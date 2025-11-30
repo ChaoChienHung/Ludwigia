@@ -4,32 +4,28 @@ AOS.init({
   offset: 80,
 });
 
-// Fade-in / slide-down navbar on hover near top
 const navbar = document.querySelector('.custom-nav');
-const hoverAreaHeight = 50; // pixels from top
 
-window.addEventListener('mousemove', function(e) {
-  if (e.clientY <= hoverAreaHeight) {
+let lastScrollY = window.scrollY;
+
+window.addEventListener('scroll', () => {
+  const current = window.scrollY;
+
+  if (current > lastScrollY && current > 80) {
+    // scrolling DOWN → show navbar
     navbar.classList.add('show');
-  } else if (!navbar.matches(':hover')) {
-    // Hide only if mouse not hovering navbar
+  } else if (current < lastScrollY) {
+    // scrolling UP → hide navbar
     navbar.classList.remove('show');
   }
+
+  lastScrollY = current;
 });
 
-// Hide navbar slightly after mouse leaves
-navbar.addEventListener('mouseleave', function() {
-  setTimeout(() => {
-    if (!navbar.matches(':hover')) {
-      navbar.classList.remove('show');
-    }
-  }, 300); // 0.3s delay for smooth disappearance
-});
-
-// Make parent link navigate on click even with dropdown
+// Dropdown parent link clickable on desktop
 document.querySelectorAll('.dropdown-toggle').forEach(function(dropdown) {
   dropdown.addEventListener('click', function(e) {
-    if (window.innerWidth >= 992) { // only for desktop
+    if (window.innerWidth >= 992) {
       window.location.href = this.href;
     }
   });

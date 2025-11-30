@@ -11,20 +11,27 @@ body {
 /* Navbar */
 .custom-nav {
   position: fixed;
+  top: 0;
   width: 100%;
-  top: -80px;       /* initially hidden above viewport */
   left: 0;
   background: rgba(0,0,0,0.8);
-  opacity: 0;
-  transition: top 0.3s ease, opacity 0.5s ease;
+  backdrop-filter: blur(6px);
+  transition: transform 0.35s ease, background 0.35s ease;
   z-index: 1000;
 }
 
-.custom-nav.show {
-  top: 0;
-  opacity: 1;
+/* Slide-down when scrolling */
+.custom-nav.scrolled {
+  transform: translateY(12px);
+  background: rgba(0,0,0,0.9);
 }
 
+/* When visible */
+.custom-nav.show {
+  top: 0;
+}
+
+/* Links */
 .nav-link {
   color: #f5f5f5 !important;
   transition: color .2s;
