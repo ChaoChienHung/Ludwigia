@@ -1,9 +1,10 @@
-# TODO
-- [ ] Add day and dark mode
-- [ ] Day mode should be in brown color or orange color
-- [ ] Put a image with a boy making wish to the meteor shower in the first page of the index.html
-- [ ] put the about within the first page of the index.html
-- [ ] use a rectangle border to bound the contact part, and make them left aligned
-- [ ] use logo icon to represent facebook, instagram, linked in profile link
-- [ ] change the background color to galaxy blue
-- [ ] add a meteor shower animation in the background
+# TODO List (Refined)
+
+- [ ] Add day mode and dark mode
+- [ ] Use brown or orange color scheme for day mode
+- [ ] Place an image of a boy making a wish to a meteor shower on the first page of `index.html`
+- [ ] Include the About section within the first page of `index.html`
+- [ ] Add a rectangle border around the Contact section and left-align its contents
+- [ ] Use logo icons for Facebook, Instagram, and LinkedIn profile links
+- [ ] Change the background color to galaxy blue
+- [ ] Add a meteor shower animation in the background
