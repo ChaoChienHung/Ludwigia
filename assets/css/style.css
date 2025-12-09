@@ -10,6 +10,7 @@ body {
 
 /* Navbar */
 .custom-nav {
+  padding: 20px 0; /* increase top/bottom padding */
   position: fixed;
   top: 0;
   width: 100%;
@@ -35,6 +36,7 @@ body {
 .nav-link {
   color: #f5f5f5 !important;
   transition: color .2s;
+  font-size: 1.1rem;
 }
 .nav-link:hover {
   color: #ff6b00 !important;
@@ -150,13 +152,13 @@ footer {
 }
 
 .contact-email-text {
-  margin-top: 25px;
   font-size: 1rem;
   opacity: 0.8;
 }
 
 .contact-email-text,
 .contact-phone-text {
+  margin-top: 10px;
   font-size: 1rem;
   color: #f5f5f5;
 }
