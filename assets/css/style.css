@@ -14,7 +14,7 @@ body {
 /* Navbar */
 /*--------*/
 .custom-nav {
-  padding: 20px 0; /* increase top/bottom padding */
+  padding: 10px; /* increase top/bottom padding */
   position: fixed;
   top: 0;
   width: 100%;
@@ -23,6 +23,11 @@ body {
   backdrop-filter: blur(6px);
   transition: transform 0.35s ease, background 0.35s ease;
   z-index: 1000;
+}
+
+.custom-brand {
+  font-size: 1.6rem;
+  color: #f5f5f5 !important;
 }
 
 /*---------------------------*/
@@ -107,6 +112,12 @@ body {
 section {
   padding: 90px 0;
 }
+
+.section-title {
+  font-weight: 700;
+  text-align: center;
+}
+
 .page-section {
   padding-top: 130px;
 }
@@ -130,11 +141,16 @@ section {
 /* Projects Section */
 /*------------------*/
 
+.project-section {
+  padding: 40px;
+}
+
 /* Project Cards */
 /*---------------*/
 .project-card {
   background: #181818;
   border: none;
+  padding: 30px;
   border-radius: 12px;
   position: relative;
   transition: transform .3s ease, box-shadow .3s ease;
