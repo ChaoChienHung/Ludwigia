@@ -62,212 +62,216 @@
 <!------------>
 <!-- Navbar -->
 <!------------>
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
-  <div class="container">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+    <div class="container">
 
-    <!----------->
-    <!-- Brand -->
-    <!----------->
-    <a class="navbar-brand fw-bold" href="index.html">Ludwig</a>
+      <!----------->
+      <!-- Brand -->
+      <!----------->
+      <a class="navbar-brand fw-bold" href="index.html">Ludwig</a>
 
-    <!------------------------>
-    <!-- Toggler for Mobile -->
-    <!------------------------>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <!------------------------>
+      <!-- Toggler for Mobile -->
+      <!------------------------>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <!------------------>
-    <!-- Navbar Links -->
-    <!------------------>
-    <div class="collapse navbar-collapse justify-content-end" id="nav">
-      <ul class="navbar-nav">
+      <!------------------>
+      <!-- Navbar Links -->
+      <!------------------>
+      <div class="collapse navbar-collapse justify-content-end" id="nav">
+        <ul class="navbar-nav">
 
-        <!------------------->
-        <!-- Home Dropdown -->
-        <!------------------->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle mx-2" href="index.html" id="homeDropdown" role="button"
-             data-bs-toggle="dropdown" aria-expanded="false">
-            Home
-          </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
-            <li><a class="dropdown-item" href="index.html#about">About</a></li>
-            <li><a class="dropdown-item" href="index.html#contact">Contact</a></li>
-          </ul>
-        </li>
+          <!------------------->
+          <!-- Home Dropdown -->
+          <!------------------->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="index.html" id="homeDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Home
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+              <li><a class="dropdown-item" href="index.html#about">About</a></li>
+              <li><a class="dropdown-item" href="index.html#contact">Contact</a></li>
+            </ul>
+          </li>
 
-        <!----------------------->
-        <!-- Projects Dropdown -->
-        <!----------------------->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle mx-2" href="projects.html" id="projectsDropdown" role="button"
-             data-bs-toggle="dropdown" aria-expanded="false">
-            Projects
-          </a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
-            <li><a class="dropdown-item" href="projects.html#spaceshipX">SpaceshipX</a></li>
-            <li><a class="dropdown-item" href="projects.html#superres">Image Super-Resolution</a></li>
-            <li><a class="dropdown-item" href="projects.html#asr">Automatic Speech Recognition</a></li>
-            <li><a class="dropdown-item" href="projects.html#yolo">YOLO Face Detection</a></li>
-            <li><a class="dropdown-item" href="projects.html#bert">Toxic-BERT NLP</a></li>
-          </ul>
-        </li>
+          <!----------------------->
+          <!-- Projects Dropdown -->
+          <!----------------------->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="projects.html" id="projectsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Projects
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+              <li><a class="dropdown-item" href="projects.html#spaceshipX">SpaceshipX</a></li>
+              <li><a class="dropdown-item" href="projects.html#superres">Image Super-Resolution</a></li>
+              <li><a class="dropdown-item" href="projects.html#asr">Automatic Speech Recognition</a></li>
+              <li><a class="dropdown-item" href="projects.html#yolo">YOLO Face Detection</a></li>
+              <li><a class="dropdown-item" href="projects.html#bert">Toxic-BERT NLP</a></li>
+            </ul>
+          </li>
 
-        <!---------->
-        <!-- Blog -->
-        <!---------->
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="blog/index.html">Blog</a>
-        </li>
+          <!---------->
+          <!-- Blog -->
+          <!---------->
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="blog/index.html">Blog</a>
+          </li>
 
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<!------------------------------------->
-<!-- Hero (Project Carousel Preview) -->
-<!------------------------------------->
-<section class="project-section" style="padding-top:150px;">
-  <h2 class="section-title" data-aos="fade-up">Project Showcase</h2>
-  <div class="divider"></div>
-
-  <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel" data-aos="zoom-in">
-    <div class="carousel-inner">
-
-      <div class="carousel-item active">
-        <a href="#spaceshipX"><img src="assets/images/SpaceshipX_gameplay.gif" class="d-block w-30" alt="SpaceshipX screenshot"></a>
-        <div class="carousel-caption-below mt-3">
-          <h4>SpaceshipX</h4>
-          <p>A compact, assembly-language-based spacecraft shooting game developed in MASM.</p>
-        </div>
-      </div>
-
-      <!-- <div class="carousel-item">
-        <div class="text-center">
-          <h3>Lightweight Image Super-Resolution</h3>
-          <p>Efficient DL models for edge devices.</p>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <div class="text-center">
-          <h3>Automatic Speech Recognition</h3>
-          <p>High-accuracy ASR on noisy datasets.</p>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <div class="text-center">
-          <h3>YOLO Face Detection</h3>
-          <p>Real-time person detection using YOLO.</p>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <div class="text-center">
-          <h3>Toxic-BERT NLP System</h3>
-          <p>BERT-powered toxicity classification.</p>
-        </div>
-      </div> -->
-
-    </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button>
-  </div>
-</section>
-
-<!--------------------------------->
-<!-- Individual Project Sections -->
-<!--------------------------------->
-<section class="project-section" id="spaceshipX" data-aos="fade-up">
-  <div class="container">
-    <div class="project-card">
-
-      <!------------>
-      <!-- GitHub -->
-      <!------------>
-      <a href="https://github.com/ChaoChienHung/SpaceshipX" class="contact-item project-card-icon" title="GitHub" target="_blank">
-        <i class="fab fa-github"></i>
-      </a>
-      <h3>SpaceshipX</h3>
-      <p>
-        SpaceshipX is a small assembly-based game developed using MASM and WinDbg.
-        In the game, the player controls a spaceship to shoot bullets and destroy incoming comets to protect Earth.
-        Future updates will include new items, additional weapon types, and extra lives.
-      </p>
-      <hr>
-      <h5>Key Features</h5>
-      <p>
-        <ul>
-          <li>Control the spaceship using the keyboard: arrow keys (W, S, A, D) to move, and Space to shoot.</li>
-          <li>Shoot bullets to destroy incoming comets</li>
-          <li>Protect the Earth from destruction</li>
-          <li>Planned enhancements: multiple weapon types, collectibles, and advanced enemy patterns</li>
         </ul>
-      </p>
+      </div>
     </div>
-  </div>
-</section>
+  </nav>
 
-<section class="project-section" id="superres" data-aos="fade-up">
-  <div class="container">
-    <div class="project-card">
-      <h3>Lightweight Image Super-Resolution</h3>
-      <p>Designed efficient models to enhance images while running on limited hardware.</p>
+  <!------------------------------------->
+  <!-- Hero (Project Carousel Preview) -->
+  <!------------------------------------->
+  <section class="project-section" style="padding-top:150px;">
+    <h2 class="section-title" data-aos="fade-up">Project Showcase</h2>
+    <div class="divider"></div>
+
+    <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel" data-aos="zoom-in">
+      <div class="carousel-inner">
+
+        <div class="carousel-item active">
+          <a href="#spaceshipX"><img src="assets/images/SpaceshipX_gameplay.gif" class="d-block w-30" alt="SpaceshipX screenshot"></a>
+          <div class="carousel-caption-below mt-3">
+            <h4>SpaceshipX</h4>
+            <p>A compact, assembly-language-based spacecraft shooting game developed in MASM.</p>
+          </div>
+        </div>
+
+        <!-- <div class="carousel-item">
+          <div class="text-center">
+            <h3>Lightweight Image Super-Resolution</h3>
+            <p>Efficient DL models for edge devices.</p>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="text-center">
+            <h3>Automatic Speech Recognition</h3>
+            <p>High-accuracy ASR on noisy datasets.</p>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="text-center">
+            <h3>YOLO Face Detection</h3>
+            <p>Real-time person detection using YOLO.</p>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="text-center">
+            <h3>Toxic-BERT NLP System</h3>
+            <p>BERT-powered toxicity classification.</p>
+          </div>
+        </div> -->
+
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="project-section" id="asr" data-aos="fade-up">
-  <div class="container">
-    <div class="project-card">
-      <h3>Automatic Speech Recognition</h3>
-      <p>Built ASR systems with strong noise-robust performance.</p>
+  <!--------------------------------->
+  <!-- Individual Project Sections -->
+  <!--------------------------------->
+
+  <!------------>
+  <!-- GitHub -->
+  <!------------>
+  <section class="project-section" id="spaceshipX" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/SpaceshipX" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>SpaceshipX</h3>
+        <p>
+          SpaceshipX is a small assembly-based game developed using MASM and WinDbg.
+          In the game, the player controls a spaceship to shoot bullets and destroy incoming comets to protect Earth.
+          Future updates will include new items, additional weapon types, and extra lives.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Control the spaceship using the keyboard: arrow keys (W, S, A, D) to move, and Space to shoot.</li>
+            <li>Shoot bullets to destroy incoming comets</li>
+            <li>Protect the Earth from destruction</li>
+            <li>Planned enhancements: multiple weapon types, collectibles, and advanced enemy patterns</li>
+          </ul>
+        </p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="project-section" id="yolo" data-aos="fade-up">
-  <div class="container">
-    <div class="project-card">
-      <h3>YOLO-based Face Detection</h3>
-      <p>Developed real-time face detection pipelines using YOLO.</p>
+  <section class="project-section" id="superres" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+        <h3>Lightweight Image Super-Resolution</h3>
+        <p>Designed efficient models to enhance images while running on limited hardware.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="project-section" id="bert" data-aos="fade-up">
-  <div class="container">
-    <div class="project-card">
-      <h3>Toxic-BERT NLP System</h3>
-      <p>Implemented BERT models to classify toxic language effectively.</p>
+  <section class="project-section" id="asr" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+        <h3>Automatic Speech Recognition</h3>
+        <p>Built ASR systems with strong noise-robust performance.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!------------>
-<!-- FOOTER -->
-<!------------>
-<footer class="text-center p-4" style="background:#111;">
-  © 2025 Ludwig — All Rights Reserved
-</footer>
+  <section class="project-section" id="yolo" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+        <h3>YOLO-based Face Detection</h3>
+        <p>Developed real-time face detection pipelines using YOLO.</p>
+      </div>
+    </div>
+  </section>
 
-<!------------->
-<!-- Scripts -->
-<!------------->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script src="../assets/js/script.js"></script>
-<script>
-  AOS.init({ duration: 900, offset: 80 });
-</script>
+  <section class="project-section" id="bert" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+        <h3>Toxic-BERT NLP System</h3>
+        <p>Implemented BERT models to classify toxic language effectively.</p>
+      </div>
+    </div>
+  </section>
+
+  <!------------>
+  <!-- FOOTER -->
+  <!------------>
+  <footer class="text-center p-4" style="background:#111;">
+    © 2025 Ludwig — All Rights Reserved
+  </footer>
+
+  <!------------->
+  <!-- Scripts -->
+  <!------------->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../assets/js/script.js"></script>
+  <script>
+    AOS.init({ duration: 900, offset: 80 });
+  </script>
 
 </body>
 </html>
