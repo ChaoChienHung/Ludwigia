@@ -237,7 +237,7 @@ footer {
 
 .contact-item {
   font-size: 2rem;
-  color: #f5f5f5;
+  color: var(--text);
   transition: color .25s ease, transform .25s ease;
 }
 
