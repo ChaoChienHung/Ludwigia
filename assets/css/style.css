@@ -118,6 +118,14 @@ body {
   text-align: center;
   padding: 0 15px;
 }
+
+.hero-image img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 100%;
+  margin-bottom: 40px;
+}
+
 .hero h1 {
   font-size: 3.5rem;
   font-weight: 700;
