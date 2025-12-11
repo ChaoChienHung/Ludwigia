@@ -30,3 +30,24 @@ document.querySelectorAll('.dropdown-toggle').forEach(function(dropdown) {
     }
   });
 });
+
+// Retrieve saved theme
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme === "light") {
+  document.body.classList.add("light-theme");
+  document.getElementById("theme-icon").classList.replace("fa-moon", "fa-sun");
+}
+
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+
+  const isLight = document.body.classList.contains("light-theme");
+
+  // Switch icon
+  const icon = document.getElementById("theme-icon");
+  icon.classList.toggle("fa-sun", isLight);
+  icon.classList.toggle("fa-moon", !isLight);
+
+  // Save preference
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+});
