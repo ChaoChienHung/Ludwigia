@@ -23,17 +23,17 @@
   /*-------------*/
   /* Light Theme */
   /*-------------*/
-  --bg: #f7f7f7;
-  --bg-alt: #ffffff;
-  --text: #111111;
-  --accent: #ff6b00;
-  --navbar-bg: rgba(255,255,255,0.8);
-  --navbar-bg-scrolled: rgba(255,255,255,0.9);
-  --brand-color: #111111;
-  --project-card-bg: #eaeaea;
-  --hero-gradient-start: #f7f7f7;
+  --bg: #f9f4e7;
+  --bg-alt: #fdf9ec;
+  --text: rgba(61, 46, 37, 0.939); 
+  --accent: #996229;
+  --navbar-bg: rgba(144, 100, 80, 0.939);
+  --navbar-bg-scrolled: #8a5d4a;
+  --brand-color: rgba(61, 46, 37, 0.939);
+  --project-card-bg: #eee7da;
+  --hero-gradient-start: #f9f4e7;
   --hero-gradient-end: #ffffff;
-  --footer-bg: #e5e5e5;
+  --footer-bg: #eae3d6;
   --contact-color: #111111;
   --transparent: transparent;
 }
