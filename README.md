@@ -1,6 +1,6 @@
 # Ludwigia
 
-Ludwigia is my personal website—designed as both a portfolio and a playground for learning essential web development skills. Through this project, I practice core frontend technologies such as HTML, CSS, JavaScript, and Bootstrap while building a space to introduce myself and showcase my work.
+Ludwigia is my personal website that serves as both a portfolio and a playground for learning essential web development skills. Through this project, I practice core frontend technologies such as HTML, CSS, JavaScript, and Bootstrap while building a space to introduce myself and showcase my work.
 
 ## Features
 
