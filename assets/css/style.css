@@ -35,7 +35,7 @@
   --hero-gradient-start: #fbf4e4;
   --hero-gradient-end: #fffdf8;
   --footer-bg: #eae3d6;
-  --contact-color: #111111;
+  --contact-color: rgba(61, 46, 37, 0.939); 
   --border-color: #e3d8c3;
   --transparent: transparent;
 }
