@@ -11,6 +11,7 @@
   --navbar-bg: rgba(0,0,0,0.8);
   --navbar-bg-scrolled: rgba(0,0,0,0.9);
   --brand-color: #f5f5f5;
+  --carousel-filter: invert(0);
   --project-card-bg: #2f2f2f;
   --hero-gradient-start: #0e0e0e;
   --hero-gradient-end: #1f1f1f;
@@ -31,6 +32,7 @@
   --navbar-bg: rgba(144, 100, 80, 0.939);
   --navbar-bg-scrolled: #8a5d4a;
   --brand-color: rgba(61, 46, 37, 0.939);
+  --carousel-filter: invert(1);
   --project-card-bg: #eee7da;
   --hero-gradient-start: #fbf4e4;
   --hero-gradient-end: #fffdf8;
@@ -231,6 +233,14 @@ section {
   border-style: solid;
   border-width: 15px;
   border-color: var(--border-color);
+}
+
+/*------------------*/
+/* Carousel Control */
+/*------------------*/
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: var(--carousel-filter);
 }
 
 /*------------------*/
