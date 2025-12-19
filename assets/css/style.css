@@ -26,14 +26,14 @@
   /* Light Theme */
   /*-------------*/
   --bg: rgb(243, 238, 225);
-  --bg-alt: #fdf9ec;
+  --bg-alt: #f7f4e7;
   --text: rgba(61, 46, 37, 0.939); 
   --accent: #635646;
   --navbar-bg: rgba(144, 100, 80, 0.939);
   --navbar-bg-scrolled: #8a5d4a;
   --brand-color: rgba(61, 46, 37, 0.939);
   --carousel-filter: invert(1);
-  --project-card-bg: #eee7da;
+  --project-card-bg: #dfd5c2;
   --hero-gradient-start: #fbf4e4;
   --hero-gradient-end: #fffdf8;
   --footer-bg: #eae3d6;
