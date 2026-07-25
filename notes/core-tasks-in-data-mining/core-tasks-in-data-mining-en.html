@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Core Tasks in Data Mining — Ludwig</title>
+  <meta name="garden:tags" content="Data Mining, Classification, Regression, Clustering, Association Rules, Graph Mining, Recommender Systems, Predictive Tasks, Descriptive Tasks">
+  <meta name="garden:summary" content="A map of the main task families in data mining, from prediction and grouping to co-occurrence discovery, graph analysis, and recommendation.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.classification,concept.regression,concept.clustering,concept.association_rules,concept.graph_mining,concept.recommender_systems,concept.predictive_tasks,concept.descriptive_tasks">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.classification&quot;:{&quot;en&quot;:&quot;Classification&quot;,&quot;zh-Hant&quot;:&quot;分類&quot;,&quot;zh-Hans&quot;:&quot;分类&quot;},&quot;concept.regression&quot;:{&quot;en&quot;:&quot;Regression&quot;,&quot;zh-Hant&quot;:&quot;迴歸&quot;,&quot;zh-Hans&quot;:&quot;回归&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.association_rules&quot;:{&quot;en&quot;:&quot;Association Rules&quot;,&quot;zh-Hant&quot;:&quot;關聯規則&quot;,&quot;zh-Hans&quot;:&quot;关联规则&quot;},&quot;concept.graph_mining&quot;:{&quot;en&quot;:&quot;Graph Mining&quot;,&quot;zh-Hant&quot;:&quot;圖探勘&quot;,&quot;zh-Hans&quot;:&quot;图挖掘&quot;},&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.predictive_tasks&quot;:{&quot;en&quot;:&quot;Predictive Tasks&quot;,&quot;zh-Hant&quot;:&quot;預測性任務&quot;,&quot;zh-Hans&quot;:&quot;预测性任务&quot;},&quot;concept.descriptive_tasks&quot;:{&quot;en&quot;:&quot;Descriptive Tasks&quot;,&quot;zh-Hant&quot;:&quot;描述性任務&quot;,&quot;zh-Hans&quot;:&quot;描述性任务&quot;}}">
+  <meta name="garden:published_at" content="2026-06-12">
+  <meta name="garden:last_modified_at" content="2026-06-12">
+  <meta name="garden:reading_time_minutes" content="4">
+  <meta name="garden:source" content="notes/core-tasks-in-data-mining/core-tasks-in-data-mining-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Core Tasks in Data Mining</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#core-tasks">Core Tasks in Data Mining</a>
+<a class="note-toc-link level-2" href="#tasks-guiding">Guiding Questions</a>
+<a class="note-toc-link level-2" href="#prediction">Prediction: Classification and Regression</a>
+<a class="note-toc-link level-2" href="#grouping">Grouping: Clustering</a>
+<a class="note-toc-link level-2" href="#cooccurrence">Co-occurrence: Association Rules and Correlation</a>
+<a class="note-toc-link level-2" href="#networks">Networks and Sparse Preference Structure</a>
+<a class="note-toc-link level-2" href="#choosing-task">Choosing the Right Task</a>
+<a class="note-toc-link level-1" href="#summary">Summary &amp; Key Takeaways</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-12" data-published-at="2026-06-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="core-tasks" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Core Tasks in Data Mining</h3>
+
+<div id="tasks-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Guiding Questions: What Kind of Pattern Are We Looking For?</h4><p class="mb-3">Once data has been prepared, the next question is not "Which algorithm is best?" but "What kind of pattern are we trying to extract?" Are we predicting a known target, discovering natural groups, surfacing items that co-occur, or reasoning over relational structure?</p>
+
+<p class="mb-3">Different data mining tasks ask fundamentally different questions of the same dataset. Some aim to forecast outcomes, while others aim to discover hidden organization without labels. Some care about pairwise co-occurrence, while others focus on networks or missing preferences.</p>
+
+<p class="mb-3">So before choosing a method, we first need to identify the task family that matches the kind of knowledge we hope to uncover.</p></div>
+
+<p class="mb-3">Data mining is not a single computational act. It is a family of different tasks, each aimed at extracting a different kind of structure from data. That is why the same dataset may support multiple kinds of analysis, depending on what question we ask. If we want to predict a category or a number, we enter the world of predictive tasks. If we want to discover hidden groups without labels, we move into clustering. If we want to know which events tend to appear together, we care about associations and correlations. And if relationships between entities are themselves the main object of interest, graph-based or recommendation-oriented tasks become more natural. Before discussing specific algorithms, we therefore need a clean map of the major task families.</p>
+</section>
+
+<section id="prediction-classification-and-regression" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Prediction: Classification and Regression</h3>
+
+<ul class="note-list">
+<li>Classification &amp; Regression (Predictive Tasks):<ul class="note-list">
+<li>The Goal: To build a model that can forecast future outcomes based on historical data.</li>
+<li>The Mechanics: Classification maps data points into discrete, categorical buckets (e.g., predicting whether a patient has a disease: "Yes" or "No"). Regression, on the other hand, models continuous numerical trends (e.g., forecasting a patient's exact blood pressure level).</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="grouping-clustering" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Grouping: Clustering</h3>
+
+<ul class="note-list">
+<li>Clustering (Descriptive Grouping):<ul class="note-list">
+<li>The Goal: To discover natural, hidden populations within a dataset without any prior instructions.</li>
+<li>The Mechanics: The algorithm mathematically scans the data to maximize intra-group similarity (making items inside a cluster as alike as possible) while minimizing inter-group overlap (pushing different clusters as far apart as possible). A common example is identifying distinct, unknown subtypes of a disease among thousands of patient profiles.</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="co-occurrence-association-rules-and-correlation" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Co-occurrence: Association Rules and Correlation</h3>
+
+<ul class="note-list">
+<li>Association Rules &amp; Correlation (Pattern Co-occurrence):<ul class="note-list">
+<li>The Goal: To find items or events that mathematically imply the presence of one another.</li>
+<li>The Mechanics: Most famously used in market-basket analysis, this task surfaces predictive rules (e.g., "Customers who buy diapers are 80% likely to also purchase beer"). It scans massive transactional logs to move past basic statistical frequency and uncover genuine dependencies.</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="networks-and-sparse-preference-structure" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Networks and Sparse Preference Structure</h3>
+
+<ul class="note-list">
+<li>Graph Mining &amp; Recommender Systems (Network &amp; Matrix Analysis):<ul class="note-list">
+<li>The Goal: To analyze highly interconnected or missing structural relational data.</li>
+<li>The Mechanics: Graph Mining treats data as networks of nodes and edges to isolate central hubs or tight-knit communities (such as mapping protein-protein interaction networks). Recommender Systems utilize large sparse matrices of past user behaviors to predict missing preferences and suggest new content (such as Netflix movie recommendations or predicting drug-target interactions).</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="choosing-the-right-task" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Choosing the Right Task</h3>
+
+<p class="mb-3">The choice of which task to pursue—and which mathematical framework to deploy—fundamentally depends on the nature of our data's blueprint. Specifically, it hinges on whether our dataset possesses a ground truth guide to learn from, split into two primary paradigms: <code>Supervised Learning in Data Mining</code> and <code>Unsupervised Learning and Dimensionality Reduction</code>.</p>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary &amp; Key Takeaways</h3>
+
+<ul class="note-list">
+<li>Data mining contains multiple task families, each aligned with a different kind of question.</li>
+<li>Predictive tasks estimate known targets; descriptive tasks reveal hidden structure.</li>
+<li>Relational and recommendation settings require thinking beyond flat records.</li>
+<li>Choosing the right task comes before choosing the right algorithm.</li>
+</ul>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

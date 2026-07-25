@@ -1,0 +1,92 @@
+<!-- Legacy fallback: canonical navbar source now lives at pages/_shared/navbar.html. -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="{{REPO_PREFIX}}index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="{{REPO_PREFIX}}index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="{{REPO_PREFIX}}pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="{{REPO_PREFIX}}pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="{{REPO_PREFIX}}notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="{{REPO_PREFIX}}writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="{{REPO_PREFIX}}canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="{{REPO_PREFIX}}pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="{{REPO_PREFIX}}pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

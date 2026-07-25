@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>架構先行、Agent 補內容、最後全盤 proofread：我現在更想採用的寫作 workflow</title>
+  <meta name="garden:tags" content="寫作, 工作流, 代理式 AI, 大綱, 校對, 文件">
+  <meta name="garden:summary" content="先用架構拆出段落與問題，再讓 Agent 依 raw info 與既有知識補內容，最後保留一次完整 proofread。這比從零手寫每一段更輕、更快，也更容易 refine。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.writing,concept.workflow,concept.agentic_ai,concept.outline,concept.proofread,concept.documentation">
+  <meta name="garden:tag_labels" content="{&quot;concept.writing&quot;:{&quot;en&quot;:&quot;Writing&quot;,&quot;zh-Hant&quot;:&quot;寫作&quot;,&quot;zh-Hans&quot;:&quot;写作&quot;},&quot;concept.workflow&quot;:{&quot;en&quot;:&quot;Workflow&quot;,&quot;zh-Hant&quot;:&quot;工作流&quot;,&quot;zh-Hans&quot;:&quot;工作流&quot;},&quot;concept.agentic_ai&quot;:{&quot;en&quot;:&quot;Agentic AI&quot;,&quot;zh-Hant&quot;:&quot;代理式 AI&quot;,&quot;zh-Hans&quot;:&quot;代理式 AI&quot;},&quot;concept.outline&quot;:{&quot;en&quot;:&quot;Outline&quot;,&quot;zh-Hant&quot;:&quot;大綱&quot;,&quot;zh-Hans&quot;:&quot;大纲&quot;},&quot;concept.proofread&quot;:{&quot;en&quot;:&quot;Proofread&quot;,&quot;zh-Hant&quot;:&quot;校對&quot;,&quot;zh-Hans&quot;:&quot;校对&quot;},&quot;concept.documentation&quot;:{&quot;en&quot;:&quot;Documentation&quot;,&quot;zh-Hant&quot;:&quot;文件&quot;,&quot;zh-Hans&quot;:&quot;文档&quot;}}">
+  <meta name="garden:published_at" content="2026-06-10">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="6">
+  <meta name="garden:source" content="writing/outline-first-agent-writing-proofread/outline-first-agent-writing-proofread-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">架構先行、Agent 補內容、最後全盤 proofread：我現在更想採用的寫作 workflow</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">為什麼我現在更偏向架構先行</a>
+<a class="note-toc-link level-1" href="#raw-info-agent">架構一旦清楚，raw info 就更好交給 Agent 處理</a>
+<a class="note-toc-link level-1" href="#refine">生成之後，還可以反過來用結構再 refine 一輪</a>
+<a class="note-toc-link level-1" href="#workflow">這種 workflow 其實讓很多前置工作都可以被簡化</a>
+<a class="note-toc-link level-1" href="#proofread">最後的全盤 proofread，反而是最不能省的一步</a>
+<a class="note-toc-link level-1" href="#section-2">我現在比較想採用的實際流程</a>
+<a class="note-toc-link level-1" href="#section-3">結論：不是把寫作交出去，而是把寫作拆成更適合協作的層次</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">我最近越來越覺得，寫作 workflow 本身也正在被 Agent 改寫。</p>
+
+<p class="mb-3">以前比較常見的流程是：</p>
+
+<ul class="note-list">
+<li>我先自己把每一段都寫得差不多完整</li>
+<li>再回頭修文、重排、補例子</li>
+<li>如果中途發現結構不夠好，就得把很多段落整個打散重寫</li>
+</ul>
+
+<p class="mb-3">但現在我越來越偏向另一種順序：</p>
+
+<ul class="note-list">
+<li>先定清楚文章架構</li>
+<li>再把每段需要回答的問題列出來</li>
+<li>然後把 raw info 丟給 Agent / LLM 幫我補內容</li>
+<li>最後再做一次全盤 proofread</li>
+</ul>
+
+<p class="mb-3">我不是在說「讓 Agent 取代寫作」，而是：</p>
+
+<ul class="note-list">
+<li>先把最重要的結構與問題意識抓穩</li>
+<li>再把填充內容、整理措辭、補例子這些工作盡量交給工具加速</li>
+<li>但最後的人類 proofread 仍然是整個流程裡最重要的一環</li>
+</ul>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">為什麼我現在更偏向架構先行</h3>
+
+<p class="mb-3">如果文章還沒有結構，很多時候真正卡住的不是文字本身，而是：</p>
+
+<ul class="note-list">
+<li>這篇到底想回答什麼</li>
+<li>哪些段落應該先講</li>
+<li>哪些只是補充、哪些才是主軸</li>
+<li>哪些疑問其實還沒被釐清</li>
+</ul>
+
+<p class="mb-3">在這種情況下，直接把段落一股腦寫滿，常常只是比較早暴露混亂，而不是更接近成稿。</p>
+
+<p class="mb-3">所以我現在更喜歡先做一個比較明確的骨架。</p>
+
+<ul class="note-list">
+<li>先列大章節</li>
+<li>每個章節再列它要回答的核心問題</li>
+<li>如果有需要，再把每節拆成更小的子段落</li>
+</ul>
+
+<p class="mb-3">做到這一步，其實文章已經開始變得很好 refine 了。</p>
+
+<p class="mb-3">因為這時候你不是在面對一整團模糊的「我要寫一篇文章」，而是在面對很多個相對清楚的小任務：</p>
+
+<ul class="note-list">
+<li>這段要不要補例子</li>
+<li>那段是不是還缺反例</li>
+<li>哪一節的過渡不夠順</li>
+<li>哪個 claim 目前還太空</li>
+</ul>
+</section>
+
+<section id="raw-info-agent" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">架構一旦清楚，raw info 就更好交給 Agent 處理</h3>
+
+<p class="mb-3">我覺得這一步是 Agent 真正開始有價值的地方。</p>
+
+<p class="mb-3">如果你只有一團散亂的想法，Agent 雖然也能幫忙，但很容易：</p>
+
+<ul class="note-list">
+<li>寫得很滿，卻沒有真的對準問題</li>
+<li>產生過度 generic 的段落</li>
+<li>把還沒想清楚的東西直接包裝成看起來完整的文字</li>
+</ul>
+
+<p class="mb-3">但如果你已經先把架構和每段問題列出來，狀況會不一樣。</p>
+
+<p class="mb-3">你可以直接給它：</p>
+
+<ul class="note-list">
+<li>這一節的標題</li>
+<li>這一節想回答的問題</li>
+<li>你目前手上的 raw info</li>
+<li>你想保留的語氣、立場、限制</li>
+</ul>
+
+<p class="mb-3">這樣 Agent 的工作就不是「憑空替你寫一篇文章」，而是：</p>
+
+<ul class="note-list">
+<li>依照既有結構補足內容</li>
+<li>把 raw info 組織成比較可讀的段落</li>
+<li>在必要時用 prior knowledge 幫你補上說明、例子或比較</li>
+</ul>
+
+<p class="mb-3">這種協作方式會讓文章比較不容易失焦。</p>
+</section>
+
+<section id="refine" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">生成之後，還可以反過來用結構再 refine 一輪</h3>
+
+<p class="mb-3">我很喜歡這個 workflow 的地方在於，它不是單向的。</p>
+
+<p class="mb-3">不是說：</p>
+
+<ul class="note-list">
+<li>先做 outline</li>
+<li>然後 Agent 補完</li>
+<li>就直接結束</li>
+</ul>
+
+<p class="mb-3">而是：</p>
+
+<ul class="note-list">
+<li>先用 outline 把文章拆清楚</li>
+<li>再用 Agent 把各段補起來</li>
+<li>接著把生成後的內容重新攤回結構上看</li>
+</ul>
+
+<p class="mb-3">這時候你會更容易看到：</p>
+
+<ul class="note-list">
+<li>哪些段落太空</li>
+<li>哪些段落太長</li>
+<li>哪些段落其實在重複</li>
+<li>哪些子問題應該被拆出去</li>
+</ul>
+
+<p class="mb-3">也就是說，文章一旦同時有了「架構」和「暫時的內容」，refine 反而會變得更容易。</p>
+
+<p class="mb-3">因為你現在不是在 refine 一片空白，而是在 refine 一個已經有輪廓的東西。</p>
+</section>
+
+<section id="workflow" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">這種 workflow 其實讓很多前置工作都可以被簡化</h3>
+
+<p class="mb-3">我現在的感覺是：</p>
+
+<ul class="note-list">
+<li>在 proofread 之前，其實很多步驟都可以被簡化或 agent 化</li>
+</ul>
+
+<p class="mb-3">例如：</p>
+
+<ul class="note-list">
+<li>收斂大綱</li>
+<li>幫每節列子問題</li>
+<li>整理 raw info</li>
+<li>生成第一版段落</li>
+<li>把長段落拆短</li>
+<li>補對比、例子、反例</li>
+<li>把結構反向列成一份 refine checklist</li>
+</ul>
+
+<p class="mb-3">這些工作很重要，但它們不一定都需要由我親手從零完成。</p>
+
+<p class="mb-3">真正不能被省略的是最後那輪全面性的閱讀。</p>
+</section>
+
+<section id="proofread" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">最後的全盤 proofread，反而是最不能省的一步</h3>
+
+<p class="mb-3">這是我現在最確定的一個結論。</p>
+
+<p class="mb-3">前面的流程可以優化、可以加速、可以部分委派給 Agent。</p>
+
+<p class="mb-3">但最後還是要有一輪完整 proofread。</p>
+
+<p class="mb-3">因為只有在你從頭到尾把整篇文章當成一個整體重新讀過時，你才會真正看見：</p>
+
+<ul class="note-list">
+<li>語氣是不是一致</li>
+<li>過渡是不是自然</li>
+<li>立場是不是被寫歪了</li>
+<li>某些句子是不是雖然通順，卻不是你真正想說的</li>
+<li>某些段落是不是看起來完整，但其實沒有回答問題</li>
+</ul>
+
+<p class="mb-3">這一層目前很難完全外包。</p>
+
+<p class="mb-3">不是因為 Agent 不會改文，而是因為最後這一步在做的事情不是「補文字」，而是：</p>
+
+<ul class="note-list">
+<li>對整篇文章的意圖負責</li>
+<li>對邏輯一致性負責</li>
+<li>對語氣與判斷負責</li>
+</ul>
+
+<p class="mb-3">這也是為什麼我會覺得：</p>
+
+<ul class="note-list">
+<li>前面的流程都可以簡化優化</li>
+<li>但 proofread 一定要留到最後，並且由人完整走過一遍</li>
+</ul>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">我現在比較想採用的實際流程</h3>
+
+<p class="mb-3">如果把整件事寫成一個比較實用的 workflow，我目前偏好的是：</p>
+
+<ol class="mb-3">
+<li>先寫文章架構</li>
+<li>幫每個段落列出要回答的問題</li>
+<li>把 raw info、例子、觀察、碎念全部先丟進對應段落</li>
+<li>讓 Agent 依架構補成第一版可讀內容</li>
+<li>把生成後的內容重新映回結構，列出 refine 點</li>
+<li>再做一到兩輪定向修改</li>
+<li>最後做一次全盤 proofread</li>
+</ol>
+
+<p class="mb-3">這個流程對我來說最大的好處是：</p>
+
+<ul class="note-list">
+<li>不用在一開始就承擔「我要一次把整篇寫對」的壓力</li>
+<li>可以把高成本的填充工作交給 Agent</li>
+<li>同時又不會放棄對整篇文章的最終掌控</li>
+</ul>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">結論：不是把寫作交出去，而是把寫作拆成更適合協作的層次</h3>
+
+<p class="mb-3">我現在越來越不把這種 workflow 理解成「讓 Agent 幫我寫文章」。</p>
+
+<p class="mb-3">更像是：</p>
+
+<ul class="note-list">
+<li>我先定義結構與問題</li>
+<li>Agent 幫我把內容快速補起來</li>
+<li>我再回來做最後的判斷與 proofread</li>
+</ul>
+
+<p class="mb-3">也就是說，真正被外包出去的，主要是那些可被系統化、可被填充、可被重組的部分。</p>
+
+<p class="mb-3">真正被保留下來的，是：</p>
+
+<ul class="note-list">
+<li>架構判斷</li>
+<li>文章立場</li>
+<li>refine 的方向</li>
+<li>最後的整體 proofread</li>
+</ul>
+
+<p class="mb-3">對我來說，這不是偷懶。</p>
+
+<p class="mb-3">反而比較像是把寫作這件事重新拆對層次之後，讓每一層都交給最適合的人或工具來做。</p>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

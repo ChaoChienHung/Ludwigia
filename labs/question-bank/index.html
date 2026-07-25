@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Question Bank Demo — Labs — Ludwig</title>
+
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+  </script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css?v=2026-06-21-6">
+  <style>
+    body.labs-question-bank-page .page-section {
+      padding-top: 136px;
+    }
+
+    .question-bank-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .question-bank-panel,
+    .question-bank-shell {
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: color-mix(in srgb, var(--project-card-bg, rgba(255,255,255,0.04)) 92%, transparent);
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .light-theme .question-bank-panel,
+    .light-theme .question-bank-shell {
+      border-color: rgba(61, 46, 37, 0.12);
+      box-shadow: 0 18px 34px rgba(61, 46, 37, 0.08);
+    }
+
+    .question-bank-panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 104px;
+    }
+
+    .question-bank-panel-title,
+    .question-bank-shell-title {
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.78;
+      margin: 0;
+    }
+
+    .question-bank-source-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .question-bank-source {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+      border-radius: 18px;
+      padding: 12px 14px;
+      text-align: left;
+      transition: border-color 0.16s ease, transform 0.16s ease, background-color 0.16s ease;
+    }
+
+    .light-theme .question-bank-source {
+      border-color: rgba(61, 46, 37, 0.12);
+      background: rgba(61, 46, 37, 0.04);
+    }
+
+    .question-bank-source:hover,
+    .question-bank-source:focus,
+    .question-bank-source.is-active {
+      border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.1));
+      background: color-mix(in srgb, var(--accent) 12%, rgba(255, 255, 255, 0.05));
+      transform: translateY(-1px);
+    }
+
+    .question-bank-source-title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .question-bank-source-title {
+      font-weight: 700;
+    }
+
+    .question-bank-source-lang,
+    .question-bank-tag,
+    .question-bank-stat-value {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.84rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .light-theme .question-bank-source-lang,
+    .light-theme .question-bank-tag,
+    .light-theme .question-bank-stat-value {
+      border-color: rgba(61, 46, 37, 0.12);
+      background: rgba(61, 46, 37, 0.04);
+    }
+
+    .question-bank-source-canonical {
+      font-size: 0.88rem;
+      opacity: 0.76;
+      word-break: break-word;
+    }
+
+    .question-bank-status {
+      border-radius: 16px;
+      padding: 11px 13px;
+      font-size: 0.94rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .light-theme .question-bank-status {
+      background: rgba(61, 46, 37, 0.04);
+      border-color: rgba(61, 46, 37, 0.12);
+    }
+
+    .question-bank-status[data-tone="ok"] {
+      border-color: rgba(60, 179, 113, 0.4);
+      background: rgba(60, 179, 113, 0.08);
+    }
+
+    .question-bank-status[data-tone="error"] {
+      border-color: rgba(220, 53, 69, 0.4);
+      background: rgba(220, 53, 69, 0.08);
+    }
+
+    .question-bank-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .question-bank-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .question-bank-filter-chip {
+      border-radius: 999px;
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+      transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .light-theme .question-bank-filter-chip {
+      border-color: rgba(61, 46, 37, 0.14);
+      background: rgba(61, 46, 37, 0.04);
+    }
+
+    .question-bank-filter-chip:hover,
+    .question-bank-filter-chip:focus,
+    .question-bank-filter-chip.is-active {
+      border-color: color-mix(in srgb, var(--accent) 52%, rgba(255, 255, 255, 0.16));
+      background: color-mix(in srgb, var(--accent) 12%, rgba(255, 255, 255, 0.05));
+      transform: translateY(-1px);
+    }
+
+    .question-bank-stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .question-bank-stat {
+      border-radius: 18px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .light-theme .question-bank-stat {
+      background: rgba(61, 46, 37, 0.04);
+      border-color: rgba(61, 46, 37, 0.12);
+    }
+
+    .question-bank-stat-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.72;
+    }
+
+    .question-bank-shell {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .question-bank-shell-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .question-bank-shell-head h2 {
+      margin: 0;
+    }
+
+    .question-bank-shell-subtitle {
+      margin: 8px 0 0;
+      opacity: 0.8;
+      max-width: 68ch;
+    }
+
+    .question-bank-source-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .question-bank-source-links a,
+    .question-bank-nav button {
+      border-radius: 999px;
+      padding: 8px 14px;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+    }
+
+    .light-theme .question-bank-source-links a,
+    .light-theme .question-bank-nav button {
+      border-color: rgba(61, 46, 37, 0.14);
+      background: rgba(61, 46, 37, 0.04);
+    }
+
+    .question-bank-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .question-bank-nav button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .question-bank-progress {
+      font-size: 0.92rem;
+      opacity: 0.78;
+      min-width: 54px;
+      text-align: center;
+    }
+
+    .question-bank-card {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .light-theme .question-bank-card {
+      background: rgba(61, 46, 37, 0.04);
+      border-color: rgba(61, 46, 37, 0.12);
+    }
+
+    .question-bank-question-id {
+      font-size: 0.9rem;
+      opacity: 0.76;
+      word-break: break-word;
+    }
+
+    .question-bank-question-meta {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      opacity: 0.78;
+    }
+
+    .question-bank-prompt {
+      margin: 14px 0 0;
+      font-size: 1.18rem;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .question-bank-options {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .question-bank-option {
+      text-align: left;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+      transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .light-theme .question-bank-option {
+      border-color: rgba(61, 46, 37, 0.14);
+      background: rgba(61, 46, 37, 0.04);
+    }
+
+    .question-bank-option:hover,
+    .question-bank-option:focus {
+      border-color: color-mix(in srgb, var(--accent) 48%, rgba(255, 255, 255, 0.14));
+      background: color-mix(in srgb, var(--accent) 10%, rgba(255, 255, 255, 0.05));
+    }
+
+    .question-bank-option.is-selected {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+
+    .question-bank-option.is-correct {
+      border-color: rgba(60, 179, 113, 0.72);
+      background: rgba(60, 179, 113, 0.14);
+    }
+
+    .question-bank-option.is-wrong {
+      border-color: rgba(220, 53, 69, 0.72);
+      background: rgba(220, 53, 69, 0.12);
+    }
+
+    .question-bank-option.is-revealed-correct {
+      border-color: rgba(60, 179, 113, 0.48);
+      background: rgba(60, 179, 113, 0.08);
+    }
+
+    .question-bank-response {
+      margin-top: 14px;
+      min-height: 88px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.08);
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .question-bank-response.is-correct {
+      border-color: rgba(60, 179, 113, 0.5);
+      background: rgba(60, 179, 113, 0.12);
+    }
+
+    .question-bank-response.is-wrong {
+      border-color: rgba(220, 53, 69, 0.5);
+      background: rgba(220, 53, 69, 0.1);
+    }
+
+    .question-bank-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 991.98px) {
+      .question-bank-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .question-bank-panel {
+        position: static;
+      }
+
+      .question-bank-shell-head {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body class="labs-question-bank-page">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+    <div class="container">
+      <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="nav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link mx-2" href="../../notes/index.html">Notes</a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="../../writing/index.html">Writing</a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i><span class="visually-hidden">Search</span></a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings"><i class="fa-solid fa-gear"></i><span class="visually-hidden">Settings</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="page-section">
+    <div class="container">
+      <div class="hub-hero text-center" data-aos="fade-up">
+        <span class="hub-hero-kicker"><i class="fa-solid fa-vial"></i>Question Bank prototype</span>
+        <h1>Question Bank Demo</h1>
+        <p class="page-text">A Labs-only surface for testing whether note-local `questions.&lt;lang&gt;.json` feels worth keeping before it grows into a fuller quiz or exam product.</p>
+      </div>
+
+      <div class="hub-callout mt-4" data-aos="fade-up" data-aos-delay="80">
+        <div>
+          <div class="hub-callout-title">What this page is testing</div>
+          <p class="hub-callout-text">Schema + loader first, UI second. The goal is to confirm that one configured bank can already support localized tags, language filtering, question-direction filtering, and union-style tag selection before we expand the system.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="hub-callout-link" href="../index.html">Back to Labs</a>
+          <a class="hub-callout-link" href="../../README.md">Open README</a>
+        </div>
+      </div>
+
+      <div class="question-bank-layout mt-4">
+        <aside class="question-bank-panel" data-aos="fade-up" data-aos-delay="120">
+          <div id="question-bank-status" class="question-bank-status">Loading question bank...</div>
+
+          <div>
+            <p id="question-bank-label-filters" class="question-bank-panel-title">Filters</p>
+            <div class="question-bank-filter-group">
+              <div>
+                <span id="question-bank-label-language" class="question-bank-stat-label">Language</span>
+                <div id="question-bank-language-filters" class="question-bank-filter-row"></div>
+              </div>
+              <div>
+                <span id="question-bank-label-focus" class="question-bank-stat-label">Question Focus</span>
+                <div id="question-bank-focus-filters" class="question-bank-filter-row"></div>
+              </div>
+              <div>
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                  <span id="question-bank-label-tags" class="question-bank-stat-label mb-0">Tags</span>
+                  <button id="question-bank-clear-tags" type="button" class="question-bank-filter-chip">Clear Tags</button>
+                </div>
+                <div id="question-bank-tag-filters" class="question-bank-filter-row mt-2"></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p id="question-bank-label-snapshot" class="question-bank-panel-title">Snapshot</p>
+            <div class="question-bank-stats">
+              <div class="question-bank-stat">
+                <span id="question-bank-label-visible-questions" class="question-bank-stat-label">Visible Questions</span>
+                <span id="question-bank-visible-count" class="question-bank-stat-value">—</span>
+              </div>
+              <div class="question-bank-stat">
+                <span id="question-bank-label-active-tags" class="question-bank-stat-label">Active Tags</span>
+                <span id="question-bank-active-tag-count" class="question-bank-stat-value">—</span>
+              </div>
+              <div class="question-bank-stat">
+                <span id="question-bank-label-visible-languages" class="question-bank-stat-label">Visible Languages</span>
+                <span id="question-bank-language-count" class="question-bank-stat-value">—</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="question-bank-shell" data-aos="fade-up" data-aos-delay="160">
+          <div class="question-bank-shell-head">
+            <div>
+              <p id="question-bank-label-active-bank" class="question-bank-shell-title">Active bank</p>
+              <h2 id="question-bank-title">Question bank</h2>
+              <p id="question-bank-subtitle" class="question-bank-shell-subtitle"></p>
+            </div>
+
+            <div class="question-bank-source-links">
+              <a id="question-bank-source-note" href="#">Open source note</a>
+            </div>
+          </div>
+
+          <div id="question-bank-quiz" style="display:none;">
+            <div class="question-bank-nav">
+              <button id="question-bank-prev" type="button"><i class="fa-solid fa-arrow-left me-2"></i><span id="question-bank-label-prev">Previous</span></button>
+              <div id="question-bank-progress" class="question-bank-progress">1 / 1</div>
+              <button id="question-bank-next" type="button"><span id="question-bank-label-next">Next</span><i class="fa-solid fa-arrow-right ms-2"></i></button>
+              <button id="question-bank-reset" type="button"><span id="question-bank-label-reset">Reset</span></button>
+            </div>
+
+            <div class="question-bank-card mt-3">
+              <div id="question-bank-question-meta" class="question-bank-question-meta"></div>
+              <div class="question-bank-question-meta mt-2"><span id="question-bank-label-source-note">Source note</span>: <span id="question-bank-source-note-title"></span></div>
+              <p id="question-bank-question-prompt" class="question-bank-prompt"></p>
+
+              <div id="question-bank-options" class="question-bank-options"></div>
+              <div id="question-bank-response" class="question-bank-response"></div>
+              <div id="question-bank-tags" class="question-bank-tags"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Ludwig — All Rights Reserved</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../../core/script.js?v=2026-06-21-6"></script>
+  <script src="../../assets/js/question-bank-labs.js?v=2026-06-14-1"></script>
+</body>
+</html>

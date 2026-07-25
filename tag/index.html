@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tag — Ludwig</title>
+
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=2026-06-21-6">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+    <div class="container">
+      <a class="navbar-brand fw-bold custom-brand" href="../index.html">Ludwig</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="nav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="../index.html" id="homeDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Home
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+              <li><a class="dropdown-item" href="../index.html#about">About</a></li>
+              <li><a class="dropdown-item" href="../index.html#timeline" data-nav-timeline>Timeline</a></li>
+              <li><a class="dropdown-item" href="../index.html#contact">Contact</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="../pages/projects.html" id="projectsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Projects
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+              <li><a class="dropdown-item" href="../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#ludwigia">Ludwigia</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#karen">Karen</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#mentorion">Mentorion</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#detoxio">Detox.io</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#piggynest">PiggyNest</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#scriba">Scriba</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#sesame">Sesame</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#vellichor">Vellichor</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../notes/index.html">Notes</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../writing/index.html">Writing</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../canvas/index.html">Canvas</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../pages/search.html" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="visually-hidden">Search</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../pages/settings.html" aria-label="Settings">
+              <i class="fa-solid fa-gear"></i>
+              <span class="visually-hidden">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <section class="page-section">
+    <div class="container">
+      <div class="hub-hero hub-hero--compact text-center" data-aos="fade-up">
+        <span class="hub-hero-kicker"><i class="fa-solid fa-hashtag"></i>Tag detail</span>
+        <h1 id="tag-title">Tag</h1>
+        <p id="tag-context" class="page-text">Browse tagged content across notes, writing, and canvas.</p>
+      </div>
+
+      <div class="hub-card hub-card--stack tag-summary-card mt-4" data-aos="fade-up" data-aos-delay="80">
+        <div class="tag-summary-head">
+          <div class="tag-summary-copy">
+            <div class="tag-summary-kicker">Results overview</div>
+            <h2 class="tag-summary-title">Everything gathered under this tag</h2>
+            <p class="tag-summary-caption">A quick scan across notes, writing, and canvas.</p>
+          </div>
+          <div class="tag-summary-total">
+            <strong id="tag-total-count">0</strong>
+            <div class="tag-summary-total-meta">
+              <span id="tag-total-label">entries</span>
+              <span>across all sections</span>
+            </div>
+          </div>
+        </div>
+        <div class="tag-summary-stats">
+          <div class="tag-summary-stat">
+            <div class="hub-card-icon"><i class="fa-solid fa-note-sticky"></i></div>
+            <div class="hub-card-body">
+              <div class="hub-card-title-row">
+                <h2>Notes</h2>
+              </div>
+              <p class="mb-0"><strong id="tag-notes-count">0</strong> notes.</p>
+            </div>
+          </div>
+          <div class="tag-summary-stat">
+            <div class="hub-card-icon"><i class="fa-solid fa-pen-nib"></i></div>
+            <div class="hub-card-body">
+              <div class="hub-card-title-row">
+                <h2>Writing</h2>
+              </div>
+              <p class="mb-0"><strong id="tag-writing-count">0</strong> writing.</p>
+            </div>
+          </div>
+          <div class="tag-summary-stat">
+            <div class="hub-card-icon"><i class="fa-solid fa-palette"></i></div>
+            <div class="hub-card-body">
+              <div class="hub-card-title-row">
+                <h2>Canvas</h2>
+              </div>
+              <p class="mb-0"><strong id="tag-canvas-count">0</strong> canvas.</p>
+            </div>
+          </div>
+        </div>
+        <div id="tag-related-section" class="tag-summary-related" style="display:none;">
+          <div class="tag-summary-related-head">
+            <h3>Related tags</h3>
+            <p>Neighboring ideas that often appear with this tag.</p>
+          </div>
+          <div id="tag-related" class="d-flex flex-wrap gap-2"></div>
+          <div id="tag-related-empty" class="page-text mt-2" style="display:none;">No related tags yet.</div>
+        </div>
+      </div>
+
+      <div class="hub-callout mt-4" data-aos="fade-up" data-aos-delay="120">
+        <div>
+          <div class="hub-callout-title">Same tag, two views</div>
+          <p class="hub-callout-text">Use this page as the stable detail route; open Patch when you want the Garden-style cluster view.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <a id="tag-open-search" class="hub-callout-link" href="../pages/search.html">Search with this tag</a>
+          <a id="tag-open-patch" class="hub-callout-link" href="index.html">Open Patch view</a>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-lg-10">
+          <div id="tag-results" class="garden-results"></div>
+          <div id="tag-empty" class="page-text mt-3 text-center" style="display:none;">No results.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Ludwig — All Rights Reserved</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../core/script.js?v=2026-06-21-6"></script>
+  <script src="../search/search-index.js?v=2026-06-11-1"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"></script>
+<script src="../core/search-core.js?v=2026-06-21-6"></script>
+<script src="../assets/js/search-ui.js?v=2026-06-21-6"></script>
+  <script src="../assets/js/tag-page.js?v=2026-06-14-6"></script>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">{{TITLE}}</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            {{TOC_LINKS}}
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section{{READING_TIME_CLASS}}">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section{{META_DATES_CLASS}}">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              {{META_DATES_HTML}}
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section{{MARKDOWN_ACTIONS_CLASS}}">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          {{CONTENT}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

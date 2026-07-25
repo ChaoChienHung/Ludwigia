@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>逼近真實的極限：機器學習中的「規律」、「規則」與過擬合之謎</title>
+  <meta name="garden:tags" content="機器學習, 過擬合, 泛化, 因果關係, 認識論, 深度學習, 符號式 AI, 統計">
+  <meta name="garden:summary" content="從工程、統計學習理論到知識論三個層次重讀過擬合：我們是在捕捉資料的規律，還是在逼近世界的規則？">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.machine_learning,concept.overfitting,concept.generalization,concept.causality,concept.epistemology,concept.deep_learning,concept.symbolic_ai,concept.statistics">
+  <meta name="garden:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.overfitting&quot;:{&quot;en&quot;:&quot;Overfitting&quot;,&quot;zh-Hant&quot;:&quot;過擬合&quot;,&quot;zh-Hans&quot;:&quot;过拟合&quot;},&quot;concept.generalization&quot;:{&quot;en&quot;:&quot;Generalization&quot;,&quot;zh-Hant&quot;:&quot;泛化&quot;,&quot;zh-Hans&quot;:&quot;泛化&quot;},&quot;concept.causality&quot;:{&quot;en&quot;:&quot;Causality&quot;,&quot;zh-Hant&quot;:&quot;因果關係&quot;,&quot;zh-Hans&quot;:&quot;因果关系&quot;},&quot;concept.epistemology&quot;:{&quot;en&quot;:&quot;Epistemology&quot;,&quot;zh-Hant&quot;:&quot;認識論&quot;,&quot;zh-Hans&quot;:&quot;认识论&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.symbolic_ai&quot;:{&quot;en&quot;:&quot;Symbolic AI&quot;,&quot;zh-Hant&quot;:&quot;符號式 AI&quot;,&quot;zh-Hans&quot;:&quot;符号式 AI&quot;},&quot;concept.statistics&quot;:{&quot;en&quot;:&quot;Statistics&quot;,&quot;zh-Hant&quot;:&quot;統計&quot;,&quot;zh-Hans&quot;:&quot;统计&quot;}}">
+  <meta name="garden:published_at" content="2026-06-03">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="6">
+  <meta name="garden:source" content="writing/ml-patterns-rules-overfitting/ml-patterns-rules-overfitting-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">逼近真實的極限：機器學習中的「規律」、「規則」與過擬合之謎</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">一、重新定義過擬合：學到雜訊，或過度迎合殘缺的現實？</a>
+<a class="note-toc-link level-2" href="#1-vs">1) 工程上的定義：泛化 vs. 過擬合</a>
+<a class="note-toc-link level-2" href="#2">2) 哲學上的定義：對有限資料的過度妥協</a>
+<a class="note-toc-link level-1" href="#patterns-rules">二、內插與外推：規律（Patterns）與規則（Rules）的本質差異</a>
+<a class="note-toc-link level-2" href="#1-patterns">1) 規律（patterns）：相關性 + 內插</a>
+<a class="note-toc-link level-2" href="#2-rules">2) 規則（rules）：因果性 + 外推</a>
+<a class="note-toc-link level-1" href="#ai">三、AI 發展史的路線之爭：為何「只靠規律」會撞到天花板？</a>
+<a class="note-toc-link level-2" href="#1-symbolic-ai">1) 符號主義（Symbolic AI）：嘗試把規則寫進機器</a>
+<a class="note-toc-link level-2" href="#2-deep-learning">2) 聯結主義（Deep Learning）：改用資料規律近似規則</a>
+<a class="note-toc-link level-1" href="#section-2">結語：用有限逼近無限</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-03"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在現代人工智慧與機器學習的浪潮中，「過擬合（Overfitting）」常被當成訓練流程裡的技術缺陷：調參、正則化、早停、更多資料——修一修就好。</p>
+
+<p class="mb-3">但如果我們退一步，從統計學習理論與知識論的角度回頭看，過擬合其實點出了一個更根本的無奈：我們手上的資料永遠只是世界的一小段切片。於是問題變成——模型究竟是在尋找世界的「規則」，還是在拼湊資料中的「規律」？</p>
+
+<p class="mb-3">本文想做的事很簡單：把過擬合從「工程名詞」重新拉回到「認知限制」，並用一條清楚的主線把三件事串起來：</p>
+
+<ul class="note-list">
+<li>過擬合到底在「多學了什麼」？</li>
+<li>規律（patterns）與規則（rules）差在哪裡？</li>
+<li>為什麼這差異會成為當代 AI 的天花板？</li>
+</ul>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">一、重新定義過擬合：學到雜訊，或過度迎合殘缺的現實？</h3>
+
+<p class="mb-3">談過擬合之前，先把一個常見混淆釐清：用已知規律推測未知，不等於過擬合。</p>
+
+<h4 id="1-vs" class="mb-2">1) 工程上的定義：泛化 vs. 過擬合</h4>
+
+<p class="mb-3">在機器學習的標準語境裡，模型的理想目標是「泛化（generalization）」。</p>
+
+<ul class="note-list">
+<li>泛化：抓到資料中可重複、可遷移的訊號（signal），在新資料上依然有效。</li>
+<li>過擬合：不只學到訊號，連訓練資料裡不可避免的雜訊（noise）、偶然波動、測量誤差都一併背起來，導致訓練集很強、真實世界很弱。</li>
+</ul>
+
+<p class="mb-3">一個直覺的類比是：人類也會模式識別，但真正讓人跌倒的不是「歸納」，而是把偶然當必然，例如：</p>
+
+<ul class="note-list">
+<li>「我穿紅襪子去考試就考得好」→ 把雜訊當成規律</li>
+<li>「某群人都怎樣」→ 把少量樣本的偏差當成穩定法則</li>
+</ul>
+
+<p class="mb-3">這些其實就是人類版本的過擬合：把不可重複的偶然性記成了定律。</p>
+
+<h4 id="2" class="mb-2">2) 哲學上的定義：對有限資料的過度妥協</h4>
+
+<p class="mb-3">如果我們做一個思想實驗：假設你擁有世界的完整資料分佈，還會過擬合嗎？</p>
+
+<p class="mb-3">這觸及統計學習理論最核心、也最無奈的落差：真實分佈與經驗分佈永遠不相同。</p>
+
+<ul class="note-list">
+<li>真實分佈 $P_{true}(X, Y)$：上帝視角，包含世界所有因果與細節。</li>
+<li>經驗分佈 $P_{data}(X, Y)$：我們能收集到的有限樣本，是對真實分佈的粗糙抽樣。</li>
+</ul>
+
+<p class="mb-3">模型訓練在做的，常被描述為「經驗風險最小化（Empirical Risk Minimization, ERM）」：你只能把損失在 $P_{data}$ 上壓到最低。資料顆粒度不夠、覆蓋不全、採樣有偏，模型就只能去迎合一個「殘缺的局部世界」。</p>
+
+<p class="mb-3">因此，過擬合也可以被視為一種更廣義的現象：</p>
+
+<blockquote class="blockquote mb-3">我們不是把模型訓練得太認真，而是因為我們手上的世界太不完整，模型被迫把不完整當完整。</blockquote>
+
+<p class="mb-3">這會帶來一種無法用更多訓練步數消除的不確定性：認知不確定性（epistemic uncertainty）。</p>
+</section>
+
+<section id="patterns-rules" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">二、內插與外推：規律（Patterns）與規則（Rules）的本質差異</h3>
+
+<p class="mb-3">既然我們永遠掌握不了 $P_{true}$，大多數模型能做的其實是「內插（interpolation）」：在看過的資料點之間，找一條看起來合理的曲線把它們連起來。</p>
+
+<p class="mb-3">問題在於：真實世界常常要求我們「外推（extrapolation）」——遇到分佈外（out-of-distribution, OOD）的情況，仍要做出合理判斷。</p>
+
+<p class="mb-3">這裡就是「規律」與「規則」分道揚鑣的地方。</p>
+
+<h4 id="1-patterns" class="mb-2">1) 規律（patterns）：相關性 + 內插</h4>
+
+<p class="mb-3">規律可以理解成「資料分佈呈現出來的樣子」：它是統計上的相關性與共現結構。</p>
+
+<p class="mb-3">深度學習擅長做的事情是：在大量資料上，把這些規律刻畫得非常細緻，於是它在分佈內（in-distribution）看起來近乎無所不能。</p>
+
+<p class="mb-3">但當你碰到 OOD，它就必須把規律延伸出去，而這種延伸往往缺乏保證。直覺上像是：</p>
+
+<ul class="note-list">
+<li>你只看過白天鵝，就用「天鵝＝白色」去推測天鵝這個概念</li>
+<li>第一次遇到黑天鵝時，推論就崩了</li>
+</ul>
+
+<p class="mb-3">大型語言模型的「幻覺」也可以用這個角度理解：它延伸了規律，但那不一定符合真實世界的約束。</p>
+
+<h4 id="2-rules" class="mb-2">2) 規則（rules）：因果性 + 外推</h4>
+
+<p class="mb-3">規則則更像是世界底層的運作機制（underlying mechanism）。經典例子是物理定律：</p>
+
+<ul class="note-list">
+<li>萬有引力：$F = G \\frac{m_1 m_2}{r^2}$</li>
+<li>牛頓第二運動定律：$F = ma$</li>
+</ul>
+
+<p class="mb-3">一旦你真的掌握規則，面對分佈外的情境，你不是「猜」，而是「帶入條件算出結果」。只要規則正確、計算無誤，就不會因為資料不足而失真。</p>
+
+<p class="mb-3">因此，過擬合的哲學核心可以被改寫成一句更尖銳的話：</p>
+
+<blockquote class="blockquote mb-3">過擬合的陰影之所以存在，是因為我們多半只學得到規律，而很少真正掌握規則。</blockquote>
+</section>
+
+<section id="ai" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">三、AI 發展史的路線之爭：為何「只靠規律」會撞到天花板？</h3>
+
+<p class="mb-3">「規律 vs. 規則」的差異，其實映射到 AI 發展史上兩條著名路線。</p>
+
+<h4 id="1-symbolic-ai" class="mb-2">1) 符號主義（Symbolic AI）：嘗試把規則寫進機器</h4>
+
+<p class="mb-3">在 1970–80 年代，專家系統希望把人類專家知道的規則顯式寫成 if-then。</p>
+
+<p class="mb-3">它的優點是可解釋、可推理，也更接近「規則」的味道；但很快就遇到兩個困境：</p>
+
+<ul class="note-list">
+<li>真實世界的邊界條件無限多，規則永遠寫不完</li>
+<li>規則之間會衝突、會過時，維護成本爆炸</li>
+</ul>
+
+<h4 id="2-deep-learning" class="mb-2">2) 聯結主義（Deep Learning）：改用資料規律近似規則</h4>
+
+<p class="mb-3">寫不出規則，那就讓模型自己從資料裡學。深度學習在影像、語音、語言上取得巨大成功，某些時候甚至「看起來像懂了規則」。</p>
+
+<p class="mb-3">但剝開表象，它往往仍是一個高度複雜的插值函數：在分佈內極強，在分佈外缺乏保證。你可以用更多資料與算力把規律逼近到非常像規則，但那不等於真的掌握因果機制。</p>
+
+<p class="mb-3">所以當代 AI 的瓶頸，並不只是算力或資料不夠，而是：</p>
+
+<ul class="note-list">
+<li>若沒有更強的因果發現與推理能力，系統很難穩健地外推</li>
+<li>只靠規律延伸，遇到新世界時容易崩潰或產生幻覺</li>
+</ul>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">結語：用有限逼近無限</h3>
+
+<p class="mb-3">機器學習的本質，是一場與資料顆粒度搏鬥的過程：我們用有限的樣本去逼近無限的真實，用龐大的規律去模擬嚴格的規則。</p>
+
+<p class="mb-3">理解「用規律推測」與「用規則計算」的差異，有兩個直接的收穫：</p>
+
+<ul class="note-list">
+<li>你會更清楚過擬合不是單一技術錯誤，而是我們認知能力（資料覆蓋）本身的上限</li>
+<li>你也會更清醒地看見：讓 AI 走得更遠，可能需要的不只是更大的模型，而是更接近規則與因果的能力</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

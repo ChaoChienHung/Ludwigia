@@ -1,0 +1,349 @@
+{
+  "version": 2,
+  "dimensions": [
+    {
+      "id": "question_type",
+      "values": [
+        {
+          "id": "mcq",
+          "order": 10,
+          "labels": {
+            "en": "Multiple Choice Question",
+            "zh-Hant": "選擇題",
+            "zh-Hans": "选择题"
+          }
+        }
+      ]
+    },
+    {
+      "id": "difficulty",
+      "values": [
+        {
+          "id": "beginner",
+          "order": 10,
+          "labels": {
+            "en": "Beginner",
+            "zh-Hant": "初階",
+            "zh-Hans": "初阶"
+          }
+        },
+        {
+          "id": "intermediate",
+          "order": 20,
+          "labels": {
+            "en": "Intermediate",
+            "zh-Hant": "中階",
+            "zh-Hans": "中阶"
+          }
+        },
+        {
+          "id": "advanced",
+          "order": 30,
+          "labels": {
+            "en": "Advanced",
+            "zh-Hant": "進階",
+            "zh-Hans": "进阶"
+          }
+        },
+        {
+          "id": "professional",
+          "order": 40,
+          "labels": {
+            "en": "Professional",
+            "zh-Hant": "專業",
+            "zh-Hans": "专业"
+          }
+        }
+      ]
+    },
+    {
+      "id": "question_focus",
+      "values": [
+        {
+          "id": "concept_understanding",
+          "order": 10,
+          "labels": {
+            "en": "Concept Understanding",
+            "zh-Hant": "概念理解",
+            "zh-Hans": "概念理解"
+          }
+        },
+        {
+          "id": "algorithm_recognition",
+          "order": 20,
+          "labels": {
+            "en": "Algorithm Recognition",
+            "zh-Hant": "演算法辨識",
+            "zh-Hans": "算法辨识"
+          }
+        }
+      ]
+    },
+    {
+      "id": "review_status",
+      "values": [
+        {
+          "id": "draft",
+          "order": 10,
+          "labels": {
+            "en": "Draft",
+            "zh-Hant": "草稿",
+            "zh-Hans": "草稿"
+          }
+        },
+        {
+          "id": "reviewed",
+          "order": 20,
+          "labels": {
+            "en": "Reviewed",
+            "zh-Hant": "已審閱",
+            "zh-Hans": "已审阅"
+          }
+        },
+        {
+          "id": "verified",
+          "order": 30,
+          "labels": {
+            "en": "Verified",
+            "zh-Hant": "已驗證",
+            "zh-Hans": "已验证"
+          }
+        }
+      ]
+    }
+  ],
+  "ui_strings": [
+    {
+      "id": "site_language",
+      "labels": {
+        "en": "Site Language ({lang})",
+        "zh-Hant": "網站語言（{lang}）",
+        "zh-Hans": "网站语言（{lang}）"
+      }
+    },
+    {
+      "id": "all_languages",
+      "labels": {
+        "en": "All Languages",
+        "zh-Hant": "所有語言",
+        "zh-Hans": "所有语言"
+      }
+    },
+    {
+      "id": "clear_tags",
+      "labels": {
+        "en": "Clear Tags",
+        "zh-Hant": "清除標籤",
+        "zh-Hans": "清除标签"
+      }
+    },
+    {
+      "id": "filters",
+      "labels": {
+        "en": "Filters",
+        "zh-Hant": "篩選",
+        "zh-Hans": "筛选"
+      }
+    },
+    {
+      "id": "language",
+      "labels": {
+        "en": "Language",
+        "zh-Hant": "語言",
+        "zh-Hans": "语言"
+      }
+    },
+    {
+      "id": "question_focus",
+      "labels": {
+        "en": "Question Focus",
+        "zh-Hant": "題目方向",
+        "zh-Hans": "题目方向"
+      }
+    },
+    {
+      "id": "all_focuses",
+      "labels": {
+        "en": "All Directions",
+        "zh-Hant": "所有方向",
+        "zh-Hans": "所有方向"
+      }
+    },
+    {
+      "id": "tags",
+      "labels": {
+        "en": "Tags",
+        "zh-Hant": "標籤",
+        "zh-Hans": "标签"
+      }
+    },
+    {
+      "id": "snapshot",
+      "labels": {
+        "en": "Snapshot",
+        "zh-Hant": "摘要",
+        "zh-Hans": "摘要"
+      }
+    },
+    {
+      "id": "visible_questions",
+      "labels": {
+        "en": "Visible Questions",
+        "zh-Hant": "可見題目",
+        "zh-Hans": "可见题目"
+      }
+    },
+    {
+      "id": "active_tags",
+      "labels": {
+        "en": "Active Tags",
+        "zh-Hant": "啟用標籤",
+        "zh-Hans": "启用标签"
+      }
+    },
+    {
+      "id": "visible_languages",
+      "labels": {
+        "en": "Visible Languages",
+        "zh-Hant": "可見語言",
+        "zh-Hans": "可见语言"
+      }
+    },
+    {
+      "id": "active_bank",
+      "labels": {
+        "en": "Active Bank",
+        "zh-Hant": "目前題庫",
+        "zh-Hans": "当前题库"
+      }
+    },
+    {
+      "id": "question_bank",
+      "labels": {
+        "en": "Question Bank",
+        "zh-Hant": "題庫",
+        "zh-Hans": "题库"
+      }
+    },
+    {
+      "id": "open_source_note",
+      "labels": {
+        "en": "Open Source Note",
+        "zh-Hant": "開啟來源筆記",
+        "zh-Hans": "打开来源笔记"
+      }
+    },
+    {
+      "id": "source_note",
+      "labels": {
+        "en": "Source Note",
+        "zh-Hant": "來源筆記",
+        "zh-Hans": "来源笔记"
+      }
+    },
+    {
+      "id": "previous",
+      "labels": {
+        "en": "Previous",
+        "zh-Hant": "上一題",
+        "zh-Hans": "上一题"
+      }
+    },
+    {
+      "id": "next",
+      "labels": {
+        "en": "Next",
+        "zh-Hant": "下一題",
+        "zh-Hans": "下一题"
+      }
+    },
+    {
+      "id": "reset",
+      "labels": {
+        "en": "Reset",
+        "zh-Hant": "重設",
+        "zh-Hans": "重置"
+      }
+    },
+    {
+      "id": "single_bank_subtitle",
+      "labels": {
+        "en": "This demo stays on a single configured bank for now, then filters its questions by language, direction, and tags.",
+        "zh-Hant": "這個 demo 目前先維持單一題庫，再用語言、題目方向與標籤做篩選。",
+        "zh-Hans": "这个 demo 目前先维持单一题库，再用语言、题目方向与标签做筛选。"
+      }
+    },
+    {
+      "id": "no_questions_match",
+      "labels": {
+        "en": "No questions match the current language, direction, and tag filters yet.",
+        "zh-Hant": "目前沒有題目符合這組語言、題目方向與標籤篩選。",
+        "zh-Hans": "目前没有题目符合这组语言、题目方向与标签筛选。"
+      }
+    },
+    {
+      "id": "showing_after_filters_one",
+      "labels": {
+        "en": "Showing {count} question after filters.",
+        "zh-Hant": "篩選後顯示 {count} 題。",
+        "zh-Hans": "筛选后显示 {count} 题。"
+      }
+    },
+    {
+      "id": "showing_after_filters_many",
+      "labels": {
+        "en": "Showing {count} questions after filters.",
+        "zh-Hant": "篩選後顯示 {count} 題。",
+        "zh-Hans": "筛选后显示 {count} 题。"
+      }
+    },
+    {
+      "id": "no_questions_match_status",
+      "labels": {
+        "en": "No questions match the current language, direction, and tag filters.",
+        "zh-Hant": "目前沒有題目符合這組語言、題目方向與標籤篩選。",
+        "zh-Hans": "目前没有题目符合这组语言、题目方向与标签筛选。"
+      }
+    },
+    {
+      "id": "loading_bank",
+      "labels": {
+        "en": "Loading {title}...",
+        "zh-Hant": "正在載入 {title}…",
+        "zh-Hans": "正在载入 {title}…"
+      }
+    },
+    {
+      "id": "file_protocol_error",
+      "labels": {
+        "en": "This demo needs an HTTP preview, not file://. Open it through the local server or IDE preview.",
+        "zh-Hant": "這個 demo 需要透過 HTTP 預覽，不能直接用 file:// 開啟。請改用本地伺服器或 IDE preview。",
+        "zh-Hans": "这个 demo 需要通过 HTTP 预览，不能直接用 file:// 打开。请改用本地服务器或 IDE preview。"
+      }
+    },
+    {
+      "id": "no_bank_configured",
+      "labels": {
+        "en": "No question bank is configured yet.",
+        "zh-Hant": "目前還沒有設定題庫。",
+        "zh-Hans": "目前还没有设置题库。"
+      }
+    },
+    {
+      "id": "no_bank_loaded",
+      "labels": {
+        "en": "No question banks are configured yet.",
+        "zh-Hant": "目前還沒有任何題庫設定。",
+        "zh-Hans": "目前还没有任何题库设置。"
+      }
+    },
+    {
+      "id": "failed_to_load_data",
+      "labels": {
+        "en": "Failed to load question bank data: {message}",
+        "zh-Hant": "載入題庫資料失敗：{message}",
+        "zh-Hans": "载入题库资料失败：{message}"
+      }
+    }
+  ]
+}

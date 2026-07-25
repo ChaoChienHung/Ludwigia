@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>為什麼在 Agent 時代，我越來越不想用 Notion 記錄 codebase</title>
+  <meta name="garden:tags" content="Notion, 寫作, 代理式 AI, Vibe Coding, Codebase, 文件, 工作流, 單一真相來源">
+  <meta name="garden:summary" content="當 code 在 Agent 協作下變成最穩定的 single source of truth 時，花大量時間在 Notion 裡維護會頻繁變動的 codebase 摘要，反而越來越像高成本、低回報的重複勞動。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.notion,concept.writing,concept.agentic_ai,concept.vibe_coding,concept.codebase,concept.documentation,concept.workflow,concept.ssot">
+  <meta name="garden:tag_labels" content="{&quot;concept.notion&quot;:{&quot;en&quot;:&quot;Notion&quot;,&quot;zh-Hant&quot;:&quot;Notion&quot;,&quot;zh-Hans&quot;:&quot;Notion&quot;},&quot;concept.writing&quot;:{&quot;en&quot;:&quot;Writing&quot;,&quot;zh-Hant&quot;:&quot;寫作&quot;,&quot;zh-Hans&quot;:&quot;写作&quot;},&quot;concept.agentic_ai&quot;:{&quot;en&quot;:&quot;Agentic AI&quot;,&quot;zh-Hant&quot;:&quot;代理式 AI&quot;,&quot;zh-Hans&quot;:&quot;代理式 AI&quot;},&quot;concept.vibe_coding&quot;:{&quot;en&quot;:&quot;Vibe Coding&quot;,&quot;zh-Hant&quot;:&quot;Vibe Coding&quot;,&quot;zh-Hans&quot;:&quot;Vibe Coding&quot;},&quot;concept.codebase&quot;:{&quot;en&quot;:&quot;Codebase&quot;,&quot;zh-Hant&quot;:&quot;Codebase&quot;,&quot;zh-Hans&quot;:&quot;Codebase&quot;},&quot;concept.documentation&quot;:{&quot;en&quot;:&quot;Documentation&quot;,&quot;zh-Hant&quot;:&quot;文件&quot;,&quot;zh-Hans&quot;:&quot;文档&quot;},&quot;concept.workflow&quot;:{&quot;en&quot;:&quot;Workflow&quot;,&quot;zh-Hant&quot;:&quot;工作流&quot;,&quot;zh-Hans&quot;:&quot;工作流&quot;},&quot;concept.ssot&quot;:{&quot;en&quot;:&quot;SSOT&quot;,&quot;zh-Hant&quot;:&quot;單一真相來源&quot;,&quot;zh-Hans&quot;:&quot;单一真相来源&quot;}}">
+  <meta name="garden:published_at" content="2026-06-10">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="7">
+  <meta name="garden:source" content="writing/notion-log-takeaways-vs-codebase-ssot/notion-log-takeaways-vs-codebase-ssot-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">為什麼在 Agent 時代，我越來越不想用 Notion 記錄 codebase</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#setup">Setup：記錄的本質到底是什麼</a>
+<a class="note-toc-link level-1" href="#code-agent-ssot">Code 在 Agent 協作下，越來越像真正的 SSOT</a>
+<a class="note-toc-link level-1" href="#notion-codebase">為什麼 Notion 裡的 codebase 摘要越來越像高成本低回報</a>
+<a class="note-toc-link level-1" href="#section">以前我們需要小模型，現在越來越像直接在本體上工作</a>
+<a class="note-toc-link level-1" href="#notion">那 Notion 還適合記什麼</a>
+<a class="note-toc-link level-1" href="#takeaways-codebase-mirror">也許最合理的配置是：日誌 + takeaways，而不是 codebase mirror</a>
+<a class="note-toc-link level-1" href="#anti-documentation">這背後其實不是 anti-documentation，而是重新定義什麼值得被記錄</a>
+<a class="note-toc-link level-1" href="#code">也許我真正想保留的，不是 code 的快照，而是成長的痕跡</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">我最近越來越強烈地感覺到一件事：在現在這種 agent 幫忙讀 code、改 code、理解 code 的 workflow 裡，Notion 裡最值得留下來的，好像不是 codebase 本身，而是日誌、takeaways，還有那些比較不會頻繁變動的重點。</p>
+
+<ul class="note-list">
+<li>我現在其實有在寫專案日誌</li>
+<li>但越寫越覺得，真正需要在 Notion 裡維護的內容，可能只剩這一層</li>
+<li>反而那些「目前 codebase 長什麼樣」、「這個模組現在怎麼串」之類的記錄，常常剛寫完沒多久就過期了</li>
+</ul>
+
+<p class="mb-3">這讓我開始懷疑：在 Agent 時代，我們是不是不該再把 Notion 當成 codebase 的平行鏡像？</p>
+</section>
+
+<section id="setup" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Setup：記錄的本質到底是什麼</h3>
+
+<p class="mb-3">我現在對「記錄」的理解越來越偏向這個方向：</p>
+
+<ul class="note-list">
+<li>記錄是為了保存重要資訊，避免未來遺忘、重工、或重走同一段思路</li>
+<li>如果某個資訊在未來高度不穩定、很快就會失效，那它被記錄下來的價值本來就會下降</li>
+<li>換句話說，真正值得記錄的，通常不是那些一直在變的表層狀態，而是比較穩定的脈絡、理由與結論</li>
+</ul>
+
+<p class="mb-3">所以問題不只是「我能不能把 codebase 記下來」，而是：</p>
+
+<ul class="note-list">
+<li>這些記錄未來還有沒有價值？</li>
+<li>它們的維護成本跟回報到底成不成比例？</li>
+<li>如果之後最有效率的理解方式仍然是直接讀 code，那我為什麼還要維護一份次級描述？</li>
+</ul>
+</section>
+
+<section id="code-agent-ssot" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Code 在 Agent 協作下，越來越像真正的 SSOT</h3>
+
+<p class="mb-3">在過去，記錄 codebase 的一個很大理由，是理解 code 的成本高。</p>
+
+<ul class="note-list">
+<li>人要自己翻檔案、自己追呼叫鏈、自己補上下文</li>
+<li>所以把某些結構先整理到 Notion，確實能降低協作者的理解門檻</li>
+<li>那時候「文件作為快速入口」的價值很高</li>
+</ul>
+
+<p class="mb-3">但現在狀況不太一樣了。</p>
+
+<ul class="note-list">
+<li>Agent 讀 code 的速度比人快太多</li>
+<li>Agent 最擅長的事情之一，就是直接從 code 裡抽出結構、責任邊界與資料流</li>
+<li>如果要理解現在的系統，最直接的方法其實還是去讀 code，而不是讀某份可能晚了一版的整理文件</li>
+</ul>
+
+<p class="mb-3">在這種情況下，code 的 single source of truth 地位反而更明顯了。</p>
+
+<ul class="note-list">
+<li>因為 code 才是實際執行的東西</li>
+<li>因為 code 變動時，Agent 可以直接重新解讀最新狀態</li>
+<li>因為任何平行維護的 codebase 摘要，都很容易在高頻修改下失真</li>
+</ul>
+</section>
+
+<section id="notion-codebase" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">為什麼 Notion 裡的 codebase 摘要越來越像高成本低回報</h3>
+
+<p class="mb-3">這裡最麻煩的不是「記錄做不到」，而是「維護它變得不值得」。</p>
+
+<ul class="note-list">
+<li>現在 code 的變動頻率比以前高很多</li>
+<li>vibe coding / agentic AI 讓重構與快速嘗試的門檻大幅降低</li>
+<li>結果是：很多你今天寫下來的架構描述，過幾天就過期了</li>
+</ul>
+
+<p class="mb-3">這會帶來一個很尷尬的情況：</p>
+
+<ul class="note-list">
+<li>你花很多時間整理 Notion</li>
+<li>但未來真的要理解系統時，還是得回去看 code</li>
+<li>那份 Notion 若沒跟上最新狀態，甚至還可能誤導自己</li>
+</ul>
+
+<p class="mb-3">所以我越來越覺得，對 codebase 做這種高頻同步，會慢慢失去「記錄」的本心。</p>
+
+<ul class="note-list">
+<li>記錄原本是為了防止遺忘</li>
+<li>但如果某個資訊一直變，表示它可能本來就不適合被當成長期知識保存</li>
+<li>它更像是 execution state，而不是值得長期沉澱的認知資產</li>
+</ul>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">以前我們需要小模型，現在越來越像直接在本體上工作</h3>
+
+<p class="mb-3">我最近還想到一個更具體的比喻。</p>
+
+<p class="mb-3">以前如果要蓋一棟大樓，我們很可能會先做一個小模型。</p>
+
+<ul class="note-list">
+<li>小模型讓大家比較容易討論</li>
+<li>新人可以先看模型理解整體結構</li>
+<li>要改哪一層、哪一面，也可以先在模型上模擬</li>
+</ul>
+
+<p class="mb-3">在那個脈絡下，Notion 裡的 codebase 文件就很像那個小模型。</p>
+
+<ul class="note-list">
+<li>它不是本體</li>
+<li>但它是一個方便討論、方便理解、方便協作的縮影</li>
+</ul>
+
+<p class="mb-3">可是在 Agent 出現之後，整件事慢慢變了。</p>
+
+<ul class="note-list">
+<li>我們不太需要花很多時間手工維護那個小模型</li>
+<li>因為 Agent 可以直接去讀本體</li>
+<li>它甚至可以直接把修改先作用在本體上，再快速回報結果給你</li>
+</ul>
+
+<p class="mb-3">這時候再去維護一份平行的小模型，反而開始顯得很瑣碎。</p>
+
+<ul class="note-list">
+<li>它沒有以前那種「完整專案感」</li>
+<li>它也不再是理解系統最有效率的入口</li>
+<li>很多時候，直接在本體上討論、直接在 code 上改，反而更快</li>
+</ul>
+
+<p class="mb-3">如果這個比喻成立，那就代表：</p>
+
+<ul class="note-list">
+<li>在 Agent 時代，codebase mirror 的必要性下降了</li>
+<li>我們剩下真正需要額外記錄的，主要是那些「沒辦法直接在本體上出現的東西」</li>
+</ul>
+
+<p class="mb-3">例如：</p>
+
+<ul class="note-list">
+<li>當時為什麼這樣決策</li>
+<li>我們捨棄了哪些方向</li>
+<li>哪些 takeaways 值得之後重用</li>
+<li>哪些觀察現在還只是暫時假設</li>
+</ul>
+
+<p class="mb-3">這些東西才是就算把整份 code 再讀一遍，也不一定能高效率取回來的部分。</p>
+</section>
+
+<section id="notion" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">那 Notion 還適合記什麼</h3>
+
+<p class="mb-3">我現在比較認同的方向是：Notion 不要再試圖複製 codebase，而是專心記錄 code 之外、更不容易直接從 code 讀出的東西。</p>
+
+<p class="mb-3">目前我最認同的幾類是：</p>
+
+<ul class="note-list">
+<li>專案日誌：今天做了什麼、遇到什麼問題、為什麼轉向</li>
+<li>Takeaways：這次實作後留下來的穩定結論</li>
+<li>決策理由：為什麼選 A 不選 B，當時的 trade-off 是什麼</li>
+<li>待驗證觀察：某些還沒完全定論，但值得後續回頭檢查的假設</li>
+</ul>
+
+<p class="mb-3">這些東西有一個共同點：</p>
+
+<ul class="note-list">
+<li>它們不是 code 的直接鏡像</li>
+<li>它們也不是靠重新讀 code 就能最有效率地取回</li>
+<li>它們保存的是「當時的上下文與判斷」，而不只是「現在檔案裡長什麼樣」</li>
+</ul>
+</section>
+
+<section id="takeaways-codebase-mirror" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">也許最合理的配置是：日誌 + takeaways，而不是 codebase mirror</h3>
+
+<p class="mb-3">如果只保留專案日誌，我覺得已經很有價值。</p>
+
+<ul class="note-list">
+<li>它保留了時間序</li>
+<li>它保留了決策與卡點</li>
+<li>它讓之後回頭看時，不需要重新拼湊「那時候到底在想什麼」</li>
+</ul>
+
+<p class="mb-3">但如果再往前一步，我覺得還可以加一個更精煉的層：</p>
+
+<ul class="note-list">
+<li>日誌負責保存過程</li>
+<li>takeaways 頁負責保存沉澱後仍然有效的重點</li>
+</ul>
+
+<p class="mb-3">這樣的分工也許比「維護一整份 codebase overview」更有意義。</p>
+
+<ul class="note-list">
+<li>日誌回答的是：這段時間發生了什麼</li>
+<li>takeaways 回答的是：從這些變動裡，哪些結論值得留下</li>
+<li>code 則維持為真正的 SSOT：如果要理解當前系統，回去看 code 即可</li>
+</ul>
+</section>
+
+<section id="anti-documentation" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">這背後其實不是 anti-documentation，而是重新定義什麼值得被記錄</h3>
+
+<p class="mb-3">我現在不是覺得文件不重要，而是越來越覺得，文件應該集中在那些不容易被 code 取代的資訊。</p>
+
+<ul class="note-list">
+<li>如果某件事重新讀 code 就能拿回來，那它未必值得在 Notion 裡再維護一份</li>
+<li>如果某件事的價值來自上下文、判斷、路徑依賴，那它才更值得被記錄</li>
+<li>在 Agent 時代，理解 codebase 的成本下降了；所以文件的角色也應該跟著改變</li>
+</ul>
+
+<p class="mb-3">也許最後最合理的結論不是「不要記錄」，而是：</p>
+
+<ul class="note-list">
+<li>不要再花大量力氣同步記錄那些會高頻變動的 codebase 表象</li>
+<li>把 Notion 留給日誌、takeaways、決策理由、以及真正不想遺忘的脈絡</li>
+<li>讓 code 做最擅長的事：成為最新、最準的 single source of truth</li>
+</ul>
+</section>
+
+<section id="code" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">也許我真正想保留的，不是 code 的快照，而是成長的痕跡</h3>
+
+<p class="mb-3">如果這個想法成立，那我之後在 Notion 裡最該維護的，可能真的不是「這個 repo 現在怎麼長」，而是：</p>
+
+<ul class="note-list">
+<li>我最近在做什麼</li>
+<li>我學到了什麼</li>
+<li>哪些結論下次還用得到</li>
+<li>哪些東西只是短期 execution state，不值得投入心力長期同步</li>
+</ul>
+
+<p class="mb-3">這也許才比較接近記錄真正的意義。</p>
+
+<ul class="note-list">
+<li>不是複製一份會過期的系統說明</li>
+<li>而是留下那些未來的我真的會感謝現在的我有寫下來的東西</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

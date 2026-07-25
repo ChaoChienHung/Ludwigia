@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doc-driven vibe-coding：如何用文檔整理 repo，讓 vibe-coding 可持續</title>
+  <meta name="garden:tags" content="Vibe Coding, 代理式 AI, 文件, 工作流, 生產力">
+  <meta name="garden:summary" content="把想法變成可驗收規格，並用文檔分層把協作成本壓低：一套能長期維護的 doc-driven vibe-coding 工作流。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.vibe_coding,concept.agentic_ai,concept.documentation,concept.workflow,concept.productivity">
+  <meta name="garden:tag_labels" content="{&quot;concept.vibe_coding&quot;:{&quot;en&quot;:&quot;Vibe Coding&quot;,&quot;zh-Hant&quot;:&quot;Vibe Coding&quot;,&quot;zh-Hans&quot;:&quot;Vibe Coding&quot;},&quot;concept.agentic_ai&quot;:{&quot;en&quot;:&quot;Agentic AI&quot;,&quot;zh-Hant&quot;:&quot;代理式 AI&quot;,&quot;zh-Hans&quot;:&quot;代理式 AI&quot;},&quot;concept.documentation&quot;:{&quot;en&quot;:&quot;Documentation&quot;,&quot;zh-Hant&quot;:&quot;文件&quot;,&quot;zh-Hans&quot;:&quot;文档&quot;},&quot;concept.workflow&quot;:{&quot;en&quot;:&quot;Workflow&quot;,&quot;zh-Hant&quot;:&quot;工作流&quot;,&quot;zh-Hans&quot;:&quot;工作流&quot;},&quot;concept.productivity&quot;:{&quot;en&quot;:&quot;Productivity&quot;,&quot;zh-Hant&quot;:&quot;生產力&quot;,&quot;zh-Hans&quot;:&quot;生产力&quot;}}">
+  <meta name="garden:published_at" content="2026-06-09">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="2">
+  <meta name="garden:source" content="writing/vibe-coding-doc-driven-workflow/vibe-coding-doc-driven-workflow-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Doc-driven vibe-coding：如何用文檔整理 repo，讓 vibe-coding 可持續</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#setup">Setup：先把文檔職責分層</a>
+<a class="note-toc-link level-1" href="#setup-2">Setup：把決策理由寫下來（給協作者與未來的我）</a>
+<a class="note-toc-link level-1" href="#workflow-todo">Workflow：想法 → TODO → 實作 → 驗收 → 文件同步（走一輪）</a>
+<a class="note-toc-link level-1" href="#agent-friendly">Agent-friendly：把任務改寫成可委派任務</a>
+<a class="note-toc-link level-1" href="#tooling">Tooling：最小工具鏈</a>
+<a class="note-toc-link level-1" href="#pitfalls">Pitfalls：常見踩坑</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-09"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">目標：10–15 分鐘可讀完；如果超過，拆成下一篇或拆成兩個章節。</p>
+</section>
+
+<section id="setup" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Setup：先把文檔職責分層</h3>
+
+<ul class="note-list">
+<li>Contract：什麼永遠不能退化（例如 Single Source of Truth）</li>
+<li>System：資料流 / schema / guardrails（可驗證）</li>
+<li>Design：UI/UX 的取捨與原則（Why）</li>
+<li>DevNotes：決策記錄（Decision Records）</li>
+<li>How-to：日常操作流程（跑站、生成索引、更新文件）</li>
+</ul>
+</section>
+
+<section id="setup-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Setup：把決策理由寫下來（給協作者與未來的我）</h3>
+
+<ul class="note-list">
+<li>讓協作者知道「我們在做什麼」與「為什麼這樣做」，避免重複討論同一個問題</li>
+<li>讓未來的我能快速回到當時的脈絡，避免只看到結論卻不知道取捨</li>
+<li>把理由與規則放到對應的文檔分層，避免 README/AGENTS 變成大雜燴</li>
+</ul>
+</section>
+
+<section id="workflow-todo" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Workflow：想法 → TODO → 實作 → 驗收 → 文件同步（走一輪）</h3>
+
+<ul class="note-list">
+<li>想法：先用一段話說清楚「行為」與「影響範圍」</li>
+<li>TODO：把任務寫成可驗收的 checklist（含交付條件）</li>
+<li>實作：只動必要的檔案，維持 Single Source of Truth</li>
+<li>驗收：最少用例 + 反例（不破壞既有行為）</li>
+<li>文件同步：把新的規則放到對的位置（避免漂移）</li>
+</ul>
+</section>
+
+<section id="agent-friendly" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Agent-friendly：把任務改寫成可委派任務</h3>
+
+<ul class="note-list">
+<li>把「主觀偏好」改成「可選項」並提前列出 trade-offs</li>
+<li>把「規則」寫成「可勾選的守門清單」</li>
+<li>把「完成定義」寫成「可跑、可重現、可回歸」的驗收條件</li>
+<li>把「討論」收斂成 1–2 個明確決策點，避免來回</li>
+</ul>
+</section>
+
+<section id="tooling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Tooling：最小工具鏈</h3>
+
+<ul class="note-list">
+<li>Python indexer（生成 <code>search/search-index.{json,js}</code>）</li>
+<li>靜態伺服器（避免 <code>file://</code> 限制）</li>
+<li>生成物策略：白名單 commit，其餘全部 ignore</li>
+</ul>
+</section>
+
+<section id="pitfalls" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Pitfalls：常見踩坑</h3>
+
+<ul class="note-list">
+<li>忘記更新 search index（導致 UI/搜尋跟內容不同步）</li>
+<li>把 build output commit 進 repo（造成噪音與衝突）</li>
+<li>規則散落各處（大家都以為在「文件」但其實不一致）</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

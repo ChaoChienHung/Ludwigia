@@ -1,0 +1,585 @@
+{
+  "questions": [
+    {
+      "question_id": "q01-pmmc-main-goal",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "這份筆記對 PMMC 的核心定位是什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "一種只用來壓縮網路延遲的 batching 技術。",
+          "response": "不正確。PMMC 的主線不是 batching，而是以 Paxos 原理實現 SMR。"
+        },
+        {
+          "id": "B",
+          "text": "一種把 Multi-Paxos 放回 State Machine Replication 脈絡中的協定設計。",
+          "response": "正確。筆記強調 PMMC 關心的是在非同步與 crash failures 下實現 SMR。"
+        },
+        {
+          "id": "C",
+          "text": "一種只針對 Byzantine failures 設計的複製協定。",
+          "response": "不正確。這裡討論的是 crash failures，不是 Byzantine failures。"
+        },
+        {
+          "id": "D",
+          "text": "一種把所有 replicas 直接變成同步系統的方法。",
+          "response": "不正確。PMMC 的前提就是 asynchronous environment，而不是同步系統。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "PMMC 的主線是把 Paxos 原理落到 state machine replication，處理非同步環境與 crash failures 下的 command ordering 與 safety。",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.paxos",
+        "concept.multi_paxos",
+        "concept.state_machine_replication"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q02-asynchronous-environment",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "在這份筆記裡，asynchronous environment 最準確的意思是什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "所有訊息都必須在固定 deadline 內送達。",
+          "response": "不正確。這反而是同步系統比較接近的假設。"
+        },
+        {
+          "id": "B",
+          "text": "節點之間的 clocks 必須嚴格同步。",
+          "response": "不正確。筆記明確說 clocks 不同步。"
+        },
+        {
+          "id": "C",
+          "text": "通訊與狀態轉移沒有時間上界保證，只能依賴最終一致方向前進。",
+          "response": "正確。這正是筆記對 asynchronous environment 的整理。"
+        },
+        {
+          "id": "D",
+          "text": "每個 replica 可以自由決定自己的 command 執行順序。",
+          "response": "不正確。SMR 恰恰要求 replicas 最終執行相同順序的 commands。"
+        }
+      ],
+      "answer": "C",
+      "explanation": "非同步環境的重點是沒有通訊延遲或執行時間的上界，也不能依賴同步 clock 來保證安全性。",
+      "difficulty": "beginner",
+      "question_focus": "system_model",
+      "tag_concepts": [
+        "concept.distributed_systems",
+        "concept.consensus"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q03-smr-requirement",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "State Machine Replication 要能對外看起來像單一 state machine，最核心的條件是什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "所有 replicas 只要使用同一套硬體規格即可。",
+          "response": "不正確。硬體一致不是 SMR 正確性的核心。"
+        },
+        {
+          "id": "B",
+          "text": "所有 replicas 從相同初始狀態出發，並依同樣順序套用同樣 commands。",
+          "response": "正確。SMR 的 deterministic 性就是建基在這件事上。"
+        },
+        {
+          "id": "C",
+          "text": "每個 client 都必須永遠連到同一個 replica。",
+          "response": "不正確。系統應該能在 replica failure 後無縫切換。"
+        },
+        {
+          "id": "D",
+          "text": "所有 commands 都必須由 acceptor 直接執行。",
+          "response": "不正確。acceptor 保存共識記憶，不是負責執行 state machine。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "只要 state machine 是 deterministic 的，從同樣初始狀態出發並按同樣順序執行同樣 commands，就應該得到同樣結果。",
+      "difficulty": "beginner",
+      "question_focus": "smr_basics",
+      "tag_concepts": [
+        "concept.state_machine_replication",
+        "concept.consensus"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q04-replica-out-slot",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "在 replica state variables 裡，`out-slot` 最好理解成什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "下一個要等待 decision 的 slot。",
+          "response": "正確。`out-slot` 代表 replica 正在往前消化決議的進度。"
+        },
+        {
+          "id": "B",
+          "text": "下一個 leader 要競選的 ballot number。",
+          "response": "不正確。ballot number 是 leader / acceptor 關心的狀態。"
+        },
+        {
+          "id": "C",
+          "text": "已經被 GC 刪掉的最後一個 slot。",
+          "response": "不正確。這不是筆記對 `out-slot` 的定義。"
+        },
+        {
+          "id": "D",
+          "text": "acceptor 已接受值的數量。",
+          "response": "不正確。那是 acceptor state，不是 replica state。"
+        }
+      ],
+      "answer": "A",
+      "explanation": "`out-slot` 可以理解成 replica 下一個正在等 decision、準備按序執行的 slot。",
+      "difficulty": "beginner",
+      "question_focus": "role_mapping",
+      "tag_concepts": [
+        "concept.state_machine_replication",
+        "concept.paxos"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q05-replica-r1",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "Replica invariant `R1` 的核心語意是什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "同一個 client 不能送出兩次 request。",
+          "response": "不正確。`R1` 管的是 slot 與 command 的唯一性，不是 client 重送。"
+        },
+        {
+          "id": "B",
+          "text": "同一個 slot 不能對應到兩個不同 commands。",
+          "response": "正確。這是 replica safety 的核心。"
+        },
+        {
+          "id": "C",
+          "text": "每個 replica 都必須在同一時間收到所有 commands。",
+          "response": "不正確。非同步環境下不會有這種保證。"
+        },
+        {
+          "id": "D",
+          "text": "每個 slot 都必須由同一個 leader 永遠負責。",
+          "response": "不正確。leader 可以失敗與切換。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`R1` 要守住的是同一個 slot 上不會產生兩個互相衝突的 commands，否則 replicas 的 log 就會分叉。",
+      "difficulty": "intermediate",
+      "question_focus": "invariant_reasoning",
+      "tag_concepts": [
+        "concept.state_machine_replication",
+        "concept.consensus"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q06-replica-r5-window",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "Replica invariant `R5` 說 proposals 只能在已知 configuration 的 slots 上發生。筆記用什麼直觀條件描述這件事？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "`in-slot` 必須永遠等於 `out-slot`。",
+          "response": "不正確。這樣反而無法 pipeline。"
+        },
+        {
+          "id": "B",
+          "text": "`in-slot - out-slot < WINDOW`。",
+          "response": "正確。這是筆記整理出的直觀窗口條件。"
+        },
+        {
+          "id": "C",
+          "text": "`accepted` 集合大小必須固定。",
+          "response": "不正確。這是 acceptor 無關的條件。"
+        },
+        {
+          "id": "D",
+          "text": "所有 leaders 都必須 active 之後才能 proposal。",
+          "response": "不正確。系統只需要有合法 active leader。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`R5` 的重點是 replica 不該盲目往未知 configuration 的未來 slots proposal，常以 window 方式限制超前距離。",
+      "difficulty": "intermediate",
+      "question_focus": "window_safety",
+      "tag_concepts": [
+        "concept.state_machine_replication",
+        "concept.multi_paxos"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q07-acceptor-a2",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "Acceptor invariant `A2` 最準確的意思是什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Acceptor 只會接受目前 ballot-number 相符的 `<b, s, c>`。",
+          "response": "正確。`A2` 直接把 accept 行為綁到當前 ballot。"
+        },
+        {
+          "id": "B",
+          "text": "Acceptor 可以同時接受任意 ballot 的值，只要 slot 不同即可。",
+          "response": "不正確。這會破壞 ballot discipline。"
+        },
+        {
+          "id": "C",
+          "text": "Acceptor 必須先刪掉舊 `accepted` 才能接受新值。",
+          "response": "不正確。`A3` 反而說不能刪除。"
+        },
+        {
+          "id": "D",
+          "text": "Acceptor 只在 system start 時接受值一次。",
+          "response": "不正確。acceptor 會隨不同 ballot / slot 持續工作。"
+        }
+      ],
+      "answer": "A",
+      "explanation": "`A2` 強調 acceptor 只能接受與自己當前 ballot-number 相符的值，並會拒絕較舊 ballot 的訊息。",
+      "difficulty": "intermediate",
+      "question_focus": "acceptor_state",
+      "tag_concepts": [
+        "concept.paxos",
+        "concept.multi_paxos",
+        "concept.consensus"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q08-acceptor-a5",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "Acceptor invariant `A5` 為什麼那麼重要？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "因為它允許新 leader 用更高 ballot 覆寫已形成多數的舊 command。",
+          "response": "不正確。A5 恰恰是在禁止這種覆寫。"
+        },
+        {
+          "id": "B",
+          "text": "因為它保證只要某 slot 曾被多數接受，後續更高 ballot 不能換成不同 command。",
+          "response": "正確。這是 quorum intersection 與安全性的核心。"
+        },
+        {
+          "id": "C",
+          "text": "因為它要求每個 acceptor 都記住完整 client session。",
+          "response": "不正確。A5 與 client session 無關。"
+        },
+        {
+          "id": "D",
+          "text": "因為它保證所有 replicas 一定同步收到 network packet。",
+          "response": "不正確。A5 講的是被多數接受的值如何在未來 ballots 中被保留。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`A5` 是 Paxos safety 的核心之一：舊 quorum 一旦把某 slot 鎖到某 command，新的 ballot 只能延續它。",
+      "difficulty": "advanced",
+      "question_focus": "majority_preservation",
+      "tag_concepts": [
+        "concept.consensus",
+        "concept.paxos",
+        "concept.fault_tolerance"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q09-scout-role",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "在 PMMC 裡，Scout 的主要角色是什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "負責執行 phase 1，確認 leader 合法並收集先前已接受的資訊。",
+          "response": "正確。Scout 的核心責任是 phase 1 與歷史收集。"
+        },
+        {
+          "id": "B",
+          "text": "直接幫 replicas 執行 state machine operation。",
+          "response": "不正確。Scout 不負責執行 state machine。"
+        },
+        {
+          "id": "C",
+          "text": "專門把垃圾資料從 `accepted` 集合裡清掉。",
+          "response": "不正確。這違反 A3 的精神。"
+        },
+        {
+          "id": "D",
+          "text": "用來把 client responses 回傳給使用者。",
+          "response": "不正確。這不是 Scout 的職責。"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Scout 是 leader 裡負責 phase 1 的過程，目的是建立領導權並看見過去已接受的值，從而保護 C2。",
+      "difficulty": "advanced",
+      "question_focus": "phase_reasoning",
+      "tag_concepts": [
+        "concept.multi_paxos",
+        "concept.paxos",
+        "concept.consensus"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q10-commander-c2",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "Commander 要守住的 `C2` 最準確在說什麼？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "每個 slot 永遠只能由第一任 leader 提案。",
+          "response": "不正確。leader 可以切換。"
+        },
+        {
+          "id": "B",
+          "text": "如果較舊 ballot 已經為某 slot 接受過某 command，新 commander 必須沿用同一 command。",
+          "response": "正確。C2 的功能就是禁止高 ballot 改寫 slot 內容。"
+        },
+        {
+          "id": "C",
+          "text": "Commander 必須等所有 acceptors 都同意，不能只等 majority。",
+          "response": "不正確。Paxos 依賴的是 majority，而不是全體一致。"
+        },
+        {
+          "id": "D",
+          "text": "Commander 只能在沒有 replica failure 時存在。",
+          "response": "不正確。Commander 的存在與 replica failure 無此限制。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`C2` 讓新的 ballot 尊重舊 ballot 已接受的歷史，從而把 slot-level safety 往前延續。",
+      "difficulty": "advanced",
+      "question_focus": "slot_preservation",
+      "tag_concepts": [
+        "concept.multi_paxos",
+        "concept.paxos",
+        "concept.consensus"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q11-active-leader-optimization",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "PMMC / Multi-Paxos 在穩定 leader 下為什麼能比「每個操作都完整跑一次 Paxos」更有效率？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "因為一旦有 leader，acceptors 就不再需要保存任何歷史。",
+          "response": "不正確。acceptors 仍需保存 ballot 與 accepted values。"
+        },
+        {
+          "id": "B",
+          "text": "因為 phase 1 可以在 leader 穩定期間被 amortize，穩態主要做 phase 2。",
+          "response": "正確。這是 Multi-Paxos / PMMC 的核心效率來源。"
+        },
+        {
+          "id": "C",
+          "text": "因為 replicas 可以各自挑一個 slot 自行執行 command。",
+          "response": "不正確。這會破壞一致順序。"
+        },
+        {
+          "id": "D",
+          "text": "因為 crash failures 在 active leader 出現後就不再可能發生。",
+          "response": "不正確。leader 隨時仍可能失敗。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Multi-Paxos / PMMC 的 steady state 優勢來自穩定 leader 把 phase 1 成本攤平，之後每個 proposal 主要做 phase 2。",
+      "difficulty": "advanced",
+      "question_focus": "protocol_optimization",
+      "tag_concepts": [
+        "concept.multi_paxos",
+        "concept.paxos",
+        "concept.state_machine_replication"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q12-safety-chain",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "哪一個選項最符合筆記整理的 safety 推導鏈？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "`R5 -> A1 -> C1`，所以 network delay 不重要。",
+          "response": "不正確。這不是筆記的安全性主線。"
+        },
+        {
+          "id": "B",
+          "text": "`C1`、`C2` 推出 `A4`、`A5`，而 `A5` 再推出 `R1`。",
+          "response": "正確。這是筆記最強調的 invariants 鏈條。"
+        },
+        {
+          "id": "C",
+          "text": "`A3` 直接推出所有 replicas 一定 live。",
+          "response": "不正確。A3 講的是 accepted set 不可刪除，不是 liveness。"
+        },
+        {
+          "id": "D",
+          "text": "`R2` 直接保證 leader election success。",
+          "response": "不正確。R2 與 leader election success 不是直接關係。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "筆記把 safety 主線整理成 Commander invariants 先約束 leader 行為，再推出 Acceptor invariants，最後保護 Replica invariant `R1`。",
+      "difficulty": "advanced",
+      "question_focus": "invariant_chain",
+      "tag_concepts": [
+        "concept.paxos",
+        "concept.consensus",
+        "concept.state_machine_replication"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q13-acceptor-count",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "若系統要容忍 `f` 個 failures，acceptors 為什麼通常要設成 `2f + 1`？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "因為 acceptors 需要比 replicas 多剛好一倍，這是固定公式。",
+          "response": "不正確。真正原因是 majority 與 quorum intersection。"
+        },
+        {
+          "id": "B",
+          "text": "因為這樣在最多 `f` 個 acceptors 壞掉後，系統仍能取得 majority，並保證 majorities 彼此交集。",
+          "response": "正確。這是 Paxos 多數派設計的核心數學理由。"
+        },
+        {
+          "id": "C",
+          "text": "因為每個 leader 都必須專屬綁定兩個 acceptors。",
+          "response": "不正確。Paxos 沒有這種綁定規則。"
+        },
+        {
+          "id": "D",
+          "text": "因為 `2f + 1` 可以讓 replicas 不再需要 leaders。",
+          "response": "不正確。acceptor 多數不能取代 leader 的協調角色。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "只要有 `2f + 1` 個 acceptors，就算壞掉 `f` 個仍能留下 majority；而任何兩個 majorities 的交集則是 preserving history 的基礎。",
+      "difficulty": "advanced",
+      "question_focus": "quorum_math",
+      "tag_concepts": [
+        "concept.fault_tolerance",
+        "concept.consensus",
+        "concept.paxos"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q14-raft-election-safety",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "Raft 在 leader election safety 上，筆記強調哪個限制最關鍵？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Candidate 只要 timeout 最短，就一定應該當 leader。",
+          "response": "不正確。randomized timeout 只是幫忙避免 split vote。"
+        },
+        {
+          "id": "B",
+          "text": "新的 leader 必須擁有所有 committed entries，因此 RequestVote 會檢查 log 是否足夠 up-to-date。",
+          "response": "正確。Raft 的 election restriction 就是在保護這件事。"
+        },
+        {
+          "id": "C",
+          "text": "Follower 一旦投票，就永遠不能再參與未來任何 term 的投票。",
+          "response": "不正確。限制是每個 term 至多投一票。"
+        },
+        {
+          "id": "D",
+          "text": "Raft 不需要 majority，只需要最新 term 的單一 leader 宣告即可。",
+          "response": "不正確。Raft 仍然依賴 majority。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Raft 要求新 leader 必須有所有 committed entries，因此 follower 會依據 term 與 log 長度判斷 candidate 是否足夠 up-to-date。",
+      "difficulty": "professional",
+      "question_focus": "election_safety",
+      "tag_concepts": [
+        "concept.raft",
+        "concept.consensus",
+        "concept.state_machine_replication"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    },
+    {
+      "question_id": "q15-pmmc-vs-raft",
+      "lang": "zh-Hant",
+      "question_type": "mcq",
+      "prompt": "根據這份筆記，哪個對 PMMC 與 Raft 的比較最準確？",
+      "choices": [
+        {
+          "id": "A",
+          "text": "PMMC 與 Raft 的 safety guarantees 完全不同，所以不能放在同一家族比較。",
+          "response": "不正確。筆記認為它們在 safety family 上是同一家族。"
+        },
+        {
+          "id": "B",
+          "text": "PMMC 更偏向用 ballot / acceptor invariants 拆解問題；Raft 則把心智模型整理成單一 server role、term 與 log replication。",
+          "response": "正確。這正是筆記對兩者理解路徑差異的整理。"
+        },
+        {
+          "id": "C",
+          "text": "Raft 不處理 log replication，只處理 leader election。",
+          "response": "不正確。Raft 的兩大主軸就是 leader election 與 log replication。"
+        },
+        {
+          "id": "D",
+          "text": "PMMC 不依賴 majority，而 Raft 才依賴 majority。",
+          "response": "不正確。兩者都依賴 majority / quorum intersection。"
+        }
+      ],
+      "answer": "B",
+      "explanation": "這份筆記把 PMMC 與 Raft 放在一起看時，強調的不是誰比較強，而是 PMMC 透過 invariants 與角色拆分來講 safety，Raft 則透過 term、state 與 log 來整理可理解性。",
+      "difficulty": "professional",
+      "question_focus": "protocol_comparison",
+      "tag_concepts": [
+        "concept.paxos",
+        "concept.multi_paxos",
+        "concept.raft",
+        "concept.system_design"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-24"
+    }
+  ]
+}

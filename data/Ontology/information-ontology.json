@@ -1,0 +1,321 @@
+{
+  "version": 1,
+  "concepts": [
+    {
+      "concept_id": "concept.resulting",
+      "labels": {
+        "en": "Resulting",
+        "zh-Hant": "結果偏誤",
+        "zh-Hans": "结果偏误"
+      },
+      "contexts": {
+        "en": "Resulting is a cognitive bias in which people judge the quality of a decision or prediction based on the outcome, rather than the information available when the decision was made.",
+        "zh-Hant": "結果偏誤是一種認知偏誤，指的是人們習慣以決策或預測的最終結果，來反過來判斷這個決策或預測原本的好壞，而不是根據當時的資訊與邏輯來評估。",
+        "zh-Hans": "结果偏误是一种认知偏误，指的是人们习惯以决策或预测的最终结果，来反过来判断这个决策或预测原本的好坏，而不是根据当时的信息与逻辑来评估。"
+      },
+      "aliases": [
+        "resulting"
+      ]
+    },
+    {
+      "concept_id": "concept.eda",
+      "labels": {
+        "en": "Exploratory Data Analysis (EDA)",
+        "zh-Hant": "探索式資料分析（EDA）",
+        "zh-Hans": "探索式数据分析（EDA）"
+      },
+      "contexts": {
+        "en": "Exploratory Data Analysis (EDA) is an early stage in a data-analysis workflow. It uses summarization, visualization, and basic inspection before formal modeling so we can understand what kind of data we have, what problems it may contain, and what signals might be worth following.",
+        "zh-Hant": "探索式資料分析（EDA）是資料分析 workflow 裡的前期階段。它會在正式建模前先透過摘要、視覺化與初步檢查來理解資料，幫我們看清手上的資料長什麼樣子、有哪些問題，以及可能藏著哪些值得追的訊號。",
+        "zh-Hans": "探索式数据分析（EDA）是数据分析 workflow 里的前期阶段。它会在正式建模前先通过摘要、可视化与初步检查来理解数据，帮我们看清手上的数据长什么样子、有哪些问题，以及可能藏着哪些值得追的信号。"
+      },
+      "aliases": [
+        "EDA",
+        "Exploratory Data Analysis"
+      ]
+    },
+    {
+      "concept_id": "concept.data_mining",
+      "labels": {
+        "en": "Data Mining",
+        "zh-Hant": "資料探勘",
+        "zh-Hans": "数据挖掘"
+      },
+      "contexts": {
+        "en": "Data Mining is a data-analysis task centered on discovering patterns, structure, or knowledge that are not obvious at first glance. It is used to extract insights that can change how we understand a problem or make decisions, rather than merely store or retrieve data.",
+        "zh-Hant": "資料探勘是一種以發現為核心的資料分析任務，重點是從資料中找出原本不明顯的模式、結構或知識。它用來萃取真正會改變理解或決策的洞見，而不只是把資料存好或查出來。",
+        "zh-Hans": "数据挖掘是一种以发现为核心的数据分析任务，重点是从数据中找出原本不明显的模式、结构或知识。它用来提取真正会改变理解或决策的洞见，而不只是把数据存好或查出来。"
+      },
+      "aliases": [
+        "data mining"
+      ]
+    },
+    {
+      "concept_id": "concept.local_optimum",
+      "labels": {
+        "en": "Local Optimum",
+        "zh-Hant": "局部最優解",
+        "zh-Hans": "局部最优解"
+      },
+      "contexts": {
+        "en": "Local Optimum is the best possible solution in a given problem space. It is the solution that maximizes the objective function, and it is the solution that is most likely to lead to the best possible outcome.",
+        "zh-Hant": "局部最優解是在給定問題空間中的最佳可能解。它是使目標函數最大化的解，也是最有可能帶來最佳可能結果的解。",
+        "zh-Hans": "局部最优解是在给定问题空间中的最佳可能解。它是使目标函数最大化的解，也是最有可能带来最佳可能结果的解。"
+      },
+      "aliases": [
+        "local optimum"
+      ]
+    },
+    {
+      "concept_id": "concept.global_optimum",
+      "labels": {
+        "en": "Global Optimum",
+        "zh-Hant": "全局最優解",
+        "zh-Hans": "全局最优解"
+      },
+      "contexts": {
+        "en": "Global Optimum is the best possible solution in a given problem space. It is the solution that maximizes the objective function, and it is the solution that is most likely to lead to the best possible outcome.",
+        "zh-Hant": "全局最優解是在給定問題空間中的最佳可能解。它是使目標函數最大化的解，也是最有可能帶來最佳可能結果的解。",
+        "zh-Hans": "全局最优解是在给定问题空间中的最佳可能解。它是使目标函数最大化的解，也是最有可能带来最佳可能结果的解。"
+      },
+      "aliases": [
+        "global optimum",
+        "全局最優解",
+        "全局最优解"
+      ]
+    },
+    {
+      "concept_id": "concept.clustering",
+      "labels": {
+        "en": "Clustering",
+        "zh-Hant": "分群",
+        "zh-Hans": "聚类"
+      },
+      "contexts": {
+        "en": "Clustering is an unsupervised learning task in machine learning and data mining. It groups similar data points together so we can reveal hidden structure in unlabeled data.",
+        "zh-Hant": "分群是一種非監督式學習任務，會把彼此相似的資料點分到同一群。它用來揭露沒有標註資料中的潛在群體結構。",
+        "zh-Hans": "聚类是一种无监督式学习任务，会把彼此相似的数据点分到同一组。它用来揭露没有标注数据中的潜在群体结构。"
+      },
+      "aliases": [
+        "clustering"
+      ]
+    },
+    {
+      "concept_id": "concept.k_means",
+      "labels": {
+        "en": "K-Means",
+        "zh-Hant": "K-Means",
+        "zh-Hans": "K-Means"
+      },
+      "contexts": {
+        "en": "K-Means is a centroid-based clustering algorithm. It represents each cluster with a center point and repeatedly assigns data to the nearest center, so it works best when each group can be summarized by a relatively compact center.",
+        "zh-Hant": "K-Means 是一種中心點式分群演算法。它會用一個中心代表一群資料，並反覆把資料點分配給最近的中心，因此特別適合每一群都能被相對集中的中心概括的情境。",
+        "zh-Hans": "K-Means 是一种中心点式聚类算法。它会用一个中心代表一组数据，并反复把数据点分配给最近的中心，因此特别适合每一组都能被相对集中的中心概括的情境。"
+      },
+      "aliases": [
+        "k-means"
+      ]
+    },
+    {
+      "concept_id": "concept.dbscan",
+      "labels": {
+        "en": "DBSCAN",
+        "zh-Hant": "DBSCAN",
+        "zh-Hans": "DBSCAN"
+      },
+      "contexts": {
+        "en": "DBSCAN is a density-based clustering algorithm. It finds regions where data points are packed closely together and treats isolated points as possible noise, so it works well when groups are better understood as dense areas rather than as clouds around a single center.",
+        "zh-Hant": "DBSCAN 是一種以密度為基礎的分群演算法。它會找出資料點彼此擠得夠近、能連成一片的區域，並把孤立點視為可能的雜訊，因此特別適合把群體理解成高密度區域而不是單一中心周圍雲團的情境。",
+        "zh-Hans": "DBSCAN 是一种以密度为基础的聚类算法。它会找出数据点彼此挤得够近、能连成一片的区域，并把孤立点视为可能的噪声，因此特别适合把群体理解成高密度区域而不是单一中心周围云团的情境。"
+      },
+      "aliases": [
+        "dbscan"
+      ]
+    },
+    {
+      "concept_id": "concept.co_occurrence",
+      "labels": {
+        "en": "Co-occurrence",
+        "zh-Hant": "共現",
+        "zh-Hans": "共现"
+      },
+      "contexts": {
+        "en": "Co-occurrence is a descriptive pattern in data where two events, features, or signals tend to appear together. It tells us that things co-appear, but by itself it does not prove why they do.",
+        "zh-Hant": "共現是一種描述資料表面關聯的模式，指兩個事件、特徵或訊號傾向一起出現。它告訴我們有些東西會一起發生，但光靠這件事本身，還不足以證明背後真正的原因是什麼。",
+        "zh-Hans": "共现是一种描述数据表面关联的模式，指两个事件、特征或信号倾向一起出现。它告诉我们有些东西会一起发生，但光靠这件事本身，还不足以证明背后真正的原因是什么。"
+      },
+      "aliases": [
+        "co-occurrence",
+        "co-occurence",
+        "cooccurence"
+      ]
+    },
+    {
+      "concept_id": "concept.noise",
+      "labels": {
+        "en": "Noise",
+        "zh-Hant": "擾動",
+        "zh-Hans": "扰动"
+      },
+      "contexts": {
+        "en": "Noise is the part of observed data that comes from random fluctuations, measurement errors, or incidental disturbances rather than from the main structure we care about. It does not mean 'meaningless,' but it does make the real signal harder to see clearly.",
+        "zh-Hant": "擾動是觀測資料中那些來自隨機波動、測量誤差或偶發干擾的部分，而不是來自我們真正想理解的主要結構。它不等於完全沒有意義，但確實會讓底層訊號變得更難被看清楚。",
+        "zh-Hans": "扰动是观测数据中那些来自随机波动、测量误差或偶发干扰的部分，而不是来自我们真正想理解的主要结构。它不等于完全没有意义，但确实会让底层信号变得更难被看清楚。"
+      },
+      "aliases": [
+        "noise"
+      ]
+    },
+    {
+      "concept_id": "concept.supervised_learning",
+      "labels": {
+        "en": "Supervised Learning",
+        "zh-Hant": "監督式學習",
+        "zh-Hans": "监督式学习"
+      },
+      "contexts": {
+        "en": "Supervised Learning is a model-training setup in machine learning. It gives the model examples with both inputs and correct target answers so the model can learn a stable relationship that generalizes to unseen cases rather than merely memorizing labels.",
+        "zh-Hant": "監督式學習是一種模型訓練模式。它會提供模型已知的輸入與對應答案，讓模型學著掌握兩者之間的關係，目標不是把答案背起來，而是學到能延伸到新資料上的穩定規律。",
+        "zh-Hans": "监督式学习是一种模型训练模式。它会提供模型已知的输入与对应答案，让模型学着掌握两者之间的关系，目标不是把答案背起来，而是学到能延伸到新数据上的稳定规律。"
+      },
+      "aliases": [
+        "supervised learning"
+      ]
+    },
+    {
+      "concept_id": "concept.dimensionality_reduction",
+      "labels": {
+        "en": "Dimensionality Reduction",
+        "zh-Hant": "降維",
+        "zh-Hans": "降维"
+      },
+      "contexts": {
+        "en": "Dimensionality Reduction is a family of methods in machine learning and data analysis. It rewrites high-dimensional data into a smaller set of dimensions so we can keep the most important structure, variation, or geometry in a more compact representation.",
+        "zh-Hant": "降維是一類方法，會把高維資料改寫成較少的維度。它用來在更精煉的表示裡，仍保留原本最重要的結構、變化來源或幾何關係。",
+        "zh-Hans": "降维是一类方法，会把高维数据改写成较少的维度。它用来在更精炼的表示里，仍保留原本最重要的结构、变化来源或几何关系。"
+      },
+      "aliases": [
+        "dimensionality reduction"
+      ]
+    },
+    {
+      "concept_id": "concept.anomaly_detection",
+      "labels": {
+        "en": "Anomaly Detection",
+        "zh-Hant": "異常偵測",
+        "zh-Hans": "异常检测"
+      },
+      "contexts": {
+        "en": "Anomaly Detection is a modeling or analysis task that looks for data points, events, or states that deviate from what is considered normal. It is used to find unusual cases by assuming that 'normal' has a recognizable structure rather than being random chaos.",
+        "zh-Hant": "異常偵測是一種建模或分析任務，目的是找出那些偏離正常狀態的資料點、事件或系統行為。它的前提是我們相信「正常」具有可辨識、可描述的結構，而不是一團隨機混亂。",
+        "zh-Hans": "异常检测是一种建模或分析任务，目的是找出那些偏离正常状态的数据点、事件或系统行为。它的前提是我们相信“正常”具有可辨识、可描述的结构，而不是一团随机混乱。"
+      },
+      "aliases": [
+        "anomaly detection"
+      ]
+    },
+    {
+      "concept_id": "concept.overfitting",
+      "labels": {
+        "en": "Overfitting",
+        "zh-Hant": "過擬合",
+        "zh-Hans": "过拟合"
+      },
+      "contexts": {
+        "en": "Overfitting is a failure mode in machine learning. It happens when a model fits the training data too closely, including noise and accidental details, so it may look accurate on past data while still failing to capture the real pattern that generalizes to new cases.",
+        "zh-Hant": "過擬合是機器學習裡的一種失敗模式。它發生在模型把訓練資料貼得太緊、連雜訊與偶然細節都一起記住時，因此模型看起來也許很會解釋歷史資料，卻沒有真正抓住能泛化到新資料的規律。",
+        "zh-Hans": "过拟合是机器学习里的一种失败模式。它发生在模型把训练数据贴得太紧、连噪声与偶然细节都一起记住时，因此模型看起来也许很会解释历史数据，却没有真正抓住能泛化到新数据的规律。"
+      },
+      "aliases": [
+        "overfitting"
+      ]
+    },
+    {
+      "concept_id": "concept.reverse_engineering",
+      "labels": {
+        "en": "Reverse Engineering",
+        "zh-Hant": "反向工程",
+        "zh-Hans": "反向工程"
+      },
+      "contexts": {
+        "en": "Reverse Engineering is a way of thinking that starts from visible results, traces, or outward phenomena, then works backward to infer the hidden mechanism or structure that produced them.",
+        "zh-Hant": "反向工程是一種思考方式，會先從可觀測到的結果、足跡或表面現象出發，再反過來推測背後的機制與底層結構。",
+        "zh-Hans": "反向工程是一种思考方式，会先从可观测到的结果、足迹或表面现象出发，再反过来推测背后的机制与底层结构。"
+      },
+      "aliases": [
+        "reverse engineering"
+      ]
+    },
+    {
+      "concept_id": "concept.first_principles",
+      "labels": {
+        "en": "First Principles",
+        "zh-Hant": "第一性原理",
+        "zh-Hans": "第一性原理"
+      },
+      "contexts": {
+        "en": "First Principles is a way of thinking that keeps digging until it reaches the most basic assumptions that cannot be reduced further, then rebuilds understanding upward from there. It is used to reconnect surface facts to a deeper shared structure instead of stopping at inherited assumptions.",
+        "zh-Hant": "第一性原理是一種思考方式，會一路往下追問，直到碰到那些不可再拆的基礎假設，然後再從那裡往上重建理解。它用來把很多表面現象重新接回更深的共享底層，而不是停在沿用既有說法。",
+        "zh-Hans": "第一性原理是一种思考方式，会一路往下追问，直到碰到那些不可再拆的基础假设，然后再从那里往上重建理解。它用来把很多表面现象重新接回更深的共享底层，而不是停在沿用既有说法。"
+      },
+      "aliases": [
+        "first principles"
+      ]
+    },
+    {
+      "concept_id": "concept.goldilocks_principle",
+      "labels": {
+        "en": "Goldilocks Principle",
+        "zh-Hant": "金髮女孩原則",
+        "zh-Hans": "金发女孩原则"
+      },
+      "contexts": {
+        "en": "The Goldilocks Principle is a principle that says many systems work best within a 'just right' range rather than at either extreme. In learning, it often refers to a difficulty level that is not too easy to be trivial and not too hard to be discouraging, but challenging enough to promote growth.",
+        "zh-Hant": "金髮女孩原則是一個原則，指很多系統最有效的狀態往往落在一個剛剛好的區間，而不是任一端的極端值。放到學習上，它通常指的是那種不會簡單到毫不費力、也不會困難到直接放棄，而是剛好足以推動成長的挑戰程度。",
+        "zh-Hans": "金发女孩原则是一个原则，指很多系统最有效的状态往往落在一个刚刚好的区间，而不是任一端的极端值。放到学习上，它通常指的是那种不会简单到毫不费力、也不会困难到直接放弃，而是刚好足以推动成长的挑战程度。"
+      },
+      "aliases": [
+        "Goldilocks Principle",
+        "goldilocks principle",
+        "金髮姑娘原則",
+        "金发姑娘原则"
+      ]
+    },
+    {
+      "concept_id": "concept.feynman_technique",
+      "labels": {
+        "en": "Feynman Technique",
+        "zh-Hant": "費曼學習法",
+        "zh-Hans": "费曼学习法"
+      },
+      "contexts": {
+        "en": "The Feynman Technique is a learning method. It checks understanding by asking whether you can explain an idea clearly in simple language to someone outside the field, so vague understanding has to become concrete, organized, and teachable.",
+        "zh-Hant": "費曼學習法是一種學習方法。它透過要求你用簡單語言把概念講清楚給圈外人聽，來檢驗自己是不是真的理解，因此能把原本模糊的理解逼成具體、可組織、也能真正教給別人的說明。",
+        "zh-Hans": "费曼学习法是一种学习方法。它通过要求你用简单语言把概念讲清楚给圈外人听，来检验自己是不是真的理解，因此能把原本模糊的理解逼成具体、可组织、也能真正教给别人的说明。"
+      },
+      "aliases": [
+        "Feynman Technique"
+      ]
+    },
+    {
+      "concept_id": "concept.rubber_duck_debugging",
+      "labels": {
+        "en": "Rubber Duck Debugging",
+        "zh-Hant": "小黃鴨除錯法",
+        "zh-Hans": "小黄鸭调试法"
+      },
+      "contexts": {
+        "en": "Rubber Duck Debugging is a debugging method. It asks you to explain a problem step by step to a rubber duck or any stand-in listener, so vague thoughts have to become a more concrete, ordered, and inspectable line of reasoning.",
+        "zh-Hant": "小黃鴨除錯法是一種除錯方法。它要求你對著一隻小鴨或任何替代聽眾，逐步把問題講清楚，因此能把原本模糊的思路整理成更具體、更有順序、也更容易檢查的推理。",
+        "zh-Hans": "小黄鸭调试法是一种调试方法。它要求你对着一只小鸭或任何替代听众，逐步把问题讲清楚，因此能把原本模糊的思路整理成更具体、更有顺序、也更容易检查的推理。"
+      },
+      "aliases": [
+        "Rubber Duck Debugging",
+        "黃色小鴨調適法",
+        "黃色小鴨調試法",
+        "黄色小鸭调试法",
+        "黄色小鸭调适法"
+      ]
+    }
+  ]
+}

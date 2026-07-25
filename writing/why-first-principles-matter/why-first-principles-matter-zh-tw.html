@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>為什麼對齊第一性原理很重要？</title>
+  <meta name="garden:tags" content="學習, 認知, 第一性原理, 反思, 創造力">
+  <meta name="garden:summary" content="當越來越多知識能沿著不同路徑收斂到共享模式時，底層知識網路會變得更穩固，也更容易記憶、遷移與舉一反三。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.learning,concept.cognition,concept.first_principles,concept.reflection,concept.creativity">
+  <meta name="garden:tag_labels" content="{&quot;concept.learning&quot;:{&quot;en&quot;:&quot;Learning&quot;,&quot;zh-Hant&quot;:&quot;學習&quot;,&quot;zh-Hans&quot;:&quot;学习&quot;},&quot;concept.cognition&quot;:{&quot;en&quot;:&quot;Cognition&quot;,&quot;zh-Hant&quot;:&quot;認知&quot;,&quot;zh-Hans&quot;:&quot;认知&quot;},&quot;concept.first_principles&quot;:{&quot;en&quot;:&quot;First Principles&quot;,&quot;zh-Hant&quot;:&quot;第一性原理&quot;,&quot;zh-Hans&quot;:&quot;第一性原理&quot;},&quot;concept.reflection&quot;:{&quot;en&quot;:&quot;Reflection&quot;,&quot;zh-Hant&quot;:&quot;反思&quot;,&quot;zh-Hans&quot;:&quot;反思&quot;},&quot;concept.creativity&quot;:{&quot;en&quot;:&quot;Creativity&quot;,&quot;zh-Hant&quot;:&quot;創造力&quot;,&quot;zh-Hans&quot;:&quot;创造力&quot;}}">
+  <meta name="garden:canonical_id" content="why-first-principles-matter">
+  <meta name="garden:published_at" content="2026-06-17">
+  <meta name="garden:last_modified_at" content="2026-06-17">
+  <meta name="garden:reading_time_minutes" content="9">
+  <meta name="garden:source" content="writing/why-first-principles-matter/why-first-principles-matter-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">為什麼對齊第一性原理很重要？</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">第一性原理：不只是拆解，更是收斂與壓縮</a>
+<a class="note-toc-link level-1" href="#section-2">共享模式：看似不同的知識，如何收斂於同源</a>
+<a class="note-toc-link level-1" href="#section-3">比擬與延伸：從看見相似到系統開展</a>
+<a class="note-toc-link level-1" href="#information-theory">知識壓縮：大腦的資訊理論（Information Theory）</a>
+<a class="note-toc-link level-1" href="#section-4">穩固的網路：為什麼我們不再害怕遺忘？</a>
+<a class="note-toc-link level-1" href="#recall">Recall 的本質，其實是「走到」知識</a>
+<a class="note-toc-link level-1" href="#section-5">從遷移到創造力：同中找異的終極展現</a>
+<a class="note-toc-link level-1" href="#section-6">結語：建立自我延伸的系統</a>
+<a class="note-toc-link level-2" href="#section-7">附錄與延伸閱讀</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-17" data-published-at="2026-06-17"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-17</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">很多人在談論「第一性原理（First Principles）」時，通常只把它理解成一種拆解問題的實用技巧：不要直接接受既有的框架，把問題拆解到底層事實，回到不可再分解的基礎，然後重新推導出結論。</p>
+
+<p class="mb-3">這種理解沒有錯，但我後來慢慢發現，第一性原理真正深遠的影響，根本不只是讓我們在當下「把問題理解得更深」。</p>
+
+<p class="mb-3">它更重要的價值其實是：<strong>當越來越多知識能沿著不同路徑，收斂到共享的模式之後，我們大腦底層的知識網路會開始變得越來越穩固。</strong></p>
+
+<p class="mb-3">這種穩固，不僅僅是提升了理解力。它還會引發連鎖反應，直接重塑我們的記憶力、提取資訊（Recall）的效率、知識遷移的能力，乃至於最終的創造力。它甚至可能決定了一個人在有限的腦容量裡，最終能承載與運用多少知識。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">第一性原理：不只是拆解，更是收斂與壓縮</h3>
+
+<p class="mb-3">大部分人在學習新知識時，往往只是在記錄「表面答案」。我們背誦英文單字、熟記數學公式、套用商業策略或軟體工程的框架。</p>
+
+<p class="mb-3">如果這些知識彼此之間沒有建立起共享的底層結構，那麼每一份新知識，都會在大腦中變成一個獨立的記憶節點。</p>
+
+<p class="mb-3">結果就是：知識很容易遺忘、很難在需要時被提取，也無法跨領域遷移。這就像是一個塞滿了重複檔案的硬碟，表面上看起來資料非常豐富，但因為底層沒有經過任何壓縮，很快就會耗盡空間，且運作效率極低。</p>
+
+<p class="mb-3">第一性原理真正做的事情，其實是<strong>找出不同知識背後，共同依賴的底層結構</strong>。</p>
+
+<p class="mb-3">也就是說，第一性原理不只是在「拆解」事物，它更是在進行知識的對齊（Alignment）、收斂（Convergence）、壓縮（Compression）與統一（Unification）。這才是它在學習與認知上，最深層的威力所在。</p>
+
+<hr>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">共享模式：看似不同的知識，如何收斂於同源</h3>
+
+<p class="mb-3">世界上許多看似截然不同的知識，本質上往往共享著相同的底層模式。</p>
+
+<p class="mb-3">表面上，美國早期的波士頓傾茶事件與法國大革命時期的國民議會，發生在不同的大洲與時空。但當你往下拆解，會發現它們都共享著同一個底層結構：啟蒙運動中對個人權利的訴求，以及社會階層在經濟與資源壓力下的反撲與重組。</p>
+
+<p class="mb-3">一旦掌握了這個「共享模式」，歷史就不再是破碎的年份與名詞，而是一套可以互相參照、甚至能一路推演至後世《拿破崙法典》成形的連續變體。</p>
+
+<p class="mb-3">同樣的道理也存在於各個領域：</p>
+
+<ul class="note-list">
+<li>語言學習中的語感</li>
+<li>物理學中的能量守恆</li>
+<li>軟體工程中的抽象化（Abstraction）</li>
+<li>經濟學中的誘因機制（Incentive）</li>
+<li>演化生物學中的天擇壓力（Selection Pressure）</li>
+</ul>
+
+<p class="mb-3">當你將知識拆解到底層，你會發現許多學問其實只是同一個底層模式在不同場景下的變形。知識不再是孤立的點，它們開始交織成一面網。</p>
+
+<hr>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">比擬與延伸：從看見相似到系統開展</h3>
+
+<p class="mb-3">這裡必須釐清一個重要的觀念：許多人會把「比擬（Analogy）」與「知識延伸」混為一談，但它們其實扮演著不同階段的角色。</p>
+
+<ul class="note-list">
+<li><strong>比擬</strong>：是在不同知識之間，找到相似的表面特徵與關聯。</li>
+<li><strong>共享模式</strong>：是這些相似特徵經過拆解後，最終收斂出的共同底層。</li>
+<li><strong>知識延伸</strong>：是在真正掌握這個共享模式後，以此為基底，往不同的新領域繼續推展。</li>
+</ul>
+
+<p class="mb-3">好的比擬，就像是一座橋樑，負責把我們帶到「共享模式」的面前。而一旦這個共享的底層被大腦內化，原本看似毫不相干的知識，就會順理成章地變成同一套結構下的自然延伸。這也是為什麼，當一個人的知識體系越成熟，他越常產生「原來這個和那個本質上是一樣的」的頓悟感。</p>
+
+<hr>
+</section>
+
+<section id="information-theory" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">知識壓縮：大腦的資訊理論（Information Theory）</h3>
+
+<p class="mb-3">人類的大腦雖然神奇，但處理與儲存資訊的容量終究是有限的。因此，學習的關鍵從來就不是死記硬背更多資訊，而是：<strong>如何讓更多資訊共享同一套底層表示法。</strong></p>
+
+<p class="mb-3">這在概念上非常接近資訊理論（Information Theory）中的壓縮機制。如果大量的知識都擁有一個「共同的字首（Common Prefix）」，大腦就不需要為每一份新知識憑空建立一套全新的神經結構。</p>
+
+<p class="mb-3">我們只需要：</p>
+
+<ol class="mb-3">
+<li>共用底層結構。</li>
+<li>辨識並記錄差異。</li>
+<li>儲存產生變化的部分。</li>
+</ol>
+
+<p class="mb-3">這就像是程式設計中的函式重複使用（Function Reuse）、物件導向中的繼承（Inheritance），或是機器學習中的共享嵌入（Shared Embedding）。知識越能共享 Prefix，整體的編碼長度就越短。</p>
+
+<p class="mb-3">在固定的腦容量下，越接近最短編碼，就能承載越海量的知識。真正厲害的學習者，並不是他們天生「記性特別好」，而是他們懂得將龐雜的知識，極致地壓縮進少數幾個穩固的底層結構中。</p>
+
+<hr>
+</section>
+
+<section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">穩固的網路：為什麼我們不再害怕遺忘？</h3>
+
+<p class="mb-3">當知識共享的底層模式越來越多，大腦內的知識網路就會發生質變——它會變得極度穩固。</p>
+
+<p class="mb-3">每一個概念都不再只依賴單一的記憶路徑，而是同時被許多跨領域的知識交叉支撐。這就像是網路拓撲中擁有極高連結度的核心節點，或是神經網路裡的共享權重（Shared Weights）。</p>
+
+<p class="mb-3">一旦某個底層模式被大量知識共同依賴，每一次你呼叫相關知識時，這個底層模式就會被反覆活化與強化。因此，知識會變得更難遺忘、更容易提取，甚至當你忘記了某個具體公式或年代時，你依然能憑藉底層邏輯重新推導出來，從局部完美恢復整體。</p>
+
+<hr>
+</section>
+
+<section id="recall" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Recall 的本質，其實是「走到」知識</h3>
+
+<p class="mb-3">我們常誤以為提取記憶（Recall）就是把塞進腦袋的東西原封不動地「拿出來」。但實際上：</p>
+
+<blockquote class="blockquote mb-3"><strong>Recall 的本質，其實是知識網路中的路徑搜尋。</strong></blockquote>
+
+<p class="mb-3">如果知識是孤立的，你只能依賴唯一的一條小徑去尋找它；一旦這條小徑因為時間久遠而雜草叢生（遺忘），你就再也找不到那個知識點了。</p>
+
+<p class="mb-3">但如果你的知識共享了大量的底層模式：</p>
+
+<ul class="note-list">
+<li>不同的知識會互相成為彼此的錨點。</li>
+<li>不同的概念會互相提供進入的入口。</li>
+<li>尋找知識的路徑（Recall route）會呈指數級別增加。</li>
+</ul>
+
+<p class="mb-3">這帶來了一個認知上的根本轉變：<strong>你不再是死命「記住」知識，而是擁有無數條路徑能輕鬆「走到」知識。</strong></p>
+
+<hr>
+</section>
+
+<section id="section-5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">從遷移到創造力：同中找異的終極展現</h3>
+
+<p class="mb-3">一個高度連結、共享底層的強大知識網路，最終會孕育出人類最珍貴的能力：創造力。</p>
+
+<p class="mb-3">當許多知識都建構在共享的模式之上時，你會變得極度擅長舉一反三。你能在相同中看見差異，在相異中找出雷同，並將某個領域的局部變形，精準地映射（Apply）回另一個領域。</p>
+
+<p class="mb-3">這正是知識遷移（Transfer Ability）的源頭，也是創造力的本質。</p>
+
+<p class="mb-3">真正的創造力，極少是憑空捏造的。它往往是建立在發現不同領域間的「共享底層」之上。這也是為什麼數學的結構能啟發物理學的突破，演化論的機制能應用於最佳化演算法，而市場經濟的運作邏輯能成為設計分散式系統的靈感。這些都不是巧合，而是看穿共享模式後的必然延伸。</p>
+
+<hr>
+</section>
+
+<section id="section-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">結語：建立自我延伸的系統</h3>
+
+<p class="mb-3">對齊第一性原理，從來就不只是一種為了「更理性思考」而存在的工具。</p>
+
+<p class="mb-3">它最深層的價值在於，幫助我們將漫無邊際的知識，逐步收斂至共享的底層。隨著這個底層越來越豐厚，知識會自動被壓縮，大腦的網路會變得無堅不摧，記憶的提取會毫不費力，跨域的遷移與創造力也會隨之爆發。</p>
+
+<p class="mb-3">到了這個境界，學習不再只是被動地「累積更多資料」。你其實是在自己的大腦中，建構一個能夠持續自我延伸、自我壓縮、自我連結的有機系統。</p>
+
+<hr>
+
+<h4 id="section-7" class="mb-2">附錄與延伸閱讀</h4>
+
+<ul class="note-list">
+<li><strong>Lollapalooza Effect（魯拉帕路薩效應）</strong></li>
+</ul>
+
+<p class="mb-3">這是由查理·蒙格（Charlie Munger）提出的概念，用來描述當多個不同的偏見、傾向或模型，在同一個方向上共同作用時，會產生一種極端且呈指數級放大的非線性效應。當我們在腦中建立起穩固的跨領域底層結構後，不同學科的共享模式一旦交匯，往往也能在思考與決策上產生類似的正向 Lollapalooza Effect。</p>
+
+<ul class="note-list">
+<li><strong>關於知識壓縮的進階視角：RL 與 Reverse KL</strong></li>
+</ul>
+
+<p class="mb-3">在機器學習的強化學習（RL）領域中，Reverse KL Divergence 常被用來讓模型學會「抓住最核心的眾數（Mode-seeking）」，而不是平均地分配機率去涵蓋所有細枝末節。這與大腦尋找第一性原理的過程非常相似：我們的大腦在面對海量資訊時，也是在進行類似的優化，拋棄表面的雜訊，強制將知識收斂到最核心、最具有解釋力的底層結構（Mode）上，以此達到極致的壓縮與效率。</p>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

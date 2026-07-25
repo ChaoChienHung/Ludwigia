@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Canvas — Ludwig</title>
+  <script src="../core/i18n-preload.js?v=2026-06-10-2"></script>
+
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=2026-06-21-6">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+</head>
+
+<body data-garden-section="canvas" data-i18n-page="canvasLanding">
+
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+    <div class="container">
+      <a class="navbar-brand fw-bold custom-brand" href="../index.html">Ludwig</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="nav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="../index.html" id="homeDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Home
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+              <li><a class="dropdown-item" href="../index.html#about">About</a></li>
+              <li><a class="dropdown-item" href="../index.html#timeline" data-nav-timeline>Timeline</a></li>
+              <li><a class="dropdown-item" href="../index.html#contact">Contact</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="../pages/projects.html" id="projectsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Projects
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+              <li><a class="dropdown-item" href="../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#ludwigia">Ludwigia</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#karen">Karen</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#mentorion">Mentorion</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#detoxio">Detox.io</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#piggynest">PiggyNest</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#scriba">Scriba</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#sesame">Sesame</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#vellichor">Vellichor</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../notes/index.html">Notes</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../writing/index.html">Writing</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../canvas/index.html">Canvas</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../pages/search.html" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="visually-hidden">Search</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../pages/settings.html" aria-label="Settings">
+              <i class="fa-solid fa-gear"></i>
+              <span class="visually-hidden">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <section class="page-section">
+    <div class="container">
+      <div class="section-landing-head" data-aos="fade-up">
+        <div class="section-landing-hero">
+          <div class="section-landing-kicker">Visual</div>
+          <h1 id="section-title" class="section-landing-title">Canvas</h1>
+          <p class="section-landing-subtitle">Photos, drawings, and visual experiments. Start with simple image items, then grow into gallery sets.</p>
+        </div>
+
+        <div class="section-landing-toolbar">
+          <div class="section-landing-search">
+            <button id="section-filter-toggle" class="section-search-icon-btn" type="button" aria-label="Tags">
+              <i class="fa-solid fa-tags" aria-hidden="true"></i>
+            </button>
+            <input id="section-search" class="section-landing-search-input" type="search" placeholder="Search canvas..." autocomplete="off" />
+          </div>
+          <div id="section-count" class="section-landing-count"></div>
+        </div>
+
+        <div id="section-filter-panel" class="section-filter-panel" style="display:none;"></div>
+      </div>
+
+      <div class="section-landing-content mt-4" data-aos="fade-up" data-aos-delay="120">
+        <div id="section-results" class="section-feed"></div>
+        <div id="section-empty" class="page-text mt-3 text-center" style="display:none;">No results.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Ludwig — All Rights Reserved</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../core/script.js?v=2026-06-21-6"></script>
+  <script src="../core/i18n.js?v=2026-06-14-1"></script>
+  <script src="../search/search-index.js?v=2026-06-11-1"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"></script>
+<script src="../core/search-core.js?v=2026-06-21-6"></script>
+<script src="../assets/js/search-ui.js?v=2026-06-21-6"></script>
+  <script src="../assets/js/section-landing.js?v=2026-06-21-6"></script>
+
+</body>
+</html>

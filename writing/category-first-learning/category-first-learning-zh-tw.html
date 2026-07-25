@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>理解新事物時，為什麼先知道分類更好吸收？</title>
+  <meta name="garden:tags" content="學習, 認知, 分類, 反思">
+  <meta name="garden:summary" content="先知道一個新事物屬於哪個大方向，通常比先塞進一堆零碎細節更容易吸收，因為分類會先提供可辨識、可延伸的認知骨架。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.learning,concept.cognition,concept.classification,concept.reflection">
+  <meta name="garden:tag_labels" content="{&quot;concept.learning&quot;:{&quot;en&quot;:&quot;Learning&quot;,&quot;zh-Hant&quot;:&quot;學習&quot;,&quot;zh-Hans&quot;:&quot;学习&quot;},&quot;concept.cognition&quot;:{&quot;en&quot;:&quot;Cognition&quot;,&quot;zh-Hant&quot;:&quot;認知&quot;,&quot;zh-Hans&quot;:&quot;认知&quot;},&quot;concept.classification&quot;:{&quot;en&quot;:&quot;Classification&quot;,&quot;zh-Hant&quot;:&quot;分類&quot;,&quot;zh-Hans&quot;:&quot;分类&quot;},&quot;concept.reflection&quot;:{&quot;en&quot;:&quot;Reflection&quot;,&quot;zh-Hant&quot;:&quot;反思&quot;,&quot;zh-Hans&quot;:&quot;反思&quot;}}">
+  <meta name="garden:canonical_id" content="category-first-learning">
+  <meta name="garden:published_at" content="2026-06-23">
+  <meta name="garden:last_modified_at" content="2026-06-23">
+  <meta name="garden:reading_time_minutes" content="9">
+  <meta name="garden:source" content="writing/category-first-learning/category-first-learning-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">理解新事物時，為什麼先知道分類更好吸收？</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">為什麼分類常常是最友善的入口？</a>
+<a class="note-toc-link level-1" href="#section-2">例子：先知道牠是哪一類，理解就容易很多</a>
+<a class="note-toc-link level-1" href="#section-3">例子：在技術領域裡，分類常常更重要</a>
+<a class="note-toc-link level-1" href="#section-4">分類提供的是高辨識度、低負擔的資訊</a>
+<a class="note-toc-link level-1" href="#section-5">為什麼細節先行很容易形成知識孤島？</a>
+<a class="note-toc-link level-1" href="#section-6">分類先行，不是反細節，而是先有骨架再補解析度</a>
+<a class="note-toc-link level-1" href="#section-7">最後形成的知識體系可能一樣，但形成難度差很多</a>
+<a class="note-toc-link level-1" href="#section-8">所以分類不是終點，而是最好的起點之一</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-23" data-published-at="2026-06-23"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-23</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">假設今天有人要你理解一個全新的東西。</p>
+
+<p class="mb-3">他有兩種講法。</p>
+
+<p class="mb-3">第一種講法是，一開始就直接丟一堆零碎細節給你：它有這些特徵、那些限制、某些例外、某些特殊情況。你會覺得自己好像有在接收資訊，但腦中其實很難立刻長出一個穩定的畫面。</p>
+
+<p class="mb-3">第二種講法是，先告訴你：</p>
+
+<blockquote class="blockquote mb-3">這個東西大致上屬於哪一類。</blockquote>
+
+<blockquote class="blockquote mb-3">它比較像你已經熟悉的哪個家族。</blockquote>
+
+<blockquote class="blockquote mb-3">它和相鄰分類最大的差別是什麼。</blockquote>
+
+<p class="mb-3">通常第二種講法會友善很多。</p>
+
+<p class="mb-3">因為當我們在理解一個新事物時，最好的入口往往不是最細的細節，而是它<strong>屬於哪個大方向、哪個分類、哪一類東西</strong>。</p>
+
+<p class="mb-3">這件事表面上像只是「先講大方向比較好懂」，但我覺得它背後其實牽涉到一個更底層的問題：<strong>人到底是怎麼把新知識接進既有知識體系裡的？</strong></p>
+
+<p class="mb-3">很多時候，我們以為自己是在學細節，但真正決定吸收效率的，反而是我們有沒有先找到一個足夠穩定、足夠熟悉、足夠容易辨識的高層骨架，讓這些細節可以掛上去。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">為什麼分類常常是最友善的入口？</h3>
+
+<p class="mb-3">分類之所以重要，不只是因為它比較抽象，而是因為它通常會直接提供幾種對我們特別有用的資訊：</p>
+
+<ol class="mb-3">
+<li>它先告訴我們這個東西大概屬於哪一種世界。</li>
+<li>它提供一個現成的比較框架，讓我們知道該拿什麼來對照。</li>
+<li>它幫我們快速排除很多不必要的可能性。</li>
+</ol>
+
+<p class="mb-3">換句話說，分類不是單純替事物貼標籤而已。它真正做的，是先幫我們建一個<strong>認知上的座標系</strong>。</p>
+
+<p class="mb-3">一旦這個座標系先出現，後面的理解就不再是散亂的資訊湧入，而是有地方可以安放。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">例子：先知道牠是哪一類，理解就容易很多</h3>
+
+<p class="mb-3">比如說，如果有人第一次接觸鯨魚，最先知道的是：</p>
+
+<blockquote class="blockquote mb-3">鯨魚雖然生活在海裡，但它其實是哺乳類。</blockquote>
+
+<p class="mb-3">這句話的效果很強，因為它一下就把鯨魚放進了一個我們比較熟悉的分類框架裡。</p>
+
+<p class="mb-3">接下來很多細節就突然變得更容易理解：</p>
+
+<ul class="note-list">
+<li>為什麼牠不是魚。</li>
+<li>為什麼牠需要上來呼吸。</li>
+<li>為什麼牠是胎生。</li>
+<li>為什麼牠和海豚、人類反而比較接近。</li>
+</ul>
+
+<p class="mb-3">如果反過來，一開始先丟給你的是這些零散細節，你當然也有可能慢慢記住。但在還沒有分類骨架之前，這些資訊更像是一串彼此分離的事實，只能先硬背。</p>
+
+<p class="mb-3">等到你後來終於知道「原來它是哺乳類」，你才會發現：前面那些細節其實終於被接起來了。</p>
+
+<p class="mb-3">也就是說，<strong>分類先行不是省略理解，而是讓理解更早開始變得有結構。</strong></p>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">例子：在技術領域裡，分類常常更重要</h3>
+
+<p class="mb-3">這件事不只發生在日常知識裡，在技術領域其實也一樣。</p>
+
+<p class="mb-3">比如說，當我們第一次接觸一個演算法時，如果一開始就直接看它的每一步計算、邊界條件、時間複雜度與實作細節，常常會覺得資訊很多，但抓不到主線。</p>
+
+<p class="mb-3">可是假如一開始先知道：</p>
+
+<blockquote class="blockquote mb-3">這個方法大致上屬於哪個家族？</blockquote>
+
+<p class="mb-3">理解難度通常會立刻下降很多。</p>
+
+<p class="mb-3">像是：</p>
+
+<ul class="note-list">
+<li>如果先知道某個方法是 <code>greedy</code>，你就會先預期它是在每一步做局部最好的選擇。</li>
+<li>如果先知道某個方法是 <code>dynamic programming</code>，你就會先預期它在處理重疊子問題與狀態轉移。</li>
+<li>如果先知道某個方法屬於 <code>clustering</code>，你就會先預期它的核心問題是如何定義相似、如何分群，而不是在預測標籤。</li>
+</ul>
+
+<p class="mb-3">一旦這個家族定位先出現，後面的細節就不再是無序湧入，而是會自動被你放進對的位置。</p>
+
+<p class="mb-3">同樣地，理解工具也常常是這樣。</p>
+
+<p class="mb-3">如果你第一次接觸一個系統工具，先知道它是資料庫、快取、訊息佇列，還是工作流編排器，通常會比先看一長串命令列選項與設定檔更有幫助。</p>
+
+<p class="mb-3">因為分類先回答的，是「它到底是在解哪一類問題」。而這往往比「它有哪些參數」更重要。</p>
+</section>
+
+<section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">分類提供的是高辨識度、低負擔的資訊</h3>
+
+<p class="mb-3">我覺得分類先行之所以有效，是因為分類本身通常具有一種很特別的資訊特性：</p>
+
+<ul class="note-list">
+<li>它抓的是大方向上最有區分度的特徵。</li>
+<li>它往往是我們接觸得比較久、比較熟悉的知識層。</li>
+<li>它比細節更容易和既有知識連結。</li>
+</ul>
+
+<p class="mb-3">這種資訊對大腦很友善。因為它不要求你一開始就精準掌握全部機制，它只要求你先回答一個比較容易的問題：</p>
+
+<blockquote class="blockquote mb-3">這個東西大概是什麼類型？</blockquote>
+
+<p class="mb-3">而一旦這個問題先被回答，後面很多理解都會從「完全陌生」變成「是在熟悉框架上的局部更新」。</p>
+
+<p class="mb-3">這個差別很大。</p>
+
+<p class="mb-3">前者像是在黑暗裡亂摸，後者像是你已經先拿到地圖，接下來只是補更多地標與細節。</p>
+</section>
+
+<section id="section-5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">為什麼細節先行很容易形成知識孤島？</h3>
+
+<p class="mb-3">細節當然重要，問題不在細節本身，而在於<strong>如果細節先於骨架出現，它們很容易暫時變成知識孤島</strong>。</p>
+
+<p class="mb-3">所謂知識孤島，就是你知道一些事實，但你不知道它們彼此之間的關係，也不知道它們應該掛在哪個更大的脈絡裡。</p>
+
+<p class="mb-3">這時候常見的情況是：</p>
+
+<ul class="note-list">
+<li>你記得某些局部特徵，但不知道它們為什麼重要。</li>
+<li>你知道一些例外或技巧，但不知道它們屬於哪個方法家族。</li>
+<li>你累積了很多片段資訊，卻很難快速辨識新東西和舊知識的關係。</li>
+</ul>
+
+<p class="mb-3">在這種狀態下，學習就很容易退化成硬記。</p>
+
+<p class="mb-3">不是因為我們不夠努力，而是因為這些資訊還沒有被編進一個可延伸的結構裡。於是大腦只能先把它們當作很多獨立的小包裹暫存起來，等待未來某一天，當我們終於有足夠多資訊時，再回頭把它們統整進某個更大的分類。</p>
+
+<p class="mb-3">問題是，這條路通常更慢，也更累。</p>
+</section>
+
+<section id="section-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">分類先行，不是反細節，而是先有骨架再補解析度</h3>
+
+<p class="mb-3">我覺得這裡很容易被誤解成：既然分類這麼重要，那是不是細節就不重要了？</p>
+
+<p class="mb-3">其實完全不是。</p>
+
+<p class="mb-3">比較準確的說法應該是：<strong>分類先行，不是反對細節，而是反對在沒有骨架的情況下，讓細節先獨自進場。</strong></p>
+
+<p class="mb-3">分類提供的是骨架，細節提供的是解析度。</p>
+
+<p class="mb-3">沒有骨架的細節，很容易散掉；沒有細節的骨架，則會停留在太粗糙的大概理解。</p>
+
+<p class="mb-3">真正比較好的理解流程，往往是：</p>
+
+<ol class="mb-3">
+<li>先有一個夠穩的分類定位。</li>
+<li>再用細節去修正、補強、增加辨識度。</li>
+<li>最後才長成真正成熟的理解。</li>
+</ol>
+
+<p class="mb-3">所以分類先行的重點從來不是「停在抽象」，而是「先給理解一個可以生長的方向」。</p>
+</section>
+
+<section id="section-7" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">最後形成的知識體系可能一樣，但形成難度差很多</h3>
+
+<p class="mb-3">我覺得這裡最關鍵的一點是：</p>
+
+<blockquote class="blockquote mb-3">很多時候，不管你一開始是分類先行，還是細節先行，最後形成的知識體系可能都會慢慢收斂到類似的樣子。</blockquote>
+
+<p class="mb-3">但差別在於，兩條路的形成難度完全不同。</p>
+
+<p class="mb-3">如果你一開始就先知道大方向，後面的細節是在既有骨架上逐步長出來的。這個過程比較像是：</p>
+
+<ol class="mb-3">
+<li>先定位。</li>
+<li>再辨識。</li>
+<li>最後補解析度。</li>
+</ol>
+
+<p class="mb-3">可是如果你一開始只有細節，那過程通常會變成：</p>
+
+<ol class="mb-3">
+<li>先暫存很多零碎資訊。</li>
+<li>被迫硬記與反覆碰撞。</li>
+<li>等累積到一定程度後，再回頭抽象出共同分類。</li>
+</ol>
+
+<p class="mb-3">也就是說，最後雖然都可能長成一套完整知識體系，但前者是在骨架上生長，後者更像是先把很多碎片堆起來，再想辦法回頭拼圖。</p>
+
+<p class="mb-3">這兩種難度，真的差很多。</p>
+</section>
+
+<section id="section-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">所以分類不是終點，而是最好的起點之一</h3>
+
+<p class="mb-3">當然，這不是說只要知道分類就夠了。</p>
+
+<p class="mb-3">分類如果太粗，最後也會失去辨識力；真正完整的理解，仍然需要細節、限制、例外、機制與脈絡去補足。</p>
+
+<p class="mb-3">但我越來越覺得，分類的價值從來就不在於「它已經完整」，而在於它能提供一個<strong>最容易吸收、最容易辨識、也最容易延伸的起點</strong>。</p>
+
+<p class="mb-3">它先幫我們把新知識放到正確的大方向裡，讓後面的細節不再只是細節，而是有位置、有關係、有生長方向的細節。</p>
+
+<p class="mb-3">所以，如果今天要理解一個全新的事物，也許一個很好的第一步不是立刻衝進所有細節，而是先問：</p>
+
+<blockquote class="blockquote mb-3">它大概屬於哪一類？</blockquote>
+
+<blockquote class="blockquote mb-3">它和我已經知道的哪個大方向最接近？</blockquote>
+
+<p class="mb-3">很多時候，真正讓理解變簡單的，不是你第一秒知道了多少細節，而是你有沒有先找到一個足夠好的分類入口。</p>
+
+<p class="mb-3">而我覺得這件事如果再往下走，其實就會自然接到另一條更深的內容鏈。</p>
+
+<p class="mb-3">因為當我們一直用「先找分類、先找共享骨架」的方式理解世界，最後發生的事情不只是比較好懂而已。更深一層地說，我們會開始把不同知識沿著不同路徑，慢慢收斂到一些共享模式上。</p>
+
+<p class="mb-3">一旦共享模式越來越多，知識之間就不再只是鬆散地相鄰，而是會真的開始共用底層結構。這時候，理解就不只是「比較快」，還會進一步牽涉到為什麼知識能被更有效地壓縮、為什麼記憶更穩固、以及為什麼後續更容易舉一反三。</p>
+
+<p class="mb-3">也就是說，分類先行這件事，某種程度上可以看成更大問題的一個入口：</p>
+
+<blockquote class="blockquote mb-3">我們到底要怎麼讓新知識，不是變成另一個孤立的小碎片，</blockquote>
+
+<blockquote class="blockquote mb-3">而是長成既有知識體系的自然延伸？</blockquote>
+
+<p class="mb-3">而這，也正是我接下來想往「第一性原理 / 共享模式 / 知識壓縮」那條線繼續寫下去的原因。</p>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

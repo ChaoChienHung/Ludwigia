@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>From Raw Data to Knowledge: A Practical Introduction to Data Mining</title>
+  <meta name="garden:tags" content="Data Mining, Preprocessing, Normalization, Feature Selection">
+  <meta name="garden:summary" content="A practical introduction to data mining: why it matters, how it differs from naive retrieval, how raw data becomes knowledge, and the core data, quality, preprocessing, and methods foundations behind that process.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.preprocessing,concept.normalization,concept.feature_selection">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.preprocessing&quot;:{&quot;en&quot;:&quot;Preprocessing&quot;,&quot;zh-Hant&quot;:&quot;前處理&quot;,&quot;zh-Hans&quot;:&quot;预处理&quot;},&quot;concept.normalization&quot;:{&quot;en&quot;:&quot;Normalization&quot;,&quot;zh-Hant&quot;:&quot;正規化&quot;,&quot;zh-Hans&quot;:&quot;归一化&quot;},&quot;concept.feature_selection&quot;:{&quot;en&quot;:&quot;Feature Selection&quot;,&quot;zh-Hant&quot;:&quot;特徵選擇&quot;,&quot;zh-Hans&quot;:&quot;特征选择&quot;}}">
+  <meta name="garden:canonical_id" content="from-raw-data-to-knowledge-a-practical-introduction-to-data-mining">
+  <meta name="garden:published_at" content="2026-06-01">
+  <meta name="garden:last_modified_at" content="2026-06-13">
+  <meta name="garden:cover" content="notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/Data-Mining.png">
+  <meta name="garden:reading_time_minutes" content="19">
+  <meta name="garden:source" content="notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">From Raw Data to Knowledge: A Practical Introduction to Data Mining</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#why-data-mining">Why Data Mining?</a>
+<a class="note-toc-link level-2" href="#kdd-guiding">Why Data Mining?</a>
+<a class="note-toc-link level-1" href="#what-is-data-mining">What Is Data Mining?</a>
+<a class="note-toc-link level-2" href="#dm-vs-retrieval">Data Mining vs. Data Retrieval</a>
+<a class="note-toc-link level-2" href="#dm-hierarchy">The Hierarchy of Data Mining: From Raw Data to Wisdom</a>
+<a class="note-toc-link level-1" href="#data-mining-process">A Systematic Pipeline: Extracting Generalizable Insights</a>
+<a class="note-toc-link level-2" href="#pipeline-hierarchy-link">Bridging the Gap: Moving from Computation to Action</a>
+<a class="note-toc-link level-1" href="#understanding-data">Understanding the Data</a>
+<a class="note-toc-link level-2" href="#attributes-types">Types of Attributes</a>
+<a class="note-toc-link level-2" href="#data-structures">Structures &amp; Representations</a>
+<a class="note-toc-link level-1" href="#quality">Data Quality &amp; Preparation</a>
+<a class="note-toc-link level-2" href="#quality-health">Assessing Data Health</a>
+<a class="note-toc-link level-2" href="#eda">Exploratory Data Analysis (EDA)</a>
+<a class="note-toc-link level-2" href="#preprocessing">Advanced Data Preprocessing</a>
+<a class="note-toc-link level-1" href="#algorithms">Algorithms &amp; Methods</a>
+<a class="note-toc-link level-2" href="#supervised-deep-learning">Supervised &amp; Deep Learning</a>
+<a class="note-toc-link level-2" href="#unsupervised-learning">Unsupervised Learning</a>
+<a class="note-toc-link level-1" href="#summary">Summary &amp; Key Takeaways</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-13" data-published-at="2026-06-01"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-13</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./Data-Mining.png" alt="Pyramid showing the data-mining abstraction levels from raw data to wisdom" loading="lazy"><figcaption class="note-image-caption">Data-mining abstraction hierarchy: raw data -&gt; information -&gt; knowledge -&gt; wisdom.</figcaption></figure>
+
+<div id="kdd-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Why Data Mining?</h4><p class="mb-3">As we explored in <a class="note-content-link" data-canonical-id="the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic" href="../../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html">The Essence of Data: A Snapshot of the World's Underlying Logic<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="https://copilot-sg-og.byteintl.net/api/ide/v1/text_to_image?prompt=Minimalist+editorial+photo+of+a+modern+desk+with+a+printed+magazine+and+a+pen%2C+soft+studio+lighting%2C+shallow+depth+of+field%2C+high+contrast%2C+no+text%2C+professional%2C+realistic&amp;image_size=landscape_4_3" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">The Essence of Data: A Snapshot of the World's Underlying Logic</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">Data is not just a cold collection of symbols. It is a snapshot of reality frozen at a particular moment. Data science is possible not because algorithms are magical, but because we believe structure can still be revealed beneath noise and randomness.</span></span></span></a> previously, raw data is essentially a snapshot of the world's underlying logic. We collect it because we fundamentally assume that hidden "engines"—human behaviors, economic shifts, or physical laws—leave behind structural footprints.</p>
+
+<p class="mb-3">However, just as keeping a shoebox full of paper receipts does not automatically reveal your monthly spending habits, simply possessing these snapshots does not mean the underlying engine will reveal itself. This leads to a critical question: How do we bridge the massive gap between collecting messy, raw footprints and generating actionable wisdom?</p>
+
+<p class="mb-3">Is executing simple database queries enough? Can we rely on basic statistics, or must we employ more robust methods to uncover deep insights? Furthermore, how do we systematically discover hidden patterns that remain predictive in the real world, rather than simply memorizing historical data? These questions bring us to the core of today’s topic: Data Mining—a field dedicated to extracting meaningful, actionable intelligence from complex datasets.</p></div>
+</section>
+
+<section id="what-is-data-mining" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">What Is Data Mining?</h3>
+
+<h4 id="dm-vs-retrieval" class="mb-2">Data Mining vs. Data Retrieval</h4>
+
+<p class="mb-3">To begin, we must clear up a common misconception: data mining is not the same as simple data retrieval. Although the two terms may sound similar, data retrieval is a deterministic task that does not require analytical depth.</p>
+
+<p class="mb-3">What, then, is data mining? Broadly speaking, <em>data mining</em> refers to the non-trivial extraction of implicit, previously unknown, and potentially useful information from data.</p>
+
+<ul class="note-list">
+<li>Non-trivial: This process goes far beyond executing simple queries or calculating basic sums. It requires sophisticated algorithms to identify correlations and patterns that are not immediately apparent to the human eye.</li>
+<li>Implicit &amp; Unknown: The goal is to uncover hidden knowledge, insights that are not stored explicitly in the database but are buried within the relationships and trends of the data.</li>
+<li>Actionable: The output must have utility; it should drive strategic decision-making or provide predictive value.</li>
+</ul>
+
+<p class="mb-3">By distinguishing between data retrieval and data mining, we shift our focus from merely reporting on the past to uncovering the patterns that define the future.</p>
+
+<div id="what-it-is-not" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>⚠️ What It Is Not?</h4><p class="mb-3">Tasks that rely on simple retrieval or continuous monitoring without pattern generation do not constitute data mining. Looking up a phone number, querying a search engine for a specific term, or simply monitoring a patient's real-time heart rate on a screen fall outside the scope of genuine data mining.</p>
+
+<p class="mb-3"><strong>Why exclude trivial extraction?</strong> Querying a database is a deterministic process (asking "how many?"). Data mining, by contrast, is an exploratory process (asking "why?" or "what next?"). A true data mining pattern is defined by its generalizability, its ability to remain accurate and relevant when applied to entirely new, unseen data, rather than just tightly fitting to the historical data it was trained on.</p></div>
+
+<h4 id="dm-hierarchy" class="mb-2">The Hierarchy of Data Mining: From Raw Data to Wisdom</h4>
+
+<p class="mb-3">Now that we have a working definition of data mining, we can see that the term covers several different kinds of activity in practice. Organizing relationships within an unstructured body of information can already be regarded as a form of data mining. Uncovering hidden, recurring patterns within that information is also data mining. And when those insights are distilled into more general principles that inform real decisions, that too remains within its scope. At first glance, these activities may seem quite different from one another. In reality, however, they all describe the same upward movement: from raw material toward increasingly meaningful forms of understanding. Seen in that light, data mining is not a collection of isolated cases, but a connected process that can be organized into a clear hierarchy.</p>
+
+<figure class="note-image"><img src="./Pyramid.png" alt="Data mining hierarchy from data to wisdom" loading="lazy"><figcaption class="note-image-caption">The hierarchy of abstraction in data mining, from raw data to wisdom.</figcaption></figure>
+
+<p class="mb-3">At each tier of this hierarchy, the data undergoes a fundamental shift in abstraction. But this upward movement does not happen automatically; it is an active process of hypothesis and verification.</p>
+
+<ol class="mb-3">
+<li>Data (The Snapshots): It begins with raw data—the chaotic footprints left behind by real-world events. On its own, it lacks context.</li>
+<li>Information (The Hypothesis): We don't just stare at the data; we hypothesize that a specific underlying structure exists (e.g., "Customers might fall into distinct shopping groups"). By structuring the raw data and defining relationships based on these guesses, we elevate it into meaningful Information.</li>
+<li>Knowledge / Insight (The Verification): This is where Data Mining algorithms step in. Algorithms are not magic; they are the analytical flashlights we use to verify our hypotheses. When an algorithm successfully extracts a stable, reproducible pattern that confirms (or refutes) our structural guess, Information transforms into actionable Knowledge (Insight).</li>
+<li>Wisdom (The Action): Ultimately, when that Knowledge is distilled into core principles that dictate real-world action—like launching a targeted marketing campaign or blocking a fraudulent transaction—it transforms into true Wisdom.</li>
+</ol>
+
+<p class="mb-3">This gradual progression helps us separate meaningful signals from background noise. With these conceptual foundations in place, the next step is examining the systematic pipeline used to actually execute this verification process.</p>
+</section>
+
+<section id="a-systematic-pipeline-executing-the-discovery" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">A Systematic Pipeline: Executing the Discovery</h3>
+
+<p class="mb-3">We now understand the theoretical journey from raw snapshots to actionable wisdom. But how do we actually execute this hypothesis-and-verification process in reality?</p>
+
+<p class="mb-3">Raw data is chaotic. Algorithms are not magic boxes that can simply read a "shoebox of receipts" and output business strategies; they are strictly mathematical tools. If we feed them unformatted data—such as missing values, duplicate entries, or obvious typos (like recording a customer's age as 999)—the algorithm will not instinctively know these are human mistakes. It will treat them as absolute numerical facts, weaving those errors directly into the final calculation. This is the simple logic behind the famous "garbage in, garbage out" trap.</p>
+
+<p class="mb-3">Furthermore, having perfectly clean data only gives an algorithm the opportunity to learn correctly; it does not guarantee success. Even with pristine data, a naive analytical approach can still fail to discover the true, underlying engine in many different ways. One of the most common and dangerous examples of this failure is <strong>overfitting</strong>—when a model simply memorizes the historical data.</p>
+
+<div id="overfitting" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>🔍 What is Overfitting?</h4><p class="mb-3">Overfitting occurs when an algorithm learns the training data too well. Instead of capturing the true underlying "engine" (the generalizable signal), it absorbs all the random fluctuations, errors, and noise (the messy footprints). As a result, it performs flawlessly on the data it has already seen, but fails drastically when confronted with new, unseen real-world scenarios.</p></div>
+
+<p class="mb-3">To avoid these critical traps—whether it is garbage data, incompatible formats, or overfitted models—we cannot rely on a single algorithm. Instead, we rely on a structured, end-to-end pipeline (often referred to as the Knowledge Discovery in Databases, or KDD process). In practice, this means we first gather source data, optionally organize it in a warehouse, rigorously preprocess it, mine it, and finally interpret the results.</p>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong>Data Source</strong><br>
+  The process begins by identifying and collecting raw source data from the relevant environment, such as transaction logs, operational records, interaction traces, or sensor outputs. At this point, the data is still heterogeneous and often noisy. The point of this stage is not yet to model patterns, but to establish the upstream raw material from which discovery can later emerge.
+  
+</li>
+<li>
+  <strong>Data Warehouse (Optional)</strong><br>
+  In many industrial settings, organizations add a warehouse layer between raw source systems and mining workflows. This optional stage integrates data from multiple upstream systems into a more stable analytical repository, often with standardized schemas, historical snapshots, and governance controls. Conceptually, this stage does not replace preprocessing; it improves consistency, traceability, and reuse before preprocessing begins.
+  
+</li>
+<li>
+  <strong>Data Preprocessing</strong><br>
+  Next comes the crucial stage of data preprocessing. Since we already know that feeding messy data into an algorithm leads to the "garbage in, garbage out" trap, this stage serves as our purification plant. In this article, we keep preprocessing as one coherent main flow that includes four tightly connected sub-tasks: Seen this way, preprocessing is the full preparation engine: selection narrows scope, cleaning repairs quality, feature refinement sharpens signal, and transformation maps the result into model-compatible representations.
+  <ul class="mb-0 mt-2">
+<li>Data selection: Isolating the subset of data relevant to the target task. For example, if a retail store wants to predict holiday shopping trends, it might select transaction records from the past three Decembers while excluding unrelated logs such as employee attendance.</li>
+<li>Data cleaning and quality control: Handling missing data, eliminating duplicates, and correcting inconsistent records so that the dataset reflects reality as faithfully as possible.</li>
+<li>Feature refinement and selection: Filtering out irrelevant or redundant attributes to focus on variables that carry actual predictive signal.</li>
+<li>Data transformation and representation: Converting data into mining-ready forms, such as normalized scales, encoded categorical variables, numerical vectors, or structured matrices that algorithms can process reliably.</li>
+</ul>
+</li>
+<li>
+  <strong>Data Mining</strong><br>
+  Only then does the actual Data Mining occur. This is the moment we turn on our "analytical flashlights" to verify our initial hypotheses. Utilizing intelligent methods, the algorithms scan the preprocessed representation to surface valuable insights among thousands of candidate patterns. Depending on the objective, practitioners deploy specific algorithms designed to achieve distinct analytical goals:
+  <ul class="mb-0 mt-2">
+<li>Clustering: Grouping similar data points together based on shared characteristics without using predefined labels.</li>
+<li>Classification: Assigning new data points into distinct, predefined categories (such as sorting emails into "spam" or "inbox").</li>
+<li>Regression: Modeling relationships between variables to predict continuous, fluid numerical values (such as real estate prices).</li>
+<li>Association &amp; Correlation: Uncovering hidden relationships between items (like products frequently bought together) and measuring the mathematical strength of those dependencies.</li>
+</ul>
+</li>
+<li>
+  <strong>Postprocessing</strong><br>
+  Finally, the pipeline concludes with Postprocessing, which bridges the gap between raw algorithmic output and strategic execution. This phase ensures that abstract mathematical configurations are translated into intuitive charts, graphs, narratives, or business logic. By prioritizing the visualization of results, interpretation of mined patterns, and filtering out of redundant findings, postprocessing allows human decision-makers to interpret conclusions clearly and extract true, actionable knowledge.
+  
+</li>
+</ol>
+
+<h4 id="pipeline-hierarchy-link" class="mb-2">Bridging the Gap: Moving from Computation to Action</h4>
+
+<p class="mb-3">The pipeline is not just an operational checklist; it is also the mechanism that moves us upward through the hierarchy from raw data toward usable knowledge. Data Source establishes the raw observational substrate. Where needed, an optional Data Warehouse layer consolidates and stabilizes those inputs for analytical reuse. Preprocessing then performs the heavy lifting: selecting relevant scope, cleaning quality defects, refining signal-carrying features, and transforming structure so that underlying patterns become legible rather than buried in noise. Once data mining extracts stable patterns from that representation, the process has effectively moved from raw data toward reproducible knowledge. Postprocessing completes the journey by turning those patterns into explanations, decisions, and practical actions that humans can actually use.</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>From Snapshot to Hypothesis, Not Certainty</strong></p><p class="mb-2">Even when data mining surfaces strong and useful patterns, we should not treat those patterns as the only necessary reading of reality. A dataset is always a snapshot captured under particular conditions, and the deeper mechanisms that could have produced that snapshot are often multiple rather than singular. In that sense, mining results are better understood as disciplined hypotheses about what may be happening beneath the surface, not as final proof of one uniquely true explanation.</p>
+
+<p class="mb-0">To reason more accurately about those underlying mechanisms, we usually need to combine mined patterns with domain-grounded evidence. In baseball analytics, that may mean watching games and understanding tactical context rather than relying on box scores alone. In recommender-system design, that may mean conducting case studies, reviewing product flows, and examining real usage scenarios in addition to analyzing logged behavior. The broader the evidence base, the more complete and trustworthy the resulting insight becomes.</p></div>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary</h3>
+
+<p class="mb-3">The overarching lesson of this article is that data mining is not a single algorithm, but an end-to-end process for turning raw data into increasingly useful forms of understanding. Meaningful patterns do not emerge automatically from stored records; they move from data source acquisition (and optionally a warehouse layer) into preprocessing (selection, cleaning, refinement, transformation), then into mining and interpretation.</p>
+
+<p class="mb-3">By distinguishing trivial retrieval from genuine discovery, organizing the field through a hierarchy of abstraction, and grounding the work in a structured pipeline, we get a clearer picture of what data mining actually does. The more specialized topics—data understanding, data quality, preprocessing, supervised learning, and unsupervised learning—can then be explored in their own dedicated articles without overloading the main introduction.</p>
+</section>
+
+<section id="summary-quiz" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="summary-quiz--takeaways-tab" data-bs-toggle="tab" data-bs-target="#summary-quiz--takeaways-pane" type="button" role="tab" aria-controls="summary-quiz--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="summary-quiz--quiz-tab" data-bs-toggle="tab" data-bs-target="#summary-quiz--quiz-pane" type="button" role="tab" aria-controls="summary-quiz--quiz-pane" aria-selected="false">Quick Quiz</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="summary-quiz--prompt-tab" data-bs-toggle="tab" data-bs-target="#summary-quiz--prompt-pane" type="button" role="tab" aria-controls="summary-quiz--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="summary-quiz--takeaways-pane" role="tabpanel" aria-labelledby="summary-quiz--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Data mining is about extracting non-trivial, previously unknown, and useful knowledge from data rather than just retrieving known facts.</li>
+<li>The hierarchy from data to information, knowledge, and wisdom explains why raw records do not automatically become insight.</li>
+<li>A reliable pipeline depends on data source, optional warehouse integration, preprocessing (selection, cleaning, feature refinement, transformation), mining, and postprocessing working together as one end-to-end process.</li>
+<li>The main introduction provides the conceptual map; the detailed topics now live in dedicated follow-up articles.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-quiz" id="summary-quiz--quiz-pane" role="tabpanel" aria-labelledby="summary-quiz--quiz-tab" tabindex="0">
+<div class="note-quiz">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Summary Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 5</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">Which statement best matches the core definition of data mining in these notes?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is deterministic retrieval, not discovery.">A. Retrieving known facts from a database as quickly as possible.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. These notes define data mining as the non-trivial extraction of implicit, previously unknown, and useful information from data.">B. Non-trivial extraction of implicit, previously unknown, and potentially useful information from data.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Monitoring is not necessarily mining; discovery requires pattern generation.">C. Monitoring real-time metrics and alerting when a threshold is crossed.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Visualization can help, but it is not the definition of data mining.">D. Turning all datasets into charts so humans can interpret them.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="2">
+    <div class="note-quiz-question-title">Why is simple SQL querying usually not considered data mining in this context?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. SQL is powerful; the issue is the task being deterministic vs exploratory.">A. SQL cannot be used on large datasets.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Queries answer known questions deterministically; mining aims to discover generalizable patterns and future-facing insights.">B. It is deterministic retrieval that answers known questions rather than discovering implicit patterns.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. SQL can compute statistics; that alone does not make it mining.">C. SQL cannot compute statistics like averages and sums.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Interpretation matters, but the key distinction is discovery vs retrieval.">D. SQL results are always impossible for humans to interpret.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="3">
+    <div class="note-quiz-question-title">Which ordering best reflects the hierarchy described in these notes?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The article presents data mining as an upward movement from raw data toward increasingly meaningful forms of understanding.">A. Data -&gt; Information -&gt; Knowledge -&gt; Wisdom</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Information comes before knowledge in the hierarchy.">B. Data -&gt; Knowledge -&gt; Information -&gt; Wisdom</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is the reverse of the progression described in the article.">C. Wisdom -&gt; Knowledge -&gt; Information -&gt; Data</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The hierarchy begins with raw data and rises step by step.">D. Information -&gt; Data -&gt; Wisdom -&gt; Knowledge</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="4">
+    <div class="note-quiz-question-title">Which ordering best matches the data mining pipeline described in the notes?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Mining does not come before source setup and preprocessing.">A. Data Mining -&gt; Data Source -&gt; Data Warehouse -&gt; Data Preprocessing -&gt; Postprocessing</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Preprocessing must happen before mining, and warehouse (if used) sits before preprocessing.">B. Data Source -&gt; Data Mining -&gt; Data Warehouse -&gt; Data Preprocessing -&gt; Postprocessing</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The notes describe source first, then an optional warehouse layer, then preprocessing as one umbrella stage, then mining, and finally postprocessing.">C. Data Source -&gt; Data Warehouse (optional) -&gt; Data Preprocessing (including selection, cleaning, feature refinement, transformation) -&gt; Data Mining -&gt; Postprocessing</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Source systems feed the warehouse, not the other way around.">D. Data Warehouse -&gt; Data Source -&gt; Data Preprocessing -&gt; Data Mining -&gt; Postprocessing</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="5">
+    <div class="note-quiz-question-title">What is overfitting?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Overfitting is memorizing training noise so performance drops on unseen data.">A. The model memorizes noise and quirks in training data and fails on new data.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This describes good generalization.">B. The model captures the underlying trend and performs similarly on unseen data.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is about encoding, not overfitting.">C. The model converts categories into one-hot vectors.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is about data preparation, not overfitting.">D. The model removes duplicates and missing values.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="summary-quiz--prompt-pane" role="tabpanel" aria-labelledby="summary-quiz--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="summary-quiz--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#summary-quiz--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="summary-quiz--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

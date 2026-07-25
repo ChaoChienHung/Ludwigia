@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discovering Hidden Structures: What Clustering Really Does</title>
+  <meta name="garden:tags" content="Data Mining, Clustering">
+  <meta name="garden:summary" content="A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;}}">
+  <meta name="garden:canonical_id" content="discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan">
+  <meta name="garden:published_at" content="2026-06-10">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:cover" content="notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/Clustering.jpeg">
+  <meta name="garden:reading_time_minutes" content="20">
+  <meta name="garden:source" content="notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Discovering Hidden Structures: What Clustering Really Does</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#introduction-what-clustering-is-and-why-it-matters">Introduction: What Clustering Is and Why It Matters</a>
+<a class="note-toc-link level-1" href="#what-makes-a-cluster-the-role-of-representation-and-similarity">What Makes a Cluster? The Role of Representation and Similarity</a>
+<a class="note-toc-link level-1" href="#foundations-of-good-clustering-data-quality">Foundations of Good Clustering: Data Quality</a>
+<a class="note-toc-link level-1" href="#how-clustering-works-three-structural-hypotheses">How Clustering Works: Three Structural Hypotheses</a>
+<a class="note-toc-link level-2" href="#centroid-based-clustering">Centroid-Based Clustering</a>
+<a class="note-toc-link level-2" href="#density-based-clustering">Density-Based Clustering</a>
+<a class="note-toc-link level-2" href="#hierarchical-clustering">Hierarchical Clustering</a>
+<a class="note-toc-link level-1" href="#summary">Summary</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./Clustering.jpeg" alt="Diagram showing how clustering transforms unlabeled raw data into distinct groups of similar points, illustrating algorithms such as K-Means, DBSCAN, and hierarchical clustering." loading="lazy"><figcaption class="note-image-caption">Clustering groups unlabeled data into meaningful clusters by identifying points with high intra-cluster similarity and low inter-cluster similarity.</figcaption></figure>
+</section>
+
+<section id="introduction-what-clustering-is-and-why-it-matters" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Introduction: What Clustering Is and Why It Matters</h3>
+
+<p class="mb-3">Imagine being handed a large dataset with no labels and no obvious categories. A retailer may want to know whether its customers naturally fall into different shopping profiles. A music platform may want to see whether listeners form distinct taste communities before building recommendations. A fraud team may want to identify transactions that do not fit normal behavioral patterns. In all of these cases, the data may contain structure, but that structure is not given to us explicitly. The real question is: how can we discover meaningful groups when no one has labeled them for us?</p>
+
+<p class="mb-3">This is exactly where clustering comes in. Clustering is the task of discovering natural groupings in data by identifying shared patterns in the features of the objects we observe. Unlike classification, which depends on labeled examples, clustering works directly on unlabeled data. That makes it especially valuable in real-world settings where obtaining large amounts of labeled data is expensive, slow, or simply impractical.</p>
+
+<p class="mb-3">By placing similar objects into the same group and separating dissimilar ones, clustering gives us a middle-scale view of a dataset. It helps us see structure between two extremes: individual data points on one side and broad aggregate statistics on the other. This is useful when we care about the behavior of groups rather than isolated records, or when individual examples are too limited to reveal useful patterns while overall averages smooth away too much detail. That ability to expose group-level structure is what makes clustering valuable across many domains, including market segmentation, recommendation systems, fraud detection, and image analysis.</p>
+
+<div id="why-do-we-assume-data-has-a-group-structure" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-lightbulb me-2"></i>Why Do We Assume Data Has a Group Structure?</h4><p class="mb-3">As we explored in <a class="note-content-link" data-canonical-id="the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic" href="../../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html">The Essence of Data: A Snapshot of the World's Underlying Logic<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="https://copilot-sg-og.byteintl.net/api/ide/v1/text_to_image?prompt=Minimalist+editorial+photo+of+a+modern+desk+with+a+printed+magazine+and+a+pen%2C+soft+studio+lighting%2C+shallow+depth+of+field%2C+high+contrast%2C+no+text%2C+professional%2C+realistic&amp;image_size=landscape_4_3" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">The Essence of Data: A Snapshot of the World's Underlying Logic</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">Data is not just a cold collection of symbols. It is a snapshot of reality frozen at a particular moment. Data science is possible not because algorithms are magical, but because we believe structure can still be revealed beneath noise and randomness.</span></span></span></a>, raw data is not just a random collection of numbers; it is a partial record of the processes that generated it. We collect data because we assume it contains hidden patterns driven by real-world behaviors. But out of all possible patterns, why do we so often expect <em>group</em> structure to be there?</p>
+
+<p class="mb-3">There are two main reasons:</p>
+
+<ol class="mb-3">
+<li><strong>The Intuitive Reason (Shared Motivations):</strong> We heuristically believe that human behavior, and many natural phenomena, is not entirely random. Instead, it is shaped by recurring motivations and conditions that naturally form distinct "tribes." For example, if you look at a local café's transaction data, you can already imagine recurring customer types: the "7 AM rush-hour commuter" grabbing a quick espresso, and the "Sunday afternoon lingerer" ordering a latte and a pastry. Those shared underlying realities naturally pull data points into dense, similar clusters.</li>
+<li><strong>The Pragmatic Reason (Actionable Strategy):</strong> From a business and operational perspective, we actively <em>need</em> the data to have a group structure. We cannot afford to design a million personalized strategies for a million individuals, and a single "overall average" strategy is often too generic to be useful. Discovering clusters gives us a practical middle ground: actionable segments that let us apply more targeted strategies.</li>
+</ol>
+
+<p class="mb-3">This dual expectation—that groups naturally exist in the wild, and that we operationally need them to exist—is exactly what motivates the real-world applications (like retail segmentation, music recommendation, and fraud detection) mentioned earlier.</p></div>
+</section>
+
+<section id="what-makes-a-cluster-the-role-of-representation-and-similarity" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">What Makes a Cluster? The Role of Representation and Similarity</h3>
+
+<p class="mb-3">So what exactly defines a cluster? Imagine looking down at a map of a busy city. People are not distributed evenly. Instead, they gather around specific hubs: train stations, office districts, campuses, or parks.</p>
+
+<p class="mb-3">We perceive these locations as clusters because the density of people within each hub is much higher than in the streets between them. What matters is not just the presence of points, but the relative strength of within-group connection compared with across-group separation.</p>
+
+<p class="mb-3">In data, the same intuition applies, but "closeness" is rarely physical. Instead, it depends on a chosen representation, meaning how we describe the data, and a similarity measure, meaning how we compute distance or similarity. Two data points become meaningfully "close" only after we place them in a representation where comparison is mathematically well defined.</p>
+
+<p class="mb-3">This is why similarity measures are so central to clustering. In any clustering task, the algorithm is effectively asking, "Which points are close to each other?" But the answer is never universal. It depends on what kind of similarity actually matters for your task:</p>
+
+<ul class="note-list">
+<li>If your goal is to find similar behavior, and you represent customers by spending and shopping frequency, "closer" should mean having similar purchasing habits. You need a measure that reflects the magnitude of those actions.</li>
+<li>If your goal is to identify thematic alignment, and you represent documents as word-frequency vectors, "closer" should not depend mainly on document length, but on whether the documents discuss similar topics. You need a measure that downplays magnitude and focuses more on orientation.</li>
+</ul>
+
+<p class="mb-3">In practice, the choice of similarity measure should be driven by the geometry of the data, meaning how the "meaning" of the data is encoded in its features:</p>
+
+<ul class="note-list">
+<li><strong>Numerical</strong> data (e.g., house prices, temperature) often lives in a continuous feature space where straight-line distance, or Euclidean distance, tracks the magnitude of difference between two points.</li>
+<li><strong>Set-valued</strong> data (e.g., shopping carts, pages visited) is defined by membership: whether an item is present or not. Here, overlap matters more, so Jaccard similarity is often more meaningful.</li>
+<li>High-dimensional vector data (e.g., word or image embeddings) often lives in a space where direction is more informative than magnitude. In those cases, cosine similarity is often a better fit.</li>
+</ul>
+
+<p class="mb-3">Choosing the right measure is therefore not just a matter of convention. It is about making sure that our mathematical definition of "closeness" matches the domain-specific notion of "similarity" that we actually care about.</p>
+
+<div id="why-numerical-data-often-uses-euclidean-distance" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-lightbulb me-2"></i>Why Numerical Data Often Uses Euclidean Distance?</h4><p class="mb-3">One helpful way to build intuition is to imagine plotting houses on graph paper using price and square footage as axes. If two houses are similar in both size and price, they will appear close to each other on the page.</p>
+
+<p class="mb-3">Euclidean distance extends this physical "ruler" idea into multiple dimensions. It assumes that your features behave like coordinates and that dissimilarity is well captured by straight-line distance. This works well when features are continuous and properly scaled, but it breaks down when features are not geometrically comparable, which is why categorical data or text usually calls for other measures.</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>A Better Mental Model for Clustering</strong></p><p class="mb-2">The key idea is that clustering is not just about visually grouping points that seem close together. It becomes a meaningful computational task only after we decide how objects should be represented and what it means for them to be similar.</p>
+
+<p class="mb-3">This also means the groups are not something we simply invent out of thin air. The underlying structure may already be present in the data, but it becomes visible only through a particular representational lens. By choosing features and a similarity measure, we are deciding how that structure can show up.</p>
+
+<p class="mb-0">In that sense, clustering is not only about finding groups. It is about making similarity explicit, then using an algorithm to test whether a particular view of the data reveals a meaningful pattern.</p></div>
+</section>
+
+<section id="foundations-of-good-clustering-data-quality" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Foundations of Good Clustering: Data Quality</h3>
+
+<p class="mb-3">Once we understand that clustering is driven by feature representation and similarity, a critical consequence becomes obvious: <strong>clustering algorithms are highly sensitive to data quality.</strong> Because clustering works by measuring patterns in the features, problems in the data directly distort the similarity calculations. Missing values, outliers, noise, and incompatible feature scales can stretch or compress distances in misleading ways and obscure the structure we hope to recover.</p>
+
+<p class="mb-3">For this reason, data preparation is a necessary step before applying any clustering algorithm. Analysts need to clean the data, handle missing values, and scale numerical features so that one large-valued feature, such as annual income, does not completely overshadow a smaller one, such as age. This is exactly why <span class="note-information" tabindex="0" data-information-concept="concept.eda" data-information-lang="en">Exploratory Data Analysis (EDA)<span class="note-information-tooltip" aria-hidden="true"></span></span> matters so much: it helps reveal anomalies and suspicious distributions early, before they mislead the clustering process.</p>
+
+<p class="mb-3">Simply put, a clustering algorithm cannot recover a clean structure from a distorted representation.</p>
+</section>
+
+<section id="how-clustering-works-three-structural-hypotheses" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">How Clustering Works: Three Structural Hypotheses</h3>
+
+<p class="mb-3">Once representation, similarity, and data quality are in place, clustering becomes a more concrete workflow. In practice, we usually move through five steps: represent each object as features, define what counts as close, prepare the data so that comparisons are meaningful, choose a structural hypothesis, and then apply an algorithm that matches that hypothesis.</p>
+
+<p class="mb-3">The last step is where clustering methods begin to diverge. They do not all search for the same kind of pattern. Each family is built around a different assumption about what a cluster looks like:</p>
+
+<ul class="note-list">
+<li>Some methods assume clusters are organized around a center or prototype.</li>
+<li>Others assume clusters are dense connected regions separated by sparser space.</li>
+<li>Still others assume clusters form a nested hierarchy across multiple levels of granularity.</li>
+</ul>
+
+<p class="mb-3">Seen this way, a clustering algorithm is not a black box that magically creates structure. It is a tool for testing a particular structural hypothesis against the data.</p>
+
+<h4 id="centroid-based-clustering" class="mb-2">Centroid-Based Clustering</h4>
+
+<p class="mb-3">Centroid-based methods assume that each cluster can be summarized by a central point, often called a centroid or prototype. The algorithm assigns points to the cluster whose center best represents them and then updates those centers as the grouping changes. This view works best when clusters are relatively compact and roughly center-shaped in the chosen feature space.</p>
+
+<p class="mb-3"><a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="https://copilot-sg-og.byteintl.net/api/ide/v1/text_to_image?prompt=Minimalist+editorial+photo+of+a+notebook+and+pen+on+a+dark+desk%2C+soft+studio+lighting%2C+shallow+depth+of+field%2C+high+contrast%2C+no+text%2C+professional%2C+realistic&amp;image_size=landscape_4_3" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a> is the canonical example of this idea and the most natural method to study once the center-based intuition is clear. It is simple, efficient, and widely used, but it works best when the geometry of the data is reasonably compatible with center-based partitioning.</p>
+
+<p class="mb-3">More broadly, K-Means is only one member of a larger center-based family. Variants such as <code>K-Medoids</code>, <code>X-Means</code>, <code>RK-means</code>, and <code>RQ-Kmeans</code> preserve the same basic intuition while adapting it to different practical goals, including robustness, cluster-number selection, and large-scale representation.</p>
+
+<h4 id="density-based-clustering" class="mb-2">Density-Based Clustering</h4>
+
+<p class="mb-3">Density-based methods take a different view. Instead of asking which center a point belongs to, they ask whether points form a sufficiently dense region of space. Under this perspective, a cluster is defined not by a prototype but by local connectivity through neighborhoods of high point density.</p>
+
+<p class="mb-3">DBSCAN is the classic example. It is especially useful when clusters have irregular shapes or when the dataset contains outliers that should remain unassigned as noise. HDBSCAN follows the same general density-based intuition but handles datasets with more variable density structure in a more flexible way.</p>
+
+<h4 id="hierarchical-clustering" class="mb-2">Hierarchical Clustering</h4>
+
+<p class="mb-3">Hierarchical methods view clustering as a nested structure rather than a single flat partition. Instead of producing only one grouping, they build a hierarchy of possible groupings at different levels of granularity. This is useful when the data may contain meaningful structure at more than one scale.</p>
+
+<p class="mb-3">There are two classic directions here. AGNES is an agglomerative approach: it starts with individual points and repeatedly merges the closest groups. DIANA is a divisive approach: it starts with one large cluster and repeatedly splits it into smaller ones. Together, they illustrate the two opposite ways hierarchical structure can be constructed.</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>A Practical Way to Read the Clustering Landscape</strong></p><p class="mb-2">When people compare clustering methods, they often jump too quickly to algorithm names. A more useful first question is what kind of structure the method assumes. Does it look for centers, dense connected regions, or nested groupings? Once that is clear, the role of algorithms like K-Means, DBSCAN, HDBSCAN, AGNES, and DIANA becomes much easier to understand.</p></div>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary</h3>
+
+<p class="mb-3">Clustering matters because it helps us recover structure that is present in the data but not explicitly labeled. But clustering is not just an algorithmic trick for grouping nearby points. It becomes meaningful only after we decide how objects should be represented, how similarity should be defined, and whether the underlying data is clean enough for those patterns to be trusted. In that sense, good clustering begins before any algorithm is chosen.</p>
+
+<p class="mb-3">From there, different clustering families reflect different assumptions about what structure in the data looks like. K-Means represents the centroid-based view, where clusters are organized around representative centers. DBSCAN and HDBSCAN represent density-based thinking, where clusters emerge as dense regions separated by sparser space. AGNES and DIANA represent hierarchical thinking, where clusters appear as nested groupings at different levels of granularity.</p>
+
+<p class="mb-3">There is therefore no universally best clustering algorithm. The right method depends on whether its assumptions match the geometry of the data, the density pattern in the data, and the practical goals of the task. The core lesson is simple: clustering is most useful when representation, similarity, data quality, and algorithmic assumptions all point in the same direction.</p>
+</section>
+
+<section id="summary-quiz" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="summary-quiz--takeaways-tab" data-bs-toggle="tab" data-bs-target="#summary-quiz--takeaways-pane" type="button" role="tab" aria-controls="summary-quiz--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="summary-quiz--quiz-tab" data-bs-toggle="tab" data-bs-target="#summary-quiz--quiz-pane" type="button" role="tab" aria-controls="summary-quiz--quiz-pane" aria-selected="false">Quick Quiz</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="summary-quiz--prompt-tab" data-bs-toggle="tab" data-bs-target="#summary-quiz--prompt-pane" type="button" role="tab" aria-controls="summary-quiz--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="summary-quiz--takeaways-pane" role="tabpanel" aria-labelledby="summary-quiz--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Clustering helps reveal structure in unlabeled data.</li>
+<li>Clustering only becomes meaningful after we decide how objects are represented and what it means for them to be similar.</li>
+<li>Good clustering starts with representation, similarity, and clean input, not with picking an algorithm name first.</li>
+<li>Major clustering families include centroid-based, density-based, and hierarchical methods, each reflecting a different idea of structure.</li>
+<li>K-Means is most natural when clusters are compact and center-based.</li>
+<li>DBSCAN and HDBSCAN are more natural when clusters have irregular shapes, noise, or varying density structure.</li>
+<li>AGNES and DIANA are useful when we care about nested groupings and structure at multiple levels of granularity.</li>
+<li>The best method depends on the data and the problem, not on a universal ranking of algorithms.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-quiz" id="summary-quiz--quiz-pane" role="tabpanel" aria-labelledby="summary-quiz--quiz-tab" tabindex="0">
+<div class="note-quiz">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Summary Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 5</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">What problem is clustering primarily used to solve in these notes?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is the framing of supervised classification, not clustering.">A. Predicting labels from previously labeled examples.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The note defines clustering as discovering structure in unlabeled data through shared feature patterns.">B. Discovering natural groupings in unlabeled data by identifying shared patterns in features.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Clustering reveals group-level structure rather than collapsing everything into one summary.">C. Compressing every dataset into a single aggregate summary statistic.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is preparation work that supports clustering, not clustering itself.">D. Cleaning missing values and resolving inconsistencies before analysis.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="2">
+    <div class="note-quiz-question-title">Why do these notes emphasize data quality and EDA before applying a clustering algorithm?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The article says poor data can directly distort the patterns clustering tries to uncover.">A. Because clustering automatically fixes missing values and noisy records during training.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The note explicitly says EDA helps surface issues early so the discovered clusters are more trustworthy.">B. Because EDA and cleaning help reveal outliers, noise, and suspicious structure before they mislead the clustering result.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Clustering is useful precisely because it works on unlabeled data.">C. Because clustering only works after the data is manually labeled by domain experts.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The point is not identical preprocessing for all methods, but protecting structure from distortion.">D. Because every clustering method requires the same preprocessing pipeline regardless of the data.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="3">
+    <div class="note-quiz-question-title">According to the note, what makes two objects count as close in clustering?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The note stresses that closeness is not automatically physical distance.">A. They are always physically near each other in a two-dimensional plot.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Clustering is defined before labels exist.">B. They share the same label assigned by a classification model.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The note argues that clustering only becomes meaningful after representation and similarity are made explicit.">C. They are close under the chosen representation and similarity or distance measure.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Feature count alone does not define similarity.">D. They contain the same number of raw features, regardless of feature meaning.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="4">
+    <div class="note-quiz-question-title">Which clustering family is presented as especially useful for irregular cluster shapes and outliers?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The note says centroid-based methods work best when clusters are compact and center-shaped.">A. Centroid-based methods such as K-Means.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The note highlights DBSCAN for irregular shapes and cases where outliers should remain noise.">B. Density-based methods such as DBSCAN.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Hierarchical methods focus on nested structure across different levels of granularity.">C. Hierarchical methods such as AGNES and DIANA.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is not one of the clustering families discussed here.">D. Rule-based classification methods.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="5">
+    <div class="note-quiz-question-title">What is the defining idea behind hierarchical clustering in these notes?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is the centroid-based view.">A. Every cluster must be summarized by a single centroid.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is the density-based view.">B. Clusters are dense regions connected through local neighborhoods.</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The note defines hierarchical methods as building a hierarchy rather than a single flat partition.">C. Clusters are nested groupings that can be examined at multiple levels of granularity.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Labels are not required for clustering.">D. Clusters only exist when a dataset is already labeled into classes.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="summary-quiz--prompt-pane" role="tabpanel" aria-labelledby="summary-quiz--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="summary-quiz--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#summary-quiz--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="summary-quiz--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "questions": [
+    {
+      "question_id": "ratio-vs-interval",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Which numerical attribute type has a true zero and supports meaningful multiplication and division?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Interval",
+          "response": "Incorrect. Interval data has meaningful differences but no true zero, so ratios are not meaningful."
+        },
+        {
+          "id": "B",
+          "text": "Ratio",
+          "response": "Correct. Ratio data has an absolute zero, so ratio statements and multiplication/division are meaningful."
+        },
+        {
+          "id": "C",
+          "text": "Ordinal",
+          "response": "Incorrect. Ordinal data is ordered but does not define meaningful numeric distances."
+        },
+        {
+          "id": "D",
+          "text": "Nominal",
+          "response": "Incorrect. Nominal data is unordered categories and only supports equality checks."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Ratio data has an absolute zero, so ratio statements and multiplication/division are meaningful.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.data_mining",
+        "concept.preprocessing"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    }
+  ]
+}

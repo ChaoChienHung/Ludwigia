@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brief Introduction to Knowledge Discovery and Data Mining Algorithms &amp; Methods — Ludwig</title>
+  <meta name="garden:tags" content="Data Mining, Machine Learning, Exploratory Data Analysis, Preprocessing, Clustering, Classification, Regression, Association Rules, Graph Mining, Recommender Systems, Dimensionality Reduction, PCA, TSNE, Normalization, Feature Selection">
+  <meta name="garden:summary" content="Brief introduction to Knowledge Discovery and Data Mining algorithms &amp; methods: supervised vs unsupervised learning, key task families, and core dimensionality reduction ideas.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.machine_learning,concept.exploratory_data_analysis,concept.preprocessing,concept.clustering,concept.classification,concept.regression,concept.association_rules,concept.graph_mining,concept.recommender_systems,concept.dimensionality_reduction,concept.pca,concept.tsne,concept.normalization,concept.feature_selection">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.exploratory_data_analysis&quot;:{&quot;en&quot;:&quot;Exploratory Data Analysis&quot;,&quot;zh-Hant&quot;:&quot;探索式資料分析&quot;,&quot;zh-Hans&quot;:&quot;探索式数据分析&quot;},&quot;concept.preprocessing&quot;:{&quot;en&quot;:&quot;Preprocessing&quot;,&quot;zh-Hant&quot;:&quot;前處理&quot;,&quot;zh-Hans&quot;:&quot;预处理&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.classification&quot;:{&quot;en&quot;:&quot;Classification&quot;,&quot;zh-Hant&quot;:&quot;分類&quot;,&quot;zh-Hans&quot;:&quot;分类&quot;},&quot;concept.regression&quot;:{&quot;en&quot;:&quot;Regression&quot;,&quot;zh-Hant&quot;:&quot;迴歸&quot;,&quot;zh-Hans&quot;:&quot;回归&quot;},&quot;concept.association_rules&quot;:{&quot;en&quot;:&quot;Association Rules&quot;,&quot;zh-Hant&quot;:&quot;關聯規則&quot;,&quot;zh-Hans&quot;:&quot;关联规则&quot;},&quot;concept.graph_mining&quot;:{&quot;en&quot;:&quot;Graph Mining&quot;,&quot;zh-Hant&quot;:&quot;圖探勘&quot;,&quot;zh-Hans&quot;:&quot;图挖掘&quot;},&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.dimensionality_reduction&quot;:{&quot;en&quot;:&quot;Dimensionality Reduction&quot;,&quot;zh-Hant&quot;:&quot;降維&quot;,&quot;zh-Hans&quot;:&quot;降维&quot;},&quot;concept.pca&quot;:{&quot;en&quot;:&quot;PCA&quot;,&quot;zh-Hant&quot;:&quot;主成分分析&quot;,&quot;zh-Hans&quot;:&quot;主成分分析&quot;},&quot;concept.tsne&quot;:{&quot;en&quot;:&quot;TSNE&quot;,&quot;zh-Hant&quot;:&quot;t-SNE&quot;,&quot;zh-Hans&quot;:&quot;t-SNE&quot;},&quot;concept.normalization&quot;:{&quot;en&quot;:&quot;Normalization&quot;,&quot;zh-Hant&quot;:&quot;正規化&quot;,&quot;zh-Hans&quot;:&quot;归一化&quot;},&quot;concept.feature_selection&quot;:{&quot;en&quot;:&quot;Feature Selection&quot;,&quot;zh-Hant&quot;:&quot;特徵選擇&quot;,&quot;zh-Hans&quot;:&quot;特征选择&quot;}}">
+  <meta name="garden:canonical_id" content="brief-introduction-to-knowledge-discovery-and-data-mining-algorithms-and-methods">
+  <meta name="garden:published_at" content="2026-06-01">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="12">
+  <meta name="garden:source" content="notes/brief-introduction-to-knowledge-discovery-and-data-mining-algorithms-and-methods/brief-introduction-to-knowledge-discovery-and-data-mining-algorithms-and-methods-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Brief Introduction to Knowledge Discovery and Data Mining Algorithms &amp; Methods</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#algorithms">Algorithms &amp; Methods</a>
+<a class="note-toc-link level-2" href="#algorithms-guiding">Guiding Questions</a>
+<a class="note-toc-link level-2" href="#algorithms-supervised">Supervised &amp; Deep Learning</a>
+<a class="note-toc-link level-2" href="#algorithms-unsupervised">Unsupervised Learning</a>
+<a class="note-toc-link level-1" href="#summary">Summary &amp; Key Takeaways</a>
+<a class="note-toc-link level-1" href="#summary-quiz">Summary Quiz</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-01"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="algorithms" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Algorithms &amp; Methods</h3>
+
+<div id="algorithms-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Guiding Questions: Choosing the Right Tool</h4><p class="mb-3">Now that the soil is prepared, choose tools that match the plant you want to grow.</p>
+
+<ul class="note-list">
+<li>Do I have labels (supervised), or am I discovering structure (unsupervised)?</li>
+<li>Am I predicting (classification/regression) or discovering (clustering/association/graph patterns)?</li>
+<li>How will I validate and communicate results so they stay actionable?</li>
+</ul></div>
+
+<p class="mb-3">Having understood the inherent traits of our data and successfully guided it through the preprocessing pipeline, we can now enter the engine room of Knowledge Discovery and Data Mining: the data mining algorithms. These algorithms are not one-size-fits-all tools; instead, they are specialized instruments designed to solve distinct computational challenges.</p>
+
+<p class="mb-3">Before diving into specific algorithmic families, we must understand the primary tasks they are engineered to accomplish:</p>
+
+<ul class="note-list">
+<li>Classification &amp; Regression (Predictive Tasks):<ul class="note-list">
+<li>The Goal: To build a model that can forecast future outcomes based on historical data.</li>
+<li>The Mechanics: Classification maps data points into discrete, categorical buckets (e.g., predicting whether a patient has a disease: "Yes" or "No"). Regression, on the other hand, models continuous numerical trends (e.g., forecasting a patient's exact blood pressure level).</li>
+</ul></li>
+<li>Clustering (Descriptive Grouping):<ul class="note-list">
+<li>The Goal: To discover natural, hidden populations within a dataset without any prior instructions.</li>
+<li>The Mechanics: The algorithm mathematically scans the data to maximize intra-group similarity (making items inside a cluster as alike as possible) while minimizing inter-group overlap (pushing different clusters as far apart as possible). A common example is identifying distinct, unknown subtypes of a disease among thousands of patient profiles.</li>
+</ul></li>
+<li>Association Rules &amp; Correlation (Pattern Co-occurrence):<ul class="note-list">
+<li>The Goal: To find items or events that mathematically imply the presence of one another.</li>
+<li>The Mechanics: Most famously used in market-basket analysis, this task surfaces predictive rules (e.g., "Customers who buy diapers are $80\%$ likely to also purchase beer"). It scans massive transactional logs to move past basic statistical frequency and uncover genuine dependencies.</li>
+</ul></li>
+<li>Graph Mining &amp; Recommender Systems (Network &amp; Matrix Analysis):<ul class="note-list">
+<li>The Goal: To analyze highly interconnected or missing structural relational data.</li>
+<li>The Mechanics: Graph Mining treats data as networks of nodes and edges to isolate central hubs or tight-knit communities (such as mapping protein-protein interaction networks). Recommender Systems utilize large sparse matrices of past user behaviors to predict missing preferences and suggest new content (such as Netflix movie recommendations or predicting drug-target interactions).</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">The choice of which task to pursue—and which mathematical framework to deploy—fundamentally depends on the nature of our data's blueprint. Specifically, it hinges on whether our dataset possesses a "ground truth" guide to learn from, split into two primary paradigms: Supervised Learning and Unsupervised Learning.</p>
+
+<h4 id="algorithms-supervised" class="mb-2">Supervised &amp; Deep Learning</h4>
+
+<p class="mb-3">When a dataset arrives with established, gold-standard labels, supervised learning algorithms are deployed. In this setup, the algorithm acts like a student with an answer key, constantly adjusting its internal parameters to minimize the gap between its predictions and the actual ground truth.</p>
+
+<p class="mb-3">In practical classification tasks, classical algorithms like Support Vector Machines (SVM) and K-Nearest Neighbors (KNN) are frequently used to draw mathematical boundaries between distinct classes. For instance, in biomedical workflows, these models can successfully categorize cancerous versus healthy tissues by identifying specific threshold boundaries within highly complex gene expression profiles.</p>
+
+<p class="mb-3">Similarly, Random Forests—an ensemble architecture built by aggregating numerous individual Decision Trees—provide both robust predictive power and structural interpretability. Because a single Decision Tree is essentially a flow chart of sequential feature tests and logical rules (e.g., If Gene A &gt; 2.5 and Gene B &lt; 1.0, then Classify as Type X), practitioners can inspect the forest to understand exactly how a clinical or pathway-based decision was formulated.</p>
+
+<p class="mb-3">When the data scales into massive, highly intricate biological configurations, Deep Learning architectures take over. These neural networks automatically extract hierarchical features without manual engineering:</p>
+
+<ul class="note-list">
+<li>Convolutional Neural Networks (CNNs): Excel at processing structural, spatial data. They can analyze medical images to detect tumors or predict protein secondary structures directly from raw, spatial amino acid layouts.</li>
+<li>Recurrent Neural Networks (RNNs): Engineered to handle sequential data where order carries meaning. They are highly effective at tracking long-range dependencies over time, making them the ideal tool for mapping nucleotide chains and calculating alignment or sequence similarities.</li>
+</ul>
+
+<h4 id="algorithms-unsupervised" class="mb-2">Unsupervised Learning</h4>
+
+<p class="mb-3">Conversely, when a dataset lacks predefined labels or target outcomes, we must rely on unsupervised learning to independently uncover the data's raw, underlying topology. Without an answer key, these algorithms look purely at the intrinsic geometric distribution of the data to find patterns.</p>
+
+<p class="mb-3">Hierarchical Clustering is widely favored when the analytical goal is to build an evolutionary or structural taxonomy. It groups data points into nested, tree-like structures (dendrograms), which allows researchers to visually trace how distinct protein families branch out from common ancestors. For flatter, hard partitions, K-Means Clustering is deployed to systematically divide a dataset into $K$ distinct groups, a technique frequently used to map co-expressed genes across specific chromosomal regions.</p>
+
+<p class="mb-3">Another monumental task within unsupervised learning is Dimensionality Reduction. Real-world datasets—especially in biology—are heavily burdened by the "curse of dimensionality," containing thousands of variables per sample. Because human perception is strictly limited to 2D or 3D spaces, visualizing these complex spaces is impossible without mathematical compression. Furthermore, excessive dimensions introduce massive background noise that obscures true patterns.</p>
+
+<p class="mb-3">To solve this, practitioners utilize advanced mathematical transformations:</p>
+
+<ul class="note-list">
+<li>Principal Component Analysis (PCA): A linear method that rotates the data space to capture the axes of maximum statistical variance. Because it highlights major structural shifts, PCA is frequently used to identify statistical anomalies and perform outlier classification.</li>
+<li>t-Distributed Stochastic Neighbor Embedding (t-SNE): A non-linear technique that preserves local distances, mapping high-dimensional data into a 2D plane so that highly similar points remain tightly packed together. This has become the gold standard for single-cell RNA-sequencing (scRNA-seq) visualization, allowing researchers to visually isolate entirely new cell types.</li>
+<li>Non-Negative Matrix Factorization (NMF): An unsupervised matrix decomposition approach that forces all factored components to be non-negative. This constraint makes NMF exceptionally useful for gene expression profile clustering, as it yields a "parts-based" representation that maps cleanly onto real, additive biological pathways.</li>
+</ul>
+
+<div class="note-quiz mt-4">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 11</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">Which statement best distinguishes supervised learning from unsupervised learning?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Supervised learning uses labeled ground truth; unsupervised learning discovers structure without labels.">A. Supervised learning trains on labeled data, while unsupervised learning finds patterns without labels.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Both can scale; the key difference here is the presence of labels.">B. Supervised learning only works on small datasets, while unsupervised learning only works on large datasets.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Supervision is about labels, not whether data is structured.">C. Supervised learning only works on structured data, while unsupervised learning only works on unstructured data.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Deep learning can be supervised or unsupervised; it is not the separator.">D. Supervised learning is deep learning, while unsupervised learning is classical machine learning.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="2">
+    <div class="note-quiz-question-title">Which statement best distinguishes supervised learning from unsupervised learning?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Supervised learning uses labeled ground truth; unsupervised learning discovers structure without labels.">A. Supervised learning trains on labeled data, while unsupervised learning finds patterns without labels.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Both can scale; the key difference is whether labels exist.">B. Supervised learning only works on small datasets, while unsupervised learning only works on large datasets.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Supervision is about labels, not whether data is structured.">C. Supervised learning only works on structured data, while unsupervised learning only works on unstructured data.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Deep learning can be supervised or unsupervised; it is not the separator.">D. Supervised learning is deep learning, while unsupervised learning is classical machine learning.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="3">
+    <div class="note-quiz-question-title">Which pairing correctly matches the predictive task with its output type?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Classification predicts categories, not continuous values.">A. Classification → continuous value; Regression → category</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Classification predicts discrete categories; regression predicts continuous values.">B. Classification → category; Regression → continuous value</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Both can be used for prediction; the difference is output type.">C. Classification → only for unsupervised learning; Regression → only for supervised learning</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Time is not what distinguishes classification vs regression.">D. Classification → time series; Regression → graphs</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="4">
+    <div class="note-quiz-question-title">Which task is most closely associated with market-basket analysis (e.g., “diapers → beer”)?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Clustering groups items; it does not directly produce implication rules.">A. Clustering</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Classification predicts labels for new examples.">B. Classification</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Association rules discover co-occurrence patterns and implication-like rules.">C. Association rules &amp; correlation</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Dimensionality reduction compresses features; it does not produce basket rules.">D. Dimensionality reduction</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="5">
+    <div class="note-quiz-question-title">In this note, what is the core idea behind recommender systems?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. That describes graph mining; recommender systems often operate on sparse user-item matrices.">A. Finding hubs and communities in a network of nodes and edges</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Recommenders use sparse behavior matrices to predict missing preferences and suggest content.">B. Predicting missing user preferences in a sparse behavior matrix to suggest new items</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That describes clustering.">C. Grouping users into K groups without labels</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That is data preprocessing, not recommendation.">D. Removing duplicates and imputing missing values in raw data</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="6">
+    <div class="note-quiz-question-title">Which method is described as a non-linear technique commonly used for scRNA-seq visualization?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. PCA is a linear variance-maximizing method.">A. PCA</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. t-SNE is highlighted as a non-linear neighborhood-preserving visualization method.">B. t-SNE</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. NMF is a matrix factorization method, not the one described as non-linear neighborhood embedding here.">C. NMF</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Random Forest is a supervised ensemble model, not dimensionality reduction.">D. Random Forest</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="7">
+    <div class="note-quiz-question-title">Which pairing best matches the deep learning architecture to the data type it is described to handle?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The note describes CNNs for spatial/structural data, and RNNs for sequential data.">A. CNN → sequences; RNN → images</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. CNNs are described for spatial/structural data; RNNs for sequential data.">B. CNN → spatial/structural data; RNN → sequential data</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Both can be used broadly, but the note highlights a specific pairing.">C. CNN → graphs; RNN → tabular data</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The note does not frame them this way.">D. CNN → unsupervised learning; RNN → supervised learning</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="8">
+    <div class="note-quiz-question-title">Which unsupervised method is described as producing nested, tree-like groupings (a dendrogram)?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. K-Means produces flat partitions, not a dendrogram.">A. K-Means clustering</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Hierarchical clustering is described as building a nested taxonomy (dendrogram).">B. Hierarchical clustering</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. PCA is dimensionality reduction.">C. PCA</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Random Forest is a supervised ensemble model.">D. Random Forest</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="9">
+    <div class="note-quiz-question-title">In this note’s framing, what triggers the need for unsupervised learning?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Having labels indicates supervised learning.">A. The dataset has reliable ground-truth labels</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Unsupervised learning is used when labels/targets are absent.">B. The dataset lacks predefined labels or target outcomes</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Scale alone does not determine supervised vs unsupervised.">C. The dataset is too large to label</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Data representation is not the key trigger here; labels are.">D. The dataset is semi-structured instead of tabular</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="10">
+    <div class="note-quiz-question-title">Which statement best matches the purpose of dimensionality reduction described in this note?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Dimensionality reduction is about compressing features, not producing class labels.">A. Assigning new data points into predefined categories</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Dimensionality reduction is not the same as association-rule mining.">B. Discovering market-basket rules like “diapers → beer”</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. It compresses high-dimensional spaces for visualization and reduces noise/curse-of-dimensionality issues.">C. Compressing high-dimensional data to visualize structure and reduce the curse of dimensionality</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That describes graph mining.">D. Finding central hubs in a node-edge network</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="11">
+    <div class="note-quiz-question-title">Which statement best matches PCA as described in this note?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. PCA is described as a linear method that captures axes of maximum variance.">A. A linear method that rotates the space to capture axes of maximum variance</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That describes t-SNE in the note.">B. A non-linear neighborhood-preserving embedding commonly used for scRNA-seq visualization</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That describes NMF in the note.">C. A non-negative factorization that yields parts-based representations</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That describes supervised learning with labels.">D. A method that requires ground-truth labels to learn class boundaries</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="qa-generator-prompt" class="note-section note-qa-section" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout">
+<div class="note-qa" data-qa-block="qa-generator-prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#qa-generator-prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="qa-generator-prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+  </div>
+</section>
+
+<section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;/reviewkit&gt;</p>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

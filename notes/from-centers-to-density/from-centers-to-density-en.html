@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>From Centers to Density: K-Means, DBSCAN, and the Geometry of Clusters</title>
+  <meta name="garden:tags" content="Data Mining, Clustering, K-Means, DBSCAN, Centroid, Density">
+  <meta name="garden:summary" content="A comparison of K-Means and DBSCAN through the assumptions they make about cluster shape, noise, parameters, and practical use.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.k_means,concept.dbscan,concept.centroid,concept.density">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.k_means&quot;:{&quot;en&quot;:&quot;K-Means&quot;,&quot;zh-Hant&quot;:&quot;K-Means 分群&quot;,&quot;zh-Hans&quot;:&quot;K-Means 聚类&quot;},&quot;concept.dbscan&quot;:{&quot;en&quot;:&quot;DBSCAN&quot;,&quot;zh-Hant&quot;:&quot;DBSCAN&quot;,&quot;zh-Hans&quot;:&quot;DBSCAN&quot;},&quot;concept.centroid&quot;:{&quot;en&quot;:&quot;Centroid&quot;,&quot;zh-Hant&quot;:&quot;質心&quot;,&quot;zh-Hans&quot;:&quot;质心&quot;},&quot;concept.density&quot;:{&quot;en&quot;:&quot;Density&quot;,&quot;zh-Hant&quot;:&quot;密度&quot;,&quot;zh-Hans&quot;:&quot;密度&quot;}}">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="5">
+  <meta name="garden:source" content="notes/from-centers-to-density/from-centers-to-density-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">From Centers to Density: K-Means, DBSCAN, and the Geometry of Clusters</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#draft-intent">Draft Intent</a>
+<a class="note-toc-link level-1" href="#draft-mapping-from-the-original-note">Draft Mapping from the Original Note</a>
+<a class="note-toc-link level-1" href="#introduction-two-different-answers-to-the-same-question">Introduction: Two Different Answers to the Same Question</a>
+<a class="note-toc-link level-1" href="#k-means-clusters-around-centers">K-Means: Clusters Around Centers</a>
+<a class="note-toc-link level-1" href="#where-k-means-breaks">Where K-Means Breaks</a>
+<a class="note-toc-link level-1" href="#dbscan-clusters-as-dense-connected-regions">DBSCAN: Clusters as Dense Connected Regions</a>
+<a class="note-toc-link level-1" href="#where-dbscan-breaks">Where DBSCAN Breaks</a>
+<a class="note-toc-link level-1" href="#comparison-choosing-by-geometry-noise-and-judgment">Comparison: Choosing by Geometry, Noise, and Judgment</a>
+<a class="note-toc-link level-1" href="#conclusion-the-algorithm-follows-the-structure">Conclusion: The Algorithm Follows the Structure</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="draft-intent" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Draft Intent</h3>
+
+<ul class="note-list">
+<li>Core question: once we agree that similarity matters, what different assumptions can algorithms make about the shape of a cluster?</li>
+<li>Role in the content chain: this is a bridge note that follows the overview page, not necessarily the final home of all method detail.</li>
+<li>Target outcome: the reader should be able to explain why K-Means and DBSCAN succeed on different kinds of structure, and see why each technique may deserve its own standalone note later.</li>
+</ul>
+</section>
+
+<section id="draft-mapping-from-the-original-note" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Draft Mapping from the Original Note</h3>
+
+<ul class="note-list">
+<li>Keep and refine <code>### K-Means: The Centroid-Based Approach</code>.</li>
+<li>Keep and refine <code>### DBSCAN: The Density-Based Approach</code>.</li>
+<li>Keep <code>## Limitations</code>, but reorganize it so each method's failure modes appear closer to its assumptions.</li>
+<li>Keep <code>## Comparison: K-Means vs. DBSCAN</code>, but use it as the synthesis section rather than as the first time trade-offs appear.</li>
+<li>Rework the summary so it closes on selection by data geometry, not on repeating the whole clustering introduction.</li>
+<li>Pull in only the minimum conceptual bridge needed from the overview note:<ul class="note-list">
+<li>once similarity is defined, different algorithms correspond to different notions of group structure</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="introduction-two-different-answers-to-the-same-question" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Introduction: Two Different Answers to the Same Question</h3>
+
+<p class="mb-3">Open with a single setup question:</p>
+
+<ul class="note-list">
+<li>what should a cluster look like?</li>
+</ul>
+
+<p class="mb-3">Then frame the contrast:</p>
+
+<ul class="note-list">
+<li>K-Means assumes clusters can be summarized by centers.</li>
+<li>DBSCAN assumes clusters are dense regions separated by sparse space.</li>
+</ul>
+
+<p class="mb-3">This opening should immediately tell the reader why these methods are being compared together:</p>
+
+<ul class="note-list">
+<li>they solve the same high-level problem while encoding different geometric assumptions</li>
+</ul>
+</section>
+
+<section id="k-means-clusters-around-centers" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">K-Means: Clusters Around Centers</h3>
+
+<p class="mb-3">Use the current intuition-first progression, but tighten the line of argument:</p>
+
+<ol class="mb-3">
+<li>A good cluster feels tight.</li>
+<li>Tightness becomes distance to a representative center.</li>
+<li>Under squared distance, the mean becomes the natural center.</li>
+<li>Minimizing SSE becomes the operational objective.</li>
+</ol>
+
+<p class="mb-3">Keep:</p>
+
+<ul class="note-list">
+<li>the SSE formula</li>
+<li>the centroid formula</li>
+<li>Lloyd's algorithm steps</li>
+<li>the callout about why a centroid need not be a real data point</li>
+</ul>
+
+<p class="mb-3">What this section must make explicit:</p>
+
+<ul class="note-list">
+<li>K-Means is not just "grouping by proximity."</li>
+<li>It is optimizing a center-based notion of compactness.</li>
+</ul>
+
+<p class="mb-3">End with a short diagnostic sentence:</p>
+
+<ul class="note-list">
+<li>K-Means is strongest when the data really does look like compact groups organized around centers.</li>
+</ul>
+</section>
+
+<section id="where-k-means-breaks" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Where K-Means Breaks</h3>
+
+<p class="mb-3">Move the limitations closer to the method.</p>
+
+<p class="mb-3">Keep and sharpen:</p>
+
+<ul class="note-list">
+<li>sensitivity to initialization</li>
+<li>local optima</li>
+<li>preference for roughly spherical, similarly sized clusters</li>
+<li>weakness under irregular shapes, varying density, and heavy noise</li>
+</ul>
+
+<p class="mb-3">Variants can remain as a short final paragraph:</p>
+
+<ul class="note-list">
+<li>K-Means++</li>
+<li>X-Means</li>
+<li>K-Medoids</li>
+</ul>
+
+<p class="mb-3">But keep the section focused:</p>
+
+<ul class="note-list">
+<li>these variants patch weaknesses; they do not erase the center-based bias of the method</li>
+</ul>
+</section>
+
+<section id="dbscan-clusters-as-dense-connected-regions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DBSCAN: Clusters as Dense Connected Regions</h3>
+
+<p class="mb-3">Use the current structure, but make the logic of density connectivity more central.</p>
+
+<p class="mb-3">Progression:</p>
+
+<ol class="mb-3">
+<li>Some data does not form nice spherical groups.</li>
+<li>We may care more about connected dense regions than about centers.</li>
+<li>DBSCAN uses <code>eps</code> and <code>MinPts</code> to decide whether a point lives inside such a region.</li>
+<li>Core points enable expansion; border points attach without continuing the growth; noise points remain outside.</li>
+</ol>
+
+<p class="mb-3">Keep:</p>
+
+<ul class="note-list">
+<li>parameter definitions</li>
+<li>core / border / noise roles</li>
+<li>two-phase expansion explanation</li>
+<li>the callout about noise versus outlier</li>
+</ul>
+
+<p class="mb-3">End with the method identity:</p>
+
+<ul class="note-list">
+<li>DBSCAN is strong because it can keep arbitrary shapes intact and avoid forcing every point into a cluster.</li>
+</ul>
+</section>
+
+<section id="where-dbscan-breaks" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Where DBSCAN Breaks</h3>
+
+<p class="mb-3">Keep the current limitations, but tie them more directly to the density assumption:</p>
+
+<ul class="note-list">
+<li>sensitivity to <code>eps</code> and <code>MinPts</code></li>
+<li>difficulty with clusters of very different densities</li>
+<li>parameter choice often depends on EDA and domain knowledge</li>
+</ul>
+
+<p class="mb-3">The payoff sentence:</p>
+
+<ul class="note-list">
+<li>DBSCAN removes the need to pre-specify <code>K</code>, but it replaces that convenience with a different burden: deciding what should count as density</li>
+</ul>
+</section>
+
+<section id="comparison-choosing-by-geometry-noise-and-judgment" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Comparison: Choosing by Geometry, Noise, and Judgment</h3>
+
+<p class="mb-3">This is the synthesis section.</p>
+
+<p class="mb-3">Keep the comparison table, but the prose around it should do more work:</p>
+
+<ul class="note-list">
+<li>K-Means asks: can I explain the data by compact regions around centers?</li>
+<li>DBSCAN asks: can I explain the data by dense connected regions separated by sparse space?</li>
+</ul>
+
+<p class="mb-3">Then walk through three decision axes:</p>
+
+<ul class="note-list">
+<li>geometry: center-based versus irregular shape</li>
+<li>noise: forced assignment versus explicit noise handling</li>
+<li>analyst burden: choosing <code>K</code> versus tuning density parameters</li>
+</ul>
+
+<p class="mb-3">Keep the final selection heuristic:</p>
+
+<ul class="note-list">
+<li>compact, center-based, speed-sensitive settings often favor K-Means</li>
+<li>irregular, noisy, shape-sensitive settings often favor DBSCAN</li>
+</ul>
+</section>
+
+<section id="conclusion-the-algorithm-follows-the-structure" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Conclusion: The Algorithm Follows the Structure</h3>
+
+<p class="mb-3">The closing should be short and clean:</p>
+
+<ul class="note-list">
+<li>There is no universally best clustering method.</li>
+<li>K-Means and DBSCAN differ because they encode different beliefs about what a group looks like.</li>
+<li>The right choice follows the geometry and density pattern of the data, not a generic ranking of algorithms.</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

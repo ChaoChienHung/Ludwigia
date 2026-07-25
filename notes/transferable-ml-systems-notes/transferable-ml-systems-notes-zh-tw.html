@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>可遷移機器學習與系統設計筆記</title>
+  <meta name="garden:tags" content="機器學習, 系統設計, 縮放定律, 序列, 資料, 訊噪比, 配額, 去重, 上下文, Chinchilla, 嵌入表示, 稀疏性, 注意力, 記憶, 記憶痕跡, 正交性, 局部敏感雜湊, 代理, 大型語言模型">
+  <meta name="garden:summary" content="從數據/序列、Scaling Laws、記憶注入，到系統/Agent 邊界的可遷移原則。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.machine_learning,concept.system_design,concept.scaling_laws,concept.sequence,concept.data,concept.snr,concept.quota,concept.dedup,concept.context,concept.chinchilla,concept.embedding,concept.sparsity,concept.attention,concept.memory,concept.engram,concept.orthogonality,concept.lsh,concept.agent,concept.llm">
+  <meta name="garden:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.system_design&quot;:{&quot;en&quot;:&quot;System Design&quot;,&quot;zh-Hant&quot;:&quot;系統設計&quot;,&quot;zh-Hans&quot;:&quot;系统设计&quot;},&quot;concept.scaling_laws&quot;:{&quot;en&quot;:&quot;Scaling Laws&quot;,&quot;zh-Hant&quot;:&quot;縮放定律&quot;,&quot;zh-Hans&quot;:&quot;缩放定律&quot;},&quot;concept.sequence&quot;:{&quot;en&quot;:&quot;Sequence&quot;,&quot;zh-Hant&quot;:&quot;序列&quot;,&quot;zh-Hans&quot;:&quot;序列&quot;},&quot;concept.data&quot;:{&quot;en&quot;:&quot;Data&quot;,&quot;zh-Hant&quot;:&quot;資料&quot;,&quot;zh-Hans&quot;:&quot;数据&quot;},&quot;concept.snr&quot;:{&quot;en&quot;:&quot;SNR&quot;,&quot;zh-Hant&quot;:&quot;訊噪比&quot;,&quot;zh-Hans&quot;:&quot;信噪比&quot;},&quot;concept.quota&quot;:{&quot;en&quot;:&quot;Quota&quot;,&quot;zh-Hant&quot;:&quot;配額&quot;,&quot;zh-Hans&quot;:&quot;配额&quot;},&quot;concept.dedup&quot;:{&quot;en&quot;:&quot;Dedup&quot;,&quot;zh-Hant&quot;:&quot;去重&quot;,&quot;zh-Hans&quot;:&quot;去重&quot;},&quot;concept.context&quot;:{&quot;en&quot;:&quot;Context&quot;,&quot;zh-Hant&quot;:&quot;上下文&quot;,&quot;zh-Hans&quot;:&quot;上下文&quot;},&quot;concept.chinchilla&quot;:{&quot;en&quot;:&quot;Chinchilla&quot;,&quot;zh-Hant&quot;:&quot;Chinchilla&quot;,&quot;zh-Hans&quot;:&quot;Chinchilla&quot;},&quot;concept.embedding&quot;:{&quot;en&quot;:&quot;Embedding&quot;,&quot;zh-Hant&quot;:&quot;嵌入表示&quot;,&quot;zh-Hans&quot;:&quot;嵌入表示&quot;},&quot;concept.sparsity&quot;:{&quot;en&quot;:&quot;Sparsity&quot;,&quot;zh-Hant&quot;:&quot;稀疏性&quot;,&quot;zh-Hans&quot;:&quot;稀疏性&quot;},&quot;concept.attention&quot;:{&quot;en&quot;:&quot;Attention&quot;,&quot;zh-Hant&quot;:&quot;注意力&quot;,&quot;zh-Hans&quot;:&quot;注意力&quot;},&quot;concept.memory&quot;:{&quot;en&quot;:&quot;Memory&quot;,&quot;zh-Hant&quot;:&quot;記憶&quot;,&quot;zh-Hans&quot;:&quot;记忆&quot;},&quot;concept.engram&quot;:{&quot;en&quot;:&quot;Engram&quot;,&quot;zh-Hant&quot;:&quot;記憶痕跡&quot;,&quot;zh-Hans&quot;:&quot;记忆痕迹&quot;},&quot;concept.orthogonality&quot;:{&quot;en&quot;:&quot;Orthogonality&quot;,&quot;zh-Hant&quot;:&quot;正交性&quot;,&quot;zh-Hans&quot;:&quot;正交性&quot;},&quot;concept.lsh&quot;:{&quot;en&quot;:&quot;LSH&quot;,&quot;zh-Hant&quot;:&quot;局部敏感雜湊&quot;,&quot;zh-Hans&quot;:&quot;局部敏感哈希&quot;},&quot;concept.agent&quot;:{&quot;en&quot;:&quot;Agent&quot;,&quot;zh-Hant&quot;:&quot;代理&quot;,&quot;zh-Hans&quot;:&quot;代理&quot;},&quot;concept.llm&quot;:{&quot;en&quot;:&quot;LLM&quot;,&quot;zh-Hant&quot;:&quot;大型語言模型&quot;,&quot;zh-Hans&quot;:&quot;大型语言模型&quot;}}">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="8">
+  <meta name="garden:source" content="notes/transferable-ml-systems-notes/transferable-ml-systems-notes-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">可遷移機器學習與系統設計筆記</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">四個核心領域</a>
+<a class="note-toc-link level-1" href="#data-sequence-modeling">一、序列與數據建模 (Data &amp; Sequence Modeling)</a>
+<a class="note-toc-link level-2" href="#1-snr-behavioral-quota-filtering">1. 序列信噪比（SNR）控制與配額過濾 (Behavioral Quota Filtering)</a>
+<a class="note-toc-link level-2" href="#2-context-aware-deduplication">2. 上下文感知去重 (Context-Aware Deduplication)</a>
+<a class="note-toc-link level-1" href="#model-architecture-scaling-laws">二、模型架構與縮放定律 (Model Architecture &amp; Scaling Laws)</a>
+<a class="note-toc-link level-2" href="#1-chinchilla-law-embedding">1. Chinchilla Law 的參數口徑與 Embedding 本質</a>
+<a class="note-toc-link level-2" href="#2-sparsity-tolerance-vs-model-scale">2. 模型規模與稀疏性容忍度 (Sparsity Tolerance vs. Model Scale)</a>
+<a class="note-toc-link level-1" href="#memory-injection-orthogonality">三、記憶注入與特徵正交性 (Memory Injection &amp; Orthogonality)</a>
+<a class="note-toc-link level-2" href="#1-engram-injection">1. Engram Injection（記憶外掛與算力解放）</a>
+<a class="note-toc-link level-2" href="#2-orthogonal-gains">2. 架構收益與特徵收益的正交性 (Orthogonal Gains)</a>
+<a class="note-toc-link level-1" href="#agent-system-design-agent-limits">四、系統設計與 Agent 邊界 (System Design &amp; Agent Limits)</a>
+<a class="note-toc-link level-2" href="#1-lsh">1. LSH（局部敏感哈希）的應用邊界與召回深度博弈</a>
+<a class="note-toc-link level-2" href="#2-agentic-cycle-llm">2. Agentic Cycle 中 LLM 的「局部最優陷阱」</a>
+<a class="note-toc-link level-1" href="#section-2">可遷移總結</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">這是一份為您深度提煉的知識點筆記。我已經過濾掉了單純的實驗數值和特定業務的 performance improvement，專注於提取可遷移（Transferable）與可泛化（Generalizable）的核心機器學習、模型架構與系統設計概念。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">四個核心領域</h3>
+
+<ul class="note-list">
+<li><code>1</code> 序列與數據建模</li>
+<li><code>2</code> 模型架構與縮放定律</li>
+<li><code>3</code> 記憶注入與特徵正交性</li>
+<li><code>4</code> 系統設計與 Agent 邊界</li>
+</ul>
+</section>
+
+<section id="data-sequence-modeling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">一、序列與數據建模 (Data &amp; Sequence Modeling)</h3>
+
+<h4 id="1-snr-behavioral-quota-filtering" class="mb-2">1. 序列信噪比（SNR）控制與配額過濾 (Behavioral Quota Filtering)</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">在處理長尾且極度不平衡的用戶行為序列時，低價值且高頻的行為（如 Impression/曝光）會迅速淹沒高價值但低頻的行為（如 Order/下單、Cart/加購），導致模型對深度轉化信號的建模能力退化。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">構建任何時間序列或行為序列數據時，引入嚴格的優先級與硬性配額上限（Hard Quota）。高價值數據可向下順延填補空缺，但低價值噪音數據必須有絕對截斷閾值，等同於在數據層面強制提升信噪比（SNR）。</p></div>
+
+<h4 id="2-context-aware-deduplication" class="mb-2">2. 上下文感知去重 (Context-Aware Deduplication)</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">去重不應僅依賴 ID 精確匹配。同一個實體在不同場景（Scene）下出現，可能蘊含不同意圖信號。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">只要在輸入前綴保留足夠的場景上下文，神經網絡可學會區分「無效重複」與「有效回訪」。長序列去重主鍵建議使用 <code>Context + ID</code>，而不是單純 <code>ID</code>。</p></div>
+</section>
+
+<section id="model-architecture-scaling-laws" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">二、模型架構與縮放定律 (Model Architecture &amp; Scaling Laws)</h3>
+
+<h4 id="1-chinchilla-law-embedding" class="mb-2">1. Chinchilla Law 的參數口徑與 Embedding 本質</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">評估模型參數規模與 FLOPs 時，Tie / Untie Embedding（輸入與輸出層共享權重）的處理方式很關鍵。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">Tie Embedding 更像正則化（Regularization），不是新增「額外參數」。算力口徑下，Untied 輸入 Embedding 多是 lookup，通常不參與密集矩陣乘法。有效參數口徑可用 <code>N = body + V · H</code>，而不是把 embedding 算兩次，這會直接影響 Scaling Laws 的預測準確性。</p></div>
+
+<h4 id="2-sparsity-tolerance-vs-model-scale" class="mb-2">2. 模型規模與稀疏性容忍度 (Sparsity Tolerance vs. Model Scale)</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">在 Full Attention 與 Sliding Window Attention 的比例分配上，不同模型規模對稀疏度的容忍不同。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">模型容量越大，越能吃下更高稀疏度：可維持少量 Full Attention 層不變，並提高 Sliding Window 層比例。小模型過度稀疏容易崩。結構化稀疏（Structural Sparsity）的 ROI 往往在大模型上更高。</p></div>
+</section>
+
+<section id="memory-injection-orthogonality" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">三、記憶注入與特徵正交性 (Memory Injection &amp; Orthogonality)</h3>
+
+<h4 id="1-engram-injection" class="mb-2">1. Engram Injection（記憶外掛與算力解放）</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">透過 Gated Projection（類似殘差連接），把高頻模式（如固定 ID 組合）注入到模型淺層（Layer 0 之後）。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">模型算力有限。若大量參數用於死記硬背高頻共現模式，會擠壓推理能力。把高頻模式交給外部 Engram 模塊可解放算力；並且不經 Attention 建模組合、直接 Gate 注入，在動力學上可視作增加有效深度（Effective Depth）。</p></div>
+
+<h4 id="2-orthogonal-gains" class="mb-2">2. 架構收益與特徵收益的正交性 (Orthogonal Gains)</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">引入 Engram（架構層）與引入額外 Context（數據層特徵豐富）帶來的收益可疊加。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">不同歸納偏置（Inductive Bias）的引入通常正交：改信息流路徑（架構修改）與提升輸入信息熵（特徵工程）常互補，是打破瓶頸的通用策略。</p></div>
+</section>
+
+<section id="agent-system-design-agent-limits" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">四、系統設計與 Agent 邊界 (System Design &amp; Agent Limits)</h3>
+
+<h4 id="1-lsh" class="mb-2">1. LSH（局部敏感哈希）的應用邊界與召回深度博弈</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">LSH 的優勢在於候選更小、排序更精確；但當召回配額極大時，粗暴 baseline 可能靠覆蓋率抹平優勢。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">算法選擇強依賴系統約束（Constraints）。在小 Top-K、低延遲、高精度場景，精細算法價值更能兌現；在寬召回、大 Quota 場景，覆蓋率更重要，應選開銷最小的 baseline。沒有絕對領先算法，只有最匹配 operating regime 的策略。</p></div>
+
+<h4 id="2-agentic-cycle-llm" class="mb-2">2. Agentic Cycle 中 LLM 的「局部最優陷阱」</h4>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心概念</strong></p><p class="mb-2">在沒有足夠外部回饋與硬性約束時，LLM 很容易在局部語義空間裡反覆修飾、重寫與打轉，陷入看似有進展、實則沒有真正突破的局部最優陷阱。</p></div>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>泛化應用</strong></p><p class="mb-2">Agentic workflow 不能只依賴「讓模型再想一次」。需要顯式 feedback signal、termination rule、以及 hard-stuck breaker。否則 loop 只會放大語言流暢性，卻不一定提高任務完成度。</p></div>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">可遷移總結</h3>
+
+<ul class="note-list">
+<li>好的序列建模，核心不是保留最多資料，而是保留最高價值的訊號。</li>
+<li>好的模型設計，不能只看參數量，還要看算力口徑、稀疏配置與可被釋放的有效深度。</li>
+<li>好的記憶與特徵設計，常來自不同歸納偏置的正交疊加。</li>
+<li>好的系統與 Agent 設計，關鍵不是單點技術最強，而是是否匹配 operating regime 與回饋機制。</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

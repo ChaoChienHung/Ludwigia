@@ -1,0 +1,375 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "point-born-taiwan",
+      "type": "point",
+      "scale": "micro",
+      "at": "2000-10-14",
+      "title": {
+        "en": "Born in Taiwan",
+        "zh-Hant": "出生於台灣",
+        "zh-Hans": "出生于台湾"
+      },
+      "summary": {
+        "en": "The timeline begins with being born in Taiwan on October 14, 2000.",
+        "zh-Hant": "時間線從 2000 年 10 月 14 日出生於台灣開始。",
+        "zh-Hans": "时间线从 2000 年 10 月 14 日出生于台湾开始。"
+      },
+      "detail": {
+        "en": "This is the opening point of the personal timeline: born in Taiwan on October 14, 2000.",
+        "zh-Hant": "這是個人時間線的起點：2000 年 10 月 14 日出生於台灣。",
+        "zh-Hans": "这是个人时间线的起点：2000 年 10 月 14 日出生于台湾。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-indonesia",
+      "type": "period",
+      "scale": "micro",
+      "start": "2008-07",
+      "end": "2013-08",
+      "label": {
+        "en": "2008-07-2013-08",
+        "zh-Hant": "2008-07-2013-08",
+        "zh-Hans": "2008-07-2013-08"
+      },
+      "title": {
+        "en": "Indonesia Chapter",
+        "zh-Hant": "印尼生活階段",
+        "zh-Hans": "印尼生活阶段"
+      },
+      "summary": {
+        "en": "Moved to Indonesia around July 2008 and stayed there until returning to Taiwan around August 2013.",
+        "zh-Hant": "約在 2008 年 7 月前往印尼生活，直到約 2013 年 8 月回到台灣。",
+        "zh-Hans": "约在 2008 年 7 月前往印度尼西亚生活，直到约 2013 年 8 月回到台湾。"
+      },
+      "detail": {
+        "en": "This period covers the years spent in Indonesia after moving there around July 2008, ending with the return to Taiwan around August 2013.",
+        "zh-Hant": "這段期間是自約 2008 年 7 月前往印尼之後，到約 2013 年 8 月返回台灣之前的生活階段。",
+        "zh-Hans": "这段期间是自约 2008 年 7 月前往印度尼西亚之后，到约 2013 年 8 月返回台湾之前的生活阶段。"
+      },
+      "start_title": {
+        "en": "Moved to Indonesia",
+        "zh-Hant": "前往印尼",
+        "zh-Hans": "前往印度尼西亚"
+      },
+      "end_title": {
+        "en": "Back to Taiwan",
+        "zh-Hant": "回到台灣",
+        "zh-Hans": "回到台湾"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-ren-ai-elementary",
+      "type": "period",
+      "category": "education",
+      "scale": "micro",
+      "start": "2007-09",
+      "end": "2008-06",
+      "label": {
+        "en": "2007-09-2008-06",
+        "zh-Hant": "2007-09-2008-06",
+        "zh-Hans": "2007-09-2008-06"
+      },
+      "title": {
+        "en": "Ren-Ai Elementary School",
+        "zh-Hant": "新北市蘆洲區仁愛國民小學",
+        "zh-Hans": "新北市芦洲区仁爱国民小学"
+      },
+      "summary": {
+        "en": "Studied at Ren-Ai Elementary School from September 2007 to June 2008 before moving to Indonesia.",
+        "zh-Hant": "約自 2007 年 9 月至 2008 年 6 月就讀新北市蘆洲區仁愛國民小學，之後前往印尼。",
+        "zh-Hans": "约自 2007 年 9 月至 2008 年 6 月就读新北市芦洲区仁爱国民小学，之后前往印度尼西亚。"
+      },
+      "detail": {
+        "en": "This period covers the Ren-Ai Elementary School stage in New Taipei from around September 2007 to June 2008, before the move to Indonesia.",
+        "zh-Hant": "這段對應約自 2007 年 9 月到 2008 年 6 月，在前往印尼之前於新北市蘆洲區仁愛國民小學就讀的階段。",
+        "zh-Hans": "这段对应约自 2007 年 9 月到 2008 年 6 月，在前往印度尼西亚之前于新北市芦洲区仁爱国民小学就读的阶段。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-gandhi-ancol",
+      "type": "period",
+      "category": "education",
+      "scale": "micro",
+      "start": "2008-07",
+      "end": "2013-06",
+      "label": {
+        "en": "2008-07-2013-06",
+        "zh-Hant": "2008-07-2013-06",
+        "zh-Hans": "2008-07-2013-06"
+      },
+      "title": {
+        "en": "Gandhi High School Ancol Jakarta",
+        "zh-Hant": "雅加達 Gandhi High School Ancol",
+        "zh-Hans": "雅加达 Gandhi High School Ancol"
+      },
+      "summary": {
+        "en": "Studied at Gandhi High School Ancol Jakarta from around July 2008 to June 2013 during the Indonesia chapter.",
+        "zh-Hant": "約自 2008 年 7 月至 2013 年 6 月於雅加達 Gandhi High School Ancol 就讀，對應印尼生活階段。",
+        "zh-Hans": "约自 2008 年 7 月至 2013 年 6 月于雅加达 Gandhi High School Ancol 就读，对应印度尼西亚生活阶段。"
+      },
+      "detail": {
+        "en": "This period covers the school stage at Gandhi High School Ancol Jakarta while living in Indonesia, beginning around July 2008 and ending in June 2013 before returning to Taiwan.",
+        "zh-Hant": "這段對應在印尼生活期間，就讀雅加達 Gandhi High School Ancol 的階段，約自 2008 年 7 月開始，並於 2013 年 6 月回台前結束。",
+        "zh-Hans": "这段对应在印度尼西亚生活期间，就读雅加达 Gandhi High School Ancol 的阶段，约自 2008 年 7 月开始，并于 2013 年 6 月回台前结束。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-sanmin-junior",
+      "type": "period",
+      "category": "education",
+      "scale": "micro",
+      "start": "2013-09",
+      "end": "2016-06",
+      "label": {
+        "en": "2013-09-2016-06",
+        "zh-Hant": "2013-09-2016-06",
+        "zh-Hans": "2013-09-2016-06"
+      },
+      "title": {
+        "en": "San Min Senior High School (Junior High Division)",
+        "zh-Hant": "新北市立三民高級中學國中部",
+        "zh-Hans": "新北市立三民高级中学国中部"
+      },
+      "summary": {
+        "en": "Entered San Min Senior High School (Junior High Division) in September 2013 and graduated in June 2016.",
+        "zh-Hant": "2013 年 9 月入學新北市立三民高級中學國中部，2016 年 6 月畢業。",
+        "zh-Hans": "2013 年 9 月入学新北市立三民高级中学国中部，2016 年 6 月毕业。"
+      },
+      "detail": {
+        "en": "This school period begins with entering San Min Senior High School (Junior High Division) in September 2013 and ends with graduation in June 2016.",
+        "zh-Hant": "這段求學階段從 2013 年 9 月進入新北市立三民高級中學國中部開始，到 2016 年 6 月畢業為止。",
+        "zh-Hans": "这段求学阶段从 2013 年 9 月进入新北市立三民高级中学国中部开始，到 2016 年 6 月毕业为止。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-sanmin-high",
+      "type": "period",
+      "category": "education",
+      "scale": "micro",
+      "start": "2016-09",
+      "end": "2019-06",
+      "label": {
+        "en": "2016-09-2019-06",
+        "zh-Hant": "2016-09-2019-06",
+        "zh-Hans": "2016-09-2019-06"
+      },
+      "title": {
+        "en": "San Min Senior High School",
+        "zh-Hant": "新北市立三民高級中學",
+        "zh-Hans": "新北市立三民高级中学"
+      },
+      "summary": {
+        "en": "Entered San Min Senior High School in September 2016 and graduated in June 2019.",
+        "zh-Hant": "2016 年 9 月入學新北市立三民高級中學，2019 年 6 月畢業。",
+        "zh-Hans": "2016 年 9 月入学新北市立三民高级中学，2019 年 6 月毕业。"
+      },
+      "detail": {
+        "en": "This stage covers the full San Min Senior High School period, from entry in September 2016 to graduation in June 2019.",
+        "zh-Hant": "這段階段涵蓋新北市立三民高級中學的完整求學歷程，從 2016 年 9 月入學到 2019 年 6 月畢業。",
+        "zh-Hans": "这段阶段涵盖新北市立三民高级中学的完整求学历程，从 2016 年 9 月入学到 2019 年 6 月毕业。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-ntu-pt",
+      "type": "period",
+      "category": "education",
+      "scale": "macro",
+      "start": "2019-09",
+      "end": "2020-08",
+      "label": {
+        "en": "2019-09-2020-08",
+        "zh-Hant": "2019-09-2020-08",
+        "zh-Hans": "2019-09-2020-08"
+      },
+      "title": {
+        "en": "National Taiwan University: Physical Therapy",
+        "zh-Hant": "國立臺灣大學：物理治療學系",
+        "zh-Hans": "国立台湾大学：物理治疗学系"
+      },
+      "summary": {
+        "en": "Entered the Department of Physical Therapy at National Taiwan University in September 2019 and took leave in August 2020.",
+        "zh-Hant": "2019 年 9 月進入台灣大學物理治療學系，並於 2020 年 8 月休學。",
+        "zh-Hans": "2019 年 9 月进入台湾大学物理治疗学系，并于 2020 年 8 月休学。"
+      },
+      "detail": {
+        "en": "This period marks the first university stage: entering NTU Physical Therapy in September 2019, then taking leave in August 2020.",
+        "zh-Hant": "這段代表第一個大學階段：2019 年 9 月進入台大物理治療學系，並在 2020 年 8 月休學。",
+        "zh-Hans": "这段代表第一个大学阶段：2019 年 9 月进入台大物理治疗学系，并在 2020 年 8 月休学。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-ncu-cs",
+      "type": "period",
+      "category": "education",
+      "scale": "macro",
+      "start": "2020-09",
+      "end": "2024-06",
+      "label": {
+        "en": "2020-09-2024-06",
+        "zh-Hant": "2020-09-2024-06",
+        "zh-Hans": "2020-09-2024-06"
+      },
+      "title": {
+        "en": "National Central University: Computer Science and Information Engineering",
+        "zh-Hant": "國立中央大學：資訊工程學系",
+        "zh-Hans": "国立中央大学：资讯工程学系"
+      },
+      "summary": {
+        "en": "Entered National Central University Computer Science in September 2020, graduated in June 2024, and completed the degree with a cumulative GPA of 4.2/4.3.",
+        "zh-Hant": "2020 年 9 月入學中央大學資訊工程學系，2024 年 6 月畢業，累積 GPA 為 4.2/4.3。",
+        "zh-Hans": "2020 年 9 月入学中央大学资讯工程学系，2024 年 6 月毕业，累计 GPA 为 4.2/4.3。"
+      },
+      "detail": {
+        "en": "This period covers the Computer Science stage at National Central University, from entry in September 2020 to graduation in June 2024, finishing with a cumulative GPA of 4.2/4.3.",
+        "zh-Hant": "這段涵蓋中央資工的求學歷程，從 2020 年 9 月入學到 2024 年 6 月畢業，並以累積 GPA 4.2/4.3 完成學位。",
+        "zh-Hans": "这段涵盖中央资工的求学历程，从 2020 年 9 月入学到 2024 年 6 月毕业，并以累计 GPA 4.2/4.3 完成学位。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-nus-ai",
+      "type": "period",
+      "category": "education",
+      "scale": "macro",
+      "start": "2025-08",
+      "end": "present",
+      "label": {
+        "en": "2025-08-present",
+        "zh-Hant": "2025-08-present",
+        "zh-Hans": "2025-08-present"
+      },
+      "title": {
+        "en": "National University of Singapore: Master of Computing in Artificial Intelligence",
+        "zh-Hant": "新加坡國立大學：人工智慧碩士",
+        "zh-Hans": "新加坡国立大学：人工智能硕士"
+      },
+      "summary": {
+        "en": "Studying the Master of Computing in Artificial Intelligence at the National University of Singapore since August 2025, with a current GPA of 5.0/5.0.",
+        "zh-Hant": "自 2025 年 8 月起就讀新加坡國立大學人工智慧碩士，目前 GPA 為 5.0/5.0。",
+        "zh-Hans": "自 2025 年 8 月起就读新加坡国立大学人工智能硕士，目前 GPA 为 5.0/5.0。"
+      },
+      "detail": {
+        "en": "This period covers the ongoing Master of Computing in Artificial Intelligence at the National University of Singapore, beginning in August 2025 and currently continuing with a GPA of 5.0/5.0.",
+        "zh-Hant": "這段涵蓋自 2025 年 8 月開始、目前仍在進行中的新加坡國立大學人工智慧碩士歷程，目前 GPA 為 5.0/5.0。",
+        "zh-Hans": "这段涵盖自 2025 年 8 月开始、目前仍在进行中的新加坡国立大学人工智能硕士历程，目前 GPA 为 5.0/5.0。"
+      },
+      "start_title": {
+        "en": "National University of Singapore: Master of Computing in Artificial Intelligence Begins",
+        "zh-Hant": "新加坡國立大學：人工智慧碩士開始",
+        "zh-Hans": "新加坡国立大学：人工智能硕士开始"
+      },
+      "end_title": {
+        "en": "National University of Singapore: Master of Computing in Artificial Intelligence",
+        "zh-Hant": "新加坡國立大學：人工智慧碩士",
+        "zh-Hans": "新加坡国立大学：人工智能硕士"
+      },
+      "start_summary": {
+        "en": "Entered the Master of Computing in Artificial Intelligence at NUS in August 2025 and currently hold a GPA of 5.0/5.0.",
+        "zh-Hant": "2025 年 8 月進入新加坡國立大學人工智慧碩士，目前 GPA 為 5.0/5.0。",
+        "zh-Hans": "2025 年 8 月进入新加坡国立大学人工智能硕士，目前 GPA 为 5.0/5.0。"
+      },
+      "end_summary": {
+        "en": "Currently studying the Master of Computing in Artificial Intelligence at NUS.",
+        "zh-Hant": "目前就讀新加坡國立大學人工智慧碩士。",
+        "zh-Hans": "目前就读新加坡国立大学人工智能硕士。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-aiunion",
+      "type": "period",
+      "category": "internship",
+      "scale": "macro",
+      "start": "2024-02",
+      "end": "2024-03",
+      "label": {
+        "en": "2024-02-2024-03",
+        "zh-Hant": "2024-02-2024-03",
+        "zh-Hans": "2024-02-2024-03"
+      },
+      "title": {
+        "en": "AiUnion: C++ and AI Engineer",
+        "zh-Hant": "AiUnion：C++ 與 AI 工程師",
+        "zh-Hans": "AiUnion：C++ 与 AI 工程师"
+      },
+      "summary": {
+        "en": "Completed an internship as a C++ and AI Engineer at AiUnion from February 2024 to March 2024, implementing a real-time face detection system with YOLOv8 and OpenCV in C++.",
+        "zh-Hant": "2024 年 2 月至 2024 年 3 月於 AiUnion 擔任 C++ 與 AI Engineer 實習生，使用 YOLOv8 與 OpenCV 在 C++ 中實作即時人臉偵測系統。",
+        "zh-Hans": "2024 年 2 月至 2024 年 3 月于 AiUnion 担任 C++ 与 AI Engineer 实习生，使用 YOLOv8 与 OpenCV 在 C++ 中实现实时人脸检测系统。"
+      },
+      "detail": {
+        "en": "This period captures the AiUnion internship, focused on human face recognition through a real-time face detection system built with YOLOv8, OpenCV, and C++ while balancing accuracy and performance.",
+        "zh-Hant": "這段對應 AiUnion 的實習經歷，核心是以 YOLOv8、OpenCV 與 C++ 建立即時人臉偵測系統，在準確率與效能間做最佳化。",
+        "zh-Hans": "这段对应 AiUnion 的实习经历，核心是以 YOLOv8、OpenCV 与 C++ 构建实时人脸检测系统，在准确率与性能间做优化。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-united-link",
+      "type": "period",
+      "category": "internship",
+      "scale": "macro",
+      "start": "2024-05",
+      "end": "2024-11",
+      "label": {
+        "en": "2024-05-2024-11",
+        "zh-Hant": "2024-05-2024-11",
+        "zh-Hans": "2024-05-2024-11"
+      },
+      "title": {
+        "en": "United Link: AI Researcher",
+        "zh-Hant": "United Link：AI 研究員",
+        "zh-Hans": "United Link：AI 研究员"
+      },
+      "summary": {
+        "en": "Completed an internship as an AI Researcher at United Link from May 2024 to November 2024, covering video codec research, Tencent MPS evaluation, real-time image super-resolution, and automatic toxic comment filtering.",
+        "zh-Hant": "2024 年 5 月至 2024 年 11 月於 United Link 擔任 AI Researcher 實習生，涵蓋影片編碼研究、Tencent MPS 評估、即時影像超解析，以及自動有毒留言過濾。",
+        "zh-Hans": "2024 年 5 月至 2024 年 11 月于 United Link 担任 AI Researcher 实习生，涵盖视频编码研究、Tencent MPS 评估、实时图像超分辨率，以及自动有毒评论过滤。"
+      },
+      "detail": {
+        "en": "This period covers the United Link internship across multiple research directions: studying traditional and neural video codecs, evaluating Tencent MPS quality with VMAF, implementing real-time image super-resolution with lightweight CNN and ViT models, and contributing to toxic comment filtering with BERT-based NLP models.",
+        "zh-Hant": "這段對應 United Link 的 AI Researcher 實習經歷，內容包含研究傳統與神經網路式影片編碼、以 VMAF 評估 Tencent MPS、開發輕量 CNN 與 ViT 的即時影像超解析，以及參與以 BERT 為主的有毒留言過濾系統。",
+        "zh-Hans": "这段对应 United Link 的 AI Researcher 实习经历，内容包含研究传统与神经网络式视频编码、以 VMAF 评估 Tencent MPS、开发轻量 CNN 与 ViT 的实时图像超分辨率，以及参与以 BERT 为主的有毒评论过滤系统。"
+      },
+      "references": []
+    },
+    {
+      "id": "phase-douyin",
+      "type": "period",
+      "category": "internship",
+      "scale": "macro",
+      "start": "2026-02-23",
+      "end": "present",
+      "label": {
+        "en": "2026-02-23-present",
+        "zh-Hant": "2026-02-23-present",
+        "zh-Hans": "2026-02-23-present"
+      },
+      "title": {
+        "en": "TikTok Singapore: Machine Learning Engineer (Recommendation)",
+        "zh-Hant": "TikTok Singapore：推薦系統機器學習工程師",
+        "zh-Hans": "TikTok Singapore：推荐系统机器学习工程师"
+      },
+      "summary": {
+        "en": "Started an internship as a Machine Learning Engineer (Recommendation) at TikTok Singapore on February 23, 2026 and have been continuing there since then.",
+        "zh-Hant": "自 2026 年 2 月 23 日起於 TikTok Singapore 擔任推薦系統機器學習工程師實習生，並持續至今。",
+        "zh-Hans": "自 2026 年 2 月 23 日起于 TikTok Singapore 担任推荐系统机器学习工程师实习生，并持续至今。"
+      },
+      "detail": {
+        "en": "This period marks the ongoing internship chapter as a Machine Learning Engineer (Recommendation) at TikTok Singapore, beginning on February 23, 2026 and continuing to the present.",
+        "zh-Hant": "這段代表自 2026 年 2 月 23 日開始、目前仍在進行中的 TikTok Singapore 推薦系統機器學習工程師實習階段。",
+        "zh-Hans": "这段代表自 2026 年 2 月 23 日开始、目前仍在进行中的 TikTok Singapore 推荐系统机器学习工程师实习阶段。"
+      },
+      "references": []
+    }
+  ]
+}

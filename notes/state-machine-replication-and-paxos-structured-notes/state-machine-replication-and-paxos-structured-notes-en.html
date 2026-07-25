@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>State Machine Replication and Paxos Structured Notes</title>
+  <meta name="garden:tags" content="State Machine Replication, Paxos, Consensus, Distributed Systems">
+  <meta name="garden:summary" content="Structured study notes covering the fundamentals of State Machine Replication (SMR), FLP impossibility, Paxos algorithm details, correctness invariants, and practical execution issues.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.state_machine_replication,concept.paxos,concept.consensus,concept.distributed_systems">
+  <meta name="garden:tag_labels" content="{&quot;concept.state_machine_replication&quot;:{&quot;en&quot;:&quot;State Machine Replication&quot;,&quot;zh-Hant&quot;:&quot;狀態機複製&quot;,&quot;zh-Hans&quot;:&quot;状态机复制&quot;},&quot;concept.paxos&quot;:{&quot;en&quot;:&quot;Paxos&quot;,&quot;zh-Hant&quot;:&quot;Paxos&quot;,&quot;zh-Hans&quot;:&quot;Paxos&quot;},&quot;concept.consensus&quot;:{&quot;en&quot;:&quot;Consensus&quot;,&quot;zh-Hant&quot;:&quot;共識&quot;,&quot;zh-Hans&quot;:&quot;共识&quot;},&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;}}">
+  <meta name="garden:canonical_id" content="state-machine-replication-and-paxos-structured-notes">
+  <meta name="garden:published_at" content="2026-06-25">
+  <meta name="garden:last_modified_at" content="2026-06-25">
+  <meta name="garden:reading_time_minutes" content="13">
+  <meta name="garden:source" content="notes/state-machine-replication-and-paxos-structured-notes/state-machine-replication-and-paxos-structured-notes-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">State Machine Replication and Paxos Structured Notes</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#state-machine-replication-smr">State Machine Replication (SMR)</a>
+<a class="note-toc-link level-2" href="#the-goal-of-smr">The Goal of SMR</a>
+<a class="note-toc-link level-2" href="#limitations-of-primary-backup-models">Limitations of Primary-Backup Models</a>
+<a class="note-toc-link level-1" href="#paxos-overview">Paxos Overview</a>
+<a class="note-toc-link level-2" href="#system-model-assumptions">System Model Assumptions</a>
+<a class="note-toc-link level-2" href="#logical-roles-in-paxos">Logical Roles in Paxos</a>
+<a class="note-toc-link level-2" href="#consensus-properties">Consensus Properties</a>
+<a class="note-toc-link level-2" href="#terminology">Terminology</a>
+<a class="note-toc-link level-2" href="#why-majorities-quorums">Why Majorities (Quorums)?</a>
+<a class="note-toc-link level-1" href="#designing-paxos-invariants-requirements">Designing Paxos: Invariants &amp; Requirements</a>
+<a class="note-toc-link level-2" href="#the-path-to-consensus-invariants">The Path to Consensus Invariants</a>
+<a class="note-toc-link level-2" href="#proposal-numbers">Proposal Numbers</a>
+<a class="note-toc-link level-2" href="#ensuring-a-single-chosen-value-p2">Ensuring a Single Chosen Value (P2)</a>
+<a class="note-toc-link level-2" href="#core-idea-to-implement-p2c">Core Idea to Implement P2c</a>
+<a class="note-toc-link level-1" href="#the-paxos-algorithm">The Paxos Algorithm</a>
+<a class="note-toc-link level-2" href="#phase-1-prepare-phase">Phase 1 (Prepare Phase)</a>
+<a class="note-toc-link level-2" href="#phase-2-accept-phase">Phase 2 (Accept Phase)</a>
+<a class="note-toc-link level-1" href="#learning-liveness">Learning &amp; Liveness</a>
+<a class="note-toc-link level-2" href="#learning-chosen-values">Learning Chosen Values</a>
+<a class="note-toc-link level-2" href="#liveness-and-the-flp-result">Liveness and the FLP Result</a>
+<a class="note-toc-link level-1" href="#integrating-paxos-with-state-machine-replication-smr">Integrating Paxos with State Machine Replication (SMR)</a>
+<a class="note-toc-link level-2" href="#practical-engineering-challenges">Practical Engineering Challenges</a>
+<a class="note-toc-link level-2" href="#paxos-made-moderately-complex-pmmc-approach">Paxos Made Moderately Complex (PMMC) Approach</a>
+<a class="note-toc-link level-1" href="#summary">Summary</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-25" data-published-at="2026-06-25"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-25</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="state-machine-replication-smr" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">State Machine Replication (SMR)</h3>
+
+<h4 id="the-goal-of-smr" class="mb-2">The Goal of SMR</h4>
+
+<p class="mb-3">The goal of State Machine Replication (SMR) is to replicate a deterministic state machine across multiple nodes, ensuring that all replicas execute the same sequence of operations in the same order.</p>
+
+<p class="mb-3">We model these operations as a sequential log: <code>Op1</code> $\rightarrow$ <code>Op2</code> $\rightarrow$ <code>Op3</code> $\rightarrow$ <code>Op4</code> $\rightarrow$ <code>Op5</code> $\rightarrow$ <code>Op6</code> $\rightarrow$ ...</p>
+
+<h4 id="limitations-of-primary-backup-models" class="mb-2">Limitations of Primary-Backup Models</h4>
+
+<p class="mb-3">In simpler setups (like basic primary-backup models):</p>
+
+<ul class="note-list">
+<li><strong>Detecting Failures vs. Slowness:</strong> It is extremely difficult to reliably distinguish a failed primary from a slow primary in an asynchronous network.</li>
+<li><strong>Split-Brain Risk:</strong> If a backup incorrectly assumes the primary has failed and takes over, the system can end up with two primaries active at the same time, leading to state divergence.</li>
+<li><strong>View Server Bottleneck:</strong> Using a central "view server" to declare who the primary is simply shifts the failure domain. What if the view server fails? Replicating the view server itself leads to an infinite regress.</li>
+</ul>
+
+<p class="mb-3"><strong>Conclusion:</strong> To resolve this safely, we need a robust distributed consensus protocol.</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>The FLP Impossibility Result</strong></p><p class="mb-2">The <strong>FLP Theorem</strong> (Fischer, Lynch, and Paterson) states that in a fully asynchronous distributed system, with even a single faulty (crashed) process, no deterministic consensus protocol can guarantee progress (liveness) in bounded time.</p>
+
+<p class="mb-3">Consequently, practical consensus protocols must make trade-offs: they choose to <strong>guarantee safety under all asynchronous conditions</strong> (never returning an incorrect result), and target <strong>liveness under reasonable timing assumptions</strong> (eventually resolving when network conditions stabilize).</p></div>
+
+<hr>
+</section>
+
+<section id="paxos-overview" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Paxos Overview</h3>
+
+<p class="mb-3">Paxos is a consensus protocol designed to reach agreement on a single value in an asynchronous network. It was originally proposed in Leslie Lamport's paper <em>"The Part-Time Parliament"</em>, using the metaphor of legislators passing numbered decrees.</p>
+
+<h4 id="system-model-assumptions" class="mb-2">System Model Assumptions</h4>
+
+<ul class="note-list">
+<li><strong>Processes:</strong> Processes can propose values, may crash, and may recover later.</li>
+<li><strong>Asynchronous Network:</strong> Message delivery times are unbounded. Messages can be delayed, lost, or duplicated, but they are not corrupted (non-Byzantine environment).</li>
+</ul>
+
+<h4 id="logical-roles-in-paxos" class="mb-2">Logical Roles in Paxos</h4>
+
+<p class="mb-3">Nodes in a Paxos cluster can play one or more of three logical roles:</p>
+
+<ol class="mb-3">
+<li><strong>Proposers:</strong> Initiate proposals to choose a value.</li>
+<li><strong>Acceptors:</strong> Accept or reject proposals. A value is chosen when accepted by a majority of acceptors. They act as the fault-tolerant memory of the system.</li>
+<li><strong>Learners:</strong> Detect when a value has been chosen and learn what it is.</li>
+</ol>
+
+<div class="note-markdown-block"><pre><code>                  +-------------+
+                  |  Proposers  |
+                  +------+------+
+                         | (Propose)
+                         v
+                  +------+------+
+                  |  Acceptors  +&lt;---&gt; [Majority Quorum Intersection]
+                  +------+------+
+                         | (Learn)
+                         v
+                  +------+------+
+                  |  Learners   |
+                  +-------------+</code></pre></div>
+
+<h4 id="consensus-properties" class="mb-2">Consensus Properties</h4>
+
+<p class="mb-3">A correct consensus protocol must satisfy the following properties:</p>
+
+<ul class="note-list">
+<li><strong>Safety:</strong><ul class="note-list">
+<li>Only proposed values can be chosen.</li>
+<li>Only a single value is chosen.</li>
+<li>A process only learns a value if it has actually been chosen.</li>
+</ul></li>
+<li><strong>Liveness:</strong><ul class="note-list">
+<li>Some proposed value is eventually chosen.</li>
+<li>If a value is chosen, processes eventually learn it.</li>
+</ul></li>
+</ul>
+
+<h4 id="terminology" class="mb-2">Terminology</h4>
+
+<ul class="note-list">
+<li><strong>Value ($v$):</strong> A candidate value proposed for consensus.</li>
+<li><strong>Proposal Sequence Number (psn / $n$):</strong> A unique, monotonically increasing number.</li>
+<li><strong>Proposal ($n, v$):</strong> A pair combining a proposal sequence number and a value.</li>
+<li><strong>Accept:</strong> An acceptor agrees to a proposal.</li>
+<li><strong>Chosen:</strong> A proposal $(n, v)$ is accepted by a majority of acceptors.</li>
+<li><strong>Learned:</strong> A learner discovers that a proposal has been chosen.</li>
+</ul>
+
+<h4 id="why-majorities-quorums" class="mb-2">Why Majorities (Quorums)?</h4>
+
+<p class="mb-3">A majority is defined as more than half of the acceptors ($&gt; N/2$).</p>
+
+<ul class="note-list">
+<li><strong>Intersection Property:</strong> Any two majorities of the same set must intersect by at least one acceptor.</li>
+<li><strong>Information Propagation:</strong> Since any two majorities share at least one acceptor, this intersection ensures that information about a chosen value is preserved and propagated to any subsequent majority quorum.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="designing-paxos-invariants-requirements" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Designing Paxos: Invariants &amp; Requirements</h3>
+
+<h4 id="the-path-to-consensus-invariants" class="mb-2">The Path to Consensus Invariants</h4>
+
+<h5 class="mb-2">Naive Approach</h5>
+
+<ul class="note-list">
+<li><strong>Single Acceptor:</strong> If there is only one acceptor, fault tolerance is lost. If that acceptor crashes, the system stops.</li>
+</ul>
+
+<h5 class="mb-2">Improved Approach</h5>
+
+<ul class="note-list">
+<li><strong>Majority Acceptance:</strong> A value is chosen only when it is accepted by a majority of acceptors.</li>
+</ul>
+
+<div id="requirement-p1-the-initial-acceptor-requirement" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-alert-circle me-2"></i>Requirement P1 (The Initial Acceptor Requirement)</h4><p class="mb-3">An acceptor must accept the first proposal it receives.</p></div>
+
+<ul class="note-list">
+<li><strong>The Problem:</strong> If multiple proposers send conflicting proposals at the same time, acceptors might split their votes such that no single value receives a majority. The system could get stuck.</li>
+</ul>
+
+<h4 id="proposal-numbers" class="mb-2">Proposal Numbers</h4>
+
+<p class="mb-3">To handle multiple proposers without deadlock, we must allow multiple proposals to be made. However, we must guarantee that only a single value is ultimately chosen.</p>
+
+<ul class="note-list">
+<li>Each proposal is assigned a unique, increasing <strong>proposal sequence number (psn)</strong>.</li>
+<li>A proposal is represented as the pair $(n, v)$.</li>
+<li>A proposal is chosen when it is accepted by a majority of acceptors.</li>
+</ul>
+
+<p class="mb-3">To prevent collisions, proposal numbers must be unique and unbounded. We can achieve this by assigning disjoint sequences to different proposers. For example, Proposer $i$ out of $N$ total proposers uses the sequence: $$i,\; i+N,\; i+2N,\; i+3N,\; \dots$$</p>
+
+<h4 id="ensuring-a-single-chosen-value-p2" class="mb-2">Ensuring a Single Chosen Value (P2)</h4>
+
+<p class="mb-3">To ensure safety, we must guarantee that even if multiple proposals are accepted, they all carry the same value once a value has been chosen.</p>
+
+<div id="invariant-p2" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-shield me-2"></i>Invariant P2</h4><p class="mb-3">If a proposal $(n, v)$ is chosen, then any higher-numbered chosen proposal must also have the value $v$.</p></div>
+
+<p class="mb-3">To implement P2, we strengthen it into conditions that are easier to enforce programmatically:</p>
+
+<div id="invariant-p2a" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-check-square me-2"></i>Invariant P2a</h4><p class="mb-3">If a proposal $(n, v)$ is chosen, then any higher-numbered accepted proposal must have the value $v$.</p></div>
+
+<p class="mb-3">Since proposers issue proposals, we can restrict the proposers directly by strengthening the invariant further:</p>
+
+<div id="invariant-p2b" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-check-square me-2"></i>Invariant P2b</h4><p class="mb-3">If a proposal $(n, v)$ is chosen, then any higher-numbered proposal issued by any proposer must have the value $v$.</p></div>
+
+<p class="mb-3">To make P2b checkable without knowing the future, we define a structural invariant <strong>P2c</strong>:</p>
+
+<div id="invariant-p2c-the-implementation-invariant" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-key me-2"></i>Invariant P2c (The Implementation Invariant)</h4><p class="mb-3">For any proposal $(n, v)$, there exists a majority quorum of acceptors $S$ such that:</p>
+
+<ul class="note-list">
+<li>Either no acceptor in $S$ has accepted a proposal numbered less than $n$.</li>
+<li>Or $v$ equals the value of the highest-numbered accepted proposal numbered less than $n$ among all acceptors in $S$.</li>
+</ul></div>
+
+<p class="mb-3">This invariant guarantees P2b, which in turn guarantees P2a, ensuring safety.</p>
+
+<h4 id="core-idea-to-implement-p2c" class="mb-2">Core Idea to Implement P2c</h4>
+
+<p class="mb-3">To satisfy P2c without predicting which values will be accepted in the future, the protocol uses a <strong>promise mechanism</strong>:</p>
+
+<ul class="note-list">
+<li>A proposer requests a <strong>promise</strong> from a majority of acceptors.</li>
+<li>The promise states that the acceptors will <strong>not accept</strong> any proposals numbered less than $n$.</li>
+<li>Acceptors also return the highest-numbered proposal they have accepted so far.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="the-paxos-algorithm" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Paxos Algorithm</h3>
+
+<p class="mb-3">The Paxos protocol operates in two phases:</p>
+
+<h4 id="phase-1-prepare-phase" class="mb-2">Phase 1 (Prepare Phase)</h4>
+
+<ol class="mb-3">
+<li><strong>Proposer Selection:</strong> The proposer selects a new, unique proposal number $n$.</li>
+<li><strong>Prepare Request:</strong> The proposer sends a <code>&lt;prepare, n&gt;</code> request to a majority of acceptors.</li>
+<li><strong>Acceptor Response:</strong> An acceptor responds to the <code>&lt;prepare, n&gt;</code> request if and only if $n$ is strictly greater than any prepare number it has previously responded to. The response contains:</li>
+</ol>
+
+<ul class="note-list">
+<li>A <strong>promise</strong> not to accept any future proposals numbered less than $n$.</li>
+<li>The <strong>highest-numbered proposal</strong> (if any) that the acceptor has accepted so far, along with its value.</li>
+</ul>
+
+<h4 id="phase-2-accept-phase" class="mb-2">Phase 2 (Accept Phase)</h4>
+
+<ol class="mb-3">
+<li><strong>Value Selection:</strong> If the proposer receives responses from a majority of acceptors, it selects a value $v$:</li>
+</ol>
+
+<ul class="note-list">
+<li>Let $v$ be the value of the highest-numbered accepted proposal returned by the acceptors.</li>
+<li>If no acceptor in the majority has accepted a proposal yet, the proposer is free to choose any value $v$.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Accept Request:</strong> The proposer sends an <code>&lt;accept, n, v&gt;</code> request to those acceptors.</li>
+<li><strong>Acceptor Decision:</strong> An acceptor accepts the <code>&lt;accept, n, v&gt;</code> proposal unless it has already responded to a higher-numbered prepare request (which would violate its promise).</li>
+</ol>
+
+<p class="mb-3"><strong>A value is chosen when a majority of acceptors accept the proposal $(n, v)$.</strong></p>
+
+<hr>
+</section>
+
+<section id="learning-liveness" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Learning &amp; Liveness</h3>
+
+<h4 id="learning-chosen-values" class="mb-2">Learning Chosen Values</h4>
+
+<p class="mb-3">Once a value is chosen, how do learners find out?</p>
+
+<ol class="mb-3">
+<li><strong>Direct Notification:</strong> Each acceptor informs all learners whenever it accepts a proposal. This requires $O(A \times L)$ messages, where $A$ is the number of acceptors and $L$ is the number of learners.</li>
+<li><strong>Distinguished Learner:</strong> Acceptors send acceptance notifications to a distinguished learner (or a small set of them). The distinguished learner then broadcasts the decision to the rest of the learners. This reduces message complexity to $O(A + L)$, but introduces a single point of failure.</li>
+</ol>
+
+<p class="mb-3">If a learner misses a decision due to message loss or node crashes, it can propose a dummy value (e.g., a no-op) to force the Paxos instance to complete, thereby discovering what value was chosen.</p>
+
+<h4 id="liveness-and-the-flp-result" class="mb-2">Liveness and the FLP Result</h4>
+
+<p class="mb-3">Under dueling proposers, liveness is not guaranteed. Two competing proposers can continuously preempt each other's prepare phases before either can complete Phase 2: $$\text{Proposer 1 prepare } (n_1) \rightarrow \text{Proposer 2 prepare } (n_2 &gt; n_1) \rightarrow \text{Proposer 1 accept fails} \rightarrow \dots$$</p>
+
+<p class="mb-3"><strong>Solution:</strong> Elect a single <strong>distinguished proposer (leader)</strong>.</p>
+
+<ul class="note-list">
+<li>If only one proposer is active, it can complete both phases without interference.</li>
+<li>This reduces contention and ensures liveness in practice.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="integrating-paxos-with-state-machine-replication-smr" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Integrating Paxos with State Machine Replication (SMR)</h3>
+
+<p class="mb-3">To build a replicated log, we run an independent instance of the Paxos algorithm for each log slot.</p>
+
+<div class="note-markdown-block"><pre><code>Slot 1: Paxos Instance 1  ---&gt; Decided: Put k1 v1
+Slot 2: Paxos Instance 2  ---&gt; Decided: Put k2 v2
+Slot 3: Paxos Instance 3  ---&gt; Decided: Get k1</code></pre></div>
+
+<ul class="note-list">
+<li>Each state machine operation is assigned to a specific log index (Paxos instance).</li>
+<li>Once consensus is reached on a slot, it is appended to the replicated log.</li>
+<li>Replicas execute the operations in strict log order.</li>
+</ul>
+
+<h4 id="practical-engineering-challenges" class="mb-2">Practical Engineering Challenges</h4>
+
+<ul class="note-list">
+<li><strong>Two Communication Rounds:</strong> Running both Phase 1 and Phase 2 for every single operation is slow.</li>
+<li><strong>Log Gaps:</strong> If slot 3 is chosen but slot 2 is still empty (due to message loss or leader crashes), the state machine cannot execute slot 3 until the gap at slot 2 is resolved.</li>
+<li><strong>Choosing Slot Positions:</strong> Which instance index should a proposer use when a new command arrives?</li>
+<li><strong>Leader Election:</strong> How do we establish a stable leader?</li>
+</ul>
+
+<h4 id="paxos-made-moderately-complex-pmmc-approach" class="mb-2">Paxos Made Moderately Complex (PMMC) Approach</h4>
+
+<p class="mb-3">To optimize performance and handle practical issues:</p>
+
+<ul class="note-list">
+<li><strong>Phase 1 Amortization:</strong> The leader runs Phase 1 for <em>all</em> future instances at once to establish its leadership.</li>
+<li><strong>Phase 2 Fast Path:</strong> For subsequent client requests, the active leader runs only Phase 2, reducing the message rounds per command.</li>
+<li><strong>Leader Failure Recovery:</strong> If the leader crashes, another node runs Phase 1 to elect itself and learn the state of all unresolved instances.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary</h3>
+
+<ul class="note-list">
+<li><strong>Primary-backup is insufficient</strong> on its own without a consensus mechanism due to the risk of split-brain in asynchronous networks.</li>
+<li><strong>FLP Impossibility</strong> shows that deterministic consensus cannot guarantee both safety and liveness in a fully asynchronous system with crash failures.</li>
+<li><strong>Paxos ensures safety</strong> under all conditions through:<ul class="note-list">
+<li><strong>Majority Intersection:</strong> Ensuring any two quorums share at least one node.</li>
+<li><strong>Proposal Numbering:</strong> Maintaining order and disjoint proposer sequences.</li>
+<li><strong>Two-Phase Protocol:</strong> Collecting state and promising not to look back before choosing a value.</li>
+</ul></li>
+<li><strong>Liveness</strong> is achieved in practice by electing a single leader.</li>
+<li><strong>State Machine Replication</strong> is achieved by running an instance of Paxos per log slot, building a replicated log that all nodes execute in the same order.</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

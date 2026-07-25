@@ -1,0 +1,194 @@
+{
+  "questions": [
+    {
+      "question_id": "clustering-on-unlabeled-data",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "What problem is clustering primarily used to solve in these notes?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Predicting labels from previously labeled examples.",
+          "response": "Incorrect. That is the framing of supervised classification, not clustering."
+        },
+        {
+          "id": "B",
+          "text": "Discovering natural groupings in unlabeled data by identifying shared patterns in features.",
+          "response": "Correct. The note defines clustering as discovering structure in unlabeled data through shared feature patterns."
+        },
+        {
+          "id": "C",
+          "text": "Compressing every dataset into a single aggregate summary statistic.",
+          "response": "Incorrect. Clustering reveals group-level structure rather than collapsing everything into one summary."
+        },
+        {
+          "id": "D",
+          "text": "Cleaning missing values and resolving inconsistencies before analysis.",
+          "response": "Incorrect. That is preparation work that supports clustering, not clustering itself."
+        }
+      ],
+      "answer": "B",
+      "explanation": "The note presents clustering as the task of discovering natural groupings in unlabeled data by identifying shared patterns in features.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.data_mining",
+        "concept.clustering"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "data-quality-before-clustering",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Why do these notes emphasize data quality and EDA before applying a clustering algorithm?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Because clustering automatically fixes missing values and noisy records during training.",
+          "response": "Incorrect. The article says poor data can directly distort the patterns clustering tries to uncover."
+        },
+        {
+          "id": "B",
+          "text": "Because EDA and cleaning help reveal outliers, noise, and suspicious structure before they mislead the clustering result.",
+          "response": "Correct. The note explicitly says EDA helps surface issues early so the discovered clusters are more trustworthy."
+        },
+        {
+          "id": "C",
+          "text": "Because clustering only works after the data is manually labeled by domain experts.",
+          "response": "Incorrect. Clustering is useful precisely because it works on unlabeled data."
+        },
+        {
+          "id": "D",
+          "text": "Because every clustering method requires the same preprocessing pipeline regardless of the data.",
+          "response": "Incorrect. The point is not identical preprocessing for all methods, but protecting structure from distortion."
+        }
+      ],
+      "answer": "B",
+      "explanation": "EDA and data cleaning matter because missing values, noise, and inconsistencies can distort the structure clustering is supposed to recover.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.clustering",
+        "concept.data_quality",
+        "concept.eda"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "similarity-depends-on-representation",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "According to the note, what makes two objects count as close in clustering?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "They are always physically near each other in a two-dimensional plot.",
+          "response": "Incorrect. The note stresses that closeness is not automatically physical distance."
+        },
+        {
+          "id": "B",
+          "text": "They share the same label assigned by a classification model.",
+          "response": "Incorrect. Clustering is defined before labels exist."
+        },
+        {
+          "id": "C",
+          "text": "They are close under the chosen representation and similarity or distance measure.",
+          "response": "Correct. The note argues that clustering only becomes meaningful after representation and similarity are made explicit."
+        },
+        {
+          "id": "D",
+          "text": "They contain the same number of raw features, regardless of feature meaning.",
+          "response": "Incorrect. Feature count alone does not define similarity."
+        }
+      ],
+      "answer": "C",
+      "explanation": "In these notes, closeness depends on how objects are represented and what similarity or distance measure is chosen.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.clustering"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "density-based-for-irregular-shapes",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Which clustering family is presented as especially useful for irregular cluster shapes and outliers?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Centroid-based methods such as K-Means.",
+          "response": "Incorrect. The note says centroid-based methods work best when clusters are compact and center-shaped."
+        },
+        {
+          "id": "B",
+          "text": "Density-based methods such as DBSCAN.",
+          "response": "Correct. The note highlights DBSCAN for irregular shapes and cases where outliers should remain noise."
+        },
+        {
+          "id": "C",
+          "text": "Hierarchical methods such as AGNES and DIANA.",
+          "response": "Incorrect. Hierarchical methods focus on nested structure across different levels of granularity."
+        },
+        {
+          "id": "D",
+          "text": "Rule-based classification methods.",
+          "response": "Incorrect. That is not one of the clustering families discussed here."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Density-based methods such as DBSCAN are emphasized for irregular shapes and for treating outliers as noise.",
+      "difficulty": "beginner",
+      "question_focus": "algorithm_recognition",
+      "tag_concepts": [
+        "concept.clustering",
+        "concept.dbscan"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "hierarchical-nested-granularity",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "What is the defining idea behind hierarchical clustering in these notes?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Every cluster must be summarized by a single centroid.",
+          "response": "Incorrect. That is the centroid-based view."
+        },
+        {
+          "id": "B",
+          "text": "Clusters are dense regions connected through local neighborhoods.",
+          "response": "Incorrect. That is the density-based view."
+        },
+        {
+          "id": "C",
+          "text": "Clusters are nested groupings that can be examined at multiple levels of granularity.",
+          "response": "Correct. The note defines hierarchical methods as building a hierarchy rather than a single flat partition."
+        },
+        {
+          "id": "D",
+          "text": "Clusters only exist when a dataset is already labeled into classes.",
+          "response": "Incorrect. Labels are not required for clustering."
+        }
+      ],
+      "answer": "C",
+      "explanation": "Hierarchical clustering is presented as a nested structure that supports multiple levels of grouping rather than one flat partition.",
+      "difficulty": "beginner",
+      "question_focus": "algorithm_recognition",
+      "tag_concepts": [
+        "concept.clustering",
+        "concept.hierarchical_clustering"
+      ],
+      "review_status": "draft",
+      "last_review_date": "2026-06-14"
+    }
+  ]
+}

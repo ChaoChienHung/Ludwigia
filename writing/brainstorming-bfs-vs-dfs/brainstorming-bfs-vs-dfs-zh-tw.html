@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brainstorming 的 BFS / DFS：為什麼我總是在深挖後忘記前面想過什麼</title>
+  <meta name="garden:tags" content="腦力激盪, 寫作, 思考, 工作流, 創造力, 生產力">
+  <meta name="garden:summary" content="Brainstorming 常像先做 BFS 掃可能性，再對少數點做 DFS 深挖；真正困難的不是發散或收斂本身，而是如何在兩者之間保留上下文。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.brainstorming,concept.writing,concept.thinking,concept.workflow,concept.creativity,concept.productivity">
+  <meta name="garden:tag_labels" content="{&quot;concept.brainstorming&quot;:{&quot;en&quot;:&quot;Brainstorming&quot;,&quot;zh-Hant&quot;:&quot;腦力激盪&quot;,&quot;zh-Hans&quot;:&quot;头脑风暴&quot;},&quot;concept.writing&quot;:{&quot;en&quot;:&quot;Writing&quot;,&quot;zh-Hant&quot;:&quot;寫作&quot;,&quot;zh-Hans&quot;:&quot;写作&quot;},&quot;concept.thinking&quot;:{&quot;en&quot;:&quot;Thinking&quot;,&quot;zh-Hant&quot;:&quot;思考&quot;,&quot;zh-Hans&quot;:&quot;思考&quot;},&quot;concept.workflow&quot;:{&quot;en&quot;:&quot;Workflow&quot;,&quot;zh-Hant&quot;:&quot;工作流&quot;,&quot;zh-Hans&quot;:&quot;工作流&quot;},&quot;concept.creativity&quot;:{&quot;en&quot;:&quot;Creativity&quot;,&quot;zh-Hant&quot;:&quot;創造力&quot;,&quot;zh-Hans&quot;:&quot;创造力&quot;},&quot;concept.productivity&quot;:{&quot;en&quot;:&quot;Productivity&quot;,&quot;zh-Hant&quot;:&quot;生產力&quot;,&quot;zh-Hans&quot;:&quot;生产力&quot;}}">
+  <meta name="garden:published_at" content="2026-06-10">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="4">
+  <meta name="garden:source" content="writing/brainstorming-bfs-vs-dfs/brainstorming-bfs-vs-dfs-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Brainstorming 的 BFS / DFS：為什麼我總是在深挖後忘記前面想過什麼</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#setup-brainstorming-bfs">Setup：為什麼 brainstorming 很像 BFS</a>
+<a class="note-toc-link level-1" href="#dfs">DFS：人類又為什麼會自然往深處鑽</a>
+<a class="note-toc-link level-1" href="#tension-dfs-bfs">真正的 tension：DFS 完之後，BFS 的上下文很容易掉光</a>
+<a class="note-toc-link level-1" href="#section">這件事為什麼特別消耗</a>
+<a class="note-toc-link level-1" href="#bfs">可能的解法：讓工作流幫我保存 BFS，而不是只靠腦袋記</a>
+<a class="note-toc-link level-1" href="#section-2">也許發散與收斂從來不是二選一</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20" data-published-at="2026-06-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">我最近一直有一個很強烈的體感：brainstorming 很像在圖上走路。</p>
+
+<ul class="note-list">
+<li>一開始通常是 BFS：先快速掃過很多可能的方向</li>
+<li>之後會自然進入 DFS：挑一兩個特別有趣的點一路深挖</li>
+<li>最難的不是哪一種比較好，而是我常常在 DFS 完之後，回頭找不到 BFS 當初展開過的整張地圖</li>
+</ul>
+</section>
+
+<section id="setup-brainstorming-bfs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Setup：為什麼 brainstorming 很像 BFS</h3>
+
+<ul class="note-list">
+<li>brainstorm 的前期通常不是為了立刻找到答案，而是先把可能性空間打開</li>
+<li>這個階段的目標比較像「先知道有哪些分支」，而不是「先把某一條走到底」</li>
+<li>所以它很像 BFS：一層一層看、快速標記、盡量避免太早鎖死方向</li>
+</ul>
+
+<p class="mb-3">這個階段常帶來一種很舒服的感覺。</p>
+
+<ul class="note-list">
+<li>會覺得自己很有創造力，因為點子一直冒出來</li>
+<li>會覺得世界很大，因為每個點都像可以再長出新的分支</li>
+<li>但也很容易留下大量半成形的片段，沒有真正整理成結構</li>
+</ul>
+</section>
+
+<section id="dfs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DFS：人類又為什麼會自然往深處鑽</h3>
+
+<ul class="note-list">
+<li>只要某個點特別有趣、特別有情緒、或特別接近當下的問題，我就會很自然一直往下挖</li>
+<li>深挖的過程會帶來一種「終於碰到真正重要的東西」的快感</li>
+<li>這也很合理，因為真正有洞見的內容，常常不是在表層發散時出現，而是在持續追問後才浮出來</li>
+</ul>
+
+<p class="mb-3">DFS 不是壞事，甚至常常是必要的。</p>
+
+<ul class="note-list">
+<li>沒有 DFS，很多想法只會停在標題層級</li>
+<li>沒有 DFS，文章會像一張 ideas 清單，而不是一條真的能帶人走完的論述</li>
+<li>沒有 DFS，很多「我其實在意的是什麼」根本不會被自己看見</li>
+</ul>
+</section>
+
+<section id="tension-dfs-bfs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">真正的 tension：DFS 完之後，BFS 的上下文很容易掉光</h3>
+
+<ul class="note-list">
+<li>問題不是我不會發散，也不是我不會深挖</li>
+<li>問題是我一旦在某一條支線裡待太久，就會忘記前面還有哪些分支曾經被打開</li>
+<li>於是整體探索常常變成：要嘛停在很淺的廣度，要嘛掉進一條很深但脫離全局的隧道</li>
+</ul>
+
+<p class="mb-3">這種遺失上下文的感覺很具體。</p>
+
+<ul class="note-list">
+<li>原本想到三四個可以寫的方向，最後只記得目前在挖的那個</li>
+<li>深挖時冒出的新問題很多，但它們跟最初那張地圖的相對位置開始模糊</li>
+<li>等回來想收斂時，會發現自己只剩局部洞見，卻失去了整體編排</li>
+</ul>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">這件事為什麼特別消耗</h3>
+
+<ul class="note-list">
+<li>因為大腦在 DFS 時，工作記憶幾乎都被眼前這條支線佔滿了</li>
+<li>一旦沒有外部化的記錄，BFS 階段那些還沒長成句子的點就很容易蒸發</li>
+<li>最後的疲憊感不只是來自思考本身，而是來自「一直在重建自己之前想過什麼」</li>
+</ul>
+
+<p class="mb-3">所以很多時候，真正累人的不是沒有靈感，而是：</p>
+
+<ul class="note-list">
+<li>我明明知道前面有想到一些好東西，但現在抓不回來</li>
+<li>我明明覺得這條 DFS 很有價值，但又隱約知道自己漏掉了別的分支</li>
+<li>我必須同時兼顧探索、記憶、排序、收斂，切換成本很高</li>
+</ul>
+</section>
+
+<section id="bfs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">可能的解法：讓工作流幫我保存 BFS，而不是只靠腦袋記</h3>
+
+<ul class="note-list">
+<li>如果 BFS 的分支沒有被外部化，DFS 幾乎一定會把它們沖掉</li>
+<li>所以問題不只是「我要不要更專心」，而是「我的工作流有沒有幫我保存探索樹」</li>
+<li>好的工具或流程，本質上是在替工作記憶做 cache</li>
+</ul>
+
+<p class="mb-3">目前我覺得比較有希望的做法有幾種。</p>
+
+<ul class="note-list">
+<li>把 BFS 階段先記成很輕量的分支清單，不要求當下寫完整</li>
+<li>DFS 時只深挖一條，但要保留返回 BFS 地圖的入口</li>
+<li>用 TODO、outline、分層筆記或卡片，把「分支」和「正文」分開存放</li>
+</ul>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">也許發散與收斂從來不是二選一</h3>
+
+<ul class="note-list">
+<li>很多時候我們以為自己是在找更好的想法，其實是在找一種不會遺失上下文的思考方式</li>
+<li>BFS 給我可能性，DFS 給我密度；兩者都重要</li>
+<li>真正的關鍵也許不是選哪一個，而是怎麼讓它們在同一個 workflow 裡共存</li>
+</ul>
+
+<p class="mb-3">如果這個問題能被解得更好，也許不只是 brainstorm 會更順。</p>
+
+<ul class="note-list">
+<li>寫作會更順，因為不必一直重建文章全圖</li>
+<li>做產品或做研究也會更順，因為探索與收斂能接到同一張地圖上</li>
+<li>甚至和 AI 協作也會更順，因為我可以把 BFS 的分支更清楚地交給系統，而不是只剩眼前這一條 DFS 線索</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

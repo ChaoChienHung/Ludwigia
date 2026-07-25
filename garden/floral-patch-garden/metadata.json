@@ -1,0 +1,6 @@
+{
+  "name": "Ludwig's Flora Garden",
+  "description": "An interactive digital garden where notes transform into blooming flower clusters. Explore tags as grass patches, with dual-sided flipping cards detailing both your writing and their symbolic flora.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

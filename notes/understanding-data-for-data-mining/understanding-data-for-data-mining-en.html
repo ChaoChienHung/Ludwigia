@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Understanding Data for Data Mining — Ludwig</title>
+  <meta name="garden:tags" content="Data Mining, Data Understanding, Attributes, Categorical Data, Numerical Data, Structured Data, Graph Data, Time Series, Data Representation">
+  <meta name="garden:summary" content="How to read a dataset before mining it: attribute types, measurement scales, structural formats, and the representations algorithms actually consume.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.data_understanding,concept.attributes,concept.categorical_data,concept.numerical_data,concept.structured_data,concept.graph_data,concept.time_series,concept.data_representation">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.data_understanding&quot;:{&quot;en&quot;:&quot;Data Understanding&quot;,&quot;zh-Hant&quot;:&quot;資料理解&quot;,&quot;zh-Hans&quot;:&quot;数据理解&quot;},&quot;concept.attributes&quot;:{&quot;en&quot;:&quot;Attributes&quot;,&quot;zh-Hant&quot;:&quot;屬性&quot;,&quot;zh-Hans&quot;:&quot;属性&quot;},&quot;concept.categorical_data&quot;:{&quot;en&quot;:&quot;Categorical Data&quot;,&quot;zh-Hant&quot;:&quot;類別資料&quot;,&quot;zh-Hans&quot;:&quot;类别数据&quot;},&quot;concept.numerical_data&quot;:{&quot;en&quot;:&quot;Numerical Data&quot;,&quot;zh-Hant&quot;:&quot;數值資料&quot;,&quot;zh-Hans&quot;:&quot;数值数据&quot;},&quot;concept.structured_data&quot;:{&quot;en&quot;:&quot;Structured Data&quot;,&quot;zh-Hant&quot;:&quot;結構化資料&quot;,&quot;zh-Hans&quot;:&quot;结构化数据&quot;},&quot;concept.graph_data&quot;:{&quot;en&quot;:&quot;Graph Data&quot;,&quot;zh-Hant&quot;:&quot;圖資料&quot;,&quot;zh-Hans&quot;:&quot;图数据&quot;},&quot;concept.time_series&quot;:{&quot;en&quot;:&quot;Time Series&quot;,&quot;zh-Hant&quot;:&quot;時間序列&quot;,&quot;zh-Hans&quot;:&quot;时间序列&quot;},&quot;concept.data_representation&quot;:{&quot;en&quot;:&quot;Data Representation&quot;,&quot;zh-Hant&quot;:&quot;資料表示&quot;,&quot;zh-Hans&quot;:&quot;数据表示&quot;}}">
+  <meta name="garden:canonical_id" content="understanding-data-for-data-mining">
+  <meta name="garden:published_at" content="2026-06-12">
+  <meta name="garden:last_modified_at" content="2026-06-12">
+  <meta name="garden:reading_time_minutes" content="5">
+  <meta name="garden:source" content="notes/understanding-data-for-data-mining/understanding-data-for-data-mining-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Understanding Data for Data Mining</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#understanding-data">Understanding Data for Data Mining</a>
+<a class="note-toc-link level-2" href="#understanding-guiding">Guiding Questions</a>
+<a class="note-toc-link level-2" href="#attributes">Attribute Types and Measurement</a>
+<a class="note-toc-link level-2" href="#structures">Data Structures in the Wild</a>
+<a class="note-toc-link level-2" href="#representations">From Raw Format to Mining Representation</a>
+<a class="note-toc-link level-2" href="#why-understanding-matters">Why Data Understanding Matters</a>
+<a class="note-toc-link level-1" href="#summary">Summary &amp; Key Takeaways</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-12" data-published-at="2026-06-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="understanding-data" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Understanding Data for Data Mining</h3>
+
+<div id="understanding-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Guiding Questions: What Kind of Data Are We Looking At?</h4><p class="mb-3">Before we can mine data, we have to understand what kind of thing our dataset actually is. Are we looking at categories or quantities? Ordered values or unordered labels? Flat records, networks, or sequences where order itself carries meaning?</p>
+
+<p class="mb-3">These questions matter because different kinds of data permit different operations, distort in different ways, and support different modeling choices. A method that makes sense for tabular ratios may be meaningless for nominal labels or graph edges.</p>
+
+<p class="mb-3">So before we ask what pattern to extract, we first need to ask a more basic question: what structure is already present in the data itself?</p></div>
+
+<p class="mb-3">In data mining, poor results do not come only from weak algorithms. They also come from misunderstanding what kind of data we have in front of us. A dataset is never just a pile of values. Each column, record, edge, timestamp, or token carries assumptions about measurement, structure, and meaning. Some attributes merely label categories; others measure quantities with real arithmetic meaning. Some datasets are already organized into clean tables, while others arrive as text, networks, event streams, or documents that must be interpreted differently before mining even begins. This is why data understanding is the first intellectual step after defining the mining task. Before we clean, model, or interpret anything, we must understand what the data can legitimately say.</p>
+</section>
+
+<section id="attribute-types-and-measurement" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Attribute Types and Measurement</h3>
+
+<p class="mb-3">Before initiating the data mining process, practitioners must deeply understand the fundamental building blocks of their datasets: the attributes. The reason is simple—different data structures demand different handling techniques to maximize their analytical utility. Much like social interactions, where we adapt our communication style to match different personalities, data requires tailored analytical approaches based on its inherent characteristics. To understand data deeply, we must inspect its attributes, which essentially act as the "personality traits" of the dataset.</p>
+
+<p class="mb-3">These attributes generally fall into two broad categories:</p>
+
+<ol class="mb-3">
+<li>Categorical (Qualitative) Attributes</li>
+</ol>
+
+<p class="mb-3">Categorical attributes describe traits, qualities, or characteristics that cannot be measured with a meaningful numerical scale.</p>
+
+<ul class="note-list">
+<li><strong>Nominal</strong> values consist of completely unordered, mutually exclusive labels, such as eye color, zip codes, or gender. For nominal data, the only mathematically valid operation is testing for equality ($=$ or $\neq$). Because these labels possess no intrinsic ranking, it is impossible to define which value is "larger" or "smaller"; we can only determine whether two data points are identical or distinct.</li>
+<li><strong>Ordinal</strong> values, by contrast, possess a meaningful and sequential order, such as education level (High School, Bachelor's, PhD) or customer satisfaction ratings (Poor, Fair, Excellent). While we still cannot calculate the exact mathematical distance between "Fair" and "Excellent," their inherent sequence allows for greater-than ($&gt;$) or less-than ($&lt;$) comparisons.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Numerical (Quantitative) Attributes</li>
+</ol>
+
+<p class="mb-3">Numerical attributes represent measurable magnitudes and quantities that are inherently numeric, making them ripe for mathematical calculation.</p>
+
+<ul class="note-list">
+<li><strong>Interval</strong> data features meaningful, measurable distances between values, but lacks a "true zero" point. A classic example is temperature measured in Celsius or Fahrenheit. In these systems, $0^\circ\text{C}$ does not mean a total "absence of heat"—it is simply an arbitrary point selected as the freezing point of water. Because there is no absolute zero, you can perform addition and subtraction (e.g., $30^\circ\text{C}$ is $10^\circ$ hotter than $20^\circ\text{C}$), but you cannot perform multiplication or division. It is scientifically incorrect to claim that $20^\circ\text{C}$ is "twice as hot" as $10^\circ\text{C}$.</li>
+<li><strong>Ratio</strong> data, however, possesses an absolute, true zero, where a value of zero signifies the complete, total absence of the measured attribute. Examples include weight, income, or age. If a bank account holds $$0$, it means there is completely no money present. Because a true zero anchor exists, ratio data permits all arithmetic operations, including multiplication and division. Therefore, we can accurately say that an individual earning $$100,000$ makes exactly twice the income of someone earning $$50,000$.</li>
+</ul>
+
+<div class="note-quiz mt-4">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 1</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">Which numerical attribute type has a true zero and supports meaningful multiplication and division?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Interval data has meaningful differences but no true zero, so ratios are not meaningful.">A. Interval</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Ratio data has an absolute zero, so ratio statements and multiplication/division are meaningful.">B. Ratio</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Ordinal data is ordered but does not define meaningful numeric distances.">C. Ordinal</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Nominal data is unordered categories and only supports equality checks.">D. Nominal</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

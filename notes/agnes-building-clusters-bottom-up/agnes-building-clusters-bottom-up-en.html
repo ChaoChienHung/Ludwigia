@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AGNES: Building Clusters Bottom-Up</title>
+  <meta name="garden:tags" content="Data Mining, Clustering, Hierarchical Clustering, Agnes, Dendrogram, Linkage">
+  <meta name="garden:summary" content="A draft on AGNES as a bottom-up hierarchical clustering method, focusing on merge decisions, linkage criteria, dendrograms, and practical trade-offs.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.hierarchical_clustering,concept.agnes,concept.dendrogram,concept.linkage">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.hierarchical_clustering&quot;:{&quot;en&quot;:&quot;Hierarchical Clustering&quot;,&quot;zh-Hant&quot;:&quot;階層式分群&quot;,&quot;zh-Hans&quot;:&quot;层次聚类&quot;},&quot;concept.agnes&quot;:{&quot;en&quot;:&quot;Agnes&quot;,&quot;zh-Hant&quot;:&quot;AGNES&quot;,&quot;zh-Hans&quot;:&quot;AGNES&quot;},&quot;concept.dendrogram&quot;:{&quot;en&quot;:&quot;Dendrogram&quot;,&quot;zh-Hant&quot;:&quot;樹狀圖&quot;,&quot;zh-Hans&quot;:&quot;树状图&quot;},&quot;concept.linkage&quot;:{&quot;en&quot;:&quot;Linkage&quot;,&quot;zh-Hant&quot;:&quot;鏈結準則&quot;,&quot;zh-Hans&quot;:&quot;链接准则&quot;}}">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="4">
+  <meta name="garden:source" content="notes/agnes-building-clusters-bottom-up/agnes-building-clusters-bottom-up-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">AGNES: Building Clusters Bottom-Up</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#draft-intent">Draft Intent</a>
+<a class="note-toc-link level-1" href="#suggested-opening">Suggested Opening</a>
+<a class="note-toc-link level-1" href="#the-core-idea-merge-the-closest-things-first">The Core Idea: Merge the Closest Things First</a>
+<a class="note-toc-link level-1" href="#why-linkage-criteria-matter">Why Linkage Criteria Matter</a>
+<a class="note-toc-link level-1" href="#the-dendrogram-as-the-output">The Dendrogram as the Output</a>
+<a class="note-toc-link level-1" href="#why-agnes-feels-useful">Why AGNES Feels Useful</a>
+<a class="note-toc-link level-1" href="#where-agnes-breaks">Where AGNES Breaks</a>
+<a class="note-toc-link level-1" href="#agnes-vs-flat-clustering">AGNES vs. Flat Clustering</a>
+<a class="note-toc-link level-1" href="#conclusion">Conclusion</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="draft-intent" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Draft Intent</h3>
+
+<ul class="note-list">
+<li>Core question: what if clustering is not about producing one flat partition, but about revealing structure at multiple levels?</li>
+<li>Target outcome: the reader should understand AGNES as a bottom-up way of building a hierarchy of clusters.</li>
+<li>Role in the content chain: this is a standalone technique note for hierarchical clustering.</li>
+</ul>
+</section>
+
+<section id="suggested-opening" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Suggested Opening</h3>
+
+<p class="mb-3">Open from a different mental model than K-Means or DBSCAN:</p>
+
+<ul class="note-list">
+<li>sometimes we do not want just one answer to "how many clusters are there?"</li>
+<li>sometimes we want to see nested structure: small groups inside larger groups</li>
+<li>hierarchical clustering is useful because it preserves that gradual organization</li>
+</ul>
+
+<p class="mb-3">Then position AGNES:</p>
+
+<ul class="note-list">
+<li>AGNES stands for agglomerative nesting</li>
+<li>it starts from individual points and repeatedly merges them upward</li>
+</ul>
+</section>
+
+<section id="the-core-idea-merge-the-closest-things-first" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Core Idea: Merge the Closest Things First</h3>
+
+<p class="mb-3">Main beats:</p>
+
+<ul class="note-list">
+<li>begin with every point as its own cluster</li>
+<li>at each step, merge the two most similar clusters</li>
+<li>repeat until everything is merged into a single hierarchy</li>
+</ul>
+
+<p class="mb-3">Key conceptual shift:</p>
+
+<ul class="note-list">
+<li>AGNES does not commit early to one final number of clusters</li>
+<li>instead, it produces a merge history that we can inspect later</li>
+</ul>
+</section>
+
+<section id="why-linkage-criteria-matter" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Why Linkage Criteria Matter</h3>
+
+<p class="mb-3">This section is the real heart of the article.</p>
+
+<p class="mb-3">Explain that cluster-to-cluster distance is not unique:</p>
+
+<ul class="note-list">
+<li>single linkage</li>
+<li>complete linkage</li>
+<li>average linkage</li>
+<li>Ward-style variance-based merging</li>
+</ul>
+
+<p class="mb-3">Main point:</p>
+
+<ul class="note-list">
+<li>AGNES is not one fixed behavior; the linkage criterion changes what kind of structure it prefers</li>
+</ul>
+
+<p class="mb-3">Interpretive angles:</p>
+
+<ul class="note-list">
+<li>single linkage can preserve chain-like connectivity</li>
+<li>complete linkage prefers tighter groups</li>
+<li>average linkage balances the two</li>
+<li>Ward-style merging tends to favor compact variance-minimizing clusters</li>
+</ul>
+</section>
+
+<section id="the-dendrogram-as-the-output" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Dendrogram as the Output</h3>
+
+<p class="mb-3">This section should explain why hierarchical clustering feels different from flat methods.</p>
+
+<p class="mb-3">Key ideas:</p>
+
+<ul class="note-list">
+<li>the dendrogram records the order and level of merges</li>
+<li>cutting the tree at different heights produces different clusterings</li>
+<li>the same run can support multiple resolutions of analysis</li>
+</ul>
+
+<p class="mb-3">This is the main payoff:</p>
+
+<ul class="note-list">
+<li>AGNES gives us a structured map of grouping, not just one fixed partition</li>
+</ul>
+</section>
+
+<section id="why-agnes-feels-useful" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Why AGNES Feels Useful</h3>
+
+<p class="mb-3">Advantages:</p>
+
+<ul class="note-list">
+<li>captures nested structure</li>
+<li>avoids forcing a single <code>K</code> too early</li>
+<li>can be insightful for exploratory analysis</li>
+<li>the dendrogram can be more informative than a one-shot assignment</li>
+</ul>
+
+<p class="mb-3">Good fit:</p>
+
+<ul class="note-list">
+<li>cases where we care about hierarchy or gradual grouping</li>
+<li>analysis workflows where the cluster count is not known ahead of time</li>
+</ul>
+</section>
+
+<section id="where-agnes-breaks" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Where AGNES Breaks</h3>
+
+<p class="mb-3">Main weaknesses:</p>
+
+<ul class="note-list">
+<li>computational cost can grow quickly</li>
+<li>merge decisions are greedy and usually irreversible</li>
+<li>bad early merges can distort later structure</li>
+<li>the result depends heavily on the choice of linkage and distance measure</li>
+</ul>
+
+<p class="mb-3">Important interpretive point:</p>
+
+<ul class="note-list">
+<li>AGNES feels flexible because it gives a whole tree, but that tree still reflects strong modeling choices</li>
+</ul>
+</section>
+
+<section id="agnes-vs-flat-clustering" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">AGNES vs. Flat Clustering</h3>
+
+<p class="mb-3">This comparison section can stay short.</p>
+
+<p class="mb-3">Contrast with K-Means:</p>
+
+<ul class="note-list">
+<li>K-Means gives one flat partition organized around centers</li>
+<li>AGNES gives a nested hierarchy built by repeated merges</li>
+</ul>
+
+<p class="mb-3">Contrast with DBSCAN:</p>
+
+<ul class="note-list">
+<li>DBSCAN thinks in dense connected regions and noise</li>
+<li>AGNES thinks in merge history and similarity structure</li>
+</ul>
+</section>
+
+<section id="conclusion" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Conclusion</h3>
+
+<p class="mb-3">Target takeaway:</p>
+
+<ul class="note-list">
+<li>AGNES is useful when the structure of the data may exist at multiple levels</li>
+<li>its power comes from preserving merge history through the dendrogram</li>
+<li>its main cost is that linkage choice and early greedy merges strongly shape the final hierarchy</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supervised Learning in Data Mining — Ludwig</title>
+  <meta name="garden:tags" content="Data Mining, Supervised Learning, Classification, Regression, SVM, KNN, Random Forest, Deep Learning, Labels">
+  <meta name="garden:summary" content="How supervised learning fits into data mining: learning from labeled data to perform classification and regression, from classical models to deep learning.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.supervised_learning,concept.classification,concept.regression,concept.svm,concept.knn,concept.random_forest,concept.deep_learning,concept.labels">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.supervised_learning&quot;:{&quot;en&quot;:&quot;Supervised Learning&quot;,&quot;zh-Hant&quot;:&quot;監督式學習&quot;,&quot;zh-Hans&quot;:&quot;监督学习&quot;},&quot;concept.classification&quot;:{&quot;en&quot;:&quot;Classification&quot;,&quot;zh-Hant&quot;:&quot;分類&quot;,&quot;zh-Hans&quot;:&quot;分类&quot;},&quot;concept.regression&quot;:{&quot;en&quot;:&quot;Regression&quot;,&quot;zh-Hant&quot;:&quot;迴歸&quot;,&quot;zh-Hans&quot;:&quot;回归&quot;},&quot;concept.svm&quot;:{&quot;en&quot;:&quot;SVM&quot;,&quot;zh-Hant&quot;:&quot;支援向量機&quot;,&quot;zh-Hans&quot;:&quot;支持向量机&quot;},&quot;concept.knn&quot;:{&quot;en&quot;:&quot;KNN&quot;,&quot;zh-Hant&quot;:&quot;KNN&quot;,&quot;zh-Hans&quot;:&quot;KNN&quot;},&quot;concept.random_forest&quot;:{&quot;en&quot;:&quot;Random Forest&quot;,&quot;zh-Hant&quot;:&quot;隨機森林&quot;,&quot;zh-Hans&quot;:&quot;随机森林&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.labels&quot;:{&quot;en&quot;:&quot;Labels&quot;,&quot;zh-Hant&quot;:&quot;標籤&quot;,&quot;zh-Hans&quot;:&quot;标签&quot;}}">
+  <meta name="garden:published_at" content="2026-06-12">
+  <meta name="garden:last_modified_at" content="2026-06-12">
+  <meta name="garden:reading_time_minutes" content="5">
+  <meta name="garden:source" content="notes/supervised-learning-in-data-mining/supervised-learning-in-data-mining-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Supervised Learning in Data Mining</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#supervised">Supervised Learning in Data Mining</a>
+<a class="note-toc-link level-2" href="#supervised-guiding">Guiding Questions</a>
+<a class="note-toc-link level-2" href="#label-setting">The Labeled Learning Setting</a>
+<a class="note-toc-link level-2" href="#classical-models">Classical Supervised Models</a>
+<a class="note-toc-link level-2" href="#ensembles">Ensembles and Interpretability</a>
+<a class="note-toc-link level-2" href="#deep-learning">When Deep Learning Becomes Useful</a>
+<a class="note-toc-link level-2" href="#strengths-limits">Strengths and Limits of Supervised Learning</a>
+<a class="note-toc-link level-1" href="#summary">Summary &amp; Key Takeaways</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-12" data-published-at="2026-06-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="supervised" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Supervised Learning in Data Mining</h3>
+
+<div id="supervised-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Guiding Questions: What If We Already Know the Right Answer?</h4><p class="mb-3">Some data mining problems arrive with labeled examples: spam or not spam, diseased or healthy, fraud or normal, price tomorrow or sales next week. When that target is already known for past examples, the task changes. We are no longer discovering structure in a vacuum; we are learning a mapping from input to output.</p>
+
+<p class="mb-3">This raises a central question. If labeled data exists, how should we use it to build a model that generalizes beyond the training set rather than merely memorizing it?</p>
+
+<p class="mb-3">That is the setting of supervised learning: a core branch of data mining built around prediction from labeled experience.</p></div>
+
+<p class="mb-3">Supervised learning occupies the part of data mining where examples come with some form of ground truth. Instead of asking the model to freely discover structure, we ask it to learn from known input-output pairs and then extend that knowledge to unseen cases. This makes supervised learning especially powerful for predictive tasks such as classification and regression. But it also introduces a serious responsibility: if the labels are biased, noisy, or too narrow, the model may learn a highly polished version of the wrong lesson. That is why supervised learning should be understood not just as a set of algorithms, but as a disciplined framework for turning labeled experience into generalizable prediction.</p>
+</section>
+
+<section id="the-labeled-learning-setting" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Labeled Learning Setting</h3>
+
+<p class="mb-3">When a dataset arrives with established, gold-standard labels, supervised learning algorithms are deployed. In this setup, the algorithm acts like a student with an answer key, constantly adjusting its internal parameters to minimize the gap between its predictions and the actual ground truth.</p>
+</section>
+
+<section id="classical-supervised-models" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Classical Supervised Models</h3>
+
+<p class="mb-3">In practical classification tasks, classical algorithms like Support Vector Machines (SVM) and K-Nearest Neighbors (KNN) are frequently used to draw mathematical boundaries between distinct classes. For instance, in biomedical workflows, these models can successfully categorize cancerous versus healthy tissues by identifying specific threshold boundaries within highly complex gene expression profiles.</p>
+</section>
+
+<section id="ensembles-and-interpretability" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Ensembles and Interpretability</h3>
+
+<p class="mb-3">Similarly, Random Forests—an ensemble architecture built by aggregating numerous individual Decision Trees—provide both robust predictive power and structural interpretability. Because a single Decision Tree is essentially a flow chart of sequential feature tests and logical rules (e.g., If Gene A &gt; 2.5 and Gene B &lt; 1.0, then Classify as Type X), practitioners can inspect the forest to understand exactly how a clinical or pathway-based decision was formulated.</p>
+</section>
+
+<section id="when-deep-learning-becomes-useful" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">When Deep Learning Becomes Useful</h3>
+
+<p class="mb-3">When the data scales into massive, highly intricate biological configurations, Deep Learning architectures take over. These neural networks automatically extract hierarchical features without manual engineering:</p>
+
+<ul class="note-list">
+<li>Convolutional Neural Networks (CNNs): Excel at processing structural, spatial data. They can analyze medical images to detect tumors or predict protein secondary structures directly from raw, spatial amino acid layouts.</li>
+<li>Recurrent Neural Networks (RNNs): Engineered to handle sequential data where order carries meaning. They are highly effective at tracking long-range dependencies over time, making them the ideal tool for mapping nucleotide chains and calculating alignment or sequence similarities.</li>
+</ul>
+</section>
+
+<section id="strengths-and-limits-of-supervised-learning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Strengths and Limits of Supervised Learning</h3>
+
+<p class="mb-3">Supervised learning is powerful because it gives us a direct path from labeled experience to prediction. But that strength depends entirely on the quality, breadth, and representativeness of the labels we provide. If the labels are biased, noisy, or too narrow, the model may simply learn a more polished version of the wrong lesson. The real challenge is therefore not just fitting labels, but extracting patterns that remain stable and useful when applied beyond the training set.</p>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary &amp; Key Takeaways</h3>
+
+<ul class="note-list">
+<li>Supervised learning is the branch of data mining that learns from labeled examples.</li>
+<li>It is especially suited to classification and regression tasks.</li>
+<li>Classical models, ensemble methods, and deep learning each fit different structural conditions.</li>
+<li>The real challenge is not just fitting labels, but learning patterns that generalize beyond them.</li>
+</ul>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

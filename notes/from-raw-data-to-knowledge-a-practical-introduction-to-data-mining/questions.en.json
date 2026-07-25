@@ -1,0 +1,192 @@
+{
+  "questions": [
+    {
+      "question_id": "core-definition-of-data-mining",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Which statement best matches the core definition of data mining in these notes?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Retrieving known facts from a database as quickly as possible.",
+          "response": "Incorrect. This is deterministic retrieval, not discovery."
+        },
+        {
+          "id": "B",
+          "text": "Non-trivial extraction of implicit, previously unknown, and potentially useful information from data.",
+          "response": "Correct. These notes define data mining as the non-trivial extraction of implicit, previously unknown, and useful information from data."
+        },
+        {
+          "id": "C",
+          "text": "Monitoring real-time metrics and alerting when a threshold is crossed.",
+          "response": "Incorrect. Monitoring is not necessarily mining; discovery requires pattern generation."
+        },
+        {
+          "id": "D",
+          "text": "Turning all datasets into charts so humans can interpret them.",
+          "response": "Incorrect. Visualization can help, but it is not the definition of data mining."
+        }
+      ],
+      "answer": "B",
+      "explanation": "These notes define data mining as the non-trivial extraction of implicit, previously unknown, and useful information from data.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.data_mining",
+        "concept.preprocessing"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "sql-querying-vs-data-mining",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Why is simple SQL querying usually not considered data mining in this context?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "SQL cannot be used on large datasets.",
+          "response": "Incorrect. SQL is powerful; the issue is the task being deterministic vs exploratory."
+        },
+        {
+          "id": "B",
+          "text": "It is deterministic retrieval that answers known questions rather than discovering implicit patterns.",
+          "response": "Correct. Queries answer known questions deterministically; mining aims to discover generalizable patterns and future-facing insights."
+        },
+        {
+          "id": "C",
+          "text": "SQL cannot compute statistics like averages and sums.",
+          "response": "Incorrect. SQL can compute statistics; that alone does not make it mining."
+        },
+        {
+          "id": "D",
+          "text": "SQL results are always impossible for humans to interpret.",
+          "response": "Incorrect. Interpretation matters, but the key distinction is discovery vs retrieval."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Queries answer known questions deterministically; mining aims to discover generalizable patterns and future-facing insights.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.data_mining"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "data-information-knowledge-wisdom-order",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Which ordering best reflects the hierarchy described in these notes?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Data -> Information -> Knowledge -> Wisdom",
+          "response": "Correct. The article presents data mining as an upward movement from raw data toward increasingly meaningful forms of understanding."
+        },
+        {
+          "id": "B",
+          "text": "Data -> Knowledge -> Information -> Wisdom",
+          "response": "Incorrect. Information comes before knowledge in the hierarchy."
+        },
+        {
+          "id": "C",
+          "text": "Wisdom -> Knowledge -> Information -> Data",
+          "response": "Incorrect. That is the reverse of the progression described in the article."
+        },
+        {
+          "id": "D",
+          "text": "Information -> Data -> Wisdom -> Knowledge",
+          "response": "Incorrect. The hierarchy begins with raw data and rises step by step."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The article organizes the process as a hierarchy: Data -> Information -> Knowledge -> Wisdom.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.data_mining"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "data-mining-pipeline-order",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Which ordering best matches the data mining pipeline described in the notes?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Data Mining -> Data Source -> Data Warehouse -> Data Preprocessing -> Postprocessing",
+          "response": "Incorrect. Mining does not come before source setup and preprocessing."
+        },
+        {
+          "id": "B",
+          "text": "Data Source -> Data Mining -> Data Warehouse -> Data Preprocessing -> Postprocessing",
+          "response": "Incorrect. Preprocessing must happen before mining, and warehouse (if used) sits before preprocessing."
+        },
+        {
+          "id": "C",
+          "text": "Data Source -> Data Warehouse (optional) -> Data Preprocessing (including selection, cleaning, feature refinement, transformation) -> Data Mining -> Postprocessing",
+          "response": "Correct. The notes describe source first, then an optional warehouse layer, then preprocessing as one umbrella stage, then mining, and finally postprocessing."
+        },
+        {
+          "id": "D",
+          "text": "Data Warehouse -> Data Source -> Data Preprocessing -> Data Mining -> Postprocessing",
+          "response": "Incorrect. Source systems feed the warehouse, not the other way around."
+        }
+      ],
+      "answer": "C",
+      "explanation": "The notes describe: data source -> optional warehouse -> preprocessing (selection, cleaning, refinement, transformation) -> mining -> postprocessing.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.data_mining",
+        "concept.preprocessing"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    },
+    {
+      "question_id": "overfitting-definition",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "What is overfitting?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The model memorizes noise and quirks in training data and fails on new data.",
+          "response": "Correct. Overfitting is memorizing training noise so performance drops on unseen data."
+        },
+        {
+          "id": "B",
+          "text": "The model captures the underlying trend and performs similarly on unseen data.",
+          "response": "Incorrect. This describes good generalization."
+        },
+        {
+          "id": "C",
+          "text": "The model converts categories into one-hot vectors.",
+          "response": "Incorrect. This is about encoding, not overfitting."
+        },
+        {
+          "id": "D",
+          "text": "The model removes duplicates and missing values.",
+          "response": "Incorrect. This is about data preparation, not overfitting."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Overfitting is memorizing training noise so performance drops on unseen data.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.machine_learning",
+        "concept.overfitting"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    }
+  ]
+}

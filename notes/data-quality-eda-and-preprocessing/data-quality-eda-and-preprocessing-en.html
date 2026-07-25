@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Quality, EDA, and Preprocessing — Ludwig</title>
+  <meta name="garden:tags" content="Data Mining, Data Quality, Exploratory Data Analysis, EDA, Preprocessing, Missing Values, Outliers, Noise, Normalization, Feature Selection">
+  <meta name="garden:summary" content="How data quality problems distort learning, how EDA diagnoses them, and how preprocessing turns messy records into reliable model-ready data.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.data_quality,concept.exploratory_data_analysis,concept.eda,concept.preprocessing,concept.missing_values,concept.outliers,concept.noise,concept.normalization,concept.feature_selection">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.data_quality&quot;:{&quot;en&quot;:&quot;Data Quality&quot;,&quot;zh-Hant&quot;:&quot;資料品質&quot;,&quot;zh-Hans&quot;:&quot;数据质量&quot;},&quot;concept.exploratory_data_analysis&quot;:{&quot;en&quot;:&quot;Exploratory Data Analysis&quot;,&quot;zh-Hant&quot;:&quot;探索式資料分析&quot;,&quot;zh-Hans&quot;:&quot;探索式数据分析&quot;},&quot;concept.eda&quot;:{&quot;en&quot;:&quot;EDA&quot;,&quot;zh-Hant&quot;:&quot;探索式資料分析&quot;,&quot;zh-Hans&quot;:&quot;探索式数据分析&quot;},&quot;concept.preprocessing&quot;:{&quot;en&quot;:&quot;Preprocessing&quot;,&quot;zh-Hant&quot;:&quot;前處理&quot;,&quot;zh-Hans&quot;:&quot;预处理&quot;},&quot;concept.missing_values&quot;:{&quot;en&quot;:&quot;Missing Values&quot;,&quot;zh-Hant&quot;:&quot;缺失值&quot;,&quot;zh-Hans&quot;:&quot;缺失值&quot;},&quot;concept.outliers&quot;:{&quot;en&quot;:&quot;Outliers&quot;,&quot;zh-Hant&quot;:&quot;離群值&quot;,&quot;zh-Hans&quot;:&quot;离群值&quot;},&quot;concept.noise&quot;:{&quot;en&quot;:&quot;Noise&quot;,&quot;zh-Hant&quot;:&quot;雜訊&quot;,&quot;zh-Hans&quot;:&quot;噪声&quot;},&quot;concept.normalization&quot;:{&quot;en&quot;:&quot;Normalization&quot;,&quot;zh-Hant&quot;:&quot;正規化&quot;,&quot;zh-Hans&quot;:&quot;归一化&quot;},&quot;concept.feature_selection&quot;:{&quot;en&quot;:&quot;Feature Selection&quot;,&quot;zh-Hant&quot;:&quot;特徵選擇&quot;,&quot;zh-Hans&quot;:&quot;特征选择&quot;}}">
+  <meta name="garden:published_at" content="2026-06-12">
+  <meta name="garden:last_modified_at" content="2026-06-12">
+  <meta name="garden:reading_time_minutes" content="7">
+  <meta name="garden:source" content="notes/data-quality-eda-and-preprocessing/data-quality-eda-and-preprocessing-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Data Quality, EDA, and Preprocessing</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#prep">Data Quality, EDA, and Preprocessing</a>
+<a class="note-toc-link level-2" href="#prep-guiding">Guiding Questions</a>
+<a class="note-toc-link level-2" href="#quality-first">Why Data Quality Comes First</a>
+<a class="note-toc-link level-2" href="#data-health">Assessing Data Health</a>
+<a class="note-toc-link level-2" href="#eda">EDA as the Diagnostic Lens</a>
+<a class="note-toc-link level-2" href="#preprocessing">Preprocessing as the Treatment Plan</a>
+<a class="note-toc-link level-2" href="#prep-to-modeling">From Preparation to Modeling</a>
+<a class="note-toc-link level-1" href="#summary">Summary &amp; Key Takeaways</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-12" data-published-at="2026-06-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="prep" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Data Quality, EDA, and Preprocessing</h3>
+
+<div id="prep-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Guiding Questions: Before We Clean the Data</h4><p class="mb-3">Once we have selected the data we care about, a new problem emerges: how do we know whether that data deserves to be trusted? If our records are noisy, incomplete, duplicated, or inconsistently formatted, even the most sophisticated model can end up learning the wrong lesson.</p>
+
+<p class="mb-3">This raises a second question. Why can’t we simply feed raw data directly into a model and hope it learns the right lesson? Before we "fix" a dataset, how do we diagnose what is actually wrong with it? We need a way to see distributions, spot anomalies, and understand whether the data's structure supports the task we care about.</p>
+
+<p class="mb-3">That is where data quality analysis, Exploratory Data Analysis (EDA), and preprocessing come together. They form the critical middle layer between raw collection and meaningful modeling.</p></div>
+
+<p class="mb-3">After data selection, the next challenge in data mining is not immediately choosing an algorithm. It is learning how to trust the data that will feed that algorithm. Raw datasets often look complete at first glance, yet still contain the exact kinds of defects that distort later modeling: missing values, duplicated records, inconsistent scales, mislabeled categories, and extreme outliers that blur the line between error and signal. This is the practical meaning of "garbage in, garbage out": low-quality inputs do not merely make a model less accurate, they can teach it the wrong picture of reality. That is why data quality assessment, EDA, and preprocessing belong together. Data quality tells us what can go wrong, EDA helps us see where those problems are concentrated, and preprocessing gives us the concrete operations needed to repair, reshape, and stabilize the dataset before mining begins.</p>
+</section>
+
+<section id="why-data-quality-comes-first" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Why Data Quality Comes First</h3>
+
+<p class="mb-3">Once we understand the structural persona of our data, we must assess its integrity before allowing an algorithm to touch it. In the real world, data quality is defined by three pillars: accuracy (is it correct?), completeness (is anything missing?), and consistency (is it formatted uniformly?). High-quality data is an absolute prerequisite for effective modeling; if we skip this health check, we fall straight into the "garbage in, garbage out" trap.</p>
+</section>
+
+<section id="assessing-data-health-noise-outliers-missing-values-and-duplicates" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Assessing Data Health: Noise, Outliers, Missing Values, and Duplicates</h3>
+
+<p class="mb-3">Real-world datasets are perpetually plagued by anomalies that threaten this quality:</p>
+
+<ul class="note-list">
+<li>Noise: Random errors or variances, often stemming from faulty hardware sensors, human data-entry typos, or erratic formatting.</li>
+<li>Outliers: Data points that exhibit extreme deviations from the statistical norm. These require careful human scrutiny: are they simply severe noise to be discarded, or are they highly valuable rare events—such as a brilliant flash of fraud in banking data or a new anomaly in cybersecurity networks?</li>
+<li>Missing Values &amp; Duplicates: Gaps that require mathematical imputation (filling in blanks) or outright record deletion, alongside clone entries that must be merged to prevent algorithms from applying skewed, artificial weights to identical underlying entities.</li>
+</ul>
+</section>
+
+<section id="eda-as-the-diagnostic-lens" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">EDA as the Diagnostic Lens</h3>
+
+<p class="mb-3">We cannot fix these quality issues blindly. To systematically diagnose a dataset's flaws before any heavy modeling occurs, practitioners employ Exploratory Data Analysis (EDA). Acting as a crucial sanity check, EDA is the "X-ray machine" of data science. It relies heavily on visual tools—such as histograms to view data distributions, boxplots to instantly spot outliers, and scatter plots to reveal hidden correlations.</p>
+
+<p class="mb-3">Through EDA, we assess class balances to ensure our future models won't be heavily biased toward a dominant majority group. Even for unstructured data, running basic statistical summaries on text word frequencies or image pixel distributions during this diagnostic phase provides the foundational insights that dictate our ultimate cleaning strategy.</p>
+
+<div class="note-quiz mt-4">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 1</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">In EDA, which visualization is commonly used to quickly spot outliers?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Histograms show distributions, but boxplots are the classic fast outlier spotter.">A. Histogram</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.">B. Boxplot</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Scatter plots help reveal relationships, but they are not the standard outlier-first tool described.">C. Scatter plot</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Confusion matrices are for evaluating classifiers, not EDA.">D. Confusion matrix</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="preprocessing-as-the-treatment-plan" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Preprocessing as the Treatment Plan</h3>
+
+<p class="mb-3">Once EDA has illuminated the precise vulnerabilities within the dataset, Data Preprocessing steps in to physically execute the treatment plan, moving from conceptual cleanup to concrete algorithmic preparation. This phase materializes across three rigorous technical fronts:</p>
+
+<ol class="mb-3">
+<li>Data Cleaning: Resolving the specific missing values, inconsistencies, and corrupted entries surfaced during the EDA phase.</li>
+<li>Data Reduction: Shrinking the sheer volume and dimensionality of massive datasets—either through statistical sampling, feature binning, or applying advanced mathematical techniques like Principal Component Analysis (PCA)—ensuring we reduce computational strain without losing the core structural integrity of the signal.</li>
+<li>Transformation &amp; Encoding: Physically reshaping data values into machine-ready formats. This includes normalizing numerical scales (via Min-Max scaling or Z-scores) so that massive numbers do not mathematically overpower smaller, equally important ones. Furthermore, it utilizes techniques like One-Hot Encoding to seamlessly convert qualitative categorical text labels into binary numerical vectors ($0$s and $1$s), ensuring the dataset is fully compatible with mathematical machine learning models.</li>
+</ol>
+</section>
+
+<section id="from-preparation-to-modeling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">From Preparation to Modeling</h3>
+
+<p class="mb-3">Good preparation does not guarantee a good model, but bad preparation often guarantees a bad one. That is why this article sits at the center of the larger pipeline. Data quality tells us what can go wrong, EDA tells us what is actually happening, and preprocessing tells us what to do next. Only after these steps can we responsibly move on to later articles such as <code>Core Tasks in Data Mining</code>, <code>Supervised Learning in Data Mining</code>, and <code>Unsupervised Learning and Dimensionality Reduction</code>.</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>📊 Characteristics of Useful Patterns</strong></p><p class="mb-2">For a discovered pattern to be considered true "knowledge," it must possess two critical characteristics:</p>
+
+<ul class="note-list">
+<li><strong>Generalizability:</strong> A pattern must remain highly accurate when tested on unseen data (<code>Generalizability = accuracy on unseen data</code>). Its generalizability is fundamentally limited by the quality of the baseline data; small, narrow, or heavily biased datasets will inevitably cause a model to memorize noise.</li>
+<li><strong>Importance:</strong> The uncovered relationship must reflect a genuine, meaningful mechanism. It is critical to remember that correlation does not imply causation—simply because two variables move together mathematically does not mean one forces the other to happen.</li>
+</ul>
+
+<p class="mb-3"><strong>Core Insight:</strong> To maximize both generalizability and importance, practitioners rely heavily on strategic feature selection, precise normalization, and rigorous preprocessing to actively isolate true signals from background noise. &lt;/block&gt;</p>
+
+<h3 class="mb-3">Summary &amp; Key Takeaways</h3>
+
+<p class="mb-3">This conclusion should gather the main claims without expanding scope.</p>
+
+<ul class="note-list">
+<li>Data quality is not a side concern; it is part of the epistemic reliability of the whole pipeline.</li>
+<li>EDA is the diagnostic step that turns vague suspicion into concrete evidence.</li>
+<li>Preprocessing is the operational layer that transforms evidence into intervention.</li>
+<li>Good preparation does not just make algorithms easier to run; it makes later knowledge claims more trustworthy.</li>
+</ul>
+
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+</ol></div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

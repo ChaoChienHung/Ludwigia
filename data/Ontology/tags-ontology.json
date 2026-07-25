@@ -1,0 +1,1404 @@
+{
+  "version": "v1",
+  "updated_at": "2026-06-24",
+  "description": "Minimal tag ontology for concept-level mapping across labels.",
+  "naming_rules": {
+    "display_case": "capitalized",
+    "storage_case": "capitalized",
+    "normalization": [
+      "trim surrounding spaces",
+      "collapse internal spaces to a single space",
+      "compare case-insensitively when resolving aliases"
+    ]
+  },
+  "simple_rules": [
+    {
+      "rule_id": "rule.ml-acronym",
+      "description": "Resolve ML and Chinese variant to Machine Learning.",
+      "match_any": [
+        "Machine Learning",
+        "machine learning",
+        "ML",
+        "ml",
+        "機器學習"
+      ],
+      "map_to_concept_id": "concept.machine_learning"
+    },
+    {
+      "rule_id": "rule.ai-acronym",
+      "description": "Resolve AI and spelling variants to Artificial Intelligence.",
+      "match_any": [
+        "Artificial Intelligence",
+        "artificial intelligence",
+        "aritificial intelligence",
+        "AI",
+        "ai",
+        "人工智慧"
+      ],
+      "map_to_concept_id": "concept.artificial_intelligence"
+    }
+  ],
+  "concepts": [
+    {
+      "concept_id": "concept.data_mining",
+      "labels": {
+        "en": "Data Mining",
+        "zh-Hant": "資料探勘",
+        "zh-Hans": "数据挖掘"
+      },
+      "aliases": [
+        "data mining",
+        "Data mining",
+        "資料探勘",
+        "資料挖掘",
+        "数据挖掘"
+      ]
+    },
+    {
+      "concept_id": "concept.clustering",
+      "labels": {
+        "en": "Clustering",
+        "zh-Hant": "分群",
+        "zh-Hans": "聚类"
+      },
+      "aliases": [
+        "clustering",
+        "Clustering",
+        "cluster analysis",
+        "分群",
+        "分群分析",
+        "聚类"
+      ]
+    },
+    {
+      "concept_id": "concept.machine_learning",
+      "labels": {
+        "en": "Machine Learning",
+        "zh-Hant": "機器學習",
+        "zh-Hans": "机器学习"
+      },
+      "aliases": [
+        "machine learning",
+        "Machine learning",
+        "ML",
+        "機器學習",
+        "机器学习"
+      ]
+    },
+    {
+      "concept_id": "concept.artificial_intelligence",
+      "labels": {
+        "en": "Artificial Intelligence",
+        "zh-Hant": "人工智慧",
+        "zh-Hans": "人工智能"
+      },
+      "aliases": [
+        "artificial intelligence",
+        "Artificial intelligence",
+        "aritificial intelligence",
+        "AI",
+        "人工智慧",
+        "人工智能"
+      ]
+    },
+    {
+      "concept_id": "concept.active_recall",
+      "labels": {
+        "en": "Active Recall",
+        "zh-Hant": "主動回憶",
+        "zh-Hans": "主动回忆"
+      },
+      "aliases": [
+        "active recall",
+        "主動回憶",
+        "主动回忆"
+      ]
+    },
+    {
+      "concept_id": "concept.agent",
+      "labels": {
+        "en": "Agent",
+        "zh-Hant": "代理",
+        "zh-Hans": "代理"
+      },
+      "aliases": [
+        "agent",
+        "代理"
+      ]
+    },
+    {
+      "concept_id": "concept.agentic_ai",
+      "labels": {
+        "en": "Agentic AI",
+        "zh-Hant": "代理式 AI",
+        "zh-Hans": "代理式 AI"
+      },
+      "aliases": [
+        "agentic ai",
+        "代理式 AI"
+      ]
+    },
+    {
+      "concept_id": "concept.agnes",
+      "labels": {
+        "en": "Agnes",
+        "zh-Hant": "AGNES",
+        "zh-Hans": "AGNES"
+      },
+      "aliases": [
+        "agnes",
+        "AGNES"
+      ]
+    },
+    {
+      "concept_id": "concept.association_rules",
+      "labels": {
+        "en": "Association Rules",
+        "zh-Hant": "關聯規則",
+        "zh-Hans": "关联规则"
+      },
+      "aliases": [
+        "association rules",
+        "關聯規則",
+        "关联规则"
+      ]
+    },
+    {
+      "concept_id": "concept.attention",
+      "labels": {
+        "en": "Attention",
+        "zh-Hant": "注意力",
+        "zh-Hans": "注意力"
+      },
+      "aliases": [
+        "attention",
+        "注意力"
+      ]
+    },
+    {
+      "concept_id": "concept.attributes",
+      "labels": {
+        "en": "Attributes",
+        "zh-Hant": "屬性",
+        "zh-Hans": "属性"
+      },
+      "aliases": [
+        "attributes",
+        "屬性",
+        "属性"
+      ]
+    },
+    {
+      "concept_id": "concept.brainstorming",
+      "labels": {
+        "en": "Brainstorming",
+        "zh-Hant": "腦力激盪",
+        "zh-Hans": "头脑风暴"
+      },
+      "aliases": [
+        "brainstorming",
+        "腦力激盪",
+        "头脑风暴"
+      ]
+    },
+    {
+      "concept_id": "concept.burnout",
+      "labels": {
+        "en": "Burnout",
+        "zh-Hant": "倦怠",
+        "zh-Hans": "倦怠"
+      },
+      "aliases": [
+        "burnout",
+        "倦怠"
+      ]
+    },
+    {
+      "concept_id": "concept.categorical_data",
+      "labels": {
+        "en": "Categorical Data",
+        "zh-Hant": "類別資料",
+        "zh-Hans": "类别数据"
+      },
+      "aliases": [
+        "categorical data",
+        "類別資料",
+        "类别数据"
+      ]
+    },
+    {
+      "concept_id": "concept.causality",
+      "labels": {
+        "en": "Causality",
+        "zh-Hant": "因果關係",
+        "zh-Hans": "因果关系"
+      },
+      "aliases": [
+        "causality",
+        "因果關係",
+        "因果关系"
+      ]
+    },
+    {
+      "concept_id": "concept.centroid",
+      "labels": {
+        "en": "Centroid",
+        "zh-Hant": "質心",
+        "zh-Hans": "质心"
+      },
+      "aliases": [
+        "centroid",
+        "質心",
+        "质心"
+      ]
+    },
+    {
+      "concept_id": "concept.centroid_based_clustering",
+      "labels": {
+        "en": "Centroid-Based Clustering",
+        "zh-Hant": "質心式分群",
+        "zh-Hans": "质心式聚类"
+      },
+      "aliases": [
+        "centroid-based clustering",
+        "centroid based clustering",
+        "質心式分群",
+        "质心式聚类"
+      ]
+    },
+    {
+      "concept_id": "concept.chinchilla",
+      "labels": {
+        "en": "Chinchilla",
+        "zh-Hant": "Chinchilla",
+        "zh-Hans": "Chinchilla"
+      },
+      "aliases": [
+        "chinchilla"
+      ]
+    },
+    {
+      "concept_id": "concept.classification",
+      "labels": {
+        "en": "Classification",
+        "zh-Hant": "分類",
+        "zh-Hans": "分类"
+      },
+      "aliases": [
+        "classification",
+        "分類",
+        "分类"
+      ]
+    },
+    {
+      "concept_id": "concept.codebase",
+      "labels": {
+        "en": "Codebase",
+        "zh-Hant": "Codebase",
+        "zh-Hans": "Codebase"
+      },
+      "aliases": [
+        "codebase"
+      ]
+    },
+    {
+      "concept_id": "concept.cognition",
+      "labels": {
+        "en": "Cognition",
+        "zh-Hant": "認知",
+        "zh-Hans": "认知"
+      },
+      "aliases": [
+        "cognition",
+        "認知",
+        "认知"
+      ]
+    },
+    {
+      "concept_id": "concept.context",
+      "labels": {
+        "en": "Context",
+        "zh-Hant": "上下文",
+        "zh-Hans": "上下文"
+      },
+      "aliases": [
+        "context",
+        "上下文"
+      ]
+    },
+    {
+      "concept_id": "concept.creativity",
+      "labels": {
+        "en": "Creativity",
+        "zh-Hant": "創造力",
+        "zh-Hans": "创造力"
+      },
+      "aliases": [
+        "creativity",
+        "創造力",
+        "创造力"
+      ]
+    },
+    {
+      "concept_id": "concept.data",
+      "labels": {
+        "en": "Data",
+        "zh-Hant": "資料",
+        "zh-Hans": "数据"
+      },
+      "aliases": [
+        "data",
+        "資料",
+        "数据"
+      ]
+    },
+    {
+      "concept_id": "concept.data_quality",
+      "labels": {
+        "en": "Data Quality",
+        "zh-Hant": "資料品質",
+        "zh-Hans": "数据质量"
+      },
+      "aliases": [
+        "data quality",
+        "資料品質",
+        "数据质量"
+      ]
+    },
+    {
+      "concept_id": "concept.data_representation",
+      "labels": {
+        "en": "Data Representation",
+        "zh-Hant": "資料表示",
+        "zh-Hans": "数据表示"
+      },
+      "aliases": [
+        "data representation",
+        "資料表示",
+        "数据表示"
+      ]
+    },
+    {
+      "concept_id": "concept.data_understanding",
+      "labels": {
+        "en": "Data Understanding",
+        "zh-Hant": "資料理解",
+        "zh-Hans": "数据理解"
+      },
+      "aliases": [
+        "data understanding",
+        "資料理解",
+        "数据理解"
+      ]
+    },
+    {
+      "concept_id": "concept.dbscan",
+      "labels": {
+        "en": "DBSCAN",
+        "zh-Hant": "DBSCAN",
+        "zh-Hans": "DBSCAN"
+      },
+      "aliases": [
+        "dbscan"
+      ]
+    },
+    {
+      "concept_id": "concept.decision_making",
+      "labels": {
+        "en": "Decision Making",
+        "zh-Hant": "決策",
+        "zh-Hans": "决策"
+      },
+      "aliases": [
+        "decision making",
+        "決策",
+        "决策"
+      ]
+    },
+    {
+      "concept_id": "concept.dedup",
+      "labels": {
+        "en": "Dedup",
+        "zh-Hant": "去重",
+        "zh-Hans": "去重"
+      },
+      "aliases": [
+        "dedup",
+        "去重"
+      ]
+    },
+    {
+      "concept_id": "concept.deep_learning",
+      "labels": {
+        "en": "Deep Learning",
+        "zh-Hant": "深度學習",
+        "zh-Hans": "深度学习"
+      },
+      "aliases": [
+        "deep learning",
+        "深度學習",
+        "深度学习"
+      ]
+    },
+    {
+      "concept_id": "concept.dendrogram",
+      "labels": {
+        "en": "Dendrogram",
+        "zh-Hant": "樹狀圖",
+        "zh-Hans": "树状图"
+      },
+      "aliases": [
+        "dendrogram",
+        "樹狀圖",
+        "树状图"
+      ]
+    },
+    {
+      "concept_id": "concept.density",
+      "labels": {
+        "en": "Density",
+        "zh-Hant": "密度",
+        "zh-Hans": "密度"
+      },
+      "aliases": [
+        "density",
+        "密度"
+      ]
+    },
+    {
+      "concept_id": "concept.descriptive_tasks",
+      "labels": {
+        "en": "Descriptive Tasks",
+        "zh-Hant": "描述性任務",
+        "zh-Hans": "描述性任务"
+      },
+      "aliases": [
+        "descriptive tasks",
+        "描述性任務",
+        "描述性任务"
+      ]
+    },
+    {
+      "concept_id": "concept.diana",
+      "labels": {
+        "en": "Diana",
+        "zh-Hant": "DIANA",
+        "zh-Hans": "DIANA"
+      },
+      "aliases": [
+        "diana",
+        "DIANA"
+      ]
+    },
+    {
+      "concept_id": "concept.dimensionality_reduction",
+      "labels": {
+        "en": "Dimensionality Reduction",
+        "zh-Hant": "降維",
+        "zh-Hans": "降维"
+      },
+      "aliases": [
+        "dimensionality reduction",
+        "降維",
+        "降维"
+      ]
+    },
+    {
+      "concept_id": "concept.divisive_clustering",
+      "labels": {
+        "en": "Divisive Clustering",
+        "zh-Hant": "分裂式分群",
+        "zh-Hans": "分裂式聚类"
+      },
+      "aliases": [
+        "divisive clustering",
+        "分裂式分群",
+        "分裂式聚类"
+      ]
+    },
+    {
+      "concept_id": "concept.documentation",
+      "labels": {
+        "en": "Documentation",
+        "zh-Hant": "文件",
+        "zh-Hans": "文档"
+      },
+      "aliases": [
+        "documentation",
+        "文件",
+        "文档"
+      ]
+    },
+    {
+      "concept_id": "concept.eda",
+      "labels": {
+        "en": "EDA",
+        "zh-Hant": "探索式資料分析",
+        "zh-Hans": "探索式数据分析"
+      },
+      "aliases": [
+        "eda",
+        "探索式資料分析",
+        "探索式数据分析"
+      ]
+    },
+    {
+      "concept_id": "concept.education",
+      "labels": {
+        "en": "Education",
+        "zh-Hant": "教育",
+        "zh-Hans": "教育"
+      },
+      "aliases": [
+        "education",
+        "教育"
+      ]
+    },
+    {
+      "concept_id": "concept.embedding",
+      "labels": {
+        "en": "Embedding",
+        "zh-Hant": "嵌入表示",
+        "zh-Hans": "嵌入表示"
+      },
+      "aliases": [
+        "embedding",
+        "嵌入表示"
+      ]
+    },
+    {
+      "concept_id": "concept.engram",
+      "labels": {
+        "en": "Engram",
+        "zh-Hant": "記憶痕跡",
+        "zh-Hans": "记忆痕迹"
+      },
+      "aliases": [
+        "engram",
+        "記憶痕跡",
+        "记忆痕迹"
+      ]
+    },
+    {
+      "concept_id": "concept.epistemology",
+      "labels": {
+        "en": "Epistemology",
+        "zh-Hant": "認識論",
+        "zh-Hans": "认识论"
+      },
+      "aliases": [
+        "epistemology",
+        "認識論",
+        "认识论"
+      ]
+    },
+    {
+      "concept_id": "concept.exploratory_data_analysis",
+      "labels": {
+        "en": "Exploratory Data Analysis",
+        "zh-Hant": "探索式資料分析",
+        "zh-Hans": "探索式数据分析"
+      },
+      "aliases": [
+        "exploratory data analysis",
+        "探索式資料分析",
+        "探索式数据分析"
+      ]
+    },
+    {
+      "concept_id": "concept.feature_selection",
+      "labels": {
+        "en": "Feature Selection",
+        "zh-Hant": "特徵選擇",
+        "zh-Hans": "特征选择"
+      },
+      "aliases": [
+        "feature selection",
+        "特徵選擇",
+        "特征选择"
+      ]
+    },
+    {
+      "concept_id": "concept.first_principles",
+      "labels": {
+        "en": "First Principles",
+        "zh-Hant": "第一性原理",
+        "zh-Hans": "第一性原理"
+      },
+      "aliases": [
+        "first principles",
+        "First Principles",
+        "第一性原理"
+      ]
+    },
+    {
+      "concept_id": "concept.generalization",
+      "labels": {
+        "en": "Generalization",
+        "zh-Hant": "泛化",
+        "zh-Hans": "泛化"
+      },
+      "aliases": [
+        "generalization",
+        "泛化"
+      ]
+    },
+    {
+      "concept_id": "concept.graph_data",
+      "labels": {
+        "en": "Graph Data",
+        "zh-Hant": "圖資料",
+        "zh-Hans": "图数据"
+      },
+      "aliases": [
+        "graph data",
+        "圖資料",
+        "图数据"
+      ]
+    },
+    {
+      "concept_id": "concept.graph_mining",
+      "labels": {
+        "en": "Graph Mining",
+        "zh-Hant": "圖探勘",
+        "zh-Hans": "图挖掘"
+      },
+      "aliases": [
+        "graph mining",
+        "圖探勘",
+        "图挖掘"
+      ]
+    },
+    {
+      "concept_id": "concept.hierarchical_clustering",
+      "labels": {
+        "en": "Hierarchical Clustering",
+        "zh-Hant": "階層式分群",
+        "zh-Hans": "层次聚类"
+      },
+      "aliases": [
+        "hierarchical clustering",
+        "階層式分群",
+        "层次聚类"
+      ]
+    },
+    {
+      "concept_id": "concept.k_means",
+      "labels": {
+        "en": "K-Means",
+        "zh-Hant": "K-Means 分群",
+        "zh-Hans": "K-Means 聚类"
+      },
+      "aliases": [
+        "k-means",
+        "K-Means 分群",
+        "K-Means 聚类"
+      ]
+    },
+    {
+      "concept_id": "concept.knn",
+      "labels": {
+        "en": "KNN",
+        "zh-Hant": "KNN",
+        "zh-Hans": "KNN"
+      },
+      "aliases": [
+        "knn"
+      ]
+    },
+    {
+      "concept_id": "concept.labels",
+      "labels": {
+        "en": "Labels",
+        "zh-Hant": "標籤",
+        "zh-Hans": "标签"
+      },
+      "aliases": [
+        "labels",
+        "標籤",
+        "标签"
+      ]
+    },
+    {
+      "concept_id": "concept.learning",
+      "labels": {
+        "en": "Learning",
+        "zh-Hant": "學習",
+        "zh-Hans": "学习"
+      },
+      "aliases": [
+        "learning",
+        "學習",
+        "学习"
+      ]
+    },
+    {
+      "concept_id": "concept.linkage",
+      "labels": {
+        "en": "Linkage",
+        "zh-Hant": "鏈結準則",
+        "zh-Hans": "链接准则"
+      },
+      "aliases": [
+        "linkage",
+        "鏈結準則",
+        "链接准则"
+      ]
+    },
+    {
+      "concept_id": "concept.llm",
+      "labels": {
+        "en": "LLM",
+        "zh-Hant": "大型語言模型",
+        "zh-Hans": "大型语言模型"
+      },
+      "aliases": [
+        "llm",
+        "大型語言模型",
+        "大型语言模型"
+      ]
+    },
+    {
+      "concept_id": "concept.lsh",
+      "labels": {
+        "en": "LSH",
+        "zh-Hant": "局部敏感雜湊",
+        "zh-Hans": "局部敏感哈希"
+      },
+      "aliases": [
+        "lsh",
+        "局部敏感雜湊",
+        "局部敏感哈希"
+      ]
+    },
+    {
+      "concept_id": "concept.memory",
+      "labels": {
+        "en": "Memory",
+        "zh-Hant": "記憶",
+        "zh-Hans": "记忆"
+      },
+      "aliases": [
+        "memory",
+        "記憶",
+        "记忆"
+      ]
+    },
+    {
+      "concept_id": "concept.missing_values",
+      "labels": {
+        "en": "Missing Values",
+        "zh-Hant": "缺失值",
+        "zh-Hans": "缺失值"
+      },
+      "aliases": [
+        "missing values",
+        "缺失值"
+      ]
+    },
+    {
+      "concept_id": "concept.nmf",
+      "labels": {
+        "en": "NMF",
+        "zh-Hant": "非負矩陣分解",
+        "zh-Hans": "非负矩阵分解"
+      },
+      "aliases": [
+        "nmf",
+        "非負矩陣分解",
+        "非负矩阵分解"
+      ]
+    },
+    {
+      "concept_id": "concept.noise",
+      "labels": {
+        "en": "Noise",
+        "zh-Hant": "雜訊",
+        "zh-Hans": "噪声"
+      },
+      "aliases": [
+        "noise",
+        "雜訊",
+        "噪声"
+      ]
+    },
+    {
+      "concept_id": "concept.normalization",
+      "labels": {
+        "en": "Normalization",
+        "zh-Hant": "正規化",
+        "zh-Hans": "归一化"
+      },
+      "aliases": [
+        "normalization",
+        "正規化",
+        "归一化"
+      ]
+    },
+    {
+      "concept_id": "concept.notion",
+      "labels": {
+        "en": "Notion",
+        "zh-Hant": "Notion",
+        "zh-Hans": "Notion"
+      },
+      "aliases": [
+        "notion"
+      ]
+    },
+    {
+      "concept_id": "concept.numerical_data",
+      "labels": {
+        "en": "Numerical Data",
+        "zh-Hant": "數值資料",
+        "zh-Hans": "数值数据"
+      },
+      "aliases": [
+        "numerical data",
+        "數值資料",
+        "数值数据"
+      ]
+    },
+    {
+      "concept_id": "concept.orthogonality",
+      "labels": {
+        "en": "Orthogonality",
+        "zh-Hant": "正交性",
+        "zh-Hans": "正交性"
+      },
+      "aliases": [
+        "orthogonality",
+        "正交性"
+      ]
+    },
+    {
+      "concept_id": "concept.outlier",
+      "labels": {
+        "en": "Outlier",
+        "zh-Hant": "離群值",
+        "zh-Hans": "离群值"
+      },
+      "aliases": [
+        "outlier",
+        "離群值",
+        "离群值"
+      ]
+    },
+    {
+      "concept_id": "concept.outliers",
+      "labels": {
+        "en": "Outliers",
+        "zh-Hant": "離群值",
+        "zh-Hans": "离群值"
+      },
+      "aliases": [
+        "outliers",
+        "離群值",
+        "离群值"
+      ]
+    },
+    {
+      "concept_id": "concept.outline",
+      "labels": {
+        "en": "Outline",
+        "zh-Hant": "大綱",
+        "zh-Hans": "大纲"
+      },
+      "aliases": [
+        "outline",
+        "大綱",
+        "大纲"
+      ]
+    },
+    {
+      "concept_id": "concept.overfitting",
+      "labels": {
+        "en": "Overfitting",
+        "zh-Hant": "過擬合",
+        "zh-Hans": "过拟合"
+      },
+      "aliases": [
+        "overfitting",
+        "過擬合",
+        "过拟合"
+      ]
+    },
+    {
+      "concept_id": "concept.pca",
+      "labels": {
+        "en": "PCA",
+        "zh-Hant": "主成分分析",
+        "zh-Hans": "主成分分析"
+      },
+      "aliases": [
+        "pca",
+        "主成分分析"
+      ]
+    },
+    {
+      "concept_id": "concept.predictive_tasks",
+      "labels": {
+        "en": "Predictive Tasks",
+        "zh-Hant": "預測性任務",
+        "zh-Hans": "预测性任务"
+      },
+      "aliases": [
+        "predictive tasks",
+        "預測性任務",
+        "预测性任务"
+      ]
+    },
+    {
+      "concept_id": "concept.preprocessing",
+      "labels": {
+        "en": "Preprocessing",
+        "zh-Hant": "前處理",
+        "zh-Hans": "预处理"
+      },
+      "aliases": [
+        "preprocessing",
+        "前處理",
+        "预处理"
+      ]
+    },
+    {
+      "concept_id": "concept.productivity",
+      "labels": {
+        "en": "Productivity",
+        "zh-Hant": "生產力",
+        "zh-Hans": "生产力"
+      },
+      "aliases": [
+        "productivity",
+        "生產力",
+        "生产力"
+      ]
+    },
+    {
+      "concept_id": "concept.proofread",
+      "labels": {
+        "en": "Proofread",
+        "zh-Hant": "校對",
+        "zh-Hans": "校对"
+      },
+      "aliases": [
+        "proofread",
+        "校對",
+        "校对"
+      ]
+    },
+    {
+      "concept_id": "concept.quota",
+      "labels": {
+        "en": "Quota",
+        "zh-Hant": "配額",
+        "zh-Hans": "配额"
+      },
+      "aliases": [
+        "quota",
+        "配額",
+        "配额"
+      ]
+    },
+    {
+      "concept_id": "concept.random_forest",
+      "labels": {
+        "en": "Random Forest",
+        "zh-Hant": "隨機森林",
+        "zh-Hans": "随机森林"
+      },
+      "aliases": [
+        "random forest",
+        "隨機森林",
+        "随机森林"
+      ]
+    },
+    {
+      "concept_id": "concept.recommender_systems",
+      "labels": {
+        "en": "Recommender Systems",
+        "zh-Hant": "推薦系統",
+        "zh-Hans": "推荐系统"
+      },
+      "aliases": [
+        "recommender systems",
+        "推薦系統",
+        "推荐系统"
+      ]
+    },
+    {
+      "concept_id": "concept.reflection",
+      "labels": {
+        "en": "Reflection",
+        "zh-Hant": "反思",
+        "zh-Hans": "反思"
+      },
+      "aliases": [
+        "reflection",
+        "反思"
+      ]
+    },
+    {
+      "concept_id": "concept.regression",
+      "labels": {
+        "en": "Regression",
+        "zh-Hant": "迴歸",
+        "zh-Hans": "回归"
+      },
+      "aliases": [
+        "regression",
+        "迴歸",
+        "回归"
+      ]
+    },
+    {
+      "concept_id": "concept.scaling_laws",
+      "labels": {
+        "en": "Scaling Laws",
+        "zh-Hant": "縮放定律",
+        "zh-Hans": "缩放定律"
+      },
+      "aliases": [
+        "scaling laws",
+        "縮放定律",
+        "缩放定律"
+      ]
+    },
+    {
+      "concept_id": "concept.sequence",
+      "labels": {
+        "en": "Sequence",
+        "zh-Hant": "序列",
+        "zh-Hans": "序列"
+      },
+      "aliases": [
+        "sequence",
+        "序列"
+      ]
+    },
+    {
+      "concept_id": "concept.snr",
+      "labels": {
+        "en": "SNR",
+        "zh-Hant": "訊噪比",
+        "zh-Hans": "信噪比"
+      },
+      "aliases": [
+        "snr",
+        "訊噪比",
+        "信噪比"
+      ]
+    },
+    {
+      "concept_id": "concept.sparsity",
+      "labels": {
+        "en": "Sparsity",
+        "zh-Hant": "稀疏性",
+        "zh-Hans": "稀疏性"
+      },
+      "aliases": [
+        "sparsity",
+        "稀疏性"
+      ]
+    },
+    {
+      "concept_id": "concept.sse",
+      "labels": {
+        "en": "SSE",
+        "zh-Hant": "平方誤差和",
+        "zh-Hans": "平方误差和"
+      },
+      "aliases": [
+        "sse",
+        "平方誤差和",
+        "平方误差和"
+      ]
+    },
+    {
+      "concept_id": "concept.ssot",
+      "labels": {
+        "en": "SSOT",
+        "zh-Hant": "單一真相來源",
+        "zh-Hans": "单一真相来源"
+      },
+      "aliases": [
+        "ssot",
+        "單一真相來源",
+        "单一真相来源"
+      ]
+    },
+    {
+      "concept_id": "concept.statistics",
+      "labels": {
+        "en": "Statistics",
+        "zh-Hant": "統計",
+        "zh-Hans": "统计"
+      },
+      "aliases": [
+        "statistics",
+        "統計",
+        "统计"
+      ]
+    },
+    {
+      "concept_id": "concept.structured_data",
+      "labels": {
+        "en": "Structured Data",
+        "zh-Hant": "結構化資料",
+        "zh-Hans": "结构化数据"
+      },
+      "aliases": [
+        "structured data",
+        "結構化資料",
+        "结构化数据"
+      ]
+    },
+    {
+      "concept_id": "concept.supervised_learning",
+      "labels": {
+        "en": "Supervised Learning",
+        "zh-Hant": "監督式學習",
+        "zh-Hans": "监督学习"
+      },
+      "aliases": [
+        "supervised learning",
+        "監督式學習",
+        "监督学习"
+      ]
+    },
+    {
+      "concept_id": "concept.svm",
+      "labels": {
+        "en": "SVM",
+        "zh-Hant": "支援向量機",
+        "zh-Hans": "支持向量机"
+      },
+      "aliases": [
+        "svm",
+        "支援向量機",
+        "支持向量机"
+      ]
+    },
+    {
+      "concept_id": "concept.symbolic_ai",
+      "labels": {
+        "en": "Symbolic AI",
+        "zh-Hant": "符號式 AI",
+        "zh-Hans": "符号式 AI"
+      },
+      "aliases": [
+        "symbolic ai",
+        "符號式 AI",
+        "符号式 AI"
+      ]
+    },
+    {
+      "concept_id": "concept.consensus",
+      "labels": {
+        "en": "Consensus",
+        "zh-Hant": "共識",
+        "zh-Hans": "共识"
+      },
+      "aliases": [
+        "consensus",
+        "Consensus",
+        "共識",
+        "共识"
+      ]
+    },
+    {
+      "concept_id": "concept.distributed_systems",
+      "labels": {
+        "en": "Distributed Systems",
+        "zh-Hant": "分散式系統",
+        "zh-Hans": "分布式系统"
+      },
+      "aliases": [
+        "distributed systems",
+        "Distributed Systems",
+        "distributed system",
+        "分散式系統",
+        "分布式系统"
+      ]
+    },
+    {
+      "concept_id": "concept.fault_tolerance",
+      "labels": {
+        "en": "Fault Tolerance",
+        "zh-Hant": "容錯",
+        "zh-Hans": "容错"
+      },
+      "aliases": [
+        "fault tolerance",
+        "Fault Tolerance",
+        "容錯",
+        "容错"
+      ]
+    },
+    {
+      "concept_id": "concept.multi_paxos",
+      "labels": {
+        "en": "Multi-Paxos",
+        "zh-Hant": "Multi-Paxos",
+        "zh-Hans": "Multi-Paxos"
+      },
+      "aliases": [
+        "multi-paxos",
+        "Multi-Paxos",
+        "multi paxos"
+      ]
+    },
+    {
+      "concept_id": "concept.paxos",
+      "labels": {
+        "en": "Paxos",
+        "zh-Hant": "Paxos",
+        "zh-Hans": "Paxos"
+      },
+      "aliases": [
+        "paxos",
+        "Paxos"
+      ]
+    },
+    {
+      "concept_id": "concept.raft",
+      "labels": {
+        "en": "Raft",
+        "zh-Hant": "Raft",
+        "zh-Hans": "Raft"
+      },
+      "aliases": [
+        "raft",
+        "Raft"
+      ]
+    },
+    {
+      "concept_id": "concept.state_machine_replication",
+      "labels": {
+        "en": "State Machine Replication",
+        "zh-Hant": "狀態機複製",
+        "zh-Hans": "状态机复制"
+      },
+      "aliases": [
+        "state machine replication",
+        "State Machine Replication",
+        "SMR",
+        "smr",
+        "狀態機複製",
+        "状态机复制"
+      ]
+    },
+    {
+      "concept_id": "concept.system_design",
+      "labels": {
+        "en": "System Design",
+        "zh-Hant": "系統設計",
+        "zh-Hans": "系统设计"
+      },
+      "aliases": [
+        "system design",
+        "系統設計",
+        "系统设计"
+      ]
+    },
+    {
+      "concept_id": "concept.testing",
+      "labels": {
+        "en": "Testing",
+        "zh-Hant": "測試",
+        "zh-Hans": "测试"
+      },
+      "aliases": [
+        "testing",
+        "測試",
+        "测试"
+      ]
+    },
+    {
+      "concept_id": "concept.thinking",
+      "labels": {
+        "en": "Thinking",
+        "zh-Hant": "思考",
+        "zh-Hans": "思考"
+      },
+      "aliases": [
+        "thinking",
+        "思考"
+      ]
+    },
+    {
+      "concept_id": "concept.time_series",
+      "labels": {
+        "en": "Time Series",
+        "zh-Hant": "時間序列",
+        "zh-Hans": "时间序列"
+      },
+      "aliases": [
+        "time series",
+        "時間序列",
+        "时间序列"
+      ]
+    },
+    {
+      "concept_id": "concept.tsne",
+      "labels": {
+        "en": "TSNE",
+        "zh-Hant": "t-SNE",
+        "zh-Hans": "t-SNE"
+      },
+      "aliases": [
+        "tsne",
+        "t-SNE"
+      ]
+    },
+    {
+      "concept_id": "concept.unsupervised_learning",
+      "labels": {
+        "en": "Unsupervised Learning",
+        "zh-Hant": "非監督式學習",
+        "zh-Hans": "无监督学习"
+      },
+      "aliases": [
+        "unsupervised learning",
+        "非監督式學習",
+        "无监督学习"
+      ]
+    },
+    {
+      "concept_id": "concept.vibe_coding",
+      "labels": {
+        "en": "Vibe Coding",
+        "zh-Hant": "Vibe Coding",
+        "zh-Hans": "Vibe Coding"
+      },
+      "aliases": [
+        "vibe coding"
+      ]
+    },
+    {
+      "concept_id": "concept.workflow",
+      "labels": {
+        "en": "Workflow",
+        "zh-Hant": "工作流",
+        "zh-Hans": "工作流"
+      },
+      "aliases": [
+        "workflow",
+        "工作流"
+      ]
+    },
+    {
+      "concept_id": "concept.writing",
+      "labels": {
+        "en": "Writing",
+        "zh-Hant": "寫作",
+        "zh-Hans": "写作"
+      },
+      "aliases": [
+        "writing",
+        "寫作",
+        "写作"
+      ]
+    }
+  ]
+}

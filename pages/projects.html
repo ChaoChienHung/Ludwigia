@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Projects — Ludwig Portfolio</title>
+  <meta name="garden:tags" content="Ludwigia, Projects">
+  <meta name="garden:summary" content="Project showcase: SpaceshipX, Ludwigia, Karen, Mentorion, Detox.io, PiggyNest, Scriba, Sesame, and Vellichor.">
+  <script src="../core/i18n-preload.js?v=2026-06-10-2"></script>
+
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+
+  <!--------------->
+  <!-- Bootstrap -->
+  <!--------------->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!--------------------------->
+  <!-- AOS Scroll Animations -->
+  <!--------------------------->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  
+  <!------------------>
+  <!-- Font Awesome -->
+  <!------------------>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!------------------->
+  <!-- Global Styles -->
+  <!------------------->
+  <link rel="stylesheet" href="../assets/css/style.css?v=2026-06-21-6">
+
+  <style>
+    html {
+      scroll-padding-top: 140px; /* adjust to your navbar + spacing */
+    }
+
+    @media (max-width: 991px) {
+      html {
+        scroll-padding-top: 100px;
+      }
+    }
+  </style>
+</head>
+<body class="projects-page" data-i18n-page="projects">
+
+<!------------>
+<!-- Navbar -->
+<!------------>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+    <div class="container">
+
+      <!----------->
+      <!-- Brand -->
+      <!----------->
+      <a class="navbar-brand fw-bold custom-brand" href="../index.html">Ludwig</a>
+
+      <!------------------------>
+      <!-- Toggler for Mobile -->
+      <!------------------------>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!------------------>
+      <!-- Navbar Links -->
+      <!------------------>
+      <div class="collapse navbar-collapse justify-content-end" id="nav">
+        <ul class="navbar-nav">
+
+          <!------------------->
+          <!-- Home Dropdown -->
+          <!------------------->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="../index.html" id="homeDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Home
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+              <li><a class="dropdown-item" href="../index.html#about">About</a></li>
+              <li><a class="dropdown-item" href="../index.html#timeline" data-nav-timeline>Timeline</a></li>
+              <li><a class="dropdown-item" href="../index.html#contact">Contact</a></li>
+            </ul>
+          </li>
+
+          <!----------------------->
+          <!-- Projects Dropdown -->
+          <!----------------------->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="projects.html" id="projectsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Projects
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+              <li><a class="dropdown-item" href="projects.html#spaceshipX">SpaceshipX</a></li>
+              <li><a class="dropdown-item" href="projects.html#ludwigia">Ludwigia</a></li>
+              <li><a class="dropdown-item" href="projects.html#karen">Karen</a></li>
+              <li><a class="dropdown-item" href="projects.html#mentorion">Mentorion</a></li>
+              <li><a class="dropdown-item" href="projects.html#detoxio">Detox.io</a></li>
+              <li><a class="dropdown-item" href="projects.html#piggynest">PiggyNest</a></li>
+              <li><a class="dropdown-item" href="projects.html#scriba">Scriba</a></li>
+              <li><a class="dropdown-item" href="projects.html#sesame">Sesame</a></li>
+              <li><a class="dropdown-item" href="projects.html#vellichor">Vellichor</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../notes/index.html">Notes</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../writing/index.html">Writing</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="../canvas/index.html">Canvas</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="search.html" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="visually-hidden">Search</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="settings.html" aria-label="Settings">
+              <i class="fa-solid fa-gear"></i>
+              <span class="visually-hidden">Settings</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!------------------------------------->
+  <!-- Hero (Project Carousel Preview) -->
+  <!------------------------------------->
+  <section class="project-section project-hero" style="padding-top:150px;">
+    <div class="container project-hero-shell">
+      <h2 class="section-title" data-aos="fade-up">Project Showcase</h2>
+      <div class="divider"></div>
+      <p class="project-hero-intro" data-aos="fade-up" data-aos-delay="80">
+        A quick tour of a few representative projects before the full write-ups below.
+      </p>
+
+      <div id="projectCarousel" class="carousel slide project-carousel" data-bs-ride="carousel" data-aos="zoom-in">
+        <div class="carousel-inner">
+          <div class="carousel-item active project-carousel-item">
+            <a class="project-carousel-media" href="#spaceshipX"><img src="../assets/images/SpaceshipX_gameplay.gif" alt="SpaceshipX screenshot"></a>
+            <div class="carousel-caption-below mt-3">
+              <h4>SpaceshipX</h4>
+              <p>A compact MASM shooting game built around fast keyboard control and arcade-style survival.</p>
+            </div>
+          </div>
+
+          <div class="carousel-item project-carousel-item">
+            <a class="project-carousel-media" href="#ludwigia"><img src="../assets/images/Ludwigia.gif" alt="Ludwigia screenshot"></a>
+            <div class="carousel-caption-below mt-3">
+              <h4>Ludwigia</h4>
+              <p>A personal website that doubles as a portfolio, a digital garden, and a long-term frontend practice space.</p>
+            </div>
+          </div>
+
+          <!-- 
+          <div class="carousel-item">
+            <div class="text-center">
+              <h3>Automatic Speech Recognition</h3>
+              <p>High-accuracy ASR on noisy datasets.</p>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="text-center">
+              <h3>YOLO Face Detection</h3>
+              <p>Real-time person detection using YOLO.</p>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="text-center">
+              <h3>Toxic-BERT NLP System</h3>
+              <p>BERT-powered toxicity classification.</p>
+            </div>
+          </div>
+          -->
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev" aria-label="Previous project">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next" aria-label="Next project">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!--------------------------------->
+  <!-- Individual Project Sections -->
+  <!--------------------------------->
+
+  <!---------------->
+  <!-- SpaceshipX -->
+  <!---------------->
+  <section class="project-section" id="spaceshipX" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/SpaceshipX" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>SpaceshipX</h3>
+        <p>
+          SpaceshipX is a small assembly-based game developed using MASM and WinDbg.
+          In the game, the player controls a spaceship to shoot bullets and destroy incoming comets to protect Earth.
+          Future updates will include new items, additional weapon types, and extra lives.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Control the spaceship using the keyboard: arrow keys (W, S, A, D) to move, and Space to shoot.</li>
+            <li>Shoot bullets to destroy incoming comets</li>
+            <li>Protect the Earth from destruction</li>
+            <li>Score tracking based on destroyed comets</li>
+            <li>Game over condition when a comet hits the Earth</li>
+          </ul>
+        </p>
+        <h5>Planned enhancements</h5>
+        <p>
+          <ul>
+            <li>Add new items such as power-ups and shields</li>
+            <li>Introduce additional weapon types</li>
+            <li>Implement extra lives for the player</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!---------------->
+  <!-- Ludwigia -->
+  <!---------------->
+  <section class="project-section" id="ludwigia" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/Ludwigia" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Ludwigia</h3>
+        <p>
+          Ludwigia is my personal website that serves as both a portfolio and a playground for learning essential web development skills.
+          Through this project, I practice core frontend technologies such as HTML, CSS, JavaScript, and Bootstrap while building a space to introduce myself and showcase my work.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Home page with personal introduction and contact information</li>
+            <li>Projects page featuring a carousel preview of selected work</li>
+            <li>Garden section for a personal note library</li>
+            <li>Writing section for longer, evolving thoughts</li>
+          </ul>
+        </p>
+        <h5>Planned enhancements</h5>
+        <p>
+          <ul>
+            <li>Responsive layout for smartphones and tablets</li>
+            <li>Garden & Writing expansion</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!------------>
+  <!-- Karen -->
+  <!------------>
+  <section class="project-section" id="karen" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/Fine-TunedLLaMa" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Karen</h3>
+        <p>
+          Karen is my personal LLM lab for experimenting with both pretrained fine-tuning and scratch-built mini models under one training workflow.
+          The repo shares a single dataset pipeline across HuggingFace + LoRA runs and lightweight GPT2/Llama variants, with every run recorded under a consistent output layout.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Unified training entrypoint via <code>python -m llm.train</code> with <code>--arch</code> and <code>--engine</code></li>
+            <li>Pretrained fine-tuning path with HuggingFace, LoRA, and optional 8-bit loading</li>
+            <li>Scratch GPT2 and Llama-style mini models for faster architecture experiments</li>
+            <li>Traceable <code>runs/&lt;run_name&gt;/</code> outputs for args, env, logs, metrics, and checkpoints</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>Training and evaluation entrypoints for local or multi-GPU workflows</li>
+            <li>Reusable preprocessing, logging, and model packaging utilities</li>
+            <li>Benchmark recipes and experiment logs documented alongside the codebase</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!---------------->
+  <!-- Mentorion -->
+  <!---------------->
+  <section class="project-section" id="mentorion" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/Mentorion" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Mentorion</h3>
+        <p>
+          Mentorion is a learning support project built to practice LLM integration while turning articles into study material.
+          Its FastAPI backend scrapes or parses content into structured notes, then generates question-and-answer pairs that can be consumed from either a React web app or a Streamlit interface.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Scrape articles from URLs into note objects</li>
+            <li>Parse raw content into structured notes</li>
+            <li>Generate question-and-answer sets from stored notes</li>
+            <li>Ship both React/Vite and Streamlit frontends on top of the same backend</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>FastAPI API under <code>/api/v1</code> for scrape, parse, and question generation flows</li>
+            <li>Gemini-powered note generation and QA workflows driven by environment configuration</li>
+            <li>Backend tests plus separate UI surfaces for iterative product experiments</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!--------------->
+  <!-- Detox.io -->
+  <!--------------->
+  <div id="detoxio"></div>
+  <section class="project-section" id="commentDetoxifier" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/CommentDetoxifier" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Detox.io</h3>
+        <p>
+          Detox.io is a comment detoxification system that detects harmful language and rewrites it into socially acceptable wording without losing the original context and intent.
+          The runtime supports pluggable toxicity detection and detoxification backends, while its training workflows are intentionally split into the Sesame and Karen toolchains.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Detect toxic comments with classifier, OpenAI, or local LLM backends</li>
+            <li>Rewrite toxic comments while preserving the source meaning</li>
+            <li>Use retry and fallback logic to keep detoxification flows resilient</li>
+            <li>Log key runtime events and support environment-driven backend switching</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>Standalone inference pipeline in <code>main.py</code> for detection plus rewriting</li>
+            <li>Training and evaluation documentation for Sesame and Karen submodules</li>
+            <li>Architecture, API, privacy, and safety notes maintained in project docs</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!---------------->
+  <!-- PiggyNest -->
+  <!---------------->
+  <div id="piggynest"></div>
+  <section class="project-section" id="bookkeeping" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/PiggyNest" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>PiggyNest</h3>
+        <p>
+          PiggyNest is a full-stack personal finance and asset management app built with FastAPI and React.
+          It models real-world money flows through PiggyBanks, then layers transactions, transfers, reports, and analytics on top of a multi-currency setup.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>JWT-based authentication for user registration and login</li>
+            <li>Multi-currency PiggyBanks as separate wallets or sub-accounts</li>
+            <li>Transaction recording, category management, and inter-bank transfers</li>
+            <li>Reports, statistics, charts, and CSV import/export flows</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>FastAPI backend with SQLite plus a React/Vite frontend</li>
+            <li>Dashboard analytics and period-based financial summaries</li>
+            <li>Developer CLI for API self-testing and lightweight DB inspection</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!------------->
+  <!-- Scriba -->
+  <!------------->
+  <section class="project-section" id="scriba" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/Scriba" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Scriba</h3>
+        <p>
+          Scriba is a sandbox for building, training, and evaluating handwritten text parsing models while also supporting real application surfaces.
+          The project compares OCR and structured parsing approaches such as TrOCR and Donut, then exposes them through CLI, API, and web interfaces.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Model baselines for handwritten OCR and structured document parsing</li>
+            <li>Unified training and evaluation entrypoints for multiple architectures</li>
+            <li>CLI inference plus FastAPI and Next.js application surfaces</li>
+            <li>Karen-style run and model layout for reproducible experiments</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>Support TrOCR and Donut workflows from dataset setup to evaluation</li>
+            <li>Publish default checkpoints through the local <code>models/&lt;arch&gt;/latest</code> structure</li>
+            <li>Keep experiment notes, compatibility rules, and workflows in project docs</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!------------->
+  <!-- Sesame -->
+  <!------------->
+  <section class="project-section" id="sesame" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/Sesame" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Sesame</h3>
+        <p>
+          Sesame is a BERT-family training lab that adapts Karen's repository conventions into a workflow for BERT, RoBERTa, and related architectures.
+          It focuses on a unified training entrypoint, task and model registries, and a stable run-output structure that can be reused by downstream projects such as Detox.io.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Unified <code>python3 -m bert.train</code> interface across tasks, models, and engines</li>
+            <li>Registry-based architecture for BERT-family models and tasks</li>
+            <li>Support for masked language modeling and multi-label classification workflows</li>
+            <li>Structured <code>runs/&lt;run_name&gt;/</code> outputs plus dedicated evaluation scripts</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>Reusable preprocessing and split utilities shared across tasks</li>
+            <li>Trainer and custom-loop execution modes for experimentation</li>
+            <li>Alignment with Detox.io toxic-comment classification use cases</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!---------------->
+  <!-- Vellichor -->
+  <!---------------->
+  <section class="project-section" id="vellichor" data-aos="fade-up">
+    <div class="container">
+      <div class="project-card">
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/Vellichor" class="contact-item project-card-icon" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <h3>Vellichor</h3>
+        <p>
+          Vellichor is an offline-first diary app backed by local SQLite, with entry content encrypted before it is stored.
+          It offers both a local web interface and a CLI workflow, using password-derived keys and encrypted content fields to keep journaling private by default.
+        </p>
+        <hr>
+        <h5>Key Features</h5>
+        <p>
+          <ul>
+            <li>Offline-first journal with local web and CLI interfaces</li>
+            <li>SQLite as the single source of truth for metadata and encrypted entry storage</li>
+            <li>Password-derived encryption flow with AES-based content protection</li>
+            <li>Entry creation, listing, search, and password rotation workflows</li>
+          </ul>
+        </p>
+        <h5>Project Scope</h5>
+        <p>
+          <ul>
+            <li>Local-first workflow that does not depend on a remote backend</li>
+            <li>MVP search over decrypted local previews with room for future indexing work</li>
+            <li>Documentation around security, setup, and operational usage for the project</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!------------>
+  <!-- FOOTER -->
+  <!------------>
+  <footer class="text-center p-4">
+    © 2025 Ludwig — All Rights Reserved
+  </footer>
+
+  <!------------->
+  <!-- Scripts -->
+  <!------------->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="../core/script.js?v=2026-06-21-6"></script>
+  <script src="../core/i18n.js?v=2026-06-14-1"></script>
+  <script>
+    AOS.init({ duration: 900, offset: 80 });
+
+    document.querySelectorAll('.project-card').forEach((card) => {
+      const detailSections = card.querySelectorAll('h5, ul');
+      const summary = card.querySelector(':scope > p');
+      if (!summary || detailSections.length === 0) return;
+
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'project-card-toggle';
+
+      const sync = () => {
+        const expanded = card.classList.contains('project-card-expanded');
+        toggle.textContent = expanded ? 'Hide details' : 'Show details';
+        toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      };
+
+      toggle.addEventListener('click', () => {
+        card.classList.toggle('project-card-expanded');
+        sync();
+      });
+
+      summary.insertAdjacentElement('afterend', toggle);
+      sync();
+    });
+  </script>
+
+</body>
+</html>

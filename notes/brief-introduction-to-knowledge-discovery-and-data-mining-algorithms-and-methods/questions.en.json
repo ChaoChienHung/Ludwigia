@@ -1,0 +1,42 @@
+{
+  "questions": [
+    {
+      "question_id": "supervised-vs-unsupervised",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Which statement best distinguishes supervised learning from unsupervised learning?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Supervised learning trains on labeled data, while unsupervised learning finds patterns without labels.",
+          "response": "Correct. Supervised learning uses labeled ground truth; unsupervised learning discovers structure without labels."
+        },
+        {
+          "id": "B",
+          "text": "Supervised learning only works on small datasets, while unsupervised learning only works on large datasets.",
+          "response": "Incorrect. Both can scale; the key difference here is the presence of labels."
+        },
+        {
+          "id": "C",
+          "text": "Supervised learning only works on structured data, while unsupervised learning only works on unstructured data.",
+          "response": "Incorrect. Supervision is about labels, not whether data is structured."
+        },
+        {
+          "id": "D",
+          "text": "Supervised learning is deep learning, while unsupervised learning is classical machine learning.",
+          "response": "Incorrect. Deep learning can be supervised or unsupervised; it is not the separator."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Supervised learning uses labeled ground truth; unsupervised learning discovers structure without labels.",
+      "difficulty": "beginner",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.machine_learning",
+        "concept.classification"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-06-14"
+    }
+  ]
+}

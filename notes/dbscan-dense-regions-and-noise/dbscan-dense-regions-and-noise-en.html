@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DBSCAN: Dense Regions, Loose Boundaries, and Noise</title>
+  <meta name="garden:tags" content="Data Mining, Clustering, DBSCAN, Density, Noise, Outlier">
+  <meta name="garden:summary" content="An intuition-first draft on DBSCAN, explaining density-based clustering, core and border points, noise, parameter sensitivity, and practical trade-offs.">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.dbscan,concept.density,concept.noise,concept.outlier">
+  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.dbscan&quot;:{&quot;en&quot;:&quot;DBSCAN&quot;,&quot;zh-Hant&quot;:&quot;DBSCAN&quot;,&quot;zh-Hans&quot;:&quot;DBSCAN&quot;},&quot;concept.density&quot;:{&quot;en&quot;:&quot;Density&quot;,&quot;zh-Hant&quot;:&quot;密度&quot;,&quot;zh-Hans&quot;:&quot;密度&quot;},&quot;concept.noise&quot;:{&quot;en&quot;:&quot;Noise&quot;,&quot;zh-Hant&quot;:&quot;雜訊&quot;,&quot;zh-Hans&quot;:&quot;噪声&quot;},&quot;concept.outlier&quot;:{&quot;en&quot;:&quot;Outlier&quot;,&quot;zh-Hant&quot;:&quot;離群值&quot;,&quot;zh-Hans&quot;:&quot;离群值&quot;}}">
+  <meta name="garden:last_modified_at" content="2026-06-20">
+  <meta name="garden:reading_time_minutes" content="4">
+  <meta name="garden:source" content="notes/dbscan-dense-regions-and-noise/dbscan-dense-regions-and-noise-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">DBSCAN: Dense Regions, Loose Boundaries, and Noise</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#draft-intent">Draft Intent</a>
+<a class="note-toc-link level-1" href="#suggested-opening">Suggested Opening</a>
+<a class="note-toc-link level-1" href="#the-core-idea-density-instead-of-centers">The Core Idea: Density Instead of Centers</a>
+<a class="note-toc-link level-1" href="#core-points-border-points-and-noise">Core Points, Border Points, and Noise</a>
+<a class="note-toc-link level-1" href="#how-cluster-expansion-works">How Cluster Expansion Works</a>
+<a class="note-toc-link level-1" href="#why-dbscan-feels-powerful">Why DBSCAN Feels Powerful</a>
+<a class="note-toc-link level-1" href="#where-dbscan-breaks">Where DBSCAN Breaks</a>
+<a class="note-toc-link level-1" href="#how-to-think-about-parameter-choice">How to Think About Parameter Choice</a>
+<a class="note-toc-link level-1" href="#when-to-use-dbscan">When to Use DBSCAN</a>
+<a class="note-toc-link level-1" href="#conclusion">Conclusion</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="draft-intent" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Draft Intent</h3>
+
+<ul class="note-list">
+<li>Core question: what if clusters are not organized around centers at all?</li>
+<li>Target outcome: the reader should understand DBSCAN as a density-based alternative that can preserve irregular shapes and leave noise unassigned.</li>
+<li>Role in the content chain: this is a standalone technique note inside the larger clustering series.</li>
+</ul>
+</section>
+
+<section id="suggested-opening" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Suggested Opening</h3>
+
+<p class="mb-3">Open by breaking the center-based intuition:</p>
+
+<ul class="note-list">
+<li>some datasets do not look like neat balls around centroids</li>
+<li>some meaningful groups are curved, stretched, or oddly connected</li>
+<li>some points should not be assigned anywhere at all</li>
+</ul>
+
+<p class="mb-3">That motivates the method:</p>
+
+<ul class="note-list">
+<li>DBSCAN treats a cluster as a dense connected region rather than a center-based partition</li>
+</ul>
+</section>
+
+<section id="the-core-idea-density-instead-of-centers" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Core Idea: Density Instead of Centers</h3>
+
+<p class="mb-3">This section should introduce the shift in worldview:</p>
+
+<ul class="note-list">
+<li>a cluster is not "points near a center"</li>
+<li>a cluster is "points inside a region where the local neighborhood is dense enough"</li>
+</ul>
+
+<p class="mb-3">Explain the two parameters:</p>
+
+<ul class="note-list">
+<li><code>eps</code>: how far we look around a point</li>
+<li><code>MinPts</code>: how many neighbors are needed before we call that region dense</li>
+</ul>
+
+<p class="mb-3">Payoff:</p>
+
+<ul class="note-list">
+<li>DBSCAN replaces a fixed number of clusters with a density criterion</li>
+</ul>
+</section>
+
+<section id="core-points-border-points-and-noise" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Core Points, Border Points, and Noise</h3>
+
+<p class="mb-3">This is the conceptual heart of the method.</p>
+
+<p class="mb-3">Define:</p>
+
+<ul class="note-list">
+<li>core point</li>
+<li>border point</li>
+<li>noise point</li>
+</ul>
+
+<p class="mb-3">Then interpret them:</p>
+
+<ul class="note-list">
+<li>core points are the engine of cluster growth</li>
+<li>border points can belong to a cluster without being strong enough to expand it</li>
+<li>noise points stay outside because they do not live in any sufficiently dense region</li>
+</ul>
+
+<p class="mb-3">This section should also clarify:</p>
+
+<ul class="note-list">
+<li>DBSCAN noise is not identical to the everyday idea of "outlier"</li>
+<li>a point can be moderately close to others and still fail the density requirement</li>
+</ul>
+</section>
+
+<section id="how-cluster-expansion-works" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">How Cluster Expansion Works</h3>
+
+<p class="mb-3">This section should make the algorithm feel procedural without becoming too low-level.</p>
+
+<p class="mb-3">Suggested progression:</p>
+
+<ol class="mb-3">
+<li>inspect a point's neighborhood</li>
+<li>if the neighborhood is not dense enough, it is temporary noise</li>
+<li>if it is dense enough, start a cluster</li>
+<li>recursively expand through reachable core points</li>
+<li>attach border points without letting them continue the expansion</li>
+</ol>
+
+<p class="mb-3">Main conceptual point:</p>
+
+<ul class="note-list">
+<li>DBSCAN grows structure outward from dense seeds instead of pulling points toward centers</li>
+</ul>
+</section>
+
+<section id="why-dbscan-feels-powerful" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Why DBSCAN Feels Powerful</h3>
+
+<p class="mb-3">This section should explain why so many people find DBSCAN conceptually appealing.</p>
+
+<p class="mb-3">Advantages:</p>
+
+<ul class="note-list">
+<li>supports irregular cluster shapes</li>
+<li>handles noise explicitly</li>
+<li>does not require <code>K</code> in advance</li>
+<li>fits exploratory settings where the number of groups is not known beforehand</li>
+</ul>
+
+<p class="mb-3">Suggested phrasing:</p>
+
+<ul class="note-list">
+<li>DBSCAN feels natural when we care more about whether points belong to the same dense region than whether they can be summarized by a centroid</li>
+</ul>
+</section>
+
+<section id="where-dbscan-breaks" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Where DBSCAN Breaks</h3>
+
+<p class="mb-3">This section must show the trade-off clearly.</p>
+
+<p class="mb-3">Main failure modes:</p>
+
+<ul class="note-list">
+<li>high sensitivity to <code>eps</code> and <code>MinPts</code></li>
+<li>one global density setting may be wrong for clusters with very different densities</li>
+<li>poor scaling or feature engineering can distort local neighborhoods</li>
+<li>the method can become harder to interpret when density is ambiguous</li>
+</ul>
+
+<p class="mb-3">Key payoff sentence:</p>
+
+<ul class="note-list">
+<li>DBSCAN removes the need to choose <code>K</code>, but it replaces that burden with the harder question of what should count as density</li>
+</ul>
+</section>
+
+<section id="how-to-think-about-parameter-choice" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">How to Think About Parameter Choice</h3>
+
+<p class="mb-3">This can stay medium-depth, but it deserves its own section.</p>
+
+<p class="mb-3">Ideas to include:</p>
+
+<ul class="note-list">
+<li>parameter choice is often guided by EDA, pairwise distance inspection, and domain expectations</li>
+<li>the right setting is partly a modeling decision, not just a mechanical tuning step</li>
+<li>the meaning of density changes with feature scaling and representation</li>
+</ul>
+
+<p class="mb-3">Possible bridge:</p>
+
+<ul class="note-list">
+<li>if density varies too much across the dataset, that is a sign we may need a different method or a later variant such as HDBSCAN</li>
+</ul>
+</section>
+
+<section id="when-to-use-dbscan" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">When to Use DBSCAN</h3>
+
+<p class="mb-3">Good fit:</p>
+
+<ul class="note-list">
+<li>arbitrary cluster shapes</li>
+<li>substantial noise</li>
+<li>exploratory analysis where outlier handling matters</li>
+<li>settings where pre-specifying <code>K</code> is awkward or misleading</li>
+</ul>
+
+<p class="mb-3">Less ideal:</p>
+
+<ul class="note-list">
+<li>data with wildly varying density</li>
+<li>high-dimensional settings where neighborhood structure becomes unstable</li>
+</ul>
+</section>
+
+<section id="conclusion" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Conclusion</h3>
+
+<p class="mb-3">Target takeaway:</p>
+
+<ul class="note-list">
+<li>DBSCAN is powerful because it defines clusters through density and connectivity rather than centers</li>
+<li>that makes it much better than K-Means in some messy real-world geometries</li>
+<li>its main cost is not speed alone, but judgment: we have to decide what density should mean in the first place</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>
