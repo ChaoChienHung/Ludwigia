@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ludwig — A Visionary Driven to Change the World</title>
+  <meta name="garden:tags" content="Ludwigia, Home">
+  <meta name="garden:summary" content="Homepage: profile, interests, and entry points to projects, garden, notes, and writing.">
+  <script src="./core/i18n-preload.js?v=2026-06-10-2"></script>
+
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+
+  <!--------------->
+  <!-- Bootstrap -->
+  <!--------------->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!--------->
+  <!-- AOS -->
+  <!--------->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+  <!---------->
+  <!-- Flag -->
+  <!---------->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"/>
+
+  <!------------------>
+  <!-- Font Awesome -->
+  <!------------------>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!---------------->
+  <!-- Custom CSS -->
+  <!---------------->
+  <link rel="stylesheet" href="assets/css/style.css?v=2026-06-21-6">
+</head>
+
+<body data-i18n-page="home">
+
+  <!------------>
+  <!-- Navbar -->
+  <!------------>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+    <div class="container">
+
+      <!----------->
+      <!-- Brand -->
+      <!----------->
+      <a class="navbar-brand fw-bold custom-brand" href="index.html">Ludwig</a>
+
+      <!------------------------>
+      <!-- Toggler for mobile -->
+      <!------------------------>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!------------------>
+      <!-- Navbar links -->
+      <!------------------>
+      <div class="collapse navbar-collapse justify-content-end" id="nav">
+        <ul class="navbar-nav">
+
+          <!------------------->
+          <!-- HOME DROPDOWN -->
+          <!------------------->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="index.html" id="homeDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Home
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+              <li><a class="dropdown-item" href="index.html#about">About</a></li>
+              <li><a class="dropdown-item" href="index.html#timeline" data-nav-timeline>Timeline</a></li>
+              <li><a class="dropdown-item" href="index.html#contact">Contact</a></li>
+            </ul>
+          </li>
+
+          <!----------------------->
+          <!-- PROJECTS DROPDOWN -->
+          <!----------------------->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle mx-2" href="pages/projects.html" id="projectsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Projects
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+              <li><a class="dropdown-item" href="pages/projects.html#spaceshipX">SpaceshipX</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#ludwigia">Ludwigia</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#karen">Karen</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#mentorion">Mentorion</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#detoxio">Detox.io</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#piggynest">PiggyNest</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#scriba">Scriba</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#sesame">Sesame</a></li>
+              <li><a class="dropdown-item" href="pages/projects.html#vellichor">Vellichor</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="notes/index.html">Notes</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="writing/index.html">Writing</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="canvas/index.html">Canvas</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="pages/search.html" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="visually-hidden">Search</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="pages/settings.html" aria-label="Settings">
+              <i class="fa-solid fa-gear"></i>
+              <span class="visually-hidden">Settings</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!---------->
+  <!-- Hero -->
+  <!---------->
+  <section id="home" class="hero">
+    <div class="hero-image">
+      <img src="assets/images/cover.jpg" alt="Hero graphic">
+    </div>
+
+    <div class="hero-text">
+      <h1>Hi, I'm Ludwig</h1>
+      <p>A computer science enthusiast who enjoys exploring the magnificent world.</p>
+    </div>
+  </section>
+
+  <!------------------->
+  <!-- About Section -->
+  <!------------------->
+  <section id="about" class="alt-bg">
+    <div class="container">
+      <h2 class="text-center" data-aos="fade-up">About Me</h2>
+      <div class="divider"></div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10" data-aos="fade-up" data-aos-delay="150" data-about-copy>
+          <p class="page-text">
+            Right now, my main focus is on machine learning and deep learning, alongside software development and distributed systems. Lately, I've also been diving into networking and cloud architecture. It might sound like I'm trying to take on too much, but to borrow Steve Jobs' words: "Stay hungry, stay foolish." For me, it's simply about chasing what I genuinely love.
+          </p>
+          <p class="page-text">
+            The tech world feels like an endless treasure hunt. There's always a new problem to solve or a fresh perspective to discover. Of course, the sheer amount of information can be overwhelming at times, but that feeling when you finally grasp a tough concept or fix a complex bug? That is exactly why I keep falling in love with this field over and over again.
+          </p>
+          <p class="page-text">
+            Beyond tech, I'm deeply curious about a variety of subjects, including biology, physics, history, and current affairs. I really enjoy the collision of ideas across different disciplines. It often provides a completely new lens through which to understand the world.
+          </p>
+          <p class="page-text">
+            Outside of work, my lifestyle is pretty dynamic. I love watching baseball and esports, playing basketball, and staying active through fitness and swimming. I'm also a big fan of anime, TV series, and gaming. On top of that, I'm planning to challenge myself with drawing soon, and I'm looking to pick up the piano again after letting it slide for a while.
+          </p>
+          <p class="page-text">
+            If you're also curious about the world or feel like we're on the same wavelength, definitely feel free to reach out. I'd love to connect!
+          </p>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-xl-10" data-aos="fade-up" data-aos-delay="220">
+          <div id="timeline" data-about-timeline-root></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!------------------->
+  <!-- Skill Section -->
+  <!------------------->
+  <!--
+  <section id="skill" class="skill-section">
+    <div class="container">
+      <h2 class="text-center" data-aos="fade-up">Skill</h2>
+      <div class="divider"></div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10" data-aos="fade-up" data-aos-delay="150">
+          <p class="page-text">
+            Please insert your skill design here.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  -->
+
+  <!--------------------->
+  <!-- Contact Section -->
+  <!--------------------->
+  <section id="contact" class="alt-bg">
+    <div class="container">
+      <h2 class="text-center" data-aos="fade-up">Contact</h2>
+      <div class="divider"></div>
+
+      <h5 class="text-center" data-aos="fade-up" data-aos-delay="100">
+        Phone
+      </h5>
+
+      <p class="contact-phone-text text-center" data-aos="fade-up" data-aos-delay="250">
+        <span class="fi fi-sg"></span>  +65 80904376 <br>
+        <span class="fi fi-tw"></span> +886 922222845
+      </p>
+
+      <h5 class="text-center" data-aos="fade-up" data-aos-delay="100">
+        Email
+      </h5>
+      
+      <p class="contact-email-text text-center" data-aos="fade-up" data-aos-delay="250">
+        chaochienhungludwig@gmail.com<br>
+        chaochienhungludwig123@yahoo.com.tw
+      </p>
+      
+      <div class="contact-icons d-flex justify-content-center" data-aos="fade-up" data-aos-delay="150">
+        
+        <!----------->
+        <!-- Email -->
+        <!----------->
+        <a href="mailto:chaochienhungludwig123@yahoo.com.tw" class="contact-item" title="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+
+        <!-------------->
+        <!-- LinkedIn -->
+        <!-------------->
+        <a href="https://www.linkedin.com/in/chaochienhungludwig/" class="contact-item" title="LinkedIn" target="_blank">
+          <i class="fab fa-linkedin"></i>
+        </a>
+
+        <!------------>
+        <!-- GitHub -->
+        <!------------>
+        <a href="https://github.com/ChaoChienHung/" class="contact-item" title="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+
+        <!--------------->
+        <!-- Instagram -->
+        <!--------------->
+        <a href="https://www.instagram.com/zhaoludwig/" class="contact-item" title="Instagram", target="_blank">
+          <i class="fab fa-instagram"></i></a>
+
+        <!-------------->
+        <!-- Facebook -->
+        <!-------------->
+        <a href="https://www.facebook.com/ludwig.zhao.2025" class="contact-item" title="Facebook" target="_blank">
+          <i class="fab fa-facebook"></i></a>
+      </div>
+
+    </div>
+  </section>
+
+  <!------------>
+  <!-- Footer -->
+  <!------------>
+  <footer>
+    <p>© 2025 Ludwig — All Rights Reserved</p>
+  </footer>
+
+  <!------------->
+  <!-- Scripts -->
+  <!------------->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="./core/script.js?v=2026-06-21-6"></script>
+  <script src="./core/i18n.js?v=2026-06-14-1"></script>
+  <script src="./assets/js/about-timeline.js?v=2026-06-20-1"></script>
+
+</body>
+</html>
