@@ -12,7 +12,7 @@ Lang: en
 TitleSuffix: false
 Status: published
 Published: 2026-06-10
-LastModified: 2026-06-20
+LastModified: 2026-07-26
 </meta>
 
 <draft>
