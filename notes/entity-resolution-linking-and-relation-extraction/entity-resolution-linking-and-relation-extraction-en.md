@@ -1,86 +1,60 @@
 <meta>
 Title: Entity Resolution, Named Entity Linking, and Relation Extraction
 Tags: NLP, Entity Resolution, Named Entity Linking, Relation Extraction, Knowledge Graphs, Machine Learning, Information Extraction
-Summary: A detailed, comprehensive guide covering Entity Resolution (Anaphora/Coreference, Hobbs' algorithm, mention-pair ML, deep learning), Named Entity Linking (NEL pipeline, ranking, NIL prediction, ML/DL models), and Relation Extraction (Hearst patterns, bootstrapping, dependency RE, ML pipelines, ontologies ACE/UMLS/Schema.org).
+Summary: Comprehensive structured notes covering entity resolution, anaphora vs. coreference, Hobbs' algorithm, Named Entity Linking (NEL) pipelines, relation extraction paradigms, ontologies (ACE, UMLS, Schema.org), and neural representations.
 Slug: entity-resolution-linking-and-relation-extraction-en
 Output: notes/entity-resolution-linking-and-relation-extraction/entity-resolution-linking-and-relation-extraction-en.html
 Style: default
 EstimatedReadingTime: true
 Lang: en
 TitleSuffix: true
-Status: drafting
+Status: published
 Published: 2026-07-25
 LastModified: 2026-07-25
 </meta>
 
 <anchors>
-toc1: repetition-and-resolution -> Repetition in Language & Intro to Entity Resolution
-h2: Repetition in Language & Intro to Entity Resolution -> repetition-and-resolution
+toc1: overview -> Overview: Structuring Knowledge from Text
+h2: Overview: Structuring Knowledge from Text -> overview
 toc1: entity-resolution -> Entity Resolution & Coreference Resolution
 h2: Entity Resolution & Coreference Resolution -> entity-resolution
 toc2: anaphora-vs-coref -> Anaphora vs. Coreference Resolution
 h3: Anaphora vs. Coreference Resolution -> anaphora-vs-coref
-toc2: resolution-phenomena -> Reference Phenomena & Resolution Challenges
-h3: Reference Phenomena & Resolution Challenges -> resolution-phenomena
-toc2: resolution-constraints -> Constraints Used in Resolution
-h3: Constraints Used in Resolution -> resolution-constraints
-toc2: hobbs-algorithm -> Rule-Based Approach: Hobbs' Algorithm (1978)
-h3: Rule-Based Approach: Hobbs' Algorithm (1978) -> hobbs-algorithm
-toc2: ml-entity-resolution -> Traditional Machine Learning: Mention-Pair Model
-h3: Traditional Machine Learning: Mention-Pair Model -> ml-entity-resolution
-toc2: dl-entity-resolution -> Datasets & Deep Learning Approaches
-h3: Datasets & Deep Learning Approaches -> dl-entity-resolution
-toc2: er-summary -> Entity Resolution Summary
-h3: Entity Resolution Summary -> er-summary
+toc2: resolution-phenomena -> Linguistic Phenomena & Resolution Constraints
+h3: Linguistic Phenomena & Resolution Constraints -> resolution-phenomena
+toc2: hobbs-algorithm -> Rule-Based Resolution: Hobbs' Algorithm (1978)
+h3: Rule-Based Resolution: Hobbs' Algorithm (1978) -> hobbs-algorithm
+toc2: ml-dl-entity-resolution -> Traditional ML & Deep Learning for Coreference
+h3: Traditional ML & Deep Learning for Coreference -> ml-dl-entity-resolution
 toc1: named-entity-linking -> Named Entity Linking (NEL)
 h2: Named Entity Linking (NEL) -> named-entity-linking
-toc2: nel-task -> Task Definition, Surface Forms & Example Intuition
-h3: Task Definition, Surface Forms & Example Intuition -> nel-task
-toc2: nel-applications -> Applications of Named Entity Linking
-h3: Applications of Named Entity Linking -> nel-applications
-toc2: nel-challenges -> Key Challenges in Named Entity Linking
-h3: Key Challenges in Named Entity Linking -> nel-challenges
-toc2: nel-pipeline -> Named Entity Linking Pipeline Architecture
-h3: Named Entity Linking Pipeline Architecture -> nel-pipeline
-toc2: nel-ranking-features -> Candidate Ranking Features (Independent vs. Dependent)
-h3: Candidate Ranking Features (Independent vs. Dependent) -> nel-ranking-features
-toc2: nel-nil-prediction -> NIL Prediction (Unlinkable Entities)
-h3: NIL Prediction (Unlinkable Entities) -> nel-nil-prediction
-toc2: nel-ml-dl-models -> Supervised Learning & Deep Learning Formulations for NEL
-h3: Supervised Learning & Deep Learning Formulations for NEL -> nel-ml-dl-models
-toc2: nel-model-dimensions -> Deep Learning Model Dimensions in NEL
-h3: Deep Learning Model Dimensions in NEL -> nel-model-dimensions
-toc2: nel-summary -> Named Entity Linking Summary
-h3: Named Entity Linking Summary -> nel-summary
+toc2: nel-definition -> Task Definition, Examples & Applications
+h3: Task Definition, Examples & Applications -> nel-definition
+toc2: nel-challenges -> Key Challenges in Entity Linking
+h3: Key Challenges in Entity Linking -> nel-challenges
+toc2: nel-pipeline -> The NEL Pipeline Architecture
+h3: The NEL Pipeline Architecture -> nel-pipeline
+toc2: nel-models -> Supervised Learning & Deep Learning Formulations
+h3: Supervised Learning & Deep Learning Formulations -> nel-models
 toc1: relation-extraction -> Relation Extraction & Ontologies
 h2: Relation Extraction & Ontologies -> relation-extraction
-toc2: re-kg-foundations -> Knowledge Graphs, Triples & Benefits
-h3: Knowledge Graphs, Triples & Benefits -> re-kg-foundations
-toc2: re-tacit-and-meaningful -> Tacit Knowledge & Meaningful Relations
-h3: Tacit Knowledge & Meaningful Relations -> re-tacit-and-meaningful
-toc2: re-complexity -> Linguistic Complexity: Negation, Uncertainty & Paraphrasing
-h3: Linguistic Complexity: Negation, Uncertainty & Paraphrasing -> re-complexity
-toc2: ontologies-vocabularies -> Relation Vocabularies & Ontologies (ACE, UMLS, Schema.org)
-h3: Relation Vocabularies & Ontologies (ACE, UMLS, Schema.org) -> ontologies-vocabularies
-toc2: closed-open-world -> Closed-World vs. Open-World Assumption
-h3: Closed-World vs. Open-World Assumption -> closed-open-world
-toc2: rule-based-re -> Rule-Based Relation Extraction & Hearst Patterns
-h3: Rule-Based Relation Extraction & Hearst Patterns -> rule-based-re
-toc2: rule-re-tradeoffs -> Rule-Based RE: Strengths and Weaknesses
-h3: Rule-Based RE: Strengths and Weaknesses -> rule-re-tradeoffs
+toc2: re-kg-foundations -> Knowledge Graphs, Triples & Relation Complexity
+h3: Knowledge Graphs, Triples & Relation Complexity -> re-kg-foundations
+toc2: ontologies-vocabularies -> Vocabularies, Ontologies & Assumptions
+h3: Vocabularies, Ontologies & Assumptions -> ontologies-vocabularies
+toc2: rule-based-re -> Rule-Based RE: Hearst Patterns & Templates
+h3: Rule-Based RE: Hearst Patterns & Templates -> rule-based-re
 toc2: bootstrapping-dependency -> Bootstrapping & Dependency-Based Extraction
 h3: Bootstrapping & Dependency-Based Extraction -> bootstrapping-dependency
-toc2: ml-relation-extraction -> Traditional Machine Learning Approaches for RE
-h3: Traditional Machine Learning Approaches for RE -> ml-relation-extraction
-toc2: re-summary -> Relation Extraction Summary
-h3: Relation Extraction Summary -> re-summary
+toc2: ml-relation-extraction -> Machine Learning Pipelines for Relation Extraction
+h3: Machine Learning Pipelines for Relation Extraction -> ml-relation-extraction
 toc1: takeaways -> Summary & Key Takeaways
 h2: Summary & Key Takeaways -> takeaways
 </anchors>
 
 # Entity Resolution, Named Entity Linking, and Relation Extraction
 
-## Repetition in Language & Intro to Entity Resolution
+## Overview: Structuring Knowledge from Text
 
 <callout>
 id: ie-guiding
@@ -90,319 +64,210 @@ icon: circle-question
 style: regular
 title: Guiding Questions: How Do Machines Transform Unstructured Text into Structured Knowledge?
 content:
-Natural language text is rich with indirect references, ambiguous surface names, and complex entity relations. How do computational systems resolve pronouns to antecedents, link surface names to unique Knowledge Base entries, and extract queryable relational triples?
+Natural language text is filled with ambiguity, indirect references, and implicit relationships. How do automated systems identify who or what is being discussed, map ambiguous surface mentions to canonical knowledge base entities, and discover structured relational triples?
 
-This note covers the three foundational components of Information Extraction (IE): Entity Resolution (Coreference), Named Entity Linking (NEL), and Relation Extraction (RE).
+This note explores the three core pillars of Information Extraction (IE): Entity Resolution (Coreference), Named Entity Linking (NEL), and Relation Extraction (RE).
 </callout>
 
-### Repetition in Language
-Referring to the same entity or concept multiple times is extremely common in natural language. However, humans avoid naive repetition by using pronouns and alternative expressions instead of repeating full names:
+Referring to the same entity multiple times is fundamental to human communication. To avoid naive and repetitive expressions (e.g., *"Neil Armstrong said Neil Armstrong jumped..."*), natural languages rely heavily on pronouns and alternative noun phrases (*"Neil Armstrong said ... He jumped..."*). While human readers effortlessly track these entity references, computational models require specialized techniques to resolve entity mentions, link surface forms to Knowledge Base (KB) identifiers, and extract structured relational facts.
 
-- **Repeated Form (Unnatural):** *"Neil Armstrong said Neil Armstrong jumped..."*
-- **Natural Form:** *"Neil Armstrong said ... He jumped..."*
-
-**When naive repetition may be preferred:** Naive repetition is typically reserved for contexts requiring extreme clarity, low ambiguity, or machine readability (such as legal contracts, technical specifications, or raw database records where pronouns could introduce confusion).
+Over time, methods for information extraction have evolved through three major paradigms:
+1. **Rule-Based Systems:** Explicit linguistic rules, syntactic parse tree traversals (e.g., Hobbs' algorithm), and surface patterns (e.g., Hearst patterns).
+2. **Feature-Based Machine Learning:** Supervised classifiers using hand-crafted distance, grammatical, syntactic, and semantic features.
+3. **Deep Learning & Representation Learning:** End-to-end neural architectures that joint-learn mention detection, contextual embeddings, and global coherence.
 
 ---
 
 ## Entity Resolution & Coreference Resolution
 
-**Entity Resolution** is the task of resolving multiple mentions in text that refer to the same real-world entity. It serves as an essential preprocessing step across numerous NLP applications, including:
-- Keyword extraction
-- Entity linking
-- Relation extraction
-- Text summarization
-- Machine translation
-- Question answering
-
----
+Entity resolution is an essential preprocessing step across information retrieval, entity linking, relation extraction, summarization, machine translation, and question answering.
 
 ### Anaphora vs. Coreference Resolution
 
-While used interchangeably in many practical NLP contexts, **anaphora resolution** and **coreference resolution** are theoretically distinct concepts:
+While often used interchangeably in practice, **anaphora resolution** and **coreference resolution** have distinct theoretical definitions:
 
-- **Anaphora Resolution:** Identifies what an *anaphor* (e.g., a pronoun) refers to. It is a directional relationship where an anaphor points back to a previous mention (the *antecedent*).
-    - *Example:* *"He"* referring to *"Neil Armstrong"* is anaphora.
-- **Coreference Resolution:** Identifies all mentions that refer to the exact same real-world entity. It forms equivalence sets across mentions.
-    - *Example:* *"The CEO of Tesla, Elon Musk"* and *"Elon Musk"* are coreferential, but not anaphoric (neither is a pronoun pointing to the other).
+- **Anaphora:** A directional relationship where a dependent mention (the *anaphor*, e.g., a pronoun) refers back to a preceding mention (the *antecedent*) for its interpretation.
+    - *Example:* In *"Neil Armstrong landed on the moon. **He** made history."*, the pronoun *"He"* is an anaphor pointing to *"Neil Armstrong"*.
+- **Coreference:** A relationship where two or more noun phrases (mentions) refer to the exact same real-world entity, without necessarily requiring a directional dependency.
+    - *Example:* *"The CEO of Tesla"* and *"Elon Musk"* in the same document refer to the same real-world person.
 
-#### Important Theoretical Distinctions:
-- Not all coreference is anaphoric (e.g., non-directional reference between noun phrases or appositions).
-- Not all anaphora are strictly coreferential depending on interpretation (e.g., bridging anaphora like *mall $\rightarrow$ food court*).
-
-| Aspect | Anaphora Resolution | Coreference Resolution |
+| Feature | Anaphora Resolution | Coreference Resolution |
 | :--- | :--- | :--- |
-| **Core Definition** | Identifying what an anaphor (e.g., pronoun) refers to | Identifying all mentions referring to the same real-world entity |
-| **Directionality** | Directional (anaphor $\rightarrow$ antecedent) | Equivalence partition / non-directional cluster |
-| **Pronominal Links** | Covers pronouns pointing to antecedents | Covers all noun phrase mentions (pronouns, proper names, titles) |
-| **Non-Coreferential Cases** | Includes bridging anaphora | Excluded (must refer to the identical entity) |
+| **Core Object** | Directional reference link (anaphor $\rightarrow$ antecedent) | Equivalence partition / cluster of mentions |
+| **Directionality** | Inherently directional (usually backward, rarely cataphora) | Non-directional equivalence set |
+| **Non-Coreferential Anaphora** | Includes bridging cases (e.g., *the mall $\rightarrow$ the food court*) | Excluded (must refer to the exact same entity) |
+| **Non-Anaphoric Coreference** | Excluded (e.g., appositives or independent alias mentions) | Included |
+
+### Linguistic Phenomena & Resolution Constraints
+
+Real-world reference resolution must account for complex linguistic phenomena:
+- **Cataphora:** The reference appears *before* its antecedent (e.g., *"Before **he** landed on the moon, Neil Armstrong trained for years."*).
+- **Bridging Anaphora:** The anaphor is linked indirectly to an antecedent via conceptual association (e.g., *"We visited the **mall**. The **food court** was crowded."*).
+- **Zero Anaphora:** The pronoun is omitted entirely and must be inferred from context (common in pro-drop languages).
+- **Split Anaphora:** A single pronoun refers to multiple antecedents combined (e.g., *"Alice met Bob. **They** discussed the plan."*).
+- **Non-Anaphoric Pronouns:** Expletive or pleonastic pronouns that carry no referential entity (e.g., *"**It** is raining"* or *"**It** is important to note..."*).
+
+To evaluate candidate antecedents, systems apply structural and semantic constraints:
+1. **Gender & Number Agreement:** Pronouns must match candidate antecedents in gender (male/female/neuter) and number (singular/plural).
+2. **Recency Preference:** Mentions appearing closer to the pronoun are statistically more likely antecedents.
+3. **Syntactic Constraints:** Subject vs. object positioning and reflexivity govern valid links (e.g., binding theory in linguistics).
+4. **Semantic & Animacy Constraints:** Verbs impose selectional preferences on their arguments (e.g., *"The company launched its product"* vs. *"The engineer fixed the machine"*).
+5. **World Knowledge Constraints:** Reasoning about real-world plausibility and domain facts.
 
 ---
 
-### Reference Phenomena & Resolution Challenges
+### Rule-Based Resolution: Hobbs' Algorithm (1978)
 
-Resolving references in natural text involves navigating complex linguistic phenomena:
-- **Bridging Anaphora:** Indirect relation where the reference is inferred via semantic association (e.g., *the mall $\rightarrow$ the food court*).
-- **Zero Anaphora:** The pronoun is omitted entirely and must be inferred from surrounding context.
-- **Cataphora:** The reference appears *before* its antecedent (e.g., *"Before **he** stepped on the moon, Neil Armstrong trained..."*).
-- **Split Anaphora:** One reference refers to multiple antecedents combined (e.g., *"Alice met Bob. **They** left."*).
-- **Indefinite Pronominal Anaphora:** Ambiguous or generic pronoun usage (e.g., generic *"one"*).
-- **"one" Anaphora:** Substitution using the pronoun *"one"* (e.g., *"I lost my pen, so I bought a new **one**"*).
-- **Non-Anaphoric Pronouns:** Pronouns that do not refer to any entity, such as expletive *"it"* in *"It was raining"* or *"It is obvious that..."*.
+**Hobbs' algorithm** (1978) is a foundational rule-based approach for pronoun resolution that operates directly on syntactic parse trees.
 
-#### Core Challenges in Entity Resolution:
-- High linguistic variability in reference forms.
-- Long-distance dependencies across multiple sentences or paragraphs.
-- Ambiguity in pronoun resolution.
-- Requirement of world knowledge and deep semantic understanding.
-- Syntax and agreement constraints are helpful, but not always sufficient on their own.
+#### Detailed Procedure:
+1. **Locate Pronoun Node:** Find the Noun Phrase (NP) node dominating the pronoun in the syntactic parse tree.
+2. **Ascend to S or NP:** Move up the parse tree to the first `NP` or `S` (Sentence) node above the pronoun. Call this node $X$, and the path traversed $p$.
+3. **Traverse Left-to-Right under $X$:** Traverse all branches below $X$ to the left of path $p$ in a left-to-right, breadth-first manner. Any `NP` node encountered is a candidate antecedent.
+4. **Test Agreement Constraints:** Check gender, number, animacy, and syntactic constraints for each candidate `NP`.
+5. **Ascend Higher:** If no valid match is found under $X$, move up to the next `NP` or `S` node above $X$. If this node is an `S` node, search branches to the right of path $p$ that do not contain $X$.
+6. **Cross Sentence Boundaries:** If the root of the sentence tree is reached without a match, search the parse trees of previous sentences in order of recency using left-to-right breadth-first search.
+7. **Select First Match:** The first candidate `NP` that satisfies all agreement constraints is selected as the antecedent.
+
+> **Key Takeaway:** Hobbs' algorithm demonstrates how **structured tree traversal** combined with **constraint filtering** and **first-valid-match selection** can resolve pronominal references without machine learning models.
 
 ---
 
-### Constraints Used in Resolution
+### Traditional ML & Deep Learning for Coreference
 
-Resolution systems apply a variety of linguistic and domain constraints to filter candidate antecedents:
-1. **Gender Agreement:** Gender consistency between mention and pronoun (male/female/neuter).
-2. **Number Agreement:** Singular vs. plural consistency (e.g., *he/she* vs. *they*).
-3. **Recency Preference:** Mentions appearing closer to the pronoun are statistically more likely antecedents.
-4. **Syntactic Constraints:** Grammatical roles such as subject, object, or appositive positioning (e.g., binding theory constraints).
-5. **Semantic Constraints:** Animacy (animate vs. inanimate) and semantic plausibility.
-6. **Verb and Structural Agreement Constraints:** Selectional preferences of verbs on their subject/object arguments.
-7. **World Knowledge Constraints:** Real-world plausibility and domain facts.
+#### Traditional Machine Learning: Mention-Pair Model
+The **mention-pair model** frames coreference resolution as a classification task over candidate pairs:
+1. **Candidate Pair Generation:** Extract all candidate noun phrases (mentions) in a document and pair them $(m_i, m_j)$.
+2. **Binary Classification:** Train a binary classifier (e.g., Logistic Regression or SVM) using cross-entropy or margin loss to predict whether $m_i$ and $m_j$ are coreferent.
+3. **Feature Engineering:**
+    - *Distance Features:* Sentence distance, token distance, word count separation.
+    - *String Match Features:* Exact match, head word match, substring overlap, acronym match.
+    - *Grammatical & Syntactic Features:* Noun phrase type (proper, definite, indefinite, pronoun), subject/object syntactic roles, appositive structures.
+    - *Semantic & Distributional Features:* Animacy, WordNet hypernyms, pre-trained word embeddings.
+4. **Clustering:** Apply transitive closure or graph clustering (e.g., single-linkage clustering) to merge pairwise predictions into coreference chains.
 
-> **Note:** While constraints are invaluable for rule-based systems and as features for machine learning models, they are not always 100% reliable due to linguistic exceptions and non-standard usage.
+#### Evaluation Benchmarks & Datasets
+- **Definite Pronoun Resolution (DPR) Dataset:** Benchmark focusing on hard pronoun disambiguation.
+- **GAP Coreference Dataset:** Gender-balanced benchmark for pronoun resolution in Wikipedia contexts.
 
----
-
-### Rule-Based Approach: Hobbs' Algorithm (1978)
-
-**Hobbs' algorithm (1978)** is a classic rule-based algorithm for pronoun resolution operating directly on syntactic parse trees.
-
-- **Input:** Syntactic parse trees of the current and preceding sentences.
-- **Goal:** Find the correct antecedent NP for a target pronoun.
-- **Key Idea:** Structured tree traversal + constraint filtering + first valid match selection.
-
-```
-[ Locate NP dominating pronoun ]
-               │
-               ▼
-[ Ascend to nearest NP or S node (X) ]
-               │
-               ▼
-[ Left-to-Right BFS under X for candidate NPs ]
-               │
-               ▼
-[ Test agreement constraints for candidate ] ──► (Match Found?) ──► [ Select Antecedent ]
-               │ (No match)
-               ▼
-[ Move up to higher NP or S node (previous sentences) ]
-               │
-               ▼
-[ Repeat search until antecedent is found ]
-```
-
-#### Step-by-Step Procedure:
-1. **Locate Pronoun Node:** Locate the `NP` node dominating the pronoun in the syntactic parse tree.
-2. **Ascend to $X$:** Move up the tree to the nearest `NP` or `S` node (call it node $X$), noting the path taken.
-3. **Left-to-Right BFS:** Perform a left-to-right, breadth-first search under $X$ for candidate noun phrases (NPs) that appear to the left of the path.
-4. **Test Agreement Constraints:** Test gender, number, animacy, and syntactic constraints for each candidate `NP`.
-5. **Ascend Higher:** If none match, move up to the next higher `NP` or `S` node (including structural search in preceding sentences in order of recency).
-6. **Repeat Until Match:** Repeat the search procedure until a valid antecedent is found. Select the first matching candidate.
-
----
-
-### Traditional Machine Learning: Mention-Pair Model
-
-Traditional machine learning frames coreference resolution as a classification problem over candidate pairs.
-
-#### 1. Mention-Pair Model Workflow
-- **Candidate Generation:** Generate all pairs of mentions (all noun phrases, including pronouns) within a document $(m_i, m_j)$.
-- **Binary Classifier:** Train a binary classifier (e.g., Logistic Regression, SVM, or Decision Trees) to predict whether two mentions are coreferent (`1`) or not (`0`).
-- **Learning Objective:** Framed using cross-entropy loss over candidate pair predictions.
-
-#### 2. Feature Engineering
-Feature engineering is crucial for the performance of traditional mention-pair models:
-- **Distance Features:** Token distance, sentence distance, intervening mention count.
-- **String Match Features:** Exact string match, partial overlap, head noun match, substring matching, acronym match.
-- **Grammatical Features:** NP type (proper noun, definite NP, indefinite NP, pronoun), gender, number.
-- **Syntactic Features:** Subject role, object role, apposition, modifier structures.
-- **Semantic Features:** Animacy, semantic category, plausibility.
-- **Distributional Features:** Pre-trained word embeddings and vector similarities.
-
----
-
-### Datasets & Deep Learning Approaches
-
-#### Datasets for Entity Resolution:
-- **Definite Pronoun Resolution (DPR) Dataset:** Benchmark for evaluating pronoun resolution on definite pronouns.
-- **GAP Coreference Dataset:** Gender-balanced coreference dataset sourced from Wikipedia.
-- Used extensively for training and benchmarking pronominal and coreference resolution models.
-
-#### Deep Learning Approaches:
-- **Learned Distributed Representations:** Learn continuous vector representations for mentions and entity clusters rather than relying on manual feature engineering.
-- **Global Context Modeling:** Model document-level global context rather than making isolated pairwise decisions.
-- **End-to-End Neural Coreference Models:** Jointly learn mention detection and mention linking in an end-to-end differentiable neural architecture.
-- **Performance:** Deep learning models typically outperform traditional feature-based methods by capturing richer semantic and contextual cues.
-
----
-
-### Entity Resolution Summary
-
-<block title="Entity Resolution Summary">
-- Entity resolution is an essential preprocessing step across many NLP tasks (IR, QA, RE, MT, Summarization).
-- Core difficulty stems from ambiguity, high linguistic variability, and the need for contextual and world knowledge.
-- Methods have evolved progressively from **rule-based tree traversals** (Hobbs' algorithm) $\rightarrow$ **feature-engineered machine learning** (Mention-pair classifiers with cross-entropy loss) $\rightarrow$ **deep learning models** with learned end-to-end representations and global context.
-</block>
+#### Deep Learning Approaches
+Modern neural coreference models replace manual feature engineering with learned distributed representations:
+- **Contextual Encoders:** Utilize Transformers (e.g., BERT, RoBERTa) to encode span representations that capture document-level context.
+- **End-to-End Neural Coreference:** Jointly learn mention detection and mention linking, scoring all span pairs $(g_i, g_j)$ directly without pre-extracted mentions.
+- **Global Context & Entity Clusters:** Model cluster-level representations rather than relying strictly on local pairwise decisions.
 
 ---
 
 ## Named Entity Linking (NEL)
 
-### Task Definition, Surface Forms & Example Intuition
+### Task Definition, Examples & Applications
 
-**Named Entity Linking (NEL)**—also known as **Entity Disambiguation**—is the task of linking named entities mentioned in text to canonical entries in a Knowledge Base (KB) or Knowledge Graph (such as Wikipedia, DBpedia, or Wikidata).
+**Named Entity Linking (NEL)**—also referred to as **Entity Disambiguation**—is the task of mapping ambiguous surface mentions in text to canonical, uniquely identified entities in a Knowledge Base (KB) or Knowledge Graph (e.g., Wikipedia, DBpedia, or Wikidata).
 
-- **Surface Form (Mention):** The raw word or phrase appearing in unstructured text (e.g., *"Armstrong"*).
-- **Canonical Entity (KB Entry / URI):** Unique entity identifier in a KB (e.g., `http://dbpedia.org/resource/Neil_Armstrong`).
-- **Goal:** Map ambiguous surface forms to correct canonical entities using contextual similarity between mention context and candidate entity descriptions.
+- **Surface Form (Mention):** The raw string in text (e.g., *"Armstrong"*).
+- **Canonical Entity (KB URI):** The unique identifier in the Knowledge Base (e.g., `http://dbpedia.org/resource/Neil_Armstrong`).
 
-#### Example Intuition:
-> *Text:* *"**Neil Armstrong** stepped on the moon … **Armstrong** jumped down from the ladder …"*
->
-> *Challenge:* Determine whether the surface form *"Armstrong"* refers to `dbpedia:Neil_Armstrong`, `dbpedia:Lance_Armstrong`, or `dbpedia:Louis_Armstrong`.
->
-> *Core Issue:* Linking ambiguous surface forms to the correct canonical KB entity based on surrounding evidence.
+#### Intuitive Example:
+> *"**Neil Armstrong** stepped on the moon ... **Armstrong** jumped down from the ladder..."*
 
----
+The challenge is to recognize that the second surface mention *"Armstrong"* refers to the historical astronaut `dbpedia:Neil_Armstrong` rather than `dbpedia:Lance_Armstrong` or `dbpedia:Louis_Armstrong`.
 
-### Applications of Named Entity Linking
-
-1. **Information Retrieval (IR):** Improves search relevance via entity-level indexing rather than superficial keyword matching.
-2. **Question Answering (QA):** Maps entity mentions in user questions directly to correct KB entities for factual retrieval.
-3. **Machine Translation (MT):** Preserves entity identity and gender consistency across languages.
-4. **Relation Extraction (RE):** Connects extracted entities via structured relations to populate Knowledge Graphs.
-5. **Conversational Agents:** Grounds references in external Knowledge Bases for task-oriented dialogues.
+#### Key Downstream Applications:
+- **Information Retrieval (IR):** Entity-level indexing improves search relevance beyond raw keyword matching.
+- **Question Answering (QA):** Maps entity references in user questions directly to KB nodes for factual retrieval.
+- **Machine Translation (MT):** Preserves correct entity identity and gender across target languages.
+- **Relation Extraction (RE):** Grounds extracted entity pairs into canonical nodes before adding triples to a Knowledge Graph.
+- **Conversational Agents:** Grounds conversational references into external Knowledge Graph structures.
 
 ---
 
-### Key Challenges in Named Entity Linking
+### Key Challenges in Entity Linking
 
-- **Ambiguity:** The same surface name can refer to multiple distinct entities.
-    - *Example:* *"Washington"* $\rightarrow$ George Washington (Person), Washington D.C. (Capital City), Washington State (Location), or Washington Huskies (Sports Team).
-- **Variability:** A single entity can be represented by many surface forms (abbreviations, nicknames, spelling variants).
-    - *Example:* *"SG"*, *"S'pore"*, *"Singapore"*, *"The Lion City"*.
-- **Missing Entities (NIL Problem):** Mentions in text may not exist in the Knowledge Base. Systems must explicitly detect missing entities and abstain (`NIL`).
-- **Knowledge Base Incompleteness & Evolution:** Knowledge Bases are incomplete and continuously evolve as entities are added or updated over time.
-- **Context Sensitivity:** Meaning depends heavily on surrounding local and document-level text context.
+1. **Ambiguity:** A single surface form can correspond to many distinct real-world entities.
+    - *Example:* *"Washington"* may refer to George Washington (Person), Washington D.C. (Capital City), Washington State (Location), or Washington Huskies (Sports Team).
+2. **Variability:** A single real-world entity can be expressed using diverse surface forms.
+    - *Example:* `dbpedia:Singapore` can appear as *"Singapore"*, *"S'pore"*, *"SG"*, *"The Lion City"*, or *"Republic of Singapore"*.
+3. **The NIL Problem (Unlinkable / Missing Entities):** Knowledge Bases are incomplete. Many mentions in text do not exist in the target KB. Systems must detect these cases and predict `NIL` (abstain) rather than forcing an incorrect link.
+4. **Knowledge Base Incompleteness & Evolution:** Real-world entities, attributes, and relationships continuously change and expand over time.
+5. **Context Sensitivity:** Disambiguation requires capturing both local sentence context and global document-level topics.
 
 ---
 
-### Named Entity Linking Pipeline Architecture
+### The NEL Pipeline Architecture
 
-The standard NEL architecture consists of three core components:
+Standard Named Entity Linking architectures consist of three consecutive stages:
 
 ```
-[ Input Text with Surface Mention ]
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 1. Candidate Generation         │ ──► Retrieves candidate set (High Recall, Low Precision)
-└─────────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 2. Candidate Ranking            │ ──► Scores candidates using Independent & Dependent features
-└─────────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────┐
-│ 3. NIL Prediction               │ ──► Abstains if top score < threshold (Missing Entity)
-└─────────────────────────────────┘
-                 │
-                 ▼
-[ Canonical KB Entity URI / NIL ]
+[ Unstructured Text ]
+        │
+        ▼
+┌───────────────────────────────┐
+│ 1. Candidate Generation       │ ──► High Recall, Low Precision
+└───────────────────────────────┘
+        │
+        ▼
+┌───────────────────────────────┐
+│ 2. Candidate Ranking          │ ──► Feature Scoring / Neural Encoder
+└───────────────────────────────┘
+        │
+        ▼
+┌───────────────────────────────┐
+│ 3. NIL Prediction             │ ──► Thresholding / Explicit NIL Class
+└───────────────────────────────┘
+        │
+        ▼
+[ Linked KB Entity URI / NIL ]
 ```
 
 #### 1. Candidate Generation
-- **Task:** Retrieve all plausible candidate entities for a given surface mention.
-- **Characteristics:** Typically produces a large set of candidates (high recall, low precision).
-- **Common Methods:** String matching / lexical similarity, Wikipedia disambiguation pages, Search APIs (e.g., Wikidata search).
-- **Goal:** Ensure the correct KB entity is included in the candidate set.
+Retrieve a subset of candidate entities $e \in E$ for a given surface mention $m$.
+- **Goal:** Achieve high recall so the true entity is not omitted, while keeping candidate set size manageable.
+- **Methods:** Lexical exact/partial string matching, Wikipedia redirect/disambiguation pages, candidate dictionary lookups, and Wikidata search APIs.
+
+#### 2. Candidate Ranking
+Score and rank generated candidate entities to select the best semantic match.
+
+- **Context-Independent Features:**
+    - *String Similarity:* Levenshtein distance, Jaro-Winkler, prefix/suffix overlap.
+    - *Entity Popularity / Prior Probability:* $P(e|m)$ based on Wikipedia page views, inbound link counts, and hyper-link anchor text frequencies.
+    - *Entity Type Consistency:* Matching Named Entity Recognition (NER) labels (`PER`, `ORG`, `LOC`) with KB entity classes.
+
+- **Context-Dependent Features:**
+    - *Local Context Similarity:* Bag-of-Words TF-IDF, keyphrase similarity, or embedding cosine similarity between the sentence surrounding mention $m$ and the KB entity description.
+    - *Global Coherence:* Document-level topic consistency; ensuring linked entities across a document are topically compatible (e.g., linking *"Apollo"* to `dbpedia:Apollo_program` when *"Armstrong"* is linked to `dbpedia:Neil_Armstrong`).
+
+#### 3. NIL Prediction
+Determine whether the top-ranked candidate entity is correct or if the mention refers to an un-cataloged entity (`NIL`).
+- **Methods:** Thresholding prediction probability scores, training an explicit `NIL` classifier, or assigning a dedicated `NIL` candidate sink node.
 
 ---
 
-### Candidate Ranking Features (Independent vs. Dependent)
-
-Candidate ranking scores and ranks candidate entities to select the best match. Features are divided into two main categories:
-
-#### 1. Context-Independent Features
-- **String Similarity:** Exact match, prefix/suffix overlap, partial match, edit distance.
-- **Entity Popularity:** Wikipedia page views, inbound link counts, prior mention-entity frequency $P(e|m)$.
-- **Entity Type Consistency:** Matching NER labels (`PER`, `ORG`, `LOC`) with KB entity categories.
-
-#### 2. Context-Dependent Features
-- **Local Text Context:** Bag-of-words similarity, keyphrase overlap, or embedding similarity around the mention.
-- **Wikipedia Anchor Text Statistics:** Hyperlink anchor text distribution across Wikipedia.
-- **Entity Coherence (Global Consistency):** Coherence between entities mentioned within the same document (e.g., linking *"Apollo"* to spaceflight when *"Armstrong"* is linked to Neil Armstrong).
-- **Context Overlap:** Overlap between linked entity descriptions and document context.
-
----
-
-### NIL Prediction (Unlinkable Entities)
-
-- **Task:** Decide when no candidate entity in the KB is correct (`NIL`).
-- **Importance:** Essential because real-world Knowledge Bases are inherently incomplete.
-- **Implementation:** Thresholding probability scores, or explicitly modeling a `NIL` sink class.
-- **Challenge:** Borderline cases where candidate context similarity is moderate make NIL prediction difficult in practice.
-
----
-
-### Supervised Learning & Deep Learning Formulations for NEL
+### Supervised Learning & Deep Learning Formulations
 
 #### Supervised Ranking Formulation
-- **Input:** Pairwise inputs $(m, e)$ where $m$ is the mention (with context) and $e$ is a candidate entity.
-- **Output:** Probability score $P(e|m, \text{Context})$ predicting whether candidate $e$ is the correct link.
-- **Training Objective:** Classification optimized using cross-entropy loss or ranking loss.
-- **Final Decision:** Rank candidate entities by probability score and select top candidate (or `NIL` if below threshold).
+NEL is frequently formulated as a pairwise ranking or classification task over $(m_i, e_j)$ pairs. The model outputs a conditional probability $P(e_j | m_i, \text{Context})$, optimized using cross-entropy or margin-based ranking loss:
 
-#### Common Machine Learning Approaches:
-- **Traditional ML:** Logistic Regression, Naive Bayes, and other probabilistic classifiers operating on heavily feature-engineered pipelines.
-- **Deep Learning:** Encoder-based architectures (CNN, RNN, Transformers) that learn continuous representations for mention and entity contexts. Often incorporate attention mechanisms for alignment between text context and entity descriptions to capture richer semantic similarity than manual features.
+$$\mathcal{L} = - \sum_{i} \log P(e^*_i | m_i, \text{Context})$$
 
----
-
-### Deep Learning Model Dimensions in NEL
-
-When designing deep learning architectures for NEL, systems vary across five main dimensions:
-1. **Choice of Encoder Architecture:** CNNs, RNNs (LSTMs/GRUs), or Transformer models (BERT, RoBERTa).
-2. **Local vs. Global Disambiguation Strategies:** Scoring mentions independently vs. joint disambiguation maximizing document-wide entity coherence.
-3. **Handling NIL Cases Explicitly or Implicitly:** Using confidence thresholds vs. explicit `NIL` representation vectors.
-4. **Candidate Generation Strategy Integration:** Multi-stage retrieval-and-rank vs. joint candidate retrieval networks.
-5. **Entity Coherence Modeling Across Documents:** Graph Neural Networks or inter-entity attention layers modeling global topical consistency.
-
----
-
-### Named Entity Linking Summary
-
-<block title="Named Entity Linking Summary">
-- Named Entity Linking connects unstructured text mentions to canonical Knowledge Base entities.
-- Core pipeline: **Candidate Generation** $\rightarrow$ **Candidate Ranking** $\rightarrow$ **NIL Detection**.
-- Major difficulty stems from ambiguity, variability, missing entities (NIL), KB incompleteness, and context dependence.
-- Methodological evolution: **Rule-based & lexical matching** $\rightarrow$ **Feature-engineered ML** $\rightarrow$ **Neural representation learning & attention models**.
-</block>
+#### Deep Learning & Encoder-Based Models
+Modern neural NEL architectures eliminate manual feature engineering:
+- **Bi-Encoder Models:** Encode mention text context and candidate KB entity descriptions separately into dense vectors using Transformer backbones (e.g., BERT), computing dot-product or cosine similarity scores.
+- **Cross-Encoder Models:** Pass the mention context concatenated directly with candidate entity descriptions into a Transformer, allowing multi-head cross-attention to capture fine-grained semantic matches.
+- **Global Disambiguation Networks:** Use Graph Neural Networks (GNNs) or dense attention layers to jointly disambiguate all mentions in a document, maximizing global entity coherence.
 
 ---
 
 ## Relation Extraction & Ontologies
 
-### Knowledge Graphs, Triples & Benefits
+### Knowledge Graphs, Triples & Relation Complexity
 
-**Relation Extraction (RE)** converts unstructured text into structured knowledge representations, outputting Knowledge Graphs composed of `(Subject, Predicate, Object)` triples.
+**Relation Extraction (RE)** is the task of extracting structured semantic relationships between entity pairs from unstructured text, transforming raw prose into a queryable **Knowledge Graph (KG)**.
 
-- **Example Triples:**
-    - `(Euler, born-in, Basel)`
-    - `(Euler, works-as, mathematician)`
-    - `(Basel, located-in, Switzerland)`
+#### Triples Structure:
+A Knowledge Graph is composed of structured `(Subject, Predicate, Object)` triples:
+- `(Euler, born-in, Basel)`
+- `(Euler, works-as, mathematician)`
+- `(Basel, located-in, Switzerland)`
 
 ```
  (Euler) ───[ born-in ]───► (Basel) ───[ located-in ]───► (Switzerland)
@@ -410,204 +275,126 @@ When designing deep learning architectures for NEL, systems vary across five mai
     └───[ works-as ]───► (Mathematician)
 ```
 
-#### Knowledge Graphs:
-- Represent entities and relations as structured triples.
-- Enable machine-readable semantic structure over unstructured text.
-- **Example Structure:**
-    - *Entity Types:* `Person`, `City`, `Mathematician`
-    - *Relations:* `born-in`, `located-in`, `is-a`, `works-as`, `advisor-of`, `education`
-- Support reasoning and query execution over connected facts.
+#### Meaningful Relations & Downstream Benefits:
+- **Downstream Benefits:** Enhances semantic search, structured Question Answering, automated reasoning, data integration, and recommendation systems.
+- **Tacit Knowledge:** Information that is implied rather than explicitly stated, requiring domain background to infer.
+- **Target Selection:** Practical RE systems focus primarily on extracting relations between validated named entities.
 
-#### Benefits of Relation Extraction:
-- Improves search and information retrieval via entity-level indexing.
-- Enables Question Answering over structured facts.
-- Supports Natural Language Understanding (NLU).
-- Helps data integration across heterogeneous sources (especially when paired with Entity Linking).
-- Improves semantic interoperability (machine understanding of text).
-- Enhances recommendation systems.
-- **Overall Goal:** Transforms raw text into structured, queryable knowledge graphs.
+#### Handling Linguistic Complexity:
+1. **Negation:** Expressing non-existence or negative facts (e.g., *"Euler was not born in St. Petersburg"* $\rightarrow$ `(Euler, not-born-in, St. Petersburg)`). Standard triple stores often struggle to represent negative facts natively.
+2. **Uncertainty & Attribution:** Non-factual, probabilistic, or attributed statements (e.g., *"Reports claim Euler was born in Basel"*). Requires meta-level statements or provenance annotation.
+3. **Paraphrasing & Relation Equivalence:** Different surface expressions convey identical facts:
+    - *"Euler was born in Basel."* $\leftrightarrow$ *"Basel was the birthplace of Euler."*
+    - Canonical mapping resolves `(Euler, born-in, Basel)` and `(Basel, birthplace-of, Euler)`.
 
 ---
 
-### Tacit Knowledge & Meaningful Relations
+### Vocabularies, Ontologies & Assumptions
 
-- **Tacit Knowledge:** Information that is implied rather than explicitly stated in text (e.g., background commonsense facts). It is difficult to extract automatically because it is not directly expressed in surface syntax.
-- **What Counts as a Meaningful Relation:**
-    - Not all extracted triples are equally useful.
-    - *Example Sentence:* *"Euler was born in Basel where he enjoyed his childhood."*
-        - Triple 1 (Useful): `(Euler, born-in, Basel)`
-        - Triple 2 (Less Useful): `(Euler, enjoyed, childhood)`
-    - Most practical RE systems focus on relations between validated named entities.
-    - The utility of extracted relations depends heavily on the downstream application.
+Standardized vocabularies define target entity classes and relation predicates to ensure semantic interoperability.
 
----
+#### Key Relation Vocabularies & Standards:
+- **ACE (Automatic Content Extraction):** Defines major relation categories:
+    - *Physical:* `located`, `near`
+    - *Part-Whole:* `geographical`, `subsidiary`, `artifact`
+    - *Personal-Social:* `family`, `business`
+    - *Org-Affiliation:* `employment`, `membership`, `ownership`
+    - *Agent-Artifact:* `manufacturer`, `inventor`, `user`
+- **UMLS (Unified Medical Language System):** Medical domain ontology containing ~127 semantic types and ~54 semantic relationships (including probabilistic relations like `may-cause`).
+- **Formal Ontologies:** Structured specifications defining **Individuals** (Euler), **Classes** (Person), **Properties** (birth date), **Relationships** (born-in), and **Logical Axioms**.
+- **Schema.org & Knowledge Graphs:** Industry-wide structured schema backed by major technology companies, powering web-scale Knowledge Graphs.
 
-### Linguistic Complexity: Negation, Uncertainty & Paraphrasing
-
-1. **Negation:**
-    - *Sentence:* *"Euler was not born in St. Petersburg."*
-    - *Requirement:* Representation like `(Euler, not-born-in, St. Petersburg)`.
-    - *Challenge:* Often difficult to represent in standard triple stores without specialized negation predicate schemas.
-2. **Uncertainty & Attribution:**
-    - *Sentence:* *"They say Euler was born in Basel."*
-    - *Requirement:* Represents belief or attribution rather than established fact.
-    - *Challenge:* Requires meta-level representations (statements about statements / provenance graphs).
-3. **Relation Equivalence & Paraphrasing:**
-    - The same underlying fact can be expressed in multiple ways:
-        - *"Euler was born in Basel."*
-        - *"Basel was the birthplace of Euler."*
-    - Semantically equivalent triples: `(Euler, born-in, Basel)` vs. `(Basel, birthplace-of, Euler)`.
-    - Requires normalization or controlled vocabularies for consistency across datasets.
+#### Closed-World vs. Open-World Assumption
+- **Closed-World Assumption (CWA):** Any fact not explicitly stated in the database is assumed to be *false*. Standard in traditional relational databases.
+- **Open-World Assumption (OWA):** Absence of information does *not* imply falsehood; unstated facts are simply *unknown*. Essential for web-scale Knowledge Graphs and open domain extraction.
 
 ---
 
-### Relation Vocabularies & Ontologies (ACE, UMLS, Schema.org)
+### Rule-Based RE: Hearst Patterns & Templates
 
-Ontologies define allowed entities, classes, properties, and relationships to standardize queries (e.g., `(?person, born_in, Basel)`). Without standardization, cross-dataset integration becomes unmanageable.
+#### 1. Hearst Patterns (IS-A / Hyponym Extraction)
+First introduced by Marti Hearst (1992), **Hearst patterns** use regular expressions over surface syntax to extract hyponym (class-instance) relations:
 
-#### 1. ACE (Automatic Content Extraction)
-Defines structured relation categories:
-- **Physical:** `located`, `near`
-- **Part-Whole:** `geographical`, `subsidiary`, `artifact`
-- **Personal-Social:** `family`, `business`, etc.
-- **Org-Affiliation:** `employment`, `membership`, `ownership`
-- **Agent-Artifact:** `manufacturer`, `inventor`, `user`
+| Pattern Syntax | Surface Text Example | Extracted Triple |
+| :--- | :--- | :--- |
+| `Y such as X` | *"Mathematicians such as Euler..."* | `(Euler, is-a, mathematician)` |
+| `such Y as X` | *"such cities as Basel..."* | `(Basel, is-a, city)` |
+| `X or other Y` | *"Euler or other mathematicians..."* | `(Euler, is-a, mathematician)` |
+| `Y including X` | *"Great minds including Euler..."* | `(Euler, is-a, great mind)` |
+| `Y especially X` | *"Swiss scholars especially Euler..."* | `(Euler, is-a, Swiss scholar)` |
 
-#### 2. UMLS (Unified Medical Language System)
-- Medical domain ontology containing **~127 semantic types** and **~54 semantic relationships**.
-- Includes non-factual or probabilistic relations (e.g., `may-cause`).
+#### 2. Domain-Specific Surface Patterns
+Extending beyond IS-A relations, hand-written text patterns target specific domain relationships:
+- *Pattern Template:* `PERSON joined ORG as OCCUPATION`
+- *Pattern Template:* `PERSON works as OCCUPATION at ORG`
+- *Sentence:* *"Chris works as a lecturer at NUS."*
+- *Extracted Triples:* `(Chris, works-as, lecturer)` and `(Chris, works-at, NUS)`.
 
-#### 3. Formal Ontologies
-Formal representation of entities, classes, properties, and relationships.
-- **Components:**
-    - *Individuals:* Specific entities (e.g., `Euler`, `Basel`).
-    - *Classes:* Categories (e.g., `Person`, `City`).
-    - *Properties:* Attributes or values (e.g., `birth date`).
-    - *Relationships:* Links between individuals (e.g., `born-in`).
-    - *Axioms:* Logical constraints.
-
-#### 4. Schema.org
-- Industry ontology created by major tech companies.
-- Used extensively in the Google Knowledge Graph and web microdata.
-
----
-
-### Closed-World vs. Open-World Assumption
-
-- **Closed-World Assumption (CWA):** What is not known to be true is assumed to be *false*. Useful in traditional relational databases and closed rule-based systems.
-- **Open-World Assumption (OWA):** Absence of information does *not* imply falsehood; unstated facts are simply *unknown*. Essential for Knowledge Graphs and web-scale information extraction.
-- **Key Implication:** Directs how missing facts are interpreted during query evaluation and reasoning.
-
----
-
-### Rule-Based Relation Extraction & Hearst Patterns
-
-#### 1. Hearst Patterns (IS-A / Hyponym Relations)
-First proposed by Marti Hearst (1992) for extracting hyponym relationships:
-
-| Pattern Template | Surface Pattern Syntax | Example Match | Extracted Triple |
-| :--- | :--- | :--- | :--- |
-| `Y such as X` | `"Y such as X"` | *"Mathematicians such as Euler"* | `(Euler, is-a, mathematician)` |
-| `such Y as X` | `"such Y as X"` | *"such cities as Basel"* | `(Basel, is-a, city)` |
-| `X or other Y` | `"X or other Y"` | *"Euler or other mathematicians"* | `(Euler, is-a, mathematician)` |
-| `Y including X` | `"Y including X"` | *"Scholars including Euler"* | `(Euler, is-a, scholar)` |
-| `Y especially X` | `"Y especially X"` | *"Mathematicians especially Euler"* | `(Euler, is-a, mathematician)` |
-
-#### 2. Extension Beyond IS-A (Domain-Specific Templates)
-Pattern-based extraction for domain-specific relations:
-- *Template 1:* `PERSON joined ORG as OCCUPATION`
-- *Template 2:* `PERSON works as OCCUPATION at ORG`
-- *Example Sentence:* *"Chris works as a lecturer at NUS."*
-- *Extracted Triples:*
-    - `(Chris, works-as, lecturer)`
-    - `(Chris, works-at, NUS)`
-
----
-
-### Rule-Based RE: Strengths and Weaknesses
-
-| Strengths (Pros) | Weaknesses (Cons) |
-| :--- | :--- |
-| **No Labeled Dataset Required:** Works immediately without annotated training corpora. | **Low Recall:** Cannot cover the wide range of natural language variability. |
-| **High Precision:** Explicit rules produce highly trustworthy extractions. | **Hard to Scale:** Difficult to manually author rules for hundreds of relation types. |
-| **Domain Customization:** Easy to tailor rules for specialized domain jargon. | **Labor Intensive:** Rule creation is time-consuming and requires domain experts. |
-| | **Limited Generalization:** Fails to generalize to unseen syntax or paraphrases. |
+#### Evaluation of Rule-Based Approaches:
+- **Pros:** High precision, no manually labeled training dataset required, easily customizable for specialized domains.
+- **Cons:** Extremely low recall due to linguistic variability, labor-intensive rule authoring, inability to scale to hundreds of relation types, and poor generalization to unseen expressions.
 
 ---
 
 ### Bootstrapping & Dependency-Based Extraction
 
-#### 1. Bootstrapping Approach
-Semi-automatic pattern learning starting from seed entity pairs:
-1. **Seed Set:** Start with seed entity pairs with known relations (e.g., `(Euler, Basel)` for `born-in`).
-2. **Sentence Retrieval:** Extract sentences from a large corpus containing both entities.
-3. **Pattern Learning:** Learn surface context patterns connecting the entity pairs.
-4. **New Pair Discovery:** Use learned patterns to discover new entity pairs across the corpus.
-5. **Iterative Expansion:** Iterate to expand dataset and pattern set continuously.
-6. **Risk (Error Propagation):** If early patterns are imprecise, invalid pairs are extracted, leading to semantic drift and dataset corruption.
+#### Bootstrapping (Semi-Supervised Pattern Learning)
+Bootstrapping iteratively expands relation patterns from a small set of seed entity pairs:
 
-#### 2. Dependency-Based Relation Extraction
-Uses syntactic dependency trees instead of raw surface text:
-- **Grammatical Structure:** Extracts relations based on shortest dependency paths connecting entities (e.g., `nsubj` $\rightarrow$ `verb` $\rightarrow$ `dobj`).
-- **Advantage:** More structured and robust than surface patterns, bypassing intervening adjectives and prepositional modifiers.
+```
+[ Seed Entity Pairs ] (e.g. Euler, Basel)
+        │
+        ▼
+[ Search Corpus & Retrieve Sentences ]
+        │
+        ▼
+[ Extract Common Context Patterns ]
+        │
+        ▼
+[ Apply Patterns to Find New Entity Pairs ]
+        │
+        ▼
+[ Filter & Add New Pairs to Seed Set ] (Iterate)
+```
+
+> **Warning:** A major risk in bootstrapping is **error propagation** (semantic drift); if an incorrect pattern is learned early, it extracts invalid pairs that corrupt subsequent iterations.
+
+#### Dependency-Based Relation Extraction
+Instead of relying on raw surface text, **dependency-based methods** extract relation paths over syntactic dependency trees:
+- **Syntactic Path:** Extract shortest dependency paths connecting entity nodes (e.g., `nsubj` $\rightarrow$ `verb` $\rightarrow$ `dobj`).
+- **Advantage:** Bypasses intervening modifier words and long-distance surface variation, providing far greater structural robustness than raw text patterns.
 
 ---
 
-### Traditional Machine Learning Approaches for RE
+### Machine Learning Pipelines for Relation Extraction
 
-#### Task Formulations:
-- **Binary Classification:** Predict relation vs. no-relation between an entity pair.
-- **Multiclass Classification:** Classify relation type directly from a fixed set (e.g., `born-in`, `works-for`, `located-in`).
+#### Problem Formulations
+Given a pair of extracted entities $(e_1, e_2)$ within a text context:
+- **Binary Classification:** Predict whether a relation exists between $e_1$ and $e_2$ (`Relation` vs. `No-Relation`).
+- **Multiclass Classification:** Classify the entity pair into one of $K$ predefined relation types (e.g., `born-in`, `works-at`, `located-in`, `none`).
 
-#### Pipeline Design:
-```
-[ Text Input ]
-      │
-      ▼
-[ Step 1: Detect Entities ] ──► (NER / Noun Phrase Chunking / Lookup Lists)
-      │
-      ▼
-[ Step 2: Generate Candidate Entity Pairs ] ──► Pair (e1, e2)
-      │
-      ▼
-[ Step 3: Extract Features ] ──► (Lexical, Syntactic, Dependency, Type features)
-      │
-      ▼
-[ Step 4: Classification ] ──► Predict relation existence & classify relation type
-```
-
----
-
-### Relation Extraction Summary
-
-<block title="Relation Extraction Summary">
-- Relation extraction builds structured Knowledge Graphs from unstructured text.
-- Key difficulties include linguistic variation, ambiguity, negation, uncertainty, and paraphrasing.
-- Major methodological approaches:
-    - **Rule-based:** High precision, low recall (Hearst patterns & templates).
-    - **Bootstrapping:** Semi-automatic iterative pattern learning from seed pairs.
-    - **Dependency-based:** Syntactic dependency path extractions (`nsubj`, `verb`, `dobj`).
-    - **Feature-based ML & Deep Learning:** Supervised binary/multiclass pipelines and neural representation learning models.
-</block>
+#### Standard Pipeline Design:
+1. **Entity Detection:** Run NER, noun phrase chunkers, or dictionary lookup to identify candidate entities $e_1, e_2$.
+2. **Pair Generation:** Form candidate entity pairs within the same sentence or window.
+3. **Feature Extraction:** Extract lexical, syntactic dependency, positional, and entity type features.
+4. **Classification & Prediction:** Apply ML classifiers (e.g., SVM, Random Forest) or neural network encoders (e.g., CNN, BiLSTM, Transformer cross-encoders) to output relation probability scores.
 
 ---
 
 ## Summary & Key Takeaways
 
 <takeaways>
-- **Entity Resolution (Coreference):**
-    - Resolves multiple mentions referring to the same real-world entity.
-    - Differentiates directional **anaphora** (anaphor $\rightarrow$ antecedent) from non-directional **coreference**.
-    - Evolved from syntactic tree traversals (**Hobbs' algorithm 1978**) $\rightarrow$ feature-engineered **mention-pair ML** (with cross-entropy loss and DPR/GAP benchmarks) $\rightarrow$ **end-to-end neural coreference models**.
+- **Entity Resolution & Coreference:**
+    - Coreference resolution groups all mentions in a text that refer to the same real-world entity.
+    - Rule-based systems like **Hobbs' algorithm (1978)** navigate syntactic parse trees using left-to-right breadth-first search and agreement constraints.
+    - Neural models replace manual feature engineering with Transformer-based span representations and joint mention-linking architectures.
 
 - **Named Entity Linking (NEL):**
-    - Links surface text mentions to canonical Knowledge Base URIs (e.g., DBpedia / Wikidata).
-    - Key challenges: ambiguity, variability, missing entities (**NIL problem**), KB evolution, and context sensitivity.
-    - Pipeline: **Candidate Generation** $\rightarrow$ **Candidate Ranking** (context-independent & dependent features) $\rightarrow$ **NIL Prediction**.
-    - Models range from traditional ML (Logistic Regression, Naive Bayes) to encoder-based deep neural networks (CNN/RNN/Transformers).
+    - Maps ambiguous surface text mentions to canonical Knowledge Base URIs (e.g., DBpedia / Wikidata).
+    - Standard pipeline: **Candidate Generation** (high recall) $\rightarrow$ **Candidate Ranking** (context-independent & context-dependent features) $\rightarrow$ **NIL Prediction** (handling missing entities).
 
 - **Relation Extraction (RE) & Ontologies:**
-    - Transforms raw text into `(Subject, Predicate, Object)` Knowledge Graph triples under Open-World Assumptions (OWA).
-    - Vocabularies like **ACE** (Physical, Part-whole, Personal-social, Org-affiliation, Agent-artifact), **UMLS** (~127 types, ~54 relations), and **Schema.org** define standard schemas.
-    - Methods progress from **Hearst IS-A patterns** $\rightarrow$ **Bootstrapping** $\rightarrow$ **Dependency path extraction** $\rightarrow$ **Supervised ML/DL pipelines**.
+    - Converts unstructured text into structured `(Subject, Predicate, Object)` Knowledge Graph triples.
+    - Ontologies (ACE, UMLS, Schema.org) define standardized class and predicate schemas under Open-World Assumptions (OWA).
+    - Extraction paradigms evolved from **Hearst surface patterns** and **bootstrapping**, to **dependency parse path extraction**, and end-to-end **neural classification models**.
 </takeaways>

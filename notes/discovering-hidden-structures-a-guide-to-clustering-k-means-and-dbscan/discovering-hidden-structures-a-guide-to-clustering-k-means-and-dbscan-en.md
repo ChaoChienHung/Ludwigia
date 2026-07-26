@@ -67,6 +67,16 @@ This is why similarity measures are so central to clustering. In any clustering 
 - If your goal is to find similar behavior, and you represent customers by spending and shopping frequency, "closer" should mean having similar purchasing habits. You need a measure that reflects the magnitude of those actions.
 - If your goal is to identify thematic alignment, and you represent documents as word-frequency vectors, "closer" should not depend mainly on document length, but on whether the documents discuss similar topics. You need a measure that downplays magnitude and focuses more on orientation.
 
+<block>
+title: A Better Mental Model for Clustering
+content:
+The key idea is that clustering is not just about visually grouping points that seem close together. It becomes a meaningful computational task only after we decide how objects should be represented and what it means for them to be similar.
+
+This also means the groups are not something we simply invent out of thin air. The underlying structure may already be present in the data, but it becomes visible only through a particular representational lens. By choosing features and a similarity measure, we are deciding how that structure can show up.
+
+In that sense, clustering is not only about finding groups. It is about making similarity explicit, then using an algorithm to test whether a particular view of the data reveals a meaningful pattern.
+</block>
+
 In practice, the choice of similarity measure should be driven by the geometry of the data, meaning how the "meaning" of the data is encoded in its features:
 
 - Numerical data (e.g., house prices, temperature) often lives in a continuous feature space where straight-line distance, or Euclidean distance, tracks the magnitude of difference between two points.
@@ -84,16 +94,6 @@ One helpful way to build intuition is to imagine plotting houses on graph paper 
 
 Euclidean distance extends this physical "ruler" idea into multiple dimensions. It assumes that your features behave like coordinates and that dissimilarity is well captured by straight-line distance. This works well when features are continuous and properly scaled, but it breaks down when features are not geometrically comparable, which is why categorical data or text usually calls for other measures.
 </callout>
-
-<block>
-title: A Better Mental Model for Clustering
-content:
-The key idea is that clustering is not just about visually grouping points that seem close together. It becomes a meaningful computational task only after we decide how objects should be represented and what it means for them to be similar.
-
-This also means the groups are not something we simply invent out of thin air. The underlying structure may already be present in the data, but it becomes visible only through a particular representational lens. By choosing features and a similarity measure, we are deciding how that structure can show up.
-
-In that sense, clustering is not only about finding groups. It is about making similarity explicit, then using an algorithm to test whether a particular view of the data reveals a meaningful pattern.
-</block>
 
 ## Foundations of Good Clustering: Data Quality
 

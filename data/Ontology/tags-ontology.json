@@ -1022,8 +1022,27 @@
       },
       "aliases": [
         "recommender systems",
+        "Recommender Systems",
+        "recommender system",
+        "Recommender System",
         "推薦系統",
         "推荐系统"
+      ]
+    },
+    {
+      "concept_id": "concept.architecture",
+      "labels": {
+        "en": "Architecture",
+        "zh-Hant": "系統架構",
+        "zh-Hans": "系统架构"
+      },
+      "aliases": [
+        "architecture",
+        "Architecture",
+        "System Architecture",
+        "system architecture",
+        "系統架構",
+        "系统架构"
       ]
     },
     {
@@ -1494,6 +1513,52 @@
         "ie",
         "資訊抽取",
         "信息抽取"
+      ]
+    },
+    {
+      "concept_id": "concept.generative_retrieval",
+      "labels": {
+        "en": "Generative Retrieval",
+        "zh-Hant": "生成式檢索",
+        "zh-Hans": "生成式检索"
+      },
+      "aliases": [
+        "generative retrieval",
+        "Generative Retrieval",
+        "GR",
+        "gr",
+        "生成式檢索",
+        "生成式检索"
+      ]
+    },
+    {
+      "concept_id": "concept.information_retrieval",
+      "labels": {
+        "en": "Information Retrieval",
+        "zh-Hant": "資訊檢索",
+        "zh-Hans": "信息检索"
+      },
+      "aliases": [
+        "information retrieval",
+        "Information Retrieval",
+        "IR",
+        "ir",
+        "資訊檢索",
+        "信息检索"
+      ]
+    },
+    {
+      "concept_id": "concept.transformers",
+      "labels": {
+        "en": "Transformers",
+        "zh-Hant": "Transformer 模型",
+        "zh-Hans": "Transformer 模型"
+      },
+      "aliases": [
+        "transformers",
+        "Transformers",
+        "Transformer",
+        "transformer"
       ]
     }
   ]

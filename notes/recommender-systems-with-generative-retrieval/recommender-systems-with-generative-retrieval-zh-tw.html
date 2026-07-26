@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recommender Systems with Generative Retrieval — Ludwig</title>
+  <meta name="garden:tags" content="推薦系統, 生成式檢索, 機器學習, 深度學習, 資訊檢索, Transformer 模型">
+  <meta name="garden:summary" content="本篇筆記深入探討生成式檢索（Generative Retrieval, GR）在推薦系統中的架構演進、核心機制與實作細節。涵蓋雙塔 MIPS 檢索範式的瓶頸、Semantic ID 與 RQ-VAE 殘差量化編碼、Seq2Seq 自回歸生成模型（如 TIGER）、前綴樹受限解碼（Constrained Trie Search）、冷啟動泛化能力與未來挑戰。">
+  <meta name="garden:lang" content="zh-Hant">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.machine_learning,concept.deep_learning,concept.information_retrieval,concept.transformers">
+  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
+  <meta name="garden:published_at" content="2026-07-26">
+  <meta name="garden:last_modified_at" content="2026-07-26">
+  <meta name="garden:reading_time_minutes" content="15">
+  <meta name="garden:source" content="notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Recommender Systems with Generative Retrieval</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#overview">演進背景：從雙塔 MIPS 到生成式檢索</a>
+<a class="note-toc-link level-1" href="#paradigm-comparison">範式對比：雙塔 MIPS vs. 生成式檢索</a>
+<a class="note-toc-link level-1" href="#item-tokenization">Item 符號化與 Semantic ID 建立</a>
+<a class="note-toc-link level-2" href="#rq-vae-details">殘差向量量化自動編碼器（RQ-VAE）數學原理</a>
+<a class="note-toc-link level-1" href="#seq2seq-training">Seq2Seq 模型架構與自回歸訓練</a>
+<a class="note-toc-link level-1" href="#trie-decoding">推理階段與受限前綴解碼（Constrained Trie Search）</a>
+<a class="note-toc-link level-1" href="#cold-start-scaling">冷啟動泛化與模型 Scaling 特性</a>
+<a class="note-toc-link level-1" href="#challenges-future">系統挑戰、權衡與未來發展</a>
+<a class="note-toc-link level-1" href="#prerequisites">前置與延伸閱讀</a>
+<a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
+<a class="note-toc-link level-1" href="#takeaways">總結與核心要點</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-07-26" data-published-at="2026-07-26"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-07-26</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="overview" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">演進背景：從雙塔 MIPS 到生成式檢索</h3>
+
+<p class="mb-3">在深入生成式檢索（Generative Retrieval, GR）之前，若需先瞭解工業界傳統的「召回-粗排-精排-重排」級聯流程，可參考前導文章：現代推薦系統的基石：深入解析「漏斗式級聯架構」。</p>
+
+<p class="mb-3">在大規模推薦系統中，召回（Retrieval / Candidate Generation）的目標是在毫秒級時間內，從數百萬甚至數千萬的物品候選池（Item Catalog）中篩選出數百個使用者可能感興趣的候選集合。</p>
+
+<p class="mb-3">傳統的召回範式主要基於 <strong>雙塔向量模型（Dual-Tower Embedding Models）</strong> 與 <strong>最大內積搜尋（Maximum Inner Product Search, MIPS）</strong>。使用者塔將互動歷史編碼為 User Vector $\mathbf{u} \in \mathbb{R}^D$，物品塔將物品特徵編碼為 Item Vector $\mathbf{v} \in \mathbb{R}^D$，兩者在統一的向量空間中透過點積或餘弦相似度衡量匹配程度，並藉由 Faiss、HNSW 或 ScaNN 等近似近鄰搜尋（ANN）演算法進行召回。</p>
+
+<p class="mb-3">然而，近年來隨著 Transformer 與大型語言模型（LLM）的突破，<strong>生成式檢索（Generative Retrieval, GR）</strong> 提出了一種全新的解答：<strong>直接將推薦檢索視為自回歸序列生成任務（Autoregressive Sequence-to-Sequence Generation）</strong>。代表性研究如 Google 提出的 <strong>TIGER (Generative Retrieval for Recommender Systems)</strong>，成功證明了生成模型在推薦檢索上的優越性。</p>
+
+<hr>
+</section>
+
+<section id="paradigm-comparison" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">範式對比：雙塔 MIPS vs. 生成式檢索</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>比較維度</th>
+<th>傳統雙塔 MIPS 範式 (Dual-Tower MIPS)</th>
+<th>生成式檢索範式 (Generative Retrieval, GR)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>核心機制</strong></td>
+<td>向量空間嵌入 + 近似近鄰搜尋 (ANN / MIPS)</td>
+<td>自回歸 Seq2Seq 生成 + 受限前綴解碼 (Constrained Beam Search)</td>
+</tr>
+<tr>
+<td><strong>表達力瓶頸</strong></td>
+<td><strong>Representation Bottleneck</strong>：使用者所有複雜多變的興趣強制壓縮為單一固定向量 $\mathbf{u}$</td>
+<td>使用者興趣表現為 Transformer 記憶與動態上下文解碼，無單一向量壓縮限制</td>
+</tr>
+<tr>
+<td><strong>索引與模型關係</strong></td>
+<td><strong>模型與索引解耦</strong>：模型訓練向量與 ANN 索引（如 HNSW 樹/圖）各自獨立建立與更新</td>
+<td><strong>模型即索引 (Model-as-Index)</strong>：物品索引參數化儲存於 Transformer 網路權重中</td>
+</tr>
+<tr>
+<td><strong>Item 表示方式</strong></td>
+<td>獨立點向量 $\mathbf{v}_i$ 或原子 ID (Atomic ID)</td>
+<td>語義層級代碼序列 <strong>Semantic ID</strong> $(c_1, c_2, \dots, c_K)$</td>
+</tr>
+<tr>
+<td><strong>冷啟動能力</strong></td>
+<td>新 Item 無互動歷史時向量品質差，需頻繁重新建置 ANN 索引</td>
+<td>新 Item 可透過內容 Encoder 與 RQ-VAE 快速生成 Semantic ID，無需重建索引</td>
+</tr>
+<tr>
+<td><strong>參數與模型 Scaling</strong></td>
+<td>向量索引記憶體隨 Item 數量線性成長</td>
+<td>模型容量隨 Transformer 參數規模 Scaling，高效率運用參數記憶</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="item-tokenization" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Item 符號化與 Semantic ID 建立</h3>
+
+<p class="mb-3">在生成式檢索中，如何將抽象的 Item 轉化為 Seq2Seq 模型可以生成的 Token 序列，是整個系統設計的核心 key。</p>
+
+<h4 id="id" class="mb-2">為何傳統 ID 策略不可行？</h4>
+
+<ol class="mb-3">
+<li><strong>原子 ID (Atomic Item ID)</strong>：若為每個 Item 賦予一個獨立 Token (如 <code>Item_123456</code>)，詞表大小將高達數百萬，導致 Embedding 層參數爆炸，且 Token 之間缺乏任何語意關聯（無法進行跨 Item 泛化）。</li>
+<li><strong>純文字標題 (Title Subwords)</strong>：使用物品名稱的自然語言 Subword 序列作為 Target，序列長度過長、名稱可能重複，且耗費大量自回歸解碼步數。</li>
+<li><strong>無結構哈希 (Random Hash Codes)</strong>：缺乏層級語意結構，無法反映 Item 之間的類別與相似度關係。</li>
+</ol>
+
+<h4 id="semantic-id" class="mb-2">Semantic ID (語義代碼元組)</h4>
+
+<p class="mb-3">生成式檢索引入了 <strong>Semantic ID</strong> 的概念：將每個 Item $i$ 映射為一個短且固定長度的層級代碼元組 $c = (c_1, c_2, \dots, c_K)$，其中 $c_k \in \{1, 2, \dots, V\}$。</p>
+
+<ul class="note-list">
+<li><strong>粗到細的層級結構</strong>：前段代碼 $c_1, c_2$ 代表高層級的語意類別（如「電子產品 $\rightarrow$ 手機」），後段代碼 $c_K$ 區分細粒度的具體商品個體。</li>
+<li><strong>共享碼標 (Shared Codewords)</strong>：相似的 Item 會共享前綴代碼，使模型能夠學習到類別之間的語意轉移與關聯。</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code> [ Item 多模態特徵 / 文字描述 ]
+              │
+              ▼ (Pre-trained Encoder: e.g. Sentence-BERT)
+     [ 稠密特徵向量 x ∈ R^D ]
+              │
+              ▼ (RQ-VAE 殘差向量量化)
+ [ Semantic ID: (c_1, c_2, c_3, c_4) ]
+   (c_1: 大類, c_2: 中類, c_3: 小類, c_4: 個體細節)</code></pre></div>
+
+<hr>
+
+<h4 id="rq-vae-details" class="mb-2">殘差向量量化自動編碼器（RQ-VAE）數學原理</h4>
+
+<p class="mb-3">為了從 Item 的稠密特徵向量 $\mathbf{x} \in \mathbb{R}^D$（如由 Sentence-BERT 或多模態模型產生的 Embedding）提取層級離散代碼，TIGER 採用了 <strong>Residual Quantized Variational Autoencoder (RQ-VAE)</strong>。</p>
+
+<h5 class="mb-2">殘差量化過程 (Residual Quantization)</h5>
+
+<p class="mb-3">設系統包含 $K$ 個碼本（Codebooks）$\mathcal{C}_1, \mathcal{C}_2, \dots, \mathcal{C}_K$，每個碼本包含 $V$ 個大小為 $D$ 的離散向量：</p>
+
+<ol class="mb-3">
+<li><strong>第一階量化 ($k=1$)</strong>：</li>
+</ol>
+
+<p class="mb-3">找尋碼本 $\mathcal{C}_1$ 中與原始向量 $\mathbf{x}$ 距離最近的向量代碼 $c_1$： $$c_1 = \arg\min_{j \in \{1,\dots,V\}} \|\mathbf{x} - \mathbf{e}_1^{(j)}\|_2^2$$ 計算第一階殘差：$\mathbf{r}_1 = \mathbf{x} - \mathbf{e}_1^{(c_1)}$。</p>
+
+<ol class="mb-3">
+<li><strong>第 $k$ 階量化 ($k &gt; 1$)</strong>：</li>
+</ol>
+
+<p class="mb-3">對前一階的殘差向量 $\mathbf{r}_{k-1}$ 在碼本 $\mathcal{C}_k$ 中進行近鄰尋找： $$c_k = \arg\min_{j \in \{1,\dots,V\}} \|\mathbf{r}_{k-1} - \mathbf{e}_k^{(j)}\|_2^2$$ 更新第 $k$ 階殘差：$\mathbf{r}_k = \mathbf{r}_{k-1} - \mathbf{e}_k^{(c_k)}$。</p>
+
+<p class="mb-3">經過 $K$ 階量化後，原始向量 $\mathbf{x}$ 可被重建為各階量化向量之和： $$\hat{\mathbf{x}} = \sum_{k=1}^K \mathbf{e}_k^{(c_k)}$$</p>
+
+<h5 class="mb-2">RQ-VAE 損失函數 (Loss Function)</h5>
+
+<p class="mb-3">RQ-VAE 的訓練目標包含重建損失（Reconstruction Loss）與直通估計器（Straight-Through Estimator, STE）代碼本損失：</p>
+
+<p class="mb-3">$$\mathcal{L}_{\text{RQ-VAE}} = \|\mathbf{x} - \hat{\mathbf{x}}\|_2^2 + \sum_{k=1}^K \|\text{sg}[\mathbf{r}_{k-1}] - \mathbf{e}_k^{(c_k)}\|_2^2 + \beta \sum_{k=1}^K \|\mathbf{r}_{k-1} - \text{sg}[\mathbf{e}_k^{(c_k)}]\|_2^2$$</p>
+
+<p class="mb-3">其中 $\text{sg}[\cdot]$ 為停止梯度算子（Stop-Gradient），$\beta$ 為 Commitment 損失權重。</p>
+
+<hr>
+</section>
+
+<section id="seq2seq-training" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Seq2Seq 模型架構與自回歸訓練</h3>
+
+<p class="mb-3">在建構好所有 Item 的 Semantic ID 後，整個推薦檢索問題被轉化為標準的 <strong>序列到序列 (Seq2Seq)</strong> 自回歸生成問題。</p>
+
+<h4 id="section" class="mb-2">輸入與目標序列建構</h4>
+
+<ul class="note-list">
+<li><strong>輸入 (Input / Context)</strong>：使用者過去互動過的 Item 歷史 Semantic ID 序列：</li>
+</ul>
+
+<p class="mb-3">$$\text{Input} = [c^{(1)}, c^{(2)}, \dots, c^{(T)}]$$ 其中每個 $c^{(t)} = (c_1^{(t)}, c_2^{(t)}, \dots, c_K^{(t)})$ 為第 $t$ 個互動 Item 的 Semantic ID。</p>
+
+<ul class="note-list">
+<li><strong>目標 (Target / Ground Truth)</strong>：使用者下一次互動 Item 的 Semantic ID：</li>
+</ul>
+
+<p class="mb-3">$$\text{Target} = c^{(T+1)} = (c_1^{(T+1)}, c_2^{(T+1)}, \dots, c_K^{(T+1)})$$</p>
+
+<h4 id="autoregressive-cross-entropy-loss" class="mb-2">自回歸交叉熵損失 (Autoregressive Cross-Entropy Loss)</h4>
+
+<p class="mb-3">模型採用 Encoder-Decoder（如 T5）或 Decoder-only（如 LLaMA）架構。對目標 Semantic ID 的生成過程進行自回歸條件概率建模：</p>
+
+<p class="mb-3">$$P(c^{(T+1)} | \text{History}) = \prod_{k=1}^K P(c_k^{(T+1)} | c_1^{(T+1)}, \dots, c_{k-1}^{(T+1)}, \text{History})$$</p>
+
+<p class="mb-3">訓練目標為最大化對數概似，即最小化標準交叉熵損失：</p>
+
+<p class="mb-3">$$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(T+1)}, \dots, c_{k-1}^{(T+1)}, \text{History})$$</p>
+
+<div class="note-markdown-block"><pre><code> [ 使用者歷史: Item_1, Item_2, ... Item_T ]
+                     │
+                     ▼ (Transformer Encoder)
+           [ User Context Vector ]
+                     │
+                     ▼ (Transformer Decoder 自回歸生成)
+    Step 1 ──► 生成 c_1 (大類 Token)
+    Step 2 ──► 生成 c_2 (中類 Token)
+    Step 3 ──► 生成 c_3 (細節 Token)
+    Step 4 ──► 生成 c_4 (個體識別 Token) ──► 映射回真實 Item</code></pre></div>
+
+<hr>
+</section>
+
+<section id="trie-decoding" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">推理階段與受限前綴解碼（Constrained Trie Search）</h3>
+
+<p class="mb-3">在推理（Inference）階段，若直接使用未加限制的束搜尋（Beam Search），解碼器可能會生成出<strong>歷史上不存在於商品庫中的無效 Semantic ID 組合</strong>。</p>
+
+<p class="mb-3">為了保證生成的 Semantic ID 必定能精準對應到商品庫中的真實 Item，生成式檢索採用了 <strong>受限前綴解碼 (Constrained Trie Search)</strong>。</p>
+
+<div class="note-markdown-block"><pre><code>                    Root (始)
+                   /        \
+              c_1=12       c_1=45
+              /    \          \
+         c_2=03   c_2=88     c_2=19
+          /          \          \
+     c_3=01         c_3=05     c_3=77
+        │              │          │
+   [Item A]       [Item B]   [Item C]</code></pre></div>
+
+<h4 id="trie" class="mb-2">Trie (前綴樹) 樹狀約束搜尋機制</h4>
+
+<ol class="mb-3">
+<li><strong>建置商品庫前綴樹 (Trie Construction)</strong>：在線上服務前，將商品庫中所有現存 Item 的 Semantic ID 組合 $(c_1, c_2, \dots, c_K)$ 建立為一棵深度為 $K$ 的 Trie 樹。</li>
+<li><strong>遮罩 Softmax 採樣 (Masked Softmax Decoding)</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>在解碼第 $k$ 個 Token 時，僅允許解碼器在目前 Trie 樹節點下的合法子節點 Token 集合中挑選。</li>
+<li>將非法 Token 的 Logits 設定為 $-\infty$，確保採樣概率為 0。</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>束搜尋 (Beam Search)</strong>：保留 Top-$N$ 個最可能的高分前綴路徑，最終生成 Top-$N$ 個對應真實商品庫的 Item，並以生成的累計對數概率 $\sum_{k=1}^K \log P(c_k)$ 作為檢索召回的分數排序依據。</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="cold-start-scaling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">冷啟動泛化與模型 Scaling 特性</h3>
+
+<p class="mb-3">生成式檢索相較於傳統雙塔模型展現出兩個極具突破性的優勢：</p>
+
+<h4 id="1-cold-start-generalization" class="mb-2">1. 卓越的零樣本 / 冷啟動泛化 (Cold-Start Generalization)</h4>
+
+<p class="mb-3">在傳統雙塔模型中，完全沒有互動歷史的新 Item（Cold-start Item）無法獲得高品質的 User-Item 共現表示，甚至無法在 ANN 索引中被有效檢索。</p>
+
+<p class="mb-3">而在生成式檢索中：</p>
+
+<ul class="note-list">
+<li>新 Item 只要通過 Pre-trained 特徵提取器與 RQ-VAE，就能立即獲得其語義 Semantic ID $(c_1, c_2, \dots, c_K)$。</li>
+<li>由於 Transformer 已經在大量歷史資料中學習過前綴類別 $(c_1, c_2)$ 的轉移規律，即使 $c_K$ 是新出現的個體，模型也能憑藉共享的前綴語義成功預測並召回該新 Item。</li>
+<li>實驗證明，TIGER 在冷啟動 Item 召回指標（如 Recall@K, NDCG@K）上顯著超越了 SOTA 雙塔與序列推薦模型。</li>
+</ul>
+
+<h4 id="2-scaling-law-scaling-properties" class="mb-2">2. 模型容量 Scaling Law (Scaling Properties)</h4>
+
+<ul class="note-list">
+<li><strong>雙塔模型瓶頸</strong>：雙塔模型的參數主要集中在 Embedding Table。當 Item 數量大幅增加時，記憶體呈線性膨脹，但模型計算深度（MLP / Dot-Product）並未提升，邊際效益快速遞減。</li>
+<li><strong>生成式檢索 Scaling</strong>：生成式檢索將 Item 知識參數化存儲在 Transformer 的全連接層與 Attention 權重中。隨着模型參數規模（如從小模型擴展至數十億參數）與訓練數據量的增加，模型的檢索精準度呈現顯著的 Scaling 成長曲線。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="challenges-future" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">系統挑戰、權衡與未來發展</h3>
+
+<p class="mb-3">儘管生成式檢索展現出巨大潛力，但在工業級落地應用中仍面臨若干關鍵挑戰：</p>
+
+<h4 id="1-inference-latency-throughput" class="mb-2">1. 推理延遲與計算吞吐 (Inference Latency &amp; Throughput)</h4>
+
+<ul class="note-list">
+<li><strong>瓶頸</strong>：傳統 MIPS 可以在 1~2 毫秒內完成數百萬向量的檢索；而自回歸 Seq2Seq 解碼需要進行 $K$ 次 Transformer 前向傳播與 Beam Search。</li>
+<li><strong>解法</strong>：模型剪枝、蒸餾（Distillation）、KV Cache 優化、非自回歸（Non-Autoregressive Generation）或推測解碼（Speculative Decoding）。</li>
+</ul>
+
+<h4 id="2-semantic-id-collision" class="mb-2">2. 代碼碰撞與唯一性 (Semantic ID Collision)</h4>
+
+<ul class="note-list">
+<li><strong>瓶頸</strong>：若 RQ-VAE 的碼本容量或層數 $K$ 設計不足，不同的 Item 可能被量化為完全相同的 Semantic ID。</li>
+<li><strong>解法</strong>：增加適度長度的流水號 Code，或在 RQ-VAE 損失函數中引入衝突懲罰項（Collision Penalty）。</li>
+</ul>
+
+<h4 id="3-dynamic-catalog-codebook-drift" class="mb-2">3. 動態商品庫更新 (Dynamic Catalog &amp; Codebook Drift)</h4>
+
+<ul class="note-list">
+<li><strong>瓶頸</strong>：當商品庫大規模新增或下架時，若重新訓練 RQ-VAE 導致 Semantic ID 發生漂移，整個 Seq2Seq 模型都需要重新微調。</li>
+<li><strong>解法</strong>：增量碼本學習（Incremental Codebook Learning）與穩定語義碼表映射機制。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="prerequisites" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">前置與延伸閱讀</h3>
+
+<p class="mb-3">若需深入理解推薦系統全貌，建議搭配以下內容閱讀：</p>
+
+<ul class="note-list">
+<li><strong>基石篇（前置）</strong>：現代推薦系統的基石：深入解析「漏斗式級聯架構」<ul class="note-list">
+<li>詳細拆解工業界「召回-粗排-精排-重排」級聯管線的延遲限制、模型複雜度與特徵維度，以及傳統雙塔向量空間的固有痛點。</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考文獻（References）</h3>
+
+<ol class="mb-3">
+<li>Rajput, S., Mehta, N., Singh, A., Ramakrishnan, R., Bhojanapalli, S., Sathiamoorthy, M., Kumar, J., Ravi, S., Mazumder, R., &amp; Beutel, A. (2023). <em>Generative Retrieval for Recommender Systems</em>. arXiv preprint <a href="https://arxiv.org/abs/2305.05065" target="_blank" rel="noopener noreferrer">arXiv:2305.05065</a>.</li>
+<li>知乎專欄：<a href="https://zhuanlan.zhihu.com/p/676663980" target="_blank" rel="noopener noreferrer">推薦系統中生成式檢索（Generative Retrieval）技術演進與 TIGER 解讀</a>.</li>
+<li>知乎專欄：<a href="https://zhuanlan.zhihu.com/p/1970625397411520943" target="_blank" rel="noopener noreferrer">生成式推薦系統 (Generative Recommendation / GR) 深度解析：Semantic ID, RQ-VAE 與自回歸檢索</a>.</li>
+<li>知乎文章：<a href="https://www.zhihu.com/tardis/zm/art/2023374127587697445" target="_blank" rel="noopener noreferrer">大模型時代的生成式檢索與推薦系統架構實踐</a>.</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">總結與核心要點</h3>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>範式轉變</strong>：生成式檢索（Generative Retrieval, GR）將推薦召回從「雙塔向量空間內積搜尋 (MIPS)」轉化為「自回歸序列生成 (Seq2Seq Generation)」，打破了單一向量表達瓶頸，實現了模型與索引的深度融合（Model-as-Index）。</li>
+<li><strong>Semantic ID 與 RQ-VAE</strong>：透過殘差向量量化自動編碼器（RQ-VAE），將 Item 稠密向量轉化為層級離散代碼元組 $(c_1, c_2, \dots, c_K)$，實現了粗到細的語義結構共享與無語意 Atomic ID 的解耦。</li>
+<li><strong>受限解碼 (Constrained Trie Search)</strong>：推理階段透過商品庫建立的前綴樹（Trie）對解碼 logits 進行 Mask 限制，結合 Beam Search 確保生成的代碼 100% 精準對應真實商品。</li>
+<li><strong>核心優勢與未來</strong>：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構。</li>
+</ul></div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

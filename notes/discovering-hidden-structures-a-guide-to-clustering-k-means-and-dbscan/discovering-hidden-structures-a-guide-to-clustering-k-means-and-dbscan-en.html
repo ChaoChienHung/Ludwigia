@@ -251,6 +251,12 @@
 <li>If your goal is to identify thematic alignment, and you represent documents as word-frequency vectors, "closer" should not depend mainly on document length, but on whether the documents discuss similar topics. You need a measure that downplays magnitude and focuses more on orientation.</li>
 </ul>
 
+<div class="note-callout mb-3"><p class="mb-2"><strong>A Better Mental Model for Clustering</strong></p><p class="mb-2">The key idea is that clustering is not just about visually grouping points that seem close together. It becomes a meaningful computational task only after we decide how objects should be represented and what it means for them to be similar.</p>
+
+<p class="mb-3">This also means the groups are not something we simply invent out of thin air. The underlying structure may already be present in the data, but it becomes visible only through a particular representational lens. By choosing features and a similarity measure, we are deciding how that structure can show up.</p>
+
+<p class="mb-0">In that sense, clustering is not only about finding groups. It is about making similarity explicit, then using an algorithm to test whether a particular view of the data reveals a meaningful pattern.</p></div>
+
 <p class="mb-3">In practice, the choice of similarity measure should be driven by the geometry of the data, meaning how the "meaning" of the data is encoded in its features:</p>
 
 <ul class="note-list">
@@ -264,12 +270,6 @@
 <div id="why-numerical-data-often-uses-euclidean-distance" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-lightbulb me-2"></i>Why Numerical Data Often Uses Euclidean Distance?</h4><p class="mb-3">One helpful way to build intuition is to imagine plotting houses on graph paper using price and square footage as axes. If two houses are similar in both size and price, they will appear close to each other on the page.</p>
 
 <p class="mb-3">Euclidean distance extends this physical "ruler" idea into multiple dimensions. It assumes that your features behave like coordinates and that dissimilarity is well captured by straight-line distance. This works well when features are continuous and properly scaled, but it breaks down when features are not geometrically comparable, which is why categorical data or text usually calls for other measures.</p></div>
-
-<div class="note-callout mb-3"><p class="mb-2"><strong>A Better Mental Model for Clustering</strong></p><p class="mb-2">The key idea is that clustering is not just about visually grouping points that seem close together. It becomes a meaningful computational task only after we decide how objects should be represented and what it means for them to be similar.</p>
-
-<p class="mb-3">This also means the groups are not something we simply invent out of thin air. The underlying structure may already be present in the data, but it becomes visible only through a particular representational lens. By choosing features and a similarity measure, we are deciding how that structure can show up.</p>
-
-<p class="mb-0">In that sense, clustering is not only about finding groups. It is about making similarity explicit, then using an algorithm to test whether a particular view of the data reveals a meaningful pattern.</p></div>
 </section>
 
 <section id="foundations-of-good-clustering-data-quality" class="note-section" data-aos="fade-up" data-aos-delay="120">
