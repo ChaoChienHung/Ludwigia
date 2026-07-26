@@ -669,6 +669,30 @@ body.note-toc-open .note-toc-overlay {
   z-index: 48;
 }
 
+.note-information-tooltip-title {
+  display: block;
+  font-weight: 650;
+  font-size: 0.94rem;
+  line-height: 1.4;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.note-information-tooltip-divider {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: color-mix(in srgb, var(--accent) 20%, rgba(61, 46, 37, 0.12));
+  margin-bottom: 8px;
+}
+
+.note-information-tooltip-text {
+  display: block;
+  font-weight: 450;
+  font-size: 0.90rem;
+  line-height: 1.55;
+}
+
 .note-information-tooltip::before {
   content: "";
   position: absolute;
@@ -712,6 +736,10 @@ body.note-page:not(.light-theme) .note-information-tooltip {
   box-shadow:
     0 18px 42px rgba(0, 0, 0, 0.34),
     0 2px 10px rgba(0, 0, 0, 0.18);
+}
+
+body.note-page:not(.light-theme) .note-information-tooltip-divider {
+  background: color-mix(in srgb, var(--accent) 24%, rgba(255, 255, 255, 0.12));
 }
 
 body.note-page:not(.light-theme) .note-information-tooltip::after {

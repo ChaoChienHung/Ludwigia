@@ -1399,6 +1399,102 @@
         "寫作",
         "写作"
       ]
+    },
+    {
+      "concept_id": "concept.nlp",
+      "labels": {
+        "en": "NLP",
+        "zh-Hant": "自然語言處理",
+        "zh-Hans": "自然语言处理"
+      },
+      "aliases": [
+        "nlp",
+        "NLP",
+        "Natural Language Processing",
+        "natural language processing",
+        "自然語言處理",
+        "自然语言处理"
+      ]
+    },
+    {
+      "concept_id": "concept.entity_resolution",
+      "labels": {
+        "en": "Entity Resolution",
+        "zh-Hant": "實體解析",
+        "zh-Hans": "实体解析"
+      },
+      "aliases": [
+        "entity resolution",
+        "Entity Resolution",
+        "實體解析",
+        "实体解析"
+      ]
+    },
+    {
+      "concept_id": "concept.named_entity_linking",
+      "labels": {
+        "en": "Named Entity Linking",
+        "zh-Hant": "具名實體連結",
+        "zh-Hans": "具名实体链接"
+      },
+      "aliases": [
+        "named entity linking",
+        "Named Entity Linking",
+        "NEL",
+        "nel",
+        "具名實體連結",
+        "具名实体链接"
+      ]
+    },
+    {
+      "concept_id": "concept.relation_extraction",
+      "labels": {
+        "en": "Relation Extraction",
+        "zh-Hant": "關聯抽取",
+        "zh-Hans": "关系抽取"
+      },
+      "aliases": [
+        "relation extraction",
+        "Relation Extraction",
+        "RE",
+        "re",
+        "關聯抽取",
+        "關係抽取"
+      ]
+    },
+    {
+      "concept_id": "concept.knowledge_graphs",
+      "labels": {
+        "en": "Knowledge Graphs",
+        "zh-Hant": "知識圖譜",
+        "zh-Hans": "知识图谱"
+      },
+      "aliases": [
+        "knowledge graphs",
+        "Knowledge Graphs",
+        "Knowledge Graph",
+        "knowledge graph",
+        "KG",
+        "kg",
+        "知識圖譜",
+        "知识图谱"
+      ]
+    },
+    {
+      "concept_id": "concept.information_extraction",
+      "labels": {
+        "en": "Information Extraction",
+        "zh-Hant": "資訊抽取",
+        "zh-Hans": "信息抽取"
+      },
+      "aliases": [
+        "information extraction",
+        "Information Extraction",
+        "IE",
+        "ie",
+        "資訊抽取",
+        "信息抽取"
+      ]
     }
   ]
 }

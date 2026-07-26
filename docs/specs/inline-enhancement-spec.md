@@ -58,6 +58,7 @@
 
 - 本體仍是正文的一部分
 - hover / focus 時顯示短說明 tooltip
+- ontology-backed `information` tooltip 頂部會顯示依語系切換的概念標籤 (title label) 與小分隔線 (horizontal bar)，下方為詳細說明 (context)
 - tooltip 可在 pointer / focus 停留於本體或 tooltip 本體期間維持可見
 - tooltip 不應膨脹成萬用 rich panel 或可塞複雜互動的浮層
 

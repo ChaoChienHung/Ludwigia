@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entity Resolution, Named Entity Linking, and Relation Extraction — Ludwig</title>
+  <meta name="garden:tags" content="NLP, Entity Resolution, Named Entity Linking, Relation Extraction, Knowledge Graphs, Machine Learning, Information Extraction">
+  <meta name="garden:summary" content="A detailed, comprehensive guide covering Entity Resolution (Anaphora/Coreference, Hobbs&#x27; algorithm, mention-pair ML, deep learning), Named Entity Linking (NEL pipeline, ranking, NIL prediction, ML/DL models), and Relation Extraction (Hearst patterns, bootstrapping, dependency RE, ML pipelines, ontologies ACE/UMLS/Schema.org).">
+  <meta name="garden:lang" content="en">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.nlp,concept.entity_resolution,concept.named_entity_linking,concept.relation_extraction,concept.knowledge_graphs,concept.machine_learning,concept.information_extraction">
+  <meta name="garden:tag_labels" content="{&quot;concept.nlp&quot;:{&quot;en&quot;:&quot;NLP&quot;,&quot;zh-Hant&quot;:&quot;自然語言處理&quot;,&quot;zh-Hans&quot;:&quot;自然语言处理&quot;},&quot;concept.entity_resolution&quot;:{&quot;en&quot;:&quot;Entity Resolution&quot;,&quot;zh-Hant&quot;:&quot;實體解析&quot;,&quot;zh-Hans&quot;:&quot;实体解析&quot;},&quot;concept.named_entity_linking&quot;:{&quot;en&quot;:&quot;Named Entity Linking&quot;,&quot;zh-Hant&quot;:&quot;具名實體連結&quot;,&quot;zh-Hans&quot;:&quot;具名实体链接&quot;},&quot;concept.relation_extraction&quot;:{&quot;en&quot;:&quot;Relation Extraction&quot;,&quot;zh-Hant&quot;:&quot;關聯抽取&quot;,&quot;zh-Hans&quot;:&quot;关系抽取&quot;},&quot;concept.knowledge_graphs&quot;:{&quot;en&quot;:&quot;Knowledge Graphs&quot;,&quot;zh-Hant&quot;:&quot;知識圖譜&quot;,&quot;zh-Hans&quot;:&quot;知识图谱&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.information_extraction&quot;:{&quot;en&quot;:&quot;Information Extraction&quot;,&quot;zh-Hant&quot;:&quot;資訊抽取&quot;,&quot;zh-Hans&quot;:&quot;信息抽取&quot;}}">
+  <meta name="garden:published_at" content="2026-07-25">
+  <meta name="garden:last_modified_at" content="2026-07-25">
+  <meta name="garden:reading_time_minutes" content="25">
+  <meta name="garden:source" content="notes/entity-resolution-linking-and-relation-extraction/entity-resolution-linking-and-relation-extraction-en.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Entity Resolution, Named Entity Linking, and Relation Extraction</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#repetition-and-resolution">Repetition in Language &amp; Intro to Entity Resolution</a>
+<a class="note-toc-link level-1" href="#entity-resolution">Entity Resolution &amp; Coreference Resolution</a>
+<a class="note-toc-link level-2" href="#anaphora-vs-coref">Anaphora vs. Coreference Resolution</a>
+<a class="note-toc-link level-2" href="#resolution-phenomena">Reference Phenomena &amp; Resolution Challenges</a>
+<a class="note-toc-link level-2" href="#resolution-constraints">Constraints Used in Resolution</a>
+<a class="note-toc-link level-2" href="#hobbs-algorithm">Rule-Based Approach: Hobbs' Algorithm (1978)</a>
+<a class="note-toc-link level-2" href="#ml-entity-resolution">Traditional Machine Learning: Mention-Pair Model</a>
+<a class="note-toc-link level-2" href="#dl-entity-resolution">Datasets &amp; Deep Learning Approaches</a>
+<a class="note-toc-link level-2" href="#er-summary">Entity Resolution Summary</a>
+<a class="note-toc-link level-1" href="#named-entity-linking">Named Entity Linking (NEL)</a>
+<a class="note-toc-link level-2" href="#nel-task">Task Definition, Surface Forms &amp; Example Intuition</a>
+<a class="note-toc-link level-2" href="#nel-applications">Applications of Named Entity Linking</a>
+<a class="note-toc-link level-2" href="#nel-challenges">Key Challenges in Named Entity Linking</a>
+<a class="note-toc-link level-2" href="#nel-pipeline">Named Entity Linking Pipeline Architecture</a>
+<a class="note-toc-link level-2" href="#nel-ranking-features">Candidate Ranking Features (Independent vs. Dependent)</a>
+<a class="note-toc-link level-2" href="#nel-nil-prediction">NIL Prediction (Unlinkable Entities)</a>
+<a class="note-toc-link level-2" href="#nel-ml-dl-models">Supervised Learning &amp; Deep Learning Formulations for NEL</a>
+<a class="note-toc-link level-2" href="#nel-model-dimensions">Deep Learning Model Dimensions in NEL</a>
+<a class="note-toc-link level-2" href="#nel-summary">Named Entity Linking Summary</a>
+<a class="note-toc-link level-1" href="#relation-extraction">Relation Extraction &amp; Ontologies</a>
+<a class="note-toc-link level-2" href="#re-kg-foundations">Knowledge Graphs, Triples &amp; Benefits</a>
+<a class="note-toc-link level-2" href="#re-tacit-and-meaningful">Tacit Knowledge &amp; Meaningful Relations</a>
+<a class="note-toc-link level-2" href="#re-complexity">Linguistic Complexity: Negation, Uncertainty &amp; Paraphrasing</a>
+<a class="note-toc-link level-2" href="#ontologies-vocabularies">Relation Vocabularies &amp; Ontologies (ACE, UMLS, Schema.org)</a>
+<a class="note-toc-link level-2" href="#closed-open-world">Closed-World vs. Open-World Assumption</a>
+<a class="note-toc-link level-2" href="#rule-based-re">Rule-Based Relation Extraction &amp; Hearst Patterns</a>
+<a class="note-toc-link level-2" href="#rule-re-tradeoffs">Rule-Based RE: Strengths and Weaknesses</a>
+<a class="note-toc-link level-2" href="#bootstrapping-dependency">Bootstrapping &amp; Dependency-Based Extraction</a>
+<a class="note-toc-link level-2" href="#ml-relation-extraction">Traditional Machine Learning Approaches for RE</a>
+<a class="note-toc-link level-2" href="#re-summary">Relation Extraction Summary</a>
+<a class="note-toc-link level-1" href="#takeaways">Summary &amp; Key Takeaways</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-07-25" data-published-at="2026-07-25"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-07-25</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section id="repetition-and-resolution" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Repetition in Language &amp; Intro to Entity Resolution</h3>
+
+<div id="ie-guiding" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-circle-question me-2"></i>Guiding Questions: How Do Machines Transform Unstructured Text into Structured Knowledge?</h4><p class="mb-3">Natural language text is rich with indirect references, ambiguous surface names, and complex entity relations. How do computational systems resolve pronouns to antecedents, link surface names to unique Knowledge Base entries, and extract queryable relational triples?</p>
+
+<p class="mb-3">This note covers the three foundational components of Information Extraction (IE): Entity Resolution (Coreference), Named Entity Linking (NEL), and Relation Extraction (RE).</p></div>
+
+<h4 id="repetition-in-language" class="mb-2">Repetition in Language</h4>
+
+<p class="mb-3">Referring to the same entity or concept multiple times is extremely common in natural language. However, humans avoid naive repetition by using pronouns and alternative expressions instead of repeating full names:</p>
+
+<ul class="note-list">
+<li><strong>Repeated Form (Unnatural):</strong> <em>"Neil Armstrong said Neil Armstrong jumped..."</em></li>
+<li><strong>Natural Form:</strong> <em>"Neil Armstrong said ... He jumped..."</em></li>
+</ul>
+
+<p class="mb-3"><strong>When naive repetition may be preferred:</strong> Naive repetition is typically reserved for contexts requiring extreme clarity, low ambiguity, or machine readability (such as legal contracts, technical specifications, or raw database records where pronouns could introduce confusion).</p>
+
+<hr>
+</section>
+
+<section id="entity-resolution" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Entity Resolution &amp; Coreference Resolution</h3>
+
+<p class="mb-3"><strong>Entity Resolution</strong> is the task of resolving multiple mentions in text that refer to the same real-world entity. It serves as an essential preprocessing step across numerous NLP applications, including:</p>
+
+<ul class="note-list">
+<li>Keyword extraction</li>
+<li>Entity linking</li>
+<li>Relation extraction</li>
+<li>Text summarization</li>
+<li>Machine translation</li>
+<li>Question answering</li>
+</ul>
+
+<hr>
+
+<h4 id="anaphora-vs-coref" class="mb-2">Anaphora vs. Coreference Resolution</h4>
+
+<p class="mb-3">While used interchangeably in many practical NLP contexts, <strong>anaphora resolution</strong> and <strong>coreference resolution</strong> are theoretically distinct concepts:</p>
+
+<ul class="note-list">
+<li><strong>Anaphora Resolution:</strong> Identifies what an <em>anaphor</em> (e.g., a pronoun) refers to. It is a directional relationship where an anaphor points back to a previous mention (the <em>antecedent</em>).<ul class="note-list">
+<li><em>Example:</em> <em>"He"</em> referring to <em>"Neil Armstrong"</em> is anaphora.</li>
+</ul></li>
+<li><strong>Coreference Resolution:</strong> Identifies all mentions that refer to the exact same real-world entity. It forms equivalence sets across mentions.<ul class="note-list">
+<li><em>Example:</em> <em>"The CEO of Tesla, Elon Musk"</em> and <em>"Elon Musk"</em> are coreferential, but not anaphoric (neither is a pronoun pointing to the other).</li>
+</ul></li>
+</ul>
+
+<h5 class="mb-2">Important Theoretical Distinctions:</h5>
+
+<ul class="note-list">
+<li>Not all coreference is anaphoric (e.g., non-directional reference between noun phrases or appositions).</li>
+<li>Not all anaphora are strictly coreferential depending on interpretation (e.g., bridging anaphora like <em>mall $\rightarrow$ food court</em>).</li>
+</ul>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Aspect</th>
+<th>Anaphora Resolution</th>
+<th>Coreference Resolution</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Core Definition</strong></td>
+<td>Identifying what an anaphor (e.g., pronoun) refers to</td>
+<td>Identifying all mentions referring to the same real-world entity</td>
+</tr>
+<tr>
+<td><strong>Directionality</strong></td>
+<td>Directional (anaphor $\rightarrow$ antecedent)</td>
+<td>Equivalence partition / non-directional cluster</td>
+</tr>
+<tr>
+<td><strong>Pronominal Links</strong></td>
+<td>Covers pronouns pointing to antecedents</td>
+<td>Covers all noun phrase mentions (pronouns, proper names, titles)</td>
+</tr>
+<tr>
+<td><strong>Non-Coreferential Cases</strong></td>
+<td>Includes bridging anaphora</td>
+<td>Excluded (must refer to the identical entity)</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+<h4 id="resolution-phenomena" class="mb-2">Reference Phenomena &amp; Resolution Challenges</h4>
+
+<p class="mb-3">Resolving references in natural text involves navigating complex linguistic phenomena:</p>
+
+<ul class="note-list">
+<li><strong>Bridging Anaphora:</strong> Indirect relation where the reference is inferred via semantic association (e.g., <em>the mall $\rightarrow$ the food court</em>).</li>
+<li><strong>Zero Anaphora:</strong> The pronoun is omitted entirely and must be inferred from surrounding context.</li>
+<li><strong>Cataphora:</strong> The reference appears <em>before</em> its antecedent (e.g., <em>"Before </em><em>he</em><em> stepped on the moon, Neil Armstrong trained..."</em>).</li>
+<li><strong>Split Anaphora:</strong> One reference refers to multiple antecedents combined (e.g., <em>"Alice met Bob. </em><em>They</em><em> left."</em>).</li>
+<li><strong>Indefinite Pronominal Anaphora:</strong> Ambiguous or generic pronoun usage (e.g., generic <em>"one"</em>).</li>
+<li><strong>"one" Anaphora:</strong> Substitution using the pronoun <em>"one"</em> (e.g., <em>"I lost my pen, so I bought a new </em><em>one</em><em>"</em>).</li>
+<li><strong>Non-Anaphoric Pronouns:</strong> Pronouns that do not refer to any entity, such as expletive <em>"it"</em> in <em>"It was raining"</em> or <em>"It is obvious that..."</em>.</li>
+</ul>
+
+<h5 class="mb-2">Core Challenges in Entity Resolution:</h5>
+
+<ul class="note-list">
+<li>High linguistic variability in reference forms.</li>
+<li>Long-distance dependencies across multiple sentences or paragraphs.</li>
+<li>Ambiguity in pronoun resolution.</li>
+<li>Requirement of world knowledge and deep semantic understanding.</li>
+<li>Syntax and agreement constraints are helpful, but not always sufficient on their own.</li>
+</ul>
+
+<hr>
+
+<h4 id="resolution-constraints" class="mb-2">Constraints Used in Resolution</h4>
+
+<p class="mb-3">Resolution systems apply a variety of linguistic and domain constraints to filter candidate antecedents:</p>
+
+<ol class="mb-3">
+<li><strong>Gender Agreement:</strong> Gender consistency between mention and pronoun (male/female/neuter).</li>
+<li><strong>Number Agreement:</strong> Singular vs. plural consistency (e.g., <em>he/she</em> vs. <em>they</em>).</li>
+<li><strong>Recency Preference:</strong> Mentions appearing closer to the pronoun are statistically more likely antecedents.</li>
+<li><strong>Syntactic Constraints:</strong> Grammatical roles such as subject, object, or appositive positioning (e.g., binding theory constraints).</li>
+<li><strong>Semantic Constraints:</strong> Animacy (animate vs. inanimate) and semantic plausibility.</li>
+<li><strong>Verb and Structural Agreement Constraints:</strong> Selectional preferences of verbs on their subject/object arguments.</li>
+<li><strong>World Knowledge Constraints:</strong> Real-world plausibility and domain facts.</li>
+</ol>
+
+<blockquote class="blockquote mb-3"><strong>Note:</strong> While constraints are invaluable for rule-based systems and as features for machine learning models, they are not always 100% reliable due to linguistic exceptions and non-standard usage.</blockquote>
+
+<hr>
+
+<h4 id="hobbs-algorithm" class="mb-2">Rule-Based Approach: Hobbs' Algorithm (1978)</h4>
+
+<p class="mb-3"><strong>Hobbs' algorithm (1978)</strong> is a classic rule-based algorithm for pronoun resolution operating directly on syntactic parse trees.</p>
+
+<ul class="note-list">
+<li><strong>Input:</strong> Syntactic parse trees of the current and preceding sentences.</li>
+<li><strong>Goal:</strong> Find the correct antecedent NP for a target pronoun.</li>
+<li><strong>Key Idea:</strong> Structured tree traversal + constraint filtering + first valid match selection.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>[ Locate NP dominating pronoun ]
+               │
+               ▼
+[ Ascend to nearest NP or S node (X) ]
+               │
+               ▼
+[ Left-to-Right BFS under X for candidate NPs ]
+               │
+               ▼
+[ Test agreement constraints for candidate ] ──► (Match Found?) ──► [ Select Antecedent ]
+               │ (No match)
+               ▼
+[ Move up to higher NP or S node (previous sentences) ]
+               │
+               ▼
+[ Repeat search until antecedent is found ]</code></pre></div>
+
+<h5 class="mb-2">Step-by-Step Procedure:</h5>
+
+<ol class="mb-3">
+<li><strong>Locate Pronoun Node:</strong> Locate the <code>NP</code> node dominating the pronoun in the syntactic parse tree.</li>
+<li><strong>Ascend to $X$:</strong> Move up the tree to the nearest <code>NP</code> or <code>S</code> node (call it node $X$), noting the path taken.</li>
+<li><strong>Left-to-Right BFS:</strong> Perform a left-to-right, breadth-first search under $X$ for candidate noun phrases (NPs) that appear to the left of the path.</li>
+<li><strong>Test Agreement Constraints:</strong> Test gender, number, animacy, and syntactic constraints for each candidate <code>NP</code>.</li>
+<li><strong>Ascend Higher:</strong> If none match, move up to the next higher <code>NP</code> or <code>S</code> node (including structural search in preceding sentences in order of recency).</li>
+<li><strong>Repeat Until Match:</strong> Repeat the search procedure until a valid antecedent is found. Select the first matching candidate.</li>
+</ol>
+
+<hr>
+
+<h4 id="ml-entity-resolution" class="mb-2">Traditional Machine Learning: Mention-Pair Model</h4>
+
+<p class="mb-3">Traditional machine learning frames coreference resolution as a classification problem over candidate pairs.</p>
+
+<h5 class="mb-2">1. Mention-Pair Model Workflow</h5>
+
+<ul class="note-list">
+<li><strong>Candidate Generation:</strong> Generate all pairs of mentions (all noun phrases, including pronouns) within a document $(m_i, m_j)$.</li>
+<li><strong>Binary Classifier:</strong> Train a binary classifier (e.g., Logistic Regression, SVM, or Decision Trees) to predict whether two mentions are coreferent (<code>1</code>) or not (<code>0</code>).</li>
+<li><strong>Learning Objective:</strong> Framed using cross-entropy loss over candidate pair predictions.</li>
+</ul>
+
+<h5 class="mb-2">2. Feature Engineering</h5>
+
+<p class="mb-3">Feature engineering is crucial for the performance of traditional mention-pair models:</p>
+
+<ul class="note-list">
+<li><strong>Distance Features:</strong> Token distance, sentence distance, intervening mention count.</li>
+<li><strong>String Match Features:</strong> Exact string match, partial overlap, head noun match, substring matching, acronym match.</li>
+<li><strong>Grammatical Features:</strong> NP type (proper noun, definite NP, indefinite NP, pronoun), gender, number.</li>
+<li><strong>Syntactic Features:</strong> Subject role, object role, apposition, modifier structures.</li>
+<li><strong>Semantic Features:</strong> Animacy, semantic category, plausibility.</li>
+<li><strong>Distributional Features:</strong> Pre-trained word embeddings and vector similarities.</li>
+</ul>
+
+<hr>
+
+<h4 id="dl-entity-resolution" class="mb-2">Datasets &amp; Deep Learning Approaches</h4>
+
+<h5 class="mb-2">Datasets for Entity Resolution:</h5>
+
+<ul class="note-list">
+<li><strong>Definite Pronoun Resolution (DPR) Dataset:</strong> Benchmark for evaluating pronoun resolution on definite pronouns.</li>
+<li><strong>GAP Coreference Dataset:</strong> Gender-balanced coreference dataset sourced from Wikipedia.</li>
+<li>Used extensively for training and benchmarking pronominal and coreference resolution models.</li>
+</ul>
+
+<h5 class="mb-2">Deep Learning Approaches:</h5>
+
+<ul class="note-list">
+<li><strong>Learned Distributed Representations:</strong> Learn continuous vector representations for mentions and entity clusters rather than relying on manual feature engineering.</li>
+<li><strong>Global Context Modeling:</strong> Model document-level global context rather than making isolated pairwise decisions.</li>
+<li><strong>End-to-End Neural Coreference Models:</strong> Jointly learn mention detection and mention linking in an end-to-end differentiable neural architecture.</li>
+<li><strong>Performance:</strong> Deep learning models typically outperform traditional feature-based methods by capturing richer semantic and contextual cues.</li>
+</ul>
+
+<hr>
+
+<h4 id="er-summary" class="mb-2">Entity Resolution Summary</h4>
+
+<p class="mb-3">&lt;block title="Entity Resolution Summary"&gt;</p>
+
+<ul class="note-list">
+<li>Entity resolution is an essential preprocessing step across many NLP tasks (IR, QA, RE, MT, Summarization).</li>
+<li>Core difficulty stems from ambiguity, high linguistic variability, and the need for contextual and world knowledge.</li>
+<li>Methods have evolved progressively from <strong>rule-based tree traversals</strong> (Hobbs' algorithm) $\rightarrow$ <strong>feature-engineered machine learning</strong> (Mention-pair classifiers with cross-entropy loss) $\rightarrow$ <strong>deep learning models</strong> with learned end-to-end representations and global context.</li>
+</ul>
+
+<p class="mb-3">&lt;/block&gt;</p>
+
+<hr>
+</section>
+
+<section id="named-entity-linking" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Named Entity Linking (NEL)</h3>
+
+<h4 id="nel-task" class="mb-2">Task Definition, Surface Forms &amp; Example Intuition</h4>
+
+<p class="mb-3"><strong>Named Entity Linking (NEL)</strong>—also known as <strong>Entity Disambiguation</strong>—is the task of linking named entities mentioned in text to canonical entries in a Knowledge Base (KB) or Knowledge Graph (such as Wikipedia, DBpedia, or Wikidata).</p>
+
+<ul class="note-list">
+<li><strong>Surface Form (Mention):</strong> The raw word or phrase appearing in unstructured text (e.g., <em>"Armstrong"</em>).</li>
+<li><strong>Canonical Entity (KB Entry / URI):</strong> Unique entity identifier in a KB (e.g., <code>http://dbpedia.org/resource/Neil_Armstrong</code>).</li>
+<li><strong>Goal:</strong> Map ambiguous surface forms to correct canonical entities using contextual similarity between mention context and candidate entity descriptions.</li>
+</ul>
+
+<h5 class="mb-2">Example Intuition:</h5>
+
+<blockquote class="blockquote mb-3"><em>Text:</em> <em>"</em><em>Neil Armstrong</em><em> stepped on the moon … </em><em>Armstrong</em><em> jumped down from the ladder …"</em></blockquote>
+
+<p class="mb-3">&gt;</p>
+
+<blockquote class="blockquote mb-3"><em>Challenge:</em> Determine whether the surface form <em>"Armstrong"</em> refers to <code>dbpedia:Neil_Armstrong</code>, <code>dbpedia:Lance_Armstrong</code>, or <code>dbpedia:Louis_Armstrong</code>.</blockquote>
+
+<p class="mb-3">&gt;</p>
+
+<blockquote class="blockquote mb-3"><em>Core Issue:</em> Linking ambiguous surface forms to the correct canonical KB entity based on surrounding evidence.</blockquote>
+
+<hr>
+
+<h4 id="nel-applications" class="mb-2">Applications of Named Entity Linking</h4>
+
+<ol class="mb-3">
+<li><strong>Information Retrieval (IR):</strong> Improves search relevance via entity-level indexing rather than superficial keyword matching.</li>
+<li><strong>Question Answering (QA):</strong> Maps entity mentions in user questions directly to correct KB entities for factual retrieval.</li>
+<li><strong>Machine Translation (MT):</strong> Preserves entity identity and gender consistency across languages.</li>
+<li><strong>Relation Extraction (RE):</strong> Connects extracted entities via structured relations to populate Knowledge Graphs.</li>
+<li><strong>Conversational Agents:</strong> Grounds references in external Knowledge Bases for task-oriented dialogues.</li>
+</ol>
+
+<hr>
+
+<h4 id="nel-challenges" class="mb-2">Key Challenges in Named Entity Linking</h4>
+
+<ul class="note-list">
+<li><strong>Ambiguity:</strong> The same surface name can refer to multiple distinct entities.<ul class="note-list">
+<li><em>Example:</em> <em>"Washington"</em> $\rightarrow$ George Washington (Person), Washington D.C. (Capital City), Washington State (Location), or Washington Huskies (Sports Team).</li>
+</ul></li>
+<li><strong>Variability:</strong> A single entity can be represented by many surface forms (abbreviations, nicknames, spelling variants).<ul class="note-list">
+<li><em>Example:</em> <em>"SG"</em>, <em>"S'pore"</em>, <em>"Singapore"</em>, <em>"The Lion City"</em>.</li>
+</ul></li>
+<li><strong>Missing Entities (NIL Problem):</strong> Mentions in text may not exist in the Knowledge Base. Systems must explicitly detect missing entities and abstain (<code>NIL</code>).</li>
+<li><strong>Knowledge Base Incompleteness &amp; Evolution:</strong> Knowledge Bases are incomplete and continuously evolve as entities are added or updated over time.</li>
+<li><strong>Context Sensitivity:</strong> Meaning depends heavily on surrounding local and document-level text context.</li>
+</ul>
+
+<hr>
+
+<h4 id="nel-pipeline" class="mb-2">Named Entity Linking Pipeline Architecture</h4>
+
+<p class="mb-3">The standard NEL architecture consists of three core components:</p>
+
+<div class="note-markdown-block"><pre><code>[ Input Text with Surface Mention ]
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│ 1. Candidate Generation         │ ──► Retrieves candidate set (High Recall, Low Precision)
+└─────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│ 2. Candidate Ranking            │ ──► Scores candidates using Independent &amp; Dependent features
+└─────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│ 3. NIL Prediction               │ ──► Abstains if top score &lt; threshold (Missing Entity)
+└─────────────────────────────────┘
+                 │
+                 ▼
+[ Canonical KB Entity URI / NIL ]</code></pre></div>
+
+<h5 class="mb-2">1. Candidate Generation</h5>
+
+<ul class="note-list">
+<li><strong>Task:</strong> Retrieve all plausible candidate entities for a given surface mention.</li>
+<li><strong>Characteristics:</strong> Typically produces a large set of candidates (high recall, low precision).</li>
+<li><strong>Common Methods:</strong> String matching / lexical similarity, Wikipedia disambiguation pages, Search APIs (e.g., Wikidata search).</li>
+<li><strong>Goal:</strong> Ensure the correct KB entity is included in the candidate set.</li>
+</ul>
+
+<hr>
+
+<h4 id="nel-ranking-features" class="mb-2">Candidate Ranking Features (Independent vs. Dependent)</h4>
+
+<p class="mb-3">Candidate ranking scores and ranks candidate entities to select the best match. Features are divided into two main categories:</p>
+
+<h5 class="mb-2">1. Context-Independent Features</h5>
+
+<ul class="note-list">
+<li><strong>String Similarity:</strong> Exact match, prefix/suffix overlap, partial match, edit distance.</li>
+<li><strong>Entity Popularity:</strong> Wikipedia page views, inbound link counts, prior mention-entity frequency $P(e|m)$.</li>
+<li><strong>Entity Type Consistency:</strong> Matching NER labels (<code>PER</code>, <code>ORG</code>, <code>LOC</code>) with KB entity categories.</li>
+</ul>
+
+<h5 class="mb-2">2. Context-Dependent Features</h5>
+
+<ul class="note-list">
+<li><strong>Local Text Context:</strong> Bag-of-words similarity, keyphrase overlap, or embedding similarity around the mention.</li>
+<li><strong>Wikipedia Anchor Text Statistics:</strong> Hyperlink anchor text distribution across Wikipedia.</li>
+<li><strong>Entity Coherence (Global Consistency):</strong> Coherence between entities mentioned within the same document (e.g., linking <em>"Apollo"</em> to spaceflight when <em>"Armstrong"</em> is linked to Neil Armstrong).</li>
+<li><strong>Context Overlap:</strong> Overlap between linked entity descriptions and document context.</li>
+</ul>
+
+<hr>
+
+<h4 id="nel-nil-prediction" class="mb-2">NIL Prediction (Unlinkable Entities)</h4>
+
+<ul class="note-list">
+<li><strong>Task:</strong> Decide when no candidate entity in the KB is correct (<code>NIL</code>).</li>
+<li><strong>Importance:</strong> Essential because real-world Knowledge Bases are inherently incomplete.</li>
+<li><strong>Implementation:</strong> Thresholding probability scores, or explicitly modeling a <code>NIL</code> sink class.</li>
+<li><strong>Challenge:</strong> Borderline cases where candidate context similarity is moderate make NIL prediction difficult in practice.</li>
+</ul>
+
+<hr>
+
+<h4 id="nel-ml-dl-models" class="mb-2">Supervised Learning &amp; Deep Learning Formulations for NEL</h4>
+
+<h5 class="mb-2">Supervised Ranking Formulation</h5>
+
+<ul class="note-list">
+<li><strong>Input:</strong> Pairwise inputs $(m, e)$ where $m$ is the mention (with context) and $e$ is a candidate entity.</li>
+<li><strong>Output:</strong> Probability score $P(e|m, \text{Context})$ predicting whether candidate $e$ is the correct link.</li>
+<li><strong>Training Objective:</strong> Classification optimized using cross-entropy loss or ranking loss.</li>
+<li><strong>Final Decision:</strong> Rank candidate entities by probability score and select top candidate (or <code>NIL</code> if below threshold).</li>
+</ul>
+
+<h5 class="mb-2">Common Machine Learning Approaches:</h5>
+
+<ul class="note-list">
+<li><strong>Traditional ML:</strong> Logistic Regression, Naive Bayes, and other probabilistic classifiers operating on heavily feature-engineered pipelines.</li>
+<li><strong>Deep Learning:</strong> Encoder-based architectures (CNN, RNN, Transformers) that learn continuous representations for mention and entity contexts. Often incorporate attention mechanisms for alignment between text context and entity descriptions to capture richer semantic similarity than manual features.</li>
+</ul>
+
+<hr>
+
+<h4 id="nel-model-dimensions" class="mb-2">Deep Learning Model Dimensions in NEL</h4>
+
+<p class="mb-3">When designing deep learning architectures for NEL, systems vary across five main dimensions:</p>
+
+<ol class="mb-3">
+<li><strong>Choice of Encoder Architecture:</strong> CNNs, RNNs (LSTMs/GRUs), or Transformer models (BERT, RoBERTa).</li>
+<li><strong>Local vs. Global Disambiguation Strategies:</strong> Scoring mentions independently vs. joint disambiguation maximizing document-wide entity coherence.</li>
+<li><strong>Handling NIL Cases Explicitly or Implicitly:</strong> Using confidence thresholds vs. explicit <code>NIL</code> representation vectors.</li>
+<li><strong>Candidate Generation Strategy Integration:</strong> Multi-stage retrieval-and-rank vs. joint candidate retrieval networks.</li>
+<li><strong>Entity Coherence Modeling Across Documents:</strong> Graph Neural Networks or inter-entity attention layers modeling global topical consistency.</li>
+</ol>
+
+<hr>
+
+<h4 id="nel-summary" class="mb-2">Named Entity Linking Summary</h4>
+
+<p class="mb-3">&lt;block title="Named Entity Linking Summary"&gt;</p>
+
+<ul class="note-list">
+<li>Named Entity Linking connects unstructured text mentions to canonical Knowledge Base entities.</li>
+<li>Core pipeline: <strong>Candidate Generation</strong> $\rightarrow$ <strong>Candidate Ranking</strong> $\rightarrow$ <strong>NIL Detection</strong>.</li>
+<li>Major difficulty stems from ambiguity, variability, missing entities (NIL), KB incompleteness, and context dependence.</li>
+<li>Methodological evolution: <strong>Rule-based &amp; lexical matching</strong> $\rightarrow$ <strong>Feature-engineered ML</strong> $\rightarrow$ <strong>Neural representation learning &amp; attention models</strong>.</li>
+</ul>
+
+<p class="mb-3">&lt;/block&gt;</p>
+
+<hr>
+</section>
+
+<section id="relation-extraction" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Relation Extraction &amp; Ontologies</h3>
+
+<h4 id="re-kg-foundations" class="mb-2">Knowledge Graphs, Triples &amp; Benefits</h4>
+
+<p class="mb-3"><strong>Relation Extraction (RE)</strong> converts unstructured text into structured knowledge representations, outputting Knowledge Graphs composed of <code>(Subject, Predicate, Object)</code> triples.</p>
+
+<ul class="note-list">
+<li><strong>Example Triples:</strong><ul class="note-list">
+<li><code>(Euler, born-in, Basel)</code></li>
+<li><code>(Euler, works-as, mathematician)</code></li>
+<li><code>(Basel, located-in, Switzerland)</code></li>
+</ul></li>
+</ul>
+
+<div class="note-markdown-block"><pre><code> (Euler) ───[ born-in ]───► (Basel) ───[ located-in ]───► (Switzerland)
+    │
+    └───[ works-as ]───► (Mathematician)</code></pre></div>
+
+<h5 class="mb-2">Knowledge Graphs:</h5>
+
+<ul class="note-list">
+<li>Represent entities and relations as structured triples.</li>
+<li>Enable machine-readable semantic structure over unstructured text.</li>
+<li><strong>Example Structure:</strong><ul class="note-list">
+<li><em>Entity Types:</em> <code>Person</code>, <code>City</code>, <code>Mathematician</code></li>
+<li><em>Relations:</em> <code>born-in</code>, <code>located-in</code>, <code>is-a</code>, <code>works-as</code>, <code>advisor-of</code>, <code>education</code></li>
+</ul></li>
+<li>Support reasoning and query execution over connected facts.</li>
+</ul>
+
+<h5 class="mb-2">Benefits of Relation Extraction:</h5>
+
+<ul class="note-list">
+<li>Improves search and information retrieval via entity-level indexing.</li>
+<li>Enables Question Answering over structured facts.</li>
+<li>Supports Natural Language Understanding (NLU).</li>
+<li><strong>Helps</strong> data integration across heterogeneous sources (especially when paired with Entity Linking).</li>
+<li>Improves semantic interoperability (machine understanding of text).</li>
+<li>Enhances recommendation systems.</li>
+<li><strong>Overall Goal:</strong> Transforms raw text into structured, queryable knowledge graphs.</li>
+</ul>
+
+<hr>
+
+<h4 id="re-tacit-and-meaningful" class="mb-2">Tacit Knowledge &amp; Meaningful Relations</h4>
+
+<ul class="note-list">
+<li><strong>Tacit Knowledge:</strong> Information that is implied rather than explicitly stated in text (e.g., background commonsense facts). It is difficult to extract automatically because it is not directly expressed in surface syntax.</li>
+<li><strong>What Counts as a Meaningful Relation:</strong><ul class="note-list">
+<li>Not all extracted triples are equally useful.</li>
+<li><em>Example Sentence:</em> <em>"Euler was born in Basel where he enjoyed his childhood."</em><ul class="note-list">
+<li>Triple 1 (Useful): <code>(Euler, born-in, Basel)</code></li>
+<li>Triple 2 (Less Useful): <code>(Euler, enjoyed, childhood)</code></li>
+</ul></li>
+<li>Most practical RE systems focus on relations between validated named entities.</li>
+<li>The utility of extracted relations depends heavily on the downstream application.</li>
+</ul></li>
+</ul>
+
+<hr>
+
+<h4 id="re-complexity" class="mb-2">Linguistic Complexity: Negation, Uncertainty &amp; Paraphrasing</h4>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Negation:</strong></strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><em>Sentence:</em> <em>"Euler was not born in St. Petersburg."</em></li>
+<li><em>Requirement:</em> Representation like <code>(Euler, not-born-in, St. Petersburg)</code>.</li>
+<li><em>Challenge:</em> Often difficult to represent in standard triple stores without specialized negation predicate schemas.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>Uncertainty &amp; Attribution:</strong></strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><em>Sentence:</em> <em>"They say Euler was born in Basel."</em></li>
+<li><em>Requirement:</em> Represents belief or attribution rather than established fact.</li>
+<li><em>Challenge:</em> Requires meta-level representations (statements about statements / provenance graphs).</li>
+</ul>
+</li>
+<li>
+  <strong><strong>Relation Equivalence &amp; Paraphrasing:</strong></strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>The same underlying fact can be expressed in multiple ways:</li>
+<li><em>"Euler was born in Basel."</em></li>
+<li><em>"Basel was the birthplace of Euler."</em></li>
+<li>Semantically equivalent triples: <code>(Euler, born-in, Basel)</code> vs. <code>(Basel, birthplace-of, Euler)</code>.</li>
+<li>Requires normalization or controlled vocabularies for consistency across datasets.</li>
+</ul>
+</li>
+</ol>
+
+<hr>
+
+<h4 id="ontologies-vocabularies" class="mb-2">Relation Vocabularies &amp; Ontologies (ACE, UMLS, Schema.org)</h4>
+
+<p class="mb-3">Ontologies define allowed entities, classes, properties, and relationships to standardize queries (e.g., <code>(?person, born_in, Basel)</code>). Without standardization, cross-dataset integration becomes unmanageable.</p>
+
+<h5 class="mb-2">1. ACE (Automatic Content Extraction)</h5>
+
+<p class="mb-3">Defines structured relation categories:</p>
+
+<ul class="note-list">
+<li><strong>Physical:</strong> <code>located</code>, <code>near</code></li>
+<li><strong>Part-Whole:</strong> <code>geographical</code>, <code>subsidiary</code>, <code>artifact</code></li>
+<li><strong>Personal-Social:</strong> <code>family</code>, <code>business</code>, etc.</li>
+<li><strong>Org-Affiliation:</strong> <code>employment</code>, <code>membership</code>, <code>ownership</code></li>
+<li><strong>Agent-Artifact:</strong> <code>manufacturer</code>, <code>inventor</code>, <code>user</code></li>
+</ul>
+
+<h5 class="mb-2">2. UMLS (Unified Medical Language System)</h5>
+
+<ul class="note-list">
+<li>Medical domain ontology containing <strong>~127 semantic types</strong> and <strong>~54 semantic relationships</strong>.</li>
+<li>Includes non-factual or probabilistic relations (e.g., <code>may-cause</code>).</li>
+</ul>
+
+<h5 class="mb-2">3. Formal Ontologies</h5>
+
+<p class="mb-3">Formal representation of entities, classes, properties, and relationships.</p>
+
+<ul class="note-list">
+<li><strong>Components:</strong><ul class="note-list">
+<li><em>Individuals:</em> Specific entities (e.g., <code>Euler</code>, <code>Basel</code>).</li>
+<li><em>Classes:</em> Categories (e.g., <code>Person</code>, <code>City</code>).</li>
+<li><em>Properties:</em> Attributes or values (e.g., <code>birth date</code>).</li>
+<li><em>Relationships:</em> Links between individuals (e.g., <code>born-in</code>).</li>
+<li><em>Axioms:</em> Logical constraints.</li>
+</ul></li>
+</ul>
+
+<h5 class="mb-2">4. Schema.org</h5>
+
+<ul class="note-list">
+<li>Industry ontology created by major tech companies.</li>
+<li>Used extensively in the Google Knowledge Graph and web microdata.</li>
+</ul>
+
+<hr>
+
+<h4 id="closed-open-world" class="mb-2">Closed-World vs. Open-World Assumption</h4>
+
+<ul class="note-list">
+<li><strong>Closed-World Assumption (CWA):</strong> What is not known to be true is assumed to be <em>false</em>. Useful in traditional relational databases and closed rule-based systems.</li>
+<li><strong>Open-World Assumption (OWA):</strong> Absence of information does <em>not</em> imply falsehood; unstated facts are simply <em>unknown</em>. Essential for Knowledge Graphs and web-scale information extraction.</li>
+<li><strong>Key Implication:</strong> Directs how missing facts are interpreted during query evaluation and reasoning.</li>
+</ul>
+
+<hr>
+
+<h4 id="rule-based-re" class="mb-2">Rule-Based Relation Extraction &amp; Hearst Patterns</h4>
+
+<h5 class="mb-2">1. Hearst Patterns (IS-A / Hyponym Relations)</h5>
+
+<p class="mb-3">First proposed by Marti Hearst (1992) for extracting hyponym relationships:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Pattern Template</th>
+<th>Surface Pattern Syntax</th>
+<th>Example Match</th>
+<th>Extracted Triple</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><code>Y such as X</code></td>
+<td><code>"Y such as X"</code></td>
+<td><em>"Mathematicians such as Euler"</em></td>
+<td><code>(Euler, is-a, mathematician)</code></td>
+</tr>
+<tr>
+<td><code>such Y as X</code></td>
+<td><code>"such Y as X"</code></td>
+<td><em>"such cities as Basel"</em></td>
+<td><code>(Basel, is-a, city)</code></td>
+</tr>
+<tr>
+<td><code>X or other Y</code></td>
+<td><code>"X or other Y"</code></td>
+<td><em>"Euler or other mathematicians"</em></td>
+<td><code>(Euler, is-a, mathematician)</code></td>
+</tr>
+<tr>
+<td><code>Y including X</code></td>
+<td><code>"Y including X"</code></td>
+<td><em>"Scholars including Euler"</em></td>
+<td><code>(Euler, is-a, scholar)</code></td>
+</tr>
+<tr>
+<td><code>Y especially X</code></td>
+<td><code>"Y especially X"</code></td>
+<td><em>"Mathematicians especially Euler"</em></td>
+<td><code>(Euler, is-a, mathematician)</code></td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h5 class="mb-2">2. Extension Beyond IS-A (Domain-Specific Templates)</h5>
+
+<p class="mb-3">Pattern-based extraction for domain-specific relations:</p>
+
+<ul class="note-list">
+<li><em>Template 1:</em> <code>PERSON joined ORG as OCCUPATION</code></li>
+<li><em>Template 2:</em> <code>PERSON works as OCCUPATION at ORG</code></li>
+<li><em>Example Sentence:</em> <em>"Chris works as a lecturer at NUS."</em></li>
+<li><em>Extracted Triples:</em><ul class="note-list">
+<li><code>(Chris, works-as, lecturer)</code></li>
+<li><code>(Chris, works-at, NUS)</code></li>
+</ul></li>
+</ul>
+
+<hr>
+
+<h4 id="rule-re-tradeoffs" class="mb-2">Rule-Based RE: Strengths and Weaknesses</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Strengths (Pros)</th>
+<th>Weaknesses (Cons)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>No Labeled Dataset Required:</strong> Works immediately without annotated training corpora.</td>
+<td><strong>Low Recall:</strong> Cannot cover the wide range of natural language variability.</td>
+</tr>
+<tr>
+<td><strong>High Precision:</strong> Explicit rules produce highly trustworthy extractions.</td>
+<td><strong>Hard to Scale:</strong> Difficult to manually author rules for hundreds of relation types.</td>
+</tr>
+<tr>
+<td><strong>Domain Customization:</strong> Easy to tailor rules for specialized domain jargon.</td>
+<td><strong>Labor Intensive:</strong> Rule creation is time-consuming and requires domain experts.</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Limited Generalization:</strong> Fails to generalize to unseen syntax or paraphrases.</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+<h4 id="bootstrapping-dependency" class="mb-2">Bootstrapping &amp; Dependency-Based Extraction</h4>
+
+<h5 class="mb-2">1. Bootstrapping Approach</h5>
+
+<p class="mb-3">Semi-automatic pattern learning starting from seed entity pairs:</p>
+
+<ol class="mb-3">
+<li><strong>Seed Set:</strong> Start with seed entity pairs with known relations (e.g., <code>(Euler, Basel)</code> for <code>born-in</code>).</li>
+<li><strong>Sentence Retrieval:</strong> Extract sentences from a large corpus containing both entities.</li>
+<li><strong>Pattern Learning:</strong> Learn surface context patterns connecting the entity pairs.</li>
+<li><strong>New Pair Discovery:</strong> Use learned patterns to discover new entity pairs across the corpus.</li>
+<li><strong>Iterative Expansion:</strong> Iterate to expand dataset and pattern set continuously.</li>
+<li><strong>Risk (Error Propagation):</strong> If early patterns are imprecise, invalid pairs are extracted, leading to semantic drift and dataset corruption.</li>
+</ol>
+
+<h5 class="mb-2">2. Dependency-Based Relation Extraction</h5>
+
+<p class="mb-3">Uses syntactic dependency trees instead of raw surface text:</p>
+
+<ul class="note-list">
+<li><strong>Grammatical Structure:</strong> Extracts relations based on shortest dependency paths connecting entities (e.g., <code>nsubj</code> $\rightarrow$ <code>verb</code> $\rightarrow$ <code>dobj</code>).</li>
+<li><strong>Advantage:</strong> More structured and robust than surface patterns, bypassing intervening adjectives and prepositional modifiers.</li>
+</ul>
+
+<hr>
+
+<h4 id="ml-relation-extraction" class="mb-2">Traditional Machine Learning Approaches for RE</h4>
+
+<h5 class="mb-2">Task Formulations:</h5>
+
+<ul class="note-list">
+<li><strong>Binary Classification:</strong> Predict relation vs. no-relation between an entity pair.</li>
+<li><strong>Multiclass Classification:</strong> Classify relation type directly from a fixed set (e.g., <code>born-in</code>, <code>works-for</code>, <code>located-in</code>).</li>
+</ul>
+
+<h5 class="mb-2">Pipeline Design:</h5>
+
+<div class="note-markdown-block"><pre><code>[ Text Input ]
+      │
+      ▼
+[ Step 1: Detect Entities ] ──► (NER / Noun Phrase Chunking / Lookup Lists)
+      │
+      ▼
+[ Step 2: Generate Candidate Entity Pairs ] ──► Pair (e1, e2)
+      │
+      ▼
+[ Step 3: Extract Features ] ──► (Lexical, Syntactic, Dependency, Type features)
+      │
+      ▼
+[ Step 4: Classification ] ──► Predict relation existence &amp; classify relation type</code></pre></div>
+
+<hr>
+
+<h4 id="re-summary" class="mb-2">Relation Extraction Summary</h4>
+
+<p class="mb-3">&lt;block title="Relation Extraction Summary"&gt;</p>
+
+<ul class="note-list">
+<li>Relation extraction builds structured Knowledge Graphs from unstructured text.</li>
+<li>Key difficulties include linguistic variation, ambiguity, negation, uncertainty, and paraphrasing.</li>
+<li>Major methodological approaches:<ul class="note-list">
+<li><strong>Rule-based:</strong> High precision, low recall (Hearst patterns &amp; templates).</li>
+<li><strong>Bootstrapping:</strong> Semi-automatic iterative pattern learning from seed pairs.</li>
+<li><strong>Dependency-based:</strong> Syntactic dependency path extractions (<code>nsubj</code>, <code>verb</code>, <code>dobj</code>).</li>
+<li><strong>Feature-based ML &amp; Deep Learning:</strong> Supervised binary/multiclass pipelines and neural representation learning models.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">&lt;/block&gt;</p>
+
+<hr>
+</section>
+
+<section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary &amp; Key Takeaways</h3>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>Entity Resolution (Coreference):</strong><ul class="note-list">
+<li>Resolves multiple mentions referring to the same real-world entity.</li>
+<li>Differentiates directional <strong>anaphora</strong> (anaphor $\rightarrow$ antecedent) from non-directional <strong>coreference</strong>.</li>
+<li>Evolved from syntactic tree traversals (<strong>Hobbs' algorithm 1978</strong>) $\rightarrow$ feature-engineered <strong>mention-pair ML</strong> (with cross-entropy loss and DPR/GAP benchmarks) $\rightarrow$ <strong>end-to-end neural coreference models</strong>.</li>
+</ul></li>
+</ul>
+
+<ul class="note-list">
+<li><strong>Named Entity Linking (NEL):</strong><ul class="note-list">
+<li>Links surface text mentions to canonical Knowledge Base URIs (e.g., DBpedia / Wikidata).</li>
+<li>Key challenges: ambiguity, variability, missing entities (<strong>NIL problem</strong>), KB evolution, and context sensitivity.</li>
+<li>Pipeline: <strong>Candidate Generation</strong> $\rightarrow$ <strong>Candidate Ranking</strong> (context-independent &amp; dependent features) $\rightarrow$ <strong>NIL Prediction</strong>.</li>
+<li>Models range from traditional ML (Logistic Regression, Naive Bayes) to encoder-based deep neural networks (CNN/RNN/Transformers).</li>
+</ul></li>
+</ul>
+
+<ul class="note-list">
+<li><strong>Relation Extraction (RE) &amp; Ontologies:</strong><ul class="note-list">
+<li>Transforms raw text into <code>(Subject, Predicate, Object)</code> Knowledge Graph triples under Open-World Assumptions (OWA).</li>
+<li>Vocabularies like <strong>ACE</strong> (Physical, Part-whole, Personal-social, Org-affiliation, Agent-artifact), <strong>UMLS</strong> (~127 types, ~54 relations), and <strong>Schema.org</strong> define standard schemas.</li>
+<li>Methods progress from <strong>Hearst IS-A patterns</strong> $\rightarrow$ <strong>Bootstrapping</strong> $\rightarrow$ <strong>Dependency path extraction</strong> $\rightarrow$ <strong>Supervised ML/DL pipelines</strong>.</li>
+</ul></li>
+</ul></div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

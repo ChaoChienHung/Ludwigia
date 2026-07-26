@@ -1,6 +1,6 @@
 <meta>
 Title: [Please fill in]
-Tags: [Please fill in]
+Tags: Documentation
 Summary: [Please fill in]
 Slug: [Please fill in]
 Output: writing/[Please fill in]/[Please fill in]-zh-tw.html
