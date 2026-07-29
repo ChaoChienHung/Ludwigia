@@ -12,6 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.architecture&quot;:{&quot;en&quot;:&quot;Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
   <meta name="garden:published_at" content="2026-07-26">
   <meta name="garden:last_modified_at" content="2026-07-30">
+  <meta name="garden:cover" content="notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems.png">
   <meta name="garden:reading_time_minutes" content="23">
   <meta name="garden:source" content="notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.md">
   <script>
@@ -212,7 +213,11 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section id="challenge" class="note-section" data-aos="fade-up" data-aos-delay="120">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./funnel-cascade-architecture-in-recommendation-systems.png" alt="推薦系統的級聯架構（Cascade Architecture）與三大核心模組示意圖，展示商品池、召回、粗排、精排及重混排模組的層層過濾流程。" loading="lazy"><figcaption class="note-image-caption">推薦系統的「級聯架構」（Cascade Architecture）與三大核心模組資料流示意圖。</figcaption></figure>
+</section>
+
+<section id="challenge" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">如何在極短的時間內，從千萬級商品庫精準挑出最適合使用者的 10 個結果？</h3>
 
 <p class="mb-3">你是否曾想過，當你打開 YouTube、Netflix 或淘寶首頁時，系統是如何在不到一秒的時間內，精準推播你當下最想看的內容？</p>

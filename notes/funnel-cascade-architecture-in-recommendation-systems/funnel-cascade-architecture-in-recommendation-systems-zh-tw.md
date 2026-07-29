@@ -5,6 +5,7 @@ Summary: 深入剖析工業界推薦系統的核心設計哲學——「級聯�
 Slug: funnel-cascade-architecture-in-recommendation-systems-zh-tw
 Output: notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html
 Style: default
+Cover: ./funnel-cascade-architecture-in-recommendation-systems.png
 EstimatedReadingTime: true
 Lang: zh-Hant
 TitleSuffix: true
@@ -43,6 +44,12 @@ h2: 總結與核心要點 -> takeaways
 </anchors>
 
 # 現代推薦系統的基石：深入解析「級聯架構」
+
+<image>
+src: ./funnel-cascade-architecture-in-recommendation-systems.png
+alt: 推薦系統的級聯架構（Cascade Architecture）與三大核心模組示意圖，展示商品池、召回、粗排、精排及重混排模組的層層過濾流程。
+caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核心模組資料流示意圖。
+</image>
 
 ## 如何在極短的時間內，從千萬級商品庫精準挑出最適合使用者的 10 個結果？
 
