@@ -12,7 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.architecture&quot;:{&quot;en&quot;:&quot;Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
   <meta name="garden:published_at" content="2026-07-26">
   <meta name="garden:last_modified_at" content="2026-07-30">
-  <meta name="garden:reading_time_minutes" content="20">
+  <meta name="garden:reading_time_minutes" content="23">
   <meta name="garden:source" content="notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.md">
   <script>
   (() => {
@@ -158,7 +158,7 @@
 <a class="note-toc-link level-2" href="#retrieval">階段一：召回 (Retrieval / Recall)</a>
 <a class="note-toc-link level-2" href="#pre-ranking">階段二：粗排 (Pre-ranking / Rough Ranking)</a>
 <a class="note-toc-link level-2" href="#ranking">階段三：精排 (Ranking / Fine Ranking)</a>
-<a class="note-toc-link level-1" href="#display-logic">策略與混排模組：打破局部最優與商業平衡 (Re-ranking &amp; Mixing)</a>
+<a class="note-toc-link level-1" href="#display-logic">重混排模組：從單品預測走向整體版面優化 (Re-Ranking &amp; Mix-Ranking)</a>
 <a class="note-toc-link level-1" href="#stage-comparison">各階段的資源與特徵對比表</a>
 <a class="note-toc-link level-1" href="#tradeoffs-limitations">級聯架構的隱憂與未來挑戰</a>
 <a class="note-toc-link level-1" href="#transition-to-gr">邁向下一代範式：生成式檢索（Generative Retrieval）</a>
@@ -359,7 +359,7 @@
 </ul></li>
 <li><strong>生成式與大模型技術線 (Generative Recommendation, GR)</strong>：
 <ul class="note-list">
-<li>核心思維：借鑑 LLM 的成功經驗，將推薦問題重新定義為「序列生成與超長行為建模」，驗證推薦系統的 Scaling Law。</li>
+<li>核心思維：借鑑 LLM 的成功經驗，將推薦問題重新定義為「序列生成與超長行為建模」，驗證推薦系統的 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-Hant">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span>。</li>
 <li>代表模型與突破：
 <ul class="note-list">
 <li>Meta (HSTU/GR)：提出上萬億參數規模的超長序列生成式推薦模型，摒棄傳統軟 max attention，在極長用戶歷史下實現高吞吐推理。</li>
@@ -377,23 +377,40 @@
 <p class="mb-3">這正是系統進入最終把關的第三大模組——「重混排模組 (Re-Ranking &amp; Mix-Ranking)」 所要解決的課題。</p>
 </section>
 
-<section id="re-ranking-mix-ranking" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">重混排模組：打破局部最優與商業平衡 (Re-Ranking &amp; Mix-Ranking)</h3>
+<section id="display-logic" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">重混排模組：從單品預測走向整體版面優化 (Re-Ranking &amp; Mix-Ranking)</h3>
 
-<p class="mb-3">如果說前三個排序階段是層層篩選出最優質的食材，並由主廚精心烹調出每一道料理，那麼最終的策略與混排作用，就類似於出菜前的「擺盤調味」與「菜單定製」：</p>
+<p class="mb-3">前面經歷的粗排與精排，本質上都是在做「單一內容」的分數預測——試圖回答「使用者有多大機率點擊這一個商品？」。然而，單個商品預測分數高，不代表把它們直接堆疊在一起就是一個好的推薦頁面。</p>
+
+<p class="mb-3">因此，在重混排階段，我們更注重的是整體評分與組合效果——重排負責處理同類內容內部的「體驗與多樣性」，混排則負責處理不同類內容之間的「商業價值與版面分配」。這也是為什麼「重排」與「混排」緊密相連，因為它們共同負責了<strong>「最終版面呈現（Page-level Optimization）」</strong>。</p>
+
+<p class="mb-3">舉個形象一點的比喻：如果說前三個排序階段是層層篩選出最優質的食材，並由主廚精心烹調出每一道料理；那麼最終的策略與混排作用，就類似於出菜前的<strong>「擺盤調味」與「菜單定製」</strong>。</p>
 
 <ol class="mb-3">
 <li class="mb-2">
-  <strong><strong>第一步：重排（Re-ranking）——打破局部最優，兼顧使用者體驗</strong>：</strong><br>
+  <strong><strong>重排（Re-ranking）——打破局部最優，兼顧使用者體驗</strong>：</strong><br>
   精排階段算出來的「理論最高分」，並不一定等於「使用者體驗最好」的最終呈現。舉例來說，假設預測得分最高的前十名全是運動鞋，若完全仰賴精排結果，首頁將清一色全是鞋子。這看似滿足了精準度，卻嚴重忽略了多樣性。因此，「重排」的任務就是打破這種死板的「局部最優」。系統會在這階段進行<strong>打散多樣性、去重與頻控</strong>（例如過濾掉剛剛才買過的商品），確保最終呈現在使用者面前的內容既精準又豐富，不會產生視覺疲勞。
   
 </li>
 <li>
-  <strong><strong>第二步：混排（Mixing）——平衡商業價值與內容生態</strong>：</strong><br>
+  <strong><strong>混排（Mixing）——平衡商業價值與內容生態</strong>：</strong><br>
   並非所有的業務場景都需要混排。混排主要出現在需要整合「多種不同來源內容」的平台上。當系統不僅要推薦自然內容，還需要插入廣告（Ads）、營運強推商品，或跨頻道的內容時，就需要混排機制出場。混排的核心挑戰，在於如何在「不嚴重傷害使用者體驗」的前提下，將不同屬性的內容合理分配版面，從而最大化平台的整體商業收益與生態健康。
   
 </li>
 </ol>
+
+<p class="mb-3">至此，我們已經完整走過了現代推薦系統最核心的架構鏈條——從海量篩選的「三大核心排序模組（粗排 $\rightarrow$ 精排 $\rightarrow$ 重排）」到全局把關的「混排模組」。這套級聯架構（Cascading Architecture）成功在「計算延遲」與「推薦精準度」之間找到了最佳平衡，讓系統得以在毫秒級的時間內，從千萬級的商品庫中為使用者交出客製化的頁面解答。</p>
+
+<div id="real-world-complexity" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-cogs me-2"></i>工業界真實系統的複雜度</h4><p class="mb-3">為了讓整體脈絡更加清晰易懂，本文在論述時簡化了部分工程實務上的細節。在實際的業界推薦系統中，除了上述的核心骨幹外，通常還包含許多極其關鍵的工程環節：</p>
+
+<ul class="note-list">
+<li><strong>召回結果合併與截斷 (Recall Merging &amp; Truncation)</strong>：如何將多路召回（如雙塔、生成式 TIGER、規則等）的分數進行歸一化、去重與長度裁切。</li>
+<li><strong>硬性過濾 (Hard Filtering)</strong>：即時剔除無庫存、違規、黑名單或已購買過（針對非重複消費品）的商品。</li>
+<li><strong>商業保量與合約控量 (Guaranteed Traffic / Pacing)</strong>：針對特定品牌贊助商品或營運活動，透過流量合約（Guaranteed Delivery）強制注入保量機制。</li>
+<li><strong>權重提昇與干預 (Boosting &amp; Suppress)</strong>：基於即時營運策略，對特定類目或季節性商品進行人工加權（Boosting）或降權（Suppress）。</li>
+</ul>
+
+<p class="mb-3">這些細節構成了推薦系統在真實商業環境落地的另一半版圖，但其底層的核心邏輯，依然離不開我們本文所探討的級聯篩選與整體版面優化思維。</p></div>
 </section>
 
 <section id="stage-comparison" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -447,35 +464,38 @@
 <section id="tradeoffs-limitations" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">級聯架構的隱憂與未來挑戰</h3>
 
-<p class="mb-3">漏斗式級聯架構雖然完美解決了工程上的算力瓶頸，但它本質上是一個<strong>「妥協的產物」</strong>。這套架構帶來了兩個難以根除的結構性痛點：</p>
+<p class="mb-3">漏斗式級聯架構雖然完美解決了工程上的算力瓶頸，但它本質上是一個<strong>「妥協的產物」</strong>。隨著業務規模膨脹與模型複雜度提升，這套架構帶來了三個難以根除的結構性痛點：</p>
 
 <ol class="mb-3">
 <li class="mb-2">
-  <strong><strong>資訊遺失 (Information Loss / Early Truncation)</strong>：</strong><br>
-  召回階段因為模型太簡單，常常會漏掉一些對使用者其實很有價值，但在向量空間中距離不夠近的冷門優質商品。一旦在召回階段被漏掉，後面再強大的精排模型也無力回天（因為精排根本看不到它）。
+  <strong><strong>召回決定上限，精排僅能逼近上限</strong>：</strong><br>
+  雖然業界普遍將研發重心與龐大算力放在最尾端的精排階段，但從級聯架構的資料流不難發現——精排能打分的對象，完全取決於粗排與召回供給的候選集。換句話說，<strong>「召回階段決定了本次推薦成果的品質上限，而精排只是在這個上限約束下進行逼近」</strong>。一旦召回階段因為模型過於簡單而漏掉了使用者真正感興趣的優質內容，後面再強大的精排模型也無能為力。
   
 </li>
 <li>
-  <strong><strong>目標不一致 (Objective Misalignment)</strong>：</strong><br>
-  召回看重點積相似度、粗排看重快速篩選、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，容易導致整個系統收斂於<strong>局部最佳解</strong>，而非全局最優解。
+  <strong><strong>通信與 IO 搬運開銷極高，阻礙 &lt;information concept="concept.scaling_law"&gt;Scaling Law&lt;/information&gt; 落地</strong>：</strong><br>
+  在多階段級聯架構中，資料必須跨越多個獨立模組（召回 $\rightarrow$ 粗排 $\rightarrow$ 精排 $\rightarrow$ 重混排）。每次跨模組調用，都伴隨著大量的通信開銷、特徵查詢與記憶體搬運。在極致的毫秒級延遲約束下，<strong>很大一部分的算力預算與時間成本都被浪費在「系統傳輸與資料搬運」上，而非「模型計算」</strong>。這導致傳統推薦系統很難像大型語言模型（LLM）一樣，簡單地透過擴大參數規模（Scaling Up）來享受 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-Hant">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 的紅利。
+  
+</li>
+<li>
+  <strong><strong>資訊遺失與目標不一致 (Information Loss &amp; Objective Misalignment)</strong>：</strong><br>
+  召回看重興趣涵蓋率、粗排看重過濾效率、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，且前階段的早裁斷（Early Truncation）無法修復，容易導致整個系統收斂於<strong>局部最佳解</strong>，而非全局最優解。
   
 </li>
 </ol>
 </section>
 
-<section id="transition-to-gr" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">邁向下一代範式：生成式檢索（Generative Retrieval）</h3>
+<section id="generative-retrieval-onerec" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">邁向下一代範式：生成式檢索與全鏈路一體化（Generative Retrieval &amp; OneRec）</h3>
 
 <p class="mb-3">正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「雙塔向量空間與級聯漏斗」限制的新方法。</p>
 
-<p class="mb-3">近年來，隨著生成式 AI 與大型語言模型（LLM）的崛起，將推薦系統視為一種<strong>自回歸序列生成問題（Generative Retrieval, GR）</strong> 正在成為最前沿的研究熱點：</p>
+<p class="mb-3">為了打破 IO 開銷枷鎖並統一優化目標，最新的前沿趨勢（如快手的 <strong>OneRec</strong> 等研究）正朝向<strong>「全鏈路一體化（End-to-End Architectures）」</strong> 與 <strong>「生成式檢索（Generative Retrieval, GR）」</strong> 演進：</p>
 
 <ul class="note-list">
-<li>透過 <strong>Semantic ID</strong>（如 RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列。</li>
-<li>讓 Transformer 模型直接從全局記憶中「生成」出最終的推薦結果，實現模型與索引的深度整合（Model-as-Index），徹底消除召回與排序之間的隔閡。</li>
+<li><strong>極致壓縮通信開銷</strong>：將召回與排序的邊界模糊化甚至合併，將省下來的網路與 IO 時間成本，全力投入到<strong>擴大模型規模與複雜度</strong>上，以更好地捕捉使用者極其微細且動態的興趣變化。</li>
+<li><strong>模型即索引（Model-as-Index）</strong>：透過 <strong>Semantic ID</strong>（如 RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。</li>
 </ul>
-
-<p class="mb-3">想進一步了解生成式檢索如何顛覆傳統雙塔與級聯架構？可接續閱讀延伸文章：Recommender Systems with Generative Retrieval。</p>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -495,13 +515,13 @@
 <li><strong>核心矛盾與解答</strong>：現代推薦系統利用「漏斗式級聯架構（Cascade Architecture）」解決了海量候選池與毫秒級延遲限制之間的衝突。</li>
 <li><strong>三大排序與展示階段</strong>：
 <ul class="note-list">
-<li><strong>召回 (Retrieval)</strong>：精準捕捉多維度興趣，從海量資料中快速圈選出高度相關的潛在候選集，確保興趣方向的廣度與涵蓋率。</li>
+<li><strong>召回 (Retrieval)</strong>：精準捕捉多維度興趣，決定本次推薦的品質上限，確保興趣方向的廣度與涵蓋率。</li>
 <li><strong>粗排 (Pre-ranking)</strong>：作為算力減壓閥，透過輕量模型快速過濾掉明顯不相關或低品質的雜訊。</li>
-<li><strong>精排 (Ranking)</strong>：算力全開，利用複雜神經網路特徵交叉進行極致精準的多目標預估與打分。</li>
+<li><strong>精排 (Ranking)</strong>：算力全開，利用複雜神經網路特徵交叉進行極致精準的多目標預估與打分，逼近召回上限。</li>
 <li><strong>重排與混排 (Re-ranking &amp; Mixing)</strong>：打破局部最優，綜合考量多樣性、去重、商業價值分配與平台生態健康。</li>
 </ul></li>
-<li><strong>固有局限</strong>：級聯架構面臨「資訊遺失 (Information Loss)」與「目標不一致 (Objective Misalignment)」兩大結構性痛點。</li>
-<li><strong>未來趨勢</strong>：生成式檢索（Generative Retrieval, GR）直接透過自回歸生成實現「模型即索引」，成為打破傳統級聯架構限制的最新研究方向。</li>
+<li><strong>固有局限</strong>：級聯架構面臨「召回決定上限」、「系統通信/IO 搬運開銷過大（阻礙模型 Scaling）」以及「目標不一致」等結構性痛點。</li>
+<li><strong>未來趨勢</strong>：全鏈路一體化（如 OneRec）與生成式檢索（Generative Retrieval, GR）正致力於省去跨模組搬運開銷，將算力集中於大模型 Scaling，成為打破傳統級聯架構限制的最前沿方向。</li>
 </ul></div>
 </section>
         </div>

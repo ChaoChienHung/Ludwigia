@@ -316,6 +316,23 @@
         "黄色小鸭调试法",
         "黄色小鸭调适法"
       ]
+    },
+    {
+      "concept_id": "concept.scaling_law",
+      "labels": {
+        "en": "Scaling Law",
+        "zh-Hant": "擴展法則（Scaling Law）",
+        "zh-Hans": "扩展法则（Scaling Law）"
+      },
+      "contexts": {
+        "en": "Scaling Law refers to the empirical phenomenon in deep learning where model performance predictably improves as a power-law function of compute, parameter count, and training dataset size.",
+        "zh-Hant": "擴展法則（Scaling Law）指深度學習中的經驗規律：當模型參數規模、計算量（Compute）或訓練資料量按比例擴大時，模型的預測效能與損失通常會呈現可預測的冪律（Power-law）次遞進改善。",
+        "zh-Hans": "扩展法则（Scaling Law）指深度学习中的经验规律：当模型参数规模、计算量（Compute）或训练数据量按比例扩大时，模型的预测性能与损失通常会呈现可预测的幂律（Power-law）次递进改善。"
+      },
+      "aliases": [
+        "scaling law",
+        "Scaling Law"
+      ]
     }
   ]
 }
