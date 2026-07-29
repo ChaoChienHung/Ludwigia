@@ -923,11 +923,27 @@ body.note-page:not(.light-theme) .note-content-link-preview-thumb {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.2rem;
+  border-radius: 14px;
+}
+
+.note-table-wrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.note-table-wrap::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-radius: 999px;
+}
+
+.note-table-wrap::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 28%, rgba(120, 120, 120, 0.4));
+  border-radius: 999px;
 }
 
 .note-table {
   width: 100%;
-  min-width: 560px;
+  min-width: 680px;
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid rgba(61, 46, 37, 0.12);
@@ -938,7 +954,7 @@ body.note-page:not(.light-theme) .note-content-link-preview-thumb {
 
 .note-table th,
 .note-table td {
-  padding: 0.8rem 0.95rem;
+  padding: 0.85rem 1.1rem;
   text-align: left;
   vertical-align: top;
   border-bottom: 1px solid rgba(61, 46, 37, 0.1);
@@ -948,6 +964,7 @@ body.note-page:not(.light-theme) .note-content-link-preview-thumb {
   font-weight: 700;
   color: var(--text);
   background: rgba(243, 236, 219, 0.78);
+  white-space: nowrap;
 }
 
 .note-table tbody tr:last-child td {
