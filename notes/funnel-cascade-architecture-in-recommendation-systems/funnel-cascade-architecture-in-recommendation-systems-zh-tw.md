@@ -1,7 +1,7 @@
 <meta>
 Title: 現代推薦系統的基石：深入解析「級聯架構」
-Tags: Recommender Systems, Machine Learning, Deep Learning, Architecture, Information Retrieval
-Summary: 深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-ranking）、精排（Ranking）到重排與混排（Re-ranking & Mixing）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。
+Tags: Recommender Systems, Machine Learning, Deep Learning, Recall, Rough Sort, Ranking, Pre-Ranking, Mix-Ranking, Re-Ranking, Retrieval
+Summary: 深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）到重排與混排（Re-Ranking & Mix-Ranking）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。
 Slug: funnel-cascade-architecture-in-recommendation-systems-zh-tw
 Output: notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html
 Style: default
@@ -25,8 +25,8 @@ toc1: three-stages -> 三大關鍵排序階段
 h2: 三大關鍵排序階段 -> three-stages
 toc2: retrieval -> 階段一：召回 (Retrieval / Recall)
 h3: 階段一：召回 (Retrieval / Recall) -> retrieval
-toc2: pre-ranking -> 階段二：粗排 (Pre-ranking / Rough Ranking)
-h3: 階段二：粗排 (Pre-ranking / Rough Ranking) -> pre-ranking
+toc2: Pre-Ranking -> 階段二：粗排 (Pre-Ranking / Rough Ranking)
+h3: 階段二：粗排 (Pre-Ranking / Rough Ranking) -> Pre-Ranking
 toc2: ranking -> 階段三：精排 (Ranking / Fine Ranking)
 h3: 階段三：精排 (Ranking / Fine Ranking) -> ranking
 toc1: display-logic -> 重混排模組：從單品預測走向整體版面優化 (Re-Ranking & Mix-Ranking)
@@ -127,7 +127,7 @@ caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核
 * **出發點切入**：例如一路召回專門根據使用者過往的長期偏好進行深度挖掘；另一路則專門輸出近期的熱門趨勢；甚至再加一路基於搜尋關鍵字或圖像相似度進行檢索。
 * **多樣化原則**：多條召回路之間最好具備實質差異。效果最好的差異是「考察維度/業務邏輯」不同（如：長期興趣 vs. 即時熱度），其次是「模型結構」不同；如果只是輸入資料略有差異，對於提升候選集質量的效果非常有限。
 
-### 階段二：粗排 (Pre-ranking / Rough Ranking)
+### 階段二：粗排 (Pre-Ranking / Rough Ranking)
 * **處理規模**：千級 -> 百級（約 300 ~ 500 個）
 * **延遲限制**：< 20 ms
 
@@ -205,7 +205,7 @@ content:
 | 處理階段 | 處理數量 (Item 數) | 延遲限制 | 模型複雜度與特徵維度 | 核心優化目標 |
 | :--- | :--- | :--- | :--- | :--- |
 | **召回 (Retrieval)** | 10,000,000 -> 3,000 | < 20 ms | **極低**。主要使用 Embedding 向量、單/雙塔與全局熱門特徵。 | **召回率 (Recall)**。精準涵蓋潛在興趣方向，找回所有潛在候選。 |
-| **粗排 (Pre-ranking)** | 3,000 -> 500 | < 20 ms | **中低**。開始引入簡單的使用者與物品交叉特徵。 | **過濾效率**。精準剔除低品質與不相關候選，為算力減壓。 |
+| **粗排 (Pre-Ranking)** | 3,000 -> 500 | < 20 ms | **中低**。開始引入簡單的使用者與物品交叉特徵。 | **過濾效率**。精準剔除低品質與不相關候選，為算力減壓。 |
 | **精排 (Ranking)** | 500 -> 50 | < 40 ms | **極高**。深度神經網路、即時行為序列、超大規模稀疏特徵。 | **準確率 (AUC, LogLoss)**。精準預估點擊、轉換等多重互動機率。 |
 | **重排 (Re-ranking)** | 50 -> 10 (展示) | < 10 ms | **策略 / Listwise**。規則引擎、MMR、強化學習或 Listwise 模型。 | **體驗與生態指標**。兼顧多樣性、視覺體驗與曝光公平性。 |
 
@@ -247,7 +247,7 @@ content:
 * **核心矛盾與解答**：現代推薦系統利用「漏斗式級聯架構（Cascade Architecture）」解決了海量候選池與毫秒級延遲限制之間的衝突。
 * **三大排序與展示階段**：
     * **召回 (Retrieval)**：精準捕捉多維度興趣，決定本次推薦的品質上限，確保興趣方向的廣度與涵蓋率。
-    * **粗排 (Pre-ranking)**：作為算力減壓閥，透過輕量模型快速過濾掉明顯不相關或低品質的雜訊。
+    * **粗排 (Pre-Ranking)**：作為算力減壓閥，透過輕量模型快速過濾掉明顯不相關或低品質的雜訊。
     * **精排 (Ranking)**：算力全開，利用複雜神經網路特徵交叉進行極致精準的多目標預估與打分，逼近召回上限。
     * **重排與混排 (Re-ranking & Mixing)**：打破局部最優，綜合考量多樣性、去重、商業價值分配與平台生態健康。
 * **固有局限**：級聯架構面臨「召回決定上限」、「系統通信/IO 搬運開銷過大（阻礙模型 Scaling）」以及「目標不一致」等結構性痛點。
