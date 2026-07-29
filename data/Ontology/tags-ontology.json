@@ -1560,6 +1560,86 @@
         "Transformer",
         "transformer"
       ]
+    },
+    {
+      "concept_id": "concept.retrieval",
+      "labels": {
+        "en": "Retrieval",
+        "zh-Hant": "召回",
+        "zh-Hans": "召回"
+      },
+      "aliases": [
+        "retrieval",
+        "Retrieval",
+        "Recall",
+        "recall",
+        "召回"
+      ]
+    },
+    {
+      "concept_id": "concept.pre_ranking",
+      "labels": {
+        "en": "Pre-Ranking",
+        "zh-Hant": "粗排",
+        "zh-Hans": "粗排"
+      },
+      "aliases": [
+        "pre-ranking",
+        "Pre-Ranking",
+        "Pre-ranking",
+        "rough ranking",
+        "Rough Ranking",
+        "Rough Sort",
+        "rough sort",
+        "粗排"
+      ]
+    },
+    {
+      "concept_id": "concept.ranking",
+      "labels": {
+        "en": "Ranking",
+        "zh-Hant": "精排",
+        "zh-Hans": "精排"
+      },
+      "aliases": [
+        "ranking",
+        "Ranking",
+        "fine ranking",
+        "Fine Ranking",
+        "精排"
+      ]
+    },
+    {
+      "concept_id": "concept.re_ranking",
+      "labels": {
+        "en": "Re-Ranking",
+        "zh-Hant": "重排",
+        "zh-Hans": "重排"
+      },
+      "aliases": [
+        "re-ranking",
+        "Re-Ranking",
+        "Re-ranking",
+        "reranking",
+        "Reranking",
+        "重排"
+      ]
+    },
+    {
+      "concept_id": "concept.mix_ranking",
+      "labels": {
+        "en": "Mix-Ranking",
+        "zh-Hant": "混排",
+        "zh-Hans": "混排"
+      },
+      "aliases": [
+        "mix-ranking",
+        "Mix-Ranking",
+        "Mix-ranking",
+        "mix ranking",
+        "Mix Ranking",
+        "混排"
+      ]
     }
   ]
 }
