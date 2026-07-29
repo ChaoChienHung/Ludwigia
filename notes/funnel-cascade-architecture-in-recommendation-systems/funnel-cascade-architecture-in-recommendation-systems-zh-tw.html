@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>現代推薦系統的基石：深入解析「級聯架構」 — Ludwig</title>
   <meta name="garden:tags" content="推薦系統, 機器學習, 深度學習, 系統架構, 資訊檢索">
-  <meta name="garden:summary" content="深入剖析工業界推薦系統的核心設計哲學——「漏斗式級聯架構」（Cascade Architecture）。從推薦系統全貌的六大核心模組（商品池/索引池、特徵服務、排序模組、線上展示邏輯、日誌系統與 A/B 測試）切入，結合 HR 招募海選的生活化比喻，層層拆解召回（Retrieval）、粗排（Pre-ranking）、精排（Ranking）到重排與混排（Re-ranking / Mixing）的技術細節、延遲約束與特徵維度，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。">
+  <meta name="garden:summary" content="深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-ranking）、精排（Ranking）到重排與混排（Re-ranking &amp; Mixing）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。">
   <meta name="garden:lang" content="zh-Hant">
   <meta name="garden:status" content="published">
   <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.machine_learning,concept.deep_learning,concept.architecture,concept.information_retrieval">
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.architecture&quot;:{&quot;en&quot;:&quot;Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
   <meta name="garden:published_at" content="2026-07-26">
   <meta name="garden:last_modified_at" content="2026-07-30">
-  <meta name="garden:reading_time_minutes" content="15">
+  <meta name="garden:reading_time_minutes" content="20">
   <meta name="garden:source" content="notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.md">
   <script>
   (() => {
@@ -152,13 +152,13 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#challenge">如何在極短的時間內，從千萬級商品庫精準挑出最適合使用者的 10 個結果？</a>
-<a class="note-toc-link level-1" href="#system-modules">推薦系統的六大核心模組</a>
+<a class="note-toc-link level-1" href="#system-modules">推薦系統的內容資料流：三大核心模組</a>
 <a class="note-toc-link level-1" href="#core-analogy">核心思維：以「漏斗模型」破解計算資源與精準度的矛盾</a>
 <a class="note-toc-link level-1" href="#three-stages">三大關鍵排序階段</a>
 <a class="note-toc-link level-2" href="#retrieval">階段一：召回 (Retrieval / Recall)</a>
 <a class="note-toc-link level-2" href="#pre-ranking">階段二：粗排 (Pre-ranking / Rough Ranking)</a>
 <a class="note-toc-link level-2" href="#ranking">階段三：精排 (Ranking / Fine Ranking)</a>
-<a class="note-toc-link level-1" href="#display-logic">線上展示邏輯：重排與混排 (Re-ranking &amp; Mixing)</a>
+<a class="note-toc-link level-1" href="#display-logic">策略與混排模組：打破局部最優與商業平衡 (Re-ranking &amp; Mixing)</a>
 <a class="note-toc-link level-1" href="#stage-comparison">各階段的資源與特徵對比表</a>
 <a class="note-toc-link level-1" href="#tradeoffs-limitations">級聯架構的隱憂與未來挑戰</a>
 <a class="note-toc-link level-1" href="#transition-to-gr">邁向下一代範式：生成式檢索（Generative Retrieval）</a>
@@ -217,61 +217,48 @@
 
 <p class="mb-3">你是否曾想過，當你打開 YouTube、Netflix 或淘寶首頁時，系統是如何在不到一秒的時間內，精準推播你當下最想看的內容？</p>
 
-<p class="mb-3">仔細想想，這其實是一件非常不可思維的事。這些平台上的內容庫龐大到難以想像：影片數以千萬計，商品更是動輒數億件。要在轉瞬之間從這片數據大海中，精準挑出最適合你的那十幾個結果，本身就是一項極具挑戰的工程難題。畢竟，如果對每件物品都進行精密計算來評估你的偏好，那等系統產出一個頁面，真不知要等到何年何月了。</p>
+<p class="mb-3">仔細想想，這其實是一件非常不可思議的事。這些平台上的內容庫龐大到難以想像：影片數以千萬計，商品更是動輒數億件。要在轉瞬之間從這片數據大海中，精準挑出最適合你的那十幾個結果，本身就是一項極具挑戰的工程難題。畢竟，如果對每件物品都進行精密計算來評估你的偏好，系統恐怕需要極其漫長的時間，才能吐出僅僅一頁的推薦名單。</p>
 
 <p class="mb-3">為了突破這個挑戰，現代業界普遍採用了「級聯架構」（Cascade Architecture），來破解這個看似不可能的任務。</p>
 
-<p class="mb-3">但在深入拆解「級聯架構」的技術細節前，我們不妨先建立對推薦系統全貌的宏觀視角，了解業界系統通常包含哪些核心模組，以及它們之間如何協同運作。</p>
+<p class="mb-3">但在深入拆解「級聯架構」的技術細節前，我們不妨先建立對推薦系統全貌的宏觀視角，了解在一次推薦請求中，資料是經過哪些核心模組的傳遞，最終才呈現在你眼前的。</p>
 </section>
 
 <section id="system-modules" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">推薦系統的六大核心模組</h3>
+<h3 class="mb-3">推薦系統的內容資料流：三大核心模組</h3>
 
-<p class="mb-3">大體上來說，推薦系統主要包含以下六個核心模組：</p>
-
-<ol class="mb-3">
-<li><strong>商品池 / 索引池 (Item / Index Pool)</strong>：</li>
-</ol>
-
-<p class="mb-3">負責判定哪些物品具備進入推薦流程的資格。並非資料庫中的所有 Item 都能參與推薦，必須先過濾掉不符合條件的項目。例如：若廣告主的推廣預算耗盡或主動暫停，該項目就必須立即從索引池中剔除；又如廣告主指定排除 20~30 歲客群時，系統會動態合成適合其他年齡段的定向索引池。</p>
+<p class="mb-3">雖然一個成熟的推薦系統背後往往牽涉到非常龐大且複雜的工程（例如日誌追蹤、A/B 測試等），但如果我們單純只為了回答最初拋出的問題——<strong>「系統是如何從海量的內容庫中，挑選出使用者最可能喜歡的商品，並精準呈現在他們眼前？」</strong>——那我們可以先主要關注整個資料流動環節中的「三大核心模組」：</p>
 
 <ol class="mb-3">
-<li><strong>特徵服務 (Feature Service)</strong>：</li>
+<li class="mb-2">
+  <strong><strong>商品池 / 索引池 (Item / Index Pool)</strong>：</strong><br>
+  這是整個推薦流程的「起點」，代表從全量資料庫中篩選出、當前具備推薦資格的候選商品集合。但為什麼不直接拿全量資料庫來推薦就好了呢？ 這是因為資料庫中包含大量「無法被推薦」的商品——例如已售罄無庫存、因違規暫時封禁、或是因跨國法規/物流限制無法配送至使用者所在區域的物品。這些商品雖然必須保存在資料庫中（供歷史訂單與帳務查詢），但會被排除在索引池之外，確保系統只在「有意義且合規」的商品中進行精準推薦。
+  
+</li>
+<li>
+  <strong><strong>排序模組 (Ranking Module)</strong>：</strong><br>
+  這是由演算法主導的核心戰場，採用了<strong>「召回 $\rightarrow$ 粗排 $\rightarrow$ 精排」</strong>的漏斗式篩選機制。由於全量演算極為耗時，模組必須先透過「召回」快速將範圍縮小至千級別，再利用「粗排」與「精排」進行多維度的深度評分。其最終目的，是從商品池的海量候選中，精準挑出得分最高、最符合使用者當下情境與偏好的頂級項目，傳送至最後一關的重混排模組。
+  
+</li>
+<li>
+  <strong><strong>重混排模組 (Re-Ranking &amp; Mix-Ranking Module)</strong>：</strong><br>
+  這是內容發送至使用者眼前前的「最終把關者」。為什麼精排選出高分項目後不能直接輸出？因為在真實場景中，我們不能只看演算法的「理論最高分」，還必須兼顧瀏覽體驗與商業目標。舉例來說，若使用者當下對「運動鞋」表現出極高興趣，精排演算法給出的高分項目可能全都是運動鞋。如果直接照單全收，整個頁面就會被同類商品塞滿；這雖然滿足了短期偏好，卻犧牲了視覺多樣性，長期來看反而容易讓使用者感到厭倦，不利於平台的永續經營。此外，商業上的廣告內容也需要適時曝光，不能完全被自然推薦的高分項目擠壓。因此，為了解決這些問題，我們引入了重混排模組，並分別執行兩項核心任務：
+  <ul class="mb-0 mt-2">
+<li><strong>重排（Re-Ranking）</strong>：導入業務規則進行體驗調控，例如將同類商品強制打散以確保多樣性、剔除近期已購項目等。</li>
+<li><strong>混排（Mix-Ranking）</strong>：處理跨來源內容的版面插播，評估廣告或活動項目是否符合門檻，並將其安插在最適當的位置。</li>
+</ul>
+</li>
 </ol>
 
-<p class="mb-3">當使用者發起請求（如打開 App、刷新頁面）時，系統需即時讀取並計算使用者特徵（如年齡、性別、歷史互動記錄與即時行為序列）。由於物品特徵大多相對靜態，而使用者行為特徵變化極快且即時性要求高，因此需要專門的低延遲特徵服務進行特徵的獲取與處理。</p>
-
-<ol class="mb-3">
-<li><strong>排序模組 (Ranking Module)</strong>：</li>
-</ol>
-
-<p class="mb-3">這是由模型主導的核心戰場，包含了<strong>召回、粗排、精排</strong>，以及針對特殊物品的打壓與保送策略。排序模組的作用是從海量的候選 Item 中，挑出得分最高的優質項目，傳送至後續的展示邏輯中。</p>
-
-<ol class="mb-3">
-<li><strong>線上展示邏輯 (Online Display Logic)</strong>：</li>
-</ol>
-
-<p class="mb-3">為什麼排序選出高分項目後不能直接發送給使用者？因為真實場景中往往涉及<strong>跨內容來源的混排（Mixing）</strong>（如廣告與自然內容混排、短影音與文章混排）。廣告與自然內容在各自的排序階段是獨立算分、互不可見的。當雙方都排序完畢後，線上展示邏輯會判定廣告是否符合投放門檻（如預估點擊/轉換率極高，或為達成保證曝光量而降低門檻），符合條件才會選擇合適的位置插入投放。</p>
-
-<ol class="mb-3">
-<li><strong>日誌系統 (Log System)</strong>：</li>
-</ol>
-
-<p class="mb-3">全程記錄推送前後系統內部與使用者端的各種互動行為（曝光、點擊、停留時長等）。在架構鏈條中，使用者的行為數據必須落盤（Persistence），轉化為全新的訓練樣本反餵給排序模組，實現持續微調與訓練閉環（Feedback Loop）。</p>
-
-<ol class="mb-3">
-<li><strong>分析系統與 A/B 測試 (Analytics System &amp; A/B Testing)</strong>：</li>
-</ol>
-
-<p class="mb-3">依賴日誌數據來評估演算法改進的效果，核心為 A/B 測試系統。透過將使用者隨機劃分，對比對照組（現有系統）與實驗組（新功能/新模型）的關鍵指標差異。業界實踐中往往採用 <strong>AABB 多分桶實驗</strong>（即多個對照組與多個實驗組），用以觀察「組內方差」與「組間方差」。例如：若兩個對照組之間因為隨機波動就有 3% 的差異，而實驗組相較對照組僅提升 2%，就無法證明該實驗具有實質的正向提升。</p>
+<p class="mb-3">透過重混排機制，系統才能在最終一刻產出一份兼顧使用者體驗與商業價值的推薦清單。</p>
 </section>
 
 <section id="core-analogy" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">核心思維：以「漏斗模型」破解計算資源與精準度的矛盾</h3>
 
-<p class="mb-3">在建立對推薦系統全貌的宏觀認識後，我們現在可以回到最初拋出的核心工程難題：<strong>如何在極短的時間內，從數以千萬計的物品中，精準挑出最適合使用者的結果？</strong></p>
+<p class="mb-3">了解了內容是如何從商品池流向最終重混排模組後，我們現在可以把焦點鎖定在最核心的工程難題：<strong>推薦系統究竟是如何在中間的「排序模組」裡，於極短的時間內完成千萬級別的篩選？</strong></p>
 
-<p class="mb-3">解決這個難題的最關鍵鑰匙，就是我們接下來要深入探討的核心技術——「排序模組」中的<strong>級聯架構（Cascade Architecture）</strong>。但在進入技術細節前，我們不妨先來思考一道情境題：</p>
+<p class="mb-3">解決這個難題的最關鍵鑰匙，就是我們接下來要深入探討的<strong>級聯架構（Cascade Architecture）</strong>。但在進入技術細節前，我們不妨先來思考一道情境題：</p>
 
 <blockquote class="blockquote mb-3"><strong>假設你需要負責一場大型企業招募，面對數百萬份履歷，目標是從中選出最適合公司的 10 名員工，你會怎麼做？</strong></blockquote>
 
@@ -298,7 +285,7 @@
 <section id="three-stages" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">三大關鍵排序階段</h3>
 
-<p class="mb-3">整個級聯架構由粗到細分為三大關鍵階段，缺一不可，且順序不可逆轉：</p>
+<p class="mb-3">整個級聯架構由粗到細主要分為三大關鍵階段：</p>
 
 <h4 id="retrieval" class="mb-2">階段一：召回 (Retrieval / Recall)</h4>
 
@@ -307,16 +294,30 @@
 <li><strong>延遲限制</strong>：&lt; 20 ms</li>
 </ul>
 
-<p class="mb-3">這是整個級聯架構的第一關，目標只有一個：「用最短的時間把範圍大幅縮小，且不漏掉任何潛在的興趣方向」。</p>
+<p class="mb-3">這是整個級聯架構的第一關，也是海量內容的入口，目標只有一個：「用最短的時間大幅縮小範圍，確保所有潛在感興趣的內容都不被漏掉」。</p>
 
 <p class="mb-3">召回階段的核心目的，在於<strong>精準建模使用者的多維度興趣（User Intent &amp; Interest），並將其映射至商品空間中，快速檢索出高度相關的候選子集</strong>。此階段不追求複雜模型的「精細分數預測」，而是追求「興趣涵蓋的準確度與廣度」。例如：系統透過模型精準捕捉到使用者當下對「電競週邊」與「戶外攝影」感興趣，就會快速從這兩個領域的千萬級商品中，召回高度匹配的熱門滑鼠與相機配件進入候選名單，完成第一輪篩選。</p>
 
 <ul class="note-list">
-<li><strong>模型複雜度與特徵</strong>：因為要在極短時間內處理海量數據，這裡的模型通常非常輕量，無法考慮太多細節或即時交叉特徵。</li>
-<li><strong>主流技術實現</strong>：<ul class="note-list">
-<li><strong>雙塔模型 (Two-Tower Model / DSSM)</strong>：將使用者與物品分別壓縮成向量，利用近似近鄰搜尋（ANN，如 Faiss、HNSW）在多維空間中快速找出距離最近的物品。</li>
-<li><strong>多路召回策略 (Multi-channel Retrieval)</strong>：並行使用協同過濾（ItemCF / UserCF）、熱門規則、基於圖神經網路（Graph-based）召回、以及基於搜尋關鍵字的召回，確保候選集的多樣性。</li>
+<li><strong>模型複雜度與特徵</strong>：
+<ul class="note-list">
+<li><strong>傳統限制</strong>：傳統召回模型為了在極短時間內與海量商品（千萬級）進行比對，必須將「使用者」與「商品」分離建模（解耦），導致線上無法引入複雜的即時交叉特徵（Cross-Features）；在許多極致追求低延遲的場景下，甚至需依賴簡單高效的業務規則（如：熱門榜單、近 7 天同類別重複瀏覽、品牌硬性比對）進行快速篩選。</li>
+<li><strong>生成式範式突破</strong>：自從 2023 年 Google 推出以生成式 Backbone（如 TIGER）為核心的新召回範式後，這個限制被成功打破。由於模型不再需要與海量商品庫進行逐一比對，而是直接端到端「生成」目標候選商品的 Semantic ID，檢索複雜度與商品庫規模解耦。這使得召回階段得以引入大參數量的 Transformer 結構與更深入的特徵互動，擺脫了傳統「為了速度必須極度輕量化」的枷鎖。</li>
 </ul></li>
+<li><strong>主流技術實現</strong>：
+<ul class="note-list">
+<li><strong>啟發式業務規則 (Rule-based)</strong>：基於領域知識的硬性篩選（如熱門榜單、地區限制、品牌硬性比對等），作為系統的基礎兜底（Fallback）與即時特徵補充。</li>
+<li><strong>雙塔模型 (Two-Tower Model / DSSM)</strong>：將使用者與物品分別壓縮成向量，利用近似近鄰搜尋（ANN，如 Faiss、HNSW）在多維空間中進行向量距離檢索，為工業界成熟且廣泛應用的經典向量召回方案。</li>
+<li><strong>圖神經網路與協同過濾 (Graph &amp; CF-based)</strong>：利用 ItemCF / UserCF 或 PinSage 等圖神經網路，透過使用者與物品的行為關聯圖譜，進行高階關聯興趣的召回。</li>
+<li><strong>生成式召回 (Generative Retrieval / Index-based Generation)</strong>：以 Google TIGER 為代表的新一代範式。將商品編碼為具備語義層次的 Semantic ID (SID)，由 Seq2Seq / Decoder-only 大模型直接根據使用者行為序列生成候選商品的 SID，實現大模型在召回階段的高效落地。</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">為了同時兼顧涵蓋度與多樣性，單一的召回管道往往力有未逮，因此業界普遍採用<strong>「多路召回策略 (Multi-channel Retrieval)」</strong>——由多條出發點不同的召回路共同決定進入下一階段的候選集：</p>
+
+<ul class="note-list">
+<li><strong>出發點切入</strong>：例如一路召回專門根據使用者過往的長期偏好進行深度挖掘；另一路則專門輸出近期的熱門趨勢；甚至再加一路基於搜尋關鍵字或圖像相似度進行檢索。</li>
+<li><strong>多樣化原則</strong>：多條召回路之間最好具備實質差異。效果最好的差異是「考察維度/業務邏輯」不同（如：長期興趣 vs. 即時熱度），其次是「模型結構」不同；如果只是輸入資料略有差異，對於提升候選集質量的效果非常有限。</li>
 </ul>
 
 <h4 id="pre-ranking" class="mb-2">階段二：粗排 (Pre-ranking / Rough Ranking)</h4>
@@ -326,13 +327,14 @@
 <li><strong>延遲限制</strong>：&lt; 20 ms</li>
 </ul>
 
-<p class="mb-3">為什麼不直接把第一關選出來的幾千個項目拿去給最強的模型打分？因為後端的深度學習模型太「重」了，如果一次處理幾千個候選，計算資源會瞬間崩潰，導致使用者頁面卡頓。</p>
+<p class="mb-3">為什麼不直接把第一關選出來的幾千個項目拿去給最強的模型打分？因為後端的深度學習模型太「重」了，如果一次處理幾千個候選，計算資源會瞬間崩潰，導致使用者頁面卡頓。因此，粗排扮演了關鍵的「算力減壓閥」與「過濾橋樑」角色。</p>
 
-<p class="mb-3">因此，粗排扮演了關鍵的「算力減壓閥」與「橋樑」角色。</p>
+<p class="mb-3">然而，相比於召回與精排，<strong>粗排在工程上的定位其實相對尷尬</strong>：</p>
 
 <ul class="note-list">
-<li><strong>模型複雜度與特徵</strong>：粗排是算力與準確度的折衷。模型比召回層稍微複雜一些，開始引入少量的特徵交叉（Cross Features）。</li>
-<li><strong>主流技術實現</strong>：通常使用輕量級的三層全連接神經網路（DNN）或稍微複雜的雙塔結構，預先篩除召回階段因模型過於簡化而選出的明顯低質或無關物品。</li>
+<li><strong>粗排並非不可或缺的必備環節</strong>：前面提到粗排是為了應對龐大候選量而生的「算力減壓閥」，但召回傳遞下來的候選數量並不總是那麼龐大。在某些業務場景中，召回量本就不多，或者精排模型的算力與架構已經足夠強大、能直接承接數千個候選，此時粗排就不一定有存在的必要性。因此，粗排更像是一個可以根據系統瓶頸與資源限制彈性增減的「過濾橋樑」階段，而非固定不可少的固定環節。</li>
+<li><strong>模型結構與定位</strong>：由於粗排是作為召回與精排之間的橋樑，其功能介於兩者之間，導致它的模型結構在大多數情況下，往往只是精排模型的簡化版（如層數較少的 DNN），或者是雙塔召回模型的延伸。這種夾在中間的特性，使其在工程上較難建立自身獨特的演算法護城河。</li>
+<li><strong>核心挑戰：目標與精排對齊（知道精排喜歡什麼）</strong>：召回階段關注的是多樣性與廣泛捕捉興趣，因此不會完全順著精排的喜好走，但粗排不同——<strong>「粗排必須知道精排喜歡什麼」</strong>。如果粗排的目標與精排嚴重背離（Objective Misalignment），就極易陷入「粗排辛辛苦苦挑選出的 300~500 個商品，送至精排後預估得分都很低」的窘境。因此，現代粗排模型（如 Teacher-Student 蒸餾粗排）通常會以精排的打分與排序結果作為監督訊號，確保粗排能精準預測精排的偏好。</li>
 </ul>
 
 <h4 id="ranking" class="mb-2">階段三：精排 (Ranking / Fine Ranking)</h4>
@@ -342,37 +344,56 @@
 <li><strong>延遲限制</strong>：&lt; 40 ms</li>
 </ul>
 
-<p class="mb-3">這裡是整個推薦系統的「大腦」，也是技術含量最高、模型最複雜、各家科技巨頭演算法競爭最激烈的主戰場。</p>
+<p class="mb-3">這裡是整個推薦系統的「大腦」，也是技術含量最高、模型最複雜、各家科技巨頭演算法競爭最激烈的主戰場。之所以如此關鍵，是因為精排位於整個系統最尾端，直接決定了呈現給使用者的最終內容，更第一線影響著點擊率、用戶留存與商業收益（轉化率）。</p>
 
-<p class="mb-3">經由前兩輪的過濾，候選集已經收斂到只剩幾百個精華。這時，系統終於可以不計成本地投入龐大算力！</p>
+<p class="mb-3">經由前兩輪的過濾，候選集已經收斂到只剩幾百個精華。這時，系統終於可以不計成本地投入龐大算力，只為追求最高精度的預估！</p>
 
 <ul class="note-list">
 <li><strong>模型複雜度與特徵</strong>：精排模型會吃進數百甚至數千維度的複雜特徵——包括你過去幾秒鐘點了什麼、現在的手機型號、當地天氣、影片的細節標籤，甚至你過去停留在某些頁面的微小秒數差異等。</li>
-<li><strong>主流技術實現</strong>：<ul class="note-list">
-<li><strong>複雜神經網路</strong>：DeepFM、DIN (Deep Interest Network)、DCN、MMoE 等。</li>
-<li><strong>多目標預估 (Multi-Task Learning)</strong>：對每一個物品進行極度精密的打分，同時預估點擊率（CTR）、觀看時長（Dwell Time）、按讚率與轉換率（CVR），最後依據綜合多目標得分進行絕對排序。</li>
+<li><strong>主流技術實現</strong>：
+<ul class="note-list">
+<li><strong>經典深度學習範式 (DLRM Paradigm)：</strong>
+<ul class="note-list">
+<li>核心思維：透過人工與模型自動構建「高階特徵交叉」與「多目標預估」。</li>
+<li>代表模型：DeepFM、DIN (Deep Interest Network)、DCN、MMoE（多目標優化 CTR/CVR/停留時間）等。</li>
+</ul></li>
+<li><strong>生成式與大模型技術線 (Generative Recommendation, GR)</strong>：
+<ul class="note-list">
+<li>核心思維：借鑑 LLM 的成功經驗，將推薦問題重新定義為「序列生成與超長行為建模」，驗證推薦系統的 Scaling Law。</li>
+<li>代表模型與突破：
+<ul class="note-list">
+<li>Meta (HSTU/GR)：提出上萬億參數規模的超長序列生成式推薦模型，摒棄傳統軟 max attention，在極長用戶歷史下實現高吞吐推理。</li>
+<li>美團 (MTGR)：解決了純生成式模型丟失特徵交叉的缺點，提出兼具「生成式序列架構」與「判別式特徵交叉」的混合範式，大副降低推理成本。</li>
+<li>抖音/快手等 (OneTrans, RankMixer 等)：打破傳統「先編碼序列、後做特徵交叉」的兩階段限制，實現序列與特徵的統一大模型 Transformer 建模。</li>
+</ul></li>
+</ul></li>
 </ul></li>
 </ul>
 
-<p class="mb-3">至此，我們已經完整走過了排序模組的核心階段。然而，倘若系統需要推薦多種不同類型的內容（如廣告、文章、短影音），我們除了需要對各類內容分別進行上述的排序流程外，還需要在出現在使用者眼前的前一刻，進行最終的把關——這就是「重排與混排」。</p>
+<p class="mb-3">至此，我們已經完整走過了單一內容維度下「排序模組」的核心流程。然而在真實商業場景中，系統往往需要同時推薦多種不同性質的內容（如：自然商品、付費廣告、短影音、品牌專題）。</p>
+
+<p class="mb-3">這就引申出一系列關鍵問題：不同性質的內容該如何公平比較？應該在什麼階段進行融合？如果某類內容表現太好，全刷同一類會發生什麼事？</p>
+
+<p class="mb-3">這正是系統進入最終把關的第三大模組——「重混排模組 (Re-Ranking &amp; Mix-Ranking)」 所要解決的課題。</p>
 </section>
 
-<section id="display-logic" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">線上展示邏輯：重排與混排 (Re-ranking &amp; Mixing)</h3>
+<section id="re-ranking-mix-ranking" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">重混排模組：打破局部最優與商業平衡 (Re-Ranking &amp; Mix-Ranking)</h3>
 
-<p class="mb-3">如果說前三個排序階段是層層篩選出最優質的食材，並由主廚精心烹調出每一道料理，那麼「重排」與「混排」的作用，就類似於出菜前的「擺盤調味」與「菜單定製」：</p>
+<p class="mb-3">如果說前三個排序階段是層層篩選出最優質的食材，並由主廚精心烹調出每一道料理，那麼最終的策略與混排作用，就類似於出菜前的「擺盤調味」與「菜單定製」：</p>
 
-<ul class="note-list">
-<li><strong>第一步：重排（Re-ranking）——打破局部最優，兼顧使用者體驗</strong>：</li>
-</ul>
-
-<p class="mb-3">精排階段算出來的「理論最高分」，並不一定等於「使用者體驗最好」的最終呈現。舉例來說，假設預測得分最高的前十名全是運動鞋，若完全仰賴精排結果，首頁將清一色全是鞋子。這看似滿足了精準度，卻嚴重忽略了多樣性。 因此，「重排」的任務就是打破這種死板的「局部最優」。系統會在這階段進行<strong>打散多樣性、去重與頻控</strong>（例如過濾掉剛剛才買過的商品），確保最終呈現在使用者面前的內容既精準又豐富，不會產生視覺疲勞。</p>
-
-<ul class="note-list">
-<li><strong>第二步：混排（Mixing）——平衡商業價值與內容生態</strong>：</li>
-</ul>
-
-<p class="mb-3">並非所有的業務場景都需要混排。混排主要出現在需要整合「多種不同來源內容」的平台上。當系統不僅要推薦自然內容，還需要插入廣告（Ads）、營運強推商品，或跨頻道的內容時，就需要混排機制出場。 混排的核心挑戰，在於如何在「不嚴重傷害使用者體驗」的前提下，將不同屬性的內容合理分配版面，從而最大化平台的整體商業收益與生態健康。</p>
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>第一步：重排（Re-ranking）——打破局部最優，兼顧使用者體驗</strong>：</strong><br>
+  精排階段算出來的「理論最高分」，並不一定等於「使用者體驗最好」的最終呈現。舉例來說，假設預測得分最高的前十名全是運動鞋，若完全仰賴精排結果，首頁將清一色全是鞋子。這看似滿足了精準度，卻嚴重忽略了多樣性。因此，「重排」的任務就是打破這種死板的「局部最優」。系統會在這階段進行<strong>打散多樣性、去重與頻控</strong>（例如過濾掉剛剛才買過的商品），確保最終呈現在使用者面前的內容既精準又豐富，不會產生視覺疲勞。
+  
+</li>
+<li>
+  <strong><strong>第二步：混排（Mixing）——平衡商業價值與內容生態</strong>：</strong><br>
+  並非所有的業務場景都需要混排。混排主要出現在需要整合「多種不同來源內容」的平台上。當系統不僅要推薦自然內容，還需要插入廣告（Ads）、營運強推商品，或跨頻道的內容時，就需要混排機制出場。混排的核心挑戰，在於如何在「不嚴重傷害使用者體驗」的前提下，將不同屬性的內容合理分配版面，從而最大化平台的整體商業收益與生態健康。
+  
+</li>
+</ol>
 </section>
 
 <section id="stage-comparison" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -429,16 +450,17 @@
 <p class="mb-3">漏斗式級聯架構雖然完美解決了工程上的算力瓶頸，但它本質上是一個<strong>「妥協的產物」</strong>。這套架構帶來了兩個難以根除的結構性痛點：</p>
 
 <ol class="mb-3">
-<li><strong>資訊遺失 (Information Loss / Early Truncation)</strong>：</li>
+<li class="mb-2">
+  <strong><strong>資訊遺失 (Information Loss / Early Truncation)</strong>：</strong><br>
+  召回階段因為模型太簡單，常常會漏掉一些對使用者其實很有價值，但在向量空間中距離不夠近的冷門優質商品。一旦在召回階段被漏掉，後面再強大的精排模型也無力回天（因為精排根本看不到它）。
+  
+</li>
+<li>
+  <strong><strong>目標不一致 (Objective Misalignment)</strong>：</strong><br>
+  召回看重點積相似度、粗排看重快速篩選、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，容易導致整個系統收斂於<strong>局部最佳解</strong>，而非全局最優解。
+  
+</li>
 </ol>
-
-<p class="mb-3">召回階段因為模型太簡單，常常會漏掉一些對使用者其實很有價值，但在向量空間中距離不夠近的冷門優質商品。一旦在召回階段被漏掉，後面再強大的精排模型也無力回天（因為精排根本看不到它）。</p>
-
-<ol class="mb-3">
-<li><strong>目標不一致 (Objective Misalignment)</strong>：</li>
-</ol>
-
-<p class="mb-3">召回看重點積相似度、粗排看重快速篩選、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，容易導致整個系統收斂於<strong>局部最佳解</strong>，而非全局最優解。</p>
 </section>
 
 <section id="transition-to-gr" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -471,7 +493,8 @@
 
 <div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li><strong>核心矛盾與解答</strong>：現代推薦系統利用「漏斗式級聯架構（Cascade Architecture）」解決了海量候選池與毫秒級延遲限制之間的衝突。</li>
-<li><strong>三大排序與展示階段</strong>：<ul class="note-list">
+<li><strong>三大排序與展示階段</strong>：
+<ul class="note-list">
 <li><strong>召回 (Retrieval)</strong>：精準捕捉多維度興趣，從海量資料中快速圈選出高度相關的潛在候選集，確保興趣方向的廣度與涵蓋率。</li>
 <li><strong>粗排 (Pre-ranking)</strong>：作為算力減壓閥，透過輕量模型快速過濾掉明顯不相關或低品質的雜訊。</li>
 <li><strong>精排 (Ranking)</strong>：算力全開，利用複雜神經網路特徵交叉進行極致精準的多目標預估與打分。</li>

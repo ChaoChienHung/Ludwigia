@@ -460,27 +460,53 @@ body.note-toc-open .note-toc-overlay {
 
 .note-content-link {
   position: relative;
-  display: inline;
-  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  padding: 0.12em 0.52em 0.16em;
+  margin: 0 0.15em;
+  color: color-mix(in srgb, var(--accent) 88%, var(--text));
   font: inherit;
-  font-weight: inherit;
-  text-decoration-line: underline;
-  text-decoration-style: solid;
-  text-decoration-thickness: 1.5px;
-  text-decoration-color: color-mix(in srgb, var(--accent) 58%, currentColor);
-  text-underline-offset: 0.22em;
-  border-radius: 0.22rem;
+  font-weight: 600;
+  font-size: 0.94em;
+  line-height: 1.35;
+  text-decoration: none;
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--accent) 8%, rgba(120, 120, 120, 0.05));
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, rgba(120, 120, 120, 0.12));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   transition:
-    color 0.18s ease,
-    text-decoration-color 0.18s ease,
-    background-color 0.18s ease;
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  vertical-align: baseline;
+}
+
+.note-content-link::after {
+  content: "↗";
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.7;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .note-content-link:hover,
 .note-content-link:focus-visible {
-  color: inherit;
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-  text-decoration-color: color-mix(in srgb, var(--accent) 92%, currentColor);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, rgba(255, 255, 255, 0.08));
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 18%, transparent);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.note-content-link:hover::after,
+.note-content-link:focus-visible::after {
+  opacity: 1;
+  transform: translate(2px, -2px);
 }
 
 .note-content-link-preview {
@@ -750,6 +776,20 @@ body.note-page:not(.light-theme) .note-information-tooltip::after {
 
 body.note-page:not(.light-theme) .note-information {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+body.note-page:not(.light-theme) .note-content-link {
+  background: color-mix(in srgb, var(--accent) 14%, rgba(255, 255, 255, 0.03));
+  border-color: color-mix(in srgb, var(--accent) 24%, rgba(255, 255, 255, 0.08));
+  color: color-mix(in srgb, var(--accent) 92%, #ffffff);
+}
+
+body.note-page:not(.light-theme) .note-content-link:hover,
+body.note-page:not(.light-theme) .note-content-link:focus-visible {
+  background: color-mix(in srgb, var(--accent) 24%, rgba(255, 255, 255, 0.08));
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  color: #ffffff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 body.note-page:not(.light-theme) .note-content-link-preview {

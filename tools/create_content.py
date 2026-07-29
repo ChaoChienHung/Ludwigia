@@ -1452,29 +1452,72 @@ def _markdown_to_html(
         items_html: list[str] = []
         for node in nodes:
             text = _render_inline(_maybe_bold_term(str(node.get("text") or "")))
+            paras = node.get("paras") or []
             children = node.get("children") or []
-            nested_html = _render_nested_ul_tree(children) if children else ""
-            items_html.append(f"<li>{text}{nested_html}</li>")
+
+            para_html = ""
+            if paras:
+                rendered_paras = [_render_inline(p) for p in paras if isinstance(p, str) and p.strip()]
+                para_html = "\n" + "\n".join(f'<p class="mb-2">{p}</p>' for p in rendered_paras)
+
+            nested_html = ("\n" + _render_nested_ul_tree(children)) if children else ""
+            items_html.append(f"<li>{text}{para_html}{nested_html}</li>")
         return f'<ul class="note-list">\n' + "\n".join(items_html) + "\n</ul>"
 
     def _parse_nested_ul(start_idx: int) -> tuple[str, int]:
         root: list[dict[str, object]] = []
-        stack: list[tuple[int, list[dict[str, object]]]] = [(-1, root)]
+        stack: list[tuple[int, list[dict[str, object]], dict[str, object] | None]] = [(-1, root, None)]
         i_local = start_idx
         while i_local < len(lines):
             raw_line = lines[i_local].rstrip("\n")
             stripped_local = raw_line.strip()
+
+            if not stripped_local:
+                next_i = i_local + 1
+                while next_i < len(lines) and not lines[next_i].strip():
+                    next_i += 1
+                if next_i >= len(lines):
+                    i_local = next_i
+                    break
+                next_raw = lines[next_i].rstrip("\n")
+                next_st = next_raw.strip()
+                next_indent = _count_indent(next_raw)
+
+                m_next_bullet = re.match(r"^(\s*)([*+-])\s+(.*)$", next_raw)
+                if m_next_bullet or next_indent >= 4:
+                    if re.match(r"^(#{1,6})\s+", next_st) or (next_st.startswith("<") and next_st.endswith(">") and next_st not in ("<br>", "<br/>")):
+                        i_local = next_i
+                        break
+                    if not m_next_bullet and next_indent < 4:
+                        i_local = next_i
+                        break
+                    i_local = next_i
+                    continue
+                else:
+                    i_local = next_i
+                    break
+
             m_item = re.match(r"^(\s*)([*+-])\s+(.*)$", raw_line)
-            if not m_item:
-                break
-            indent = _count_indent(raw_line)
-            text = m_item.group(3).strip()
-            while len(stack) > 1 and indent <= stack[-1][0]:
-                stack.pop()
-            node: dict[str, object] = {"text": text, "children": []}
-            stack[-1][1].append(node)
-            stack.append((indent, node["children"]))  # type: ignore[index]
-            i_local += 1
+            if m_item:
+                indent = _count_indent(raw_line)
+                text = m_item.group(3).strip()
+                while len(stack) > 1 and indent <= stack[-1][0]:
+                    stack.pop()
+                node: dict[str, object] = {"text": text, "paras": [], "children": []}
+                stack[-1][1].append(node)
+                stack.append((indent, node["children"], node))  # type: ignore[index]
+                i_local += 1
+            else:
+                indent = _count_indent(raw_line)
+                if indent >= 4 and len(stack) > 1:
+                    if re.match(r"^(#{1,6})\s+", stripped_local) or (stripped_local.startswith("<") and stripped_local.endswith(">") and stripped_local not in ("<br>", "<br/>")):
+                        break
+                    curr_node = stack[-1][2]
+                    if curr_node is not None:
+                        curr_node["paras"].append(stripped_local)  # type: ignore[index]
+                    i_local += 1
+                else:
+                    break
         return _render_nested_ul_tree(root), i_local
 
     def _render_complex_ol(items: list[tuple[str, list[str], list[str]]]) -> str:
