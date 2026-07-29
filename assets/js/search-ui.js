@@ -48,7 +48,7 @@
     const langs = Array.isArray(doc && doc.availableLangs) ? doc.availableLangs : [];
     if (langs.length <= 1) return '';
     const uiLang = getUiLang();
-    const title = langs.map((lang) => getLangLabel(lang, core)).filter(Boolean).join(' / ');
+    const title = langs.map((lang) => getLangLabel(lang, core)).filter(Boolean).join(', ');
     const safeTitle = title.replace(/"/g, '&quot;');
     const isZh = uiLang === 'zh-Hant' || uiLang === 'zh-Hans';
     const safeHeader = (isZh ? '可用語言' : 'Available languages').replace(/"/g, '&quot;');
