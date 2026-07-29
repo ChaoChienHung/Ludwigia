@@ -1,6 +1,6 @@
 <meta>
 Title: 現代推薦系統的基石：深入解析「級聯架構」
-Tags: Recommender Systems, Machine Learning, Deep Learning, Recall, Rough Sort, Ranking, Pre-Ranking, Mix-Ranking, Re-Ranking, Retrieval
+Tags: Recommender Systems, Machine Learning, Deep Learning, Recall, Ranking, Pre-Ranking, Mix-Ranking, Re-Ranking
 Summary: 深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）到重排與混排（Re-Ranking & Mix-Ranking）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。
 Slug: funnel-cascade-architecture-in-recommendation-systems-zh-tw
 Output: notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html
