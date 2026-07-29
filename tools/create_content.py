@@ -1063,7 +1063,7 @@ def _render_inline_no_code(raw: str) -> str:
                 continue
             label_html = _render_inline(label_raw)
             out.append(
-                f'<a href="{_escape_attr(href)}" target="_blank" rel="noopener noreferrer">{label_html}</a>'
+                f'<a class="note-inline-link" href="{_escape_attr(href)}" target="_blank" rel="noopener noreferrer">{label_html}</a>'
             )
             i = close_paren + 1
             continue

@@ -446,16 +446,53 @@ body.note-toc-open .note-toc-overlay {
   }
 }
 
-.note-inline-link {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.note-inline-link,
+.note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link) {
+  position: relative;
+  display: inline;
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  font-weight: 550;
+  text-decoration: none;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--accent) 45%, currentColor);
+  padding-bottom: 0.1em;
+  padding-left: 0.15em;
+  padding-right: 0.15em;
+  border-radius: 0.2rem;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-bottom-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.note-inline-link::after,
+.note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link)::after {
+  content: " ↗";
+  font-size: 0.78em;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.7;
+  display: inline-block;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .note-inline-link:hover,
-.note-inline-link:focus {
+.note-inline-link:focus-visible,
+.note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link):hover,
+.note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link):focus-visible {
   color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-bottom-color: var(--accent);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 15%, transparent);
   text-decoration: none;
+}
+
+.note-inline-link:hover::after,
+.note-inline-link:focus-visible::after,
+.note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link):hover::after,
+.note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link):focus-visible::after {
+  opacity: 1;
+  transform: translate(2px, -2px);
 }
 
 .note-content-link {
@@ -776,6 +813,22 @@ body.note-page:not(.light-theme) .note-information-tooltip::after {
 
 body.note-page:not(.light-theme) .note-information {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+body.note-page:not(.light-theme) .note-inline-link,
+body.note-page:not(.light-theme) .note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link) {
+  color: color-mix(in srgb, var(--accent) 94%, #ffffff);
+  border-bottom-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+body.note-page:not(.light-theme) .note-inline-link:hover,
+body.note-page:not(.light-theme) .note-inline-link:focus-visible,
+body.note-page:not(.light-theme) .note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link):hover,
+body.note-page:not(.light-theme) .note-section a:not(.note-content-link):not(.note-toc-link):not(.note-image-link):focus-visible {
+  color: #ffffff;
+  background-color: color-mix(in srgb, var(--accent) 22%, rgba(255, 255, 255, 0.05));
+  border-bottom-color: var(--accent);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 body.note-page:not(.light-theme) .note-content-link {
