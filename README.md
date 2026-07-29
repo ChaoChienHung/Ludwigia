@@ -81,7 +81,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Section landing：
   - `notes/index.html` / `writing/index.html` / `canvas/index.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/section-landing.js` 讀索引，只顯示該 section 的內容（含 scoped search + tag filter）
   - freshness guard：section landing / search / tag page 與 note recommendation 會優先抓 `search/search-index.json`（`cache: "no-store"`），抓不到才退回 `window.SITE_SEARCH_INDEX` / `search-index.js`；目的不是放棄 JS 版本，而是降低 GitHub Pages / 瀏覽器快取把舊索引一直當成真相的機率
-  - Cover 圖片策略：若未提供內容專屬 cover，section landing 會使用「預設 cover」當作列表縮圖（避免版面破碎）；之後可再擴充成 per-post cover（例如 index schema 加 `coverUrl`）
+  - Cover 圖片策略：若未提供內容專屬 cover，section landing 與搜尋卡片會使用「預設 cover」當作列表縮圖（`notes` 預設使用 `assets/images/Notes.png`，`writing` 預設使用 `assets/images/Writing.png`），確保未指定 cover 時版面視覺一致
 - Search：
   - `pages/search.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/search-page.js` 讀 `window.SITE_SEARCH_INDEX`，提供 query ranking + multi-tag filter
   - tag filter 仍留在 search 內；若已選單一 tag，可用明確的 `Open tag page` 入口切到 `tag/index.html`

@@ -618,11 +618,13 @@
   };
 
   const getDefaultCoverHref = (sectionLike) => {
-    const base = 'https://copilot-sg-og.byteintl.net/api/ide/v1/text_to_image';
-    const url = new URL(base);
-    url.searchParams.set('prompt', getDefaultCoverPrompt(sectionLike));
-    url.searchParams.set('image_size', DEFAULT_COVER_IMAGE_SIZE);
-    return url.toString();
+    const section = typeof sectionLike === 'object' && sectionLike !== null
+      ? inferSection(sectionLike)
+      : String(sectionLike || '').trim().toLowerCase();
+    if (section === 'writing') {
+      return resolveSiteHref('assets/images/Writing.png');
+    }
+    return resolveSiteHref('assets/images/Notes.png');
   };
 
   const matchesAllTags = (doc, selectedTags) => {

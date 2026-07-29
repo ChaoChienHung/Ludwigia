@@ -69,7 +69,7 @@ extras layer 的穩定降級規則：
 - `<content-link>`：在一般內容頁可依 target `CanonicalId` resolve 成站內連結；但在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律退化成純文字
 - `<image>`：只屬於一般內容頁的補充 block，不屬於 core content；在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律排除
 - Card imagery 必須來自 `<meta>.Cover` / `garden:cover`，而不是從正文 `<image>` 推導；原因是 `Cover` 只承擔單一 card / preview image，而正文可以合法包含多張不同用途的 `<image>`
-- Search result、section landing 與 `content-link` preview card 應共用同一個 default cover fallback contract：target 有 `Cover` 用自己的，沒有則依內容類型退回 shared default cover
+- Search result、section landing 與 `content-link` preview card 應共用同一個 default cover fallback contract：target 有 `Cover` 用自己的，沒有則依內容類型退回 shared default cover（`notes` 預設退回 `assets/images/Notes.png`，`writing` 預設退回 `assets/images/Writing.png`）
 
 ## Index Schema（穩定視圖）
 

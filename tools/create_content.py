@@ -576,21 +576,10 @@ def _safe_link_href(raw: str) -> str:
 
 
 def _default_card_cover_href(section_like: str = "") -> str:
-    base = "https://copilot-sg-og.byteintl.net/api/ide/v1/text_to_image"
     normalized = str(section_like or "").strip().lower()
     if normalized == "writing":
-        prompt = "Minimalist editorial photo of a modern desk with a printed magazine and a pen, soft studio lighting, shallow depth of field, high contrast, no text, professional, realistic"
-    elif normalized == "canvas":
-        prompt = "Minimalist gallery wall with pinned photographs, sketchbook pages and soft natural light, clean composition, high contrast, no text, professional, realistic"
-    else:
-        prompt = "Minimalist editorial photo of a notebook and pen on a dark desk, soft studio lighting, shallow depth of field, high contrast, no text, professional, realistic"
-    query = urllib.parse.urlencode(
-        {
-            "prompt": prompt,
-            "image_size": "landscape_4_3",
-        }
-    )
-    return f"{base}?{query}"
+        return "assets/images/Writing.png"
+    return "assets/images/Notes.png"
 
 
 def _normalize_repo_asset_href(
@@ -840,7 +829,13 @@ def _render_content_link_preview(entry: dict[str, str], *, current_output_path: 
         cover_abs_path = os.path.abspath(os.path.join(_resolve_repo_dir(), cover_href))
         cover_src = os.path.relpath(cover_abs_path, current_dir).replace(os.sep, "/")
     elif not cover_href:
-        cover_src = _default_card_cover_href(content_kind)
+        default_rel = _default_card_cover_href(content_kind)
+        if current_output_path:
+            current_dir = os.path.dirname(current_output_path)
+            cover_abs_path = os.path.abspath(os.path.join(_resolve_repo_dir(), default_rel))
+            cover_src = os.path.relpath(cover_abs_path, current_dir).replace(os.sep, "/")
+        else:
+            cover_src = default_rel
     if cover_src:
         cover_html = (
             '<span class="note-content-link-preview-thumb">'
@@ -2357,7 +2352,7 @@ def _self_test() -> None:
     assert 'class="note-content-link"' in html
     assert "note-content-link-preview" in html
     assert "note-content-link-preview-thumb" in html
-    assert "copilot-sg-og.byteintl.net/api/ide/v1/text_to_image" in html
+    assert "assets/images/Notes.png" in html
     assert "An intuition-first note on K-Means and center-based compactness." in html
     assert 'href="k-means-clustering-around-centers/k-means-clustering-around-centers.html"' in html
     assert "note-table" in html

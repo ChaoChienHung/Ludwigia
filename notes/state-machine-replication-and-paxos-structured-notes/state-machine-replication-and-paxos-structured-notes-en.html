@@ -293,12 +293,14 @@
 <p class="mb-3">A correct consensus protocol must satisfy the following properties:</p>
 
 <ul class="note-list">
-<li><strong>Safety:</strong><ul class="note-list">
+<li><strong>Safety:</strong>
+<ul class="note-list">
 <li>Only proposed values can be chosen.</li>
 <li>Only a single value is chosen.</li>
 <li>A process only learns a value if it has actually been chosen.</li>
 </ul></li>
-<li><strong>Liveness:</strong><ul class="note-list">
+<li><strong>Liveness:</strong>
+<ul class="note-list">
 <li>Some proposed value is eventually chosen.</li>
 <li>If a value is chosen, processes eventually learn it.</li>
 </ul></li>
@@ -510,7 +512,8 @@ Slot 3: Paxos Instance 3  ---&gt; Decided: Get k1</code></pre></div>
 <ul class="note-list">
 <li><strong>Primary-backup is insufficient</strong> on its own without a consensus mechanism due to the risk of split-brain in asynchronous networks.</li>
 <li><strong>FLP Impossibility</strong> shows that deterministic consensus cannot guarantee both safety and liveness in a fully asynchronous system with crash failures.</li>
-<li><strong>Paxos ensures safety</strong> under all conditions through:<ul class="note-list">
+<li><strong>Paxos ensures safety</strong> under all conditions through:
+<ul class="note-list">
 <li><strong>Majority Intersection:</strong> Ensuring any two quorums share at least one node.</li>
 <li><strong>Proposal Numbering:</strong> Maintaining order and disjoint proposer sequences.</li>
 <li><strong>Two-Phase Protocol:</strong> Collecting state and promising not to look back before choosing a value.</li>

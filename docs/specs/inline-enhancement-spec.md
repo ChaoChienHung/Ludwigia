@@ -84,11 +84,11 @@ preview card 的資訊層級：
 - target 無 `Cover`：退回 shared default cover
 - shared default cover 應由內容類型決定最基本的 fallback 氣質
 
-目前收斂的內容類型：
+目前收斂的內容類型與預設 cover 圖片：
 
-- `notes`
-- `writing`
-- `canvas`
+- `notes`：`assets/images/Notes.png`
+- `writing`：`assets/images/Writing.png`
+- `canvas`：`assets/images/Notes.png` (fallback)
 
 這條 contract 應在至少以下 surface 維持一致：
 
