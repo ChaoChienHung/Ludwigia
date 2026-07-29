@@ -37,10 +37,10 @@ toc1: tradeoffs-limitations -> 級聯架構的隱憂與未來挑戰
 h2: 級聯架構的隱憂與未來挑戰 -> tradeoffs-limitations
 toc1: transition-to-gr -> 邁向下一代範式：生成式檢索（Generative Retrieval）
 h2: 邁向下一代範式：生成式檢索（Generative Retrieval） -> transition-to-gr
-toc1: references -> 參考文獻（References）
-h2: 參考文獻（References） -> references
 toc1: takeaways -> 總結與核心要點
 h2: 總結與核心要點 -> takeaways
+toc1: references -> 參考文獻（References）
+h2: 參考文獻（References） -> references
 </anchors>
 
 # 現代推薦系統的基石：深入解析「級聯架構」
@@ -235,12 +235,6 @@ content:
 想進一步了解生成式檢索如何顛覆傳統雙塔與級聯架構？可接續閱讀延伸文章：<content-link canonical="recommender-systems-with-generative-retrieval-zh-tw">Recommender Systems with Generative Retrieval</content-link>。
 </draft>
 
-## 參考文獻（References）
-
-1. 知乎專欄：[推荐系统概述（1）：推荐系统是干啥的？](https://zhuanlan.zhihu.com/p/384471991)
-2. 知乎專欄：[推荐系统全链路（1）：召回粗排精排-各有所长](https://zhuanlan.zhihu.com/p/390503646)
-3. 知乎專欄：[推荐系统全链路（2）：召回粗排精排-级联漏斗（上）](https://zhuanlan.zhihu.com/p/396951216)
-
 ## 總結與核心要點
 
 <takeaways>
@@ -253,3 +247,9 @@ content:
 * **固有局限**：級聯架構面臨「召回決定上限」、「系統通信/IO 搬運開銷過大（阻礙模型 Scaling）」以及「目標不一致」等結構性痛點。
 * **未來趨勢**：全鏈路一體化（如 OneRec）與生成式檢索（Generative Retrieval, GR）正致力於省去跨模組搬運開銷，將算力集中於大模型 Scaling，成為打破傳統級聯架構限制的最前沿方向。
 </takeaways>
+
+## 參考文獻（References）
+
+1. 知乎專欄：[推荐系统概述（1）：推荐系统是干啥的？](https://zhuanlan.zhihu.com/p/384471991)
+2. 知乎專欄：[推荐系统全链路（1）：召回粗排精排-各有所长](https://zhuanlan.zhihu.com/p/390503646)
+3. 知乎專欄：[推荐系统全链路（2）：召回粗排精排-级联漏斗（上）](https://zhuanlan.zhihu.com/p/396951216)
