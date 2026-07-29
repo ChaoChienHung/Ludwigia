@@ -473,7 +473,7 @@
   
 </li>
 <li>
-  <strong><strong>通信與 IO 搬運開銷極高，阻礙 &lt;information concept="concept.scaling_law"&gt;Scaling Law&lt;/information&gt; 落地</strong>：</strong><br>
+  <strong><strong>通信與 IO 搬運開銷極高，阻礙 Scaling Law 落地</strong>：</strong><br>
   在多階段級聯架構中，資料必須跨越多個獨立模組（召回 $\rightarrow$ 粗排 $\rightarrow$ 精排 $\rightarrow$ 重混排）。每次跨模組調用，都伴隨著大量的通信開銷、特徵查詢與記憶體搬運。在極致的毫秒級延遲約束下，<strong>很大一部分的算力預算與時間成本都被浪費在「系統傳輸與資料搬運」上，而非「模型計算」</strong>。這導致傳統推薦系統很難像大型語言模型（LLM）一樣，簡單地透過擴大參數規模（Scaling Up）來享受 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-Hant">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 的紅利。
   
 </li>

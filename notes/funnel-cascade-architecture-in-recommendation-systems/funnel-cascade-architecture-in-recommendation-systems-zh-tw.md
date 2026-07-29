@@ -209,7 +209,7 @@ content:
 1. **召回決定上限，精排僅能逼近上限**：
     雖然業界普遍將研發重心與龐大算力放在最尾端的精排階段，但從級聯架構的資料流不難發現——精排能打分的對象，完全取決於粗排與召回供給的候選集。換句話說，**「召回階段決定了本次推薦成果的品質上限，而精排只是在這個上限約束下進行逼近」**。一旦召回階段因為模型過於簡單而漏掉了使用者真正感興趣的優質內容，後面再強大的精排模型也無能為力。
 
-2. **通信與 IO 搬運開銷極高，阻礙 <information concept="concept.scaling_law">Scaling Law</information> 落地**：
+2. **通信與 IO 搬運開銷極高，阻礙 Scaling Law 落地**：
     在多階段級聯架構中，資料必須跨越多個獨立模組（召回 $\rightarrow$ 粗排 $\rightarrow$ 精排 $\rightarrow$ 重混排）。每次跨模組調用，都伴隨著大量的通信開銷、特徵查詢與記憶體搬運。在極致的毫秒級延遲約束下，**很大一部分的算力預算與時間成本都被浪費在「系統傳輸與資料搬運」上，而非「模型計算」**。這導致傳統推薦系統很難像大型語言模型（LLM）一樣，簡單地透過擴大參數規模（Scaling Up）來享受 <information concept="concept.scaling_law">Scaling Law</information> 的紅利。
 
 3. **資訊遺失與目標不一致 (Information Loss & Objective Misalignment)**：
