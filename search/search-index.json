@@ -1,8 +1,8 @@
 [
   {
     "title": "Discovering Hidden Structures: What Clustering Really Does",
-    "url": "../notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
-    "path": "notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
+    "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+    "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
     "section": "notes",
     "tags": [
       "Data Mining",
@@ -31,9 +31,9 @@
     "reading_time_minutes": 20,
     "published_at": "2026-06-10",
     "last_modified_at": "2026-07-26",
-    "cover": "notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/Clustering.jpeg",
+    "cover": "notes/discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg",
     "lang": "en",
-    "canonical_id": "discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan",
+    "canonical_id": "discovering-hidden-structures-what-clustering-really-does",
     "status": "published",
     "pinned": false,
     "priority": 0.0,
@@ -152,8 +152,8 @@
         "score": 0.017507
       },
       {
-        "url": "../notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
-        "path": "notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
+        "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+        "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "score": 0.01068
       }
     ]
@@ -213,8 +213,8 @@
     "kind": "content",
     "related": [
       {
-        "url": "../notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
-        "path": "notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
+        "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+        "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "score": 0.304171
       },
       {
@@ -513,8 +513,8 @@
         "score": 0.052275
       },
       {
-        "url": "../notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
-        "path": "notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
+        "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+        "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "score": 0.027315
       },
       {
@@ -662,8 +662,8 @@
         "score": 0.29387
       },
       {
-        "url": "../notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
-        "path": "notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html",
+        "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+        "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "score": 0.268552
       },
       {

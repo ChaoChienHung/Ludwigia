@@ -1,10 +1,10 @@
 <meta>
 Title: Discovering Hidden Structures: What Clustering Really Does
-CanonicalId: discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan
+CanonicalId: discovering-hidden-structures-what-clustering-really-does
 Tags: Data Mining, Clustering
 Summary: A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.
-Slug: discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en
-Output: notes/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan/discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.html
+Slug: discovering-hidden-structures-what-clustering-really-does-en
+Output: notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html
 Style: default
 Cover: ./Clustering.jpeg
 EstimatedReadingTime: true

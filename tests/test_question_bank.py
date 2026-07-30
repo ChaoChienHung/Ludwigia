@@ -124,8 +124,8 @@ class QuestionBankTests(unittest.TestCase):
             ),
             self._repo_path(
                 "notes",
-                "discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan",
-                "discovering-hidden-structures-a-guide-to-clustering-k-means-and-dbscan-en.md",
+                "discovering-hidden-structures-what-clustering-really-does",
+                "discovering-hidden-structures-what-clustering-really-does-en.md",
             ),
         ]
 
