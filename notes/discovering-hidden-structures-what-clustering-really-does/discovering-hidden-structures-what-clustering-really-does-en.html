@@ -12,7 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;}}">
   <meta name="garden:canonical_id" content="discovering-hidden-structures-what-clustering-really-does">
   <meta name="garden:published_at" content="2026-06-10">
-  <meta name="garden:last_modified_at" content="2026-07-26">
+  <meta name="garden:last_modified_at" content="2026-07-31">
   <meta name="garden:cover" content="notes/discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg">
   <meta name="garden:reading_time_minutes" content="22">
   <meta name="garden:source" content="notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.md">
@@ -154,7 +154,8 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#introduction-what-clustering-is-and-why-it-matters">Introduction: What Clustering Is and Why It Matters</a>
-<a class="note-toc-link level-1" href="#what-makes-a-cluster-the-role-of-representation-and-similarity">What Makes a Cluster? The Role of Representation and Similarity</a>
+<a class="note-toc-link level-1" href="#what-makes-a-cluster">What Makes a Cluster?</a>
+<a class="note-toc-link level-1" href="#the-role-of-representation-and-similarity">The Role of Representation and Similarity</a>
 <a class="note-toc-link level-1" href="#foundations-of-good-clustering-data-quality">Foundations of Good Clustering: Data Quality</a>
 <a class="note-toc-link level-1" href="#how-clustering-works-three-structural-hypotheses">How Clustering Works: Three Structural Hypotheses</a>
 <a class="note-toc-link level-2" href="#centroid-based-clustering">Centroid-Based Clustering</a>
@@ -184,7 +185,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-07-26" data-published-at="2026-06-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-07-26</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-07-31" data-published-at="2026-06-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-07-31</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -211,7 +212,7 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<figure class="note-image"><img src="./Clustering.jpeg" alt="Diagram showing how clustering transforms unlabeled raw data into distinct groups of similar points, illustrating algorithms such as K-Means, DBSCAN, and hierarchical clustering." loading="lazy"><figcaption class="note-image-caption">Clustering groups unlabeled data into meaningful clusters by identifying points with high intra-cluster similarity and low inter-cluster similarity.</figcaption></figure>
+<figure class="note-image"><img src="./Clustering.jpeg" alt="Diagram showing how clustering transforms unlabeled raw data into distinct groups of similar points, illustrating algorithms such as K-Means, DBSCAN, and hierarchical clustering." loading="lazy"><figcaption class="note-image-caption">Clustering groups unlabeled data into meaningful clusters.</figcaption></figure>
 </section>
 
 <section id="introduction-what-clustering-is-and-why-it-matters" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -235,22 +236,34 @@
 <p class="mb-3">This dual expectation—that groups naturally exist in the wild, and that we operationally need them to exist—is exactly what motivates the real-world applications (like retail segmentation, music recommendation, and fraud detection) mentioned earlier.</p></div>
 </section>
 
-<section id="what-makes-a-cluster-the-role-of-representation-and-similarity" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">What Makes a Cluster? The Role of Representation and Similarity</h3>
+<section id="what-makes-a-cluster" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">What Makes a Cluster?</h3>
 
-<p class="mb-3">So, what exactly defines a cluster? At its core, clustering is much like the Sorting Hat in <em>Harry Potter</em>.</p>
+<p class="mb-3">So, what exactly defines a cluster? We have talked a lot about finding groups, but at its fundamental level, the underlying logic of clustering is really about evaluating <strong>similarity</strong>.</p>
 
-<p class="mb-3">When new students arrive at Hogwarts, the Hat’s job is to assign each person to the group (a cluster) that fits them perfectly. But why is a specific group the best fit? Because the students within that group share hidden commonalities—whether it’s courage, ambition, or intellect. In mathematical terms, the Hat places them together because they score incredibly high on a specific <strong>similarity measure</strong>. The shared trait acts as the glue that connects the members internally, while cleanly separating them from the rest of the school.</p>
+<p class="mb-3">The core intent is to measure how closely data points resemble one another. When a set of individuals exhibits a remarkably high degree of similarity from a specific perspective, we can effectively treat them as the <em>same kind of entity</em>. By recognizing them as a unified whole, we form a cohesive partition—<strong>a cluster</strong>—which then serves as a reliable basis for our downstream judgments, decisions, or strategies.</p>
 
-<p class="mb-3">This reveals a profound truth about machine learning: <strong>clustering is essentially an unlabeled classification problem.</strong> We don't have predefined labels with fixed definitions telling us what the groups are. Instead, the algorithm must discover the natural boundaries itself by finding the strongest commonalities among the data points.</p>
+<p class="mb-3">Therefore, the golden rule of clustering is simple: every point must be assigned to the cluster it is most similar to.</p>
 
-<p class="mb-3">But wait—if clustering is simply about finding commonalities, does that mean it could actually make perfect sense to put Harry Potter and Voldemort in the exact same group?</p>
+<p class="mb-3">But what does "most similar" actually mean? "Similarity" is not a universal truth; it depends entirely on the perspective we choose to measure it.</p>
 
-<p class="mb-3">If you think about it, they actually share a striking number of traits. Both are orphans, both share twin wand cores, and both can speak Parseltongue. From a certain perspective, they perfectly belong in the same cluster!</p>
+<p class="mb-3">To understand this, think about the <strong>Sorting Hat</strong> in <em>Harry Potter</em>.</p>
+
+<p class="mb-3">When new students arrive at Hogwarts, the Hat’s job is to assign each person to the group (a cluster) that fits them perfectly. But why is a specific group the best fit? Because the students within that group share a high degree of similarity in certain traits—whether it’s courage, ambition, or intellect. In mathematical terms, the Hat places them together because they score incredibly high on a specific <strong>similarity measure</strong>. This shared resemblance acts as the glue that connects the members internally, allowing the school to treat them as a unified House for future judgments and competitions.</p>
+
+<p class="mb-3">This reveals a profound truth about machine learning: <strong>clustering is essentially an unlabeled classification problem.</strong> We don't have predefined labels with fixed definitions telling us what the groups are. Instead, the algorithm must discover the natural boundaries itself by finding the strongest similarities among the data points.</p>
+
+<p class="mb-3">But wait—if clustering is simply about evaluating similarities, does that mean it could actually make perfect sense to put Harry Potter and Voldemort in the exact same group?</p>
+
+<p class="mb-3">If you think about it, they actually share a striking number of traits. Both are orphans, both share twin wand cores, and both can speak Parseltongue. From a certain perspective, they are highly similar and perfectly belong in the same cluster!</p>
 
 <p class="mb-3">This brings us to a crucial catch: <strong>how the algorithm—or the Hat—initially defines "similarity" changes everything.</strong></p>
 
 <p class="mb-3">Imagine if the Sorting Hat stopped measuring similarity based on "personality traits" (courage vs. ambition) and instead measured it based on "magical lineage" or "wand history." Harry and Voldemort would suddenly be clustered together, while Ron Weasley might be placed somewhere else entirely. The students themselves haven't changed, but their "closest peers" completely shifted simply because the definition of similarity changed.</p>
+</section>
+
+<section id="the-role-of-representation-and-similarity" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Role of Representation and Similarity</h3>
 
 <div class="note-callout mb-3"><p class="mb-2"><strong>A Better Mental Model for Clustering</strong></p><p class="mb-2">The key idea is that clustering is not just about visually grouping points that seem close together. It becomes a meaningful computational task only after we decide how objects should be represented and what it means for them to be similar.</p>
 
@@ -258,7 +271,7 @@
 
 <p class="mb-0">In that sense, clustering is not only about finding groups. It is about making similarity explicit, then using an algorithm to test whether a particular view of the data reveals a meaningful pattern.</p></div>
 
-<p class="mb-3">In data science, we don't have a magical hat; we have to translate these commonalities into math. The algorithm is simply an engine that groups things—it is the similarity measure you choose that dictates exactly what kind of commonality it will look for. In practice, this choice must be driven by the geometry of the data, meaning how the "meaning" of the data is encoded in its features:</p>
+<p class="mb-3">In data science, we don't have a magical hat; we have to translate these similarities into math. The algorithm is simply an engine that groups things—it is the similarity measure you choose that dictates exactly what kind of resemblance it will look for. In practice, this choice must be driven by the geometry of the data, meaning how the "meaning" of the data is encoded in its features:</p>
 
 <ul class="note-list">
 <li><strong>Measuring Magnitude (Euclidean Distance):</strong> Numerical data (e.g., house prices, temperature) often lives in a continuous feature space. If you are clustering customers by spending power, the actual numerical size of those actions matters. Euclidean distance tracks this magnitude of difference perfectly.</li>
@@ -304,7 +317,7 @@
 
 <p class="mb-3">Centroid-based methods assume that each cluster can be summarized by a central point, often called a centroid or prototype. The algorithm assigns points to the cluster whose center best represents them and then updates those centers as the grouping changes.</p>
 
-<p class="mb-3">Because there are no predefined labels locking in a group's identity, the algorithm must dynamically update its understanding of what each group represents. The "commonality" of a cluster is not a fixed rule; it is a living average of whoever is currently inside it.</p>
+<p class="mb-3">Because there are no predefined labels locking in a group's identity, the algorithm must dynamically update its understanding of what each group represents. The "profile" of a cluster is not a fixed rule; it is a living average of whoever is currently inside it.</p>
 
 <p class="mb-3">Think about the Sorting Hat analogy again, but applied to this centroid-based logic. If it places Harry into Gryffindor, the House's overall "chivalry" average naturally increases. But what if it places Voldemort into Gryffindor? While this sounds absurd, algorithms assign points based on <em>relative</em> similarity, not absolute thresholds. If Voldemort's data make him even less suited for the other three Houses, the algorithm will assign him to Gryffindor simply because it is the "least bad" fit.</p>
 
