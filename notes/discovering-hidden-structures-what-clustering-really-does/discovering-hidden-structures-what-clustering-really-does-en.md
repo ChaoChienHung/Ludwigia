@@ -60,8 +60,6 @@ So, what exactly defines a cluster? We have talked a lot about finding groups, b
 
 The core intent is to measure how closely data points resemble one another. When a set of individuals exhibits a remarkably high degree of similarity from a specific perspective, we can effectively treat them as the *same kind of entity*. By recognizing them as a unified whole, we form a cohesive partition—**a cluster**—which then serves as a reliable basis for our downstream judgments, decisions, or strategies.
 
-Therefore, the golden rule of clustering is simple: every point must be assigned to the cluster it is most similar to.
-
 But what does "most similar" actually mean? "Similarity" is not a universal truth; it depends entirely on the perspective we choose to measure it.
 
 To understand this, think about the **Sorting Hat** in *Harry Potter*.
