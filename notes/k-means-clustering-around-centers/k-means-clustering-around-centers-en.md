@@ -22,7 +22,9 @@ FollowUps: Comparison note with DBSCAN; possible later note on K-Means++ and mod
 
 # K-Means: Clustering Around Centers
 
-In the overview note on clustering, the main point was that clustering only becomes meaningful after we decide how objects are represented, what similarity means, and what kind of structure we think the data contains. K-Means is the natural next step because it is one of the clearest examples of a center-based view of clustering. It assumes that a good cluster is a compact group organized around a representative center.
+As we saw in <content-link canonical="discovering-hidden-structures-what-clustering-really-does">Discovering Hidden Structures: What Clustering Really Does</content-link>, clustering isn't magic—it relies heavily on how we represent data, measure similarity, and envision the underlying structures. Among the different clustering approaches, centroid-based methods are often the first port of call. In this article, we'll dive into the quintessential centroid-based algorithm that started it all: K-Means.
+
+K-means is the natural next step because it is one of the clearest examples of a center-based view of clustering. It assumes that a good cluster is a compact group organized around a representative center.
 
 That makes K-Means a useful method to study even beyond its practical popularity. It shows how a geometric intuition can be turned into a concrete optimization problem. If a cluster is supposed to be a tight group of points around a center, then we can ask a sharper question: how should we place those centers, and how should we assign points to them, so that each group stays as compact as possible?
 
