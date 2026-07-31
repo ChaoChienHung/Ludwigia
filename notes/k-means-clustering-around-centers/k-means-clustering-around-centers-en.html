@@ -13,7 +13,7 @@
   <meta name="garden:canonical_id" content="k-means-clustering-around-centers">
   <meta name="garden:published_at" content="2026-07-31">
   <meta name="garden:last_modified_at" content="2026-07-31">
-  <meta name="garden:reading_time_minutes" content="26">
+  <meta name="garden:reading_time_minutes" content="28">
   <meta name="garden:source" content="notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.md">
   <script>
   (() => {
@@ -292,7 +292,7 @@
 <section id="2-the-optimization-process-global-sse-and-lloyds-algorithm" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">2. The Optimization Process: Global SSE and Lloyd's Algorithm</h3>
 
-<p class="mb-3">In Section 1, we established that evaluating the <code>SSE</code> to the centroid is the mathematically perfect way to measure the compactness of a single cluster.</p>
+<p class="mb-3">In Section 1, we established that evaluating the $SSE$ to the centroid is the mathematically perfect way to measure the compactness of a single cluster.</p>
 
 <p class="mb-3">But a clustering algorithm doesn't just evaluate one isolated group—it evaluates the entire dataset partitioned into $K$ clusters. Therefore, we simply generalize this goal into the global objective of K-Means, which is to minimize the total Sum of Squared Errors across all $K$ clusters simultaneously:</p>
 
@@ -316,7 +316,7 @@
 <li><strong>Repeat:</strong> Alternate between Step 2 and Step 3 until the assignments stop changing.</li>
 </ol>
 
-<p class="mb-3">This alternating structure is the core reason K-Means is so effective. Because every single step (both assigning points and updating centers) mathematically reduces—or at worst, maintains—the Global <code>SSE</code>, the algorithm is strictly monotonic and is guaranteed to converge. It elegantly breaks an infinitely complex optimization problem into two simple, actionable steps.</p>
+<p class="mb-3">This alternating structure is the core reason K-Means is so effective. Because every single step (both assigning points and updating centers) mathematically reduces—or at worst, maintains—the Global $SSE$, the algorithm is strictly monotonic and is guaranteed to converge. It elegantly breaks an infinitely complex optimization problem into two simple, actionable steps.</p>
 
 <p class="mb-3">However, it is important to note that this is a <em>greedy</em> approach. Because it optimizes step-by-step based on the immediate best choice, <strong>K-Means is only guaranteed to find a local optimum, not the global optimum</strong>. Depending on where the initial centroids are placed, K-Means may converge to a state where the total SSE is significantly higher than the true mathematical minimum.</p>
 </section>
@@ -328,11 +328,11 @@
 
 <h4 id="the-centroid-initialization-problem" class="mb-2">The Centroid Initialization Problem</h4>
 
-<p class="mb-3">As we established, K-Means uses a greedy approach to optimize the Global <code>SSE</code>. This means the algorithm only makes the best immediate choice at any given moment (assign to the nearest center, move center to the exact mean) without considering the long-term impact of that choice. More importantly, it never backtracks.</p>
+<p class="mb-3">As we established, K-Means uses a greedy approach to optimize the Global $SSE$. This means the algorithm only makes the best immediate choice at any given moment (assign to the nearest center, move center to the exact mean) without considering the long-term impact of that choice. More importantly, it never backtracks.</p>
 
 <p class="mb-3">Because of this greedy nature, the initial placement of your centroids dictates the entire trajectory of the algorithm. If you start with bad initial centroids—for instance, placing two starting centroids perfectly inside the same natural cluster—the algorithm will simply optimize locally based on that bad start. It will permanently split that natural group in half and will never realize its mistake.</p>
 
-<p class="mb-3">Unfortunately, it is almost impossible to know where the "good" centroids are before running the algorithm (otherwise, you wouldn't need to cluster in the first place!). The most common workaround is simply to <strong>run the algorithm multiple times with different random starting points</strong>. Because different initial seeds change the trajectory, they will yield different final clusterings. Practitioners run it 10 or 20 times and simply keep the result that achieved the lowest final <code>SSE</code>.</p>
+<p class="mb-3">Unfortunately, it is almost impossible to know where the "good" centroids are before running the algorithm (otherwise, you wouldn't need to cluster in the first place!). The most common workaround is simply to <strong>run the algorithm multiple times with different random starting points</strong>. Because different initial seeds change the trajectory, they will yield different final clusterings. Therefore, practitioners often run it 10 or 20 times and simply keep the result that achieved the lowest final $SSE$.</p>
 
 <h4 id="the-k-problem" class="mb-2">The $K$ Problem</h4>
 
@@ -352,16 +352,22 @@
 <li><strong>If $K$ is too large:</strong> The algorithm is forced to artificially fracture natural, cohesive groups into multiple smaller pieces to meet the quota.</li>
 </ul>
 
-<p class="mb-3">You can think of it this way: <strong>The value of $K$ determines the absolute ceiling (upper bound) of your clustering quality, while the initial centroid placement determines whether your specific run actually reaches that ceiling.</strong></p>
+<p class="mb-3">Therefore, the value of $K$ ultimately dictates the quality of your clustering results. To put it simply: <strong>The value of $K$ sets the absolute ceiling (upper bound) of your clustering performance, while the initial centroid placement determines whether your specific run actually has the chance to reach that ceiling.</strong></p>
 
-<p class="mb-3">Furthermore, you cannot simply test different $K$ values and pick the one with the lowest <code>SSE</code>. Mathematically, as $K$ increases, <code>SSE</code> will <em>always</em> decrease. If you have $N$ points and set $K=N$, every point becomes its own cluster, and the <code>SSE</code> drops perfectly to zero—but that is completely useless for finding patterns!</p>
+<p class="mb-3">Furthermore, you cannot simply test different $K$ values and pick the one with the lowest $SSE$. Mathematically, as $K$ increases, $SSE$ will <em>always</em> decrease. To make it clearer, let's look at an extreme case, where you have $N$ points and set $K=N$. In this case, every point becomes its own cluster, and the $SSE$ drops perfectly to zero—but that is completely useless for finding patterns!</p>
 
-<p class="mb-3">So, how do we actually choose $K$? It remains a mix of statistical heuristics and human judgment:</p>
+<p class="mb-3">So, how do we actually choose $K$? Because K-Means cannot answer this on its own, determining $K$ remains a practical blend of statistical heuristics, mathematical evaluation, and human judgment:</p>
 
 <ul class="note-list">
-<li><strong>Prior Knowledge:</strong> Sometimes the business logic dictates $K$ (e.g., "We need exactly 3 subscription tiers: Basic, Pro, Enterprise").</li>
-<li><strong>Evaluation Metrics:</strong> We can use methods that balance compactness with separation. The <strong>Elbow Method</strong> looks for the point where adding another cluster yields diminishing returns in dropping the SSE. The <strong>Silhouette Score</strong> measures how similar an object is to its own cluster compared to other clusters. The <strong>Davies-Bouldin Index</strong> evaluates the ratio of within-cluster scatter to between-cluster separation.</li>
-<li><strong>Over-clustering and Manual Merging:</strong> A practical trick is to intentionally set a slightly larger $K$ to ensure no natural groups are accidentally merged. After the algorithm finishes, a human domain expert can manually combine clusters that conceptually belong together.</li>
+<li><strong>Prior Knowledge &amp; Business Logic:</strong> In many real-world scenarios, the problem context itself dictates the number of clusters. For example, if a business wants to segment its customer base into "Basic, Pro, and Enterprise" tiers for marketing, $K$ is fixed at 3 by design. Domain constraints or physical limitations (such as deciding where to place exactly 5 regional warehouses) often provide the most reliable $K$ right out of the gate.</li>
+<li><strong>Quantitative Evaluation Metrics &amp; Heuristics:</strong> Instead of relying purely on guesswork, we can mathematically or visually score the clustering quality across different $K$ values using internal validation methods:
+<ul class="note-list">
+<li><strong>The Elbow Method (Visual Heuristic):</strong> We run K-Means across a range of $K$ values (e.g., from $K=1$ to $10$) and plot the total $Global SSE$ against each $K$. As $K$ increases, SSE will always drop. However, the graph typically forms an "elbow" shape—a sharp bend where adding more clusters yields rapidly diminishing returns in reducing error. The point right at this bend suggests the optimal $K$, representing the sweet spot before we start splitting natural groups into artificial fragments.</li>
+<li><strong>Silhouette Score:</strong> Measures how similar a data point is to its own cluster compared to other clusters, outputting a score between $-1$ and $+1$. A higher average score indicates that clusters are well-separated and dense.</li>
+<li><strong>Davies-Bouldin Index:</strong> Evaluates the "similarity" between each cluster and its most similar counterpart, factoring in both within-cluster scatter and between-cluster separation. A <em>lower</em> score means the clusters are compact and far apart from each other.
+<p class="mb-2"><em>(Note: If your Elbow graph is a smooth curve with no sharp bend, or if these metrics oscillate wildly without a clear peak, it usually signals a crucial reality: your data lacks distinct, discrete groups, meaning K-Means' spherical assumptions may be a poor fit for the dataset.)</em></p></li>
+</ul></li>
+<li><strong>Over-Clustering and Manual Merging (The Expert-in-the-Loop Trick):</strong> A clever, highly pragmatic strategy used by data scientists is to intentionally set $K$ slightly <em>larger</em> than expected. By over-clustering, you ensure that dense, natural groups are never awkwardly merged together. Once the algorithm finishes, a human domain expert reviews the resulting micro-clusters and manually combines adjacent groups that conceptually belong to the same category. This combines the speed of automated partitioning with the nuanced intelligence of human intuition.</li>
 </ul>
 </section>
 
@@ -409,14 +415,14 @@
 
 <p class="mb-3">K-Means is a foundational algorithm because it takes our intuitive visual desire to find "tight, compact groups" and translates it into a rigorous, solvable mathematical optimization problem: minimizing the within-cluster squared distance to representative centers.</p>
 
-<p class="mb-3">That single objective function (<code>SSE</code>) explains the entire behavior of the algorithm. It explains why we use the arithmetic mean (because calculus proves it is the ultimate SSE minimizer). It explains why Lloyd's algorithm ping-pongs between fixing assignments and fixing centers. It explains why the algorithm is a greedy prisoner to its initial starting points. Most importantly, it explains why K-Means stubbornly assumes every cluster in the world is a neat, similarly-sized, compact sphere.</p>
+<p class="mb-3">That single objective function ($SSE$) explains the entire behavior of the algorithm. It explains why we use the arithmetic mean (because calculus proves it is the ultimate SSE minimizer). It explains why Lloyd's algorithm ping-pongs between fixing assignments and fixing centers. It explains why the algorithm is a greedy prisoner to its initial starting points. Most importantly, it explains why K-Means stubbornly assumes every cluster in the world is a neat, similarly-sized, compact sphere.</p>
 
 <p class="mb-3">If your data fits that geometric assumption, K-Means is a lightning-fast, highly interpretable powerhouse. If it doesn't, K-Means will still give you an answer—but it will be the wrong one. However, by understanding <em>why</em> the math forced K-Means to fail, you gain the exact insight needed to choose the right advanced variant or switch to a density-based algorithm instead.</p>
 
 <div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li><strong>The Pairwise Shortcut:</strong> K-Means avoids the computational nightmare of $O(N^2)$ point-to-point distance calculations by summarizing clusters with a centroid, reducing the cost to $O(N)$.</li>
 <li><strong>The Centroid Identity:</strong> We don't lose the true essence of clustering by doing this. The math proves that minimizing the distance to the centroid is strictly mathematically equivalent to minimizing the pairwise distances between all points in the cluster.</li>
-<li><strong>The Optimization Goal:</strong> The algorithm's ultimate purpose is to minimize the Global Sum of Squared Errors (<code>SSE</code>).</li>
+<li><strong>The Optimization Goal:</strong> The algorithm's ultimate purpose is to minimize the Global Sum of Squared Errors ($SSE$).</li>
 <li><strong>Why the Mean:</strong> The arithmetic mean is not an arbitrary choice; it is the exact mathematical minimizer for squared Euclidean distance.</li>
 <li><strong>Lloyd's Algorithm:</strong> It resolves the chicken-and-egg problem by alternating between assigning points to the nearest center and updating the centers to the mean of those points. It is greedy and only guarantees convergence to a local minimum.</li>
 <li><strong>The $K$ Ceiling:</strong> The number of clusters ($K$) dictates the maximum possible quality of the grouping, while the initialization dictates if we reach it. Both require human guidance (e.g., Elbow Method, K-Means++).</li>
