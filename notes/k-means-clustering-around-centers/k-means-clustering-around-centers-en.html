@@ -11,8 +11,9 @@
   <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.centroid_based_clustering">
   <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.centroid_based_clustering&quot;:{&quot;en&quot;:&quot;Centroid-Based Clustering&quot;,&quot;zh-Hant&quot;:&quot;質心式分群&quot;,&quot;zh-Hans&quot;:&quot;质心式聚类&quot;}}">
   <meta name="garden:canonical_id" content="k-means-clustering-around-centers">
-  <meta name="garden:last_modified_at" content="2026-06-20">
-  <meta name="garden:reading_time_minutes" content="18">
+  <meta name="garden:published_at" content="2026-07-31">
+  <meta name="garden:last_modified_at" content="2026-07-31">
+  <meta name="garden:reading_time_minutes" content="16">
   <meta name="garden:source" content="notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.md">
   <script>
   (() => {
@@ -151,21 +152,15 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#article-compass">Article Compass</a>
-<a class="note-toc-link level-1" href="#why-k-means-is-worth-learning">Why K-Means Is Worth Learning</a>
-<a class="note-toc-link level-1" href="#the-core-assumption-clusters-are-organized-around-centers">The Core Assumption: Clusters Are Organized Around Centers</a>
-<a class="note-toc-link level-1" href="#from-intuition-to-objective-why-sse-appears">From Intuition to Objective: Why SSE Appears</a>
-<a class="note-toc-link level-1" href="#why-the-mean-appears-naturally">Why the Mean Appears Naturally</a>
-<a class="note-toc-link level-1" href="#how-lloyds-algorithm-optimizes-k-means">How Lloyd's Algorithm Optimizes K-Means</a>
-<a class="note-toc-link level-1" href="#a-more-concrete-intuition-for-the-alternation">A More Concrete Intuition for the Alternation</a>
-<a class="note-toc-link level-1" href="#initialization-matters-more-than-people-first-expect">Initialization Matters More Than People First Expect</a>
-<a class="note-toc-link level-1" href="#what-k-means-is-really-assuming-about-data-geometry">What K-Means Is Really Assuming About Data Geometry</a>
-<a class="note-toc-link level-1" href="#where-k-means-works-well">Where K-Means Works Well</a>
-<a class="note-toc-link level-1" href="#where-k-means-breaks">Where K-Means Breaks</a>
-<a class="note-toc-link level-1" href="#choosing-k-necessary-useful-and-awkward">Choosing `K`: Necessary, Useful, and Awkward</a>
-<a class="note-toc-link level-1" href="#practical-patches-and-variants">Practical Patches and Variants</a>
-<a class="note-toc-link level-1" href="#beyond-vanilla-k-means">Beyond Vanilla K-Means</a>
-<a class="note-toc-link level-1" href="#when-to-use-it-and-when-not-to">When to Use It, and When Not To</a>
+            <a class="note-toc-link level-1" href="#1-representing-a-cluster-the-birth-of-the-centroid">1. Representing a Cluster: The Birth of the Centroid</a>
+<a class="note-toc-link level-2" href="#step-1-evaluating-the-representative">Step 1: Evaluating the Representative</a>
+<a class="note-toc-link level-2" href="#step-2-finding-the-optimal-point">Step 2: Finding the Optimal Point</a>
+<a class="note-toc-link level-2" href="#step-3-the-pairwise-bonus-centroid-identity">Step 3: The Pairwise Bonus (Centroid Identity)</a>
+<a class="note-toc-link level-1" href="#2-the-optimization-process-global-sse-and-lloyds-algorithm">2. The Optimization Process: Global SSE and Lloyd's Algorithm</a>
+<a class="note-toc-link level-2" href="#solving-the-chicken-and-egg-problem">Solving the Chicken-and-Egg Problem</a>
+<a class="note-toc-link level-1" href="#3-implementation-details-initialization-and-choosing-k">3. Implementation Details: Initialization and Choosing $K$</a>
+<a class="note-toc-link level-1" href="#4-pros-cons-and-geometric-assumptions">4. Pros, Cons, and Geometric Assumptions</a>
+<a class="note-toc-link level-1" href="#5-the-k-means-family-beyond-the-vanilla-algorithm">5. The K-Means Family: Beyond the Vanilla Algorithm</a>
 <a class="note-toc-link level-1" href="#summary">Summary</a>
           </nav>
         </div>
@@ -189,7 +184,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-07-31" data-published-at="2026-07-31"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-07-31</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -216,311 +211,196 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">In the overview note on clustering, the main point was that clustering only becomes meaningful after we decide how objects are represented, what similarity means, and what kind of structure we think the data contains. K-Means is the natural next step because it is one of the clearest examples of a center-based view of clustering. It assumes that a good cluster is a compact group organized around a representative center.</p>
+<p class="mb-3">As we explored in <a class="note-content-link" data-canonical-id="discovering-hidden-structures-what-clustering-really-does" href="../discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html">Discovering Hidden Structures: What Clustering Really Does<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Discovering Hidden Structures: What Clustering Really Does</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span></span><span class="note-content-link-preview-summary">A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.</span></span></span></a>, clustering is fundamentally about grouping objects together based on a chosen perspective of <strong>similarity</strong>. Depending on their core mechanisms, clustering algorithms generally fall into three main categories: centroid-based, density-based, and hierarchical clustering.</p>
 
-<p class="mb-3">That makes K-Means a useful method to study even beyond its practical popularity. It shows how a geometric intuition can be turned into a concrete optimization problem. If a cluster is supposed to be a tight group of points around a center, then we can ask a sharper question: how should we place those centers, and how should we assign points to them, so that each group stays as compact as possible?</p>
+<p class="mb-3">In this note, we will explore K-Means, one of the most classic centroid-based algorithms. As its category suggests, K-Means uses a central point (a <strong>centroid</strong>) to represent an entire cluster, and assigns data points to these clusters based on their distance to these representatives. Consequently, a good clustering is one that minimizes the total distance between data points and their assigned representatives, resulting in compact clusters whose members lie closely around their centers.</p>
 
-<p class="mb-3">This framing matters because K-Means is often described too casually as "grouping points by closeness." That description is not exactly wrong, but it is incomplete. K-Means is not just following local closeness in an ad hoc way. It is optimizing a specific notion of within-cluster compactness, and that objective explains both why the algorithm is so simple and why it breaks in predictable ways.</p>
+<p class="mb-3">However, this simple premise introduces a core dilemma: calculating a cluster's <em>centroid</em> (its arithmetic mean) requires knowing which data points belong to that cluster in the first place. But in unlabeled data, cluster memberships are precisely the unknown information we are trying to discover! How can we find optimal centroids when they depend on assignments we don't yet have? Beyond this fundamental chicken-and-egg problem, what practical details must we pay attention to when implementing the algorithm? When is K-Means the right tool for the job, and when is it destined to fail? Finally, are there related variants we can turn to for different outcomes?</p>
+
+<p class="mb-3">In the following sections, we will delve into these questions one by one.</p>
 </section>
 
-<section id="article-compass" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Article Compass</h3>
+<section id="1-representing-a-cluster-the-birth-of-the-centroid" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Representing a Cluster: The Birth of the Centroid</h3>
+
+<p class="mb-3">In many practical applications, we don't just want to partition data; we want to <em>summarize</em> it. If we are clustering customer behaviors, we want a single "typical customer profile" to represent a group. If we are grouping delivery locations, we want a single coordinate to act as the regional hub.</p>
+
+<p class="mb-3">Therefore, our initial goal is simple: we want to find a single point, let's call it $c$, to act as the representative for an entire cluster $C$.</p>
+
+<h4 id="step-1-evaluating-the-representative" class="mb-2">Step 1: Evaluating the Representative</h4>
+
+<p class="mb-3">If $c$ is going to be a good representative, the data points in the cluster should lie as close to it as possible. We can quantify exactly how "good" a specific point $c$ is by measuring the Sum of Squared Errors (<code>SSE</code>). We define the cost function $J(c)$ as the total squared distance from every point $x$ in the cluster to this representative $c$:</p>
+
+<p class="mb-3">$$ J(c) = \sum_{x \in C} \lVert x - c \rVert^2 $$</p>
+
+<p class="mb-3">Notice that at this stage, $c$ could be <em>any</em> point in space. Our goal is to find the absolute best $c$ that minimizes this cost.</p>
+
+<h4 id="step-2-finding-the-optimal-point" class="mb-2">Step 2: Finding the Optimal Point</h4>
+
+<p class="mb-3">To find the optimal representative that minimizes the squared distances, we can take the partial derivative of $J$ with respect to $c$ and set it to zero:</p>
+
+<p class="mb-3">$$ \frac{\partial J}{\partial c} = -2\sum_{x \in C}(x - c) = 0 $$</p>
+
+<p class="mb-3">By expanding this equation, we get:</p>
+
+<p class="mb-3">$$ \sum_{x \in C} x - \sum_{x \in C} c = 0 $$</p>
+
+<p class="mb-3">Since summing the constant $c$ over all $|C|$ points in the cluster is simply $|C|c$, we have:</p>
+
+<p class="mb-3">$$ |C|c = \sum_{x \in C} x $$</p>
+
+<p class="mb-3">Dividing both sides by the number of points $|C|$, we arrive at the perfect representative point:</p>
+
+<p class="mb-3">$$ c = \frac{1}{|C|} \sum_{x \in C} x $$</p>
+
+<p class="mb-3">We define this optimal, SSE-minimizing point as the <strong>centroid</strong> (denoted as $\mu$). This is a profound realization: K-Means does not just arbitrarily decide to use the "average." <strong>It uses the mean because calculus proves it is the exact mathematical minimizer of the squared distance.</strong></p>
+
+<h4 id="step-3-the-pairwise-bonus-centroid-identity" class="mb-2">Step 3: The Pairwise Bonus (Centroid Identity)</h4>
+
+<p class="mb-3">At this point, a skeptic might ask a very valid question: <em>"By summarizing the cluster with a single point, aren't we ignoring the true essence of clustering? Shouldn't clustering be about ensuring that data points are close to EACH OTHER, not just close to some artificial center?"</em></p>
+
+<p class="mb-3">Intuitively, to verify that a cluster is truly tight, we would want to measure the pairwise distances between <em>every single point</em> in the cluster. But computing point-to-point distances for $N$ points requires $O(N^2)$ operations, which becomes a computational nightmare for large datasets.</p>
+
+<p class="mb-3">Does optimizing for our representative centroid $\mu$ actually achieve the goal of bringing points closer to each other?</p>
+
+<p class="mb-3">The answer is a resounding yes, thanks to a beautiful mathematical result known as the <strong>Centroid Identity</strong> (also called Huygens' Theorem). It states that the sum of squared distances from the points to their centroid is exactly proportional to the total pairwise squared distance within that cluster:</p>
+
+<p class="mb-3">$$ \sum_{x \in C} \lVert x - \mu \rVert^2 = \frac{1}{2|C|} \sum_{x \in C} \sum_{y \in C} \lVert x - y \rVert^2 $$</p>
+
+<p class="mb-3">Let's briefly see why this identity holds. Let the cluster contain $n = |C|$ points, denoted by $x_1, x_2, \dots, x_n$, and let $\mu = \frac{1}{n}\sum_{i=1}^{n}x_i$.</p>
+
+<p class="mb-3">First, expand the left-hand side:</p>
+
+<p class="mb-3">$$ \begin{aligned} \sum_{i=1}^{n}\lVert x_i-\mu\rVert^2 &amp;= \sum_{i=1}^{n} \left( \lVert x_i\rVert^2 -2x_i^\top\mu +\lVert\mu\rVert^2 \right) \\ &amp;= \sum_{i=1}^{n}\lVert x_i\rVert^2 - 2\mu^\top\sum_{i=1}^{n}x_i + n\lVert\mu\rVert^2 \end{aligned} $$</p>
+
+<p class="mb-3">Since $\sum_{i=1}^{n}x_i=n\mu$, we obtain:</p>
+
+<p class="mb-3">$$ \sum_{i=1}^{n}\lVert x_i-\mu\rVert^2 = \sum_{i=1}^{n}\lVert x_i\rVert^2 - n\lVert\mu\rVert^2 $$</p>
+
+<p class="mb-3">Now expand the pairwise distances on the right side:</p>
+
+<p class="mb-3">$$ \begin{aligned} \sum_{i=1}^{n}\sum_{j=1}^{n} \lVert x_i-x_j\rVert^2 &amp;= \sum_{i,j} \left( \lVert x_i\rVert^2 + \lVert x_j\rVert^2 - 2x_i^\top x_j \right) \\ &amp;= 2n\sum_{i=1}^{n}\lVert x_i\rVert^2 - 2\left\| \sum_{i=1}^{n}x_i \right\|^2 \\ &amp;= 2n\sum_{i=1}^{n}\lVert x_i\rVert^2 - 2n^2\lVert\mu\rVert^2 \end{aligned} $$</p>
+
+<p class="mb-3">Dividing both sides by $2n$ gives:</p>
+
+<p class="mb-3">$$ \frac{1}{2n} \sum_{i=1}^{n}\sum_{j=1}^{n} \lVert x_i-x_j\rVert^2 = \sum_{i=1}^{n}\lVert x_i\rVert^2 - n\lVert\mu\rVert^2 = \sum_{i=1}^{n}\lVert x_i-\mu\rVert^2 $$</p>
+
+<p class="mb-3">Which is exactly the Centroid Identity.</p>
+
+<p class="mb-3"><strong>What does this mean for K-Means?</strong> Because the scaling factor $\frac{1}{2|C|}$ depends only on the cluster size, minimizing one quantity is exactly equivalent to minimizing the other. In other words, <strong>bringing every point closer to the centroid is mathematically the exact same thing as bringing every point closer to every other point.</strong></p>
+
+<p class="mb-3">We get the best of both worlds: we successfully summarize the cluster using a single representative point, we achieve the true clustering goal of minimizing pairwise distances, and we drastically reduce the computational cost from $O(N^2)$ down to $O(N)$.</p>
+
+<div id="the-euclidean-catch-and-a-clever-workaround" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-regular fa-warning me-2"></i>The Euclidean Catch (and a Clever Workaround)</h4><p class="mb-3">It is crucial to note, however, that this elegant equivalence comes with a strict condition: it only holds true in Euclidean space. This is a fundamental limitation of K-Means—it is strictly bound to using Euclidean distance (or geometric distance) as its similarity metric. You cannot simply swap in other distance metrics (like Manhattan or raw Cosine distance) and expect the same mathematical derivation to work.</p>
+
+<p class="mb-3">Fortunately, there is a very practical workaround, especially for modern machine learning embeddings. If you apply L2 normalization to your data (turning them into unit vectors), the squared Euclidean distance becomes inversely proportional to Cosine similarity. This means that while vanilla K-Means doesn't support Cosine similarity out of the box, you can perfectly cluster text or image embeddings based on their angles just by normalizing the vectors first!</p></div>
+
+<hr>
+</section>
+
+<section id="2-the-optimization-process-global-sse-and-lloyds-algorithm" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. The Optimization Process: Global SSE and Lloyd's Algorithm</h3>
+
+<p class="mb-3">In Section 1, we proved that <em>if</em> we have a specific group of points, the centroid (the arithmetic mean) is the absolute best representative for them.</p>
+
+<p class="mb-3">But a clustering algorithm doesn't just evaluate one cluster—it evaluates the entire dataset partitioned into $K$ clusters. The global objective of K-Means is to minimize the total Sum of Squared Errors (<code>SSE</code>) across all $K$ clusters simultaneously:</p>
+
+<p class="mb-3">$$ \mathrm{Global\ SSE} = \sum_{i=1}^{K} \sum_{x \in C_i} \lVert x - \mu_i \rVert^2 $$</p>
+
+<h4 id="solving-the-chicken-and-egg-problem" class="mb-2">Solving the Chicken-and-Egg Problem</h4>
+
+<p class="mb-3">To minimize this Global SSE, we are faced with a circular dependency:</p>
 
 <ul class="note-list">
-<li>Focus: understand K-Means as a center-based clustering method rather than as a vague nearest-neighbor heuristic.</li>
-<li>Main flow: connect K-Means back to the center-based clustering view introduced in the overview, derive the objective function, see why the centroid is the mean, walk through Lloyd's algorithm, then examine where the method works and where it does not.</li>
-<li>Out of scope: this note does not try to survey all clustering families or fully compare K-Means with DBSCAN and hierarchical clustering.</li>
-</ul>
-</section>
-
-<section id="why-k-means-is-worth-learning" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Why K-Means Is Worth Learning</h3>
-
-<p class="mb-3">K-Means matters for two reasons. First, it gives a clean example of how an intuitive geometric idea can be turned into an optimization objective. Second, even when it is not the final method you deploy, it often serves as a useful baseline because it is fast, easy to implement, and easy to interpret.</p>
-
-<p class="mb-3">It also teaches an important modeling lesson: every algorithm quietly carries a worldview about what data should look like. In K-Means, that worldview is simple. A good cluster is one that can be summarized by a representative center, and the points in that cluster should remain close to that center.</p>
-
-<p class="mb-3">Once you see that assumption clearly, the rest of the method becomes much easier to understand.</p>
-</section>
-
-<section id="the-core-assumption-clusters-are-organized-around-centers" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">The Core Assumption: Clusters Are Organized Around Centers</h3>
-
-<p class="mb-3">Imagine looking at a scatter plot and saying that one region "looks like a cluster." Usually what you mean is not just that the points are near each other. You also mean that the group feels internally coherent, almost as if it has a middle that the points gather around.</p>
-
-<p class="mb-3">K-Means formalizes exactly that intuition.</p>
-
-<ul class="note-list">
-<li>Each cluster is represented by a center.</li>
-<li>Each point belongs to the cluster whose center is closest.</li>
-<li>A clustering is better when points stay closer to their own centers.</li>
+<li>To find the best centers ($\mu_i$), you need to know which points belong to which clusters ($C_i$).</li>
+<li>To assign points to the best clusters ($C_i$), you need to know where the centers ($\mu_i$) are.</li>
 </ul>
 
-<p class="mb-3">This is why K-Means is a center-based method. It does not try to discover arbitrary shapes. It does not care about connectivity chains or density plateaus. It asks a narrower question: if the world really consists of <code>K</code> compact groups with meaningful centers, how do we recover them?</p>
-
-<p class="mb-3">That question naturally leads to an objective function.</p>
-</section>
-
-<section id="from-intuition-to-objective-why-sse-appears" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">From Intuition to Objective: Why SSE Appears</h3>
-
-<p class="mb-3">If compactness is the goal, we need a way to measure how spread out each cluster is. The standard K-Means objective is the sum of squared errors, usually abbreviated as <code>SSE</code>:</p>
-
-<p class="mb-3">$$ \mathrm{SSE} = \sum_{i=1}^{K} \sum_{x \in C_i} \lVert x - \mu_i \rVert^2 $$</p>
-
-<p class="mb-3">Here:</p>
-
-<ul class="note-list">
-<li><code>K</code> is the number of clusters.</li>
-<li><code>C_i</code> is the set of points assigned to cluster <code>i</code>.</li>
-<li><code>\mu_i</code> is the center of cluster <code>i</code>.</li>
-<li><code>\lVert x - \mu_i \rVert^2</code> is the squared Euclidean distance between point <code>x</code> and the cluster center.</li>
-</ul>
-
-<p class="mb-3">This objective says: for each cluster, measure how far every point is from that cluster's center, square those distances, and add everything up. Lower <code>SSE</code> means the points sit more tightly around their centers, so lower is better.</p>
-
-<p class="mb-3">Why squared distance instead of plain distance?</p>
-
-<ul class="note-list">
-<li>It penalizes far-away points more strongly, which makes scattered clusters look worse than compact ones.</li>
-<li>It leads to a mathematically convenient objective whose best center is the mean.</li>
-<li>It matches the geometry K-Means is built around: compact, roughly spherical groups under Euclidean distance.</li>
-</ul>
-
-<p class="mb-3">So the algorithm is not simply saying "put nearby things together." It is saying "find a partition and a set of centers that minimize within-cluster squared deviation."</p>
-</section>
-
-<section id="why-the-mean-appears-naturally" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Why the Mean Appears Naturally</h3>
-
-<p class="mb-3">At this point a natural objection appears: why does the cluster center have to be the mean? Why not choose any point near the middle, or even require the center to be an actual observed data point?</p>
-
-<p class="mb-3">The answer comes directly from the squared-distance objective. If the cluster assignments are fixed, then the best center for a cluster is the point that minimizes the total squared distance to all points in that cluster. That minimizer is the arithmetic mean:</p>
-
-<p class="mb-3">$$ \mu_i = \frac{1}{|C_i|} \sum_{x \in C_i} x $$</p>
-
-<p class="mb-3">This is the reason the centroid keeps being recomputed as an average during the algorithm. It is not an arbitrary design choice. It is the direct consequence of optimizing squared error.</p>
-
-<p class="mb-3">That also explains an important detail: the centroid does not need to be one of the original data points. It is a derived representative point, not necessarily an observed example. If you want the representative to be an actual member of the dataset, you are already moving toward a different method such as K-Medoids.</p>
-
-<p class="mb-3">This is the payoff sentence for the whole method:</p>
-
-<p class="mb-3">K-Means is really mean-based partitioning under squared distance.</p>
-
-<p class="mb-3">Once that sentence is clear, the algorithm becomes much less mysterious.</p>
-</section>
-
-<section id="how-lloyds-algorithm-optimizes-k-means" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">How Lloyd's Algorithm Optimizes K-Means</h3>
-
-<p class="mb-3">The most common procedure for K-Means is Lloyd's algorithm. It alternates between two simple operations: assign points to centers, then update centers from assigned points.</p>
+<p class="mb-3">K-Means solves this using <strong>Lloyd's algorithm</strong>, which breaks the problem down by repeatedly fixing one half of the equation while solving the other:</p>
 
 <ol class="mb-3">
-<li>Choose the number of clusters <code>K</code>.</li>
-<li>Initialize <code>K</code> centroids.</li>
-<li>Assign each point to its nearest centroid.</li>
-<li>Recompute each centroid as the mean of the points currently assigned to it.</li>
-<li>Repeat the assignment and update steps until the assignments stop changing, or until <code>SSE</code> no longer meaningfully improves.</li>
+<li><strong>Initialize:</strong> Randomly place $K$ centroids in the space.</li>
+<li><strong>Assign (Fix Centers):</strong> Assuming the centers are perfectly placed, assign each point to its nearest centroid. Because points join the cluster that offers the smallest squared distance, this step mathematically minimizes the overall SSE.</li>
+<li><strong>Update (Fix Assignments):</strong> Assuming the cluster assignments are perfect, recompute each centroid as the mean of its newly assigned points. As we proved in Section 1, the mean is the exact minimizer of the SSE for a fixed set of points.</li>
+<li><strong>Repeat:</strong> Alternate between Step 2 and Step 3 until the assignments stop changing.</li>
 </ol>
 
-<p class="mb-3">This alternating structure is the core reason K-Means feels so simple in practice. Each step is easy to explain:</p>
-
-<ul class="note-list">
-<li>In the assignment step, if the centers are fixed, the best thing you can do is assign each point to the nearest one.</li>
-<li>In the update step, if the assignments are fixed, the best thing you can do is replace each center with the mean of its assigned points.</li>
-</ul>
-
-<p class="mb-3">Each step improves the objective or leaves it unchanged, so <code>SSE</code> never increases across iterations. That monotonic improvement gives the method a stable feel: every iteration makes the clustering at least as good as before under its own objective.</p>
-
-<p class="mb-3">But there is an important caveat. Convergence does not mean global optimality. Lloyd's algorithm can get stuck in a local minimum, which is why two runs on the same dataset can produce different answers.</p>
+<p class="mb-3">This alternating structure is the core reason K-Means is so effective. Because every single step mathematically reduces (or maintains) the Global <code>SSE</code>, the algorithm is strictly monotonic and is guaranteed to converge. It elegantly breaks an infinitely complex optimization problem into two simple, greedy steps.</p>
 </section>
 
-<section id="a-more-concrete-intuition-for-the-alternation" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">A More Concrete Intuition for the Alternation</h3>
+<section id="3-implementation-details-initialization-and-choosing-k" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Implementation Details: Initialization and Choosing $K$</h3>
 
-<p class="mb-3">It helps to think of Lloyd's algorithm as repeatedly fixing one half of the problem while solving the other half.</p>
+<p class="mb-3">While K-Means is mathematically elegant, Lloyd's algorithm has a major catch: it guarantees convergence, but only to a <em>local</em> minimum, not necessarily the <em>global</em> optimum. This makes practical implementation details crucial.</p>
+
+<p class="mb-3"><strong>The Initialization Problem</strong> If you start with bad initial centroids (e.g., two centroids placed right next to each other in the same natural group), the algorithm can easily get permanently stuck in a sub-optimal arrangement. Different random seeds will yield noticeably different clusterings.</p>
+
+<p class="mb-3">This is why practitioners usually run K-Means multiple times and keep the result with the lowest final <code>SSE</code>. To systematically fix this, <strong>K-Means++</strong> was introduced. It uses a smarter initialization strategy that probabilistically spreads the initial centers as far apart as possible, drastically reducing the chance of poor convergence.</p>
+
+<p class="mb-3"><strong>The $K$ Problem</strong> The optimization math is clean only <em>after</em> $K$ is fixed. But in reality, $K$ is rarely known in advance.</p>
 
 <ul class="note-list">
-<li>If the centers are already chosen, the partition problem becomes easy: every point simply joins the closest center.</li>
-<li>If the memberships are already chosen, the center problem becomes easy: every cluster center simply becomes the mean of its members.</li>
+<li>If $K$ is too small, distinct natural groups get merged.</li>
+<li>If $K$ is too large, natural groups get artificially fragmented.</li>
+<li>You cannot just pick the $K$ with the lowest <code>SSE</code>, because <code>SSE</code> will <em>always</em> decrease as $K$ increases (reaching zero if every point becomes its own cluster).</li>
 </ul>
 
-<p class="mb-3">The hard part is that these two decisions depend on each other. Membership depends on centers, and centers depend on membership. Lloyd's algorithm handles that circular dependence by alternating between them until the solution stabilizes.</p>
-
-<p class="mb-3">This is also why the method is efficient but not omniscient. It solves each subproblem greedily and cleanly, but it does not search the entire space of all possible partitions.</p>
+<p class="mb-3">Choosing $K$ remains an awkward mix of domain knowledge, heuristics (like the Elbow Method), and downstream validation. K-Means is not a fully automatic pattern detector; it requires human guidance to set the boundaries.</p>
 </section>
 
-<section id="initialization-matters-more-than-people-first-expect" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Initialization Matters More Than People First Expect</h3>
+<section id="4-pros-cons-and-geometric-assumptions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Pros, Cons, and Geometric Assumptions</h3>
 
-<p class="mb-3">Because Lloyd's algorithm only guarantees convergence to a local minimum, initialization is not a minor implementation detail. It is part of the method's practical behavior.</p>
+<p class="mb-3">To understand when K-Means works and when it fails, you just need to look at what its objective function rewards. By minimizing squared Euclidean distance to a single center, K-Means is inherently biased toward a specific geometry.</p>
 
-<p class="mb-3">Bad initial centroids can cause several problems:</p>
+<p class="mb-3"><strong>Where K-Means Shines:</strong> K-Means is incredibly fast, simple, and interpretable. It works exceptionally well when your data is:</p>
 
 <ul class="note-list">
-<li>the algorithm may converge to a poor local minimum</li>
-<li>different runs may yield noticeably different clusterings</li>
-<li>one centroid may end up with very few points while another absorbs too many</li>
-<li>some implementations may even face empty clusters during updates</li>
+<li>Pockets of compact, roughly spherical groups.</li>
+<li>Of somewhat similar scale and density.</li>
+<li>Separated enough that nearest-center assignments make logical sense.</li>
 </ul>
 
-<p class="mb-3">These outcomes are not just accidental bugs. They reflect the fact that the optimization surface is sensitive to where the search begins.</p>
+<p class="mb-3">In applications like basic customer segmentation, vector quantization, or image color compression, K-Means provides a clean summary. The resulting centroids are highly interpretable—they literally serve as readable "prototypes" for the group they represent.</p>
 
-<p class="mb-3">This is why practitioners often run K-Means multiple times with different random seeds and keep the solution with the lowest final <code>SSE</code>. It is also why K-Means++ became so popular. K-Means++ uses a smarter initialization strategy that spreads initial centers apart, making it less likely that the algorithm starts from a clearly bad configuration.</p>
+<p class="mb-3"><strong>Where K-Means Breaks:</strong> K-Means does not fail randomly; it fails predictably when data violates its geometric worldview. Common failure modes include:</p>
 
-<p class="mb-3">K-Means++ improves a practical weakness, but it does not change the deeper modeling assumption. The method still expects center-based, compact structure.</p>
+<ul class="note-list">
+<li><strong>Irregular or non-convex shapes:</strong> If clusters are crescent-shaped or form concentric rings, a single centroid is a terrible summary.</li>
+<li><strong>Different scales and densities:</strong> If one cluster is tiny and dense while another is broad and sparse, the squared-error objective may incorrectly chop the large cluster in half.</li>
+<li><strong>Outliers:</strong> Because distances are squared, extreme outliers act like gravity wells, pulling the mean—and therefore the centroid—far away from the actual data mass.</li>
+</ul>
+
+<p class="mb-3">If your data relies on connectivity (like a chain of points) rather than central tendency, K-Means will still force the data into rigid, spherical boxes anyway.</p>
 </section>
 
-<section id="what-k-means-is-really-assuming-about-data-geometry" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">What K-Means Is Really Assuming About Data Geometry</h3>
+<section id="5-the-k-means-family-beyond-the-vanilla-algorithm" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. The K-Means Family: Beyond the Vanilla Algorithm</h3>
 
-<p class="mb-3">A useful way to judge K-Means is to ask what sort of geometry its objective rewards.</p>
-
-<p class="mb-3">It works best when clusters are:</p>
+<p class="mb-3">Once the core K-Means idea is clear, it is easier to see why a whole family of variants keeps emerging. They all share the same center-based logic, but extend it to patch specific weaknesses:</p>
 
 <ul class="note-list">
-<li>compact rather than elongated</li>
-<li>roughly spherical rather than highly irregular</li>
-<li>of somewhat similar scale rather than wildly different sizes</li>
-<li>separated enough that nearest-center assignments are meaningful</li>
+<li><strong>K-Medoids:</strong> Keeps the center-based view but restricts the center to be an <em>actual data point</em> rather than a computed mean. This makes it far more robust to extreme outliers and easier to interpret in non-continuous spaces.</li>
+<li><strong>X-Means:</strong> Attempts to automate the painful process of choosing $K$ by allowing the model to adaptively split clusters based on statistical criteria.</li>
+<li><strong>RK-Means (Robust K-Means):</strong> Modifies the objective function or weighting scheme to prevent noise and outliers from ruining the centroid updates.</li>
+<li><strong>Mini-Batch K-Means:</strong> An algorithmic tweak that processes small random subsets of data at a time, drastically speeding up convergence for massive, web-scale datasets.</li>
 </ul>
-
-<p class="mb-3">This is not a formal theorem you need to memorize. It is simply the geometric consequence of minimizing squared distance to centroids.</p>
-
-<p class="mb-3">If a cluster is long and curved, one center is a poor summary. If one cluster is dense and tiny while another is broad and diffuse, the same squared-error objective may favor a partition that does not match the structure a human would expect. If extreme outliers are present, squared distance can let those few points pull the centroids around more than they should.</p>
-
-<p class="mb-3">So the question is not "Is K-Means good or bad?" The better question is "Does my data actually look like something that centers can summarize well?"</p>
-</section>
-
-<section id="where-k-means-works-well" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Where K-Means Works Well</h3>
-
-<p class="mb-3">K-Means is a strong fit when you want a fast, interpretable partition of data that is plausibly organized around representative centers.</p>
-
-<p class="mb-3">Typical good-fit scenarios include:</p>
-
-<ul class="note-list">
-<li>customer segmentation after careful feature scaling and selection</li>
-<li>vector quantization or compression-like tasks where prototypes matter</li>
-<li>image or signal processing contexts where a small number of representative patterns is useful</li>
-<li>quick baseline exploration when you suspect compact groups and need something simple before moving to more specialized methods</li>
-</ul>
-
-<p class="mb-3">In these settings, K-Means is attractive because it offers a clean summary. Each cluster comes with a centroid, and that centroid often gives a readable "prototype" for the cluster.</p>
-
-<p class="mb-3">This interpretability is one of the method's real strengths. The centroid is not just a computational artifact. In many applications, it becomes a compact description of the group.</p>
-</section>
-
-<section id="where-k-means-breaks" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Where K-Means Breaks</h3>
-
-<p class="mb-3">K-Means does not fail randomly. It fails when the geometry of the data violates the worldview baked into the objective.</p>
-
-<p class="mb-3">Common failure modes include:</p>
-
-<ul class="note-list">
-<li>irregular or non-convex shapes</li>
-<li>clusters with very different densities</li>
-<li>clusters with very different sizes</li>
-<li>heavy noise or strong outliers</li>
-<li>features measured on incompatible scales</li>
-<li>a poor choice of <code>K</code></li>
-</ul>
-
-<p class="mb-3">Each of these is easy to connect back to the method's assumptions.</p>
-
-<p class="mb-3">If clusters are crescent-shaped or connected by thin bridges, a single centroid is the wrong summary. If one feature is measured in dollars and another in percentages, Euclidean distance may mostly reflect the larger-scale feature unless you scale first. If outliers are far away, squared distance can let them dominate the objective more than their importance deserves.</p>
-
-<p class="mb-3">This is why K-Means should be read as a modeling statement, not just an algorithmic trick. It encodes a very particular notion of what structure counts as a cluster.</p>
-</section>
-
-<section id="choosing-k-necessary-useful-and-awkward" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Choosing <code>K</code>: Necessary, Useful, and Awkward</h3>
-
-<p class="mb-3">One reason K-Means remains popular is that the optimization problem is clean once <code>K</code> is fixed. One reason it remains awkward is that <code>K</code> usually is not known in advance.</p>
-
-<p class="mb-3">That creates a practical burden:</p>
-
-<ul class="note-list">
-<li>if <code>K</code> is too small, distinct groups get merged</li>
-<li>if <code>K</code> is too large, natural groups get split into artificial fragments</li>
-<li>the resulting <code>SSE</code> always decreases as <code>K</code> grows, so lower error alone cannot tell you the right answer</li>
-</ul>
-
-<p class="mb-3">In practice, choosing <code>K</code> often combines domain judgment with heuristics such as elbow-style inspection, validation metrics, or downstream usefulness. There is no universal rule that rescues you from understanding the problem context.</p>
-
-<p class="mb-3">This is another reminder that K-Means is not a fully automatic cluster detector. It is a method for fitting a center-based partition under a user-chosen number of groups.</p>
-</section>
-
-<section id="practical-patches-and-variants" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Practical Patches and Variants</h3>
-
-<p class="mb-3">Several common variants try to improve the usability of K-Means without changing its underlying intuition.</p>
-
-<ul class="note-list">
-<li><code>K-Means++</code>: improves initialization so the algorithm starts from more sensible seeds.</li>
-<li><code>X-Means</code>: extends the basic setup by trying to relax the burden of fixing <code>K</code> completely by hand.</li>
-<li><code>K-Medoids</code>: replaces means with representative data points, which can improve robustness and interpretability in some settings.</li>
-</ul>
-
-<p class="mb-3">These methods matter in practice, but they do not erase the central idea. They still live in the world where clusters are expected to organize around representative centers.</p>
-</section>
-
-<section id="beyond-vanilla-k-means" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Beyond Vanilla K-Means</h3>
-
-<p class="mb-3">It is also worth ending with a broader perspective: once the core K-Means idea is clear, many later methods can be read as attempts to adapt that center-based intuition to different practical constraints.</p>
-
-<ul class="note-list">
-<li><code>K-Medoids</code> keeps the center-based view but uses actual data points as representatives, which is often easier to interpret and usually less sensitive to extreme outliers.</li>
-<li><code>X-Means</code> keeps the K-Means spirit while making the choice of <code>K</code> less rigid by allowing the model to expand the number of clusters more adaptively.</li>
-<li><code>RK-means</code> is best understood as a family of more specialized extensions that modify the basic objective or weighting scheme so the method behaves better under more demanding settings.</li>
-<li><code>RQ-Kmeans</code> pushes the center-based idea toward residual or quantization-oriented use cases, where the goal is not only clustering for interpretation but also efficient representation, coding, or large-scale retrieval.</li>
-</ul>
-
-<p class="mb-3">These variants are useful reminders that K-Means is not just one fixed algorithm. It is a base idea that keeps reappearing in different forms. Some variants focus on robustness, some on model selection, and some on large-scale representation learning or compression. The common thread is still the same: data is being approximated through representative centers or codewords.</p>
-
-<p class="mb-3">So for this note, the right stopping point is not "K-Means is the whole story." The better conclusion is that basic K-Means gives you the conceptual foundation, and those more advanced variants become easier to understand once that foundation is stable.</p>
-</section>
-
-<section id="when-to-use-it-and-when-not-to" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">When to Use It, and When Not To</h3>
-
-<p class="mb-3">Use K-Means when:</p>
-
-<ul class="note-list">
-<li>you need a fast, simple baseline</li>
-<li>Euclidean geometry is meaningful after preprocessing</li>
-<li>cluster centers would be useful summaries in their own right</li>
-<li>you believe the data has compact center-based structure</li>
-</ul>
-
-<p class="mb-3">Be cautious or look elsewhere when:</p>
-
-<ul class="note-list">
-<li>the main signal is density or connectivity rather than central tendency</li>
-<li>clusters may be irregular, nested, or heavily noise-contaminated</li>
-<li>outliers are common and influential</li>
-<li>the correct number of clusters is deeply unclear and hard to justify</li>
-</ul>
-
-<p class="mb-3">This framing is often more useful than memorizing a long list of pros and cons. It turns K-Means into a decision aid: use it when center-based compactness is a reasonable approximation of the world.</p>
 </section>
 
 <section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Summary</h3>
 
-<p class="mb-3">K-Means is powerful because it converts a visual intuition about tight groups into a concrete objective: minimize within-cluster squared distance to representative centers. That objective explains why centroids are means, why Lloyd's algorithm alternates between assignment and update, why initialization matters, and why the method prefers compact, roughly spherical structure.</p>
+<p class="mb-3">K-Means is powerful because it translates our visual intuition of "tight groups" into a concrete optimization problem: minimizing the within-cluster squared distance to representative centers.</p>
 
-<p class="mb-3">Its strength and weakness come from the same place. If the data is well described by centers, K-Means is hard to beat for simplicity, speed, and interpretability. If the data violates that assumption, the method will still produce clusters, but they may reflect the objective more than the structure you actually care about. And once the basic picture is clear, it is easier to see why later variants such as <code>K-Medoids</code>, <code>X-Means</code>, <code>RK-means</code>, and <code>RQ-Kmeans</code> keep emerging: they are all different ways of extending the same center-based logic toward robustness, flexibility, or scale.</p>
+<p class="mb-3">That single objective explains everything about the algorithm. It explains why we use means, why Lloyd's algorithm ping-pongs between fixing assignments and fixing centers, why bad initialization leads to bad local minima, and why the algorithm stubbornly assumes every cluster in the world is a neat, compact sphere. If your data fits that assumption, K-Means is hard to beat. If it doesn't, understanding <em>why</em> K-Means failed is often your best clue for what to try next.</p>
 
 <div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>K-Means is best understood as optimizing compactness around cluster centers, not merely grouping by vague closeness.</li>
-<li>The mean appears because it minimizes squared error within a fixed cluster.</li>
-<li>Lloyd's algorithm works by alternating between the best assignments for fixed centers and the best centers for fixed assignments.</li>
-<li>Initialization matters because the algorithm converges to a local minimum, not necessarily the global optimum.</li>
-<li>K-Means works well when clusters are compact and center-based, and breaks when the data geometry does not match that assumption.</li>
-<li>Many later variants can be understood as extensions of the same center-based idea, including <code>K-Medoids</code>, <code>X-Means</code>, <code>RK-means</code>, and <code>RQ-Kmeans</code>.</li>
+<li>K-Means avoids the $O(N^2)$ pairwise distance trap by using centroids, leveraging the mathematical proof that minimizing distance to the mean implicitly minimizes all pairwise distances.</li>
+<li>The algorithm's ultimate goal is to minimize the Sum of Squared Errors (SSE).</li>
+<li>The arithmetic mean is naturally chosen because it is the exact mathematical minimizer for squared Euclidean distance.</li>
+<li>Lloyd's algorithm alternates between assigning points to the nearest center and updating centers to the mean of their points, guaranteeing convergence to a local minimum.</li>
+<li>Because it optimizes squared distance to a center, K-Means strongly assumes clusters are spherical, similarly sized, and free of massive outliers.</li>
+<li>Variants like K-Medoids (for robustness) and K-Means++ (for better initialization) patch the algorithm's practical flaws without abandoning its center-based philosophy.</li>
 </ul></div>
 </section>
         </div>
