@@ -53,9 +53,10 @@ Let's break down this beautiful revelation:
 
 This is not an approximation; it is an exact mathematical equals sign. It proves that **bringing every point closer to the centroid is mathematically the exact same thing as bringing every point closer to every other point.** This simplifies everything! We no longer need to compute the pairwise distances between all pairs of points to measure a cluster's compactness; we just need the distances between the points and their centroid. Furthermore, this tells us that if we can find a way to minimize the distance between all points and their centroid, it is strictly equivalent to bringing all pairs of points closer together, making the cluster as tight and compact as possible.
 
-<details>
-<summary><b>[Mathematical Proof] The Algebraic Derivation of the Centroid Identity</b></summary>
-<p>
+<block>
+title: Mathematical Proof: Derivation of the Centroid Identity
+collapsible: true
+content:
 To see why this identity holds, let the cluster contain $n = |C|$ points, denoted by $x_1, x_2, \dots, x_n$, and let the centroid be defined as $\mu = \frac{1}{n}\sum_{i=1}^{n}x_i$ (meaning $n\mu = \sum_{i=1}^{n}x_i$).
 
 First, let's expand the right-hand side (the squared distance to the centroid):
@@ -91,11 +92,10 @@ $$
 \frac{1}{2n} \sum_{i=1}^{n}\sum_{j=1}^{n} \lVert x_i-x_j\rVert^2 = \sum_{i=1}^{n}\lVert x_i\rVert^2 - n\lVert\mu\rVert^2 = \sum_{i=1}^{n}\lVert x_i-\mu\rVert^2
 $$
 This completes the proof. The pairwise sum is identically equal to $2n$ times the sum of squared errors from the centroid.
-</p>
-</details>
+</block>
 
 ### Discovering the SSE
-Now that we know we can easily use the distance between the data points and their centroids to measure compactness, we can define a new core metric: the **Sum of Squared Errors (`SSE`)**, calculated as $\sum \lVert x - \mu \rVert^2$. 
+Now that we know we can easily use the distance between the data points and their centroids to measure compactness, we can define a new core metric: the **Sum of Squared Errors (SSE)**, calculated as $\sum \lVert x - \mu \rVert^2$. 
 
 By optimizing this single metric, we achieve the exact same clustering objective (compactness) while drastically reducing the computational complexity from $O(N^2)$ down to just $O(N)$.
 
@@ -104,15 +104,28 @@ icon: lightbulb
 style: regular
 title: The Calculus Perspective: Centroids as a State of Equilibrium
 content:
-Beyond the algebraic proof, we can also look at this through the lens of calculus and physics. If we define our objective cost function for a single cluster as finding a general representative point $c$ that minimizes the SSE:
+Beyond the algebraic proof, we can also look at this through the lens of calculus and physics, which reveals *why* the arithmetic mean naturally emerges as the optimal center. 
+
+Suppose we don't yet know that the centroid is the average. Instead, we define a general objective cost function for a single cluster: we want to find *some* representative point $c$ in the space that minimizes the Sum of Squared Errors (SSE):
 $$
 J(c) = \sum_{x \in C} \lVert x - c \rVert^2
 $$
-To find the optimal point $c$ that minimizes this energy, we take the derivative with respect to $c$ and set it to zero:
+To find the optimal point $c$ that minimizes this total energy, we can take the partial derivative of our cost function with respect to $c$ and set it to zero to find the stationary point (the minimum):
 $$
-\frac{\partial J}{\partial c} = -2\sum_{x \in C}(x - c) = 0 \implies \sum_{x \in C} x = |C|c \implies c = \frac{1}{|C|} \sum_{x \in C} x
+\frac{\partial J}{\partial c} = -2\sum_{x \in C}(x - c) = 0
 $$
-Physically, this means the centroid is the "center of mass" where all pulling forces from the data points balance out to zero. Taking the derivative of the SSE is simply the calculus way of finding this lowest-energy equilibrium point!
+Dividing by $-2$ and expanding the sum, we get:
+$$
+\sum_{x \in C} x - \sum_{x \in C} c = 0 \implies \sum_{x \in C} x = |C|c
+$$
+Solving for $c$, we arrive at:
+$$
+c = \frac{1}{|C|} \sum_{x \in C} x
+$$
+**The Physics Translation:**
+Physically, this calculus result has a wonderful interpretation. If you think of each data point as pulling on the representative point $c$ with a force proportional to their distance (like a collection of rubber bands), the derivative $\frac{\partial J}{\partial c}$ represents the net force acting on $c$. 
+
+When the derivative is set to zero, it means the net force is zero—the exact coordinate where all the pulling forces from the data points perfectly balance out. In optimization, this balanced state is the minimum energy state. Therefore, taking the derivative of the SSE is simply the calculus way of finding this lowest-energy equilibrium point, proving that the centroid is physically and mathematically the ultimate center of mass for the group!
 </callout>
 
 It is crucial to note that the beautiful equivalence in the Centroid Identity comes with a strict condition: it only holds true in **Euclidean space** because the proof relies specifically on the algebraic properties of squared Euclidean distance. Therefore, you cannot simply swap in other distance metrics (like Manhattan or raw Cosine distance) and expect this mathematical magic to work.

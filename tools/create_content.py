@@ -1339,12 +1339,34 @@ def _markdown_to_html(
         s = re.sub(r'<p class="mb-3">([^<]*)</p>\s*$', r'<p class="mb-0">\1</p>', s)
         return s
 
-    def render_block(title: str, content_html: str, block_id: str) -> str:
+    def render_block(
+        title: str,
+        content_html: str,
+        block_id: str,
+        collapsible: bool = False,
+        collapsed: bool = True,
+    ) -> str:
         title_text = title.strip()
-        title_html = _render_inline(title_text) if title_text else ""
-        header_html = f'<p class="mb-2"><strong>{title_html}</strong></p>' if title_html else ""
+        title_html = _render_inline(title_text) if title_text else "Details"
         attrs = f' id="{_escape_attr(block_id)}"' if block_id else ""
         content_norm = _normalize_block_content_html(content_html)
+        if collapsible:
+            open_attr = "" if collapsed else " open"
+            return (
+                f'<details{attrs} class="note-callout note-block-collapsible mb-3"{open_attr}>\n'
+                f'  <summary class="note-block-summary">\n'
+                f'    <span class="note-block-summary-title">{title_html}</span>\n'
+                f'    <span class="note-block-summary-meta">\n'
+                f'      <span class="note-block-pill">Click to toggle</span>\n'
+                f'      <i class="fa-solid fa-chevron-down note-block-chevron"></i>\n'
+                f'    </span>\n'
+                f'  </summary>\n'
+                f'  <div class="note-block-collapsible-body">\n'
+                f'    {content_norm}\n'
+                f'  </div>\n'
+                f'</details>'
+            )
+        header_html = f'<p class="mb-2"><strong>{title_html}</strong></p>' if title_html else ""
         return f'<div{attrs} class="note-callout mb-3">{header_html}{content_norm}</div>'
 
     def render_takeaways(content_html: str) -> str:
@@ -1903,6 +1925,8 @@ def _markdown_to_html(
             i += 1
             block_id = ""
             title = ""
+            collapsible = False
+            collapsed = True
             content_lines: list[str] = []
             in_content = False
             while i < len(lines):
@@ -1911,7 +1935,11 @@ def _markdown_to_html(
                 if inner_stripped == "</block>":
                     break
                 if not in_content:
-                    m_kv = re.match(r"^(id|title|content)\s*:\s*(.*)$", inner_stripped, flags=re.IGNORECASE)
+                    m_kv = re.match(
+                        r"^(id|title|collapsible|collapsed|default|open|content)\s*:\s*(.*)$",
+                        inner_stripped,
+                        flags=re.IGNORECASE,
+                    )
                     if m_kv:
                         key = m_kv.group(1).strip().lower()
                         value = m_kv.group(2).strip()
@@ -1919,6 +1947,15 @@ def _markdown_to_html(
                             block_id = value
                         elif key == "title":
                             title = value
+                        elif key == "collapsible":
+                            collapsible = _parse_bool(value, default=True)
+                        elif key in ("collapsed", "default", "open"):
+                            if key == "open":
+                                collapsed = not _parse_bool(value, default=True)
+                            elif key == "default":
+                                collapsed = (value.lower() != "open")
+                            else:
+                                collapsed = _parse_bool(value, default=True)
                         else:
                             in_content = True
                             if value:
@@ -1941,7 +1978,15 @@ def _markdown_to_html(
                 )
                 if not block_id:
                     block_id = _anchor_lookup("block", title) or ""
-                current_section_lines.append(render_block(title=title, content_html=inner_html, block_id=block_id))
+                current_section_lines.append(
+                    render_block(
+                        title=title,
+                        content_html=inner_html,
+                        block_id=block_id,
+                        collapsible=collapsible,
+                        collapsed=collapsed,
+                    )
+                )
             while i < len(lines) and lines[i].strip() != "</block>":
                 i += 1
             i += 1

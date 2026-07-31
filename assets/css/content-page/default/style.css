@@ -1360,6 +1360,96 @@ body.note-page:not(.light-theme) .note-related-cta:focus {
   box-shadow: var(--note-block-shadow);
 }
 
+details.note-block-collapsible {
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+details.note-block-collapsible summary.note-block-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+}
+
+details.note-block-collapsible summary::-webkit-details-marker,
+details.note-block-collapsible summary::marker {
+  display: none;
+  content: "";
+}
+
+details.note-block-collapsible summary.note-block-summary:hover {
+  background: color-mix(in srgb, var(--accent) 8%, rgba(255, 255, 255, 0.04));
+}
+
+.note-block-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.note-block-summary-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.note-block-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, rgba(120, 120, 120, 0.1));
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  color: color-mix(in srgb, var(--accent) 85%, var(--text));
+}
+
+.note-block-chevron {
+  font-size: 0.88rem;
+  opacity: 0.75;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+}
+
+details.note-block-collapsible summary:hover .note-block-chevron {
+  opacity: 1;
+  color: var(--accent);
+}
+
+details.note-block-collapsible[open] .note-block-chevron {
+  transform: rotate(180deg);
+}
+
+details.note-block-collapsible[open] summary.note-block-summary {
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 15%, rgba(120, 120, 120, 0.12));
+}
+
+.note-block-collapsible-body {
+  padding: 18px 20px 20px;
+  animation: note-block-fade-in 0.25s ease-out;
+}
+
+@keyframes note-block-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .note-section > p + .note-callout,
 .note-section > .note-callout + p {
   margin-top: 28px;

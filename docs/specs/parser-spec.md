@@ -148,6 +148,8 @@ authoring 規則：
 
 - `id:` 可選
 - `title:` 可選
+- `collapsible:` 可選 (`true` / `false`)；若設為 `true`，渲染為折疊手風琴卡片
+- `collapsed:` 可選 (`true` / `false`；預設為 `true`，即預設收起)
 - `content:` 後面接多行 markdown 子集
 
 ### `<takeaways>...</takeaways>`
