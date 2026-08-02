@@ -396,7 +396,7 @@
     "preview_markdown": "# K-Means: Clustering Around Centers\n\nAs we explored in Discovering Hidden Structures: What Clustering Really Does, clustering is fundamentally about grouping objects together based on a chosen perspective of **similarity**. Depending on their core mechanisms, clustering algorithms generally fall into three main categories: centroid-based, density-based, and hierarchical clustering.",
     "reading_time_minutes": 28,
     "published_at": "2026-08-01",
-    "last_modified_at": "2026-08-01",
+    "last_modified_at": "2026-08-02",
     "cover": "notes/k-means-clustering-around-centers/K-Means-Clustering.jpeg",
     "lang": "en",
     "canonical_id": "k-means-clustering-around-centers",
