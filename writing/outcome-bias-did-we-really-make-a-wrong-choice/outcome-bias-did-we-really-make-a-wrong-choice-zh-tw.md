@@ -14,6 +14,68 @@ Published: 2026-06-27
 LastModified: 2026-08-02
 </meta>
 
+<draft>
+
+- 引子：
+    - 你有過這種經驗嗎？
+        - 在某個人生的叉路中猶豫，即使做了人生無數次的模擬與沙盤推演，甚至預想到了所有可能的突發狀況，最終選擇了一條你認為最穩妥、成功率最高的路徑，但結果卻不如預期。
+        - 於是你開始後悔，並質疑起自己的決定，認為當初的選擇就是個錯誤的決定，並為此後悔不已，然後用往後的餘生不斷地問自己「當初為什麼會這樣選？」。
+        - 如果你曾經有過這樣的經驗，那我希望可以透過這篇文章跟你分享我的看法，或許，你並沒有做錯也說不定？
+        - 事實上，你並非真的「看錯了」或「選錯了」，而是陷入了「結果偏誤（Outcome Bias）」。
+    
+    - 結果偏誤：
+        - 定義：
+            - 以成敗論英雄的陷阱：結果偏誤是一種常見的認知偏誤（Cognitive Bias）。當我們「只根據最終結果」來倒推並評斷「當初決策的好壞」時，就陷入了這種偏誤。
+            - The outcome bias is a cognitive bias that occurs when the quality of a decision is determined only once the outcome is known. But failing to invest the necessary time in understanding how results were achieved can lead to making low-quality decisions in the future, regardless of former outcomes.
+            - 簡單來說，它是一種「不看過程，只看結果」的思維慣性。
+            - 之所以它是一種思維偏誤是因為，這世界是非常複雜且有著許多我們無法控制且無法預期的因素，甚至可能存在某種程度上的隨機性。因此，即使你已經做出了基於當下的所有資訊中「最好」的決策，結果也仍有一定機率不如預期。但這並不代表你做的決策是錯的，最少，不代表這個決策在可見資訊內做出來的決定，是錯的。
+            - 我們沒有「上帝視角」（全局資訊），所以我們永遠無法做出保證絕對成功的「全局最優解」。我們在當下所能做的，幾乎都是基於有限條件下的「局部最優解」判斷——而局部的最優解，並不總是等於完美的結局。
+        
+        - 起因：為什麼會有結果偏誤
+            - We fall victim to the outcome bias because our brains skip over complex processes and jump to the most simplified conclusions possible. We assess people’s competence through our perception of their judgement calls–but this is unreliable if you’re influenced by outcome bias.
+            - 人腦天生重視結果，而不是機率。我們往往只看到人為的努力，卻低估了運氣與隨機性的影響。
+            - 演化上的原因：從演化角度，人類需要快速判斷哪些行為「有效」。例如：吃某種果子沒死 → 下次再吃。走某條路遇到老虎 → 不要再走。這種「用結果學習」在許多日常情境很有效率，但在充滿機率和隨機性的現代世界，就容易形成結果偏誤。
+            - We are particularly vulnerable to the outcome bias in situations where we only have a superficial understanding of the decision-making process and limited knowledge of the full context of a situation.
+        
+        - 為什麼這種思維偏誤有一定的風險？
+            - 忽視決策過程與資訊落差：如果單純以結果來評斷過去的決策，而完全忽略了決策者在採取行動當下所擁有（或缺乏）的資訊。如果不去深究結果是「如何」達成的，只看最終成敗，會導致我們盲目複製「純屬僥倖（狗屎運）」的壞決策，進而導致未來更有機會失敗。同理，好的決策過程也可能因為一次壞結果而被抑制。
+            - 要求為「不可控因素」負責：現實中，任何重大決策的結果都會受到「外部因素」與「機率（運氣）」的強烈影響，沒有人能確切預知一個經過計算的風險最終會如何發展。當判斷被蒙蔽時，我們等於是在要求決策者為那些根本不在他們控制範圍內的變數負責。
+            - Judging a past decision by its outcome instead of the quality of the decision-making process doesn’t take into account the information (or lack thereof) that the decision maker had at the time they took action. This is faulty reasoning because outcomes of any consequential decision are influenced by external factors and some level of chance. When your judgments are clouded by outcome bias, you make the mistake of holding decision-makers responsible for elements of a situation that were beyond their control.  
+
+    - 比較：結果偏誤 vs 後見之明偏誤
+        - The outcome bias is often confused with the hindsight bias, which is similar, but not the same. 
+        - 後見之明偏誤（Hindsight Bias）：扭曲的是「記憶」。The hindsight bias describes a distorted memory favoring the desired outcome, with someone claiming they knew what the outcome would be throughout the entire process.（事後諸葛，覺得早就知道會這樣）。
+        - 結果偏誤（Outcome Bias）：扭曲的是「決策評價」。While the outcome bias ignores the process entirely.（不一定改寫記憶，而是單純用結果來替過去的決策打分數）。
+
+    - 結果偏誤常見的例子
+        - The outcome bias is especially problematic in healthcare, where it can lead to a decrease in patient safety. For instance, if a doctor prescribes a drug that has been shown to be effective in most cases, but a patient has a negative reaction to the drug, doctors may be discouraged from prescribing the drug in the future. 
+        - In business, the outcome bias can lead to a decrease in innovation. For example, if a company has a successful product launch, other companies may be discouraged from developing similar products.
+        - 日常生活中也是如此。For example, if we have a bad experience with a certain type of food, we may be discouraged from trying it again, even if it is a perfectly good food.
+
+    - 決策的本質與解決之道：
+        - 認清世界是不完全資訊賽局：現實世界更像德州撲克而非圍棋。在缺乏全局資訊的情況下，未來充滿無數可能。只有結果發生的那一刻，不確定性才收束成確切資訊。
+        - 第一步：用「預測」量化未知：預測的本質從來不是保證未來，而是根據現有線索與歷史數據（如考古題）推估機率，對未來的不確定性進行量化（如 90% 會考）。以此做出的高勝率選擇，就是期望值最高的「局部最優解」。
+        - 第二步：接受 10% 的遺憾（世界線思維）：
+            - 應用反向思考：Always consider all possible outcomes that can come from your actions. 90% 的命中率，代表那 10% 沒命中的機率客觀存在。
+            - 當你做出 90% 勝率的決策，等於為未來的 100 條世界線做出選擇，其中 90 條會成功，10 條會失敗。但在結果揭曉前，我們永遠無法預知自己身處哪一條世界線。
+            - 不能因為剛好踩中這條世界線裡 10% 的小機率遺憾，就否定該決策在另外 90% 世界線裡的巨大保障。
+        - 第三步：著重過程與分離因果關係（決策矩陣）：
+            - This first step to overcoming the outcome bias is to shift your focus from the outcome of a process to the process itself. Reflect on People, Information, Ownership, and External influences.
+            - 利用矩陣拆開實力與運氣：好過程＋好結果（實至名歸）、好過程＋壞結果（遺憾的代價，應堅持）、壞過程＋好結果（純屬僥倖，應警惕）、壞過程＋壞結果（自食其果）。
+        - 第四步：用「長期主義」親自走遍所有世界線：
+            - 利用數據擴充知識庫：使用數據來做出決策，而不是基於個人的觀感。積攢更廣闊的知識庫，才能讓局部的最優解勝率不斷提高。
+            - 大數法則：單次決策摻雜極大運氣。但長期重複執行高勝率決策，運氣的影響會被彌平（等於你親自走遍了那 100 條世界線）。長期的總體成就必定無限趨近於高期望值。
+
+    - 結論:
+        - 因此，若回到文章開端的那個問題，倘若你也有經歷過類似的情境，我想說的是，或許你已經盡力了，也做出當下最好的判斷了，只是沒想到結果不如預期。這沒關係，人生本是如此難以預料，才有如此多的驚喜與意外。
+        - 成熟的決策者追求的從來不是「每次都贏」，而是「每次都在當下做出最合理的選擇」。
+        - 我們能做的，只有不斷地去精進自己做決策的能力與維持好的決策習慣，盡自己所能的人事，至於結果，真的就只能聽天由命了。放過那個已經盡了全力的自己，帶著優化過後的思維，勇敢邁向下一次選擇。
+
+    - References:
+        1. [Vocus: 想減少失敗?你必須知道的偏誤—結果偏誤【心理學知識分享#3】](https://vocus.cc/article/64618bc2fd89780001db9df0)
+        2. [Develop Good Habits: 6 Outcome Bias Examples That Can Negatively Impact Your Decisions](https://www.developgoodhabits.com/outcome-bias/)
+</draft>
+
 # 結果偏誤：結果不好的我們，真的做錯了嗎？
 
 你有過這種經驗嗎？
