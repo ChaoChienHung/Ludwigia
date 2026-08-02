@@ -7,12 +7,13 @@
   <meta name="garden:tags" content="Data Mining, Clustering, Centroid-Based Clustering">
   <meta name="garden:summary" content="An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd&#x27;s algorithm, limitations, and practical use.">
   <meta name="garden:lang" content="en">
-  <meta name="garden:status" content="drafting">
+  <meta name="garden:status" content="published">
   <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.centroid_based_clustering">
   <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.centroid_based_clustering&quot;:{&quot;en&quot;:&quot;Centroid-Based Clustering&quot;,&quot;zh-Hant&quot;:&quot;質心式分群&quot;,&quot;zh-Hans&quot;:&quot;质心式聚类&quot;}}">
   <meta name="garden:canonical_id" content="k-means-clustering-around-centers">
-  <meta name="garden:published_at" content="2026-07-31">
-  <meta name="garden:last_modified_at" content="2026-07-31">
+  <meta name="garden:published_at" content="2026-08-01">
+  <meta name="garden:last_modified_at" content="2026-08-01">
+  <meta name="garden:cover" content="notes/k-means-clustering-around-centers/K-Means-Clustering.png">
   <meta name="garden:reading_time_minutes" content="28">
   <meta name="garden:source" content="notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.md">
   <script>
@@ -163,6 +164,7 @@
 <a class="note-toc-link level-1" href="#4-pros-cons-and-geometric-assumptions">4. Pros, Cons, and Geometric Assumptions</a>
 <a class="note-toc-link level-1" href="#5-the-k-means-family-beyond-the-vanilla-algorithm">5. The K-Means Family: Beyond the Vanilla Algorithm</a>
 <a class="note-toc-link level-1" href="#summary">Summary</a>
+<a class="note-toc-link level-1" href="#references">References</a>
           </nav>
         </div>
       </div>
@@ -185,7 +187,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-07-31" data-published-at="2026-07-31"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-07-31</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-01" data-published-at="2026-08-01"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-01</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -212,6 +214,8 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./K-Means-Clustering.png" alt="An illustration of K-Means clustering, where data points are grouped around their nearest centroid." loading="lazy"><figcaption class="note-image-caption">An illustration of K-Means clustering, where data points are grouped around their nearest centroid.</figcaption></figure>
+
 <p class="mb-3">As we explored in <a class="note-content-link" data-canonical-id="discovering-hidden-structures-what-clustering-really-does" href="../discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html">Discovering Hidden Structures: What Clustering Really Does<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Discovering Hidden Structures: What Clustering Really Does</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span></span><span class="note-content-link-preview-summary">A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.</span></span></span></a>, clustering is fundamentally about grouping objects together based on a chosen perspective of <strong>similarity</strong>. Depending on their core mechanisms, clustering algorithms generally fall into three main categories: centroid-based, density-based, and hierarchical clustering.</p>
 
 <p class="mb-3">In this note, we will explore K-Means, one of the most classic centroid-based algorithms. As its category suggests, K-Means uses a central point, known as a <strong>centroid</strong>, to represent an entire cluster, and assigns data points to these clusters based on their distance to these representatives. A good clustering is one that minimizes the total distance between data points and their assigned representatives, resulting in compact clusters whose members lie closely around their centers.</p>
@@ -428,6 +432,15 @@
 <li><strong>The $K$ Ceiling:</strong> The number of clusters ($K$) dictates the maximum possible quality of the grouping, while the initialization dictates if we reach it. Both require human guidance (e.g., Elbow Method, K-Means++).</li>
 <li><strong>Geometric Bias:</strong> Because it optimizes squared distance to a center, K-Means strongly assumes clusters are spherical, similarly sized, and free of massive outliers.</li>
 </ul></div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>NUS CS5228 Knowledge Discovery and Data Mining Course Materials</li>
+<li>NUS CS5246 Text Mining Course Materials</li>
+</ol>
 </section>
         </div>
       </div>

@@ -5,6 +5,7 @@ Tags: Data Mining, Clustering, Centroid-Based Clustering
 Summary: An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.
 Slug: k-means-clustering-around-centers-en
 Output: notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html
+Cover: ./K-Means-Clustering.png
 Style: default
 EstimatedReadingTime: true
 Lang: en
@@ -13,6 +14,14 @@ Status: published
 Published: 2026-08-01
 LastModified: 2026-08-01
 </meta>
+
+# K-Means: Clustering Around Centers
+
+<image>
+src: ./K-Means-Clustering.png
+alt: An illustration of K-Means clustering, where data points are grouped around their nearest centroid.
+caption: An illustration of K-Means clustering, where data points are grouped around their nearest centroid.
+</image>
 
 As we explored in <content-link canonical="discovering-hidden-structures-what-clustering-really-does">Discovering Hidden Structures: What Clustering Really Does</content-link>, clustering is fundamentally about grouping objects together based on a chosen perspective of **similarity**. Depending on their core mechanisms, clustering algorithms generally fall into three main categories: centroid-based, density-based, and hierarchical clustering. 
 
