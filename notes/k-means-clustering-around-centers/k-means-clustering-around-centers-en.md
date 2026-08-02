@@ -12,7 +12,7 @@ Lang: en
 TitleSuffix: false
 Status: published
 Published: 2026-08-01
-LastModified: 2026-08-01
+LastModified: 2026-08-02
 </meta>
 
 # K-Means: Clustering Around Centers
