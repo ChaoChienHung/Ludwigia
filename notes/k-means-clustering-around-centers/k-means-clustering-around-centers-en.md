@@ -9,9 +9,9 @@ Style: default
 EstimatedReadingTime: true
 Lang: en
 TitleSuffix: false
-Status: drafting
-Published: 2026-07-31
-LastModified: 2026-07-31
+Status: published
+Published: 2026-08-01
+LastModified: 2026-08-01
 </meta>
 
 As we explored in <content-link canonical="discovering-hidden-structures-what-clustering-really-does">Discovering Hidden Structures: What Clustering Really Does</content-link>, clustering is fundamentally about grouping objects together based on a chosen perspective of **similarity**. Depending on their core mechanisms, clustering algorithms generally fall into three main categories: centroid-based, density-based, and hierarchical clustering. 
@@ -246,3 +246,7 @@ If your data fits that geometric assumption, K-Means is a lightning-fast, highly
 - **The $K$ Ceiling:** The number of clusters ($K$) dictates the maximum possible quality of the grouping, while the initialization dictates if we reach it. Both require human guidance (e.g., Elbow Method, K-Means++).
 - **Geometric Bias:** Because it optimizes squared distance to a center, K-Means strongly assumes clusters are spherical, similarly sized, and free of massive outliers.
 </takeaways>
+
+## References
+1. NUS CS5228 Knowledge Discovery and Data Mining Course Materials
+2. NUS CS5246 Text Mining Course Materials
