@@ -1025,6 +1025,10 @@
         "Recommender Systems",
         "recommender system",
         "Recommender System",
+        "recommendation systems",
+        "Recommendation Systems",
+        "recommendation system",
+        "Recommendation System",
         "推薦系統",
         "推荐系统"
       ]
@@ -1079,6 +1083,9 @@
       },
       "aliases": [
         "scaling laws",
+        "scaling law",
+        "Scaling Law",
+        "Scaling Laws",
         "縮放定律",
         "缩放定律"
       ]
@@ -1639,6 +1646,126 @@
         "mix ranking",
         "Mix Ranking",
         "混排"
+      ]
+    },
+    {
+      "concept_id": "concept.vector_quantization",
+      "labels": {
+        "en": "Vector Quantization",
+        "zh-Hant": "向量量化",
+        "zh-Hans": "向量量化"
+      },
+      "aliases": [
+        "vector quantization",
+        "Vector Quantization",
+        "向量量化"
+      ]
+    },
+    {
+      "concept_id": "concept.rq_kmeans",
+      "labels": {
+        "en": "RQ-KMeans",
+        "zh-Hant": "RQ-KMeans",
+        "zh-Hans": "RQ-KMeans"
+      },
+      "aliases": [
+        "rq-kmeans",
+        "RQ-KMeans",
+        "RQ-Kmeans",
+        "rq kmeans"
+      ]
+    },
+    {
+      "concept_id": "concept.rq_vae",
+      "labels": {
+        "en": "RQ-VAE",
+        "zh-Hant": "RQ-VAE",
+        "zh-Hans": "RQ-VAE"
+      },
+      "aliases": [
+        "rq-vae",
+        "RQ-VAE",
+        "rq vae"
+      ]
+    },
+    {
+      "concept_id": "concept.vq_vae",
+      "labels": {
+        "en": "VQ-VAE",
+        "zh-Hant": "VQ-VAE",
+        "zh-Hans": "VQ-VAE"
+      },
+      "aliases": [
+        "vq-vae",
+        "VQ-VAE",
+        "vq vae"
+      ]
+    },
+    {
+      "concept_id": "concept.semantic_id",
+      "labels": {
+        "en": "Semantic ID",
+        "zh-Hant": "Semantic ID",
+        "zh-Hans": "Semantic ID"
+      },
+      "aliases": [
+        "semantic id",
+        "Semantic ID",
+        "semantic-id"
+      ]
+    },
+    {
+      "concept_id": "concept.onerec",
+      "labels": {
+        "en": "OneRec",
+        "zh-Hant": "OneRec",
+        "zh-Hans": "OneRec"
+      },
+      "aliases": [
+        "onerec",
+        "OneRec"
+      ]
+    },
+    {
+      "concept_id": "concept.psychology",
+      "labels": {
+        "en": "Psychology",
+        "zh-Hant": "心理學",
+        "zh-Hans": "心理学"
+      },
+      "aliases": [
+        "psychology",
+        "Psychology",
+        "心理學",
+        "心理学"
+      ]
+    },
+    {
+      "concept_id": "concept.cognitive_bias",
+      "labels": {
+        "en": "Cognitive Bias",
+        "zh-Hant": "認知偏誤",
+        "zh-Hans": "认知偏误"
+      },
+      "aliases": [
+        "cognitive bias",
+        "Cognitive Bias",
+        "認知偏誤",
+        "认知偏误"
+      ]
+    },
+    {
+      "concept_id": "concept.self_improvement",
+      "labels": {
+        "en": "Self-Improvement",
+        "zh-Hant": "自我提升",
+        "zh-Hans": "自我提升"
+      },
+      "aliases": [
+        "self-improvement",
+        "Self-Improvement",
+        "self improvement",
+        "自我提升"
       ]
     }
   ]

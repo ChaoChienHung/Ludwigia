@@ -333,6 +333,109 @@
         "scaling law",
         "Scaling Law"
       ]
+    },
+    {
+      "concept_id": "concept.perfect_information_game",
+      "labels": {
+        "en": "Perfect Information Game",
+        "zh-Hant": "完全訊息賽局",
+        "zh-Hans": "完全信息博弈"
+      },
+      "contexts": {
+        "en": "A perfect information game is a game in game theory where all players are fully informed of all previous moves and current state with zero hidden information.",
+        "zh-Hant": "完全訊息賽局（Perfect Information Game）是賽局論中的概念，指所有玩家均能掌握完全相同的公開資訊與歷史步數，不存在任何隱藏資訊或未知隨機性。",
+        "zh-Hans": "完全信息博弈（Perfect Information Game）是博弈论中的概念，指所有玩家均能掌握完全相同的公开信息与历史步数，不存在任何隐藏信息或未知随机性。"
+      },
+      "aliases": [
+        "perfect information game",
+        "完全資訊賽局",
+        "完全訊息賽局",
+        "完全信息博弈"
+      ]
+    },
+    {
+      "concept_id": "concept.imperfect_information_game",
+      "labels": {
+        "en": "Imperfect Information Game",
+        "zh-Hant": "不完全訊息賽局",
+        "zh-Hans": "不完全信息博弈"
+      },
+      "contexts": {
+        "en": "An imperfect information game is a game in game theory where players do not have complete visibility into all hidden state or cards held by opponents, requiring decision-making under uncertainty and probabilistic estimation.",
+        "zh-Hant": "不完全訊息賽局（Imperfect Information Game）是賽局論中的概念，指玩家無法獲得完整的全局狀態（例如對手的底牌或未知的牌庫），決策時必須面對隱藏資訊與隨機性，僅能依靠機率與期望值評估進行下注。",
+        "zh-Hans": "不完全信息博弈（Imperfect Information Game）是博弈论中的概念，指玩家无法获得完整的全局状态（例如对手的底牌或未知的牌库），决策时必须面对隐藏信息与随机性，仅能依靠概率与期望值评估进行下注。"
+      },
+      "aliases": [
+        "imperfect information game",
+        "不完全資訊賽局",
+        "不完全訊息賽局",
+        "不完全信息博弈"
+      ]
+    },
+    {
+      "concept_id": "concept.law_of_large_numbers",
+      "labels": {
+        "en": "Law of Large Numbers",
+        "zh-Hant": "大數法則",
+        "zh-Hans": "大数法则"
+      },
+      "contexts": {
+        "en": "The Law of Large Numbers is a theorem in probability theory that states that as the number of trials increases, the empirical average of results will converge toward the expected value, diluting short-term random noise.",
+        "zh-Hant": "大數法則（Law of Large Numbers）是機率論中的極限定理，指當重複實驗的次數或累積樣本數足夠多時，事件發生的累積平均結果會無限趨近於其真實的期望值，進而稀釋單次隨機運氣的干擾。",
+        "zh-Hans": "大数法则（Law of Large Numbers）是概率论中的极限定理，指当重复实验的次数或累计样本数足够多时，事件发生的累计平均结果会无限趋近于其真实的期望值，进而稀释单次随机运气的干扰。"
+      },
+      "aliases": [
+        "law of large numbers",
+        "Law of Large Numbers",
+        "大數法則",
+        "大数法则",
+        "大數定律",
+        "大数定律"
+      ]
+    },
+    {
+      "concept_id": "concept.kl_divergence",
+      "labels": {
+        "en": "Kullback–Leibler Divergence (KL Divergence)",
+        "zh-Hant": "KL 散度（KL Divergence）",
+        "zh-Hans": "KL 散度（KL Divergence）"
+      },
+      "contexts": {
+        "en": "Kullback–Leibler (KL) Divergence is a measure in information theory and probability that quantifies how one probability distribution differs from a reference probability distribution. Forward KL tends toward mean-seeking (averaging over modes), while Reverse KL tends toward mode-seeking (focusing tightly on prominent modes).",
+        "zh-Hant": "KL 散度（Kullback–Leibler Divergence）是資訊理論與機率論中用來衡量兩個機率分佈差異的指標。前向 KL（Forward KL）傾向尋求平均（Mean-seeking），涵蓋整體分佈；逆向 KL（Reverse KL）則傾向尋求眾數（Mode-seeking），高度集中於局部峰值。",
+        "zh-Hans": "KL 散度（Kullback–Leibler Divergence）是信息论与概率论中用来衡量两个概率分布差异的指标。前向 KL（Forward KL）倾向寻求平均（Mean-seeking），涵盖整体分布；逆向 KL（Reverse KL）则倾向寻求众数（Mode-seeking），高度集中于局部峰值。"
+      },
+      "aliases": [
+        "KL Divergence",
+        "KL divergence",
+        "Kullback-Leibler Divergence",
+        "KL 散度",
+        "KL散度",
+        "Forward KL",
+        "Reverse KL"
+      ]
+    },
+    {
+      "concept_id": "concept.maillard_reaction",
+      "labels": {
+        "en": "Maillard Reaction",
+        "zh-Hant": "梅納反應",
+        "zh-Hans": "梅纳反应"
+      },
+      "contexts": {
+        "en": "The Maillard Reaction is a chemical reaction between amino acids and reducing sugars that occurs under heat, producing brown pigments and complex savory flavor compounds. In cooking, it is the underlying mechanism behind browning and intense aromas when searing meats or baking bread.",
+        "zh-Hant": "梅納反應（Maillard Reaction）是胺基酸與還原糖在高溫下發生的複雜化學反應，會產生褐色色素與豐富的香氣化合物。在烹飪中，它是煎牛排、烤麵包產生金黃焦香與獨特風味的核心物理與化學機制。",
+        "zh-Hans": "梅纳反应（Maillard Reaction）是氨基酸与还原糖在高温下发生的复杂化学反应，会产生褐色色素与丰富的香气化合物。在烹饪中，它是煎牛排、烤面包产生金黄焦香与独特风味的核心物理与化学机制。"
+      },
+      "aliases": [
+        "Maillard Reaction",
+        "maillard reaction",
+        "Maillard reaction",
+        "梅納反應",
+        "梅纳反应",
+        "梅納效應",
+        "梅纳效应"
+      ]
     }
   ]
 }
