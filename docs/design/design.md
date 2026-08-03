@@ -237,9 +237,10 @@ Garden 是內容層之上的探索介面：提供「可逛、可回憶、可漫�
 
 如果某篇明明定位成 overview，卻花大量篇幅停留在 `K-Means` 的直覺、step-by-step 流程或細部 limitation，我會把它視為 flow 開始偏移。那代表讀者原本想拿到的是一張方法地圖，最後卻被迫先讀完半篇 `K-Means` 教學。這不只會讓主線變鬆，也會讓 overview 很難 scale 到更多相關技術。
 
-`TL;DR`、`MainFlow`、`Scope` 這類欄位對我來說也不是要變成讀者 UI，而更像作者寫作前的 scaffolding。現在我更偏好把它們放在 source 的 `<draft>...</draft>`，而不是混在 `<meta>`；因為它們不是公開 metadata，而是作者自己的 drafting rails。它們的價值在於讓我在還沒正式寫滿之前，就先檢查：
+`TL;DR`、`MainFlow`、`Scope` 這類欄位以及整篇文章的章節骨架，對我來說也不是要變成讀者 UI，而更像作者寫作前的 scaffolding。現在我更偏好把它們放在 source 的 `<draft>...</draft>`，而不是混在 `<meta>`；因為它們不是公開 metadata，而是作者自己的 drafting rails。在骨架結構上，我更推薦以「`重點：內容`」（例如 `何謂結果偏誤：結果偏誤是...`）或層級化縮排大綱呈現，讓大綱本身包含有價值的觀點摘要。把它們放在 `<draft>` 的價值在於讓我在還沒正式寫滿之前，就先檢查：
 
 - 這篇真的在講少數幾件事嗎
+- 各段落的論點與資訊傳遞重點是否清晰且聚焦
 - limitation / comparison 是不是還 stick to the main flow
 - 哪些段落其實更適合挪到 follow-up page
 

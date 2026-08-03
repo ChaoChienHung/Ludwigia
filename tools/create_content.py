@@ -913,11 +913,12 @@ def _render_inline_no_code(raw: str) -> str:
     while i < len(s):
         next_information = s.find("<information", i)
         next_content_link = s.find("<content-link", i)
+        next_br = s.lower().find("<br", i)
         next_link = s.find("[", i)
         next_bold = s.find("**", i)
         next_italic = s.find("*", i)
 
-        candidates = [p for p in (next_information, next_content_link, next_link, next_bold, next_italic) if p != -1]
+        candidates = [p for p in (next_information, next_content_link, next_br, next_link, next_bold, next_italic) if p != -1]
         if not candidates:
             out.append(_escape_text(s[i:]))
             break
@@ -1016,13 +1017,21 @@ def _render_inline_no_code(raw: str) -> str:
             i = close_idx + len(close_tag)
             continue
 
+        if s.lower().startswith("<br", i):
+            m_br = re.match(r"^<br\s*/?>", s[i:], flags=re.IGNORECASE)
+            if m_br:
+                tag_text = m_br.group(0)
+                out.append("<br>")
+                i += len(tag_text)
+                continue
+
         if s.startswith("**", i):
             k = s.find("**", i + 2)
             if k == -1:
                 out.append(_escape_text(s[i:]))
                 break
             inner = s[i + 2 : k]
-            out.append(f"<strong>{_escape_text(inner)}</strong>")
+            out.append(f"<strong>{_render_inline(inner)}</strong>")
             i = k + 2
             continue
 
@@ -1033,7 +1042,7 @@ def _render_inline_no_code(raw: str) -> str:
                 break
             inner = s[i + 1 : k]
             if inner.strip():
-                out.append(f"<em>{_escape_text(inner)}</em>")
+                out.append(f"<em>{_render_inline(inner)}</em>")
             else:
                 out.append(_escape_text(s[i : k + 1]))
             i = k + 1
@@ -2329,6 +2338,17 @@ def _self_test() -> None:
         "| K-Means | Fast |\n"
         "| DBSCAN | Handles noise |\n"
         "\n"
+        "<callout>\n"
+        "title: Callout Test\n"
+        "icon: dice\n"
+        "content:\n"
+        "**Bold <information context=\"Test context\">test information</information>**\n"
+        "\n"
+        "| Header <br> Sub | Cell |\n"
+        "| --- | --- |\n"
+        "| A | B |\n"
+        "</callout>\n"
+        "\n"
         "<reviewkit>\n"
         "title: Review Kit\n"
         "id: summary-quiz\n"
@@ -2394,6 +2414,8 @@ def _self_test() -> None:
     )
     assert "note-information" in html
     assert "note-information-tooltip" in html
+    assert "<strong>Bold <span class=\"note-information\"" in html
+    assert "Header <br> Sub" in html
     assert 'class="note-content-link"' in html
     assert "note-content-link-preview" in html
     assert "note-content-link-preview-thumb" in html

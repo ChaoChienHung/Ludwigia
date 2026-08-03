@@ -194,22 +194,19 @@ source metadata 應可再現性生成以下 HTML / index 欄位：
 - 若需要跨語言聚合，應提供穩定的 `garden:canonical_id`
 - 修改手寫 HTML 後，仍需重新生成 `search/search-index.{json,js}`
 
-## Author-Only Planning Metadata
+## Author-Only Planning Metadata & Draft Outline
 
-作者規劃欄位不屬於公開 metadata contract，應放在 `<draft>...</draft>` 而不是 `<meta>`。
+作者規劃欄位與文章大綱骨架不屬於公開 metadata contract，應放在 `<draft>...</draft>` 而不是 `<meta>`。
 
 例如：
 
-- `TLDR`
-- `MainFlow`
-- `Scope`
-- `OutOfScope`
-- `FollowUps`
+- `TLDR` / `MainFlow` / `Scope` / `OutOfScope` / `FollowUps`
+- 格式化章節骨架：採用「`重點：內容`」（如 `何謂結果偏誤：結果偏誤是...`）或層級化縮排大綱清單
 
 規則：
 
 - `tools/create_content.py`、markdown extractor、search/indexer 預設都忽略 `<draft>`
-- 不得把這些欄位輸出成公開 `<head>` metadata
+- 不得把這些欄位/骨架輸出成公開 `<head>` metadata
 - 不得要求作者再維護第二份對外摘要
 
 ## Non-Goals

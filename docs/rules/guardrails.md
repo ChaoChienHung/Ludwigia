@@ -166,7 +166,7 @@
 
 - [ ] Agent-assisted 寫作 workflow 不退化
   - [ ] 前面可簡化或委派，但最後的人類 full proofread 不得省略
-  - [ ] 若 source `<draft>` 使用 `TLDR / MainFlow / Scope / OutOfScope / FollowUps`，它們仍只屬於 author-only scaffolding，不外洩到公開 `<head>` metadata 或 search index，也不進入 core markdown
+  - [ ] 若 source `<draft>` 使用 `TLDR / MainFlow / Scope / OutOfScope / FollowUps` 或「`重點：內容`」/層級化大綱骨架，它們仍只屬於 author-only scaffolding，不外洩到公開 `<head>` metadata 或 search index，也不進入 core markdown
   - [ ] 長文仍維持單一主問題；若文章同時在講主題家族 overview 與單一方法 deep dive，優先拆篇而不是硬塞成一篇
   - [ ] 若本篇定位是方法家族 overview，不會把單一子方法的直覺或細部流程寫成主要篇幅，避免主 flow 被代表方法綁走
   - [ ] 若文章前段有可見導讀 block，預設語意是 `TL;DR / Focus`；不要求另開 `Guiding Questions` 特殊區塊

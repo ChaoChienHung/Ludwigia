@@ -143,7 +143,7 @@
   - [ ] README / AGENTS / docs 已同步說明「架構先行 + Agent 補內容 + 最後全盤 proofread」
   - [ ] 發布前至少做過一次從頭到尾的人類 full proofread
   - [ ] 依本次改動範圍抽驗相關內容條目：
-    - [ ] `<draft>` 仍是 author-only planning 欄位，不會污染公開 `<head>` metadata / search index / core markdown
+    - [ ] `<draft>` 仍是 author-only planning 區塊（採 `重點：內容` 或層級化清單大綱），不會污染公開 `<head>` metadata / search index / core markdown
     - [ ] 若本次重構的是知識型長文：文章仍專心回答單一主問題；overview 與單一方法 deep dive 沒有被硬塞回同一篇
     - [ ] 若本次重構的是方法家族 overview：單一子方法的直覺或詳細流程沒有吃掉主要篇幅，overview 仍以方法地圖與差異軸為主
     - [ ] 若文章前段有導讀 block：它在做 `TL;DR / Focus`，而不是把分散在各段裡的 guiding questions 再重複列一次
