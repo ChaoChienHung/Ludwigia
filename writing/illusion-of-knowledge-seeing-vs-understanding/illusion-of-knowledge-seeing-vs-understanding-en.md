@@ -232,9 +232,3 @@ If your learning goal is merely satisfying short-term test needs, relying on fam
 To cross the chasm from "understanding" to "true mastery," we must take charge of our learning. On one hand, apply First Principles to deconstruct underlying mechanics; on the other, embrace the "blank-page" challenge of the Feynman Technique and Rubber Duck Debugging. Allow yourself to stumble, freeze, or experience mental blackouts when explaining concepts in plain language. Don't fear this discomfort—that moment of friction proves your brain is stripping away external cues and working hard to build deep memory hooks.
 
 Learning has never been about recognizing correct options on a test sheet, but about building a 3D, retrievable, transferable knowledge network in your mind. We must learn to separate "getting answers right" from "true mastery." Recognizing a rabbit drawn by someone else is only the starting point; only by exploring core mechanics and drawing that rabbit from scratch on a blank page will your understanding shed its hollow shell and grow an unshakeable, authentic spine.
-
-<block>
-Want to learn how the brain uses Information Theory to compress core First Principles into a Common Prefix, reduce memory decay, and trigger the Lollapalooza creativity effect? Continue reading the companion article: <content-link canonical="why-first-principles-matter">First Principles: The Brain's Ultimate Information Compression Technique</content-link>.
-
-Want to learn how multiple-choice questions play a positive role in early-stage learning, and how to harness them through the Goldilocks Principle and Reverse Engineering? Continue reading the companion article: <content-link canonical="hidden-value-of-multiple-choice-questions-goldilocks-principle">The Hidden Value of Multiple-Choice Questions: Training Wheels and the Goldilocks Principle</content-link>.
-</block>
