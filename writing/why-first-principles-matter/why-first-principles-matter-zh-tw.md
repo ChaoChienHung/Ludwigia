@@ -1,6 +1,6 @@
 <meta>
 Title: 第一性原理：大腦的終極資訊壓縮術
-Tags: Learning, Cognition, First Principles, Reflection, Creativity
+Tags: Learning, Cognition, Reflection
 Summary: 當越來越多知識能沿著不同路徑收斂到共享模式時，底層知識網路會變得更穩固，也更容易記憶、遷移與舉一反三。
 Slug: why-first-principles-matter-zh-tw
 Output: writing/why-first-principles-matter/why-first-principles-matter-zh-tw.html
