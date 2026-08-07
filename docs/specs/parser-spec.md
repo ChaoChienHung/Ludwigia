@@ -164,6 +164,7 @@ authoring 規則：
 - 內部以標準 markdown list 承載內容
 - 屬正文 flow 外的補充元件，不取代正文段落總結
 - 可獨立存在，也可放在 `<reviewkit>` 內
+- 在 Core Markdown / `Copy Markdown` / `Download Markdown` 導出時，會降級轉換為 `## Key Takeaways` 標題加標準 Markdown 清單，保留精華重點。
 
 ### `<qquiz>...</qquiz>`
 
@@ -352,15 +353,28 @@ shorthand 範例：
 - 舊的 `<section>...</section>` source block 不再視為作者可用語法
 - section 的語意仍可存在於輸出的 HTML 結構中，但由 heading / template 負責，而不是要求作者手動寫 source block
 
-## Downgrade Rules
+## Downgrade & Surface Matrix
 
-當不同 surface 不需要完整 extras layer 時，必須維持穩定降級：
+當內容在不同情境 (Surfaces) 呈現時，依據「統一一致」或「有 Styling / 行為區分」的分類契約如下表所示：
 
-- `<information>`：在內容頁可保留 tooltip；在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律退化成純文字
-- `<image>`：只屬於一般內容頁補充 block；在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律排除
-- `<reviewkit>`：Reading Mode 應視為 extras 並隱藏
-- `<content-link>`：在內容頁可 resolve 成站內連結；在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律退化成純文字
-- 其它自訂 block：core markdown extractor 可忽略，不要求保留完整互動
+### 類別 A：跨 Surface 統一一致 (Unified & Consistent)
+
+| 語法 / 元素 | 標準內容頁 (Content Page) | Copy / Download Markdown | Reading Mode (閱讀模式) | Garden Mode / Search Preview |
+| :--- | :--- | :--- | :--- | :--- |
+| **Core Markdown**<br>`#(h1-h3)`, 段落, 清單, 表格, Math | ✅ 標準 HTML + CSS / KaTeX | ✅ 導出純粹標準 Markdown 語法 | ✅ 純淨閱讀排版，保留完整內容 | ✅ 提取純文字正文用於索引與摘要 |
+| **`<draft>`**<br>作者起稿與規劃骨架 | 🚫 完全隱藏/不生成 | 🚫 剝離（不進導出 Markdown） | 🚫 完全隱藏 | 🚫 剝離（不進索引/不進摘要） |
+
+### 類別 B：有 Styling 與行為區分 (Surface-Differentiated)
+
+| 語法 / 元素 | 標準內容頁 (Content Page) | Copy / Download Markdown | Reading Mode (閱讀模式) | Garden Mode / Search Preview |
+| :--- | :--- | :--- | :--- | :--- |
+| **`<information>`**<br>Inline 術語 Tooltip | 💡 顯示波浪底線 + 浮動說明卡 | 📝 降級為純文字 Label（不含 HTML/Tooltip） | 💡 保留波浪底線 + 浮動說明卡 | 📝 降級為純文字 Label |
+| **`<content-link>`**<br>站內關聯內容連結 | 🔗 站內超連結 + Hover 預覽卡片 | 📝 降級為純文字標題 Label | 🔗 保留站內超連結 + Hover 預覽卡 | 📝 降級為純文字標題 Label |
+| **`<takeaways>`**<br>重點整理區塊 | 📌 獨立高亮區塊 (`.note-takeaways`) | 📝 轉寫為 `## Key Takeaways` + 清單 | 🚫 完全隱藏/省略 (`display: none`) | 🚫 完全剝離/省略（不進正文索引） |
+| **`<callout>` / `<block>`**<br>補充與折疊卡片 | 📦 獨立卡片 (Icon/邊框/折疊手風琴) | 📄 剝離外層 HTML 標籤，**保留內部 Markdown** | 🚫 完全隱藏/省略 (`display: none`) | 🚫 完全剝離/省略（不進正文索引） |
+| **`<image>`**<br>內文插圖卡片 | 🖼️ 完整圖片 + Caption + 放大預覽 | 🖼️ 轉換為標準 Markdown 圖片 `![alt](src)` | 🖼️ 保留圖片，停用強烈大圖陰影 | 🚫 剝離內文圖片 (卡片封面改讀 Metadata Cover) |
+| **`<rawhtml>`**<br>互動視覺化 Widget | ⚡ 完整載入 JS/CSS 繪圖 Canvas | 🚫 完全剝離 (Stripped) | 🚫 完全隱藏/省略 (`display: none`) | 🚫 完全剝離/省略（不進正文索引） |
+| **`<reviewkit>` / `<qquiz>` / `<qprompt>`**<br>測驗與 Prompt 區塊 | 🎮 互動式 Tabs / 選擇題 / Prompt 複製按鈕 | 🚫 完全剝離 (Stripped) | 🚫 完全隱藏/省略 (`display: none`) | 🚫 完全剝離/省略（不進正文索引） |
 
 ## Non-Goals
 

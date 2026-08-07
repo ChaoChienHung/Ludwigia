@@ -52,6 +52,7 @@
   - source 語法為 `<takeaways>...</takeaways>`
   - 內部以標準 markdown list 承載條列式重點
   - `takeaways` 屬於正文 flow 外的重點回收區，不應取代正文段落總結
+  - 在 `Copy Markdown` / `Download Markdown` 導出時，會降級轉換成 `## Key Takeaways` 標題加清單，確保重點整理在純文字 Markdown 導出中完好保留
 - 若 source `.md` 支援作者規劃欄位與起稿骨架（例如 `TLDR` / `MainFlow` / `Scope` / `OutOfScope` / `FollowUps` 或大綱骨架）：
   - 它們屬於 author-only planning scaffolding，應統一放在 source `<draft>...</draft>`，而不是混進公開 metadata 的 `<meta>`
   - 建議採用「`重點：內容`」（例如 `何謂結果偏誤：結果偏誤是...`）或層級化縮排清單表達章節與重點骨架

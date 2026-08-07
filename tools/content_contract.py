@@ -411,6 +411,15 @@ def extract_core_markdown(source_text: str) -> str:
     body, _ = extract_simple_block(body, "anchors")
     body, _ = extract_qaprompt(body)
     body = downgrade_content_link_markup(body)
+
+    def _format_takeaways(match: re.Match) -> str:
+        content = match.group(1).strip()
+        if not content:
+            return ""
+        return f"\n\n## Key Takeaways\n\n{content}\n\n"
+
+    body = re.sub(r"<takeaways>\s*(.*?)\s*</takeaways>", _format_takeaways, body, flags=re.DOTALL | re.IGNORECASE)
+
     lines = body.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     kept: list[str] = []
     in_fence = False
@@ -424,7 +433,6 @@ def extract_core_markdown(source_text: str) -> str:
         "block",
         "image",
         "rawhtml",
-        "takeaways",
     }
 
     for line in lines:

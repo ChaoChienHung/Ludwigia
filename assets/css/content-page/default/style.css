@@ -289,7 +289,8 @@ body.reading-mode .custom-nav {
 body.reading-mode .note-quiz,
 body.reading-mode .note-qa-section,
 body.reading-mode .note-reviewkit,
-body.reading-mode .note-callout {
+body.reading-mode .note-callout,
+body.reading-mode .kmeans-widget {
   display: none;
 }
 
