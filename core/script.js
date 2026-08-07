@@ -2744,17 +2744,27 @@ const getSourceMarkdown = async () => {
   }
 };
 
-const getNoteMarkdown = async () => {
-  const sourceText = await getSourceMarkdown();
-  if (sourceText) {
-    const coreMarkdown = extractCoreMarkdown(sourceText);
-    if (coreMarkdown) return coreMarkdown;
-  }
+let cachedNoteMarkdown = "";
 
+const getNoteMarkdownFallback = () => {
   const title = document.querySelector("h1")?.innerText?.trim() || document.title || "Note";
   const contentEl = document.querySelector(".note-content");
   const md = domToMarkdown(contentEl || document.body);
   return `# ${escapeMarkdown(title)}\n\n${md.replace(/^## /m, "## ")}`;
+};
+
+const getNoteMarkdown = async () => {
+  if (cachedNoteMarkdown) return cachedNoteMarkdown;
+  const sourceText = await getSourceMarkdown();
+  if (sourceText) {
+    const coreMarkdown = extractCoreMarkdown(sourceText);
+    if (coreMarkdown) {
+      cachedNoteMarkdown = coreMarkdown;
+      return coreMarkdown;
+    }
+  }
+  cachedNoteMarkdown = getNoteMarkdownFallback();
+  return cachedNoteMarkdown;
 };
 
 const syncNoteMetaStaticI18n = () => {
@@ -2785,6 +2795,38 @@ const syncNoteMetaStaticI18n = () => {
   }
 };
 
+const copyTextToClipboardSync = (text) => {
+  if (!text) return false;
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.top = "0";
+    textarea.style.left = "0";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const success = document.execCommand("copy");
+    textarea.remove();
+    if (success) return true;
+  } catch (_) {}
+  return false;
+};
+
+const copyTextToClipboard = async (text) => {
+  if (!text) return false;
+  if (copyTextToClipboardSync(text)) return true;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_) {}
+  }
+  return false;
+};
+
 const initNoteMarkdownActions = () => {
   if (!isNotesPage) return;
   const copyBtn = document.getElementById("note-copy-md");
@@ -2793,6 +2835,9 @@ const initNoteMarkdownActions = () => {
 
   syncNoteMetaStaticI18n();
 
+  // Start pre-fetching source markdown in background so click is instant & synchronous
+  getNoteMarkdown().catch(() => {});
+
   const statusEl = document.getElementById("note-md-status");
   const setStatus = (text) => {
     if (!statusEl) return;
@@ -2800,13 +2845,18 @@ const initNoteMarkdownActions = () => {
     if (text) setTimeout(() => { if (statusEl.textContent === text) statusEl.textContent = ""; }, 1800);
   };
 
-  copyBtn.addEventListener("click", async () => {
-    try {
-      const md = await getNoteMarkdown();
-      await navigator.clipboard.writeText(md);
+  copyBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const md = cachedNoteMarkdown || getNoteMarkdownFallback();
+    const success = copyTextToClipboardSync(md);
+    if (success) {
       setStatus(getContentUiI18n().copySuccess);
-    } catch (e) {
-      setStatus(getContentUiI18n().copyFailure);
+    } else {
+      copyTextToClipboard(md).then((ok) => {
+        setStatus(ok ? getContentUiI18n().copySuccess : getContentUiI18n().copyFailure);
+      }).catch(() => {
+        setStatus(getContentUiI18n().copyFailure);
+      });
     }
   });
 
@@ -3747,9 +3797,14 @@ const initNoteQaPromptCopy = () => {
     btn.addEventListener("click", async () => {
       try {
         const txt = await getFullText();
-        await navigator.clipboard.writeText(txt);
-        btn.classList.add("is-copied");
-        setTimeout(() => btn.classList.remove("is-copied"), 1200);
+        const success = await copyTextToClipboard(txt);
+        if (success) {
+          btn.classList.add("is-copied");
+          setTimeout(() => btn.classList.remove("is-copied"), 1200);
+        } else {
+          btn.classList.add("is-failed");
+          setTimeout(() => btn.classList.remove("is-failed"), 1200);
+        }
       } catch (e) {
         btn.classList.add("is-failed");
         setTimeout(() => btn.classList.remove("is-failed"), 1200);
