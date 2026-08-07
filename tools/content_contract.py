@@ -485,11 +485,15 @@ def estimate_reading_time_minutes(markdown: str) -> int:
     if not text.strip():
         return 0
 
-    latin_words = len(re.findall(r"[A-Za-z0-9]+(?:'[A-Za-z0-9]+)?", text))
-    cjk_chars = len(re.findall(r"[\u4E00-\u9FFF]", text))
-    table_rows = len(re.findall(r"(?m)^\s*\|.*\|\s*$", text))
-    fenced_blocks = len(re.findall(r"(?m)^```", text)) // 2
-    math_blocks = len(re.findall(r"(?m)^\$\$", text)) // 2
+    clean_text = re.sub(r"<script\b[^>]*>[\s\S]*?</script>", " ", text, flags=re.IGNORECASE)
+    clean_text = re.sub(r"<style\b[^>]*>[\s\S]*?</style>", " ", clean_text, flags=re.IGNORECASE)
+    clean_text = re.sub(r"<rawhtml\b[^>]*>[\s\S]*?</rawhtml>", " ", clean_text, flags=re.IGNORECASE)
+
+    latin_words = len(re.findall(r"[A-Za-z0-9]+(?:'[A-Za-z0-9]+)?", clean_text))
+    cjk_chars = len(re.findall(r"[\u4E00-\u9FFF]", clean_text))
+    table_rows = len(re.findall(r"(?m)^\s*\|.*\|\s*$", clean_text))
+    fenced_blocks = len(re.findall(r"(?m)^```", clean_text)) // 2
+    math_blocks = len(re.findall(r"(?m)^\$\$", clean_text)) // 2
     dense_block_penalty = table_rows * 0.08 + fenced_blocks * 0.5 + math_blocks * 0.3
     return max(1, int(math.ceil(latin_words / 170 + cjk_chars / 320 + dense_block_penalty)))
 

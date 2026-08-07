@@ -376,13 +376,16 @@ def _estimate_note_reading_time_minutes(rendered_html: str) -> int:
     if not raw_html.strip():
         return 0
 
-    text = html.unescape(re.sub(r"<[^>]+>", " ", raw_html))
+    clean_html = re.sub(r"<script\b[^>]*>[\s\S]*?</script>", " ", raw_html, flags=re.IGNORECASE)
+    clean_html = re.sub(r"<style\b[^>]*>[\s\S]*?</style>", " ", clean_html, flags=re.IGNORECASE)
+
+    text = html.unescape(re.sub(r"<[^>]+>", " ", clean_html))
     text = re.sub(r"\s+", " ", text).strip()
     latin_words = len(re.findall(r"[A-Za-z0-9]+(?:'[A-Za-z0-9]+)?", text))
     cjk_chars = len(re.findall(r"[\u4E00-\u9FFF]", text))
-    table_count = len(re.findall(r"<table\b", raw_html))
-    pre_count = len(re.findall(r"<pre\b", raw_html))
-    callout_count = len(re.findall(r'class="[^"]*(?:note-callout|note-block)[^"]*"', raw_html))
+    table_count = len(re.findall(r"<table\b", clean_html))
+    pre_count = len(re.findall(r"<pre\b", clean_html))
+    callout_count = len(re.findall(r'class="[^"]*(?:note-callout|note-block)[^"]*"', clean_html))
     dense_block_penalty = table_count * 0.4 + pre_count * 0.5 + callout_count * 0.2
     return max(1, int(math.ceil(latin_words / 170 + cjk_chars / 320 + dense_block_penalty)))
 
