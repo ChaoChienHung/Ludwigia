@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-01">
   <meta name="garden:last_modified_at" content="2026-08-02">
   <meta name="garden:cover" content="notes/k-means-clustering-around-centers/K-Means-Clustering.jpeg">
-  <meta name="garden:reading_time_minutes" content="48">
+  <meta name="garden:reading_time_minutes" content="31">
   <meta name="garden:source" content="notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.md">
   <script>
   (() => {
@@ -468,6 +468,7 @@
 .control-label {
   font-weight: 600;
   opacity: 0.9;
+  white-space: nowrap;
 }
 .km-pill-group {
   display: inline-flex;
@@ -1311,6 +1312,449 @@ body.galaxy-theme .stat-item strong {
 
 <p class="mb-3">Unfortunately, it is almost impossible to know where the "good" centroids are before running the algorithm (otherwise, you wouldn't need to cluster in the first place!). The most common workaround is simply to <strong>run the algorithm multiple times with different random starting points</strong>. Because different initial seeds change the trajectory, they will yield different final clusterings. Therefore, practitioners often run it 10 or 20 times and simply keep the result that achieved the lowest final $SSE$.</p>
 
+<div id="extreme-edge-case-empty-clusters-single-cluster-collapse" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-alert-triangle me-2"></i>Extreme Edge Case: Empty Clusters &amp; Single-Cluster Collapse</h4><p class="mb-3">While bad initialization usually causes convergence to a poor local minimum, extreme initializations can trigger the <strong>empty cluster dilemma</strong> ($|C_k| = 0$).</p>
+
+<p class="mb-3">If a centroid is initialized in a remote, sparse region—or if neighboring centroids actively "steal" all surrounding data points during an update—it is possible that zero data points choose that centroid as their nearest neighbor. In the update phase ($\mu_k = \frac{1}{|C_k|} \sum x$), dividing by $|C_k| = 0$ causes a mathematical $\frac{0}{0}$ division-by-zero breakdown.</p>
+
+<p class="mb-3">In the most extreme scenario, if one centroid is placed right at a dense core while the remaining $K-1$ centroids start far on the outer margins, that central centroid will greedily capture <strong>all $N$ data points</strong>. As a result, the entire dataset collapses into a single massive cluster ($K=1$), leaving $K-1$ empty, useless centroids.</p>
+
+<p class="mb-3"><strong>How Engines Handle This:</strong> Robust engines (such as scikit-learn) dynamically detect empty clusters ($|C_k|=0$) and forcibly re-assign the empty centroid to the data point $x_{\text{max}}$ currently contributing the highest single squared error in the dataset.</p>
+
+<div class="kmeans-widget empty-cluster-demo" id="km-ec-container">
+  <div class="kmeans-header">
+    <div class="kmeans-title">
+      <span class="kmeans-badge alert-badge">Interactive Demo</span>
+      <span>Empty Cluster & Single-Cluster Collapse ($K=3$)</span>
+    </div>
+    <div class="kmeans-stats">
+      <span class="stat-item">Active Clusters: <strong id="km-ec-active">1 / 3</strong></span>
+      <span class="stat-badge alert-stat" id="km-ec-status">Initialized</span>
+    </div>
+  </div>
+
+  <div class="kmeans-canvas-wrapper">
+    <canvas id="km-ec-canvas" width="600" height="240"></canvas>
+  </div>
+
+  <div class="kmeans-controls">
+    <div class="controls-row config-row">
+      <span class="control-label">Preset Scenario:</span>
+      <div class="km-pill-group" id="km-ec-pills">
+        <button type="button" class="km-pill-btn active" data-scenario="collapse">💥 Extreme Collapse</button>
+        <button type="button" class="km-pill-btn" data-scenario="recover">🛠️ Re-assign <em>x</em><sub>max</sub></button>
+      </div>
+    </div>
+    <div class="controls-row button-row">
+      <button type="button" id="km-ec-step" class="km-btn km-btn-primary">⚡ Run Assign Step</button>
+      <button type="button" id="km-ec-reset" class="km-btn km-btn-outline">🔄 Reset Scenario</button>
+    </div>
+  </div>
+
+  <div class="kmeans-explanation" id="km-ec-explanation">
+    <div class="exp-block">
+      <div class="exp-title">🌱 Scenario Initialized (Extreme Collapse)</div>
+      <div class="exp-desc">Centroid 1 is placed inside the data cluster. Centroids 2 & 3 start far out in empty space.</div>
+    </div>
+    <div class="exp-block">
+      <div class="exp-title">⚡ Action</div>
+      <div class="exp-desc">Click <strong>Run Assign Step</strong> to calculate Euclidean distance to nearest centroid.</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.empty-cluster-demo {
+  margin: 14px 0 0 0 !important;
+  padding: 14px 16px !important;
+}
+.empty-cluster-demo .kmeans-canvas-wrapper {
+  margin-bottom: 10px;
+}
+.empty-cluster-demo canvas {
+  height: 240px !important;
+}
+.empty-cluster-demo .kmeans-explanation {
+  min-height: 80px;
+  margin-top: 10px;
+  padding: 10px 14px;
+}
+.alert-badge {
+  background: linear-gradient(135deg, #ff4e50, #f9d423) !important;
+  color: #000 !important;
+}
+.alert-stat {
+  border-color: rgba(255, 78, 80, 0.4) !important;
+  color: #ff6b6b !important;
+  background: rgba(255, 78, 80, 0.12) !important;
+}
+</style>
+
+<script>
+(function() {
+  const GALAXY_PALETTE = [
+    { fill: 'rgba(167, 139, 250, 0.85)', stroke: '#a78bfa', centroid: '#a78bfa' },
+    { fill: 'rgba(244, 63, 94, 0.85)', stroke: '#f43f5e', centroid: '#f43f5e' },
+    { fill: 'rgba(251, 191, 36, 0.85)', stroke: '#fbbf24', centroid: '#fbbf24' }
+  ];
+  const LIGHT_PALETTE = [
+    { fill: 'rgba(200, 90, 50, 0.8)', stroke: '#c85a32', centroid: '#a04018' },
+    { fill: 'rgba(31, 122, 140, 0.8)', stroke: '#1f7a8c', centroid: '#13505c' },
+    { fill: 'rgba(107, 112, 92, 0.85)', stroke: '#6b705c', centroid: '#484c3c' }
+  ];
+  const SKY_PALETTE = [
+    { fill: 'rgba(2, 119, 189, 0.8)', stroke: '#0277bd', centroid: '#01579b' },
+    { fill: 'rgba(123, 31, 162, 0.8)', stroke: '#7b1fa2', centroid: '#4a148c' },
+    { fill: 'rgba(0, 137, 123, 0.85)', stroke: '#00897b', centroid: '#004d40' }
+  ];
+  const GARDEN_PALETTE = [
+    { fill: 'rgba(74, 222, 128, 0.8)', stroke: '#4ade80', centroid: '#4ade80' },
+    { fill: 'rgba(250, 204, 21, 0.8)', stroke: '#facc15', centroid: '#facc15' },
+    { fill: 'rgba(45, 212, 191, 0.85)', stroke: '#2dd4bf', centroid: '#2dd4bf' }
+  ];
+  const DEEP_SEA_PALETTE = [
+    { fill: 'rgba(94, 231, 255, 0.85)', stroke: '#5ee7ff', centroid: '#5ee7ff' },
+    { fill: 'rgba(255, 110, 199, 0.85)', stroke: '#ff6ec7', centroid: '#ff6ec7' },
+    { fill: 'rgba(255, 217, 102, 0.85)', stroke: '#ffd966', centroid: '#ffd966' }
+  ];
+  const DARK_PALETTE = [
+    { fill: 'rgba(0, 243, 255, 0.8)', stroke: '#00f3ff', centroid: '#00f3ff' },
+    { fill: 'rgba(255, 78, 80, 0.8)', stroke: '#ff4e50', centroid: '#ff4e50' },
+    { fill: 'rgba(255, 204, 0, 0.8)', stroke: '#ffcc00', centroid: '#ffcc00' }
+  ];
+
+  function getThemeConfig() {
+    if (document.body.classList.contains('light-theme')) {
+      return { palette: LIGHT_PALETTE, unassigned: 'rgba(140, 120, 105, 0.45)', grid: 'rgba(61, 46, 37, 0.08)', centroidSymbol: '#3d2e25', connectingAlpha: 0.2 };
+    }
+    if (document.body.classList.contains('sky-theme')) {
+      return { palette: SKY_PALETTE, unassigned: 'rgba(100, 130, 160, 0.45)', grid: 'rgba(79, 157, 232, 0.08)', centroidSymbol: '#1e3a5f', connectingAlpha: 0.2 };
+    }
+    if (document.body.classList.contains('garden-theme')) {
+      return { palette: GARDEN_PALETTE, unassigned: 'rgba(154, 223, 181, 0.35)', grid: 'rgba(154, 223, 181, 0.08)', centroidSymbol: '#ffffff', connectingAlpha: 0.2 };
+    }
+    if (document.body.classList.contains('deep-sea-theme') || document.body.classList.contains('galaxy-night-theme')) {
+      return { palette: DEEP_SEA_PALETTE, unassigned: 'rgba(94, 231, 255, 0.35)', grid: 'rgba(94, 231, 255, 0.06)', centroidSymbol: '#ffffff', connectingAlpha: 0.18 };
+    }
+    if (document.body.classList.contains('galaxy-theme')) {
+      return { palette: GALAXY_PALETTE, unassigned: 'rgba(167, 139, 250, 0.35)', grid: 'rgba(167, 139, 250, 0.06)', centroidSymbol: '#ffffff', connectingAlpha: 0.18 };
+    }
+    return { palette: DARK_PALETTE, unassigned: 'rgba(160, 175, 200, 0.4)', grid: 'rgba(255, 255, 255, 0.04)', centroidSymbol: '#ffffff', connectingAlpha: 0.12 };
+  }
+
+  let canvas, ctx;
+  let rawPoints = []; // relative coordinates [0..1]
+  let centroids = []; // relative coordinates [0..1]
+  let scenario = 'collapse';
+  let stepState = 0;
+
+  function initDemo() {
+    canvas = document.getElementById('km-ec-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+
+    setupScenario('collapse');
+    bindEvents();
+  }
+
+  function setupScenario(mode) {
+    scenario = mode;
+    stepState = 0;
+
+    rawPoints = [];
+    const centerX = 0.42;
+    const centerY = 0.50;
+    for (let i = 0; i < 95; i++) {
+      const u1 = Math.random() || 0.001, u2 = Math.random();
+      const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+      const z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+      rawPoints.push({
+        rx: Math.min(0.82, Math.max(0.08, centerX + z0 * 0.09)),
+        ry: Math.min(0.85, Math.max(0.12, centerY + z1 * 0.14)),
+        cluster: -1
+      });
+    }
+
+    centroids = [
+      { rx: centerX, ry: centerY },
+      { rx: 0.88, ry: 0.18 },
+      { rx: 0.88, ry: 0.82 }
+    ];
+
+    updateUI();
+    draw();
+  }
+
+  function runStep() {
+    const width = canvas.clientWidth || 600;
+    const height = canvas.clientHeight || 240;
+
+    if (stepState === 0) {
+      rawPoints.forEach(p => {
+        const px = p.rx * width, py = p.ry * height;
+        let minDist = Infinity;
+        let best = -1;
+        centroids.forEach((c, idx) => {
+          const cx = c.rx * width, cy = c.ry * height;
+          const d = Math.hypot(px - cx, py - cy);
+          if (d < minDist) {
+            minDist = d;
+            best = idx;
+          }
+        });
+        p.cluster = best;
+      });
+      stepState = 1;
+    } else if (stepState === 1 && scenario === 'recover') {
+      const counts = [0, 0, 0];
+      rawPoints.forEach(p => counts[p.cluster]++);
+
+      centroids.forEach((c, idx) => {
+        if (counts[idx] === 0) {
+          let maxDist = -1;
+          let maxPt = null;
+          rawPoints.forEach(p => {
+            const px = p.rx * width, py = p.ry * height;
+            const parentC = centroids[p.cluster];
+            const cx = parentC.rx * width, cy = parentC.ry * height;
+            const d = Math.hypot(px - cx, py - cy);
+            if (d > maxDist) {
+              maxDist = d;
+              maxPt = p;
+            }
+          });
+          if (maxPt) {
+            c.rx = maxPt.rx;
+            c.ry = maxPt.ry;
+            maxPt.cluster = idx;
+          }
+        }
+      });
+
+      rawPoints.forEach(p => {
+        const px = p.rx * width, py = p.ry * height;
+        let minDist = Infinity;
+        let best = -1;
+        centroids.forEach((c, idx) => {
+          const cx = c.rx * width, cy = c.ry * height;
+          const d = Math.hypot(px - cx, py - cy);
+          if (d < minDist) {
+            minDist = d;
+            best = idx;
+          }
+        });
+        p.cluster = best;
+      });
+
+      stepState = 2;
+    }
+
+    updateUI();
+    draw();
+  }
+
+  function updateUI() {
+    const activeEl = document.getElementById('km-ec-active');
+    const statusEl = document.getElementById('km-ec-status');
+    const expEl = document.getElementById('km-ec-explanation');
+
+    const counts = [0, 0, 0];
+    rawPoints.forEach(p => { if (p.cluster >= 0) counts[p.cluster]++; });
+    const activeCount = counts.filter(c => c > 0).length;
+    const emptyCount = 3 - activeCount;
+
+    if (activeEl) activeEl.innerText = `${activeCount} / 3`;
+
+    if (stepState === 0) {
+      if (statusEl) statusEl.innerText = 'Initialized';
+      if (expEl) expEl.innerHTML = `
+        <div class="exp-block">
+          <div class="exp-title">🌱 Scenario Initialized (${scenario === 'collapse' ? 'Extreme Collapse' : 'Scikit-Learn Recovery'})</div>
+          <div class="exp-desc">Centroid 1 is placed inside the data cluster. Centroids 2 & 3 start far out in empty space.</div>
+        </div>
+        <div class="exp-block">
+          <div class="exp-title">⚡ Action</div>
+          <div class="exp-desc">Click <strong>Run Assign Step</strong> to calculate Euclidean distance to nearest centroid.</div>
+        </div>
+      `;
+    } else if (stepState === 1) {
+      if (emptyCount > 0) {
+        if (statusEl) statusEl.innerText = `⚠️ ${emptyCount} Empty Cluster${emptyCount > 1 ? 's' : ''}`;
+      } else {
+        if (statusEl) statusEl.innerText = '✅ All Clusters Active';
+      }
+
+      if (scenario === 'collapse') {
+        if (expEl) expEl.innerHTML = `
+          <div class="exp-block">
+            <div class="exp-title">💥 Extreme Collapse Occurred (<em>K</em> = 1 Capture)</div>
+            <div class="exp-desc">Centroid 1 is closest to <strong>100% of data points (${rawPoints.length}/${rawPoints.length})</strong>.</div>
+          </div>
+          <div class="exp-block">
+            <div class="exp-title">⚠️ Mathematical Vulnerability</div>
+            <div class="exp-desc">Centroids 2 & 3 received <strong>0 points</strong> (|<em>C</em><sub>2</sub>| = 0, |<em>C</em><sub>3</sub>| = 0). Updating mean would attempt division by zero (0/0)!</div>
+          </div>
+        `;
+      } else {
+        if (expEl) expEl.innerHTML = `
+          <div class="exp-block">
+            <div class="exp-title">⚠️ 2 Empty Clusters Detected (|<em>C</em><sub>k</sub>| = 0)</div>
+            <div class="exp-desc">Centroid 1 captured all points. Centroids 2 & 3 are currently empty.</div>
+          </div>
+          <div class="exp-block">
+            <div class="exp-title">⚡ Next Step</div>
+            <div class="exp-desc">Click <strong>Run Assign Step</strong> again to trigger Scikit-Learn's <em>Farthest-Point Re-assignment</em> (<em>x</em><sub>max</sub>)!</div>
+          </div>
+        `;
+      }
+    } else if (stepState === 2) {
+      if (statusEl) statusEl.innerText = '🛠️ Recovered via x_max!';
+      if (expEl) expEl.innerHTML = `
+        <div class="exp-block">
+          <div class="exp-title">🛠️ Scikit-Learn Recovery Executed</div>
+          <div class="exp-desc">Detected empty centroids (|<em>C</em><sub>k</sub>| = 0) and forcibly relocated them onto the data points contributing maximum squared error (<em>x</em><sub>max</sub>).</div>
+        </div>
+        <div class="exp-block">
+          <div class="exp-title">🎉 Result</div>
+          <div class="exp-desc">All ${activeCount} centroids are now actively clustering data points without crashing or collapsing!</div>
+        </div>
+      `;
+    }
+  }
+
+  function draw() {
+    if (!ctx || !canvas) return;
+    const width = canvas.clientWidth || canvas.offsetWidth || 600;
+    const height = canvas.clientHeight || canvas.offsetHeight || 240;
+    const dpr = window.devicePixelRatio || 1;
+
+    if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+    }
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    const theme = getThemeConfig();
+
+    // Grid lines
+    ctx.strokeStyle = theme.grid;
+    ctx.lineWidth = 1;
+    for (let x = 0; x < width; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+    }
+    for (let y = 0; y < height; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+    }
+
+    // Connecting lines
+    rawPoints.forEach(p => {
+      if (p.cluster >= 0 && centroids[p.cluster]) {
+        const c = centroids[p.cluster];
+        const px = p.rx * width, py = p.ry * height;
+        const cx = c.rx * width, cy = c.ry * height;
+        ctx.strokeStyle = theme.palette[p.cluster % theme.palette.length].stroke;
+        ctx.globalAlpha = theme.connectingAlpha;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx, cy); ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
+    });
+
+    // Points
+    rawPoints.forEach(p => {
+      const px = p.rx * width, py = p.ry * height;
+      ctx.beginPath();
+      ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+      if (p.cluster >= 0) {
+        const color = theme.palette[p.cluster % theme.palette.length];
+        ctx.fillStyle = color.fill;
+        ctx.strokeStyle = color.stroke;
+      } else {
+        ctx.fillStyle = theme.unassigned;
+        ctx.strokeStyle = 'rgba(120, 135, 155, 0.4)';
+      }
+      ctx.lineWidth = 1.2;
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // Centroids
+    const counts = [0, 0, 0];
+    rawPoints.forEach(p => { if (p.cluster >= 0) counts[p.cluster]++; });
+
+    centroids.forEach((c, idx) => {
+      const cx = c.rx * width, cy = c.ry * height;
+      const color = theme.palette[idx % theme.palette.length];
+      const isEmpty = stepState > 0 && counts[idx] === 0;
+
+      if (isEmpty) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 78, 80, 0.15)';
+        ctx.fill();
+        ctx.strokeStyle = '#ff4e50';
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      } else {
+        ctx.beginPath();
+        ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+        ctx.fillStyle = color.fill.replace(/0\.\d+/, '0.2');
+        ctx.fill();
+        ctx.strokeStyle = color.centroid || color.stroke;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = isEmpty ? '#ff4e50' : theme.centroidSymbol;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 7, cy); ctx.lineTo(cx + 7, cy);
+      ctx.moveTo(cx, cy - 7); ctx.lineTo(cx, cy + 7);
+      ctx.stroke();
+
+      if (isEmpty) {
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillStyle = '#ff4e50';
+        ctx.fillText('0 points', cx - 20, cy + 32);
+      }
+    });
+
+    ctx.restore();
+  }
+
+  function bindEvents() {
+    const btnStep = document.getElementById('km-ec-step');
+    const btnReset = document.getElementById('km-ec-reset');
+    const pills = document.querySelectorAll('#km-ec-pills .km-pill-btn');
+
+    if (btnStep) btnStep.addEventListener('click', runStep);
+    if (btnReset) btnReset.addEventListener('click', () => setupScenario(scenario));
+
+    pills.forEach(p => {
+      p.addEventListener('click', () => {
+        pills.forEach(pill => pill.classList.remove('active'));
+        p.classList.add('active');
+        const mode = p.getAttribute('data-scenario');
+        setupScenario(mode);
+      });
+    });
+
+    window.addEventListener('ludwig-theme-changed', draw);
+    const observer = new MutationObserver(() => draw());
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDemo);
+  } else {
+    setTimeout(initDemo, 50);
+  }
+})();
+</script></div>
+
 <h4 id="the-k-problem" class="mb-2">The $K$ Problem</h4>
 
 <p class="mb-3">The optimization math of K-Means is beautifully clean, but it only works <em>after</em> $K$, the number of clusters, is fixed. In reality, $K$ is rarely known in advance, and this rigidity is one of the algorithm's biggest challenges.</p>
@@ -1402,6 +1846,7 @@ body.galaxy-theme .stat-item strong {
 <li><strong>Why the Mean:</strong> The arithmetic mean is not an arbitrary choice; it is the exact mathematical minimizer for squared Euclidean distance.</li>
 <li><strong>Lloyd's Algorithm:</strong> It resolves the chicken-and-egg problem by alternating between assigning points to the nearest center and updating the centers to the mean of those points. It is greedy and only guarantees convergence to a local minimum.</li>
 <li><strong>The $K$ Ceiling:</strong> The number of clusters ($K$) dictates the maximum possible quality of the grouping, while the initialization dictates if we reach it. Both require human guidance (e.g., Elbow Method, K-Means++).</li>
+<li><strong>The Empty Cluster Vulnerability:</strong> Poor initialization can leave a centroid with zero assigned points ($|C_k|=0$), causing division-by-zero math breakdowns or extreme degenerate collapse where all points concentrate into a single cluster ($K=1$). Practical implementations resolve this by re-initializing empty centroids to high-error residual points or using K-Means++.</li>
 <li><strong>Geometric Bias:</strong> Because it optimizes squared distance to a center, K-Means strongly assumes clusters are spherical, similarly sized, and free of massive outliers.</li>
 </ul></div>
 </section>
