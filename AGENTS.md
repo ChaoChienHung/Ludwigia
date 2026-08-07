@@ -52,8 +52,9 @@
   - source 語法為 `<takeaways>...</takeaways>`
   - 內部以標準 markdown list 承載條列式重點
   - `takeaways` 屬於正文 flow 外的重點回收區，不應取代正文段落總結
-- 若 source `.md` 支援作者規劃欄位（例如 `TLDR` / `MainFlow` / `Scope` / `OutOfScope` / `FollowUps`），它們只屬於 author-only planning metadata：
-  - 應放在 source `<draft>...</draft>`，而不是混進公開 metadata 的 `<meta>`
+- 若 source `.md` 支援作者規劃欄位與起稿骨架（例如 `TLDR` / `MainFlow` / `Scope` / `OutOfScope` / `FollowUps` 或大綱骨架）：
+  - 它們屬於 author-only planning scaffolding，應統一放在 source `<draft>...</draft>`，而不是混進公開 metadata 的 `<meta>`
+  - 建議採用「`重點：內容`」（例如 `何謂結果偏誤：結果偏誤是...`）或層級化縮排清單表達章節與重點骨架
   - `tools/create_content.py`、markdown extractor、search/indexer 預設都應忽略 `<draft>` 內容
   - 不得被當成公開 `<head>` metadata 或 search index 欄位
   - 不應要求作者另外手動維護第二份對外摘要

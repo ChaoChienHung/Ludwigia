@@ -18,7 +18,9 @@
   - 如果 task 的核心是「把東西做出來」，偏 `Agent-friendly`
   - 如果 task 的核心是「決定要做成什麼樣子 / 想表達什麼」，偏 `Author-driven`
 
-## Constellation Queue（待 Review）
+- [x] Standardize `<draft>` block authoring structure: Update documentation with `<draft>` outline patterns & Outcome Bias example
+  - [x] 已完成什麼：已更新 `AGENTS.md`、`docs/author/writing-notes.md`（新增 `## Draft 骨架編寫規範` 及《結果偏誤》文章範例）、`docs/specs/parser-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/design/design.md`、`docs/rules/checklist.md` 與 `docs/rules/guardrails.md`
+  - [x] Review 重點：確認各份文檔中的 `<draft>` 骨架約定（`重點：內容` 或層級化清單）與範例是否完整且與現有規格保持一致
 
 - [x] SMR and Paxos Notes: Add State Machine Replication and Paxos Structured Notes
   - [x] 已完成什麼：新增 `notes/state-machine-replication-and-paxos-structured-notes/`，整理 SMR 和 Paxos 結構化筆記，包含 SMR 背景與 FLP 不可能性定理、Paxos 各角色與 terminology、二階段算法細節、P2/P2a/P2b/P2c invariants、以及 liveness 與實務議題。

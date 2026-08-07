@@ -240,19 +240,6 @@
       ]
     },
     {
-      "concept_id": "concept.centroid",
-      "labels": {
-        "en": "Centroid",
-        "zh-Hant": "質心",
-        "zh-Hans": "质心"
-      },
-      "aliases": [
-        "centroid",
-        "質心",
-        "质心"
-      ]
-    },
-    {
       "concept_id": "concept.centroid_based_clustering",
       "labels": {
         "en": "Centroid-Based Clustering",
@@ -543,18 +530,6 @@
       ]
     },
     {
-      "concept_id": "concept.education",
-      "labels": {
-        "en": "Education",
-        "zh-Hant": "教育",
-        "zh-Hans": "教育"
-      },
-      "aliases": [
-        "education",
-        "教育"
-      ]
-    },
-    {
       "concept_id": "concept.embedding",
       "labels": {
         "en": "Embedding",
@@ -616,19 +591,6 @@
         "feature selection",
         "特徵選擇",
         "特征选择"
-      ]
-    },
-    {
-      "concept_id": "concept.first_principles",
-      "labels": {
-        "en": "First Principles",
-        "zh-Hant": "第一性原理",
-        "zh-Hans": "第一性原理"
-      },
-      "aliases": [
-        "first principles",
-        "First Principles",
-        "第一性原理"
       ]
     },
     {
@@ -1034,22 +996,6 @@
       ]
     },
     {
-      "concept_id": "concept.architecture",
-      "labels": {
-        "en": "Architecture",
-        "zh-Hant": "系統架構",
-        "zh-Hans": "系统架构"
-      },
-      "aliases": [
-        "architecture",
-        "Architecture",
-        "System Architecture",
-        "system architecture",
-        "系統架構",
-        "系统架构"
-      ]
-    },
-    {
       "concept_id": "concept.reflection",
       "labels": {
         "en": "Reflection",
@@ -1125,19 +1071,6 @@
       "aliases": [
         "sparsity",
         "稀疏性"
-      ]
-    },
-    {
-      "concept_id": "concept.sse",
-      "labels": {
-        "en": "SSE",
-        "zh-Hant": "平方誤差和",
-        "zh-Hans": "平方误差和"
-      },
-      "aliases": [
-        "sse",
-        "平方誤差和",
-        "平方误差和"
       ]
     },
     {
@@ -1325,19 +1258,6 @@
         "system design",
         "系統設計",
         "系统设计"
-      ]
-    },
-    {
-      "concept_id": "concept.testing",
-      "labels": {
-        "en": "Testing",
-        "zh-Hant": "測試",
-        "zh-Hans": "测试"
-      },
-      "aliases": [
-        "testing",
-        "測試",
-        "测试"
       ]
     },
     {

@@ -1171,7 +1171,7 @@ def _load_partial(shared_dir: str, style_dir: str, name: str) -> str:
     raise SystemExit(f"Missing shared partial: {shared_path}")
 
 
-def _load_page_shared_partial(repo_dir: str, name: str) -> Optional[str]:
+def _load_page_shared_partial(repo_dir: str, name: str) -> str | None:
     if not re.fullmatch(r"[a-z0-9_]+", name):
         raise SystemExit(f"Invalid shared page partial name: {name}")
     shared_path = os.path.join(repo_dir, "pages", "_shared", f"{name}.html")
@@ -1478,16 +1478,39 @@ def _markdown_to_html(
         items_html: list[str] = []
         for node in nodes:
             text = _render_inline(_maybe_bold_term(str(node.get("text") or "")))
-            paras = node.get("paras") or []
-            children = node.get("children") or []
+            blocks = node.get("blocks") or []
+            if not blocks:
+                paras = node.get("paras") or []
+                children = node.get("children") or []
+                if paras:
+                    for p in paras:
+                        if isinstance(p, str) and p.strip():
+                            p_str = p.strip()
+                            if p_str.startswith("> "):
+                                blocks.append({"type": "quote", "text": p_str[2:].strip()})
+                            elif p_str.startswith(">"):
+                                blocks.append({"type": "quote", "text": p_str[1:].strip()})
+                            else:
+                                blocks.append({"type": "para", "text": p_str})
+                if children:
+                    blocks.append({"type": "children", "nodes": children})
 
-            para_html = ""
-            if paras:
-                rendered_paras = [_render_inline(p) for p in paras if isinstance(p, str) and p.strip()]
-                para_html = "\n" + "\n".join(f'<p class="mb-2">{p}</p>' for p in rendered_paras)
+            inner_parts: list[str] = []
+            for b in blocks:
+                if not isinstance(b, dict):
+                    continue
+                btype = b.get("type")
+                if btype == "para":
+                    inner_parts.append(f'<p class="mb-2">{_render_inline(str(b.get("text") or ""))}</p>')
+                elif btype == "quote":
+                    inner_parts.append(style.blockquote(_render_inline(str(b.get("text") or ""))))
+                elif btype == "children":
+                    child_nodes = b.get("nodes") or []
+                    if isinstance(child_nodes, list) and child_nodes:
+                        inner_parts.append(_render_nested_ul_tree(child_nodes))
 
-            nested_html = ("\n" + _render_nested_ul_tree(children)) if children else ""
-            items_html.append(f"<li>{text}{para_html}{nested_html}</li>")
+            inner_html = ("\n" + "\n".join(inner_parts)) if inner_parts else ""
+            items_html.append(f"<li>{text}{inner_html}</li>")
         return f'<ul class="note-list">\n' + "\n".join(items_html) + "\n</ul>"
 
     def _parse_nested_ul(start_idx: int) -> tuple[str, int]:
@@ -1529,18 +1552,37 @@ def _markdown_to_html(
                 text = m_item.group(3).strip()
                 while len(stack) > 1 and indent <= stack[-1][0]:
                     stack.pop()
-                node: dict[str, object] = {"text": text, "paras": [], "children": []}
-                stack[-1][1].append(node)
-                stack.append((indent, node["children"], node))  # type: ignore[index]
+                node: dict[str, object] = {"text": text, "blocks": []}
+
+                parent_node = stack[-1][2]
+                if parent_node is None:
+                    root.append(node)
+                else:
+                    parent_blocks: list[dict[str, object]] = parent_node.setdefault("blocks", [])  # type: ignore[assignment]
+                    if not parent_blocks or parent_blocks[-1].get("type") != "children":
+                        parent_blocks.append({"type": "children", "nodes": [node]})
+                    else:
+                        nodes_list: list[dict[str, object]] = parent_blocks[-1].setdefault("nodes", [])  # type: ignore[assignment]
+                        nodes_list.append(node)
+
+                stack.append((indent, [], node))
                 i_local += 1
             else:
                 indent = _count_indent(raw_line)
+                while len(stack) > 1 and indent <= stack[-1][0]:
+                    stack.pop()
                 if indent >= 4 and len(stack) > 1:
                     if re.match(r"^(#{1,6})\s+", stripped_local) or (stripped_local.startswith("<") and stripped_local.endswith(">") and stripped_local not in ("<br>", "<br/>")):
                         break
                     curr_node = stack[-1][2]
                     if curr_node is not None:
-                        curr_node["paras"].append(stripped_local)  # type: ignore[index]
+                        curr_blocks: list[dict[str, object]] = curr_node.setdefault("blocks", [])  # type: ignore[assignment]
+                        if stripped_local.startswith("> "):
+                            curr_blocks.append({"type": "quote", "text": stripped_local[2:].strip()})
+                        elif stripped_local.startswith(">"):
+                            curr_blocks.append({"type": "quote", "text": stripped_local[1:].strip()})
+                        else:
+                            curr_blocks.append({"type": "para", "text": stripped_local})
                     i_local += 1
                 else:
                     break
@@ -1552,7 +1594,17 @@ def _markdown_to_html(
             title_html = f"<strong>{_render_inline(title)}</strong><br>"
             para_html = ""
             if paras:
-                para_html = _render_inline(" ".join([p.strip() for p in paras if p.strip()]))
+                rendered_paras: list[str] = []
+                for p in paras:
+                    if isinstance(p, str) and p.strip():
+                        p_str = p.strip()
+                        if p_str.startswith("> "):
+                            rendered_paras.append(style.blockquote(_render_inline(p_str[2:].strip())))
+                        elif p_str.startswith(">"):
+                            rendered_paras.append(style.blockquote(_render_inline(p_str[1:].strip())))
+                        else:
+                            rendered_paras.append(f'<p class="mb-2">{_render_inline(p_str)}</p>')
+                para_html = "\n" + "\n".join(rendered_paras)
             nested_html = ""
             if subitems:
                 nested_html = _render_ul(subitems, "mb-0 mt-2")

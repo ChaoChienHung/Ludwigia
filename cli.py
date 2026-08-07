@@ -279,7 +279,7 @@ def main() -> None:
     p_build.set_defaults(func=cmd_build)
 
     p_build_all = sub.add_parser("build-all")
-    p_build_all.add_argument("--content-dir", default="notes")
+    p_build_all.add_argument("--content-dir", default="all")
     p_build_all.add_argument("--no-index", action="store_true")
     p_build_all.add_argument("--output-root", default="")
     p_build_all.set_defaults(func=cmd_build_all)
