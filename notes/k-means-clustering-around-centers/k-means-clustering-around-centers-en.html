@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-01">
   <meta name="garden:last_modified_at" content="2026-08-02">
   <meta name="garden:cover" content="notes/k-means-clustering-around-centers/K-Means-Clustering.jpeg">
-  <meta name="garden:reading_time_minutes" content="28">
+  <meta name="garden:reading_time_minutes" content="48">
   <meta name="garden:source" content="notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.md">
   <script>
   (() => {
@@ -323,6 +323,979 @@
 <p class="mb-3">This alternating structure is the core reason K-Means is so effective. Because every single step—whether assigning points or updating centers—mathematically reduces or at worst maintains the Global $SSE$, the algorithm is strictly monotonic and is guaranteed to converge. It elegantly breaks an infinitely complex optimization problem into two simple, actionable steps.</p>
 
 <p class="mb-3">However, it is important to note that this is a <em>greedy</em> approach. Because it optimizes step-by-step based on the immediate best choice, <strong>K-Means is only guaranteed to find a local optimum, not the global optimum</strong>. Depending on where the initial centroids are placed, K-Means may converge to a state where the total SSE is significantly higher than the true mathematical minimum.</p>
+
+<div class="kmeans-widget" id="kmeans-widget-container">
+  <div class="kmeans-header">
+    <div class="kmeans-title">
+      <span class="kmeans-badge">Interactive Visualizer</span>
+      <span>Lloyd's Algorithm (Step-by-Step K-Means)</span>
+    </div>
+    <div class="kmeans-stats">
+      <span class="stat-item">Iteration: <strong id="km-iter">0</strong></span>
+      <span class="stat-item">Global SSE: <strong id="km-sse">0</strong></span>
+      <span class="stat-badge" id="km-status">Initialized</span>
+    </div>
+  </div>
+
+  <div class="kmeans-canvas-wrapper">
+    <canvas id="kmeans-canvas" width="600" height="380"></canvas>
+  </div>
+
+  <div class="kmeans-controls">
+    <div class="controls-row config-row">
+      <div class="control-group">
+        <span class="control-label">Clusters (K):</span>
+        <div class="km-pill-group" id="km-k-pills">
+          <button type="button" class="km-pill-btn" data-value="2">K = 2</button>
+          <button type="button" class="km-pill-btn active" data-value="3">K = 3</button>
+          <button type="button" class="km-pill-btn" data-value="4">K = 4</button>
+        </div>
+      </div>
+    </div>
+    <div class="controls-row button-row">
+      <button type="button" id="km-btn-step" class="km-btn km-btn-primary">⚡ Next Step</button>
+      <button type="button" id="km-btn-auto" class="km-btn km-btn-secondary">▶ Auto Play</button>
+      <button type="button" id="km-btn-reset" class="km-btn km-btn-outline">🔄 Reset Centroids</button>
+    </div>
+  </div>
+  <div class="kmeans-explanation" id="km-explanation">
+    <div class="exp-block">
+      <div class="exp-title">🌱 Initialized</div>
+      <div class="exp-desc">Placed 3 initial centroids at random data point locations. Points are currently unassigned.</div>
+    </div>
+    <div class="exp-block">
+      <div class="exp-title">⚡ Next Step</div>
+      <div class="exp-desc">Click <strong>Next Step</strong> or <strong>Auto Play</strong> to start Lloyd's algorithm.</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.kmeans-widget {
+  background: var(--note-block-bg, rgba(20, 24, 33, 0.85));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--note-block-border, rgba(255, 255, 255, 0.12));
+  border-radius: var(--note-block-radius, 14px);
+  padding: 20px;
+  margin: 28px 0;
+  color: var(--text-color, #e0e6ed);
+  box-shadow: var(--note-block-shadow, 0 8px 32px rgba(0, 0, 0, 0.2));
+  transition: all 0.3s ease;
+}
+.kmeans-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.kmeans-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.kmeans-badge {
+  background: linear-gradient(135deg, #00f3ff, #0077ff);
+  color: #000;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.kmeans-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.88rem;
+  flex-wrap: wrap;
+}
+.stat-item strong {
+  color: var(--accent-color, #00f3ff);
+}
+.stat-badge {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.kmeans-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(10, 12, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+#kmeans-canvas {
+  display: block;
+  width: 100%;
+  height: 380px;
+}
+.kmeans-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.config-row {
+  justify-content: flex-start;
+}
+.button-row {
+  justify-content: space-between;
+}
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+.control-label {
+  font-weight: 600;
+  opacity: 0.9;
+}
+.km-pill-group {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+}
+.km-pill-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+.km-pill-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+.km-pill-btn.active {
+  opacity: 1;
+  background: var(--accent-color, #00f3ff);
+  color: #050b14;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.km-btn {
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+.km-btn-primary {
+  background: linear-gradient(135deg, #00f3ff, #0088ff);
+  color: #050b14;
+  box-shadow: 0 2px 10px rgba(0, 243, 255, 0.3);
+}
+.km-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
+}
+.km-btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.km-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.km-btn-outline {
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.km-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.kmeans-explanation {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border-left: 3px solid var(--accent-color, #00f3ff);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.3s ease;
+  min-height: 108px;
+  box-sizing: border-box;
+}
+.exp-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.exp-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--accent-color, #00f3ff);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.exp-desc {
+  font-size: 0.84rem;
+  opacity: 0.9;
+  line-height: 1.45;
+}
+
+/* Warm Light Theme Refinements (Parchment Tone) */
+body.light-theme .kmeans-widget {
+  background: rgba(61, 46, 37, 0.05);
+  border-color: rgba(61, 46, 37, 0.16);
+  color: #3d2e25;
+  box-shadow: 0 4px 20px rgba(61, 46, 37, 0.06);
+}
+body.light-theme .kmeans-header {
+  border-bottom-color: rgba(61, 46, 37, 0.12);
+}
+body.light-theme .kmeans-badge {
+  background: linear-gradient(135deg, #c85a32, #e07a5f);
+  color: #ffffff;
+}
+body.light-theme .kmeans-canvas-wrapper {
+  background: #f8f3e6;
+  border-color: rgba(61, 46, 37, 0.14);
+}
+body.light-theme .km-pill-group {
+  background: rgba(61, 46, 37, 0.06);
+  border-color: rgba(61, 46, 37, 0.16);
+}
+body.light-theme .km-pill-btn.active {
+  background: #c85a32;
+  color: #ffffff;
+}
+body.light-theme .km-btn-primary {
+  background: linear-gradient(135deg, #c85a32, #d96b43);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(200, 90, 50, 0.3);
+}
+body.light-theme .km-btn-secondary,
+body.light-theme .km-btn-outline {
+  border-color: rgba(61, 46, 37, 0.2);
+  color: #3d2e25;
+}
+body.light-theme .km-btn-secondary:hover {
+  background: rgba(61, 46, 37, 0.1);
+}
+body.light-theme .stat-badge {
+  background: rgba(61, 46, 37, 0.06);
+  border-color: rgba(61, 46, 37, 0.16);
+  color: #3d2e25;
+}
+body.light-theme .kmeans-explanation {
+  background: rgba(61, 46, 37, 0.04);
+  border-left-color: #c85a32;
+  color: #3d2e25;
+}
+body.light-theme .stat-item strong {
+  color: #c85a32;
+}
+
+/* Sky Theme Refinements (Translucent Ice-Blue) */
+body.sky-theme .kmeans-widget {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(79, 157, 232, 0.28);
+  color: #1e3a5f;
+  box-shadow: 0 10px 24px rgba(93, 136, 182, 0.12);
+}
+body.sky-theme .kmeans-header {
+  border-bottom-color: rgba(79, 157, 232, 0.18);
+}
+body.sky-theme .kmeans-badge {
+  background: linear-gradient(135deg, #0277bd, #29b6f6);
+  color: #ffffff;
+}
+body.sky-theme .kmeans-canvas-wrapper {
+  background: #e8f4fc;
+  border-color: rgba(79, 157, 232, 0.22);
+}
+body.sky-theme .km-pill-group {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(79, 157, 232, 0.25);
+}
+body.sky-theme .km-pill-btn.active {
+  background: #0277bd;
+  color: #ffffff;
+}
+body.sky-theme .km-btn-primary {
+  background: linear-gradient(135deg, #0277bd, #0288d1);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(2, 119, 189, 0.3);
+}
+body.sky-theme .km-btn-secondary,
+body.sky-theme .km-btn-outline {
+  border-color: rgba(79, 157, 232, 0.3);
+  color: #1e3a5f;
+}
+body.sky-theme .km-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+body.sky-theme .stat-badge {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(79, 157, 232, 0.25);
+  color: #1e3a5f;
+}
+body.sky-theme .kmeans-explanation {
+  background: rgba(255, 255, 255, 0.5);
+  border-left-color: #0277bd;
+  color: #1e3a5f;
+}
+body.sky-theme .stat-item strong {
+  color: #0277bd;
+}
+
+/* Garden Theme Refinements (Deep Forest Green) */
+body.garden-theme .kmeans-widget {
+  background: rgba(28, 63, 47, 0.85);
+  border-color: rgba(154, 223, 181, 0.22);
+  color: #e2f5ea;
+  box-shadow: 0 10px 24px rgba(10, 30, 20, 0.25);
+}
+body.garden-theme .kmeans-header {
+  border-bottom-color: rgba(154, 223, 181, 0.15);
+}
+body.garden-theme .kmeans-badge {
+  background: linear-gradient(135deg, #2e7d32, #4caf50);
+  color: #ffffff;
+}
+body.garden-theme .kmeans-canvas-wrapper {
+  background: #142e22;
+  border-color: rgba(154, 223, 181, 0.2);
+}
+body.garden-theme .km-pill-group {
+  background: rgba(154, 223, 181, 0.12);
+  border-color: rgba(154, 223, 181, 0.22);
+}
+body.garden-theme .km-pill-btn.active {
+  background: #2e7d32;
+  color: #ffffff;
+}
+body.garden-theme .km-btn-primary {
+  background: linear-gradient(135deg, #2e7d32, #388e3c);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(46, 125, 50, 0.3);
+}
+body.garden-theme .km-btn-secondary,
+body.garden-theme .km-btn-outline {
+  border-color: rgba(154, 223, 181, 0.25);
+  color: #e2f5ea;
+}
+body.garden-theme .km-btn-secondary:hover {
+  background: rgba(154, 223, 181, 0.2);
+}
+body.garden-theme .stat-badge {
+  background: rgba(154, 223, 181, 0.1);
+  border-color: rgba(154, 223, 181, 0.2);
+  color: #e2f5ea;
+}
+body.garden-theme .kmeans-explanation {
+  background: rgba(154, 223, 181, 0.08);
+  border-left-color: #4ade80;
+  color: #e2f5ea;
+}
+body.garden-theme .stat-item strong {
+  color: #4ade80;
+}
+
+/* Deep Sea / Galaxy Night Theme Refinements (Oceanic Cyan) */
+body.deep-sea-theme .kmeans-widget,
+body.galaxy-night-theme .kmeans-widget {
+  background: rgba(7, 39, 52, 0.88);
+  border-color: rgba(94, 231, 255, 0.22);
+  color: #e0f7fc;
+  box-shadow: 0 10px 28px rgba(4, 22, 32, 0.35);
+}
+body.deep-sea-theme .kmeans-header,
+body.galaxy-night-theme .kmeans-header {
+  border-bottom-color: rgba(94, 231, 255, 0.15);
+}
+body.deep-sea-theme .kmeans-badge,
+body.galaxy-night-theme .kmeans-badge {
+  background: linear-gradient(135deg, #00b4d8, #5ee7ff);
+  color: #041620;
+}
+body.deep-sea-theme .kmeans-canvas-wrapper,
+body.galaxy-night-theme .kmeans-canvas-wrapper {
+  background: #041620;
+  border-color: rgba(94, 231, 255, 0.2);
+}
+body.deep-sea-theme .km-pill-group,
+body.galaxy-night-theme .km-pill-group {
+  background: rgba(94, 231, 255, 0.08);
+  border-color: rgba(94, 231, 255, 0.2);
+}
+body.deep-sea-theme .km-pill-btn.active,
+body.galaxy-night-theme .km-pill-btn.active {
+  background: #5ee7ff;
+  color: #041620;
+}
+body.deep-sea-theme .km-btn-primary,
+body.galaxy-night-theme .km-btn-primary {
+  background: linear-gradient(135deg, #00b4d8, #5ee7ff);
+  color: #041620;
+  box-shadow: 0 2px 10px rgba(94, 231, 255, 0.3);
+}
+body.deep-sea-theme .km-btn-secondary,
+body.galaxy-night-theme .km-btn-secondary,
+body.deep-sea-theme .km-btn-outline,
+body.galaxy-night-theme .km-btn-outline {
+  border-color: rgba(94, 231, 255, 0.25);
+  color: #e0f7fc;
+}
+body.deep-sea-theme .km-btn-secondary:hover,
+body.galaxy-night-theme .km-btn-secondary:hover {
+  background: rgba(94, 231, 255, 0.15);
+}
+body.deep-sea-theme .stat-badge,
+body.galaxy-night-theme .stat-badge {
+  background: rgba(94, 231, 255, 0.1);
+  border-color: rgba(94, 231, 255, 0.2);
+  color: #e0f7fc;
+}
+body.deep-sea-theme .kmeans-explanation,
+body.galaxy-night-theme .kmeans-explanation {
+  background: rgba(94, 231, 255, 0.08);
+  border-left-color: #5ee7ff;
+  color: #e0f7fc;
+}
+body.deep-sea-theme .stat-item strong,
+body.galaxy-night-theme .stat-item strong {
+  color: #5ee7ff;
+}
+
+/* Galaxy Theme Refinements (Cosmic Violet) */
+body.galaxy-theme .kmeans-widget {
+  background: rgba(28, 18, 56, 0.88);
+  border-color: rgba(167, 139, 250, 0.24);
+  color: #f3e8ff;
+  box-shadow: 0 10px 28px rgba(14, 10, 34, 0.35);
+}
+body.galaxy-theme .kmeans-header {
+  border-bottom-color: rgba(167, 139, 250, 0.15);
+}
+body.galaxy-theme .kmeans-badge {
+  background: linear-gradient(135deg, #8b5cf6, #c084fc);
+  color: #ffffff;
+}
+body.galaxy-theme .kmeans-canvas-wrapper {
+  background: #0e0a22;
+  border-color: rgba(167, 139, 250, 0.2);
+}
+body.galaxy-theme .km-pill-group {
+  background: rgba(167, 139, 250, 0.1);
+  border-color: rgba(167, 139, 250, 0.22);
+}
+body.galaxy-theme .km-pill-btn.active {
+  background: #a78bfa;
+  color: #0e0a22;
+}
+body.galaxy-theme .km-btn-primary {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  color: #0e0a22;
+  box-shadow: 0 2px 10px rgba(167, 139, 250, 0.3);
+}
+body.galaxy-theme .km-btn-secondary,
+body.galaxy-theme .km-btn-outline {
+  border-color: rgba(167, 139, 250, 0.25);
+  color: #f3e8ff;
+}
+body.galaxy-theme .km-btn-secondary:hover {
+  background: rgba(167, 139, 250, 0.15);
+}
+body.galaxy-theme .stat-badge {
+  background: rgba(167, 139, 250, 0.1);
+  border-color: rgba(167, 139, 250, 0.2);
+  color: #f3e8ff;
+}
+body.galaxy-theme .kmeans-explanation {
+  background: rgba(167, 139, 250, 0.08);
+  border-left-color: #a78bfa;
+  color: #f3e8ff;
+}
+body.galaxy-theme .stat-item strong {
+  color: #a78bfa;
+}
+</style>
+
+<script>
+(function() {
+  const DARK_PALETTE = [
+    { fill: 'rgba(0, 243, 255, 0.75)', stroke: '#00f3ff', centroid: '#00f3ff' },
+    { fill: 'rgba(255, 0, 127, 0.75)', stroke: '#ff007f', centroid: '#ff007f' },
+    { fill: 'rgba(255, 204, 0, 0.75)', stroke: '#ffcc00', centroid: '#ffcc00' },
+    { fill: 'rgba(0, 230, 118, 0.75)', stroke: '#00e676', centroid: '#00e676' }
+  ];
+
+  const DEEP_SEA_PALETTE = [
+    { fill: 'rgba(94, 231, 255, 0.8)', stroke: '#5ee7ff', centroid: '#5ee7ff' },
+    { fill: 'rgba(255, 110, 64, 0.8)', stroke: '#ff6e40', centroid: '#ff6e40' },
+    { fill: 'rgba(0, 230, 118, 0.85)', stroke: '#00e676', centroid: '#00e676' },
+    { fill: 'rgba(255, 213, 79, 0.85)', stroke: '#ffd54f', centroid: '#ffd54f' }
+  ];
+
+  const GALAXY_PALETTE = [
+    { fill: 'rgba(167, 139, 250, 0.85)', stroke: '#a78bfa', centroid: '#a78bfa' },
+    { fill: 'rgba(244, 63, 94, 0.85)', stroke: '#f43f5e', centroid: '#f43f5e' },
+    { fill: 'rgba(251, 191, 36, 0.85)', stroke: '#fbbf24', centroid: '#fbbf24' },
+    { fill: 'rgba(45, 212, 191, 0.85)', stroke: '#2dd4bf', centroid: '#2dd4bf' }
+  ];
+
+  const LIGHT_PALETTE = [
+    { fill: 'rgba(200, 90, 50, 0.8)', stroke: '#c85a32', centroid: '#a04018' },
+    { fill: 'rgba(31, 122, 140, 0.8)', stroke: '#1f7a8c', centroid: '#13505c' },
+    { fill: 'rgba(107, 112, 92, 0.85)', stroke: '#6b705c', centroid: '#484c3c' },
+    { fill: 'rgba(180, 130, 30, 0.85)', stroke: '#b4821e', centroid: '#8a6010' }
+  ];
+
+  const SKY_PALETTE = [
+    { fill: 'rgba(2, 119, 189, 0.8)', stroke: '#0277bd', centroid: '#01579b' },
+    { fill: 'rgba(123, 31, 162, 0.8)', stroke: '#7b1fa2', centroid: '#4a148c' },
+    { fill: 'rgba(0, 137, 123, 0.85)', stroke: '#00897b', centroid: '#004d40' },
+    { fill: 'rgba(230, 81, 0, 0.85)', stroke: '#e65100', centroid: '#bf360c' }
+  ];
+
+  const GARDEN_PALETTE = [
+    { fill: 'rgba(74, 222, 128, 0.8)', stroke: '#4ade80', centroid: '#4ade80' },
+    { fill: 'rgba(250, 204, 21, 0.8)', stroke: '#facc15', centroid: '#facc15' },
+    { fill: 'rgba(45, 212, 191, 0.85)', stroke: '#2dd4bf', centroid: '#2dd4bf' },
+    { fill: 'rgba(251, 113, 133, 0.85)', stroke: '#fb7185', centroid: '#fb7185' }
+  ];
+
+  let canvas, ctx;
+  let points = [];
+  let centroids = [];
+  let k = 3;
+  let phase = 'ASSIGN';
+  let iteration = 0;
+  let lastAction = 'INIT';
+  let isConverged = false;
+  let autoPlayTimer = null;
+
+  function getThemeConfig() {
+    if (document.body.classList.contains('light-theme')) {
+      return {
+        palette: LIGHT_PALETTE,
+        unassigned: 'rgba(140, 120, 105, 0.45)',
+        grid: 'rgba(61, 46, 37, 0.08)',
+        centroidSymbol: '#3d2e25',
+        connectingAlpha: 0.2
+      };
+    }
+    if (document.body.classList.contains('sky-theme')) {
+      return {
+        palette: SKY_PALETTE,
+        unassigned: 'rgba(100, 130, 160, 0.45)',
+        grid: 'rgba(79, 157, 232, 0.08)',
+        centroidSymbol: '#1e3a5f',
+        connectingAlpha: 0.2
+      };
+    }
+    if (document.body.classList.contains('garden-theme')) {
+      return {
+        palette: GARDEN_PALETTE,
+        unassigned: 'rgba(154, 223, 181, 0.35)',
+        grid: 'rgba(154, 223, 181, 0.08)',
+        centroidSymbol: '#ffffff',
+        connectingAlpha: 0.2
+      };
+    }
+    if (document.body.classList.contains('deep-sea-theme') || document.body.classList.contains('galaxy-night-theme')) {
+      return {
+        palette: DEEP_SEA_PALETTE,
+        unassigned: 'rgba(94, 231, 255, 0.35)',
+        grid: 'rgba(94, 231, 255, 0.06)',
+        centroidSymbol: '#ffffff',
+        connectingAlpha: 0.18
+      };
+    }
+    if (document.body.classList.contains('galaxy-theme')) {
+      return {
+        palette: GALAXY_PALETTE,
+        unassigned: 'rgba(167, 139, 250, 0.35)',
+        grid: 'rgba(167, 139, 250, 0.06)',
+        centroidSymbol: '#ffffff',
+        connectingAlpha: 0.18
+      };
+    }
+    return {
+      palette: DARK_PALETTE,
+      unassigned: 'rgba(160, 175, 200, 0.4)',
+      grid: 'rgba(255, 255, 255, 0.04)',
+      centroidSymbol: '#ffffff',
+      connectingAlpha: 0.12
+    };
+  }
+
+  function initWidget() {
+    canvas = document.getElementById('kmeans-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = (rect.width || 600) * dpr;
+    canvas.height = (rect.height || 380) * dpr;
+    ctx.scale(dpr, dpr);
+
+    generateDataset();
+    resetCentroids();
+    bindEvents();
+    updateUI();
+    draw();
+  }
+
+  function generateDataset() {
+    points = [];
+    const width = canvas.clientWidth || 600;
+    const height = canvas.clientHeight || 380;
+    
+    const centers = [
+      { x: width * 0.25, y: height * 0.35 },
+      { x: width * 0.75, y: height * 0.4 },
+      { x: width * 0.5, y: height * 0.75 }
+    ];
+
+    for (let c = 0; c < centers.length; c++) {
+      const count = 45;
+      const spreadX = 35 + Math.random() * 15;
+      const spreadY = 35 + Math.random() * 15;
+      for (let i = 0; i < count; i++) {
+        const u1 = Math.random() || 0.001, u2 = Math.random();
+        const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+        const z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+        points.push({
+          x: Math.min(width - 20, Math.max(20, centers[c].x + z0 * spreadX)),
+          y: Math.min(height - 20, Math.max(20, centers[c].y + z1 * spreadY)),
+          cluster: -1
+        });
+      }
+    }
+  }
+
+  function resetCentroids() {
+    centroids = [];
+    const indices = new Set();
+    while (indices.size < k && indices.size < points.length) {
+      indices.add(Math.floor(Math.random() * points.length));
+    }
+    
+    indices.forEach(idx => {
+      centroids.push({
+        x: points[idx].x + (Math.random() - 0.5) * 10,
+        y: points[idx].y + (Math.random() - 0.5) * 10
+      });
+    });
+
+    points.forEach(p => p.cluster = -1);
+    phase = 'ASSIGN';
+    iteration = 0;
+    lastAction = 'INIT';
+    isConverged = false;
+    stopAutoPlay();
+  }
+
+  function calculateSSE() {
+    let totalSSE = 0;
+    points.forEach(p => {
+      if (p.cluster >= 0 && centroids[p.cluster]) {
+        const dx = p.x - centroids[p.cluster].x;
+        const dy = p.y - centroids[p.cluster].y;
+        totalSSE += (dx * dx + dy * dy);
+      }
+    });
+    return totalSSE;
+  }
+
+  function step() {
+    if (isConverged) return;
+
+    if (phase === 'ASSIGN') {
+      let changed = false;
+      points.forEach(p => {
+        let minDist = Infinity;
+        let bestCluster = -1;
+        centroids.forEach((c, idx) => {
+          const dist = Math.pow(p.x - c.x, 2) + Math.pow(p.y - c.y, 2);
+          if (dist < minDist) {
+            minDist = dist;
+            bestCluster = idx;
+          }
+        });
+        if (p.cluster !== bestCluster) {
+          p.cluster = bestCluster;
+          changed = true;
+        }
+      });
+
+      iteration++;
+      lastAction = 'ASSIGN';
+      phase = 'UPDATE';
+      if (!changed && iteration > 1) {
+        isConverged = true;
+        stopAutoPlay();
+      }
+    } else {
+      let maxMove = 0;
+      centroids.forEach((c, idx) => {
+        const assigned = points.filter(p => p.cluster === idx);
+        if (assigned.length > 0) {
+          const sumX = assigned.reduce((s, p) => s + p.x, 0);
+          const sumY = assigned.reduce((s, p) => s + p.y, 0);
+          const newX = sumX / assigned.length;
+          const newY = sumY / assigned.length;
+
+          const move = Math.hypot(newX - c.x, newY - c.y);
+          if (move > maxMove) maxMove = move;
+
+          c.x = newX;
+          c.y = newY;
+        }
+      });
+
+      lastAction = 'UPDATE';
+      phase = 'ASSIGN';
+      if (maxMove < 0.1) {
+        isConverged = true;
+        stopAutoPlay();
+      }
+    }
+
+    updateUI();
+    draw();
+  }
+
+  function stopAutoPlay() {
+    if (autoPlayTimer) {
+      clearInterval(autoPlayTimer);
+      autoPlayTimer = null;
+      const btn = document.getElementById('km-btn-auto');
+      if (btn) btn.innerHTML = '▶ Auto Play';
+    }
+  }
+
+  function toggleAutoPlay() {
+    if (autoPlayTimer) {
+      stopAutoPlay();
+    } else {
+      if (isConverged) resetCentroids();
+      const btn = document.getElementById('km-btn-auto');
+      if (btn) btn.innerHTML = '⏸ Pause';
+      step();
+      autoPlayTimer = setInterval(() => {
+        if (isConverged) {
+          stopAutoPlay();
+        } else {
+          step();
+        }
+      }, 650);
+    }
+  }
+
+  function updateUI() {
+    const iterEl = document.getElementById('km-iter');
+    const sseEl = document.getElementById('km-sse');
+    const statusEl = document.getElementById('km-status');
+    const expEl = document.getElementById('km-explanation');
+
+    const sseFormatted = Math.round(calculateSSE()).toLocaleString('en-US');
+
+    if (iterEl) iterEl.innerText = iteration;
+    if (sseEl) sseEl.innerText = sseFormatted;
+
+    if (isConverged) {
+      if (statusEl) statusEl.innerText = '✅ Converged!';
+      if (expEl) expEl.innerHTML = `
+        <div class="exp-block">
+          <div class="exp-title">🎉 Converged (Iteration ${iteration})</div>
+          <div class="exp-desc">Centroid locations and cluster assignments no longer change. Global SSE reached a stable local minimum of <strong>${sseFormatted}</strong>.</div>
+        </div>
+        <div class="exp-block">
+          <div class="exp-title">💡 Algorithm Complete</div>
+          <div class="exp-desc">Try changing <strong>K</strong> or click <strong>Reset Centroids</strong> to explore different initial centroid placements!</div>
+        </div>
+      `;
+    } else if (lastAction === 'INIT') {
+      if (statusEl) statusEl.innerText = 'Initialized';
+      if (expEl) expEl.innerHTML = `
+        <div class="exp-block">
+          <div class="exp-title">🌱 Initialized</div>
+          <div class="exp-desc">Placed <strong>${k}</strong> initial centroids at random data point locations. Points are currently unassigned.</div>
+        </div>
+        <div class="exp-block">
+          <div class="exp-title">⚡ Next Step</div>
+          <div class="exp-desc">Click <strong>Next Step</strong> or <strong>Auto Play</strong> to start Lloyd's algorithm.</div>
+        </div>
+      `;
+    } else if (lastAction === 'ASSIGN') {
+      if (statusEl) statusEl.innerText = `Iteration ${iteration}: Points Assigned`;
+      if (expEl) expEl.innerHTML = `
+        <div class="exp-block">
+          <div class="exp-title">📍 Step ${iteration} Executed (Assigned Points)</div>
+          <div class="exp-desc">Calculated Euclidean distance from every data point to all centroids. Each point greedily joined its nearest centroid. Current Global SSE = <strong>${sseFormatted}</strong>.</div>
+        </div>
+        <div class="exp-block">
+          <div class="exp-title">⚡ Next Step (Update Centroids)</div>
+          <div class="exp-desc">Centroids will move to the exact arithmetic mean (center of mass) of their newly assigned points.</div>
+        </div>
+      `;
+    } else if (lastAction === 'UPDATE') {
+      if (statusEl) statusEl.innerText = `Iteration ${iteration}: Centroids Updated`;
+      if (expEl) expEl.innerHTML = `
+        <div class="exp-block">
+          <div class="exp-title">🎯 Step ${iteration} Executed (Updated Centroids)</div>
+          <div class="exp-desc">Recalculated each centroid as the exact arithmetic mean of its assigned points, shifting centroids to lower SSE equilibrium coordinates.</div>
+        </div>
+        <div class="exp-block">
+          <div class="exp-title">⚡ Next Step (Assign Points)</div>
+          <div class="exp-desc">Re-evaluate distance from points to updated centroids to re-assign points.</div>
+        </div>
+      `;
+    }
+  }
+
+  function draw() {
+    if (!ctx || !canvas) return;
+    const width = canvas.clientWidth || 600;
+    const height = canvas.clientHeight || 380;
+    const theme = getThemeConfig();
+
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.strokeStyle = theme.grid;
+    ctx.lineWidth = 1;
+    for (let x = 0; x < width; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+    }
+    for (let y = 0; y < height; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+    }
+
+    points.forEach(p => {
+      if (p.cluster >= 0 && centroids[p.cluster]) {
+        const c = centroids[p.cluster];
+        ctx.strokeStyle = theme.palette[p.cluster % theme.palette.length].stroke;
+        ctx.globalAlpha = theme.connectingAlpha;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(c.x, c.y);
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
+    });
+
+    points.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      if (p.cluster >= 0) {
+        const color = theme.palette[p.cluster % theme.palette.length];
+        ctx.fillStyle = color.fill;
+        ctx.strokeStyle = color.stroke;
+      } else {
+        ctx.fillStyle = theme.unassigned;
+        ctx.strokeStyle = 'rgba(120, 135, 155, 0.3)';
+      }
+      ctx.lineWidth = 1.2;
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    centroids.forEach((c, idx) => {
+      const color = theme.palette[idx % theme.palette.length];
+      
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 16, 0, Math.PI * 2);
+      ctx.fillStyle = color.fill.replace(/0\.\d+/, '0.2');
+      ctx.fill();
+      ctx.strokeStyle = color.centroid;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.strokeStyle = theme.centroidSymbol;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(c.x - 8, c.y); ctx.lineTo(c.x + 8, c.y);
+      ctx.moveTo(c.x, c.y - 8); ctx.lineTo(c.x, c.y + 8);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = theme.centroidSymbol;
+      ctx.fill();
+    });
+  }
+
+  function bindEvents() {
+    const btnStep = document.getElementById('km-btn-step');
+    const btnAuto = document.getElementById('km-btn-auto');
+    const btnReset = document.getElementById('km-btn-reset');
+    const kPills = document.querySelectorAll('#km-k-pills .km-pill-btn');
+
+    if (btnStep) btnStep.addEventListener('click', step);
+    if (btnAuto) btnAuto.addEventListener('click', toggleAutoPlay);
+    if (btnReset) btnReset.addEventListener('click', () => {
+      generateDataset();
+      resetCentroids();
+      updateUI();
+      draw();
+    });
+
+    kPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        kPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        k = parseInt(pill.getAttribute('data-value'), 10);
+        resetCentroids();
+        updateUI();
+        draw();
+      });
+    });
+
+    window.addEventListener('ludwig-theme-changed', draw);
+    const observer = new MutationObserver(() => draw());
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWidget);
+  } else {
+    setTimeout(initWidget, 50);
+  }
+})();
+</script>
 </section>
 
 <section id="3-implementation-details-initialization-and-choosing-k" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -368,9 +1341,9 @@
 <ul class="note-list">
 <li><strong>The Elbow Method:</strong> As a visual heuristic, we run K-Means across a range of $K$ values, such as from $K=1$ to $10$, and plot the total $Global\ SSE$ against each $K$. As $K$ increases, SSE will always drop. However, the graph typically forms an "elbow" shape—a sharp bend where adding more clusters yields rapidly diminishing returns in reducing error. The point right at this bend suggests the optimal $K$, representing the sweet spot before we start splitting natural groups into artificial fragments.</li>
 <li><strong>Silhouette Score:</strong> Measures how similar a data point is to its own cluster compared to other clusters, outputting a score between $-1$ and $+1$. A higher average score indicates that clusters are well-separated and dense.</li>
-<li><strong>Davies-Bouldin Index:</strong> Evaluates the similarity between each cluster and its most similar counterpart, factoring in both within-cluster scatter and between-cluster separation. A lower score means the clusters are compact and far apart from each other.
+<li><strong>Davies-Bouldin Index:</strong> Evaluates the similarity between each cluster and its most similar counterpart, factoring in both within-cluster scatter and between-cluster separation. A lower score means the clusters are compact and far apart from each other.</li>
+</ul>
 <p class="mb-2">If your Elbow graph is a smooth curve with no sharp bend, or if these metrics oscillate wildly without a clear peak, it usually signals a crucial reality: your data lacks distinct, discrete groups, meaning K-Means' spherical assumptions may be a poor fit for the dataset.</p></li>
-</ul></li>
 <li><strong>Over-Clustering and Manual Merging:</strong> As an expert-in-the-loop strategy, a clever and highly pragmatic approach used by data scientists is to intentionally set $K$ slightly larger than expected. By over-clustering, you ensure that dense, natural groups are never awkwardly merged together. Once the algorithm finishes, a human domain expert reviews the resulting micro-clusters and manually combines adjacent groups that conceptually belong to the same category. This combines the speed of automated partitioning with the nuanced intelligence of human intuition.</li>
 </ul>
 </section>
