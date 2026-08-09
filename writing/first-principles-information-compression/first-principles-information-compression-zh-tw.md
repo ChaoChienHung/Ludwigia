@@ -2,12 +2,12 @@
 Title: 第一性原理：大腦的終極資訊壓縮術
 Tags: Learning, Cognition, Reflection
 Summary: 第一性原理不僅是拆解問題的工具，更是升級大腦運作機制的關鍵。透過將異質知識收斂至共享的底層結構，我們能達成極致的資訊壓縮、將記憶提取轉為路徑導航，並在跨領域應用中引爆創造力。
-Slug: why-first-principles-matter-zh-tw
-Output: writing/why-first-principles-matter/why-first-principles-matter-zh-tw.html
+Slug: first-principles-information-compression-zh-tw
+Output: writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html
 Style: default
 EstimatedReadingTime: true
 Lang: zh-Hant
-CanonicalId: why-first-principles-matter
+CanonicalId: first-principles-information-compression
 TitleSuffix: false
 Status: published
 Published: 2026-06-17

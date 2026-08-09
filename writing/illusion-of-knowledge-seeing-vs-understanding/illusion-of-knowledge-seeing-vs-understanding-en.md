@@ -204,7 +204,7 @@ In this article, we primarily frame First Principles as a remedy for two specifi
 
 At that point, First Principles evolves from a surgical tool for solving one-off learning problems into a systemic upgrade to your cognitive operating system—enabling extreme information compression, turning memory retrieval into intuitive path navigation, and unlocking exponential compound interest in cross-domain learning.
 
-To explore how the brain leverages First Principles for information compression and cognitive operating system upgrades, see the dedicated piece: <content-link canonical="why-first-principles-matter">First Principles: The Brain's Ultimate Information Compression</content-link>.
+To explore how the brain leverages First Principles for information compression and cognitive operating system upgrades, see the dedicated piece: <content-link canonical="first-principles-information-compression">First Principles: The Brain's Ultimate Information Compression</content-link>.
 </callout>
 
 ### The Ultimate Blank Page: The Brutal Test of the Feynman Technique and Rubber Duck Debugging

@@ -211,7 +211,7 @@ content:
 
 這時，第一性原理就不再只是單點解決學習問題的技巧，而是會徹底升級大腦處理資訊的方式——實現極致的資訊壓縮、讓記憶提取從死記轉為路徑導航，並在跨領域學習時產生龐大的複利效應。
 
-關於大腦如何透過第一性原理達成「資訊壓縮」與「認知系統升級」的完整運作機制，可以參考這篇專題探討：<content-link canonical="why-first-principles-matter">第一性原理：大腦的終極資訊壓縮術</content-link>。
+關於大腦如何透過第一性原理達成「資訊壓縮」與「認知系統升級」的完整運作機制，可以參考這篇專題探討：<content-link canonical="first-principles-information-compression">第一性原理：大腦的終極資訊壓縮術</content-link>。
 </callout>
 
 ### 終極的空白頁：費曼學習法與小黃鴨的殘酷考驗
