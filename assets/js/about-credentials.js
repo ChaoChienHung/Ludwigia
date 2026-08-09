@@ -482,6 +482,10 @@
         render(container);
       });
     }
+
+    window.addEventListener('ludwig-language-changed', () => {
+      render(container);
+    });
   }
 
   if (document.readyState === 'loading') {
