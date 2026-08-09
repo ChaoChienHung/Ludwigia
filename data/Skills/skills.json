@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "languages",
+      "title": {
+        "en": "Languages",
+        "zh-Hant": "語言能力",
+        "zh-Hans": "语言能力"
+      },
+      "icon": "fa-solid fa-language",
+      "items": [
+        {
+          "id": "traditional-chinese",
+          "name": {
+            "en": "Traditional Chinese",
+            "zh-Hant": "繁體中文",
+            "zh-Hans": "繁体中文"
+          },
+          "level": "Native",
+          "percentage": 100,
+          "badge": "Native",
+          "desc": {
+            "en": "Mother tongue, native written & spoken proficiency.",
+            "zh-Hant": "母語，具備極佳的書寫與口語表達能力。",
+            "zh-Hans": "母语，具备极佳的书写与口语表达能力。"
+          }
+        },
+        {
+          "id": "english",
+          "name": {
+            "en": "English",
+            "zh-Hant": "英文",
+            "zh-Hans": "英文"
+          },
+          "level": "Fluent / Professional",
+          "percentage": 90,
+          "badge": "Full Professional",
+          "desc": {
+            "en": "Fluent in academic writing, technical communication, and professional discussions.",
+            "zh-Hant": "流利於學術寫作、技術溝通與專業討論。",
+            "zh-Hans": "流利于学术写作、技术沟通与专业讨论。"
+          }
+        },
+        {
+          "id": "indonesian",
+          "name": {
+            "en": "Indonesian",
+            "zh-Hant": "印尼語",
+            "zh-Hans": "印尼语"
+          },
+          "level": "Fluent / Native-level",
+          "percentage": 92,
+          "badge": "Native-level",
+          "desc": {
+            "en": "Lived in Indonesia for 5+ years, native-level spoken & listening skills with professional fluency.",
+            "zh-Hant": "印尼生活 5+ 年，具備母語級聽說與專業流利度。",
+            "zh-Hans": "印尼生活 5+ 年，具备母语级听说与专业流利度。"
+          }
+        },
+        {
+          "id": "simplified-chinese",
+          "name": {
+            "en": "Simplified Chinese",
+            "zh-Hant": "簡體中文",
+            "zh-Hans": "简体中文"
+          },
+          "level": "Native / Fluent",
+          "percentage": 98,
+          "badge": "Full Literacy",
+          "desc": {
+            "en": "Full reading, typing, and professional communication literacy.",
+            "zh-Hant": "完整的閱讀、打字與專業交流能力。",
+            "zh-Hans": "完整的阅读、打字与专业交流能力。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "programming-engineering",
+      "title": {
+        "en": "Programming & CS Core",
+        "zh-Hant": "程式設計與電腦科學核心",
+        "zh-Hans": "程序设计与计算机科学核心"
+      },
+      "icon": "fa-solid fa-code",
+      "items": [
+        {
+          "id": "python",
+          "name": {
+            "en": "Python",
+            "zh-Hant": "Python",
+            "zh-Hans": "Python"
+          },
+          "level": "Advanced / Expert",
+          "percentage": 95,
+          "badge": "Primary Tool",
+          "desc": {
+            "en": "ML/DL model development, data pipelines, script automation, backend tools.",
+            "zh-Hant": "機器學習/深度學習開發、資料流水線、自動化腳本與後端工具。",
+            "zh-Hans": "机器学习/深度学习开发、数据流水线、自动化脚本与后端工具。"
+          }
+        },
+        {
+          "id": "cpp-c",
+          "name": {
+            "en": "C / C++",
+            "zh-Hant": "C / C++",
+            "zh-Hans": "C / C++"
+          },
+          "level": "Proficient",
+          "percentage": 85,
+          "badge": "Core Systems",
+          "desc": {
+            "en": "Data structures, algorithms, systems programming, and performance optimization.",
+            "zh-Hant": "資料結構、演算法、系統程式設計與效能最佳化。",
+            "zh-Hans": "数据结构、算法、系统程序设计与性能优化。"
+          }
+        },
+        {
+          "id": "web-dev",
+          "name": {
+            "en": "HTML / CSS / JavaScript",
+            "zh-Hant": "HTML / CSS / JavaScript",
+            "zh-Hans": "HTML / CSS / JavaScript"
+          },
+          "level": "Advanced",
+          "percentage": 90,
+          "badge": "Full Stack UI",
+          "desc": {
+            "en": "Modern interactive web apps, bespoke CSS design systems, responsive layouts.",
+            "zh-Hant": "現代互動式 Web 應用、自訂 CSS 設計系統與響應式版型。",
+            "zh-Hans": "现代交互式 Web 应用、自定 CSS 设计系统与响应式版型。"
+          }
+        },
+        {
+          "id": "distributed-systems",
+          "name": {
+            "en": "Distributed Systems & Paxos",
+            "zh-Hant": "分散式系統與 Paxos",
+            "zh-Hans": "分布式系统与 Paxos"
+          },
+          "level": "Proficient",
+          "percentage": 82,
+          "badge": "Architecture",
+          "desc": {
+            "en": "Consensus protocols, state machine replication, fault tolerance, and system consistency.",
+            "zh-Hant": "共識協定、狀態機複製、容錯機制與系統一致性。",
+            "zh-Hans": "共识协议、状态机复制、容错机制与系统一致性。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai-ml",
+      "title": {
+        "en": "AI & Machine Learning",
+        "zh-Hant": "人工智慧與機器學習",
+        "zh-Hans": "人工智能与机器学习"
+      },
+      "icon": "fa-solid fa-brain",
+      "items": [
+        {
+          "id": "deep-learning",
+          "name": {
+            "en": "Deep Learning & Neural Nets",
+            "zh-Hant": "深度學習與神經網路",
+            "zh-Hans": "深度学习与神经网络"
+          },
+          "level": "Advanced",
+          "percentage": 88,
+          "badge": "Research & Practice",
+          "desc": {
+            "en": "PyTorch, Transformers, generative models, representation learning.",
+            "zh-Hant": "PyTorch、Transformers、生成式模型與表徵學習。",
+            "zh-Hans": "PyTorch、Transformers、生成式模型与表征学习。"
+          }
+        },
+        {
+          "id": "recommender-systems",
+          "name": {
+            "en": "Recommender Systems & Retrieval",
+            "zh-Hant": "推薦系統與檢索架構",
+            "zh-Hans": "推荐系统与检索架构"
+          },
+          "level": "Proficient",
+          "percentage": 85,
+          "badge": "Domain Specialization",
+          "desc": {
+            "en": "Cascade funnel architecture, generative retrieval, Semantic ID tokenization (RQ-VAE / RQ-KMeans).",
+            "zh-Hant": "漏斗瀑布流架構、生成式檢索、Semantic ID Tokenization (RQ-VAE / RQ-KMeans)。",
+            "zh-Hans": "漏斗瀑布流架构、生成式检索、Semantic ID Tokenization (RQ-VAE / RQ-KMeans)。"
+          }
+        },
+        {
+          "id": "agentic-ai",
+          "name": {
+            "en": "Agentic AI & LLM Systems",
+            "zh-Hant": "Agentic AI 與大模型系統",
+            "zh-Hans": "Agentic AI 与大模型系统"
+          },
+          "level": "Advanced",
+          "percentage": 90,
+          "badge": "AI Orchestration",
+          "desc": {
+            "en": "Autonomous tool calling, documentation-driven workflows, multi-step agent planning.",
+            "zh-Hant": "自主工具調用、文檔驅動工作流與多步驟 Agent 規劃。",
+            "zh-Hans": "自主工具调用、文档驱动工作流与多步骤 Agent 规划。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tools-infra",
+      "title": {
+        "en": "Cloud, Networking & Tools",
+        "zh-Hant": "雲端、網路與工程工具",
+        "zh-Hans": "云端、网络与工程工具"
+      },
+      "icon": "fa-solid fa-server",
+      "items": [
+        {
+          "id": "git-linux",
+          "name": {
+            "en": "Git, Linux & Bash",
+            "zh-Hant": "Git、Linux 與 Bash",
+            "zh-Hans": "Git、Linux 与 Bash"
+          },
+          "level": "Proficient",
+          "percentage": 90,
+          "badge": "Daily Driver",
+          "desc": {
+            "en": "Version control, shell scripting, environment management, automated CLI tooling.",
+            "zh-Hant": "版本控制、Shell 腳本、環境管理與自動化 CLI 工具鏈。",
+            "zh-Hans": "版本控制、Shell 脚本、环境管理与自动化 CLI 工具链。"
+          }
+        },
+        {
+          "id": "networking-cloud",
+          "name": {
+            "en": "Networking & Cloud Architecture",
+            "zh-Hant": "網路與雲端架構",
+            "zh-Hans": "网络与云端架构"
+          },
+          "level": "Exploring / Intermediate",
+          "percentage": 78,
+          "badge": "Active Growth",
+          "desc": {
+            "en": "TCP/IP fundamentals, cloud infrastructure, containerization, microservices concepts.",
+            "zh-Hant": "TCP/IP 基礎、雲端基礎設施、容器化與微服務概念。",
+            "zh-Hans": "TCP/IP 基础、云端基础设施、容器化与微服务概念。"
+          }
+        }
+      ]
+    }
+  ]
+}

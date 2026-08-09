@@ -53,6 +53,7 @@
 - `docs/specs/copilot-entry-spec.md`：站內 Copilot 的入口 / fallback / 問題範圍小規格
 - `docs/specs/companion-spec.md`：`Companion` 的位置、尺寸、placeholder 與 fallback baseline
 - `docs/specs/timeline-design-spec.md`：`About Me` 下 timeline 的正式設計規格
+- `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
 
 ### Design
 

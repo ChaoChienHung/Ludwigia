@@ -42,9 +42,9 @@
 
 除了內容頁與 search index，repo 也允許少數「page-scoped source data」存在於獨立資料檔。
 
-- 典型例子：首頁上的獨立 `Timeline` section
+- 典型例子：首頁上的獨立 `Timeline` section、`Skills` section 與 `Credentials` section
 - 這類資料不屬於 `search/search-index.{json,js}`，也不應硬寫死在前端 JS 常數裡
-- source of truth 應是獨立 data file（例如 `data/Timeline/timeline.json`）
+- source of truth 應是獨立 data file（例如 `data/Timeline/timeline.json`、`data/Skills/skills.json` 與 `data/Credentials/credentials.json`）
 - runtime 的責任是 load / validate / normalize / project / render，而不是要求作者同時維護 data 與 projection 後的 JS 陣列
 - 若靜態站需要兼容 `file://`，可提供 JS preload / inline preload fallback；但 fallback 不是新的真相來源
 

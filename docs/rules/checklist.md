@@ -23,11 +23,12 @@
   - [ ] `garden/floral-assets/` 已同步更新並納入版本控制（Garden 入口可直接使用）
   - [ ] `garden/_floral_dist/` 等 build output 已被忽略且不納入版本控制
 
-- [ ] 若本次改動涉及 page-scoped source data（例如首頁上的獨立 `Timeline` section）：
-  - [ ] source of truth 仍維持在獨立 data file，而不是把事件重新寫回前端 JS 常數
-  - [ ] scale visibility contract 正確（`macro -> Macro + Meso + Micro`、`meso -> Meso + Micro`、`micro -> Micro only`）
-  - [ ] `period` 的 `start_*` / `end_*` fallback 正確，缺席時會退回共用欄位
-  - [ ] ongoing `period` 若使用 `end: "present"`，runtime 顯示與排序都正確，且作者不需要手動維護今天日期
+- [ ] 若本次改動涉及 page-scoped source data（例如首頁上的獨立 `Timeline`、`Skills` 或 `Credentials` section）：
+  - [ ] source of truth 仍維持在獨立 data file（`data/Timeline/timeline.json`、`data/Skills/skills.json`、`data/Credentials/credentials.json`），而不是把資料重新寫回前端 JS 常數
+  - [ ] `Skills` 類別切換、左右按鈕與動態進度條在桌機與手機上表現正常
+  - [ ] `Credentials` 的 `Type` / `Domain` 雙維度篩選、縮圖 Option Bar 切換與全螢幕放大燈箱 Modal 正常運作
+  - [ ] 視覺元件完整繼承全站 Theme & Palette CSS Design Tokens
+  - [ ] `python3 cli.py test` 中的 `test_skills_credentials_data.py` 測試通過
   - [ ] 若同時存在多個 ongoing `period`，尾端的 `Present / 至今` 會被收斂成單一 cluster，點進 detail 後仍能看到各個 ongoing phase
   - [ ] 若 timeline 使用 `category`，event card / detail card 的 badge 正常顯示，且沒有另外長出與 palette 打架的固定 category 配色
 - [ ] 若本次改動涉及全站 navbar / page shell shared source：

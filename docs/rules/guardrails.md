@@ -31,7 +31,10 @@
 
 - [ ] 若支援 pinned writing
   - [ ] `garden:pinned` / `garden:priority` 由 source metadata 再現性生成，不靠手改 HTML 或另一份推薦清單
-  - [ ] pinned 只影響已命中 query/tag filter 的 writing 排序，不繞過 filter
+  - [ ] 若首頁 Skills 或 Credentials & Honors 採用獨立 data file（`data/Skills/skills.json` 或 `data/Credentials/credentials.json`）：
+  - [ ] source JSON 維持為單一真相來源，不要求在 HTML 硬寫第二份靜態 DOM 資料
+  - [ ] `Skills` 切換不引發全頁跳躍或垂直高度大幅膨脹
+  - [ ] `Credentials` 的 `Type` 與 `Domain` 雙維度篩選、縮圖 Option Bar 與全螢幕 Modal 燈箱運作正常，且完全符合全站 Palette/Theme token 規範
 
 ## UI / UX（可讀性優先）
 

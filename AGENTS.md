@@ -32,6 +32,10 @@
   - ongoing `period` 若啟用，`end: "present"` 必須作為穩定 authoring 寫法；runtime 可把它投影成「至今 / Present」顯示與可排序的當下時間點，但作者不應被迫反覆手改今天日期
   - 若同一時間存在多個 ongoing `period`，timeline UI 可把多個 `period-end` 收斂為單一尾端 `Present / 至今` cluster；但 source data 仍維持逐筆 event，不能把 cluster 本身當成新的手動資料層
   - 若 timeline 支援 `category` metadata（例如 `education` / `internship` / `work`），它只作為輕量 facet 與 badge 顯示來源；不得反過來長成第二套固定配色系統，破壞既有 palette-driven 視覺契約
+- 若首頁 `Skills` 與 `Credentials` 區塊啟用 source-driven data file（`data/Skills/skills.json` 與 `data/Credentials/credentials.json`），必須維持：
+  - 作者只維護 source JSON，前端 runtime (`about-skills.js` / `about-credentials.js`) 負責載入、正規化、多語切換與 DOM 渲染；不應要求手動維護第二份 HTML 靜態資料
+  - `Skills` 必須維持類別分組與頁籤/箭頭控制，確保多個技能面板共用顯示空間，隨技能成長仍能維持空間精簡
+  - `Credentials` 必須維持 `Type` 與 `Domain/Category` 雙維度篩選、主視覺展示區、縮圖導覽列與 Modal 燈箱放大檢視能力；視覺元件必須完全繼承全站 Theme 與 Palette Design Tokens
 - `qprompt` 的基本語意若啟用，必須維持：
   - prompt 本體由 `<qprompt>...</qprompt>` 或 `<qprompt/>` 再現性生成
   - 若 placeholder 出現在 `reviewkit` 內，就渲染成該 `reviewkit` 的 prompt pane
@@ -196,6 +200,7 @@
 - `docs/specs/inline-enhancement-spec.md`：`information` / `content-link` 的 shared inline 視覺、互動與 downgrade contract
 - `docs/specs/content-metadata-spec.md`：`<meta>` 欄位、head metadata、visibility/date/language/ranking contract
 - `docs/specs/translation-spec.md`：source-driven translation workflow contract
+- `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡
 - `docs/rules/checklist.md` / `docs/rules/guardrails.md`：交付收尾與守門清單
 - `docs/guide/language-guide.md` / `docs/guide/theme-palette-guide.md` / `docs/guide/ontology-guide.md` / `docs/guide/companion-guide.md`：共享維護 guide

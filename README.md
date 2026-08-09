@@ -532,7 +532,8 @@ Ludwigia/
 │   ├── README.md
 │   ├── specs/
 │   │   ├── layout-spec.md
-│   │   └── system-spec.md
+│   │   ├── system-spec.md
+│   │   └── skills-credentials-spec.md
 │   ├── design/
 │   │   └── design.md
 │   ├── rules/

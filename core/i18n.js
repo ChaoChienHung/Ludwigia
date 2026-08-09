@@ -16,6 +16,8 @@
       entries: [
         { selector: '#homeDropdown', text: { en: 'Home', 'zh-Hant': '首頁', 'zh-Hans': '首页' } },
         { selector: 'a[href$="index.html#about"]', text: { en: 'About', 'zh-Hant': '關於我', 'zh-Hans': '关于我' } },
+        { selector: '[data-nav-skills]', text: { en: 'Skills', 'zh-Hant': '技能樹', 'zh-Hans': '技能树' } },
+        { selector: '[data-nav-credentials]', text: { en: 'Credentials', 'zh-Hant': '榮譽與憑證', 'zh-Hans': '荣誉与凭证' } },
         { selector: '[data-nav-timeline]', text: { en: 'Timeline', 'zh-Hant': 'Timeline', 'zh-Hans': 'Timeline' }, cipherText: { en: 'Chronology', 'zh-Hant': 'Chronology', 'zh-Hans': 'Chronology' } },
         { selector: 'a[href$="index.html#contact"]', text: { en: 'Contact', 'zh-Hant': '聯絡方式', 'zh-Hans': '联系方式' } },
         { selector: '#projectsDropdown', text: { en: 'Projects', 'zh-Hant': '專案', 'zh-Hans': '项目' } },
