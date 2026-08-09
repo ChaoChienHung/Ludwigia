@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer — Ludwig</title>
+  <meta name="garden:tags" content="推薦系統, 生成式檢索, RQ-VAE, VQ-VAE, 深度學習, Semantic ID">
+  <meta name="garden:summary" content="本文深入解析 RQ-VAE（Residual Quantized VAE）在生成式推薦與檢索中的核心機制，包含從 VQ-VAE 到 RQ-VAE 的階層式離散化演進、Straight-Through Estimator (STE) 梯度補正、碼本崩塌 (Codebook Collapse) 的解決之道，以及 TIGER 模型如何利用 RQ-VAE 生成 Semantic ID。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.rq_vae,concept.vq_vae,concept.deep_learning,concept.semantic_id">
+  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.rq_vae&quot;:{&quot;en&quot;:&quot;RQ-VAE&quot;,&quot;zh-Hant&quot;:&quot;RQ-VAE&quot;,&quot;zh-Hans&quot;:&quot;RQ-VAE&quot;},&quot;concept.vq_vae&quot;:{&quot;en&quot;:&quot;VQ-VAE&quot;,&quot;zh-Hant&quot;:&quot;VQ-VAE&quot;,&quot;zh-Hans&quot;:&quot;VQ-VAE&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;}}">
+  <meta name="garden:published_at" content="2026-08-02">
+  <meta name="garden:last_modified_at" content="2026-08-02">
+  <meta name="garden:reading_time_minutes" content="10">
+  <meta name="garden:source" content="notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-rq-vae">1. 為什麼需要端到端的 RQ-VAE？</a>
+<a class="note-toc-link level-1" href="#2-vq-vae-rq-vae">2. 從 VQ-VAE 到 RQ-VAE：階層式殘差向量量化</a>
+<a class="note-toc-link level-2" href="#vq-vae">VQ-VAE 的基礎機制與單碼本瓶頸</a>
+<a class="note-toc-link level-2" href="#rq-vae">RQ-VAE 的多階層殘差架構</a>
+<a class="note-toc-link level-1" href="#3-straight-through-estimator-ste">3. 不可微離散化與梯度傳播：Straight-Through Estimator (STE)</a>
+<a class="note-toc-link level-2" href="#rq-vae-loss-function">RQ-VAE 的完整損失函數 (Loss Function)</a>
+<a class="note-toc-link level-1" href="#4-codebook-collapse">4. 實務難題：碼本崩塌 (Codebook Collapse) 與解決方案</a>
+<a class="note-toc-link level-1" href="#5-google-tiger">5. 經典案例：Google TIGER 如何實現生成式推薦</a>
+<a class="note-toc-link level-1" href="#6-rq-vae-vs-rq-kmeans">6. RQ-VAE vs. RQ-Kmeans 比較</a>
+<a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-02" data-published-at="2026-08-02"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-02</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在延伸專文 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰 中，我們探討了推薦系統為何全面邁向生成式範式。而在將推薦對齊為自迴歸生成的過程中，最關鍵的核心落地瓶頸在於：<strong>如何將高維商品特徵端到端地量化為階層式的離散 Token（Semantic ID）？</strong></p>
+
+<p class="mb-3">作為生成式檢索（Generative Retrieval, GR）領域的開山技術，<strong>RQ-VAE（Residual Quantized VAE）</strong> 提供了端到端學習離散碼本與商品編碼的解答。本文將直奔這個落地瓶頸，深入解析 RQ-VAE 的階層量化機制、Straight-Through Estimator (STE) 梯度傳播、碼本崩塌處置與 TIGER 落地實踐。</p>
+</section>
+
+<section id="1-rq-vae" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 為什麼需要端到端的 RQ-VAE？</h3>
+
+<p class="mb-3">在離散 Token 化（Item Tokenization）的過程中，主要存在兩種技術路線：</p>
+
+<ol class="mb-3">
+<li><strong>兩階段解耦方案（如 RQ-Kmeans）：</strong> 先利用獨立的模型生成靜態商品 Embedding，再經由幾何殘差聚類切分成 Token。</li>
+<li><strong>端到端深度學習方案（RQ-VAE）：</strong> 建立一個由變分編碼器（Encoder）、離散碼本（Codebooks）與解碼器（Decoder）組成的神經網路，聯合優化向量表示與 Token 化過程。</li>
+</ol>
+
+<p class="mb-3">兩階段解耦方案雖然輕量且穩定，但其 Token 化過程與下游的推薦生成目標是完全分離的。相比之下，<strong>RQ-VAE 能夠讓神經網路主動學習符合下游推薦目標的潛在語意空間（Latent Semantic Space）</strong>。這種端到端訓練能力，使其成為許多最前沿生成式推薦模型（如 Google TIGER）的核心基礎設施。</p>
+
+<hr>
+</section>
+
+<section id="2-vq-vae-rq-vae" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 從 VQ-VAE 到 RQ-VAE：階層式殘差向量量化</h3>
+
+<p class="mb-3">要理解 RQ-VAE，必須先回顧 2017 年 DeepMind 提出的 <strong>VQ-VAE (Vector Quantized VAE)</strong>。</p>
+
+<h4 id="vq-vae" class="mb-2">VQ-VAE 的基礎機制與單碼本瓶頸</h4>
+
+<p class="mb-3">VQ-VAE 引入了一個包含 $K$ 個向量的離散碼本 $\mathcal{C} = \{e_1, e_2, \dots, e_K\}$：</p>
+
+<ol class="mb-3">
+<li><strong>編碼：</strong> 輸入商品特徵 $x$，經由 Encoder 得到連續潛在向量 $z_e = E(x)$。</li>
+<li><strong>量化：</strong> 在碼本 $\mathcal{C}$ 中找到離其最近的向量 $e_k$：</li>
+</ol>
+
+<p class="mb-3">$$z_q = Q(z_e) = \arg\min_{e_k \in \mathcal{C}} \|z_e - e_k\|_2$$</p>
+
+<ol class="mb-3">
+<li><strong>解碼：</strong> 將量化向量 $z_q$ 輸入 Decoder，重構原始特徵 $\hat{x} = D(z_q)$。</li>
+</ol>
+
+<p class="mb-3">然而，單一碼本的 VQ-VAE 面臨著表達力上限問題：若要精確區分平台上的數百萬商品，碼本大小 $K$ 必須極大，這會導致神經網路的記憶體開銷崩潰與訓練極度不穩定。</p>
+
+<h4 id="rq-vae" class="mb-2">RQ-VAE 的多階層殘差架構</h4>
+
+<p class="mb-3">為了在保持小碼本（如每層 $K = 256$ 或 $8192$）的同時獲得巨大的表達空間，<strong>RQ-VAE (Lee et al., 2022)</strong> 引入了 $M$ 層階層式殘差碼本 $\mathcal{C}^{(1)}, \mathcal{C}^{(2)}, \dots, \mathcal{C}^{(M)}$：</p>
+
+<ol class="mb-3">
+<li><strong>第一層量化：</strong></li>
+</ol>
+
+<p class="mb-3">將連續潛在向量 $z_e$ 映射到第一層碼本 $\mathcal{C}^{(1)}$ 的最近向量 $e_{k_1}^{(1)}$，並計算第一層殘差： $$r^{(1)} = z_e - e_{k_1}^{(1)}$$</p>
+
+<ol class="mb-3">
+<li><strong>第 $m$ 層量化（$m = 2 \dots M$）：</strong></li>
+</ol>
+
+<p class="mb-3">將上一層殘差 $r^{(m-1)}$ 映射到第 $m$ 層碼本 $\mathcal{C}^{(m)}$ 的最近向量 $e_{k_m}^{(m)}$，並更新殘差： $$r^{(m)} = r^{(m-1)} - e_{k_m}^{(m)}$$</p>
+
+<ol class="mb-3">
+<li><strong>累積幾何重構：</strong></li>
+</ol>
+
+<p class="mb-3">最終量化向量 $z_q$ 為各層選擇向量的加總： $$z_q = \sum_{m=1}^M e_{k_m}^{(m)}$$</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>產出 Semantic ID：</strong> 商品 $x$ 最終被轉化為長度為 $M$ 的階層式離散 Token 序列 $[k_1, k_2, \dots, k_M]$。 第 1 個 Token $k_1$ 代表粗粒度語意類別，後續 Token $k_2 \dots k_M$ 則在殘差空間中持續修正細節語意。</p></div>
+
+<hr>
+</section>
+
+<section id="3-straight-through-estimator-ste" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 不可微離散化與梯度傳播：Straight-Through Estimator (STE)</h3>
+
+<p class="mb-3">在神經網路中，$\arg\min$ 的最近鄰搜尋是一個不可微的離散階梯函數，梯度無法直接從 Decoder 穿透量化層傳回 Encoder。</p>
+
+<p class="mb-3">為了打破這個限制，RQ-VAE 採用了 <strong>Straight-Through Estimator (STE)</strong> 技巧：在前向傳播（Forward Pass）時使用離散量化向量 $z_q$；在反向傳播（Backward Pass）時，直接將 Decoder 的梯度複製傳回 Encoder（即視 $\nabla_{z_e} \approx \nabla_{z_q}$）。</p>
+
+<h4 id="rq-vae-loss-function" class="mb-2">RQ-VAE 的完整損失函數 (Loss Function)</h4>
+
+<p class="mb-3">為了使 Encoder 的輸出 $z_e$ 與碼本向量 $z_q$ 互相靠近，RQ-VAE 的訓練損失由三部分組成：</p>
+
+<p class="mb-3">$$\mathcal{L}_{\text{RQ-VAE}} = \mathcal{L}_{\text{recon}}(x, \hat{x}) + \|\text{sg}[z_e] - z_q\|_2^2 + \beta \|z_e - \text{sg}[z_q]\|_2^2$$</p>
+
+<ul class="note-list">
+<li><strong>$\mathcal{L}_{\text{recon}}(x, \hat{x})$（重構損失）：</strong> 確保重構後的特徵 $\hat{x}$ 逼近原始輸入 $x$。</li>
+<li><strong>碼本損失 $\|\text{sg}[z_e] - z_q\|_2^2$：</strong> 運用 stop-gradient 運算子 $\text{sg}[\cdot]$，推動碼本向量向 Encoder 輸出靠攏。</li>
+<li><strong>承諾損失 (Commitment Loss) $\beta \|z_e - \text{sg}[z_q]\|_2^2$：</strong> 防止 Encoder 輸出過度劇烈跳變，確保其「承諾」於當前的碼本分佈。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="4-codebook-collapse" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 實務難題：碼本崩塌 (Codebook Collapse) 與解決方案</h3>
+
+<p class="mb-3">在端到端訓練 RQ-VAE 時，最常見的工程病徵是<strong>碼本崩塌（Codebook Collapse / Dead Codes）</strong>：模型在訓練早期迅速收斂到少數幾個熱門 Codeword，導致大部分碼本向量再也沒有梯度更新，最終失真度大增，Semantic ID 失去區分度。</p>
+
+<p class="mb-3">為了確保碼本利用率（Codebook Utilization Rate, CUR）達到最大化，現代 RQ-VAE 採用了以下關鍵優化手段：</p>
+
+<ol class="mb-3">
+<li><strong>指數移動平均更新 (EMA Codebook Update)：</strong></li>
+</ol>
+
+<p class="mb-3">放棄直接透過梯度更新碼本，轉而使用 Encoder 輸出的指數移動平均（EMA）來動態更新聚類中心，能極大地穩定碼本訓練。</p>
+
+<ol class="mb-3">
+<li><strong>死碼重置機制 (Dead Code Revival / Resetting)：</strong></li>
+</ol>
+
+<p class="mb-3">當檢測到某些 Codeword 的使用率低於設定閾值時，主動將該 Codeword 的位置隨機重置為當前 Batch 中某個失真最大的 Encoder 向量。</p>
+
+<ol class="mb-3">
+<li><strong>K-means 聚類初始化：</strong></li>
+</ol>
+
+<p class="mb-3">在訓練初期，先對 Encoder 輸出運行幾次 K-means 聚類來初始化碼本中心，避免隨機初始化帶來的局部最優陷阱。</p>
+
+<hr>
+</section>
+
+<section id="5-google-tiger" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 經典案例：Google TIGER 如何實現生成式推薦</h3>
+
+<p class="mb-3">Google 於 NeurIPS 2022 提出的 <strong>TIGER (Transformer with Implicit Generative Retrieval)</strong> 展現了 RQ-VAE 在生成式檢索上的極致威力：</p>
+
+<div class="note-markdown-block"><pre><code>[ 商品文本/特徵 ] 
+       │
+       ▼
+( Sentence-T5 Encoder ) ──&gt; 向量 v
+       │
+       ▼
+( 預訓練好的 RQ-VAE ) ───&gt; 產出 Semantic ID: [31, 88, 102, 5]
+       │
+       ▼
+( 自迴歸 Transformer ) ───&gt; 預測下一個商品的 Semantic ID 序列</code></pre></div>
+
+<ul class="note-list">
+<li><strong>第一階段：</strong> 透過文本模型（如 Sentence-T5）提取商品語意特徵，並訓練 RQ-VAE 將商品編碼為 4 個 Token 的 Semantic ID。</li>
+<li><strong>第二階段：</strong> 將用戶歷史互動商品的 Semantic ID 展平為輸入序列，訓練 Sequence-to-Sequence Transformer 自迴歸生成下一個推薦商品的 Semantic ID 序列。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="6-rq-vae-vs-rq-kmeans" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. RQ-VAE vs. RQ-Kmeans 比較</h3>
+
+<p class="mb-3">在選擇離散 Token 化方案時，團隊通常需要在「端到端極致表現」與「工程穩定性」之間做取捨：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>特性維度</th>
+<th>RQ-VAE (端到端神經網路)</th>
+<th>RQ-Kmeans (兩階段幾何量化)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>訓練範式</strong></td>
+<td>端到端聯合訓練（Encoder + Codebook + Decoder）</td>
+<td>兩階段解耦（先產生 Embedding，再做幾何量化）</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">| <strong>優化目標</strong> | 重構損失 + 碼本損失，學習任務導向的潛在空間 | 純粹最小化幾何向量平方距離 $\|v - v_{\text{approx}}\|^2$ | | <strong>工程複雜度</strong> | 需處理 STE 梯度傳播、EMA 更新與碼本重置 | 純粹 Python/C++ 聚類演算法，無梯度問題，極其穩定 | | <strong>適用場景</strong> | 追求 SOTA 表現、需要端到端學習新領域特徵 | 已有高品質靜態 Embedding（如 Graph Embedding/DSSM），追求快速穩健落地 |</p>
+
+<hr>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>端到端 Token 化的核心：</strong> RQ-VAE 透過變分編碼器與階層式碼本，實現了從高維特徵到離散 Semantic ID 的端到端神經網路量化。</li>
+<li><strong>關鍵梯度技巧：</strong> 採用 Straight-Through Estimator (STE) 克服離散 $\arg\min$ 選擇的不可微問題，並透過 Commitment Loss 穩定編碼器與碼本的對齊。</li>
+<li><strong>解決碼本崩塌：</strong> 結合 EMA 碼本更新與死碼重置機制（Dead Code Revival），確保所有階層的 Codeword 都能被充分利用。</li>
+<li><strong>與 RQ-Kmeans 的分工：</strong> RQ-VAE 代表了端到端深度學習的 SOTA 方向；而 RQ-Kmeans 則是兩階段解耦場景下最具高 CP 值與穩定度的工程選擇。</li>
+</ul></div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考文獻（References）</h3>
+
+<ol class="mb-3">
+<li>Lee, D., et al. (2022). <em>Autoregressive Image Generation using Residual Quantization</em>. (RQ-VAE 原創論文)</li>
+<li>Rajput, S., et al. (2022). <em>Recommender Systems with Generative Retrieval</em>. (Google TIGER 論文, NeurIPS 2022)</li>
+<li>van den Oord, A., et al. (2017). <em>Neural Discrete Representation Learning</em>. (VQ-VAE 原創論文, NIPS 2017)</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

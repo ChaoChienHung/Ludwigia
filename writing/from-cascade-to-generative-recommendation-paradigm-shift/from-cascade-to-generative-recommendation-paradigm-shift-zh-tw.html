@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰 — Ludwig</title>
+  <meta name="garden:tags" content="推薦系統, 生成式檢索, 縮放定律, 深度學習, Semantic ID, RQ-KMeans, RQ-VAE, OneRec">
+  <meta name="garden:summary" content="本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.scaling_laws,concept.deep_learning,concept.semantic_id,concept.rq_kmeans,concept.rq_vae,concept.onerec">
+  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.scaling_laws&quot;:{&quot;en&quot;:&quot;Scaling Laws&quot;,&quot;zh-Hant&quot;:&quot;縮放定律&quot;,&quot;zh-Hans&quot;:&quot;缩放定律&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;},&quot;concept.rq_kmeans&quot;:{&quot;en&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hant&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hans&quot;:&quot;RQ-KMeans&quot;},&quot;concept.rq_vae&quot;:{&quot;en&quot;:&quot;RQ-VAE&quot;,&quot;zh-Hant&quot;:&quot;RQ-VAE&quot;,&quot;zh-Hans&quot;:&quot;RQ-VAE&quot;},&quot;concept.onerec&quot;:{&quot;en&quot;:&quot;OneRec&quot;,&quot;zh-Hant&quot;:&quot;OneRec&quot;,&quot;zh-Hans&quot;:&quot;OneRec&quot;}}">
+  <meta name="garden:published_at" content="2026-08-02">
+  <meta name="garden:last_modified_at" content="2026-08-02">
+  <meta name="garden:reading_time_minutes" content="11">
+  <meta name="garden:source" content="writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-roi">1. 傳統級聯架構的深層痛點與低 ROI 陷阱</a>
+<a class="note-toc-link level-2" href="#1-neq">(1) 各階段優化目標不一致，局部最優 $\neq$ 全局最優</a>
+<a class="note-toc-link level-2" href="#2">(2) 系統算力利用率低下，通信吞噬計算</a>
+<a class="note-toc-link level-2" href="#3-ai">(3) 技術壁壘造成代差，阻礙 AI 前沿技術吸納</a>
+<a class="note-toc-link level-2" href="#4-scaling-law-roi">(4) 傳統 Scaling Law 陷入低 ROI 的困境</a>
+<a class="note-toc-link level-1" href="#2-generative-recommendation-onerec">2. 生成式推薦（Generative Recommendation）的破局之道：以 OneRec 為例</a>
+<a class="note-toc-link level-2" href="#1">(1) 架構上：用單一端到端模組替換多階段級聯</a>
+<a class="note-toc-link level-2" href="#2-discriminative-generative">(2) 建模上：從「判別式 (Discriminative)」轉向「生成式 (Generative)」</a>
+<a class="note-toc-link level-1" href="#3">3. 核心工程挑戰：海量商品與詞彙庫爆炸難題</a>
+<a class="note-toc-link level-2" href="#semantic-id-sid">破局關鍵：Semantic ID (SID) 與多步解碼</a>
+<a class="note-toc-link level-1" href="#4-token">4. 商品 Token 化的兩大實踐路徑</a>
+<a class="note-toc-link level-1" href="#5">5. 結語：推薦系統的未來展望</a>
+<a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-02" data-published-at="2026-08-02"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-02</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在 NLP 與大模型（LLM）領域，Transformer 架構所代表的<strong>自迴歸生成式建模（Generative Modeling）</strong>已成為機器學習的底層基本原理。然而反觀推薦系統，在過去數十年間，工業界的技術架構幾乎都停留在同一個經典框架上——<a class="note-content-link" data-canonical-id="funnel-cascade-architecture-in-recommendation-systems" href="../../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html">漏斗式級聯架構（Funnel Cascade Architecture）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">現代推薦系統的基石：深入解析「級聯架構」</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">機器學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）到重排與混排（Re-Ranking &amp; Mix-Ranking）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。</span></span></span></a>。</p>
+
+<p class="mb-3">從「召回（Retrieval）$\to$ 粗排（Pre-Ranking）$\to$ 精排（Ranking）$\to$ 重排（Re-Ranking）」，這種將大問題拆解為多個階段逐層篩選的工程策略，曾經成功支撐了電商、短影音與資訊流平台在毫秒級延遲限制下處理數億候選池的需求。</p>
+
+<p class="mb-3">然而，相較於大模型領域的飛速革新，傳統推薦系統近年來卻面臨邊際效益遞減的困境。隨著快手在 2025 年發表 <a class="note-inline-link" href="https://arxiv.org/abs/2502.18965" target="_blank" rel="noopener noreferrer"><strong>OneRec</strong> (<em>OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment</em>)</a> 等前沿工作的推出，業界開始掀起一場深遠的範式轉移：<strong>從傳統級聯漏斗走向端到端自迴歸生成（Generative Recommendation）</strong>。</p>
+
+<p class="mb-3">曾經主流的級聯架構遇到了怎樣的效能瓶頸？生成式推薦又帶來了什麼樣的範式轉移？在邁向落地的過程中，它又將面臨哪些技術挑戰與應對策略？</p>
+
+<p class="mb-3">本文將帶你層層拆解，一探生成式推薦背後的技術全貌與破局之道。</p>
+</section>
+
+<section id="1-roi" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 傳統級聯架構的深層痛點與低 ROI 陷阱</h3>
+
+<p class="mb-3">級聯架構的核心哲學是<strong>「用空間與階段換取時間」</strong>。在面對數百萬甚至數十億級別的候選商品庫時，系統不可能在 50 毫秒內的嚴苛延遲約束（SLA）下，對所有商品進行高精度的複雜神經網路計算。因此，級聯架構採取了務實的工程折衷：將龐大的候選空間劃分為多個階段，隨著候選集數量被逐層大幅過濾（如 $10^6 \to 10^3 \to 10^2 \to 10^1$），模型的特徵維度與計算複雜度才得以遞增。</p>
+
+<p class="mb-3">在推薦技術演進的早期，這種「分而治之」的工程策略帶來了巨大的效益，各模組獨立升級都能產出顯著的業務增益。然而，<strong>隨著各階段模組被越做越精細、技術優化逐漸趨於飽和與極限時，整個推薦系統的效果開始明顯受制於這種框架設計本身的結構性天花板</strong>。級聯架構暴露出四個難以調和的深層矛盾：</p>
+
+<h4 id="1-neq" class="mb-2">(1) 各階段優化目標不一致，局部最優 $\neq$ 全局最優</h4>
+
+<p class="mb-3">在級聯鏈路上，各模組的優化目標天然存在錯位。例如，召回階段專注於擴大候選池的覆蓋度與多樣性，避免漏掉潛在興趣；而精排階段則極致追求預測的精準度（如 CTR/CVR），致力於挑出用戶最可能點擊的商品。這兩個目標看似互補，實則常產生背離：召回為了多樣性強行塞入的候選，往往會在精排階段被低分打回，造成算力浪費；反之，精排偏好的高分數商品，也可能因召回過度過濾而根本無法進入候選池。加上系統長期迭代累積的各種工程 Trick 與模組間的隱性耦合，導致各階段單獨達成的「局部最優」，最終無法收斂為整個推薦系統的「全局最優」。</p>
+
+<h4 id="2" class="mb-2">(2) 系統算力利用率低下，通信吞噬計算</h4>
+
+<p class="mb-3">在多階段鏈路中，資料必須頻繁跨越多個獨立模組。每次跨階段調用，都伴隨著大量的 RPC 網路通信、特徵檢索與記憶體搬運。在極致的 50 毫秒延遲限制下，很大一部分算力預算被浪費在「系統傳輸與資料搬運」上，而非有效的模型計算，導致硬體效率遠低於大模型領域。</p>
+
+<h4 id="3-ai" class="mb-2">(3) 技術壁壘造成代差，阻礙 AI 前沿技術吸納</h4>
+
+<p class="mb-3">分模組的特化架構形成了高度割裂的技術壁壘。這導致大模型、強化學習（RL）以及對齊技術（Preference Alignment）等 AI 領域的突破性進展，極難被傳統推薦系統有效吸納，產生了明顯的技術代差。</p>
+
+<h4 id="4-scaling-law-roi" class="mb-2">(4) 傳統 Scaling Law 陷入低 ROI 的困境</h4>
+
+<p class="mb-3">為了持續提升推薦效果，業界過去嘗試推動模型 Scaling 的方向主要有二：</p>
+
+<ol class="mb-3">
+<li><strong>持續拉長用戶行為序列：</strong> 從最早的十量級，擴展到百、千量級，甚至萬量級以上。</li>
+<li><strong>增大打分候選集：</strong> 讓精排/粗排對盡可能多的物品進行打分。</li>
+</ol>
+
+<p class="mb-3">然而，在傳統級聯架構已被優化至接近極限、技術趨於飽和的前提下，透過上述手段強行推動 Scaling 所產出的邊際收益，與投入的龐大算力資源相比，<strong>投資報酬率 (ROI) 極低</strong>。</p>
+</section>
+
+<section id="2-generative-recommendation-onerec" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 生成式推薦（Generative Recommendation）的破局之道：以 OneRec 為例</h3>
+
+<p class="mb-3">為了解決多階段級聯的固有一致性與算力浪費問題，以 <strong>OneRec</strong> 為代表的生成式推薦系統提出了全新的架構設計：</p>
+
+<div class="note-markdown-block"><pre><code>[ 用戶歷史與 Context 信息 ] ───&gt; ( 統一端到端 Transformer 生成器 ) ───&gt; [ 自迴歸生成推薦列表 ]</code></pre></div>
+
+<p class="mb-3">這項範式轉移包含兩個核心維度的升級：</p>
+
+<h4 id="1" class="mb-2">(1) 架構上：用單一端到端模組替換多階段級聯</h4>
+
+<ul class="note-list">
+<li><strong>集中算力與極致效率：</strong> 將原本分散於召回、粗排、精排的算力預算集中於單一模型上，大幅減少模組間的通信與 IO 開銷，顯著提升硬體利用率。</li>
+<li><strong>恢復系統一致性：</strong> 規避了不同階段獨立迭代、互相掣肘的複雜問題，讓模型效果完全取決於整體能力，徹底解決一致性難題。</li>
+<li><strong>釋放 Scaling Law 與強化學習空間：</strong> 簡約的端到端架構，為強化學習（對齊用戶偏好）與擴大模型規模（Scaling）提供了天然的基石。</li>
+</ul>
+
+<h4 id="2-discriminative-generative" class="mb-2">(2) 建模上：從「判別式 (Discriminative)」轉向「生成式 (Generative)」</h4>
+
+<ul class="note-list">
+<li><strong>傳統判別式：</strong> 給定特定用戶與特定 Item，預估點擊/轉化概率 $P(\text{action} \mid \text{user}, \text{item})$。</li>
+<li><strong>生成式建模：</strong> 給定用戶與 Context 資訊，直接對潛在的 Item 進行預估，學習複雜的<strong>聯合機率分佈 $P(\text{items} \mid \text{user}, \text{context})$</strong>。</li>
+</ul>
+
+<p class="mb-3">這種更高維度的建模方式，為模型參數規模的擴展（Scaling Law）打開了龐大的表現力空間。值得強調的是，生成式範式的收益並不局限於「端到端架構」；<strong>即便僅將傳統級聯中的單一模組（例如將向量召回升級為生成式檢索 Generative Retrieval）替換為生成式範式，同樣機能帶來顯著的 Scaling 收益。</strong></p>
+
+<p class="mb-3">這背後的核心邏輯在於，Scaling Law 的本質之一是「能否將規模化算力高效轉化為模型能力」。而生成式範式所依賴的 Transformer 架構，正是目前現代硬體（如 GPU/TPU）優化最為成熟、最能極致釋放算力潛能的架構，因此能最大程度享受到硬體迭代帶來的紅利。</p>
+</section>
+
+<section id="3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 核心工程挑戰：海量商品與詞彙庫爆炸難題</h3>
+
+<p class="mb-3">儘管生成式推薦的藍圖非常吸引人，但在實務落地時，團隊會立刻撞上一道天險：<strong>詞彙庫爆炸（Vocabulary Explosion）</strong>。</p>
+
+<ul class="note-list">
+<li>大語言模型（LLM）處理的是文字，其詞彙庫（Vocabulary Size）通常只有 32,000 到 128,000 個 Token。</li>
+<li>然而，工業級電商或短影音平台的商品庫（Item Catalog）高達數千萬到數十億（$10^7 \sim 10^9$）。</li>
+</ul>
+
+<p class="mb-3">如果直接將每一個商品指定為一個獨立 Token，模型最後一層的 Softmax 計算複雜度將直接崩潰。</p>
+
+<h4 id="semantic-id-sid" class="mb-2">破局關鍵：Semantic ID (SID) 與多步解碼</h4>
+
+<p class="mb-3">為了解決這個問題，業界提出了 <strong>Semantic ID (SID)</strong> 的概念：<strong>不將商品視為單一原子 ID，而是將商品編碼為長度為 $M$（如 3~4）的階層式 Token 序列</strong>。</p>
+
+<p class="mb-3">如果每一步的碼本大小為 $K = 8192$，則：</p>
+
+<ul class="note-list">
+<li><strong>單步預測開銷：</strong> 模型在每一步解碼時只需處理 8192 規模的小詞彙庫。</li>
+<li><strong>可表達商品空間：</strong> $8192^3 \approx 5.5 \times 10^{11}$，輕鬆覆蓋全站商品。</li>
+</ul>
+</section>
+
+<section id="4-token" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 商品 Token 化的兩大實踐路徑</h3>
+
+<p class="mb-3">當我們確定將海量商品編碼為由 $M$ 個 Token 組成的 Semantic ID (SID) 序列後，下一個核心的工程實踐問題在於：<strong>該如何將高維商品特徵轉換為具備由粗到細（Coarse-to-fine）階層語意的離散 Token？</strong></p>
+
+<p class="mb-3">在實際落地時，業界主要衍生出兩大 Tokenizer 實現路徑：</p>
+
+<ul class="note-list">
+<li><strong>端到端深度學習路線（RQ-VAE）：</strong> 透過變分編碼器與離散碼本，讓神經網路端到端地學習任務導向的商品表徵與 Token 化。詳細架構、直通估算器（STE）與訓練技巧可參考專屬筆記：端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer。</li>
+<li><strong>兩階段解耦幾何路線（RQ-Kmeans）：</strong> 複用既有模型的 Embedding 資產，透過幾何殘差 K-means 迅速進行向量切分。詳細演算法、幾何證明與工程落地流程可參考專屬筆記：從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer。</li>
+</ul>
+
+<p class="mb-3">這兩種 Token 化路徑各具優勢，前者追求極致的端到端表達力，後者則追求工程落地的高度穩定與計算效率，共同支撐起生成式推薦在不同算力與業務約束下的實踐。</p>
+</section>
+
+<section id="5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 結語：推薦系統的未來展望</h3>
+
+<p class="mb-3">從級聯漏斗走向自迴歸生成，絕非僅僅是演算法模型的微調，而是一場涉及系統架構、資料編碼與工程設施的全面革命。</p>
+
+<p class="mb-3">正如快手 OneRec 所展示的，將多階段級聯收斂為單一端到端生成模型，不僅消除了階段間的通信浪費與目標解耦，更為強化學習偏好對齊與 Scaling Law 提供了可持續發力的舞台。雖然生成式推薦在即時性延遲與長尾商品泛化上仍有諸多工程難題待解，但對齊大模型生態所帶來的高算力利用率與模型規模效應，無疑代表著推薦系統下一代的必然趨勢。</p>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>級聯架構的局限：</strong> 各階段優化目標不一致（局部最優 $\neq$ 全局最優）、通信與 IO 搬運開銷巨大，導致傳統推薦系統在序列拉長與候選打分放大時陷入低 ROI 的 Scaling 陷阱。</li>
+<li><strong>生成式推薦的突破 (以 OneRec 為例)：</strong> 透過單一端到端模型取代多級漏斗，集中算力並恢復系統一致性；建模上從判別式 $P(\text{action} \mid u, i)$ 升級為生成式聯合機率分佈 $P(\text{items} \mid u, c)$，徹底打開 Scaling 空間。</li>
+<li><strong>核心工程天險與 SID：</strong> 工業級商品庫（$10^7 \sim 10^9$）與 LLM 詞彙庫規模衝突。透過 Semantic ID (SID) 將商品拆解為多步 Token 序列，在保有巨量表達空間的同時將 Softmax 複雜度控制在毫秒級。</li>
+<li><strong>Token 化兩大關鍵路徑：</strong> RQ-VAE 提供端到端深度學習優化；而 RQ-Kmeans 則提供輕量、極度穩健的兩階段幾何替代方案。</li>
+</ul></div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考文獻（References）</h3>
+
+<ol class="mb-3">
+<li><a class="note-inline-link" href="https://arxiv.org/abs/2502.18965" target="_blank" rel="noopener noreferrer">Paper: <em>OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment</em> (Feb 2025).</a></li>
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/2011387251351908741" target="_blank" rel="noopener noreferrer">知乎：从原理到落地详细解读生成式推荐OneRec</a></li>
+<li>Paper: <em>Recommender Systems with Generative Retrieval</em> (Google TIGER, NeurIPS 2022).</li>
+<li>Paper: <em>Autoregressive Image Generation using Residual Quantization</em> (RQ-VAE, 2022).</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

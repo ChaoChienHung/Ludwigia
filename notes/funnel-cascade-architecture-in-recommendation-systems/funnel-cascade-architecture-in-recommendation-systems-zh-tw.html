@@ -10,10 +10,11 @@
   <meta name="garden:status" content="published">
   <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.machine_learning,concept.deep_learning,concept.retrieval,concept.ranking,concept.pre_ranking,concept.mix_ranking,concept.re_ranking">
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.retrieval&quot;:{&quot;en&quot;:&quot;Retrieval&quot;,&quot;zh-Hant&quot;:&quot;召回&quot;,&quot;zh-Hans&quot;:&quot;召回&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;},&quot;concept.pre_ranking&quot;:{&quot;en&quot;:&quot;Pre-Ranking&quot;,&quot;zh-Hant&quot;:&quot;粗排&quot;,&quot;zh-Hans&quot;:&quot;粗排&quot;},&quot;concept.mix_ranking&quot;:{&quot;en&quot;:&quot;Mix-Ranking&quot;,&quot;zh-Hant&quot;:&quot;混排&quot;,&quot;zh-Hans&quot;:&quot;混排&quot;},&quot;concept.re_ranking&quot;:{&quot;en&quot;:&quot;Re-Ranking&quot;,&quot;zh-Hant&quot;:&quot;重排&quot;,&quot;zh-Hans&quot;:&quot;重排&quot;}}">
+  <meta name="garden:canonical_id" content="funnel-cascade-architecture-in-recommendation-systems">
   <meta name="garden:published_at" content="2026-07-26">
   <meta name="garden:last_modified_at" content="2026-07-30">
   <meta name="garden:cover" content="notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems.png">
-  <meta name="garden:reading_time_minutes" content="23">
+  <meta name="garden:reading_time_minutes" content="24">
   <meta name="garden:source" content="notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.md">
   <script>
   (() => {
@@ -163,8 +164,8 @@
 <a class="note-toc-link level-1" href="#stage-comparison">各階段的資源與特徵對比表</a>
 <a class="note-toc-link level-1" href="#tradeoffs-limitations">級聯架構的隱憂與未來挑戰</a>
 <a class="note-toc-link level-1" href="#transition-to-gr">邁向下一代範式：生成式檢索（Generative Retrieval）</a>
-<a class="note-toc-link level-1" href="#takeaways">總結與核心要點</a>
 <a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
+<a class="note-toc-link level-1" href="#takeaways">總結與核心要點</a>
           </nav>
         </div>
       </div>
@@ -237,17 +238,20 @@
 <ol class="mb-3">
 <li class="mb-2">
   <strong><strong>商品池 / 索引池 (Item / Index Pool)</strong>：</strong><br>
-  這是整個推薦流程的「起點」，代表從全量資料庫中篩選出、當前具備推薦資格的候選商品集合。但為什麼不直接拿全量資料庫來推薦就好了呢？ 這是因為資料庫中包含大量「無法被推薦」的商品——例如已售罄無庫存、因違規暫時封禁、或是因跨國法規/物流限制無法配送至使用者所在區域的物品。這些商品雖然必須保存在資料庫中（供歷史訂單與帳務查詢），但會被排除在索引池之外，確保系統只在「有意義且合規」的商品中進行精準推薦。
+  
+<p class="mb-2">這是整個推薦流程的「起點」，代表從全量資料庫中篩選出、當前具備推薦資格的候選商品集合。但為什麼不直接拿全量資料庫來推薦就好了呢？ 這是因為資料庫中包含大量「無法被推薦」的商品——例如已售罄無庫存、因違規暫時封禁、或是因跨國法規/物流限制無法配送至使用者所在區域的物品。這些商品雖然必須保存在資料庫中（供歷史訂單與帳務查詢），但會被排除在索引池之外，確保系統只在「有意義且合規」的商品中進行精準推薦。</p>
   
 </li>
 <li>
   <strong><strong>排序模組 (Ranking Module)</strong>：</strong><br>
-  這是由演算法主導的核心戰場，採用了<strong>「召回 $\rightarrow$ 粗排 $\rightarrow$ 精排」</strong>的漏斗式篩選機制。由於全量演算極為耗時，模組必須先透過「召回」快速將範圍縮小至千級別，再利用「粗排」與「精排」進行多維度的深度評分。其最終目的，是從商品池的海量候選中，精準挑出得分最高、最符合使用者當下情境與偏好的頂級項目，傳送至最後一關的重混排模組。
+  
+<p class="mb-2">這是由演算法主導的核心戰場，採用了<strong>「召回 $\rightarrow$ 粗排 $\rightarrow$ 精排」</strong>的漏斗式篩選機制。由於全量演算極為耗時，模組必須先透過「召回」快速將範圍縮小至千級別，再利用「粗排」與「精排」進行多維度的深度評分。其最終目的，是從商品池的海量候選中，精準挑出得分最高、最符合使用者當下情境與偏好的頂級項目，傳送至最後一關的重混排模組。</p>
   
 </li>
 <li>
   <strong><strong>重混排模組 (Re-Ranking &amp; Mix-Ranking Module)</strong>：</strong><br>
-  這是內容發送至使用者眼前前的「最終把關者」。為什麼精排選出高分項目後不能直接輸出？因為在真實場景中，我們不能只看演算法的「理論最高分」，還必須兼顧瀏覽體驗與商業目標。舉例來說，若使用者當下對「運動鞋」表現出極高興趣，精排演算法給出的高分項目可能全都是運動鞋。如果直接照單全收，整個頁面就會被同類商品塞滿；這雖然滿足了短期偏好，卻犧牲了視覺多樣性，長期來看反而容易讓使用者感到厭倦，不利於平台的永續經營。此外，商業上的廣告內容也需要適時曝光，不能完全被自然推薦的高分項目擠壓。因此，為了解決這些問題，我們引入了重混排模組，並分別執行兩項核心任務：
+  
+<p class="mb-2">這是內容發送至使用者眼前前的「最終把關者」。為什麼精排選出高分項目後不能直接輸出？因為在真實場景中，我們不能只看演算法的「理論最高分」，還必須兼顧瀏覽體驗與商業目標。舉例來說，若使用者當下對「運動鞋」表現出極高興趣，精排演算法給出的高分項目可能全都是運動鞋。如果直接照單全收，整個頁面就會被同類商品塞滿；這雖然滿足了短期偏好，卻犧牲了視覺多樣性，長期來看反而容易讓使用者感到厭倦，不利於平台的永續經營。此外，商業上的廣告內容也需要適時曝光，不能完全被自然推薦的高分項目擠壓。因此，為了解決這些問題，我們引入了重混排模組，並分別執行兩項核心任務：</p>
   <ul class="mb-0 mt-2">
 <li><strong>重排（Re-Ranking）</strong>：導入業務規則進行體驗調控，例如將同類商品強制打散以確保多樣性、剔除近期已購項目等。</li>
 <li><strong>混排（Mix-Ranking）</strong>：處理跨來源內容的版面插播，評估廣告或活動項目是否符合門檻，並將其安插在最適當的位置。</li>
@@ -394,12 +398,14 @@
 <ol class="mb-3">
 <li class="mb-2">
   <strong><strong>重排（Re-ranking）——打破局部最優，兼顧使用者體驗</strong>：</strong><br>
-  精排階段算出來的「理論最高分」，並不一定等於「使用者體驗最好」的最終呈現。舉例來說，假設預測得分最高的前十名全是運動鞋，若完全仰賴精排結果，首頁將清一色全是鞋子。這看似滿足了精準度，卻嚴重忽略了多樣性。因此，「重排」的任務就是打破這種死板的「局部最優」。系統會在這階段進行<strong>打散多樣性、去重與頻控</strong>（例如過濾掉剛剛才買過的商品），確保最終呈現在使用者面前的內容既精準又豐富，不會產生視覺疲勞。
+  
+<p class="mb-2">精排階段算出來的「理論最高分」，並不一定等於「使用者體驗最好」的最終呈現。舉例來說，假設預測得分最高的前十名全是運動鞋，若完全仰賴精排結果，首頁將清一色全是鞋子。這看似滿足了精準度，卻嚴重忽略了多樣性。因此，「重排」的任務就是打破這種死板的「局部最優」。系統會在這階段進行<strong>打散多樣性、去重與頻控</strong>（例如過濾掉剛剛才買過的商品），確保最終呈現在使用者面前的內容既精準又豐富，不會產生視覺疲勞。</p>
   
 </li>
 <li>
   <strong><strong>混排（Mixing）——平衡商業價值與內容生態</strong>：</strong><br>
-  並非所有的業務場景都需要混排。混排主要出現在需要整合「多種不同來源內容」的平台上。當系統不僅要推薦自然內容，還需要插入廣告（Ads）、營運強推商品，或跨頻道的內容時，就需要混排機制出場。混排的核心挑戰，在於如何在「不嚴重傷害使用者體驗」的前提下，將不同屬性的內容合理分配版面，從而最大化平台的整體商業收益與生態健康。
+  
+<p class="mb-2">並非所有的業務場景都需要混排。混排主要出現在需要整合「多種不同來源內容」的平台上。當系統不僅要推薦自然內容，還需要插入廣告（Ads）、營運強推商品，或跨頻道的內容時，就需要混排機制出場。混排的核心挑戰，在於如何在「不嚴重傷害使用者體驗」的前提下，將不同屬性的內容合理分配版面，從而最大化平台的整體商業收益與生態健康。</p>
   
 </li>
 </ol>
@@ -474,17 +480,20 @@
 <ol class="mb-3">
 <li class="mb-2">
   <strong><strong>召回決定上限，精排僅能逼近上限</strong>：</strong><br>
-  雖然業界普遍將研發重心與龐大算力放在最尾端的精排階段，但從級聯架構的資料流不難發現——精排能打分的對象，完全取決於粗排與召回供給的候選集。換句話說，<strong>「召回階段決定了本次推薦成果的品質上限，而精排只是在這個上限約束下進行逼近」</strong>。一旦召回階段因為模型過於簡單而漏掉了使用者真正感興趣的優質內容，後面再強大的精排模型也無能為力。
+  
+<p class="mb-2">雖然業界普遍將研發重心與龐大算力放在最尾端的精排階段，但從級聯架構的資料流不難發現——精排能打分的對象，完全取決於粗排與召回供給的候選集。換句話說，<strong>「召回階段決定了本次推薦成果的品質上限，而精排只是在這個上限約束下進行逼近」</strong>。一旦召回階段因為模型過於簡單而漏掉了使用者真正感興趣的優質內容，後面再強大的精排模型也無能為力。</p>
   
 </li>
 <li>
   <strong><strong>通信與 IO 搬運開銷極高，阻礙 Scaling Law 落地</strong>：</strong><br>
-  在多階段級聯架構中，資料必須跨越多個獨立模組（召回 $\rightarrow$ 粗排 $\rightarrow$ 精排 $\rightarrow$ 重混排）。每次跨模組調用，都伴隨著大量的通信開銷、特徵查詢與記憶體搬運。在極致的毫秒級延遲約束下，<strong>很大一部分的算力預算與時間成本都被浪費在「系統傳輸與資料搬運」上，而非「模型計算」</strong>。這導致傳統推薦系統很難像大型語言模型（LLM）一樣，簡單地透過擴大參數規模（Scaling Up）來享受 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-Hant">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 的紅利。
+  
+<p class="mb-2">在多階段級聯架構中，資料必須跨越多個獨立模組（召回 $\rightarrow$ 粗排 $\rightarrow$ 精排 $\rightarrow$ 重混排）。每次跨模組調用，都伴隨著大量的通信開銷、特徵查詢與記憶體搬運。在極致的毫秒級延遲約束下，<strong>很大一部分的算力預算與時間成本都被浪費在「系統傳輸與資料搬運」上，而非「模型計算」</strong>。這導致傳統推薦系統很難像大型語言模型（LLM）一樣，簡單地透過擴大參數規模（Scaling Up）來享受 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-Hant">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 的紅利。</p>
   
 </li>
 <li>
   <strong><strong>資訊遺失與目標不一致 (Information Loss &amp; Objective Misalignment)</strong>：</strong><br>
-  召回看重興趣涵蓋率、粗排看重過濾效率、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，且前階段的早裁斷（Early Truncation）無法修復，容易導致整個系統收斂於<strong>局部最佳解</strong>，而非全局最優解。
+  
+<p class="mb-2">召回看重興趣涵蓋率、粗排看重過濾效率、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，且前階段的早裁斷（Early Truncation）無法修復，容易導致整個系統收斂於<strong>局部最佳解</strong>，而非全局最優解。</p>
   
 </li>
 </ol>
@@ -495,12 +504,15 @@
 
 <p class="mb-3">正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「雙塔向量空間與級聯漏斗」限制的新方法。</p>
 
-<p class="mb-3">為了打破 IO 開銷枷鎖並統一優化目標，最新的前沿趨勢（如快手的 <strong>OneRec</strong> 等研究）正朝向<strong>「全鏈路一體化（End-to-End Architectures）」</strong> 與 <strong>「生成式檢索（Generative Retrieval, GR）」</strong> 演進：</p>
+<p class="mb-3">為了打破 IO 開銷枷鎖、統一優化目標並直接對齊大語言模型範式，最新的前沿趨勢（如快手的 <strong>OneRec</strong> 等研究）正朝向<strong>「端到端架構（End-to-End Architectures）」</strong> 與 <strong>「生成式檢索（Generative Retrieval, GR）」</strong> 演進：</p>
 
 <ul class="note-list">
+<li><strong>對齊 LLM 範式以解鎖 Scaling Law 紅利</strong>：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統不再需要為各個細部模組單獨雕琢特化模型，而是能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <strong>Scaling Law</strong> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。</li>
 <li><strong>極致壓縮通信開銷</strong>：將召回與排序的邊界模糊化甚至合併，將省下來的網路與 IO 時間成本，全力投入到<strong>擴大模型規模與複雜度</strong>上，以更好地捕捉使用者極其微細且動態的興趣變化。</li>
-<li><strong>模型即索引（Model-as-Index）</strong>：透過 <strong>Semantic ID</strong>（如 RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。</li>
+<li><strong>模型即索引（Model-as-Index）</strong>：透過 <strong>Semantic ID</strong>（如 RQ-Kmeans / RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。</li>
 </ul>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">想進一步了解生成式推薦如何顛覆傳統級聯架構並解鎖 Scaling Law 紅利？可接續閱讀延伸專文：從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰。</p></div>
 </section>
 
 <section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -524,9 +536,9 @@
 <h3 class="mb-3">參考文獻（References）</h3>
 
 <ol class="mb-3">
-<li>知乎專欄：<a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/384471991" target="_blank" rel="noopener noreferrer">推荐系统概述（1）：推荐系统是干啥的？</a></li>
-<li>知乎專欄：<a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/390503646" target="_blank" rel="noopener noreferrer">推荐系统全链路（1）：召回粗排精排-各有所长</a></li>
-<li>知乎專欄：<a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/396951216" target="_blank" rel="noopener noreferrer">推荐系统全链路（2）：召回粗排精排-级联漏斗（上）</a></li>
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/384471991" target="_blank" rel="noopener noreferrer">知乎：推荐系统概述（1）：推荐系统是干啥的？</a></li>
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/390503646" target="_blank" rel="noopener noreferrer">知乎：推荐系统全链路（1）：召回粗排精排-各有所长</a></li>
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/396951216" target="_blank" rel="noopener noreferrer">知乎：推荐系统全链路（2）：召回粗排精排-级联漏斗（上）</a></li>
 </ol>
 </section>
         </div>

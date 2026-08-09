@@ -285,17 +285,21 @@
 <ol class="mb-3">
 <li class="mb-2">
   <strong>Data Source</strong><br>
-  The process begins by identifying and collecting raw source data from the relevant environment, such as transaction logs, operational records, interaction traces, or sensor outputs. At this point, the data is still heterogeneous and often noisy. The point of this stage is not yet to model patterns, but to establish the upstream raw material from which discovery can later emerge.
+  
+<p class="mb-2">The process begins by identifying and collecting raw source data from the relevant environment, such as transaction logs, operational records, interaction traces, or sensor outputs. At this point, the data is still heterogeneous and often noisy. The point of this stage is not yet to model patterns, but to establish the upstream raw material from which discovery can later emerge.</p>
   
 </li>
 <li>
   <strong>Data Warehouse (Optional)</strong><br>
-  In many industrial settings, organizations add a warehouse layer between raw source systems and mining workflows. This optional stage integrates data from multiple upstream systems into a more stable analytical repository, often with standardized schemas, historical snapshots, and governance controls. Conceptually, this stage does not replace preprocessing; it improves consistency, traceability, and reuse before preprocessing begins.
+  
+<p class="mb-2">In many industrial settings, organizations add a warehouse layer between raw source systems and mining workflows. This optional stage integrates data from multiple upstream systems into a more stable analytical repository, often with standardized schemas, historical snapshots, and governance controls. Conceptually, this stage does not replace preprocessing; it improves consistency, traceability, and reuse before preprocessing begins.</p>
   
 </li>
 <li>
   <strong>Data Preprocessing</strong><br>
-  Next comes the crucial stage of data preprocessing. Since we already know that feeding messy data into an algorithm leads to the "garbage in, garbage out" trap, this stage serves as our purification plant. In this article, we keep preprocessing as one coherent main flow that includes four tightly connected sub-tasks: Seen this way, preprocessing is the full preparation engine: selection narrows scope, cleaning repairs quality, feature refinement sharpens signal, and transformation maps the result into model-compatible representations.
+  
+<p class="mb-2">Next comes the crucial stage of data preprocessing. Since we already know that feeding messy data into an algorithm leads to the "garbage in, garbage out" trap, this stage serves as our purification plant. In this article, we keep preprocessing as one coherent main flow that includes four tightly connected sub-tasks:</p>
+<p class="mb-2">Seen this way, preprocessing is the full preparation engine: selection narrows scope, cleaning repairs quality, feature refinement sharpens signal, and transformation maps the result into model-compatible representations.</p>
   <ul class="mb-0 mt-2">
 <li>Data selection: Isolating the subset of data relevant to the target task. For example, if a retail store wants to predict holiday shopping trends, it might select transaction records from the past three Decembers while excluding unrelated logs such as employee attendance.</li>
 <li>Data cleaning and quality control: Handling missing data, eliminating duplicates, and correcting inconsistent records so that the dataset reflects reality as faithfully as possible.</li>
@@ -305,7 +309,8 @@
 </li>
 <li>
   <strong>Data Mining</strong><br>
-  Only then does the actual Data Mining occur. This is the moment we turn on our "analytical flashlights" to verify our initial hypotheses. Utilizing intelligent methods, the algorithms scan the preprocessed representation to surface valuable insights among thousands of candidate patterns. Depending on the objective, practitioners deploy specific algorithms designed to achieve distinct analytical goals:
+  
+<p class="mb-2">Only then does the actual Data Mining occur. This is the moment we turn on our "analytical flashlights" to verify our initial hypotheses. Utilizing intelligent methods, the algorithms scan the preprocessed representation to surface valuable insights among thousands of candidate patterns. Depending on the objective, practitioners deploy specific algorithms designed to achieve distinct analytical goals:</p>
   <ul class="mb-0 mt-2">
 <li>Clustering: Grouping similar data points together based on shared characteristics without using predefined labels.</li>
 <li>Classification: Assigning new data points into distinct, predefined categories (such as sorting emails into "spam" or "inbox").</li>
@@ -315,7 +320,8 @@
 </li>
 <li>
   <strong>Postprocessing</strong><br>
-  Finally, the pipeline concludes with Postprocessing, which bridges the gap between raw algorithmic output and strategic execution. This phase ensures that abstract mathematical configurations are translated into intuitive charts, graphs, narratives, or business logic. By prioritizing the visualization of results, interpretation of mined patterns, and filtering out of redundant findings, postprocessing allows human decision-makers to interpret conclusions clearly and extract true, actionable knowledge.
+  
+<p class="mb-2">Finally, the pipeline concludes with Postprocessing, which bridges the gap between raw algorithmic output and strategic execution. This phase ensures that abstract mathematical configurations are translated into intuitive charts, graphs, narratives, or business logic. By prioritizing the visualization of results, interpretation of mined patterns, and filtering out of redundant findings, postprocessing allows human decision-makers to interpret conclusions clearly and extract true, actionable knowledge.</p>
   
 </li>
 </ol>

@@ -1,6 +1,7 @@
 <meta>
 Title: 現代推薦系統的基石：深入解析「級聯架構」
 Tags: Recommender Systems, Machine Learning, Deep Learning, Recall, Ranking, Pre-Ranking, Mix-Ranking, Re-Ranking
+CanonicalId: funnel-cascade-architecture-in-recommendation-systems
 Summary: 深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）到重排與混排（Re-Ranking & Mix-Ranking）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。
 Slug: funnel-cascade-architecture-in-recommendation-systems-zh-tw
 Output: notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html
@@ -37,10 +38,10 @@ toc1: tradeoffs-limitations -> 級聯架構的隱憂與未來挑戰
 h2: 級聯架構的隱憂與未來挑戰 -> tradeoffs-limitations
 toc1: transition-to-gr -> 邁向下一代範式：生成式檢索（Generative Retrieval）
 h2: 邁向下一代範式：生成式檢索（Generative Retrieval） -> transition-to-gr
-toc1: takeaways -> 總結與核心要點
-h2: 總結與核心要點 -> takeaways
 toc1: references -> 參考文獻（References）
 h2: 參考文獻（References） -> references
+toc1: takeaways -> 總結與核心要點
+h2: 總結與核心要點 -> takeaways
 </anchors>
 
 # 現代推薦系統的基石：深入解析「級聯架構」
@@ -226,14 +227,15 @@ content:
 
 正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「雙塔向量空間與級聯漏斗」限制的新方法。
 
-為了打破 IO 開銷枷鎖並統一優化目標，最新的前沿趨勢（如快手的 **OneRec** 等研究）正朝向**「全鏈路一體化（End-to-End Architectures）」** 與 **「生成式檢索（Generative Retrieval, GR）」** 演進：
+為了打破 IO 開銷枷鎖、統一優化目標並直接對齊大語言模型範式，最新的前沿趨勢（如快手的 **OneRec** 等研究）正朝向**「端到端架構（End-to-End Architectures）」** 與 **「生成式檢索（Generative Retrieval, GR）」** 演進：
 
+* **對齊 LLM 範式以解鎖 Scaling Law 紅利**：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統不再需要為各個細部模組單獨雕琢特化模型，而是能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 **Scaling Law** 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。
 * **極致壓縮通信開銷**：將召回與排序的邊界模糊化甚至合併，將省下來的網路與 IO 時間成本，全力投入到**擴大模型規模與複雜度**上，以更好地捕捉使用者極其微細且動態的興趣變化。
-* **模型即索引（Model-as-Index）**：透過 **Semantic ID**（如 RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。
+* **模型即索引（Model-as-Index）**：透過 **Semantic ID**（如 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-Kmeans</content-link> / RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。
 
-<draft>
-想進一步了解生成式檢索如何顛覆傳統雙塔與級聯架構？可接續閱讀延伸文章：<content-link canonical="recommender-systems-with-generative-retrieval-zh-tw">Recommender Systems with Generative Retrieval</content-link>。
-</draft>
+<block>
+想進一步了解生成式推薦如何顛覆傳統級聯架構並解鎖 Scaling Law 紅利？可接續閱讀延伸專文：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift-zh-tw">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</content-link>。
+</block>
 
 ## 總結與核心要點
 
@@ -250,6 +252,6 @@ content:
 
 ## 參考文獻（References）
 
-1. 知乎專欄：[推荐系统概述（1）：推荐系统是干啥的？](https://zhuanlan.zhihu.com/p/384471991)
-2. 知乎專欄：[推荐系统全链路（1）：召回粗排精排-各有所长](https://zhuanlan.zhihu.com/p/390503646)
-3. 知乎專欄：[推荐系统全链路（2）：召回粗排精排-级联漏斗（上）](https://zhuanlan.zhihu.com/p/396951216)
+1. [知乎：推荐系统概述（1）：推荐系统是干啥的？](https://zhuanlan.zhihu.com/p/384471991)
+2. [知乎：推荐系统全链路（1）：召回粗排精排-各有所长](https://zhuanlan.zhihu.com/p/390503646)
+3. [知乎：推荐系统全链路（2）：召回粗排精排-级联漏斗（上）](https://zhuanlan.zhihu.com/p/396951216)

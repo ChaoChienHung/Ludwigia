@@ -8,9 +8,9 @@ Slug: from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en
 Output: notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html
 Style: default
 EstimatedReadingTime: true
-Published: 2026-06-01
 Lang: en
 TitleSuffix: false
+Published: 2026-06-01
 LastModified: 2026-06-13
 Status: published
 </meta>
