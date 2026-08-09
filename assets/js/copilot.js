@@ -73,7 +73,7 @@
     const button = window.LudwigCopilotBase.createAvatarButton({
       className: "site-copilot__button",
       variant: "copilot-photo",
-      imageSrc: window.LudwigCopilotBase.resolveProjectPath("assets/images/copilot-smile-photo.jpeg"),
+      imageSrc: window.LudwigCopilotBase.resolveProjectPath("assets/images/copilot/copilot-smile-photo.jpeg"),
       imageAlt: "",
       imagePosition: "50% 38%",
       onActivate: ({ button: anchorEl }) => open({ source: "copilot", anchorEl }),

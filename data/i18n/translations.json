@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "supportedLanguages": [
+    { "code": "en", "label": "English" },
+    { "code": "zh-Hant", "label": "繁體中文" },
+    { "code": "zh-Hans", "label": "簡體中文" }
+  ],
+  "translations": {
+    "nav": {
+      "home": { "en": "Home", "zh-Hant": "首頁", "zh-Hans": "首页" },
+      "about": { "en": "About", "zh-Hant": "關於我", "zh-Hans": "关于我" },
+      "skills": { "en": "Skills", "zh-Hant": "技能樹", "zh-Hans": "技能树" },
+      "credentials": { "en": "Credentials", "zh-Hant": "榮譽與憑證", "zh-Hans": "荣誉与凭证" },
+      "timeline": { "en": "Timeline", "zh-Hant": "Timeline", "zh-Hans": "Timeline" },
+      "contact": { "en": "Contact", "zh-Hant": "聯絡方式", "zh-Hans": "联系方式" },
+      "projects": { "en": "Projects", "zh-Hant": "專案", "zh-Hans": "项目" },
+      "notes": { "en": "Notes", "zh-Hant": "筆記", "zh-Hans": "笔记" },
+      "writing": { "en": "Writing", "zh-Hant": "文章", "zh-Hans": "文章" },
+      "canvas": { "en": "Canvas", "zh-Hant": "圖廊", "zh-Hans": "图廊" },
+      "search": { "en": "Search", "zh-Hant": "搜尋", "zh-Hans": "搜索" },
+      "settings": { "en": "Settings", "zh-Hant": "設定", "zh-Hans": "设置" }
+    },
+    "about": {
+      "title": { "en": "About Me", "zh-Hant": "關於我", "zh-Hans": "关于我" }
+    },
+    "skills": {
+      "kicker": { "en": "Proficiency & Stack", "zh-Hant": "專業領域與能力值", "zh-Hans": "专业领域与能力值" },
+      "title": { "en": "Skills & Capabilities", "zh-Hant": "Skills & Capabilities", "zh-Hans": "Skills & Capabilities" },
+      "intro": { "en": "Grouped skill domains sharing a compact, scalable space. Use the tabs or arrows to switch genres.", "zh-Hant": "將技能依主題分組，並在精簡空間內動態展示。可使用標籤或左右按鈕切換不同領域。", "zh-Hans": "将技能依主题分组，并在精简空间内动态展示。可使用标签或左右按钮切换不同领域。" },
+      "loading": { "en": "Loading skills...", "zh-Hant": "正在載入技能資料...", "zh-Hans": "正在载入技能数据..." },
+      "loadFailed": { "en": "Unable to load skills data right now.", "zh-Hant": "目前無法載入技能資料。", "zh-Hans": "目前无法载入技能数据。" },
+      "prevCategory": { "en": "Previous category", "zh-Hant": "上一個類別", "zh-Hans": "上一个类别" },
+      "nextCategory": { "en": "Next category", "zh-Hant": "下一個類別", "zh-Hans": "下一个类别" }
+    },
+    "credentials": {
+      "kicker": { "en": "Credentials", "zh-Hant": "憑證紀錄", "zh-Hans": "凭证纪录" },
+      "title": { "en": "Credentials", "zh-Hant": "Credentials", "zh-Hans": "Credentials" },
+      "intro": { "en": "Certificates, official transcripts, honor awards, and letters of appreciation. Filter by type or domain to explore.", "zh-Hant": "包含各式獎狀、成績單、結業證書與感謝狀等紀錄。可依據「種類」或「領域」進行選取與檢視。", "zh-Hans": "包含各式奖状、成绩单、结业证书与感谢状等纪录。可依据“种类”或“领域”进行选取与检视。" },
+      "typeLabel": { "en": "Type", "zh-Hant": "種類", "zh-Hans": "种类" },
+      "categoryLabel": { "en": "Domain", "zh-Hant": "領域", "zh-Hans": "领域" },
+      "loading": { "en": "Loading credentials...", "zh-Hant": "正在載入憑證資料...", "zh-Hans": "正在载入凭证数据..." },
+      "loadFailed": { "en": "Unable to load credentials data right now.", "zh-Hant": "目前無法載入憑證資料。", "zh-Hans": "目前无法载入凭证数据。" },
+      "empty": { "en": "No credentials found matching the selected filters.", "zh-Hant": "沒有符合目前篩選條件的憑證項目。", "zh-Hans": "没有符合当前筛选条件的凭证项目。" },
+      "zoomHint": { "en": "Click image to expand view", "zh-Hant": "點擊圖片放大檢視", "zh-Hans": "点击图片放大检视" },
+      "zoomButton": { "en": "Full Preview", "zh-Hant": "全螢幕檢視", "zh-Hans": "全屏幕检视" },
+      "downloadButton": { "en": "Download Document", "zh-Hant": "下載檔案", "zh-Hans": "下载文件" },
+      "issuerLabel": { "en": "Issued by", "zh-Hant": "頒發單位", "zh-Hans": "颁发单位" },
+      "dateLabel": { "en": "Date", "zh-Hant": "日期", "zh-Hans": "日期" },
+      "prevItem": { "en": "Previous item", "zh-Hant": "上一個項目", "zh-Hans": "上一个项目" },
+      "nextItem": { "en": "Next item", "zh-Hant": "下一個項目", "zh-Hans": "下一个项目" },
+      "modalClose": { "en": "Close", "zh-Hant": "關閉", "zh-Hans": "关闭" }
+    },
+    "search": {
+      "title": { "en": "Search — Ludwig", "zh-Hant": "搜尋 — Ludwig", "zh-Hans": "搜索 — Ludwig" },
+      "placeholder": { "en": "Search notes by keyword, tag, or concept...", "zh-Hant": "用關鍵字、標籤或概念搜尋內容...", "zh-Hans": "用关键词、标签或概念搜索内容..." }
+    },
+    "common": {
+      "footerCopyright": { "en": "© 2025 Ludwig — All Rights Reserved", "zh-Hant": "© 2025 Ludwig — 保留所有權利", "zh-Hans": "© 2025 Ludwig — 保留所有权利" }
+    }
+  }
+}

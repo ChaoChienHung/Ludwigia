@@ -622,9 +622,9 @@
       ? inferSection(sectionLike)
       : String(sectionLike || '').trim().toLowerCase();
     if (section === 'writing') {
-      return resolveSiteHref('assets/images/Writing.png');
+      return resolveSiteHref('assets/images/defaults/Writing.png');
     }
-    return resolveSiteHref('assets/images/Notes.png');
+    return resolveSiteHref('assets/images/defaults/Notes.png');
   };
 
   const matchesAllTags = (doc, selectedTags) => {

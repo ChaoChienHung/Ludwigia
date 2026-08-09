@@ -276,3 +276,5 @@ estimated reading time 這件事我也開始覺得不能太天真。一般網頁
 - 我最近也把另一條邊界想得更清楚：主站 `Theme / Palette / Effects` runtime 預設只保證主站頁面與標準內容頁。像 `garden/index.html` 這種獨立 extension surface，應該允許保有自己的視覺/runtime，而不是被默認綁進主站 ambient effect contract。否則之後每次有人說「某頁怎麼沒吃到 Garden theme」，很容易把其實不同子系統的東西誤判成 regression。
 - 翻譯工作流我決定走 source-driven：`tools/translate_content.py` 只翻必要自然語言，metadata/tag/path/骨架不應被重寫
 - 首頁 `Skills` 與 `Credentials & Honors` 區塊我維持了資料與渲染分離：`data/Skills/skills.json` 與 `data/Credentials/credentials.json` 作為單一真相來源，前端以類別切換與 Modal 燈箱處理展示，兼顧資料可維護性與畫面精簡度。
+- 圖片資源重構：我將 `assets/images/` 整理為明確的領域子資料夾 (`defaults/`, `hero/`, `projects/`, `copilot/`, `credentials/`)，徹底解決根目錄散亂與路徑不可控技術債。
+- 可擴充 Key-Based 多語言架構 (`data/i18n/translations.json`)：將 UI 標籤與動態組件翻譯集中收斂至單一字典 JSON 檔，搭配 HTML 聲明式 `data-i18n-key` 與 `LudwigI18n.t()` 全域 Helper API，使未來新增全新語系（如 `ja` / `de`）只需調整 JSON 與語系切換選單即可自動擴充。

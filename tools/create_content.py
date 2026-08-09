@@ -581,8 +581,8 @@ def _safe_link_href(raw: str) -> str:
 def _default_card_cover_href(section_like: str = "") -> str:
     normalized = str(section_like or "").strip().lower()
     if normalized == "writing":
-        return "assets/images/Writing.png"
-    return "assets/images/Notes.png"
+        return "assets/images/defaults/Writing.png"
+    return "assets/images/defaults/Notes.png"
 
 
 def _normalize_repo_asset_href(
@@ -2474,7 +2474,7 @@ def _self_test() -> None:
     assert 'class="note-content-link"' in html
     assert "note-content-link-preview" in html
     assert "note-content-link-preview-thumb" in html
-    assert "assets/images/Notes.png" in html
+    assert "assets/images/defaults/Notes.png" in html
     assert "An intuition-first note on K-Means and center-based compactness." in html
     assert 'href="k-means-clustering-around-centers/k-means-clustering-around-centers.html"' in html
     assert "note-table" in html
