@@ -50,32 +50,30 @@
 {
   "version": 1,
   "types": [
-    { "id": "all", "label": { "en": "All Types", "zh-Hant": "全部類型" } },
-    { "id": "award", "label": { "en": "Awards & Honors", "zh-Hant": "獎狀與榮譽" } },
-    { "id": "transcript", "label": { "en": "Transcripts & Grades", "zh-Hant": "成績單與證明" } },
-    { "id": "certificate", "label": { "en": "Certificates & Training", "zh-Hant": "證書與結業證明" } },
-    { "id": "appreciation", "label": { "en": "Letters of Appreciation", "zh-Hant": "感謝狀與推薦" } }
+    { "id": "all", "label": { "en": "All Types", "zh-Hant": "全部項目" } },
+    { "id": "offer", "label": { "en": "Admission Offer", "zh-Hant": "錄取通知" } },
+    { "id": "transcript", "label": { "en": "Academic Transcript", "zh-Hant": "歷年成績單" } },
+    { "id": "exam", "label": { "en": "Test & Examination", "zh-Hant": "語言與能力檢定" } },
+    { "id": "certificate", "label": { "en": "Degree & Diploma", "zh-Hant": "學位證書" } },
+    { "id": "award", "label": { "en": "Honor & Award", "zh-Hant": "獎項榮譽" } },
+    { "id": "competition", "label": { "en": "Competition", "zh-Hant": "競賽" } }
   ],
   "categories": [
     { "id": "all", "label": { "en": "All Domains", "zh-Hant": "全部領域" } },
-    { "id": "academic", "label": { "en": "Academic & Research", "zh-Hant": "學術與研究" } },
-    { "id": "tech", "label": { "en": "Engineering & Tech", "zh-Hant": "工程技術" } },
-    { "id": "sports", "label": { "en": "Sports & Athletics", "zh-Hant": "體育競賽" } },
-    { "id": "volunteer", "label": { "en": "Volunteer & Leadership", "zh-Hant": "志工與領導" } }
+    { "id": "tech", "label": { "en": "Engineering & CS", "zh-Hant": "資訊工程" } },
+    { "id": "academic", "label": { "en": "Academic & Research", "zh-Hant": "學術研究" } },
+    { "id": "language", "label": { "en": "Language", "zh-Hant": "語言" } }
   ],
   "items": [
     {
-      "id": "academic-excellence-award",
-      "title": { "en": "Academic Excellence Award", "zh-Hant": "學業優良獎狀" },
-      "type": "award",
-      "category": "academic",
-      "date": "2024-06",
-      "issuer": { "en": "National Taiwan University", "zh-Hant": "國立臺灣大學" },
-      "image": "assets/images/cover.jpg",
-      "thumbnail": "assets/images/cover.jpg",
-      "summary": { "en": "Summary...", "zh-Hant": "摘要..." },
-      "detail": { "en": "Detail...", "zh-Hant": "細節..." },
-      "highlights": ["Top Academic Standing"]
+      "id": "nus-mcomp-ai-offer",
+      "title": { "en": "NUS Master of Computing in AI Admission Offer", "zh-Hant": "國立新加坡大學 人工智慧碩士錄取通知" },
+      "type": "offer",
+      "category": "tech",
+      "date": "2025-05",
+      "issuer": { "en": "NUS School of Computing", "zh-Hant": "國立新加坡大學資訊學院" },
+      "document": "assets/documents/credentials/nus-mcomp-ai-offer.pdf",
+      "summary": { "en": "Official admission offer letter...", "zh-Hant": "正式錄取通知書..." }
     }
   ]
 }

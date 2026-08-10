@@ -43,8 +43,8 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - 系統 contract / data flow / schema：看 `docs/specs/system-spec.md`
 - `Companion` 的位置 / 大小 / placeholder baseline：看 `docs/specs/companion-spec.md`
 - source `.md` parser contract：看 `docs/specs/parser-spec.md`
-- source `.md` parser contract：看 `docs/specs/parser-spec.md`
 - timeline 資料與投影 contract：看 `docs/specs/timeline-design-spec.md`
+- Timeline, Skills, Credentials 資料新增與維護：看 `docs/guide/data-authoring-guide.md`
 - inline enhancement contract：看 `docs/specs/inline-enhancement-spec.md`
 - 內容 metadata contract：看 `docs/specs/content-metadata-spec.md`
 - 翻譯 workflow contract：看 `docs/specs/translation-spec.md`

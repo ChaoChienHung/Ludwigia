@@ -66,6 +66,7 @@
 
 ### Guide
 
+- `docs/guide/data-authoring-guide.md`：Timeline, Skills, Credentials 資料新增與自動化多語維護指南
 - `docs/guide/language-guide.md`：多語擴充 guide / impact map
 - `docs/guide/theme-palette-guide.md`：theme / palette 擴充 guide / impact map
 - `docs/guide/ontology-guide.md`：tag ontology 維護手冊

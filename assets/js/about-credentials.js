@@ -97,18 +97,19 @@
       modalEl.setAttribute('tabindex', '-1');
       modalEl.setAttribute('aria-hidden', 'true');
       modalEl.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
           <div class="modal-content credential-modal-content">
             <div class="modal-header border-0 pb-0">
-              <h5 class="modal-title h6" id="credentialModalTitle"></h5>
+              <h5 class="modal-title h6 fw-bold" id="credentialModalTitle"></h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="${txt.modalClose}"></button>
             </div>
-            <div class="modal-body text-center p-4">
-              <img id="credentialModalImage" src="" alt="" class="img-fluid rounded shadow-sm credential-modal-img">
+            <div class="modal-body text-center p-3" id="credentialModalBody">
+              <img id="credentialModalImage" src="" alt="" class="img-fluid rounded shadow-sm credential-modal-img d-none">
+              <iframe id="credentialModalPdf" src="" class="w-100 rounded border-0 d-none" style="height: 72vh; min-height: 500px;"></iframe>
             </div>
             <div class="modal-footer border-0 pt-0 justify-content-between">
-              <a id="credentialModalDownloadBtn" href="#" download class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                <i class="fa-solid fa-download me-1"></i> <span>${txt.downloadButton}</span>
+              <a id="credentialModalDownloadBtn" href="#" download target="_blank" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-download me-1"></i> <span id="credentialModalDownloadText">${txt.downloadButton}</span>
               </a>
               <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">${txt.modalClose}</button>
             </div>
@@ -244,63 +245,12 @@
       const typeLabel = typeObj ? getLocalizedText(typeObj.label, lang) : currentItem.type;
       const catLabel = catObj ? getLocalizedText(catObj.label, lang) : currentItem.category;
       const imgSrc = currentItem.image || 'assets/images/cover.jpg';
+      const docSrc = currentItem.document || currentItem.pdf || currentItem.image || 'assets/images/cover.jpg';
+      const docExt = docSrc.split('.').pop() || 'png';
 
-      showcaseHtml = `
-        <div class="row g-4 align-items-center">
-          <div class="col-lg-6">
-            <div class="credential-image-wrapper rounded-3 overflow-hidden shadow-sm position-relative" 
-                 data-cred-lightbox="trigger"
-                 style="cursor: pointer;"
-                 title="${txt.zoomHint}">
-              <img src="${imgSrc}" alt="${titleStr}" class="img-fluid w-100 object-fit-cover">
-              <div class="credential-image-overlay d-flex align-items-center justify-content-center">
-                <span class="btn btn-sm btn-light shadow-sm fw-semibold">
-                  <i class="fa-solid fa-magnifying-glass-plus me-1"></i> ${txt.zoomButton}
-                </span>
-              </div>
-            </div>
-          </div>
+      const mediaHtml = `<img src="${imgSrc}" alt="${titleStr}" class="img-fluid w-100 object-fit-cover rounded-3">`;
 
-          <div class="col-lg-6">
-            <div class="credential-info">
-              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                <span class="credential-badge-type text-uppercase">${typeLabel}</span>
-                <span class="credential-badge-domain text-uppercase">${catLabel}</span>
-                <span class="credential-badge-date">${currentItem.date}</span>
-              </div>
-
-              <h4 class="fw-bold mb-2">${titleStr}</h4>
-              <p class="credential-issuer small mb-3"><i class="fa-solid fa-building-columns me-1"></i> <strong>${txt.issuerLabel}:</strong> ${issuerStr}</p>
-
-              <div class="credential-description mb-3">
-                <p class="mb-0">${fullDesc}</p>
-              </div>
-
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" 
-                        class="btn btn-sm btn-outline-primary rounded-pill credential-action-btn" 
-                        data-cred-lightbox="trigger">
-                  <i class="fa-solid fa-magnifying-glass-plus me-1"></i> ${txt.zoomButton}
-                </button>
-                <a href="${imgSrc}" 
-                   download="${currentItem.id}.png" 
-                   target="_blank" 
-                   class="btn btn-sm btn-outline-secondary rounded-pill credential-action-btn credential-download-btn">
-                  <i class="fa-solid fa-download me-1"></i> ${txt.downloadButton}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      showcaseHtml = `
-        <div class="text-center p-5 credentials-empty-box">
-          <i class="fa-solid fa-folder-open fs-2 mb-2 d-block"></i>
-          <p class="mb-0">${txt.empty}</p>
-        </div>
-      `;
-    }
+      showcaseHtml = getShowcaseHtml(currentItem, lang, txt);
 
     container.innerHTML = `
       <div class="credentials-section-wrapper">
@@ -363,6 +313,112 @@
     bindEvents(container, currentItem, filteredItems);
   }
 
+  function getShowcaseHtml(currentItem, lang, txt) {
+    if (!currentItem) {
+      return `
+        <div class="text-center p-5 credentials-empty-box">
+          <i class="fa-solid fa-folder-open fs-2 mb-2 d-block"></i>
+          <p class="mb-0">${txt.empty}</p>
+        </div>
+      `;
+    }
+
+    const titleStr = getLocalizedText(currentItem.title, lang);
+    const issuerStr = getLocalizedText(currentItem.issuer, lang);
+    const summaryStr = getLocalizedText(currentItem.summary, lang);
+    const detailStr = getLocalizedText(currentItem.detail, lang);
+    const fullDesc = summaryStr ? (detailStr ? `${summaryStr} ${detailStr}` : summaryStr) : detailStr;
+
+    const typeObj = (state.data.types || []).find((t) => t.id === currentItem.type);
+    const catObj = (state.data.categories || []).find((c) => c.id === currentItem.category);
+    const typeLabel = typeObj ? getLocalizedText(typeObj.label, lang) : currentItem.type;
+    const catLabel = catObj ? getLocalizedText(catObj.label, lang) : currentItem.category;
+    const imgSrc = currentItem.image || 'assets/images/cover.jpg';
+    const docSrc = currentItem.document || currentItem.pdf || currentItem.image || 'assets/images/cover.jpg';
+    const docExt = docSrc.split('.').pop() || 'png';
+
+    const mediaHtml = `<img src="${imgSrc}" alt="${titleStr}" class="img-fluid w-100 object-fit-cover rounded-3">`;
+
+    return `
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-6">
+          <div class="credential-image-wrapper rounded-3 overflow-hidden shadow-sm position-relative" 
+               data-cred-lightbox="trigger"
+               style="cursor: pointer;"
+               title="${txt.zoomHint}">
+            ${mediaHtml}
+            <div class="credential-image-overlay d-flex align-items-center justify-content-center">
+              <span class="btn btn-sm btn-light shadow-sm fw-semibold">
+                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> ${txt.zoomButton}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="credential-info">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span class="credential-badge-type text-uppercase">${typeLabel}</span>
+              <span class="credential-badge-domain text-uppercase">${catLabel}</span>
+              <span class="credential-badge-date">${currentItem.date}</span>
+            </div>
+
+            <h4 class="fw-bold mb-2">${titleStr}</h4>
+            <p class="credential-issuer small mb-3"><i class="fa-solid fa-building-columns me-1"></i> <strong>${txt.issuerLabel}:</strong> ${issuerStr}</p>
+
+            <div class="credential-description mb-3">
+              <p class="mb-0">${fullDesc}</p>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" 
+                      class="btn btn-sm btn-outline-primary rounded-pill credential-action-btn" 
+                      data-cred-lightbox="trigger">
+                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> ${txt.zoomButton}
+              </button>
+              <a href="${docSrc}" 
+                 download="${currentItem.id}.${docExt}" 
+                 target="_blank" 
+                 class="btn btn-sm btn-outline-secondary rounded-pill credential-action-btn credential-download-btn">
+                <i class="fa-solid fa-download me-1"></i> ${txt.downloadButton}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function updateActiveItem(container, itemId, filteredItems) {
+    if (!itemId) return;
+    state.activeItemId = itemId;
+    const lang = getLang();
+    const txt = uiText[lang] || uiText['en'];
+
+    const currentItem = filteredItems.find((it) => it.id === itemId);
+    const showcaseViewport = container.querySelector('.credentials-showcase-viewport');
+    if (showcaseViewport && currentItem) {
+      showcaseViewport.innerHTML = getShowcaseHtml(currentItem, lang, txt);
+      bindLightboxEvents(container, currentItem);
+    }
+
+    container.querySelectorAll('.credential-thumb-item').forEach((btn) => {
+      const bId = btn.getAttribute('data-cred-item-id');
+      if (bId === itemId) {
+        btn.classList.add('active');
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    const idx = filteredItems.findIndex((it) => it.id === itemId);
+    const prevBtn = container.querySelector('[data-cred-thumb-nav="prev"]');
+    const nextBtn = container.querySelector('[data-cred-thumb-nav="next"]');
+    if (prevBtn) prevBtn.disabled = (idx <= 0);
+    if (nextBtn) nextBtn.disabled = (idx < 0 || idx >= filteredItems.length - 1);
+  }
+
   function bindEvents(container, currentItem, filteredItems) {
     // Type Filter Click
     container.querySelectorAll('[data-cred-type]').forEach((btn) => {
@@ -397,8 +453,7 @@
         e.stopPropagation();
         const id = e.currentTarget.getAttribute('data-cred-item-id');
         if (id && id !== state.activeItemId) {
-          state.activeItemId = id;
-          render(container);
+          updateActiveItem(container, id, filteredItems);
         }
       });
     });
@@ -411,8 +466,7 @@
         e.stopPropagation();
         const idx = filteredItems.findIndex((it) => it.id === state.activeItemId);
         if (idx > 0) {
-          state.activeItemId = filteredItems[idx - 1].id;
-          render(container);
+          updateActiveItem(container, filteredItems[idx - 1].id, filteredItems);
         }
       });
     }
@@ -424,13 +478,15 @@
         e.stopPropagation();
         const idx = filteredItems.findIndex((it) => it.id === state.activeItemId);
         if (idx >= 0 && idx < filteredItems.length - 1) {
-          state.activeItemId = filteredItems[idx + 1].id;
-          render(container);
+          updateActiveItem(container, filteredItems[idx + 1].id, filteredItems);
         }
       });
     }
 
-    // Lightbox Triggers
+    bindLightboxEvents(container, currentItem);
+  }
+
+  function bindLightboxEvents(container, currentItem) {
     container.querySelectorAll('[data-cred-lightbox="trigger"]').forEach((trigger) => {
       trigger.addEventListener('click', (e) => {
         e.preventDefault();
@@ -445,24 +501,44 @@
         const detailStr = getLocalizedText(currentItem.detail, lang);
         const fullDesc = summaryStr ? (detailStr ? `${summaryStr} ${detailStr}` : summaryStr) : detailStr;
         const imgSrc = currentItem.image || 'assets/images/cover.jpg';
+        const docSrc = currentItem.document || currentItem.pdf || currentItem.image || 'assets/images/cover.jpg';
+        const docExt = docSrc.split('.').pop() || 'pdf';
 
         const modalEl = document.getElementById('credentialModal');
         const modalTitle = document.getElementById('credentialModalTitle');
         const modalImg = document.getElementById('credentialModalImage');
+        const modalPdf = document.getElementById('credentialModalPdf');
         const modalSummary = document.getElementById('credentialModalSummary');
-        const modalDl = document.getElementById('credentialModalDownload');
+        const modalDl = document.getElementById('credentialModalDownloadBtn');
         const modalDlText = document.getElementById('credentialModalDownloadText');
 
         if (modalEl && window.bootstrap && window.bootstrap.Modal) {
           if (modalTitle) modalTitle.textContent = titleStr;
-          if (modalImg) {
-            modalImg.src = imgSrc;
-            modalImg.alt = titleStr;
+
+          const isPdf = docSrc.toLowerCase().endsWith('.pdf');
+          if (isPdf) {
+            if (modalImg) modalImg.classList.add('d-none');
+            if (modalPdf) {
+              modalPdf.src = docSrc;
+              modalPdf.classList.remove('d-none');
+            }
+          } else {
+            if (modalPdf) {
+              modalPdf.src = '';
+              modalPdf.classList.add('d-none');
+            }
+            if (modalImg) {
+              modalImg.src = imgSrc;
+              modalImg.alt = titleStr;
+              modalImg.classList.remove('d-none');
+            }
           }
+
           if (modalSummary) modalSummary.textContent = fullDesc;
           if (modalDl) {
-            modalDl.href = imgSrc;
-            modalDl.download = `${currentItem.id}.png`;
+            modalDl.href = docSrc;
+            modalDl.download = `${currentItem.id}.${docExt}`;
+            modalDl.target = '_blank';
           }
           if (modalDlText) modalDlText.textContent = txt.downloadButton;
 

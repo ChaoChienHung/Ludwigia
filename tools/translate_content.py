@@ -10,7 +10,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Iterable
 
-
+# Markdown Content Translation Constants
 TRANSLATABLE_META_KEYS = {"title", "summary"}
 NON_TRANSLATABLE_META_KEYS = {
     "tags",
@@ -30,6 +30,14 @@ PROTECTED_LINE_PATTERN = re.compile(r"^\s*</?[a-zA-Z][^>]*>\s*$")
 KV_PATTERN = re.compile(r"^(\s*)([A-Za-z][A-Za-z0-9_-]*)(\s*:\s*)(.*)$")
 FENCE_PATTERN = re.compile(r"^\s*```")
 
+# JSON Data File Translation Constants
+KNOWN_LANG_CODES = {"en", "zh-Hant", "zh-Hans", "ja", "de", "fr", "es"}
+DEFAULT_DATA_FILES = [
+    "data/Skills/skills.json",
+    "data/Credentials/credentials.json",
+    "data/Timeline/timeline.json",
+]
+
 
 def _read_text(path: str) -> str:
     with open(path, "r", encoding="utf-8") as file:
@@ -42,6 +50,17 @@ def _write_text(path: str, content: str) -> None:
         file.write(content)
         if not content.endswith("\n"):
             file.write("\n")
+
+
+def _read_json(path: str) -> dict | list:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _write_json(path: str, data: dict | list) -> None:
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
 
 def _iter_sources(path: str, recursive: bool) -> list[str]:
@@ -74,9 +93,7 @@ def _target_output_path(source_path: str, target_lang: str, output_root: str) ->
 
 
 def _load_secret_file(secret_file: str) -> str:
-    if not secret_file:
-        return ""
-    if not os.path.isfile(secret_file):
+    if not secret_file or not os.path.isfile(secret_file):
         return ""
     raw = _read_text(secret_file).strip()
     if not raw:
@@ -129,20 +146,19 @@ class TranslatorBackend:
 class LocalModelTranslator(TranslatorBackend):
     name = "local-model"
 
-    def __init__(self, model_store: str) -> None:
+    def __init__(self, model_store: str = "models") -> None:
         self.model_store = model_store
         self.cache_dir = os.path.join(model_store, "local")
         os.makedirs(self.cache_dir, exist_ok=True)
 
     def translate(self, text: str, context: TranslationContext) -> str:
-        # Local/pretrained hooks intentionally keep output deterministic until model runtime is plugged in.
         return text
 
 
 class PretrainedModelTranslator(TranslatorBackend):
     name = "pretrained-model"
 
-    def __init__(self, model_store: str) -> None:
+    def __init__(self, model_store: str = "models") -> None:
         self.model_store = model_store
         self.cache_dir = os.path.join(model_store, "pretrain")
         os.makedirs(self.cache_dir, exist_ok=True)
@@ -164,7 +180,7 @@ class GeminiApiTranslator(TranslatorBackend):
         prompt = (
             "Translate the input text from "
             f"{context.source_lang} to {context.target_lang}. "
-            "Keep markdown symbols, placeholders, links, tags, and punctuation unchanged. "
+            "Keep technical terms, markdown symbols, placeholders, links, tags, and punctuation unchanged. "
             "Return only translated text with no explanation.\n\n"
             f"Input:\n{text}"
         )
@@ -203,7 +219,7 @@ class GeminiApiTranslator(TranslatorBackend):
 
 def _build_backend(args: argparse.Namespace) -> TranslatorBackend:
     backend = args.backend.strip().lower()
-    model_store = _ensure_model_store(args.model_store)
+    model_store = _ensure_model_store(getattr(args, "model_store", "data/models"))
     if backend == "local-model":
         return LocalModelTranslator(model_store=model_store)
     if backend == "pretrained-model":
@@ -212,6 +228,8 @@ def _build_backend(args: argparse.Namespace) -> TranslatorBackend:
         return GeminiApiTranslator(api_key=_resolve_gemini_api_key(args.secret_file), model=args.gemini_model)
     raise SystemExit(f"Unsupported backend: {args.backend}")
 
+
+# --- Markdown Content Translation Functions ---
 
 def _translate_segments(backend: TranslatorBackend, text: str, context: TranslationContext) -> str:
     if not text.strip():
@@ -316,12 +334,104 @@ def _translate_file(
     print(f"[translated] {source_path} -> {output_path}")
 
 
+# --- JSON Data File Translation Functions ---
+
+def is_localized_dict(node: dict) -> bool:
+    if not node or not isinstance(node, dict):
+        return False
+    keys = set(node.keys())
+    return bool(keys & KNOWN_LANG_CODES) and all(
+        k in KNOWN_LANG_CODES for k in keys if isinstance(k, str)
+    )
+
+
+def translate_json_node(
+    node: object,
+    target_langs: list[str],
+    source_lang: str,
+    backend: TranslatorBackend,
+    overwrite: bool,
+    dry_run: bool,
+    stats: dict[str, int],
+) -> object:
+    if isinstance(node, list):
+        return [
+            translate_json_node(
+                item, target_langs, source_lang, backend, overwrite, dry_run, stats
+            )
+            for item in node
+        ]
+
+    if isinstance(node, dict):
+        if is_localized_dict(node):
+            source_text = node.get(source_lang, "")
+            if not source_text:
+                for k, v in node.items():
+                    if isinstance(v, str) and v.strip():
+                        source_text = v
+                        break
+
+            if source_text:
+                for target_lang in target_langs:
+                    existing = str(node.get(target_lang, "") or "").strip()
+                    if not existing or overwrite:
+                        stats["found"] += 1
+                        if dry_run:
+                            print(f"[dry-run] Translate '{source_text}' -> {target_lang}")
+                            stats["translated"] += 1
+                        else:
+                            ctx = TranslationContext(
+                                source_lang=source_lang, target_lang=target_lang
+                            )
+                            translated = backend.translate(source_text, ctx)
+                            node[target_lang] = translated
+                            stats["translated"] += 1
+                            print(f"Translated [{target_lang}]: '{source_text}' -> '{translated}'")
+            return node
+
+        updated_dict = {}
+        for key, val in node.items():
+            updated_dict[key] = translate_json_node(
+                val, target_langs, source_lang, backend, overwrite, dry_run, stats
+            )
+        return updated_dict
+
+    return node
+
+
+def process_data_file(
+    file_path: str,
+    target_langs: list[str],
+    source_lang: str,
+    backend: TranslatorBackend,
+    overwrite: bool,
+    dry_run: bool,
+) -> dict[str, int]:
+    if not os.path.isfile(file_path):
+        print(f"Warning: File not found: {file_path}")
+        return {"found": 0, "translated": 0}
+
+    data = _read_json(file_path)
+    stats = {"found": 0, "translated": 0}
+    updated_data = translate_json_node(
+        data, target_langs, source_lang, backend, overwrite, dry_run, stats
+    )
+
+    if not dry_run and stats["translated"] > 0:
+        _write_json(file_path, updated_data)
+        print(f"Updated JSON file: {file_path} ({stats['translated']} translations added/updated)")
+
+    return stats
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Translate Ludwigia source markdown with source-contract safety.")
-    parser.add_argument("--source", default="", help="Single source markdown path")
+    parser = argparse.ArgumentParser(description="Translate Ludwigia source markdown or JSON data files.")
+    parser.add_argument("--source", default="", help="Single source markdown or json path")
+    parser.add_argument("--data-file", default="", help="Path to JSON file or 'all' for default data files")
     parser.add_argument("--batch-dir", default="", help="Batch directory containing markdown sources")
     parser.add_argument("--recursive", action="store_true", help="Recursive walk for --batch-dir")
-    parser.add_argument("--target-lang", required=True, help="Target language tag, e.g. zh-Hant/en")
+    parser.add_argument("--target-lang", default="", help="Target language tag, e.g. zh-Hant/en")
+    parser.add_argument("--target-langs", default="", help="Comma-separated target languages for JSON data mode")
     parser.add_argument("--source-lang", default="auto", help="Source language tag, default auto")
     parser.add_argument(
         "--backend",
@@ -337,8 +447,37 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Preview actions without writing")
     args = parser.parse_args()
 
+    # Route 1: Handle JSON data file translation if --data-file is provided or --source ends with .json
+    is_json_mode = bool(args.data_file) or (args.source and args.source.endswith(".json"))
+    if is_json_mode:
+        data_arg = args.data_file or args.source
+        raw_targets = args.target_langs or args.target_lang or "en,zh-Hans"
+        target_langs = [part.strip() for part in raw_targets.split(",") if part.strip()]
+        source_lang = "zh-Hant" if args.source_lang == "auto" else args.source_lang
+
+        files_to_process = DEFAULT_DATA_FILES if data_arg == "all" else [os.path.abspath(data_arg)]
+        backend = _build_backend(args)
+
+        total_stats = {"found": 0, "translated": 0}
+        for file_path in files_to_process:
+            print(f"\nProcessing data file: {file_path}...")
+            stats = process_data_file(
+                file_path, target_langs, source_lang, backend, args.overwrite, args.dry_run
+            )
+            total_stats["found"] += stats["found"]
+            total_stats["translated"] += stats["translated"]
+
+        print(
+            f"\nDone! Found {total_stats['found']} target fields, {total_stats['translated']} translations processed."
+        )
+        return
+
+    # Route 2: Handle Markdown content file translation
     if not args.source and not args.batch_dir:
-        raise SystemExit("Provide --source or --batch-dir.")
+        raise SystemExit("Provide --source, --data-file, or --batch-dir.")
+
+    if not args.target_lang:
+        raise SystemExit("Provide --target-lang for markdown content translation.")
 
     sources: list[str] = []
     if args.source:

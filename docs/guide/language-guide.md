@@ -9,8 +9,8 @@
 Ludwigia 採用 **資料驅動 (Data-Driven)** 與 **Key-Based** 的可擴充多語言架構：
 
 1. **SSOT 翻譯字典檔**：
-   - 全站 UI 標籤、導覽列、頁面標題與動態組件文案統一存放在 [data/i18n/translations.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/i18n/translations.json)。
-   - 技能與憑證的資料內容則分別存放在 [data/Skills/skills.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/Skills/skills.json) 與 [data/Credentials/credentials.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/Credentials/credentials.json)。
+   - 全站 UI 標籤、導覽列、頁面標題與動態組件文案統一存放在根目錄 [i18n/](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/i18n) 下的模組化 JSON 檔（如 `i18n/navbar.json`, `i18n/index.json`, `i18n/skills.json`, `i18n/credentials.json` 等）。
+   - 技能與憑證的內容資料條目則分別存放在 [data/Skills/skills.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/Skills/skills.json) 與 [data/Credentials/credentials.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/Credentials/credentials.json)。
 
 2. **聲明式 HTML 佔位符 (`data-i18n-key`)**：
    - HTML 中的元素可加上 `data-i18n-key="nav.skills"` 或 `data-i18n-attr="placeholder"`。
@@ -26,28 +26,17 @@ Ludwigia 採用 **資料驅動 (Data-Driven)** 與 **Key-Based** 的可擴充多
 
 當你需要新增一門新的語言（例如日文 `ja`）時，請依序執行以下 4 個步驟：
 
-### 步驟一：更新 `data/i18n/translations.json`
+### 步驟一：更新根目錄 `i18n/*.json`
 
-在 `supportedLanguages` 中註冊新語系，並在 `translations` 的每個 Key 下補上該語系的對應翻譯文案：
+在對應的 `i18n/` 模組檔中（如 `i18n/navbar.json`, `i18n/skills.json`, `i18n/credentials.json`）為新語系補上對應 key 的翻譯文案：
 
 ```json
 {
-  "version": 1,
-  "supportedLanguages": [
-    { "code": "en", "label": "English" },
-    { "code": "zh-Hant", "label": "繁體中文" },
-    { "code": "zh-Hans", "label": "簡體中文" },
-    { "code": "ja", "label": "日本語" }
-  ],
-  "translations": {
-    "nav": {
-      "skills": { 
-        "en": "Skills", 
-        "zh-Hant": "技能樹", 
-        "zh-Hans": "技能树", 
-        "ja": "スキル" 
-      }
-    }
+  "skills": { 
+    "en": "Skills", 
+    "zh-Hant": "技能樹", 
+    "zh-Hans": "技能树", 
+    "ja": "スキル" 
   }
 }
 ```

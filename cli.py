@@ -168,7 +168,11 @@ def cmd_build_all(args: argparse.Namespace) -> None:
 
 
 def cmd_translate(args: argparse.Namespace) -> None:
-    argv = [sys.executable, "tools/translate_content.py", "--target-lang", args.target_lang, "--backend", args.backend]
+    argv = [sys.executable, "tools/translate_content.py"]
+    if args.target_lang:
+        argv.extend(["--target-lang", args.target_lang])
+    if args.backend:
+        argv.extend(["--backend", args.backend])
     if args.source:
         argv.extend(["--source", _abs_path(args.source)])
     if args.batch_dir:
@@ -181,6 +185,27 @@ def cmd_translate(args: argparse.Namespace) -> None:
         argv.extend(["--output-root", _abs_path(args.output_root)])
     if args.model_store:
         argv.extend(["--model-store", _abs_path(args.model_store)])
+    if args.secret_file:
+        argv.extend(["--secret-file", args.secret_file if os.path.isabs(args.secret_file) else _abs_path(args.secret_file)])
+    if args.gemini_model:
+        argv.extend(["--gemini-model", args.gemini_model])
+    if args.overwrite:
+        argv.append("--overwrite")
+    if args.dry_run:
+        argv.append("--dry-run")
+    _run(argv)
+
+
+def cmd_translate_data(args: argparse.Namespace) -> None:
+    argv = [sys.executable, "tools/translate_content.py"]
+    if args.data_file:
+        argv.extend(["--data-file", args.data_file if args.data_file == "all" else _abs_path(args.data_file)])
+    if args.target_langs:
+        argv.extend(["--target-langs", args.target_langs])
+    if args.source_lang:
+        argv.extend(["--source-lang", args.source_lang])
+    if args.backend:
+        argv.extend(["--backend", args.backend])
     if args.secret_file:
         argv.extend(["--secret-file", args.secret_file if os.path.isabs(args.secret_file) else _abs_path(args.secret_file)])
     if args.gemini_model:
@@ -298,6 +323,17 @@ def main() -> None:
     p_translate.add_argument("--overwrite", action="store_true")
     p_translate.add_argument("--dry-run", action="store_true")
     p_translate.set_defaults(func=cmd_translate)
+
+    p_translate_data = sub.add_parser("translate-data")
+    p_translate_data.add_argument("--data-file", default="all")
+    p_translate_data.add_argument("--target-langs", default="en,zh-Hans")
+    p_translate_data.add_argument("--source-lang", default="zh-Hant")
+    p_translate_data.add_argument("--backend", default="gemini-api")
+    p_translate_data.add_argument("--secret-file", default="secret.txt")
+    p_translate_data.add_argument("--gemini-model", default="gemini-1.5-flash")
+    p_translate_data.add_argument("--overwrite", action="store_true")
+    p_translate_data.add_argument("--dry-run", action="store_true")
+    p_translate_data.set_defaults(func=cmd_translate_data)
 
     p_check_tags = sub.add_parser("check-tags")
     p_check_tags.add_argument("--content-dir", default="all")

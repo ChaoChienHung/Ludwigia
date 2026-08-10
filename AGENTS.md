@@ -203,7 +203,7 @@
 - `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡
 - `docs/rules/checklist.md` / `docs/rules/guardrails.md`：交付收尾與守門清單
-- `docs/guide/language-guide.md` / `docs/guide/theme-palette-guide.md` / `docs/guide/ontology-guide.md` / `docs/guide/companion-guide.md`：共享維護 guide
+- `docs/guide/data-authoring-guide.md` / `docs/guide/language-guide.md` / `docs/guide/theme-palette-guide.md` / `docs/guide/ontology-guide.md` / `docs/guide/companion-guide.md`：共享維護 guide
 - `docs/tech/README.md`：技術文件入口；實作細節再往下分到 `docs/tech/*.md`
 - `docs/author/writing-notes.md` / `docs/author/testing-notes.md` / `docs/author/dev-notes.md`：作者自己的寫作、測試與演進筆記
 - `notes/**/<slug>.md`、`writing/**/<slug>.md`、`canvas/**/<slug>.md`：內容來源；若調整語法/解析器，需同步檢查相容性
