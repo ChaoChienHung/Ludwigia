@@ -1,5 +1,5 @@
 <meta>
-Title: 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰
+Title: 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然
 Summary: 本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。
 Slug: from-cascade-to-generative-recommendation-paradigm-shift-zh-tw
 Output: writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html
@@ -13,7 +13,7 @@ Published: 2026-08-02
 LastModified: 2026-08-10
 </meta>
 
-# 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰
+# 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然
 
 推薦系統就像是現代網路世界「看不見的手」。從電商首頁的商品展示，到無盡滑動的短影音資訊流，它決定了數十億人每天消費的內容。然而，當整個 AI 圈正因為大語言模型（LLM）的突破而天翻地覆時，支撐著這些龐大商業流量底層的推薦引擎，過去十幾年來卻沒有太多本質上的改變。
 

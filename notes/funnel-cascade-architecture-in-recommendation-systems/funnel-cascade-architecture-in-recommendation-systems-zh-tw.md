@@ -227,7 +227,7 @@ content:
 
 正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「級聯漏斗」限制的新方法，推動著推薦系統朝向「端到端架構（End-to-End Architectures）」與「生成式檢索（Generative Retrieval, GR）」演進。
 
-關於這場範式轉移背後的深層動機，以及業界（如快手 OneRec）在對齊大模型基建時所面臨的挑戰，我在專文中整理了一些個人的觀察與探討。若對這段發展脈絡感興趣，歡迎進一步閱讀：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</content-link>。
+關於這場範式轉移背後的深層動機，以及業界（如快手 OneRec）在對齊大模型基建時所面臨的挑戰，我在專文中整理了一些個人的觀察與探討。若對這段發展脈絡感興趣，歡迎進一步閱讀：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然</content-link>。
 
 在此就不多贅述了，我們主要將重點聚焦於這套新架構所帶來的四大核心優勢，看看它究竟是如何統一優化目標、打破 IO 開銷枷鎖，並直接對齊大語言模型的發展範式：
 
