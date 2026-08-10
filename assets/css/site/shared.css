@@ -6602,37 +6602,89 @@ body.site-fab-open .site-fab-panel {
   transition: all 0.2s ease;
 }
 
-.credential-filter-select {
-  background-color: var(--bg-alt, #1a1a1a);
+/* Custom Credentials Filter Dropdowns */
+.credential-filter-btn {
+  background: color-mix(in srgb, var(--bg-alt, #1a1a1a) 80%, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
   color: var(--text, #f5f5f5);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.18));
-  border-radius: 12px;
-  padding: 6px 36px 6px 12px;
+  padding: 7px 16px;
+  border-radius: 999px;
   font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.light-theme .credential-filter-select {
-  background-color: #ffffff;
+.light-theme .credential-filter-btn {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.14);
   color: var(--text, #222222);
-  border-color: rgba(0, 0, 0, 0.15);
 }
 
-.credential-filter-select:focus,
-.credential-filter-select:hover {
+.credential-filter-btn:hover,
+.credential-filter-btn:focus,
+.credential-filter-btn.show {
+  background: color-mix(in srgb, var(--bg-alt, #1a1a1a) 60%, rgba(255, 255, 255, 0.1));
   border-color: var(--site-accent, var(--accent, #ff6b00));
-}
-
-.credential-filter-select option {
-  background-color: var(--bg-alt, #1a1a1a);
   color: var(--text, #f5f5f5);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 20%, transparent);
 }
 
-.light-theme .credential-filter-select option {
-  background-color: #ffffff;
+.light-theme .credential-filter-btn:hover,
+.light-theme .credential-filter-btn:focus,
+.light-theme .credential-filter-btn.show {
+  background: #ffffff;
+  border-color: var(--site-accent, var(--accent, #ff6b00));
   color: var(--text, #222222);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 15%, transparent);
+}
+
+.credential-filter-val {
+  color: var(--site-accent, var(--accent, #ff6b00));
+}
+
+.credential-dropdown-menu {
+  background: var(--bg-alt, #161616) !important;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.18)) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px;
+  min-width: 220px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+.light-theme .credential-dropdown-menu {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.12) !important;
+}
+
+.credential-dropdown-item {
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  color: var(--text, #f5f5f5) !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.light-theme .credential-dropdown-item {
+  color: var(--text, #222222) !important;
+}
+
+.credential-dropdown-item:hover,
+.credential-dropdown-item:focus {
+  background: color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 15%, transparent) !important;
+  color: var(--site-accent, var(--accent, #ff6b00)) !important;
+}
+
+.light-theme .credential-dropdown-item:hover,
+.light-theme .credential-dropdown-item:focus {
+  background: color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 10%, transparent) !important;
+  color: var(--site-accent, var(--accent, #ff6b00)) !important;
+}
+
+.credential-dropdown-item.active {
+  background: color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 20%, transparent) !important;
+  color: var(--site-accent, var(--accent, #ff6b00)) !important;
+  font-weight: 600;
 }
 
 .skill-category-pill i,

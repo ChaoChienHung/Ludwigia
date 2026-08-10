@@ -188,18 +188,43 @@
     const currentItem = filteredItems.find((it) => it.id === state.activeItemId) || null;
     const currentIndex = filteredItems.findIndex((it) => it.id === state.activeItemId);
 
-    // Type Select Options
-    const typeOptionsHtml = (state.data.types || []).map((t) => {
-      const isSelected = state.activeType === t.id;
+    // Active labels for dropdown triggers
+    const activeTypeObj = (state.data.types || []).find((t) => t.id === state.activeType);
+    const activeTypeLabel = activeTypeObj ? getLocalizedText(activeTypeObj.label, lang) : txt.typeLabel;
+
+    const activeCatObj = (state.data.categories || []).find((c) => c.id === state.activeCategory);
+    const activeCatLabel = activeCatObj ? getLocalizedText(activeCatObj.label, lang) : txt.categoryLabel;
+
+    // Type Dropdown Items
+    const typeMenuItemsHtml = (state.data.types || []).map((t) => {
+      const isActive = state.activeType === t.id;
       const labelStr = getLocalizedText(t.label, lang);
-      return `<option value="${t.id}" ${isSelected ? 'selected' : ''}>${labelStr}</option>`;
+      return `
+        <li>
+          <button class="dropdown-item credential-dropdown-item d-flex align-items-center justify-content-between gap-3 ${isActive ? 'active' : ''}" 
+                  type="button" 
+                  data-cred-type-select="${t.id}">
+            <span>${labelStr}</span>
+            ${isActive ? '<i class="fa-solid fa-check small ms-2" style="color: var(--site-accent, var(--accent, #ff6b00));"></i>' : ''}
+          </button>
+        </li>
+      `;
     }).join('');
 
-    // Category Select Options
-    const catOptionsHtml = (state.data.categories || []).map((c) => {
-      const isSelected = state.activeCategory === c.id;
+    // Category Dropdown Items
+    const catMenuItemsHtml = (state.data.categories || []).map((c) => {
+      const isActive = state.activeCategory === c.id;
       const labelStr = getLocalizedText(c.label, lang);
-      return `<option value="${c.id}" ${isSelected ? 'selected' : ''}>${labelStr}</option>`;
+      return `
+        <li>
+          <button class="dropdown-item credential-dropdown-item d-flex align-items-center justify-content-between gap-3 ${isActive ? 'active' : ''}" 
+                  type="button" 
+                  data-cred-cat-select="${c.id}">
+            <span>${labelStr}</span>
+            ${isActive ? '<i class="fa-solid fa-check small ms-2" style="color: var(--site-accent, var(--accent, #ff6b00));"></i>' : ''}
+          </button>
+        </li>
+      `;
     }).join('');
 
     // Thumbnail strip html
@@ -229,29 +254,40 @@
         </div>
 
         <div class="credentials-card p-4 rounded-4 shadow-sm">
-          <!-- Filters -->
+          <!-- Custom Filters -->
           <div class="credentials-filters mb-4 pb-3 border-bottom">
-            <div class="row g-3 align-items-center">
-              <div class="col-12 col-md-6">
-                <div class="d-flex align-items-center gap-2">
-                  <label for="credTypeSelect" class="credential-filter-label fw-bold text-nowrap small text-uppercase mb-0">
-                    <i class="fa-solid fa-filter me-1"></i>${txt.typeLabel}:
-                  </label>
-                  <select id="credTypeSelect" class="form-select credential-filter-select shadow-none" data-cred-type-select aria-label="${txt.typeLabel}">
-                    ${typeOptionsHtml}
-                  </select>
-                </div>
+            <div class="d-flex flex-wrap align-items-center justify-content-start gap-3">
+              
+              <!-- Type Dropdown -->
+              <div class="dropdown credential-dropdown">
+                <button class="btn credential-filter-btn dropdown-toggle d-flex align-items-center gap-2 shadow-none" 
+                        type="button" 
+                        id="credTypeDropdown" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                  <span class="text-secondary small text-uppercase fw-semibold"><i class="fa-solid fa-filter me-1"></i>${txt.typeLabel}:</span>
+                  <span class="credential-filter-val fw-bold">${activeTypeLabel}</span>
+                </button>
+                <ul class="dropdown-menu credential-dropdown-menu shadow-lg border-0 rounded-3" aria-labelledby="credTypeDropdown">
+                  ${typeMenuItemsHtml}
+                </ul>
               </div>
-              <div class="col-12 col-md-6">
-                <div class="d-flex align-items-center gap-2">
-                  <label for="credCatSelect" class="credential-filter-label fw-bold text-nowrap small text-uppercase mb-0">
-                    <i class="fa-solid fa-tags me-1"></i>${txt.categoryLabel}:
-                  </label>
-                  <select id="credCatSelect" class="form-select credential-filter-select shadow-none" data-cred-cat-select aria-label="${txt.categoryLabel}">
-                    ${catOptionsHtml}
-                  </select>
-                </div>
+
+              <!-- Domain Dropdown -->
+              <div class="dropdown credential-dropdown">
+                <button class="btn credential-filter-btn dropdown-toggle d-flex align-items-center gap-2 shadow-none" 
+                        type="button" 
+                        id="credCatDropdown" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                  <span class="text-secondary small text-uppercase fw-semibold"><i class="fa-solid fa-tags me-1"></i>${txt.categoryLabel}:</span>
+                  <span class="credential-filter-val fw-bold">${activeCatLabel}</span>
+                </button>
+                <ul class="dropdown-menu credential-dropdown-menu shadow-lg border-0 rounded-3" aria-labelledby="credCatDropdown">
+                  ${catMenuItemsHtml}
+                </ul>
               </div>
+
             </div>
           </div>
 
@@ -398,29 +434,31 @@
   }
 
   function bindEvents(container, currentItem, filteredItems) {
-    // Type Filter Select
-    const typeSelect = container.querySelector('[data-cred-type-select]');
-    if (typeSelect) {
-      typeSelect.addEventListener('change', (e) => {
-        const type = e.target.value;
+    // Type Filter Select Items
+    container.querySelectorAll('[data-cred-type-select]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const type = e.currentTarget.getAttribute('data-cred-type-select');
         if (type && type !== state.activeType) {
           state.activeType = type;
           render(container);
         }
       });
-    }
+    });
 
-    // Category Filter Select
-    const catSelect = container.querySelector('[data-cred-cat-select]');
-    if (catSelect) {
-      catSelect.addEventListener('change', (e) => {
-        const cat = e.target.value;
+    // Category Filter Select Items
+    container.querySelectorAll('[data-cred-cat-select]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const cat = e.currentTarget.getAttribute('data-cred-cat-select');
         if (cat && cat !== state.activeCategory) {
           state.activeCategory = cat;
           render(container);
         }
       });
-    }
+    });
 
     // Thumbnail Click
     container.querySelectorAll('[data-cred-item-id]').forEach((btn) => {
