@@ -434,6 +434,47 @@
   }
 
   function bindEvents(container, currentItem, filteredItems) {
+    // Dropdown Toggle Click
+    container.querySelectorAll('.credential-filter-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const dropdownEl = btn.closest('.credential-dropdown');
+        const menuEl = dropdownEl ? dropdownEl.querySelector('.credential-dropdown-menu') : null;
+        const isShown = btn.classList.contains('show');
+
+        // Close all credential dropdowns first
+        container.querySelectorAll('.credential-filter-btn').forEach((b) => {
+          b.classList.remove('show');
+          b.setAttribute('aria-expanded', 'false');
+        });
+        container.querySelectorAll('.credential-dropdown-menu').forEach((m) => {
+          m.classList.remove('show');
+        });
+
+        if (!isShown && btn && menuEl) {
+          btn.classList.add('show');
+          btn.setAttribute('aria-expanded', 'true');
+          menuEl.classList.add('show');
+        }
+      });
+    });
+
+    // Close dropdowns on document click outside
+    const documentOutsideClickHandler = (e) => {
+      if (!e.target.closest('.credential-dropdown')) {
+        container.querySelectorAll('.credential-filter-btn').forEach((b) => {
+          b.classList.remove('show');
+          b.setAttribute('aria-expanded', 'false');
+        });
+        container.querySelectorAll('.credential-dropdown-menu').forEach((m) => {
+          m.classList.remove('show');
+        });
+      }
+    };
+    document.removeEventListener('click', documentOutsideClickHandler);
+    document.addEventListener('click', documentOutsideClickHandler);
+
     // Type Filter Select Items
     container.querySelectorAll('[data-cred-type-select]').forEach((btn) => {
       btn.addEventListener('click', (e) => {

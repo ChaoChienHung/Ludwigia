@@ -1780,6 +1780,12 @@ body.note-page.reading-mode .custom-brand {
   transition: opacity 0.3s ease;
 }
 
+.dropdown-menu.show,
+.dropdown.show > .dropdown-menu {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 991px) {
   .custom-nav {
     top: 0 !important;
@@ -6649,6 +6655,12 @@ body.site-fab-open .site-fab-panel {
   padding: 6px;
   min-width: 220px;
   box-shadow: 0 14px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+.credential-dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .light-theme .credential-dropdown-menu {
