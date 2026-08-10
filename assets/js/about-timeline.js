@@ -77,7 +77,7 @@
     },
     'zh-Hant': {
       kicker: '一路走來',
-      title: 'Timeline',
+      title: '時間軸',
       cipherTitle: 'Chronology',
       intro:
         '這不是履歷，也不完全是日記；比較像一張還在變動的地圖，慢慢把那些轉折、階段與長期執念怎麼把我塑造成現在的樣子勾出來。',
@@ -119,7 +119,7 @@
     },
     'zh-Hans': {
       kicker: '一路走来',
-      title: 'Timeline',
+      title: '时间轴',
       cipherTitle: 'Chronology',
       intro:
         '这不是履历，也不完全是日记；更像一张仍在变化的地图，慢慢把那些转折、阶段与长期执念怎样把我塑造成现在的样子勾出来。',
