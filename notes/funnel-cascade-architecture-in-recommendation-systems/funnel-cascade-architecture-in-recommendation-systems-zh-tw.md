@@ -224,15 +224,17 @@ content:
     召回看重興趣涵蓋率、粗排看重過濾效率、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，且前階段的早裁斷（Early Truncation）無法修復，容易導致整個系統收斂於**局部最佳解**，而非全局最優解。
 
 ## 邁向下一代範式：生成式檢索與全鏈路一體化（Generative Retrieval）
-正是因為級聯架構存在上述痛點，業界開始尋求打破傳統「級聯漏斗」限制的新方法，推動推薦系統朝向「端到端架構（End-to-End Architectures）」與「生成式檢索（Generative Retrieval, GR）」演進。
 
-關於這場範式轉移背後的動機，以及在對齊大模型基建時面臨的挑戰，我在專文中整理了一些個人的觀察與探討。若對背後的脈絡感興趣，歡迎進一步閱讀：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</content-link>。
+正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「級聯漏斗」限制的新方法，推動著推薦系統朝向「端到端架構（End-to-End Architectures）」與「生成式檢索（Generative Retrieval, GR）」演進。
 
-這裡我們主要把重點聚焦於這套新架構帶來的三大核心優勢，看看它究竟是如何打破 IO 開銷枷鎖、統一優化目標，並直接對齊大語言模型的發展範式：
+關於這場範式轉移背後的深層動機，以及業界（如快手 OneRec）在對齊大模型基建時所面臨的挑戰，我在專文中整理了一些個人的觀察與探討。若對這段發展脈絡感興趣，歡迎進一步閱讀：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</content-link>。
 
-* **對齊 LLM 範式以解鎖 Scaling Law 紅利**：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統不再需要為各個細部模組單獨雕琢特化模型，而是能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <information concept="concept.scaling_law">Scaling Law</information> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。
-* **極致壓縮通信開銷**：將召回與排序的邊界模糊化甚至合併，將省下來的網路與 IO 時間成本，全力投入到**擴大模型規模與複雜度**上，以更好地捕捉使用者極其微細且動態的興趣變化。
-* **模型即索引（Model-as-Index）**：透過 **Semantic ID**（如 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-Kmeans</content-link> / <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link> 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列。其最大的優勢在於，Transformer 模型能直接從全局記憶中「自迴歸生成」出推薦結果，**完全免去了傳統架構需要在龐大候選池（Candidate Pool）中進行逐一運算與比對的繁瑣步驟**。這不僅徹底消除了級聯架構帶來的資訊遺失與目標斷層，更大幅節省了檢索與比對的時間，讓系統能將這些寶貴的時間預算重新投入到模型的深度優化與複雜度提升上。
+在此就不多贅述了，我們主要將重點聚焦於這套新架構所帶來的四大核心優勢，看看它究竟是如何統一優化目標、打破 IO 開銷枷鎖，並直接對齊大語言模型的發展範式：
+
+* **消除級聯斷層以統一優化目標**：將傳統的「多級漏斗」整合成單一的端到端模型，徹底解決了過去召回與排序階段因優化目標不一致而導致的「目標斷層」與資訊遺失問題，讓模型能直接且專注地為最終的使用者滿意度進行全鏈路優化。
+* **極致壓縮網路與 IO 通信開銷**：由於召回與排序的邊界被模糊化甚至完全合併，大幅減少了多級模組間頻繁傳遞龐大特徵數據所帶來的網路延遲與 IO 開銷。系統能將省下來的時間與硬體資源，全力投入到**擴大模型規模與複雜度**上，以更好地捕捉使用者極其微細且動態的興趣變化。
+* **對齊 LLM 範式以解鎖 Scaling Law 紅利**：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <information concept="concept.scaling_law">Scaling Law</information> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。
+* **模型即索引（Model-as-Index）消除候選比對瓶頸**：透過 **Semantic ID**（如 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-Kmeans</content-link> / <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link> 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列。Transformer 模型能直接從全局記憶中「自迴歸生成」出推薦結果，**完全免去了傳統架構需要在龐大候選池（Candidate Pool）中進行逐一運算與向量比對的繁瑣步驟**，並能將這些省下的檢索與比對時間，重新投入到模型的深度運算中。
 
 ## 總結與核心要點
 
