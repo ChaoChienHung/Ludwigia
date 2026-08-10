@@ -263,7 +263,37 @@
         "zh-Hant": "這段涵蓋中央資工的求學歷程，從 2020 年 9 月入學到 2024 年 6 月畢業，並以累積 GPA 4.2/4.3 完成學位。",
         "zh-Hans": "这段涵盖中央资工的求学历程，从 2020 年 9 月入学到 2024 年 6 月毕业，并以累计 GPA 4.2/4.3 完成学位。"
       },
-      "references": []
+      "references": [],
+      "start_title": {
+        "en": "National Central University: Computer Science — Grounding & Foundation: Transfer Exam Pivot and Self-Reinvention",
+        "zh-Hant": "國立中央大學：資訊工程學系 —— 沉澱與扎根：轉學考的意外轉折與自我重塑",
+        "zh-Hans": "国立中央大学：资讯工程学系 —— 沉淀与扎根：转学考的意外转折与自我重塑"
+      },
+      "start_summary": {
+        "en": "Entered NCU CS in September 2020. Overcoming transfer exam pivots through disciplined self-study, built a solid STEM foundation with a cumulative GPA of 4.2/4.3.",
+        "zh-Hant": "2020 年 9 月進入中央資工。經歷轉學考轉折與紮實自學修補後，以累積 GPA 4.2/4.3 奠定深厚理工根基。",
+        "zh-Hans": "2020 年 9 月进入中央资工。经历转学考转折与扎实自学修补后，以累计 GPA 4.2/4.3 奠定深厚理工根基。"
+      },
+      "start_detail": {
+        "en": "In September 2020, I entered the Department of Computer Science and Information Engineering at National Central University. Upon arriving at NCU, I immediately felt an atmosphere distinct from NTU—the pace here was relatively unhurried and relaxed. While the academic pressure was less intense than NTU, it granted us greater freedom and time for self-directed exploration.\n\nFrankly, when I first arrived, my mind was set on taking the transfer exam to return to NTU or transfer to top engineering institutions like NTHU or NYCU. I enrolled in cram school and poured immense effort into preparation. However, the COVID-19 outbreak in 2021 altered many trajectories: transfer exams across Taiwan were canceled and converted entirely to portfolio reviews. Because portfolio reviews required a fundamentally different preparation strategy than written exams, I missed the transfer opportunity, finishing as second candidate on the waitlist for NCKU.\n\nWas this hard work wasted? I certainly do not think so. It was the second time after my retake year that I systematically structured a learning schedule, vastly improving my study efficiency and establishing a strong habit for long-term endurance. Looking back, missing the transfer exam was perhaps the best outcome for me. At that time, my academic foundation was not yet rock-solid and my mindset carried some rigidity. Had I entered an even more competitive environment then, I might not have had the resilience to thrive or face setbacks.\n\nThose earlier gaps were precisely repaired at NCU. The balanced academic tempo gave me space to solidify my foundation. I spent countless peaceful afternoons self-studying in the library and exploring extra topics beyond coursework. Ultimately, I completed my degree with a cumulative GPA of 4.2/4.3, establishing a deep STEM foundation for mastering any technical field.",
+        "zh-Hant": "2020 年 9 月，我進入了國立中央大學資訊工程學系。初抵中央，能明顯感受到與臺大截然不同的氛圍——這裡的步調相對緩慢而愜意，課業壓力雖不如臺大沉重，卻也因此賦予了我們更多自由探索的時間與餘裕。\n\n坦白說，剛入學時我一心想透過轉學考回到臺大，或至少轉入清交等傳統二類名校。為此，我報名了補習班，傾注了大量的心力與時間備戰。然而，2021 年爆發的 COVID-19 疫情改變了許多人的軌跡，當時全臺轉學考被迫取消，全面改為書面審查；由於書審與筆試的準備方向南轅北轍，我最終與轉學失之交臂，報考成大時也僅以「備取第二」之姿，與最後一個錄取名額擦身而過。\n\n這段日子的努力白費了嗎？我並不這麼認為。這是我繼重考之後，第二次如此有系統地規劃學習日程，大幅改善了過去缺乏效率的準備方式，為我日後「拉長學習戰線」奠定了極佳的基礎。日後回首，我常在想：當年轉學考的失利，對我而言或許是最好的安排。當時的我，學術根基尚未穩固，性格上也帶著些許偏執；倘若當時真的進入了競爭更激烈的頂尖名校，我未必有能力活得璀璨，也未必有足夠的心智去面對挫折。\n\n而這些曾經的不足，正是在中央被逐步修補的。這裡適中的課業壓力，給了我安心「打底」的空間，我常獨自泡在圖書館裡度過整個靜謐的下午，並在課餘時間額外進修自己想鑽研的領域。最終，我以累積 GPA 4.2/4.3 的成績完成學位，為日後學習任何新領域打下了深厚的理工根基。",
+        "zh-Hans": "2020 年 9 月，我进入了国立中央大学资讯工程学系。初抵中央，能明显感受到与台大截然不同的氛围——这里的步调相对缓慢而惬意，课业压力虽不如台大沉重，却也因此赋予了我们更多自由探索的时间与余裕。\n\n坦白说，刚入学时我一心想通过转学考回到台大，或至少转入清交等传统二类名校。为此，我报名了补习班，倾注了大量的心力与时间备战。然而，2021 年爆发的 COVID-19 疫情改变了许多人的轨迹，当时全台转学考被迫取消，全面改为书面审查；由于书审与笔试的准备方向南辕北辙，我最终与转学失之交臂，报考成大时也仅以“备取第二”之姿，与最后一个录取名额擦身而过。\n\n这段日子的努力白费了吗？我并不这么认为。这是我继重考之后，第二次如此有系统地规划学习日程，大幅改善了过去缺乏效率的准备方式，为我日后“拉长学习战线”奠定了极佳的基础。日后回首，我常在想：当年转学考的失利，对我而言或许是最好的安排。当时的我，学术根基尚未稳固，性格上也带着些许偏执；倘若当时真的进入了竞争更激烈的顶尖名校，我未必有能力活得璀璨，也未必有足够的心智去面对挫折。\n\n而这些曾经的不足，正是在中央被逐步修补的。这里适中的课业压力，给了我安心“打底”的空间，我常独自泡在图书馆里度过整个静谧的下午，并在课余时间额外进修自己想钻研的领域。最终，我以累计 GPA 4.2/4.3 的成绩完成学位，为日后学习任何新领域打下了深厚的理工根基。"
+      },
+      "end_title": {
+        "en": "National Central University: Computer Science — Inspiration & Growth: Bonds of Friendship and Mindset Elevation",
+        "zh-Hant": "國立中央大學：資訊工程學系 —— 啟發與蛻變：同儕的羈絆與心態格局的昇華",
+        "zh-Hans": "国立中央大学：资讯工程学系 —— 启发与蜕变：同侪的羁绊与心态格局的昇华"
+      },
+      "end_summary": {
+        "en": "Grew alongside lifelong friends and roommates during four years at NCU, developing global aspirations, English fluency, and emotional maturity.",
+        "zh-Hant": "在中央四年的歲月裡，受珍貴同儕與室友深深啟發，不僅收穫真摯友誼與英文學習樂趣，更奠定出國留學志向與堅韌圓融的心態。",
+        "zh-Hans": "在中央四年的岁月里，受珍贵同侪与室友深深启发，不仅收获真挚友谊与英文学习乐趣，更奠定出国留学志向与坚韧圆融的心态。"
+      },
+      "end_detail": {
+        "en": "Beyond academic growth during my four years at NCU, what I treasure most is meeting a group of lifelong friends and roommates who transformed my perspective: Wu Yu-Chian, Fang Chun-Ping, Chang Kai-Yun, Wang Cheng-Yu, Chung Hao-Che, Chang Pai-Kuan, and Wu Po-Han. Together we shared academic discussions and countless youth memories—attending English Salon, studying, playing League of Legends, bantering, sharing gossip, and occasionally embarking on harmless wild adventures, making college life vibrant and joyous.\n\nMore importantly, living alongside them taught me invaluable lessons in social connection. I observed how charismatic individuals seamlessly interact with others—bringing joy to a group without sacrificing self-respect or causing friction. Through these meaningful exchanges, I absorbed their diverse mindsets and life philosophies. Constant reflection shaped a stronger, more resilient self with the grace to handle life's setbacks calmly.\n\nFurthermore, my aspiration to study abroad was inspired by them. We frequently practiced spoken English together; though often filled with friendly banter, growing together amidst laughter was truly magical. Today, even though we have graduated and set off for different corners of the world, we remain closely connected. This priceless friendship and emotional growth are the most precious treasures of my four years at NCU.",
+        "zh-Hant": "在中央四年的歲月裡，除了學術上的成長，最讓我珍視的，是遇見了一群改變我一生的摯友與室友：吳宥謙、方竣平、張開畇、王誠煜、鍾昊哲、張百寬與吳柏翰。我們之間不僅有學科上的切磋，更多的是共享青春的點滴——我們一起參加 English Salon 練習會話、一起讀書、打 LOL、聊天打屁、分享八卦，甚至偶爾一起做些無傷大雅的瘋狂蠢事，度過了一段無比充實且歡樂的大學時光。\n\n更重要的是，與他們的朝夕相處為我上了一堂最寶貴的社交課。我從中觀察到，一個善於交際的人是如何游刃有餘地與人互動，又是如何在為大家帶來歡樂的同時，不需委屈妥協，也不會傷害任何人或自己。在這些深度的交流中，我潛移默化地吸收了他們截然不同的思維模式與處世態度；透過不斷的自省與啟發，我逐漸雕琢出一個更堅韌、更強大的自我，也終於長出了能夠從容面對人生失利的力量。\n\n此外，我對「出國留學」的嚮往，也正是受到他們的啟發，才真正開始認真思考並著手準備。我們常湊在一起練習英文口說，雖然內容多半是互相調侃的玩笑話，但那種在歡笑中共同成長的感覺真的很快樂。如今，儘管我們已畢業並各自奔赴世界不同的角落，我們依然保持著緊密的聯繫。這份難能可貴的友誼與心態上的蛻變，是我留在中央四年最寶貴、也最珍惜的收穫。",
+        "zh-Hans": "在中央四年的岁月里，除了学术上的成长，最让我珍视的，是遇见了一群改变我一生的挚友与室友：吴宥谦、方竣平、张开畇、王诚煜、钟昊哲、张百宽与吴柏翰。我们之间不仅有学科上的切磋，更多的是共享青春的点滴——我们一起参加 English Salon 练习会话、一起读书、打 LOL、聊天打屁、分享八卦，甚至偶尔一起做些无伤大雅的疯狂蠢事，度过了一段无比充实且欢乐的大学时光。\n\n更重要的是，与他们的朝夕相处为我上了最宝贵的一堂社交课。我从中观察到，一个善于交际的人是如何游刃有余地与人互动，又是如何在为大家带来欢乐的同时，不需委屈妥协，也不会伤害任何人或自己。在这些深度的交流中，我潜移默化地吸收了他们截然不同的思维模式与处世态度；通过不断的自省与启发，我逐渐雕琢出一个更坚韧、更强大的自我，也终于长出了能够从容面对人生失利的力量。\n\n此外，我对“出国留学”的向往，也正是受到他们的启发，才真正开始认真思考并着手准备。我们常凑在一起练习英文口说，虽然内容多半是互相调侃的玩笑话，但那种在欢笑中共同成长的感觉真的很快乐。如今，尽管我们已毕业并各自奔赴世界不同的角落，我们依然保持着紧密的联系。这份难能可贵的友谊与心态上的蜕变，是我留在中央四年最宝贵、也最珍惜的收获。"
+      }
     },
     {
       "id": "phase-nus-ai",
