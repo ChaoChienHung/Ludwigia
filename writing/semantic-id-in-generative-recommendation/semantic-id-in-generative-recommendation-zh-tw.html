@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題 — Ludwig</title>
+  <meta name="garden:tags" content="推薦系統, 生成式檢索, Semantic ID, 深度學習, tokenization">
+  <meta name="garden:summary" content="本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic Item ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="published">
+  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.semantic_id,concept.deep_learning,">
+  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;}}">
+  <meta name="garden:canonical_id" content="semantic-id-in-generative-recommendation">
+  <meta name="garden:published_at" content="2026-08-11">
+  <meta name="garden:last_modified_at" content="2026-08-11">
+  <meta name="garden:reading_time_minutes" content="6">
+  <meta name="garden:source" content="writing/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 前言與破題：生成式推薦的終極落地難題</a>
+<a class="note-toc-link level-1" href="#2-semantic-id-sid">2. 何謂 Semantic ID (SID)？</a>
+<a class="note-toc-link level-2" href="#semantic-id">Semantic ID 的三大核心特質</a>
+<a class="note-toc-link level-1" href="#3-semantic-id">3. Semantic ID 如何破解三大工程困境？</a>
+<a class="note-toc-link level-1" href="#4-semantic-id-tokenizer">4. 如何生成 Semantic ID？兩大 Tokenizer 技術路線</a>
+<a class="note-toc-link level-2" href="#rq-vae">路線一：端到端神經網路量化 (RQ-VAE)</a>
+<a class="note-toc-link level-2" href="#rq-kmeans">路線二：兩階段幾何殘差聚類 (RQ-Kmeans)</a>
+<a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-11" data-published-at="2026-08-11"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-11</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在 <a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">從級聯漏斗到自迴歸生成：推薦系統的範式重塑<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Writing.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。</span></span></span></a> 中，我們探討了推薦系統為何全面邁向生成式範式。然而，當我們試圖將大語言模型（LLM）的自迴歸生成能力套用到推薦系統時，立刻就會撞上一道核心工程高牆：<strong>如何將平台上海量、動態變化的商品，轉化為大模型能夠理解與生成的離散 Token？</strong></p>
+
+<p class="mb-3">本文將深入剖析生成式推薦的核心抽象介面——<strong>Semantic ID（語意識別碼）</strong>，揭示它如何破解傳統 Atomic Item ID 的算力與冷啟動瓶頸，並作為連結海量商品庫與自迴歸大模型的關鍵橋樑。</p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 前言與破題：生成式推薦的終極落地難題</h3>
+
+<p class="mb-3">在自然語言處理（NLP）中，大模型處理的是數萬到數十萬個常用詞彙或 Byte-Pair Encoding (BPE) Token（例如 GPT-4 的 Vocab Size 約為 100,000）。然而在真實商業推薦場景中，平台上的商品（Item）數量動輒高達千萬甚至數億級別。</p>
+
+<p class="mb-3">如果直接將每個商品視為一個獨立的 Atomic Token，會面臨兩大無法逾越的工程痛點：</p>
+
+<ol class="mb-3">
+<li><strong>Softmax 算力與記憶體爆炸：</strong></li>
+</ol>
+
+<p class="mb-3">在自迴歸生成的最後一層，模型需要對所有潛在 Token 計算 Softmax 機率分佈。當 Vocab Size 達到 $10^7$ 數量級時，Softmax 矩陣乘法將消耗天文數字般的 GPU 記憶體與算力，造成 OOM (Out-Of-Memory) 且無法即時推理。</p>
+
+<ol class="mb-3">
+<li><strong>Catalog Churn（商品頻繁上下架）與冷啟動絕壁：</strong></li>
+</ol>
+
+<p class="mb-3">真實平台上的商品庫隨時在動態變化。傳統 Atomic ID 彼此孤立（如 Item <code>10023</code> 與 Item <code>10024</code> 在 Embedding 空間中沒有任何先天關聯），新上架的商品因為沒有歷史互動數據，模型完全無法生成其專屬 ID，導致嚴重的冷啟動失敗。</p>
+
+<hr>
+</section>
+
+<section id="2-semantic-id-sid" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 何謂 Semantic ID (SID)？</h3>
+
+<p class="mb-3">為了解決上述瓶頸，業界提出了 <strong>Semantic ID（語意識別碼）</strong> 的概念。</p>
+
+<p class="mb-3">簡單來說，Semantic ID 不再將商品視為單一無意義的整數 ID，而是<strong>將每個商品編碼為一串具備語意階層的離散 Token 序列</strong>：</p>
+
+<p class="mb-3">$$\text{Item } x \longrightarrow [c_1, c_2, \dots, c_M]$$</p>
+
+<p class="mb-3">其中 $c_m \in \{1, 2, \dots, K\}$ 代表第 $m$ 層碼本（Codebook）中的 Token 索引。</p>
+
+<h4 id="semantic-id" class="mb-2">Semantic ID 的三大核心特質</h4>
+
+<ul class="note-list">
+<li><strong>語意階層性 (Hierarchical Semantics)：</strong></li>
+</ul>
+
+<p class="mb-3">第一個 Token $c_1$ 通常代表粗粒度的語意類別（如「3C 電子」），第二個 Token $c_2$ 代表子類別（如「智慧型手機」），後續 Token $c_3 \dots c_M$ 則逐漸修飾品牌的細節特徵與個體差異。</p>
+
+<ul class="note-list">
+<li><strong>碼本複用與空間壓縮 (Codebook Reuse)：</strong></li>
+</ul>
+
+<p class="mb-3">透過 $M$ 層大小為 $K$ 的碼本組合，僅需 $M \times K$ 個 Token（例如 $4 \times 256 = 1024$ 個 Vocab），就能組合出 $K^M = 256^4 \approx 42.9$ 億種獨一無二的商品編碼空間！</p>
+
+<ul class="note-list">
+<li><strong>自然泛化與零樣本冷啟動 (Zero-Shot Generalization)：</strong></li>
+</ul>
+
+<p class="mb-3">當新商品上架時，系統能根據其文本或影像特徵，將其映射至既有碼本中的 Semantic ID。由於大模型已經學習過這些語意 Token 的分佈，因此無需重訓即可直接推薦新商品。</p>
+
+<hr>
+</section>
+
+<section id="3-semantic-id" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Semantic ID 如何破解三大工程困境？</h3>
+
+<ol class="mb-3">
+<li><strong>極致壓縮 Vocab Size：</strong></li>
+</ol>
+
+<p class="mb-3">大模型的輸出層 Vocab Size 從千萬級別的商品數，大幅縮小至僅需幾百到幾千個通用 Codebook Token，徹底解決了 Softmax 機率計算與記憶體爆炸的問題。</p>
+
+<ol class="mb-3">
+<li><strong>克服 Catalog Churn 困境：</strong></li>
+</ol>
+
+<p class="mb-3">即使舊商品下架、新商品上架，大模型使用的 Token 集合（Codebook Tokens）始終保持固定，大幅提升了模型在工業界線上部署的穩定度。</p>
+
+<ol class="mb-3">
+<li><strong>支援階層前綴檢索 (Prefix Search)：</strong></li>
+</ol>
+
+<p class="mb-3">在生成推薦結果時，模型可以逐字生成 Semantic ID。即使生成途中在最後一層 Token 產生微小偏差，前幾層的 Token 依然精準鎖定了正確的商品大類與細節屬性，不會像傳統 ID 般一錯即失之千里。</p>
+
+<hr>
+</section>
+
+<section id="4-semantic-id-tokenizer" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 如何生成 Semantic ID？兩大 Tokenizer 技術路線</h3>
+
+<p class="mb-3">要將商品特徵轉換為 Semantic ID，關鍵在於如何訓練或建立這套「量化碼本（Quantization Codebooks）」。目前業界主要存在兩大技術路線：</p>
+
+<h4 id="rq-vae" class="mb-2">路線一：端到端神經網路量化 (RQ-VAE)</h4>
+
+<ul class="note-list">
+<li><strong>代表工作：</strong> Google TIGER (NeurIPS 2022)</li>
+<li><strong>核心思維：</strong> 建立一個由 Encoder、Codebooks 與 Decoder 組成的變分自編碼器（RQ-VAE），透過 Straight-Through Estimator (STE) 讓神經網路主動學習符合下游任務的潛在語意空間。</li>
+<li><strong>詳細解析：</strong> 請參閱 端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer。</li>
+</ul>
+
+<h4 id="rq-kmeans" class="mb-2">路線二：兩階段幾何殘差聚類 (RQ-Kmeans)</h4>
+
+<ul class="note-list">
+<li><strong>代表工作：</strong> 快手 OneRec / OneSearch (2024)</li>
+<li><strong>核心思維：</strong> 先透過既有模型產生高品質靜態商品 Embedding，再經由多層幾何殘差 K-means 聚類切分成 Token 序列，實現輕量、穩定且極高 CP 值的落地。</li>
+<li><strong>詳細解析：</strong> 請參閱 從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer。</li>
+</ul>
+
+<hr>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>解耦核心抽象：</strong> Semantic ID 是生成式推薦 (Generative Recommendation) 的核心介面，將千萬級商品編碼為階層式 Token 序列。</li>
+<li><strong>破解三大瓶頸：</strong> 徹底解決 Softmax 機率計算 OOM、Catalog Churn 商品上下架，以及新商品零樣本冷啟動問題。</li>
+<li><strong>兩大落地路線：</strong> 追求 SOTA 端到端表現選擇 <strong>RQ-VAE</strong>；追求工程極致穩定與資產複用選擇 <strong>RQ-Kmeans</strong>。</li>
+</ul></div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考文獻（References）</h3>
+
+<ol class="mb-3">
+<li>Rajput, S., et al. (2022). <em>Recommender Systems with Generative Retrieval</em>. (Google TIGER 論文, NeurIPS 2022)</li>
+<li>Lee, D., et al. (2022). <em>Autoregressive Image Generation using Residual Quantization</em>. (RQ-VAE 論文)</li>
+<li>快手 OneRec 團隊 (2024). <em>OneRec: Seamless Autoregressive Recommendation with Generative Retrieval</em>.</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>
