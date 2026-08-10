@@ -3870,6 +3870,7 @@ body.modal-open {
 
 .timeline-detail-body {
   margin-top: 12px;
+  white-space: pre-line;
 }
 
 .timeline-detail-links {

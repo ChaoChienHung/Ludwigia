@@ -716,8 +716,7 @@
             </div>
             ${buildDurationMarkup(childEvent, text)}
             <h5>${readLocalized(childEvent.title, lang)}</h5>
-            <p class="timeline-detail-summary">${readLocalized(childEvent.summary, lang)}</p>
-            <p class="timeline-detail-body">${readLocalized(childEvent.detail, lang)}</p>
+            <p class="timeline-detail-body">${readLocalized(childEvent.detail, lang) || readLocalized(childEvent.summary, lang)}</p>
             ${referenceMarkup}
           </article>
         `;
@@ -728,8 +727,7 @@
       <div class="timeline-detail-card timeline-detail-card--cluster">
         <div class="timeline-detail-meta">${formatEventLabel(event, text)}</div>
         <h4>${readLocalized(event.title, lang)}</h4>
-        <p class="timeline-detail-summary">${readLocalized(event.summary, lang)}</p>
-        <p class="timeline-detail-body">${readLocalized(event.detail, lang)}</p>
+        <p class="timeline-detail-body">${readLocalized(event.detail, lang) || readLocalized(event.summary, lang)}</p>
         <div class="timeline-detail-cluster-list-wrap">
           <div class="timeline-detail-links-label">${text.presentClusterListLabel}</div>
           <div class="timeline-detail-cluster-list">
@@ -783,8 +781,7 @@
         </div>
         ${buildDurationMarkup(event, text)}
         <h4>${readLocalized(event.title, lang)}</h4>
-        <p class="timeline-detail-summary">${readLocalized(event.summary, lang)}</p>
-        <p class="timeline-detail-body">${readLocalized(event.detail, lang)}</p>
+        <p class="timeline-detail-body">${readLocalized(event.detail, lang) || readLocalized(event.summary, lang)}</p>
         ${referenceMarkup}
       </div>
     `;
