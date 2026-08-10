@@ -58,9 +58,9 @@
         "zh-Hans": "局部最优解"
       },
       "contexts": {
-        "en": "Local Optimum is the best possible solution in a given problem space. It is the solution that maximizes the objective function, and it is the solution that is most likely to lead to the best possible outcome.",
-        "zh-Hant": "局部最優解是在給定問題空間中的最佳可能解。它是使目標函數最大化的解，也是最有可能帶來最佳可能結果的解。",
-        "zh-Hans": "局部最优解是在给定问题空间中的最佳可能解。它是使目标函数最大化的解，也是最有可能带来最佳可能结果的解。"
+        "en": "Local Optimum is a solution that is better than all nearby alternatives within a limited neighborhood of the search space, but is not necessarily the best solution overall. Optimization algorithms can get trapped at a local optimum, mistaking it for the best answer when a superior solution exists elsewhere in the space.",
+        "zh-Hant": "局部最優解是在搜尋空間的某個鄰域內比所有附近替代方案都更好的解，但不保證是全局範圍內的最佳解。優化演算法可能被困在局部最優解中，誤以為已找到最佳答案，而更優的解其實存在於空間的其他地方。",
+        "zh-Hans": "局部最优解是在搜索空间的某个邻域内比所有附近替代方案都更好的解，但不保证是全局范围内的最佳解。优化算法可能被困在局部最优解中，误以为已找到最佳答案，而更优的解其实存在于空间的其他地方。"
       },
       "aliases": [
         "local optimum"
@@ -74,9 +74,9 @@
         "zh-Hans": "全局最优解"
       },
       "contexts": {
-        "en": "Global Optimum is the best possible solution in a given problem space. It is the solution that maximizes the objective function, and it is the solution that is most likely to lead to the best possible outcome.",
-        "zh-Hant": "全局最優解是在給定問題空間中的最佳可能解。它是使目標函數最大化的解，也是最有可能帶來最佳可能結果的解。",
-        "zh-Hans": "全局最优解是在给定问题空间中的最佳可能解。它是使目标函数最大化的解，也是最有可能带来最佳可能结果的解。"
+        "en": "Global Optimum is the absolute best solution across the entire search space, not just within a local neighborhood. It is the solution that truly maximizes (or minimizes) the objective function over all possible alternatives. Finding the global optimum is often computationally hard, and many practical algorithms settle for local optima instead.",
+        "zh-Hant": "全局最優解是在整個搜尋空間中的絕對最佳解，而不僅是某個局部鄰域內的最優。它是在所有可能的替代方案中真正使目標函數最大化（或最小化）的解。找到全局最優解往往在計算上非常困難，許多實際演算法會退而求其次，停在局部最優解。",
+        "zh-Hans": "全局最优解是在整个搜索空间中的绝对最佳解，而不仅是某个局部邻域内的最优。它是在所有可能的替代方案中真正使目标函数最大化（或最小化）的解。找到全局最优解往往在计算上非常困难，许多实际算法会退而求其次，停在局部最优解。"
       },
       "aliases": [
         "global optimum",
@@ -361,9 +361,9 @@
         "zh-Hans": "不完全信息博弈"
       },
       "contexts": {
-        "en": "An imperfect information game is a game in game theory where players do not have complete visibility into all hidden state or cards held by opponents, requiring decision-making under uncertainty and probabilistic estimation.",
-        "zh-Hant": "不完全訊息賽局（Imperfect Information Game）是賽局論中的概念，指玩家無法獲得完整的全局狀態（例如對手的底牌或未知的牌庫），決策時必須面對隱藏資訊與隨機性，僅能依靠機率與期望值評估進行下注。",
-        "zh-Hans": "不完全信息博弈（Imperfect Information Game）是博弈论中的概念，指玩家无法获得完整的全局状态（例如对手的底牌或未知的牌库），决策时必须面对隐藏信息与随机性，仅能依靠概率与期望值评估进行下注。"
+        "en": "An imperfect information game is a game in game theory where players must make decisions without complete knowledge of the full game state. Some information is hidden or private to other players, requiring reasoning under uncertainty, probabilistic estimation, and strategic information management.",
+        "zh-Hant": "不完全訊息賽局是賽局論中的概念，指玩家必須在無法完全掌握全局狀態的情況下進行決策。部分資訊對其他參與者而言是隱藏或私有的，因此需要在不確定性下推理、進行機率估計，並策略性地管理資訊揭露。",
+        "zh-Hans": "不完全信息博弈是博弈论中的概念，指玩家必须在无法完全掌握全局状态的情况下进行决策。部分信息对其他参与者而言是隐藏或私有的，因此需要在不确定性下推理、进行概率估计，并策略性地管理信息揭露。"
       },
       "aliases": [
         "imperfect information game",
@@ -682,9 +682,9 @@
         "zh-Hans": "远程过程调用 RPC"
       },
       "contexts": {
-        "en": "RPC (Remote Procedure Call) is a communication protocol that allows a program to execute a procedure on a remote server as if it were a local function call. In large-scale recommendation systems, RPC is the primary mechanism for inter-service communication between distributed modules such as retrieval, ranking, and feature serving.",
-        "zh-Hant": "RPC（Remote Procedure Call，遠端程序呼叫）是一種通信協定，讓程式可以像呼叫本地函式一樣去執行遠端伺服器上的程序。在大規模推薦系統中，RPC 是各個分散式模組（如召回、排序、特徵服務）之間進行跨服務通信的主要機制。",
-        "zh-Hans": "RPC（Remote Procedure Call，远程过程调用）是一种通信协议，让程序可以像调用本地函数一样去执行远端服务器上的程序。在大规模推荐系统中，RPC 是各个分布式模块（如召回、排序、特征服务）之间进行跨服务通信的主要机制。"
+        "en": "RPC (Remote Procedure Call) is a communication protocol that allows a program to execute a procedure on a remote server as if it were a local function call. It is one of the foundational building blocks of distributed systems, enabling different services to communicate across network boundaries while hiding the complexity of serialization, transport, and error handling from the caller.",
+        "zh-Hant": "RPC（Remote Procedure Call，遠端程序呼叫）是一種通信協定，讓程式可以像呼叫本地函式一樣去執行遠端伺服器上的程序。它是分散式系統的基礎構件之一，使不同服務能跨越網路邊界互相通信，同時對呼叫端隱藏序列化、傳輸與錯誤處理的複雜性。",
+        "zh-Hans": "RPC（Remote Procedure Call，远程过程调用）是一种通信协议，让程序可以像调用本地函数一样去执行远端服务器上的程序。它是分布式系统的基础构件之一，使不同服务能跨越网络边界互相通信，同时对调用端隐藏序列化、传输与错误处理的复杂性。"
       },
       "aliases": [
         "RPC",
@@ -701,9 +701,9 @@
         "zh-Hans": "内存带宽受限"
       },
       "contexts": {
-        "en": "Memory-bound describes a computational workload whose performance is limited by memory bandwidth or latency rather than by arithmetic throughput. In such workloads, the processor spends most of its time waiting for data to be fetched from memory, leaving compute units idle. Traditional recommendation systems with scattered embedding lookups and irregular memory access patterns are classic memory-bound workloads.",
-        "zh-Hant": "記憶體頻寬受限（Memory-bound）描述一種計算工作負載，其效能瓶頸在於記憶體的頻寬或延遲，而非算術運算能力。在這類工作負載中，處理器大部分時間都在等待從記憶體取回資料，導致計算單元閒置。傳統推薦系統中散亂的 Embedding 查找與不規則的記憶體存取模式，就是典型的記憶體頻寬受限型工作負載。",
-        "zh-Hans": "内存带宽受限（Memory-bound）描述一种计算工作负载，其性能瓶颈在于内存的带宽或延迟，而非算术运算能力。在这类工作负载中，处理器大部分时间都在等待从内存取回数据，导致计算单元闲置。传统推荐系统中散乱的 Embedding 查找与不规则的内存访问模式，就是典型的内存带宽受限型工作负载。"
+        "en": "Memory-bound describes a computational workload whose performance is limited by memory bandwidth or latency rather than by arithmetic throughput. In such workloads, the processor spends most of its time waiting for data to be fetched from memory, leaving compute units idle. Common examples include sparse lookups, graph traversals, and workloads with irregular or non-contiguous memory access patterns.",
+        "zh-Hant": "記憶體頻寬受限（Memory-bound）描述一種計算工作負載，其效能瓶頸在於記憶體的頻寬或延遲，而非算術運算能力。在這類工作負載中，處理器大部分時間都在等待從記憶體取回資料，導致計算單元閒置。常見的例子包括稀疏查找、圖遍歷，以及存取模式不規則或不連續的工作負載。",
+        "zh-Hans": "内存带宽受限（Memory-bound）描述一种计算工作负载，其性能瓶颈在于内存的带宽或延迟，而非算术运算能力。在这类工作负载中，处理器大部分时间都在等待从内存取回数据，导致计算单元闲置。常见的例子包括稀疏查找、图遍历，以及访问模式不规则或不连续的工作负载。"
       },
       "aliases": [
         "memory-bound",
@@ -740,9 +740,9 @@
         "zh-Hans": "参数服务器 Parameter Server"
       },
       "contexts": {
-        "en": "Parameter Server is a distributed computing architecture for machine learning that stores model parameters on dedicated server nodes and synchronizes updates from multiple worker nodes during training. It was widely adopted in recommendation systems to handle massive sparse embedding tables that cannot fit in a single machine's memory.",
-        "zh-Hant": "參數伺服器（Parameter Server）是一種分散式機器學習架構，將模型參數存放在專用的伺服器節點上，並在訓練期間同步來自多個工作節點的更新。它曾被推薦系統廣泛採用，用來處理單機記憶體無法容納的超大規模稀疏 Embedding 表。",
-        "zh-Hans": "参数服务器（Parameter Server）是一种分布式机器学习架构，将模型参数存放在专用的服务器节点上，并在训练期间同步来自多个工作节点的更新。它曾被推荐系统广泛采用，用来处理单机内存无法容纳的超大规模稀疏 Embedding 表。"
+        "en": "Parameter Server is a distributed computing architecture for machine learning that stores model parameters on dedicated server nodes and synchronizes updates from multiple worker nodes during training. It is especially suited for workloads with massive sparse parameters that exceed single-machine memory, allowing horizontal scaling of both storage and throughput.",
+        "zh-Hant": "參數伺服器（Parameter Server）是一種分散式機器學習架構，將模型參數存放在專用的伺服器節點上，並在訓練期間同步來自多個工作節點的更新。它特別適用於參數量超過單機記憶體上限的大規模稀疏模型，能透過水平擴展同時提升儲存容量與吞吐量。",
+        "zh-Hans": "参数服务器（Parameter Server）是一种分布式机器学习架构，将模型参数存放在专用的服务器节点上，并在训练期间同步来自多个工作节点的更新。它特别适用于参数量超过单机内存上限的大规模稀疏模型，能通过水平扩展同时提升存储容量与吞吐量。"
       },
       "aliases": [
         "Parameter Server",

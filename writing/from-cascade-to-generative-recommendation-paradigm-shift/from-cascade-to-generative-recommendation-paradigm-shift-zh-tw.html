@@ -240,7 +240,7 @@
 
 <p class="mb-3">在多階段鏈路中，數據必須頻繁跨越多個獨立模組。每一次跨階段的呼叫，都伴隨著大量的 <span class="note-information" tabindex="0" data-information-concept="concept.rpc" data-information-lang="zh-tw">RPC<span class="note-information-tooltip" aria-hidden="true"></span></span> 網路通信、海量的分散式特徵檢索以及記憶體搬運。</p>
 
-<p class="mb-3">在極限的延遲限制下，系統其實花了大半的時間在「等」——等數據傳輸、等特徵拼裝。真正在做純數學 Tensor 運算的時間比例少得可憐。對於極度昂貴的硬體資源來說，這是一種極大的浪費。</p>
+<p class="mb-3">在極限的延遲限制下，系統其實花了大半的時間在「等」——等數據傳輸、等特徵拼裝。模型真正在做運算的時間比例少得可憐。對於極度昂貴的硬體資源來說，這是一種極大的浪費。</p>
 
 <h4 id="gpu" class="mb-2">痛點三（核心致命傷）：碎片化模組與 GPU 算力天性的不相容</h4>
 
