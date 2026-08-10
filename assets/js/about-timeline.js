@@ -591,8 +591,9 @@
     const position = mobileMode ? 'stack' : index % 2 === 0 ? 'upper' : 'lower';
 
     return `
-      <button
-        type="button"
+      <div
+        role="button"
+        tabindex="0"
         class="timeline-event timeline-event--${event.type}${isActive ? ' is-active' : ''}"
         data-timeline-event
         data-event-id="${event.id}"
@@ -614,7 +615,7 @@
           <span class="timeline-event-connector"></span>
           <span class="timeline-event-marker"></span>
         </span>
-      </button>
+      </div>
     `;
   };
 
@@ -916,6 +917,15 @@
     } else if (event.key === 'ArrowRight') {
       event.preventDefault();
       moveViewport(1);
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      const eventTrigger = event.target && event.target.closest('[data-timeline-event]');
+      if (eventTrigger) {
+        event.preventDefault();
+        state.activeId = eventTrigger.getAttribute('data-event-id');
+        state.dragLiveTranslate = null;
+        syncViewportToActive(getVisibleEvents());
+        render();
+      }
     }
   };
 
