@@ -1,0 +1,12 @@
+{
+  "title": {
+    "en": "Projects — Ludwig",
+    "zh-Hant": "專案 — Ludwig",
+    "zh-Hans": "项目 — Ludwig"
+  },
+  "entries": [
+    { "selector": ".project-section .section-title", "text": { "en": "Project Showcase", "zh-Hant": "專案展示", "zh-Hans": "项目展示" } },
+    { "selector": "#projectCarousel .carousel-item:nth-of-type(1) .carousel-caption-below p", "text": { "en": "A compact, assembly-language-based spacecraft shooting game developed in MASM.", "zh-Hant": "使用 MASM 開發的小型組合語言太空射擊遊戲。", "zh-Hans": "使用 MASM 开发的小型汇编语言太空射击游戏。" } },
+    { "selector": "#projectCarousel .carousel-item:nth-of-type(2) .carousel-caption-below p", "text": { "en": "A personal website that serves as both a portfolio and a hands-on space for developing essential web development skills.", "zh-Hant": "一個同時作為作品集與練習場的個人網站，用來磨練重要的網頁開發能力。", "zh-Hans": "一个同时作为作品集与练习场的个人网站，用来磨练重要的网页开发能力。" } }
+  ]
+}

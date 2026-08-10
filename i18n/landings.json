@@ -1,0 +1,37 @@
+{
+  "notesLanding": {
+    "title": { "en": "Notes — Ludwig", "zh-Hant": "筆記 — Ludwig", "zh-Hans": "笔记 — Ludwig" },
+    "entries": [
+      { "selector": ".section-landing-kicker", "text": { "en": "Knowledge Base", "zh-Hant": "知識庫", "zh-Hans": "知识库" } },
+      { "selector": "#section-title", "text": { "en": "Notes", "zh-Hant": "筆記", "zh-Hans": "笔记" }, "cipherText": { "en": "Notes", "zh-Hant": "日知", "zh-Hans": "日知" } },
+      { "selector": ".section-landing-subtitle", "text": { "en": "Compact, evolving notes for learning, reuse, and long-term accumulation.", "zh-Hant": "在時間的推進裡，一邊向未知探路，一邊回首點亮那些走過的足跡。", "zh-Hans": "在时间的推进里，一边向未知探路，一边回首点亮那些走过的足迹。" }, "cipherText": { "en": "Compact, evolving notes for learning, reuse, and long-term accumulation.", "zh-Hant": "「日知其所亡，月無忘其所能。」 ——《日知錄》", "zh-Hans": "「日知其所亡，月無忘其所能。」 ——《日知錄》" } },
+      { "selector": "#section-filter-toggle", "attr": "aria-label", "text": { "en": "Tags", "zh-Hant": "標籤", "zh-Hans": "标签" } },
+      { "selector": "#section-filter-toggle", "attr": "title", "text": { "en": "Tags", "zh-Hant": "標籤", "zh-Hans": "标签" } },
+      { "selector": "#section-search", "attr": "placeholder", "text": { "en": "Search notes...", "zh-Hant": "搜尋筆記...", "zh-Hans": "搜索笔记..." }, "cipherText": { "en": "Search notes...", "zh-Hant": "搜尋日知...", "zh-Hans": "搜索日知..." } },
+      { "selector": "#section-empty", "text": { "en": "No results.", "zh-Hant": "沒有結果。", "zh-Hans": "没有结果。" } }
+    ],
+    "cipherTitle": { "en": "Notes — Ludwig", "zh-Hant": "日知 — Ludwig", "zh-Hans": "日知 — Ludwig" }
+  },
+  "writingLanding": {
+    "title": { "en": "Writing — Ludwig", "zh-Hant": "文章 — Ludwig", "zh-Hans": "文章 — Ludwig" },
+    "entries": [
+      { "selector": ".section-landing-kicker", "text": { "en": "Long-form Thinking", "zh-Hant": "隨筆謄錄", "zh-Hans": "随笔誊录" }, "cipherText": { "en": "Long-form Thinking", "zh-Hant": "隨筆謄錄", "zh-Hans": "随笔誊录" } },
+      { "selector": "#section-title", "text": { "en": "Writing", "zh-Hant": "文章", "zh-Hans": "文章" }, "cipherText": { "en": "Writing", "zh-Hant": "求音", "zh-Hans": "求音" } },
+      { "selector": ".section-landing-subtitle", "text": { "en": "Essays, reflections, and evolving ideas that need more room to breathe.", "zh-Hant": "在此搭建一座空間，容納未竟的思緒，記錄持續萌芽的觀點。", "zh-Hans": "在此搭建一座空间，容纳未竟的思绪，记录持续萌芽的观点。" }, "cipherText": { "en": "Essays, reflections, and evolving ideas that need more room to breathe.", "zh-Hant": "「課虛無以責有，叩寂寞以求音。」 ——《文賦》", "zh-Hans": "「課虛無以責有，叩寂寞以求音。」 ——《文賦》" } },
+      { "selector": "#section-search", "attr": "placeholder", "text": { "en": "Search writing...", "zh-Hant": "搜尋文章...", "zh-Hans": "搜索文章..." }, "cipherText": { "en": "Search writing...", "zh-Hant": "搜尋求音...", "zh-Hans": "搜索求音..." } },
+      { "selector": "#section-empty", "text": { "en": "No results.", "zh-Hant": "沒有結果。", "zh-Hans": "没有结果。" } }
+    ],
+    "cipherTitle": { "en": "Writing — Ludwig", "zh-Hant": "求音 — Ludwig", "zh-Hans": "求音 — Ludwig" }
+  },
+  "canvasLanding": {
+    "title": { "en": "Canvas — Ludwig", "zh-Hant": "圖廊 — Ludwig", "zh-Hans": "图廊 — Ludwig" },
+    "entries": [
+      { "selector": ".section-landing-kicker", "text": { "en": "Visual Work", "zh-Hant": "視覺作品", "zh-Hans": "视觉作品" } },
+      { "selector": "#section-title", "text": { "en": "Canvas", "zh-Hant": "圖廊", "zh-Hans": "图廊" }, "cipherText": { "en": "Canvas", "zh-Hant": "視界", "zh-Hans": "视界" } },
+      { "selector": ".section-landing-subtitle", "text": { "en": "Images, sketches, and visual experiments collected as a reusable gallery.", "zh-Hant": "在此凝結視線的軌跡，將靈光、草稿與視覺的涉渡，編織成一座隨時可步入的意象圖廊。", "zh-Hans": "在此凝结视线的轨迹，将灵光、草稿与视觉的涉渡，编织成一座随时可步入的意象图廊。" }, "cipherText": { "en": "Images, sketches, and visual experiments collected as a reusable gallery.", "zh-Hant": "把圖片、草圖與視覺實驗整理成可重用的畫廊。", "zh-Hans": "把圖片、草圖與視覺實驗整理成可重用的畫廊。" } },
+      { "selector": "#section-search", "attr": "placeholder", "text": { "en": "Search canvas...", "zh-Hant": "搜尋圖廊...", "zh-Hans": "搜索图廊..." }, "cipherText": { "en": "Search canvas...", "zh-Hant": "搜尋視界...", "zh-Hans": "搜索视界..." } },
+      { "selector": "#section-empty", "text": { "en": "No results.", "zh-Hant": "沒有結果。", "zh-Hans": "没有结果。" } }
+    ],
+    "cipherTitle": { "en": "Canvas — Ludwig", "zh-Hant": "視界 — Ludwig", "zh-Hans": "视界 — Ludwig" }
+  }
+}

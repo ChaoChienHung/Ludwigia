@@ -1,0 +1,19 @@
+{
+  "title": { "en": "Search — Ludwig", "zh-Hant": "搜尋 — Ludwig", "zh-Hans": "搜索 — Ludwig" },
+  "entries": [
+    { "selector": ".page-section h2", "text": { "en": "Search", "zh-Hant": "搜尋", "zh-Hans": "搜索" } },
+    { "selector": ".page-section > .container > .page-text", "text": { "en": "Search across notes and writing by keyword, tag, or concept.", "zh-Hant": "用關鍵字、標籤或概念，在筆記與文章之間快速搜尋。", "zh-Hans": "用关键词、标签或概念，在笔记与文章之间快速搜索。" } },
+    { "selector": "#garden-search", "attr": "placeholder", "text": { "en": "Search notes by keyword, tag, or concept...", "zh-Hant": "用關鍵字、標籤或概念搜尋內容...", "zh-Hans": "用关键词、标签或概念搜索内容..." } },
+    { "selector": ".input-group + .text-center", "text": { "en": "Ctrl/⌘ + K to focus · Open tags to filter", "zh-Hant": "按 Ctrl/⌘ + K 聚焦搜尋框 · 開啟標籤來篩選", "zh-Hans": "按 Ctrl/⌘ + K 聚焦搜索框 · 打开标签来筛选" } },
+    { "selector": "#garden-filter-state > span:first-child", "text": { "en": "Filtering by", "zh-Hant": "目前篩選", "zh-Hans": "当前筛选" } },
+    { "selector": "#garden-clear-tags", "text": { "en": "Clear", "zh-Hant": "清除", "zh-Hans": "清除" } },
+    { "selector": "#garden-open-tag-page", "text": { "en": "Open page", "zh-Hant": "開啟頁面", "zh-Hans": "打开页面" } },
+    { "selector": "#garden-empty", "text": { "en": "No results.", "zh-Hant": "沒有結果。", "zh-Hans": "没有结果。" } },
+    { "selector": "#gardenTagsModal .modal-title", "text": { "en": "Tags", "zh-Hant": "標籤", "zh-Hans": "标签" } },
+    { "selector": "#gardenTagsModal .modal-body .mt-3", "text": { "en": "Click tags to filter. Click an active tag again to remove it.", "zh-Hant": "點擊標籤可篩選；再次點擊已啟用的標籤可移除。", "zh-Hans": "点击标签可筛选；再次点击已启用的标签可移除。" } },
+    { "selector": "#gardenHelpModal .modal-title", "text": { "en": "Help", "zh-Hant": "說明", "zh-Hans": "说明" } },
+    { "selector": "#gardenHelpModal .mb-3:nth-of-type(1)", "html": { "en": "<span class=\"badge text-bg-secondary me-2\">Search</span>Type keywords to search across titles, tags, and content.", "zh-Hant": "<span class=\"badge text-bg-secondary me-2\">搜尋</span>輸入關鍵字，搜尋標題、標籤與內容。", "zh-Hans": "<span class=\"badge text-bg-secondary me-2\">搜索</span>输入关键词，搜索标题、标签与内容。" } },
+    { "selector": "#gardenHelpModal .mb-3:nth-of-type(2)", "html": { "en": "<span class=\"badge text-bg-secondary me-2\">Tags</span>Open the tag picker and click multiple tags to filter results (AND / intersection).", "zh-Hant": "<span class=\"badge text-bg-secondary me-2\">標籤</span>開啟標籤選擇器，點擊多個標籤做交集篩選。", "zh-Hans": "<span class=\"badge text-bg-secondary me-2\">标签</span>打开标签选择器，点击多个标签做交集筛选。" } },
+    { "selector": "#gardenHelpModal .mb-3:nth-of-type(3)", "html": { "en": "<span class=\"badge text-bg-secondary me-2\">Shortcuts</span>Press Ctrl/⌘ + K to focus the search bar.", "zh-Hant": "<span class=\"badge text-bg-secondary me-2\">快捷鍵</span>按 Ctrl/⌘ + K 聚焦搜尋框。", "zh-Hans": "<span class=\"badge text-bg-secondary me-2\">快捷键</span>按 Ctrl/⌘ + K 聚焦搜索框。" } }
+  ]
+}

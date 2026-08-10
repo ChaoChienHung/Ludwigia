@@ -1,0 +1,9 @@
+{
+  "kicker": { "en": "Proficiency & Stack", "zh-Hant": "專業領域與能力值", "zh-Hans": "专业领域与能力值" },
+  "title": { "en": "Skills & Capabilities", "zh-Hant": "專業能力", "zh-Hans": "专业能力" },
+  "intro": { "en": "Grouped skill domains sharing a compact, scalable space. Use the tabs or arrows to switch genres.", "zh-Hant": "將專業技能依主題分組，並在精簡空間內動態展示。可使用標籤或左右按鈕切換不同領域。", "zh-Hans": "将专业技能依主题分组，并在精简空间内动态展示。可使用标签或左右按钮切换不同领域。" },
+  "loading": { "en": "Loading skills...", "zh-Hant": "正在載入技能資料...", "zh-Hans": "正在载入技能数据..." },
+  "loadFailed": { "en": "Unable to load skills data right now.", "zh-Hant": "目前無法載入技能資料。", "zh-Hans": "目前无法载入技能数据。" },
+  "prevCategory": { "en": "Previous category", "zh-Hant": "上一個類別", "zh-Hans": "上一个类别" },
+  "nextCategory": { "en": "Next category", "zh-Hant": "下一個類別", "zh-Hans": "下一个类别" }
+}

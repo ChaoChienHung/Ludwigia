@@ -1,0 +1,21 @@
+{
+  "entries": [
+    { "selector": "#homeDropdown", "text": { "en": "Home", "zh-Hant": "首頁", "zh-Hans": "首页" } },
+    { "selector": "a[href$=\"index.html#about\"]", "text": { "en": "About", "zh-Hant": "關於我", "zh-Hans": "关于我" } },
+    { "selector": "[data-nav-skills]", "text": { "en": "Skills", "zh-Hant": "專業能力", "zh-Hans": "专业能力" } },
+    { "selector": "[data-nav-credentials]", "text": { "en": "Credentials", "zh-Hant": "學業資歷與榮譽", "zh-Hans": "学业资历与荣誉" } },
+    { "selector": "[data-nav-timeline]", "text": { "en": "Timeline", "zh-Hant": "Timeline", "zh-Hans": "Timeline" }, "cipherText": { "en": "Chronology", "zh-Hant": "Chronology", "zh-Hans": "Chronology" } },
+    { "selector": "a[href$=\"index.html#contact\"]", "text": { "en": "Contact", "zh-Hant": "聯絡方式", "zh-Hans": "联系方式" } },
+    { "selector": "#projectsDropdown", "text": { "en": "Projects", "zh-Hant": "專案", "zh-Hans": "项目" } },
+    { "selector": "a[href$=\"notes/index.html\"]", "text": { "en": "Notes", "zh-Hant": "筆記", "zh-Hans": "笔记" }, "cipherText": { "en": "Notes", "zh-Hant": "日知", "zh-Hans": "日知" } },
+    { "selector": "a[href$=\"writing/index.html\"]", "text": { "en": "Writing", "zh-Hant": "文章", "zh-Hans": "文章" }, "cipherText": { "en": "Writing", "zh-Hant": "求音", "zh-Hans": "求音" } },
+    { "selector": "a[href$=\"canvas/index.html\"]", "text": { "en": "Canvas", "zh-Hant": "圖廊", "zh-Hans": "图廊" }, "cipherText": { "en": "Canvas", "zh-Hant": "視界", "zh-Hans": "视界" } },
+    { "selector": "a[href$=\"search.html\"]", "attr": "aria-label", "text": { "en": "Search", "zh-Hant": "搜尋", "zh-Hans": "搜索" } },
+    { "selector": "a[href$=\"search.html\"]", "attr": "title", "text": { "en": "Search", "zh-Hant": "搜尋", "zh-Hans": "搜索" } },
+    { "selector": "a[href$=\"search.html\"] .visually-hidden", "text": { "en": "Search", "zh-Hant": "搜尋", "zh-Hans": "搜索" } },
+    { "selector": "a[href$=\"settings.html\"]", "attr": "aria-label", "text": { "en": "Settings", "zh-Hant": "設定", "zh-Hans": "设置" } },
+    { "selector": "a[href$=\"settings.html\"]", "attr": "title", "text": { "en": "Settings", "zh-Hant": "設定", "zh-Hans": "设置" } },
+    { "selector": "a[href$=\"settings.html\"] .visually-hidden", "text": { "en": "Settings", "zh-Hant": "設定", "zh-Hans": "设置" } },
+    { "selector": "footer p", "text": { "en": "© 2025 Ludwig — All Rights Reserved", "zh-Hant": "© 2025 Ludwig — 保留所有權利", "zh-Hans": "© 2025 Ludwig — 保留所有权利" } }
+  ]
+}

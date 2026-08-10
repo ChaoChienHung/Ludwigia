@@ -14,9 +14,9 @@
 
   const uiText = {
     en: {
-      kicker: 'Credentials',
-      title: 'Credentials',
-      intro: 'Certificates, official transcripts, honor awards, and letters of appreciation. Filter by type or domain to explore.',
+      kicker: 'Credentials & Honors',
+      title: 'Credentials & Honors',
+      intro: 'Certificates, official transcripts, honor awards, admission offers, and competition achievements. Filter by type or domain to explore.',
       typeLabel: 'Type',
       categoryLabel: 'Domain',
       loading: 'Loading credentials...',
@@ -32,14 +32,14 @@
       modalClose: 'Close',
     },
     'zh-Hant': {
-      kicker: '憑證紀錄',
-      title: 'Credentials',
-      intro: '包含各式獎狀、成績單、結業證書與感謝狀等紀錄。可依據「種類」或「領域」進行選取與檢視。',
+      kicker: '學業資歷與榮譽',
+      title: '學業資歷與榮譽',
+      intro: '包含學術證書、歷年成績單、榮譽獎項、頂尖名校錄取通知與競賽參賽證明。可依據「種類」或「領域」進行篩選與檢視。',
       typeLabel: '種類',
       categoryLabel: '領域',
-      loading: '正在載入憑證資料...',
-      loadFailed: '目前無法載入憑證資料。',
-      empty: '沒有符合目前篩選條件的憑證項目。',
+      loading: '正在載入資歷資料...',
+      loadFailed: '目前無法載入資歷資料。',
+      empty: '沒有符合目前篩選條件的項目。',
       zoomHint: '點擊圖片放大檢視',
       zoomButton: '全螢幕檢視',
       downloadButton: '下載檔案',
@@ -50,14 +50,14 @@
       modalClose: '關閉',
     },
     'zh-Hans': {
-      kicker: '凭证纪录',
-      title: 'Credentials',
-      intro: '包含各式奖状、成绩单、结业证书与感谢状等纪录。可依据“种类”或“领域”进行选取与检视。',
+      kicker: '学业资历与荣誉',
+      title: '学业资历与荣誉',
+      intro: '包含学术证书、历年成绩单、荣誉奖项、顶尖名校录取通知与竞赛参赛证明。可依据“种类”或“领域”进行筛选与检视。',
       typeLabel: '种类',
       categoryLabel: '领域',
-      loading: '正在载入凭证数据...',
-      loadFailed: '目前无法载入凭证数据。',
-      empty: '没有符合当前筛选条件的凭证项目。',
+      loading: '正在载入资历数据...',
+      loadFailed: '目前无法载入资历数据。',
+      empty: '没有符合当前筛选条件的项目。',
       zoomHint: '点击图片放大检视',
       zoomButton: '全屏幕检视',
       downloadButton: '下载文件',
@@ -98,17 +98,19 @@
       modalEl.setAttribute('aria-hidden', 'true');
       modalEl.innerHTML = `
         <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content rounded-4 overflow-hidden position-relative shadow-lg">
-            <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="${txt ? txt.modalClose : 'Close'}"></button>
-            <div class="modal-header border-0 pb-0 pt-4 px-4">
-              <h5 class="modal-title fw-bold pe-4" id="credentialModalTitle"></h5>
+          <div class="modal-content credential-modal-content">
+            <div class="modal-header border-0 pb-0">
+              <h5 class="modal-title h6" id="credentialModalTitle"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="${txt.modalClose}"></button>
             </div>
-            <div class="modal-body p-4 text-center">
-              <img id="credentialModalImage" src="" alt="" class="img-fluid rounded-3 mb-3 shadow">
-              <p id="credentialModalSummary" class="credential-modal-summary small mb-3"></p>
-              <a id="credentialModalDownload" href="#" download="" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 py-2 fw-semibold shadow-sm">
-                <i class="fa-solid fa-download me-1.5"></i> <span id="credentialModalDownloadText">${txt ? txt.downloadButton : 'Download'}</span>
+            <div class="modal-body text-center p-4">
+              <img id="credentialModalImage" src="" alt="" class="img-fluid rounded shadow-sm credential-modal-img">
+            </div>
+            <div class="modal-footer border-0 pt-0 justify-content-between">
+              <a id="credentialModalDownloadBtn" href="#" download class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-download me-1"></i> <span>${txt.downloadButton}</span>
               </a>
+              <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">${txt.modalClose}</button>
             </div>
           </div>
         </div>
@@ -118,6 +120,8 @@
   }
 
   async function fetchCredentialsData() {
+    state.isLoading = true;
+    state.loadError = false;
     try {
       const res = await fetch(dataPath);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -140,7 +144,7 @@
       const typeMatch = state.activeType === 'all' || item.type === state.activeType;
       const catMatch = state.activeCategory === 'all' || item.category === state.activeCategory;
       return typeMatch && catMatch;
-    });
+    }).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
   }
 
   function render(container) {

@@ -22,8 +22,8 @@
     },
     'zh-Hant': {
       kicker: '專業領域與能力值',
-      title: 'Skills & Capabilities',
-      intro: '將技能依主題分組，並在精簡空間內動態展示。可使用標籤或左右按鈕切換不同領域。',
+      title: '專業能力',
+      intro: '將專業技能依主題分組，並在精簡空間內動態展示。可使用標籤或左右按鈕切換不同領域。',
       loading: '正在載入技能資料...',
       loadFailed: '目前無法載入技能資料。',
       prevCategory: '上一個類別',
@@ -31,8 +31,8 @@
     },
     'zh-Hans': {
       kicker: '专业领域与能力值',
-      title: 'Skills & Capabilities',
-      intro: '将技能依主题分组，并在精简空间内动态展示。可使用标签或左右按钮切换不同领域。',
+      title: '专业能力',
+      intro: '将专业技能依主题分组，并在精简空间内动态展示。可使用标签或左右按钮切换不同领域。',
       loading: '正在载入技能数据...',
       loadFailed: '目前无法载入技能数据。',
       prevCategory: '上一个类别',
