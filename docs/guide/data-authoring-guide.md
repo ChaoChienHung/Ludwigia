@@ -139,7 +139,7 @@ Ludwigia 的資料區塊採 **Data-Driven / Source-Driven** 架構設計：
 1. `"offer"`: 錄取通知 (Admission Offer)
 2. `"certificate"`: 學位證書與結業證明 (Degree & Diploma)
 3. `"transcript"`: 歷年成績單 (Academic Transcript)
-4. `"exam"`: 語言與能力檢定 (Test & Examination)
+4. `"exam"`: 能力檢定 (Test & Examination)
 5. `"award"`: 獎項榮譽 (Honor & Award)
 6. `"competition"`: 競賽參賽證明 (Competition)
 

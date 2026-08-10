@@ -53,7 +53,7 @@
     { "id": "all", "label": { "en": "All Types", "zh-Hant": "全部項目" } },
     { "id": "offer", "label": { "en": "Admission Offer", "zh-Hant": "錄取通知" } },
     { "id": "transcript", "label": { "en": "Academic Transcript", "zh-Hant": "歷年成績單" } },
-    { "id": "exam", "label": { "en": "Test & Examination", "zh-Hant": "語言與能力檢定" } },
+    { "id": "exam", "label": { "en": "Test & Examination", "zh-Hant": "能力檢定" } },
     { "id": "certificate", "label": { "en": "Degree & Diploma", "zh-Hant": "學位證書" } },
     { "id": "award", "label": { "en": "Honor & Award", "zh-Hant": "獎項榮譽" } },
     { "id": "competition", "label": { "en": "Competition", "zh-Hant": "競賽" } }
