@@ -2,7 +2,7 @@
 Title: 生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題
 Summary: 本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic Item ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。
 Slug: semantic-id-in-generative-recommendation-zh-tw
-Output: writing/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html
+Output: notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html
 CanonicalId: semantic-id-in-generative-recommendation
 Style: default
 EstimatedReadingTime: true
@@ -130,9 +130,3 @@ $$\text{Item } x \longrightarrow [c_1, c_2, \dots, c_M]$$
 - **破解三大瓶頸：** 徹底解決 Softmax 機率計算 OOM、Catalog Churn 商品上下架，以及新商品零樣本冷啟動問題。
 - **兩大落地路線：** 追求 SOTA 端到端表現選擇 **RQ-VAE**；追求工程極致穩定與資產複用選擇 **RQ-Kmeans**。
 </takeaways>
-
-## 參考文獻（References）
-
-1. Rajput, S., et al. (2022). *Recommender Systems with Generative Retrieval*. (Google TIGER 論文, NeurIPS 2022)
-2. Lee, D., et al. (2022). *Autoregressive Image Generation using Residual Quantization*. (RQ-VAE 論文)
-3. 快手 OneRec 團隊 (2024). *OneRec: Seamless Autoregressive Recommendation with Generative Retrieval*.

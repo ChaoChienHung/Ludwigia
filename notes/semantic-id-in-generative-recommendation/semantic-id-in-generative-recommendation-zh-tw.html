@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-11">
   <meta name="garden:last_modified_at" content="2026-08-11">
   <meta name="garden:reading_time_minutes" content="6">
-  <meta name="garden:source" content="writing/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
+  <meta name="garden:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
     try {
@@ -161,7 +161,6 @@
 <a class="note-toc-link level-1" href="#4-semantic-id-tokenizer">4. 如何生成 Semantic ID？兩大 Tokenizer 技術路線</a>
 <a class="note-toc-link level-2" href="#rq-vae">路線一：端到端神經網路量化 (RQ-VAE)</a>
 <a class="note-toc-link level-2" href="#rq-kmeans">路線二：兩階段幾何殘差聚類 (RQ-Kmeans)</a>
-<a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
           </nav>
         </div>
       </div>
@@ -211,7 +210,7 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">在 <a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">從級聯漏斗到自迴歸生成：推薦系統的範式重塑<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Writing.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。</span></span></span></a> 中，我們探討了推薦系統為何全面邁向生成式範式。然而，當我們試圖將大語言模型（LLM）的自迴歸生成能力套用到推薦系統時，立刻就會撞上一道核心工程高牆：<strong>如何將平台上海量、動態變化的商品，轉化為大模型能夠理解與生成的離散 Token？</strong></p>
+<p class="mb-3">在 <a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">從級聯漏斗到自迴歸生成：推薦系統的範式重塑<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。</span></span></span></a> 中，我們探討了推薦系統為何全面邁向生成式範式。然而，當我們試圖將大語言模型（LLM）的自迴歸生成能力套用到推薦系統時，立刻就會撞上一道核心工程高牆：<strong>如何將平台上海量、動態變化的商品，轉化為大模型能夠理解與生成的離散 Token？</strong></p>
 
 <p class="mb-3">本文將深入剖析生成式推薦的核心抽象介面——<strong>Semantic ID（語意識別碼）</strong>，揭示它如何破解傳統 Atomic Item ID 的算力與冷啟動瓶頸，並作為連結海量商品庫與自迴歸大模型的關鍵橋樑。</p>
 </section>
@@ -324,16 +323,6 @@
 <li><strong>破解三大瓶頸：</strong> 徹底解決 Softmax 機率計算 OOM、Catalog Churn 商品上下架，以及新商品零樣本冷啟動問題。</li>
 <li><strong>兩大落地路線：</strong> 追求 SOTA 端到端表現選擇 <strong>RQ-VAE</strong>；追求工程極致穩定與資產複用選擇 <strong>RQ-Kmeans</strong>。</li>
 </ul></div>
-</section>
-
-<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">參考文獻（References）</h3>
-
-<ol class="mb-3">
-<li>Rajput, S., et al. (2022). <em>Recommender Systems with Generative Retrieval</em>. (Google TIGER 論文, NeurIPS 2022)</li>
-<li>Lee, D., et al. (2022). <em>Autoregressive Image Generation using Residual Quantization</em>. (RQ-VAE 論文)</li>
-<li>快手 OneRec 團隊 (2024). <em>OneRec: Seamless Autoregressive Recommendation with Generative Retrieval</em>.</li>
-</ol>
 </section>
         </div>
       </div>

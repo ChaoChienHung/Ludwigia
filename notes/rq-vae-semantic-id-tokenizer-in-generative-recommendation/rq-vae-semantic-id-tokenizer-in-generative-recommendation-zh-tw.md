@@ -48,7 +48,6 @@ FollowUps:
 ## 何為Semantic ID (SID)？
 - 介紹Semantic ID是什麼
 - 介紹他的優點 以及業界是如何使用它解決上述問題的
-- 接著帶到，SID那麼好，那我們又該如何實現它呢？其中一種方法就是RQ-VAE。
 
 ## 為什麼需要端到端的 RQ-VAE？
 - 
@@ -95,7 +94,7 @@ FollowUps:
 
 # 端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer
 
-在 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</content-link> 與 <content-link canonical="semantic-id-in-generative-recommendation">Semantic ID 總論</content-link> 中，我們探討了推薦系統為何全面邁向生成式範式，以及如何透過 Semantic ID 破解海量商品 Token 化的瓶頸。而在具體實現 Semantic ID 的過程中，最關鍵的 SOTA 端到端解法便是：**如何透過神經網路端到端地將高維商品特徵量化為階層式的離散 Token？**
+在 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</content-link> 中，我們探討了推薦系統為何全面邁向生成式範式。然而在將推薦對齊為自迴歸生成的過程中，最關鍵的核心落地瓶頸在於：**如何將高維商品特徵端到端地量化為階層式的離散 Token（Semantic ID）？**
 
 作為生成式檢索（Generative Retrieval, GR）領域的開山技術，**RQ-VAE（Residual Quantized VAE）** 提供了端到端學習離散碼本與商品編碼的解答。本文將直奔這個落地瓶頸，深入解析 RQ-VAE 的階層量化機制、Straight-Through Estimator (STE) 梯度傳播、碼本崩塌處置與 TIGER 落地實踐。
 
