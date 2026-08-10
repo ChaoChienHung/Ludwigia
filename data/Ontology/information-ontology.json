@@ -436,6 +436,322 @@
         "梅納效應",
         "梅纳效应"
       ]
+    },
+    {
+      "concept_id": "concept.transformer",
+      "labels": {
+        "en": "Transformer",
+        "zh-Hant": "Transformer",
+        "zh-Hans": "Transformer"
+      },
+      "contexts": {
+        "en": "Transformer is a neural network architecture introduced in the 2017 paper 'Attention Is All You Need.' It replaces recurrence with a self-attention mechanism that processes all positions in a sequence in parallel, enabling efficient long-range dependency modeling and becoming the backbone of modern large language models and generative AI systems.",
+        "zh-Hant": "Transformer 是一種神經網路架構，源自 2017 年論文《Attention Is All You Need》。它用自注意力機制取代了循環結構，能平行處理序列中所有位置，從而高效建模長距離依賴關係，成為現代大語言模型與生成式 AI 系統的核心骨架。",
+        "zh-Hans": "Transformer 是一种神经网络架构，源自 2017 年论文《Attention Is All You Need》。它用自注意力机制取代了循环结构，能并行处理序列中所有位置，从而高效建模长距离依赖关系，成为现代大语言模型与生成式 AI 系统的核心骨架。"
+      },
+      "aliases": [
+        "transformer"
+      ]
+    },
+    {
+      "concept_id": "concept.forward_pass",
+      "labels": {
+        "en": "Forward Pass",
+        "zh-Hant": "前向傳播（Forward Pass）",
+        "zh-Hans": "前向传播（Forward Pass）"
+      },
+      "contexts": {
+        "en": "Forward Pass is the computation phase in a neural network where input data flows layer by layer from input to output, producing predictions without updating any weights. It is the inference-time computation path and also the first half of each training iteration before backpropagation.",
+        "zh-Hant": "前向傳播（Forward Pass）是神經網路中的計算階段，資料從輸入層逐層流向輸出層，在不更新任何權重的情況下產出預測結果。它既是推論時的計算路徑，也是每次訓練迭代中反向傳播之前的前半段。",
+        "zh-Hans": "前向传播（Forward Pass）是神经网络中的计算阶段，数据从输入层逐层流向输出层，在不更新任何权重的情况下产出预测结果。它既是推理时的计算路径，也是每次训练迭代中反向传播之前的前半段。"
+      },
+      "aliases": [
+        "forward pass",
+        "前向傳播",
+        "前向传播"
+      ]
+    },
+    {
+      "concept_id": "concept.gemm",
+      "labels": {
+        "en": "GEMM (General Matrix Multiply)",
+        "zh-Hant": "通用矩陣乘法（GEMM）",
+        "zh-Hans": "通用矩阵乘法（GEMM）"
+      },
+      "contexts": {
+        "en": "GEMM (General Matrix Multiply) is the core computational primitive in deep learning and high-performance computing. It performs large-scale matrix-matrix multiplication and is the dominant operation in Transformer layers, convolutional layers, and fully connected layers. Modern GPUs and TPUs are architecturally optimized to maximize GEMM throughput.",
+        "zh-Hant": "GEMM（General Matrix Multiply，通用矩陣乘法）是深度學習與高效能計算中的核心計算基元。它執行大規模的矩陣對矩陣乘法，是 Transformer 層、卷積層和全連接層中最主要的運算。現代 GPU 與 TPU 的硬體架構在設計上就是為了最大化 GEMM 的吞吐量。",
+        "zh-Hans": "GEMM（General Matrix Multiply，通用矩阵乘法）是深度学习与高性能计算中的核心计算基元。它执行大规模的矩阵对矩阵乘法，是 Transformer 层、卷积层和全连接层中最主要的运算。现代 GPU 与 TPU 的硬件架构在设计上就是为了最大化 GEMM 的吞吐量。"
+      },
+      "aliases": [
+        "GEMM",
+        "General Matrix Multiply",
+        "矩陣乘法",
+        "矩阵乘法"
+      ]
+    },
+    {
+      "concept_id": "concept.simt",
+      "labels": {
+        "en": "SIMT (Single Instruction, Multiple Threads)",
+        "zh-Hant": "單指令多執行緒（SIMT）",
+        "zh-Hans": "单指令多线程（SIMT）"
+      },
+      "contexts": {
+        "en": "SIMT (Single Instruction, Multiple Threads) is a GPU execution model pioneered by NVIDIA. It allows a single instruction to be executed across many threads simultaneously, each operating on different data. This model is the foundation of GPU parallelism and is what makes GPUs excel at data-parallel workloads like matrix operations in deep learning.",
+        "zh-Hant": "SIMT（Single Instruction, Multiple Threads，單指令多執行緒）是由 NVIDIA 首創的 GPU 執行模型。它讓單一指令同時在大量執行緒上執行，每個執行緒操作不同的資料。這種模型是 GPU 平行計算的基礎，也是 GPU 擅長處理深度學習中矩陣運算等資料平行工作負載的根本原因。",
+        "zh-Hans": "SIMT（Single Instruction, Multiple Threads，单指令多线程）是由 NVIDIA 首创的 GPU 执行模型。它让单一指令同时在大量线程上执行，每个线程操作不同的数据。这种模型是 GPU 并行计算的基础，也是 GPU 擅长处理深度学习中矩阵运算等数据并行工作负载的根本原因。"
+      },
+      "aliases": [
+        "SIMT",
+        "Single Instruction Multiple Threads",
+        "單指令多執行緒",
+        "单指令多线程"
+      ]
+    },
+    {
+      "concept_id": "concept.embedding",
+      "labels": {
+        "en": "Embedding",
+        "zh-Hant": "嵌入向量（Embedding）",
+        "zh-Hans": "嵌入向量（Embedding）"
+      },
+      "contexts": {
+        "en": "Embedding is a learned dense vector representation that maps discrete, high-dimensional entities (such as words, users, or items) into a continuous, lower-dimensional space. In this space, semantic similarity is captured by geometric proximity, enabling neural networks to process categorical data and discover latent relationships.",
+        "zh-Hant": "嵌入向量（Embedding）是一種學習得到的稠密向量表示，將離散的高維實體（如詞彙、用戶或商品）映射到連續的低維空間中。在這個空間裡，語意相似性由幾何距離來表達，使神經網路能處理類別型資料並發現潛在關係。",
+        "zh-Hans": "嵌入向量（Embedding）是一种学习得到的稠密向量表示，将离散的高维实体（如词汇、用户或商品）映射到连续的低维空间中。在这个空间里，语义相似性由几何距离来表达，使神经网络能处理类别型数据并发现潜在关系。"
+      },
+      "aliases": [
+        "embedding",
+        "embeddings",
+        "嵌入向量"
+      ]
+    },
+    {
+      "concept_id": "concept.gpu",
+      "labels": {
+        "en": "GPU (Graphics Processing Unit)",
+        "zh-Hant": "圖形處理器（GPU）",
+        "zh-Hans": "图形处理器（GPU）"
+      },
+      "contexts": {
+        "en": "GPU (Graphics Processing Unit) is a massively parallel processor originally designed for graphics rendering. Its architecture, built around thousands of lightweight cores optimized for data-parallel computation, makes it the dominant hardware accelerator for deep learning training and inference, where workloads are dominated by large matrix operations.",
+        "zh-Hant": "GPU（Graphics Processing Unit，圖形處理器）是一種大規模平行處理器，原本為圖形渲染而設計。它的架構由數千個輕量核心組成，專為資料平行運算優化，使其成為深度學習訓練與推論的主流硬體加速器——因為這些工作負載的核心就是大規模矩陣運算。",
+        "zh-Hans": "GPU（Graphics Processing Unit，图形处理器）是一种大规模并行处理器，原本为图形渲染而设计。它的架构由数千个轻量核心组成，专为数据并行运算优化，使其成为深度学习训练与推理的主流硬件加速器——因为这些工作负载的核心就是大规模矩阵运算。"
+      },
+      "aliases": [
+        "gpu",
+        "GPU",
+        "Graphics Processing Unit"
+      ]
+    },
+    {
+      "concept_id": "concept.flash_attention",
+      "labels": {
+        "en": "FlashAttention",
+        "zh-Hant": "FlashAttention",
+        "zh-Hans": "FlashAttention"
+      },
+      "contexts": {
+        "en": "FlashAttention is an IO-aware exact attention algorithm that reorders the attention computation to minimize memory reads/writes between GPU HBM and SRAM. By tiling the computation and fusing kernels, it achieves significant speedup and memory savings without any approximation, making long-context Transformer training and inference practical.",
+        "zh-Hant": "FlashAttention 是一種 IO 感知的精確注意力演算法，透過重新排列注意力計算的順序來最小化 GPU HBM 與 SRAM 之間的記憶體讀寫。它利用分塊計算與核函數融合，在完全不犧牲精確度的前提下實現顯著加速與記憶體節省，讓長上下文的 Transformer 訓練與推論變得可行。",
+        "zh-Hans": "FlashAttention 是一种 IO 感知的精确注意力算法，通过重新排列注意力计算的顺序来最小化 GPU HBM 与 SRAM 之间的内存读写。它利用分块计算与核函数融合，在完全不牺牲精确度的前提下实现显著加速与内存节省，让长上下文的 Transformer 训练与推理变得可行。"
+      },
+      "aliases": [
+        "FlashAttention",
+        "Flash Attention",
+        "flash attention"
+      ]
+    },
+    {
+      "concept_id": "concept.kv_cache",
+      "labels": {
+        "en": "KV Cache",
+        "zh-Hant": "KV Cache",
+        "zh-Hans": "KV Cache"
+      },
+      "contexts": {
+        "en": "KV Cache is an inference optimization technique for autoregressive Transformer models. It caches the Key and Value tensors computed in previous decoding steps so they do not need to be recomputed at each new token generation, turning quadratic per-step attention cost into linear and dramatically speeding up sequential decoding.",
+        "zh-Hant": "KV Cache 是一種針對自迴歸 Transformer 模型的推論加速技術。它會快取先前解碼步驟中已計算過的 Key 與 Value 張量，使每生成一個新 token 時不必重複計算，從而將每步注意力的計算成本從平方級降為線性級，大幅加速序列式解碼。",
+        "zh-Hans": "KV Cache 是一种针对自回归 Transformer 模型的推理加速技术。它会缓存先前解码步骤中已计算过的 Key 与 Value 张量，使每生成一个新 token 时不必重复计算，从而将每步注意力的计算成本从平方级降为线性级，大幅加速序列式解码。"
+      },
+      "aliases": [
+        "KV Cache",
+        "KV cache",
+        "kv cache",
+        "Key-Value Cache"
+      ]
+    },
+    {
+      "concept_id": "concept.vllm",
+      "labels": {
+        "en": "vLLM",
+        "zh-Hant": "vLLM",
+        "zh-Hans": "vLLM"
+      },
+      "contexts": {
+        "en": "vLLM is an open-source high-throughput inference engine for large language models. Its core innovation, PagedAttention, manages KV cache memory like virtual memory pages, eliminating fragmentation and enabling efficient batching. This makes it one of the most widely adopted serving frameworks for production LLM deployment.",
+        "zh-Hant": "vLLM 是一個開源的高吞吐量大語言模型推論引擎。其核心創新 PagedAttention 以類似虛擬記憶體分頁的方式管理 KV Cache，消除記憶體碎片並支援高效批次處理，使其成為生產環境中最廣泛採用的 LLM 部署框架之一。",
+        "zh-Hans": "vLLM 是一个开源的高吞吐量大语言模型推理引擎。其核心创新 PagedAttention 以类似虚拟内存分页的方式管理 KV Cache，消除内存碎片并支持高效批处理，使其成为生产环境中最广泛采用的 LLM 部署框架之一。"
+      },
+      "aliases": [
+        "vLLM",
+        "vllm"
+      ]
+    },
+    {
+      "concept_id": "concept.megatron",
+      "labels": {
+        "en": "Megatron-LM",
+        "zh-Hant": "Megatron-LM",
+        "zh-Hans": "Megatron-LM"
+      },
+      "contexts": {
+        "en": "Megatron-LM is NVIDIA's distributed training framework for large Transformer models. It implements tensor parallelism, pipeline parallelism, and data parallelism to efficiently scale model training across hundreds or thousands of GPUs, and is a foundational infrastructure behind many of the world's largest language models.",
+        "zh-Hant": "Megatron-LM 是 NVIDIA 開發的大型 Transformer 模型分散式訓練框架。它實作了張量平行（Tensor Parallelism）、管線平行（Pipeline Parallelism）與資料平行（Data Parallelism），能高效地將模型訓練擴展到數百甚至數千張 GPU 上，是許多世界最大規模語言模型背後的基礎設施。",
+        "zh-Hans": "Megatron-LM 是 NVIDIA 开发的大型 Transformer 模型分布式训练框架。它实现了张量并行（Tensor Parallelism）、流水线并行（Pipeline Parallelism）与数据并行（Data Parallelism），能高效地将模型训练扩展到数百甚至数千张 GPU 上，是许多世界最大规模语言模型背后的基础设施。"
+      },
+      "aliases": [
+        "Megatron",
+        "Megatron-LM",
+        "megatron"
+      ]
+    },
+    {
+      "concept_id": "concept.ctr",
+      "labels": {
+        "en": "CTR (Click-Through Rate)",
+        "zh-Hant": "點擊率 CTR",
+        "zh-Hans": "点击率 CTR"
+      },
+      "contexts": {
+        "en": "CTR (Click-Through Rate) is the ratio of users who click on a specific item to the total number of users who view it. In recommendation systems, CTR prediction is one of the core ranking objectives, estimating the probability that a user will click on a recommended item.",
+        "zh-Hant": "點擊率 CTR（Click-Through Rate）是點擊某個項目的用戶數與看到它的總用戶數之比。在推薦系統中，CTR 預估是排序階段的核心目標之一，用來預測用戶點擊推薦內容的機率。",
+        "zh-Hans": "点击率 CTR（Click-Through Rate）是点击某个项目的用户数与看到它的总用户数之比。在推荐系统中，CTR 预估是排序阶段的核心目标之一，用来预测用户点击推荐内容的概率。"
+      },
+      "aliases": [
+        "CTR",
+        "Click-Through Rate",
+        "點擊率",
+        "点击率"
+      ]
+    },
+    {
+      "concept_id": "concept.cvr",
+      "labels": {
+        "en": "CVR (Conversion Rate)",
+        "zh-Hant": "轉化率 CVR",
+        "zh-Hans": "转化率 CVR"
+      },
+      "contexts": {
+        "en": "CVR (Conversion Rate) is the ratio of users who complete a desired action (such as a purchase, sign-up, or download) to the total number of users who had the opportunity to do so. In recommendation systems, CVR prediction goes beyond clicks to estimate the probability of a deeper business-critical action.",
+        "zh-Hant": "轉化率 CVR（Conversion Rate）是完成目標行為（如購買、註冊或下載）的用戶數與總曝光或點擊用戶數之比。在推薦系統中，CVR 預估比點擊率更深入，直接估計用戶是否會完成具有商業價值的關鍵行為。",
+        "zh-Hans": "转化率 CVR（Conversion Rate）是完成目标行为（如购买、注册或下载）的用户数与总曝光或点击用户数之比。在推荐系统中，CVR 预估比点击率更深入，直接估计用户是否会完成具有商业价值的关键行为。"
+      },
+      "aliases": [
+        "CVR",
+        "Conversion Rate",
+        "轉化率",
+        "转化率"
+      ]
+    },
+    {
+      "concept_id": "concept.roi",
+      "labels": {
+        "en": "ROI (Return on Investment)",
+        "zh-Hant": "投資報酬率 ROI",
+        "zh-Hans": "投资回报率 ROI"
+      },
+      "contexts": {
+        "en": "ROI (Return on Investment) measures the efficiency of an investment by comparing gains to costs. In engineering and ML contexts, it often refers to the ratio of performance improvement (e.g., model accuracy, business metrics) to the resources invested (compute, engineering time, infrastructure cost).",
+        "zh-Hant": "投資報酬率 ROI（Return on Investment）衡量投入與回報之間的效率。在工程與機器學習的語境下，它通常指投入的資源（算力、工程時間、基礎設施成本）相對於獲得的效能提升（模型精度、業務指標）之間的比值。",
+        "zh-Hans": "投资回报率 ROI（Return on Investment）衡量投入与回报之间的效率。在工程与机器学习的语境下，它通常指投入的资源（算力、工程时间、基础设施成本）相对于获得的性能提升（模型精度、业务指标）之间的比值。"
+      },
+      "aliases": [
+        "ROI",
+        "Return on Investment",
+        "投資報酬率",
+        "投资回报率"
+      ]
+    },
+    {
+      "concept_id": "concept.rpc",
+      "labels": {
+        "en": "RPC (Remote Procedure Call)",
+        "zh-Hant": "遠端程序呼叫 RPC",
+        "zh-Hans": "远程过程调用 RPC"
+      },
+      "contexts": {
+        "en": "RPC (Remote Procedure Call) is a communication protocol that allows a program to execute a procedure on a remote server as if it were a local function call. In large-scale recommendation systems, RPC is the primary mechanism for inter-service communication between distributed modules such as retrieval, ranking, and feature serving.",
+        "zh-Hant": "RPC（Remote Procedure Call，遠端程序呼叫）是一種通信協定，讓程式可以像呼叫本地函式一樣去執行遠端伺服器上的程序。在大規模推薦系統中，RPC 是各個分散式模組（如召回、排序、特徵服務）之間進行跨服務通信的主要機制。",
+        "zh-Hans": "RPC（Remote Procedure Call，远程过程调用）是一种通信协议，让程序可以像调用本地函数一样去执行远端服务器上的程序。在大规模推荐系统中，RPC 是各个分布式模块（如召回、排序、特征服务）之间进行跨服务通信的主要机制。"
+      },
+      "aliases": [
+        "RPC",
+        "Remote Procedure Call",
+        "遠端程序呼叫",
+        "远程过程调用"
+      ]
+    },
+    {
+      "concept_id": "concept.memory_bound",
+      "labels": {
+        "en": "Memory-bound",
+        "zh-Hant": "記憶體頻寬受限",
+        "zh-Hans": "内存带宽受限"
+      },
+      "contexts": {
+        "en": "Memory-bound describes a computational workload whose performance is limited by memory bandwidth or latency rather than by arithmetic throughput. In such workloads, the processor spends most of its time waiting for data to be fetched from memory, leaving compute units idle. Traditional recommendation systems with scattered embedding lookups and irregular memory access patterns are classic memory-bound workloads.",
+        "zh-Hant": "記憶體頻寬受限（Memory-bound）描述一種計算工作負載，其效能瓶頸在於記憶體的頻寬或延遲，而非算術運算能力。在這類工作負載中，處理器大部分時間都在等待從記憶體取回資料，導致計算單元閒置。傳統推薦系統中散亂的 Embedding 查找與不規則的記憶體存取模式，就是典型的記憶體頻寬受限型工作負載。",
+        "zh-Hans": "内存带宽受限（Memory-bound）描述一种计算工作负载，其性能瓶颈在于内存的带宽或延迟，而非算术运算能力。在这类工作负载中，处理器大部分时间都在等待从内存取回数据，导致计算单元闲置。传统推荐系统中散乱的 Embedding 查找与不规则的内存访问模式，就是典型的内存带宽受限型工作负载。"
+      },
+      "aliases": [
+        "memory-bound",
+        "Memory-bound",
+        "記憶體頻寬受限",
+        "内存带宽受限",
+        "memory bandwidth bound"
+      ]
+    },
+    {
+      "concept_id": "concept.compute_bound",
+      "labels": {
+        "en": "Compute-bound",
+        "zh-Hant": "算力密集",
+        "zh-Hans": "算力密集"
+      },
+      "contexts": {
+        "en": "Compute-bound describes a workload whose performance is limited by the speed of the processor's arithmetic units rather than by memory bandwidth or I/O. In such workloads, compute units are fully utilized performing calculations (e.g., matrix multiplications), which is the ideal operating regime for GPUs and TPUs.",
+        "zh-Hant": "算力密集（Compute-bound）描述一種計算工作負載，其效能瓶頸在於處理器的算術運算速度，而非記憶體頻寬或 IO。在這類工作負載中，計算單元被充分利用來進行運算（如矩陣乘法），這正是 GPU 和 TPU 最理想的運行狀態。",
+        "zh-Hans": "算力密集（Compute-bound）描述一种计算工作负载，其性能瓶颈在于处理器的算术运算速度，而非内存带宽或 IO。在这类工作负载中，计算单元被充分利用来进行运算（如矩阵乘法），这正是 GPU 和 TPU 最理想的运行状态。"
+      },
+      "aliases": [
+        "compute-bound",
+        "Compute-bound",
+        "算力密集",
+        "compute intensive"
+      ]
+    },
+    {
+      "concept_id": "concept.parameter_server",
+      "labels": {
+        "en": "Parameter Server",
+        "zh-Hant": "參數伺服器 Parameter Server",
+        "zh-Hans": "参数服务器 Parameter Server"
+      },
+      "contexts": {
+        "en": "Parameter Server is a distributed computing architecture for machine learning that stores model parameters on dedicated server nodes and synchronizes updates from multiple worker nodes during training. It was widely adopted in recommendation systems to handle massive sparse embedding tables that cannot fit in a single machine's memory.",
+        "zh-Hant": "參數伺服器（Parameter Server）是一種分散式機器學習架構，將模型參數存放在專用的伺服器節點上，並在訓練期間同步來自多個工作節點的更新。它曾被推薦系統廣泛採用，用來處理單機記憶體無法容納的超大規模稀疏 Embedding 表。",
+        "zh-Hans": "参数服务器（Parameter Server）是一种分布式机器学习架构，将模型参数存放在专用的服务器节点上，并在训练期间同步来自多个工作节点的更新。它曾被推荐系统广泛采用，用来处理单机内存无法容纳的超大规模稀疏 Embedding 表。"
+      },
+      "aliases": [
+        "Parameter Server",
+        "parameter server",
+        "參數伺服器",
+        "参数服务器",
+        "PS 架構",
+        "PS 架构"
+      ]
     }
   ]
 }

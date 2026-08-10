@@ -349,32 +349,32 @@
       {
         "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.312907
+        "score": 0.325176
       },
       {
         "url": "../notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
         "path": "notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
-        "score": 0.250676
+        "score": 0.250984
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.210619
+        "score": 0.211161
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.163919
+        "score": 0.165136
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.119738
+        "score": 0.119711
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.118866
+        "score": 0.118839
       }
     ]
   },
@@ -526,34 +526,34 @@
     "kind": "content",
     "related": [
       {
-        "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.459894
-      },
-      {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.458503
+        "score": 0.465311
+      },
+      {
+        "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "score": 0.42227
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.408373
+        "score": 0.408621
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.250676
+        "score": 0.250984
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.112455
+        "score": 0.111221
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.108644
+        "score": 0.107451
       }
     ]
   },
@@ -621,32 +621,32 @@
       {
         "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.560706
+        "score": 0.524046
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.453263
+        "score": 0.45416
       },
       {
         "url": "../notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
         "path": "notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
-        "score": 0.408373
+        "score": 0.408621
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.210619
+        "score": 0.211161
       },
       {
         "url": "../writing/hidden-value-of-multiple-choice-questions-goldilocks-principle/hidden-value-of-multiple-choice-questions-goldilocks-principle-zh-tw.html",
         "path": "writing/hidden-value-of-multiple-choice-questions-goldilocks-principle/hidden-value-of-multiple-choice-questions-goldilocks-principle-zh-tw.html",
-        "score": 0.129427
+        "score": 0.129354
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.123039
+        "score": 0.12297
       }
     ]
   },
@@ -719,34 +719,34 @@
     "kind": "content",
     "related": [
       {
-        "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.480411
-      },
-      {
         "url": "../notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
         "path": "notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
-        "score": 0.458503
+        "score": 0.465311
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.453263
+        "score": 0.45416
+      },
+      {
+        "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "score": 0.400664
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.163919
+        "score": 0.165136
       },
       {
         "url": "../writing/hidden-value-of-multiple-choice-questions-goldilocks-principle/hidden-value-of-multiple-choice-questions-goldilocks-principle-zh-tw.html",
         "path": "writing/hidden-value-of-multiple-choice-questions-goldilocks-principle/hidden-value-of-multiple-choice-questions-goldilocks-principle-zh-tw.html",
-        "score": 0.083421
+        "score": 0.083055
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.07706
+        "score": 0.076721
       }
     ]
   },
@@ -906,12 +906,12 @@
       {
         "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.12816
+        "score": 0.13363
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.123039
+        "score": 0.12297
       }
     ]
   },
@@ -922,34 +922,19 @@
     "section": "writing",
     "tags": [
       "推薦系統",
-      "生成式檢索",
       "縮放定律",
-      "深度學習",
-      "Semantic ID",
-      "RQ-KMeans",
-      "RQ-VAE",
-      "OneRec"
+      "深度學習"
     ],
     "tag_concepts": [
       "concept.recommender_systems",
-      "concept.generative_retrieval",
       "concept.scaling_laws",
-      "concept.deep_learning",
-      "concept.semantic_id",
-      "concept.rq_kmeans",
-      "concept.rq_vae",
-      "concept.onerec"
+      "concept.deep_learning"
     ],
     "tag_labels": {
       "concept.recommender_systems": {
         "en": "Recommender Systems",
         "zh-Hant": "推薦系統",
         "zh-Hans": "推荐系统"
-      },
-      "concept.generative_retrieval": {
-        "en": "Generative Retrieval",
-        "zh-Hant": "生成式檢索",
-        "zh-Hans": "生成式检索"
       },
       "concept.scaling_laws": {
         "en": "Scaling Laws",
@@ -960,35 +945,15 @@
         "en": "Deep Learning",
         "zh-Hant": "深度學習",
         "zh-Hans": "深度学习"
-      },
-      "concept.semantic_id": {
-        "en": "Semantic ID",
-        "zh-Hant": "Semantic ID",
-        "zh-Hans": "Semantic ID"
-      },
-      "concept.rq_kmeans": {
-        "en": "RQ-KMeans",
-        "zh-Hant": "RQ-KMeans",
-        "zh-Hans": "RQ-KMeans"
-      },
-      "concept.rq_vae": {
-        "en": "RQ-VAE",
-        "zh-Hant": "RQ-VAE",
-        "zh-Hans": "RQ-VAE"
-      },
-      "concept.onerec": {
-        "en": "OneRec",
-        "zh-Hant": "OneRec",
-        "zh-Hans": "OneRec"
       }
     },
     "summary": "本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。",
-    "content": "從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰 在 NLP 與大模型（LLM）領域，Transformer 架構所代表的自迴歸生成式建模（Generative Modeling）已成為機器學習的底層基本原理。然而反觀推薦系統，在過去數十年間，工業界的技術架構幾乎都停留在同一個經典框架上——漏斗式級聯架構（Funnel Cascade Architecture）。 從「召回（Retrieval）$\\to$ 粗排（Pre-Ranking）$\\to$ 精排（Ranking）$\\to$ 重排（Re-Ranking）」，這種將大問題拆解為多個階段逐層篩選的工程策略，曾經成功支撐了電商、短影音與資訊流平台在毫秒級延遲限制下處理數億候選池的需求。 然而，相較於大模型領域的飛速革新，傳統推薦系統近年來卻面臨邊際效益遞減的困境。隨著快手在 2025 年發表 OneRec (OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment) 等前沿工作的推出，業界開始掀起一場深遠的範式轉移：從傳統級聯漏斗走向端到端自迴歸生成（Generative Recommendation）。 曾經主流的級聯架構遇到了怎樣的效能瓶頸？生成式推薦又帶來了什麼樣的範式轉移？在邁向落地的過程中，它又將面臨哪些技術挑戰與應對策略？ 本文將帶你層層拆解，一探生成式推薦背後的技術全貌與破局之道。 傳統級聯架構的深層痛點與低 ROI 陷阱 級聯架構的核心哲學是「用空間與階段換取時間」。在面對數百萬甚至數十億級別的候選商品庫時，系統不可能在 50 毫秒內的嚴苛延遲約束（SLA）下，對所有商品進行高精度的複雜神經網路計算。因此，級聯架構採取了務實的工程折衷：將龐大的候選空間劃分為多個階段，隨著候選集數量被逐層大幅過濾（如 $10^6 \\to 10^3 \\to 10^2 \\to 10^1$），模型的特徵維度與計算複雜度才得以遞增。 在推薦技術演進的早期，這種「分而治之」的工程策略帶來了巨大的效益，各模組獨立升級都能產出顯著的業務增益。然而，隨著各階段模組被越做越精細、技術優化逐漸趨於飽和與極限時，整個推薦系統的效果開始明顯受制於這種框架設計本身的結構性天花板。級聯架構暴露出四個難以調和的深層矛盾： (1) 各階段優化目標不一致，局部最優 $\\neq$ 全局最優 在級聯鏈路上，各模組的優化目標天然存在錯位。例如，召回階段專注於擴大候選池的覆蓋度與多樣性，避免漏掉潛在興趣；而精排階段則極致追求預測的精準度（如 CTR/CVR），致力於挑出用戶最可能點擊的商品。這兩個目標看似互補，實則常產生背離：召回為了多樣性強行塞入的候選，往往會在精排階段被低分打回，造成算力浪費；反之，精排偏好的高分數商品，也可能因召回過度過濾而根本無法進入候選池。加上系統長期迭代累積的各種工程 Trick 與模組間的隱性耦合，導致各階段單獨達成的「局部最優」，最終無法收斂為整個推薦系統的「全局最優」。 (2) 系統算力利用率低下，通信吞噬計算 在多階段鏈路中，資料必須頻繁跨越多個獨立模組。每次跨階段調用，都伴隨著大量的 RPC 網路通信、特徵檢索與記憶體搬運。在極致的 50 毫秒延遲限制下，很大一部分算力預算被浪費在「系統傳輸與資料搬運」上，而非有效的模型計算，導致硬體效率遠低於大模型領域。 (3) 技術壁壘造成代差，阻礙 AI 前沿技術吸納 分模組的特化架構形成了高度割裂的技術壁壘。這導致大模型、強化學習（RL）以及對齊技術（Preference Alignment）等 AI 領域的突破性進展，極難被傳統推薦系統有效吸納，產生了明顯的技術代差。 (4) 傳統 Scaling Law 陷入低 ROI 的困境 為了持續提升推薦效果，業界過去嘗試推動模型 Scaling 的方向主要有二： 持續拉長用戶行為序列： 從最早的十量級，擴展到百、千量級，甚至萬量級以上。 增大打分候選集： 讓精排/粗排對盡可能多的物品進行打分。 然而，在傳統級聯架構已被優化至接近極限、技術趨於飽和的前提下，透過上述手段強行推動 Scaling 所產出的邊際收益，與投入的龐大算力資源相比，投資報酬率 (ROI) 極低。 生成式推薦（Generative Recommendation）的破局之道：以 OneRec 為例 為了解決多階段級聯的固有一致性與算力浪費問題，以 OneRec 為代表的生成式推薦系統提出了全新的架構設計： [ 用戶歷史與 Context 信息 ] ───> ( 統一端到端 Transformer 生成器 ) ───> [ 自迴歸生成推薦列表 ] 這項範式轉移包含兩個核心維度的升級： (1) 架構上：用單一端到端模組替換多階段級聯 集中算力與極致效率： 將原本分散於召回、粗排、精排的算力預算集中於單一模型上，大幅減少模組間的通信與 IO 開銷，顯著提升硬體利用率。 恢復系統一致性： 規避了不同階段獨立迭代、互相掣肘的複雜問題，讓模型效果完全取決於整體能力，徹底解決一致性難題。 釋放 Scaling Law 與強化學習空間： 簡約的端到端架構，為強化學習（對齊用戶偏好）與擴大模型規模（Scaling）提供了天然的基石。 (2) 建模上：從「判別式 (Discriminative)」轉向「生成式 (Generative)」 傳統判別式： 給定特定用戶與特定 Item，預估點擊/轉化概率 $P(\\text{action} \\mid \\text{user}, \\text{item})$。 生成式建模： 給定用戶與 Context 資訊，直接對潛在的 Item 進行預估，學習複雜的聯合機率分佈 $P(\\text{items} \\mid \\text{user}, \\text{context})$。 這種更高維度的建模方式，為模型參數規模的擴展（Scaling Law）打開了龐大的表現力空間。值得強調的是，生成式範式的收益並不局限於「端到端架構」；即便僅將傳統級聯中的單一模組（例如將向量召回升級為生成式檢索 Generative Retrieval）替換為生成式範式，同樣機能帶來顯著的 Scaling 收益。 這背後的核心邏輯在於，Scaling Law 的本質之一是「能否將規模化算力高效轉化為模型能力」。而生成式範式所依賴的 Transformer 架構，正是目前現代硬體（如 GPU/TPU）優化最為成熟、最能極致釋放算力潛能的架構，因此能最大程度享受到硬體迭代帶來的紅利。 核心工程挑戰：海量商品與詞彙庫爆炸難題 儘管生成式推薦的藍圖非常吸引人，但在實務落地時，團隊會立刻撞上一道天險：詞彙庫爆炸（Vocabulary Explosion）。 大語言模型（LLM）處理的是文字，其詞彙庫（Vocabulary Size）通常只有 32,000 到 128,000 個 Token。 然而，工業級電商或短影音平台的商品庫（Item Catalog）高達數千萬到數十億（$10^7 \\sim 10^9$）。 如果直接將每一個商品指定為一個獨立 Token，模型最後一層的 Softmax 計算複雜度將直接崩潰。 破局關鍵：Semantic ID (SID) 與多步解碼 為了解決這個問題，業界提出了 Semantic ID (SID) 的概念：不將商品視為單一原子 ID，而是將商品編碼為長度為 $M$（如 3~4）的階層式 Token 序列。 如果每一步的碼本大小為 $K = 8192$，則： 單步預測開銷： 模型在每一步解碼時只需處理 8192 規模的小詞彙庫。 可表達商品空間： $8192^3 \\approx 5.5 \\times 10^{11}$，輕鬆覆蓋全站商品。 商品 Token 化的兩大實踐路徑 當我們確定將海量商品編碼為由 $M$ 個 Token 組成的 Semantic ID (SID) 序列後，下一個核心的工程實踐問題在於：該如何將高維商品特徵轉換為具備由粗到細（Coarse-to-fine）階層語意的離散 Token？ 在實際落地時，業界主要衍生出兩大 Tokenizer 實現路徑： 端到端深度學習路線（RQ-VAE）： 透過變分編碼器與離散碼本，讓神經網路端到端地學習任務導向的商品表徵與 Token 化。詳細架構、直通估算器（STE）與訓練技巧可參考專屬筆記：端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer。 兩階段解耦幾何路線（RQ-Kmeans）： 複用既有模型的 Embedding 資產，透過幾何殘差 K-means 迅速進行向量切分。詳細演算法、幾何證明與工程落地流程可參考專屬筆記：從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer。 這兩種 Token 化路徑各具優勢，前者追求極致的端到端表達力，後者則追求工程落地的高度穩定與計算效率，共同支撐起生成式推薦在不同算力與業務約束下的實踐。 結語：推薦系統的未來展望 從級聯漏斗走向自迴歸生成，絕非僅僅是演算法模型的微調，而是一場涉及系統架構、資料編碼與工程設施的全面革命。 正如快手 OneRec 所展示的，將多階段級聯收斂為單一端到端生成模型，不僅消除了階段間的通信浪費與目標解耦，更為強化學習偏好對齊與 Scaling Law 提供了可持續發力的舞台。雖然生成式推薦在即時性延遲與長尾商品泛化上仍有諸多工程難題待解，但對齊大模型生態所帶來的高算力利用率與模型規模效應，無疑代表著推薦系統下一代的必然趨勢。 Key Takeaways 級聯架構的局限： 各階段優化目標不一致（局部最優 $\\neq$ 全局最優）、通信與 IO 搬運開銷巨大，導致傳統推薦系統在序列拉長與候選打分放大時陷入低 ROI 的 Scaling 陷阱。 生成式推薦的突破 (以 OneRec 為例)： 透過單一端到端模型取代多級漏斗，集中算力並恢復系統一致性；建模上從判別式 $P(\\text{action} \\mid u, i)$ 升級為生成式聯合機率分佈 $P(\\text{items} \\mid u, c)$，徹底打開 Scaling 空間。 核心工程天險與 SID： 工業級商品庫（$10^7 \\sim 10^9$）與 LLM 詞彙庫規模衝突。透過 Semantic ID (SID) 將商品拆解為多步 Token 序列，在保有巨量表達空間的同時將 Softmax 複雜度控制在毫秒級。 Token 化兩大關鍵路徑： RQ-VAE 提供端到端深度學習優化；而 RQ-Kmeans 則提供輕量、極度穩健的兩階段幾何替代方案。 參考文獻（References） Paper: OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment (Feb 2025). 知乎：从原理到落地详细解读生成式推荐OneRec Paper: Recommender Systems with Generative Retrieval (Google TIGER, NeurIPS 2022). Paper: Autoregressive Image Generation using Residual Quantization (RQ-VAE, 2022).",
-    "content_markdown": "# 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰\n\n在 NLP 與大模型（LLM）領域，Transformer 架構所代表的**自迴歸生成式建模（Generative Modeling）**已成為機器學習的底層基本原理。然而反觀推薦系統，在過去數十年間，工業界的技術架構幾乎都停留在同一個經典框架上——漏斗式級聯架構（Funnel Cascade Architecture）。\n\n從「召回（Retrieval）$\\to$ 粗排（Pre-Ranking）$\\to$ 精排（Ranking）$\\to$ 重排（Re-Ranking）」，這種將大問題拆解為多個階段逐層篩選的工程策略，曾經成功支撐了電商、短影音與資訊流平台在毫秒級延遲限制下處理數億候選池的需求。\n\n然而，相較於大模型領域的飛速革新，傳統推薦系統近年來卻面臨邊際效益遞減的困境。隨著快手在 2025 年發表 [**OneRec** (*OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment*)](https://arxiv.org/abs/2502.18965) 等前沿工作的推出，業界開始掀起一場深遠的範式轉移：**從傳統級聯漏斗走向端到端自迴歸生成（Generative Recommendation）**。\n\n曾經主流的級聯架構遇到了怎樣的效能瓶頸？生成式推薦又帶來了什麼樣的範式轉移？在邁向落地的過程中，它又將面臨哪些技術挑戰與應對策略？\n\n本文將帶你層層拆解，一探生成式推薦背後的技術全貌與破局之道。\n\n## 1. 傳統級聯架構的深層痛點與低 ROI 陷阱\n\n級聯架構的核心哲學是**「用空間與階段換取時間」**。在面對數百萬甚至數十億級別的候選商品庫時，系統不可能在 50 毫秒內的嚴苛延遲約束（SLA）下，對所有商品進行高精度的複雜神經網路計算。因此，級聯架構採取了務實的工程折衷：將龐大的候選空間劃分為多個階段，隨著候選集數量被逐層大幅過濾（如 $10^6 \\to 10^3 \\to 10^2 \\to 10^1$），模型的特徵維度與計算複雜度才得以遞增。\n\n在推薦技術演進的早期，這種「分而治之」的工程策略帶來了巨大的效益，各模組獨立升級都能產出顯著的業務增益。然而，**隨著各階段模組被越做越精細、技術優化逐漸趨於飽和與極限時，整個推薦系統的效果開始明顯受制於這種框架設計本身的結構性天花板**。級聯架構暴露出四個難以調和的深層矛盾：\n\n### (1) 各階段優化目標不一致，局部最優 $\\neq$ 全局最優\n在級聯鏈路上，各模組的優化目標天然存在錯位。例如，召回階段專注於擴大候選池的覆蓋度與多樣性，避免漏掉潛在興趣；而精排階段則極致追求預測的精準度（如 CTR/CVR），致力於挑出用戶最可能點擊的商品。這兩個目標看似互補，實則常產生背離：召回為了多樣性強行塞入的候選，往往會在精排階段被低分打回，造成算力浪費；反之，精排偏好的高分數商品，也可能因召回過度過濾而根本無法進入候選池。加上系統長期迭代累積的各種工程 Trick 與模組間的隱性耦合，導致各階段單獨達成的「局部最優」，最終無法收斂為整個推薦系統的「全局最優」。\n\n### (2) 系統算力利用率低下，通信吞噬計算\n在多階段鏈路中，資料必須頻繁跨越多個獨立模組。每次跨階段調用，都伴隨著大量的 RPC 網路通信、特徵檢索與記憶體搬運。在極致的 50 毫秒延遲限制下，很大一部分算力預算被浪費在「系統傳輸與資料搬運」上，而非有效的模型計算，導致硬體效率遠低於大模型領域。\n\n### (3) 技術壁壘造成代差，阻礙 AI 前沿技術吸納\n分模組的特化架構形成了高度割裂的技術壁壘。這導致大模型、強化學習（RL）以及對齊技術（Preference Alignment）等 AI 領域的突破性進展，極難被傳統推薦系統有效吸納，產生了明顯的技術代差。\n\n### (4) 傳統 Scaling Law 陷入低 ROI 的困境\n為了持續提升推薦效果，業界過去嘗試推動模型 Scaling 的方向主要有二：\n1. **持續拉長用戶行為序列：** 從最早的十量級，擴展到百、千量級，甚至萬量級以上。\n2. **增大打分候選集：** 讓精排/粗排對盡可能多的物品進行打分。\n\n然而，在傳統級聯架構已被優化至接近極限、技術趨於飽和的前提下，透過上述手段強行推動 Scaling 所產出的邊際收益，與投入的龐大算力資源相比，**投資報酬率 (ROI) 極低**。\n\n## 2. 生成式推薦（Generative Recommendation）的破局之道：以 OneRec 為例\n\n為了解決多階段級聯的固有一致性與算力浪費問題，以 **OneRec** 為代表的生成式推薦系統提出了全新的架構設計：\n\n```\n[ 用戶歷史與 Context 信息 ] ───> ( 統一端到端 Transformer 生成器 ) ───> [ 自迴歸生成推薦列表 ]\n```\n\n這項範式轉移包含兩個核心維度的升級：\n\n### (1) 架構上：用單一端到端模組替換多階段級聯\n- **集中算力與極致效率：** 將原本分散於召回、粗排、精排的算力預算集中於單一模型上，大幅減少模組間的通信與 IO 開銷，顯著提升硬體利用率。\n- **恢復系統一致性：** 規避了不同階段獨立迭代、互相掣肘的複雜問題，讓模型效果完全取決於整體能力，徹底解決一致性難題。\n- **釋放 Scaling Law 與強化學習空間：** 簡約的端到端架構，為強化學習（對齊用戶偏好）與擴大模型規模（Scaling）提供了天然的基石。\n\n### (2) 建模上：從「判別式 (Discriminative)」轉向「生成式 (Generative)」\n- **傳統判別式：** 給定特定用戶與特定 Item，預估點擊/轉化概率 $P(\\text{action} \\mid \\text{user}, \\text{item})$。\n- **生成式建模：** 給定用戶與 Context 資訊，直接對潛在的 Item 進行預估，學習複雜的**聯合機率分佈 $P(\\text{items} \\mid \\text{user}, \\text{context})$**。\n\n這種更高維度的建模方式，為模型參數規模的擴展（Scaling Law）打開了龐大的表現力空間。值得強調的是，生成式範式的收益並不局限於「端到端架構」；**即便僅將傳統級聯中的單一模組（例如將向量召回升級為生成式檢索 Generative Retrieval）替換為生成式範式，同樣機能帶來顯著的 Scaling 收益。**\n\n這背後的核心邏輯在於，Scaling Law 的本質之一是「能否將規模化算力高效轉化為模型能力」。而生成式範式所依賴的 Transformer 架構，正是目前現代硬體（如 GPU/TPU）優化最為成熟、最能極致釋放算力潛能的架構，因此能最大程度享受到硬體迭代帶來的紅利。\n\n## 3. 核心工程挑戰：海量商品與詞彙庫爆炸難題\n\n儘管生成式推薦的藍圖非常吸引人，但在實務落地時，團隊會立刻撞上一道天險：**詞彙庫爆炸（Vocabulary Explosion）**。\n\n- 大語言模型（LLM）處理的是文字，其詞彙庫（Vocabulary Size）通常只有 32,000 到 128,000 個 Token。\n- 然而，工業級電商或短影音平台的商品庫（Item Catalog）高達數千萬到數十億（$10^7 \\sim 10^9$）。\n\n如果直接將每一個商品指定為一個獨立 Token，模型最後一層的 Softmax 計算複雜度將直接崩潰。\n\n### 破局關鍵：Semantic ID (SID) 與多步解碼\n\n為了解決這個問題，業界提出了 **Semantic ID (SID)** 的概念：**不將商品視為單一原子 ID，而是將商品編碼為長度為 $M$（如 3~4）的階層式 Token 序列**。\n\n如果每一步的碼本大小為 $K = 8192$，則：\n- **單步預測開銷：** 模型在每一步解碼時只需處理 8192 規模的小詞彙庫。\n- **可表達商品空間：** $8192^3 \\approx 5.5 \\times 10^{11}$，輕鬆覆蓋全站商品。\n\n## 4. 商品 Token 化的兩大實踐路徑\n\n當我們確定將海量商品編碼為由 $M$ 個 Token 組成的 Semantic ID (SID) 序列後，下一個核心的工程實踐問題在於：**該如何將高維商品特徵轉換為具備由粗到細（Coarse-to-fine）階層語意的離散 Token？**\n\n在實際落地時，業界主要衍生出兩大 Tokenizer 實現路徑：\n\n- **端到端深度學習路線（RQ-VAE）：** 透過變分編碼器與離散碼本，讓神經網路端到端地學習任務導向的商品表徵與 Token 化。詳細架構、直通估算器（STE）與訓練技巧可參考專屬筆記：端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer。\n- **兩階段解耦幾何路線（RQ-Kmeans）：** 複用既有模型的 Embedding 資產，透過幾何殘差 K-means 迅速進行向量切分。詳細演算法、幾何證明與工程落地流程可參考專屬筆記：從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer。\n\n這兩種 Token 化路徑各具優勢，前者追求極致的端到端表達力，後者則追求工程落地的高度穩定與計算效率，共同支撐起生成式推薦在不同算力與業務約束下的實踐。\n\n## 5. 結語：推薦系統的未來展望\n\n從級聯漏斗走向自迴歸生成，絕非僅僅是演算法模型的微調，而是一場涉及系統架構、資料編碼與工程設施的全面革命。\n\n正如快手 OneRec 所展示的，將多階段級聯收斂為單一端到端生成模型，不僅消除了階段間的通信浪費與目標解耦，更為強化學習偏好對齊與 Scaling Law 提供了可持續發力的舞台。雖然生成式推薦在即時性延遲與長尾商品泛化上仍有諸多工程難題待解，但對齊大模型生態所帶來的高算力利用率與模型規模效應，無疑代表著推薦系統下一代的必然趨勢。\n\n## Key Takeaways\n\n- **級聯架構的局限：** 各階段優化目標不一致（局部最優 $\\neq$ 全局最優）、通信與 IO 搬運開銷巨大，導致傳統推薦系統在序列拉長與候選打分放大時陷入低 ROI 的 Scaling 陷阱。\n- **生成式推薦的突破 (以 OneRec 為例)：** 透過單一端到端模型取代多級漏斗，集中算力並恢復系統一致性；建模上從判別式 $P(\\text{action} \\mid u, i)$ 升級為生成式聯合機率分佈 $P(\\text{items} \\mid u, c)$，徹底打開 Scaling 空間。\n- **核心工程天險與 SID：** 工業級商品庫（$10^7 \\sim 10^9$）與 LLM 詞彙庫規模衝突。透過 Semantic ID (SID) 將商品拆解為多步 Token 序列，在保有巨量表達空間的同時將 Softmax 複雜度控制在毫秒級。\n- **Token 化兩大關鍵路徑：** RQ-VAE 提供端到端深度學習優化；而 RQ-Kmeans 則提供輕量、極度穩健的兩階段幾何替代方案。\n\n## 參考文獻（References）\n\n1. [Paper: *OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment* (Feb 2025).](https://arxiv.org/abs/2502.18965)\n2. [知乎：从原理到落地详细解读生成式推荐OneRec](https://zhuanlan.zhihu.com/p/2011387251351908741)\n3. Paper: *Recommender Systems with Generative Retrieval* (Google TIGER, NeurIPS 2022).\n4. Paper: *Autoregressive Image Generation using Residual Quantization* (RQ-VAE, 2022).",
-    "preview_markdown": "# 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰\n\n在 NLP 與大模型（LLM）領域，Transformer 架構所代表的**自迴歸生成式建模（Generative Modeling）**已成為機器學習的底層基本原理。然而反觀推薦系統，在過去數十年間，工業界的技術架構幾乎都停留在同一個經典框架上——漏斗式級聯架構（Funnel Cascade Architecture）。\n\n從「召回（Retrieval）$\\to$ 粗排（Pre-Ranking）$\\to$ 精排（Ranking）$\\to$ 重排（Re-Ranking）」，這種將大問題拆解為多個階段逐層篩選的工程策略，曾經成功支撐了電商、短影音與資訊流平台在毫秒級延遲限制下處理數億候選池的需求。",
-    "reading_time_minutes": 11,
+    "content": "從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰 推薦系統就像是現代網路世界「看不見的手」。從電商首頁的商品展示，到無盡滑動的短影音資訊流，它決定了數十億人每天消費的內容。然而，當整個 AI 圈正因為大語言模型（LLM）的突破而天翻地覆時，支撐著這些龐大商業流量底層的推薦引擎，過去十幾年來卻沒有太多本質上的改變。 長久以來，大廠們的底層心法始終是同一個經典框架——漏斗式級聯架構。這套架構在過去十年確實完美解決了「如何在毫秒級延遲下處理海量數據」的現實難題。但如今，這套不斷打補丁的舊系統，正無可避免地撞上一道物理與工程的高牆。系統越疊越厚，投入的算力與研發資源呈指數級飆升，但換來的業務 <information concept=\"concept.roi\">ROI</information> 增長卻越來越微不足道。 曾經無往不利的架構，到底卡在了哪裡？面對增長停滯的焦慮，業界前沿團隊又是如何尋找下一代破局之道的？ 這篇文章將帶你拆解舊架構的技術債黑盒，並探討一場正在發生、將底層架構「推倒重來」的範式轉移——端到端自迴歸生成（Generative Recommendation）背後的技術全貌與工程挑戰。 傳統級聯架構的深層痛點：陷入低 ROI 陷阱 級聯架構的核心工程哲學是「用空間與階段換取時間」。面對數百萬甚至數億級別的商品庫，我們不可能在短短 50 毫秒內，用最複雜的深度神經網路把每個商品都精算一遍。 因此，業界標準做法是將鏈路切分為多個階段（召回 $\\to$ 粗排 $\\to$ 精排 $\\to$ 重排）。候選商品像過沙漏一樣被層層篩選，數量從百萬、千、百，一路縮減到最後呈現在用戶眼前的十幾個。隨著數量減少，模型特徵才敢越加越厚。這套「分而治之」的策略在早期吃盡了紅利，但當各個模組的優化都逼近天花板時，架構本身的結構性缺陷就徹底暴露了。 痛點一：目標錯位與模型解釋性的喪失 在長長的級聯鏈路上，各模組的優化目標天然存在不一致。召回階段拼命擴大覆蓋度與多樣性，深怕漏掉潛在興趣；精排階段卻極致追求 <information concept=\"concept.ctr\">CTR</information> 與 <information concept=\"concept.cvr\">CVR</information> 的精準預估。這帶來了嚴重的內部消耗：召回硬塞進來的多樣性內容，往往在精排階段被無情打低分；而精排真正偏好的高潛力內容，可能早就在召回階段被過濾掉了。各自追求局部最優，最終卻拼湊不出全局最優。 更折磨人的是多模組耦合帶來的「歸因問題」。當線上數據掉血、出現糟糕的推薦時，系統的問題排查宛如大海撈針：是召回通道失效？被粗排的某條硬規則誤殺？還是精排給了異常的低分？模組間互相掣肘，不僅迭代成本極高，還經常演變成不同演算法團隊間的推諉扯皮。 痛點二：通信與 IO 吞噬了寶貴算力 在多階段鏈路中，數據必須頻繁跨越多個獨立模組。每一次跨階段的呼叫，都伴隨著大量的 <information concept=\"concept.rpc\">RPC</information> 網路通信、海量的分散式特徵檢索以及記憶體搬運。 在極限的延遲限制下，系統其實花了大半的時間在「等」——等數據傳輸、等特徵拼裝。真正在做純數學 Tensor 運算的時間比例少得可憐。對於極度昂貴的硬體資源來說，這是一種極大的浪費。 痛點三（核心致命傷）：碎片化模組與 GPU 算力天性的不相容 為了解決效果瓶頸，業界這幾年也嘗試讓推薦系統追隨大模型的 <information concept=\"concept.scalinglaw\">Scaling Law</information>：拉長用戶行為序列、放大打分候選集。但結果卻是算力成本增加，效果成長有限，<information concept=\"concept.roi\">ROI</information> 不佳。其根本原因在於：傳統推薦架構與現代 AI 算力的底層天性不完全相容。 現代算力的核心推動力是 <information concept=\"concept.gpu\">GPU</information>，而 GPU 渴望的是「<information concept=\"concept.computebound\">算力密集</information>」的任務，生來就是為了高效執行「一致且海量的 <information concept=\"concept.gemm\">GEMM</information>」與「<information concept=\"concept.simt\">SIMT</information>」。反觀傳統推薦系統，充斥著各種異構小模型、複雜的規則過濾、樹狀結構與散亂的 <information concept=\"concept.embedding\">Embedding</information> 查找，這是一個典型的「<information concept=\"concept.memorybound\">記憶體頻寬受限</information>」任務。當你把這樣的系統丟給 GPU 時，算力被嚴重的記憶體碎片與邏輯分支所打斷，硬體根本無法跑滿，<information concept=\"concept.scalinglaw\">Scaling Law</information> 自然也就無從談起。 痛點四：淪為「技術孤島」，與現代 AI 基礎設施脫節 長久以來，為了應對超大規模的稀疏特徵，推薦領域造了無數特化的輪子——如獨創的分散式 <information concept=\"concept.parameterserver\">Parameter Server</information>。這導致當 LLM 與大模型社群的底層工程基建突飛猛進時，推薦系統卻因為架構太過特殊而淪為一座技術孤島，看著龐大的生態紅利卻吃不到。 破局之道：當推薦系統走向「端到端生成」 當級聯架構在目標一致性、IO 開銷與硬體利用率上都走到死胡同時，業界意識到：我們不能再繼續給舊系統打補丁了。解藥，其實藏在另一個領域——大語言模型（LLM）所採用的自迴歸生成（Autoregressive Generation）。 這正是近年來以快手 OneRec (OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment) 為代表的前沿研究所掀起的範式轉移：從多階段的漏斗過濾，走向端到端的自迴歸生成（Generative Recommendation）。 過去的推薦模型本質上是「判別式（Discriminative）」的思維，其核心任務是給定特定用戶與商品，去預估一個單點的互動機率 $P(\\text{action} \\mid u, i)$。對於模型而言，這就像是在做無數道「是非題」或「打分題」，它只能被動地對系統餵給它的候選商品進行評估，專注於局部的特徵匹配，卻缺乏對全局商品空間以及商品之間關聯性的宏觀理解。 而生成式推薦則將問題昇華，直接讓模型學習複雜的聯合機率分佈 $P(\\text{items} \\mid u, c)$。給定用戶歷史與上下文，模型直接像寫文章一樣，一步步「生成」出最適合的商品序列。這本質上比起判別式，對於模型而言更像是一道「開放式申論題」——模型不再受限於既定的候選集，而是必須真正掌握用戶興趣的演變脈絡與全局商品的分佈特徵，具備主動構建內容序列的全局視野與推理能力。 不僅如此，這種演算法的轉變，還精準地擊破了傳統架構的四大痛點： 解法一：統一目標，消除內耗與歸因難題 生成式架構用一個強大的端到端模型，直接根據用戶上下文吐出最終的推薦列表。沒有召回與排序的割裂，模型直接為最終的全局最優解負責。同時，因為不再有多階段的過濾規則，問題案例的歸因變得純粹——一切效果好壞，皆源於這個統一模型的權重與訓練數據，徹底消滅了偵錯黑盒。 解法二：消除系統 IO，讓計算回歸計算 傳統的跨網路傳輸、繁雜的特徵拼接與多階段檢索被徹底抹除。所有的資訊流轉、用戶興趣的捕捉與商品的匹配，全部在單一模型的一次<information concept=\"concept.forwardpass\">前向傳播</information>中，由隱藏層權重瞬間完成。系統的 IO 瓶頸被打破，時間預算終於能全數投資在真正的模型計算上。 解法三：硬體親和性與 Scaling Law 的真正釋放 為什麼生成式架構能享受 <information concept=\"concept.scalinglaw\">Scaling Law</information> 紅利？因為其底層骨幹網路如 <information concept=\"concept.transformer\">Transformer</information> 是高度同質化的結構，核心運算幾乎百分之百是大規模的 <information concept=\"concept.gemm\">GEMM</information>。 這完美契合了現代 GPU 的底層設計。當軟體架構終於對齊了硬體的物理天性，投入的每一分算力都能毫無耗損地轉化為模型參數規模的擴展。推薦系統終於能擺脫低 <information concept=\"concept.roi\">ROI</information> 的泥沼，享受「算力越大、能力越強」的暴力美學。 解法四：全面繼承 LLM 的工業級基礎設施 當推薦系統轉向標準的 Transformer 自迴歸架構後，最大的隱藏紅利在於：不再需要重複造輪子。 推薦系統可以直接「無縫接入」LLM 領域極度成熟的工程優化——無論是 <information concept=\"concept.flashattention\">FlashAttention</information>、<information concept=\"concept.kv_cache\">KV Cache</information>、<information concept=\"concept.vllm\">vLLM</information> 推理加速，還是 <information concept=\"concept.megatron\">Megatron</information> 的分散式訓練框架。這讓推薦系統的迭代速度與全球頂尖的 AI 工程社群正式接軌，全面繼承這波大模型基建的爆發紅利。 結語：算法、硬體與生態共振的未來 推薦系統從級聯漏斗走向自迴歸生成，絕非僅僅是追趕大模型的時髦。這本質上是一場「軟體架構向硬體物理極限妥協與對齊」，並且與 LLM 工業生態大一統的必然結果。 Key Takeaways 級聯架構的局限： 各階段優化目標不一致（局部最優 $\\neq$ 全局最優）、通信與 IO 搬運開銷巨大，導致傳統推薦系統在序列拉長與候選打分放大時陷入低 ROI 的 Scaling 陷阱。 生成式推薦的突破 (以 OneRec 為例)： 透過單一端到端模型取代多級漏斗，集中算力並恢復系統一致性；建模上從判別式 $P(\\text{action} \\mid u, i)$ 升級為生成式聯合機率分佈 $P(\\text{items} \\mid u, c)$，徹底打開 Scaling 空間。 參考文獻（References） 知乎：从原理到落地详细解读生成式推荐OneRec",
+    "content_markdown": "# 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰\n\n推薦系統就像是現代網路世界「看不見的手」。從電商首頁的商品展示，到無盡滑動的短影音資訊流，它決定了數十億人每天消費的內容。然而，當整個 AI 圈正因為大語言模型（LLM）的突破而天翻地覆時，支撐著這些龐大商業流量底層的推薦引擎，過去十幾年來卻沒有太多本質上的改變。\n\n長久以來，大廠們的底層心法始終是同一個經典框架——漏斗式級聯架構。這套架構在過去十年確實完美解決了「如何在毫秒級延遲下處理海量數據」的現實難題。但如今，這套不斷打補丁的舊系統，正無可避免地撞上一道物理與工程的高牆。系統越疊越厚，投入的算力與研發資源呈指數級飆升，但換來的業務 <information concept=\"concept.roi\">ROI</information> 增長卻越來越微不足道。\n\n曾經無往不利的架構，到底卡在了哪裡？面對增長停滯的焦慮，業界前沿團隊又是如何尋找下一代破局之道的？\n\n這篇文章將帶你拆解舊架構的技術債黑盒，並探討一場正在發生、將底層架構「推倒重來」的範式轉移——端到端自迴歸生成（Generative Recommendation）背後的技術全貌與工程挑戰。\n\n## 1. 傳統級聯架構的深層痛點：陷入低 ROI 陷阱\n\n級聯架構的核心工程哲學是「**用空間與階段換取時間**」。面對數百萬甚至數億級別的商品庫，我們不可能在短短 50 毫秒內，用最複雜的深度神經網路把每個商品都精算一遍。\n\n因此，業界標準做法是將鏈路切分為多個階段（召回 $\\to$ 粗排 $\\to$ 精排 $\\to$ 重排）。候選商品像過沙漏一樣被層層篩選，數量從百萬、千、百，一路縮減到最後呈現在用戶眼前的十幾個。隨著數量減少，模型特徵才敢越加越厚。這套「分而治之」的策略在早期吃盡了紅利，但當各個模組的優化都逼近天花板時，架構本身的結構性缺陷就徹底暴露了。\n\n### 痛點一：目標錯位與模型解釋性的喪失\n在長長的級聯鏈路上，各模組的優化目標天然存在不一致。召回階段拼命擴大覆蓋度與多樣性，深怕漏掉潛在興趣；精排階段卻極致追求 <information concept=\"concept.ctr\">CTR</information> 與 <information concept=\"concept.cvr\">CVR</information> 的精準預估。這帶來了嚴重的內部消耗：召回硬塞進來的多樣性內容，往往在精排階段被無情打低分；而精排真正偏好的高潛力內容，可能早就在召回階段被過濾掉了。**各自追求局部最優，最終卻拼湊不出全局最優。**\n\n更折磨人的是多模組耦合帶來的「歸因問題」。當線上數據掉血、出現糟糕的推薦時，系統的問題排查宛如大海撈針：是召回通道失效？被粗排的某條硬規則誤殺？還是精排給了異常的低分？模組間互相掣肘，不僅迭代成本極高，還經常演變成不同演算法團隊間的推諉扯皮。\n\n### 痛點二：通信與 IO 吞噬了寶貴算力\n在多階段鏈路中，數據必須頻繁跨越多個獨立模組。每一次跨階段的呼叫，都伴隨著大量的 <information concept=\"concept.rpc\">RPC</information> 網路通信、海量的分散式特徵檢索以及記憶體搬運。\n\n在極限的延遲限制下，系統其實花了大半的時間在「等」——等數據傳輸、等特徵拼裝。真正在做純數學 Tensor 運算的時間比例少得可憐。對於極度昂貴的硬體資源來說，這是一種極大的浪費。\n\n### 痛點三（核心致命傷）：碎片化模組與 GPU 算力天性的不相容\n為了解決效果瓶頸，業界這幾年也嘗試讓推薦系統追隨大模型的 <information concept=\"concept.scaling_law\">Scaling Law</information>：拉長用戶行為序列、放大打分候選集。但結果卻是算力成本增加，效果成長有限，<information concept=\"concept.roi\">ROI</information> 不佳。其根本原因在於：**傳統推薦架構與現代 AI 算力的底層天性不完全相容。**\n\n現代算力的核心推動力是 <information concept=\"concept.gpu\">GPU</information>，而 GPU 渴望的是「**<information concept=\"concept.compute_bound\">算力密集</information>**」的任務，生來就是為了高效執行「**一致且海量的 <information concept=\"concept.gemm\">GEMM</information>**」與「**<information concept=\"concept.simt\">SIMT</information>**」。反觀傳統推薦系統，充斥著各種異構小模型、複雜的規則過濾、樹狀結構與散亂的 <information concept=\"concept.embedding\">Embedding</information> 查找，這是一個典型的「**<information concept=\"concept.memory_bound\">記憶體頻寬受限</information>**」任務。當你把這樣的系統丟給 GPU 時，算力被嚴重的記憶體碎片與邏輯分支所打斷，硬體根本無法跑滿，<information concept=\"concept.scaling_law\">Scaling Law</information> 自然也就無從談起。\n\n### 痛點四：淪為「技術孤島」，與現代 AI 基礎設施脫節\n長久以來，為了應對超大規模的稀疏特徵，推薦領域造了無數特化的輪子——如獨創的分散式 <information concept=\"concept.parameter_server\">Parameter Server</information>。這導致當 LLM 與大模型社群的底層工程基建突飛猛進時，推薦系統卻因為架構太過特殊而淪為一座技術孤島，看著龐大的生態紅利卻吃不到。\n\n## 2. 破局之道：當推薦系統走向「端到端生成」\n\n當級聯架構在目標一致性、IO 開銷與硬體利用率上都走到死胡同時，業界意識到：我們不能再繼續給舊系統打補丁了。解藥，其實藏在另一個領域——大語言模型（LLM）所採用的**自迴歸生成（Autoregressive Generation）**。\n\n這正是近年來以快手 [**OneRec** (*OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment*)](https://arxiv.org/abs/2502.18965) 為代表的前沿研究所掀起的範式轉移：從多階段的漏斗過濾，走向端到端的自迴歸生成（Generative Recommendation）。\n\n過去的推薦模型本質上是「**判別式（Discriminative）**」的思維，其核心任務是給定特定用戶與商品，去**預估一個單點的互動機率 $P(\\text{action} \\mid u, i)$**。對於模型而言，這就像是在做無數道「是非題」或「打分題」，它只能被動地對系統餵給它的候選商品進行評估，專注於局部的特徵匹配，卻缺乏對全局商品空間以及商品之間關聯性的宏觀理解。\n\n而生成式推薦則將問題昇華，直接讓模型學習複雜的**聯合機率分佈 $P(\\text{items} \\mid u, c)$**。給定用戶歷史與上下文，模型直接像寫文章一樣，一步步「生成」出最適合的商品序列。這本質上比起判別式，對於模型而言更像是一道「開放式申論題」——模型不再受限於既定的候選集，而是必須真正掌握用戶興趣的演變脈絡與全局商品的分佈特徵，具備主動構建內容序列的全局視野與推理能力。\n\n不僅如此，這種演算法的轉變，還精準地擊破了傳統架構的四大痛點：\n\n### 解法一：統一目標，消除內耗與歸因難題\n生成式架構用一個強大的端到端模型，直接根據用戶上下文吐出最終的推薦列表。沒有召回與排序的割裂，模型直接為最終的全局最優解負責。同時，因為不再有多階段的過濾規則，問題案例的歸因變得純粹——一切效果好壞，皆源於這個統一模型的權重與訓練數據，徹底消滅了偵錯黑盒。\n\n### 解法二：消除系統 IO，讓計算回歸計算\n傳統的跨網路傳輸、繁雜的特徵拼接與多階段檢索被徹底抹除。所有的資訊流轉、用戶興趣的捕捉與商品的匹配，全部在單一模型的一次<information concept=\"concept.forward_pass\">前向傳播</information>中，由隱藏層權重瞬間完成。系統的 IO 瓶頸被打破，時間預算終於能全數投資在真正的模型計算上。\n\n### 解法三：硬體親和性與 Scaling Law 的真正釋放\n為什麼生成式架構能享受 <information concept=\"concept.scaling_law\">Scaling Law</information> 紅利？因為其底層骨幹網路如 <information concept=\"concept.transformer\">Transformer</information> 是高度同質化的結構，核心運算幾乎百分之百是大規模的 <information concept=\"concept.gemm\">GEMM</information>。\n\n這完美契合了現代 GPU 的底層設計。當軟體架構終於對齊了硬體的物理天性，投入的每一分算力都能毫無耗損地轉化為模型參數規模的擴展。推薦系統終於能擺脫低 <information concept=\"concept.roi\">ROI</information> 的泥沼，享受「算力越大、能力越強」的暴力美學。\n\n### 解法四：全面繼承 LLM 的工業級基礎設施\n當推薦系統轉向標準的 Transformer 自迴歸架構後，最大的隱藏紅利在於：**不再需要重複造輪子**。\n\n推薦系統可以直接「無縫接入」LLM 領域極度成熟的工程優化——無論是 <information concept=\"concept.flash_attention\">FlashAttention</information>、<information concept=\"concept.kv_cache\">KV Cache</information>、<information concept=\"concept.vllm\">vLLM</information> 推理加速，還是 <information concept=\"concept.megatron\">Megatron</information> 的分散式訓練框架。這讓推薦系統的迭代速度與全球頂尖的 AI 工程社群正式接軌，全面繼承這波大模型基建的爆發紅利。\n\n## 3. 結語：算法、硬體與生態共振的未來\n\n推薦系統從級聯漏斗走向自迴歸生成，絕非僅僅是追趕大模型的時髦。這本質上是一場「軟體架構向硬體物理極限妥協與對齊」，並且與 LLM 工業生態大一統的必然結果。\n\n## Key Takeaways\n\n- **級聯架構的局限：** 各階段優化目標不一致（局部最優 $\\neq$ 全局最優）、通信與 IO 搬運開銷巨大，導致傳統推薦系統在序列拉長與候選打分放大時陷入低 ROI 的 Scaling 陷阱。\n- **生成式推薦的突破 (以 OneRec 為例)：** 透過單一端到端模型取代多級漏斗，集中算力並恢復系統一致性；建模上從判別式 $P(\\text{action} \\mid u, i)$ 升級為生成式聯合機率分佈 $P(\\text{items} \\mid u, c)$，徹底打開 Scaling 空間。\n\n## 參考文獻（References）\n\n1. [知乎：从原理到落地详细解读生成式推荐OneRec](https://zhuanlan.zhihu.com/p/2011387251351908741)",
+    "preview_markdown": "# 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰\n\n推薦系統就像是現代網路世界「看不見的手」。從電商首頁的商品展示，到無盡滑動的短影音資訊流，它決定了數十億人每天消費的內容。然而，當整個 AI 圈正因為大語言模型（LLM）的突破而天翻地覆時，支撐著這些龐大商業流量底層的推薦引擎，過去十幾年來卻沒有太多本質上的改變。\n\n長久以來，大廠們的底層心法始終是同一個經典框架——漏斗式級聯架構。這套架構在過去十年確實完美解決了「如何在毫秒級延遲下處理海量數據」的現實難題。但如今，這套不斷打補丁的舊系統，正無可避免地撞上一道物理與工程的高牆。系統越疊越厚，投入的算力與研發資源呈指數級飆升，但換來的業務 <information concept=\"concept.roi\">ROI</information> 增長卻越來越微不足道。\n\n曾經無往不利的架構，到底卡在了哪裡？面對增長停滯的焦慮，業界前沿團隊又是如何尋找下一代破局之道的？\n\n這篇文章將帶你拆解舊架構的技術債黑盒，並探討一場正在發生、將底層架構「推倒重來」的範式轉移——端到端自迴歸生成（Generative Recommendation）背後的技術全貌與工程挑戰。",
+    "reading_time_minutes": 10,
     "published_at": "2026-08-02",
-    "last_modified_at": "2026-08-02",
+    "last_modified_at": "2026-08-10",
     "cover": "",
     "lang": "zh-Hant",
     "canonical_id": "writing:from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
@@ -1000,32 +965,32 @@
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.560706
-      },
-      {
-        "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.480411
+        "score": 0.524046
       },
       {
         "url": "../notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
         "path": "notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
-        "score": 0.459894
+        "score": 0.42227
+      },
+      {
+        "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
+        "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
+        "score": 0.400664
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.312907
+        "score": 0.325176
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.138286
+        "score": 0.14494
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.12816
+        "score": 0.13363
       }
     ]
   },
@@ -1094,12 +1059,12 @@
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.129427
+        "score": 0.129354
       },
       {
         "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.112559
+        "score": 0.119592
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
@@ -1257,12 +1222,12 @@
       {
         "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.071954
+        "score": 0.07645
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.071414
+        "score": 0.071373
       }
     ]
   },
@@ -1343,12 +1308,12 @@
       {
         "url": "../writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "writing/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.138286
+        "score": 0.14494
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.092899
+        "score": 0.092878
       }
     ]
   },
@@ -1538,12 +1503,12 @@
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.118866
+        "score": 0.118839
       },
       {
         "url": "../notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
         "path": "notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.html",
-        "score": 0.108644
+        "score": 0.107451
       },
       {
         "url": "../writing/hidden-value-of-multiple-choice-questions-goldilocks-principle/hidden-value-of-multiple-choice-questions-goldilocks-principle-zh-tw.html",
