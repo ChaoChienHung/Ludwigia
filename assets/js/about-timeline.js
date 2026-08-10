@@ -88,7 +88,7 @@
       periodPresentLabel: '至今',
       presentClusterTitle: '目前進行中',
       presentClusterListLabel: '目前進行中的階段',
-      durationLabel: '期間',
+      durationLabel: '持續時間',
       referencesLabel: '延伸連結',
       categories: {
         education: '學歷',
@@ -130,7 +130,7 @@
       periodPresentLabel: '至今',
       presentClusterTitle: '当前进行中',
       presentClusterListLabel: '当前进行中的阶段',
-      durationLabel: '期间',
+      durationLabel: '持续时间',
       referencesLabel: '延伸链接',
       categories: {
         education: '学历',
