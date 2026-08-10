@@ -501,20 +501,22 @@
 </ol>
 </section>
 
-<section id="generative-retrieval-onerec" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">邁向下一代範式：生成式檢索與全鏈路一體化（Generative Retrieval &amp; OneRec）</h3>
+<section id="generative-retrieval" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">邁向下一代範式：生成式檢索與全鏈路一體化（Generative Retrieval）</h3>
 
-<p class="mb-3">正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「雙塔向量空間與級聯漏斗」限制的新方法。</p>
+<p class="mb-3">正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「級聯漏斗」限制的新方法。</p>
 
-<p class="mb-3">為了打破 IO 開銷枷鎖、統一優化目標並直接對齊大語言模型範式，最新的前沿趨勢（如快手的 <strong>OneRec</strong> 等研究）正朝向<strong>「端到端架構（End-to-End Architectures）」</strong> 與 <strong>「生成式檢索（Generative Retrieval, GR）」</strong> 演進：</p>
+<p class="mb-3">為了打破 IO 開銷枷鎖、統一優化目標並直接對齊大語言模型範式，最新的前沿趨勢正朝向<strong>「端到端架構（End-to-End Architectures）」</strong> 與 <strong>「生成式檢索（Generative Retrieval, GR）」</strong> 演進：</p>
 
 <ul class="note-list">
-<li><strong>對齊 LLM 範式以解鎖 Scaling Law 紅利</strong>：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統不再需要為各個細部模組單獨雕琢特化模型，而是能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <strong>Scaling Law</strong> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。</li>
+<li><strong>對齊 LLM 範式以解鎖 Scaling Law 紅利</strong>：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統不再需要為各個細部模組單獨雕琢特化模型，而是能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-Hant">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。</li>
 <li><strong>極致壓縮通信開銷</strong>：將召回與排序的邊界模糊化甚至合併，將省下來的網路與 IO 時間成本，全力投入到<strong>擴大模型規模與複雜度</strong>上，以更好地捕捉使用者極其微細且動態的興趣變化。</li>
 <li><strong>模型即索引（Model-as-Index）</strong>：透過 <strong>Semantic ID</strong>（如 RQ-Kmeans / RQ-VAE 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。</li>
 </ul>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">想進一步了解生成式推薦如何顛覆傳統級聯架構並解鎖 Scaling Law 紅利？可接續閱讀延伸專文：從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰。</p></div>
+<div class="note-callout mb-3"><p class="mb-2"><strong>延伸專文：從「漏斗級聯」走向「自迴歸生成」的範式轉移</strong></p><p class="mb-2">雖然級聯架構成功解答了毫秒級處理海量候選集的歷史難題，但其多階段切割產生的巨額 IO 開銷、目標錯位（局部最優 $\neq$ 全局最優），以及碎片化模組與 GPU「算力密集（Compute-bound）」天性的背離，已成為傳統推薦系統進一步 Scaling 的核心障礙。</p>
+
+<p class="mb-0">若想深入了解業界如何透過「端到端自迴歸生成式推薦（如快手 OneRec）」從源頭消滅這四大痛點、實現軟體架構與硬體物理天性的對齊（Hardware Sympathy），並全面接軌 FlashAttention、vLLM 等頂尖 LLM 工業級基建，請接續閱讀深度分析專文： 👉 從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰。</p></div>
 </section>
 
 <section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
