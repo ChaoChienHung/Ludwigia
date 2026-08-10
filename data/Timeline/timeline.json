@@ -407,7 +407,7 @@
       "id": "phase-aiunion",
       "type": "period",
       "category": "internship",
-      "scale": "macro",
+      "scale": "meso",
       "start": "2024-02",
       "end": "2024-03",
       "label": {
@@ -421,16 +421,46 @@
         "zh-Hans": "AiUnion：C++ 与 AI 工程师"
       },
       "summary": {
-        "en": "Completed an internship as a C++ and AI Engineer at AiUnion from February 2024 to March 2024, implementing a real-time face detection system with YOLOv8 and OpenCV in C++.",
-        "zh-Hant": "2024 年 2 月至 2024 年 3 月於 AiUnion 擔任 C++ 與 AI Engineer 實習生，使用 YOLOv8 與 OpenCV 在 C++ 中實作即時人臉偵測系統。",
-        "zh-Hans": "2024 年 2 月至 2024 年 3 月于 AiUnion 担任 C++ 与 AI Engineer 实习生，使用 YOLOv8 与 OpenCV 在 C++ 中实现实时人脸检测系统。"
+        "en": "Served as a C++ and AI Engineer Intern at AiUnion in Feb-Mar 2024, building a high-performance YOLOv8/OpenCV face detection system and gaining valuable workplace reflections.",
+        "zh-Hant": "2024 年 2 月至 3 月於 AiUnion 擔任 C++ 與 AI 工程師實習生，實作高效 C++ YOLOv8 人臉偵測系統，並獲得寶貴職場溝通與心態學習。",
+        "zh-Hans": "2024 年 2 月至 3 月于 AiUnion 担任 C++ 与 AI 工程师实习生，实现高效 C++ YOLOv8 人脸检测系统，并获得宝贵职场沟通与心态学习。"
       },
       "detail": {
-        "en": "This period captures the AiUnion internship, focused on human face recognition through a real-time face detection system built with YOLOv8, OpenCV, and C++ while balancing accuracy and performance.",
-        "zh-Hant": "這段對應 AiUnion 的實習經歷，核心是以 YOLOv8、OpenCV 與 C++ 建立即時人臉偵測系統，在準確率與效能間做最佳化。",
-        "zh-Hans": "这段对应 AiUnion 的实习经历，核心是以 YOLOv8、OpenCV 与 C++ 构建实时人脸检测系统，在准确率与性能间做优化。"
+        "en": "This period captures the AiUnion internship, encompassing both technical achievements in C++/YOLOv8 real-time computer vision and mature reflections on startup dynamics and mentorship.",
+        "zh-Hant": "這段對應 AiUnion 的實習經歷，涵蓋以 C++ / YOLOv8 / OpenCV 打造高效電腦視覺系統的技術突破，以及對新創節奏與導師說明的成熟體悟。",
+        "zh-Hans": "这段对应 AiUnion 的实习经历，涵盖以 C++ / YOLOv8 / OpenCV 打造高效计算机视觉系统的技术突破，以及对初创节奏与导师说明的成熟体悟。"
       },
-      "references": []
+      "references": [],
+      "start_title": {
+        "en": "AiUnion: C++ & AI Engineer — Departure",
+        "zh-Hant": "AiUnion：C++ 與 AI 工程師 —— 啟程",
+        "zh-Hans": "AiUnion：C++ 与 AI 工程师 —— 启程"
+      },
+      "start_summary": {
+        "en": "Joined AiUnion in Feb 2024 as my first industry internship, building a real-time face detection system with C++, YOLOv8, and OpenCV that achieved 6-7x inference speed over Python.",
+        "zh-Hant": "2024 年 2 月加入 AiUnion 展開人生首份實習，以 C++ 結合 YOLOv8 與 OpenCV 完成即時人臉偵測系統，推論速度達 Python 版本 6 至 7 倍。",
+        "zh-Hans": "2024 年 2 月加入 AiUnion 展开人生首份实习，以 C++ 结合 YOLOv8 与 OpenCV 完成实时人脸检测系统，推理速度达 Python 版本 6 至 7 倍。"
+      },
+      "start_detail": {
+        "en": "In February 2024, I joined AiUnion for my first-ever internship and industry role.\n\nRealistically, having industry internship experience was a vital asset when applying for graduate schools. My initial goal was pragmatic: gain practical experience to enrich my background. Lacking prior job application experience, everything from resume writing, interviewing, onboarding, to workplace communication served as a valuable learning experience. Thankfully, everyone at the company—from HR to senior colleagues—was exceptionally patient.\n\nI served as a C++ & AI Engineer, responsible for building a real-time face detection system combining C++, YOLOv8, and OpenCV. We chose C++ because the Python version of YOLOv8 was too slow for real-time inference. When we successfully deployed the C++ implementation, system performance improved dramatically—achieving 6x to 7x the inference speed of Python. This result validated the performance advantages of compiled languages over interpreted ones.\n\nThis success meant a lot to me. It was my first time applying AI to build a tangible industry product, deepening my understanding of computer vision and strengthening my resolve to pursue the AI field.",
+        "zh-Hant": "2024 年 2 月，我加入了 AiUnion，這是我人生中的第一份實習，也是我踏入業界的第一份工作。\n\n老實說，當時的時空背景下，我意識到無論是申請國內或國外的研究所，擁有業界的實習經驗都是極為關鍵的加分項。因此，最初的我抱持著一個很務實的目標：盡快進入一間公司學習，為自己的履歷增添亮點。由於缺乏求職經驗，從撰寫履歷、投遞、面試、入職，到真正開始與同事交流應對，這一切對我而言都是一場震撼教育，也是無比寶貴的學習歷程。幸運的是，公司裡的人都非常友善，無論是 HR 還是前輩同事，都對我這個職場菜鳥充滿了耐心。\n\n我入職的崗位是 C++ 與 AI 工程師，主要負責接手並開發一套「以 C++ 結合 YOLOv8 與 OpenCV 的即時人臉偵測系統」。在技術選型上之所以採用 C++，是因為 Python 版本的 YOLOv8 雖然實作相對簡單，但在即時推論的速度上實在過於緩慢。當我們成功以 C++ 完成系統實作時，系統效能迎來了顯著的突破——推論速度達到了 Python 版本的 6 到 7 倍。這個結果完全符合預期，也完美印證了編譯式語言與直譯式語言在底層效能上的巨大差異。\n\n這次的成功經驗對我意義非凡。這是我第一次在業界，真正意義上運用 AI 技術創造出一個具備實質內容與貢獻的產品。這不僅讓我對電腦視覺與 AI 的底層邏輯有了更透徹的理解，也帶給我極大的成就感，更加堅定了我未來渴望持續深耕 AI 領域的決心。",
+        "zh-Hans": "2024 年 2 月，我加入了 AiUnion，这是我人生中的第一份实习，也是我踏入業界的第一份工作。\n\n老实说，当时的时空背景下，我意识到无论是申请国内或国外的研究所，拥有業界的实习经验都是极为关键的加分项。因此，最初的我抱持着一个很务实的目标：尽快进入一家公司学习，为自己的履历增添亮点。由于缺乏求职经验，从撰写履历、投递、面试、入职，到真正开始与同事交流应对，这一切对我而言都是一场震撼教育，也是无比宝贵的学习历程。幸运的是，公司里的人都非常友善，无论是 HR 还是前辈同事，都对我这个职场菜鸟充满了耐心。\n\n我入职的岗位是 C++ 与 AI 工程师，主要负责接手并开发一套“以 C++ 结合 YOLOv8 与 OpenCV 的实时人脸检测系统”。在技术选型上之所以采用 C++，是因为 Python 版本的 YOLOv8 虽然实现相对简单，但在实时推理的速度上实在过于缓慢。当我们成功以 C++ 完成系统实现时，系统性能迎来了显著的突破——推理速度达到了 Python 版本的 6 到 7 倍。这个结果完全符合预期，也完美印证了编译型语言与解释型语言在底层性能上的巨大差异。\n\n这次的成功经验对我意义非凡。这是我第一次在業界，真正意义上运用 AI 技术创造出一个具备实质内容与贡献的产品。这不仅让我对计算机视觉与 AI 的底层逻辑有了更透彻的理解，也带给我极大的成就感，更加坚定了我未来渴望持续深耕 AI 领域的决心。"
+      },
+      "end_title": {
+        "en": "AiUnion: C++ & AI Engineer — Pivot & Farewell",
+        "zh-Hant": "AiUnion：C++ 與 AI 工程師 —— 轉折與告別",
+        "zh-Hans": "AiUnion：C++ 与 AI 工程师 —— 转折与告别"
+      },
+      "end_summary": {
+        "en": "Parted ways amicably after recognizing alignment differences in a fast-paced startup, deeply grateful to mentor Cong-Wen for patient guidance.",
+        "zh-Hant": "坦誠溝通離職，理解新創節奏與務實溝通，並深切感恩帶領我的琮文學長在職場初始給予無私耐心的指導。",
+        "zh-Hans": "坦诚沟通离职，理解初创节奏与务实沟通，并深切感恩带领我的琮文学长在职场初始给予无私耐心的指导。"
+      },
+      "end_detail": {
+        "en": "However, subsequent developments did not go entirely as expected.\n\nIn a fast-paced startup environment, companies urgently require immediate value delivery. Understandably, the company had limited bandwidth to mentor early-stage exploration. Our expectations diverged: the company needed me to handle lower-learning but immediate-value tasks, whereas I sought deeper technical growth. Recognizing this misalignment, I communicated openly and arranged my resignation amicably.\n\nThough brief, this internship proved immensely rewarding. I am particularly grateful to my mentor, Cong-Wen. From day one, he guided me with unfailing patience, helping me navigate unfamiliar tasks. I deeply appreciate how rare it is for a senior engineer to invest time mentoring newcomers in a fast-paced environment. Meeting such a selfless mentor early in my career remains the highlight of this chapter.",
+        "zh-Hant": "然而，後續的發展並沒有完全如預期般順利。\n\n身處於節奏緊湊的新創公司，企業往往急需能立刻產出價值的即戰力。客觀來說，公司確實沒有太多的時間與成本能讓我慢慢摸索與成長，這點我完全能夠理解。因此，我們在後續的職涯規劃上出現了分歧。公司期望我能接手一些學習價值較低，但相對簡單且能立刻帶來產值與貢獻的任務；然而，這與我當初進入公司渴望深化技術與學習的初衷有所落差。在意識到雙方期待不符後，我很快地與公司坦誠溝通並商量辭職。我很慶幸公司的主管們都能理解我的想法，過程十分和平，沒有受到任何刁難。\n\n這段實習的時間雖然短暫，卻依然讓我收穫滿載。其中，我最想感謝的是帶領我的琮文學長。從我剛進公司的第一天起，他就始終保持著無比的溫柔與耐心，一步步指導我，甚至幫我處理了許多我還不上手的瑣碎事務。我心裡很清楚，在節奏飛快的職場中，願意從自己的業務中抽空、耐著性子教導後輩，是一件多麼吃力不討好的事，哪怕這是上級交辦的任務亦然。因此，能在初入職場時，遇到一位如此認真、無私且極具耐心的前輩，是我這段短暫旅程中最幸運、也最感激的事。",
+        "zh-Hans": "然而，后续的发展并没有完全如预期般顺利。\n\n身处于节奏紧凑的初创公司，企业往往急需能立刻产出价值的即战力。客观来说，公司确实没有太多的时间与成本能让我慢慢摸索与成长，这点我完全能够理解。因此，我们在后续的职能规划上出现了分歧。公司期望我能接手一些学习价值较低，但相对简单且能立刻带来产值与贡献的任务；然而，这与我当初进入公司渴望深化技术与学习的初衷有所落差。在意识到双方期待不符后，我很快地与公司坦诚沟通并商量辞职。我很庆幸主管们都能理解我的想法，过程十分和平，没有受到任何刁难。\n\n这段实习的时间虽然短暂，却依然让我收获满载。其中，我最想感谢的是带领我的琮文学长。从我刚进公司的第一天起，他就始终保持着无比的温柔与耐心，一步步指导我，甚至帮我处理了许多我还不上手的琐碎事务。我心里很清楚，在节奏飞快的职场中，愿意从自己的业务中抽空、耐着性子教导后辈，是一件多么吃力不讨好的事，哪怕这是上级交办的任务亦然。因此，能在初入职场时，遇到一位如此认真、无私且极具耐心的前辈，是我这段短暂旅程中最幸运、也最感激的事。"
+      }
     },
     {
       "id": "phase-united-link",
