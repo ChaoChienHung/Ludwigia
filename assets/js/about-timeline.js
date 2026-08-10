@@ -52,6 +52,7 @@
         education: 'Education',
         internship: 'Internship',
         work: 'Work',
+        military: 'Military',
       },
       loadingDetail: 'Loading timeline...',
       loadFailedDetail: 'Unable to load timeline right now.',
@@ -94,6 +95,7 @@
         education: '學歷',
         internship: '實習',
         work: '工作',
+        military: '服役',
       },
       loadingDetail: '正在載入 timeline...',
       loadFailedDetail: '目前無法載入 timeline 資料。',
@@ -136,6 +138,7 @@
         education: '学历',
         internship: '实习',
         work: '工作',
+        military: '服役',
       },
       loadingDetail: '正在载入 timeline...',
       loadFailedDetail: '目前无法载入 timeline 资料。',
@@ -276,7 +279,7 @@
           : rawEvent.magnitude === 'minor'
             ? 'micro'
             : '';
-    const category = rawEvent.category === 'education' || rawEvent.category === 'internship' || rawEvent.category === 'work'
+    const category = rawEvent.category === 'education' || rawEvent.category === 'internship' || rawEvent.category === 'work' || rawEvent.category === 'military'
       ? rawEvent.category
       : '';
 

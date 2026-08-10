@@ -355,6 +355,74 @@
       }
     },
     {
+      "id": "phase-military-chenggongling-101",
+      "type": "period",
+      "category": "military",
+      "scale": "macro",
+      "start": "2025-02-24",
+      "end": "2025-04-25",
+      "label": {
+        "en": "2025-02-24 - 2025-04-25",
+        "zh-Hant": "2025-02-24 - 2025-04-25",
+        "zh-Hans": "2025-02-24 - 2025-04-25"
+      },
+      "title": {
+        "en": "ROC Army: Chenggongling 101st Brigade (219th Batch)",
+        "zh-Hant": "中華民國陸軍：成功嶺 101 旅（陸軍第 219 梯次）",
+        "zh-Hans": "中华民国陆军：成功岭 101 旅（陆军第 219 梯次）"
+      },
+      "summary": {
+        "en": "Completed basic military training as a 219th batch Army recruit at the 101st Infantry Brigade in Chenggongling from Feb 24 to Apr 25, 2025.",
+        "zh-Hant": "2025 年 2 月 24 日至 4 月 25 日入伍服役，於成功嶺陸軍步兵第 101 旅完成第 219 梯次常備兵役軍事訓練新兵入伍訓。",
+        "zh-Hans": "2025 年 2 月 24 日至 4 月 25 日入伍服役，于成功岭陆军步兵第 101 旅完成第 219 梯次常备兵役军事训练新兵入伍训。"
+      },
+      "detail": {
+        "en": "This period documents basic military training in the 219th batch of the ROC Army at Chenggongling 101st Infantry Brigade from February 24 to April 25, 2025, completing disciplined physical, tactical, and group training.",
+        "zh-Hant": "這段歷程記錄了 2025 年 2 月 24 日至 4 月 25 日在台中成功嶺陸軍步兵第 101 旅的服役生活，作為陸軍第 219 梯次常備兵役新兵，完成了嚴謹的基礎軍事訓練、體能淬鍊與團體紀律生活。",
+        "zh-Hans": "这段历程记录了 2025 年 2 月 24 日至 4 月 25 日在台中成功岭陆军步兵第 101 旅的服役生活，作为陆军第 219 梯次常备兵役新兵，完成了严谨的基础军事训练、体能淬炼与团体纪律生活。"
+      },
+      "references": [
+        {
+          "title": "青年日報 - 陸軍步兵101旅常備兵役軍事訓練報導",
+          "url": "https://www.ydn.com.tw/tw/News/ugC_News_Detail.aspx?ID=575461"
+        }
+      ]
+    },
+    {
+      "id": "phase-military-artillery-21st-b3c1",
+      "type": "period",
+      "category": "military",
+      "scale": "macro",
+      "start": "2025-04-26",
+      "end": "2025-06-10",
+      "label": {
+        "en": "2025-04-26 - 2025-06-10",
+        "zh-Hant": "2025-04-26 - 2025-06-10",
+        "zh-Hans": "2025-04-26 - 2025-06-10"
+      },
+      "title": {
+        "en": "ROC Army: 21st Artillery Command, 3rd Battalion, 1st Battery",
+        "zh-Hant": "中華民國陸軍：砲兵第 21 指揮部砲 3 營砲 1 連",
+        "zh-Hans": "中华民国陆军：炮兵第 21 指挥部炮 3 营炮 1 连"
+      },
+      "summary": {
+        "en": "Served in the 1st Battery, 3rd Battalion, 21st Artillery Command from Apr 26 to Jun 10, 2025, mentored by Section Chief Staff Sergeant Wu Wei-Ming and Staff Sergeant Lee Mei-Chi.",
+        "zh-Hant": "2025 年 4 月 26 日至 6 月 10 日分發至陸軍砲兵第 21 指揮部，於砲長吳維銘上士帶領及李美奇上士照顧下完成下部隊與專長訓練。",
+        "zh-Hans": "2025 年 4 月 26 日至 6 月 10 日分发至陆军炮兵第 21 指挥部，于炮长吴维铭上士带领及李美奇上士照顾下完成下部队与专长训练。"
+      },
+      "detail": {
+        "en": "From April 26 to June 10, 2025, I served in the 1st Battery, 3rd Battalion, 21st Artillery Command during field unit deployment. Under Section Chief Staff Sergeant Wu Wei-Ming leadership, I gained specialized field training and formed lasting bonds with comrades. Special thanks go to Staff Sergeant Lee Mei-Chi, who cared for and guided us throughout unit life, making this period deeply meaningful.",
+        "zh-Hant": "2025 年 4 月 26 日至 6 月 10 日，我分發至陸軍砲兵第 21 指揮部砲 3 營砲 1 連展開下部隊階段。這期間主要由砲長吳維銘上士嚴謹負責管轄，同時也結識了許多熱情可靠的同儕戰友。特別感謝主要非常照顧我們的李美奇上士，在部隊生活中給予我們溫暖的協助與指導，讓這段基層砲兵部隊的歲月充滿珍貴的情誼與充實的回億。",
+        "zh-Hans": "2025 年 4 月 26 日至 6 月 10 日，我分发至陆军炮兵第 21 指挥部炮 3 营炮 1 连展开下部队阶段。这期间主要由炮长吴维铭上士严谨负责管辖，同时也结识了许多热情可靠的同侪战友。特别感谢主要非常照顾我们的李美奇上士，在部队生活中给予我们温暖的协助与指导，让这段基层炮兵部队的岁月充满珍贵的情谊与充实的回忆。"
+      },
+      "references": [
+        {
+          "title": "青年日報 - 陸軍砲兵第21指揮部相關報導",
+          "url": "https://www.ydn.com.tw/tw/News/ugC_News_Detail.aspx?ID=632938"
+        }
+      ]
+    },
+    {
       "id": "phase-nus-ai",
       "type": "period",
       "category": "education",
