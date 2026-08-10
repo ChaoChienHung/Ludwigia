@@ -232,25 +232,7 @@
     }).join('');
 
     // Active showcase view html
-    let showcaseHtml = '';
-    if (currentItem) {
-      const titleStr = getLocalizedText(currentItem.title, lang);
-      const issuerStr = getLocalizedText(currentItem.issuer, lang);
-      const summaryStr = getLocalizedText(currentItem.summary, lang);
-      const detailStr = getLocalizedText(currentItem.detail, lang);
-      const fullDesc = summaryStr ? (detailStr ? `${summaryStr} ${detailStr}` : summaryStr) : detailStr;
-
-      const typeObj = (state.data.types || []).find((t) => t.id === currentItem.type);
-      const catObj = (state.data.categories || []).find((c) => c.id === currentItem.category);
-      const typeLabel = typeObj ? getLocalizedText(typeObj.label, lang) : currentItem.type;
-      const catLabel = catObj ? getLocalizedText(catObj.label, lang) : currentItem.category;
-      const imgSrc = currentItem.image || 'assets/images/cover.jpg';
-      const docSrc = currentItem.document || currentItem.pdf || currentItem.image || 'assets/images/cover.jpg';
-      const docExt = docSrc.split('.').pop() || 'png';
-
-      const mediaHtml = `<img src="${imgSrc}" alt="${titleStr}" class="img-fluid w-100 object-fit-cover rounded-3">`;
-
-      showcaseHtml = getShowcaseHtml(currentItem, lang, txt);
+    const showcaseHtml = getShowcaseHtml(currentItem, lang, txt);
 
     container.innerHTML = `
       <div class="credentials-section-wrapper">
