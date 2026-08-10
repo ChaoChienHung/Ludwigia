@@ -10,7 +10,25 @@
 
   const page = String(document.body.getAttribute('data-i18n-page') || '').trim();
 
-  const bundles = {
+  let siteTranslations = null;
+
+  function getRelativeDataUrl() {
+    const scripts = document.querySelectorAll('script[src*="i18n"]');
+    for (const script of scripts) {
+      const src = script.getAttribute('src');
+      if (src && src.includes('core/i18n')) {
+        const rootPath = src.substring(0, src.indexOf('core/i18n'));
+        return rootPath + 'data/i18n/translations.json';
+      }
+    }
+    const path = window.location.pathname;
+    if (path.includes('/pages/') || path.includes('/notes/') || path.includes('/writing/') || path.includes('/canvas/') || path.includes('/garden/')) {
+      return '../data/i18n/translations.json';
+    }
+    return 'data/i18n/translations.json';
+  }
+
+  let bundles = {
     common: {
       title: {},
       entries: [
