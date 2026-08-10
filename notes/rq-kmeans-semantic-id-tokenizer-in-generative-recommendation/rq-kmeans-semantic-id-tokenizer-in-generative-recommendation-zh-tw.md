@@ -14,7 +14,7 @@ LastModified: 2026-08-02
 
 # 從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer
 
-在延伸專文 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然</content-link> 中，我們探討了推薦系統為何全面轉向生成式範式以解鎖 Scaling Law 紅利。然而，當推薦系統轉向自迴歸生成時，首要面臨的核心落地瓶頸便是：**如何將平台上海量的商品，轉換為生成模型能夠理解與預測的離散 Token（Semantic ID）？**
+在延伸專文 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</content-link> 中，我們探討了推薦系統為何全面轉向生成式範式以解鎖 Scaling Law 紅利。然而，當推薦系統轉向自迴歸生成時，首要面臨的核心落地瓶頸便是：**如何將平台上海量的商品，轉換為生成模型能夠理解與預測的離散 Token（Semantic ID）？**
 
 在深度學習領域，解答這個問題的最早代表性工作是端到端的 <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link>（如 Google 的 TIGER 模型）。然而在工業界落地時，考慮到訓練穩定性、算力開銷以及對既有 Embedding 資產的複用，許多團隊（如快手的 OneRec / OneSearch）選擇了一條更為輕量且解耦的幾何路線。
 

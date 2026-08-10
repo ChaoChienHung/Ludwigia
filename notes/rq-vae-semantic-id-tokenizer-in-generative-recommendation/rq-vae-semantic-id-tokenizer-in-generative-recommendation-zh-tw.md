@@ -14,7 +14,7 @@ LastModified: 2026-08-02
 
 # 端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer
 
-在 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然</content-link> 中，我們探討了推薦系統為何全面邁向生成式範式。而在將推薦對齊為自迴歸生成的過程中，最關鍵的核心落地瓶頸在於：**如何將高維商品特徵端到端地量化為階層式的離散 Token（Semantic ID）？**
+在 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</content-link> 中，我們探討了推薦系統為何全面邁向生成式範式。而在將推薦對齊為自迴歸生成的過程中，最關鍵的核心落地瓶頸在於：**如何將高維商品特徵端到端地量化為階層式的離散 Token（Semantic ID）？**
 
 作為生成式檢索（Generative Retrieval, GR）領域的開山技術，**RQ-VAE（Residual Quantized VAE）** 提供了端到端學習離散碼本與商品編碼的解答。本文將直奔這個落地瓶頸，深入解析 RQ-VAE 的階層量化機制、Straight-Through Estimator (STE) 梯度傳播、碼本崩塌處置與 TIGER 落地實踐。
 
