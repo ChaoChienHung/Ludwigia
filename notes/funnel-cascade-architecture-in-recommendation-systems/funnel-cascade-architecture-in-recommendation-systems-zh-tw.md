@@ -233,14 +233,7 @@ content:
 * **極致壓縮通信開銷**：將召回與排序的邊界模糊化甚至合併，將省下來的網路與 IO 時間成本，全力投入到**擴大模型規模與複雜度**上，以更好地捕捉使用者極其微細且動態的興趣變化。
 * **模型即索引（Model-as-Index）**：透過 **Semantic ID**（如 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-Kmeans</content-link> / <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link> 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列，讓 Transformer 模型直接從全局記憶中「自回歸生成」出最終的推薦結果，徹底消除級聯架構帶來的資訊遺失與目標斷層。
 
-<block>
-title: 延伸專文：從「漏斗級聯」走向「自迴歸生成」的範式轉移
-content:
-雖然級聯架構成功解答了毫秒級處理海量候選集的歷史難題，但其多階段切割產生的巨額 IO 開銷、目標錯位（局部最優 $\neq$ 全局最優），以及碎片化模組與 GPU「算力密集（Compute-bound）」天性的背離，已成為傳統推薦系統進一步 Scaling 的核心障礙。
-
-若想深入了解業界如何透過「端到端自迴歸生成式推薦（如快手 OneRec）」從源頭消滅這四大痛點、實現軟體架構與硬體物理天性的對齊（Hardware Sympathy），並全面接軌 FlashAttention、vLLM 等頂尖 LLM 工業級基建，請接續閱讀深度分析專文：
-👉 <content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift-zh-tw">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</content-link>。
-</block>
+關於這場「從多級漏斗過濾走向端到端自迴歸生成」的範式轉移，以及業界（如快手 OneRec）如何解決軟硬體對齊與大模型基建繼承等關鍵議題，可接續閱讀深度專文：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift-zh-tw">從級聯漏斗到自迴歸生成：推薦系統範式轉移的必然與挑戰</content-link>。
 
 ## 總結與核心要點
 
