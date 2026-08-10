@@ -14,8 +14,8 @@
 
   const uiText = {
     en: {
-      kicker: 'Credentials & Honors',
-      title: 'Credentials & Honors',
+      kicker: 'Achievements',
+      title: 'Achievements',
       intro: 'Certificates, official transcripts, honor awards, admission offers, and competition achievements. Filter by type or domain to explore.',
       typeLabel: 'Type',
       categoryLabel: 'Domain',
@@ -32,8 +32,8 @@
       modalClose: 'Close',
     },
     'zh-Hant': {
-      kicker: '學業資歷與榮譽',
-      title: '學業資歷與榮譽',
+      kicker: '成就',
+      title: '成就',
       intro: '包含學術證書、歷年成績單、榮譽獎項、頂尖名校錄取通知與競賽參賽證明。可依據「種類」或「領域」進行篩選與檢視。',
       typeLabel: '種類',
       categoryLabel: '領域',
@@ -50,8 +50,8 @@
       modalClose: '關閉',
     },
     'zh-Hans': {
-      kicker: '学业资历与荣誉',
-      title: '学业资历与荣誉',
+      kicker: '成就',
+      title: '成就',
       intro: '包含学术证书、历年成绩单、荣誉奖项、顶尖名校录取通知与竞赛参赛证明。可依据“种类”或“领域”进行筛选与检视。',
       typeLabel: '种类',
       categoryLabel: '领域',
