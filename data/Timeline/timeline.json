@@ -358,7 +358,7 @@
       "id": "phase-military-chenggongling-101",
       "type": "period",
       "category": "military",
-      "scale": "macro",
+      "scale": "meso",
       "start": "2025-02-24",
       "end": "2025-04-25",
       "label": {
@@ -367,19 +367,19 @@
         "zh-Hans": "2025-02-24 - 2025-04-25"
       },
       "title": {
-        "en": "ROC Army: Chenggongling 101st Brigade (219th Batch)",
-        "zh-Hant": "中華民國陸軍：成功嶺 101 旅（陸軍第 219 梯次）",
-        "zh-Hans": "中华民国陆军：成功岭 101 旅（陆军第 219 梯次）"
+        "en": "ROC Army: Chenggongling 101st Brigade, 3rd Battalion, 2nd Company",
+        "zh-Hant": "中華民國陸軍：成功嶺 101 旅步 3 營步 2 連",
+        "zh-Hans": "中华民国陆军：成功岭 101 旅步 3 营步 2 连"
       },
       "summary": {
-        "en": "Completed basic military training as a 219th batch Army recruit at the 101st Infantry Brigade in Chenggongling from Feb 24 to Apr 25, 2025.",
-        "zh-Hant": "2025 年 2 月 24 日至 4 月 25 日入伍服役，於成功嶺陸軍步兵第 101 旅完成第 219 梯次常備兵役軍事訓練新兵入伍訓。",
-        "zh-Hans": "2025 年 2 月 24 日至 4 月 25 日入伍服役，于成功岭陆军步兵第 101 旅完成第 219 梯次常备兵役军事训练新兵入伍训。"
+        "en": "Served in the 2nd Company, 3rd Battalion, 101st Infantry Brigade at Chenggongling from Feb 24 to Apr 25, 2025, completing 219th batch basic military training.",
+        "zh-Hant": "2025 年 2 月 24 日至 4 月 25 日於成功嶺陸軍步兵第 101 旅步 3 營步 2 連服役，完成陸軍第 219 梯次新兵入伍訓練。",
+        "zh-Hans": "2025 年 2 月 24 日至 4 月 25 日于成功岭陆军步兵第 101 旅步 3 营步 2 连服役，完成陆军第 219 梯次新兵入伍训练。"
       },
       "detail": {
-        "en": "This period documents basic military training in the 219th batch of the ROC Army at Chenggongling 101st Infantry Brigade from February 24 to April 25, 2025, completing disciplined physical, tactical, and group training.",
-        "zh-Hant": "這段歷程記錄了 2025 年 2 月 24 日至 4 月 25 日在台中成功嶺陸軍步兵第 101 旅的服役生活，作為陸軍第 219 梯次常備兵役新兵，完成了嚴謹的基礎軍事訓練、體能淬鍊與團體紀律生活。",
-        "zh-Hans": "这段历程记录了 2025 年 2 月 24 日至 4 月 25 日在台中成功岭陆军步兵第 101 旅的服役生活，作为陆军第 219 梯次常备兵役新兵，完成了严谨的基础军事训练、体能淬炼与团体纪律生活。"
+        "en": "This period documents basic military training as a 219th batch recruit in the 2nd Company, 3rd Battalion, 101st Infantry Brigade at Chenggongling from February 24 to April 25, 2025, completing physical, tactical, and group discipline training.",
+        "zh-Hant": "這段歷程記錄了 2025 年 2 月 24 日至 4 月 25 日在台中成功嶺陸軍步兵第 101 旅步 3 營步 2 連的入伍服役生活。作為陸軍第 219 梯次常備兵役新兵，在這裡完成了嚴謹的基礎軍事訓練、單兵戰技、體能淬鍊與團體紀律生活。",
+        "zh-Hans": "这段历程记录了 2025 年 2 月 24 日至 4 月 25 日在台中成功岭陆军步兵第 101 旅步 3 营步 2 连的入伍服役生活。作为陆军第 219 梯次常备兵役新兵，在这里完成了严谨的基础军事训练、单兵战术、体能淬炼与团体纪律生活。"
       },
       "references": [
         {
@@ -392,7 +392,7 @@
       "id": "phase-military-artillery-21st-b3c1",
       "type": "period",
       "category": "military",
-      "scale": "macro",
+      "scale": "meso",
       "start": "2025-04-26",
       "end": "2025-06-10",
       "label": {
