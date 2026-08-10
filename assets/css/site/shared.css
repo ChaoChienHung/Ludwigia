@@ -6602,6 +6602,39 @@ body.site-fab-open .site-fab-panel {
   transition: all 0.2s ease;
 }
 
+.credential-filter-select {
+  background-color: var(--bg-alt, #1a1a1a);
+  color: var(--text, #f5f5f5);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.18));
+  border-radius: 12px;
+  padding: 6px 36px 6px 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.light-theme .credential-filter-select {
+  background-color: #ffffff;
+  color: var(--text, #222222);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.credential-filter-select:focus,
+.credential-filter-select:hover {
+  border-color: var(--site-accent, var(--accent, #ff6b00));
+}
+
+.credential-filter-select option {
+  background-color: var(--bg-alt, #1a1a1a);
+  color: var(--text, #f5f5f5);
+}
+
+.light-theme .credential-filter-select option {
+  background-color: #ffffff;
+  color: var(--text, #222222);
+}
+
 .skill-category-pill i,
 .credential-chip i {
   color: var(--site-accent, var(--accent, #ff6b00));

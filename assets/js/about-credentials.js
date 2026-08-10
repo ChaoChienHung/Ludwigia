@@ -188,32 +188,18 @@
     const currentItem = filteredItems.find((it) => it.id === state.activeItemId) || null;
     const currentIndex = filteredItems.findIndex((it) => it.id === state.activeItemId);
 
-    // Type Chips
-    const typeChipsHtml = (state.data.types || []).map((t) => {
-      const isActive = state.activeType === t.id;
+    // Type Select Options
+    const typeOptionsHtml = (state.data.types || []).map((t) => {
+      const isSelected = state.activeType === t.id;
       const labelStr = getLocalizedText(t.label, lang);
-      return `
-        <button type="button" 
-                class="credential-chip ${isActive ? 'active' : ''}" 
-                data-cred-type="${t.id}"
-                aria-pressed="${isActive}">
-          ${labelStr}
-        </button>
-      `;
+      return `<option value="${t.id}" ${isSelected ? 'selected' : ''}>${labelStr}</option>`;
     }).join('');
 
-    // Category Chips
-    const catChipsHtml = (state.data.categories || []).map((c) => {
-      const isActive = state.activeCategory === c.id;
+    // Category Select Options
+    const catOptionsHtml = (state.data.categories || []).map((c) => {
+      const isSelected = state.activeCategory === c.id;
       const labelStr = getLocalizedText(c.label, lang);
-      return `
-        <button type="button" 
-                class="credential-chip ${isActive ? 'active' : ''}" 
-                data-cred-cat="${c.id}"
-                aria-pressed="${isActive}">
-          ${labelStr}
-        </button>
-      `;
+      return `<option value="${c.id}" ${isSelected ? 'selected' : ''}>${labelStr}</option>`;
     }).join('');
 
     // Thumbnail strip html
@@ -245,16 +231,26 @@
         <div class="credentials-card p-4 rounded-4 shadow-sm">
           <!-- Filters -->
           <div class="credentials-filters mb-4 pb-3 border-bottom">
-            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-2">
-              <span class="credential-filter-label fw-bold text-nowrap small text-uppercase"><i class="fa-solid fa-filter me-1"></i>${txt.typeLabel}:</span>
-              <div class="d-flex flex-wrap gap-2">
-                ${typeChipsHtml}
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-md-6">
+                <div class="d-flex align-items-center gap-2">
+                  <label for="credTypeSelect" class="credential-filter-label fw-bold text-nowrap small text-uppercase mb-0">
+                    <i class="fa-solid fa-filter me-1"></i>${txt.typeLabel}:
+                  </label>
+                  <select id="credTypeSelect" class="form-select credential-filter-select shadow-none" data-cred-type-select aria-label="${txt.typeLabel}">
+                    ${typeOptionsHtml}
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-              <span class="credential-filter-label fw-bold text-nowrap small text-uppercase"><i class="fa-solid fa-tags me-1"></i>${txt.categoryLabel}:</span>
-              <div class="d-flex flex-wrap gap-2">
-                ${catChipsHtml}
+              <div class="col-12 col-md-6">
+                <div class="d-flex align-items-center gap-2">
+                  <label for="credCatSelect" class="credential-filter-label fw-bold text-nowrap small text-uppercase mb-0">
+                    <i class="fa-solid fa-tags me-1"></i>${txt.categoryLabel}:
+                  </label>
+                  <select id="credCatSelect" class="form-select credential-filter-select shadow-none" data-cred-cat-select aria-label="${txt.categoryLabel}">
+                    ${catOptionsHtml}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -402,31 +398,29 @@
   }
 
   function bindEvents(container, currentItem, filteredItems) {
-    // Type Filter Click
-    container.querySelectorAll('[data-cred-type]').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const type = e.currentTarget.getAttribute('data-cred-type');
+    // Type Filter Select
+    const typeSelect = container.querySelector('[data-cred-type-select]');
+    if (typeSelect) {
+      typeSelect.addEventListener('change', (e) => {
+        const type = e.target.value;
         if (type && type !== state.activeType) {
           state.activeType = type;
           render(container);
         }
       });
-    });
+    }
 
-    // Category Filter Click
-    container.querySelectorAll('[data-cred-cat]').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const cat = e.currentTarget.getAttribute('data-cred-cat');
+    // Category Filter Select
+    const catSelect = container.querySelector('[data-cred-cat-select]');
+    if (catSelect) {
+      catSelect.addEventListener('change', (e) => {
+        const cat = e.target.value;
         if (cat && cat !== state.activeCategory) {
           state.activeCategory = cat;
           render(container);
         }
       });
-    });
+    }
 
     // Thumbnail Click
     container.querySelectorAll('[data-cred-item-id]').forEach((btn) => {
