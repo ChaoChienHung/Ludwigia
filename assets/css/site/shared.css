@@ -6600,10 +6600,21 @@ body.site-fab-open .site-fab-panel {
   transition: all 0.2s ease;
 }
 
+.skill-category-pill i,
+.credential-chip i {
+  color: var(--site-accent, var(--accent, #ff6b00));
+  transition: color 0.2s ease;
+}
+
 .skill-category-pill:hover,
 .credential-chip:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--site-accent, var(--accent, #ff6b00));
+}
+
+.skill-category-pill:hover i,
+.credential-chip:hover i {
+  color: var(--site-accent, var(--accent, #ff6b00));
 }
 
 .skill-category-pill.active,
@@ -6613,6 +6624,11 @@ body.site-fab-open .site-fab-panel {
   color: #ffffff;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.skill-category-pill.active i,
+.credential-chip.active i {
+  color: #ffffff;
 }
 
 .skill-bar-outer {
