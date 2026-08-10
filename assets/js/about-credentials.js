@@ -263,7 +263,6 @@
                 <button class="btn credential-filter-btn dropdown-toggle d-flex align-items-center gap-2 shadow-none" 
                         type="button" 
                         id="credTypeDropdown" 
-                        data-bs-toggle="dropdown" 
                         aria-expanded="false">
                   <span class="text-secondary small text-uppercase fw-semibold"><i class="fa-solid fa-filter me-1"></i>${txt.typeLabel}:</span>
                   <span class="credential-filter-val fw-bold">${activeTypeLabel}</span>
@@ -278,7 +277,6 @@
                 <button class="btn credential-filter-btn dropdown-toggle d-flex align-items-center gap-2 shadow-none" 
                         type="button" 
                         id="credCatDropdown" 
-                        data-bs-toggle="dropdown" 
                         aria-expanded="false">
                   <span class="text-secondary small text-uppercase fw-semibold"><i class="fa-solid fa-tags me-1"></i>${txt.categoryLabel}:</span>
                   <span class="credential-filter-val fw-bold">${activeCatLabel}</span>
