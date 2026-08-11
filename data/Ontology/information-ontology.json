@@ -752,6 +752,24 @@
         "PS 架構",
         "PS 架构"
       ]
+    },
+    {
+      "concept_id": "concept.mask_ml",
+      "labels": {
+        "en": "Mask (Machine Learning)",
+        "zh-Hant": "遮罩 (Machine Learning)",
+        "zh-Hans": "掩码 (Machine Learning)"
+      },
+      "contexts": {
+        "en": "In machine learning and deep learning, a Mask is a tensor or matrix masking mechanism used in attention mechanisms (Attention Mask), autoregressive decoding, or constrained decoding. It forces logit positions of invalid or illegal choices to extremely negative values (such as -inf) so the model ignores invalid tokens, hides future context, or filters out invalid generation paths.",
+        "zh-Hant": "在機器學習與深度學習中，遮罩（Mask）是一種張量或矩陣遮蔽機制。它在自迴歸解碼、注意力機制（Attention Mask）或約束搜尋（Constrained Decoding）中被用來強制將不合法或無效項目的 Logits 設定為極小值（如 -inf），從而忽略無效 Token、遮蔽未來資訊或過濾不合法的生成路徑。",
+        "zh-Hans": "在机器学习与深度学习中，掩码（Mask）是一种张量或矩阵遮蔽机制。它在自回归解码、注意力机制（Attention Mask）或约束搜索（Constrained Decoding）中被用来强制将不合法或无效项目的 Logits 设置为极小值（如 -inf），从而忽略无效 Token、遮蔽未来信息或过滤不合法的生成路径。"
+      },
+      "aliases": [
+        "mask",
+        "遮罩",
+        "掩码"
+      ]
     }
   ]
 }
