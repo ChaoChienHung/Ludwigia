@@ -13,6 +13,7 @@
   <meta name="garden:canonical_id" content="semantic-id-in-generative-recommendation">
   <meta name="garden:published_at" content="2026-08-11">
   <meta name="garden:last_modified_at" content="2026-08-11">
+  <meta name="garden:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
   <meta name="garden:reading_time_minutes" content="15">
   <meta name="garden:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
   <script>
@@ -212,6 +213,8 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./semantic-id-in-generative-recommendation.png" alt="Semantic ID 與 Traditional ID 對比示意圖，展示無意義的獨立流水號 (Traditional ID) 與包含階層語意結構 (Semantic ID) 的差異。" loading="lazy"><figcaption class="note-image-caption">Traditional ID 與 Semantic ID 的編碼理念對比示意圖。</figcaption></figure>
+
 <p class="mb-3">在 <a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">從級聯漏斗到自迴歸生成：推薦系統的範式重塑<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。</span></span></span></a> 中，我們探討了推薦系統全面邁向生成式範式的必然趨勢。理論上，自迴歸生成（Autoregressive Generation）確實帶來了更強大的序列學習與表達能力；然而，理論上的優雅並不等同於落地時的順遂。在實際工程推進時，我們必然會遭遇一個核心的底層挑戰：<strong>如何將生成式架構套用到海量的商品上？</strong>畢竟，自然語言的詞彙空間（Vocabulary）是有限且相對封閉的，但推薦系統中的商品庫卻是無限擴展且高度動態的。這種本質上的差異，導致模型無法直接沿用理解自然語言的方式來理解與生成商品。如果無法讓大模型具備「理解並生成商品」的能力，再強大的自迴歸網路架構也無法發揮作用。</p>
 
 <p class="mb-3">因此，本文將深度拆解生成式推薦系統中最核心的抽象介面——<strong>Semantic ID（語意識別碼）</strong>。我們將探討傳統商品 ID 體系為何會導致大模型運算癱瘓，Semantic ID 如何透過語意量化解決這個難題，以及在真實工業場景落地時，系統必須直面的解碼延遲與集內排序痛點。</p>
@@ -230,14 +233,14 @@
 <li class="mb-2">
   <strong><strong>Softmax 算力與記憶體爆炸：</strong></strong><br>
   
-<p class="mb-2">自迴歸模型在預測下一個 Token 時，需要在網路的最後一層對所有潛在的商品 ID 進行 Softmax 運算。當詞表大小（Vocab Size）達到 $10^7$ 的數量級時，這個極度龐大的矩陣乘法將會消耗驚人的 GPU 記憶體與算力頻寬。這不僅會導致運算過程出現嚴重的數值不穩定，模型也根本無法在要求 50 毫秒響應的線上環境中完成推論。</p>
+<p class="mb-2">自迴歸模型在預測下一個 Token 時，需要在網路的最後一層對所有潛在的商品 ID 進行 Softmax 運算。當詞表大小（Vocab Size）達到 $10^7$ 的數量級時，這個極度龐大的<span class="note-information" tabindex="0" data-information-concept="concept.gemm" data-information-lang="zh-tw">矩陣乘法<span class="note-information-tooltip" aria-hidden="true"></span></span>將會消耗驚人的 <span class="note-information" tabindex="0" data-information-concept="concept.gpu" data-information-lang="zh-tw">GPU<span class="note-information-tooltip" aria-hidden="true"></span></span> 記憶體與算力頻寬。這不僅會導致運算過程出現嚴重的數值不穩定，模型也根本無法在要求 50 毫秒響應的線上環境中完成推論。</p>
   
 </li>
 <li>
   <strong><strong>商品頻繁上下架與冷啟動絕壁：</strong></strong><br>
   
 <p class="mb-2">語言模型的詞表相對靜態，模型訓練收斂後就能持續泛化使用。但推薦系統的商品庫每天都在劇烈變動，若要為了新上架的商品頻繁地重新訓練模型或更新 Output Layer，在實務上極度耗時且不切實際。</p>
-<p class="mb-2">更致命的是，<strong>傳統的 Atomic ID 本質上僅是用來在 Embedding Table 中尋找對應向量的查表鍵（Lookup Key），其本身不具備任何物理與語意意義。</strong> 例如 Item <code>10023</code> 與 Item <code>10024</code> 在系統中只是兩個獨立的流水號，無法反映出它們可能是同款不同色的 3C 產品。因此，當新商品上架時，由於缺乏歷史互動數據，且這把「新鑰匙」與其他既有 ID 之間毫無特徵關聯，模型完全沒有任何線索去預測這個新商品，導致嚴重的冷啟動失敗。</p>
+<p class="mb-2">更致命的是，<strong>傳統的 Atomic ID 本質上僅是用來在 <span class="note-information" tabindex="0" data-information-concept="concept.embedding" data-information-lang="zh-tw">Embedding<span class="note-information-tooltip" aria-hidden="true"></span></span> Table 中尋找對應向量的查表鍵（Lookup Key），其本身不具備任何物理與語意意義。</strong> 例如 Item <code>10023</code> 與 Item <code>10024</code> 在系統中只是兩個獨立的流水號，無法反映出它們可能是同款不同色的 3C 產品。因此，當新商品上架時，由於缺乏歷史互動數據，且這把「新鑰匙」與其他既有 ID 之間毫無特徵關聯，模型完全沒有任何線索去預測這個新商品，導致嚴重的冷啟動失敗。</p>
   
 </li>
 </ol>
@@ -326,7 +329,7 @@
 <li>
   <strong><strong>兩階段幾何量化路線 (RQ-Kmeans)：</strong></strong><br>
   
-<p class="mb-2">以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 K-means 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer 中有更完整的紀錄。</p>
+<p class="mb-2">以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <span class="note-information" tabindex="0" data-information-concept="concept.k_means" data-information-lang="zh-tw">K-means<span class="note-information-tooltip" aria-hidden="true"></span></span> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer 中有更完整的紀錄。</p>
   
 </li>
 </ol>
@@ -341,7 +344,7 @@
 
 <p class="mb-3">大模型是基於機率分佈進行自迴歸生成的。這意味著模型在推論時極有可能發生「幻覺」，並組合出一串在真實商品庫中根本不存在的 Semantic ID（例如模型合理地推導出一個「蘋果牌微波爐」的 Token 序列，但現實中沒有這個實體商品）。</p>
 
-<p class="mb-3">因此，為防止系統推薦出空集合，推論階段必須引入 <strong>約束解碼 (Constrained Decoding)</strong>。實務上通常會預先構建一棵龐大的 Trie Tree（字典樹）來儲存所有合法的商品 Token 序列。在模型生成每一步 Token 時，動態比對字典樹並利用 <span class="note-information" tabindex="0" data-information-concept="concept.mask_ml" data-information-lang="zh-tw">遮罩（Mask）<span class="note-information-tooltip" aria-hidden="true"></span></span> 過濾掉不合法的選項，強制限制模型只能在「真實存在的商品路徑」中進行搜尋與生成。</p>
+<p class="mb-3">因此，為防止系統推薦出空集合，推論階段必須引入 <strong>約束解碼 (Constrained Decoding)</strong>。實務上通常會預先構建一棵龐大的 Trie Tree（字典樹）來儲存所有合法的商品 Token 序列。在模型生成每一步 Token 時，動態比對字典樹並利用 <span class="note-information" tabindex="0" data-information-concept="concept.mask" data-information-lang="zh-tw">遮罩（Mask）<span class="note-information-tooltip" aria-hidden="true"></span></span> 過濾掉不合法的選項，強制限制模型只能在「真實存在的商品路徑」中進行搜尋與生成。</p>
 
 <h4 id="section-2" class="mb-2">痛點二：自迴歸解碼延遲</h4>
 
@@ -351,7 +354,7 @@
 
 <h4 id="id-collision" class="mb-2">痛點三：ID 碰撞 (Collision) 與集內排序難題</h4>
 
-<p class="mb-3">為控制上述的解碼延遲，實務上常將 Semantic ID 限制在 3 層以內。但將高維的連續向量強制進行離散語意量化，必然會帶來一定程度的資訊遺失。這會導致一個直接的後果：多個極度相似的商品（如同款不同色的服飾、規格極近的配件）可能被映射到<strong>完全相同的 Semantic ID</strong>，這就是所謂的「ID 碰撞」。</p>
+<p class="mb-3">為控制上述的解碼延遲，實務上常將 Semantic ID 限制在 3 層以內。但將高維的連續向量強制進行離散語意量化，必然會帶來一定程度的資訊遺失。這會導致一個直接的後果：多個極度相似的商品（如同款不同色的服飾、規格極近的配件）被映射到<strong>完全相同的 Semantic ID</strong>，這就是所謂的「ID 碰撞」。</p>
 
 <p class="mb-3">此時，當模型預測出這組 Semantic ID 時，實際上是召回了一個「候選商品集合」。真正的難題在於：模型很難單靠這組 SID 的生成機率，去決定集合內部幾十個同質商品的優先展現順序。</p>
 

@@ -754,16 +754,16 @@
       ]
     },
     {
-      "concept_id": "concept.mask_ml",
+      "concept_id": "concept.mask",
       "labels": {
-        "en": "Mask (Machine Learning)",
-        "zh-Hant": "遮罩 (Machine Learning)",
-        "zh-Hans": "掩码 (Machine Learning)"
+        "en": "Mask",
+        "zh-Hant": "遮罩",
+        "zh-Hans": "掩码"
       },
       "contexts": {
-        "en": "In machine learning and deep learning, a Mask is a tensor or matrix masking mechanism used in attention mechanisms (Attention Mask), autoregressive decoding, or constrained decoding. It forces logit positions of invalid or illegal choices to extremely negative values (such as -inf) so the model ignores invalid tokens, hides future context, or filters out invalid generation paths.",
-        "zh-Hant": "在機器學習與深度學習中，遮罩（Mask）是一種張量或矩陣遮蔽機制。它在自迴歸解碼、注意力機制（Attention Mask）或約束搜尋（Constrained Decoding）中被用來強制將不合法或無效項目的 Logits 設定為極小值（如 -inf），從而忽略無效 Token、遮蔽未來資訊或過濾不合法的生成路徑。",
-        "zh-Hans": "在机器学习与深度学习中，掩码（Mask）是一种张量或矩阵遮蔽机制。它在自回归解码、注意力机制（Attention Mask）或约束搜索（Constrained Decoding）中被用来强制将不合法或无效项目的 Logits 设置为极小值（如 -inf），从而忽略无效 Token、遮蔽未来信息或过滤不合法的生成路径。"
+        "en": "A Mask has different meanings and applications across domains:\n- **Machine Learning & Deep Learning**: A mask is a tensor or matrix operation used in attention mechanisms (Attention Mask), autoregressive generation, or constrained decoding. It sets logits of invalid positions to negative infinity (-inf) so the model ignores invalid tokens or blocks future sequence context.\n- **Computer Vision & Graphics**: A mask is a binary or alpha map used to select, isolate, or blend specific pixel regions of an image.",
+        "zh-Hant": "遮罩（Mask）在不同領域有著不同的作用與含意：\n- **機器學習與深度學習**：遮罩是一種張量或矩陣遮蔽機制。它常用於注意力機制（Attention Mask）、自迴歸生成或約束解碼（Constrained Decoding），透過將無效或不合法選項的 Logits 設為極小值（如 -inf），強制模型忽略無效 Token、遮蔽未來序列或過濾非法的生成路徑。\n- **圖像處理與計算機圖形學**：遮罩是一張二值或透明度矩陣，用於指定圖像中哪些區域需要保留、修改、合成或套用濾鏡。",
+        "zh-Hans": "掩码/遮罩（Mask）在不同领域有着不同的作用与含义：\n- **机器学习与深度学习**：掩码是一种张量或矩阵遮蔽机制。它常用于注意力机制（Attention Mask）、自回归生成或约束解码（Constrained Decoding），通过将无效或不合法选项的 Logits 设置为极大极小值（如 -inf），强制模型忽略无效 Token、遮蔽未来序列或过滤非法的生成路径。\n- **图像处理与计算机图形学**：掩码是一张二值或透明度矩阵，用于指定图像中哪些区域需要保留、修改、合成或应用滤镜。"
       },
       "aliases": [
         "mask",
