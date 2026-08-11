@@ -5,7 +5,7 @@ Slug: from-cascade-to-generative-recommendation-paradigm-shift-zh-tw
 Output: notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html
 CanonicalId: from-cascade-to-generative-recommendation-paradigm-shift
 Style: default
-Cover: ./from-cascade-to-generative-recommendation-paradigm-shift.jpg
+Cover: ./from-cascade-to-generative-recommendation-paradigm-shift.png
 EstimatedReadingTime: true
 Lang: zh-tw
 Tags: recommendation systems, scaling law, deep learning
@@ -17,7 +17,7 @@ LastModified: 2026-08-10
 # 從級聯漏斗到自迴歸生成：推薦系統的範式重塑
 
 <image>
-src: ./from-cascade-to-generative-recommendation-paradigm-shift.jpg
+src: ./from-cascade-to-generative-recommendation-paradigm-shift.png
 alt: 生成式推薦系統 (Generative Recommender System) 新範式架構示意圖，展示用戶輸入、生成式模型核心與多維度生成式輸出。
 caption: 生成式推薦系統（Generative Recommender System）的新範式架構示意圖。
 </image>
