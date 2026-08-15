@@ -105,6 +105,12 @@ content:
 
 ### 乘積量化 Product Quantization (PQ)——分而治之
 
+<image>
+src: ./product-quantization.png
+alt: 乘積量化 (Product Quantization, PQ) 流程示意圖，展示高維向量切分子空間、獨立量化與組合表示
+caption: 乘積量化 (Product Quantization, PQ) 運算機制與組合表示流程示意圖
+</image>
+
 為了突破單一 Token 的限制，轉而以「多個 Token 組合」來表達商品，乘積量化（Product Quantization, PQ）提出了一個「分而治之」的巧妙思路：
 
 1. **切分子空間：** 將高維向量（如 256 維）切分成 $M$ 段獨立的子空間（如 4 段，每段 64 維）。
