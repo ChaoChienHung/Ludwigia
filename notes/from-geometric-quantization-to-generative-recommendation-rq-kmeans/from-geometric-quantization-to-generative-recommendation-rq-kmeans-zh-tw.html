@@ -451,29 +451,36 @@
 <p class="mb-3">量化器訓練完成後，便可作為離線 Tokenizer 使用（此階段為純推論編碼，不更新碼本）：</p>
 
 <ol class="mb-3">
-<li><strong>編碼全站物品：</strong> 遍歷商品庫，將每個物品的連續向量輸入 RQ-Kmeans（可搭配 Beam Search 降低重構失真），轉換為長度為 $M$ 的 SID 序列。例如：</li>
-</ol>
-
-<p class="mb-3">$$\text{Item}_A \longrightarrow [12, 255, 7, 98]$$</p>
-
-<ol class="mb-3">
-<li><strong>建構總詞彙表：</strong> 若每層碼本大小為 $K$（如 $K=8192$），則整套系統的總詞表容量僅需 $M \times K$，即可精準表徵全站數億級別的商品集合。</li>
+<li class="mb-2">
+  <strong><strong>編碼全站物品：</strong> 遍歷商品庫，將每個物品的連續向量輸入 RQ-Kmeans（可搭配 Beam Search 降低重構失真），轉換為長度為 $M$ 的 SID 序列。例如：</strong><br>
+  
+<p class="mb-2">$$\text{Item}_A \longrightarrow [12, 255, 7, 98]$$</p>
+  
+</li>
+<li>
+  <strong><strong>建構總詞彙表：</strong> 若每層碼本大小為 $K$（如 $K=8192$），則整套系統的總詞表容量僅需 $M \times K$，即可精準表徵全站數億級別的商品集合。</strong><br>
+  
+  
+</li>
 </ol>
 
 <h4 id="generative-model-training" class="mb-2">階段三：自迴歸推薦模型訓練 (Generative Model Training)</h4>
 
 <ol class="mb-3">
-<li><strong>序列轉換與展平：</strong> 根據物品與 SID 的映射關係，將用戶的歷史行為序列逐一轉為 Token 並展平：</li>
-</ol>
-
-<ul class="note-list">
+<li class="mb-2">
+  <strong><strong>序列轉換與展平：</strong> 根據物品與 SID 的映射關係，將用戶的歷史行為序列逐一轉為 Token 並展平：</strong><br>
+  
+  <ul class="mb-0 mt-2">
 <li>原始行為序列：$[\text{Item}_A, \text{Item}_B]$</li>
 <li>轉為 SID 序列：$[[12, 255, 7, 98], [56, 101, 23, 42]]$</li>
 <li>展平輸入模型：$[12, 255, 7, 98, 56, 101, 23, 42, \dots]$</li>
 </ul>
-
-<ol class="mb-3">
-<li><strong>Next-Token Prediction 訓練：</strong> 將展平後的 Token 序列送入 Transformer 骨幹網路（如 SASRec 或自迴歸大模型），以標準的交叉熵損失進行自迴歸訓練，讓模型學會根據過去的行為軌跡，逐層預測下一個目標商品的階層式 Token。</li>
+</li>
+<li>
+  <strong><strong>Next-Token Prediction 訓練：</strong> 將展平後的 Token 序列送入 Transformer 骨幹網路（如 SASRec 或自迴歸大模型），以標準的交叉熵損失進行自迴歸訓練，讓模型學會根據過去的行為軌跡，逐層預測下一個目標商品的階層式 Token。</strong><br>
+  
+  
+</li>
 </ol>
 </section>
 
