@@ -1,5 +1,5 @@
 <meta>
-Title: 從幾何量化到生成式推薦：演進之路與 RQ-Kmeans 的 Semantic ID 實踐
+Title: 從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer
 Summary: 本文從連續空間的離散化出發，探討推薦系統如何從 K-means、乘積量化 (PQ) 一路演進至 RQ-Kmeans，藉此解決海量物品詞彙庫爆炸問題，並深入解析殘差量化的底層幾何原理、進階正則化與落地工作流。
 Slug: from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw
 Output: notes/from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw.html
