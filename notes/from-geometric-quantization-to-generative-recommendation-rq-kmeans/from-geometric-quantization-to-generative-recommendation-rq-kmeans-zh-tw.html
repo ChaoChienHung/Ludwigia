@@ -223,34 +223,34 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">在<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>一文中，我們探討了 Semantic ID (SID) 的概念——透過多步解碼將單一商品轉化為長度為 $M$ 的「階層式語意 Token 序列」，從而避開單步預測海量商品導致的詞表爆炸難題。</p>
+<p class="mb-3">在<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>一文中，我們探討了 Semantic ID (SID) 的核心概念——我們需要將海量商品轉換為大模型能理解的長度為 $M$ 的「階層式語意 Token 序列」，從而避開單步預測導致的詞表爆炸難題。</p>
 
-<p class="mb-3">然而，這中間存在一個核心的離散化挑戰：商品在傳統推薦系統中，通常是以連續、高維度的浮點數向量（Embeddings）形式存在，而自迴歸大模型則擅長處理離散 Token 序列。<strong>我們該如何將連續的高維向量空間，精準且高效地轉換為離散且具備由粗到細語意階層的 SID 序列？</strong></p>
+<p class="mb-3">然而，商品在傳統推薦系統中，通常是以連續、高維度的浮點數向量（Embeddings）形式存在，而自迴歸大模型則擅長處理離散的 Token 序列。這帶來一個關鍵問題：<strong>我們該如何將連續的高維向量空間，精準且高效地轉換為離散且具備由粗到細語意階層的 SID 序列？</strong></p>
 
-<p class="mb-3">本文將介紹目前業界主流、CP 值最高且最穩健的離散化方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>。它能精準地把高維商品向量壓縮成 3~4 個具備由粗到細語意階層的 SID (Semantic ID) Token，完美扮演了生成式推薦中「翻譯官」的角色。</p>
+<p class="mb-3">因此，本文將與讀者一同走過這段從傳統量化到生成式推薦的演進之路，從 K-means 到乘積量化 (PQ)，最終深入探討目前業界主流、CP 值最高且最穩健的終極方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>。它能精準地把高維商品向量壓縮成 3~4 個具備由粗到細語意階層的 SID (Semantic ID) Token，完美扮演了生成式推薦中「翻譯官」的角色。</p>
 </section>
 
 <section id="token" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">核心思維：從連續空間到離散 Token 的幾何橋樑</h3>
 
-<p class="mb-3">我們先前曾提到，我們需要將連續的高維商品向量（Embeddings）轉換為大模型能理解的長度為 $M$ 的「階層式語意 Token 序列」，亦即 Semantic ID (SID) 序列。因此，我們本質上可以將這個需求拆解為兩個循序漸進的核心難題：</p>
+<p class="mb-3">要達成將高維商品向量轉換為階層式語意 Token 序列的目標，本質上需要解決兩個循序漸進的難題：</p>
 
 <ol class="mb-3">
-<li><strong>如何將連續向量映射到離散的「碼本（Codebook）」中？</strong>（解決連續空間 $\to$ 離散字典的映射問題）</li>
-<li><strong>如何讓這些碼本中的索引（ID）構成「由粗到細（Coarse-to-fine）」的階層式序列？</strong>（解決單一特徵 $\to$ 階層序列的結構問題）</li>
+<li><strong>如何將連續向量映射到離散的「碼本（Codebook）」中？</strong>（連續空間 $\to$ 離散字典的映射問題）</li>
+<li><strong>如何讓這些碼本的 ID 構成「由粗到細（Coarse-to-fine）」的階層式結構？</strong>（單一特徵 $\to$ 階層序列的結構問題）</li>
 </ol>
 
-<p class="mb-3">我們的首要目標，就是先解決第一個難題：建立一個有語意的離散碼本。</p>
+<p class="mb-3">因此，我們的首要目標，就是先解決第一個難題：<strong>建立一個有語意的離散碼本</strong>。</p>
 
 <h4 id="section" class="mb-2">離散化的直覺陷阱：生硬的網格分桶</h4>
 
-<p class="mb-3">要將連續空間離散化，最直覺的想法是「空間分桶（Bucketing / Grid）」，就像切豆腐一樣將多維空間劃分成等分的網格，<strong>並將這些網格的集合視為一個「碼本（Codebook）」</strong>。然而，當來到高維度空間時，這種做法會立刻撞上「維度詛咒（Curse of Dimensionality）」。</p>
+<p class="mb-3">要將連續空間離散化，最直覺的想法是「空間分桶（Bucketing / Grid）」，就像切豆腐一樣將多維空間劃分成等分的網格，並將落入同一個網格的資料賦予同一個離散 ID。</p>
 
-<p class="mb-3">真實世界的高維資料分佈往往極度不均。生硬的網格化不僅會產生海量的「空桶」，白白浪費儲存與運算資源；更致命的是，它完全無法捕捉資料真實的語意邊界——也就是說，死板的網格線常常會把語意相近的資料硬生生切開，無法保證能將它們分在同一個桶子裡。</p>
+<p class="mb-3">然而，當來到高維度空間時，這種做法會立刻撞上「維度詛咒（Curse of Dimensionality）」。真實世界的高維資料分佈往往極度不均。生硬的網格化不僅會產生海量的「空桶」，白白浪費儲存與運算資源；更致命的是，它完全無法捕捉資料真實的語意邊界——也就是說，死板的網格線常常會把語意相近的資料硬生生切開，無法保證能將它們分在同一個桶子裡。</p>
 
-<p class="mb-3">除此之外，網格化還面臨另一個根本性的痛點：我們又該如何找出一個能真實代表這個網格的<strong>「碼字（Codeword）」</strong>？網格只是一個人為劃定的幾何方塊，它的幾何中心通常無法反映內部資料的真實樣貌，這讓賦予該區域語意這件事變得毫無根據。</p>
+<p class="mb-3">除此之外，網格化還面臨另一個根本性的痛點：<strong>它無法建構出真正帶有語意的「碼本（Codebook）」與「碼字（Codeword）」</strong>。網格只是一個人為劃定的死板幾何方塊，其幾何中心通常無法反映內部資料的真實樣貌，這讓賦予該區域語意這件事變得毫無根據。</p>
 
-<p class="mb-3">這不禁讓我們思考：與其用一把死板的尺去切割空間，有沒有方法能順應相似語意資料本身的分佈，做出更聰明、有效的劃分？又或者說，我們能不能先用某種演算法，找出一群群具有相似語意的族群，<strong>並用各族群真實的中心來建構出我們的「碼本（Codebook）」呢？</strong></p>
+<p class="mb-3">這不禁讓我們思考：與其用一把死板的尺去切割空間，有沒有方法能順應相似語意資料本身的分佈，做出更聰明、有效的劃分？又或者說，我們能不能先用某種演算法，找出一群群具有相似語意的族群，<strong>並用各族群真實的中心點（Centroids）來作為「碼字（Codeword）」，進而建構出我們的「碼本（Codebook）」呢？</strong></p>
 
 <h4 id="clustering-as-quantization" class="mb-2">聚類即量化（Clustering as Quantization）</h4>
 
