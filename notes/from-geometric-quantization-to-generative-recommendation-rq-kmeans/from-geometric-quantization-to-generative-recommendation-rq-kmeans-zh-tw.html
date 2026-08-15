@@ -13,7 +13,7 @@
   <meta name="garden:canonical_id" content="from-geometric-quantization-to-generative-recommendation-rq-kmeans">
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="25">
+  <meta name="garden:reading_time_minutes" content="24">
   <meta name="garden:source" content="notes/from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw.md">
   <script>
   (() => {
@@ -165,14 +165,12 @@
 <a class="note-toc-link level-2" href="#refinement-stage">第二步：多層殘差量化 (Refinement Stage)</a>
 <a class="note-toc-link level-2" href="#geometric-reconstruction">第三步：向量近似重構 (Geometric Reconstruction)</a>
 <a class="note-toc-link level-1" href="#rq-kmeans-3">RQ-Kmeans 核心優勢與潛在探索性</a>
-<a class="note-toc-link level-1" href="#section-2">進階技術視角與挑戰：率失真理論與正則化</a>
-<a class="note-toc-link level-2" href="#dead-codes">死碼危機與碼本坍塌 (Dead Codes)</a>
-<a class="note-toc-link level-1" href="#section-3">落地實踐：生成式推薦的四階段工作流</a>
-<a class="note-toc-link level-2" href="#offline-training">階段一：離線訓練量化器 (Offline Training)</a>
-<a class="note-toc-link level-2" href="#token-offline-encoding">階段二：離線商品 Token 化與總詞彙表 (Offline Encoding)</a>
-<a class="note-toc-link level-2" href="#offline-online">階段三：自迴歸推薦模型訓練 (Offline / Online)</a>
-<a class="note-toc-link level-2" href="#inference">階段四：線上推論、重構與召回 (Inference)</a>
-<a class="note-toc-link level-1" href="#section-4">總結</a>
+<a class="note-toc-link level-1" href="#dead-codes">進階技術視角：死碼危機與碼本坍塌 (Dead Codes)</a>
+<a class="note-toc-link level-1" href="#section-2">落地實踐：生成式推薦的三階段工作流</a>
+<a class="note-toc-link level-2" href="#offline-quantizer-training">階段一：離線訓練量化器 (Offline Quantizer Training)</a>
+<a class="note-toc-link level-2" href="#token-offline-tokenization">階段二：離線商品 Token 化與總詞表建構 (Offline Tokenization)</a>
+<a class="note-toc-link level-2" href="#generative-model-training">階段三：自迴歸推薦模型訓練 (Generative Model Training)</a>
+<a class="note-toc-link level-1" href="#section-3">總結</a>
 <a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
           </nav>
         </div>
@@ -330,7 +328,7 @@
 
 <p class="mb-3">從幾何視角來看，$c_1$ 先在大尺度空間定位宏觀類別（如「電子產品 $\to$ 手機」），後續的 $c_2, \dots, c_M$ 則在殘差空間中扮演微調向量，沿著殘差方向不斷修正細部幾何位置（如「品牌 $\to$ 尺寸 $\to$ 顏色」）。</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</strong> 在將原始連續向量轉換為離散 Token 序列的過程中（也就是決定上述每層最近中心點的「量化解碼」階段），我們該如何選擇每一層的中心點？實務上有兩種截然不同的策略：</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</strong> 在將原始連續向量轉換為離散 Token 序列的過程中（也就是決定上述每層最近中心點的「量化解碼」階段），我們究竟該如何選擇每一層的中心點？實務上有兩種截然不同的策略：</p>
 
 <ul class="note-list">
 <li><strong>貪婪解碼 (Greedy Encoding)：</strong> 每層獨立選擇距離最近的中心。缺點是前幾層的選擇會直接決定下一層殘差的空間走向，貪婪選擇往往會落入「一步錯，步步錯」的局部陷阱。</li>
@@ -341,65 +339,61 @@
 <section id="rq-kmeans-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">RQ-Kmeans 核心優勢與潛在探索性</h3>
 
-<p class="mb-3">了解了 RQ-Kmeans 巧妙的殘差量化機制後，我們可以發現它不僅僅是個單純的壓縮演算法，更是為生成式推薦量身打造的橋樑。具體而言，它具備以下幾個不可替代的核心優勢：</p>
+<p class="mb-3">了解了 RQ-Kmeans 巧妙的殘差量化機制後，我們可以發現它不僅僅是單純的幾何壓縮工具，更是為生成式推薦量身打造的橋樑。具體而言，它具備五大核心優勢：</p>
 
 <ol class="mb-3">
 <li class="mb-2">
-  <strong><strong>極強表達力與階層語意：</strong></strong><br>
+  <strong><strong>指數級的表達容量（以小博大）：</strong></strong><br>
   
-<p class="mb-2">僅需 $M \times K$ 個向量的儲存空間即可表達 $K^M$ 種組合，在兼具精度與檢索效率的同時，保留了由粗到細的階層結構。</p>
-  
-</li>
-<li>
-  <strong><strong>天然的階層結構：</strong></strong><br>
-  
-<p class="mb-2">RQ 的第一層 Token 決定了物品的粗粒度類別（Coarse），後續 Token 不斷進行幾何細化（Fine-grained）。這種階層性極大地有助於模型學習物品之間的複雜層級關係與語意相近度。</p>
+<p class="mb-2">僅需維護 $M \times K$ 個中心點向量的儲存空間，就能組合表達出 $K^M$ 種狀態。在顯著降低碼本與詞表大小的同時，依然保有極高的幾何重構精度。</p>
   
 </li>
 <li>
-  <strong><strong>適應生成模型：</strong></strong><br>
+  <strong><strong>天然由粗到細的階層語意（Coarse-to-fine）：</strong></strong><br>
   
-<p class="mb-2">RQ-Kmeans 完美地將連續向量空間中的推薦問題，轉化為離散序列生成問題，使得 Transformer 等強大的 LLM 生成式架構可以無縫應用於推薦領域。</p>
-  
-</li>
-<li>
-  <strong><strong>生成新穎物品與潛在興趣探索 (Novel Item Generation)：</strong></strong><br>
-  
-<p class="mb-2">模型自迴歸生成的 Token 組合在資料庫中可能並不對應於任何一個已存在的真實物品，但其重構出來的向量 $v_{\text{pred}}$ 可能代表一個「新穎的」或「潛在的」用戶興趣點。這為推薦系統的探索性（Exploration）與多樣性（Diversity）提供了創新的理論與工程可能性。</p>
+<p class="mb-2">第 1 層 Token 鎖定宏觀大類，後續 Token 逐步微調幾何細節。這種天然的樹狀層級關係，極大程度降低了大模型學習商品相似度與語意關聯的難度。</p>
   
 </li>
 <li>
-  <strong><strong>高度的架構彈性 (Flexibility of $M$)：</strong></strong><br>
+  <strong><strong>無縫對齊自迴歸架構：</strong></strong><br>
   
-<p class="mb-2">這套範式允許我們根據實際的業務需求自主調整碼本層數 $M$。如果我們希望模型推論速度更快（即生成較少的 Token），只需調降 $M$；反之，若我們希望模型能更精確地刻畫並還原商品特徵，則只需提升 $M$。透過調整 $M$，我們能在「推論效率」與「表示精度」之間靈活切換。</p>
+<p class="mb-2">將連續空間的檢索難題轉化為離散序列生成任務，讓 Transformer 等強大的 LLM 骨幹網路能直接沿用 Next-Token Prediction 範式進行推薦。</p>
+  
+</li>
+<li>
+  <strong><strong>潛在興趣探索與新穎性（Novel Item Exploration）：</strong></strong><br>
+  
+<p class="mb-2">模型自迴歸生成出的 Token 序列，即使在資料庫中找不到完全對應的現有商品，其求和重構出的向量 $v_{\text{pred}}$ 依然落在合理的幾何空間中，代表著使用者的「潛在興趣點」。這為系統兼顧探索性（Exploration）與多樣性（Diversity）開啟了全新的工程空間。</p>
+  
+</li>
+<li>
+  <strong><strong>高度可調的工程彈性（Flexibility of $M$）：</strong></strong><br>
+  
+<p class="mb-2">碼本層數 $M$ 賦予了系統在「推論延遲」與「表徵精度」之間靈活權衡（Trade-off）的能力——調小 $M$ 可加速自迴歸解碼，調大 $M$ 則能更精準地還原商品特徵。</p>
   
 </li>
 </ol>
 
-<p class="mb-3">然而，RQ-Kmeans 雖然擁有上述諸多優勢與優美的數學幾何直覺，但在真實的工程落地場景中，它並非完美無缺。當面對極端高維且稀疏的真實數據時，純粹的幾何量化會遭遇一些棘手的退化問題與技術挑戰。這也就是我們接下來要探討的進階議題。</p>
+<p class="mb-3">然而，RQ-Kmeans 雖然擁有上述諸多優勢與優美的數學幾何直覺，但在真實的工程落地場景中，它並非完美無缺。當面對極端高維且稀疏的真實數據時，純粹的幾何量化會遭遇一些棘手的退化問題與技術挑戰。</p>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">進階技術視角與挑戰：率失真理論與正則化</h3>
+<section id="dead-codes" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">進階技術視角：死碼危機與碼本坍塌 (Dead Codes)</h3>
 
-<p class="mb-3">雖然 RQ-Kmeans 的基礎流程非常直觀，但在處理高維、高度相關的真實數據時，純粹的幾何量化會面臨諸多退化問題與技術挑戰：</p>
+<p class="mb-3">在理想狀況下，我們會希望碼本中每個 Codeword 的利用率（Codebook Utilization Rate, CUR）達到最大化。畢竟，碼本容量是我們預先設定好的寶貴資源（如 $K=8192$），如果只有少數幾個中心點被頻繁使用，其餘中心點全部閒置，就等於白白浪費了模型的表達能力。</p>
 
-<h4 id="dead-codes" class="mb-2">死碼危機與碼本坍塌 (Dead Codes)</h4>
+<p class="mb-3">然而，就如同在<a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means: Clustering Around Centers<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a>中所探討的，在大規模高維數據上運行 K-means 常常會出現空群集（Empty Clusters），或是某些聚類中心幾乎沒有數據點落入。這會導致碼本有效容量被嚴重稀釋，發生碼本坍塌，在量化領域中被稱為「死碼（Dead Codes）」現象。</p>
 
-<p class="mb-3">在理想狀況下，我們會希望碼本中每個 Codeword 的利用率（Codebook Utilization Rate, CUR）達到最大化。畢竟，碼本的容量是我們預先設定好的寶貴資源（如 $K=8192$），如果只有少數幾個中心點被頻繁使用，而其他中心點閒置，就等於白白浪費了模型的表達能力。</p>
-
-<p class="mb-3">然而，就如同在<a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a>中有提到的，大規模高維數據上運行 K-means 常常會出現空群集，或著某些聚類中心幾乎沒有數據點落入，導致碼本容量被嚴重浪費，發生碼本坍塌。我們稱這種現象為「死碼（Dead Codes）」現象。</p>
-
-<p class="mb-3">為此，我們通過<strong>正則化殘差量化（Regularized Residual Quantization, RRQ）</strong> 引入了資訊理論中的率失真理論（Rate-Distortion Theory）與反向水閥（Reverse Water-Filling）原則：</p>
+<p class="mb-3">為了解決這個問題，業界常透過<strong>正則化殘差量化（Regularized Residual Quantization, RRQ）</strong>，引入資訊理論中的率失真理論（Rate-Distortion Theory）與反向水閥（Reverse Water-Filling）原則：</p>
 
 <ul class="note-list">
-<li><strong>動態維度選擇（Active Dimension Selection）：</strong> 在深層殘差空間中，數據在某些維度的變異數已大幅衰減。RRQ 僅對變異數高於臨界值的維度進行量化，避免模型在低變異數的雜訊維度過度擬合。</li>
-<li><strong>變異數懲罰項：</strong> 在 K-means 的平方誤差目標中加入變異數匹配懲罰，強迫各層碼本分佈均勻，極大化資訊熵，使碼本利用率逼近 100%。</li>
+<li><strong>動態維度選擇（Active Dimension Selection）：</strong> 在深層殘差空間中，數據在某些維度的變異數已大幅衰減。RRQ 僅對變異數高於臨界值的維度進行量化，避免模型在低變異數的雜訊維度上過度擬合。</li>
+<li><strong>變異數懲罰項：</strong> 在 K-means 的平方誤差優化目標中加入變異數匹配懲罰，強迫各層碼本的使用分佈更加均勻，極大化資訊熵，讓碼本利用率逼近 100%。</li>
 </ul>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><h4 id="rq-kmeans-rq-vae" class="mb-2">關鍵對決：工業界為何偏愛 RQ-Kmeans 而非 RQ-VAE？</h4>
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><h4 id="rq-kmeans-rq-vae" class="mb-2">架構選型與權衡：RQ-Kmeans 與 RQ-VAE 的技術路徑之爭</h4>
 
-<p class="mb-3">在生成式推薦領域，另一個備受關注的量化方案是 <strong>RQ-VAE (端到端神經量化)</strong>。兩者雖然都產出階層式 Token 序列，但設計理念與工程取捨截然不同：</p>
+<p class="mb-3">在生成式推薦領域，除了幾何導向的 RQ-Kmeans，另一個備受關注的量化方案是 <strong>RQ-VAE (端到端神經量化)</strong>。兩者雖然都能產出階層式 Token 序列，但在架構設計理念與工程取捨上截然不同：</p>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
@@ -412,92 +406,76 @@
 <tr>
 <td><strong>核心驅動</strong></td>
 <td><strong>演算法驅動：</strong> 基於 K-means 幾何空間劃分。</td>
-<td><strong>模型驅動：</strong> 基於 VAE 概率分佈擬合與神經網路。</td>
+<td><strong>模型驅動：</strong> 基於 VAE 機率分佈擬合與神經網路。</td>
 </tr>
 <tr>
 <td><strong>訓練機制</strong></td>
-<td><strong>解耦 / 兩階段式：</strong> 先由預訓練模型產生向量，再獨立訓練量化器。</td>
-<td><strong>端到端 (E2E)：</strong> 變分編碼器、離散碼本與解碼器聯合梯度更新。</td>
+<td><strong>解耦 / 兩階段式：</strong> 由預訓練模型產出向量後，獨立訓練量化器。</td>
+<td><strong>端到端 (E2E)：</strong> 編碼器、離散碼本與解碼器聯合進行梯度更新。</td>
 </tr>
 <tr>
 <td><strong>運算成本與穩定性</strong></td>
-<td><strong>極低、極穩定：</strong> 無梯度傳播，純 EM 演算法驅動，幾何收斂有數學保證。</td>
-<td><strong>高成本、需調參：</strong> 依賴不可微的 STE 傳遞梯度，訓練極度不穩定。</td>
+<td><strong>極低、極穩定：</strong> 無梯度傳播，純 EM 演算法驅動，收斂具備數學保證。</td>
+<td><strong>高成本、調參敏感：</strong> 依賴不可微的 STE 傳遞梯度，訓練容易不穩定。</td>
 </tr>
 <tr>
 <td><strong>適用場景</strong></td>
 <td>系統已有高品質 Embedding，追求高效率與穩健落地。</td>
-<td>算力充足，追求端到端 SOTA 效能，希望碼本主動適應推薦目標。</td>
+<td>算力充足，追求端到端 SOTA 效能，希望碼本能根據推薦目標共同演化。</td>
 </tr>
     </tbody>
   </table>
 </div>
 
-<p class="mb-3">而儘管 RQ-VAE 結合 AutoEncoder 能達成特徵與量化的聯合優化，看似更先進，但在工業落地時卻面臨巨大挑戰：它高度依賴不可微的 Straight-Through Estimator (STE) 來估算梯度，導致訓練極度不穩定，調參與算力成本高昂。 相比之下，<strong>RQ-Kmeans 擁有絕對優勢</strong>：除了極致穩定之外，它具備極佳的<strong>資產複用性 (Plug-and-Play)</strong>，可無縫接入系統現有的 DSSM 或 Graph 高品質 Item Embedding，無需重訓上游模型。 <strong>💡 實務混用策略：</strong> 其實在實務工程上，這兩者並不互斥。一個常見的做法是：我們先利用 RQ-Kmeans 跑出初始碼本當作良好的初始化權重（Initialization），接著再將其無縫接入 RQ-VAE 去進行微調優化。如此一來，便能同時兼顧初期的模型穩定性，以及後期的極限效能優化！</p></div>
+<p class="mb-3">而儘管 RQ-VAE 透過 AutoEncoder 架構實現特徵學習與量化碼本的聯合優化，理論上限更高；然而在工業落地時，它高度依賴不可微的 Straight-Through Estimator (STE) 來近似梯度，容易面臨碼本坍塌與訓練發散的風險，調參與算力成本顯著偏高。 相較之下，<strong>RQ-Kmeans 展現了極高的工程實用性</strong>：除了純幾何優化帶來的極致穩定外，它具備極佳的<strong>資產複用性 (Plug-and-Play)</strong>，能夠直接無縫接入現有 DSSM、雙塔或 Graph 模型產出的高品質 Item Embedding，無需重構上游特徵管線。 <strong>💡 實務混用策略 (Hybrid Strategy)：</strong> 在實際落地中，兩者並非二選一的對立關係。業界常見的 Best Practice 是採用「熱啟動（Warm-up）」策略：先利用 RQ-Kmeans 在離線快速聚類出穩健的初始碼本，作為 RQ-VAE 的初始化權重（Initialization），隨後再進行端到端的微調。如此既能避開從零隨機初始化導致的訓練動盪，又能保留神經網路微調的上限空間。</p></div>
 
-<p class="mb-3">至此，我們算是粗略介紹完 RQ-Kmeans 的運作流程了。但業界究竟是如何將之整合到實際的生成式推薦系統中呢？它又在整個推薦系統中扮演什麼樣的角色呢？</p>
+<p class="mb-3">在理解了 RQ-Kmeans 的幾何原理與進階優化後，我們來看看在工業界中，工程團隊如何將它無縫接入生成式推薦的端到端管線中。</p>
 </section>
 
-<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">落地實踐：生成式推薦的四階段工作流</h3>
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">落地實踐：生成式推薦的三階段工作流</h3>
 
-<p class="mb-3">在實際的生成式推薦系統中，RQ-Kmeans 扮演了串聯離線特徵與線上推論的核心組件。整個工作流可分為四個核心階段：</p>
+<p class="mb-3">在推薦系統邁向生成式架構的過程中，RQ-Kmeans 扮演了連接「連續特徵工程」與「離散自迴歸建模」的橋樑。整個落地流程可劃分為三個核心階段：</p>
 
-<h4 id="offline-training" class="mb-2">階段一：離線訓練量化器 (Offline Training)</h4>
+<h4 id="offline-quantizer-training" class="mb-2">階段一：離線訓練量化器 (Offline Quantizer Training)</h4>
 
 <ol class="mb-3">
-<li><strong>獲取物品向量：</strong> 前面有提到，RQ-Kmeans 本質上還是將商品的 Embedding 離散化成階層式 Token 的一個方式。既然如此，我們還是會需要透過預訓練模型（如 DSSM、GNN 或 BERT）為系統中的所有物品生成高品質的連續嵌入向量 $v$。</li>
-<li><strong>訓練 RQ-Kmeans：</strong> 接著，我們就可以將全站物品的向量作為輸入，去<strong>訓練（擬合）</strong>一個 $M$ 層的 RQ-Kmeans 量化器，藉由幾何收斂產出 $M$ 個中心點碼本 $\mathcal{C}^{(1)}, \mathcal{C}^{(2)}, \dots, \mathcal{C}^{(M)}$。</li>
+<li><strong>獲取物品向量：</strong> 複用既有特徵工程資產，由預訓練模型（如 DSSM、雙塔、GraphSAGE 或多模態模型）為全站物品產出高品質的連續嵌入向量 $v$。</li>
+<li><strong>訓練 RQ-Kmeans：</strong> 將全量物品向量作為輸入進行幾何分群，逐層最小化殘差，產出 $M$ 層穩健的中心點碼本 $\mathcal{C}^{(1)}, \mathcal{C}^{(2)}, \dots, \mathcal{C}^{(M)}$。</li>
 </ol>
 
-<h4 id="token-offline-encoding" class="mb-2">階段二：離線商品 Token 化與總詞彙表 (Offline Encoding)</h4>
+<h4 id="token-offline-tokenization" class="mb-2">階段二：離線商品 Token 化與總詞表建構 (Offline Tokenization)</h4>
 
-<p class="mb-3">此階段屬於純推論（Inference）的編碼過程，並不會更新碼本權重：</p>
+<p class="mb-3">量化器訓練完成後，便可作為離線 Tokenizer 使用（此階段為純推論編碼，不更新碼本）：</p>
 
 <ol class="mb-3">
-<li><strong>編碼全站物品：</strong> 將每個物品的嵌入向量輸入訓練好的 RQ-Kmeans，利用 Beam Search 等策略生成長度為 $M$ 的 SID 序列。例如：</li>
+<li><strong>編碼全站物品：</strong> 遍歷商品庫，將每個物品的連續向量輸入 RQ-Kmeans（可搭配 Beam Search 降低重構失真），轉換為長度為 $M$ 的 SID 序列。例如：</li>
 </ol>
 
 <p class="mb-3">$$\text{Item}_A \longrightarrow [12, 255, 7, 98]$$</p>
 
 <ol class="mb-3">
-<li><strong>建構總詞彙表：</strong> 所有 Token 的取值範圍是 $0$ 到 $K-1$。結合 $M$ 個碼本，系統會建立一個大小為 $M \times K$ 的總詞彙表。</li>
+<li><strong>建構總詞彙表：</strong> 若每層碼本大小為 $K$（如 $K=8192$），則整套系統的總詞表容量僅需 $M \times K$，即可精準表徵全站數億級別的商品集合。</li>
 </ol>
 
-<h4 id="offline-online" class="mb-2">階段三：自迴歸推薦模型訓練 (Offline / Online)</h4>
+<h4 id="generative-model-training" class="mb-2">階段三：自迴歸推薦模型訓練 (Generative Model Training)</h4>
 
 <ol class="mb-3">
-<li><strong>轉換與展平用戶序列：</strong> 在有了階段二生成的總詞彙表後，我們就可以將用戶的歷史交互序列轉換成 Token 序列並展平：</li>
+<li><strong>序列轉換與展平：</strong> 根據物品與 SID 的映射關係，將用戶的歷史行為序列逐一轉為 Token 並展平：</li>
 </ol>
 
 <ul class="note-list">
-<li>原始序列：$[\text{Item}_A, \text{Item}_B]$</li>
-<li>Token 化：$[[12, 255, 7, 98], [56, 101, 23, 42]]$</li>
+<li>原始行為序列：$[\text{Item}_A, \text{Item}_B]$</li>
+<li>轉為 SID 序列：$[[12, 255, 7, 98], [56, 101, 23, 42]]$</li>
 <li>展平輸入模型：$[12, 255, 7, 98, 56, 101, 23, 42, \dots]$</li>
 </ul>
 
 <ol class="mb-3">
-<li><strong>生成式訓練：</strong> 接著，將展平後的 Token 序列送入 Transformer，我們就可以開始真正訓練生成式自回歸模型預測下一個 Token (Next-Token Prediction) 的能力。</li>
+<li><strong>Next-Token Prediction 訓練：</strong> 將展平後的 Token 序列送入 Transformer 骨幹網路（如 SASRec 或自迴歸大模型），以標準的交叉熵損失進行自迴歸訓練，讓模型學會根據過去的行為軌跡，逐層預測下一個目標商品的階層式 Token。</li>
 </ol>
-
-<h4 id="inference" class="mb-2">階段四：線上推論、重構與召回 (Inference)</h4>
-
-<p class="mb-3">線上服務時，輸入使用者的最新歷史，模型會自迴歸地生成下一個目標物品的 $M$ 個 Tokens $[\text{idx}_1, \dots, \text{idx}_M]$。 關於接下來的推論召回方式，實務上通常有兩種不同的路徑設計：</p>
-
-<ul class="note-list">
-<li><strong>路徑一（向量重構與 ANNS 召回）：</strong></li>
-</ul>
-
-<p class="mb-3">從碼本中取出生成的 Tokens 對應的中心向量並求和，重構出預測的興趣向量 $v_{\text{pred}}$。接著，利用 Faiss 或 Milvus 等 <strong>ANNS（近似最近鄰搜尋, Approximate Nearest Neighbor Search）</strong> 引擎，使用 $v_{\text{pred}}$ 完成 Top-$N$ 的高效商品召回。這能有效處理模型生成出「不存在於現有商品庫中」的全新 Token 組合。</p>
-
-<ul class="note-list">
-<li><strong>路徑二（直接 SID 精準比對）：</strong></li>
-</ul>
-
-<p class="mb-3">不經過向量重構，而是直接將生成出來的 SID 序列當作索引，去對應實際的商品資料庫進行精準匹配（Exact Match 或 Prefix Match）。這種方式省去了向量搜尋的開銷，速度極快，但高度依賴生成模型的精準度。</p>
 </section>
 
-<section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">總結</h3>
 
 <p class="mb-3">至此，我們總算是粗略介紹完了生成式推薦的背景以及 RQ-Kmeans 在其中扮演的角色與運作流程。</p>
@@ -574,6 +552,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <ol class="mb-3">
 <li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/1949167463393650590" target="_blank" rel="noopener noreferrer">知乎：生成式推荐入门2——RQ-Kmeans分词器</a></li>
+<li><a class="note-inline-link" href="https://www.emergentmind.com/topics/residual-quantization-rq-kmeans" target="_blank" rel="noopener noreferrer">Emergent Mind: RQ-KMeans: Hierarchical Residual Quantization</a></li>
 </ol>
 </section>
         </div>
