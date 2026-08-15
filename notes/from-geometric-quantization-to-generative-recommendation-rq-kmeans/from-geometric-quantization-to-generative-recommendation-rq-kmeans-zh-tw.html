@@ -266,7 +266,7 @@
 
 <p class="mb-3">在成功透過碼本將連續向量離散化後，我們迎來了第二個難題：<strong>如何讓這些離散 ID 構成「由粗到細（Coarse-to-fine）」的階層式 Token 序列？</strong></p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>迷思破解：為何不直接用單一 K-means 當作詞表就好？</strong> 這個想法很直覺：既然幾億個商品太多，那就把它們聚類成 8192 個群，詞彙表不就縮小了嗎？但如果我們只依賴這種單一碼本的範式，會立刻陷入兩難的困境：</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>迷思破解：為何不直接用單一 K-means 當作詞表就好？</strong></p><p class="mb-2">這個想法很直覺：既然幾億個商品太多，那就把它們聚類成 8192 個群，詞彙表不就縮小了嗎？但如果我們只依賴這種單一碼本的範式，會立刻陷入兩難的困境：</p>
 
 <ul class="note-list">
 <li><strong>若 $K$ 值太小（例如 8192）：</strong> 雖然解決了詞表過大的問題，但量化誤差（Distortion）會非常驚人。這意味著可能會有成千上萬個截然不同的商品被強行映射到同一個 Codebook ID 上，模型根本無法區分這些商品的細微差異，推薦將變得極度粗糙。</li>
@@ -328,7 +328,7 @@
 
 <p class="mb-3">從幾何視角來看，$c_1$ 先在大尺度空間定位宏觀類別（如「電子產品 $\to$ 手機」），後續的 $c_2, \dots, c_M$ 則在殘差空間中扮演微調向量，沿著殘差方向不斷修正細部幾何位置（如「品牌 $\to$ 尺寸 $\to$ 顏色」）。</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</strong> 在將原始連續向量轉換為離散 Token 序列的過程中（也就是決定上述每層最近中心點的「量化解碼」階段），我們究竟該如何選擇每一層的中心點？實務上有兩種截然不同的策略：</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</strong></p><p class="mb-2">在將原始連續向量轉換為離散 Token 序列的過程中（也就是決定上述每層最近中心點的「量化解碼」階段），我們究竟該如何選擇每一層的中心點？實務上有兩種截然不同的策略：</p>
 
 <ul class="note-list">
 <li><strong>貪婪解碼 (Greedy Encoding)：</strong> 每層獨立選擇距離最近的中心。缺點是前幾層的選擇會直接決定下一層殘差的空間走向，貪婪選擇往往會落入「一步錯，步步錯」的局部陷阱。</li>
@@ -391,9 +391,7 @@
 <li><strong>變異數懲罰項：</strong> 在 K-means 的平方誤差優化目標中加入變異數匹配懲罰，強迫各層碼本的使用分佈更加均勻，極大化資訊熵，讓碼本利用率逼近 100%。</li>
 </ul>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><h4 id="rq-kmeans-rq-vae" class="mb-2">架構選型與權衡：RQ-Kmeans 與 RQ-VAE 的技術路徑之爭</h4>
-
-<p class="mb-3">在生成式推薦領域，除了幾何導向的 RQ-Kmeans，另一個備受關注的量化方案是 <strong>RQ-VAE (端到端神經量化)</strong>。兩者雖然都能產出階層式 Token 序列，但在架構設計理念與工程取捨上截然不同：</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>架構選型與權衡：RQ-Kmeans 與 RQ-VAE 的技術路徑之爭</strong></p><p class="mb-2">在生成式推薦領域，除了幾何導向的 RQ-Kmeans，另一個備受關注的量化方案是 <strong>RQ-VAE (端到端神經量化)</strong>。兩者雖然都能產出階層式 Token 序列，但在架構設計理念與工程取捨上截然不同：</p>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
@@ -427,7 +425,11 @@
   </table>
 </div>
 
-<p class="mb-3">儘管 RQ-VAE 透過 AutoEncoder 架構實現特徵學習與量化碼本的聯合優化，理論上限更高；但在工業落地時，它高度依賴不可微的 Straight-Through Estimator (STE) 來近似梯度，容易面臨碼本坍塌與訓練發散的風險，調參與算力成本顯著偏高。 相較之下，<strong>RQ-Kmeans 展現了極高的工程實用性</strong>：除了純幾何優化帶來的極致穩定外，它具備極佳的<strong>資產複用性 (Plug-and-Play)</strong>，能夠直接無縫接入現有 DSSM、雙塔或 Graph 模型產出的高品質 Item Embedding，無需重構上游特徵管線。 <strong>💡 實務混用策略 (Hybrid Strategy)：</strong> 在實際落地中，兩者並非二選一的對立關係。業界常見的 Best Practice 是採用「熱啟動（Warm-up）」策略：先利用 RQ-Kmeans 在離線快速聚類出穩健的初始碼本，作為 RQ-VAE 的初始化權重（Initialization），隨後再進行端到端的微調。如此既能避開從零隨機初始化導致的訓練動盪，又能保留神經網路微調的上限空間。</p></div>
+<p class="mb-3">儘管 RQ-VAE 透過 AutoEncoder 架構實現特徵學習與量化碼本的聯合優化，理論上限更高；但在工業落地時，它高度依賴不可微的 Straight-Through Estimator (STE) 來近似梯度，容易面臨碼本坍塌與訓練發散的風險，調參與算力成本顯著偏高。</p>
+
+<p class="mb-3">相較之下，<strong>RQ-Kmeans 展現了極高的工程實用性</strong>：除了純幾何優化帶來的極致穩定外，它具備極佳的<strong>資產複用性 (Plug-and-Play)</strong>，能夠直接無縫接入現有 DSSM、雙塔或 Graph 模型產出的高品質 Item Embedding，無需重構上游特徵管線。</p>
+
+<p class="mb-3"><strong>💡 實務混用策略 (Hybrid Strategy)：</strong> 在實際落地中，兩者並非二選一的對立關係。業界常見的 Best Practice 是採用「熱啟動（Warm-up）」策略：先利用 RQ-Kmeans 在離線快速聚類出穩健的初始碼本，作為 RQ-VAE 的初始化權重（Initialization），隨後再進行端到端的微調。如此既能避開從零隨機初始化導致的訓練動盪，又能保留神經網路微調的上限空間。</p></div>
 
 <p class="mb-3">在理解了 RQ-Kmeans 的幾何原理與進階優化後，我們來看看在工業界中，工程團隊如何將它無縫接入生成式推薦的端到端管線中。</p>
 </section>
