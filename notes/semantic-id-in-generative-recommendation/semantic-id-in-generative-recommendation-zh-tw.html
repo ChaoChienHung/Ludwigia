@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題 — Ludwig</title>
   <meta name="garden:tags" content="推薦系統, 生成式檢索, Semantic ID, 深度學習, Token 化">
-  <meta name="garden:summary" content="本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，透過「單一 K-means → 乘積量化 (PQ) → 殘差量化 (RQ)」的思想實驗推導，剖析語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。">
+  <meta name="garden:summary" content="本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。">
   <meta name="garden:lang" content="zh-tw">
   <meta name="garden:status" content="published">
   <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.semantic_id,concept.deep_learning,concept.tokenization">
@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-11">
   <meta name="garden:last_modified_at" content="2026-08-16">
   <meta name="garden:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
-  <meta name="garden:reading_time_minutes" content="21">
+  <meta name="garden:reading_time_minutes" content="18">
   <meta name="garden:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -158,10 +158,6 @@
             <a class="note-toc-link level-1" href="#section">前言與破題：生成式推薦的落地難題</a>
 <a class="note-toc-link level-1" href="#semantic-id">破局之道：從「無意義流水號」到「語意序列」的 Semantic ID</a>
 <a class="note-toc-link level-2" href="#semantic-id-2">Semantic ID 帶來的顛覆性優勢</a>
-<a class="note-toc-link level-1" href="#semantic-id-3">思想實驗：Semantic ID 的量化演進之路</a>
-<a class="note-toc-link level-2" href="#k-means">嘗試一：單一 K-means 聚類</a>
-<a class="note-toc-link level-2" href="#product-quantization-pq">嘗試二：乘積量化 Product Quantization (PQ)</a>
-<a class="note-toc-link level-2" href="#residual-quantization-rq">終極解答：殘差量化 Residual Quantization (RQ)</a>
 <a class="note-toc-link level-1" href="#semantic-id-tokenizer">如何生成 Semantic ID？兩大 Tokenizer 技術路線</a>
 <a class="note-toc-link level-1" href="#sid">實務挑戰與工程權衡：SID 的深層痛點</a>
 <a class="note-toc-link level-2" href="#sid-2">痛點一：無效 SID 生成與幻覺</a>
@@ -312,39 +308,6 @@
   
 </li>
 </ol>
-</section>
-
-<section id="semantic-id-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">思想實驗：Semantic ID 的量化演進之路</h3>
-
-<p class="mb-3">既然我們確定了商品必須被表示為多個 Token 的「語意序列」，下一個隨之而來的疑問是：<strong>這套 Token 序列究竟是如何被量化設計出來的？我們能不能直接使用傳統的量化演算法？</strong></p>
-
-<p class="mb-3">為了理解 Semantic ID 最終形態的由來，我們可以進行一場簡單的「思想實驗」，看看量化技術是如何一路演進的：</p>
-
-<h4 id="k-means" class="mb-2">嘗試一：單一 K-means 聚類</h4>
-
-<p class="mb-3">最直覺的想法是：既然幾億個商品 ID 太多，我們直接用 <a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a> 把商品聚編成 8192 個群，將聚類中心的 ID（0 到 8191）當作商品的單一 Token 不就好了嗎？</p>
-
-<p class="mb-3">這個想法立刻會陷入兩難的死胡同：</p>
-
-<ul class="note-list">
-<li><strong>若 $K$ 值太小（如 $K=8192$）：</strong> 雖然將 Vocab Size 壓縮到了大模型可承受的範圍，但量化誤差（Distortion）極度驚人。成千上萬個細節截然不同的商品會被強行併入同一個 ID，模型根本無法區分商品差異。</li>
-<li><strong>若 $K$ 值極大（如 $K=100\text{萬}$）：</strong> 雖然保留了商品細節，但詞表空間與 Softmax 計算再次爆炸，退回了 Atomic ID 的老路。</li>
-</ul>
-
-<h4 id="product-quantization-pq" class="mb-2">嘗試二：乘積量化 Product Quantization (PQ)</h4>
-
-<p class="mb-3">為了打破單一 Token 的限制，乘積量化（PQ）提出了一種「分而治之」的組合思路：將一個 256 維的商品向量拆分成 4 段獨立的 64 維子空間，每段子空間各自訓練一個小碼本（$K=256$）。</p>
-
-<figure class="note-image"><img src="./product-quantization.png" alt="乘積量化 (Product Quantization, PQ) 流程示意圖，展示高維向量切分子空間、獨立量化與組合表示" loading="lazy"><figcaption class="note-image-caption">乘積量化 (Product Quantization, PQ) 運算機制與組合表示流程示意圖</figcaption></figure>
-
-<p class="mb-3">這樣僅需極小的儲存（$4 \times 256$ 個中心點），就能組合表達 $256^4 \approx 43$ 億種商品，大幅提升了表達容量。然而，PQ 存在一個致命缺陷：<strong>子空間的切分是平行且獨立的，各段 ID 地位對等，完全無法提供大模型所需的「由粗到細 (Coarse-to-fine)」階層語意結構。</strong></p>
-
-<h4 id="residual-quantization-rq" class="mb-2">終極解答：殘差量化 Residual Quantization (RQ)</h4>
-
-<p class="mb-3">為了同時兼顧「小詞表組合」與「階層語意」，技術最終演進出了<strong>殘差量化（Residual Quantization, RQ）</strong>： 不切分向量空間，而是保留完整的全局向量，改採「逐層逼近、遞減殘差」的策略——第一層 Token 鎖定商品宏觀大類，後續 Token 則針對上一層遺留的「幾何殘差」進行量化微調。</p>
-
-<p class="mb-3">這種機制讓 Token 序列天然成長為一棵「由粗到細」的語意樹，成為了 Semantic ID 最完美的底層依託。</p>
 </section>
 
 <section id="semantic-id-tokenizer" class="note-section" data-aos="fade-up" data-aos-delay="120">

@@ -38,9 +38,9 @@ LastModified: 2026-08-16
 
 # 從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer
 
-在<content-link canonical="semantic-id-in-generative-recommendation">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</content-link>一文中，我們探討了 Semantic ID (SID) 的核心概念與推導過程——透過「單一 K-means $\to$ 乘積量化 (PQ) $\to$ 殘差量化 (RQ)」的思想實驗，我們確認了**殘差量化（Residual Quantization, RQ）** 是兼顧小詞表容量與「由粗到細 (Coarse-to-fine)」階層語意的唯一解答。
+在<content-link canonical="semantic-id-in-generative-recommendation">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</content-link>一文中，我們探討了 Semantic ID (SID) 的核心概念與目標——透過將高維連續向量轉化為長度為 $M$ 的離散 Token 序列，避開傳統 Atomic ID 導致的 Softmax 算力爆炸，並賦予大模型 Zero-shot 冷啟動與前綴包容能力。
 
-然而，知道「需要殘差量化」只是第一步。在實際工程推進時，我們該如何將連續的高維商品嵌入向量（Embeddings），穩定且精準地轉化為離散的 SID 序列？
+然而，知道「需要 Semantic ID」只是第一步。在實際工程推進時，我們該如何將連續的高維商品嵌入向量（Embeddings），穩定且精準地轉化為離散的 SID 序列？
 
 本文將暫時放下龐大的系統架構，展開一場硬核的**演算法與工程深潛 (Deep Dive)**。我們將聚焦於目前工業界 CP 值最高、落地最穩健的離散化方案——**RQ-Kmeans (Residual Quantization K-means)**，深入剖析其幾何本質、解碼策略、防範死碼的正則化機制（RRQ），以及端到端落地的四階段工作流。
 
@@ -55,11 +55,25 @@ LastModified: 2026-08-16
 
 向量量化的底層哲學，就是**不切割空間，而是讓資料自己決定聚落，並用聚落的中心點（碼字）來建構碼本**。任何新的商品向量，只要找到碼本中距離最近的碼字，就能以該碼字的索引 ID 來代表這個商品。
 
-而 RQ-Kmeans 的關鍵突破，在於它既不切分空間，也不強求用單一碼本完成離散化。相反地，它採用**「逐層逼近、遞減殘差、逐步求精」**的策略：
-- **第 1 個 Token：** 在全量原始特徵空間中，快速鎖定商品的大尺度幾何區域（如商品大類）。
-- **第 2 到第 $M$ 個 Token：** 逐層對上一層遺留的「殘差（Residual）」進行量化，沿著殘差方向不斷修正局部的幾何細節。
+### 為什麼選擇 RQ 而非 PQ？向量 Token 化的技術選型比較
 
-這種機制讓商品的離散 Token 序列，天然生長為一棵「由粗到細」的樹狀階層語意樹，完美扮演了生成式推薦中「翻譯官」的角色。
+在向量量化（Vector Quantization, VQ）與資料壓縮領域，最著名的兩種組合量化手法分別是 **乘積量化 (Product Quantization, PQ)** 與 **殘差量化 (Residual Quantization, RQ)**。
+
+在傳統的雙塔推薦模型時代，PQ 與 RQ 曾被廣泛用於向量檢索引擎（如 Faiss）中，作為離線檢索與記憶體壓縮的底層工具。然而，當推薦系統轉向自迴歸生成（Generative Retrieval）時，工程師發現這兩種量化手法在對齊大模型時產生了本質上的分歧：
+
+<image>
+src: ./product-quantization.png
+alt: 乘積量化 (Product Quantization, PQ) 運算機制與子空間切分示意圖
+caption: 乘積量化 (Product Quantization, PQ) 的平行子空間切分機制
+</image>
+
+* **乘積量化 (Product Quantization, PQ) 的局限：**
+  PQ 的做法是將一個高維向量切割成 $M$ 段獨立的子空間（例如 256 維切分成 4 段 64 維），每段各自進行量化。雖然這能以極小儲存表達 $K^M$ 種組合，但 **PQ 的 $M$ 個 Token 在邏輯上是完全平行、地位對等的**。大模型本質上是自迴歸（Autoregressive）的 Next-Token Prediction 網路，要求模型去依次「預測」4 個毫不相干、缺乏因果與階層依賴的平行子空間 Token，在邏輯與語意學習上非常違和。
+
+* **殘差量化 (Residual Quantization, RQ) 的契合：**
+  與 PQ 的平行切分不同，RQ 選擇保留完整的全局向量，改採「逐層逼近、遞減殘差」的策略。第一個 Token 鎖定宏觀大類，後續 Token 則沿著殘差方向逐層修正細部幾何。這讓 Token 序列天然成長為一棵「由粗到細 (Coarse-to-fine)」的階層語意樹，**完美契合了自迴歸模型的序列生成特性**。
+
+這種機制讓商品的離散 Token 序列，天然生長為一棵樹狀階層語意樹，完美扮演了生成式推薦中「翻譯官」的角色。
 
 ## RQ-Kmeans 演算法運作機制、解碼策略與幾何重構
 
