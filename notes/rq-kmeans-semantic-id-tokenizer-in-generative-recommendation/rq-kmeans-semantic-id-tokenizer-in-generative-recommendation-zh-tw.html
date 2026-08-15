@@ -12,7 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.rq_kmeans&quot;:{&quot;en&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hant&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hans&quot;:&quot;RQ-KMeans&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="20">
+  <meta name="garden:reading_time_minutes" content="21">
   <meta name="garden:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -153,10 +153,8 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#semantic-id">前言：從 Semantic ID 到多步解碼的幾何破局</a>
-<a class="note-toc-link level-2" href="#semantic-id-sid">拆解難題：多步解碼與 Semantic ID (SID)</a>
-<a class="note-toc-link level-1" href="#token">核心思維：從連續空間到離散 Token 的幾何橋樑</a>
-<a class="note-toc-link level-2" href="#section">離散化的直覺陷阱（分桶與網格）</a>
+            <a class="note-toc-link level-1" href="#token">核心思維：從連續空間到離散 Token 的幾何橋樑</a>
+<a class="note-toc-link level-2" href="#section">離散化的直覺陷阱：生硬的網格分桶</a>
 <a class="note-toc-link level-2" href="#clustering-as-quantization">聚類即量化（Clustering as Quantization）</a>
 <a class="note-toc-link level-1" href="#rq-kmeans">演算法進化：從基礎量化到 RQ-Kmeans 的階層破局</a>
 <a class="note-toc-link level-2" href="#1-k-means">1. 基礎 K-means 作為最簡單的向量量化器</a>
@@ -224,41 +222,30 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section id="semantic-id" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">前言：從 Semantic ID 到多步解碼的幾何破局</h3>
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>一文中，我們探討了 Semantic ID (SID) 的概念——透過多步解碼將單一商品轉化為長度為 $M$ 的「階層式語意 Token 序列」，從而避開單步預測海量商品導致的詞表爆炸難題。</p>
 
-<p class="mb-3">承接上文對<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>的回顧，我們了解到將海量商品轉化為大語言模型（LLM）能讀懂的「階層式語意序列」，是生成式推薦系統能否成功的關鍵。</p>
+<p class="mb-3">然而，這中間存在一個核心的離散化挑戰：商品在傳統推薦系統中，通常是以連續、高維度的浮點數向量（Embeddings）形式存在，而自迴歸大模型則擅長處理離散 Token 序列。<strong>我們該如何將連續的高維向量空間，精準且高效地轉換為離散且具備由粗到細語意階層的 SID 序列？</strong></p>
 
-<p class="mb-3">然而，這中間存在一個核心痛點：商品在傳統推薦系統中，通常是以連續、高維度的浮點數向量（Embeddings）形式存在，而 LLM 等基於 Transformer 的自迴歸模型只能處理離散的 Token 序列。我們該如何將連續的向量空間，精準且高效地轉換為離散的字典表示？</p>
-
-<h4 id="semantic-id-sid" class="mb-2">拆解難題：多步解碼與 Semantic ID (SID)</h4>
-
-<p class="mb-3">既然將商品直接轉換為「單一 Token」會因為單步預測的 Vocabulary 過大而崩潰，那麼<strong>「如果我們改用多步解碼呢？」</strong></p>
-
-<p class="mb-3">這正是當前生成式推薦（如快手的 OneRec、OneSearch 等）的核心破局思路：<strong>將單一商品表示為由 $M$ 個 Token 組成的固定長度序列，稱為 Semantic ID (SID)</strong>。</p>
-
-<p class="mb-3">假定我們設定商品由 $M = 3$ 個 Token 表示，而每個 Token 的碼本大小（Codebook Size）為 $K = 8192$：</p>
-
-<ul class="note-list">
-<li><strong>單步預測開銷：</strong> 模型在每一步解碼時，只需要在大小為 $8192$ 的小詞彙庫中進行 Softmax 預估，計算複雜度降低了數個數量級。</li>
-<li><strong>可表達空間：</strong> 3 個 Token 組合所能覆蓋的商品總量達到：</li>
-</ul>
-
-<p class="mb-3">$$8192^3 = 549,755,813,888 \approx 5.5 \times 10^{11}$$ 高達 5,500 億種獨特組合，這足以無壓地覆蓋全世界任何超大型平台的商品庫。</p>
-
-<p class="mb-3">剩下的核心問題在於：<strong>我們該如何將一個連續的商品特徵向量（Item Embedding），轉換為 3~4 個具備由粗到細語意階層的 SID (Semantic ID) Token？</strong> 這正是本文主角——基於幾何聚類思維的 <strong>RQ-Kmeans (Residual Quantization K-means)</strong> 展現價值的所在。它完美扮演了生成式推薦中「翻譯官」的角色。</p>
+<p class="mb-3">本文將深入解析目前工業界最主流、CP 值最高且最穩健的離散化方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>。它如何扮演生成式推薦中「翻譯官」的角色，將連續空間幾何量化為離散的階層 Token。</p>
 </section>
 
 <section id="token" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">核心思維：從連續空間到離散 Token 的幾何橋樑</h3>
 
-<h4 id="section" class="mb-2">離散化的直覺陷阱（分桶與網格）</h4>
+<h4 id="section" class="mb-2">離散化的直覺陷阱：生硬的網格分桶</h4>
 
-<p class="mb-3">要將連續空間離散化，最直覺的想法是「空間分桶（Bucketing / Grid）」，就像切豆腐一樣將多維空間劃分成等分的網格。但在高維空間下，這種做法會遭遇嚴重的「維度詛咒」：資料分布極度不均勻，網格化會產生海量的「空桶」，不僅浪費儲存空間，也完全無法捕捉資料真實的語意邊界。</p>
+<p class="mb-3">要將連續空間離散化，最直覺的想法是「空間分桶（Bucketing / Grid）」，就像切豆腐一樣將多維空間劃分成等分的網格，並將落入同一個網格的資料視為同一個 Token。然而，當來到高維度空間時，這種做法會立刻撞上「維度詛咒（Curse of Dimensionality）」。</p>
+
+<p class="mb-3">真實世界的高維資料分佈往往極度不均。生硬的網格化不僅會產生海量的「空桶」，白白浪費儲存與運算資源；更致命的是，它完全無法捕捉資料真實的語意邊界——<strong>也就是說，死板的網格線常常會把語意相近的資料硬生生切開，無法保證能將它們分在同一個桶子裡</strong>。除此之外，網格化還面臨另一個根本性的痛點：我們又該如何找出一個能真實代表這個網格的「語意 Token」？網格只是一個人為劃定的幾何方塊，它的幾何中心通常無法反映內部資料的真實樣貌，這讓賦予 Token 語意這件事變得毫無根據。</p>
+
+<p class="mb-3">這不禁讓我們思考：與其用一把死板的尺去切割空間，有沒有方法能<strong>順應相似語意資料本身的分佈</strong>，做出更聰明、有效的劃分？又或者說，我們能不能先用某種演算法，找出<strong>一群群具有相似語意的族群</strong>，並用各<strong>族群真實的中心</strong>來作為代表該族群的 Token 呢？</p>
 
 <h4 id="clustering-as-quantization" class="mb-2">聚類即量化（Clustering as Quantization）</h4>
 
-<p class="mb-3">呼應<a class="note-content-link" data-canonical-id="discovering-hidden-structures-what-clustering-really-does" href="../discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html">Discovering Hidden Structures<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Discovering Hidden Structures: What Clustering Really Does</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span></span><span class="note-content-link-preview-summary">A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.</span></span></span></a>的概念，聚類的本質其實就是尋找資料的自然群集，並用核心特徵（Centroid）來代表整個群體。與其盲目預先切分空間，不如透過 K-means 找出資料分佈的真實中心點，並將這些中心點的 ID 作為代表該區域的 Token。這就是「向量量化（Vector Quantization, VQ）」的底層哲學。</p>
+<p class="mb-3">這個問題的答案，其實就藏在我們熟悉的聚類演算法中。在<a class="note-content-link" data-canonical-id="discovering-hidden-structures-what-clustering-really-does" href="../discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html">Discovering Hidden Structures: What Clustering Really Does<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Discovering Hidden Structures: What Clustering Really Does</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span></span><span class="note-content-link-preview-summary">A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.</span></span></span></a>一文中，我們曾提及聚類的本質就是尋找資料的自然群集，並用該群落的核心特徵來代表整個群體。這恰好完美契合了離散化的目標。</p>
+
+<p class="mb-3">與其盲目地預先切分整個連續空間，不如透過 K-means 找出資料真實分佈的中心點。我們只需將每個空間點歸類到最近的中心，並將該中心點的 ID 作為代表該區域的「詞彙（Token）」，就能將連續的向量精準轉化為離散符號。這正是「向量量化（Vector Quantization, VQ）」的底層哲學——<strong>不切割空間，而是讓資料自己決定聚落，並用聚落的中心點來擔任 Token。</strong>。</p>
 </section>
 
 <section id="rq-kmeans" class="note-section" data-aos="fade-up" data-aos-delay="120">
