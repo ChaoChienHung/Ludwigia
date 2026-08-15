@@ -10,8 +10,8 @@
   <meta name="garden:status" content="drafting">
   <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.hierarchical_clustering,concept.agnes,concept.dendrogram,concept.linkage">
   <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.hierarchical_clustering&quot;:{&quot;en&quot;:&quot;Hierarchical Clustering&quot;,&quot;zh-Hant&quot;:&quot;階層式分群&quot;,&quot;zh-Hans&quot;:&quot;层次聚类&quot;},&quot;concept.agnes&quot;:{&quot;en&quot;:&quot;Agnes&quot;,&quot;zh-Hant&quot;:&quot;AGNES&quot;,&quot;zh-Hans&quot;:&quot;AGNES&quot;},&quot;concept.dendrogram&quot;:{&quot;en&quot;:&quot;Dendrogram&quot;,&quot;zh-Hant&quot;:&quot;樹狀圖&quot;,&quot;zh-Hans&quot;:&quot;树状图&quot;},&quot;concept.linkage&quot;:{&quot;en&quot;:&quot;Linkage&quot;,&quot;zh-Hant&quot;:&quot;鏈結準則&quot;,&quot;zh-Hans&quot;:&quot;链接准则&quot;}}">
-  <meta name="garden:last_modified_at" content="2026-06-20">
-  <meta name="garden:reading_time_minutes" content="4">
+  <meta name="garden:last_modified_at" content="2026-08-15">
+  <meta name="garden:reading_time_minutes" content="6">
   <meta name="garden:source" content="notes/agnes-building-clusters-bottom-up/agnes-building-clusters-bottom-up-en.md">
   <script>
   (() => {
@@ -183,7 +183,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-06-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-06-20</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-15"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-15</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -376,6 +376,48 @@
 <li>its power comes from preserving merge history through the dendrogram</li>
 <li>its main cost is that linkage choice and early greedy merges strongly shape the final hierarchy</li>
 </ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

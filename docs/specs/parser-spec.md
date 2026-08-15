@@ -217,7 +217,7 @@ external bank contract：
 - 內部可放 `<takeaways>`、`<qquiz>`、`<qprompt>`，且都可缺席
 - 若內含多個子元件，才以 tabs / pane 呈現
 - 若只有一個子元件，只顯示該子區塊，不硬產生空 tab
-- `qquiz` / `qprompt` 可獨立存在於 `reviewkit` 外
+- `qquiz` / `qprompt` 可獨立存在於 `reviewkit` 外；但所有 `notes/` 筆記頁面底端均標配 `<reviewkit>`，至少包含 `<qprompt/>`，若包含 `<takeaways>` 或 `<qquiz>` 也一併包在該 `<reviewkit>` 容器內
 
 ### `<qprompt>...</qprompt>` / `<qprompt/>`
 

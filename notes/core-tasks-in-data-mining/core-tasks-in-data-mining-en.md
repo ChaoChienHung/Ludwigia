@@ -34,7 +34,6 @@ LastModified: 2026-06-12
 - References
 </draft>
 
-
 <anchors>
 toc1: core-tasks -> Core Tasks in Data Mining
 h2: Core Tasks in Data Mining -> core-tasks
@@ -111,6 +110,16 @@ The choice of which task to pursueâ€”and which mathematical framework to deployâ
 - Predictive tasks estimate known targets; descriptive tasks reveal hidden structure.
 - Relational and recommendation settings require thinking beyond flat records.
 - Choosing the right task comes before choosing the right algorithm.
+
+<reviewkit>
+<takeaways>
+- Data mining contains multiple task families, each aligned with a different kind of question.
+- Predictive tasks estimate known targets; descriptive tasks reveal hidden structure.
+- Relational and recommendation settings require thinking beyond flat records.
+- Choosing the right task comes before choosing the right algorithm.
+</takeaways>
+<qprompt/>
+</reviewkit>
 
 ## References
 

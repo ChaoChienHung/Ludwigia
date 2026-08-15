@@ -270,3 +270,12 @@ To optimize performance and handle practical issues:
   - **Two-Phase Protocol:** Collecting state and promising not to look back before choosing a value.
 - **Liveness** is achieved in practice by electing a single leader.
 - **State Machine Replication** is achieved by running an instance of Paxos per log slot, building a replicated log that all nodes execute in the same order.
+
+<reviewkit>
+<takeaways>
+- **Primary-backup is insufficient** on its own without a consensus mechanism due to the risk of split-brain in asynchronous networks.
+- **FLP Impossibility** shows that deterministic consensus cannot guarantee both safety and liveness in a fully asynchronous system with crash failures.
+- **Paxos ensures safety** under all conditions through:
+</takeaways>
+<qprompt/>
+</reviewkit>

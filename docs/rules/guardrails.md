@@ -162,9 +162,10 @@
   - [ ] 若 Copilot 可見性支援 settings 偏好，應與 modal / `pages/settings.html` 共用同一套 localStorage + runtime 狀態，不應各自長出平行設定
   - [ ] 內容頁若要共用 navbar，優先在生成階段讀 `pages/_shared/navbar.html`；不要改成 runtime fetch 導致 `file://` 與靜態站情境退化
 
-- [ ] ReviewKit / Quiz / Prompt 的關係不退化
+- [ ] ReviewKit / Quiz / Prompt 的關係與標配契約不退化
   - [ ] `reviewkit` 是 container，不是硬綁的固定 tabs 組合
   - [ ] `qquiz` / `qprompt` 可獨立存在；若同時在同一個 `reviewkit` 內，才組成 tabs
+  - [ ] 所有 `notes/` 筆記頁面底端均標配 `<reviewkit>` 容器，至少包裹 `<qprompt/>`；若存在 `<takeaways>` 或 `<qquiz>`，一律包在同一個 `<reviewkit>` 內，不讓 `<takeaways>` 散落在 `reviewkit` 外
   - [ ] 不再依賴全域固定 id 讓 prompt copy 或 summary tabs 勉強工作
 
 - [ ] Agent-assisted 寫作 workflow 不退化

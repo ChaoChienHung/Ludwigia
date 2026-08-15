@@ -20,6 +20,7 @@
 - 若啟用翻譯 workflow（`tools/translate_content.py` / `cli.py translate`），必須維持 source-driven contract：只翻必要自然語言；`Tags`、metadata key、slug、路徑與 block 骨架不得被任意改寫
 - 若翻譯 backend 需要憑證，必須支援 environment variables 與 `secret.txt`；`secret.txt` 必須排除在版本控制外
 - `reviewkit` 若存在，必須維持為 semantic container：`qquiz` / `qprompt` 可獨立存在；只有當它們都出現在同一個 `reviewkit` 內時，才組成 tabs UI
+- 所有 `notes/` 底下的單篇筆記（Note）一律必須在頁面結尾包含 `<reviewkit>` 容器；`<reviewkit>` 內部至少包含 `<qprompt/>`，若存在 `<takeaways>` 或 `<qquiz>`，一律必須包在該 `<reviewkit>` 容器內，不得讓 `<takeaways>` 散落在 `reviewkit` 外
 - 若內容支援 external question bank（`questions.<lang>.json`），題目 metadata 若啟用 `question_focus`，必須維持為 per-question source-driven facet：
   - 可用來表達如 `concept_understanding` / `algorithm_recognition` 這類題目方向
   - 同一個 bank 可混放不同方向題目，不應要求拆成多份 bank

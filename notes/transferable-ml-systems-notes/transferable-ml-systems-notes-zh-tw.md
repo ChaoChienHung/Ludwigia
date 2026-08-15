@@ -31,7 +31,6 @@ Status: drafting
     - - 好的模型設計，不能只看參數量，還要看算力口徑、稀疏配置與可被釋放的有效深度
 </draft>
 
-
 # 可遷移機器學習與系統設計筆記
 
 這是一份為您深度提煉的知識點筆記。我已經過濾掉了單純的實驗數值和特定業務的 performance improvement，專注於提取可遷移（Transferable）與可泛化（Generalizable）的核心機器學習、模型架構與系統設計概念。
@@ -169,3 +168,7 @@ Agentic workflow 不能只依賴「讓模型再想一次」。需要顯式 feedb
 - 好的模型設計，不能只看參數量，還要看算力口徑、稀疏配置與可被釋放的有效深度。
 - 好的記憶與特徵設計，常來自不同歸納偏置的正交疊加。
 - 好的系統與 Agent 設計，關鍵不是單點技術最強，而是是否匹配 operating regime 與回饋機制。
+
+<reviewkit>
+<qprompt/>
+</reviewkit>

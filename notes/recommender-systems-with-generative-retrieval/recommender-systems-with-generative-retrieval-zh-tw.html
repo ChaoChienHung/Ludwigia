@@ -12,7 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
   <meta name="garden:published_at" content="2026-07-26">
   <meta name="garden:last_modified_at" content="2026-07-26">
-  <meta name="garden:reading_time_minutes" content="15">
+  <meta name="garden:reading_time_minutes" content="18">
   <meta name="garden:source" content="notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.md">
   <script>
   (() => {
@@ -490,6 +490,68 @@
 <hr>
 </section>
 
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>範式轉變</strong>：生成式檢索（Generative Retrieval, GR）將推薦召回從「雙塔向量空間內積搜尋 (MIPS)」轉化為「自回歸序列生成 (Seq2Seq Generation)」，打破了單一向量表達瓶頸，實現了模型與索引的深度融合（Model-as-Index）。</li>
+<li><strong>Semantic ID 與 RQ-VAE</strong>：透過殘差向量量化自動編碼器（RQ-VAE），將 Item 稠密向量轉化為層級離散代碼元組 $(c_1, c_2, \dots, c_K)$，實現了粗到細的語義結構共享與無語意 Atomic ID 的解耦。</li>
+<li><strong>受限解碼 (Constrained Trie Search)</strong>：推理階段透過商品庫建立的前綴樹（Trie）對解碼 logits 進行 Mask 限制，結合 Beam Search 確保生成的代碼 100% 精準對應真實商品。</li>
+<li><strong>核心優勢與未來</strong>：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">參考文獻（References）</h3>
 
@@ -505,13 +567,6 @@
 
 <section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">總結與核心要點</h3>
-
-<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li><strong>範式轉變</strong>：生成式檢索（Generative Retrieval, GR）將推薦召回從「雙塔向量空間內積搜尋 (MIPS)」轉化為「自回歸序列生成 (Seq2Seq Generation)」，打破了單一向量表達瓶頸，實現了模型與索引的深度融合（Model-as-Index）。</li>
-<li><strong>Semantic ID 與 RQ-VAE</strong>：透過殘差向量量化自動編碼器（RQ-VAE），將 Item 稠密向量轉化為層級離散代碼元組 $(c_1, c_2, \dots, c_K)$，實現了粗到細的語義結構共享與無語意 Atomic ID 的解耦。</li>
-<li><strong>受限解碼 (Constrained Trie Search)</strong>：推理階段透過商品庫建立的前綴樹（Trie）對解碼 logits 進行 Mask 限制，結合 Beam Search 確保生成的代碼 100% 精準對應真實商品。</li>
-<li><strong>核心優勢與未來</strong>：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構。</li>
-</ul></div>
 </section>
         </div>
       </div>

@@ -30,7 +30,6 @@ LastModified: 2026-06-12
 - References
 </draft>
 
-
 <anchors>
 toc1: unsupervised -> Unsupervised Learning and Dimensionality Reduction
 h2: Unsupervised Learning and Dimensionality Reduction -> unsupervised
@@ -103,6 +102,16 @@ The strength of unsupervised learning is that it can reveal structure that no on
 - Clustering and dimensionality reduction are two major ways of revealing hidden organization.
 - Different methods preserve different notions of similarity, variance, or parts-based structure.
 - The real challenge is not just discovering patterns, but deciding whether those patterns are meaningful.
+
+<reviewkit>
+<takeaways>
+- Unsupervised learning studies structure without relying on labeled targets.
+- Clustering and dimensionality reduction are two major ways of revealing hidden organization.
+- Different methods preserve different notions of similarity, variance, or parts-based structure.
+- The real challenge is not just discovering patterns, but deciding whether those patterns are meaningful.
+</takeaways>
+<qprompt/>
+</reviewkit>
 
 ## References
 

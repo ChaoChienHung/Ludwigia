@@ -32,7 +32,6 @@ LastModified: 2026-06-12
 - References
 </draft>
 
-
 <anchors>
 toc1: understanding-data -> Understanding Data for Data Mining
 h2: Understanding Data for Data Mining -> understanding-data
@@ -88,8 +87,6 @@ These attributes generally fall into two broad categories:
    - Interval data features meaningful, measurable distances between values, but lacks a "true zero" point. A classic example is temperature measured in Celsius or Fahrenheit. In these systems, $0^\circ\text{C}$ does not mean a total "absence of heat"—it is simply an arbitrary point selected as the freezing point of water. Because there is no absolute zero, you can perform addition and subtraction (e.g., $30^\circ\text{C}$ is $10^\circ$ hotter than $20^\circ\text{C}$), but you cannot perform multiplication or division. It is scientifically incorrect to claim that $20^\circ\text{C}$ is "twice as hot" as $10^\circ\text{C}$.
    - Ratio data, however, possesses an absolute, true zero, where a value of zero signifies the complete, total absence of the measured attribute. Examples include weight, income, or age. If a bank account holds $$0$, it means there is completely no money present. Because a true zero anchor exists, ratio data permits all arithmetic operations, including multiplication and division. Therefore, we can accurately say that an individual earning $$100,000$ makes exactly twice the income of someone earning $$50,000$.
 
-<qquiz src="questions.en.json" ids="ratio-vs-interval" title="Quick Quiz"/>
-
 ## Data Structures in the Wild
 
 Beyond individual attributes, the overarching structure of a dataset dictates how it must be mathematically handled and mined. Broadly speaking, data presents itself in three foundational structural frameworks:
@@ -120,6 +117,17 @@ This conclusion should gather the key ideas without expanding scope.
 - Attribute types and measurement scales constrain the mathematics we can legitimately apply.
 - Raw storage format and mining representation are related but not identical.
 - A clear understanding of data structure is what makes later cleaning and modeling decisions defensible.
+
+<reviewkit>
+<takeaways>
+- Data understanding is not optional context; it determines what operations and interpretations are valid.
+- Attribute types and measurement scales constrain the mathematics we can legitimately apply.
+- Raw storage format and mining representation are related but not identical.
+- A clear understanding of data structure is what makes later cleaning and modeling decisions defensible.
+</takeaways>
+<qquiz src="questions.en.json" ids="ratio-vs-interval" title="Quick Quiz"/>
+<qprompt/>
+</reviewkit>
 
 ## References
 

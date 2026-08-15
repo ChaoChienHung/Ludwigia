@@ -46,7 +46,6 @@ LastModified: 2026-07-26
     - - **核心優勢與未來**：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構
 </draft>
 
-
 <anchors>
 toc1: overview -> 演進背景：從雙塔 MIPS 到生成式檢索
 h2: 演進背景：從雙塔 MIPS 到生成式檢索 -> overview
@@ -275,6 +274,16 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
 
 ---
 
+<reviewkit>
+<takeaways>
+- **範式轉變**：生成式檢索（Generative Retrieval, GR）將推薦召回從「雙塔向量空間內積搜尋 (MIPS)」轉化為「自回歸序列生成 (Seq2Seq Generation)」，打破了單一向量表達瓶頸，實現了模型與索引的深度融合（Model-as-Index）。
+- **Semantic ID 與 RQ-VAE**：透過殘差向量量化自動編碼器（RQ-VAE），將 Item 稠密向量轉化為層級離散代碼元組 $(c_1, c_2, \dots, c_K)$，實現了粗到細的語義結構共享與無語意 Atomic ID 的解耦。
+- **受限解碼 (Constrained Trie Search)**：推理階段透過商品庫建立的前綴樹（Trie）對解碼 logits 進行 Mask 限制，結合 Beam Search 確保生成的代碼 100% 精準對應真實商品。
+- **核心優勢與未來**：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構。
+</takeaways>
+<qprompt/>
+</reviewkit>
+
 ## 參考文獻（References）
 
 1. Rajput, S., Mehta, N., Singh, A., Ramakrishnan, R., Bhojanapalli, S., Sathiamoorthy, M., Kumar, J., Ravi, S., Mazumder, R., & Beutel, A. (2023). *Generative Retrieval for Recommender Systems*. arXiv preprint [arXiv:2305.05065](https://arxiv.org/abs/2305.05065).
@@ -285,10 +294,3 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
 ---
 
 ## 總結與核心要點
-
-<takeaways>
-- **範式轉變**：生成式檢索（Generative Retrieval, GR）將推薦召回從「雙塔向量空間內積搜尋 (MIPS)」轉化為「自回歸序列生成 (Seq2Seq Generation)」，打破了單一向量表達瓶頸，實現了模型與索引的深度融合（Model-as-Index）。
-- **Semantic ID 與 RQ-VAE**：透過殘差向量量化自動編碼器（RQ-VAE），將 Item 稠密向量轉化為層級離散代碼元組 $(c_1, c_2, \dots, c_K)$，實現了粗到細的語義結構共享與無語意 Atomic ID 的解耦。
-- **受限解碼 (Constrained Trie Search)**：推理階段透過商品庫建立的前綴樹（Trie）對解碼 logits 進行 Mask 限制，結合 Beam Search 確保生成的代碼 100% 精準對應真實商品。
-- **核心優勢與未來**：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構。
-</takeaways>

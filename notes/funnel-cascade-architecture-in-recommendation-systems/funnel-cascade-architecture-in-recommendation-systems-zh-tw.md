@@ -48,7 +48,6 @@ LastModified: 2026-07-30
 - 參考文獻（References）
 </draft>
 
-
 <anchors>
 toc1: challenge -> 如何在極短的時間內，從千萬級商品庫精準挑出最適合使用者的 10 個結果？
 h2: 如何在極短的時間內，從千萬級商品庫精準挑出最適合使用者的 10 個結果？ -> challenge
@@ -272,6 +271,7 @@ content:
 
 ## 總結與核心要點
 
+<reviewkit>
 <takeaways>
 * **核心矛盾與解答**：現代推薦系統利用「漏斗式級聯架構（Cascade Architecture）」解決了海量候選池與毫秒級延遲限制之間的衝突。
 * **三大排序與展示階段**：
@@ -282,6 +282,8 @@ content:
 * **固有局限**：級聯架構面臨「召回決定上限」、「系統通信/IO 搬運開銷過大（阻礙模型 Scaling）」以及「目標不一致」等結構性痛點。
 * **未來趨勢**：全鏈路一體化（如 OneRec）與生成式檢索（Generative Retrieval, GR）正致力於省去跨模組搬運開銷，將算力集中於大模型 Scaling，成為打破傳統級聯架構限制的最前沿方向。
 </takeaways>
+<qprompt/>
+</reviewkit>
 
 ## 參考文獻（References）
 

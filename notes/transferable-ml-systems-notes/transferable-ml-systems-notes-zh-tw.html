@@ -11,7 +11,7 @@
   <meta name="garden:tag_concepts" content="concept.machine_learning,concept.system_design,concept.scaling_laws,concept.sequence,concept.data,concept.snr,concept.quota,concept.dedup,concept.context,concept.chinchilla,concept.embedding,concept.sparsity,concept.attention,concept.memory,concept.engram,concept.orthogonality,concept.lsh,concept.agent,concept.llm">
   <meta name="garden:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.system_design&quot;:{&quot;en&quot;:&quot;System Design&quot;,&quot;zh-Hant&quot;:&quot;系統設計&quot;,&quot;zh-Hans&quot;:&quot;系统设计&quot;},&quot;concept.scaling_laws&quot;:{&quot;en&quot;:&quot;Scaling Laws&quot;,&quot;zh-Hant&quot;:&quot;縮放定律&quot;,&quot;zh-Hans&quot;:&quot;缩放定律&quot;},&quot;concept.sequence&quot;:{&quot;en&quot;:&quot;Sequence&quot;,&quot;zh-Hant&quot;:&quot;序列&quot;,&quot;zh-Hans&quot;:&quot;序列&quot;},&quot;concept.data&quot;:{&quot;en&quot;:&quot;Data&quot;,&quot;zh-Hant&quot;:&quot;資料&quot;,&quot;zh-Hans&quot;:&quot;数据&quot;},&quot;concept.snr&quot;:{&quot;en&quot;:&quot;SNR&quot;,&quot;zh-Hant&quot;:&quot;訊噪比&quot;,&quot;zh-Hans&quot;:&quot;信噪比&quot;},&quot;concept.quota&quot;:{&quot;en&quot;:&quot;Quota&quot;,&quot;zh-Hant&quot;:&quot;配額&quot;,&quot;zh-Hans&quot;:&quot;配额&quot;},&quot;concept.dedup&quot;:{&quot;en&quot;:&quot;Dedup&quot;,&quot;zh-Hant&quot;:&quot;去重&quot;,&quot;zh-Hans&quot;:&quot;去重&quot;},&quot;concept.context&quot;:{&quot;en&quot;:&quot;Context&quot;,&quot;zh-Hant&quot;:&quot;上下文&quot;,&quot;zh-Hans&quot;:&quot;上下文&quot;},&quot;concept.chinchilla&quot;:{&quot;en&quot;:&quot;Chinchilla&quot;,&quot;zh-Hant&quot;:&quot;Chinchilla&quot;,&quot;zh-Hans&quot;:&quot;Chinchilla&quot;},&quot;concept.embedding&quot;:{&quot;en&quot;:&quot;Embedding&quot;,&quot;zh-Hant&quot;:&quot;嵌入表示&quot;,&quot;zh-Hans&quot;:&quot;嵌入表示&quot;},&quot;concept.sparsity&quot;:{&quot;en&quot;:&quot;Sparsity&quot;,&quot;zh-Hant&quot;:&quot;稀疏性&quot;,&quot;zh-Hans&quot;:&quot;稀疏性&quot;},&quot;concept.attention&quot;:{&quot;en&quot;:&quot;Attention&quot;,&quot;zh-Hant&quot;:&quot;注意力&quot;,&quot;zh-Hans&quot;:&quot;注意力&quot;},&quot;concept.memory&quot;:{&quot;en&quot;:&quot;Memory&quot;,&quot;zh-Hant&quot;:&quot;記憶&quot;,&quot;zh-Hans&quot;:&quot;记忆&quot;},&quot;concept.engram&quot;:{&quot;en&quot;:&quot;Engram&quot;,&quot;zh-Hant&quot;:&quot;記憶痕跡&quot;,&quot;zh-Hans&quot;:&quot;记忆痕迹&quot;},&quot;concept.orthogonality&quot;:{&quot;en&quot;:&quot;Orthogonality&quot;,&quot;zh-Hant&quot;:&quot;正交性&quot;,&quot;zh-Hans&quot;:&quot;正交性&quot;},&quot;concept.lsh&quot;:{&quot;en&quot;:&quot;LSH&quot;,&quot;zh-Hant&quot;:&quot;局部敏感雜湊&quot;,&quot;zh-Hans&quot;:&quot;局部敏感哈希&quot;},&quot;concept.agent&quot;:{&quot;en&quot;:&quot;Agent&quot;,&quot;zh-Hant&quot;:&quot;代理&quot;,&quot;zh-Hans&quot;:&quot;代理&quot;},&quot;concept.llm&quot;:{&quot;en&quot;:&quot;LLM&quot;,&quot;zh-Hant&quot;:&quot;大型語言模型&quot;,&quot;zh-Hans&quot;:&quot;大型语言模型&quot;}}">
   <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="8">
+  <meta name="garden:reading_time_minutes" content="11">
   <meta name="garden:source" content="notes/transferable-ml-systems-notes/transferable-ml-systems-notes-zh-tw.md">
   <script>
   (() => {
@@ -302,6 +302,48 @@
 <li>好的記憶與特徵設計，常來自不同歸納偏置的正交疊加。</li>
 <li>好的系統與 Agent 設計，關鍵不是單點技術最強，而是是否匹配 operating regime 與回饋機制。</li>
 </ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

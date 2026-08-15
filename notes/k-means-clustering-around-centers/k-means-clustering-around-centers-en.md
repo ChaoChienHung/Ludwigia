@@ -38,7 +38,6 @@ LastModified: 2026-08-02
 - References
 </draft>
 
-
 # K-Means: Clustering Around Centers
 
 <image>
@@ -1696,6 +1695,7 @@ That single objective function ($SSE$) explains the entire behavior of the algor
 
 If your data fits that geometric assumption, K-Means is a lightning-fast, highly interpretable powerhouse. If it doesn't, K-Means will still give you an answer—but it will be the wrong one. However, by understanding *why* the math forced K-Means to fail, you gain the exact insight needed to choose the right advanced variant or switch to a density-based algorithm instead.
 
+<reviewkit>
 <takeaways>
 - **The Pairwise Shortcut:** K-Means avoids the computational nightmare of $O(N^2)$ point-to-point distance calculations by summarizing clusters with a centroid, reducing the cost to $O(N)$.
 - **The Centroid Identity:** We don't lose the true essence of clustering by doing this. The math proves that minimizing the distance to the centroid is strictly mathematically equivalent to minimizing the pairwise distances between all points in the cluster.
@@ -1706,6 +1706,8 @@ If your data fits that geometric assumption, K-Means is a lightning-fast, highly
 - **The Empty Cluster Vulnerability:** Poor initialization can leave a centroid with zero assigned points ($|C_k|=0$), causing division-by-zero math breakdowns or extreme degenerate collapse where all points concentrate into a single cluster ($K=1$). Practical implementations resolve this by re-initializing empty centroids to high-error residual points or using K-Means++.
 - **Geometric Bias:** Because it optimizes squared distance to a center, K-Means strongly assumes clusters are spherical, similarly sized, and free of massive outliers.
 </takeaways>
+<qprompt/>
+</reviewkit>
 
 ## References
 1. NUS CS5228 Knowledge Discovery and Data Mining Course Materials

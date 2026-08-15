@@ -137,3 +137,7 @@ Target takeaway:
 - AGNES is useful when the structure of the data may exist at multiple levels
 - its power comes from preserving merge history through the dendrogram
 - its main cost is that linkage choice and early greedy merges strongly shape the final hierarchy
+
+<reviewkit>
+<qprompt/>
+</reviewkit>

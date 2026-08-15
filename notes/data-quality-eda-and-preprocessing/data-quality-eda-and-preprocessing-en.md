@@ -32,7 +32,6 @@ LastModified: 2026-06-12
 - References
 </draft>
 
-
 <anchors>
 toc1: prep -> Data Quality, EDA, and Preprocessing
 h2: Data Quality, EDA, and Preprocessing -> prep
@@ -93,25 +92,6 @@ We cannot fix these quality issues blindly. To systematically diagnose a dataset
 
 Through EDA, we assess class balances to ensure our future models won't be heavily biased toward a dominant majority group. Even for unstructured data, running basic statistical summaries on text word frequencies or image pixel distributions during this diagnostic phase provides the foundational insights that dictate our ultimate cleaning strategy.
 
-<qquiz>
-title: Quick Quiz
-
-<question>
-Question: In EDA, which visualization is commonly used to quickly spot outliers?
-A: Histogram
-ResponseA: Incorrect. Histograms show distributions, but boxplots are the classic fast outlier spotter.
-B: Boxplot
-ResponseB: Correct. Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.
-C: Scatter plot
-ResponseC: Incorrect. Scatter plots help reveal relationships, but they are not the standard outlier-first tool described.
-D: Confusion matrix
-ResponseD: Incorrect. Confusion matrices are for evaluating classifiers, not EDA.
-Answer: B
-Explanation: Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.
-</question>
-
-</qquiz>
-
 ## Preprocessing as the Treatment Plan
 
 Once EDA has illuminated the precise vulnerabilities within the dataset, Data Preprocessing steps in to physically execute the treatment plan, moving from conceptual cleanup to concrete algorithmic preparation. This phase materializes across three rigorous technical fronts:
@@ -142,6 +122,34 @@ This conclusion should gather the main claims without expanding scope.
 - EDA is the diagnostic step that turns vague suspicion into concrete evidence.
 - Preprocessing is the operational layer that transforms evidence into intervention.
 - Good preparation does not just make algorithms easier to run; it makes later knowledge claims more trustworthy.
+
+<reviewkit>
+<takeaways>
+- Data quality is not a side concern; it is part of the epistemic reliability of the whole pipeline.
+- EDA is the diagnostic step that turns vague suspicion into concrete evidence.
+- Preprocessing is the operational layer that transforms evidence into intervention.
+- Good preparation does not just make algorithms easier to run; it makes later knowledge claims more trustworthy.
+</takeaways>
+<qquiz>
+title: Quick Quiz
+
+<question>
+Question: In EDA, which visualization is commonly used to quickly spot outliers?
+A: Histogram
+ResponseA: Incorrect. Histograms show distributions, but boxplots are the classic fast outlier spotter.
+B: Boxplot
+ResponseB: Correct. Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.
+C: Scatter plot
+ResponseC: Incorrect. Scatter plots help reveal relationships, but they are not the standard outlier-first tool described.
+D: Confusion matrix
+ResponseD: Incorrect. Confusion matrices are for evaluating classifiers, not EDA.
+Answer: B
+Explanation: Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.
+</question>
+
+</qquiz>
+<qprompt/>
+</reviewkit>
 
 ## References
 

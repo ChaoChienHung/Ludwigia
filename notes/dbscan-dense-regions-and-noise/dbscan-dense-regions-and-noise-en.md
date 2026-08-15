@@ -157,3 +157,7 @@ Target takeaway:
 - DBSCAN is powerful because it defines clusters through density and connectivity rather than centers
 - that makes it much better than K-Means in some messy real-world geometries
 - its main cost is not speed alone, but judgment: we have to decide what density should mean in the first place
+
+<reviewkit>
+<qprompt/>
+</reviewkit>

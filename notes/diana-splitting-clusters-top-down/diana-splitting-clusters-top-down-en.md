@@ -127,3 +127,7 @@ Target takeaway:
 - DIANA is useful when clustering is better understood as progressive separation from a mixed whole
 - its strength lies in surfacing the major fault lines in the data early
 - its cost is that divisive decisions can be computationally heavy and highly consequential
+
+<reviewkit>
+<qprompt/>
+</reviewkit>

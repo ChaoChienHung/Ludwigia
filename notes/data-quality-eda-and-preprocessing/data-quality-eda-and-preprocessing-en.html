@@ -12,7 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.data_quality&quot;:{&quot;en&quot;:&quot;Data Quality&quot;,&quot;zh-Hant&quot;:&quot;資料品質&quot;,&quot;zh-Hans&quot;:&quot;数据质量&quot;},&quot;concept.exploratory_data_analysis&quot;:{&quot;en&quot;:&quot;Exploratory Data Analysis&quot;,&quot;zh-Hant&quot;:&quot;探索式資料分析&quot;,&quot;zh-Hans&quot;:&quot;探索式数据分析&quot;},&quot;concept.eda&quot;:{&quot;en&quot;:&quot;EDA&quot;,&quot;zh-Hant&quot;:&quot;探索式資料分析&quot;,&quot;zh-Hans&quot;:&quot;探索式数据分析&quot;},&quot;concept.preprocessing&quot;:{&quot;en&quot;:&quot;Preprocessing&quot;,&quot;zh-Hant&quot;:&quot;前處理&quot;,&quot;zh-Hans&quot;:&quot;预处理&quot;},&quot;concept.missing_values&quot;:{&quot;en&quot;:&quot;Missing Values&quot;,&quot;zh-Hant&quot;:&quot;缺失值&quot;,&quot;zh-Hans&quot;:&quot;缺失值&quot;},&quot;concept.outliers&quot;:{&quot;en&quot;:&quot;Outliers&quot;,&quot;zh-Hant&quot;:&quot;離群值&quot;,&quot;zh-Hans&quot;:&quot;离群值&quot;},&quot;concept.noise&quot;:{&quot;en&quot;:&quot;Noise&quot;,&quot;zh-Hant&quot;:&quot;雜訊&quot;,&quot;zh-Hans&quot;:&quot;噪声&quot;},&quot;concept.normalization&quot;:{&quot;en&quot;:&quot;Normalization&quot;,&quot;zh-Hant&quot;:&quot;正規化&quot;,&quot;zh-Hans&quot;:&quot;归一化&quot;},&quot;concept.feature_selection&quot;:{&quot;en&quot;:&quot;Feature Selection&quot;,&quot;zh-Hant&quot;:&quot;特徵選擇&quot;,&quot;zh-Hans&quot;:&quot;特征选择&quot;}}">
   <meta name="garden:published_at" content="2026-06-12">
   <meta name="garden:last_modified_at" content="2026-06-12">
-  <meta name="garden:reading_time_minutes" content="7">
+  <meta name="garden:reading_time_minutes" content="8">
   <meta name="garden:source" content="notes/data-quality-eda-and-preprocessing/data-quality-eda-and-preprocessing-en.md">
   <script>
   (() => {
@@ -246,32 +246,6 @@
 <p class="mb-3">We cannot fix these quality issues blindly. To systematically diagnose a dataset's flaws before any heavy modeling occurs, practitioners employ Exploratory Data Analysis (EDA). Acting as a crucial sanity check, EDA is the "X-ray machine" of data science. It relies heavily on visual tools—such as histograms to view data distributions, boxplots to instantly spot outliers, and scatter plots to reveal hidden correlations.</p>
 
 <p class="mb-3">Through EDA, we assess class balances to ensure our future models won't be heavily biased toward a dominant majority group. Even for unstructured data, running basic statistical summaries on text word frequencies or image pixel distributions during this diagnostic phase provides the foundational insights that dictate our ultimate cleaning strategy.</p>
-
-<div class="note-quiz mt-4">
-  <div class="note-quiz-header">
-    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
-    <div class="note-quiz-controls">
-      <div class="note-quiz-progress" aria-live="polite">1 / 1</div>
-      <button type="button" class="note-quiz-reset">Reset</button>
-    </div>
-  </div>
-  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
-    <div class="carousel-inner">
-<div class="carousel-item active">
-  <div class="note-quiz-question" data-question="1">
-    <div class="note-quiz-question-title">In EDA, which visualization is commonly used to quickly spot outliers?</div>
-    <div class="note-quiz-options">
-<button type="button" class="note-quiz-option" data-response="Incorrect. Histograms show distributions, but boxplots are the classic fast outlier spotter.">A. Histogram</button>
-<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.">B. Boxplot</button>
-<button type="button" class="note-quiz-option" data-response="Incorrect. Scatter plots help reveal relationships, but they are not the standard outlier-first tool described.">C. Scatter plot</button>
-<button type="button" class="note-quiz-option" data-response="Incorrect. Confusion matrices are for evaluating classifiers, not EDA.">D. Confusion matrix</button>
-    </div>
-    <div class="note-quiz-response" aria-live="polite"></div>
-  </div>
-</div>
-    </div>
-  </div>
-</div>
 </section>
 
 <section id="preprocessing-as-the-treatment-plan" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -310,6 +284,61 @@
 <li>Preprocessing is the operational layer that transforms evidence into intervention.</li>
 <li>Good preparation does not just make algorithms easier to run; it makes later knowledge claims more trustworthy.</li>
 </ul>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--quiz-tab" data-bs-toggle="tab" data-bs-target="#review-kit--quiz-pane" type="button" role="tab" aria-controls="review-kit--quiz-pane" aria-selected="false">Quick Quiz</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Data quality is not a side concern; it is part of the epistemic reliability of the whole pipeline.</li>
+<li>EDA is the diagnostic step that turns vague suspicion into concrete evidence.</li>
+<li>Preprocessing is the operational layer that transforms evidence into intervention.</li>
+<li>Good preparation does not just make algorithms easier to run; it makes later knowledge claims more trustworthy.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-quiz" id="review-kit--quiz-pane" role="tabpanel" aria-labelledby="review-kit--quiz-tab" tabindex="0">
+<div class="note-quiz">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 1</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">In EDA, which visualization is commonly used to quickly spot outliers?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Histograms show distributions, but boxplots are the classic fast outlier spotter.">A. Histogram</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Boxplots are designed to highlight quartiles and reveal outliers beyond whiskers.">B. Boxplot</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Scatter plots help reveal relationships, but they are not the standard outlier-first tool described.">C. Scatter plot</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Confusion matrices are for evaluating classifiers, not EDA.">D. Confusion matrix</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <h3 class="mb-3">References</h3>
 

@@ -195,11 +195,14 @@ Google 於 NeurIPS 2022 提出的 **TIGER (Transformer with Implicit Generative 
 
 生成式推薦正在重塑我們對資訊檢索的想像，而 RQ-VAE 無疑是這場革命中最璀璨的底層基石之一。沒有絕對完美的架構，只有最適合團隊算力、既有資產與落地場景的 Tokenizer。如果你的團隊擁有強大的算力與調參經驗，RQ-VAE 將為你打開 SOTA 效能的大門；若追求快速落地與極致穩定，RQ-Kmeans 則是無可挑剔的務實首選。
 
+<reviewkit>
 <takeaways>
 - **突破單碼本極限：** RQ-VAE 透過「殘差遞減量化」，用極小的記憶體空間實現了海量商品的階層式語意編碼（Semantic ID）。
 - **梯度魔法 STE：** 解決了 $\arg\min$ 離散化導致梯度斷裂的問題，讓神經網路的端到端訓練成為可能。
 - **直面死碼痛點：** 透過 EMA 更新與 Dead Code Revival，成功拯救了碼本崩塌，保證了 Semantic ID 的高區分度。
 </takeaways>
+<qprompt/>
+</reviewkit>
 
 ## 參考文獻（References）
 

@@ -39,7 +39,6 @@ LastModified: 2026-07-25
     - - Coreference resolution groups all mentions in a text that refer to the same real-world entity
 </draft>
 
-
 <anchors>
 toc1: overview -> Overview: Structuring Knowledge from Text
 h2: Overview: Structuring Knowledge from Text -> overview
@@ -410,6 +409,7 @@ Given a pair of extracted entities $(e_1, e_2)$ within a text context:
 
 ## Summary & Key Takeaways
 
+<reviewkit>
 <takeaways>
 - **Entity Resolution & Coreference:**
     - Coreference resolution groups all mentions in a text that refer to the same real-world entity.
@@ -425,3 +425,5 @@ Given a pair of extracted entities $(e_1, e_2)$ within a text context:
     - Ontologies (ACE, UMLS, Schema.org) define standardized class and predicate schemas under Open-World Assumptions (OWA).
     - Extraction paradigms evolved from **Hearst surface patterns** and **bootstrapping**, to **dependency parse path extraction**, and end-to-end **neural classification models**.
 </takeaways>
+<qprompt/>
+</reviewkit>

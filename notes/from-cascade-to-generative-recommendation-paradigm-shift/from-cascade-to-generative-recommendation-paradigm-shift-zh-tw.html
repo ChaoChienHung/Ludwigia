@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-11">
   <meta name="garden:cover" content="notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift.png">
-  <meta name="garden:reading_time_minutes" content="12">
+  <meta name="garden:reading_time_minutes" content="14">
   <meta name="garden:source" content="notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.md">
   <script>
   (() => {
@@ -299,12 +299,67 @@
 <p class="mb-3">轉向端到端自迴歸生成，不僅解決了碎片化模組帶來的內部損耗與通訊開銷，更讓推薦系統的底層運算契合了現代硬體的天性。藉由將任務統一於 Transformer 架構下，系統得以擺脫記憶體頻寬的限制，真正釋放 Scaling Law 的潛能，同時無縫銜接大語言模型的成熟工業基建。</p>
 
 <p class="mb-3">對工程與研發團隊而言，這場範式轉移標誌著核心焦點的轉變：從過去繁瑣的跨模組調優與歸因排查，回歸到模型與數據本身的建設。隨著底層架構的重塑，未來的推薦引擎將不再只是被動的過濾篩選器，而是具備全局視野與推理能力的內容生成中樞。</p>
+</section>
 
-<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li><strong>傳統級聯架構的效能死胡同：</strong> 多階段漏斗不僅帶來了優化目標錯位（局部最優 $\neq$ 全局最優）與龐大的 IO 通信開銷，更致命的是，其充滿碎片化邏輯與 Embedding 查找的特性，屬於「記憶體頻寬受限」任務。這與現代 GPU 追求「算力密集」的天性嚴重互斥，導致系統陷入低 ROI 的 Scaling 陷阱，更淪為錯失大模型基建紅利的技術孤島。</li>
 <li><strong>從「判別」到「生成」的思維昇華：</strong> 推薦任務從預估單點互動機率的被動「打分題」$P(\text{action} \mid u, i)$，轉變為直接生成最適合商品序列的「開放式申論題」$P(\text{items} \mid u, c)$。這迫使模型不再依賴多級過濾，而是直接掌握全局商品分佈，從源頭統一了優化目標並消滅了歸因黑盒。</li>
 <li><strong>軟硬體對齊與生態大一統（以 OneRec 為例）：</strong> 端到端自迴歸架構徹底打破了 IO 瓶頸。其底層 Transformer 架構將運算統一為大規模矩陣乘法（GEMM），完美契合 GPU 物理特性。這不僅讓推薦系統真正解鎖了「算力越大、能力越強」的 Scaling Law，更能無縫繼承 FlashAttention、vLLM 等頂尖 LLM 工業級基建，實現演算法、硬體與生態的全面共振。</li>
 </ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
