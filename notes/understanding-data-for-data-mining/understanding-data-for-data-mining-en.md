@@ -13,6 +13,25 @@ Status: drafting
 Published: 2026-06-12
 LastModified: 2026-06-12
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - How to read a dataset before mining it: attribute types, measurement scales, structural formats, and the representations algorithms actually consume.
+- Attribute Types and Measurement
+    - These attributes generally fall into two broad categories:
+    - - Nominal values consist of completely unordered, mutually exclusive labels, such as eye color, zip codes, or gender
+- Data Structures in the Wild
+    - * Well-Structured Data: Follows a strict, rigid schema (such as tabular relational databases or SQL tables)
+- From Raw Format to Mining Representation
+    - * Graph Data (Networks): Used when the relationships between objects are just as important as the objects themselves
+- Why Data Understanding Matters
+    - The later stages of preprocessing, feature engineering, and model choice all depend on these earlier distinctions
+    - In that sense, this article naturally bridges into `Data Quality, EDA, and Preprocessing`
+- Summary & Key Takeaways
+    - This conclusion should gather the key ideas without expanding scope
+    - - Data understanding is not optional context; it determines what operations and interpretations are valid
+- References
+</draft>
+
 
 <anchors>
 toc1: understanding-data -> Understanding Data for Data Mining

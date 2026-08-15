@@ -12,6 +12,40 @@ Status: published
 Published: 2026-07-26
 LastModified: 2026-07-26
 </meta>
+<draft>
+- 核心摘要與問題意識
+    - 本篇筆記深入探討生成式檢索（Generative Retrieval, GR）在推薦系統中的架構演進、核心機制與實作細節。涵蓋雙塔 MIPS 檢索範式的瓶頸、Semantic ID 與 RQ-VAE 殘差量化編碼、Seq2Seq 自回歸生成模型（如 TIGER）、前綴樹受限解碼（Constrained Trie Search）、冷啟動泛化能力與未來挑戰。
+- 演進背景：從雙塔 MIPS 到生成式檢索
+    - 在大規模推薦系統中，召回（Retrieval / Candidate Generation）的目標是在毫秒級時間內，從數百萬甚至數千萬的物品候選池（Item Catalog）中篩選出數百個使用者可能感興趣的候選集合
+    - 傳統的召回範式主要基於 **雙塔向量模型（Dual-Tower Embedding Models）** 與 **最大內積搜尋（Maximum Inner Product Search, MIPS）**
+- 範式對比：雙塔 MIPS vs. 生成式檢索
+    - | 比較維度 | 傳統雙塔 MIPS 範式 (Dual-Tower MIPS) | 生成式檢索範式 (Generative Retrieval, GR) |
+    - | :--- | :--- | :--- |
+- Item 符號化與 Semantic ID 建立
+    - 為何傳統 ID 策略不可行？
+    - Semantic ID (語義代碼元組)
+    - 殘差向量量化自動編碼器（RQ-VAE）數學原理
+- Seq2Seq 模型架構與自回歸訓練
+    - 輸入與目標序列建構
+    - 自回歸交叉熵損失 (Autoregressive Cross-Entropy Loss)
+- 推理階段與受限前綴解碼（Constrained Trie Search）
+    - Trie (前綴樹) 樹狀約束搜尋機制
+- 冷啟動泛化與模型 Scaling 特性
+    - 1. 卓越的零樣本 / 冷啟動泛化 (Cold-Start Generalization)
+    - 2. 模型容量 Scaling Law (Scaling Properties)
+- 系統挑戰、權衡與未來發展
+    - 1. 推理延遲與計算吞吐 (Inference Latency & Throughput)
+    - 2. 代碼碰撞與唯一性 (Semantic ID Collision)
+    - 3. 動態商品庫更新 (Dynamic Catalog & Codebook Drift)
+- 前置與延伸閱讀
+    - 若需深入理解推薦系統全貌，建議搭配以下內容閱讀：
+    - - 詳細拆解工業界「召回-粗排-精排-重排」級聯管線的延遲限制、模型複雜度與特徵維度，以及傳統雙塔向量空間的固有痛點
+- 參考文獻（References）
+- 總結與核心要點
+    - - **受限解碼 (Constrained Trie Search)**：推理階段透過商品庫建立的前綴樹（Trie）對解碼 logits 進行 Mask 限制，結合 Beam Search 確保生成的代碼 100% 精準對應真實商品
+    - - **核心優勢與未來**：具備優異的冷啟動泛化能力與模型 Scaling 潛力；未來突破方向集中於推理延遲優化、非自回歸解碼與多模態 LLM 原生推薦架構
+</draft>
+
 
 <anchors>
 toc1: overview -> 演進背景：從雙塔 MIPS 到生成式檢索

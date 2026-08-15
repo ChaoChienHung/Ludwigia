@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第一性原理的終極型態：將現實抽絲剝繭成帶有數學屬性的符號與規則</title>
+  <meta name="garden:tags" content="認知, 決策, 學習, 反思">
+  <meta name="garden:summary" content="本文重新審視第一性原理思考的終極型態——將現實抽絲剝繭成帶有數學屬性的純粹符號與規則。文章深入探討符號化的極致壓縮與知識擴充力量、大腦適應符號思考的認知代價、按需調用的剪枝策略，以及訓練符號能力如何帶來精準辨識模式差異與真正的「邏輯好」。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.cognition,concept.decision_making,concept.learning,concept.reflection">
+  <meta name="garden:tag_labels" content="{&quot;concept.cognition&quot;:{&quot;en&quot;:&quot;Cognition&quot;,&quot;zh-Hant&quot;:&quot;認知&quot;,&quot;zh-Hans&quot;:&quot;认知&quot;},&quot;concept.decision_making&quot;:{&quot;en&quot;:&quot;Decision Making&quot;,&quot;zh-Hant&quot;:&quot;決策&quot;,&quot;zh-Hans&quot;:&quot;决策&quot;},&quot;concept.learning&quot;:{&quot;en&quot;:&quot;Learning&quot;,&quot;zh-Hant&quot;:&quot;學習&quot;,&quot;zh-Hans&quot;:&quot;学习&quot;},&quot;concept.reflection&quot;:{&quot;en&quot;:&quot;Reflection&quot;,&quot;zh-Hant&quot;:&quot;反思&quot;,&quot;zh-Hans&quot;:&quot;反思&quot;}}">
+  <meta name="garden:canonical_id" content="first-principles-symbols-and-rules">
+  <meta name="garden:published_at" content="2026-08-15">
+  <meta name="garden:last_modified_at" content="2026-08-15">
+  <meta name="garden:reading_time_minutes" content="7">
+  <meta name="garden:source" content="writing/first-principles-symbols-and-rules/first-principles-symbols-and-rules-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">第一性原理的終極型態：將現實抽絲剝繭成帶有數學屬性的符號與規則</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">什麼是「符號與規則」？以資料分群為例</a>
+<a class="note-toc-link level-1" href="#knowledge-scaling">符號化思考的力量：極致壓縮與 Knowledge Scaling</a>
+<a class="note-toc-link level-1" href="#section-2">符號化思考的挑戰：為什麼這極度吃力？</a>
+<a class="note-toc-link level-2" href="#1">1. 大腦是「模式識別引擎」，不是「代碼編譯器」</a>
+<a class="note-toc-link level-2" href="#2">2. 比起生活錨點，符號的認知摩擦力極高</a>
+<a class="note-toc-link level-2" href="#3">3. 萃取與推導的雙重門檻</a>
+<a class="note-toc-link level-1" href="#section-3">數理思維的重要性：真正「邏輯好」的本質</a>
+<a class="note-toc-link level-1" href="#section-4">結論：按需調用與自由穿梭</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-15" data-published-at="2026-08-15"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-15</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在思考問題時，我們常習慣使用「類比思維（Analogy Thinking）」——用我們熟悉的現象 A，去類比未知的現象 B。</p>
+
+<p class="mb-3">這種方式在日常生活中極其高效，但它有一個致命的天花板：<strong>極度依賴我們個人所擁有的現象與經驗記憶錨點（Cognitive Anchors）。</strong></p>
+
+<p class="mb-3">如果你面對的是一個全新的規則、或是高維度空間中的複雜現象，你在宏觀現實中根本找不到任何可以類比的錨點。這時，試圖用類比去理解只會產生偏差。</p>
+
+<p class="mb-3">這正是為什麼第一性原理的終極型態，並非尋找另一個粗糙的現象類比，而是：</p>
+
+<blockquote class="blockquote mb-3"><strong>將現實世界抽絲剝繭，去除非本質的微觀噪音，提煉出最純粹的「帶有數學屬性的符號與規則（Symbols &amp; Rules）」。</strong></blockquote>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">什麼是「符號與規則」？以資料分群為例</h3>
+
+<p class="mb-3">為了理解什麼是「將現實剝離至帶有數學屬性的符號與規則」，我們可以拿商業運營與資料分析中最常見的<strong>「資料分群（Clustering / Segmentation）」</strong>作為具體的例子。</p>
+
+<p class="mb-3">分群的過程，完美展現了符號化的三部曲：</p>
+
+<ol class="mb-3">
+<li><strong>過濾噪音與萃取特質：</strong> 在面對一百萬名獨立個體時，剝離個體間微小的消費時間差與隨機波動，找出共享的結構特徵（如同構特徵或相似分布）。</li>
+<li><strong>簡化壓縮為代表符號：</strong> 將龐大的個體空間「坍縮」並映射為一個代表符號（例如 <code>Segment Alpha</code> 或 <code>Cluster Centroid</code>）。</li>
+<li><strong>對符號進行規則推演：</strong> 後續的策略制定或演算推導，<strong>不再作用於那一百萬個複雜個體上，而是直接作用於這個簡化後的符號上</strong>。</li>
+</ol>
+
+<p class="mb-3">分群只是符號化思考在現實中的一個微小縮影。當你不再是用另一個現象去類比，而是將現象精練成一個帶有運算規則的符號時，你便擁有了超越大腦直覺極限的精密推導能力。</p>
+</section>
+
+<section id="knowledge-scaling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">符號化思考的力量：極致壓縮與 Knowledge Scaling</h3>
+
+<p class="mb-3">將現實抽象成符號與規則，最直觀的威力在於<strong>極致的資訊壓縮與知識擴充能力（Knowledge Scaling）</strong>。</p>
+
+<p class="mb-3">正如我們在 <a class="note-content-link" data-canonical-id="first-principles-information-compression" href="../first-principles-information-compression/first-principles-information-compression-zh-tw.html">第一性原理：大腦的終極資訊壓縮術<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Writing.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">第一性原理：大腦的終極資訊壓縮術</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">學習</span><span class="note-content-link-preview-tag">認知</span><span class="note-content-link-preview-tag">反思</span></span><span class="note-content-link-preview-summary">第一性原理不僅是拆解問題的工具，更是升級大腦運作機制的關鍵。透過將異質知識收斂至共享的底層結構，我們能達成極致的資訊壓縮、將記憶提取轉為路徑導航，並在跨領域應用中引爆創造力。</span></span></span></a> 中所探討的，當我們將異質的現象收斂至共享的底層結構時，我們能在有限的腦容量中裝下跨領域的龐大知識。</p>
+
+<p class="mb-3">一個精確的符號與公式（例如 $F = ma$ 或矩陣相乘 $Y = XW + b$），可以用幾行符號替換掉幾十頁文字的混亂描述。這讓大腦的工作記憶（Working Memory）能從繁瑣的表象細節中解脫出來，專注於更高階的架構推導與系統決策。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">符號化思考的挑戰：為什麼這極度吃力？</h3>
+
+<p class="mb-3">既然符號化是第一性原理的終極型態，為什麼大多數人（甚至包括專家）在日常思考時，依然極少直接使用純符號推導？</p>
+
+<p class="mb-3">因為這違背了大腦的生物演化直覺，並帶來極高的認知代價：</p>
+
+<h4 id="1" class="mb-2">1. 大腦是「模式識別引擎」，不是「代碼編譯器」</h4>
+
+<p class="mb-3">在演化上，大腦優先解決的是生存問題（避開掠食者、尋找食物），擅長處理圖形、空間、隱喻與故事。符號數學是人類極近期才發明的文化工具，我們的大腦並沒有原生執行符號演算的神經硬體。</p>
+
+<h4 id="2" class="mb-2">2. 比起生活錨點，符號的認知摩擦力極高</h4>
+
+<p class="mb-3">生活中的實例與類比（如「水流類比電流」）對我們而言唾手可得且極度熟悉，大腦調取的認知成本幾乎為零。 相反地，純粹的抽象符號除非經過長年累月的刻意訓練並達到肌肉記憶般的熟練度，否則大腦在處理符號時會消耗極大的意念與能量。用抽象符號替代生活錨點進行思考，在初期感覺不是簡化，而是極度吃力。</p>
+
+<h4 id="3" class="mb-2">3. 萃取與推導的雙重門檻</h4>
+
+<p class="mb-3">符號化思考要求雙重的高階能力：</p>
+
+<ul class="note-list">
+<li><strong>精確萃取能力：</strong> 是否能精確剝離雜訊，定義出帶有正確屬性的符號？</li>
+<li><strong>嚴密推導能力：</strong> 是否能在沒有自然語言語意輔助的情況下，嚴格沿著邏輯規則進行演算？</li>
+</ul>
+
+<p class="mb-3">如果這兩項能力未經充分培養與訓練，強行使用符號化思考反而會因為無法駕馭符號而導致思維卡頓，甚至比使用直觀類比更容易迷失。</p>
+
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-scale-unbalanced me-2"></i>認知工具的比較</h4><ul class="note-list">
+<li><strong>生活實例與類比：</strong> 認知成本極低、調用迅速、直觀易懂。缺點是受限於個人經驗錨點，無法推導超越感官經驗的全新規則。</li>
+<li><strong>純粹符號與規則：</strong> 無偏見、精密、可進行長鏈條嚴密推導。缺點是學習與運算摩擦力極大，需要長期刻意培養。</li>
+</ul></div>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">數理思維的重要性：真正「邏輯好」的本質</h3>
+
+<p class="mb-3">既然符號思考如此吃力，為什麼我們依然要強調「數理思維」與「形式化思考」的重要性？</p>
+
+<p class="mb-3">因為<strong>數學本質上就是符號與規則推導的集大成者</strong>。</p>
+
+<p class="mb-3">雖然我們不能說數學的符號與規則已經能 100% 完美囊括現實世界萬物的所有複雜變化，但不可否認的是，<strong>數學是人類至今所建立出最精密、最嚴密、也最能成功模擬與詮釋世界動態的語言與工具體系</strong>。</p>
+
+<p class="mb-3">更重要的是，在提升「符號屬性萃取」與「規則推導」能力的過程中，我們會獲得一個極其關鍵的認知副產物：</p>
+
+<blockquote class="blockquote mb-3"><strong>精準辨識出「看似相似但並不完全相同的 Pattern 之間的微觀差異」，並一眼洞察「為什麼這個相異處會導致原本的模式或類比失效」。</strong></blockquote>
+
+<p class="mb-3">大多數人在思考時，容易被表面的相似所誤導（產生粗糙的偽類比）；而經過符號與規則訓練的人，能一眼看到邊界條件在哪裡斷裂、哪個屬性對不上。<strong>這種對微觀差異與邊界限制的極致敏銳度，正是大眾常形容一個人「邏輯很好」的真正本質。</strong> 它能讓我們在面對複雜情境時，做出遠比他人更精確的預測與決策。</p>
+</section>
+
+<section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">結論：按需調用與自由穿梭</h3>
+
+<p class="mb-3">理解了符號與規則的力量與邊界後，我們就能建立起健康的調用策略：</p>
+
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-scissors me-2"></i>剪枝策略：按需符號化，而非凡事硬套</h4><p class="mb-3">符號與規則推導在數學上可以組合出無窮無盡的合理可能性，但「邏輯上合理」並不代表「真實存在」或「當下需要」。</p>
+
+<p class="mb-3">因此，我們<strong>不需要凡事都強迫自己用純符號思考</strong>——那只會無謂地浪費大腦能量，帶來的邊際效益極低。正確的做法是<strong>「按需調用（On Demand）」</strong>：只在需要對特定現象進行精確預測、長鏈條推導、或是尋找底層解釋時，才啟動符號化工具；在日常探索與溝通時，則依然使用高效的生活類比。</p></div>
+
+<p class="mb-3">成熟的思考者，絕不是一味沉溺於冰冷的符號演算中，而是能夠根據情境在不同的認知階層自由切換：</p>
+
+<ul class="note-list">
+<li><strong>需要快速探索、啟發靈感、與人溝通時：</strong> 使用日常生活實例與直觀類比（低摩擦力、高溝通效率）。</li>
+<li><strong>需要精確校準、推導極限、打破經驗錨點時：</strong> 按需切換至帶有數學屬性的符號與規則（無偏見、嚴密推導）。</li>
+</ul>
+
+<p class="mb-3">將現實抽絲剝繭成符號與規則，是一項需要長期栽培的大腦內功。唯有理解了它的力量、代價與適用的邊界，我們才能真正駕馭這項第一性原理的終極工具。</p>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>第一性原理終極型態：</strong> 擺脫經驗記憶錨點（Anchors）的束縛，將現實剝離至最純粹的「帶有數學屬性的符號與規則」。</li>
+<li><strong>真正的「邏輯好」：</strong> 訓練符號能力能提升精準辨識「看似相似但不同的 Pattern 微觀差異」的能力，洞察模式失效的邊界條件。</li>
+<li><strong>按需調用（On Demand）：</strong> 符號化是極致精確但認知摩擦力高的工具，僅在需要精密預測與推導時按需啟動，避免凡事硬套。</li>
+</ul></div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

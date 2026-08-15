@@ -12,6 +12,24 @@ Status: drafting
 Published: 2026-06-12
 LastModified: 2026-06-12
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - How supervised learning fits into data mining: learning from labeled data to perform classification and regression, from classical models to deep learning.
+- The Labeled Learning Setting
+    - When a dataset arrives with established, gold-standard labels, supervised learning algorithms are deployed
+- Classical Supervised Models
+- Ensembles and Interpretability
+- When Deep Learning Becomes Useful
+    - When the data scales into massive, highly intricate biological configurations, Deep Learning architectures take over
+    - - Convolutional Neural Networks (CNNs): Excel at processing structural, spatial data
+- Strengths and Limits of Supervised Learning
+    - Supervised learning is powerful because it gives us a direct path from labeled experience to prediction
+- Summary & Key Takeaways
+    - - Supervised learning is the branch of data mining that learns from labeled examples
+    - - It is especially suited to classification and regression tasks
+- References
+</draft>
+
 
 <anchors>
 toc1: supervised -> Supervised Learning in Data Mining

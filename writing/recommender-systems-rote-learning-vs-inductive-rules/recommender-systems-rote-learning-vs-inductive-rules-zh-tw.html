@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>推薦系統的本質痛點：從「死記硬背」到「符號與規則」的演進</title>
+  <meta name="garden:tags" content="推薦系統, 機器學習, 決策, 反思">
+  <meta name="garden:summary" content="本文借用「符號與規則」框架解析推薦系統的演進本質。剖析為何傳統 ID 矩陣分解傾向於「死記硬背」改寫 Embedding 座標，揭示歸納偏置（Inductive Bias）與人工先驗在過渡至生成式推薦時的核心角色。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.machine_learning,concept.decision_making,concept.reflection">
+  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.decision_making&quot;:{&quot;en&quot;:&quot;Decision Making&quot;,&quot;zh-Hant&quot;:&quot;決策&quot;,&quot;zh-Hans&quot;:&quot;决策&quot;},&quot;concept.reflection&quot;:{&quot;en&quot;:&quot;Reflection&quot;,&quot;zh-Hant&quot;:&quot;反思&quot;,&quot;zh-Hans&quot;:&quot;反思&quot;}}">
+  <meta name="garden:canonical_id" content="recommender-systems-rote-learning-vs-inductive-rules">
+  <meta name="garden:published_at" content="2026-08-15">
+  <meta name="garden:last_modified_at" content="2026-08-15">
+  <meta name="garden:reading_time_minutes" content="7">
+  <meta name="garden:source" content="writing/recommender-systems-rote-learning-vs-inductive-rules/recommender-systems-rote-learning-vs-inductive-rules-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">推薦系統的本質痛點：從「死記硬背」到「符號與規則」的演進</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#vs">兩種學習策略：理解歸納 vs 死記硬背</a>
+<a class="note-toc-link level-1" href="#section">為什麼傳統推薦系統選擇了「死記硬背」？</a>
+<a class="note-toc-link level-2" href="#1">1. 參數配置的失衡：自由度全給了「符號」</a>
+<a class="note-toc-link level-2" href="#2-path-of-least-resistance">2. 阻力最小原則（Path of Least Resistance）</a>
+<a class="note-toc-link level-2" href="#3-identity-like-lookup">3. 規則層的極簡化（Identity-like Lookup）</a>
+<a class="note-toc-link level-1" href="#human-priors">人工先驗（Human Priors）與歸納偏置</a>
+<a class="note-toc-link level-1" href="#section-2">推薦系統演進：規則掌控權的轉移</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-15" data-published-at="2026-08-15"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-15</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在 <a class="note-content-link" data-canonical-id="first-principles-symbols-and-rules" href="../first-principles-symbols-and-rules/first-principles-symbols-and-rules-zh-tw.html">第一性原理的終極型態：將現實抽絲剝繭成帶有數學屬性的符號與規則<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Writing.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">第一性原理的終極型態：將現實抽絲剝繭成帶有數學屬性的符號與規則</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">認知</span><span class="note-content-link-preview-tag">決策</span><span class="note-content-link-preview-tag">學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文重新審視第一性原理思考的終極型態——將現實抽絲剝繭成帶有數學屬性的純粹符號與規則。文章深入探討符號化的極致壓縮與知識擴充力量、大腦適應符號思考的認知代價、按需調用的剪枝策略，以及訓練符號能力如何帶來精準辨識模式差異與真正的「邏輯好」。</span></span></span></a> 一文中，我們探討了如何將現實問題拆解為「符號（Representation）」與「規則（Rules）」。</p>
+
+<p class="mb-3">如果我們將這套心智模型帶入機器學習與推薦系統（Recommender Systems）領域，便能一舉點破傳統推薦演算法在泛化能力上的本質痛點：<strong>模型在訓練時，究竟是在「理解歸納規律」，還是在「死記硬背」？</strong></p>
+</section>
+
+<section id="vs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">兩種學習策略：理解歸納 vs 死記硬背</h3>
+
+<p class="mb-3">在面對考試或優化目標時，不論是人類大腦還是機器學習模型，本質上都在尋找將「輸入」映射至「正確答案」的路徑。這通常存在兩種截然不同的策略：</p>
+
+<div class="note-markdown-block"><pre><code>[理想模式]  輸入 ──► [萃取具備共享屬性的符號] ──► [建立跨樣本通用規則] ──► 答案 (高泛化)
+[死記模式]  輸入 ──► [分配獨立無關的專屬符號] ──► [查表映射 Identity-like] ──► 答案 (零泛化)</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>理解歸納模式（Inductive Rules）：</strong></li>
+</ol>
+
+<p class="mb-3">將輸入拆解並萃取出具備共享屬性的特徵組合（符號），並建立一套能解釋跨樣本規律的通用公式（規則）。這種方式具備強大的泛化能力，能輕鬆應對未見過的輸入，但學習過程極度吃力。</p>
+
+<ol class="mb-3">
+<li><strong>死記硬背模式（Rote Learning / Lookup）：</strong></li>
+</ol>
+
+<p class="mb-3">不辛辛苦苦去摸索通用規則，而是為每一個輸入直接分配一個獨立、無關的專屬標籤，並用最簡單的「查表」對應到答案。這種方式不需要高階的歸納能力，只要記憶體與參數夠大就能迅速把當下題目的答案寫對。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">為什麼傳統推薦系統選擇了「死記硬背」？</h3>
+
+<p class="mb-3">在傳統以 ID（User ID / Item ID）為主的推薦模型（如 Matrix Factorization 矩陣分解）中，模型的運作本質上全面傾向了「死記硬背」。</p>
+
+<p class="mb-3">這並非模型「犯錯」，而是梯度下降優化器在運作機制下的必然選擇：</p>
+
+<h4 id="1" class="mb-2">1. 參數配置的失衡：自由度全給了「符號」</h4>
+
+<p class="mb-3">在矩陣分解模型中，<strong>99% 以上的可訓練參數都集中在 Embedding Layer（符號庫）</strong>。每增加一個新的 User 或 Item，模型就為它分配一個完全獨立、不受任何幾何約束的高維向量。</p>
+
+<h4 id="2-path-of-least-resistance" class="mb-2">2. 阻力最小原則（Path of Least Resistance）</h4>
+
+<p class="mb-3">模型訓練是一個極度功利的 Loss 最小化過程。梯度下降在更新參數時，遵循的是「阻力最小原則」：</p>
+
+<ul class="note-list">
+<li>如果要建立通用的「規則」（例如學習到 <em>「喜歡科幻片且年齡 &lt; 25 歲的使用者容易對這部電影給高分」</em>），模型需要多次跨樣本更新共享權重，學習成本與阻力極高。</li>
+<li>反之，直接去<strong>微調（Move）特定 User ID 與 Item ID 的 Embedding 向量座標</strong>，讓兩點在向量空間裡的距離拉近，只會影響這一個樣本，完全不會干擾其他樣本的 Loss。</li>
+</ul>
+
+<blockquote class="blockquote mb-3"><strong>換句話說：</strong> 修改「符號本身的座標」比建立「通用的規則」簡單太多了。優化器為了快速把 Loss 降下去，自然會選擇直接死記座標。</blockquote>
+
+<h4 id="3-identity-like-lookup" class="mb-2">3. 規則層的極簡化（Identity-like Lookup）</h4>
+
+<p class="mb-3">傳統矩陣分解的規則層，本質上只是一個簡單的向量內積：</p>
+
+<p class="mb-3">$$\text{Score}(u, i) = \mathbf{e}_u^T \mathbf{e}_i$$</p>
+
+<p class="mb-3">這幾乎沒有任何動態規則學習的能力，它本質上就是一種連續空間下的「查表映射（Lookup Table）」。模型並沒有真正學會「為什麼這個使用者喜歡這個商品」，它只是在地圖上把這兩點擺在了隔壁。</p>
+</section>
+
+<section id="human-priors" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">人工先驗（Human Priors）與歸納偏置</h3>
+
+<p class="mb-3">如果傳統模型只是在死記硬背，那為什麼矩陣分解在過去十幾年裡能取得巨大的商業成功？</p>
+
+<p class="mb-3">答案在於：<strong>人類工程師預先替模型寫好了 80% 的規則結構，模型只負責去解那剩下的 20% 數值填空。</strong></p>
+
+<p class="mb-3">心理學與機器學習中將這種現象稱為<strong>歸納偏置（Inductive Bias）</strong>：</p>
+
+<ul class="note-list">
+<li><strong>記憶型協同過濾（UserCF / ItemCF）：</strong> 100% 人工寫死的啟發式規則（如 Cosine 相似度加權平均），模型訓練度為零。</li>
+<li><strong>矩陣分解（MF）：</strong> 人類強加了兩個強烈先驗：</li>
+</ul>
+
+<ol class="mb-3">
+<li><em>低秩假設（Low-Rank Assumption）：</em> 人類規定偏好必須被壓縮在 $k$ 個隱含維度裡。</li>
+<li><em>雙線性內積規則：</em> 人類規定交互邏輯必須是向量內積。</li>
+</ol>
+
+<p class="mb-3">在算力與資料稀疏的年代，強加人工先驗是防止模型過擬合（Overfitting）最強大的武器。工程師用領域知識（Domain Knowledge）替模型鎖定了幾何形狀，換取了訓練的穩定性與近鄰檢索（ANN）的極致工程效率。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">推薦系統演進：規則掌控權的轉移</h3>
+
+<p class="mb-3">看待推薦系統這十幾年的演進史，本質上就是<strong>「符號與規則的掌控權，如何從人類轉移回模型」</strong>的過程：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>演進階段</th>
+<th>符號（Representation）來源</th>
+<th>規則（Interaction Logic）來源</th>
+<th>模型的自由度與特性</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>傳統 CF</strong> (User/Item CF)</td>
+<td><strong>人類</strong>（直接拿原始評分向量）</td>
+<td><strong>人類寫死</strong>（Pearson / Cosine 公式）</td>
+<td>純啟發式統計，無參數學習</td>
+</tr>
+<tr>
+<td><strong>矩陣分解</strong> (MF)</td>
+<td><strong>模型學習</strong>（填入 Latent Vector 數值）</td>
+<td><strong>人類鎖死</strong>（低秩先驗與雙線性內積 $\mathbf{u}^T \mathbf{v}$）</td>
+<td>只學符號座標，規則層被固定</td>
+</tr>
+<tr>
+<td><strong>深度學習推薦</strong> (DeepFM / NCF)</td>
+<td><strong>模型學習</strong>（從 ID 與 Side Info 生成）</td>
+<td><strong>模型學習一部分</strong>（引入 MLP、Attention 學習非線性交叉）</td>
+<td>符號與規則共同微調</td>
+</tr>
+<tr>
+<td><strong>生成式推薦</strong> (LLM RecSys)</td>
+<td><strong>預訓練自帶</strong>（Semantic ID 離散語意空間）</td>
+<td><strong>預訓練自帶</strong>（大模型常識與推理邏輯）</td>
+<td>端到端語意理解與歸納推理</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-brain me-2"></i>心智模型總結</h4><ul class="note-list">
+<li><strong>傳統 ID 推薦：</strong> 符號自由度極高（獨立可變），規則極度簡化（內積查表），本質是「記憶座標」。</li>
+<li><strong>現代生成式推薦：</strong> 符號帶有強語意約束（Semantic ID），規則依賴預訓練大模型的廣義推導，實現從「死記硬背」到「通用歸納」的跨越。</li>
+</ul></div>
+
+<div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>優化器本能：</strong> 在高維稀疏空間中，梯度下降傾向走「微調單一符號座標」的阻力最小路徑，而非學習跨樣本通用規則。</li>
+<li><strong>歸納偏置：</strong> 傳統 MF 的成功建立在人類寫死內積規則與低秩先驗上，用人工知識換取計算效率與穩定性。</li>
+<li><strong>演進本質：</strong> 推薦系統演進史是規則掌控權從「人類寫死」走向「模型自適應歸納」的過程。</li>
+</ul></div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

@@ -11,6 +11,23 @@ TitleSuffix: false
 Status: drafting
 Published: 2026-06-09
 </meta>
+<draft>
+- 核心摘要與問題意識
+    - AI 自動化了大量實作，讓工作更像「高密度決策」而不是「長時間落地」；效率提升的 trade-off，可能是更疲憊的一天。
+- Before/After：以前寫 code 的「喘息區間」在哪
+    - - 以前的節奏：思考 → 實作 → debug → 反覆迭代
+    - - 其中「實作/搬運」常是 IO-bound：知道要怎麼做後，只要把它打出來
+- What changed：大腦更常在線，休息更少
+    - - 現在的節奏：下指令 → 等落地 → 快速 review → 做決策 → 立刻切下一個任務
+    - - 典型模式：讓 AI implement，自己去做別的 task，結果變成高頻 context switch
+- Root cause：不是只有 AI，本質是 automation 把人推向「更高比例關鍵決策」
+    - - 過去的 automation 多處理繁瑣但好定義的工作，釋放的是體力與時間
+    - - 現在的 automation 能覆蓋更大比例的工作，剩下的更偏「判斷、取捨、定義」
+- Countermeasures：刻意設計喘息機制
+    - - 限制 context switching：設定同時進行的任務上限
+    - - 保留低腦力工作：讓大腦有過渡區間，而不是把所有空隙塞滿
+</draft>
+
 
 # Vibe-coding / Agentic AI 的效率與疲憊：Automation 帶來的決策疲勞
 

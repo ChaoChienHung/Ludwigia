@@ -12,6 +12,28 @@ Status: drafting
 Published: 2026-06-12
 LastModified: 2026-06-12
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - A map of the main task families in data mining, from prediction and grouping to co-occurrence discovery, graph analysis, and recommendation.
+- Prediction: Classification and Regression
+    - - Classification & Regression (Predictive Tasks):
+    - - The Goal: To build a model that can forecast future outcomes based on historical data
+- Grouping: Clustering
+    - - Clustering (Descriptive Grouping):
+    - - The Goal: To discover natural, hidden populations within a dataset without any prior instructions
+- Co-occurrence: Association Rules and Correlation
+    - - Association Rules & Correlation (Pattern Co-occurrence):
+    - - The Goal: To find items or events that mathematically imply the presence of one another
+- Networks and Sparse Preference Structure
+    - - Graph Mining & Recommender Systems (Network & Matrix Analysis):
+    - - The Goal: To analyze highly interconnected or missing structural relational data
+- Choosing the Right Task
+- Summary & Key Takeaways
+    - - Data mining contains multiple task families, each aligned with a different kind of question
+    - - Predictive tasks estimate known targets; descriptive tasks reveal hidden structure
+- References
+</draft>
+
 
 <anchors>
 toc1: core-tasks -> Core Tasks in Data Mining

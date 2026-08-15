@@ -12,6 +12,26 @@ Status: drafting
 Published: 2026-06-12
 LastModified: 2026-06-12
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - How data quality problems distort learning, how EDA diagnoses them, and how preprocessing turns messy records into reliable model-ready data.
+- Why Data Quality Comes First
+- Assessing Data Health: Noise, Outliers, Missing Values, and Duplicates
+    - Real-world datasets are perpetually plagued by anomalies that threaten this quality:
+    - - Outliers: Data points that exhibit extreme deviations from the statistical norm
+- EDA as the Diagnostic Lens
+    - We cannot fix these quality issues blindly
+    - Question: In EDA, which visualization is commonly used to quickly spot outliers
+- Preprocessing as the Treatment Plan
+- From Preparation to Modeling
+    - Good preparation does not guarantee a good model, but bad preparation often guarantees a bad one
+    - title: 📊 Characteristics of Useful Patterns
+- Summary & Key Takeaways
+    - This conclusion should gather the main claims without expanding scope
+    - - Data quality is not a side concern; it is part of the epistemic reliability of the whole pipeline
+- References
+</draft>
+
 
 <anchors>
 toc1: prep -> Data Quality, EDA, and Preprocessing

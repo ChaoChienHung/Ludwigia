@@ -12,6 +12,18 @@ TitleSuffix: true
 Status: drafting
 Published: 2026-06-01
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - Brief introduction to Knowledge Discovery and Data Mining algorithms & methods: supervised vs unsupervised learning, key task families, and core dimensionality reduction ideas.
+- Algorithms & Methods
+    - Supervised & Deep Learning
+    - Unsupervised Learning
+- Summary & Key Takeaways
+    - Ultimately, knowledge discovery is an end-to-end journey
+    - Question: Which statement best distinguishes supervised learning from unsupervised learning
+- References
+</draft>
+
 
 <anchors>
 toc1: algorithms -> Algorithms & Methods

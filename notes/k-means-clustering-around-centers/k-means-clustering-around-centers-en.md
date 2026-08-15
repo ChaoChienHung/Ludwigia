@@ -15,6 +15,29 @@ Status: published
 Published: 2026-08-01
 LastModified: 2026-08-02
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.
+- 1. The Pairwise Problem and the Algebraic Miracle
+    - The Mathematical Revelation: The Centroid Identity
+    - Discovering the SSE
+- 2. The Optimization Process: Global SSE and Lloyd's Algorithm
+    - Solving the Chicken-and-Egg Problem
+- 3. Implementation Details: Initialization and Choosing $K$
+    - The Centroid Initialization Problem
+    - The $K$ Problem
+- 4. Pros, Cons, and Geometric Assumptions
+    - **Where K-Means Shines:**
+    - K-Means is incredibly fast, running in $O(N)$ complexity per iteration, conceptually simple, and highly interpretable
+- 5. The K-Means Family: Beyond the Vanilla Algorithm
+    - - **K-Medoids:** Another primary drawback of K-Means is its sensitivity to outliers
+    - - **X-Means:** As previously mentioned, standard K-Means is highly sensitive to the initial choice of $K$
+- Summary
+    - That single objective function ($SSE$) explains the entire behavior of the algorithm
+    - If your data fits that geometric assumption, K-Means is a lightning-fast, highly interpretable powerhouse
+- References
+</draft>
+
 
 # K-Means: Clustering Around Centers
 

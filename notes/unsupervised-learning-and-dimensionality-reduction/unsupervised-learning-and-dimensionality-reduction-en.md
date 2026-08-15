@@ -12,6 +12,24 @@ Status: drafting
 Published: 2026-06-12
 LastModified: 2026-06-12
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - How data mining works without labels: discovering hidden groups, compressing high-dimensional structure, and making latent patterns visible.
+- The Unlabeled Discovery Setting
+- Clustering as Structure Discovery
+    - Hierarchical Clustering is widely favored when the analytical goal is to build an evolutionary or structural taxonomy
+- Why Dimensionality Reduction Matters
+    - Another monumental task within unsupervised learning is Dimensionality Reduction
+- Common Methods: PCA, t-SNE, and NMF
+    - To solve this, practitioners utilize advanced mathematical transformations:
+- Strengths and Limits of Unsupervised Learning
+    - The strength of unsupervised learning is that it can reveal structure that no one labeled in advance
+- Summary & Key Takeaways
+    - - Unsupervised learning studies structure without relying on labeled targets
+    - - Clustering and dimensionality reduction are two major ways of revealing hidden organization
+- References
+</draft>
+
 
 <anchors>
 toc1: unsupervised -> Unsupervised Learning and Dimensionality Reduction

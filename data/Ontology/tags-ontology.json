@@ -1687,6 +1687,20 @@
         "self improvement",
         "自我提升"
       ]
+    },
+    {
+      "concept_id": "concept.tokenization",
+      "labels": {
+        "en": "Tokenization",
+        "zh-Hant": "Token 化",
+        "zh-Hans": "Token 化"
+      },
+      "aliases": [
+        "tokenization",
+        "Tokenization",
+        "Token 化",
+        "token化"
+      ]
     }
   ]
 }

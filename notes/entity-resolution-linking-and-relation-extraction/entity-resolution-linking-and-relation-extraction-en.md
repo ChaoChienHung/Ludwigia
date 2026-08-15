@@ -12,6 +12,33 @@ Status: published
 Published: 2026-07-25
 LastModified: 2026-07-25
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - Comprehensive structured notes covering entity resolution, anaphora vs. coreference, Hobbs' algorithm, Named Entity Linking (NEL) pipelines, relation extraction paradigms, ontologies (ACE, UMLS, Schema.org), and neural representations.
+- Overview: Structuring Knowledge from Text
+    - toc: Guiding Questions
+    - icon: circle-question
+- Entity Resolution & Coreference Resolution
+    - Anaphora vs. Coreference Resolution
+    - Linguistic Phenomena & Resolution Constraints
+    - Rule-Based Resolution: Hobbs' Algorithm (1978)
+    - Traditional ML & Deep Learning for Coreference
+- Named Entity Linking (NEL)
+    - Task Definition, Examples & Applications
+    - Key Challenges in Entity Linking
+    - The NEL Pipeline Architecture
+    - Supervised Learning & Deep Learning Formulations
+- Relation Extraction & Ontologies
+    - Knowledge Graphs, Triples & Relation Complexity
+    - Vocabularies, Ontologies & Assumptions
+    - Rule-Based RE: Hearst Patterns & Templates
+    - Bootstrapping & Dependency-Based Extraction
+    - Machine Learning Pipelines for Relation Extraction
+- Summary & Key Takeaways
+    - - **Entity Resolution & Coreference:**
+    - - Coreference resolution groups all mentions in a text that refer to the same real-world entity
+</draft>
+
 
 <anchors>
 toc1: overview -> Overview: Structuring Knowledge from Text

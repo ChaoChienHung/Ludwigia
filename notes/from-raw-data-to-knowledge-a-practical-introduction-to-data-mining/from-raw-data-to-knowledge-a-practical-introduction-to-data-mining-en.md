@@ -14,6 +14,19 @@ Published: 2026-06-01
 LastModified: 2026-06-13
 Status: published
 </meta>
+<draft>
+- Core Summary & Problem Statement
+    - A practical introduction to data mining: why it matters, how it differs from naive retrieval, how raw data becomes knowledge, and the core data, quality, preprocessing, and methods foundations behind that process.
+- What Is Data Mining?
+    - Data Mining vs. Data Retrieval
+    - The Hierarchy of Data Mining: From Raw Data to Wisdom
+- A Systematic Pipeline: Executing the Discovery
+    - Bridging the Gap: Moving from Computation to Action
+- Summary
+    - - The main introduction provides the conceptual map; the detailed topics now live in dedicated follow-up articles
+- References
+</draft>
+
 
 <anchors>
 toc1: why-data-mining -> Why Data Mining?

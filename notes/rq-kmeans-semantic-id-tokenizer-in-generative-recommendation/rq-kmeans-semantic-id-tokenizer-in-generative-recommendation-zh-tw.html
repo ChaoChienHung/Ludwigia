@@ -12,7 +12,7 @@
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.rq_kmeans&quot;:{&quot;en&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hant&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hans&quot;:&quot;RQ-KMeans&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-02">
-  <meta name="garden:reading_time_minutes" content="13">
+  <meta name="garden:reading_time_minutes" content="15">
   <meta name="garden:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -153,16 +153,18 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#1">1. 核心落地瓶頸：海量商品與詞彙庫爆炸</a>
-<a class="note-toc-link level-2" href="#semantic-id-sid">拆解難題：多步解碼與 Semantic ID (SID)</a>
-<a class="note-toc-link level-1" href="#2-rq-kmeans">2. RQ-Kmeans 演算法機制：從幾何聚類到殘差量化</a>
-<a class="note-toc-link level-2" href="#k-means-pq">基礎量化的局限：K-means 與 PQ</a>
-<a class="note-toc-link level-2" href="#rq-kmeans">殘差量化 (RQ-Kmeans) 的逐層求精</a>
-<a class="note-toc-link level-1" href="#3">3. 進階技術視角：率失真理論、正則化與編碼優化</a>
+            <a class="note-toc-link level-2" href="#semantic-id-sid">拆解難題：多步解碼與 Semantic ID (SID)</a>
+<a class="note-toc-link level-1" href="#2-rq-kmeans">2. 演算法進化：從基礎量化到 RQ-Kmeans 的階層破局</a>
+<a class="note-toc-link level-2" href="#1-k-means">1. 基礎 K-means 量化：最簡單的向量量化器</a>
+<a class="note-toc-link level-2" href="#2-product-quantization-pq">2. 乘積量化 (Product Quantization, PQ)：分而治之的折衷與局限</a>
+<a class="note-toc-link level-2" href="#3-rq-kmeans">3. 殘差量化 (RQ-Kmeans)：逐層細化與階層結構</a>
+<a class="note-toc-link level-1" href="#3-rq-kmeans-2">3. RQ-Kmeans 演算法運作機制與幾何重構</a>
+<a class="note-toc-link level-1" href="#4">4. 進階技術視角：率失真理論、正則化與解碼優化</a>
 <a class="note-toc-link level-2" href="#rrq">率失真理論與變異數正則化 (RRQ)</a>
 <a class="note-toc-link level-2" href="#vs-beam-search">貪婪解碼 vs. 束搜尋 (Beam Search)</a>
-<a class="note-toc-link level-1" href="#4-rq-kmeans-vs-rq-vae">4. 關鍵對決：RQ-Kmeans vs. RQ-VAE</a>
-<a class="note-toc-link level-1" href="#5">5. 生成式推薦的四階段落地工作流</a>
+<a class="note-toc-link level-1" href="#5-rq-kmeans-vs-rq-vae">5. 關鍵對決：RQ-Kmeans vs. RQ-VAE</a>
+<a class="note-toc-link level-1" href="#6">6. 生成式推薦的四階段落地工作流</a>
+<a class="note-toc-link level-1" href="#7">7. 核心優勢總結與潛在探索性</a>
 <a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
           </nav>
         </div>
@@ -213,24 +215,7 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">在延伸專文 <a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">從級聯漏斗到自迴歸生成：推薦系統的範式重塑<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。</span></span></span></a> 中，我們探討了推薦系統為何全面轉向生成式範式以解鎖 Scaling Law 紅利。然而，當推薦系統轉向自迴歸生成時，首要面臨的核心落地瓶頸便是：<strong>如何將平台上海量的商品，轉換為生成模型能夠理解與預測的離散 Token（Semantic ID）？</strong></p>
-
-<p class="mb-3">在深度學習領域，解答這個問題的最早代表性工作是端到端的 RQ-VAE（如 Google 的 TIGER 模型）。然而在工業界落地時，考慮到訓練穩定性、算力開銷以及對既有 Embedding 資產的複用，許多團隊（如快手的 OneRec / OneSearch）選擇了一條更為輕量且解耦的幾何路線。</p>
-
-<p class="mb-3">本文將聚焦於這項落地瓶頸的解答，詳細拆解這條業界廣為採用的 Token 化關鍵技術——<strong>RQ-Kmeans（殘差 K-means 量化）</strong> 的演算法原理、進階優化與落地流程。</p>
-</section>
-
-<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. 核心落地瓶頸：海量商品與詞彙庫爆炸</h3>
-
-<p class="mb-3">在標準的大語言模型中，模型輸入與輸出的單位是離散的文本 Token（如 Subword 或 BPE Token）。LLM 的總 Token 數（Vocabulary Size）通常落在萬到十萬級別（例如 32,000 到 128,000 個 Token）。在這個量級下，模型最後一層的 Softmax 預估與交叉熵損失計算在計算資源上是完全可行的。</p>
-
-<p class="mb-3">然而，工業級推薦系統（如電商平台、短影音平台）的商品或內容總量（Item Catalog）往往高達數千萬甚至數十億（$10^7 \sim 10^9$）。若採取最直觀的作法：<strong>將每一個商品直接映射為一個獨立的 Token ID</strong>，就會產生完全無法調和的矛盾：</p>
-
-<ul class="note-list">
-<li><strong>計算複雜度崩塌：</strong> Softmax 層的分子需要對數億個類別求和，反向傳播與採樣開銷將使模型根本無法訓練。</li>
-<li><strong>冷啟動與語意孤立：</strong> 隨機分配的原子型 ID（Atomic ID）缺乏任何內部結構與語意關聯，無法實現跨商品的泛化與遷移學習。</li>
-</ul>
+<p class="mb-3">在<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>中，我們探討了 Semantic ID 的強大潛力。它徹底拋棄了傳統的無意義流水號，將海量商品轉化為大模型能讀懂的「階層式語意序列」。</p>
 
 <h4 id="semantic-id-sid" class="mb-2">拆解難題：多步解碼與 Semantic ID (SID)</h4>
 
@@ -253,69 +238,94 @@
 </section>
 
 <section id="2-rq-kmeans" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. RQ-Kmeans 演算法機制：從幾何聚類到殘差量化</h3>
+<h3 class="mb-3">2. 演算法進化：從基礎量化到 RQ-Kmeans 的階層破局</h3>
 
-<p class="mb-3">要理解 RQ-Kmeans（Residual Quantization K-means），我們需要回顧幾何空間中的向量量化（Vector Quantization, VQ）思維。</p>
+<p class="mb-3">要理解 RQ-Kmeans（Residual Quantization K-means）的優勢，我們需要梳理向量量化（Vector Quantization, VQ）在技術上的演變脈絡：</p>
 
-<h4 id="k-means-pq" class="mb-2">基礎量化的局限：K-means 與 PQ</h4>
+<h4 id="1-k-means" class="mb-2">1. 基礎 K-means 量化：最簡單的向量量化器</h4>
 
-<ol class="mb-3">
-<li><strong>基礎 K-means 量化：</strong></li>
-</ol>
-
-<p class="mb-3">若直接對商品向量進行 <a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a>，若要降低量化誤差（Distortion），就必須設定極大的 $K$ 值，這會立刻導致碼本空間爆炸與儲存災難。</p>
-
-<ol class="mb-3">
-<li><strong>乘積量化 (Product Quantization, PQ)：</strong></li>
-</ol>
-
-<p class="mb-3">PQ 將高維向量切分為 $M$ 個子空間（如將 256 維切為 4 個 64 维），並在每個子空間獨立進行 K-means。雖然 PQ 解決了儲存問題，但其子空間切分是並行且獨立的，無法表達「由粗到細（Coarse-to-fine）」的階層語意關係。</p>
-
-<h4 id="rq-kmeans" class="mb-2">殘差量化 (RQ-Kmeans) 的逐層求精</h4>
-
-<p class="mb-3">RQ-Kmeans 採取了一種<strong>「逐層細化、逐步求精」</strong>的幾何逼近策略，天然具備良好的階層結構：</p>
-
-<p class="mb-3">給定一個商品的原始高維特徵向量 $v \in \mathbb{R}^d$，預計使用 $M$ 層碼本（每層大小為 $K$）進行量化：</p>
-
-<ol class="mb-3">
-<li><strong>第一層量化（Coarse Stage - 粗粒度）：</strong></li>
-</ol>
+<p class="mb-3">在向量量化中，<a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a>可以被看作最直觀的基礎量化器：</p>
 
 <ul class="note-list">
-<li>在原始向量空間訓練第一層 K-means 碼本 $\mathcal{C}^{(1)}$。</li>
-<li>尋找與 $v$ 距離最近的聚類中心 $c_{k_1}^{(1)}$，記錄其索引 $k_1$ 作為第 1 個 Token。</li>
-<li>計算第一層殘差：
-<p class="mb-2">$$r^{(1)} = v - c_{k_1}^{(1)}$$</p>
-<p class="mb-2">殘差 $r^{(1)}$ 代表了第一層量化後遺失的幾何細節。</p></li>
+<li><strong>訓練（Training）：</strong> 對大量物品向量進行 K-means 聚類，得出 $K$ 個聚類中心（Centroids），這 $K$ 個中心點就構成了一個碼本（Codebook）。</li>
+<li><strong>量化（Quantization）：</strong> 對於任何一個新的物品向量，找到碼本中距離最近的聚類中心，並用該中心的索引 ID（從 $0$ 到 $K-1$）來代表這個物品向量。</li>
 </ul>
 
-<ol class="mb-3">
-<li><strong>第二層量化（Refinement Stage - 中粒度）：</strong></li>
-</ol>
+<p class="mb-3"><strong>痛點與兩難：</strong></p>
 
 <ul class="note-list">
-<li>收集所有數據點的第一層殘差 $\{r^{(1)}\}$，訓練第二層 K-means 碼本 $\mathcal{C}^{(2)}$。</li>
-<li>針對殘差 $r^{(1)}$ 尋找最近中心 $c_{k_2}^{(2)}$，記錄其索引 $k_2$ 作為第 2 個 Token。</li>
-<li>計算更新後的殘差：
-<p class="mb-2">$$r^{(2)} = r^{(1)} - c_{k_2}^{(2)} = v - c_{k_1}^{(1)} - c_{k_2}^{(2)}$$</p></li>
+<li>若 $K$ 值太小，量化誤差（Distortion）會非常大，無法精確代表物品的細節。</li>
+<li>若 $K$ 值極大（例如 100 萬個物品需要 100 萬個聚類中心），碼本會變得異常龐大，儲存與訓練算力會直接爆炸。</li>
 </ul>
 
-<ol class="mb-3">
-<li><strong>第 $m$ 層量化（Fine Stage - 細粒度）：</strong></li>
-</ol>
+<h4 id="2-product-quantization-pq" class="mb-2">2. 乘積量化 (Product Quantization, PQ)：分而治之的折衷與局限</h4>
+
+<p class="mb-3">為了解決 K-means 的碼本爆炸問題，乘積量化（PQ）提出了一個巧妙的「分而治之」思路：</p>
 
 <ul class="note-list">
-<li>重複上述步驟至第 $M$ 層。對於上一層殘差 $r^{(m-1)}$，在碼本 $\mathcal{C}^{(m)}$ 中尋找中心 $c_{k_m}^{(m)}$，輸出 Token $k_m$，並更新殘差：
-<p class="mb-2">$$r^{(m)} = r^{(m-1)} - c_{k_m}^{(m)}$$</p></li>
+<li><strong>切分子空間：</strong> 將一個高維向量（如 256 維）切分成多段獨立的子空間（如 4 段，每段 64 維）。</li>
+<li><strong>獨立量化：</strong> 為每一段子空間獨立訓練一個小的 K-means 碼本（如 $K=256$）。</li>
+<li><strong>組合表示：</strong> 一個物品向量被表示為多個子空間碼本索引的組合，例如 <code>[id_seg1, id_seg2, id_seg3, id_seg4]</code>。</li>
 </ul>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>最終表示與幾何重構：</strong> 商品向量 $v$ 被成功「翻譯」為長度為 $M$ 的離散 Token 序列：$[k_1, k_2, \dots, k_M]$。 其近似重構向量為各層碼本中心點的向量和： $$v_{\text{approx}} = \sum_{m=1}^M c_{k_m}^{(m)}$$ 第一層 Token 決定商品在大尺度幾何空間中的大類（如「電子產品 $\to$ 手機」），後續 Token 則在殘差空間中持續修正細節（如「品牌 $\to$ 螢幕尺寸 $\to$ 顏色」）。</p></div>
+<p class="mb-3"><strong>優點與致命局限：</strong></p>
+
+<ul class="note-list">
+<li><strong>優點：</strong> 只需要極小的儲存空間（$4 \times 256$ 個向量），就能表達 $256^4 \approx 43$ 億種組合，極大地提升了表達能力。</li>
+<li><strong>局限：</strong> 子空間切割是並行且獨立的，破壞了向量的全局幾何特徵；更重要的是，各個子空間地位平等，<strong>無法提供「由粗到細（Coarse-to-fine）」的階層語意結構</strong>。</li>
+</ul>
+
+<h4 id="3-rq-kmeans" class="mb-2">3. 殘差量化 (RQ-Kmeans)：逐層細化與階層結構</h4>
+
+<p class="mb-3">RQ-Kmeans 是 PQ 的一種重要變體。它不再將向量切分成獨立子空間，而是對全局向量採用了<strong>「逐層細化、逐步求精」</strong>的幾何逼近策略，天然具備樹狀階層結構。</p>
 
 <hr>
 </section>
 
-<section id="3" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. 進階技術視角：率失真理論、正則化與編碼優化</h3>
+<section id="3-rq-kmeans-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. RQ-Kmeans 演算法運作機制與幾何重構</h3>
+
+<p class="mb-3">假設我們要用 $M$ 個碼本（每個碼本大小為 $K$）來量化一個物品向量 $v \in \mathbb{R}^d$，RQ-Kmeans 的具體演算法步驟如下：</p>
+
+<ol class="mb-3">
+<li><strong>第一層量化（Coarse Quantization - 粗粒度）：</strong></li>
+</ol>
+
+<ul class="note-list">
+<li>在所有物品向量上訓練第一個 K-means 模型，得到碼本 $\mathcal{C}^{(1)}$。</li>
+<li>對於向量 $v$，在 $\mathcal{C}^{(1)}$ 中找到距離最近的中心 $c_1$。向量 $v$ 的第一個 Token 就是 $c_1$ 的索引 $\text{idx}_1$。</li>
+<li>計算殘差（Residual）：
+<p class="mb-2">$$r_1 = v - c_1$$</p>
+<p class="mb-2">這個殘差 $r_1$ 代表了第一次量化後丟失的幾何資訊。</p></li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>第二層量化（Refinement - 中粒度）：</strong></li>
+</ol>
+
+<ul class="note-list">
+<li>用所有物品向量的第一層殘差 $\{r_1\}$ 集合來訓練第二個 K-means 模型，得到碼本 $\mathcal{C}^{(2)}$。</li>
+<li>對於殘差 $r_1$，在 $\mathcal{C}^{(2)}$ 中找到最近的中心 $c_2$。向量 $v$ 的第二個 Token 就是 $c_2$ 的索引 $\text{idx}_2$。</li>
+<li>計算更新後的殘差：
+<p class="mb-2">$$r_2 = r_1 - c_2 = (v - c_1) - c_2$$</p>
+<p class="mb-2">這個新殘差 $r_2$ 代表了第二層量化後仍然遺失的幾何細節。</p></li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>多層迭代至第 $M$ 層（Fine Quantization - 細粒度）：</strong></li>
+</ol>
+
+<ul class="note-list">
+<li>重複這個過程 $M$ 次。在第 $m$ 層，我們量化上一層的殘差 $r_{m-1}$，得到碼本 $\mathcal{C}^{(m)}$、最近中心 $c_m$，輸出 Token $\text{idx}_m$，並更新殘差 $r_m = r_{m-1} - c_m$。</li>
+</ul>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>最終表示與幾何重構：</strong> 原始向量 $v$ 被成功量化為一個由 $M$ 個索引組成的序列：$[\text{idx}_1, \text{idx}_2, \dots, \text{idx}_M]$。這個序列就是物品最終的「Token 序列（Semantic ID）」。 向量 $v$ 的近似重構值為各層碼本中心點的向量和： $$v_{\text{approx}} = \sum_{m=1}^M c_m = c_1 + c_2 + \dots + c_M$$ 第一層 Token 決定商品在大尺度幾何空間中的大類（如「電子產品 $\to$ 手機」），後續 Token 則在殘差空間中持續修正細節（如「品牌 $\to$ 螢幕尺寸 $\to$ 顏色」）。</p></div>
+
+<hr>
+</section>
+
+<section id="4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 進階技術視角：率失真理論、正則化與解碼優化</h3>
 
 <p class="mb-3">雖然 RQ-Kmeans 的基礎流程非常直觀，但在處理高維、高度相關的真實數據時，純粹的幾何量化會面臨諸多退化問題。</p>
 
@@ -332,15 +342,15 @@
 
 <h4 id="vs-beam-search" class="mb-2">貪婪解碼 vs. 束搜尋 (Beam Search)</h4>
 
-<p class="mb-3">在離線將向量轉為 Token 時，最簡單的方法是<strong>貪婪編碼（Greedy Encoding）</strong>：每層獨立選擇最近的中心。然而，由於前幾層的選擇會直接決定下一層殘差的方向，貪婪選擇往往會落入局部最優。</p>
+<p class="mb-3">在離線將向量轉為 Token 時，最簡單的方法是<strong>貪婪編碼（Greedy Encoding）</strong>：每層獨立選擇最近的中心。然而，由於前幾層的選擇會獨立決定下一層殘差的方向，貪婪選擇往往會落入局部最優。</p>
 
 <p class="mb-3">為了達到更低的全局重構失真，先進的量化框架會採用 <strong>Beam Search</strong>：在逐層選擇時維護 Top-$B$ 個候選 Token 序列路徑，最終選出總幾何失真 $\sum \|v - v_{\text{approx}}\|^2$ 最小的序列。</p>
 
 <hr>
 </section>
 
-<section id="4-rq-kmeans-vs-rq-vae" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">4. 關鍵對決：RQ-Kmeans vs. RQ-VAE</h3>
+<section id="5-rq-kmeans-vs-rq-vae" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 關鍵對決：RQ-Kmeans vs. RQ-VAE</h3>
 
 <p class="mb-3">在生成式推薦領域，另一個備受關注的量化方案是 <strong>RQ-VAE</strong>。兩者雖然都產出階層式 Token 序列，但設計理念與工程取捨截然不同：</p>
 
@@ -355,7 +365,7 @@
 <tr>
 <td><strong>核心驅動</strong></td>
 <td><strong>演算法驅動：</strong> 基於 K-means 幾何空間劃分。</td>
-<td><strong>模型驅動：</strong> 基於 VAE 概率分佈擬合與神經網絡。</td>
+<td><strong>模型驅動：</strong> 基於 VAE 概率分佈擬合與神經網路。</td>
 </tr>
 <tr>
 <td><strong>訓練機制</strong></td>
@@ -371,38 +381,85 @@
 <hr>
 </section>
 
-<section id="5" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">5. 生成式推薦的四階段落地工作流</h3>
+<section id="6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. 生成式推薦的四階段落地工作流</h3>
 
-<p class="mb-3">將 RQ-Kmeans 整合至工業級生成式推薦系統中，整體架構分為以下四個階段：</p>
+<p class="mb-3">將 RQ-Kmeans 放入生成式推薦的完整系統架構中，整體流程分為以下四個階段：</p>
 
-<div class="note-markdown-block"><pre><code>[ 階段一：向量生成 ] -&gt; [ 階段二：RQ-Kmeans Token 化 ] -&gt; [ 階段三：Transformer 自迴歸訓練 ] -&gt; [ 階段四：線上推論與向量召回 ]</code></pre></div>
-
-<ol class="mb-3">
-<li><strong>階段一：物品向量生成 (Offline)</strong></li>
-</ol>
-
-<p class="mb-3">利用前置的深度雙塔模型（如 Item2Vec、DSSM 或圖神經網路）為全站商品生成高維度、語意豐富的連續嵌入向量 $v$。</p>
+<div class="note-markdown-block"><pre><code>[ 階段一：訓練量化器 ] -&gt; [ 階段二：物品 Token 化 ] -&gt; [ 階段三：自迴歸模型訓練 ] -&gt; [ 階段四：線上推論與 ANNS 召回 ]</code></pre></div>
 
 <ol class="mb-3">
-<li><strong>階段二：物品 Token 化 (Offline)</strong></li>
+<li><strong>階段一：訓練量化器 (Offline)</strong></li>
 </ol>
 
-<p class="mb-3">將所有商品向量輸入訓練好的 $M$ 層 RQ-Kmeans 量化器，為每個商品產出長度為 $M$ 的 Semantic ID： $$\text{Item}_A \longrightarrow [k_1, k_2, \dots, k_M]$$</p>
+<ul class="note-list">
+<li><strong>獲取物品向量：</strong> 首先，透過預訓練模型（如 Word2Vec、BERT、DSSM 或圖神經網絡 GNN）為系統中的所有物品生成高品質的連續嵌入向量 $v$。</li>
+<li><strong>訓練 RQ-Kmeans：</strong> 將所有物品的嵌入向量作為輸入，訓練一個 $M$ 層的 RQ-Kmeans 量化器。訓練完成後得到 $M$ 個碼本 $\mathcal{C}^{(1)}, \mathcal{C}^{(2)}, \dots, \mathcal{C}^{(M)}$。</li>
+</ul>
 
 <ol class="mb-3">
-<li><strong>階段三：自迴歸推薦模型訓練 (Online / Offline)</strong></li>
+<li><strong>階段二：物品 Token 化與建立總詞彙表 (Offline)</strong></li>
 </ol>
 
-<p class="mb-3">將用戶的歷史行為序列轉換為展平的 Token 陣列： $$\text{User History: } [\text{Item}_A, \text{Item}_B] \longrightarrow [k_1^A, k_2^A, \dots, k_M^A, k_1^B, k_2^B, \dots, k_M^B]$$ 輸入 Transformer 模型中，以標準的 Next-Token Prediction 交叉熵損失訓練自迴歸生成能力。</p>
+<ul class="note-list">
+<li><strong>編碼所有物品：</strong> 對於系統中的每一個物品，將其嵌入向量輸入訓練好的 RQ-Kmeans 量化器中，生成長度為 $M$ 的 Token 序列，例如：
+<p class="mb-2">$$\text{Item}_A \longrightarrow [12, 255, 7, 98]$$</p></li>
+<li><strong>建構總詞彙表：</strong> 所有 Token 的取值範圍是 $0$ 到 $K-1$。由於有 $M$ 個碼本，總詞彙表的大小通常是 $M \times K$。每個 Token $(m, k)$ 代表「第 $m$ 個碼本中的第 $k$ 個索引」。</li>
+</ul>
 
 <ol class="mb-3">
-<li><strong>階段四：線上推論與檢索 (Inference)</strong></li>
+<li><strong>階段三：訓練生成式推薦模型 (Online / Offline)</strong></li>
 </ol>
 
-<p class="mb-3">模型根據用戶最新 Token 序列，自迴歸生成下一個商品對應的 $M$ 個 Token。系統取出碼本對應中心並求和重構出預估向量： $$v_{\text{pred}} = \sum_{m=1}^M c_{k_m}^{(m)}$$ 最後利用 Faiss / Milvus 等向量檢索庫進行 ANNS 近似最近鄰搜尋，完成 Top-$N$ 召回。</p>
+<ul class="note-list">
+<li><strong>轉換與展平用戶序列：</strong> 將用戶的歷史交互序列（如 $[\text{Item}_A, \text{Item}_B, \text{Item}_C]$）轉換成 Token 序列並展平：
+<p class="mb-2">$$\text{原始序列: } [\text{Item}_A, \text{Item}_B, \text{Item}_C]$$</p>
+<p class="mb-2">$$\text{Token 化後: } [[12, 255, 7, 98], [56, 101, 23, 42], [88, 12, 199, 6]]$$</p>
+<p class="mb-2">$$\text{展平輸入模型: } [12, 255, 7, 98, 56, 101, 23, 42, 88, 12, 199, 6, \dots]$$</p></li>
+<li><strong>自迴歸訓練：</strong> 將展平後的 Token 序列輸入 Transformer 模型中，訓練其自迴歸預測下一個 Token 的能力。例如輸入 $[12, 255, 7]$，模型預測 $98$；輸入 $[12, 255, 7, 98]$，模型預測 $56$，以此類推。</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>階段四：線上推論、重構與召回 (Inference)</strong></li>
+</ol>
+
+<ul class="note-list">
+<li><strong>輸入用戶歷史：</strong> 將用戶最新的交互序列 Token 化並展平輸入模型。</li>
+<li><strong>生成下一個物品的 Tokens：</strong> 模型自迴歸地生成下一個目標物品的 $M$ 個 Tokens，如 $[\text{idx}_1, \text{idx}_2, \dots, \text{idx}_M]$。</li>
+<li><strong>解碼為物品向量：</strong> 根據生成的 Token 序列，從對應碼本中取出中心向量並相加，重構出預估的物品向量：
+<p class="mb-2">$$v_{\text{pred}} = \sum_{m=1}^M \mathcal{C}^{(m)}[\text{idx}_m]$$</p></li>
+<li><strong>向量召回：</strong> 在所有物品的向量庫中，利用高效的向量檢索技術（如 Faiss / Milvus），找到與 $v_{\text{pred}}$ 最相似的 Top-$N$ 個物品，作為最終的推薦結果。</li>
+</ul>
 
 <hr>
+</section>
+
+<section id="7" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. 核心優勢總結與潛在探索性</h3>
+
+<ol class="mb-3">
+<li><strong>強大的表示能力：</strong></li>
+</ol>
+
+<p class="mb-3">透過 $M$ 層碼本組合，僅需極小的儲存空間（$M \times K$ 個向量）就能表示海量的物品（理論上高達 $K^M$ 種組合），實現了精確度與存儲效率的完美平衡。</p>
+
+<ol class="mb-3">
+<li><strong>天然的階層結構：</strong></li>
+</ol>
+
+<p class="mb-3">RQ 的第一層 Token 決定了物品的粗粒度類別（Coarse），後續 Token 不斷進行幾何細化（Fine-grained）。這種階層性極大地有助於模型學習物品之間的複雜層級關係與語意相近度。</p>
+
+<ol class="mb-3">
+<li><strong>完美適應生成模型：</strong></li>
+</ol>
+
+<p class="mb-3">成功將連續向量空間中的推薦問題，轉化為離散序列生成問題，使得 Transformer 等強大的 LLM 生成式架構可以無縫應用於推薦領域。</p>
+
+<ol class="mb-3">
+<li><strong>生成新穎物品與潛在興趣探索 (Novel Item Generation)：</strong></li>
+</ol>
+
+<p class="mb-3">模型自迴歸生成的 Token 組合在資料庫中可能並不對應於任何一個已存在的真實物品，但其重構出來的向量 $v_{\text{pred}}$ 可能代表一個「新穎的」或「潛在的」用戶興趣點。這為推薦系統的探索性（Exploration）與多樣性（Diversity）提供了創新的理論與工程可能性。</p>
 
 <div class="note-callout note-takeaways mb-3"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li><strong>解決的核心痛點：</strong> 傳統漏斗級聯架構面臨跨模組通信與 IO 開銷大、阻礙 Scaling Law 等難題；生成式推薦對齊 LLM 範式，但面臨商品數量極大導致的「詞彙庫爆炸」困境。</li>
@@ -416,11 +473,7 @@
 <h3 class="mb-3">參考文獻（References）</h3>
 
 <ol class="mb-3">
-<li>Ferdowsi, S., et al. (2017). <em>Regularized Residual Quantization: a multi-layer sparse dictionary learning approach</em>.</li>
-<li>Nguyen, T., et al. (2025). <em>BRIDLE: Generalized Self-supervised Learning with Quantization</em>.</li>
-<li>Liu, X., et al. (2015). <em>Improved Residual Vector Quantization for High-dimensional Approximate Nearest Neighbor Search</em>.</li>
-<li>Yuan, J., et al. (2015). <em>Transformed Residual Quantization for Approximate Nearest Neighbor Search</em>.</li>
-<li>知乎專欄（二師兄統領）：<em>生成式推薦入門2——RQ-Kmeans分詞器</em>.</li>
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/1949167463393650590" target="_blank" rel="noopener noreferrer">知乎：生成式推荐入门2——RQ-Kmeans分词器</a></li>
 </ol>
 </section>
         </div>

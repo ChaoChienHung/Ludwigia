@@ -109,6 +109,11 @@
   - [x] Reading Mode：responsive 對齊一般模式的 typography rhythm，只保留必要的閱讀輔助差異
   - [ ] Section landing：Notes/Writing/Canvas 的 search bar + filter + feed（含小螢幕行為）
 
+- [ ] Refactor & Review: 審視與修正 `discovering-hidden-structures-what-clustering-really-does` 文章篇幅與範疇
+  - [ ] 問題：目前 `notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.md` 中，Centroid-based clustering 的篇幅與深度遠大於 Density-based 與 Hierarchical-based clustering，導致文章結構與比重顯著失衡
+  - [ ] 方向：評估兩條路徑：(1) 將 Centroid-based clustering 的深度內容單獨拆分成獨立文章（例如專屬 Centroid-based / K-Means 入門），主文章維持概覽與導覽角色；或 (2) 將 Density-based 與 Hierarchical-based clustering 的篇幅與直覺推導補齊至與 Centroid-based 相同的完整度
+  - [ ] 交付條件：完成結構檢視與拆分/補齊決策，更新對應文章與 `search-index.{json,js}`，並維持全站搜尋與離線可讀性不退化
+
 ### P1
 
   - [x] Background effect 參考：先以 `https://codepen.io/mdusmanansari/pen/BamepLe` 的氛圍語彙做出第一版 `Garden` ambient effect，並接進既有 `Effects` 開關

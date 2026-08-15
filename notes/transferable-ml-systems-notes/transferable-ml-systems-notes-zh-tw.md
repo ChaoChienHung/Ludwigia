@@ -10,6 +10,27 @@ Lang: zh-Hant
 TitleSuffix: false
 Status: drafting
 </meta>
+<draft>
+- 核心摘要與問題意識
+    - 從數據/序列、Scaling Laws、記憶注入，到系統/Agent 邊界的可遷移原則。
+- 四個核心領域
+- 一、序列與數據建模 (Data & Sequence Modeling)
+    - 1. 序列信噪比（SNR）控制與配額過濾 (Behavioral Quota Filtering)
+    - 2. 上下文感知去重 (Context-Aware Deduplication)
+- 二、模型架構與縮放定律 (Model Architecture & Scaling Laws)
+    - 1. Chinchilla Law 的參數口徑與 Embedding 本質
+    - 2. 模型規模與稀疏性容忍度 (Sparsity Tolerance vs. Model Scale)
+- 三、記憶注入與特徵正交性 (Memory Injection & Orthogonality)
+    - 1. Engram Injection（記憶外掛與算力解放）
+    - 2. 架構收益與特徵收益的正交性 (Orthogonal Gains)
+- 四、系統設計與 Agent 邊界 (System Design & Agent Limits)
+    - 1. LSH（局部敏感哈希）的應用邊界與召回深度博弈
+    - 2. Agentic Cycle 中 LLM 的「局部最優陷阱」
+- 可遷移總結
+    - - 好的序列建模，核心不是保留最多資料，而是保留最高價值的訊號
+    - - 好的模型設計，不能只看參數量，還要看算力口徑、稀疏配置與可被釋放的有效深度
+</draft>
+
 
 # 可遷移機器學習與系統設計筆記
 
