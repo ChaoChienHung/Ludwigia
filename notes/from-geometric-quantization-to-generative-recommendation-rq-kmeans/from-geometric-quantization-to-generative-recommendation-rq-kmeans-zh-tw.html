@@ -13,7 +13,7 @@
   <meta name="garden:canonical_id" content="from-geometric-quantization-to-generative-recommendation-rq-kmeans">
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="20">
+  <meta name="garden:reading_time_minutes" content="25">
   <meta name="garden:source" content="notes/from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw.md">
   <script>
   (() => {
@@ -157,21 +157,21 @@
             <a class="note-toc-link level-1" href="#token">核心思維：從連續空間到離散 Token 的幾何橋樑</a>
 <a class="note-toc-link level-2" href="#section">離散化的直覺陷阱：生硬的網格分桶</a>
 <a class="note-toc-link level-2" href="#clustering-as-quantization">聚類即量化（Clustering as Quantization）</a>
-<a class="note-toc-link level-1" href="#rq-kmeans">演算法進化：從基礎量化到 RQ-Kmeans 的階層破局</a>
+<a class="note-toc-link level-1" href="#rq-kmeans">演進之路：從基礎量化到 RQ-Kmeans 的階層破局</a>
 <a class="note-toc-link level-2" href="#product-quantization-pq">乘積量化 Product Quantization (PQ)——分而治之</a>
 <a class="note-toc-link level-2" href="#residual-quantization-rq-kmeans">殘差量化 Residual Quantization (RQ-Kmeans)——逐層細化</a>
-<a class="note-toc-link level-1" href="#rq-kmeans-2">RQ-Kmeans 演算法運作機制與幾何重構</a>
-<a class="note-toc-link level-2" href="#coarse-quantization">第一層：粗粒度量化 (Coarse Quantization)</a>
-<a class="note-toc-link level-2" href="#refinement-stage">第二層與多層殘差量化 (Refinement Stage)</a>
+<a class="note-toc-link level-1" href="#rq-kmeans-2">RQ-Kmeans 演算法運作機制、解碼策略與幾何重構</a>
+<a class="note-toc-link level-2" href="#coarse-quantization">第一步：粗粒度量化 (Coarse Quantization)</a>
+<a class="note-toc-link level-2" href="#refinement-stage">第二步：多層殘差量化 (Refinement Stage)</a>
+<a class="note-toc-link level-2" href="#geometric-reconstruction">第三步：向量近似重構 (Geometric Reconstruction)</a>
 <a class="note-toc-link level-1" href="#rq-kmeans-3">RQ-Kmeans 核心優勢與潛在探索性</a>
-<a class="note-toc-link level-1" href="#section-2">進階技術視角與挑戰：率失真理論、正則化與解碼優化</a>
+<a class="note-toc-link level-1" href="#section-2">進階技術視角與挑戰：率失真理論與正則化</a>
 <a class="note-toc-link level-2" href="#dead-codes">死碼危機與碼本坍塌 (Dead Codes)</a>
-<a class="note-toc-link level-2" href="#vs-beam-search">解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</a>
 <a class="note-toc-link level-1" href="#section-3">落地實踐：生成式推薦的四階段工作流</a>
-<a class="note-toc-link level-2" href="#offline">階段一：離線訓練量化器 (Offline)</a>
-<a class="note-toc-link level-2" href="#token-offline">階段二：離線商品 Token 化與總詞彙表 (Offline)</a>
+<a class="note-toc-link level-2" href="#offline-training">階段一：離線訓練量化器 (Offline Training)</a>
+<a class="note-toc-link level-2" href="#token-offline-encoding">階段二：離線商品 Token 化與總詞彙表 (Offline Encoding)</a>
 <a class="note-toc-link level-2" href="#offline-online">階段三：自迴歸推薦模型訓練 (Offline / Online)</a>
-<a class="note-toc-link level-2" href="#anns-inference">階段四：線上推論、重構與 ANNS 召回 (Inference)</a>
+<a class="note-toc-link level-2" href="#inference">階段四：線上推論、重構與召回 (Inference)</a>
 <a class="note-toc-link level-1" href="#section-4">總結</a>
 <a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
           </nav>
@@ -244,7 +244,9 @@
 
 <h4 id="section" class="mb-2">離散化的直覺陷阱：生硬的網格分桶</h4>
 
-<p class="mb-3">要將連續空間離散化，最直覺的想法是「空間分桶（Bucketing / Grid）」，就像切豆腐一樣將多維空間劃分成等分的網格，並將落入同一個網格的資料賦予同一個離散 ID（在向量量化中，這個離散 ID 及其代表的特徵，便被稱為「碼字 Codeword」）。</p>
+<p class="mb-3">要將連續空間離散化，最直覺的想法是「空間分桶（Bucketing / Grid）」，就像切豆腐一樣將多維空間劃分成等分的網格，並將落入同一個網格的資料賦予同一個離散 ID。</p>
+
+<p class="mb-3">在向量量化（Vector Quantization）的術語中，這個離散 ID 以及它所代表的網格中心向量，被稱為碼字（Codeword）；而所有碼字集結而成的查找集合，就是碼本（Codebook）。換言之，離散化的本質，就是為每筆資料在碼本中找到一個最合適的碼字作為其身份標籤。</p>
 
 <p class="mb-3">然而，當來到高維度空間時，這種做法會立刻撞上「維度詛咒（Curse of Dimensionality）」。真實世界的高維資料分佈往往極度不均。生硬的網格化不僅會產生海量的「空桶」，白白浪費儲存與運算資源；更致命的是，它完全無法捕捉資料真實的語意邊界——也就是說，死板的網格線常常會把語意相近的資料硬生生切開，無法保證能將它們分在同一個桶子裡。</p>
 
@@ -258,71 +260,88 @@
 
 <p class="mb-3">與其盲目地預先切分整個連續空間，不如透過 <a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a> 找出資料真實分佈的中心點。<strong>這 $K$ 個中心點的集合，就是我們的「碼本（Codebook）」，而每一個中心點就是一個「碼字（Codeword）」。</strong></p>
 
-<p class="mb-3">對於任何一個新的物品向量，我們只要找到碼本中距離最近的聚類中心，並用該中心的索引 ID（從 $0$ 到 $K-1$）來代表這個物品向量即可。當我們把這個索引 ID 餵給大模型時，它就搖身一變成了大模型眼中的 Token。這正是「向量量化（Vector Quantization, VQ）」的底層哲學——<strong>不切割空間，而是讓資料自己決定聚落，並用聚落的中心點來建構碼本。</strong></p>
+<p class="mb-3">對於任何一個新的物品向量，我們只要找到碼本中距離最近的聚類中心，並用該中心的索引 ID（從 $0$ 到 $K-1$）來代表這個物品向量即可。當我們把這個索引 ID 餵給大模型時，它就搖身一變成了大模型眼中的 Token。這正是「向量量化」的底層哲學——<strong>不切割空間，而是讓資料自己決定聚落，並用聚落的中心點來建構碼本。</strong></p>
 </section>
 
 <section id="rq-kmeans" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">演算法進化：從基礎量化到 RQ-Kmeans 的階層破局</h3>
+<h3 class="mb-3">演進之路：從基礎量化到 RQ-Kmeans 的階層破局</h3>
 
 <p class="mb-3">在成功透過碼本將連續向量離散化後，我們迎來了第二個難題：<strong>如何讓這些離散 ID 構成「由粗到細（Coarse-to-fine）」的階層式 Token 序列？</strong></p>
 
-<p class="mb-3">如果我們只依賴如 K-means 那樣的單一碼本範式，會立刻陷入兩難的困境：</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>迷思破解：既然一開始我們不能只使用單一 Token 來表示商品是因為物品數量太多，那我們透過上述 K-means 的方式把它們聚類成 8192 個群，這樣單一 Token 的可能性不就限縮到 8192 了嗎？直接用這 8192 個聚類中心當作單一 Token 的碼本不就好了嗎？</strong> 這個想法很直覺：既然幾億個商品太多，那就把它們聚類成 8192 個群，詞彙表不就縮小了嗎？但如果我們只依賴這種單一碼本的範式，會立刻陷入兩難的困境：</p>
 
 <ul class="note-list">
-<li><strong>若 $K$ 值太小：</strong> 量化誤差（Distortion）會非常大，無法精確代表物品的細節。</li>
-<li><strong>若 $K$ 值極大：</strong> （例如 100 萬個物品需要 100 萬個聚類中心），碼本空間與訓練算力會直接爆炸。這本質上又退回了傳統 ID 詞表爆炸的老路。</li>
+<li><strong>若 $K$ 值太小（例如 8192）：</strong> 雖然解決了詞表過大的問題，但量化誤差（Distortion）會非常驚人。這意味著可能會有成千上萬個截然不同的商品被強行映射到同一個 Codebook ID 上，模型根本無法區分這些商品的細微差異，推薦將變得極度粗糙且失去意義。</li>
+<li><strong>若 $K$ 值極大（例如 100 萬）：</strong> 為了精確代表物品的細節，我們賦予每個商品獨特的聚類中心。但這時碼本的儲存空間與大模型的訓練算力又會直接爆炸，本質上又退回了傳統 ID 詞表爆炸的老路。</li>
 </ul>
 
-<p class="mb-3">因此，我們必須突破單一碼本的範式，往<strong>多碼本</strong>的方向發展，藉此緩解甚至徹底解決上述問題。</p>
+<p class="mb-3">這就是為什麼單一 K-means 無法直接作為 Semantic ID 的原因。我們必須突破單一碼本的限制，往<strong>多碼本組合</strong>的方向發展。</p></div>
 
 <h4 id="product-quantization-pq" class="mb-2">乘積量化 Product Quantization (PQ)——分而治之</h4>
 
-<p class="mb-3">為解決單一碼本的爆炸問題，乘積量化（PQ）提出了一個巧妙的「分而治之」思路：</p>
+<p class="mb-3">為了突破單一 Token 的限制，轉而以「多個 Token 組合」來表達商品，乘積量化（Product Quantization, PQ）提出了一個「分而治之」的巧妙思路：</p>
 
 <ol class="mb-3">
-<li><strong>切分子空間：</strong> 將一個高維向量（如 256 維）切分成 $M$ 段獨立的子空間（如 4 段，每段 64 維）。</li>
+<li><strong>切分子空間：</strong> 將高維向量（如 256 維）切分成 $M$ 段獨立的子空間（如 4 段，每段 64 維）。</li>
 <li><strong>獨立量化：</strong> 為每一段子空間獨立訓練一個小的 K-means 碼本（如 $K=256$）。</li>
-<li><strong>組合表示：</strong> 一個物品向量被表示為多個子空間碼本索引的組合，例如 <code>[id_seg1, id_seg2, id_seg3, id_seg4]</code>。</li>
+<li><strong>組合表示：</strong> 最終，一個物品向量就能被表示為多個子空間碼本索引的組合，例如 <code>[id_seg1, id_seg2, id_seg3, id_seg4]</code>。</li>
 </ol>
 
-<p class="mb-3"><strong>優點與致命局限：</strong></p>
+<p class="mb-3">並且，透過這種方式，我們僅需極小的儲存空間（$4 \times 256$ 個向量），就能表達高達 $256^4 \approx 43$ 億種商品組合，大幅提升了模型的表達容量。</p>
 
-<ul class="note-list">
-<li><strong>優點：</strong> 只需要極小的儲存空間（$4 \times 256$ 個向量），就能表達 $256^4 \approx 43$ 億種組合，極大地提升了表達能力。</li>
-<li><strong>局限：</strong> 子空間切割是並行且獨立的，硬生生破壞了向量的全局幾何特徵；更重要的是，各個子空間地位平等，<strong>完全無法提供「由粗到細（Coarse-to-fine）」的階層語意結構</strong>。</li>
-</ul>
+<p class="mb-3">然而，Product Quantization 存在一個致命缺陷：子空間的切分是獨立且平行的，這不僅硬生生破壞了向量整體的全局幾何特徵；更關鍵的是，各子空間地位完全對等，<strong>無法提供生成式模型所必需的「由粗到細（Coarse-to-fine）」階層語意結構</strong>。</p>
 
 <h4 id="residual-quantization-rq-kmeans" class="mb-2">殘差量化 Residual Quantization (RQ-Kmeans)——逐層細化</h4>
 
-<p class="mb-3">為解決 PQ 無法提供階層語意的致命傷，RQ-Kmeans 成為了關鍵變體。</p>
+<p class="mb-3">為了克服 Product Quantization 缺乏階層語意的致命缺點，殘差量化（RQ-Kmeans） 成為了技術演進的關鍵突破。</p>
 
-<p class="mb-3">RQ 不切分空間，而是對全局向量採用「<strong>逐層細化、遞減殘差、逐步求精</strong>」的策略。第 1 個 Token 在大類空間鎖定大方向，第 2 到第 $M$ 個 Token 則針對前一層未捕捉到的「殘差（Residual）」繼續量化，以微調幾何細節。這種機制天然形成了一棵由粗到細的語意樹，完美契合 Semantic ID 的需求。</p>
+<p class="mb-3">與 PQ 粗暴切分空間不同，RQ 選擇保留完整的全局向量，改採「逐層細化、遞減殘差、逐步求精」的策略：</p>
+
+<ul class="note-list">
+<li>第 1 個 Token： 在原始特徵空間中快速鎖定宏觀大方向（如商品大類）。</li>
+<li>第 2 到第 $M$ 個 Token： 逐層對上一層遺留的「殘差（Residual）」進行量化，不斷修正局部的幾何細節。</li>
+</ul>
+
+<p class="mb-3">這種機制讓商品向量天然長成一棵「由粗到細」的語意樹，完美契合了生成式推薦對 Semantic ID 的階層化需求。</p>
 </section>
 
 <section id="rq-kmeans-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">RQ-Kmeans 演算法運作機制與幾何重構</h3>
+<h3 class="mb-3">RQ-Kmeans 演算法運作機制、解碼策略與幾何重構</h3>
 
-<p class="mb-3">假設我們使用 $M$ 層碼本來量化一個連續向量 $v$，具體的運作機制如下：</p>
+<p class="mb-3">假設我們使用 $M$ 層碼本來量化一個連續向量 $v$，具體的運作機制可拆解為三個核心階段：</p>
 
-<h4 id="coarse-quantization" class="mb-2">第一層：粗粒度量化 (Coarse Quantization)</h4>
+<h4 id="coarse-quantization" class="mb-2">第一步：粗粒度量化 (Coarse Quantization)</h4>
 
-<p class="mb-3">在全量商品向量上訓練第一層 K-means 碼本 $\mathcal{C}^{(1)}$。我們尋找與向量 $v$ 距離最近的碼字 $c_1$，第 1 個 Token 即為 $c_1$ 的索引 $\text{idx}_1$。</p>
+<p class="mb-3">在全量商品向量上訓練第一層 K-means 碼本 $\mathcal{C}^{(1)}$。針對目標向量 $v$，尋找距離最近的碼字（中心點）$c_1$，第 1 個 Token 即為 $c_1$ 的索引 $\text{idx}_1$。</p>
 
-<p class="mb-3">接著計算<strong>殘差</strong>，這代表了第一次量化後丟失的細節資訊： $$r_1 = v - c_1$$</p>
+<p class="mb-3">接著計算殘差，這代表第一次粗量化後尚未捕捉到的幾何細節： $$r_1 = v - c_1$$</p>
 
-<h4 id="refinement-stage" class="mb-2">第二層與多層殘差量化 (Refinement Stage)</h4>
+<h4 id="refinement-stage" class="mb-2">第二步：多層殘差量化 (Refinement Stage)</h4>
 
-<p class="mb-3">收集所有第一層的殘差 $\{r_1\}$，以此為基礎訓練第二層碼本 $\mathcal{C}^{(2)}$。針對 $r_1$ 尋找距離最近的碼字 $c_2$，第 2 個 Token 即為 $\text{idx}_2$。</p>
+<p class="mb-3">收集所有第一層的殘差 $\{r_1\}$，以此為訓練集擬合第二層碼本 $\mathcal{C}^{(2)}$。針對殘差 $r_1$ 尋找距離最近的碼字 $c_2$，第 2 個 Token 即為 $\text{idx}_2$。</p>
 
-<p class="mb-3">接著，繼續更新殘差，算出第二層量化後依然丟失的資訊： $$r_2 = r_1 - c_2 = (v - c_1) - c_2$$</p>
+<p class="mb-3">接著繼續更新殘差，計算第二層量化後依然遺留的誤差： $$r_2 = r_1 - c_2 = (v - c_1) - c_2$$</p>
 
-<p class="mb-3">重複此過程 $M$ 次，在第 $m$ 層量化上一層留下來的殘差 $r_{m-1}$，最終我們即可得到一組由粗到細的索引序列 $[\text{idx}_1, \text{idx}_2, \dots, \text{idx}_M]$。這組序列，就是我們夢寐以求的 Semantic ID！</p>
+<p class="mb-3">重複此過程 $M$ 次，在第 $m$ 層針對上一層留下的殘差 $r_{m-1}$ 持續尋找最佳碼字 $c_m$ 並記錄索引 $\text{idx}_m$。最終，原始向量 $v$ 就被轉換為一組長度為 $M$ 的離散索引序列： $$\text{SID}(v) = [\text{idx}_1, \text{idx}_2, \dots, \text{idx}_M]$$</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>最終表示與幾何重構：</strong> 原始向量 $v$ 最終被量化為長度 $M$ 的 Token 序列：$[\text{idx}_1, \text{idx}_2, \dots, \text{idx}_M]$。 在推論階段，其近似重構向量 $v_{\text{approx}}$ 為各層碼本中心點向量的總和： $$v_{\text{approx}} = \sum_{m=1}^M c_m = c_1 + c_2 + \dots + c_M$$ 第一層 Token 決定商品在大尺度幾何空間中的大類（如「電子產品 $\to$ 手機」），後續 Token 則在殘差空間中持續修正細節（如「品牌 $\to$ 螢幕尺寸 $\to$ 顏色」）。</p></div>
+<h4 id="geometric-reconstruction" class="mb-2">第三步：向量近似重構 (Geometric Reconstruction)</h4>
+
+<p class="mb-3">有了這組 Token 序列，在幾何空間中該如何還原該商品？我們只需從各層碼本取出對應的中心點向量並直接求和，即可得到原始向量的近似重構向量 $v_{\text{approx}}$： $$v_{\text{approx}} = \sum_{m=1}^M c_m = c_1 + c_2 + \dots + c_M$$</p>
+
+<p class="mb-3">從幾何視角來看，$c_1$ 先在大尺度空間定位宏觀類別（如「電子產品 $\to$ 手機」），後續的 $c_2, \dots, c_M$ 則在殘差空間中扮演微調向量，沿著殘差方向不斷修正細部幾何位置（如「品牌 $\to$ 尺寸 $\to$ 顏色」）。</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</strong> 在將原始連續向量轉換為離散 Token 序列的過程中（也就是決定上述每層最近中心點的「量化解碼」階段），我們該如何選擇每一層的中心點？實務上有兩種截然不同的策略：</p>
+
+<ul class="note-list">
+<li><strong>貪婪解碼 (Greedy Encoding)：</strong> 每層獨立選擇距離最近的中心。缺點是前幾層的選擇會直接決定下一層殘差的空間走向，貪婪選擇往往會落入「一步錯，步步錯」的局部陷阱。</li>
+<li><strong>束搜尋 (Beam Search)：</strong> 在量化解碼時維護 Top-$B$ 個候選 Token 序列路徑。這種方式考量了全局最佳解，能顯著降低整體的幾何重構失真 $\sum \|v - v_{\text{approx}}\|^2$。</li>
+</ul></div>
 </section>
 
 <section id="rq-kmeans-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">RQ-Kmeans 核心優勢與潛在探索性</h3>
+
+<p class="mb-3">了解了 RQ-Kmeans 巧妙的殘差量化機制後，我們可以發現它不僅僅是個單純的壓縮演算法，更是為生成式推薦量身打造的橋樑。具體而言，它具備以下幾個不可替代的核心優勢：</p>
 
 <ol class="mb-3">
 <li class="mb-2">
@@ -349,30 +368,33 @@
 <p class="mb-2">模型自迴歸生成的 Token 組合在資料庫中可能並不對應於任何一個已存在的真實物品，但其重構出來的向量 $v_{\text{pred}}$ 可能代表一個「新穎的」或「潛在的」用戶興趣點。這為推薦系統的探索性（Exploration）與多樣性（Diversity）提供了創新的理論與工程可能性。</p>
   
 </li>
+<li>
+  <strong><strong>高度的架構彈性 (Flexibility of $M$)：</strong></strong><br>
+  
+<p class="mb-2">這套範式允許我們根據實際的業務需求自主調整碼本層數 $M$。如果我們希望模型推論速度更快（即生成較少的 Token），只需調降 $M$；反之，若我們希望模型能更精確地刻畫並還原商品特徵，則只需提升 $M$。透過調整 $M$，我們能在「推論效率」與「表示精度」之間靈活切換。</p>
+  
+</li>
 </ol>
+
+<p class="mb-3">然而，RQ-Kmeans 雖然擁有上述諸多優勢與優美的數學幾何直覺，但在真實的工程落地場景中，它並非完美無缺。當面對極端高維且稀疏的真實數據時，純粹的幾何量化會遭遇一些棘手的退化問題與技術挑戰。這也就是我們接下來要探討的進階議題。</p>
 </section>
 
 <section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">進階技術視角與挑戰：率失真理論、正則化與解碼優化</h3>
+<h3 class="mb-3">進階技術視角與挑戰：率失真理論與正則化</h3>
 
 <p class="mb-3">雖然 RQ-Kmeans 的基礎流程非常直觀，但在處理高維、高度相關的真實數據時，純粹的幾何量化會面臨諸多退化問題與技術挑戰：</p>
 
 <h4 id="dead-codes" class="mb-2">死碼危機與碼本坍塌 (Dead Codes)</h4>
 
-<p class="mb-3">在理想狀況下，我們希望碼本中每個 Codeword 的利用率（Codebook Utilization Rate, CUR）達到最大化。然而，直接在大規模高維數據上運行 K-means 常常會出現「死碼（Dead Codes）」現象——即某些聚類中心幾乎沒有數據點落入，導致碼本容量被嚴重浪費，發生碼本坍塌。</p>
+<p class="mb-3">在理想狀況下，我們會希望碼本中每個 Codeword 的利用率（Codebook Utilization Rate, CUR）達到最大化。畢竟，碼本的容量是我們預先設定好的寶貴資源（如 $K=8192$），如果只有少數幾個中心點被頻繁使用，而其他中心點閒置，就等於白白浪費了模型的表達能力。</p>
 
-<p class="mb-3">為此，<strong>正則化殘差量化（Regularized Residual Quantization, RRQ）</strong> 引入了資訊理論中的率失真理論（Rate-Distortion Theory）與反向水閥（Reverse Water-Filling）原則：</p>
+<p class="mb-3">然而，就如同在<a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a>中有提到的，大規模高維數據上運行 K-means 常常會出現空群集，或著某些聚類中心幾乎沒有數據點落入，導致碼本容量被嚴重浪費，發生碼本坍塌。我們稱這種現象為「死碼（Dead Codes）」現象。</p>
+
+<p class="mb-3">為此，我們通過<strong>正則化殘差量化（Regularized Residual Quantization, RRQ）</strong> 引入了資訊理論中的率失真理論（Rate-Distortion Theory）與反向水閥（Reverse Water-Filling）原則：</p>
 
 <ul class="note-list">
 <li><strong>動態維度選擇（Active Dimension Selection）：</strong> 在深層殘差空間中，數據在某些維度的變異數已大幅衰減。RRQ 僅對變異數高於臨界值的維度進行量化，避免模型在低變異數的雜訊維度過度擬合。</li>
 <li><strong>變異數懲罰項：</strong> 在 K-means 的平方誤差目標中加入變異數匹配懲罰，強迫各層碼本分佈均勻，極大化資訊熵，使碼本利用率逼近 100%。</li>
-</ul>
-
-<h4 id="vs-beam-search" class="mb-2">解碼策略：貪婪解碼 vs. 束搜尋 (Beam Search)</h4>
-
-<ul class="note-list">
-<li><strong>貪婪編碼 (Greedy Encoding)：</strong> 每層獨立選擇最近的中心。缺點是前幾層的選擇會直接決定下一層殘差的方向，貪婪選擇往往會落入「一步錯，步步錯」的局部陷阱。</li>
-<li><strong>束搜尋 (Beam Search)：</strong> 在量化解碼時維護 Top-$B$ 個候選 Token 序列路徑。這種方式考量了全局最佳解，能顯著降低整體的幾何重構失真 $\sum \|v - v_{\text{approx}}\|^2$。</li>
 </ul>
 
 <div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><h4 id="rq-kmeans-rq-vae" class="mb-2">關鍵對決：工業界為何偏愛 RQ-Kmeans 而非 RQ-VAE？</h4>
@@ -411,7 +433,9 @@
   </table>
 </div>
 
-<p class="mb-3">儘管 RQ-VAE 結合 AutoEncoder 能達成特徵與量化的聯合優化，看似更先進，但在工業落地時卻面臨巨大挑戰：它高度依賴不可微的 Straight-Through Estimator (STE) 來估算梯度，導致訓練極度不穩定，調參與算力成本高昂。 相比之下，<strong>RQ-Kmeans 擁有絕對優勢</strong>：除了極致穩定之外，它具備極佳的<strong>資產複用性 (Plug-and-Play)</strong>，可無縫接入系統現有的 DSSM 或 Graph 高品質 Item Embedding，無需重訓上游模型。</p></div>
+<p class="mb-3">而儘管 RQ-VAE 結合 AutoEncoder 能達成特徵與量化的聯合優化，看似更先進，但在工業落地時卻面臨巨大挑戰：它高度依賴不可微的 Straight-Through Estimator (STE) 來估算梯度，導致訓練極度不穩定，調參與算力成本高昂。 相比之下，<strong>RQ-Kmeans 擁有絕對優勢</strong>：除了極致穩定之外，它具備極佳的<strong>資產複用性 (Plug-and-Play)</strong>，可無縫接入系統現有的 DSSM 或 Graph 高品質 Item Embedding，無需重訓上游模型。 <strong>💡 實務混用策略：</strong> 其實在實務工程上，這兩者並不互斥。一個常見的做法是：我們先利用 RQ-Kmeans 跑出初始碼本當作良好的初始化權重（Initialization），接著再將其無縫接入 RQ-VAE 去進行微調優化。如此一來，便能同時兼顧初期的模型穩定性，以及後期的極限效能優化！</p></div>
+
+<p class="mb-3">至此，我們算是粗略介紹完 RQ-Kmeans 的運作流程了。但業界究竟是如何將之整合到實際的生成式推薦系統中呢？它又在整個推薦系統中扮演什麼樣的角色呢？</p>
 </section>
 
 <section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -419,17 +443,19 @@
 
 <p class="mb-3">在實際的生成式推薦系統中，RQ-Kmeans 扮演了串聯離線特徵與線上推論的核心組件。整個工作流可分為四個核心階段：</p>
 
-<h4 id="offline" class="mb-2">階段一：離線訓練量化器 (Offline)</h4>
+<h4 id="offline-training" class="mb-2">階段一：離線訓練量化器 (Offline Training)</h4>
 
 <ol class="mb-3">
-<li><strong>獲取物品向量：</strong> 透過預訓練模型（如 DSSM、GNN 或 BERT）為系統中的所有物品生成高品質的連續嵌入向量 $v$。</li>
-<li><strong>訓練 RQ-Kmeans：</strong> 將全站物品的向量作為輸入，訓練一個 $M$ 層的 RQ-Kmeans 量化器，產出 $M$ 個碼本 $\mathcal{C}^{(1)}, \mathcal{C}^{(2)}, \dots, \mathcal{C}^{(M)}$。</li>
+<li><strong>獲取物品向量：</strong> 前面有提到，RQ-Kmeans 本質上還是將商品的 Embedding 離散化成階層式 Token 的一個方式。既然如此，我們還是會需要透過預訓練模型（如 DSSM、GNN 或 BERT）為系統中的所有物品生成高品質的連續嵌入向量 $v$。</li>
+<li><strong>訓練 RQ-Kmeans：</strong> 接著，我們就可以將全站物品的向量作為輸入，去<strong>訓練（擬合）</strong>一個 $M$ 層的 RQ-Kmeans 量化器，藉由幾何收斂產出 $M$ 個中心點碼本 $\mathcal{C}^{(1)}, \mathcal{C}^{(2)}, \dots, \mathcal{C}^{(M)}$。</li>
 </ol>
 
-<h4 id="token-offline" class="mb-2">階段二：離線商品 Token 化與總詞彙表 (Offline)</h4>
+<h4 id="token-offline-encoding" class="mb-2">階段二：離線商品 Token 化與總詞彙表 (Offline Encoding)</h4>
+
+<p class="mb-3">此階段屬於純推論（Inference）的編碼過程，並不會更新碼本權重：</p>
 
 <ol class="mb-3">
-<li><strong>編碼全站物品：</strong> 將每個物品的嵌入向量輸入訓練好的 RQ-Kmeans，生成長度為 $M$ 的 SID 序列。例如：</li>
+<li><strong>編碼全站物品：</strong> 將每個物品的嵌入向量輸入訓練好的 RQ-Kmeans，利用 Beam Search 等策略生成長度為 $M$ 的 SID 序列。例如：</li>
 </ol>
 
 <p class="mb-3">$$\text{Item}_A \longrightarrow [12, 255, 7, 98]$$</p>
@@ -441,7 +467,7 @@
 <h4 id="offline-online" class="mb-2">階段三：自迴歸推薦模型訓練 (Offline / Online)</h4>
 
 <ol class="mb-3">
-<li><strong>轉換與展平用戶序列：</strong> 將用戶的歷史交互序列轉換成 Token 序列並展平：</li>
+<li><strong>轉換與展平用戶序列：</strong> 在有了階段二生成的總詞彙表後，我們就可以將用戶的歷史交互序列轉換成 Token 序列並展平：</li>
 </ol>
 
 <ul class="note-list">
@@ -451,26 +477,34 @@
 </ul>
 
 <ol class="mb-3">
-<li><strong>生成式訓練：</strong> 將展平後的 Token 序列送入 Transformer，訓練模型預測下一個 Token (Next-Token Prediction) 的能力。</li>
+<li><strong>生成式訓練：</strong> 接著，將展平後的 Token 序列送入 Transformer，我們就可以開始真正訓練生成式自回歸模型預測下一個 Token (Next-Token Prediction) 的能力。</li>
 </ol>
 
-<h4 id="anns-inference" class="mb-2">階段四：線上推論、重構與 ANNS 召回 (Inference)</h4>
+<h4 id="inference" class="mb-2">階段四：線上推論、重構與召回 (Inference)</h4>
 
-<ol class="mb-3">
-<li><strong>自迴歸生成：</strong> 線上服務時，輸入使用者的最新歷史，模型自迴歸地生成下一個目標物品的 $M$ 個 Tokens $[\text{idx}_1, \dots, \text{idx}_M]$。</li>
-<li><strong>解碼重構向量：</strong> 從碼本中取出對應的中心向量並求和，重構出預測的興趣向量 $v_{\text{pred}}$。</li>
-<li><strong>向量召回：</strong> 利用 Faiss 或 Milvus 等 ANNS（近似最近鄰搜尋）引擎，使用 $v_{\text{pred}}$ 完成 Top-$N$ 的高效商品召回。</li>
-</ol>
+<p class="mb-3">線上服務時，輸入使用者的最新歷史，模型會自迴歸地生成下一個目標物品的 $M$ 個 Tokens $[\text{idx}_1, \dots, \text{idx}_M]$。 關於接下來的推論召回方式，實務上通常有兩種不同的路徑設計：</p>
+
+<ul class="note-list">
+<li><strong>路徑一（向量重構與 ANNS 召回）：</strong></li>
+</ul>
+
+<p class="mb-3">從碼本中取出生成的 Tokens 對應的中心向量並求和，重構出預測的興趣向量 $v_{\text{pred}}$。接著，利用 Faiss 或 Milvus 等 <strong>ANNS（近似最近鄰搜尋, Approximate Nearest Neighbor Search）</strong> 引擎，使用 $v_{\text{pred}}$ 完成 Top-$N$ 的高效商品召回。這能有效處理模型生成出「不存在於現有商品庫中」的全新 Token 組合。</p>
+
+<ul class="note-list">
+<li><strong>路徑二（直接 SID 精準比對）：</strong></li>
+</ul>
+
+<p class="mb-3">不經過向量重構，而是直接將生成出來的 SID 序列當作索引，去對應實際的商品資料庫進行精準匹配（Exact Match 或 Prefix Match）。這種方式省去了向量搜尋的開銷，速度極快，但高度依賴生成模型的精準度。</p>
 </section>
 
 <section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">總結</h3>
 
-<p class="mb-3">從傳統雙塔與級聯架構走向生成式推薦（Generative Recommendation），核心的障礙從來不是模型容量，而是如何讓大語言模型（LLM）理解並生成海量物品。Semantic ID (SID) 透過多步解碼機制打破了詞彙庫爆炸的瓶頸，而 <strong>RQ-Kmeans</strong> 則為這套機制提供了一條極具工程 CP 值且幾何收斂穩健的離散化路徑。</p>
+<p class="mb-3">至此，我們總算是粗略介紹完了生成式推薦的背景以及 RQ-Kmeans 在其中扮演的角色與運作流程。</p>
 
 <p class="mb-3">透過將連續高維 Embedding 進行「逐層求精、遞減殘差」的幾何逼近，RQ-Kmeans 不僅實現了極高的資訊壓縮比，更天然賦予了 Token 序列「由粗到細」的樹狀階層語意。結合 RRQ 正則化與 Beam Search 搜尋，能有效消除死碼危機並降低幾何失真。</p>
 
-<p class="mb-3">相較於訓練極不穩定的端到端神經量化模型（如 RQ-VAE），RQ-Kmeans 具備「極致穩定、無需梯度傳播、可無縫複用現有資產」的巨大優勢。此外，其模型生成的全新 Token 組合所重構出的向量，更為推薦系統的探索性開啟了前瞻想像空間。在走向生成式檢索的浪潮中，RQ-Kmeans 堪稱工業界連接連續向量空間與離散 LLM 語意序列最為實用、堅固的橋樑。</p>
+<p class="mb-3">RQ-Kmeans 具備「極致穩定、無需梯度傳播、可無縫複用現有資產」的巨大優勢。此外，其模型生成的全新 Token 組合所重構出的向量，更為推薦系統的探索性開啟了前瞻想像空間。在走向生成式檢索的浪潮中，RQ-Kmeans 堪稱工業界連接連續向量空間與離散 LLM 語意序列最為實用、堅固的橋樑。</p>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
