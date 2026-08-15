@@ -149,7 +149,9 @@ Seen this way, a clustering algorithm is not a black box that magically creates 
 
 ### Centroid-Based Clustering
 
-Centroid-based methods assume that each cluster can be summarized by a central point, often called a centroid or prototype. The algorithm assigns points to the cluster whose center best represents them and then updates those centers as the grouping changes. 
+Earlier, we noted that one of the ultimate value of clustering lies in extracting a "core profile" to represent a massive group. Centroid-based clustering essentially reverse-engineers this idea: it uses the concept of a representative prototype as the very mechanism to discover the clusters in the first place.
+
+These methods assume that a cluster can be defined entirely by its relationship to a central point, often called a centroid. By anchoring each group to a centroid, the algorithm's primary goal becomes finding a stable set of core profiles that best summarize the entire dataset. It does this iteratively: assigning points to the prototype that best represents them, and then updating those prototypes as the grouping changes.
 
 Because there are no predefined labels locking in a group's identity, the algorithm must dynamically update its understanding of what each group represents. The "profile" of a cluster is not a fixed rule; it is a living average of whoever is currently inside it.
 

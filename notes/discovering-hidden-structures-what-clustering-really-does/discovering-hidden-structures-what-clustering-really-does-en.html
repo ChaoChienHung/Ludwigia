@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-06-10">
   <meta name="garden:last_modified_at" content="2026-07-31">
   <meta name="garden:cover" content="notes/discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg">
-  <meta name="garden:reading_time_minutes" content="25">
+  <meta name="garden:reading_time_minutes" content="26">
   <meta name="garden:source" content="notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.md">
   <script>
   (() => {
@@ -329,7 +329,9 @@
 
 <h4 id="centroid-based-clustering" class="mb-2">Centroid-Based Clustering</h4>
 
-<p class="mb-3">Centroid-based methods assume that each cluster can be summarized by a central point, often called a centroid or prototype. The algorithm assigns points to the cluster whose center best represents them and then updates those centers as the grouping changes.</p>
+<p class="mb-3">Earlier, we noted that one of the ultimate value of clustering lies in extracting a "core profile" to represent a massive group. Centroid-based clustering essentially reverse-engineers this idea: it uses the concept of a representative prototype as the very mechanism to discover the clusters in the first place.</p>
+
+<p class="mb-3">These methods assume that a cluster can be defined entirely by its relationship to a central point, often called a centroid. By anchoring each group to a centroid, the algorithm's primary goal becomes finding a stable set of core profiles that best summarize the entire dataset. It does this iteratively: assigning points to the prototype that best represents them, and then updating those prototypes as the grouping changes.</p>
 
 <p class="mb-3">Because there are no predefined labels locking in a group's identity, the algorithm must dynamically update its understanding of what each group represents. The "profile" of a cluster is not a fixed rule; it is a living average of whoever is currently inside it.</p>
 
