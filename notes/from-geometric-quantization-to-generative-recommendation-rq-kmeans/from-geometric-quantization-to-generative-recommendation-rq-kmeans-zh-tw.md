@@ -4,6 +4,7 @@ Summary: 本文從連續空間的離散化出發，探討推薦系統如何從 K
 Slug: from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw
 Output: notes/from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw.html
 CanonicalId: from-geometric-quantization-to-generative-recommendation-rq-kmeans
+Cover: ./from-geometric-quantization-to-generative-recommendation-rq-kmeans.png
 Style: default
 EstimatedReadingTime: true
 Lang: zh-tw
@@ -132,6 +133,12 @@ caption: 乘積量化 (Product Quantization, PQ) 運算機制與組合表示流�
 這種機制讓商品向量天然長成一棵「由粗到細」的語意樹，完美契合了生成式推薦對 Semantic ID 的階層化需求。
 
 ## RQ-Kmeans 演算法運作機制、解碼策略與幾何重構
+
+<image>
+src: ./from-geometric-quantization-to-generative-recommendation-rq-kmeans.png
+alt: RQ-Kmeans 殘差量化編碼流程與索引重構架構圖，展示多層殘差量化、索引序列生成與中心點求和重構
+caption: RQ-Kmeans 殘差量化編碼流程與索引重構架構示意圖
+</image>
 
 假設我們使用 $M$ 層碼本來量化一個連續向量 $v$，具體的運作機制可拆解為三個核心階段：
 
