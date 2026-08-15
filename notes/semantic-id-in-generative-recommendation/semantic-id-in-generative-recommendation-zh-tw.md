@@ -119,7 +119,7 @@ $$\text{Item } x \longrightarrow [c_1, c_2, \dots, c_M]$$
      以 Google TIGER (NeurIPS 2022) 為代表。透過變分自編碼器（Encoder、Codebooks、Decoder）與 Straight-Through Estimator (STE) 梯度技巧，讓神經網路主動學習符合「下游推薦任務」的潛在語意空間。這條路線能將推薦效果推向極致（SOTA），但訓練成本與調參難度較高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</content-link> 中有更完整的紀錄。
 
 2. **兩階段幾何量化路線 (RQ-Kmeans)：**
-     以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <information concept="concept.k_means">K-means</information> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw">從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer</content-link> 中有更完整的紀錄。
+     以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <information concept="concept.k_means">K-means</information> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <content-link canonical="from-geometric-quantization-to-generative-recommendation-rq-kmeans">從幾何量化到生成式推薦：演進之路與 RQ-Kmeans 的 Semantic ID 實踐</content-link> 中有更完整的紀錄。
 
 ## 實務挑戰與工程權衡：SID 的深層痛點
 

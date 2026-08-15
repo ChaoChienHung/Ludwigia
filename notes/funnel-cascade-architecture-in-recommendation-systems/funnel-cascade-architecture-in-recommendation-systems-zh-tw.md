@@ -267,7 +267,7 @@ content:
 * **消除級聯斷層以統一優化目標**：生成式檢索將傳統的「多級漏斗」整合成單一的端到端模型，徹底解決了過去召回與排序階段因優化目標不一致而導致的「目標斷層」與資訊遺失問題，讓模型能直接且專注地為最終的使用者滿意度進行全鏈路優化。
 * **極致壓縮網路與 IO 通信開銷**：由於生成式檢索已整合成單一模型，因此不同級聯階段的邊界被模糊化甚至完全合併，大幅減少了多級模組間頻繁傳遞龐大特徵數據所帶來的網路延遲與 IO 開銷。系統能將省下來的時間與硬體資源，全力投入到**擴大模型規模與複雜度**上，以更好地捕捉使用者極其微細且動態的興趣變化。
 * **對齊 LLM 範式以解鎖 Scaling Law 紅利**：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <information concept="concept.scaling_law">Scaling Law</information> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。
-* **模型即索引（Model-as-Index）消除候選比對瓶頸**：生成式檢索透過 **Semantic ID**（如 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-Kmeans</content-link> / <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link> 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列。Transformer 模型能直接從全局記憶中「自迴歸生成」出推薦結果，**完全免去了傳統架構需要在龐大候選池（Candidate Pool）中進行逐一運算與向量比對的繁瑣步驟**，並能將這些省下的檢索與比對時間，重新投入到模型的深度運算中。
+* **模型即索引（Model-as-Index）消除候選比對瓶頸**：生成式檢索透過 **Semantic ID**（如 <content-link canonical="from-geometric-quantization-to-generative-recommendation-rq-kmeans">RQ-Kmeans</content-link> / <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link> 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列。Transformer 模型能直接從全局記憶中「自迴歸生成」出推薦結果，**完全免去了傳統架構需要在龐大候選池（Candidate Pool）中進行逐一運算與向量比對的繁瑣步驟**，並能將這些省下的檢索與比對時間，重新投入到模型的深度運算中。
 
 ## 總結與核心要點
 
