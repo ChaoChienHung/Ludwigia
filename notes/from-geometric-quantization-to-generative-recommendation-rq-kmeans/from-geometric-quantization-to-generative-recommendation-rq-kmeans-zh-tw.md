@@ -231,7 +231,7 @@ content:
      * 原始行為序列：$[\text{Item}_A, \text{Item}_B]$
      * 轉為 SID 序列：$[[12, 255, 7, 98], [56, 101, 23, 42]]$
      * 展平輸入模型：$[12, 255, 7, 98, 56, 101, 23, 42, \dots]$
-     
+
 2. **Next-Token Prediction 訓練：** 將展平後的 Token 序列送入 Transformer 骨幹網路（如 SASRec 或自迴歸大模型），以標準的交叉熵損失進行自迴歸訓練，讓模型學會根據過去的行為軌跡，逐層預測下一個目標商品的階層式 Token。
 
 ## 總結
@@ -249,7 +249,8 @@ content:
 - **RQ-Kmeans 的幾何本質 (Coarse-to-fine)：** 採用「逐層求精、遞減殘差」的機制，第一層鎖定大類幾何區域，後續層持續量化殘差。這不僅只需 $M \times K$ 的空間就能表達 $K^M$ 種組合，更天然建構了 Semantic ID 所需的樹狀階層語意。
 - **實務陷阱與解碼優化：** 在高維稀疏數據中，純幾何量化易遭遇「死碼 (Dead Codes)」導致碼本坍塌。實務上必須搭配 RRQ 正則化（極大化資訊熵）與 Beam Search 搜尋策略，才能有效提高碼本利用率並降低全局重構失真。
 - **重構向量與探索性 (Exploration)：** RQ-Kmeans 不只是壓縮工具，大模型生成的 Token 組合即使不存在對應實體商品，也能反向重構為連續空間中的「潛在興趣向量」，搭配 ANNS 引擎大幅提升了推薦系統的探索性。
-- **工程選型與混合策略 (Hybrid Strategy)：** 相較於難以收斂的端到端 RQ-VAE，RQ-Kmeans 具備極高的穩定度，且能隨插即用（Plug-and-Play）現有的 Embedding 資產。業界 Best Practice 常以 RQ-Kmeans 產出初始碼本進行「熱啟動（Warm-up）」，再交由 RQ-VAE 微調，兼顧工程穩定與效能上限。</takeaways>
+- **工程選型與混合策略 (Hybrid Strategy)：** 相較於難以收斂的端到端 RQ-VAE，RQ-Kmeans 具備極高的穩定度，且能隨插即用（Plug-and-Play）現有的 Embedding 資產。業界 Best Practice 常以 RQ-Kmeans 產出初始碼本進行「熱啟動（Warm-up）」，再交由 RQ-VAE 微調，兼顧工程穩定與效能上限。
+</takeaways>
 <qprompt/>
 </reviewkit>
 
