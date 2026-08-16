@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-16">
   <meta name="garden:cover" content="notes/from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans.png">
-  <meta name="garden:reading_time_minutes" content="22">
+  <meta name="garden:reading_time_minutes" content="21">
   <meta name="garden:source" content="notes/from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw.md">
   <script>
   (() => {
@@ -158,8 +158,7 @@
             <a class="note-toc-link level-1" href="#tokenizer-vq">尋找 Tokenizer 的基石：從聚類到向量量化 (VQ)</a>
 <a class="note-toc-link level-2" href="#section">離散化的直覺陷阱：生硬的網格分桶</a>
 <a class="note-toc-link level-2" href="#section-2">聚類即量化：讓資料自己說話</a>
-<a class="note-toc-link level-1" href="#2-rq">2. 突破單層極限：殘差量化 (RQ) 的誕生</a>
-<a class="note-toc-link level-2" href="#residual-quantization">殘差量化 (Residual Quantization) 的階層魔法</a>
+<a class="note-toc-link level-2" href="#residual-quantization">突破單層極限：殘差量化 (Residual Quantization) 的階層魔法</a>
 <a class="note-toc-link level-1" href="#3-rq-kmeans">3. RQ-Kmeans 演算法運作機制與幾何重構</a>
 <a class="note-toc-link level-2" href="#coarse-quantization">第一步：粗粒度量化 (Coarse Quantization)</a>
 <a class="note-toc-link level-2" href="#refinement-stage">第二步：多層殘差細化 (Refinement Stage)</a>
@@ -256,7 +255,7 @@
 
 <p class="mb-3">在幾何與訊號處理領域，<strong>「在向量空間中，直接用聚落中心點（Centroid）的向量，來近似與代表該群落內的所有資料向量」</strong>，這個將無限連續向量空間映射至有限原型向量集的過程，被精煉為一個專有名詞——<strong>向量量化（Vector Quantization, VQ）</strong>。聚類負責找出群落結構，而量化則進一步將該群落內的所有個體，統一用中心點向量取代。</p>
 
-<p class="mb-3">在 VQ 的世界裡，有幾個核心術語：</p>
+<p class="mb-3">因此，在 VQ 的世界裡，有幾個核心術語：</p>
 
 <ul class="note-list">
 <li><strong>碼字（Codeword）：</strong> K-means 找出來的那 $K$ 個聚類中心點向量，例如 $c_k \in \mathbb{R}^D$。它們是具備真實語意的代表性向量。</li>
@@ -267,32 +266,22 @@
 <p class="mb-3">量化的過程非常直觀：給定一個連續的商品向量 $x$，我們直接在 Codebook 裡找一個距離它最近的中心點 $c_1$ 來代表它： $$\text{近似向量 } \hat{x} = c_1$$</p>
 
 <p class="mb-3">只要找到最近的碼字 $c_1$，我們就能把這個商品的連續向量，轉換為該碼字的索引 ID。至此，我們優雅地解決了第一個難題——成功建構了有語意的離散映射。</p>
-</section>
 
-<section id="2-rq" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. 突破單層極限：殘差量化 (RQ) 的誕生</h3>
+<h4 id="residual-quantization" class="mb-2">突破單層極限：殘差量化 (Residual Quantization) 的階層魔法</h4>
 
-<p class="mb-3">雖然 VQ 成功把商品變成了離散 ID，但如果我們直接把它餵給自迴歸大模型，會立刻遭遇第二個難題的嚴峻考驗。標準的單層 VQ 存在兩個致命局限：</p>
+<p class="mb-3">雖然 VQ 成功把商品變成了離散 ID，但如果我們直接把單層 VQ 餵給自迴歸大模型，會立刻陷入兩個致命的困境：</p>
 
 <ol class="mb-3">
-<li><strong>無法建構階層：</strong> 單層 VQ 只會輸出「一個」平面的離散 ID。這就像是給商品貼上一個無意義的流水號，完全沒有大模型所需的那種「由粗到細（Coarse-to-fine）」的階層式樹狀語意。缺乏上下文因果，Next-Token Prediction 就無從發揮。</li>
-<li><strong>碼本指數爆炸：</strong> 如果我們想用一個 ID 就精準區分淘寶或亞馬遜上數以億計的微小商品差異，這個 Codebook 的大小必須呈指數級爆炸（例如需要 $2^{32}$ 個碼字）。這在記憶體儲存與近鄰搜尋的算力上，是完全不可行的。</li>
+<li><strong>無法建構階層語意：</strong> 單層 VQ 只會輸出「一個」平面的離散 ID。這就像是給商品貼上一個單純的群集編號，缺乏大模型所需的那種「由粗到細（Coarse-to-fine）」的階層式樹狀結構與因果上下文，Next-Token Prediction 就無從發揮。</li>
+<li><strong>單一碼本的兩難（量化失真 vs. 詞表爆炸）：</strong></li>
 </ol>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>迷思破解：為何不直接用單一 K-means 當作詞表就好？</strong></p><p class="mb-2">這個想法很直覺：既然幾億個商品太多，那就把它們聚類成 8192 個群，詞彙表不就縮小了嗎？但如果我們只依賴這種單一碼本的範式，會立刻陷入兩難的困境：</p>
-
 <ul class="note-list">
-<li><strong>若 $K$ 值太小（例如 8192）：</strong> 雖然解決了詞表過大的問題，但量化誤差（Distortion）會非常驚人。這意味著可能會有成千上萬個截然不同的商品被強行映射到同一個 Codebook ID 上，模型根本無法區分這些商品的細微差異，推薦將變得極度粗糙。</li>
-<li><strong>若 $K$ 值極大（例如 100 萬）：</strong> 為了精確代表物品的細節，我們賦予每個商品獨特的聚類中心。但這時碼本的儲存空間與大模型的訓練算力又會直接爆炸，本質上又退回了傳統 ID 詞表爆炸的老路。</li>
+<li><strong>若中心點數量 $K$ 太小（如 8192）：</strong> 雖然限制了詞表大小，但量化誤差（Distortion）極大，成千上萬個細節截然不同的商品被強行擠進同一個碼字 ID 中，模型無法分辨商品差異，推薦將變得極度粗糙。</li>
+<li><strong>若中心點數量 $K$ 極大（如 100 萬）：</strong> 為了精確代表商品細節，Codebook 大小呈現指數級爆炸（需要數百萬至數億個碼字），這在記憶體儲存與算力上完全不可行，本質上退回了傳統 Atomic ID 詞表爆炸的老路。</li>
 </ul>
 
-<p class="mb-3">這就是為什麼單一 K-means 無法直接作為 Semantic ID 的原因。我們必須突破單一碼本的限制，往<strong>多碼本組合</strong>的方向發展。</p></div>
-
-<p class="mb-3">單純的 VQ 不完全符合大模型的需求，我們必須在此基礎上繼續演化。</p>
-
-<h4 id="residual-quantization" class="mb-2">殘差量化 (Residual Quantization) 的階層魔法</h4>
-
-<p class="mb-3">為了解決缺乏階層與碼本爆炸的問題，工程界將量化過程從「單次」改為「多層迭代」，發展出了<strong>殘差量化（Residual Quantization, RQ）</strong>。</p>
+<p class="mb-3"><strong>這說明單一碼本（Single Codebook）無法勝任 Tokenizer 的重任。</strong> 為了解決缺乏階層與單碼本兩難的問題，工程界將量化過程從「單次」改為「多層迭代」，發展出了<strong>殘差量化（Residual Quantization, RQ）</strong>。</p>
 
 <p class="mb-3">RQ 的核心精神是：<strong>不試圖用一個龐大的碼本一次到位，而是用幾個小碼本（例如 4 層，每層僅 256 個中心點），一層一層地逼近目標。</strong></p>
 
