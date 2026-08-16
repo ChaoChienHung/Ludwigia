@@ -56,7 +56,7 @@ In the following sections, we will delve into these questions one by one.
 
 ## 1. The Pairwise Problem and the Algebraic Miracle
 
-In the previous section, we mentioned that a good cluster is one where its members lie closely around their center. But wait—if the true goal of clustering is to ensure that data points are close to *each other*, shouldn't we directly measure the distance between the points themselves?
+In the previous section, we mentioned that a good cluster is one where its members lie closely around their center. But wait—why can we confidently assert that a cluster is "good" simply because every data point is close to its centroid? While a representative centroid should capture the essence of a cluster, does measuring distance to a centroid truly reflect the real quality of a cluster? Wouldn't a much more direct and intuitive approach be to ask whether the data points are close to *each other* within the cluster by directly measuring the pairwise distances between the points themselves?
 
 Intuitively, yes. To evaluate how compact a cluster is, the most rigorous approach is to compute the **Sum of Squared Pairwise Distances**. The reason why we use squared distance instead of regular distance here is because it heavily penalizes larger deviations (forcing points to gather tightly rather than spreading out) and makes algebraic manipulation—like the trick we are about to see—mathematically possible without dealing with ugly square roots. Therefore, we measure the distance between every point $x$ and every other point $y$ inside the cluster as follows:
 
