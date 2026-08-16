@@ -155,7 +155,7 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#1-tokenizer-vq">1. 尋找 Tokenizer 的基石：從聚類到向量量化 (VQ)</a>
+            <a class="note-toc-link level-1" href="#tokenizer-vq">尋找 Tokenizer 的基石：從聚類到向量量化 (VQ)</a>
 <a class="note-toc-link level-2" href="#section">離散化的直覺陷阱：生硬的網格分桶</a>
 <a class="note-toc-link level-2" href="#section-2">聚類即量化：讓資料自己說話</a>
 <a class="note-toc-link level-1" href="#2-rq">2. 突破單層極限：殘差量化 (RQ) 的誕生</a>
@@ -225,9 +225,7 @@
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
 <p class="mb-3">在<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>一文中，我們探討了 Semantic ID (SID) 的核心概念——為了避開傳統 Atomic ID 導致的 Softmax 算力爆炸，我們必須將海量商品轉換為大模型能理解的「長度為 $M$ 的階層式語意 Token 序列」。</p>
 
-<p class="mb-3">然而，知道「需要 Semantic ID」只指出了終點，工程實踐上的考驗才剛開始。在傳統的推薦系統中，商品通常是以連續、高維度的浮點數向量（Embeddings）形式存在；而自迴歸大模型則擅長處理一段又一段離散的 Token 序列。</p>
-
-<p class="mb-3">這帶來了一個最為關鍵的工程問題：<strong>我們該如何將連續的高維向量空間，精準、高效且充滿語意地轉換為離散的 SID 序列？</strong></p>
+<p class="mb-3">然而，商品在傳統推薦系統中，通常是以連續、高維度的浮點數向量（Embeddings）形式存在，而自迴歸大模型則擅長處理離散的 Token 序列。這帶來一個關鍵問題：<strong>我們該如何將連續的高維向量空間，精準且高效地轉換為離散且具備由粗到細語意階層的 SID 序列？</strong></p>
 
 <p class="mb-3">要達成這個目標，本質上，我們需要一種強大的 Tokenizer。這個 Tokenizer 必須同時具備解決以下兩個核心問題的能力：</p>
 
@@ -236,11 +234,11 @@
 <li><strong>構築由粗到細的階層結構：</strong> 如何讓這串離散 ID 序列在邏輯上不只是隨機的編號，而是能構成「由粗到細（Coarse-to-fine）」的階層式樹狀語意？</li>
 </ol>
 
-<p class="mb-3">本文將與讀者一同走過這段從連續空間走向離散化的演進之路，從最基礎的 K-means 聚類與向量量化出發，最終深入探討目前工業界 CP 值最高、落地最穩健的終極方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>。</p>
+<p class="mb-3">本文將與讀者一同走過這段從傳統量化到生成式推薦的演進之路，從 K-means 到乘積量化 (PQ)，最終深入探討目前業界主流、CP 值最高且最穩健的終極方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>。它能精準地把高維商品向量壓縮成 3~4 個具備由粗到細語意階層的 SID (Semantic ID) Token，完美扮演了生成式推薦中「翻譯官」的角色。</p>
 </section>
 
-<section id="1-tokenizer-vq" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. 尋找 Tokenizer 的基石：從聚類到向量量化 (VQ)</h3>
+<section id="tokenizer-vq" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">尋找 Tokenizer 的基石：從聚類到向量量化 (VQ)</h3>
 
 <p class="mb-3">我們的首要任務，是解決第一個難題：如何有意義地將連續向量轉換為離散 ID。</p>
 
@@ -248,15 +246,15 @@
 
 <p class="mb-3">說到連續轉離散，許多人腦海中浮現的第一個直覺是「空間分桶（Bucketing / Grid）」。這就像是拿著一把刀，把多維空間劃分成等分的網格，只要資料落入同一個網格，我們就賦予它們同一個離散 ID。</p>
 
-<p class="mb-3">但當我們來到幾百維的商品向量空間時，這種做法會立刻撞上「維度詛咒（Curse of Dimensionality）」。真實世界的高維資料分佈往往極度不均，生硬的網格化不僅會產生海量根本沒有資料的「空桶」，白白浪費儲存資源；更致命的是，它完全無法捕捉資料真實的語意邊界。死板的網格線常常會把語意極為相近的商品硬生生切開，分到不同的桶子裡。</p>
-
-<p class="mb-3">網格化最大的盲點在於：網格只是一個人為劃定的幾何方塊，它的幾何中心通常無法反映內部資料的真實樣貌，這讓我們無法賦予這個離散 ID 任何具體的「代表性語意」。</p>
+<p class="mb-3">但當我們來到幾百維的商品向量空間時，這種做法會立刻撞上「維度詛咒（Curse of Dimensionality）」。真實世界的高維資料分佈往往極度不均，生硬的網格化不僅會產生海量根本沒有資料的「空桶」，白白浪費儲存資源；更致命的是，它完全無法捕捉資料真實的語意邊界。死板的網格線常常會把語意極為相近的商品硬生生切開，分到不同的桶子裡。並且，網格化最大的盲點在於：網格只是一個人為劃定的幾何方塊，它的幾何中心通常無法反映內部資料的真實樣貌，這讓我們無法賦予這個離散 ID 任何具體的「代表性語意」。</p>
 
 <h4 id="section-2" class="mb-2">聚類即量化：讓資料自己說話</h4>
 
-<p class="mb-3">既然人為的網格行不通，我們能不能順應資料本身的分佈，做出更聰明的劃分？在<a class="note-content-link" data-canonical-id="discovering-hidden-structures-what-clustering-really-does" href="../discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html">Discovering Hidden Structures<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Discovering Hidden Structures: What Clustering Really Does</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span></span><span class="note-content-link-preview-summary">A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.</span></span></span></a>一文中，我們曾提及聚類的本質就是尋找資料的自然群集，並用該群落的「核心特徵」來代表整個群體。這恰好完美契合了離散化的目標。</p>
+<p class="mb-3">既然人為的網格行不通，我們能不能順應資料本身的分佈，做出更聰明的劃分？在<a class="note-content-link" data-canonical-id="discovering-hidden-structures-what-clustering-really-does" href="../discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html">Discovering Hidden Structures: What Clustering Really Does<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../discovering-hidden-structures-what-clustering-really-does/Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Discovering Hidden Structures: What Clustering Really Does</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span></span><span class="note-content-link-preview-summary">A concept-first overview of clustering as a way to reveal structure in unlabeled data through representation, similarity, data quality, and structural assumptions.</span></span></span></a>一文中，我們曾提及聚類的本質就是尋找資料的自然群集，並用該群落的「核心特徵」來代表整個群體。這恰好完美契合了離散化的目標。</p>
 
-<p class="mb-3">與其盲目地切割空間，不如直接透過 K-means 演算法，在所有商品向量中找出 $K$ 個最能代表資料分佈的聚類中心點（Centroids）。這種「不強制切分空間，而是讓資料自己決定聚落，並用聚落中心點來代表個體」的底層哲學，在數學上被精煉為一個專有名詞——<strong>向量量化（Vector Quantization, VQ）</strong>。</p>
+<p class="mb-3">與其盲目地切分空間，不如直接透過 <a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a>，在所有商品向量中找出 $K$ 個最能代表資料分佈的聚類中心點（Centroids）。</p>
+
+<p class="mb-3">在幾何與訊號處理領域，<strong>「在向量空間中，直接用聚落中心點（Centroid）的向量，來近似與代表該群落內的所有資料向量」</strong>，這個將無限連續向量空間映射至有限原型向量集的過程，被精煉為一個專有名詞——<strong>向量量化（Vector Quantization, VQ）</strong>。聚類負責找出群落結構，而量化則進一步將該群落內的所有個體，統一用中心點向量取代。</p>
 
 <p class="mb-3">在 VQ 的世界裡，有幾個核心術語：</p>
 
