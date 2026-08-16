@@ -881,7 +881,7 @@
     "preview_markdown": "# 生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題\n\n在 從級聯漏斗到自迴歸生成：推薦系統的範式重塑 中，我們探討了推薦系統全面邁向生成式範式的必然趨勢。理論上，自迴歸生成（Autoregressive Generation）確實帶來了更強大的序列學習與表達能力；然而，理論上的優雅並不等同於落地時的順遂。在實際工程推進時，我們必然會遭遇一個核心的底層挑戰：**如何將生成式架構套用到海量的商品上？**畢竟，自然語言的詞彙空間（Vocabulary）是有限且相對封閉的，但推薦系統中的商品庫卻是無限擴展且高度動態的。這種本質上的差異，導致模型無法直接沿用理解自然語言的方式來理解與生成商品。如果無法讓大模型具備「理解並生成商品」的能力，再強大的自迴歸網路架構也無法發揮作用。\n\n因此，本文將深度拆解生成式推薦系統中最核心的抽象介面——**Semantic ID（語意識別碼）**。我們將探討傳統商品 ID 體系為何會導致大模型運算癱瘓，Semantic ID 如何透過語意量化解決這個難題，以及在真實工業場景落地時，系統必須直面的解碼延遲與集內排序痛點。\n\n## 前言與破題：生成式推薦的落地難題",
     "reading_time_minutes": 18,
     "published_at": "2026-08-11",
-    "last_modified_at": "2026-08-16",
+    "last_modified_at": "2026-08-11",
     "cover": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png",
     "lang": "zh-Hant",
     "canonical_id": "semantic-id-in-generative-recommendation",
