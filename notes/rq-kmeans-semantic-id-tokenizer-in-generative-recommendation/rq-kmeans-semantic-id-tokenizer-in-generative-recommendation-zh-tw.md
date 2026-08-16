@@ -54,7 +54,7 @@ caption: RQ-Kmeans 殘差量化編碼流程與索引重構架構示意圖
 1. **連續空間的離散化映射：** 如何將無限可能的連續向量，合理地壓縮並對應到一組有限的「離散 ID 字典」中？
 2. **構築由粗到細的階層結構：** 如何讓產出的離散 ID 序列不只是隨機的組合編號，而是能天然構成「由粗到細（Coarse-to-fine）」的樹狀語意？
 
-本文將與讀者一同走過這段從連續空間走向離散化的技術演進之路，從最基礎的 <information concept="concept.k_means">K-means</information> <information concept="concept.clustering">聚類</information> 與向量量化出發，最終深入探討目前工業界 CP 值最高、落地最穩健的終極方案——**RQ-Kmeans (Residual Quantization K-means)**。
+本文將與讀者一同走過這段從連續空間走向離散化的技術演進之路，從最基礎的 <content-link canonical="k-means-clustering-around-centers">K-means 聚類</content-link> 與向量量化出發，最終深入探討目前工業界 CP 值最高、落地最穩健的終極方案——**RQ-Kmeans (Residual Quantization K-means)**。
 
 ## 尋找 Tokenizer 的基石：從聚類到向量量化 (VQ)
 
@@ -70,9 +70,11 @@ caption: RQ-Kmeans 殘差量化編碼流程與索引重構架構示意圖
 
 ### 聚類即量化：讓資料自己說話
 
-既然人為的網格劃分行不通，我們能不能順應資料本身的分佈，做出更聰明的劃分？在<content-link canonical="discovering-hidden-structures-what-clustering-really-does">Discovering Hidden Structures: What Clustering Really Does</content-link>一文中，我們曾提及聚類的本質就是尋找資料的自然群集，並用該群落的「核心特徵」來代表整個群體。這恰好完美契合了我們對離散化的渴望。
+既然人為的網格劃分行不通，我們能否順應資料本身的分佈，找出更聰明的劃分方式？
 
-與其盲目地切分空間，不如直接透過 <content-link canonical="k-means-clustering-around-centers">K-means 聚類</content-link>，在所有商品向量中找出 $K$ 個最能代表資料分佈的聚類中心點（Centroids）。
+回顧在<content-link canonical="semantic-id-in-generative-recommendation">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</content-link>一文中所提及的 Semantic ID 階層式結構，其底層的核心邏輯正是「先分類，再細化」。
+
+那麼，面對缺乏預設標籤（Predefined Label）的海量資料，提到自動分類，我們腦海中第一個浮現的經典工具是什麼呢？沒錯，就是 <content-link canonical="k-means-clustering-around-centers">K-means 聚類</content-link>！我們可以藉由 K-means 演算法，我們能夠順應資料的真實幾何特徵，在龐大的商品向量空間中，精準捕捉出 $K$ 個最能代表整體分佈的「聚類中心點（Centroids）」。
 
 在幾何與訊號處理領域，這種「用群落中心點來近似並代表內部所有資料」的做法，被稱作**向量量化（Vector Quantization, VQ）**。如果說聚類（K-means）的任務是找出空間中的自然群落結構，那麼量化的任務，就是把這套結構變成一本可供查閱的「字典」。
 
