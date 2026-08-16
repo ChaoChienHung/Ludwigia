@@ -42,7 +42,7 @@ LastModified: 2026-08-16
 
 然而，知道「需要 Semantic ID」只是第一步。在實際工程推進時，我們該如何將連續的高維商品嵌入向量（Embeddings），穩定且精準地轉化為離散的 SID 序列？
 
-本文將暫時放下龐大的系統架構，展開一場硬核的**演算法與工程深潛 (Deep Dive)**。我們將聚焦於目前工業界 CP 值最高、落地最穩健的離散化方案——**RQ-Kmeans (Residual Quantization K-means)**，從底層幾何原理、演算法機制、工程實作細節到業界真實工作流進行全面拆解。
+本文將聚焦於目前工業界 CP 值最高、落地最穩健的離散化方案——**RQ-Kmeans (Residual Quantization K-means)**，從底層幾何原理、演算法機制、工程實作細節到業界真實工作流進行全面拆解。
 
 ## 1. 前言與破題：離散化與 Token 化的核心挑戰
 
@@ -74,12 +74,6 @@ content:
 在向量量化與資料壓縮領域，最著名的兩種組合量化手法分別是 **乘積量化 (Product Quantization, PQ)** 與 **殘差量化 (Residual Quantization, RQ)**。
 
 在傳統的雙塔推薦模型時代，PQ 與 RQ 曾被廣泛用於向量檢索引擎（如 Faiss）中，作為離線檢索與記憶體壓縮的底層工具。然而，當推薦系統轉向自迴歸生成（Generative Retrieval）時，工程師發現這兩種量化手法在對齊大模型時產生了本質上的分歧：
-
-<image>
-src: ./product-quantization.png
-alt: 乘積量化 (Product Quantization, PQ) 運算機制與子空間切分示意圖
-caption: 乘積量化 (Product Quantization, PQ) 的平行子空間切分機制
-</image>
 
 * **乘積量化 (Product Quantization, PQ) 的局限：**
   PQ 的做法是將一個高維向量切割成 $M$ 段獨立的子空間（例如 256 維切分成 4 段 64 維），每段各自進行量化。雖然這能以極小儲存表達 $K^M$ 種組合，但 **PQ 的 $M$ 個 Token 在邏輯上是完全平行、地位對等的**。大模型本質上是自迴歸（Autoregressive）的 Next-Token Prediction 網路，要求模型去依次「預測」4 個毫不相干、缺乏因果與階層依賴的平行子空間 Token，在邏輯與語意學習上非常違和。

@@ -770,6 +770,26 @@
         "遮罩",
         "掩码"
       ]
+    },
+    {
+      "concept_id": "concept.euclidean_distance",
+      "labels": {
+        "en": "Euclidean Distance",
+        "zh-Hant": "歐氏距離",
+        "zh-Hans": "欧氏距离"
+      },
+      "contexts": {
+        "en": "Euclidean Distance is the straight-line distance between two points in Euclidean space, calculated as the square root of the sum of squared differences across coordinates.",
+        "zh-Hant": "歐式距離（Euclidean Distance）是高維歐式空間中兩點之間的直線距離，計算公式為各維度座標差值平方和的平方根。",
+        "zh-Hans": "欧氏距离（Euclidean Distance）是高维欧氏空间中两点之间的直线距离，计算公式为各维度坐标差值平方和的平方根。"
+      },
+      "aliases": [
+        "Euclidean Distance",
+        "euclidean distance",
+        "歐氏距離",
+        "歐幾里得距離",
+        "欧氏距离"
+      ]
     }
   ]
 }

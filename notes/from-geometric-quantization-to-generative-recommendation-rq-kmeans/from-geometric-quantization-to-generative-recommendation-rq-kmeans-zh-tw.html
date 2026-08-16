@@ -234,7 +234,7 @@
 
 <p class="mb-3">然而，知道「需要 Semantic ID」只是第一步。在實際工程推進時，我們該如何將連續的高維商品嵌入向量（Embeddings），穩定且精準地轉化為離散的 SID 序列？</p>
 
-<p class="mb-3">本文將暫時放下龐大的系統架構，展開一場硬核的<strong>演算法與工程深潛 (Deep Dive)</strong>。我們將聚焦於目前工業界 CP 值最高、落地最穩健的離散化方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>，從底層幾何原理、演算法機制、工程實作細節到業界真實工作流進行全面拆解。</p>
+<p class="mb-3">本文將聚焦於目前工業界 CP 值最高、落地最穩健的離散化方案——<strong>RQ-Kmeans (Residual Quantization K-means)</strong>，從底層幾何原理、演算法機制、工程實作細節到業界真實工作流進行全面拆解。</p>
 </section>
 
 <section id="1-token" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -272,8 +272,6 @@
 <div class="note-callout mb-3"><p class="mb-2"><strong>技術選型對決：為什麼選擇 RQ 而非 PQ？</strong></p><p class="mb-2">在向量量化與資料壓縮領域，最著名的兩種組合量化手法分別是 <strong>乘積量化 (Product Quantization, PQ)</strong> 與 <strong>殘差量化 (Residual Quantization, RQ)</strong>。</p>
 
 <p class="mb-3">在傳統的雙塔推薦模型時代，PQ 與 RQ 曾被廣泛用於向量檢索引擎（如 Faiss）中，作為離線檢索與記憶體壓縮的底層工具。然而，當推薦系統轉向自迴歸生成（Generative Retrieval）時，工程師發現這兩種量化手法在對齊大模型時產生了本質上的分歧：</p>
-
-<figure class="note-image"><img src="./product-quantization.png" alt="乘積量化 (Product Quantization, PQ) 運算機制與子空間切分示意圖" loading="lazy"><figcaption class="note-image-caption">乘積量化 (Product Quantization, PQ) 的平行子空間切分機制</figcaption></figure>
 
 <ul class="note-list">
 <li><strong>乘積量化 (Product Quantization, PQ) 的局限：</strong></li>

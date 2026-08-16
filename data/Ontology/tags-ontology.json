@@ -1701,6 +1701,36 @@
         "Token 化",
         "token化"
       ]
+    },
+    {
+      "concept_id": "concept.product_quantization",
+      "labels": {
+        "en": "Product Quantization",
+        "zh-Hant": "乘積量化",
+        "zh-Hans": "乘积量化"
+      },
+      "aliases": [
+        "product quantization",
+        "Product Quantization",
+        "Product quantization",
+        "乘積量化",
+        "乘积量化"
+      ]
+    },
+    {
+      "concept_id": "concept.vector_search",
+      "labels": {
+        "en": "Vector Search",
+        "zh-Hant": "向量檢索",
+        "zh-Hans": "向量检索"
+      },
+      "aliases": [
+        "vector search",
+        "Vector Search",
+        "Vector search",
+        "向量檢索",
+        "向量检索"
+      ]
     }
   ]
 }

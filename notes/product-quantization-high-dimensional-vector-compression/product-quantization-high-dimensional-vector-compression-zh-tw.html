@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>乘積量化 Product Quantization (PQ)：十億級向量檢索與記憶體壓縮的底層幾何 — Ludwig</title>
+  <meta name="garden:tags" content="向量量化, 乘積量化, 向量檢索, 機器學習, 資訊檢索">
+  <meta name="garden:summary" content="本文深入拆解乘積量化 (Product Quantization, PQ) 的幾何原理與數學本質，剖析子空間分割與組合碼本如何實現十億級高維向量的極致記憶體壓縮，並詳細介紹對稱 (SDC) 與非對稱距離計算 (ADC) 在 ANNS 向量搜尋中的實作細節。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.vector_quantization,concept.product_quantization,concept.vector_search,concept.machine_learning,concept.information_retrieval">
+  <meta name="garden:tag_labels" content="{&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.product_quantization&quot;:{&quot;en&quot;:&quot;Product Quantization&quot;,&quot;zh-Hant&quot;:&quot;乘積量化&quot;,&quot;zh-Hans&quot;:&quot;乘积量化&quot;},&quot;concept.vector_search&quot;:{&quot;en&quot;:&quot;Vector Search&quot;,&quot;zh-Hant&quot;:&quot;向量檢索&quot;,&quot;zh-Hans&quot;:&quot;向量检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
+  <meta name="garden:canonical_id" content="product-quantization-high-dimensional-vector-compression">
+  <meta name="garden:published_at" content="2026-08-16">
+  <meta name="garden:last_modified_at" content="2026-08-16">
+  <meta name="garden:cover" content="notes/product-quantization-high-dimensional-vector-compression/product-quantization.png">
+  <meta name="garden:reading_time_minutes" content="18">
+  <meta name="garden:source" content="notes/product-quantization-high-dimensional-vector-compression/product-quantization-high-dimensional-vector-compression-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">乘積量化 Product Quantization (PQ)：十億級向量檢索與記憶體壓縮的底層幾何</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 前言與破題：高維向量海量儲存與檢索高牆</a>
+<a class="note-toc-link level-1" href="#2">2. 底層幾何與數學原理：分而治之與笛卡兒積</a>
+<a class="note-toc-link level-2" href="#section">分而治之：子空間分割</a>
+<a class="note-toc-link level-2" href="#section-2">笛卡兒積組合：以小博大的指數容量</a>
+<a class="note-toc-link level-1" href="#3-pq">3. PQ 演算法運作機制、編碼與距離計算</a>
+<a class="note-toc-link level-2" href="#section-3">步驟一：離線擬合與子碼本訓練</a>
+<a class="note-toc-link level-2" href="#encoding-quantization">步驟二：向量編碼 (Encoding &amp; Quantization)</a>
+<a class="note-toc-link level-2" href="#asymmetric-distance-computation-adc">步驟三：查表法非對稱距離計算 (Asymmetric Distance Computation, ADC)</a>
+<a class="note-toc-link level-1" href="#4-pq-opq">4. 實作細節與進階議題：幾何失真與旋轉 PQ (OPQ)</a>
+<a class="note-toc-link level-2" href="#subspace-independence-assumption">子空間獨立性假定 (Subspace Independence Assumption)</a>
+<a class="note-toc-link level-2" href="#optimized-product-quantization-opq">優化乘積量化 Optimized Product Quantization (OPQ)</a>
+<a class="note-toc-link level-1" href="#5-faiss-ivf-pq">5. 業界真實運用：Faiss、向量資料庫與倒排乘積量化 (IVF-PQ)</a>
+<a class="note-toc-link level-2" href="#ivf-pq">IVF-PQ 的雙層幾何分工：</a>
+<a class="note-toc-link level-1" href="#6">6. 優缺點與工程權衡</a>
+<a class="note-toc-link level-2" href="#section-4">核心優勢</a>
+<a class="note-toc-link level-2" href="#section-5">局限與工程妥協</a>
+<a class="note-toc-link level-1" href="#7">7. 總結</a>
+<a class="note-toc-link level-1" href="#references">參考文獻（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-16" data-published-at="2026-08-16"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-16</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./product-quantization.png" alt="乘積量化 (Product Quantization, PQ) 流程示意圖，展示高維向量切分子空間、獨立量化與組合表示" loading="lazy"><figcaption class="note-image-caption">乘積量化 (Product Quantization, PQ) 運算機制與組合表示流程示意圖</figcaption></figure>
+
+<p class="mb-3">在現代搜尋引擎、推薦系統與大語言模型（LLM）的 RAG 檢索架構中，多模態模型與雙塔模型會將文字、圖片或商品映射為高維度密集的浮點數向量（Dense Embeddings，通常為 256、512 乃至 1024 維）。</p>
+
+<p class="mb-3">然而，當資料庫規模達到千萬、數億乃至十億級別時，高維向量檢索將立刻撞上<strong>記憶體開銷與運算延遲的物理極限</strong>：</p>
+
+<ol class="mb-3">
+<li><strong>記憶體爆炸：</strong> 一筆 512 維的單精度浮點數（FP32）向量佔用 2 KB；十億筆向量光是靜態儲存就需要高達 <strong>2 TB</strong> 的超大記憶體，硬體維運成本極度昂貴。</li>
+<li><strong>計算延遲高牆：</strong> 在線上推論時，若要計算查詢向量（Query）與全庫十億向量的 <span class="note-information" tabindex="0" data-information-concept="concept.euclidean_distance" data-information-lang="zh-tw">歐式距離<span class="note-information-tooltip" aria-hidden="true"></span></span>，哪怕使用 <span class="note-information" tabindex="0" data-information-concept="concept.gpu" data-information-lang="zh-tw">GPU<span class="note-information-tooltip" aria-hidden="true"></span></span> 進行廣義矩陣乘法（<span class="note-information" tabindex="0" data-information-concept="concept.gemm" data-information-lang="zh-tw">GEMM<span class="note-information-tooltip" aria-hidden="true"></span></span>），也無法滿足毫秒級（&lt; 10ms）的即時響應需求。</li>
+</ol>
+
+<p class="mb-3">為了突破這座高牆，工業界在近似最近鄰搜尋（Approximate Nearest Neighbor Search, ANNS）領域發展出了無數演算法。而其中最經典、最具革命性、至今仍作為 Faiss 與各大向量資料庫（Vector Databases）心臟的底層演算法，正是由 Hervé Jégou 等人於 2010 年提出的 <strong>乘積量化 (Product Quantization, PQ)</strong>。</p>
+
+<p class="mb-3">本文將深度拆解乘積量化（PQ）的幾何原理、分而治之的數學本質、查表法非對稱距離計算（ADC），以及其在工業級向量檢索中的端到端實務應用。</p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 前言與破題：高維向量海量儲存與檢索高牆</h3>
+
+<p class="mb-3">在深入 PQ 之前，我們必須明白：<strong>為什麼傳統的向量量化（如單一 K-means 聚類）無法勝任十億級向量的壓縮任務？</strong></p>
+
+<p class="mb-3">正如在 <a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-Means 聚類<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a> 中所介紹的，向量量化 (Vector Quantization, VQ) 的核心思想是用一個核心中心點（Centroid，即碼字 Codeword）來代表一群相似的向量，並以該中心點的索引 ID（例如 0 到 $K-1$）來進行儲存。</p>
+
+<p class="mb-3">若我們試圖用單一 <a class="note-content-link" data-canonical-id="k-means-clustering-around-centers" href="../k-means-clustering-around-centers/k-means-clustering-around-centers-en.html">K-means<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../k-means-clustering-around-centers/K-Means-Clustering.jpeg" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">K-Means: Clustering Around Centers</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">Data Mining</span><span class="note-content-link-preview-tag">Clustering</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.</span></span></span></a> 碼本來量化高維商品向量：</p>
+
+<ul class="note-list">
+<li>若 $K=256$（1 位元組），量化誤差（Distortion）極大，無數截然不同的向量被強行併入同一個中心點，搜尋精確度慘不忍睹。</li>
+<li>若要維持足夠的表達精度，我們可能需要 $K = 2^{64} \approx 1.8 \times 10^{19}$ 個中心點。然而，訓練與維護如此龐大的碼本在數學與工程上都是絕對不可能實現的。</li>
+</ul>
+
+<p class="mb-3"><strong>單一碼本的表達容量與儲存成本呈線性關係（$O(K)$），這限制了其在海量資料中的應用。</strong> 要突破這個兩難困境，我們必須打破單一碼本的枷鎖，尋求一種能讓表達容量呈「指數級爆發」的全新幾何架構。</p>
+</section>
+
+<section id="2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 底層幾何與數學原理：分而治之與笛卡兒積</h3>
+
+<p class="mb-3">乘積量化（Product Quantization, PQ）的核心突破，在於引進了<strong>「正交子空間分割（Subspace Segmentation）」與「笛卡兒積組合（Cartesian Product）」</strong>的幾何思想。</p>
+
+<h4 id="section" class="mb-2">分而治之：子空間分割</h4>
+
+<p class="mb-3">假設我們有一個 $D$ 維的連續向量 $v \in \mathbb{R}^D$（例如 $D=256$）。PQ 不在完整的 $D$ 維空間中硬碰撞，而是將這個高維向量均勻切分為 $M$ 段獨立的低維子向量：</p>
+
+<p class="mb-3">$$v = [v^{(1)}, v^{(2)}, \dots, v^{(M)}]$$</p>
+
+<p class="mb-3">其中，每個子向量 $v^{(m)}$ 的維度縮減為 $D' = D / M$（若 $D=256, M=4$，則每個子空間維度僅為 $D'=64$）。</p>
+
+<h4 id="section-2" class="mb-2">笛卡兒積組合：以小博大的指數容量</h4>
+
+<p class="mb-3">切分子空間後，PQ 為這 $M$ 個子空間<strong>各自獨立訓練一個規模較小的 K-means 碼本</strong> $\mathcal{C}^{(m)}$：</p>
+
+<p class="mb-3">$$\mathcal{C}^{(m)} = \{c_0^{(m)}, c_1^{(m)}, \dots, c_{K-1}^{(m)}\}$$</p>
+
+<p class="mb-3">其中每個碼本僅包含 $K$ 個子中心點（實務上常設 $K=256$，剛好佔用 1 個 Byte 的儲存空間）。</p>
+
+<p class="mb-3">此時，整套 PQ 系統總共維護的中心點向量數量僅為： $$\text{Memory Overhead} = M \times K \times D' \text{ 浮點數}$$</p>
+
+<p class="mb-3">然而，透過這 $M$ 個小碼本的<strong>笛卡兒積組合（Cartesian Product）</strong>，全空間所能表達的有效碼字總數量 $\mathcal{C}_{\text{total}}$ 達到了驚人的指數級：</p>
+
+<p class="mb-3">$$\mathcal{C}_{\text{total}} = \mathcal{C}^{(1)} \times \mathcal{C}^{(2)} \times \dots \times \mathcal{C}^{(M)} \Longrightarrow |\mathcal{C}_{\text{total}}| = K^M$$</p>
+
+<p class="mb-3">以 $M=8, K=256$ 為例：</p>
+
+<ul class="note-list">
+<li><strong>儲存需求：</strong> 僅需維護 $8 \times 256 = 2,048$ 個低維子中心點。</li>
+<li><strong>表達容量：</strong> 卻能組合表達出 $256^8 = 2^{64} \approx 1.84 \times 10^{19}$ 種獨一無二的向量狀態！</li>
+</ul>
+
+<p class="mb-3">這正是乘積量化名稱中 <strong>「乘積 (Product)」</strong> 的由來——透過子空間的笛卡兒乘積，以極小且線性增長的儲存代價（$M \times K$），獲得了指數級爆發的空間表達能力（$K^M$）。</p>
+</section>
+
+<section id="3-pq" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. PQ 演算法運作機制、編碼與距離計算</h3>
+
+<p class="mb-3">乘積量化的端到端運作流程，可拆解為<strong>離線擬合（Training）、向量編碼（Encoding）與線上檢索（Distance Computation）</strong>三大階段。</p>
+
+<h4 id="section-3" class="mb-2">步驟一：離線擬合與子碼本訓練</h4>
+
+<ol class="mb-3">
+<li>收集全庫 $N$ 筆 $D$ 維向量訓練集。</li>
+<li>將所有向量切分為 $M$ 段 $D'$ 維子向量。</li>
+<li>對第 $m$ 段子向量集，運行標準 K-means 聚類，收斂得到大小為 $K$ 的子碼本 $\mathcal{C}^{(m)}$。</li>
+</ol>
+
+<h4 id="encoding-quantization" class="mb-2">步驟二：向量編碼 (Encoding &amp; Quantization)</h4>
+
+<p class="mb-3">對於資料庫中的任意向量 $v$：</p>
+
+<ol class="mb-3">
+<li>切分為 $M$ 段子向量 $[v^{(1)}, v^{(2)}, \dots, v^{(M)}]$。</li>
+<li>針對第 $m$ 段子向量 $v^{(m)}$，在對應的子碼本 $\mathcal{C}^{(m)}$ 中尋找歐氏距離最近的子中心點：</li>
+</ol>
+
+<p class="mb-3">$$i_m = \arg\min_{k \in \{0, \dots, K-1\}} \|v^{(m)} - c_k^{(m)}\|^2$$</p>
+
+<ol class="mb-3">
+<li>將原始 $D \times 32$ bits（如 256 個 FP32 = 1024 Bytes）的高維向量，壓縮為長度為 $M$ 的整數索引陣列：</li>
+</ol>
+
+<p class="mb-3">$$\text{PQ\_Code}(v) = [i_1, i_2, \dots, i_M]$$</p>
+
+<p class="mb-3">若 $K=256$，每個 $i_m$ 僅需 1 個 Byte 表示。原本 1024 Bytes 的向量被極致壓縮至僅剩 <strong>$M$ Bytes</strong>（若 $M=8$，壓縮比高達 <strong>128 倍</strong>！）。</p>
+
+<h4 id="asymmetric-distance-computation-adc" class="mb-2">步驟三：查表法非對稱距離計算 (Asymmetric Distance Computation, ADC)</h4>
+
+<p class="mb-3">在 ANNS 向量搜尋中，當使用者發起一個查詢向量 $q \in \mathbb{R}^D$ 時，我們該如何計算 $q$ 與庫中經 PQ 壓縮後的向量 $v$ 之間的歐式距離？</p>
+
+<p class="mb-3">業界存在兩種計算模式：</p>
+
+<ol class="mb-3">
+<li><strong>對稱距離計算 (Symmetric Distance Computation, SDC)：</strong> 先將查詢向量 $q$ 也量化為 PQ 碼，再計算兩組中心點之間的距離。由於 $q$ 與 $v$ 都經歷了量化失真，誤差疊加較大。</li>
+<li><strong>非對稱距離計算 (Asymmetric Distance Computation, ADC)：</strong> <strong>保持查詢向量 $q$ 為精確的 FP32 不進行量化</strong>，直接計算精確向量 $q$ 與全庫量化碼 $\text{PQ\_Code}(v)$ 之間的距離。此方法的量化失真小得多，也是工業界預設採用的模式。</li>
+</ol>
+
+<h5 class="mb-2">查表法（Lookup Table）極速加速機制</h5>
+
+<p class="mb-3">如果對庫中數億筆 PQ 碼逐一計算歐式距離，運算量依然巨大。ADC 巧妙地利用了<strong>「空間可拆分性」與「預計算查表」</strong>：</p>
+
+<p class="mb-3">歐式距離的平方可拆解為各子空間距離之和： $$\|q - v_{\text{approx}}\|^2 = \sum_{m=1}^M \|q^{(m)} - c_{i_m}^{(m)}\|^2$$</p>
+
+<p class="mb-3">在搜尋開始前，系統先做一次性預計算（Precomputation）：</p>
+
+<ol class="mb-3">
+<li>將查詢向量 $q$ 切分為 $M$ 段 $[q^{(1)}, \dots, q^{(M)}]$。</li>
+<li>計算第 $m$ 段查詢子向量 $q^{(m)}$ 與該子碼本中<strong>所有 $K$ 個子中心點</strong>的距離，構建一張大小為 $M \times K$ 的 <strong>距離查找表 (Distance Lookup Table, LUT)</strong>：</li>
+</ol>
+
+<p class="mb-3">$$\text{LUT}[m][k] = \|q^{(m)} - c_k^{(m)}\|^2$$</p>
+
+<p class="mb-3">建表耗時極短（只需計算 $M \times K$ 次低維歐氏距離）。完成 LUT 建構後，掃描全庫任何一個商品 $v$ 時，<strong>完全不需要進行任何浮點數幾何運算</strong>，只需根據商品儲存的 $M$ 個 Byte 索引，執行 $M$ 次記憶體查表並累加：</p>
+
+<p class="mb-3">$$\text{Distance}(q, v) \approx \sum_{m=1}^M \text{LUT}[m][\text{PQ\_Code}(v)[m]]$$</p>
+
+<p class="mb-3">這將複雜的浮點數向量乘法，降維打擊為極速的<strong> CPU L1 Cache 查表與整數累加</strong>，推論速度獲得了數十倍的飛躍！</p>
+</section>
+
+<section id="4-pq-opq" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 實作細節與進階議題：幾何失真與旋轉 PQ (OPQ)</h3>
+
+<p class="mb-3">儘管 PQ 擁有驚人的壓縮比與查表速度，但在實務落地時，工程師必須直面其背後的幾何假設限制與退化問題。</p>
+
+<h4 id="subspace-independence-assumption" class="mb-2">子空間獨立性假定 (Subspace Independence Assumption)</h4>
+
+<p class="mb-3">PQ 的數學基礎建立在一個強烈假設上：<strong>被切分開的 $M$ 個子空間之間必須彼此獨立、互不相關。</strong></p>
+
+<p class="mb-3">然而，真實世界的高維 Embeddings（如 Transformer 輸出的特徵向量）維度之間往往存在強烈的非對角協變性（Covariance）。如果生硬地按照維度順序隨機切分（例如前 64 維一組，次 64 維一組），很容易把強相關的特徵硬生生切在不同的子空間中，導致極大的幾何量化失真（Quantization Noise）。</p>
+
+<h4 id="optimized-product-quantization-opq" class="mb-2">優化乘積量化 Optimized Product Quantization (OPQ)</h4>
+
+<p class="mb-3">為了解決這個問題，Ge 等人提出了 <strong>OPQ (Optimized Product Quantization)</strong>。</p>
+
+<p class="mb-3">OPQ 在 PQ 切分之前，引入了一個可學習的正則正交矩陣（Orthogonal Rotation Matrix）$R \in \mathbb{R}^{D \times D}$，對原始空間進行全局旋轉：</p>
+
+<p class="mb-3">$$v' = R^T v$$</p>
+
+<p class="mb-3">OPQ 透過交替優化（Alternating Optimization）演算法，聯合訓練旋轉矩陣 $R$ 與子碼本 $\mathcal{C}^{(m)}$：</p>
+
+<ul class="note-list">
+<li><strong>旋轉矩陣 $R$ 的作用：</strong> 解耦維度間的相關性，並平衡各子空間的變異數分佈（Variance Balance），確保切分後的每個子空間都承載均勻且獨立的資訊量。</li>
+<li>實驗證明，經過正交旋轉後的 OPQ 能在相同的碼本大小下，顯著降低 ANNS 檢索的召回率損失。</li>
+</ul>
+</section>
+
+<section id="5-faiss-ivf-pq" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 業界真實運用：Faiss、向量資料庫與倒排乘積量化 (IVF-PQ)</h3>
+
+<p class="mb-3">在實際大規模工業系統（如 Meta 開源的 Faiss 庫、Milvus、Qdrant 等向量資料庫）中，<strong>單純的 PQ 很少單獨使用</strong>。因為即便查表極快，對十億級資料進行單純的全庫掃描（Flat Scan），依然會面臨 CPU 記憶體頻寬瓶頸。</p>
+
+<p class="mb-3">實務上最標準的工業級組合拳，是將 PQ 與倒排索引相結合的 <strong>IVF-PQ (Inverted File with Product Quantization)</strong> 索引架構：</p>
+
+<div class="note-markdown-block"><pre><code>[Query Vector q]
+       │
+       ▼
+1. 粗粒度 IVF 搜尋 ──► 鎖定 Top-N 最近的桶 (Centroids)
+       │
+       ▼
+2. 僅對桶內殘差進行 PQ 查表 (ADC) ──► 快速累加 LUT 距離
+       │
+       ▼
+3. 排序輸出 Top-K 近鄰</code></pre></div>
+
+<h4 id="ivf-pq" class="mb-2">IVF-PQ 的雙層幾何分工：</h4>
+
+<ol class="mb-3">
+<li><strong>粗粒度倒排索引 (IVF Component)：</strong> 先用一個大 K-means（如 $K_{\text{ivf}} = 65536$）將全庫向量劃分為數萬個區域（Buckets）。查詢時只需鎖定距離查詢向量最近的 $N_{\text{probe}}$ 個桶，瞬間過濾掉 99% 以上不相干的向量。</li>
+<li><strong>細粒度殘差 PQ (PQ Component)：</strong> 在每個桶內部，不直接儲存原始向量，而是儲存向量相對於桶中心的「殘差向量（Residuals）」，並對殘差向量進行 PQ 量化壓縮。</li>
+</ol>
+
+<p class="mb-3">透過 <strong>「IVF 剪枝 + 殘差 PQ 高速查表」</strong>，系統能在數 GB 的普通伺服器記憶體中，實現十億級資料庫 <strong>10 毫秒以內、Recall@100 &gt; 90%</strong> 的極致檢索效能！</p>
+</section>
+
+<section id="6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. 優缺點與工程權衡</h3>
+
+<p class="mb-3">乘積量化作為向量檢索領域的里程碑，其工程優缺點與適用邊界非常明確：</p>
+
+<h4 id="section-4" class="mb-2">核心優勢</h4>
+
+<ol class="mb-3">
+<li><strong>極致的記憶體壓縮比：</strong> 可將高維向量壓縮 16 倍到 128 倍，使 TB 級資料庫能輕鬆部署於單台伺服器記憶體中。</li>
+<li><strong>查表法 (ADC) 極速推論：</strong> 歐氏距離計算降維打擊為 L1 Cache 距離查找表與整數累加，極適合 CPU SIMD 指令集與 GPU 並行加速。</li>
+<li><strong>高維表達容量：</strong> 笛卡兒積組合 $K^M$ 賦予了其以小博大的幾何表達力。</li>
+</ol>
+
+<h4 id="section-5" class="mb-2">局限與工程妥協</h4>
+
+<ol class="mb-3">
+<li><strong>存在不可逆的幾何失真：</strong> 量化過程拋棄了部分幾何細節，高精確度要求的檢索場景需搭配原始向量進行 Re-ranking（重新排序）。</li>
+<li><strong>子空間平行對等，缺乏階層語意（不適用自迴歸生成）：</strong></li>
+</ol>
+
+<p class="mb-3">正如在 <a class="note-content-link" data-canonical-id="from-geometric-quantization-to-generative-recommendation-rq-kmeans" href="../from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans-zh-tw.html">從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../from-geometric-quantization-to-generative-recommendation-rq-kmeans/from-geometric-quantization-to-generative-recommendation-rq-kmeans.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文承接 Semantic ID 概念，深挖生成式推薦中最穩健的 Tokenizer 方案——RQ-Kmeans 的幾何殘差量化原理、解碼策略 (Beam Search)、進階正則化 (RRQ)、業界四階段工作流與優缺點權衡。</span></span></span></a> 中所探討的，PQ 的 $M$ 個 Token 是平行的子空間索引，缺乏因果序與 Coarse-to-fine 的階層關係。這使其非常適合傳統向量檢索（ANNS），但<strong>無法直接作為大模型 Next-Token Prediction 的自迴歸生成目標</strong>（此場景需改用殘差量化 RQ）。</p>
+</section>
+
+<section id="7" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. 總結</h3>
+
+<p class="mb-3">乘積量化（PQ）展現了數學幾何與工程優化的完美結合。它告訴我們：面對高維度的資料洪水，硬碰撞往往不可行；但透過巧妙的「子空間切分」與「笛卡兒積組合」，我們能以極小的記憶體代價，撬動龐大空間的表達能力。</p>
+
+<p class="mb-3">從 Faiss 的底層架構到各大向量資料庫的效能引擎，乘積量化深刻影響了近十年巨量資料向量檢索的技術走向。理解 PQ 的幾何原理與 ADC 查表機制，不僅是掌握現代向量搜尋引擎的必經之路，也為我們在面對高維特徵壓縮與系統架構設計時，提供了極具啟發性的解題視角。</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>高維向量檢索的兩大高牆：</strong> 千萬至十億級高維 FP32 向量面臨 TB 級記憶體爆炸與線性掃描 (Linear Scan) 的 GEMM 計算延遲瓶頸。</li>
+<li><strong>PQ 的核心幾何哲學 (Cartesian Product)：</strong> 切分 $M$ 段 $D/M$ 維子空間，各訓練大小為 $K$ 的子碼本。透過笛卡兒積組合表達 $K^M$ 種狀態，僅需 $M \times K$ 個中心點的極小記憶體開銷。</li>
+<li><strong>極致壓縮比：</strong> 將 1024 Bytes 的高維向量壓縮為 $M$ 個 Byte 索引（若 $M=8, K=256$），實現高達 128 倍的記憶體壓縮。</li>
+<li><strong>非對稱距離計算 (ADC) 查表加速：</strong> 查詢向量 $q$ 保持 FP32 不量化，一次性預計算 $M \times K$ 距離查找表 (LUT)。掃描全庫時將歐式距離計算降維為 L1 Cache 查表與整數累加。</li>
+<li><strong>工業級 IVF-PQ 組合拳：</strong> 結合倒排索引 (IVF) 進行大範圍桶剪枝，再在桶內對殘差進行 PQ 查表量化，實現 10ms 級十億向量 ANNS 檢索。</li>
+<li><strong>與 RQ 的本質差異：</strong> PQ 的 Token 是平行的子空間索引，非常適合向量檢索 (ANNS) 記憶體壓縮；但因缺乏因果與由粗到細 (Coarse-to-fine) 的階層語意，無法直接對齊自迴歸 LLM 生成（生成式推薦需改用殘差量化 RQ）。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考文獻（References）</h3>
+
+<ol class="mb-3">
+<li>Jégou, H., Douze, M., &amp; Schmid, C. (2010). Product quantization for nearest neighbor search. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, 33(1), 117-128.</li>
+<li>Ge, T., He, K., Ke, Q., &amp; Sun, J. (2013). Optimized product quantization for approximate nearest neighbor search. In <em>CVPR 2013</em>.</li>
+<li><a class="note-inline-link" href="https://github.com/facebookresearch/faiss/wiki/Vector-quantization" target="_blank" rel="noopener noreferrer">Faiss Documentation: Vector Quantization &amp; Product Quantization</a></li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>
