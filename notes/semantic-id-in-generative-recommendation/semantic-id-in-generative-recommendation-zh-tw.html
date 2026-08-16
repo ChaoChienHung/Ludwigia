@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-11">
   <meta name="garden:last_modified_at" content="2026-08-16">
   <meta name="garden:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
-  <meta name="garden:reading_time_minutes" content="22">
+  <meta name="garden:reading_time_minutes" content="24">
   <meta name="garden:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -268,6 +268,16 @@
 
 <p class="mb-3">因此，人類從不為每個物件單獨編造無意義的隨機代碼，而是習慣將資訊先進行分類，並做「結構化」與「階層化」的梳理。<strong>這，就是 Semantic ID 的底層邏輯！</strong></p>
 
+<div id="hierarchical-softmax" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-diagram-project me-2"></i>跨領域案例對比：Hierarchical Softmax 與第一性原理</h4><p class="mb-3">類似的邏輯我們也能在其他案例上找到，比如說 Hierarchical Softmax 就是使用相同的核心想法去解決 Softmax 計算量爆炸的問題。具體來說，Hierarchical Softmax 將龐大的類別（或詞彙表）構造成一棵樹狀結構，將原本需要計算全量類別的單次高昂對數正規化，拆解成沿著樹狀路徑的多步二元（或多元）決策，將計算複雜度從 $O(N)$ 大幅降低至 $O(\log N)$。</p>
+
+<p class="mb-3">只不過核心差異在於：Hierarchical Softmax 往往高度依賴人工先驗或統計規則（如哈夫曼樹、詞網階層）來建立樹狀結構；而 Semantic ID（如 RQ-VAE）則是利用深度學習自動學出資料導向（Data-driven）的階層化離散語意表徵。</p>
+
+<p class="mb-3">另一個相關的例子是我們在<a class="note-content-link" data-canonical-id="first-principles-information-compression" href="../../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html">第一性原理：大腦的終極資訊壓縮術<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Writing.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">第一性原理：大腦的終極資訊壓縮術</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">學習</span><span class="note-content-link-preview-tag">認知</span><span class="note-content-link-preview-tag">反思</span></span><span class="note-content-link-preview-summary">第一性原理不僅是拆解問題的工具，更是升級大腦運作機制的關鍵。透過將異質知識收斂至共享的底層結構，我們能達成極致的資訊壓縮、將記憶提取轉為路徑導航，並在跨領域應用中引爆創造力。</span></span></span></a>中提到關於使用第一性原理可以找到不同知識的共享底層邏輯，進而讓大腦能有效壓縮更多資訊，這也與我們使用 Semantic ID 的核心想法不謀而合。</p></div>
+
+<p class="mb-3">Semantic ID 的核心直覺，正是將這種階層化邏輯搬進推薦系統中：<strong>既然要用大模型做推薦，為何不讓商品也變成一種「由基礎語意疊加而成的語言」？</strong></p>
+
+<p class="mb-3">我們可以讓商品也遵從「由粗到細（Coarse-to-Fine）」的階層化結構。這樣一來，我們不僅能避免為海量商品賦予獨立編碼所造成的計算量爆炸，更能用「類群編碼」來代表每個商品。因為 Semantic ID 中的每個編碼，都不再是冷冰冰的流水號，而是蘊含豐富分類語意與空間關係的座標。</p>
+
 <div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa- me-2"></i>為什麼當實體數量一大，就必然能找到可分類的「共通點」？</h4><p class="mb-3">乘法原理能生效的核心前提，在於海量實體之間必須存在可被歸納的「共通點」。但為什麼當實體數量極其龐大時，我們總是能順利找到共通點？</p>
 
 <p class="mb-3">這背後其實與高維幾何空間的特性以及<span class="note-information" tabindex="0" data-information-concept="concept.law_of_large_numbers" data-information-lang="zh-tw">大數法則<span class="note-information-tooltip" aria-hidden="true"></span></span>密切相關：</p>
@@ -278,10 +288,6 @@
 </ol>
 
 <p class="mb-3">因此，實體數量越大、維度越高，系統就越容易歸納出共通點，這也正是 Semantic ID 能透過乘法原理達成極致資訊壓縮的根本保障。</p></div>
-
-<p class="mb-3">Semantic ID 的核心直覺，正是將這種階層化邏輯搬進推薦系統中：<strong>既然要用大模型做推薦，為何不讓商品也變成一種「由基礎語意疊加而成的語言」？</strong></p>
-
-<p class="mb-3">我們可以讓商品也遵從「由粗到細（Coarse-to-Fine）」的階層化結構。這樣一來，我們不僅能避免為海量商品賦予獨立編碼所造成的計算量爆炸，更能用「類群編碼」來代表每個商品。因為 Semantic ID 中的每個編碼，都不再是冷冰冰的流水號，而是蘊含豐富分類語意與空間關係的座標。</p>
 
 <h4 id="section-4" class="mb-2">階層化編碼的構建：從連續向量到離散語意</h4>
 
