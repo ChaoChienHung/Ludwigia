@@ -13,7 +13,7 @@
   <meta name="garden:canonical_id" content="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-16">
-  <meta name="garden:cover" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation.png">
+  <meta name="garden:cover" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png">
   <meta name="garden:reading_time_minutes" content="28">
   <meta name="garden:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
   <script>
@@ -223,7 +223,7 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<figure class="note-image"><img src="./deconstructing-semantic-id-rq-kmeans.png" alt="RQ-Kmeans 殘差量化編碼流程與索引重構架構圖，展示多層殘差量化、索引序列生成與中心點求和重構" loading="lazy"><figcaption class="note-image-caption">RQ-Kmeans 殘差量化編碼流程與索引重構架構示意圖</figcaption></figure>
+<figure class="note-image"><img src="./rq-kmeans.png" alt="RQ-Kmeans 殘差量化編碼流程與索引重構架構圖，展示多層殘差量化、索引序列生成與中心點求和重構" loading="lazy"><figcaption class="note-image-caption">RQ-Kmeans 殘差量化編碼流程與索引重構架構示意圖</figcaption></figure>
 
 <p class="mb-3">在<a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。</span></span></span></a>一文中，我們確立了 Semantic ID (SID) 的戰略地位——為了避開傳統 Atomic ID 導致的 Softmax 算力爆炸，我們必須將海量商品轉換為大模型能理解的「長度為 $M$ 的階層式語意 Token 序列」。</p>
 
