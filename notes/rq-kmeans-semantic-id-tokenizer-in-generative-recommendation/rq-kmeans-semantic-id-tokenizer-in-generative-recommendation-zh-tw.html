@@ -277,14 +277,20 @@
 <p class="mb-3">單層 VQ 存在兩個無法忽視的局限：</p>
 
 <ol class="mb-3">
-<li><strong>無法建構階層語意：</strong> 單層 VQ 只會輸出「一個」平面的離散 ID。這就像是給商品貼上一個單純的流水編號，完全缺乏 SID 所需的那種「由粗到細（Coarse-to-fine）」的階層式樹狀結構，大模型根本無從進行上下文的因果推論。</li>
-<li><strong>單一碼本的兩難（量化失真 vs. 詞表爆炸）：</strong></li>
-</ol>
-
-<ul class="note-list">
+<li class="mb-2">
+  <strong><strong>無法建構階層語意：</strong> 單層 VQ 只會輸出「一個」平面的離散 ID。這就像是給商品貼上一個單純的流水編號，完全缺乏 SID 所需的那種「由粗到細（Coarse-to-fine）」的階層式樹狀結構，大模型根本無從進行上下文的因果推論。</strong><br>
+  
+  
+</li>
+<li>
+  <strong><strong>單一碼本的兩難（量化失真 vs. 詞表爆炸）：</strong></strong><br>
+  
+  <ul class="mb-0 mt-2">
 <li><strong>若中心點數量 $K$ 太小（如 8192）：</strong> 雖然限制了詞表大小，但量化誤差（Distortion）會極大。成千上萬個細節截然不同的商品會被強行擠進同一個碼字 ID 中，推薦結果將變得極度粗糙。</li>
 <li><strong>若中心點數量 $K$ 極大（如 100 萬）：</strong> 為了精確代表海量商品細節，Codebook 大小必須呈現指數級爆炸。這在記憶體儲存與近鄰搜尋的算力上完全不可行，本質上又退回了傳統 Atomic ID 詞表爆炸的老路。</li>
 </ul>
+</li>
+</ol>
 
 <p class="mb-3"><strong>這說明單一碼本（Single Codebook）絕對無法勝任生成式 Tokenizer 的重任。</strong> 為了解開這個死結，工程界轉變了思路：將量化過程從「單次」改為「多層迭代」，在 VQ 之上延伸發展出了<strong>殘差量化（Residual Quantization, RQ）</strong>。</p>
 
@@ -365,33 +371,34 @@
 <h4 id="section-6" class="mb-2">四階段端到端工作流</h4>
 
 <ol class="mb-3">
-<li><strong>離線訓練量化器 (Offline Quantizer Training)：</strong></li>
-</ol>
-
-<p class="mb-3">這是建構基礎設施的第一步。系統會直接複用既有特徵工程的資產，由成熟的預訓練模型（如 DSSM、雙塔架構或 GraphSAGE）為全站物品產出高品質的連續嵌入向量 $x$。接著，利用這些海量的高維向量作為訓練集，啟動 RQ-Kmeans 進行幾何分群，逐層最小化殘差，最終淬鍊出 $M$ 層穩健且富含語意的中心點碼本 $\mathcal{C}^{(1)}, \dots, \mathcal{C}^{(M)}$。</p>
-
-<ol class="mb-3">
-<li><strong>離線商品 Token 化與字典樹建構 (Offline Tokenization &amp; Trie Construction)：</strong></li>
-</ol>
-
-<p class="mb-3">量化器訓練完成後，便轉化為離線的 Tokenizer。系統會遍歷百萬甚至數億級別的商品庫，將每個物品的連續向量輸入 RQ-Kmeans（並搭配 Beam Search 降低重構失真），將其轉換為長度為 $M$ 的離散 SID 序列。與此同時，系統會將所有在商品庫中真實存在的合法 SID 組合，建構成一棵高效的字典樹 (Trie Tree)。這一步至關重要，因為它能在後續線上推論時提供約束解碼（Constrained Decoding），防止大模型「幻覺」出根本不存在的商品。</p>
-
-<ol class="mb-3">
-<li><strong>自迴歸推薦模型訓練 (Generative Model Training)：</strong></li>
-</ol>
-
-<p class="mb-3">有了 SID，推薦任務正式轉變為語言生成任務。系統會將用戶的歷史行為序列逐一轉為 SID Token 並展平。例如，用戶先後瀏覽了 <code>[ItemA, ItemB]</code>，資料便會被轉換為一長串連續的 SID 序列（如 <code>[12, 255, 7, 98, 56, 101, 23, 42]</code>）。這些序列會被送入 <span class="note-information" tabindex="0" data-information-concept="concept.transformer" data-information-lang="zh-tw">Transformer<span class="note-information-tooltip" aria-hidden="true"></span></span> 等大模型骨幹網路，以標準的交叉熵損失 (Cross-Entropy Loss) 進行 Next-Token 預測訓練，讓模型學會從用戶的過去推論未來的商品階層。</p>
-
-<ol class="mb-3">
-<li><strong>線上推論與雙路召回 (Online Inference &amp; Dual-Branch Retrieval)：</strong></li>
-</ol>
-
-<p class="mb-3">在線上即時推薦階段，模型會根據用戶最新的歷史軌跡，自迴歸預測出接下來的 $M$ 個 SID Tokens。實務上為了兼顧「精確性」與「泛化性」，通常會設立兩種平行的召回分支：</p>
-
-<ul class="note-list">
+<li class="mb-2">
+  <strong><strong>離線訓練量化器 (Offline Quantizer Training)：</strong></strong><br>
+  
+<p class="mb-2">這是建構基礎設施的第一步。系統會直接複用既有特徵工程的資產，由成熟的預訓練模型（如 DSSM、雙塔架構或 GraphSAGE）為全站物品產出高品質的連續嵌入向量 $x$。接著，利用這些海量的高維向量作為訓練集，啟動 RQ-Kmeans 進行幾何分群，逐層最小化殘差，最終淬鍊出 $M$ 層穩健且富含語意的中心點碼本 $\mathcal{C}^{(1)}, \dots, \mathcal{C}^{(M)}$。</p>
+  
+</li>
+<li>
+  <strong><strong>離線商品 Token 化與字典樹建構 (Offline Tokenization &amp; Trie Construction)：</strong></strong><br>
+  
+<p class="mb-2">量化器訓練完成後，便轉化為離線的 Tokenizer。系統會遍歷百萬甚至數億級別的商品庫，將每個物品的連續向量輸入 RQ-Kmeans（並搭配 Beam Search 降低重構失真），將其轉換為長度為 $M$ 的離散 SID 序列。與此同時，系統會將所有在商品庫中真實存在的合法 SID 組合，建構成一棵高效的字典樹 (Trie Tree)。這一步至關重要，因為它能在後續線上推論時提供約束解碼（Constrained Decoding），防止大模型「幻覺」出根本不存在的商品。</p>
+  
+</li>
+<li>
+  <strong><strong>自迴歸推薦模型訓練 (Generative Model Training)：</strong></strong><br>
+  
+<p class="mb-2">有了 SID，推薦任務正式轉變為語言生成任務。系統會將用戶的歷史行為序列逐一轉為 SID Token 並展平。例如，用戶先後瀏覽了 <code>[ItemA, ItemB]</code>，資料便會被轉換為一長串連續的 SID 序列（如 <code>[12, 255, 7, 98, 56, 101, 23, 42]</code>）。這些序列會被送入 <span class="note-information" tabindex="0" data-information-concept="concept.transformer" data-information-lang="zh-tw">Transformer<span class="note-information-tooltip" aria-hidden="true"></span></span> 等大模型骨幹網路，以標準的交叉熵損失 (Cross-Entropy Loss) 進行 Next-Token 預測訓練，讓模型學會從用戶的過去推論未來的商品階層。</p>
+  
+</li>
+<li>
+  <strong><strong>線上推論與雙路召回 (Online Inference &amp; Dual-Branch Retrieval)：</strong></strong><br>
+  
+<p class="mb-2">在線上即時推薦階段，模型會根據用戶最新的歷史軌跡，自迴歸預測出接下來的 $M$ 個 SID Tokens。實務上為了兼顧「精確性」與「泛化性」，通常會設立兩種平行的召回分支：</p>
+  <ul class="mb-0 mt-2">
 <li><strong>精準 SID 直比對：</strong> 直接利用先前建構的 Trie Tree 進行約束解碼，確保模型生成的完整 SID 絕對合法，並直接將其精準映射回實體商品 ID 推薦給用戶。</li>
 <li><strong>重構向量 ANNS 召回（探索性召回）：</strong> 將模型生成的 $M$ 個 Token 倒推，從碼本中取出對應的中心點碼字並求和，重構出代表使用者潛在興趣的「幾何向量」 $\hat{x}_{\text{pred}}$。隨後，將這個向量放進 ANNS（近似最近鄰搜尋）引擎中，在連續空間進行相似度擴展召回。這能有效挖掘出雖然不完全符合生成 SID，但幾何特徵極為相近的新穎商品。</li>
 </ul>
+</li>
+</ol>
 
 <div class="note-callout mb-3"><p class="mb-2"><strong>架構選型：RQ-Kmeans vs. RQ-VAE 的技術路徑之爭</strong></p><p class="mb-2">值得一提的是，在架構選型上，業界並非沒有其他選擇。除了幾何導向的 RQ-Kmeans，另一個備受關注的重量級方案是基於深度生成模型的 <strong>RQ-VAE (端到端神經量化)</strong>。</p>
 
