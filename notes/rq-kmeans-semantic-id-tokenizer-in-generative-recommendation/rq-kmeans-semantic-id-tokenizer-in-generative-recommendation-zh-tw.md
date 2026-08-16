@@ -1,10 +1,10 @@
 <meta>
 Title: RQ-Kmeans 深度解析：打造生成式推薦最穩健的 Semantic ID Tokenizer
 Summary: 本文從連續空間的離散化出發，探討推薦系統如何從 K-means 聚類、向量量化 (VQ) 一路演進至 RQ-Kmeans，藉此解決海量物品詞彙庫爆炸問題，並深入解析殘差量化的底層幾何原理、進階正則化與業界落地工作流。
-Slug: deconstructing-semantic-id-rq-kmeans-tokenizer-zh-tw
-Output: notes/deconstructing-semantic-id-rq-kmeans/deconstructing-semantic-id-rq-kmeans-tokenizer-zh-tw.html
-CanonicalId: deconstructing-semantic-id-rq-kmeans
-Cover: ./deconstructing-semantic-id-rq-kmeans.png
+Slug: rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw
+Output: notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html
+CanonicalId: rq-kmeans-semantic-id-tokenizer-in-generative-recommendation
+Cover: ./rq-kmeans-semantic-id-tokenizer-in-generative-recommendation.png
 Style: default
 EstimatedReadingTime: true
 Lang: zh-tw
@@ -39,7 +39,7 @@ LastModified: 2026-08-16
 # RQ-Kmeans 深度解析：打造生成式推薦最穩健的 Semantic ID Tokenizer
 
 <image>
-src: ./deconstructing-semantic-id-rq-kmeans.png
+src: ./rq-kmeans-semantic-id-tokenizer-in-generative-recommendation.png
 alt: RQ-Kmeans 殘差量化編碼流程與索引重構架構圖，展示多層殘差量化、索引序列生成與中心點求和重構
 caption: RQ-Kmeans 殘差量化編碼流程與索引重構架構示意圖
 </image>
