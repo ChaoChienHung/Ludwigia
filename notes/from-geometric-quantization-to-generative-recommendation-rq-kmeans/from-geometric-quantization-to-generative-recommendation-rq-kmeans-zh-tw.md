@@ -68,8 +68,9 @@ $$\min_{\mathcal{C}} \sum_{v} \min_{c_k \in \mathcal{C}} \|v - c_k\|^2$$
 
 任何新的商品向量 $v$，只要找到碼本中距離最近的碼字 $c_k$，就能以該碼字的索引 ID 來代表這個商品。
 
-### 為什麼選擇 RQ 而非 PQ？向量 Token 化的技術選型比較
-
+<block>
+title: 技術選型對決：為什麼選擇 RQ 而非 PQ？
+content:
 在向量量化與資料壓縮領域，最著名的兩種組合量化手法分別是 **乘積量化 (Product Quantization, PQ)** 與 **殘差量化 (Residual Quantization, RQ)**。
 
 在傳統的雙塔推薦模型時代，PQ 與 RQ 曾被廣泛用於向量檢索引擎（如 Faiss）中，作為離線檢索與記憶體壓縮的底層工具。然而，當推薦系統轉向自迴歸生成（Generative Retrieval）時，工程師發現這兩種量化手法在對齊大模型時產生了本質上的分歧：
@@ -85,6 +86,7 @@ caption: 乘積量化 (Product Quantization, PQ) 的平行子空間切分機制
 
 * **殘差量化 (Residual Quantization, RQ) 的契合：**
   與 PQ 的平行切分不同，RQ 選擇保留完整的全局向量，改採「逐層逼近、遞減殘差」的策略。第一個 Token 鎖定宏觀大類，後續 Token 則沿著殘差方向逐層修正細部幾何。這讓 Token 序列天然成長為一棵「由粗到細 (Coarse-to-fine)」的階層語意樹，**完美契合了自迴歸模型的序列生成特性**。
+</block>
 
 ## 3. RQ-Kmeans 演算法運作機制、解碼策略與幾何重構
 
