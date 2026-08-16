@@ -206,7 +206,7 @@ OPQ 透過交替優化（Alternating Optimization）演算法，聯合訓練旋�
 ### 局限與工程妥協
 1. **存在不可逆的幾何失真：** 量化過程拋棄了部分幾何細節，高精確度要求的檢索場景需搭配原始向量進行 Re-ranking（重新排序）。
 2. **子空間平行對等，缺乏階層語意（不適用自迴歸生成）：** 
-   正如在 <content-link canonical="from-geometric-quantization-to-generative-recommendation-rq-kmeans">從幾何量化到生成式推薦：RQ-Kmeans 如何打造 Semantic ID Tokenizer</content-link> 中所探討的，PQ 的 $M$ 個 Token 是平行的子空間索引，缺乏因果序與 Coarse-to-fine 的階層關係。這使其非常適合傳統向量檢索（ANNS），但**無法直接作為大模型 Next-Token Prediction 的自迴歸生成目標**（此場景需改用殘差量化 RQ）。
+   正如在 <content-link canonical="deconstructing-semantic-id-rq-kmeans">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer</content-link> 中所探討的，PQ 的 $M$ 個 Token 是平行的子空間索引，缺乏因果序與 Coarse-to-fine 的階層關係。這使其非常適合傳統向量檢索（ANNS），但**無法直接作為大模型 Next-Token Prediction 的自迴歸生成目標**（此場景需改用殘差量化 RQ）。
 
 ## 7. 總結
 
