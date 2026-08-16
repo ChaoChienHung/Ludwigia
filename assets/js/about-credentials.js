@@ -14,9 +14,9 @@
 
   const uiText = {
     en: {
-      kicker: 'Achievements',
+      kicker: 'Accolades',
       title: 'Achievements',
-      intro: 'Certificates, official transcripts, honor awards, admission offers, and competition achievements. Filter by type or domain to explore.',
+      intro: 'Effort matters.',
       typeLabel: 'Type',
       categoryLabel: 'Domain',
       loading: 'Loading credentials...',
@@ -32,9 +32,9 @@
       modalClose: 'Close',
     },
     'zh-Hant': {
-      kicker: '成就',
+      kicker: '成果',
       title: '成就',
-      intro: '包含學術證書、歷年成績單、榮譽獎項、頂尖名校錄取通知與競賽參賽證明。可依據「種類」或「領域」進行篩選與檢視。',
+      intro: '每一次的全力以赴，都有跡可循。',
       typeLabel: '種類',
       categoryLabel: '領域',
       loading: '正在載入資歷資料...',
@@ -50,9 +50,9 @@
       modalClose: '關閉',
     },
     'zh-Hans': {
-      kicker: '成就',
+      kicker: '成果',
       title: '成就',
-      intro: '包含学术证书、历年成绩单、荣誉奖项、顶尖名校录取通知与竞赛参赛证明。可依据“种类”或“领域”进行筛选与检视。',
+      intro: '每一次的全力以赴，都有迹可循。',
       typeLabel: '种类',
       categoryLabel: '领域',
       loading: '正在载入资历数据...',

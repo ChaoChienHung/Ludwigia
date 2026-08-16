@@ -790,6 +790,25 @@
         "歐幾里得距離",
         "欧氏距离"
       ]
+    },
+    {
+      "concept_id": "concept.rule_of_product",
+      "labels": {
+        "en": "Rule of Product (Combinatorial Power)",
+        "zh-Hant": "乘法原理",
+        "zh-Hans": "乘法原理"
+      },
+      "contexts": {
+        "en": "The Rule of Product (or Multiplication Principle) is a basic counting principle in combinatorics stating that if a task can be broken into M sequential stages with K choices each, the total number of possible combinations grows exponentially as K^M.",
+        "zh-Hant": "乘法原理（Rule of Product / Combinatorial Power）是組合計數中的基本原則。指的是當一個選擇或系統可拆解為 M 個獨立的階層階段、且每階段有 K 個選項時，整體組合狀態數會以乘積 K^M 指數級擴展，用極少的基礎元件量撐起龐大的組合表達空間。",
+        "zh-Hans": "乘法原理（Rule of Product / Combinatorial Power）是组合计数中的基本原则。指的是当一个选择或系统可拆解为 M 个独立的阶层阶段、且每阶段有 K 个选项时，整体组合状态数会以乘积 K^M 指数级扩展，用极少的基础元件量撑起庞大的组合表达空间。"
+      },
+      "aliases": [
+        "rule of product",
+        "multiplication principle",
+        "combinatorial power",
+        "乘法原理"
+      ]
     }
   ]
 }

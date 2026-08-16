@@ -37,8 +37,7 @@
       kicker: 'Path So Far',
       title: 'Timeline',
       cipherTitle: 'Chronology',
-      intro:
-        'Not a resume, and not quite a diary either. More like a shifting map of how certain turns, phases, and obsessions gradually shaped the person standing here now.',
+      intro: 'Shaped by the past. Alive in the present. Open to the future.',
       detailTitle: 'Focused Event',
       pointLabel: 'Point Event',
       periodStartLabel: 'Start',
@@ -80,8 +79,7 @@
       kicker: '一路走來',
       title: '時間軸',
       cipherTitle: 'Chronology',
-      intro:
-        '這不是履歷，也不完全是日記；比較像一張還在變動的地圖，慢慢把那些轉折、階段與長期執念怎麼把我塑造成現在的樣子勾出來。',
+      intro: '昔時勾勒，以為底蘊；今朝皴染，力透紙背；來日留白，以待風華。',
       detailTitle: '目前聚焦事件',
       pointLabel: '單點事件',
       periodStartLabel: '開始',
@@ -123,8 +121,7 @@
       kicker: '一路走来',
       title: '时间轴',
       cipherTitle: 'Chronology',
-      intro:
-        '这不是履历，也不完全是日记；更像一张仍在变化的地图，慢慢把那些转折、阶段与长期执念怎样把我塑造成现在的样子勾出来。',
+      intro: '昔时勾勒，以为底蕴；今朝皴染，力透纸背；来日留白，以待风华。',
       detailTitle: '当前聚焦事件',
       pointLabel: '单点事件',
       periodStartLabel: '开始',
@@ -389,7 +386,9 @@
   };
 
   const syncTimelineNavLabels = () => {
-    const label = isCipherMode() ? 'Chronology' : 'Timeline';
+    const lang = getLang();
+    const text = uiText[lang] || uiText.en;
+    const label = isCipherMode() ? text.cipherTitle || 'Chronology' : text.title || 'Timeline';
     document.querySelectorAll('[data-nav-timeline]').forEach((el) => {
       el.textContent = label;
       el.setAttribute('aria-label', label);
