@@ -809,6 +809,246 @@
         "combinatorial power",
         "乘法原理"
       ]
+    },
+    {
+      "concept_id": "concept.bpe",
+      "labels": {
+        "en": "Byte-Pair Encoding (BPE)",
+        "zh-Hant": "BPE（Byte-Pair Encoding）",
+        "zh-Hans": "BPE（Byte-Pair Encoding）"
+      },
+      "contexts": {
+        "en": "Byte-Pair Encoding (BPE) is a subword tokenization algorithm that iteratively replaces the most frequent pairs of consecutive characters or bytes in text with a single new token, balancing vocabulary size and out-of-vocabulary handling.",
+        "zh-Hant": "Byte-Pair Encoding（BPE）是一種常用的子詞（subword）切分演算法。它透過統計頻次反覆合併出現頻率最高的相鄰字元或位元組對，將常見字詞組合縮減為離散 Token，以兼顧字典容量與未登錄詞處理。",
+        "zh-Hans": "Byte-Pair Encoding（BPE）是一种常用的子词（subword）切分算法。它通过统计频次反复合并出现频率最高的相邻字符或字节对，将常见字词组合缩减为离散 Token，以兼顾字典容量与未登录词处理。"
+      },
+      "aliases": [
+        "BPE",
+        "bpe",
+        "Byte-Pair Encoding",
+        "byte-pair encoding"
+      ]
+    },
+    {
+      "concept_id": "concept.tokenizer",
+      "labels": {
+        "en": "Tokenizer",
+        "zh-Hant": "分詞/賦碼器（Tokenizer）",
+        "zh-Hans": "分词/赋码器（Tokenizer）"
+      },
+      "contexts": {
+        "en": "A Tokenizer is a component responsible for breaking down continuous or complex raw data (such as text or multimodal items) into a sequence of discrete units or integer tokens for model processing.",
+        "zh-Hant": "Tokenizer（分詞/賦碼器）是負責將連續或複雜的原始資料（如文本、圖像或多模態商品）切分並映射為離散 Token / 整數編號序列的核心基礎設施。",
+        "zh-Hans": "Tokenizer（分词/赋码器）是负责将连续或复杂的原始数据（如文本、图像或多模态商品）切分并映射为离散 Token / 整数编号序列的核心基础设施。"
+      },
+      "aliases": [
+        "Tokenizer",
+        "tokenizer",
+        "分詞器",
+        "賦碼器"
+      ]
+    },
+    {
+      "concept_id": "concept.multimodal",
+      "labels": {
+        "en": "Multimodal",
+        "zh-Hant": "多模態",
+        "zh-Hans": "多模态"
+      },
+      "contexts": {
+        "en": "Multimodal refers to system inputs or representations that combine two or more distinct types of data modalities, such as text, images, audio, structure metadata, or categorical attributes.",
+        "zh-Hant": "多模態（Multimodal）指同時融合並理解文本、圖像、音訊、層級類別與多維中繼資料等多種不同形態資料的綜合資料類型與模型架構。",
+        "zh-Hans": "多模态（Multimodal）指同时融合并理解文本、图像、音频、层级类别与多维中继数据等多种不同形态数据的综合数据类型与模型架构。"
+      },
+      "aliases": [
+        "multimodal",
+        "多模態",
+        "多模态"
+      ]
+    },
+    {
+      "concept_id": "concept.autoencoder",
+      "labels": {
+        "en": "AutoEncoder",
+        "zh-Hant": "自編碼器（AutoEncoder）",
+        "zh-Hans": "自编码器（AutoEncoder）"
+      },
+      "contexts": {
+        "en": "An AutoEncoder is a self-supervised neural network architecture comprising an Encoder (which compresses input data into a latent representation) and a Decoder (which reconstructs the original input from the latent space).",
+        "zh-Hant": "自編碼器（AutoEncoder）是一種自監督神經網路架構，由 Encoder（將高維輸入壓縮至低維潛在空間）與 Decoder（嘗試從潛在空間還原原始輸入）組成。",
+        "zh-Hans": "自编码器（AutoEncoder）是一种自监督神经网络架构，由 Encoder（将高维输入压缩至低维潜在空间）与 Decoder（尝试从潜在空间还原原始输入）组成。"
+      },
+      "aliases": [
+        "AutoEncoder",
+        "autoencoder",
+        "自編碼器",
+        "自编码器"
+      ]
+    },
+    {
+      "concept_id": "concept.cold_start",
+      "labels": {
+        "en": "Cold Start",
+        "zh-Hant": "冷啟動",
+        "zh-Hans": "冷启动"
+      },
+      "contexts": {
+        "en": "Cold Start is a common challenge in recommendation systems where newly introduced users or items lack historical interaction data, making it difficult to generate accurate recommendations.",
+        "zh-Hant": "冷啟動（Cold Start）是推薦系統中的常見挑戰，指新登場的商品或新加入的使用者因缺乏歷史點擊與互動行為資料，導致傳統模型難以為其進行精準推薦。",
+        "zh-Hans": "冷启动（Cold Start）是推荐系统中的常见挑战，指新登场的商品或新加入的平使用者因缺乏历史点击与互动行为数据，导致传统模型难以为其进行精准推荐。"
+      },
+      "aliases": [
+        "cold start",
+        "冷啟動",
+        "冷启动"
+      ]
+    },
+    {
+      "concept_id": "concept.oom",
+      "labels": {
+        "en": "Out of Memory (OOM)",
+        "zh-Hant": "記憶體溢出（OOM）",
+        "zh-Hans": "内存溢出（OOM）"
+      },
+      "contexts": {
+        "en": "Out of Memory (OOM) occurs when a program or neural network training process requests more memory space (such as GPU VRAM or System RAM) than physically available, causing execution failure.",
+        "zh-Hant": "記憶體溢出（Out of Memory, OOM）指模型訓練或程式執行時，因維度爆炸或快取過大，所消耗的記憶體（如 GPU 顯存或系統記憶體）超過實體硬體上限而導致崩潰的現象。",
+        "zh-Hans": "内存溢出（Out of Memory, OOM）指模型训练或程序执行时，因维度爆炸或缓存过大，所消耗的内存（如 GPU 显存或系统内存）超过物理硬件上限而导致崩溃的现象。"
+      },
+      "aliases": [
+        "OOM",
+        "oom",
+        "記憶體溢出",
+        "內存溢出"
+      ]
+    },
+    {
+      "concept_id": "concept.step_function",
+      "labels": {
+        "en": "Step Function",
+        "zh-Hant": "階梯函數",
+        "zh-Hans": "阶梯函数"
+      },
+      "contexts": {
+        "en": "A Step Function is a mathematical function with discontinuous jumps whose derivative is zero almost everywhere. In vector quantization (such as argmin), step functions block continuous gradient flow in backpropagation.",
+        "zh-Hant": "階梯函數（Step Function）是值域呈現不連續跳躍、且導數幾乎處處為零的離散函數。在向量量化（如 argmin）中，階梯函數會直接斷絕反向傳播的梯度計算。",
+        "zh-Hans": "阶梯函数（Step Function）是值域呈现不连续跳跃、且导数几乎处处为零的离散函数。在向量量化（如 argmin）中，阶梯函数会直接断绝反向传播的梯度计算。"
+      },
+      "aliases": [
+        "step function",
+        "階梯函數",
+        "阶梯函数"
+      ]
+    },
+    {
+      "concept_id": "concept.backpropagation",
+      "labels": {
+        "en": "Backpropagation",
+        "zh-Hant": "反向傳播",
+        "zh-Hans": "反向传播"
+      },
+      "contexts": {
+        "en": "Backpropagation is the central training algorithm for artificial neural networks that uses the chain rule to compute error gradients from the output back to each layer's weights, enabling gradient descent optimization.",
+        "zh-Hant": "反向傳播（Backpropagation）是神經網路訓練的核心演算法。它利用微積分的連鎖律，將輸出層計算出的損失誤差梯度向後傳遞給網路各層權重，驅動梯度下降優化。",
+        "zh-Hans": "反向传播（Backpropagation）是神经网络训练的核心算法。它利用微积分的连锁律，将输出层计算出的损失误差梯度向后传递给网络各层权重，驱动梯度下降优化。"
+      },
+      "aliases": [
+        "backpropagation",
+        "反向傳播",
+        "反向传播"
+      ]
+    },
+    {
+      "concept_id": "concept.pca",
+      "labels": {
+        "en": "Principal Component Analysis (PCA)",
+        "zh-Hant": "主成分分析（PCA）",
+        "zh-Hans": "主成分分析（PCA）"
+      },
+      "contexts": {
+        "en": "Principal Component Analysis (PCA) is an orthogonal linear transformation technique in multivariate statistics that projects data onto principal directions maximizing variance, summarizing major variation while reducing dimensionality.",
+        "zh-Hant": "主成分分析（PCA）是一種經典的正交線性變換降維技術。它透過尋找數據變異數最大的正交主成分方向，將高維資料投影至低維空間，優先保留總體能量與宏觀分佈結構。",
+        "zh-Hans": "主成分分析（PCA）是一种经典的正交线性变换降维技术。它通过寻找数据方差最大的正交主成分方向，将高维数据投影至低维空间，优先保留总体能量与宏观分布结构。"
+      },
+      "aliases": [
+        "PCA",
+        "pca",
+        "主成分分析"
+      ]
+    },
+    {
+      "concept_id": "concept.matthew_effect",
+      "labels": {
+        "en": "Matthew Effect",
+        "zh-Hant": "馬太效應",
+        "zh-Hans": "马太效应"
+      },
+      "contexts": {
+        "en": "The Matthew Effect refers to a phenomenon of cumulative advantage ('the rich get richer, the poor get poorer'). In vector quantization, argmin winner-take-all dynamics cause initialized hot codewords to absorb all gradients while others perish.",
+        "zh-Hant": "馬太效應（Matthew Effect）指『富者愈富、貧者愈貧』的正回饋現象。在向量量化訓練中，argmin 具備贏者全拿的特性，導致少數熱門 Codeword 瘋狂吸收梯度更新，而遠端 Codeword 永遠無法被命中而壞死。",
+        "zh-Hans": "马太效应（Matthew Effect）指『富者愈富、贫者愈贫』的正反馈现象。在向量量化训练中，argmin 具备赢者全拿的特性，导致少数热门 Codeword 疯狂吸收梯度更新，而远端 Codeword 永远无法被命中而坏死。"
+      },
+      "aliases": [
+        "matthew effect",
+        "馬太效應",
+        "马太效应"
+      ]
+    },
+    {
+      "concept_id": "concept.dead_code",
+      "labels": {
+        "en": "Dead Code",
+        "zh-Hant": "死碼",
+        "zh-Hans": "死码"
+      },
+      "contexts": {
+        "en": "Dead Code in vector quantization refers to codebook vectors that remain unselected by any continuous latent input over prolonged training epochs, receiving zero gradient updates and effectively wasting dictionary capacity.",
+        "zh-Hant": "死碼（Dead Code）指 Codebook 中因長期未命中任何潛在特徵輸入而無法接收梯度更新、徹底停滯壞死的離散向量原型，會大幅破壞 Semantic ID 的表徵多樣性。",
+        "zh-Hans": "死码（Dead Code）指 Codebook 中因长期未命中任何潜在特征输入而无法接收梯度更新、彻底停滞坏死的离散向量原型，会大幅破坏 Semantic ID 的表征多样性。"
+      },
+      "aliases": [
+        "dead code",
+        "死碼",
+        "死码"
+      ]
+    },
+    {
+      "concept_id": "concept.autoregressive",
+      "labels": {
+        "en": "Autoregressive",
+        "zh-Hant": "自迴歸",
+        "zh-Hans": "自回归"
+      },
+      "contexts": {
+        "en": "Autoregressive models generate output sequences step-by-step, where each next token prediction explicitly conditions on all previously generated historical tokens as context.",
+        "zh-Hant": "自迴歸（Autoregressive）指序列生成模型在預測下一個 Token 時，必須將前面已產出的所有歷史 Token 作為上下文條件輸入，逐個 Token 進行因果推論與序列生成。",
+        "zh-Hans": "自回归（Autoregressive）指序列生成模型在预测下一个 Token 时，必须将前面已产出的所有历史 Token 作为上下文条件输入，逐个 Token 进行因果推断与序列生成。"
+      },
+      "aliases": [
+        "autoregressive",
+        "自迴歸",
+        "自回归"
+      ]
+    },
+    {
+      "concept_id": "concept.warmup",
+      "labels": {
+        "en": "Warm-up (Warm Start)",
+        "zh-Hant": "熱啟動",
+        "zh-Hans": "热启动"
+      },
+      "contexts": {
+        "en": "Warm-up (or Warm Start) is an initialization strategy that uses pre-computed cluster centroids (e.g., from offline RQ-Kmeans) to populate codebook weights before starting end-to-end neural network fine-tuning.",
+        "zh-Hant": "熱啟動（Warm-up / Warm Start）是一種初始化策略。指先利用離線靜態聚類（如 RQ-Kmeans）產生穩定優良的初始碼本中心，作為神經網路（如 RQ-VAE）的初始權重，避免訓練初期陷入死碼瓶頸。",
+        "zh-Hans": "热启动（Warm-up / Warm Start）是一种初始化策略。指先利用离线静态聚类（如 RQ-Kmeans）产生稳定优良的初始码本中心，作为神经网络（如 RQ-VAE）的初始权重，避免训练初期陷入死码瓶颈。"
+      },
+      "aliases": [
+        "warm-up",
+        "warmup",
+        "warm start",
+        "熱啟動",
+        "热启动"
+      ]
     }
   ]
 }

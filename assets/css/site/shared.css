@@ -5315,6 +5315,14 @@ body.galaxy-meteors-on .section-entry-main {
   margin: var(--preview-block-gap) 0;
 }
 
+.section-entry-summary blockquote,
+.garden-result-preview blockquote {
+  padding: 0.4rem 0.7rem;
+  border-left: 3px solid color-mix(in srgb, var(--accent) 60%, currentColor);
+  background: color-mix(in srgb, var(--bg-alt, rgba(0, 0, 0, 0.04)) 85%, var(--accent) 6%);
+  border-radius: 0 8px 8px 0;
+}
+
 .section-entry-summary h2,
 .garden-result-preview h2 {
   margin: var(--preview-heading-gap-top) 0 var(--preview-heading-gap-bottom);
