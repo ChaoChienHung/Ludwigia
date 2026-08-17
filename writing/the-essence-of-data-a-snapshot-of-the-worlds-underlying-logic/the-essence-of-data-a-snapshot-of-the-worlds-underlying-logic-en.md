@@ -35,7 +35,7 @@ What is stored inside a database is never just "numbers." The true essence of th
 
 If I had to summarize it in one sentence, I would say:
 
-**The essence of data is a snapshot left behind when the world is frozen at a specific point in time.**
+> **The essence of data is a snapshot left behind when the world is frozen at a specific point in time.**
 
 This perspective sounds a bit abstract, but it fundamentally changes how we view data science. Because once you understand data as a "slice of reality," you no longer treat analysis as purely numerical calculation; you begin to realize that, through a pile of residual images, you are actually trying to reconstruct exactly how this world operates.
 
@@ -70,7 +70,7 @@ To take a few dimensions closest to our daily lives:
 * **Hard physical and physiological limits:** Geographic distance increases interaction costs, the linearity of time dictates the sequence of events, and biological rhythms silently govern our attention and routines.
     * *For example: No matter how advanced social networks become, interaction data still shows that the people we contact most often live in the same city; and the regular sleeping heart rate on a smartwatch is the most faithful reflection of human biological rhythms on a data table.*
 
-Of course, these points are merely the tip of the iceberg. The sensor data of industrial machines is driven by the laws of physics; the attack logs of hackers are constrained by the vulnerabilities of network protocols. The core point we want to emphasize is: Although our observations in reality will inevitably be mixed with various random <information concept="concept.noise">noise</information>—such as minute sensor errors, sudden environmental interferences, or sporadic irrational human impulses—as long as a stably operating underlying mechanism exists, it will inevitably pierce through this noise and leave a non-random structure in the ocean of data.
+Of course, these points are merely the tip of the iceberg. The core point we want to emphasize is: Although our observations in reality will inevitably be mixed with various random <information concept="concept.noise">noise</information>—such as minute sensor errors, sudden environmental interferences, or sporadic irrational human impulses—as long as a stably operating underlying mechanism exists, it will inevitably pierce through this noise and leave a non-random structure in the ocean of data.
 
 ## Data Is Like Footprints; the World Is Like an Invisible Engine
 
