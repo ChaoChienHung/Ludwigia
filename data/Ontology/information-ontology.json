@@ -1049,6 +1049,177 @@
         "熱啟動",
         "热启动"
       ]
+    },
+    {
+      "concept_id": "concept.reverse_water_filling",
+      "labels": {
+        "en": "Reverse Water-Filling Principle",
+        "zh-Hant": "反向水閥原則",
+        "zh-Hans": "反向水阀原则"
+      },
+      "contexts": {
+        "en": "The Reverse Water-Filling principle is an information-theoretic rate-distortion strategy that allocates quantization resolution only to signal dimensions with variance exceeding a noise threshold, discarding low-variance noisy dimensions.",
+        "zh-Hant": "反向水閥原則（Reverse Water-Filling）是資訊理論中率失真優化的策略。它僅對變異數高於門檻的顯著訊號維度進行精細量化，而捨棄微小變異數的純雜訊維度，避免模型為了擬合雜訊而浪費資源。",
+        "zh-Hans": "反向水阀原则（Reverse Water-Filling）是信息论中率失真优化的策略。它仅对方差高于门槛的显著信号维度进行精细量化，而舍弃微小方差的纯噪声维度，避免模型为了拟合噪声而浪费资源。"
+      },
+      "aliases": [
+        "reverse water-filling",
+        "reverse water filling",
+        "反向水閥原則",
+        "反向水阀原则"
+      ]
+    },
+    {
+      "concept_id": "concept.domino_effect",
+      "labels": {
+        "en": "Domino Effect (Error Propagation)",
+        "zh-Hant": "骨牌效應（連鎖誤差傳遞）",
+        "zh-Hans": "骨牌效应（连锁误差传递）"
+      },
+      "contexts": {
+        "en": "The Domino Effect in greedy quantization describes how a sub-optimal choice at early layers shifts residual vectors, forcing subsequent quantizers into sub-optimal search spaces and accumulating global reconstruction error.",
+        "zh-Hant": "骨牌效應指在逐層貪婪解碼中，前幾層若發生微小選擇偏差，會直接改變後續殘差空間的走向，導致後續所有層級被迫在次優空間尋找中心，引發『一步錯，步步錯』的幾何重構失真。",
+        "zh-Hans": "骨牌效应指在逐层贪婪解码中，前几层若发生微小选择偏差，会直接改变后续残差空间的走向，导致后续所有层级被迫在次优空间寻找中心，引发『一步错，步步错』的几何重构失真。"
+      },
+      "aliases": [
+        "domino effect",
+        "骨牌效應",
+        "骨牌效应"
+      ]
+    },
+    {
+      "concept_id": "concept.cross_entropy_loss",
+      "labels": {
+        "en": "Cross-Entropy Loss",
+        "zh-Hant": "交叉熵損失（Cross-Entropy Loss）",
+        "zh-Hans": "交叉熵损失（Cross-Entropy Loss）"
+      },
+      "contexts": {
+        "en": "Cross-Entropy Loss measures the divergence between the true category distribution and predicted probability distribution, serving as the standard objective function for discrete classification and Next-Token prediction.",
+        "zh-Hant": "交叉熵損失（Cross-Entropy Loss）是用於衡量真實類別分佈與模型預測概率分佈之間差異的損失函數，是自迴歸模型訓練與 Next-Token 預測時的最標準優化目標。",
+        "zh-Hans": "交叉熵损失（Cross-Entropy Loss）是用于衡量真实类别分布与模型预测概率分布之间差异的损失函数，是自回归模型训练与 Next-Token 预测时的最标准优化目标。"
+      },
+      "aliases": [
+        "cross-entropy loss",
+        "cross entropy loss",
+        "交叉熵損失",
+        "交叉熵损失"
+      ]
+    },
+    {
+      "concept_id": "concept.trie",
+      "labels": {
+        "en": "Trie (Prefix Tree)",
+        "zh-Hant": "字典樹（Trie Tree）",
+        "zh-Hans": "字典树（Trie Tree）"
+      },
+      "contexts": {
+        "en": "A Trie (Prefix Tree) is a tree-based search data structure used to store associative keys (such as valid Token sequences), enabling O(M) prefix lookups and constrained search space filtering.",
+        "zh-Hant": "字典樹（Trie Tree / 前綴樹）是一種樹狀搜尋資料結構，專門用來高效儲存與檢索序列前綴。在生成式檢索中用來維護所有合法商品 SID，以確保推論時只生成存在實體的 Token 組合。",
+        "zh-Hans": "字典树（Trie Tree / 前缀树）是一种树状搜索数据结构，专门用来高效存储与检索序列前缀。在生成式检索中用来维护所有合法商品 SID，以确保推导时只生成存在实体的 Token 组合。"
+      },
+      "aliases": [
+        "trie",
+        "trie tree",
+        "prefix tree",
+        "字典樹",
+        "字典树"
+      ]
+    },
+    {
+      "concept_id": "concept.constrained_decoding",
+      "labels": {
+        "en": "Constrained Decoding",
+        "zh-Hant": "約束解碼",
+        "zh-Hans": "约束解码"
+      },
+      "contexts": {
+        "en": "Constrained Decoding is a generation technique that restricts a language model's sampling space at each autoregressive step to valid prefix branches of a pre-built prefix tree (Trie), preventing out-of-vocabulary output or hallucinations.",
+        "zh-Hant": "約束解碼（Constrained Decoding）是一種生成控制技術。在自迴歸推論的每一步驟，強迫模型只能從預先構建好的合法字典樹（Trie）分支中採樣下一個 Token，完全避免生成無效或虛構的商品序列。",
+        "zh-Hans": "约束解码（Constrained Decoding）是一种生成控制技术。在自回归推导的每一步骤，强迫模型只能从预先构建好的合法字典树（Trie）分支中采样下一个 Token，完全避免生成无效或虚构的商品序列。"
+      },
+      "aliases": [
+        "constrained decoding",
+        "約束解碼",
+        "约束解码"
+      ]
+    },
+    {
+      "concept_id": "concept.quantization_distortion",
+      "labels": {
+        "en": "Quantization Error / Distortion",
+        "zh-Hant": "量化誤差 / 失真",
+        "zh-Hans": "量化误差 / 失真"
+      },
+      "contexts": {
+        "en": "Quantization Error (or Distortion) measures the distance or loss introduced when mapping a continuous high-dimensional vector to its nearest discrete codeword prototype.",
+        "zh-Hant": "量化誤差（Quantization Error / Distortion）指將連續高維向量強制映射並替換為離散碼字原型時，所造成的幾何距離損失與資訊偏離程度。",
+        "zh-Hans": "量化误差（Quantization Error / Distortion）指将连续高维向量强制映射并替换为离散码字原型时，所造成的几何距离损失与信息偏离程度。"
+      },
+      "aliases": [
+        "quantization error",
+        "quantization distortion",
+        "量化誤差",
+        "量化失真",
+        "量化误差"
+      ]
+    },
+    {
+      "concept_id": "concept.curse_of_dimensionality",
+      "labels": {
+        "en": "Curse of Dimensionality",
+        "zh-Hant": "維度詛咒",
+        "zh-Hans": "维度诅咒"
+      },
+      "contexts": {
+        "en": "The Curse of Dimensionality refers to various phenomena that arise when analyzing data in high-dimensional spaces, where data becomes extremely sparse, distances lose contrast, and grid partitioning fails exponentially.",
+        "zh-Hant": "維度詛咒（Curse of Dimensionality）指當資料維度極高時，空間體積呈指數增長，導致資料點變得極度稀疏、歐式距離失去區分度，且網格劃分會產生海量無效空間的現象。",
+        "zh-Hans": "维度诅咒（Curse of Dimensionality）指当数据维度极高时，空间体积呈指数增长，导致数据点变得极度稀疏、欧式距离失去区分度，且网格划分会产生海量无效空间的现象。"
+      },
+      "aliases": [
+        "curse of dimensionality",
+        "維度詛咒",
+        "维度诅咒"
+      ]
+    },
+    {
+      "concept_id": "concept.anns",
+      "labels": {
+        "en": "Approximate Nearest Neighbor Search (ANNS)",
+        "zh-Hant": "近似最近鄰搜尋（ANNS）",
+        "zh-Hans": "近似最近邻搜索（ANNS）"
+      },
+      "contexts": {
+        "en": "Approximate Nearest Neighbor Search (ANNS) refers to indexing algorithms (such as HNSW, IVF) that rapidly locate items close to a query vector in sub-linear time, trading slight accuracy for extreme search speed.",
+        "zh-Hant": "近似最近鄰搜尋（ANNS / Approximate Nearest Neighbor Search）是向量檢索的核心技術（如 HNSW、IVF）。透過建構近似索引結構，以些許精準度為代價換取毫秒級的海量向量相近度檢索。",
+        "zh-Hans": "近似最近邻搜索（ANNS / Approximate Nearest Neighbor Search）是向量检索的核心技术（如 HNSW、IVF）。通过构建近似索引结构，以些许精准度为代价换取毫秒级的海量向量相近度检索。"
+      },
+      "aliases": [
+        "ANNS",
+        "anns",
+        "Approximate Nearest Neighbor Search",
+        "近似最近鄰搜尋",
+        "近似最近邻搜索"
+      ]
+    },
+    {
+      "concept_id": "concept.plug_and_play",
+      "labels": {
+        "en": "Plug-and-Play",
+        "zh-Hant": "隨插即用（Plug-and-Play）",
+        "zh-Hans": "随插即用（Plug-and-Play）"
+      },
+      "contexts": {
+        "en": "Plug-and-Play in ML architecture design refers to modular components that can seamlessly integrate into existing data pipelines and pre-trained embeddings without requiring architectural redesign or retraining of upstream models.",
+        "zh-Hant": "隨插即用（Plug-and-Play）指模組化的架構設計特性。模組能夠直接銜接與複用系統既有的特徵管道與預訓練 Embedding 向量資產，無須重構或重新訓練上游系統即可直接運作。",
+        "zh-Hans": "随插即用（Plug-and-Play）指模块化的架构设计特性。模块能够直接衔接与复用系统既有的特征管道与预训练 Embedding 向量资产，无需重构或重新训练上游系统即可直接运作。"
+      },
+      "aliases": [
+        "plug-and-play",
+        "plug and play",
+        "隨插即用",
+        "随插即用"
+      ]
     }
   ]
 }
