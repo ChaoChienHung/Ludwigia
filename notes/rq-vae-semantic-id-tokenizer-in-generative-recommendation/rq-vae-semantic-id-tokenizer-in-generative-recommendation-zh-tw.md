@@ -71,9 +71,9 @@ content:
 
 探究 RQ-VAE，我們必須先回顧其本質 <information concept="concept.autoencoder">AutoEncoder</information>，以及其近親 **VQ-VAE (Vector Quantized Variational AutoEncoder)**。
 
-AutoEncoder 的基礎架構由 Encoder 與 Decoder 組成，目標是將輸入資料（如文本、圖像）壓縮並生成低維的連續特徵向量（<information concept="concept.embedding">Embedding</information>），再由 Decoder 嘗試無損重建。這套範式賦予了模型強大的語意壓縮與還原能力，為 RQ-VAE 奠定了理解多模態語意與生成 Semantic ID 的基礎。**VQ-VAE** 則在此基礎上邁出了關鍵一步：在 Encoder 產出連續向量後，系統會在預先定義的碼本中，尋找空間距離最近的 Codeword $c_1$ 並進行強制替換。這個將連續變數轉為離散原型的過程，即為**「量化」**。
+AutoEncoder 的基礎架構由 Encoder 與 Decoder 組成，目標是將輸入資料（如文本、圖像）壓縮並生成低維的連續特徵向量（<information concept="concept.embedding">Embedding</information>），再由 Decoder 嘗試無損重建。這套範式賦予了模型強大的語意壓縮與還原能力，為 RQ-VAE 奠定了理解多模態語意與生成 Semantic ID 的基礎。**VQ-VAE** 則在此基礎上邁出了關鍵一步：在 Encoder 產出連續向量後，系統會在預先定義的碼本中，尋找空間距離最近的 Codeword $e_1$ 並進行強制替換。這個將連續變數轉為離散原型的過程，即為**「量化」**。
 
-$$\hat{x} = c_1$$
+$$\hat{x} = e_1$$
 
 <image>
 src: ./vq-vae-architecture.png
