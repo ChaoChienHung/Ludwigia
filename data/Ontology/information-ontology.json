@@ -984,9 +984,9 @@
         "zh-Hans": "马太效应"
       },
       "contexts": {
-        "en": "The Matthew Effect refers to a phenomenon of cumulative advantage ('the rich get richer, the poor get poorer'). In vector quantization, argmin winner-take-all dynamics cause initialized hot codewords to absorb all gradients while others perish.",
-        "zh-Hant": "馬太效應（Matthew Effect）指『富者愈富、貧者愈貧』的正回饋現象。在向量量化訓練中，argmin 具備贏者全拿的特性，導致少數熱門 Codeword 瘋狂吸收梯度更新，而遠端 Codeword 永遠無法被命中而壞死。",
-        "zh-Hans": "马太效应（Matthew Effect）指『富者愈富、贫者愈贫』的正反馈现象。在向量量化训练中，argmin 具备赢者全拿的特性，导致少数热门 Codeword 疯狂吸收梯度更新，而远端 Codeword 永远无法被命中而坏死。"
+        "en": "The Matthew Effect refers to a phenomenon of cumulative advantage ('the rich get richer, the poor get poorer'), where individuals or entities with an initial advantage tend to accumulate more resources and success over time.",
+        "zh-Hant": "馬太效應（Matthew Effect）指『富者愈富、貧者愈貧』的累積優勢現象，意指初始擁有優勢的個體或群體隨時間推進會累積更多資源與優勢，導致差距不斷擴大。",
+        "zh-Hans": "马太效应（Matthew Effect）指『富者愈富、贫者愈贫』的累计优势现象，意指初始拥有优势的个体或群体随着时间推进会积累更多资源与优势，导致差距不断扩大。"
       },
       "aliases": [
         "matthew effect",
