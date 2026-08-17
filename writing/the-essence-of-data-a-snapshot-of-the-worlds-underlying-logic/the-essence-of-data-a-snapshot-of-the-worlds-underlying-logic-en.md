@@ -70,7 +70,7 @@ To take a few dimensions closest to our daily lives:
 * **Hard physical and physiological limits:** Geographic distance increases interaction costs, the linearity of time dictates the sequence of events, and biological rhythms silently govern our attention and routines.
     * *For example: No matter how advanced social networks become, interaction data still shows that the people we contact most often live in the same city; and the regular sleeping heart rate on a smartwatch is the most faithful reflection of human biological rhythms on a data table.*
 
-Of course, these points are merely the tip of the iceberg. The core point we want to emphasize is: Although our observations in reality will inevitably be mixed with various random <information concept="concept.noise">noise</information>—such as minute sensor errors, sudden environmental interferences, or sporadic irrational human impulses—as long as a stably operating underlying mechanism exists, it will inevitably pierce through this noise and leave a non-random structure in the ocean of data.
+Of course, these points are merely the tip of the iceberg. The core point I want to emphasize is: Although our observations in reality will inevitably be mixed with various random <information concept="concept.noise">noise</information>—such as minute sensor errors, sudden environmental interferences, or sporadic irrational human impulses—as long as a stably operating underlying mechanism exists, it will inevitably pierce through this noise and leave a non-random structure in the ocean of data.
 
 ## Data Is Like Footprints; the World Is Like an Invisible Engine
 
@@ -99,9 +99,11 @@ Reaching this step, we are actually very close to the essence of "science."
 
 ## Data Science Is Possible Because We Believe Snapshots Hide Structures
 
-This is why fields like data mining, artificial intelligence, and related areas exist. They are effective not because algorithms have been cast with a magic spell, but because they are all built upon the same fundamental belief:
+This is the foundational rationale behind fields like data mining and machine learning. Their efficacy stems not from algorithmic magic, but from a singular premise:
 
-**If there is a structure behind the world, then the data snapshots it produces cannot possibly be devoid of structure.**
+**If the world has an underlying structure, the data it produces cannot be purely random.**
+
+At their core, these disciplines seek to identify non-random structures within seemingly chaotic data snapshots, thereby deducing and uncovering the mechanisms that drive them.
 
 <information concept="concept.clustering">Clustering</information> is a very beautiful example. When we cluster data, on the surface, it looks like we are just dividing points into a few piles in a high-dimensional mathematical space; but in a deeper philosophical sense, we are actually asking:
 
