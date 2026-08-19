@@ -1331,6 +1331,25 @@
         "溫度參數",
         "温度参数"
       ]
+    },
+    {
+      "concept_id": "concept.filter_bubble",
+      "labels": {
+        "en": "Filter Bubble (Echo Chamber)",
+        "zh-Hant": "資訊繭房（Filter Bubble）",
+        "zh-Hans": "信息茧房（Filter Bubble）"
+      },
+      "contexts": {
+        "en": "A Filter Bubble is a state of intellectual isolation where recommendation algorithms continuously feed users content aligned with their historical preferences, trapping them in narrowed interest loops.",
+        "zh-Hant": "資訊繭房（Filter Bubble）是指推薦系統過度依賴使用者過去的偏好與歷史點擊，不斷推送高度同質化的內容，導致使用者思想視野逐漸狹窄、難以接觸多元觀點的現象。",
+        "zh-Hans": "信息茧房（Filter Bubble）是指推荐系统过度依赖使用者过去的偏好与历史点击，不断推送高度同质化的内容，导致使用者思想视野逐渐狭窄、难以接触多元观点的现象。"
+      },
+      "aliases": [
+        "Filter Bubble",
+        "filter bubble",
+        "資訊繭房",
+        "信息茧房"
+      ]
     }
   ]
 }
