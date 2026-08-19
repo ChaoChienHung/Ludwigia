@@ -14,7 +14,7 @@
   <meta name="garden:published_at" content="2026-08-02">
   <meta name="garden:last_modified_at" content="2026-08-16">
   <meta name="garden:cover" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png">
-  <meta name="garden:reading_time_minutes" content="30">
+  <meta name="garden:reading_time_minutes" content="31">
   <meta name="garden:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -409,7 +409,7 @@
 </li>
 </ol>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>架構選型：RQ-Kmeans vs. RQ-VAE 的技術路徑之爭</strong></p><p class="mb-2">值得一提的是，在架構選型上，業界並非沒有其他選擇。除了幾何導向的 RQ-Kmeans，另一個備受關注的重量級方案是基於深度生成模型的 <strong>RQ-VAE</strong>。</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>架構選型：RQ-Kmeans vs. RQ-VAE 的技術路徑之爭</strong></p><p class="mb-2">值得一提的是，在架構選型上，業界並非沒有其他選擇。除了幾何導向的 RQ-Kmeans，另一個備受關注的重量級方案是基於深度生成模型的 <a class="note-content-link" data-canonical-id="rq-vae-semantic-id-tokenizer-in-generative-recommendation" href="../rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html"><strong>RQ-VAE</strong><span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-architecture.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 RQ-VAE（Residual Quantized VAE）在生成式推薦與檢索中的核心機制，包含從 VQ-VAE 到 RQ-VAE 的階層式離散化演進、Straight-Through Estimator (STE) 梯度補正、Depth Dropout 語意分層約束，以及碼本崩塌 (Codebook Collapse) 的工程防禦與 TIGER 模型落地實踐。</span></span></span></a>。</p>
 
 <p class="mb-3">RQ-VAE 的最大賣點在於<strong>端到端訓練與語意對齊</strong>：編碼器、離散碼本與解碼器可以聯合進行梯度更新。純幾何聚類（如 RQ-Kmeans）只看歐式距離，但「空間距離近」並不代表「推薦意圖相近」。而 RQ-VAE 透過聯合訓練，能根據最終的推薦目標（如<span class="note-information" tabindex="0" data-information-concept="concept.ctr" data-information-lang="zh-tw">點擊率<span class="note-information-tooltip" aria-hidden="true"></span></span>、<span class="note-information" tabindex="0" data-information-concept="concept.cvr" data-information-lang="zh-tw">轉化率<span class="note-information-tooltip" aria-hidden="true"></span></span>）主動重塑特徵空間，確保離散碼本與下游任務的真實語意高度對齊，具備極高的效能天花板。</p>
 
@@ -453,7 +453,7 @@
 
 <p class="mb-3">RQ-Kmeans 完美地扮演了這個「翻譯官」的角色。它拋棄了單層碼本粗糙且容易詞表爆炸的缺陷，透過「逐層細化、遞減殘差」的幾何機制，不僅以極小的儲存成本 ($M \times K$) 撬動了巨大的表達容量 ($K^M$)，更順勢為商品建構出了一套完美契合 Next-Token Prediction 特性的 Coarse-to-fine 階層語意。</p>
 
-<p class="mb-3">在生成式推薦百家爭鳴的當下，比起追求極致但難以馴服、動輒引發碼本坍塌的端到端神經網路（如 RQ-VAE），RQ-Kmeans 勝在極致的務實與穩健。它不要求企業推翻既有的特徵工程資產，而是以一種即插即用的優雅姿態，無縫接軌了傳統的連續特徵與前瞻的離散大模型語意。對於渴望擁抱生成式推薦卻又追求落地穩定性的工程團隊而言，RQ-Kmeans 無疑是目前最可靠的基石選擇。</p>
+<p class="mb-3">在生成式推薦百家爭鳴的當下，比起追求極致但難以馴服、動輒引發碼本坍塌的端到端神經網路（如 <a class="note-content-link" data-canonical-id="rq-vae-semantic-id-tokenizer-in-generative-recommendation" href="../rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html">RQ-VAE<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-architecture.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文深入解析 RQ-VAE（Residual Quantized VAE）在生成式推薦與檢索中的核心機制，包含從 VQ-VAE 到 RQ-VAE 的階層式離散化演進、Straight-Through Estimator (STE) 梯度補正、Depth Dropout 語意分層約束，以及碼本崩塌 (Codebook Collapse) 的工程防禦與 TIGER 模型落地實踐。</span></span></span></a>），RQ-Kmeans 勝在極致的務實與穩健。它不要求企業推翻既有的特徵工程資產，而是以一種即插即用的優雅姿態，無縫接軌了傳統的連續特徵與前瞻的離散大模型語意。對於渴望擁抱生成式推薦卻又追求落地穩定性的工程團隊而言，RQ-Kmeans 無疑是目前最可靠的基石選擇。</p>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">

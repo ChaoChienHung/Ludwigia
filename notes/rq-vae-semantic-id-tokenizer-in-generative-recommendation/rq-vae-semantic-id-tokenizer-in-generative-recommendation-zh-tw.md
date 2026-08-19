@@ -3,6 +3,7 @@ Title: 端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID To
 Summary: 本文深入解析 RQ-VAE（Residual Quantized VAE）在生成式推薦與檢索中的核心機制，包含從 VQ-VAE 到 RQ-VAE 的階層式離散化演進、Straight-Through Estimator (STE) 梯度補正、Depth Dropout 語意分層約束，以及碼本崩塌 (Codebook Collapse) 的工程防禦與 TIGER 模型落地實踐。
 Slug: rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw
 Output: notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html
+CanonicalId: rq-vae-semantic-id-tokenizer-in-generative-recommendation
 Cover: ./rq-vae-architecture.png
 Style: default
 EstimatedReadingTime: true
