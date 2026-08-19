@@ -148,22 +148,20 @@ $$ \text{Item } x \longrightarrow [c_1, c_2, \dots, c_M] $$
 2. **協同訊號遷移與零樣本 (Zero-Shot) 冷啟動：**
     新上架商品由於缺乏歷史互動數據，在傳統架構下形同孤島。但在 Semantic ID 體系中，新商品只要走一遍量化流程，就可以被分發到對應的共同前綴 $[c_1, c_2]$ 之下。大模型在過往訓練中早已掌握該前綴代表的用戶偏好，因此能直接將累積在該前綴上的大量協同訊號零成本遷移，即使商品毫無點擊紀錄，模型依然能精準推薦。
 
-<callout>
-title: 為什麼 Semantic ID 能解決 Zero-Shot 冷啟動？核心機制拆解
-icon: lightbulb
-content:
-零樣本（Zero-Shot）<information concept="concept.cold_start">冷啟動</information>能被緩解的底層關鍵，在於**商品表徵之間是否存在可共享的「語意共通性」**。
+    <callout>
+    title: 解鎖 Zero-Shot 冷啟動的關鍵：語意表徵的存在與否
+    icon: lightbulb
+    content:
+    零樣本（Zero-Shot）<information concept="concept.cold_start">冷啟動</information>能否被有效緩解，底層本質取決於**商品表徵是否帶有「可傳遞的語意（Semantics）」**：
 
-只要商品是以語意 <information concept="concept.embedding">Embedding</information> 進行表徵，相似商品之間就會存在結構上的共通點，讓模型理解這些商品共享了類似的屬性與性質。而 Semantic ID（SID）正是將這種連續語意空間離散化的產物，因此天然繼承了這項優勢：
+    - **無語意表徵（如傳統 Atomic ID）：** 新商品在系統中只是一組無意義的隨機編號，與已知商品之間不存在任何可說明的語意關聯。模型無法從 ID 本身獲得任何資訊，被迫只能被動等待累積實時點擊數據。
+    - **有語意表徵（語意 Embedding / Semantic ID）：** 只要商品表徵攜帶了真實語意（如內涵文字、圖像特徵或語意碼本），相似商品之間就會存在結構上的共通點。模型即便面對完全沒看過的新商品，也能憑藉其語意特徵直接連結到已知商品的知識群。
 
-- **傳統無意義流水號（Atomic ID）：** 每個新商品都是獨立的新 ID，模型無法從編碼本身推導出任何與已知商品的關聯，必須重新累積海量點擊資料。
-- **語意表徵與 Semantic ID：** 新商品即便毫無點擊紀錄，只要透過內容/多模態特徵映射至語意空間，就能量化出包含共同前綴的 Token 序列（如 $[c_1, c_2, c_{\text{new}}]$）。
-
-大模型透過前綴 Token 掌握了這群商品共享的基礎屬性，進而能將累積在相同前綴上的用戶偏好與協同訊號，零成本遷移至新商品上，從源頭打破冷啟動困境。
-</callout>
+    簡言之，冷啟動的破局並非單純源自特定的模型架構，而是源於**「語意的存在」賦予了模型跨商品遷移與泛化的基礎能力**。Semantic ID 正是因為奠基於連續語意空間，才得以自然繼承這一關鍵特性。
+    </callout>
 
 3. **Trie 樹前綴剪枝與極致檢索效率：**
-    生成式推薦依賴<information concept="concept.autoregressive">自迴歸</information>解碼生成候選商品。由粗到細的前綴讓搜尋空間形成一棵標準的前綴<information concept="concept.trie">字典樹</information>（Trie Tree）。模型在解碼第 1 個 Token 時，就能立刻剔除 90% 以上不相干的大類別，逐層收斂範圍，徹底解決百萬級候選庫生成時的計算爆炸問題。
+    生成式推薦依賴<information concept="concept.autoregressive">自迴歸</information>解碼生成候選商品。由粗到細的前綴讓搜尋空間形成一棵標準的前綴<information concept="concept.trie">字典樹</information>。模型在解碼第 1 個 Token 時，就能立刻剔除 90% 以上不相干的大類別，逐層收斂範圍，徹底解決百萬級候選庫生成時的計算爆炸問題。
 
 4. **前綴包容性與平滑退化 (Graceful Degradation)：**
     模型在預測末端微觀細節時往往存在不確定性。在 Atomic ID 下，預測錯一個數字，結果可能從「筆記型電腦」變成「洋裝」。但 Semantic ID 具備高度容錯率：即便最後一層 $c_3$ 產生偏差（例如將 512GB 預測為 1TB），只要前綴 $[c_1, c_2]$ 正確，推薦結果依然維持在高度相關的產品線內，確保線上系統體驗不會產生災難性偏離。
