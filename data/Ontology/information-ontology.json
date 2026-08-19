@@ -1350,6 +1350,263 @@
         "資訊繭房",
         "信息茧房"
       ]
+    },
+    {
+      "concept_id": "concept.ai_planning",
+      "labels": {
+        "en": "AI Planning",
+        "zh-Hant": "人工智慧規劃",
+        "zh-Hans": "人工智能规划"
+      },
+      "contexts": {
+        "en": "AI Planning is a branch of Artificial Intelligence centered on finding a sequence of actions that transfers an initial state to a goal state.",
+        "zh-Hant": "人工智慧規劃（AI Planning）是 AI 的核心分支之一，旨在自動尋找一串可行動作序列，以將系統從初始狀態引導至目標狀態。",
+        "zh-Hans": "人工智能规划（AI Planning）是 AI 的核心分支之一，旨在自动寻找一串可行动作序列，以将系统从初始状态引导至目标状态。"
+      },
+      "aliases": [
+        "ai planning",
+        "AI Planning"
+      ]
+    },
+    {
+      "concept_id": "concept.classical_planning",
+      "labels": {
+        "en": "Classical Planning",
+        "zh-Hant": "古典規劃",
+        "zh-Hans": "古典规划"
+      },
+      "contexts": {
+        "en": "Classical Planning assumes a discrete, deterministic, static, and fully observable environment where actions change state deterministically.",
+        "zh-Hant": "古典規劃（Classical Planning）建立在離散、確定性、靜態與完全可觀察環境假設之上，專注於從確定狀態推導目標路徑。",
+        "zh-Hans": "古典规划（Classical Planning）建立在离散、确定性、静态与完全可观察环境假设之上，专注于从确定状态推导目标路径。"
+      },
+      "aliases": [
+        "classical planning",
+        "Classical Planning"
+      ]
+    },
+    {
+      "concept_id": "concept.strips",
+      "labels": {
+        "en": "STRIPS",
+        "zh-Hant": "STRIPS 規劃表徵",
+        "zh-Hans": "STRIPS 规划表征"
+      },
+      "contexts": {
+        "en": "STRIPS (Stanford Research Institute Problem Solver) is an early formal planning language defining states by facts and actions by preconditions, ADD, and DEL lists.",
+        "zh-Hant": "STRIPS（Stanford Research Institute Problem Solver）是早期古典規劃的經典符號表徵，透過事實集合定義狀態，並以 Precondition、ADD List 與 DEL List 表徵動作。",
+        "zh-Hans": "STRIPS（Stanford Research Institute Problem Solver）是早期古典规划的经典符号表征，通过事实集合定义状态，并以 Precondition、ADD List 与 DEL List 表征动作。"
+      },
+      "aliases": [
+        "strips",
+        "STRIPS"
+      ]
+    },
+    {
+      "concept_id": "concept.pddl",
+      "labels": {
+        "en": "PDDL",
+        "zh-Hant": "規劃領域定義語言（PDDL）",
+        "zh-Hans": "规划领域定义语言（PDDL）"
+      },
+      "contexts": {
+        "en": "PDDL (Planning Domain Definition Language) is the standard standardized language used for automated planning benchmark problems and planners.",
+        "zh-Hant": "PDDL（Planning Domain Definition Language）是自動規劃領域的標準語言，將問題拆分為通用 Domain 檔與具體 Problem 檔。",
+        "zh-Hans": "PDDL（Planning Domain Definition Language）是自动规划领域的标准语言，将问题拆分为通用 Domain 档与具体 Problem 档。"
+      },
+      "aliases": [
+        "pddl",
+        "PDDL"
+      ]
+    },
+    {
+      "concept_id": "concept.satplan",
+      "labels": {
+        "en": "SATPlan",
+        "zh-Hant": "SATPlan 邏輯規劃",
+        "zh-Hans": "SATPlan 逻辑规划"
+      },
+      "contexts": {
+        "en": "SATPlan reduces classical planning problems to Propositional Satisfiability (SAT) formulas and uses modern SAT solvers to find valid plans.",
+        "zh-Hant": "SATPlan 是一種將古典規劃問題轉譯為命題邏輯 CNF 公式，並利用強大 SAT 求解器搜尋可行路徑的演算法。",
+        "zh-Hans": "SATPlan 是一种将古典规划问题转译为命题逻辑 CNF 公式，并利用强大 SAT 求解器搜索可行路径的算法。"
+      },
+      "aliases": [
+        "satplan",
+        "SATPlan"
+      ]
+    },
+    {
+      "concept_id": "concept.automated_reasoning",
+      "labels": {
+        "en": "Automated Reasoning",
+        "zh-Hant": "自動推理",
+        "zh-Hans": "自动推理"
+      },
+      "contexts": {
+        "en": "Automated Reasoning uses computer programs to draw logical conclusions from structured knowledge, rules, or axioms.",
+        "zh-Hant": "自動推理（Automated Reasoning）是利用電腦程式從結構化知識、規則或公理中進行嚴密邏輯推論與證明的技術。",
+        "zh-Hans": "自动推理（Automated Reasoning）是利用计算机程序从结构化知识、规则或公理中进行严密逻辑推论与证明的技术。"
+      },
+      "aliases": [
+        "automated reasoning",
+        "Automated Reasoning"
+      ]
+    },
+    {
+      "concept_id": "concept.ai_agents",
+      "labels": {
+        "en": "AI Agents",
+        "zh-Hant": "AI 代理人",
+        "zh-Hans": "AI 代理人"
+      },
+      "contexts": {
+        "en": "AI Agents are autonomous software systems capable of perceiving their environment, making decisions, and executing actions to achieve specific goals.",
+        "zh-Hant": "AI 代理人（AI Agents）是具備感知環境、自主決策、工具呼叫與目標規劃執行的智慧軟體實體。",
+        "zh-Hans": "AI 代理人（AI Agents）是具备感知环境、自主决策、工具调用与目标规划执行的智慧软件实体。"
+      },
+      "aliases": [
+        "ai agents",
+        "AI Agents",
+        "ai agent",
+        "AI Agent"
+      ]
+    },
+    {
+      "concept_id": "concept.llm_planning",
+      "labels": {
+        "en": "LLM-Assisted Planning",
+        "zh-Hant": "大模型輔助規劃",
+        "zh-Hans": "大模型辅助规划"
+      },
+      "contexts": {
+        "en": "LLM-Assisted Planning leverages Large Language Models for commonsense reasoning, task decomposition, PDDL model synthesis, or heuristic generation.",
+        "zh-Hant": "大模型輔助規劃（LLM-Assisted Planning）結合大語言模型的常識理解與符號規劃器的邏輯嚴密性，實現模型生成、任務分解與啟發式合成。",
+        "zh-Hans": "大模型辅助规划（LLM-Assisted Planning）结合大语言模型的常识理解与符号规划器的逻辑严密性，实现模型生成、任务分解与启发式合成。"
+      },
+      "aliases": [
+        "llm planning",
+        "LLM Planning"
+      ]
+    },
+    {
+      "concept_id": "concept.responsible_ai",
+      "labels": {
+        "en": "Responsible AI",
+        "zh-Hant": "負責任 AI",
+        "zh-Hans": "负责任 AI"
+      },
+      "contexts": {
+        "en": "Responsible AI is a framework for developing AI systems with safety, privacy, fairness, transparency, accountability, and regulatory compliance.",
+        "zh-Hant": "負責任 AI（Responsible AI）是確保 AI 系統在開發與部署過程中兼顧安全性、隱私保護、公平性、透明度與合規治理的實踐框架。",
+        "zh-Hans": "负责任 AI（Responsible AI）是确保 AI 系统在开发与部署过程中兼顾安全性、隐私保护、公平性、透明度与合规治理的实践框架。"
+      },
+      "aliases": [
+        "responsible ai",
+        "Responsible AI"
+      ]
+    },
+    {
+      "concept_id": "concept.automated_planning",
+      "labels": {
+        "en": "Automated Planning",
+        "zh-Hant": "自動規劃",
+        "zh-Hans": "自动规划"
+      },
+      "contexts": {
+        "en": "Automated Planning involves algorithmic determination of action sequences to reach desired goal states from initial states.",
+        "zh-Hant": "自動規劃（Automated Planning）是利用演算法自動生成動作序列，以引導系統從初始狀態達成特定目標狀態的技術。",
+        "zh-Hans": "自动规划（Automated Planning）是利用算法自动生成动作序列，以引导系统从初始状态达成特定目标状态的技术。"
+      },
+      "aliases": [
+        "automated planning",
+        "Automated Planning"
+      ]
+    },
+    {
+      "concept_id": "concept.mcts",
+      "labels": {
+        "en": "Monte Carlo Tree Search (MCTS)",
+        "zh-Hant": "蒙地卡羅樹搜尋（MCTS）",
+        "zh-Hans": "蒙特卡洛树搜索（MCTS）"
+      },
+      "contexts": {
+        "en": "Monte Carlo Tree Search (MCTS) is a heuristic search algorithm for decision processes that builds a search tree using random or policy-guided simulations.",
+        "zh-Hant": "蒙地卡羅樹搜尋（MCTS）是一種結合隨機模擬或策略網路引導的啟發式搜尋演算法，廣泛應用於高維決策與棋牌 AI。",
+        "zh-Hans": "蒙特卡洛树搜索（MCTS）是一种结合随机模拟或策略网络引导的启发式搜索算法，广泛应用于高维决策与棋牌 AI。"
+      },
+      "aliases": [
+        "mcts",
+        "MCTS"
+      ]
+    },
+    {
+      "concept_id": "concept.htn",
+      "labels": {
+        "en": "Hierarchical Task Network (HTN)",
+        "zh-Hant": "分層任務網路（HTN）",
+        "zh-Hans": "分层任务网络（HTN）"
+      },
+      "contexts": {
+        "en": "Hierarchical Task Networks (HTN) formulate planning problems by recursively decomposing high-level actions (HLAs) into finer subtasks.",
+        "zh-Hant": "分層任務網路（HTN）是一種利用領域過程性知識，將高階動作（HLA）遞迴分解為微觀動作序列的分層規劃方法。",
+        "zh-Hans": "分层任务网络（HTN）是一种利用领域过程性知识，将高阶动作（HLA）递归分解为微观动作序列的分层规划方法。"
+      },
+      "aliases": [
+        "htn",
+        "HTN"
+      ]
+    },
+    {
+      "concept_id": "concept.heuristics",
+      "labels": {
+        "en": "Heuristics",
+        "zh-Hant": "啟發式函數",
+        "zh-Hans": "启发式函数"
+      },
+      "contexts": {
+        "en": "Heuristics provide estimated costs from a current state to a goal state, guiding search algorithms to prune and prioritize promising branches.",
+        "zh-Hant": "啟發式函數（Heuristics）用於估算從當前狀態抵達目標的剩餘代價，幫助搜尋演算法剪枝並優先探索高潛力分支。",
+        "zh-Hans": "启发式函数（Heuristics）用于估算从当前状态抵达目标的剩余代价，帮助搜索算法剪枝并优先探索高潜力分支。"
+      },
+      "aliases": [
+        "heuristics",
+        "Heuristics"
+      ]
+    },
+    {
+      "concept_id": "concept.fast_forward",
+      "labels": {
+        "en": "Fast Forward Heuristic (h_FF)",
+        "zh-Hant": "Fast Forward 啟發式（h_FF）",
+        "zh-Hans": "Fast Forward 启发式（h_FF）"
+      },
+      "contexts": {
+        "en": "Fast Forward Heuristic (h_FF) estimates state costs by greedily extracting a relaxed plan length from a relaxed planning graph.",
+        "zh-Hant": "Fast Forward 啟發式（h_FF）透過忽略刪除效果建構鬆弛規劃圖，並貪婪提取鬆弛計畫中的動作總數作為代價估計。",
+        "zh-Hans": "Fast Forward 启发式（h_FF）通过忽略删除效果建构松弛规划图，并贪婪提取松弛计划中的动作总数作为代价估计。"
+      },
+      "aliases": [
+        "fast forward",
+        "Fast Forward"
+      ]
+    },
+    {
+      "concept_id": "concept.state_abstraction",
+      "labels": {
+        "en": "State Abstraction",
+        "zh-Hant": "狀態抽象",
+        "zh-Hans": "状态抽象"
+      },
+      "contexts": {
+        "en": "State Abstraction groups concrete states into simplified abstract states, enabling planning in a smaller search space before refinement.",
+        "zh-Hant": "狀態抽象（State Abstraction）將具體狀態分組為簡化的抽象狀態，藉由在縮小的抽象空間中快速搜尋後再進行微觀精煉。",
+        "zh-Hans": "状态抽象（State Abstraction）将具体状态分组为简化的抽象状态，藉由在缩小的抽象空间中快速搜索后再进行微观精炼。"
+      },
+      "aliases": [
+        "state abstraction",
+        "State Abstraction"
+      ]
     }
   ]
 }

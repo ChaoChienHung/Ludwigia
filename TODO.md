@@ -109,10 +109,76 @@
   - [x] Reading Mode：responsive 對齊一般模式的 typography rhythm，只保留必要的閱讀輔助差異
   - [ ] Section landing：Notes/Writing/Canvas 的 search bar + filter + feed（含小螢幕行為）
 
-- [ ] Refactor & Review: 審視與修正 `discovering-hidden-structures-what-clustering-really-does` 文章篇幅與範疇
-  - [ ] 問題：目前 `notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.md` 中，Centroid-based clustering 的篇幅與深度遠大於 Density-based 與 Hierarchical-based clustering，導致文章結構與比重顯著失衡
-  - [ ] 方向：評估兩條路徑：(1) 將 Centroid-based clustering 的深度內容單獨拆分成獨立文章（例如專屬 Centroid-based / K-Means 入門），主文章維持概覽與導覽角色；或 (2) 將 Density-based 與 Hierarchical-based clustering 的篇幅與直覺推導補齊至與 Centroid-based 相同的完整度
-  - [ ] 交付條件：完成結構檢視與拆分/補齊決策，更新對應文章與 `search-index.{json,js}`，並維持全站搜尋與離線可讀性不退化
+- [ ] Refactor & Deep-Dive: 重構與深化《Discovering Hidden Structures: What Clustering Really Does》的核心邏輯與動態思維
+  - [ ] 背景與問題：現有文章 `notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.md` 雖然提及了三類 Clustering 家族，但在「分群的根本動機」與「Representative Point 的哲學定義」上尚可精準深化；同時 Centroid-based 篇幅比重偏大。
+  - [ ] 重點重構方向與深度內容融入：
+    - **1. 開頭重新定義 Clustering 的根本動機 (Motivations of Clustering)**：
+      - 在文章開頭即釐清「求同 (Core Archetype)」與「求連貫/關聯 (Manifold Continuity)」的本質差異。
+      - 分群不是單純視覺上的「點跟點相近」，而是源於不同的歸類邏輯：是尋找全組共通的本質核心（如共通動機、特徵、來源），還是尋找局部連續傳播的特徵流動（Point-to-Point chaining）。
+    - **2. 閾值決定機制與完備性 (Thresholding & Partitioning Trade-offs)**：
+      - 探討「相似/共通到什麼程度才算同群？」的兩種實現方式：
+        - **絕對閾值 (Absolute Threshold, e.g. DBSCAN $\epsilon$)**：自訂硬性邊界，允許無法歸類的邊緣點退化為 Noise（不完備分群 Incomplete Partitioning）。
+        - **相對比較 (Relative Assignment, e.g. K-Means)**：不自訂絕對閾值，而是比較點相對於各 Centroid 的相對距離（選擇「最不壞」的群），確保所有點都被強行分群（完備分群 Complete Partitioning）。
+    - **3. 「Representative Point」的深層哲學與 GMM / EM 演算法連結**：
+      - 深入剖析代表點（Centroid）兩種截然不同的心智模型與時間序：
+        - **Inside-Out (起源/藍圖)**：*「先有點，再有群」*。代表點是生成整個 Cluster 的本質起源或核心藍圖（如 GMM 混合高斯模型的機率生成過程 $P(x \mid z=k)$、或 RQ-KMeans 的 Codebook 代表動漫/科幻等潛在風格概念），數據點是因為共享此核心並帶有些微變異（高斯噪聲）而圍繞在周圍。
+        - **Outside-In (統計平均/計算捷徑)**：*「先有群，再有中心」*。代表點純粹是群形成後，為了避免點對點兩兩計算而採用的數學平均值，是一種提高計算效率的手段（Efficiency Hack）。
+      - **GMM（生成式）與 K-Means（判別/距離）的隱形橋樑：EM 演算法**：
+        - K-Means 與 GMM 的本質連繫：K-Means 其實是 GMM 在各高斯分量的協方差矩陣相等且方差趨近於 0（Hard Assignment）時的幾何極限特例。
+        - 運作的大前提：**相信資料中存在一個 Inside-Out 的生成起源點（GMM 潛在變量 $z$），並假設 Outside-In 的數學平均值是該起源點的最大似然估計 (MLE)**。
+        - EM 雙向迭代邏輯：
+          1. **Expectation (E-step / Assignment)**：根據 Inside-Out 假說，計算每個點屬於各起源點的責任度/後驗機率（或 K-Means 近鄰硬分配）。
+          2. **Maximization (M-step / Update)**：根據 Outside-In 統計平均值，重新估計各起源點的參數（均值 $\mu$ 與協方差 $\Sigma$）。
+        - 混淆的風險：若 Inside-Out 生成假說不成立（如非高斯、多模態或非凸幾何），Outside-In 會算出一個現實中根本不存在的「虛幻平均用戶 (Phantom Average User)」。
+      - **符號規則與物理現象的解耦 (Formal Rules vs Real-World Phenomena)**：
+        - EM 演算法與 K-Means 本質上是一套**純粹的數學優化規則與符號運算**（Minimal Variance / Objective Optimization），公式本身並沒有天然附帶物理或現實世界的哲學語意。
+        - 當現實世界的現象（如潛在顧客動機、生成藍圖）被抽絲剝繭並進行符號化之後，其極致萃取的結果**「恰好對齊」**了 EM / K-Means 的公式。並非「公式本身自帶這些物理意義去詮釋現實」，而是「現實現象萃取至符號極致後，剛好呈現出該公式的形態」。
+        - **數學收斂性 $\neq$ 語意/物理有效性 (Convergence vs Semantic Validity)**：公式在數學優化理論上保證一定會收斂並輸出一個「局部最優 (Local Optimum)」的 Centroid 結果。然而，**「數學上有解」不代表「現實中有意義」**；即使資料是純粹的均勻隨機雜訊，演算法依然會強行劃分空間並輸出 Centroid，展現了「數學符號規則的自我完備運算」與「現實現象的可解釋性」之間的本質解耦。
+        - **站內連結 (Content Link)**：對接專文 <content-link canonical="first-principles-symbols-and-rules">《第一性原理的終極型態：將現實抽絲剝繭成帶有數學屬性的符號與規則》</content-link>，將 Clustering 作為「將現實抽絲剝繭成帶有數學屬性的符號與規則」的核心經典範例。
+    - **4. Density-based (DBSCAN) 的流形動機與幾何意義**：
+      - 解釋為什麼 Density-based 不追求 single representative center，而是追求「局部鄰域連貫性 (Continuity / Connectivity)」：A 近 B，B 近 C，C 近 D $\implies$ A-B-C-D 組成同群。
+      - 探討長條形、不規則形狀（Manifold）在實際應用中的獨特意義（如流形空間、地理河流/道路網絡、連續行為軌跡）。
+    - **5. Hierarchical Clustering 的多尺度樹狀層次**：
+      - 解釋 Linkage 規則如何改變分群哲學（Single Linkage $\sim$ 類似 Density 連貫；Complete Linkage $\sim$ 緊密球形；Average/Ward Linkage $\sim$ Centroid 方差平衡）。
+  - [ ] 篇幅調整與結構拆分：
+    - 評估是否將 K-Means 的深層推導與 EM 雙向橋樑獨立成《K-Means: Clustering Around Centers》，而本總覽篇聚焦於三大分群家族的「動機、幾何假設與 Representative Point 哲學對比」。
+  - [ ] 交付條件：完成文章邏輯重構與修訂，更新對應 Markdown 與 `search-index.{json,js}`，確保離線與靜態站離線可讀性不退化。
+
+- [ ] Refactor & Scope Alignment: 重構《從級聯漏斗到自迴歸生成：推薦系統的範式重塑》的寫作焦點
+  - [ ] 背景與問題：現有 `notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.md` 混雜了「系統級架構演進（分階段級聯 -> 端到端大一統）」與「模型級範式轉移（判別式打分 -> 自迴歸生成）」，導致層級與焦點出現重疊。
+  - [ ] 核心定位重塑：將本篇純粹收斂在**「系統架構層 (System Pipeline Architecture)」**：
+    - 主線聚焦：說明從分階段級聯漏斗（召回 -> 粗排 -> 精排 -> 重排）走向端到端大一統（如 OneRec）的根本原因，在於全鏈路共享同一套 Transformer Backbone。
+    - 局部 vs 全局放大效應：點出「即使傳統級聯中的單一模組（如精排）使用了 Transformer，整體系統仍會被跨模組 RPC/IO、特徵拼接與異構非 GEMM 階段所瓶頸」；只有當碎片化模組徹底收斂為單一 Backbone 時，原本在模型層的優勢（Scaling Law、GEMM 硬體親和性、LLM 生態繼承如 FlashAttention / vLLM / Megatron / RLHF / DPO）其影響力才能**從局部擴大到全系統**。
+  - [ ] 逐段轉移與精簡規劃：
+    - L67-L73（痛點三與痛點四）：保留系統級描述（異構模組維護成本高、跨階段傳輸消耗算力、Parameter Server 特化輪子導致系統級離群），精簡單點模型 Memory-bound 計算細節，導流至新模型篇。
+    - L80-L81（判別式 vs 生成式定義）：保留作為「大一統模型如何簡化目標歸因」的引言，詳細演算法數學公式導流至新模型篇。
+    - L93-L115（硬體親和性、Scaling Law、LLM 生態、解碼採樣 Callout）：重寫為「全系統大一統如何讓這些優勢產生全局倍率放大效果」，將具體的解碼採樣（Temperature / Top-k / Top-p）與細部優化導向新模型篇。
+  - [ ] 交付條件：完成文章重構修訂與站內導流，更新 `search-index.{json,js}` 並維持全站離線可讀性不退化。
+
+- [ ] New Article Planning: 規劃與撰寫《從判別式打分到自迴歸生成：推薦模型的範式轉移》
+  - [ ] 背景與目標：新增專注於**「模型演算法建模層 (Model Formulation & Algorithmic Paradigm)」**的深度筆記，與系統級大一統文章（Overview）及生成式檢索文章（Stage-Deep Dive）建立明確的三層體系分工。
+  - [ ] 完整大綱與論點規劃：
+    - 1. 導言：推薦模型的建模瓶頸與解題思維重構
+    - 2. 數學與任務定義：
+      - 判別式單點打分 $P(\text{action} \mid u, i)$（是非題/打分題）：被動評估候選集，關注局部特徵匹配。
+      - 自迴歸序列生成 $P(\text{items} \mid u, c)$（開放式申論題）：主動建模聯合機率分佈，捕捉全局興趣演變與商品空間關聯。
+    - 3. 物品表示（Item Tokenization）：
+      - 判別式：原子 ID (Atomic ID) 散列與高維稀疏 Embedding Table，無法跨 Item 共享底層離散語意，記憶體隨商品量線性膨脹。
+      - 生成式：Semantic ID / RQ-VAE 殘差量化編碼，實現層級語意共享與 Model-as-Index。
+    - 4. 硬體親和性與算力分配：
+      - 判別式：記憶體頻寬受限 (Memory-bound) 的異構小模型、規則過濾與散亂 Embedding 查找，無法跑滿 GPU。
+      - 生成式：算力密集 (Compute-bound) 的大規模 GEMM 矩陣乘法，真正釋放 Transformer 的容量與 Scaling Law。
+    - 5. 生態繼承與模型對齊：
+      - 演算法層：跳脫短視的單點 CTR/CVR 打分，引入 DPO / RLHF 對齊機制優化用戶長期滿意度。
+      - 工程層：全面無縫繼承 LLM 工業級基建（FlashAttention, KV Cache, vLLM, Megatron）。
+    - 6. 探索機制演進：
+      - 從傳統級聯的事後規則強插與啟發式外掛（Post-hoc Rules），轉向生成式解碼過程中的原生採樣控制（Temperature, Top-$k$, Top-$p$）。
+    - 7. 總結與導覽：
+      - 對接系統級《從級聯漏斗到自迴歸生成》與階段級《Recommender Systems with Generative Retrieval》。
+  - [ ] 素材承接：完整接納並深化從 `from-cascade-...` 移出/延伸的 L67-L73、L80-L81、L93-L115 細節。
+  - [ ] 交付條件：在 `notes/from-discriminative-to-generative-recommendation-models/` 建立草稿與 source `.md`，完成生成與 `search-index.{json,js}` 更新。
+
+
 
 ### P1
 

@@ -271,8 +271,22 @@
 - [ ] 若改到作者寫作語法 / 系統工作流 / guardrails，相關文件已同步更新：
   - [ ] `AGENTS.md`
   - [ ] `docs/specs/system-spec.md`
+  - [ ] `docs/specs/citation-spec.md`（若本次改動涉及參考文獻結構、引用格式或驗證標準）
   - [ ] `docs/specs/timeline-design-spec.md`（若本次改動涉及 timeline data / projection / scale contract）
   - [ ] `docs/design/design.md`
   - [ ] `docs/author/dev-notes.md`
   - [ ] `docs/rules/checklist.md`
   - [ ] `README.md`
+
+## References & Citations（參考文獻與真實性守門）
+
+- [ ] 參考文獻結構分層
+  - [ ] 標題為 `## 參考資料（References）`（英文頁面為 `## References`）
+  - [ ] 劃分 `### 學術論文（Academic Literature）` 與 `### 技術文章（Technical Articles）`
+
+- [ ] 學術論文引用真實性與格式
+  - [ ] 論文採 APA / IEEE 格式（作者、年份、題目、發表會議/期刊、卷號頁碼）
+  - [ ] 論文連結點擊連至 Abstract 頁面（`arxiv.org/abs/...` 或 DOI），禁止直接下載 `.pdf`
+
+- [ ] 原始語言保留原則
+  - [ ] 外部參考文章標題（如知乎文章）嚴格保留原網址之原始語言（簡體/繁體/英文），禁止手動覆蓋或譯成繁體中文

@@ -2,7 +2,7 @@
 
 本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
 
-本文件只放「必須永遠成立」的規則；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；parser / metadata / translation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
+本文件只放「必須永遠成立」的規則；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；parser / metadata / translation / citation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`、`docs/specs/citation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
 
 ## 不退化原則（Non-regression）
 
@@ -201,6 +201,7 @@
 - `docs/specs/inline-enhancement-spec.md`：`information` / `content-link` 的 shared inline 視覺、互動與 downgrade contract
 - `docs/specs/content-metadata-spec.md`：`<meta>` 欄位、head metadata、visibility/date/language/ranking contract
 - `docs/specs/translation-spec.md`：source-driven translation workflow contract
+- `docs/specs/citation-spec.md`：參考文獻（References）結構、APA/IEEE 引用格式、真實驗核與原語言留存 spec
 - `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡
 - `docs/rules/checklist.md` / `docs/rules/guardrails.md`：交付收尾與守門清單

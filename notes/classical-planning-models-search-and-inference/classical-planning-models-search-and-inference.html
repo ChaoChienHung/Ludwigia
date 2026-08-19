@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>經典規劃與狀態空間搜尋：從 STRIPS、PDDL 到 SATPlan — Ludwig</title>
+  <meta name="garden:tags" content="人工智慧規劃, 古典規劃, STRIPS, PDDL, SATPlan, 自動推理">
+  <meta name="garden:summary" content="本文系統性梳理古典 AI 規劃（Classical Planning）的核心理論框架與運算機制。從 STRIPS 與 PDDL 的因果狀態表徵（Factored Representation），到狀態空間的正向前推進（Progression）與逆向迴歸（Regression）搜尋演算法，再到利用命題邏輯與 SATPlan 將規劃問題化歸為 Boolean Satisfiability (SAT) 的邏輯推論機制。同時深入剖析 Frame Problem 的解決方案（如 Successor-State Axioms）以及 PlanSAT / Bounded PlanSAT 的複雜度界線。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.ai_planning,concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning">
+  <meta name="garden:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;}}">
+  <meta name="garden:canonical_id" content="classical-planning-models-search-and-inference">
+  <meta name="garden:published_at" content="2026-08-19">
+  <meta name="garden:last_modified_at" content="2026-08-19">
+  <meta name="garden:reading_time_minutes" content="19">
+  <meta name="garden:source" content="notes/classical-planning-models-search-and-inference/classical-planning-models-search-and-inference.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">經典規劃與狀態空間搜尋：從 STRIPS、PDDL 到 SATPlan</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 古典規劃的問題範疇與四大基礎假設</a>
+<a class="note-toc-link level-1" href="#2-strips-pddl">2. 規劃問題表徵：從 STRIPS 到 PDDL</a>
+<a class="note-toc-link level-2" href="#2-1">2.1 因果狀態表徵與資料庫語意</a>
+<a class="note-toc-link level-2" href="#2-2-action-schemas-grounded-actions">2.2 動作模式（Action Schemas）與具體動作（Grounded Actions）</a>
+<a class="note-toc-link level-2" href="#2-3-the-frame-problem">2.3 框架問題（The Frame Problem）</a>
+<a class="note-toc-link level-1" href="#3-vs">3. 狀態空間搜尋演算法：正向推進 vs 逆向迴歸</a>
+<a class="note-toc-link level-2" href="#3-1-progression-search">3.1 正向搜尋（Progression Search）</a>
+<a class="note-toc-link level-2" href="#3-2-regression-search">3.2 逆向搜尋（Regression Search）</a>
+<a class="note-toc-link level-1" href="#4-satplan-boolean-satisfiability">4. 規劃即邏輯推論：SATPlan 與 Boolean Satisfiability</a>
+<a class="note-toc-link level-2" href="#4-1-satplan">4.1 SATPlan 基本運作流程</a>
+<a class="note-toc-link level-2" href="#4-2-successor-state-axioms">4.2 邏輯公理編碼與 Successor-State Axioms</a>
+<a class="note-toc-link level-1" href="#5">5. 規劃演算法特性與計算複雜度分析</a>
+<a class="note-toc-link level-2" href="#5-1">5.1 演算法三大屬性</a>
+<a class="note-toc-link level-2" href="#5-2">5.2 計算複雜度界線</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+<a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-19" data-published-at="2026-08-19"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-19</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在人工智能（AI）與自主 Agent 的發展歷程中，<strong>順序決策（Sequential Decision Making）</strong>與<strong>自動規劃（Automated Planning）</strong>始終處於核心地位。無論是讓機器人在未知環境中搬運包裹、調度航天器的發射任務，還是在複雜遊戲中控制非玩家角色（NPC），Agent 都必須具備「給定當前狀態與目標，自動推理出一系列可執行動作」的能力。</p>
+
+<p class="mb-3">本篇文章將深入探討<strong>古典規劃（Classical Planning）</strong>的完整理論基石，包含符號表徵語言 <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span> 與 <span class="note-information" tabindex="0" aria-label="Planning Domain Definition Language">PDDL<span class="note-information-tooltip" aria-hidden="true">Planning Domain Definition Language</span></span>、狀態空間的正向推進（Progression）與逆向迴歸（Regression）搜尋演算法，以及將規劃化歸為命題邏輯求解的 <strong>SATPlan</strong> 機制，並分析其計算複雜度界線。</p>
+
+<hr>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 古典規劃的問題範疇與四大基礎假設</h3>
+
+<p class="mb-3">在自動規劃的理論模型中，最基礎且最被充分研究的範式稱為<strong>古典規劃（Classical Planning）</strong>。古典規劃對 Agent 所處的環境做出了四個極為強烈的簡化假設：</p>
+
+<ol class="mb-3">
+<li><strong>離散性（Discrete）</strong>：時間、狀態與動作皆為離散單位，不考慮連續的時間流逝或連續的物理控制量。</li>
+<li><strong>確定性（Deterministic）</strong>：在特定狀態 $s$ 下執行動作 $a$，其產生的新狀態 $s'$ 是百分之百確定的，不存在機率轉移或不確定 outcomes。</li>
+<li><strong>靜態性（Static）</strong>：環境的變更僅能由 Agent 自身執行的動作引發。當 Agent 正在思考或未採取動作時，環境狀態保持絕對靜止。</li>
+<li><strong>完全可觀察性（Fully Observable）</strong>：Agent 在任意時間點都能完整且精準地感知環境的所有細節，不存在隱藏狀態或噪聲干擾。</li>
+</ol>
+
+<div class="note-markdown-block"><pre><code>+-----------------------------------------------------------------+
+|                    Classical Planning Domain                    |
+|                                                                 |
+|   [ Fully Observable ]   [ Deterministic ]   [ Discrete State ] |
+|            ^                     ^                    ^         |
+|            |                     |                    |         |
+|      Agent Sensing -------&gt; Environment -------&gt; Action Execution|
+|                                  ^                              |
+|                                  | (Static: No outside events)  |
++-----------------------------------------------------------------+</code></pre></div>
+
+<p class="mb-3">雖然真實世界往往充斥著動態噪聲、連續變量與非確定性，但古典規劃之所以至今仍被廣泛應用與研究，原因在於：<strong>它是解決複雜現實規劃問題的底層基石</strong>。現代高級規劃器往往先在抽象的古典規劃模型中求解骨幹路徑，再透過分層分解或馬可夫決策過程（MDP）處理不確定性與連續控制。</p>
+
+<hr>
+</section>
+
+<section id="2-strips-pddl" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 規劃問題表徵：從 STRIPS 到 PDDL</h3>
+
+<p class="mb-3">要讓計算機對世界進行規劃，首要挑戰是「<strong>如何用精簡且具備因果推理能力的符號來表徵狀態與動作</strong>」。</p>
+
+<h4 id="2-1" class="mb-2">2.1 因果狀態表徵與資料庫語意</h4>
+
+<p class="mb-3">傳統搜尋演算法（如 $A^<em>$ 或 BFS）將狀態視為黑盒（Black-box Nodes），僅透過鄰接函數進行狀態轉移。這種方式無法利用狀態內部的結構資訊。古典規劃採用了</em><em>因果狀態表徵（Factored State Representation）</em><em>，將世界狀態表示為一組</em><em>基底原子變量（Ground Atomic Fluents）</em>*的集合。</p>
+
+<p class="mb-3">所謂 <strong>Fluent</strong>，是指隨時間變化而改變真偽值的命題或謂詞。例如在航空貨運問題中，$\text{At}(P_1, \text{SFO})$ 表示「飛機 $P_1$ 在舊金山機場」。</p>
+
+<p class="mb-3">在古典規劃中，狀態的語意遵循兩項核心原則：</p>
+
+<ul class="note-list">
+<li><strong>閉世界假設（Closed-World Assumption, CWA）</strong>：任何未在狀態集合中明確列出的 Fluent，一律被判定為假（False）。例如若當前狀態為 $\{\text{At}(P_1, \text{SFO})\text{, } \text{Plane}(P_1)\}$，則 $\text{At}(P_1, \text{SIN})$ 自動為假。</li>
+<li><strong>唯一名稱假設（Unique Names Assumption, UNA）</strong>：不同的常數符號必須代表不同的實體物件。例如 $P_1 \neq P_2$。</li>
+</ul>
+
+<h4 id="2-2-action-schemas-grounded-actions" class="mb-2">2.2 動作模式（Action Schemas）與具體動作（Grounded Actions）</h4>
+
+<p class="mb-3">動作是改變世界狀態的唯一手段。為了避免為每個物件組合手寫動作，古典規劃引入了帶有變量的<strong>動作模式（Action Schema）</strong>。</p>
+
+<p class="mb-3">一個動作模式 $a$ 由三部分組成：</p>
+
+<ol class="mb-3">
+<li><strong>動作名稱與參數（Action Name &amp; Parameters）</strong>：如 $\text{Fly}(p, \text{from}, \text{to})$。</li>
+<li><strong>前置條件（Preconditions）</strong>：動作可被執行前，狀態必須滿足的 Fluent 集合 $\text{Precond}(a)$。</li>
+<li><strong>效果（Effects）</strong>：執行該動作後狀態的變化。包含將 Fluent 設為真的 <strong>ADD List</strong>（正向效果 $\text{ADD}(a)$）與設為假的 <strong>DEL List</strong>（負向效果 $\text{DEL}(a)$）。</li>
+</ol>
+
+<p class="mb-3">例如，飛航動作模式在 PDDL 中可定義如下：</p>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">(:action Fly
+ :parameters (?p - plane ?from - airport ?to - airport)
+ :precondition (and (At ?p ?from) (Plane ?p) (Airport ?from) (Airport ?to))
+ :effect (and (not (At ?p ?from)) (At ?p ?to)))</code></pre></div>
+
+<p class="mb-3">當常數代入變量後（如 $p \to P_1, \text{from} \to \text{SFO}, \text{to} \to \text{SIN}$），即生成一個<strong>具體動作（Grounded Action）</strong>：</p>
+
+<ul class="note-list">
+<li>$\text{Precond}(\text{Fly}(P_1, \text{SFO}, \text{SIN})) = \{\text{At}(P_1, \text{SFO}), \text{Plane}(P_1), \text{Airport}(\text{SFO}), \text{Airport}(\text{SIN})\}$</li>
+<li>$\text{DEL}(\text{Fly}(P_1, \text{SFO}, \text{SIN})) = \{\text{At}(P_1, \text{SFO})\}$</li>
+<li>$\text{ADD}(\text{Fly}(P_1, \text{SFO}, \text{SIN})) = \{\text{At}(P_1, \text{SIN})\}$</li>
+</ul>
+
+<h4 id="2-3-the-frame-problem" class="mb-2">2.3 框架問題（The Frame Problem）</h4>
+
+<p class="mb-3">在古典邏輯推理中，一個歷史悠久的難題稱為<strong>框架問題（Frame Problem）</strong>：<em>如何精確指定在執行某一動作後，世界上有哪些事實「沒有發生改變」，而不需要在公理中冗長地列出所有未受影響的事項？</em></p>
+
+<p class="mb-3">在 PDDL 與 STRIPS 語意中，框架問題透過<strong>預設保持原則</strong>被隱式解決：<strong>未在 $\text{ADD}(a)$ 或 $\text{DEL}(a)$ 中提及的 Fluent，其真偽值在動作執行前後保持絕對不變</strong>。執行動作後的新狀態 $s'$ 計算公式為：</p>
+
+<p class="mb-3">$$s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$$</p>
+
+<hr>
+</section>
+
+<section id="3-vs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 狀態空間搜尋演算法：正向推進 vs 逆向迴歸</h3>
+
+<p class="mb-3">有了狀態與動作的數學表徵後，求解規劃問題便可轉化為在狀態空間（State Space）中尋找一條從初始狀態 $s_0$ 到滿足目標 $g$ 的路徑。</p>
+
+<div class="note-markdown-block"><pre><code>Forward (Progression) Search:
+Initial State s0 ----a1----&gt; s1 ----a2----&gt; s2 ... ----an----&gt; State satisfying Goal g
+
+Backward (Regression) Search:
+Initial Goal g &lt;----a_n---- Subgoal g1 &lt;----a_{n-1}---- Subgoal g2 ... &lt;----a1---- Initial State s0</code></pre></div>
+
+<h4 id="3-1-progression-search" class="mb-2">3.1 正向搜尋（Progression Search）</h4>
+
+<p class="mb-3">正向搜尋（Progression / Forward State-Space Search）從初始狀態 $s_0$ 出發，顯式模擬動作的執行：</p>
+
+<ol class="mb-3">
+<li><strong>可適用性檢查（Applicability）</strong>：當且僅當當前狀態 $s$ 蘊含動作 $a$ 的前置條件（即 $\text{Precond}(a) \subseteq s$）時，動作 $a$ 在狀態 $s$ 下可適用。</li>
+<li><strong>狀態更新（State Transition）</strong>：套用公式生成後繼狀態 $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$。</li>
+<li><strong>目標檢測（Goal Test）</strong>：若 $g \subseteq s'$，則尋找成功，返回動作序列。</li>
+</ol>
+
+<p class="mb-3"><strong>優點</strong>：永遠維護完整的具體狀態（Ground States），推理邏輯直觀。 <strong>缺點</strong>：分支因子（Branching Factor）通常極大。許多與目標無關的動作也會被盲目展開，導致搜尋空間爆炸。</p>
+
+<h4 id="3-2-regression-search" class="mb-2">3.2 逆向搜尋（Regression Search）</h4>
+
+<p class="mb-3">與正向搜尋相反，逆向搜尋（Regression / Backward Search）從目標描述 $g$ 開始，逆向推導「為了達成當前目標，上一階段必須滿足什麼樣的子目標（Subgoals）」。</p>
+
+<h5 class="mb-2">動作相關性（Relevant Action）</h5>
+
+<p class="mb-3">在逆向搜尋中，並非所有動作都適合逆向套用。一個動作 $a$ 被稱為對目標描述 $g$ <strong>相關（Relevant）</strong>，當且僅當：</p>
+
+<ol class="mb-3">
+<li>動作 $a$ 的效果至少實現了 $g$ 中的一個目標字面量（即 $\text{ADD}(a) \cap g \neq \emptyset$）。</li>
+<li>動作 $a$ 的效果<strong>不與 $g$ 中的任何目標字面量發生矛盾</strong>（即 $\text{DEL}(a) \cap g = \emptyset$）。</li>
+</ol>
+
+<h5 class="mb-2">迴歸方程（Regression Formula）</h5>
+
+<p class="mb-3">給定目標描述 $g$ 與相關動作 $a$，逆向推導出的前置子目標 $g'$（稱為 $g$ 關於 $a$ 的 Regressed State）計算公式如下：</p>
+
+<p class="mb-3">$$\text{POS}(g') = (\text{POS}(g) \setminus \text{ADD}(a)) \cup \text{POS}(\text{Precond}(a))$$</p>
+
+<p class="mb-3">$$\text{NEG}(g') = (\text{NEG}(g) \setminus \text{DEL}(a)) \cup \text{NEG}(\text{Precond}(a))$$</p>
+
+<p class="mb-3">其中 $\text{POS}(\cdot)$ 與 $\text{NEG}(\cdot)$ 分別代表正向與負向字面量集合。在逆向過程中，我們利用<strong>最通用統一子（Most General Unifier, MGU）</strong>對動作參數進行替換與綁定。</p>
+
+<p class="mb-3">&lt;callout title="基數比較：狀態（Ground State）與狀態描述（Description）" icon="info"&gt; 若環境中共有 $n$ 個 Ground Fluents：</p>
+
+<ul class="note-list">
+<li><strong>具體狀態（Ground States）</strong> 的數量為 $2^n$（每個 Fluent 非 True 即 False）。正向搜尋的節點即為具體狀態。</li>
+<li><strong>狀態描述（Descriptions / Subgoals）</strong> 的數量為 $3^n$（每個 Fluent 可為 Positive、Negative 或 Unmentioned/Don't Care）。逆向搜尋維護的是狀態描述，代表符合該描述的一組狀態集合。</li>
+</ul>
+
+<p class="mb-3">&lt;/callout&gt;</p>
+
+<hr>
+</section>
+
+<section id="4-satplan-boolean-satisfiability" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 規劃即邏輯推論：SATPlan 與 Boolean Satisfiability</h3>
+
+<p class="mb-3">除了將規劃視為圖搜尋外，另一個極具影響力的範式是將規劃問題完全轉譯為<strong>命題邏輯（Propositional Logic）</strong>公式，並利用高效的 SAT Solver（如 MiniSAT、Glucose）求解。這一方法稱為 <strong>SATPlan</strong>（Kautz &amp; Selman）。</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------+      Translate to CNF      +-------------------+
+|  Planning Domain  | -------------------------&gt; | Propositional CNF |
+|   &amp; Problem PDDL  |   (at time t = 0..T)       |      Formula      |
++-------------------+                            +-------------------+
+                                                           |
+                                                           v
++-------------------+   Extract Action Sequence   +-------------------+
+| Valid Plan Output | &lt;-------------------------- |    SAT Solver     |
++-------------------+      (if Satisfiable)       |  (Finds Model M)  |
++-------------------+</code></pre></div>
+
+<h4 id="4-1-satplan" class="mb-2">4.1 SATPlan 基本運作流程</h4>
+
+<p class="mb-3">SATPlan 將時間離散化為時間步 $t = 0, 1, \dots, T_{\max}$。每個 Fluent 與 Action 都附加上時間索引 $t$：</p>
+
+<ul class="note-list">
+<li>$P_t$：代表 Fluent $P$ 在時間步 $t$ 是否為真。</li>
+<li>$A_t$：代表 Action $A$ 是否在時間步 $t$ 被執行。</li>
+</ul>
+
+<p class="mb-3">SATPlan 的演算法輪廓如下：</p>
+
+<ol class="mb-3">
+<li>設定邊界步數 $T = 0$。</li>
+<li>將初始狀態 $s_0$、目標 $g$、動作轉移公理編碼為合取範式（CNF）公式 $\Phi_T$。</li>
+<li>呼叫 SAT Solver 檢驗 $\Phi_T$ 的可滿足性：</li>
+</ol>
+
+<ul class="note-list">
+<li>若可滿足（SAT），解出的模型（Truth Assignment）中所有為 True 的 $A_t$ 即構成有效計畫，演算法終止。</li>
+<li>若不可滿足（UNSAT），增加步數 $T \leftarrow T + 1$，重複步驟 2。</li>
+</ul>
+
+<h4 id="4-2-successor-state-axioms" class="mb-2">4.2 邏輯公理編碼與 Successor-State Axioms</h4>
+
+<p class="mb-3">在將規劃編碼為 SAT 時，必須精確表達狀態隨時間演變的邏輯關係：</p>
+
+<ol class="mb-3">
+<li><strong>初始與目標公理</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>初始狀態：若 $P \in s_0$，加入 $P_0$；若 $P \notin s_0$，加入 $\neg P_0$。</li>
+<li>目標狀態：加入 $G_T$。</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>動作前置條件公理</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>若動作 $A$ 的前置條件包含 $P$，則 $A_t \implies P_t$（即 $\neg A_t \lor P_t$）。</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>動作效果公理</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>若動作 $A$ 的 ADD 包含 $P$，DEL 包含 $Q$，則 $A_t \implies (P_{t+1} \land \neg Q_{t+1})$。</li>
+</ul>
+
+<h5 class="mb-2">繼承狀態公理（Successor-State Axioms）</h5>
+
+<p class="mb-3">若僅有上述公理，SAT Solver 可能會解出「未執行任何動作，但 Fluent 憑空改變」的不合理模型。若為每個未受影響的 Fluent 寫框條公理（Frame Axioms），對於 $m$ 個動作與 $n$ 個 Fluent，公理數量高達 $O(mn)$。</p>
+
+<p class="mb-3">SATPlan 採用了 <strong>Successor-State Axioms</strong>（Reiter 邏輯之延伸）：<em> Fluent $P$ 在 $t+1$ 為真，當且僅當（1）在 $t$ 時執行了能 ADD $P$ 的動作，或（2）在 $t$ 時 $P$ 已為真，且沒有執行任何會 DEL $P$ 的動作。</em></p>
+
+<p class="mb-3">$$P_{t+1} \iff \left( \bigvee_{A \in \text{Add}(P)} A_t \right) \lor \left( P_t \land \neg \bigvee_{B \in \text{Del}(P)} B_t \right)$$</p>
+
+<p class="mb-3">透過此編碼，公理總數大幅降至 $O(n)$，完美解決了邏輯編碼中的框架問題。此外，為了避免同一時間步執行互斥動作，還需加入<strong>動作互斥公理（Action Exclusion Axioms）</strong>：若動作 $A$ 與 $B$ 互相干擾，加入 $\neg A_t \lor \neg B_t$。</p>
+
+<hr>
+</section>
+
+<section id="5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 規劃演算法特性與計算複雜度分析</h3>
+
+<p class="mb-3">衡量一個規劃演算法的優劣，需從理論特性與計算複雜度進行評估。</p>
+
+<h4 id="5-1" class="mb-2">5.1 演算法三大屬性</h4>
+
+<ul class="note-list">
+<li><strong>正確性（Soundness）</strong>：演算法所輸出的任意動作序列，保證能從初始狀態合法執行並成功達成目標。</li>
+<li><strong>完備性（Completeness）</strong>：若該規劃問題存在合法解，演算法保證能在有限時間內找到解；若無解，能正確報告失敗。</li>
+<li><strong>最佳性（Optimality）</strong>：演算法找到的解在特定度量（如動作步數或路徑總成本）下保證為全局最優。</li>
+</ul>
+
+<h4 id="5-2" class="mb-2">5.2 計算複雜度界線</h4>
+
+<p class="mb-3">自動規劃在理論計算複雜度上屬於硬問題（Hard Problems）：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>判定問題名稱</th>
+<th>數學定義與問題描述</th>
+<th>複雜度類別</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>PlanSAT</strong></td>
+<td>給定規劃領域與問題描述，是否存在<strong>任意長度</strong>的有效解？</td>
+<td><strong>PSPACE-complete</strong>（在有限狀態空間下可判定，但空間複雜度高）</td>
+</tr>
+<tr>
+<td><strong>Bounded PlanSAT</strong></td>
+<td>給定規劃問題與步數限制 $k$，是否存在<strong>長度 $\le k$</strong> 的有效解？</td>
+<td><strong>NP-complete</strong></td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">在實務中，找到<strong>全局最佳解（Optimal Planning）</strong>極具挑戰性；而尋找<strong>滿意解（Satisficing Planning，即任意可行解）</strong>則通常藉助高資訊量的啟發式函數（Heuristics）與強大的剪枝策略來實現，這也是下一篇文章將要深入探討的核心主題。</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>古典規劃四大假設：</strong> 離散（Discrete）、確定性（Deterministic）、靜態（Static）與完全可觀察（Fully Observable）。雖然設定嚴格，但它是複雜真實世界規劃問題的理論基礎與抽象層。</li>
+<li><strong>狀態表徵與框架問題：</strong> STRIPS 與 PDDL 採用因果狀態表徵（Factored Representation），透過閉世界假設（CWA）與唯一名稱假設（UNA）簡化狀態。框架問題（Frame Problem）透過僅在動作中顯式定義 ADD/DEL 效果，隱式預設未提及事實保持不變。</li>
+<li><strong>正向推進 vs 逆向迴歸：</strong> 正向搜尋從具體初始狀態（Ground State, $2^n$）出發；逆向搜尋從目標描述（State Description, $3^n$）利用相關動作（Relevant Action）與最通用統一子（MGU）倒推。迴歸方程精確更新正向與負向字面量集合。</li>
+<li><strong>SATPlan 與 Successor-State Axioms：</strong> SATPlan 將時間步 $t$ 的狀態與動作轉譯為 CNF 命題邏輯。Successor-State Axioms 以 $P_{t+1} \iff \text{AddActions}_t \lor (P_t \land \neg \text{DelActions}_t)$ 的邏輯等價式將框條公理數量從 $O(mn)$ 降至 $O(n)$。</li>
+<li><strong>計算複雜度界線：</strong> 任意長度的 PlanSAT 問題屬於 PSPACE-complete，而帶步數限制的 Bounded PlanSAT 則為 NP-complete。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<h4 id="academic-literature" class="mb-2">學術論文（Academic Literature）</h4>
+
+<ol class="mb-3">
+<li>Fikes, R. E., &amp; Nilsson, N. J. (1971). STRIPS: A new approach to the application of theorem proving to problem solving. <em>Artificial Intelligence</em>, 2(3-4), 189-208. <a class="note-inline-link" href="https://doi.org/10.1016/0004-3702(71" target="_blank" rel="noopener noreferrer">ScienceDirect</a>90010-5)</li>
+<li>Kautz, H., &amp; Selman, B. (1992). Planning as satisfiability. In <em>Proceedings of the 10th European Conference on Artificial Intelligence (ECAI)</em> (pp. 359-363).</li>
+<li>Ghallab, M., Nau, D., &amp; Traverso, P. (2004). <em>Automated Planning: Theory and Practice</em>. Morgan Kaufmann.</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

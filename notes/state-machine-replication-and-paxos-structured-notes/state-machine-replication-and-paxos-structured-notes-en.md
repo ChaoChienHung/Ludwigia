@@ -9,7 +9,7 @@ Style: default
 EstimatedReadingTime: true
 Lang: en
 TitleSuffix: false
-Status: published
+Status: drafting
 Published: 2026-06-25
 LastModified: 2026-06-25
 </meta>

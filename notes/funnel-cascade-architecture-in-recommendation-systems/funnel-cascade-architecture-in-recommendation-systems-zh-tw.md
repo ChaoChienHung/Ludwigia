@@ -285,7 +285,9 @@ content:
 <qprompt/>
 </reviewkit>
 
-## 參考文獻（References）
+## 參考資料（References）
+
+### 技術文章（Technical Articles）
 
 1. [知乎：推荐系统概述（1）：推荐系统是干啥的？](https://zhuanlan.zhihu.com/p/384471991)
 2. [知乎：推荐系统全链路（1）：召回粗排精排-各有所长](https://zhuanlan.zhihu.com/p/390503646)

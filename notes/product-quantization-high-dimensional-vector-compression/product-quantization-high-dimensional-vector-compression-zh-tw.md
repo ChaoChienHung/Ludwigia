@@ -226,8 +226,13 @@ OPQ 透過交替優化（Alternating Optimization）演算法，聯合訓練旋�
 <qprompt/>
 </reviewkit>
 
-## 參考文獻（References）
+## 參考資料（References）
 
-1. Jégou, H., Douze, M., & Schmid, C. (2010). Product quantization for nearest neighbor search. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, 33(1), 117-128.
-2. Ge, T., He, K., Ke, Q., & Sun, J. (2013). Optimized product quantization for approximate nearest neighbor search. In *CVPR 2013*.
-3. [Faiss Documentation: Vector Quantization & Product Quantization](https://github.com/facebookresearch/faiss/wiki/Vector-quantization)
+### 學術論文（Academic Literature）
+
+1. Jégou, H., Douze, M., & Schmid, C. (2010). Product quantization for nearest neighbor search. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, 33(1), 117-128. [IEEE Xplore](https://doi.org/10.1109/TPAMI.2010.57)
+2. Ge, T., He, K., Ke, Q., & Sun, J. (2013). Optimized product quantization for approximate nearest neighbor search. In *Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)* (pp. 2946-2953). [IEEE Xplore](https://ieeexplore.ieee.org/document/6619223)
+
+### 技術文章（Technical Articles）
+
+1. [Faiss Documentation: Vector Quantization & Product Quantization](https://github.com/facebookresearch/faiss/wiki/Vector-quantization)

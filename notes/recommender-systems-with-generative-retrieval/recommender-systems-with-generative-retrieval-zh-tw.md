@@ -8,7 +8,7 @@ Style: default
 EstimatedReadingTime: true
 Lang: zh-Hant
 TitleSuffix: true
-Status: published
+Status: drafting
 Published: 2026-07-26
 LastModified: 2026-07-26
 </meta>
@@ -222,8 +222,6 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
    - 將非法 Token 的 Logits 設定為 $-\infty$，確保採樣概率為 0。
 3. **束搜尋 (Beam Search)**：保留 Top-$N$ 個最可能的高分前綴路徑，最終生成 Top-$N$ 個對應真實商品庫的 Item，並以生成的累計對數概率 $\sum_{k=1}^K \log P(c_k)$ 作為檢索召回的分數排序依據。
 
----
-
 ## 冷啟動泛化與模型 Scaling 特性
 
 生成式檢索相較於傳統雙塔模型展現出兩個極具突破性的優勢：
@@ -241,8 +239,6 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
 
 - **雙塔模型瓶頸**：雙塔模型的參數主要集中在 Embedding Table。當 Item 數量大幅增加時，記憶體呈線性膨脹，但模型計算深度（MLP / Dot-Product）並未提升，邊際效益快速遞減。
 - **生成式檢索 Scaling**：生成式檢索將 Item 知識參數化存儲在 Transformer 的全連接層與 Attention 權重中。隨着模型參數規模（如從小模型擴展至數十億參數）與訓練數據量的增加，模型的檢索精準度呈現顯著的 Scaling 成長曲線。
-
----
 
 ## 系統挑戰、權衡與未來發展
 
@@ -263,8 +259,6 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
 - **瓶頸**：當商品庫大規模新增或下架時，若重新訓練 RQ-VAE 導致 Semantic ID 發生漂移，整個 Seq2Seq 模型都需要重新微調。
 - **解法**：增量碼本學習（Incremental Codebook Learning）與穩定語義碼表映射機制。
 
----
-
 ## 前置與延伸閱讀
 
 若需深入理解推薦系統全貌，建議搭配以下內容閱讀：
@@ -272,7 +266,7 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
 - **基石篇（前置）**：<content-link canonical="funnel-cascade-architecture-in-recommendation-systems-zh-tw">現代推薦系統的基石：深入解析「漏斗式級聯架構」</content-link>
   - 詳細拆解工業界「召回-粗排-精排-重排」級聯管線的延遲限制、模型複雜度與特徵維度，以及傳統雙塔向量空間的固有痛點。
 
----
+## 總結與核心要點
 
 <reviewkit>
 <takeaways>
@@ -284,13 +278,14 @@ $$\mathcal{L}_{\text{Gen}} = - \sum_{k=1}^K \log P_{\theta}(c_k^{(T+1)} | c_1^{(
 <qprompt/>
 </reviewkit>
 
-## 參考文獻（References）
+## 參考資料（References）
 
-1. Rajput, S., Mehta, N., Singh, A., Ramakrishnan, R., Bhojanapalli, S., Sathiamoorthy, M., Kumar, J., Ravi, S., Mazumder, R., & Beutel, A. (2023). *Generative Retrieval for Recommender Systems*. arXiv preprint [arXiv:2305.05065](https://arxiv.org/abs/2305.05065).
-2. 知乎專欄：[推薦系統中生成式檢索（Generative Retrieval）技術演進與 TIGER 解讀](https://zhuanlan.zhihu.com/p/676663980).
-3. 知乎專欄：[生成式推薦系統 (Generative Recommendation / GR) 深度解析：Semantic ID, RQ-VAE 與自回歸檢索](https://zhuanlan.zhihu.com/p/1970625397411520943).
-4. 知乎文章：[大模型時代的生成式檢索與推薦系統架構實踐](https://www.zhihu.com/tardis/zm/art/2023374127587697445).
+### 學術論文（Academic Literature）
 
----
+1. Rajput, S., Mehta, N., Singh, A., Ramakrishnan, R., Bhojanapalli, S., Sathiamoorthy, M., Kumar, J., Ravi, S., Mazumder, R., & Beutel, A. (2023). Recommender systems with generative retrieval. In *Advances in Neural Information Processing Systems (NeurIPS 2023)* (Vol. 36, pp. 10299-10313). [arXiv:2305.05065](https://arxiv.org/abs/2305.05065)
 
-## 總結與核心要點
+### 技術文章（Technical Articles）
+
+1. [知乎：谷歌-2023：TIGER-基于生成式召回模型的推荐系统](https://zhuanlan.zhihu.com/p/676663980)
+2. [知乎：万字长文解读生成式搜推开山之作——Tiger](https://zhuanlan.zhihu.com/p/1970625397411520943)
+3. [知乎：生成式推荐经典论文解读：TIGER](https://www.zhihu.com/tardis/zm/art/2023374127587697445)

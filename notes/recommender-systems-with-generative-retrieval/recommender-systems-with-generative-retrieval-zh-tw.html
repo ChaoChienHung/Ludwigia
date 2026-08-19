@@ -7,7 +7,7 @@
   <meta name="garden:tags" content="推薦系統, 生成式檢索, 機器學習, 深度學習, 資訊檢索, Transformer 模型">
   <meta name="garden:summary" content="本篇筆記深入探討生成式檢索（Generative Retrieval, GR）在推薦系統中的架構演進、核心機制與實作細節。涵蓋雙塔 MIPS 檢索範式的瓶頸、Semantic ID 與 RQ-VAE 殘差量化編碼、Seq2Seq 自回歸生成模型（如 TIGER）、前綴樹受限解碼（Constrained Trie Search）、冷啟動泛化能力與未來挑戰。">
   <meta name="garden:lang" content="zh-Hant">
-  <meta name="garden:status" content="published">
+  <meta name="garden:status" content="drafting">
   <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.machine_learning,concept.deep_learning,concept.information_retrieval,concept.transformers">
   <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
   <meta name="garden:published_at" content="2026-07-26">
@@ -415,8 +415,6 @@
 <ol class="mb-3">
 <li><strong>束搜尋 (Beam Search)</strong>：保留 Top-$N$ 個最可能的高分前綴路徑，最終生成 Top-$N$ 個對應真實商品庫的 Item，並以生成的累計對數概率 $\sum_{k=1}^K \log P(c_k)$ 作為檢索召回的分數排序依據。</li>
 </ol>
-
-<hr>
 </section>
 
 <section id="cold-start-scaling" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -442,8 +440,6 @@
 <li><strong>雙塔模型瓶頸</strong>：雙塔模型的參數主要集中在 Embedding Table。當 Item 數量大幅增加時，記憶體呈線性膨脹，但模型計算深度（MLP / Dot-Product）並未提升，邊際效益快速遞減。</li>
 <li><strong>生成式檢索 Scaling</strong>：生成式檢索將 Item 知識參數化存儲在 Transformer 的全連接層與 Attention 權重中。隨着模型參數規模（如從小模型擴展至數十億參數）與訓練數據量的增加，模型的檢索精準度呈現顯著的 Scaling 成長曲線。</li>
 </ul>
-
-<hr>
 </section>
 
 <section id="challenges-future" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -471,8 +467,6 @@
 <li><strong>瓶頸</strong>：當商品庫大規模新增或下架時，若重新訓練 RQ-VAE 導致 Semantic ID 發生漂移，整個 Seq2Seq 模型都需要重新微調。</li>
 <li><strong>解法</strong>：增量碼本學習（Incremental Codebook Learning）與穩定語義碼表映射機制。</li>
 </ul>
-
-<hr>
 </section>
 
 <section id="prerequisites" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -486,8 +480,10 @@
 <li>詳細拆解工業界「召回-粗排-精排-重排」級聯管線的延遲限制、模型複雜度與特徵維度，以及傳統雙塔向量空間的固有痛點。</li>
 </ul></li>
 </ul>
+</section>
 
-<hr>
+<section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">總結與核心要點</h3>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
@@ -553,20 +549,21 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">參考文獻（References）</h3>
+<h3 class="mb-3">參考資料（References）</h3>
+
+<h4 id="academic-literature" class="mb-2">學術論文（Academic Literature）</h4>
 
 <ol class="mb-3">
-<li>Rajput, S., Mehta, N., Singh, A., Ramakrishnan, R., Bhojanapalli, S., Sathiamoorthy, M., Kumar, J., Ravi, S., Mazumder, R., &amp; Beutel, A. (2023). <em>Generative Retrieval for Recommender Systems</em>. arXiv preprint <a class="note-inline-link" href="https://arxiv.org/abs/2305.05065" target="_blank" rel="noopener noreferrer">arXiv:2305.05065</a>.</li>
-<li>知乎專欄：<a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/676663980" target="_blank" rel="noopener noreferrer">推薦系統中生成式檢索（Generative Retrieval）技術演進與 TIGER 解讀</a>.</li>
-<li>知乎專欄：<a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/1970625397411520943" target="_blank" rel="noopener noreferrer">生成式推薦系統 (Generative Recommendation / GR) 深度解析：Semantic ID, RQ-VAE 與自回歸檢索</a>.</li>
-<li>知乎文章：<a class="note-inline-link" href="https://www.zhihu.com/tardis/zm/art/2023374127587697445" target="_blank" rel="noopener noreferrer">大模型時代的生成式檢索與推薦系統架構實踐</a>.</li>
+<li>Rajput, S., Mehta, N., Singh, A., Ramakrishnan, R., Bhojanapalli, S., Sathiamoorthy, M., Kumar, J., Ravi, S., Mazumder, R., &amp; Beutel, A. (2023). Recommender systems with generative retrieval. In <em>Advances in Neural Information Processing Systems (NeurIPS 2023)</em> (Vol. 36, pp. 10299-10313). <a class="note-inline-link" href="https://arxiv.org/abs/2305.05065" target="_blank" rel="noopener noreferrer">arXiv:2305.05065</a></li>
 </ol>
 
-<hr>
-</section>
+<h4 id="technical-articles" class="mb-2">技術文章（Technical Articles）</h4>
 
-<section id="takeaways" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">總結與核心要點</h3>
+<ol class="mb-3">
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/676663980" target="_blank" rel="noopener noreferrer">知乎：谷歌-2023：TIGER-基于生成式召回模型的推荐系统</a></li>
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/1970625397411520943" target="_blank" rel="noopener noreferrer">知乎：万字长文解读生成式搜推开山之作——Tiger</a></li>
+<li><a class="note-inline-link" href="https://www.zhihu.com/tardis/zm/art/2023374127587697445" target="_blank" rel="noopener noreferrer">知乎：生成式推荐经典论文解读：TIGER</a></li>
+</ol>
 </section>
         </div>
       </div>

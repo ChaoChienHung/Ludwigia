@@ -120,7 +120,13 @@ type TimelineBaseEvent = {
   title: TimelineLocalizedText;
   summary: TimelineLocalizedText;
   detail?: TimelineLocalizedText;
-  references?: TimelineReference[];
+  references?: Array<{
+    label?: TimelineLocalizedText | string;
+    title?: TimelineLocalizedText | string;
+    href?: string;
+    url?: string;
+    kind?: string;
+  }>;
   category?: "education" | "internship" | "work";
 };
 ```

@@ -249,9 +249,11 @@
     return references
       .map((reference) => {
         if (!reference || typeof reference !== 'object') return null;
-        const href = typeof reference.href === 'string' ? reference.href.trim() : '';
+        const rawHref = typeof reference.href === 'string' ? reference.href : typeof reference.url === 'string' ? reference.url : '';
+        const href = rawHref.trim();
         if (!href) return null;
-        const label = normalizeLocalizedText(reference.label);
+        const rawLabel = reference.label || reference.title;
+        const label = normalizeLocalizedText(rawLabel);
         if (!label) return null;
         return {
           href,
@@ -700,7 +702,7 @@
                 ${references
                   .map(
                     (ref) => `
-                      <a class="timeline-detail-link" href="${ref.href}">
+                      <a class="timeline-detail-link" href="${ref.href}" target="_blank" rel="noopener noreferrer">
                         ${readLocalized(ref.label, lang)}
                       </a>
                     `,
@@ -765,7 +767,7 @@
             ${references
               .map(
                 (ref) => `
-                  <a class="timeline-detail-link" href="${ref.href}">
+                  <a class="timeline-detail-link" href="${ref.href}" target="_blank" rel="noopener noreferrer">
                     ${readLocalized(ref.label, lang)}
                   </a>
                 `,

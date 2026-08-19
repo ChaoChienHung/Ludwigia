@@ -240,10 +240,15 @@ RQ-VAE 完美填補了這道從連續特徵邁向離散表徵的技術斷層。�
 <qprompt/>
 </reviewkit>
 
-## 參考文獻（References）
+## 參考資料（References）
 
-1. [Lee, D., et al. (2022). Autoregressive Image Generation using Residual Quantization (arXiv:2203.01941)](https://arxiv.org/pdf/2203.01941)
-2. [知乎：生成式推荐番外——为什么是RQ-VAE？](https://zhuanlan.zhihu.com/p/1948761095876621200)
-3. [知乎：RQ-VAE入门详解](https://zhuanlan.zhihu.com/p/716658479)
-4. [知乎：一文读懂--RQ-VAE(残差量化-变分自编码器)](https://zhuanlan.zhihu.com/p/1969198880924083875)
-5. [知乎：一文详解 codebook 技术史（从 VAE 到 VQ/RQ-VAE 到 FSQ）](https://zhuanlan.zhihu.com/p/2433292582)
+### 學術論文（Academic Literature）
+
+1. Lee, D., Kim, C., Kim, S., Cho, M., & Han, W.-S. (2022). Autoregressive image generation using residual quantization. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)* (pp. 11523-11532). [arXiv:2203.01941](https://arxiv.org/abs/2203.01941)
+
+### 技術文章（Technical Articles）
+
+1. [知乎：生成式推荐番外——为什么是RQ-VAE？](https://zhuanlan.zhihu.com/p/1948761095876621200)
+2. [知乎：RQ-VAE入门详解](https://zhuanlan.zhihu.com/p/716658479)
+3. [知乎：一文读懂--RQ-VAE(残差量化-变分自编码器)](https://zhuanlan.zhihu.com/p/1969198880924083875)
+4. [知乎：一文详解 codebook 技术史（从 VAE 到 VQ/RQ-VAE 到 FSQ）](https://zhuanlan.zhihu.com/p/2433292582)

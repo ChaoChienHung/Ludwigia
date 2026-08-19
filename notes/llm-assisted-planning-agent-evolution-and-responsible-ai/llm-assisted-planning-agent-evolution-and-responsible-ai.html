@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>大模型輔助規劃、Agent 演進與可信決策：從理論到負責任 AI 治理 — Ludwig</title>
+  <meta name="garden:tags" content="AI 代理人, 大模型規劃, 負責任 AI, 自動規劃, 蒙地卡羅樹搜尋, 代理式 AI">
+  <meta name="garden:summary" content="本文探討現代 AI Agent 的演進歷程與大語言模型（LLM）驅動的全新規劃範式。從 1980 年代符號 Agent、2000 年代增強學習 Agent 到現代 LLM 語言推理與多 Agent 協作，詳細剖析大模型與古典符號規劃器結合的 4 大前沿範式（LLM 導引 PDDL 生成與修正、LLM 與 MCTS 混合子目標規劃、LLM 啟發式 Python 代碼合成、全自動泛化規劃）。同時論述 Rational Agent 的感知-決策-行動閉環，以及可信與負責任 AI（Responsible AI）在安全、隱私、公平、可解釋性與政策法規監管下的權衡與開發生命週期（SDLC）實踐。">
+  <meta name="garden:lang" content="zh-tw">
+  <meta name="garden:status" content="drafting">
+  <meta name="garden:tag_concepts" content="concept.ai_agents,concept.llm_planning,concept.responsible_ai,concept.automated_planning,concept.mcts,concept.agentic_ai">
+  <meta name="garden:tag_labels" content="{&quot;concept.ai_agents&quot;:{&quot;en&quot;:&quot;AI Agents&quot;,&quot;zh-Hant&quot;:&quot;AI 代理人&quot;,&quot;zh-Hans&quot;:&quot;AI 代理人&quot;},&quot;concept.llm_planning&quot;:{&quot;en&quot;:&quot;LLM Planning&quot;,&quot;zh-Hant&quot;:&quot;大模型規劃&quot;,&quot;zh-Hans&quot;:&quot;大模型规划&quot;},&quot;concept.responsible_ai&quot;:{&quot;en&quot;:&quot;Responsible AI&quot;,&quot;zh-Hant&quot;:&quot;負責任 AI&quot;,&quot;zh-Hans&quot;:&quot;负责任 AI&quot;},&quot;concept.automated_planning&quot;:{&quot;en&quot;:&quot;Automated Planning&quot;,&quot;zh-Hant&quot;:&quot;自動規劃&quot;,&quot;zh-Hans&quot;:&quot;自动规划&quot;},&quot;concept.mcts&quot;:{&quot;en&quot;:&quot;MCTS&quot;,&quot;zh-Hant&quot;:&quot;蒙地卡羅樹搜尋&quot;,&quot;zh-Hans&quot;:&quot;蒙特卡洛树搜索&quot;},&quot;concept.agentic_ai&quot;:{&quot;en&quot;:&quot;Agentic AI&quot;,&quot;zh-Hant&quot;:&quot;代理式 AI&quot;,&quot;zh-Hans&quot;:&quot;代理式 AI&quot;}}">
+  <meta name="garden:canonical_id" content="llm-assisted-planning-agent-evolution-and-responsible-ai">
+  <meta name="garden:published_at" content="2026-08-19">
+  <meta name="garden:last_modified_at" content="2026-08-19">
+  <meta name="garden:reading_time_minutes" content="15">
+  <meta name="garden:source" content="notes/llm-assisted-planning-agent-evolution-and-responsible-ai/llm-assisted-planning-agent-evolution-and-responsible-ai.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">大模型輔助規劃、Agent 演進與可信決策：從理論到負責任 AI 治理</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-ai-agent-agent">1. AI Agent 的四代演進歷史與理性 Agent 環節</a>
+<a class="note-toc-link level-2" href="#1-1-agent">1.1 四代 Agent 技術範式演進</a>
+<a class="note-toc-link level-2" href="#1-2-agent-rational-agent">1.2 理性 Agent（Rational Agent）架構與問題複雜度維度</a>
+<a class="note-toc-link level-1" href="#2">2. 大模型輔助規劃的四大前沿範式</a>
+<a class="note-toc-link level-2" href="#llm-pddl-llm-guided-pddl-creation">範式一：LLM 導引 PDDL 自動生成與閉環修正（LLM-Guided PDDL Creation）</a>
+<a class="note-toc-link level-2" href="#llm-mcts-task-decomposition-subgoal-planning">範式二：任務分解與 LLM-MCTS 混合子目標規劃（Task Decomposition &amp; Subgoal Planning）</a>
+<a class="note-toc-link level-2" href="#llm-heuristic-generation-via-llms">範式三：LLM 領域專屬啟發式程式碼合成（Heuristic Generation via LLMs）</a>
+<a class="note-toc-link level-2" href="#llm-generalized-planning-in-pddl-domains">範式四：基於 LLM 的全自動泛化規劃（Generalized Planning in PDDL Domains）</a>
+<a class="note-toc-link level-1" href="#3">3. 工業級規劃框架與開源生態</a>
+<a class="note-toc-link level-1" href="#4-ai-responsible-ai">4. 可信與負責任 AI 規劃與決策（Responsible AI）</a>
+<a class="note-toc-link level-2" href="#4-1-ai">4.1 可信 AI 的核心治理原則</a>
+<a class="note-toc-link level-2" href="#4-2-trade-offs">4.2 準確度與負責任特性的權衡（Trade-offs）</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+<a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-19" data-published-at="2026-08-19"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-19</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">隨著大語言模型（LLM）與基礎模型（Foundational Models）的爆發式成長，人工智能正在經歷從「單純的文本生成與常識答疑」向「具備主動目標規劃、工具使用與自我糾錯能力」的 <strong>Agentic AI（Agent 化人工智能）</strong> 跨越。</p>
+
+<p class="mb-3">然而，單靠 LLM 的常識推理往往容易產生幻覺（Hallucination），缺乏嚴密的符號邏輯保證；而傳統古典規劃器雖然具備百分之百的正確性，卻受限於手工構建 PDDL 模型的高昂成本。<strong>將大模型的常識與語言理解能力，與古典規劃器的嚴密符號推理深度結合</strong>，成為當前 AI 規劃領域最受矚目的突破點。</p>
+
+<p class="mb-3">本文將梳理 AI Agent 的四代演進歷程，深入剖析 LLM 輔助規劃（LLM-Assisted Planning）的四大前沿技術範式，並進一步論述可信與負責任 AI（Responsible AI）在實際系統部署與治理中的關鍵框架。</p>
+
+<hr>
+</section>
+
+<section id="1-ai-agent-agent" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. AI Agent 的四代演進歷史與理性 Agent 環節</h3>
+
+<h4 id="1-1-agent" class="mb-2">1.1 四代 Agent 技術範式演進</h4>
+
+<p class="mb-3">回顧人工智能的發展歷史，Agent 的心智模型與核心驅動引擎經歷了四個階段的重大演進：</p>
+
+<div class="note-markdown-block"><pre><code>+------------------+     +------------------+     +------------------+     +------------------+
+|    1980s Agent   |     |    2000s Agent   |     |    2020s Agent   |     |    2030s Agent   |
+|   Symbolic AI    | --&gt; | Reinforcement L. | --&gt; |    LLM Agent     | --&gt; | Tool-Using Multi |
+| Logic &amp; PDDL     |     | Trial &amp; Error RL |     | ReACT &amp; CoT LLM  |     | Agent Ecosystem  |
++------------------+     +------------------+     +------------------+     +------------------+</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>1980s 符號 AI Agent（Symbolic Agent）</strong>：依賴人工定義的邏輯規則與符號規劃器（如 STRIPS）。具備嚴密的邏輯推理能力，但缺乏對不確定性環境的適應力與常識理解。</li>
+<li><strong>2000s 強化學習 Agent（Reinforcement Learning Agent）</strong>：透過試錯（Trial &amp; Error）與獎勵訊號（Reward Signals）學習最佳策略函數（Policy $\pi(a \mid s)$）。在特定封閉領域（如圍棋、電玩）表現優異，但採樣效率低且難以泛化至未見任務。</li>
+<li><strong>2020s LLM Agent（Large Foundation Model Agent）</strong>：以預訓練大語言模型為腦髓，利用 <span class="note-information" tabindex="0" aria-label="Reasoning and Acting Paradigm">ReACT<span class="note-information-tooltip" aria-hidden="true">Reasoning and Acting Paradigm</span></span>（Reasoning + Acting）與 Chain-of-Thought（CoT）實現自然語言推理與步驟規劃。</li>
+<li><strong>2030s 多 Agent 協作生態（Tool-Using Multi-Agent）</strong>：結合外部工具 API、長期記憶體系統（Memory Systems）與分工明確的多 Agent 團隊，具備複雜任務委派與動態協調能力。</li>
+</ol>
+
+<h4 id="1-2-agent-rational-agent" class="mb-2">1.2 理性 Agent（Rational Agent）架構與問題複雜度維度</h4>
+
+<p class="mb-3">一個完整的<strong>理性 Agent（Rational Agent）</strong>，必須在環境中形成「感知-建模-推理-規劃-行動」的閉環：</p>
+
+<ul class="note-list">
+<li><strong>感知（Perception &amp; Sensing）</strong>：接收環境的多模態觀察。</li>
+<li><strong>建模與推理（Modeling &amp; Reasoning）</strong>：維護內部世界模型（World Model）與常識推導。</li>
+<li><strong>規劃與決策（Planning &amp; Decision Making）</strong>：評估目標與價值，產生動作序列。</li>
+<li><strong>行動與溝通（Acting &amp; Communicating）</strong>：執行動作並與環境或人類協作。</li>
+</ul>
+
+<p class="mb-3">環境複雜度矩陣決定了規劃器所需的技術組態：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>環境維度</th>
+<th>簡單場景（Toy Problems）</th>
+<th>複雜現實場景（Real-Life Problems）</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>可觀察性</strong></td>
+<td>完全可觀察（Fully Observable）</td>
+<td>部分可觀察（Partially Observable, POMDP）</td>
+</tr>
+<tr>
+<td><strong>動作空間</strong></td>
+<td>離散動作（Discrete）</td>
+<td>連續控制（Continuous Control）</td>
+</tr>
+<tr>
+<td><strong>動態轉移</strong></td>
+<td>確定性轉移（Deterministic）</td>
+<td>非確定性 / 隨機性（Stochastic / Dynamic）</td>
+</tr>
+<tr>
+<td><strong>主體數量</strong></td>
+<td>單一 Agent（Single Agent）</td>
+<td>多 Agent 競爭與協作（Multi-Agent / Game Theory）</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 大模型輔助規劃的四大前沿範式</h3>
+
+<p class="mb-3">近年來，學界與業界探索出將 LLM 與符號規劃（Symbolic Planning）結合的四大核心範式：</p>
+
+<div class="note-markdown-block"><pre><code>                             [ Natural Language Goal &amp; Domain ]
+                                             |
+                                             v
+                           +-----------------------------------+
+                           | Large Language Model (LLM Engine) |
+                           +-----------------------------------+
+                                             |
+       +-----------------------+-------------+-------------+-----------------------+
+       | Paradigm 1            | Paradigm 2                | Paradigm 3            | Paradigm 4
+       v                       v                           v                       v
+[ LLM-Guided PDDL ]   [ Subgoal Decomposition ]   [ Heuristic Code Synthesis ] [ Generalized Planning ]
+(Model Generation &amp;   (Symbolic Planner +         (Python Code Heuristics    (Program Generation &amp;
+ Env Feedback VAL)     LLM-Policy MCTS)            for Pyperplan/GBFS)        Automated Debugging)</code></pre></div>
+
+<h4 id="llm-pddl-llm-guided-pddl-creation" class="mb-2">範式一：LLM 導引 PDDL 自動生成與閉環修正（LLM-Guided PDDL Creation）</h4>
+
+<ul class="note-list">
+<li><strong>代表研究</strong>：Mahdavi et al., NeurIPS 2024 (<em>LLM-Guided PDDL Creation and Refinement</em>)。</li>
+<li><strong>運作機制</strong>：</li>
+</ul>
+
+<ol class="mb-3">
+<li>LLM 根據自然語言描述自動草擬 PDDL 領域模型（Domain）與問題定義（Problem）。</li>
+<li>將生成的 PDDL 送入符號驗證工具（如 <span class="note-information" tabindex="0" aria-label="Validator for PDDL Plans">VAL<span class="note-information-tooltip" aria-hidden="true">Validator for PDDL Plans</span></span>）與求解器（Fast Downward）進行環境模擬測試。</li>
+<li>若發現語法錯誤或無法求解，將環境反饋資訊（Feedback）回傳給 LLM 進行疊代修正。</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>實證效果</strong>：引入環境反饋閉環後，任務解決率大幅提升至 <strong>66%</strong>（遠高於僅靠 GPT-4 內部 Chain-of-Thought 推理的 29%）。</li>
+</ul>
+
+<h4 id="llm-mcts-task-decomposition-subgoal-planning" class="mb-2">範式二：任務分解與 LLM-MCTS 混合子目標規劃（Task Decomposition &amp; Subgoal Planning）</h4>
+
+<ul class="note-list">
+<li><strong>代表研究</strong>：Kwon et al., ICRA 2025 (<em>Hybrid Symbolic + MCTS Planning</em>)。</li>
+<li><strong>運作機制</strong>：</li>
+</ul>
+
+<ol class="mb-3">
+<li>LLM 發揮常識優勢，將複雜的高階目標分解為多個子目標（Subgoals）。</li>
+<li>對於中等複雜度的子目標，交由傳統符號規劃器（Fast Downward）迅速精確求解。</li>
+<li>當遇到符號代價過高或複雜度超出預期的子問題時，系統自動切換至基於 <strong>蒙地卡羅樹搜尋（MCTS）</strong> 的 LLM 規劃器，利用 LLM 作為 Rollout Policy（L-Policy）引導搜尋。</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>優勢</strong>：結合了符號規劃的速度與 MCTS/LLM 在高維空間的突破能力，顯著降低規劃時間並提升擴展性。</li>
+</ul>
+
+<h4 id="llm-heuristic-generation-via-llms" class="mb-2">範式三：LLM 領域專屬啟發式程式碼合成（Heuristic Generation via LLMs）</h4>
+
+<ul class="note-list">
+<li><strong>代表研究</strong>：Corrêa et al., 2025 (ArXiv)。</li>
+<li><strong>運作機制</strong>：</li>
+</ul>
+
+<ol class="mb-3">
+<li>不直接讓 LLM 輸出動作序列，而是讓 LLM 閱讀 PDDL 領域規格後，<strong>自動編寫 Python 語言實現的域專屬啟發式函數代碼</strong>。</li>
+<li>將合成的啟發式代碼動態載入至傳統古典規劃器（如 Pyperplan）中，搭配貪婪最佳優先搜尋（GBFS）引導搜尋方向。</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>優勢</strong>：生成的啟發式大幅減少了搜尋過程中探索的狀態節點數，效能顯著超越標準的域獨立啟發式（Domain-Independent Heuristics）。</li>
+</ul>
+
+<h4 id="llm-generalized-planning-in-pddl-domains" class="mb-2">範式四：基於 LLM 的全自動泛化規劃（Generalized Planning in PDDL Domains）</h4>
+
+<ul class="note-list">
+<li><strong>代表研究</strong>：Silver et al., AAAI 2024 (<em>Generalized Planning in PDDL Domains with Pretrained LLMs</em>)。</li>
+<li><strong>運作機制</strong>：</li>
+</ul>
+
+<ol class="mb-3">
+<li>給定 PDDL 領域描述與僅僅 2 個訓練任務範例。</li>
+<li>LLM 透過 CoT 提取領域內部的廣義解題策略，直接合成能解決該領域<strong>任意新任務</strong>的通用 Python 規劃程序（Solver-like Code）。</li>
+<li>透過 Automated Debugging 閉環，根據驗證結果不斷 Prompt LLM 修正程式碼。</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>實證效果</strong>：在 7 個標準 PDDL 領域中，僅需 2 個訓練任務，LLM 生成的通用程序效能即可媲美甚至超越傳統求解器基線。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 工業級規劃框架與開源生態</h3>
+
+<p class="mb-3">在理論研發之外，開源社群也推出了多項將現代規劃技術工程化的統一框架：</p>
+
+<ul class="note-list">
+<li><strong>AIPlanning4EU (Unified Planning Library)</strong>：歐洲 AI 規劃專案，提供統一的 Python 介面，讓開發者能以簡潔程式碼定義 Fluent 與 Action，並一鍵切換後端異構求解器（如 Fast Downward、Tamer 等）。</li>
+<li><strong>PANDA Framework</strong>：德國烏爾姆大學開發的分層規劃框架（PANDA Network Decomposition Architecture），完整支援 HDDL（Hierarchical Domain Definition Language），其下的 <strong>PANDADealer</strong> 奪得 IPC 2023 分層規劃競賽冠軍。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="4-ai-responsible-ai" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 可信與負責任 AI 規劃與決策（Responsible AI）</h3>
+
+<p class="mb-3">隨著 AI Agent 開始接管醫療診斷推薦、自動駕駛、金融貸款審核與公共福利發放等高風險決策，<strong>負責任 AI（Responsible AI）</strong> 成為不可迴避的核心課題。</p>
+
+<div class="note-markdown-block"><pre><code>                    +------------------------------------+
+                    |     Rational Decision Making       |
+                    |  (Optimizing Objective &amp; Utility)  |
+                    +------------------------------------+
+                                      |
+         +----------------------------+----------------------------+
+         | Trade-off &amp; Balance                                     |
+         v                                                         v
++---------------------------------+               +---------------------------------+
+|      Performance Metrics        |               |      Responsible Features       |
+|  - Accuracy &amp; CTR / CVR         |               |  - Safety &amp; Privacy             |
+|  - Speed &amp; Throughput           |               |  - Fairness &amp; Transparency      |
+|  - Resource Efficiency          |               |  - Accountability &amp; Governance  |
++---------------------------------+               +---------------------------------+</code></pre></div>
+
+<h4 id="4-1-ai" class="mb-2">4.1 可信 AI 的核心治理原則</h4>
+
+<p class="mb-3">一個具備理性與負責任特性的 Agent 系統，必須在設計中貫徹以下原則（參考 Russell &amp; Norvig Ch. 27）：</p>
+
+<ol class="mb-3">
+<li><strong>安全性（Safety）</strong>：保證 Agent 執行的動作序列絕不會侵犯物理或邏輯安全邊界（ Fail-safe Mechanisms）。</li>
+<li><strong>隱私保護（Privacy）</strong>：在狀態感知與數據學習中嚴格保護用戶敏感資訊。</li>
+<li><strong>公平性（Fairness）</strong>：避免決策策略產生對特定群體的偏見或歧視。</li>
+<li><strong>透明度與可解釋性（Transparency &amp; Explainability）</strong>：Agent 需能對其產生的規劃方案給出人類可理解的理由（Why this action sequence?）。</li>
+<li><strong>問責制與歸因性（Accountability &amp; Attribution）</strong>：明確 Agent 決策鏈路中的責任歸屬。</li>
+</ol>
+
+<h4 id="4-2-trade-offs" class="mb-2">4.2 準確度與負責任特性的權衡（Trade-offs）</h4>
+
+<p class="mb-3">在工程實踐中，系統設計者永遠面臨著<strong>效能/準確度與負責任特性之間的權衡（Trade-off）</strong>：</p>
+
+<ul class="note-list">
+<li>加入嚴格的隱私保護（如差分隱私）或可解釋性約束，可能會限制模型的表徵能力，帶來少許準確度下降。</li>
+<li>引入安全審查與合規檢查機制，會增加推斷延遲與算力成本。</li>
+</ul>
+
+<p class="mb-3">因此，負責任 AI 的決策不應是事後的補救措施，而必須<strong>貫穿於軟體工程的完整生命週期（SDLC）</strong>：從需求分析、架構設計、代碼實作、測試驗證，到上線後的運營監控與政策審查（Policy and Governance）。同時，全球立法趨勢（如歐盟 <strong>EU AI Act</strong>、美國 <strong>AI Bill of Rights</strong>）正逐步將這些原則轉化為具備法律約束力的強制規範。</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>AI Agent 四代演進：</strong> 從 1980s 符號 AI（規則/PDDL）、2000s 增強學習（試錯/獎勵）、2020s LLM Agent（ReACT/語言推理）走向 2030s 多 Agent 工具協作生態。理性 Agent 需完成感知、建模、推理、規劃與行動閉環。</li>
+<li><strong>LLM-Assisted Planning 四大範式：</strong> （1）LLM+VAL 環境反饋閉環生成 PDDL（NeurIPS 2024，成功率 66%）；（2）LLM 任務分解 + MCTS/Fast Downward 混合規劃（ICRA 2025）；（3）LLM 合成 Python 啟發式代碼導引 GBFS（ArXiv 2025）；（4）LLM 基於 2 個範例生成通用 PDDL 解題程序（AAAI 2024）。</li>
+<li><strong>工業級開源生態：</strong> AIPlanning4EU 提供 Unified Planning 統一介面；PANDA Framework（PANDADealer）主導了 HDDL 分層規劃競賽。</li>
+<li><strong>負責任 AI 治理（Responsible AI）：</strong> 規劃與決策系統必須平衡效能（Accuracy/Speed）與可信特性（Safety, Privacy, Fairness, Transparency, Accountability）。負責任 AI 必須融入 SDLC 全生命週期，並對齊 EU AI Act 等全球監管法規。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<h4 id="academic-literature" class="mb-2">學術論文（Academic Literature）</h4>
+
+<ol class="mb-3">
+<li>Mahdavi, S., et al. (2024). LLM-guided PDDL creation and refinement. In <em>Advances in Neural Information Processing Systems (NeurIPS 2024)</em>. <a class="note-inline-link" href="https://arxiv.org/abs/2410.03570" target="_blank" rel="noopener noreferrer">arXiv:2410.03570</a></li>
+<li>Kwon, M., et al. (2025). Hybrid symbolic and MCTS planning with large language models. In <em>IEEE International Conference on Robotics and Automation (ICRA 2025)</em>.</li>
+<li>Silver, T., Dan, S., Srinivas, K., Tenenbaum, J. B., Kaelbling, L., &amp; Katz, M. (2024). Generalized planning in PDDL domains with pretrained large language models. In <em>Proceedings of the AAAI Conference on Artificial Intelligence</em>, 38(18), 20006-20014. <a class="note-inline-link" href="https://arxiv.org/abs/2305.11014" target="_blank" rel="noopener noreferrer">arXiv:2305.11014</a></li>
+<li>Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., &amp; Cao, Y. (2023). ReAct: Synergizing reasoning and acting in language models. In <em>International Conference on Learning Representations (ICLR)</em>. <a class="note-inline-link" href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer">arXiv:2210.03629</a></li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

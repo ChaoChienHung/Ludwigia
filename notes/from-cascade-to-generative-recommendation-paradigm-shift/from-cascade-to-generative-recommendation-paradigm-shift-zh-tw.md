@@ -131,6 +131,8 @@ content:
 <qprompt/>
 </reviewkit>
 
-## 參考文獻（References）
+## 參考資料（References）
+
+### 技術文章（Technical Articles）
 
 1. [知乎：从原理到落地详细解读生成式推荐OneRec](https://zhuanlan.zhihu.com/p/2011387251351908741)

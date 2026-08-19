@@ -1731,6 +1731,206 @@
         "向量檢索",
         "向量检索"
       ]
+    },
+    {
+      "concept_id": "concept.ai_planning",
+      "labels": {
+        "en": "AI Planning",
+        "zh-Hant": "人工智慧規劃",
+        "zh-Hans": "人工智能规划"
+      },
+      "aliases": [
+        "ai planning",
+        "AI Planning",
+        "人工智慧規劃",
+        "人工智能规划"
+      ]
+    },
+    {
+      "concept_id": "concept.classical_planning",
+      "labels": {
+        "en": "Classical Planning",
+        "zh-Hant": "古典規劃",
+        "zh-Hans": "古典规划"
+      },
+      "aliases": [
+        "classical planning",
+        "Classical Planning",
+        "古典規劃",
+        "古典规划"
+      ]
+    },
+    {
+      "concept_id": "concept.strips",
+      "labels": {
+        "en": "STRIPS",
+        "zh-Hant": "STRIPS",
+        "zh-Hans": "STRIPS"
+      },
+      "aliases": [
+        "strips",
+        "STRIPS"
+      ]
+    },
+    {
+      "concept_id": "concept.pddl",
+      "labels": {
+        "en": "PDDL",
+        "zh-Hant": "PDDL",
+        "zh-Hans": "PDDL"
+      },
+      "aliases": [
+        "pddl",
+        "PDDL"
+      ]
+    },
+    {
+      "concept_id": "concept.satplan",
+      "labels": {
+        "en": "SATPlan",
+        "zh-Hant": "SATPlan",
+        "zh-Hans": "SATPlan"
+      },
+      "aliases": [
+        "satplan",
+        "SATPlan"
+      ]
+    },
+    {
+      "concept_id": "concept.automated_reasoning",
+      "labels": {
+        "en": "Automated Reasoning",
+        "zh-Hant": "自動推理",
+        "zh-Hans": "自动推理"
+      },
+      "aliases": [
+        "automated reasoning",
+        "Automated Reasoning",
+        "自動推理",
+        "自动推理"
+      ]
+    },
+    {
+      "concept_id": "concept.ai_agents",
+      "labels": {
+        "en": "AI Agents",
+        "zh-Hant": "AI 代理人",
+        "zh-Hans": "AI 代理人"
+      },
+      "aliases": [
+        "ai agents",
+        "AI Agents",
+        "ai agent",
+        "AI Agent"
+      ]
+    },
+    {
+      "concept_id": "concept.llm_planning",
+      "labels": {
+        "en": "LLM Planning",
+        "zh-Hant": "大模型規劃",
+        "zh-Hans": "大模型规划"
+      },
+      "aliases": [
+        "llm planning",
+        "LLM Planning"
+      ]
+    },
+    {
+      "concept_id": "concept.responsible_ai",
+      "labels": {
+        "en": "Responsible AI",
+        "zh-Hant": "負責任 AI",
+        "zh-Hans": "负责任 AI"
+      },
+      "aliases": [
+        "responsible ai",
+        "Responsible AI",
+        "負責任 AI",
+        "负责任 AI"
+      ]
+    },
+    {
+      "concept_id": "concept.automated_planning",
+      "labels": {
+        "en": "Automated Planning",
+        "zh-Hant": "自動規劃",
+        "zh-Hans": "自动规划"
+      },
+      "aliases": [
+        "automated planning",
+        "Automated Planning",
+        "自動規劃",
+        "自动规划"
+      ]
+    },
+    {
+      "concept_id": "concept.mcts",
+      "labels": {
+        "en": "MCTS",
+        "zh-Hant": "蒙地卡羅樹搜尋",
+        "zh-Hans": "蒙特卡洛树搜索"
+      },
+      "aliases": [
+        "mcts",
+        "MCTS",
+        "蒙地卡羅樹搜尋",
+        "蒙特卡洛树搜索"
+      ]
+    },
+    {
+      "concept_id": "concept.htn",
+      "labels": {
+        "en": "HTN",
+        "zh-Hant": "分層任務網路",
+        "zh-Hans": "分层任务网络"
+      },
+      "aliases": [
+        "htn",
+        "HTN",
+        "分層任務網路",
+        "分层任务网络"
+      ]
+    },
+    {
+      "concept_id": "concept.heuristics",
+      "labels": {
+        "en": "Heuristics",
+        "zh-Hant": "啟發式函數",
+        "zh-Hans": "启发式函数"
+      },
+      "aliases": [
+        "heuristics",
+        "Heuristics",
+        "啟發式函數",
+        "启发式函数"
+      ]
+    },
+    {
+      "concept_id": "concept.fast_forward",
+      "labels": {
+        "en": "Fast Forward",
+        "zh-Hant": "Fast Forward 啟發式",
+        "zh-Hans": "Fast Forward 启发式"
+      },
+      "aliases": [
+        "fast forward",
+        "Fast Forward"
+      ]
+    },
+    {
+      "concept_id": "concept.state_abstraction",
+      "labels": {
+        "en": "State Abstraction",
+        "zh-Hant": "狀態抽象",
+        "zh-Hans": "状态抽象"
+      },
+      "aliases": [
+        "state abstraction",
+        "State Abstraction",
+        "狀態抽象",
+        "状态抽象"
+      ]
     }
   ]
 }

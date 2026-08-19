@@ -8,7 +8,7 @@ EstimatedReadingTime: true
 Lang: zh-tw
 CanonicalId: hidden-value-of-multiple-choice-questions-goldilocks-principle
 Tags: Learning, Cognition, Active Recall
-Status: published
+Status: drafting
 Published: 2026-08-02
 LastModified: 2026-08-02
 </meta>
@@ -87,7 +87,9 @@ RawThought:
 - **正確使用三階段：** 初期快速掃描建立地圖 $\to$ 中期對錯誤選項做逆向工程 $\to$ 後期果斷離場，切換至空白頁主動回想。
 </takeaways>
 
-## 參考文獻（References）
+## 參考資料（References）
 
-1. Bjork, R. A. (1994). *Memory and metamemory considerations in the training of human beings*.
-2. Roediger, H. L., & Karpicke, J. D. (2006). *Test-enhanced learning: Taking memory tests improves long-term retention*. Psychological Science.
+### 學術論文（Academic Literature）
+
+1. Bjork, R. A. (1994). Memory and metamemory considerations in the training of human beings. In J. Metcalfe & A. Shimamura (Eds.), *Metacognition: Knowing about Knowing* (pp. 185-205). MIT Press.
+2. Roediger, H. L., & Karpicke, J. D. (2006). Test-enhanced learning: Taking memory tests improves long-term retention. *Psychological Science*, 17(3), 249-255. [DOI:10.1111/j.1467-9280.2006.01693.x](https://doi.org/10.1111/j.1467-9280.2006.01693.x)
