@@ -381,12 +381,7 @@
         "zh-Hant": "這段歷程記錄了 2025 年 2 月 24 日至 4 月 25 日在台中成功嶺陸軍步兵第 101 旅步 3 營步 2 連的入伍服役生活。作為陸軍第 219 梯次常備兵役新兵，在這裡完成了嚴謹的基礎軍事訓練、單兵戰技、體能淬鍊與團體紀律生活。",
         "zh-Hans": "这段历程记录了 2025 年 2 月 24 日至 4 月 25 日在台中成功岭陆军步兵第 101 旅步 3 营步 2 连的入伍服役生活。作为陆军第 219 梯次常备兵役新兵，在这里完成了严谨的基础军事训练、单兵战术、体能淬炼与团体纪律生活。"
       },
-      "references": [
-        {
-          "title": "青年日報 - 陸軍步兵101旅常備兵役軍事訓練報導",
-          "url": "https://www.ydn.com.tw/tw/News/ugC_News_Detail.aspx?ID=575461"
-        }
-      ]
+      "references": []
     },
     {
       "id": "phase-military-artillery-21st-b3c1",
@@ -419,6 +414,10 @@
         {
           "title": "青年日報 - 陸軍砲兵第21指揮部相關報導",
           "url": "https://www.ydn.com.tw/tw/News/ugC_News_Detail.aspx?ID=632938"
+        }, 
+        {
+          "title": "青年日報 - 陸軍步兵101旅常備兵役軍事訓練報導",
+          "url": "https://www.ydn.com.tw/tw/News/ugC_News_Detail.aspx?ID=575461"
         }
       ]
     },
@@ -469,7 +468,14 @@
         "zh-Hant": "目前就讀新加坡國立大學人工智慧碩士。",
         "zh-Hans": "目前就读新加坡国立大学人工智能硕士。"
       },
-      "references": []
+      "references": [
+        {
+          "canonical": "from-raw-data-to-knowledge-a-practical-introduction-to-data-mining"
+        },
+        {
+          "canonical": "discovering-hidden-structures-what-clustering-really-does"
+        }
+      ]
     },
     {
       "id": "phase-aiunion",

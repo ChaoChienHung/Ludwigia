@@ -256,6 +256,8 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 - `period` 先由 runtime 投影成 `period-start / period-end`
 - `start_*` / `end_*` 欄位若缺席，應 fallback 到共用 `title / summary / detail`
 - ongoing `period` 可用 `end = "present"`；runtime 應負責把它顯示成 `Present / 至今`，並投影成可排序的當下時間點
+- `references` 延伸連結：支援 `{ title, url }` 或 `{ title, canonical }`（亦支援 `canonical_id` / `canonicalId`）；前端 runtime 於渲染時依 `SITE_SEARCH_INDEX` 自動對接 `writing` / `notes` 文章路徑與標題，缺省標題時會自動從搜尋索引取文章 Title，無法 resolve 時則優雅退化為純文字標題
+- 延伸連結呈現：採用 `<ol class="timeline-detail-links-list">` 有序清單，樣式與 `notes/writings` 內的 linked text 保持一致（預設收斂、hover 時呈現 accent 亮彩與箭頭微動）
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。
 

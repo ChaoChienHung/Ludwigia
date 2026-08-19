@@ -251,17 +251,164 @@
         if (!reference || typeof reference !== 'object') return null;
         const rawHref = typeof reference.href === 'string' ? reference.href : typeof reference.url === 'string' ? reference.url : '';
         const href = rawHref.trim();
-        if (!href) return null;
+        const rawCanonical = typeof reference.canonical === 'string'
+          ? reference.canonical
+          : typeof reference.canonical_id === 'string'
+            ? reference.canonical_id
+            : typeof reference.canonicalId === 'string'
+              ? reference.canonicalId
+              : '';
+        const canonical = rawCanonical.trim();
+
+        if (!href && !canonical) return null;
+
         const rawLabel = reference.label || reference.title;
         const label = normalizeLocalizedText(rawLabel);
-        if (!label) return null;
+
         return {
           href,
+          canonical,
           label,
           kind: typeof reference.kind === 'string' ? reference.kind : undefined,
         };
       })
       .filter(Boolean);
+  };
+
+  const ensureSearchIndexLoaded = async () => {
+    if (Array.isArray(window.SITE_SEARCH_INDEX) && window.SITE_SEARCH_INDEX.length > 0) {
+      return window.SITE_SEARCH_INDEX;
+    }
+    if (typeof window.loadSiteIndex === 'function') {
+      try {
+        const idx = await window.loadSiteIndex();
+        if (Array.isArray(idx) && idx.length > 0) return idx;
+      } catch (e) {
+        // ignore
+      }
+    }
+    try {
+      const res = await fetch('search/search-index.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          window.SITE_SEARCH_INDEX = data;
+          return data;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    return [];
+  };
+
+  const resolveCanonicalTarget = (canonicalId, lang) => {
+    if (!canonicalId) return null;
+    const siteIndex = Array.isArray(window.SITE_SEARCH_INDEX) ? window.SITE_SEARCH_INDEX : null;
+    if (!siteIndex || !siteIndex.length) return null;
+
+    const targetCanonical = canonicalId.trim().toLowerCase();
+
+    const matches = siteIndex.filter((doc) => {
+      const docCanonical = (doc.canonical_id || doc.canonicalId || '').trim().toLowerCase();
+      return docCanonical === targetCanonical;
+    });
+
+    if (!matches.length) return null;
+
+    const targetLangs = lang === 'zh-Hant'
+      ? ['zh-hant', 'zh-tw', 'zh']
+      : lang === 'zh-Hans'
+        ? ['zh-hans', 'zh-cn', 'zh']
+        : ['en'];
+
+    let bestDoc = matches.find((doc) => {
+      const docLang = (doc.lang || '').toLowerCase();
+      return targetLangs.some((tl) => docLang.includes(tl));
+    });
+
+    if (!bestDoc) bestDoc = matches[0];
+
+    let href = bestDoc.path || bestDoc.url || '';
+    if (href.startsWith('../')) {
+      href = href.replace(/^\.\.\//, '');
+    }
+
+    return {
+      href,
+      title: bestDoc.title || canonicalId,
+    };
+  };
+
+  const resolveReferenceItem = (ref, lang) => {
+    if (!ref || typeof ref !== 'object') return null;
+
+    const customLabel = readLocalized(ref.label, lang);
+
+    if (ref.href) {
+      const isExternal = /^https?:\/\//i.test(ref.href);
+      return {
+        href: ref.href,
+        label: customLabel || ref.href,
+        isExternal,
+        isResolved: true,
+      };
+    }
+
+    if (ref.canonical) {
+      const resolved = resolveCanonicalTarget(ref.canonical, lang);
+      if (resolved && resolved.href) {
+        return {
+          href: resolved.href,
+          label: customLabel || resolved.title,
+          isExternal: false,
+          isResolved: true,
+        };
+      }
+      return {
+        href: '',
+        label: customLabel || ref.canonical,
+        isExternal: false,
+        isResolved: false,
+      };
+    }
+
+    return null;
+  };
+
+  const buildReferencesMarkup = (references, lang, isClusterItem = false) => {
+    if (!Array.isArray(references) || !references.length) return '';
+    const resolvedRefs = references.map((ref) => resolveReferenceItem(ref, lang)).filter(Boolean);
+    if (!resolvedRefs.length) return '';
+
+    const containerClass = isClusterItem
+      ? 'timeline-detail-links timeline-detail-links--cluster-item'
+      : 'timeline-detail-links';
+
+    return `
+      <div class="${containerClass}">
+        <ol class="timeline-detail-links-list">
+          ${resolvedRefs
+            .map(
+              (ref) => `
+                <li class="timeline-detail-link-item">
+                  ${
+                    ref.isResolved && ref.href
+                      ? `<a class="timeline-detail-link" href="${ref.href}"${ref.isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''}>
+                          <span class="timeline-detail-link-text">${ref.label}</span>
+                          <span class="timeline-detail-link-icon" aria-hidden="true">${ref.isExternal ? '↗' : '→'}</span>
+                        </a>`
+                      : `<span class="timeline-detail-link timeline-detail-link--disabled">
+                          <span class="timeline-detail-link-text">${ref.label}</span>
+                        </span>`
+                  }
+                </li>
+              `,
+            )
+            .join('')}
+        </ol>
+      </div>
+    `;
   };
 
   const normalizeEvent = (rawEvent) => {
@@ -352,6 +499,7 @@
     state.loadError = false;
 
     try {
+      ensureSearchIndexLoaded();
       let payload = null;
       let lastError = null;
 
@@ -695,23 +843,7 @@
     const childMarkup = childEvents
       .map((childEvent) => {
         const references = Array.isArray(childEvent.references) ? childEvent.references : [];
-        const referenceMarkup = references.length
-          ? `
-            <div class="timeline-detail-links timeline-detail-links--cluster-item">
-              <div class="timeline-detail-links-list">
-                ${references
-                  .map(
-                    (ref) => `
-                      <a class="timeline-detail-link" href="${ref.href}" target="_blank" rel="noopener noreferrer">
-                        ${readLocalized(ref.label, lang)}
-                      </a>
-                    `,
-                  )
-                  .join('')}
-              </div>
-            </div>
-          `
-          : '';
+        const referenceMarkup = buildReferencesMarkup(references, lang, true);
 
         return `
           <article class="timeline-detail-cluster-item">
@@ -759,21 +891,13 @@
     }
 
     const references = Array.isArray(event.references) ? event.references : [];
-    const referenceMarkup = references.length
+    const referenceMarkup = buildReferencesMarkup(references, lang, false);
+
+    const referenceBlock = referenceMarkup
       ? `
-        <div class="timeline-detail-links">
+        <div class="timeline-detail-links-section">
           <div class="timeline-detail-links-label">${text.referencesLabel}</div>
-          <div class="timeline-detail-links-list">
-            ${references
-              .map(
-                (ref) => `
-                  <a class="timeline-detail-link" href="${ref.href}" target="_blank" rel="noopener noreferrer">
-                    ${readLocalized(ref.label, lang)}
-                  </a>
-                `,
-              )
-              .join('')}
-          </div>
+          ${referenceMarkup}
         </div>
       `
       : '';
@@ -787,7 +911,7 @@
         ${buildDurationMarkup(event, text)}
         <h4>${readLocalized(event.title, lang)}</h4>
         <p class="timeline-detail-body">${readLocalized(event.detail, lang) || readLocalized(event.summary, lang)}</p>
-        ${referenceMarkup}
+        ${referenceBlock}
       </div>
     `;
   };

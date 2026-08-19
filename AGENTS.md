@@ -33,6 +33,7 @@
   - ongoing `period` 若啟用，`end: "present"` 必須作為穩定 authoring 寫法；runtime 可把它投影成「至今 / Present」顯示與可排序的當下時間點，但作者不應被迫反覆手改今天日期
   - 若同一時間存在多個 ongoing `period`，timeline UI 可把多個 `period-end` 收斂為單一尾端 `Present / 至今` cluster；但 source data 仍維持逐筆 event，不能把 cluster 本身當成新的手動資料層
   - 若 timeline 支援 `category` metadata（例如 `education` / `internship` / `work`），它只作為輕量 facet 與 badge 顯示來源；不得反過來長成第二套固定配色系統，破壞既有 palette-driven 視覺契約
+  - 若 timeline events 支援 `references` 延伸連結，必須維持：支援 `{ title, url }` 與 `{ title, canonical }`（或 `canonical_id` / `canonicalId`）結構；前端 runtime 負責 resolve canonical link 與無標題時的 title fallback/退化處理；呈現上統一採 ordered list (`<ol>`) 呈現，視覺樣式與 `notes/writings` 內的 linked text 保持一致（預設收斂、hover 時呈現 accent 亮彩與箭頭微動）。
 - 若首頁 `Skills` 與 `Credentials` 區塊啟用 source-driven data file（`data/Skills/skills.json` 與 `data/Credentials/credentials.json`），必須維持：
   - 作者只維護 source JSON，前端 runtime (`about-skills.js` / `about-credentials.js`) 負責載入、正規化、多語切換與 DOM 渲染；不應要求手動維護第二份 HTML 靜態資料
   - `Skills` 必須維持類別分組與頁籤/箭頭控制，確保多個技能面板共用顯示空間，隨技能成長仍能維持空間精簡
