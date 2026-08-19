@@ -100,7 +100,7 @@ caption: 生成式推薦系統（Generative Recommender System）的新範式架
 
 在工程層面，推薦系統可以直接「無縫接入」LLM 領域極度成熟的工程優化——無論是 <information concept="concept.flash_attention">FlashAttention</information>、<information concept="concept.kv_cache">KV Cache</information>、<information concept="concept.vllm">vLLM</information> 推理加速，還是 <information concept="concept.megatron">Megatron</information> 的分散式訓練框架。
 
-更重要的是，在演算法層面，推薦系統也能直接吃滿大模型的技術紅利。例如，透過引入 LLM 前沿的對齊技術——如 RLHF 或 DPO，系統可以直接借鑑這些框架，跳脫短視的點擊率指標，建立動態的獎勵模型來優化用戶的長期滿意度。這讓推薦系統的迭代速度得以與全球頂尖的 AI 工程社群正式接軌，全面繼承這波大模型基建爆發的技術紅利。
+更重要的是，在演算法層面，推薦系統也能直接吃滿大模型的技術紅利。例如，透過引入 LLM 前沿的<information concept="concept.alignment">對齊技術</information>——如 <information concept="concept.rlhf">RLHF</information> 或 <information concept="concept.dpo">DPO</information>，系統可以直接借鑑這些框架，跳脫短視的<information concept="concept.ctr">點擊率</information>（CTR）指標，建立動態的獎勵模型來優化用戶的長期滿意度。這讓推薦系統的迭代速度得以與全球頂尖的 AI 工程社群正式接軌，全面繼承這波大模型基建爆發的技術紅利。
 
 <callout>
 title: 探索機制的範式轉移：從外掛啟發式到原生解碼採樣
@@ -109,7 +109,7 @@ content:
 當推薦系統走向端到端生成時，過去許多經典難題的解題思維也發生了本質上的轉變。以**探索機制**為例：
 
 - **傳統級聯架構：** 過去為了解決<information concept="concept.cold_start">冷啟動</information>與<information concept="concept.filter_bubble">資訊繭房</information>問題，多在排序後以規則強插新商品、或引入簡單的隨機探索策略。這種方式與模型本體解耦，本質上只是事後的啟發式補救。
-- **端到端生成範式：** 探索機制被優雅地融入模型本身的**解碼過程**。透過調整 Temperature、Top-$K$ 或 Top-$p$ 等採樣參數，模型在自迴歸生成下一個商品 Token 時，天生即帶有基於全局機率分佈的適度隨機性與多樣性。
+- **端到端生成範式：** 探索機制被優雅地融入模型本身的**解碼過程**。透過調整 <information concept="concept.temperature">Temperature</information>、<information concept="concept.top_k">Top-$K$</information> 或 <information concept="concept.top_p">Top-$p$</information> 等採樣參數，模型在<information concept="concept.autoregressive">自迴歸</information>生成下一個商品 Token 時，天生即帶有基於全局機率分佈的適度隨機性與多樣性。
 
 這並非代表生成式探索在所有維度上絕對優於傳統外掛，而是將「探索與利用」的權衡從繁雜的外部規則，轉化為模型內建的採樣特性，提供了一種更渾然天成、與模型能力完全對齊的解法。
 </callout>
