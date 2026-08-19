@@ -60,10 +60,10 @@ caption: Traditional ID 與 Semantic ID 的編碼理念對比示意圖。
 系統會立刻撞上兩道無法逾越的工程高牆：
 
 1. **Softmax 算力與記憶體爆炸：**
-   自迴歸模型在預測下一個 Token 時，需要在網路的最後一層對所有潛在的商品 ID 進行 Softmax 運算。當詞表大小（Vocab Size）達到 $10^7$ 的數量級時，這個極度龐大的<information concept="concept.gemm">矩陣乘法</information>將會消耗驚人的 <information concept="concept.gpu">GPU</information> 記憶體與算力頻寬。這不僅會導致運算過程出現嚴重的數值不穩定，模型也根本無法在嚴格要求響應時間（如 50 毫秒內）的線上環境中完成推論。
+    自迴歸模型在預測下一個 Token 時，需要在網路的最後一層對所有潛在的商品 ID 進行 Softmax 運算。當詞表大小（Vocab Size）達到 $10^7$ 的數量級時，這個極度龐大的<information concept="concept.gemm">矩陣乘法</information>將會消耗驚人的 <information concept="concept.gpu">GPU</information> 記憶體與算力頻寬。這不僅會導致運算過程出現嚴重的數值不穩定，模型也根本無法在嚴格要求響應時間（如 50 毫秒內）的線上環境中完成推論。
 
 2. **商品頻繁上下架與冷啟動絕壁：**
-   語言模型的詞表相對靜態，模型訓練收斂後就能持續泛化使用。但推薦系統的商品庫每天都在劇烈變動，若要為了新上架的商品頻繁地重新訓練模型或更新 Output Layer，在實務上極度耗時且不切實際。
+    語言模型的詞表相對靜態，模型訓練收斂後就能持續泛化使用。但推薦系統的商品庫每天都在劇烈變動，若要為了新上架的商品頻繁地重新訓練模型或更新 Output Layer，在實務上極度耗時且不切實際。
    更致命的是，**傳統的 Atomic ID 本質上僅是用來在 <information concept="concept.embedding">Embedding</information> Table 中尋找對應向量的查表鍵（Lookup Key），其本身不具備任何物理與語意意義。** 例如 Item `10023` 與 Item `10024` 在系統中只是兩個獨立的流水號，無法反映出它們可能是同款不同色的 3C 產品。因此，當新商品上架時，由於缺乏歷史互動數據，且這把「新鑰匙」與其他既有 ID 之間毫無特徵關聯，模型完全沒有任何線索去預測這個新商品，導致嚴重的冷啟動失敗。
 
 這意味著我們無法再將大模型硬塞進傳統的 ID 體系，而是需要一套全新的商品表徵與編碼方式。而業界目前普遍採用的破局關鍵，正是 **Semantic ID（語意 ID）**。
@@ -143,16 +143,16 @@ $$ \text{Item } x \longrightarrow [c_1, c_2, \dots, c_M] $$
 將商品轉化為 Token 序列後，我們不僅完美破解了前面的兩大工程高牆，還因為階層化編碼與共享前綴的緣故而獲得了其他紅利：
 
 1. **極致的空間壓縮與碼本複用：**
-    假設每一層的詞表大小（即碼本容量 Codebook Size）設定為 $K=256$，對於一個 3 層的 Semantic ID，大模型最後一層的 Vocab Size 會被極度壓縮到僅剩 $3 \times 256 = 768$。這徹底消滅了千萬級 Softmax 帶來的 <information concept="concept.oom">OOM</information> 危機。然而，這區區 768 個基礎語意詞彙，透過排列組合卻能撐起 $256^3 \approx 1,677$ 萬種編碼空間，輕鬆覆蓋龐大商品庫。
+     假設每一層的詞表大小（即碼本容量 Codebook Size）設定為 $K=256$，對於一個 3 層的 Semantic ID，大模型最後一層的 Vocab Size 會被極度壓縮到僅剩 $3 \times 256 = 768$。這徹底消滅了千萬級 Softmax 帶來的 <information concept="concept.oom">OOM</information> 危機。然而，這區區 768 個基礎語意詞彙，透過排列組合卻能撐起 $256^3 \approx 1,677$ 萬種編碼空間，輕鬆覆蓋龐大商品庫。
 
 2. **協同訊號遷移與零樣本 (Zero-Shot) 冷啟動：**
-    新上架商品由於缺乏歷史互動數據，在傳統架構下形同孤島。但在 Semantic ID 體系中，新商品只要走一遍量化流程，就可以被分發到對應的共同前綴 $[c_1, c_2]$ 之下。大模型在過往訓練中早已掌握該前綴代表的用戶偏好，因此能直接將累積在該前綴上的大量協同訊號零成本遷移，即使商品毫無點擊紀錄，模型依然能精準推薦。
+     新上架商品由於缺乏歷史互動數據，在傳統架構下形同孤島。但在 Semantic ID 體系中，新商品只要走一遍量化流程，就可以被分發到對應的共同前綴 $[c_1, c_2]$ 之下。大模型在過往訓練中早已掌握該前綴代表的用戶偏好，因此能直接將累積在該前綴上的大量協同訊號零成本遷移，即使商品毫無點擊紀錄，模型依然能精準推薦。
 
 3. **Trie 樹前綴剪枝與極致檢索效率：**
-    生成式推薦依賴<information concept="concept.autoregressive">自迴歸</information>解碼生成候選商品。由粗到細的前綴讓搜尋空間形成一棵標準的前綴<information concept="concept.trie">字典樹</information>。模型在解碼第 1 個 Token 時，就能立刻剔除 90% 以上不相干的大類別，逐層收斂範圍，徹底解決百萬級候選庫生成時的計算爆炸問題。
+     生成式推薦依賴<information concept="concept.autoregressive">自迴歸</information>解碼生成候選商品。由粗到細的前綴讓搜尋空間形成一棵標準的前綴<information concept="concept.trie">字典樹</information>。模型在解碼第 1 個 Token 時，就能立刻剔除 90% 以上不相干的大類別，逐層收斂範圍，徹底解決百萬級候選庫生成時的計算爆炸問題。
 
 4. **前綴包容性與平滑退化 (Graceful Degradation)：**
-    模型在預測末端微觀細節時往往存在不確定性。在 Atomic ID 下，預測錯一個數字，結果可能從「筆記型電腦」變成「洋裝」。但 Semantic ID 具備高度容錯率：即便最後一層 $c_3$ 產生偏差（例如將 512GB 預測為 1TB），只要前綴 $[c_1, c_2]$ 正確，推薦結果依然維持在高度相關的產品線內，確保線上系統體驗不會產生災難性偏離。
+     模型在預測末端微觀細節時往往存在不確定性。在 Atomic ID 下，預測錯一個數字，結果可能從「筆記型電腦」變成「洋裝」。但 Semantic ID 具備高度容錯率：即便最後一層 $c_3$ 產生偏差（例如將 512GB 預測為 1TB），只要前綴 $[c_1, c_2]$ 正確，推薦結果依然維持在高度相關的產品線內，確保線上系統體驗不會產生災難性偏離。
 
 <callout>
 title: 解鎖 Zero-Shot 冷啟動的關鍵：語意表徵的存在與否
@@ -175,10 +175,10 @@ content:
 目前業界打造商品 Tokenizer 的技術路線，主要分為兩大陣營：
 
 1. **端到端神經網路路線 (RQ-VAE)：**
-    以 Google TIGER (NeurIPS 2022) 為代表。透過變分自編碼器（Encoder、Codebooks、Decoder）與 Straight-Through Estimator (STE) 梯度技巧，讓神經網路主動學習符合「下游推薦任務」的潛在語意空間。這條路線能將推薦效果推向極致（SOTA），但訓練成本與調參難度較高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</content-link> 中有更完整的介紹。
+     以 Google TIGER (NeurIPS 2022) 為代表。透過變分自編碼器（Encoder、Codebooks、Decoder）與 Straight-Through Estimator (STE) 梯度技巧，讓神經網路主動學習符合「下游推薦任務」的潛在語意空間。這條路線能將推薦效果推向極致（SOTA），但訓練成本與調參難度較高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</content-link> 中有更完整的介紹。
 
 2. **兩階段幾何量化路線 (RQ-Kmeans)：**
-    以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <information concept="concept.k_means">K-means</information> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer</content-link> 中有更完整的介紹。
+     以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <information concept="concept.k_means">K-means</information> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer</content-link> 中有更完整的介紹。
 
 ## 實務挑戰與工程權衡：SID 的深層痛點
 
