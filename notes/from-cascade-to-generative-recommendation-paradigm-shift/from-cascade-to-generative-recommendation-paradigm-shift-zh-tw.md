@@ -74,7 +74,7 @@ caption: 生成式推薦系統（Generative Recommender System）的新範式架
 
 ## 2. 破局之道：當推薦系統走向「端到端生成」
 
-當級聯架構在目標一致性、IO 開銷與硬體利用率上都走到死胡同時，業界意識到：我們不能再繼續給舊系統打補丁了。解藥，其實藏在另一個領域——大語言模型（LLM）所採用的**自迴歸生成（Autoregressive Generation）**。
+當級聯架構在目標一致性、IO 開銷與硬體利用率上都走到死胡同時，業界意識到：我們不能再繼續給舊系統打補丁了。答案，其實藏在另一個領域——大語言模型（LLM）所採用的**自迴歸生成（Autoregressive Generation）**。
 
 這正是近年來以快手 [**OneRec** (*OneRec: Unifying Retrieve and Rank with Generative Recommender and Preference Alignment*)](https://arxiv.org/abs/2502.18965) 為代表的前沿研究所掀起的範式轉移：從多階段的漏斗過濾，走向端到端的自迴歸生成（Generative Recommendation）。
 
@@ -82,7 +82,7 @@ caption: 生成式推薦系統（Generative Recommender System）的新範式架
 
 而生成式推薦則將問題昇華，直接讓模型學習複雜的**聯合機率分佈 $P(\text{items} \mid u, c)$**。給定用戶歷史與上下文，模型直接像寫文章一樣，一步步「生成」出最適合的商品序列。這本質上比起判別式，對於模型而言更像是一道「開放式申論題」——模型不再受限於既定的候選集，而是必須真正掌握用戶興趣的演變脈絡與全局商品的分佈特徵，具備主動構建內容序列的全局視野與推理能力。
 
-不僅如此，這種演算法的轉變，更解鎖了傳統架構無法企及的四大優勢：
+不僅如此，這種演算法的轉變，更解鎖了傳統架構無法企及的**四大優勢**：
 
 ### 一、統一目標，消除內耗與歸因難題
 生成式架構採用單一強大的端到端模型，直接根據用戶上下文輸出最終的推薦列表，而非如傳統多階段級聯架構般逐層篩選。由於模型擺脫了分階段優化不同局部目標的妥協，改由單一模型對同一終極目標進行優化，因而能直接對全局最優解負責。同時，由於不再受限於多階段的複雜過濾規則，問題案例的歸因變得極為純粹——成效優劣皆源於該統一模型的權重與訓練數據，徹底消滅了系統偵錯的黑盒現象。
@@ -95,10 +95,24 @@ caption: 生成式推薦系統（Generative Recommender System）的新範式架
 
 在軟硬體高度對齊的優勢下，投入的每一分算力都能無縫轉化為模型規模的擴展，這使得推薦系統徹底擺脫了低 <information concept="concept.roi">ROI</information> 的泥沼，正式迎來「算力越大、能力越強」的全新範式。
 
-### 四、全面繼承 LLM 的工業級基礎設施
+### 四、全面繼承 LLM 的技術生態
 當推薦系統轉向標準的 Transformer 自迴歸架構後，另一個巨大的隱藏紅利在於：**不再需要重複造輪子**。
 
-推薦系統可以直接「無縫接入」LLM 領域極度成熟的工程優化——無論是 <information concept="concept.flash_attention">FlashAttention</information>、<information concept="concept.kv_cache">KV Cache</information>、<information concept="concept.vllm">vLLM</information> 推理加速，還是 <information concept="concept.megatron">Megatron</information> 的分散式訓練框架。這讓推薦系統的迭代速度得以與全球頂尖的 AI 工程社群正式接軌，全面繼承這波大模型基建爆發的技術紅利。
+在工程層面，推薦系統可以直接「無縫接入」LLM 領域極度成熟的工程優化——無論是 <information concept="concept.flash_attention">FlashAttention</information>、<information concept="concept.kv_cache">KV Cache</information>、<information concept="concept.vllm">vLLM</information> 推理加速，還是 <information concept="concept.megatron">Megatron</information> 的分散式訓練框架。
+
+更重要的是，在演算法層面，推薦系統也能直接吃滿大模型的技術紅利。例如，透過引入 LLM 前沿的對齊技術——如 RLHF 或 DPO，系統可以直接借鑑這些框架，跳脫短視的點擊率指標，建立動態的獎勵模型來優化用戶的長期滿意度。這讓推薦系統的迭代速度得以與全球頂尖的 AI 工程社群正式接軌，全面繼承這波大模型基建爆發的技術紅利。
+
+<callout>
+title: 探索機制的範式轉移：從外掛啟發式到原生解碼採樣
+icon: compass
+content:
+當推薦系統走向端到端生成時，過去許多經典難題的解題思維也發生了本質上的轉變。以**探索機制**為例：
+
+- **傳統級聯架構：** 過去為了解決冷啟動與資訊繭房問題，多在排序後以規則強插新商品、或引入簡單的隨機探索策略。這種方式與模型本體解耦，本質上只是事後的啟發式補救。
+- **端到端生成範式：** 探索機制被優雅地融入模型本身的**解碼過程**。透過調整 Temperature、Top-$K$ 或 Top-$p$ 等採樣參數，模型在自迴歸生成下一個商品 Token 時，天生即帶有基於全局機率分佈的適度隨機性與多樣性。
+
+這並非代表生成式探索在所有維度上絕對優於傳統外掛，而是將「探索與利用」的權衡從繁雜的外部規則，轉化為模型內建的採樣特性，提供了一種更渾然天成、與模型能力完全對齊的解法。
+</callout>
 
 ## 3. 結語：算法、硬體與生態共振的未來
 

@@ -1220,6 +1220,117 @@
         "隨插即用",
         "随插即用"
       ]
+    },
+    {
+      "concept_id": "concept.alignment",
+      "labels": {
+        "en": "Model Alignment",
+        "zh-Hant": "對齊技術（Alignment）",
+        "zh-Hans": "对齐技术（Alignment）"
+      },
+      "contexts": {
+        "en": "Model Alignment refers to methodologies used in model post-training to adjust language model behavior and outputs to match human intent, preferences, safety constraints, and values.",
+        "zh-Hant": "對齊技術（Model Alignment）是指在大模型後訓練階段，透過偏好學習與目標函數調整，使模型的輸出行為符合人類預期意圖、安全規範與長遠價值的技術與方法。",
+        "zh-Hans": "对齐技术（Model Alignment）是指在大模型后训练阶段，通过偏好学习与目标函数调整，使模型的输出行为符合人类预期意图、安全规范与长远价值的技术与方法。"
+      },
+      "aliases": [
+        "alignment",
+        "對齊技術",
+        "对齐技术"
+      ]
+    },
+    {
+      "concept_id": "concept.rlhf",
+      "labels": {
+        "en": "Reinforcement Learning from Human Feedback (RLHF)",
+        "zh-Hant": "基於人類回饋的強化學習（RLHF）",
+        "zh-Hans": "基于人类反馈的强化学习（RLHF）"
+      },
+      "contexts": {
+        "en": "Reinforcement Learning from Human Feedback (RLHF) is an alignment methodology that trains a reward model from human preference data and optimizes language model outputs using reinforcement learning algorithms.",
+        "zh-Hant": "基於人類回饋的強化學習（RLHF）是一種模型對齊技術。它透過收集人類偏好排序資料訓練獎勵模型，並利用強化學習演算法（如 PPO）引導模型生成更符合人類意圖與價值的輸出。",
+        "zh-Hans": "基于人类反馈的强化学习（RLHF）是一种模型对齐技术。它通过收集人类偏好排序数据训练奖励模型，并利用强化学习算法（如 PPO）引导模型生成更符合人类意图与价值的输出。"
+      },
+      "aliases": [
+        "RLHF",
+        "rlhf"
+      ]
+    },
+    {
+      "concept_id": "concept.dpo",
+      "labels": {
+        "en": "Direct Preference Optimization (DPO)",
+        "zh-Hant": "直接偏好優化（DPO）",
+        "zh-Hans": "直接偏好优化（DPO）"
+      },
+      "contexts": {
+        "en": "Direct Preference Optimization (DPO) is an alignment algorithm that directly optimizes model parameters on preference data without needing a separate reward model or PPO training loop.",
+        "zh-Hant": "直接偏好優化（DPO）是一種免除顯式獎勵模型的對齊演算法。它將對齊問題直接數學重構為偏好資料上的交叉熵損失，簡化了傳統 RLHF 訓練獎勵模型與 PPO 的複雜流程。",
+        "zh-Hans": "直接偏好优化（DPO）是一种免除显式奖励模型的对齐算法。它将对齐问题直接数学重构为偏好数据上的交叉熵损失，简化了传统 RLHF 训练奖励模型与 PPO 的复杂流程。"
+      },
+      "aliases": [
+        "DPO",
+        "dpo"
+      ]
+    },
+    {
+      "concept_id": "concept.top_k",
+      "labels": {
+        "en": "Top-K Sampling",
+        "zh-Hant": "Top-K 採樣",
+        "zh-Hans": "Top-K 采样"
+      },
+      "contexts": {
+        "en": "Top-K Sampling is a decoding sampling strategy that restricts candidates to the K highest probability tokens at each step before re-normalizing and sampling.",
+        "zh-Hant": "Top-K 採樣是一種自迴歸解碼截斷策略。在生成下一個 Token 時，模型僅保留機率最高的前 K 個候選詞並進行重新歸一化採樣，用來過濾低概率長尾詞並維持生成的多樣性。",
+        "zh-Hans": "Top-K 采样是一种自回归解码截断策略。在生成下一个 Token 时，模型仅保留概率最高的前 K 个候选词并进行重新归一化采样，用来过滤低概率长尾词并维持生成的多样性。"
+      },
+      "aliases": [
+        "Top-K",
+        "top-k",
+        "Top-K 採樣",
+        "Top-K 采样"
+      ]
+    },
+    {
+      "concept_id": "concept.top_p",
+      "labels": {
+        "en": "Top-p Sampling (Nucleus Sampling)",
+        "zh-Hant": "Top-p 採樣（核採樣）",
+        "zh-Hans": "Top-p 采样（核采样）"
+      },
+      "contexts": {
+        "en": "Top-p Sampling (Nucleus Sampling) is a dynamic decoding sampling strategy that selects from the smallest set of tokens whose cumulative probability exceeds p.",
+        "zh-Hant": "Top-p 採樣（核採樣，Nucleus Sampling）是一種動態截斷解碼策略。它依據候選詞的累積機率是否達到設定門檻 p 來動態決定候選集大小，在高信心時收窄選擇，在平坦分佈時放寬候選。",
+        "zh-Hans": "Top-p 采样（核采样，Nucleus Sampling）是一种动态截断解码策略。它依据候选词的累积概率是否达到设定门槛 p 来动态决定候选集大小，在高信心时收窄选择，在平稳分布时放宽候选。"
+      },
+      "aliases": [
+        "Top-p",
+        "top-p",
+        "Top-p 採樣",
+        "Top-p 采样",
+        "核採樣",
+        "核采样"
+      ]
+    },
+    {
+      "concept_id": "concept.temperature",
+      "labels": {
+        "en": "Temperature Scaling",
+        "zh-Hant": "溫度參數（Temperature）",
+        "zh-Hans": "温度参数（Temperature）"
+      },
+      "contexts": {
+        "en": "Temperature Scaling is a hyperparameter used during decoding logits normalization to control the randomness and sharpness of the output probability distribution.",
+        "zh-Hant": "溫度參數（Temperature）是生成模型在 Logits 做 Softmax 前所使用的調節係數。較低溫度會使分佈更加陡峭尖銳（趨向確定性），較高溫度則平滑分佈（提升採樣隨機性與多樣性）。",
+        "zh-Hans": "温度参数（Temperature）是生成模型在 Logits 做 Softmax 前所使用的调节系数。较低温度会使分布更加陡峭尖锐（趋向确定性），较高温度则平滑分布（提升采样随机性与多样性）。"
+      },
+      "aliases": [
+        "Temperature",
+        "temperature",
+        "溫度參數",
+        "温度参数"
+      ]
     }
   ]
 }
