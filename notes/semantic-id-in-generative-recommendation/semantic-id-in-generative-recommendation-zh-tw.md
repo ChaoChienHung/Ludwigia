@@ -60,11 +60,12 @@ caption: Traditional ID 與 Semantic ID 的編碼理念對比示意圖。
 系統會立刻撞上兩道無法逾越的工程高牆：
 
 1. **Softmax 算力與記憶體爆炸：**
-    自迴歸模型在預測下一個 Token 時，需要在網路的最後一層對所有潛在的商品 ID 進行 Softmax 運算。當詞表大小（Vocab Size）達到 $10^7$ 的數量級時，這個極度龐大的<information concept="concept.gemm">矩陣乘法</information>將會消耗驚人的 <information concept="concept.gpu">GPU</information> 記憶體與算力頻寬。這不僅會導致運算過程出現嚴重的數值不穩定，模型也根本無法在嚴格要求響應時間（如 50 毫秒內）的線上環境中完成推論。
+     自迴歸模型在預測下一個 Token 時，需要在網路的最後一層對所有潛在的商品 ID 進行 Softmax 運算。當詞表大小（Vocab Size）達到 $10^7$ 的數量級時，這個極度龐大的<information concept="concept.gemm">矩陣乘法</information>將會消耗驚人的 <information concept="concept.gpu">GPU</information> 記憶體與算力頻寬。這不僅會導致運算過程出現嚴重的數值不穩定，模型也根本無法在嚴格要求響應時間（如 50 毫秒內）的線上環境中完成推論。
 
 2. **商品頻繁上下架與冷啟動絕壁：**
-    語言模型的詞表相對靜態，模型訓練收斂後就能持續泛化使用。但推薦系統的商品庫每天都在劇烈變動，若要為了新上架的商品頻繁地重新訓練模型或更新 Output Layer，在實務上極度耗時且不切實際。
-   更致命的是，**傳統的 Atomic ID 本質上僅是用來在 <information concept="concept.embedding">Embedding</information> Table 中尋找對應向量的查表鍵（Lookup Key），其本身不具備任何物理與語意意義。** 例如 Item `10023` 與 Item `10024` 在系統中只是兩個獨立的流水號，無法反映出它們可能是同款不同色的 3C 產品。因此，當新商品上架時，由於缺乏歷史互動數據，且這把「新鑰匙」與其他既有 ID 之間毫無特徵關聯，模型完全沒有任何線索去預測這個新商品，導致嚴重的冷啟動失敗。
+     語言模型的詞表相對靜態，模型訓練收斂後就能持續泛化使用。但推薦系統的商品庫每天都在劇烈變動，若要為了新上架的商品頻繁地重新訓練模型或更新 Output Layer，在實務上極度耗時且不切實際。
+   
+     更致命的是，**傳統的 Atomic ID 本質上僅是用來在 <information concept="concept.embedding">Embedding</information> Table 中尋找對應向量的查表鍵（Lookup Key），其本身不具備任何物理與語意意義。** 例如 Item `10023` 與 Item `10024` 在系統中只是兩個獨立的流水號，無法反映出它們可能是同款不同色的 3C 產品。因此，當新商品上架時，由於缺乏歷史互動數據，且這把「新鑰匙」與其他既有 ID 之間毫無特徵關聯，模型完全沒有任何線索去預測這個新商品，導致嚴重的冷啟動失敗。
 
 這意味著我們無法再將大模型硬塞進傳統的 ID 體系，而是需要一套全新的商品表徵與編碼方式。而業界目前普遍採用的破局關鍵，正是 **Semantic ID（語意 ID）**。
 
