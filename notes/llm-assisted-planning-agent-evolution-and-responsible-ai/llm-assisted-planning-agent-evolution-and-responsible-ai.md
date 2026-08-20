@@ -197,8 +197,6 @@ LastModified: 2026-08-19
 
 ## 參考資料（References）
 
-### 學術論文（Academic Literature）
-
 1. Mahdavi, S., et al. (2024). LLM-guided PDDL creation and refinement. In *Advances in Neural Information Processing Systems (NeurIPS 2024)*. [arXiv:2410.03570](https://arxiv.org/abs/2410.03570)
 2. Kwon, M., et al. (2025). Hybrid symbolic and MCTS planning with large language models. In *IEEE International Conference on Robotics and Automation (ICRA 2025)*.
 3. Silver, T., Dan, S., Srinivas, K., Tenenbaum, J. B., Kaelbling, L., & Katz, M. (2024). Generalized planning in PDDL domains with pretrained large language models. In *Proceedings of the AAAI Conference on Artificial Intelligence*, 38(18), 20006-20014. [arXiv:2305.11014](https://arxiv.org/abs/2305.11014)

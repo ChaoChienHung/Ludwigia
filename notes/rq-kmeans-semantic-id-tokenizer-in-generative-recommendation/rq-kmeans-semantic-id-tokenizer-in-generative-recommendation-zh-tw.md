@@ -249,7 +249,5 @@ RQ-Kmeans 完美地扮演了這個「翻譯官」的角色。它拋棄了單層�
 
 ## 參考資料（References）
 
-### 技術文章（Technical Articles）
-
 1. [知乎：生成式推荐入门2——RQ-Kmeans分词器](https://zhuanlan.zhihu.com/p/1949167463393650590)
 2. [Emergent Mind: RQ-KMeans: Hierarchical Residual Quantization](https://www.emergentmind.com/topics/residual-quantization-rq-kmeans)

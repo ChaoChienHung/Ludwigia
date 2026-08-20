@@ -244,8 +244,6 @@ $$\text{REACH}^-(s, h) \subseteq \text{REACH}(s, h) \subseteq \text{REACH}^+(s, 
 
 ## 參考資料（References）
 
-### 學術論文（Academic Literature）
-
 1. Hoffmann, J., & Nebel, B. (2001). The FF planning system: Fast plan generation through heuristic search. *Journal of Artificial Intelligence Research*, 14, 253-302. [JAIR](https://doi.org/10.1613/jair.855)
 2. Georgievski, I., & Aiello, M. (2015). HTN planning: Overview, comparison, and beyond. *Artificial Intelligence*, 222, 124-156. [ScienceDirect](https://doi.org/10.1016/j.artint.2015.02.002)
 3. Höller, D., Behnke, G., Bercher, P., Biundo, S., Fiorino, H., Pellier, D., & Alford, R. (2020). HDDL: An extension to PDDL for expressing hierarchical planning problems. In *Proceedings of the AAAI Conference on Artificial Intelligence* (Vol. 34, No. 06, pp. 9883-9891). [AAAI](https://doi.org/10.1609/aaai.v34i06.6541)

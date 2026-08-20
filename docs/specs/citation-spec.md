@@ -60,15 +60,13 @@
 
 ---
 
-## 4. 原始語言保留原則（Source Language Contract）
+## 5. 原始語言保留原則（Source Language Contract）
 
 * **原則**：外部參考文獻（特別是文章標題與平台名稱）**必須嚴格保持原網址/原文獻的原始語言與用字**。
 * **簡體中文**：若來源為簡體中文文章（如知乎「从原理到落地详细解读生成式推荐OneRec」），標題**不得**被強制改寫或轉換為繁體中文，必須維護原文真相。
 * **英文/其他語言**：保持原文標題，不得自行翻譯論文題目。
 
----
-
-## 5. 引用真實性與精準度核驗 Protocol（Verification Protocol）
+## 6. 引用真實性與精準度核驗 Protocol（Verification Protocol）
 
 在新增或編輯參考文獻時，Agent 與作者必須執行以下實體核驗（Verification Steps）：
 

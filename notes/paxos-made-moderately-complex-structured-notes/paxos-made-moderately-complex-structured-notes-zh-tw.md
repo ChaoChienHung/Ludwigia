@@ -323,8 +323,6 @@ toc: false
 
 ## 參考資料（References）
 
-### 學術論文（Academic Literature）
-
 1. Van Renesse, R., & Altinbuken, D. (2015). Paxos made moderately complex. *ACM Computing Surveys (CSUR)*, 47(3), 1-28. [ACM Digital Library](https://doi.org/10.1145/2673577)
 2. Ongaro, D., & Ousterhout, J. (2014). In search of an understandable consensus algorithm (Raft). In *2014 USENIX Annual Technical Conference (USENIX ATC 14)* (pp. 305-319). [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
 3. Multi-Paxos / State Machine Replication Course Notes & System Architecture References.
