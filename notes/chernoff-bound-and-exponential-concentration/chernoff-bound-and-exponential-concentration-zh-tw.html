@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chernoff Bound 與指數級集中：獨立隨機變數和的強界限 — Ludwig</title>
+  <meta name="garden:tags" content="演算法, 機率學, 集中不等式, Chernoff Bound, 矩生成函數 (MGF), Union Bound, 球與桶模型">
+  <meta name="garden:summary" content="剖析矩生成函數（MGF）與 Chernoff Bound 的指數級衰減特性，對比 Chebyshev 界的優勢，並深入證明多項式球桶分配下的強集中度與無空桶極高機率定理。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.algorithm,concept.probability,concept.concentration_inequalities,concept.chernoff_bound,concept.moment_generating_function,concept.union_bound,concept.balls_and_bins">
+  <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.moment_generating_function&quot;:{&quot;en&quot;:&quot;Moment Generating Function&quot;,&quot;zh-Hant&quot;:&quot;矩生成函數 (MGF)&quot;,&quot;zh-Hans&quot;:&quot;矩生成函数 (MGF)&quot;},&quot;concept.union_bound&quot;:{&quot;en&quot;:&quot;Union Bound&quot;,&quot;zh-Hant&quot;:&quot;Union Bound&quot;,&quot;zh-Hans&quot;:&quot;Union Bound&quot;},&quot;concept.balls_and_bins&quot;:{&quot;en&quot;:&quot;Balls and Bins&quot;,&quot;zh-Hant&quot;:&quot;球與桶模型&quot;,&quot;zh-Hans&quot;:&quot;球与桶模型&quot;}}">
+  <meta name="site:canonical_id" content="chernoff-bound-and-exponential-concentration">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="8">
+  <meta name="site:source" content="notes/chernoff-bound-and-exponential-concentration/chernoff-bound-and-exponential-concentration-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Chernoff Bound 與指數級集中：獨立隨機變數和的強界限</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-mgf-chernoff">1. 矩生成函數 (MGF) 與 Chernoff 的導出</a>
+<a class="note-toc-link level-1" href="#2-chernoff-bound">2. Chernoff Bound 的常用形式</a>
+<a class="note-toc-link level-2" href="#2-1-0-delta-le-1">2.1 雙邊相對偏差形式 ($0 &lt; \delta \le 1$)</a>
+<a class="note-toc-link level-2" href="#2-2-delta-1">2.2 大偏差單邊形式 ($\delta &gt; 1$)</a>
+<a class="note-toc-link level-1" href="#3-chebyshev-vs-chernoff">3. Chebyshev vs. Chernoff 實戰對比</a>
+<a class="note-toc-link level-2" href="#section">步驟解析</a>
+<a class="note-toc-link level-1" href="#4-note-1-exercise-4">4. 經典應用：高機率無空桶證明 (Note 1 Exercise 4)</a>
+<a class="note-toc-link level-2" href="#section-2">完整證明</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: Chernoff Bound 是獨立隨機變數和（Sum of Independent Random Variables）最強大的集中不等式。透過矩生成函數（MGF），它將 Tail Bound 的衰減速率從多項式級一口氣提升至<strong>指數級衰減（Exponential Decay）</strong>。 &lt;/callout&gt;</p>
+</section>
+
+<section id="1-mgf-chernoff" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 矩生成函數 (MGF) 與 Chernoff 的導出</h3>
+
+<p class="mb-3">設 $X_1, X_2, \dots, X_n$ 為獨立的伯努利隨機變數（$X_i \in \{0, 1\}$），令 $X = \sum_{i=1}^n X_i$，期望值為 $\mu = \mathbb{E}[X]$。</p>
+
+<p class="mb-3">Chernoff Bound 的關鍵核心在於：<strong>對 $e^{tX}$（$t &gt; 0$）套用 Markov 不等式</strong>。</p>
+
+<p class="mb-3">$$\operatorname{Pr}[X \ge a] = \operatorname{Pr}[e^{tX} \ge e^{ta}] \le \frac{\mathbb{E}[e^{tX}]}{e^{ta}}$$</p>
+
+<p class="mb-3">由於 $X_i$ 互相獨立，指數函數將「和」轉化為「積」，使得矩生成函數（Moment Generating Function, MGF）可以拆解：</p>
+
+<p class="mb-3">$$\mathbb{E}[e^{tX}] = \mathbb{E}\left[e^{t \sum X_i}\right] = \mathbb{E}\left[\prod e^{t X_i}\right] = \prod_{i=1}^n \mathbb{E}[e^{t X_i}]$$</p>
+
+<p class="mb-3">針對參數 $t &gt; 0$ 進行最優化（Optimization over $t$），即可導出極為緊緻的指數級界限。</p>
+
+<hr>
+</section>
+
+<section id="2-chernoff-bound" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Chernoff Bound 的常用形式</h3>
+
+<p class="mb-3">在演算法分析中，我們最常使用以下幾種標準形式（記 $\mu = \mathbb{E}[X]$）：</p>
+
+<h4 id="2-1-0-delta-le-1" class="mb-2">2.1 雙邊相對偏差形式 ($0 &lt; \delta \le 1$)</h4>
+
+<p class="mb-3">$$\operatorname{Pr}[|X - \mu| \ge \delta \mu] \le 2 e^{-\frac{\delta^2 \mu}{3}}$$</p>
+
+<h4 id="2-2-delta-1" class="mb-2">2.2 大偏差單邊形式 ($\delta &gt; 1$)</h4>
+
+<p class="mb-3">$$\operatorname{Pr}[X \ge (1 + \delta)\mu] \le e^{-\frac{\delta \mu}{3}}$$</p>
+
+<hr>
+</section>
+
+<section id="3-chebyshev-vs-chernoff" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Chebyshev vs. Chernoff 實戰對比</h3>
+
+<blockquote class="blockquote mb-3"><strong>問題 (Note 1 Exercise 3)</strong>：將 $10 n \ln n$ 個球隨機且獨立地投進 $n$ 個桶子中。求第二個桶子內的球數 $Y$ 集中在期望值附近的機率。</blockquote>
+
+<h4 id="section" class="mb-2">步驟解析</h4>
+
+<ol class="mb-3">
+<li><strong>期望值與方差</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>投一次進第二桶的機率為 $p = 1/n$。</li>
+<li>總球數 $N = 10 n \ln n$。</li>
+<li>$\mathbb{E}[Y] = N p = 10 \ln n$。</li>
+<li>$\operatorname{Var}(Y) = N p (1 - p) = 10 \ln n \left(1 - \frac{1}{n}\right)$。</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>方法一：Chebyshev 不等式（多項式界限）</strong>：</li>
+</ol>
+
+<p class="mb-3">求偏離值 $\varepsilon \ln n$ 的機率：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[|Y - \mu| \ge \varepsilon \ln n] \le \frac{\operatorname{Var}(Y)}{(\varepsilon \ln n)^2} = \frac{10 (1 - 1/n) \ln n}{\varepsilon^2 \ln^2 n} = \mathcal{O}\left(\frac{1}{\varepsilon^2 \ln n}\right)$$</p>
+
+<p class="mb-3">衰減速率為 $\frac{1}{\ln n}$，當 $n$ 很大時收斂相當緩慢。</p>
+
+<ol class="mb-3">
+<li><strong>方法二：Chernoff Bound（指數級界限）</strong>：</li>
+</ol>
+
+<p class="mb-3">套用 Chernoff Bound 雙邊形式（取 $\delta$ 使 $\delta \mu = \delta (10 \ln n)$）：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[|Y - \mu| \ge \delta \mu] \le 2 e^{-\frac{\delta^2 (10 \ln n)}{3}} = 2 e^{\ln (n^{-\frac{10 \delta^2}{3}})} = 2 n^{-\frac{10 \delta^2}{3}}$$</p>
+
+<p class="mb-3"><strong>結果對比</strong>：Chernoff Bound 給出了多項式級小於 $n$ 的機率（例如取 $\delta = 1$ 時機率小於 $2 n^{-3.33}$），衰減速度遠快於 Chebyshev 的 $\mathcal{O}(1/\ln n)$！</p>
+
+<hr>
+</section>
+
+<section id="4-note-1-exercise-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 經典應用：高機率無空桶證明 (Note 1 Exercise 4)</h3>
+
+<blockquote class="blockquote mb-3"><strong>定理</strong>：若將 $10 n \ln n$ 個球隨機投進 $n$ 個桶子中，則<strong>完全沒有空桶</strong>的機率極高（High Probability, 即 $1 - \frac{1}{\operatorname{poly}(n)}$）。</blockquote>
+
+<h4 id="section-2" class="mb-2">完整證明</h4>
+
+<ol class="mb-3">
+<li>令 $E_i$ 為「第 $i$ 個桶子為空」的壞事件。</li>
+<li>計算單一桶子為空的機率：</li>
+</ol>
+
+<p class="mb-3">$$\operatorname{Pr}[E_i] = \left(1 - \frac{1}{n}\right)^{10 n \ln n} \le \left(e^{-\frac{1}{n}}\right)^{10 n \ln n} = e^{-10 \ln n} = n^{-10}$$</p>
+
+<ol class="mb-3">
+<li><strong>結合 Union Bound</strong>：求存在至少一個空桶（即任意壞事件發生）的總機率：</li>
+</ol>
+
+<p class="mb-3">$$\operatorname{Pr}[\text{存在空桶}] = \operatorname{Pr}\left[\bigcup_{i=1}^n E_i\right] \le \sum_{i=1}^n \operatorname{Pr}[E_i] = n \cdot n^{-10} = n^{-9}$$</p>
+
+<ol class="mb-3">
+<li>故無空桶的成功率為：</li>
+</ol>
+
+<p class="mb-3">$$\operatorname{Pr}[\text{無空桶}] = 1 - \operatorname{Pr}[\text{存在空桶}] \ge 1 - \frac{1}{n^9}$$</p>
+
+<p class="mb-3">這是一個典型的 High Probability（$1 - \mathcal{O}(n^{-k})$）保證！</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Chernoff Bound 適用於獨立試驗和，利用矩生成函數 (MGF) 獲得指數級衰減。
+<ul class="note-list">
+<li>相比 Chebyshev 的多項式衰減，Chernoff 能提供 $n^{-\Omega(1)}$ 等極強的概率界限。</li>
+<li>結合 Chernoff Bound 與 Union Bound，可以證明在 $10 n \ln n$ 球分配下，系統以 $1 - n^{-9}$ 的極高機率完全無空桶。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>NUS CS5234: Algorithms at Scale</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

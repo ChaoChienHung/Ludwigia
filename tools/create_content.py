@@ -1232,7 +1232,7 @@ def _build_style_template(
     body_class = f"note-page note-style-{style_name}"
     source_meta = ""
     if source_rel_path:
-        source_meta = f'<meta name="garden:source" content="{_escape_attr(source_rel_path.replace(os.sep, "/"))}">'
+        source_meta = f'<meta name="site:source" content="{_escape_attr(source_rel_path.replace(os.sep, "/"))}">'
 
     html_doc = base
     html_doc = html_doc.replace("{{CONTENT_META}}", content_meta_html or "")
@@ -2659,29 +2659,29 @@ def main() -> None:
         output_path=out_path,
     )
     content_meta_parts = [
-        f'<meta name="garden:lang" content="{_escape_attr(html_lang or "en")}">',
-        f'<meta name="garden:status" content="{_escape_attr(status)}">',
+        f'<meta name="site:lang" content="{_escape_attr(html_lang or "en")}">',
+        f'<meta name="site:status" content="{_escape_attr(status)}">',
     ]
     if any(tag_concepts):
         content_meta_parts.append(
-            f'<meta name="garden:tag_concepts" content="{_escape_attr(",".join(tag_concepts))}">'
+            f'<meta name="site:tag_concepts" content="{_escape_attr(",".join(tag_concepts))}">'
         )
     if tag_label_map:
         content_meta_parts.append(
-            f'<meta name="garden:tag_labels" content="{_escape_attr(json.dumps(tag_label_map, ensure_ascii=False, separators=(",", ":")))}">'
+            f'<meta name="site:tag_labels" content="{_escape_attr(json.dumps(tag_label_map, ensure_ascii=False, separators=(",", ":")))}">'
         )
     if canonical_id:
-        content_meta_parts.append(f'<meta name="garden:canonical_id" content="{_escape_attr(canonical_id)}">')
+        content_meta_parts.append(f'<meta name="site:canonical_id" content="{_escape_attr(canonical_id)}">')
     if pinned:
-        content_meta_parts.append('<meta name="garden:pinned" content="1">')
+        content_meta_parts.append('<meta name="site:pinned" content="1">')
     if priority:
-        content_meta_parts.append(f'<meta name="garden:priority" content="{_escape_attr(priority)}">')
+        content_meta_parts.append(f'<meta name="site:priority" content="{_escape_attr(priority)}">')
     if published_at:
-        content_meta_parts.append(f'<meta name="garden:published_at" content="{_escape_attr(published_at)}">')
+        content_meta_parts.append(f'<meta name="site:published_at" content="{_escape_attr(published_at)}">')
     if last_modified_at:
-        content_meta_parts.append(f'<meta name="garden:last_modified_at" content="{_escape_attr(last_modified_at)}">')
+        content_meta_parts.append(f'<meta name="site:last_modified_at" content="{_escape_attr(last_modified_at)}">')
     if cover_href:
-        content_meta_parts.append(f'<meta name="garden:cover" content="{_escape_attr(cover_href)}">')
+        content_meta_parts.append(f'<meta name="site:cover" content="{_escape_attr(cover_href)}">')
     meta_date_attrs: list[str] = []
     if last_modified_at:
         meta_date_attrs.append(
@@ -2751,7 +2751,7 @@ def main() -> None:
         toc_links = ""
 
     if reading_time_minutes > 0:
-        content_meta_parts.append(f'<meta name="garden:reading_time_minutes" content="{reading_time_minutes}">')
+        content_meta_parts.append(f'<meta name="site:reading_time_minutes" content="{reading_time_minutes}">')
     content_meta_html = "\n  ".join(content_meta_parts)
 
     style_name = _resolve_style_name(style_name)

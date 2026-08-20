@@ -4,7 +4,7 @@
   if (!container) return;
 
   const parseMetaTags = () => {
-    const meta = document.querySelector('meta[name="garden:tags"]');
+    const meta = document.querySelector('meta[name="site:tags"]') || document.querySelector('meta[name="garden:tags"]');
     const raw = meta ? meta.getAttribute('content') : '';
     return String(raw || '')
       .split(',')
@@ -12,12 +12,12 @@
       .filter(Boolean);
   };
   const parseMetaTagConcepts = () => {
-    const meta = document.querySelector('meta[name="garden:tag_concepts"]');
+    const meta = document.querySelector('meta[name="site:tag_concepts"]') || document.querySelector('meta[name="garden:tag_concepts"]');
     const raw = meta ? meta.getAttribute('content') : '';
     return String(raw || '').split(',').map((t) => t.trim());
   };
   const parseMetaTagLabels = () => {
-    const meta = document.querySelector('meta[name="garden:tag_labels"]');
+    const meta = document.querySelector('meta[name="site:tag_labels"]') || document.querySelector('meta[name="garden:tag_labels"]');
     const raw = meta ? meta.getAttribute('content') : '';
     if (!raw) return {};
     try {

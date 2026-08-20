@@ -6,10 +6,10 @@
 
 ## 不退化原則（Non-regression）
 
-- 內容的可索引 metadata 必須維持為再現性生成：`<title>` / `meta name="garden:tags"` / `meta name="garden:summary"` / `meta name="garden:status"`（若啟用）不能要求手動維護第二份
-- 若內容支援 pinned/priority metadata，`meta name="garden:pinned"` / `meta name="garden:priority"` 也必須由 source metadata 再現性生成；不能靠手改 HTML 或另外維護一份推薦清單
+- 內容的可索引 metadata 必須維持為再現性生成：`<title>` / `meta name="site:tags"` / `meta name="site:summary"` / `meta name="site:status"`（若啟用）不能要求手動維護第二份
+- 若內容支援 pinned/priority metadata，`meta name="site:pinned"` / `meta name="site:priority"` 也必須由 source metadata 再現性生成；不能靠手改 HTML 或另外維護一份推薦清單
 - 頁內大標題若啟用 H1 fallback，必須維持：優先讀正文最前面的第一個 `# Title`；`<meta Title>` 只當頁內顯示 fallback，不得反過來強迫正文標題跟 metadata 耦合
-- 若內容支援日期 metadata，`meta name="garden:published_at"` / `meta name="garden:last_modified_at"` 也必須由 source metadata / 可重現 fallback 再現性生成，不應要求手動維護第二份 HTML 顯示值
+- 若內容支援日期 metadata，`meta name="site:published_at"` / `meta name="site:last_modified_at"` 也必須由 source metadata / 可重現 fallback 再現性生成，不應要求手動維護第二份 HTML 顯示值
 - Garden 的所有搜尋/瀏覽頁面只讀索引資料（`window.SITE_SEARCH_INDEX`），不得要求手動維護第二份 tags/summary/related
 - 若內容支援 `status` metadata，`drafting` 狀態不得出現在公開搜尋/瀏覽入口；但仍可保留本機預覽與直連工作流
 - 若未來 Reading Mode / Garden 卡片改成從 Markdown source 再現性生成，應依賴「必要 metadata + core markdown 正文」；其中 markdown extractor 只負責 core markdown，`<meta>` 由另一層 metadata parser 處理，其餘 `<...>` 型自訂語法都視為可忽略的附加層
@@ -134,9 +134,9 @@
   - note / writing / canvas 單篇頁可在頂部 navbar 保留品牌 `Ludwig`，並以左右兩側按鈕承接 page-level sidebar action；這些按鈕屬於單篇頁閱讀控制，不取代 bottom nav 的 site-level 導覽
   - 所有依賴 hover 的 sidebar / reveal interaction，在手機上都必須有明確的 tap-first 入口
 - tag 的基本語意必須維持：
-  - `garden:tags` 以逗號分隔
+  - `site:tags` 以逗號分隔
   - 若 tag 已收斂到 ontology concept，對外顯示文案應優先依目前語系選對應 label；不強制統一英文
-  - `garden:tag_concepts`（若存在）需與 `garden:tags` 保持相同順序，作為 tag concept 的穩定對齊欄位
+  - `site:tag_concepts`（若存在）需與 `site:tags` 保持相同順序，作為 tag concept 的穩定對齊欄位
   - tag 比對應優先走 ontology concept id；未命中 ontology 的 tag 才退回 trim + case-insensitive 的字串精準比對
   - tag 內允許空白（例如 `system design`），URL 端以 encode 後的值為準
   - 可點擊的 tag detail 入口預設收斂到 `tag/index.html`；可帶 `?concept=...&tag=...`，且需向後相容既有 `?tag=...`

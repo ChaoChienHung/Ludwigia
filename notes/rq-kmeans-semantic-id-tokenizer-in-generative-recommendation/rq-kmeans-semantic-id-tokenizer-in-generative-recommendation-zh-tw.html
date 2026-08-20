@@ -6,16 +6,16 @@
   <title>RQ-Kmeans 深度解析：打造生成式推薦最穩健的 Semantic ID Tokenizer — Ludwig</title>
   <meta name="garden:tags" content="推薦系統, 生成式檢索, 向量量化, RQ-KMeans, 機器學習">
   <meta name="garden:summary" content="本文從連續空間的離散化出發，探討推薦系統如何從 K-means 聚類、向量量化 (VQ) 一路演進至 RQ-Kmeans，藉此解決海量物品詞彙庫爆炸問題，並深入解析殘差量化的底層幾何原理、進階正則化與業界落地工作流。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="published">
-  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.vector_quantization,concept.rq_kmeans,concept.machine_learning">
-  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.rq_kmeans&quot;:{&quot;en&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hant&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hans&quot;:&quot;RQ-KMeans&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
-  <meta name="garden:canonical_id" content="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">
-  <meta name="garden:published_at" content="2026-08-02">
-  <meta name="garden:last_modified_at" content="2026-08-16">
-  <meta name="garden:cover" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png">
-  <meta name="garden:reading_time_minutes" content="31">
-  <meta name="garden:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="published">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.vector_quantization,concept.rq_kmeans,concept.machine_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.rq_kmeans&quot;:{&quot;en&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hant&quot;:&quot;RQ-KMeans&quot;,&quot;zh-Hans&quot;:&quot;RQ-KMeans&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
+  <meta name="site:canonical_id" content="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">
+  <meta name="site:published_at" content="2026-08-02">
+  <meta name="site:last_modified_at" content="2026-08-16">
+  <meta name="site:cover" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png">
+  <meta name="site:reading_time_minutes" content="31">
+  <meta name="site:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
     try {

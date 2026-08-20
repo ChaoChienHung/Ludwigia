@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>圖連通分量亞線性估算：有界與一般結構下的查詢複雜度 — Ludwig</title>
+  <meta name="garden:tags" content="演算法, 查詢演算法, 圖演算法, 亞線性演算法, 圖連通分量, 廣度優先搜尋 (BFS), 可加性 (Additivity)">
+  <meta name="garden:summary" content="分析無向圖中連通分量（Connected Components）數量的亞線性估估演算法，從頂點貢獻和 C = ∑ 1/|C(v)| 的代數轉換切入，探討組件大小有界與一般圖結構下的 BFS 截斷搜尋與 O(n/ε²) 查詢複雜度。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.algorithm,concept.query_algorithm,concept.graph_algorithm,concept.sublinear_algorithm,concept.connected_components,concept.bfs,concept.additivity">
+  <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.connected_components&quot;:{&quot;en&quot;:&quot;Connected Components&quot;,&quot;zh-Hant&quot;:&quot;圖連通分量&quot;,&quot;zh-Hans&quot;:&quot;图连通分量&quot;},&quot;concept.bfs&quot;:{&quot;en&quot;:&quot;Breadth-First Search (BFS)&quot;,&quot;zh-Hant&quot;:&quot;廣度優先搜尋 (BFS)&quot;,&quot;zh-Hans&quot;:&quot;广度优先搜索 (BFS)&quot;},&quot;concept.additivity&quot;:{&quot;en&quot;:&quot;Additivity&quot;,&quot;zh-Hant&quot;:&quot;可加性 (Additivity)&quot;,&quot;zh-Hans&quot;:&quot;可加性 (Additivity)&quot;}}">
+  <meta name="site:canonical_id" content="sublinear-connected-components-estimation">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="8">
+  <meta name="site:source" content="notes/sublinear-connected-components-estimation/sublinear-connected-components-estimation-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">圖連通分量亞線性估算：有界與一般結構下的查詢複雜度</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 核心恆等式：從連通分量到頂點倒數和</a>
+<a class="note-toc-link level-2" href="#section">恆等式證明</a>
+<a class="note-toc-link level-1" href="#2-bounded-component-size-c-v-le-b">2. 情境一：組件大小有界 (Bounded Component Size, $|C(v)| \le B$)</a>
+<a class="note-toc-link level-2" href="#2-1-x">2.1 估計器 $X$ 與演算法設計</a>
+<a class="note-toc-link level-2" href="#2-2">2.2 期望值與查詢複雜度</a>
+<a class="note-toc-link level-1" href="#3-unbounded-component-size">3. 情境二：一般圖結構 (Unbounded Component Size)</a>
+<a class="note-toc-link level-2" href="#3-1-bfs-truncated-bfs">3.1 截斷式 BFS (Truncated BFS) 演算法</a>
+<a class="note-toc-link level-2" href="#3-2">3.2 誤差分析</a>
+<a class="note-toc-link level-2" href="#3-3">3.3 總查詢複雜度</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 利用經典恆等式 $C = \sum_{v \in V} \frac{1}{|C(v)|}$，估計連通分量數量 $C$ 可轉化為估計隨機頂點倒數組件大小 $\frac{1}{|C(v)|}$ 的期望值。透過 BFS 廣度優先搜尋，在加性誤差 $\varepsilon n$ 下，查詢複雜度可壓低至與 $n$ 無關的 <strong>$\mathcal{O}(1/\varepsilon^3)$</strong>！ &lt;/callout&gt;</p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 核心恆等式：從連通分量到頂點倒數和</h3>
+
+<p class="mb-3">設無向圖 $G = (V, E)$ 包含 $n$ 個頂點與 $C$ 個連通分量（Connected Components）。 記 $C(v)$ 為包含頂點 $v$ 的連通分量，且 $|C(v)|$ 為該分量包含的頂點個數。</p>
+
+<p class="mb-3">關鍵數學恆等式：</p>
+
+<p class="mb-3">$$C = \sum_{v \in V} \frac{1}{|C(v)|}$$</p>
+
+<h4 id="section" class="mb-2">恆等式證明</h4>
+
+<p class="mb-3">設圖中的 $C$ 個連通分量分別為 $K_1, K_2, \dots, K_C$。我們將總和依分量拆解：</p>
+
+<p class="mb-3">$$\sum_{v \in V} \frac{1}{|C(v)|} = \sum_{i=1}^C \sum_{v \in K_i} \frac{1}{|K_i|} = \sum_{i=1}^C \left( |K_i| \cdot \frac{1}{|K_i|} \right) = \sum_{i=1}^C 1 = C$$</p>
+
+<blockquote class="blockquote mb-3"><strong>觀念轉化</strong>：原先需要全圖探索才能知道的連通分量總數 $C$，現在被成功拆解為每個頂點 $v$ 對全域的<strong>局部貢獻值 $f(v) = \frac{1}{|C(v)|}$</strong>！</blockquote>
+
+<hr>
+</section>
+
+<section id="2-bounded-component-size-c-v-le-b" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 情境一：組件大小有界 (Bounded Component Size, $|C(v)| \le B$)</h3>
+
+<p class="mb-3">假設圖中每個連通分量的大小都有明確上界 $B$（例如 $B = 100$）。</p>
+
+<h4 id="2-1-x" class="mb-2">2.1 估計器 $X$ 與演算法設計</h4>
+
+<ol class="mb-3">
+<li>均勻隨機抽樣一個頂點 $v \in V$。</li>
+<li>從 $v$ 開始執行 <strong>BFS（廣度優先搜尋）</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>由於 $|C(v)| \le B$，BFS 最多只需探測 $B$ 個頂點即可完整遍歷 $v$ 所在的整個連通分量，並精確求出 $|C(v)|$。</li>
+</ul>
+
+<ol class="mb-3">
+<li>回傳估計變數 $X = \frac{1}{|C(v)|}$。</li>
+</ol>
+
+<h4 id="2-2" class="mb-2">2.2 期望值與查詢複雜度</h4>
+
+<p class="mb-3">隨機變數 $X$ 的期望值：</p>
+
+<p class="mb-3">$$\mathbb{E}[X] = \sum_{v \in V} \operatorname{Pr}[v] \cdot \frac{1}{|C(v)|} = \frac{1}{n} \sum_{v \in V} \frac{1}{|C(v)|} = \frac{C}{n}$$</p>
+
+<p class="mb-3">因此 $n X$ 是 $C$ 的無偏估計量。</p>
+
+<ul class="note-list">
+<li><strong>單次試驗查詢數</strong>：在 Adjacency-matrix 模型中，BFS 最多探索 $B$ 個頂點，邊查詢次數不超過 $\mathcal{O}(B^2)$。</li>
+<li><strong>總查詢複雜度</strong>：抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 個頂點，總查詢數為：</li>
+</ul>
+
+<p class="mb-3">$$\text{總查詢數} = \mathcal{O}\left(\frac{B^2}{\varepsilon^2}\right)$$</p>
+
+<p class="mb-3">當 $B$ 為常數時，查詢複雜度為 <strong>$\mathcal{O}(1/\varepsilon^2)$</strong>，完全與圖的大小的 $n$ 無關！</p>
+
+<hr>
+</section>
+
+<section id="3-unbounded-component-size" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 情境二：一般圖結構 (Unbounded Component Size)</h3>
+
+<p class="mb-3">當圖中存在巨大連通分量（如包含 $\mathcal{O}(n)$ 個頂點的 Giant Component）時，對單一頂點執行完整 BFS 可能需要 $\Omega(n)$ 次查詢。</p>
+
+<h4 id="3-1-bfs-truncated-bfs" class="mb-2">3.1 截斷式 BFS (Truncated BFS) 演算法</h4>
+
+<p class="mb-3">為了維持亞線性，我們定義 <strong>截斷門檻 $K = \frac{1}{\varepsilon}$</strong>：</p>
+
+<ol class="mb-3">
+<li>均勻隨機抽樣一個頂點 $v \in V$。</li>
+<li>從 $v$ 開始執行 BFS，但<strong>最多只探索 $K = 1/\varepsilon$ 個頂點</strong>：</li>
+</ol>
+
+<ul class="note-list">
+<li>若 BFS 在到達 $K$ 個頂點前結束，輸出真實大小 $|C(v)|$。</li>
+<li>若探索達到 $K$ 個頂點仍未結束，強制中斷 BFS，並回報截斷大小 $n_K(v) = K$。</li>
+</ul>
+
+<ol class="mb-3">
+<li>回傳估計變數 $X = \frac{1}{n_K(v)}$。</li>
+</ol>
+
+<h4 id="3-2" class="mb-2">3.2 誤差分析</h4>
+
+<p class="mb-3">定義近似函數 $\hat{f}(v) = \frac{1}{n_K(v)}$。 分析真實貢獻 $f(v) = \frac{1}{|C(v)|}$ 與截斷估計 $\hat{f}(v)$ 的最大偏差：</p>
+
+<ul class="note-list">
+<li>若 $|C(v)| \le K$：$n_K(v) = |C(v)|$，偏差為 0。</li>
+<li>若 $|C(v)| &gt; K$：真實貢獻 $\frac{1}{|C(v)|} &lt; \frac{1}{K} = \varepsilon$，而截斷估值 $\frac{1}{n_K(v)} = \frac{1}{K} = \varepsilon$。偏差大於 0 但恆不超過 $\varepsilon$：</li>
+</ul>
+
+<p class="mb-3">$$0 \le \hat{f}(v) - f(v) &lt; \frac{1}{K} = \varepsilon$$</p>
+
+<p class="mb-3">將所有頂點的偏差求和：</p>
+
+<p class="mb-3">$$0 \le \sum_{v \in V} \hat{f}(v) - \sum_{v \in V} f(v) \le n \cdot \varepsilon$$</p>
+
+<p class="mb-3">這意味著：<strong>截斷式估算帶來的系統誤差天生受到加性誤差 $\varepsilon n$ 的保護</strong>！</p>
+
+<h4 id="3-3" class="mb-2">3.3 總查詢複雜度</h4>
+
+<ul class="note-list">
+<li><strong>單次截斷 BFS 查詢數</strong>：最多探索 $K = 1/\varepsilon$ 個頂點，查詢次數上限為 $\mathcal{O}(1/\varepsilon^2)$。</li>
+<li><strong>總抽樣次數</strong>：由 Chernoff Bound，抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 個頂點即可滿足採樣波動小於 $\varepsilon n$。</li>
+<li><strong>總查詢複雜度</strong>：</li>
+</ul>
+
+<p class="mb-3">$$\text{總查詢數} = \mathcal{O}\left(\frac{1}{\varepsilon^2}\right) \times \mathcal{O}\left(\frac{1}{\varepsilon}\right) = \mathcal{O}\left(\frac{1}{\varepsilon^3}\right)$$</p>
+
+<p class="mb-3">在完全不對圖結構做任何假設的前提下，我們依然達成了<strong>與頂點總數 $n$ 無關的常數亞線性查詢複雜度 $\mathcal{O}(1/\varepsilon^3)$</strong>！</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>透過倒數和恆等式 $C = \sum \frac{1}{|C(v)|}$，連通分量估算轉化為頂點局部貢獻的平均值估計。
+<ul class="note-list">
+<li>組件大小有界時，BFS 最多探索 $B$ 個頂點，查詢複雜度為 $\mathcal{O}(B^2 / \varepsilon^2)$。</li>
+<li>一般圖結構下，透過設定截斷門檻 $K = 1/\varepsilon$，Truncated BFS 成功將誤差控制在 $\varepsilon n$ 內，達成 $\mathcal{O}(1/\varepsilon^3)$ 亞線性界限。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>NUS CS5234: Algorithms at Scale</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

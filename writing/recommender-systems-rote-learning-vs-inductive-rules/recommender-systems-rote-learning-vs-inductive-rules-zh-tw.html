@@ -6,15 +6,15 @@
   <title>推薦系統的本質痛點：從「死記硬背」到「符號與規則」的演進</title>
   <meta name="garden:tags" content="推薦系統, 機器學習, 決策, 反思">
   <meta name="garden:summary" content="本文借用「符號與規則」框架解析推薦系統的演進本質。剖析為何傳統 ID 矩陣分解傾向於「死記硬背」改寫 Embedding 座標，揭示歸納偏置（Inductive Bias）與人工先驗在過渡至生成式推薦時的核心角色。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.machine_learning,concept.decision_making,concept.reflection">
-  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.decision_making&quot;:{&quot;en&quot;:&quot;Decision Making&quot;,&quot;zh-Hant&quot;:&quot;決策&quot;,&quot;zh-Hans&quot;:&quot;决策&quot;},&quot;concept.reflection&quot;:{&quot;en&quot;:&quot;Reflection&quot;,&quot;zh-Hant&quot;:&quot;反思&quot;,&quot;zh-Hans&quot;:&quot;反思&quot;}}">
-  <meta name="garden:canonical_id" content="recommender-systems-rote-learning-vs-inductive-rules">
-  <meta name="garden:published_at" content="2026-08-15">
-  <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="7">
-  <meta name="garden:source" content="writing/recommender-systems-rote-learning-vs-inductive-rules/recommender-systems-rote-learning-vs-inductive-rules-zh-tw.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.machine_learning,concept.decision_making,concept.reflection">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.decision_making&quot;:{&quot;en&quot;:&quot;Decision Making&quot;,&quot;zh-Hant&quot;:&quot;決策&quot;,&quot;zh-Hans&quot;:&quot;决策&quot;},&quot;concept.reflection&quot;:{&quot;en&quot;:&quot;Reflection&quot;,&quot;zh-Hant&quot;:&quot;反思&quot;,&quot;zh-Hans&quot;:&quot;反思&quot;}}">
+  <meta name="site:canonical_id" content="recommender-systems-rote-learning-vs-inductive-rules">
+  <meta name="site:published_at" content="2026-08-15">
+  <meta name="site:last_modified_at" content="2026-08-15">
+  <meta name="site:reading_time_minutes" content="7">
+  <meta name="site:source" content="writing/recommender-systems-rote-learning-vs-inductive-rules/recommender-systems-rote-learning-vs-inductive-rules-zh-tw.md">
   <script>
   (() => {
     try {

@@ -6,15 +6,15 @@
   <title>大規模規劃與分層抽象：啟發式搜尋、HTN 與可達集合理論 — Ludwig</title>
   <meta name="garden:tags" content="人工智慧規劃, 分層任務網路, 啟發式函數, Fast Forward 啟發式, 狀態抽象, 自動規劃">
   <meta name="garden:summary" content="本文深入探討古典規劃如何突破狀態空間爆炸的效能瓶頸。詳細剖析鬆弛模型與啟發式函數（包含 $h_{\max}$、$h_{\text{add}}$ 與著名的 Fast Forward 啟發式 $h_{\text{FF}}$）、剪枝技術（對稱性剪枝與子目標序列化）；接著探討狀態抽象（State Abstraction）與目標分解（Goal Decomposition）的數學原理與相互作用；最後完整介紹分層任務網路（Hierarchical Task Networks, HTN）與高階動作（HLAs），並深入 Reachable Sets（可達集合）與近似可達集（$REACH^+$ 與 $REACH^-$）在抽象平面驗證解之正確性與剪枝的理論證明。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.ai_planning,concept.htn,concept.heuristics,concept.fast_forward,concept.state_abstraction,concept.automated_planning">
-  <meta name="garden:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.htn&quot;:{&quot;en&quot;:&quot;HTN&quot;,&quot;zh-Hant&quot;:&quot;分層任務網路&quot;,&quot;zh-Hans&quot;:&quot;分层任务网络&quot;},&quot;concept.heuristics&quot;:{&quot;en&quot;:&quot;Heuristics&quot;,&quot;zh-Hant&quot;:&quot;啟發式函數&quot;,&quot;zh-Hans&quot;:&quot;启发式函数&quot;},&quot;concept.fast_forward&quot;:{&quot;en&quot;:&quot;Fast Forward&quot;,&quot;zh-Hant&quot;:&quot;Fast Forward 啟發式&quot;,&quot;zh-Hans&quot;:&quot;Fast Forward 启发式&quot;},&quot;concept.state_abstraction&quot;:{&quot;en&quot;:&quot;State Abstraction&quot;,&quot;zh-Hant&quot;:&quot;狀態抽象&quot;,&quot;zh-Hans&quot;:&quot;状态抽象&quot;},&quot;concept.automated_planning&quot;:{&quot;en&quot;:&quot;Automated Planning&quot;,&quot;zh-Hant&quot;:&quot;自動規劃&quot;,&quot;zh-Hans&quot;:&quot;自动规划&quot;}}">
-  <meta name="garden:canonical_id" content="scalable-planning-heuristics-abstractions-and-htn">
-  <meta name="garden:published_at" content="2026-08-19">
-  <meta name="garden:last_modified_at" content="2026-08-19">
-  <meta name="garden:reading_time_minutes" content="16">
-  <meta name="garden:source" content="notes/scalable-planning-heuristics-abstractions-and-htn/scalable-planning-heuristics-abstractions-and-htn.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.ai_planning,concept.htn,concept.heuristics,concept.fast_forward,concept.state_abstraction,concept.automated_planning">
+  <meta name="site:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.htn&quot;:{&quot;en&quot;:&quot;HTN&quot;,&quot;zh-Hant&quot;:&quot;分層任務網路&quot;,&quot;zh-Hans&quot;:&quot;分层任务网络&quot;},&quot;concept.heuristics&quot;:{&quot;en&quot;:&quot;Heuristics&quot;,&quot;zh-Hant&quot;:&quot;啟發式函數&quot;,&quot;zh-Hans&quot;:&quot;启发式函数&quot;},&quot;concept.fast_forward&quot;:{&quot;en&quot;:&quot;Fast Forward&quot;,&quot;zh-Hant&quot;:&quot;Fast Forward 啟發式&quot;,&quot;zh-Hans&quot;:&quot;Fast Forward 启发式&quot;},&quot;concept.state_abstraction&quot;:{&quot;en&quot;:&quot;State Abstraction&quot;,&quot;zh-Hant&quot;:&quot;狀態抽象&quot;,&quot;zh-Hans&quot;:&quot;状态抽象&quot;},&quot;concept.automated_planning&quot;:{&quot;en&quot;:&quot;Automated Planning&quot;,&quot;zh-Hant&quot;:&quot;自動規劃&quot;,&quot;zh-Hans&quot;:&quot;自动规划&quot;}}">
+  <meta name="site:canonical_id" content="scalable-planning-heuristics-abstractions-and-htn">
+  <meta name="site:published_at" content="2026-08-19">
+  <meta name="site:last_modified_at" content="2026-08-19">
+  <meta name="site:reading_time_minutes" content="16">
+  <meta name="site:source" content="notes/scalable-planning-heuristics-abstractions-and-htn/scalable-planning-heuristics-abstractions-and-htn.md">
   <script>
   (() => {
     try {

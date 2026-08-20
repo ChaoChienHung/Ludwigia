@@ -174,7 +174,7 @@
     - 6. 探索機制演進：
       - 從傳統級聯的事後規則強插與啟發式外掛（Post-hoc Rules），轉向生成式解碼過程中的原生採樣控制（Temperature, Top-$k$, Top-$p$）。
     - 7. 總結與導覽：
-      - 對接系統級《從級聯漏斗到自迴歸生成》與階段級《Recommender Systems with Generative Retrieval》。
+      - 對接系統級《從級聯漏斗到自迴歸生成》與階段級《猛虎出柙：打破雙塔禁錮，一舉跨越傳統召回的生成式檢索》。
   - [ ] 素材承接：完整接納並深化從 `from-cascade-...` 移出/延伸的 L67-L73、L80-L81、L93-L115 細節。
   - [ ] 交付條件：在 `notes/from-discriminative-to-generative-recommendation-models/` 建立草稿與 source `.md`，完成生成與 `search-index.{json,js}` 更新。
 
@@ -196,6 +196,19 @@
       - ID 的本質與演進：
         - **Atomic ID**：把商品所有資訊強行壓縮/打包至單一離散流水號 ID。本身**不具備任何語意資訊**，其特徵學習與 Embedding 更新**極度強烈依賴過去大量的歷史互動紀錄 (Historical Interaction Logs)**。當新商品上架缺乏互動紀錄時，該「獨立流水號鑰匙」無法與其他 ID 建立特徵關聯，導致嚴重的冷啟動失敗與參數膨脹。
         - **Semantic ID**：將商品資訊**因子化拆分 (Factorized Quantization)** 至多個離散 Token 序列。相似商品共享前綴 Token，使模型能以相同的離散 Token 表達「共享局部資訊」，零樣本新商品只要經由量化即可直接繼承前綴上的累積協同訊號。
+    - **3. 共享統計強度 (Sharing Statistical Strength) 與 TIGER (NeurIPS 2022) 消融實驗實證**：
+      - **相較於無語意傳統 ID 的訓練優勢**：Semantic ID 讓模型在訓練過程中，能夠在相似物品之間**有效共享統計強度 (Share Statistical Strength)**。當用戶與商品 A 互動時，更新作用於共享前綴 $[c_1, c_2]$ 上，使共享同前綴的相似商品 B 直接享有此學習強度。
+      - **TIGER 論文消融實驗 (Ablation) 關鍵實證**：Google TIGER 論文比較了 `Random Tuple / Random ID`（無語意的多 Token 隨機組合）與 `Semantic ID (RQ-VAE)`，結果顯示 **Random ID 的表現顯著劣於 RQ-VAE Semantic ID**。
+      - **核心理論啟示（由粗到細語意對齊 vs 純粹多 Token 表示）**：這證明了 Semantic ID 的威力**絕非單純「把海量商品用多個 Token 表示即可」**，而是**「由粗到細的語意/幾何對齊範式 (Coarse-to-fine Semantic Alignment)」**發揮了關鍵作用。若缺乏語意對齊，單純多 Token 化無法有效傳遞與共享統計強度。
+    - **4. RQ-VAE 碼本崩塌防禦（第一 Batch K-means 初始化與 Cluster Features EMA 更新）**：
+      - **防禦 Codebook Collapse**：在訓練第一個 Training Batch 上執行 K-means，並將算出的 Cluster Centers (分群中心) 作為 Codebook 初始建立值。
+      - **權重平滑更新**：後續透過 Cluster Features (分群特徵) 的 Exponential Moving Average (EMA) 進行權重更新，防止少數熱點獨佔梯度。
+    - **5. 碼本更新質心與 VQ-VAE 訓練穩定性紅利（Codebook Update & Mode Collapse Defense）**：
+      - **Codebook Update 機理**：聚合映射到該向量的所有殘差特徵並取平均，本質上是計算該分群樣本的**誤差質心 (Centroid)**，以此逐步修正碼本位置，極小化殘差量化的整體重構誤差，並重複 Encoding 與質心/EMA 更新直到 Iterations 收斂。
+      - **VQ-VAE 穩定性紅利**：相較於傳統連續 Latent 空間（如標準 VAE 的高斯採樣），離散量化過程能有效減少 **Mode Collapse (模式崩塌)** 與生成品質不穩定的問題。
+    - **6. 廣泛下游應用延伸（數據壓縮 Data Compression & 離散特徵提取 Discrete Feature Extraction）**：
+      - **極致數據壓縮**：透過對高維連續 Latent 空間進行殘差量化，將龐大向量壓縮為極短離散代碼，大幅優化網路傳輸與儲存。
+      - **多模態離散特徵提取**：在 NLP 與語音處理（如 SoundStream / EnCodec 聲學 Codec）中作為極度高效的離散特徵提取工具。
   - [ ] 交付條件：完成中文與英文版 markdown 文章內容重構/Callout 補強，更新 `search-index.{json,js}` 並維持全站離線可讀性不退化。
 
 

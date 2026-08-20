@@ -1,5 +1,5 @@
 <meta>
-Title: Recommender Systems with Generative Retrieval
+Title: 猛虎出柙：打破雙塔禁錮，一舉跨越傳統召回的生成式檢索
 Tags: Recommender System, Generative Retrieval, Machine Learning, Deep Learning, Information Retrieval, Transformer
 Summary: 本篇筆記深入探討生成式檢索（Generative Retrieval, GR）在推薦系統中的架構演進、核心機制與實作細節。涵蓋雙塔 MIPS 檢索範式的瓶頸、Semantic ID 與 RQ-VAE 殘差量化編碼、Seq2Seq 自回歸生成模型（如 TIGER）、前綴樹受限解碼（Constrained Trie Search）、冷啟動泛化能力與未來挑戰。
 Slug: recommender-systems-with-generative-retrieval-zh-tw
@@ -71,7 +71,7 @@ toc1: takeaways -> 總結與核心要點
 h2: 總結與核心要點 -> takeaways
 </anchors>
 
-# Recommender Systems with Generative Retrieval
+# 猛虎出柙：打破雙塔禁錮，一舉跨越傳統召回的生成式檢索
 
 ## 演進背景：從雙塔 MIPS 到生成式檢索
 

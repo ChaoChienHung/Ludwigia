@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>圖邊數亞線性估計：加性/乘性誤差與 Heavy/Light 頂點分割 — Ludwig</title>
+  <meta name="garden:tags" content="演算法, 查詢演算法, 圖演算法, 亞線性演算法, 圖邊數亞線性估計, Heavy/Light 頂點分割, Chebyshev 不等式, Median Trick（中位數招式）">
+  <meta name="garden:summary" content="深入探討無向圖邊數 m 的亞線性估算難題，對比加性與乘性誤差模型的差異，詳解基於頂點全序與 Heavy/Light (H/L) 分割的無偏估計器設計與方差放界證明，並剖析未知 m 時的適應性倍減猜測演算法。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.algorithm,concept.query_algorithm,concept.graph_algorithm,concept.sublinear_algorithm,concept.edge_counting,concept.heavy_light_decomposition,concept.chebyshev_inequality,concept.median_trick">
+  <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.edge_counting&quot;:{&quot;en&quot;:&quot;Sublinear Edge Counting&quot;,&quot;zh-Hant&quot;:&quot;圖邊數亞線性估計&quot;,&quot;zh-Hans&quot;:&quot;图边数亚线性估计&quot;},&quot;concept.heavy_light_decomposition&quot;:{&quot;en&quot;:&quot;Heavy/Light Vertex Partition&quot;,&quot;zh-Hant&quot;:&quot;Heavy/Light 頂點分割&quot;,&quot;zh-Hans&quot;:&quot;Heavy/Light 顶点分割&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.median_trick&quot;:{&quot;en&quot;:&quot;Median Trick&quot;,&quot;zh-Hant&quot;:&quot;Median Trick（中位數招式）&quot;,&quot;zh-Hans&quot;:&quot;Median Trick（中位数招式）&quot;}}">
+  <meta name="site:canonical_id" content="sublinear-graph-edge-counting">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="10">
+  <meta name="site:source" content="notes/sublinear-graph-edge-counting/sublinear-graph-edge-counting-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">圖邊數亞線性估計：加性/乘性誤差與 Heavy/Light 頂點分割</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 問題背景與誤差模型的選擇</a>
+<a class="note-toc-link level-2" href="#1-1-additive-error">1.1 加性誤差模型 (Additive Error)</a>
+<a class="note-toc-link level-2" href="#1-2-multiplicative-error">1.2 乘性誤差模型 (Multiplicative Error)</a>
+<a class="note-toc-link level-1" href="#2-adjacency-list-model">2. 亞線性乘性估計器設計 (Adjacency-List Model)</a>
+<a class="note-toc-link level-2" href="#2-1">2.1 頂點全序定義</a>
+<a class="note-toc-link level-2" href="#2-2-x">2.2 估計器隨機變數 $X$ 設計</a>
+<a class="note-toc-link level-2" href="#2-3-unbiased-estimator">2.3 無偏性證明 (Unbiased Estimator)</a>
+<a class="note-toc-link level-1" href="#3-heavy-light-h-l">3. 方差放界：Heavy / Light (H/L) 頂點分割法</a>
+<a class="note-toc-link level-2" href="#3-1-lemma">3.1 關鍵 Lemma 證明</a>
+<a class="note-toc-link level-2" href="#3-2-operatorname-var-x">3.2 方差 $\operatorname{Var}(X)$ 界的計算</a>
+<a class="note-toc-link level-1" href="#4-m-adaptive-guessing">4. 未知 $m$ 時的適應性倍減猜測 (Adaptive Guessing)</a>
+<a class="note-toc-link level-2" href="#section">總查詢複雜度分析</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 在稀疏圖（Sparse Graphs）中估算邊數 $m$ 時，加性誤差 $\varepsilon n^2$ 會失效。透過 Adjacency-list 模型建立頂點全序，並巧用 Heavy/Light ($H/L$) 頂點分割壓低估計器方差，配合適應性倍減猜測（Adaptive Guessing）與 Median Trick，可在 <strong>$\Theta\left(\frac{n \log \log n}{\varepsilon^2 m}\right)$</strong> 亞線性查詢複雜度內獲得乘性誤差 $(1+\varepsilon)$-逼近。 &lt;/callout&gt;</p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 問題背景與誤差模型的選擇</h3>
+
+<p class="mb-3">給定一個包含 $n$ 個頂點的無向簡單圖 $G = (V, E)$，目標是估計總邊數 $m = |E|$。</p>
+
+<h4 id="1-1-additive-error" class="mb-2">1.1 加性誤差模型 (Additive Error)</h4>
+
+<p class="mb-3">在 Adjacency-matrix 模型中，若隨機抽樣 $k$ 對頂點對 $(u, v)$，計算其中屬於邊的比例：</p>
+
+<ul class="note-list">
+<li>若允許 $\varepsilon n^2$ 的加性誤差，只需抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 次。</li>
+<li><strong>缺點</strong>：在稀疏圖（如 $m = \mathcal{O}(n)$）中，$\varepsilon n^2 \gg m$，估算結果毫無參考價值！</li>
+</ul>
+
+<h4 id="1-2-multiplicative-error" class="mb-2">1.2 乘性誤差模型 (Multiplicative Error)</h4>
+
+<p class="mb-3">我們希望獲得 $(1+\varepsilon)$-逼近，即輸出 $\hat{m}$ 滿足：</p>
+
+<p class="mb-3">$$(1 - \varepsilon) m \le \hat{m} \le (1 + \varepsilon) m$$</p>
+
+<p class="mb-3">估計邊數 $m$ 等價於估計圖的平均度數 $\bar{d} = \frac{2m}{n}$。 如果直接隨機抽樣頂點 $v$ 查詢其度數 $d_v$：</p>
+
+<ul class="note-list">
+<li>期望值 $\mathbb{E}[d_v] = \bar{d}$。</li>
+<li>方差 $\operatorname{Var}(d_v)$ 最高可達 $\mathcal{O}(n \bar{d})$（如星狀圖 Star Graph）。</li>
+<li>Chebyshev 不等式需要採樣 $k = \Theta(n / \bar{d}) = \Theta(n^2 / m)$ 次，在稀疏圖上一點也不亞線性！</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="2-adjacency-list-model" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 亞線性乘性估計器設計 (Adjacency-List Model)</h3>
+
+<p class="mb-3">為了解決直接抽樣度數方差過高的問題，我們引入<strong>頂點全序（Total Order）與轉向邊計數</strong>。</p>
+
+<h4 id="2-1" class="mb-2">2.1 頂點全序定義</h4>
+
+<p class="mb-3">對所有頂點 $v_1, \dots, v_n$ 建立嚴格的全序關係 $&lt;$：</p>
+
+<ol class="mb-3">
+<li>若 $d_{v_i} &lt; d_{v_j}$，則 $v_i &lt; v_j$。</li>
+<li>若 $d_{v_i} = d_{v_j}$，則當 $i &lt; j$ 時 $v_i &lt; v_j$。</li>
+</ol>
+
+<p class="mb-3">定義 $d'_{v_i}$ 為頂點 $v_i$ 所有鄰居中，<strong>序號大於 $v_i$ 的鄰居數量</strong>。 注意到：每條邊 $(v_i, v_j)$ 在全序下恰好被唯一方向計數一次，因此：</p>
+
+<p class="mb-3">$$\sum_{i=1}^n d'_{v_i} = m$$</p>
+
+<h4 id="2-2-x" class="mb-2">2.2 估計器隨機變數 $X$ 設計</h4>
+
+<p class="mb-3">每次試驗執行以下步驟：</p>
+
+<ol class="mb-3">
+<li>均勻隨機抽樣一個頂點 $v_i \in V$。</li>
+<li>查詢其度數 $d_{v_i}$。</li>
+<li>均勻隨機挑選索引 $k \in \{1, 2, \dots, d_{v_i}\}$。</li>
+<li>查詢 $v_i$ 的第 $k$ 個鄰居，獲得頂點 $v_j$；並查詢 $d_{v_j}$。</li>
+<li><strong>判定條件</strong>：若 $v_i &lt; v_j$，則回傳 $X = d_{v_i}$；否則回傳 $X = 0$。</li>
+</ol>
+
+<h4 id="2-3-unbiased-estimator" class="mb-2">2.3 無偏性證明 (Unbiased Estimator)</h4>
+
+<p class="mb-3">$$\begin{aligned} \mathbb{E}[X] &amp;= \sum_{i=1}^n \operatorname{Pr}[v_i] \cdot d_{v_i} \cdot \operatorname{Pr}[v_j &gt; v_i \mid v_i] \\ &amp;= \frac{1}{n} \sum_{i=1}^n d_{v_i} \cdot \frac{d'_{v_i}}{d_{v_i}} = \frac{1}{n} \sum_{i=1}^n d'_{v_i} = \frac{m}{n} \end{aligned}$$</p>
+
+<p class="mb-3">因此 $X$ 是 $m/n$ 的<strong>無偏估計量</strong>（只需將輸出乘以 $n$ 即得 $m$）。</p>
+
+<hr>
+</section>
+
+<section id="3-heavy-light-h-l" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 方差放界：Heavy / Light (H/L) 頂點分割法</h3>
+
+<p class="mb-3">為證明方差受控，我們將頂點集 $V$ 依據全序切分為兩大集合：</p>
+
+<ul class="note-list">
+<li><strong>Heavy 頂點集 $H$</strong>：全序最大的前 $2m$ 個頂點。</li>
+<li><strong>Light 頂點集 $L$</strong>：其餘 $n - 2m$ 個較小的頂點。</li>
+</ul>
+
+<h4 id="3-1-lemma" class="mb-2">3.1 關鍵 Lemma 證明</h4>
+
+<blockquote class="blockquote mb-3"><strong>Lemma 1</strong>：對任意 $v_i \in L$，其度數 $d_{v_i} \le 2m$。</blockquote>
+
+<p class="mb-3">&gt;</p>
+
+<blockquote class="blockquote mb-3"><em>證明</em>：若存在 $v_i \in L$ 使 $d_{v_i} &gt; 2m$，因 $H$ 中所有頂點皆大於 $v_i$，則 $H$ 中 $2m$ 個頂點的度數皆 $&gt; 2m$。總度數和將超過 $2m \times 2m &gt; 2m$，矛盾！</blockquote>
+
+<blockquote class="blockquote mb-3"><strong>Lemma 2</strong>：對任意 $v_i \in H$，其大於本身的鄰居數 $d'_{v_i} \le 2m$。</blockquote>
+
+<p class="mb-3">&gt;</p>
+
+<blockquote class="blockquote mb-3"><em>證明</em>：因為全序中大於 $v_i$ 的頂點總數最多不超過 $|H| = 2m$ 個。</blockquote>
+
+<h4 id="3-2-operatorname-var-x" class="mb-2">3.2 方差 $\operatorname{Var}(X)$ 界的計算</h4>
+
+<p class="mb-3">$$\operatorname{Var}(X) \le \mathbb{E}[X^2] = \frac{1}{n} \sum_{i=1}^n d_{v_i}^2 \cdot \frac{d'_{v_i}}{d_{v_i}} = \frac{1}{n} \sum_{i=1}^n d_{v_i} d'_{v_i}$$</p>
+
+<p class="mb-3">將求和拆分為 $L$ 與 $H$ 兩部分：</p>
+
+<p class="mb-3">$$\begin{aligned} \sum_{i=1}^n d_{v_i} d'_{v_i} &amp;= \sum_{v_i \in L} d_{v_i} d'_{v_i} + \sum_{v_i \in H} d_{v_i} d'_{v_i} \\ &amp;\le \sum_{v_i \in L} (2m) d'_{v_i} + \sum_{v_i \in H} d_{v_i} (2m) \quad (\text{套用 Lemma 1 \&amp; 2}) \\ &amp;\le 2m \sum_{v_i \in L} d'_{v_i} + 2m \sum_{v_i \in H} d_{v_i} \\ &amp;\le 2m \cdot m + 2m \cdot 2m = 6m^2 \end{aligned}$$</p>
+
+<p class="mb-3">因此：</p>
+
+<p class="mb-3">$$\operatorname{Var}(X) \le \frac{6m^2}{n}$$</p>
+
+<p class="mb-3">相對變異數（Relative Variance）：</p>
+
+<p class="mb-3">$$\frac{\operatorname{Var}(X)}{(\mathbb{E}[X])^2} \le \frac{6m^2 / n}{(m/n)^2} = 6n$$</p>
+
+<p class="mb-3">根據 Chebyshev 不等式，當已知 $m$ 的數量級時，所需的抽樣次數為：</p>
+
+<p class="mb-3">$$k = \Theta\left(\frac{n}{\varepsilon^2 m}\right)$$</p>
+
+<hr>
+</section>
+
+<section id="4-m-adaptive-guessing" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 未知 $m$ 時的適應性倍減猜測 (Adaptive Guessing)</h3>
+
+<p class="mb-3">在實際應用中，$m$ 是我們要估計的目標，事先無法得知。我們採用<strong>等比倍減猜測策略</strong>：</p>
+
+<ol class="mb-3">
+<li>猜測值 $m'$ 從上界 $n^2$ 開始，每次除以 2：$m' = n^2, \frac{n^2}{2}, \frac{n^2}{4}, \dots, 1$。</li>
+<li>對每個猜測值 $m'$，執行估計器並取 $\Theta\left(\frac{n \log \log n}{\varepsilon^2 m'}\right)$ 次抽樣，並配合 <strong>Median Trick</strong> 提升當次成功率至 $1 - \mathcal{O}(1/\log n)$。</li>
+<li><strong>終止條件</strong>：當估算出的結果首次超過 $1.5 m'$ 時，停止迭代並輸出當前估計值。</li>
+</ol>
+
+<h4 id="section" class="mb-2">總查詢複雜度分析</h4>
+
+<p class="mb-3">假設真實邊數為 $m$，在達到 $m' \approx m$ 前的等比級數求和：</p>
+
+<p class="mb-3">$$\text{總查詢數} = \sum_{m' = m}^{n^2} \Theta\left(\frac{n \log \log n}{\varepsilon^2 m'}\right) = \Theta\left(\frac{n \log \log n}{\varepsilon^2 m}\right)$$</p>
+
+<p class="mb-3">利用 Union Bound 結合所有猜測步驟的失敗率，整體算法以高機率返回 $(1+\varepsilon)$-近似值！</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>加性誤差在稀疏圖中失效，必須採用乘性誤差與 Adjacency-list 模型。
+<ul class="note-list">
+<li>頂點全序與轉向邊計數將估計量轉化為無偏估計 $\mathbb{E}[X] = m/n$。</li>
+<li>Heavy/Light ($H/L$) 分割巧妙限制了 $L$ 的度數與 $H$ 的上向邊數，證明 $\operatorname{Var}(X) \le 6m^2/n$。</li>
+<li>倍減猜測 (Adaptive Guessing) 配合 Median Trick 解決了 $m$ 未知難題，達成 $\Theta\left(\frac{n \log \log n}{\varepsilon^2 m}\right)$ 最佳複雜度。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>NUS CS5234: Algorithms at Scale</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

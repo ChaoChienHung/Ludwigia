@@ -75,20 +75,28 @@ def _extract_title(raw_html: str) -> str:
 def _extract_meta(raw_html: str, name: str) -> str:
     pattern = rf'<meta[^>]+name=["\']{re.escape(name)}["\'][^>]+content=["\']([^"\']*)["\'][^>]*>'
     m = re.search(pattern, raw_html, flags=re.IGNORECASE)
-    return html.unescape((m.group(1) if m else "")).strip()
+    if m and m.group(1).strip():
+        return html.unescape(m.group(1)).strip()
+    if name.startswith("site:"):
+        fallback_name = "garden:" + name[5:]
+        pattern_fb = rf'<meta[^>]+name=["\']{re.escape(fallback_name)}["\'][^>]+content=["\']([^"\']*)["\'][^>]*>'
+        m_fb = re.search(pattern_fb, raw_html, flags=re.IGNORECASE)
+        if m_fb:
+            return html.unescape(m_fb.group(1)).strip()
+    return ""
 
 
 def _extract_tags(html: str) -> list[str]:
-    raw = _extract_meta(html, "garden:tags")
+    raw = _extract_meta(html, "site:tags")
     if not raw:
         return []
-    lang = _normalize_lang(_extract_meta(html, "garden:lang"))
+    lang = _normalize_lang(_extract_meta(html, "site:lang"))
     normalized = content_contract.normalize_tags(raw, lang=lang)
     return [t.strip() for t in normalized.split(",") if t.strip()]
 
 
 def _extract_tag_concepts(html: str, tags: list[str], lang: str) -> list[str]:
-    raw = _extract_meta(html, "garden:tag_concepts")
+    raw = _extract_meta(html, "site:tag_concepts")
     if raw:
         concepts = [content_contract.collapse_spaces(part) for part in raw.split(",")]
     else:
@@ -311,19 +319,19 @@ def build_index(content_dirs: list[tuple[str, str]], site_pages: list[str]) -> l
         html = _read_text(path)
         title = _extract_title(html) or os.path.basename(rel_path)
         tags = _extract_tags(html)
-        summary = _extract_meta(html, "garden:summary")
-        source_rel = _extract_meta(html, "garden:source")
-        cover = _extract_meta(html, "garden:cover")
-        reading_time_minutes = int(_extract_meta(html, "garden:reading_time_minutes") or "0" or 0)
-        lang = _normalize_lang(_extract_meta(html, "garden:lang"))
+        summary = _extract_meta(html, "site:summary")
+        source_rel = _extract_meta(html, "site:source")
+        cover = _extract_meta(html, "site:cover")
+        reading_time_minutes = int(_extract_meta(html, "site:reading_time_minutes") or "0" or 0)
+        lang = _normalize_lang(_extract_meta(html, "site:lang"))
         tag_concepts = _extract_tag_concepts(html, tags, lang)
         tag_labels = _build_tag_label_map(tag_concepts)
-        canonical_id = _extract_meta(html, "garden:canonical_id")
-        status = (_extract_meta(html, "garden:status") or "published").strip().lower()
-        pinned = _parse_bool_flag(_extract_meta(html, "garden:pinned"))
-        priority = _parse_priority(_extract_meta(html, "garden:priority"))
-        published_at = _extract_meta(html, "garden:published_at")
-        last_modified_at = _extract_meta(html, "garden:last_modified_at")
+        canonical_id = _extract_meta(html, "site:canonical_id")
+        status = (_extract_meta(html, "site:status") or "published").strip().lower()
+        pinned = _parse_bool_flag(_extract_meta(html, "site:pinned"))
+        priority = _parse_priority(_extract_meta(html, "site:priority"))
+        published_at = _extract_meta(html, "site:published_at")
+        last_modified_at = _extract_meta(html, "site:last_modified_at")
         source_content = ""
         core_markdown = ""
         preview_markdown = ""
@@ -454,14 +462,14 @@ def build_index(content_dirs: list[tuple[str, str]], site_pages: list[str]) -> l
         basename = os.path.basename(page_path)
         html = _read_text(page_path)
         title = _extract_title(html) or basename
-        lang = _normalize_lang(_extract_meta(html, "garden:lang"))
+        lang = _normalize_lang(_extract_meta(html, "site:lang"))
         tags = _extract_tags(html)
         tag_concepts = _extract_tag_concepts(html, tags, lang)
         tag_labels = _build_tag_label_map(tag_concepts)
-        summary = _extract_meta(html, "garden:summary")
-        cover = _extract_meta(html, "garden:cover")
-        published_at = _extract_meta(html, "garden:published_at")
-        last_modified_at = _extract_meta(html, "garden:last_modified_at")
+        summary = _extract_meta(html, "site:summary")
+        cover = _extract_meta(html, "site:cover")
+        published_at = _extract_meta(html, "site:published_at")
+        last_modified_at = _extract_meta(html, "site:last_modified_at")
         content = _strip_tags(_prune_layout_blocks(html))
         if not summary:
             summary = _summary_fallback_from_content(content)
@@ -483,10 +491,10 @@ def build_index(content_dirs: list[tuple[str, str]], site_pages: list[str]) -> l
                 "last_modified_at": last_modified_at,
                 "cover": cover,
                 "lang": lang,
-                "canonical_id": _extract_meta(html, "garden:canonical_id") or basename,
-                "status": (_extract_meta(html, "garden:status") or "published").strip().lower() or "published",
-                "pinned": _parse_bool_flag(_extract_meta(html, "garden:pinned")),
-                "priority": _parse_priority(_extract_meta(html, "garden:priority")),
+                "canonical_id": _extract_meta(html, "site:canonical_id") or basename,
+                "status": (_extract_meta(html, "site:status") or "published").strip().lower() or "published",
+                "pinned": _parse_bool_flag(_extract_meta(html, "site:pinned")),
+                "priority": _parse_priority(_extract_meta(html, "site:priority")),
                 "kind": "page",
                 "related": [],
             }

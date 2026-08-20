@@ -6,16 +6,16 @@
   <title>生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題 — Ludwig</title>
   <meta name="garden:tags" content="推薦系統, 生成式檢索, Semantic ID, 深度學習, Token 化">
   <meta name="garden:summary" content="本文深入解析 Semantic ID（語意識別碼）在生成式推薦與檢索 (Generative Retrieval) 中的核心角色，剖析為何傳統 Atomic ID 無法適應大模型自迴歸生成，揭示語意階層離散 Token 化的破局之道，並比較端到端與兩階段 Tokenizer 的選型取捨。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="published">
-  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.semantic_id,concept.deep_learning,concept.tokenization">
-  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.tokenization&quot;:{&quot;en&quot;:&quot;Tokenization&quot;,&quot;zh-Hant&quot;:&quot;Token 化&quot;,&quot;zh-Hans&quot;:&quot;Token 化&quot;}}">
-  <meta name="garden:canonical_id" content="semantic-id-in-generative-recommendation">
-  <meta name="garden:published_at" content="2026-08-11">
-  <meta name="garden:last_modified_at" content="2026-08-19">
-  <meta name="garden:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
-  <meta name="garden:reading_time_minutes" content="25">
-  <meta name="garden:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="published">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.semantic_id,concept.deep_learning,concept.tokenization">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.tokenization&quot;:{&quot;en&quot;:&quot;Tokenization&quot;,&quot;zh-Hant&quot;:&quot;Token 化&quot;,&quot;zh-Hans&quot;:&quot;Token 化&quot;}}">
+  <meta name="site:canonical_id" content="semantic-id-in-generative-recommendation">
+  <meta name="site:published_at" content="2026-08-11">
+  <meta name="site:last_modified_at" content="2026-08-19">
+  <meta name="site:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
+  <meta name="site:reading_time_minutes" content="25">
+  <meta name="site:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
     try {

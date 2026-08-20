@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>從決定性到機率性：隨機化演算法與分析的思維轉變 — Ludwig</title>
+  <meta name="garden:tags" content="演算法, 隨機化演算法, 機率學, 期望值, 複雜度理論">
+  <meta name="garden:summary" content="探討隨機化演算法（Randomized Algorithms）的核心優勢、期望值與最壞情況的差異、期望值的線性（Linearity of Expectation），並說明為何在巨量資料分析中，我們需要從單純的期望值走向集中現象（Concentration of Measure）。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.algorithm,concept.randomized_algorithm,concept.probability,concept.expectation,concept.complexity_theory">
+  <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.expectation&quot;:{&quot;en&quot;:&quot;Expectation&quot;,&quot;zh-Hant&quot;:&quot;期望值&quot;,&quot;zh-Hans&quot;:&quot;期望值&quot;},&quot;concept.complexity_theory&quot;:{&quot;en&quot;:&quot;Complexity Theory&quot;,&quot;zh-Hant&quot;:&quot;複雜度理論&quot;,&quot;zh-Hans&quot;:&quot;复杂度理论&quot;}}">
+  <meta name="site:canonical_id" content="introduction-to-randomized-algorithms-and-probabilistic-analysis">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="9">
+  <meta name="site:source" content="notes/introduction-to-randomized-algorithms-and-probabilistic-analysis/introduction-to-randomized-algorithms-and-probabilistic-analysis-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">從決定性到機率性：隨機化演算法與分析的思維轉變</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 為什麼需要隨機化演算法？</a>
+<a class="note-toc-link level-1" href="#2">2. 隨機化演算法的二大類別</a>
+<a class="note-toc-link level-1" href="#3">3. 機率分析的基石：期望值與期望值的線性</a>
+<a class="note-toc-link level-2" href="#3-1">3.1 離散隨機變數與期望值</a>
+<a class="note-toc-link level-2" href="#3-2-linearity-of-expectation">3.2 期望值的線性（Linearity of Expectation）</a>
+<a class="note-toc-link level-1" href="#4-concentration-of-measure">4. 從「期望值」走向「集中現象 (Concentration of Measure)」</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 在傳統決定性演算法（Deterministic Algorithms）中，最壞情況複雜度（Worst-case complexity）往往受到極端輸入資料的限制。隨機化演算法透過在演算法執行過程中引入硬幣擲甩（Random Flips），能打破決定性結構的硬性限制，在期望時間或極高機率下獲得超越決定性演算法的極佳效能。 &lt;/callout&gt;</p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 為什麼需要隨機化演算法？</h3>
+
+<p class="mb-3">在傳統計算複雜度理論中，我們習慣評估一個演算法在最壞情況下的時間與空間開銷。然而，面對海量資料或 NP-Hard 難題時，追求「100% 絕對正確且在最壞情況下依然最快」的決定性演算法往往帶來過高的開銷。</p>
+
+<p class="mb-3">隨機化演算法的核心思想是：<strong>將控制權交給隨機性（Random Choice）</strong>。</p>
+
+<ul class="note-list">
+<li><strong>打破對手的最壞情況配置</strong>：決定性演算法的極端輸入往往可以被對手（Adversary）預先設計；但若演算法本身包含隨機選擇，對手便無法針對特定的確定行為構造最壞輸入。</li>
+<li><strong>簡化演算法結構</strong>：許多複雜的決定性資料結構與演算法（如平衡樹、複雜圖切割），改用隨機化策略（如 QuickSort 的隨機選取 pivot、Treap、Randomized QuickSelect）後，程式碼結構變得極其簡潔且常數係數更小。</li>
+<li><strong>交易精準度換取極致效率</strong>：在巨量資料（Big Data）或資料流（Data Streams）場景中，我們往往不需要 $100\%$ 的精確解答。透過放棄微小的精確度，能在時間或空間上獲得數量級的提升。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 隨機化演算法的二大類別</h3>
+
+<p class="mb-3">隨機化演算法通常分為兩大類：</p>
+
+<div class="note-markdown-block"><pre><code>                ┌───────────────────────────────┐
+                │     Randomized Algorithms     │
+                └───────────────┬───────────────┘
+                                │
+        ┌───────────────────────┴───────────────────────┐
+        ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐
+│  Las Vegas    │                               │  Monte Carlo  │
+└───────┬───────┘                               └───────┬───────┘
+        │                                               │
+        ├─ 答案永遠 100% 正確                              ├─ 執行時間固定或有明確 Upper Bound
+        └─ 執行時間為隨機變數 (Expected Time)                └─ 答案有微小失敗機率 (Error Probability)</code></pre></div>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Las Vegas 演算法</strong>：</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><strong>正確性</strong>：保證輸出答案永遠是 $100\%$ 正確的。</li>
+<li><strong>執行時間</strong>：執行時間是一個隨機變數，我們分析的是其「期望執行時間（Expected Running Time）」。</li>
+<li><strong>經典範例</strong>：Randomized QuickSort（隨機選取 Pivot 的快速排序）。</li>
+</ul>
+</li>
+<li>
+  <strong><strong>Monte Carlo 演算法</strong>：</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><strong>執行時間</strong>：執行時間是確定性的（Deterministic bound），或保證在給定限制內結束。</li>
+<li><strong>正確性</strong>：輸出結果有一定機率出錯（失敗），但我們可以透過重複運行來將錯誤率壓低至任意小。</li>
+<li><strong>經典範例</strong>：Miller-Rabin 素數測試、Karger 隨機圖切割演算法、Sublinear Query Algorithms。</li>
+</ul>
+</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 機率分析的基石：期望值與期望值的線性</h3>
+
+<p class="mb-3">在分析隨機化演算法時，隨機變數（Random Variable）與期望值（Expectation）是最基礎的數學工具。</p>
+
+<h4 id="3-1" class="mb-2">3.1 離散隨機變數與期望值</h4>
+
+<p class="mb-3">給定一個離散隨機變數 $X$，其期望值 $\mathbb{E}[X]$ 定義為：</p>
+
+<p class="mb-3">$$\mathbb{E}[X] = \sum_{x} x \cdot \operatorname{Pr}[X = x]$$</p>
+
+<h4 id="3-2-linearity-of-expectation" class="mb-2">3.2 期望值的線性（Linearity of Expectation）</h4>
+
+<p class="mb-3"><strong>期望值的線性</strong>是隨機化分析中最強大且最常用的工具之一：</p>
+
+<blockquote class="blockquote mb-3">對於任意兩個隨機變數 $X$ 與 $Y$（<strong>無論它們是否獨立</strong>），以下恆成立：</blockquote>
+
+<p class="mb-3">&gt;</p>
+
+<blockquote class="blockquote mb-3">$$\mathbb{E}[X + Y] = \mathbb{E}[X] + \mathbb{E}[Y]$$</blockquote>
+
+<p class="mb-3">推廣至多個隨機變數：</p>
+
+<p class="mb-3">$$\mathbb{E}\left[\sum_{i=1}^n X_i\right] = \sum_{i=1}^n \mathbb{E}[X_i]$$</p>
+
+<h5 class="mb-2">指示隨機變數 (Indicator Random Variables)</h5>
+
+<p class="mb-3">我們常結合「指示隨機變數」與期望值的線性來簡化複雜計數。設 $E_i$ 為某事件，定義指示變數：</p>
+
+<p class="mb-3">$$X_i = \begin{cases} 1 &amp; \text{若 } E_i \text{ 發生} \\ 0 &amp; \text{若 } E_i \text{ 未發生} \end{cases}$$</p>
+
+<p class="mb-3">則其期望值等於該事件發生的機率：</p>
+
+<p class="mb-3">$$\mathbb{E}[X_i] = 1 \cdot \operatorname{Pr}[E_i] + 0 \cdot \operatorname{Pr}[\neg E_i] = \operatorname{Pr}[E_i]$$</p>
+
+<hr>
+</section>
+
+<section id="4-concentration-of-measure" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 從「期望值」走向「集中現象 (Concentration of Measure)」</h3>
+
+<p class="mb-3">僅僅知道期望值 $\mathbb{E}[X]$ 通常是不夠的。</p>
+
+<p class="mb-3">假設某個隨機化演算法的期望運行時間為 $\mathbb{E}[T] = 10 \text{ ms}$。這是否意味著我們能在 $100 \text{ ms}$ 內完成運行？</p>
+
+<ul class="note-list">
+<li>若 $T$ 的分佈高度集中在 $10 \text{ ms}$ 附近，答案是肯定且令人安心的。</li>
+<li>若 $T$ 有 $1\%$ 的機率高達 $1000 \text{ ms}$，雖然平均值依然是 $10 \text{ ms}$，但在系統服務（SLA）中卻會造成不可接受的尾端遲延（Tail Latency）。</li>
+</ul>
+
+<p class="mb-3">因此，我們必須回答核心問題：</p>
+
+<blockquote class="blockquote mb-3"><strong>隨機變數 $X$ 偏離其期望值 $\mathbb{E}[X]$ 的機率有多大？</strong></blockquote>
+
+<p class="mb-3">這正是<strong>集中現象（Concentration of Measure）</strong>與<strong>集中不等式（Concentration Inequalities）</strong>要解決的核心課題。</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>隨機化演算法分為 Las Vegas（答案保證正確，時間為隨機變數）與 Monte Carlo（時間有界，結果存在小機率失敗）。
+<ul class="note-list">
+<li>期望值的線性（Linearity of Expectation）對任意隨機變數皆成立，<strong>完全不需要獨立性條件</strong>。</li>
+<li>單純了解期望值無法評估演算法的最壞尾端行為，必須透過 Concentration 分析評估偏離期望值的機率上限。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>NUS CS5234: Algorithms at Scale</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

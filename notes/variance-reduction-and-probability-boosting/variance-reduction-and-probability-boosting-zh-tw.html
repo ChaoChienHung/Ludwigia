@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>估計器增強技巧：Mean Trick 方差降低與 Median Trick 成功率放大 — Ludwig</title>
+  <meta name="garden:tags" content="演算法, 隨機化演算法, 方差降低技巧, Median Trick（中位數招式）, Mean Trick（平均值招式）, 成功率放大 (Probability Boosting), Chernoff Bound">
+  <meta name="garden:summary" content="詳解二大通用估計器增強技巧：Mean Trick 透過重複取樣降低方差，與 Median Trick 透過中位數以僅對數級開銷 O(log(1/δ)) 將成功率提升至任意高的 1-δ。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.algorithm,concept.randomized_algorithm,concept.variance_reduction,concept.median_trick,concept.mean_trick,concept.probability_boosting,concept.chernoff_bound">
+  <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.variance_reduction&quot;:{&quot;en&quot;:&quot;Variance Reduction&quot;,&quot;zh-Hant&quot;:&quot;方差降低技巧&quot;,&quot;zh-Hans&quot;:&quot;方差降低技巧&quot;},&quot;concept.median_trick&quot;:{&quot;en&quot;:&quot;Median Trick&quot;,&quot;zh-Hant&quot;:&quot;Median Trick（中位數招式）&quot;,&quot;zh-Hans&quot;:&quot;Median Trick（中位数招式）&quot;},&quot;concept.mean_trick&quot;:{&quot;en&quot;:&quot;Mean Trick&quot;,&quot;zh-Hant&quot;:&quot;Mean Trick（平均值招式）&quot;,&quot;zh-Hans&quot;:&quot;Mean Trick（平均值招式）&quot;},&quot;concept.probability_boosting&quot;:{&quot;en&quot;:&quot;Probability Boosting&quot;,&quot;zh-Hant&quot;:&quot;成功率放大 (Probability Boosting)&quot;,&quot;zh-Hans&quot;:&quot;成功率放大 (Probability Boosting)&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;}}">
+  <meta name="site:canonical_id" content="variance-reduction-and-probability-boosting">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="9">
+  <meta name="site:source" content="notes/variance-reduction-and-probability-boosting/variance-reduction-and-probability-boosting-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">估計器增強技巧：Mean Trick 方差降低與 Median Trick 成功率放大</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 估計器面臨的挑戰</a>
+<a class="note-toc-link level-1" href="#2-mean-trick-variance-reduction">2. Mean Trick：透過平均降低方差 (Variance Reduction)</a>
+<a class="note-toc-link level-2" href="#2-1">2.1 數學機制</a>
+<a class="note-toc-link level-2" href="#2-2">2.2 性質分析</a>
+<a class="note-toc-link level-1" href="#3-median-trick-probability-boosting">3. Median Trick：透過中位數放大成功率 (Probability Boosting)</a>
+<a class="note-toc-link level-2" href="#3-1">3.1 數學機制</a>
+<a class="note-toc-link level-2" href="#3-2">3.2 為什麼取中位數能放大成功率？</a>
+<a class="note-toc-link level-2" href="#3-3-chernoff-union-bound">3.3 嚴謹證明 (Chernoff + Union Bound)</a>
+<a class="note-toc-link level-2" href="#3-4-mathcal-o-log-1-delta">3.4 代價分析：只需對數級開銷 $\mathcal{O}(\log(1/\delta))$</a>
+<a class="note-toc-link level-1" href="#4">4. 兩大技巧比較與組合實用</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 在設計隨機演算法時，我們常先設計一個「僅有常數成功率（如 66%）」或「高方差」的基礎估計器。透過 <strong>Mean Trick（平均值招式）</strong> 可線性壓低方差；再透過 <strong>Median Trick（中位數招式）</strong>，只需付出 $\mathcal{O}(\log(1/\delta))$ 的重複代價，就能將成功率放大至任意高的 $1 - \delta$。 &lt;/callout&gt;</p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 估計器面臨的挑戰</h3>
+
+<p class="mb-3">在許多隨機演算法中，直接設計一個「高精度、高成功率」的演算法非常困難。通常我們的設計策略是：</p>
+
+<ol class="mb-3">
+<li><strong>第一步</strong>：設計一個極其簡單、單次運行極快，但成功率僅高於 $1/2$（例如 $2/3$）的基礎估計器。</li>
+<li><strong>第二步</strong>：套用通用增強框架（Boosting Framework），將其提升為高精度的工業級演算法。</li>
+</ol>
+
+<p class="mb-3">本篇介紹的 <strong>Mean Trick</strong> 與 <strong>Median Trick</strong> 正是這套框架的核心。</p>
+
+<hr>
+</section>
+
+<section id="2-mean-trick-variance-reduction" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Mean Trick：透過平均降低方差 (Variance Reduction)</h3>
+
+<h4 id="2-1" class="mb-2">2.1 數學機制</h4>
+
+<p class="mb-3">假設我們有一個無偏估計器 $X$，滿足：</p>
+
+<p class="mb-3">$$\mathbb{E}[X] = A, \quad \operatorname{Var}(X) = M$$</p>
+
+<p class="mb-3"><strong>Mean Trick 演算法</strong>：</p>
+
+<ol class="mb-3">
+<li>獨立運行該演算法 $k$ 次，獲得 $k$ 個獨立估計值 $X_1, X_2, \dots, X_k$。</li>
+<li>計算並輸出<strong>樣本平均值</strong>：</li>
+</ol>
+
+<p class="mb-3">$$\bar{X} = \frac{1}{k} \sum_{i=1}^k X_i$$</p>
+
+<h4 id="2-2" class="mb-2">2.2 性質分析</h4>
+
+<ul class="note-list">
+<li><strong>期望值不變</strong>：</li>
+</ul>
+
+<p class="mb-3">$$\mathbb{E}[\bar{X}] = \mathbb{E}\left[\frac{1}{k} \sum_{i=1}^k X_i\right] = \frac{1}{k} \sum_{i=1}^k \mathbb{E}[X_i] = A$$</p>
+
+<ul class="note-list">
+<li><strong>方差縮減 $k$ 倍</strong>（因 $X_i$ 互相獨立）：</li>
+</ul>
+
+<p class="mb-3">$$\operatorname{Var}(\bar{X}) = \operatorname{Var}\left(\frac{1}{k} \sum_{i=1}^k X_i\right) = \frac{1}{k^2} \sum_{i=1}^k \operatorname{Var}(X_i) = \frac{1}{k^2} \cdot k M = \frac{M}{k}$$</p>
+
+<blockquote class="blockquote mb-3"><strong>核心結論</strong>：平均 $k$ 次獨立無偏估計，能將方差精確壓低至原先的 $\frac{1}{k}$。</blockquote>
+
+<hr>
+</section>
+
+<section id="3-median-trick-probability-boosting" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Median Trick：透過中位數放大成功率 (Probability Boosting)</h3>
+
+<p class="mb-3">Mean Trick 雖然能降低方差，但若原估計器存在極端的 Outliers（離群值），平均值容易被拉偏。<strong>Median Trick</strong> 則是處理失敗率的最強通用工具。</p>
+
+<h4 id="3-1" class="mb-2">3.1 數學機制</h4>
+
+<p class="mb-3">假設我們有一個基礎演算法，其輸出 $X$ 偏離真實值 $A$ 超過 $\varepsilon$ 的失敗機率小於 $1/3$：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[|X - A| &gt; \varepsilon] &lt; \frac{1}{3}$$</p>
+
+<p class="mb-3"><strong>Median Trick 演算法</strong>：</p>
+
+<ol class="mb-3">
+<li>獨立運行該演算法 $k$ 次，獲得 $k$ 個估計值 $X_1, X_2, \dots, X_k$。</li>
+<li>輸出這 $k$ 個估計值的<strong>中位數（Median）</strong> $\tilde{X} = \operatorname{median}(X_1, \dots, X_k)$。</li>
+</ol>
+
+<h4 id="3-2" class="mb-2">3.2 為什麼取中位數能放大成功率？</h4>
+
+<p class="mb-3">只有當 <strong>至少一半（$\ge k/2$）的估計值都出錯</strong> 時，中位數 $\tilde{X}$ 才可能偏離真實值超過 $\varepsilon$。</p>
+
+<div class="note-markdown-block"><pre><code>              Error Zone (&lt; A - ε)     Correct Zone (A ± ε)     Error Zone (&gt; A + ε)
+              ◄─────────────────────► ◄─────────────────────► ◄─────────────────────►
+                                          [  True A  ]
+Estimates:         X_2                      X_1, X_4, X_5              X_3
+
+Median is X_1 (in Correct Zone) as long as &lt; k/2 estimates land in any Error Zone!</code></pre></div>
+
+<h4 id="3-3-chernoff-union-bound" class="mb-2">3.3 嚴謹證明 (Chernoff + Union Bound)</h4>
+
+<p class="mb-3">中位數偏離超過 $\varepsilon$ 等價於以下二壞事件之一發生：</p>
+
+<ul class="note-list">
+<li>壞事件 $E_1$：有超過 $k/2$ 個估計值 $&gt; A + \varepsilon$。</li>
+<li>壞事件 $E_2$：有超過 $k/2$ 個估計值 $&lt; A - \varepsilon$。</li>
+</ul>
+
+<p class="mb-3">對於 $E_1$，定義指示變數 $Y_i = 1$ 表示 $X_i &gt; A + \varepsilon$。 已知 $\operatorname{Pr}[Y_i = 1] &lt; 1/3$，故期望值 $\mathbb{E}\left[\sum Y_i\right] &lt; k/3$。 要讓超過 $k/2$ 個估計值出錯，屬於顯著高於期望值的 Tail Event。套用 Chernoff Bound：</p>
+
+<p class="mb-3">$$\operatorname{Pr}\left[\sum_{i=1}^k Y_i \ge \frac{k}{2}\right] &lt; e^{-\frac{k}{100}}$$</p>
+
+<p class="mb-3">同理對 $E_2$，$\operatorname{Pr}[E_2] &lt; e^{-k/100}$。 結合 Union Bound，中位數失敗的總機率：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[|\tilde{X} - A| &gt; \varepsilon] \le \operatorname{Pr}[E_1] + \operatorname{Pr}[E_2] &lt; 2 e^{-\frac{k}{100}}$$</p>
+
+<h4 id="3-4-mathcal-o-log-1-delta" class="mb-2">3.4 代價分析：只需對數級開銷 $\mathcal{O}(\log(1/\delta))$</h4>
+
+<p class="mb-3">若我們希望將整體失敗率控制在目標 $\delta$ 以內（例如 $\delta = 10^{-6}$）：</p>
+
+<p class="mb-3">$$2 e^{-\frac{k}{100}} = \delta \implies k = \Theta\left(\log \frac{1}{\delta}\right)$$</p>
+
+<blockquote class="blockquote mb-3"><strong>核心結論</strong>：要將演算法成功率從 $66\%$ 提升至 $99.9999\%$，重複次數 $k$ 僅隨 $\log(1/\delta)$ 對數級成長！</blockquote>
+
+<hr>
+</section>
+
+<section id="4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 兩大技巧比較與組合實用</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>技巧名稱</th>
+<th>核心操作</th>
+<th>主要效益</th>
+<th>重複開銷代價</th>
+<th>適用場景</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Mean Trick</strong></td>
+<td>取 $k$ 次運行的平均值</td>
+<td>將方差降至 $M/k$</td>
+<td>線性代價 $\mathcal{O}(k)$</td>
+<td>無偏估計器，需精確降低方差</td>
+</tr>
+<tr>
+<td><strong>Median Trick</strong></td>
+<td>取 $k$ 次運行的中位數</td>
+<td>將失敗率降至 $2e^{-ck}$</td>
+<td>對數代價 $\mathcal{O}(\log(1/\delta))$</td>
+<td>基礎成功率 $&gt; 1/2$，需極高成功率保證</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">在許多高級演算法中，我們常<strong>組合使用</strong>：先用 Mean Trick 降低方差獲得一個成功率稍微大於 $1/2$ 的估計器，再外包一層 Median Trick 將成功率推至 $1 - \delta$！</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Mean Trick 透過求平均將無偏估計器的方差按比例 $k$ 線性壓低。
+<ul class="note-list">
+<li>Median Trick 利用中位數抵抗偏離，只需 $\mathcal{O}(\log(1/\delta))$ 次重複即可將成功率拉高至 $1 - \delta$。</li>
+<li>兩者是亞線性與隨機化演算法中不可或缺的通用增強 (Boosting) 武器。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>NUS CS5234: Algorithms at Scale</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

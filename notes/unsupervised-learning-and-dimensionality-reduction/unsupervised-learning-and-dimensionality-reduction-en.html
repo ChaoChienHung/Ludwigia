@@ -6,14 +6,14 @@
   <title>Unsupervised Learning and Dimensionality Reduction — Ludwig</title>
   <meta name="garden:tags" content="Data Mining, Unsupervised Learning, Clustering, Dimensionality Reduction, Hierarchical Clustering, K-Means, PCA, TSNE, NMF">
   <meta name="garden:summary" content="How data mining works without labels: discovering hidden groups, compressing high-dimensional structure, and making latent patterns visible.">
-  <meta name="garden:lang" content="en">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.data_mining,concept.unsupervised_learning,concept.clustering,concept.dimensionality_reduction,concept.hierarchical_clustering,concept.k_means,concept.pca,concept.tsne,concept.nmf">
-  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.unsupervised_learning&quot;:{&quot;en&quot;:&quot;Unsupervised Learning&quot;,&quot;zh-Hant&quot;:&quot;非監督式學習&quot;,&quot;zh-Hans&quot;:&quot;无监督学习&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.dimensionality_reduction&quot;:{&quot;en&quot;:&quot;Dimensionality Reduction&quot;,&quot;zh-Hant&quot;:&quot;降維&quot;,&quot;zh-Hans&quot;:&quot;降维&quot;},&quot;concept.hierarchical_clustering&quot;:{&quot;en&quot;:&quot;Hierarchical Clustering&quot;,&quot;zh-Hant&quot;:&quot;階層式分群&quot;,&quot;zh-Hans&quot;:&quot;层次聚类&quot;},&quot;concept.k_means&quot;:{&quot;en&quot;:&quot;K-Means&quot;,&quot;zh-Hant&quot;:&quot;K-Means 分群&quot;,&quot;zh-Hans&quot;:&quot;K-Means 聚类&quot;},&quot;concept.pca&quot;:{&quot;en&quot;:&quot;PCA&quot;,&quot;zh-Hant&quot;:&quot;主成分分析&quot;,&quot;zh-Hans&quot;:&quot;主成分分析&quot;},&quot;concept.tsne&quot;:{&quot;en&quot;:&quot;TSNE&quot;,&quot;zh-Hant&quot;:&quot;t-SNE&quot;,&quot;zh-Hans&quot;:&quot;t-SNE&quot;},&quot;concept.nmf&quot;:{&quot;en&quot;:&quot;NMF&quot;,&quot;zh-Hant&quot;:&quot;非負矩陣分解&quot;,&quot;zh-Hans&quot;:&quot;非负矩阵分解&quot;}}">
-  <meta name="garden:published_at" content="2026-06-12">
-  <meta name="garden:last_modified_at" content="2026-06-12">
-  <meta name="garden:reading_time_minutes" content="8">
-  <meta name="garden:source" content="notes/unsupervised-learning-and-dimensionality-reduction/unsupervised-learning-and-dimensionality-reduction-en.md">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.data_mining,concept.unsupervised_learning,concept.clustering,concept.dimensionality_reduction,concept.hierarchical_clustering,concept.k_means,concept.pca,concept.tsne,concept.nmf">
+  <meta name="site:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.unsupervised_learning&quot;:{&quot;en&quot;:&quot;Unsupervised Learning&quot;,&quot;zh-Hant&quot;:&quot;非監督式學習&quot;,&quot;zh-Hans&quot;:&quot;无监督学习&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.dimensionality_reduction&quot;:{&quot;en&quot;:&quot;Dimensionality Reduction&quot;,&quot;zh-Hant&quot;:&quot;降維&quot;,&quot;zh-Hans&quot;:&quot;降维&quot;},&quot;concept.hierarchical_clustering&quot;:{&quot;en&quot;:&quot;Hierarchical Clustering&quot;,&quot;zh-Hant&quot;:&quot;階層式分群&quot;,&quot;zh-Hans&quot;:&quot;层次聚类&quot;},&quot;concept.k_means&quot;:{&quot;en&quot;:&quot;K-Means&quot;,&quot;zh-Hant&quot;:&quot;K-Means 分群&quot;,&quot;zh-Hans&quot;:&quot;K-Means 聚类&quot;},&quot;concept.pca&quot;:{&quot;en&quot;:&quot;PCA&quot;,&quot;zh-Hant&quot;:&quot;主成分分析&quot;,&quot;zh-Hans&quot;:&quot;主成分分析&quot;},&quot;concept.tsne&quot;:{&quot;en&quot;:&quot;TSNE&quot;,&quot;zh-Hant&quot;:&quot;t-SNE&quot;,&quot;zh-Hans&quot;:&quot;t-SNE&quot;},&quot;concept.nmf&quot;:{&quot;en&quot;:&quot;NMF&quot;,&quot;zh-Hant&quot;:&quot;非負矩陣分解&quot;,&quot;zh-Hans&quot;:&quot;非负矩阵分解&quot;}}">
+  <meta name="site:published_at" content="2026-06-12">
+  <meta name="site:last_modified_at" content="2026-06-12">
+  <meta name="site:reading_time_minutes" content="8">
+  <meta name="site:source" content="notes/unsupervised-learning-and-dimensionality-reduction/unsupervised-learning-and-dimensionality-reduction-en.md">
   <script>
   (() => {
     try {

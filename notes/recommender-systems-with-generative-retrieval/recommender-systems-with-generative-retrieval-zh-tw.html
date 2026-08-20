@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recommender Systems with Generative Retrieval — Ludwig</title>
+  <title>猛虎出柙：打破雙塔禁錮，一舉跨越傳統召回的生成式檢索 — Ludwig</title>
   <meta name="garden:tags" content="推薦系統, 生成式檢索, 機器學習, 深度學習, 資訊檢索, Transformer 模型">
   <meta name="garden:summary" content="本篇筆記深入探討生成式檢索（Generative Retrieval, GR）在推薦系統中的架構演進、核心機制與實作細節。涵蓋雙塔 MIPS 檢索範式的瓶頸、Semantic ID 與 RQ-VAE 殘差量化編碼、Seq2Seq 自回歸生成模型（如 TIGER）、前綴樹受限解碼（Constrained Trie Search）、冷啟動泛化能力與未來挑戰。">
-  <meta name="garden:lang" content="zh-Hant">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.machine_learning,concept.deep_learning,concept.information_retrieval,concept.transformers">
-  <meta name="garden:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
-  <meta name="garden:published_at" content="2026-07-26">
-  <meta name="garden:last_modified_at" content="2026-07-26">
-  <meta name="garden:reading_time_minutes" content="18">
-  <meta name="garden:source" content="notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.md">
+  <meta name="site:lang" content="zh-Hant">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.machine_learning,concept.deep_learning,concept.information_retrieval,concept.transformers">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
+  <meta name="site:published_at" content="2026-07-26">
+  <meta name="site:last_modified_at" content="2026-07-26">
+  <meta name="site:reading_time_minutes" content="18">
+  <meta name="site:source" content="notes/recommender-systems-with-generative-retrieval/recommender-systems-with-generative-retrieval-zh-tw.md">
   <script>
   (() => {
     try {
@@ -141,7 +141,7 @@
 </nav>
   <section class="page-section">
   <div class="container">
-    <h1 class="text-center" data-aos="fade-up">Recommender Systems with Generative Retrieval</h1>
+    <h1 class="text-center" data-aos="fade-up">猛虎出柙：打破雙塔禁錮，一舉跨越傳統召回的生成式檢索</h1>
 
     <div class="note-toc-hover-zone" aria-hidden="true"></div>
     <div class="note-toc-backdrop" aria-hidden="true"></div>

@@ -6,14 +6,14 @@
   <title>Paxos Made Moderately Complex 結構化筆記</title>
   <meta name="garden:tags" content="Paxos, Multi-Paxos, 共識, 狀態機複製, 容錯, 分散式系統, Raft, 系統設計">
   <meta name="garden:summary" content="從 SMR 問題設定、Replica/Leader/Acceptor invariants、Scout/Commander 分工，到 PMMC 與 Raft 的對照整理。">
-  <meta name="garden:lang" content="zh-Hant">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.paxos,concept.multi_paxos,concept.consensus,concept.state_machine_replication,concept.fault_tolerance,concept.distributed_systems,concept.raft,concept.system_design">
-  <meta name="garden:tag_labels" content="{&quot;concept.paxos&quot;:{&quot;en&quot;:&quot;Paxos&quot;,&quot;zh-Hant&quot;:&quot;Paxos&quot;,&quot;zh-Hans&quot;:&quot;Paxos&quot;},&quot;concept.multi_paxos&quot;:{&quot;en&quot;:&quot;Multi-Paxos&quot;,&quot;zh-Hant&quot;:&quot;Multi-Paxos&quot;,&quot;zh-Hans&quot;:&quot;Multi-Paxos&quot;},&quot;concept.consensus&quot;:{&quot;en&quot;:&quot;Consensus&quot;,&quot;zh-Hant&quot;:&quot;共識&quot;,&quot;zh-Hans&quot;:&quot;共识&quot;},&quot;concept.state_machine_replication&quot;:{&quot;en&quot;:&quot;State Machine Replication&quot;,&quot;zh-Hant&quot;:&quot;狀態機複製&quot;,&quot;zh-Hans&quot;:&quot;状态机复制&quot;},&quot;concept.fault_tolerance&quot;:{&quot;en&quot;:&quot;Fault Tolerance&quot;,&quot;zh-Hant&quot;:&quot;容錯&quot;,&quot;zh-Hans&quot;:&quot;容错&quot;},&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;},&quot;concept.raft&quot;:{&quot;en&quot;:&quot;Raft&quot;,&quot;zh-Hant&quot;:&quot;Raft&quot;,&quot;zh-Hans&quot;:&quot;Raft&quot;},&quot;concept.system_design&quot;:{&quot;en&quot;:&quot;System Design&quot;,&quot;zh-Hant&quot;:&quot;系統設計&quot;,&quot;zh-Hans&quot;:&quot;系统设计&quot;}}">
-  <meta name="garden:canonical_id" content="paxos-made-moderately-complex-structured-notes">
-  <meta name="garden:last_modified_at" content="2026-06-24">
-  <meta name="garden:reading_time_minutes" content="21">
-  <meta name="garden:source" content="notes/paxos-made-moderately-complex-structured-notes/paxos-made-moderately-complex-structured-notes-zh-tw.md">
+  <meta name="site:lang" content="zh-Hant">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.paxos,concept.multi_paxos,concept.consensus,concept.state_machine_replication,concept.fault_tolerance,concept.distributed_systems,concept.raft,concept.system_design">
+  <meta name="site:tag_labels" content="{&quot;concept.paxos&quot;:{&quot;en&quot;:&quot;Paxos&quot;,&quot;zh-Hant&quot;:&quot;Paxos&quot;,&quot;zh-Hans&quot;:&quot;Paxos&quot;},&quot;concept.multi_paxos&quot;:{&quot;en&quot;:&quot;Multi-Paxos&quot;,&quot;zh-Hant&quot;:&quot;Multi-Paxos&quot;,&quot;zh-Hans&quot;:&quot;Multi-Paxos&quot;},&quot;concept.consensus&quot;:{&quot;en&quot;:&quot;Consensus&quot;,&quot;zh-Hant&quot;:&quot;共識&quot;,&quot;zh-Hans&quot;:&quot;共识&quot;},&quot;concept.state_machine_replication&quot;:{&quot;en&quot;:&quot;State Machine Replication&quot;,&quot;zh-Hant&quot;:&quot;狀態機複製&quot;,&quot;zh-Hans&quot;:&quot;状态机复制&quot;},&quot;concept.fault_tolerance&quot;:{&quot;en&quot;:&quot;Fault Tolerance&quot;,&quot;zh-Hant&quot;:&quot;容錯&quot;,&quot;zh-Hans&quot;:&quot;容错&quot;},&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;},&quot;concept.raft&quot;:{&quot;en&quot;:&quot;Raft&quot;,&quot;zh-Hant&quot;:&quot;Raft&quot;,&quot;zh-Hans&quot;:&quot;Raft&quot;},&quot;concept.system_design&quot;:{&quot;en&quot;:&quot;System Design&quot;,&quot;zh-Hant&quot;:&quot;系統設計&quot;,&quot;zh-Hans&quot;:&quot;系统设计&quot;}}">
+  <meta name="site:canonical_id" content="paxos-made-moderately-complex-structured-notes">
+  <meta name="site:last_modified_at" content="2026-06-24">
+  <meta name="site:reading_time_minutes" content="21">
+  <meta name="site:source" content="notes/paxos-made-moderately-complex-structured-notes/paxos-made-moderately-complex-structured-notes-zh-tw.md">
   <script>
   (() => {
     try {

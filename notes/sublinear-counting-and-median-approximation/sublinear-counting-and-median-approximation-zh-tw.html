@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>亞線性計數與中位數估算：Counting 1s 與 Sample Median — Ludwig</title>
+  <meta name="garden:tags" content="演算法, 查詢演算法, 亞線性演算法, 亞線性計數, 中位數估算, Chernoff Bound, Union Bound">
+  <meta name="garden:summary" content="剖析 1s 數量估算（Counting 1s）與陣列中位數（Sample Median）的經典亞線性查詢演算法，詳細分析抽樣複雜度並利用 Chernoff bound 與 Union bound 提供嚴謹的正確性證明。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.algorithm,concept.query_algorithm,concept.sublinear_algorithm,concept.counting,concept.median_approximation,concept.chernoff_bound,concept.union_bound">
+  <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.counting&quot;:{&quot;en&quot;:&quot;Sublinear Counting&quot;,&quot;zh-Hant&quot;:&quot;亞線性計數&quot;,&quot;zh-Hans&quot;:&quot;亚线性计数&quot;},&quot;concept.median_approximation&quot;:{&quot;en&quot;:&quot;Median Approximation&quot;,&quot;zh-Hant&quot;:&quot;中位數估算&quot;,&quot;zh-Hans&quot;:&quot;中位数估算&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.union_bound&quot;:{&quot;en&quot;:&quot;Union Bound&quot;,&quot;zh-Hant&quot;:&quot;Union Bound&quot;,&quot;zh-Hans&quot;:&quot;Union Bound&quot;}}">
+  <meta name="site:canonical_id" content="sublinear-counting-and-median-approximation">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="8">
+  <meta name="site:source" content="notes/sublinear-counting-and-median-approximation/sublinear-counting-and-median-approximation-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">亞線性計數與中位數估算：Counting 1s 與 Sample Median</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-counting-1s-1">1. 案例一：Counting 1s (位元串 1 的數量估計)</a>
+<a class="note-toc-link level-2" href="#1-1">1.1 問題定義</a>
+<a class="note-toc-link level-2" href="#1-2">1.2 演算法設計</a>
+<a class="note-toc-link level-2" href="#1-3">1.3 期望值與正確性分析</a>
+<a class="note-toc-link level-2" href="#1-4-chernoff-bound">1.4 抽樣複雜度放界 (Chernoff Bound)</a>
+<a class="note-toc-link level-1" href="#2-median-approximation">2. 案例二：Median Approximation (近似中位數估算)</a>
+<a class="note-toc-link level-2" href="#2-1">2.1 問題定義</a>
+<a class="note-toc-link level-2" href="#2-2">2.2 演算法設計</a>
+<a class="note-toc-link level-2" href="#2-3-union-bound">2.3 分析與 Union Bound 證明</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 透過隨機抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 個元素，我們可以在完全不遍歷整體資料的情況下，以加性誤差 $\varepsilon n$ 估算 $n$-bit 位元串中 1 的數量，或以極高機率找到接近陣列中位數（Rank 在 $(1/2 \pm \varepsilon)n$ 之間）的元素。 &lt;/callout&gt;</p>
+</section>
+
+<section id="1-counting-1s-1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 案例一：Counting 1s (位元串 1 的數量估計)</h3>
+
+<h4 id="1-1" class="mb-2">1.1 問題定義</h4>
+
+<ul class="note-list">
+<li><strong>輸入</strong>：長度為 $n$ 的二元字串（$n$-bit binary string）。</li>
+<li><strong>目標</strong>：估計字串中 1 的總個數 $A = \sum_{i=1}^n b_i$。</li>
+<li><strong>誤差要求</strong>：給定 $\varepsilon &gt; 0$，允許 <strong>加性誤差（Additive Error）</strong> $\varepsilon n$，即輸出估計值 $\hat{A}$ 滿足 $|A - \hat{A}| \le \varepsilon n$。</li>
+</ul>
+
+<p class="mb-3">若要求 $100\%$ 精確解，必須查詢全部 $n$ 個 bit（下界 $\Omega(n)$）。但若允許 $\varepsilon n$ 的誤差，我們可以達到<strong>常數時間複雜度 $\mathcal{O}(1/\varepsilon^2)$</strong>！</p>
+
+<h4 id="1-2" class="mb-2">1.2 演算法設計</h4>
+
+<ol class="mb-3">
+<li>獨立且均勻地隨機挑選 $k$ 個位置 $i_1, i_2, \dots, i_k \in \{1, \dots, n\}$。</li>
+<li>向 Oracle 查詢這 $k$ 個位置的 bit 值，記為 $x_1, x_2, \dots, x_k$。</li>
+<li>計算採樣中 1 的數量 $X = \sum_{j=1}^k x_j$。</li>
+<li>輸出估計值：</li>
+</ol>
+
+<p class="mb-3">$$\hat{A} = X \cdot \frac{n}{k}$$</p>
+
+<h4 id="1-3" class="mb-2">1.3 期望值與正確性分析</h4>
+
+<p class="mb-3">對於每次採樣 $x_j$，其為 1 的機率等於總體中 1 的比例：</p>
+
+<p class="mb-3">$$\mathbb{E}[x_j] = \operatorname{Pr}[x_j = 1] = \frac{A}{n}$$</p>
+
+<p class="mb-3">根據期望值的線性：</p>
+
+<p class="mb-3">$$\mathbb{E}[X] = \mathbb{E}\left[\sum_{j=1}^k x_j\right] = k \cdot \frac{A}{n}$$</p>
+
+<p class="mb-3">因此估計值 $\hat{A}$ 是<strong>無偏估計量（Unbiased Estimator）</strong>：</p>
+
+<p class="mb-3">$$\mathbb{E}[\hat{A}] = \mathbb{E}\left[X \cdot \frac{n}{k}\right] = \frac{n}{k} \cdot \frac{k A}{n} = A$$</p>
+
+<h4 id="1-4-chernoff-bound" class="mb-2">1.4 抽樣複雜度放界 (Chernoff Bound)</h4>
+
+<p class="mb-3">我們希望偏差超過 $\varepsilon n$ 的失敗機率小於 $0.1$：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[|\hat{A} - A| \ge \varepsilon n] = \operatorname{Pr}[|X - \mu| \ge \varepsilon k] \le 0.1 \quad \left(\text{記 } \mu = \mathbb{E}[X] = \frac{k A}{n}\right)$$</p>
+
+<p class="mb-3">套用 Chernoff Bound 雙邊形式：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[|X - \mu| \ge \delta \mu] \le 2 e^{-\frac{\delta^2 \mu}{3}}$$</p>
+
+<p class="mb-3">其中令 $\delta \mu = \varepsilon k \implies \delta = \frac{\varepsilon k}{\mu} = \frac{\varepsilon n}{A}$。 經推導可得：只要選取採樣數 <strong>$k \ge \frac{100}{\varepsilon^2}$</strong>，失敗機率保證小於 $0.1$（即成功率至少 $90\%$）。</p>
+
+<hr>
+</section>
+
+<section id="2-median-approximation" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 案例二：Median Approximation (近似中位數估算)</h3>
+
+<h4 id="2-1" class="mb-2">2.1 問題定義</h4>
+
+<ul class="note-list">
+<li><strong>輸入</strong>：未排序的陣列 $a_1, a_2, \dots, a_n$。</li>
+<li><strong>目標</strong>：找到一個元素，其在排序後的 Rank 介於 $\left(\frac{1}{2} - \varepsilon\right)n$ 與 $\left(\frac{1}{2} + \varepsilon\right)n$ 之間。</li>
+</ul>
+
+<h4 id="2-2" class="mb-2">2.2 演算法設計</h4>
+
+<ol class="mb-3">
+<li>均勻隨機抽樣 $k$ 個陣列位置。</li>
+<li>輸出這 $k$ 個樣本的<strong>中位數（Sample Median）</strong>。</li>
+</ol>
+
+<h4 id="2-3-union-bound" class="mb-2">2.3 分析與 Union Bound 證明</h4>
+
+<p class="mb-3">什麼時候演算法會<strong>失敗</strong>？當樣本中位數的 Rank 偏離目標範圍時。 這等價於以下兩個壞事件（Bad Events）之一發生：</p>
+
+<ul class="note-list">
+<li><strong>壞事件 $E_1$</strong>：採樣中超過 $k/2$ 個元素的 Rank 小於 $\left(\frac{1}{2} - \varepsilon\right)n$。</li>
+<li><strong>壞事件 $E_2$</strong>：採樣中超過 $k/2$ 個元素的 Rank 大於 $\left(\frac{1}{2} + \varepsilon\right)n$。</li>
+</ul>
+
+<h5 class="mb-2">對 $E_1$ 進行 Chernoff 放界</h5>
+
+<p class="mb-3">定義指示變數 $Y_j = 1$ 表示第 $j$ 個採樣元素的 Rank $&lt; \left(\frac{1}{2} - \varepsilon\right)n$。</p>
+
+<p class="mb-3">$$\mathbb{E}[Y_j] = \frac{1}{2} - \varepsilon$$</p>
+
+<p class="mb-3">令 $Y = \sum_{j=1}^k Y_j$，則期望值 $\mu_Y = \mathbb{E}[Y] = \left(\frac{1}{2} - \varepsilon\right)k$。 條件 $Y \ge k/2$ 等價於 $Y \ge (1 + \delta)\mu_Y$（其中 $\delta \approx 2\varepsilon$）。 套用 Chernoff Bound：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[E_1] = \operatorname{Pr}\left[Y \ge \frac{k}{2}\right] &lt; e^{-\frac{\varepsilon^2 k}{10}}$$</p>
+
+<p class="mb-3">當取 $k \ge \frac{100}{\varepsilon^2}$ 時：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[E_1] &lt; 0.1, \quad \operatorname{Pr}[E_2] &lt; 0.1$$</p>
+
+<h5 class="mb-2">結合 Union Bound</h5>
+
+<p class="mb-3">根據 Union Bound，整體失敗機率：</p>
+
+<p class="mb-3">$$\operatorname{Pr}[\text{失敗}] = \operatorname{Pr}[E_1 \cup E_2] \le \operatorname{Pr}[E_1] + \operatorname{Pr}[E_2] &lt; 0.1 + 0.1 = 0.2$$</p>
+
+<p class="mb-3">故<strong>整體成功找到近中位數的機率至少為 $80\%$</strong>！</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Counting 1s 透過均勻抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 個位置，能在常數時間內獲得加性誤差 $\varepsilon n$ 的無偏估算。
+<ul class="note-list">
+<li>Sample Median 利用樣本中位數估算總體中位數，利用 Chernoff Bound 與 Union Bound 證明其成功率高於 $80\%$。</li>
+<li>抽樣數僅取決於精度參數 $\varepsilon$，達成真正的亞線性（甚至常數時間 $\mathcal{O}(1)$）查詢複雜度。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>NUS CS5234: Algorithms at Scale</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

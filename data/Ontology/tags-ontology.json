@@ -1931,6 +1931,386 @@
         "狀態抽象",
         "状态抽象"
       ]
+    },
+    {
+      "concept_id": "concept.algorithm",
+      "labels": {
+        "en": "Algorithm",
+        "zh-Hant": "演算法",
+        "zh-Hans": "算法"
+      },
+      "aliases": [
+        "algorithm",
+        "algorithms",
+        "演算法",
+        "算法"
+      ]
+    },
+    {
+      "concept_id": "concept.randomized_algorithm",
+      "labels": {
+        "en": "Randomized Algorithm",
+        "zh-Hant": "隨機化演算法",
+        "zh-Hans": "随机化算法"
+      },
+      "aliases": [
+        "randomized algorithm",
+        "randomized algorithms",
+        "隨機化演算法",
+        "随机化算法"
+      ]
+    },
+    {
+      "concept_id": "concept.probability",
+      "labels": {
+        "en": "Probability",
+        "zh-Hant": "機率學",
+        "zh-Hans": "概率学"
+      },
+      "aliases": [
+        "probability",
+        "機率",
+        "概率"
+      ]
+    },
+    {
+      "concept_id": "concept.expectation",
+      "labels": {
+        "en": "Expectation",
+        "zh-Hant": "期望值",
+        "zh-Hans": "期望值"
+      },
+      "aliases": [
+        "expectation",
+        "expected value",
+        "期望值"
+      ]
+    },
+    {
+      "concept_id": "concept.complexity_theory",
+      "labels": {
+        "en": "Complexity Theory",
+        "zh-Hant": "複雜度理論",
+        "zh-Hans": "复杂度理论"
+      },
+      "aliases": [
+        "complexity theory",
+        "複雜度理論",
+        "复杂度理论"
+      ]
+    },
+    {
+      "concept_id": "concept.concentration_inequalities",
+      "labels": {
+        "en": "Concentration Inequalities",
+        "zh-Hant": "集中不等式",
+        "zh-Hans": "集中不等式"
+      },
+      "aliases": [
+        "concentration inequalities",
+        "concentration inequality",
+        "集中不等式"
+      ]
+    },
+    {
+      "concept_id": "concept.markov_inequality",
+      "labels": {
+        "en": "Markov's Inequality",
+        "zh-Hant": "Markov 不等式",
+        "zh-Hans": "Markov 不等式"
+      },
+      "aliases": [
+        "markov inequality",
+        "markov's inequality",
+        "Markov 不等式"
+      ]
+    },
+    {
+      "concept_id": "concept.chebyshev_inequality",
+      "labels": {
+        "en": "Chebyshev's Inequality",
+        "zh-Hant": "Chebyshev 不等式",
+        "zh-Hans": "Chebyshev 不等式"
+      },
+      "aliases": [
+        "chebyshev inequality",
+        "chebyshev's inequality",
+        "Chebyshev 不等式"
+      ]
+    },
+    {
+      "concept_id": "concept.chernoff_bound",
+      "labels": {
+        "en": "Chernoff Bound",
+        "zh-Hant": "Chernoff Bound",
+        "zh-Hans": "Chernoff Bound"
+      },
+      "aliases": [
+        "chernoff bound",
+        "chernoff's bound",
+        "Chernoff Bound"
+      ]
+    },
+    {
+      "concept_id": "concept.union_bound",
+      "labels": {
+        "en": "Union Bound",
+        "zh-Hant": "Union Bound",
+        "zh-Hans": "Union Bound"
+      },
+      "aliases": [
+        "union bound",
+        "Union Bound"
+      ]
+    },
+    {
+      "concept_id": "concept.query_algorithm",
+      "labels": {
+        "en": "Query Algorithm",
+        "zh-Hant": "查詢演算法",
+        "zh-Hans": "查询算法"
+      },
+      "aliases": [
+        "query algorithm",
+        "query algorithms",
+        "查詢演算法",
+        "查询算法"
+      ]
+    },
+    {
+      "concept_id": "concept.sublinear_algorithm",
+      "labels": {
+        "en": "Sublinear Algorithm",
+        "zh-Hant": "亞線性演算法",
+        "zh-Hans": "亚线性算法"
+      },
+      "aliases": [
+        "sublinear algorithm",
+        "sublinear algorithms",
+        "亞線性演算法",
+        "亚线性算法"
+      ]
+    },
+    {
+      "concept_id": "concept.oracle",
+      "labels": {
+        "en": "Oracle Model",
+        "zh-Hant": "Oracle 查詢介面",
+        "zh-Hans": "Oracle 查询接口"
+      },
+      "aliases": [
+        "oracle",
+        "Oracle"
+      ]
+    },
+    {
+      "concept_id": "concept.graph_algorithm",
+      "labels": {
+        "en": "Graph Algorithm",
+        "zh-Hant": "圖演算法",
+        "zh-Hans": "图算法"
+      },
+      "aliases": [
+        "graph algorithm",
+        "graph algorithms",
+        "圖演算法",
+        "图算法"
+      ]
+    },
+    {
+      "concept_id": "concept.counting",
+      "labels": {
+        "en": "Sublinear Counting",
+        "zh-Hant": "亞線性計數",
+        "zh-Hans": "亚线性计数"
+      },
+      "aliases": [
+        "counting",
+        "計數"
+      ]
+    },
+    {
+      "concept_id": "concept.median_approximation",
+      "labels": {
+        "en": "Median Approximation",
+        "zh-Hant": "中位數估算",
+        "zh-Hans": "中位数估算"
+      },
+      "aliases": [
+        "median approximation",
+        "中位數估算"
+      ]
+    },
+    {
+      "concept_id": "concept.variance",
+      "labels": {
+        "en": "Variance",
+        "zh-Hant": "變異數（方差）",
+        "zh-Hans": "方差"
+      },
+      "aliases": [
+        "variance",
+        "變異數",
+        "方差"
+      ]
+    },
+    {
+      "concept_id": "concept.covariance",
+      "labels": {
+        "en": "Covariance",
+        "zh-Hant": "共變異數",
+        "zh-Hans": "协方差"
+      },
+      "aliases": [
+        "covariance",
+        "共變異數",
+        "协方差"
+      ]
+    },
+    {
+      "concept_id": "concept.balls_and_bins",
+      "labels": {
+        "en": "Balls and Bins",
+        "zh-Hant": "球與桶模型",
+        "zh-Hans": "球与桶模型"
+      },
+      "aliases": [
+        "balls and bins",
+        "球與桶模型"
+      ]
+    },
+    {
+      "concept_id": "concept.moment_generating_function",
+      "labels": {
+        "en": "Moment Generating Function",
+        "zh-Hant": "矩生成函數 (MGF)",
+        "zh-Hans": "矩生成函数 (MGF)"
+      },
+      "aliases": [
+        "moment generating function",
+        "矩生成函數"
+      ]
+    },
+    {
+      "concept_id": "concept.tail_bound",
+      "labels": {
+        "en": "Tail Bound",
+        "zh-Hant": "尾端界限 (Tail Bound)",
+        "zh-Hans": "尾端界限 (Tail Bound)"
+      },
+      "aliases": [
+        "tail bound",
+        "Tail Bound"
+      ]
+    },
+    {
+      "concept_id": "concept.variance_reduction",
+      "labels": {
+        "en": "Variance Reduction",
+        "zh-Hant": "方差降低技巧",
+        "zh-Hans": "方差降低技巧"
+      },
+      "aliases": [
+        "variance reduction",
+        "方差降低"
+      ]
+    },
+    {
+      "concept_id": "concept.median_trick",
+      "labels": {
+        "en": "Median Trick",
+        "zh-Hant": "Median Trick（中位數招式）",
+        "zh-Hans": "Median Trick（中位数招式）"
+      },
+      "aliases": [
+        "median trick",
+        "Median Trick"
+      ]
+    },
+    {
+      "concept_id": "concept.mean_trick",
+      "labels": {
+        "en": "Mean Trick",
+        "zh-Hant": "Mean Trick（平均值招式）",
+        "zh-Hans": "Mean Trick（平均值招式）"
+      },
+      "aliases": [
+        "mean trick",
+        "Mean Trick"
+      ]
+    },
+    {
+      "concept_id": "concept.probability_boosting",
+      "labels": {
+        "en": "Probability Boosting",
+        "zh-Hant": "成功率放大 (Probability Boosting)",
+        "zh-Hans": "成功率放大 (Probability Boosting)"
+      },
+      "aliases": [
+        "probability boosting",
+        "成功率放大"
+      ]
+    },
+    {
+      "concept_id": "concept.edge_counting",
+      "labels": {
+        "en": "Sublinear Edge Counting",
+        "zh-Hant": "圖邊數亞線性估計",
+        "zh-Hans": "图边数亚线性估计"
+      },
+      "aliases": [
+        "edge counting",
+        "邊數估算"
+      ]
+    },
+    {
+      "concept_id": "concept.heavy_light_decomposition",
+      "labels": {
+        "en": "Heavy/Light Vertex Partition",
+        "zh-Hant": "Heavy/Light 頂點分割",
+        "zh-Hans": "Heavy/Light 顶点分割"
+      },
+      "aliases": [
+        "heavy light decomposition",
+        "Heavy/Light 頂點分割"
+      ]
+    },
+    {
+      "concept_id": "concept.connected_components",
+      "labels": {
+        "en": "Connected Components",
+        "zh-Hant": "圖連通分量",
+        "zh-Hans": "图连通分量"
+      },
+      "aliases": [
+        "connected components",
+        "連通分量"
+      ]
+    },
+    {
+      "concept_id": "concept.bfs",
+      "labels": {
+        "en": "Breadth-First Search (BFS)",
+        "zh-Hant": "廣度優先搜尋 (BFS)",
+        "zh-Hans": "广度优先搜索 (BFS)"
+      },
+      "aliases": [
+        "bfs",
+        "BFS",
+        "廣度優先搜尋"
+      ]
+    },
+    {
+      "concept_id": "concept.additivity",
+      "labels": {
+        "en": "Additivity",
+        "zh-Hant": "可加性 (Additivity)",
+        "zh-Hans": "可加性 (Additivity)"
+      },
+      "aliases": [
+        "additivity",
+        "可加性"
+      ]
     }
   ]
 }

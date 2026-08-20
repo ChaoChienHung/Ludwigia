@@ -6,16 +6,16 @@
   <title>乘積量化 Product Quantization (PQ)：十億級向量檢索與記憶體壓縮的底層幾何 — Ludwig</title>
   <meta name="garden:tags" content="向量量化, 乘積量化, 向量檢索, 機器學習, 資訊檢索">
   <meta name="garden:summary" content="本文深入拆解乘積量化 (Product Quantization, PQ) 的幾何原理與數學本質，剖析子空間分割與組合碼本如何實現十億級高維向量的極致記憶體壓縮，並詳細介紹對稱 (SDC) 與非對稱距離計算 (ADC) 在 ANNS 向量搜尋中的實作細節。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.vector_quantization,concept.product_quantization,concept.vector_search,concept.machine_learning,concept.information_retrieval">
-  <meta name="garden:tag_labels" content="{&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.product_quantization&quot;:{&quot;en&quot;:&quot;Product Quantization&quot;,&quot;zh-Hant&quot;:&quot;乘積量化&quot;,&quot;zh-Hans&quot;:&quot;乘积量化&quot;},&quot;concept.vector_search&quot;:{&quot;en&quot;:&quot;Vector Search&quot;,&quot;zh-Hant&quot;:&quot;向量檢索&quot;,&quot;zh-Hans&quot;:&quot;向量检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
-  <meta name="garden:canonical_id" content="product-quantization-high-dimensional-vector-compression">
-  <meta name="garden:published_at" content="2026-08-16">
-  <meta name="garden:last_modified_at" content="2026-08-16">
-  <meta name="garden:cover" content="notes/product-quantization-high-dimensional-vector-compression/product-quantization.png">
-  <meta name="garden:reading_time_minutes" content="18">
-  <meta name="garden:source" content="notes/product-quantization-high-dimensional-vector-compression/product-quantization-high-dimensional-vector-compression-zh-tw.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.vector_quantization,concept.product_quantization,concept.vector_search,concept.machine_learning,concept.information_retrieval">
+  <meta name="site:tag_labels" content="{&quot;concept.vector_quantization&quot;:{&quot;en&quot;:&quot;Vector Quantization&quot;,&quot;zh-Hant&quot;:&quot;向量量化&quot;,&quot;zh-Hans&quot;:&quot;向量量化&quot;},&quot;concept.product_quantization&quot;:{&quot;en&quot;:&quot;Product Quantization&quot;,&quot;zh-Hant&quot;:&quot;乘積量化&quot;,&quot;zh-Hans&quot;:&quot;乘积量化&quot;},&quot;concept.vector_search&quot;:{&quot;en&quot;:&quot;Vector Search&quot;,&quot;zh-Hant&quot;:&quot;向量檢索&quot;,&quot;zh-Hans&quot;:&quot;向量检索&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
+  <meta name="site:canonical_id" content="product-quantization-high-dimensional-vector-compression">
+  <meta name="site:published_at" content="2026-08-16">
+  <meta name="site:last_modified_at" content="2026-08-16">
+  <meta name="site:cover" content="notes/product-quantization-high-dimensional-vector-compression/product-quantization.png">
+  <meta name="site:reading_time_minutes" content="18">
+  <meta name="site:source" content="notes/product-quantization-high-dimensional-vector-compression/product-quantization-high-dimensional-vector-compression-zh-tw.md">
   <script>
   (() => {
     try {

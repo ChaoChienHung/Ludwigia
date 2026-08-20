@@ -1607,6 +1607,496 @@
         "state abstraction",
         "State Abstraction"
       ]
+    },
+    {
+      "concept_id": "concept.algorithm",
+      "labels": {
+        "en": "Algorithm",
+        "zh-Hant": "演算法",
+        "zh-Hans": "算法"
+      },
+      "contexts": {
+        "en": "A step-by-step procedure or set of rules for solving a problem.",
+        "zh-Hant": "解決問題或執行計算的明確步驟與規則集合。",
+        "zh-Hans": "解决问题或执行计算的明确步骤与规则集合。"
+      },
+      "aliases": [
+        "algorithm",
+        "algorithms"
+      ]
+    },
+    {
+      "concept_id": "concept.randomized_algorithm",
+      "labels": {
+        "en": "Randomized Algorithm",
+        "zh-Hant": "隨機化演算法",
+        "zh-Hans": "随机化算法"
+      },
+      "contexts": {
+        "en": "An algorithm that employs a degree of randomness as part of its logic.",
+        "zh-Hant": "在執行過程中引入隨機數或硬幣擲甩決策的演算法。",
+        "zh-Hans": "在执行过程中引入随机数或硬币掷甩决策的算法。"
+      },
+      "aliases": [
+        "randomized algorithm",
+        "randomized algorithms"
+      ]
+    },
+    {
+      "concept_id": "concept.probability",
+      "labels": {
+        "en": "Probability",
+        "zh-Hant": "機率學",
+        "zh-Hans": "概率学"
+      },
+      "contexts": {
+        "en": "The branch of mathematics concerning numerical descriptions of how likely an event is to occur.",
+        "zh-Hant": "研究不確定事件發生可能性大小的數學分支。",
+        "zh-Hans": "研究不确定事件发生可能性大小的数学分支。"
+      },
+      "aliases": [
+        "probability"
+      ]
+    },
+    {
+      "concept_id": "concept.expectation",
+      "labels": {
+        "en": "Expectation",
+        "zh-Hant": "期望值",
+        "zh-Hans": "期望值"
+      },
+      "contexts": {
+        "en": "The long-run average value of repetitions of the experiment it represents.",
+        "zh-Hant": "隨機變數試驗長期重複試驗結果的算術平均值。",
+        "zh-Hans": "随机变量试验长期重复试验结果的算术平均值。"
+      },
+      "aliases": [
+        "expectation",
+        "expected value"
+      ]
+    },
+    {
+      "concept_id": "concept.complexity_theory",
+      "labels": {
+        "en": "Complexity Theory",
+        "zh-Hant": "複雜度理論",
+        "zh-Hans": "复杂度理论"
+      },
+      "contexts": {
+        "en": "A branch of the theory of computation focusing on classifying computational problems according to their resource usage.",
+        "zh-Hant": "計算理論分支，關注根據資源開銷對計算問題進行分類。",
+        "zh-Hans": "计算理论分支，关注根据资源开销对计算问题进行分类。"
+      },
+      "aliases": [
+        "complexity theory"
+      ]
+    },
+    {
+      "concept_id": "concept.concentration_inequalities",
+      "labels": {
+        "en": "Concentration Inequalities",
+        "zh-Hant": "集中不等式",
+        "zh-Hans": "集中不等式"
+      },
+      "contexts": {
+        "en": "Mathematical bounds on the probability of a random variable deviating from a value, such as its expectation.",
+        "zh-Hant": "用於限制隨機變數偏離其期望值範圍上界的數學不等式工具箱。",
+        "zh-Hans": "用于限制随机变量偏离其期望值范围上界的数学不等式工具箱。"
+      },
+      "aliases": [
+        "concentration inequalities",
+        "concentration inequality"
+      ]
+    },
+    {
+      "concept_id": "concept.markov_inequality",
+      "labels": {
+        "en": "Markov's Inequality",
+        "zh-Hant": "Markov 不等式",
+        "zh-Hans": "Markov 不等式"
+      },
+      "contexts": {
+        "en": "An inequality that gives an upper bound for the probability that a non-negative random variable exceeds a positive constant.",
+        "zh-Hant": "為非負隨機變數超過特定門檻提供粗粒度機率上限的不等式。",
+        "zh-Hans": "为非负随机变量超过特定门槛提供粗粒度概率上限的不等式。"
+      },
+      "aliases": [
+        "markov inequality",
+        "markov's inequality"
+      ]
+    },
+    {
+      "concept_id": "concept.chebyshev_inequality",
+      "labels": {
+        "en": "Chebyshev's Inequality",
+        "zh-Hant": "Chebyshev 不等式",
+        "zh-Hans": "Chebyshev 不等式"
+      },
+      "contexts": {
+        "en": "An inequality that guarantees that no more than a certain fraction of values can be more than a certain distance from the mean.",
+        "zh-Hant": "利用變異數（Variance）限制隨機變數雙邊偏離程度的二次方反比不等式。",
+        "zh-Hans": "利用方差（Variance）限制随机变量双边偏离程度的二次方反比不等式。"
+      },
+      "aliases": [
+        "chebyshev inequality",
+        "chebyshev's inequality"
+      ]
+    },
+    {
+      "concept_id": "concept.chernoff_bound",
+      "labels": {
+        "en": "Chernoff Bound",
+        "zh-Hant": "Chernoff Bound",
+        "zh-Hans": "Chernoff Bound"
+      },
+      "contexts": {
+        "en": "Exponentially decreasing tail bounds for sums of independent random variables.",
+        "zh-Hant": "利用矩生成函數 (MGF) 為獨立隨機變數和提供指數級衰減的極強尾端界限。",
+        "zh-Hans": "利用矩生成函数 (MGF) 为独立随机变量和提供指数级衰减的极强尾端界限。"
+      },
+      "aliases": [
+        "chernoff bound",
+        "chernoff's bound"
+      ]
+    },
+    {
+      "concept_id": "concept.union_bound",
+      "labels": {
+        "en": "Union Bound",
+        "zh-Hant": "Union Bound",
+        "zh-Hans": "Union Bound"
+      },
+      "contexts": {
+        "en": "Boole's inequality stating that the probability of at least one event happening is at most the sum of the individual probabilities.",
+        "zh-Hant": "指出至少一個事件發生之機率不大於各事件單獨發生機率之和的不等式（不需獨立性）。",
+        "zh-Hans": "指出至少一个事件发生之概率不大干各事件单独发生概率之和的不等式（不需独立性）。"
+      },
+      "aliases": [
+        "union bound"
+      ]
+    },
+    {
+      "concept_id": "concept.query_algorithm",
+      "labels": {
+        "en": "Query Algorithm",
+        "zh-Hant": "查詢演算法",
+        "zh-Hans": "查询算法"
+      },
+      "contexts": {
+        "en": "An algorithm that accesses its input through querying an oracle.",
+        "zh-Hant": "透過 Oracle 介面隨機抽樣存取局部輸入以估算總體統計量的演算法。",
+        "zh-Hans": "通过 Oracle 接口随机抽样存取局部输入以估算总体统计量的算法。"
+      },
+      "aliases": [
+        "query algorithm",
+        "query algorithms"
+      ]
+    },
+    {
+      "concept_id": "concept.sublinear_algorithm",
+      "labels": {
+        "en": "Sublinear Algorithm",
+        "zh-Hant": "亞線性演算法",
+        "zh-Hans": "亚线性算法"
+      },
+      "contexts": {
+        "en": "An algorithm whose time or space complexity is o(N) relative to input size N.",
+        "zh-Hant": "時間或空間複雜度嚴格小於輸入資料規模 N 的超高效演算法。",
+        "zh-Hans": "时间或空间复杂度严格小于输入数据规模 N 的超高效算法。"
+      },
+      "aliases": [
+        "sublinear algorithm",
+        "sublinear algorithms"
+      ]
+    },
+    {
+      "concept_id": "concept.oracle",
+      "labels": {
+        "en": "Oracle Model",
+        "zh-Hant": "Oracle 查詢介面",
+        "zh-Hans": "Oracle 查询接口"
+      },
+      "contexts": {
+        "en": "An abstract black box used in theoretical computer science to answer specific queries about the input.",
+        "zh-Hant": "理論計算科學中用來提供局部資料解答的抽象黑盒子查詢介面。",
+        "zh-Hans": "理论计算科学中用来提供局部数据解答的抽象黑盒子查询接口。"
+      },
+      "aliases": [
+        "oracle"
+      ]
+    },
+    {
+      "concept_id": "concept.graph_algorithm",
+      "labels": {
+        "en": "Graph Algorithm",
+        "zh-Hant": "圖演算法",
+        "zh-Hans": "图算法"
+      },
+      "contexts": {
+        "en": "Algorithms designed to solve problems on graph data structures.",
+        "zh-Hant": "專門用來處理圖形（頂點與邊）資料結構的演算法。",
+        "zh-Hans": "专门用来处理图形（顶点与边）数据结构的算法。"
+      },
+      "aliases": [
+        "graph algorithm",
+        "graph algorithms"
+      ]
+    },
+    {
+      "concept_id": "concept.counting",
+      "labels": {
+        "en": "Sublinear Counting",
+        "zh-Hant": "亞線性計數",
+        "zh-Hans": "亚线性计数"
+      },
+      "contexts": {
+        "en": "Estimating quantities of interest in sublinear time.",
+        "zh-Hant": "透過隨機抽樣在亞線性時間內估算特定元素總量的技術。",
+        "zh-Hans": "通过随机抽样在亚线性时间内估算特定元素总量的技术。"
+      },
+      "aliases": [
+        "counting"
+      ]
+    },
+    {
+      "concept_id": "concept.median_approximation",
+      "labels": {
+        "en": "Median Approximation",
+        "zh-Hant": "中位數估算",
+        "zh-Hans": "中位数估算"
+      },
+      "contexts": {
+        "en": "Approximating the median of a collection of values using sample medians.",
+        "zh-Hant": "利用樣本中位數以高機率估算全域陣列中位數位階的亞線性演算法。",
+        "zh-Hans": "利用样本中位数以高概率估算全局数组中位数位阶的亚线性算法。"
+      },
+      "aliases": [
+        "median approximation"
+      ]
+    },
+    {
+      "concept_id": "concept.variance",
+      "labels": {
+        "en": "Variance",
+        "zh-Hant": "變異數（方差）",
+        "zh-Hans": "方差"
+      },
+      "contexts": {
+        "en": "A measure of dispersion showing how far a set of numbers is spread out from their average value.",
+        "zh-Hant": "衡量隨機變數離散程度、即相對於其期望值偏離平方平均的統計量。",
+        "zh-Hans": "衡量随机变量离散程度、即相对于其期望值偏离平方平均的统计量。"
+      },
+      "aliases": [
+        "variance"
+      ]
+    },
+    {
+      "concept_id": "concept.covariance",
+      "labels": {
+        "en": "Covariance",
+        "zh-Hant": "共變異數",
+        "zh-Hans": "协方差"
+      },
+      "contexts": {
+        "en": "A measure of the joint variability of two random variables.",
+        "zh-Hant": "衡量兩個隨機變數共同變異與相關方向的統計量。",
+        "zh-Hans": "衡量两个随机变量共同变异与相关方向的统计量。"
+      },
+      "aliases": [
+        "covariance"
+      ]
+    },
+    {
+      "concept_id": "concept.balls_and_bins",
+      "labels": {
+        "en": "Balls and Bins",
+        "zh-Hant": "球與桶模型",
+        "zh-Hans": "球与桶模型"
+      },
+      "contexts": {
+        "en": "A classic model in probability theory describing the placement of balls into bins.",
+        "zh-Hant": "機率論與隨機演算法中描述將 m 個球隨機投進 n 個桶子的經典分析模型。",
+        "zh-Hans": "概率论与随机算法中描述将 m 个球随机投进 n 个桶子的经典分析模型。"
+      },
+      "aliases": [
+        "balls and bins"
+      ]
+    },
+    {
+      "concept_id": "concept.moment_generating_function",
+      "labels": {
+        "en": "Moment Generating Function",
+        "zh-Hant": "矩生成函數 (MGF)",
+        "zh-Hans": "矩生成函数 (MGF)"
+      },
+      "contexts": {
+        "en": "An alternative specification of the probability distribution of a random variable.",
+        "zh-Hant": "隨機變數分佈的另一種函數形式 E[e^{tX}]，用來匯出更高階的指數級 Tail Bounds。",
+        "zh-Hans": "随机变量分布的另一种函数形式 E[e^{tX}]，用来汇出更高阶的指数级 Tail Bounds。"
+      },
+      "aliases": [
+        "moment generating function"
+      ]
+    },
+    {
+      "concept_id": "concept.tail_bound",
+      "labels": {
+        "en": "Tail Bound",
+        "zh-Hant": "尾端界限 (Tail Bound)",
+        "zh-Hans": "尾端界限 (Tail Bound)"
+      },
+      "contexts": {
+        "en": "An upper bound on the probability of extreme values occurring in a random variable.",
+        "zh-Hant": "限制隨機變數出現極端偏離值的機率上界估計。",
+        "zh-Hans": "限制随机变量出现极端偏离值的概率上界估计。"
+      },
+      "aliases": [
+        "tail bound"
+      ]
+    },
+    {
+      "concept_id": "concept.variance_reduction",
+      "labels": {
+        "en": "Variance Reduction",
+        "zh-Hant": "方差降低技巧",
+        "zh-Hans": "方差降低技巧"
+      },
+      "contexts": {
+        "en": "Techniques used to reduce the variance of statistical estimates.",
+        "zh-Hant": "透過重複獨立採樣求平均等方式降低估計器方差的統計技術。",
+        "zh-Hans": "通过重复独立采样求平均等方式降低估计器方差的统计技术。"
+      },
+      "aliases": [
+        "variance reduction"
+      ]
+    },
+    {
+      "concept_id": "concept.median_trick",
+      "labels": {
+        "en": "Median Trick",
+        "zh-Hant": "Median Trick（中位數招式）",
+        "zh-Hans": "Median Trick（中位数招式）"
+      },
+      "contexts": {
+        "en": "A technique that takes the median of repeated independent trials to exponentially boost the success probability.",
+        "zh-Hant": "透過對多次獨立估計值取中位數，以 O(log(1/δ)) 代價將演算法成功率提升至 1-δ 的技巧。",
+        "zh-Hans": "通过对多次独立估计值取中位数，以 O(log(1/δ)) 代价将算法成功率提升至 1-δ 的技巧。"
+      },
+      "aliases": [
+        "median trick"
+      ]
+    },
+    {
+      "concept_id": "concept.mean_trick",
+      "labels": {
+        "en": "Mean Trick",
+        "zh-Hant": "Mean Trick（平均值招式）",
+        "zh-Hans": "Mean Trick（平均值招式）"
+      },
+      "contexts": {
+        "en": "A technique that averages k independent unbiased runs to reduce variance by a factor of k.",
+        "zh-Hant": "透過平均 k 次獨立無偏估估運行，將估計器方差按比例壓低至 M/k 的技巧。",
+        "zh-Hans": "通过平均 k 次独立无偏估估运行，将估计器方差按比例压低至 M/k 的技巧。"
+      },
+      "aliases": [
+        "mean trick"
+      ]
+    },
+    {
+      "concept_id": "concept.probability_boosting",
+      "labels": {
+        "en": "Probability Boosting",
+        "zh-Hant": "成功率放大 (Probability Boosting)",
+        "zh-Hans": "成功率放大 (Probability Boosting)"
+      },
+      "contexts": {
+        "en": "Methods to amplify the success rate of a randomized algorithm.",
+        "zh-Hant": "將弱隨機演算法的成功率提升至接近 100% 的方法體系。",
+        "zh-Hans": "将弱随机算法的成功率提升至接近 100% 的方法体系。"
+      },
+      "aliases": [
+        "probability boosting"
+      ]
+    },
+    {
+      "concept_id": "concept.edge_counting",
+      "labels": {
+        "en": "Sublinear Edge Counting",
+        "zh-Hant": "圖邊數亞線性估計",
+        "zh-Hans": "图边数亚线性估计"
+      },
+      "contexts": {
+        "en": "Estimating the number of edges in a graph in sublinear time.",
+        "zh-Hant": "在亞線性查詢時間內估算圖中總邊數 m 的演算法。",
+        "zh-Hans": "在亚线性查询时间内估算图中总边数 m 的算法。"
+      },
+      "aliases": [
+        "edge counting"
+      ]
+    },
+    {
+      "concept_id": "concept.heavy_light_decomposition",
+      "labels": {
+        "en": "Heavy/Light Vertex Partition",
+        "zh-Hant": "Heavy/Light 頂點分割",
+        "zh-Hans": "Heavy/Light 顶点分割"
+      },
+      "contexts": {
+        "en": "Partitioning vertices into high-degree and low-degree sets to bound variance.",
+        "zh-Hant": "將圖頂點依據度數全序切分為 H 與 L 集合以成功限制估計器方差的分析技巧。",
+        "zh-Hans": "将图顶点依据度数全序切分为 H 与 L 集合以成功限制估计器方差的分析技巧。"
+      },
+      "aliases": [
+        "heavy light decomposition"
+      ]
+    },
+    {
+      "concept_id": "concept.connected_components",
+      "labels": {
+        "en": "Connected Components",
+        "zh-Hant": "圖連通分量",
+        "zh-Hans": "图连通分量"
+      },
+      "contexts": {
+        "en": "Subgraphs in which any two vertices are connected to each other by paths.",
+        "zh-Hant": "無向圖中任意兩頂點皆有路徑相連的極大連通子圖。",
+        "zh-Hans": "无向图中任意两顶点皆有路径相连的极大连通子图。"
+      },
+      "aliases": [
+        "connected components"
+      ]
+    },
+    {
+      "concept_id": "concept.bfs",
+      "labels": {
+        "en": "Breadth-First Search (BFS)",
+        "zh-Hant": "廣度優先搜尋 (BFS)",
+        "zh-Hans": "广度优先搜索 (BFS)"
+      },
+      "contexts": {
+        "en": "An algorithm for searching a tree or graph data structure level by level.",
+        "zh-Hant": "依層級順序探索樹或圖形結構頂點的標準搜尋演算法。",
+        "zh-Hans": "依层级顺序探索树或图形结构顶点的标准搜索算法。"
+      },
+      "aliases": [
+        "bfs"
+      ]
+    },
+    {
+      "concept_id": "concept.additivity",
+      "labels": {
+        "en": "Additivity",
+        "zh-Hant": "可加性 (Additivity)",
+        "zh-Hans": "可加性 (Additivity)"
+      },
+      "contexts": {
+        "en": "The property of a function or statistic where the whole is equal to the sum of the parts.",
+        "zh-Hant": "整體統計量等於各部分局部統計量相加的數學性質。",
+        "zh-Hans": "整体统计量等于各部分局部统计量相加的数学性质。"
+      },
+      "aliases": [
+        "additivity"
+      ]
     }
   ]
 }

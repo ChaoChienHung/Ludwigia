@@ -6,15 +6,15 @@
   <title>大模型輔助規劃、Agent 演進與可信決策：從理論到負責任 AI 治理 — Ludwig</title>
   <meta name="garden:tags" content="AI 代理人, 大模型規劃, 負責任 AI, 自動規劃, 蒙地卡羅樹搜尋, 代理式 AI">
   <meta name="garden:summary" content="本文探討現代 AI Agent 的演進歷程與大語言模型（LLM）驅動的全新規劃範式。從 1980 年代符號 Agent、2000 年代增強學習 Agent 到現代 LLM 語言推理與多 Agent 協作，詳細剖析大模型與古典符號規劃器結合的 4 大前沿範式（LLM 導引 PDDL 生成與修正、LLM 與 MCTS 混合子目標規劃、LLM 啟發式 Python 代碼合成、全自動泛化規劃）。同時論述 Rational Agent 的感知-決策-行動閉環，以及可信與負責任 AI（Responsible AI）在安全、隱私、公平、可解釋性與政策法規監管下的權衡與開發生命週期（SDLC）實踐。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.ai_agents,concept.llm_planning,concept.responsible_ai,concept.automated_planning,concept.mcts,concept.agentic_ai">
-  <meta name="garden:tag_labels" content="{&quot;concept.ai_agents&quot;:{&quot;en&quot;:&quot;AI Agents&quot;,&quot;zh-Hant&quot;:&quot;AI 代理人&quot;,&quot;zh-Hans&quot;:&quot;AI 代理人&quot;},&quot;concept.llm_planning&quot;:{&quot;en&quot;:&quot;LLM Planning&quot;,&quot;zh-Hant&quot;:&quot;大模型規劃&quot;,&quot;zh-Hans&quot;:&quot;大模型规划&quot;},&quot;concept.responsible_ai&quot;:{&quot;en&quot;:&quot;Responsible AI&quot;,&quot;zh-Hant&quot;:&quot;負責任 AI&quot;,&quot;zh-Hans&quot;:&quot;负责任 AI&quot;},&quot;concept.automated_planning&quot;:{&quot;en&quot;:&quot;Automated Planning&quot;,&quot;zh-Hant&quot;:&quot;自動規劃&quot;,&quot;zh-Hans&quot;:&quot;自动规划&quot;},&quot;concept.mcts&quot;:{&quot;en&quot;:&quot;MCTS&quot;,&quot;zh-Hant&quot;:&quot;蒙地卡羅樹搜尋&quot;,&quot;zh-Hans&quot;:&quot;蒙特卡洛树搜索&quot;},&quot;concept.agentic_ai&quot;:{&quot;en&quot;:&quot;Agentic AI&quot;,&quot;zh-Hant&quot;:&quot;代理式 AI&quot;,&quot;zh-Hans&quot;:&quot;代理式 AI&quot;}}">
-  <meta name="garden:canonical_id" content="llm-assisted-planning-agent-evolution-and-responsible-ai">
-  <meta name="garden:published_at" content="2026-08-19">
-  <meta name="garden:last_modified_at" content="2026-08-19">
-  <meta name="garden:reading_time_minutes" content="15">
-  <meta name="garden:source" content="notes/llm-assisted-planning-agent-evolution-and-responsible-ai/llm-assisted-planning-agent-evolution-and-responsible-ai.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.ai_agents,concept.llm_planning,concept.responsible_ai,concept.automated_planning,concept.mcts,concept.agentic_ai">
+  <meta name="site:tag_labels" content="{&quot;concept.ai_agents&quot;:{&quot;en&quot;:&quot;AI Agents&quot;,&quot;zh-Hant&quot;:&quot;AI 代理人&quot;,&quot;zh-Hans&quot;:&quot;AI 代理人&quot;},&quot;concept.llm_planning&quot;:{&quot;en&quot;:&quot;LLM Planning&quot;,&quot;zh-Hant&quot;:&quot;大模型規劃&quot;,&quot;zh-Hans&quot;:&quot;大模型规划&quot;},&quot;concept.responsible_ai&quot;:{&quot;en&quot;:&quot;Responsible AI&quot;,&quot;zh-Hant&quot;:&quot;負責任 AI&quot;,&quot;zh-Hans&quot;:&quot;负责任 AI&quot;},&quot;concept.automated_planning&quot;:{&quot;en&quot;:&quot;Automated Planning&quot;,&quot;zh-Hant&quot;:&quot;自動規劃&quot;,&quot;zh-Hans&quot;:&quot;自动规划&quot;},&quot;concept.mcts&quot;:{&quot;en&quot;:&quot;MCTS&quot;,&quot;zh-Hant&quot;:&quot;蒙地卡羅樹搜尋&quot;,&quot;zh-Hans&quot;:&quot;蒙特卡洛树搜索&quot;},&quot;concept.agentic_ai&quot;:{&quot;en&quot;:&quot;Agentic AI&quot;,&quot;zh-Hant&quot;:&quot;代理式 AI&quot;,&quot;zh-Hans&quot;:&quot;代理式 AI&quot;}}">
+  <meta name="site:canonical_id" content="llm-assisted-planning-agent-evolution-and-responsible-ai">
+  <meta name="site:published_at" content="2026-08-19">
+  <meta name="site:last_modified_at" content="2026-08-19">
+  <meta name="site:reading_time_minutes" content="15">
+  <meta name="site:source" content="notes/llm-assisted-planning-agent-evolution-and-responsible-ai/llm-assisted-planning-agent-evolution-and-responsible-ai.md">
   <script>
   (() => {
     try {

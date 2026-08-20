@@ -135,14 +135,14 @@ source metadata 應可再現性生成以下 HTML / index 欄位：
 | --- | --- | --- |
 | `Title` | `<title>` | 若 `TitleSuffix=true`，可加站名 suffix |
 | `Title` | 頁內 H1 fallback | 若正文最前面已有 `# Heading`，正文 H1 優先 |
-| `Tags` | `meta name="garden:tags"` | 以目前內容語言輸出顯示 label |
+| `Tags` | `meta name="site:tags"` | 以目前內容語言輸出顯示 label |
 | `Tags` | index `tags` / `tag_concepts` / `tag_labels` | 概念比對優先走 ontology |
-| `Summary` | `meta name="garden:summary"` | 供 preview / cards / search 使用 |
-| `Status` | `meta name="garden:status"` | 若啟用 status metadata |
-| `Pinned` | `meta name="garden:pinned"` | 若啟用 pinned metadata |
-| `Priority` | `meta name="garden:priority"` | 若啟用 priority metadata |
-| `Published` | `meta name="garden:published_at"` | 正規化後輸出 |
-| `LastModified` | `meta name="garden:last_modified_at"` | 正規化或 fallback 後輸出 |
+| `Summary` | `meta name="site:summary"` | 供 preview / cards / search 使用 |
+| `Status` | `meta name="site:status"` | 若啟用 status metadata |
+| `Pinned` | `meta name="site:pinned"` | 若啟用 pinned metadata |
+| `Priority` | `meta name="site:priority"` | 若啟用 priority metadata |
+| `Published` | `meta name="site:published_at"` | 正規化後輸出 |
+| `LastModified` | `meta name="site:last_modified_at"` | 正規化或 fallback 後輸出 |
 | `Lang` | `<html lang="...">` 或等價語言資訊 | 供 i18n / search / runtime 使用 |
 | `CanonicalId` | index `canonical_id` | 供跨語言聚合與切換 |
 
@@ -162,7 +162,7 @@ source metadata 應可再現性生成以下 HTML / index 欄位：
 - 值以逗號分隔
 - tag 允許空白，例如 `system design`
 - 若 tag 命中 ontology，對外顯示文案應依目前語言選對應 label
-- 若同步輸出 `garden:tag_concepts`，其順序必須與 `garden:tags` 對齊
+- 若同步輸出 `site:tag_concepts`，其順序必須與 `site:tags` 對齊
 - tag 比對應優先走 ontology concept id；未命中時才退回 trim + case-insensitive 的字串精準比對
 
 ## Hand-Written HTML Contract
@@ -174,24 +174,24 @@ source metadata 應可再現性生成以下 HTML / index 欄位：
 最低集合：
 
 - `<title>...</title>`
-- `<meta name="garden:tags" content="...">`
-- `<meta name="garden:summary" content="...">`
+- `<meta name="site:tags" content="...">`
+- `<meta name="site:summary" content="...">`
 
 視需求可補：
 
-- `<meta name="garden:tag_concepts" content="...">`
-- `<meta name="garden:lang" content="...">`
-- `<meta name="garden:status" content="...">`
-- `<meta name="garden:canonical_id" content="...">`
-- `<meta name="garden:published_at" content="...">`
-- `<meta name="garden:last_modified_at" content="...">`
+- `<meta name="site:tag_concepts" content="...">`
+- `<meta name="site:lang" content="...">`
+- `<meta name="site:status" content="...">`
+- `<meta name="site:canonical_id" content="...">`
+- `<meta name="site:published_at" content="...">`
+- `<meta name="site:last_modified_at" content="...">`
 
 規則：
 
 - 即使頁面本體完全客製化，索引層仍只依賴這些 `<head>` metadata
-- `garden:tags` 仍以逗號分隔；tag 可含空白
-- 若 tag 命中 ontology，建議同步輸出 `garden:tag_concepts`，且順序需與 `garden:tags` 對齊
-- 若需要跨語言聚合，應提供穩定的 `garden:canonical_id`
+- `site:tags` 仍以逗號分隔；tag 可含空白
+- 若 tag 命中 ontology，建議同步輸出 `site:tag_concepts`，且順序需與 `site:tags` 對齊
+- 若需要跨語言聚合，應提供穩定的 `site:canonical_id`
 - 修改手寫 HTML 後，仍需重新生成 `search/search-index.{json,js}`
 
 ## Author-Only Planning Metadata & Draft Outline

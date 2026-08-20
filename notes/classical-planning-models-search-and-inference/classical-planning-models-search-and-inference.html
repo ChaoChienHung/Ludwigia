@@ -6,15 +6,15 @@
   <title>經典規劃與狀態空間搜尋：從 STRIPS、PDDL 到 SATPlan — Ludwig</title>
   <meta name="garden:tags" content="人工智慧規劃, 古典規劃, STRIPS, PDDL, SATPlan, 自動推理">
   <meta name="garden:summary" content="本文系統性梳理古典 AI 規劃（Classical Planning）的核心理論框架與運算機制。從 STRIPS 與 PDDL 的因果狀態表徵（Factored Representation），到狀態空間的正向前推進（Progression）與逆向迴歸（Regression）搜尋演算法，再到利用命題邏輯與 SATPlan 將規劃問題化歸為 Boolean Satisfiability (SAT) 的邏輯推論機制。同時深入剖析 Frame Problem 的解決方案（如 Successor-State Axioms）以及 PlanSAT / Bounded PlanSAT 的複雜度界線。">
-  <meta name="garden:lang" content="zh-tw">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.ai_planning,concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning">
-  <meta name="garden:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;}}">
-  <meta name="garden:canonical_id" content="classical-planning-models-search-and-inference">
-  <meta name="garden:published_at" content="2026-08-19">
-  <meta name="garden:last_modified_at" content="2026-08-19">
-  <meta name="garden:reading_time_minutes" content="19">
-  <meta name="garden:source" content="notes/classical-planning-models-search-and-inference/classical-planning-models-search-and-inference.md">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.ai_planning,concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning">
+  <meta name="site:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;}}">
+  <meta name="site:canonical_id" content="classical-planning-models-search-and-inference">
+  <meta name="site:published_at" content="2026-08-19">
+  <meta name="site:last_modified_at" content="2026-08-19">
+  <meta name="site:reading_time_minutes" content="19">
+  <meta name="site:source" content="notes/classical-planning-models-search-and-inference/classical-planning-models-search-and-inference.md">
   <script>
   (() => {
     try {

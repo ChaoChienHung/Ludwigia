@@ -6,13 +6,13 @@
   <title>AGNES: Building Clusters Bottom-Up</title>
   <meta name="garden:tags" content="Data Mining, Clustering, Hierarchical Clustering, Agnes, Dendrogram, Linkage">
   <meta name="garden:summary" content="A draft on AGNES as a bottom-up hierarchical clustering method, focusing on merge decisions, linkage criteria, dendrograms, and practical trade-offs.">
-  <meta name="garden:lang" content="en">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.hierarchical_clustering,concept.agnes,concept.dendrogram,concept.linkage">
-  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.hierarchical_clustering&quot;:{&quot;en&quot;:&quot;Hierarchical Clustering&quot;,&quot;zh-Hant&quot;:&quot;階層式分群&quot;,&quot;zh-Hans&quot;:&quot;层次聚类&quot;},&quot;concept.agnes&quot;:{&quot;en&quot;:&quot;Agnes&quot;,&quot;zh-Hant&quot;:&quot;AGNES&quot;,&quot;zh-Hans&quot;:&quot;AGNES&quot;},&quot;concept.dendrogram&quot;:{&quot;en&quot;:&quot;Dendrogram&quot;,&quot;zh-Hant&quot;:&quot;樹狀圖&quot;,&quot;zh-Hans&quot;:&quot;树状图&quot;},&quot;concept.linkage&quot;:{&quot;en&quot;:&quot;Linkage&quot;,&quot;zh-Hant&quot;:&quot;鏈結準則&quot;,&quot;zh-Hans&quot;:&quot;链接准则&quot;}}">
-  <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="6">
-  <meta name="garden:source" content="notes/agnes-building-clusters-bottom-up/agnes-building-clusters-bottom-up-en.md">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.data_mining,concept.clustering,concept.hierarchical_clustering,concept.agnes,concept.dendrogram,concept.linkage">
+  <meta name="site:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.hierarchical_clustering&quot;:{&quot;en&quot;:&quot;Hierarchical Clustering&quot;,&quot;zh-Hant&quot;:&quot;階層式分群&quot;,&quot;zh-Hans&quot;:&quot;层次聚类&quot;},&quot;concept.agnes&quot;:{&quot;en&quot;:&quot;Agnes&quot;,&quot;zh-Hant&quot;:&quot;AGNES&quot;,&quot;zh-Hans&quot;:&quot;AGNES&quot;},&quot;concept.dendrogram&quot;:{&quot;en&quot;:&quot;Dendrogram&quot;,&quot;zh-Hant&quot;:&quot;樹狀圖&quot;,&quot;zh-Hans&quot;:&quot;树状图&quot;},&quot;concept.linkage&quot;:{&quot;en&quot;:&quot;Linkage&quot;,&quot;zh-Hant&quot;:&quot;鏈結準則&quot;,&quot;zh-Hans&quot;:&quot;链接准则&quot;}}">
+  <meta name="site:last_modified_at" content="2026-08-15">
+  <meta name="site:reading_time_minutes" content="6">
+  <meta name="site:source" content="notes/agnes-building-clusters-bottom-up/agnes-building-clusters-bottom-up-en.md">
   <script>
   (() => {
     try {

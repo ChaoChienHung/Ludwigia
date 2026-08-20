@@ -6,13 +6,13 @@
   <title>DBSCAN: Dense Regions, Loose Boundaries, and Noise</title>
   <meta name="garden:tags" content="Data Mining, Clustering, DBSCAN, Density, Noise, Outlier">
   <meta name="garden:summary" content="An intuition-first draft on DBSCAN, explaining density-based clustering, core and border points, noise, parameter sensitivity, and practical trade-offs.">
-  <meta name="garden:lang" content="en">
-  <meta name="garden:status" content="drafting">
-  <meta name="garden:tag_concepts" content="concept.data_mining,concept.clustering,concept.dbscan,concept.density,concept.noise,concept.outlier">
-  <meta name="garden:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.dbscan&quot;:{&quot;en&quot;:&quot;DBSCAN&quot;,&quot;zh-Hant&quot;:&quot;DBSCAN&quot;,&quot;zh-Hans&quot;:&quot;DBSCAN&quot;},&quot;concept.density&quot;:{&quot;en&quot;:&quot;Density&quot;,&quot;zh-Hant&quot;:&quot;密度&quot;,&quot;zh-Hans&quot;:&quot;密度&quot;},&quot;concept.noise&quot;:{&quot;en&quot;:&quot;Noise&quot;,&quot;zh-Hant&quot;:&quot;雜訊&quot;,&quot;zh-Hans&quot;:&quot;噪声&quot;},&quot;concept.outlier&quot;:{&quot;en&quot;:&quot;Outlier&quot;,&quot;zh-Hant&quot;:&quot;離群值&quot;,&quot;zh-Hans&quot;:&quot;离群值&quot;}}">
-  <meta name="garden:last_modified_at" content="2026-08-15">
-  <meta name="garden:reading_time_minutes" content="7">
-  <meta name="garden:source" content="notes/dbscan-dense-regions-and-noise/dbscan-dense-regions-and-noise-en.md">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.data_mining,concept.clustering,concept.dbscan,concept.density,concept.noise,concept.outlier">
+  <meta name="site:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.dbscan&quot;:{&quot;en&quot;:&quot;DBSCAN&quot;,&quot;zh-Hant&quot;:&quot;DBSCAN&quot;,&quot;zh-Hans&quot;:&quot;DBSCAN&quot;},&quot;concept.density&quot;:{&quot;en&quot;:&quot;Density&quot;,&quot;zh-Hant&quot;:&quot;密度&quot;,&quot;zh-Hans&quot;:&quot;密度&quot;},&quot;concept.noise&quot;:{&quot;en&quot;:&quot;Noise&quot;,&quot;zh-Hant&quot;:&quot;雜訊&quot;,&quot;zh-Hans&quot;:&quot;噪声&quot;},&quot;concept.outlier&quot;:{&quot;en&quot;:&quot;Outlier&quot;,&quot;zh-Hant&quot;:&quot;離群值&quot;,&quot;zh-Hans&quot;:&quot;离群值&quot;}}">
+  <meta name="site:last_modified_at" content="2026-08-15">
+  <meta name="site:reading_time_minutes" content="7">
+  <meta name="site:source" content="notes/dbscan-dense-regions-and-noise/dbscan-dense-regions-and-noise-en.md">
   <script>
   (() => {
     try {
