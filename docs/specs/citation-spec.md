@@ -2,8 +2,6 @@
 
 本文件定義 Ludwigia 全站筆記（`notes/`）與文章（`writing/`）中「參考文獻與延伸閱讀（References & Resources）」的標準結構、學術引用格式、真實性核驗 protocol 與語言留存規範。
 
----
-
 ## 1. 參考文獻區塊結構（Section Structure）
 
 所有內容頁底部的參考文獻區塊，應採簡潔標題並按屬性分層：
@@ -17,8 +15,6 @@
     * **學術論文**：`### 學術論文（Academic Literature）`
     * **課程與教材**：`### 課程與教材（Course Materials）`
     * **技術文章**：`### 技術文章（Technical Articles）`
-
----
 
 ## 2. 學術論文引用格式（Academic Citation Standard）
 
@@ -36,8 +32,6 @@
    * **禁止**：直接連結 `.pdf` 二進位檔（如 `https://arxiv.org/pdf/2203.01941`）。
    * **必須**：連結至 Abstract / Overview 導覽頁面（如 `https://arxiv.org/abs/2203.01941`）或官方 DOI 連結（`https://doi.org/...`），以利讀者閱讀摘要與取得 BibTeX。
 
----
-
 ## 3. 課程與教材引用格式（Course Materials Standard）
 
 針對大學開放式課程、講義簡報 (Lecture Slides) 與作業單元：
@@ -49,16 +43,12 @@
 - `National University of Singapore (2025). CS5234: Algorithms at Scale — Lecture 1 & Lecture 2.`
 - `NUS CS5234: Algorithms at Scale (Lecture Notes & Exercises)`
 
----
-
 ## 4. 技術文章與社群解讀格式（Technical Articles Standard）
 
 針對知乎、微信公眾號、Medium、Substack 或官方技術文檔：
 
 ### 格式範本
 `[平台/作者：文章原始標題](URL)`
-
----
 
 ## 5. 原始語言保留原則（Source Language Contract）
 

@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>遠端程序呼叫 (RPC) 核心架構與透明度語意：從 Stub 到 Marshaling 運作機制 — Ludwig</title>
+  <meta name="garden:tags" content="分散式系統, 遠端程序呼叫 (RPC), 進程間通訊 (IPC), 電腦網路, 系統架構">
+  <meta name="garden:summary" content="本文深入解析遠端程序呼叫 (Remote Procedure Call, RPC) 的底層運作機制。從 IPC 與 RPC 的差異出發，剖析 Client/Server Stub、Parameter Marshaling（參數序列化）、RPC Daemon 監聽，以及達成網路透明度 (Location Transparency) 的完整 8 步呼叫生命週期。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.distributed_systems,concept.rpc,concept.ipc,concept.networking,concept.system_architecture">
+  <meta name="site:tag_labels" content="{&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;},&quot;concept.rpc&quot;:{&quot;en&quot;:&quot;Remote Procedure Call (RPC)&quot;,&quot;zh-Hant&quot;:&quot;遠端程序呼叫 (RPC)&quot;,&quot;zh-Hans&quot;:&quot;远端程序调用 (RPC)&quot;},&quot;concept.ipc&quot;:{&quot;en&quot;:&quot;Inter-Process Communication (IPC)&quot;,&quot;zh-Hant&quot;:&quot;進程間通訊 (IPC)&quot;,&quot;zh-Hans&quot;:&quot;进程间通讯 (IPC)&quot;},&quot;concept.networking&quot;:{&quot;en&quot;:&quot;Computer Networking&quot;,&quot;zh-Hant&quot;:&quot;電腦網路&quot;,&quot;zh-Hans&quot;:&quot;计算机网络&quot;},&quot;concept.system_architecture&quot;:{&quot;en&quot;:&quot;System Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;}}">
+  <meta name="site:canonical_id" content="remote-procedure-call-architecture-and-semantics">
+  <meta name="site:published_at" content="2026-08-20">
+  <meta name="site:last_modified_at" content="2026-08-20">
+  <meta name="site:reading_time_minutes" content="10">
+  <meta name="site:source" content="notes/remote-procedure-call-architecture-and-semantics/remote-procedure-call-architecture-and-semantics-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">遠端程序呼叫 (RPC) 核心架構與透明度語意：從 Stub 到 Marshaling 運作機制</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-ipc-rpc">1. 背景與演進：從 IPC 到 RPC</a>
+<a class="note-toc-link level-1" href="#2-rpc-location-transparency">2. RPC 的核心理念：位置透明度 (Location Transparency)</a>
+<a class="note-toc-link level-1" href="#3-rpc">3. RPC 架構的三大核心元件</a>
+<a class="note-toc-link level-2" href="#3-1-stub">3.1 Stub（代理切片 / 根切塊）</a>
+<a class="note-toc-link level-2" href="#3-2-parameter-marshaling">3.2 Parameter Marshaling（參數封裝與序列化）</a>
+<a class="note-toc-link level-2" href="#3-3-rpc-daemon">3.3 RPC Daemon（伺服器端守護進程）</a>
+<a class="note-toc-link level-1" href="#4-rpc-8">4. RPC 呼叫生命週期 (8 步完整流程)</a>
+<a class="note-toc-link level-1" href="#5-rpc">5. 分散式 RPC 的工程挑戰</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-20" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 在單機系統中，進程間通訊（IPC）可透過共享記憶體（Shared Memory）或訊息傳遞（Message Passing）完成。然而在分散式網路環境中，實體機器分離導致共享記憶體不可行。遠端程序呼叫（Remote Procedure Call, RPC）透過 <strong>Client/Server Stub</strong> 與 <strong>Parameter Marshaling</strong> 技術，隱藏網路訊息打包、埠號查找與通訊細節，讓呼叫遠端服務體驗如同呼叫本機函式般透明。 &lt;/callout&gt;</p>
+</section>
+
+<section id="1-ipc-rpc" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 背景與演進：從 IPC 到 RPC</h3>
+
+<p class="mb-3">在作業系統與電腦網路中，進程間通訊（Inter-Process Communication, IPC）是建構模組化系統的基石：</p>
+
+<ul class="note-list">
+<li><strong>單機 IPC (Local Communication)</strong>：當所有進程運行於同一台實體機器時，系統可以透過<strong>共享記憶體（Shared Memory）</strong>或<strong>系統內部訊息佇列（Message Passing）</strong>高效交換數據。</li>
+<li><strong>跨網路通訊 (Remote Communication)</strong>：當進程分佈於由網路連接的不同獨立機器時，硬體層級的共享記憶體已無法使用。此時通訊必須完全依賴<strong>跨網路的訊息傳遞（Message-based Communication）</strong>與 Socket 介面。</li>
+</ul>
+
+<p class="mb-3">然而，直接使用原始 Socket 編寫網路傳遞邏輯繁瑣且容易出錯。程式員必須親自處理 Socket 連線、建立 Byte 流協定以及資料格式解析。</p>
+
+<p class="mb-3"><strong>RPC（Remote Procedure Call）</strong> 的出現正是為了打破這一限制——它定義了一套高階通訊協定，將底層網路呼叫抽象化為高階程式語言中的「函式呼叫（Function Call）」。</p>
+
+<hr>
+</section>
+
+<section id="2-rpc-location-transparency" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. RPC 的核心理念：位置透明度 (Location Transparency)</h3>
+
+<p class="mb-3">RPC 的設計宗旨是提供 <strong>位置透明度（Location Transparency）</strong>：</p>
+
+<blockquote class="blockquote mb-3"><strong>讓程式呼叫運行在遠端伺服器上的程序時，其語意與語法體驗與呼叫同機器的本機函式（Local Procedure Call）完全一致。</strong></blockquote>
+
+<div class="note-markdown-block"><pre><code class="language-text">┌─────────────────────────────────────────────────────────────┐
+│ Client Application                                          │
+│   result = remote_sum(a, b);  ◄── 寫法如同普通本機函式呼叫      │
+└──────────────┬──────────────────────────────────────────────┘
+               │ (隱藏底層通訊細節)
+               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ RPC Subsystem (Client Stub ➔ Network ➔ Server Stub)         │
+└─────────────────────────────────────────────────────────────┘</code></pre></div>
+
+<p class="mb-3">對客戶端程式員而言，不需要知道遠端主機的 IP 位址、通訊埠號（Port Number）或二進位序列化格式，所有的通訊複雜度皆被 RPC 子系統屏蔽。</p>
+
+<hr>
+</section>
+
+<section id="3-rpc" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. RPC 架構的三大核心元件</h3>
+
+<p class="mb-3">為了達成透明度，RPC 架構引入了三種關鍵角色：</p>
+
+<h4 id="3-1-stub" class="mb-2">3.1 Stub（代理切片 / 根切塊）</h4>
+
+<p class="mb-3">Stub 是 RPC 架構中最關鍵的通訊中介代碼：</p>
+
+<ul class="note-list">
+<li><strong>Client-side Stub（客戶端存根）</strong>：
+<ul class="note-list">
+<li>在客戶端扮演遠端程序的「本地代理人（Proxy）」。</li>
+<li>暴露與遠端程序完全相同的介面。</li>
+<li>負責接收本機呼叫參數、尋找遠端服務埠號，並將參數進行 <strong>Marshaling（序列化）</strong>。</li>
+</ul></li>
+<li><strong>Server-side Stub（伺服器端存根 / Skeleton）</strong>：
+<ul class="note-list">
+<li>在伺服器端接收 RPC 守護進程分發的二進位封包。</li>
+<li>負責 <strong>Unmarshaling（反序列化）</strong> 解封參數。</li>
+<li>真正的呼叫伺服器本機上的具體函數實作，並將執行結果打包回傳。</li>
+</ul></li>
+</ul>
+
+<h4 id="3-2-parameter-marshaling" class="mb-2">3.2 Parameter Marshaling（參數封裝與序列化）</h4>
+
+<p class="mb-3">由於不同機器可能使用不同的 CPU 架構、位元組順序（Big-Endian vs. Little-Endian）或資料對齊規則，參數不能以原始記憶體指標或結構直接發送。</p>
+
+<ul class="note-list">
+<li><strong>Marshaling（序列化）</strong>：客戶端 Stub 將高階資料結構與參數打包成適合在網路傳輸的標準結構化訊息（Structured Message）。</li>
+<li><strong>Unmarshaling（反序列化）</strong>：伺服器端 Stub 將二進位封包解碼還原為伺服器語言可理解的物件或資料結構。</li>
+</ul>
+
+<h4 id="3-3-rpc-daemon" class="mb-2">3.3 RPC Daemon（伺服器端守護進程）</h4>
+
+<p class="mb-3">在伺服器端，必須有一個長期運行的後台進程——<strong>RPC Daemon</strong>：</p>
+
+<ul class="note-list">
+<li>在特定的網路埠號（Port）上持續監聽（Listening）。</li>
+<li>接收來自客戶端的 RPC 請求封包。</li>
+<li>根據封包中的服務識別碼（Function Identifier / Service ID），將請求分發給對應的 Server-side Stub。</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="4-rpc-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. RPC 呼叫生命週期 (8 步完整流程)</h3>
+
+<p class="mb-3">下圖展示了一次完整的 RPC 呼叫流程：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Client Application           Client Stub              Server Daemon / Stub          Server Execution
+     │                            │                            │                           │
+  1. │ 呼叫 remote_func(a,b)      │                            │                           │
+     ├───────────────────────────►│                            │                           │
+     │                            │ 2. 打包 Marshaling          │                           │
+     │                            │ 3. 發送網路封包             │                           │
+     │                            ├───────────────────────────►│                           │
+     │                            │   (Message via Network)    │ 4. 接收並 Unmarshal       │
+     │                            │                            ├──────────────────────────►│
+     │                            │                            │                           │ 5. 執行真實函式
+     │                            │                            │                           │    Compute result
+     │                            │                            │ 6. 打包結果 Return Value  │
+     │                            │◄───────────────────────────┼───────────────────────────┤
+     │                            │   (Response via Network)   │                           │
+     │ 8. 得到回傳值 (Transparent) │                            │                           │
+     │◄───────────────────────────┤                            │                           │</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>Step 1：客戶端呼叫</strong>：客戶端應用程式發起正常的程序呼叫（如 <code>remote_func(a, b)</code>）。</li>
+<li><strong>Step 2：Client Stub 接管</strong>：客戶端 Stub 被觸發，接收呼叫參數。</li>
+<li><strong>Step 3：Marshaling 與發送</strong>：Client Stub 將參數進行序列化，封裝為結構化訊息，並透過底層網路介面發送給伺服器 RPC Daemon。</li>
+<li><strong>Step 4：Server 接收與分發</strong>：伺服器端 RPC Daemon 在指定 Port 收到訊息，將其交給相應的 Server Stub 進行 Unmarshaling 解包。</li>
+<li><strong>Step 5：執行服務</strong>：Server Stub 呼叫伺服器上的真實函數實作，完成計算。</li>
+<li><strong>Step 6：結果打包回傳</strong>：Server Stub 將執行結果（Return Values）序列化，透過網路發回客戶端。</li>
+<li><strong>Step 7：Client 接收與解封</strong>：Client Stub 接收網路回應訊息，解封出回傳值。</li>
+<li><strong>Step 8：回傳結果</strong>：Client Stub 將最終結果傳回客戶端呼叫者，完成一次透通的呼叫。</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="5-rpc" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 分散式 RPC 的工程挑戰</h3>
+
+<p class="mb-3">雖然 RPC 提供了位置透明度，但在實際分散式系統中，<strong>遠端呼叫與本機呼叫在物理特性上存在本質差異</strong>：</p>
+
+<ul class="note-list">
+<li><strong>網路斷連與延遲 (Network Partition &amp; Latency)</strong>：本機呼叫通常在納秒級完成且保證執行；遠端呼叫可能面臨毫秒級延遲、網路丟包甚至對端崩潰。</li>
+<li><strong>失敗語意 (Failure Semantics)</strong>：當發生網路超時（Timeout）時，客戶端難以得知伺服器是「完全未收到請求」、「執行到一半崩潰」還是「已執行完畢但回應丟失」。</li>
+<li><strong>呼叫語意保障</strong>：為應對失敗，分散式 RPC 通常提供以下執行語意保障：
+<ul class="note-list">
+<li><em>At-least-once（至少一次）</em>：重複重試，適用於等冪操作（Idempotent Operations）。</li>
+<li><em>At-most-once（至多一次）</em>：透過去重 ID 防止重複執行。</li>
+<li><em>Exactly-once（恰好一次）</em>：結合交易或狀態機的終極保證。</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>從 IPC 到 RPC</strong>：RPC 將本機程序呼叫擴展至分散式網路，透過訊息傳遞克服實體機器無法共享記憶體的限制。
+<ul class="note-list">
+<li><strong>核心角色 Stub</strong>：Client Stub 負責代理與 Marshaling；Server Stub 負責 Unmarshaling 與本機函式派送。</li>
+<li><strong>位置透明度 (Transparency)</strong>：封裝了 Socket 建立、埠號尋找與序列化傳輸，使遠端呼叫語意貼近本機呼叫。</li>
+<li><strong>分散式挑戰</strong>：由於網路延遲與不可靠性，RPC 必須處理網路斷連、重試與 At-most-once / At-least-once 語意保障。</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li><a class="note-inline-link" href="https://www.youtube.com/watch?v=QmhTjsOOrlw" target="_blank" rel="noopener noreferrer">YouTube: Remote Procedure Call (RPC)</a></li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

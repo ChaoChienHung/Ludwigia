@@ -2311,6 +2311,61 @@
         "additivity",
         "可加性"
       ]
+    },
+    {
+      "concept_id": "concept.rpc",
+      "labels": {
+        "en": "Remote Procedure Call (RPC)",
+        "zh-Hant": "遠端程序呼叫 (RPC)",
+        "zh-Hans": "远端程序调用 (RPC)"
+      },
+      "aliases": [
+        "rpc",
+        "RPC",
+        "遠端程序呼叫",
+        "远端程序调用"
+      ]
+    },
+    {
+      "concept_id": "concept.ipc",
+      "labels": {
+        "en": "Inter-Process Communication (IPC)",
+        "zh-Hant": "進程間通訊 (IPC)",
+        "zh-Hans": "进程间通讯 (IPC)"
+      },
+      "aliases": [
+        "ipc",
+        "IPC",
+        "進程間通訊",
+        "进程间通讯"
+      ]
+    },
+    {
+      "concept_id": "concept.networking",
+      "labels": {
+        "en": "Computer Networking",
+        "zh-Hant": "電腦網路",
+        "zh-Hans": "计算机网络"
+      },
+      "aliases": [
+        "networking",
+        "computer networking",
+        "電腦網路",
+        "计算机网络"
+      ]
+    },
+    {
+      "concept_id": "concept.system_architecture",
+      "labels": {
+        "en": "System Architecture",
+        "zh-Hant": "系統架構",
+        "zh-Hans": "系统架构"
+      },
+      "aliases": [
+        "system architecture",
+        "系統架構",
+        "系统架构"
+      ]
     }
   ]
 }
