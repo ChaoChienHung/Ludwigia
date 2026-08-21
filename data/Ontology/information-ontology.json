@@ -2097,6 +2097,174 @@
       "aliases": [
         "additivity"
       ]
+    },
+    {
+      "concept_id": "concept.confidence_level",
+      "labels": {
+        "en": "Confidence Level",
+        "zh-Hant": "信心水準（置信度）",
+        "zh-Hans": "置信度"
+      },
+      "contexts": {
+        "en": "The probability that a statistical parameter or estimate falls within a specified interval or bound.",
+        "zh-Hant": "統計學與機器學習中描述估計值或參數落在指定區間內的機率保證程度。",
+        "zh-Hans": "统计学与机器学习中描述估计值或参数落在指定区间内的概率保证程度。"
+      },
+      "aliases": [
+        "confidence level",
+        "信心水準",
+        "置信度"
+      ]
+    },
+    {
+      "concept_id": "concept.generalization_bounds",
+      "labels": {
+        "en": "Generalization Bounds",
+        "zh-Hant": "泛化邊界",
+        "zh-Hans": "泛化边界"
+      },
+      "contexts": {
+        "en": "Theoretical upper bounds on the difference between a model's training error and its expected error on unseen test data.",
+        "zh-Hant": "學習理論中用來保證模型在未知測試數據上的期望誤差與訓練誤差之間差距的上界。",
+        "zh-Hans": "学习理论中用来保证模型在未知测试数据上的期望误差与训练误差之间差距的上界。"
+      },
+      "aliases": [
+        "generalization bounds",
+        "generalization bound",
+        "泛化邊界",
+        "泛化界限"
+      ]
+    },
+    {
+      "concept_id": "concept.pdf",
+      "labels": {
+        "en": "Probability Density Function (PDF)",
+        "zh-Hant": "機率密度函數 (PDF)",
+        "zh-Hans": "概率密度函数 (PDF)"
+      },
+      "contexts": {
+        "en": "A function whose integral over a given region provides the probability that a continuous random variable falls within that region.",
+        "zh-Hant": "連續型隨機變數的基礎函數，在其某區間上的積分代表隨機變數落於該區間的機率。",
+        "zh-Hans": "连续型随机变量的基础函数，在其某区间上的积分代表随机变量落于该区间的概率。"
+      },
+      "aliases": [
+        "probability density function",
+        "pdf",
+        "PDF",
+        "機率密度函數",
+        "概率密度函数"
+      ]
+    },
+    {
+      "concept_id": "concept.integration",
+      "labels": {
+        "en": "Mathematical Integration",
+        "zh-Hant": "數學積分",
+        "zh-Hans": "数学积分"
+      },
+      "contexts": {
+        "en": "The mathematical process of calculating the total accumulation of a quantity, such as area under a probability density curve.",
+        "zh-Hant": "微積分中用以計算連續空間累積量或機率密度函數曲線下總面積的數學運算。",
+        "zh-Hans": "微积分中用以计算连续空间累积量或概率密度函数曲线下总面积的数学运算。"
+      },
+      "aliases": [
+        "integration",
+        "積分",
+        "积分"
+      ]
+    },
+    {
+      "concept_id": "concept.absolute_probability",
+      "labels": {
+        "en": "Absolute Probability",
+        "zh-Hant": "絕對機率",
+        "zh-Hans": "绝对概率"
+      },
+      "contexts": {
+        "en": "The precise, exact probability value of a specific event occurring under a defined random distribution.",
+        "zh-Hant": "某特定隨機事件在明確分佈下發生的精確理論機率數值。",
+        "zh-Hans": "某特定随机事件在明确分布下发生的精确理论概率数值。"
+      },
+      "aliases": [
+        "absolute probability",
+        "絕對機率",
+        "绝对概率"
+      ]
+    },
+    {
+      "concept_id": "concept.concentration_of_measure",
+      "labels": {
+        "en": "Concentration of Measure",
+        "zh-Hant": "機率集中現象",
+        "zh-Hans": "概率集中现象"
+      },
+      "contexts": {
+        "en": "The phenomenon where a random variable composed of many small random factors concentrates strongly around its expectation.",
+        "zh-Hant": "當隨機變數由許多微小獨立或弱相關因子共同決定時，其數值以極高機率緊密集中於期望值附近的宏觀確定性現象。",
+        "zh-Hans": "当随机变量由许多微小独立或弱相关因子共同决定时，其数值以极高概率紧密集中于期望值附近的宏观确定性现象。"
+      },
+      "aliases": [
+        "concentration of measure",
+        "集中現象",
+        "機率集中現象",
+        "概率集中现象"
+      ]
+    },
+    {
+      "concept_id": "concept.moments",
+      "labels": {
+        "en": "Statistical Moments",
+        "zh-Hant": "動差（矩）",
+        "zh-Hans": "动差（矩）"
+      },
+      "contexts": {
+        "en": "Quantitative measures related to the shape of a random variable's probability distribution (e.g., 1st moment is mean, 2nd moment is variance).",
+        "zh-Hant": "描述隨機變數分佈形狀特徵的數值指標，如一階動差為期望值、二階動差為變異數、高階動差對應 MGF。",
+        "zh-Hans": "描述随机变量分布形状特征的数值指标，如一阶动差为期望值、二阶动差为方差、高阶动差对应 MGF。"
+      },
+      "aliases": [
+        "moments",
+        "moment",
+        "動差",
+        "矩資訊",
+        "動差資訊"
+      ]
+    },
+    {
+      "concept_id": "concept.algebraic_bounding",
+      "labels": {
+        "en": "Algebraic Bounding",
+        "zh-Hant": "代數放縮",
+        "zh-Hans": "代数放缩"
+      },
+      "contexts": {
+        "en": "Mathematical techniques that replace complex, intractable integrals or functions with simpler, conservative upper bounds.",
+        "zh-Hant": "利用不等式性質將難以直接積分的複雜函數替換為易於計算且保守安全的上界函數之數學技巧。",
+        "zh-Hans": "利用不等式性质将难以直接积分的复杂函数替换为易于计算且保守安全的上界函数之数学技巧。"
+      },
+      "aliases": [
+        "algebraic bounding",
+        "代數放縮",
+        "放縮技巧"
+      ]
+    },
+    {
+      "concept_id": "concept.distribution_integration",
+      "labels": {
+        "en": "Distribution Integration",
+        "zh-Hant": "分佈積分",
+        "zh-Hans": "分布积分"
+      },
+      "contexts": {
+        "en": "Calculating exact tail probabilities by integrating a probability density function across continuous sample spaces.",
+        "zh-Hant": "在連續樣本空間上對機率密度函數進行定積分以計算精確事件機率的運算過程。",
+        "zh-Hans": "在连续样本空间上对概率密度函数进行定积分以计算精确事件概率的运算过程。"
+      },
+      "aliases": [
+        "distribution integration",
+        "分佈積分",
+        "分布积分"
+      ]
     }
   ]
 }
