@@ -342,19 +342,54 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li><strong>核心思維：用資訊換取緊緻度（Information-Tightness Trade-off）</strong>：集中不等式的底層邏輯在於，我們掌握的隨機變數資訊越多，從一階動差的期望值、二階動差的變異數，一路提升到動差生成函數 MGF，我們就能將 Tail Bounds 縮得越緊。這是一個從 $\mathcal{O}(1/t)$ 漸進到指數級 $e^{-\Omega(t^2)}$ 衰減的升級過程。
-<ul class="note-list">
+<li><strong>核心思維：用資訊換取緊緻度（Information-Tightness Trade-off）</strong>：集中不等式的底層邏輯在於，我們掌握的隨機變數資訊越多，從一階動差的期望值、二階動差的變異數，一路提升到動差生成函數 MGF，我們就能將 Tail Bounds 縮得越緊。這是一個從 $\mathcal{O}(1/t)$ 漸進到指數級 $e^{-\Omega(t^2)}$ 衰減的升級過程。</li>
 <li><strong>Union Bound 的無條件疊加超能力</strong>：在真實系統中，壞事件，像是不同節點同時當機這類情況，往往具有複雜的相關性。Union Bound 的強大之處在於它不要求任何獨立性，直接將各壞事機率相加作為總風險上限。它是演算法分析中結合多種失敗情境的最強保底工具。</li>
 <li><strong>實務應用與陷阱</strong>：以經典的 Balls &amp; Bins 模型為例，如果我們將球投入桶子，一個桶子變滿會略微降低其他桶子變滿的機率，在統計上我們稱之為弱負相關（Negative Correlation）。在使用進階工具如 Chebyshev 或 Chernoff 時，我們必須非常謹慎地檢驗獨立性條件，若不滿足嚴格獨立，則需要透過替代證明，例如 Poissonization 技巧，來合法套用不等式。</li>
 </ul>
-<p class="mb-2"><strong>集中不等式工具箱速查表</strong></p>
-<p class="mb-2">| 不等式名稱 | 必要前提條件 | 所需動差資訊階層 | 尾端衰減速率 | 適用場景 |</p>
-<p class="mb-2">| :--- | :--- | :--- | :--- | :--- |</p>
-<p class="mb-2">| <strong>Markov's Inequality</strong> | 非負隨機變數 $X \ge 0$ | 一階動差：期望值 $\mathbb{E}[X]$ | 多項式級衰減 $\mathcal{O}(1/t)$ | 最通用，已知資訊最少時的保底界限 |</p>
-<p class="mb-2">| <strong>Chebyshev's Inequality</strong> | 有限變異數 $\operatorname{Var}(X) &lt; \infty$ | 二階動差：期望值與變異數 | 多項式級衰減 $\mathcal{O}(1/t^2)$ | 存在成對獨立弱條件的場景 |</p>
-<p class="mb-2">| <strong>Chernoff Bound</strong> | 互相獨立有界 $X = \sum X_i$ | 無限階動差：動差生成函數 MGF | 指數級衰減 $e^{-\Omega(t^2)}$ | 獨立試驗總和，提供極強的機率保證 |</p>
-<p class="mb-2">| <strong>Union Bound</strong> | 任意事件集合，無條件適用 | 知道各事件發生的機率 | 線性疊加 $\sum \operatorname{Pr}[A_i]$ | 結合多個壞事件計算總失敗率 |</p></li>
-</ul></div>
+
+<p class="mb-3"><strong>集中不等式工具箱速查表</strong></p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>不等式名稱</th>
+<th>必要前提條件</th>
+<th>所需動差資訊階層</th>
+<th>尾端衰減速率</th>
+<th>適用場景</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Markov's Inequality</strong></td>
+<td>非負隨機變數 $X \ge 0$</td>
+<td>一階動差：期望值 $\mathbb{E}[X]$</td>
+<td>多項式級衰減 $\mathcal{O}(1/t)$</td>
+<td>最通用，已知資訊最少時的保底界限</td>
+</tr>
+<tr>
+<td><strong>Chebyshev's Inequality</strong></td>
+<td>有限變異數 $\operatorname{Var}(X) &lt; \infty$</td>
+<td>二階動差：期望值與變異數</td>
+<td>多項式級衰減 $\mathcal{O}(1/t^2)$</td>
+<td>存在成對獨立弱條件的場景</td>
+</tr>
+<tr>
+<td><strong>Chernoff Bound</strong></td>
+<td>互相獨立有界 $X = \sum X_i$</td>
+<td>無限階動差：動差生成函數 MGF</td>
+<td>指數級衰減 $e^{-\Omega(t^2)}$</td>
+<td>獨立試驗總和，提供極強的機率保證</td>
+</tr>
+<tr>
+<td><strong>Union Bound</strong></td>
+<td>任意事件集合，無條件適用</td>
+<td>知道各事件發生的機率</td>
+<td>線性疊加 $\sum \operatorname{Pr}[A_i]$</td>
+<td>結合多個壞事件計算總失敗率</td>
+</tr>
+    </tbody>
+  </table>
+</div></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
 <div class="note-qa" data-qa-block="review-kit--prompt">
