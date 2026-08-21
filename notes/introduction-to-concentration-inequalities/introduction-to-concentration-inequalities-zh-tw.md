@@ -76,7 +76,7 @@ $$P(|X - \mu| \le \epsilon) = 1 - \delta$$
 <block>
 title: 為什麼求上限值會比較簡單？
 content:
-因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<information concept="concept.expectation">期望值</information>與變異數等統稱為「<information concept="concept.moments">動差</information>」（Moments）的量，透過<information concept="concept.algebraic_bounding">代數放縮</information>技巧來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>。這使得我們**不必知道完整的機率分佈長什麼樣子**，就能給出一個保守但絕對安全的數學保證。
+因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<information concept="concept.expectation">期望值</information>與<information concept="concept.variance">變異數</information>等統稱為「<information concept="concept.moments">動差</information>」（Moments）的量，透過<information concept="concept.algebraic_bounding">代數放縮</information>技巧來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>。這使得我們**不必知道完整的機率分佈長什麼樣子**，就能給出一個保守但絕對安全的數學保證。
 </block>
 
 這時，上述的等式就變成了<information concept="concept.concentration_inequalities">集中不等式</information>：
@@ -117,7 +117,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
      這是不等式家族中最基礎、也最通用的工具。它唯一的前提條件是隨機變數必須為非負數，也就是 $X \ge 0$。在我們只知道一階<information concept="concept.moments">動差</information>，亦即<information concept="concept.expectation">期望值</information> $\mathbb{E}[X]$ 的匱乏情況下，它就能給出一個<information concept="concept.tail_bound">尾端衰減速率</information>為多項式級 $\mathcal{O}(1/t)$ 的保證。由於所需條件極低，當我們對系統幾乎一無所知時，它通常作為最底層的保底界限。
 
 *   **<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式（Chebyshev's Inequality）</content-link>**
-     當我們對系統有進一步的了解，除了期望值，還掌握了二階<information concept="concept.moments">動差</information>，也就是變異數 $\operatorname{Var}(X)$ 為有限值的狀態時，就可以升級使用柴比雪夫不等式。它將衰減速率顯著提升到了 $\mathcal{O}(1/t^2)$，使得界限大幅收緊。在實務上，它特別適用於我們能證明變數之間存在弱條件的場景，像是成對獨立（Pairwise independence）。
+     當我們對系統有進一步的了解，除了<information concept="concept.expectation">期望值</information>，還掌握了二階<information concept="concept.moments">動差</information>，也就是<information concept="concept.variance">變異數</information> $\operatorname{Var}(X)$ 為有限值的狀態時，就可以升級使用柴比雪夫不等式。它將衰減速率顯著提升到了 $\mathcal{O}(1/t^2)$，使得界限大幅收緊。在實務上，它特別適用於我們能證明變數之間存在弱條件的場景，像是成對獨立（Pairwise independence）。
 
 *   **<content-link canonical="chernoff-bound-and-exponential-concentration">切爾諾夫界（Chernoff Bound）</content-link>**
      這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成，亦即形式為 $X = \sum X_i$ 時，我們可以利用<information context="動差生成函數（Moment Generating Function，簡稱 MGF）是機率統計中的一種解析工具（定義為 E[e^{tX}]），用來將所有高階動差編碼並導出極為緊緻的指數級尾端機率界限。">動差生成函數</information>（Moment Generating Function，簡稱 MGF），來捕捉無限階<information concept="concept.moments">動差</information>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。

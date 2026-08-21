@@ -689,6 +689,24 @@
         "分佈積分",
         "分布积分"
       ]
+    },
+    {
+      "concept_id": "concept.variance",
+      "labels": {
+        "en": "Variance",
+        "zh-Hant": "變異數（方差）",
+        "zh-Hans": "方差"
+      },
+      "contexts": {
+        "en": "Variance is the fundamental second-moment statistical measure that quantifies how far a set of random numbers are spread out from their average value.",
+        "zh-Hant": "變異數（Variance，方差）是機率統計中的核心二階動差指標，用來量化隨機變數數值偏離其期望值的離散與波動程度。",
+        "zh-Hans": "方差（Variance）是概率统计中的核心二阶动差指标，用来量化随机变量数值偏离其期望值的离散与波动程度。"
+      },
+      "aliases": [
+        "variance",
+        "變異數",
+        "方差"
+      ]
     }
   ]
 }
