@@ -66,9 +66,11 @@ $$P(|X - \mu| \le \epsilon) = 1 - \delta$$
 
 既然精確計算 $\delta$ 是不可行的，我們轉而尋求計算一個相對容易得到的上限值 $\delta'$，使得精確機率 $\delta \le \delta'$。
 
-> **為什麼求上限值會比較簡單？**
-> 
-> 因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<information concept="concept.expectation">期望值</information>與變異數等統稱為「<information concept="concept.moments">動差</information>」（Moments）的量，透過<information concept="concept.algebraic_bounding">代數放縮</information>技巧來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>。這使得我們**不必知道完整的機率分佈長什麼樣子**，就能給出一個保守但絕對安全的數學保證。
+<block>
+**為什麼求上限值會比較簡單？**
+
+因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<information concept="concept.expectation">期望值</information>與變異數等統稱為「<information concept="concept.moments">動差</information>」（Moments）的量，透過<information concept="concept.algebraic_bounding">代數放縮</information>技巧來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>。這使得我們**不必知道完整的機率分佈長什麼樣子**，就能給出一個保守但絕對安全的數學保證。
+</block>
 
 這時，上述的等式就變成了<information concept="concept.concentration_inequalities">集中不等式</information>：
 
