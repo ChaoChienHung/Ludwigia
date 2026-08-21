@@ -20,7 +20,9 @@ LastModified: 2026-08-20
 
 # Chebyshev 不等式與變異數分析：從方差壓制偏差
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: Chebyshev 不等式利用隨機變數的**二階矩（變異數 Variance）**，將偏離雙邊距離的機率上界壓制到二次方反比衰減 $\mathcal{O}(1/k^2)$。只要變數滿足成對獨立（Pairwise Independence）或負相關（Negative Covariance），就能發揮強大效果。
 </callout>
 

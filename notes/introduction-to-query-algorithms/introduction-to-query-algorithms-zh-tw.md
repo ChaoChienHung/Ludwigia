@@ -21,7 +21,9 @@ LastModified: 2026-08-20
 
 # 亞線性查詢演算法導論：Oracle 介面與查詢複雜度
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 在大數據時代，當資料規模 $N$ 極大時，傳統連線性時間 $\mathcal{O}(N)$ 的演算法都過於昂貴。亞線性查詢演算法（Sublinear Query Algorithms）放棄完整讀取輸入，改透過 **Oracle 查詢介面** 對資料進行局部隨機抽樣，在亞線性時間 $\mathcal{O}(o(N))$ 內以高機率估算出資料的總體統計量。
 </callout>
 

@@ -21,7 +21,9 @@ LastModified: 2026-08-20
 
 # 從決定性到機率性：隨機化演算法與分析的思維轉變
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 在傳統決定性演算法（Deterministic Algorithms）中，最壞情況複雜度（Worst-case complexity）往往受到極端輸入資料的限制。隨機化演算法透過在演算法執行過程中引入硬幣擲甩（Random Flips），能打破決定性結構的硬性限制，在期望時間或極高機率下獲得超越決定性演算法的極佳效能。
 </callout>
 

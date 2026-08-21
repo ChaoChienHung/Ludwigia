@@ -262,7 +262,7 @@
 
 <p class="mb-3">既然精確計算 $\delta$ 是不可行的，我們轉而尋求計算一個相對容易得到的上限值 $\delta'$，使得精確機率 $\delta \le \delta'$。</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2"><strong>為什麼求上限值會比較簡單？</strong> 因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>與變異數等統稱為「<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>」（Moments）的量，透過<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>技巧來繞過複雜的<span class="note-information" tabindex="0" data-information-concept="concept.distribution_integration" data-information-lang="zh-tw">分佈積分<span class="note-information-tooltip" aria-hidden="true"></span></span>。這使得我們<strong>不必知道完整的機率分佈長什麼樣子</strong>，就能給出一個保守但絕對安全的數學保證。</p></div>
+<div class="note-callout mb-3"><p class="mb-2"><strong>為什麼求上限值會比較簡單？</strong></p><p class="mb-2">因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>與變異數等統稱為「<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>」（Moments）的量，透過<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>技巧來繞過複雜的<span class="note-information" tabindex="0" data-information-concept="concept.distribution_integration" data-information-lang="zh-tw">分佈積分<span class="note-information-tooltip" aria-hidden="true"></span></span>。這使得我們<strong>不必知道完整的機率分佈長什麼樣子</strong>，就能給出一個保守但絕對安全的數學保證。</p></div>
 
 <p class="mb-3">這時，上述的等式就變成了<span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span>：</p>
 
@@ -277,9 +277,7 @@
 
 <p class="mb-3">顯然，機率界限 $\delta'$ 是門檻 $\epsilon$ 的函數，可以寫作 $\delta'(\epsilon)$。當我們對容忍誤差 $\epsilon$ 的要求越小與越嚴苛時，壞事發生的機率上限 $\delta'$ 也就無可避免地跟著變大。</p>
 
-<p class="mb-3">&lt;callout type="info"&gt; <strong>高斯分佈的界限範例</strong></p>
-
-<p class="mb-3">我們可以用最常見的標準常態分佈，也就是高斯分佈，來具體感受<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>的威力。對於標準常態分佈，尾端機率為 $P(X \ge t) = \frac{1}{\sqrt{2\pi}} \int_{t}^{\infty} e^{-\frac{x^2}{2}} dx$。</p>
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa- me-2"></i>高斯分佈的界限範例</h4><p class="mb-3">我們可以用最常見的標準常態分佈，也就是高斯分佈，來具體感受<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>的威力。對於標準常態分佈，尾端機率為 $P(X \ge t) = \frac{1}{\sqrt{2\pi}} \int_{t}^{\infty} e^{-\frac{x^2}{2}} dx$。</p>
 
 <p class="mb-3">直接<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>很困難，但我們可以應用一個巧妙的放縮技巧：因為在積分區間 $[t, \infty)$ 中，$x \ge t$，所以必然有 $\frac{x}{t} \ge 1$。我們將這個大於 1 的項代入積分中，將原本的函數放大：</p>
 
@@ -289,7 +287,7 @@
 
 <p class="mb-3">$$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$</p>
 
-<p class="mb-3">透過這個簡單的放縮技巧，我們成功避開了複雜的高斯<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>，並獲得了一個形式優美且實用的指數級衰減上界。這正是<span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span>核心思想的最佳體現：用微小的精度妥協，換取計算上的極大便利與強而有力的數學保證。 &lt;/callout&gt;</p>
+<p class="mb-3">透過這個簡單的放縮技巧，我們成功避開了複雜的高斯<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>，並獲得了一個形式優美且實用的指數級衰減上界。這正是<span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span>核心思想的最佳體現：用微小的精度妥協，換取計算上的極大便利與強而有力的數學保證。</p></div>
 </section>
 
 <section id="section-5" class="note-section" data-aos="fade-up" data-aos-delay="120">

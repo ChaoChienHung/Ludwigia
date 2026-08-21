@@ -24,7 +24,9 @@ LastModified: 2026-08-20
 
 # 遠端程序呼叫 (RPC) 核心架構與透明度語意：從 Stub 到 Marshaling 運作機制
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 在單機系統中，進程間通訊（IPC）可透過共享記憶體（Shared Memory）或訊息傳遞（Message Passing）完成。然而在分散式網路環境中，實體機器分離導致共享記憶體不可行。遠端程序呼叫（Remote Procedure Call, RPC）透過 **Client/Server Stub** 與 **Parameter Marshaling** 技術，隱藏網路訊息打包、埠號查找與通訊細節，讓呼叫遠端服務體驗如同呼叫本機函式般透明。
 </callout>
 

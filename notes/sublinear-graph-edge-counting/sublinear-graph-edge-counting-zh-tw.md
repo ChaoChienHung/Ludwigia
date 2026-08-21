@@ -21,7 +21,9 @@ LastModified: 2026-08-20
 
 # 圖邊數亞線性估計：加性/乘性誤差與 Heavy/Light 頂點分割
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 在稀疏圖（Sparse Graphs）中估算邊數 $m$ 時，加性誤差 $\varepsilon n^2$ 會失效。透過 Adjacency-list 模型建立頂點全序，並巧用 Heavy/Light ($H/L$) 頂點分割壓低估計器方差，配合適應性倍減猜測（Adaptive Guessing）與 Median Trick，可在 **$\Theta\left(\frac{n \log \log n}{\varepsilon^2 m}\right)$** 亞線性查詢複雜度內獲得乘性誤差 $(1+\varepsilon)$-逼近。
 </callout>
 

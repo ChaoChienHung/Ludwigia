@@ -157,7 +157,10 @@ $$\text{NEG}(g') = (\text{NEG}(g) \setminus \text{DEL}(a)) \cup \text{NEG}(\text
 
 其中 $\text{POS}(\cdot)$ 與 $\text{NEG}(\cdot)$ 分別代表正向與負向字面量集合。在逆向過程中，我們利用**最通用統一子（Most General Unifier, MGU）**對動作參數進行替換與綁定。
 
-<callout title="基數比較：狀態（Ground State）與狀態描述（Description）" icon="info">
+<callout>
+title: 基數比較：狀態（Ground State）與狀態描述（Description）
+variant: info
+content:
 若環境中共有 $n$ 個 Ground Fluents：
 - **具體狀態（Ground States）** 的數量為 $2^n$（每個 Fluent 非 True 即 False）。正向搜尋的節點即為具體狀態。
 - **狀態描述（Descriptions / Subgoals）** 的數量為 $3^n$（每個 Fluent 可為 Positive、Negative 或 Unmentioned/Don't Care）。逆向搜尋維護的是狀態描述，代表符合該描述的一組狀態集合。

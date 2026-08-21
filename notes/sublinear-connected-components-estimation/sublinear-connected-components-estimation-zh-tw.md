@@ -20,7 +20,9 @@ LastModified: 2026-08-20
 
 # 圖連通分量亞線性估算：有界與一般結構下的查詢複雜度
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 利用經典恆等式 $C = \sum_{v \in V} \frac{1}{|C(v)|}$，估計連通分量數量 $C$ 可轉化為估計隨機頂點倒數組件大小 $\frac{1}{|C(v)|}$ 的期望值。透過 BFS 廣度優先搜尋，在加性誤差 $\varepsilon n$ 下，查詢複雜度可壓低至與 $n$ 無關的 **$\mathcal{O}(1/\varepsilon^3)$**！
 </callout>
 

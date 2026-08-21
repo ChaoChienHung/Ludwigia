@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="remote-procedure-call-architecture-and-semantics">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-08-20">
-  <meta name="site:reading_time_minutes" content="10">
+  <meta name="site:reading_time_minutes" content="11">
   <meta name="site:source" content="notes/remote-procedure-call-architecture-and-semantics/remote-procedure-call-architecture-and-semantics-zh-tw.md">
   <script>
   (() => {
@@ -212,7 +212,7 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">&lt;callout type="info"&gt; TL;DR: 在單機系統中，進程間通訊（IPC）可透過共享記憶體（Shared Memory）或訊息傳遞（Message Passing）完成。然而在分散式網路環境中，實體機器分離導致共享記憶體不可行。遠端程序呼叫（Remote Procedure Call, RPC）透過 <strong>Client/Server Stub</strong> 與 <strong>Parameter Marshaling</strong> 技術，隱藏網路訊息打包、埠號查找與通訊細節，讓呼叫遠端服務體驗如同呼叫本機函式般透明。 &lt;/callout&gt;</p>
+<div class="note-callout" data-aos="fade-up" data-aos-delay="80"><p class="mb-3">TL;DR: 在單機系統中，進程間通訊（IPC）可透過共享記憶體（Shared Memory）或訊息傳遞（Message Passing）完成。然而在分散式網路環境中，實體機器分離導致共享記憶體不可行。遠端程序呼叫（Remote Procedure Call, RPC）透過 <strong>Client/Server Stub</strong> 與 <strong>Parameter Marshaling</strong> 技術，隱藏網路訊息打包、埠號查找與通訊細節，讓呼叫遠端服務體驗如同呼叫本機函式般透明。</p></div>
 </section>
 
 <section id="1-ipc-rpc" class="note-section" data-aos="fade-up" data-aos-delay="120">

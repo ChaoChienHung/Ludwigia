@@ -21,7 +21,9 @@ LastModified: 2026-08-20
 
 # 估計器增強技巧：Mean Trick 方差降低與 Median Trick 成功率放大
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 在設計隨機演算法時，我們常先設計一個「僅有常數成功率（如 66%）」或「高方差」的基礎估計器。透過 **Mean Trick（平均值招式）** 可線性壓低方差；再透過 **Median Trick（中位數招式）**，只需付出 $\mathcal{O}(\log(1/\delta))$ 的重複代價，就能將成功率放大至任意高的 $1 - \delta$。
 </callout>
 

@@ -21,7 +21,9 @@ LastModified: 2026-08-20
 
 # Chernoff Bound 與指數級集中：獨立隨機變數和的強界限
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: Chernoff Bound 是獨立隨機變數和（Sum of Independent Random Variables）最強大的集中不等式。透過矩生成函數（MGF），它將 Tail Bound 的衰減速率從多項式級一口氣提升至**指數級衰減（Exponential Decay）**。
 </callout>
 

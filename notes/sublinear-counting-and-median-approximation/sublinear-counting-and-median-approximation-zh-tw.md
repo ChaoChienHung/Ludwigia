@@ -20,7 +20,9 @@ LastModified: 2026-08-20
 
 # 亞線性計數與中位數估算：Counting 1s 與 Sample Median
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: 透過隨機抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 個元素，我們可以在完全不遍歷整體資料的情況下，以加性誤差 $\varepsilon n$ 估算 $n$-bit 位元串中 1 的數量，或以極高機率找到接近陣列中位數（Rank 在 $(1/2 \pm \varepsilon)n$ 之間）的元素。
 </callout>
 

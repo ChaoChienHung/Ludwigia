@@ -67,8 +67,8 @@ $$P(|X - \mu| \le \epsilon) = 1 - \delta$$
 既然精確計算 $\delta$ 是不可行的，我們轉而尋求計算一個相對容易得到的上限值 $\delta'$，使得精確機率 $\delta \le \delta'$。
 
 <block>
-**為什麼求上限值會比較簡單？**
-
+title: 為什麼求上限值會比較簡單？
+content:
 因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<information concept="concept.expectation">期望值</information>與變異數等統稱為「<information concept="concept.moments">動差</information>」（Moments）的量，透過<information concept="concept.algebraic_bounding">代數放縮</information>技巧來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>。這使得我們**不必知道完整的機率分佈長什麼樣子**，就能給出一個保守但絕對安全的數學保證。
 </block>
 
@@ -83,9 +83,10 @@ $$P(|X - \mu| \le \epsilon) \ge 1 - \delta'$$
 
 顯然，機率界限 $\delta'$ 是門檻 $\epsilon$ 的函數，可以寫作 $\delta'(\epsilon)$。當我們對容忍誤差 $\epsilon$ 的要求越小與越嚴苛時，壞事發生的機率上限 $\delta'$ 也就無可避免地跟著變大。
 
-<callout type="info">
-**高斯分佈的界限範例**
-
+<callout>
+title: 高斯分佈的界限範例
+variant: info
+content:
 我們可以用最常見的標準常態分佈，也就是高斯分佈，來具體感受<information concept="concept.algebraic_bounding">代數放縮</information>的威力。對於標準常態分佈，尾端機率為 $P(X \ge t) = \frac{1}{\sqrt{2\pi}} \int_{t}^{\infty} e^{-\frac{x^2}{2}} dx$。
 
 直接<information concept="concept.integration">積分</information>很困難，但我們可以應用一個巧妙的放縮技巧：因為在積分區間 $[t, \infty)$ 中，$x \ge t$，所以必然有 $\frac{x}{t} \ge 1$。我們將這個大於 1 的項代入積分中，將原本的函數放大：

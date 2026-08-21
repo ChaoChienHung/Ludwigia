@@ -20,7 +20,9 @@ LastModified: 2026-08-20
 
 # Markov 不等式：基於期望值的非負隨機變數機率上限
 
-<callout type="info">
+<callout>
+variant: info
+content:
 TL;DR: Markov 不等式（Markov's Inequality）是集中現象中最基礎的定量工具。它只需要知道隨機變數的**一階矩（期望值）**，且前提為變數必須為**非負（Non-negative）**，就能給出尾端機率的上界。
 </callout>
 
