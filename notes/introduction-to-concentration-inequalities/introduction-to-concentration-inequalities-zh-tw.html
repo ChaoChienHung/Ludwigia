@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="introduction-to-concentration-inequalities">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-08-20">
-  <meta name="site:reading_time_minutes" content="14">
+  <meta name="site:reading_time_minutes" content="16">
   <meta name="site:source" content="notes/introduction-to-concentration-inequalities/introduction-to-concentration-inequalities-zh-tw.md">
   <script>
   (() => {
@@ -331,6 +331,16 @@
       <h3 class="mb-0">Review Kit</h3>
     </div>
     <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li><strong>核心思維：用資訊換取緊緻度（Information-Tightness Trade-off）</strong>：集中不等式的底層邏輯在於，我們掌握的隨機變數資訊越多，從一階動差的期望值、二階動差的變異數，一路提升到動差生成函數 MGF，我們就能將 Tail Bounds 縮得越緊。這是一個從 $\mathcal{O}(1/t)$ 漸進到指數級 $e^{-\Omega(t^2)}$ 衰減的升級過程。
 <ul class="note-list">
@@ -345,6 +355,42 @@
 <p class="mb-2">| <strong>Chernoff Bound</strong> | 互相獨立有界 $X = \sum X_i$ | 無限階動差：動差生成函數 MGF | 指數級衰減 $e^{-\Omega(t^2)}$ | 獨立試驗總和，提供極強的機率保證 |</p>
 <p class="mb-2">| <strong>Union Bound</strong> | 任意事件集合，無條件適用 | 知道各事件發生的機率 | 線性疊加 $\sum \operatorname{Pr}[A_i]$ | 結合多個壞事件計算總失敗率 |</p></li>
 </ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
     </div>
   </div>
 </section>
