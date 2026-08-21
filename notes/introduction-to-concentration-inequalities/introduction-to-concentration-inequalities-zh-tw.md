@@ -5,11 +5,12 @@ Slug: introduction-to-concentration-inequalities-zh-tw
 Output: notes/introduction-to-concentration-inequalities/introduction-to-concentration-inequalities-zh-tw.html
 CanonicalId: introduction-to-concentration-inequalities
 Style: default
+Cover: ./introduction-to-concentration-inequalities.png
 Lang: zh-tw
 Tags: algorithm, probability, concentration inequalities, markov inequality, chebyshev inequality, chernoff bound, union bound
 Status: published
 Published: 2026-08-20
-LastModified: 2026-08-21
+LastModified: 2026-08-22
 </meta>
 
 <draft>
@@ -23,6 +24,12 @@ LastModified: 2026-08-21
 </draft>
 
 # 集中不等式：從極限定理到集中不等式工具箱
+
+<image>
+src: ./introduction-to-concentration-inequalities.png
+alt: 集中不等式視覺化全景圖，包含 Concentration of Measure 概念、Tail Bound 分佈極限光譜、Markov/Chebyshev/Chernoff/Hoeffding 不等式比較與機器學習應用。
+caption: 集中不等式視覺化全景圖：從極限定理、動差資訊階梯到學習理論與隨機演算法應用。
+</image>
 
 在機器學習與演算法分析的領域中，我們時常需要面臨幾個問題：「我們訓練出來的模型，在未知的測試數據上表現到底有多好？」、「我們設計的隨機演算法，有多大的機率能在預期時間內給出正確答案？」。這些問題本質上都有個共同核心目標，那就是**如何嚴謹地向他人證明我們的模型或演算法是「好」的？**畢竟空口無憑，我們不能僅靠直覺或有限的實驗結果來下定論，而是需要強而有力的數學工具來背書。
 

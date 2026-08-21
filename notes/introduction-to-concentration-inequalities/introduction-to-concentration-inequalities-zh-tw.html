@@ -12,7 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.markov_inequality&quot;:{&quot;en&quot;:&quot;Markov&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Markov 不等式&quot;,&quot;zh-Hans&quot;:&quot;Markov 不等式&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.union_bound&quot;:{&quot;en&quot;:&quot;Union Bound&quot;,&quot;zh-Hant&quot;:&quot;Union Bound&quot;,&quot;zh-Hans&quot;:&quot;Union Bound&quot;}}">
   <meta name="site:canonical_id" content="introduction-to-concentration-inequalities">
   <meta name="site:published_at" content="2026-08-20">
-  <meta name="site:last_modified_at" content="2026-08-21">
+  <meta name="site:last_modified_at" content="2026-08-22">
+  <meta name="site:cover" content="notes/introduction-to-concentration-inequalities/introduction-to-concentration-inequalities.png">
   <meta name="site:reading_time_minutes" content="18">
   <meta name="site:source" content="notes/introduction-to-concentration-inequalities/introduction-to-concentration-inequalities-zh-tw.md">
   <script>
@@ -183,7 +184,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-08-21" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-21</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-22" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-22</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -210,6 +211,8 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./introduction-to-concentration-inequalities.png" alt="集中不等式視覺化全景圖，包含 Concentration of Measure 概念、Tail Bound 分佈極限光譜、Markov/Chebyshev/Chernoff/Hoeffding 不等式比較與機器學習應用。" loading="lazy"><figcaption class="note-image-caption">集中不等式視覺化全景圖：從極限定理、動差資訊階梯到學習理論與隨機演算法應用。</figcaption></figure>
+
 <p class="mb-3">在機器學習與演算法分析的領域中，我們時常需要面臨幾個問題：「我們訓練出來的模型，在未知的測試數據上表現到底有多好？」、「我們設計的隨機演算法，有多大的機率能在預期時間內給出正確答案？」。這些問題本質上都有個共同核心目標，那就是<strong>如何嚴謹地向他人證明我們的模型或演算法是「好」的？</strong>畢竟空口無憑，我們不能僅靠直覺或有限的實驗結果來下定論，而是需要強而有力的數學工具來背書。</p>
 
 <p class="mb-3">為了回答這些問題，我們常需要計算所謂的<strong><span class="note-information" tabindex="0" aria-label="信心水準（Confidence Level）屬於統計學與機器學習中的核心指標，用來描述估計值或真實參數以多大的機率保證落在指定的統計區間內。">信心水準<span class="note-information-tooltip" aria-hidden="true">信心水準（Confidence Level）屬於統計學與機器學習中的核心指標，用來描述估計值或真實參數以多大的機率保證落在指定的統計區間內。</span></span></strong>（Confidence Level），或是推導<strong><span class="note-information" tabindex="0" aria-label="泛化邊界（Generalization Bounds）是計算學習理論中的一種數學上界保證，用來限制模型在未知測試數據上的期望誤差與訓練數據誤差之間的差距。">泛化邊界<span class="note-information-tooltip" aria-hidden="true">泛化邊界（Generalization Bounds）是計算學習理論中的一種數學上界保證，用來限制模型在未知測試數據上的期望誤差與訓練數據誤差之間的差距。</span></span></strong>（Generalization Bounds）。然而，真實世界的數據分佈往往極度複雜。在諸如影像辨識或自然語言處理等絕大多數的應用場景中，我們根本無法得知數據背後真實的<span class="note-information" tabindex="0" data-information-concept="concept.pdf" data-information-lang="zh-tw">機率密度函數（PDF）<span class="note-information-tooltip" aria-hidden="true"></span></span>。退一步說，即使我們僥倖得知了某種近似分佈，要在這種超高維度的複雜空間中進行精確的<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">數學積分<span class="note-information-tooltip" aria-hidden="true"></span></span>，在計算上也是完全不可行的。</p>
