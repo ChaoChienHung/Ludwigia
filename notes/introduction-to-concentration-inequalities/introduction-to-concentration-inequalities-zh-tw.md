@@ -5,7 +5,7 @@ Slug: introduction-to-concentration-inequalities-zh-tw
 Output: notes/introduction-to-concentration-inequalities/introduction-to-concentration-inequalities-zh-tw.html
 CanonicalId: introduction-to-concentration-inequalities
 Style: default
-Cover: ./introduction-to-concentration-inequalities.png
+Cover: ./concentration-inequalities.png
 Lang: zh-tw
 Tags: algorithm, probability, concentration inequalities, markov inequality, chebyshev inequality, chernoff bound, union bound
 Status: published
@@ -26,7 +26,7 @@ LastModified: 2026-08-22
 # 集中不等式：從極限定理到集中不等式工具箱
 
 <image>
-src: ./introduction-to-concentration-inequalities.png
+src: ./concentration-inequalities.png
 alt: 集中不等式視覺化全景圖，包含 Concentration of Measure 概念、Tail Bound 分佈極限光譜、Markov/Chebyshev/Chernoff/Hoeffding 不等式比較與機器學習應用。
 caption: 集中不等式視覺化全景圖：從極限定理、動差資訊階梯到學習理論與隨機演算法應用。
 </image>
