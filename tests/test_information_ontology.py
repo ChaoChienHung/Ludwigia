@@ -7,14 +7,14 @@ from tools import information_ontology
 
 class InformationOntologyTests(unittest.TestCase):
     def test_localized_lookup(self) -> None:
-        self.assertEqual(information_ontology.get_concept_label("concept.eda", "en"), "Exploratory Data Analysis (EDA)")
-        self.assertEqual(information_ontology.get_concept_label("concept.eda", "zh-Hant"), "探索式資料分析（EDA）")
-        self.assertIn("early stage", information_ontology.get_concept_context("concept.eda", "en"))
+        self.assertEqual(information_ontology.get_concept_label("concept.supervised_learning", "en"), "Supervised Learning")
+        self.assertEqual(information_ontology.get_concept_label("concept.supervised_learning", "zh-Hant"), "監督式學習")
+        self.assertIn("監督", information_ontology.get_concept_context("concept.supervised_learning", "zh-Hant"))
 
     def test_generated_js_contains_window_assignment(self) -> None:
         js = information_ontology.build_information_ontology_js()
         self.assertTrue(js.startswith("window.LUDWIG_INFORMATION_ONTOLOGY="))
-        self.assertIn("concept.eda", js)
+        self.assertIn("concept.supervised_learning", js)
 
     def test_scan_information_candidates_reports_annotated_and_unannotated_first_occurrences(self) -> None:
         sample = """

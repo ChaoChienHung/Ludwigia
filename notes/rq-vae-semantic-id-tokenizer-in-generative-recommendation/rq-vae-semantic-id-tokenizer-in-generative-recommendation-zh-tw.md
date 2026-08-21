@@ -53,7 +53,7 @@ caption: RQ-VAE 架構與多階段殘差量化 (Residual Quantization) 運作流
 
 在<content-link canonical="semantic-id-in-generative-recommendation">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</content-link>中，我們確立了 Semantic ID（SID）的核心價值。為了解決傳統 Atomic ID 所引發的 Softmax 算力瓶頸與參數膨脹，我們必須將海量商品映射為大語言模型（LLM）易於表徵與生成的「長度為 $M$ 的階層式語意 Token 序列」。
 
-提及「將語意離散化為 Token」，自然語言處理（NLP）領域成熟的 <information concept="concept.bpe">BPE</information> 等 <information concept="concept.tokenizer">Tokenizer</information> 往往是大家最先想到的標準範式。然而，推薦系統面對的標的截然不同。商品本質上是由文字描述、視覺圖像、層級類別與多維中繼資料交織而成的「<information concept="concept.multimodal">多模態</information>實體」，我們顯然無法直接套用文字為主的 Tokenizer。
+提及「將語意離散化為 Token」，自然語言處理（NLP）領域成熟的 <information context="Byte-Pair Encoding（BPE）是一種常用的子詞（subword）切分演算法。它透過統計頻次反覆合併出現頻率最高的相鄰字元或位元組對，將常見字詞組合縮減為離散 Token，以兼顧字典容量與未登錄詞處理。">BPE</information> 等 <information concept="concept.tokenizer">Tokenizer</information> 往往是大家最先想到的標準範式。然而，推薦系統面對的標的截然不同。商品本質上是由文字描述、視覺圖像、層級類別與多維中繼資料交織而成的「<information context="多模態（Multimodal）指同時融合並理解文本、圖像、音訊、層級類別與多維中繼資料等多種不同形態資料的綜合資料類型與模型架構。">多模態</information>實體」，我們顯然無法直接套用文字為主的 Tokenizer。
 
 這意味著我們需要一種全新的 Tokenizer。它必須具備深度的多模態理解能力，同時還能執行「階層式離散映射」，將連續的高維向量精準拆解為由粗到細、且涵蓋原始資訊的離散 ID，而**RQ-VAE（Residual Quantized Variational AutoEncoder）** 正是滿足這項嚴苛要求的理想架構。
 
@@ -70,7 +70,7 @@ content:
 * **Codeword（碼字 / 離散向量）：** 碼本中儲存的各個離散向量原型 $e_k$。量化過程即是在 Codebook 中尋找與 Encoder 產出的連續特徵最相近的 Codeword，並將其對應的整數索引（Index）作為該階段的離散 Token 或 ID。
 </block>
 
-探究 RQ-VAE，我們必須先回顧其本質 <information concept="concept.autoencoder">AutoEncoder</information>，以及其近親 **VQ-VAE (Vector Quantized Variational AutoEncoder)**。
+探究 RQ-VAE，我們必須先回顧其本質 <information context="自編碼器（AutoEncoder）是一種自監督神經網路架構，由 Encoder（將高維輸入壓縮至低維潛在空間）與 Decoder（嘗試從潛在空間還原原始輸入）組成。">AutoEncoder</information>，以及其近親 **VQ-VAE (Vector Quantized Variational AutoEncoder)**。
 
 AutoEncoder 的基礎架構由 Encoder 與 Decoder 組成，目標是將輸入資料（如文本、圖像）壓縮並生成低維的連續特徵向量（<information concept="concept.embedding">Embedding</information>），再由 Decoder 嘗試無損重建。這套範式賦予了模型強大的語意壓縮與還原能力，為 RQ-VAE 奠定了理解多模態語意與生成 Semantic ID 的基礎。**VQ-VAE** 則在此基礎上邁出了關鍵一步：在 Encoder 產出連續向量後，系統會在預先定義的碼本中，尋找空間距離最近的 Codeword $e_1$ 並進行強制替換。這個將連續變數轉為離散原型的過程，即為**「量化」**。
 
@@ -118,7 +118,7 @@ $$\mathcal{L}_{\text{recon}}(x, \hat{x})$$
 
 這個 Loss 確保了整個端到端系統的優化大方向是正確的。然而，由於 Decoder 依賴 Encoder 的輸出來還原輸入，若能讓 Encoder 與 Decoder 聯合優化，效果將會更佳。但此時我們會面臨一個嚴峻的數學挑戰。
 
-在量化的過程中，模型必須對輸入向量與 Codeword 計算距離，並執行 $\arg\min$ 操作——亦即從 Codebook 眾多候選向量中，挑選出「能讓距離達到極小值」的那一個 Codeword 索引。然而，這種尋找極小值索引的 $\arg\min$ 是一個離散的<information concept="concept.step_function">階梯函數</information>，其導數幾乎處處為零，這意味著它將阻斷<information concept="concept.backpropagation">反向傳播</information>的梯度。Decoder 計算出的誤差因此無法穿透這個斷層，Encoder 也將無從得知該如何更新權重。
+在量化的過程中，模型必須對輸入向量與 Codeword 計算距離，並執行 $\arg\min$ 操作——亦即從 Codebook 眾多候選向量中，挑選出「能讓距離達到極小值」的那一個 Codeword 索引。然而，這種尋找極小值索引的 $\arg\min$ 是一個離散的<information context="階梯函數（Step Function）是值域呈現不連續跳躍、且導數幾乎處處為零的離散函數。在向量量化（如 argmin）中，階梯函數會直接斷絕反向傳播的梯度計算。">階梯函數</information>，其導數幾乎處處為零，這意味著它將阻斷<information context="反向傳播（Backpropagation）是神經網路訓練的核心演算法。它利用微積分的連鎖律，將輸出層計算出的損失誤差梯度向後傳遞給網路各層權重，驅動梯度下降優化。">反向傳播</information>的梯度。Decoder 計算出的誤差因此無法穿透這個斷層，Encoder 也將無從得知該如何更新權重。
 
 為了解開這個數學死局，RQ-VAE 採用了一個直觀且有效的技巧——**Straight-Through Estimator (STE)**。
 
@@ -158,7 +158,7 @@ content:
 實際上，這並非梯度的「偏好」，而是仰賴以下三大機制的巧妙協同：
 
 1. **變異數優先與 MSE 幾何懲罰：**
-     第一層碼本直接面對完整未扣除的目標向量 $z$。在潛在空間中，宏觀特徵（如圖像輪廓、商品大類）佔據了最大的變異數與能量。由於重構損失採用均方誤差（MSE），而 MSE 對大偏差極為敏感，若第一層預測偏離了全域結構，誤差將呈二次方劇增。因此優化器會優先調整第一層碼本，使其貼近數據總體分布的中心（類似 <information concept="concept.pca">PCA</information> 的第一主成分）。
+     第一層碼本直接面對完整未扣除的目標向量 $z$。在潛在空間中，宏觀特徵（如圖像輪廓、商品大類）佔據了最大的變異數與能量。由於重構損失採用均方誤差（MSE），而 MSE 對大偏差極為敏感，若第一層預測偏離了全域結構，誤差將呈二次方劇增。因此優化器會優先調整第一層碼本，使其貼近數據總體分布的中心（類似 <information context="主成分分析（PCA）是一種經典的正交線性變換降維技術。它透過尋找數據變異數最大的正交主成分方向，將高維資料投影至低維空間，優先保留總體能量與宏觀分佈結構。">PCA</information> 的第一主成分）。
 
 2. **核心強制力：碼本深度丟棄 (Depth Dropout)：**
      如果每次訓練都將所有 $M$ 層碼本加總送入 Decoder，會產生嚴重的**協同適應（Co-adaptation）**：第一層可能會產生依賴性，預期後續層級會協助修正誤差，導致層級間的語意嚴重交織。為此，實務上（包含 SoundStream、EnCodec 等變體）會引入 **Quantizer Dropout**。訓練時，系統會以一定機率隨機截斷後續層級的輸出，強迫模型僅使用前 $k$ 層（甚至僅第 1 層）進行解碼。這直接改變了優化規則：第一層被迫在有限容量內獨立解碼出合理的宏觀特徵，徹底確立了「前綴可解碼性（Prefix Decodability）」。
@@ -172,7 +172,7 @@ content:
 
 即便數學推導看似嚴密，但當工程師將 RQ-VAE 投入實際訓練時，依然會遭遇向量量化領域最棘手的難題：**碼本崩塌 (Codebook Collapse)**。
 
-這源於 $\arg\min$ 操作所帶來的「<information concept="concept.matthew_effect">馬太效應</information>」。由於梯度只能透過 Codebook Loss 傳遞給距離最近的碼字，這意味著在每次更新中，僅有被命中的 Codeword 能獲得優化，其餘未命中的則停滯不前。
+這源於 $\arg\min$ 操作所帶來的「<information context="馬太效應（Matthew Effect）指『富者愈富、貧者愈貧』的累積優勢現象，意指初始擁有優勢的個體或群體隨時間推進會累積更多資源與優勢，導致差距不斷擴大。">馬太效應</information>」。由於梯度只能透過 Codebook Loss 傳遞給距離最近的碼字，這意味著在每次更新中，僅有被命中的 Codeword 能獲得優化，其餘未命中的則停滯不前。
 
 在訓練初期，這會引發嚴重的資源傾斜。少數恰好位於資料密集區的熱門節點，能持續獲得梯度回饋與優化資源；而遠離資料分佈區的邊緣節點，則因缺乏命中機會而永遠未被激活。
 

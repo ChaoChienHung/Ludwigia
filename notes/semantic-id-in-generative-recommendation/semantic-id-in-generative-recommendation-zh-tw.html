@@ -14,7 +14,7 @@
   <meta name="site:published_at" content="2026-08-11">
   <meta name="site:last_modified_at" content="2026-08-19">
   <meta name="site:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
-  <meta name="site:reading_time_minutes" content="25">
+  <meta name="site:reading_time_minutes" content="26">
   <meta name="site:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -265,7 +265,7 @@
 
 <p class="mb-3">我們會觀察到，大部分的實體在某些方面，會與另一群實體共享著「大方向」的特徵，這意味著我們可以將這群實體歸納為同一類。即便它們被歸為同一類，同類內的每個物品之間，依然存在著除共享特徵之外的細微差異。因此，我們可以在原本的「大特徵類群」之上，繼續進行更細部的拆分。</p>
 
-<p class="mb-3">透過這種方式，我們就能將原本需要處理的龐大實體數，利用「不斷分類並在此基礎上繼續拆分」的原理，簡化為單純的「處理分類數」問題。這本質上就是利用數學的<strong><span class="note-information" tabindex="0" data-information-concept="concept.rule_of_product" data-information-lang="zh-tw">乘法原理<span class="note-information-tooltip" aria-hidden="true"></span></span>（Combinatorial Power）</strong>，大大壓縮了系統需要處理的資訊量。</p>
+<p class="mb-3">透過這種方式，我們就能將原本需要處理的龐大實體數，利用「不斷分類並在此基礎上繼續拆分」的原理，簡化為單純的「處理分類數」問題。這本質上就是利用數學的<strong><span class="note-information" tabindex="0" aria-label="乘法原理（Rule of Product / Combinatorial Power）是組合計數中的基本原則。指的是當一個選擇或系統可拆解為 M 個獨立的階層階段、且每階段有 K 個選項時，整體組合狀態數會以乘積 K^M 指數級擴展，用極少的基礎元件量撐起龐大的組合表達空間。">乘法原理<span class="note-information-tooltip" aria-hidden="true">乘法原理（Rule of Product / Combinatorial Power）是組合計數中的基本原則。指的是當一個選擇或系統可拆解為 M 個獨立的階層階段、且每階段有 K 個選項時，整體組合狀態數會以乘積 K^M 指數級擴展，用極少的基礎元件量撐起龐大的組合表達空間。</span></span>（Combinatorial Power）</strong>，大大壓縮了系統需要處理的資訊量。</p>
 
 <p class="mb-3">舉個簡單的例子：假設我們原本需要處理的實體數量高達 1,000,000 個，這是一個極度龐大的數字！但如果我們想辦法將它處理成「100 個大分類 $\times$ 每個大分類裡有 100 個中分類 $\times$ 每個中分類裡有 100 個小分類」，這樣一來，我們真正需要認識與處理的基礎分類數，就只有 $100 + 100 + 100 = 300$ 個！非常神奇且高效。</p>
 
@@ -381,7 +381,7 @@
 <li>
   <strong><strong>兩階段幾何量化路線 (RQ-Kmeans)：</strong></strong><br>
   
-<p class="mb-2">以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <span class="note-information" tabindex="0" data-information-concept="concept.k_means" data-information-lang="zh-tw">K-means<span class="note-information-tooltip" aria-hidden="true"></span></span> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <a class="note-content-link" data-canonical-id="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation" href="../rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">RQ-Kmeans 深度解析：打造生成式推薦最穩健的 Semantic ID Tokenizer</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文從連續空間的離散化出發，探討推薦系統如何從 K-means 聚類、向量量化 (VQ) 一路演進至 RQ-Kmeans，藉此解決海量物品詞彙庫爆炸問題，並深入解析殘差量化的底層幾何原理、進階正則化與業界落地工作流。</span></span></span></a> 中有更完整的介紹。</p>
+<p class="mb-2">以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <span class="note-information" tabindex="0" aria-label="K-Means 是一種中心點式分群演算法。它會用一個中心代表一群資料，並反覆把資料點分配給最近的中心，因此特別適合每一群都能被相對集中的中心概括的情境。">K-means<span class="note-information-tooltip" aria-hidden="true">K-Means 是一種中心點式分群演算法。它會用一個中心代表一群資料，並反覆把資料點分配給最近的中心，因此特別適合每一群都能被相對集中的中心概括的情境。</span></span> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <a class="note-content-link" data-canonical-id="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation" href="../rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">RQ-Kmeans 深度解析：打造生成式推薦最穩健的 Semantic ID Tokenizer</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">本文從連續空間的離散化出發，探討推薦系統如何從 K-means 聚類、向量量化 (VQ) 一路演進至 RQ-Kmeans，藉此解決海量物品詞彙庫爆炸問題，並深入解析殘差量化的底層幾何原理、進階正則化與業界落地工作流。</span></span></span></a> 中有更完整的介紹。</p>
   
 </li>
 </ol>
@@ -396,7 +396,12 @@
 
 <p class="mb-3">大模型是基於機率分佈進行自迴歸生成的。這意味著模型在推論時極有可能發生「幻覺」，並組合出一串在真實商品庫中根本不存在的 Semantic ID（例如模型合理地推導出一個「蘋果牌微波爐」的 Token 序列，但現實中沒有這個實體商品）。</p>
 
-<p class="mb-3">因此，為防止系統推薦出空集合，推論階段必須引入<strong>約束解碼 (Constrained Decoding)</strong>。實務上通常會預先構建一棵龐大的 Trie Tree（字典樹）來儲存所有合法的商品 Token 序列。在模型生成每一步 Token 時，動態比對字典樹並利用 <span class="note-information" tabindex="0" data-information-concept="concept.mask" data-information-lang="zh-tw">遮罩（Mask）<span class="note-information-tooltip" aria-hidden="true"></span></span> 過濾掉不合法的選項，強制限制模型只能在「真實存在的商品路徑」中進行搜尋與生成。</p>
+<p class="mb-3">因此，為防止系統推薦出空集合，推論階段必須引入<strong>約束解碼 (Constrained Decoding)</strong>。實務上通常會預先構建一棵龐大的 Trie Tree（字典樹）來儲存所有合法的商品 Token 序列。在模型生成每一步 Token 時，動態比對字典樹並利用 &lt;information context="遮罩（Mask）在不同領域有著不同的作用與含意：</p>
+
+<ul class="note-list">
+<li><strong>機器學習與深度學習</strong>：遮罩是一種張量或矩陣遮蔽機制。它常用於注意力機制（Attention Mask）、自迴歸生成或約束解碼（Constrained Decoding），透過將無效或不合法選項的 Logits 設為極小值（如 -inf），強制模型忽略無效 Token、遮蔽未來序列或過濾非法的生成路徑。</li>
+<li><strong>圖像處理與計算機圖形學</strong>：遮罩是一張二值或透明度矩陣，用於指定圖像中哪些區域需要保留、修改、合成或套用濾鏡。"&gt;遮罩（Mask）&lt;/information&gt; 過濾掉不合法的選項，強制限制模型只能在「真實存在的商品路徑」中進行搜尋與生成。</li>
+</ul>
 
 <h4 id="section-5" class="mb-2">痛點二：自迴歸解碼延遲</h4>
 

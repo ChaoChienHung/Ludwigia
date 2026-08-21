@@ -51,7 +51,7 @@ caption: 乘積量化 (Product Quantization, PQ) 運算機制與組合表示流�
 
 然而，當資料庫規模達到千萬、數億乃至十億級別時，高維向量檢索將立刻撞上**記憶體開銷與運算延遲的物理極限**：
 1. **記憶體爆炸：** 一筆 512 維的單精度浮點數（FP32）向量佔用 2 KB；十億筆向量光是靜態儲存就需要高達 **2 TB** 的超大記憶體，硬體維運成本極度昂貴。
-2. **計算延遲高牆：** 在線上推論時，若要計算查詢向量（Query）與全庫十億向量的 <information concept="concept.euclidean_distance">歐式距離</information>，哪怕使用 <information concept="concept.gpu">GPU</information> 進行廣義矩陣乘法（<information concept="concept.gemm">GEMM</information>），也無法滿足毫秒級（< 10ms）的即時響應需求。
+2. **計算延遲高牆：** 在線上推論時，若要計算查詢向量（Query）與全庫十億向量的 <information context="歐式距離（Euclidean Distance）是高維歐式空間中兩點之間的直線距離，計算公式為各維度座標差值平方和的平方根。">歐式距離</information>，哪怕使用 <information concept="concept.gpu">GPU</information> 進行廣義矩陣乘法（<information concept="concept.gemm">GEMM</information>），也無法滿足毫秒級（< 10ms）的即時響應需求。
 
 為了突破這座高牆，工業界在近似最近鄰搜尋（Approximate Nearest Neighbor Search, ANNS）領域發展出了無數演算法。而其中最經典、最具革命性、至今仍作為 Faiss 與各大向量資料庫（Vector Databases）心臟的底層演算法，正是由 Hervé Jégou 等人於 2010 年提出的 **乘積量化 (Product Quantization, PQ)**。
 

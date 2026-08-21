@@ -219,7 +219,7 @@ class CreateContentTests(unittest.TestCase):
     def test_information_concept_renders_placeholder_tooltip(self) -> None:
         style, _, _ = create_content._load_style(create_content._resolve_repo_dir(), "default")
         rendered, _ = create_content._markdown_to_html(
-            '<information concept="concept.eda">EDA</information>\n',
+            '<information concept="concept.supervised_learning">Supervised Learning</information>\n',
             style=style,
             doc_title="Info Concept",
             anchors={},
@@ -228,11 +228,11 @@ class CreateContentTests(unittest.TestCase):
             allow_raw_html=False,
             source_meta={"lang": "en"},
         )
-        self.assertIn('data-information-concept="concept.eda"', rendered)
+        self.assertIn('data-information-concept="concept.supervised_learning"', rendered)
         self.assertIn('data-information-lang="en"', rendered)
-        self.assertIn(">EDA<", rendered)
+        self.assertIn(">Supervised Learning<", rendered)
         self.assertIn('class="note-information-tooltip" aria-hidden="true"></span>', rendered)
-        self.assertNotIn("The preliminary phase of data analysis", rendered)
+        self.assertNotIn("Machine learning task", rendered)
 
     def test_information_self_closing_uses_localized_label(self) -> None:
         style, _, _ = create_content._load_style(create_content._resolve_repo_dir(), "default")

@@ -14,7 +14,7 @@
   <meta name="site:published_at" content="2026-08-02">
   <meta name="site:last_modified_at" content="2026-08-16">
   <meta name="site:cover" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png">
-  <meta name="site:reading_time_minutes" content="31">
+  <meta name="site:reading_time_minutes" content="32">
   <meta name="site:source" content="notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -249,7 +249,7 @@
 
 <p class="mb-3">說到「連續轉離散」，許多人腦海中浮現的第一個直覺通常是「空間分桶」。這就像是拿著一把刀，把多維空間劃分成等分的網格，只要資料落入同一個網格，我們就賦予它們同一個 ID。</p>
 
-<p class="mb-3">但當我們來到幾百維的商品向量空間時，這種做法會立刻撞上「<span class="note-information" tabindex="0" data-information-concept="concept.curse_of_dimensionality" data-information-lang="zh-tw">維度詛咒<span class="note-information-tooltip" aria-hidden="true"></span></span>」。真實世界的高維資料分佈往往極度不均，生硬的網格化不僅會產生海量根本沒有資料的「空桶」，白白浪費儲存資源；更致命的是，它完全無法捕捉資料真實的語意邊界。死板的網格線常常會把語意極為相近的商品硬生生切開，分到不同的桶子裡。</p>
+<p class="mb-3">但當我們來到幾百維的商品向量空間時，這種做法會立刻撞上「<span class="note-information" tabindex="0" aria-label="維度詛咒（Curse of Dimensionality）指當資料維度極高時，空間體積呈指數增長，導致資料點變得極度稀疏、歐式距離失去區分度，且網格劃分會產生海量無效空間的現象。">維度詛咒<span class="note-information-tooltip" aria-hidden="true">維度詛咒（Curse of Dimensionality）指當資料維度極高時，空間體積呈指數增長，導致資料點變得極度稀疏、歐式距離失去區分度，且網格劃分會產生海量無效空間的現象。</span></span>」。真實世界的高維資料分佈往往極度不均，生硬的網格化不僅會產生海量根本沒有資料的「空桶」，白白浪費儲存資源；更致命的是，它完全無法捕捉資料真實的語意邊界。死板的網格線常常會把語意極為相近的商品硬生生切開，分到不同的桶子裡。</p>
 
 <p class="mb-3">除此之外，網格化最大的盲點在於：網格只是一個人為劃定的幾何方塊，它的幾何中心通常無法反映內部資料的真實樣貌。當中心點沒有實質意義時，我們便無法賦予這個離散 ID 任何具體的「代表性語意」。</p>
 
@@ -287,7 +287,7 @@
   <strong><strong>單一碼本的兩難（量化失真 vs. 詞表爆炸）：</strong></strong><br>
   
   <ul class="mb-0 mt-2">
-<li><strong>若中心點數量 $K$ 太小（如 8192）：</strong> 雖然限制了詞表大小，但<span class="note-information" tabindex="0" data-information-concept="concept.quantization_distortion" data-information-lang="zh-tw">量化誤差<span class="note-information-tooltip" aria-hidden="true"></span></span>會極大。成千上萬個細節截然不同的商品會被強行擠進同一個碼字 ID 中，推薦結果將變得極度粗糙。</li>
+<li><strong>若中心點數量 $K$ 太小（如 8192）：</strong> 雖然限制了詞表大小，但<span class="note-information" tabindex="0" aria-label="量化誤差（Quantization Error / Distortion）指將連續高維向量強制映射並替換為離散碼字原型時，所造成的幾何距離損失與資訊偏離程度。">量化誤差<span class="note-information-tooltip" aria-hidden="true">量化誤差（Quantization Error / Distortion）指將連續高維向量強制映射並替換為離散碼字原型時，所造成的幾何距離損失與資訊偏離程度。</span></span>會極大。成千上萬個細節截然不同的商品會被強行擠進同一個碼字 ID 中，推薦結果將變得極度粗糙。</li>
 <li><strong>若中心點數量 $K$ 極大（如 100 萬）：</strong> 為了精確代表海量商品細節，Codebook 大小必須呈現指數級爆炸。這在記憶體儲存與近鄰搜尋的算力上完全不可行，本質上又退回了傳統 Atomic ID 詞表爆炸的老路。</li>
 </ul>
 </li>
@@ -341,10 +341,10 @@
 
 <p class="mb-3">在理想狀況下，我們會希望碼本中每個碼字都能被均勻命中。然而，高維特徵空間往往存在許多「空曠的角落」。若在大規模稀疏數據上直接運行 K-means，常會出現空群集（Empty Clusters）：碼本中僅有少數幾個中心點被頻繁激活，其餘中心點則徹底閒置。這在量化領域被稱為「<span class="note-information" tabindex="0" data-information-concept="concept.dead_code" data-information-lang="zh-tw">死碼 (Dead Code)<span class="note-information-tooltip" aria-hidden="true"></span></span>」現象，它會嚴重浪費寶貴的詞表容量，導致特徵表達能力驟降。</p>
 
-<p class="mb-3">為了解決死碼問題，業界通常不會單純依賴基礎版 K-means，而是升級採用<strong>正則化殘差量化（Regularized Residual Quantization, RRQ）</strong>。透過引入<span class="note-information" tabindex="0" data-information-concept="concept.reverse_water_filling" data-information-lang="zh-tw">反向水閥原則 (Reverse Water-Filling)<span class="note-information-tooltip" aria-hidden="true"></span></span>，在優化過程中施加強制約束：</p>
+<p class="mb-3">為了解決死碼問題，業界通常不會單純依賴基礎版 K-means，而是升級採用<strong>正則化殘差量化（Regularized Residual Quantization, RRQ）</strong>。透過引入<span class="note-information" tabindex="0" aria-label="反向水閥原則（Reverse Water-Filling）是資訊理論中率失真優化的策略。它僅對變異數高於門檻的顯著訊號維度進行精細量化，而捨棄微小變異數的純雜訊維度，避免模型為了擬合雜訊而浪費資源。">反向水閥原則 (Reverse Water-Filling)<span class="note-information-tooltip" aria-hidden="true">反向水閥原則（Reverse Water-Filling）是資訊理論中率失真優化的策略。它僅對變異數高於門檻的顯著訊號維度進行精細量化，而捨棄微小變異數的純雜訊維度，避免模型為了擬合雜訊而浪費資源。</span></span>，在優化過程中施加強制約束：</p>
 
 <ul class="note-list">
-<li><strong>動態維度選擇：</strong> 在深層的殘差空間中，數據在某些維度的變異數早已大幅衰減，僅剩無意義的雜訊。RRQ 僅對變異數高於特定臨界值的維度進行量化，避免模型為了擬合雜訊而發生<span class="note-information" tabindex="0" data-information-concept="concept.overfitting" data-information-lang="zh-tw">過擬合 (Overfitting)<span class="note-information-tooltip" aria-hidden="true"></span></span>，進而浪費碼字資源。</li>
+<li><strong>動態維度選擇：</strong> 在深層的殘差空間中，數據在某些維度的變異數早已大幅衰減，僅剩無意義的雜訊。RRQ 僅對變異數高於特定臨界值的維度進行量化，避免模型為了擬合雜訊而發生<span class="note-information" tabindex="0" aria-label="過擬合是機器學習裡的一種失敗模式。它發生在模型把訓練資料貼得太緊、連雜訊與偶然細節都一起記住時，因此模型看起來也許很會解釋歷史資料，卻沒有真正抓住能泛化到新資料的規律。">過擬合 (Overfitting)<span class="note-information-tooltip" aria-hidden="true">過擬合是機器學習裡的一種失敗模式。它發生在模型把訓練資料貼得太緊、連雜訊與偶然細節都一起記住時，因此模型看起來也許很會解釋歷史資料，卻沒有真正抓住能泛化到新資料的規律。</span></span>，進而浪費碼字資源。</li>
 <li><strong>變異數懲罰項：</strong> 在原本的平方誤差優化目標中，強行加入變異數匹配懲罰，約束各層碼本的使用分佈必須更加均勻。透過最大化資訊熵，強迫模型調動所有碼字，讓碼本的利用率逼近 100%。</li>
 </ul>
 
@@ -356,7 +356,7 @@
 
 <p class="mb-3">在量化過程中，我們看似只需在每一層挑選距離最近的中心點，就能組合出代表該商品的 SID 序列。但這種「每一步都選擇當下最近」的短視策略，真的能找到最適合描述該商品的全局最佳解嗎？</p>
 
-<p class="mb-3">答案是否定的。一方面，<strong>單步最優的歐氏距離，並不完全等同於全局最優的語意還原</strong>；另一方面，前幾層的選擇會直接決定下一層殘差的空間走向。局部微小的偏差極易引發「<span class="note-information" tabindex="0" data-information-concept="concept.domino_effect" data-information-lang="zh-tw">骨牌效應 (Domino Effect)<span class="note-information-tooltip" aria-hidden="true"></span></span>」，導致後續的選擇全數落入次優陷阱。僅憑眼前的距離做硬性決策，容易使最終產出的離散序列偏離商品整體的真實語意。</p>
+<p class="mb-3">答案是否定的。一方面，<strong>單步最優的歐氏距離，並不完全等同於全局最優的語意還原</strong>；另一方面，前幾層的選擇會直接決定下一層殘差的空間走向。局部微小的偏差極易引發「<span class="note-information" tabindex="0" aria-label="骨牌效應指在逐層貪婪解碼中，前幾層若發生微小選擇偏差，會直接改變後續殘差空間的走向，導致後續所有層級被迫在次優空間尋找中心，引發『一步錯，步步錯』的幾何重構失真。">骨牌效應 (Domino Effect)<span class="note-information-tooltip" aria-hidden="true">骨牌效應指在逐層貪婪解碼中，前幾層若發生微小選擇偏差，會直接改變後續殘差空間的走向，導致後續所有層級被迫在次優空間尋找中心，引發『一步錯，步步錯』的幾何重構失真。</span></span>」，導致後續的選擇全數落入次優陷阱。僅憑眼前的距離做硬性決策，容易使最終產出的離散序列偏離商品整體的真實語意。</p>
 
 <p class="mb-3">這就如同大型語言模型在生成文本時，若每次都只挑選機率最高的單字，往往會產出語意不連貫的句子。理論上，要達到絕對最優解必須依賴暴力搜尋，但這在實務上極不切實際。因此，我們必須在「運算效率」與「全局最優」之間做出取捨，根據應用場景選擇合適的解碼策略：</p>
 
@@ -389,13 +389,13 @@
 <li>
   <strong><strong>離線商品 Token 化與字典樹建構 (Offline Tokenization &amp; Trie Construction)：</strong></strong><br>
   
-<p class="mb-2">量化器訓練完成後，便轉化為離線的 Tokenizer。系統會遍歷百萬甚至數億級別的商品庫，將每個物品的連續向量輸入 RQ-Kmeans，並搭配束搜尋降低重構失真，將其轉換為長度為 $M$ 的離散 SID 序列。與此同時，系統會將所有在商品庫中真實存在的合法 SID 組合，建構成一棵高效的<span class="note-information" tabindex="0" data-information-concept="concept.trie" data-information-lang="zh-tw">字典樹<span class="note-information-tooltip" aria-hidden="true"></span></span>。這一步至關重要，因為它能在後續線上推論時提供<span class="note-information" tabindex="0" data-information-concept="concept.constrained_decoding" data-information-lang="zh-tw">約束解碼<span class="note-information-tooltip" aria-hidden="true"></span></span>，防止大模型「幻覺」出根本不存在的商品。</p>
+<p class="mb-2">量化器訓練完成後，便轉化為離線的 Tokenizer。系統會遍歷百萬甚至數億級別的商品庫，將每個物品的連續向量輸入 RQ-Kmeans，並搭配束搜尋降低重構失真，將其轉換為長度為 $M$ 的離散 SID 序列。與此同時，系統會將所有在商品庫中真實存在的合法 SID 組合，建構成一棵高效的<span class="note-information" tabindex="0" data-information-concept="concept.trie" data-information-lang="zh-tw">字典樹<span class="note-information-tooltip" aria-hidden="true"></span></span>。這一步至關重要，因為它能在後續線上推論時提供<span class="note-information" tabindex="0" aria-label="約束解碼（Constrained Decoding）是一種生成控制技術。在自迴歸推論的每一步驟，強迫模型只能從預先構建好的合法字典樹（Trie）分支中採樣下一個 Token，完全避免生成無效或虛構的商品序列。">約束解碼<span class="note-information-tooltip" aria-hidden="true">約束解碼（Constrained Decoding）是一種生成控制技術。在自迴歸推論的每一步驟，強迫模型只能從預先構建好的合法字典樹（Trie）分支中採樣下一個 Token，完全避免生成無效或虛構的商品序列。</span></span>，防止大模型「幻覺」出根本不存在的商品。</p>
   
 </li>
 <li>
   <strong><strong>自迴歸推薦模型訓練 (Generative Model Training)：</strong></strong><br>
   
-<p class="mb-2">有了 SID，推薦任務正式轉變為語言生成任務。系統會將用戶的歷史行為序列逐一轉為 SID Token 並展平。例如，用戶先後瀏覽了 <code>[ItemA, ItemB]</code>，資料便會被轉換為一長串連續的 SID 序列（如 <code>[12, 255, 7, 98, 56, 101, 23, 42]</code>）。這些序列會被送入 <span class="note-information" tabindex="0" data-information-concept="concept.transformer" data-information-lang="zh-tw">Transformer<span class="note-information-tooltip" aria-hidden="true"></span></span> 等大模型骨幹網路，以標準的<span class="note-information" tabindex="0" data-information-concept="concept.cross_entropy_loss" data-information-lang="zh-tw">交叉熵損失<span class="note-information-tooltip" aria-hidden="true"></span></span>進行 Next-Token 預測訓練，讓模型學會從用戶的過去推論未來的商品階層。</p>
+<p class="mb-2">有了 SID，推薦任務正式轉變為語言生成任務。系統會將用戶的歷史行為序列逐一轉為 SID Token 並展平。例如，用戶先後瀏覽了 <code>[ItemA, ItemB]</code>，資料便會被轉換為一長串連續的 SID 序列（如 <code>[12, 255, 7, 98, 56, 101, 23, 42]</code>）。這些序列會被送入 <span class="note-information" tabindex="0" data-information-concept="concept.transformer" data-information-lang="zh-tw">Transformer<span class="note-information-tooltip" aria-hidden="true"></span></span> 等大模型骨幹網路，以標準的<span class="note-information" tabindex="0" aria-label="交叉熵損失（Cross-Entropy Loss）是用於衡量真實類別分佈與模型預測概率分佈之間差異的損失函數，是自迴歸模型訓練與 Next-Token 預測時的最標準優化目標。">交叉熵損失<span class="note-information-tooltip" aria-hidden="true">交叉熵損失（Cross-Entropy Loss）是用於衡量真實類別分佈與模型預測概率分佈之間差異的損失函數，是自迴歸模型訓練與 Next-Token 預測時的最標準優化目標。</span></span>進行 Next-Token 預測訓練，讓模型學會從用戶的過去推論未來的商品階層。</p>
   
 </li>
 <li>
@@ -404,7 +404,7 @@
 <p class="mb-2">在線上即時推薦階段，模型會根據用戶最新的歷史軌跡，自迴歸預測出接下來的 $M$ 個 SID Tokens。實務上為了兼顧「精確性」與「泛化性」，通常會設立兩種平行的召回分支：</p>
   <ul class="mb-0 mt-2">
 <li><strong>精準 SID 直比對：</strong> 直接利用先前建構的字典樹進行約束解碼，確保模型生成的完整 SID 絕對合法，並直接將其精準映射回實體商品 ID 推薦給用戶。</li>
-<li><strong>重構向量 ANNS 召回：</strong> 將模型生成的 $M$ 個 Token 倒推，從碼本中取出對應的中心點碼字並求和，重構出代表使用者潛在興趣的「幾何向量」 $\hat{x}_{\text{pred}}$。隨後，將這個向量放進 <span class="note-information" tabindex="0" data-information-concept="concept.anns" data-information-lang="zh-tw">ANNS<span class="note-information-tooltip" aria-hidden="true"></span></span>（近似最近鄰搜尋）引擎中，在連續空間進行相似度擴展召回。這能有效挖掘出雖然不完全符合生成 SID，但幾何特徵極為相近的新穎商品。</li>
+<li><strong>重構向量 ANNS 召回：</strong> 將模型生成的 $M$ 個 Token 倒推，從碼本中取出對應的中心點碼字並求和，重構出代表使用者潛在興趣的「幾何向量」 $\hat{x}_{\text{pred}}$。隨後，將這個向量放進 <span class="note-information" tabindex="0" aria-label="近似最近鄰搜尋（ANNS / Approximate Nearest Neighbor Search）是向量檢索的核心技術（如 HNSW、IVF）。透過建構近似索引結構，以些許精準度為代價換取毫秒級的海量向量相近度檢索。">ANNS<span class="note-information-tooltip" aria-hidden="true">近似最近鄰搜尋（ANNS / Approximate Nearest Neighbor Search）是向量檢索的核心技術（如 HNSW、IVF）。透過建構近似索引結構，以些許精準度為代價換取毫秒級的海量向量相近度檢索。</span></span>（近似最近鄰搜尋）引擎中，在連續空間進行相似度擴展召回。這能有效挖掘出雖然不完全符合生成 SID，但幾何特徵極為相近的新穎商品。</li>
 </ul>
 </li>
 </ol>
@@ -415,7 +415,7 @@
 
 <p class="mb-3">然而，在真實的工業落地時，RQ-VAE 面臨極大的工程考驗。它高度依賴不可微的 <strong>Straight-Through Estimator (STE)</strong> 來近似傳遞梯度，導致訓練過程極度不穩定，極易面臨碼本坍塌，且調參成本極為高昂。</p>
 
-<p class="mb-3">相較之下，<strong>RQ-Kmeans 展現了無與倫比的務實度</strong>。由於它是純粹的幾何演算法驅動，無梯度傳播，純 EM 演算法優化讓其收斂具備強大的數學保證。更重要的是，它具備極佳的 <span class="note-information" tabindex="0" data-information-concept="concept.plug_and_play" data-information-lang="zh-tw"><strong>Plug-and-Play</strong><span class="note-information-tooltip" aria-hidden="true"></span></span> 特性，能夠直接無縫接入現有模型產出的高品質 Embedding，完全無需重構上游的特徵管線。</p>
+<p class="mb-3">相較之下，<strong>RQ-Kmeans 展現了無與倫比的務實度</strong>。由於它是純粹的幾何演算法驅動，無梯度傳播，純 EM 演算法優化讓其收斂具備強大的數學保證。更重要的是，它具備極佳的 <span class="note-information" tabindex="0" aria-label="隨插即用（Plug-and-Play）指模組化的架構設計特性。模組能夠直接銜接與複用系統既有的特徵管道與預訓練 Embedding 向量資產，無須重構或重新訓練上游系統即可直接運作。"><strong>Plug-and-Play</strong><span class="note-information-tooltip" aria-hidden="true">隨插即用（Plug-and-Play）指模組化的架構設計特性。模組能夠直接銜接與複用系統既有的特徵管道與預訓練 Embedding 向量資產，無須重構或重新訓練上游系統即可直接運作。</span></span> 特性，能夠直接無縫接入現有模型產出的高品質 Embedding，完全無需重構上游的特徵管線。</p>
 
 <p class="mb-3"><strong>💡 實務混用策略 (Hybrid Strategy)：</strong> 針對這兩者的優劣，業界常見的 Best Practice 是採用「<span class="note-information" tabindex="0" data-information-concept="concept.warmup" data-information-lang="zh-tw">熱啟動<span class="note-information-tooltip" aria-hidden="true"></span></span>」策略：先利用 RQ-Kmeans 在離線快速聚類出穩健的初始碼本，作為 RQ-VAE 的初始化權重，隨後再進行神經網路的端到端微調。這完美兼顧了幾何量化的穩定性與神經網路微調的效能上限空間。</p></div>
 </section>

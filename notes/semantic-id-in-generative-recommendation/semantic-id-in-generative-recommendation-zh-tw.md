@@ -79,7 +79,7 @@ caption: Traditional ID 與 Semantic ID 的編碼理念對比示意圖。
 
 我們會觀察到，大部分的實體在某些方面，會與另一群實體共享著「大方向」的特徵，這意味著我們可以將這群實體歸納為同一類。即便它們被歸為同一類，同類內的每個物品之間，依然存在著除共享特徵之外的細微差異。因此，我們可以在原本的「大特徵類群」之上，繼續進行更細部的拆分。
 
-透過這種方式，我們就能將原本需要處理的龐大實體數，利用「不斷分類並在此基礎上繼續拆分」的原理，簡化為單純的「處理分類數」問題。這本質上就是利用數學的**<information concept="concept.rule_of_product">乘法原理</information>（Combinatorial Power）**，大大壓縮了系統需要處理的資訊量。
+透過這種方式，我們就能將原本需要處理的龐大實體數，利用「不斷分類並在此基礎上繼續拆分」的原理，簡化為單純的「處理分類數」問題。這本質上就是利用數學的**<information context="乘法原理（Rule of Product / Combinatorial Power）是組合計數中的基本原則。指的是當一個選擇或系統可拆解為 M 個獨立的階層階段、且每階段有 K 個選項時，整體組合狀態數會以乘積 K^M 指數級擴展，用極少的基礎元件量撐起龐大的組合表達空間。">乘法原理</information>（Combinatorial Power）**，大大壓縮了系統需要處理的資訊量。
 
 舉個簡單的例子：假設我們原本需要處理的實體數量高達 1,000,000 個，這是一個極度龐大的數字！但如果我們想辦法將它處理成「100 個大分類 $\times$ 每個大分類裡有 100 個中分類 $\times$ 每個中分類裡有 100 個小分類」，這樣一來，我們真正需要認識與處理的基礎分類數，就只有 $100 + 100 + 100 = 300$ 個！非常神奇且高效。
 
@@ -177,7 +177,7 @@ content:
      以 Google TIGER (NeurIPS 2022) 為代表。透過變分自編碼器（Encoder、Codebooks、Decoder）與 Straight-Through Estimator (STE) 梯度技巧，讓神經網路主動學習符合「下游推薦任務」的潛在語意空間。這條路線能將推薦效果推向極致（SOTA），但訓練成本與調參難度較高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation">端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer</content-link> 中有更完整的介紹。
 
 2. **兩階段幾何量化路線 (RQ-Kmeans)：**
-     以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <information concept="concept.k_means">K-means</information> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer</content-link> 中有更完整的介紹。
+     以快手 OneRec (2024) 等前沿實踐為代表。先複用既有模型（如雙塔 DSSM）產生高品質的靜態商品 Embedding，再經由純粹的幾何殘差 <information context="K-Means 是一種中心點式分群演算法。它會用一個中心代表一群資料，並反覆把資料點分配給最近的中心，因此特別適合每一群都能被相對集中的中心概括的情境。">K-means</information> 聚類切分成 Token 序列。這條路線避開了複雜的梯度優化問題，工程穩定性與 CP 值極高。若想更深入了解其背後的細節，我在 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">解構 Semantic ID：為什麼 RQ-Kmeans 是生成式推薦最穩健的 Tokenizer</content-link> 中有更完整的介紹。
 
 ## 實務挑戰與工程權衡：SID 的深層痛點
 
@@ -186,7 +186,9 @@ content:
 ### 痛點一：無效 SID 生成與幻覺
 大模型是基於機率分佈進行自迴歸生成的。這意味著模型在推論時極有可能發生「幻覺」，並組合出一串在真實商品庫中根本不存在的 Semantic ID（例如模型合理地推導出一個「蘋果牌微波爐」的 Token 序列，但現實中沒有這個實體商品）。
 
-因此，為防止系統推薦出空集合，推論階段必須引入**約束解碼 (Constrained Decoding)**。實務上通常會預先構建一棵龐大的 Trie Tree（字典樹）來儲存所有合法的商品 Token 序列。在模型生成每一步 Token 時，動態比對字典樹並利用 <information concept="concept.mask">遮罩（Mask）</information> 過濾掉不合法的選項，強制限制模型只能在「真實存在的商品路徑」中進行搜尋與生成。
+因此，為防止系統推薦出空集合，推論階段必須引入**約束解碼 (Constrained Decoding)**。實務上通常會預先構建一棵龐大的 Trie Tree（字典樹）來儲存所有合法的商品 Token 序列。在模型生成每一步 Token 時，動態比對字典樹並利用 <information context="遮罩（Mask）在不同領域有著不同的作用與含意：
+- **機器學習與深度學習**：遮罩是一種張量或矩陣遮蔽機制。它常用於注意力機制（Attention Mask）、自迴歸生成或約束解碼（Constrained Decoding），透過將無效或不合法選項的 Logits 設為極小值（如 -inf），強制模型忽略無效 Token、遮蔽未來序列或過濾非法的生成路徑。
+- **圖像處理與計算機圖形學**：遮罩是一張二值或透明度矩陣，用於指定圖像中哪些區域需要保留、修改、合成或套用濾鏡。">遮罩（Mask）</information> 過濾掉不合法的選項，強制限制模型只能在「真實存在的商品路徑」中進行搜尋與生成。
 
 ### 痛點二：自迴歸解碼延遲
 傳統推薦模型只需一次 <information concept="concept.forward_pass">前向傳播（Forward Pass）</information> 就能給所有候選商品打分。但生成式模型每推薦一個商品，必須依次等待 $M$ 次的自迴歸解碼。
