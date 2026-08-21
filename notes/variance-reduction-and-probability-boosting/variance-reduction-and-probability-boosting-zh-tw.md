@@ -128,9 +128,7 @@ $$2 e^{-\frac{k}{100}} = \delta \implies k = \Theta\left(\log \frac{1}{\delta}\r
 在許多高級演算法中，我們常**組合使用**：先用 Mean Trick 降低方差獲得一個成功率稍微大於 $1/2$ 的估計器，再外包一層 Median Trick 將成功率推至 $1 - \delta$！
 
 <reviewkit>
-  <qprompt>
-    為什麼 Median Trick 要求基礎估計器的失敗率必須嚴格小於 $1/2$（如 $1/3$）？如果基礎估計器的失敗率等於 $0.6$，取中位數還能放大成功率嗎？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - Mean Trick 透過求平均將無偏估計器的方差按比例 $k$ 線性壓低。
     - Median Trick 利用中位數抵抗偏離，只需 $\mathcal{O}(\log(1/\delta))$ 次重複即可將成功率拉高至 $1 - \delta$。

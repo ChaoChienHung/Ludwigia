@@ -102,9 +102,7 @@ $$\operatorname{Pr}[|X - \mathbb{E}[X]| \ge \varepsilon n] \le \frac{\operatorna
 當 $n \to \infty$ 時，該機率趨近於 0，證明了空桶數量極度集中在期望值 $\frac{n}{e}$ 附近！
 
 <reviewkit>
-  <qprompt>
-    在計算隨機變數和的方差時，為什麼 Pairwise Independence（成對獨立）就足以讓 Covariance 項歸零？這與 Fully Independent（全獨立）在要求上有何本質區別？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - Chebyshev 不等式將偏差機率界限提升至二次方反比衰減 $\mathcal{O}(1/k^2)$。
     - 證明的核心是將 $(X - \mu)^2$ 視為非負隨機變數並套用 Markov 不等式。

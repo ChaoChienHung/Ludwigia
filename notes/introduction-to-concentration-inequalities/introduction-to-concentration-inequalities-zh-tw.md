@@ -9,7 +9,7 @@ Lang: zh-tw
 Tags: algorithm, probability, concentration inequalities, markov inequality, chebyshev inequality, chernoff bound, union bound
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-08-20
+LastModified: 2026-08-21
 </meta>
 
 <draft>
@@ -124,7 +124,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
 如果我們將上述公式中的 $\epsilon$ 或者是 $t$ 視為模型的「泛化誤差」，我們實際上就能利用這些工具推導出一個嚴謹的界限，並自信地宣告：「**存在至少不低於 $1 - \delta'$ 的機率，我們的模型泛化誤差會被 $\epsilon$ 所界定！**」這完美解答了學習理論中許多關鍵問題的核心——即量化模型的可靠程度。
 
 <reviewkit>
-  <takeaways>
+<takeaways>
     - **核心思維：用資訊換取緊緻度（Information-Tightness Trade-off）**：集中不等式的底層邏輯在於，我們掌握的隨機變數資訊越多，從一階動差的期望值、二階動差的變異數，一路提升到動差生成函數 MGF，我們就能將 Tail Bounds 縮得越緊。這是一個從 $\mathcal{O}(1/t)$ 漸進到指數級 $e^{-\Omega(t^2)}$ 衰減的升級過程。
     - **Union Bound 的無條件疊加超能力**：在真實系統中，壞事件，像是不同節點同時當機這類情況，往往具有複雜的相關性。Union Bound 的強大之處在於它不要求任何獨立性，直接將各壞事機率相加作為總風險上限。它是演算法分析中結合多種失敗情境的最強保底工具。
     - **實務應用與陷阱**：以經典的 Balls & Bins 模型為例，如果我們將球投入桶子，一個桶子變滿會略微降低其他桶子變滿的機率，在統計上我們稱之為弱負相關（Negative Correlation）。在使用進階工具如 Chebyshev 或 Chernoff 時，我們必須非常謹慎地檢驗獨立性條件，若不滿足嚴格獨立，則需要透過替代證明，例如 Poissonization 技巧，來合法套用不等式。
@@ -138,9 +138,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
     | **Chernoff Bound** | 互相獨立有界 $X = \sum X_i$ | 無限階動差：動差生成函數 MGF | 指數級衰減 $e^{-\Omega(t^2)}$ | 獨立試驗總和，提供極強的機率保證 |
     | **Union Bound** | 任意事件集合，無條件適用 | 知道各事件發生的機率 | 線性疊加 $\sum \operatorname{Pr}[A_i]$ | 結合多個壞事件計算總失敗率 |
   </takeaways>
-  <qprompt>
-    在 Balls & Bins 模型中，當我們分析空桶數量時，為什麼 $X_i$ 與 $X_j$（第 $i$ 與第 $j$ 個桶子是否為空）不是互相獨立的？這對選擇集中不等式有何影響？
-  </qprompt>
+  <qprompt/>
 </reviewkit>
 
 ## 參考資料（References）

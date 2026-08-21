@@ -89,9 +89,7 @@ $$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 0.9$$
 例如，若我們將隨機變數重複獨立運行 $n$ 次，經驗告訴我們偏差應該會以指數級衰減；但 Markov 不等式只給出了多項式級 $\mathcal{O}(1/a)$ 的衰減速度。這是因為它完全沒有利用到方差（Variance）或高階矩（Higher Moments）的資訊。
 
 <reviewkit>
-  <qprompt>
-    為什麼 Markov 不等式必須嚴格要求隨機變數為「非負（$X \ge 0$）」？如果隨機變數可能取負值，該不等式會在哪一個證明步驟失效？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - Markov 不等式只需要非負前提與一階矩 $\mathbb{E}[X]$。
     - 形式 $\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le 1/\alpha$ 是評估隨機演算法 Worst-case 時間上限的保底工具。

@@ -117,9 +117,7 @@ $$\mathbb{E}[X_i] = 1 \cdot \operatorname{Pr}[E_i] + 0 \cdot \operatorname{Pr}[\
 這正是**集中現象（Concentration of Measure）**與**集中不等式（Concentration Inequalities）**要解決的核心課題。
 
 <reviewkit>
-  <qprompt>
-    為什麼「期望值的線性（Linearity of Expectation）」在分析複雜隨機結構（如 Balls & Bins、隨機圖）時如此強大？其成立是否需要隨機變數互相獨立？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - 隨機化演算法分為 Las Vegas（答案保證正確，時間為隨機變數）與 Monte Carlo（時間有界，結果存在小機率失敗）。
     - 期望值的線性（Linearity of Expectation）對任意隨機變數皆成立，**完全不需要獨立性條件**。

@@ -112,9 +112,7 @@ $$\text{總查詢數} = \mathcal{O}\left(\frac{1}{\varepsilon^2}\right) \times \
 在完全不對圖結構做任何假設的前提下，我們依然達成了**與頂點總數 $n$ 無關的常數亞線性查詢複雜度 $\mathcal{O}(1/\varepsilon^3)$**！
 
 <reviewkit>
-  <qprompt>
-    為什麼恆等式 $C = \sum_{v \in V} \frac{1}{|C(v)|}$ 在設計亞線性演算法時如此關鍵？若直接計算每個頂點所屬分量的編號（Component ID），為什麼無法達到亞線性？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - 透過倒數和恆等式 $C = \sum \frac{1}{|C(v)|}$，連通分量估算轉化為頂點局部貢獻的平均值估計。
     - 組件大小有界時，BFS 最多探索 $B$ 個頂點，查詢複雜度為 $\mathcal{O}(B^2 / \varepsilon^2)$。

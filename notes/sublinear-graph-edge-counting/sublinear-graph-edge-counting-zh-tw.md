@@ -145,9 +145,7 @@ $$\text{總查詢數} = \sum_{m' = m}^{n^2} \Theta\left(\frac{n \log \log n}{\va
 利用 Union Bound 結合所有猜測步驟的失敗率，整體算法以高機率返回 $(1+\varepsilon)$-近似值！
 
 <reviewkit>
-  <qprompt>
-    在 Heavy/Light 分割中，為什麼要將 Heavy 集合 $H$ 的大小剛好定為 $2m$？這個常數對 Lemma 1 與 Lemma 2 的矛盾證明起到了什麼關鍵作用？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - 加性誤差在稀疏圖中失效，必須採用乘性誤差與 Adjacency-list 模型。
     - 頂點全序與轉向邊計數將估計量轉化為無偏估計 $\mathbb{E}[X] = m/n$。

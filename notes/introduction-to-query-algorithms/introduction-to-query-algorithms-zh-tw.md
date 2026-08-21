@@ -111,9 +111,7 @@ $$(1 - \varepsilon) A \le \hat{A} \le (1 + \varepsilon) A$$
 4. **成功率放大（Boosting）**：利用 Median Trick 將成功率提升至任意高的 $1 - \delta$。
 
 <reviewkit>
-  <qprompt>
-    為什麼在稀疏圖（Sparse Graphs）中，使用 Adjacency-matrix 模型進行邊數估計往往是不合適的？這與加性誤差（Additive Error）有何關聯？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - 亞線性演算法透過 Oracle 隨機抽樣，將查詢複雜度降低至 $\mathcal{O}(o(N))$。
     - 圖論查詢模型分為稠密圖專用的 Adjacency-matrix 與稀疏圖專用的 Adjacency-list。

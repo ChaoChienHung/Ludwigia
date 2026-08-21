@@ -105,9 +105,7 @@ $$\operatorname{Pr}[\text{無空桶}] = 1 - \operatorname{Pr}[\text{存在空桶
 這是一個典型的 High Probability（$1 - \mathcal{O}(n^{-k})$）保證！
 
 <reviewkit>
-  <qprompt>
-    在 Chernoff Bound 的推導中，為什麼對 $e^{tX}$ 取矩生成函數 (MGF) 能將獨立隨機變數的「和」轉化為「積」？這與指數函數的何種代數性質有關？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - Chernoff Bound 適用於獨立試驗和，利用矩生成函數 (MGF) 獲得指數級衰減。
     - 相比 Chebyshev 的多項式衰減，Chernoff 能提供 $n^{-\Omega(1)}$ 等極強的概率界限。

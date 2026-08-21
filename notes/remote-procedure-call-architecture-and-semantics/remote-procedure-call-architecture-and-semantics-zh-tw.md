@@ -144,9 +144,7 @@ Client Application           Client Stub              Server Daemon / Stub      
 ---
 
 <reviewkit>
-  <qprompt>
-    在 RPC 系統中，為什麼 Parameter Marshaling（參數序列化）是必要的？如果兩台電腦皆為同款 X86 CPU，是否可以直接傳遞記憶體指標（Memory Pointers）？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - **從 IPC 到 RPC**：RPC 將本機程序呼叫擴展至分散式網路，透過訊息傳遞克服實體機器無法共享記憶體的限制。
     - **核心角色 Stub**：Client Stub 負責代理與 Marshaling；Server Stub 負責 Unmarshaling 與本機函式派送。

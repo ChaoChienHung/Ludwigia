@@ -117,9 +117,7 @@ $$\operatorname{Pr}[\text{失敗}] = \operatorname{Pr}[E_1 \cup E_2] \le \operat
 故**整體成功找到近中位數的機率至少為 $80\%$**！
 
 <reviewkit>
-  <qprompt>
-    在 Counting 1s 與 Median Approximation 中，所需的抽樣數 $k = \mathcal{O}(1/\varepsilon^2)$ 都與資料總量 $n$ **完全無關**。這背後的直覺原因是什麼？
-  </qprompt>
+<qprompt/>
   <takeaways>
     - Counting 1s 透過均勻抽樣 $k = \mathcal{O}(1/\varepsilon^2)$ 個位置，能在常數時間內獲得加性誤差 $\varepsilon n$ 的無偏估算。
     - Sample Median 利用樣本中位數估算總體中位數，利用 Chernoff Bound 與 Union Bound 證明其成功率高於 $80\%$。
