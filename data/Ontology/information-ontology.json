@@ -535,8 +535,8 @@
         "zh-Hans": "期望值"
       },
       "contexts": {
-        "en": "The long-run average value of repetitions of the experiment it represents.",
-        "zh-Hant": "隨機變數試驗長期重複試驗結果的算術平均值。",
+        "en": "Expectation (or Expected Value) is the foundational first-moment statistical measure representing the weighted long-term average outcome of a random variable.",
+        "zh-Hant": "期望值（Expectation / Expected Value）是機率統計中的核心一階動差指標，代表隨機變數在大量重複試驗下結果的加權算術平均值。",
         "zh-Hans": "随机变量试验长期重复试验结果的算术平均值。"
       },
       "aliases": [
@@ -552,8 +552,8 @@
         "zh-Hans": "集中不等式"
       },
       "contexts": {
-        "en": "Mathematical bounds on the probability of a random variable deviating from a value, such as its expectation.",
-        "zh-Hant": "用於限制隨機變數偏離其期望值範圍上界的數學不等式工具箱。",
+        "en": "Concentration Inequalities are a mathematical toolkit in probability theory used to bound the probability that a random variable deviates from its expectation.",
+        "zh-Hant": "集中不等式（Concentration Inequalities）是機率論中用於界定隨機變數偏離其期望值機率上界的數學工具箱。",
         "zh-Hans": "用于限制随机变量偏离其期望值范围上界的数学不等式工具箱。"
       },
       "aliases": [
@@ -569,8 +569,8 @@
         "zh-Hans": "尾端界限 (Tail Bound)"
       },
       "contexts": {
-        "en": "An upper bound on the probability of extreme values occurring in a random variable.",
-        "zh-Hant": "限制隨機變數出現極端偏離值的機率上界估計。",
+        "en": "Tail Bounds are mathematical estimates in probability theory that bound the probability of a random variable exhibiting extreme deviations from its mean.",
+        "zh-Hant": "尾端界限（Tail Bound）是機率統計中用來限制隨機變數極端偏離值（壞事件）發生機率上限的數學估計。",
         "zh-Hans": "限制随机变量出现极端偏离值的概率上界估计。"
       },
       "aliases": [
@@ -585,8 +585,8 @@
         "zh-Hans": "概率密度函数 (PDF)"
       },
       "contexts": {
-        "en": "A function whose integral over a given region provides the probability that a continuous random variable falls within that region.",
-        "zh-Hant": "連續型隨機變數的基礎函數，在其某區間上的積分代表隨機變數落於該區間的機率。",
+        "en": "Probability Density Function (PDF) is a fundamental function for continuous random variables whose integral over an interval gives the probability of the variable landing in that interval.",
+        "zh-Hant": "機率密度函數（Probability Density Function, PDF）是連續型隨機變數的基礎描述函數，在其特定區間上的定積分代表變數落於該區間的機率。",
         "zh-Hans": "连续型随机变量的基础函数，在其某区间上的积分代表随机变量落于该区间的概率。"
       },
       "aliases": [
@@ -605,8 +605,8 @@
         "zh-Hans": "数学积分"
       },
       "contexts": {
-        "en": "The mathematical process of calculating the total accumulation of a quantity, such as area under a probability density curve.",
-        "zh-Hant": "微積分中用以計算連續空間累積量或機率密度函數曲線下總面積的數學運算。",
+        "en": "Mathematical Integration is a fundamental operation in calculus and probability used to compute total accumulated area under continuous curves such as probability density functions.",
+        "zh-Hant": "數學積分（Mathematical Integration）是微積分與機率論中的核心運算，用來計算連續空間中的累積量或機率密度函數曲線下的總面積。",
         "zh-Hans": "微积分中用以计算连续空间累积量或概率密度函数曲线下总面积的数学运算。"
       },
       "aliases": [
@@ -623,8 +623,8 @@
         "zh-Hans": "概率集中现象"
       },
       "contexts": {
-        "en": "The phenomenon where a random variable composed of many small random factors concentrates strongly around its expectation.",
-        "zh-Hant": "當隨機變數由許多微小獨立或弱相關因子共同決定時，其數值以極高機率緊密集中於期望值附近的宏觀確定性現象。",
+        "en": "Concentration of Measure is a high-dimensional phenomenon where a random variable composed of many small random factors strongly concentrates around its mean with high probability.",
+        "zh-Hant": "機率集中現象（Concentration of Measure）是高維機率統計中的巨觀現象，指當隨機變數由許多微小因子組合而成時，其總體數值會以極高機率緊密集中於期望值附近。",
         "zh-Hans": "当随机变量由许多微小独立或弱相关因子共同决定时，其数值以极高概率紧密集中于期望值附近的宏观确定性现象。"
       },
       "aliases": [
@@ -642,8 +642,8 @@
         "zh-Hans": "动差（矩）"
       },
       "contexts": {
-        "en": "Quantitative measures related to the shape of a random variable's probability distribution (e.g., 1st moment is mean, 2nd moment is variance).",
-        "zh-Hant": "描述隨機變數分佈形狀特徵的數值指標，如一階動差為期望值、二階動差為變異數、高階動差對應 MGF。",
+        "en": "Statistical Moments are quantitative measures describing the shape of a random variable's probability distribution (e.g., 1st moment is mean, 2nd moment is variance).",
+        "zh-Hant": "動差（Moments）是描述隨機變數分佈幾何特徵的定量指標，如一階動差為期望值、二階動差為變異數，高階動差則捕捉偏態與峰態。",
         "zh-Hans": "描述随机变量分布形状特征的数值指标，如一阶动差为期望值、二阶动差为方差、高阶动差对应 MGF。"
       },
       "aliases": [
@@ -662,8 +662,8 @@
         "zh-Hans": "代数放缩"
       },
       "contexts": {
-        "en": "Mathematical techniques that replace complex, intractable integrals or functions with simpler, conservative upper bounds.",
-        "zh-Hant": "利用不等式性質將難以直接積分的複雜函數替換為易於計算且保守安全的上界函數之數學技巧。",
+        "en": "Algebraic Bounding refers to mathematical techniques that replace complex, intractable integrals or functions with simpler, conservative upper bounds.",
+        "zh-Hant": "代數放縮（Algebraic Bounding）是數學分析中的推導技巧，利用不等式將難以直接積分的複雜函數替換為易於計算且保守安全的數學上界。",
         "zh-Hans": "利用不等式性质将难以直接积分的复杂函数替换为易于计算且保守安全的上界函数之数学技巧。"
       },
       "aliases": [
@@ -680,8 +680,8 @@
         "zh-Hans": "分布积分"
       },
       "contexts": {
-        "en": "Calculating exact tail probabilities by integrating a probability density function across continuous sample spaces.",
-        "zh-Hant": "在連續樣本空間上對機率密度函數進行定積分以計算精確事件機率的運算過程。",
+        "en": "Distribution Integration is the mathematical process of performing definite integration over a probability density function across continuous sample spaces.",
+        "zh-Hant": "分佈積分（Distribution Integration）指在連續樣本空間上對機率密度函數進行定積分，以計算事件發生的絕對機率。",
         "zh-Hans": "在连续样本空间上对概率密度函数进行定积分以计算精确事件概率的运算过程。"
       },
       "aliases": [
