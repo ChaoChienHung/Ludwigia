@@ -162,6 +162,8 @@
 <a class="note-toc-link level-1" href="#section-5">破局的武器庫：條件越強，邊界越銳利</a>
 <a class="note-toc-link level-1" href="#section-6">結語</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+<a class="note-toc-link level-2" href="#course-materials">課程與教材（Course Materials）</a>
+<a class="note-toc-link level-2" href="#technical-articles">技術文章（Technical Articles）</a>
           </nav>
         </div>
       </div>
@@ -213,7 +215,7 @@
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
 <figure class="note-image"><img src="./concentration-inequalities.png" alt="集中不等式視覺化全景圖，包含 Concentration of Measure 概念、Tail Bound 分佈極限光譜、Markov/Chebyshev/Chernoff/Hoeffding 不等式比較與隨機演算法應用。" loading="lazy"><figcaption class="note-image-caption">集中不等式視覺化全景圖：從極限定理、動差資訊到尾端界限與隨機演算法分析應用。</figcaption></figure>
 
-<p class="mb-3">在演算法分析（Algorithm Analysis）的領域中，我們不只需要設計演算法，更需要在設計完成後，回答一些關鍵問題：<strong>「我們設計的<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法<span class="note-information-tooltip" aria-hidden="true"></span></span>，能在預期時間內給出正確答案的機率有多高？」</strong>、<strong>「在最壞情況下，系統資源的消耗是否會超出我們設定的容忍上限？」</strong>。這些問題本質上都有個共同的核心目標，那就是<strong>如何嚴謹地向他人證明我們的演算法是「好」的、是「可靠」的？</strong></p>
+<p class="mb-3">在演算法分析的領域中，我們不只需要設計演算法，更需要在設計完成後，回答一些關鍵問題：<strong>「我們設計的<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法<span class="note-information-tooltip" aria-hidden="true"></span></span>，能在預期時間內給出正確答案的機率有多高？」</strong>、<strong>「在最壞情況下，系統資源的消耗是否會超出我們設定的容忍上限？」</strong>。這些問題本質上都有個共同的核心目標，那就是<strong>如何嚴謹地向他人證明我們的演算法是「好」的、是「可靠」的？</strong></p>
 
 <p class="mb-3">畢竟空口無憑，我們不能僅靠有限的實驗結果來下定論。因為有限的測試數據可能存在倖存者偏差，我們不能僅憑幾次成功的執行紀錄，就斷言該演算法在面對所有可能的龐大輸入時都能表現優異——局部結果與整體的真實表現往往存在不小的差異。</p>
 
@@ -221,15 +223,15 @@
 
 <p class="mb-3">要算出該演算法對全體可能輸入的結果，最直觀的方式就是對所有可能的執行路徑進行精確的<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>或離散加總，然後算出符合條件的事件所佔的比例；不過這也意味著我們必須掌握系統完整的機率分佈。</p>
 
-<p class="mb-3">然而，現代<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法（Randomized Algorithms）<span class="note-information-tooltip" aria-hidden="true"></span></span>與分散式系統的狀態空間往往極度複雜，屬於超高維度的巨大組合空間。即使我們確切知道了每一步隨機操作的局部機率分佈，要在這樣龐大的空間中進行精確的<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>與加總，在計算上也是完全不可行的。</p>
+<p class="mb-3">然而，現代<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法<span class="note-information-tooltip" aria-hidden="true"></span></span>與分散式系統的狀態空間往往極度複雜，屬於超高維度的巨大組合空間。即使我們確切知道了每一步隨機操作的局部機率分佈，要在這樣龐大的空間中進行精確的<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>與加總，在計算上也是完全不可行的。</p>
 
-<p class="mb-3">既然無法進行精確的<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>與加總，我們自然就無法算出某個特定極端事件發生的「<span class="note-information" tabindex="0" aria-label="絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。">絕對機率<span class="note-information-tooltip" aria-hidden="true">絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。</span></span>」（例如「演算法執行時間超過預期 10 倍」的精確數值）。在無法得知精確分佈與絕對機率的情況下，我們該如何給出嚴謹的信心保證？這時，我們需要一種數學工具，來繞過複雜的<span class="note-information" tabindex="0" data-information-concept="concept.distribution_integration" data-information-lang="zh-tw">分佈積分<span class="note-information-tooltip" aria-hidden="true"></span></span>與加總運算，幫助我們<strong>真正量化對演算法結果的信心程度</strong>。這就引出了我們今天的主題——<strong><span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>。而這個信心程度在理論分析中，就是所謂的<strong><span class="note-information" tabindex="0" aria-label="信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。">信心水準<span class="note-information-tooltip" aria-hidden="true">信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。</span></span></strong>（Confidence Level），用來精確宣告「演算法結果落在安全區間內的理論機率」。</p>
+<p class="mb-3">既然無法進行精確的<span class="note-information" tabindex="0" data-information-concept="concept.integration" data-information-lang="zh-tw">積分<span class="note-information-tooltip" aria-hidden="true"></span></span>與加總，我們自然就無法算出某個特定極端事件發生的「<span class="note-information" tabindex="0" aria-label="絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。">絕對機率<span class="note-information-tooltip" aria-hidden="true">絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。</span></span>」（例如「演算法執行時間超過預期 10 倍」的精確數值）。在無法得知精確分佈與絕對機率的情況下，我們該如何給出嚴謹的信心保證？這時，我們需要一種數學工具，來繞過複雜的<span class="note-information" tabindex="0" data-information-concept="concept.distribution_integration" data-information-lang="zh-tw">分佈積分<span class="note-information-tooltip" aria-hidden="true"></span></span>與加總運算，幫助我們<strong>真正量化對演算法結果的信心程度</strong>。這就引出了我們今天的主題——<strong><span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>。而這個信心程度在理論分析中，就是所謂的<strong><span class="note-information" tabindex="0" aria-label="信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。">信心水準<span class="note-information-tooltip" aria-hidden="true">信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。</span></span></strong>，用來精確宣告「演算法結果落在安全區間內的理論機率」。</p>
 </section>
 
 <section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">亂數中的巨觀確定性：什麼是機率的集中現象？</h3>
 
-<p class="mb-3">在正式進入集中不等式之前，我們先來簡單介紹什麼是「<strong><span class="note-information" tabindex="0" data-information-concept="concept.concentration_of_measure" data-information-lang="zh-tw">集中現象<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>（Concentration of Measure）」。<span class="note-information" tabindex="0" data-information-concept="concept.concentration_of_measure" data-information-lang="zh-tw">集中現象<span class="note-information-tooltip" aria-hidden="true"></span></span>主要描述一個機率統計上的宏觀確定性：當一個隨機變數 $X$ 是由許多隨機因子共同作用組合而成時，只要滿足以下兩個條件，其總體行為就會展現出極強的穩定性。</p>
+<p class="mb-3">在正式進入集中不等式之前，我們先來簡單介紹什麼是「<strong><span class="note-information" tabindex="0" data-information-concept="concept.concentration_of_measure" data-information-lang="zh-tw">集中現象<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>」。<span class="note-information" tabindex="0" data-information-concept="concept.concentration_of_measure" data-information-lang="zh-tw">集中現象<span class="note-information-tooltip" aria-hidden="true"></span></span>主要描述一個機率統計上的宏觀確定性：當一個隨機變數 $X$ 是由許多隨機因子共同作用組合而成時，只要滿足以下兩個條件，其總體行為就會展現出極強的穩定性。</p>
 
 <ol class="mb-3">
 <li><strong>影響力微小</strong>：每個獨立因子對最終結果的貢獻被嚴格限制，沒有任何單一變數可以壓倒性地主導全局。</li>
@@ -257,7 +259,7 @@
 
 <p class="mb-3">絕大多數人的真實狀態是：如果在某個指標極端突出（例如長相極佳），通常會伴隨著其他較為普通甚至偏低的指標。這些極端的加分與扣分，在多個互不干擾的維度聚合下會互相抵消。最終，這成千上萬個因子的期望值聚合在一起，會讓大多數人的綜合分數塌縮、並緊緊圍繞在期望值上下。這就是生活中的集中現象。</p>
 
-<p class="mb-3">而我們今天的主題<strong><span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>（Concentration Inequalities），其主要任務就是捕捉並量化這種現象。它們能給出隨機變數偏離其<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>的機率上界，也就是說，當我們關注那些極端偏離平均值的不尋常壞事件時，這些工具能為我們提供所謂的<strong><span class="note-information" tabindex="0" data-information-concept="concept.tail_bound" data-information-lang="zh-tw">尾端機率界限<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>（Tail Bounds），明確且保守地告訴我們：發生極端狀況的機率「天花板」到底在哪裡。</p>
+<p class="mb-3">而我們今天的主題<strong><span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>，其主要任務就是捕捉並量化這種現象。它們能給出隨機變數偏離其<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>的機率上界，也就是說，當我們關注那些極端偏離平均值的不尋常壞事件時，這些工具能為我們提供所謂的<strong><span class="note-information" tabindex="0" data-information-concept="concept.tail_bound" data-information-lang="zh-tw">尾端機率界限<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>，明確且保守地告訴我們：發生極端狀況的機率「天花板」到底在哪裡。</p>
 
 <div class="note-callout mb-3"><p class="mb-2"><strong>觀念解析：大數法則（Law of Large Numbers）與集中效應</strong></p><p class="mb-2">事實上，集中現象的底層邏輯，其實就是在說明：<strong>最終結果的分佈，會很大程度取決於多個「互不干擾且幾乎同等重要」的因子之期望值的聚合。</strong> 只要系統符合這個條件，我們就能以集中現象來解釋。</p>
 
@@ -294,12 +296,12 @@
 
 <p class="mb-3">答案是很難。在已知的資訊下，我們基本上無法 100% 確定。因為要回答這個問題，我們最少需要這家公司的人資薪資表——也就是說，我們需要掌握<strong>「完整的機率分佈」</strong>。然而在現實世界中，數據往往太過複雜，我們根本拿不到這些細節。</p>
 
-<p class="mb-3">但是，如果我們退一步，不求精確值，只求一個<strong>絕對安全的上界（天花板）</strong>呢？如果我改問：「這家公司裡，月薪『達到或超過 10 萬元』的人，<strong>最多</strong>可能有幾個？」</p>
+<p class="mb-3">但是，如果我們退一步，不求精確值，只求一個<strong>絕對安全的上界</strong>呢？如果我改問：「這家公司裡，月薪『達到或超過 10 萬元』的人，<strong>最多</strong>可能有幾個？」</p>
 
 <p class="mb-3">雖然我們沒有完整的薪資表，但至少我們已知兩個微小但確定的特徵：</p>
 
 <ol class="mb-3">
-<li><strong>非負數</strong>：薪水不可能是負的（最慘就是 0 元）。</li>
+<li><strong>非負數</strong>：薪水不可能是負的，也就是說最慘就是 0 元。</li>
 <li><strong>總量限制</strong>：全公司的總薪水是 100 人 × 3 萬元 = 300 萬元。</li>
 </ol>
 
@@ -311,9 +313,9 @@
 
 <p class="mb-3">我們完全不需要知道這家公司的真實薪資鐘形曲線長怎樣、有沒有兼職員工，我們只是抓住了「平均值」與「非負數」這兩個最粗略的特徵，就逼出了一個絕對安全的「天花板」。</p>
 
-<p class="mb-3"><strong>這，就是集中不等式（Concentration Inequalities）的底層邏輯。</strong></p>
+<p class="mb-3"><strong>這，就是「集中不等式」的底層邏輯。</strong></p>
 
-<p class="mb-3">在真實世界中，數據的複雜度極高，我們沒辦法直接寫出精確的機率分佈。但是，要取得這些數據的某些已知統計特徵，像是「<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>」或「<span class="note-information" tabindex="0" data-information-concept="concept.variance" data-information-lang="zh-tw">變異數<span class="note-information-tooltip" aria-hidden="true"></span></span>」（數學上統稱為「<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>」，Moments），卻相對容易許多。我們就是利用這些容易取得的動差，透過像上述算薪水般的代數放縮邏輯，去逼出一個「極端事件發生的最高機率」。它讓我們用極少的資訊，換取了一個保守但無比堅固的數學保證。</p></div>
+<p class="mb-3">在真實世界中，數據的複雜度極高，我們沒辦法直接寫出精確的機率分佈。但是，要取得這些數據的某些已知統計特徵，像是「<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>」或「<span class="note-information" tabindex="0" data-information-concept="concept.variance" data-information-lang="zh-tw">變異數<span class="note-information-tooltip" aria-hidden="true"></span></span>」（數學上統稱為「<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>」），卻相對容易許多。我們就是利用這些容易取得的動差，透過像上述算薪水般的代數放縮邏輯，去逼出一個「極端事件發生的最高機率」。它讓我們用極少的資訊，換取了一個保守但無比堅固的數學保證。</p></div>
 
 <p class="mb-3">這時，上述的等式就變成了<span class="note-information" tabindex="0" data-information-concept="concept.concentration_inequalities" data-information-lang="zh-tw">集中不等式<span class="note-information-tooltip" aria-hidden="true"></span></span>：</p>
 
@@ -328,7 +330,7 @@
 
 <p class="mb-3">顯然，由於機率界限 $\delta'$ 是門檻 $\epsilon$ 的函數，因此我們也可以將之改寫作 $\delta'(\epsilon)$。而當我們對容忍誤差 $\epsilon$ 的要求越小、越嚴苛時，壞事發生的機率上限 $\delta'$ 自然也就無可避免地跟著變大。</p>
 
-<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa- me-2"></i>實戰演練：以代數放縮破解高斯分佈尾端界限</h4><p class="mb-3">我們可以用最常見的標準常態分佈（高斯分佈），來具體感受<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>的威力。對於標準常態分佈，尾端機率為：</p>
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa- me-2"></i>實戰演練：以代數放縮破解高斯分佈尾端界限</h4><p class="mb-3">我們可以用最常見的標準常態分佈，來具體感受<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>的威力。對於標準常態分佈，尾端機率為：</p>
 
 <p class="mb-3">$$P(X \ge t) = \frac{1}{\sqrt{2\pi}} \int_{t}^{\infty} e^{-\frac{x^2}{2}} dx$$</p>
 
@@ -356,7 +358,7 @@
 <li><strong><a class="note-content-link" data-canonical-id="chebyshevs-inequality-and-variance" href="../chebyshevs-inequality-and-variance/chebyshevs-inequality-and-variance-zh-tw.html">柴比雪夫不等式（Chebyshev's Inequality）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chebyshev 不等式與變異數分析：從方差壓制偏差</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">深入 Chebyshev 不等式的數學推導、Pairwise Independence 條件、共變異數（Covariance）矩陣，並以 Balls &amp; Bins 模型中負共變異數（Negative Covariance）的精確界限證明為實戰範例。</span></span></span></a></strong>
 <p class="mb-2">當我們對系統有進一步的了解，除了<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>，還掌握了二階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>，也就是<span class="note-information" tabindex="0" data-information-concept="concept.variance" data-information-lang="zh-tw">變異數<span class="note-information-tooltip" aria-hidden="true"></span></span> $\operatorname{Var}(X)$ 為有限值的狀態時，就可以升級使用柴比雪夫不等式。它將衰減速率顯著提升到了 $\mathcal{O}(1/t^2)$，使得界限大幅收緊。在實務上，它特別適用於我們能證明變數之間存在弱條件的場景，像是成對獨立（Pairwise independence）。</p></li>
 <li><strong><a class="note-content-link" data-canonical-id="chernoff-bound-and-exponential-concentration" href="../chernoff-bound-and-exponential-concentration/chernoff-bound-and-exponential-concentration-zh-tw.html">切爾諾夫界（Chernoff Bound）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chernoff Bound 與指數級集中：獨立隨機變數和的強界限</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">剖析矩生成函數（MGF）與 Chernoff Bound 的指數級衰減特性，對比 Chebyshev 界的優勢，並深入證明多項式球桶分配下的強集中度與無空桶極高機率定理。</span></span></span></a></strong>
-<p class="mb-2">這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<span class="note-information" tabindex="0" data-information-concept="concept.mgf" data-information-lang="zh-tw">動差生成函數<span class="note-information-tooltip" aria-hidden="true"></span></span>（Moment Generating Function，簡稱 MGF），來捕捉無限階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。</p></li>
+<p class="mb-2">這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<span class="note-information" tabindex="0" data-information-concept="concept.mgf" data-information-lang="zh-tw">動差生成函數<span class="note-information-tooltip" aria-hidden="true"></span></span>，來捕捉無限階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。</p></li>
 <li><strong>聯集界限（Union Bound）</strong>
 <p class="mb-2">常被稱為 Boole's Inequality。與上述探討單一隨機變數偏移的工具不同，它是用來處理事件集合的。它不需要任何獨立性前提，完全無條件適用。只要知道個別壞事件發生的機率，就可以透過簡單的線性疊加 $\sum \operatorname{Pr}[A_i]$ 來計算出至少發生一件壞事的總失敗率上界。在結合多個可能導致系統崩潰的潛在問題時，它是不可或缺的最強實用工具。</p></li>
 </ul>
@@ -480,8 +482,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">參考資料（References）</h3>
 
+<h4 id="course-materials" class="mb-2">課程與教材（Course Materials）</h4>
+
 <ol class="mb-3">
 <li>NUS CS5234 Algorithms at Scale Course Materials</li>
+<li>NUS CS5562 Trustworthy Machine Learning Course Materials</li>
+</ol>
+
+<h4 id="technical-articles" class="mb-2">技術文章（Technical Articles）</h4>
+
+<ol class="mb-3">
 <li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/693258957" target="_blank" rel="noopener noreferrer">知乎：本科生能看懂的学习理论（二）为什么用集中不等式</a></li>
 </ol>
 </section>

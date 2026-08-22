@@ -32,7 +32,7 @@ alt: 集中不等式視覺化全景圖，包含 Concentration of Measure 概念�
 caption: 集中不等式視覺化全景圖：從極限定理、動差資訊到尾端界限與隨機演算法分析應用。
 </image>
 
-在演算法分析（Algorithm Analysis）的領域中，我們不只需要設計演算法，更需要在設計完成後，回答一些關鍵問題：**「我們設計的<information concept="concept.randomized_algorithms">隨機演算法</information>，能在預期時間內給出正確答案的機率有多高？」**、**「在最壞情況下，系統資源的消耗是否會超出我們設定的容忍上限？」**。這些問題本質上都有個共同的核心目標，那就是**如何嚴謹地向他人證明我們的演算法是「好」的、是「可靠」的？**
+在演算法分析的領域中，我們不只需要設計演算法，更需要在設計完成後，回答一些關鍵問題：**「我們設計的<information concept="concept.randomized_algorithms">隨機演算法</information>，能在預期時間內給出正確答案的機率有多高？」**、**「在最壞情況下，系統資源的消耗是否會超出我們設定的容忍上限？」**。這些問題本質上都有個共同的核心目標，那就是**如何嚴謹地向他人證明我們的演算法是「好」的、是「可靠」的？**
 
 畢竟空口無憑，我們不能僅靠有限的實驗結果來下定論。因為有限的測試數據可能存在倖存者偏差，我們不能僅憑幾次成功的執行紀錄，就斷言該演算法在面對所有可能的龐大輸入時都能表現優異——局部結果與整體的真實表現往往存在不小的差異。
 
@@ -40,13 +40,13 @@ caption: 集中不等式視覺化全景圖：從極限定理、動差資訊到�
 
 要算出該演算法對全體可能輸入的結果，最直觀的方式就是對所有可能的執行路徑進行精確的<information concept="concept.integration">積分</information>或離散加總，然後算出符合條件的事件所佔的比例；不過這也意味著我們必須掌握系統完整的機率分佈。
 
-然而，現代<information concept="concept.randomized_algorithms">隨機演算法（Randomized Algorithms）</information>與分散式系統的狀態空間往往極度複雜，屬於超高維度的巨大組合空間。即使我們確切知道了每一步隨機操作的局部機率分佈，要在這樣龐大的空間中進行精確的<information concept="concept.integration">積分</information>與加總，在計算上也是完全不可行的。
+然而，現代<information concept="concept.randomized_algorithms">隨機演算法</information>與分散式系統的狀態空間往往極度複雜，屬於超高維度的巨大組合空間。即使我們確切知道了每一步隨機操作的局部機率分佈，要在這樣龐大的空間中進行精確的<information concept="concept.integration">積分</information>與加總，在計算上也是完全不可行的。
 
-既然無法進行精確的<information concept="concept.integration">積分</information>與加總，我們自然就無法算出某個特定極端事件發生的「<information context="絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。">絕對機率</information>」（例如「演算法執行時間超過預期 10 倍」的精確數值）。在無法得知精確分佈與絕對機率的情況下，我們該如何給出嚴謹的信心保證？這時，我們需要一種數學工具，來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>與加總運算，幫助我們**真正量化對演算法結果的信心程度**。這就引出了我們今天的主題——**<information concept="concept.concentration_inequalities">集中不等式</information>**。而這個信心程度在理論分析中，就是所謂的**<information context="信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。">信心水準</information>**（Confidence Level），用來精確宣告「演算法結果落在安全區間內的理論機率」。
+既然無法進行精確的<information concept="concept.integration">積分</information>與加總，我們自然就無法算出某個特定極端事件發生的「<information context="絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。">絕對機率</information>」（例如「演算法執行時間超過預期 10 倍」的精確數值）。在無法得知精確分佈與絕對機率的情況下，我們該如何給出嚴謹的信心保證？這時，我們需要一種數學工具，來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>與加總運算，幫助我們**真正量化對演算法結果的信心程度**。這就引出了我們今天的主題——**<information concept="concept.concentration_inequalities">集中不等式</information>**。而這個信心程度在理論分析中，就是所謂的**<information context="信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。">信心水準</information>**，用來精確宣告「演算法結果落在安全區間內的理論機率」。
 
 ## 亂數中的巨觀確定性：什麼是機率的集中現象？
 
-在正式進入集中不等式之前，我們先來簡單介紹什麼是「**<information concept="concept.concentration_of_measure">集中現象</information>**（Concentration of Measure）」。<information concept="concept.concentration_of_measure">集中現象</information>主要描述一個機率統計上的宏觀確定性：當一個隨機變數 $X$ 是由許多隨機因子共同作用組合而成時，只要滿足以下兩個條件，其總體行為就會展現出極強的穩定性。
+在正式進入集中不等式之前，我們先來簡單介紹什麼是「**<information concept="concept.concentration_of_measure">集中現象</information>**」。<information concept="concept.concentration_of_measure">集中現象</information>主要描述一個機率統計上的宏觀確定性：當一個隨機變數 $X$ 是由許多隨機因子共同作用組合而成時，只要滿足以下兩個條件，其總體行為就會展現出極強的穩定性。
 
 1.  **影響力微小**：每個獨立因子對最終結果的貢獻被嚴格限制，沒有任何單一變數可以壓倒性地主導全局。
 2.  **獨立或弱相關**：變數之間的波動不會產生嚴重的連鎖反應，而是傾向於在總和中互相抵消。
@@ -73,7 +73,7 @@ content:
 
 絕大多數人的真實狀態是：如果在某個指標極端突出（例如長相極佳），通常會伴隨著其他較為普通甚至偏低的指標。這些極端的加分與扣分，在多個互不干擾的維度聚合下會互相抵消。最終，這成千上萬個因子的期望值聚合在一起，會讓大多數人的綜合分數塌縮、並緊緊圍繞在期望值上下。這就是生活中的集中現象。
 
-而我們今天的主題**<information concept="concept.concentration_inequalities">集中不等式</information>**（Concentration Inequalities），其主要任務就是捕捉並量化這種現象。它們能給出隨機變數偏離其<information concept="concept.expectation">期望值</information>的機率上界，也就是說，當我們關注那些極端偏離平均值的不尋常壞事件時，這些工具能為我們提供所謂的**<information concept="concept.tail_bound">尾端機率界限</information>**（Tail Bounds），明確且保守地告訴我們：發生極端狀況的機率「天花板」到底在哪裡。
+而我們今天的主題**<information concept="concept.concentration_inequalities">集中不等式</information>**，其主要任務就是捕捉並量化這種現象。它們能給出隨機變數偏離其<information concept="concept.expectation">期望值</information>的機率上界，也就是說，當我們關注那些極端偏離平均值的不尋常壞事件時，這些工具能為我們提供所謂的**<information concept="concept.tail_bound">尾端機率界限</information>**，明確且保守地告訴我們：發生極端狀況的機率「天花板」到底在哪裡。
 
 
 <block>
@@ -114,10 +114,10 @@ content:
 
 答案是很難。在已知的資訊下，我們基本上無法 100% 確定。因為要回答這個問題，我們最少需要這家公司的人資薪資表——也就是說，我們需要掌握**「完整的機率分佈」**。然而在現實世界中，數據往往太過複雜，我們根本拿不到這些細節。
 
-但是，如果我們退一步，不求精確值，只求一個**絕對安全的上界（天花板）**呢？如果我改問：「這家公司裡，月薪『達到或超過 10 萬元』的人，**最多**可能有幾個？」
+但是，如果我們退一步，不求精確值，只求一個**絕對安全的上界**呢？如果我改問：「這家公司裡，月薪『達到或超過 10 萬元』的人，**最多**可能有幾個？」
 
 雖然我們沒有完整的薪資表，但至少我們已知兩個微小但確定的特徵：
-1. **非負數**：薪水不可能是負的（最慘就是 0 元）。
+1. **非負數**：薪水不可能是負的，也就是說最慘就是 0 元。
 2. **總量限制**：全公司的總薪水是 100 人 × 3 萬元 = 300 萬元。
 
 掌握了這兩點，我們就能完全不理會複雜的細節，單憑邏輯來推斷：要在不打破「總預算 300 萬」的前提下，盡可能塞進最多個「月薪 10 萬」的高薪族，最極端的做法，就是讓剩下的所有人薪水全部歸零。
@@ -128,9 +128,9 @@ content:
 
 我們完全不需要知道這家公司的真實薪資鐘形曲線長怎樣、有沒有兼職員工，我們只是抓住了「平均值」與「非負數」這兩個最粗略的特徵，就逼出了一個絕對安全的「天花板」。
 
-**這，就是集中不等式（Concentration Inequalities）的底層邏輯。** 
+**這，就是「集中不等式」的底層邏輯。** 
 
-在真實世界中，數據的複雜度極高，我們沒辦法直接寫出精確的機率分佈。但是，要取得這些數據的某些已知統計特徵，像是「<information concept="concept.expectation">期望值</information>」或「<information concept="concept.variance">變異數</information>」（數學上統稱為「<information concept="concept.moments">動差</information>」，Moments），卻相對容易許多。我們就是利用這些容易取得的動差，透過像上述算薪水般的代數放縮邏輯，去逼出一個「極端事件發生的最高機率」。它讓我們用極少的資訊，換取了一個保守但無比堅固的數學保證。
+在真實世界中，數據的複雜度極高，我們沒辦法直接寫出精確的機率分佈。但是，要取得這些數據的某些已知統計特徵，像是「<information concept="concept.expectation">期望值</information>」或「<information concept="concept.variance">變異數</information>」（數學上統稱為「<information concept="concept.moments">動差</information>」），卻相對容易許多。我們就是利用這些容易取得的動差，透過像上述算薪水般的代數放縮邏輯，去逼出一個「極端事件發生的最高機率」。它讓我們用極少的資訊，換取了一個保守但無比堅固的數學保證。
 </block>
 
 這時，上述的等式就變成了<information concept="concept.concentration_inequalities">集中不等式</information>：
@@ -148,7 +148,7 @@ $$P(|X - \mu| \le \epsilon) \ge 1 - \delta'$$
 title: 實戰演練：以代數放縮破解高斯分佈尾端界限
 variant: info
 content:
-我們可以用最常見的標準常態分佈（高斯分佈），來具體感受<information concept="concept.algebraic_bounding">代數放縮</information>的威力。對於標準常態分佈，尾端機率為：
+我們可以用最常見的標準常態分佈，來具體感受<information concept="concept.algebraic_bounding">代數放縮</information>的威力。對於標準常態分佈，尾端機率為：
 
 $$P(X \ge t) = \frac{1}{\sqrt{2\pi}} \int_{t}^{\infty} e^{-\frac{x^2}{2}} dx$$
 
@@ -176,7 +176,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
      當我們對系統有進一步的了解，除了<information concept="concept.expectation">期望值</information>，還掌握了二階<information concept="concept.moments">動差</information>，也就是<information concept="concept.variance">變異數</information> $\operatorname{Var}(X)$ 為有限值的狀態時，就可以升級使用柴比雪夫不等式。它將衰減速率顯著提升到了 $\mathcal{O}(1/t^2)$，使得界限大幅收緊。在實務上，它特別適用於我們能證明變數之間存在弱條件的場景，像是成對獨立（Pairwise independence）。
 
 *   **<content-link canonical="chernoff-bound-and-exponential-concentration">切爾諾夫界（Chernoff Bound）</content-link>**
-     這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<information concept="concept.mgf">動差生成函數</information>（Moment Generating Function，簡稱 MGF），來捕捉無限階<information concept="concept.moments">動差</information>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。
+     這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<information concept="concept.mgf">動差生成函數</information>，來捕捉無限階<information concept="concept.moments">動差</information>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。
 
 *   **聯集界限（Union Bound）**
      常被稱為 Boole's Inequality。與上述探討單一隨機變數偏移的工具不同，它是用來處理事件集合的。它不需要任何獨立性前提，完全無條件適用。只要知道個別壞事件發生的機率，就可以透過簡單的線性疊加 $\sum \operatorname{Pr}[A_i]$ 來計算出至少發生一件壞事的總失敗率上界。在結合多個可能導致系統崩潰的潛在問題時，它是不可或缺的最強實用工具。
@@ -209,5 +209,11 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
 
 ## 參考資料（References）
 
+### 課程與教材（Course Materials）
+
 1. NUS CS5234 Algorithms at Scale Course Materials
-2. [知乎：本科生能看懂的学习理论（二）为什么用集中不等式](https://zhuanlan.zhihu.com/p/693258957)
+2. NUS CS5562 Trustworthy Machine Learning Course Materials
+
+### 技術文章（Technical Articles）
+
+1. [知乎：本科生能看懂的学习理论（二）为什么用集中不等式](https://zhuanlan.zhihu.com/p/693258957)

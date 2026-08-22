@@ -148,7 +148,7 @@ $$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
 
 雖然馬爾科夫不等式極為通用，但它給出的界限通常**不夠緊緻（Loose Bound）**。其衰減速率僅為多項式級別的 $\mathcal{O}(1/a)$。如果我們知道該隨機變數是由多個獨立事件重複組合而成，經驗告訴我們極端值出現的機率應該呈「指數級」衰減。
 
-馬爾科夫不等式之所以無法給出這麼好的界限，是因為它**完全沒有利用到<information concept="concept.variance">變異數</information>（Variance）或更高階<information concept="concept.moments">動差</information>（Higher Moments）的資訊**。而後續我們將介紹的<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式</content-link>，正是在此基礎之上，引入了<information concept="concept.variance">變異數</information>資訊來大幅改進馬爾科夫不等式的不足。
+馬爾科夫不等式之所以無法給出這麼好的界限，是因為它**完全沒有利用到<information concept="concept.variance">變異數</information>或更高階<information concept="concept.moments">動差</information>的資訊**。而後續我們將介紹的<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式</content-link>，正是在此基礎之上，引入了<information concept="concept.variance">變異數</information>資訊來大幅改進馬爾科夫不等式的不足。
 
 ## 結語：集中不等式工具箱的堅實根基
 
@@ -168,5 +168,11 @@ $$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
 
 ## 參考資料（References）
 
+### 課程與教材（Course Materials）
+
 1. NUS CS5234 Algorithms at Scale Course Materials
-2. Taboga, Marco (2021). "Markov's inequality", *Lectures on probability theory and mathematical statistics*. Kindle Direct Publishing. Online appendix. https://www.statlect.com/fundamentals-of-probability/Markov-inequality
+2. NUS CS5562 Trustworthy Machine Learning Course Materials
+
+### 學術論文與專著（Academic Literature & Textbooks）
+
+1. Taboga, Marco (2021). "Markov's inequality", *Lectures on probability theory and mathematical statistics*. Kindle Direct Publishing. Online appendix. https://www.statlect.com/fundamentals-of-probability/Markov-inequality
