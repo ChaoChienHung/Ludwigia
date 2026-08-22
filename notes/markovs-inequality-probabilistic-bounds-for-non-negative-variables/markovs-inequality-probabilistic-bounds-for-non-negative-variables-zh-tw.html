@@ -10,11 +10,11 @@
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.algorithm,concept.probability,concept.concentration_inequalities,concept.markov_inequality">
   <meta name="site:tag_labels" content="{&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.markov_inequality&quot;:{&quot;en&quot;:&quot;Markov&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Markov 不等式&quot;,&quot;zh-Hans&quot;:&quot;Markov 不等式&quot;}}">
-  <meta name="site:canonical_id" content="markovs-inequality">
+  <meta name="site:canonical_id" content="markovs-inequality-probabilistic-bounds-for-non-negative-variables">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-08-22">
-  <meta name="site:reading_time_minutes" content="11">
-  <meta name="site:source" content="notes/markovs-inequality/markovs-inequality-zh-tw.md">
+  <meta name="site:reading_time_minutes" content="14">
+  <meta name="site:source" content="notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.md">
   <script>
   (() => {
     try {
@@ -155,9 +155,9 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#section">數學定理與形式</a>
+<a class="note-toc-link level-2" href="#section-2">數學證明：指示函數的巧妙應用</a>
+<a class="note-toc-link level-2" href="#section-3">直觀理解：隱藏在期望值背後的引力</a>
 <a class="note-toc-link level-2" href="#parameterized-form">倍數參數化形式 (Parameterized Form)</a>
-<a class="note-toc-link level-1" href="#section-2">數學證明與幾何直覺</a>
-<a class="note-toc-link level-1" href="#section-3">演算法分析中的應用實例</a>
 <a class="note-toc-link level-1" href="#section-4">進階應用與侷限性</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
           </nav>
@@ -209,80 +209,76 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">在上一篇集中不等式：從極限定理到集中不等式工具箱的導論中，我們提到在分析隨機演算法的效度時，我們時常需要評估<strong>「演算法在最壞情況下，執行時間或資源消耗超出容忍上限的機率」</strong>。為了繞過複雜的機率密度函數積分，我們引入了「代數放縮」的概念。</p>
+<p class="mb-3">在上一篇<a class="note-content-link" data-canonical-id="concentration-inequalities-from-limit-theorems-to-toolbox" href="../concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html">集中不等式：從極限定理到集中不等式工具箱<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">集中不等式：從極限定理到集中不等式工具箱</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">集中不等式</span></span><span class="note-content-link-preview-summary">綜覽集中現象（Concentration of Measure）的核心概念、階梯式集中不等式工具箱（Markov, Chebyshev, Chernoff）與 Union Bound，並以經典的 Balls &amp; Bins 模型做為引導案例。</span></span></span></a>的導論中，我們提到在分析<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法<span class="note-information-tooltip" aria-hidden="true"></span></span>的效度時，我們時常需要評估<strong>「演算法在最壞情況下，執行時間或資源消耗超出容忍上限的機率」</strong>。為了繞過複雜的<span class="note-information" tabindex="0" data-information-concept="concept.pdf" data-information-lang="zh-tw">機率密度函數<span class="note-information-tooltip" aria-hidden="true"></span></span>積分，我們引入了「<span class="note-information" tabindex="0" data-information-concept="concept.algebraic_bounding" data-information-lang="zh-tw">代數放縮<span class="note-information-tooltip" aria-hidden="true"></span></span>」的概念。</p>
 
-<p class="mb-3">而在這龐大的集中不等式工具箱中，最基礎、前置條件最簡約的開路先鋒，就是 <strong>馬爾科夫不等式（Markov's Inequality）</strong>。</p>
+<p class="mb-3">而在這龐大的集中不等式工具箱中，最基礎、前置條件最簡約的開路先鋒，就是<strong>馬爾科夫不等式（Markov's Inequality）</strong>。</p>
 
-<p class="mb-3">馬爾科夫不等式是量化<span class="note-information" tabindex="0" data-information-concept="concept.concentration_of_measure" data-information-lang="zh-tw">集中現象<span class="note-information-tooltip" aria-hidden="true"></span></span>最基礎的機率不等式。它只需要知道隨機變數的<strong>一階動差（即<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>）</strong>，且前提為變數必須為<strong>非負（Non-negative）</strong>，就能為我們給出一個安全且保守的<span class="note-information" tabindex="0" data-information-concept="concept.tail_bound" data-information-lang="zh-tw">尾端機率上界<span class="note-information-tooltip" aria-hidden="true"></span></span>。</p>
+<p class="mb-3">馬爾科夫不等式是量化<span class="note-information" tabindex="0" data-information-concept="concept.concentration_of_measure" data-information-lang="zh-tw">集中現象<span class="note-information-tooltip" aria-hidden="true"></span></span>最基礎的機率不等式。它只需要知道隨機變數的<strong><span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">一階動差<span class="note-information-tooltip" aria-hidden="true"></span></span>（即<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>）</strong>，且前提為變數必須為<strong>非負（Non-negative）</strong>，就能為我們給出一個安全且保守的<span class="note-information" tabindex="0" data-information-concept="concept.tail_bound" data-information-lang="zh-tw">尾端機率上界<span class="note-information-tooltip" aria-hidden="true"></span></span>。這意味著我們甚至不需要知道隨機變數的真實機率分佈為何，這也是為什麼它是一項極為實用且廣泛普及的工具。</p>
 </section>
 
 <section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">數學定理與形式</h3>
 
-<p class="mb-3"><strong>Markov 不等式定理</strong>： 設 $X$ 為一個定義在樣本空間上的可積隨機變數，且 $X$ 為<strong>幾乎必然非負</strong>（即 $X &lt; 0$ 的機率為 0，$\operatorname{Pr}[X \ge 0] = 1$）。則對任意嚴格大於零的實數常數 $a &gt; 0$，恆滿足以下不等式：</p>
+<p class="mb-3"><strong>馬爾科夫不等式定理</strong>： 設 $X$ 為一個定義在樣本空間上的可積隨機變數，且 $X$ 為<strong>非負隨機變數</strong>（$X \ge 0$）。則對任意嚴格大於零的實數常數 $a &gt; 0$，恆滿足以下不等式：</p>
 
 <p class="mb-3">$$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$</p>
 
+<p class="mb-3">這個不等式是一個非常優雅且直觀的結論，其<strong>白話文</strong>意即：一個非負隨機變數的值，超過任意正數 $a$ 的機率，永遠不可能大於「期望值除以 $a$」。</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>補充說明：幾乎必然非負（Almost Surely Non-negative）</strong></p><p class="mb-2">variant: info 這個屬性在數學上可以進一步放寬到 $X$ 為<strong>幾乎必然非負</strong>（Almost surely positive）。換句話說，只要 $X &lt; 0$ 是一個「零機率事件」（即 $\operatorname{Pr}[X &lt; 0] = 0$），馬爾科夫不等式就依然完全成立。</p></div>
+
+<h4 id="section-2" class="mb-2">數學證明：指示函數的巧妙應用</h4>
+
+<p class="mb-3">強烈建議親自閱讀並理解馬爾科夫不等式的證明，因為這是機率論中「<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>基本性質」非常有趣且經典的應用。為了給出一個不論連續或離散皆適用的通用證明，我們引入<strong>指示函數（Indicator Function）</strong> $I$。</p>
+
+<p class="mb-3">首先，隨機變數 $X$ 可以根據門檻 $a$ 被拆分為兩部分： $$X = X \cdot I_{\{X &lt; a\}} + X \cdot I_{\{X \ge a\}}$$</p>
+
+<p class="mb-3">由於前提 $X$ 是一個非負隨機變數，且指示函數的結果非 0 即 1，因此第一項 $X \cdot I_{\{X &lt; a\}}$ 必然大於等於零。如果我們直接將其捨棄，會得到一個必然成立的不等式： $$X \ge X \cdot I_{\{X \ge a\}}$$</p>
+
+<p class="mb-3">接著，觀察右邊的項 $X \cdot I_{\{X \ge a\}}$。當指示函數 $I_{\{X \ge a\}}$ 不為零（亦即等於 1）時，代表事件 $X \ge a$ 發生了。既然 $X \ge a$，我們可以將變數 $X$ 放縮為底限常數 $a$，這會讓數值進一步變小： $$X \cdot I_{\{X \ge a\}} \ge a \cdot I_{\{X \ge a\}}$$</p>
+
+<p class="mb-3">將上述兩個放縮步驟結合，我們得出： $$X \ge a \cdot I_{\{X \ge a\}}$$</p>
+
+<p class="mb-3">現在，我們對不等式兩邊同時取<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>。根據期望值的單調性（Monotonicity）與線性性質（Linearity），我們得到： $$\mathbb{E}[X] \ge \mathbb{E}[a \cdot I_{\{X \ge a\}}] = a \cdot \mathbb{E}[I_{\{X \ge a\}}]$$</p>
+
+<p class="mb-3">在機率論中有一個極為基本且好用的性質：<strong>一個事件指示函數的<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>，就等於該事件發生的機率。</strong> 因此 $\mathbb{E}[I_{\{X \ge a\}}] = \operatorname{Pr}[X \ge a]$。代入後得到： $$\mathbb{E}[X] \ge a \cdot \operatorname{Pr}[X \ge a]$$</p>
+
+<p class="mb-3">最後，由於 $a$ 是嚴格大於零的常數，我們將兩邊同除以 $a$，即得證馬爾科夫不等式： $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$</p>
+
+<h4 id="section-3" class="mb-2">直觀理解：隱藏在期望值背後的引力</h4>
+
+<p class="mb-3">從本質上來看，這個結論非常符合我們的直覺。</p>
+
+<p class="mb-3">一個分佈的「<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>」，本就是由整個樣本空間的機率與其數值綜合推演而出的重心。因此，雖然我們不知道整體分佈的真實形貌，但可以肯定的是，絕大部分的數值都不可能無限制地偏離期望值太遠。</p>
+
+<p class="mb-3">馬爾科夫不等式正是提供了這樣一個嚴格的推導，宣告極端大值出現的機率最多不會超過多少。道理很簡單：<strong>如果那些極端數值出現的機率真的超過了這個界限，那麼這些極大值所貢獻的權重，打從一開始就會把期望值往上拉高，使得這組資料的期望值根本不可能是我們目前所看到的數字。</strong></p>
+
 <h4 id="parameterized-form" class="mb-2">倍數參數化形式 (Parameterized Form)</h4>
 
-<p class="mb-3">如果我們將門檻 $a$ 表示為期望值的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha &gt; 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：</p>
+<p class="mb-3">如果我們將門檻 $a$ 表示為<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha &gt; 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：</p>
 
 <p class="mb-3">$$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le \frac{1}{\alpha}$$</p>
 
-<p class="mb-3">這段數學式的白話文非常震撼：<strong>一個非負隨機變數的數值，超過其平均值 $\alpha$ 倍的機率，絕對不可能大於 $1/\alpha$。</strong> 例如，數值超過平均值 10 倍的機率，絕對不可能超過 $\frac{1}{10} = 10\%$。</p>
+<p class="mb-3">這段數學式的白話文強而有力：<strong>一個非負隨機變數的數值，超過其平均值 $\alpha$ 倍的機率，絕對不可能大於 $1/\alpha$</strong>。例如，數值超過平均值 10 倍的機率，絕對不可能超過 $\frac{1}{10} = 10\%$。</p>
 
-<p class="mb-3">&lt;callout variant="info"&gt; <strong>直觀生活範例：國民平均所得</strong></p>
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-lightbulb me-2"></i>直觀生活範例：國民平均所得</h4><p class="mb-3">這個不等式背後的直覺是什麼？想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的<strong>平均年所得為 4 萬美元</strong>。請問：這名被抽中者的年所得「<strong>大於 20 萬美元</strong>」的機率有多高？</p>
 
-<p class="mb-3">這個不等式背後的直覺是什麼？想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的<strong>平均年所得為 4 萬美元</strong>。</p>
-
-<p class="mb-3">請問：這名被抽中者的年所得「<strong>大於 20 萬美元</strong>」的機率有多高？</p>
-
-<p class="mb-3">在完全不知道該國貧富差距或所得分佈曲線（PDF）的情況下，我們能回答這個問題嗎？可以的。因為所得必定是「非負」的（不會有負收入），我們直接套用 Markov 不等式：</p>
+<p class="mb-3">在完全不知道該國貧富差距或所得<span class="note-information" tabindex="0" data-information-concept="concept.pdf" data-information-lang="zh-tw">分佈曲線<span class="note-information-tooltip" aria-hidden="true"></span></span>的情況下，我們能回答這個問題嗎？可以的。因為所得必定是「非負」的，我們可以運用倍數形式——20 萬是平均 4 萬的 5 倍，因此直接套用馬爾科夫不等式：</p>
 
 <ul class="note-list">
-<li>期望值 $\mathbb{E}[X] = 40,000$</li>
+<li><span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span> $\mathbb{E}[X] = 40,000$</li>
 <li>門檻 $a = 200,000$</li>
 </ul>
 
 <p class="mb-3">$$\operatorname{Pr}[X \ge 200,000] \le \frac{40,000}{200,000} = \frac{1}{5} = 20\%$$</p>
 
-<p class="mb-3">因此，在缺乏更多分佈資訊的情況下，我們能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，<strong>最多不會超過總人口的 20%</strong>。因為如果超過 20%，那這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提矛盾。 &lt;/callout&gt;</p>
-</section>
+<p class="mb-3">即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，<strong>最多不會超過總人口的 20%</strong>。這再次呼應了我們前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。</p></div>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">數學證明與幾何直覺</h3>
-
-<p class="mb-3">強烈建議理解 Markov 不等式的證明，因為這是機率論中「期望值基本性質」最優雅的應用之一。我們以離散隨機變數為例來推導。</p>
-
-<p class="mb-3">根據期望值的定義，我們將總和拆分為「小於門檻 $a$」與「大於等於門檻 $a$」兩個部分：</p>
-
-<p class="mb-3">$$\begin{aligned} \mathbb{E}[X] &amp;= \sum_{x} x \cdot \operatorname{Pr}[X = x] \\ &amp;= \underbrace{\sum_{x &lt; a} x \cdot \operatorname{Pr}[X = x]}_{\text{第一項}} + \underbrace{\sum_{x \ge a} x \cdot \operatorname{Pr}[X = x]}_{\text{第二項}} \end{aligned}$$</p>
-
-<p class="mb-3">這裡來到證明的關鍵：因為 $X$ 是<strong>非負隨機變數</strong>（$x \ge 0$），所以第一項必定大於等於零（$\sum_{x &lt; a} x \cdot \operatorname{Pr}[X = x] \ge 0$）。如果我們直接把第一項丟掉，整個等式就會變成「大於等於」的不等式：</p>
-
-<p class="mb-3">$$\mathbb{E}[X] \ge \sum_{x \ge a} x \cdot \operatorname{Pr}[X = x]$$</p>
-
-<p class="mb-3">接著觀察保留下來的第二項。在這個加總範圍內，每一個 $x$ 都保證大於等於 $a$（因為 $x \ge a$）。如果我們把所有的 $x$ 都無情地縮小並替換成底限 $a$，這個數值會進一步變小（放縮法）：</p>
-
-<p class="mb-3">$$\mathbb{E}[X] \ge \sum_{x \ge a} a \cdot \operatorname{Pr}[X = x] = a \sum_{x \ge a} \operatorname{Pr}[X = x]$$</p>
-
-<p class="mb-3">而後面這個加總 $\sum_{x \ge a} \operatorname{Pr}[X = x]$，剛好就是機率 $\operatorname{Pr}[X \ge a]$ 的定義！因此：</p>
-
-<p class="mb-3">$$\mathbb{E}[X] \ge a \cdot \operatorname{Pr}[X \ge a]$$</p>
-
-<p class="mb-3">最後，兩邊同除以常數 $a$ ($a &gt; 0$)，即得證：</p>
-
-<p class="mb-3">$$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$</p>
-</section>
-
-<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">演算法分析中的應用實例</h3>
-
-<p class="mb-3">在隨機演算法分析中，Markov 不等式是為執行時間建立保底界限的利器。</p>
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-code me-2"></i>演算法分析中的應用實例</h4><p class="mb-3">在<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法<span class="note-information-tooltip" aria-hidden="true"></span></span>分析中，馬爾科夫不等式是為執行時間建立保底界限的利器。</p>
 
 <p class="mb-3">假設我們設計了一個 <span class="note-information" tabindex="0" aria-label="Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。">Las Vegas 演算法<span class="note-information-tooltip" aria-hidden="true">Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。</span></span>，經過初步的理論分析，我們得知其<strong>期望運行時間（Expected Running Time）</strong>為 $T$ 秒。</p>
 
-<p class="mb-3">由於時間必定是非負的實數 ($T \ge 0$)，我們可以直接應用 Markov 不等式的倍數形式。如果我們將系統容忍的超時上限設定為平均時間的 10 倍：</p>
+<p class="mb-3">由於時間必定是非負的實數 ($T \ge 0$)，我們可以直接應用馬爾科夫不等式的倍數形式。如果我們將系統容忍的超時上限設定為平均時間的 10 倍：</p>
 
 <p class="mb-3">$$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\%$$</p>
 
@@ -290,21 +286,21 @@
 
 <p class="mb-3">$$\operatorname{Pr}[\text{運行時間} &lt; 10T] \ge 1 - 0.1 = 90\%$$</p>
 
-<p class="mb-3"><strong>工程意義</strong>：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈究竟長什麼樣子，我們也能 $100\%$ 在數學上保證——<strong>該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$</strong>。</p>
+<p class="mb-3"><strong>工程意義</strong>：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈究竟長什麼樣子，我們也能在數學上做擔保——<strong>該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$</strong>。</p></div>
 </section>
 
 <section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">進階應用與侷限性</h3>
 
-<p class="mb-3">Markov 不等式在機率與統計學中有著舉足輕重的地位，它不僅能直接用來推導尾端機率上界，更是諸多進階定理的核心基石：</p>
+<p class="mb-3">馬爾科夫不等式在機率與統計學中有著舉足輕重的地位，它不僅能直接用來推導<span class="note-information" tabindex="0" data-information-concept="concept.tail_bound" data-information-lang="zh-tw">尾端機率上界<span class="note-information-tooltip" aria-hidden="true"></span></span>，更是諸多進階定理的核心基石。例如：</p>
 
 <ol class="mb-3">
-<li><strong>推導 Chebyshev 不等式</strong>：將隨機變數 $X$ 替換為 $(X - \mu)^2$，即可推導出大名鼎鼎的 Chebyshev 不等式。</li>
-<li><strong>推導 Chernoff Bound</strong>：將隨機變數替換為指數形式 $e^{tX}$，即可利用動差生成函數（MGF）推導出具備指數級衰減的 Chernoff Bound。</li>
+<li><strong>推導<a class="note-content-link" data-canonical-id="chebyshevs-inequality-and-variance" href="../chebyshevs-inequality-and-variance/chebyshevs-inequality-and-variance-zh-tw.html">柴比雪夫不等式 (Chebyshev's Inequality)<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chebyshev 不等式與變異數分析：從方差壓制偏差</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">深入 Chebyshev 不等式的數學推導、Pairwise Independence 條件、共變異數（Covariance）矩陣，並以 Balls &amp; Bins 模型中負共變異數（Negative Covariance）的精確界限證明為實戰範例。</span></span></span></a></strong>：將隨機變數 $X$ 替換為 $(X - \mu)^2$。</li>
+<li><strong>推導<a class="note-content-link" data-canonical-id="chernoff-bound-and-exponential-concentration" href="../chernoff-bound-and-exponential-concentration/chernoff-bound-and-exponential-concentration-zh-tw.html">切爾諾夫界限 (Chernoff Bound)<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chernoff Bound 與指數級集中：獨立隨機變數和的強界限</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">剖析矩生成函數（MGF）與 Chernoff Bound 的指數級衰減特性，對比 Chebyshev 界的優勢，並深入證明多項式球桶分配下的強集中度與無空桶極高機率定理。</span></span></span></a></strong>：將隨機變數替換為指數形式 $e^{tX}$，即可利用<span class="note-information" tabindex="0" data-information-concept="concept.mgf" data-information-lang="zh-tw">動差生成函數<span class="note-information-tooltip" aria-hidden="true"></span></span>（MGF）推導出具備指數級衰減的機率邊界。</li>
 <li><strong>收斂性證明</strong>：在高等機率論中，它常被用來證明「均方收斂（Mean Square Convergence）」必然推導出「依機率收斂（Convergence in Probability）」。</li>
 </ol>
 
-<p class="mb-3"><strong>侷限性：</strong> 雖然 Markov 不等式極為通用，但它給出的界限通常<strong>不夠緊緻（Loose Bound）</strong>。其衰減速率僅為多項式級別的 $\mathcal{O}(1/a)$。如果我們知道該隨機變數是由多個獨立事件重複組合而成，經驗告訴我們極端值出現的機率應該呈「指數級」衰減。Markov 不等式之所以無法給出這麼好的界限，是因為它<strong>完全沒有利用到變異數（Variance）或更高階動差（Higher Moments）的資訊</strong>。這也正是我們在下一篇文章中，需要進一步探討 Chebyshev 不等式的原因。</p>
+<p class="mb-3"><strong>侷限性：</strong> 雖然馬爾科夫不等式極為通用，但它給出的界限通常<strong>不夠緊緻（Loose Bound）</strong>。其衰減速率僅為多項式級別的 $\mathcal{O}(1/a)$。如果我們知道該隨機變數是由多個獨立事件重複組合而成，經驗告訴我們極端值出現的機率應該呈「指數級」衰減。馬爾科夫不等式之所以無法給出這麼好的界限，是因為它<strong>完全沒有利用到<span class="note-information" tabindex="0" data-information-concept="concept.variance" data-information-lang="zh-tw">變異數<span class="note-information-tooltip" aria-hidden="true"></span></span>（Variance）或更高階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>（Higher Moments）的資訊</strong>。而後續將介紹的<a class="note-content-link" data-canonical-id="chebyshevs-inequality-and-variance" href="../chebyshevs-inequality-and-variance/chebyshevs-inequality-and-variance-zh-tw.html">柴比雪夫不等式<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chebyshev 不等式與變異數分析：從方差壓制偏差</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">深入 Chebyshev 不等式的數學推導、Pairwise Independence 條件、共變異數（Covariance）矩陣，並以 Balls &amp; Bins 模型中負共變異數（Negative Covariance）的精確界限證明為實戰範例。</span></span></span></a>，正是在此基礎之上，引入了<span class="note-information" tabindex="0" data-information-concept="concept.variance" data-information-lang="zh-tw">變異數<span class="note-information-tooltip" aria-hidden="true"></span></span>資訊來大幅改進馬爾科夫不等式的不足。</p>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
@@ -324,10 +320,11 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li><strong>核心前提</strong>：Markov 不等式是要求最低的集中不等式，只需要「非負變數」與「一階動差（期望值）」。
+<li><strong>核心前提</strong>：Markov 不等式是要求最低的集中不等式，只需要「幾乎必然非負變數」與「一階動差（期望值）」。
 <ul class="note-list">
 <li><strong>直觀倍數形式</strong>：$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le 1/\alpha$。數值超過平均值 $\alpha$ 倍的機率，必不大於 $1/\alpha$。</li>
-<li><strong>演算法應用</strong>：在未知具體分佈的情況下，它是評估隨機演算法「最壞時間上限（Worst-case Tail Bound）」的終極保底工具。</li>
+<li><strong>反證直覺</strong>：如果極端大值的機率過高，其貢獻的權重就會打破現有期望值的平衡。</li>
+<li><strong>演算法應用</strong>：在未知具體機率分佈的情況下，它是評估隨機演算法「最壞時間上限（Worst-case Tail Bound）」的終極保底工具。</li>
 <li><strong>承先啟後</strong>：由於其衰減速率僅為 $\mathcal{O}(1/a)$，當我們需要更緊緻的界限時，必須將其結合函數變換（如平方、指數）來引入更高階的動差資訊，這也是後續 Chebyshev 與 Chernoff 不等式的發展脈絡。</li>
 </ul></li>
 </ul></div>

@@ -124,7 +124,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
 
 以下是我們在分析時最常用的階梯式工具箱光譜：
 
-*   **<content-link canonical="markovs-inequality">馬可夫不等式（Markov's Inequality）</content-link>**
+*   **<content-link canonical="markovs-inequality-probabilistic-bounds-for-non-negative-variables">馬可夫不等式（Markov's Inequality）</content-link>**
      這是不等式家族中最基礎、也最通用的工具。它唯一的前提條件是隨機變數必須為非負數（即 $X \ge 0$）。在我們只知道一階<information concept="concept.moments">動差</information>，亦即<information concept="concept.expectation">期望值</information> $\mathbb{E}[X]$ 的匱乏情況下，它就能給出一個<information concept="concept.tail_bound">尾端衰減速率</information>為多項式級 $\mathcal{O}(1/t)$ 的保證。由於所需條件極低，當我們對系統幾乎一無所知時，它通常作為最底層的保底界限。
 
 *   **<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式（Chebyshev's Inequality）</content-link>**
