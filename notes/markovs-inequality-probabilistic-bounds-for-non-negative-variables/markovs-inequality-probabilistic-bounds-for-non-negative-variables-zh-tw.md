@@ -36,7 +36,7 @@ caption: 馬爾科夫不等式（Markov's Inequality）視覺化全景圖：尾�
 
 馬爾科夫不等式是量化<information concept="concept.concentration_of_measure">集中現象</information>最基礎的機率不等式。它只需要知道隨機變數的**<information concept="concept.moments">一階動差</information>（即<information concept="concept.expectation">期望值</information>）**，且前提為變數必須為**非負（Non-negative）**，就能為我們給出一個安全且保守的<information concept="concept.tail_bound">尾端機率上界</information>。這意味著我們甚至不需要知道隨機變數的真實機率分佈為何，這也是為什麼它是一項極為實用且廣泛普及的工具。
 
-## 數學定理與形式
+## 定理定義：馬爾科夫不等式的數學形式
 
 **馬爾科夫不等式定理**：
 設 $X$ 為一個定義在樣本空間上的可積隨機變數，且 $X$ 為**非負隨機變數**（$X \ge 0$）。則對任意嚴格大於零的實數常數 $a > 0$，恆滿足以下不等式：
@@ -46,9 +46,9 @@ $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 這個不等式是一個非常優雅且直觀的結論，其**白話文**意即：一個非負隨機變數的值，超過任意正數 $a$ 的機率，永遠不可能大於「期望值除以 $a$」。
 
 <block>
-title: 邊界放寬：幾乎必然非負
+title: 邊界放寬：什麼是「幾乎必然非負」？
 content:
-在定理中，「非負」的前提在數學上可以進一步放寬為**「幾乎必然非負（Almost Surely Non-negative, $X \ge 0 \text{ a.s.}$）」**：
+在定理中，「非負」的前提在數學上可以進一步放寬為**「幾乎必然非負（Almost Surely Non-negative, $X \ge 0 \text{ a.s.}$）」**，這兩者最主要的區別在於：
 
 * **嚴格非負**：要求樣本空間中絕對不存在任何負數數值。
 * **幾乎必然非負**：允許樣本空間中存在取值為負數的例外個體，但要求所有負數例外發生的**總機率必須嚴格為零**（即 $\operatorname{Pr}[X < 0] = 0$，等價於 $\operatorname{Pr}[X \ge 0] = 1$）。
@@ -56,9 +56,9 @@ content:
 **為何不等式依然成立？** 在機率論與測度論中，機率為零的例外事件在計算期望值（積分/加總）時對總量的貢獻精確為 $0$（屬於「零測集 Null set」）。因此就算理論上存在負數例外，只要其發生機率為 0，就不會破壞代數放縮過程，馬爾科夫不等式依然完全成立。
 </block>
 
-### 數學證明：指示函數的巧妙應用
+### 數學證明：指示函數的巧妙放縮
 
-強烈建議親自閱讀並理解馬爾科夫不等式的證明，因為這是機率論中「<information concept="concept.expectation">期望值</information>基本性質」非常有趣且經典的應用。為了給出一個不論連續或離散皆適用的通用證明，我們引入**指示函數（Indicator Function）** $I$。
+要想證明這個不論連續或離散皆適用的結論是如何推導的，我們首先需要引入**指示函數（Indicator Function）** $I$。
 
 首先，隨機變數 $X$ 可以根據門檻 $a$ 被拆分為兩部分：
 $$X = X \cdot I_{\{X < a\}} + X \cdot I_{\{X \ge a\}}$$
@@ -81,7 +81,7 @@ $$\mathbb{E}[X] \ge a \cdot \operatorname{Pr}[X \ge a]$$
 最後，由於 $a$ 是嚴格大於零的常數，我們將兩邊同除以 $a$，即得證馬爾科夫不等式：
 $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 
-### 直觀理解：隱藏在期望值背後的引力
+### 直觀理解：隱藏在期望值背後的邏輯反證
 
 從本質上來看，這個結論非常符合我們的直覺。
 
@@ -89,57 +89,70 @@ $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 
 馬爾科夫不等式正是提供了這樣一個嚴格的推導，宣告極端大值出現的機率最多不會超過多少。道理很簡單：**如果那些極端數值出現的機率真的超過了這個界限，那麼這些極大值所貢獻的權重，打從一開始就會把期望值往上拉高，使得這組資料的期望值根本不可能是我們目前所看到的數字。**
 
-### 倍數參數化形式 (Parameterized Form)
+### 倍數形式：工程實務上的參數化表達
 
-如果我們將門檻 $a$ 表示為<information concept="concept.expectation">期望值</information>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha > 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：
+而如果我們將門檻 $a$ 進一步表示為<information concept="concept.expectation">期望值</information>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha > 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：
 
 $$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le \frac{1}{\alpha}$$
 
 這段數學式的白話文強而有力：**一個非負隨機變數的數值，超過其平均值 $\alpha$ 倍的機率，絕對不可能大於 $1/\alpha$**。例如，數值超過平均值 10 倍的機率，絕對不可能超過 $\frac{1}{10} = 10\%$。
 
 <callout>
-title: 倍數形式的兩大經典範例：生活直覺與演算法分析
+title: 直觀生活範例：國民平均所得
 variant: info
 icon: lightbulb
-content:
-馬爾科夫不等式的「倍數形式」在日常生活與演算法工程中皆有著極為強大的實用價值（點擊切換閱讀範例）：
+content: 
+這個不等式背後的直覺是什麼？想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的**平均年所得為 4 萬美元**。請問：這名被抽中者的年所得「**大於 20 萬美元**」的機率有多高？
 
-<details open>
-<summary><strong>案例一：國民所得分佈（日常生活直覺）</strong></summary>
-
-想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的**平均年所得為 4 萬美元**。請問：這名被抽中者的年所得「**大於 20 萬美元**」的機率有多高？
-
-在完全不知道該國所得<information concept="concept.pdf">分佈曲線</information>的情況下，因為所得必定非負，且 20 萬為平均 4 萬的 5 倍（$\alpha = 5$），我們直接套用馬爾科夫不等式：
+在完全不知道該國貧富差距或所得<information concept="concept.pdf">分佈曲線</information>的情況下，我們能回答這個問題嗎？可以的。因為所得必定是「非負」的，我們可以運用倍數形式——20 萬是平均 4 萬的 5 倍，因此直接套用馬爾科夫不等式：
 *   <information concept="concept.expectation">期望值</information> $\mathbb{E}[X] = 40,000$
 *   門檻 $a = 200,000 = 5 \cdot \mathbb{E}[X]$
 
 $$\operatorname{Pr}[X \ge 200,000] \le \frac{40,000}{200,000} = \frac{1}{5} = 20\%$$
 
-即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，**最多不會超過總人口的 20%**。這呼應了前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。
-</details>
-
-<details>
-<summary><strong>案例二：Las Vegas 演算法（隨機演算法 Worst-Case 時間保障）</strong></summary>
-
-在<information concept="concept.randomized_algorithms">隨機演算法</information>分析中，馬爾科夫不等式是為執行時間建立保底界限的利器。
-
-假設我們設計了一個 <information context="Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。">Las Vegas 演算法</information>，經過初步理論分析，得知其**期望運行時間**為 $T$ 秒。由於時間必定是非負實數 ($T \ge 0$)，若將系統容忍的超時上限設定為平均時間的 10 倍（$\alpha = 10$）：
-
-$$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\% \implies \operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
-
-**工程意義**：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈長什麼樣子，我們也能在數學上做擔保——**該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$**。
-</details>
+即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，**最多不會超過總人口的 20%**。這再次呼應了我們前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。
 </callout>
 
-## 進階應用與侷限性
+## 理論延伸：馬爾科夫不等式的應用與侷限
+
+### 核心樞紐：通往高階定理的理論橋樑
 
 馬爾科夫不等式在機率與統計學中有著舉足輕重的地位，它不僅能直接用來推導<information concept="concept.tail_bound">尾端機率上界</information>，更是諸多進階定理的核心基石。例如：
-1. **推導<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式 (Chebyshev's Inequality)</content-link>**：將隨機變數 $X$ 替換為 $(X - \mu)^2$。
+1. **推導<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式 (Chebyshev's Inequality)</content-link>**：將隨機變數 $X$ 替換為平方形式 $(X - \mu)^2$。
 2. **推導<content-link canonical="chernoff-bound-and-exponential-concentration">切爾諾夫界限 (Chernoff Bound)</content-link>**：將隨機變數替換為指數形式 $e^{tX}$，即可利用<information concept="concept.mgf">動差生成函數</information>（MGF）推導出具備指數級衰減的機率邊界。
 3. **收斂性證明**：在高等機率論中，它常被用來證明「均方收斂（Mean Square Convergence）」必然推導出「依機率收斂（Convergence in Probability）」。
 
-**侷限性：**
-雖然馬爾科夫不等式極為通用，但它給出的界限通常**不夠緊緻（Loose Bound）**。其衰減速率僅為多項式級別的 $\mathcal{O}(1/a)$。如果我們知道該隨機變數是由多個獨立事件重複組合而成，經驗告訴我們極端值出現的機率應該呈「指數級」衰減。馬爾科夫不等式之所以無法給出這麼好的界限，是因為它**完全沒有利用到<information concept="concept.variance">變異數</information>（Variance）或更高階<information concept="concept.moments">動差</information>（Higher Moments）的資訊**。而後續將介紹的<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式</content-link>，正是在此基礎之上，引入了<information concept="concept.variance">變異數</information>資訊來大幅改進馬爾科夫不等式的不足。
+<callout>
+title: 演算法分析中的應用實例
+variant: info
+icon: code
+content:
+在<information concept="concept.randomized_algorithms">隨機演算法</information>分析中，馬爾科夫不等式是為執行時間建立保底界限的利器。
+
+假設我們設計了一個 <information context="Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。">Las Vegas 演算法</information>，經過初步的理論分析，我們得知其**期望運行時間（Expected Running Time）**為 $T$ 秒。
+
+由於時間必定是非負的實數 ($T \ge 0$)，我們可以直接應用馬爾科夫不等式的倍數形式。如果我們將系統容忍的超時上限設定為平均時間的 10 倍：
+
+$$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\%$$
+
+透過互補事件，這也意味著：
+
+$$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
+
+**工程意義**：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈究竟長什麼樣子，我們也能在數學上做擔保——**該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$**。
+</callout>
+
+### 工具侷限性：為何我們需要更緊緻的界限？
+
+雖然馬爾科夫不等式極為通用，但它給出的界限通常**不夠緊緻（Loose Bound）**。其衰減速率僅為多項式級別的 $\mathcal{O}(1/a)$。如果我們知道該隨機變數是由多個獨立事件重複組合而成，經驗告訴我們極端值出現的機率應該呈「指數級」衰減。
+
+馬爾科夫不等式之所以無法給出這麼好的界限，是因為它**完全沒有利用到<information concept="concept.variance">變異數</information>（Variance）或更高階<information concept="concept.moments">動差</information>（Higher Moments）的資訊**。而後續我們將介紹的<content-link canonical="chebyshevs-inequality-and-variance">柴比雪夫不等式</content-link>，正是在此基礎之上，引入了<information concept="concept.variance">變異數</information>資訊來大幅改進馬爾科夫不等式的不足。
+
+## 結語：集中不等式工具箱的堅實根基
+
+總結來說，馬爾科夫不等式雖然形式簡單，卻是整個集中不等式工具箱中最堅實的根基。它向我們展示了：即使在極端缺乏數據分佈資訊的情況下，僅憑「非負」的前提與「期望值」這個一階動差，我們依然能對系統的最壞情況給出嚴格的數學保證。
+
+在演算法分析與系統設計的初期，這往往是我們建立信心水準的第一道防線。然而，正如我們所探討的，僅依賴期望值的代價就是界限相對鬆散。當我們對系統有更深入的掌握，例如取得了變異數等高階統計特徵時，我們自然會渴望獲得更緊緻的界限。這份對精確度的追求，將引領我們邁向集中不等式工具箱的下一階梯，探索更為強大的放縮工具。
 
 <reviewkit>
   <takeaways>
@@ -149,7 +162,6 @@ $$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\% \implie
     - **演算法應用**：在未知具體機率分佈的情況下，它是評估隨機演算法「最壞時間上限（Worst-case Tail Bound）」的終極保底工具。
     - **承先啟後**：由於其衰減速率僅為 $\mathcal{O}(1/a)$，當我們需要更緊緻的界限時，必須將其結合函數變換（如平方、指數）來引入更高階的動差資訊，這也是後續 Chebyshev 與 Chernoff 不等式的發展脈絡。
   </takeaways>
-  <qprompt/>
 </reviewkit>
 
 ## 參考資料（References）
