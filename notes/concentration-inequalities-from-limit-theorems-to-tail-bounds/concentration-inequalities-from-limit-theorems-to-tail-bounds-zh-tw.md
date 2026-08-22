@@ -20,7 +20,7 @@ LastModified: 2026-08-22
 - 追求完美的代價：集中等式的計算困境
 - 妥協的藝術：集中不等式的放縮本質
 - 實戰演練：以代數放縮破解高斯分佈尾端界限
-- 破局的武器庫：動差資訊與尾端界限
+- 破局的武器庫：前置資訊與界限緊緻度
 - 結語與演算法分析關聯
 </draft>
 
@@ -141,7 +141,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
 透過這個簡單的放縮技巧，我們成功避開了複雜的高斯<information concept="concept.integration">積分</information>，並獲得了一個形式優美且非常實用的指數級衰減上界。這正是<information concept="concept.concentration_inequalities">集中不等式</information>核心思想的最佳體現：用微小的精度妥協，換取計算上的極大便利與強而有力的數學保證。
 </callout>
 
-## 破局的武器庫：動差資訊與尾端界限
+## 破局的武器庫：前置資訊與界限緊緻度
 
 在大致瞭解了<information concept="concept.concentration_inequalities">集中不等式</information>的概念之後，下一個疑問就是：那我們該如何運用呢？實際上，集中不等式有許多不同的形式，它們各自適用於不同的隨機性場景。根據我們對隨機變數 $X$ 掌握的已知資訊多寡，特別是所謂的「<information concept="concept.moments">動差</information>」，我們擁有不同階層的數學工具。而這裡最重要的一個核心法則是：**已知條件越嚴苛、掌握的統計資訊越多，我們能得到的界限就越緊緻**。
 
