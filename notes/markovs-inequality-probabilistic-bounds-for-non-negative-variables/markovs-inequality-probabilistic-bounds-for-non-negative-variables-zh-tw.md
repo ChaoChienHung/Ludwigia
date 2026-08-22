@@ -91,46 +91,40 @@ $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 
 ### 倍數參數化形式 (Parameterized Form)
 
-如果我們將門檻 $a$ 表示為<information concept="concept.expectation">期望值</information>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha > 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：
+如果我們將門檻 $a$ 表示為<information concept="concept.expectation">期望值</information>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha > 1$），這個不等式可以改寫成一個在工程與分析上極為直觀的「倍數形式」：
 
 $$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le \frac{1}{\alpha}$$
 
 這段數學式的白話文強而有力：**一個非負隨機變數的數值，超過其平均值 $\alpha$ 倍的機率，絕對不可能大於 $1/\alpha$**。例如，數值超過平均值 10 倍的機率，絕對不可能超過 $\frac{1}{10} = 10\%$。
 
 <callout>
-title: 直觀生活範例：國民平均所得
+title: 倍數形式的兩大經典範例：生活直覺與演算法分析
 variant: info
 icon: lightbulb
 content:
-這個不等式背後的直覺是什麼？想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的**平均年所得為 4 萬美元**。請問：這名被抽中者的年所得「**大於 20 萬美元**」的機率有多高？
+馬爾科夫不等式的「倍數形式」在日常生活與演算法工程中皆有著極為強大的實用價值：
 
-在完全不知道該國貧富差距或所得<information concept="concept.pdf">分佈曲線</information>的情況下，我們能回答這個問題嗎？可以的。因為所得必定是「非負」的，我們可以運用倍數形式——20 萬是平均 4 萬的 5 倍，因此直接套用馬爾科夫不等式：
+#### 案例一：國民所得分佈（日常生活直覺）
+想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的**平均年所得為 4 萬美元**。請問：這名被抽中者的年所得「**大於 20 萬美元**」的機率有多高？
+
+在完全不知道該國所得<information concept="concept.pdf">分佈曲線</information>的情況下，因為所得必定非負，且 20 萬為平均 4 萬的 5 倍（$\alpha = 5$），我們直接套用馬爾科夫不等式：
 *   <information concept="concept.expectation">期望值</information> $\mathbb{E}[X] = 40,000$
-*   門檻 $a = 200,000$
+*   門檻 $a = 200,000 = 5 \cdot \mathbb{E}[X]$
 
 $$\operatorname{Pr}[X \ge 200,000] \le \frac{40,000}{200,000} = \frac{1}{5} = 20\%$$
 
-即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，**最多不會超過總人口的 20%**。這再次呼應了我們前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。
-</callout>
+即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，**最多不會超過總人口的 20%**。這呼應了前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。
 
-<callout>
-title: 演算法分析中的應用實例
-variant: info
-icon: code
-content:
+---
+
+#### 案例二：Las Vegas 演算法（隨機演算法 Worst-Case 時間保障）
 在<information concept="concept.randomized_algorithms">隨機演算法</information>分析中，馬爾科夫不等式是為執行時間建立保底界限的利器。
 
-假設我們設計了一個 <information context="Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。">Las Vegas 演算法</information>，經過初步的理論分析，我們得知其**期望運行時間（Expected Running Time）**為 $T$ 秒。
+假設我們設計了一個 <information context="Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。">Las Vegas 演算法</information>，經過初步理論分析，得知其**期望運行時間**為 $T$ 秒。由於時間必定是非負實數 ($T \ge 0$)，若將系統容忍的超時上限設定為平均時間的 10 倍（$\alpha = 10$）：
 
-由於時間必定是非負的實數 ($T \ge 0$)，我們可以直接應用馬爾科夫不等式的倍數形式。如果我們將系統容忍的超時上限設定為平均時間的 10 倍：
+$$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\% \implies \operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
 
-$$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\%$$
-
-透過互補事件，這也意味著：
-
-$$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
-
-**工程意義**：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈究竟長什麼樣子，我們也能在數學上做擔保——**該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$**。
+**工程意義**：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈長什麼樣子，我們也能在數學上做擔保——**該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$**。
 </callout>
 
 ## 進階應用與侷限性
