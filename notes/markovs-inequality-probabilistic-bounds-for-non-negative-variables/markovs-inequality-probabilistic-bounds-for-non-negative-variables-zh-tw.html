@@ -14,7 +14,7 @@
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-08-22">
   <meta name="site:cover" content="notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality.png">
-  <meta name="site:reading_time_minutes" content="14">
+  <meta name="site:reading_time_minutes" content="15">
   <meta name="site:source" content="notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.md">
   <script>
   (() => {
@@ -228,7 +228,14 @@
 
 <p class="mb-3">這個不等式是一個非常優雅且直觀的結論，其<strong>白話文</strong>意即：一個非負隨機變數的值，超過任意正數 $a$ 的機率，永遠不可能大於「期望值除以 $a$」。</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>邊界放寬：什麼是「幾乎必然非負」</strong></p><p class="mb-2">這個屬性在數學上可以進一步放寬到 $X$ 為<strong>幾乎必然非負</strong>（Almost surely positive）。換句話說，只要 $X &lt; 0$ 是一個「零機率事件」（即 $\operatorname{Pr}[X &lt; 0] = 0$），馬爾科夫不等式就依然完全成立。</p></div>
+<div class="note-callout mb-3"><p class="mb-2"><strong>邊界放寬：什麼是「幾乎必然非負」？</strong></p><p class="mb-2">在定理中，「非負」的前提在數學上可以進一步放寬為<strong>「幾乎必然非負（Almost Surely Non-negative, $X \ge 0 \text{ a.s.}$）」</strong>：</p>
+
+<ul class="note-list">
+<li><strong>嚴格非負</strong>：要求樣本空間中絕對不存在任何負數數值。</li>
+<li><strong>幾乎必然非負</strong>：允許樣本空間中存在取值為負數的例外個體，但要求所有負數例外發生的<strong>總機率必須嚴格為零</strong>（即 $\operatorname{Pr}[X &lt; 0] = 0$，等價於 $\operatorname{Pr}[X \ge 0] = 1$）。</li>
+</ul>
+
+<p class="mb-3"><strong>為何不等式依然成立？</strong> 在機率論與測度論中，機率為零的例外事件在計算期望值（積分/加總）時對總量的貢獻精確為 $0$（屬於「零測集 Null set」）。因此就算理論上存在負數例外，只要其發生機率為 0，就不會破壞代數放縮過程，馬爾科夫不等式依然完全成立。</p></div>
 
 <h4 id="section-2" class="mb-2">數學證明：指示函數的巧妙應用</h4>
 
