@@ -2,7 +2,7 @@
 Title: 集中不等式：從極限定理到集中不等式工具箱
 Summary: 綜覽集中現象（Concentration of Measure）的核心概念、階梯式集中不等式工具箱（Markov, Chebyshev, Chernoff）與 Union Bound，並以經典的 Balls & Bins 模型做為引導案例。
 Slug: concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw
-Output: notes/introduction-to-concentration-inequalities/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html
+Output: notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html
 CanonicalId: concentration-inequalities-from-limit-theorems-to-toolbox
 Style: default
 Cover: ./concentration-inequalities.png
