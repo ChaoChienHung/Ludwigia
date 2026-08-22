@@ -7,20 +7,12 @@
     "tags": [
       "演算法",
       "機率學",
-      "集中不等式",
-      "Markov 不等式",
-      "Chebyshev 不等式",
-      "Chernoff Bound",
-      "Union Bound"
+      "集中不等式"
     ],
     "tag_concepts": [
       "concept.algorithm",
       "concept.probability",
-      "concept.concentration_inequalities",
-      "concept.markov_inequality",
-      "concept.chebyshev_inequality",
-      "concept.chernoff_bound",
-      "concept.union_bound"
+      "concept.concentration_inequalities"
     ],
     "tag_labels": {
       "concept.algorithm": {
@@ -37,26 +29,6 @@
         "en": "Concentration Inequalities",
         "zh-Hant": "集中不等式",
         "zh-Hans": "集中不等式"
-      },
-      "concept.markov_inequality": {
-        "en": "Markov's Inequality",
-        "zh-Hant": "Markov 不等式",
-        "zh-Hans": "Markov 不等式"
-      },
-      "concept.chebyshev_inequality": {
-        "en": "Chebyshev's Inequality",
-        "zh-Hant": "Chebyshev 不等式",
-        "zh-Hans": "Chebyshev 不等式"
-      },
-      "concept.chernoff_bound": {
-        "en": "Chernoff Bound",
-        "zh-Hant": "Chernoff Bound",
-        "zh-Hans": "Chernoff Bound"
-      },
-      "concept.union_bound": {
-        "en": "Union Bound",
-        "zh-Hant": "Union Bound",
-        "zh-Hans": "Union Bound"
       }
     },
     "summary": "綜覽集中現象（Concentration of Measure）的核心概念、階梯式集中不等式工具箱（Markov, Chebyshev, Chernoff）與 Union Bound，並以經典的 Balls & Bins 模型做為引導案例。",
@@ -77,32 +49,32 @@
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.134398
+        "score": 0.142213
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.122154
-      },
-      {
-        "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.118434
+        "score": 0.13119
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.11097
+        "score": 0.127258
+      },
+      {
+        "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "score": 0.124786
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.10827
+        "score": 0.113797
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.088011
+        "score": 0.093808
       }
     ]
   },
@@ -174,7 +146,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.00679
+        "score": 0.008248
       }
     ]
   },
@@ -715,7 +687,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.134398
+        "score": 0.142213
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
@@ -808,7 +780,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.122154
+        "score": 0.13119
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
@@ -890,9 +862,9 @@
         "score": 0.128408
       },
       {
-        "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.11556
+        "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
+        "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
+        "score": 0.127258
       }
     ]
   },
@@ -966,7 +938,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.01468
+        "score": 0.017834
       }
     ]
   },
@@ -1126,7 +1098,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.10827
+        "score": 0.113797
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
@@ -1226,7 +1198,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.017099
+        "score": 0.020772
       }
     ]
   },
@@ -1321,7 +1293,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-toolbox/concentration-inequalities-from-limit-theorems-to-toolbox-zh-tw.html",
-        "score": 0.088011
+        "score": 0.093808
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",

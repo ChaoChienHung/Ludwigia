@@ -7,7 +7,7 @@ CanonicalId: concentration-inequalities-from-limit-theorems-to-toolbox
 Style: default
 Cover: ./concentration-inequalities.png
 Lang: zh-tw
-Tags: algorithm, probability, concentration inequalities, markov inequality, chebyshev inequality, chernoff bound, union bound
+Tags: algorithm, probability, concentration inequalities
 Status: published
 Published: 2026-08-20
 LastModified: 2026-08-22
