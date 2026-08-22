@@ -108,7 +108,29 @@ $$P(|X - \mu| \le \epsilon) = 1 - \delta$$
 <block>
 title: 為什麼求上限值會比較簡單？
 content:
-因為在數學推導上，我們可以利用隨機變數的某些已知統計特徵，像是<information concept="concept.expectation">期望值</information>與<information concept="concept.variance">變異數</information>等統稱為「<information concept="concept.moments">動差</information>」（Moments）的量，透過<information concept="concept.algebraic_bounding">代數放縮</information>技巧來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>。這使得我們**不必知道完整的機率分佈長什麼樣子**，就能給出一個保守但絕對安全的數學保證。
+假設你在看新聞，聽到：「某家擁有 100 名員工的企業，平均月薪是 3 萬元。」
+
+如果這時有人問你：「這家公司裡，月薪『剛好是 10 萬元』的精確人數有幾個？」我們有辦法求解嗎？
+
+答案是很難。在已知的資訊下，我們基本上無法 100% 確定。因為要回答這個問題，我們最少需要這家公司的人資薪資表——也就是說，我們需要掌握**「完整的機率分佈」**。然而在現實世界中，數據往往太過複雜，我們根本拿不到這些細節。
+
+但是，如果我們退一步，不求精確值，只求一個**絕對安全的上界（天花板）**呢？如果我改問：「這家公司裡，月薪『達到或超過 10 萬元』的人，**最多**可能有幾個？」
+
+雖然我們沒有完整的薪資表，但至少我們已知兩個微小但確定的特徵：
+1. **非負數**：薪水不可能是負的（最慘就是 0 元）。
+2. **總量限制**：全公司的總薪水是 100 人 × 3 萬元 = 300 萬元。
+
+掌握了這兩點，我們就能完全不理會複雜的細節，單憑邏輯來推斷：要在不打破「總預算 300 萬」的前提下，盡可能塞進最多個「月薪 10 萬」的高薪族，最極端的做法，就是讓剩下的所有人薪水全部歸零。
+
+所以，計算方式非常簡單：300 萬元 ÷ 10 萬元 = 30 人。
+
+看！透過純粹的邏輯，我們非常篤定地得出了一個結論：**「這家公司裡，月薪超過 10 萬的人，絕對不可能超過 30 個。也就是說，你隨機抽一個人在這家公司裡，他月薪超過 10 萬的機率最多就是 30%。」**
+
+我們完全不需要知道這家公司的真實薪資鐘形曲線長怎樣、有沒有兼職員工，我們只是抓住了「平均值」與「非負數」這兩個最粗略的特徵，就逼出了一個絕對安全的「天花板」。
+
+**這，就是集中不等式（Concentration Inequalities）的底層邏輯。** 
+
+在真實世界中，數據的複雜度極高，我們沒辦法直接寫出精確的機率分佈。但是，要取得這些數據的某些已知統計特徵，像是「<information concept="concept.expectation">期望值</information>」或「<information concept="concept.variance">變異數</information>」（數學上統稱為「<information concept="concept.moments">動差</information>」，Moments），卻相對容易許多。我們就是利用這些容易取得的動差，透過像上述算薪水般的代數放縮邏輯，去逼出一個「極端事件發生的最高機率」。它讓我們用極少的資訊，換取了一個保守但無比堅固的數學保證。
 </block>
 
 這時，上述的等式就變成了<information concept="concept.concentration_inequalities">集中不等式</information>：
