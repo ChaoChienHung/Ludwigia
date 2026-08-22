@@ -1527,6 +1527,17 @@ body.note-page .note-reviewkit-pane-takeaways .note-takeaways-title {
   padding-left: 1.35rem;
 }
 
+.note-takeaways ul + p,
+.note-takeaways ul + h4,
+.note-takeaways ul + h5,
+.note-takeaways ul + .note-table-wrap,
+.note-takeaways ol + p,
+.note-takeaways ol + h4,
+.note-takeaways ol + h5,
+.note-takeaways ol + .note-table-wrap {
+  margin-top: 1.25rem;
+}
+
 .note-takeaways li {
   padding-left: 0.18rem;
 }
