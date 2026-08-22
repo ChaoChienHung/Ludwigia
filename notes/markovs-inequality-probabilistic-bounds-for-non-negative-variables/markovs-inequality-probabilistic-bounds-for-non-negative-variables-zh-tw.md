@@ -5,9 +5,10 @@ Slug: markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw
 Output: notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html
 CanonicalId: markovs-inequality-probabilistic-bounds-for-non-negative-variables
 Style: default
+Cover: ./markovs-inequality.png
 Lang: zh-tw
 Tags: algorithm, probability, concentration inequalities, markov inequality
-Status: drafting
+Status: published
 Published: 2026-08-20
 LastModified: 2026-08-22
 </meta>
@@ -22,6 +23,8 @@ LastModified: 2026-08-22
 </draft>
 
 # 馬爾科夫不等式：基於期望值的非負隨機變數機率上限
+
+![Markov's Inequality: Visualizing a Tail Probability Bound](./markovs-inequality.png)
 
 在上一篇<content-link canonical="concentration-inequalities-from-limit-theorems-to-toolbox">集中不等式：從極限定理到集中不等式工具箱</content-link>的導論中，我們提到在分析<information concept="concept.randomized_algorithms">隨機演算法</information>的效度時，我們時常需要評估**「演算法在最壞情況下，執行時間或資源消耗超出容忍上限的機率」**。為了繞過複雜的<information concept="concept.pdf">機率密度函數</information>積分，我們引入了「<information concept="concept.algebraic_bounding">代數放縮</information>」的概念。
 
