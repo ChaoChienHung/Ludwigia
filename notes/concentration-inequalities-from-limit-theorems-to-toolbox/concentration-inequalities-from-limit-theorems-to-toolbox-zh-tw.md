@@ -131,7 +131,7 @@ $$P(X \ge t) \le \frac{1}{t\sqrt{2\pi}} e^{-\frac{t^2}{2}}$$
      當我們對系統有進一步的了解，除了<information concept="concept.expectation">期望值</information>，還掌握了二階<information concept="concept.moments">動差</information>，也就是<information concept="concept.variance">變異數</information> $\operatorname{Var}(X)$ 為有限值的狀態時，就可以升級使用柴比雪夫不等式。它將衰減速率顯著提升到了 $\mathcal{O}(1/t^2)$，使得界限大幅收緊。在實務上，它特別適用於我們能證明變數之間存在弱條件的場景，像是成對獨立（Pairwise independence）。
 
 *   **<content-link canonical="chernoff-bound-and-exponential-concentration">切爾諾夫界（Chernoff Bound）</content-link>**
-     這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<information context="動差生成函數（Moment Generating Function，簡稱 MGF）是機率統計中的一種解析工具（定義為 E[e^{tX}]），用來將所有高階動差編碼並導出極為緊緻的指數級尾端機率界限。">動差生成函數</information>（Moment Generating Function，簡稱 MGF），來捕捉無限階<information concept="concept.moments">動差</information>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。
+     這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<information concept="concept.mgf">動差生成函數</information>（Moment Generating Function，簡稱 MGF），來捕捉無限階<information concept="concept.moments">動差</information>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。
 
 *   **聯集界限（Union Bound）**
      常被稱為 Boole's Inequality。與上述探討單一隨機變數偏移的工具不同，它是用來處理事件集合的。它不需要任何獨立性前提，完全無條件適用。只要知道個別壞事件發生的機率，就可以透過簡單的線性疊加 $\sum \operatorname{Pr}[A_i]$ 來計算出至少發生一件壞事的總失敗率上界。在結合多個可能導致系統崩潰的潛在問題時，它是不可或缺的最強實用工具。
