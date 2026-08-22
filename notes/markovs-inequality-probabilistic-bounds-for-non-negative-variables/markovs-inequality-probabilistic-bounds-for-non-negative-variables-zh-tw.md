@@ -46,7 +46,7 @@ $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 這個不等式是一個非常優雅且直觀的結論，其**白話文**意即：一個非負隨機變數的值，超過任意正數 $a$ 的機率，永遠不可能大於「期望值除以 $a$」。
 
 <block>
-title: 邊界放寬：什麼是「幾乎必然非負」？
+title: 邊界放寬：幾乎必然非負
 content:
 在定理中，「非負」的前提在數學上可以進一步放寬為**「幾乎必然非負（Almost Surely Non-negative, $X \ge 0 \text{ a.s.}$）」**：
 
@@ -91,7 +91,7 @@ $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 
 ### 倍數參數化形式 (Parameterized Form)
 
-如果我們將門檻 $a$ 表示為<information concept="concept.expectation">期望值</information>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha > 1$），這個不等式可以改寫成一個在工程與分析上極為直觀的「倍數形式」：
+如果我們將門檻 $a$ 表示為<information concept="concept.expectation">期望值</information>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha > 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：
 
 $$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le \frac{1}{\alpha}$$
 
@@ -102,9 +102,11 @@ title: 倍數形式的兩大經典範例：生活直覺與演算法分析
 variant: info
 icon: lightbulb
 content:
-馬爾科夫不等式的「倍數形式」在日常生活與演算法工程中皆有著極為強大的實用價值：
+馬爾科夫不等式的「倍數形式」在日常生活與演算法工程中皆有著極為強大的實用價值（點擊切換閱讀範例）：
 
-#### 案例一：國民所得分佈（日常生活直覺）
+<details open>
+<summary><strong>案例一：國民所得分佈（日常生活直覺）</strong></summary>
+
 想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的**平均年所得為 4 萬美元**。請問：這名被抽中者的年所得「**大於 20 萬美元**」的機率有多高？
 
 在完全不知道該國所得<information concept="concept.pdf">分佈曲線</information>的情況下，因為所得必定非負，且 20 萬為平均 4 萬的 5 倍（$\alpha = 5$），我們直接套用馬爾科夫不等式：
@@ -114,10 +116,11 @@ content:
 $$\operatorname{Pr}[X \ge 200,000] \le \frac{40,000}{200,000} = \frac{1}{5} = 20\%$$
 
 即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，**最多不會超過總人口的 20%**。這呼應了前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。
+</details>
 
----
+<details>
+<summary><strong>案例二：Las Vegas 演算法（隨機演算法 Worst-Case 時間保障）</strong></summary>
 
-#### 案例二：Las Vegas 演算法（隨機演算法 Worst-Case 時間保障）
 在<information concept="concept.randomized_algorithms">隨機演算法</information>分析中，馬爾科夫不等式是為執行時間建立保底界限的利器。
 
 假設我們設計了一個 <information context="Las Vegas 演算法是一種隨機演算法，其特點是『只要給出答案就保證絕對正確』，但其『執行時間是隨機的』。與之相對的是 Monte Carlo 演算法。">Las Vegas 演算法</information>，經過初步理論分析，得知其**期望運行時間**為 $T$ 秒。由於時間必定是非負實數 ($T \ge 0$)，若將系統容忍的超時上限設定為平均時間的 10 倍（$\alpha = 10$）：
@@ -125,6 +128,7 @@ $$\operatorname{Pr}[X \ge 200,000] \le \frac{40,000}{200,000} = \frac{1}{5} = 20
 $$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\% \implies \operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
 
 **工程意義**：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈長什麼樣子，我們也能在數學上做擔保——**該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$**。
+</details>
 </callout>
 
 ## 進階應用與侷限性

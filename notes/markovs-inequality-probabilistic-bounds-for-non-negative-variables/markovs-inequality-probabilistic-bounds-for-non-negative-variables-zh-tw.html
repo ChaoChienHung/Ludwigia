@@ -228,7 +228,7 @@
 
 <p class="mb-3">這個不等式是一個非常優雅且直觀的結論，其<strong>白話文</strong>意即：一個非負隨機變數的值，超過任意正數 $a$ 的機率，永遠不可能大於「期望值除以 $a$」。</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>邊界放寬：什麼是「幾乎必然非負」？</strong></p><p class="mb-2">在定理中，「非負」的前提在數學上可以進一步放寬為<strong>「幾乎必然非負（Almost Surely Non-negative, $X \ge 0 \text{ a.s.}$）」</strong>：</p>
+<div class="note-callout mb-3"><p class="mb-2"><strong>邊界放寬：幾乎必然非負</strong></p><p class="mb-2">在定理中，「非負」的前提在數學上可以進一步放寬為<strong>「幾乎必然非負（Almost Surely Non-negative, $X \ge 0 \text{ a.s.}$）」</strong>：</p>
 
 <ul class="note-list">
 <li><strong>嚴格非負</strong>：要求樣本空間中絕對不存在任何負數數值。</li>
@@ -265,15 +265,15 @@
 
 <h4 id="parameterized-form" class="mb-2">倍數參數化形式 (Parameterized Form)</h4>
 
-<p class="mb-3">如果我們將門檻 $a$ 表示為<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha &gt; 1$），這個不等式可以改寫成一個在工程與分析上極為直觀的「倍數形式」：</p>
+<p class="mb-3">如果我們將門檻 $a$ 表示為<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>的 $\alpha$ 倍（即令 $a = \alpha \cdot \mathbb{E}[X]$，其中 $\alpha &gt; 1$），這個不等式可以改寫成一個在工程上極為直觀的「倍數形式」：</p>
 
 <p class="mb-3">$$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le \frac{1}{\alpha}$$</p>
 
 <p class="mb-3">這段數學式的白話文強而有力：<strong>一個非負隨機變數的數值，超過其平均值 $\alpha$ 倍的機率，絕對不可能大於 $1/\alpha$</strong>。例如，數值超過平均值 10 倍的機率，絕對不可能超過 $\frac{1}{10} = 10\%$。</p>
 
-<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-lightbulb me-2"></i>倍數形式的兩大經典範例：生活直覺與演算法分析</h4><p class="mb-3">馬爾科夫不等式的「倍數形式」在日常生活與演算法工程中皆有著極為強大的實用價值：</p>
+<div class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-lightbulb me-2"></i>倍數形式的兩大經典範例：生活直覺與演算法分析</h4><p class="mb-3">馬爾科夫不等式的「倍數形式」在日常生活與演算法工程中皆有著極為強大的實用價值（點擊切換閱讀範例）：</p>
 
-<h5 class="mb-2">案例一：國民所得分佈（日常生活直覺）</h5>
+<p class="mb-3">&lt;details open&gt; &lt;summary&gt;&lt;strong&gt;案例一：國民所得分佈（日常生活直覺）&lt;/strong&gt;&lt;/summary&gt;</p>
 
 <p class="mb-3">想像一下，假設我們從某個國家中隨機抽取一名國民，已知該國的<strong>平均年所得為 4 萬美元</strong>。請問：這名被抽中者的年所得「<strong>大於 20 萬美元</strong>」的機率有多高？</p>
 
@@ -286,11 +286,9 @@
 
 <p class="mb-3">$$\operatorname{Pr}[X \ge 200,000] \le \frac{40,000}{200,000} = \frac{1}{5} = 20\%$$</p>
 
-<p class="mb-3">即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，<strong>最多不會超過總人口的 20%</strong>。這呼應了前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。</p>
+<p class="mb-3">即使缺乏任何其他分佈資訊，我們依然能得出一個強而有力的數學保證：該國年收入超過 20 萬美元的極端高薪人口，<strong>最多不會超過總人口的 20%</strong>。這呼應了前面的直覺——如果超過 20%，這些人的收入總和就會把整體的平均值拉抬到超過 4 萬美元，與已知前提產生矛盾。 &lt;/details&gt;</p>
 
-<hr>
-
-<h5 class="mb-2">案例二：Las Vegas 演算法（隨機演算法 Worst-Case 時間保障）</h5>
+<p class="mb-3">&lt;details&gt; &lt;summary&gt;&lt;strong&gt;案例二：Las Vegas 演算法（隨機演算法 Worst-Case 時間保障）&lt;/strong&gt;&lt;/summary&gt;</p>
 
 <p class="mb-3">在<span class="note-information" tabindex="0" data-information-concept="concept.randomized_algorithms" data-information-lang="zh-tw">隨機演算法<span class="note-information-tooltip" aria-hidden="true"></span></span>分析中，馬爾科夫不等式是為執行時間建立保底界限的利器。</p>
 
@@ -298,7 +296,7 @@
 
 <p class="mb-3">$$\operatorname{Pr}[\text{運行時間} \ge 10T] \le \frac{1}{10} = 10\% \implies \operatorname{Pr}[\text{運行時間} &lt; 10T] \ge 1 - 0.1 = 90\%$$</p>
 
-<p class="mb-3"><strong>工程意義</strong>：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈長什麼樣子，我們也能在數學上做擔保——<strong>該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$</strong>。</p></div>
+<p class="mb-3"><strong>工程意義</strong>：即便我們完全不知道該演算法在面對極端測資時，其運行時間的具體機率分佈長什麼樣子，我們也能在數學上做擔保——<strong>該演算法在 $10T$ 秒內順利結束運行的機率，至少高達 $90\%$</strong>。 &lt;/details&gt;</p></div>
 </section>
 
 <section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
