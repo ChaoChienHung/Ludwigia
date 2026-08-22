@@ -735,9 +735,9 @@
         "zh-Hans": "动差生成函数（MGF）"
       },
       "contexts": {
-        "en": "Moment Generating Function (MGF) is an analytical tool in probability theory (defined as (t) = \\mathbb{E}[e^{tX}]$) that encodes all higher-order moments and yields tight exponential tail bounds.",
-        "zh-Hant": "動差生成函數（Moment Generating Function，簡稱 MGF）是機率統計中的核心解析工具（定義為 (t) = \\mathbb{E}[e^{tX}]$），用來將隨機變數的所有高階動差編碼並導出極為緊緻的指數級尾端機率界限。",
-        "zh-Hans": "动差生成函数（Moment Generating Function，简称 MGF）是概率统计中的核心解析工具（定义为 (t) = \\mathbb{E}[e^{tX}]$），用来将随机变量的所有高阶动差编码并导出极为紧凑的指数级尾端概率界限。"
+        "en": "Moment Generating Function (MGF) is an analytical tool in probability theory (defined as $(t) = \\mathbb{E}[e^{tX}]$) that encodes all higher-order moments and yields tight exponential tail bounds.",
+        "zh-Hant": "動差生成函數（Moment Generating Function，簡稱 MGF）是機率論與統計學中用來完全描述隨機變數機率分配的數學工具（定義為 (t) = \\mathbb{E}[e^{tX}]$）。它的核心價值在於透過對函數進行微分，能輕鬆求出隨機變數的各種原點動差（如期望值與變異數），並可作為識別分配的獨特標記。",
+        "zh-Hans": "动差生成函数（Moment Generating Function，简称 MGF）是概率统计中的核心解析工具（定义为 $(t) = \\mathbb{E}[e^{tX}]$），用来将随机变量的所有高阶动差编码并导出极为紧凑的指数级尾端概率界限。"
       },
       "aliases": [
         "moment generating function",
