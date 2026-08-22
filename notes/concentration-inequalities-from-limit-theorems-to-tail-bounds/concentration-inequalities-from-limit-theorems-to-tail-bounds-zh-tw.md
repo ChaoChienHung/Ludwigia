@@ -38,11 +38,11 @@ caption: 集中不等式視覺化全景圖：從極限定理、動差資訊到�
 
 那如果我們嘗試透過數學模型，來推算該演算法面對全體可能輸入的結果呢？
 
-要算出該演算法對全體可能輸入的結果，最直觀的方式就是對所有可能的執行路徑進行精確的<information concept="concept.integration">數學積分</information>或離散加總，然後算出符合條件的事件所佔的比例；不過這也意味著我們必須掌握系統完整的機率分佈。
+要算出該演算法對全體可能輸入的結果，最直觀的方式就是對所有可能的執行路徑進行精確的<information concept="concept.integration">積分</information>或離散加總，然後算出符合條件的事件所佔的比例；不過這也意味著我們必須掌握系統完整的機率分佈。
 
-然而，現代<information concept="concept.randomized_algorithms">隨機演算法（Randomized Algorithms）</information>與分散式系統的狀態空間往往極度複雜，屬於超高維度的巨大組合空間。即使我們確切知道了每一步隨機操作的局部機率分佈，要在這樣龐大的空間中進行精確的<information concept="concept.integration">積分與加總</information>，在計算上也是完全不可行的。
+然而，現代<information concept="concept.randomized_algorithms">隨機演算法（Randomized Algorithms）</information>與分散式系統的狀態空間往往極度複雜，屬於超高維度的巨大組合空間。即使我們確切知道了每一步隨機操作的局部機率分佈，要在這樣龐大的空間中進行精確的<information concept="concept.integration">積分</information>與加總，在計算上也是完全不可行的。
 
-既然無法進行精確的<information concept="concept.integration">積分與加總</information>，我們自然就無法算出某個特定極端事件發生的「<information context="絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。">絕對機率</information>」（例如「演算法執行時間超過預期 10 倍」的精確數值）。在無法得知精確分佈與絕對機率的情況下，我們該如何給出嚴謹的信心保證？這時，我們需要一種數學工具，來繞過複雜的<information concept="concept.distribution_integration">積分與加總運算</information>，幫助我們**真正量化對演算法結果的信心程度**。這就引出了我們今天的主題——**<information concept="concept.concentration_inequalities">集中不等式</information>**。而這個信心程度在理論分析中，就是所謂的**<information context="信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。">信心水準</information>**（Confidence Level），用來精確宣告「演算法結果落在安全區間內的理論機率」。
+既然無法進行精確的<information concept="concept.integration">積分</information>與加總，我們自然就無法算出某個特定極端事件發生的「<information context="絕對機率（Absolute Probability）是機率論中的精確量化指標，代表某特定隨機事件在明確分佈與樣本空間下發生的精確理論機率數值。">絕對機率</information>」（例如「演算法執行時間超過預期 10 倍」的精確數值）。在無法得知精確分佈與絕對機率的情況下，我們該如何給出嚴謹的信心保證？這時，我們需要一種數學工具，來繞過複雜的<information concept="concept.distribution_integration">分佈積分</information>與加總運算，幫助我們**真正量化對演算法結果的信心程度**。這就引出了我們今天的主題——**<information concept="concept.concentration_inequalities">集中不等式</information>**。而這個信心程度在理論分析中，就是所謂的**<information context="信心水準（Confidence Level）屬於統計學與演算法分析中的核心指標，用來描述估計值或演算法結果以多大的機率保證落在指定的安全區間內。">信心水準</information>**（Confidence Level），用來精確宣告「演算法結果落在安全區間內的理論機率」。
 
 ## 亂數中的巨觀確定性：什麼是機率的集中現象？
 
@@ -90,7 +90,7 @@ content:
 
 ### 追求完美的代價：集中等式的計算困境
 
-在機率論中，集中等式實際上描述的是<information concept="concept.pdf">機率密度函數</information>在某一特定區域內的<information concept="concept.distribution_integration">積分精確值</information>。例如，如果我們想知道某個隨機變數 $X$ 與平均值 $\mu$ 的誤差大於或小於某個門檻 $\epsilon$ 的機率，我們理想中會得到如下等式：
+在機率論中，集中等式實際上描述的是<information concept="concept.pdf">機率密度函數</information>在某一特定區域內的<information concept="concept.distribution_integration">分佈積分</information>精確值。例如，如果我們想知道某個隨機變數 $X$ 與平均值 $\mu$ 的誤差大於或小於某個門檻 $\epsilon$ 的機率，我們理想中會得到如下等式：
 
 $$P(|X - \mu| > \epsilon) = \delta$$
 $$P(|X - \mu| \le \epsilon) = 1 - \delta$$
@@ -99,7 +99,7 @@ $$P(|X - \mu| \le \epsilon) = 1 - \delta$$
 *   存在剛好為 $\delta$ 的機率，使得隨機變數 $X$ 與平均值 $\mu$ 的誤差大於 $\epsilon$。
 *   存在剛好為 $1 - \delta$ 的機率，使得隨機變數 $X$ 與平均值 $\mu$ 的誤差不大於 $\epsilon$，換句話說，誤差被 $\epsilon$ 所嚴格界定。
 
-然而，正如前面所提及的，在現實中針對複雜分佈的<information concept="concept.integration">積分與加總運算</information>往往極度困難甚至不可行。因此，我們幾乎無法獲得這樣一個精確的界定機率 $\delta$。
+然而，正如前面所提及的，在現實中針對複雜分佈的<information concept="concept.integration">積分</information>與加總運算往往極度困難甚至不可行。因此，我們幾乎無法獲得這樣一個精確的界定機率 $\delta$。
 
 ### 妥協的藝術：集中不等式的放縮本質
 
