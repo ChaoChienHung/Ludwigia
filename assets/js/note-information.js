@@ -38,49 +38,75 @@
     );
   };
 
+  const renderMathOnElement = (element) => {
+    if (!element) return;
+    if (window.LudwigContentRuntime && typeof window.LudwigContentRuntime.renderMathInElementSafely === "function") {
+      window.LudwigContentRuntime.renderMathInElementSafely(element);
+    } else if (typeof window.renderMathInElement === "function") {
+      try {
+        window.renderMathInElement(element, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true }
+          ],
+          throwOnError: false
+        });
+      } catch (e) {}
+    }
+  };
+
   const hydrate = () => {
     const conceptsById = buildConceptIndex();
-    if (conceptsById.size === 0) return;
 
-    const nodes = document.querySelectorAll(".note-information[data-information-concept]");
-    nodes.forEach((node) => {
-      const conceptId = String(node.getAttribute("data-information-concept") || "").trim();
-      if (!conceptId) return;
-      const concept = conceptsById.get(conceptId);
-      if (!concept) return;
+    const conceptNodes = document.querySelectorAll(".note-information[data-information-concept]");
+    if (conceptsById.size > 0) {
+      conceptNodes.forEach((node) => {
+        const conceptId = String(node.getAttribute("data-information-concept") || "").trim();
+        if (!conceptId) return;
+        const concept = conceptsById.get(conceptId);
+        if (!concept) return;
 
-      const lang = (window.LudwigLanguage && typeof window.LudwigLanguage.getCurrentLang === "function")
-        ? window.LudwigLanguage.getCurrentLang()
-        : document.documentElement.getAttribute("lang")
-        || node.getAttribute("data-information-lang")
-        || "en";
-      const label = pickLocalizedText(concept.labels, lang);
-      const context = pickLocalizedText(concept.contexts, lang);
-      if (!context) return;
+        const lang = (window.LudwigLanguage && typeof window.LudwigLanguage.getCurrentLang === "function")
+          ? window.LudwigLanguage.getCurrentLang()
+          : document.documentElement.getAttribute("lang")
+          || node.getAttribute("data-information-lang")
+          || "en";
+        const label = pickLocalizedText(concept.labels, lang);
+        const context = pickLocalizedText(concept.contexts, lang);
+        if (!context) return;
 
-      node.setAttribute("aria-label", label ? `${label}: ${context}` : context);
-      const tooltip = node.querySelector(".note-information-tooltip");
-      if (tooltip) {
-        tooltip.textContent = "";
-        if (label) {
-          const titleEl = document.createElement("strong");
-          titleEl.className = "note-information-tooltip-title";
-          titleEl.textContent = label;
+        node.setAttribute("aria-label", label ? `${label}: ${context}` : context);
+        const tooltip = node.querySelector(".note-information-tooltip");
+        if (tooltip) {
+          tooltip.textContent = "";
+          if (label) {
+            const titleEl = document.createElement("strong");
+            titleEl.className = "note-information-tooltip-title";
+            titleEl.textContent = label;
 
-          const dividerEl = document.createElement("span");
-          dividerEl.className = "note-information-tooltip-divider";
+            const dividerEl = document.createElement("span");
+            dividerEl.className = "note-information-tooltip-divider";
 
-          const textEl = document.createElement("span");
-          textEl.className = "note-information-tooltip-text";
-          textEl.textContent = context;
+            const textEl = document.createElement("span");
+            textEl.className = "note-information-tooltip-text";
+            textEl.textContent = context;
 
-          tooltip.appendChild(titleEl);
-          tooltip.appendChild(dividerEl);
-          tooltip.appendChild(textEl);
-        } else {
-          tooltip.textContent = context;
+            tooltip.appendChild(titleEl);
+            tooltip.appendChild(dividerEl);
+            tooltip.appendChild(textEl);
+          } else {
+            tooltip.textContent = context;
+          }
+          renderMathOnElement(tooltip);
         }
-      }
+      });
+    }
+
+    const allTooltips = document.querySelectorAll(".note-information-tooltip");
+    allTooltips.forEach((tooltip) => {
+      renderMathOnElement(tooltip);
     });
   };
 
