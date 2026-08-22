@@ -707,6 +707,25 @@
         "變異數",
         "方差"
       ]
+    },
+    {
+      "concept_id": "concept.randomized_algorithms",
+      "labels": {
+        "en": "Randomized Algorithms",
+        "zh-Hant": "隨機演算法",
+        "zh-Hans": "随机算法"
+      },
+      "contexts": {
+        "en": "Randomized Algorithms are a foundational class of algorithms in computer science that incorporate random choices into their logic to achieve superior expected efficiency, simplicity, or high-probability correctness guarantees.",
+        "zh-Hant": "隨機演算法（Randomized Algorithms）是演算法分析中的核心類別，在其邏輯中引入隨機選擇或隨機數，以換取極高的期望執行效率、簡潔性與機率極高（High Probability）的正確性保證。",
+        "zh-Hans": "随机算法（Randomized Algorithms）是算法分析中的核心类别，在其逻辑中引入随机选择或随机数，以换取极高的期望执行效率、简洁性与概率极高（High Probability）的正确性保证。"
+      },
+      "aliases": [
+        "randomized algorithms",
+        "randomized algorithm",
+        "隨機演算法",
+        "随机算法"
+      ]
     }
   ]
 }
