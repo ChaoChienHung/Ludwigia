@@ -30,7 +30,7 @@ alt: Markov's Inequality: Visualizing a Tail Probability Bound
 caption: 馬爾科夫不等式（Markov's Inequality）視覺化全景圖：尾端機率上界與直覺範例
 </image>
 
-在上一篇<content-link canonical="concentration-inequalities-from-limit-theorems-to-tail-bounds">集中不等式：從極限定理到尾端界限</content-link>的導論中，我們提到在分析<information concept="concept.randomized_algorithms">隨機演算法</information>的效度時，我們時常需要評估**「演算法在最壞情況下，執行時間或資源消耗超出容忍上限的機率」**。為了繞過複雜的<information concept="concept.pdf">機率密度函數</information>積分，我們引入了「<information concept="concept.algebraic_bounding">代數放縮</information>」的概念。
+在<content-link canonical="concentration-inequalities-from-limit-theorems-to-tail-bounds">集中不等式：從極限定理到尾端界限</content-link>中，我們提到在分析<information concept="concept.randomized_algorithms">隨機演算法</information>的效度時，我們時常需要評估**「演算法在最壞情況下，執行時間或資源消耗超出容忍上限的機率」**。為了繞過複雜的<information concept="concept.pdf">機率密度函數</information>積分，我們引入了「<information concept="concept.algebraic_bounding">代數放縮</information>」的概念。
 
 而在這龐大的集中不等式工具箱中，最基礎、前置條件最簡約的開路先鋒，就是**馬爾科夫不等式（Markov's Inequality）**。
 
