@@ -46,8 +46,7 @@ $$\operatorname{Pr}[X \ge a] \le \frac{\mathbb{E}[X]}{a}$$
 這個不等式是一個非常優雅且直觀的結論，其**白話文**意即：一個非負隨機變數的值，超過任意正數 $a$ 的機率，永遠不可能大於「期望值除以 $a$」。
 
 <block>
-title: 補充說明：幾乎必然非負（Almost Surely Non-negative）
-variant: info
+title: 邊界放寬：幾乎必然非負
 content:
 這個屬性在數學上可以進一步放寬到 $X$ 為**幾乎必然非負**（Almost surely positive）。換句話說，只要 $X < 0$ 是一個「零機率事件」（即 $\operatorname{Pr}[X < 0] = 0$），馬爾科夫不等式就依然完全成立。
 </block>
