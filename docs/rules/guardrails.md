@@ -282,7 +282,7 @@
 
 - [ ] 參考文獻結構分層
   - [ ] 標題為 `## 參考資料（References）`（英文頁面為 `## References`）
-  - [ ] 劃分 `### 學術論文（Academic Literature）` 與 `### 技術文章（Technical Articles）`
+  - [ ] 多重屬性時，依內容分劃 `### 學術論文（Academic Literature）`、`### 課程與教材（Course Materials）`、`### 技術文章（Technical Articles）` 與 `### 開源專案與代碼（Open Source Code）`
 
 - [ ] 學術論文引用真實性與格式
   - [ ] 論文採 APA / IEEE 格式（作者、年份、題目、發表會議/期刊、卷號頁碼）

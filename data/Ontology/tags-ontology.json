@@ -2366,6 +2366,34 @@
         "系統架構",
         "系统架构"
       ]
+    },
+    {
+      "concept_id": "concept.tokenizer",
+      "labels": {
+        "en": "Tokenizer",
+        "zh-Hant": "分詞器 (Tokenizer)",
+        "zh-Hans": "分词器 (Tokenizer)"
+      },
+      "aliases": [
+        "tokenizer",
+        "Tokenizer",
+        "分詞器",
+        "分词器"
+      ]
+    },
+    {
+      "concept_id": "concept.snap_grid",
+      "labels": {
+        "en": "Snap GRID",
+        "zh-Hant": "Snap GRID 框架",
+        "zh-Hans": "Snap GRID 框架"
+      },
+      "aliases": [
+        "snap grid",
+        "Snap GRID",
+        "snap grid 框架",
+        "snap grid 框架"
+      ]
     }
   ]
 }

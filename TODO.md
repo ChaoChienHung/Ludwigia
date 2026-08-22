@@ -141,7 +141,7 @@
     - **5. Hierarchical Clustering 的多尺度樹狀層次**：
       - 解釋 Linkage 規則如何改變分群哲學（Single Linkage $\sim$ 類似 Density 連貫；Complete Linkage $\sim$ 緊密球形；Average/Ward Linkage $\sim$ Centroid 方差平衡）。
   - [ ] 篇幅調整與結構拆分：
-    - 評估是否將 K-Means 的深層推導與 EM 雙向橋樑獨立成《K-Means: Clustering Around Centers》，而本總覽篇聚焦於三大分群家族的「動機、幾何假設與 Representative Point 哲學對比」。
+    - 評估是否將 K-Means 的深層推導與 EM 雙向橋樑獨立成《K-Means: Clustering Around Centers》，而本總覽篇聚焦於三大分群家族的「動機、幾何假設與 Representative Point 哲學對比」（已於下方 P1 規劃獨立任務《K-Means 聚類演算法：從牧師-村民模型、調優改進到 EM 收斂證明》）。
   - [ ] 交付條件：完成文章邏輯重構與修訂，更新對應 Markdown 與 `search-index.{json,js}`，確保離線與靜態站離線可讀性不退化。
 
 - [ ] Refactor & Scope Alignment: 重構《從級聯漏斗到自迴歸生成：推薦系統的範式重塑》的寫作焦點
@@ -214,6 +214,54 @@
 
 
 ### P1
+
+- [ ] New Note: 規劃與撰寫《K-Means 聚類演算法：從牧師-村民模型、調優改進到 EM 收斂證明》
+  - [ ] 背景與目標：新增專注於 **K-Means 聚類演算法** 的完整結構化筆記（`notes/k-means-clustering-algorithm-and-em-proof/`），詳細涵蓋經典牧師-村民模型、算法步驟與時間/空間複雜度、優缺點分析、多種算法調優與改進（數據預處理、手肘法、Gap Statistic、核函數 Kernel K-means、K-means++ / K-means||、ISODATA），以及基於 EM 演算法的嚴謹收斂性證明。
+  - [ ] 完整大綱與內容規劃：
+    - **1. 算法介紹**：
+      - **1.1 牧師-村民模型 (Priest-Villager Model)**：以牧師郊區布道、搬遷至村民地址中心、村民重新選擇最近布道點至位置穩定的模型，直觀引入 K-Means 的核心目標：最小化每個村民到其最近中心點的距離和（極小化平方誤差 SSE）。
+      - **1.2 算法步驟**：
+        1. 隨機選擇 $k$ 個樣本點作為初始聚類中心 $\mu_1, \mu_2, \dots, \mu_k$。
+        2. 針對數據集中每個樣本 $x_i$，計算其到各聚類中心的歐氏距離，分配至距離最小的聚類中心對應簇。
+        3. 針對每個類別 $C_j$，重新計算聚類中心（屬於該類所有樣本的質心 $\mu_j = \frac{1}{|C_j|} \sum_{x \in C_j} x$）。
+        4. 重複步驟 2 與 3，直到達到中止條件（達到最大迭代次數 $t$、最小誤差變化等）。
+      - **1.3 複雜度分析與虛擬代碼**：
+        - 虛擬代碼結構：包含雙重迴圈計算距離與重新計算中心點。
+        - **時間複雜度**：$O(t \cdot k \cdot n \cdot m)$，其中 $t$ 為迭代次數，$k$ 為簇數，$n$ 為樣本數，$m$ 為特徵維度。
+        - **空間複雜度**：$O((k + n) \cdot m)$，儲存 $k$ 個聚類中心與 $n$ 個 $m$ 維數據點。
+    - **2. 演算法優缺點分析**：
+      - **2.1 優點**：直觀易懂、聚類效果好（局部最優解實務上通常足夠）、大數據集下具較佳伸縮性 (Scalability)、簇分佈接近高斯分佈時效果優秀、計算複雜度低（時間呈線性關係）。
+      - **2.2 缺點**：$K$ 值需人工預先設定、對初始簇中心敏感、對異常值/離群點敏感、硬劃分 (Hard Assignment, 樣本僅能歸為單一類)、不適合非凸形狀 (Non-convex)、離散分類或類別不平衡數據。
+    - **3. 算法調優與改進 (Tuning & Improvements)**：
+      - **3.1 數據預處理**：基於歐氏距離特性，均值與方差較大的維度會產生決定性影響，故數據必須先做歸一化 (Normalization) 或標準化 (Standardization)；離群點或噪聲會導致中心嚴重偏移，需進行異常點檢測。
+      - **3.2 合理選擇 K 值**：
+        - **手肘法 (Elbow Method)**：觀察損失函數隨 $K$ 變化的拐點 (Elbow point)，缺點為需人工判讀、自動化程度低。
+        - **Gap Statistic 方法**：出自 Stanford 學者論文 *Estimating the number of clusters in a data set via the gap statistic* (Tibshirani et al.)。在樣本區域內按均勻分佈透過蒙特卡洛模擬 (Monte Carlo simulation) 產生同等大小隨機樣本並執行 K-Means，重複多次（如 20 次）求得 $E_n^*\{\log(W_k)\}$ 平均值，計算 Gap Statistic：
+          $$\text{Gap}(K) = E_n^*\{\log(W_k)\} - \log(W_k)$$
+          取 $\text{Gap}(K)$ 最大值對應的 $K$ 即為最佳簇數。可對接 Python 開源套件 `gap_statistic`。
+      - **3.3 採用核函數 (Kernel K-means)**：透過非線性映射 $\Phi(x)$ 將數據點映射至高維特徵空間，增加線性可分概率，解決非凸數據分佈形狀的聚類問題。
+      - **3.4 初始點改進：K-means++ 與 K-means||**：
+        - **K-means++**：首個中心點隨機選取，後續中心點以正比於到已選中心點最短距離平方 $D(x)^2$ 的概率選擇，使中心點相互儘可能遠離。缺點為難以平行化。
+        - **K-means|| (Parallel K-means++)**：改變採樣策略，每次迭代採樣 $O(k)$ 個點，重複 $l$ 次（如 5 次即可）得到 $O(k l)$ 個候選點集合，再從中選出 $k$ 個中心點。
+      - **3.5 動態聚類：ISODATA 算法**：迭代自組織數據分析法 (Iterative Self-Organizing Data Analysis Technique)，當某類別樣本數過少時將其剔除/合併，樣本數過多或分散程度較大時將其拆分為兩個子類別，動態優化 $K$ 值。
+    - **4. EM 算法框架下的收斂性證明**：
+      - **EM 視角**：K-Means 迭代過程本質上是 EM 算法在硬劃分下的極限特例。隱變量為樣本所屬類別。
+        - **E 步 (Expectation)**：給定當前中心點 $\mu_k$，計算每個樣本的硬分配（求期望 / 最近距離歸類）。
+        - **M 步 (Maximization)**：給定分配結果，求似然函數最大化（損失函數最小時）對應的參數 $\mu_k$。
+      - **極值導數導引**：定義損失函數 $J = \sum_{i=1}^n \sum_{k=1}^K r_{ik} \|x_i - \mu_k\|^2$（其中 $r_{ik} \in \{0, 1\}$ 表示 $x_i$ 是否屬於第 $k$ 類）。令偏導數等於 0：
+        $$\frac{\partial J}{\partial \mu_k} = -2 \sum_{i=1}^n r_{ik} (x_i - \mu_k) = 0 \implies \mu_k = \frac{\sum_{i=1}^n r_{ik} x_i}{\sum_{i=1}^n r_{ik}} = \frac{1}{|C_k|} \sum_{x_i \in C_k} x_i$$
+        證得新的中心點即為該類別所有數據點的質心。
+      - **局部最優陷阱**：點出 EM 演算法容易陷入局部極小值 (Local Minimum)，此為 K-Means 可能得到局部最優解的根本數學原因。
+    - **5. 參考文獻**：
+      - 周志華《機器學習》
+      - *K-means 筆記（三）數學原理*
+      - *Estimating the number of clusters in a data set via the gap statistic* (Tibshirani, Walther, Hastie, 2001)
+  - [ ] 站內導流與聯動：
+    - 與總覽篇《Discovering Hidden Structures: What Clustering Really Does》雙向連結（Overview vs Deep-Dive）。
+    - 對接 <content-link canonical="first-principles-symbols-and-rules">《第一性原理的終極型態》</content-link> 探討 EM / K-means 符號優化與物理意義解耦。
+  - [ ] 交付條件：在 `notes/k-means-clustering-algorithm-and-em-proof/` 建立草稿與 source `.md`，完成 HTML 生成與 `search-index.{json,js}` 更新，且符合全站離線可讀性約定。
+
+
 
   - [x] Background effect 參考：先以 `https://codepen.io/mdusmanansari/pen/BamepLe` 的氛圍語彙做出第一版 `Garden` ambient effect，並接進既有 `Effects` 開關
     - [x] 已落地：首頁 / note page 的 `Garden` theme 會顯示低對比 bloom + pollen + stem silhouette ambient layer，`Effects` 關閉時完全收起，不直接搬整個 CodePen 場景

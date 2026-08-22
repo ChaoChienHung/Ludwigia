@@ -46,7 +46,7 @@ TitleSuffix: true
 - `## <Core Topic 2>`
 - `## Summary & Key Takeaways`
 - `## 參考資料（References）`
-  - 建議分為 `### 學術論文（Academic Literature）` 與 `### 技術文章（Technical Articles）`
+  - 依內容屬性分為 `### 學術論文（Academic Literature）`、`### 課程與教材（Course Materials）`、`### 技術文章（Technical Articles）` 與 `### 開源專案與代碼（Open Source Code）`
   - 學術論文採 APA / IEEE 格式（`作者 (年份). 題目. *刊碼*. [arXiv:xxx](URL)`），論文連結指向 Abstract 頁面而非 raw PDF
 - `## Summary Quiz`（用 `<reviewkit>`）
 - `<qprompt>`（提供 Quiz Generator Prompt 的 SSOT）

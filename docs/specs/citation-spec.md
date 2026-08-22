@@ -15,6 +15,7 @@
     * **學術論文**：`### 學術論文（Academic Literature）`
     * **課程與教材**：`### 課程與教材（Course Materials）`
     * **技術文章**：`### 技術文章（Technical Articles）`
+    * **開源專案與代碼**：`### 開源專案與代碼（Open Source Code）`
 
 ## 2. 學術論文引用格式（Academic Citation Standard）
 
@@ -50,16 +51,28 @@
 ### 格式範本
 `[平台/作者：文章原始標題](URL)`
 
-## 5. 原始語言保留原則（Source Language Contract）
+## 5. 開源專案與代碼引用格式（Open Source Code Standard）
+
+針對 GitHub、GitLab、HuggingFace、Kaggle 等開源專案、代碼庫與資料集：
+
+### 格式範本
+`**[專案名稱/平台](URL)**` 或 `**專案標籤**: [repository-id](URL)`
+
+### 範例
+- `**[Snap GRID Github](https://github.com/snap-research/GRID)**`
+- `**Snap GRID Github**: [snap-research/GRID](https://github.com/snap-research/GRID)`
+
+## 6. 原始語言保留原則（Source Language Contract）
 
 * **原則**：外部參考文獻（特別是文章標題與平台名稱）**必須嚴格保持原網址/原文獻的原始語言與用字**。
 * **簡體中文**：若來源為簡體中文文章（如知乎「从原理到落地详细解读生成式推荐OneRec」），標題**不得**被強制改寫或轉換為繁體中文，必須維護原文真相。
 * **英文/其他語言**：保持原文標題，不得自行翻譯論文題目。
 
-## 6. 引用真實性與精準度核驗 Protocol（Verification Protocol）
+## 7. 引用真實性與精準度核驗 Protocol（Verification Protocol）
 
 在新增或編輯參考文獻時，Agent 與作者必須執行以下實體核驗（Verification Steps）：
 
 1. **標題與作者對齊**：核對 paper title 與 author 名單是否精準一致。
 2. **發表場合（Venue）查驗**：透過 arXiv、Google Scholar、DBLP 或 IEEE Xplore/ACM 確定論文實際發表的會議或期刊名稱，不得將 CVPR / NeurIPS 論文誤標為未發表預印本。
 3. **網址有效性**：確保 arXiv 號碼、DOI 號碼與知乎/技術部落格網址正確無誤且可連線。
+
