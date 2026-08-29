@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>告別 RL 的偏好對齊：DPO (Direct Preference Optimization) 數學推導與實務解析 — Ludwig</title>
+  <meta name="garden:tags" content="強化學習, DPO (直接偏好優化), RLHF (人類回饋強化學習), 深度學習">
+  <meta name="garden:summary" content="本文深入剖析 DPO (Direct Preference Optimization) 演算法，解構其如何利用 Bradley-Terry 偏好模型，將隱性 Reward Function 參數化為 Policy 與 Reference Model 的 Log-Likelihood 比率，進而將複雜的 RLHF 轉化為極簡的離線二元交叉熵優化，並對比其與 PPO/GRPO 的長短板。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,concept.dpo,concept.rlhf,concept.deep_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.dpo&quot;:{&quot;en&quot;:&quot;DPO&quot;,&quot;zh-Hant&quot;:&quot;DPO (直接偏好優化)&quot;,&quot;zh-Hans&quot;:&quot;DPO (直接偏好优化)&quot;},&quot;concept.rlhf&quot;:{&quot;en&quot;:&quot;RLHF&quot;,&quot;zh-Hant&quot;:&quot;RLHF (人類回饋強化學習)&quot;,&quot;zh-Hans&quot;:&quot;RLHF (人类反馈强化学习)&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;}}">
+  <meta name="site:canonical_id" content="dpo-direct-preference-optimization">
+  <meta name="site:published_at" content="2026-08-29">
+  <meta name="site:last_modified_at" content="2026-08-29">
+  <meta name="site:reading_time_minutes" content="10">
+  <meta name="site:source" content="notes/dpo-direct-preference-optimization/dpo-direct-preference-optimization-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">告別 RL 的偏好對齊：DPO (Direct Preference Optimization) 數學推導與實務解析</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#dpo-rlhf">DPO 數學推導：從 RLHF 到離線閉式解</a>
+<a class="note-toc-link level-2" href="#1-rlhf">1. 標準 RLHF 目標函數</a>
+<a class="note-toc-link level-2" href="#2-closed-form-solution">2. 最優策略的閉式解 (Closed-Form Solution)</a>
+<a class="note-toc-link level-2" href="#3-bradley-terry">3. 結合 Bradley-Terry 偏好模型</a>
+<a class="note-toc-link level-2" href="#4-dpo-dpo-loss">4. DPO 損失函數 (DPO Loss)</a>
+<a class="note-toc-link level-1" href="#dpo-loss">DPO Loss 的物理語意與梯度解析</a>
+<a class="note-toc-link level-1" href="#dpo">DPO 的優勢與局限性</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-29" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-29</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在大語言模型（LLM）的偏好對齊領域，傳統 RLHF (PPO) 雖然效果顯著，但其訓練過程極不穩定、超參數敏感，且需要同時載入四個大型神經網路。由 Rafailov 等人於 2023 年提出的 <strong>DPO（Direct Preference Optimization，直接偏好優化）</strong>，打破了「偏好對齊必須依賴強化學習（RL）」的迷思。</p>
+
+<p class="mb-3">DPO 的核心數學貢獻在於：<strong>證明了帶 KL 散逸約束的 RLHF 最優策略，可以用 Reward Model 的閉式解（Closed-Form Solution）精確替換</strong>。透過將隱性獎勵函數（Implicit Reward Function）直接參數化為策略模型本身，DPO 將繁複的 RLHF 轉化為標準的離線二元交叉熵（Binary Cross-Entropy）分類優化。</p>
+
+<p class="mb-3">本文將帶領讀者完整還原 DPO 的數學推導過程、損失函數語意，並剖析其與 PPO/GRPO 的長短板。</p>
+</section>
+
+<section id="dpo-rlhf" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DPO 數學推導：從 RLHF 到離線閉式解</h3>
+
+<h4 id="1-rlhf" class="mb-2">1. 標準 RLHF 目標函數</h4>
+
+<p class="mb-3">在傳統 RLHF 中，給定 Prompt $x$，我們希望優化策略 $\pi_\theta(y|x)$ 以極大化獎勵模型 $r(y|x)$ 的得分，同時受限於與參考模型 $\pi_{\text{ref}}(y|x)$ 的 KL 散逸：</p>
+
+<p class="mb-3">$$\max_{\pi_\theta} \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta(y|x)} \left[ r(x, y) \right] - \beta D_{\text{KL}}(\pi_\theta(y|x) || \pi_{\text{ref}}(y|x))$$</p>
+
+<p class="mb-3">這可以重寫為求期望的最大化：</p>
+
+<p class="mb-3">$$\max_{\pi_\theta} \mathbb{E}_{x \sim \mathcal{D}} \left[ \mathbb{E}_{y \sim \pi_\theta(y|x)} \left[ r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)} \right] \right]$$</p>
+
+<h4 id="2-closed-form-solution" class="mb-2">2. 最優策略的閉式解 (Closed-Form Solution)</h4>
+
+<p class="mb-3">數學上可以證明（利用 Gibbs 分佈與 Jensen 不等式），上述優化問題的最優策略 $\pi^*$ 滿足如下關係：</p>
+
+<p class="mb-3">$$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y|x) \exp \left( \frac{1}{\beta} r(x, y) \right)$$</p>
+
+<p class="mb-3">其中 $Z(x) = \sum_y \pi_{\text{ref}}(y|x) \exp \left( \frac{1}{\beta} r(x, y) \right)$ 為歸一化配分函數（Partition Function）。</p>
+
+<p class="mb-3">將兩邊取對數並移項，我們可以導出<strong>隱性獎勵函數（Implicit Reward Function）</strong> 的精確表達式：</p>
+
+<p class="mb-3">$$r(x, y) = \beta \log \frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta \log Z(x)$$</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心神來之筆：將 Reward 重參數化為 Policy</strong></p><p class="mb-2">這個公式意味著：<strong>我們不需要單獨訓練一個 Reward Model $r(x, y)$！</strong> 只要我們知道當前 Policy $\pi_\theta$ 與 Reference Policy $\pi_{\text{ref}}$ 對回答 $y$ 的相對概率比值，就能直接推算出該回答隱含的 Reward 得分。</p></div>
+
+<h4 id="3-bradley-terry" class="mb-2">3. 結合 Bradley-Terry 偏好模型</h4>
+
+<p class="mb-3">人類偏好通常以成對數據（Pairwise Dataset）形式給出 $\mathcal{D} = \{(x, y_w, y_l)\}$，其中 $y_w$ 表示偏好的回答（Winning Response），$y_l$ 表示較差的回答（Losing Response）。</p>
+
+<p class="mb-3">根據經典的 Bradley-Terry 偏好模型，人類選擇 $y_w$ 勝過 $y_l$ 的概率為：</p>
+
+<p class="mb-3">$$P(y_w \succ y_l | x) = \sigma (r(x, y_w) - r(x, y_l))$$</p>
+
+<p class="mb-3">其中 $\sigma(t) = \frac{1}{1 + e^{-t}}$ 為 Sigmoid 函數。</p>
+
+<p class="mb-3">將我們剛剛導出的隱性獎勵公式代入 Bradley-Terry 模型中，注意項 $\beta \log Z(x)$ 在相減時<strong>完全抵消</strong>：</p>
+
+<p class="mb-3">$$r(x, y_w) - r(x, y_l) = \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}$$</p>
+
+<h4 id="4-dpo-dpo-loss" class="mb-2">4. DPO 損失函數 (DPO Loss)</h4>
+
+<p class="mb-3">對偏好對數據極大化對數似然（Negative Log-Likelihood），便得到極簡的 <strong>DPO Loss</strong>：</p>
+
+<p class="mb-3">$$\mathcal{L}_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} \right) \right]$$</p>
+</section>
+
+<section id="dpo-loss" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DPO Loss 的物理語意與梯度解析</h3>
+
+<p class="mb-3">對 DPO Loss 求關於參數 $\theta$ 的梯度，可以揭示其背後的動態調節機制：</p>
+
+<p class="mb-3">$$\nabla_\theta \mathcal{L}_{\text{DPO}}(\theta) = -\beta \mathbb{E}_{(x, y_w, y_l)} \left[ \underbrace{\sigma \left( \hat{r}_\theta(x, y_l) - \hat{r}_\theta(x, y_w) \right)}_{\text{動態標量權重 (Dynamic Weight)}} \left( \nabla_\theta \log \pi_\theta(y_w|x) - \nabla_\theta \log \pi_\theta(y_l|x) \right) \right]$$</p>
+
+<ul class="note-list">
+<li><strong>方向指引</strong>：梯度會<strong>推高</strong>勝出回答 $\log \pi_\theta(y_w|x)$ 的生成概率，同時<strong>壓低</strong>失敗回答 $\log \pi_\theta(y_l|x)$ 的生成概率。</li>
+<li><strong>動態權重（Dynamic Weighting）</strong>：當模型已經能很好地區分 $y_w$ 與 $y_l$（即估算的隱性獎勵差很大時），Sigmoid 權重趨近於 0，梯度更新自動變小；反之，若模型誤判（將 $y_l$ 評高於 $y_w$），權重會增大，給予強烈的校正梯度。</li>
+</ul>
+</section>
+
+<section id="dpo" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DPO 的優勢與局限性</h3>
+
+<p class="mb-3">&lt;callout title="DPO 與 Online RL (PPO / GRPO) 的工程權衡"&gt;</p>
+
+<ul class="note-list">
+<li><strong>優勢</strong>：</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>無 Sampling 開銷</strong>：不需要在訓練時調用模型大量生成文本。</li>
+<li><strong>架構極簡</strong>：省去 Critic Model 與 Reward Model，訓練速度快數倍，顯存開銷小。</li>
+<li><strong>穩定收斂</strong>：標準的二元交叉熵 Loss，無 RL 中的方差爆炸與 Policy 崩塌隱患。</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>局限性（Why RL is Still Needed?）</strong>：</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>高度依賴離線偏好集</strong>：DPO 無法探索離線資料庫 $\mathcal{D}$ 以外的未知輸出空間（No Active Exploration）。</li>
+<li><strong>對標註噪聲敏感</strong>：若離線資料中存在錯誤的偏好標註，DPO 容易過擬合錯誤樣本。</li>
+<li><strong>長鏈條推理 (CoT) 瓶頸</strong>：在數學、程式碼等需要多步推理的任務中，DPO 很難單靠離線成對數據引發自發的推理進化，此時 GRPO / PPO 的 Online 反饋仍具備顯著優勢。</li>
+</ol>
+
+<p class="mb-3">&lt;/callout&gt;</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>DPO (Direct Preference Optimization) 證明了帶 KL 懲罰的最優 RLHF 策略，可將 Reward 重參數化為 Policy 與 Reference Model 的 Log-Ratio。</li>
+<li>DPO 將 RLHF 簡化為離線二元交叉熵 Loss：$\mathcal{L}_{\text{DPO}} = -\mathbb{E} [\log \sigma( \beta \log \frac{\pi_\theta(y_w)}{\pi_{\text{ref}}(y_w)} - \beta \log \frac{\pi_\theta(y_l)}{\pi_{\text{ref}}(y_l)} )]$。</li>
+<li>DPO 免去了在訓練期線上 Sampling、Critic 網路與 Reward Model，但在探索能力 (Exploration) 與長鏈條推理進化上弱於 Online RL (如 GRPO)。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 15 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 15 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

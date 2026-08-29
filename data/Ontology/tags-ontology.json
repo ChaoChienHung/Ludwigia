@@ -2394,6 +2394,82 @@
         "snap grid 框架",
         "snap grid 框架"
       ]
+    },
+    {
+      "concept_id": "concept.reinforcement_learning",
+      "labels": {
+        "en": "Reinforcement Learning",
+        "zh-Hant": "強化學習",
+        "zh-Hans": "强化学习"
+      },
+      "aliases": [
+        "reinforcement learning",
+        "Reinforcement Learning",
+        "強化學習",
+        "强化学习",
+        "rl",
+        "RL"
+      ]
+    },
+    {
+      "concept_id": "concept.ppo",
+      "labels": {
+        "en": "PPO",
+        "zh-Hant": "PPO (近端策略優化)",
+        "zh-Hans": "PPO (近端策略优化)"
+      },
+      "aliases": [
+        "ppo",
+        "PPO",
+        "proximal policy optimization",
+        "Proximal Policy Optimization",
+        "近端策略優化"
+      ]
+    },
+    {
+      "concept_id": "concept.grpo",
+      "labels": {
+        "en": "GRPO",
+        "zh-Hant": "GRPO (群體相對策略優化)",
+        "zh-Hans": "GRPO (群体相对策略优化)"
+      },
+      "aliases": [
+        "grpo",
+        "GRPO",
+        "group relative policy optimization",
+        "Group Relative Policy Optimization",
+        "群體相對策略優化"
+      ]
+    },
+    {
+      "concept_id": "concept.dpo",
+      "labels": {
+        "en": "DPO",
+        "zh-Hant": "DPO (直接偏好優化)",
+        "zh-Hans": "DPO (直接偏好优化)"
+      },
+      "aliases": [
+        "dpo",
+        "DPO",
+        "direct preference optimization",
+        "Direct Preference Optimization",
+        "直接偏好優化"
+      ]
+    },
+    {
+      "concept_id": "concept.rlhf",
+      "labels": {
+        "en": "RLHF",
+        "zh-Hant": "RLHF (人類回饋強化學習)",
+        "zh-Hans": "RLHF (人类反馈强化学习)"
+      },
+      "aliases": [
+        "rlhf",
+        "RLHF",
+        "reinforcement learning from human feedback",
+        "Reinforcement Learning from Human Feedback",
+        "人類回饋強化學習"
+      ]
     }
   ]
 }

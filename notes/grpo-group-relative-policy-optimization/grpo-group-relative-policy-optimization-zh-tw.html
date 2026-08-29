@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeepSeek-R1 的核心基石：GRPO (Group Relative Policy Optimization) 群體相對策略優化 — Ludwig</title>
+  <meta name="garden:tags" content="強化學習, GRPO (群體相對策略優化), PPO (近端策略優化), RLHF (人類回饋強化學習), 深度學習">
+  <meta name="garden:summary" content="本文深入解析 GRPO (Group Relative Policy Optimization) 的演算機制與數學原理，剖析其如何藉由群體相對優勢 (Group Relative Advantage) 徹底擺脫傳統 PPO 昂貴的 Critic (Value Model) 網路開銷，並探討 Rule-based Reward、Format Reward 與 DeepSeek-R1 純 RL 自我推理進化的工程落地。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,concept.grpo,concept.ppo,concept.rlhf,concept.deep_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.grpo&quot;:{&quot;en&quot;:&quot;GRPO&quot;,&quot;zh-Hant&quot;:&quot;GRPO (群體相對策略優化)&quot;,&quot;zh-Hans&quot;:&quot;GRPO (群体相对策略优化)&quot;},&quot;concept.ppo&quot;:{&quot;en&quot;:&quot;PPO&quot;,&quot;zh-Hant&quot;:&quot;PPO (近端策略優化)&quot;,&quot;zh-Hans&quot;:&quot;PPO (近端策略优化)&quot;},&quot;concept.rlhf&quot;:{&quot;en&quot;:&quot;RLHF&quot;,&quot;zh-Hant&quot;:&quot;RLHF (人類回饋強化學習)&quot;,&quot;zh-Hans&quot;:&quot;RLHF (人类反馈强化学习)&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;}}">
+  <meta name="site:canonical_id" content="grpo-group-relative-policy-optimization">
+  <meta name="site:published_at" content="2026-08-29">
+  <meta name="site:last_modified_at" content="2026-08-29">
+  <meta name="site:reading_time_minutes" content="11">
+  <meta name="site:source" content="notes/grpo-group-relative-policy-optimization/grpo-group-relative-policy-optimization-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">DeepSeek-R1 的核心基石：GRPO (Group Relative Policy Optimization) 群體相對策略優化</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#ppo-grpo">PPO 的瓶頸與 GRPO 的破局思維</a>
+<a class="note-toc-link level-1" href="#grpo">GRPO 數學原理與優化目標</a>
+<a class="note-toc-link level-2" href="#1-group-relative-advantage">1. 群體相對優勢 (Group Relative Advantage)</a>
+<a class="note-toc-link level-2" href="#2-grpo-objective-function">2. GRPO 損失函數 (Objective Function)</a>
+<a class="note-toc-link level-1" href="#reward-engineering">獎勵信號的多元構建 (Reward Engineering)</a>
+<a class="note-toc-link level-1" href="#deepseek-r1-cot">DeepSeek-R1 實踐：長鏈條思考 (CoT) 的自發湧現</a>
+<a class="note-toc-link level-1" href="#grpo-vs-ppo-vs-dpo">GRPO vs. PPO vs. DPO 對比</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-29" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-29</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">在基於強化學習（Reinforcement Learning, RL）的大語言模型（LLM）對齊與推理能力優化領域，<strong>GRPO（Group Relative Policy Optimization，群體相對策略優化）</strong> 是近年來最關鍵的演算突破之一。GRPO 最初由 DeepSeek 團隊在 <em>DeepSeekMath</em> 中提出，並隨後成為 <em>DeepSeek-R1</em> 強大推理解題能力的核心驅動引擎。</p>
+
+<p class="mb-3">傳統的 RLHF（Human Feedback Reinforcement Learning）方法（例如 PPO）極度依賴一個與 Actor 模型相同規模的 Critic (Value) 模型來評估狀態價值。這種架構在訓練千億參數級別的大模型時，會帶來巨大的顯存負擔與系統複雜度。GRPO 巧妙地<strong>廢除了獨立的 Critic 網路</strong>，改採對同一 Prompt 採樣一組候選回答，並計算「群體內部相對優勢（Group Relative Advantage）」來指導策略更新。</p>
+
+<p class="mb-3">本文將完整拆解 GRPO 的運作機制、數學推導、獎勵信號構造，以及在 DeepSeek-R1 中實現純 RL 推理能力湧現的落地經驗。</p>
+</section>
+
+<section id="ppo-grpo" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">PPO 的瓶頸與 GRPO 的破局思維</h3>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心痛點：為何傳統 PPO 難以擴展至極大規模 LLM 訓練？</strong></p><p class="mb-2">在標準 PPO 訓練中，系統必須同時維護 4 個巨型模型：<strong>Actor (Policy)</strong>、<strong>Critic (Value)</strong>、<strong>Reference Model</strong> 與 <strong>Reward Model</strong>。 其中 Critic 網路負責估算當前 Token 生成序列的累積期望回報 $V(s)$。為了獲得精確的估計，Critic 網路的參數量通常需要與 Actor 模型相當。這意味著顯存開銷翻倍，且 Value Network 的擬合難度會隨著輸出長度增加而劇烈上升。</p></div>
+
+<p class="mb-3">GRPO 的核心突破在於：<strong>不需要絕對的狀態價值估計，只需知道哪一個回答在「當前同組候選中表現更好」</strong>。</p>
+
+<p class="mb-3">對於給定的提示詞（Prompt）$q$，模型 $\pi_\theta$ 不再只生成一個回答，而是同步採樣生成包含 $G$ 個候選回答的策略組（Group of Candidate Strategies）：</p>
+
+<p class="mb-3">$$\mathcal{O} = \{o_1, o_2, \dots, o_G\}$$</p>
+
+<p class="mb-3">環境或獎勵函數對每個回答評定一個純數獎勵值（Scalar Reward）$R = \{R_1, R_2, \dots, R_G\}$。GRPO 直接利用這 $G$ 個獎勵值在群體內部的相對高低，計算出每個回答的「優勢（Advantage）」。</p>
+</section>
+
+<section id="grpo" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">GRPO 數學原理與優化目標</h3>
+
+<h4 id="1-group-relative-advantage" class="mb-2">1. 群體相對優勢 (Group Relative Advantage)</h4>
+
+<p class="mb-3">GRPO 捨棄了 GAE（Generalized Advantage Estimation）與 Value 估算，採用群體內的 Z-score 標準化來定義相對優勢：</p>
+
+<p class="mb-3">$$A_i = \frac{R_i - \text{mean}(R)}{\text{std}(R)} = \frac{R_i - \frac{1}{G}\sum_{j=1}^G R_j}{\sqrt{\frac{1}{G}\sum_{j=1}^G (R_j - \bar{R})^2 + \epsilon}}$$</p>
+
+<p class="mb-3">其中 $\epsilon$ 為防止除以零的微小數值（如 $10^{-8}$）。</p>
+
+<p class="mb-3">這個簡潔的公式蘊含了深刻的直覺：</p>
+
+<ul class="note-list">
+<li><strong>高於平均值（$A_i &gt; 0$）</strong>：說明回答 $o_i$ 在當前組內表現優於平均，其對應的概率生成路徑會獲得正向鼓勵。</li>
+<li><strong>低於平均值（$A_i &lt; 0$）</strong>：說明回答 $o_i$ 低於平均水平，概率會受到抑制。</li>
+<li><strong>無縫基線消除（Baseline Elimination）</strong>：同組採樣隱式地提供了一個高質量的相對基線（Baseline），徹底省去了獨立 Critic 模型的訓練。</li>
+</ul>
+
+<h4 id="2-grpo-objective-function" class="mb-2">2. GRPO 損失函數 (Objective Function)</h4>
+
+<p class="mb-3">GRPO 的總優化目標由兩部分組成：<strong>PPO 風格的 Clipped Surrogate Loss</strong> 以及 <strong>KL 散逸懲罰 (KL Penalty)</strong>。</p>
+
+<p class="mb-3">$$\mathcal{L}_{\text{GRPO}}(\theta) = \mathbb{E}_{\substack{q \sim P(Q) \\ \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}(O|q)}} \left[ \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} \min \left( r_{i,t}(\theta) A_i, \text{clip}(r_{i,t}(\theta), 1-\epsilon, 1+\epsilon) A_i \right) - \beta D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}}) \right]$$</p>
+
+<p class="mb-3">其中重要性採樣比率（Importance Sampling Ratio）定義為：</p>
+
+<p class="mb-3">$$r_{i,t}(\theta) = \frac{\pi_\theta(o_{i,t} | q, o_{i,&lt;t})}{\pi_{\theta_{\text{old}}}(o_{i,t} | q, o_{i,&lt;t})}$$</p>
+
+<p class="mb-3">$D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}})$ 用於防範 Policy 偏離初始參考模型過遠。DeepSeek 實作中常採用可直接估算的無偏 KL 散逸表示法：</p>
+
+<p class="mb-3">$$D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}}) = \frac{\pi_{\text{ref}}(o_{i,t} | q, o_{i,&lt;t})}{\pi_\theta(o_{i,t} | q, o_{i,&lt;t})} - \log \frac{\pi_{\text{ref}}(o_{i,t} | q, o_{i,&lt;t})}{\pi_\theta(o_{i,t} | q, o_{i,&lt;t})} - 1$$</p>
+</section>
+
+<section id="reward-engineering" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">獎勵信號的多元構建 (Reward Engineering)</h3>
+
+<p class="mb-3">在傳統 RLHF 中，獎勵主要依賴人類標註資料訓練的 Reward Model（RM）。然而 GRPO 的強大之處在於其能高度相容多元、客觀且無需人工標註的環境獎勵（Environment / Rule Rewards）：</p>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>規則型獎勵 (Rule-based Accuracy Reward)</strong>：</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><strong>數學問題</strong>：比對最終輸出的答案數值是否與 Ground Truth 完全匹配（如 <code>Accuracy = 1.0</code> 或 <code>0.0</code>）。</li>
+<li><strong>程式碼編譯</strong>：將生成的 Code 送入單元測試（Unit Test），若通過測試則給予滿分，語法錯誤或執行逾時則扣分。</li>
+</ul>
+</li>
+<li>
+  <strong><strong>格式型獎勵 (Format Reward)</strong>：</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>為了約束模型進行結構化思考，設置格式檢查器。例如規範回答必須將推理過程放在 <code>&lt;think&gt;</code> 與 <code>&lt;/think&gt;</code> 標籤之間，最終答案放在指定區塊。符合格式給予正回饋，打破格式給予懲罰。</li>
+</ul>
+</li>
+<li>
+  <strong><strong>神經網路評分模型 (Neural Reward Model)</strong>：</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>對於語意流暢度、文章結構等無唯一標準答案的任務，可引入預訓練的 Reward Model 給予連貫評分。</li>
+</ul>
+</li>
+</ol>
+
+<p class="mb-3">&lt;callout title="擺脫 SFT 依賴：為什麼 GRPO 不需要標註的「正確思考過程」？"&gt; 傳統 Supervised Fine-Tuning (SFT) 需要大量人類專家撰寫的 Step-by-Step 思路（CoT）。但人類思考路徑可能並非神經網路的最優解。 GRPO 只檢驗「最終結果」與「結構規範」，讓模型自己在 $G$ 個嘗試中摸索。只要某個隨機嘗試產生了較好的思考步驟並導向正確答案，該嘗試的相對優勢 $A_i$ 便會凸顯，進而強化該推理模式。 &lt;/callout&gt;</p>
+</section>
+
+<section id="deepseek-r1-cot" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DeepSeek-R1 實踐：長鏈條思考 (CoT) 的自發湧現</h3>
+
+<p class="mb-3">在 DeepSeek-R1-Zero 的實驗中，研究人員直接從 Base Model 出發，未經過任何 SFT 數據預熱，直接套用 GRPO 進行純強化學習訓練。</p>
+
+<p class="mb-3">實驗觀測到了顯著的「<strong>Aha Moment（頓悟時刻）</strong>」：</p>
+
+<ul class="note-list">
+<li><strong>自我修正 (Self-Correction)</strong>：模型在面對複雜數學題時，會在 <code>&lt;think&gt;</code> 標籤中自發出現「Wait, let me double check my step...」等重新檢視邏輯的行為。</li>
+<li><strong>長思考鏈條 (Long CoT)</strong>：隨著 GRPO 迭代代數增加，模型生成 <code>&lt;think&gt;</code> 的長度自然延伸，推導步驟越趨嚴密。</li>
+<li><strong>Zero-Shot 性能躍升</strong>：在 AIME 2024 等高難度競賽級數學基準上，僅靠 GRPO 訓練的模型的準確率實現了跨越式提升。</li>
+</ul>
+</section>
+
+<section id="grpo-vs-ppo-vs-dpo" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">GRPO vs. PPO vs. DPO 對比</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>維度</th>
+<th>PPO (Proximal Policy Optimization)</th>
+<th>GRPO (Group Relative Policy Optimization)</th>
+<th>DPO (Direct Preference Optimization)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Critic 網路</strong></td>
+<td>需要（規模同 Actor）</td>
+<td><strong>不需要</strong></td>
+<td><strong>不需要</strong></td>
+</tr>
+<tr>
+<td><strong>獎勵來源</strong></td>
+<td>Reward Model 評估</td>
+<td>規則、RM、環境多源相對評估</td>
+<td>離線成對標註偏好 $(y_w, y_l)$</td>
+</tr>
+<tr>
+<td><strong>採樣機制</strong></td>
+<td>Online 單個 / 批量採樣</td>
+<td><strong>Online 同 Prompt 群體採樣 ($G \ge 4$)</strong></td>
+<td>Offline 數據集對齊</td>
+</tr>
+<tr>
+<td><strong>顯存開銷</strong></td>
+<td>極高（4 模型同時載入）</td>
+<td><strong>中低（省去 Critic 顯存）</strong></td>
+<td><strong>極低（無 Sampling，雙模型 forward）</strong></td>
+</tr>
+<tr>
+<td><strong>探索能力 (Exploration)</strong></td>
+<td>強</td>
+<td><strong>極強（群體多樣性推動創新）</strong></td>
+<td>弱（限於離線數據分佈）</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>GRPO (Group Relative Policy Optimization) 核心在於廢除獨立 Critic Model，改以「群體採樣 + 相對優勢」更新策略。</li>
+<li>群體優勢 $A_i = \frac{R_i - \bar{R}}{\sigma_R}$ 能自動消除 Baseline，極大減輕千億參數 LLM 的訓練顯存負擔。</li>
+<li>結合 Rule-based Reward 與 Format Reward，GRPO 在 DeepSeek-R1 中實現了無需人工 SFT 的自發 Chain-of-Thought 與自我修正能力。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 15 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 15 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>
