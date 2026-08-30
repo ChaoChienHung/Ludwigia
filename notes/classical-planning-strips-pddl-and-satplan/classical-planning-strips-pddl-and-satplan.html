@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Classical AI Planning and SATPlan: From STRIPS, PDDL, and State-Space Search to Propositional Satisfiability Reduction — Ludwig</title>
+  <meta name="garden:tags" content="Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, AI Planning">
+  <meta name="garden:summary" content="A comprehensive exploration of Classical AI Planning theory, representation, search, and logic-based reduction. Covers symbolic agents, PDDL and STRIPS semantics, Closed-World Assumption (CWA), Unique Names Assumption (UNA), model-theoretic goal entailment (s |= g, M(s) &lt;= M(g)), action schemas, and successor state mechanics. Compares forward progression search with backward regression search (2^n ground states vs. 3^n partial state descriptions). Details Boolean Satisfiability (SAT) and SATPlan, showing how Successor-State Axioms resolve the frame problem in O(n) axioms instead of O(mn). Concludes with algorithm properties (soundness, completeness, optimality) and complexity bounds (PlanSAT PSPACE-complete vs. Bounded PlanSAT NP-complete).">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning,concept.ai_planning">
+  <meta name="site:tag_labels" content="{&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;},&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;}}">
+  <meta name="site:canonical_id" content="classical-planning-strips-pddl-and-satplan">
+  <meta name="site:published_at" content="2026-08-29">
+  <meta name="site:last_modified_at" content="2026-08-29">
+  <meta name="site:reading_time_minutes" content="21">
+  <meta name="site:source" content="notes/classical-planning-strips-pddl-and-satplan/classical-planning-strips-pddl-and-satplan.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Classical AI Planning and SATPlan: From STRIPS, PDDL, and State-Space Search to Propositional Satisfiability Reduction</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-symbolic-agents-fundamentals-of-classical-planning">1. Symbolic Agents &amp; Fundamentals of Classical Planning</a>
+<a class="note-toc-link level-2" href="#1-1-why-are-symbolic-agents-important">1.1 Why are Symbolic Agents Important?</a>
+<a class="note-toc-link level-2" href="#1-2-classical-planning-environment-assumptions">1.2 Classical Planning Environment Assumptions</a>
+<a class="note-toc-link level-1" href="#2-pddl-state-representation-goal-entailment-and-database-semantics">2. PDDL State Representation, Goal Entailment, and Database Semantics</a>
+<a class="note-toc-link level-2" href="#2-1-pddl-representation-characteristics">2.1 PDDL Representation Characteristics</a>
+<a class="note-toc-link level-2" href="#2-2-state-representation-database-semantics-cwa-una">2.2 State Representation &amp; Database Semantics (CWA &amp; UNA)</a>
+<a class="note-toc-link level-2" href="#2-3-goal-representation-model-entailment">2.3 Goal Representation &amp; Model Entailment</a>
+<a class="note-toc-link level-1" href="#3-action-schemas-state-transitions-and-the-frame-problem">3. Action Schemas, State Transitions, and the Frame Problem</a>
+<a class="note-toc-link level-2" href="#3-1-action-schemas-and-grounding">3.1 Action Schemas and Grounding</a>
+<a class="note-toc-link level-2" href="#3-2-successor-state-formula-the-frame-problem">3.2 Successor State Formula &amp; The Frame Problem</a>
+<a class="note-toc-link level-1" href="#4-pddl-syntax-example-air-cargo-domain-and-problem-specifications">4. PDDL Syntax Example: Air-Cargo Domain and Problem Specifications</a>
+<a class="note-toc-link level-2" href="#4-1-domain-specification-air-cargo">4.1 Domain Specification (`air-cargo`)</a>
+<a class="note-toc-link level-2" href="#4-2-problem-specification-air-cargo-problem">4.2 Problem Specification (`air-cargo-problem`)</a>
+<a class="note-toc-link level-1" href="#5-state-space-search-forward-progression-vs-backward-regression">5. State-Space Search: Forward Progression vs. Backward Regression</a>
+<a class="note-toc-link level-2" href="#5-1-forward-progression-search-algorithm">5.1 Forward Progression Search Algorithm</a>
+<a class="note-toc-link level-2" href="#5-2-backward-search-by-regression">5.2 Backward Search by Regression</a>
+<a class="note-toc-link level-2" href="#5-3-combinatorics-2-n-ground-states-vs-3-n-partial-state-descriptions">5.3 Combinatorics: $2^n$ Ground States vs. $3^n$ Partial State Descriptions</a>
+<a class="note-toc-link level-1" href="#6-boolean-satisfiability-sat-fundamentals-and-cnf-semantics">6. Boolean Satisfiability (SAT) Fundamentals and CNF Semantics</a>
+<a class="note-toc-link level-2" href="#6-1-sat-definition-cnf-form">6.1 SAT Definition &amp; CNF Form</a>
+<a class="note-toc-link level-2" href="#6-2-complexity-modern-solvers">6.2 Complexity &amp; Modern Solvers</a>
+<a class="note-toc-link level-1" href="#7-planning-as-sat-reduction-satplan-algorithm-and-axiom-encodings">7. Planning as SAT Reduction: SATPlan Algorithm and Axiom Encodings</a>
+<a class="note-toc-link level-2" href="#7-1-satplan-algorithm-pseudocode">7.1 SATPlan Algorithm Pseudocode</a>
+<a class="note-toc-link level-2" href="#7-2-the-four-formulated-axioms-in-satplan">7.2 The Four Formulated Axioms in SATPlan</a>
+<a class="note-toc-link level-1" href="#8-seven-classical-planning-paradigms-algorithm-properties-and-computational-complexity">8. Seven Classical Planning Paradigms, Algorithm Properties, and Computational Complexity</a>
+<a class="note-toc-link level-2" href="#8-1-seven-classical-planning-paradigms">8.1 Seven Classical Planning Paradigms</a>
+<a class="note-toc-link level-2" href="#8-2-three-key-algorithm-properties">8.2 Three Key Algorithm Properties</a>
+<a class="note-toc-link level-2" href="#8-3-theoretical-complexity-plansat-vs-bounded-plansat">8.3 Theoretical Complexity (PlanSAT vs. Bounded PlanSAT)</a>
+<a class="note-toc-link level-1" href="#9-summary">9. Summary</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-29" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-29</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">In Artificial Intelligence (AI), <strong>Symbolic Agents</strong> establish the core mathematical foundation for reasoning and decision making. By representing world states, action preconditions, and state transitions using formal logic, symbolic agents provide a solid ground for world modeling, allowing computer systems to prove the correctness (Soundness) and completeness of inference algorithms.</p>
+
+<p class="mb-3">This note systematically decomposes <strong>Classical AI Planning</strong>. We begin with the formal representation languages <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span> and <span class="note-information" tabindex="0" aria-label="Planning Domain Definition Language">PDDL<span class="note-information-tooltip" aria-hidden="true">Planning Domain Definition Language</span></span>, database semantics (Closed-World Assumption and Unique Names Assumption), and model-theoretic goal entailment ($s \models g$). We then analyze forward progression search and backward regression search over state spaces. Next, we introduce Boolean Satisfiability (SAT) fundamentals and detail how <strong>SATPlan</strong> leverages <strong>Successor-State Axioms</strong> to solve the Frame Problem in $O(n)$ axioms instead of $O(mn)$. Finally, we outline seven classical planning paradigms and analyze theoretical computational complexity bounds (PlanSAT vs. Bounded PlanSAT).</p>
+
+<hr>
+</section>
+
+<section id="1-symbolic-agents-fundamentals-of-classical-planning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Symbolic Agents &amp; Fundamentals of Classical Planning</h3>
+
+<h4 id="1-1-why-are-symbolic-agents-important" class="mb-2">1.1 Why are Symbolic Agents Important?</h4>
+
+<p class="mb-3">Before deep learning and large language models, <strong>Symbolic Agents</strong> defined the rigorous baseline for artificial intelligence:</p>
+
+<ul class="note-list">
+<li><strong>Solid Ground of Logical Reasoning</strong>: Establishes agent definitions, state representations, and reasoning capabilities on mathematical logic (Propositional and First-Order Logic).</li>
+<li><strong>Meaningful World Modeling</strong>: Gives clear semantics to what the agent is modeling in real-world environments.</li>
+<li><strong>Truth-Value &amp; Inference Validation</strong>: Provides explicit methods to evaluate truth values ($s \models g$) and prove whether inference algorithms are valid.</li>
+</ul>
+
+<h4 id="1-2-classical-planning-environment-assumptions" class="mb-2">1.2 Classical Planning Environment Assumptions</h4>
+
+<p class="mb-3"><strong>Classical Planning</strong> imposes four strong simplifying assumptions on the task environment:</p>
+
+<ol class="mb-3">
+<li><strong>Discrete</strong>: Time, states, and actions consist of discrete units.</li>
+<li><strong>Deterministic</strong>: Action execution yields exact, predictable successor states without probability distributions.</li>
+<li><strong>Static</strong>: Environment changes occur exclusively via agent actions, unaffected by external dynamic processes.</li>
+<li><strong>Fully Observable</strong>: The agent possesses complete, noise-free state observation at every step.</li>
+</ol>
+
+<div class="note-markdown-block"><pre><code>+-----------------------------------------------------------------+
+|                    Classical Planning Domain                    |
+|                                                                 |
+|   [ Fully Observable ]   [ Deterministic ]   [ Discrete State ] |
+|            ^                     ^                    ^         |
+|            |                     |                    |         |
+|            +----------+----------+----------+---------+         |
+|                       |                     |                   |
+|                 [ Static Env ]     [ Global Optimality ]        |
++-----------------------------------------------------------------+</code></pre></div>
+
+<p class="mb-3">Under these assumptions, the core objective is to search through a state space to construct an action sequence leading from an initial state to a goal state.</p>
+
+<hr>
+</section>
+
+<section id="2-pddl-state-representation-goal-entailment-and-database-semantics" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. PDDL State Representation, Goal Entailment, and Database Semantics</h3>
+
+<h4 id="2-1-pddl-representation-characteristics" class="mb-2">2.1 PDDL Representation Characteristics</h4>
+
+<p class="mb-3">Classical planning originated with STRIPS (Fikes &amp; Nilsson, 1971) and evolved into the standard domain description language, PDDL.</p>
+
+<ul class="note-list">
+<li><strong>Lifted Logic-Based Representation</strong>: Uses compact, lifted representations derived from restricted First-Order Logic (FOL) with parameterized predicates.</li>
+<li><strong>Factored State Representation</strong>: The world is modeled via state variables known as <strong>Fluents</strong> (properties that change over time).</li>
+<li><strong>Implicit Transitions</strong>: State transitions are defined dynamically via action schemas. Planners compute successor states on demand rather than generating full state graphs upfront.</li>
+<li><strong>Domain-Independent Heuristics</strong>: Allows general heuristics (e.g., Planning Graph heuristics) to guide search across arbitrary domains without specialized domain engineering.</li>
+</ul>
+
+<h4 id="2-2-state-representation-database-semantics-cwa-una" class="mb-2">2.2 State Representation &amp; Database Semantics (CWA &amp; UNA)</h4>
+
+<p class="mb-3">In PDDL, a state $s$ is defined as a conjunction of <strong>Ground Function-Free Atomic Fluents</strong> (predicates containing only constant arguments and no function symbols), or equivalently as a set of true fluents.</p>
+
+<p class="mb-3">To keep state representations compact, classical planning relies on two database semantics:</p>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">&lt;strong&gt;1. Closed-World Assumption (CWA):&lt;/strong&gt;<br> Any fluent not explicitly listed in the state set $s$ is assumed to be false. This eliminates the need to explicitly store millions of negative literals.<br><br> &lt;strong&gt;2. Unique Names Assumption (UNA):&lt;/strong&gt;<br> Distinct constant symbols refer to distinct real-world entities (e.g., &lt;code&gt;Plane1&lt;/code&gt; and &lt;code&gt;Plane2&lt;/code&gt; strictly refer to different aircraft).</p></div>
+
+<h4 id="2-3-goal-representation-model-entailment" class="mb-2">2.3 Goal Representation &amp; Model Entailment</h4>
+
+<p class="mb-3">A goal ($g$) is a partially specified state written as a conjunction of literals. Unmentioned fluents can take any truth value.</p>
+
+<p class="mb-3">Semantically, a state $s$ satisfies a goal $g$ if and only if $s$ <strong>entails</strong> $g$:</p>
+
+<p class="mb-3">$$s \models g \iff M(s) \subseteq M(g)$$</p>
+
+<p class="mb-3">Model-theoretically, $M(s) \subseteq M(g)$ means that <strong>in every model $m$ where state $s$ is true, goal $g$ is automatically true</strong>. Because $s$ is a fully specified state (stronger constraint) and $g$ is a partial goal (weaker constraint), $s$ being true implies $g$ is true, but $g$ being true does not require $s$ to be identical.</p>
+
+<p class="mb-3">Variables in goals are existentially quantified. Standard STRIPS restricts goals strictly to positive, ground literals without variables.</p>
+
+<hr>
+</section>
+
+<section id="3-action-schemas-state-transitions-and-the-frame-problem" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Action Schemas, State Transitions, and the Frame Problem</h3>
+
+<h4 id="3-1-action-schemas-and-grounding" class="mb-2">3.1 Action Schemas and Grounding</h4>
+
+<p class="mb-3">An Action Schema is a lifted template parameterized with variables. Substituting variables with domain constant objects yields a <strong>Grounded Action</strong>.</p>
+
+<p class="mb-3">Each action $a$ consists of:</p>
+
+<ol class="mb-3">
+<li><strong>Preconditions ($\text{Precond}(a)$)</strong>: Conditions that must hold in state $s$ prior to execution.</li>
+<li><strong>Effects</strong>: Fluents added ($\text{ADD}(a)$) or deleted ($\text{DEL}(a)$) after execution.</li>
+</ol>
+
+<p class="mb-3">Action applicability is defined as:</p>
+
+<p class="mb-3">$$a \text{ is applicable in } s \iff s \models \text{Precond}(a)$$</p>
+
+<h4 id="3-2-successor-state-formula-the-frame-problem" class="mb-2">3.2 Successor State Formula &amp; The Frame Problem</h4>
+
+<p class="mb-3">Applying action $a$ to state $s$ produces successor state $s'$ according to:</p>
+
+<p class="mb-3">$$s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$$</p>
+
+<div class="note-markdown-block"><pre><code>  Current State (s)
++-------------------+
+| At(Plane1, SFO)   |        Action: Fly(Plane1, SFO, JFK)
+| At(Cargo1, SFO)   |      ---------------------------------&gt;
+| Cargo(Cargo1)     |      DEL: { At(Plane1, SFO) }
++-------------------+      ADD: { At(Plane1, JFK) }
+          |
+          v
+  Successor State (s')
++-------------------+
+| At(Plane1, JFK)   |  &lt;-- Updated by ADD
+| At(Cargo1, SFO)   |  &lt;-- Preserved automatically (Frame Axioms)
+| Cargo(Cargo1)     |  &lt;-- Preserved automatically
++-------------------+</code></pre></div>
+
+<p class="mb-3">&lt;callout style="warning"&gt; &lt;strong&gt;The Frame Problem:&lt;/strong&gt;<br> How can an automated planner specify what changes after an action without explicitly restating every unchanged fluent?<br> &lt;strong&gt;PDDL / STRIPS Resolution:&lt;/strong&gt;<br> By leveraging CWA and implicit persistence. Actions state only their ADD and DEL lists; all unspecified fluents are assumed to remain unchanged between time step $t$ and $t+1$. &lt;/callout&gt;</p>
+
+<hr>
+</section>
+
+<section id="4-pddl-syntax-example-air-cargo-domain-and-problem-specifications" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. PDDL Syntax Example: Air-Cargo Domain and Problem Specifications</h3>
+
+<p class="mb-3">Below is the standard PDDL code for the Air-Cargo domain:</p>
+
+<h4 id="4-1-domain-specification-air-cargo" class="mb-2">4.1 Domain Specification (<code>air-cargo</code>)</h4>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">(define (domain air-cargo)
+  (:requirements :strips :typing)
+  (:types plane airport cargo)
+  (:predicates
+    (At ?x - (either plane cargo) ?a - airport)
+    (In ?c - cargo ?p - plane)
+    (Cargo ?c - cargo)
+    (Plane ?p - plane)
+    (Airport ?a - airport))
+
+  (:action Load
+    :parameters (?c - cargo ?p - plane ?a - airport)
+    :precondition (and (At ?c ?a) (At ?p ?a) (Cargo ?c) (Plane ?p) (Airport ?a))
+    :effect (and (not (At ?c ?a)) (In ?c ?p)))
+
+  (:action Unload
+    :parameters (?c - cargo ?p - plane ?a - airport)
+    :precondition (and (In ?c ?p) (At ?p ?a) (Cargo ?c) (Plane ?p) (Airport ?a))
+    :effect (and (At ?c ?a) (not (In ?c ?p))))
+
+  (:action Fly
+    :parameters (?p - plane ?from - airport ?to - airport)
+    :precondition (and (At ?p ?from) (Plane ?p) (Airport ?from) (Airport ?to))
+    :effect (and (not (At ?p ?from)) (At ?p ?to))))</code></pre></div>
+
+<h4 id="4-2-problem-specification-air-cargo-problem" class="mb-2">4.2 Problem Specification (<code>air-cargo-problem</code>)</h4>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">(define (problem air-cargo-problem)
+  (:domain air-cargo)
+  (:objects
+    C1 C2 - cargo
+    P1 P2 - plane
+    SFO SIN - airport)
+  (:init
+    (At C1 SFO)
+    (At C2 SIN)
+    (At P1 SFO)
+    (At P2 SIN)
+    (Cargo C1)
+    (Cargo C2)
+    (Plane P1)
+    (Plane P2)
+    (Airport SFO)
+    (Airport SIN))
+  (:goal
+    (and (At C1 SIN) (At C2 SFO))))</code></pre></div>
+
+<p class="mb-3">Planners must handle caveats like preventing <strong>spurious actions</strong> (e.g., <code>Fly(P1, SFO, SFO)</code>), avoiding redundant graph expansions.</p>
+
+<hr>
+</section>
+
+<section id="5-state-space-search-forward-progression-vs-backward-regression" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. State-Space Search: Forward Progression vs. Backward Regression</h3>
+
+<p class="mb-3">Searching for plans maps the problem into a state graph, explored either via <strong>Forward Progression</strong> or <strong>Backward Regression</strong>.</p>
+
+<div class="note-markdown-block"><pre><code>Progression (Forward Search):
+[ Initial State s0 ] ----a1----&gt; [ s1 ] ----a2----&gt; ... ----&gt; [ Goal s_k ]
+
+Regression (Backward Search):
+[ Initial State s0 ] &lt;---- (s0 |= g_k) .... [ g2 ] &lt;----a_k---- [ Goal g ]</code></pre></div>
+
+<h4 id="5-1-forward-progression-search-algorithm" class="mb-2">5.1 Forward Progression Search Algorithm</h4>
+
+<p class="mb-3">Forward search moves from initial state $s_0$ toward the goal:</p>
+
+<ol class="mb-3">
+<li><strong>Step 1</strong>: Initialize root node with $s_0$.</li>
+<li><strong>Step 2</strong>: Test if $s \models \text{Goal}$; terminate if true.</li>
+<li><strong>Step 3</strong>: Identify applicable grounded actions $A(s) = \{ a \mid s \models \text{Precond}(a) \}$.</li>
+<li><strong>Step 4</strong>: Compute successor states $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.</li>
+<li><strong>Step 5</strong>: Advance search frontier until a goal node is expanded.</li>
+</ol>
+
+<h4 id="5-2-backward-search-by-regression" class="mb-2">5.2 Backward Search by Regression</h4>
+
+<p class="mb-3">Backward search regresses from Goal $g$ to $s_0$:</p>
+
+<ul class="note-list">
+<li><strong>Action Relevance</strong>: Action $a$ is relevant to $g$ iff (1) at least one ADD effect unifies with a goal literal, and (2) no effect contradicts any goal literal.</li>
+<li><strong>Goal Regression Formulas</strong>:</li>
+</ul>
+
+<p class="mb-3">$$\text{POS}(g') = (\text{POS}(g) \setminus \text{ADD}(a)) \cup \text{POS}(\text{Precond}(a))$$ $$\text{NEG}(g') = (\text{NEG}(g) \setminus \text{DEL}(a)) \cup \text{NEG}(\text{Precond}(a))$$</p>
+
+<ul class="note-list">
+<li><strong>Most General Unifier (MGU)</strong>: Applied in lifted regression to prevent arbitrary variable substitution branching.</li>
+</ul>
+
+<h4 id="5-3-combinatorics-2-n-ground-states-vs-3-n-partial-state-descriptions" class="mb-2">5.3 Combinatorics: $2^n$ Ground States vs. $3^n$ Partial State Descriptions</h4>
+
+<p class="mb-3">Progression and Regression operate over different state representation spaces:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Dimension</th>
+<th>Forward Progression</th>
+<th>Backward Regression</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Operates On</strong></td>
+<td>Concrete, fully specified states</td>
+<td>Partial state descriptions</td>
+</tr>
+<tr>
+<td><strong>Fluent Values</strong></td>
+<td>Each fluent is strictly True or False</td>
+<td>Each fluent is Positive, Negative, or Unmentioned</td>
+</tr>
+<tr>
+<td><strong>State Space Size</strong></td>
+<td><strong>$2^n$</strong> Ground States</td>
+<td><strong>$3^n$</strong> Partial State Descriptions</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="6-boolean-satisfiability-sat-fundamentals-and-cnf-semantics" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. Boolean Satisfiability (SAT) Fundamentals and CNF Semantics</h3>
+
+<h4 id="6-1-sat-definition-cnf-form" class="mb-2">6.1 SAT Definition &amp; CNF Form</h4>
+
+<p class="mb-3"><strong>Boolean Satisfiability (SAT)</strong> asks whether there exists a truth assignment (model $m$) that makes a Boolean formula evaluate to true.</p>
+
+<p class="mb-3">Formulas are structured into <strong>Conjunctive Normal Form (CNF)</strong>:</p>
+
+<ul class="note-list">
+<li>A conjunction ($\land$) of clauses.</li>
+<li>Each clause is a disjunction ($\lor$) of literals (variables or their negations).</li>
+</ul>
+
+<p class="mb-3">$$\alpha = (A \lor \neg B \lor C) \land (\neg A \lor D) \land (B \lor \neg C)$$</p>
+
+<p class="mb-3">If model $m$ satisfies $\alpha$, written $m \models \alpha$, $M(\alpha)$ denotes the set of all satisfying models.</p>
+
+<h4 id="6-2-complexity-modern-solvers" class="mb-2">6.2 Complexity &amp; Modern Solvers</h4>
+
+<ul class="note-list">
+<li><strong>NP-Completeness</strong>: SAT was proven to be NP-complete by the Cook-Levin theorem.</li>
+<li><strong>Modern CDCL Solvers</strong>: Using Conflict-Driven Clause Learning (CDCL) and VSIDS heuristics, modern SAT solvers solve instances with millions of variables in seconds.</li>
+<li><strong>Applications</strong>: Circuit verification, software testing, automated theorem proving, cryptanalysis, operations research, and SATPlan.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="7-planning-as-sat-reduction-satplan-algorithm-and-axiom-encodings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. Planning as SAT Reduction: SATPlan Algorithm and Axiom Encodings</h3>
+
+<p class="mb-3"><strong>SATPlan</strong> (Kautz &amp; Selman) reduces planning into propositional satisfiability.</p>
+
+<h4 id="7-1-satplan-algorithm-pseudocode" class="mb-2">7.1 SATPlan Algorithm Pseudocode</h4>
+
+<p class="mb-3">SATPlan uses a <strong>Bounded Horizon ($T$)</strong> strategy, incrementally increasing plan length step $t$ until a satisfying model is found:</p>
+
+<div class="note-markdown-block"><pre><code>function SATPLAN(init, transition, goal, T_max) returns solution or failure
+  inputs: init, transition, goal, constitute a description of the problem
+          T_max, an upper limit for plan length
+
+  for t = 0 to T_max do
+    cnf &lt;- TRANSLATE-TO-SAT(init, transition, goal, t)
+    model &lt;- SAT-SOLVER(cnf)    &lt;-- Assignment of values to variables
+    if model is not null then
+      return EXTRACT-SOLUTION(model)
+  return failure</code></pre></div>
+
+<p class="mb-3">When <code>SAT-SOLVER</code> returns a satisfying model, SATPlan extracts actions where action variables evaluate to true, outputting a valid plan trajectory.</p>
+
+<h4 id="7-2-the-four-formulated-axioms-in-satplan" class="mb-2">7.2 The Four Formulated Axioms in SATPlan</h4>
+
+<p class="mb-3">Translating a planning problem into CNF requires four axiom types:</p>
+
+<ol class="mb-3">
+<li><strong>Initial &amp; Goal Axioms</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>At $t=0$: Assert $P_0$ or $\neg P_0$ according to CWA.</li>
+<li>At $t=T$: Assert goal literals $G_T$.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Action Implication Axioms</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Action $A_t$ implies preconditions at $t$ and effects at $t+1$:
+<p class="mb-2">$$A_t \implies \text{Precond}(A)_t \land \text{ADD}(A)_{t+1} \land \neg \text{DEL}(A)_{t+1}$$</p>
+<p class="mb-2"><em>Example</em>: $\text{Eat}(\text{Cake}, t) \implies \text{Have}(\text{Cake}, t) \land \neg \text{Have}(\text{Cake}, t+1) \land \text{Eaten}(\text{Cake}, t+1)$</p></li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Successor-State Axioms</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Based on Reiter's logic: <em>Fluent $P$ is true at $t+1$ iff an action at $t$ added $P$, OR $P$ was already true at $t$ and no action at $t$ deleted $P$</em>:
+<p class="mb-2">$$P_{t+1} \iff \left( \bigvee_{A \in \text{Add}(P)} A_t \right) \lor \left( P_t \land \neg \bigvee_{B \in \text{Del}(P)} B_t \right)$$</p></li>
+<li><strong>Efficiency</strong>: Naive frame axioms require $O(mn)$ clauses for $m$ actions and $n$ fluents. Successor-State Axioms encode only actions affecting each fluent, reducing total axioms to <strong>$O(n)$</strong>.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Action Exclusion Axioms</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Prevents conflicting simultaneous action execution: $\neg A_t \lor \neg B_t$.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="8-seven-classical-planning-paradigms-algorithm-properties-and-computational-complexity" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. Seven Classical Planning Paradigms, Algorithm Properties, and Computational Complexity</h3>
+
+<h4 id="8-1-seven-classical-planning-paradigms" class="mb-2">8.1 Seven Classical Planning Paradigms</h4>
+
+<ol class="mb-3">
+<li><strong>Goal-Directed Planning</strong>: Symbolic deduction using STRIPS / PDDL.</li>
+<li><strong>Search-Based Planning</strong>: State-space Progression and Regression.</li>
+<li><strong>SAT-Based Planning</strong>: Propositional CNF reduction (SATPlan).</li>
+<li><strong>Planning Graph Approaches</strong>: Reachability graphs (Graphplan) deriving informative heuristics.</li>
+<li><strong>Situation Calculus</strong>: First-order logic reasoning over actions and situations.</li>
+<li><strong>Constraint Satisfaction Problem (CSP)</strong>: Constraint network formulations.</li>
+<li><strong>Partial-Order Planning (POP)</strong>: Directed graph plan networks supporting parallel execution.</li>
+</ol>
+
+<h4 id="8-2-three-key-algorithm-properties" class="mb-2">8.2 Three Key Algorithm Properties</h4>
+
+<ul class="note-list">
+<li><strong>Soundness</strong>: Every returned plan is mathematically guaranteed to be valid.</li>
+<li><strong>Completeness</strong>: Guarantees finding a solution if one exists in the search space.</li>
+<li><strong>Optimality</strong>: Guarantees finding the minimal-cost or shortest plan length.</li>
+</ul>
+
+<h4 id="8-3-theoretical-complexity-plansat-vs-bounded-plansat" class="mb-2">8.3 Theoretical Complexity (PlanSAT vs. Bounded PlanSAT)</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Decision Problem</th>
+<th>Mathematical Definition</th>
+<th>Complexity Class</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>PlanSAT</strong></td>
+<td>Does <strong>any valid plan</strong> of arbitrary length exist?</td>
+<td><strong>PSPACE-complete</strong> (Subclasses without negative effects in <strong>P</strong>)</td>
+</tr>
+<tr>
+<td><strong>Bounded PlanSAT</strong></td>
+<td>Does a valid plan of length <strong>$\le k$</strong> exist?</td>
+<td><strong>NP-complete</strong></td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Finding <strong>Optimal Plans</strong> is computationally harder than finding <strong>Satisficing Plans</strong>.</p>
+
+<hr>
+</section>
+
+<section id="9-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">9. Summary</h3>
+
+<p class="mb-3">Classical AI Planning establishes logical decision-making via STRIPS and PDDL representations. By utilizing CWA and UNA semantics, resolving the Frame Problem with $O(n)$ Successor-State Axioms, and reducing problems into state-space search or SATPlan CNF formulas, classical planning provides enduring theoretical principles for autonomous intelligent agents.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>Symbolic Agents &amp; PDDL:</strong> Symbolic agents ground decision making in mathematical logic. PDDL uses lifted First-Order Logic and Fluents for Factored State representations, simplified via Closed-World (CWA) and Unique Names (UNA) assumptions.</li>
+<li><strong>Goal Entailment &amp; State Transitions:</strong> Goals are partial state descriptions ($s \models g \iff M(s) \subseteq M(g)$). Successor states are dynamically computed via $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.</li>
+<li><strong>Progression vs. Regression:</strong> Forward progression searches across $2^n$ ground states; backward regression searches across $3^n$ partial state descriptions using MGUs to minimize branching.</li>
+<li><strong>SATPlan &amp; Successor-State Axioms:</strong> SATPlan translates horizon $T$ planning into CNF. Successor-State Axioms ($P_{t+1} \iff \text{AddActions}_t \lor (P_t \land \neg \text{DelActions}_t)$) slash frame axiom overhead from $O(mn)$ to $O(n)$.</li>
+<li><strong>Complexity Bounds:</strong> Arbitrary length PlanSAT is PSPACE-complete; step-bounded Bounded PlanSAT is NP-complete.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>Fikes, R. E., &amp; Nilsson, N. J. (1971). STRIPS: A new approach to the application of theorem proving to problem solving. <em>Artificial Intelligence</em>, 2(3-4), 189-208. <a class="note-inline-link" href="https://doi.org/10.1016/0004-3702(71" target="_blank" rel="noopener noreferrer">ScienceDirect</a>90010-5)</li>
+<li>Kautz, H., &amp; Selman, B. (1992). Planning as satisfiability. In <em>Proceedings of the 10th European Conference on Artificial Intelligence (ECAI)</em> (pp. 359-363).</li>
+<li>Ghallab, M., Nau, D., &amp; Traverso, P. (2004). <em>Automated Planning: Theory and Practice</em>. Morgan Kaufmann.</li>
+<li>Russell, S., &amp; Norvig, P. (2020). <em>Artificial Intelligence: A Modern Approach</em> (4th ed.). Pearson.</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

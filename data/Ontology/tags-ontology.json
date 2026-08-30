@@ -2470,6 +2470,96 @@
         "Reinforcement Learning from Human Feedback",
         "人類回饋強化學習"
       ]
+    },
+    {
+      "concept_id": "concept.cloud_computing",
+      "labels": {
+        "en": "Cloud Computing",
+        "zh-Hant": "雲端運算",
+        "zh-Hans": "云计算"
+      },
+      "aliases": [
+        "cloud computing",
+        "Cloud Computing",
+        "雲端運算",
+        "云计算"
+      ]
+    },
+    {
+      "concept_id": "concept.iaas",
+      "labels": {
+        "en": "IaaS",
+        "zh-Hant": "基礎設施即服務 (IaaS)",
+        "zh-Hans": "基础设施即服务 (IaaS)"
+      },
+      "aliases": [
+        "iaas",
+        "IaaS",
+        "infrastructure as a service",
+        "Infrastructure as a Service",
+        "基礎設施即服務",
+        "基础设施即服务"
+      ]
+    },
+    {
+      "concept_id": "concept.paas",
+      "labels": {
+        "en": "PaaS",
+        "zh-Hant": "平台即服務 (PaaS)",
+        "zh-Hans": "平台即服务 (PaaS)"
+      },
+      "aliases": [
+        "paas",
+        "PaaS",
+        "platform as a service",
+        "Platform as a Service",
+        "平台即服務",
+        "平台即服务"
+      ]
+    },
+    {
+      "concept_id": "concept.saas",
+      "labels": {
+        "en": "SaaS",
+        "zh-Hant": "軟體即服務 (SaaS)",
+        "zh-Hans": "软件即服务 (SaaS)"
+      },
+      "aliases": [
+        "saas",
+        "SaaS",
+        "software as a service",
+        "Software as a Service",
+        "軟體即服務",
+        "软件即服务"
+      ]
+    },
+    {
+      "concept_id": "concept.virtualization",
+      "labels": {
+        "en": "Virtualization",
+        "zh-Hant": "虛擬化",
+        "zh-Hans": "虚拟化"
+      },
+      "aliases": [
+        "virtualization",
+        "Virtualization",
+        "虛擬化",
+        "虚拟化"
+      ]
+    },
+    {
+      "concept_id": "concept.capacity_planning",
+      "labels": {
+        "en": "Capacity Planning",
+        "zh-Hant": "容量規劃",
+        "zh-Hans": "容量规划"
+      },
+      "aliases": [
+        "capacity planning",
+        "Capacity Planning",
+        "容量規劃",
+        "容量规划"
+      ]
     }
   ]
 }

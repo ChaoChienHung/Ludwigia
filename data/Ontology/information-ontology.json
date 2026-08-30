@@ -747,6 +747,119 @@
         "動差生成函數",
         "动差生成函数"
       ]
+    },
+    {
+      "concept_id": "concept.cloud_computing",
+      "labels": {
+        "en": "Cloud Computing",
+        "zh-Hant": "雲端運算",
+        "zh-Hans": "云计算"
+      },
+      "contexts": {
+        "en": "Cloud computing is a model for enabling ubiquitous, on-demand network access to a shared pool of configurable computing resources (networks, servers, storage, applications, and services) that can be rapidly provisioned and released.",
+        "zh-Hant": "雲端運算是一種透過網路提供按需存取共享可配置計算資源（如網路、伺服器、存儲、應用程式與服務）的運算模式。",
+        "zh-Hans": "云计算是一种通过网络提供按需访问共享可配置计算资源（如网络、服务器、存储、应用程序与服务）的计算模式。"
+      },
+      "aliases": [
+        "cloud computing",
+        "cloud",
+        "雲端運算",
+        "云计算"
+      ]
+    },
+    {
+      "concept_id": "concept.iaas",
+      "labels": {
+        "en": "IaaS",
+        "zh-Hant": "基礎設施即服務 (IaaS)",
+        "zh-Hans": "基础设施即服务 (IaaS)"
+      },
+      "contexts": {
+        "en": "Infrastructure-as-a-Service (IaaS) provides fundamental compute, storage, and networking resources over the network, giving users OS-level control.",
+        "zh-Hant": "基礎設施即服務 (IaaS) 提供基礎的運算、存儲與網路資源，讓使用者具備作業系統級別的控管能力。",
+        "zh-Hans": "基础设施即服务 (IaaS) 提供基础的计算、存储与网络资源，让使用者具备操作系统级别的管控能力。"
+      },
+      "aliases": [
+        "iaas",
+        "infrastructure as a service",
+        "基礎設施即服務",
+        "基础设施即服务"
+      ]
+    },
+    {
+      "concept_id": "concept.paas",
+      "labels": {
+        "en": "PaaS",
+        "zh-Hant": "平台即服務 (PaaS)",
+        "zh-Hans": "平台即服务 (PaaS)"
+      },
+      "contexts": {
+        "en": "Platform-as-a-Service (PaaS) supplies execution environments and development frameworks, allowing developers to deploy application code without managing underlying OS infrastructure.",
+        "zh-Hant": "平台即服務 (PaaS) 提供預先配置好的執行環境與開發框架，讓開發者只需部署應用程式代碼，而無須管理底層 OS 與硬體。",
+        "zh-Hans": "平台即服务 (PaaS) 提供预先配置好的执行环境与开发框架，让开发者只需部署应用程序代码，而无需管理底层 OS 与硬件。"
+      },
+      "aliases": [
+        "paas",
+        "platform as a service",
+        "平台即服務",
+        "平台即服务"
+      ]
+    },
+    {
+      "concept_id": "concept.saas",
+      "labels": {
+        "en": "SaaS",
+        "zh-Hant": "軟體即服務 (SaaS)",
+        "zh-Hans": "软件即服务 (SaaS)"
+      },
+      "contexts": {
+        "en": "Software-as-a-Service (SaaS) offers fully managed application software directly to end-users over network interfaces.",
+        "zh-Hant": "軟體即服務 (SaaS) 直接透過網路介面提供完全受管的應用軟體給終端使用者。",
+        "zh-Hans": "软件即服务 (SaaS) 直接通过网络界面提供完全受管的应用软件给终端使用者。"
+      },
+      "aliases": [
+        "saas",
+        "software as a service",
+        "軟體即服務",
+        "软件即服务"
+      ]
+    },
+    {
+      "concept_id": "concept.virtualization",
+      "labels": {
+        "en": "Virtualization",
+        "zh-Hant": "虛擬化",
+        "zh-Hans": "虚拟化"
+      },
+      "contexts": {
+        "en": "Virtualization is the abstraction of physical hardware via hypervisors, enabling multiple isolated virtual environments to run concurrently on a single physical host.",
+        "zh-Hant": "虛擬化技術透過 Hypervisor 抽象化實體硬體，使多個獨立的虛擬環境能夠在單一實體主機上同時運行。",
+        "zh-Hans": "虚拟化技术通过 Hypervisor 抽象化实体硬件，使多个独立的虚拟环境能够在单一实体主机上同时运行。"
+      },
+      "aliases": [
+        "virtualization",
+        "虛擬化",
+        "虚拟化"
+      ]
+    },
+    {
+      "concept_id": "concept.capacity_planning",
+      "labels": {
+        "en": "Capacity Planning",
+        "zh-Hant": "容量規劃",
+        "zh-Hans": "容量规划"
+      },
+      "contexts": {
+        "en": "Capacity Planning is the systematic process of estimating future computing demands and provisioning resources to avoid under-provisioning outages or over-provisioning waste.",
+        "zh-Hant": "容量規劃是系統化評估未來 IT 資源需求與配置資源的過程，旨在避免資源過度配置的浪費或配置不足造成的服務中斷。",
+        "zh-Hans": "容量规划是系统化评估未来 IT 资源需求与配置资源的过程，旨在避免资源过度配置的浪费或配置不足造成的服务中断。"
+      },
+      "aliases": [
+        "capacity planning",
+        "resource provisioning",
+        "容量規劃",
+        "容量规划"
+      ]
     }
   ]
 }
