@@ -1,0 +1,157 @@
+{
+  "questions": [
+    {
+      "question_id": "inter-agent-utility-comparison-validity",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "If Agent 1 has utility U1(Win) = 100 and Agent 2 has utility U2(Win) = 10, why is it incorrect to conclude that Agent 1 desires winning 10 times more than Agent 2?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Utility numbers convey ranking and risk properties within an agent, but do not permit absolute inter-agent comparisons.",
+          "response": "Correct. Utility scales are invariant under positive affine transformations (aU + b), so raw numerical values are subjective to each individual agent and cannot be meaningfully compared in absolute terms across different agents."
+        },
+        {
+          "id": "B",
+          "text": "Utility values are purely ordinal and cannot express mathematical expectations.",
+          "response": "Incorrect. VNM utility functions explicitly express mathematical expectations, but scales remain internally relative per agent."
+        },
+        {
+          "id": "C",
+          "text": "Both utility functions must always be normalized between 0 and 1.",
+          "response": "Incorrect. Normalization does not enable inter-agent comparison; affine scale choices remain arbitrary."
+        },
+        {
+          "id": "D",
+          "text": "Agent 2's action space is necessarily 10 times larger than Agent 1's.",
+          "response": "Incorrect. Action space size is completely unrelated to utility scale choices."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Because utility scales are invariant under positive affine transformations (aU + b), the raw numerical values are subjective to each individual agent and cannot be meaningfully compared in absolute terms across different agents.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.utility_theory",
+        "concept.rational_agents"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-01"
+    },
+    {
+      "question_id": "epistemic-uncertainty-in-utility-function",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "What is meant by epistemic uncertainty in the utility function itself, and how does it challenge classical MEU?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The agent is uncertain about environmental transition physics P(s' | s, a).",
+          "response": "Incorrect. Uncertainty over environmental transition dynamics is state/transition uncertainty, not utility epistemic uncertainty."
+        },
+        {
+          "id": "B",
+          "text": "The agent does not perfectly know its own true preferences or human designer goals, risking misalignment during optimization.",
+          "response": "Correct. Epistemic uncertainty over utility refers to incomplete knowledge of what the objective function should actually be (e.g., preference uncertainty, reward misspecification), meaning the agent may optimize for the wrong target."
+        },
+        {
+          "id": "C",
+          "text": "The environment contains inherent random noise that cannot be eliminated by data.",
+          "response": "Incorrect. Inherent noise in state observation or outcome is environmental stochasticity."
+        },
+        {
+          "id": "D",
+          "text": "The computer hardware encounters floating-point rounding errors during calculation.",
+          "response": "Incorrect. Floating-point rounding errors are hardware precision artifacts."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Epistemic uncertainty over utility refers to incomplete knowledge of what the objective function should actually be (e.g., preference uncertainty, reward misspecification), meaning the agent may optimize for the wrong target.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.utility_theory",
+        "concept.rational_agents"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-01"
+    },
+    {
+      "question_id": "logarithmic-utility-transformation-flaw",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "An engineer attempts to normalize an agent's utility values by applying the transformation U'(s) = log(U(s)) (where U(s) > 0). What theoretical flaw does this introduce into the agent's MEU decision process?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "It preserves the exact same expected utility rankings over all lotteries.",
+          "response": "Incorrect. Non-linear transformations are non-affine and alter expected utility rankings across stochastic choices."
+        },
+        {
+          "id": "B",
+          "text": "It is a strictly positive affine transformation and has zero effect.",
+          "response": "Incorrect. A logarithmic transformation is non-linear and concave, not a positive affine transformation."
+        },
+        {
+          "id": "C",
+          "text": "It is a non-linear concave transformation that distorts the agent's risk posture, potentially altering optimal action selection among stochastic choices.",
+          "response": "Correct. While logarithmic transformations preserve ordinal ranking among deterministic states, they are non-affine and alter the curvature of the utility function, artificially injecting risk aversion and altering lottery rankings."
+        },
+        {
+          "id": "D",
+          "text": "It causes all expected utility calculations to become negative.",
+          "response": "Incorrect. The logarithm of values > 1 remains positive; the key issue is non-affine curvature distortion."
+        }
+      ],
+      "answer": "C",
+      "explanation": "While logarithmic transformations preserve ordinal ranking among deterministic states, they are non-affine and alter the curvature of the utility function, artificially injecting risk aversion and altering lottery rankings.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.utility_theory",
+        "concept.rational_agents"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-01"
+    },
+    {
+      "question_id": "utility-approximation-mcts-rl",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In high-dimensional, long-horizon decision problems, evaluating the exact term U(s') for future states is often intractable. Which combination of modern AI techniques is primarily used to approximate U(s') and resolve this implementation challenge?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Propositional logic unification and exhaustive state generation.",
+          "response": "Incorrect. Exhaustive state generation suffers from exponential blowup in high-dimensional domains."
+        },
+        {
+          "id": "B",
+          "text": "Heuristic value functions (learned via reinforcement learning) and Monte Carlo tree lookahead search.",
+          "response": "Correct. State-of-the-art AI systems combine truncated lookahead search (e.g., MCTS) with learned heuristic value estimators (e.g., deep neural networks trained via RL) to approximate downstream expected utility."
+        },
+        {
+          "id": "C",
+          "text": "Converting all stochastic probabilities P(s' | s, a) into uniform distributions.",
+          "response": "Incorrect. Forcing uniform distributions destroys domain dynamics rather than solving evaluation intractability."
+        },
+        {
+          "id": "D",
+          "text": "Setting b = 0 in the positive affine transformation equation.",
+          "response": "Incorrect. Changing affine constants has zero impact on computational complexity or state-space size."
+        }
+      ],
+      "answer": "B",
+      "explanation": "When exact evaluation of long-term state utility U(s') is intractable, state-of-the-art AI systems combine truncated lookahead search (e.g., MCTS) with learned heuristic value estimators (e.g., deep neural networks in RL) to approximate downstream expected utility.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.utility_theory",
+        "concept.reinforcement_learning",
+        "concept.rational_agents"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-01"
+    }
+  ]
+}

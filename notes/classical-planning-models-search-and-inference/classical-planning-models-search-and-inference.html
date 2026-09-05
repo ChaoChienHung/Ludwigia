@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="zh-tw">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>經典規劃與狀態空間搜尋：從 STRIPS、PDDL 到 SATPlan — Ludwig</title>
-  <meta name="garden:tags" content="人工智慧規劃, 古典規劃, STRIPS, PDDL, SATPlan, 自動推理">
-  <meta name="garden:summary" content="本文系統性梳理古典 AI 規劃（Classical Planning）的核心理論框架與運算機制。從 STRIPS 與 PDDL 的因果狀態表徵（Factored Representation），到狀態空間的正向前推進（Progression）與逆向迴歸（Regression）搜尋演算法，再到利用命題邏輯與 SATPlan 將規劃問題化歸為 Boolean Satisfiability (SAT) 的邏輯推論機制。同時深入剖析 Frame Problem 的解決方案（如 Successor-State Axioms）以及 PlanSAT / Bounded PlanSAT 的複雜度界線。">
-  <meta name="site:lang" content="zh-tw">
+  <title>Classical AI Planning: STRIPS, PDDL, State-Space Search, SATPlan, and Complexity Bounds — Ludwig</title>
+  <meta name="garden:tags" content="Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning">
+  <meta name="garden:summary" content="An exhaustive master technical note on Classical AI Planning theory, representation, search, and logic-based reduction. Covers symbolic agent architectures, PDDL and STRIPS semantics, Closed-World Assumption (CWA), Unique Names Assumption (UNA), model-theoretic goal entailment (s |= g, M(s) &lt;= M(g)), action schemas, preconditions, ADD and DEL fluents, successor state mechanics, and the Frame Problem. Details complete executable PDDL air-cargo domain and problem code blocks. Compares forward progression search with backward regression search (2^n ground state space vs 3^n partial state description space) and Most General Unifiers (MGU). Formulates Boolean Satisfiability (SAT) reduction via SATPlan, proving how Successor-State Axioms resolve the frame problem in O(n) clauses instead of O(mn), alongside Action Exclusion Axioms. Concludes with formal proofs and analysis of algorithmic properties (soundness, completeness, optimality) and complexity bounds (PlanSAT PSPACE-complete vs Bounded PlanSAT NP-complete).">
+  <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.ai_planning,concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning">
-  <meta name="site:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;}}">
+  <meta name="site:tag_concepts" content="concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning">
+  <meta name="site:tag_labels" content="{&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;}}">
   <meta name="site:canonical_id" content="classical-planning-models-search-and-inference">
   <meta name="site:published_at" content="2026-08-19">
-  <meta name="site:last_modified_at" content="2026-08-19">
-  <meta name="site:reading_time_minutes" content="19">
+  <meta name="site:last_modified_at" content="2026-09-01">
+  <meta name="site:reading_time_minutes" content="30">
   <meta name="site:source" content="notes/classical-planning-models-search-and-inference/classical-planning-models-search-and-inference.md">
   <script>
   (() => {
@@ -142,7 +142,7 @@
 </nav>
   <section class="page-section">
   <div class="container">
-    <h1 class="text-center" data-aos="fade-up">經典規劃與狀態空間搜尋：從 STRIPS、PDDL 到 SATPlan</h1>
+    <h1 class="text-center" data-aos="fade-up">Classical AI Planning: STRIPS, PDDL, State-Space Search, SATPlan, and Complexity Bounds</h1>
 
     <div class="note-toc-hover-zone" aria-hidden="true"></div>
     <div class="note-toc-backdrop" aria-hidden="true"></div>
@@ -154,21 +154,40 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#1">1. 古典規劃的問題範疇與四大基礎假設</a>
-<a class="note-toc-link level-1" href="#2-strips-pddl">2. 規劃問題表徵：從 STRIPS 到 PDDL</a>
-<a class="note-toc-link level-2" href="#2-1">2.1 因果狀態表徵與資料庫語意</a>
-<a class="note-toc-link level-2" href="#2-2-action-schemas-grounded-actions">2.2 動作模式（Action Schemas）與具體動作（Grounded Actions）</a>
-<a class="note-toc-link level-2" href="#2-3-the-frame-problem">2.3 框架問題（The Frame Problem）</a>
-<a class="note-toc-link level-1" href="#3-vs">3. 狀態空間搜尋演算法：正向推進 vs 逆向迴歸</a>
-<a class="note-toc-link level-2" href="#3-1-progression-search">3.1 正向搜尋（Progression Search）</a>
-<a class="note-toc-link level-2" href="#3-2-regression-search">3.2 逆向搜尋（Regression Search）</a>
-<a class="note-toc-link level-1" href="#4-satplan-boolean-satisfiability">4. 規劃即邏輯推論：SATPlan 與 Boolean Satisfiability</a>
-<a class="note-toc-link level-2" href="#4-1-satplan">4.1 SATPlan 基本運作流程</a>
-<a class="note-toc-link level-2" href="#4-2-successor-state-axioms">4.2 邏輯公理編碼與 Successor-State Axioms</a>
-<a class="note-toc-link level-1" href="#5">5. 規劃演算法特性與計算複雜度分析</a>
-<a class="note-toc-link level-2" href="#5-1">5.1 演算法三大屬性</a>
-<a class="note-toc-link level-2" href="#5-2">5.2 計算複雜度界線</a>
-<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+            <a class="note-toc-link level-1" href="#1-foundations-of-classical-planning-and-symbolic-agent-architecture">1. Foundations of Classical Planning and Symbolic Agent Architecture</a>
+<a class="note-toc-link level-2" href="#1-1-the-four-core-environment-assumptions">1.1 The Four Core Environment Assumptions</a>
+<a class="note-toc-link level-2" href="#1-2-baseline-role-in-autonomous-ai-systems">1.2 Baseline Role in Autonomous AI Systems</a>
+<a class="note-toc-link level-1" href="#2-state-representation-and-database-semantics">2. State Representation and Database Semantics</a>
+<a class="note-toc-link level-2" href="#2-1-factored-state-representation-and-atomic-fluents">2.1 Factored State Representation and Atomic Fluents</a>
+<a class="note-toc-link level-2" href="#2-2-closed-world-assumption-cwa-and-unique-names-assumption-una">2.2 Closed-World Assumption (CWA) and Unique Names Assumption (UNA)</a>
+<a class="note-toc-link level-1" href="#3-goal-representation-and-model-theoretic-entailment">3. Goal Representation and Model-Theoretic Entailment</a>
+<a class="note-toc-link level-2" href="#3-1-goal-definition-as-partial-state">3.1 Goal Definition as Partial State</a>
+<a class="note-toc-link level-2" href="#3-2-model-theoretic-goal-entailment-s-models-g">3.2 Model-Theoretic Goal Entailment ($s \models g$)</a>
+<a class="note-toc-link level-2" href="#3-3-quantifier-treatment-in-strips-vs-pddl">3.3 Quantifier Treatment in STRIPS vs. PDDL</a>
+<a class="note-toc-link level-1" href="#4-action-schemas-grounding-and-state-transitions">4. Action Schemas, Grounding, and State Transitions</a>
+<a class="note-toc-link level-2" href="#4-1-action-schemas-vs-grounded-actions">4.1 Action Schemas vs. Grounded Actions</a>
+<a class="note-toc-link level-2" href="#4-2-action-structure-and-applicability-condition">4.2 Action Structure and Applicability Condition</a>
+<a class="note-toc-link level-2" href="#4-3-successor-state-formula-and-the-frame-problem">4.3 Successor State Formula and the Frame Problem</a>
+<a class="note-toc-link level-1" href="#5-complete-pddl-air-cargo-domain-and-problem-specifications">5. Complete PDDL Air-Cargo Domain and Problem Specifications</a>
+<a class="note-toc-link level-2" href="#5-1-executable-pddl-domain-code-air-cargo-domain-pddl">5.1 Executable PDDL Domain Code (`air-cargo-domain.pddl`)</a>
+<a class="note-toc-link level-2" href="#5-2-executable-pddl-problem-code-air-cargo-problem-pddl">5.2 Executable PDDL Problem Code (`air-cargo-problem.pddl`)</a>
+<a class="note-toc-link level-2" href="#5-3-grounding-analysis-and-preventing-spurious-actions">5.3 Grounding Analysis and Preventing Spurious Actions</a>
+<a class="note-toc-link level-1" href="#6-planning-as-state-space-search-forward-progression-vs-backward-regression">6. Planning as State-Space Search: Forward Progression vs. Backward Regression</a>
+<a class="note-toc-link level-2" href="#6-1-forward-progression-search-algorithm">6.1 Forward Progression Search Algorithm</a>
+<a class="note-toc-link level-2" href="#6-2-backward-regression-search-algorithm">6.2 Backward Regression Search Algorithm</a>
+<a class="note-toc-link level-2" href="#6-3-most-general-unifiers-mgu-in-lifted-regression">6.3 Most General Unifiers (MGU) in Lifted Regression</a>
+<a class="note-toc-link level-2" href="#6-4-state-space-cardinality-comparison-2-n-vs-3-n">6.4 State-Space Cardinality Comparison: $2^n$ vs. $3^n$</a>
+<a class="note-toc-link level-1" href="#7-planning-as-logical-inference-satplan-and-satisfiability-reduction">7. Planning as Logical Inference: SATPlan and Satisfiability Reduction</a>
+<a class="note-toc-link level-2" href="#7-1-propositional-variable-mapping-across-time-steps">7.1 Propositional Variable Mapping Across Time Steps</a>
+<a class="note-toc-link level-2" href="#7-2-the-satplan-cnf-formula-structure">7.2 The SATPlan CNF Formula Structure</a>
+<a class="note-toc-link level-2" href="#7-3-resolving-the-frame-problem-successor-state-axioms">7.3 Resolving the Frame Problem: Successor-State Axioms</a>
+<a class="note-toc-link level-2" href="#7-4-action-mutual-exclusion-axioms">7.4 Action Mutual Exclusion Axioms</a>
+<a class="note-toc-link level-2" href="#7-5-satplan-algorithm-iteration">7.5 SATPlan Algorithm Iteration</a>
+<a class="note-toc-link level-1" href="#8-algorithmic-properties-and-computational-complexity-bounds">8. Algorithmic Properties and Computational Complexity Bounds</a>
+<a class="note-toc-link level-2" href="#8-1-soundness-completeness-and-optimality">8.1 Soundness, Completeness, and Optimality</a>
+<a class="note-toc-link level-2" href="#8-2-computational-complexity-of-plansat-vs-bounded-plansat">8.2 Computational Complexity of PlanSAT vs. Bounded PlanSAT</a>
+<a class="note-toc-link level-1" href="#9-summary">9. Summary</a>
+<a class="note-toc-link level-1" href="#references">References</a>
           </nav>
         </div>
       </div>
@@ -191,7 +210,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-08-19" data-published-at="2026-08-19"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-19</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-01" data-published-at="2026-08-19"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-01</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -218,273 +237,494 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">在人工智能（AI）與自主 Agent 的發展歷程中，<strong>順序決策（Sequential Decision Making）</strong>與<strong>自動規劃（Automated Planning）</strong>始終處於核心地位。無論是讓機器人在未知環境中搬運包裹、調度航天器的發射任務，還是在複雜遊戲中控制非玩家角色（NPC），Agent 都必須具備「給定當前狀態與目標，自動推理出一系列可執行動作」的能力。</p>
+<p class="mb-3">Automated planning is a core branch of Artificial Intelligence (AI) focused on sequential decision making for autonomous agents. Whether controlling a space rover on Mars, orchestrating global logistics for air cargo, or driving an autonomous vehicle through dynamic traffic, an intelligent agent must be capable of reasoning over actions, state transitions, and future horizons to synthesize a valid sequence of actions—a <strong>plan</strong>—that reaches a designated goal.</p>
 
-<p class="mb-3">本篇文章將深入探討<strong>古典規劃（Classical Planning）</strong>的完整理論基石，包含符號表徵語言 <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span> 與 <span class="note-information" tabindex="0" aria-label="Planning Domain Definition Language">PDDL<span class="note-information-tooltip" aria-hidden="true">Planning Domain Definition Language</span></span>、狀態空間的正向推進（Progression）與逆向迴歸（Regression）搜尋演算法，以及將規劃化歸為命題邏輯求解的 <strong>SATPlan</strong> 機制，並分析其計算複雜度界線。</p>
-
-<hr>
-</section>
-
-<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. 古典規劃的問題範疇與四大基礎假設</h3>
-
-<p class="mb-3">在自動規劃的理論模型中，最基礎且最被充分研究的範式稱為<strong>古典規劃（Classical Planning）</strong>。古典規劃對 Agent 所處的環境做出了四個極為強烈的簡化假設：</p>
-
-<ol class="mb-3">
-<li><strong>離散性（Discrete）</strong>：時間、狀態與動作皆為離散單位，不考慮連續的時間流逝或連續的物理控制量。</li>
-<li><strong>確定性（Deterministic）</strong>：在特定狀態 $s$ 下執行動作 $a$，其產生的新狀態 $s'$ 是百分之百確定的，不存在機率轉移或不確定 outcomes。</li>
-<li><strong>靜態性（Static）</strong>：環境的變更僅能由 Agent 自身執行的動作引發。當 Agent 正在思考或未採取動作時，環境狀態保持絕對靜止。</li>
-<li><strong>完全可觀察性（Fully Observable）</strong>：Agent 在任意時間點都能完整且精準地感知環境的所有細節，不存在隱藏狀態或噪聲干擾。</li>
-</ol>
-
-<div class="note-markdown-block"><pre><code>+-----------------------------------------------------------------+
-|                    Classical Planning Domain                    |
-|                                                                 |
-|   [ Fully Observable ]   [ Deterministic ]   [ Discrete State ] |
-|            ^                     ^                    ^         |
-|            |                     |                    |         |
-|      Agent Sensing -------&gt; Environment -------&gt; Action Execution|
-|                                  ^                              |
-|                                  | (Static: No outside events)  |
-+-----------------------------------------------------------------+</code></pre></div>
-
-<p class="mb-3">雖然真實世界往往充斥著動態噪聲、連續變量與非確定性，但古典規劃之所以至今仍被廣泛應用與研究，原因在於：<strong>它是解決複雜現實規劃問題的底層基石</strong>。現代高級規劃器往往先在抽象的古典規劃模型中求解骨幹路徑，再透過分層分解或馬可夫決策過程（MDP）處理不確定性與連續控制。</p>
+<p class="mb-3">This technical note provides an exhaustive analysis of <strong>Classical AI Planning</strong>, covering symbolic agent architectures, STRIPS and PDDL domain representations, Closed-World Assumption (CWA) and Unique Names Assumption (UNA) semantics, forward progression vs. backward regression state-space search, Most General Unifiers (MGU), SATPlan logical satisfiability reduction, Successor-State Axioms, and formal computational complexity bounds ($\text{PlanSAT}$ PSPACE-Completeness vs. $\text{Bounded PlanSAT}$ NP-Completeness).</p>
 
 <hr>
 </section>
 
-<section id="2-strips-pddl" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. 規劃問題表徵：從 STRIPS 到 PDDL</h3>
+<section id="1-foundations-of-classical-planning-and-symbolic-agent-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Foundations of Classical Planning and Symbolic Agent Architecture</h3>
 
-<p class="mb-3">要讓計算機對世界進行規劃，首要挑戰是「<strong>如何用精簡且具備因果推理能力的符號來表徵狀態與動作</strong>」。</p>
+<p class="mb-3">In artificial intelligence, a <strong>Symbolic Agent</strong> maintains an explicit, formal representation of its world using mathematical logic. This world model enables the agent to establish truth values for facts, reason about action consequences, and verify the mathematical soundness of plan synthesis.</p>
 
-<h4 id="2-1" class="mb-2">2.1 因果狀態表徵與資料庫語意</h4>
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               Classical AI Planning Domain Model                  |
++-------------------------------------------------------------------+
+|  [ Fully Observable ]   [ Deterministic ]   [ Discrete State ]    |
+|           ^                    ^                    ^             |
+|           |                    |                    |             |
+|  +--------+--------------------+--------------------+--------+    |
+|  |             Classical Planning Environment                |    |
+|  |             (Static, No External Interferences)           |    |
+|  +-----------------------------+-----------------------------+    |
+|                                |                                  |
+|                                v                                  |
+|  Initial State s0 ===&gt; [ Grounded Action Sequence ] ===&gt; Goal g  |
++-------------------------------------------------------------------+</code></pre></div>
 
-<p class="mb-3">傳統搜尋演算法（如 $A^<em>$ 或 BFS）將狀態視為黑盒（Black-box Nodes），僅透過鄰接函數進行狀態轉移。這種方式無法利用狀態內部的結構資訊。古典規劃採用了</em><em>因果狀態表徵（Factored State Representation）</em><em>，將世界狀態表示為一組</em><em>基底原子變量（Ground Atomic Fluents）</em>*的集合。</p>
+<h4 id="1-1-the-four-core-environment-assumptions" class="mb-2">1.1 The Four Core Environment Assumptions</h4>
 
-<p class="mb-3">所謂 <strong>Fluent</strong>，是指隨時間變化而改變真偽值的命題或謂詞。例如在航空貨運問題中，$\text{At}(P_1, \text{SFO})$ 表示「飛機 $P_1$ 在舊金山機場」。</p>
-
-<p class="mb-3">在古典規劃中，狀態的語意遵循兩項核心原則：</p>
-
-<ul class="note-list">
-<li><strong>閉世界假設（Closed-World Assumption, CWA）</strong>：任何未在狀態集合中明確列出的 Fluent，一律被判定為假（False）。例如若當前狀態為 $\{\text{At}(P_1, \text{SFO})\text{, } \text{Plane}(P_1)\}$，則 $\text{At}(P_1, \text{SIN})$ 自動為假。</li>
-<li><strong>唯一名稱假設（Unique Names Assumption, UNA）</strong>：不同的常數符號必須代表不同的實體物件。例如 $P_1 \neq P_2$。</li>
-</ul>
-
-<h4 id="2-2-action-schemas-grounded-actions" class="mb-2">2.2 動作模式（Action Schemas）與具體動作（Grounded Actions）</h4>
-
-<p class="mb-3">動作是改變世界狀態的唯一手段。為了避免為每個物件組合手寫動作，古典規劃引入了帶有變量的<strong>動作模式（Action Schema）</strong>。</p>
-
-<p class="mb-3">一個動作模式 $a$ 由三部分組成：</p>
+<p class="mb-3">Classical planning operates under four strict, foundational environmental assumptions:</p>
 
 <ol class="mb-3">
-<li><strong>動作名稱與參數（Action Name &amp; Parameters）</strong>：如 $\text{Fly}(p, \text{from}, \text{to})$。</li>
-<li><strong>前置條件（Preconditions）</strong>：動作可被執行前，狀態必須滿足的 Fluent 集合 $\text{Precond}(a)$。</li>
-<li><strong>效果（Effects）</strong>：執行該動作後狀態的變化。包含將 Fluent 設為真的 <strong>ADD List</strong>（正向效果 $\text{ADD}(a)$）與設為假的 <strong>DEL List</strong>（負向效果 $\text{DEL}(a)$）。</li>
+<li><strong>Discrete State and Time</strong>: The environment consists of discrete states $s \in S$, and time progresses in discrete steps $t \in \{0, 1, 2, \dots\}$. Continuous physics and time flows are abstracted into atomic state transitions.</li>
+<li><strong>Deterministic Transitions</strong>: Executing an applicable action $a$ in state $s$ produces a single, uniquely determined successor state $s'$. There are no probabilistic outcomes or stochastic variations.</li>
+<li><strong>Static Environment</strong>: State changes occur <em>only</em> as a direct result of actions executed by the planning agent. The environment remains completely frozen when the agent is deliberating or inactive.</li>
+<li><strong>Fully Observable</strong>: The agent possesses complete, error-free knowledge of the exact world state $s$ at any point in time. There are no hidden variables, noisy sensors, or unobserved fluents.</li>
 </ol>
 
-<p class="mb-3">例如，飛航動作模式在 PDDL 中可定義如下：</p>
+<h4 id="1-2-baseline-role-in-autonomous-ai-systems" class="mb-2">1.2 Baseline Role in Autonomous AI Systems</h4>
 
-<div class="note-markdown-block"><pre><code class="language-lisp">(:action Fly
- :parameters (?p - plane ?from - airport ?to - airport)
- :precondition (and (At ?p ?from) (Plane ?p) (Airport ?from) (Airport ?to))
- :effect (and (not (At ?p ?from)) (At ?p ?to)))</code></pre></div>
-
-<p class="mb-3">當常數代入變量後（如 $p \to P_1, \text{from} \to \text{SFO}, \text{to} \to \text{SIN}$），即生成一個<strong>具體動作（Grounded Action）</strong>：</p>
-
-<ul class="note-list">
-<li>$\text{Precond}(\text{Fly}(P_1, \text{SFO}, \text{SIN})) = \{\text{At}(P_1, \text{SFO}), \text{Plane}(P_1), \text{Airport}(\text{SFO}), \text{Airport}(\text{SIN})\}$</li>
-<li>$\text{DEL}(\text{Fly}(P_1, \text{SFO}, \text{SIN})) = \{\text{At}(P_1, \text{SFO})\}$</li>
-<li>$\text{ADD}(\text{Fly}(P_1, \text{SFO}, \text{SIN})) = \{\text{At}(P_1, \text{SIN})\}$</li>
-</ul>
-
-<h4 id="2-3-the-frame-problem" class="mb-2">2.3 框架問題（The Frame Problem）</h4>
-
-<p class="mb-3">在古典邏輯推理中，一個歷史悠久的難題稱為<strong>框架問題（Frame Problem）</strong>：<em>如何精確指定在執行某一動作後，世界上有哪些事實「沒有發生改變」，而不需要在公理中冗長地列出所有未受影響的事項？</em></p>
-
-<p class="mb-3">在 PDDL 與 STRIPS 語意中，框架問題透過<strong>預設保持原則</strong>被隱式解決：<strong>未在 $\text{ADD}(a)$ 或 $\text{DEL}(a)$ 中提及的 Fluent，其真偽值在動作執行前後保持絕對不變</strong>。執行動作後的新狀態 $s'$ 計算公式為：</p>
-
-<p class="mb-3">$$s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$$</p>
+<p class="mb-3">While real-world environments (such as robotics, autonomous driving, or high-frequency trading) violate these idealized assumptions, classical planning serves as the indispensable baseline abstraction. Advanced planning paradigms—such as Markov Decision Processes (MDPs), Partial Observability (POMDPs), and Neuro-Symbolic LLM Planners—build directly upon classical state-space search, heuristic abstractions, and PDDL representations.</p>
 
 <hr>
 </section>
 
-<section id="3-vs" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. 狀態空間搜尋演算法：正向推進 vs 逆向迴歸</h3>
+<section id="2-state-representation-and-database-semantics" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. State Representation and Database Semantics</h3>
 
-<p class="mb-3">有了狀態與動作的數學表徵後，求解規劃問題便可轉化為在狀態空間（State Space）中尋找一條從初始狀態 $s_0$ 到滿足目標 $g$ 的路徑。</p>
+<h4 id="2-1-factored-state-representation-and-atomic-fluents" class="mb-2">2.1 Factored State Representation and Atomic Fluents</h4>
 
-<div class="note-markdown-block"><pre><code>Forward (Progression) Search:
-Initial State s0 ----a1----&gt; s1 ----a2----&gt; s2 ... ----an----&gt; State satisfying Goal g
-
-Backward (Regression) Search:
-Initial Goal g &lt;----a_n---- Subgoal g1 &lt;----a_{n-1}---- Subgoal g2 ... &lt;----a1---- Initial State s0</code></pre></div>
-
-<h4 id="3-1-progression-search" class="mb-2">3.1 正向搜尋（Progression Search）</h4>
-
-<p class="mb-3">正向搜尋（Progression / Forward State-Space Search）從初始狀態 $s_0$ 出發，顯式模擬動作的執行：</p>
-
-<ol class="mb-3">
-<li><strong>可適用性檢查（Applicability）</strong>：當且僅當當前狀態 $s$ 蘊含動作 $a$ 的前置條件（即 $\text{Precond}(a) \subseteq s$）時，動作 $a$ 在狀態 $s$ 下可適用。</li>
-<li><strong>狀態更新（State Transition）</strong>：套用公式生成後繼狀態 $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$。</li>
-<li><strong>目標檢測（Goal Test）</strong>：若 $g \subseteq s'$，則尋找成功，返回動作序列。</li>
-</ol>
-
-<p class="mb-3"><strong>優點</strong>：永遠維護完整的具體狀態（Ground States），推理邏輯直觀。 <strong>缺點</strong>：分支因子（Branching Factor）通常極大。許多與目標無關的動作也會被盲目展開，導致搜尋空間爆炸。</p>
-
-<h4 id="3-2-regression-search" class="mb-2">3.2 逆向搜尋（Regression Search）</h4>
-
-<p class="mb-3">與正向搜尋相反，逆向搜尋（Regression / Backward Search）從目標描述 $g$ 開始，逆向推導「為了達成當前目標，上一階段必須滿足什麼樣的子目標（Subgoals）」。</p>
-
-<h5 class="mb-2">動作相關性（Relevant Action）</h5>
-
-<p class="mb-3">在逆向搜尋中，並非所有動作都適合逆向套用。一個動作 $a$ 被稱為對目標描述 $g$ <strong>相關（Relevant）</strong>，當且僅當：</p>
-
-<ol class="mb-3">
-<li>動作 $a$ 的效果至少實現了 $g$ 中的一個目標字面量（即 $\text{ADD}(a) \cap g \neq \emptyset$）。</li>
-<li>動作 $a$ 的效果<strong>不與 $g$ 中的任何目標字面量發生矛盾</strong>（即 $\text{DEL}(a) \cap g = \emptyset$）。</li>
-</ol>
-
-<h5 class="mb-2">迴歸方程（Regression Formula）</h5>
-
-<p class="mb-3">給定目標描述 $g$ 與相關動作 $a$，逆向推導出的前置子目標 $g'$（稱為 $g$ 關於 $a$ 的 Regressed State）計算公式如下：</p>
-
-<p class="mb-3">$$\text{POS}(g') = (\text{POS}(g) \setminus \text{ADD}(a)) \cup \text{POS}(\text{Precond}(a))$$</p>
-
-<p class="mb-3">$$\text{NEG}(g') = (\text{NEG}(g) \setminus \text{DEL}(a)) \cup \text{NEG}(\text{Precond}(a))$$</p>
-
-<p class="mb-3">其中 $\text{POS}(\cdot)$ 與 $\text{NEG}(\cdot)$ 分別代表正向與負向字面量集合。在逆向過程中，我們利用<strong>最通用統一子（Most General Unifier, MGU）</strong>對動作參數進行替換與綁定。</p>
-
-<div id="ground-state-description" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa- me-2"></i>基數比較：狀態（Ground State）與狀態描述（Description）</h4><p class="mb-3">若環境中共有 $n$ 個 Ground Fluents：</p>
+<p class="mb-3">In classical planning, world states are modeled using a <strong>factored representation</strong>. Instead of treating states as monolithic black-box tokens (as in un-factored graph search like $A^<em>$), a state is decomposed into a set of state variables called </em><em>fluents</em>* (properties whose truth values fluctuate over time).</p>
 
 <ul class="note-list">
-<li><strong>具體狀態（Ground States）</strong> 的數量為 $2^n$（每個 Fluent 非 True 即 False）。正向搜尋的節點即為具體狀態。</li>
-<li><strong>狀態描述（Descriptions / Subgoals）</strong> 的數量為 $3^n$（每個 Fluent 可為 Positive、Negative 或 Unmentioned/Don't Care）。逆向搜尋維護的是狀態描述，代表符合該描述的一組狀態集合。</li>
-</ul></div>
+<li><strong>Ground Function-Free Atomic Fluent</strong>: A predicate symbol applied to constant terms (objects) without function symbols. For example, $\text{At}(\text{Plane1}, \text{SFO})$ or $\text{In}(\text{Cargo2}, \text{Plane1})$.</li>
+<li><strong>State Definition</strong>: A state $s$ is formally defined as a <strong>conjunction of ground, positive, function-free atomic fluents</strong>. Equivalently, $s$ is treated as the <em>set of all fluents currently true in that state</em>.</li>
+</ul>
+
+<p class="mb-3">$$\text{State } s = \{\text{At}(\text{Cargo1}, \text{JFK}), \text{At}(\text{Plane1}, \text{JFK}), \text{Airport}(\text{JFK}), \text{Airport}(\text{SFO})\}$$</p>
+
+<h4 id="2-2-closed-world-assumption-cwa-and-unique-names-assumption-una" class="mb-2">2.2 Closed-World Assumption (CWA) and Unique Names Assumption (UNA)</h4>
+
+<p class="mb-3">Classical planning adopts specialized database semantics to maintain compact state representations:</p>
+
+<ol class="mb-3">
+<li><strong>Closed-World Assumption (CWA)</strong>: Any atomic fluent that is not explicitly listed in the state set $s$ is <strong>assumed to be false</strong>. If $\text{In}(\text{Cargo1}, \text{Plane1}) \notin s$, then $\text{In}(\text{Cargo1}, \text{Plane1}) = \text{False}$. This eliminates the need to explicitly store negative literals.</li>
+<li><strong>Unique Names Assumption (UNA)</strong>: Distinct constant symbols refer to distinct, unique real-world entities. For example, $\text{JFK} \neq \text{SFO}$ and $\text{Plane1} \neq \text{Plane2}$.</li>
+</ol>
 
 <hr>
 </section>
 
-<section id="4-satplan-boolean-satisfiability" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">4. 規劃即邏輯推論：SATPlan 與 Boolean Satisfiability</h3>
+<section id="3-goal-representation-and-model-theoretic-entailment" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Goal Representation and Model-Theoretic Entailment</h3>
 
-<p class="mb-3">除了將規劃視為圖搜尋外，另一個極具影響力的範式是將規劃問題完全轉譯為<strong>命題邏輯（Propositional Logic）</strong>公式，並利用高效的 SAT Solver（如 MiniSAT、Glucose）求解。這一方法稱為 <strong>SATPlan</strong>（Kautz &amp; Selman）。</p>
+<h4 id="3-1-goal-definition-as-partial-state" class="mb-2">3.1 Goal Definition as Partial State</h4>
 
-<div class="note-markdown-block"><pre><code>+-------------------+      Translate to CNF      +-------------------+
-|  Planning Domain  | -------------------------&gt; | Propositional CNF |
-|   &amp; Problem PDDL  |   (at time t = 0..T)       |      Formula      |
-+-------------------+                            +-------------------+
-                                                           |
-                                                           v
-+-------------------+   Extract Action Sequence   +-------------------+
-| Valid Plan Output | &lt;-------------------------- |    SAT Solver     |
-+-------------------+      (if Satisfiable)       |  (Finds Model M)  |
-+-------------------+</code></pre></div>
+<p class="mb-3">Unlike a complete world state (which specifies the truth value of every fluent in the domain via CWA), a <strong>Goal</strong> $g$ is a <strong>partially specified state</strong> expressed as a conjunction of literals. Any fluent omitted from $g$ is unconstrained and can take any truth value in a satisfying goal state.</p>
 
-<h4 id="4-1-satplan" class="mb-2">4.1 SATPlan 基本運作流程</h4>
+<p class="mb-3">$$g = \text{At}(\text{Cargo1}, \text{SFO}) \land \text{At}(\text{Cargo2}, \text{JFK})$$</p>
 
-<p class="mb-3">SATPlan 將時間離散化為時間步 $t = 0, 1, \dots, T_{\max}$。每個 Fluent 與 Action 都附加上時間索引 $t$：</p>
+<h4 id="3-2-model-theoretic-goal-entailment-s-models-g" class="mb-2">3.2 Model-Theoretic Goal Entailment ($s \models g$)</h4>
 
-<ul class="note-list">
-<li>$P_t$：代表 Fluent $P$ 在時間步 $t$ 是否為真。</li>
-<li>$A_t$：代表 Action $A$ 是否在時間步 $t$ 被執行。</li>
-</ul>
+<p class="mb-3">A state $s$ satisfies a goal $g$ if and only if $s$ logically entails $g$, written as $s \models g$. Model-theoretically:</p>
 
-<p class="mb-3">SATPlan 的演算法輪廓如下：</p>
+<p class="mb-3">$$s \models g \iff \mathcal{M}(s) \subseteq \mathcal{M}(g)$$</p>
 
-<ol class="mb-3">
-<li>設定邊界步數 $T = 0$。</li>
-<li>將初始狀態 $s_0$、目標 $g$、動作轉移公理編碼為合取範式（CNF）公式 $\Phi_T$。</li>
-<li>呼叫 SAT Solver 檢驗 $\Phi_T$ 的可滿足性：</li>
-</ol>
+<p class="mb-3">where $\mathcal{M}(\cdot)$ represents the set of satisfying interpretations (models). In set-theoretic terms under CWA, state $s$ satisfies goal $g$ if every positive literal in $g$ is contained within $s$, and no negative literal in $g$ is contained within $s$:</p>
+
+<p class="mb-3">$$s \models g \iff (\forall p \in g^+, p \in s) \land (\forall q \in g^-, q \notin s)$$</p>
+
+<h4 id="3-3-quantifier-treatment-in-strips-vs-pddl" class="mb-2">3.3 Quantifier Treatment in STRIPS vs. PDDL</h4>
 
 <ul class="note-list">
-<li>若可滿足（SAT），解出的模型（Truth Assignment）中所有為 True 的 $A_t$ 即構成有效計畫，演算法終止。</li>
-<li>若不可滿足（UNSAT），增加步數 $T \leftarrow T + 1$，重複步驟 2。</li>
+<li><strong>STRIPS Restriction</strong>: Standard STRIPS restricts goal specifications strictly to <strong>conjunctions of positive ground literals</strong> without variables.</li>
+<li><strong>PDDL Extension</strong>: Modern PDDL permits negative literals, disjunctions, and explicitly quantified variables in goals (where unassigned variables are implicitly existentially quantified: $\exists x \, \text{At}(x, \text{SFO})$).</li>
 </ul>
-
-<h4 id="4-2-successor-state-axioms" class="mb-2">4.2 邏輯公理編碼與 Successor-State Axioms</h4>
-
-<p class="mb-3">在將規劃編碼為 SAT 時，必須精確表達狀態隨時間演變的邏輯關係：</p>
-
-<ol class="mb-3">
-<li><strong>初始與目標公理</strong>：</li>
-</ol>
-
-<ul class="note-list">
-<li>初始狀態：若 $P \in s_0$，加入 $P_0$；若 $P \notin s_0$，加入 $\neg P_0$。</li>
-<li>目標狀態：加入 $G_T$。</li>
-</ul>
-
-<ol class="mb-3">
-<li><strong>動作前置條件公理</strong>：</li>
-</ol>
-
-<ul class="note-list">
-<li>若動作 $A$ 的前置條件包含 $P$，則 $A_t \implies P_t$（即 $\neg A_t \lor P_t$）。</li>
-</ul>
-
-<ol class="mb-3">
-<li><strong>動作效果公理</strong>：</li>
-</ol>
-
-<ul class="note-list">
-<li>若動作 $A$ 的 ADD 包含 $P$，DEL 包含 $Q$，則 $A_t \implies (P_{t+1} \land \neg Q_{t+1})$。</li>
-</ul>
-
-<h5 class="mb-2">繼承狀態公理（Successor-State Axioms）</h5>
-
-<p class="mb-3">若僅有上述公理，SAT Solver 可能會解出「未執行任何動作，但 Fluent 憑空改變」的不合理模型。若為每個未受影響的 Fluent 寫框條公理（Frame Axioms），對於 $m$ 個動作與 $n$ 個 Fluent，公理數量高達 $O(mn)$。</p>
-
-<p class="mb-3">SATPlan 採用了 <strong>Successor-State Axioms</strong>（Reiter 邏輯之延伸）：<em> Fluent $P$ 在 $t+1$ 為真，當且僅當（1）在 $t$ 時執行了能 ADD $P$ 的動作，或（2）在 $t$ 時 $P$ 已為真，且沒有執行任何會 DEL $P$ 的動作。</em></p>
-
-<p class="mb-3">$$P_{t+1} \iff \left( \bigvee_{A \in \text{Add}(P)} A_t \right) \lor \left( P_t \land \neg \bigvee_{B \in \text{Del}(P)} B_t \right)$$</p>
-
-<p class="mb-3">透過此編碼，公理總數大幅降至 $O(n)$，完美解決了邏輯編碼中的框架問題。此外，為了避免同一時間步執行互斥動作，還需加入<strong>動作互斥公理（Action Exclusion Axioms）</strong>：若動作 $A$ 與 $B$ 互相干擾，加入 $\neg A_t \lor \neg B_t$。</p>
 
 <hr>
 </section>
 
-<section id="5" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">5. 規劃演算法特性與計算複雜度分析</h3>
+<section id="4-action-schemas-grounding-and-state-transitions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Action Schemas, Grounding, and State Transitions</h3>
 
-<p class="mb-3">衡量一個規劃演算法的優劣，需從理論特性與計算複雜度進行評估。</p>
+<h4 id="4-1-action-schemas-vs-grounded-actions" class="mb-2">4.1 Action Schemas vs. Grounded Actions</h4>
 
-<h4 id="5-1" class="mb-2">5.1 演算法三大屬性</h4>
+<p class="mb-3">To avoid hand-crafting transitions for every object, planning domains use parameterized <strong>Action Schemas</strong> (lifted representations):</p>
+
+<div class="note-markdown-block"><pre><code>Action Schema: Fly(?p, ?from, ?to)
+  Parameters:   ?p (Plane), ?from (Airport), ?to (Airport)
+  Preconditions: At(?p, ?from) ^ Plane(?p) ^ Airport(?from) ^ Airport(?to)
+  Effects:      NOT At(?p, ?from) ^ At(?p, ?to)</code></pre></div>
 
 <ul class="note-list">
-<li><strong>正確性（Soundness）</strong>：演算法所輸出的任意動作序列，保證能從初始狀態合法執行並成功達成目標。</li>
-<li><strong>完備性（Completeness）</strong>：若該規劃問題存在合法解，演算法保證能在有限時間內找到解；若無解，能正確報告失敗。</li>
-<li><strong>最佳性（Optimality）</strong>：演算法找到的解在特定度量（如動作步數或路徑總成本）下保證為全局最優。</li>
+<li><strong>Lifted Action Schema</strong>: Uses universally quantified variables ($\text{?p}, \text{?from}, \text{?to}$).</li>
+<li><strong>Grounded Action</strong>: A concrete instance obtained by substituting variables with constant domain objects using substitution $\theta = \{?p/\text{Plane1}, ?from/\text{JFK}, ?to/\text{SFO}\}$:</li>
 </ul>
 
-<h4 id="5-2" class="mb-2">5.2 計算複雜度界線</h4>
+<p class="mb-3">$$\text{Fly}(\text{Plane1}, \text{JFK}, \text{SFO})$$</p>
 
-<p class="mb-3">自動規劃在理論計算複雜度上屬於硬問題（Hard Problems）：</p>
+<h4 id="4-2-action-structure-and-applicability-condition" class="mb-2">4.2 Action Structure and Applicability Condition</h4>
+
+<p class="mb-3">A grounded action $a$ consists of three components:</p>
+
+<ol class="mb-3">
+<li><strong>Preconditions ($\text{Precond}(a)$)</strong>: Literals that must hold in state $s$ for $a$ to be executed.</li>
+<li><strong>ADD Set ($\text{ADD}(a)$)</strong>: Positive fluents made true by executing $a$.</li>
+<li><strong>DEL Set ($\text{DEL}(a)$)</strong>: Positive fluents made false by executing $a$.</li>
+</ol>
+
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">&lt;strong&gt;Applicability Condition:&lt;/strong&gt;<br> Action $a$ is applicable in state $s$ if and only if state $s$ satisfies the preconditions of $a$:<br> $$\text{Applicable}(a, s) \iff s \models \text{Precond}(a)$$</p></div>
+
+<h4 id="4-3-successor-state-formula-and-the-frame-problem" class="mb-2">4.3 Successor State Formula and the Frame Problem</h4>
+
+<p class="mb-3">When an applicable action $a$ is executed in state $s$, the successor state $s'$ is generated by deleting fluents in $\text{DEL}(a)$ and adding fluents in $\text{ADD}(a)$:</p>
+
+<p class="mb-3">$$s' = \text{Result}(s, a) = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$$</p>
+
+<div class="note-markdown-block"><pre><code>State Transition Formula:
++-------------------------------------------------------------------+
+| Current State s  : { At(P1, JFK), At(C1, JFK), Airport(JFK) }     |
+| Action Executed  : Fly(P1, JFK, SFO)                              |
+|   DEL Set        : { At(P1, JFK) }                                |
+|   ADD Set        : { At(P1, SFO) }                                |
++-------------------------------------------------------------------+
+| Successor State s': (s \ DEL) U ADD                               |
+|                  = { At(C1, JFK), Airport(JFK), At(P1, SFO) }      |
++-------------------------------------------------------------------+</code></pre></div>
+
+<h5 class="mb-2">The Frame Problem Resolution</h5>
+
+<p class="mb-3">The <strong>Frame Problem</strong> is the fundamental challenge of formally specifying which aspects of the world <em>remain unchanged</em> when an action occurs. Naive logic requires explicit "frame axioms" asserting that unmentioned fluents persist (e.g., "Flying a plane does not change the color of the building"). PDDL and STRIPS resolve the frame problem by adopting an <strong>Inertia Assumption</strong>: <em>All fluents not explicitly listed in $\text{ADD}(a)$ or $\text{DEL}(a)$ automatically retain their previous truth values.</em></p>
+
+<hr>
+</section>
+
+<section id="5-complete-pddl-air-cargo-domain-and-problem-specifications" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Complete PDDL Air-Cargo Domain and Problem Specifications</h3>
+
+<p class="mb-3">The <strong>Planning Domain Definition Language (PDDL)</strong> was introduced by McDermott et al. (1998) as a standardized syntax extending STRIPS (Fikes &amp; Nilsson, 1971). A complete PDDL specification separates the <strong>Domain</strong> (predicates and action schemas) from the <strong>Problem</strong> (objects, initial state, and goal state).</p>
+
+<h4 id="5-1-executable-pddl-domain-code-air-cargo-domain-pddl" class="mb-2">5.1 Executable PDDL Domain Code (<code>air-cargo-domain.pddl</code>)</h4>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">(define (domain air-cargo)
+  (:requirements :strips :typing)
+  (:types cargo plane airport - object)
+  
+  (:predicates
+    (At ?obj - object ?loc - airport)
+    (In ?c - cargo ?p - plane)
+  )
+
+  (:action Load
+    :parameters (?c - cargo ?p - plane ?a - airport)
+    :precondition (and (At ?c ?a) (At ?p ?a))
+    :effect (and (not (At ?c ?a))
+                 (In ?c ?p))
+  )
+
+  (:action Unload
+    :parameters (?c - cargo ?p - plane ?a - airport)
+    :precondition (and (In ?c ?p) (At ?p ?a))
+    :effect (and (not (In ?c ?p))
+                 (At ?c ?a))
+  )
+
+  (:action Fly
+    :parameters (?p - plane ?from - airport ?to - airport)
+    :precondition (and (At ?p ?from))
+    :effect (and (not (At ?p ?from))
+                 (At ?p ?to))
+  )
+)</code></pre></div>
+
+<h4 id="5-2-executable-pddl-problem-code-air-cargo-problem-pddl" class="mb-2">5.2 Executable PDDL Problem Code (<code>air-cargo-problem.pddl</code>)</h4>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">(define (problem air-cargo-problem)
+  (:domain air-cargo)
+  (:objects
+    C1 C2 - cargo
+    P1 P2 - plane
+    SFO JFK - airport
+  )
+  
+  (:init
+    (At C1 JFK)
+    (At C2 JFK)
+    (At P1 JFK)
+    (At P2 SFO)
+  )
+  
+  (:goal (and
+    (At C1 SFO)
+    (At C2 SFO)
+  ))
+)</code></pre></div>
+
+<h4 id="5-3-grounding-analysis-and-preventing-spurious-actions" class="mb-2">5.3 Grounding Analysis and Preventing Spurious Actions</h4>
+
+<p class="mb-3">When compiling a lifted PDDL domain into grounded actions:</p>
+
+<ul class="note-list">
+<li>For objects $|\text{Cargo}|=2, |\text{Plane}|=2, |\text{Airport}|=2$:
+<ul class="note-list">
+<li>$\text{Load}$: $2 \times 2 \times 2 = 8$ grounded actions.</li>
+<li>$\text{Unload}$: $2 \times 2 \times 2 = 8$ grounded actions.</li>
+<li>$\text{Fly}$: $2 \times 2 \times 2 = 8$ grounded actions (including self-flights like $\text{Fly}(\text{P1}, \text{JFK}, \text{JFK})$).</li>
+</ul></li>
+<li><strong>Spurious Action Elimination</strong>: To prevent redundant self-flights, domain designers add inequality constraints $\text{(not (= ?from ?to))}$ to action preconditions, pruning the action branch space upfront.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="6-planning-as-state-space-search-forward-progression-vs-backward-regression" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. Planning as State-Space Search: Forward Progression vs. Backward Regression</h3>
+
+<p class="mb-3">Planning problems map directly to directed graph search over world states:</p>
+
+<ul class="note-list">
+<li><strong>Nodes</strong>: Complete ground states $s \in S$.</li>
+<li><strong>Root Node</strong>: The initial state $s_0$.</li>
+<li><strong>Edges</strong>: Applicable grounded actions $a$.</li>
+<li><strong>Goal Test</strong>: Verifying whether node state $s$ entails goal $g$ ($s \models g$).</li>
+<li><strong>Path Solution</strong>: A valid sequence of actions $[a_1, a_2, \dots, a_k]$ transforming $s_0$ into a goal-satisfying state $s_k$.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>Forward Progression Search                    Backward Regression Search
++------------------------------------+        +------------------------------------+
+| Initial State s0                   |        | Goal Description g                 |
+|   |-- Action a1 (Forward Transition)|        |   |-- Regress Action a (Relevant)   |
+|   v                                |        |   v                                |
+| State s1 = (s0 \ DEL) U ADD        | =====&gt; | Subgoal g' = (g \ ADD(a)) U Precond|
+|   |-- Action a2                    |        |   |-- Regress Action a'            |
+|   v                                |        |   v                                |
+| State s2 |= Goal g (Goal Met!)    |        | State s0 |= g_final (Root Met!)    |
++------------------------------------+        +------------------------------------+</code></pre></div>
+
+<h4 id="6-1-forward-progression-search-algorithm" class="mb-2">6.1 Forward Progression Search Algorithm</h4>
+
+<p class="mb-3"><strong>Progression Search</strong> starts at the initial state $s_0$ and explores forward toward the goal.</p>
+
+<h5 class="mb-2">Algorithm Steps</h5>
+
+<ol class="mb-3">
+<li>Initialize search queue with root state node $s_0$.</li>
+<li>Pop current state node $s$. If $s \models g$, return the action path (Plan Found).</li>
+<li>Find all applicable grounded actions $a$ where $s \models \text{Precond}(a)$.</li>
+<li>For each applicable action $a$, compute successor state $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.</li>
+<li>Add child nodes $s'$ to search queue (guided by BFS, DFS, $A^*$, or Greedy Best-First Search).</li>
+</ol>
+
+<h5 class="mb-2">State-Space Explosion</h5>
+
+<p class="mb-3">If a domain contains $n$ ground atomic fluents, the total number of distinct concrete ground states is <strong>$2^n$</strong>. Forward search must evaluate concrete states, making unguided progression intractable for large $n$.</p>
+
+<h4 id="6-2-backward-regression-search-algorithm" class="mb-2">6.2 Backward Regression Search Algorithm</h4>
+
+<p class="mb-3"><strong>Regression Search</strong> starts at goal set $g$ and works backward toward initial state $s_0$.</p>
+
+<h5 class="mb-2">Relevance Condition</h5>
+
+<p class="mb-3">An action $a$ is <strong>relevant</strong> to a current goal description $g$ if and only if:</p>
+
+<ol class="mb-3">
+<li>Action $a$ achieves at least one literal in $g$: $\text{ADD}(a) \cap g \neq \emptyset$.</li>
+<li>Action $a$ does not destroy any literal required by $g$: $\text{DEL}(a) \cap g = \emptyset$.</li>
+</ol>
+
+<h5 class="mb-2">Goal Regression Formula</h5>
+
+<p class="mb-3">The regressed description $g'$ prior to executing relevant action $a$ is:</p>
+
+<p class="mb-3">$$g' = \text{Regress}(g, a) = (g \setminus \text{ADD}(a)) \cup \text{Precond}(a)$$</p>
+
+<div class="note-markdown-block"><pre><code>Regression Trace Example (Air Cargo):
+Goal g            : { At(C1, SFO) }
+Relevant Action a : Unload(C1, P1, SFO)
+  ADD Set         : { At(C1, SFO) }
+  Preconditions   : { In(C1, P1), At(P1, SFO) }
+Regressed Goal g' : (g \ ADD(a)) U Precond(a)
+                  = {} U { In(C1, P1), At(P1, SFO) }
+                  = { In(C1, P1), At(P1, SFO) }</code></pre></div>
+
+<h4 id="6-3-most-general-unifiers-mgu-in-lifted-regression" class="mb-2">6.3 Most General Unifiers (MGU) in Lifted Regression</h4>
+
+<p class="mb-3">In lifted regression search, goals contain variables. When unifying a goal literal $L_g$ with an action effect literal $L_e$, regression computes the <strong>Most General Unifier (MGU)</strong> $\theta$:</p>
+
+<p class="mb-3">$$\text{MGU}(L_g, L_e) = \theta \implies L_g \theta = L_e \theta$$</p>
+
+<p class="mb-3">Using MGUs postpones concrete variable bindings, avoiding arbitrary ground action expansion until required by domain constraints.</p>
+
+<h4 id="6-4-state-space-cardinality-comparison-2-n-vs-3-n" class="mb-2">6.4 State-Space Cardinality Comparison: $2^n$ vs. $3^n$</h4>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
     <thead><tr>
-<th>判定問題名稱</th>
-<th>數學定義與問題描述</th>
-<th>複雜度類別</th>
+<th>Search Direction</th>
+<th>State Representation</th>
+<th>Search Space Cardinality</th>
+<th>Advantages &amp; Trade-offs</th>
     </tr></thead>
     <tbody>
 <tr>
-<td><strong>PlanSAT</strong></td>
-<td>給定規劃領域與問題描述，是否存在<strong>任意長度</strong>的有效解？</td>
-<td><strong>PSPACE-complete</strong>（在有限狀態空間下可判定，但空間複雜度高）</td>
+<td><strong>Forward Progression</strong></td>
+<td>Full concrete states (every fluent is True or False)</td>
+<td><strong>$2^n$</strong> concrete states</td>
+<td>• Fully specified states allow easy heuristic evaluation ($h(s)$).<br>• High branching factor due to irrelevant actions.</td>
 </tr>
 <tr>
-<td><strong>Bounded PlanSAT</strong></td>
-<td>給定規劃問題與步數限制 $k$，是否存在<strong>長度 $\le k$</strong> 的有效解？</td>
-<td><strong>NP-complete</strong></td>
+<td><strong>Backward Regression</strong></td>
+<td>Partial state descriptions (fluents are True, False, or Unspecified)</td>
+<td><strong>$3^n$</strong> partial descriptions</td>
+<td>• Focuses strictly on actions relevant to goal fluents.<br>• Harder to design powerful domain-independent heuristics for partial states.</td>
 </tr>
     </tbody>
   </table>
 </div>
 
-<p class="mb-3">在實務中，找到<strong>全局最佳解（Optimal Planning）</strong>極具挑戰性；而尋找<strong>滿意解（Satisficing Planning，即任意可行解）</strong>則通常藉助高資訊量的啟發式函數（Heuristics）與強大的剪枝策略來實現，這也是下一篇文章將要深入探討的核心主題。</p>
+<hr>
+</section>
+
+<section id="7-planning-as-logical-inference-satplan-and-satisfiability-reduction" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. Planning as Logical Inference: SATPlan and Satisfiability Reduction</h3>
+
+<p class="mb-3">Rather than searching state space graphs, <strong>SATPlan</strong> (Kautz &amp; Selman, 1992) translates classical planning problems into <strong>Conjunctive Normal Form (CNF)</strong> propositional logic formulas, solving them via state-of-the-art Boolean Satisfiability (SAT) solvers.</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|                   SATPlan Reduction Pipeline                      |
++-------------------------------------------------------------------+
+|  PDDL Domain &amp; Problem  ===&gt;  Bound Horizon Step T = 0, 1, 2...   |
+|                                         |                         |
+|                                         v                         |
+|  [ SAT Decoder / Plan ] &lt;===  [ Propositional CNF Formula Phi_T ] |
+|  (Extract Action Execution)   (Initial + Transitions + Frame + Goal)|
++-------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="7-1-propositional-variable-mapping-across-time-steps" class="mb-2">7.1 Propositional Variable Mapping Across Time Steps</h4>
+
+<p class="mb-3">For a bounded plan horizon $T = k$, SATPlan creates timed propositional variables for every ground fluent and action:</p>
+
+<ul class="note-list">
+<li>$F^t$: Ground fluent $F$ is True at time step $t \in \{0, 1, \dots, k\}$.</li>
+<li>$A^t$: Ground action $A$ is executed at time step $t \in \{0, 1, \dots, k-1\}$.</li>
+</ul>
+
+<h4 id="7-2-the-satplan-cnf-formula-structure" class="mb-2">7.2 The SATPlan CNF Formula Structure</h4>
+
+<p class="mb-3">The complete propositional logic formula $\Phi_k$ for horizon $k$ is a conjunction of five clause groups:</p>
+
+<p class="mb-3">$$\Phi_k = \text{Init}^0 \land \text{PrecondClauses} \land \text{EffectClauses} \land \text{FrameClauses} \land \text{Goal}^k$$</p>
+
+<ol class="mb-3">
+<li><strong>Initial State ($\text{Init}^0$)</strong>: Asserts true fluents as positive unit clauses and unmentioned fluents as negative unit clauses at $t=0$:</li>
+</ol>
+
+<p class="mb-3">$$F_1^0 \land F_2^0 \land \neg F_3^0 \land \dots$$</p>
+
+<ol class="mb-3">
+<li><strong>Action Preconditions</strong>: Executing action $A^t$ implies its preconditions hold at time $t$:</li>
+</ol>
+
+<p class="mb-3">$$A^t \implies P^t \iff (\neg A^t \lor P^t)$$</p>
+
+<ol class="mb-3">
+<li><strong>Action Effects</strong>: Executing action $A^t$ implies its ADD fluents are true and DEL fluents are false at time $t+1$:</li>
+</ol>
+
+<p class="mb-3">$$A^t \implies (ADD^{t+1} \land \neg DEL^{t+1}) \iff (\neg A^t \lor ADD^{t+1}) \land (\neg A^t \lor \neg DEL^{t+1})$$</p>
+
+<h4 id="7-3-resolving-the-frame-problem-successor-state-axioms" class="mb-2">7.3 Resolving the Frame Problem: Successor-State Axioms</h4>
+
+<p class="mb-3">A naive approach to frame axioms requires specifying that if fluent $F$ is true at $t$ and action $A$ (which doesn't delete $F$) occurs, $F$ remains true at $t+1$. For $m$ actions and $n$ fluents, this requires $\mathcal{O}(m \cdot n)$ clauses.</p>
+
+<h5 class="mb-2">Successor-State Axioms (Reiter, 1991)</h5>
+
+<p class="mb-3">SATPlan uses <strong>Successor-State Axioms</strong> to combine all cause actions for fluent $F$ into a single bi-conditional clause, reducing frame clause complexity to <strong>$\mathcal{O}(n)$</strong>:</p>
+
+<p class="mb-3">$$F^{t+1} \iff \text{PosActions}^t(F) \lor (F^t \land \neg \text{NegActions}^t(F))$$</p>
+
+<p class="mb-3">where:</p>
+
+<ul class="note-list">
+<li>$\text{PosActions}^t(F)$ is a disjunction of all actions that ADD fluent $F$ at step $t$.</li>
+<li>$\text{NegActions}^t(F)$ is a disjunction of all actions that DEL fluent $F$ at step $t$.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>Successor-State Axiom Example for At(P1, SFO):
+At(P1, SFO)^{t+1} &lt;=&gt; Fly(P1, JFK, SFO)^t v ( At(P1, SFO)^t ^ ~Fly(P1, SFO, JFK)^t )</code></pre></div>
+
+<h4 id="7-4-action-mutual-exclusion-axioms" class="mb-2">7.4 Action Mutual Exclusion Axioms</h4>
+
+<p class="mb-3">To prevent invalid parallel executions (e.g., flying a plane to SFO while simultaneously loading cargo into it at JFK), SATPlan asserts <strong>Action Exclusion Axioms</strong> for conflicting action pairs $A_1$ and $A_2$:</p>
+
+<p class="mb-3">$$\neg A_1^t \lor \neg A_2^t$$</p>
+
+<h4 id="7-5-satplan-algorithm-iteration" class="mb-2">7.5 SATPlan Algorithm Iteration</h4>
+
+<div class="note-markdown-block"><pre><code>Algorithm 1: SATPlan
+-------------------------------------------------------------------
+1. Set plan horizon length k = 0.
+2. Construct propositional CNF formula Phi_k.
+3. Call SAT Solver (e.g., MiniSAT, Glucose) on Phi_k.
+4. If SAT Solver returns SATISFIABLE:
+     Extract truth assignment for action variables A^t = True.
+     Return synthesized plan [A^0, A^1, ..., A^{k-1}].
+5. Else (UNSATISFIABLE):
+     Increment horizon k = k + 1.
+     Repeat from Step 2 until k exceeds upper bound k_max.</code></pre></div>
+
+<hr>
+</section>
+
+<section id="8-algorithmic-properties-and-computational-complexity-bounds" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. Algorithmic Properties and Computational Complexity Bounds</h3>
+
+<h4 id="8-1-soundness-completeness-and-optimality" class="mb-2">8.1 Soundness, Completeness, and Optimality</h4>
+
+<ul class="note-list">
+<li><strong>Soundness</strong>: A planning algorithm is <em>sound</em> if every generated plan sequence $[a_1, \dots, a_k]$ is mathematically valid—meaning executing actions sequentially from $s_0$ strictly terminates in a state $s_k \models g$.</li>
+<li><strong>Completeness</strong>: A planning algorithm is <em>complete</em> if it is guaranteed to find a valid plan whenever one exists in the domain.</li>
+<li><strong>Optimality</strong>: A planning algorithm is <em>optimal</em> if it returns a plan that minimizes total step cost (e.g., shortest plan length or lowest cumulative action cost).</li>
+</ul>
+
+<h4 id="8-2-computational-complexity-of-plansat-vs-bounded-plansat" class="mb-2">8.2 Computational Complexity of PlanSAT vs. Bounded PlanSAT</h4>
+
+<p class="mb-3">The computational complexity of classical planning is categorized into two formal decision problems:</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               Classical Planning Complexity Bounds                |
++-------------------------------------------------------------------+
+| PlanSAT         | Does ANY valid plan exist?    | PSPACE-Complete |
+| Bounded PlanSAT | Does a plan of length &lt;= k    | NP-Complete     |
+|                 | exist?                        |                 |
++-------------------------------------------------------------------+</code></pre></div>
+
+<h5 class="mb-2">1. PlanSAT Problem ($\text{PlanSAT} \in \text{PSPACE-Complete}$)</h5>
+
+<ul class="note-list">
+<li><strong>Definition</strong>: Given a classical planning domain and problem instance, determine whether there <em>exists any valid plan of unrestricted length</em> reaching the goal.</li>
+<li><strong>Complexity</strong>: <strong>PSPACE-Complete</strong> (Bylander, 1994).</li>
+<li><strong>Proof Intuition</strong>:
+<ul class="note-list">
+<li><em>In PSPACE</em>: A non-deterministic algorithm can simulate plan execution step by step, storing only the current state $s$ (which takes polynomial memory $\mathcal{O}(n)$ fluents). By Savitch's Theorem ($\text{NPSPACE} = \text{PSPACE}$), $\text{PlanSAT} \in \text{PSPACE}$.</li>
+<li><em>PSPACE-Hardness</em>: Any deterministic Turing Machine operating in polynomial space $S(n)$ can be encoded as a classical planning problem. Turing Machine tape cells, head position, and internal control states map directly to ground fluents. Synthesizing a plan is equivalent to deciding whether the Turing Machine accepts the input.</li>
+</ul></li>
+</ul>
+
+<h5 class="mb-2">2. Bounded PlanSAT Problem ($\text{Bounded PlanSAT} \in \text{NP-Complete}$)</h5>
+
+<ul class="note-list">
+<li><strong>Definition</strong>: Given a classical planning domain, problem instance, and integer bound $k$ (written in unary), determine whether there exists a valid plan of length <em>at most $k$</em>.</li>
+<li><strong>Complexity</strong>: <strong>NP-Complete</strong>.</li>
+<li><strong>Proof Intuition</strong>:
+<ul class="note-list">
+<li><em>In NP</em>: A non-deterministic algorithm can non-deterministically guess an action sequence of length $k' \le k$ and verify in polynomial time $\mathcal{O}(k' \cdot n)$ that preconditions and goal conditions hold.</li>
+<li><em>NP-Hardness</em>: SATPlan provides a direct polynomial-time reduction from 3-SAT to Bounded PlanSAT.</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="9-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">9. Summary</h3>
+
+<p class="mb-3">Classical AI Planning forms the core symbolic backbone of automated reasoning and sequential decision making. By enforcing discrete, deterministic, static, and fully observable assumptions, domains are represented compactly using factored atomic fluents under Closed-World (CWA) and Unique Names (UNA) semantics. PDDL domain and problem specifications define parameterized action schemas, applicability conditions ($s \models \text{Precond}(a)$), and successor state transitions ($s' = (s \setminus \text{DEL}) \cup \text{ADD}$).</p>
+
+<p class="mb-3">Plan synthesis can be executed either via state-space search—contrasting forward progression ($2^n$ ground state space) with backward regression ($3^n$ partial state description space using MGUs)—or via logical satisfiability reduction (SATPlan). SATPlan resolves the frame problem efficiently using Reiter's Successor-State Axioms, reducing clause complexity from $\mathcal{O}(m \cdot n)$ to $\mathcal{O}(n)$. Formally, deciding plan existence ($\text{PlanSAT}$) is PSPACE-Complete due to state space size, while bounded plan search ($\text{Bounded PlanSAT}$) is NP-Complete.</p>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
@@ -504,11 +744,12 @@ Initial Goal g &lt;----a_n---- Subgoal g1 &lt;----a_{n-1}---- Subgoal g2 ... &lt
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li><strong>古典規劃四大假設：</strong> 離散（Discrete）、確定性（Deterministic）、靜態（Static）與完全可觀察（Fully Observable）。雖然設定嚴格，但它是複雜真實世界規劃問題的理論基礎與抽象層。</li>
-<li><strong>狀態表徵與框架問題：</strong> STRIPS 與 PDDL 採用因果狀態表徵（Factored Representation），透過閉世界假設（CWA）與唯一名稱假設（UNA）簡化狀態。框架問題（Frame Problem）透過僅在動作中顯式定義 ADD/DEL 效果，隱式預設未提及事實保持不變。</li>
-<li><strong>正向推進 vs 逆向迴歸：</strong> 正向搜尋從具體初始狀態（Ground State, $2^n$）出發；逆向搜尋從目標描述（State Description, $3^n$）利用相關動作（Relevant Action）與最通用統一子（MGU）倒推。迴歸方程精確更新正向與負向字面量集合。</li>
-<li><strong>SATPlan 與 Successor-State Axioms：</strong> SATPlan 將時間步 $t$ 的狀態與動作轉譯為 CNF 命題邏輯。Successor-State Axioms 以 $P_{t+1} \iff \text{AddActions}_t \lor (P_t \land \neg \text{DelActions}_t)$ 的邏輯等價式將框條公理數量從 $O(mn)$ 降至 $O(n)$。</li>
-<li><strong>計算複雜度界線：</strong> 任意長度的 PlanSAT 問題屬於 PSPACE-complete，而帶步數限制的 Bounded PlanSAT 則為 NP-complete。</li>
+<li><strong>Core Environment Assumptions:</strong> Classical planning assumes discrete time/state, deterministic transitions, static environment, and full observability.</li>
+<li><strong>Factored State &amp; Database Semantics:</strong> States are sets of ground function-free fluents. Unmentioned fluents are false (Closed-World Assumption, CWA) and distinct constants refer to distinct entities (Unique Names Assumption, UNA).</li>
+<li><strong>Action Transitions &amp; Frame Problem:</strong> $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$. Frame problem is resolved in STRIPS/PDDL by assuming unmentioned fluents automatically persist (inertia assumption).</li>
+<li><strong>Progression vs. Regression:</strong> Forward progression expands $2^n$ concrete ground states. Backward regression expands $3^n$ partial state descriptions using Most General Unifiers (MGUs) to maintain goal relevance.</li>
+<li><strong>SATPlan &amp; Successor-State Axioms:</strong> SATPlan converts planning into CNF propositional logic over horizon step $k$. Successor-State Axioms ($F^{t+1} \iff \text{PosAction}^t \lor (F^t \land \neg \text{NegAction}^t)$) reduce frame clause complexity to $\mathcal{O}(n)$.</li>
+<li><strong>Complexity Bounds:</strong> $\text{PlanSAT}$ (any plan length) is <strong>PSPACE-Complete</strong> (simulates polynomial-space Turing machines). $\text{Bounded PlanSAT}$ (length $\le k$) is <strong>NP-Complete</strong> (polynomial reduction to SAT).</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
@@ -551,12 +792,15 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">參考資料（References）</h3>
+<h3 class="mb-3">References</h3>
 
 <ol class="mb-3">
-<li>Fikes, R. E., &amp; Nilsson, N. J. (1971). STRIPS: A new approach to the application of theorem proving to problem solving. <em>Artificial Intelligence</em>, 2(3-4), 189-208. <a class="note-inline-link" href="https://doi.org/10.1016/0004-3702(71" target="_blank" rel="noopener noreferrer">ScienceDirect</a>90010-5)</li>
+<li>Fikes, R. E., &amp; Nilsson, N. J. (1971). STRIPS: A new approach to the application of theorem proving to problem solving. <em>Artificial Intelligence</em>, 2(3-4), 189-208.</li>
 <li>Kautz, H., &amp; Selman, B. (1992). Planning as satisfiability. In <em>Proceedings of the 10th European Conference on Artificial Intelligence (ECAI)</em> (pp. 359-363).</li>
-<li>Ghallab, M., Nau, D., &amp; Traverso, P. (2004). <em>Automated Planning: Theory and Practice</em>. Morgan Kaufmann.</li>
+<li>McDermott, D., et al. (1998). PDDL—The Planning Domain Definition Language. <em>Technical Report CVC TR-98-003/DCS TR-1165</em>, Yale University.</li>
+<li>Reiter, R. (1991). The frame problem in the situation calculus: A solution (sometimes) suitable for explanation. <em>Knowledge Representation and Reasoning</em>, 359-370.</li>
+<li>Bylander, T. (1994). The computational complexity of propositional STRIPS planning. <em>Artificial Intelligence</em>, 69(1-2), 165-204.</li>
+<li>Russell, S., &amp; Norvig, P. (2020). <em>Artificial Intelligence: A Modern Approach</em> (4th ed.). Pearson.</li>
 </ol>
 </section>
         </div>

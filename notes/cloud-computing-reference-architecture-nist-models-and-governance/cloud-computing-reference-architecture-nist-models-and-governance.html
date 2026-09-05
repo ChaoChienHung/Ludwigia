@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Computing Reference Architecture: NIST SP 500-292 Models, Service Layering, and Cloud Governance — Ludwig</title>
+  <meta name="garden:tags" content="Cloud Computing, NIST Reference Architecture, IaaS, PaaS, SaaS, Cloud Governance">
+  <meta name="garden:summary" content="A detailed technical exploration of cloud computing reference architectures and governance frameworks. Covers NIST SP 800-145 five essential characteristics (on-demand self-service, broad network access, resource pooling, rapid elasticity, measured service), single tenant vs. multi-tenancy dynamics, primary service models (IaaS, PaaS, SaaS), strict PaaS disqualification rules, the 10-layer responsibility stack matrix, cross-provider PaaS/IaaS wrapping for data localization compliance, Function-as-a-Service (FaaS / serverless) mechanics, NIST SP 500-292 reference architecture and five major cloud actors (Consumer, Provider, Auditor, Broker with 3 services, Carrier with SLAs), provider functions (3-layer Service Orchestration, Cloud Service Management, Security, Privacy), deployment models (Public, Private On-Site vs. Out-Sourced, VPC, Community Cloud with IAM, Hybrid, Sovereign Cloud), and code vs. data decoupling patterns.">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.cloud_computing,concept.nist_reference_architecture,concept.iaas,concept.paas,concept.saas,concept.cloud_governance">
+  <meta name="site:tag_labels" content="{&quot;concept.cloud_computing&quot;:{&quot;en&quot;:&quot;Cloud Computing&quot;,&quot;zh-Hant&quot;:&quot;雲端運算&quot;,&quot;zh-Hans&quot;:&quot;云计算&quot;},&quot;concept.nist_reference_architecture&quot;:{&quot;en&quot;:&quot;NIST Reference Architecture&quot;,&quot;zh-Hant&quot;:&quot;NIST 參考架構&quot;,&quot;zh-Hans&quot;:&quot;NIST 参考架构&quot;},&quot;concept.iaas&quot;:{&quot;en&quot;:&quot;IaaS&quot;,&quot;zh-Hant&quot;:&quot;基礎設施即服務 (IaaS)&quot;,&quot;zh-Hans&quot;:&quot;基础设施即服务 (IaaS)&quot;},&quot;concept.paas&quot;:{&quot;en&quot;:&quot;PaaS&quot;,&quot;zh-Hant&quot;:&quot;平台即服務 (PaaS)&quot;,&quot;zh-Hans&quot;:&quot;平台即服务 (PaaS)&quot;},&quot;concept.saas&quot;:{&quot;en&quot;:&quot;SaaS&quot;,&quot;zh-Hant&quot;:&quot;軟體即服務 (SaaS)&quot;,&quot;zh-Hans&quot;:&quot;软件即服务 (SaaS)&quot;},&quot;concept.cloud_governance&quot;:{&quot;en&quot;:&quot;Cloud Governance&quot;,&quot;zh-Hant&quot;:&quot;雲端治理&quot;,&quot;zh-Hans&quot;:&quot;云治理&quot;}}">
+  <meta name="site:canonical_id" content="cloud-computing-reference-architecture-nist-models-and-governance">
+  <meta name="site:published_at" content="2026-08-30">
+  <meta name="site:last_modified_at" content="2026-08-30">
+  <meta name="site:reading_time_minutes" content="27">
+  <meta name="site:source" content="notes/cloud-computing-reference-architecture-nist-models-and-governance/cloud-computing-reference-architecture-nist-models-and-governance.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Cloud Computing Reference Architecture: NIST SP 500-292 Models, Service Layering, and Cloud Governance</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-nist-sp-800-145-five-essential-characteristics">1. NIST SP 800-145: Five Essential Characteristics</a>
+<a class="note-toc-link level-1" href="#2-resource-pooling-and-multi-tenancy-dynamics">2. Resource Pooling and Multi-Tenancy Dynamics</a>
+<a class="note-toc-link level-1" href="#3-dissection-of-cloud-service-models-and-service-layering">3. Dissection of Cloud Service Models and Service Layering</a>
+<a class="note-toc-link level-2" href="#3-1-infrastructure-as-a-service-iaas">3.1 Infrastructure-as-a-Service (IaaS)</a>
+<a class="note-toc-link level-2" href="#3-2-platform-as-a-service-paas-and-disqualification-criteria">3.2 Platform-as-a-Service (PaaS) and Disqualification Criteria</a>
+<a class="note-toc-link level-2" href="#3-3-software-as-a-service-saas">3.3 Software-as-a-Service (SaaS)</a>
+<a class="note-toc-link level-1" href="#4-the-10-layer-management-responsibility-stack">4. The 10-Layer Management Responsibility Stack</a>
+<a class="note-toc-link level-1" href="#5-combining-service-models-wrappers-and-faas">5. Combining Service Models, Wrappers, and FaaS</a>
+<a class="note-toc-link level-2" href="#5-1-combining-iaas-and-paas-cross-provider-wrapping">5.1 Combining IaaS and PaaS (Cross-Provider Wrapping)</a>
+<a class="note-toc-link level-2" href="#5-2-function-as-a-service-faas-and-serverless-mechanics">5.2 Function-as-a-Service (FaaS) and Serverless Mechanics</a>
+<a class="note-toc-link level-1" href="#6-nist-sp-500-292-conceptual-reference-architecture">6. NIST SP 500-292 Conceptual Reference Architecture</a>
+<a class="note-toc-link level-2" href="#6-1-the-five-major-cloud-actors">6.1 The Five Major Cloud Actors</a>
+<a class="note-toc-link level-1" href="#7-cloud-provider-core-subsystems">7. Cloud Provider Core Subsystems</a>
+<a class="note-toc-link level-1" href="#8-cloud-broker-services-and-carrier-slas">8. Cloud Broker Services and Carrier SLAs</a>
+<a class="note-toc-link level-2" href="#8-1-cloud-broker-services">8.1 Cloud Broker Services</a>
+<a class="note-toc-link level-2" href="#8-2-cloud-carrier-slas">8.2 Cloud Carrier SLAs</a>
+<a class="note-toc-link level-1" href="#9-cloud-deployment-models-and-sovereign-cloud">9. Cloud Deployment Models and Sovereign Cloud</a>
+<a class="note-toc-link level-2" href="#9-1-public-cloud">9.1 Public Cloud</a>
+<a class="note-toc-link level-2" href="#9-2-private-cloud-on-site-vs-out-sourced-and-vpc">9.2 Private Cloud (On-Site vs. Out-Sourced) and VPC</a>
+<a class="note-toc-link level-2" href="#9-3-community-cloud-and-iam-governance">9.3 Community Cloud and IAM Governance</a>
+<a class="note-toc-link level-2" href="#9-4-hybrid-cloud">9.4 Hybrid Cloud</a>
+<a class="note-toc-link level-2" href="#9-5-sovereign-cloud">9.5 Sovereign Cloud</a>
+<a class="note-toc-link level-1" href="#10-security-boundaries-and-code-vs-data-decoupling">10. Security Boundaries and Code vs. Data Decoupling</a>
+<a class="note-toc-link level-2" href="#10-1-shared-responsibility-model-and-trust-boundaries">10.1 Shared Responsibility Model and Trust Boundaries</a>
+<a class="note-toc-link level-2" href="#10-2-code-vs-data-decoupling-architecture">10.2 Code vs. Data Decoupling Architecture</a>
+<a class="note-toc-link level-1" href="#11-summary">11. Summary</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-08-30" data-published-at="2026-08-30"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-30</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">Cloud computing reference architectures establish standardized, vendor-neutral frameworks for evaluating service delivery, actor responsibilities, resource management, and regulatory compliance. Formulated by the National Institute of Standards and Technology (NIST), these reference models define <strong>what</strong> cloud services provide rather than <strong>how</strong> individual vendor systems are implemented.</p>
+
+<p class="mb-3">This technical note provides an exhaustive analysis of the NIST SP 800-145 essential characteristics, multi-tenancy dynamics, the 10-layer responsibility management stack, PaaS disqualification rules, cross-provider service wrappers, Function-as-a-Service (FaaS), the NIST SP 500-292 conceptual reference model (covering five major cloud actors), deployment paradigms (including Community Cloud IAM and Sovereign Cloud), and code vs. data decoupling governance.</p>
+
+<hr>
+</section>
+
+<section id="1-nist-sp-800-145-five-essential-characteristics" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. NIST SP 800-145: Five Essential Characteristics</h3>
+
+<p class="mb-3">NIST SP 800-145 defines five essential characteristics that establish the baseline technical definition of cloud computing:</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               NIST 5 Essential Cloud Characteristics               |
++-------------------------------------------------------------------+
+| 1. On-Demand Self-Service  | Automated resource provisioning via UI|
+| 2. Broad Network Access    | Access via heterogeneous devices/WAN |
+| 3. Resource Pooling        | Multi-tenant location-independent pool|
+| 4. Rapid Elasticity        | Rapid scale-out and scale-in on demand|
+| 5. Measured Service        | Pay-per-use metered billing structure  |
++-------------------------------------------------------------------+</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>On-Demand Self-Service</strong>: A consumer can unilaterally provision computing capabilities (such as server time and network storage) automatically without requiring human interaction with each service provider. Access is typically managed via self-service web portals or automated APIs.</li>
+<li><strong>Broad Network Access</strong>: Capabilities are available over network connections and accessed through standard mechanisms that promote use by heterogeneous client platforms (e.g., mobile phones, tablets, laptops, and workstations).</li>
+<li><strong>Resource Pooling</strong>: The provider's computing resources are pooled to serve multiple consumers using a <strong>multi-tenant model</strong>, with different physical and virtual resources dynamically assigned and reassigned according to consumer demand. There is a degree of location independence in that the customer generally has no control or knowledge over the exact physical location of provided resources.</li>
+<li><strong>Rapid Elasticity</strong>: Capabilities can be elastically provisioned and released (often automatically) to scale rapidly outward and inward commensurate with demand. To the consumer, the capabilities available for provisioning often appear to be unlimited and can be appropriated in any quantity at any time.</li>
+<li><strong>Measured Service</strong>: Cloud systems automatically control and optimize resource use by leveraging a metering capability at some level of abstraction appropriate to the type of service (e.g., storage, processing, bandwidth, and active user accounts). Resource usage can be monitored, controlled, and reported, providing transparency for both provider and consumer through pay-per-use billing structures.</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="2-resource-pooling-and-multi-tenancy-dynamics" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Resource Pooling and Multi-Tenancy Dynamics</h3>
+
+<p class="mb-3">Resource allocation models determine how hardware and virtual server instances serve enterprise consumers:</p>
+
+<div class="note-markdown-block"><pre><code>Single Tenant Model                              Multi-Tenancy Model
++-------------------------------+              +-------------------------------+
+| Tenant A -&gt; Dedicated Server  |              | Tenant A  Tenant B  Tenant C  |
++-------------------------------+              +-------------------------------+
+| Tenant B -&gt; Dedicated Server  |   ======&gt;    | Shared Software &amp; VM Instance |
++-------------------------------+              +-------------------------------+
+| High Cost, Zero Co-location   |              | Pooled Hardware, High Usage   |
++-------------------------------+              +-------------------------------+</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Single Tenant</strong>: A model where each cloud consumer receives a completely separate, dedicated IT resource instance. Offers maximum control, custom isolation, and zero co-location security risks, but incurs high operational and procurement costs.</li>
+<li><strong>Multi-Tenancy</strong>: A model where the cloud provider pools IT resources to serve multiple consumers simultaneously. A single software application instance or virtual server cluster serves multiple tenants.
+<ul class="note-list">
+<li><em>Core Benefit</em>: Significantly improves resource utilization, operational efficiency, and usability, ensuring physical hardware cycles are not wasted on idle single-tenant servers.</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="3-dissection-of-cloud-service-models-and-service-layering" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Dissection of Cloud Service Models and Service Layering</h3>
+
+<p class="mb-3">Cloud service models represent a <strong>layering system</strong>. Without Infrastructure, a Platform cannot exist; without a Platform, Software cannot execute. Different models offer varying levels of abstraction and management control based on organizational needs.</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               Cloud Service Abstraction Hierarchy                 |
++-------------------------------------------------------------------+
+|  SaaS (Software-as-a-Service)     | Fully managed application UI  |
+|  (Salesforce, Google Workspace)   | (End-User Remote Access)      |
++-----------------------------------+-------------------------------+
+|  PaaS (Platform-as-a-Service)     | Ready-made execution runtime  |
+|  (Google App Engine, Heroku)      | (Developer Code Deployment)   |
++-----------------------------------+-------------------------------+
+|  IaaS (Infrastructure-as-a-Service)| Virtual compute, Net, Storage|
+|  (AWS EC2, DigitalOcean, Linode)  | (SysAdmin VM Control)         |
++-------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="3-1-infrastructure-as-a-service-iaas" class="mb-2">3.1 Infrastructure-as-a-Service (IaaS)</h4>
+
+<p class="mb-3">Consumers rent basic computing capabilities like processing power, storage arrays, and networking infrastructure (e.g., Amazon EC2, DigitalOcean, Linode, Alibaba ECS). This is the lowest level of abstraction, where physical servers, storage, networks, and middleware are abstracted as virtual resources. The machine obtained from the provider is a virtualized notion rather than direct physical hardware.</p>
+
+<h4 id="3-2-platform-as-a-service-paas-and-disqualification-criteria" class="mb-2">3.2 Platform-as-a-Service (PaaS) and Disqualification Criteria</h4>
+
+<ul class="note-list">
+<li><strong>NIST PaaS Definition</strong>: The capability provided to the consumer is to deploy onto the cloud infrastructure consumer-created or acquired applications created using programming languages, libraries, services, and tools supported by the provider (e.g., Google App Engine, Heroku, Azure App Service).</li>
+<li><strong>Two Structural Components</strong>:</li>
+</ul>
+
+<ol class="mb-3">
+<li><em>Platform Software</em>: Product offering consisting of application servers, DBMS platforms, development libraries, and execution middleware.</li>
+<li><em>Compute Resources</em>: Infrastructure needed to run the platform software.</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>PaaS Provider vs. Consumer Roles</strong>:
+<ul class="note-list">
+<li><em>PaaS Provider</em>: Develops the platform software and decides where to host/run compute resources.</li>
+<li><em>PaaS Consumer</em>: Incorporates the ready-made PaaS platform into their application development and deploys application code onto the cloud.</li>
+</ul></li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               PaaS Disqualification Rules                         |
++-------------------------------------------------------------------+
+| Disqualification Condition                 | Classified As         |
++--------------------------------------------+----------------------+
+| 1. Only end-user UI; no custom code import | SaaS (Salesforce)    |
+| 2. Must configure OS, patches, networking  | IaaS (Raw AWS EC2)   |
+| 3. Only stores data / executes query APIs  | DBaaS / Managed Tier |
++--------------------------------------------+----------------------+
+| Rule: If a service lacks runtime to deploy and execute custom     |
+| application code, it ceases to be PaaS!                            |
++-------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="3-3-software-as-a-service-saas" class="mb-2">3.3 Software-as-a-Service (SaaS)</h4>
+
+<p class="mb-3">Consumers use the provider's applications over a network (e.g., Salesforce.com, Google Workspace, Microsoft 365). The provider installs, updates, and maintains the software, while the consumer runs it remotely.</p>
+
+<ul class="note-list">
+<li><em>Installation Rule</em>: SaaS requires zero local software installation. Therefore, native mobile applications installed locally on a device do not strictly count as pure SaaS if execution logic runs locally on client hardware.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="4-the-10-layer-management-responsibility-stack" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. The 10-Layer Management Responsibility Stack</h3>
+
+<p class="mb-3">The management split between cloud consumer and provider across the four computing environments is defined across ten architectural layers:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Layer #</th>
+<th>Technical Component</th>
+<th>On-Premise</th>
+<th>IaaS (Infrastructure)</th>
+<th>PaaS (Platform)</th>
+<th>SaaS (Software)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>10</strong></td>
+<td><strong>Data</strong></td>
+<td>Consumer</td>
+<td><strong>Consumer</strong></td>
+<td><strong>Consumer</strong></td>
+<td><strong>Consumer</strong></td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td><strong>Application</strong></td>
+<td>Consumer</td>
+<td><strong>Consumer</strong></td>
+<td><strong>Consumer</strong></td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td><strong>Runtime</strong></td>
+<td>Consumer</td>
+<td><strong>Consumer</strong></td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td><strong>Integration</strong></td>
+<td>Consumer</td>
+<td><strong>Consumer</strong></td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td><strong>Database</strong></td>
+<td>Consumer</td>
+<td><strong>Consumer</strong></td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td><strong>Operating System</strong></td>
+<td>Consumer</td>
+<td>Provider</td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td><strong>Virtualization</strong></td>
+<td>Consumer</td>
+<td>Provider</td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td><strong>Server</strong></td>
+<td>Consumer</td>
+<td>Provider</td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td><strong>Storage</strong></td>
+<td>Consumer</td>
+<td>Provider</td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>1</strong></td>
+<td><strong>Network</strong></td>
+<td>Consumer</td>
+<td>Provider</td>
+<td>Provider</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td><strong>Sum</strong></td>
+<td><strong>Management Split</strong></td>
+<td><strong>Consumer 10/10</strong></td>
+<td><strong>5 Provider / 5 Consumer</strong></td>
+<td><strong>8 Provider / 2 Consumer</strong></td>
+<td><strong>10 Provider / 0 Consumer</strong></td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="5-combining-service-models-wrappers-and-faas" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Combining Service Models, Wrappers, and FaaS</h3>
+
+<h4 id="5-1-combining-iaas-and-paas-cross-provider-wrapping" class="mb-2">5.1 Combining IaaS and PaaS (Cross-Provider Wrapping)</h4>
+
+<p class="mb-3">Cloud service models can be combined across different providers to fulfill legal data localization or regional hosting requirements:</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|                 Combining PaaS and IaaS (Cross-Cloud)             |
++-------------------------------------------------------------------+
+|                                                                   |
+|   Cloud Consumer (Subscribes to PaaS from Provider X)             |
+|                          |                                        |
+|                          v                                        |
+|   +-----------------------------------------------------------+   |
+|   | PaaS Cloud Provider X (Cloud A)                           |   |
+|   | Provides Ready-Made App Server &amp; Runtime Environment      |   |
+|   +-----------------------------+-----------------------------+   |
+|                                 | Wrapper / Host Connection   |
+|                                 v                             |
+|   +-----------------------------------------------------------+   |
+|   | IaaS Cloud Provider Y (Cloud B - In Consumer's Region)    |   |
+|   | Physically Hosts Compute &amp; Storage to satisfy Data        |   |
+|   | Localization Compliance Regulations                       |   |
+|   +-----------------------------------------------------------+   |
++-------------------------------------------------------------------+</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Use Case</strong>: A consumer subscribes to a PaaS offered by Provider X (Cloud A). To comply with regional data storage laws, the services offered by Provider X are physically hosted on an IaaS from Provider Y (Cloud B) located in the consumer's required geographic region. Providers supply software wrappers to enable seamless deployment across platforms.</li>
+</ul>
+
+<h4 id="5-2-function-as-a-service-faas-and-serverless-mechanics" class="mb-2">5.2 Function-as-a-Service (FaaS) and Serverless Mechanics</h4>
+
+<ul class="note-list">
+<li><strong>FaaS Mechanics</strong>: FaaS (serverless computing) consists of lightweight, event-driven programs that execute reactively in response to events (HTTP requests, database triggers).</li>
+<li><strong>Cost &amp; Server Reality</strong>:
+<ul class="note-list">
+<li><em>Cost Advantage</em>: Users execute code on-demand without incurring the cost of maintaining dedicated servers or running idle infrastructure.</li>
+<li><em>Server Reality Check</em>: "Serverless" does not mean no servers exist. Servers are still fully required to execute the code; server management, provisioning, and operating system maintenance are completely handled by the cloud provider.</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="6-nist-sp-500-292-conceptual-reference-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. NIST SP 500-292 Conceptual Reference Architecture</h3>
+
+<p class="mb-3">NIST SP 500-292 establishes a common, vendor-independent reference framework to describe, discuss, and develop system-specific cloud architectures. It focuses strictly on <strong>what</strong> cloud services provide rather than <strong>how</strong> individual vendor systems are implemented.</p>
+
+<div class="note-markdown-block"><pre><code>+-----------------------------------------------------------------------------------+
+|                       NIST SP 500-292 Reference Model Architecture                |
++-----------------+-------------------------------------------------+---------------+
+|  Cloud Consumer |                 Cloud Provider                  | Cloud Broker  |
+|                 |  +-------------------------------------------+  |               |
+|                 |  | Service Orchestration                     |  | • Service     |
+|                 |  |  - Service Layer (SaaS, PaaS, IaaS)       |  |   Intermedi-  |
+|  Cloud Auditor  |  |  - Resource Abstraction &amp; Control Layer   |  |   ation       |
+|                 |  |  - Physical Resource Layer (HW, Facility) |  | • Service     |
+|  • Security     |  +-------------------------------------------+  |   Aggregation |
+|    Audit        |  | Cloud Service Management                  |  | • Service     |
+|  • Privacy      |  |  - Business Support (Billing, Pricing)    |  |   Arbitrage   |
+|    Impact Audit |  |  - Provisioning / Configuration           |  |               |
+|  • Performance  |  |  - Portability / Interoperability         |  |               |
+|    Audit        |  +-------------------------------------------+  |               |
+|                 |  | Security | Privacy                        |  |               |
++-----------------+-------------------------------------------------+---------------+
+|                                   Cloud Carrier                                   |
++-----------------------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="6-1-the-five-major-cloud-actors" class="mb-2">6.1 The Five Major Cloud Actors</h4>
+
+<ol class="mb-3">
+<li><strong>Cloud Consumer</strong>: A person or organization that maintains a business relationship with and uses services from cloud providers.</li>
+<li><strong>Cloud Provider</strong>: An entity (offering SaaS, PaaS, or IaaS) responsible for making cloud services available to consumers.</li>
+<li><strong>Cloud Auditor</strong>: An independent party that conducts objective examinations of cloud service controls, system operations, performance, privacy impacts, and security controls to verify regulation and policy compliance.</li>
+</ol>
+
+<ul class="note-list">
+<li><em>Government Role</em>: The most common cloud auditor is a government regulatory body enforcing data privacy and security laws.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Cloud Broker</strong>: An entity that manages the use, performance, and delivery of cloud services, negotiating relationships between providers and consumers.</li>
+<li><strong>Cloud Carrier</strong>: An intermediary providing connectivity and transport of cloud services between providers and consumers, backed by Service Level Agreements (SLAs).</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="7-cloud-provider-core-subsystems" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. Cloud Provider Core Subsystems</h3>
+
+<p class="mb-3">The Cloud Provider architecture integrates three primary operational subsystems:</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               Cloud Provider Functional Subsystems                |
++-------------------------------------------------------------------+
+| 1. Service Orchestration Layer                                    |
+|    • Service Layer: Exposes SaaS, PaaS, and IaaS service APIs     |
+|    • Resource Abstraction &amp; Control Layer: Hypervisors, SDN, SAN  |
+|    • Physical Resource Layer: Physical Hardware and Datacenter    |
++-------------------------------------------------------------------+
+| 2. Cloud Service Management Subsystem                             |
+|    • Business Support: Billing, accounting, pricing, rating       |
+|    • Provisioning/Configuration: Automated deployment, repairs    |
+|    • Portability/Interoperability: Cross-cloud migration tools    |
++-------------------------------------------------------------------+
+| 3. Cross-Cutting Concerns: Security &amp; Privacy (PI / PII Protection)|
++-------------------------------------------------------------------+</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>Service Orchestration (3 Layers)</strong>: Composes system components to arrange, coordinate, and manage computing resources for cloud services:</li>
+</ol>
+
+<ul class="note-list">
+<li><em>Service Layer</em>: SaaS, PaaS, and IaaS interfaces.</li>
+<li><em>Resource Abstraction and Control Layer</em>: Virtualization hypervisors, software-defined networking, and virtual storage management.</li>
+<li><em>Physical Resource Layer</em>: Physical hardware assets (compute, storage, network) and facility infrastructure (datacenter buildings, power, cooling).</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Cloud Service Management</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li><em>Business Support</em>: Set of business-related services to deal with consumers, including billing, accounting, pricing models, and rating engines.</li>
+<li><em>Provisioning/Configuration</em>: Rapid automated deployment based on requested resources, plus resource assignment adjustments for upgrades, repairs, and node scaling.</li>
+<li><em>Portability and Interoperability</em>: Mechanisms enabling data portability, service interoperability, and system portability across cloud boundaries.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Security and Privacy</strong>: Cross-cutting concerns spanning all layers and actors to safeguard Personal Information (PI) and Personally Identifiable Information (PII).</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="8-cloud-broker-services-and-carrier-slas" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. Cloud Broker Services and Carrier SLAs</h3>
+
+<h4 id="8-1-cloud-broker-services" class="mb-2">8.1 Cloud Broker Services</h4>
+
+<p class="mb-3">Cloud brokers assist consumers in managing the integration and delivery of cloud services through three primary mechanisms:</p>
+
+<ol class="mb-3">
+<li><strong>Service Intermediation</strong>: Delivering value-added services on top of existing cloud services (e.g., identity management wrappers, custom security controls).</li>
+<li><strong>Service Aggregation</strong>: Combining and integrating multiple distinct cloud services into one or more new services, providing data integration and ensuring secure data movement between consumers and multiple providers.</li>
+<li><strong>Service Arbitrage</strong>: Providing consumers with the flexibility to dynamically choose, compare, and switch between services from multiple different cloud agencies based on cost or performance.</li>
+</ol>
+
+<h4 id="8-2-cloud-carrier-slas" class="mb-2">8.2 Cloud Carrier SLAs</h4>
+
+<p class="mb-3">Cloud carriers provide network connectivity and transport between providers and consumers. Cloud providers establish Service Level Agreements (SLAs) with carriers to guarantee consistent service delivery. In high-security environments, carriers supply <strong>dedicated, secured physical connections</strong> (e.g., AWS Direct Connect, Azure ExpressRoute).</p>
+
+<hr>
+</section>
+
+<section id="9-cloud-deployment-models-and-sovereign-cloud" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">9. Cloud Deployment Models and Sovereign Cloud</h3>
+
+<p class="mb-3">Cloud deployment models define access privileges, administrative boundaries, and governance constraints.</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|                     Cloud Deployment Models                       |
++-------------------------------------------------------------------+
+|  Public Cloud     | Open to general public; pay-as-you-go         |
+|  Private Cloud    | Exclusive single org use (On-Site / Out-sourced)|
+|  Community Cloud  | Shared by orgs with common goals (IAM Managed)|
+|  Hybrid Cloud     | Interoperable multi-cloud combination         |
+|  Sovereign Cloud  | Data &amp; metadata locked inside national borders|
++-------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="9-1-public-cloud" class="mb-2">9.1 Public Cloud</h4>
+
+<p class="mb-3">Made available to the general public over shared infrastructure. Organizations act as consumers accessing IT resources provided by third-party providers (Amazon, Microsoft, Google, IBM). Offers low upfront pay-as-you-go costs, high availability, and provider-managed maintenance.</p>
+
+<h4 id="9-2-private-cloud-on-site-vs-out-sourced-and-vpc" class="mb-2">9.2 Private Cloud (On-Site vs. Out-Sourced) and VPC</h4>
+
+<ul class="note-list">
+<li><strong>Private Cloud</strong>: Dedicated to the exclusive use of a single organization, offering high control over sensitive data, restricted access, and in-house or outsourced maintenance.
+<ul class="note-list">
+<li><em>On-Site Private Cloud</em>: Infrastructure hosted within the organization's physical datacenter.</li>
+<li><em>Out-Sourced Private Cloud</em>: Hosted by a third-party cloud provider on dedicated hardware exclusively allocated to the organization.</li>
+</ul></li>
+<li><strong>Virtual Private Cloud (VPC)</strong>: A secure, isolated, customizable virtual environment hosted within a public cloud infrastructure.</li>
+</ul>
+
+<h4 id="9-3-community-cloud-and-iam-governance" class="mb-2">9.3 Community Cloud and IAM Governance</h4>
+
+<ul class="note-list">
+<li><strong>Community Cloud Architecture</strong>: Shared by multiple organizations that have common operational, regulatory, or security requirements (common in healthcare, government, and education).</li>
+<li><strong>IAM Governance</strong>: Community clouds utilize a <strong>Cloud Manager</strong> backed by an <strong>Identity Access Manager (IAM)</strong> system to govern and monitor access across shared policies, protocols, storage buckets, security controls, data governance tools, reporting engines, and logging infrastructure.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|                    Community Cloud Architecture                   |
++-------------------------------------------------------------------+
+|   ORG 1  ----+                                                    |
+|              |---&gt; [ Shared Policies ]                            |
+|   ORG 2  ----+           |                                        |
+|              |---&gt; [    IAM    ] ===&gt; [    CLOUD MANAGER    ]     |
+|   ORG 3  ----+           |            | Storage | Apps | Security |
+|                    [ Shared Protocols]| Data Governance | Logging  |
++-------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="9-4-hybrid-cloud" class="mb-2">9.4 Hybrid Cloud</h4>
+
+<p class="mb-3">Consists of two or more distinct clouds (on-site private, off-site private, community, or public) that remain separate entities but are connected together to allow data and application interoperability. Enables organizations to balance control and cost—e.g., storing sensitive data on a private cloud while executing application workloads on a public cloud.</p>
+
+<h4 id="9-5-sovereign-cloud" class="mb-2">9.5 Sovereign Cloud</h4>
+
+<ul class="note-list">
+<li><strong>Why Sovereign Cloud</strong>: Designed to meet the strict regulatory and compliance requirements of a specific country or jurisdiction.</li>
+<li><strong>Data Sovereignty Mandate</strong>: Guarantees that <strong>all data and metadata are stored exclusively within national geographic borders</strong> to adhere to local data protection laws and prevent foreign access or foreign subpoena disclosure under all circumstances (e.g., Microsoft Sovereign Cloud, Oracle Sovereign Cloud, SAP Sovereign Cloud).</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="10-security-boundaries-and-code-vs-data-decoupling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">10. Security Boundaries and Code vs. Data Decoupling</h3>
+
+<h4 id="10-1-shared-responsibility-model-and-trust-boundaries" class="mb-2">10.1 Shared Responsibility Model and Trust Boundaries</h4>
+
+<p class="mb-3">A <strong>Trust Boundary</strong> is a logical perimeter defining which IT resources are trusted by an organization. Shifting to public clouds expands trust boundaries across external networks, introducing overlapping trust boundaries in multi-tenant environments. Malicious co-located tenants may exploit hypervisor side-channel flaws (e.g., Spectre/Meltdown). To eliminate co-location risks, organizations opt for <strong>Dedicated Instances</strong> or <strong>Bare Metal Servers</strong> at higher cost.</p>
+
+<h4 id="10-2-code-vs-data-decoupling-architecture" class="mb-2">10.2 Code vs. Data Decoupling Architecture</h4>
+
+<p class="mb-3">When implementing hybrid governance or cloud repatriation, organizations do not need to assume code and data must always be co-located.</p>
+
+<div class="note-markdown-block"><pre><code>+-------------------------------------------------------------------+
+|               Code vs. Data Decoupling Architecture               |
++-------------------------------------------------------------------+
+|                                                                   |
+|   +-----------------------------------------------------------+   |
+|   |                  PUBLIC CLOUD ENVIRONMENT                 |   |
+|   |  • Application Code, Microservices, &amp; Public API Endpoints|   |
+|   |  • Less Sensitive, High Elasticity &amp; Global Scalability   |   |
+|   +-----------------------------+-----------------------------+   |
+|                                 |                                 |
+|                         Secure Encrypted                          |
+|                       Tunnel (VPN / Direct)                       |
+|                                 |                                 |
+|   +-----------------------------v-----------------------------+   |
+|   |             ON-PREMISE PRIVATE DATACENTER                 |   |
+|   |  • Sensitive Databases, Proprietary Assets, Citizen Data  |   |
+|   |  • High Security, Strict Compliance, Local Firewalls      |   |
+|   +-----------------------------------------------------------+   |
++-------------------------------------------------------------------+</code></pre></div>
+
+<p class="mb-3">&lt;callout style="info"&gt; &lt;strong&gt;Hybrid Separation Pattern:&lt;/strong&gt;<br> • &lt;strong&gt;Code on Cloud&lt;/strong&gt;: Application logic, stateless microservices, web servers, and public-facing APIs reside on public cloud infrastructure. This layer carries lower security sensitivity and benefits directly from cloud auto-scaling, global CDN distribution, and high availability.<br> • &lt;strong&gt;Data On-Premise&lt;/strong&gt;: Highly sensitive customer records, proprietary databases, and regulated data assets remain stored in private on-premise datacenters behind local enterprise firewalls. This satisfies strict data localization laws (e.g., Singapore citizen data residency), avoids network data egress charges, and prevents co-location risks without sacrificing compute scalability. &lt;/callout&gt;</p>
+
+<hr>
+</section>
+
+<section id="11-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">11. Summary</h3>
+
+<p class="mb-3">NIST SP 800-145 and SP 500-292 establish standard reference architectures for evaluating cloud capability delivery. NIST defines five essential characteristics: on-demand self-service, broad network access, resource pooling, rapid elasticity, and measured service. Management responsibilities are split across a 10-layer stack spanning On-Premise (Consumer 10/10), IaaS (5/5 split), PaaS (8 Provider / 2 Consumer), and SaaS (Provider 10/0). A service must provide the runtime to deploy custom code to qualify as PaaS; otherwise, it degrades to SaaS, IaaS, or DBaaS.</p>
+
+<p class="mb-3">NIST SP 500-292 identifies five major cloud actors: Consumer, Provider (featuring 3-layer Service Orchestration and Cloud Service Management), Auditor (conducting independent security, privacy, and performance audits), Broker (delivering Intermediation, Aggregation, and Arbitrage), and Carrier (supplying SLA-backed network transport). Deployment models include Public, Private (On-Site/Out-Sourced &amp; VPC), Community (IAM-governed multi-organization sharing), Hybrid, and Sovereign Cloud (locking all data and metadata within national borders). Finally, code vs. data decoupling architectures balance cloud elasticity with strict enterprise data security.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>NIST 5 Essential Characteristics:</strong> On-demand self-service, broad network access, resource pooling (multi-tenancy), rapid elasticity, and measured service (pay-per-use).</li>
+<li><strong>Multi-Tenancy vs. Single Tenant:</strong> Multi-tenancy pools resources so a single software/VM instance serves multiple tenants, maximizing hardware utilization. Single tenant offers dedicated hardware at higher cost.</li>
+<li><strong>10-Layer Responsibility Stack:</strong> On-premise (Consumer 10/10), IaaS (5/5 split), PaaS (8 Provider / 2 Consumer), SaaS (Provider 10/0).</li>
+<li><strong>PaaS Disqualification Rules:</strong> A service must provide the runtime to deploy and execute custom code. UI-only services are SaaS; OS/kernel configuration services are IaaS; API-only query stores are DBaaS.</li>
+<li><strong>Cross-Provider Wrapping &amp; FaaS:</strong> Subscribing to PaaS from Provider X physically hosted on IaaS from Provider Y satisfies regional data laws. FaaS provides reactive event-driven execution, though underlying servers still exist under the hood.</li>
+<li><strong>NIST SP 500-292 Reference Model (5 Actors):</strong> Cloud Consumer, Cloud Provider (3-layer Service Orchestration, Cloud Service Management, Security, Privacy), Cloud Auditor (independent compliance evaluation), Cloud Broker (Intermediation, Aggregation, Arbitrage), and Cloud Carrier (SLA-backed connectivity).</li>
+<li><strong>Deployment Models &amp; Sovereign Cloud:</strong> Public, Private (On-Site/Out-Sourced &amp; VPC), Community (IAM access control across orgs), Hybrid, and Sovereign Cloud (all data and metadata locked within national borders to prevent foreign access).</li>
+<li><strong>Code vs. Data Decoupling:</strong> Application code stays on the public cloud for compute elasticity, while sensitive data remains on-premise behind corporate firewalls to satisfy compliance and eliminate egress costs.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>Mell, P., &amp; Grance, T. (2011). <em>The NIST Definition of Cloud Computing</em>. National Institute of Standards and Technology (NIST), Special Publication 800-145.</li>
+<li>Fang, Liu, et al. (2011). <em>NIST Cloud Computing Reference Architecture</em>. National Institute of Standards and Technology (NIST), Special Publication 500-292.</li>
+<li>Armbrust, M., Fox, A., Griffith, R., Joseph, A. D., Katz, R., Konwinski, A., Lee, G., Patterson, D., Rabkin, A., Stoica, I., &amp; Zaharia, M. (2010). A view of cloud computing. <em>Communications of the ACM</em>, 53(4), 50-58.</li>
+<li>Buyya, R., Yeo, C. S., Venugopal, S., Broberg, J., &amp; Brandic, I. (2009). Cloud computing and emerging IT platforms: Vision, hype, and reality for delivering computing as the 5th utility. <em>Future Generation Computer Systems</em>, 25(6), 599-616.</li>
+<li>Erl, T., Puttini, R., &amp; Mahmood, Z. (2013). <em>Cloud Computing: Concepts, Technology &amp; Architecture</em>. Prentice Hall.</li>
+</ol>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

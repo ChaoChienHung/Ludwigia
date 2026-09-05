@@ -2560,6 +2560,166 @@
         "容量規劃",
         "容量规划"
       ]
+    },
+    {
+      "concept_id": "concept.nist_reference_architecture",
+      "labels": {
+        "en": "NIST Reference Architecture",
+        "zh-Hant": "NIST 參考架構",
+        "zh-Hans": "NIST 参考架构"
+      },
+      "aliases": [
+        "NIST Reference Architecture",
+        "nist reference architecture",
+        "NIST Reference Model",
+        "NIST 參考架構",
+        "NIST 参考架构"
+      ]
+    },
+    {
+      "concept_id": "concept.cloud_governance",
+      "labels": {
+        "en": "Cloud Governance",
+        "zh-Hant": "雲端治理",
+        "zh-Hans": "云治理"
+      },
+      "aliases": [
+        "Cloud Governance",
+        "cloud governance",
+        "雲端治理",
+        "云治理"
+      ]
+    },
+    {
+      "concept_id": "concept.cloud_architecture",
+      "labels": {
+        "en": "Cloud Architecture",
+        "zh-Hant": "雲端架構",
+        "zh-Hans": "云架构"
+      },
+      "aliases": [
+        "Cloud Architecture",
+        "cloud architecture",
+        "Cloud Architectures",
+        "雲端架構",
+        "云架构"
+      ]
+    },
+    {
+      "concept_id": "concept.load_balancing",
+      "labels": {
+        "en": "Load Balancing",
+        "zh-Hant": "負載平衡",
+        "zh-Hans": "负载均衡"
+      },
+      "aliases": [
+        "Load Balancing",
+        "load balancing",
+        "Load Balancer",
+        "負載平衡",
+        "负载均衡"
+      ]
+    },
+    {
+      "concept_id": "concept.cloud_bursting",
+      "labels": {
+        "en": "Cloud Bursting",
+        "zh-Hant": "雲端爆發",
+        "zh-Hans": "云爆发"
+      },
+      "aliases": [
+        "Cloud Bursting",
+        "cloud bursting",
+        "雲端爆發",
+        "云爆发"
+      ]
+    },
+    {
+      "concept_id": "concept.resource_pooling",
+      "labels": {
+        "en": "Resource Pooling",
+        "zh-Hant": "資源池化",
+        "zh-Hans": "资源池化"
+      },
+      "aliases": [
+        "Resource Pooling",
+        "resource pooling",
+        "資源池化",
+        "资源池化"
+      ]
+    },
+    {
+      "concept_id": "concept.elasticity",
+      "labels": {
+        "en": "Elasticity",
+        "zh-Hant": "彈性擴充",
+        "zh-Hans": "弹性扩充"
+      },
+      "aliases": [
+        "Elasticity",
+        "elasticity",
+        "rapid elasticity",
+        "Rapid Elasticity",
+        "彈性擴充",
+        "弹性扩充"
+      ]
+    },
+    {
+      "concept_id": "concept.decision_theory",
+      "labels": {
+        "en": "Decision Theory",
+        "zh-Hant": "決策理論",
+        "zh-Hans": "决策理论"
+      },
+      "aliases": [
+        "Decision Theory",
+        "decision theory",
+        "決策理論",
+        "决策理论"
+      ]
+    },
+    {
+      "concept_id": "concept.utility_theory",
+      "labels": {
+        "en": "Utility Theory",
+        "zh-Hant": "效用理論",
+        "zh-Hans": "效用理论"
+      },
+      "aliases": [
+        "Utility Theory",
+        "utility theory",
+        "效用理論",
+        "效用理论"
+      ]
+    },
+    {
+      "concept_id": "concept.game_theory",
+      "labels": {
+        "en": "Game Theory",
+        "zh-Hant": "賽局理論",
+        "zh-Hans": "博弈论"
+      },
+      "aliases": [
+        "Game Theory",
+        "game theory",
+        "賽局理論",
+        "博弈论"
+      ]
+    },
+    {
+      "concept_id": "concept.rational_agents",
+      "labels": {
+        "en": "Rational Agents",
+        "zh-Hant": "理性代理人",
+        "zh-Hans": "理性代理人"
+      },
+      "aliases": [
+        "Rational Agents",
+        "rational agents",
+        "Rational Agent",
+        "rational agent",
+        "理性代理人"
+      ]
     }
   ]
 }
