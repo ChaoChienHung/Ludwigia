@@ -2720,6 +2720,79 @@
         "rational agent",
         "理性代理人"
       ]
+    },
+    {
+      "concept_id": "concept.datacenter",
+      "labels": {
+        "en": "Datacenter",
+        "zh-Hant": "資料中心",
+        "zh-Hans": "数据中心"
+      },
+      "aliases": [
+        "Datacenter",
+        "datacenter",
+        "Data Center",
+        "data center",
+        "資料中心",
+        "数据中心"
+      ]
+    },
+    {
+      "concept_id": "concept.resource_hosting",
+      "labels": {
+        "en": "Resource Hosting",
+        "zh-Hant": "資源託管",
+        "zh-Hans": "资源托管"
+      },
+      "aliases": [
+        "Resource Hosting",
+        "resource hosting",
+        "資源託管",
+        "资源托管"
+      ]
+    },
+    {
+      "concept_id": "concept.datacenter_networking",
+      "labels": {
+        "en": "Datacenter Networking",
+        "zh-Hant": "資料中心網路",
+        "zh-Hans": "数据中心网络"
+      },
+      "aliases": [
+        "Datacenter Networking",
+        "datacenter networking",
+        "Data Center Networking",
+        "data center networking",
+        "資料中心網路",
+        "数据中心网络"
+      ]
+    },
+    {
+      "concept_id": "concept.energy_efficiency",
+      "labels": {
+        "en": "Energy Efficiency",
+        "zh-Hant": "能源效率",
+        "zh-Hans": "能源效率"
+      },
+      "aliases": [
+        "Energy Efficiency",
+        "energy efficiency",
+        "能源效率"
+      ]
+    },
+    {
+      "concept_id": "concept.hardware_architecture",
+      "labels": {
+        "en": "Hardware Architecture",
+        "zh-Hant": "硬體架構",
+        "zh-Hans": "硬件架构"
+      },
+      "aliases": [
+        "Hardware Architecture",
+        "hardware architecture",
+        "硬體架構",
+        "硬件架构"
+      ]
     }
   ]
 }

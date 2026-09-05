@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Classical AI Planning and SATPlan: From STRIPS, PDDL, and State-Space Search to Propositional Satisfiability Reduction — Ludwig</title>
   <meta name="garden:tags" content="Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, AI Planning">
-  <meta name="garden:summary" content="A comprehensive exploration of Classical AI Planning theory, representation, search, and logic-based reduction. Covers symbolic agents, PDDL and STRIPS semantics, Closed-World Assumption (CWA), Unique Names Assumption (UNA), model-theoretic goal entailment (s |= g, M(s) &lt;= M(g)), action schemas, and successor state mechanics. Compares forward progression search with backward regression search (2^n ground states vs. 3^n partial state descriptions). Details Boolean Satisfiability (SAT) and SATPlan, showing how Successor-State Axioms resolve the frame problem in O(n) axioms instead of O(mn). Concludes with algorithm properties (soundness, completeness, optimality) and complexity bounds (PlanSAT PSPACE-complete vs. Bounded PlanSAT NP-complete).">
+  <meta name="garden:summary" content="An exhaustive master technical note on Classical AI Planning theory, representation, search, and logic-based reduction based on NUS CS4246/CS5446 lecture materials. Covers symbolic agent foundations, PDDL and STRIPS semantics, Closed-World Assumption (CWA), Unique Names Assumption (UNA), model-theoretic goal entailment (s |= g, M(s) &lt;= M(g)), action schemas, preconditions, ADD and DEL fluents, successor state mechanics, and the Frame Problem. Details complete executable PDDL code for both flight_domain and air-cargo domains. Compares forward progression search with backward regression search (2^n ground states vs. 3^n partial state descriptions), Most General Unifiers (MGU), and step-by-step goal regression traces. Formulates Boolean Satisfiability (SAT) reduction via SATPlan, featuring the complete &#x27;Eat a Cake!&#x27; worked example, proving how Successor-State Axioms resolve the frame problem in O(n) axioms instead of O(mn), alongside Action Exclusion Axioms. Explores real-world industrial applications across 7 domains, the AIPlanning4EU unified library, IPC 2023 competitions, algorithmic properties (soundness, completeness, optimality), and computational complexity bounds (PlanSAT PSPACE-complete vs. Bounded PlanSAT NP-complete).">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning,concept.ai_planning">
   <meta name="site:tag_labels" content="{&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;},&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;}}">
   <meta name="site:canonical_id" content="classical-planning-strips-pddl-and-satplan">
   <meta name="site:published_at" content="2026-08-29">
-  <meta name="site:last_modified_at" content="2026-08-29">
-  <meta name="site:reading_time_minutes" content="21">
+  <meta name="site:last_modified_at" content="2026-09-05">
+  <meta name="site:reading_time_minutes" content="36">
   <meta name="site:source" content="notes/classical-planning-strips-pddl-and-satplan/classical-planning-strips-pddl-and-satplan.md">
   <script>
   (() => {
@@ -157,6 +157,7 @@
             <a class="note-toc-link level-1" href="#1-symbolic-agents-fundamentals-of-classical-planning">1. Symbolic Agents &amp; Fundamentals of Classical Planning</a>
 <a class="note-toc-link level-2" href="#1-1-why-are-symbolic-agents-important">1.1 Why are Symbolic Agents Important?</a>
 <a class="note-toc-link level-2" href="#1-2-classical-planning-environment-assumptions">1.2 Classical Planning Environment Assumptions</a>
+<a class="note-toc-link level-2" href="#1-3-physical-reasoning-and-current-challenges-deepmind-pushworld">1.3 Physical Reasoning and Current Challenges: DeepMind PushWorld</a>
 <a class="note-toc-link level-1" href="#2-pddl-state-representation-goal-entailment-and-database-semantics">2. PDDL State Representation, Goal Entailment, and Database Semantics</a>
 <a class="note-toc-link level-2" href="#2-1-pddl-representation-characteristics">2.1 PDDL Representation Characteristics</a>
 <a class="note-toc-link level-2" href="#2-2-state-representation-database-semantics-cwa-una">2.2 State Representation &amp; Database Semantics (CWA &amp; UNA)</a>
@@ -164,9 +165,9 @@
 <a class="note-toc-link level-1" href="#3-action-schemas-state-transitions-and-the-frame-problem">3. Action Schemas, State Transitions, and the Frame Problem</a>
 <a class="note-toc-link level-2" href="#3-1-action-schemas-and-grounding">3.1 Action Schemas and Grounding</a>
 <a class="note-toc-link level-2" href="#3-2-successor-state-formula-the-frame-problem">3.2 Successor State Formula &amp; The Frame Problem</a>
-<a class="note-toc-link level-1" href="#4-pddl-syntax-example-air-cargo-domain-and-problem-specifications">4. PDDL Syntax Example: Air-Cargo Domain and Problem Specifications</a>
-<a class="note-toc-link level-2" href="#4-1-domain-specification-air-cargo">4.1 Domain Specification (`air-cargo`)</a>
-<a class="note-toc-link level-2" href="#4-2-problem-specification-air-cargo-problem">4.2 Problem Specification (`air-cargo-problem`)</a>
+<a class="note-toc-link level-1" href="#4-pddl-syntax-examples-flight-domain-and-air-cargo-case-studies">4. PDDL Syntax Examples: Flight Domain and Air-Cargo Case Studies</a>
+<a class="note-toc-link level-2" href="#4-1-case-study-1-the-flight-domain-flight-domain">4.1 Case Study 1: The Flight Domain (`flight_domain`)</a>
+<a class="note-toc-link level-2" href="#4-2-case-study-2-the-air-cargo-domain-air-cargo">4.2 Case Study 2: The Air-Cargo Domain (`air-cargo`)</a>
 <a class="note-toc-link level-1" href="#5-state-space-search-forward-progression-vs-backward-regression">5. State-Space Search: Forward Progression vs. Backward Regression</a>
 <a class="note-toc-link level-2" href="#5-1-forward-progression-search-algorithm">5.1 Forward Progression Search Algorithm</a>
 <a class="note-toc-link level-2" href="#5-2-backward-search-by-regression">5.2 Backward Search by Regression</a>
@@ -177,11 +178,15 @@
 <a class="note-toc-link level-1" href="#7-planning-as-sat-reduction-satplan-algorithm-and-axiom-encodings">7. Planning as SAT Reduction: SATPlan Algorithm and Axiom Encodings</a>
 <a class="note-toc-link level-2" href="#7-1-satplan-algorithm-pseudocode">7.1 SATPlan Algorithm Pseudocode</a>
 <a class="note-toc-link level-2" href="#7-2-the-four-formulated-axioms-in-satplan">7.2 The Four Formulated Axioms in SATPlan</a>
-<a class="note-toc-link level-1" href="#8-seven-classical-planning-paradigms-algorithm-properties-and-computational-complexity">8. Seven Classical Planning Paradigms, Algorithm Properties, and Computational Complexity</a>
-<a class="note-toc-link level-2" href="#8-1-seven-classical-planning-paradigms">8.1 Seven Classical Planning Paradigms</a>
-<a class="note-toc-link level-2" href="#8-2-three-key-algorithm-properties">8.2 Three Key Algorithm Properties</a>
-<a class="note-toc-link level-2" href="#8-3-theoretical-complexity-plansat-vs-bounded-plansat">8.3 Theoretical Complexity (PlanSAT vs. Bounded PlanSAT)</a>
-<a class="note-toc-link level-1" href="#9-summary">9. Summary</a>
+<a class="note-toc-link level-2" href="#7-3-complete-worked-example-eat-a-cake-have-cake-and-eat-it-too">7.3 Complete Worked Example: "Eat a Cake!" (Have Cake and Eat it Too)</a>
+<a class="note-toc-link level-1" href="#8-real-world-applications-industrial-ecosystem-competitions">8. Real-World Applications, Industrial Ecosystem &amp; Competitions</a>
+<a class="note-toc-link level-2" href="#8-1-the-aiplanning4eu-unified-planning-library">8.1 The AIPlanning4EU Unified Planning Library</a>
+<a class="note-toc-link level-2" href="#8-2-international-planning-competition-ipc-2023">8.2 International Planning Competition (IPC 2023)</a>
+<a class="note-toc-link level-1" href="#9-seven-classical-planning-paradigms-algorithm-properties-and-complexity-bounds">9. Seven Classical Planning Paradigms, Algorithm Properties, and Complexity Bounds</a>
+<a class="note-toc-link level-2" href="#9-1-seven-classical-planning-paradigms">9.1 Seven Classical Planning Paradigms</a>
+<a class="note-toc-link level-2" href="#9-2-three-key-algorithm-properties">9.2 Three Key Algorithm Properties</a>
+<a class="note-toc-link level-2" href="#9-3-theoretical-complexity-plansat-vs-bounded-plansat">9.3 Theoretical Complexity (PlanSAT vs. Bounded PlanSAT)</a>
+<a class="note-toc-link level-1" href="#10-summary">10. Summary</a>
 <a class="note-toc-link level-1" href="#references">References</a>
           </nav>
         </div>
@@ -205,7 +210,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-08-29" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-29</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-05" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-05</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -234,7 +239,7 @@
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
 <p class="mb-3">In Artificial Intelligence (AI), <strong>Symbolic Agents</strong> establish the core mathematical foundation for reasoning and decision making. By representing world states, action preconditions, and state transitions using formal logic, symbolic agents provide a solid ground for world modeling, allowing computer systems to prove the correctness (Soundness) and completeness of inference algorithms.</p>
 
-<p class="mb-3">This note systematically decomposes <strong>Classical AI Planning</strong>. We begin with the formal representation languages <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span> and <span class="note-information" tabindex="0" aria-label="Planning Domain Definition Language">PDDL<span class="note-information-tooltip" aria-hidden="true">Planning Domain Definition Language</span></span>, database semantics (Closed-World Assumption and Unique Names Assumption), and model-theoretic goal entailment ($s \models g$). We then analyze forward progression search and backward regression search over state spaces. Next, we introduce Boolean Satisfiability (SAT) fundamentals and detail how <strong>SATPlan</strong> leverages <strong>Successor-State Axioms</strong> to solve the Frame Problem in $O(n)$ axioms instead of $O(mn)$. Finally, we outline seven classical planning paradigms and analyze theoretical computational complexity bounds (PlanSAT vs. Bounded PlanSAT).</p>
+<p class="mb-3">This note systematically decomposes <strong>Classical AI Planning</strong>, based on the pedagogical foundations established in NUS CS4246/CS5446. We begin with the formal representation languages <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span> and <span class="note-information" tabindex="0" aria-label="Planning Domain Definition Language">PDDL<span class="note-information-tooltip" aria-hidden="true">Planning Domain Definition Language</span></span>, database semantics (Closed-World Assumption and Unique Names Assumption), and model-theoretic goal entailment ($s \models g$). We then analyze forward progression search and backward regression search over state spaces. Next, we introduce Boolean Satisfiability (SAT) fundamentals and detail how <strong>SATPlan</strong> leverages <strong>Successor-State Axioms</strong> to solve the Frame Problem in $O(n)$ axioms instead of $O(mn)$, illustrated by the complete <strong>"Eat a Cake!"</strong> worked proof. Finally, we survey seven classical planning paradigms, real-world industrial deployments, the <strong>AIPlanning4EU</strong> and <strong>IPC 2023</strong> benchmarks, and theoretical computational complexity bounds (PlanSAT vs. Bounded PlanSAT).</p>
 
 <hr>
 </section>
@@ -276,6 +281,18 @@
 
 <p class="mb-3">Under these assumptions, the core objective is to search through a state space to construct an action sequence leading from an initial state to a goal state.</p>
 
+<h4 id="1-3-physical-reasoning-and-current-challenges-deepmind-pushworld" class="mb-2">1.3 Physical Reasoning and Current Challenges: DeepMind PushWorld</h4>
+
+<p class="mb-3">While classical planning assumptions provide a tractable foundation for discrete problems, real-world physical environments present complex physical constraints.</p>
+
+<p class="mb-3">A prominent benchmark illustrating this boundary is the <strong>DeepMind PushWorld</strong> challenge (<code>https://deepmind-pushworld.github.io/play/</code>). In PushWorld, an agent must navigate grid mazes to push puzzle blocks into target configurations:</p>
+
+<ul class="note-list">
+<li>Physical obstacles and friction dynamics mean that actions have non-local, irreversible consequences.</li>
+<li>Pushing a block into a corner creates a permanent dead-end state from which no valid plan exists.</li>
+<li>The challenge demonstrates why automated planning requires rigorous state-transition models: purely intuitive, pattern-matching models fail to anticipate multi-step physical collisions without explicit lookahead search.</li>
+</ul>
+
 <hr>
 </section>
 
@@ -284,22 +301,30 @@
 
 <h4 id="2-1-pddl-representation-characteristics" class="mb-2">2.1 PDDL Representation Characteristics</h4>
 
-<p class="mb-3">Classical planning originated with STRIPS (Fikes &amp; Nilsson, 1971) and evolved into the standard domain description language, PDDL.</p>
+<p class="mb-3">Classical planning originated with <strong>STRIPS</strong> (Fikes &amp; Nilsson, 1971) and evolved into the standard domain description language, <strong>PDDL</strong> (Planning Domain Definition Language):</p>
 
 <ul class="note-list">
 <li><strong>Lifted Logic-Based Representation</strong>: Uses compact, lifted representations derived from restricted First-Order Logic (FOL) with parameterized predicates.</li>
 <li><strong>Factored State Representation</strong>: The world is modeled via state variables known as <strong>Fluents</strong> (properties that change over time).</li>
 <li><strong>Implicit Transitions</strong>: State transitions are defined dynamically via action schemas. Planners compute successor states on demand rather than generating full state graphs upfront.</li>
-<li><strong>Domain-Independent Heuristics</strong>: Allows general heuristics (e.g., Planning Graph heuristics) to guide search across arbitrary domains without specialized domain engineering.</li>
+<li><strong>Domain-Independent Heuristics</strong>: Allows general heuristics (e.g., Planning Graph heuristics, delete-relaxation heuristics) to guide search across arbitrary domains without specialized domain engineering.</li>
 </ul>
 
 <h4 id="2-2-state-representation-database-semantics-cwa-una" class="mb-2">2.2 State Representation &amp; Database Semantics (CWA &amp; UNA)</h4>
 
 <p class="mb-3">In PDDL, a state $s$ is defined as a conjunction of <strong>Ground Function-Free Atomic Fluents</strong> (predicates containing only constant arguments and no function symbols), or equivalently as a set of true fluents.</p>
 
+<div class="note-markdown-block"><pre><code>+---------------------------------------------------+-----------------------------------------------+
+| Logical Statement Conjunction                     | Factored Set of True Fluents (S)              |
++---------------------------------------------------+-----------------------------------------------+
+| Hungry ∧ Sleepy                                   | S = { Hungry, Sleepy }                        |
+| New(Plane1) ∧ Safe(Plane1)                        | S = { New(Plane1), Safe(Plane1) }             |
+| At(Plane1, SIN) ∧ At(Plane2, SFO)                 | S = { At(Plane1, SIN), At(Plane2, SFO) }      |
++---------------------------------------------------+-----------------------------------------------+</code></pre></div>
+
 <p class="mb-3">To keep state representations compact, classical planning relies on two database semantics:</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">&lt;strong&gt;1. Closed-World Assumption (CWA):&lt;/strong&gt;<br> Any fluent not explicitly listed in the state set $s$ is assumed to be false. This eliminates the need to explicitly store millions of negative literals.<br><br> &lt;strong&gt;2. Unique Names Assumption (UNA):&lt;/strong&gt;<br> Distinct constant symbols refer to distinct real-world entities (e.g., &lt;code&gt;Plane1&lt;/code&gt; and &lt;code&gt;Plane2&lt;/code&gt; strictly refer to different aircraft).</p></div>
+<div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">&lt;strong&gt;1. Closed-World Assumption (CWA):&lt;/strong&gt;<br> Any fluent not explicitly listed in the state set $s$ is assumed to be false. For example, if &lt;code&gt;Fierce(CS3263_Lecturer)&lt;/code&gt; is not present in state $s$, it is automatically evaluated as false. This eliminates the need to explicitly store millions of negative literals.<br><br> &lt;strong&gt;2. Unique Names Assumption (UNA):&lt;/strong&gt;<br> Distinct constant symbols refer to distinct real-world entities (e.g., &lt;code&gt;Plane1 ≠ Plane2&lt;/code&gt;; they strictly refer to different physical aircraft).</p></div>
 
 <h4 id="2-3-goal-representation-model-entailment" class="mb-2">2.3 Goal Representation &amp; Model Entailment</h4>
 
@@ -311,7 +336,14 @@
 
 <p class="mb-3">Model-theoretically, $M(s) \subseteq M(g)$ means that <strong>in every model $m$ where state $s$ is true, goal $g$ is automatically true</strong>. Because $s$ is a fully specified state (stronger constraint) and $g$ is a partial goal (weaker constraint), $s$ being true implies $g$ is true, but $g$ being true does not require $s$ to be identical.</p>
 
-<p class="mb-3">Variables in goals are existentially quantified. Standard STRIPS restricts goals strictly to positive, ground literals without variables.</p>
+<div class="note-markdown-block"><pre><code>Model Entailment Examples:
+1. Hungry ∧ Sleepy ∧ Bored  ⊨  Hungry ∧ Bored
+2. At(Cargo1, SFO)          ⊨  At(c, SFO)  under substitution θ = { c / Cargo1 }</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Variables in Goals</strong>: Variables appearing in goal specifications are treated as <strong>existentially quantified</strong> ($\exists p. \text{At}(P_1, \text{SIN}) \land \text{At}(p, \text{SFO}) \land \text{Plane}(p)$).</li>
+<li><strong>STRIPS Restriction</strong>: Standard STRIPS restricts goals strictly to positive, ground literals without variables.</li>
+</ul>
 
 <hr>
 </section>
@@ -321,7 +353,21 @@
 
 <h4 id="3-1-action-schemas-and-grounding" class="mb-2">3.1 Action Schemas and Grounding</h4>
 
-<p class="mb-3">An Action Schema is a lifted template parameterized with variables. Substituting variables with domain constant objects yields a <strong>Grounded Action</strong>.</p>
+<p class="mb-3">An <strong>Action Schema</strong> is a lifted template parameterized with variables (universally quantified). Substituting variables with domain constant objects yields a <strong>Grounded Action</strong>.</p>
+
+<div class="note-markdown-block"><pre><code>Action Schema:
+Action(Fly(p, from, to))
+  PRECOND: At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
+  EFFECT : ¬At(p, from) ∧ At(p, to)
+
+Grounded Actions:
+Action(Fly(P1, SFO, SIN))
+  PRECOND: At(P1, SFO) ∧ Plane(P1) ∧ Airport(SFO) ∧ Airport(SIN)
+  EFFECT : ¬At(P1, SFO) ∧ At(P1, SIN)
+
+Action(Fly(P2, SIN, SFO))
+  PRECOND: At(P2, SIN) ∧ Plane(P2) ∧ Airport(SIN) ∧ Airport(SFO)
+  EFFECT : ¬At(P2, SIN) ∧ At(P2, SFO)</code></pre></div>
 
 <p class="mb-3">Each action $a$ consists of:</p>
 
@@ -341,31 +387,82 @@
 <p class="mb-3">$$s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$$</p>
 
 <div class="note-markdown-block"><pre><code>  Current State (s)
-+-------------------+
-| At(Plane1, SFO)   |        Action: Fly(Plane1, SFO, JFK)
-| At(Cargo1, SFO)   |      ---------------------------------&gt;
-| Cargo(Cargo1)     |      DEL: { At(Plane1, SFO) }
-+-------------------+      ADD: { At(Plane1, JFK) }
-          |
-          v
++---------------------------------------------------+
+| At(P1, SFO) ∧ Plane(P1) ∧ Airport(SFO) ∧ Airport(SIN)|
++---------------------------------------------------+
+                          |
+                          |  Action: Fly(P1, SFO, SIN)
+                          |  DEL: { At(P1, SFO) }
+                          |  ADD: { At(P1, SIN) }
+                          v
   Successor State (s')
-+-------------------+
-| At(Plane1, JFK)   |  &lt;-- Updated by ADD
-| At(Cargo1, SFO)   |  &lt;-- Preserved automatically (Frame Axioms)
-| Cargo(Cargo1)     |  &lt;-- Preserved automatically
-+-------------------+</code></pre></div>
++---------------------------------------------------+
+| At(P1, SIN) ∧ Plane(P1) ∧ Airport(SFO) ∧ Airport(SIN)|
++---------------------------------------------------+</code></pre></div>
 
 <p class="mb-3">&lt;callout style="warning"&gt; &lt;strong&gt;The Frame Problem:&lt;/strong&gt;<br> How can an automated planner specify what changes after an action without explicitly restating every unchanged fluent?<br> &lt;strong&gt;PDDL / STRIPS Resolution:&lt;/strong&gt;<br> By leveraging CWA and implicit persistence. Actions state only their ADD and DEL lists; all unspecified fluents are assumed to remain unchanged between time step $t$ and $t+1$. &lt;/callout&gt;</p>
 
 <hr>
 </section>
 
-<section id="4-pddl-syntax-example-air-cargo-domain-and-problem-specifications" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">4. PDDL Syntax Example: Air-Cargo Domain and Problem Specifications</h3>
+<section id="4-pddl-syntax-examples-flight-domain-and-air-cargo-case-studies" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. PDDL Syntax Examples: Flight Domain and Air-Cargo Case Studies</h3>
 
-<p class="mb-3">Below is the standard PDDL code for the Air-Cargo domain:</p>
+<h4 id="4-1-case-study-1-the-flight-domain-flight-domain" class="mb-2">4.1 Case Study 1: The Flight Domain (<code>flight_domain</code>)</h4>
 
-<h4 id="4-1-domain-specification-air-cargo" class="mb-2">4.1 Domain Specification (<code>air-cargo</code>)</h4>
+<p class="mb-3">A clean, minimalist PDDL domain modeling aircraft flight between airports:</p>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">;; =================================================================
+;; Flight Domain Specification
+;; =================================================================
+(define (domain flight_domain)
+  (:requirements :strips :typing)
+  
+  (:types 
+    plane 
+    airport)
+  
+  (:predicates 
+    (At ?p - plane ?a - airport)
+    (Plane ?p - plane)
+    (Airport ?a - airport))
+  
+  (:action Fly
+    :parameters (?p - plane ?from - airport ?to - airport)
+    :precondition (and (At ?p ?from) 
+                       (Plane ?p) 
+                       (Airport ?from) 
+                       (Airport ?to))
+    :effect (and (not (At ?p ?from)) 
+                 (At ?p ?to))))</code></pre></div>
+
+<div class="note-markdown-block"><pre><code class="language-lisp">;; =================================================================
+;; Flight Problem Specification
+;; =================================================================
+(define (problem flight_problem)
+  (:domain flight_domain)
+  
+  (:objects 
+    P1 P2 - plane
+    SFO SIN - airport)
+  
+  (:init
+    (At P1 SFO)
+    (At P2 SIN)
+    (Plane P1)
+    (Plane P2)
+    (Airport SFO)
+    (Airport SIN))
+  
+  (:goal 
+    (and (At P1 SIN) 
+         (not (At P1 SFO))
+         (At ?p SFO) 
+         (Plane ?p))))</code></pre></div>
+
+<h4 id="4-2-case-study-2-the-air-cargo-domain-air-cargo" class="mb-2">4.2 Case Study 2: The Air-Cargo Domain (<code>air-cargo</code>)</h4>
+
+<p class="mb-3">The classic benchmark problem modeling freight loading, inter-airport flights, and unloading:</p>
 
 <div class="note-markdown-block"><pre><code class="language-lisp">(define (domain air-cargo)
   (:requirements :strips :typing)
@@ -392,8 +489,6 @@
     :precondition (and (At ?p ?from) (Plane ?p) (Airport ?from) (Airport ?to))
     :effect (and (not (At ?p ?from)) (At ?p ?to))))</code></pre></div>
 
-<h4 id="4-2-problem-specification-air-cargo-problem" class="mb-2">4.2 Problem Specification (<code>air-cargo-problem</code>)</h4>
-
 <div class="note-markdown-block"><pre><code class="language-lisp">(define (problem air-cargo-problem)
   (:domain air-cargo)
   (:objects
@@ -414,7 +509,22 @@
   (:goal
     (and (At C1 SIN) (At C2 SFO))))</code></pre></div>
 
-<p class="mb-3">Planners must handle caveats like preventing <strong>spurious actions</strong> (e.g., <code>Fly(P1, SFO, SFO)</code>), avoiding redundant graph expansions.</p>
+<h5 class="mb-2">A Possible Solution Plan</h5>
+
+<p class="mb-3">A valid sequential plan achieving the goal is:</p>
+
+<ol class="mb-3">
+<li>$\text{Load}(C_1, P_1, \text{SFO})$</li>
+<li>$\text{Fly}(P_1, \text{SFO}, \text{SIN})$</li>
+<li>$\text{Unload}(C_1, P_1, \text{SIN})$</li>
+<li>$\text{Load}(C_2, P_2, \text{SIN})$</li>
+<li>$\text{Fly}(P_2, \text{SIN}, \text{SFO})$</li>
+<li>$\text{Unload}(C_2, P_2, \text{SFO})$</li>
+</ol>
+
+<h5 class="mb-2">Preventing Spurious Actions</h5>
+
+<p class="mb-3">Notice that without explicit inequality constraints, the action schema permits spurious self-transitions such as: $$\text{Fly}(P_1, \text{SIN}, \text{SIN})$$ Executing this action satisfies preconditions, deletes $\text{At}(P_1, \text{SIN})$, and immediately re-adds $\text{At}(P_1, \text{SIN})$, wasting search effort. Domain designers eliminate spurious actions by adding inequality preconditions: $$\text{:precondition (and } \dots \text{ (not (= ?from ?to)))}$$</p>
 
 <hr>
 </section>
@@ -422,7 +532,15 @@
 <section id="5-state-space-search-forward-progression-vs-backward-regression" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">5. State-Space Search: Forward Progression vs. Backward Regression</h3>
 
-<p class="mb-3">Searching for plans maps the problem into a state graph, explored either via <strong>Forward Progression</strong> or <strong>Backward Regression</strong>.</p>
+<p class="mb-3">Planning problems map directly to directed graph search over world states:</p>
+
+<ul class="note-list">
+<li><strong>Nodes</strong>: Complete ground states $s \in S$.</li>
+<li><strong>Root Node</strong>: The initial state $s_0$.</li>
+<li><strong>Edges</strong>: Applicable grounded actions $a$.</li>
+<li><strong>Goal Test</strong>: Verifying whether node state $s$ entails goal $g$ ($s \models g$).</li>
+<li><strong>Path Solution</strong>: A valid sequence of actions $[a_1, a_2, \dots, a_k]$ transforming $s_0$ into a goal-satisfying state $s_k$.</li>
+</ul>
 
 <div class="note-markdown-block"><pre><code>Progression (Forward Search):
 [ Initial State s0 ] ----a1----&gt; [ s1 ] ----a2----&gt; ... ----&gt; [ Goal s_k ]
@@ -442,20 +560,63 @@ Regression (Backward Search):
 <li><strong>Step 5</strong>: Advance search frontier until a goal node is expanded.</li>
 </ol>
 
+<h5 class="mb-2">Forward Search Worked Trace</h5>
+
+<ul class="note-list">
+<li>Start at $s_0 = \text{In}(C_2, P_1) \land \text{At}(P_1, \text{SFO}) \land \text{Cargo}(C_2) \land \text{Plane}(P_1) \land \text{Airport}(\text{SFO})$.</li>
+<li>Goal: $\text{At}(C_2, \text{SFO})$.</li>
+<li>Applicable action: $\text{Action}(\text{Unload}(c, p, a))$ grounded via substitution $\theta = \{ c/C_2, p/P_1, a/\text{SFO} \}$.</li>
+<li>Successor state $s_1 = (s_0 \setminus \{ \text{In}(C_2, P_1) \}) \cup \{ \text{At}(C_2, \text{SFO}) \}$.</li>
+<li>Since $s_1 \models \text{Goal}$, the search terminates successfully in 1 step.</li>
+</ul>
+
 <h4 id="5-2-backward-search-by-regression" class="mb-2">5.2 Backward Search by Regression</h4>
 
-<p class="mb-3">Backward search regresses from Goal $g$ to $s_0$:</p>
+<p class="mb-3">Backward search regresses from Goal $g$ toward initial state $s_0$:</p>
+
+<h5 class="mb-2">When is an Action Relevant?</h5>
+
+<p class="mb-3">An action $a$ is <strong>relevant</strong> to current goal description $g$ if:</p>
+
+<ol class="mb-3">
+<li>At least one effect of $a$ matches (unifies with) a goal literal: $\text{ADD}(a) \cap g \neq \emptyset$.</li>
+<li>No effect of $a$ contradicts any goal literal: $\text{DEL}(a) \cap g = \emptyset$.</li>
+</ol>
+
+<h5 class="mb-2">Goal Regression Formulas</h5>
+
+<p class="mb-3">The regressed subgoal description $g'$ prior to executing action $a$ is computed by:</p>
+
+<p class="mb-3">$$\text{POS}(g') = (\text{POS}(g) \setminus \text{ADD}(a)) \cup \text{POS}(\text{Precond}(a))$$</p>
+
+<p class="mb-3">$$\text{NEG}(g') = (\text{NEG}(g) \setminus \text{DEL}(a)) \cup \text{NEG}(\text{Precond}(a))$$</p>
+
+<h5 class="mb-2">Regression Worked Example 1 (Air Cargo)</h5>
 
 <ul class="note-list">
-<li><strong>Action Relevance</strong>: Action $a$ is relevant to $g$ iff (1) at least one ADD effect unifies with a goal literal, and (2) no effect contradicts any goal literal.</li>
-<li><strong>Goal Regression Formulas</strong>:</li>
+<li><strong>Current Goal</strong>: $g = \{ \text{At}(C_2, \text{SFO}) \}$.</li>
+<li><strong>Relevant Action Schema</strong>: $\text{Action}(\text{Unload}(c, p, a))$ with preconditions $\text{In}(c, p) \land \text{At}(p, a) \land \dots$ and effect $\text{At}(c, a) \land \neg \text{In}(c, p)$.</li>
+<li><strong>Substitution</strong>: $\theta = \{ c / C_2, a / \text{SFO} \}$. Note that plane $p$ remains an unbound variable $p'$.</li>
+<li><strong>Regressed Goal ($g'$)</strong>:</li>
 </ul>
 
-<p class="mb-3">$$\text{POS}(g') = (\text{POS}(g) \setminus \text{ADD}(a)) \cup \text{POS}(\text{Precond}(a))$$ $$\text{NEG}(g') = (\text{NEG}(g) \setminus \text{DEL}(a)) \cup \text{NEG}(\text{Precond}(a))$$</p>
+<p class="mb-3">$$g' = \text{In}(C_2, p') \land \text{At}(p', \text{SFO}) \land \text{Cargo}(C_2) \land \text{Plane}(p') \land \text{Airport}(\text{SFO})$$</p>
+
+<h5 class="mb-2">Regression Worked Example 2 (Air Cargo Specific Binding)</h5>
 
 <ul class="note-list">
-<li><strong>Most General Unifier (MGU)</strong>: Applied in lifted regression to prevent arbitrary variable substitution branching.</li>
+<li><strong>Current Goal</strong>: $g = \{ \text{At}(C_1, \text{SFO}) \}$.</li>
+<li><strong>Action</strong>: $\text{Unload}(c, p, a)$ with precondition $\text{In}(c, p) \land \text{At}(p, a)$ and effect $\text{At}(c, a)$.</li>
+<li><strong>Unification</strong>: $\text{At}(C_1, \text{SFO})$ with $\text{At}(c, a) \implies \theta = \{ c / C_1, a / \text{SFO} \}$.</li>
+<li><strong>Substituted Action</strong>: $\text{Unload}(C_1, P_1, \text{SFO})$.</li>
+<li><strong>Regression Execution</strong>:</li>
 </ul>
+
+<ol class="mb-3">
+<li>Remove achieved literal: $\text{At}(C_1, \text{SFO})$.</li>
+<li>Add preconditions: $\{ \text{In}(C_1, P_1), \text{At}(P_1, \text{SFO}) \}$.</li>
+<li><strong>New Regressed Goal</strong>: $g' = \{ \text{In}(C_1, P_1), \text{At}(P_1, \text{SFO}) \}$.</li>
+</ol>
 
 <h4 id="5-3-combinatorics-2-n-ground-states-vs-3-n-partial-state-descriptions" class="mb-2">5.3 Combinatorics: $2^n$ Ground States vs. $3^n$ Partial State Descriptions</h4>
 
@@ -487,6 +648,8 @@ Regression (Backward Search):
     </tbody>
   </table>
 </div>
+
+<p class="mb-3">For example, with $n$ fluents, a state sets every fluent explicitly. A partial description like $\neg \text{Hungry} \land \text{Sleepy}$ specifies only 2 fluents, leaving all other $n-2$ fluents unmentioned (free to take any value). While regression searches a larger syntactic space ($3^n$), it dramatically prunes the branching factor by expanding only actions strictly relevant to goal literals.</p>
 
 <hr>
 </section>
@@ -561,8 +724,7 @@ Regression (Backward Search):
 
 <ul class="note-list">
 <li>Action $A_t$ implies preconditions at $t$ and effects at $t+1$:
-<p class="mb-2">$$A_t \implies \text{Precond}(A)_t \land \text{ADD}(A)_{t+1} \land \neg \text{DEL}(A)_{t+1}$$</p>
-<p class="mb-2"><em>Example</em>: $\text{Eat}(\text{Cake}, t) \implies \text{Have}(\text{Cake}, t) \land \neg \text{Have}(\text{Cake}, t+1) \land \text{Eaten}(\text{Cake}, t+1)$</p></li>
+<p class="mb-2">$$A_t \implies \text{Precond}(A)_t \land \text{ADD}(A)_{t+1} \land \neg \text{DEL}(A)_{t+1}$$</p></li>
 </ul>
 
 <ol class="mb-3">
@@ -583,13 +745,113 @@ Regression (Backward Search):
 <li>Prevents conflicting simultaneous action execution: $\neg A_t \lor \neg B_t$.</li>
 </ul>
 
+<h4 id="7-3-complete-worked-example-eat-a-cake-have-cake-and-eat-it-too" class="mb-2">7.3 Complete Worked Example: "Eat a Cake!" (Have Cake and Eat it Too)</h4>
+
+<p class="mb-3">Consider the classic planning problem where an agent wants to eat a cake and still have a cake:</p>
+
+<div class="note-markdown-block"><pre><code>Initial State: {}  (By CWA, ¬Have(Cake, 0) and ¬Eaten(Cake, 0))
+Goal State   : ¬Have(Cake, 2) ∧ Eaten(Cake, 2)
+
+Action Schemas:
+Action(Eat(Cake))
+  PRECOND: Have(Cake)
+  EFFECT : ¬Have(Cake) ∧ Eaten(Cake)
+
+Action(Bake(Cake))
+  PRECOND: ¬Have(Cake)
+  EFFECT : Have(Cake)</code></pre></div>
+
+<h5 class="mb-2">Step 1: Action Propositional Implications ($n = 2$)</h5>
+
+<ul class="note-list">
+<li>At $t = 0$:
+<ul class="note-list">
+<li>$\text{Eat}(\text{Cake}, 0) \implies \text{Have}(\text{Cake}, 0) \land \neg \text{Have}(\text{Cake}, 1) \land \text{Eaten}(\text{Cake}, 1)$</li>
+<li>$\text{Bake}(\text{Cake}, 0) \implies \neg \text{Have}(\text{Cake}, 0) \land \text{Have}(\text{Cake}, 1)$</li>
+</ul></li>
+<li>At $t = 1$:
+<ul class="note-list">
+<li>$\text{Eat}(\text{Cake}, 1) \implies \text{Have}(\text{Cake}, 1) \land \neg \text{Have}(\text{Cake}, 2) \land \text{Eaten}(\text{Cake}, 2)$</li>
+<li>$\text{Bake}(\text{Cake}, 1) \implies \neg \text{Have}(\text{Cake}, 1) \land \text{Have}(\text{Cake}, 2)$</li>
+</ul></li>
+</ul>
+
+<h5 class="mb-2">Step 2: Successor-State Axioms</h5>
+
+<p class="mb-3">How fluents change over time: $$\text{Have}(\text{Cake}, 1) \iff (\text{Have}(\text{Cake}, 0) \land \neg \text{Eat}(\text{Cake}, 0)) \lor \text{Bake}(\text{Cake}, 0)$$ $$\text{Have}(\text{Cake}, 2) \iff (\text{Have}(\text{Cake}, 1) \land \neg \text{Eat}(\text{Cake}, 1)) \lor \text{Bake}(\text{Cake}, 1)$$ $$\text{Eaten}(\text{Cake}, 1) \iff \text{Eaten}(\text{Cake}, 0) \lor \text{Eat}(\text{Cake}, 0)$$ $$\text{Eaten}(\text{Cake}, 2) \iff \text{Eaten}(\text{Cake}, 1) \lor \text{Eat}(\text{Cake}, 1)$$</p>
+
+<h5 class="mb-2">Step 3: Action Exclusion Axioms</h5>
+
+<p class="mb-3">Prevent executing contradictory actions simultaneously: $$\neg \text{Eat}(\text{Cake}, 0) \lor \neg \text{Bake}(\text{Cake}, 0)$$ $$\neg \text{Eat}(\text{Cake}, 1) \lor \neg \text{Bake}(\text{Cake}, 1)$$</p>
+
+<h5 class="mb-2">Step 4: Solving the SAT Problem</h5>
+
+<ul class="note-list">
+<li>At horizon $T = 1$: The goal requires $\text{Eaten}(\text{Cake}, 1)$, which requires $\text{Eat}(\text{Cake}, 0)$, which requires $\text{Have}(\text{Cake}, 0)$. But $\text{Have}(\text{Cake}, 0)$ is false in the initial state! Formula is <strong>UNSAT</strong>.</li>
+<li>At horizon $T = 2$:
+<ul class="note-list">
+<li>Initial: $\neg \text{Have}(\text{Cake}, 0)$.</li>
+<li>Set $\text{Bake}(\text{Cake}, 0) = \text{True} \implies \text{Have}(\text{Cake}, 1) = \text{True}$.</li>
+<li>Set $\text{Eat}(\text{Cake}, 1) = \text{True} \implies \neg \text{Have}(\text{Cake}, 2) = \text{True}$ and $\text{Eaten}(\text{Cake}, 2) = \text{True}$.</li>
+<li>The solver returns a satisfying model yielding the optimal 2-step plan:
+<p class="mb-2">$$\mathbf{[\text{Bake}(\text{Cake}, 0), \text{Eat}(\text{Cake}, 1)]}$$</p></li>
+</ul></li>
+</ul>
+
 <hr>
 </section>
 
-<section id="8-seven-classical-planning-paradigms-algorithm-properties-and-computational-complexity" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">8. Seven Classical Planning Paradigms, Algorithm Properties, and Computational Complexity</h3>
+<section id="8-real-world-applications-industrial-ecosystem-competitions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. Real-World Applications, Industrial Ecosystem &amp; Competitions</h3>
 
-<h4 id="8-1-seven-classical-planning-paradigms" class="mb-2">8.1 Seven Classical Planning Paradigms</h4>
+<p class="mb-3">Automated planning algorithms are deployed across industry and space exploration:</p>
+
+<div class="note-markdown-block"><pre><code>+---------------------------------------------------------------------------------------------------+
+|                                Real-World Applications of AI Planning                             |
++---------------------------+-----------------------------------------------+-----------------------+
+| Domain                    | Key Operational Use Case                      | Landmark References   |
++---------------------------+-----------------------------------------------+-----------------------+
+| Logistics &amp; Manufacturing | High-throughput scheduling, resource allocation| SciTePress (2022)     |
+|                           | and dynamic assembly line balancing           | ScienceDirect (2025)  |
+| Enterprise Operations     | Business process modeling, automated workflow | Sohrabi et al.,       |
+|                           | synthesis, and robotic process automation     | IJCAI (2019)          |
+| Robotics &amp; Manipulation   | Autonomous path planning, collision-free      | Nature Scientific     |
+|                           | mobile manipulation, and task-motion planning | Reports (2025)        |
+| Healthcare Management     | Hospital operating room scheduling, resource  | arXiv (2021)          |
+|                           | optimization, and clinical guidelines execution| RCRA (2023)           |
+| Video Games &amp; Virtual NPCs| Real-time NPC goal-oriented action planning   | Neufeld et al.,       |
+|                           | (GOAP) and dynamic tactical behaviors        | IEEE TOG (2019)       |
+| Space Exploration         | Onboard autonomous spacecraft commanding and  | Mars 2020 Rover       |
+|                           | Mars rover automated activity scheduling      | i-SAIRAS (2020), ICRA |
+| Real-Time Decision Making | Constraints-aware automated decision guidance | Mission Control &amp;     |
+|                           | under dynamic, safety-critical deadlines      | Emergency Response    |
++---------------------------+-----------------------------------------------+-----------------------+</code></pre></div>
+
+<h4 id="8-1-the-aiplanning4eu-unified-planning-library" class="mb-2">8.1 The AIPlanning4EU Unified Planning Library</h4>
+
+<p class="mb-3">The European Commission's <strong>AIPlanning4EU</strong> initiative (<code>https://github.com/aiplan4eu/unified-planning</code>) unifies disparate planning engines (Fast Downward, Pyperplan, Tamer, ENHSP, OptaPlanner) under an open-source Python API. It provides automated domain translation, problem grounding, and compilation of conditional effects.</p>
+
+<h4 id="8-2-international-planning-competition-ipc-2023" class="mb-2">8.2 International Planning Competition (IPC 2023)</h4>
+
+<p class="mb-3">The biennial IPC benchmarks planning efficiency across classical, probabilistic, and hierarchical tracks:</p>
+
+<ul class="note-list">
+<li><strong>Reproducible Apptainer Images</strong>: Planners are packaged into containerized Apptainer recipes (<code>ipc2023-classical.github.io</code>) for deterministic benchmarking.</li>
+<li><strong>Top Solvers</strong>:
+<ul class="note-list">
+<li><em>Optimal Track</em>: <strong>Ragnarok</strong> (combining symbolic pattern databases with merge-and-shrink heuristics).</li>
+<li><em>Agile Track</em>: <strong>DecStar-2023</strong> (decoupled state-space search).</li>
+<li><em>Satisficing Track</em>: <strong>Scorpion Maidu and Levitron</strong> (best-first search with cost-partitioned heuristics).</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="9-seven-classical-planning-paradigms-algorithm-properties-and-complexity-bounds" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">9. Seven Classical Planning Paradigms, Algorithm Properties, and Complexity Bounds</h3>
+
+<h4 id="9-1-seven-classical-planning-paradigms" class="mb-2">9.1 Seven Classical Planning Paradigms</h4>
 
 <ol class="mb-3">
 <li><strong>Goal-Directed Planning</strong>: Symbolic deduction using STRIPS / PDDL.</li>
@@ -597,19 +859,19 @@ Regression (Backward Search):
 <li><strong>SAT-Based Planning</strong>: Propositional CNF reduction (SATPlan).</li>
 <li><strong>Planning Graph Approaches</strong>: Reachability graphs (Graphplan) deriving informative heuristics.</li>
 <li><strong>Situation Calculus</strong>: First-order logic reasoning over actions and situations.</li>
-<li><strong>Constraint Satisfaction Problem (CSP)</strong>: Constraint network formulations.</li>
-<li><strong>Partial-Order Planning (POP)</strong>: Directed graph plan networks supporting parallel execution.</li>
+<li><strong>Constraint Satisfaction Problem (CSP)</strong>: Constraint network formulations for bounded planning.</li>
+<li><strong>Partial-Order Planning (POP)</strong>: Directed acyclic graph plans supporting parallel execution.</li>
 </ol>
 
-<h4 id="8-2-three-key-algorithm-properties" class="mb-2">8.2 Three Key Algorithm Properties</h4>
+<h4 id="9-2-three-key-algorithm-properties" class="mb-2">9.2 Three Key Algorithm Properties</h4>
 
 <ul class="note-list">
-<li><strong>Soundness</strong>: Every returned plan is mathematically guaranteed to be valid.</li>
+<li><strong>Soundness</strong>: Every returned plan is mathematically guaranteed to be valid and executable.</li>
 <li><strong>Completeness</strong>: Guarantees finding a solution if one exists in the search space.</li>
 <li><strong>Optimality</strong>: Guarantees finding the minimal-cost or shortest plan length.</li>
 </ul>
 
-<h4 id="8-3-theoretical-complexity-plansat-vs-bounded-plansat" class="mb-2">8.3 Theoretical Complexity (PlanSAT vs. Bounded PlanSAT)</h4>
+<h4 id="9-3-theoretical-complexity-plansat-vs-bounded-plansat" class="mb-2">9.3 Theoretical Complexity (PlanSAT vs. Bounded PlanSAT)</h4>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
@@ -633,13 +895,17 @@ Regression (Backward Search):
   </table>
 </div>
 
-<p class="mb-3">Finding <strong>Optimal Plans</strong> is computationally harder than finding <strong>Satisficing Plans</strong>.</p>
+<ul class="note-list">
+<li><strong>PlanSAT</strong>: Testing plan existence is PSPACE-complete because the shortest plan can have length exponential in the number of state fluents ($2^n - 1$), requiring exponential steps to execute even though verification fits within polynomial space.</li>
+<li><strong>Bounded PlanSAT</strong>: Because plan length is bounded by $k$, a candidate plan can be guessed and verified in polynomial time, placing it in <strong>NP</strong> (and NP-complete via reduction from 3-SAT).</li>
+<li><strong>Core Practical Insight</strong>: Finding <strong>Optimal Plans</strong> is computationally harder than finding <strong>Satisficing (Suboptimal) Plans</strong>.</li>
+</ul>
 
 <hr>
 </section>
 
-<section id="9-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">9. Summary</h3>
+<section id="10-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">10. Summary</h3>
 
 <p class="mb-3">Classical AI Planning establishes logical decision-making via STRIPS and PDDL representations. By utilizing CWA and UNA semantics, resolving the Frame Problem with $O(n)$ Successor-State Axioms, and reducing problems into state-space search or SATPlan CNF formulas, classical planning provides enduring theoretical principles for autonomous intelligent agents.</p>
 </section>
@@ -661,10 +927,11 @@ Regression (Backward Search):
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li><strong>Symbolic Agents &amp; PDDL:</strong> Symbolic agents ground decision making in mathematical logic. PDDL uses lifted First-Order Logic and Fluents for Factored State representations, simplified via Closed-World (CWA) and Unique Names (UNA) assumptions.</li>
-<li><strong>Goal Entailment &amp; State Transitions:</strong> Goals are partial state descriptions ($s \models g \iff M(s) \subseteq M(g)$). Successor states are dynamically computed via $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.</li>
-<li><strong>Progression vs. Regression:</strong> Forward progression searches across $2^n$ ground states; backward regression searches across $3^n$ partial state descriptions using MGUs to minimize branching.</li>
-<li><strong>SATPlan &amp; Successor-State Axioms:</strong> SATPlan translates horizon $T$ planning into CNF. Successor-State Axioms ($P_{t+1} \iff \text{AddActions}_t \lor (P_t \land \neg \text{DelActions}_t)$) slash frame axiom overhead from $O(mn)$ to $O(n)$.</li>
+<li><strong>Symbolic Agents &amp; PDDL:</strong> Ground decision making in mathematical logic. PDDL uses lifted First-Order Logic and Fluents for Factored State representations, simplified via Closed-World (CWA) and Unique Names (UNA) assumptions.</li>
+<li><strong>Goal Entailment &amp; State Transitions:</strong> Goals are partial state descriptions ($s \models g \iff M(s) \subseteq M(g)$). Successor states are computed via $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$. Spurious actions like <code>Fly(P1, SIN, SIN)</code> are pruned via inequality preconditions.</li>
+<li><strong>Progression vs. Regression:</strong> Forward progression searches across $2^n$ ground states; backward regression searches across $3^n$ partial state descriptions using MGUs to eliminate irrelevant branches.</li>
+<li><strong>SATPlan &amp; Successor-State Axioms:</strong> SATPlan translates horizon $T$ planning into CNF. Successor-State Axioms ($P_{t+1} \iff \text{AddActions}_t \lor (P_t \land \neg \text{DelActions}_t)$) slash frame axiom overhead from $O(mn)$ to $O(n)$, proven via the 2-step 'Eat a Cake!' puzzle.</li>
+<li><strong>Industrial Systems &amp; Ecosystem:</strong> Deployed in Mars rover autonomy (Mars 2020), manufacturing, and gaming. Supported by AIPlanning4EU's <code>unified-planning</code> library and IPC 2023 containerized solvers.</li>
 <li><strong>Complexity Bounds:</strong> Arbitrary length PlanSAT is PSPACE-complete; step-bounded Bounded PlanSAT is NP-complete.</li>
 </ul></div>
       </div>
@@ -715,6 +982,11 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li>Kautz, H., &amp; Selman, B. (1992). Planning as satisfiability. In <em>Proceedings of the 10th European Conference on Artificial Intelligence (ECAI)</em> (pp. 359-363).</li>
 <li>Ghallab, M., Nau, D., &amp; Traverso, P. (2004). <em>Automated Planning: Theory and Practice</em>. Morgan Kaufmann.</li>
 <li>Russell, S., &amp; Norvig, P. (2020). <em>Artificial Intelligence: A Modern Approach</em> (4th ed.). Pearson.</li>
+<li>Rabideau, G., Wong, V., Gaines, D., Agrawal, J., Chien, S., Kuhn, S., Fosse, E., &amp; Biehl, J. (2020). Onboard automated scheduling for the Mars 2020 Rover. In <em>Proceedings of i-SAIRAS 2020</em>. ESA.</li>
+<li>Sohrabi, S. (2019). AI planning for enterprise: Putting theory into practice. In <em>Proceedings of IJCAI-19</em> (pp. 6408-6410).</li>
+<li>Neufeld, X., Mostaghim, S., &amp; Perez-Liebana, D. (2019). Building a planner: A survey of planning systems used in commercial video games. <em>IEEE Transactions on Games</em>, 11(2), 91-108.</li>
+<li>AIPlanning4EU Project. (2023). <em>The Unified Planning Library</em>. European Commission Horizon 2020. <a class="note-inline-link" href="https://github.com/aiplan4eu/unified-planning" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+<li>International Planning Competition. (2023). <em>IPC 2023 Classical Tracks</em>. ICAPS. <a class="note-inline-link" href="https://ipc2023-classical.github.io" target="_blank" rel="noopener noreferrer">Website</a></li>
 </ol>
 </section>
         </div>

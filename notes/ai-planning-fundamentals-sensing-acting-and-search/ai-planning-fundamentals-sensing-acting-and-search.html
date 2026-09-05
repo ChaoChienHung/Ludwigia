@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Planning Fundamentals: From Sensing-Acting Loops and State-Space Search to Responsible AI Governance — Ludwig</title>
   <meta name="garden:tags" content="AI Planning, AI Agents, Classical Planning, Automated Planning">
-  <meta name="garden:summary" content="A comprehensive exploration of AI Planning problem formulation, perception-action loops, state-space search algorithms, problem complexity matrices, agent evolution (1980s-2030s), LLM probabilistic limitations and deterministic tool fusion, Responsible AI principles, non-technical challenge dimensions, and lifecycle governance frameworks.">
+  <meta name="garden:summary" content="A comprehensive exploration of AI Planning problem formulation, perception-action loops, state-space search algorithms, problem complexity matrices, agent evolution (1980s-2030s), DeepMind PushWorld physical reasoning benchmark, LLM probabilistic limitations and deterministic tool fusion, 7 real-world application domains, AIPlanning4EU unified library, IPC 2023 competition benchmarks, transition to decision making under uncertainty (Utility Theory, MDPs, RL), Responsible AI principles, non-technical challenge dimensions, and lifecycle governance frameworks.">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.ai_planning,concept.ai_agents,concept.classical_planning,concept.automated_planning">
   <meta name="site:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.ai_agents&quot;:{&quot;en&quot;:&quot;AI Agents&quot;,&quot;zh-Hant&quot;:&quot;AI 代理人&quot;,&quot;zh-Hans&quot;:&quot;AI 代理人&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.automated_planning&quot;:{&quot;en&quot;:&quot;Automated Planning&quot;,&quot;zh-Hant&quot;:&quot;自動規劃&quot;,&quot;zh-Hans&quot;:&quot;自动规划&quot;}}">
   <meta name="site:canonical_id" content="ai-planning-fundamentals-sensing-acting-and-search">
   <meta name="site:published_at" content="2026-08-29">
-  <meta name="site:last_modified_at" content="2026-08-29">
-  <meta name="site:reading_time_minutes" content="18">
+  <meta name="site:last_modified_at" content="2026-09-05">
+  <meta name="site:reading_time_minutes" content="26">
   <meta name="site:source" content="notes/ai-planning-fundamentals-sensing-acting-and-search/ai-planning-fundamentals-sensing-acting-and-search.md">
   <script>
   (() => {
@@ -156,8 +156,9 @@
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#1-the-perception-action-communication-loop">1. The Perception-Action-Communication Loop</a>
 <a class="note-toc-link level-1" href="#2-ai-planning-problem-formulation-and-complexity-matrix">2. AI Planning Problem Formulation and Complexity Matrix</a>
-<a class="note-toc-link level-2" href="#2-1-formalization-four-elements">2.1 Formalization Four Elements</a>
+<a class="note-toc-link level-2" href="#2-1-formalization-four-core-elements">2.1 Formalization: Four Core Elements</a>
 <a class="note-toc-link level-2" href="#2-2-problem-complexity-matrix-simple-vs-complex-models">2.2 Problem Complexity Matrix: Simple vs. Complex Models</a>
+<a class="note-toc-link level-2" href="#2-3-physical-reasoning-and-current-challenges-deepmind-pushworld">2.3 Physical Reasoning and Current Challenges: DeepMind PushWorld</a>
 <a class="note-toc-link level-1" href="#3-a-brief-history-of-agents-1980s-to-2030s">3. A Brief History of Agents: 1980s to 2030s</a>
 <a class="note-toc-link level-1" href="#4-core-solver-mechanism-state-space-search-algorithms">4. Core Solver Mechanism: State-Space Search Algorithms</a>
 <a class="note-toc-link level-1" href="#5-ai-planning-and-rational-decision-making">5. AI Planning and Rational Decision Making</a>
@@ -165,14 +166,20 @@
 <a class="note-toc-link level-2" href="#5-2-the-actors-view-of-planning">5.2 The Actor's View of Planning</a>
 <a class="note-toc-link level-1" href="#6-llm-probabilistic-instability-and-deterministic-tool-fusion">6. LLM Probabilistic Instability and Deterministic Tool Fusion</a>
 <a class="note-toc-link level-2" href="#6-1-deterministic-tool-fusion-architecture">6.1 Deterministic Tool Fusion Architecture</a>
-<a class="note-toc-link level-1" href="#7-responsible-ai-planning-and-decision-making">7. Responsible AI Planning and Decision Making</a>
-<a class="note-toc-link level-2" href="#7-1-human-ai-collaboration-paradigms">7.1 Human-AI Collaboration Paradigms</a>
-<a class="note-toc-link level-2" href="#7-2-12-common-principles-of-responsible-ai">7.2 12 Common Principles of Responsible AI</a>
-<a class="note-toc-link level-2" href="#7-3-balancing-accuracy-vs-responsible-feature-costs">7.3 Balancing Accuracy vs. Responsible Feature Costs</a>
-<a class="note-toc-link level-1" href="#8-beyond-technical-challenges-and-lifecycle-governance">8. Beyond Technical Challenges and Lifecycle Governance</a>
-<a class="note-toc-link level-2" href="#8-1-four-dimensions-of-non-technical-challenges">8.1 Four Dimensions of Non-Technical Challenges</a>
-<a class="note-toc-link level-2" href="#8-2-stakeholder-questions-lifecycle-governance">8.2 Stakeholder Questions &amp; Lifecycle Governance</a>
-<a class="note-toc-link level-1" href="#9-summary">9. Summary</a>
+<a class="note-toc-link level-1" href="#7-real-world-application-domains-and-industrial-systems">7. Real-World Application Domains and Industrial Systems</a>
+<a class="note-toc-link level-2" href="#case-spotlight-autonomous-mars-rover-scheduling">Case Spotlight: Autonomous Mars Rover Scheduling</a>
+<a class="note-toc-link level-1" href="#8-modern-planning-ecosystem-aiplanning4eu-and-ipc-competitions">8. Modern Planning Ecosystem: AIPlanning4EU and IPC Competitions</a>
+<a class="note-toc-link level-2" href="#8-1-the-aiplanning4eu-project-unified-planning-library">8.1 The AIPlanning4EU Project &amp; Unified Planning Library</a>
+<a class="note-toc-link level-2" href="#8-2-international-planning-competition-ipc-2023">8.2 International Planning Competition (IPC 2023)</a>
+<a class="note-toc-link level-1" href="#9-from-classical-planning-to-decision-making-under-uncertainty">9. From Classical Planning to Decision Making Under Uncertainty</a>
+<a class="note-toc-link level-1" href="#10-responsible-ai-planning-and-decision-making">10. Responsible AI Planning and Decision Making</a>
+<a class="note-toc-link level-2" href="#10-1-human-ai-collaboration-paradigms">10.1 Human-AI Collaboration Paradigms</a>
+<a class="note-toc-link level-2" href="#10-2-12-common-principles-of-responsible-ai">10.2 12 Common Principles of Responsible AI</a>
+<a class="note-toc-link level-2" href="#10-3-balancing-accuracy-vs-responsible-feature-costs">10.3 Balancing Accuracy vs. Responsible Feature Costs</a>
+<a class="note-toc-link level-1" href="#11-beyond-technical-challenges-and-lifecycle-governance">11. Beyond Technical Challenges and Lifecycle Governance</a>
+<a class="note-toc-link level-2" href="#11-1-four-dimensions-of-non-technical-challenges">11.1 Four Dimensions of Non-Technical Challenges</a>
+<a class="note-toc-link level-2" href="#11-2-stakeholder-questions-lifecycle-governance">11.2 Stakeholder Questions &amp; Lifecycle Governance</a>
+<a class="note-toc-link level-1" href="#12-summary">12. Summary</a>
 <a class="note-toc-link level-1" href="#references">References</a>
           </nav>
         </div>
@@ -196,7 +203,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-08-29" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-29</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-05" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-05</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -225,7 +232,7 @@
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
 <p class="mb-3">In Artificial Intelligence (AI) and autonomous agent research, <strong>Planning and Decision Making</strong> serve as the vital bridge connecting cognitive reasoning to physical or virtual action. An intelligent agent must not only perceive dynamic environment changes, but also autonomously reason about a valid sequence of actions to achieve complex objectives.</p>
 
-<p class="mb-3">This note systematically decomposes the core mechanisms of AI Planning. We begin with the agent-environment <strong>Perception-Action Loop</strong> and the <strong>Problem Complexity Matrix</strong>, tracing the historical evolution from 1980s Symbolic AI to 2030s Tool-using Multi-Agents. We then formulate planning problems, state-space <strong>Search Algorithms</strong>, and the actor's dual perspective (<em>Plan to Act</em> vs. <em>Act to Plan</em>). Furthermore, we examine the probabilistic limitations of Large Language Models (LLMs) and how <strong>Deterministic Tool Fusion</strong> forms the State-of-the-Art (SOTA) agent architecture. Finally, we address <strong>Responsible AI Planning</strong>, covering 12 foundational principles, Human-AI collaboration paradigms, non-technical challenge dimensions, and lifecycle governance frameworks.</p>
+<p class="mb-3">This note systematically decomposes the core mechanisms of AI Planning. We begin with the agent-environment <strong>Perception-Action Loop</strong> and the <strong>Problem Complexity Matrix</strong>, tracing the historical evolution from 1980s Symbolic AI to 2030s Tool-using Multi-Agents. We examine state-space <strong>Search Algorithms</strong>, the actor's dual perspective (<em>Plan to Act</em> vs. <em>Act to Plan</em>), and the challenge of physical reasoning illustrated by the <strong>DeepMind PushWorld</strong> benchmark. Furthermore, we analyze the probabilistic limitations of Large Language Models (LLMs) and how <strong>Deterministic Tool Fusion</strong> forms modern agent architectures. Finally, we explore real-world application domains, open-source ecosystems (<strong>AIPlanning4EU</strong> and <strong>IPC 2023</strong>), the bridge to <strong>Decision Making Under Uncertainty</strong>, and <strong>Responsible AI Planning</strong> governance frameworks.</p>
 
 <hr>
 </section>
@@ -257,7 +264,7 @@
 <p class="mb-3">This interaction framework comprises three essential dimensions:</p>
 
 <ol class="mb-3">
-<li><strong>Agent Sensing from Environment</strong>: The agent extracts state information, raw observations, and environmental feedback via sensors or API endpoints to build its internal world model.</li>
+<li><strong>Agent Sensing from Environment</strong>: The agent extracts state information, raw observations, and environmental feedback via physical sensors or software API endpoints to maintain its internal world model.</li>
 <li><strong>Agent Acting in Environment</strong>: The agent executes actions or issues commands derived from its internal policy or planning module into the environment.</li>
 <li><strong>Bidirectional Communication &amp; State Evolution</strong>: The environment receives the agent's actions, undergoes state transitions, and emits updated state representations back to the agent, closing the decision loop.</li>
 </ol>
@@ -272,7 +279,7 @@
 
 <div class="note-callout mb-3"><p class="mb-2"><strong>Details</strong></p><p class="mb-2">&lt;strong&gt;Core Definition of AI Planning:&lt;/strong&gt;<br> Given a Task Environment, a planning problem is formalized as a tuple of states, actions, effects, and goal tests. Its ultimate objective is to find a legal sequence of actions leading from an initial state to a goal state.</p></div>
 
-<h4 id="2-1-formalization-four-elements" class="mb-2">2.1 Formalization Four Elements</h4>
+<h4 id="2-1-formalization-four-core-elements" class="mb-2">2.1 Formalization: Four Core Elements</h4>
 
 <p class="mb-3">A standard AI Planning Problem is defined by four core elements:</p>
 
@@ -291,43 +298,57 @@
   <table class="note-table">
     <thead><tr>
 <th>Problem Feature</th>
-<th>Simple Model (Classical)</th>
-<th>Complex Model (Real-World)</th>
+<th>Simple Model (Classical Planning)</th>
+<th>Complex Model (Real-World Acting)</th>
     </tr></thead>
     <tbody>
 <tr>
 <td><strong>States</strong></td>
-<td><strong>Fully observable</strong></td>
-<td><strong>Partially observable</strong></td>
+<td><strong>Fully observable</strong> (complete state known)</td>
+<td><strong>Partially observable</strong> (noisy sensors, hidden states)</td>
 </tr>
 <tr>
 <td><strong>Actions</strong></td>
-<td><strong>Discrete</strong></td>
-<td><strong>Continuous</strong></td>
+<td><strong>Discrete</strong> (atomic step transitions)</td>
+<td><strong>Continuous</strong> (continuous control, velocities)</td>
 </tr>
 <tr>
 <td><strong>Effects</strong></td>
-<td><strong>Deterministic</strong></td>
-<td><strong>Non-deterministic or Uncertain</strong></td>
+<td><strong>Deterministic</strong> (exact predictable outcome)</td>
+<td><strong>Non-deterministic or Uncertain</strong> (probabilities)</td>
 </tr>
 <tr>
 <td><strong>Goals</strong></td>
-<td><strong>Deterministic</strong></td>
-<td><strong>Ordered or graded</strong></td>
+<td><strong>Deterministic</strong> (binary goal test satisfaction)</td>
+<td><strong>Ordered or graded</strong> (utility functions, preferences)</td>
 </tr>
 <tr>
 <td><strong>Environment</strong></td>
-<td><strong>Static</strong></td>
-<td><strong>Dynamic</strong></td>
+<td><strong>Static</strong> (changes only through agent actions)</td>
+<td><strong>Dynamic</strong> (exogenous events, time-varying processes)</td>
 </tr>
 <tr>
 <td><strong>Agent Count</strong></td>
-<td><strong>Single agent</strong></td>
-<td><strong>Multiple agents</strong></td>
+<td><strong>Single agent</strong> (solitary actor)</td>
+<td><strong>Multiple agents</strong> (cooperative or adversarial games)</td>
 </tr>
     </tbody>
   </table>
 </div>
+
+<h4 id="2-3-physical-reasoning-and-current-challenges-deepmind-pushworld" class="mb-2">2.3 Physical Reasoning and Current Challenges: DeepMind PushWorld</h4>
+
+<p class="mb-3">While classical planning successfully solves combinatorial problems where state transitions are purely symbolic (e.g., discrete block stacks or flight hops), modern AI planning faces severe hurdles when bridging symbolic models to physical reality.</p>
+
+<p class="mb-3">A prominent contemporary challenge is highlighted by the <strong>DeepMind PushWorld</strong> benchmark (<code>https://deepmind-pushworld.github.io/play/</code>). PushWorld evaluates whether AI agents can solve physical grid-world puzzles requiring:</p>
+
+<ul class="note-list">
+<li>Spatial reasoning over obstacles, walls, and multi-object collisions.</li>
+<li>Indirect manipulation (e.g., pushing an intermediate block to unblock a switch, which in turn deactivates a barrier).</li>
+<li>Managing non-linear physical dynamics where an unintended move permanently traps the agent in a dead-end state.</li>
+</ul>
+
+<p class="mb-3">PushWorld proves that pure autoregressive language models struggle with spatial and physical planning unless augmented by explicit state transition models, physics-informed search, and verification engines.</p>
 
 <hr>
 </section>
@@ -335,7 +356,7 @@
 <section id="3-a-brief-history-of-agents-1980s-to-2030s" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">3. A Brief History of Agents: 1980s to 2030s</h3>
 
-<p class="mb-3">The evolution of AI Agents reflects a paradigm shift from hardcoded logic and trial-and-error learning to LLM reasoning and multi-agent tool ecosystems:</p>
+<p class="mb-3">The evolution of AI Agents reflects a fundamental paradigm shift across four distinct decades:</p>
 
 <div class="note-markdown-block"><pre><code>+---------------------------------------------------------------------------------------------------+
 |                                      A Brief History of Agents                                    |
@@ -350,10 +371,10 @@
 +-------------------+-----------------------+-----------------------+-------------------------------+</code></pre></div>
 
 <ol class="mb-3">
-<li><strong>1980s Symbolic AI Agent</strong>: Relied on first-order logic and symbolic planning algorithms (e.g., <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span>). Highly structured but brittle under uncertainty.</li>
-<li><strong>2000s Reinforcement Learning (RL) Agent</strong>: Optimized policy and value functions through Markov Decision Processes (MDPs), trial-and-error exploration, and scalar reward signals.</li>
-<li><strong>2020s LLM Agent</strong>: Leveraged pretrained Large Language Models for language-based reasoning, utilizing zero-shot/few-shot prompting and Chain-of-Thought ("Let's reason step by step").</li>
-<li><strong>2030s Tool-using Multi-Agent</strong>: Integrates high-level planning and multi-agent coordination (Planning + coordination). Agents dynamically call external search engines, code interpreters, and APIs, delegating sub-tasks across specialized agents (e.g., Search $\rightarrow$ Extract $\rightarrow$ Summarize $\rightarrow$ Email).</li>
+<li><strong>1980s Symbolic AI Agent</strong>: Relied on formal First-Order Logic and symbolic planning algorithms (e.g., <span class="note-information" tabindex="0" aria-label="Stanford Research Institute Problem Solver">STRIPS<span class="note-information-tooltip" aria-hidden="true">Stanford Research Institute Problem Solver</span></span>). World states and actions were modeled as logical predicates. Highly verifiable, but fragile when confronted with noisy sensor inputs.</li>
+<li><strong>2000s Reinforcement Learning (RL) Agent</strong>: Optimized policy $\pi(a \mid s)$ and value functions $V(s)$ through Markov Decision Processes (MDPs). Agents learned optimal behaviors through continuous trial-and-error interactions and scalar reward feedback, dominating games and robotic locomotion.</li>
+<li><strong>2020s LLM Agent</strong>: Leveraged billions of parameters in pretrained Large Language Models for language-based commonsense reasoning. Employs prompting techniques like Chain-of-Thought ("<em>Let's reason step by step</em>") to generate sequential plans in natural language.</li>
+<li><strong>2030s Tool-Using Multi-Agent</strong>: The emerging paradigm integrates high-level neural planning with multi-agent coordination. Specialized autonomous agents decompose tasks and dynamically invoke deterministic external tools, APIs, and symbolic engines (e.g., Web Search $\rightarrow$ Data Extraction $\rightarrow$ Formal PDDL Verification $\rightarrow$ Email Delivery).</li>
 </ol>
 
 <hr>
@@ -362,15 +383,24 @@
 <section id="4-core-solver-mechanism-state-space-search-algorithms" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">4. Core Solver Mechanism: State-Space Search Algorithms</h3>
 
-<p class="mb-3">Given a formalized planning problem, the central algorithmic question is: <strong>How do we search for an action sequence that connects $s_0$ to $G$?</strong></p>
+<p class="mb-3">Given a formalized planning problem, the central algorithmic challenge is: <strong>How do we search for an action sequence that connects initial state $s_0$ to goal state $G$?</strong></p>
 
-<p class="mb-3">&lt;callout style="info"&gt; &lt;strong&gt;The Answer is Search Algorithms.&lt;/strong&gt;<br> By mapping the planning problem into a state-space graph, finding a plan reduces to searching for a valid path connecting the initial node to a goal node. &lt;/callout&gt;</p>
+<p class="mb-3">&lt;callout style="info"&gt; &lt;strong&gt;Planning as State-Space Search:&lt;/strong&gt;<br> By mapping the planning problem into a state-space graph where nodes represent ground world states and directed edges represent valid action transitions, finding a plan is equivalent to finding a path from $s_0$ to $G$. &lt;/callout&gt;</p>
 
 <p class="mb-3">Classic planning search paradigms include:</p>
 
 <ul class="note-list">
-<li><strong>Uninformed Search (Blind Search)</strong>: Explores state transitions without domain-specific estimates, such as Breadth-First Search (BFS), Depth-First Search (DFS), and Uniform Cost Search (UCS).</li>
-<li><strong>Informed Search (Heuristic Search)</strong>: Employs a heuristic evaluation function $h(s)$ to estimate distance to goals and prune search trees, such as <span class="note-information" tabindex="0" aria-label="A* Search: Evaluates f(n) = g(n) + h(n) for optimal pathfinding">A* Search<span class="note-information-tooltip" aria-hidden="true">A* Search: Evaluates f(n) = g(n) + h(n) for optimal pathfinding</span></span> and Greedy Best-First Search.</li>
+<li><strong>Uninformed Search (Blind Search)</strong>: Explores state transitions without domain-specific distance estimates:
+<ul class="note-list">
+<li><strong>Breadth-First Search (BFS)</strong>: Explores level by level; guarantees shortest path in unweighted graphs, but suffers from exponential memory consumption ($O(b^d)$).</li>
+<li><strong>Depth-First Search (DFS)</strong>: Explores deep paths first; memory efficient ($O(bd)$), but neither complete in infinite spaces nor optimal.</li>
+<li><strong>Uniform Cost Search (Dijkstra's Algorithm)</strong>: Expands nodes in order of cumulative path cost $g(n)$, guaranteeing cost-optimality.</li>
+</ul></li>
+<li><strong>Informed Search (Heuristic Search)</strong>: Employs a heuristic evaluation function $h(s)$ estimating the remaining distance from state $s$ to goal $G$:
+<ul class="note-list">
+<li><strong>$A^*$ Search</strong>: Evaluates nodes via $f(n) = g(n) + h(n)$. If $h(n)$ is <strong>admissible</strong> (never overestimates true remaining cost), $A^*$ is mathematically guaranteed to find the optimal plan.</li>
+<li><strong>Greedy Best-First Search (GBFS)</strong>: Evaluates nodes strictly by $f(n) = h(n)$. Runs orders of magnitude faster in practice, finding satisficing (suboptimal) plans.</li>
+</ul></li>
 </ul>
 
 <hr>
@@ -417,8 +447,8 @@
 <p class="mb-3">From the actor's standpoint, planning exhibits a dual dialectic:</p>
 
 <ul class="note-list">
-<li><strong>Plan to Act</strong>: <em>How to plan in advance to act effectively in the real world?</em></li>
-<li><strong>Act to Plan</strong>: <em>How to act and explore in the real world to effectively update and refine plans?</em></li>
+<li><strong>Plan to Act</strong>: <em>How to plan in advance to act effectively in the real world?</em> Developing predictive plans that minimize execution risks.</li>
+<li><strong>Act to Plan</strong>: <em>How to act and explore in the real world to effectively update and refine plans?</em> Gathering sensory observations through exploratory actions to eliminate epistemic state uncertainty.</li>
 </ul>
 
 <hr>
@@ -455,21 +485,121 @@
 +-------------------------------------------------------------------+</code></pre></div>
 
 <ul class="note-list">
-<li><strong>Foundation Models (LLM)</strong>: Handle natural language understanding, intent extraction, and intuitive reasoning.</li>
+<li><strong>Foundation Models (LLM)</strong>: Handle natural language understanding, intent extraction, and intuitive task decomposition.</li>
 <li><strong>Memory Systems</strong>: Store short-term conversational context and long-term vector embeddings.</li>
 <li><strong>Computational Cognitive Processes</strong>: Perform structured reasoning, sub-goal generation, and search (e.g., Tree of Thoughts, MCTS).</li>
-<li><strong>Deterministic Tools</strong>: Execute exact code (Python interpreters, SQL engines, math solvers, deterministic APIs) to ensure 100% reliable execution.</li>
+<li><strong>Deterministic Tools</strong>: Execute exact code (Python interpreters, SQL engines, SAT/SMT solvers, symbolic PDDL planners) to guarantee 100% sound execution.</li>
 </ul>
 
 <hr>
 </section>
 
-<section id="7-responsible-ai-planning-and-decision-making" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">7. Responsible AI Planning and Decision Making</h3>
+<section id="7-real-world-application-domains-and-industrial-systems" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. Real-World Application Domains and Industrial Systems</h3>
+
+<p class="mb-3">Automated planning is actively deployed across industrial, aerospace, and mission-critical domains:</p>
+
+<div class="note-markdown-block"><pre><code>+---------------------------------------------------------------------------------------------------+
+|                                Real-World Applications of AI Planning                             |
++---------------------------+-----------------------------------------------+-----------------------+
+| Domain                    | Key Operational Use Case                      | Landmark References   |
++---------------------------+-----------------------------------------------+-----------------------+
+| Logistics &amp; Manufacturing | High-throughput scheduling, resource allocation| SciTePress (2022)     |
+|                           | and dynamic assembly line balancing           | ScienceDirect (2025)  |
+| Enterprise Operations     | Business process modeling, automated workflow | Sohrabi et al.,       |
+|                           | synthesis, and robotic process automation     | IJCAI (2019)          |
+| Robotics &amp; Manipulation   | Autonomous path planning, collision-free      | Nature Scientific     |
+|                           | mobile manipulation, and task-motion planning | Reports (2025)        |
+| Healthcare Management     | Hospital operating room scheduling, resource  | arXiv (2021)          |
+|                           | optimization, and clinical guidelines execution| RCRA (2023)           |
+| Video Games &amp; Virtual NPCs| Real-time NPC goal-oriented action planning   | Neufeld et al.,       |
+|                           | (GOAP) and dynamic tactical behaviors        | IEEE TOG (2019)       |
+| Space Exploration         | Onboard autonomous spacecraft commanding and  | Mars 2020 Rover       |
+|                           | Mars rover automated activity scheduling      | i-SAIRAS (2020), ICRA |
+| Real-Time Decision Making | Constraints-aware automated decision guidance | Mission Control &amp;     |
+|                           | under dynamic, safety-critical deadlines      | Emergency Response    |
++---------------------------+-----------------------------------------------+-----------------------+</code></pre></div>
+
+<h4 id="case-spotlight-autonomous-mars-rover-scheduling" class="mb-2">Case Spotlight: Autonomous Mars Rover Scheduling</h4>
+
+<p class="mb-3">NASA's <strong>Mars 2020 Perseverance Rover</strong> utilizes onboard automated scheduling (Rabideau et al., 2020) to dynamically plan scientific observations and rover traverses. In interplanetary environments where communication latency to Earth exceeds $10\text{ to } 20\text{ minutes}$, autonomous planning algorithms allow the rover to repair schedules on the fly when tasks complete ahead of or behind schedule, without awaiting commands from mission control.</p>
+
+<hr>
+</section>
+
+<section id="8-modern-planning-ecosystem-aiplanning4eu-and-ipc-competitions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. Modern Planning Ecosystem: AIPlanning4EU and IPC Competitions</h3>
+
+<p class="mb-3">Modern planning research has converged into standardized, open-source software libraries and international benchmarks.</p>
+
+<h4 id="8-1-the-aiplanning4eu-project-unified-planning-library" class="mb-2">8.1 The AIPlanning4EU Project &amp; Unified Planning Library</h4>
+
+<p class="mb-3">The European Commission's <strong>AIPlanning4EU Project</strong> developed the <strong>Unified Planning Library</strong> (<code>unified-planning</code>, <code>https://github.com/aiplan4eu/unified-planning</code>), designed to make automated planning accessible to software engineers without requiring deep expertise in esoteric PDDL dialects:</p>
+
+<div class="note-markdown-block"><pre><code>+---------------------------------------------------------------------------------------------------+
+|                             AIPlanning4EU Unified Planning Architecture                           |
++---------------------------------------------------------------------------------------------------+
+| [ Use Cases ]: Logistics Automation | Flexible Manufacturing | Fleet Operations | Lab Planning    |
+|                                                |                                                  |
+|                                                v                                                  |
+|   +-------------------------------------------------------------------------------------------+   |
+|   |                           Unified Planning Framework (Python API)                         |   |
+|   |   • Intuitive Pythonic problem and action definition (Fluents, Preconditions, Effects)    |   |
+|   |   • Automatic problem reformulation, grounding, and conditional effect simplification    |   |
+|   |   • Bidirectional translation bridges (PDDL, ANML, ground formats)                        |   |
+|   +--------------------------------------------+----------------------------------------------+   |
+|                                                |                                                  |
+|                                                v                                                  |
+| [ Planning Engines ]:  Fast Downward  |  Pyperplan  |  Tamer  |  OptaPlanner  |  ENHSP           |
++---------------------------------------------------------------------------------------------------+</code></pre></div>
+
+<h4 id="8-2-international-planning-competition-ipc-2023" class="mb-2">8.2 International Planning Competition (IPC 2023)</h4>
+
+<p class="mb-3">The <strong>International Planning Competition (IPC)</strong>, organized by ICAPS, represents the gold standard for benchmarking automated planning engines:</p>
+
+<ul class="note-list">
+<li><strong>Diverse Tracks</strong>: Spans Classical (Sequential &amp; Satisficing), Learning, Probabilistic, Numeric, and Hierarchical Task Network (HTN) tracks.</li>
+<li><strong>Top Competitors</strong>: State-of-the-art classical winners include <strong>Ragnarok</strong> (Optimal track), <strong>DecStar-2023</strong> (Agile track), and <strong>Scorpion Maidu and Levitron</strong> (Satisficing track).</li>
+<li><strong>Reproducible Containerization</strong>: Planners are packaged into standardized <strong>Apptainer (Singularity)</strong> containers (<code>ipc2023-classical.github.io</code>), guaranteeing reproducible execution across high-performance compute clusters and integrating with industrial linear programming engines such as IBM CPLEX.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="9-from-classical-planning-to-decision-making-under-uncertainty" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">9. From Classical Planning to Decision Making Under Uncertainty</h3>
+
+<p class="mb-3">Classical planning relies on a deterministic world model: actions succeed with $100\%$ certainty, and world states are fully known. However, real-world deployment must overcome:</p>
+
+<ol class="mb-3">
+<li><strong>Noisy and Incomplete Perception</strong>: Sensor noise means the agent observes partial features, requiring reasoning over <strong>Belief States</strong> (probability distributions over possible world states).</li>
+<li><strong>Stochastic Action Transitions</strong>: Physical actions can fail, slip, or yield varied outcomes, governed by transition probabilities $P(s' \mid s, a)$.</li>
+<li><strong>Preference &amp; Risk Trade-offs</strong>: Real-world goals are rarely binary. Achieving a goal faster might carry higher financial cost or safety risk.</li>
+</ol>
+
+<div class="note-markdown-block"><pre><code>+---------------------------------------------------------------------------------------------------+
+|                        From Deterministic Planning to Uncertainty Modeling                        |
++-----------------------------------+---------------------------------------------------------------+
+| Paradigm                          | Core Formalisms &amp; Solution Methods                            |
++-----------------------------------+---------------------------------------------------------------+
+| Classical Deterministic Planning  | STRIPS, PDDL, State-Space Graph Search (A*, BFS), SATPlan    |
+| Decision Theory &amp; Preferences     | Axioms of Rational Preferences, Utility Functions, MEU        |
+| Sequential Stochastic Decisions   | Markov Decision Processes (MDPs), Bellman Optimality, Value It|
+| Partial Observability Decisions   | Partially Observable MDPs (POMDPs), Belief State Tracking     |
+| Model-Free Autonomous Learning    | Reinforcement Learning (Q-Learning, Policy Gradient, PPO)    |
++-----------------------------------+---------------------------------------------------------------+</code></pre></div>
+
+<p class="mb-3">This evolutionary progression leads directly into <strong>Utility Theory, Markov Decision Processes, and Reinforcement Learning</strong>, equipping agents to navigate real-world stochastic environments.</p>
+
+<hr>
+</section>
+
+<section id="10-responsible-ai-planning-and-decision-making" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">10. Responsible AI Planning and Decision Making</h3>
 
 <p class="mb-3">As AI agents integrate into societal infrastructure, <strong>Responsible AI Planning</strong> becomes paramount.</p>
 
-<h4 id="7-1-human-ai-collaboration-paradigms" class="mb-2">7.1 Human-AI Collaboration Paradigms</h4>
+<h4 id="10-1-human-ai-collaboration-paradigms" class="mb-2">10.1 Human-AI Collaboration Paradigms</h4>
 
 <p class="mb-3">Human-aware AI systems structure human-AI interaction into three paradigms:</p>
 
@@ -479,7 +609,7 @@
 <li><strong>Works alongside Humans</strong>: AI acts as an autonomous peer, operating in shared environments while adhering to social norms.</li>
 </ol>
 
-<h4 id="7-2-12-common-principles-of-responsible-ai" class="mb-2">7.2 12 Common Principles of Responsible AI</h4>
+<h4 id="10-2-12-common-principles-of-responsible-ai" class="mb-2">10.2 12 Common Principles of Responsible AI</h4>
 
 <p class="mb-3">Trustworthy AI agent deployment relies on 12 common principles:</p>
 
@@ -494,7 +624,7 @@
 | 6. Provide Transparency          | 12. Limit Harmful Uses         |
 +-------------------------------------------------------------------+</code></pre></div>
 
-<h4 id="7-3-balancing-accuracy-vs-responsible-feature-costs" class="mb-2">7.3 Balancing Accuracy vs. Responsible Feature Costs</h4>
+<h4 id="10-3-balancing-accuracy-vs-responsible-feature-costs" class="mb-2">10.3 Balancing Accuracy vs. Responsible Feature Costs</h4>
 
 <p class="mb-3">Integrating responsible features (transparency, privacy, fairness, safety, robustness) introduces a core trade-off: <strong>balancing the value gained from accurate outputs against the additional cost and effort required for responsible governance</strong>.</p>
 
@@ -503,12 +633,12 @@
 <hr>
 </section>
 
-<section id="8-beyond-technical-challenges-and-lifecycle-governance" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">8. Beyond Technical Challenges and Lifecycle Governance</h3>
+<section id="11-beyond-technical-challenges-and-lifecycle-governance" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">11. Beyond Technical Challenges and Lifecycle Governance</h3>
 
 <p class="mb-3">Deploying responsible agents requires navigating non-technical challenge dimensions and establishing full-lifecycle governance.</p>
 
-<h4 id="8-1-four-dimensions-of-non-technical-challenges" class="mb-2">8.1 Four Dimensions of Non-Technical Challenges</h4>
+<h4 id="11-1-four-dimensions-of-non-technical-challenges" class="mb-2">11.1 Four Dimensions of Non-Technical Challenges</h4>
 
 <div class="note-markdown-block"><pre><code>                       +-----------------------------------+
                        |    Beyond Technical Challenges    |
@@ -533,7 +663,7 @@
 <li><strong>System Challenges</strong>: Handling uncertain/dynamic data and adapting to evolving IT infrastructure.</li>
 </ol>
 
-<h4 id="8-2-stakeholder-questions-lifecycle-governance" class="mb-2">8.2 Stakeholder Questions &amp; Lifecycle Governance</h4>
+<h4 id="11-2-stakeholder-questions-lifecycle-governance" class="mb-2">11.2 Stakeholder Questions &amp; Lifecycle Governance</h4>
 
 <p class="mb-3">Governance requires addressing key questions across Developers, Users, Managers, and Regulators regarding feature definitions, trust safeguards, quantitative trade-offs, downstream legal impacts, and accountability timelines.</p>
 
@@ -549,8 +679,8 @@
 <hr>
 </section>
 
-<section id="9-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">9. Summary</h3>
+<section id="12-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">12. Summary</h3>
 
 <p class="mb-3">AI Planning has evolved from classical symbolic search to SOTA architectures combining probabilistic foundation models with deterministic tools and multi-agent coordination. Achieving effective deployment requires coupling algorithmic planning with Responsible AI governance—balancing accuracy against safety, privacy, and fairness across the full software lifecycle.</p>
 </section>
@@ -573,10 +703,12 @@
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li><strong>Perception-Action Loop &amp; Problem Complexity:</strong> Agents operate in closed Sensing-Acting loops. Problems are categorized by state observability, action continuity, effect determinism, goal granularity, environment dynamics, and agent count.</li>
+<li><strong>Physical Reasoning &amp; PushWorld:</strong> Symbolic planners operate over clean state abstractions, whereas physical environments (PushWorld) require reasoning over spatial dynamics, friction, and multi-body interactions.</li>
 <li><strong>Agent Evolution (1980s–2030s):</strong> Shifted from 1980s Symbolic AI (STRIPS) and 2000s Reinforcement Learning (MDP) to 2020s LLM Agents (CoT) and 2030s Tool-using Multi-Agents.</li>
 <li><strong>Deterministic Tool Fusion:</strong> Overcomes LLM probabilistic sampling limitations by coupling foundation models with memory, cognitive search, and deterministic code/API tools.</li>
-<li><strong>Responsible AI &amp; Collaboration:</strong> Enforces 12 core principles across Works for, Works with, and Works alongside human-AI paradigms, balancing accuracy against responsible feature costs.</li>
-<li><strong>Lifecycle Governance &amp; Challenges:</strong> Addresses Domain, User, Economic, and System challenges through continuous governance across design, engineering, and monitoring phases.</li>
+<li><strong>Industrial Applications &amp; Ecosystem:</strong> Actively deployed in space exploration (Mars 2020 Rover), manufacturing, robotics, and healthcare. Unified by modern libraries (AIPlanning4EU) and tested in international competitions (IPC 2023).</li>
+<li><strong>Roadmap to Uncertainty:</strong> Real-world stochasticity and preference trade-offs necessitate transitioning from classical deterministic planning to Utility Theory, Markov Decision Processes (MDPs), and Reinforcement Learning (RL).</li>
+<li><strong>Responsible AI &amp; Governance:</strong> Enforces 12 core principles across Works for, Works with, and Works alongside human-AI paradigms, supported by lifecycle governance from design to monitoring.</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
@@ -625,7 +757,11 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li>Russell, S., &amp; Norvig, P. (2020). <em>Artificial Intelligence: A Modern Approach</em> (4th ed.). Pearson.</li>
 <li>Ghallab, M., Nau, D., &amp; Traverso, P. (2004). <em>Automated Planning: Theory and Practice</em>. Morgan Kaufmann.</li>
 <li>Fikes, R. E., &amp; Nilsson, N. J. (1971). STRIPS: A new approach to the application of theorem proving to problem solving. <em>Artificial Intelligence</em>, 2(3-4), 189-208. <a class="note-inline-link" href="https://doi.org/10.1016/0004-3702(71" target="_blank" rel="noopener noreferrer">ScienceDirect</a>90010-5)</li>
-<li>Xi, Z., Chen, W., Guo, X., He, W., Ding, Y., Liao, B., ... &amp; Zheng, R. (2023). The rise and potential of large language model based agents: A survey. <em>arXiv preprint arXiv:2309.07864</em>.</li>
+<li>Rabideau, G., Wong, V., Gaines, D., Agrawal, J., Chien, S., Kuhn, S., Fosse, E., &amp; Biehl, J. (2020). Onboard automated scheduling for the Mars 2020 Rover. In <em>Proceedings of i-SAIRAS 2020</em>. ESA.</li>
+<li>Sohrabi, S. (2019). AI planning for enterprise: Putting theory into practice. In <em>Proceedings of IJCAI-19</em> (pp. 6408-6410).</li>
+<li>Neufeld, X., Mostaghim, S., &amp; Perez-Liebana, D. (2019). Building a planner: A survey of planning systems used in commercial video games. <em>IEEE Transactions on Games</em>, 11(2), 91-108.</li>
+<li>AIPlanning4EU Project. (2023). <em>The Unified Planning Library</em>. European Commission Horizon 2020. <a class="note-inline-link" href="https://github.com/aiplan4eu/unified-planning" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+<li>International Planning Competition. (2023). <em>IPC 2023 Classical and HTN Tracks</em>. ICAPS. <a class="note-inline-link" href="https://ipc2023-classical.github.io" target="_blank" rel="noopener noreferrer">Website</a></li>
 </ol>
 </section>
         </div>
