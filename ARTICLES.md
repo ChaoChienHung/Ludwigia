@@ -1,4 +1,4 @@
-# WriteList (筆記與文章創作/優化清單)
+# ARTICLES (筆記與文章創作/優化清單)
 
 本文件為 Ludwigia 的**寫作與筆記主題專用追蹤清單（Writing & Notes Backlog）**。  
 所有與工程、架構、系統功能、UI 樣式無關的「文章撰寫、論文深度研讀、筆記重構、思考散文與比喻種子」，統一收錄於此，保持 `TODO.md` 專注於工程與站點架構交付。
@@ -40,7 +40,29 @@
     - [知乎專欄解析](https://zhuanlan.zhihu.com/p/1956000400772686421)
     - [arXiv:2509.18362](https://arxiv.org/abs/2509.18362)
 
-### 4. 觀點篇：投機解碼（Speculative Decoding）與「我對投機開訓練 Job 的理解」
+### 4. EntMTP: Accelerating LLM Inference with Entropy Guided Multi Token Prediction
+- [ ] 規劃並撰寫 EntMTP 原理與調度機制筆記
+  - **核心主題**：基於生成上下文局部熵（Local Generation Entropy）動態調度 MTP 注意力樹狀拓撲的推測解碼加速架構。
+  - **研究重點**：
+    - 傳統 MTP / Self-speculative 解碼採用靜態樹狀注意力拓撲（Static Tree-based Attention Topology）的結構性缺陷：高熵語意邊界推測過深導致驗證開銷浪費，低熵流暢區域推測過淺未能吃滿吞吐收益。
+    - EntMTP 如何透過運行時（Running Estimate）計算局部生成熵，自適應在 Pareto-optimal 樹狀拓撲集合中動態切換推測深度。
+    - 訓練免調（Training-free scheduler）架構在多種基準（Humaneval, ShareGPT, GSM8k）下的實測表現，以及相較 Hydra / Medusa 的加速比增益。
+  - **References**：
+    - [arXiv:2606.27550](https://arxiv.org/abs/2606.27550)
+    - [arXiv HTML](https://arxiv.org/html/2606.27550v1)
+
+### 5. Direct Multi-Token Decoding (DMTD): Late-Layer Multi-Token Generation
+- [ ] 規劃並撰寫 DMTD 架構與分層特徵機制筆記
+  - **核心主題**：揭示 Transformer 前中後層職責分離特性，實現免額外參數、免 Draft Model、免後驗證的直接多 Token 解碼（Direct Multi-Token Decoding, DMTD）。
+  - **研究重點**：
+    - Transformer 垂直層次的分工假說：前層聚焦上下文理解（Input Context）、中層處理任務特徵（Task-specific Processing）、後層負責將抽象表徵映射至輸出 Token（Representation-to-Token）。
+    - DMTD 機制：一旦前中層完成特徵抽取，僅依賴後層（Late Layers）直接連續生成多個 Token，免除自迴歸過程中重複穿越前中層的龐大計算開銷。
+    - 與典型投機解碼（Speculative Decoding）的本質區別：零新增參數量、無獨立 Draft Model 顯存佔用、無需額外驗證步驟（Lossless/Low-loss trade-off）。
+    - 在 Qwen3-4B 等模型上的 2x 加速比實證與 Scaling 潛力。
+  - **References**：
+    - [arXiv:2510.11958](https://arxiv.org/abs/2510.11958)
+
+### 6. 觀點篇：投機解碼（Speculative Decoding）與「我對投機開訓練 Job 的理解」
 - [ ] 撰寫技術反思散文《投機解碼與投機開 Job 的資源配置哲學》
   - **文章目標**：不只介紹 `speculative decoding` 的標準流程，而是把它和我自己在實際研究 / 實作時對「哪些訓練 job 值得先投機地開、哪些不值得」的判斷連起來。
   - **問題意識**：
@@ -52,7 +74,105 @@
 
 ---
 
-## 二、NUS 碩士專業課程筆記整理系列（NUS Courseware Series）
+## 二、開源前沿大模型與架構演進系列（Frontier Foundation Models & Architecture Innovations）
+
+### 1. DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning
+- [ ] 規劃並撰寫 DeepSeek-R1 大規模純強化學習與推理湧現深度筆記
+  - **核心主題**：利用純強化學習（Large-Scale RL）激發大語言模型深度推理能力、自反思（Self-Reflection）與測試期計算（Test-time Compute）擴展範式。
+  - **研究重點**：
+    - **R1-Zero 與純 RL 湧現**：在缺乏人類 SFT 標註數據的前提下，直接在 Base 模型上透過純 RL（Pure RL without SFT）引導出超長 Chain-of-Thought（CoT）、自驗證（Verification）、動態策略調整與「Aha Moment」認知頓悟。
+    - **GRPO（Group Relative Policy Optimization）演算法**：徹底移除傳統 PPO 中的 Critic 網絡，改以群組相對打分估計優勢函數（Advantage），大幅削減訓練顯存開銷與通信瓶頸。
+    - **規則驅動獎勵（Rule-based Rewards）**：利用編譯器代碼測試與數學精確匹配（Accuracy Reward）結合格式約束（Format Reward，強制 `<think>` 標籤規範），從根源杜絕神經網絡 Reward Model 的獎勵作弊（Reward Hacking）。
+    - **全鏈路兩階段多步管線（DeepSeek-R1 Pipeline）**：冷啟動小數據（Cold-start data） $\to$ 推理導向 RL $\to$ 拒絕採樣（Rejection Sampling）與通用數據 SFT $\to$ 次級全場景 RL 對齊。
+    - **小模型知識蒸餾（Distillation vs Direct RL）**：將 671B R1 湧現出的高階推理軌跡蒸餾至 Qwen（1.5B/7B/14B/32B）與 Llama（8B/70B），實證「大模型 RL 湧現 + 小模型蒸餾」遠勝於小模型直接單獨跑純 RL。
+  - **References**：
+    - [arXiv:2501.12948](https://arxiv.org/abs/2501.12948)
+    - [arXiv PDF](https://arxiv.org/pdf/2501.12948)
+    - [GitHub: DeepSeek-AI/DeepSeek-R1](https://github.com/deepseek-ai/DeepSeek-R1)
+
+### 2. DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence
+- [ ] 規劃並撰寫 DeepSeek-V4 架構技術解析筆記
+  - **核心主題**：百萬長文本（Million-Token Context）與極限推理成本優化的大規模 MoE 架構。
+  - **研究重點**：
+    - 混合注意力架構（Hybrid Attention）：壓縮稀疏注意力（Compressed Sparse Attention, CSA）與深度壓縮注意力（Heavily Compressed Attention, HCA）如何將 1M 上下文下的 KV Cache 壓低至 DeepSeek-V3.2 的 10%、單 Token 推理 FLOPs 降低 73%。
+    - 流形約束超連接（Manifold-Constrained Hyper-Connections, mHC）：重構傳統殘差連接（Residual Connections），在高層特徵流形上施加約束以提升超深層模型穩定性。
+    - Muon 優化器在大規模預訓練（32T+ Tokens）中的快速收斂與超參數魯棒性。
+    - Post-training 深度推理模式（DeepSeek-V4-Pro-Max）與長程推理（Long-horizon reasoning）能力湧現。
+  - **References**：
+    - [arXiv:2606.19348](https://arxiv.org/abs/2606.19348)
+    - [arXiv PDF](https://arxiv.org/pdf/2606.19348)
+    - [HuggingFace Collection](https://huggingface.co/collections/deepseek-ai/deepseek-v4)
+
+### 3. MiniMax-01: Scaling Foundation Models with Lightning Attention
+- [ ] 規劃並撰寫 MiniMax-01 閃電注意力與線性 MoE 筆記
+  - **核心主題**：線性注意力機制（Lightning Attention）與大規模稀疏混合專家（MoE, 456B 總參數 / 45.9B 激活）的融合落地。
+  - **研究重點**：
+    - 線性注意力（Linear Attention / Lightning Attention）在數學原理與工程實現上的突破，突破 Softmax 二次複雜度瓶頸，維持推論時常數級/低成本狀態維護。
+    - 長文本原生支持：預訓練 100 萬 Token，推理無損外推至 400 萬 Token（4M Context Window）。
+    - 系統級軟硬體優化：針對 Lightning Attention + MoE 的通訊-計算重疊（Overlap）與分散式並行策略。
+    - 多模態擴展：MiniMax-VL-01 的 512B 視覺-語言持續預訓練與跨模態理解。
+  - **References**：
+    - [arXiv:2501.08313](https://arxiv.org/abs/2501.08313)
+    - [GitHub: MiniMax-AI](https://github.com/MiniMax-AI)
+
+### 4. MiMo: Unlocking the Reasoning Potential of Language Model -- From Pretraining to Posttraining
+- [ ] 規劃並撰寫小米 MiMo-7B 推理模型全流程筆記
+  - **核心主題**：專為深度推理打造的小鋼砲開源模型（小米 MiMo-7B），貫穿「預訓練強化 $\to$ 強化學習（RL）後訓練」全鏈路架構設計。
+  - **研究重點**：
+    - 預訓練創新：25T Tokens 高品質數據管線、三階段數據混合策略（Data Mixing Strategy），以及原生整合 Multi-Token Prediction (MTP) 目標增強推理與解碼吞吐。
+    - 後訓練（Post-training）突破：130K 可驗證數學與程式題目庫，提出測試難度驅動的代碼獎勵機制（Test-Difficulty-Driven Code-Reward Scheme），從根本緩解 RL 探索中的稀疏獎勵（Sparse-reward）瓶頸。
+    - 7B 小尺寸跨越式能力：在代碼與數學推理上超越部分 32B 模型與 OpenAI o1-mini，驗證小模型高密度推理的極限。
+  - **References**：
+    - [arXiv:2505.07608](https://arxiv.org/abs/2505.07608)
+    - [GitHub: XiaomiMiMo/MiMo](https://github.com/xiaomimimo/MiMo)
+
+### 5. Gemma 系列：實用尺度下的模型架構精粹與知識蒸餾（Google Gemma 1 / 2 / 3）
+- [ ] 規劃並撰寫 Google Gemma 系列架構與蒸餾技術筆記
+  - **核心主題**：Google 開源模型家族在「實用參數量（Practical Size）」下的精準架構取捨與端側部署工程。
+  - **研究重點**：
+    - Gemma 2 的關鍵架構演進：滑動窗口注意力（Sliding Window Attention, SWA）與全域注意力的交替堆疊、Logit Soft-capping（避免激活值極化）、Pre-and-Post RMSNorm 數值穩定性設計。
+    - 知識蒸餾（Knowledge Distillation）在開源基礎模型預訓練與微調中的核心角色：如何藉助超大參數量 Teacher 模型（Gemini）傳遞暗知識，使 2B/9B/27B 取得越級性能。
+    - Gemma 3 與 PaliGemma：向視覺語言與多模態的自然延伸，以及端側推理效率與記憶體頻寬平衡。
+  - **References**：
+    - [Gemma 2 Technical Report (arXiv:2408.00118)](https://arxiv.org/abs/2408.00118)
+    - [Gemma 1 Paper (arXiv:2403.08295)](https://arxiv.org/abs/2403.08295)
+
+---
+
+## 三、大模型安全、對齊與機器遺忘系列（LLM Safety, Alignment & Machine Unlearning）
+
+### 1. Wisdom is Knowing What not to Say: Hallucination-Free LLMs Unlearning via Attention Shifting
+- [ ] 規劃並撰寫 LLM 機器遺忘與 Attention Shifting 筆記
+  - **核心主題**：大語言模型選擇性機器遺忘（Selective Machine Unlearning）與注意力偏移（Attention Shifting, AS）機制。
+  - **研究重點**：
+    - 傳統 Unlearning 的雙難困境（Dilemma）：激進遺忘會劇烈損害模型通用能力（Utility Loss），而保守遺忘則易在被詢問遺忘知識時產生荒謬幻覺（Hallucination）。
+    - Attention Shifting (AS) 的雙核心機制：
+      1. 上下文保留抑制（Context-Preserving Suppression）：降低對敏感/目標事實 Token 的注意力權重，同時保持語法與通用語境結構完好。
+      2. 抗幻覺響應塑形（Hallucination-Resistant Response Shaping）：面對遺忘知識查詢時，引導模型給予穩健拒絕或真實替代，而非胡亂編造。
+    - 雙損失聯合優化（Dual-loss Objective）：在表徵疊加（Representation Superposition）條件下畫出軟邊界（Soft Boundary），隔離目標知識。
+    - 基準測試與聯動：在 ToFU 與 TDEC 基準上取得顯著優勢，後續可與 NUS CS5562 Trustworthy Machine Learning（對抗魯棒性、隱私與安全性）建立深度交叉引用。
+  - **References**：
+    - [arXiv:2510.17210](https://arxiv.org/abs/2510.17210)
+    - [arXiv HTML](https://arxiv.org/html/2510.17210v1)
+
+---
+
+## 四、啟發式優化、組合搜索與演算法理論（Metaheuristics, Combinatorial Optimization & Search Algorithms）
+
+### 1. Iterated Local Search (ILS): 經典元啟發式算法框架與擾動搜索理論
+- [ ] 規劃並撰寫 Iterated Local Search 系統性架構筆記
+  - **核心主題**：組合優化（Combinatorial Optimization）經典元啟發式算法「迭代局部搜索」（Iterated Local Search, ILS）的系統性本質。
+  - **研究重點**：
+    - ILS 四大核心基石：Initial Solution（初始解） $\to$ Local Search（局部精細搜索） $\to$ Perturbation（非破壞性擾動以跳出局部最優） $\to$ Acceptance Criterion（接受準則：決定是貪婪、保留或退火接受）。
+    - 探索（Exploration / Diversification）與利用（Exploitation / Intensification）的微妙動態平衡：擾動過大退化為隨機重啟，擾動過小易被困於同一吸引盆（Basin of Attraction）。
+    - 經典問題實踐：旅行商問題（TSP）、流水車間調度（Flow-Shop Scheduling）及圖分割。
+    - 與機器學習與離散優化的現代交匯：聚類中心優化（K-Medoids / K-Means 局部搜索擴展）、離散特徵選擇、以及 LLM Agentic Planning 中的推測-修正搜索類比。
+  - **References**：
+    - [arXiv:math/0102188](https://arxiv.org/abs/math/0102188)
+
+---
+
+## 五、NUS 碩士專業課程筆記整理系列（NUS Courseware Series）
 
 目前 `notes/` 目錄中已有大量修課原始筆記（Raw Notes），需依 Ludwigia 標準規範（`<reviewkit>`、多語 metadata、核心 Takeaways、數學公式與圖表）進行模組化重構、提煉與發布。
 
@@ -90,7 +210,7 @@
 
 ---
 
-## 三、現有筆記重構與深度優化（Notes Refactoring & Deep-Dives）
+## 六、現有筆記重構與深度優化（Notes Refactoring & Deep-Dives）
 
 ### 1. 重構與深化《Discovering Hidden Structures: What Clustering Really Does》
 - [ ] 重構核心邏輯與動態思維
@@ -138,7 +258,7 @@
 
 ---
 
-## 四、思考、方法論與觀點散文（Essays & Methodologies）
+## 七、思考、方法論與觀點散文（Essays & Methodologies）
 
 ### 1. 寫作框架與技術傳播方法論
 - [ ] **Writing：整理幾種可重用的寫作框架 / scaffold**
@@ -170,7 +290,7 @@
 
 ---
 
-## 五、寫作靈感與比喻種子（Writing Seeds & Ideas）
+## 八、寫作靈感與比喻種子（Writing Seeds & Ideas）
 
 - [ ] **Writing seeds：`recognition-vs-active-recall`**
   - 探討認知心理學中的「再認（Recognition）」與「主動提取（Active Recall）」在機器學習、推薦系統表徵學習與人類大腦抄捷徑模式之間的深刻對照。

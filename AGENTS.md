@@ -195,7 +195,8 @@
 - `docs/README.md`：文檔角色總覽，以及目前 `rules/` / `guide/` / `tech/` / `author/` 的資料夾分工
 - `AGENTS.md`：不可退化契約（non-negotiables）；新增/重構時的第一優先校驗點
 - `README.md`：日常使用入口（跑站、build、內容工作流）
-- `TODO.md`：任務追蹤與待 review queue
+- `TODO.md`：任務追蹤與待 review queue（系統工程、架構、功能與 UI）
+- `ARTICLES.md`：寫作與筆記主題待辦清單（Writing & Notes Backlog）
 - `docs/specs/system-spec.md`：系統 contract、data flow、schema、生成物策略
 - `docs/specs/companion-spec.md`：`Companion` 的位置、尺寸、placeholder 與 fallback contract
 - `docs/specs/parser-spec.md`：source `.md` parser contract、extended markdown 與 extras downgrade 規則

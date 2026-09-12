@@ -39,7 +39,8 @@
 
 - `AGENTS.md`：不可退化契約（新增/重構時的第一優先校驗點）
 - `README.md`：repo root 使用入口
-- `TODO.md`：任務追蹤
+- `TODO.md`：任務追蹤（系統工程、功能、架構與 UI）
+- `ARTICLES.md`：寫作與筆記主題待辦清單（Writing & Notes Backlog）
 - `docs/README.md`：`docs/` 入口與索引（本文件）
 
 ### Specs
@@ -106,7 +107,7 @@
 
 ## 命名與存放規範
 
-- repo root 只保留：`AGENTS.md`、`README.md`、`TODO.md`
+- repo root 只保留：`AGENTS.md`、`README.md`、`TODO.md`、`ARTICLES.md`
 - `docs/` 內所有文檔一律使用 kebab-case
 - spec 類文檔統一以 `-spec.md` 結尾
 - 若某份文件同時混了 spec 與 rules，優先把：
