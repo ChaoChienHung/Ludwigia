@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NUS CS5228: Knowledge Discovery and Data Mining — Ludwig</title>
+  <title>NUS CS5228 Knowledge Discovery and Data Mining — Ludwig</title>
   <meta name="garden:tags" content="Data Mining, Clustering, Classification, Association Rules">
   <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5228 Knowledge Discovery and Data Mining, covering data preprocessing, exploratory data analysis, clustering, classification, and association rule mining.">
   <meta name="site:lang" content="en">
@@ -14,7 +14,7 @@
   <meta name="site:published_at" content="2026-09-12">
   <meta name="site:last_modified_at" content="2026-09-12">
   <meta name="site:reading_time_minutes" content="100">
-  <meta name="site:source" content="notes/NUS CS5228: Knowledge Discovery and Data Mining/NUS CS5228: Knowledge Discovery and Data Mining.md">
+  <meta name="site:source" content="notes/NUS CS5228 Knowledge Discovery and Data Mining/NUS CS5228 Knowledge Discovery and Data Mining.md">
   <script>
   (() => {
     try {
@@ -142,7 +142,7 @@
 </nav>
   <section class="page-section">
   <div class="container">
-    <h1 class="text-center" data-aos="fade-up">NUS CS5228: Knowledge Discovery and Data Mining</h1>
+    <h1 class="text-center" data-aos="fade-up">NUS CS5228 Knowledge Discovery and Data Mining</h1>
 
     <div class="note-toc-hover-zone" aria-hidden="true"></div>
     <div class="note-toc-backdrop" aria-hidden="true"></div>
@@ -154,7 +154,8 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#categorical-qualitative">Categorical (Qualitative)</a>
+            <a class="note-toc-link level-1" href="#week-1">Week 1</a>
+<a class="note-toc-link level-1" href="#categorical-qualitative">Categorical (Qualitative)</a>
 <a class="note-toc-link level-1" href="#numerical-quantitative">Numerical (Quantitative)</a>
 <a class="note-toc-link level-1" href="#noise">Noise</a>
 <a class="note-toc-link level-1" href="#outliers">Outliers</a>
@@ -165,6 +166,7 @@
 <a class="note-toc-link level-1" href="#data-transformation">Data Transformation</a>
 <a class="note-toc-link level-1" href="#data-discretization">Data Discretization</a>
 <a class="note-toc-link level-1" href="#one-hot-encoding">One-Hot Encoding</a>
+<a class="note-toc-link level-1" href="#week-2">Week 2</a>
 <a class="note-toc-link level-1" href="#nature-of-data">Nature of Data</a>
 <a class="note-toc-link level-2" href="#types-of-attributes-2">Types of Attributes</a>
 <a class="note-toc-link level-2" href="#types-of-data-and-representations">Types of Data and Representations</a>
@@ -195,6 +197,7 @@
 <a class="note-toc-link level-1" href="#limitations-2">Limitations</a>
 <a class="note-toc-link level-1" href="#choosing-parameters">Choosing Parameters</a>
 <a class="note-toc-link level-1" href="#quick-notes-quiz-insights">Quick Notes / Quiz Insights</a>
+<a class="note-toc-link level-1" href="#week-3">Week 3</a>
 <a class="note-toc-link level-1" href="#agnes-implementation-hierarchical-clustering">AGNES — Implementation (Hierarchical Clustering)</a>
 <a class="note-toc-link level-1" href="#diana-divisive-hierarchical-clustering">DIANA — Divisive Hierarchical Clustering</a>
 <a class="note-toc-link level-1" href="#cluster-evaluation">Cluster Evaluation</a>
@@ -204,6 +207,10 @@
 <a class="note-toc-link level-2" href="#internal-quality-measures">Internal Quality Measures</a>
 <a class="note-toc-link level-2" href="#practical-considerations">Practical Considerations</a>
 <a class="note-toc-link level-1" href="#summary-clustering">Summary — Clustering</a>
+<a class="note-toc-link level-1" href="#week-4">Week 4</a>
+<a class="note-toc-link level-1" href="#week-5">Week 5</a>
+<a class="note-toc-link level-1" href="#week-6">Week 6</a>
+<a class="note-toc-link level-1" href="#week-7">Week 7</a>
 <a class="note-toc-link level-1" href="#overview">Overview</a>
 <a class="note-toc-link level-1" href="#building-decision-trees">Building Decision Trees</a>
 <a class="note-toc-link level-1" href="#challenges-2">Challenges</a>
@@ -229,6 +236,7 @@
 <a class="note-toc-link level-1" href="#gradient-descent">Gradient Descent</a>
 <a class="note-toc-link level-1" href="#polynomial-logistic-regression">Polynomial Logistic Regression</a>
 <a class="note-toc-link level-1" href="#practical-implementation">Practical Implementation</a>
+<a class="note-toc-link level-1" href="#week-8">Week 8</a>
 <a class="note-toc-link level-1" href="#basic-assumption">Basic Assumption</a>
 <a class="note-toc-link level-1" href="#linear-regression-2">Linear Regression</a>
 <a class="note-toc-link level-1" href="#logistic-regression-2">Logistic Regression</a>
@@ -255,6 +263,9 @@
 <a class="note-toc-link level-2" href="#item-based-cf">Item-Based CF</a>
 <a class="note-toc-link level-2" href="#model-based-cf">Model-Based CF</a>
 <a class="note-toc-link level-1" href="#pros-and-cons-2">Pros and Cons</a>
+<a class="note-toc-link level-1" href="#week-9">Week 9</a>
+<a class="note-toc-link level-1" href="#week-10">Week 10</a>
+<a class="note-toc-link level-1" href="#week-11">Week 11</a>
           </nav>
         </div>
       </div>
@@ -303,8 +314,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">CS5228: Knowledge Discovery and Data Mining Week 1</p>
+          <section id="week-1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 1</h3>
 
 <h1 class="mt-4">Types of Attributes</h1>
 </section>
@@ -470,8 +481,10 @@
 </ul></li>
 <li>Preprocessing is crucial for meaningful, efficient, valid analysis</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 2</p>
+<section id="week-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 2</h3>
 
 <h1 class="mt-4">Data Mining — From Data to Knowledge</h1>
 </section>
@@ -817,8 +830,12 @@
 <li>DBSCAN: density-based, absolute similarity, detects noise, sensitive to parameters</li>
 <li>Algorithm choice depends on data distribution, cluster shape/size/density, and noise handling</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 3 Encoding &amp; Interpretation</p>
+<section id="week-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 3</h3>
+
+<p class="mb-3">Encoding &amp; Interpretation</p>
 
 <ul class="note-list">
 <li>Encoding through replacement
@@ -1180,8 +1197,12 @@
 <li>Cluster evaluation remains a challenge, especially without ground truth</li>
 <li>Practical tip: evaluation often requires combination of internal measures, domain knowledge, and parameter tuning</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 4 Recap — Hierarchical Clustering AGNES (AGglomerative NESting)</p>
+<section id="week-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 4</h3>
+
+<p class="mb-3">Recap — Hierarchical Clustering AGNES (AGglomerative NESting)</p>
 
 <ul class="note-list">
 <li>Start with N clusters, one for each data point</li>
@@ -1674,8 +1695,12 @@
 <li>Efficient association rule generation from frequent itemsets</li>
 </ul></li>
 </ul>
+</section>
 
-<p class="mb-3">Week 5 CS5228: Knowledge Discovery and Data Mining — Lecture 5 Classification &amp; Regression I</p>
+<section id="week-5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 5</h3>
+
+<p class="mb-3">CS5228: Knowledge Discovery and Data Mining — Lecture 5 Classification &amp; Regression I</p>
 
 <p class="mb-3">Recap — Association Rules</p>
 
@@ -1955,8 +1980,12 @@
 <li>KNN: intuitive, but sensitive to choice of k, scaling, dimensionality, and distance metric</li>
 <li>Proper preprocessing, validation, and careful metric selection are essential for reliable model performance</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 6 SUPERVISED LEARNING FOUNDATIONS</p>
+<section id="week-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 6</h3>
+
+<p class="mb-3">SUPERVISED LEARNING FOUNDATIONS</p>
 
 <ol class="mb-3">
 <li>Supervised Learning Setup</li>
@@ -3575,8 +3604,10 @@
 <p class="mb-3">Linkage summary table</p>
 
 <p class="mb-3">Linkage | Shape | Noise Sensitivity | Dataset Size | Typical Use Single | Arbitrary | High | Large | Connectivity Complete | Compact | Medium | Medium | Well-separated clusters Average | Balanced | Medium | Medium | General-purpose Ward | Spherical | Low | Small/Medium | High-quality clustering</p>
+</section>
 
-<p class="mb-3">Week 7</p>
+<section id="week-7" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 7</h3>
 
 <h1 class="mt-4">Decision Trees</h1>
 </section>
@@ -3957,8 +3988,10 @@
 <li>Data normalization affects interpretability and regularization behavior</li>
 <li>Logistic Regression can be extended to multi-class problems</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 8</p>
+<section id="week-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 8</h3>
 
 <h1 class="mt-4">Linear Models</h1>
 </section>
@@ -4345,8 +4378,12 @@
 <li>Model-based: latent factor models, matrix factorization</li>
 <li>Evaluation: RMSE, Precision/Recall, top-k rankings</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 9 Recommender Systems</p>
+<section id="week-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 9</h3>
+
+<p class="mb-3">Recommender Systems</p>
 
 <p class="mb-3">Problem</p>
 
@@ -5006,7 +5043,13 @@
 </ul></li>
 </ul>
 
-<p class="mb-3">Both allow for different definitions ➜ wide range of algorithms Week 10 Dimensionality Reduction — Motivation</p>
+<p class="mb-3">Both allow for different definitions ➜ wide range of algorithms</p>
+</section>
+
+<section id="week-10" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 10</h3>
+
+<p class="mb-3">Dimensionality Reduction — Motivation</p>
 
 <ul class="note-list">
 <li>High dimensional data → many features (large d)</li>
@@ -5504,8 +5547,12 @@
 <li>LDA: better for classification, but constrained</li>
 <li>t-SNE: powerful visualization, but expensive and unstable</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 11 CS5228 Data Stream Mining — Structured Notes</p>
+<section id="week-11" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 11</h3>
+
+<p class="mb-3">CS5228 Data Stream Mining — Structured Notes</p>
 
 <p class="mb-3">Quick Recap — Graph Mining</p>
 

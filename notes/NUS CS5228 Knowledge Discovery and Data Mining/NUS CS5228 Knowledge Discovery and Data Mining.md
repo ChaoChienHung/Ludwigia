@@ -1,8 +1,8 @@
 <meta>
-Title: NUS CS5228: Knowledge Discovery and Data Mining
+Title: NUS CS5228 Knowledge Discovery and Data Mining
 Summary: Comprehensive lecture and study notes for NUS CS5228 Knowledge Discovery and Data Mining, covering data preprocessing, exploratory data analysis, clustering, classification, and association rule mining.
 Slug: nus-cs5228-knowledge-discovery-and-data-mining
-Output: notes/NUS CS5228: Knowledge Discovery and Data Mining/NUS CS5228: Knowledge Discovery and Data Mining.html
+Output: notes/NUS CS5228 Knowledge Discovery and Data Mining/NUS CS5228 Knowledge Discovery and Data Mining.html
 CanonicalId: nus-cs5228-knowledge-discovery-and-data-mining
 Style: default
 EstimatedReadingTime: true
@@ -13,8 +13,21 @@ Published: 2026-09-12
 LastModified: 2026-09-12
 </meta>
 
-CS5228: Knowledge Discovery and Data Mining
-Week 1
+# NUS CS5228 Knowledge Discovery and Data Mining
+
+## Week 1
+
+<draft>
+- 1. Types of Attributes
+    - Categorical (Qualitative): Nominal (unordered labels, equals/unequals) vs. Ordinal (ordered labels, ranking relations).
+    - Numerical (Quantitative): Interval (meaningful differences, arbitrary zero) vs. Ratio (meaningful ratios, absolute zero).
+- 2. Types of Data & Representations
+    - Structural Formats: Well-structured, semi-structured, and unstructured data representations.
+    - Data Models: Record data (matrices, transaction sets), graph data, and ordered/temporal sequences.
+- 3. Data Quality Dimensions
+    - Anomalies & Distortions: Noise, outliers, missing values, and duplicate records.
+    - Handling Strategies: Detection, removal, imputation, and deduplication trade-offs.
+</draft>
 
 # Types of Attributes
 
@@ -104,7 +117,19 @@ Week 1
   - Knowledge discovery process
   - Data preparation: quality, EDA, preprocessing
 - Preprocessing is crucial for meaningful, efficient, valid analysis
-Week 2
+## Week 2
+
+<draft>
+- 1. Nature of Data & Quality Dimensions
+    - Attribute Classification: Review of nominal, ordinal, interval, and ratio characteristics.
+    - Data Representations: Transaction sets, document-term matrices, and graph structures.
+    - Data Quality Challenges: Measurement error, noise filtering, outlier identification, and missing value imputation.
+- 2. Data Preparation Pipeline
+    - Data Selection: Targeted attribute filtering, stratified sampling, and feature subset selection.
+    - Data Preprocessing & Cleaning: Normalization (min-max, z-score), discretization, and binarization.
+    - Exploratory Data Analysis (EDA): Summary statistics, box plots, scatter plots, and correlation matrices.
+</draft>
+
 # Data Mining — From Data to Knowledge
 
 ## Nature of Data
@@ -290,7 +315,21 @@ SSE = Σ_{i=1}^{K} Σ_{x ∈ C_i} ||x - μ_i||²
 - K-Means: centroid-based, relative similarity, sensitive to shape/density/noise
 - DBSCAN: density-based, absolute similarity, detects noise, sensitive to parameters
 - Algorithm choice depends on data distribution, cluster shape/size/density, and noise handling
-Week 3
+## Week 3
+
+<draft>
+- 1. Feature Encoding & Interpretation
+    - Replacement Strategies: Categorical-to-numerical mappings, one-hot encoding, and ordinal ranking.
+    - Spatial & Coordinate Features: Latitude/longitude distance projections and spherical metrics.
+- 2. Clustering Foundations & Hierarchical Methods
+    - Core Clustering Concepts: Unsupervised grouping, similarity/distance metrics, and partition criteria.
+    - AGNES (Agglomerative Nesting): Bottom-up greedy cluster merging, proximity matrix updates, and dendrogram representations.
+    - DIANA (Divisive Analysis): Top-down hierarchical splitting and macroscopic cluster isolation.
+- 3. Cluster Evaluation Metrics
+    - External Measures: Purity, Rand Index, and Normalized Mutual Information (ground truth required).
+    - Internal Measures: Silhouette coefficient, Davies-Bouldin index, and compactness vs. separation trade-offs.
+</draft>
+
 Encoding & Interpretation
 
 - Encoding through replacement
@@ -523,7 +562,21 @@ For point i:a(i) = average intra-cluster distance (cohesion)b(i) = minimum avera
 - Linkage methods and distance measures
 - Cluster evaluation remains a challenge, especially without ground truth
 - Practical tip: evaluation often requires combination of internal measures, domain knowledge, and parameter tuning
-Week 4
+## Week 4
+
+<draft>
+- 1. Hierarchical Linkage Criteria
+    - Single Linkage: Nearest-neighbor distance, sensitive to chaining effects and noise bridges.
+    - Complete Linkage: Farthest-neighbor distance, generates compact, spherical clusters.
+    - Average & Centroid Linkage: Balances outlier sensitivity and cluster cohesion.
+- 2. Density-Based Clustering (DBSCAN)
+    - Density Concepts: Epsilon (ε) neighborhood, MinPts threshold, core points, border points, and noise.
+    - Cluster Expansion: Density-reachability and density-connectivity without assuming predefined cluster counts.
+- 3. Association Rule Mining Foundations
+    - Transactional Patterns: Market basket formulation, itemsets, and support/confidence metrics.
+    - Monotonicity & Pruning: Downward closure property of frequent itemsets.
+</draft>
+
 Recap — Hierarchical Clustering  
 AGNES (AGglomerative NESting)  
 - Start with N clusters, one for each data point  
@@ -794,7 +847,18 @@ Summary
   - Decoupling support and confidence calculations  
   - Apriori algorithm for frequent itemset generation  
   - Efficient association rule generation from frequent itemsets 
-Week 5
+## Week 5
+
+<draft>
+- 1. Association Rules & Pattern Discovery
+    - Metric Formulations: Support, Confidence, Lift, Leverage, and Conviction.
+    - Apriori Principle: Anti-monotone property of support for candidate pruning.
+    - Frequent Pattern Mining: Candidate generation and rule derivation dynamics.
+- 2. Supervised Learning & Classification Foundations
+    - Task Framing: Input feature mapping, discrete target labels, and predictive generalization.
+    - Evaluation Paradigms: Confusion matrix, accuracy, precision, recall, and F1-score.
+</draft>
+
 CS5228: Knowledge Discovery and Data Mining — Lecture 5
 Classification & Regression I
 
@@ -986,7 +1050,19 @@ Summary:
 - Evaluation metrics vary by data and task
 - KNN: intuitive, but sensitive to choice of k, scaling, dimensionality, and distance metric
 - Proper preprocessing, validation, and careful metric selection are essential for reliable model performance
-Week 6
+## Week 6
+
+<draft>
+- 1. Supervised Learning Formal Setup
+    - Mathematical Definition: Feature vectors in ℝ^d, discrete labels vs. continuous regression targets.
+    - Hypothesis Class & Loss Functions: Empirical risk minimization, 0-1 loss, and cross-entropy.
+- 2. Generalization, Overfitting & Model Validation
+    - Bias-Variance Trade-off: Underfitting vs. overfitting mechanics in complex models.
+    - Validation Protocols: Train/test split, k-fold cross-validation, and stratification.
+- 3. Regularization & Model Optimization
+    - Structural Risk Minimization: L1 (Lasso) vs. L2 (Ridge) penalty formulation and weight shrinkage.
+</draft>
+
 SUPERVISED LEARNING FOUNDATIONS
 
 1. Supervised Learning Setup
@@ -2051,7 +2127,18 @@ Complete | Compact | Medium | Medium | Well-separated clusters
 Average | Balanced | Medium | Medium | General-purpose
 Ward | Spherical | Low | Small/Medium | High-quality clustering
 
-Week 7
+## Week 7
+
+<draft>
+- 1. Decision Trees Architecture
+    - Structural Mechanics: Recursive binary and multi-way partitioning, internal test nodes, and leaf label assignments.
+    - Split Quality Measures: Information Gain (Entropy), Gini Impurity, and Gain Ratio.
+    - Tree Pruning: Pre-pruning constraints (max depth, min split) vs. post-pruning simplification.
+- 2. Ensemble Methods & Tree Ensembles
+    - Bagging: Bootstrap aggregating, variance reduction, and Random Forest randomized feature subspace selection.
+    - Boosting: Sequential error-focused reweighting, AdaBoost mechanics, and Gradient Boosted Decision Trees (GBDT).
+</draft>
+
 # Decision Trees
 
 ## Overview
@@ -2255,7 +2342,19 @@ Gradient Descent doesn’t get stuck in the local minimum when using Linear Regr
 - Gradient Descent applies to both; Normal Equation applies only to Linear Regression
 - Data normalization affects interpretability and regularization behavior
 - Logistic Regression can be extended to multi-class problems
-Week 8
+## Week 8
+
+<draft>
+- 1. Linear Regression & Optimization
+    - Model Formulation: Linear feature combinations, residual errors, and Ordinary Least Squares (OLS).
+    - Loss Surface & Optimization: Gradient descent convergence and analytical normal equation solution.
+- 2. Logistic Regression & Classification
+    - Probabilistic Mapping: Sigmoid / logistic activation, log-odds transformation, and maximum likelihood estimation.
+    - Decision Boundary: Linear hyperplanes and polynomial basis expansion for nonlinear separations.
+- 3. Recommender Systems Introduction
+    - Problem Setup: Information overload, utility matrix formulation, and recommendation paradigms.
+</draft>
+
 # Linear Models
 
 ## Basic Assumption
@@ -2475,7 +2574,18 @@ A: A new user has rated a new movie
 - Memory-based: user/item similarity  
 - Model-based: latent factor models, matrix factorization  
 - Evaluation: RMSE, Precision/Recall, top-k rankings
-Week 9
+## Week 9
+
+<draft>
+- 1. Recommender Systems Paradigms
+    - Problem Formulation: Sparse user-item rating matrix, cold-start challenges, and evaluation metrics (RMSE, NDCG).
+- 2. Content-Based Filtering
+    - Item Representation: Feature profile extraction, TF-IDF representations, and user profile matching via cosine similarity.
+- 3. Collaborative Filtering (CF)
+    - Memory-Based: User-based vs. item-based collaborative filtering and similarity measures (Pearson correlation, cosine).
+    - Model-Based: Matrix factorization, Latent Factor Models, and Singular Value Decomposition (SVD) approximations.
+</draft>
+
 Recommender Systems
 
 Problem
@@ -2883,7 +2993,18 @@ Graph Mining
   - Centrality: importance of a node depending its embedding in the graph
 
 Both allow for different definitions ➜ wide range of algorithms
-Week 10
+## Week 10
+
+<draft>
+- 1. Curse of Dimensionality
+    - Geometric Realities: Volume expansion, distance concentration, and data sparsity in high-dimensional spaces.
+    - Computational & Statistical Consequences: Overfitting vulnerability and vanishing statistical significance.
+- 2. Dimensionality Reduction Techniques
+    - Principal Component Analysis (PCA): Covariance matrix eigendecomposition, maximum variance projection, and reconstruction error minimization.
+    - Singular Value Decomposition (SVD): Matrix factorization into orthogonal singular vectors and singular values.
+    - Nonlinear Embeddings: t-SNE and manifold learning intuitions for low-dimensional visualization.
+</draft>
+
 Dimensionality Reduction — Motivation
 - High dimensional data → many features (large d)
 - m = number of data points, V = volume of feature space
@@ -3177,7 +3298,18 @@ Trade-offs
 - PCA: simple, fast, but ignores labels
 - LDA: better for classification, but constrained
 - t-SNE: powerful visualization, but expensive and unstable
-Week 11
+## Week 11
+
+<draft>
+- 1. Graph Mining & Community Detection
+    - Network Structures: Adjacency representations, degree distributions, and graph centrality measures.
+    - Community Partitioning: Modularity optimization, spectral clustering, and connected component analysis.
+- 2. Data Stream Mining Foundations
+    - Streaming Constraints: Infinite volume, single-pass processing, bounded memory, and concept drift.
+    - Approximation Algorithms: Reservoir sampling for representative sample maintenance.
+    - Streaming Queries: Sliding window models, DGIM bit counting, and Count-Min sketch frequency estimation.
+</draft>
+
 CS5228 Data Stream Mining — Structured Notes
 
 Quick Recap — Graph Mining

@@ -183,8 +183,8 @@
     - 拆分章節單元，評估是否建立主題式子筆記（如 Word Representation, Sequence Labeling, Topic Models, Transformer in NLP）。
     - 規範化標題層級與 LaTeX 公式，補齊每篇的 `<takeaways>` 與 `<reviewkit>` 驗證題庫。
 
-### 2. NUS CS5228: Knowledge Discovery and Data Mining
-- [ ] 整理並發布 `notes/NUS CS5228: Knowledge Discovery and Data Mining/`
+### 2. NUS CS5228 Knowledge Discovery and Data Mining
+- [ ] 整理並發布 `notes/NUS CS5228 Knowledge Discovery and Data Mining/`
   - **核心內容**：資料前處理、關聯規則挖掘（Apriori / FP-Growth）、分類算法、聚類方法、離群點檢測與高維數據降維。
   - **待辦事項**：將原始講義轉化為系統性知識架構，與既有機器學習分群系列筆記建立站內連結。
 
@@ -207,6 +207,16 @@
 - [ ] 整理並發布 `notes/NUS IS5126 Hands-on with Applied Analytics/`
   - **核心內容**：商業與實務數據分析工作流、特徵工程實戰、預測模型評估、時間序列分析與 A/B Testing 架構。
   - **待辦事項**：收斂實務分析經驗與工程踩坑紀錄，提煉為可重用的分析方法論。
+
+### 7. NUS CS5224: Cloud Computing
+- [ ] 整理並發布 `notes/NUS CS5224 Cloud Computing/`
+  - **核心內容**：雲端計算基礎、NIST 參考架構、負載均衡與資源池化架構、資料中心硬體與散熱能耗（PUE）、虛擬化技術與容器架構（Docker）、雲端應用架構與 RESTful 設計。
+  - **待辦事項**：已彙整為以 Week 1–6 劃分的大師筆記，持續補強各章節的實務系統設計案例。
+
+### 8. NUS CS5446: Reinforcement Learning and Sequential Decision Making
+- [ ] 整理並發布 `notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/`
+  - **核心內容**：感知-決策閉環與狀態空間搜尋、古典符號規劃（STRIPS/PDDL/SATPlan）、啟發式搜尋與階層任務網路（HTN）、不確定性下的理性決策（決策論、效用論、博弈論）、大模型輔助規劃與負責任 AI 治理。
+  - **待辦事項**：已彙整為以 Week 1–6 劃分的大師筆記，持續深化序列決策與強化學習理論連結。
 
 ---
 

@@ -14,7 +14,17 @@ LastModified: 2026-09-12
 </meta>
 
 NUS CS5246 Text Mining
-Week 1
+## Week 1
+
+<draft>
+- 1. Working with Text — Core Challenges
+    - Text as Unstructured Data: Variable sequence length, multiple encoding formats, and semi-structured metadata.
+    - Linguistic Complexities: Syntactic ambiguity, word sense polysemy, redundancy, and contextual drift.
+- 2. Text Representation Paradigms
+    - String vs. Semantic Vectors: From character sequences and token streams to semantic embeddings.
+    - Information Retrieval vs. Text Mining: Exact pattern matching vs. extracting non-trivial latent knowledge.
+</draft>
+
 CS5246 Text Mining — Lecture 1 Notes
 
 Working with Text — Challenges
@@ -252,7 +262,18 @@ Text as written natural language
 - Writing:
   - Visual representation of spoken language
   - Uses letters, digits, punctuation, and whitespace
-Week 2
+## Week 2
+
+<draft>
+- 1. Pattern Matching & Substring Extraction
+    - Task Definition: Substring identification, text validation, entity extraction, and string replacement.
+- 2. Regular Expressions (RegEx) Mechanics
+    - Grammar & Syntax: Metacharacters, character classes, quantifiers (greedy vs. lazy), and capture groups.
+    - Domain Application Patterns: Regex extraction for hashtags, email addresses, phone numbers, and URLs.
+- 3. Algorithmic Pattern Search
+    - Exact Matching Algorithms: Naive search, Knuth-Morris-Pratt (KMP), and finite automata representations.
+</draft>
+
 Basic Pattern / Substring Matching
 
 Overview
@@ -924,7 +945,18 @@ Summary of Text Preprocessing
     - Stemming
     - Lemmatization
 - Choice of normalization depends on task and language
-Week 3
+## Week 3
+
+<draft>
+- 1. Text Preprocessing & Normalization
+    - Tokenization: Word segmentation, whitespace boundaries, punctuation handling, and compound terms.
+    - Case Folding & Stopwords: Frequency filtering, information density, and vocabulary trimming.
+    - Stemming & Lemmatization: Rule-based suffix stripping (Porter Stemmer) vs. dictionary-backed morphological lemmatization.
+- 2. Vector Space Representations
+    - Bag of Words (BoW): Word frequency counting and sparse document vectors.
+    - TF-IDF Weighting: Term Frequency and Inverse Document Frequency penalization for ubiquitous words.
+</draft>
+
 Text as Data — Challenges
 - Text = sequence of words (tokens)
 - Many algorithms require:
@@ -1052,7 +1084,18 @@ Summary
 - Enables similarity computations, keyword extraction, document search, clustering, classification
 - Dense embeddings provide more semantic power and efficiency
 - Applications: text classification, sentiment analysis, search, summarization
-Week 4
+## Week 4
+
+<draft>
+- 1. Text Clustering & Distance Metrics
+    - Similarity Formulations: Cosine similarity, Jaccard distance, and Euclidean distance in sparse vector spaces.
+- 2. Hierarchical Clustering in Text Mining
+    - AGNES (Agglomerative Nesting): Proximity matrix initialization, iterative pair merging, and linkage trade-offs.
+    - Linkage Mechanics: Single linkage, complete linkage, average linkage, and centroid clustering on text vectors.
+- 3. Cluster Inspection & Evaluation
+    - Topical Coherence: Identifying central vocabulary per cluster and evaluating dendrogram separation.
+</draft>
+
 CS5246 Text Mining — Lecture 4  
 
 AGNES — Basic Algorithm
@@ -1443,7 +1486,19 @@ Summary — Lecture 4
   - Performance considerations for large corpora
   - Optimization techniques (sparse matrices, efficient search structures)
 - Key idea: focus on relative similarities between documents for analysis
-Week 5
+## Week 5
+
+<draft>
+- 1. Text Classification Paradigms
+    - Supervised Categorization: Mapping documents to discrete sentiment, topic, or genre labels.
+- 2. Classical Machine Learning Classifiers
+    - Naive Bayes: Generative probabilistic model, conditional independence assumption, and Laplace smoothing.
+    - k-Nearest Neighbors (k-NN): Non-parametric instance-based voting and distance metric sensitivities.
+    - Support Vector Machines (SVM): Linear hyperplanes, margin maximization, and effective high-dimensional text separation.
+- 3. Evaluation Metrics
+    - Precision, Recall, Macro/Micro-F1, and Confusion Matrix analysis on imbalanced text corpora.
+</draft>
+
 CS5246 Text Mining — Lecture 5: Text Classification (Classic ML to Deep Learning)
 
 Text classification overview
@@ -2005,7 +2060,17 @@ Examples & Observations
 - K-Means on random or high-dimensional sparse data (e.g., document vectors) often shows poor internal measure signals.  
 - Elbow curve and silhouette scores may not reveal clear cluster structure in text data.  
 - For text clustering, internal measures can be less informative due to high dimensionality and sparsity.
-Week 6
+## Week 6
+
+<draft>
+- 1. Text Representation Recap & Tokenization Granularity
+    - Token Levels: Characters, subwords (Byte-Pair Encoding, WordPiece), whole words, and n-gram phrases.
+    - Corpus Data Structures: Sets, multisets, and ordered token sequences.
+- 2. Distributed Representations & Word Embeddings
+    - Distributional Hypothesis: Words in similar contexts possess similar semantic meanings.
+    - Word2Vec Foundations: Continuous Bag of Words (CBOW) and Skip-Gram architectures with negative sampling.
+</draft>
+
 Text Preprocessing Recap
 
 Text as string represents natural language as written.  
@@ -2231,7 +2296,17 @@ Applications:
 - Word sense disambiguation  
 - Text simplification and summarization  
 - Information extraction and knowledge graph construction
-Week 7
+## Week 7
+
+<draft>
+- 1. Neural Networks for Text Processing
+    - Multilayer Perceptron (MLP): Dense layers, non-linear activation functions (ReLU, Sigmoid), and backpropagation.
+    - Fixed-Length Input Bottleneck: Limitations of flat vector BoW/TF-IDF inputs to feedforward networks.
+- 2. Convolutional Neural Networks (CNN) for Text
+    - 1D Convolutions: Sliding filter windows over token embeddings to capture local n-gram feature patterns.
+    - Pooling Layers: Max-over-time pooling for extracting dominant semantic features regardless of sentence position.
+</draft>
+
 Feedforward Neural Network (MLP)
 - Structure:
   - Input layer → hidden layers → output layer
@@ -2930,7 +3005,18 @@ Quick Quiz Insights
   - Cannot fully capture meaning
   - Example:
     - Opposite sentiment words may appear similar
-Week 8
+## Week 8
+
+<draft>
+- 1. Sentiment Analysis Foundations
+    - Task Definition: Extracting subjective opinion, affective states, and polarity (positive/negative/neutral).
+    - Core Components: Opinion holder, target entity, aspect, and emotional valence.
+- 2. Sentiment Analysis Methodologies
+    - Lexicon-Based Approaches: Sentiment dictionaries (SentiWordNet, VADER), polarity scoring, and negation handling.
+    - Machine Learning Classifiers: Feature engineering with n-grams, POS tags, and sentiment-aware embeddings.
+    - Aspect-Based Sentiment Analysis (ABSA): Fine-grained sentiment extraction tied to specific product features.
+</draft>
+
 Sentiment & Sentiment Analysis
 
 Basic Definitions
@@ -3551,7 +3637,18 @@ Key summary points
 - Word embeddings are not inherently sentiment-aware
 - ABSA addresses fine-grained sentiment tied to specific targets
 - Modern systems increasingly rely on attention and multitask learning
-Week 9
+## Week 9
+
+<draft>
+- 1. Named Entity Recognition (NER)
+    - Task Framing: Sequence labeling to identify mentions of predefined categories (Person, Location, Organization).
+    - Tagging Schemes: IOB/BIO, BIOES formats for marking entity boundaries.
+- 2. Sequence Labeling Models
+    - Hidden Markov Models (HMM) & Maximum Entropy Markov Models (MEMM).
+    - Conditional Random Fields (CRF): Global sequence probability normalization and label transition modeling.
+    - BiLSTM-CRF: Bidirectional recurrent representations coupled with structured CRF sequence decoding.
+</draft>
+
 CS5246 Week 9
 
 CS5246 Text Mining — Lecture 9 (Named Entity Recognition)
@@ -4381,7 +4478,18 @@ Neural ML:
 Core takeaway:
 - NER has evolved from:
   feature engineering → probabilistic sequence models → neural representation learning with structured decoding
-Week 10
+## Week 10
+
+<draft>
+- 1. Entity Resolution & Coreference Resolution
+    - Linguistic Redundancy: Anaphora, pronouns, aliases, and referential expressions across documents.
+    - Coreference vs. Anaphora: Pointing to previous discourse entities vs. identity equivalence relations.
+- 2. Coreference Resolution Systems
+    - Mention Detection: Identifying noun phrases and candidate referents.
+    - Mention-Pair & Entity-Mention Models: Binary classification of coreference links vs. cluster ranking.
+    - Neural Coreference Resolution: Span representations and end-to-end antecedent scoring.
+</draft>
+
 - Repetition in language: referring to the same entity or concept multiple times is very common in natural language
 - Humans avoid naive repetition by using pronouns and alternative expressions instead of repeating full names
 - Example contrast:
@@ -4847,7 +4955,18 @@ Week 10
   - Traditional ML relies on engineered lexical, syntactic, and semantic features
   - Deep learning replaces manual features with learned representations
   - Core challenge remains linguistic variability and limited supervision
-Week 11
+## Week 11
+
+<draft>
+- 1. Recurrent Neural Networks (RNN) & Sequence Modeling
+    - Sequential Recurrence: Hidden state transitions across variable-length time steps.
+    - Fundamental Bottlenecks: Vanishing and exploding gradients during backpropagation through time (BPTT).
+- 2. Gated Architectures: LSTM & GRU
+    - Long Short-Term Memory (LSTM): Cell state highways, input gate, forget gate, and output gate mechanics.
+    - Gated Recurrent Unit (GRU): Simplified update and reset gate mechanisms for efficient sequence modeling.
+    - Sequence-to-Sequence (Seq2Seq): Encoder-decoder architectures and the fixed-length vector information bottleneck.
+</draft>
+
 RNN — Limitations with Long Sequences
 
 Training Issues
@@ -5257,7 +5376,18 @@ Key Takeaways
 - Transformer architecture is the foundation of:
   - Modern NLP systems
   - Large Language Models (LLMs)
-Week 12
+## Week 12
+
+<draft>
+- 1. Attention Mechanism & Foundations
+    - Breaking the Bottleneck: Dynamic soft-alignment weights between target decoder and source encoder hidden states.
+    - Scaled Dot-Product Attention: Query, Key, Value matrix formulation and softmax normalization.
+- 2. The Transformer Architecture
+    - Multi-Head Attention: Projecting Q, K, V into multiple subspaces to attend to information at different positions.
+    - Positional Encodings: Injecting sequence order into non-recurrent parallel architectures.
+    - Pretrained Language Models: Self-supervised pretraining (BERT masked LM, GPT causal LM) and fine-tuning paradigms.
+</draft>
+
 Transformer architecture — core ideas
 
 - Encoder–decoder without recurrence or convolution  
