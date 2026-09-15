@@ -1,3 +1,18 @@
+<meta>
+Title: 化學反應速率與平衡完整整理
+Summary: 完整彙整化學反應速率、碰撞學說、活化能、速率定律與化學平衡常數等核心概念之化學重點筆記。
+Slug: chemistry
+Output: notes/chemistry/chemistry.html
+CanonicalId: chemistry
+Style: default
+EstimatedReadingTime: true
+Lang: zh-Hant
+Tags: Chemistry
+Status: drafting
+Published: 2026-09-13
+LastModified: 2026-09-13
+</meta>
+
 化學反應速率與平衡完整整理（擴充版）
 
 化學反應速率

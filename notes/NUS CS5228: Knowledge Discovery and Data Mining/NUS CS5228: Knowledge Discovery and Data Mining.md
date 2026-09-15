@@ -1,3 +1,18 @@
+<meta>
+Title: NUS CS5228: Knowledge Discovery and Data Mining
+Summary: Comprehensive lecture and study notes for NUS CS5228 Knowledge Discovery and Data Mining, covering data preprocessing, exploratory data analysis, clustering, classification, and association rule mining.
+Slug: nus-cs5228-knowledge-discovery-and-data-mining
+Output: notes/NUS CS5228: Knowledge Discovery and Data Mining/NUS CS5228: Knowledge Discovery and Data Mining.html
+CanonicalId: nus-cs5228-knowledge-discovery-and-data-mining
+Style: default
+EstimatedReadingTime: true
+Lang: en
+Tags: Data Mining, Clustering, Classification, Association Rules
+Status: drafting
+Published: 2026-09-12
+LastModified: 2026-09-12
+</meta>
+
 CS5228: Knowledge Discovery and Data Mining
 Week 1
 

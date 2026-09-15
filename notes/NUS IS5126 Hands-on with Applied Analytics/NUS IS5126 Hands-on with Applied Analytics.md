@@ -1,3 +1,18 @@
+<meta>
+Title: NUS IS5126: Hands-on with Applied Analytics
+Summary: Structured notes for NUS IS5126 Hands-on with Applied Analytics, covering batch normalization dynamics, GAN training stability, skip connections, bottlenecks, and production API workflows.
+Slug: nus-is5126-hands-on-with-applied-analytics
+Output: notes/NUS IS5126 Hands-on with Applied Analytics/NUS IS5126 Hands-on with Applied Analytics.html
+CanonicalId: nus-is5126-hands-on-with-applied-analytics
+Style: default
+EstimatedReadingTime: true
+Lang: en
+Tags: Machine Learning, Deep Learning, Applied Analytics
+Status: drafting
+Published: 2026-09-12
+LastModified: 2026-09-12
+</meta>
+
 NUS IS5126 Hands-on with Applied Analytics
 Structured Notes on BatchNorm, GAN Training, Skip Connections, Bottlenecks, and FastAPI in Data Science Workflows
 

@@ -1,3 +1,18 @@
+<meta>
+Title: NUS CS5246: Text Mining
+Summary: Comprehensive lecture and study notes for NUS CS5246 Text Mining, covering text preprocessing, linguistic ambiguity, information extraction, vector semantics, and natural language processing pipelines.
+Slug: nus-cs5246-text-mining
+Output: notes/NUS CS5246 Text Mining/NUS CS5246 Text Mining.html
+CanonicalId: nus-cs5246-text-mining
+Style: default
+EstimatedReadingTime: true
+Lang: en
+Tags: NLP, Data Mining, Information Extraction, Transformers
+Status: drafting
+Published: 2026-09-12
+LastModified: 2026-09-12
+</meta>
+
 NUS CS5246 Text Mining
 Week 1
 CS5246 Text Mining — Lecture 1 Notes

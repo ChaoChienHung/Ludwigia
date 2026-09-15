@@ -1,0 +1,2795 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NUS IS5126: Hands-on with Applied Analytics — Ludwig</title>
+  <meta name="garden:tags" content="Machine Learning, Deep Learning, Applied Analytics">
+  <meta name="garden:summary" content="Structured notes for NUS IS5126 Hands-on with Applied Analytics, covering batch normalization dynamics, GAN training stability, skip connections, bottlenecks, and production API workflows.">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.machine_learning,concept.deep_learning,concept.applied_analytics">
+  <meta name="site:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.applied_analytics&quot;:{&quot;en&quot;:&quot;Applied Analytics&quot;,&quot;zh-Hant&quot;:&quot;應用分析&quot;,&quot;zh-Hans&quot;:&quot;应用分析&quot;}}">
+  <meta name="site:canonical_id" content="nus-is5126-hands-on-with-applied-analytics">
+  <meta name="site:published_at" content="2026-09-12">
+  <meta name="site:last_modified_at" content="2026-09-12">
+  <meta name="site:reading_time_minutes" content="77">
+  <meta name="site:source" content="notes/NUS IS5126 Hands-on with Applied Analytics/NUS IS5126 Hands-on with Applied Analytics.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">NUS IS5126: Hands-on with Applied Analytics</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#explanation">Explanation:</a>
+<a class="note-toc-link level-1" href="#summary">Summary:</a>
+<a class="note-toc-link level-1" href="#key-assumptions-of-linear-regression">📊 Key Assumptions of Linear Regression</a>
+<a class="note-toc-link level-2" href="#1-linearity">1. 📈 Linearity</a>
+<a class="note-toc-link level-2" href="#2-independence-of-errors">2. 🔁 Independence of Errors</a>
+<a class="note-toc-link level-2" href="#3-homoscedasticity">3. 📉 Homoscedasticity</a>
+<a class="note-toc-link level-2" href="#4-normality-of-errors">4. 📊 Normality of Errors</a>
+<a class="note-toc-link level-2" href="#5-no-multicollinearity">5. 🔀 No Multicollinearity</a>
+<a class="note-toc-link level-2" href="#6-no-endogeneity-optional-but-important">6. ⚠️ No Endogeneity *(Optional but Important)*</a>
+<a class="note-toc-link level-2" href="#summary-table">✅ Summary Table</a>
+<a class="note-toc-link level-2" href="#key-takeaway">🧠 Key Takeaway</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">NUS IS5126 Hands-on with Applied Analytics Structured Notes on BatchNorm, GAN Training, Skip Connections, Bottlenecks, and FastAPI in Data Science Workflows</p>
+
+<p class="mb-3">Batch Normalization (BatchNorm)</p>
+
+<ul class="note-list">
+<li>Applied during both training and inference.</li>
+<li>Training mode:
+<ul class="note-list">
+<li>Uses batch statistics (mean and variance of the current mini-batch).</li>
+<li>Normalizes activations using batch statistics.</li>
+<li>Updates running averages of mean and variance to estimate population statistics.</li>
+</ul></li>
+<li>Inference mode:
+<ul class="note-list">
+<li>Uses running mean and variance accumulated during training.</li>
+<li>Does not rely on batch statistics.</li>
+</ul></li>
+<li>Helps stabilize training, accelerate convergence, and reduce internal covariate shift.</li>
+</ul>
+
+<p class="mb-3">GAN Training Dynamics</p>
+
+<ul class="note-list">
+<li>If the discriminator becomes too powerful too early:
+<ul class="note-list">
+<li>It easily distinguishes real vs fake samples.</li>
+<li>Output saturates near 0 or 1.</li>
+<li>Generator receives vanishing gradients and cannot learn effectively.</li>
+</ul></li>
+<li>This can lead to non-convergence or mode collapse.</li>
+<li>Balanced training between generator and discriminator is crucial for stable GAN training.</li>
+</ul>
+
+<p class="mb-3">Skip Connections</p>
+
+<ul class="note-list">
+<li>Technique used in deep networks (e.g., ResNet) to allow direct information flow between layers.</li>
+<li>Advantages:
+<ul class="note-list">
+<li>Facilitate gradient flow to earlier layers, reducing vanishing gradient problems.</li>
+<li>Enable deeper networks to learn refinements rather than re-learning all features.</li>
+<li>Promote parameter reuse, as layers can choose to skip or refine previous transformations.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Bottlenecks in Deep Networks</p>
+
+<ul class="note-list">
+<li>Purpose: control width and enable scalable capacity.</li>
+<li>Typical implementation:
+<ul class="note-list">
+<li>Reduce feature map dimensionality before expensive operations, then expand again.</li>
+<li>Example: ResNet Bottleneck block (1x1 reduction → 3x3 operation → 1x1 expansion).</li>
+</ul></li>
+<li>Benefits:
+<ul class="note-list">
+<li>Reduces computational cost.</li>
+<li>Encourages compact, information-dense representations.</li>
+<li>Supports deeper networks without exploding parameter count.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">FastAPI for Reusable Feature Engineering</p>
+
+<ul class="note-list">
+<li>Typed endpoints via Pydantic models:
+<ul class="note-list">
+<li>Enforces input/output schemas and type validation.</li>
+<li>Automatically parses and converts data.</li>
+<li>Provides auto-generated API documentation (OpenAPI/Swagger).</li>
+<li>Makes feature engineering logic reusable, stable, and versioned across systems.</li>
+</ul></li>
+<li>Facilitating Batch Scoring:
+<ul class="note-list">
+<li>FastAPI endpoints can trigger batch jobs (e.g., Spark, Airflow, Databricks).</li>
+<li>Example workflow:</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">""" POST /batch_score  # Trigger batch scoring job Returns: job_id</p>
+
+<p class="mb-3">GET /batch_score/{job_id}/status  # Check job status Returns: running, completed, or failed</p>
+
+<p class="mb-3">GET /batch_score/{job_id}/results  # Fetch scored results """</p>
+
+<ul class="note-list">
+<li>Provides remote triggering, monitoring, and result retrieval.</li>
+<li>Integrates batch inference into structured, reusable microservices.</li>
+<li>Week 1: Introduction to Data Analytics &amp; AI in Analytics</li>
+<li>What is Data Analytics?
+<ul class="note-list">
+<li>Definition: Collecting, cleaning, and analyzing raw data to uncover insights and support decision-making.</li>
+<li>Goal: Transform large, complex datasets into actionable information.</li>
+<li>Purpose: Guides strategy, operations, and real-world solutions.</li>
+<li>Importance:
+<ul class="note-list">
+<li>Identifies patterns and trends</li>
+<li>Enables evidence-based decisions</li>
+<li>Supports prediction, optimization, and innovation</li>
+</ul></li>
+</ul></li>
+<li>Data Pipeline Overview
+<ul class="note-list">
+<li>Flow: Real World → Collection → Raw Data → Import → Database → Analyze → Report</li>
+<li>Data Funnel: Raw → Cleaned → Transformed → Prepared → Analyzed</li>
+<li>Key Point: Analysts should understand the entire pipeline to tell a coherent, data-driven story.</li>
+</ul></li>
+<li>Traditional Organizational Roles in Analytics
+<ul class="note-list">
+<li>Sequence: Ops → Developers &amp; Engineers → DBAs → Analysts → Managers</li>
+<li>Business analysts operate across all stages to influence strategic decisions.</li>
+<li>Analysts should be familiar with the pipeline from data collection to reporting.</li>
+</ul></li>
+<li>Applied Analytics: Multidisciplinary &amp; Practical
+<ul class="note-list">
+<li>Definition: Systematic use of data analysis, statistical methods, mathematical models, and computational tools to extract meaningful insights.</li>
+<li>Focus: Real-world applications, solving practical problems, supporting informed decision-making.</li>
+<li>Examples by Domain:
+<ul class="note-list">
+<li>Retail: Decision trees for store inventory performance</li>
+<li>Healthcare: Predict disease spread patterns, patient admissions, improve care</li>
+<li>Transportation: Traffic data analysis to optimize infrastructure</li>
+<li>Social Media: Sentiment analysis to gauge public opinion</li>
+<li>Finance: Investment portfolio optimization, fraud detection, anti-money laundering</li>
+<li>E-commerce: Personalized recommendations</li>
+<li>Agriculture: Increase crop yields using data</li>
+<li>Marketing: Forecast demand, optimize strategies</li>
+<li>Risk Mitigation: Demographic analysis for store placement</li>
+</ul></li>
+</ul></li>
+<li>Tools and Technologies
+<ul class="note-list">
+<li>Machine Learning (ML)
+<ul class="note-list">
+<li>Scikit-learn: Python library for ML, model building, training, evaluation</li>
+</ul></li>
+<li>Generative AI in Analytics
+<ul class="note-list">
+<li>Generates new content (text, images, code, video) from dataset patterns</li>
+<li>Benefits: Speeds workflows, generates synthetic data, provides natural-language explanations</li>
+</ul></li>
+<li>Traditional ML vs Generative AI:
+<ul class="note-list">
+<li>ML: Predict/classify, uses labeled data, outputs numbers/categories</li>
+<li>Generative AI: Generates new content, uses unlabeled data, outputs text/images/code/video</li>
+<li>Integration:
+<ul class="note-list">
+<li>ML forecasts patterns → Generative AI explains results</li>
+<li>Generative AI generates synthetic data → improves ML training</li>
+<li>ML identifies trends → AI summarizes in plain language</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Generative AI Enhancements in Analytics
+<ul class="note-list">
+<li>Speeds up prep: Automates cleaning, handles missing values, detects anomalies</li>
+<li><strong>Synthetic</strong> data: Produces realistic, privacy-safe samples</li>
+<li>Feature engineering: Suggests important/unimportant features</li>
+<li>Natural language insights: Summarizes trends and results</li>
+<li>Strategy support: Simulates scenarios, identifies patterns</li>
+</ul></li>
+<li>Principles for Responsible AI Use
+<ul class="note-list">
+<li>Use AI for early ideas, not final answers</li>
+<li>Critically evaluate outputs and verify accuracy</li>
+<li>Acknowledge AI usage in assignments</li>
+<li>Avoid verbatim copying; rewrite and add context</li>
+<li>Maintain original thought; AI should complement, not replace</li>
+</ul></li>
+<li>AI-Powered Tools Landscape
+<ul class="note-list">
+<li>Asynchronous Coding Agents:
+<ul class="note-list">
+<li>Paid: GitHub Copilot, Cursor, Google Jules</li>
+<li>Free: AutoGPT, OpenHands, Sweep</li>
+<li>Use: Auto code/test generation, fix pipelines, autonomous operation</li>
+</ul></li>
+<li>Chat-based Data Analysis Tools:
+<ul class="note-list">
+<li>Paid: Power BI Copilot, Tableau Pulse, Snowflake Cortex Analyst, Databricks Genie</li>
+<li>Free: Metabase, Vanna</li>
+<li>Use: Ask natural language questions, get charts/explanations</li>
+</ul></li>
+<li>Table Data Modeling Tools:
+<ul class="note-list">
+<li>Paid: H2O AutoML</li>
+<li>Free: AutoGluon, TabPFN, MLJar, Auto-sklearn, LightAutoML</li>
+<li>Use: Fast model building, predictive analytics</li>
+</ul></li>
+<li>Smart Data Collection Tools:
+<ul class="note-list">
+<li>Crawl4AI, Firecrawl, Singer.io, OpenMetadata</li>
+<li>Use: Web scraping, scheduled API pulls, automate data collection</li>
+</ul></li>
+<li>AI-Powered Data Storage &amp; Search:
+<ul class="note-list">
+<li>Paid: Pinecone, Weaviate</li>
+<li>Free: Chroma, Milvus, Vespa</li>
+<li>Use: Vector storage for semantic search, efficient AI retrieval</li>
+</ul></li>
+<li>Note: Crawl4AI is not AI, just a data extraction tool for analytics pipelines.</li>
+</ul></li>
+<li>Case Study: Retail Price Monitoring
+<ul class="note-list">
+<li>Scenario: Retail shop monitors competitors’ prices &amp; detects unusual sales patterns.</li>
+<li>Workflow:
+<ul class="note-list">
+<li>Collect Data: Crawl4AI scrapes competitor pricing</li>
+<li>Store Data: Save in Chroma (semantic vector DB)</li>
+<li>Ask Questions: Vanna converts natural language queries to DB queries</li>
+<li>Make Predictions: TabPFN or AutoGluon detects price anomalies</li>
+<li>Fix Issues: OpenHands automates pipeline corrections</li>
+<li>Visualize: Build dashboards with Metabase</li>
+<li>Sentiment Analysis: Gauge customer opinions; inform product decisions</li>
+</ul></li>
+</ul></li>
+<li>Sentiment Analysis
+<ul class="note-list">
+<li>Definition: NLP technique to identify/extract emotional tone or opinion from text</li>
+<li>Use: Frequently applied in marketing and product design to understand public perception</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Week 1: Introduction to Data Analytics &amp; AI in Analytics</p>
+
+<p class="mb-3">What is Data Analytics? Definition The practice of collecting, cleaning, and analyzing raw data to uncover meaningful insights and support decision-making. Goal: Transform large, complex datasets into actionable information.</p>
+
+<p class="mb-3">Purpose Guides strategy, operations, and real-world solutions.</p>
+
+<p class="mb-3">Why It Matters</p>
+
+<ul class="note-list">
+<li>Identifies patterns and trends</li>
+<li>Enables evidence-based decisions</li>
+<li>Supports prediction, optimization, and innovation</li>
+</ul>
+
+<p class="mb-3">Data Pipeline Overview Flow Real World → Collection → Raw Data → Import → Database → Analyze → Report</p>
+
+<p class="mb-3">Data Funnel Raw → Cleaned → Transformed → Prepared → Analyzed</p>
+
+<p class="mb-3">Key Point Analysts should understand the entire pipeline to tell a coherent, data-driven story.</p>
+
+<p class="mb-3">Traditional Organizational Roles in Analytics Ops → Developers &amp; Engineers → DBAs → Analysts → Managers Business analysts operate across all stages, using data to influence strategic decisions. Analysts should be familiar with the pipeline from data collection to reporting.</p>
+
+<p class="mb-3">Applied Analytics: Multidisciplinary &amp; Practical Definition Systematic use of data analysis, statistical methods, mathematical models, and computational tools to extract meaningful insights from complex datasets.</p>
+
+<p class="mb-3">Focus</p>
+
+<ul class="note-list">
+<li>Real-world applications</li>
+<li>Solving practical problems</li>
+<li>Supporting informed decision-making</li>
+</ul>
+
+<p class="mb-3">Examples</p>
+
+<ul class="note-list">
+<li>Retail: Decision trees to analyze store inventory performance</li>
+<li>Healthcare: Predict disease spread patterns, patient admissions, improve care</li>
+<li>Transportation: Traffic data analysis to optimize infrastructure</li>
+<li>Social Media: Sentiment analysis to gauge public opinion</li>
+<li>Finance: Optimizing investment portfolios, fraud detection, anti-money laundering</li>
+<li>E-commerce: Personalized recommendations</li>
+<li>Agriculture: Increasing crop yields with data</li>
+<li>Marketing: Forecasting demand, optimizing strategies</li>
+<li>Risk Mitigation: Demographic analysis for store placement</li>
+</ul>
+
+<p class="mb-3">Tools and Technologies</p>
+
+<ul class="note-list">
+<li>Machine Learning: Scikit-learn for model building, training, evaluation</li>
+<li>Generative AI: Creates new content (text, images, code, video) from patterns in large datasets</li>
+</ul>
+
+<p class="mb-3">Benefits: Speeds workflows, generates synthetic data, provides natural-language explanations</p>
+
+<p class="mb-3">Traditional ML vs Generative AI</p>
+
+<ul class="note-list">
+<li>Goal: ML predicts/classifies, AI generates new content</li>
+<li>Data: ML uses labeled data, AI uses unlabeled data</li>
+<li>Output: ML outputs numbers or categories, AI outputs text, images, code, video</li>
+<li>Integration: ML forecasts patterns → Generative AI explains results; AI-generated data improves ML training</li>
+</ul>
+
+<p class="mb-3">Generative AI Enhancements in Analytics</p>
+
+<ul class="note-list">
+<li>Speeds up prep: Automates cleaning, missing values, anomaly detection</li>
+<li><strong>Synthetic</strong> data: Generates realistic, privacy-safe samples</li>
+<li>Feature engineering: Suggests important/unimportant features</li>
+<li>Natural language insights: Summarizes trends and results</li>
+<li>Strategy support: Simulates scenarios, finds patterns</li>
+</ul>
+
+<p class="mb-3">Principles for Responsible AI Use</p>
+
+<ul class="note-list">
+<li>Use AI for early ideas, not final answers</li>
+<li>Critically evaluate AI outputs; verify accuracy</li>
+<li>Acknowledge AI usage in assignments</li>
+<li>Avoid copying verbatim; rewrite and add context</li>
+<li>Keep original thought as core; AI should complement</li>
+</ul>
+
+<p class="mb-3">AI-Powered Tools Landscape</p>
+
+<ul class="note-list">
+<li>Asynchronous Coding Agents: GitHub Copilot, Cursor, AutoGPT, OpenHands; auto code/test generation</li>
+<li>Chat-based Data Analysis Tools: Power BI Copilot, Tableau Pulse, Metabase; natural language queries → charts/explanations</li>
+<li>Table Data Modeling Tools: H2O AutoML, AutoGluon; fast model building, predictive analytics</li>
+<li>Smart Data Collection Tools: Crawl4AI, Firecrawl; web scraping, automated data collection</li>
+<li>AI-Powered Data Storage &amp; Search: Pinecone, Chroma; vector storage for semantic search</li>
+</ul>
+
+<p class="mb-3">Case Study: Retail Price Monitoring</p>
+
+<ul class="note-list">
+<li>Collect Data: Crawl4AI to scrape competitor pricing</li>
+<li>Store Data: Save in Chroma (semantic vector DB)</li>
+<li>Ask Questions: Vanna converts natural language queries to DB queries</li>
+<li>Make Predictions: TabPFN or AutoGluon detects price anomalies</li>
+<li>Fix Issues: OpenHands automates pipeline corrections</li>
+<li>Visualize: Build dashboards with Metabase</li>
+<li>Sentiment Analysis: Gauge customer opinions; inform product decisions</li>
+</ul>
+
+<p class="mb-3">Sentiment Analysis Natural language processing technique to extract emotional tone from text. Used in marketing and product design to understand public perception.</p>
+
+<p class="mb-3">Week 2: Data Extraction, Preprocessing &amp; EDA Data Extraction Methods</p>
+
+<p class="mb-3">Web Scraping Definition: Programmatically extract data from publicly accessible websites Legal considerations: Verify website terms; some sites prohibit scraping Tools &amp; Libraries Workflow:</p>
+
+<ul class="note-list">
+<li>requests: Download HTML content</li>
+<li>BeautifulSoup: Parse HTML, extract elements via tags, IDs, classes, CSS selectors</li>
+<li><strong>Store</strong> data: Pandas DataFrame, CSV, or database</li>
+</ul>
+
+<p class="mb-3">HTML Basics:</p>
+
+<ul class="note-list">
+<li>Markup language using tags (head, body, p, title, etc.)</li>
+<li>IDs: unique, Classes: non-unique, Tags can be nested</li>
+</ul>
+
+<p class="mb-3">Common Extraction Techniques:</p>
+
+<ul class="note-list">
+<li>find_all(tag): retrieves all occurrences of a tag</li>
+<li>Select by ID: soup.find_all("p", id="id_name")</li>
+<li>Select by Class: soup.find_all("div", class_="class_name")</li>
+<li>CSS selectors: soup.select(".class"), soup.select("#id"), soup.select("div h2")</li>
+</ul>
+
+<p class="mb-3">Example:</p>
+
+<div class="note-markdown-block"><pre><code>import requests
+from bs4 import BeautifulSoup
+
+response = requests.get("https://en.wikipedia.org/wiki/National_University_of_Singapore
+")
+soup = BeautifulSoup(response.content, 'html.parser')
+print(soup.head.title.text)</code></pre></div>
+
+<p class="mb-3">Extract Table into Pandas:</p>
+
+<div class="note-markdown-block"><pre><code>import pandas as pd
+
+table = soup.find("table", class_="wikitable sortable")
+df = pd.read_html(str(table))[0]</code></pre></div>
+
+<p class="mb-3">Advanced Techniques:</p>
+
+<ul class="note-list">
+<li>Crawl4AI: Converts HTML to LLM-friendly Markdown/JSON, supports CSS/XPath, asynchronous crawling, headless, multi-URL concurrency</li>
+<li>Asynchronous crawling: Multiple pages requested/processed concurrently</li>
+<li>Headless browser: Runs browser actions without GUI</li>
+</ul>
+
+<p class="mb-3">APIs for Data Extraction Definition: Rules for software to communicate and share data Advantages: Structured, reliable, legal, consistent Workflow:</p>
+
+<ul class="note-list">
+<li>Obtain API key</li>
+<li>Send HTTP GET/POST request to endpoint</li>
+<li>Receive JSON response</li>
+<li>Convert JSON to Python dict or Pandas DataFrame</li>
+</ul>
+
+<p class="mb-3">Advanced LLM Integration:</p>
+
+<ul class="note-list">
+<li>Structured Outputs: Enforce schema with Pydantic → validated JSON → direct Pandas/database integration</li>
+<li>Function Calling: LLMs call external tools (APIs, SQL queries, business logic) → automated pipelines</li>
+</ul>
+
+<p class="mb-3">Data Pre-processing and Cleaning Tasks: Handle missing data, remove duplicates, correct inconsistencies, filter irrelevant data, encode categorical features, normalization/standardization, binning/discretization Handling Missing Data: Fill (mean, median, mode), drop rows, replace categorical with placeholder Handling Duplicates: df.duplicated(), df.drop_duplicates(inplace=True) Handling Inconsistencies: Standardize date formats, data types Filtering Rows/Columns: Select subset based on criteria Categorical Features: One-hot encoding, dummy variables Normalization: Rescale to [0,1] using MinMaxScaler Standardization: Center at 0, std=1 using StandardScaler Binning/Discretization: Convert continuous to discrete intervals (e.g., grade assignment)</p>
+
+<p class="mb-3">Exploratory Data Analysis (EDA) Purpose: Examine, summarize, visualize datasets, identify patterns, formulate hypotheses Data Types:</p>
+
+<ul class="note-list">
+<li>Categorical: nominal, ordinal</li>
+<li>Numerical: discrete, continuous</li>
+</ul>
+
+<p class="mb-3">Descriptive Statistics: Mean, median, mode, range, variance, std, IQR Exploring Categorical Data: Frequency tables, cross-tabulations Outlier Detection: Boxplots, scatterplots, mean ± 3*std, IQR method Multivariate Analysis: Correlation (Pearson, Spearman), heatmaps, pairplots</p>
+
+<p class="mb-3">Week 3: Introduction to Machine Learning: Concepts, Processes, and Applications</p>
+
+<p class="mb-3">What is Machine Learning?</p>
+
+<ul class="note-list">
+<li>Science of enabling computers to learn patterns and trends autonomously and iteratively.</li>
+<li><strong>Uses</strong> data from observations and real-world interactions.</li>
+<li>Automates model building; finds hidden insights without explicit step-by-step programming.</li>
+</ul>
+
+<p class="mb-3">Applications of Machine Learning</p>
+
+<ul class="note-list">
+<li>Fraud Detection</li>
+<li>Product Recommendations</li>
+<li>Natural Language Processing (NLP): Understand, process, and generate human language.</li>
+<li>Predicting Customer or Employee Churn</li>
+<li>Customer Segmentation: Identify subgroups for targeted marketing and personalization.</li>
+<li>Image Recognition &amp; Object Detection (Computer Vision)</li>
+<li>Dynamic Pricing Models: Adjust prices based on market conditions, demand, competitor pricing, and customer behavior.</li>
+<li>Financial Modeling</li>
+<li>Predictive Maintenance (e.g., manufacturing, aviation)</li>
+<li>Healthcare Analysis and Diagnostics</li>
+<li>Marketing Optimization</li>
+<li>Risk Management</li>
+<li>Supply Chain Forecasting</li>
+</ul>
+
+<p class="mb-3">Machine Learning Process</p>
+
+<ul class="note-list">
+<li>Workflow: Raw Data → Preprocessing (Data Cleaning) → Prepared Data → Learning Algorithm → Candidate Model → Model Validation → Chosen Model → Deployment</li>
+<li>Data Preprocessing: Cleaning, normalization, standardization, scaling</li>
+<li>Learning Algorithms: Iterative model training, candidate model evaluation, hyperparameter tuning</li>
+<li>Model Deployment: Deliver model for end-user or business use</li>
+</ul>
+
+<p class="mb-3">Types of Machine Learning</p>
+
+<ul class="note-list">
+<li>Supervised Learning: Trained on labeled data; predicts outcomes for unseen data
+<ul class="note-list">
+<li>Classification: Predict categorical outcomes</li>
+<li>Regression: Predict numerical outcomes</li>
+</ul></li>
+<li>Semi-Supervised Learning: Small labeled dataset + large unlabeled dataset; reduces labeling cost, improves accuracy</li>
+<li>Unsupervised Learning: Trained on unlabeled data; discovers hidden patterns
+<ul class="note-list">
+<li>Examples: Customer segmentation, anomaly detection, healthcare analysis</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Clustering Techniques (Unsupervised Learning)</p>
+
+<ul class="note-list">
+<li>K-Means: Partition data into K clusters; minimizes intra-cluster distance, maximizes inter-cluster distance; centroid = cluster center</li>
+<li>Hierarchical Clustering: Builds dendrogram to represent hierarchy; no need to predefine cluster count; merges clusters iteratively</li>
+</ul>
+
+<p class="mb-3">Supervised Learning Workflow</p>
+
+<ul class="note-list">
+<li><strong>Split</strong> data into training (labeled) and test sets</li>
+<li>Feature extraction: Convert raw data into feature matrix; target column = label</li>
+<li>Train model on training data</li>
+<li>Evaluate performance; adjust features or hyperparameters</li>
+<li>Select final model for predictions on new data</li>
+</ul>
+
+<p class="mb-3">Model Validation or Evaluation</p>
+
+<ul class="note-list">
+<li>Purpose: Assess generalization performance</li>
+<li>Train-Test Split: ~70% training, 30% test; random row split</li>
+<li>Train-Validation-Test Split: Training, validation, and test sets (e.g., 70-15-15); validation tunes hyperparameters</li>
+<li>K-Fold Cross-Validation: Divide dataset into K folds; train K times using K-1 folds for training, 1 for validation</li>
+</ul>
+
+<p class="mb-3">Confusion Matrix</p>
+
+<ul class="note-list">
+<li>Actual vs Predicted
+<ul class="note-list">
+<li>True Positive (TP): Correctly predicts positive</li>
+<li>True Negative (TN): Correctly predicts negative</li>
+<li>False Positive (FP, Type I Error): Incorrectly predicts positive</li>
+<li>False Negative (FN, Type II Error): Incorrectly predicts negative</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Metrics for Classification</p>
+
+<ul class="note-list">
+<li>Accuracy: (TP + TN) / Total; good for balanced datasets</li>
+<li>Precision: TP / (TP + FP); fewer false positives</li>
+<li>Recall / Sensitivity: TP / (TP + FN); fewer false negatives</li>
+<li>F1 Score: 2 <em> (Precision </em> Recall) / (Precision + Recall); useful for imbalanced datasets</li>
+</ul>
+
+<p class="mb-3">Metrics for Regression</p>
+
+<ul class="note-list">
+<li>Mean Squared Error (MSE)</li>
+<li>Root Mean Squared Error (RMSE)</li>
+<li>Mean Absolute Error (MAE)</li>
+<li>R-squared</li>
+</ul>
+
+<p class="mb-3">Supervised vs Unsupervised Learning</p>
+
+<ul class="note-list">
+<li>Supervised: Labeled data, predicts outcomes, guided by examples</li>
+<li>Unsupervised: No labels, discovers patterns, exploratory analysis</li>
+</ul>
+
+<p class="mb-3">Common Issues in Machine Learning</p>
+
+<ul class="note-list">
+<li>Imbalanced Datasets: Unequal class distribution can bias model</li>
+<li>Dirty Data: Missing, duplicated, irrelevant, or misformatted</li>
+<li>Feature Irrelevance: Features may not support problem statement</li>
+<li>Data preprocessing is critical for accuracy</li>
+</ul>
+
+<p class="mb-3">Supervised Learning – Regression</p>
+
+<ul class="note-list">
+<li>Ordinary Least Squares Linear Regression</li>
+<li>Lasso: Linear model with L1 regularization</li>
+<li>Ridge: Linear least squares with L2 regularization</li>
+<li>ElasticNet: Linear regression with combined L1 &amp; L2 regularization</li>
+<li>Decision Tree Regressor</li>
+<li>Random Forest Regressor</li>
+<li>Linear Support Vector Regression (SVR)</li>
+</ul>
+
+<p class="mb-3">Week 4: Introduction to Machine Learning: Unsupervised Learning, Clustering, Dimensionality Reduction &amp; Ensemble Methods</p>
+
+<p class="mb-3">📘 Unsupervised Learning &amp; Clustering</p>
+
+<ol class="mb-3">
+<li>Unsupervised Learning</li>
+</ol>
+
+<ul class="note-list">
+<li>Learns patterns from unlabeled data.</li>
+<li>No target labels to predict.</li>
+<li>Useful for large datasets or where labeling is costly.</li>
+<li>Goals: Discover hidden patterns, group similar points, reduce dimensionality.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Applications</li>
+</ol>
+
+<ul class="note-list">
+<li>Clustering: Group similar data points (customer segmentation, document clustering, image segmentation).</li>
+<li>Dimensionality Reduction: Reduce features while preserving information (PCA, t-SNE).</li>
+</ul>
+
+<ol class="mb-3">
+<li>k-Means Clustering</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>Partitions</strong> data into k clusters based on similarity.</li>
+<li>Minimizes distance to cluster centroid.</li>
+<li>Steps:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Choose k.</li>
+<li>Initialize centroids.</li>
+<li>Assign points to nearest centroid.</li>
+<li>Update centroids.</li>
+<li>Repeat until convergence.</li>
+<li>Choosing k</li>
+</ol>
+
+<ul class="note-list">
+<li>Elbow Method: Plot SSE vs k; choose elbow point.</li>
+<li>Silhouette Score: -1 to 1; higher = better clustering.</li>
+<li>Davies-Bouldin Index: Lower = better (compact, well-separated clusters).</li>
+</ul>
+
+<ol class="mb-3">
+<li>Hierarchical Clustering</li>
+</ol>
+
+<ul class="note-list">
+<li>Builds hierarchy instead of predefined k.</li>
+<li>Agglomerative: Bottom-up → merge closest clusters.</li>
+<li>Divisive: Top-down → split clusters.</li>
+<li>Dendrogram: Tree diagram showing cluster hierarchy.</li>
+<li>Cut dendrogram at threshold to get cluster count.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Python Libraries</li>
+</ol>
+
+<ul class="note-list">
+<li>NumPy, Pandas: Data handling</li>
+<li>Matplotlib: Visualization</li>
+<li>scikit-learn: KMeans, StandardScaler, Silhouette/Davies-Bouldin</li>
+<li>scipy.cluster.hierarchy: dendrogram, linkage, fcluster</li>
+</ul>
+
+<p class="mb-3">✅ Recap</p>
+
+<ul class="note-list">
+<li>Unsupervised learning = no labels, discover patterns.</li>
+<li>Clustering = group based on similarity.</li>
+<li>k-Means = centroid-based, requires k.</li>
+<li>Hierarchical = tree-based; visualized via dendrogram.</li>
+</ul>
+
+<hr>
+
+<p class="mb-3">📘 Dimensionality Reduction</p>
+
+<ol class="mb-3">
+<li>Dimensionality</li>
+</ol>
+
+<ul class="note-list">
+<li>Number of independent features.</li>
+<li>High dimensions → sparse data, harder pattern detection.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Curse of Dimensionality</li>
+</ol>
+
+<ul class="note-list">
+<li>Distances lose meaning; requires exponentially more data.</li>
+<li>Risk of overfitting.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Why Reduce Dimensions?</li>
+</ol>
+
+<ul class="note-list">
+<li>Efficiency, noise reduction, visualization, storage.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Feature Selection vs Feature Extraction</li>
+</ol>
+
+<ul class="note-list">
+<li>Selection: Keep important original features (correlation, mutual info, chi-square).</li>
+<li>Extraction: Create new features (e.g., PCA components).</li>
+</ul>
+
+<ol class="mb-3">
+<li>Techniques Overview</li>
+</ol>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Technique</th>
+<th>Type</th>
+<th>Use Case</th>
+<th>Strengths</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>PCA</td>
+<td>Linear</td>
+<td>Preprocessing</td>
+<td>Fast, interpretable</td>
+</tr>
+<tr>
+<td>t-SNE</td>
+<td>Non-linear</td>
+<td>Visualization</td>
+<td>Preserves local structure</td>
+</tr>
+<tr>
+<td>Autoencoders</td>
+<td>Non-linear</td>
+<td>Complex datasets</td>
+<td>Deep learning compatible</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<ol class="mb-3">
+<li>PCA (Principal Component Analysis)</li>
+</ol>
+
+<ul class="note-list">
+<li>Simplifies high-dimensional data, preserves variance.</li>
+<li>Steps:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Represent data as matrix.</li>
+<li>Compute covariance matrix.</li>
+<li>Eigen decomposition → eigenvalues/variance, eigenvectors/directions.</li>
+<li>Select top k eigenvectors → project data.</li>
+</ol>
+
+<ul class="note-list">
+<li>Applications: Image compression, gene expression.</li>
+</ul>
+
+<ol class="mb-3">
+<li>t-SNE</li>
+</ol>
+
+<ul class="note-list">
+<li>Non-linear visualization technique.</li>
+<li>Preserves local relationships.</li>
+<li>Converts high-dimensional distances → probabilities, maps to 2D/3D.</li>
+<li>Computationally expensive; mainly for visualization.</li>
+<li>Applications: MNIST digit visualization, customer segmentation.</li>
+</ul>
+
+<p class="mb-3">✅ Key Takeaways</p>
+
+<ul class="note-list">
+<li>Dimensionality reduction improves computation, noise reduction, visualization.</li>
+<li>PCA: linear, fast, for preprocessing.</li>
+<li>t-SNE: non-linear, for visualization.</li>
+</ul>
+
+<hr>
+
+<p class="mb-3">📘 Ensemble Methods</p>
+
+<ol class="mb-3">
+<li>Ensemble Learning</li>
+</ol>
+
+<ul class="note-list">
+<li>Combines multiple models to improve performance.</li>
+<li>Categories: Bagging, Boosting, Stacking.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Why Use Ensembles?</li>
+</ol>
+
+<ul class="note-list">
+<li>Reduce bias/variance, improve generalization, more robust.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Bias-Variance Trade-off</li>
+</ol>
+
+<ul class="note-list">
+<li>Bias = underfitting; Variance = overfitting</li>
+<li>Ensemble aims to balance bias &amp; variance.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Voting Ensembles</li>
+</ol>
+
+<ul class="note-list">
+<li>Hard Voting: majority class wins.</li>
+<li>Soft Voting: average probabilities; higher confidence dominates.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Bagging (Bootstrap Aggregating)</li>
+</ol>
+
+<ul class="note-list">
+<li>Create multiple datasets via bootstrap sampling.</li>
+<li>Train independent models → reduce variance.</li>
+<li>Final prediction: regression → average; classification → majority vote.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Random Forest</li>
+</ol>
+
+<ul class="note-list">
+<li>Bagging + decision trees; random subset of features at each split.</li>
+<li>Reduces overfitting, assesses feature importance.</li>
+<li>Prediction: classification → majority vote; regression → average.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Out-of-Bag (OOB) Error</li>
+</ol>
+
+<ul class="note-list">
+<li>~1/3 of data unused in each bootstrap → used to estimate error.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Boosting</li>
+</ol>
+
+<ul class="note-list">
+<li>Sequential ensemble; each model focuses on previous errors.</li>
+<li>Reduces both bias &amp; variance.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Boosting vs Bagging</li>
+</ol>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Aspect</th>
+<th>Boosting</th>
+<th>Bagging</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Model Building</td>
+<td>Sequential</td>
+<td>Independent</td>
+</tr>
+<tr>
+<td>Error Focus</td>
+<td>Misclassified points</td>
+<td>All points equally</td>
+</tr>
+<tr>
+<td>Purpose</td>
+<td>Reduce bias &amp; variance</td>
+<td>Reduce variance</td>
+</tr>
+<tr>
+<td>Training</td>
+<td>Weighted points</td>
+<td>Bootstrap subsets</td>
+</tr>
+<tr>
+<td>Overfitting Risk</td>
+<td>Higher</td>
+<td>Lower</td>
+</tr>
+<tr>
+<td>Common Algorithms</td>
+<td>AdaBoost, Gradient Boosting, XGBoost</td>
+<td>Random Forest</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<ol class="mb-3">
+<li>AdaBoost</li>
+</ol>
+
+<ul class="note-list">
+<li>Sequentially corrects errors of weak learners.</li>
+<li>Sensitive to noise.</li>
+</ul>
+
+<ol class="mb-3">
+<li>XGBoost</li>
+</ol>
+
+<ul class="note-list">
+<li>Efficient gradient boosting.</li>
+<li>Regularization (L1/L2), parallel computing.</li>
+<li>Iteratively fits residuals to trees.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Stacking</li>
+</ol>
+
+<ul class="note-list">
+<li>Combines base models using meta-learner.</li>
+<li>Steps:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Train base models.</li>
+<li>Base predictions → features for meta-learner.</li>
+<li>Meta-learner combines predictions for final output.</li>
+</ol>
+
+<ul class="note-list">
+<li>Meta-learner often logistic regression.</li>
+</ul>
+
+<p class="mb-3">✅ Key Python Libraries</p>
+
+<ul class="note-list">
+<li>scikit-learn: Bagging, Boosting, Stacking implementations.</li>
+<li>XGBoost: Efficient gradient boosting.</li>
+</ul>
+
+<p class="mb-3">Week 4: Introduction to Machine Learning</p>
+
+<p class="mb-3">Unsupervised Learning</p>
+
+<ul class="note-list">
+<li>Learning patterns from unlabeled data</li>
+<li>No target labels or outputs</li>
+<li>Useful for large datasets or expensive labeling</li>
+<li>Goals: discover hidden patterns, group similar data points, reduce dimensionality</li>
+</ul>
+
+<p class="mb-3">Applications</p>
+
+<ul class="note-list">
+<li>Clustering: group data points by similarity (customer segmentation, document clustering, image segmentation)</li>
+<li>Dimensionality Reduction: reduce features while preserving information (PCA, t-SNE)</li>
+</ul>
+
+<p class="mb-3">k-Means Clustering</p>
+
+<ul class="note-list">
+<li><strong>Partitions</strong> data into k clusters by minimizing distance to cluster centroids</li>
+<li>Steps: choose k, initialize centroids, assign points, update centroids, repeat until convergence</li>
+<li>Standardize features before clustering</li>
+<li>Python: scikit-learn KMeans.fit_predict()</li>
+</ul>
+
+<p class="mb-3">Choosing Number of Clusters (k)</p>
+
+<ul class="note-list">
+<li>Important for clustering quality</li>
+<li>Methods: Elbow method (plot SSE), Silhouette score (max value), Davies-Bouldin Index (lower is better)</li>
+</ul>
+
+<p class="mb-3">Hierarchical Clustering</p>
+
+<ul class="note-list">
+<li>Builds hierarchy instead of pre-defined k</li>
+<li>Types: Agglomerative (bottom-up), Divisive (top-down)</li>
+<li>Visualized with dendrograms (height = distance, merge order shows similarity)</li>
+<li>Cutting dendrogram at threshold height determines cluster count</li>
+</ul>
+
+<p class="mb-3">Key Python Libraries</p>
+
+<ul class="note-list">
+<li>NumPy, Pandas: data handling</li>
+<li>Matplotlib: visualization</li>
+<li>scikit-learn: KMeans, StandardScaler, clustering metrics</li>
+<li>scipy.cluster.hierarchy: dendrogram, linkage, fcluster</li>
+</ul>
+
+<p class="mb-3">Dimensionality Reduction</p>
+
+<ul class="note-list">
+<li>Dimensionality: number of independent features</li>
+<li>Curse of dimensionality: high dimensions → sparse data, harder patterns, risk of overfitting</li>
+<li>Benefits: efficiency, noise reduction, visualization, storage reduction</li>
+<li>Feature Selection: keep important features (correlation, mutual information, chi-square)</li>
+<li>Feature Extraction: create new features (e.g., PCA)</li>
+<li>Techniques: PCA (linear, fast, interpretable), t-SNE (non-linear, preserves local structure, visualization), Autoencoders (non-linear, deep learning)</li>
+<li>PCA: compute covariance matrix, eigen decomposition, select top eigenvectors, project data</li>
+<li>t-SNE: convert distances to probabilities, map to 2D/3D, optimize with KL divergence, mainly for visualization</li>
+</ul>
+
+<p class="mb-3">Week 4: Ensemble Methods</p>
+
+<p class="mb-3">Ensemble Learning</p>
+
+<ul class="note-list">
+<li>Combine multiple models to improve performance</li>
+<li>Categories: Bagging, Boosting, Stacking</li>
+<li>Goal: improve generalization, reduce bias/variance</li>
+</ul>
+
+<p class="mb-3">Bias-Variance Trade-off</p>
+
+<ul class="note-list">
+<li>Bias: error from simple models (underfitting)</li>
+<li>Variance: error from sensitivity to data (overfitting)</li>
+<li>Total error = Bias² + Variance + Irreducible error</li>
+<li>Bagging reduces variance, Boosting reduces bias &amp; variance</li>
+</ul>
+
+<p class="mb-3">Voting Ensembles</p>
+
+<ul class="note-list">
+<li>Hard voting: majority class wins</li>
+<li>Soft voting: average predicted probabilities</li>
+</ul>
+
+<p class="mb-3">Bagging</p>
+
+<ul class="note-list">
+<li>Bootstrap sampling → multiple datasets</li>
+<li>Train separate models → reduce variance</li>
+<li>Random Forest: bagging with decision trees, random feature selection, reduces overfitting, can assess feature importance</li>
+<li>Out-of-Bag error: ~1/3 data not used, evaluate performance without validation set</li>
+</ul>
+
+<p class="mb-3">Boosting</p>
+
+<ul class="note-list">
+<li>Sequential model training, focus on previous errors</li>
+<li>Reduce bias &amp; variance</li>
+<li>AdaBoost: weak learners, sensitive to noise</li>
+<li>XGBoost: gradient boosting with regularization, handles large datasets, iterative residual fitting</li>
+</ul>
+
+<p class="mb-3">Stacking</p>
+
+<ul class="note-list">
+<li>Meta-learner combines predictions from multiple base models</li>
+<li>Steps: train base models → predictions become features → train meta-learner</li>
+<li>Common meta-learner: logistic regression</li>
+</ul>
+
+<p class="mb-3">Week 5: Neural Networks</p>
+
+<p class="mb-3">Neural Networks</p>
+
+<ul class="note-list">
+<li>Computational models inspired by biological neurons</li>
+<li>Layers: input, hidden, output</li>
+<li>Neurons: compute weighted sum + bias, apply activation function</li>
+</ul>
+
+<p class="mb-3">Components</p>
+
+<ul class="note-list">
+<li>Input layer: receives features</li>
+<li>Hidden layers: intermediate processing</li>
+<li>Output layer: produces predictions</li>
+</ul>
+
+<p class="mb-3">Mathematical Representation</p>
+
+<ul class="note-list">
+<li>z = Σ(wi * xi) + b</li>
+<li>Activation: a = f(z)</li>
+</ul>
+
+<p class="mb-3">Activation Functions</p>
+
+<ul class="note-list">
+<li>ReLU: [0, ∞), hidden layers</li>
+<li>Sigmoid: (0,1), binary classification</li>
+<li>Tanh: (-1,1), hidden layers</li>
+<li>Softmax: probabilities, multi-class classification</li>
+</ul>
+
+<p class="mb-3">Forward Propagation</p>
+
+<ul class="note-list">
+<li>Pass input through network to compute output</li>
+</ul>
+
+<p class="mb-3">Loss Functions</p>
+
+<ul class="note-list">
+<li>Measure prediction error</li>
+<li>MSE: regression</li>
+<li>Binary cross-entropy: binary classification</li>
+</ul>
+
+<p class="mb-3">Backpropagation</p>
+
+<ul class="note-list">
+<li>Compute gradients with chain rule</li>
+<li>Adjust weights to minimize loss</li>
+</ul>
+
+<p class="mb-3">Gradient Descent</p>
+
+<ul class="note-list">
+<li>Update weights using gradients</li>
+<li>Learning rate controls step size</li>
+</ul>
+
+<p class="mb-3">Neural Network Class</p>
+
+<ul class="note-list">
+<li>Initialize weights &amp; biases</li>
+<li>Forward: compute activations</li>
+<li>Compute cost: cross-entropy for classification</li>
+<li>Backward: compute gradients</li>
+<li>Train: iterate forward, cost, backward, update weights</li>
+</ul>
+
+<p class="mb-3">Saving &amp; Loading Models</p>
+
+<ul class="note-list">
+<li>Use pickle to save/load trained neural network objects</li>
+</ul>
+
+<p class="mb-3">Clusters in K-Means vs t-SNE</p>
+
+<ol class="mb-3">
+<li>Different Goals and Methods</li>
+</ol>
+
+<ul class="note-list">
+<li>K-means:
+<ul class="note-list">
+<li>A clustering algorithm.</li>
+<li><strong>Partitions</strong> data into k clusters by minimizing sum of squared distances to cluster centroids.</li>
+<li>Assumes roughly convex, spherical clusters in original high-dimensional space.</li>
+<li>Produces hard cluster assignments (each point belongs to exactly one cluster).</li>
+</ul></li>
+<li>t-SNE:
+<ul class="note-list">
+<li>A dimensionality reduction and visualization technique.</li>
+<li>Preserves local neighborhoods by mapping data to 2D or 3D space.</li>
+<li>Uses non-linear transformations that distort global distances to emphasize local structure.</li>
+<li>Does not produce cluster labels, only visual groupings.</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>Different Input Spaces</li>
+</ol>
+
+<ul class="note-list">
+<li>K-means runs on the original (or preprocessed) high-dimensional features.</li>
+<li>t-SNE creates a low-dimensional embedding where distances are distorted for visualization.</li>
+<li>This distortion means clusters separated in high-dim space may appear closer or merged in t-SNE, or vice versa.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Clusters in t-SNE Are Not Traditional Clusters</li>
+</ol>
+
+<ul class="note-list">
+<li>t-SNE’s goal is to create a visual representation, not to define clusters.</li>
+<li>Visual “clusters” in t-SNE plots may not correspond to true clusters in the data.</li>
+<li>Over-interpreting these visual clusters can be misleading.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Cluster Boundaries vs Visualization</li>
+</ol>
+
+<ul class="note-list">
+<li>K-means defines explicit cluster boundaries via centroids and labels.</li>
+<li>t-SNE produces a continuous embedding with no explicit cluster boundaries.</li>
+<li>You can overlay k-means labels on a t-SNE plot, but spatial arrangement may not match perfectly.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Randomness and Parameter Sensitivity</li>
+</ol>
+
+<ul class="note-list">
+<li>Both algorithms involve randomness (k-means centroid initialization, t-SNE parameters like perplexity).</li>
+<li>Different seeds or parameters can lead to different results.</li>
+<li>t-SNE is especially sensitive to parameters and may change visualization significantly.</li>
+</ul>
+
+<p class="mb-3">Summary</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Aspect</th>
+<th>K-means</th>
+<th>t-SNE</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Purpose</td>
+<td>Clustering (hard assignment)</td>
+<td>Dimensionality reduction (visualization)</td>
+</tr>
+<tr>
+<td>Input Space</td>
+<td>Original high-dimensional space</td>
+<td>Reduced 2D/3D embedding</td>
+</tr>
+<tr>
+<td>Distance distortion</td>
+<td>Minimal (Euclidean distance)</td>
+<td>High (non-linear, preserves local structure)</td>
+</tr>
+<tr>
+<td>Cluster boundaries</td>
+<td>Explicit (centroids and labels)</td>
+<td>None (visual grouping only)</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Cluster labels</td>
+<td>2D/3D coordinates</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Standardizing Binary Features for PCA/t-SNE</p>
+
+<ol class="mb-3">
+<li>Context: Binary Features in Feature Space</li>
+</ol>
+
+<ul class="note-list">
+<li>Binary features typically have values 0 and 1 (sometimes -1 and 1).</li>
+<li>You want to apply dimensionality reduction (PCA or t-SNE) on your features, including these binary ones.</li>
+</ul>
+
+<ol class="mb-3">
+<li>What Happens When You Standardize Binary Features?</li>
+</ol>
+
+<ul class="note-list">
+<li>Standardization formula:</li>
+</ul>
+
+<p class="mb-3">\[ z = \frac{x - \mu}{\sigma} \] where:</p>
+
+<ul class="note-list">
+<li>\(x\) = original binary value (0 or 1)</li>
+<li>\(\mu\) = mean of the binary feature (proportion of 1s)</li>
+<li>\(\sigma = \sqrt{\mu (1-\mu)}\) = standard deviation</li>
+<li>Example:</li>
+</ul>
+
+<p class="mb-3">For feature vector <code>[0, 1, 0, 1, 1, 0]</code>,</p>
+
+<ul class="note-list">
+<li>Mean \( \mu = 0.5 \)</li>
+<li>Std dev \( \sigma = 0.5 \)</li>
+<li><strong>Standardized</strong> values become:
+<p class="mb-2">\[</p>
+<p class="mb-2">(0 - 0.5)/0.5 = -1, \quad (1 - 0.5)/0.5 = +1</p>
+<p class="mb-2">\]</p></li>
+</ul>
+
+<ol class="mb-3">
+<li>Should You Standardize Binary Features Before PCA/t-SNE?</li>
+</ol>
+
+<ul class="note-list">
+<li>Yes, generally you should standardize all features, including binary ones.</li>
+<li>PCA and t-SNE work better when features have similar scales and variances.</li>
+<li>Standardization prevents features with large scales from dominating the results.</li>
+<li>Standardizing binary features rescales them to have mean 0 and variance 1, putting them on equal footing with continuous features.</li>
+<li>For t-SNE, normalization is less critical but still recommended to improve performance.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Things to Keep in Mind</li>
+</ol>
+
+<ul class="note-list">
+<li>If a binary feature is very imbalanced (mostly 0s or mostly 1s), standardization will amplify its variance and impact.</li>
+<li>This isn’t usually a problem, but be aware it might affect the dimensionality reduction outcome.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Important Note on Labels vs Features</li>
+</ol>
+
+<ul class="note-list">
+<li>Do NOT standardize labels (binary target variables).</li>
+<li>Labels should remain as discrete classes (0/1).</li>
+<li>PCA and t-SNE apply only to features, never labels.</li>
+<li>Use labels only for coloring or annotating plots after dimensionality reduction.</li>
+</ul>
+
+<p class="mb-3">Summary Table</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Step</th>
+<th>Recommendation</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Standardize features</td>
+<td>Yes, including binary features</td>
+</tr>
+<tr>
+<td>Standardize labels</td>
+<td>No, keep binary labels as-is</td>
+</tr>
+<tr>
+<td>PCA input</td>
+<td>Features only</td>
+</tr>
+<tr>
+<td>t-SNE input</td>
+<td>Features only</td>
+</tr>
+<tr>
+<td>Label usage</td>
+<td>For visualization/coloring after reduction</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Regression Models for Bike Rental Dataset</p>
+
+<ul class="note-list">
+<li>Linear Regression</li>
+</ul>
+
+<p class="mb-3">Simple model relating bike rentals to variables like day, weather, season.</p>
+
+<ul class="note-list">
+<li>Ridge Regression</li>
+</ul>
+
+<p class="mb-3">Adds L2 regularization to reduce overfitting.</p>
+
+<ul class="note-list">
+<li>Lasso Regression</li>
+</ul>
+
+<p class="mb-3">Adds L1 regularization for feature selection and overfitting control.</p>
+
+<ul class="note-list">
+<li>Elastic Net</li>
+</ul>
+
+<p class="mb-3">Combines L1 and L2 regularization with two hyperparameters:</p>
+
+<ul class="note-list">
+<li>Alpha (α): overall regularization strength</li>
+<li>L1_ratio (ρ): balance between L1 and L2</li>
+<li>Random Forest</li>
+</ul>
+
+<p class="mb-3">Ensemble method that handles complex relationships, good for regression and classification.</p>
+
+<p class="mb-3">Model Evaluation Metrics and Concepts</p>
+
+<ul class="note-list">
+<li>Adjusted R-squared:</li>
+</ul>
+
+<p class="mb-3">\[ 1 - \frac{\text{total squared residuals}}{\text{total variance}} \times \frac{n-1}{n-p-1} \] where \(n\) = number of samples, \(p\) = number of features.</p>
+
+<ul class="note-list">
+<li>Clustering metrics:
+<ul class="note-list">
+<li>Elbow Method: Look for “bend” in within-cluster sum of squares vs. k.</li>
+<li>Silhouette Score: From -1 to 1, higher means well-separated clusters.</li>
+<li>Davies–Bouldin Index: Lower is better (compact and well-separated clusters).</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">PCA Explained Variance and Scree Plot</p>
+
+<ul class="note-list">
+<li><code>explained_variance_ratio_</code> shows fraction of variance each principal component explains.</li>
+<li>Scree plot shows variance explained per component and cumulative variance.</li>
+<li>Look for “elbow” point where adding more components yields diminishing returns.</li>
+<li>Standardizing before PCA ensures fair comparison across features with different units.</li>
+</ul>
+
+<p class="mb-3">t-SNE Overview</p>
+
+<ul class="note-list">
+<li>t-SNE maps high-dimensional data to 2D or 3D for visualization.</li>
+<li>Preserves local similarities rather than global structure.</li>
+<li>Steps:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Compute pairwise similarities in high-dimensional space, focusing on local neighbors.</li>
+<li>Initialize low-dimensional map with random points.</li>
+<li>Iteratively adjust low-dimensional points to preserve neighborhood similarities.</li>
+</ol>
+
+<ul class="note-list">
+<li>Useful for visualizing clusters or natural groupings.</li>
+<li>Not typically used as a preprocessing step for machine learning models.</li>
+<li>Computationally intensive and slower on large datasets.</li>
+</ul>
+
+<hr>
+
+<p class="mb-3">The perplexity value directly influences the resulting t-SNE visualization:</p>
+
+<ul class="note-list">
+<li>Perplexity controls the balance between local and global aspects. Typical values are 5 to 50. Results can vary slightly run to run due to random initial placement.</li>
+<li>Low Perplexity (e.g., 5-15): The algorithm focuses on preserving very close-range relationships. This can result in a visualization that highlights many small, distinct clusters, often referred to as "crowded" or "ball-of-string" plots. While this can reveal fine-grained local structure, it can also create spurious clusters or make the global structure appear fragmented.</li>
+<li>High Perplexity (e.g., 30-50+): The algorithm considers a wider neighbourhood of points. This forces it to pay more attention to the global structure of the data. The resulting plot will be more coherent and less fragmented, with smaller clusters potentially merging into larger, more meaningful groups.</li>
+</ul>
+
+<p class="mb-3">Best practices Choosing the right perplexity value is crucial for getting a useful visualization. There is no single "correct" value, and the ideal setting often depends on the specific dataset. It is recommended to experiment with several perplexity values to find the one that best reveals the underlying structure of your data. The t-SNE documentation suggests values typically between 5 and 50.</p>
+
+<p class="mb-3">The <code>init</code> parameter in t-SNE specifies the initial arrangement of data points in the lower-dimensional space before the optimization process begins. This initial placement serves as the starting point for the algorithm's iterative work to create the final visualization.</p>
+
+<ul class="note-list">
+<li>There are two main options for this parameter:
+<ul class="note-list">
+<li><code>'random'</code>: This is the default setting. The data points are initially placed at random coordinates in the 2D or 3D space. Because the starting point is arbitrary, running the algorithm multiple times with the same data might result in slightly different visualizations.</li>
+<li><code>'pca'</code>: This is a very common and often recommended option. Instead of random placement, the t-SNE algorithm first performs a quick Principal Component Analysis (PCA) on the data. It then uses the first two (for 2D) or three (for 3D) principal components to set the initial positions of the points. This provides a much better starting guess because PCA already captures a significant portion of the data's overall variance and global structure, which helps t-SNE converge faster and more reliably.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">XGBoost</p>
+
+<ul class="note-list">
+<li><code>eta</code>:
+<ul class="note-list">
+<li>learning rate parameter in XGBoost, controls the step size shrinkage when updating weights.</li>
+<li><strong>Smaller</strong> values of eta mean the model learns more slowly but can improve performance and prevent overfitting.</li>
+<li><strong>Typical</strong> values are between 0.01 and 0.3.</li>
+<li>Lower eta usually means you need more boosting rounds.</li>
+</ul></li>
+<li><code>num_boost_round</code>:
+<ul class="note-list">
+<li>number of boosting iterations (trees) to build.</li>
+<li>More rounds can improve model performance but may also cause overfitting.</li>
+</ul></li>
+</ul>
+
+<hr>
+
+<p class="mb-3">Here are a couple of common loss functions:</p>
+
+<ul class="note-list">
+<li>Cross-Entropy Loss:
+<ul class="note-list">
+<li>What it does: This loss function is often used for tasks where you want to classify input data into one of several categories (like identifying if an image is a cat or a dog). It measures how different the predicted probabilities for each category are from the actual category. A lower Cross-Entropy Loss means the network's predicted probabilities are closer to the true label.</li>
+<li>Use Case: Commonly used for classification problems, especially when the output layer uses a Softmax activation function to give probabilities for each class.</li>
+</ul></li>
+<li>Mean Squared Error (MSE):
+<ul class="note-list">
+<li>What it does: This loss function is used for tasks where you want to predict a continuous value (like predicting the price of a house or the temperature). It calculates the average of the squared differences between the predicted values and the actual true values. Squaring the difference makes sure that larger errors have a greater impact on the loss.</li>
+<li>Use Case: Commonly used for regression problems, where the goal is to predict a numerical value.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Optimiser</p>
+
+<ul class="note-list">
+<li>Once the network makes a prediction and the loss function tells us how far off that prediction was from the true value, we need a way to adjust the network's internal settings (its parameters, which are the weights and biases) so that it makes better predictions next time.</li>
+<li>This is where the optimiser comes in. The optimiser uses the information from the loss (specifically, the gradients of the loss with respect to the weights) to figure out how to change each weight.
+<ul class="note-list">
+<li>The goal is to change the weights in a direction that will reduce the loss.</li>
+</ul></li>
+<li>Optimisers update the weights of the network using the gradients computed via <code>autograd</code> in PyTorch.</li>
+<li>Stochastic Gradient Descent (SGD):
+<ul class="note-list">
+<li>What it does: SGD is a fundamental optimiser. For each training example (or a small batch of examples), it calculates how much the weights should change to reduce the loss for that specific example (or batch). It then updates the weights based on this calculation. The "stochastic" part means it uses a random subset of the data (a mini-batch) at each step, which makes the updates faster but also a bit noisy compared to using the whole dataset.</li>
+<li>Use Case: A foundational optimiser. While simple, variations of SGD are still widely used and can be effective, especially with careful tuning of the learning rate.</li>
+</ul></li>
+<li>Adam:
+<ul class="note-list">
+<li>What it does: Adam is a more advanced optimiser that adapts the learning rate for each weight individually. It considers both the average of the past gradients (like momentum) and the average of the squared past gradients (like RMSprop). This helps it to converge faster and often perform better than basic SGD, especially on complex problems. It's generally considered a good default choice.</li>
+<li>Use Case: A very popular and often effective optimiser for a wide range of deep learning tasks. It's known for its efficiency and ability to handle different types of network architectures and data.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">PyTorch is an open-source machine learning framework that accelerates the path from research prototyping to production deployment. It provides two high-level features:</p>
+
+<ol class="mb-3">
+<li>Tensor computation (like NumPy) with strong GPU acceleration</li>
+<li>Deep neural networks built on a tape-based automatic differentiation system</li>
+</ol>
+
+<p class="mb-3">Let's briefly introduce some of the key components of PyTorch:</p>
+
+<ul class="note-list">
+<li><code>torch.Tensor</code>: This is the fundamental data structure in PyTorch. Tensors are multi-dimensional arrays, similar to NumPy arrays, but they have the added capability of being able to run on GPUs for accelerated computation.</li>
+<li><code>torch.nn</code>: This module provides the building blocks for creating neural networks. It contains definitions for various layers (like linear layers, convolutional layers), activation functions, loss functions, and other utilities needed to construct and train neural network models.</li>
+<li><code>torch.optim</code>: This module implements various optimization algorithms, such as Stochastic Gradient Descent (SGD), Adam, and RMSprop. These optimizers are used to update the weights of your neural network during the training process based on the calculated gradients.</li>
+<li><code>torch.autograd</code>: This is PyTorch's automatic differentiation engine. It records operations performed on tensors and automatically computes the gradients of the output with respect to the input tensors. This is crucial for backpropagation, the algorithm used to train neural networks.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Autograd: Automatic gradient calculation, backpropagation, and the chain rule</li>
+</ol>
+
+<p class="mb-3">When training a neural network, we use gradient descent to minimize a loss function $L$. This process involves calculating the derivative (gradient) of the loss with respect to each weight $w$ in the network.</p>
+
+<p class="mb-3">Automatic Differentiation (Autograd) PyTorch’s <code>autograd</code> module automates the calculation of these gradients. When you create a tensor with <code>requires_grad=True</code>, PyTorch builds a computational graph that records all the operations. When you call the <code>.backward()</code> method on the final output (typically the loss), it computes the gradients for each tensor in the graph using the chain rule. This process is the backbone of backpropagation in neural networks, allowing the optimiser to update weights via gradient descent.</p>
+
+<p class="mb-3">Mini Batch Gradient Descent</p>
+
+<p class="mb-3">In practice, training is often performed on a small subset of the training data called a mini batch rather than the entire dataset. A mini batch is a collection of examples (e.g. 64 images) that is used to estimate the gradient in each update step. This approach provides a balance between the noisy updates of stochastic gradient descent (using one example) and the high computational cost of using the full dataset for every update.</p>
+
+<hr>
+
+<p class="mb-3">To address various neural network issues, different techniques and components are used:</p>
+
+<ul class="note-list">
+<li>Normalisation Techniques:</li>
+</ul>
+
+<p class="mb-3">Batch normalisation helps stabilise the gradient flow.</p>
+
+<ul class="note-list">
+<li>Gradient Clipping:</li>
+</ul>
+
+<p class="mb-3">Limits the maximum value of gradients during backpropagation to prevent exploding gradients.</p>
+
+<ul class="note-list">
+<li>PyTorch essentials:
+<ul class="note-list">
+<li><code>torch</code>: For tensor operations.</li>
+<li><code>torch.nn</code>: Provides pre-defined layers and utilities for building neural networks.</li>
+<li><code>torch.nn.functional</code>: Contains functions such as activation functions.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Defining a custom neural network involves creating a class that inherits from <code>nn.Module</code>:</p>
+
+<ul class="note-list">
+<li>Use <code>super()</code> to properly initialise the parent class (<code>nn.Module</code>).</li>
+<li>Define network layers in the constructor (<code>__init__()</code>), typically using pre-defined layers like <code>nn.Linear</code> or <code>nn.Conv2d</code>.</li>
+</ul>
+
+<p class="mb-3">Deeper layers in a network learn to combine and refine lower-level features into more abstract, task-specific representations. Reducing neurons in deeper layers encourages focusing on the most salient features needed for the task.</p>
+
+<p class="mb-3">In PyTorch:</p>
+
+<ul class="note-list">
+<li>Set the model to training mode (<code>model.train()</code>) before training loops. This:
+<ul class="note-list">
+<li>Activates dropout layers (randomly disables some neurons).</li>
+<li>Ensures batch normalisation uses current mini-batch statistics.</li>
+<li>Enables layers to update internal parameters via gradients.</li>
+</ul></li>
+<li>Set the model to evaluation mode (<code>model.eval()</code>) when testing or predicting. This:
+<ul class="note-list">
+<li>Disables dropout (all neurons active).</li>
+<li>Batch normalisation uses running averages computed during training.</li>
+<li>Ensures consistent behavior during inference.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Evaluating a batch within a <code>torch.no_grad()</code> block:</p>
+
+<ul class="note-list">
+<li>Process the batch to obtain raw output scores (logits).</li>
+<li>Predict classes by selecting the highest score per sample.</li>
+<li>Compare predictions with true labels to count correct matches.</li>
+<li>Calculate accuracy to measure model performance on unseen data.</li>
+</ul>
+
+<p class="mb-3">Traditional (shallow) neural networks:</p>
+
+<ul class="note-list">
+<li>Typically have only one hidden layer.</li>
+<li>Can learn some patterns but struggle with complex, hierarchical features.</li>
+<li>Less effective on high-dimensional or intricate tasks.</li>
+</ul>
+
+<p class="mb-3">Deep learning:</p>
+
+<ul class="note-list">
+<li>Uses layered neural networks to automatically learn important patterns from raw data.</li>
+<li>Eliminates the need for manual feature engineering.</li>
+<li>Achieves superior performance on complex tasks by learning rich, abstract representations.</li>
+</ul>
+
+<p class="mb-3">Common deep learning network types and their use cases:</p>
+
+<ol class="mb-3">
+<li>Multilayer Perceptron (MLP) / Feedforward Neural Networks</li>
+</ol>
+
+<ul class="note-list">
+<li>Information flows one way, through multiple fully connected layers.</li>
+<li>Use cases: Tabular data classification/regression, simple image classification, basic text tasks.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Convolutional Neural Networks (CNNs)</li>
+</ol>
+
+<ul class="note-list">
+<li>Use convolutional layers to detect spatial patterns in grid-like data (e.g., images).</li>
+<li>Use cases: Image recognition, object detection, segmentation, video analysis, some text tasks.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Recurrent Neural Networks (RNNs)</li>
+</ol>
+
+<ul class="note-list">
+<li>Handle sequential data with loops to maintain memory of previous inputs.</li>
+<li>Use cases: Language modeling, text generation, translation, speech recognition, time series analysis.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Long Short-Term Memory networks (LSTMs) and Gated Recurrent Units (GRUs)</li>
+</ol>
+
+<ul class="note-list">
+<li>Advanced RNNs that better remember long-range dependencies.</li>
+<li>Solve the vanishing gradient problem in standard RNNs.</li>
+<li>Use cases: Complex language tasks, translation, video analysis, long sequence modeling.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Transformers</li>
+</ol>
+
+<ul class="note-list">
+<li>Use attention mechanisms to focus on different input parts during prediction.</li>
+<li>Highly popular for text tasks and increasingly used for images.</li>
+<li>Use cases: Translation, summarization, question answering, text generation.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Autoencoders</li>
+</ol>
+
+<ul class="note-list">
+<li>Learn compressed data representations via an encoder-decoder architecture.</li>
+<li>Use cases: Feature reduction, anomaly detection, data generation.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Generative Adversarial Networks (GANs)</li>
+</ol>
+
+<ul class="note-list">
+<li>Consist of a generator creating data and a discriminator distinguishing real from fake data.</li>
+<li>Trained adversarially to produce realistic outputs.</li>
+<li>Use cases: Realistic image/video/text generation, image editing, synthetic data creation.</li>
+</ul>
+
+<hr>
+
+<ul class="note-list">
+<li>Input Layer: Input is flattened if necessary before passing to the first linear layer.</li>
+<li>Output Layer:
+<ul class="note-list">
+<li>A linear layer reducing the 64-dimensional output from the last hidden layer to a single continuous output (<code>output_dim = 1</code>).</li>
+<li>Suitable for regression tasks predicting continuous values.</li>
+</ul></li>
+<li>Sequential Container:
+<ul class="note-list">
+<li>Uses PyTorch’s <code>nn.Sequential</code> to chain layers and activations, simplifying the forward pass.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Training vs. Validation Loss in the First Epoch</p>
+
+<ul class="note-list">
+<li>Training Loss (Epoch 0):
+<ul class="note-list">
+<li>Average loss over all batches in the first epoch.</li>
+<li>Model weights update after each batch.</li>
+<li>Initial loss is usually higher (due to random initialization).</li>
+<li>Final reported loss is averaged over the entire epoch.</li>
+</ul></li>
+<li>Validation Loss (Epoch 0):
+<ul class="note-list">
+<li>Computed after completing the full training epoch.</li>
+<li>Reflects model performance after initial updates.</li>
+<li>Can be lower than the average training loss, since no weight updates occur during validation.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">When to Stop Training Focus on the validation loss curve:</p>
+
+<ol class="mb-3">
+<li>Initial Improvement</li>
+<li>Minimum Validation Loss</li>
+<li>Divergence &amp; Overfitting</li>
+</ol>
+
+<p class="mb-3">Optimal stopping point: Stop training near the epoch with the minimum validation loss (50 to 100 epochs), to get best generalization and avoid overfitting.</p>
+
+<p class="mb-3">Practical approach (Early Stopping):</p>
+
+<ul class="note-list">
+<li>Monitor validation loss during training.</li>
+<li>Set patience (number of epochs to wait for improvement).</li>
+<li>Stop training if no improvement in validation loss within patience window.</li>
+<li>Save model weights at the epoch with lowest validation loss.</li>
+</ul>
+
+<p class="mb-3">A Multilayer Perceptron (MLP), or feedforward neural network, consists of an input layer, one or more hidden layers, and an output layer. Information flows in one direction—from input through hidden layers to output.</p>
+
+<ul class="note-list">
+<li>Each neuron in one layer is connected to every neuron in the next (fully connected).</li>
+<li>Commonly used for tabular data, simple image or text classification, and regression.</li>
+</ul>
+
+<hr>
+
+<p class="mb-3">Vanishing and Exploding Gradients in RNNs</p>
+
+<p class="mb-3">Recurrent Neural Networks (RNNs) handle sequential data by passing information step by step, giving the network a form of memory. However, training RNNs on long sequences is challenging due to how gradients behave during backpropagation.</p>
+
+<ul class="note-list">
+<li>Gradient Calculation in RNNs:</li>
+</ul>
+
+<p class="mb-3">Training uses the chain rule to compute gradients for updating weights. Since each step depends on the previous one, gradients involve multiplying many derivatives across the sequence length.</p>
+
+<ul class="note-list">
+<li>Vanishing Gradients:</li>
+</ul>
+
+<p class="mb-3">When these derivatives are small (less than 1), multiplying many of them results in very small gradients. This causes the network to learn very slowly or not at all from information far back in the sequence, making it hard to remember distant inputs.</p>
+
+<ul class="note-list">
+<li>Exploding Gradients:</li>
+</ul>
+
+<p class="mb-3">When derivatives are large (greater than 1), repeated multiplication leads to very large gradients. This causes huge, unstable weight updates, making training erratic and often causing failure to converge.</p>
+
+<p class="mb-3">Impact on Learning</p>
+
+<p class="mb-3">These gradient problems limit the ability of standard RNNs to learn long-range dependencies effectively. To address this, architectures like LSTMs (Long Short-Term Memory) and GRUs (Gated Recurrent Units) use gating mechanisms to better control information flow and gradients over time.</p>
+
+<p class="mb-3">Why Not Many Layers in RNNs/LSTMs?</p>
+
+<ul class="note-list">
+<li>Training Challenges: deeper RNNs worsen vanishing/exploding gradients.</li>
+<li>Computational Cost: more layers mean more parameters and longer training.</li>
+<li>Diminishing Returns: adding layers does not always improve performance.</li>
+</ul>
+
+<p class="mb-3">However, stacked RNNs/LSTMs with 3 or more layers do exist in research and complex tasks. These are often combined with bidirectional layers or other architectures like CNNs to boost performance.</p>
+
+<p class="mb-3">Training vs. Validation Loss in the First Epoch</p>
+
+<ul class="note-list">
+<li>Training Loss (Epoch 0):</li>
+</ul>
+
+<p class="mb-3">Averaged over all batches in the first epoch with weights updated each batch. Initial loss is usually high due to random initialization. Final training loss is averaged over the entire epoch.</p>
+
+<ul class="note-list">
+<li>Validation Loss (Epoch 0):</li>
+</ul>
+
+<p class="mb-3">Calculated after the full training epoch without weight updates. Reflects performance after initial training. Can be lower than training loss since no parameter updates occur during validation.</p>
+
+<p class="mb-3">Decision to Stop Training</p>
+
+<p class="mb-3">Focus on validation loss when deciding when to stop training:</p>
+
+<ol class="mb-3">
+<li>Initial Improvement: both training and validation losses decrease early, showing the model is learning.</li>
+<li>Minimum Validation Loss: validation loss reaches its lowest point around epoch 50 to 100.</li>
+<li>Divergence and Overfitting: after this point, training loss keeps decreasing but validation loss rises and fluctuates, indicating overfitting—the model memorizes training data and generalizes poorly.</li>
+</ol>
+
+<p class="mb-3">The optimal stopping point is near the epoch where validation loss is minimum (50–100 epochs) to maximize generalization.</p>
+
+<p class="mb-3">Practical Early Stopping Strategy</p>
+
+<ul class="note-list">
+<li>Monitor validation loss continuously.</li>
+<li>Set a patience value — number of epochs to wait without improvement before stopping.</li>
+<li>Stop training if validation loss does not improve within the patience period.</li>
+<li>Save model weights from the epoch with lowest validation loss.</li>
+</ul>
+
+<p class="mb-3">This approach prevents overfitting and preserves the model’s best generalization ability.</p>
+
+<hr>
+
+<p class="mb-3">Set the model to training mode <code>model.train()</code></p>
+
+<p class="mb-3">Gradient Update</p>
+
+<div class="note-markdown-block"><pre><code>optimizer.zero_grad()  
+loss = criterion(outputs, labels)  
+loss.backward()  
+optimizer.step()</code></pre></div>
+
+<p class="mb-3">Evaluate the Model After training, we evaluate the model's performance on the unseen test dataset. We set the model to evaluation mode (model.eval()) and use torch.no_grad() to disable gradient calculations during inference, which saves memory and speeds up computation.</p>
+
+<p class="mb-3">Set the model to evaluation mode model.eval()</p>
+
+<p class="mb-3">Gates in GRUs GRUs are similar to LSTMs but have a simpler structure with two main gates:</p>
+
+<p class="mb-3">Update Gate: This gate acts like both the forget and input gates of an LSTM. It decides how much of the previous hidden state to keep and how much of the new candidate hidden state to add.</p>
+
+<p class="mb-3">Reset Gate: This gate decides how much of the previous hidden state to ignore. It is used to decide how to combine the new input with the previous hidden state.</p>
+
+<p class="mb-3">GRUs are generally simpler and faster to compute than LSTMs, while still being effective at handling sequential data and mitigating gradient problems. Both LSTMs and GRUs improve upon standard RNNs by using these gating mechanisms to better manage information flow over time.</p>
+
+<p class="mb-3">The example code below shows how to define a simple model that can be used for either an LSTM or a GRU, depending on which layer (nn.LSTM or nn.GRU) you choose to enable in the __init__ method.</p>
+
+<p class="mb-3">Autoencoders are a type of neural network trained to learn a compressed representation of the input data. They consist of two main parts: an encoder that takes the input and compresses it into a smaller representation (often called the "bottleneck" or "latent space"), and a decoder that takes this compressed representation and tries to reconstruct the original input data.</p>
+
+<p class="mb-3">The goal of training an autoencoder is for the network to learn how to reconstruct the input as accurately as possible from the compressed version. This forces the encoder to learn important features and patterns in the data to be able to reconstruct it well.</p>
+
+<p class="mb-3">How GANs Differ from Autoencoders Both Generative Adversarial Networks (GANs) and Autoencoders are neural network architectures that can be used to generate data or learn representations. However, they are fundamentally different in their structure, purpose, and how they are trained.</p>
+
+<p class="mb-3">Here are the key differences: Purpose: Autoencoders: Primarily designed to learn a compressed representation of the input data (encoding) and then reconstruct the original input from that representation (decoding). Their main goal is often dimensionality reduction, feature learning, or denoising. GANs: Primarily designed to generate new data samples that are similar to the training data. They are focused on creating realistic data that did not exist before.</p>
+
+<p class="mb-3">Structure: Autoencoders: Consist of two main parts: an Encoder and a Decoder. The data flows through the encoder to a bottleneck layer and then through the decoder. GANs: Consist of two competing networks: a Generator and a Discriminator. The Generator creates data, and the Discriminator tries to distinguish between real and generated data.</p>
+
+<p class="mb-3">Training Process: Autoencoders: Trained by minimising a reconstruction loss, which measures how accurately the decoder can reconstruct the original input from the encoded representation. GANs: Trained in an adversarial manner. The Generator tries to minimise the loss based on the Discriminator's output (trying to fool it), while the Discriminator tries to maximise its loss (correctly identifying real and fake data). They are trained in a game-like setting.</p>
+
+<p class="mb-3">In summary, while an Autoencoder learns to compress and reconstruct existing data, a GAN learns to create entirely new data through a competitive process between two networks.</p>
+
+<p class="mb-3">Long Short-Term Memory (LSTM) and Gated Recurrent Units (GRUs) are special types of Recurrent Neural Networks (RNNs). They were developed to address some of the limitations of basic RNNs, particularly in handling long sequences of data. They are better at remembering information over extended periods, which helps prevent issues like vanishing gradients during training on long sequences.</p>
+
+<p class="mb-3">Think of them as having a more sophisticated "memory" mechanism compared to simple RNNs. They use "gates" to control the flow of information, deciding what to remember, what to forget, and what to pass on to the next step.</p>
+
+<p class="mb-3">How LSTM and GRU Networks Use Gates Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) networks are designed to handle long sequences by using special structures called gates. These gates act like switches that control which information is allowed to pass through the network and which is discarded. This helps them to remember important information over long periods and forget irrelevant details, which is crucial for dealing with issues like vanishing gradients in standard RNNs.</p>
+
+<p class="mb-3">Gates in LSTMs LSTMs use three main types of gates to control the flow of information within their internal memory, called the cell state:</p>
+
+<ol class="mb-3">
+<li>Forget Gate: This gate decides what information to throw away from the cell state. It looks at the current input and the previous hidden state and outputs values between 0 and 1 for each number in the cell state. A value of 0 means completely forget this information, while a value of 1 means completely keep this information.</li>
+<li>Input Gate: This gate decides what new information to store in the cell state. It has two parts:</li>
+</ol>
+
+<ul class="note-list">
+<li>One part decides which values from the input to update.</li>
+<li>The other part creates a vector of new candidate values that could be added to the cell state.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Output Gate: This gate decides what to output based on the cell state. It looks at the current input and the previous hidden state and filters the cell state to produce the hidden state for the current step. The hidden state is the output of the LSTM unit at this time step and is passed to the next step and potentially to a subsequent layer.</li>
+</ol>
+
+<p class="mb-3">These gates work together to update the cell state and hidden state at each step of the sequence, allowing LSTMs to selectively remember or forget information.</p>
+
+<p class="mb-3">Gates in GRUs GRUs are similar to LSTMs but have a simpler structure with two main gates:</p>
+
+<ol class="mb-3">
+<li>Update Gate: This gate acts like both the forget and input gates of an LSTM. It decides how much of the previous hidden state to keep and how much of the new candidate hidden state to add.</li>
+<li>Reset Gate: This gate decides how much of the previous hidden state to ignore. It is used to decide how to combine the new input with the previous hidden state.</li>
+</ol>
+
+<p class="mb-3">GRUs are generally simpler and faster to compute than LSTMs, while still being effective at handling sequential data and mitigating gradient problems. Both LSTMs and GRUs improve upon standard RNNs by using these gating mechanisms to better manage information flow over time.</p>
+
+<p class="mb-3">Generative Adversarial Networks (GANs) Generative Adversarial Networks (GANs) are a type of neural network architecture used for generating new data that is similar to the training data. A GAN consists of two parts that are trained together in a kind of game:</p>
+
+<ul class="note-list">
+<li>Generator: This network's job is to create new data (like images). It takes random noise as input and tries to transform it into data that looks real.</li>
+<li>Discriminator: This network's job is to look at data and decide if it's real (from the training dataset) or fake (created by the Generator). It outputs a probability, where a high value means it thinks the data is real, and a low value means it thinks it's fake.</li>
+</ul>
+
+<p class="mb-3">The Generator and Discriminator are trained in competition. The Generator tries to create data that can fool the Discriminator into thinking it's real, while the Discriminator tries to get better at distinguishing between real and fake data. This adversarial process helps the Generator learn to create very realistic data.</p>
+
+<hr>
+
+<h1 class="mt-4">Does Boosting Increase Model's Variance?</h1>
+
+<p class="mb-3">Short answer: Boosting can increase model variance, but it depends on the base learners and how boosting is applied.</p>
+</section>
+
+<section id="explanation" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Explanation:</h3>
+
+<ul class="note-list">
+<li>Boosting is an ensemble method that builds models sequentially, where each new model tries to correct the errors of the previous ones.</li>
+<li>It primarily reduces bias by fitting the data more closely over multiple iterations.</li>
+<li>Because boosting focuses on harder-to-predict examples, it may increase variance, especially if:
+<ul class="note-list">
+<li>The base learners are too complex (e.g., deep trees),</li>
+<li>Too many boosting rounds are used (overfitting).</li>
+</ul></li>
+<li>When using simple base learners (e.g., shallow trees), boosting typically:
+<ul class="note-list">
+<li>Significantly reduces bias,</li>
+<li>Does not increase variance dramatically.</li>
+</ul></li>
+<li>Regularization techniques like:
+<ul class="note-list">
+<li>Early stopping,</li>
+<li>Learning rate (shrinkage),</li>
+<li>Limiting base learner complexity (e.g., max depth),</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">can help control variance and prevent overfitting.</p>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary:</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Effect</th>
+<th>Outcome</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Bias</td>
+<td>Decreases (boosting reduces bias)</td>
+</tr>
+<tr>
+<td>Variance</td>
+<td>Can increase (risk of overfitting)</td>
+</tr>
+<tr>
+<td>Control</td>
+<td>Use simple base learners and regularization</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="key-assumptions-of-linear-regression" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">📊 Key Assumptions of Linear Regression</h3>
+
+<p class="mb-3">Linear regression relies on several statistical assumptions to ensure that its estimates and predictions are reliable, unbiased, and interpretable. Violating these assumptions can lead to misleading results even if the model appears to fit well.</p>
+
+<p class="mb-3">Below are the main assumptions you should check when building a linear regression model:</p>
+
+<h4 id="1-linearity" class="mb-2">1. 📈 Linearity</h4>
+
+<ul class="note-list">
+<li>What it means:</li>
+</ul>
+
+<p class="mb-3">The relationship between the independent variables (\( X \)) and the dependent variable (\( Y \)) is linear. \[ Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \varepsilon \]</p>
+
+<ul class="note-list">
+<li>Why it matters:</li>
+</ul>
+
+<p class="mb-3">If the true relationship is not linear, the model will produce biased predictions.</p>
+
+<ul class="note-list">
+<li>How to check:
+<ul class="note-list">
+<li>Residual plots (should show no pattern)</li>
+<li>Scatter plots of \( X \) vs. \( Y \)</li>
+<li>Partial regression plots</li>
+</ul></li>
+</ul>
+
+<h4 id="2-independence-of-errors" class="mb-2">2. 🔁 Independence of Errors</h4>
+
+<ul class="note-list">
+<li>What it means:</li>
+</ul>
+
+<p class="mb-3">Residuals (errors) should be independent of each other. One observation should not influence another.</p>
+
+<ul class="note-list">
+<li>Why it matters:</li>
+</ul>
+
+<p class="mb-3">Correlated errors can lead to underestimated standard errors and unreliable hypothesis tests.</p>
+
+<ul class="note-list">
+<li>How to check:
+<ul class="note-list">
+<li>Durbin–Watson test (especially for time series)</li>
+<li>Plot of residuals vs. time or order of data</li>
+</ul></li>
+</ul>
+
+<h4 id="3-homoscedasticity" class="mb-2">3. 📉 Homoscedasticity</h4>
+
+<ul class="note-list">
+<li>What it means:</li>
+</ul>
+
+<p class="mb-3">The variance of the residuals is constant across all levels of the independent variables. (No funnel shape in residual plots.)</p>
+
+<ul class="note-list">
+<li>Why it matters:</li>
+</ul>
+
+<p class="mb-3">Heteroscedasticity can cause inefficient estimates and invalid significance tests.</p>
+
+<ul class="note-list">
+<li>How to check:
+<ul class="note-list">
+<li>Plot residuals vs. fitted values</li>
+<li>Breusch–Pagan test</li>
+<li>White test</li>
+</ul></li>
+</ul>
+
+<h4 id="4-normality-of-errors" class="mb-2">4. 📊 Normality of Errors</h4>
+
+<ul class="note-list">
+<li>What it means:</li>
+</ul>
+
+<p class="mb-3">The residuals should be normally distributed.</p>
+
+<ul class="note-list">
+<li>Why it matters:</li>
+</ul>
+
+<p class="mb-3">Normality of errors ensures that confidence intervals and hypothesis tests are valid.</p>
+
+<ul class="note-list">
+<li>How to check:
+<ul class="note-list">
+<li>Q-Q plot of residuals</li>
+<li>Histogram of residuals</li>
+<li>Shapiro–Wilk or Kolmogorov–Smirnov test</li>
+</ul></li>
+</ul>
+
+<blockquote class="blockquote mb-3">📝 Note: Normality is less critical for large sample sizes (by the Central Limit Theorem).</blockquote>
+
+<h4 id="5-no-multicollinearity" class="mb-2">5. 🔀 No Multicollinearity</h4>
+
+<ul class="note-list">
+<li>What it means:</li>
+</ul>
+
+<p class="mb-3">Independent variables should not be highly correlated with each other.</p>
+
+<ul class="note-list">
+<li>Why it matters:</li>
+</ul>
+
+<p class="mb-3">High multicollinearity inflates standard errors, making it difficult to determine the effect of individual predictors.</p>
+
+<ul class="note-list">
+<li>How to check:
+<ul class="note-list">
+<li>Variance Inflation Factor (VIF) — typically VIF &gt; 10 is problematic</li>
+<li>Correlation matrix / heatmap</li>
+</ul></li>
+</ul>
+
+<h4 id="6-no-endogeneity-optional-but-important" class="mb-2">6. ⚠️ No Endogeneity <em>(Optional but Important)</em></h4>
+
+<ul class="note-list">
+<li>What it means:</li>
+</ul>
+
+<p class="mb-3">Independent variables should be uncorrelated with the error term.</p>
+
+<ul class="note-list">
+<li>Why it matters:</li>
+</ul>
+
+<p class="mb-3">Endogeneity leads to biased and inconsistent coefficient estimates.</p>
+
+<ul class="note-list">
+<li>Common causes:
+<ul class="note-list">
+<li>Omitted variable bias</li>
+<li>Simultaneous causality</li>
+<li>Measurement errors</li>
+</ul></li>
+<li>How to check or handle:
+<ul class="note-list">
+<li>Use instrumental variables</li>
+<li>Include relevant variables</li>
+<li>Use advanced models (e.g., 2SLS)</li>
+</ul></li>
+</ul>
+
+<h4 id="summary-table" class="mb-2">✅ Summary Table</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Assumption</th>
+<th>Description</th>
+<th>Check With</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Linearity</td>
+<td>Linear relationship between X and Y</td>
+<td>Residual plots, scatter plots</td>
+</tr>
+<tr>
+<td>Independence</td>
+<td>Errors are independent</td>
+<td>Durbin–Watson, residual vs. time plot</td>
+</tr>
+<tr>
+<td>Homoscedasticity</td>
+<td>Constant variance of residuals</td>
+<td>Residual plot, Breusch–Pagan</td>
+</tr>
+<tr>
+<td>Normality of Errors</td>
+<td>Errors follow normal distribution</td>
+<td>Q-Q plot, Shapiro–Wilk</td>
+</tr>
+<tr>
+<td>No Multicollinearity</td>
+<td>Predictors not strongly correlated</td>
+<td>VIF, correlation matrix</td>
+</tr>
+<tr>
+<td>No Endogeneity</td>
+<td>Predictors not correlated with error term</td>
+<td>Instrumental variables, model checks</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="key-takeaway" class="mb-2">🧠 Key Takeaway</h4>
+
+<blockquote class="blockquote mb-3">Satisfying these assumptions makes linear regression statistically sound,</blockquote>
+
+<blockquote class="blockquote mb-3">ensuring your coefficients, confidence intervals, and p-values are trustworthy.</blockquote>
+
+<hr>
+
+<p class="mb-3">Example Neural Network for MNIST Classification Here’s a complete example of defining a simple feedforward neural network for classifying MNIST digits.</p>
+
+<p class="mb-3">This network consists of an input layer, two hidden layers, and an output layer:</p>
+
+<ul class="note-list">
+<li>Input Layer: The 28x28 image is flattened into a 784-dimensional vector.</li>
+<li>First Hidden Layer: A fully connected layer (fc1) with 256 neurons, followed by a ReLU activation.</li>
+<li>Second Hidden Layer: Another fully connected layer (fc2) with 128 neurons, followed by a ReLU activation.</li>
+<li>Output Layer: A fully connected layer (fc3) with 10 neurons, corresponding to the 10 classes for classification.</li>
+</ul>
+
+<p class="mb-3">The reduction in the number of features from 256 in the first hidden layer (<code>fc1</code>) to 128 in the second hidden layer (<code>fc2</code>) is a common architectural choice in neural networks. Neural networks learn features in a hierarchical manner. The first hidden layer (<code>fc1</code>) might learn a broader set of more basic features directly from the input (the flattened image).</p>
+
+<p class="mb-3">As you go deeper into the network, subsequent layers learn to combine and refine these lower-level features into more abstract and task-specific representations. Reducing the number of neurons in deeper layers can encourage the network to focus on the most salient and important features needed for the classification task.</p>
+
+<p class="mb-3">Full Code:</p>
+
+<div class="note-markdown-block"><pre><code class="language-python">criterion = nn.CrossEntropyLoss()
+# Adam optimiser is used here with a learning rate of 0.001.
+optimizer = optim.Adam(model.parameters(), lr=0.001)</code></pre></div>
+
+<p class="mb-3">Step B: Training Loop Example After defining your model and setting up the loss function and optimiser, you enter the training phase. During training, the model's parameters are updated based on the computed gradients. In PyTorch, it is important to set the model to training mode using <code>model.train()</code> before the training loop. This informs the network that it is in training mode so that certain layers (such as dropout and batch normalisation) behave appropriately.</p>
+
+<p class="mb-3">Training Mode vs Evaluation Mode</p>
+
+<ul class="note-list">
+<li>Training Mode (<code>model.train()</code>):
+<ul class="note-list">
+<li>Activates dropout layers, meaning that during training, some neurons are randomly disabled.</li>
+<li>Ensures that batch normalisation layers use the statistics of the current mini batch.</li>
+<li>All layers are set to update their internal parameters based on the gradient computations.</li>
+</ul></li>
+<li>Evaluation Mode (<code>model.eval()</code>):
+<ul class="note-list">
+<li>Disables dropout, so that all neurons are used during inference.</li>
+<li>Batch normalisation layers use the running averages computed during training instead of the statistics of the current batch.</li>
+<li>This mode should be used when the model is being tested or used for predictions, as it ensures consistent behaviour.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Below is an example of a training loop where the model is set to training mode before training and evaluation mode after training. It is followed by code that demonstrates how to save and then load the model.</p>
+
+<p class="mb-3">Example Training Loop and Mode Switching</p>
+
+<div class="note-markdown-block"><pre><code class="language-python">from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+# Define a series of transformations:
+transform = transforms.Compose([
+    transforms.ToTensor(),               # Convert images to PyTorch tensors
+    transforms.Normalize((0.5,), (0.5,))   # Normalise pixel values to the range [-1, 1]
+])
+
+# Download and prepare the MNIST training dataset:
+train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+
+# Create a DataLoader to iterate over the dataset in batches:
+train_loader = DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
+
+# Example: Iterate through one batch of data:
+for images, labels in train_loader:
+    print("Batch image shape:", images.shape)   # Expected: [64, 1, 28, 28]
+    print("Batch label shape:", labels.shape)   # Expected: [64]
+    Break
+`torchvision` is a PyTorch library providing popular datasets, model architectures, and common image transformations for computer vision tasks.
+num_epochs = 10
+
+# Move the model to the appropriate device (CPU or GPU) before training
+model.to(device)
+
+# Set the model to training mode before starting the training loop
+model.train()
+
+for epoch in range(num_epochs):
+    for images, labels in train_loader:  # train_loader is defined
+        images, labels = images.to(device), labels.to(device)
+
+        optimizer.zero_grad()              # Clear gradients from the previous step
+        outputs = model(images)            # Forward pass: compute predictions
+        loss = criterion(outputs, labels)  # Compute the loss between predictions and true labels
+        loss.backward()                    # Backpropagation: compute gradients
+        optimizer.step()                   # Update model parameters using the optimiser
+
+    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}")</code></pre></div>
+
+<p class="mb-3">The following code demonstrates how to evaluate a deep learning model in PyTorch. The model is set to evaluation mode with <code>model.eval()</code>.</p>
+
+<ul class="note-list">
+<li>Within a <code>torch.no_grad()</code> block, a batch of data is processed to obtain raw output scores (logits).</li>
+<li>The predicted classes are determined by selecting the highest score for each sample, and these predictions are compared with the true labels to count correct matches.</li>
+<li>Finally, the accuracy is calculated for the batch, offering a clear measure of the model's performance on new, unseen data.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code class="language-python">from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+# Define transformations for the MNIST test set
+transform = transforms.Compose([
+    transforms.ToTensor(),               # Convert images to PyTorch tensors
+    transforms.Normalize((0.5,), (0.5,))   # Normalise pixel values to the range [-1, 1]
+])
+
+# Load the MNIST test dataset (train=False indicates the test set)
+test_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+
+# Define the test_loader to iterate through the test dataset in batches
+test_loader = DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
+# After training, set the model to evaluation mode for inference
+model.eval()
+
+# Variables to accumulate correct predictions and total samples in the batch
+correct = 0
+total = 0
+
+with torch.no_grad():  # Disables gradient computation for inference
+    for images, labels in test_loader:
+        images, labels = images.to(device), labels.to(device)
+        outputs = model(images)
+        # Convert the raw outputs (logits) to predicted class indices
+        _, predicted = torch.max(outputs, dim=1)
+
+        # Count total samples and correct predictions
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+# Compute accuracy for the batch
+accuracy = correct / total * 100
+print(f'Accuracy on this batch: {accuracy:.2f}%')</code></pre></div>
+
+<p class="mb-3">In the above example:</p>
+
+<ul class="note-list">
+<li>The model is switched to training mode with <code>model.train()</code> before the training loop begins.</li>
+<li>After the training loop, <code>model.eval()</code> is called. This ensures that when you use the model for inference (i.e. making predictions), dropout is disabled and batch normalisation uses the running averages.</li>
+<li>The <code>torch.no_grad()</code> context is used during inference to prevent gradient calculations, which reduces memory consumption and speeds up computation.</li>
+</ul>
+
+<p class="mb-3">5.4.1 Saving and Loading Your Model Once your model has been trained, it is common to save its parameters (weights) so that you can reload them later without retraining the model.</p>
+
+<p class="mb-3">Saving the Model You can save the model's state dictionary, which contains all the model parameters, using the <code>torch.save()</code> function: <code>torch.save(model.state_dict(), 'model.pth')</code></p>
+
+<p class="mb-3">Loading the Model To load the saved model, create a new instance of the model class and load the saved parameters using the <code>load_state_dict()</code> method. Finally, set the model to evaluation mode if you intend to use it for inference:</p>
+
+<div class="note-markdown-block"><pre><code class="language-python">loaded_model.load_state_dict(torch.load('model.pth'))
+# Set the model to evaluation mode
+loaded_model.eval()
+# Move the model to the appropriate device (CPU or GPU) before training
+loaded_model.to(device)
+
+# Using the loaded model to make predictions on a batch of test images:
+with torch.no_grad():  # Disable gradient computation for inference
+    for images, labels in test_loader:  # test_loader is defined above and contains the test data
+        # Move images and labels to the appropriate device (CPU or GPU)
+        images, labels = images.to(device), labels.to(device)
+
+        # Get the raw outputs (logits) from the model
+        outputs = loaded_model(images)
+
+        # Convert the logits to predicted class indices
+        _, predicted = torch.max(outputs, dim=1)
+
+        # Print the predicted classes and the actual labels for this batch
+        print("Predicted classes:", predicted)
+        print("Actual classes:", labels)
+
+        # Process only one batch for demonstration purposes
+        break</code></pre></div>
+
+<p class="mb-3">Starting the Server in Jupyter Notebook</p>
+
+<p class="mb-3">If you are running the FastAPI server inside a Jupyter Notebook, you can start it directly from a code cell.</p>
+
+<p class="mb-3">This Python script is designed to safely and automatically restart a FastAPI web server. It is especially useful for developers who need to stop a running server and start it again from a single command without doing it manually.</p>
+
+<ol class="mb-3">
+<li>Define the Restart Function</li>
+</ol>
+
+<ul class="note-list">
+<li>The code defines a function called <code>restart_server()</code> that takes a <code>port</code> number as an argument, which defaults to <code>8000</code>. This function contains all the steps needed to perform the restart.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Stop the Existing Server</li>
+</ol>
+
+<ul class="note-list">
+<li>The script first attempts to find and stop any program that might already be using the specified port.</li>
+<li>It uses the <code>subprocess.run()</code> command to execute a shell command: <code>kill -9 $(lsof -t -i:{port})</code>.
+<ul class="note-list">
+<li><code>lsof -t -i:{port}</code> is a command that looks for a process using that specific port and returns its process ID (PID).</li>
+<li><code>kill -9</code> then forcefully stops that process using the PID.</li>
+</ul></li>
+<li>A <code>try-except</code> block is used to prevent the script from crashing if no server is found on that port, which is a common scenario.</li>
+<li>A short delay (<code>time.sleep(1)</code>) is added to give the operating system enough time to completely shut down the old process before trying to start a new one.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Start the New Server</li>
+</ol>
+
+<ul class="note-list">
+<li>Next, the script starts a new server instance.</li>
+<li>It uses <code>subprocess.Popen()</code> to run the command <code>uvicorn main:app --reload --port {port}</code>.
+<ul class="note-list">
+<li><code>uvicorn</code> is the web server that runs the FastAPI application.</li>
+<li><code>main:app</code> tells <code>uvicorn</code> to look for a FastAPI application named <code>app</code> inside a file called <code>main.py</code>.</li>
+<li>The <code>--reload</code> flag is a key feature for development. It tells the server to automatically restart itself whenever a change is saved in the source code files, so the user doesn't have to manually restart it.</li>
+</ul></li>
+<li>The <code>Popen()</code> function is used instead of <code>run()</code> because it starts the server in the background, allowing the Python script to continue running and complete its task.</li>
+<li>A second delay (<code>time.sleep(2)</code>) is included to give the new server time to fully start up and become ready to accept requests.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Execute the Script</li>
+</ol>
+
+<ul class="note-list">
+<li>The final line, <code>restart_server()</code>, calls the function to begin the entire process. This line is what actually triggers the server to stop (if necessary) and then start again.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code class="language-python">import subprocess   # Lets us run system commands directly from Python
+import time         # Provides time-related functions like delays
+
+# Define a function to restart the FastAPI server safely
+def restart_server(port=8000):
+    """Safely restart the FastAPI server"""
+
+    # First, try to stop any server already running on the given port
+    try:
+        # 'lsof -t -i:{port}' finds the process ID using the port
+        # 'kill -9' forcefully stops that process
+        # subprocess.run executes this command in the system shell
+        subprocess.run(f"kill -9 $(lsof -t -i:{port})", shell=True)
+        print(f"✅ Stopped existing server on port {port}")
+
+        # Wait for 1 second to make sure the process stops completely
+        time.sleep(1)
+    except:
+        # If there was no server running, print this message
+        print(f"ℹ️ No existing server on port {port}")
+
+    # Now, start a new FastAPI server on the same port
+    print(f"🚀 Starting server on port {port}...")
+
+    # Use subprocess.Popen to start the server in the background
+    # 'uvicorn main:app --reload --port {port}' runs the FastAPI app
+    # --reload makes the server restart automatically when files change
+    subprocess.Popen(f"uvicorn main:app --reload --port {port}", shell=True)
+
+    # Wait for 2 seconds to give the server time to start up
+    time.sleep(2)
+
+    # Print the URL so the user knows where to access the server
+    print(f"✅ Server running at http://127.0.0.1:{port}")
+
+# Call the function to restart the server on port 8000
+restart_server()</code></pre></div>
+
+<ol class="mb-3">
+<li>Running the Server</li>
+</ol>
+
+<p class="mb-3">In this section, we will learn what the command</p>
+
+<div class="note-markdown-block"><pre><code class="language-bash">!uvicorn main:app --reload</code></pre></div>
+
+<p class="mb-3">does and how to stop properly when you're done.</p>
+
+<p class="mb-3">What the command does</p>
+
+<ol class="mb-3">
+<li><code>uvicorn</code></li>
+</ol>
+
+<ul class="note-list">
+<li>This is the web server that runs your FastAPI application.</li>
+</ul>
+
+<ol class="mb-3">
+<li><code>main:app</code></li>
+</ol>
+
+<ul class="note-list">
+<li><code>main</code> refers to the name of your Python file without the <code>.py</code> extension
+<ul class="note-list">
+<li>If your file is called <code>main.py</code>, then you use <code>main</code>.</li>
+<li>If your file is called <code>server.py</code>, then you must use <code>server</code> instead.</li>
+</ul></li>
+<li><code>app</code> refers to the name of the FastAPI application instance inside that Python file.
+<ul class="note-list">
+<li>If you wrote <code>app = FastAPI()</code>, then you use <code>app</code>.</li>
+<li>If you named it <code>my_app = FastAPI()</code>, then you must run <code>uvicorn main:my_app --reload</code> instead.</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li><code>--reload</code></li>
+</ol>
+
+<ul class="note-list">
+<li>This flag enables auto-reload mode:
+<ul class="note-list">
+<li>If you make changes to your code, the server restarts automatically.</li>
+<li>Saves you from restarting the server manually every time you edit the code.</li>
+</ul></li>
+<li>Useful in development, but not recommended in production.</li>
+</ul>
+
+<p class="mb-3">How to Stop the Server</p>
+
+<ul class="note-list">
+<li>When you're done, you must stop the running server.</li>
+</ul>
+
+<p class="mb-3">How to Stop the Server in Jupyter Notebook</p>
+
+<ul class="note-list">
+<li>When you run the <code>uvicorn</code> command inside a Jupyter Notebook code cell, the server keeps running until you stop it manually.</li>
+</ul>
+
+<p class="mb-3">Here is the recommended way: Option 1: Use the Stop Button in Jupyter (Most Common)</p>
+
+<ul class="note-list">
+<li>Look at the toolbar at the top of Jupyter Notebook.</li>
+<li>Click the Stop (■) button — it looks like a square.</li>
+<li>This will interrupt the running cell and stop the server safely.</li>
+</ul>
+
+<p class="mb-3">Option 2: Use the Kernel Menu</p>
+
+<ul class="note-list">
+<li>Go to Kernel → Interrupt in the Jupyter Notebook menu.</li>
+<li>This sends an interrupt signal to the server, similar to <code>CTRL+C</code> in the terminal.</li>
+</ul>
+
+<p class="mb-3">Note: When running <code>uvicorn</code> in Jupyter, you don't use <code>CTRL+C</code> or <code>CMD+C</code> like in a terminal. Instead, rely on the Stop button or the Kernel menu to interrupt or restart the server process.</p>
+
+<p class="mb-3">Streamlit App Runner Script The previous script creates a FastAPI web API for churn prediction. This current script is a test suite that verifies the API's functionality. It is designed to automate the process of starting a Streamlit web application. It ensures a clean launch by first stopping any previous instances of the app.</p>
+
+<ol class="mb-3">
+<li>Define the Launch Function</li>
+</ol>
+
+<ul class="note-list">
+<li>The script defines a function <code>run_streamlit_app()</code> that takes an optional <code>port</code> number. This function contains all the logic for launching the app.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Pre-Launch Checks</li>
+</ol>
+
+<ul class="note-list">
+<li>It first checks if the main application file, <code>streamlit_app.py</code>, actually exists. If not, it prints an error message and stops, preventing a crash.</li>
+<li>Next, it attempts to kill any existing process running on the specified port. This prevents port conflicts, which are a common issue when restarting web applications.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Launch the Application</li>
+</ol>
+
+<ul class="note-list">
+<li>The script uses <code>subprocess.Popen()</code> to execute the command that runs the Streamlit app.</li>
+<li>It passes arguments to the command to specify the app file, the port to use, and a headless mode which makes it easier to run in the background.</li>
+<li>The use of <code>Popen</code> allows the script to continue running after launching the app, so it can display a confirmation message to the user.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Feedback</li>
+</ol>
+
+<ul class="note-list">
+<li>After launching the app, the script pauses briefly to give the server time to start up.</li>
+<li>It then prints a confirmation message, including the URL where the user can access the running application and a list of its features. It also provides instructions on how to stop the app.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code class="language-python">import subprocess
+import time
+import threading
+import os
+
+def run_streamlit_app(port=8501):
+    """Run the Streamlit app"""
+
+    # Check if streamlit_app.py exists
+    if not os.path.exists("streamlit_app.py"):
+        print("❌ streamlit_app.py not found. Create it first using the code above.")
+        return
+
+    # Kill any existing Streamlit processes
+    try:
+        subprocess.run(f"kill -9 $(lsof -t -i:{port})", shell=True)
+        print(f"✅ Stopped existing Streamlit app on port {port}")
+        time.sleep(1)
+    except:
+        print(f"ℹ️ No existing Streamlit app on port {port}")
+
+    # Start Streamlit
+    print(f"🚀 Starting Streamlit app on port {port}...")
+
+    # Run Streamlit in the background
+    process = subprocess.Popen([
+        "streamlit", "run", "streamlit_app.py",
+        "--server.port", str(port),
+        "--server.headless", "true"
+    ])
+
+    time.sleep(3)  # Give it time to start
+
+    print(f"✅ Streamlit app running at http://localhost:{port}")
+    print("📱 The app includes:")
+    print("   • Single customer prediction interface")
+    print("   • Batch analysis capabilities")
+    print("   • Model insights and feature importance")
+    print("   • API testing tools")
+    print("\n🛑 To stop: Use Ctrl+C in terminal or restart your kernel")
+
+    return process
+
+# Run the Streamlit app
+streamlit_process = run_streamlit_app()</code></pre></div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NUS CS5242: Neural Networks and Deep Learning — Ludwig</title>
+  <meta name="garden:tags" content="Deep Learning, Machine Learning, Artificial Intelligence, LLM">
+  <meta name="garden:summary" content="Lecture and study notes for NUS CS5242 Neural Networks and Deep Learning, covering causal language models, LLaMA label handling mechanics, and instruction fine-tuning workflows.">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.deep_learning,concept.machine_learning,concept.artificial_intelligence,concept.llm">
+  <meta name="site:tag_labels" content="{&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.artificial_intelligence&quot;:{&quot;en&quot;:&quot;Artificial Intelligence&quot;,&quot;zh-Hant&quot;:&quot;人工智慧&quot;,&quot;zh-Hans&quot;:&quot;人工智能&quot;},&quot;concept.llm&quot;:{&quot;en&quot;:&quot;LLM&quot;,&quot;zh-Hant&quot;:&quot;大型語言模型&quot;,&quot;zh-Hans&quot;:&quot;大型语言模型&quot;}}">
+  <meta name="site:canonical_id" content="nus-cs5242-neural-networks-and-deep-learning">
+  <meta name="site:published_at" content="2026-09-12">
+  <meta name="site:last_modified_at" content="2026-09-12">
+  <meta name="site:reading_time_minutes" content="21">
+  <meta name="site:source" content="notes/NUS CS5242 Neural Networks and Deep Learning/NUS CS5242 Neural Networks and Deep Learning.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">NUS CS5242: Neural Networks and Deep Learning</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#overview">Overview</a>
+<a class="note-toc-link level-1" href="#main-components-and-their-roles">Main Components and Their Roles</a>
+<a class="note-toc-link level-2" href="#1-t5layernorm">1. T5LayerNorm</a>
+<a class="note-toc-link level-2" href="#2-t5densegatedactdense">2. T5DenseGatedActDense</a>
+<a class="note-toc-link level-2" href="#3-t5layerff">3. T5LayerFF</a>
+<a class="note-toc-link level-2" href="#4-t5attention">4. T5Attention</a>
+<a class="note-toc-link level-2" href="#5-t5layerselfattention">5. T5LayerSelfAttention</a>
+<a class="note-toc-link level-2" href="#6-t5layercrossattention">6. T5LayerCrossAttention</a>
+<a class="note-toc-link level-2" href="#7-t5block">7. T5Block</a>
+<a class="note-toc-link level-2" href="#8-t5stack">8. T5Stack</a>
+<a class="note-toc-link level-1" href="#key-concepts-and-infrastructure">Key Concepts and Infrastructure</a>
+<a class="note-toc-link level-1" href="#code-syntax-highlights">Code Syntax Highlights</a>
+<a class="note-toc-link level-1" href="#detailed-explanation-and-extension-ideas">Detailed Explanation and Extension Ideas</a>
+<a class="note-toc-link level-2" href="#1-t5layernorm-2">1. T5LayerNorm</a>
+<a class="note-toc-link level-2" href="#2-t5densegatedactdense-2">2. T5DenseGatedActDense</a>
+<a class="note-toc-link level-2" href="#3-t5attention">3. T5Attention</a>
+<a class="note-toc-link level-2" href="#4-t5block">4. T5Block</a>
+<a class="note-toc-link level-2" href="#5-t5stack">5. T5Stack</a>
+<a class="note-toc-link level-1" href="#general-extensions-and-improvements">General Extensions and Improvements</a>
+<a class="note-toc-link level-1" href="#summary">Summary</a>
+<a class="note-toc-link level-1" href="#standard-layer-normalization">Standard Layer Normalization</a>
+<a class="note-toc-link level-1" href="#t5-layernorm-as-in-the-original-paper">T5 LayerNorm (As in the Original Paper)</a>
+<a class="note-toc-link level-1" href="#why-this-design">Why This Design?</a>
+<a class="note-toc-link level-1" href="#variants-in-implementations">Variants in Implementations</a>
+<a class="note-toc-link level-1" href="#comparison-table">Comparison Table</a>
+<a class="note-toc-link level-1" href="#example-parameter-free-t5layernorm-pytorch">Example: Parameter-free T5LayerNorm (PyTorch)</a>
+<a class="note-toc-link level-1" href="#causal-encoder">Causal Encoder</a>
+<a class="note-toc-link level-1" href="#causal-decoder">Causal Decoder</a>
+<a class="note-toc-link level-1" href="#summary-2">Summary</a>
+<a class="note-toc-link level-1" href="#why-does-causal-masking-matter">Why does causal masking matter?</a>
+<a class="note-toc-link level-1" href="#t5attention">T5Attention</a>
+<a class="note-toc-link level-2" href="#overview-2">Overview</a>
+<a class="note-toc-link level-2" href="#key-parameters-and-attributes">Key Parameters and Attributes</a>
+<a class="note-toc-link level-2" href="#initialization">Initialization</a>
+<a class="note-toc-link level-2" href="#relative-position-buckets">Relative Position Buckets</a>
+<a class="note-toc-link level-2" href="#compute-bias-method">`compute_bias` Method</a>
+<a class="note-toc-link level-2" href="#forward-pass">Forward Pass</a>
+<a class="note-toc-link level-1" href="#t5layerselfattention">T5LayerSelfAttention</a>
+<a class="note-toc-link level-2" href="#overview-3">Overview</a>
+<a class="note-toc-link level-2" href="#components">Components</a>
+<a class="note-toc-link level-2" href="#forward-pass-2">Forward Pass</a>
+<a class="note-toc-link level-1" href="#multi-head-attention-flow">🧠 Multi-Head Attention Flow</a>
+<a class="note-toc-link level-1" href="#mask-shapes">📏 Mask Shapes</a>
+<a class="note-toc-link level-1" href="#position-bias">🧮 Position Bias</a>
+<a class="note-toc-link level-1" href="#relative-position-buckets-2">🪜 Relative Position Buckets</a>
+<a class="note-toc-link level-1" href="#torch-where-for-device-friendly-scalars">💡 torch.where for Device-Friendly Scalars</a>
+<a class="note-toc-link level-1" href="#torch-finfo">🧱 torch.finfo</a>
+<a class="note-toc-link level-1" href="#torch-clamp">🧱 torch.clamp</a>
+<a class="note-toc-link level-1" href="#causal-mask-construction">🔒 Causal Mask Construction</a>
+<a class="note-toc-link level-1" href="#why-extend-the-mask">➕ Why Extend the Mask?</a>
+<a class="note-toc-link level-1" href="#torch-cuda-set-device">🎮 torch.cuda.set_device()</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">NUS CS5242 Neural Networks and Deep Learning LLaMA Label Handling and Instruction Fine-Tuning Notes</p>
+
+<ol class="mb-3">
+<li>Overview</li>
+</ol>
+
+<p class="mb-3">LLaMA and similar models (like GPT and Mistral) are decoder-only causal language models trained using next-token prediction. This means the model predicts the next token in a sequence based on all previous tokens. If explicit labels are not provided during training, frameworks such as Hugging Face’s Trainer automatically set labels = input_ids, causing the model to learn to reproduce the entire input sequence.</p>
+
+<ol class="mb-3">
+<li>Behavior in the Original Code</li>
+</ol>
+
+<p class="mb-3">The original dataset combined the instruction, optional context, and response into a single text field. Only input_ids were generated, and no labels were defined. As a result, the model was trained to predict both the instruction and the response. This setup is suboptimal for instruction tuning because the model wastes capacity learning to regenerate the prompt text instead of focusing on generating the correct response.</p>
+
+<ol class="mb-3">
+<li>Improved Approach</li>
+</ol>
+
+<p class="mb-3">Separate the dataset into two distinct parts:</p>
+
+<ul class="note-list">
+<li>input: the prompt (instruction + optional context)</li>
+<li>label: the expected response</li>
+</ul>
+
+<p class="mb-3">Tokenize both input and label fields. Assign the response tokens as the labels using input_enc["labels"] = label_enc["input_ids"]. This setup ensures the model learns to predict only the response given the instruction, which aligns with supervised fine-tuning (SFT) objectives.</p>
+
+<ol class="mb-3">
+<li>Comparison of Approaches</li>
+</ol>
+
+<p class="mb-3">Old version: Implicit labels (labels = input_ids), model learns to predict the full formatted text including the instruction. Updated version: Explicit labels (labels = response tokens), model learns to predict only the response.</p>
+
+<ol class="mb-3">
+<li>Additional Considerations</li>
+</ol>
+
+<p class="mb-3">For even better training efficiency, masking non-response tokens by setting their label positions to -100 can ensure the loss function ignores prompt tokens. This technique allows combining input and response into one sequence while optimizing loss computation on response tokens only.</p>
+
+<ol class="mb-3">
+<li>Summary</li>
+</ol>
+
+<p class="mb-3">Explicitly separating input and response or masking non-response tokens provides a more efficient and accurate fine-tuning setup. This ensures the LLaMA model focuses on generating meaningful responses instead of reproducing the input prompts.</p>
+
+<p class="mb-3">Why divide the dot product by √d?</p>
+
+<ul class="note-list">
+<li>No scaling: Dot product values grow large with increasing dimension <em>d</em>, causing softmax to produce overly sharp (exploding) outputs, which destabilizes training.</li>
+<li>Divide by d: Over-scales down the values, making softmax outputs almost uniform and losing meaningful differences.</li>
+<li>Divide by √d: Strikes the right balance, keeping softmax inputs stable and gradients meaningful, improving training performance.</li>
+</ul>
+
+<h1 class="mt-4">Overview of the T5 Model Implementation</h1>
+
+<h1 class="mt-4">T5 Transformer Core Components: Overview and Extensions</h1>
+</section>
+
+<section id="overview" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Overview</h3>
+
+<p class="mb-3">This code implements the core components of the T5 Transformer architecture, a powerful sequence-to-sequence model widely used in NLP tasks like translation, summarization, and more.</p>
+</section>
+
+<section id="main-components-and-their-roles" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Main Components and Their Roles</h3>
+
+<h4 id="1-t5layernorm" class="mb-2">1. T5LayerNorm</h4>
+
+<ul class="note-list">
+<li>Purpose: Applies a unique layer normalization used in T5.</li>
+<li>How it works:</li>
+</ul>
+
+<p class="mb-3">Normalizes hidden states by scaling without bias. Computes variance across the last dimension, divides inputs by √(variance + ε), then scales by learned weights.</p>
+
+<ul class="note-list">
+<li>Why: Simplifies normalization, improves training stability.</li>
+</ul>
+
+<h4 id="2-t5densegatedactdense" class="mb-2">2. T5DenseGatedActDense</h4>
+
+<ul class="note-list">
+<li>Purpose: Feed-forward network with <em>gated GELU</em> activation.</li>
+<li>How it works:
+<ul class="note-list">
+<li>Two linear layers (<code>wi_0</code>, <code>wi_1</code>) project inputs to feed-forward dimension.</li>
+<li>One output passes through GELU activation, then element-wise multiplied with the other.</li>
+<li>Result is projected back to model dimension (<code>wo</code>) and dropout applied.</li>
+</ul></li>
+<li>Why gating: Enhances expressivity and gradient flow.</li>
+</ul>
+
+<h4 id="3-t5layerff" class="mb-2">3. T5LayerFF</h4>
+
+<ul class="note-list">
+<li>Purpose: Feed-forward block of the Transformer.</li>
+<li>How it works:</li>
+</ul>
+
+<p class="mb-3">Applies T5LayerNorm → gated feed-forward network → dropout → residual connection.</p>
+
+<h4 id="4-t5attention" class="mb-2">4. T5Attention</h4>
+
+<ul class="note-list">
+<li>Purpose: Multi-head self-attention or cross-attention with relative position bias.</li>
+<li>How it works:
+<ul class="note-list">
+<li>Linear projections for queries, keys, values, output.</li>
+<li>Adds relative position biases to attention scores based on token distance.</li>
+<li>Applies softmax with attention masking (causal or padding).</li>
+<li>Supports cross-attention by using encoder keys/values.</li>
+</ul></li>
+<li>Why relative position bias: Better generalization for varying input lengths.</li>
+</ul>
+
+<h4 id="5-t5layerselfattention" class="mb-2">5. T5LayerSelfAttention</h4>
+
+<ul class="note-list">
+<li>Purpose: Self-attention with layer norm and residual dropout.</li>
+<li>How it works:</li>
+</ul>
+
+<p class="mb-3">Normalize input → self-attention → dropout → add residual.</p>
+
+<h4 id="6-t5layercrossattention" class="mb-2">6. T5LayerCrossAttention</h4>
+
+<ul class="note-list">
+<li>Purpose: Cross-attention in the decoder, attending to encoder outputs.</li>
+<li>How it works:</li>
+</ul>
+
+<p class="mb-3">Similar to self-attention, but keys/values come from encoder states.</p>
+
+<h4 id="7-t5block" class="mb-2">7. T5Block</h4>
+
+<ul class="note-list">
+<li>Purpose: A Transformer block consisting of:</li>
+</ul>
+
+<p class="mb-3">Self-attention → (optional) Cross-attention → Feed-forward network.</p>
+
+<ul class="note-list">
+<li>How it works:</li>
+</ul>
+
+<p class="mb-3">Runs each sub-layer with residual connections, layer norm, and fp16 stability clamping.</p>
+
+<h4 id="8-t5stack" class="mb-2">8. T5Stack</h4>
+
+<ul class="note-list">
+<li>Purpose: Stacks multiple Transformer blocks (encoder or decoder).</li>
+<li>How it works:
+<ul class="note-list">
+<li>Token embedding.</li>
+<li>Creates attention masks (causal for decoder, padding for encoder).</li>
+<li>Passes input through all blocks sequentially.</li>
+<li>Applies final layer norm and dropout.</li>
+<li>Handles encoder-decoder interactions.</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="key-concepts-and-infrastructure" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Key Concepts and Infrastructure</h3>
+
+<ul class="note-list">
+<li>Layer Normalization: Stabilizes training by normalizing activations; T5 omits bias.</li>
+<li>Multi-head Attention: Parallel attention heads attending to different representation subspaces.</li>
+<li>Relative Position Bias: Attention scores biased by relative token positions rather than absolute.</li>
+<li>Residual Connections: Help gradients flow through deep networks.</li>
+<li>Dropout: Regularization technique.</li>
+<li>Causal Masking: Prevents decoder from attending to future tokens (autoregressive).</li>
+</ul>
+</section>
+
+<section id="code-syntax-highlights" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Code Syntax Highlights</h3>
+
+<ul class="note-list">
+<li>Uses <code>nn.Module</code> subclasses for modularity.</li>
+<li>Parameters defined as <code>nn.Parameter</code>.</li>
+<li>Forward passes include tensor reshaping, matrix multiplication, masking, softmax, dropout.</li>
+<li>Handles different modes: encoder vs decoder, self vs cross attention.</li>
+<li>Implements fp16 numerical stability tricks.</li>
+</ul>
+</section>
+
+<section id="detailed-explanation-and-extension-ideas" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Detailed Explanation and Extension Ideas</h3>
+
+<h4 id="1-t5layernorm-2" class="mb-2">1. T5LayerNorm</h4>
+
+<ul class="note-list">
+<li>Computes variance only, scales without bias.</li>
+<li><em>Extension ideas</em>: Add bias, try RMSNorm, optimize with fused kernels.</li>
+</ul>
+
+<h4 id="2-t5densegatedactdense-2" class="mb-2">2. T5DenseGatedActDense</h4>
+
+<ul class="note-list">
+<li>Gated activation: multiply GELU output with linear projection.</li>
+<li><em>Extension ideas</em>: Swap GELU with Swish/ReLU, add normalization, learn gating weights dynamically.</li>
+</ul>
+
+<h4 id="3-t5attention" class="mb-2">3. T5Attention</h4>
+
+<ul class="note-list">
+<li>Multi-head attention with relative position bias.</li>
+<li>Supports masking (causal for decoder, padding for encoder).</li>
+<li><em>Extension ideas</em>: Use rotary position embeddings (RoPE), sparse/local attention, fuse ops for speed.</li>
+</ul>
+
+<h4 id="4-t5block" class="mb-2">4. T5Block</h4>
+
+<ul class="note-list">
+<li>Combines self-attention, optional cross-attention, feed-forward.</li>
+<li>Residual and normalization layers included.</li>
+<li><strong>Clamps</strong> values in fp16 mode for stability.</li>
+<li><em>Extension ideas</em>: Pre-norm vs post-norm, adapters for efficient fine-tuning, stochastic depth.</li>
+</ul>
+
+<h4 id="5-t5stack" class="mb-2">5. T5Stack</h4>
+
+<ul class="note-list">
+<li>Embeds tokens, builds masks, stacks blocks, applies final norm.</li>
+<li>Supports encoder-decoder interaction.</li>
+<li><em>Extension ideas</em>: Embedding tying, mixed precision training, token type embeddings, prefix/prompt tuning, beam search decoding.</li>
+</ul>
+</section>
+
+<section id="general-extensions-and-improvements" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">General Extensions and Improvements</h3>
+
+<ul class="note-list">
+<li>Tokenizer &amp; Preprocessing: Integrate SentencePiece or HuggingFace tokenizers.</li>
+<li>Training Loop &amp; Optimizer: Support gradient accumulation, learning rate schedules, mixed precision.</li>
+<li>Distributed Training: Multi-GPU and multi-node training.</li>
+<li>Model Checkpointing: Save/load weights, export to ONNX/TorchScript.</li>
+<li>Evaluation &amp; Metrics: BLEU, ROUGE, accuracy pipelines.</li>
+<li>Fine-tuning Heads: Add classification, QA, summarization heads; implement adapters/LoRA.</li>
+</ul>
+</section>
+
+<section id="summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary</h3>
+
+<ul class="note-list">
+<li>The code modularly implements T5's core blocks with attention, normalization, and feed-forward layers.</li>
+<li>Supports encoder-decoder stacks with masking and relative position bias.</li>
+<li>Provides a strong foundation for training or fine-tuning T5 models.</li>
+<li>Many extension points to improve, customize, or optimize the model.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">T5 LayerNorm Summary</h1>
+</section>
+
+<section id="standard-layer-normalization" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Standard Layer Normalization</h3>
+
+<ul class="note-list">
+<li>Formula:</li>
+</ul>
+
+<p class="mb-3">\[ \text{LayerNorm}(x) = \gamma \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta \]</p>
+
+<ul class="note-list">
+<li>Steps:
+<ul class="note-list">
+<li>Compute mean \(\mu\) of input features.</li>
+<li>Subtract mean from input.</li>
+<li>Compute variance \(\sigma^2\).</li>
+<li>Normalize input using mean and variance.</li>
+<li>Scale by learnable parameter \(\gamma\) (gamma).</li>
+<li>Shift by learnable parameter \(\beta\) (beta).</li>
+</ul></li>
+<li>Learnable parameters: scale (gamma) and bias (beta).</li>
+</ul>
+</section>
+
+<section id="t5-layernorm-as-in-the-original-paper" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">T5 LayerNorm (As in the Original Paper)</h3>
+
+<ul class="note-list">
+<li>No mean subtraction: Does not subtract mean from inputs.</li>
+<li>Variance calculation: Computes variance as mean of squared inputs (RMS).</li>
+<li>No learnable parameters: Neither scale (gamma) nor bias (beta).</li>
+<li>Formula:</li>
+</ul>
+
+<p class="mb-3">\[ \text{T5LayerNorm}(x) = \frac{x}{\sqrt{\text{mean}(x^2) + \epsilon}} \]</p>
+
+<ul class="note-list">
+<li>Simply normalizes inputs by root mean square (RMS).</li>
+</ul>
+</section>
+
+<section id="why-this-design" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Why This Design?</h3>
+
+<ul class="note-list">
+<li>Simplifies normalization, reducing parameters.</li>
+<li>Empirically shown to improve training stability for T5.</li>
+<li>Downstream layers handle scaling implicitly.</li>
+<li>Helps model efficiency and regularization.</li>
+</ul>
+</section>
+
+<section id="variants-in-implementations" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Variants in Implementations</h3>
+
+<ul class="note-list">
+<li>Some implementations add a learnable scale parameter (<code>weight</code>) for flexibility.</li>
+<li>The original T5 implementation does not include learnable parameters in LayerNorm.</li>
+<li>Bias terms are generally omitted in all variants.</li>
+</ul>
+</section>
+
+<section id="comparison-table" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Comparison Table</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Feature</th>
+<th>Standard LayerNorm</th>
+<th>T5 LayerNorm (Paper)</th>
+<th>Common Implementations (PyTorch)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Mean subtraction</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Variance calculation</td>
+<td>Variance</td>
+<td>RMS (mean squared)</td>
+<td>RMS</td>
+</tr>
+<tr>
+<td>Learnable scale (gamma)</td>
+<td>Yes</td>
+<td>No</td>
+<td>Sometimes yes</td>
+</tr>
+<tr>
+<td>Learnable bias (beta)</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section id="example-parameter-free-t5layernorm-pytorch" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Example: Parameter-free T5LayerNorm (PyTorch)</h3>
+
+<div class="note-markdown-block"><pre><code class="language-python">import torch
+import torch.nn as nn
+
+class T5LayerNorm(nn.Module):
+    def __init__(self, eps=1e-6):
+        super().__init__()
+        self.eps = eps
+
+    def forward(self, x):
+        # RMS normalization (no mean subtraction)
+        variance = x.pow(2).mean(-1, keepdim=True)
+        x = x / torch.sqrt(variance + self.eps)
+        return x</code></pre></div>
+
+<hr>
+
+<h1 class="mt-4">Summary: Layer Normalization in T5</h1>
+
+<ul class="note-list">
+<li>Normalization Dimension</li>
+</ul>
+
+<p class="mb-3">T5's layer normalization normalizes across the last dimension, which corresponds to the embedding dimension (hidden size), not the sequence length.</p>
+
+<ul class="note-list">
+<li>Why normalize the embedding dimension?</li>
+</ul>
+
+<p class="mb-3">Each token's embedding vector is normalized individually. This means each token representation is "cleaned" or stabilized before passing to the next layer, helping consistent scale and distribution across layers.</p>
+
+<ul class="note-list">
+<li>Embedding normalization vs. layer norm</li>
+</ul>
+
+<p class="mb-3">While embeddings may be somewhat normalized initially, intermediate representations after each layer benefit from re-normalization to improve training stability and model performance.</p>
+
+<ul class="note-list">
+<li>Effect of normalization per token</li>
+</ul>
+
+<p class="mb-3">This ensures the model's internal representation remains well-behaved and prevents issues like exploding or vanishing activations as information passes through many layers.</p>
+
+<ul class="note-list">
+<li>Not normalized across sequence</li>
+</ul>
+
+<p class="mb-3">Normalizing across the sequence dimension would mix tokens and lose per-token information, which is not desired here.</p>
+
+<p class="mb-3">This approach is standard for Transformer models, where layer norm is typically applied across the embedding dimension per token at each layer.</p>
+
+<h1 class="mt-4">What is a Causal Encoder and a Causal Decoder?</h1>
+</section>
+
+<section id="causal-encoder" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Causal Encoder</h3>
+
+<ul class="note-list">
+<li>Definition: An encoder that processes input tokens with a causal mask applied.</li>
+<li>Causal Mask: Ensures that each token can only attend to previous tokens (and itself), not future tokens.</li>
+<li>Usage: This is uncommon for encoders in standard Transformer setups, because encoders usually have access to the whole input sequence (bidirectional).</li>
+<li>When it might be used:
+<ul class="note-list">
+<li>In autoregressive models where even the encoder must not peek into future tokens.</li>
+<li>For example, in some language modeling tasks where the encoder itself processes sequences autoregressively.</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="causal-decoder" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Causal Decoder</h3>
+
+<ul class="note-list">
+<li>Definition: A decoder that uses a causal mask to prevent positions from attending to future tokens.</li>
+<li>Purpose:
+<ul class="note-list">
+<li>Ensures autoregressive generation — the model predicts the next token using only previous tokens.</li>
+<li>Prevents "cheating" by masking out future tokens during training and inference.</li>
+</ul></li>
+<li>Standard in: Transformer decoders for tasks like language generation, translation, summarization.</li>
+</ul>
+</section>
+
+<section id="summary-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Summary</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Component</th>
+<th>Causal Mask Usage</th>
+<th>Typical Purpose</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Encoder</td>
+<td>Usually no</td>
+<td>Encodes entire input sequence (bidirectional)</td>
+</tr>
+<tr>
+<td>Causal Encoder</td>
+<td>Yes (rare)</td>
+<td>Autoregressive encoding (e.g., language modeling)</td>
+</tr>
+<tr>
+<td>Decoder</td>
+<td>Yes (standard)</td>
+<td>Autoregressive decoding/generation</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section id="why-does-causal-masking-matter" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Why does causal masking matter?</h3>
+
+<ul class="note-list">
+<li>It preserves the causal structure of sequence generation.</li>
+<li>Without causal masking in decoder, the model would see future tokens and fail to generalize to real generation scenarios.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">Explanation of <code>T5Attention</code> and <code>T5LayerSelfAttention</code></h1>
+</section>
+
+<section id="t5attention" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">T5Attention</h3>
+
+<h4 id="overview-2" class="mb-2">Overview</h4>
+
+<p class="mb-3"><code>T5Attention</code> implements the core multi-head attention mechanism used in T5, supporting both self-attention and cross-attention.</p>
+
+<hr>
+
+<h4 id="key-parameters-and-attributes" class="mb-2">Key Parameters and Attributes</h4>
+
+<ul class="note-list">
+<li>d_model: Dimensionality of input embeddings.</li>
+<li>d_kv: Dimension of key and value vectors per head.</li>
+<li>num_heads: Number of attention heads.</li>
+<li>dropout_rate: Dropout applied to attention weights.</li>
+<li>relative_attention_num_buckets: Number of buckets for relative position bias.</li>
+<li>relative_attention_max_distance: Maximum relative distance tracked for bias.</li>
+<li>has_relative_attention_bias: Whether to use learned relative position bias.</li>
+<li>is_decoder: Indicates if this attention is in a decoder (affects masking and position bias).</li>
+</ul>
+
+<h4 id="initialization" class="mb-2">Initialization</h4>
+
+<ul class="note-list">
+<li>Defines linear layers for:
+<ul class="note-list">
+<li>Query projection (<code>q</code>): from <code>d_model</code> to <code>num_heads * d_kv</code></li>
+<li>Key projection (<code>k</code>)</li>
+<li>Value projection (<code>v</code>)</li>
+<li>Output projection (<code>o</code>): back to <code>d_model</code></li>
+</ul></li>
+<li>If relative attention bias is used, defines an embedding table for it.</li>
+<li>Sets other parameters like dropout rate and head counts.</li>
+</ul>
+
+<h4 id="relative-position-buckets" class="mb-2">Relative Position Buckets</h4>
+
+<ul class="note-list">
+<li>Converts relative positions (distance between query and key tokens) into buckets to reduce the number of learned biases.</li>
+<li>Uses a mix of linear and logarithmic scaling to handle small and large distances differently.</li>
+<li>Buckets are split for positive and negative distances when bidirectional attention (encoder).</li>
+<li>When causal (decoder), uses unidirectional buckets.</li>
+</ul>
+
+<h4 id="compute-bias-method" class="mb-2"><code>compute_bias</code> Method</h4>
+
+<ul class="note-list">
+<li>Computes relative position biases for each pair of query and key tokens.</li>
+<li>Uses the bucketed relative positions to index into learned embeddings.</li>
+<li>Returns a bias tensor shaped <code>(1, num_heads, query_length, key_length)</code>.</li>
+</ul>
+
+<hr>
+
+<h4 id="forward-pass" class="mb-2">Forward Pass</h4>
+
+<ol class="mb-3">
+<li>Inputs:</li>
+</ol>
+
+<ul class="note-list">
+<li><code>hidden_states</code>: Input embeddings of shape <code>(batch_size, seq_length, d_model)</code>.</li>
+<li><code>mask</code>: Attention mask to prevent attending to padding or future tokens.</li>
+<li><code>key_value_states</code>: Optional external states for cross-attention (encoder outputs).</li>
+<li><code>position_bias</code>: Optional cached position bias.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Projections:</li>
+</ol>
+
+<ul class="note-list">
+<li>Projects inputs to queries.</li>
+<li>For keys and values, uses <code>key_value_states</code> if provided (cross-attention), else <code>hidden_states</code>.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Reshape for Multi-Head Attention:</li>
+</ol>
+
+<ul class="note-list">
+<li>Reshapes <code>(batch_size, seq_length, num_heads * d_kv)</code> into <code>(batch_size, num_heads, seq_length, d_kv)</code>.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Attention Scores:</li>
+</ol>
+
+<ul class="note-list">
+<li>Computes scaled dot-product attention scores by multiplying queries and keys.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Add Position Bias:</li>
+</ol>
+
+<ul class="note-list">
+<li>If no cached position bias, computes relative position biases.</li>
+<li>Adds bias to scores.</li>
+<li>Adds mask if provided (e.g., causal mask to prevent attending to future tokens).</li>
+</ul>
+
+<ol class="mb-3">
+<li>Masking Heads (if pruned):</li>
+</ol>
+
+<ul class="note-list">
+<li>Optionally disables pruned attention heads.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Softmax and Dropout:</li>
+</ol>
+
+<ul class="note-list">
+<li>Applies softmax over the key dimension.</li>
+<li>Applies dropout to attention weights.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Weighted Sum:</li>
+</ol>
+
+<ul class="note-list">
+<li>Multiplies attention weights by values.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Output Projection:</li>
+</ol>
+
+<ul class="note-list">
+<li>Reshapes back to <code>(batch_size, seq_length, d_model)</code>.</li>
+<li>Projects through output linear layer.</li>
+</ul>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong>Return:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Returns a tuple <code>(attn_output, position_bias)</code> for use in caching.</li>
+</ul>
+</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="t5layerselfattention" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">T5LayerSelfAttention</h3>
+
+<h4 id="overview-3" class="mb-2">Overview</h4>
+
+<ul class="note-list">
+<li>Wraps <code>T5Attention</code> with:
+<ul class="note-list">
+<li>Layer normalization before attention.</li>
+<li>Residual connection and dropout after attention.</li>
+</ul></li>
+</ul>
+
+<h4 id="components" class="mb-2">Components</h4>
+
+<ul class="note-list">
+<li><code>SelfAttention</code>: An instance of <code>T5Attention</code>.</li>
+<li><code>layer_norm</code>: Normalizes input embeddings before attention.</li>
+<li><code>dropout</code>: Applied after attention output.</li>
+</ul>
+
+<h4 id="forward-pass-2" class="mb-2">Forward Pass</h4>
+
+<ul class="note-list">
+<li>Normalize inputs.</li>
+<li>Run self-attention.</li>
+<li>Apply dropout.</li>
+<li>Add residual connection: output = input + dropout(attention_output).</li>
+<li>Return updated hidden states and position bias.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">Summary</h1>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Step</th>
+<th>Description</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Initialization</td>
+<td>Setup of linear layers and relative position bias embedding.</td>
+</tr>
+<tr>
+<td>Relative position buckets</td>
+<td>Efficient encoding of relative positions for bias lookup.</td>
+</tr>
+<tr>
+<td>Forward pass</td>
+<td>Compute Q, K, V projections → attention scores → add bias &amp; mask → softmax → weighted sum → output projection.</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Attention output and updated position bias for caching.</td>
+</tr>
+<tr>
+<td>T5LayerSelfAttention</td>
+<td>Adds layer norm before attention and residual connection after.</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h1 class="mt-4">Additional Notes</h1>
+
+<ul class="note-list">
+<li>Cross-attention: When <code>key_value_states</code> are provided, keys and values come from encoder outputs (used in decoder cross-attention).</li>
+<li>Position bias caching: Allows reusing bias across steps during decoding.</li>
+<li>Masking:
+<ul class="note-list">
+<li>For encoder: masks pad tokens.</li>
+<li>For decoder: applies causal mask to avoid future token attention.</li>
+</ul></li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">🔍 PyTorch T5 Attention Notes</h1>
+</section>
+
+<section id="multi-head-attention-flow" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🧠 Multi-Head Attention Flow</h3>
+
+<ol class="mb-3">
+<li>Input shape: <code>(batch_size, seq_length, d_model)</code></li>
+<li>Linear Projections: Project inputs to Q, K, V using separate linear layers.</li>
+<li>Reshape: Split last dim into <code>(num_heads, d_kv)</code> and transpose to shape:</li>
+</ol>
+
+<ul class="note-list">
+<li><code>(batch_size, num_heads, seq_length, d_kv)</code></li>
+</ul>
+
+<ol class="mb-3">
+<li>Attention scores: Compute dot product of Q and K:</li>
+</ol>
+
+<ul class="note-list">
+<li><code>scores = torch.matmul(Q, K.transpose(-2, -1))</code></li>
+<li>Result shape: <code>(batch_size, num_heads, seq_length, seq_length)</code></li>
+</ul>
+
+<ol class="mb-3">
+<li>Position bias: Added to <code>scores</code> before softmax.</li>
+<li>Masking:</li>
+</ol>
+
+<ul class="note-list">
+<li>Use attention mask to block out positions (e.g. causal or padding).</li>
+<li>Mask shape: <code>(batch_size, 1, seq_length, seq_length)</code> or broadcastable.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Softmax and Dropout:</li>
+</ol>
+
+<ul class="note-list">
+<li>Normalize scores with softmax along <code>-1</code> (key axis).</li>
+<li>Optionally apply dropout.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Attention output:</li>
+</ol>
+
+<ul class="note-list">
+<li>Multiply attention weights with V.</li>
+<li>Shape: <code>(batch_size, num_heads, seq_length, d_kv)</code></li>
+<li>Merge heads and project back with output linear layer.</li>
+</ul>
+</section>
+
+<section id="mask-shapes" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">📏 Mask Shapes</h3>
+
+<ul class="note-list">
+<li>Causal mask shape: <code>(batch_size, seq_length, seq_length)</code></li>
+<li>Extended mask: <code>mask[:, None, :, :]</code> → <code>(batch_size, 1, seq_length, seq_length)</code></li>
+<li>Matches attention score shape for broadcasting.</li>
+</ul>
+</section>
+
+<section id="position-bias" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🧮 Position Bias</h3>
+
+<ul class="note-list">
+<li>Relative position bias encodes how far apart positions are.</li>
+<li>Shape: <code>(1, num_heads, query_length, key_length)</code></li>
+<li>Reused across layers for efficiency.</li>
+<li>Added to attention scores before softmax.</li>
+</ul>
+</section>
+
+<section id="relative-position-buckets-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🪜 Relative Position Buckets</h3>
+
+<ul class="note-list">
+<li><code>_relative_position_bucket()</code> maps relative distances to discrete buckets.</li>
+<li>Helps model learn patterns like "previous token", "2 tokens ahead", etc.</li>
+<li>Uses:
+<ul class="note-list">
+<li><code>relative_attention_num_buckets</code>: Total bucket count (e.g. 32)</li>
+<li><code>relative_attention_max_distance</code>: Max relative distance modeled</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="torch-where-for-device-friendly-scalars" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">💡 torch.where for Device-Friendly Scalars</h3>
+
+<div class="note-markdown-block"><pre><code class="language-python">clamp_value = torch.where(
+    torch.isinf(tensor).any(),
+    torch.finfo(tensor.dtype).max - 1000,
+    torch.finfo(tensor.dtype).max
+)</code></pre></div>
+
+<ul class="note-list">
+<li>Keeps <code>clamp_value</code> as a tensor on the same device (e.g. GPU).</li>
+<li>Avoids device mismatch and keeps code compatible with tracing.</li>
+</ul>
+</section>
+
+<section id="torch-finfo" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🧱 torch.finfo</h3>
+
+<ul class="note-list">
+<li>Returns floating-point limits for a data type:
+<ul class="note-list">
+<li><code>.max</code>: max finite value</li>
+<li><code>.min</code>: min value</li>
+<li><code>.eps</code>: smallest distinguishable delta from 1.0</li>
+<li><code>.tiny</code>: smallest positive normal value</li>
+</ul></li>
+</ul>
+
+<div class="note-markdown-block"><pre><code class="language-python">torch.finfo(torch.float32).max  # ~3.4e38</code></pre></div>
+</section>
+
+<section id="torch-clamp" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🧱 torch.clamp</h3>
+
+<ul class="note-list">
+<li>Used to clip values within <code>[min, max]</code> range.</li>
+<li><code>clamp_value</code> is just a number, <code>torch.clamp()</code> actually applies it to the tensor.</li>
+</ul>
+</section>
+
+<section id="causal-mask-construction" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🔒 Causal Mask Construction</h3>
+
+<div class="note-markdown-block"><pre><code class="language-python">seq_ids = torch.arange(seq_length, device=input_ids.device)
+causal_mask = seq_ids[None, None, :].repeat(batch_size, seq_length, 1) &lt;= seq_ids[None, :, None]
+causal_mask = causal_mask.to(inputs_embeds.dtype)</code></pre></div>
+
+<ul class="note-list">
+<li>Ensures each position can only attend to itself and earlier.</li>
+<li>Final shape: <code>(batch_size, seq_length, seq_length)</code></li>
+</ul>
+</section>
+
+<section id="why-extend-the-mask" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">➕ Why Extend the Mask?</h3>
+
+<div class="note-markdown-block"><pre><code class="language-python">extended_attention_mask = causal_mask[:, None, :, :]</code></pre></div>
+
+<ul class="note-list">
+<li>Adds a singleton head dimension for broadcasting.</li>
+<li>Final shape: <code>(batch_size, 1, seq_length, seq_length)</code></li>
+<li>Needed for compatibility with attention scores.</li>
+</ul>
+</section>
+
+<section id="torch-cuda-set-device" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">🎮 torch.cuda.set_device()</h3>
+
+<div class="note-markdown-block"><pre><code class="language-python">torch.cuda.set_device(self.encoder.first_device)</code></pre></div>
+
+<ul class="note-list">
+<li>Sets the current active CUDA device.</li>
+<li>Ensures new CUDA tensors/ops are placed on the right device.</li>
+<li>Important when working with multiple GPUs.</li>
+</ul>
+
+<hr>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

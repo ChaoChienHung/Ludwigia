@@ -1,0 +1,3595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NUS CS5223: Distributed Systems — Ludwig</title>
+  <meta name="garden:tags" content="Distributed Systems, Consensus, Fault Tolerance, System Architecture">
+  <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5223 Distributed Systems, covering distributed system models, fault tolerance, replication, consistency, and consensus protocols.">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.distributed_systems,concept.consensus,concept.fault_tolerance,concept.system_architecture">
+  <meta name="site:tag_labels" content="{&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;},&quot;concept.consensus&quot;:{&quot;en&quot;:&quot;Consensus&quot;,&quot;zh-Hant&quot;:&quot;共識&quot;,&quot;zh-Hans&quot;:&quot;共识&quot;},&quot;concept.fault_tolerance&quot;:{&quot;en&quot;:&quot;Fault Tolerance&quot;,&quot;zh-Hant&quot;:&quot;容錯&quot;,&quot;zh-Hans&quot;:&quot;容错&quot;},&quot;concept.system_architecture&quot;:{&quot;en&quot;:&quot;System Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;}}">
+  <meta name="site:canonical_id" content="nus-cs5223-distributed-systems">
+  <meta name="site:published_at" content="2026-09-12">
+  <meta name="site:last_modified_at" content="2026-09-12">
+  <meta name="site:reading_time_minutes" content="75">
+  <meta name="site:source" content="notes/NUS CS5223 Distributed Systems/NUS CS5223 Distributed Systems.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">NUS CS5223: Distributed Systems</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">NUS CS5223 Distributed Systems Slide 1</p>
+
+<ul class="note-list">
+<li>What is a distributed system
+<ul class="note-list">
+<li>Multiple interconnected computers</li>
+<li>Cooperate to provide a single service</li>
+<li>Appear to users as one coherent system</li>
+</ul></li>
+<li>Why build distributed systems
+<ul class="note-list">
+<li>Higher capacity and performance
+<ul class="note-list">
+<li>Modern workloads exceed a single machine’s limits</li>
+<li>Aggregate CPU, GPU, memory, storage, and network bandwidth</li>
+</ul></li>
+<li>Geographic distribution
+<ul class="note-list">
+<li>Connect systems across different locations</li>
+</ul></li>
+<li>Reliability and availability
+<ul class="note-list">
+<li>Build always-on systems</li>
+<li>Continue operating despite unreliable individual components</li>
+</ul></li>
+</ul></li>
+<li>Key challenges in distributed systems design
+<ul class="note-list">
+<li>System design and architecture</li>
+<li>Fault tolerance
+<ul class="note-list">
+<li>Different failure models</li>
+<li>Different types of failures</li>
+</ul></li>
+<li>Consistency and correctness
+<ul class="note-list">
+<li>Maintain correct distributed state</li>
+</ul></li>
+<li>Performance
+<ul class="note-list">
+<li>Latency, throughput, scalability</li>
+</ul></li>
+<li>Security</li>
+<li>Testing and debugging</li>
+<li>Risk of making systems less scalable and less reliable than centralized ones</li>
+</ul></li>
+<li>Goal of distributed systems
+<ul class="note-list">
+<li>Improve scalability</li>
+<li>Improve reliability</li>
+<li>Despite inherent complexity and failures</li>
+</ul></li>
+<li>Challenge 1: Failures
+<ul class="note-list">
+<li>Partial failures are the norm</li>
+<li>Systems must continue doing useful work despite failures</li>
+<li>Data center reality
+<ul class="note-list">
+<li>Hundreds of thousands of servers, disks, switches, and cables</li>
+<li>Some component is always failing</li>
+</ul></li>
+<li>Observation
+<ul class="note-list">
+<li>Large distributed systems still work most of the time</li>
+<li>Available globally and concurrently for many users</li>
+</ul></li>
+</ul></li>
+<li>Challenge 2: Managing distributed state
+<ul class="note-list">
+<li>Availability
+<ul class="note-list">
+<li><strong>Replicate</strong> data to tolerate failures</li>
+</ul></li>
+<li>Performance
+<ul class="note-list">
+<li>Replicate popular data closer to users</li>
+</ul></li>
+<li>Scale
+<ul class="note-list">
+<li><strong>Partition</strong> data across multiple machines</li>
+</ul></li>
+<li>Consistency
+<ul class="note-list">
+<li>Ensure replicas agree on data values</li>
+</ul></li>
+</ul></li>
+<li>Subtleties of distributed state
+<ul class="note-list">
+<li>Replication seems simple but is difficult to do correctly</li>
+<li>Failure scenarios
+<ul class="note-list">
+<li>One replica fails</li>
+<li>One replica believes another has failed</li>
+<li>Both replicas believe the other has failed</li>
+</ul></li>
+<li>Leads to ambiguity and inconsistency</li>
+</ul></li>
+<li>Thought experiment: Two-Generals Problem
+<ul class="note-list">
+<li>Two generals must coordinate an attack</li>
+<li>Communication via unreliable messenger</li>
+<li>Messages can be lost</li>
+<li>Result
+<ul class="note-list">
+<li>No protocol can guarantee agreement</li>
+<li>Any last confirmation message could be lost</li>
+</ul></li>
+<li>Key insight
+<ul class="note-list">
+<li>Certain coordination problems are provably impossible</li>
+</ul></li>
+</ul></li>
+<li>Implications for distributed systems
+<ul class="note-list">
+<li>Distributed systems are fundamentally hard</li>
+<li>Some problems are provably impossible
+<ul class="note-list">
+<li>Consensus</li>
+<li>Perfect failure detection</li>
+<li>Always-consistent and always-available storage (CAP theorem)</li>
+</ul></li>
+<li>Practical systems work by
+<ul class="note-list">
+<li>Making assumptions about the environment</li>
+<li>Accepting trade-offs</li>
+</ul></li>
+</ul></li>
+<li>Communication in distributed systems
+<ul class="note-list">
+<li>Nodes must exchange information</li>
+<li>Options
+<ul class="note-list">
+<li>Explicit message passing</li>
+<li>Higher-level abstractions</li>
+</ul></li>
+</ul></li>
+<li>Common abstraction: client/server model
+<ul class="note-list">
+<li>Clients request services</li>
+<li>Servers process requests and return results</li>
+</ul></li>
+<li>Local (single-host) procedure calls
+<ul class="note-list">
+<li>Function calls execute in the same address space</li>
+<li>Example
+<p class="mb-2">"""</p>
+<p class="mb-2">float balance(int accountID) {</p>
+<p class="mb-2">return balance[accountID];</p>
+<p class="mb-2">}</p>
+<p class="mb-2">void deposit(int accountID, float amount) {</p>
+<p class="mb-2">balance[accountID] += amount;</p>
+<p class="mb-2">return OK;</p>
+<p class="mb-2">}</p>
+<p class="mb-2">client() {</p>
+<p class="mb-2">deposit(42, 50.00);</p>
+<p class="mb-2">print balance(42);</p>
+<p class="mb-2">}</p>
+<p class="mb-2">"""</p></li>
+</ul></li>
+<li>Distributed version with explicit messaging
+<ul class="note-list">
+<li>Define message formats and protocols</li>
+<li>Manual marshalling and unmarshalling</li>
+<li>Client and server code tightly coupled to protocol</li>
+<li>High boilerplate and error-prone</li>
+</ul></li>
+<li>Problems with hand-coded messaging
+<ul class="note-list">
+<li>Hard-coded message formats</li>
+<li>Repetitive boilerplate code</li>
+<li>Increased complexity and maintenance burden</li>
+</ul></li>
+<li>Remote Procedure Call (RPC)
+<ul class="note-list">
+<li>Abstraction to simplify communication</li>
+<li>Makes remote calls look like local function calls</li>
+<li>Automatically handles
+<ul class="note-list">
+<li>Marshalling and unmarshalling</li>
+<li>Message sending and receiving</li>
+</ul></li>
+</ul></li>
+<li>RPC approach
+<ul class="note-list">
+<li>Protocol compiled into stubs</li>
+<li>Client stub
+<ul class="note-list">
+<li>Packages arguments</li>
+<li>Sends request</li>
+<li>Waits for reply</li>
+<li>Unpacks response</li>
+</ul></li>
+<li>Server stub
+<ul class="note-list">
+<li>Receives request</li>
+<li>Unpacks arguments</li>
+<li>Calls local procedure</li>
+<li>Sends response</li>
+</ul></li>
+</ul></li>
+<li>RPC usage example
+<p class="mb-2">"""</p>
+<p class="mb-2">client() {</p>
+<p class="mb-2">RPC_deposit(server, 42, 50.00);</p>
+<p class="mb-2">print RPC_balance(server, 42);</p>
+<p class="mb-2">}</p>
+<p class="mb-2">"""</p></li>
+<li>Benefits of RPC
+<ul class="note-list">
+<li>Hides remote messaging complexity</li>
+<li>Simplifies distributed programming</li>
+<li>Familiar programming model</li>
+</ul></li>
+<li>RPC does not eliminate all complexity
+<ul class="note-list">
+<li>Remote calls can fail</li>
+<li>Failure scenarios
+<ul class="note-list">
+<li>Message loss</li>
+<li>Client crash</li>
+<li>Server crash</li>
+<li>Server crashes after executing but before replying</li>
+<li>Server is slow but appears crashed</li>
+<li>Network partitions</li>
+</ul></li>
+</ul></li>
+<li>RPC semantics
+<ul class="note-list">
+<li>Semantics define the meaning of an RPC call</li>
+<li>Specifies what guarantees the system provides</li>
+</ul></li>
+<li>RPC semantics: at-least-once
+<ul class="note-list">
+<li>Server executes procedure one or more times</li>
+<li>Client retries until it gets a response</li>
+<li>Useful when
+<ul class="note-list">
+<li>Operations are idempotent</li>
+</ul></li>
+<li>Not suitable when
+<ul class="note-list">
+<li>Duplicate executions cause incorrect behavior</li>
+</ul></li>
+</ul></li>
+<li>RPC semantics: at-most-once
+<ul class="note-list">
+<li>Procedure executed at most one time</li>
+<li>May be executed zero times if failures occur</li>
+<li>Implementation
+<ul class="note-list">
+<li>Client includes unique request ID</li>
+<li>Server tracks processed requests and their results</li>
+<li>Duplicate requests return cached results</li>
+</ul></li>
+</ul></li>
+<li>Managing RPC history
+<ul class="note-list">
+<li>Server must eventually discard old request records</li>
+<li>Options
+<ul class="note-list">
+<li>Never discard (impractical)</li>
+<li>Use client IDs and sequence numbers
+<ul class="note-list">
+<li>Client acknowledges received replies</li>
+</ul></li>
+<li>Allow only one outstanding RPC per client
+<ul class="note-list">
+<li>Arrival of next sequence allows cleanup</li>
+</ul></li>
+</ul></li>
+<li>Lab 1 approach
+<ul class="note-list">
+<li>One outstanding RPC per client</li>
+</ul></li>
+</ul></li>
+<li>RPC semantics: exactly-once
+<ul class="note-list">
+<li>Desired semantics
+<ul class="note-list">
+<li>Operation executed exactly one time</li>
+</ul></li>
+<li>Conceptual approach
+<ul class="note-list">
+<li>At-most-once + retries until success</li>
+</ul></li>
+<li>Reality
+<ul class="note-list">
+<li>Impossible in general</li>
+<li>Cannot distinguish between
+<ul class="note-list">
+<li>Server crashing before execution</li>
+<li>Server crashing after execution but before reply</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Key takeaway
+<ul class="note-list">
+<li>Distributed systems rely on abstractions like RPC</li>
+<li>Failures and uncertainty cannot be fully hidden</li>
+<li>System design requires careful semantic choices and trade-offs</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Implementing Remote Procedure Calls Remote Procedure Calls (RPC) - Structured Notes</p>
+
+<p class="mb-3">General Concept:</p>
+
+<ul class="note-list">
+<li>RPC allows programs to communicate across a network using a high-level language paradigm.</li>
+<li>It extends the concept of a local procedure call to a distributed environment.</li>
+<li>When a remote procedure is called:
+<ul class="note-list">
+<li>The caller is suspended.</li>
+<li>Parameters are sent to the callee.</li>
+<li>The procedure executes on the callee machine.</li>
+<li>Results are sent back, resuming execution on the caller machine.</li>
+</ul></li>
+<li>Other processes on the caller machine may continue to execute during the suspension.</li>
+</ul>
+
+<p class="mb-3">Advantages of RPC:</p>
+
+<ul class="note-list">
+<li>Clean and simple semantics for building distributed systems.</li>
+<li>Potentially efficient communication.</li>
+<li>General mechanism: procedures are the primary communication method in single-machine computations.</li>
+</ul>
+
+<p class="mb-3">Historical Context:</p>
+
+<ul class="note-list">
+<li>RPC concept discussed publicly since at least 1976.</li>
+<li>Notable systems: Courier (Xerox NS), MIT research.</li>
+<li>Full-scale implementations were rare prior to this work.</li>
+</ul>
+
+<p class="mb-3">Major Design Issues:</p>
+
+<ul class="note-list">
+<li>Call semantics in the presence of machine and network failures.</li>
+<li>Handling address-containing arguments without a shared address space.</li>
+<li>Integration with programming systems.</li>
+<li>Binding: locating the callee.</li>
+<li>Protocols for data and control transfer.</li>
+<li>Data integrity and security in open networks.</li>
+</ul>
+
+<p class="mb-3">Environment:</p>
+
+<ul class="note-list">
+<li>RPC package built for Cedar programming environment.</li>
+<li>Used on Xerox research internetwork (many 3 Mb/s and 10 Mb/s Ethernets connected via leased lines/satellite links).</li>
+<li>Dominant language: Mesa (other languages: Smalltalk, InterLisp).</li>
+<li>Most computers are Dorados:
+<ul class="note-list">
+<li>Single-user, powerful workstations.</li>
+<li>24-bit virtual address space.</li>
+<li>80 MB disk.</li>
+<li>Simple Algol-style call &lt; 10 μs.</li>
+</ul></li>
+<li>Communication via PUP protocols:
+<ul class="note-list">
+<li>Unreliable datagram service.</li>
+<li>Reliable flow-controlled byte streams.</li>
+<li>Direct Ethernet access available.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Aims:</p>
+
+<ul class="note-list">
+<li>Primary aim: simplify distributed computation by making communication as easy as local procedure calls.</li>
+<li>Secondary aims:
+<ul class="note-list">
+<li>High efficiency: communication cost within ~5x network transmission time.</li>
+<li>Powerful semantics without sacrificing simplicity or efficiency.</li>
+</ul></li>
+<li>Security aim: support secure communication (data protection, password security).</li>
+</ul>
+
+<p class="mb-3">Fundamental Design Decisions:</p>
+
+<ul class="note-list">
+<li>Procedure call paradigm chosen due to alignment with the Mesa language.</li>
+<li>Message passing or remote fork paradigms considered but not chosen.</li>
+<li>Shared address space discarded due to complexity and potential inefficiency.</li>
+<li>Principle: RPC semantics should closely mirror local procedure calls.
+<ul class="note-list">
+<li>No timeout for remote calls (local calls have none).</li>
+<li>Aborting activities handled by parallel processing mechanisms of the language.</li>
+</ul></li>
+<li>Binding semantics follow Cedar mechanisms, not Nelson's thesis.</li>
+</ul>
+
+<p class="mb-3">Key Observations:</p>
+
+<ul class="note-list">
+<li>RPC is intended to hide network complexities from programmers.</li>
+<li>Emphasis on minimal load on server machines and high performance.</li>
+<li>Average Ethernet packet round trip: 120 μs (10 Mb/s Ethernet).</li>
+<li>Design decisions prioritize programmer ease-of-use over experimental distributed computing optimizations.</li>
+</ul>
+
+<p class="mb-3">References to Performance &amp; Implementation Details:</p>
+
+<ul class="note-list">
+<li>System includes facilities for:
+<ul class="note-list">
+<li>Client binding.</li>
+<li>Transport-level communication protocol.</li>
+<li>Optimizations to reduce server load and improve speed.</li>
+</ul></li>
+<li>Subsequent papers planned for:
+<ul class="note-list">
+<li>Encryption-based security.</li>
+<li>Stub module generation.</li>
+<li>Practical usage experiences.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Remote Procedure Calls (RPC) - Structured Notes (Sections 1.5 &amp; 2)</p>
+
+<p class="mb-3">Program Structure:</p>
+
+<ul class="note-list">
+<li>RPC uses the concept of stubs to mediate remote procedure calls.</li>
+<li>Five components involved in a remote call:</li>
+</ul>
+
+<ol class="mb-3">
+<li>User (caller code)</li>
+<li>User-stub (proxy on caller machine)</li>
+<li>RPCRuntime (communication package)</li>
+<li>Server-stub (proxy on callee machine)</li>
+<li>Server (callee code)</li>
+</ol>
+
+<ul class="note-list">
+<li>Call Flow:
+<ul class="note-list">
+<li>User makes a normal local call to user-stub.</li>
+<li>User-stub packages procedure specification and arguments into packets.</li>
+<li>RPCRuntime transmits packets reliably to callee machine.</li>
+<li>RPCRuntime on callee passes packets to server-stub.</li>
+<li>Server-stub unpacks arguments and calls the server procedure locally.</li>
+<li>Results return through server-stub → RPCRuntime → user-stub → user.</li>
+</ul></li>
+<li>RPCRuntime Responsibilities:
+<ul class="note-list">
+<li>Packet transmission and routing.</li>
+<li>Retransmissions and acknowledgments.</li>
+<li>Encryption (optional).</li>
+</ul></li>
+<li>User and server code are written by programmers; stubs are automatically generated by Lupine.</li>
+<li>Interface Modules:
+<ul class="note-list">
+<li>Define procedure names and argument/result types.</li>
+<li>Exporters implement procedures; importers call procedures.</li>
+<li>Interface modules allow compile-time type checking and automatic stub generation.</li>
+</ul></li>
+<li>Programmer tasks:
+<ul class="note-list">
+<li>Write user and server code.</li>
+<li>Avoid incompatible arguments/results (checked by Lupine).</li>
+<li>Invoke intermachine binding.</li>
+<li>Handle machine or communication failures.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Binding:</p>
+
+<ul class="note-list">
+<li>Two aspects:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Naming: specifying which interface to bind to.</li>
+<li>Location: determining the callee machine and procedure.</li>
+</ol>
+
+<p class="mb-3">Naming:</p>
+
+<ul class="note-list">
+<li>RPC binds an importer to an exporter.</li>
+<li>Interface Name:
+<ul class="note-list">
+<li>Type: abstract interface expected by caller (e.g., "MailServer").</li>
+<li>Instance: specific implementation desired (e.g., "Ebbets.Alpine").</li>
+</ul></li>
+<li>Default type name: derived from Mesa interface module name.</li>
+<li>Interface naming is an agreement between exporter and importer; RPC does not enforce semantics.</li>
+</ul>
+
+<p class="mb-3">Locating an Exporter:</p>
+
+<ul class="note-list">
+<li>Uses Grapevine distributed database.
+<ul class="note-list">
+<li>Grapevine:
+<ul class="note-list">
+<li>Multiple replicated servers for reliability.</li>
+<li>Database entries: individuals (connect-site = network address) and groups (member list of RNames).</li>
+</ul></li>
+</ul></li>
+<li>RPC stores two Grapevine entries per interface:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Type: Grapevine group (all instances of that type).</li>
+<li>Instance: Grapevine individual (network address of machine exporting the interface).</li>
+</ol>
+
+<ul class="note-list">
+<li>Example:
+<ul class="note-list">
+<li>Type: FileAccess.Alpine</li>
+<li>Instances: Ebbets.Alpine → 3#22#, Luther.Alpine → 3#276#</li>
+<li>Grapevine group FileAccess.Alpine members: Ebbets.Alpine, Luther.Alpine</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Exporting an Interface:</p>
+
+<ul class="note-list">
+<li>Server-stub calls RPCRuntime's ExportInterface with:
+<ul class="note-list">
+<li>Interface name (type, instance)</li>
+<li>Dispatcher procedure (handles incoming calls)</li>
+</ul></li>
+<li>RPCRuntime updates Grapevine database:
+<ul class="note-list">
+<li>Ensures instance is a member of type group.</li>
+<li>Sets instance connect-site to exporting machine's address.</li>
+</ul></li>
+<li>Maintains local table of exports:
+<ul class="note-list">
+<li>Interface name, dispatcher, 32-bit unique identifier.</li>
+<li>Unique identifier generated using 32-bit counter based on real-time clock.</li>
+</ul></li>
+<li>Guarantees uniqueness, provides implicit unbinding on exporter crash.</li>
+</ul>
+
+<p class="mb-3">Importing an Interface:</p>
+
+<ul class="note-list">
+<li>User-stub calls RPCRuntime's ImportInterface with type and instance.</li>
+<li>RPCRuntime queries Grapevine for network address of instance.</li>
+<li>Makes RPC to callee's RPCRuntime to retrieve binding information.</li>
+<li>If exporter available:
+<ul class="note-list">
+<li>Returns table index and unique identifier to importer.</li>
+</ul></li>
+<li>User-stub stores exporter address, table index, unique identifier for future calls.</li>
+<li>Call packets include:
+<ul class="note-list">
+<li>Unique identifier, table index, entry point number.</li>
+</ul></li>
+<li>Callee RPCRuntime verifies identifier and dispatches to correct procedure.</li>
+</ul>
+
+<p class="mb-3">Binding Variants:</p>
+
+<ul class="note-list">
+<li>Dynamic binding by type only:
+<ul class="note-list">
+<li>RPCRuntime selects closest available instance from Grapevine group.</li>
+</ul></li>
+<li>Binding by type and instance (RName):
+<ul class="note-list">
+<li>Delays machine choice; dynamic selection possible.</li>
+</ul></li>
+<li>Binding by network address:
+<ul class="note-list">
+<li>Fixed at compile-time; bypasses Grapevine.</li>
+</ul></li>
+<li>Multi-instance dynamic binding:
+<ul class="note-list">
+<li>Importer can bind to multiple exporters when number of machines is unknown.</li>
+</ul></li>
+<li>Binding is at interface granularity (no finer-grain binding allowed).</li>
+</ul>
+
+<p class="mb-3">Binding Benefits:</p>
+
+<ul class="note-list">
+<li>Importing does not modify exporter machine data structures → scalable to many clients.</li>
+<li>Unique identifier scheme ensures bindings break on exporter crash.</li>
+<li>Calls allowed only on explicitly exported procedures → security and access control enforced.</li>
+<li>Grapevine access control:
+<ul class="note-list">
+<li>Restricts who can export interfaces.</li>
+<li>Supports secure identification of service instances.</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>PACKET-LEVEL TRANSPORT PROTOCOL</li>
+</ol>
+
+<p class="mb-3">3.1 Requirements</p>
+
+<ul class="note-list">
+<li>RPC semantics could be implemented using existing protocols (e.g., PUP byte streams, NS sequenced packet protocols), but experiments showed poor performance.</li>
+<li>Specialized transport protocol for RPC can improve performance by up to 10×.</li>
+<li>RPC communication is request-response oriented and typically involves short calls, unlike bulk data transfers.</li>
+<li>Protocol design goals:
+<ul class="note-list">
+<li>Minimize elapsed real-time from initiating a call to receiving results.</li>
+<li>Minimize server load under high client concurrency.</li>
+<li>Maintain RPC semantics similar to local procedure calls:
+<ul class="note-list">
+<li>If a call returns successfully, server executed it exactly once.</li>
+<li>If communication fails, procedure may have executed 0 or 1 times; caller is notified via exception.</li>
+<li>Deadlocks or infinite loops in server code are not bounded; only communication failures abort the call.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p class="mb-3">3.2 Simple Calls</p>
+
+<ul class="note-list">
+<li>Typical case: all arguments and results fit in a single packet each.</li>
+<li>Call flow:
+<ul class="note-list">
+<li>Caller sends call packet containing:
+<ul class="note-list">
+<li>Call identifier</li>
+<li>Procedure identifier (from binding)</li>
+<li>Arguments</li>
+</ul></li>
+<li>Callee invokes procedure.</li>
+<li>Callee sends result packet containing same call identifier and results.</li>
+</ul></li>
+<li>Retransmission and acknowledgment:
+<ul class="note-list">
+<li>Sender retransmits until acknowledgment is received.</li>
+<li>Short calls: typically only 2 packets per call (1 call, 1 result).</li>
+</ul></li>
+<li>Call identifier structure:
+<ul class="note-list">
+<li>Machine identifier (globally unique)</li>
+<li>Process identifier (machine-relative)</li>
+<li>Sequence number (monotonic per activity)</li>
+</ul></li>
+<li>Duplicate suppression:
+<ul class="note-list">
+<li>Server maintains table of last sequence number per calling activity.</li>
+<li>Older call packets are discarded as duplicates.</li>
+</ul></li>
+<li>Connection handling:
+<ul class="note-list">
+<li>No explicit connection setup or teardown.</li>
+<li>Connection exists as shared state between caller activity and server RPCRuntime.</li>
+<li>Idle connections consume minimal state and require no maintenance.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">3.3 Complicated Calls</p>
+
+<ul class="note-list">
+<li>Arguments/results larger than one packet:
+<ul class="note-list">
+<li>Multiple packets sent.</li>
+<li>Each packet (except last) requests explicit acknowledgment.</li>
+<li>Caller sends argument packets; callee sends acknowledgment packets.</li>
+<li>Call-relative sequence numbers used to eliminate duplicates.</li>
+</ul></li>
+<li>Handling long-duration calls or large gaps:
+<ul class="note-list">
+<li>Caller sends periodic probe packets to detect callee crashes or network failures.</li>
+<li>Probe interval grows gradually (e.g., up to one every 5 minutes after 10 minutes).</li>
+<li>Caller waits indefinitely if probes acknowledged.</li>
+</ul></li>
+<li>Trade-offs:
+<ul class="note-list">
+<li>Extra acknowledgments increase packet count (up to 2× more than bulk protocols).</li>
+<li>Protocol optimized for RPC semantics rather than bulk data transfer.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">3.4 Exception Handling</p>
+
+<ul class="note-list">
+<li>Mesa language exceptions (signals):
+<ul class="note-list">
+<li>Dynamically scan call stack for catch phrase.</li>
+<li>Catch phrase can return results or terminate by jumping out.</li>
+</ul></li>
+<li>RPC implementation:
+<ul class="note-list">
+<li>Server sends exception packet instead of result packet.</li>
+<li>Caller RPCRuntime raises exception locally and executes catch phrase.</li>
+<li>Results can be returned to callee or callee unwinds procedure activations if catch phrase terminates abruptly.</li>
+</ul></li>
+<li>Constraints:
+<ul class="note-list">
+<li>Only exceptions defined in Mesa interface module are transmitted.</li>
+<li>Maintains single-machine convention, simplifies implementation, aids debugging.</li>
+</ul></li>
+<li>Communication exceptions:
+<ul class="note-list">
+<li>RPCRuntime raises call-failed exception for communication failures.</li>
+<li>Clients can distinguish remote calls from local calls.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Key Concepts</p>
+
+<ul class="note-list">
+<li>Efficiency prioritized for short, frequent RPCs rather than bulk transfers.</li>
+<li>Minimal state maintained for idle connections.</li>
+<li>Duplicate detection based on sequence numbers and unique machine/process identifiers.</li>
+<li>Exception semantics mirror local procedure calls.</li>
+<li>Acknowledgment strategy balances efficiency and correctness, especially for multi-packet calls.</li>
+</ul>
+
+<p class="mb-3">Packet Flow (Summary)</p>
+
+<ul class="note-list">
+<li>Simple calls: 2 packets per call (call → result).</li>
+<li>Complicated calls: multiple packets for arguments/results, acknowledgments requested for all but last packet.</li>
+<li>Long calls: periodic probe packets to detect failures.</li>
+<li>Sequence numbers and conversation identifiers ensure uniqueness and duplicate suppression.</li>
+</ul>
+
+<p class="mb-3">3.5 Use of Processes</p>
+
+<ul class="note-list">
+<li>Mesa and Cedar provide built-in parallel processes; process creation and swaps are inexpensive locally.
+<ul class="note-list">
+<li>Forking a process ≈ 10 local procedure calls.</li>
+<li>Process swap involves swapping evaluation stack, one register, invalidating some cached info.</li>
+</ul></li>
+<li>For RPC, process creation and swaps can become significant costs.</li>
+<li>Optimization strategy:
+<ul class="note-list">
+<li>Maintain a stock of idle server processes on each machine to handle incoming calls.</li>
+<li>Server processes revert to idle after finishing a call.</li>
+<li>Excess idle processes terminate themselves.</li>
+</ul></li>
+<li>Packet process identifiers:
+<ul class="note-list">
+<li>Each packet contains source and destination process identifiers.</li>
+<li>Caller sets source to calling process; callee sets source to handling server process.</li>
+<li>Incoming packets are dispatched to waiting process if possible; otherwise, assigned to idle server process.</li>
+</ul></li>
+<li>Caller activity tries to reuse the same destination server process for subsequent calls.</li>
+<li>Typical simple calls require only four process swaps:
+<ul class="note-list">
+<li>Minimum is two (unless busy-waiting).</li>
+<li>Extra two swaps due to interrupt handler dispatch instead of device microcode.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">3.6 Other Optimizations</p>
+
+<ul class="note-list">
+<li>Optimizations already implemented:
+<ul class="note-list">
+<li>Implicit acknowledgment of previous packets using subsequent packets.</li>
+<li>Minimized costs for connection maintenance, establishment, and termination.</li>
+<li>Reduced number of process swaps per call.</li>
+</ul></li>
+<li>Additional performance gains:
+<ul class="note-list">
+<li>Bypassing standard protocol layers for RPC packets on the same network.</li>
+<li>Gains from treating RPC as a special case in the network driver.</li>
+</ul></li>
+<li>Optimizations not used due to inconvenience or diminishing returns:
+<ul class="note-list">
+<li>Avoiding internet packet format for local networks.</li>
+<li>Specialized packet formats for simple calls.</li>
+<li>Special-purpose network microcode.</li>
+<li>Restricting non-RPC communication.</li>
+<li>Busy-waiting to save process swaps.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">3.7 Security</p>
+
+<ul class="note-list">
+<li>RPC package supports encryption-based security.</li>
+<li>Uses Grapevine for authentication/key distribution.</li>
+<li>Federal Data Encryption Standard (DES) applied.</li>
+<li>Guarantees:
+<ul class="note-list">
+<li>Caller and callee identity verification.</li>
+<li>End-to-end encryption of calls and results.</li>
+<li>Protection against eavesdropping, modification, replay, and creation of calls.</li>
+</ul></li>
+<li>Details deferred to a later paper.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Performance</li>
+</ol>
+
+<ul class="note-list">
+<li>Tests conducted on two Dorado machines connected via Ethernet (2.94 Mbps), lightly loaded (5-10%).</li>
+<li>Measurement methodology:
+<ul class="note-list">
+<li>Measured elapsed times from user-stub invocation to return.</li>
+<li>Includes user-stub, RPCRuntime, server-stub, server procedure, and network transmission.</li>
+</ul></li>
+<li>Performance results (microseconds):</li>
+</ul>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Procedure</th>
+<th>Min</th>
+<th>Median</th>
+<th>Transmission</th>
+<th>Local-only</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>no args/results</td>
+<td>1059</td>
+<td>1097</td>
+<td>131</td>
+<td>9</td>
+</tr>
+<tr>
+<td>1 arg/result</td>
+<td>1070</td>
+<td>1105</td>
+<td>142</td>
+<td>10</td>
+</tr>
+<tr>
+<td>2 args/results</td>
+<td>1077</td>
+<td>1127</td>
+<td>152</td>
+<td>11</td>
+</tr>
+<tr>
+<td>4 args/results</td>
+<td>1115</td>
+<td>1171</td>
+<td>174</td>
+<td>12</td>
+</tr>
+<tr>
+<td>10 args/results</td>
+<td>1222</td>
+<td>1278</td>
+<td>239</td>
+<td>17</td>
+</tr>
+<tr>
+<td>1 word array</td>
+<td>1069</td>
+<td>1111</td>
+<td>131</td>
+<td>10</td>
+</tr>
+<tr>
+<td>4 word array</td>
+<td>1106</td>
+<td>1153</td>
+<td>174</td>
+<td>13</td>
+</tr>
+<tr>
+<td>10 word array</td>
+<td>1214</td>
+<td>1250</td>
+<td>239</td>
+<td>16</td>
+</tr>
+<tr>
+<td>40 word array</td>
+<td>1643</td>
+<td>1695</td>
+<td>566</td>
+<td>51</td>
+</tr>
+<tr>
+<td>100 word array</td>
+<td>2915</td>
+<td>2926</td>
+<td>1219</td>
+<td>98</td>
+</tr>
+<tr>
+<td>resume exception</td>
+<td>2555</td>
+<td>2637</td>
+<td>284</td>
+<td>134</td>
+</tr>
+<tr>
+<td>unwind exception</td>
+<td>3374</td>
+<td>3467</td>
+<td>284</td>
+<td>196</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<ul class="note-list">
+<li>Observations:
+<ul class="note-list">
+<li>RPC handles small and frequent calls efficiently.</li>
+<li>For large data transfers, other protocols may transmit fewer packets, but RPC can interleave parallel calls to achieve high throughput (~2 Mbps on 3 Mbps Ethernet).</li>
+<li>Encryption not enabled during measurements.</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>Status and Discussions</li>
+</ol>
+
+<ul class="note-list">
+<li>RPCRuntime fully implemented, about 2,200 lines across 4 Cedar modules (packet exchange, sequencing, binding, security).</li>
+<li>Lupine stub generator is larger.</li>
+<li>RPC in use for:
+<ul class="note-list">
+<li>Alpine file server (multimachine transactions)</li>
+<li>Ethernet-based telephone/audio project</li>
+<li>Network games</li>
+</ul></li>
+<li>Implemented for BCPL, InterLisp, SmallTalk, C.</li>
+<li>RPC convenience and efficiency confirmed by users.</li>
+<li>RPC may not be suitable for multicast/broadcast scenarios.</li>
+<li>High-performance RPC may encourage new distributed applications.</li>
+<li>Uncertainty remains whether a general-purpose transport protocol could match the RPC-specific performance without sacrificing bulk transfer efficiency.</li>
+<li>Achieved efficient connection management, low state maintenance, and simple but powerful binding semantics.</li>
+</ul>
+
+<p class="mb-3">Time, Clocks, and the Ordering of Events in a Distributed System</p>
+
+<p class="mb-3">Concept of Time</p>
+
+<ul class="note-list">
+<li>Time is fundamental to human thinking and is derived from the order of events.</li>
+<li>We say an event happened at a specific time if it occurred after the clock read that time and before it read the next unit.</li>
+<li>Temporal ordering is crucial for system operations (e.g., airline reservations depend on request time relative to flight availability).</li>
+</ul>
+
+<p class="mb-3">Distributed Systems</p>
+
+<ul class="note-list">
+<li>A distributed system consists of multiple spatially separated processes that communicate via message exchange.</li>
+<li>Examples: ARPANET, networks of interconnected computers.</li>
+<li>Single computers can also be treated as distributed systems with separate processes (CPU, memory, I/O channels).</li>
+<li>A system is considered distributed if message transmission delay is significant compared to time between events in a process.</li>
+<li>Multiprocessing systems face similar issues due to unpredictable event ordering.</li>
+</ul>
+
+<p class="mb-3">Event Ordering in Distributed Systems</p>
+
+<ul class="note-list">
+<li>In distributed systems, it may be impossible to definitively say which of two events occurred first.</li>
+<li>"Happened before" is a partial ordering of events in the system.</li>
+<li>Problems arise if this partial ordering is not properly considered.</li>
+</ul>
+
+<p class="mb-3">Partial Ordering ("Happened Before" Relation)</p>
+
+<ul class="note-list">
+<li>Defined without physical clocks.</li>
+<li>Each process consists of a sequence of events.</li>
+<li>Events in a single process are totally ordered (a occurs before b if a precedes b in the sequence).</li>
+<li>Sending or receiving a message is considered an event.</li>
+<li>"Happened before" relation (denoted a ---&gt; b) is defined as the smallest relation satisfying:</li>
+</ul>
+
+<ol class="mb-3">
+<li>If a and b are events in the same process and a occurs before b, then a ---&gt; b.</li>
+<li>If a is the sending of a message by one process and b is the receipt of that message by another process, then a ---&gt; b.</li>
+<li>If a ---&gt; b and b ---&gt; c, then a ---&gt; c.</li>
+</ol>
+
+<ul class="note-list">
+<li>Two events a and b are concurrent if a -/-&gt; b and b -/-&gt; a.</li>
+<li>a ---&gt; a is not allowed (irreflexive), making ---&gt; an irreflexive partial ordering.</li>
+<li>Diagrammatic representation:
+<ul class="note-list">
+<li>Horizontal axis: space (processes)</li>
+<li>Vertical axis: time (later events higher)</li>
+<li>Dots: events, vertical lines: processes, wavy lines: messages</li>
+</ul></li>
+<li>Causal interpretation: a ---&gt; b means event a can causally affect event b. Concurrent events cannot causally affect each other.</li>
+</ul>
+
+<p class="mb-3">Logical Clocks</p>
+
+<ul class="note-list">
+<li>A clock Ci assigns a number Ci(a) to any event a in process Pi.</li>
+<li>The system-wide clock function C assigns C(b) = Cj(b) if b is in process Pj.</li>
+<li>Clocks are logical (abstract counters), not tied to physical time.</li>
+</ul>
+
+<p class="mb-3">Clock Correctness</p>
+
+<ul class="note-list">
+<li>Definition based on event ordering rather than physical time.</li>
+<li>Clock Condition: For events a, b:
+<ul class="note-list">
+<li>If a ---&gt; b, then C(a) &lt; C(b)</li>
+</ul></li>
+<li>Conditions ensuring Clock Condition:</li>
+</ul>
+
+<p class="mb-3">C1. For events a and b in process Pi: if a occurs before b, then Ci(a) &lt; Ci(b) C2. If a is the sending of a message by Pi and b is the receipt of that message by Pj, then Ci(a) &lt; Cj(b)</p>
+
+<ul class="note-list">
+<li>The converse of the Clock Condition does not hold due to concurrent events potentially having different logical times.</li>
+</ul>
+
+<p class="mb-3">Applications</p>
+
+<ul class="note-list">
+<li>Partial ordering can be extended to a consistent total ordering using distributed algorithms.</li>
+<li>Useful for solving synchronization problems in distributed systems.</li>
+<li>Real physical clocks can be synchronized to avoid discrepancies between perceived and algorithmic event ordering.</li>
+</ul>
+
+<p class="mb-3">Notes on Representation</p>
+
+<ul class="note-list">
+<li>Choice of what constitutes an event affects ordering (e.g., message receipt may involve interrupts or subprograms).</li>
+<li>Messages may be received out of order.</li>
+<li>Diagrams help visualize causal relationships and concurrency.</li>
+</ul>
+
+<p class="mb-3">Logical Clocks and Event Ordering in Distributed Systems</p>
+
+<ol class="mb-3">
+<li>Space-Time Diagram Representation</li>
+</ol>
+
+<ul class="note-list">
+<li>Process clocks "tick" between events.
+<ul class="note-list">
+<li>Example: If events a and b in process Pi have Ci(a)=4 and Ci(b)=7, ticks 5, 6, 7 occur between them.</li>
+</ul></li>
+<li>Tick lines: dashed lines connecting like-numbered ticks across processes.</li>
+<li>Conditions for clocks:
+<ul class="note-list">
+<li>C1: A tick line must exist between any two events on a process line.</li>
+<li>C2: Every message line must cross a tick line.</li>
+</ul></li>
+<li>Tick lines can be treated as time coordinate lines in a Cartesian system.</li>
+<li>Space-time diagrams can be redrawn with straightened coordinate lines without changing event relationships.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Logical Clock Implementation</li>
+</ol>
+
+<ul class="note-list">
+<li>Each process Pi has a clock Ci (register) that changes between events.</li>
+<li>Implementation rules to satisfy Clock Condition:
+<ul class="note-list">
+<li>IR1: Increment Ci between consecutive events on Pi.</li>
+<li>IR2:
+<ul class="note-list">
+<li>(a) Message sending: message m contains timestamp Tm = Ci(a).</li>
+<li>(b) Message receiving: process Pi sets Ci ≥ max(Ci, Tm).</li>
+</ul></li>
+</ul></li>
+<li>IR1 and IR2 guarantee the Clock Condition.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Total Ordering of Events</li>
+</ol>
+
+<ul class="note-list">
+<li>Events are ordered using clock values Ci(a) and Ci(b) and an arbitrary total process order &lt;.</li>
+<li>Relation "~" defined as:
+<ul class="note-list">
+<li>a ~ b if Ci(a) &lt; Cj(b), or if Ci(a) = Cj(b) and Pi &lt; Pj.</li>
+</ul></li>
+<li>This yields a total ordering extending the "happened-before" relation (--&gt;).</li>
+<li>Different clocks satisfying the Clock Condition can produce different total orderings.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Mutual Exclusion Problem</li>
+</ol>
+
+<ul class="note-list">
+<li>System: multiple processes sharing a single resource.</li>
+<li>Requirements:
+<ul class="note-list">
+<li>I: Resource must be released before another process is granted access.</li>
+<li>II: Requests are granted in order of issuance.</li>
+<li>III: Every request is eventually granted if all granted processes eventually release the resource.</li>
+</ul></li>
+<li>Distributed algorithm using logical clocks:
+<ul class="note-list">
+<li>Assumptions:
+<ul class="note-list">
+<li>Messages sent from Pi to Pj are received in order.</li>
+<li>Every message is eventually received.</li>
+<li>Processes can send messages to all others.</li>
+</ul></li>
+<li>Each process maintains a private request queue.</li>
+<li>Algorithm rules:
+<p class="mb-2">1. Request: Pi sends Tm:Pi requests resource to all processes and queues it.</p>
+<p class="mb-2">2. Receive request: Pj queues it and sends acknowledgment to Pi.</p>
+<p class="mb-2">3. Release: Pi removes request from queue and sends Pi releases resource message.</p>
+<p class="mb-2">4. Receive release: Pj removes Pi's request from queue.</p>
+<p class="mb-2">5. Granting resource:</p>
+<ul class="note-list">
+<li>(i) Pi's request is first in its queue by "~" order.</li>
+<li>(ii) Pi has received messages from all processes with timestamps &gt; Tm.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>State Machine Representation</li>
+</ol>
+
+<ul class="note-list">
+<li>State Machine components:
+<ul class="note-list">
+<li>C: set of commands (Pi requests/release resource)</li>
+<li>S: possible states (queue of requests)</li>
+<li>e(C, S) → S': executing command changes state.</li>
+</ul></li>
+<li>Each process simulates execution using timestamped commands, ensuring consistent state.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Anomalous Behavior</li>
+</ol>
+
+<ul class="note-list">
+<li>Occurs when external events (outside the system) affect perceived order.
+<ul class="note-list">
+<li>Example: Request B may be ordered before A due to communication outside the system.</li>
+</ul></li>
+<li>Solutions:
+<ul class="note-list">
+<li>Introduce external ordering information explicitly.</li>
+<li>Use physical clocks satisfying the Strong Clock Condition:
+<ul class="note-list">
+<li>If a → b (in real space-time), then C(a) &lt; C(b).</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>Physical Clocks</li>
+</ol>
+
+<ul class="note-list">
+<li>Ci(t): reading of clock Ci at physical time t.</li>
+<li>Clocks assumed continuous with possible isolated jumps.</li>
+<li>Conditions for physical clocks:
+<ul class="note-list">
+<li>PC1: Clock runs at approximately correct rate.
+<ul class="note-list">
+<li>|dCi(t)/dt - 1| &lt; x, where x &lt;&lt; 1 (for crystal-controlled clocks, x ≈ 10^-6)</li>
+</ul></li>
+<li>PC2: Clocks synchronized within a small bound e.
+<ul class="note-list">
+<li>|Ci(t) - Cj(t)| &lt; e for all i, j, t.</li>
+</ul></li>
+</ul></li>
+<li>To avoid anomalous behavior:
+<ul class="note-list">
+<li>Let # = minimum physical time difference for causally related events.</li>
+<li>Condition: Ci(t + #) - Ci(t) &gt; 0</li>
+<li>Combined with PC1 and PC2: e / (1 - x) ≤ #</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>Summary</li>
+</ol>
+
+<ul class="note-list">
+<li>Logical clocks allow partial ordering of events, extended to total ordering using relation "~".</li>
+<li>Total ordering enables distributed mutual exclusion without a central coordinator.</li>
+<li>Anomalous ordering arises from external events; can be addressed with physical clocks satisfying the Strong Clock Condition.</li>
+<li>Physical clocks must be accurate and synchronized to prevent violations of causal ordering.</li>
+</ul>
+
+<p class="mb-3">Distributed System Clock Synchronization Notes</p>
+
+<p class="mb-3">Concepts</p>
+
+<ul class="note-list">
+<li>Partial Ordering of Events:
+<ul class="note-list">
+<li>Events in a distributed system have an inherent partial ordering.</li>
+<li>"Happening before" defines an invariant partial ordering.</li>
+</ul></li>
+<li>Total Ordering Extension:
+<ul class="note-list">
+<li>Algorithm extends the partial ordering to an arbitrary total ordering.</li>
+<li>Helps in synchronization and ordering of distributed events.</li>
+</ul></li>
+<li>Physical Clock Synchronization:
+<ul class="note-list">
+<li>Properly synchronized clocks prevent anomalous behavior in total ordering.</li>
+<li>Ensures total ordering agrees with the perception of system users.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Message Delays</p>
+
+<ul class="note-list">
+<li>Message m sent at physical time t, received at t'.</li>
+<li>Total delay of message: l_m = t' - t.</li>
+<li>Unpredictable delay: u_m = l_m - #_m.</li>
+<li>Receiving process knows a minimum delay t_zm ≥ 0 such that #_m ≤ l_m.</li>
+<li>Clock adjustment only requires local clock reading and message timestamps.</li>
+</ul>
+
+<p class="mb-3">Clock Rules (Specialized for Physical Clocks)</p>
+
+<ul class="note-list">
+<li>IR1':
+<ul class="note-list">
+<li>If process P_i does not receive a message at time t, its clock C_i(t) is differentiable and dC_i/dt &gt; 0.</li>
+</ul></li>
+<li>IR2':
+<ul class="note-list">
+<li>(a) When P_i sends message m at time t, it timestamps m: T_m = C_i(t).</li>
+<li>(b) When P_j receives message m at time t', it sets C_j(t') = max(C_j(t'-0), T_m + u_m).</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Graph Model for Process Communication</p>
+
+<ul class="note-list">
+<li>Processes represented as nodes in a directed graph.</li>
+<li>Arc from P_i to P_j represents a direct communication line.</li>
+<li>Message frequency: at least one message sent over each arc every T seconds.</li>
+<li>Diameter d of graph: smallest number such that any pair of processes is connected by ≤ d arcs.</li>
+</ul>
+
+<p class="mb-3">Clock Synchronization Theorem</p>
+
+<p class="mb-3">Assumptions:</p>
+
+<ul class="note-list">
+<li>Strongly connected graph of processes with diameter d.</li>
+<li>All processes follow IR1' and IR2'.</li>
+<li>Unpredictable delay for any message ≤ δ.</li>
+<li>After t_0:
+<ul class="note-list">
+<li>PC1 holds.</li>
+<li>There exist constants r and v such that every T seconds, a message with unpredictable delay ≤ v is sent over every arc.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Result:</p>
+
+<ul class="note-list">
+<li>PC2 is satisfied with ε = d(2x*r + δ) for all t &gt; t_0 + Td.</li>
+<li>Proof involves bounding differences between clocks using message delays and communication paths.</li>
+</ul>
+
+<p class="mb-3">Proof Concepts</p>
+
+<ul class="note-list">
+<li>Define C_i^t as a clock of P_i set at time t and running at the same rate as C_i but never reset.</li>
+<li>For message sent at t_l and received at t_2 with unpredictable delay ≤ δ:</li>
+</ul>
+
+<p class="mb-3">C_j(t) ≥ C_i(t_l) + (1-x)(t - t_l) - nδ  (for chain of n messages along path)</p>
+
+<ul class="note-list">
+<li>Choose largest clock C_x at time t_x:</li>
+</ul>
+
+<p class="mb-3">C_i(t) ≤ C_x(t_x) + (1+x)(t - t_x)</p>
+
+<ul class="note-list">
+<li>Combining bounds for all clocks, we get:</li>
+</ul>
+
+<p class="mb-3">|C_i(t) - C_j(t)| ≤ d(2xr + δ) for t &gt; t_0 + dT</p>
+
+<p class="mb-3">Initialization/Resynchronization:</p>
+
+<ul class="note-list">
+<li>Each process sends a message relayed to all other processes.</li>
+<li>Requires ≤ 2d(r + v) + δ seconds to synchronize, assuming each message has unpredictable delay ≤ δ.</li>
+</ul>
+
+<p class="mb-3">Implementation Notes:</p>
+
+<ul class="note-list">
+<li>Assumes discrete clock ticks frequent enough to satisfy C1.</li>
+<li>Real events have finite duration; doesn't affect correctness.</li>
+<li>Algorithm only requires local clock reading and received message timestamps.</li>
+<li>Clocks are never set backwards.</li>
+</ul>
+
+<p class="mb-3">Additional Notes on Lisp Shallow Binding (Appendix)</p>
+
+<ul class="note-list">
+<li>Shallow Binding:
+<ul class="note-list">
+<li>Provides bounded access to variable values.</li>
+<li>Modeled as rerooting environment trees in Lisp 1.5.</li>
+<li>Reversible and optional for context-switching.</li>
+<li>Leaves assoc[v, a] invariant.</li>
+</ul></li>
+<li>Supports multiple active processes in the same environment.</li>
+<li>Generalizes Dijkstra's Algol display.</li>
+<li>Primitive shallow[] gives dynamic control of shallow/deep access.</li>
+<li>Affects execution speed, not program semantics.</li>
+</ul>
+
+<p class="mb-3">Distributed Snapshots: Determining Global States of Distributed Systems Distributed Snapshots: Determining Global States of Distributed Systems Authors: K. Mani Chandy (University of Texas at Austin), Leslie Lamport (Stanford Research Institute) Source: ACM Transactions on Computer Systems, Vol. 3, No. 1, February 1985, Pages 63-75</p>
+
+<p class="mb-3">Overview:</p>
+
+<ul class="note-list">
+<li>The paper presents an algorithm for determining the global state of a distributed system during computation.</li>
+<li>Determining global states is fundamental for solving several distributed system problems, especially stable property detection and checkpointing.</li>
+</ul>
+
+<p class="mb-3">Key Concepts:</p>
+
+<ul class="note-list">
+<li>Distributed System: A system where multiple processes communicate via message passing, without shared memory or clocks.</li>
+<li>Global State: The collective state of all processes and communication channels in the system at a given logical point in time.</li>
+<li>Local State: The state recorded by an individual process, including its internal variables and messages sent/received.</li>
+<li>Stable Property: A property that, once true, remains true forever.
+<ul class="note-list">
+<li>Examples:
+<ul class="note-list">
+<li>Computation has terminated</li>
+<li>System is deadlocked</li>
+<li>All tokens in a token ring have disappeared</li>
+</ul></li>
+</ul></li>
+<li>Stable Property Detection: The process of determining whether a given stable property holds in the system.</li>
+</ul>
+
+<p class="mb-3">Problem Statement:</p>
+
+<ul class="note-list">
+<li>Processes cannot record a truly simultaneous global state due to the absence of a shared clock.</li>
+<li>Goal: Devise algorithms that allow processes to record:
+<ul class="note-list">
+<li>Their local states</li>
+<li>The state of communication channels</li>
+</ul></li>
+<li>The recorded set of states must together represent a consistent global system state.</li>
+<li>Algorithm constraints:
+<ul class="note-list">
+<li>Must run concurrently with the underlying computation</li>
+<li>Must not alter the ongoing computation</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Algorithmic Approach:</p>
+
+<ul class="note-list">
+<li>A process <code>p</code> initiates global state recording.</li>
+<li><code>p</code> requests cooperation from other processes to:
+<ul class="note-list">
+<li>Record their local states</li>
+<li>Send recorded states to <code>p</code></li>
+</ul></li>
+<li>Processes cannot rely on exact simultaneous recording; instead, the algorithm ensures a consistent snapshot of the global state.</li>
+</ul>
+
+<p class="mb-3">Applications:</p>
+
+<ul class="note-list">
+<li>Stable property detection</li>
+<li>Distributed deadlock detection</li>
+<li>Checkpointing for fault tolerance and recovery</li>
+</ul>
+
+<p class="mb-3">Assumptions:</p>
+
+<ul class="note-list">
+<li>Processes do not share clocks or memory.</li>
+<li>Communication is through message passing.</li>
+</ul>
+
+<p class="mb-3">Categories and Subject Descriptors:</p>
+
+<ul class="note-list">
+<li>C.2.4: Distributed Systems (applications, databases, network operating systems)</li>
+<li>D.4.1: Operating Systems (concurrency, deadlocks, multiprocessing, mutual exclusion, scheduling, synchronization)</li>
+<li>D.4.5: Operating Systems (reliability, backup procedures, checkpoint/restart, fault-tolerance, verification)</li>
+</ul>
+
+<p class="mb-3">General Terms:</p>
+
+<ul class="note-list">
+<li>Algorithms</li>
+</ul>
+
+<p class="mb-3">Additional Key Words:</p>
+
+<ul class="note-list">
+<li>Global states, distributed deadlock detection, distributed systems, message communication systems</li>
+</ul>
+
+<p class="mb-3">Funding:</p>
+
+<ul class="note-list">
+<li>Supported by Air Force Office of Scientific Research (Grant AFOSR 81-0205)</li>
+<li>Supported by National Science Foundation (Grant MCS 81-04459)</li>
+</ul>
+
+<p class="mb-3">Remarks:</p>
+
+<ul class="note-list">
+<li>The algorithm is intended to be superimposed on normal computation.</li>
+<li>Ensures consistent snapshot without halting or altering the underlying processes.</li>
+</ul>
+
+<p class="mb-3">Distributed Snapshots and Global-State Detection</p>
+
+<p class="mb-3">Concepts:</p>
+
+<ul class="note-list">
+<li>Distributed System:
+<ul class="note-list">
+<li>Comprised of a finite set of processes and channels.</li>
+<li>Processes communicate by sending/receiving messages.</li>
+<li>Processes do not share clocks or memory.</li>
+<li>Modeled as a directed, labeled graph: vertices = processes, edges = channels.</li>
+<li>Channels assumed to have infinite buffers, be error-free, and deliver messages FIFO.</li>
+</ul></li>
+<li>Global State:
+<ul class="note-list">
+<li>Combination of the states of all processes and all channels.</li>
+<li>Initial global state: all processes in initial states, all channels empty.</li>
+<li>Events change process and possibly channel states: e = (process, pre-state, post-state, message, channel).</li>
+</ul></li>
+<li>Computation:
+<ul class="note-list">
+<li>Sequence of events e0, e1, ..., en.</li>
+<li>Event ei can occur if process and channel states satisfy preconditions.</li>
+<li>next(S, e) gives the global state after event e occurs in state S.</li>
+</ul></li>
+<li>Stable Property:
+<ul class="note-list">
+<li>Predicate y(S) on global states.</li>
+<li>Stable if y(S) ⇒ y(S') for all S' reachable from S.</li>
+<li>Examples: termination of computation, deadlock, all tokens removed from a token ring.</li>
+<li>Goal: detect whether a stable property holds.</li>
+</ul></li>
+<li>Phases:
+<ul class="note-list">
+<li>Computation may have phases: transient (useful work) + stable (endless/no-change behavior).</li>
+<li>Detecting stability signals the end of a phase.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Examples:</p>
+
+<ul class="note-list">
+<li>Single-token conservation system:
+<ul class="note-list">
+<li>Processes p and q, channels c and c'.</li>
+<li>Each process has two states: has-token (s1) and no-token (s0).</li>
+<li>Events: sending/receiving the token.</li>
+<li>Global states: in-p, in-c, in-q, in-c'.</li>
+</ul></li>
+<li>Nondeterministic computations:
+<ul class="note-list">
+<li>Multiple allowable transitions from a global state.</li>
+<li>Example illustrates that recorded global states may differ from actual global states.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Global-State Recording Algorithm:</p>
+
+<ul class="note-list">
+<li>Purpose: record a "meaningful" global state without halting computation.</li>
+<li>Intuition: snapshot system like multiple photographers of a dynamic scene.</li>
+<li>Consistency conditions for channel states:
+<ul class="note-list">
+<li>Let n = messages sent before process state recorded, n' = messages sent before channel state recorded.</li>
+<li>Let m = messages received before receiver state recorded, m' = messages received before channel state recorded.</li>
+<li>Consistency requires: n = n', m = m', n ≥ m, n' ≥ m'.</li>
+</ul></li>
+<li>Mechanism: marker messages
+<ul class="note-list">
+<li>Marker-Sending Rule (process p): send marker on outgoing channel after recording p’s state and before sending further messages.</li>
+<li>Marker-Receiving Rule (process q):
+<ul class="note-list">
+<li>If q has not recorded its state: record it, record channel as empty.</li>
+<li>Otherwise: record channel state as messages received after recording state but before receiving marker.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Termination of Algorithm:</p>
+
+<ul class="note-list">
+<li>Guarantees that all processes record their state and incoming channels.</li>
+<li>Requirements:
+<ul class="note-list">
+<li>(L1) No marker remains forever in any channel.</li>
+<li>(L2) Each process records its state within finite time of initiation.</li>
+</ul></li>
+<li>Algorithm can be initiated spontaneously by one or more processes.</li>
+<li>If the system graph is strongly connected, all processes eventually record their state.</li>
+</ul>
+
+<p class="mb-3">Properties of Recorded Global State:</p>
+
+<ul class="note-list">
+<li>Recorded state S* may not match any actual global state during computation.</li>
+<li>Theorem 1:
+<ul class="note-list">
+<li>There exists a computation seq’ (permutation of original computation) where:
+<ul class="note-list">
+<li>All prerecording events occur before postrecording events.</li>
+<li>S* occurs in seq’ as a global state.</li>
+<li>S<em> is reachable from initial state S0, and S0 is reachable from S</em>.</li>
+</ul></li>
+</ul></li>
+<li>Recorded global states are consistent and useful for detecting stable properties.</li>
+</ul>
+
+<p class="mb-3">Stability Detection Algorithm:</p>
+
+<ul class="note-list">
+<li>Input: Stable property y(S)</li>
+<li>Output: Boolean definite
+<ul class="note-list">
+<li>definite = true → property holds at termination.</li>
+<li>definite = false → property did not hold at initiation.</li>
+</ul></li>
+<li>Procedure:
+<ul class="note-list">
+<li>Record global state S* using snapshot algorithm.</li>
+<li>Set definite := y(S*).</li>
+</ul></li>
+<li>Correctness:
+<ul class="note-list">
+<li>Follows from S* being reachable from initial state and stable property definition.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Notes on Examples:</p>
+
+<ul class="note-list">
+<li>Permutation of events is allowed if events occur in different processes.</li>
+<li>Recorded global state is a “meaningful snapshot” that preserves causal consistency.</li>
+<li>Useful for problems like deadlock detection, termination detection, and checkpointing.</li>
+</ul>
+
+<p class="mb-3">Summary:</p>
+
+<ul class="note-list">
+<li>Distributed snapshot algorithm allows global-state detection without halting system.</li>
+<li>Stable-property detection reduces to evaluating y(S*) on a recorded global state.</li>
+<li>Markers coordinate state recording across processes and channels.</li>
+<li>Algorithm terminates if system is connected and marker propagation is finite.</li>
+<li>Recorded global state is consistent and supports distributed system monitoring and debugging.</li>
+</ul>
+
+<p class="mb-3">Week 7 CS5223 Distributed Systems - Week 7: Transactions</p>
+
+<p class="mb-3">Transactions • Goal: group individual operations (reads/writes) into an atomic unit • Example: transferring $100 from checking to savings checking_balance -= 100 savings_balance += 100 • Need atomicity/durability and isolation • Ensures consistency even with crashes or concurrent transactions</p>
+
+<p class="mb-3">Traditional Transactions (Single-node database) • ACID guarantees: Atomicity: all or nothing Consistency: transaction maintains application invariants Isolation: transactions do not interfere with each other Durability: committed transactions persist</p>
+
+<p class="mb-3">Atomicity and Durability • Atomicity: transaction fully applied or not at all • Durability: effects survive crashes • Technique: write-ahead logging (WAL)</p>
+
+<ul class="note-list">
+<li>Log each operation to disk</li>
+<li>Log commit record</li>
+<li>Only confirm to client after commit record written</li>
+<li>After crash: redo committed transactions, undo uncommitted</li>
+</ul>
+
+<p class="mb-3">Consistency (within transaction) • Must respect application constraints • Example: fail if checking_balance &lt; 100 when transferring $100</p>
+
+<p class="mb-3">Isolation • Transactions execute as if alone • Isolation levels:</p>
+
+<ul class="note-list">
+<li>Strict serializability</li>
+<li>Serializability</li>
+<li>Snapshot isolation</li>
+</ul>
+
+<p class="mb-3">• Techniques:</p>
+
+<ul class="note-list">
+<li>One transaction at a time</li>
+<li>Two-phase locking (2PL)
+<ul class="note-list">
+<li>Growing phase: acquire locks as needed, cannot release yet</li>
+<li>Shrinking phase: release locks, cannot acquire new ones</li>
+<li>Read locks (shared) allow multiple readers; write locks (exclusive) block others</li>
+<li>Write locks wait until all conflicting locks are released (queue mechanism)</li>
+</ul></li>
+<li>Snapshot isolation
+<ul class="note-list">
+<li>Transactions read from a consistent snapshot (versioned data)</li>
+<li>Write-write conflicts are detected at commit</li>
+<li>Conflicting transactions are automatically aborted and can be retried</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Serializability • Each transaction’s reads and writes are consistent with running them in a serial order, one transaction at a time • To provide isolation: concurrency control protocols</p>
+
+<p class="mb-3">Distributed Transactions • Hard because data may be on different nodes, replicated, or cached • Requires coordinating operations across nodes</p>
+
+<p class="mb-3">Atomic Commitment • Atomicity: all nodes execute transaction (commit) or none (abort) • Agreement required • In Paxos, agreement from a majority of nodes is required to ensure consistency, even if some nodes experience failures or hold outdated information. By relying on majority consensus, the protocol effectively ignores inconsistent or faulty nodes, allowing the system to reach a correct and reliable decision • Example: scheduling a meeting across multiple calendars (Alice, Bob, Charlie) • Without proper coordination, can get inconsistent schedules</p>
+
+<p class="mb-3">Atomic Commit Protocol (ACP) • Every node arrives at the same decision • Once a node decides, it never changes • Transaction committed only if all nodes vote YES • In normal operation, if all processes vote Yes, the transaction is committed • If all failures are eventually repaired, the transaction is eventually either committed or aborted</p>
+
+<p class="mb-3">The first four properties ensure safety, while the last property ensures liveness</p>
+
+<p class="mb-3">Two-Phase Commit (2PC) • Instance of atomic commit protocol • Roles:</p>
+
+<ul class="note-list">
+<li>Participants: nodes updating data (Alice, Bob, Charlie)</li>
+<li>Coordinator: manages and executes the protocol (may also be participant)</li>
+</ul>
+
+<p class="mb-3">• RPCs: PREPARE: can you commit? COMMIT: commit transaction ABORT: abort transaction</p>
+
+<p class="mb-3">2PC Without Failures Case 1:</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>Each participant decides whether it can commit; if so, it records its decision and replies “Yes” to the coordinator.</li>
+<li>Once the coordinator receives “Yes” from all participants, it sends a Commit message to them.</li>
+<li>Upon receiving the Commit message, each participant writes the commit record to disk, marking the transaction as committed.</li>
+</ol>
+
+<p class="mb-3">2PC Without Failures Case 2:</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>Each participant decides whether it can commit; if so, it records its decision and replies “Yes.” Otherwise, it replies “No.”</li>
+<li>If any participant votes “No,” the coordinator decides to abort the transaction.</li>
+<li>The coordinator then sends an Abort message to all participants.</li>
+</ol>
+
+<p class="mb-3">2PC with Failures – Case 1 (Participant fails before sending a response):</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>One of the participants failed before sending its decision.</li>
+<li>The coordinator may also abort the transaction if it times out while waiting for responses from participants, since it cannot determine a safe outcome without their votes.</li>
+<li>After recovering from a failure, a participant checks its log. If no final decision is recorded, it can safely abort the transaction, because it knows it has not voted “Yes,” and the coordinator cannot commit without its vote.</li>
+</ol>
+
+<p class="mb-3">2PC with Failures – Case 2 (Participant fails after sending a response):</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>A participant may fail after recording “Yes” in the log and sending “Yes” to the coordinator.</li>
+<li>Upon recovery, it checks its log; if it finds that it has already voted ‘Yes’ but has not received the final decision (Commit or Abort), it must wait for the coordinator (or other participants) to learn the outcome, as it cannot safely decide on its own.</li>
+</ol>
+
+<p class="mb-3">2PC with Failures – Case 3 (Participant fails after sending a response, and the response is lost during transmission):</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>A participant may fail after recording “Yes” in the log and sending “Yes” to the coordinator.</li>
+<li>The “Yes” vote is lost during transmission and never reaches the coordinator.</li>
+<li>The coordinator may abort the transaction if it times out while waiting for responses, since it cannot determine a safe outcome without all votes.</li>
+<li>Upon recovery, the participant checks its log. If it finds it has already voted “Yes” but has not received the final decision (Commit or Abort), it must wait for the coordinator (or another participant) to provide the outcome, as it cannot safely decide on its own.</li>
+<li>Since the coordinator never received the participant’s reply, it does not know to send an abort decision to that participant. Eventually, the participant will time out waiting for a decision and will then query the coordinator directly for the transaction outcome.</li>
+</ol>
+
+<p class="mb-3">2PC with Failures – Case 4 (Coordinator fails before sending decision):</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>Each participant decides whether it can commit; if so, it records its decision and replies “Yes” to the coordinator.</li>
+<li>The coordinator fails before logging any information about the decision.</li>
+<li>In this situation, the safest approach is to abort the transaction, or restart the entire 2PC process, sending Prepare messages again to all participants.</li>
+</ol>
+
+<p class="mb-3">2PC with Failures – Case 5 (Coordinator fails after sending decision to parts of the Participants):</p>
+
+<ol class="mb-3">
+<li>The coordinator sends a Prepare message to all participants.</li>
+<li>Each participant decides whether it can commit; if so, it records its decision and replies “Yes” to the coordinator.</li>
+<li>The coordinator logs the Commit decision and begins sending it to the participants..</li>
+<li>The coordinator fails before all participants receive the Commit decision.</li>
+<li>Any participant that has not yet received the final decision will time out and then query the coordinator or other participants to determine the transaction outcome.</li>
+</ol>
+
+<p class="mb-3">Q: In Case 4 and Case 5, if none of the participants has received the coordinator’s decision, can they communicate among themselves to determine the outcome by comparing their votes? A: No. Even if all participants voted Yes, they cannot decide on their own because the coordinator may still choose to Abort the transaction. For example, if a participant’s Yes vote was lost in transmission, the coordinator might decide to abort. All participants must follow the coordinator’s final decision, regardless of their own votes.</p>
+
+<p class="mb-3">• Participant failures:</p>
+
+<ul class="note-list">
+<li>Before sending vote: abort</li>
+<li>After sending vote: follow coordinator decision</li>
+<li>Lost vote: coordinator may abort</li>
+</ul>
+
+<p class="mb-3">• Coordinator failures:</p>
+
+<ul class="note-list">
+<li>Before sending decision: participants cannot decide (blocking)</li>
+<li>After sending decision: participants follow decision</li>
+</ul>
+
+<p class="mb-3">• Participants cannot decide independently safely in general</p>
+
+<p class="mb-3">Two-Phase Locking (2PL) • Lock types: read-lock (shared), write-lock (exclusive) • Two phases:</p>
+
+<ul class="note-list">
+<li>Expanding phase: acquire locks, do not release</li>
+<li>Shrinking phase: release locks, do not acquire</li>
+</ul>
+
+<p class="mb-3">• Usually release locks after commit/abort (Strong Strict 2PL) • Ensures serializability and strict serializability (serializable + real-time order) • Locks prevent conflicting operations (read/write or write/write) from happening concurrently. • Because a transaction holds all the locks it needs before releasing any, no other transaction can see partial changes. • This means the conflict graph (transactions as nodes, edges for conflicts) is acyclic, which is the definition of a serializable schedule. • Example sequence: Lock(R, A) Lock(W, B) Lock(W, C) Commit Unlock(A, B, C)</p>
+
+<p class="mb-3">Weaker Isolation Levels • Less strict than serializability: allow anomalies • Examples: snapshot isolation, repeatable read, read committed • Analogy to weaker consistency models: causal consistency, eventual consistency</p>
+
+<p class="mb-3">Other Concurrency Control Protocols • Optimistic concurrency control (OCC) • Timestamp ordering (TO) • Multiversion concurrency control (MVCC)</p>
+
+<p class="mb-3">Two-Phase Locking in Distributed Transactions • Send lock requests to shards • Can merge lock acquisition with 2PC PREPARE phase • Release locks after commit/abort • Must handle lock conflicts, deadlocks, and livelocks</p>
+
+<p class="mb-3">Q: What happens if a transaction cannot acquire a lock? A: The transaction must either wait until the lock is released or abort. Q: How can we handle livelock? A: We can handle livelock by enforcing a fixed order for acquiring locks, which prevents circular waiting and thus avoids livelock.</p>
+
+<p class="mb-3">Durability • Persist transaction effects even after failures • Single node: write-ahead logging + persistent storage • Disk failure: replicate database using Paxos • Distributed: replicate each shard Week 8 CS5223 Distributed Systems - Week 8: Distributed Transactions</p>
+
+<p class="mb-3">Transaction Recap A transaction is a group of multiple operations (reads and writes) executed as a single atomic unit. Transactions aim to maintain database correctness, even under failures or concurrent access. Transactions guarantee ACID properties:</p>
+
+<ul class="note-list">
+<li>Atomicity: A transaction either fully executes or has no effect. If any part fails, the system rolls back all changes.</li>
+<li>Consistency: Transactions transition the database from one valid state to another, preserving invariants and constraints.</li>
+<li>Isolation: Concurrent transactions appear to execute serially. Each transaction should not see intermediate states of others.</li>
+<li>Durability: Once a transaction commits, its effects persist even in the case of system crashes.</li>
+</ul>
+
+<p class="mb-3">Distributed Transactions In distributed systems, data is partitioned into shards, each stored on a separate server. Reasons for sharding include:</p>
+
+<ul class="note-list">
+<li>Storage capacity: Large datasets exceed a single machine's storage.</li>
+<li>Throughput: Parallel processing across shards increases performance.</li>
+<li>Scalability: Easy addition of servers without overloading existing nodes.</li>
+</ul>
+
+<p class="mb-3">Distributed transactions maintain ACID properties across multiple shards. Examples of systems using distributed transactions are MySQL Cluster, Google's Megastore, and Spanner.</p>
+
+<p class="mb-3">Atomicity in Distributed Systems Atomicity ensures that all shards involved in a transaction either commit or abort together. This is typically achieved using the Two-Phase Commit (2PC) protocol.</p>
+
+<p class="mb-3">Two-Phase Commit (2PC) Phase 1: Prepare</p>
+
+<ul class="note-list">
+<li>Coordinator sends PREPARE messages to all participants.</li>
+<li>Participants respond:
+<ul class="note-list">
+<li>YES: Ready to commit; wait for final decision.</li>
+<li>NO: Abort immediately.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Phase 2: Decision</p>
+
+<ul class="note-list">
+<li>If all participants reply YES → Coordinator sends COMMIT.</li>
+<li>If any participant replies NO → Coordinator sends ABORT.</li>
+</ul>
+
+<p class="mb-3">Isolation Isolation ensures that concurrent transactions behave as if executed one at a time, preventing anomalies from interleaved operations. The strongest standard is serializability.</p>
+
+<p class="mb-3">Example: Transferring money between accounts concurrently without proper isolation can lead to incorrect total balances if reads and writes interleave.</p>
+
+<p class="mb-3">Concurrency Control Protocols</p>
+
+<ul class="note-list">
+<li>Two-Phase Locking (2PL): Transactions acquire locks in an expanding phase and release in a shrinking phase. Read locks are shared; write locks are exclusive. Locks are held until commit/abort.</li>
+<li>Optimistic Concurrency Control: Transactions execute without locks, checking for conflicts before commit.</li>
+<li>Timestamp Ordering: Operations are ordered using timestamps to ensure serializability.</li>
+<li>Multiversion Concurrency Control (MVCC): Multiple versions of data are maintained to allow non-blocking reads.</li>
+<li>Strict Serializability: Serializability plus real-time constraints. If transaction T1 starts after T2 commits, T1 appears after T2.</li>
+</ul>
+
+<p class="mb-3">Weaker Isolation Levels Weaker isolation allows more concurrency but may produce anomalies: behaviors not consistent with executing transactions serially.</p>
+
+<p class="mb-3">Common levels:</p>
+
+<ul class="note-list">
+<li>Snapshot Isolation: Transactions read a consistent snapshot; write-write conflicts may occur.</li>
+<li>Repeatable Read: Ensures repeated reads return the same value but may allow phantom reads.</li>
+<li>Read Committed: Prevents dirty reads but allows non-repeatable reads and phantoms.</li>
+</ul>
+
+<p class="mb-3">Example</p>
+
+<p class="mb-3">Original state: A = 0 B = 0</p>
+
+<p class="mb-3">Transaction 1:</p>
+
+<ul class="note-list">
+<li>Read <code>A</code> → gets <code>0</code></li>
+<li>Write <code>B = 1</code></li>
+</ul>
+
+<p class="mb-3">Transaction 2:</p>
+
+<ul class="note-list">
+<li>Read <code>B</code> → gets <code>0</code></li>
+<li>Write <code>A = 1</code></li>
+</ul>
+
+<p class="mb-3">Explanation: Snapshot isolation allows this scenario because each transaction reads from a consistent snapshot of the database (in this case, the original state). Even though both transactions appear to run concurrently, snapshot isolation does not guarantee serializability, so this outcome—sometimes called a write skew—is possible.</p>
+
+<p class="mb-3">Two-Phase Locking in Distributed Databases</p>
+
+<ul class="note-list">
+<li>Locks are requested from each shard participating in the transaction.</li>
+<li>Can merge lock acquisition with 2PC PREPARE phase.</li>
+<li>Abort if locks cannot be acquired.</li>
+<li>Acquire locks in a fixed order to prevent deadlocks.</li>
+</ul>
+
+<p class="mb-3">Durability</p>
+
+<ul class="note-list">
+<li>Ensures transaction effects persist after commit.</li>
+<li>Single-node: use write-ahead logging and persistent storage.</li>
+<li>Distributed systems: replicate data using consensus protocols like Paxos. Each shard is typically replicated across multiple nodes.</li>
+</ul>
+
+<p class="mb-3">Distributed Transactions in Spanner Spanner stores each shard in a Paxos group replicated across data centers. Each Paxos group has a (relatively long-lived) leader responsible for tracking read/write locks for 2PL. Transactions span Paxos groups using 2PC</p>
+
+<ul class="note-list">
+<li>One group leader becomes the 2PC coordinator, others participants</li>
+</ul>
+
+<p class="mb-3">Transaction execution flow:</p>
+
+<p class="mb-3">Client:</p>
+
+<ul class="note-list">
+<li>Acquires read locks from shard leaders and reads data.</li>
+<li>Buffers writes locally.</li>
+<li>Decides to commit and acquire write locks.</li>
+<li>Sends PREPARE to participant leaders.</li>
+</ul>
+
+<p class="mb-3">Participant:</p>
+
+<ul class="note-list">
+<li>Logs PREPARE in Paxos.</li>
+<li>Votes OK or Abort.</li>
+</ul>
+
+<p class="mb-3">Coordinator:</p>
+
+<ul class="note-list">
+<li>If all votes are OK, log COMMIT in Paxos.</li>
+<li>Send COMMIT to participants.</li>
+<li>Send OK to Client</li>
+</ul>
+
+<p class="mb-3">Participants:</p>
+
+<ul class="note-list">
+<li>Logs Commit in Paxos</li>
+<li>Apply writes.</li>
+<li>Release locks.</li>
+</ul>
+
+<p class="mb-3">Spanner Transaction Example """ Transaction Flow with Paxos Replication</p>
+
+<ol class="mb-3">
+<li>Read Phase</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: The client sends read requests to the Shard Leaders (Participant Leaders) of the required data.</li>
+<li>Locking: The leaders acquire Read Locks on the requested rows and record them in their local Lock Tables.</li>
+<li>Data Retrieval: The leaders return the current values to the client.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Execution Phase (Local Buffering)</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: The client performs all business logic and computations locally.</li>
+<li>Buffering: All intended writes and intermediate results are buffered locally on the client side. No changes are sent to the server yet, minimizing network round-trips and lock holding time.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Prepare Request (2PC Phase 1)</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: Once the client decides to commit, it selects one participant as the Coordinator and sends a PREPARE message to all Participant Leaders.</li>
+<li>Payload: This message includes the transaction’s Write Set (the buffered data to be updated).</li>
+</ul>
+
+<ol class="mb-3">
+<li>Prepare Replication &amp; Lock Upgrade (Paxos)</li>
+</ol>
+
+<ul class="note-list">
+<li>Lock Upgrade: Each Participant Leader upgrades the existing Read Locks to Write Locks (Exclusive Locks) to prevent other transactions from accessing the data.</li>
+<li>Paxos Logging: Each leader replicates the "PREPARE" state and the write set via Paxos to its followers.
+<ul class="note-list">
+<li>If Paxos replication succeeds: The leader votes OK to the Coordinator.</li>
+<li>If Paxos replication fails (or conflict occurs): The leader votes ABORT.</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>Commit Decision (Coordinator Role)</li>
+</ol>
+
+<ul class="note-list">
+<li>Outcome - COMMIT: If the Coordinator receives OK votes from all participants:
+<p class="mb-2">1. The Coordinator logs the COMMIT decision via its own Paxos Group (the "point of no return").</p>
+<p class="mb-2">2. After the commit decision is durably logged, participants apply the buffered writes to the actual database storage.</p>
+<p class="mb-2">3. Once the writes are applied, all Write Locks held by the transaction are released in the Lock Table, allowing other waiting transactions to proceed</p>
+<p class="mb-2">4. The Coordinator sends the COMMIT command to all participants.</p>
+<p class="mb-2">5. The Coordinator notifies the Client that the transaction was successful.</p></li>
+<li>Outcome - ABORT: If any participant votes ABORT, the Coordinator logs and sends an ABORT command.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Commit Replication (Participants)</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: Each Participant Leader receives the COMMIT command and logs the final decision via Paxos to ensure the commit is durable even if the leader fails.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Apply Writes</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: After the commit decision is durably logged, participants apply the buffered writes to the actual database storage.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Lock Release</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: Once the writes are applied, all Write Locks held by the transaction are released in the Lock Table, allowing other waiting transactions to proceed.</li>
+</ul>
+
+<p class="mb-3">"""</p>
+
+<p class="mb-3">Note:</p>
+
+<p class="mb-3">Replication and Coordination in Transaction Commit</p>
+
+<ul class="note-list">
+<li>The write operations should also be replicated via Paxos together with the COMMIT message to ensure consistency across replicas.</li>
+<li>The PREPARE phase, initiated by the client, includes the transaction’s write set and is sent to the participant leaders.</li>
+<li>The method for selecting a coordinator can vary. As long as the selection is deterministic, correctness is preserved</li>
+</ul>
+
+<p class="mb-3">(e.g., choosing based on Shard ID).</p>
+
+<p class="mb-3">Why Can the Coordinator Reply "OK" Before Other Participants Finish?</p>
+
+<ul class="note-list">
+<li>Locks are still held by other participants</li>
+</ul>
+
+<p class="mb-3">→ No other transactions can read or modify the locked data, so isolation is preserved.</p>
+
+<ul class="note-list">
+<li>Commit decision is final</li>
+</ul>
+
+<p class="mb-3">→ Once the coordinator sends "OK" to the client, the system guarantees that the decision will not change, even if some participants are still completing execution.</p>
+
+<p class="mb-3">Lab 4 Style Distributed Transactions</p>
+
+<ul class="note-list">
+<li>Simplified Spanner-like transactions.</li>
+<li>Coordinator drives 2PC.</li>
+<li>Reads can be done during the PREPARE phase.</li>
+<li>Transaction flow across shards:</li>
+</ul>
+
+<p class="mb-3">"""</p>
+
+<ol class="mb-3">
+<li>Execution Phase (Client → Coordinator)</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: The client sends the transaction to the Coordinator.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Execution Phase (Coordinator Role)</li>
+</ol>
+
+<ul class="note-list">
+<li>Action:
+<p class="mb-2">1. Acquires all required read and write locks.</p>
+<p class="mb-2">2. Logs the PREPARE record and write set via Paxos to its replicas.</p>
+<p class="mb-2">3. Send PREPARE to all other participating shards</p></li>
+</ul>
+
+<ol class="mb-3">
+<li>Prepare Phase (Participants)</li>
+</ol>
+
+<ul class="note-list">
+<li>Upon receiving PREPARE, each participant leader:
+<p class="mb-2">1. Acquires the required locks</p>
+<p class="mb-2">2. Logs the PREPARE record and write set via Paxos to its replicas.</p></li>
+<li>Then:
+<ul class="note-list">
+<li>If Paxos replication succeeds → vote OK to the Coordinator.</li>
+<li>If replication fails or a conflict is detected → vote ABORT.</li>
+</ul></li>
+</ul>
+
+<ol class="mb-3">
+<li>Commit Decision (Coordinator Role)</li>
+</ol>
+
+<ul class="note-list">
+<li>Outcome - COMMIT: If the Coordinator receives OK votes from all participants:
+<p class="mb-2">1. The Coordinator logs the COMMIT decision via its own Paxos Group (the "point of no return").</p>
+<p class="mb-2">2. After the commit decision is durably logged, participants apply the buffered writes to the actual database storage.</p>
+<p class="mb-2">3. Once the writes are applied, all Write Locks held by the transaction are released in the Lock Table, allowing other waiting transactions to proceed</p>
+<p class="mb-2">4. The Coordinator sends the COMMIT command to all participants.</p>
+<p class="mb-2">5. The Coordinator notifies the Client that the transaction was successful.</p></li>
+<li>Outcome - ABORT: If any participant votes ABORT, the Coordinator logs and sends an ABORT command.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Commit Replication (Participants)</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: Each Participant Leader receives the COMMIT command and logs the final decision via Paxos to ensure the commit is durable even if the leader fails.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Apply Writes</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: After the commit decision is durably logged, participants apply the buffered writes to the actual database storage.</li>
+</ul>
+
+<ol class="mb-3">
+<li>Lock Release</li>
+</ol>
+
+<ul class="note-list">
+<li>Action: Once the writes are applied, all Write Locks held by the transaction are released in the Lock Table, allowing other waiting transactions to proceed.</li>
+</ul>
+
+<p class="mb-3">"""</p>
+
+<p class="mb-3">Note: Lock Management Difference</p>
+
+<ul class="note-list">
+<li>Google Spanner
+<ul class="note-list">
+<li>Only the leader is responsible for maintaining and managing locks.</li>
+<li>Followers do not track lock state; they rely on the leader for coordination.</li>
+</ul></li>
+<li>Lab 4 (Paxos-based System)
+<ul class="note-list">
+<li>All replicas in the Paxos group maintain the same state, including locks.</li>
+<li>Lock state is replicated via Paxos, ensuring consistency across all servers.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Key Insight: Spanner centralizes lock management at the leader for efficiency, while the Lab 4 design replicates lock state to all replicas for stronger consistency and simpler recovery.</p>
+
+<p class="mb-3">Distributed Transaction Costs</p>
+
+<ul class="note-list">
+<li>High latency due to multiple rounds of communication and consensus.</li>
+<li>Coordination overhead and lock contention.</li>
+<li>Mitigation strategies:
+<ul class="note-list">
+<li>Weaker isolation or consistency.
+<ul class="note-list">
+<li>Need to deal with inconsistencies and anomalies.</li>
+</ul></li>
+<li>Read-only transactions without locks.
+<ul class="note-list">
+<li>Spanner: Use physical lock</li>
+<li>Expose the uncertainty in the clock value</li>
+<li>Read at particular time (including the “current time”)</li>
+</ul></li>
+<li>Time-based reads using physical clocks (as in Spanner).</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Sharding System Overview (Lab Context) Terminology:</p>
+
+<ul class="note-list">
+<li>Shard: subset of keys; deterministic key to shard mapping.</li>
+<li>ShardStoreServer: handles key-value store for the assigned shard, replicated via Paxos.</li>
+<li>Configuration: versioned mapping of shards to Paxos groups.</li>
+<li>ShardMaster:
+<ul class="note-list">
+<li>“Application” replicated by Paxos.</li>
+<li>service that responds to changes in configuration.</li>
+<li>Keep track of which groups serve which shards.</li>
+<li>Remember all old configurations.</li>
+<li>Commands: Join, Leave, Move, Query.</li>
+<li>Join, Leave, and Move create new configuration.
+<ul class="note-list">
+<li>Join and Leave:
+<p class="mb-2">1. Divide the shards as evenly as possible</p>
+<p class="mb-2">2. Move as few shards as possible</p></li>
+</ul></li>
+<li>Goal: evenly distribute shards, minimize movement.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Reconfiguration Process</p>
+
+<ul class="note-list">
+<li>Perform one configuration change at a time.</li>
+<li>Suspend client requests during reconfiguration.</li>
+<li>Paxos replicas process client operations and reconfiguration operations in order.</li>
+<li>Steps:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Receive new configuration from ShardMaster.</li>
+<li>Replicate configuration via Paxos.</li>
+<li>Send shards to new groups; receive shards from old owners.</li>
+<li>Exchange acknowledgments.</li>
+<li>Wait until all transfers and acks complete.</li>
+</ol>
+
+<p class="mb-3">ShardStoreServer + Paxos</p>
+
+<ul class="note-list">
+<li>Client operations wrapped in PaxosRequest.</li>
+<li>Proposed to Paxos for ordering.</li>
+<li>Server executes operations in decided order.</li>
+<li>Ensures strong consistency and fault tolerance.</li>
+</ul>
+
+<p class="mb-3">System Composition</p>
+
+<ul class="note-list">
+<li>Each shard is replicated via Paxos.</li>
+<li>Transactions use:
+<ul class="note-list">
+<li>Two-Phase Locking (isolation).</li>
+<li>Two-Phase Commit (atomicity).</li>
+</ul></li>
+<li>Provides strong consistency, fault tolerance, and durability.</li>
+<li>Trade-off: high latency and increased complexity.</li>
+</ul>
+
+<p class="mb-3">Week 9 Chubby — Distributed Coordination Service</p>
+
+<p class="mb-3">Overview</p>
+
+<ul class="note-list">
+<li>Distributed coordination system developed by Google</li>
+<li>Provides synchronization and configuration management for distributed applications</li>
+<li>Open-source equivalent: Apache ZooKeeper</li>
+</ul>
+
+<p class="mb-3">Goals</p>
+
+<ul class="note-list">
+<li>Allow client applications to synchronize and manage dynamic configuration state</li>
+<li>Provide:
+<ul class="note-list">
+<li>Lock service</li>
+<li>Leader election (primary selection)</li>
+<li>Coordination primitives</li>
+</ul></li>
+<li>Ensure:
+<ul class="note-list">
+<li>Fault tolerance</li>
+<li>High availability</li>
+<li>Strong consistency</li>
+</ul></li>
+<li>Intuition: only some parts of an app need consensus</li>
+<li>Implementation: multi-Paxos state machine replication</li>
+</ul>
+
+<p class="mb-3">Key Insight</p>
+
+<ul class="note-list">
+<li>Not all parts of an application need consensus</li>
+<li>Centralize consensus logic into a service (Chubby)</li>
+</ul>
+
+<p class="mb-3">Implementation</p>
+
+<ul class="note-list">
+<li>Based on Multi-Paxos</li>
+<li>Uses state machine replication (SMR)</li>
+</ul>
+
+<p class="mb-3">Why Chubby (Service vs Library)</p>
+
+<ul class="note-list">
+<li>Easier integration than embedding Paxos in every application</li>
+<li>Developers struggle with Paxos complexity</li>
+<li>Enables external visibility (e.g., clients know current leader)</li>
+<li>Reduces complexity in application servers</li>
+</ul>
+
+<p class="mb-3">Chubby Interface</p>
+
+<p class="mb-3">File-System-Like Abstraction</p>
+
+<ul class="note-list">
+<li>Small files + directories</li>
+</ul>
+
+<p class="mb-3">Core Features</p>
+
+<ul class="note-list">
+<li>File storage</li>
+<li>Locking</li>
+<li>Sequencers (versioning / ordering mechanism)</li>
+</ul>
+
+<p class="mb-3">API Operations</p>
+
+<ul class="note-list">
+<li>File operations:
+<ul class="note-list">
+<li>Open, Close</li>
+<li>GetContents, SetContents, Delete</li>
+</ul></li>
+<li>Locking:
+<ul class="note-list">
+<li>Acquire, TryAcquire, Release</li>
+</ul></li>
+<li>Sequencers:
+<ul class="note-list">
+<li>GetSequencer, SetSequencer, CheckSequencer</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Example: Primary Election</p>
+
+<ul class="note-list">
+<li>Client tries to acquire lock on a file</li>
+<li>If successful:
+<ul class="note-list">
+<li>Becomes primary leader</li>
+<li>Writes its address to a file to signal that it is now the leader, allowing others to read the file later and determine the current leader</li>
+</ul></li>
+<li>Else (if someone has already acquired the lock):
+<ul class="note-list">
+<li>Reads file to find current primary leader</li>
+<li>Watches for updates</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Example: Primary–Backup using Chubby (instead of a view server)</p>
+
+<ol class="mb-3">
+<li>A server attempts to acquire a lock from the Chubby service.</li>
+<li>Since it is the first to request the lock, Chubby grants it, making this server the primary.</li>
+<li>The primary then writes its address into Chubby so others can discover it.</li>
+<li>When another server tries to acquire the lock, it finds that the lock is already held.</li>
+<li>By reading the state stored in Chubby, it learns the identity of the current primary.</li>
+<li>As the next available server, it assumes the role of backup.</li>
+<li>Clients query Chubby to determine the current primary, and Chubby returns the primary server’s address.</li>
+</ol>
+
+<p class="mb-3">Notes</p>
+
+<ol class="mb-3">
+<li>Chubby ensures that the system state (e.g., who the primary is) remains consistent.</li>
+<li>It is designed to be fault-tolerant, highly available, and strongly consistent.</li>
+</ol>
+
+<p class="mb-3">Why use a lock service?</p>
+
+<ul class="note-list">
+<li>Alternative: implement a consensus protocol like Paxos directly.</li>
+<li>Why a service is preferred:
+<ul class="note-list">
+<li>Easier to integrate into existing systems</li>
+<li>Avoids requiring developers to implement or fully understand Paxos</li>
+<li>Allows state (like the primary’s identity) to be exposed to external clients, not just internal replicas</li>
+<li>Can reduce the complexity and number of application servers</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Performance in Chubby</p>
+
+<p class="mb-3">Baseline</p>
+
+<ul class="note-list">
+<li>Paxos throughput ~1000 ops/sec</li>
+<li>Required ~5000 ops/sec</li>
+</ul>
+
+<p class="mb-3">Bottlenecks</p>
+
+<ul class="note-list">
+<li>Leader handles all requests</li>
+<li>Multiple message delays (~4)</li>
+<li>Sequential consensus operations</li>
+</ul>
+
+<p class="mb-3">Note: Adding more replicas does improve fault tolerance capability, but it does not necessarily improve latency or throughput; in some cases, it can even degrade performance due to increased coordination and communication overhead.</p>
+
+<p class="mb-3">Optimizations Need to engineer it so we don’t have to run Paxos on every RPC</p>
+
+<p class="mb-3">Batching</p>
+
+<ul class="note-list">
+<li>Combine multiple requests into one Paxos round</li>
+<li>Improves throughput</li>
+<li>Increases latency</li>
+</ul>
+
+<p class="mb-3">Partitioning</p>
+
+<ul class="note-list">
+<li>Multiple Paxos groups handling different keys</li>
+<li>Horizontal scalability with number of groups
+<ul class="note-list">
+<li>Uniform request distribution</li>
+</ul></li>
+<li>Challenge: cross-group operations</li>
+</ul>
+
+<p class="mb-3">Note: Even read-only requests may need coordination (or replication) because network partitions can occur. Without proper synchronization, multiple replicas might each believe they are the leader (split-brain) and independently serve requests, which can violate linearizability. So can we optimize read operation?</p>
+
+<p class="mb-3">Leases (for Reads)</p>
+
+<ul class="note-list">
+<li>Most requests are reads</li>
+<li>Want to avoid communication on reads
+<ul class="note-list">
+<li>Communication not needed for durability</li>
+<li>Just need to ensure master hasn’t changed</li>
+</ul></li>
+<li>Master obtains lease and renews while up (e.g., 10 seconds)</li>
+<li>Master can process reads alone if holding lease</li>
+<li>If master fails, need to wait 10s before new master can respond to requests</li>
+<li>Allows serving reads locally without consensus</li>
+<li>Tradeoff:
+<ul class="note-list">
+<li>Faster reads</li>
+<li>Delay after failure (must wait for lease expiry)</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Caching</p>
+
+<ul class="note-list">
+<li>Clients cache:
+<ul class="note-list">
+<li><strong>File</strong> data</li>
+<li>Metadata</li>
+</ul></li>
+<li>Strongly consistent, write-through, write-invalidate cache model
+<ul class="note-list">
+<li>Master tracks which clients might have file cached</li>
+<li>Sends invalidation on updates</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Note: Before a client sends a SetContents operation to Chubby, Chubby first issues cache invalidation messages to all clients. Each client acknowledges the invalidation, and only after receiving these acknowledgments does Chubby allow the write to proceed.</p>
+
+<p class="mb-3">Question: Is it safe for clients to read from their local cache before it has received invalidation request? Answer: Yes, it is safe, and it does not violate linearizability—but only because of how Chubby enforces ordering.</p>
+
+<p class="mb-3">When Chubby sends a cache invalidation message, it ensures that:</p>
+
+<ul class="note-list">
+<li>All clients are notified that their cached data is no longer valid.</li>
+<li>Clients acknowledge this invalidation before any write (e.g., SetContents) is allowed to proceed.</li>
+</ul>
+
+<p class="mb-3">Because of this:</p>
+
+<ul class="note-list">
+<li>Any read that happens after invalidation is processed will not rely on stale cached data.</li>
+<li>If a read happens during the invalidation window, the system ensures that the write has not yet been committed, so the read still reflects a valid, pre-write state.</li>
+</ul>
+
+<p class="mb-3">This preserves Linearizability, because:</p>
+
+<ul class="note-list">
+<li>Reads either see the old value before the write, or the new value after the write</li>
+<li>They never observe a mix or an out-of-order state</li>
+</ul>
+
+<p class="mb-3">Question: Can other clients install a copy in their cache during invalidation? Answer: In principle, it depends on the implementation, but in Chubby, the answer is effectively no.</p>
+
+<ul class="note-list">
+<li>If clients were allowed to install a new cached copy during invalidation:</li>
+<li>It could be safe only if the new cache is tracked by Chubby and properly invalidated before any write completes.</li>
+</ul>
+
+<p class="mb-3">Otherwise, the client might end up with stale data, which could violate Linearizability.</p>
+
+<p class="mb-3">In theory, Chubby could:</p>
+
+<ul class="note-list">
+<li>Allow the cache copy</li>
+<li>Then immediately invalidate it again to maintain correctness</li>
+</ul>
+
+<p class="mb-3">But this opens the door to a deeper problem:</p>
+
+<ul class="note-list">
+<li>If clients keep copying caches during invalidation, Chubby would need to continuously send invalidations</li>
+<li>This can lead to a livelock, where the system spends all its time invalidating caches and makes no real progress</li>
+</ul>
+
+<p class="mb-3">Because of this, Chubby’s design avoids the issue entirely:</p>
+
+<ul class="note-list">
+<li>Clients are not allowed to install new cached copies while an invalidation is in progress</li>
+</ul>
+
+<p class="mb-3">Clients hold file handles, locks, and cached data. What happens if a client holding a lock/file cache fails?</p>
+
+<p class="mb-3">KeepAlive Mechanism</p>
+
+<ul class="note-list">
+<li>Clients maintain leases via periodically sending messages (KeepAlive)</li>
+<li>Clients rely on responses from Chubby’s KeepAlive mechanism to confirm that their session is still active; if these responses stop, the client assumes its lease has expired.</li>
+<li>On failure:
+<ul class="note-list">
+<li>Locks released</li>
+<li>Cache invalidated</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Proxies</p>
+
+<ul class="note-list">
+<li>KeepAlives and invalidations are a huge percentage of load</li>
+<li>Use proxies to track state for groups of clients</li>
+<li>To master, proxies act exactly like clients</li>
+<li>To clients, proxies act exactly like master</li>
+<li>Reduce load from:
+<ul class="note-list">
+<li>Keep-alives</li>
+<li>Cache invalidations</li>
+</ul></li>
+<li>Act as intermediaries:
+<ul class="note-list">
+<li>Proxy ↔ Master</li>
+<li>Proxy ↔ Clients</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Real System Stats</p>
+
+<ul class="note-list">
+<li>~50k clients per cell</li>
+<li>~22k files
+<ul class="note-list">
+<li>most less than 1k; all less than 256k</li>
+</ul></li>
+<li>~2k RPCs/sec
+<ul class="note-list">
+<li>93% = keep-alives, so caching, leases help</li>
+<li>most of the rest are reads, so master leases help</li>
+<li>&lt;0.07% = writes</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">“Readers will be unsurprised to learn that the failover code, which is exercised far less often than other parts of the system, has been a rich source of interesting bugs.”</p>
+
+<p class="mb-3">Google File System (GFS)</p>
+
+<p class="mb-3">Motivation</p>
+
+<ul class="note-list">
+<li>Google needed a distributed file system for storing search index (late 90s, paper 2003)</li>
+<li>Designed for Google workloads (not traditional FS like NFS/AFS)
+<ul class="note-list">
+<li>Very different workload characteristics</li>
+<li>Able to design GFS for Google apps and design Google apps around GFS</li>
+</ul></li>
+<li>Assumptions:
+<ul class="note-list">
+<li>Frequent failures
+<ul class="note-list">
+<li>So strong fault tolerance is required</li>
+</ul></li>
+<li><strong>Large-scale</strong> data</li>
+<li>High throughput &gt; low latency</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Workload Characteristics</p>
+
+<ul class="note-list">
+<li>Few million large files (100MB to multi-GB)
+<ul class="note-list">
+<li>not optimized for small files</li>
+</ul></li>
+<li>Small files are rare</li>
+<li>Reads:
+<ul class="note-list">
+<li>Large streaming reads</li>
+<li>Small random reads</li>
+</ul></li>
+<li>Writes:
+<ul class="note-list">
+<li>Many files written once</li>
+<li>Mostly append-only</li>
+<li>Rare random writes</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">GFS Interface</p>
+
+<p class="mb-3">Not POSIX-compliant</p>
+
+<ul class="note-list">
+<li>Application-level library</li>
+</ul>
+
+<p class="mb-3">Operations</p>
+
+<ul class="note-list">
+<li>create, delete, open, close, read, write
+<ul class="note-list">
+<li>concurrent writes not guaranteed to be consistent</li>
+</ul></li>
+<li>record append (important feature): guaranteed to be atomic</li>
+<li>snapshot</li>
+</ul>
+
+<p class="mb-3">Consistency Model</p>
+
+<ul class="note-list">
+<li>Concurrent writes not strictly consistent</li>
+<li>Record append is atomic</li>
+</ul>
+
+<p class="mb-3">GFS Architecture</p>
+
+<p class="mb-3">File Structure</p>
+
+<ul class="note-list">
+<li>Files split into fixed-size chunks (64MB)</li>
+<li>Each chunk replicated (3+ chunkservers)</li>
+</ul>
+
+<p class="mb-3">Components</p>
+
+<p class="mb-3">Master</p>
+
+<ul class="note-list">
+<li>Stores metadata:
+<ul class="note-list">
+<li>File → chunk list</li>
+<li>Chunk ID → list of chunkserver holding it</li>
+</ul></li>
+<li>Stores metadata in memory</li>
+<li>Does NOT store file data</li>
+<li>Actually a replicated system using shadow masters</li>
+</ul>
+
+<p class="mb-3">Chunkservers</p>
+
+<ul class="note-list">
+<li>Store actual data</li>
+</ul>
+
+<p class="mb-3">Shadow Masters</p>
+
+<ul class="note-list">
+<li>Replicated metadata for fault tolerance</li>
+</ul>
+
+<p class="mb-3">Key Property</p>
+
+<ul class="note-list">
+<li>Single logical master (simplifies design)</li>
+</ul>
+
+<p class="mb-3">Read Operation</p>
+
+<p class="mb-3">Steps</p>
+
+<ol class="mb-3">
+<li>The client sends a request to the master with the (filename, chunk index).</li>
+<li>The master responds with the (chunk handle, chunk locations).</li>
+<li>The client then reads directly from a chunkserver by sending (chunk handle, byte range) and receives the requested data.</li>
+</ol>
+
+<p class="mb-3">Key Idea</p>
+
+<ul class="note-list">
+<li>Master not in data path → scalability</li>
+</ul>
+
+<p class="mb-3">Write Operation</p>
+
+<p class="mb-3">Steps</p>
+
+<ol class="mb-3">
+<li>The client asks the master for chunk metadata for the file (e.g., where to write the next chunk).</li>
+<li>The master identifies the relevant chunk and designates one replica as the primary, returning the chunk handle and locations of all replicas.</li>
+<li>The client pushes the data to the nearest replica, and it will forwarded to the others.</li>
+<li>Once all replicas have the data, the client sends a write request to the primary.</li>
+<li>The primary determines a global order for concurrent write requests from different clients.</li>
+<li>The primary instructs the secondary replicas to apply the writes in that order.</li>
+<li>All replicas apply the write in the same sequence and acknowledge back to the primary.</li>
+<li>The primary acknowledgement back to the client.</li>
+</ol>
+
+<p class="mb-3">Properties</p>
+
+<ul class="note-list">
+<li>Consistency depends on success/failure</li>
+<li>Primary controls ordering</li>
+</ul>
+
+<p class="mb-3">Note: Comparison with Paxos</p>
+
+<p class="mb-3">The design of the Google File System (GFS) shares some similarities with Paxos, such as using a primary to coordinate replicas, but there are key differences:</p>
+
+<ol class="mb-3">
+<li>Client interaction: In GFS, the client pushes data directly to the nearest replica. In Paxos, the client must send the request to the Proposer or Leader.</li>
+<li>Consensus mechanism: GFS does not run a full consensus protocol like Paxos. The primary orders writes and instructs replicas, but it does not wait for a majority to agree before responding. As a result, GFS can acknowledge the client before achieving majority consensus. In contrast, Paxos requires the primary to wait for acknowledgments from a majority of replicas before confirming success. Note that in GFS, if all replicas fail to apply a write, the operation may still be reported as failed.</li>
+</ol>
+
+<p class="mb-3">Important clarification</p>
+
+<p class="mb-3">GFS does not guarantee full strong consistency like Paxos, but it is also not “purely best effort”:</p>
+
+<ul class="note-list">
+<li>Replicas that successfully acknowledge a write will be consistent with each other.</li>
+<li>However, in failure cases, some replicas may have applied the write while others have not, leading to temporary inconsistencies.</li>
+<li>The system relies on retries and background repair to converge back to a consistent state.</li>
+</ul>
+
+<p class="mb-3">File Region States</p>
+
+<p class="mb-3">Defined</p>
+
+<ul class="note-list">
+<li>Consistent</li>
+<li>Entire write visible</li>
+</ul>
+
+<p class="mb-3">Consistent (but undefined)</p>
+
+<ul class="note-list">
+<li><strong>Same</strong> data seen by all clients</li>
+<li>May not reflect a complete write</li>
+</ul>
+
+<p class="mb-3">Inconsistent</p>
+
+<ul class="note-list">
+<li>Different clients see different data</li>
+</ul>
+
+<p class="mb-3">Failures in Writes</p>
+
+<ul class="note-list">
+<li>Errors encountered at replicas reported to client</li>
+<li>Client request considered failed</li>
+</ul>
+
+<p class="mb-3">If write fails:</p>
+
+<ul class="note-list">
+<li>Client notified</li>
+<li>Some replicas may have partial writes</li>
+</ul>
+
+<p class="mb-3">Result</p>
+
+<ul class="note-list">
+<li>Region becomes inconsistent</li>
+</ul>
+
+<p class="mb-3">State after Successful Writes (in Google File System)</p>
+
+<ul class="note-list">
+<li>All replicas have applied the writes in the same global order determined by the primary.
+<ul class="note-list">
+<li>The region of the file is consistent across replicas.</li>
+</ul></li>
+<li>For concurrent writes from different clients:
+<ul class="note-list">
+<li>The final state reflects one valid ordering of those writes (as chosen by the primary).</li>
+<li>The result is consistent, but not necessarily predictable from the clients’ perspective.</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Concurrent Writes</p>
+
+<ul class="note-list">
+<li>Writes overlap</li>
+<li>Final state:
+<ul class="note-list">
+<li>Consistent but undefined</li>
+<li>Depends on ordering</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Atomic Record Append</p>
+
+<p class="mb-3">Purpose</p>
+
+<ul class="note-list">
+<li>Safe concurrent appends</li>
+</ul>
+
+<p class="mb-3">Behavior</p>
+
+<ul class="note-list">
+<li>Append to end of file</li>
+<li>If chunk full:
+<ul class="note-list">
+<li>Pad chunk to the max size (all replicas)</li>
+<li>Ask the client to retry on next chunk</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Guarantees</p>
+
+<ul class="note-list">
+<li>Append is atomic</li>
+<li>Written region is defined</li>
+<li>Interleaving regions are inconsistent</li>
+</ul>
+
+<p class="mb-3">Issues</p>
+
+<ul class="note-list">
+<li>Duplicate records possible</li>
+<li>Padding may exist</li>
+</ul>
+
+<p class="mb-3">Handling Inconsistency</p>
+
+<p class="mb-3">Most applications mutate files by appending</p>
+
+<p class="mb-3">Techniques</p>
+
+<p class="mb-3">Checksums</p>
+
+<ul class="note-list">
+<li>Detect corrupted or partial writes</li>
+</ul>
+
+<p class="mb-3">Unique Identifiers</p>
+
+<ul class="note-list">
+<li>Identify duplicates</li>
+</ul>
+
+<p class="mb-3">Application-Level Handling</p>
+
+<ul class="note-list">
+<li>Design around append-only model</li>
+</ul>
+
+<p class="mb-3">GFS Design Tradeoffs</p>
+
+<p class="mb-3">Strengths</p>
+
+<ul class="note-list">
+<li>High throughput</li>
+<li>Fault tolerant</li>
+<li>Scales to massive data</li>
+</ul>
+
+<p class="mb-3">Weaknesses</p>
+
+<ul class="note-list">
+<li>Poor for small files</li>
+<li>High latency for some operations</li>
+<li>Single master bottleneck</li>
+</ul>
+
+<p class="mb-3">System Evolution</p>
+
+<p class="mb-3">Scale Achieved</p>
+
+<ul class="note-list">
+<li>~50 million files</li>
+<li>~10 PB data</li>
+</ul>
+
+<p class="mb-3">Limitations</p>
+
+<ul class="note-list">
+<li>Single master bottleneck</li>
+<li>Not suitable for latency-sensitive apps</li>
+</ul>
+
+<p class="mb-3">Outcome</p>
+
+<ul class="note-list">
+<li>Replaced by Colossus (next-generation system)</li>
+</ul>
+
+<p class="mb-3">Key Takeaways</p>
+
+<p class="mb-3">Chubby</p>
+
+<ul class="note-list">
+<li>Provides coordination as a service</li>
+<li>Built on Paxos</li>
+<li>Uses leases, caching, batching for performance</li>
+</ul>
+
+<p class="mb-3">GFS</p>
+
+<ul class="note-list">
+<li>Designed for large-scale, append-heavy workloads</li>
+<li>Separates metadata (master) and data (chunkservers)</li>
+<li>Relaxes consistency for performance</li>
+</ul>
+
+<p class="mb-3">Shared Insight</p>
+
+<ul class="note-list">
+<li>Real-world distributed systems:
+<ul class="note-list">
+<li>Trade strict guarantees for scalability</li>
+<li>Optimize for common-case workloads</li>
+<li>Push complexity to system design instead of application logic</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Week 10 CS5223 Distributed Systems – Weak Consistency (Week 10)</p>
+
+<p class="mb-3">Weak Consistency Overview</p>
+
+<ul class="note-list">
+<li>Strong consistency models:
+<ul class="note-list">
+<li>Serializability</li>
+<li>Sequential consistency</li>
+<li>Linearizability</li>
+</ul></li>
+<li>Examples: Primary-backup, Multi-Paxos, Chubby, Spanner</li>
+<li>Advantage: clear correctness guarantees</li>
+<li>Disadvantage: reduced availability and performance under failures</li>
+</ul>
+
+<p class="mb-3">CAP Theorem</p>
+
+<ul class="note-list">
+<li>Impossible to simultaneously guarantee:</li>
+</ul>
+
+<ol class="mb-3">
+<li>Consistency (linearizability)</li>
+<li>Availability (every request gets a response)</li>
+<li>Partition tolerance (network failures tolerated)</li>
+</ol>
+
+<ul class="note-list">
+<li>Trade-off required in distributed systems</li>
+</ul>
+
+<p class="mb-3">Amazon’s Design Choice</p>
+
+<ul class="note-list">
+<li>Prioritizes availability and latency</li>
+<li>Example: shopping cart must always work</li>
+<li>Even under failures or partitions</li>
+<li>Observations:
+<ul class="note-list">
+<li>+100ms latency → ~5% revenue loss</li>
+</ul></li>
+<li>Target:
+<ul class="note-list">
+<li>~99.99% availability</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Dynamo System</p>
+
+<ul class="note-list">
+<li>Distributed key-value store by Amazon</li>
+<li>Designed for:
+<ul class="note-list">
+<li>High availability</li>
+<li>Low latency (99.9% of time)</li>
+</ul></li>
+<li>Trade-off:
+<ul class="note-list">
+<li>Sacrifices strong consistency</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Eventual Consistency</p>
+
+<ul class="note-list">
+<li>Guarantees:
+<ul class="note-list">
+<li>Data will become consistent over time</li>
+</ul></li>
+<li>Characteristics:
+<ul class="note-list">
+<li>Stale reads possible</li>
+<li>Multiple “latest” versions may exist</li>
+<li>Reads may return multiple values</li>
+</ul></li>
+<li>Not sequentially consistent</li>
+</ul>
+
+<p class="mb-3">Dynamo API</p>
+
+<ul class="note-list">
+<li>get(key) → ([values], context)
+<ul class="note-list">
+<li>May return multiple versions</li>
+<li>Context contains vector clocks</li>
+</ul></li>
+<li>put(key, value, context)
+<ul class="note-list">
+<li>Context passed from previous get</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Example workflow (shopping cart) """ (carts, context) = get("cart-" + uid) cart = merge(carts) cart = add(cart, item) put("cart-" + uid, cart, context) """</p>
+
+<p class="mb-3">Conflict Resolution</p>
+
+<ul class="note-list">
+<li>Done at application level</li>
+<li>The way to resolve conflict relies on the target state</li>
+<li>Examples:
+<ul class="note-list">
+<li>Shopping cart → union of items</li>
+<li>High score → maximum value</li>
+<li>Default → latest timestamp wins</li>
+</ul></li>
+<li>Once resolved, should remain resolved</li>
+</ul>
+
+<p class="mb-3">Vector Clocks</p>
+
+<ul class="note-list">
+<li>Track causal relationships</li>
+<li>Structure:
+<ul class="note-list">
+<li>[(node1, count1), (node2, count2), ...]</li>
+</ul></li>
+<li>Rules:
+<ul class="note-list">
+<li>Increment own counter on write</li>
+<li>Compare clocks:
+<ul class="note-list">
+<li>v1 &lt; v2 → v1 is older (delete v1)</li>
+<li>concurrent → keep both versions</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Dynamo Vector Clock Behavior</p>
+
+<ul class="note-list">
+<li>Nodes in vector clock are coordinators</li>
+<li>Each write/put has a coordinator, and is replicated to multiple other nodes
+<ul class="note-list">
+<li>In an eventually consistent manner</li>
+</ul></li>
+<li>Each object associated with a vector clock</li>
+<li>On put:
+<ul class="note-list">
+<li>Client sends context</li>
+<li>Coordinator increments its entry</li>
+<li>Replicates to other nodes</li>
+</ul></li>
+<li>On get:
+<ul class="note-list">
+<li>Read from multiple nodes</li>
+<li>Merge clocks</li>
+<li>Return all concurrent versions</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Replication Parameters</p>
+
+<ul class="note-list">
+<li>N: number of replicas</li>
+<li>R: number of nodes required for read</li>
+<li>W: number of nodes required for write</li>
+</ul>
+
+<p class="mb-3">Condition for better consistency:</p>
+
+<ul class="note-list">
+<li>R + W &gt; N</li>
+</ul>
+
+<p class="mb-3">Common configuration:</p>
+
+<ul class="note-list">
+<li>(N=3, R=2, W=2)</li>
+</ul>
+
+<p class="mb-3">Sloppy Quorum</p>
+
+<ul class="note-list">
+<li>Do not wait for specific nodes</li>
+<li>Use first available nodes</li>
+<li>Ensures availability even if some nodes fail</li>
+<li>Writes/reads still proceed</li>
+</ul>
+
+<p class="mb-3">Handling Failures</p>
+
+<ul class="note-list">
+<li>Writes may go to alternative nodes</li>
+<li>Use hinted handoff:
+<ul class="note-list">
+<li>Temporary storage with “hint”</li>
+<li>Forward to correct node later</li>
+</ul></li>
+<li>Periodic synchronization between nodes</li>
+</ul>
+
+<p class="mb-3">Key Placement Problem Goals:</p>
+
+<ul class="note-list">
+<li>Load balancing</li>
+<li><strong>Minimal</strong> data movement on changes</li>
+<li>Decentralization</li>
+</ul>
+
+<p class="mb-3">Naive Hashing</p>
+
+<ul class="note-list">
+<li>key → hash(key) mod n</li>
+<li>Problem:
+<ul class="note-list">
+<li>Adding/removing nodes reshuffles most keys</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Consistent Hashing</p>
+
+<ul class="note-list">
+<li>Hash nodes and keys onto a ring</li>
+<li>Each key assigned to next node clockwise</li>
+<li>Advantages:
+<ul class="note-list">
+<li><strong>Minimal</strong> data movement</li>
+<li>Only ~K/n keys move when adding a node</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Key Insight</p>
+
+<ul class="note-list">
+<li>Weak consistency improves:
+<ul class="note-list">
+<li>Availability</li>
+<li>Performance</li>
+</ul></li>
+<li>Cost:
+<ul class="note-list">
+<li>More complexity in application logic</li>
+<li>Need for conflict resolution</li>
+<li>Possible temporary inconsistencies</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Week 11 (Rest Week) Week 12 Failure Models</p>
+
+<ul class="note-list">
+<li>Fail-stop/crash failures: node either executes correctly or stops</li>
+<li>Byzantine faults: faulty nodes can take arbitrary actions, send incorrect messages, collude, or try to subvert the protocol</li>
+</ul>
+
+<p class="mb-3">Why Byzantine Model?</p>
+
+<ul class="note-list">
+<li>Hardware failures can cause crashes or abnormal behavior</li>
+<li>Software bugs are common</li>
+<li>Security vulnerabilities can allow attackers into the system</li>
+<li>Cosmic rays can cause bit flips</li>
+<li>Economic incentives (e.g., Bitcoin) motivate attacks</li>
+</ul>
+
+<p class="mb-3">Malicious Behavior Examples</p>
+
+<ul class="note-list">
+<li>Unreplicated key-value store:
+<ul class="note-list">
+<li>Return unrelated data</li>
+<li>Reorder operations</li>
+<li>Process only some operations</li>
+<li>Show inconsistent results to clients</li>
+</ul></li>
+<li>Paxos tolerates a minority of processing failing by crashing</li>
+<li>What could a malicious replica do to a Paxos deployment:
+<ul class="note-list">
+<li>Stop processing</li>
+<li>Leaders report incorrect results</li>
+<li>Followers discard or ignore proposals</li>
+<li>Continually trigger new leader elections</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Byzantine Fault Tolerant (BFT) State Machine Replication</p>
+
+<ul class="note-list">
+<li>Uses same model as Multi-Paxos, Raft, Viewstamped Replication</li>
+<li>Assume f replicas are faulty</li>
+<li>To tolerate f Byzantine failures, need at least n &gt; 3f replicas</li>
+<li>Reason: to ensure n – 2f &gt; f (non-faulty replicas outnumber faulty replicas)</li>
+</ul>
+
+<p class="mb-3">Byzantine Quorums</p>
+
+<ul class="note-list">
+<li>Paxos: quorum size f+1 out of 2f+1 nodes</li>
+<li>BFT: quorum intersection must include at least one non-faulty node
+<ul class="note-list">
+<li>2f + 1</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">PBFT (Practical Byzantine Fault Tolerance)</p>
+
+<ul class="note-list">
+<li>Protocol progresses through views with a single primary (leader) per view</li>
+<li>Clients send commands to primary, which assigns a sequence number and forwards to backups</li>
+<li>Public-key cryptography ensures authenticity and prevents forgery
+<ul class="note-list">
+<li>To prevent faulty node from impersonating other nodes</li>
+</ul></li>
+<li>Backups send replies directly to clients; clients wait for f+1 matching replies
+<ul class="note-list">
+<li>To prevent faulty primary from sending the wrong result to the client</li>
+</ul></li>
+<li>Replicas exchange information about ops received from primary
+<ul class="note-list">
+<li>To prevent primary from assigning different commands to the same sequence number (aka. equivocation)</li>
+</ul></li>
+<li>Backups monitor primary and trigger view change if primary is faulty or unresponsive when timing out committing client operations
+<ul class="note-list">
+<li>To prevent primary from ignoring the clients altogether, or other ways to prevent progress</li>
+</ul></li>
+<li>Three sub-protocols:
+<p class="mb-2">1. Normal operations: Pre-Prepare, Prepare, Commit</p>
+<p class="mb-2">2. View change</p>
+<p class="mb-2">3. Garbage collection</p></li>
+</ul>
+
+<p class="mb-3">What about faulty clients?</p>
+
+<ul class="note-list">
+<li>We assume that there is some existing way for clients to authenticate themselves with the system</li>
+<li>Access controls can be used to restrict what each client is allowed to do</li>
+<li>System administrators (or the system itself) can revoke access for faulty clients</li>
+</ul>
+
+<p class="mb-3">PBFT Phases</p>
+
+<ul class="note-list">
+<li>Pre-Prepare:
+<ul class="note-list">
+<li>Primary assigns order</li>
+<li>Message: ⟨⟨PRE-PREPARE, v, n, D(m)⟩p, m⟩
+<ul class="note-list">
+<li>𝑣 is the view number</li>
+<li>𝑛 is the sequence number assigned by the primary</li>
+<li>𝐷(𝑚) is a digest of the message (to reduce amount of public key crypto)</li>
+</ul></li>
+<li>Backup accepts if:
+<ul class="note-list">
+<li>The client request is valid</li>
+<li>The backup is in view 𝑣</li>
+<li>The backup hasn't accepted a different PRE-PREPARE for the same sequence</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p class="mb-3">number in the same view</p>
+
+<ul class="note-list">
+<li>Prepare:
+<ul class="note-list">
+<li>Backups broadcast PREPARE: ⟨PREPARE, v, n, D(m)⟩i</li>
+<li>Prepare Certificate: 2f+1 matching PRE-PREPARE and PREPARE messages</li>
+<li>Guarantees no conflicting Prepare Certificates due to quorum intersection
+<ul class="note-list">
+<li>Quorum intersection!</li>
+</ul></li>
+<li>Two 2f+1 quorums intersect at at least one honest server</li>
+<li>Honest servers don’t prepare different commands in the same slot</li>
+<li>Can’t have two prepare certificates with different commands</li>
+</ul></li>
+<li>Commit:
+<ul class="note-list">
+<li>Broadcast COMMIT: ⟨COMMIT, v, n, D(m)⟩i</li>
+<li>Commit Certificate: 2f+1 matching COMMITs</li>
+<li>Server executes command and replies to client after Commit Certificate</li>
+</ul></li>
+<li>Reply:
+<ul class="note-list">
+<li>Client waits for f+1 matching replies</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Can a server execute the command after getting a Prepare Certificate?</p>
+
+<ul class="note-list">
+<li>No</li>
+<li>Other servers may not have the same Prepare Certificate</li>
+<li>(Remaining) honest servers may not outnumber faulty servers</li>
+<li>Therefore, may not have enough information to pick the correct command (i.e., executed command)</li>
+<li>We need another round of communication!</li>
+</ul>
+
+<p class="mb-3">Once a server has a Prepare Certificate, it broadcasts a COMMIT message</p>
+
+<ul class="note-list">
+<li>Once a server has 2𝑓+1 matching COMMITs (and the associated client message), it has a Commit Certificate</li>
+<li>The server can then execute the command (provided it executed all previous commands) and reply to the client</li>
+</ul>
+
+<p class="mb-3">Commit Certificate</p>
+
+<ul class="note-list">
+<li>A commit certificate proves that every quorum of 2𝑓+1 servers has at least one non-faulty node with a Prepare Certificate</li>
+<li>Remember: for a particular view number and slot number, there can be only one command in any Prepare Certificate</li>
+<li>This command is now stable and will be fixed in the same slot (even in future view changes)</li>
+</ul>
+
+<p class="mb-3">PBFT View Change</p>
+
+<ul class="note-list">
+<li>Backups monitor the primary. If the primary stops responding to pings or the backups timeout executing requests, they start a view change</li>
+<li>View change: move to view v+1 and a new primary</li>
+<li>Goal: all committed commands are carried over to the new view</li>
+<li>Trick: gather information from 2f+1 servers. If a command is committed, a Prepare Certificate is present at at least one of the 2f+1 servers.</li>
+<li>VIEW-CHANGE messages sent to new primary with Prepare Certificates</li>
+<li>New primary gathers 2f+1 VIEW-CHANGE messages and broadcasts NEW-VIEW</li>
+<li>Broadcasts a NEW-VIEW message, which includes
+<ul class="note-list">
+<li>PRE-PREPARE messages in view v+1 for each prepared command in the 2f+1 VIEW-CHANGE messages</li>
+<li>All 2f+1 VIEW-CHANGE messages</li>
+</ul></li>
+<li>Backups verify NEW-VIEW and send PREPARE for included PRE-PREPAREs</li>
+</ul>
+
+<p class="mb-3">PBFT Summary</p>
+
+<ul class="note-list">
+<li>Tolerates &lt; 1/3 replicas faulty (benign or malicious)</li>
+<li>Powerful but complex and expensive (O(n^2) messages, cryptography overhead)</li>
+<li>Used in blockchain systems where performance is acceptable</li>
+</ul>
+
+<p class="mb-3">Complexity</p>
+
+<ul class="note-list">
+<li>Building a bug-free Paxos is hard!</li>
+<li>BFT is much more complicated</li>
+<li>Which is more likely?
+<ul class="note-list">
+<li>bugs caused by the BFT implementation</li>
+<li>the bugs that BFT is meant to avoid</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Recently…</p>
+
+<ul class="note-list">
+<li>BFT protocols have been used in blockchain systems</li>
+<li>Performance not a big issue
+<ul class="note-list">
+<li>PBFT still faster than proof-of-work consensus (more on that later)</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Bitcoin and Decentralized Systems</p>
+
+<ul class="note-list">
+<li>PBFT requires permissioned setup; vulnerable to Sybil attacks if permissionless</li>
+<li>Bitcoin: proof-of-work cryptocurrency, decentralized, no trusted third party</li>
+<li>Transaction chain:
+<ul class="note-list">
+<li>Each bitcoin has a chain of transactions</li>
+<li>Transactions include new owner public key, previous transaction hash, signed by old owner</li>
+</ul></li>
+<li>Double spending prevention:
+<ul class="note-list">
+<li>All nodes see consistent transaction chain</li>
+<li>Consensus ensures only one valid spend per coin</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Blockchain Structure</p>
+
+<ul class="note-list">
+<li>Paxos-like log of transactions</li>
+<li>Each block:
+<ul class="note-list">
+<li>hash(previous_block), set of transactions, nonce</li>
+<li>hash chain implies block order</li>
+</ul></li>
+<li>Proof-of-work:
+<ul class="note-list">
+<li>Computationally expensive block generation</li>
+<li>Longest chain considered correct</li>
+<li>Honest miners control &gt;50% hashing power to prevent attacks</li>
+</ul></li>
+</ul>
+
+<p class="mb-3">Bitcoin Mining</p>
+
+<ul class="note-list">
+<li>Miner extends longest chain by creating a new block</li>
+<li>Nonce found via brute-force hashing to meet threshold</li>
+<li>Mining reward and transaction fees incentivize miners</li>
+<li>Average block: 2MB, ~2,500 transactions, mined every 10 minutes (~4 transactions/s)</li>
+<li>Confirmation: wait for 6 blocks (~1 hour latency)</li>
+<li>Mining consumes energy comparable to Switzerland</li>
+</ul>
+
+<p class="mb-3">Key Formulas</p>
+
+<ul class="note-list">
+<li>Byzantine quorum requirement: n &gt; 3f</li>
+<li>Prepare Certificate: 2f+1 matching PREPAREs</li>
+<li>Commit Certificate: 2f+1 matching COMMITs</li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

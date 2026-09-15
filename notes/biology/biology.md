@@ -1,3 +1,18 @@
+<meta>
+Title: 生物筆記
+Summary: 涵蓋細胞學、生命現象特徵、水與醣類蛋白質等生物體基本物質之生物核心重點整理筆記。
+Slug: biology
+Output: notes/biology/biology.html
+CanonicalId: biology
+Style: default
+EstimatedReadingTime: true
+Lang: zh-Hant
+Tags: Biology
+Status: drafting
+Published: 2026-09-13
+LastModified: 2026-09-13
+</meta>
+
 生物筆記
 
 (1) 細胞學

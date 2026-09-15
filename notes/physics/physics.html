@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>物理筆記總整理 — Ludwig</title>
+  <meta name="garden:tags" content="物理學">
+  <meta name="garden:summary" content="彙整直線運動、等加速度運動、自由落體、平面運動與靜力學質心平衡等基礎物理核心概念之重點筆記。">
+  <meta name="site:lang" content="zh-Hant">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.physics">
+  <meta name="site:tag_labels" content="{&quot;concept.physics&quot;:{&quot;en&quot;:&quot;Physics&quot;,&quot;zh-Hant&quot;:&quot;物理學&quot;,&quot;zh-Hans&quot;:&quot;物理学&quot;}}">
+  <meta name="site:canonical_id" content="physics">
+  <meta name="site:published_at" content="2026-09-13">
+  <meta name="site:last_modified_at" content="2026-09-13">
+  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:source" content="notes/physics/physics.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">物理筆記總整理</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-09-13" data-published-at="2026-09-13"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-13</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">物理筆記總整理</p>
+
+<p class="mb-3">直線運動</p>
+
+<p class="mb-3">等加速直線運動 等加速度運動中，物體的速度與時間成線性關係。 位移公式： s = v0t + 1/2 a t² v² = v0² + 2as 平均速度 = (v + v0) / 2 等加速度運動時，第 t/2 秒瞬時速度 = t 秒內平均速度。 若初速為零，位移與時間平方成正比。</p>
+
+<p class="mb-3">自由落體運動 自由落體為等加速度運動，a = g = 9.8 m/s²。 速度：v = gt 位移：s = 1/2 gt² 時間與速度及位移皆成正比關係。</p>
+
+<p class="mb-3">平面運動 平面運動可分解為互相垂直的兩個直線運動。 例如拋體運動：水平方向為等速運動，垂直方向為等加速度運動。 位移可由向量合成，合速度大小 v = √(vx² + vy²)。</p>
+
+<p class="mb-3">靜力學</p>
+
+<p class="mb-3">重心與質心 重心為物體受重力作用的平衡點。 質心為物體質量分佈的平衡位置。 對均勻物體，重心與質心重合。 若物體傾斜到重心超出支點時，物體將翻倒。 臨界條件：tanθ = x/y 時物體開始翻倒，其中 x 為重心水平距離，y 為支點高度。</p>
+
+<p class="mb-3">平衡條件 物體處於靜止或等速運動時，合力與合力矩皆為零。 ΣF = 0，Στ = 0。</p>
+
+<p class="mb-3">牛頓運動定律</p>
+
+<p class="mb-3">第一運動定律（慣性定律） 若無外力作用，物體保持靜止或等速直線運動狀態。 慣性大小與質量成正比。</p>
+
+<p class="mb-3">第二運動定律（加速度定律） 物體所受外力與其加速度成正比，方向相同。 公式：F = ma。 單位：牛頓（N）。</p>
+
+<p class="mb-3">第三運動定律（作用反作用定律） 每個作用力必有大小相等、方向相反的反作用力。 作用力與反作用力作用在不同物體上。</p>
+
+<p class="mb-3">摩擦力 靜摩擦力：防止物體相對運動，最大靜摩擦力 f_s(max) = μ_s N。 滑動摩擦力：f_k = μ_k N，方向與運動方向相反。 通常 μ_s &gt; μ_k。 若物體恰好滑動又同時翻倒，則靜摩擦係數 μ_s = tanθ = x/y。 摩擦力不影響牛頓第三定律的成立。</p>
+
+<p class="mb-3">動量守恆與系統質心運動</p>
+
+<p class="mb-3">動量與衝量 動量：p = mv。 衝量：I = Ft = Δp。 平均衝力 × 作用時間 = 動量變化。 平均衝力 = 平均力，瞬時衝力 = 瞬時力。 若淨外力為零，系統總動量守恆。</p>
+
+<p class="mb-3">動量守恆律 封閉系統中，若外力合為零，則 Σp_before = Σp_after。 適用於碰撞、爆炸等過程。 系統質心運動遵守：M V_cm = Σmi vi。</p>
+
+<p class="mb-3">碰撞 一維碰撞： 彈性碰撞：動量與動能皆守恆。 非彈性碰撞：僅動量守恆，部分動能轉為熱或形變能。</p>
+
+<p class="mb-3">一維彈性碰撞公式： v1' = (m1 - m2)/(m1 + m2) <em> v1 + (2m2)/(m1 + m2) </em> v2 v2' = (2m1)/(m1 + m2) <em> v1 + (m2 - m1)/(m1 + m2) </em> v2 相對速度關係：v1 - v2 = -(v1' - v2')。</p>
+
+<p class="mb-3">非彈性碰撞： 完全非彈性碰撞中，兩物體黏在一起，v' = (m1v1 + m2v2)/(m1 + m2)。 動能損失最大。</p>
+
+<p class="mb-3">系統質心運動 系統質心速度：V_cm = Σmi vi / Σmi。 若外力合為零，質心作等速運動。 系統內部力不改變質心運動狀態。</p>
+
+<p class="mb-3">電流與歐姆定律</p>
+
+<p class="mb-3">電流 電流 I = Q / t。 方向定義為正電荷流動方向。 單位：安培（A）。</p>
+
+<p class="mb-3">電阻與歐姆定律 符合歐姆定律之導體在固定溫度下，I 與 V 成正比。 V = IR，其中 R 為電阻。 電阻受材料、長度與截面積影響，R = ρL / A。 溫度升高時，大多數金屬電阻增大。 電阻率 ρ 取決於材料性質。</p>
+
+<p class="mb-3">功率與能量 電功率：P = IV = I²R = V²/R。 電能：W = Pt。 效率 = 輸出功 / 輸入能量。</p>
+
+<p class="mb-3">電流的磁效應</p>
+
+<p class="mb-3">磁場與洛倫茲力 通電導線產生磁場，方向依右手定則判定。 帶電粒子在磁場中受力：F = qvB sinθ。 力方向依右手定則（v × B）。 帶電粒子若垂直進入磁場，將作勻速圓周運動： qvB = mv²/r → r = mv / qB。 圓周運動週期 T = 2πm / qB，與速度無關。 若帶電粒子斜射入磁場，將作螺旋運動。</p>
+
+<p class="mb-3">磁場對電流的作用 通電導線在磁場中受力：F = BIL sinθ。 方向依右手定則：四指為電流方向，磁場方向為掌心指向，拇指為力方向。 平行導線間若電流同向則互吸，反向則互斥。</p>
+
+<p class="mb-3">電流與磁場的關係 磁通量 Φ = BA cosθ。 電磁感應定律：感應電動勢 E = - dΦ/dt。 楞次定律：感應電流方向總是反抗磁通量的變化。 右手定則：磁場→手掌方向，四指為導線移動方向，拇指指感應電流方向。</p>
+
+<p class="mb-3">直線運動 可用位移、速度、加速度三式互推。 注意方向設定與正負號。</p>
+
+<p class="mb-3">靜力學 判斷重心位置是否在支點垂直線內。 分析翻倒或滑動條件。</p>
+
+<p class="mb-3">牛頓運動定律 畫受力圖，分析合力方向。 若加速度為零，物體處於靜力平衡。</p>
+
+<p class="mb-3">摩擦力 先確定物體是否滑動，靜摩擦力為可變力，滑動摩擦力為定值。</p>
+
+<p class="mb-3">動量守恆 若外力為零則可用動量守恆。 彈性碰撞需同時滿足動量與動能守恆。 完全非彈性碰撞動能損失最大。</p>
+
+<p class="mb-3">電流與磁效應 電流方向與磁場方向的相互關係可用右手定則判定。 帶電粒子在磁場中的運動路徑為圓或螺旋。</p>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

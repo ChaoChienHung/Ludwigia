@@ -1,3 +1,18 @@
+<meta>
+Title: NUS CS5562: Trustworthy Machine Learning
+Summary: Structured notes for NUS CS5562 Trustworthy Machine Learning, exploring CLWE-based digital signature attacks, PRG embedding, membership inference auditing enhancements, and privacy safeguards.
+Slug: nus-cs5562-trustworthy-machine-learning
+Output: notes/NUS CS5562 Trustworthy Machine Learning/NUS CS5562 Trustworthy Machine Learning.html
+CanonicalId: nus-cs5562-trustworthy-machine-learning
+Style: default
+EstimatedReadingTime: true
+Lang: en
+Tags: Machine Learning, Responsible AI, Trustworthy ML
+Status: drafting
+Published: 2026-09-12
+LastModified: 2026-09-12
+</meta>
+
 CS5562 Trustworthy Machine Learning
 Structured Notes on CLWE-Based Digital Signature Attacks, PRG Embedding, Quasilinear Time, MI-Based Auditing Enhancements, and Quasi-Identifiers
 

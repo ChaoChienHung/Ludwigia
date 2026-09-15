@@ -2793,6 +2793,80 @@
         "硬體架構",
         "硬件架构"
       ]
+    },
+    {
+      "concept_id": "concept.trustworthy_ml",
+      "labels": {
+        "en": "Trustworthy ML",
+        "zh-Hant": "可信機器學習",
+        "zh-Hans": "可信机器学习"
+      },
+      "aliases": [
+        "Trustworthy ML",
+        "trustworthy ml",
+        "Trustworthy Machine Learning",
+        "trustworthy machine learning",
+        "可信機器學習",
+        "可信机器学习"
+      ]
+    },
+    {
+      "concept_id": "concept.applied_analytics",
+      "labels": {
+        "en": "Applied Analytics",
+        "zh-Hant": "應用分析",
+        "zh-Hans": "应用分析"
+      },
+      "aliases": [
+        "Applied Analytics",
+        "applied analytics",
+        "應用分析",
+        "应用分析"
+      ]
+    },
+    {
+      "concept_id": "concept.biology",
+      "labels": {
+        "en": "Biology",
+        "zh-Hant": "生物學",
+        "zh-Hans": "生物学"
+      },
+      "aliases": [
+        "Biology",
+        "biology",
+        "生物",
+        "生物學",
+        "生物学"
+      ]
+    },
+    {
+      "concept_id": "concept.chemistry",
+      "labels": {
+        "en": "Chemistry",
+        "zh-Hant": "化學",
+        "zh-Hans": "化学"
+      },
+      "aliases": [
+        "Chemistry",
+        "chemistry",
+        "化學",
+        "化学"
+      ]
+    },
+    {
+      "concept_id": "concept.physics",
+      "labels": {
+        "en": "Physics",
+        "zh-Hant": "物理學",
+        "zh-Hans": "物理学"
+      },
+      "aliases": [
+        "Physics",
+        "physics",
+        "物理",
+        "物理學",
+        "物理学"
+      ]
     }
   ]
 }

@@ -1,3 +1,18 @@
+<meta>
+Title: 物理筆記總整理
+Summary: 彙整直線運動、等加速度運動、自由落體、平面運動與靜力學質心平衡等基礎物理核心概念之重點筆記。
+Slug: physics
+Output: notes/physics/physics.html
+CanonicalId: physics
+Style: default
+EstimatedReadingTime: true
+Lang: zh-Hant
+Tags: Physics
+Status: drafting
+Published: 2026-09-13
+LastModified: 2026-09-13
+</meta>
+
 物理筆記總整理
 
 直線運動

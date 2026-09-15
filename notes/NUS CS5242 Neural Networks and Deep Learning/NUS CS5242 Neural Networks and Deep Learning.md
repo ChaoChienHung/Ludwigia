@@ -1,3 +1,18 @@
+<meta>
+Title: NUS CS5242: Neural Networks and Deep Learning
+Summary: Lecture and study notes for NUS CS5242 Neural Networks and Deep Learning, covering causal language models, LLaMA label handling mechanics, and instruction fine-tuning workflows.
+Slug: nus-cs5242-neural-networks-and-deep-learning
+Output: notes/NUS CS5242 Neural Networks and Deep Learning/NUS CS5242 Neural Networks and Deep Learning.html
+CanonicalId: nus-cs5242-neural-networks-and-deep-learning
+Style: default
+EstimatedReadingTime: true
+Lang: en
+Tags: Deep Learning, Machine Learning, Artificial Intelligence, LLM
+Status: drafting
+Published: 2026-09-12
+LastModified: 2026-09-12
+</meta>
+
 NUS CS5242 Neural Networks and Deep Learning
 LLaMA Label Handling and Instruction Fine-Tuning Notes
 

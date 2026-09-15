@@ -1,3 +1,18 @@
+<meta>
+Title: NUS CS5223: Distributed Systems
+Summary: Comprehensive lecture and study notes for NUS CS5223 Distributed Systems, covering distributed system models, fault tolerance, replication, consistency, and consensus protocols.
+Slug: nus-cs5223-distributed-systems
+Output: notes/NUS CS5223 Distributed Systems/NUS CS5223 Distributed Systems.html
+CanonicalId: nus-cs5223-distributed-systems
+Style: default
+EstimatedReadingTime: true
+Lang: en
+Tags: Distributed Systems, Consensus, Fault Tolerance, System Architecture
+Status: drafting
+Published: 2026-09-12
+LastModified: 2026-09-12
+</meta>
+
 NUS CS5223 Distributed Systems
 Slide 1
 - What is a distributed system
