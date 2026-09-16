@@ -1,0 +1,156 @@
+{
+  "questions": [
+    {
+      "question_id": "cs5234-balls-into-bins-coupon-collector",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "When 10 n ln(n) balls are thrown uniformly and independently at random into n bins, why is the probability of having at least one empty bin upper-bounded by n^{-9}?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Each individual bin has an empty probability < (1/e)^{10 ln n} = n^{-10}, and applying the Union Bound across all n bins yields n * n^{-10} = n^{-9}.",
+          "response": "Correct. For any single bin, the probability of receiving zero balls is (1 - 1/n)^{10 n ln n} < e^{-10 ln n} = n^{-10}. Summing this failure bound across all n bins via the Union Bound gives n * n^{-10} = n^{-9}."
+        },
+        {
+          "id": "B",
+          "text": "Because bin occupancies are mutually independent, the product of probabilities yields n^{-9}.",
+          "response": "Incorrect. Bin occupancies are negatively correlated, not mutually independent; the Union Bound does not require independence."
+        },
+        {
+          "id": "C",
+          "text": "Markov's inequality directly bounds the maximum bin load by n^{-9}.",
+          "response": "Incorrect. Markov's inequality provides only a linear 1/alpha bound, which cannot yield inverse polynomial powers like n^{-9}."
+        },
+        {
+          "id": "D",
+          "text": "Chebyshev's inequality guarantees exponential tail bounds for coupon collection.",
+          "response": "Incorrect. Chebyshev's inequality guarantees only polynomial decay O(1/log n), not exponential n^{-c} bounds."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The probability that a specific bin receives no balls is (1 - 1/n)^{10 n ln n} < e^{-10 ln n} = n^{-10}. By Boole's inequality (Union Bound), the probability that there exists at least one empty bin is at most sum_{i=1}^n Pr(Bin i is empty) < n * n^{-10} = n^{-9}.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.probability",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-median-trick-probability-boosting",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Why does taking the sample median of k independent repetitions of an estimator with constant success probability 2/3 boost the success probability exponentially to 1 - 2 e^{-k/100}?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The median fails only if strictly more than half of the trials fail, which corresponds to an exponential Chernoff tail deviation from the expected 1/3 failure rate.",
+          "response": "Correct. If an individual trial fails with probability <= 1/3, the expected number of failing trials in k runs is <= k/3. For the median to deviate, at least k/2 trials must fail, which requires a relative deviation of delta = 1/2 above expectation. By the Chernoff bound, this occurs with probability at most 2 e^{-k/100}."
+        },
+        {
+          "id": "B",
+          "text": "Taking the median reduces the variance of the estimator by a factor of 1/k.",
+          "response": "Incorrect. Taking the mean (arithmetic average) reduces variance linearly; the median trick boosts confidence exponentially via order statistics."
+        },
+        {
+          "id": "C",
+          "text": "The sample median eliminates the need for independent repetitions.",
+          "response": "Incorrect. Mutual independence across all k runs is an essential precondition for the Chernoff bound to hold."
+        },
+        {
+          "id": "D",
+          "text": "Chebyshev's inequality applied to the median guarantees exponential tail convergence.",
+          "response": "Incorrect. Chebyshev's inequality guarantees only polynomial tail bounds; exponential decay follows directly from the Chernoff bound."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The median of k independent trials deviates by more than epsilon if and only if at least k/2 individual estimates fail. Since each trial fails with probability at most 1/3, the expected number of failures is mu <= k/3. Setting delta = 1/2 so that (1 + delta)mu = k/2, the multiplicative Chernoff bound proves that Pr(Failures >= k/2) <= exp(-k/36) < exp(-k/100). Symmetrically bounding both tails yields Pr(|Median - A| > epsilon) <= 2 e^{-k/100}.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.probability_boosting",
+        "concept.chernoff_bound"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-yaos-minimax-principle-reduction",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "According to Yao's Minimax Principle, why does proving a lower bound for deterministic algorithms on a chosen input distribution mu establish a lower bound for all randomized algorithms?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Because for any input distribution mu, the distributional complexity D_mu(f) is a universal lower bound on randomized query complexity: D_mu(f) <= R(f).",
+          "response": "Correct. Yao's Minimax Principle proves that the expected error of any randomized algorithm on distribution mu cannot be better than the error of the best deterministic algorithm tailored to mu. Hence, D_mu(f) <= R(f) for every distribution mu."
+        },
+        {
+          "id": "B",
+          "text": "Because all randomized algorithms can be simulated deterministically with zero query overhead.",
+          "response": "Incorrect. Deterministic simulation of randomized algorithms generally incurs significant query and runtime overhead."
+        },
+        {
+          "id": "C",
+          "text": "Because von Neumann's minimax theorem only applies to non-zero-sum games.",
+          "response": "Incorrect. Von Neumann's theorem applies specifically to two-player zero-sum games between the algorithm designer and the input adversary."
+        },
+        {
+          "id": "D",
+          "text": "Because deterministic decision trees always have smaller height than randomized decision trees.",
+          "response": "Incorrect. Randomized decision trees frequently achieve lower expected height than deterministic trees."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Yao's Minimax Principle states that D_mu(f) <= R(f) for any input distribution mu, with equality holding for the worst-case distribution mu*. By establishing that every deterministic algorithm requires at least q queries to achieve 2/3 accuracy on a chosen distribution mu, one immediately proves that no randomized algorithm can solve f in fewer than q queries in the worst case.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.randomized_algorithm"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-binary-search-property-testing-lca",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the Erg\u00fcn et al. binary search tester for array sortedness, what structural property ensures that the set of indices with successful binary searches forms a monotonically sorted subsequence?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "For any two indices i1 < i2 that both succeed, their search paths diverge at a lowest common ancestor pivot k where a_{i1} <= a_k and a_k <= a_{i2}, ensuring a_{i1} <= a_{i2} by transitivity.",
+          "response": "Correct. Let k be the lowest common ancestor node in the binary search tree. Since i1 < k <= i2, the successful search for i1 verified a_{i1} <= a_k (branching left), while the successful search for i2 verified a_k <= a_{i2} (branching right). By transitivity of <=, a_{i1} <= a_{i2}."
+        },
+        {
+          "id": "B",
+          "text": "Binary search checks all n - 1 adjacent inequalities in the array simultaneously.",
+          "response": "Incorrect. Binary search checks only O(log n) non-adjacent comparisons along its search path."
+        },
+        {
+          "id": "C",
+          "text": "Any array with fewer than eps n inversions is guaranteed to be completely sorted.",
+          "response": "Incorrect. An array with even a single inversion is not sorted; eps-far means modifying > eps n elements is required."
+        },
+        {
+          "id": "D",
+          "text": "The binary search tester relies on the birthday paradox to sample identical values.",
+          "response": "Incorrect. The birthday paradox collision principle is utilized in uniformity testing, not binary search sortedness testing."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The Lowest Common Ancestor (LCA) transitivity lemma proves that if binary searches for i1 < i2 both succeed, their comparison with the LCA pivot k enforces a_{i1} <= a_k <= a_{i2}. Consequently, the set of all successful indices S_succ forms a monotonically non-decreasing subsequence. If an array is eps-far from sorted, its longest sorted subsequence has length at most (1 - eps)n, implying that at least eps n indices must trigger an unsuccessful search.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.algorithm",
+        "concept.query_algorithm"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
+    }
+  ]
+}

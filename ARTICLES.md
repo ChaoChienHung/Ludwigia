@@ -215,8 +215,13 @@
 
 ### 8. NUS CS5446: Reinforcement Learning and Sequential Decision Making
 - [ ] 整理並發布 `notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/`
-  - **核心內容**：感知-決策閉環與狀態空間搜尋、古典符號規劃（STRIPS/PDDL/SATPlan）、啟發式搜尋與階層任務網路（HTN）、不確定性下的理性決策（決策論、效用論、博弈論）、大模型輔助規劃與負責任 AI 治理。
-  - **待辦事項**：已彙整為以 Week 1–6 劃分的大師筆記，持續深化序列決策與強化學習理論連結。
+  - **核心內容**：感知-決策閉環與狀態空間搜尋、古典符號規劃（STRIPS/PDDL/SATPlan）、啟發式搜尋與階層任務網路（HTN）、不確定性下的理性決策（決策論、效用論、博弈論）、馬可夫決策過程（MDP）、無模型強化學習（Model-Free RL）、價值函數近似（Function Approximation）、深度 Q 網路（DQN）、策略梯度定理（Policy Gradients / REINFORCE）、行動者-評論家架構（Actor-Critic / A2C / SAC）以及信賴域進階策略搜尋（TRPO / PPO）。
+  - **待辦事項**：已彙整 Week 1–5 大師筆記，包含完整演算法推導、Widrow-Hoff 與梯度下降對比、SARSA 與 Q-learning 探索安全性分析、Deadly Triad 與 PPO 截斷目標函數。
+
+### 9. NUS CS5234: Algorithms at Scale
+- [ ] 整理並發布 `notes/NUS CS5234 Algorithms at Scale/`
+  - **核心內容**：亞線性時間與查詢演算法（Sublinear-Time & Query Algorithms）、機率集中不等式（Markov, Chebyshev, Chernoff, Union Bound）、變異數縮減與中位數技巧（Mean Trick & Median Trick）、圖邊數與連通分量亞線性估計、決策樹計算模型與 Yao 氏極小極大定理（Yao's Minimax Principle）、性質測試框架（Property Testing: Monotonicity, Uniformity, Bipartiteness）與全變差距離（Total Variation Distance）。
+  - **待辦事項**：已彙整 Lecture 1–4 為 Week 1–4 大師筆記，包含完整數學嚴格證明、隨機化下界與性質測試器分析。
 
 ---
 

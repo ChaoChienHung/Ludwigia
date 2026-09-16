@@ -152,6 +152,44 @@
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-01"
+    },
+    {
+      "question_id": "the-deadly-triad-and-sarsa-stability",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "According to Sutton and Barto, what constitutes the 'Deadly Triad' in approximate reinforcement learning, and why does combining these three elements risk severe divergence?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Function approximation, bootstrapping, and off-policy learning; their combination destroys the contraction mapping property of the Bellman operator under Euclidean projections.",
+          "response": "Correct. When function approximation (generalization), bootstrapping (updating from estimated values), and off-policy learning (state distribution mismatch) coincide, the projected Bellman operator is no longer a contraction, permitting unbounded weight divergence (as demonstrated by Baird's counterexample)."
+        },
+        {
+          "id": "B",
+          "text": "Experience replay, convolutional neural networks, and fixed target networks; they cause maximization overestimation bias.",
+          "response": "Incorrect. Experience replay and fixed target networks are architectural solutions designed to stabilize deep Q-learning, not causes of divergence."
+        },
+        {
+          "id": "C",
+          "text": "Monte Carlo rollouts, baseline subtraction, and entropy regularization; they induce extreme policy gradient variance.",
+          "response": "Incorrect. Baseline subtraction and entropy regularization are variance reduction and exploration stabilization techniques."
+        },
+        {
+          "id": "D",
+          "text": "Softmax policies, discount factors where gamma < 1, and epsilon-greedy exploration; they prevent reaching greedy Nash equilibria.",
+          "response": "Incorrect. Standard exploration schedules and discounting are foundational components of convergent reinforcement learning."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The Deadly Triad consists of function approximation, bootstrapping, and off-policy learning. When all three are present, the projected Bellman operator loses its contraction mapping property under the norm weighted by the behavioral state distribution, risking unbounded parameter divergence.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
     }
   ]
 }
+
