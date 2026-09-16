@@ -142,8 +142,7 @@ Planning systems drive modern autonomous operations across heterogeneous industr
 
 A formal **Planning Problem** $\mathcal{P}$ is defined as a tuple:
 
-$$\mathcal{P} = \langle \mathcal{S}, s_0, \mathcal{A}, \mathcal{T}, \mathcal{G} 
-angle$$
+$$\mathcal{P} = \langle \mathcal{S}, s_0, \mathcal{A}, \mathcal{T}, \mathcal{G} \rangle$$
 
 Where:
 - $\mathcal{S}$ is the set of all possible environmental states.
@@ -159,8 +158,7 @@ Where:
 ```
 
 **The Planning Solution:**
-A solution (or **plan**) is an action sequence $\pi = \langle a_1, a_2, \dots, a_k 
-angle$ such that executing $\pi$ sequentially starting from $s_0$ terminates in a state $s_k \in \mathcal{G}$.
+A solution (or **plan**) is an action sequence $\pi = \langle a_1, a_2, \dots, a_k \rangle$ such that executing $\pi$ sequentially starting from $s_0$ terminates in a state $s_k \in \mathcal{G}$.
 - **Satisficing Plan:** Any valid path from $s_0$ to $\mathcal{G}$.
 - **Optimal Plan:** A plan that minimizes an associated cost metric (e.g., execution steps, fuel consumption, time delay, financial expenditure).
 
@@ -243,7 +241,10 @@ The contemporary architecture of an intelligent agent combines four complementar
                             +--------------------------+
 ```
 
-This convergence powers what modern economic analyses term the *"one-person unicorn"*—where a single human operator orchestrates a fleet of specialized autonomous agents executing planning, coding, verification, and deployment workflows.
+#### Andrew Ng on Agentic Reasoning (BUILD 2024 Keynote)
+In his influential keynote *"The Rise of AI Agents and Agentic Reasoning"* (BUILD 2024), Andrew Ng articulated why the AI frontier is transitioning from zero-shot prompt-response interactions to **iterative agentic workflows**:
+- **Iterative vs. Zero-Shot:** While querying a frontier model (such as GPT-4) in a single-shot prompt often yields superficial answers, embedding even smaller open models (such as GPT-3.5 or Llama) within an iterative loop—incorporating **reflection, external tool invocation, multi-step planning, and multi-agent collaboration**—routinely outperforms zero-shot GPT-4 on complex coding and sequential problem-solving benchmarks.
+- **Economic Paradigm Shift:** This agentic convergence powers what modern economic analyses term the *"one-person unicorn"*—where a single human founder or developer orchestrates a decentralized fleet of autonomous agents executing end-to-end planning, code synthesis, verification, and automated deployment pipelines.
 
 ---
 
@@ -273,34 +274,53 @@ To standardize benchmarking across research institutions and the International P
 
 ### 4.3 Factored State Representation & Database Semantics
 
-In classical planning, states are represented in a **factored** manner using state variables known as **fluents** (properties that alter their truth value over time).
+In classical planning, world configurations are represented in a **factored** manner using state variables known as **fluents** (properties and relations whose truth values vary over discrete planning time):
 - A state $s$ is formally represented as a conjunction of positive, ground, function-free atomic predicates:
 
 $$s = \{ \text{At}(P_1, \text{SFO}), \text{At}(P_2, \text{SIN}), \text{Plane}(P_1), \text{Plane}(P_2) \}$$
 
-Classical planning engines evaluate states using strict **Database Semantics**:
-1. **Closed-World Assumption (CWA):** Any fluent not explicitly declared true within the state set is assumed to be false. For example, if $\text{Fierce}(\text{Lecturer})$ is absent from $s$, it evaluates strictly to $\text{False}$.
-2. **Unique Names Assumption (UNA):** Distinct constant symbols refer to distinct real-world physical entities ($P_1 \neq P_2$, $\text{SFO} \neq \text{SIN}$).
+**State Representation Mappings (Lecture Examples):**
+
+| First-Order Logical Statement | Factored State Set (True Fluents) | Semantics |
+| :--- | :--- | :--- |
+| $\text{Hungry} \land \text{Sleepy}$ | $S = \{ \text{Hungry}, \text{Sleepy} \}$ | Conjunction of ground propositional fluents |
+| $\text{New}(\text{Plane}_1) \land \text{Safe}(\text{Plane}_1)$ | $S = \{ \text{New}(\text{Plane}_1), \text{Safe}(\text{Plane}_1) \}$ | Ground 1-place predicates over physical object $\text{Plane}_1$ |
+| $\text{At}(\text{Plane}_1, \text{SIN}) \land \text{At}(\text{Plane}_2, \text{SFO})$ | $S = \{ \text{At}(\text{Plane}_1, \text{SIN}), \text{At}(\text{Plane}_2, \text{SFO}) \}$ | Ground relational state variables defining airport locations |
+
+Classical planning engines interpret these sets under strict **Database Semantics**:
+1. **Closed-World Assumption (CWA):** Any ground atomic fluent not explicitly present in the state set $s$ is strictly assumed to be **false**.
+   - *Example:* In an academic planning environment, if $\text{Fierce}(\text{CS3263\_Lecturer})$ is omitted from the state set $s$, it evaluates unambiguously to $\text{False}$.
+2. **Unique Names Assumption (UNA):** Distinct syntactic constants invariably denote distinct physical objects in the world ($P_1 \neq P_2$, $\text{Plane}_1 \neq \text{Plane}_2$, $\text{SFO} \neq \text{SIN}$). Two distinct names can never refer to the same object.
 
 ### 4.4 Model-Theoretic Goal Entailment
 
-A goal $g$ is a **partially specified state**, represented as a conjunction of literals. Because a goal specifies only what must hold true, unmentioned fluents can take any arbitrary truth value:
+A goal $g$ is a **partially specified state**, formally written as a conjunction of literals. Because a goal specifies only the target conditions that must be achieved, unmentioned fluents can take any arbitrary truth value in the final state:
 
-$$s \models g \iff \mathcal{M}(s) \subseteq \mathcal{M}(g)$$
+> **Definition (Model-Theoretic Entailment):**
+> A physical state $s$ satisfies a goal $g$ if and only if $s$ logically entails $g$, denoted $s \models g$:
+>
+> $$s \models g \iff \mathcal{M}(s) \subseteq \mathcal{M}(g)$$
+>
+> where $\mathcal{M}(\alpha)$ denotes the set of all logical models in which $\alpha$ is true. That is, in every interpretation where state $s$ holds true, goal $g$ is also necessarily true.
 
-A physical state $s$ satisfies goal $g$ if and only if $s$ logically entails $g$ (i.e., every positive literal in $g$ is present in $s$, and no negative literal in $g$ is present in $s$).
-- Variables appearing within PDDL goal descriptions are treated as **existentially quantified**:
-
-$$g = \text{At}(P_1, \text{SIN}) \land \text{At}(p, \text{SFO}) \land \text{Plane}(p)$$
-
-This asserts that plane $P_1$ must be at Singapore, and *there exists some plane* $p$ that is at San Francisco.
+**Key Syntactic and Semantic Properties:**
+- **Ground Conjunction Entailment:**
+  $$\text{Hungry} \land \text{Sleepy} \land \text{Bored} \models \text{Hungry} \land \text{Bored}$$
+  Since the state contains all required literals, the goal is satisfied.
+- **Lifted Goal Entailment with Variable Substitution:**
+  $$\text{At}(\text{Cargo}_1, \text{SFO}) \models \text{At}(c, \text{SFO}) \quad \text{under substitution } \theta = \{ c / \text{Cargo}_1 \}$$
+- **Existential Quantification of Variables in Goals:**
+  Variables appearing within PDDL goal expressions are treated as **existentially quantified** ($\\exists$):
+  $$g = \text{At}(P_1, \text{SIN}) \land \text{At}(p, \text{SFO}) \land \text{Plane}(p)$$
+  This asserts that plane $P_1$ must be located at Singapore, and *there must exist at least one plane* $p$ located at San Francisco.
+- **STRIPS vs. PDDL Expressive Bounds:**
+  In classical STRIPS, goals are strictly restricted to conjunctions of positive, ground literals (no negation, disjunction, or variables). PDDL extends this by allowing negative literals, typed variables, and conditional goal specifications.
 
 ### 4.5 Action Schemas, Grounding, and State Transitions
 
 An **Action Schema** provides a lifted, parameterized template representing a family of concrete actions:
 
-$$\text{Action}(a(\vec{x})) = \langle \text{Precond}(a), \text{Effect}(a) 
-angle$$
+$$\text{Action}(a(\vec{x})) = \langle \text{Precond}(a), \text{Effect}(a) \rangle$$
 
 Where:
 - $\text{Precond}(a)$ is a conjunction of literals that must hold before $a$ can be executed.
@@ -587,7 +607,17 @@ Held alongside the International Conference on Automated Planning and Scheduling
 - **Tracks:** Classical Tracks (Optimal, Agile, Satisficing), Learning Tracks, Probabilistic Tracks, Numeric Tracks, and Hierarchical Task Network (HTN) Tracks.
 - **Packaging Standard:** IPC 2023 standardized deployment using Apptainer (Singularity) container recipes, integrating commercial solvers like IBM CPLEX alongside open-source engines like *Fast Downward*, *Scorpion*, and *DecStar*.
 
-### 7.4 Summary of Alternative Classical Paradigms
+### 7.4 Modern Open Challenges: The DeepMind PushWorld Benchmark
+
+While classical planners excel in discrete, fully symbolic domains governed by explicit PDDL physics, real-world embodied robotics presents complex physical interactions, continuous geometries, and dynamic spatial occlusions. To evaluate whether learning agents and planners can acquire physical common sense, Google DeepMind introduced **PushWorld** (2024; `https://deepmind-pushworld.github.io/play/`):
+- **Problem Formulation:** PushWorld is a 2D puzzle benchmark based on physical object manipulation and obstacle clearance, conceptualized as a continuous, physics-grounded generalization of classical Sokoban.
+- **Physical Dynamics & Constraints:** An agent must push, rotate, and unblock obstacles of diverse geometric shapes across friction surfaces to clear a designated path or reposition target blocks into goal configurations. Actions alter the physical state through non-linear contact mechanics, momentum transfer, and spatial obstruction.
+- **Significance for Planning:** PushWorld exposes the fundamental dichotomy between symbolic planning and end-to-end reinforcement learning:
+  - *Symbolic Planners:* Provide provable soundness and completeness but require laborious human authoring of physical collision and friction rules in PDDL.
+  - *Reinforcement Learning / Foundation Models:* Ingest raw pixel observations and spatial coordinates directly, but struggle with long-horizon combinatorial reasoning and catastrophic out-of-distribution physical hallucination.
+- **Research Frontier:** PushWorld serves as an active proving ground for **neuro-symbolic planning architectures**—where learned visual world models extract grounded object fluents and affordances, which are then passed to classical combinatorial search engines (e.g., Fast Downward or SATPlan) for provably correct long-horizon plan synthesis.
+
+### 7.5 Summary of Alternative Classical Paradigms
 
 ```
 Classical Planning Approaches
@@ -714,57 +744,108 @@ Deploying decision-making systems surfaces four non-technical hurdles:
 3. **Economic Challenges:** High cloud compute expenditures, expensive verification audits, and uncertain market return-on-investment (ROI).
 4. **System Challenges:** Operating across legacy infrastructure, fluctuating sensor bandwidth, and unexpected environment drift.
 
-### 10.3 Core Principles of Responsible AI
+### 10.3 The Twelve Core Principles of Responsible AI
 
-Following Russell & Norvig (*AIMA 4th ed., Chapter 27*), rational decision models must incorporate explicit societal constraints:
+Following Russell & Norvig (*AIMA 4th ed., Chapter 27*), rational sequential decision models and autonomous planning agents must incorporate explicit societal, ethical, and legal constraints. The twelve foundational principles encompass:
 
-| Responsible Principle | Operational Definition in AI Planning |
+| Responsible AI Principle | Operational Meaning in Automated Planning & Decision Systems |
 | :--- | :--- |
-| **Safety & Robustness** | Actions must never produce physical harm; planning models must verify fail-safe execution states. |
-| **Privacy & Security** | Observation fluents and world models must preserve data protection; prevent adversarial state inference. |
-| **Fairness & Equity** | Decision criteria and resource allocation must eliminate demographic bias and algorithmic disparity. |
-| **Transparency & Explainability** | Action rationales must be interpretable to human operators (*"Why did the agent pick action A over B?"*). |
-| **Accountability & Governance** | Clear human liability must be assigned across developers, system managers, and enterprise owners. |
+| **1. Ensure Safety** | Actions must never produce physical injury, mechanical damage, or irreversible catastrophic states; planners must verify fail-safe recovery paths. |
+| **2. Respect Privacy** | World models and state observations must guard personal data against unauthorized disclosure or adversarial state reconstruction. |
+| **3. Ensure Fairness** | Objective functions and utility distributions must prevent disparate impact, demographic bias, and discriminatory resource allocation. |
+| **4. Promote Trust** | Systems must establish calibrated trust with human operators through predictable, reliable, and verifiable behavior. |
+| **5. Establish Accountability** | Unambiguous chains of legal and ethical responsibility must be maintained across designers, deployers, and operational managers. |
+| **6. Provide Transparency** | The underlying planning model, assumptions, state fluents, and evaluation criteria must be accessible for independent technical audit. |
+| **7. Attribute Responsibility** | System architectures must clearly delineate human agency from machine recommendations during semi-autonomous operations. |
+| **8. Reflect Diversity & Inclusion** | Decision objectives must encompass diverse stakeholder viewpoints, cultural contexts, and accessibility considerations. |
+| **9. Support Equality** | System benefits and automated services must be distributed equitably without exacerbating socioeconomic stratification. |
+| **10. Facilitate Collaboration** | Systems must be engineered for seamless Human-AI teaming, supporting mixed-initiative plan co-creation rather than rigid replacement. |
+| **11. Uphold Human Rights & Values**| Agent actions must align with international human rights standards, constitutional protections, and individual bodily autonomy. |
+| **12. Limit Harmful Uses of AI** | Autonomous planning technologies must be actively gated and prevented from weaponization, automated surveillance, or cyberattacks. |
 
-### 10.4 The Accuracy vs. Responsibility Trade-Off
+### 10.4 The Decision-Theoretic Trade-Off & Governance Framework
 
-A central architectural decision in enterprise AI planning is managing the tension between unconstrained optimization and responsible guardrails:
+A central engineering challenge in enterprise decision architecture is balancing mathematical optimization against ethical and legal guardrails:
 
-$$\text{Total Utility} = \text{Performance}(\text{Accuracy, Speed}) - \text{Penalty}(\text{Risk, Bias, Opacity})$$
+$$\text{Total Utility} = \text{Performance}(\text{Accuracy, Speed, Throughput}) - \text{Penalty}(\text{Risk, Bias, Opacity, Non-Compliance})$$
 
 ```
 Performance /
 Raw Accuracy  ^
-              |            * Unconstrained Planning (High Speed, High Liability)
+              |            * Unconstrained Optimization (High Speed, Extreme Liability)
               |           /
-              |          /  <-- Pareto Frontier of Trusted Agents
+              |          /  <-- Pareto Efficient Frontier of Trusted Agents
               |         /
               |        * Responsible Planning (Audited, Safe, Explainable)
               |       /
               |      /
               +---------------------------------------------------->
-              0                                        Responsible Features
-                                                       (Privacy, Safety, Explainability)
+              0                                        Responsible Guardrails
+                                                       (Safety, Privacy, Auditability)
 ```
 
-Engineers and regulators must determine:
-- *What is the quantifiable drop in raw speed or throughput required to verify 100% safety bounds?*
-- *Who holds legal responsibility when an autonomous plan causes downstream operational failure?*
+**The Six Fundamental Governance Inquiries:**
+Whether operating as an AI developer, system user, or executive regulator, evaluating an autonomous planning system requires answering six structural questions:
+1. **Definition & Purpose:** *What is the specific responsible feature (e.g., algorithmic fairness, differential privacy, explainable causal chains), and why is it essential for this operational domain?*
+2. **Trust Mechanisms:** *What concrete verification protocols (e.g., formal PDDL validation with `VAL`, bounded model checking) guarantee user trust?*
+3. **Tooling & Techniques:** *What open-source libraries, formal solvers, and synthetic red-teaming benchmarks are available to enforce compliance?*
+4. **Trade-Off Quantification:** *What is the explicit empirical trade-off between raw predictive accuracy/execution speed and the enforcement of responsible constraints?*
+5. **Systemic Implications:** *What are the societal, legal, and operational second-order consequences if the planner encounters an edge case?*
+6. **Decision Authority & Timing:** *Who holds the legal authority to sign off on plan deployment, and at what milestone in the lifecycle must this determination occur?*
 
-### 10.5 SDLC Integration & Global AI Regulations
+### 10.5 SDLC Lifecycle Integration & Global Regulations
 
-Responsible AI cannot be retrofitted as an afterthought; it must be embedded across the entire **System Development Life Cycle (SDLC)**:
-- **Requirement Analysis:** Identifying protected groups, stakeholder values, and failure modes.
-- **Design & Modeling:** Constraining PDDL preconditions to forbid unsafe state transitions.
-- **Implementation:** Integrating automated plan validators (`VAL`) and formal verification checkers.
-- **Testing & Auditing:** Red-teaming planners against adversarial perturbations and unexpected sensor noise.
-- **Evolution & Maintenance:** Continuous monitoring of deployed plans against real-world drift.
+Responsible governance cannot be treated as a post-hoc patch; it must be systematically embedded across all five phases of the **System Development Life Cycle (SDLC)**, surrounded by ongoing Policy, Education, and Research:
+
+```
+                          [ Policy, Education & Research ]
+                                         |
+                                         v
+                         +-------------------------------+
+                         |    1. Requirement Analysis    |
+                         +---------------+---------------+
+                                         |
+                                         v
+                         +---------------+---------------+
+                         |          2. Design            |
+                         +---------------+---------------+
+                                         |
+                                         v
+                         +---------------+---------------+
+                         |      3. Implementation        |
+                         +---------------+---------------+
+                                         |
+                                         v
+                         +---------------+---------------+
+                         |          4. Testing           |
+                         +---------------+---------------+
+                                         |
+                                         v
+                         +---------------+---------------+
+                         |    5. Evolution & Auditing    |
+                         +-------------------------------+
+```
+
+- **1. Requirement Analysis:** Engaging multidisciplinary stakeholders to define ethical boundaries, protected demographic classes, and acceptable risk margins.
+- **2. Design & Modeling:** Structuring PDDL predicates and preconditions to mathematically exclude hazardous state transitions before a single line of solver code runs.
+- **3. Implementation:** Embedding runtime assertions, verifiable invariant monitors, and cryptographically signed audit logs for every generated action sequence.
+- **4. Testing & Verification:** Subjecting planners to stress testing, adversarial perturbations, and automated plan validators (`VAL`) across thousands of edge cases.
+- **5. Evolution & Maintenance:** Continuously monitoring production workflows against real-world covariate shift, sensory drift, and changing regulatory standards.
 
 **Global Regulatory Landscape:**
-- **US AI Bill of Rights:** Five principles protecting citizens against algorithmic discrimination and automated system failures.
-- **EU Artificial Intelligence Act:** Strict risk-tiered obligations classifying safety-critical autonomous planning into *Prohibited*, *High-Risk*, and *Specific Transparency* tiers.
-- **China Generative AI Regulations:** Mandating security evaluations, alignment with socialist core values, and verifiable source provenance.
-- **Singapore HSA SaMD Guidelines:** Regulating AI decision support software as medical devices through formal lifecycle validation.
+- **US Blueprint for an AI Bill of Rights (White House OSTP):** Establishes five core protections: Safe and Effective Systems, Algorithmic Discrimination Protections, Data Privacy, Notice and Explanation, and Human Alternatives, Consideration, and Fallback.
+- **EU Artificial Intelligence Act (EU AI Act):** A landmark risk-tiered regulatory framework imposing stringent legal requirements (e.g., high-quality training datasets, continuous risk management systems, human oversight) on *High-Risk* autonomous planning systems (such as critical infrastructure, medical devices, and law enforcement tools), while strictly prohibiting cognitive behavioral manipulation and social scoring.
+- **China Interim Measures for Generative AI Services:** Requires service providers to uphold socialist core values, prevent intellectual property infringement, conduct mandatory security assessments, and maintain transparent, traceable algorithms.
+- **Singapore HSA Regulatory Guidelines for Software Medical Devices (SaMD):** The Health Sciences Authority (HSA) enforces a rigorous total-product-lifecycle framework requiring formal clinical evaluation, software change management, and automated anomaly auditing for AI decision systems deployed in patient care.
+
+### 10.6 Real-World Case Studies: AI for Social Good (AI4SG)
+
+When grounded in responsible engineering principles, automated planning and sequential decision making deliver profound global benefits across scientific, environmental, and humanitarian challenges:
+- **Accelerating the UN Sustainable Development Goals (SDGs):** A landmark study by Vinuesa et al. (*Nature Communications*, 2020) revealed that AI planning and automated systems act as documented catalysts across **134 out of 169 targets** within the 17 UN Sustainable Development Goals—including clean water distribution, renewable energy balancing, and poverty reduction.
+- **Rapid Clinical Diagnostics During Global Crises:** During the COVID-19 pandemic, automated clinical decision pipelines published in *Nature Medicine* (2020) demonstrated how convolutional neural networks combined with probabilistic decision trees could rapidly analyze full chest CT scans to triage acute patients and optimize intensive care unit (ICU) bed scheduling.
+- **Minecraft as a Testbed for Urban & Architectural Planning:** In initiatives highlighted by the *MIT Technology Review* and the International Conference on the Foundations of Digital Games, automated spatial planners operating within procedural voxel environments (*Minecraft*) are used to co-design urban layouts, optimizing municipal sunlight exposure, pedestrian ventilation corridors, and multi-modal transit accessibility.
+- **Climate Change Mitigation & Biodiversity Preservation:** Research featured by *National Geographic* details how dynamic routing algorithms and automated resource schedulers reduce fuel consumption across maritime cargo fleets, while autonomous UAV path planners track and protect endangered wildlife populations across vast African conservation corridors.
+- **Causality, Creativity, and the Frontiers of AI Planning:** In his ICAPS 2020 keynote (*"Causality, Creativity and Imagination: New Frontiers in Planning"*), Sridhar Mahadevan argued that moving beyond static optimization toward causal reasoning, counterfactual simulation, and creative problem formulation is essential for addressing existential planetary challenges.
 
 ---
 
@@ -952,29 +1033,35 @@ $$\text{Effect}: \text{On}(t, s_2) \land \text{Blank}(s_1) \land \neg\text{On}(t
 ```
 
 #### 1. Ignore Selected Preconditions: Misplaced Tiles Heuristic ($h_{\text{misplaced}}$)
-If we relax the action by removing the preconditions $\text{Blank}(s_2) \land \text{Adjacent}(s_1, s_2)$:
-- Any tile can instantly jump to any square regardless of whether it is blank or adjacent.
-- In this relaxed world, the number of steps required is simply the number of tiles that are currently in the wrong position.
-- **Result:** The **Number of Misplaced Tiles** heuristic ($h_1 = 3$ for the state above). It is admissible, but relatively weak because it ignores spatial distances.
+If we relax the action schema by removing the preconditions $\text{Blank}(s_2) \land \text{Adjacent}(s_1, s_2)$:
+- Any tile can instantly teleport to any target square regardless of whether it is blank or adjacent.
+- In this relaxed world, the minimal number of actions required is simply the number of tiles currently out of position.
+- **Result:** The **Number of Misplaced Tiles** heuristic ($h_{\text{misplaced}} = 3$ for the state above, since tiles 1, 2, and 8 are out of place). It is admissible, but relatively weak because it completely ignores geometric travel distance.
+- **Fundamental Challenge (Precondition Selection):** In general automated planning, it is non-trivial and often undecidable to deduce automatically *which* specific preconditions can be selectively ignored across thousands of domain actions without either rendering the relaxed problem trivial (zero heuristic guidance) or retaining too much complexity.
 
-#### 2. Ignore Delete Effects: Manhattan Distance & Additive Heuristics
-If we relax the action by dropping all negative effects ($\neg\text{On}(t, s_1) \land \neg\text{Blank}(s_2)$):
-- A tile can slide to an adjacent square *without vacating its current square* and *without requiring the destination to be empty*. Tiles can duplicate and overlap.
-- The minimal cost to move tile $t$ from $(x_1, y_1)$ to $(x_2, y_2)$ is its **Manhattan Distance**:
+#### 2. Ignore Delete Effects: Manhattan Distance, $h_{\max}$, $h_{\text{add}}$, and $h_{\text{FF}}$
+If we relax the action schema by dropping all negative effects ($\neg\text{On}(t, s_1) \land \neg\text{Blank}(s_2)$):
+- A tile can slide to an adjacent square *without vacating its current location* and *without requiring the destination cell to be blank*. Tiles can duplicate and freely overlap on the same grid cell.
+- The minimal cost to move tile $t$ from $(x_1, y_1)$ to target $(x_2, y_2)$ reduces to its individual **Manhattan Distance** (minimum over independent copies):
 
 $$d_{\text{Manhattan}}(t) = |x_1 - x_2| + |y_1 - y_2|$$
 
-From this delete-relaxation, we derive two domain-independent heuristics:
+**Concrete Tile Calculations for Initial State (Slide 17):**
+- Tile 1: at $(1, 2)$, goal at $(1, 3) \implies |1 - 1| + |2 - 3| = 1$
+- Tile 2: at $(1, 3)$, goal at $(2, 3) \implies |1 - 2| + |3 - 3| = 1$
+- Tile 8: at $(2, 2)$, goal at $(1, 2) \implies |2 - 1| + |2 - 2| = 1$
+- Tiles 3, 4, 5, 6, 7: already at target positions $\implies \text{distance} = 0$.
+
+From this delete-relaxation, we obtain three standard domain-independent heuristic estimates:
 - **Max Heuristic ($h_{\max}$):**
-
-$$h_{\max}(s) = \max_{i} d_{\text{Manhattan}}(t_i)$$
-
-Admissible because at least the maximum single tile distance must be traversed, but weak because it assumes all other tiles move for free.
-- **Add Heuristic ($h_{\text{add}}$):**
-
-$$h_{\text{add}}(s) = \sum_{i} d_{\text{Manhattan}}(t_i)$$
-
-Highly informative, but **not strictly admissible** in general PDDL domains because a single action can achieve effects for multiple subgoals simultaneously (positive interactions), causing $h_{\text{add}}$ to overestimate.
+  $$h_{\max}(s) = \max_{i} d_{\text{Manhattan}}(t_i) = \max \{ 1, 1, 1, 0, 0, 0, 0, 0 \} = 1$$
+  *(Strictly admissible, but weak because it assumes all remaining tiles move for free).*
+- **Additive Heuristic ($h_{\text{add}}$):**
+  $$h_{\text{add}}(s) = \sum_{i} d_{\text{Manhattan}}(t_i) = 1 + 1 + 1 = 3$$
+  *(Highly informative and discriminative, but not guaranteed to be admissible in general PDDL domains where positive action interactions allow one action to achieve multiple subgoals).*
+- **Fast-Forward Heuristic ($h_{\text{FF}}$):**
+  $$h_{\text{FF}}(s) = 3$$
+  *(Computes the number of actions in a greedy relaxed plan; highly informative and widely successful in satisficing planners).*
 
 ### 2.4 The Fast-Forward Heuristic ($h_{\text{FF}}$)
 
@@ -1053,8 +1140,7 @@ In both ordering attempts, achieving one subgoal required **undoing** a previous
 To formalize when divide-and-conquer planning is valid, Richard Korf formulated the concept of **Serializable Subgoals**:
 
 > **Definition (Serializable Subgoals):**
-> A set of subgoals $\{G_1, G_2, \dots, G_n\}$ is **serializable** if there exists an ordering $\langle G_{\pi(1)}, G_{\pi(2)}, \dots, G_{\pi(n)} 
-angle$ such that the planner can achieve each subgoal $G_{\pi(i)}$ in sequence *without ever having to undo or violate any previously achieved subgoal* $G_{\pi(j)}$ (for all $j < i$).
+> A set of subgoals $\{G_1, G_2, \dots, G_n\}$ is **serializable** if there exists an ordering $\langle G_{\pi(1)}, G_{\pi(2)}, \dots, G_{\pi(n)} \rangle$ such that the planner can achieve each subgoal $G_{\pi(i)}$ in sequence *without ever having to undo or violate any previously achieved subgoal* $G_{\pi(j)}$ (for all $j < i$).
 
 - **In the Sussman Anomaly:** The subgoals are **non-serializable** under naive state formulations because achieving $\text{On}(A, B)$ requires manipulating $B$, while achieving $\text{On}(B, C)$ requires placing $B$ on $C$.
 - **Engineering Remedy:** Planners must either utilize **partial-order causal link planning** (which tracks causal threats without committing to premature step orderings) or utilize **Hierarchical Task Networks** that encode macro-action sequences avoiding destructive intermediate states.
@@ -1278,8 +1364,7 @@ Can an intelligent agent prove that a high-level plan will achieve its goal *wit
 > **Definition (Reachable Set):**
 > For any state $s$ and High-Level Action $h$, the **Reachable Set** $\text{REACH}(s, h)$ is the set of all physical states that can be reached from $s$ by *any* valid primitive implementation of $h$.
 
-For a sequence of HLAs $\vec{h} = \langle h_1, h_2, \dots, h_m 
-angle$, reachable sets compose inductively:
+For a sequence of HLAs $\vec{h} = \langle h_1, h_2, \dots, h_m \rangle$, reachable sets compose inductively:
 
 $$\text{REACH}(s, [h_1, h_2]) = \bigcup_{s' \in \text{REACH}(s, h_1)} \text{REACH}(s', h_2)$$
 
@@ -2792,12 +2877,13 @@ $$R(s) = -0.04$$
 
 This small negative reward incentivizes the agent to reach the $+1$ goal as quickly as possible without unnecessary wandering. Crucially, the **optimal policy $\pi^*$ depends exquisitely on the magnitude of the step reward $r = R(s)$**:
 
-| Living Reward Range | Behavioral Characterization | Emergent Optimal Policy Structure |
-| :--- | :--- | :--- |
-| **$r < -1.6284$** | **Suicidal Shortcut** | The penalty for existing is so catastrophic that the agent immediately plunges into the nearest terminal state—even choosing the $-1$ exit to end the misery immediately. |
-| **$-0.4278 < r < -0.0886$** | **Aggressive Risk-Taking** | Living cost is severe. In cell `(3,2)`, the agent willingly takes the action `Right` directly toward the $+1$ goal, accepting the $10\%$ risk of accidentally drifting down into the $-1$ trap. |
-| **$-0.0221 < r < 0$**<br>*(Standard $r = -0.04$)* | **Conservative Detour** | The living cost is moderate. In cell `(3,2)`, the agent heads `Up` into `(3,3)`, purposefully looping around the wall to buffer against the deadly $-1$ cell. |
-| **$r > 0$** | **Infinite Loitering** | Every step provides free positive reward. The agent deliberately avoids all terminal states, endlessly circling inside the grid to accumulate infinite positive utility. |
+| Reward Regime | Living Reward Range | Behavioral Characterization | Emergent Optimal Policy Navigation Strategy |
+| :--- | :--- | :--- | :--- |
+| **Regime 1** | **$R(s) < -1.6284$** | **Extreme Penalty (Suicidal Shortcut)** | The penalty for existing is so catastrophic that the agent plunges immediately into the nearest available terminal exit—deliberately taking the $-1$ trap to terminate the episode and avoid accumulating further living penalties. |
+| **Regime 2** | **$-0.4278 < R(s) < -0.085$**<br>*(specifically $-0.4278 < R(s) < -0.0886$)* | **Aggressive Risk-Taking** | The living cost is severe. At state `(3,2)`, the agent chooses action `Right` directly toward the $+1$ goal, willingly accepting the $10\%$ stochastic risk of veering down into the adjacent $-1$ cell to save steps. |
+| **Regime 3** | **$-0.085 \le R(s) < 0$**<br>*(Standard $R(s) = -0.04$; $-0.0221 < R(s) < 0$)* | **Conservative Detour** | The living cost is moderate. At state `(3,2)`, the agent heads `Up` into `(3,3)`, purposefully taking a protective detour around the wall to create a safety buffer against the lethal $-1$ terminal state. |
+| **Regime 4** | **$R(s) = 0$** | **Zero Living Cost (Indifferent Wandering)** | Moving incurs no step cost. The agent has no urgency to reach the goal quickly and will wander indefinitely until stochastic drift eventually deposits it into the $+1$ absorbing state. |
+| **Regime 5** | **$R(s) > 0$** | **Delightful Environment (Infinite Loitering)** | Every non-terminal step bestows free positive reward. The agent actively and permanently avoids all terminal exits, executing infinite loops inside the grid to accumulate unbounded positive reward indefinitely. |
 
 ---
 
@@ -3330,14 +3416,17 @@ When $|\mathcal{S}|$ is astronomically large or continuous, tabular representati
 
 ---
 
-### 9.4 The Bridge to Model-Free Reinforcement Learning
+### 9.4 The Bridge to Model-Free Reinforcement Learning & Deep Q-Networks
 
-When the transition function $\mathcal{T} = P(s' \mid s, a)$ and reward function $\mathcal{R}$ are unknown, the agent must learn purely from interactive environment tuples $(s_t, a_t, r_t, s_{t+1})$:
-- **Temporal Difference (TD) Learning:** Updates state utilities using sampled prediction errors:
+When the transition model $\mathcal{T} = P(s' \mid s, a)$ and reward function $\mathcal{R}$ are unknown to the agent, dynamic programming cannot be computed offline. The agent must transition from planning to **Reinforcement Learning (RL)**, learning optimal behaviors purely through trial-and-error environment experience tuples $(s_t, a_t, r_{t+1}, s_{t+1})$:
+- **Temporal Difference (TD) Learning (Sutton, 1988):** Updates state value estimates using bootstrapped prediction errors:
   $$U(S_t) \leftarrow U(S_t) + \alpha \left[ R_{t+1} + \gamma U(S_{t+1}) - U(S_t) \right]$$
-- **Q-Learning (Watkins, 1989):** Model-free off-policy learning of optimal action-values:
+- **Q-Learning (Watkins, 1989):** An off-policy TD control algorithm that converges to optimal action-values $Q^*(s, a)$ regardless of the exploration policy:
   $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma \max_a Q(S_{t+1}, a) - Q(S_t, A_t) \right]$$
-- **Policy Gradient Methods:** Directly optimize parameterized policies $\pi_\theta(a \mid s)$ using policy gradient theorems without relying solely on value functions.
+- **Deep Q-Networks (DQN; Mnih et al., Nature 2015):** Scales Q-learning to high-dimensional state spaces by replacing lookup tables with deep convolutional neural networks $Q(s, a; \boldsymbol{	heta})$. DQN stabilizes non-linear deep reinforcement learning through two key architectural breakthroughs:
+  1. **Experience Replay Memory:** Stores past transitions $(s_t, a_t, r_{t+1}, s_{t+1})$ in a circular buffer and samples uncorrelated mini-batches, breaking non-stationary temporal autocorrelation.
+  2. **Target Q-Network ($Q(s, a; \boldsymbol{	heta}^-)$):** Decouples policy parameter updates from target evaluation by periodically freezing target network weights $\boldsymbol{	heta}^-$, mitigating policy oscillation.
+- **Policy Gradient Methods (REINFORCE, PPO):** Directly optimize parameterized stochastic policies $\pi_\theta(a \mid s)$ via gradient ascent on expected cumulative reward $\nabla_\theta J(\theta)$, avoiding value function discretization in continuous control domains.
 
 ---
 
