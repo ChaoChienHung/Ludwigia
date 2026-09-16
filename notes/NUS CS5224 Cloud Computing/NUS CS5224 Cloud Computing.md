@@ -10,7 +10,7 @@ Lang: en
 Tags: Cloud Computing, Cloud Architecture, Datacenter, Virtualization, Resource Pooling
 Status: drafting
 Published: 2026-08-30
-LastModified: 2026-09-05
+LastModified: 2026-09-16
 </meta>
 
 # NUS CS5224: Cloud Computing
@@ -2099,30 +2099,46 @@ Modern datacenters are complex engineering facilities that balance electrical di
 
 <draft>
 - 1. Virtualization Foundations & Resource Abstraction
-    - Core Definition: Single physical infrastructure abstracted into multiple logical execution environments.
-    - Architectural Motivation: Overcoming low physical server utilization (typical 10-15%), hardware independence, and rapid workload replication.
-    - Resource Dimensions: Processor, memory, storage, and software-defined network virtualization.
-- 2. Hypervisor Architectures & Virtualization Approaches
-    - The Privilege Ring Model: Popek-Goldberg virtualization requirements and the x86 virtualization hole (17 sensitive unprivileged instructions).
-    - Full Virtualization: Binary translation + direct execution, Ring 0 VMM, unmodified guest OS, and driver compatibility bottlenecks.
-    - Para-Virtualization: OS-assisted hypercalls, modified guest kernel, and why hypercalls eliminate the runtime binary translation tax.
-    - Hardware-Assisted Virtualization: Intel VT-x (VMX root/non-root) and AMD-V, VMCS hardware state tracking, and direct hardware trap mechanics.
-- 3. Hypervisor Classifications & Security Attack Surfaces
-    - Type 1 (Bare-Metal): Direct hardware execution (ESXi, Xen, Hyper-V, KVM) vs. Type 2 (Hosted): OS-dependent execution (VirtualBox, Workstation).
-    - Security Vulnerabilities: Host OS breach compromise vs. Guest OS VM escape / hypervisor breakout vectors.
-- 4. Operating-System-Level Virtualization & Containers (Docker)
-    - Virtual Machines vs. Containers: Hypervisor hardware virtualization vs. kernel user-space isolation.
-    - Linux Isolation Primitives: Deep dive into Namespaces (PID, NET, MNT, IPC, UTS, USER) and Cgroups (CPU/memory quotas).
-    - Non-Linux Platforms: macOS (HyperKit/Virtualization.framework) and Windows (WSL2/Hyper-V) Linux VM abstraction layer.
-    - Docker Architecture: Docker Client, Docker Daemon (dockerd), Docker Registries, Image vs. Container lifecycle (program vs. process analogy).
-- 5. Cloud Service Delivery & Multi-Tenancy Engineering
-    - Delivery Models (IaaS, PaaS, SaaS, CaaS) and the virtualization foundation.
-    - Multi-Tenancy Principles: Provider view vs. Consumer view, noisy neighbor isolation, and per-tenant disaster recovery.
-    - Data Tier Multi-Tenancy: Database-per-tenant vs. Schema-per-tenant vs. Shared-table partition patterns.
+    - Conceptual Definition: Single physical infrastructure functioning as multiple logical infrastructures via 1:N hardware sharing.
+    - Before vs. After Virtualization: Workloads tied directly to dedicated physical infrastructure vs. workloads abstracted away on virtual infrastructure.
+    - Economic & Operational Motivation: Overcoming low physical server utilization (typical 10-15%), lower CAPEX/OPEX, dynamic resource provisioning, and scalability.
+    - The Three Canonical Advantages: Hardware independence, resource consolidation, and resource replication (rapid scaling via virtual disk images).
+    - The Two Canonical Disadvantages: Performance overhead (management layers and translation mechanisms) and centralized Single Point of Failure (SPOF).
+- 2. Four Resource Dimensions of Virtualization
+    - Processor Virtualization: Abstracting physical processors into pools of vCPUs.
+    - Memory Virtualization: Two-stage translation hierarchy (GVA -> GPA -> HPA), shadow page tables vs. hardware Extended Page Tables (EPT/NPT).
+    - Storage Virtualization: Logical storage units abstracted from heterogeneous physical disks, virtual disk images (.vmdk, .qcow2).
+    - Network Virtualization: Abstracting physical networking into virtual switches (vSwitch), vNICs, and software-defined overlay fabrics.
+- 3. Hypervisor Architectures & Virtualization Approaches
+    - The Virtual Machine Manager (VMM): Software layer sitting between VMs and physical infrastructure, enabling IaaS providers to partition resources and execute consumer guest OSes.
+    - The Popek-Goldberg Virtualization Theorem & The x86 Virtualization Hole (17 sensitive unprivileged instructions).
+    - Approach 1: Full Virtualization (Binary Translation & Direct Execution, Ring 0 VMM, unmodified guest OS, VMware ESX, driver compatibility constraints).
+    - Approach 2: Para-Virtualization (OS-assisted hypercalls, modified guest kernel, Cambridge Xen, elimination of binary translation overhead, lack of bare-metal portability).
+    - Approach 3: Hardware-Assisted Virtualization (Intel VT-x VMX Root/Non-Root modes, AMD-V, VMCS hardware tracking, Microsoft Hyper-V, Virtual Iron, XenSource).
+    - Canonical Virtualization Approaches Comparison Matrix (Technique, OS Modification, Compatibility, Hypervisor Independence, Representative Vendors).
+- 4. Hypervisor Classifications & Security Attack Surfaces
+    - Type 1 (Bare-Metal / Native): Runs directly on hardware without host OS (Xen by Cambridge, VMware ESXi, Microsoft Hyper-V, KVM by Open Virtualization Alliance).
+    - Type 2 (Hosted / Embedded): Runs on conventional host OS (VMware Workstation, Oracle VirtualBox, Parallels Desktop).
+    - Security Attack Surfaces: Host OS attack vectors (host kernel exploit compromises all hosted instances) vs. Guest OS attack vectors (VM escape / hypervisor breakout into host context).
+- 5. Operating-System-Level Virtualization & Containers (Docker)
+    - Container Definition & Architectural Contrast: Kernel sharing vs. hypervisor hardware virtualization, lightweight footprint, and sub-second startup.
+    - Linux Kernel Isolation Primitives: Namespaces (PID, NET, MNT, IPC, UTS, USER) and Control Groups (Cgroups - CPU, memory, block I/O).
+    - Docker Implementation & Architecture: Written in Go, client-server model (REST API over UNIX sockets or TCP).
+    - Core Docker Components: Docker Desktop, Docker Client, Docker Daemon (dockerd), Docker Registries (Docker Hub default query), Docker Images (read-only stacked layers), and Docker Containers (runnable live instances).
+    - Cross-Platform Docker: Background Linux VM abstraction on macOS (HyperKit / Virtualization.framework) and Windows (WSL2 / Type 1 Hyper-V).
+- 6. Virtualization in Cloud Service Models
+    - IaaS: Consumer-managed virtual compute, storage, and networking.
+    - PaaS & CaaS: Managed application runtimes and container orchestration engines.
+    - SaaS: Complete multi-tenant software delivered across pooled virtual infrastructure.
+- 7. Multi-Tenancy Principles, Architecture, and Data Tier Isolation
+    - Cloud Provider View (single shared application instance serving multiple tenants) vs. Cloud Consumer View (dedicated logical instance with isolated view and configuration).
+    - Relationship Between Multitenancy and Virtualization: Logical software isolation vs. physical resource abstraction.
+    - Six Key Characteristics of Multi-Tenancy: Usage and tenant isolation, data security, recovery, scalability, metered usage, and data tier isolation.
+    - Data Tier Isolation Architectures: Database-per-tenant, Schema-per-tenant, and Shared-table with tenant partition keys.
 </draft>
 
 
-Virtualization is the foundational architectural pillar of cloud computing. Without virtualization, the modern utility computing model—characterized by on-demand multi-tenancy, dynamic elasticity, resource pooling, and programmatic infrastructure provisioning—would be physically and economically impossible.
+Virtualization represents the foundational architectural pillar of cloud computing. Without virtualization, the modern utility computing model—characterized by on-demand multi-tenancy, dynamic elasticity, resource pooling, and programmatic infrastructure provisioning—would be physically and economically impossible.
 
 This technical note explores virtualization from theoretical principles to low-level systems implementation: covering classical hardware virtualization theorems, hypervisor privilege rings (Rings 0–3 vs. VMX root/non-root modes), Full vs. Para vs. Hardware-Assisted approaches, OS-level containerization mechanics (Linux namespaces and cgroups), the Docker architectural ecosystem, and enterprise multi-tenancy isolation models across distributed cloud platforms.
 
@@ -2144,41 +2160,53 @@ Traditional Non-Virtual Cloud              Virtual Cloud Infrastructure
                                             (1:N Mapping, 70-80% Consolidated Util)
 ```
 
-**Virtualization** is the architectural process that abstracts physical computing infrastructure (compute, memory, storage, and networking) so that it functions as multiple isolated, independent, and logically discrete virtual execution environments.
+**Virtualization** is the architectural process that enables a single physical infrastructure to function as multiple logical infrastructures or resources.
 - **The Core Abstraction Mechanism:** Rather than binding an operating system kernel directly to the raw register files, memory controllers, and peripheral buses of a specific physical machine, an intermediate abstraction layer—the **Virtual Machine Monitor (VMM)** or **Hypervisor**—is inserted between the physical silicon and the guest operating systems.
-- **The One-to-Many Relationship:** A single physical host is partitioned into multiple virtual machines (VMs), each running its own independent guest OS and believing it has complete, exclusive ownership of a dedicated computer.
+- **The One-to-Many Relationship:** Many operating systems can run concurrently and share a single physical set of hardware. This one-to-many relationship improves overall resource utilization across all target physical assets:
+  1. **Processors:** Abstracted into pools of virtual CPUs (vCPUs) dynamically scheduled across physical execution cores.
+  2. **Memory:** Abstracted into isolated virtual address spaces managed independently from the host physical DRAM.
+  3. **Storage:** Abstracted into logical block volumes, virtual disks, and centralized storage pools.
+  4. **Networking:** Abstracted into virtual switches, virtual network interfaces, and software-defined overlay fabrics.
+
+#### Before vs. After Virtualization
+
+| Architectural Dimension | Before Virtualization (Legacy Dedicated Model) | After Virtualization (Modern Cloud Infrastructure) |
+| :--- | :--- | :--- |
+| **Infrastructure Coupling** | Workloads are tied directly to dedicated physical infrastructure with fixed hardware dependencies. | Workloads run on virtual infrastructure abstracted completely away from the physical hardware. |
+| **Resource Mapping** | Strict 1:1 mapping between software operating system and physical server hardware. | Flexible 1:N mapping where multiple isolated guest OS instances share common physical resources. |
+| **Average Utilization** | Chronically low utilization (**10%–15%**) due to over-provisioning for worst-case peak loads. | High consolidated utilization (**70%–80%**) via statistical multiplexing and dynamic load balancing. |
+| **Provisioning Velocity** | Manual, slow hardware procurement, racking, cabling, and OS installation (weeks to months). | Automated, programmatic provisioning of virtual disk images via cloud APIs (seconds to minutes). |
+| **Workload Mobility** | Bound to a single motherboard; hardware failure causes prolonged system downtime. | Frictionless live migration (e.g., vMotion) across heterogeneous physical hosts with zero user downtime. |
 
 ---
 
 ### 1.2 Motivation: Economic and Operational Imperatives
 
-Before the widespread adoption of virtualization in commodity enterprise computing, IT infrastructure suffered from crippling structural inefficiencies:
-1. **Low Hardware Utilization Rates:** Traditional physical servers ran a single operating system hosting a dedicated enterprise application (e.g., mail server, database server) to prevent library conflicts and process interference. Because servers were provisioned for worst-case peak traffic, average physical CPU and memory utilization hovered between **10% and 15%**, wasting massive amounts of capital and electricity.
-2. **Rigid Hardware Dependencies:** Operating systems and device drivers were coupled directly to specific motherboard chipsets, disk controllers, and network interface cards. Upgrading physical servers or recovering from catastrophic motherboard failure required identical replacement hardware and days of manual re-configuration.
+The primary purpose and motivation of virtualization is to improve physical resource utilization through sharing, leading to significant economic, operational, and architectural advantages:
 
-**The Post-Virtualization Paradigm:**
-- **Resource Consolidation:** Multiple under-utilized virtual servers are consolidated onto a dense pool of physical hypervisors, elevating average cluster utilization to **70%–80%** and drastically slashing Capital Expenditures (CAPEX) and Operational Expenditures (OPEX: power, cooling, space).
-- **Hardware Independence & Mobility:** Guest operating systems interact with virtualized, standardized device models provided by the hypervisor rather than raw physical silicon. A virtual machine is encapsulated entirely as a set of configuration files and virtual disk images, enabling instantaneous live migration (e.g., VMware vMotion) across heterogeneous physical servers with zero downtime.
-- **Rapid Provisioning & Replication:** Provisioning a new server shifts from a multi-week procurement and cabling cycle to an automated API call that clones a template disk image in seconds.
+1. **Lower Capital Expenditures (CAPEX):** By consolidating dozens of under-utilized physical servers into dense multi-tenant hypervisors, organizations drastically cut server hardware procurement expenses.
+2. **Lower Operational Expenditures (OPEX):** Fewer physical machines directly translate to massive reductions in datacenter real estate footprint, power consumption, cooling requirements (PUE optimization), and rack management overhead.
+3. **Enhanced Scalability & Elasticity:** Resources can be provisioned, expanded, or reclaimed dynamically on-demand to match fluctuating workload demands without physical hardware intervention.
+4. **Dynamic Resource Provisioning:** Workloads can be dynamically reallocated across physical cluster nodes based on real-time CPU, memory, and I/O pressure metrics.
 
 ---
 
-### 1.3 Architectural Trade-Offs of Virtualization
+### 1.3 The Canonical Advantages and Disadvantages of Virtualization
 
-While virtualization delivers massive consolidation and operational flexibility, it introduces fundamental systems engineering trade-offs:
+#### The Three Canonical Advantages
+1. **Hardware Independence:** Removes the strict software-to-hardware dependencies found in traditional non-virtualized environments. Guest operating systems interact with standardized, virtualized device drivers, allowing seamless migration across diverse physical server hardware.
+2. **Resource Consolidation:** Increases hardware utilization rates, facilitates effective cluster-wide load balancing, and aggregates computing capacity into centralized shared resource pools.
+3. **Resource Replication:** Enables rapid scaling since resources are completely virtual and created as virtual disk images. Virtual machines can be instantaneously cloned, snapshotted, templated, and launched across datacenters.
 
-| Dimension | Advantages | Disadvantages & Operational Costs |
-| :--- | :--- | :--- |
-| **Hardware Coupling** | **Hardware Independence:** Decouples software state from raw silicon; enables frictionless hardware upgrades. | **Driver Complexity:** Hypervisors must maintain complex software driver emulation stacks for diverse guest platforms. |
-| **Resource Utilization** | **High Consolidation:** Aggregates compute capacity, balances loads dynamically, and reduces datacenter footprint. | **Abstraction Overhead:** CPU privilege trap handling, memory address translation, and I/O emulation incur latency and throughput penalties. |
-| **Deployment Speed** | **Rapid Replication:** Software-defined images clone and spin up in seconds via automated cloud APIs. | **VM Sprawl:** Frictionless provisioning often leads to uncontrolled accumulation of abandoned, resource-consuming virtual instances. |
-| **Fault Boundaries** | **Process Isolation:** Faults and kernel panics in one guest VM do not propagate to adjacent VMs. | **Centralized Single Point of Failure (SPOF):** A hardware fault or hypervisor kernel panic crashes all hosted virtual instances on that physical host. |
+#### The Two Canonical Disadvantages
+1. **Performance Overhead:** Incurred through virtualization management layers, hypervisor privilege trap handling, memory address translation, and I/O device emulation mechanisms.
+2. **Centralized Single Point of Failure (SPOF):** Virtualization software such as the hypervisor represents a centralized point where a single hardware crash, hypervisor kernel panic, or hypervisor-level security compromise can take down all hosted virtual machine instances running on that physical machine.
 
 ---
 
 ## 2. Four Resource Dimensions of Virtualization
 
-Virtualization extends across all four fundamental computing hardware subsystems:
+Virtualization abstracts the four fundamental computing hardware subsystems:
 
 ```
 +-------------------------------------------------------------------------+
@@ -2191,11 +2219,12 @@ Virtualization extends across all four fundamental computing hardware subsystems
 ```
 
 ### 2.1 Processor Virtualization
-Processor virtualization abstracts physical hardware execution cores into a pool of **Virtual Central Processing Units (vCPUs)** exposed to guest virtual machines.
+**Definition:** The process of abstracting a physical processor into a pool of virtual processors (vCPUs) available to virtual machines.
 - **Time-Sliced Multiplexing:** The hypervisor schedules multiple vCPUs across available physical CPU cores using preemptive scheduling algorithms.
 - **State Context Switching:** When the hypervisor switches execution from one vCPU to another, it saves the complete register state (instruction pointer `EIP/RIP`, stack pointer, general-purpose registers, floating-point registers, control registers `CR0–CR4`) into memory and loads the incoming guest's saved context.
 
 ### 2.2 Memory Virtualization
+**Definition:** Providing virtual main memory to virtual machines, abstracted and managed independently from the underlying physical main memory.
 In native non-virtualized operating systems, the kernel manages a virtual-to-physical address mapping via page tables: $\text{Virtual Address (VA)} \to \text{Physical Address (PA)}$. In virtualized environments, a second layer of abstraction is required because the guest OS allocates what it believes to be physical memory, which is in fact merely a slice of hypervisor-managed host physical memory. This creates a **two-stage translation hierarchy**:
 
 $$\text{Guest Virtual Address (GVA)} \xrightarrow{\text{Guest Page Table}} \text{Guest Physical Address (GPA)} \xrightarrow{\text{Hypervisor Page Table}} \text{Host Physical Address (HPA)}$$
@@ -2204,12 +2233,12 @@ $$\text{Guest Virtual Address (GVA)} \xrightarrow{\text{Guest Page Table}} \text
 - **Nested Page Tables / Extended Page Tables (EPT/NPT - Hardware Approach):** Modern processors (Intel EPT, AMD NPT) integrate two-dimensional hardware page-table walking in silicon, allowing the hardware MMU to traverse both tables without trapping into the hypervisor, drastically accelerating memory virtualization.
 
 ### 2.3 Storage Virtualization
-Storage virtualization abstracts heterogeneous physical storage devices (local NVMe SSDs, SATA HDDs, Storage Area Network [SAN] arrays) into homogeneous logical storage volumes:
+**Definition:** Providing multiple logical storage units abstracted from multiple physical storage hardware devices.
 - **Virtual Disk Abstractions:** Virtual machines interact with virtual disks presented as standard block devices (e.g., SCSI/SATA/NVMe disks). The underlying storage is encapsulated as flat or dynamically expanding image files on the host filesystem (e.g., `.vmdk`, `.qcow2`, raw LUN partitions).
 - **Dynamic Pooling:** Logical Volume Managers (LVM) and software-defined storage clusters (e.g., Ceph, Amazon EBS) pool storage capacity across thousands of physical drives, providing transparent striping, live snapshotting, thin provisioning, and automated cross-datacenter replication.
 
 ### 2.4 Network Virtualization
-Network virtualization decouples virtual machine network interfaces from physical network cables and switches:
+**Definition:** The process of abstracting physical networking components to form a flexible, software-defined virtual network infrastructure.
 - **Virtual Network Interfaces (vNICs):** Each VM is assigned one or more software-emulated or paravirtualized network cards with unique MAC addresses.
 - **Virtual Switches (vSwitch):** Software-defined switching fabrics (e.g., Open vSwitch) running inside the hypervisor bridge traffic between local vNICs and physical Network Interface Cards (NICs), enforcing VLAN isolation, traffic shaping, and firewall packet inspection without requiring physical cable patching.
 
@@ -2218,6 +2247,8 @@ Network virtualization decouples virtual machine network interfaces from physica
 ## 3. Hypervisor Architectures & Virtualization Approaches
 
 The software layer responsible for creating, executing, and arbitrating virtual machines is the **Virtual Machine Monitor (VMM)** or **Hypervisor**.
+- **Role in Infrastructure as a Service (IaaS):** The hypervisor sits directly between virtual machines and the underlying physical infrastructure. It allows an IaaS cloud provider to manage virtual machines, enforce strict resource quotas, and execute consumer guest operating systems while partitioning physical CPU, memory, storage, and networking among multiple tenant VMs.
+- **Privilege Management:** Depending on the virtualization technique, the hypervisor software and guest operating systems operate at different privilege levels or rings to ensure hardware isolation and fault containment.
 
 ### 3.1 The Classical Virtualization Dilemma: The Popek-Goldberg Theorem
 
@@ -2282,20 +2313,28 @@ Full virtualization allows completely unmodified guest operating systems to exec
 +-------------------------------------------------------------------------+
 ```
 
-#### Execution Mechanics
-- **Direct Execution:** Non-sensitive user-mode instructions execute natively on the bare physical processor at full silicon speed without hypervisor intervention.
-- **Binary Translation (BT):** The hypervisor dynamically intercepts blocks of guest kernel code in memory before execution. The VMM parses the x86 instruction stream, identifies the 17 sensitive non-trapping instructions, strips them, and replaces them with inline instruction traps or direct calls into hypervisor routines. The translated code is cached in an execution code cache for subsequent execution.
-
-#### Deep Dive: Hardware & Software Compatibility Requirements
-Why does Full Virtualization impose strict compatibility requirements on the host infrastructure?
-1. **Device Emulation Overhead:** Because the guest OS is completely unmodified, it attempts to load standard physical device drivers (e.g., an Intel PRO/1000 network card or an IDE disk controller). The hypervisor must run complex, software-emulated virtual hardware models that mimic the exact register-level behavior of legacy hardware.
-2. **Hypervisor Driver Matrix:** The hypervisor acts as the operating system for the bare hardware. If the physical host server contains cutting-edge network cards, RAID controllers, or PCIe accelerators that lack dedicated device drivers compiled specifically for that hypervisor kernel (e.g., VMware ESXi driver rollups), the hypervisor cannot boot or access storage volumes.
+#### Architectural Mechanics
+- **Unmodified Guest Operating System:** Virtual machines can run different, off-the-shelf, unmodified guest operating systems.
+- **Guest Awareness:** The guest operating system is **entirely unaware** that it is running in a virtualized environment.
+- **Ring Model:** The Virtual Machine Manager operates at **Ring 0** and provides all required virtual infrastructure. The guest operating system kernel runs at **Ring 1**, communicating with physical hardware strictly through the VMM.
+- **Instruction Handling:**
+  - **Binary Translation:** Used by the VMM to translate privileged guest operating system instructions into safe instructions that the physical hardware can execute.
+  - **Direct Execution:** Handles non-privileged instructions, allowing user applications to execute natively at full hardware speed.
+- **Advantages (Pros):**
+  - Offers the **highest level of isolation and security** between virtual machines.
+  - Allows completely different operating systems (e.g., Windows, Linux, BSD) to run simultaneously on the same hardware.
+  - Virtual guest operating systems can be **migrated easily back to native physical hardware** without kernel reconfiguration.
+  - Simple to install and use without requiring custom kernel recompilation.
+- **Disadvantages (Cons):**
+  - **High performance overhead** due to continuous runtime binary translation and instruction parsing.
+  - **Strict hardware and software compatibility requirements:** The physical hardware must support all device drivers required by the virtualization software.
+- **Representative Platform:** **VMware ESX** (early releases).
 
 ---
 
 ### 3.3 Approach 2: Para-Virtualization (OS-Assisted Virtualization)
 
-Para-virtualization abandons the requirement to support unmodified guest operating systems in exchange for drastic performance improvements.
+Para-virtualization (operating-system-assisted virtualization) abandons the requirement to support unmodified guest operating systems in exchange for dramatic performance improvements.
 
 ```
 +-------------------------------------------------------------------------+
@@ -2303,7 +2342,7 @@ Para-virtualization abandons the requirement to support unmodified guest operati
 |   +------------------------------------------------------------------+  |
 |   | Guest User Space Applications (Executes in Ring 3)               |  |
 |   +------------------------------------------------------------------+  |
-|   | Modified Guest OS Kernel (Aware of Virtualization)               |  |
+|   | Modified Guest OS Kernel (Fully Aware of Virtualization)         |  |
 |   | (Sensitive instructions replaced directly with Hypercalls)       |  |
 |   +------------------------------------------------------------------+  |
 +-------------------------------------------------------------------------+
@@ -2323,23 +2362,25 @@ Para-virtualization abandons the requirement to support unmodified guest operati
 +-------------------------------------------------------------------------+
 ```
 
-#### Execution Mechanics
-- **Kernel Modification:** The source code of the guest operating system kernel is modified prior to compilation. All sensitive instructions that cannot natively trap are stripped out and replaced directly with **Hypercalls**.
-- **Hypercalls as Architectural Interfaces:** A hypercall is the virtualization equivalent of a standard system call (`syscall`). While an application uses a system call to request service from the OS kernel, a modified guest kernel uses a hypercall to request privileged resource manipulation directly from the hypervisor.
-
-#### Deep Dive: Why is Para-Virtualization Faster than Full Virtualization?
-A common conceptual question is: *If both approaches ultimately require the hypervisor to execute privileged operations, why is Para-Virtualization significantly faster than Full Virtualization?*
-
-1. **Elimination of Binary Translation Parsing:** In Full Virtualization, the hypervisor must continually run an active disassembly and JIT rewriting engine. Every basic block of guest kernel code must be disassembled in memory, analyzed for sensitive instructions, rewritten, and committed to a translation cache. This introduces continuous CPU overhead, translation cache thrashing, and pipeline stalls. In Para-Virtualization, **the binary translation tax is exactly zero**.
-2. **Batching of Critical Operations:** In Full Virtualization, updating 1,000 page table entries requires 1,000 individual trap-and-emulate cycles. In Para-Virtualization, the modified guest kernel is explicitly designed to batch hundreds of MMU updates into a single hypercall array, executing a single context switch to Ring 0 and amortizing hypervisor entry/exit costs.
-3. **Paravirtualized Device Drivers (VirtIO):** Rather than emulating archaic register-level hardware (which requires emulating individual clock ticks and interrupt lines), paravirtualized guest kernels use shared-memory circular queues (`virtio-net`, `virtio-blk`), streaming network packets and disk blocks directly across shared RAM with near-zero driver overhead.
-- **Drawbacks:** Requires access to guest OS source code (precluding proprietary OSs like Windows without vendor cooperation); modified kernels cannot boot on physical bare hardware.
+#### Architectural Mechanics
+- **Modified Guest Operating System:** Utilizes a modified guest OS kernel where sensitive, non-virtualizable instructions are stripped out and replaced directly with **Hypercalls**.
+- **Hypercalls:** Privileged system calls that allow the modified guest operating system to communicate directly with the hypervisor without requiring runtime binary translation.
+- **Guest Awareness:** The guest operating system is **fully aware** that it is running within a virtualized environment.
+- **Advantages (Pros):**
+  - **Eliminates the severe performance penalty of binary translation**, significantly boosting overall execution speed.
+  - Does not require specialized CPU hardware virtualization extensions (works on legacy x86 silicon).
+- **Disadvantages (Cons):**
+  - **High development overhead** required to modify, maintain, and patch the guest operating system kernel source code.
+  - **Cannot be migrated back to native physical hardware** because the modified kernel cannot boot on bare silicon.
+  - **Poor compatibility:** Proprietary operating systems (e.g., Windows) cannot easily be paravirtualized without closed-source vendor modifications.
+  - Lack of backward compatibility makes migration across differing host hypervisor platforms difficult.
+- **Representative Platform:** **Xen** (University of Cambridge Computer Laboratory).
 
 ---
 
 ### 3.4 Approach 3: Hardware-Assisted Virtualization
 
-Hardware-assisted virtualization resolved the x86 architectural flaw directly in silicon, rendering software binary translation obsolete.
+Hardware-assisted virtualization resolves the x86 architectural flaw directly in processor silicon, eliminating both runtime binary translation and the need for guest kernel modifications.
 
 ```
 +-------------------------------------------------------------------------+
@@ -2350,7 +2391,7 @@ Hardware-assisted virtualization resolved the x86 architectural flaw directly in
 +-------------------------------------------------------------------------+
          |                                                       ^
          | Sensitive Operation                                   | VM-Entry
-         | Triggers Hardware Trap                                | (VMENTRY / VMRESUME)
+         | Automatically Traps in Hardware                       | (VMENTRY / VMRESUME)
          v                                                       |
 +-------------------------------------------------------------------------+
 |                       VMX Root Operation (Hypervisor Mode)              |
@@ -2369,34 +2410,37 @@ Hardware-assisted virtualization resolved the x86 architectural flaw directly in
 ```
 
 #### Architectural Mechanics: Intel VT-x and AMD-V
-Introduced by Intel (VT-x) in 2005 and AMD (AMD-V) in 2006, hardware-assisted virtualization added a new CPU operating mode orthogonal to the traditional 4 privilege rings:
-- **VMX Root Operation:** The execution mode utilized by the hypervisor. Unrestricted access to all physical processor registers and memory.
-- **VMX Non-Root Operation:** The execution mode dedicated to virtual machines. Even though the guest kernel executes inside its own Ring 0, certain sensitive instructions and events automatically trigger a hardware-enforced transition called a **VM-Exit**.
-- **Virtual Machine Control Structure (VMCS):** A 4KB physical memory structure managed by CPU microcode. The VMCS maintains:
-  1. *Guest-State Area:* Automatically saves the guest's registers upon a VM-Exit.
-  2. *Host-State Area:* Automatically restores the hypervisor's registers upon a VM-Exit.
-  3. *VM-Execution Controls:* Bitmasks configuring precisely which instructions (e.g., `CR3` writes, `CPUID`, external interrupts) force a VM-Exit versus executing natively.
-- **The Execution Cycle:** The hypervisor executes `VMLAUNCH` or `VMRESUME` to perform a **VM-Entry** into the guest. The guest OS runs natively at hardware speed until it attempts a sensitive operation configured in the VMCS. The hardware microcode intercepts the operation, writes the guest state into the VMCS, and performs a **VM-Exit** to the hypervisor in VMX root mode.
+Introduced by Intel (VT-x) in 2005 and AMD (AMD-V) in 2006, processor-level hardware extensions explicitly support virtualization through an orthogonal privilege architecture:
+- **Privilege Model:**
+  - **VMX Root Operation:** The hypervisor operates with the highest root privilege, possessing complete, unrestricted control over physical hardware.
+  - **VMX Non-Root Operation:** Guest operating systems and user applications execute within non-root privilege levels. The guest kernel runs inside its own Ring 0, but sensitive operations are intercepted by CPU silicon.
+- **Instruction Handling:** Privileged operating system requests **automatically trap directly into the hypervisor** (triggering a hardware **VM-Exit**). This completely eliminates both binary translation and guest kernel modification requirements.
+- **Virtual Machine Control Structure (VMCS):** Guest states are tracked and managed directly within hardware control blocks (VMCS in Intel, VMCB in AMD), saving and restoring processor registers during VM-Exit and VM-Entry transitions in hardware microcode.
+- **Advantages (Pros):**
+  - **Excellent execution compatibility:** Runs standard, unmodified operating systems.
+  - **Guest OS hypervisor independence:** The guest OS does not depend on a specific hypervisor API.
+  - **Near-native execution performance:** Sensitive instructions trap directly to silicon microcode.
+- **Representative Vendors & Platforms:** **Microsoft** (Hyper-V), **Virtual Iron**, **XenSource**, **VMware ESXi**, **KVM**.
 
 ---
 
-### 3.5 Virtualization Approaches Comparison Matrix
+### 3.5 Virtualization Approaches Canonical Comparison Matrix
 
-| Technical Metric | Full Virtualization | Para-Virtualization | Hardware-Assisted Virtualization |
+| Approach Dimension | Full Virtualization | Para-Virtualization | Hardware-Assisted Virtualization |
 | :--- | :--- | :--- | :--- |
-| **Primary Technique** | Binary Translation & Direct Execution | Hypercalls via API Interface | Hardware CPU Traps (VMX Root/Non-Root) |
-| **Guest OS Modification** | **None** (Unmodified binary) | **Required** (Kernel source changes) | **None** (Unmodified binary) |
-| **Runtime Translation Overhead** | High (Continuous code parsing) | None (Replaced at compile-time) | None (Handled in silicon microcode) |
-| **Execution Performance** | Moderate to Low | High (Near native) | Very High (Native silicon execution) |
-| **Hardware Requirements** | Standard x86 processors | Standard x86 processors | Processor with Intel VT-x or AMD-V |
-| **Guest OS Portability** | High (Can migrate back to physical) | Low (Cannot boot on bare metal) | High (Standard OS binaries) |
-| **Representative Platforms** | VMware ESX 1.0–2.5, Virtual PC | Xen (Classic), User-Mode Linux (UML) | VMware ESXi, KVM, Microsoft Hyper-V |
+| **Technique** | Binary translation and direct execution | Hypercalls | OS requests trap directly to VMM without binary translation or paravirtualization |
+| **Guest OS Modification** | **No** (Unmodified OS) | **Yes** (Modified kernel source) | **No** (Unmodified OS) |
+| **Compatibility** | **Excellent** | **Poor** (Requires OS source access) | **Excellent** |
+| **Guest OS Hypervisor Independence** | **Yes** | **No** | **Yes** |
+| **Performance Overhead** | High (Binary translation tax) | Low (Direct hypercall dispatch) | Near-zero (Silicon microcode trap) |
+| **Hardware Requirements** | Standard x86 hardware | Standard x86 hardware | Hardware CPU extensions (Intel VT-x / AMD-V) |
+| **Representative Vendors & Platforms** | VMware ESX | Xen | Microsoft, Virtual Iron, XenSource |
 
 ---
 
 ## 4. Hypervisor Classifications & Security Attack Surfaces
 
-Hypervisors are formally classified into two distinct deployment models based on their relationship with the underlying physical hardware:
+Hypervisors are formally classified into two fundamental deployment architectures based on how they interact with underlying physical hardware:
 
 ```
            Type 1: Bare-Metal Hypervisor               Type 2: Hosted Hypervisor
@@ -2411,30 +2455,33 @@ Hypervisors are formally classified into two distinct deployment models based on
                                                   +---------------------------------------+
 ```
 
-### 4.1 Type 1 (Bare-Metal or Native) Hypervisors
-Type 1 hypervisors execute directly on raw physical host hardware without an intermediate host operating system.
-- **Architectural Role:** The hypervisor *is* the operating system. It holds exclusive ownership of all physical CPU schedulers, memory managers, and device driver subsystems.
-- **Performance & Security:** High performance, low latency, and minimal attack surface due to the absence of extraneous host user-space daemons, GUI packages, or unneeded services.
-- **Representative Enterprise Platforms:**
-  - **VMware ESXi:** Proprietary bare-metal hypervisor utilizing a specialized VMkernel.
-  - **KVM (Kernel-based Virtual Machine):** Converts the Linux kernel directly into a Type 1 hypervisor via a loadable kernel module (`kvm.ko`), leveraging standard Linux process scheduling and hardware drivers.
-  - **Microsoft Hyper-V:** Type 1 hypervisor where the primary parent partition runs Windows Server to manage child guest partitions.
-  - **Xen:** Microkernel bare-metal hypervisor utilizing a privileged management domain (**Dom0**) to control unprivileged guest domains (**DomU**).
+### 4.1 Type 1 (Bare Metal or Native Hypervisor)
+Type 1 hypervisors run directly on the physical hardware without relying on an underlying host operating system.
+- **Architectural Interaction:** Interacts directly with physical processors, memory, and devices, holding exclusive ownership of hardware dispatching and scheduling.
+- **Characteristics:** Minimal latency, high I/O throughput, compact footprint, and hardened enterprise security due to the absence of general-purpose host OS services.
+- **Representative Examples & Vendors:**
+  - **Xen** by University of Cambridge Computer Laboratory
+  - **VMware ESXi** by VMware, Inc.
+  - **Hyper-V** by Microsoft
+  - **KVM** (Kernel-based Virtual Machine) by Open Virtualization Alliance
 
-### 4.2 Type 2 (Hosted or Embedded) Hypervisors
-Type 2 hypervisors execute as user-space application processes on top of an existing, conventional host operating system (such as Windows, macOS, or desktop Linux).
-- **Architectural Role:** The hypervisor relies on the host OS kernel for device drivers, physical CPU scheduling, and hardware resource allocation.
-- **Performance & Overhead:** Incurs double scheduling and translation overhead: guest operations must traverse both the hypervisor application layer and the underlying host operating system kernel.
-- **Representative Developer Platforms:** Oracle VirtualBox, VMware Workstation, VMware Fusion, Parallels Desktop.
+### 4.2 Type 2 (Hosted or Embedded Hypervisor)
+Type 2 hypervisors run on top of a conventional host operating system.
+- **Architectural Interaction:** Relies on the underlying host operating system to interact with and manage the physical hardware infrastructure (delegating device driver calls, memory paging, and hardware thread scheduling to the host OS kernel).
+- **Characteristics:** Easy to install, ideal for local software development, testing, and desktop virtualization, but suffers from double-scheduling overhead and higher latency.
+- **Representative Examples & Vendors:**
+  - **VMware Workstation** by VMware, Inc.
+  - **VirtualBox** by Oracle Corporation
+  - **Parallels Desktop** by Parallels
 
 ---
 
 ### 4.3 Hypervisor Security Attack Surfaces
 
-Multi-tenancy implies that hostile, compromised, or misconfigured guest virtual machines execute on the exact same physical server as mission-critical systems. This exposes two primary security attack vectors:
+Multi-tenancy implies that potentially hostile or compromised virtual machines execute on the exact same physical server. Security architects must evaluate two distinct attack surfaces:
 
 ```
-Host OS Attack Vector (Type 2 Hypervisors)          Guest OS Attack Vector (VM Escape / Breakout)
+Host OS Attack Vector (Type 2 / Host Domain)        Guest OS Attack Vector (VM Escape / Breakout)
 +------------------------------------------+    +------------------------------------------+
 |  Attacker breaches Host Operating System  |    |  Attacker compromises Guest VM Kernel    |
 |                     |                    |    |                     |                    |
@@ -2443,18 +2490,19 @@ Host OS Attack Vector (Type 2 Hypervisors)          Guest OS Attack Vector (VM E
 +------------------------------------------+    +------------------------------------------+
 ```
 
-1. **Host OS Attack Vector (Predominant in Type 2 Systems):**
-   Because a Type 2 hypervisor runs as software on top of a standard host OS, any kernel vulnerability, unpatched service, or root exploit on the host OS immediately grants the attacker total visibility and control over all co-located virtual machines on that machine.
-2. **Guest OS Attack Vector (VM Escape / Hypervisor Breakout):**
-   An attacker who achieves root privileges inside a guest VM deliberately attacks the hypervisor abstraction layer. By exploiting memory safety vulnerabilities (e.g., buffer overflows, race conditions) inside the hypervisor's virtual device emulation code (such as emulated floppy drives, USB controllers, or display adapters—e.g., the infamous **VENOM vulnerability** CVE-2015-3456 in QEMU), the attacker breaks out of the virtualized sandbox and executes arbitrary code directly within the host hypervisor context.
-3. **Microarchitectural Side-Channel Attacks:**
-   Hardware-level vulnerabilities in speculative execution (e.g., **Spectre**, **Meltdown**, **L1 Terminal Fault [L1TF]**) allow malicious guest VMs to observe cache line access timings or branch predictor states, leaking cryptographic keys and memory contents across VM isolation boundaries on co-located physical CPU cores.
+1. **Host OS Attack:**
+   - **Definition:** Security breaches occurring via vulnerabilities in the host operating system.
+   - **Blast Radius:** Because the host operating system manages the physical machine, compromising the host OS exposes **all hosted virtual instances** running on that physical hardware. An attacker gaining root access on the host can inspect guest memory, intercept disk I/O, or terminate virtual machines at will.
+2. **Guest OS Attack:**
+   - **Definition:** Security breaches initiated within a compromised guest operating system.
+   - **Mechanism:** An attacker who has achieved root privileges inside a guest VM attempts to breach hypervisor isolation boundaries (**VM Escape** or **Hypervisor Breakout**) by exploiting vulnerabilities in the hypervisor's virtual device emulation code (e.g., QEMU buffer overflows) or hypercall handlers.
+   - **Impact:** If successful, the attacker escapes the guest sandbox into the hypervisor execution context, potentially gaining control over the entire physical host or attacking co-located neighbor tenant instances via memory inspection or side-channel snooping.
 
 ---
 
 ## 5. Operating-System-Level Virtualization & Containers (Docker)
 
-While hypervisors virtualize physical hardware to run complete guest operating systems, **Operating-System-Level Virtualization** abstracts user-space execution environments while sharing a single, common operating system kernel.
+### 5.1 Architectural Comparison: Virtual Machines vs. Containers
 
 ```
       Virtual Machine Architecture                        Container Architecture
@@ -2462,7 +2510,7 @@ While hypervisors virtualize physical hardware to run complete guest operating s
 | App A (Bin/Lib)  |  App B (Bin/Lib)   |       | App A (Bin/Lib)  |  App B (Bin/Lib)   |
 +------------------+--------------------+       +------------------+--------------------+
 | Complete Guest OS| Complete Guest OS  |       |     Container Engine (Docker/containerd)
-+------------------+--------------------+       +---------------------------------------+
++------------------+--------------------+       +------------------+--------------------+
 |       Hypervisor / VMM Layer          |       |        Single Shared Host Kernel      |
 +---------------------------------------+       |       (Namespaces & Control Groups)   |
 |           Physical Hardware           |       +---------------------------------------+
@@ -2470,64 +2518,55 @@ While hypervisors virtualize physical hardware to run complete guest operating s
 +---------------------------------------+       +---------------------------------------+
 ```
 
-### 5.1 Architectural Comparison: Virtual Machines vs. Containers
-
-| Feature Dimension | Hardware Virtual Machines (VMs) | Operating-System Containers |
-| :--- | :--- | :--- |
-| **Virtualization Boundary** | Hardware / Silicon abstraction layer. | Operating system user-space boundary. |
-| **Kernel Instances** | Each VM bundles its own dedicated OS kernel. | All containers share the single host OS kernel. |
-| **Isolation Level** | **Strong:** Hardware-enforced privilege isolation. | **Moderate:** Software-enforced kernel namespace isolation. |
-| **Startup Latency** | Minutes (Booting full kernel, init, systemd). | Milliseconds (Forking isolated user-space process). |
-| **Memory & Storage Footprint**| Gigabytes per VM (Kernel binaries, OS files). | Megabytes per container (Application code + dependencies). |
-| **Performance Overhead** | Hypervisor context switches, shadow memory. | **Near-zero:** Native bare-metal execution speed. |
+- **Container Definition:** An **operating-system-level virtualization** method that allows multiple isolated user space instances to run on the same physical host.
+- **Core Architectural Difference:**
+  - **Virtual Machines:** Bundle a complete, standalone guest operating system (including its own kernel, system binaries, device drivers, and init system) on top of a hypervisor.
+  - **Containers:** Share the host system kernel with other containers, isolating only the application processes and their immediate user-space dependencies.
+- **Efficiency Advantages:** Sharing the host kernel makes containers **significantly more lightweight** than virtual machines:
+  - Consumes far fewer computing resources (megabytes of RAM vs. gigabytes).
+  - Offers near-instantaneous startup times (milliseconds vs. minutes).
+  - Delivers near-native bare-metal I/O and compute performance without virtualization trap overhead.
 
 ---
 
-### 5.2 The Underlying Linux Kernel Primitives
+### 5.2 Linux Isolation Primitives: Namespaces and Cgroups
 
-Containers are not lightweight virtual machines; they are standard Linux processes executed inside isolated kernel boundaries. Docker builds directly upon two foundational Linux kernel mechanisms:
+Containers are not mini-virtual machines; they are standard Linux processes executed within isolated kernel boundaries established by two core Linux kernel subsystems:
 
 #### 1. Linux Namespaces (Resource Isolation)
-Namespaces provide processes with their own private view of the global system, preventing processes in one container from inspecting or manipulating processes in another:
-- **`pid` Namespace (Process IDs):** Isolates process IDs. Inside the container, the primary application process perceives itself as **PID 1** (init process), while on the physical host system it appears as a standard unprivileged process (e.g., PID 24892).
-- **`net` Namespace (Networking):** Provides an isolated network stack: private network interface cards (veth pairs), separate loopback adapters, distinct IP addresses, independent routing tables, and private firewall port mappings.
+Namespaces govern **what a process can see**, carving the system into isolated workspaces:
+- **`pid` Namespace (Process IDs):** Isolates process IDs. Inside the container, the primary application process perceives itself as **PID 1** (init process), while on the host system it appears as a standard unprivileged process (e.g., PID 28412).
+- **`net` Namespace (Networking):** Provides an isolated network stack: private virtual network interface cards (veth pairs), separate loopback adapters, distinct IP addresses, independent routing tables, and private port bindings.
 - **`mnt` Namespace (Mount Points):** Isolates filesystem mount points. Combined with `chroot` and `pivot_root`, the container sees only its own dedicated root filesystem (`/`), completely blind to the host's actual storage tree.
 - **`ipc` Namespace (Inter-Process Communication):** Prevents containers from accessing shared memory segments, semaphores, or message queues belonging to other containers or the host.
-- **`uts` Namespace (Hostnames):** Allows each container to define its own independent hostname and domain name.
+- **`uts` Namespace (Hostnames):** Allows each container to define its own independent hostname and NIS domain name.
 - **`user` Namespace (User & Group IDs):** Maps root user execution inside the container (UID 0) to a completely unprivileged user ID on the physical host (e.g., UID 10001), mitigating security risks if a container process is breached.
 
 #### 2. Control Groups (Cgroups - Resource Governance)
-While namespaces control **what a process can see**, Control Groups govern **how much physical resources a process can consume**. Cgroups enforce hard resource ceilings and proportional weights for:
+While namespaces control visibility, Control Groups govern **how much physical resources a process can consume**:
 - *CPU Quotas:* Restricting a container to specific core shares (e.g., maximum 2.0 CPUs).
 - *Memory Limits:* Enforcing hard RAM allocations; triggering the Linux Out-Of-Memory (OOM) killer if a container exceeds its ceiling.
 - *Block I/O Throttling:* Setting read/write I/O operations per second (IOPS) limits on shared block devices.
 
 ---
 
-### 5.3 Deep Dive: Docker on Non-Linux Operating Systems (macOS and Windows)
+### 5.3 Docker Architecture and Core Components
 
-A common developer observation is: *If containers share the host kernel, how does Docker run on macOS and Windows?*
-
-> **The Cross-Platform Container Dilemma:**
-> Containers are fundamentally a Linux kernel technology. Neither the macOS kernel (XNU/Darwin) nor the Windows kernel (NT) natively implement Linux namespaces, cgroups, or Linux system calls (`clone()`, `pivot_root()`).
-> - **How Docker Desktop Operates on macOS:**
->   Docker Desktop on macOS silently provisions and boots a lightweight, headless Linux Virtual Machine (historically using HyperKit, and currently leveraging Apple's native `Virtualization.framework`). All Linux containers actually run inside this background Linux VM. The macOS Docker CLI and GUI communicate over a UNIX socket with the Docker daemon running inside that hidden Linux VM.
-> - **How Docker Desktop Operates on Windows:**
->   On Windows 10/11, Docker Desktop executes within **WSL2 (Windows Subsystem for Linux 2)**, which runs a real Linux kernel inside a lightweight, highly optimized Type 1 Hyper-V utility VM. (Windows also supports native Windows Containers, but standard Linux containers always execute inside the WSL2 Linux kernel).
-
----
-
-### 5.4 Docker Architecture & The Object Lifecycle
-
-Docker implements a distributed client-server architecture:
+**Docker** is an open platform designed for developing, shipping, and running applications. It decouples applications from the underlying infrastructure to accelerate deployment.
+- **Mechanism:** Packages and runs an application in a loosely isolated unit called a container. It leverages Linux namespaces and cgroups to create distinct, isolated workspaces for each container.
+- **Implementation:** Written in the **Go programming language**, taking advantage of low-level features provided by the Linux kernel.
+- **Architecture Model:** Follows a distributed **Client-Server architecture**.
 
 ```
 [ Docker Client (CLI) ]
         |
-        | REST API over UNIX Socket (`/var/run/docker.sock`) or TCP
+        | REST API over UNIX Socket (`/var/run/docker.sock`) or Network Interface (TCP)
         v
 +-------------------------------------------------------------------------+
-| Docker Host Engine (`dockerd`)                                          |
+| Docker Daemon (`dockerd`)                                               |
+| - Listens for Docker API requests                                       |
+| - Manages Objects: Images, Containers, Networks, Volumes               |
+| - Coordinates with other daemons across networks                        |
 |                                                                         |
 |  +-------------------+  `docker build`  +----------------------------+  |
 |  |    Dockerfile     | ---------------> | Docker Image (Read-Only)   |  |
@@ -2537,42 +2576,68 @@ Docker implements a distributed client-server architecture:
 |                                                       | `docker run`    |
 |                                                       v (Instantiates)  |
 |  +-------------------------------------------------------------------+  |
-|  | Docker Containers (Live Running Processes + Thin Writable Layer)  |  |
+|  | Docker Containers (Live Running Instances + Thin Writable Layer)  |  |
 |  +-------------------------------------------------------------------+  |
 +-------------------------------------------------------------------------+
         |
         | Push / Pull Images via HTTPS
         v
 +-------------------------------------------------------------------------+
-| Docker Registries (Docker Hub, AWS ECR, Private Harbor Registry)       |
+| Docker Registries (Docker Hub - Default Public Query, Private Registry) |
 +-------------------------------------------------------------------------+
 ```
 
-1. **Docker Client:** The primary command-line tool (`docker`) used by developers to issue build, run, and push commands.
-2. **Docker Daemon (`dockerd`):** A persistent background daemon that listens for Docker Engine API requests. It manages all local Docker objects: images, containers, networks, and storage volumes.
-3. **Docker Registries:** Stateless storage repositories containing versioned Docker images. **Docker Hub** is the default global public registry.
+#### Detailed Breakdown of Docker Components
+1. **Docker Desktop:**
+   - An easy-to-install application suite for host operating systems (macOS, Windows, Linux) that allows developers to build, run, and share containerized applications and microservices.
+   - Bundles the Docker daemon (`dockerd`), Docker CLI client, Docker Compose, Docker Content Trust, Kubernetes, and related developer tooling into a unified installer.
+2. **Docker Client:**
+   - The primary interactive command-line interface or tool that developers use to communicate with Docker (`docker run`, `docker build`).
+   - Accepts commands and forwards them as API requests to a Docker daemon.
+   - A single Docker client can communicate with **multiple Docker daemons** across local and remote hosts.
+3. **Docker Daemon (`dockerd`):**
+   - The persistent background process responsible for building, running, and distributing Docker containers.
+   - Listens continuously for Docker API requests.
+   - Manages all Docker objects including images, containers, networks, and storage volumes.
+   - Communicates with other daemons across networks to coordinate distributed Docker services.
+   - **Communication Method:** The Docker client and daemon interact using a **REST API** transmitted over UNIX domain sockets (`/var/run/docker.sock`) locally or standard network interfaces (TCP) remotely.
+4. **Docker Registries:**
+   - Stateless storage repositories that store and distribute Docker images.
+   - **Docker Hub** serves as the default public registry where anyone can download and upload images. Docker automatically queries Docker Hub by default whenever an image is not found locally.
+5. **Docker Images:**
+   - Read-only templates containing the system instructions, environment configurations, and application binaries required to create a container.
+   - Stacked from immutable filesystem layers (OverlayFS), typically built on top of a base image with customizations defined using a structured declarative text file known as a **Dockerfile**.
+6. **Docker Containers:**
+   - A runnable, live instance of a Docker image.
+   - Can be created, started, stopped, moved, or deleted using the Docker API or Docker client commands.
+   - **Isolation Controls:** System administrators can precisely control the level of isolation a container maintains from other containers and from the host machine (configuring custom namespace mappings, cgroup limits, and network bridge modes).
 
-#### Deep Dive: Dockerfile vs. Docker Image vs. Docker Container
-- **Dockerfile vs. Docker Image:**
-  A **Dockerfile** is the human-readable, declarative recipe script specifying base operating systems, environment variables, dependencies, and build steps (`FROM node:18`, `COPY . .`, `RUN npm install`). When you execute `docker build`, the daemon executes each instruction, producing an immutable, binary **Docker Image** comprised of stacked, read-only content-addressable filesystem layers (OverlayFS).
-- **Image vs. Container (The Program vs. Process Analogy):**
-  The relationship between an image and a container maps identically to classical operating system concepts:
-  $$\text{Docker Image} \equiv \text{Executable Program / Class}$$
-  $$\text{Docker Container} \equiv \text{Running Process / Object Instance}$$
-  An image is a static, inert binary file sitting on disk. When you execute `docker run`, the Docker daemon creates a live **Container** by instantiating an isolated process, establishing Linux namespaces and cgroups, and mounting a thin, **ephemeral read-write layer** on top of the immutable read-only image layers.
+#### Deep Dive: Docker on Non-Linux Operating Systems (macOS & Windows)
+Because macOS and Windows do not natively implement Linux kernel namespaces and cgroups:
+- **macOS:** Docker Desktop transparently provisions a lightweight background Linux VM using Apple's `Virtualization.framework` (or historically HyperKit). All Linux containers execute inside this background VM, while the macOS client talks to it via UNIX domain sockets.
+- **Windows:** Docker Desktop utilizes **WSL2 (Windows Subsystem for Linux 2)**, which runs a real Linux kernel inside a lightweight, highly optimized Type 1 Hyper-V utility VM.
 
 ---
 
 ## 6. Virtualization in Cloud Service Models
 
-Virtualization serves as the underlying engine across all standard cloud delivery models:
-1. **Infrastructure as a Service (IaaS):** Exposes virtualization primitives directly to the customer. Users provision, configure, and manage virtual machines, virtual networks, and block storage volumes.
-2. **Platform as a Service (PaaS) & Container as a Service (CaaS):** The cloud provider abstracts raw VMs, managing hypervisors, container engines, and orchestration platforms (e.g., Kubernetes, AWS Fargate). Developers simply deploy container images or source code.
-3. **Software as a Service (SaaS):** Delivers complete, multi-tenant web applications where thousands of customer accounts execute across containerized, auto-scaled application server pools.
+Virtualization serves as the core technical engine across all standard cloud delivery models:
+
+1. **Infrastructure as a Service (IaaS):**
+   - Virtualization abstracts physical servers, storage, and networking into virtual equivalents managed by the consumer.
+   - Consumers obtain direct programmatic control over virtual machine instances, virtual disk volumes, and software-defined networks (e.g., AWS EC2, Google Compute Engine).
+2. **Platform as a Service (PaaS) & Container as a Service (CaaS):**
+   - Builds on top of virtual infrastructure to provide execution environments, managed runtime engines, and application deployment frameworks.
+   - Cloud providers abstract raw VMs, managing hypervisors, container engines, and orchestration platforms (e.g., AWS Elastic Beanstalk, Google App Engine, AWS Fargate).
+3. **Software as a Service (SaaS):**
+   - Delivers complete, functional applications to end users, running across virtualized application servers and multi-tenant infrastructure.
+   - End users interact with software via web browsers without managing underlying cloud infrastructure (e.g., Google Workspace, Salesforce, Microsoft 365).
 
 ---
 
 ## 7. Multi-Tenancy Principles, Architecture, and Data Tier Isolation
+
+### 7.1 Multi-Tenancy Principles: Provider View vs. Consumer View
 
 **Multi-Tenancy** is an architectural pattern where a single physical and logical software infrastructure instance serves multiple distinct customer organizations (**tenants**) simultaneously.
 
@@ -2586,26 +2651,44 @@ Virtualization serves as the underlying engine across all standard cloud deliver
 +---------------------------------------------+     +-------------------------------+
 ```
 
-### 7.1 Multi-Tenancy vs. Virtualization
+- **Cloud Provider View:**
+  A single software application instance runs on a server infrastructure and serves multiple distinct tenants simultaneously. This allows many users or organizations to share identical platforms, services, or applications, maximizing hardware utilization and amortizing operational costs.
+- **Cloud Consumer View:**
+  Each customer receives a dedicated logical software instance presenting a customized interface, isolated configuration, and separate operational view, perceiving the application as if they have exclusive ownership.
+- **Tenant Isolation:**
+  The critical architectural mechanism ensuring that tenants are **completely segregated** and cannot view, access, or tamper with configuration details, operational metadata, or data belonging to another tenant.
 
-- **Virtualization:** Focuses on the **abstraction of physical hardware** into multiple virtual hardware instances.
-- **Multi-Tenancy:** Focuses on the **logical sharing of software applications and databases** among multiple organizations while enforcing strict security, operational, and data boundaries.
-- **Interdependence:** Virtualization provides the elastic, programmatic computing infrastructure that allows cloud providers to scale multi-tenant SaaS software dynamically.
+### 7.2 Relationship Between Multitenancy and Virtualisation
+
+A fundamental conceptual distinction in cloud architecture:
+- **Multitenancy:** Focuses on delivering dedicated logical software instances to consumers while maintaining data and usage isolation.
+- **Virtualisation:** Focuses on the abstraction of underlying physical computing resources into pooled virtual assets.
+- **Interdependence:** Virtualisation provides the core resource abstraction, elastic provisioning, and logical boundaries that make multi-tenant software instances and secure tenant data isolation achievable in cloud environments.
 
 ---
 
-### 7.2 Core Characteristics of Multi-Tenant Cloud Architectures
+### 7.3 Six Key Characteristics of Multi-Tenancy
 
-1. **Usage & Tenant Isolation:** Operational actions, intense processing spikes, or unhandled software exceptions caused by Tenant A must never degrade performance, exhaust memory, or crash services for Tenant B (enforced via thread pool quotas and rate limiting).
-2. **Data Security & Encryption:** Tenant data must be logically or physically separated, encrypted with unique tenant-specific keys (envelope encryption), and governed by strict Role-Based Access Control (RBAC).
-3. **Independent Backup & Disaster Recovery:** The platform must support restoring data, rolling back changes, or taking point-in-time snapshots on a per-tenant basis without impacting other tenants.
-4. **Metered Consumption:** The multi-tenant architecture must accurately track processing consumption per tenant to support granular usage-based billing.
+Enterprise multi-tenant systems enforce six core operational characteristics:
+
+1. **Usage and Tenant Isolation:**
+   Behaviors, heavy computational processing spikes, or unhandled errors generated by one tenant do not adversely impact the performance, throughput, or stability of other tenants (mitigating "noisy neighbor" contention via rate limiting and cgroup isolation).
+2. **Data Security:**
+   Enforces separate data protection, encryption (at rest and in transit using tenant-specific keys), access control, and authorization procedures for each distinct tenant.
+3. **Recovery:**
+   Supports independent backup, snapshotting, point-in-time rollback, and restoration capabilities on a per-tenant basis without requiring a global database restore that disrupts other tenants.
+4. **Scalability:**
+   The underlying architecture dynamically accommodates increases in individual tenant usage as well as the addition of entirely new tenants without requiring architectural re-engineering.
+5. **Metered Usage:**
+   Infrastructure continuously tracks tenant activity (API calls, CPU runtime, storage gigabytes, network egress) so that consumers are billed strictly for the features, processing capacity, and resources they consume.
+6. **Data Tier Isolation:**
+   Supports flexible database tier architectures, where databases, database instances, or individual database tables can either be dedicated strictly to one tenant or safely shared among multiple tenants using partition identifiers.
 
 ---
 
-### 7.3 Data Tier Multi-Tenancy Architectural Patterns
+### 7.4 Data Tier Multi-Tenancy Architectural Patterns
 
-The database tier is the most critical and complex dimension of multi-tenant engineering. Systems employ three primary architectural models:
+The database tier represents the most critical and complex dimension of multi-tenant engineering:
 
 ```
 Database-per-Tenant Pattern           Schema-per-Tenant Pattern           Shared-Table Pattern
@@ -2632,26 +2715,31 @@ Database-per-Tenant Pattern           Schema-per-Tenant Pattern           Shared
 
 ## 8. Summary
 
-1. **Virtualization Foundation:** Virtualization abstracts physical silicon into pooled logical resources, transforming enterprise computing from low-utilization 1:1 hardware bindings into elastic 1:N multi-tenant cloud environments.
-2. **The x86 Dilemma:** Classic x86 architectures failed the Popek-Goldberg virtualization theorem due to 17 sensitive unprivileged instructions. Full Virtualization solved this via runtime Binary Translation, Para-Virtualization solved it via OS-assisted Hypercalls, and modern processors solved it directly in silicon via Hardware-Assisted Virtualization (Intel VT-x VMX Root/Non-Root modes).
-3. **Hypervisor Types:** Type 1 bare-metal hypervisors (ESXi, KVM, Hyper-V) deliver high-performance enterprise virtualization; Type 2 hosted hypervisors (VirtualBox) introduce host OS latency and expanded attack surfaces.
-4. **Containers vs. VMs:** VMs virtualize physical hardware via hypervisors; containers virtualize the operating system user space via Linux kernel namespaces (isolation) and cgroups (resource limits). Containers achieve sub-second startup and near-zero abstraction overhead by sharing the host kernel.
-5. **Docker Architecture:** Follows a client-server architecture. Dockerfiles are declarative source recipes; Docker images are compiled, immutable read-only layer stacks (programs); Docker containers are runnable, live process instances (processes).
-6. **Multi-Tenancy Engineering:** Multi-tenancy shares application infrastructure across customers while enforcing strict data, operational, and performance boundaries. Database isolation ranges from expensive dedicated databases to highly scalable shared tables partitioned by tenant keys.
+1. **Virtualization Foundation:** Virtualization abstracts physical infrastructure (processors, memory, storage, networking) into pooled logical resources, transforming enterprise computing from low-utilization (10%–15%) 1:1 hardware bindings into elastic 1:N multi-tenant cloud environments (70%–80% utilization).
+2. **Advantages and Disadvantages:** Canonical advantages include hardware independence, resource consolidation, and rapid resource replication via virtual disk images; canonical disadvantages include performance overhead from virtualization layers and the creation of a centralized Single Point of Failure (SPOF).
+3. **The x86 Dilemma & Three Approaches:** Classic x86 failed the Popek-Goldberg virtualization theorem due to 17 sensitive unprivileged instructions.
+   - *Full Virtualization:* Binary translation rewrites sensitive instructions, direct execution handles user code; unmodified guest OS is unaware; VMware ESX.
+   - *Para-Virtualization:* OS-assisted hypercalls replace sensitive instructions in modified guest kernel; zero binary translation tax; Cambridge Xen.
+   - *Hardware-Assisted Virtualization:* CPU hardware extensions (Intel VT-x / AMD-V) introduce VMX Root (hypervisor) and Non-Root (guest) modes; requests trap directly to silicon microcode via VMCS tracking; Microsoft Hyper-V, Virtual Iron, XenSource.
+4. **Hypervisor Classifications & Attack Surfaces:** Type 1 bare-metal hypervisors (ESXi by VMware, Xen by Cambridge, Hyper-V by Microsoft, KVM by Open Virtualization Alliance) run directly on silicon. Type 2 hosted hypervisors (Workstation, VirtualBox, Parallels) run on a host OS. Multi-tenancy exposes two primary threat vectors: Host OS attacks (compromising the host OS breaches all hosted instances) and Guest OS attacks (VM escape / breakout into hypervisor context).
+5. **Containers vs. VMs:** VMs virtualize hardware via hypervisors; containers virtualize operating system user space via Linux kernel namespaces (isolation) and cgroups (resource limits). Containers achieve sub-second startup and near-zero overhead by sharing the host kernel.
+6. **Docker Ecosystem:** Written in Go with a client-server architecture (REST API over UNIX sockets or TCP). Combines Docker Desktop, Docker Client, Docker Daemon (`dockerd`), Docker Registries (Docker Hub default query), Docker Images (read-only stacked layers), and Docker Containers (runnable live instances). On non-Linux hosts (macOS, Windows), Docker runs inside a lightweight background Linux VM (Virtualization.framework or WSL2).
+7. **Cloud Delivery Models:** Virtualization enables IaaS (consumer-managed virtual infrastructure), PaaS (managed application runtime environments), and SaaS (multi-tenant end-user software).
+8. **Multi-Tenancy Engineering:** Contrasts the cloud provider view (single application instance serving multiple tenants) with the cloud consumer view (dedicated logical instance). Driven by six key characteristics: usage isolation, data security, independent recovery, scalability, metered consumption, and data tier isolation (database-per-tenant, schema-per-tenant, shared-table with partition keys).
 
 <reviewkit>
 <takeaways>
-- **Virtualization Definition:** Enables a single physical infrastructure to function as multiple logical infrastructures by multiplexing CPUs, memory, storage, and networking under a hypervisor.
-- **Popek-Goldberg Theorem:** An architecture is fully virtualizable if and only if all sensitive instructions are a subset of privileged instructions. Classic x86 failed due to 17 sensitive unprivileged instructions.
-- **Full vs. Para vs. Hardware-Assisted:**
-  - *Full Virtualization:* Binary translation dynamically rewrites sensitive instructions; runs unmodified guest OS; high CPU translation overhead.
-  - *Para-Virtualization:* Guest kernel source modified to issue Hypercalls directly; zero binary translation overhead; requires modified OS.
-  - *Hardware-Assisted Virtualization:* Silicon extensions (Intel VT-x / AMD-V) introduce VMX Root (hypervisor) and Non-Root (guest) modes; sensitive instructions trigger hardware VM-Exits via VMCS state tracking.
-- **Hypervisor Classifications:** Type 1 (Bare-Metal: runs directly on hardware; ESXi, KVM, Xen, Hyper-V); Type 2 (Hosted: runs on top of host OS; VirtualBox, Workstation).
-- **Virtual Machines vs. Containers:** VMs isolate complete guest operating systems via hypervisor hardware emulation; containers isolate user-space processes on a shared host OS kernel using Linux Namespaces (PID, NET, MNT, IPC, UTS, USER) and Cgroups (CPU, RAM, I/O limits).
-- **Docker on Non-Linux Hosts:** Because macOS and Windows lack Linux kernel namespaces, Docker Desktop runs a lightweight background Linux Virtual Machine (HyperKit, Virtualization.framework, or WSL2) to execute containers.
-- **Docker Image vs. Container:** Image = static read-only executable program/class; Container = live running process instance with an isolated namespace and a thin writable layer.
-- **Multi-Tenant Data Tier Patterns:** Database-per-tenant (maximum isolation, highest cost), Schema-per-tenant (moderate isolation/cost), Shared-table with `tenant_id` partition keys (maximum density, lowest cost, requires row-level security).
+- **Virtualization Definition & Mechanism:** Enables a single physical infrastructure to function as multiple logical infrastructures by multiplexing processors, memory, storage, and networking under a hypervisor (VMM) via a 1:N sharing relationship.
+- **Canonical Trade-Offs:** Delivers Hardware Independence, Resource Consolidation, and Resource Replication (rapid scaling via disk images); incurs Performance Overhead and introduces a centralized Single Point of Failure (SPOF).
+- **Four Resource Subsystems:** Processor virtualization (vCPUs), Memory virtualization (two-stage GVA -> GPA -> HPA translation), Storage virtualization (logical LUNs and virtual disk files), and Network virtualization (vSwitches and overlay fabrics).
+- **Three Approaches to Virtualization:**
+  - *Full Virtualization:* Binary translation dynamically rewrites sensitive instructions while direct execution runs user code; unmodified guest OS is completely unaware; VMware ESX.
+  - *Para-Virtualization:* OS-assisted model where guest kernel source is modified to issue direct Hypercalls; eliminates binary translation tax; Cambridge Xen.
+  - *Hardware-Assisted Virtualization:* CPU silicon extensions (Intel VT-x / AMD-V) add VMX Root and Non-Root modes; privileged requests trap directly to silicon via VMCS; Microsoft, Virtual Iron, XenSource.
+- **Hypervisor Classifications:** Type 1 Bare-Metal runs directly on silicon (ESXi, Xen, Hyper-V, KVM); Type 2 Hosted runs on a host OS (Workstation, VirtualBox, Parallels). Security vectors include Host OS attacks (compromising all instances) and Guest OS attacks (VM escape).
+- **Containers vs. VMs:** Containers virtualize operating system user space and share the single host kernel using Linux Namespaces (`pid`, `net`, `mnt`, `ipc`, `uts`, `user`) and Cgroups (CPU, RAM, block I/O limits), delivering lightweight footprint and sub-second startup.
+- **Docker Architecture:** Built in Go with a Client-Server model (REST API over UNIX sockets/TCP). Components include Docker Desktop, Docker Client, Docker Daemon (`dockerd`), Docker Registries (Docker Hub), Docker Images (read-only layer templates), and Docker Containers (live running instances). Runs on macOS/Windows via background Linux VMs (WSL2 / Virtualization.framework).
+- **Multi-Tenancy Principles:** Balances the Cloud Provider View (single shared app) with the Cloud Consumer View (dedicated logical instance). Governed by usage isolation, data security, per-tenant recovery, scalability, metered usage, and data tier isolation patterns (database-per-tenant, schema-per-tenant, shared-table with partition keys).
 </takeaways>
 <qprompt/>
 </reviewkit>
@@ -2666,6 +2754,7 @@ Database-per-Tenant Pattern           Schema-per-Tenant Pattern           Shared
 6. Rosen, R. (2013). *Linux Kernel Networking: Implementation and Theory*. Apress.
 7. Erl, T., Puttini, R., & Mahmood, Z. (2013). *Cloud Computing: Concepts, Technology & Architecture*. Prentice Hall.
 8. Mell, P., & Grance, T. (2011). *The NIST Definition of Cloud Computing*. National Institute of Standards and Technology (NIST), Special Publication 800-145.
+9. Teo, Y. M. (2025). *CS5224 Cloud Computing (Lecture 5: Virtualisation & Containers)*. School of Computing, National University of Singapore (NUS).
 
 # Week 6 - Cloud Application Architectures: Delivery Models, Multi-Tier Systems, Web Services, and RESTful Engineering
 

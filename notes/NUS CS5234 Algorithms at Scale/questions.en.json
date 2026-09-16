@@ -118,7 +118,7 @@
       "question_id": "cs5234-binary-search-property-testing-lca",
       "lang": "en",
       "question_type": "mcq",
-      "prompt": "In the Erg\u00fcn et al. binary search tester for array sortedness, what structural property ensures that the set of indices with successful binary searches forms a monotonically sorted subsequence?",
+      "prompt": "In the Ergün et al. binary search tester for array sortedness, what structural property ensures that the set of indices with successful binary searches forms a monotonically sorted subsequence?",
       "choices": [
         {
           "id": "A",
@@ -148,6 +148,82 @@
       "tag_concepts": [
         "concept.algorithm",
         "concept.query_algorithm"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-morris-approximate-counting-variance",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Morris's approximate counting algorithm, the counter C is incremented with probability 2^{-C}, and the estimate is \\hat{A} = 2^C - 1. Why is the arithmetic mean of k = 10/\\epsilon^2 independent Morris counters sufficient to achieve a (1 \\pm \\epsilon)-approximation with success probability at least 0.9?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The estimator \\hat{A} is unbiased with Var(\\hat{A}) = A(A-1)/2 < A^2/2; averaging k independent copies scales the variance down to < A^2 / (2k) = \\epsilon^2 A^2 / 20, and Chebyshev's inequality guarantees failure probability <= Var(\\bar{A}) / (\\epsilon^2 A^2) < 1/20 < 0.1.",
+          "response": "Correct. For a single Morris counter, E[\\hat{A}] = A and Var(\\hat{A}) = A(A-1)/2 < A^2/2. Averaging k independent estimators reduces variance linearly by 1/k. Setting k = 10/\\epsilon^2 gives Var(\\bar{A}) < \\epsilon^2 A^2 / 20. By Chebyshev's inequality, Pr(|\\bar{A} - A| >= \\epsilon A) <= Var(\\bar{A}) / (\\epsilon^2 A^2) < 1/20 = 0.05 < 0.1."
+        },
+        {
+          "id": "B",
+          "text": "Taking k = 10/\\epsilon^2 counters increases the expectation by a factor of 1/\\epsilon.",
+          "response": "Incorrect. The arithmetic mean preserves the expectation: E[\\bar{A}] = A."
+        },
+        {
+          "id": "C",
+          "text": "Because the counter register uses O(log n) bits, Chernoff bounds apply directly without independence.",
+          "response": "Incorrect. The counter register uses O(log log n) bits, and independence is strictly required across the k counters."
+        },
+        {
+          "id": "D",
+          "text": "The median of the counters reduces the variance by 2^{-C}.",
+          "response": "Incorrect. Variance reduction in this stage is achieved via the arithmetic mean; the median trick boosts success probability rather than scaling variance."
+        }
+      ],
+      "answer": "A",
+      "explanation": "For a single Morris counter, E[\\hat{A}] = A and Var(\\hat{A}) = A(A-1)/2 < A^2/2. For the average of k independent counters \\bar{A} = (1/k) sum_{j=1}^k \\hat{A}_j, linearity of expectation preserves E[\\bar{A}] = A, and independence ensures Var(\\bar{A}) = Var(\\hat{A}) / k < A^2 / (2k). Setting k = 10/\\epsilon^2 yields Var(\\bar{A}) < \\epsilon^2 A^2 / 20. By Chebyshev's inequality, Pr(|\\bar{A} - A| >= \\epsilon A) <= Var(\\bar{A}) / (\\epsilon A)^2 < 1/20 = 0.05 < 0.1.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.randomized_algorithm",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-k-center-dominating-set-hardness",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In metric k-center clustering, why does a polynomial-time (2 - \\epsilon)-approximation algorithm for any \\epsilon > 0 imply P = NP?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "An instance of Dominating Set can be transformed into a metric space with distances 1 for edges and 2 for non-edges; an optimal radius of 1 corresponds to a dominating set of size <= k, whereas non-existence forces radius 2. Any ratio < 2 distinguishes between 1 and 2 in polynomial time, solving the NP-complete Dominating Set problem.",
+          "response": "Correct. In the metric completion of an unweighted graph where d(u, v) = 1 if (u, v) in E and d(u, v) = 2 otherwise, OPT = 1 if G has a dominating set of size <= k, and OPT = 2 otherwise. A (2-\\epsilon)-approximation algorithm outputs a solution of radius < 2 * 1 = 2 when OPT = 1, perfectly deciding the NP-complete Dominating Set problem in polynomial time."
+        },
+        {
+          "id": "B",
+          "text": "Because Gonzalez's greedy farthest-first traversal algorithm runs in \\Omega(2^n) exponential time when \\epsilon < 1.",
+          "response": "Incorrect. Gonzalez's algorithm is a deterministic polynomial-time algorithm running in O(n k) time, but it achieves a 2-approximation, not < 2."
+        },
+        {
+          "id": "C",
+          "text": "Because the triangle inequality is violated whenever the approximation ratio drops below 2.",
+          "response": "Incorrect. The metric space axioms, including triangle inequality, are fully satisfied in the 1-2 distance metric."
+        },
+        {
+          "id": "D",
+          "text": "Because the number of possible cluster center subsets binom(n, k) cannot be enumerated in polynomial space.",
+          "response": "Incorrect. Inability to brute-force subset enumeration does not prove inapproximability; the hardness stems from the reduction from Dominating Set."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Given an undirected unweighted graph G=(V, E), define metric space (V, d) where d(u, v) = 1 if (u, v) in E, and d(u, v) = 2 if (u, v) not in E (with d(u, u) = 0). This satisfies metric space axioms. If G has a dominating set of size <= k, OPT = 1. If not, every subset of k centers leaves at least one vertex at distance 2, so OPT = 2. A (2-\\epsilon)-approximation algorithm outputs a solution of radius < 2 * 1 = 2 whenever OPT = 1, perfectly deciding Dominating Set in polynomial time.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.algorithm"
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-16"

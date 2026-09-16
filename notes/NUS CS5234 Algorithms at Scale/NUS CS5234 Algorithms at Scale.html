@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NUS CS5234 Algorithms at Scale — Ludwig</title>
-  <meta name="garden:tags" content="Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev&#x27;s Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability">
-  <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao&#x27;s minimax principle, query complexity lower bounds, property testing, array monotonicity, and distribution uniformity testing.">
+  <meta name="garden:tags" content="Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev&#x27;s Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset">
+  <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao&#x27;s minimax principle, query complexity lower bounds, property testing, array monotonicity, distribution uniformity testing, reservoir sampling, Morris approximate counting, graph streaming connectivity and spanners, metric k-center NP-hardness and 2-approximation, streaming k-center in Euclidean grids, hierarchical k-median coreset trees, and minimum enclosing ball core-sets.">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.sublinear_algorithm,concept.query_algorithm,concept.randomized_algorithm,concept.concentration_inequalities,concept.chernoff_bound,concept.chebyshev_inequality,concept.variance_reduction,concept.graph_algorithm,concept.algorithm,concept.probability">
-  <meta name="site:tag_labels" content="{&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.variance_reduction&quot;:{&quot;en&quot;:&quot;Variance Reduction&quot;,&quot;zh-Hant&quot;:&quot;方差降低技巧&quot;,&quot;zh-Hans&quot;:&quot;方差降低技巧&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;}}">
+  <meta name="site:tag_concepts" content="concept.sublinear_algorithm,concept.query_algorithm,concept.randomized_algorithm,concept.concentration_inequalities,concept.chernoff_bound,concept.chebyshev_inequality,concept.variance_reduction,concept.graph_algorithm,concept.algorithm,concept.probability,concept.streaming_algorithm,concept.spanner,concept.clustering,concept.metric_space,concept.coreset">
+  <meta name="site:tag_labels" content="{&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.variance_reduction&quot;:{&quot;en&quot;:&quot;Variance Reduction&quot;,&quot;zh-Hant&quot;:&quot;方差降低技巧&quot;,&quot;zh-Hans&quot;:&quot;方差降低技巧&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.streaming_algorithm&quot;:{&quot;en&quot;:&quot;Streaming Algorithm&quot;,&quot;zh-Hant&quot;:&quot;串流演算法&quot;,&quot;zh-Hans&quot;:&quot;流式算法&quot;},&quot;concept.spanner&quot;:{&quot;en&quot;:&quot;Spanner&quot;,&quot;zh-Hant&quot;:&quot;跨角圖&quot;,&quot;zh-Hans&quot;:&quot;跨角图&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.metric_space&quot;:{&quot;en&quot;:&quot;Metric Space&quot;,&quot;zh-Hant&quot;:&quot;度量空間&quot;,&quot;zh-Hans&quot;:&quot;度量空间&quot;},&quot;concept.coreset&quot;:{&quot;en&quot;:&quot;Coreset&quot;,&quot;zh-Hant&quot;:&quot;核心集&quot;,&quot;zh-Hans&quot;:&quot;核心集&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5234-algorithms-at-scale">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-09-16">
-  <meta name="site:reading_time_minutes" content="133">
+  <meta name="site:reading_time_minutes" content="207">
   <meta name="site:source" content="notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.md">
   <script>
   (() => {
@@ -231,6 +231,51 @@
 <a class="note-toc-link level-2" href="#4-4-variance-analysis-via-chebyshevs-inequality-slide-30">4.4 Variance Analysis via Chebyshev's Inequality (Slide 30)</a>
 <a class="note-toc-link level-2" href="#4-5-graph-property-testing-bipartiteness-testing-slide-32">4.5 Graph Property Testing: Bipartiteness Testing (Slide 32)</a>
 <a class="note-toc-link level-1" href="#references">References</a>
+<a class="note-toc-link level-1" href="#1-the-streaming-model-of-computation">1. The Streaming Model of Computation</a>
+<a class="note-toc-link level-2" href="#1-1-formal-definition-constraints">1.1 Formal Definition &amp; Constraints</a>
+<a class="note-toc-link level-1" href="#2-streaming-sampling-uniform-reservoir-sampling">2. Streaming Sampling: Uniform Reservoir Sampling</a>
+<a class="note-toc-link level-2" href="#2-1-the-problem">2.1 The Problem</a>
+<a class="note-toc-link level-2" href="#2-2-algorithm-single-item-reservoir-sampling">2.2 Algorithm: Single-Item Reservoir Sampling</a>
+<a class="note-toc-link level-2" href="#2-3-mathematical-proof-of-uniformity">2.3 Mathematical Proof of Uniformity</a>
+<a class="note-toc-link level-1" href="#3-approximate-counting-the-morris-algorithm">3. Approximate Counting: The Morris Algorithm</a>
+<a class="note-toc-link level-2" href="#3-1-the-scalability-bottleneck-of-exact-counting">3.1 The Scalability Bottleneck of Exact Counting</a>
+<a class="note-toc-link level-2" href="#3-2-the-morris-counting-algorithm-robert-morris-1978">3.2 The Morris Counting Algorithm (Robert Morris, 1978)</a>
+<a class="note-toc-link level-2" href="#3-3-rigorous-mathematical-analysis-of-expectation">3.3 Rigorous Mathematical Analysis of Expectation</a>
+<a class="note-toc-link level-2" href="#3-4-rigorous-mathematical-analysis-of-variance">3.4 Rigorous Mathematical Analysis of Variance</a>
+<a class="note-toc-link level-2" href="#3-5-variance-reduction-via-the-mean-trick-morris">3.5 Variance Reduction via the Mean Trick (Morris+)</a>
+<a class="note-toc-link level-1" href="#4-graph-streaming-algorithms-the-edge-arrival-model">4. Graph Streaming Algorithms: The Edge Arrival Model</a>
+<a class="note-toc-link level-2" href="#4-1-the-edge-stream-setting">4.1 The Edge Stream Setting</a>
+<a class="note-toc-link level-2" href="#4-2-streaming-graph-connectivity">4.2 Streaming Graph Connectivity</a>
+<a class="note-toc-link level-2" href="#4-3-streaming-graph-bipartiteness">4.3 Streaming Graph Bipartiteness</a>
+<a class="note-toc-link level-1" href="#5-graph-spanners-in-streams">5. Graph Spanners in Streams</a>
+<a class="note-toc-link level-2" href="#5-1-distance-approximation-via-graph-spanners">5.1 Distance Approximation via Graph Spanners</a>
+<a class="note-toc-link level-2" href="#5-2-streaming-construction-of-a-2k-1-spanner">5.2 Streaming Construction of a $(2k - 1)$-Spanner</a>
+<a class="note-toc-link level-2" href="#5-3-proof-of-correctness-stretch-bound">5.3 Proof of Correctness (Stretch Bound)</a>
+<a class="note-toc-link level-2" href="#5-4-space-analysis-the-girth-theorem">5.4 Space Analysis: The Girth Theorem</a>
+<a class="note-toc-link level-1" href="#references-2">References</a>
+<a class="note-toc-link level-1" href="#1-the-metric-clustering-framework-objectives">1. The Metric Clustering Framework &amp; Objectives</a>
+<a class="note-toc-link level-2" href="#1-1-metric-spaces">1.1 Metric Spaces</a>
+<a class="note-toc-link level-2" href="#1-2-the-three-canonical-clustering-objectives">1.2 The Three Canonical Clustering Objectives</a>
+<a class="note-toc-link level-1" href="#2-metric-k-center-hardness-approximation-limits">2. Metric k-Center: Hardness &amp; Approximation Limits</a>
+<a class="note-toc-link level-2" href="#2-1-problem-formulation">2.1 Problem Formulation</a>
+<a class="note-toc-link level-2" href="#2-2-inapproximability-theorem-via-1-2-metric-reduction">2.2 Inapproximability Theorem via 1-2 Metric Reduction</a>
+<a class="note-toc-link level-1" href="#3-the-gonzalez-greedy-2-approximation-algorithm">3. The Gonzalez Greedy 2-Approximation Algorithm</a>
+<a class="note-toc-link level-2" href="#3-1-the-farthest-first-traversal-algorithm">3.1 The Farthest-First Traversal Algorithm</a>
+<a class="note-toc-link level-2" href="#3-2-tight-2-approximation-proof">3.2 Tight 2-Approximation Proof</a>
+<a class="note-toc-link level-2" href="#3-3-query-algorithm-complexity">3.3 Query Algorithm Complexity</a>
+<a class="note-toc-link level-1" href="#4-streaming-k-center-in-euclidean-bounded-spaces">4. Streaming k-Center in Euclidean Bounded Spaces</a>
+<a class="note-toc-link level-2" href="#4-1-reduction-to-a-decision-testing-problem">4.1 Reduction to a Decision Testing Problem</a>
+<a class="note-toc-link level-2" href="#4-2-a-2-2-epsilon-approximation-streaming-algorithm">4.2 A $(2 + 2\epsilon)$-Approximation Streaming Algorithm</a>
+<a class="note-toc-link level-1" href="#5-streaming-k-median-via-hierarchical-coreset-trees">5. Streaming k-Median via Hierarchical Coreset Trees</a>
+<a class="note-toc-link level-2" href="#5-1-problem-formulation-discrete-vs-unrestricted-centers">5.1 Problem Formulation &amp; Discrete vs. Unrestricted Centers</a>
+<a class="note-toc-link level-2" href="#5-2-the-2-level-coreset-streaming-algorithm-guha-et-al-2000">5.2 The 2-Level Coreset Streaming Algorithm (Guha et al., 2000)</a>
+<a class="note-toc-link level-2" href="#5-3-approximation-ratio-proof-4-alpha-2-4-alpha">5.3 Approximation Ratio Proof: $(4\alpha^2 + 4\alpha)$</a>
+<a class="note-toc-link level-2" href="#5-4-multi-level-merge-and-reduce-trees-l-levels">5.4 Multi-Level Merge-and-Reduce Trees ($L$ Levels)</a>
+<a class="note-toc-link level-1" href="#6-1-center-on-a-plane-minimum-enclosing-ball-meb-coresets">6. 1-Center on a Plane: Minimum Enclosing Ball (MEB) &amp; Coresets</a>
+<a class="note-toc-link level-2" href="#6-1-problem-formulation-extremal-geometry">6.1 Problem Formulation &amp; Extremal Geometry</a>
+<a class="note-toc-link level-2" href="#6-2-the-b-doiu-clarkson-greedy-core-set-algorithm-2002">6.2 The Bădoiu-Clarkson Greedy Core-Set Algorithm (2002)</a>
+<a class="note-toc-link level-2" href="#6-3-mathematical-convergence-proof">6.3 Mathematical Convergence Proof</a>
+<a class="note-toc-link level-1" href="#references-3">References</a>
           </nav>
         </div>
       </div>
@@ -2838,7 +2883,7 @@
   <div class="note-quiz-header">
     <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
     <div class="note-quiz-controls">
-      <div class="note-quiz-progress" aria-live="polite">1 / 4</div>
+      <div class="note-quiz-progress" aria-live="polite">1 / 6</div>
       <button type="button" class="note-quiz-reset">Reset</button>
     </div>
   </div>
@@ -2888,6 +2933,30 @@
 <button type="button" class="note-quiz-option" data-response="Incorrect. Binary search checks only O(log n) non-adjacent comparisons along its search path.">B. Binary search checks all n - 1 adjacent inequalities in the array simultaneously.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. An array with even a single inversion is not sorted; eps-far means modifying &gt; eps n elements is required.">C. Any array with fewer than eps n inversions is guaranteed to be completely sorted.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The birthday paradox collision principle is utilized in uniformity testing, not binary search sortedness testing.">D. The binary search tester relies on the birthday paradox to sample identical values.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="5">
+    <div class="note-quiz-question-title">In Morris's approximate counting algorithm, the counter C is incremented with probability 2^{-C}, and the estimate is \hat{A} = 2^C - 1. Why is the arithmetic mean of k = 10/\epsilon^2 independent Morris counters sufficient to achieve a (1 \pm \epsilon)-approximation with success probability at least 0.9?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. For a single Morris counter, E[\hat{A}] = A and Var(\hat{A}) = A(A-1)/2 &lt; A^2/2. Averaging k independent estimators reduces variance linearly by 1/k. Setting k = 10/\epsilon^2 gives Var(\bar{A}) &lt; \epsilon^2 A^2 / 20. By Chebyshev&#x27;s inequality, Pr(|\bar{A} - A| &gt;= \epsilon A) &lt;= Var(\bar{A}) / (\epsilon^2 A^2) &lt; 1/20 = 0.05 &lt; 0.1.">A. The estimator \hat{A} is unbiased with Var(\hat{A}) = A(A-1)/2 &lt; A^2/2; averaging k independent copies scales the variance down to &lt; A^2 / (2k) = \epsilon^2 A^2 / 20, and Chebyshev's inequality guarantees failure probability &lt;= Var(\bar{A}) / (\epsilon^2 A^2) &lt; 1/20 &lt; 0.1.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The arithmetic mean preserves the expectation: E[\bar{A}] = A.">B. Taking k = 10/\epsilon^2 counters increases the expectation by a factor of 1/\epsilon.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The counter register uses O(log log n) bits, and independence is strictly required across the k counters.">C. Because the counter register uses O(log n) bits, Chernoff bounds apply directly without independence.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Variance reduction in this stage is achieved via the arithmetic mean; the median trick boosts success probability rather than scaling variance.">D. The median of the counters reduces the variance by 2^{-C}.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="6">
+    <div class="note-quiz-question-title">In metric k-center clustering, why does a polynomial-time (2 - \epsilon)-approximation algorithm for any \epsilon &gt; 0 imply P = NP?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. In the metric completion of an unweighted graph where d(u, v) = 1 if (u, v) in E and d(u, v) = 2 otherwise, OPT = 1 if G has a dominating set of size &lt;= k, and OPT = 2 otherwise. A (2-\epsilon)-approximation algorithm outputs a solution of radius &lt; 2 * 1 = 2 when OPT = 1, perfectly deciding the NP-complete Dominating Set problem in polynomial time.">A. An instance of Dominating Set can be transformed into a metric space with distances 1 for edges and 2 for non-edges; an optimal radius of 1 corresponds to a dominating set of size &lt;= k, whereas non-existence forces radius 2. Any ratio &lt; 2 distinguishes between 1 and 2 in polynomial time, solving the NP-complete Dominating Set problem.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Gonzalez&#x27;s algorithm is a deterministic polynomial-time algorithm running in O(n k) time, but it achieves a 2-approximation, not &lt; 2.">B. Because Gonzalez's greedy farthest-first traversal algorithm runs in \Omega(2^n) exponential time when \epsilon &lt; 1.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The metric space axioms, including triangle inequality, are fully satisfied in the 1-2 distance metric.">C. Because the triangle inequality is violated whenever the approximation ratio drops below 2.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Inability to brute-force subset enumeration does not prove inapproximability; the hardness stems from the reduction from Dominating Set.">D. Because the number of possible cluster center subsets binom(n, k) cannot be enumerated in polynomial space.</button>
     </div>
     <div class="note-quiz-response" aria-live="polite"></div>
   </div>
@@ -2950,6 +3019,1279 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li>Batu, T., Fortnow, L., Rubinfeld, R., Smith, W. D., &amp; White, P. (2013). Testing that distributions are close. <em>ACM Transactions on Algorithms (TALG)</em>, 9(4), 1-24.</li>
 <li>Paninski, L. (2008). A coincidence-based test for uniformity given very sparsely sampled discrete data. <em>IEEE Transactions on Information Theory</em>, 54(10), 4750-4755.</li>
 <li>Chen, Y. (2025). <em>CS5234 Algorithms at Scale (Lectures 1–4)</em>. National University of Singapore (NUS).</li>
+</ol>
+
+<h1 class="mt-4">Week 5 - Streaming Algorithms: Reservoir Sampling, Morris Approximate Counting, Graph Streaming, and Spanners</h1>
+
+<p class="mb-3">The streaming model of computation addresses large-scale data processing under severe memory constraints. In traditional algorithms, the entire input resides in random-access memory (RAM). In modern planetary-scale systems—such as internet backbone routers, financial transaction tickers, sensor networks, and astronomical observatories—data arrives as an continuous, unbounded sequence of elements that must be processed in a single pass using working memory that is polylogarithmic or sublinear in the stream length $n$.</p>
+
+<p class="mb-3">This technical note explores the theoretical foundations and analysis of streaming algorithms: from uniform reservoir sampling and Morris logarithmic approximate counting to graph streaming models for connectivity, bipartiteness, and metric $(2k-1)$-spanners with provable girth bounds.</p>
+
+<hr>
+</section>
+
+<section id="1-the-streaming-model-of-computation" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. The Streaming Model of Computation</h3>
+
+<h4 id="1-1-formal-definition-constraints" class="mb-2">1.1 Formal Definition &amp; Constraints</h4>
+
+<p class="mb-3">In the standard streaming model:</p>
+
+<ol class="mb-3">
+<li><strong>Unbounded Input Stream:</strong> The input consists of a sequence of $n$ elements:</li>
+</ol>
+
+<p class="mb-3">$$\sigma = \langle e_1, e_2, \dots, e_n \rangle$$ where each element $e_i$ is drawn from a universe $\mathcal{U} = \{1, 2, \dots, m\}$.</p>
+
+<ol class="mb-3">
+<li><strong>Sequential Arrival:</strong> Elements arrive one at a time. The algorithm can only examine the current element $e_i$.</li>
+<li><strong>Irrevocability:</strong> Once an element $e_i$ has been processed, it cannot be re-examined unless it is explicitly retained in working memory.</li>
+<li><strong>Working Space Constraint:</strong> The algorithm has access to a working memory $\mathcal{M}$. Ideally:</li>
+</ol>
+
+<p class="mb-3">$$|\mathcal{M}| = \mathcal{O}(\text{polylog}(n, m)) \text{ bits}$$ or in graph streaming, $\mathcal{O}(n \cdot \text{polylog}(n))$ bits (the <strong>semi-streaming model</strong>), which is strictly sublinear in the number of edges $m \le \binom{n}{2}$.</p>
+
+<ol class="mb-3">
+<li><strong>Output Objective:</strong> At the end of the stream (or continuously upon query), output summary statistics, property testing certificates, or approximate structural representations of the underlying data.</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="2-streaming-sampling-uniform-reservoir-sampling" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Streaming Sampling: Uniform Reservoir Sampling</h3>
+
+<h4 id="2-1-the-problem" class="mb-2">2.1 The Problem</h4>
+
+<ul class="note-list">
+<li><strong>Input:</strong> A stream of $n$ numbers $\langle x_1, x_2, \dots, x_n \rangle$ where each $x_i \in \{1, 2, \dots, m\}$. The total length $n$ is <strong>unknown in advance</strong>.</li>
+<li><strong>Goal:</strong> Maintain a single sample $x$ such that at any step $n$, $x$ is chosen <strong>uniformly at random</strong> from the elements observed so far:</li>
+</ul>
+
+<p class="mb-3">$$\Pr(x = x_j) = \frac{1}{n} \quad \text{for all } j \in \{1, 2, \dots, n\}$$</p>
+
+<h4 id="2-2-algorithm-single-item-reservoir-sampling" class="mb-2">2.2 Algorithm: Single-Item Reservoir Sampling</h4>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Reservoir-Sampling()
+1. Initialize working variable x &lt;- null, counter i &lt;- 0.
+2. For each arriving element x_i:
+3.     i &lt;- i + 1
+4.     With probability 1 / i:
+5.         x &lt;- x_i
+6.     With probability 1 - 1 / i:
+7.         Keep x unchanged
+8. Output x at the end of the stream.</code></pre></div>
+
+<h4 id="2-3-mathematical-proof-of-uniformity" class="mb-2">2.3 Mathematical Proof of Uniformity</h4>
+
+<p class="mb-3">We prove by induction that for any stream prefix of length $n$, every element $x_j$ ($1 \le j \le n$) has an exact probability of $1/n$ of being stored in $x$.</p>
+
+<p class="mb-3">Consider a specific element $x_j$. For $x_j$ to be the final output:</p>
+
+<ol class="mb-3">
+<li>It must be selected when it arrives at step $j$, which occurs with probability $\frac{1}{j}$.</li>
+<li>It must <strong>not</strong> be replaced at step $j+1$, which occurs with probability $1 - \frac{1}{j+1} = \frac{j}{j+1}$.</li>
+<li>It must not be replaced at any subsequent step $k$ for all $k = j+1, j+2, \dots, n$, with probability $1 - \frac{1}{k} = \frac{k-1}{k}$.</li>
+</ol>
+
+<p class="mb-3">Since the random decisions at each arrival step are mutually independent: $$\Pr(x = x_j) = \frac{1}{j} \times \prod_{k=j+1}^n \left( 1 - \frac{1}{k} \right) = \frac{1}{j} \times \left( \frac{j}{j+1} \right) \times \left( \frac{j+1}{j+2} \right) \times \dots \times \left( \frac{n-1}{n} \right)$$</p>
+
+<p class="mb-3">Notice that this forms a <strong>telescoping product</strong>: $$\prod_{k=j+1}^n \frac{k-1}{k} = \frac{j}{n}$$</p>
+
+<p class="mb-3">Multiplying by the initial selection probability: $$\Pr(x = x_j) = \frac{1}{j} \times \frac{j}{n} = \frac{1}{n} \quad \blacksquare$$</p>
+
+<ul class="note-list">
+<li><strong>Space Complexity:</strong> Storing element $x$ takes $\lceil \log_2 m \rceil$ bits, and maintaining the index counter $i$ takes $\lceil \log_2 n \rceil$ bits. Total space is $\mathcal{O}(\log m + \log n)$ bits.</li>
+<li><strong>Time Complexity:</strong> $\mathcal{O}(1)$ time per arriving item.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="3-approximate-counting-the-morris-algorithm" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Approximate Counting: The Morris Algorithm</h3>
+
+<h4 id="3-1-the-scalability-bottleneck-of-exact-counting" class="mb-2">3.1 The Scalability Bottleneck of Exact Counting</h4>
+
+<p class="mb-3">Consider counting the number of $1$s (denoted by $A$) in an $n$-bit binary stream:</p>
+
+<ul class="note-list">
+<li>An exact deterministic counter must count from $0$ up to $n$.</li>
+<li>Storing an exact integer in the range $[0, n]$ requires:</li>
+</ul>
+
+<p class="mb-3">$$S = \lceil \log_2(n + 1) \rceil \text{ bits}$$</p>
+
+<ul class="note-list">
+<li>If we wish to track billions of simultaneous event counters (e.g., in high-speed router line cards or distributed telemetry), allocating $32$ or $64$ bits per counter consumes massive SRAM.</li>
+<li><strong>Question:</strong> <em>Can we count approximately using significantly less space?</em></li>
+</ul>
+
+<p class="mb-3">Specifically, can we count using only $\mathcal{O}(\log\log n)$ bits?</p>
+
+<hr>
+
+<h4 id="3-2-the-morris-counting-algorithm-robert-morris-1978" class="mb-2">3.2 The Morris Counting Algorithm (Robert Morris, 1978)</h4>
+
+<p class="mb-3">Instead of storing $A$, the Morris algorithm stores an integer $C$ that represents the <strong>order of magnitude</strong> of $A$:</p>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Morris-Counter()
+1. Initialize counter C &lt;- 0.
+2. For each arriving 1:
+3.     Flip a biased coin with probability of heads = 2^{-C} (i.e., 1 / 2^C).
+4.     If heads:
+5.         C &lt;- C + 1
+6. At the end of the stream, output:
+       \hat{A} = 2^C - 1</code></pre></div>
+
+<h5 class="mb-2">Intuition</h5>
+
+<p class="mb-3">Increasing the counter from $C = i$ to $i + 1$ requires an expected number of arrivals equal to $2^i$. Thus, when the counter reaches value $C$, the expected total number of items that have arrived is: $$\sum_{k=0}^{C-1} 2^k = 2^C - 1$$</p>
+
+<hr>
+
+<h4 id="3-3-rigorous-mathematical-analysis-of-expectation" class="mb-2">3.3 Rigorous Mathematical Analysis of Expectation</h4>
+
+<p class="mb-3">Let $A$ be the true total number of $1$s in the stream. For each $i \in \{0, 1, \dots, A\}$, let $C_i$ denote the value of the counter $C$ after the $i$-th $1$ has been processed. Define the random variable: $$X_i = 2^{C_i}$$</p>
+
+<p class="mb-3">When the $(i+1)$-th element arrives: $$X_{i+1} = \begin{cases} 2^{C_i + 1} = 2 X_i &amp; \text{with probability } \frac{1}{2^{C_i}} = \frac{1}{X_i} \\ X_i &amp; \text{with probability } 1 - \frac{1}{X_i} \end{cases}$$</p>
+
+<p class="mb-3">We compute the conditional expectation of $X_{i+1}$ given $X_i = x$: $$\mathbb{E}[X_{i+1} \mid X_i = x] = (2x) \cdot \frac{1}{x} + x \cdot \left( 1 - \frac{1}{x} \right) = 2 + x - 1 = x + 1$$</p>
+
+<p class="mb-3">By the Law of Total Expectation: $$\mathbb{E}[X_{i+1}] = \sum_x \Pr(X_i = x) \mathbb{E}[X_{i+1} \mid X_i = x] = \sum_x \Pr(X_i = x) (x + 1) = \mathbb{E}[X_i] + 1$$</p>
+
+<p class="mb-3">We have a simple linear recurrence: $\mathbb{E}[X_{i+1}] = \mathbb{E}[X_i] + 1$. The base case is $C_0 = 0 \implies X_0 = 2^0 = 1$. Solving the recurrence: $$\mathbb{E}[X_A] = X_0 + A = A + 1$$</p>
+
+<p class="mb-3">Since the output estimator is $\hat{A} = X_A - 1 = 2^{C_A} - 1$: $$\mathbb{E}[\hat{A}] = \mathbb{E}[X_A - 1] = \mathbb{E}[X_A] - 1 = (A + 1) - 1 = A$$</p>
+
+<blockquote class="blockquote mb-3"><strong>Theorem (Unbiased Estimator):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">The Morris counter estimator $\hat{A} = 2^C - 1$ is an <strong>unbiased estimator</strong> of the true stream length $A$: $\mathbb{E}[\hat{A}] = A$.</blockquote>
+
+<hr>
+
+<h4 id="3-4-rigorous-mathematical-analysis-of-variance" class="mb-2">3.4 Rigorous Mathematical Analysis of Variance</h4>
+
+<p class="mb-3">To quantify estimation error, we compute the second moment $\mathbb{E}[X_i^2]$: $$\mathbb{E}[X_{i+1}^2 \mid X_i = x] = (2x)^2 \cdot \frac{1}{x} + x^2 \cdot \left( 1 - \frac{1}{x} \right) = 4x + x^2 - x = x^2 + 3x$$</p>
+
+<p class="mb-3">Taking expectation over all values of $X_i$: $$\mathbb{E}[X_{i+1}^2] = \mathbb{E}[X_i^2] + 3 \mathbb{E}[X_i] = \mathbb{E}[X_i^2] + 3(i + 1)$$</p>
+
+<p class="mb-3">Since $X_0 = 1 \implies X_0^2 = 1$: $$\mathbb{E}[X_i^2] = 1 + 3 \sum_{j=1}^i j = 1 + \frac{3 i(i + 1)}{2} = \frac{3 i^2 + 3i + 2}{2}$$</p>
+
+<p class="mb-3">Now compute the variance of $X_i$: $$\text{Var}(X_i) = \mathbb{E}[X_i^2] - (\mathbb{E}[X_i])^2 = \left( 1 + \frac{3i(i+1)}{2} \right) - (i + 1)^2$$ Expanding and simplifying: $$\text{Var}(X_i) = 1 + \frac{3i^2 + 3i}{2} - (i^2 + 2i + 1) = \frac{3i^2 + 3i - 2i^2 - 4i}{2} = \frac{i(i - 1)}{2}$$</p>
+
+<p class="mb-3">Since $\hat{A} = X_A - 1$, shifting by a constant does not alter variance: $$\text{Var}(\hat{A}) = \text{Var}(X_A) = \frac{A(A - 1)}{2} &lt; \frac{A^2}{2}$$</p>
+
+<hr>
+
+<h4 id="3-5-variance-reduction-via-the-mean-trick-morris" class="mb-2">3.5 Variance Reduction via the Mean Trick (Morris+)</h4>
+
+<p class="mb-3">The standard deviation of a single Morris counter is $\sigma \approx \frac{A}{\sqrt{2}}$, which is of the same order as the estimate itself. To achieve an $(\epsilon, \delta)$-approximation:</p>
+
+<ol class="mb-3">
+<li>Run $k = \frac{10}{\epsilon^2}$ independent, parallel copies of the Morris algorithm: $C^{(1)}, C^{(2)}, \dots, C^{(k)}$.</li>
+<li>Compute the individual estimators: $\hat{A}_j = 2^{C^{(j)}} - 1$.</li>
+<li>Output the sample average (<strong>The Mean Trick</strong>):</li>
+</ol>
+
+<p class="mb-3">$$\bar{A} = \frac{1}{k} \sum_{j=1}^k \hat{A}_j$$</p>
+
+<h5 class="mb-2">Error Bound:</h5>
+
+<p class="mb-3">By linearity of expectation: $$\mathbb{E}[\bar{A}] = A$$ Because the $k$ instances use independent random coin flips: $$\text{Var}(\bar{A}) = \frac{\text{Var}(\hat{A})}{k} \le \frac{A^2 / 2}{10 / \epsilon^2} = \frac{\epsilon^2 A^2}{20}$$</p>
+
+<p class="mb-3">Applying <strong>Chebyshev's Inequality</strong>: $$\Pr(|\bar{A} - A| &gt; \epsilon A) \le \frac{\text{Var}(\bar{A})}{(\epsilon A)^2} \le \frac{\epsilon^2 A^2 / 20}{\epsilon^2 A^2} = \frac{1}{20} &lt; \frac{1}{10}$$</p>
+
+<h5 class="mb-2">Space Complexity Analysis:</h5>
+
+<ul class="note-list">
+<li>Since $A \le n$, the maximum value stored in any counter $C$ is $\approx \log_2 n$.</li>
+<li>Storing an integer $C \le \log_2 n$ requires:</li>
+</ul>
+
+<p class="mb-3">$$\lceil \log_2 C \rceil = \mathcal{O}(\log\log n) \text{ bits}$$</p>
+
+<ul class="note-list">
+<li>For $k = \mathcal{O}(1/\epsilon^2)$ independent counters:</li>
+</ul>
+
+<p class="mb-3">$$\text{Total Space} = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\log n \right) \text{ bits}$$ For $n = 10^{18}$ (quintillion items), $\log_2 n \approx 60$, so $\log_2\log_2 n \approx 6$ bits! Each Morris counter requires only 6 bits instead of 64 bits.</p>
+
+<hr>
+</section>
+
+<section id="4-graph-streaming-algorithms-the-edge-arrival-model" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Graph Streaming Algorithms: The Edge Arrival Model</h3>
+
+<h4 id="4-1-the-edge-stream-setting" class="mb-2">4.1 The Edge Stream Setting</h4>
+
+<p class="mb-3">In graph streaming:</p>
+
+<ul class="note-list">
+<li>The vertex set $V = \{1, 2, \dots, n\}$ is known in advance.</li>
+<li>The edges $e_1, e_2, \dots, e_m$ of an unweighted graph $G = (V, E)$ arrive sequentially in an arbitrary order.</li>
+<li>The algorithm must maintain a compact data structure to answer structural queries at stream termination.</li>
+</ul>
+
+<hr>
+
+<h4 id="4-2-streaming-graph-connectivity" class="mb-2">4.2 Streaming Graph Connectivity</h4>
+
+<ul class="note-list">
+<li><strong>Problem:</strong> Determine whether the stream of edges forms a connected graph $G$.</li>
+<li><strong>Exact Algorithm via Spanning Forest:</strong></li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Streaming-Connectivity()
+1. Initialize spanning forest F &lt;- (V, \emptyset).
+2. When edge e = (u, v) arrives:
+3.     If u and v are NOT in the same connected component of F:
+4.         F &lt;- F \cup {e}
+5.     Else:
+6.         Discard e (it forms a cycle within F)
+7. At the end of the stream:
+8.     If F has exactly n - 1 edges (1 connected component):
+9.         Output "Connected"
+10.    Else:
+11.        Output "Disconnected"</code></pre></div>
+
+<h5 class="mb-2">Correctness and Space:</h5>
+
+<ul class="note-list">
+<li>A forest on $n$ vertices contains at most $n - 1$ edges.</li>
+<li>Discarding an edge $e = (u, v)$ whose endpoints are already connected preserves the connectivity of all vertex pairs.</li>
+<li><strong>Space Complexity:</strong> Storing $n - 1$ edges requires $\mathcal{O}(n \log n)$ bits of memory, which is independent of the number of stream edges $m \le \binom{n}{2}$.</li>
+</ul>
+
+<hr>
+
+<h4 id="4-3-streaming-graph-bipartiteness" class="mb-2">4.3 Streaming Graph Bipartiteness</h4>
+
+<ul class="note-list">
+<li><strong>Problem:</strong> Determine whether the input graph $G$ is bipartite.</li>
+<li><strong>Fundamental Characterization:</strong> A graph $G$ is bipartite if and only if it contains <strong>no odd-length cycles</strong>.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Streaming-Bipartiteness()
+1. Initialize forest F &lt;- (V, \emptyset).
+2. Maintain a 2-coloring for each connected tree component in F.
+3. When edge e = (u, v) arrives:
+4.     If u and v are in different tree components of F:
+5.         Add e to F.
+6.         Merge the two trees and invert the 2-coloring of one tree if necessary
+           so that color(u) != color(v).
+7.     Else (u and v are in the same tree component):
+8.         If color(u) == color(v):
+9.             Output "No" (odd cycle detected!) and HALT.
+10.        Else (color(u) != color(v)):
+11.            Discard e (it forms an even cycle).
+12. If the stream terminates without rejection:
+13.     Output "Yes" (G is bipartite).</code></pre></div>
+
+<h5 class="mb-2">Proof of Correctness:</h5>
+
+<ol class="mb-3">
+<li><strong>If $G$ is bipartite:</strong> $G$ contains zero odd cycles. Every cycle formed by adding an edge to $F$ must be of even length, so <code>color(u) == color(v)</code> never occurs. The algorithm correctly outputs <code>Yes</code>.</li>
+<li>**If the algorithm outputs <code>Yes</code>:** $F$ is a spanning forest of $G$. Any forest is bipartite and admits a proper 2-coloring.</li>
+</ol>
+
+<p class="mb-3">For every edge $e = (u, v) \notin F$, $e$ was processed and discarded because $\text{color}(u) \neq \text{color}(v)$. Therefore, the 2-coloring computed on $F$ is simultaneously a valid proper 2-coloring for all edges in $E(G)$. Hence $G$ is bipartite!</p>
+
+<ul class="note-list">
+<li><strong>Space Complexity:</strong> Storing $F$ takes at most $n - 1$ edges $\implies \mathcal{O}(n \log n)$ bits.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="5-graph-spanners-in-streams" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Graph Spanners in Streams</h3>
+
+<h4 id="5-1-distance-approximation-via-graph-spanners" class="mb-2">5.1 Distance Approximation via Graph Spanners</h4>
+
+<p class="mb-3">In massive networks, storing all shortest path distances requires $\binom{n}{2} = \Theta(n^2)$ space. Can we construct a sparse subgraph $H \subseteq G$ that approximates all pairwise shortest path distances?</p>
+
+<blockquote class="blockquote mb-3"><strong>Definition (Metric Spanner):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">Given an unweighted connected graph $G = (V, E)$ and an integer $k \ge 1$, a subgraph $H = (V, E_H)$ with $E_H \subseteq E$ is called a <strong>$t$-spanner</strong> (or <strong>$(2k - 1)$-spanner</strong>) of $G$ if for all $u, v \in V$:</blockquote>
+
+<blockquote class="blockquote mb-3">$$d_G(u, v) \le d_H(u, v) \le (2k - 1) \cdot d_G(u, v)$$</blockquote>
+
+<blockquote class="blockquote mb-3">The multiplicative factor $2k - 1$ is the <strong>stretch factor</strong> of the spanner.</blockquote>
+
+<hr>
+
+<h4 id="5-2-streaming-construction-of-a-2k-1-spanner" class="mb-2">5.2 Streaming Construction of a $(2k - 1)$-Spanner</h4>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Streaming-Spanner(k)
+1. Initialize spanner H &lt;- (V, \emptyset).
+2. When edge e = (u, v) arrives:
+3.     Compute shortest path distance d_H(u, v) in the current subgraph H.
+4.     If d_H(u, v) &gt; 2k - 1 (or u and v are disconnected in H):
+5.         Add e to H: E_H &lt;- E_H \cup {(u, v)}
+6.     Else:
+7.         Discard e (e is adequately spanned by existing edges in H)
+8. Output H.</code></pre></div>
+
+<div class="note-markdown-block"><pre><code>Spanner Edge Addition Logic:
+      u o---------------------------------o v   (Arriving Edge e = (u, v))
+         \                               /
+          o---o---o--- ... ---o---o---o-o       (Alternative Path in H)
+                     Length &lt;= 2k - 1
+  - If length &lt;= 2k - 1: DISCARD edge e!
+  - If length &gt; 2k - 1:  KEEP edge e in H!</code></pre></div>
+
+<hr>
+
+<h4 id="5-3-proof-of-correctness-stretch-bound" class="mb-2">5.3 Proof of Correctness (Stretch Bound)</h4>
+
+<p class="mb-3">We prove that for every pair of vertices $u, v \in V$, $d_H(u, v) \le (2k - 1) d_G(u, v)$.</p>
+
+<ol class="mb-3">
+<li><strong>Edge-by-Edge Stretch:</strong></li>
+</ol>
+
+<p class="mb-3">Consider any edge $(u, v) \in E(G)$:</p>
+
+<ul class="note-list">
+<li><strong>Case 1: $(u, v) \in E_H$.</strong> Then $d_H(u, v) = 1 \le 2k - 1$.</li>
+<li><strong>Case 2: $(u, v) \notin E_H$.</strong> The edge was discarded at arrival because at that instant, there existed an alternate path in $H$ connecting $u$ and $v$ of length at most $2k - 1$. Subsequent edge additions to $H$ can only decrease or preserve distances. Thus:
+<p class="mb-2">$$d_H(u, v) \le 2k - 1$$</p></li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>General Path Stretch:</strong></li>
+</ol>
+
+<p class="mb-3">Let $P = \langle u = v_0, v_1, v_2, \dots, v_\ell = v \rangle$ be a true shortest path between $u$ and $v$ in $G$, where $\ell = d_G(u, v)$. Every step $(v_{i-1}, v_i)$ is an edge in $G$, so $d_H(v_{i-1}, v_i) \le 2k - 1$. By the triangle inequality in $H$: $$d_H(u, v) \le \sum_{i=1}^\ell d_H(v_{i-1}, v_i) \le \sum_{i=1}^\ell (2k - 1) = (2k - 1) \ell = (2k - 1) \cdot d_G(u, v) \quad \blacksquare$$</p>
+
+<hr>
+
+<h4 id="5-4-space-analysis-the-girth-theorem" class="mb-2">5.4 Space Analysis: The Girth Theorem</h4>
+
+<p class="mb-3">How many edges can the spanner $H$ retain in the worst case?</p>
+
+<h5 class="mb-2">1. The Girth Invariant</h5>
+
+<blockquote class="blockquote mb-3"><strong>Lemma (Girth of $H$):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">The subgraph $H$ contains <strong>no cycle of length at most $2k$</strong> (i.e., the girth of $H$ is at least $2k + 1$).</blockquote>
+
+<p class="mb-3"><em>Proof:</em> Suppose for contradiction that adding edge $e = (u, v)$ creates a cycle $C$ of length $|C| \le 2k$ in $H$. Then prior to adding $e$, there existed a path in $H$ connecting $u$ and $v$ of length $|C| - 1 \le 2k - 1$. According to the algorithm rule, if $d_H(u, v) \le 2k - 1$, edge $e$ is <strong>discarded</strong>, not added! Hence, no edge can ever create a cycle of length $\le 2k$. $\blacksquare$</p>
+
+<h5 class="mb-2">2. Bounding Minimum Degree via BFS Trees</h5>
+
+<blockquote class="blockquote mb-3"><strong>Lemma (Minimum Degree Bound):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">Any graph $H$ with girth $\ge 2k + 1$ has minimum degree $d_{\min} = \mathcal{O}(n^{1/k})$.</blockquote>
+
+<p class="mb-3"><em>Proof:</em> Root a Breadth-First Search (BFS) tree at an arbitrary vertex $r \in V$. Examine the first $k$ layers of the BFS tree:</p>
+
+<ul class="note-list">
+<li>Because $H$ contains no cycle of length $\le 2k$, there are <strong>no cross edges</strong> between vertices at distance $\le k$ from $r$, and no two tree paths from $r$ can meet at depth $\le k$.</li>
+<li>Thus, the first $k$ levels of the BFS tree form a <strong>strict tree</strong> without cycles.</li>
+<li>The root $r$ has at least $d_{\min}$ children at level 1.</li>
+<li>Every vertex at level $1 \le j &lt; k$ has at least $d_{\min} - 1$ children at level $j + 1$.</li>
+<li>Therefore, the number of vertices in the first $k$ levels is at least:</li>
+</ul>
+
+<p class="mb-3">$$|V_{\text{tree}}| \ge 1 + d_{\min} \sum_{j=0}^{k-1} (d_{\min} - 1)^j \ge (d_{\min} - 1)^k$$ Since the total number of vertices in $H$ is $n$: $$(d_{\min} - 1)^k \le n \implies d_{\min} - 1 \le n^{1/k} \implies d_{\min} \le n^{1/k} + 1 = \mathcal{O}(n^{1/k}) \quad \blacksquare$$</p>
+
+<h5 class="mb-2">3. Bounding Average Degree (Bondy-Simonovits Theorem / Erdős Girth Bound)</h5>
+
+<blockquote class="blockquote mb-3"><strong>Lemma (High-Degree Subgraph):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">Any graph with average degree $\bar{d}$ contains a non-empty subgraph $H'$ with minimum degree:</blockquote>
+
+<blockquote class="blockquote mb-3">$$d_{\min}(H') \ge \frac{\bar{d}}{4}$$</blockquote>
+
+<p class="mb-3"><em>Proof:</em> Let $|E(H)| = m = \frac{n \bar{d}}{2}$. Repeatedly remove from $H$ any vertex with degree strictly less than $\frac{\bar{d}}{4}$. When a vertex of degree $&lt; \bar{d}/4$ is removed, at most $\bar{d}/4$ edges are deleted. Even if we remove all $n$ vertices, the total number of deleted edges would be strictly less than: $$n \times \frac{\bar{d}}{4} = \frac{n \bar{d}}{4} = \frac{m}{2}$$ Thus, at least $m/2$ edges survive! The process must terminate at a non-empty subgraph $H'$ where every remaining vertex has degree $\ge \bar{d}/4$. $\blacksquare$</p>
+
+<h5 class="mb-2">4. Total Space Bound:</h5>
+
+<p class="mb-3">Because $H' \subseteq H$, $H'$ also contains no cycle of length $\le 2k$. Applying the minimum degree lemma to $H'$: $$\frac{\bar{d}}{4} \le d_{\min}(H') \le \mathcal{O}(n^{1/k}) \implies \bar{d} = \mathcal{O}(n^{1/k})$$ The total number of edges stored in $H$ is: $$|E_H| = \frac{n \bar{d}}{2} \le \mathcal{O}\left( n^{1 + 1/k} \right)$$</p>
+
+<blockquote class="blockquote mb-3"><strong>Theorem (Streaming $(2k-1)$-Spanner):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">For any integer $k \ge 1$, the streaming spanner algorithm computes a $(2k-1)$-spanner $H$ of $G$ with at most $\mathcal{O}(n^{1 + 1/k})$ edges, using $\mathcal{O}(n^{1 + 1/k} \log n)$ bits of working memory.</blockquote>
+
+<blockquote class="blockquote mb-3">- For $k = 2$: Computes a $3$-spanner with $\mathcal{O}(n^{1.5})$ edges.</blockquote>
+
+<blockquote class="blockquote mb-3">- For $k = \log n$: Computes an $\mathcal{O}(\log n)$-spanner with $\mathcal{O}(n)$ edges ($\mathcal{O}(n \log n)$ bits).</blockquote>
+
+<hr>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--quiz-tab" data-bs-toggle="tab" data-bs-target="#review-kit--quiz-pane" type="button" role="tab" aria-controls="review-kit--quiz-pane" aria-selected="false">Quick Quiz</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>The Streaming Paradigm:</strong> Algorithms process unbounded input streams in a single pass under sublinear working memory constraints ($\mathcal{O}(\text{polylog } n)$ or semi-streaming $\mathcal{O}(n \log n)$ bits).</li>
+<li><strong>Reservoir Sampling:</strong> Replacing the current sample $x$ with arriving element $x_i$ with probability $1/i$ yields an exact, uniform $1/n$ probability distribution across all seen elements via telescoping product cancellation.</li>
+<li><strong>Morris Logarithmic Counting:</strong> Replaces an exact $\mathcal{O}(\log n)$-bit counter with a probabilistic counter $C \leftarrow C + 1$ with probability $2^{-C}$. The estimator $\hat{A} = 2^C - 1$ is strictly unbiased ($\mathbb{E}[\hat{A}] = A$) with variance $\text{Var}(\hat{A}) = \frac{A(A-1)}{2} &lt; \frac{A^2}{2}$, requiring only $\mathcal{O}(\log\log n)$ bits of memory.</li>
+<li><strong>The Mean Trick in Morris+:</strong> Averaging $k = 10/\epsilon^2$ parallel independent Morris counters guarantees a $(1 \pm \epsilon)$-approximation with success probability $\ge 9/10$ in $\mathcal{O}\left( \frac{\log\log n}{\epsilon^2} \right)$ space.</li>
+<li><strong>Streaming Graph Connectivity &amp; Bipartiteness:</strong> Maintaining a spanning forest $F$ requires at most $n - 1$ edges ($\mathcal{O}(n \log n)$ bits). Bipartiteness is verified by 2-coloring $F$ and immediately rejecting on odd-cycle back-edges.</li>
+<li><strong>Graph Spanner Construction:</strong> A $(2k-1)$-spanner $H$ is constructed by greedily adding edge $(u, v)$ if and only if $d_H(u, v) &gt; 2k - 1$. This ensures that all shortest path distances in $G$ are preserved within a multiplicative factor of $2k - 1$.</li>
+<li><strong>Spanner Girth &amp; Space Bounds:</strong> Rejecting edges with $d_H(u, v) \le 2k - 1$ enforces a girth bound of $\ge 2k + 1$. By the Bondy-Simonovits theorem, any graph without cycles of length $\le 2k$ contains at most $\mathcal{O}(n^{1 + 1/k})$ edges, bounding spanner memory to $\mathcal{O}(n^{1 + 1/k} \log n)$ bits.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-quiz" id="review-kit--quiz-pane" role="tabpanel" aria-labelledby="review-kit--quiz-tab" tabindex="0">
+<div class="note-quiz">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 6</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">When 10 n ln(n) balls are thrown uniformly and independently at random into n bins, why is the probability of having at least one empty bin upper-bounded by n^{-9}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. For any single bin, the probability of receiving zero balls is (1 - 1/n)^{10 n ln n} &lt; e^{-10 ln n} = n^{-10}. Summing this failure bound across all n bins via the Union Bound gives n * n^{-10} = n^{-9}.">A. Each individual bin has an empty probability &lt; (1/e)^{10 ln n} = n^{-10}, and applying the Union Bound across all n bins yields n * n^{-10} = n^{-9}.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Bin occupancies are negatively correlated, not mutually independent; the Union Bound does not require independence.">B. Because bin occupancies are mutually independent, the product of probabilities yields n^{-9}.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Markov&#x27;s inequality provides only a linear 1/alpha bound, which cannot yield inverse polynomial powers like n^{-9}.">C. Markov's inequality directly bounds the maximum bin load by n^{-9}.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality guarantees only polynomial decay O(1/log n), not exponential n^{-c} bounds.">D. Chebyshev's inequality guarantees exponential tail bounds for coupon collection.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="2">
+    <div class="note-quiz-question-title">Why does taking the sample median of k independent repetitions of an estimator with constant success probability 2/3 boost the success probability exponentially to 1 - 2 e^{-k/100}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. If an individual trial fails with probability &lt;= 1/3, the expected number of failing trials in k runs is &lt;= k/3. For the median to deviate, at least k/2 trials must fail, which requires a relative deviation of delta = 1/2 above expectation. By the Chernoff bound, this occurs with probability at most 2 e^{-k/100}.">A. The median fails only if strictly more than half of the trials fail, which corresponds to an exponential Chernoff tail deviation from the expected 1/3 failure rate.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Taking the mean (arithmetic average) reduces variance linearly; the median trick boosts confidence exponentially via order statistics.">B. Taking the median reduces the variance of the estimator by a factor of 1/k.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Mutual independence across all k runs is an essential precondition for the Chernoff bound to hold.">C. The sample median eliminates the need for independent repetitions.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality guarantees only polynomial tail bounds; exponential decay follows directly from the Chernoff bound.">D. Chebyshev's inequality applied to the median guarantees exponential tail convergence.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="3">
+    <div class="note-quiz-question-title">According to Yao's Minimax Principle, why does proving a lower bound for deterministic algorithms on a chosen input distribution mu establish a lower bound for all randomized algorithms?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Yao&#x27;s Minimax Principle proves that the expected error of any randomized algorithm on distribution mu cannot be better than the error of the best deterministic algorithm tailored to mu. Hence, D_mu(f) &lt;= R(f) for every distribution mu.">A. Because for any input distribution mu, the distributional complexity D_mu(f) is a universal lower bound on randomized query complexity: D_mu(f) &lt;= R(f).</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Deterministic simulation of randomized algorithms generally incurs significant query and runtime overhead.">B. Because all randomized algorithms can be simulated deterministically with zero query overhead.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Von Neumann&#x27;s theorem applies specifically to two-player zero-sum games between the algorithm designer and the input adversary.">C. Because von Neumann's minimax theorem only applies to non-zero-sum games.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Randomized decision trees frequently achieve lower expected height than deterministic trees.">D. Because deterministic decision trees always have smaller height than randomized decision trees.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="4">
+    <div class="note-quiz-question-title">In the Ergün et al. binary search tester for array sortedness, what structural property ensures that the set of indices with successful binary searches forms a monotonically sorted subsequence?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let k be the lowest common ancestor node in the binary search tree. Since i1 &lt; k &lt;= i2, the successful search for i1 verified a_{i1} &lt;= a_k (branching left), while the successful search for i2 verified a_k &lt;= a_{i2} (branching right). By transitivity of &lt;=, a_{i1} &lt;= a_{i2}.">A. For any two indices i1 &lt; i2 that both succeed, their search paths diverge at a lowest common ancestor pivot k where a_{i1} &lt;= a_k and a_k &lt;= a_{i2}, ensuring a_{i1} &lt;= a_{i2} by transitivity.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Binary search checks only O(log n) non-adjacent comparisons along its search path.">B. Binary search checks all n - 1 adjacent inequalities in the array simultaneously.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. An array with even a single inversion is not sorted; eps-far means modifying &gt; eps n elements is required.">C. Any array with fewer than eps n inversions is guaranteed to be completely sorted.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The birthday paradox collision principle is utilized in uniformity testing, not binary search sortedness testing.">D. The binary search tester relies on the birthday paradox to sample identical values.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="5">
+    <div class="note-quiz-question-title">In Morris's approximate counting algorithm, the counter C is incremented with probability 2^{-C}, and the estimate is \hat{A} = 2^C - 1. Why is the arithmetic mean of k = 10/\epsilon^2 independent Morris counters sufficient to achieve a (1 \pm \epsilon)-approximation with success probability at least 0.9?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. For a single Morris counter, E[\hat{A}] = A and Var(\hat{A}) = A(A-1)/2 &lt; A^2/2. Averaging k independent estimators reduces variance linearly by 1/k. Setting k = 10/\epsilon^2 gives Var(\bar{A}) &lt; \epsilon^2 A^2 / 20. By Chebyshev&#x27;s inequality, Pr(|\bar{A} - A| &gt;= \epsilon A) &lt;= Var(\bar{A}) / (\epsilon^2 A^2) &lt; 1/20 = 0.05 &lt; 0.1.">A. The estimator \hat{A} is unbiased with Var(\hat{A}) = A(A-1)/2 &lt; A^2/2; averaging k independent copies scales the variance down to &lt; A^2 / (2k) = \epsilon^2 A^2 / 20, and Chebyshev's inequality guarantees failure probability &lt;= Var(\bar{A}) / (\epsilon^2 A^2) &lt; 1/20 &lt; 0.1.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The arithmetic mean preserves the expectation: E[\bar{A}] = A.">B. Taking k = 10/\epsilon^2 counters increases the expectation by a factor of 1/\epsilon.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The counter register uses O(log log n) bits, and independence is strictly required across the k counters.">C. Because the counter register uses O(log n) bits, Chernoff bounds apply directly without independence.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Variance reduction in this stage is achieved via the arithmetic mean; the median trick boosts success probability rather than scaling variance.">D. The median of the counters reduces the variance by 2^{-C}.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="6">
+    <div class="note-quiz-question-title">In metric k-center clustering, why does a polynomial-time (2 - \epsilon)-approximation algorithm for any \epsilon &gt; 0 imply P = NP?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. In the metric completion of an unweighted graph where d(u, v) = 1 if (u, v) in E and d(u, v) = 2 otherwise, OPT = 1 if G has a dominating set of size &lt;= k, and OPT = 2 otherwise. A (2-\epsilon)-approximation algorithm outputs a solution of radius &lt; 2 * 1 = 2 when OPT = 1, perfectly deciding the NP-complete Dominating Set problem in polynomial time.">A. An instance of Dominating Set can be transformed into a metric space with distances 1 for edges and 2 for non-edges; an optimal radius of 1 corresponds to a dominating set of size &lt;= k, whereas non-existence forces radius 2. Any ratio &lt; 2 distinguishes between 1 and 2 in polynomial time, solving the NP-complete Dominating Set problem.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Gonzalez&#x27;s algorithm is a deterministic polynomial-time algorithm running in O(n k) time, but it achieves a 2-approximation, not &lt; 2.">B. Because Gonzalez's greedy farthest-first traversal algorithm runs in \Omega(2^n) exponential time when \epsilon &lt; 1.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The metric space axioms, including triangle inequality, are fully satisfied in the 1-2 distance metric.">C. Because the triangle inequality is violated whenever the approximation ratio drops below 2.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Inability to brute-force subset enumeration does not prove inapproximability; the hardness stems from the reduction from Dominating Set.">D. Because the number of possible cluster center subsets binom(n, k) cannot be enumerated in polynomial space.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>Morris, R. (1978). Counting large numbers of events in small registers. <em>Communications of the ACM</em>, 21(10), 840-842.</li>
+<li>Flajolet, P. (1985). Approximate counting: a detailed analysis. <em>BIT Numerical Mathematics</em>, 25(1), 113-134.</li>
+<li>Vitter, J. S. (1985). Random sampling with a reservoir. <em>ACM Transactions on Mathematical Software (TOMS)</em>, 11(1), 37-57.</li>
+<li>Peleg, D., &amp; Schäffer, A. A. (1989). Graph spanners. <em>Journal of Graph Theory</em>, 13(1), 99-116.</li>
+<li>Baswana, S., &amp; Sen, S. (2007). A simple and linear time randomized algorithm for computing sparse spanners in weighted graphs. <em>Random Structures &amp; Algorithms</em>, 30(4), 532-563.</li>
+<li>Bondy, J. A., &amp; Simonovits, M. (1974). Cycles of even length in graphs. <em>Journal of Combinatorial Theory, Series B</em>, 16(2), 97-105.</li>
+<li>Muthukrishnan, S. (2005). Data streams: Algorithms and applications. <em>Foundations and Trends in Theoretical Computer Science</em>, 1(2), 117-236.</li>
+<li>Chen, Y. (2025). <em>CS5234 Algorithms at Scale (Lecture 5: Streaming Algorithms)</em>. National University of Singapore (NUS).</li>
+</ol>
+
+<h1 class="mt-4">Week 6 - Clustering Algorithms: Metric k-Center, Streaming Approximations, Coreset Trees for k-Median, and Minimum Enclosing Ball</h1>
+
+<p class="mb-3">Clustering is a foundational primitive across machine learning, computational geometry, pattern recognition, and data compression. Given a collection of data points in a metric space, clustering algorithms partition the points into $k$ groups such that points within the same group are close to one another, while points in different groups are far apart.</p>
+
+<p class="mb-3">This technical note provides a comprehensive algorithmic treatment of clustering at scale: covering metric space formulations, the NP-hardness and inapproximability of $k$-center via 1-2 metrics, Gonzalez's farthest-first 2-approximation, streaming $k$-center via decision testing, streaming $k$-median coreset merge-and-reduce trees, and the Bădoiu-Clarkson dimension-independent core-set theorem for the Minimum Enclosing Ball (MEB) problem.</p>
+
+<hr>
+</section>
+
+<section id="1-the-metric-clustering-framework-objectives" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. The Metric Clustering Framework &amp; Objectives</h3>
+
+<h4 id="1-1-metric-spaces" class="mb-2">1.1 Metric Spaces</h4>
+
+<p class="mb-3">Let $P = \{p_1, p_2, \dots, p_n\}$ be a dataset of $n$ points equipped with a distance function $d: P \times P \to \mathbb{R}_{\ge 0}$. The pair $(P, d)$ forms a <strong>metric space</strong> if the distance function satisfies three fundamental axioms for all points $p_i, p_j, p_k \in P$:</p>
+
+<ol class="mb-3">
+<li><strong>Identity of Indiscernibles:</strong> $d(p_i, p_j) = 0 \iff p_i = p_j$.</li>
+<li><strong>Symmetry:</strong> $d(p_i, p_j) = d(p_j, p_i)$.</li>
+<li><strong>Triangle Inequality:</strong> $d(p_i, p_k) \le d(p_i, p_j) + d(p_j, p_k)$.</li>
+</ol>
+
+<hr>
+
+<h4 id="1-2-the-three-canonical-clustering-objectives" class="mb-2">1.2 The Three Canonical Clustering Objectives</h4>
+
+<p class="mb-3">Given $n$ points $P = \{p_1, \dots, p_n\}$ and an integer $k \ge 1$, the goal is to select a subset of $k$ points $\mathcal{C} = \{C_1, C_2, \dots, C_k\} \subseteq P$ (or from the ambient space) as <strong>centers</strong>. For each point $p_i \in P$, let $C(p_i) \in \mathcal{C}$ denote the closest center to $p_i$: $$C(p_i) = \arg\min_{C \in \mathcal{C}} d(p_i, C)$$</p>
+
+<p class="mb-3">Depending on how distances from points to their assigned centers are aggregated, the three classical clustering formulations are defined:</p>
+
+<div class="note-markdown-block"><pre><code>+---------------------------------------------------------------------------------------------------+
+|                               CANONICAL CLUSTERING OBJECTIVES                                     |
++-------------------+----------------------------------------------------+--------------------------+
+| Formulation       | Mathematical Objective Function                    | Sensitivity / Behavior   |
++-------------------+----------------------------------------------------+--------------------------+
+| k-Center          | \min_\mathcal{C} \max_{i=1}^n d(p_i, C(p_i))       | Minimizes worst-case     |
+|                   |                                                    | radius; outlier sensitive|
++-------------------+----------------------------------------------------+--------------------------+
+| k-Median          | \min_\mathcal{C} \sum_{i=1}^n d(p_i, C(p_i))       | L_1 norm; robust to      |
+|                   |                                                    | extreme outliers         |
++-------------------+----------------------------------------------------+--------------------------+
+| k-Means           | \min_\mathcal{C} \sum_{i=1}^n d(p_i, C(p_i))^2     | L_2^2 norm; penalizes    |
+|                   |                                                    | large deviations heavily |
++-------------------+----------------------------------------------------+--------------------------+</code></pre></div>
+
+<p class="mb-3">All three formulations are <strong>NP-hard</strong> in general metric spaces, necessitating the design of rigorous approximation and streaming algorithms.</p>
+
+<hr>
+</section>
+
+<section id="2-metric-k-center-hardness-approximation-limits" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Metric k-Center: Hardness &amp; Approximation Limits</h3>
+
+<h4 id="2-1-problem-formulation" class="mb-2">2.1 Problem Formulation</h4>
+
+<ul class="note-list">
+<li><strong>Input:</strong> $n$ points $P = \{p_1, \dots, p_n\}$ with metric distances $d(p_i, p_j)$, and an integer $k$.</li>
+<li><strong>Objective:</strong> Choose $k$ centers $\mathcal{C} \subseteq P$ to minimize the maximum cluster radius:</li>
+</ul>
+
+<p class="mb-3">$$\Phi_{\text{center}}(\mathcal{C}) = \max_{p_i \in P} d(p_i, C(p_i))$$</p>
+
+<hr>
+
+<h4 id="2-2-inapproximability-theorem-via-1-2-metric-reduction" class="mb-2">2.2 Inapproximability Theorem via 1-2 Metric Reduction</h4>
+
+<blockquote class="blockquote mb-3"><strong>Theorem (NP-Hardness of $(2 - \epsilon)$-Approximation):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">For any constant $\epsilon &gt; 0$, approximating the metric $k$-center problem to a factor strictly less than $2$ is <strong>NP-hard</strong>.</blockquote>
+
+<h5 class="mb-2">Proof via Reduction from Dominating Set:</h5>
+
+<p class="mb-3">We construct a polynomial-time reduction from the <strong>Dominating Set</strong> problem, which is known to be NP-complete.</p>
+
+<p class="mb-3"><strong>The Dominating Set Problem:</strong></p>
+
+<ul class="note-list">
+<li><em>Input:</em> An undirected graph $G = (V, E)$ and an integer $k$.</li>
+<li><em>Question:</em> Does there exist a dominating set $S \subseteq V$ with $|S| \le k$ such that every vertex $v \in V \setminus S$ has at least one neighbor in $S$?</li>
+</ul>
+
+<p class="mb-3"><strong>Metric Construction (The 1-2 Metric):</strong> Given graph $G = (V, E)$, construct a metric space on the point set $P = V$ by defining distance $d: V \times V \to \{0, 1, 2\}$: $$d(u, v) = \begin{cases} 0 &amp; \text{if } u = v \\ 1 &amp; \text{if } (u, v) \in E \\ 2 &amp; \text{if } (u, v) \notin E \text{ and } u \neq v \end{cases}$$</p>
+
+<p class="mb-3"><strong>Verification of Metric Axioms:</strong></p>
+
+<ol class="mb-3">
+<li>Non-negativity and identity are satisfied by construction.</li>
+<li>Symmetry holds because $G$ is undirected.</li>
+<li><strong>Triangle Inequality:</strong> For any three distinct vertices $u, v, w \in V$:</li>
+</ol>
+
+<ul class="note-list">
+<li>If $d(u, w) = 1$, then $d(u, v) + d(v, w) \ge 1 + 1 = 2 &gt; 1$.</li>
+<li>If $d(u, w) = 2$, since $d(u, v) \ge 1$ and $d(v, w) \ge 1$, their sum is $d(u, v) + d(v, w) \ge 2 = d(u, w)$.</li>
+</ul>
+
+<p class="mb-3">Thus, $(V, d)$ is a strictly valid metric space (called a <strong>1-2 metric</strong>).</p>
+
+<p class="mb-3"><strong>The Decision Threshold:</strong></p>
+
+<ul class="note-list">
+<li><strong>Case 1: $G$ has a dominating set of size $\le k$.</strong></li>
+</ul>
+
+<p class="mb-3">Let $S$ be this dominating set. Choose $\mathcal{C} = S$. For every vertex $v \in V$:</p>
+
+<ul class="note-list">
+<li>If $v \in S$, $d(v, C(v)) = d(v, v) = 0$.</li>
+<li>If $v \notin S$, since $S$ is a dominating set, $v$ has an adjacent neighbor $u \in S$, so $(u, v) \in E \implies d(v, u) = 1$.</li>
+</ul>
+
+<p class="mb-3">Therefore, the optimal $k$-center radius is: $$\text{OPT} \le 1$$</p>
+
+<ul class="note-list">
+<li><strong>Case 2: $G$ has no dominating set of size $\le k$.</strong></li>
+</ul>
+
+<p class="mb-3">For <em>any</em> choice of $k$ centers $\mathcal{C} \subseteq V$, since $\mathcal{C}$ is not a dominating set, there exists at least one vertex $w \in V \setminus \mathcal{C}$ that has no neighbor in $\mathcal{C}$. For this vertex $w$, $(w, c) \notin E$ for all $c \in \mathcal{C}$, which means $d(w, c) = 2$ for all $c \in \mathcal{C}$. Therefore, the $k$-center radius is: $$\text{OPT} = 2$$</p>
+
+<p class="mb-3"><strong>Gap Amplification:</strong> The optimal radius $\text{OPT}$ can only take values in $\{1, 2\}$: $$\text{OPT} = \begin{cases} 1 &amp; \text{if } G \text{ has a dominating set of size } \le k \\ 2 &amp; \text{if } G \text{ does not have a dominating set of size } \le k \end{cases}$$</p>
+
+<p class="mb-3">Suppose an algorithm $\mathcal{A}$ achieved an approximation ratio $\alpha &lt; 2$, so $\alpha = 2 - \epsilon$.</p>
+
+<ul class="note-list">
+<li>If $\text{OPT} = 1$, $\mathcal{A}$ outputs centers with cost $\le \alpha \cdot \text{OPT} = 2 - \epsilon &lt; 2$. Since all non-zero distances are integers in $\{1, 2\}$, the cost must be $\le 1$.</li>
+<li>If $\text{OPT} = 2$, $\mathcal{A}$ outputs centers with cost $\ge \text{OPT} = 2$.</li>
+</ul>
+
+<p class="mb-3">By running $\mathcal{A}$, if the output cost is $\le 1$, we output "Yes"; if the output cost is $\ge 2$, we output "No". This decides Dominating Set in polynomial time, proving $\text{P} = \text{NP}$.</p>
+
+<blockquote class="blockquote mb-3"><strong>Conclusion:</strong></blockquote>
+
+<blockquote class="blockquote mb-3">A factor of <strong>$2$</strong> is the absolute theoretical barrier for polynomial-time metric $k$-center approximation!</blockquote>
+
+<hr>
+</section>
+
+<section id="3-the-gonzalez-greedy-2-approximation-algorithm" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. The Gonzalez Greedy 2-Approximation Algorithm</h3>
+
+<p class="mb-3">Teofilo Gonzalez (1985) introduced a simple, deterministic greedy algorithm that matches the theoretical lower bound of 2 exactly.</p>
+
+<h4 id="3-1-the-farthest-first-traversal-algorithm" class="mb-2">3.1 The Farthest-First Traversal Algorithm</h4>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Gonzalez-Greedy-k-Center(P, k)
+1. Select an arbitrary point p \in P as the first center: C_1 &lt;- p.
+2. Initialize center set \mathcal{C}_1 &lt;- {C_1}.
+3. For i = 2, 3, ..., k:
+4.     Find the point in P that is FARTHEST from the current set of centers:
+           C_i &lt;- \arg\max_{p \in P} \left( \min_{j &lt; i} d(p, C_j) \right)
+5.     Add C_i to the center set: \mathcal{C}_i &lt;- \mathcal{C}_{i-1} \cup {C_i}.
+6. Output \mathcal{C} = {C_1, C_2, \dots, C_k}.</code></pre></div>
+
+<hr>
+
+<h4 id="3-2-tight-2-approximation-proof" class="mb-2">3.2 Tight 2-Approximation Proof</h4>
+
+<p class="mb-3">Let $\mathcal{C}^<em> = \{C_1^</em>, C_2^<em>, \dots, C_k^</em>\}$ be an optimal set of $k$ centers, with optimal radius: $$R^<em> = \text{OPT} = \max_{p \in P} d(p, C^</em>(p))$$ This partitions $P$ into $k$ optimal clusters $P_1^<em>, P_2^</em>, \dots, P_k^<em>$, where each cluster $P_j^</em>$ is contained within a ball of radius $R^<em>$ centered at $C_j^</em>$.</p>
+
+<div class="note-markdown-block"><pre><code>Optimal Cluster j with Center C_j^*:
+          p o--------------------o C_j^* --------------------o q
+             \     &lt;= R^*      /         \      &lt;= R^*     /
+              \               /           \               /
+               \-------------/             \-------------/
+                       d(p, q) &lt;= d(p, C_j^*) + d(q, C_j^*) &lt;= 2 R^*</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>The $(k+1)$-th Farthest Point:</strong></li>
+</ol>
+
+<p class="mb-3">Consider what would happen if the greedy algorithm executed one additional step (step $k+1$): Let $C_{k+1}$ be the point in $P$ farthest from the chosen centers $\mathcal{C} = \{C_1, \dots, C_k\}$: $$r = \min_{j=1}^k d(C_{k+1}, C_j) = \max_{p \in P} \min_{C \in \mathcal{C}} d(p, C)$$ The distance $r$ is precisely the <strong>cost of the algorithm's clustering</strong>.</p>
+
+<ol class="mb-3">
+<li><strong>Applying the Pigeonhole Principle:</strong></li>
+</ol>
+
+<p class="mb-3">Examine the set of $k + 1$ points: $$\mathcal{S} = \{C_1, C_2, \dots, C_k, C_{k+1}\}$$ Since there are $k+1$ points distributed across $k$ optimal clusters, by the <strong>Pigeonhole Principle</strong>, at least two points in $\mathcal{S}$—denote them $p$ and $q$—must belong to the <strong>same optimal cluster</strong> $P_j^*$.</p>
+
+<ol class="mb-3">
+<li><strong>Bounding Distance via Triangle Inequality:</strong></li>
+</ol>
+
+<p class="mb-3">Since both $p$ and $q$ belong to the optimal cluster centered at $C_j^<em>$: $$d(p, C_j^</em>) \le R^<em> \quad \text{and} \quad d(q, C_j^</em>) \le R^<em>$$ By the triangle inequality: $$d(p, q) \le d(p, C_j^</em>) + d(q, C_j^<em>) \le R^</em> + R^<em> = 2 R^</em>$$</p>
+
+<ol class="mb-3">
+<li><strong>Connecting with Greedy Choices:</strong></li>
+</ol>
+
+<p class="mb-3">Without loss of generality, suppose $p$ was selected before $q$ by the greedy algorithm. When $q$ was selected, its distance to all previously chosen centers (which included $p$) was at least the minimum pairwise distance among all points selected up to that point. Because points were chosen in strictly non-increasing order of their distance to existing centers: $$d(p, q) \ge d(q, \text{centers before } q) \ge r$$ Combining the inequalities: $$r \le d(p, q) \le 2 R^* = 2 \cdot \text{OPT} \quad \blacksquare$$</p>
+
+<blockquote class="blockquote mb-3"><strong>Theorem:</strong></blockquote>
+
+<blockquote class="blockquote mb-3">The Gonzalez greedy algorithm produces a solution with radius at most $2 \cdot \text{OPT}$, matching the optimal polynomial-time approximation bound.</blockquote>
+
+<hr>
+
+<h4 id="3-3-query-algorithm-complexity" class="mb-2">3.3 Query Algorithm Complexity</h4>
+
+<p class="mb-3">Suppose we access the dataset via a <strong>distance oracle</strong>: given point indices $i, j$, the oracle returns $d(p_i, p_j)$ in $\mathcal{O}(1)$ time.</p>
+
+<ul class="note-list">
+<li>To simulate the Gonzalez greedy algorithm:</li>
+</ul>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong>Pick $C_1$ arbitrarily. Initialize an array $D[1 \dots n]$ storing $D[i] = d(p_i, C_1)$, taking $n$ queries.</strong><br>
+  
+  
+</li>
+<li>
+  <strong>In round $j$ ($2 \le j \le k$):</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Identify $C_j = \arg\max_{i} D[i]$ in $\mathcal{O}(n)$ time without queries.</li>
+<li>Query $d(p_i, C_j)$ for all $i \in \{1, \dots, n\}$ ($n$ oracle queries).</li>
+<li>Update minimum distances: $D[i] \leftarrow \min(D[i], d(p_i, C_j))$.</li>
+</ul>
+</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>Total Query Complexity:</strong> $k$ rounds $\times n$ queries per round = $\mathcal{O}(nk)$ queries.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="4-streaming-k-center-in-euclidean-bounded-spaces" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Streaming k-Center in Euclidean Bounded Spaces</h3>
+
+<p class="mb-3">In the streaming setting, points $p_1, p_2, \dots, p_n$ arrive one by one. In general metric spaces without random access, simulating the farthest-first traversal is impossible because we cannot retroactively inspect previously discarded points.</p>
+
+<p class="mb-3">Suppose all points lie in the bounded Euclidean grid $P \subset [\Delta] \times [\Delta]$ with Euclidean distance $d(p_i, p_j) = \|p_i - p_j\|_2$.</p>
+
+<h4 id="4-1-reduction-to-a-decision-testing-problem" class="mb-2">4.1 Reduction to a Decision Testing Problem</h4>
+
+<p class="mb-3">We first solve the <strong>decision version</strong> of the problem with a fixed guess threshold $T &gt; 0$:</p>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Test-k-Center(T)
+1. Initialize center set \mathcal{C} &lt;- \emptyset.
+2. For each arriving point p:
+3.     If there exists C \in \mathcal{C} such that d(p, C) &lt;= 2T:
+4.         Skip p (p is already covered within radius 2T).
+5.     Else:
+6.         If |\mathcal{C}| &lt; k:
+7.             \mathcal{C} &lt;- \mathcal{C} \cup {p}
+8.         Else (|\mathcal{C}| == k and d(p, C) &gt; 2T for all C \in \mathcal{C}):
+9.             Output "No" (OPT &gt; T) and HALT.
+10. At the end of the stream:
+11.    Output the stored centers \mathcal{C}.</code></pre></div>
+
+<h5 class="mb-2">Analysis of the Tester:</h5>
+
+<ol class="mb-3">
+<li><strong>If the algorithm outputs centers $\mathcal{C}$:</strong></li>
+</ol>
+
+<p class="mb-3">Every stream point $p$ is either added to $\mathcal{C}$ or discarded because it was within distance $\le 2T$ of some center in $\mathcal{C}$. Thus, $\mathcal{C}$ covers all points within radius $2T$.</p>
+
+<ol class="mb-3">
+<li><strong>If the algorithm outputs "No":</strong></li>
+</ol>
+
+<p class="mb-3">The algorithm accumulated $k$ centers $C_1, \dots, C_k$ and then encountered a point $p$ such that all $k + 1$ points in $\mathcal{C} \cup \{p\}$ have pairwise distances strictly greater than $2T$: $$d(u, v) &gt; 2T \quad \text{for all distinct } u, v \in \mathcal{C} \cup \{p\}$$ Any single optimal center $C^<em>$ can cover at most one point from this set within radius $T$ (by the triangle inequality, if $C^</em>$ covered two points, their distance would be $\le 2T$). Since there are $k + 1$ points, <strong>no $k$ centers can cover them within radius $T$</strong>. Therefore, $\text{OPT} &gt; T$!</p>
+
+<ol class="mb-3">
+<li><strong>Space Complexity:</strong> Storing $k$ points in $[\Delta]^2$ takes $\mathcal{O}(k \log \Delta)$ bits.</li>
+</ol>
+
+<hr>
+
+<h4 id="4-2-a-2-2-epsilon-approximation-streaming-algorithm" class="mb-2">4.2 A $(2 + 2\epsilon)$-Approximation Streaming Algorithm</h4>
+
+<p class="mb-3">To find the optimal radius without knowing $\text{OPT}$ in advance, we run multiple testing instances in parallel over an exponential geometric grid of guesses:</p>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Streaming-k-Center-Approximation(\epsilon)
+1. Let T_j = (1 + \epsilon)^j for j = 0, 1, 2, ..., M, where M = O(\frac{\log \Delta}{\epsilon}).
+2. Instantiate M parallel instances of Test-k-Center(T_j).
+3. Feed each arriving stream point p to all M testing instances.
+4. At stream end:
+5.     Let T^* be the smallest threshold for which Test-k-Center(T^*) did NOT output "No".
+6.     Output the centers stored by instance Test-k-Center(T^*).</code></pre></div>
+
+<h5 class="mb-2">Correctness and Approximation Ratio:</h5>
+
+<ul class="note-list">
+<li>Since $\text{Test-}k\text{-Center}(T^<em>)$ did not output "No", all input points are within distance $2 T^</em>$ of its centers.</li>
+<li>Since any instance with $T &lt; \text{OPT}/2$ would encounter $\text{OPT} &gt; 2T$ and output "No", we must have:</li>
+</ul>
+
+<p class="mb-3">$$T^* \ge \frac{\text{OPT}}{2}$$</p>
+
+<ul class="note-list">
+<li>Let $T_{\text{target}}$ be the smallest guess in our geometric grid such that $T_{\text{target}} \ge \text{OPT}$.</li>
+</ul>
+
+<p class="mb-3">By the density of the geometric progression: $$T_{\text{target}} \le (1 + \epsilon) \cdot \text{OPT}$$</p>
+
+<ul class="note-list">
+<li>Since $T_{\text{target}} \ge \text{OPT}$, its tester will not output "No". Because $T^<em>$ is the </em>smallest* threshold that did not output "No":</li>
+</ul>
+
+<p class="mb-3">$$T^* \le T_{\text{target}} \le (1 + \epsilon) \cdot \text{OPT}$$</p>
+
+<ul class="note-list">
+<li>Therefore, the radius achieved by the output centers is at most:</li>
+</ul>
+
+<p class="mb-3">$$\text{Radius} \le 2 T^* \le 2(1 + \epsilon) \cdot \text{OPT} = (2 + 2\epsilon) \cdot \text{OPT}$$</p>
+
+<h5 class="mb-2">Space Complexity:</h5>
+
+<ul class="note-list">
+<li>Minimum non-zero distance is $1$; maximum distance is $\sqrt{2} \Delta = \mathcal{O}(\Delta)$.</li>
+<li>Number of parallel instances: $M = \mathcal{O}\left( \frac{\log \Delta}{\epsilon} \right)$.</li>
+<li>Each instance stores at most $k$ points:</li>
+</ul>
+
+<p class="mb-3">$$\text{Total Space} = \mathcal{O}\left( \frac{k}{\epsilon} \log \Delta \right) \text{ points} = \mathcal{O}\left( \frac{k}{\epsilon} \log^2 \Delta \right) \text{ bits}$$</p>
+
+<hr>
+</section>
+
+<section id="5-streaming-k-median-via-hierarchical-coreset-trees" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Streaming k-Median via Hierarchical Coreset Trees</h3>
+
+<h4 id="5-1-problem-formulation-discrete-vs-unrestricted-centers" class="mb-2">5.1 Problem Formulation &amp; Discrete vs. Unrestricted Centers</h4>
+
+<ul class="note-list">
+<li><strong>The $k$-Median Objective:</strong> Given $n$ points $P \subset [\Delta]^2$, choose $k$ centers $\mathcal{C} \subseteq P$ to minimize the sum of distances:</li>
+</ul>
+
+<p class="mb-3">$$\Phi_{\text{median}}(\mathcal{C}) = \sum_{p_i \in P} d(p_i, C(p_i))$$</p>
+
+<ul class="note-list">
+<li>Inapproximability: Getting an approximation ratio better than $1 + 2/e \approx 1.736$ is NP-hard.</li>
+<li><strong>Unrestricted vs. Discrete Centers:</strong></li>
+</ul>
+
+<p class="mb-3">Let $\text{OPT}(P)$ be the optimal cost when centers must be chosen from $P$. Let $\text{OPT}^*(P)$ be the optimal cost if centers can be chosen anywhere in the continuous Euclidean plane $\mathbb{R}^2$.</p>
+
+<blockquote class="blockquote mb-3"><strong>Lemma (Discrete vs. Unrestricted):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">$$\text{OPT}(P) \le 2 \cdot \text{OPT}^*(P)$$</blockquote>
+
+<p class="mb-3"><em>Proof:</em> Take the unrestricted optimal centers $C_1^<em>, \dots, C_k^</em>$. For each $C_j^*$, shift it to the closest point in $P$ belonging to its cluster. By the triangle inequality, moving the center increases the total distance of points in that cluster by at most the distance to the shift point, at most doubling the total cost. $\blacksquare$</p>
+
+<hr>
+
+<h4 id="5-2-the-2-level-coreset-streaming-algorithm-guha-et-al-2000" class="mb-2">5.2 The 2-Level Coreset Streaming Algorithm (Guha et al., 2000)</h4>
+
+<p class="mb-3">We convert any offline $\alpha$-approximation $k$-median algorithm into a streaming algorithm by sacrificing approximation factor to save memory:</p>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Streaming-k-Median-2Level(P, k)
+1. Initialize coreset S &lt;- \emptyset.
+2. Partition the stream into \sqrt{n/k} consecutive chunks P_1, P_2, ..., P_{\sqrt{n/k}},
+   each containing m = \sqrt{nk} points.
+3. For each chunk P_j:
+4.     Run the offline \alpha-approximation algorithm on P_j to compute k centers.
+5.     For each center c, compute its weight w_c = number of points in P_j assigned to c.
+6.     Add the k weighted centers to S: S &lt;- S \cup {(c, w_c)}.
+7. Run the \alpha-approximation algorithm on the weighted coreset S to find the final k centers \mathcal{C}.
+8. Output \mathcal{C}.</code></pre></div>
+
+<div class="note-markdown-block"><pre><code>2-Level Coreset Tree Architecture:
+  Stream:  [  P_1 (size \sqrt{nk})  ]   [  P_2 (size \sqrt{nk})  ] ... [  P_m  ]
+                   |                             |
+                   v (\alpha-approx)             v (\alpha-approx)
+  Coreset S:  [ k centers, weights ]   +   [ k centers, weights ]   ...
+                   \______________________________/
+                                  |
+                                  v (\alpha-approx on S)
+                      [ Final k Centers \mathcal{C} ]</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Working Space:</strong> The coreset $S$ contains $\sqrt{n/k} \times k = \sqrt{nk}$ points. Storing one chunk plus $S$ takes $\mathcal{O}(\sqrt{nk})$ points.</li>
+</ul>
+
+<hr>
+
+<h4 id="5-3-approximation-ratio-proof-4-alpha-2-4-alpha" class="mb-2">5.3 Approximation Ratio Proof: $(4\alpha^2 + 4\alpha)$</h4>
+
+<p class="mb-3">For every point $p_i \in P$:</p>
+
+<ul class="note-list">
+<li>Let $s_i \in S$ be the coreset center that represents $p_i$ in its chunk.</li>
+<li>Let $C_i \in \mathcal{C}$ be the final center assigned to $s_i$.</li>
+<li>Let $C_i^*$ be the center assigned to $p_i$ in the global optimal solution.</li>
+</ul>
+
+<p class="mb-3">By the triangle inequality: $$d(p_i, C_i) \le d(p_i, s_i) + d(s_i, C_i)$$ Summing over all $n$ points: $$\sum_{i=1}^n d(p_i, C_i) \le \sum_{i=1}^n d(p_i, s_i) + \sum_{i=1}^n d(s_i, C_i)$$</p>
+
+<ol class="mb-3">
+<li><strong>Bounding the First Term (Chunk Representation Error):</strong></li>
+</ol>
+
+<p class="mb-3">Within each chunk $P_j$, the $\alpha$-approximation algorithm ensures: $$\sum_{p_i \in P_j} d(p_i, s_i) \le \alpha \cdot \text{OPT}(P_j) \le 2\alpha \cdot \text{OPT}^<em>(P_j)$$ Summing across all chunks: $$\sum_{i=1}^n d(p_i, s_i) = \sum_{j} \sum_{p_i \in P_j} d(p_i, s_i) \le 2\alpha \sum_j \text{OPT}^</em>(P_j) \le 2\alpha \cdot \text{OPT}^*(P) \le 2\alpha \cdot \text{OPT}$$</p>
+
+<ol class="mb-3">
+<li><strong>Bounding the Second Term (Coreset Clustering Error):</strong></li>
+</ol>
+
+<p class="mb-3">Clustering the weighted coreset $S$ with the $\alpha$-approximation algorithm ensures: $$\sum_{i=1}^n d(s_i, C_i) \le \alpha \cdot \text{OPT}(S) \le 2\alpha \cdot \text{OPT}^<em>(S)$$ Now evaluate the cost of clustering $S$ using the </em><em>global optimal centers</em><em> $\{C_i^</em>\}$: $$\text{OPT}^<em>(S) \le \sum_{i=1}^n d(s_i, C_i^</em>)$$ Applying the triangle inequality: $$d(s_i, C_i^<em>) \le d(s_i, p_i) + d(p_i, C_i^</em>)$$ Summing over all points: $$\text{OPT}^<em>(S) \le \sum_{i=1}^n d(s_i, p_i) + \sum_{i=1}^n d(p_i, C_i^</em>) \le 2\alpha \cdot \text{OPT} + \text{OPT} = (2\alpha + 1) \cdot \text{OPT}$$ Substituting this back into the coreset clustering bound: $$\sum_{i=1}^n d(s_i, C_i) \le 2\alpha \cdot \text{OPT}^*(S) \le 2\alpha (2\alpha + 1) \cdot \text{OPT} = (4\alpha^2 + 2\alpha) \cdot \text{OPT}$$</p>
+
+<ol class="mb-3">
+<li><strong>Combining Both Bounds:</strong></li>
+</ol>
+
+<p class="mb-3">$$\sum_{i=1}^n d(p_i, C_i) \le 2\alpha \cdot \text{OPT} + (4\alpha^2 + 2\alpha) \cdot \text{OPT} = (4\alpha^2 + 4\alpha) \cdot \text{OPT} \quad \blacksquare$$</p>
+
+<hr>
+
+<h4 id="5-4-multi-level-merge-and-reduce-trees-l-levels" class="mb-2">5.4 Multi-Level Merge-and-Reduce Trees ($L$ Levels)</h4>
+
+<p class="mb-3">By generalizing the 2-level architecture into a balanced $L$-level tree:</p>
+
+<ul class="note-list">
+<li>Chunks of size $\mathcal{O}(k \cdot n^{1/L})$ are clustered at Level 1 into $k$ weighted centers.</li>
+<li>Every $n^{1/L}$ sets of Level 1 centers are merged and re-clustered at Level 2 into $k$ centers with combined weights.</li>
+<li>Repeating this recursively across $L$ hierarchical levels:
+<ul class="note-list">
+<li><strong>Approximation Ratio:</strong> $(4\alpha + 4)^L$.</li>
+<li><strong>Working Memory:</strong> $\mathcal{O}\left( L k \cdot n^{1/L} \right)$ points.</li>
+</ul></li>
+<li>Setting $L = \mathcal{O}(1/\epsilon)$ achieves sublinear or polylogarithmic working memory!</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="6-1-center-on-a-plane-minimum-enclosing-ball-meb-coresets" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. 1-Center on a Plane: Minimum Enclosing Ball (MEB) &amp; Coresets</h3>
+
+<h4 id="6-1-problem-formulation-extremal-geometry" class="mb-2">6.1 Problem Formulation &amp; Extremal Geometry</h4>
+
+<ul class="note-list">
+<li><strong>Input:</strong> $n$ points $P = \{p_1, \dots, p_n\} \subset \mathbb{R}^2$ in the Euclidean plane.</li>
+<li><strong>Objective:</strong> Find a center point $C \in \mathbb{R}^2$ minimizing the maximum Euclidean distance to all points (the <strong>Minimum Enclosing Ball (MEB)</strong> problem):</li>
+</ul>
+
+<p class="mb-3">$$\min_{C \in \mathbb{R}^2} \max_{p_i \in P} \|p_i - C\|_2$$</p>
+
+<ul class="note-list">
+<li>Let $R$ denote the radius of the true optimal MEB ball $\mathcal{B}(C^*, R)$ covering all points $P$.</li>
+</ul>
+
+<h5 class="mb-2">The Boundary Support Lemma</h5>
+
+<blockquote class="blockquote mb-3"><strong>Lemma (Half-Plane Boundary Support):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">Consider the optimal MEB circle $\mathcal{B}(C^<em>, R)$. For </em><em>any</em><em> closed half-plane whose boundary line passes through the center $C^</em>$, there is at least one point of $P$ on the boundary of the ball $\partial \mathcal{B}$.</blockquote>
+
+<div class="note-markdown-block"><pre><code>                 MEB Boundary Extremal Property:
+                         . - ~ ~ ~ - .
+                     . '       |       ' .
+                   /           |     q   \   &lt;- Point q on boundary
+                  /            |          \
+                 |      H_1    C*   H_2    |
+                  \            |          /
+                   \           |         /
+                     . '       |       ' .
+                         ' - _ _ _ - '
+                   Boundary Line through C*</code></pre></div>
+
+<p class="mb-3"><em>Proof:</em> Suppose for contradiction that there exists a half-plane $H_1$ through $C^<em>$ containing no boundary points of $P$. Then all boundary points lie strictly in the open interior of the opposite half-plane $H_2$. We can translate the center $C^</em>$ by an infinitesimally small distance $\epsilon &gt; 0$ directly into $H_2$ along the normal vector to the dividing line. In doing so, the distances to all boundary points strictly decrease, while the distances to points in $H_1$ remain strictly less than $R$. Consequently, we can shrink the radius $R$ to $R - \delta$ for some $\delta &gt; 0$ and still cover all points in $P$. This contradicts the minimality of $R$! $\blacksquare$</p>
+
+<ul class="note-list">
+<li><strong>Corollary:</strong> The boundary $\partial \mathcal{B}$ must contain either at least 3 points, or 2 antipodal points (opposite ends of a diameter).</li>
+</ul>
+
+<hr>
+
+<h4 id="6-2-the-b-doiu-clarkson-greedy-core-set-algorithm-2002" class="mb-2">6.2 The Bădoiu-Clarkson Greedy Core-Set Algorithm (2002)</h4>
+
+<div class="note-markdown-block"><pre><code>Algorithm: Badoiu-Clarkson-MEB(P, \epsilon)
+1. Pick an arbitrary point p \in P as the initial core-set: S_1 &lt;- {p}.
+2. Set t = \lceil 10 / \epsilon \rceil.
+3. For i = 1, 2, ..., t:
+4.     Compute the exact MEB of the small active set S_i:
+           Let C_i be its center, and r_i be its radius.
+5.     Find the point in P farthest from C_i:
+           p^* &lt;- \arg\max_{p \in P} d(p, C_i)
+6.     Let D_i = d(p^*, C_i).
+7.     Update the active set: S_{i+1} &lt;- S_i \cup {p^*}.
+8. Let D = \min_{1 \le i \le t} D_i.
+9. Output the center C_{i^*} corresponding to D = D_{i^*}.</code></pre></div>
+
+<hr>
+
+<h4 id="6-3-mathematical-convergence-proof" class="mb-2">6.3 Mathematical Convergence Proof</h4>
+
+<p class="mb-3">Let $R$ be the radius of $\text{MEB}(P)$. Let $r_i$ be the radius of $\text{MEB}(S_i)$. Let $D = \min_{1 \le j \le t} D_j$. For every step $i$: $$r_i \le R \le D \le D_i$$ Define the normalized radius ratio: $$\lambda_i = \frac{r_i}{D} \in [0, 1]$$</p>
+
+<h5 class="mb-2">Step 1: Proving the Recurrence $\lambda_{i+1} \ge \frac{1 + \lambda_i^2}{2}$</h5>
+
+<p class="mb-3">Fix iteration $i$. Let $p$ be the farthest point from $C_i$, so $d(p, C_i) \ge D_i \ge D$. When forming $S_{i+1} = S_i \cup \{p\}$, the new MEB center is $C_{i+1}$ with radius $r_{i+1}$:</p>
+
+<ol class="mb-3">
+<li>Since $p \in S_{i+1}$:</li>
+</ol>
+
+<p class="mb-3">$$r_{i+1} \ge d(p, C_{i+1}) \ge d(p, C_i) - d(C_i, C_{i+1}) \ge D - d(C_i, C_{i+1})$$</p>
+
+<ol class="mb-3">
+<li>Consider the half-plane through $C_i$ whose normal points directly away from $C_{i+1}$.</li>
+</ol>
+
+<p class="mb-3">By the Half-Plane Boundary Support Lemma, there exists a point $q \in S_i$ on the boundary of $\text{MEB}(S_i)$ located in this opposite half-plane. Because $q$ lies in the opposite half-plane, the angle $\angle C_{i+1} C_i q \ge 90^\circ$. By the law of cosines: $$d(q, C_{i+1})^2 = r_i^2 + d(C_i, C_{i+1})^2 - 2 r_i d(C_i, C_{i+1}) \cos(\angle C_{i+1} C_i q) \ge r_i^2 + d(C_i, C_{i+1})^2$$ Since $q \in S_i \subset S_{i+1}$, the new radius must cover $q$: $$r_{i+1} \ge d(q, C_{i+1}) \ge \sqrt{r_i^2 + d(C_i, C_{i+1})^2}$$</p>
+
+<p class="mb-3">Normalize all terms by dividing by $D$. Let $a = \frac{d(C_i, C_{i+1})}{D} \ge 0$: $$\lambda_{i+1} \ge \max\left( 1 - a, \, \sqrt{\lambda_i^2 + a^2} \right)$$ The worst-case lower bound occurs when $1 - a = \sqrt{\lambda_i^2 + a^2}$: $$(1 - a)^2 = \lambda_i^2 + a^2 \implies 1 - 2a + a^2 = \lambda_i^2 + a^2 \implies 2a = 1 - \lambda_i^2 \implies a = \frac{1 - \lambda_i^2}{2}$$ Substituting $a$ back: $$\lambda_{i+1} \ge 1 - \frac{1 - \lambda_i^2}{2} = \frac{1 + \lambda_i^2}{2}$$</p>
+
+<h5 class="mb-2">Step 2: Rate of Convergence</h5>
+
+<p class="mb-3">Let $x_i = 1 - \lambda_i$. Since $S_1 = \{p\}$, $r_1 = 0 \implies \lambda_1 = 0 \implies x_1 = 1$. $$x_{i+1} = 1 - \lambda_{i+1} \le 1 - \frac{1 + \lambda_i^2}{2} = \frac{1 - \lambda_i^2}{2} = \frac{(1 - \lambda_i)(1 + \lambda_i)}{2} = x_i \cdot \frac{2 - x_i}{2} = x_i \left( 1 - \frac{x_i}{2} \right)$$</p>
+
+<p class="mb-3">Taking reciprocals: $$\frac{1}{x_{i+1}} \ge \frac{1}{x_i (1 - x_i / 2)} = \frac{1}{x_i} \left( 1 + \frac{x_i / 2}{1 - x_i / 2} \right) = \frac{1}{x_i} + \frac{1}{2(1 - x_i / 2)} \ge \frac{1}{x_i} + \frac{1}{2}$$</p>
+
+<p class="mb-3">By induction across $t$ iterations: $$\frac{1}{x_t} \ge \frac{1}{x_1} + \frac{t - 1}{2} = 1 + \frac{t - 1}{2} \ge \frac{t}{2}$$</p>
+
+<p class="mb-3">When $t \ge \frac{10}{\epsilon}$: $$\frac{1}{x_t} \ge \frac{5}{\epsilon} \implies x_t \le \frac{\epsilon}{5}$$ $$\lambda_t = 1 - x_t \ge 1 - \frac{\epsilon}{5} &gt; \frac{1}{1 + \epsilon}$$</p>
+
+<p class="mb-3">Since $\lambda_t = \frac{r_t}{D}$: $$\frac{r_t}{D} &gt; \frac{1}{1 + \epsilon} \implies D \le (1 + \epsilon) r_t \le (1 + \epsilon) R \quad \blacksquare$$</p>
+
+<blockquote class="blockquote mb-3"><strong>Theorem (Bădoiu-Clarkson Core-Set Theorem):</strong></blockquote>
+
+<blockquote class="blockquote mb-3">For any set of $n$ points in Euclidean space $\mathbb{R}^d$ and any $\epsilon &gt; 0$, there exists a subset (an $\epsilon$-coreset) $S \subset P$ of size $|S| = \mathcal{O}(1/\epsilon)$ such that:</blockquote>
+
+<blockquote class="blockquote mb-3">$$\text{Radius}(\text{MEB}(S)) \le \text{Radius}(\text{MEB}(P)) \le (1 + \epsilon) \cdot \text{Radius}(\text{MEB}(S))$$</blockquote>
+
+<blockquote class="blockquote mb-3">Crucially, the size of the core-set $\mathcal{O}(1/\epsilon)$ is <strong>completely independent of the number of points $n$ and the ambient dimension $d$</strong>!</blockquote>
+
+<hr>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--quiz-tab" data-bs-toggle="tab" data-bs-target="#review-kit--quiz-pane" type="button" role="tab" aria-controls="review-kit--quiz-pane" aria-selected="false">Quick Quiz</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>Metric Clustering Objectives:</strong> $k$-center minimizes the maximum distance ($\max_i d(p_i, C(p_i))$), $k$-median minimizes the $L_1$ sum ($\sum_i d(p_i, C(p_i))$), and $k$-means minimizes the $L_2^2$ sum ($\sum_i d(p_i, C(p_i))^2$).</li>
+<li><strong>Inapproximability of $k$-Center:</strong> Reduction from Dominating Set using a 1-2 metric proves that no polynomial-time $(2 - \epsilon)$-approximation exists for metric $k$-center unless $\text{P} = \text{NP}$.</li>
+<li><strong>Gonzalez 2-Approximation:</strong> Farthest-first greedy traversal chooses points maximizing distance to existing centers. By the Pigeonhole Principle on $k+1$ points, two must share an optimal cluster, guaranteeing an optimal 2-approximation in $\mathcal{O}(nk)$ distance queries.</li>
+<li><strong>Streaming $k$-Center via Testing:</strong> Converts $k$-center into decision testing for threshold $T$. Running $\mathcal{O}\left(\frac{\log \Delta}{\epsilon}\right)$ parallel testers over geometric guesses $T = (1+\epsilon)^j$ achieves a $(2 + 2\epsilon)$-approximation in $\mathcal{O}\left(\frac{k}{\epsilon} \log^2 \Delta\right)$ bits.</li>
+<li><strong>Streaming $k$-Median via Coreset Trees:</strong> The 2-level streaming algorithm partitions streams into chunks of size $\sqrt{nk}$, computes $\alpha$-approximate centers with cluster weights, and re-clusters the coreset $S$, yielding a $(4\alpha^2 + 4\alpha)$-approximation in $\mathcal{O}(\sqrt{nk})$ space. An $L$-level tree achieves $(4\alpha + 4)^L$ approximation in $\mathcal{O}(L k n^{1/L})$ space.</li>
+<li><strong>Minimum Enclosing Ball (MEB) 1-Center:</strong> By the half-plane boundary support lemma, any half-plane through the MEB center contains a support point.</li>
+<li><strong>Bădoiu-Clarkson Core-Sets:</strong> Greedily accumulating the farthest point yields a $(1 + \epsilon)$-approximation in $t = \mathcal{O}(1/\epsilon)$ steps. The resulting core-set size $\mathcal{O}(1/\epsilon)$ is completely independent of both dataset size $n$ and ambient dimension $d$.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-quiz" id="review-kit--quiz-pane" role="tabpanel" aria-labelledby="review-kit--quiz-tab" tabindex="0">
+<div class="note-quiz">
+  <div class="note-quiz-header">
+    <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
+    <div class="note-quiz-controls">
+      <div class="note-quiz-progress" aria-live="polite">1 / 6</div>
+      <button type="button" class="note-quiz-reset">Reset</button>
+    </div>
+  </div>
+  <div class="carousel slide note-quiz-carousel" data-bs-ride="false" data-bs-interval="false" data-bs-touch="true">
+    <div class="carousel-inner">
+<div class="carousel-item active">
+  <div class="note-quiz-question" data-question="1">
+    <div class="note-quiz-question-title">When 10 n ln(n) balls are thrown uniformly and independently at random into n bins, why is the probability of having at least one empty bin upper-bounded by n^{-9}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. For any single bin, the probability of receiving zero balls is (1 - 1/n)^{10 n ln n} &lt; e^{-10 ln n} = n^{-10}. Summing this failure bound across all n bins via the Union Bound gives n * n^{-10} = n^{-9}.">A. Each individual bin has an empty probability &lt; (1/e)^{10 ln n} = n^{-10}, and applying the Union Bound across all n bins yields n * n^{-10} = n^{-9}.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Bin occupancies are negatively correlated, not mutually independent; the Union Bound does not require independence.">B. Because bin occupancies are mutually independent, the product of probabilities yields n^{-9}.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Markov&#x27;s inequality provides only a linear 1/alpha bound, which cannot yield inverse polynomial powers like n^{-9}.">C. Markov's inequality directly bounds the maximum bin load by n^{-9}.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality guarantees only polynomial decay O(1/log n), not exponential n^{-c} bounds.">D. Chebyshev's inequality guarantees exponential tail bounds for coupon collection.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="2">
+    <div class="note-quiz-question-title">Why does taking the sample median of k independent repetitions of an estimator with constant success probability 2/3 boost the success probability exponentially to 1 - 2 e^{-k/100}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. If an individual trial fails with probability &lt;= 1/3, the expected number of failing trials in k runs is &lt;= k/3. For the median to deviate, at least k/2 trials must fail, which requires a relative deviation of delta = 1/2 above expectation. By the Chernoff bound, this occurs with probability at most 2 e^{-k/100}.">A. The median fails only if strictly more than half of the trials fail, which corresponds to an exponential Chernoff tail deviation from the expected 1/3 failure rate.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Taking the mean (arithmetic average) reduces variance linearly; the median trick boosts confidence exponentially via order statistics.">B. Taking the median reduces the variance of the estimator by a factor of 1/k.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Mutual independence across all k runs is an essential precondition for the Chernoff bound to hold.">C. The sample median eliminates the need for independent repetitions.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality guarantees only polynomial tail bounds; exponential decay follows directly from the Chernoff bound.">D. Chebyshev's inequality applied to the median guarantees exponential tail convergence.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="3">
+    <div class="note-quiz-question-title">According to Yao's Minimax Principle, why does proving a lower bound for deterministic algorithms on a chosen input distribution mu establish a lower bound for all randomized algorithms?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Yao&#x27;s Minimax Principle proves that the expected error of any randomized algorithm on distribution mu cannot be better than the error of the best deterministic algorithm tailored to mu. Hence, D_mu(f) &lt;= R(f) for every distribution mu.">A. Because for any input distribution mu, the distributional complexity D_mu(f) is a universal lower bound on randomized query complexity: D_mu(f) &lt;= R(f).</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Deterministic simulation of randomized algorithms generally incurs significant query and runtime overhead.">B. Because all randomized algorithms can be simulated deterministically with zero query overhead.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Von Neumann&#x27;s theorem applies specifically to two-player zero-sum games between the algorithm designer and the input adversary.">C. Because von Neumann's minimax theorem only applies to non-zero-sum games.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Randomized decision trees frequently achieve lower expected height than deterministic trees.">D. Because deterministic decision trees always have smaller height than randomized decision trees.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="4">
+    <div class="note-quiz-question-title">In the Ergün et al. binary search tester for array sortedness, what structural property ensures that the set of indices with successful binary searches forms a monotonically sorted subsequence?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let k be the lowest common ancestor node in the binary search tree. Since i1 &lt; k &lt;= i2, the successful search for i1 verified a_{i1} &lt;= a_k (branching left), while the successful search for i2 verified a_k &lt;= a_{i2} (branching right). By transitivity of &lt;=, a_{i1} &lt;= a_{i2}.">A. For any two indices i1 &lt; i2 that both succeed, their search paths diverge at a lowest common ancestor pivot k where a_{i1} &lt;= a_k and a_k &lt;= a_{i2}, ensuring a_{i1} &lt;= a_{i2} by transitivity.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Binary search checks only O(log n) non-adjacent comparisons along its search path.">B. Binary search checks all n - 1 adjacent inequalities in the array simultaneously.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. An array with even a single inversion is not sorted; eps-far means modifying &gt; eps n elements is required.">C. Any array with fewer than eps n inversions is guaranteed to be completely sorted.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The birthday paradox collision principle is utilized in uniformity testing, not binary search sortedness testing.">D. The binary search tester relies on the birthday paradox to sample identical values.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="5">
+    <div class="note-quiz-question-title">In Morris's approximate counting algorithm, the counter C is incremented with probability 2^{-C}, and the estimate is \hat{A} = 2^C - 1. Why is the arithmetic mean of k = 10/\epsilon^2 independent Morris counters sufficient to achieve a (1 \pm \epsilon)-approximation with success probability at least 0.9?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. For a single Morris counter, E[\hat{A}] = A and Var(\hat{A}) = A(A-1)/2 &lt; A^2/2. Averaging k independent estimators reduces variance linearly by 1/k. Setting k = 10/\epsilon^2 gives Var(\bar{A}) &lt; \epsilon^2 A^2 / 20. By Chebyshev&#x27;s inequality, Pr(|\bar{A} - A| &gt;= \epsilon A) &lt;= Var(\bar{A}) / (\epsilon^2 A^2) &lt; 1/20 = 0.05 &lt; 0.1.">A. The estimator \hat{A} is unbiased with Var(\hat{A}) = A(A-1)/2 &lt; A^2/2; averaging k independent copies scales the variance down to &lt; A^2 / (2k) = \epsilon^2 A^2 / 20, and Chebyshev's inequality guarantees failure probability &lt;= Var(\bar{A}) / (\epsilon^2 A^2) &lt; 1/20 &lt; 0.1.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The arithmetic mean preserves the expectation: E[\bar{A}] = A.">B. Taking k = 10/\epsilon^2 counters increases the expectation by a factor of 1/\epsilon.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The counter register uses O(log log n) bits, and independence is strictly required across the k counters.">C. Because the counter register uses O(log n) bits, Chernoff bounds apply directly without independence.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Variance reduction in this stage is achieved via the arithmetic mean; the median trick boosts success probability rather than scaling variance.">D. The median of the counters reduces the variance by 2^{-C}.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="6">
+    <div class="note-quiz-question-title">In metric k-center clustering, why does a polynomial-time (2 - \epsilon)-approximation algorithm for any \epsilon &gt; 0 imply P = NP?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. In the metric completion of an unweighted graph where d(u, v) = 1 if (u, v) in E and d(u, v) = 2 otherwise, OPT = 1 if G has a dominating set of size &lt;= k, and OPT = 2 otherwise. A (2-\epsilon)-approximation algorithm outputs a solution of radius &lt; 2 * 1 = 2 when OPT = 1, perfectly deciding the NP-complete Dominating Set problem in polynomial time.">A. An instance of Dominating Set can be transformed into a metric space with distances 1 for edges and 2 for non-edges; an optimal radius of 1 corresponds to a dominating set of size &lt;= k, whereas non-existence forces radius 2. Any ratio &lt; 2 distinguishes between 1 and 2 in polynomial time, solving the NP-complete Dominating Set problem.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Gonzalez&#x27;s algorithm is a deterministic polynomial-time algorithm running in O(n k) time, but it achieves a 2-approximation, not &lt; 2.">B. Because Gonzalez's greedy farthest-first traversal algorithm runs in \Omega(2^n) exponential time when \epsilon &lt; 1.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The metric space axioms, including triangle inequality, are fully satisfied in the 1-2 distance metric.">C. Because the triangle inequality is violated whenever the approximation ratio drops below 2.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Inability to brute-force subset enumeration does not prove inapproximability; the hardness stems from the reduction from Dominating Set.">D. Because the number of possible cluster center subsets binom(n, k) cannot be enumerated in polynomial space.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ol class="mb-3">
+<li>Gonzalez, T. F. (1985). Clustering to minimize the maximum intercluster distance. <em>Theoretical Computer Science</em>, 38, 293-306.</li>
+<li>Hochbaum, D. S., &amp; Shmoys, D. B. (1985). A best possible approximation algorithm for the $k$-center problem. <em>Mathematics of Operations Research</em>, 10(2), 180-184.</li>
+<li>Guha, S., Meyerson, A., Mishra, N., Motwani, R., &amp; O'Callaghan, L. (2000). Clustering data streams: theory and practice. <em>IEEE Transactions on Knowledge and Data Engineering</em>, 15(3), 515-528.</li>
+<li>Bădoiu, M., Har-Peled, S., &amp; Indyk, P. (2002). Approximate clustering via core-sets. <em>Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)</em>, 250-257.</li>
+<li>Bădoiu, M., &amp; Clarkson, K. L. (2008). Optimal core-sets for balls. <em>Computational Geometry</em>, 40(1), 14-22.</li>
+<li>Charikar, M., O'Callaghan, L., &amp; Panigrahy, R. (2003). Better streaming algorithms for clustering problems. <em>Proceedings of the 35th Annual ACM Symposium on Theory of Computing (STOC)</em>, 30-39.</li>
+<li>Chen, Y. (2025). <em>CS5234 Algorithms at Scale (Lecture 6: Clustering Algorithms)</em>. National University of Singapore (NUS).</li>
 </ol>
 </section>
         </div>

@@ -210,18 +210,18 @@
 
 ### 7. NUS CS5224: Cloud Computing
 - [ ] 整理並發布 `notes/NUS CS5224 Cloud Computing/`
-  - **核心內容**：雲端計算基礎、NIST 參考架構、負載均衡與資源池化架構、資料中心硬體與散熱能耗（PUE）、虛擬化技術與容器架構（Docker）、雲端應用架構與 RESTful 設計。
-  - **待辦事項**：已彙整為以 Week 1–6 劃分的大師筆記，持續補強各章節的實務系統設計案例。
+  - **核心內容**：雲端計算基礎、NIST 參考架構、負載均衡與資源池化架構、資料中心硬體與散熱能耗（PUE）、虛擬化技術（全虛擬化/二進位翻譯、類虛擬化/Hypercalls、硬體輔助虛擬化 VT-x/VMCS、Type 1/2 虛擬機監視器與攻擊面）、容器與 Docker 架構（Namespaces、Cgroups、客戶端-服務端架構與映像檔生命週期）、雲服務交付模型（IaaS/PaaS/SaaS）、多租戶架構（Provider vs Consumer 視角、租戶隔離六大特徵、資料層隔離模式），以及雲端應用架構與 RESTful 設計。
+  - **待辦事項**：已彙整為以 Week 1–6 劃分的大師筆記，包含完整硬體抽象模型、Popek-Goldberg 定理證明、Docker 內部核心機制與多租戶資料庫工程取捨。
 
 ### 8. NUS CS5446: Reinforcement Learning and Sequential Decision Making
 - [ ] 整理並發布 `notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/`
-  - **核心內容**：感知-決策閉環與狀態空間搜尋、古典符號規劃（STRIPS/PDDL/SATPlan）、啟發式搜尋與階層任務網路（HTN）、不確定性下的理性決策（決策論、效用論、博弈論）、馬可夫決策過程（MDP）、無模型強化學習（Model-Free RL）、價值函數近似（Function Approximation）、深度 Q 網路（DQN）、策略梯度定理（Policy Gradients / REINFORCE）、行動者-評論家架構（Actor-Critic / A2C / SAC）以及信賴域進階策略搜尋（TRPO / PPO）。
-  - **待辦事項**：已彙整 Week 1–5 大師筆記，包含完整演算法推導、Widrow-Hoff 與梯度下降對比、SARSA 與 Q-learning 探索安全性分析、Deadly Triad 與 PPO 截斷目標函數。
+  - **核心內容**：感知-決策閉環與狀態空間搜尋、古典符號規劃（STRIPS/PDDL/SATPlan）、啟發式搜尋與階層任務網路（HTN）、不確定性下的理性決策（決策論、效用論、博弈論）、馬可夫決策過程（MDP）、無模型強化學習（Model-Free RL）、價值函數近似（Function Approximation）、深度 Q 網路（DQN）、策略梯度定理（Policy Gradients / REINFORCE）、行動者-評論家架構（Actor-Critic / A2C / SAC）、信賴域進階策略搜尋（TRPO / PPO），以及獎勵塑造（Reward Shaping: 勢能獎勵塑造 PBRS 策略不變性證明、計數與偽計數探索獎勵、隨機網路蒸餾 RND 與 Noisy-TV 困境、瓶頸拓撲與樹狀展開、大語言模型過程獎勵模型 Math-Shepherd 與 RLHF 偏好對齊，以及前沿多智能體與自適應獎勵架構 ReLara、CenRA、SASR）。
+  - **待辦事項**：已彙整 Week 1–6 大師筆記，包含完整演算法推導、Widrow-Hoff 與梯度下降對比、SARSA 與 Q-learning 探索安全性分析、Deadly Triad、PPO 截斷目標函數、PBRS 伸縮求和不變性證明、RLHF Bradley-Terry 損失與多智能體獎勵蒸餾架構。
 
 ### 9. NUS CS5234: Algorithms at Scale
 - [ ] 整理並發布 `notes/NUS CS5234 Algorithms at Scale/`
-  - **核心內容**：亞線性時間與查詢演算法（Sublinear-Time & Query Algorithms）、機率集中不等式（Markov, Chebyshev, Chernoff, Union Bound）、變異數縮減與中位數技巧（Mean Trick & Median Trick）、圖邊數與連通分量亞線性估計、決策樹計算模型與 Yao 氏極小極大定理（Yao's Minimax Principle）、性質測試框架（Property Testing: Monotonicity, Uniformity, Bipartiteness）與全變差距離（Total Variation Distance）。
-  - **待辦事項**：已彙整 Lecture 1–4 為 Week 1–4 大師筆記，包含完整數學嚴格證明、隨機化下界與性質測試器分析。
+  - **核心內容**：亞線性時間與查詢演算法（Sublinear-Time & Query Algorithms）、機率集中不等式（Markov, Chebyshev, Chernoff, Union Bound）、變異數縮減與中位數技巧（Mean Trick & Median Trick）、圖邊數與連通分量亞線性估計、決策樹計算模型與 Yao 氏極小極大定理（Yao's Minimax Principle）、性質測試框架（Property Testing: Monotonicity, Uniformity, Bipartiteness）、串流計算與水塘抽樣（Reservoir Sampling）、Morris 對數計數演算法、圖串流連通性與 $(2k-1)$-Spanners 稀疏跨角圖、度量分群（Metric $k$-Center 2-近似與 Dominating Set NP-Hardness 下界、格點串流分群）、階層式 $k$-Median Coreset 樹（Guha et al.）與最小外接球（MEB）幾何核心集（Bădoiu-Clarkson Core-Sets）。
+  - **待辦事項**：已彙整 Lecture 1–6 為 Week 1–6 大師筆記，包含完整數學嚴格證明、隨機化下界、性質測試器、串流演算法與核心集架構分析。
 
 ---
 

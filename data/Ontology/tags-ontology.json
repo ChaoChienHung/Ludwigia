@@ -2867,6 +2867,71 @@
         "物理學",
         "物理学"
       ]
+    },
+    {
+      "concept_id": "concept.streaming_algorithm",
+      "labels": {
+        "en": "Streaming Algorithm",
+        "zh-Hant": "串流演算法",
+        "zh-Hans": "流式算法"
+      },
+      "aliases": [
+        "Streaming Algorithm",
+        "streaming algorithm",
+        "Data Stream",
+        "data stream",
+        "串流演算法",
+        "串流算法",
+        "流式算法",
+        "流算法"
+      ]
+    },
+    {
+      "concept_id": "concept.spanner",
+      "labels": {
+        "en": "Spanner",
+        "zh-Hant": "跨角圖",
+        "zh-Hans": "跨角图"
+      },
+      "aliases": [
+        "Spanner",
+        "spanner",
+        "Graph Spanner",
+        "graph spanner",
+        "跨角圖",
+        "跨角图"
+      ]
+    },
+    {
+      "concept_id": "concept.metric_space",
+      "labels": {
+        "en": "Metric Space",
+        "zh-Hant": "度量空間",
+        "zh-Hans": "度量空间"
+      },
+      "aliases": [
+        "Metric Space",
+        "metric space",
+        "Metric",
+        "metric",
+        "度量空間",
+        "度量空间"
+      ]
+    },
+    {
+      "concept_id": "concept.coreset",
+      "labels": {
+        "en": "Coreset",
+        "zh-Hant": "核心集",
+        "zh-Hans": "核心集"
+      },
+      "aliases": [
+        "Coreset",
+        "coreset",
+        "Core-Set",
+        "core-set",
+        "核心集"
+      ]
     }
   ]
 }

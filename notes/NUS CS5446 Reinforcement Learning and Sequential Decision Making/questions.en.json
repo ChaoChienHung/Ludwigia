@@ -189,7 +189,43 @@
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "potential-based-reward-shaping-policy-invariance",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In reinforcement learning, reward shaping alters the native environmental reward function R^env by introducing an auxiliary shaping term F(s, a, s'). According to the foundational theorem established by Ng, Harada, and Russell (1999), what mathematical structure must the shaping function strictly adhere to in order to theoretically guarantee that the optimal policy pi^* remains completely unchanged across arbitrary transition topologies?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "F(s, a, s') = gamma * phi(s') - phi(s), where phi: S -> R is a state potential function, ensuring that intermediate shaping terms telescope to zero along any trajectory return.",
+          "response": "Correct. Potential-Based Reward Shaping (PBRS) expresses the shaping reward as the discounted difference of a potential function: F(s, a, s') = gamma * phi(s') - phi(s). Along any trajectory, the discounted sum forms a telescoping series that eliminates intermediate bias, perfectly preserving the state-action preference ordering and the optimal policy."
+        },
+        {
+          "id": "B",
+          "text": "F(s, a, s') = beta / (N(s) + 1), where N(s) is the tabular visitation counter, guaranteeing that novelty exploration vanishes asymptotically as state samples grow infinite.",
+          "response": "Incorrect. Visitation count-based bonuses encourage exploration of novel states, but they alter the fixed-point optimal policy during learning and do not provide policy invariance guarantees in general MDPs."
+        },
+        {
+          "id": "C",
+          "text": "F(s, a, s') = beta * ||f(s) - f_hat_theta(s)||^2, where f is a fixed target network and f_hat_theta is a predictor network in Random Network Distillation.",
+          "response": "Incorrect. Random Network Distillation (RND) is an empirical exploration mechanism for high-dimensional continuous state spaces; it provides no theoretical guarantee of optimal policy invariance and is vulnerable to the Noisy-TV problem."
+        },
+        {
+          "id": "D",
+          "text": "F(s, a, s') = -log sigma(r_theta(x, y_+) - r_theta(x, y_-)), where sigma is the Sigmoid function, converting human qualitative rankings into real scalar values.",
+          "response": "Incorrect. This formula is the Bradley-Terry preference loss used to train reward models in Reinforcement Learning from Human Feedback (RLHF), not an MDP potential-based reward shaping function."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Ng, Harada, and Russell (1999) proved that Potential-Based Reward Shaping (PBRS), where F(s, a, s') = gamma * phi(s') - phi(s), is both sufficient and necessary to guarantee policy invariance across arbitrary transition structures. Expanding the cumulative discounted return reveals a telescoping series where all intermediate potential terms cancel: G_t^sha = sum_{k=0}^infty gamma^k (gamma * phi(s_{t+k+1}) - phi(s_{t+k})) = -phi(s_t), which shifts the Q-function by a state-dependent constant Q^*(s, a) - phi(s) and leaves argmax_a Q^*(s, a) unaltered.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
     }
   ]
 }
-

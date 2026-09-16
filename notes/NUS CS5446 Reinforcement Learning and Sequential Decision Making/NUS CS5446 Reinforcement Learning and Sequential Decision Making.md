@@ -1,6 +1,6 @@
 <meta>
 Title: NUS CS5446 Reinforcement Learning and Sequential Decision Making
-Summary: Comprehensive lecture and study notes for NUS CS5446 Reinforcement Learning and Sequential Decision Making (AI Planning and Decision Systems), covering AI planning foundations, classical planning (STRIPS, PDDL, SATPlan), LFM-assisted modern planning, scalable heuristics (HTN), rational decision theory, utility theory, game theory, Markov decision processes, model-free reinforcement learning, value function approximation, Deep Q-Networks (DQN), policy gradients, REINFORCE, Actor-Critic methods, and advanced trust-region policy search (TRPO, PPO).
+Summary: Comprehensive lecture and study notes for NUS CS5446 Reinforcement Learning and Sequential Decision Making (AI Planning and Decision Systems), covering AI planning foundations, classical planning (STRIPS, PDDL, SATPlan), LFM-assisted modern planning, scalable heuristics (HTN), rational decision theory, utility theory, game theory, Markov decision processes, model-free reinforcement learning, value function approximation, Deep Q-Networks (DQN), policy gradients, REINFORCE, Actor-Critic methods, advanced trust-region policy search (TRPO, PPO), and reward shaping (potential-based policy invariance, exploration bonuses with pseudo-counts and RND, exploitation bottleneck discovery, process reward models, RLHF preference alignment, and advanced multi-agent reward architectures ReLara, CenRA, SASR).
 Slug: nus-cs5446-reinforcement-learning-and-sequential-decision-making
 Output: notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.html
 CanonicalId: nus-cs5446-reinforcement-learning-and-sequential-decision-making
@@ -3483,6 +3483,8 @@ In frontier autonomous systems, MDP foundations merge with cutting-edge AI archi
     - The Curse of Dimensionality in Tabular Methods: Combinatorial state space explosions (Backgammon 10^20, Chess 10^40, Go 10^172); impossibility of visiting states infinitely often.
     - Three Scaling Paradigms: Value Function Approximation, Policy Search, and Actor-Critic hybrid architectures.
 - 2. Linear and Non-Linear Value Function Approximation
+    - Conceptual Motivation: The House Price Analogy (Tabular Excel lookup vs. parameterized fitting; compact representation and generalization).
+    - Numerical Walkthrough: Grid World Navigation with coordinates (x, y), weights (0.5, 0.2, 0.1), and coordinate-wise gradient updates.
     - Differentiable parameterization of utility: \hat{U}_\theta(s) = g(s; \theta) and \hat{Q}_\theta(s, a) = g(s, a; \theta).
     - Linear Feature Representations: \hat{U}_\theta(s) = \theta^T f(s); constant bias feature f_0(s) = 1; risks of under-parameterization and structural bias.
     - Non-Linear Deep Neural Network Parameterization: Automatic feature extraction from high-dimensional state spaces.
@@ -3521,15 +3523,16 @@ In frontier autonomous systems, MDP foundations merge with cutting-edge AI archi
         2. Fixed Target Network (Q(s, a; \theta^-)): Freezes target parameters for C steps, resolving moving target feedback oscillations.
     - Loss function: \mathcal{L}(\theta) = E_{(s, a, r, s') \sim D} [ (r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta))^2 ].
     - \epsilon-greedy exploration schedule.
+    - Case Study: Gymnasium Lunar Lander (LunarLander-v3, 8D continuous observation, 4 discrete actions, MLP architecture, Episode #1 crash vs. Episode #1500 touchdown).
 - 7. Advanced DQN Extensions & Theoretical Limitations
     - Double DQN (DDQN; Van Hasselt et al., 2016): Decoupling action selection from action evaluation to eliminate maximization bias: y = r + \gamma Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-).
     - Multi-Step Learning (n-step returns): Balancing bias-variance trade-offs along forward trajectory rollouts.
     - Distributional RL (C51): Modeling the entire return distribution Z(s, a) rather than scalar expectations.
     - Prioritized Experience Replay (PER): Sampling transitions proportional to TD error |\delta|^\alpha with importance sampling bias correction weights.
-    - Fundamental Limitations of Value-Based DQN:
-        1. Inability to handle continuous action spaces A \subset R^d (\arg\max_a Q(s, a) is computationally intractable).
-        2. Curse of dimensionality with large discrete action spaces.
-        3. Inability to represent optimal stochastic policies (e.g., bluffing in poker, rock-paper-scissors, state aliasing).
+    - Where DQN Struggles (Three Inherent Bottlenecks):
+        1. Intractable continuous action maximization (\arg\max_a Q(s, a) is intractable in continuous manifolds).
+        2. Linear action scoring cost growing directly with |A|.
+        3. Rigidity of deterministic greedy policies vs. inherent randomness and entropy in multimodal tasks.
 - 8. Policy Search & The Policy Gradient Theorem
     - Parameterized stochastic policies: \pi_\theta(a | s) = Pr(A_t = a | S_t = s; \theta).
     - Softmax policy formulation with temperature parameter \tau: \pi_\theta(a | s) = \frac{\exp(h(s, a, \theta)/\tau)}{\sum_b \exp(h(s, b, \theta)/\tau)}.
@@ -3542,6 +3545,7 @@ In frontier autonomous systems, MDP foundations merge with cutting-edge AI archi
     - High Variance Challenge: Compounding random returns across long horizons.
     - Baseline Subtraction: Proof that subtracting state-dependent baseline b(s) leaves expected gradient unbiased while drastically shrinking variance: E_{a \sim \pi_\theta} [b(s) \nabla_\theta \log \pi_\theta(a | s)] = 0.
     - The Advantage Function: A^{\pi_\theta}(s, a) = Q^{\pi_\theta}(s, a) - U^{\pi_\theta}(s).
+    - Numerical Demonstration: 4-episode sample returns yielding variance collapse from 15,275 to 28.4 under baseline subtraction.
 - 10. Actor-Critic Architectures
     - Architectural Dualism: Actor (parameterized policy \pi_\theta) + Critic (parameterized value estimator \hat{U}_w(s)).
     - 1-Step TD Advantage Estimator: A(s_t, a_t) \approx \delta_t = R_{t+1} + \gamma \hat{U}_w(s_{t+1}) - \hat{U}_w(s_t).
@@ -3660,7 +3664,27 @@ $$\hat{Q}_\theta(s, a) = g(s, a; \boldsymbol{\theta})$$
 +---------------------------------------------------------------------------------------+
 ```
 
-### 2.1 Linear Function Approximation
+### 2.1 Conceptual Motivation: The House Price Analogy
+
+To appreciate the profound architectural transition from tabular dynamic programming to function approximation, consider the intuitive real-world challenge of building an agent that estimates the market value of a house based on its floor area (size in square meters):
+
+- **Approach 1: The Tabular Lookup ("Excel Sheet") Paradigm:**
+  The agent collects historical housing transaction records and builds an exhaustive lookup table mapping every discrete floor size to its observed selling price:
+  $$\text{Lookup Table: } [60.0\text{ m}^2 \to \$400\text{k}, \; 60.5\text{ m}^2 \to \$403\text{k}, \; 61.0\text{ m}^2 \to \$407\text{k}, \; \dots]$$
+  Whenever a user queries the value of a house, the agent looks up the exact answer from the table. This corresponds directly to the **tabular reinforcement learning paradigm** studied prior to the Recess week. In real-world environments, tabular lookups collapse:
+  1. *Astronomical Memory Footprint:* If the state space contains continuous coordinates or billions of configurations, the table size exceeds available physical RAM.
+  2. *Zero Generalization:* If a prospective buyer inquires about a house with an area of $60.3\text{ m}^2$ that has never been recorded in history, the lookup table provides exactly zero information.
+- **Approach 2: Function Approximation:**
+  Instead of storing isolated cells, the agent collects historical sample pairs and learns a parameterized mathematical function that fits the data:
+  $$\hat{U}_\boldsymbol{\theta}(\text{size}) = g(\text{size}; \boldsymbol{\theta})$$
+  (ranging from a simple linear slope $\theta_1 \cdot \text{size} + \theta_0$ to a multi-layer deep neural network).
+- **Two Foundational Architectural Benefits:**
+  1. **Compact Representation:** A tiny vector of parameters $\boldsymbol{\theta} \in \mathbb{R}^d$ ($d \ll |\mathcal{S}|$) captures the entire value landscape, replacing gigabytes or terabytes of tabular lookup memory.
+  2. **Generalization:** By learning the underlying continuous structure, the function naturally interpolates and extrapolates accurate predictions for previously unvisited states based on feature similarity.
+- **The Under-Parameterization Caveat:**
+  If the hypothesis space contains too few parameters $n$ (or attempts to fit a complex oscillating value curve with a rigid linear model), the agent suffers from severe structural approximation bias (underfitting).
+
+### 2.2 Linear Function Approximation
 
 In linear function approximation, the utility is defined as a linear combination of hand-crafted basis features:
 
@@ -3671,7 +3695,23 @@ $$\hat{U}_\theta(s) = \theta_0 f_0(s) + \theta_1 f_1(s) + \dots + \theta_n f_n(s
 - **The Risk of Under-Parameterization:**
   If too few parameters or poorly chosen features are utilized ($n \ll \text{true intrinsic degrees of freedom}$), the hypothesis space cannot represent the true value landscape, introducing severe **approximation bias** (underfitting).
 
-### 2.2 Non-Linear Deep Neural Network Approximation
+#### Numerical Walkthrough: Grid World Navigation (Russell & Norvig Figure 17.2)
+Consider a robot navigating a spatial grid world where each state is represented by its Cartesian coordinates $\mathbf{s} = [x, y]^T$:
+- **Linear Parameterization:**
+  $$\hat{U}_\boldsymbol{\theta}(x, y) = \theta_0 f_0(s) + \theta_1 f_1(s) + \theta_2 f_2(s) = \theta_0 + \theta_1 x + \theta_2 y$$
+  where $f_0(s) = 1$ is the constant bias feature, $f_1(s) = x$, and $f_2(s) = y$.
+- **Forward Evaluation:**
+  Suppose the agent's current learned weights are $\boldsymbol{\theta} = (\theta_0, \theta_1, \theta_2) = (0.5, 0.2, 0.1)$.
+  At grid coordinate $(x = 1, y = 1)$, the predicted utility is:
+  $$\hat{U}(1, 1) = 0.5 + 0.2(1) + 0.1(1) = \mathbf{0.8}$$
+- **Parameter Updates via Gradient Descent:**
+  Given a training sample $(x, y, u_j)$ where $u_j$ is the observed target return, the Widrow-Hoff gradient descent rule updates each parameter individually:
+  $$\theta_0 \leftarrow \theta_0 + \alpha \left( u_j(s) - \hat{U}_\boldsymbol{\theta}(s) \right)$$
+  $$\theta_1 \leftarrow \theta_1 + \alpha \left( u_j(s) - \hat{U}_\boldsymbol{\theta}(s) \right) x$$
+  $$\theta_2 \leftarrow \theta_2 + \alpha \left( u_j(s) - \hat{U}_\boldsymbol{\theta}(s) \right) y$$
+
+
+### 2.3 Non-Linear Deep Neural Network Approximation
 
 In high-dimensional sensory environments (e.g., raw camera pixels, LiDAR point clouds), manual feature engineering fails. **Deep Reinforcement Learning** uses multi-layer convolutional neural networks (CNNs) or multi-layer perceptrons (MLPs) as non-linear function approximators:
 - The network automatically discovers hierarchical spatial and temporal abstractions from raw inputs.
@@ -4150,6 +4190,47 @@ $$\mathcal{L}(\boldsymbol{\theta}) = \mathbb{E}_{(s, a, r, s') \sim \mathcal{D}}
 Differentiating with respect to the online weights $\boldsymbol{\theta}$:
 $$\nabla_\theta \mathcal{L}(\boldsymbol{\theta}) = \mathbb{E}_{(s, a, r, s')} \left[ \left( Q(s, a; \boldsymbol{\theta}) - y_i \right) \nabla_\theta Q(s, a; \boldsymbol{\theta}) \right]$$
 
+### 6.4 Case Study: Deep Q-Networks on Gymnasium Lunar Lander
+
+Beyond Atari pixel environments, the canonical modern benchmark for value-based Deep Reinforcement Learning is **Lunar Lander** (`gymnasium.make("LunarLander-v3")`):
+
+```
++-------------------------------------------------------------------------------+
+|                      GYMNASIUM LUNAR LANDER ENVIRONMENT                       |
++-------------------------------------------------------------------------------+
+|                                                                               |
+|              [ Lunar Lander Module ]                                          |
+|                     /       \                                                 |
+|            Left Eng.  Main   Right Eng.                                       |
+|                         v                                                     |
+|   (Continuous State Vector: x, y, vx, vy, θ, ω, left_leg, right_leg)          |
+|                                                                               |
+|       |                                                               |       |
+|     Flag 1 (x = -0.2)             Landing Pad               Flag 2 (x = +0.2) |
+|   =========================================================================   |
+|   /////////////////////////////////////////////////////////////////////////   |
++-------------------------------------------------------------------------------+
+```
+
+- **Continuous Observation Space ($S \subset \mathbb{R}^8$):**
+  $$\mathbf{s} = [x, \, y, \, v_x, \, v_y, \, \theta, \, \omega, \, c_{\text{left}}, \, c_{\text{right}}]^T$$
+  * $x, y \in [-2.5, 2.5] \times [-1.5, 1.5]$: Horizontal and vertical coordinates.
+  * $v_x, v_y \in [-10, 10]$: Horizontal and vertical linear velocities.
+  * $\theta \in [-\pi, \pi]$: Lander roll orientation angle.
+  * $\omega \in [-10, 10]$: Angular velocity.
+  * $c_{\text{left}}, c_{\text{right}} \in \{0, 1\}$: Binary ground-contact indicators for left and right landing legs.
+- **Discrete Action Space ($A = \text{Discrete}(4)$):**
+  * Action $0$: Do nothing (free fall under gravity).
+  * Action $1$: Fire left orientation engine (applies counter-clockwise torque).
+  * Action $2$: Fire main engine (provides strong vertical upward thrust).
+  * Action $3$: Fire right orientation engine (applies clockwise torque).
+- **Network Architecture:**
+  A Multi-Layer Perceptron (MLP) Deep Q-Network (e.g., 8 inputs $\to$ Dense 128 ReLU $\to$ Dense 128 ReLU $\to$ 4 linear Q-value outputs) maps continuous state vectors directly to action-values $Q(s, a)$.
+- **Empirical Training Trajectory:**
+  * **Episode #1 (Untrained Agent):** With randomly initialized weights and high $\epsilon$-greedy exploration, the lander fires thrusters erratically, loses attitude control, flips upside-down, and crashes violently into the lunar surface, incurring catastrophic penalties ($\approx -250$ to $-400$).
+  * **Episode #1500 (Converged DQN Agent):** Leveraging experience replay and fixed target networks, the network learns to throttle the main engine to decelerate descent speed ($v_y \to 0$), uses orientation thrusters to hold $\theta \approx 0$, and touches down smoothly between the two yellow flags, achieving scores consistently exceeding $+200$ points.
+
+
 ---
 
 ## 7. Advanced DQN Extensions & Theoretical Limitations
@@ -4192,16 +4273,21 @@ The $\max$ operator systematically overestimates action values, leading to hyper
 
 ---
 
-### 7.2 Fundamental Limitations of Value-Based DQN
+### 7.2 Where DQN Struggles: Three Inherent Structural Bottlenecks
 
-Despite its achievements, value-based deep RL faces three fundamental bottlenecks:
-1. **Intractability in Continuous Action Spaces:**
-   To extract an action in DQN, we must evaluate $\arg\max_{a \in \mathcal{A}} Q(s, a)$.
-   - When $\mathcal{A}$ is continuous (e.g., robotic arm joint torques $\mathcal{A} \subset \mathbb{R}^6$), finding the maximum requires solving an expensive non-convex global optimization at every microsecond step.
-2. **Discretization Explosion:**
-   Discretizing continuous actions into $K$ bins per dimension causes the action space to explode exponentially ($K^d$). For a 6-DoF robot with 10 bins per joint, $|\mathcal{A}| = 10^6$ actions.
-3. **Inability to Represent Stochastic Policies:**
-   Value-based methods naturally yield deterministic greedy policies ($\arg\max$). However, in imperfect-information games (e.g., poker, rock-paper-scissors) or partially observable environments with state aliasing, the optimal policy is strictly **stochastic** (mixed strategy Nash equilibrium).
+Despite its empirical triumphs in arcade games and low-dimensional control, value-based Deep Q-Learning suffers from three critical architectural limitations:
+
+1. **Intractability of Continuous Action Maximization:**
+   DQN's policy and target evaluation depend strictly on computing:
+   $$\pi(s) = \arg\max_{a \in \mathcal{A}} Q(s, a) \quad \text{and} \quad y = r + \gamma \max_{a' \in \mathcal{A}} Q(s', a'; \boldsymbol{\theta}^-)$$
+   In continuous action spaces ($\mathcal{A} \subset \mathbb{R}^d$, such as joint torques in humanoid robotics), computing the global maximum of a non-convex neural network $Q(s, a)$ over a continuous manifold requires running an expensive numerical optimization (e.g., gradient ascent or cross-entropy method) at every single millisecond control step. Consequently, **vanilla DQN is completely inapplicable to continuous control**.
+2. **Linear Scoring Cost with Action Cardinality ($|\mathcal{A}|$):**
+   DQN requires scoring every candidate action individually at each timestep. As the discrete action space grows (e.g., multi-agent coordination, combinatorial games, natural language generation), the network's output layer expands and computing $\arg\max$ becomes computationally expensive, memory-intensive, and prone to gradient variance.
+3. **Rigidity of Purely Deterministic Greedy Policies:**
+   DQN's greedy policy is fundamentally deterministic ($\pi^*(s) = \arg\max_a Q(s, a)$). However, many complex tasks benefit from **inherent stochasticity**:
+   - *Imperfect-Information Games (Poker, Rock-Paper-Scissors):* Deterministic policies are trivially exploitable; game-theoretic equilibria require mixed (stochastic) strategies.
+   - *State Aliasing & Partial Observability (POMDPs):* When different underlying states appear identical, stochastic policies prevent the agent from getting trapped in infinite deterministic loops.
+   - *Exploration in Non-Stationary Environments:* Maintaining entropy-driven randomized policies preserves adaptability across changing reward landscapes.
 
 These limitations force a paradigm shift: **instead of parameterizing the value function and deriving the policy indirectly, parameterize the policy directly!**
 
@@ -4307,6 +4393,26 @@ Because probabilities over all possible actions must sum to 1 ($\sum_a \pi_\thet
 $$\nabla_\theta (1) = \mathbf{0}$$
 Therefore:
 $$\mathbb{E}_{a \sim \pi_\theta} \left[ b(s) \nabla_\theta \log \pi_\theta(a \mid s) \right] = b(s) \cdot \mathbf{0} = 0 \quad \blacksquare$$
+
+#### Numerical Demonstration: The Power of Baseline Variance Reduction
+
+To understand why baseline subtraction is indispensable in practice, consider an agent evaluating 4 sample trajectories from state $s$ with noisy Monte Carlo returns $G_t \in \{110, 90, 105, 100\}$:
+
+| Episode | Sample Return $G_t$ | Adjusted Return $(G_t - \mathbf{100})$ | Raw Gradient Term $G_t \nabla_\theta \log \pi$ | Baseline Gradient Term $(G_t - 100) \nabla_\theta \log \pi$ |
+| :---: | :---: | :---: | :---: | :---: |
+| **#1** | $110$ | $+10$ | $+132.0$ | $+12.0$ |
+| **#2** | $90$ | $-10$ | $-90.0$ | $-10.0$ |
+| **#3** | $105$ | $+5$ | $+115.5$ | $+5.5$ |
+| **#4** | $100$ | $0$ | $+90.0$ | $0.0$ |
+| **Sample Variance** | — | — | **$\text{Var} = \mathbf{15,275}$** | **$\text{Var} = \mathbf{28.4}$** |
+
+- **Variance Collapse:**
+  By choosing a simple constant baseline $B(s) = 100 \approx \mathbb{E}[G_t]$, the variance of the gradient estimator collapses from **$15,275$** down to **$28.4$**—a **$99.8\%$ reduction in noise**!
+- **Zero Directional Bias:**
+  Because $\sum_a \nabla_\theta \pi_\theta(a \mid s) B(s) = B(s) \nabla_\theta (1) = 0$, the mathematical expectation of the update vector is completely unaffected:
+  $$\mathbb{E}_{\pi_\theta} \left[ (G_t - B(s)) \nabla_\theta \log \pi_\theta(a \mid s) \right] \equiv \mathbb{E}_{\pi_\theta} \left[ G_t \nabla_\theta \log \pi_\theta(a \mid s) \right]$$
+  The policy climbs in the exact same true direction, but with virtually zero stochastic jitter.
+
 
 > **Profound Conclusion:**
 > Subtracting a baseline $b(s)$ leaves the expected gradient **strictly unbiased**, while dramatically dampening the variance of the gradient estimator!
@@ -4473,6 +4579,37 @@ $$\mathcal{L}^{CLIP}(\boldsymbol{\theta}) = \hat{\mathbb{E}}_t \left[ \min\left(
    - Once $r_t(\boldsymbol{\theta})$ drops below $1 - \epsilon$, the clipping function caps the term at $(1 - \epsilon) \hat{A}_t$.
    - **Result:** The gradient stops penalizing the action, preventing catastrophic over-correction.
 
+#### The PPO Clipping Dynamics: Visualizing the Surrogate Bounds
+
+```
+     When Advantage A_t > 0                          When Advantage A_t < 0
+    L^CLIP                                          L^CLIP
+      ^                                               ^
+      |             .------------- (Clipped)          |          1 - \epsilon  1
+      |            /                                  |               |        |
+      |           /                                   |    0 ---------+--------+--------> r
+      |          /                                    |               |              |         /                                     |               |         \  (Unclipped)
+      |        /                                      |               |                +-------+-------+-------------> r               |               |                 0       1   1 + \epsilon                        |               .------------ (Clipped)
+```
+
+- **When $\hat{A}_t > 0$ (Action Better than Average):**
+  The gradient encourages increasing the action probability ($r_t(\boldsymbol{\theta}) > 1$). However, if $r_t$ exceeds $1 + \epsilon$, the clipped term $(1 + \epsilon)\hat{A}_t$ becomes smaller than $r_t \hat{A}_t$. Taking the minimum $\min(\dots)$ clips the objective to a flat horizontal line, dropping the gradient to zero. The agent is prevented from making an excessively greedy update that destroys policy stability.
+- **When $\hat{A}_t < 0$ (Action Worse than Average):**
+  The gradient encourages decreasing the action probability ($r_t(\boldsymbol{\theta}) < 1$). If $r_t$ drops below $1 - \epsilon$, the clipped term $(1 - \epsilon)\hat{A}_t$ is less negative than $r_t \hat{A}_t$. The minimum operator clips the loss, halting further negative gradient pushes and preventing destructive policy collapse.
+
+### 11.4 Modern Model-Free Reinforcement Learning: The Complete Taxonomy
+
+To synthesize the historical and theoretical progression of model-free reinforcement learning:
+
+| Theoretical Dimension | Core Algorithmic Idea | Foundational Key Algorithm |
+| :--- | :--- | :--- |
+| **Policy Gradient** | Directly optimize the stochastic policy $\pi_\theta(a \mid s)$ from sampled trajectory returns. | **REINFORCE (Williams, 1992)** |
+| **Variance Reduction** | Learn a value baseline $\hat{U}(s, \mathbf{w})$ to stabilize policy gradient updates without bias. | **Actor-Critic (A2C / A3C)** |
+| **Stable Improvement** | Constrain policy updates via KL divergence to guarantee monotonic improvement. | **TRPO (Schulman et al., 2015)** |
+| **Practical Stability** | Simplify second-order trust-region constraints with first-order probability ratio clipping. | **PPO (Schulman et al., 2017)** |
+| **Exploration & Robustness** | Regularize policy entropy and inject dense surrogate signals into sparse environments. | **Soft Actor-Critic (SAC), Reward Shaping** |
+
+
 #### Modern Industrial Relevance
 Taking the minimum $\min(\dots)$ forms a **pessimistic lower bound** on the surrogate objective.
 Because PPO uses standard first-order gradients, it integrates seamlessly with the **Adam optimizer**. Today, PPO is the universal default workhorse across continuous robotic control, autonomous vehicle fleets, and **Reinforcement Learning from Human Feedback (RLHF)** for aligning Large Language Models (LLMs).
@@ -4512,4 +4649,655 @@ Because PPO uses standard first-order gradients, it integrates seamlessly with t
 9. Baird, L. (1995). Residual algorithms: Reinforcement learning with function approximation. In *Machine Learning Proceedings 1995* (pp. 30-37). Morgan Kaufmann.
 10. Widrow, B., & Hoff, M. E. (1960). Adaptive switching circuits. In *1960 IRE WESCON Convention Record, part 4* (Vol. 4, pp. 96-104).
 11. Sutton, R. S., & Barto, A. G. (2018). *Reinforcement Learning: An Introduction* (2nd ed.). MIT Press.
+12. [AlphaGo] Silver, D., Huang, A., Maddison, C. J., Guez, A., Sifre, L., Van Den Driessche, G., ... & Hassabis, D. (2016). Mastering the game of Go with deep neural networks and tree search. *Nature*, 529(7587), 484-489.
+13. [AlphaGo Zero] Silver, D., Schrittwieser, J., Simonyan, K., Antonoglou, I., Huang, A., Guez, A., ... & Hassabis, D. (2017). Mastering the game of Go without human knowledge. *Nature*, 550(7676), 354-359.
+14. [MuZero] Schrittwieser, J., Antonoglou, I., Hubert, T., Simonyan, K., Sifre, L., Schmitt, S., ... & Silver, D. (2020). Mastering Atari, Go, chess and shogi by planning with a learned model. *Nature*, 588(7839), 604-609.
+15. Silver, D. (2015). *Lectures on Reinforcement Learning*. University College London (UCL).
+16. Gopalan, A., & Teo, Y. M. (2025). *CS4246/5446 Reinforcement Learning and Sequential Decision Making (Version 5.0)*. National University of Singapore (NUS).
+
+
+# Week 6 - Reward Shaping for Reinforcement Learning and Its Applications: Exploration Bonuses, Potential-Based Policy Invariance, LLM Alignment, and Advanced Multi-Agent Reward Architectures
+
+<draft>
+- 1. Foundations of Sequential Decisions & The MDP Formalism (Guest Lecture Review)
+    - Lecture Context: National University of Singapore Guest Lecture by Ma Haozhe on "Reward Shaping for Reinforcement Learning and Its Applications".
+    - Formal MDP Tuple: State space S, Action space A, Transition dynamics T: P(s' | s, a), Reward function R(s, a, s'), Discount factor \gamma \in [0, 1).
+    - Gridworld Running Example: Coordinates S = {(1, 1), ..., (4, 3)}, discrete actions A = {\leftarrow, \rightarrow, \uparrow, \downarrow}, goal rewards R(4, 3) = +1, hazard R(4, 2) = -1, default step cost 0.
+    - Policies, State Values, and Action Values:
+        - Stochastic policy \pi(a | s) = Pr(A_t = a | S_t = s).
+        - State-value function: V^\pi(s_\tau) = E_\pi [ \sum_{k=0}^\infty \gamma^k R(s_{\tau+k}) ].
+        - Action-value function: Q(s, a) = R(s, a) + \gamma \sum_{s'} P(s' | s, a) V(s').
+        - Optimal policy extraction: \pi^*(s) = \arg\max_a Q^*(s, a).
+    - Representation Hierarchy of the Q-Function:
+        - Tabular Q-learning: Discrete memory lookup table \hat{Q}(s, a).
+        - Function Approximation Q-learning: Linear / non-linear parameterization \hat{Q}_\theta(s, a).
+        - Deep Q-Networks (DQN): End-to-end convolutional and fully connected representations (4 stacked frames 84x84x4, Conv 16 8x8 stride 4, Conv 32 4x4 stride 2, FC 256, linear Q heads).
+    - Training Targets Taxonomy:
+        - Monte Carlo Target: y_t^{MC} = G_t = \sum \gamma^k r_{t+k}.
+        - SARSA (On-Policy TD): y_t^{SARSA} = r_t + \gamma \hat{Q}(s_{t+1}, a_{t+1}).
+        - Q-Learning (Off-Policy TD): y_t^{Q-Learning} = r_t + \gamma \max_{a'} \hat{Q}(s_{t+1}, a').
+    - Continuous Action Space Resolution:
+        - The argmax intractability in infinite action spaces A \subset R^d.
+        - Critic network evaluates joint pairs Q_\theta(s, a'); Actor network directly estimates optimal action \pi_\phi(s) \approx \arg\max_{a'} Q_\theta(s, a').
+- 2. The Pathology of Native Reward Models: Sparsity, Delay, and Sample Inefficiency
+    - The Native Reward Problem: Native environment signals are sparse, delayed, and non-informative (0 rewards for all in-process states).
+    - The Empty Bellman Update: When all intermediate transitions yield R = 0, both Monte Carlo returns and TD targets equal 0. With zero-initialized weights, Q \leftarrow Q, resulting in complete learning stagnation.
+    - The Sample Efficiency Crisis: Learning commences only after stumbling upon a rare successful episode through blind exploration. Heavy discounting shrinks feedback to microscopic signals (e.g., \gamma^{20} x 1 \approx 0.12).
+- 3. Reward Shaping: Principles, Mechanics, and the General Additive Formulation
+    - Core Concept: Reshaping or rebuilding the native reward model into an informative, dense feedback structure.
+    - General Additive Formulation: R^{new}(\cdot) = \alpha R^{env}(\cdot) + \beta R^{sha}(\cdot).
+    - Conceptual Transition: Transforming sparse binary rewards (key = 0, door = 0, goal = 1) into dense milestone incentives (key = 0.5, door = 0.8, goal = 1.0).
+    - The Central Open Challenge: How to accurately define, learn, and maintain R^{sha}(\cdot) without inducing unintended policy corruption.
+- 4. Reward Shaping for Exploration: Novelty and Intrinsic Motivation
+    - Philosophy: Assigning supplemental exploration bonuses to historically under-explored or novel states.
+    - Method 1 (Tabular Count-Based Exploration): R^{count}(s) = \alpha R^{env}(s) + \frac{\beta}{N(s) + 1}; +1 prevents division by zero.
+    - Method 2 (Continuous Pseudo-Counts via Density Models; Bellemare et al., NeurIPS 2016): Generative density models \rho(s) estimating pseudo-counts \hat{N}(s) in continuous domains R^d.
+    - Method 3 (High-Dimensional Random Network Distillation; Burda et al., 2018):
+        - Predictor network \hat{f}_\theta(s) vs. randomly initialized, permanently frozen Target network f(s).
+        - Exploration bonus: R^{RND}(s) = \alpha R^{env}(s) + \beta ||f(s) - \hat{f}_\theta(s)||_2^2.
+    - The Fundamental Exploration Hazard: The Noisy-TV Problem (OpenAI Blog):
+        - Unpredictable environmental noise (e.g., a TV displaying random static in a maze) yields perpetually high prediction errors.
+        - The agent becomes hypnotized by irrelevant novelty, collecting infinite intrinsic rewards while abandoning the true environmental task.
+- 5. Reward Shaping for Exploitation: Subgoal Bottlenecks and Process Supervision
+    - Philosophy: Rewarding progress through structurally critical bottleneck states and optimal execution paths.
+    - Method 1 (Graph Clustering & Topological Bottlenecks): Identifying narrow doorways connecting maze regions; vulnerability to start-state frequency false positives.
+    - Method 2 (Tree-Like Search Rollouts): Branching forward simulations from prefix states to estimate path success probability; computational cost bottlenecks.
+    - Real-World LLM Case Study: Math-Shepherd (Wang et al., ACL 2024):
+        - Process-supervised reward modeling for mathematical reasoning without human step annotations.
+        - Evaluating step-by-step process outcomes y_{s_i} across sequential reasoning steps s_i via automated search rollouts.
+- 6. The Invariance Dilemma: Potential-Based Reward Shaping (PBRS)
+    - The Risk of Reward Gaming: Arbitrary reward bonuses alter optimal policy equilibria, encouraging unintended cyclic behaviors.
+    - Potential-Based Formulation (Ng, Harada, & Russell, ICML 1999): R^{sha}(s, s') = \gamma \phi(s') - \phi(s) (or \phi(s) - \gamma \phi(s')).
+    - The Telescoping Sum Proof of Policy Invariance:
+        - Demonstrating that intermediate potential terms \gamma^k \phi(s_k) sequentially cancel out along trajectory rollouts: G_t^{sha} = \phi(s) - \lim_{T \to \infty} \gamma^T \phi(s_T).
+        - Theoretical Guarantee: The optimal policy \pi^* under the shaped reward MDP is strictly identical to the optimal policy under the original environment MDP.
+    - Empirical Realities: Heuristic shaping methods lack theoretical invariance guarantees, relying on empirical sample efficiency validation.
+- 7. Reward Modeling for Open-Ended Environments: Reinforcement Learning from Human Feedback (RLHF)
+    - The Open-Ended Challenge: Subjective text generation (LinkedIn headlines, creative writing) lacks native programmatic rewards.
+    - RLHF Framework (Christiano et al., NeurIPS 2017; Ouyang et al., NeurIPS 2022):
+        1. Prompt x generates N candidate responses via Supervised Fine-Tuned (SFT) model.
+        2. Human annotators rank outputs: res_1 > res_2 > ... > res_N.
+        3. Reward Model Architecture: LLM backbone with a linear scalar regression head r_\theta(x, y) \in R.
+        4. Bradley-Terry Preference Loss: L_{RM}(\theta) = - E_{(x, y_+, y_-)} [ \log \sigma( r_\theta(x, y_+) - r_\theta(x, y_-) ) ].
+        5. Policy Alignment via PPO with KL divergence constraints against the reference policy.
+- 8. Advanced Multi-Agent & Adaptive Reward Shaping Architectures
+    - Framework 1: ReLara — RL with an Assistant Reward Agent (Ma et al., ICML 2024):
+        - Policy Agent (A_P): Interacts with the environment via Actor \pi_\theta and Critic Q_\phi, receiving composite reward r_{E_t} + \lambda r_{S_t}.
+        - Assistant Reward Agent (A_R): Treats reward generation as a secondary decision problem using Actor \pi_\zeta: S x A -> R and Critic Q_\eta(s, r_P).
+    - Framework 2: CenRA — Centralized Reward Agent for Multi-Task RL (Ma et al., NeurIPS 2025):
+        - Centralized Reward Agent (A^{rwd}) analyzes concatenated multi-task replay buffer D = \bigcup D_i.
+        - Extracts invariant structural meta-knowledge and distributes it via knowledge distillation / knowledge rewards r^{rwd} to individual task policy agents A_1^{pol}, ..., A_N^{pol}.
+    - Framework 3: SASR — Self-Adaptive Success Rate-Based Reward Shaping (Ma et al., ICLR 2025):
+        - Trajectory accumulation across early and late learning stages, partitioned into Success and Failure states.
+        - Kernel Density Estimation (KDE) with Random Fourier Features (RFF) to calculate smooth spatial densities \tilde{d}_S(s) and \tilde{d}_F(s).
+        - Effective counts \tilde{N}_S(s) and \tilde{N}_F(s) parameterize a localized Beta distribution Beta(\tilde{N}_S(s), \tilde{N}_F(s)).
+        - Samples dynamic success rates mapped through f(r^S) to deliver adaptive shaping rewards R^S(s) that evolve in lockstep with agent mastery.
+</draft>
+
+## 1. Foundations of Sequential Decisions & The MDP Formalism
+
+In this guest lecture presented at the **National University of Singapore (NUS)** by **Dr. Ma Haozhe**, the curriculum advances into **Reward Shaping for Reinforcement Learning and Its Advanced Applications**.
+
+Reinforcement Learning (RL) formalizes how an autonomous agent learns to solve **sequential decision-making problems** through trial-and-error interactions with an environment, heavily inspired by the behavioral adaptation mechanisms of biological intelligence.
+
+```
++---------------------------------------------------------------------------------------+
+|                       THE MARKOV DECISION PROCESS (MDP) CLOSED LOOP                   |
+|                                                                                       |
+|                         +-----------------------------------+                         |
+|                         |               AGENT               |                         |
+|                         +-----------------------------------+                         |
+|                               |                       ^                               |
+|                               | Action A_t            | State S_t                     |
+|                               v                       | Reward R_{t+1}                |
+|                         +-----------------------------------+                         |
+|                         |            ENVIRONMENT            |                         |
+|                         +-----------------------------------+                         |
++---------------------------------------------------------------------------------------+
+```
+
+### 1.1 Formal MDP Components
+
+The interaction loop is governed mathematically by a **Markov Decision Process (MDP)** defined by the 5-tuple $\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \gamma \rangle$:
+1. **State Space ($\mathcal{S}$):** The set of all possible physical or informational configurations of the environment.
+   - *Example (Robot Grid Navigation):* The coordinate space $\mathcal{S} = \{(1, 1), (1, 2), \dots, (4, 3)\}$.
+2. **Action Space ($\mathcal{A}$):** The set of all executable operations available to the agent.
+   - *Example:* Directional navigation $\mathcal{A} = \{\leftarrow, \rightarrow, \uparrow, \downarrow\}$.
+3. **Transition Dynamics ($\mathcal{T}$):** The probability distribution over successor states given the current state and chosen action:
+   $$\mathcal{T}(s' \mid s, a) = P(S_{t+1} = s' \mid S_t = s, A_t = a)$$
+   Transitions can be **deterministic** (the chosen action always succeeds) or **stochastic** (e.g., slippery grid tiles causing unintended orthogonal drifts).
+4. **Reward Function ($\mathcal{R}$):** A scalar feedback mapping providing real-time evaluation:
+   $$\mathcal{R}: \mathcal{S} \times \mathcal{A} \times \mathcal{S} \to \mathbb{R}$$
+   - *Example:* Goal state $R(4, 3) = +1$, hazard pit $R(4, 2) = -1$, and default step cost $R(s) = 0$ across all other tiles.
+5. **Discount Factor ($\gamma \in [0, 1)$):** A geometric scalar prioritizing immediate rewards over distant future returns, mathematically ensuring that infinite-horizon returns remain bounded.
+
+---
+
+### 1.2 Policies, State Values, and Action Values
+
+- **The Policy ($\pi$):** A mapping from states to a probability distribution over actions:
+  $$\pi: \mathcal{S} \to \mathcal{P}(\mathcal{A}), \quad \pi(a \mid s) = \Pr(A_t = a \mid S_t = s)$$
+- **The State-Value Function ($V^\pi(s)$):** The expected cumulative discounted return starting from state $s$ under policy $\pi$:
+  $$V^\pi(s_\tau) = \mathbb{E}_\pi \left[ R(s_\tau) + \gamma R(s_{\tau+1}) + \gamma^2 R(s_{\tau+2}) + \dots \right] = \mathbb{E}_\pi \left[ \sum_{k=0}^\infty \gamma^k R(s_{\tau+k}) \right]$$
+- **The Action-Value Function ($Q(s, a)$):** The expected cumulative discounted return of starting in state $s$, being forced to execute action $a$, and following policy $\pi$ thereafter:
+  $$Q(s, a) = R(s, a) + \gamma \sum_{s' \in \mathcal{S}} P(s' \mid s, a) V(s')$$
+- **The Ultimate Reinforcement Learning Objective:** Discover an optimal policy $\pi^*(s)$ that maximizes the expected action-value across every state:
+  $$\pi^*(s) = \arg\max_{a \in \mathcal{A}} Q^*(s, a)$$
+
+---
+
+### 1.3 Representation Hierarchy of the Q-Function
+
+How the action-value function is modeled determines the architectural scalability of the algorithm:
+1. **Tabular Q-Learning:** When $|\mathcal{S}|$ and $|\mathcal{A}|$ are small, $\hat{Q}(s, a)$ is stored as an exact 2D lookup table.
+2. **Function Approximation Q-Learning:** When state spaces grow large, $\hat{Q}_\theta(s, a)$ is parameterized as a linear combination of basis features or a shallow non-linear function.
+3. **Deep Q-Networks (DQN):** When processing high-dimensional perceptual inputs (e.g., video frames), $\hat{Q}_\theta(s, a)$ is approximated by a deep convolutional neural network.
+
+```
++---------------------------------------------------------------------------------------------------+
+|                                  DQN CONVOLUTIONAL PIPELINE                                       |
+|                                                                                                   |
+|  Stack of 4 Frames       Conv Layer 1             Conv Layer 2            FC Hidden Layer   Output|
+|  (84 x 84 x 4)     --->  16 filters, 8x8    --->  32 filters, 4x4   --->  256 units   --->  Q(s,a)|
+|                          stride 4, ReLU           stride 2, ReLU          ReLU              |A| = 4
++---------------------------------------------------------------------------------------------------+
+```
+
+---
+
+### 1.4 Training Targets Taxonomy
+
+To train parameterized estimators $\hat{Q}_\theta(s, a) \to Q^*(s, a)$, algorithms construct different supervisory regression targets $y_t$:
+- **Monte Carlo Target ($y_t^{\text{MC}}$):** Accumulates all actual empirical rewards across a full trajectory:
+  $$y_t^{\text{MC}} = G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \dots$$
+- **SARSA Target ($y_t^{\text{SARSA}}$ - On-Policy TD):** Bootstraps from the value of the action $a_{t+1}$ actually executed by the behavioral policy in the next state:
+  $$y_t^{\text{SARSA}} = r_t + \gamma \hat{Q}(s_{t+1}, a_{t+1})$$
+- **Q-Learning Target ($y_t^{\text{Q-Learning}}$ - Off-Policy TD):** Bootstraps from the hypothetical optimal greedy action in the next state:
+  $$y_t^{\text{Q-Learning}} = r_t + \gamma \max_{a' \in \mathcal{A}} \hat{Q}(s_{t+1}, a')$$
+
+---
+
+### 1.5 Resolving Continuous Action Spaces: The Actor-Critic Split
+
+In discrete action environments, extracting the greedy action is trivial: the network evaluates $|A|$ forward heads and computes an explicit $\arg\max$.
+However, in **continuous or unlimited action spaces** (e.g., joint torques $\mathcal{A} \subset \mathbb{R}^d$):
+- A lookup table or multi-head network cannot physically enumerate infinitely many continuous actions to compute $\arg\max_a Q(s, a)$.
+- **The Critic Solution:** The network inputs **both the state $s$ and continuous candidate action $a$**, outputting a single scalar evaluation $Q_\theta(s, a)$.
+- **The Actor Solution:** Because computing $\arg\max_a Q_\theta(s, a)$ via numerical optimization at every step is computationally intractable, an independent **Actor network $\pi_\phi(s)$** is trained concurrently to directly approximate the argmax:
+  $$\pi_\phi(s) \approx \arg\max_{a'} Q_\theta(s, a')$$
+
+---
+
+## 2. The Pathology of Native Reward Models: Sparsity, Delay, and Sample Inefficiency
+
+In textbook reinforcement learning, the environment reward $R(s, a, s')$ is treated as an immutable ground-truth signal. However, in real-world applications, **native environment reward models present an enormous operational obstacle**.
+
+```
+Native Environmental Rewards are typically:
+[1] Sparse:          Non-zero rewards occur only at task completion or major milestones.
+[2] Delayed:         Feedback is received hundreds or thousands of steps after critical actions.
+[3] Non-Informative: Intermediate in-process transitions yield static 0 rewards.
+```
+
+```
+A Typical Sparse Trajectory:
+s_0 ----(a_0)----> s_1 ----(a_1)----> s_2 ----(a_2)----> s_3 ---- ... ----> s_T (Goal)
+R(s_0) = 0        R(s_1) = 0         R(s_2) = 0        R(s_3) = 0           R(s_T) = +1
+```
+
+### 2.1 The "Empty Bellman Update" Phenomenon
+
+Consider an agent attempting to navigate a complex labyrinth under native sparse rewards:
+- If the agent wanders for 100 steps and fails to hit the exit, every single transition produces $r_t = 0$.
+- **Monte Carlo Target:** $y_t^{\text{MC}} = 0 + \gamma(0) + \gamma^2(0) + \dots = 0$.
+- **Q-Learning Target:** $y_t^{\text{Q-Learning}} = 0 + \gamma \max_{a'} \hat{Q}(s_{t+1}, a')$.
+- If the network parameters are initialized to zero ($Q \equiv 0$):
+  $$y_t = 0 + \gamma(0) = 0 \implies Q(s_t, a_t) \leftarrow 0$$
+- **The Stagnation Result:** The neural network executes thousands of gradient steps **updating zero with zero**! Absolutely zero learning progress occurs.
+
+---
+
+### 2.2 The Sample Efficiency Crisis
+
+A standard reinforcement learning algorithm **only begins to learn after randomly stumbling upon a rare successful episode yielding non-zero reward**.
+Even after stumbling upon a successful terminal state after 20 steps, geometric discounting heavily dampens the signal:
+$$y_0^{\text{MC}} = 0 + \gamma(0) + \dots + \gamma^{20}(1) \approx 0.12 \quad (\text{for } \gamma = 0.9)$$
+Propagating this microscopic signal backward across high-dimensional state spaces requires astronomical sample complexity, rendering native RL intractable for industrial robotics, chip design, and long-horizon language reasoning.
+
+---
+
+## 3. Reward Shaping: Principles and The General Formulation
+
+To overcome the paralysis of sparse feedback, **Reward Shaping (RS)** transforms or rebuilds the sparse native reward model into a dense, highly informative reward landscape.
+
+```
++---------------------------------------------------------------------------------------+
+|                               REWARD SHAPING TRANSFORMATION                           |
+|                                                                                       |
+|   Sparse Environment Feedback:                                                        |
+|   [Start] ---> [ ] ---> [Key: R=0] ---> [ ] ---> [Door: R=0] ---> [ ] ---> [Goal: R=1]|
+|                                  |                                                    |
+|                                  v   Reward Shaping Transformation                    |
+|   Dense Shaped Feedback:                                                              |
+|   [Start] -> [0.1] -> [Key: R=0.5] -> [0.2] -> [Door: R=0.8] -> [0.3] -> [Goal: R=1] |
++---------------------------------------------------------------------------------------+
+```
+
+### 3.1 The General Additive Formulation
+
+The standard mathematical formulation for applying a shaped reward is:
+
+$$R^{\text{new}}(\cdot) = \alpha R^{\text{env}}(\cdot) + \beta R^{\text{sha}}(\cdot)$$
+
+- $R^{\text{env}}(\cdot)$: The original sparse environmental reward signal.
+- $R^{\text{sha}}(\cdot)$: The auxiliary shaping reward engineered to incentivize desirable intermediate behaviors.
+- $\alpha, \beta > 0$: Scaling hyperparameters balancing native task fidelity against shaping guidance.
+
+By restructuring the reward surface, algorithm designers exert **explicit control over the agent's behavioral tendencies**, drastically accelerating learning curves.
+- **The Core Research Challenge:** *How can algorithm designers systematically define, learn, and maintain the shaping signal $R^{\text{sha}}(\cdot)$ across complex environments?*
+
+---
+
+## 4. Reward Shaping for Exploration: Novelty and Intrinsic Motivation
+
+The first major application of reward shaping is **exploration**: providing supplemental intrinsic rewards to incentivize the agent to visit historically under-explored, novel regions of the state space.
+
+```
++---------------------------------------------------------------------------------------+
+|                               EXPLORATION REWARD BONUS                                |
+|                                                                                       |
+|   Explored States (High Visit Frequency):       Under-Explored States (Novel Regions):|
+|   Assign LOW or ZERO shaping bonus              Assign HIGH positive exploration bonus|
+|   N(s) is large \implies R^{sha}(s) \approx 0   N(s) is small \implies R^{sha}(s) >> 0|
++---------------------------------------------------------------------------------------+
+```
+
+### 4.1 Method 1: Count-Based Exploration in Tabular Environments
+
+In finite discrete domains, novelty can be tracked directly using empirical state visitation counters $N(s)$:
+
+$$R^{\text{count}}(\cdot) = \alpha R^{\text{env}}(\cdot) + \frac{\beta}{N(s) + 1}$$
+
+- Adding $+1$ to the denominator prevents division by zero when a state is encountered for the first time ($N(s) = 0$).
+- As an agent repeatedly traverses a state, $N(s) \to \infty$, causing the exploration bonus to vanish smoothly: $\frac{\beta}{N(s) + 1} \to 0$.
+
+---
+
+### 4.2 Method 2: Continuous State Spaces & Pseudo-Counts (Bellemare et al., 2016)
+
+In continuous control domains $\mathcal{S} \subset \mathbb{R}^d$, the probability of visiting the exact same real-valued state coordinate twice is zero ($N(s) \le 1$).
+To resolve this, **Bellemare et al. (NeurIPS 2016)** formulated the concept of **Pseudo-Counts** derived from statistical generative density models $\rho(s)$:
+
+$$R^{\text{pseudo-count}}(\cdot) = \alpha R^{\text{env}}(\cdot) + \frac{\beta}{\hat{N}(s) + 1}$$
+
+- The density model estimates the localized spatial density of past visits near state $s$.
+- The pseudo-count $\hat{N}(s)$ reflects how many historical visits occurred in the local continuous neighborhood.
+
+---
+
+### 4.3 Method 3: Random Network Distillation (RND; Burda et al., 2018)
+
+When state inputs consist of high-dimensional sensory observations (e.g., raw pixel video frames in Atari games like *Montezuma's Revenge*), fitting an accurate statistical density model is computationally intractable.
+**Burda et al. (2018)** introduced **Random Network Distillation (RND)**:
+
+```
+                            RANDOM NETWORK DISTILLATION (RND)
+                                            |
+                         +------------------+------------------+
+                         |                                     |
+                         v                                     v
+             TARGET NETWORK: f(s)                   PREDICTOR NETWORK: \hat{f}_\theta(s)
+             - Randomly initialized weights         - Randomly initialized weights \theta
+             - PERMANENTLY FROZEN                   - TRAINED CONTINUOUSLY via SGD
+                         |                                     |
+                         +------------------+------------------+
+                                            |
+                                            v
+                                 PREDICTION ERROR (L2 NORM):
+                                 || f(s) - \hat{f}_\theta(s) ||^2
+                                            |
+                         +------------------+------------------+
+                         |                                     |
+                         v                                     v
+             FREQUENTLY VISITED STATE:                 NOVEL / UNSEEN STATE:
+             Predictor has fitted f(s)                 Predictor has never seen state s
+             Error is NEAR ZERO                        Error is EXTREMELY HIGH
+             Exploration Bonus \approx 0               Exploration Bonus IS MASSIVE!
+```
+
+The mathematical formulation for the RND shaped reward is:
+
+$$R^{\text{RND}}(\cdot) = \alpha R^{\text{env}}(\cdot) + \beta \| f(s) - \hat{f}_\theta(s) \|_2^2$$
+
+- Because the Target Network $f(s)$ is fixed, it represents a static mathematical function.
+- The Predictor Network $\hat{f}_\theta(s)$ minimizes the MSE loss $\| f(s) - \hat{f}_\theta(s) \|_2^2$ on observed transitions.
+- High prediction error directly indicates that the state has rarely been processed by the optimizer, generating a powerful intrinsic exploration reward.
+
+---
+
+### 4.4 The Fundamental Exploration Hazard: The Noisy-TV Problem
+
+A critical theoretical and practical limitation of prediction-error exploration is the **Noisy-TV Problem** (documented by OpenAI):
+
+```
++---------------------------------------------------------------------------------------+
+|                                 THE NOISY-TV PROBLEM                                  |
+|                                                                                       |
+|   Maze Environment                                                                    |
+|   +---------------------------------------+                                           |
+|   | Start                   Goal (+1)     |    A TV in the corner displays            |
+|   |   S                        G          |    random, unpredictable static channels! |
+|   |                                       |                                           |
+|   |            [ NOISY TV ]               |    Because white noise is UNPREDICTABLE,  |
+|   |            Channel 1 -> Channel 2     |    || f(s) - \hat{f}_\theta(s) ||^2 is    |
+|   |            Channel 3 -> Channel 4     |    PERMANENTLY MASSIVE!                   |
+|   |                                       |                                           |
+|   |   The agent becomes HYPNOTIZED by the |    The agent never reaches the goal G,    |
+|   |   TV, staring at it forever to harvest|    as novelty fails to align with the     |
+|   |   infinite exploration rewards!       |    true objective.                        |
+|   +---------------------------------------+                                           |
++---------------------------------------------------------------------------------------+
+```
+
+Because purely stochastic white noise cannot be learned by any neural network, the prediction error $\| f(s) - \hat{f}_\theta(s) \|^2$ remains perpetually maximal. The agent concludes that the noisy TV is the most interesting thing in the universe, completely abandoning the environmental task.
+
+---
+
+## 5. Reward Shaping for Exploitation: Subgoal Bottlenecks and Process Supervision
+
+Reward shaping can also accelerate **exploitation (optimization)** by rewarding progress toward structurally critical milestone states.
+
+### 5.1 Method 1: Graph Topologies & Historical State Clustering
+
+- **Mechanism:** Construct an empirical transition graph from historical trajectories to identify topological **bottleneck states** (e.g., narrow doorways connecting distinct rooms).
+- Assign supplemental positive rewards to passing through these critical bottleneck doorways.
+- **The Fundamental Flaw:** States immediately adjacent to the start position $s_0$ are visited by almost all paths regardless of competence. Frequency-based clustering produces massive **false positives**, mistaking initial states for structural bottlenecks.
+
+---
+
+### 5.2 Method 2: Tree-Like Search Rollouts
+
+- **Mechanism:** From specific prefix states, execute forward Monte Carlo simulation rollouts to evaluate the empirical completion rate of different branches.
+- **Limitation:** Simulating branching forward lookaheads in real-time is computationally prohibitive for complex environments.
+
+---
+
+### 5.3 Case Study: Process Reward Models in LLMs (Math-Shepherd; Wang et al., ACL 2024)
+
+In multi-step mathematical reasoning with Large Language Models (LLMs), outcome-based rewards (verifying only whether the final numerical answer is correct) provide sparse feedback. An LLM may arrive at the correct answer through flawed logic, or fail a complex 10-step derivation due to a minor arithmetic error on the final line.
+
+```
++---------------------------------------------------------------------------------------+
+|                       MATH-SHEPHERD: PROCESS REWARD MODELING                          |
+|                                                                                       |
+|   Problem Formulation: Let p(x) be a monic polynomial of degree 4...                  |
+|                                                                                       |
+|   (a) Outcome Annotation:                                                             |
+|       Step s_1 -> Step s_2 -> Step s_3 -> Answer: 20 [X]  ===> Outcome Reward: y_S = 0|
+|       (Sparse feedback penalizes the ENTIRE derivation, even if steps 1-3 were sound!)|
+|                                                                                       |
+|   (b) Math-Shepherd Process Annotation via Tree Rollouts:                             |
+|       Step s_1 (Sound derivation)  ===> Rollouts succeed 2/3 times ===> Reward: 2/3   |
+|       Step s_2 (Sound derivation)  ===> Rollouts succeed 2/3 times ===> Reward: 2/3   |
+|       Step s_3 (Algebraic mistake) ===> Rollouts succeed 0/3 times ===> Reward: 0     |
++---------------------------------------------------------------------------------------+
+```
+
+**Math-Shepherd (Wang et al., ACL 2024)** automates process supervision without human step-by-step labels:
+- From each intermediate reasoning step $s_i$, the system generates $K$ independent completion rollouts.
+- The step reward $y_{s_i}$ equals the fraction of rollouts that successfully reach the correct golden answer.
+- This creates dense, step-level shaping rewards that guide the policy model to reason soundly at every stage of the derivation.
+
+---
+
+## 6. The Invariance Dilemma: Potential-Based Reward Shaping (PBRS)
+
+When algorithm designers introduce arbitrary shaping bonuses $R^{\text{sha}}$, a dangerous theoretical question emerges:
+> *"Does the newly learned optimal policy $\pi^*_{\text{shaped}}$ remain strictly identical to the original environmental optimal policy $\pi^*_{\text{orig}}$?"*
+
+### 6.1 The Peril of Reward Gaming (Shortcuts and Loops)
+
+If reward shaping is constructed naively, the agent frequently exploits **unintended loopholes**:
+- *Example (Bicycle Balancing):* If an agent is given a positive reward bonus for leaning back toward vertical, it learns to tilt violently back and forth in place to collect infinite balance rewards, rather than riding forward!
+- *Example (Maze Navigation):* If an agent is rewarded for picking up a key, it may pick up the key, drop it, and pick it up repeatedly in an infinite loop.
+
+---
+
+### 6.2 Potential-Based Reward Shaping (Ng, Harada, & Russell, ICML 1999)
+
+In their seminal paper, **Andrew Ng, Daishi Harada, and Stuart Russell (ICML 1999)** proved that structuring the shaping reward as a **discounted difference of a potential function** guarantees that the optimal policy remains completely unchanged.
+
+> **Theorem (Policy Invariance under Potential-Based Reward Shaping):**
+> Let $\phi: \mathcal{S} \to \mathbb{R}$ be any real-valued potential function defined over states. If the shaping reward is defined strictly as:
+>
+> $$R^{\text{sha}}(s, s') = \gamma \phi(s') - \phi(s) \quad \left(\text{or equivalently: } \phi(s) - \gamma \phi(s')\right)$$
+>
+> then every optimal policy $\pi^*$ in the shaped MDP is guaranteed to be an optimal policy in the original MDP, and vice versa.
+
+#### The Telescoping Sum Proof
+To understand why the optimal policy is preserved, evaluate the cumulative discounted return of the shaping rewards along any state trajectory $(s_0, s_1, s_2, \dots)$:
+
+$$G_t^{\text{sha}} = R^{\text{sha}}(s_0, s_1) + \gamma R^{\text{sha}}(s_1, s_2) + \gamma^2 R^{\text{sha}}(s_2, s_3) + \dots$$
+
+Substitute the potential difference formulation $R^{\text{sha}}(s, s') = \phi(s) - \gamma \phi(s')$:
+$$\begin{aligned}
+G_t^{\text{sha}} &= \Big( \phi(s_0) - \gamma \phi(s_1) \Big) + \gamma \Big( \phi(s_1) - \gamma \phi(s_2) \Big) + \gamma^2 \Big( \phi(s_2) - \gamma \phi(s_3) \Big) + \dots \\
+&= \phi(s_0) - \gamma \phi(s_1) + \gamma \phi(s_1) - \gamma^2 \phi(s_2) + \gamma^2 \phi(s_2) - \gamma^3 \phi(s_3) + \dots
+\end{aligned}$$
+
+Notice that all intermediate terms **telescopically cancel out**:
+$$G_t^{\text{sha}} = \phi(s_0) - \lim_{T \to \infty} \gamma^T \phi(s_T)$$
+
+For discounted infinite-horizon tasks ($\gamma < 1$) where potentials are bounded, $\lim_{T \to \infty} \gamma^T \phi(s_T) = 0$.
+Therefore:
+$$G_t^{\text{sha}} = \phi(s_0)$$
+- **The Mathematical Beauty:** The total return of the shaping rewards depends **solely on the starting state $s_0$** and is completely independent of the path taken!
+- Because the total added reward is a path-independent constant, no action choice can increase or decrease it.
+- Consequently, the relative ranking of all policies remains completely unaltered: $\arg\max_\pi V^{\pi}_{\text{shaped}}(s) = \arg\max_\pi V^\pi_{\text{orig}}(s)$.
+
+> **Empirical Caveat:**
+> Outside of strict potential-based formulations, modern heuristic shaping methods (e.g., RND, count bonuses, neural heuristics) **do NOT provide theoretical policy invariance guarantees**. In practice, they are justified and evaluated entirely empirically by demonstrating accelerated sample efficiency.
+
+---
+
+## 7. Reward Modeling for Open-Ended Environments: Reinforcement Learning from Human Feedback (RLHF)
+
+In the era of Large Language Models (LLMs), reinforcement learning (specifically **Proximal Policy Optimization / PPO**) serves as the foundational post-training alignment mechanism.
+
+### 7.1 The Open-Ended Challenge
+
+When users submit open-ended generative prompts:
+- *"Draft a creative LinkedIn headline for a data scientist transitioning into product management."*
+- *"Suggest five catchy names for a specialty coffee shop next to a university campus."*
+
+There is **no programmatic ground truth, no binary compiler check, and zero native environmental rewards**.
+To apply reinforcement learning to subjective human communication, we must **learn a reward model from human preferences**.
+
+---
+
+### 7.2 The RLHF Pipeline (Christiano et al., 2017; Ouyang et al., 2022)
+
+```
++---------------------------------------------------------------------------------------+
+|                                    THE RLHF PIPELINE                                  |
+|                                                                                       |
+|   Step 1: Sampling Candidate Outputs                                                  |
+|   Prompt x ----> SFT Language Model ----> N Distinct Responses: {res_1, ..., res_N}   |
+|                                                                                       |
+|   Step 2: Human Preference Ranking                                                    |
+|   Human Annotators rank responses: res_1 > res_2 > ... > res_N                        |
+|                                                                                       |
+|   Step 3: Constructing the Reward Model Architecture                                  |
+|   Base LLM (identical scale to SFT) + Linear Regression Head ----> Output r_\theta(x, y) \in R|
+|                                                                                       |
+|   Step 4: Training via the Bradley-Terry Logistic Preference Loss                     |
+|   L_{RM}(\theta) = - E_{(x, y_+, y_-)} [ \log \sigma( r_\theta(x, y_+) - r_\theta(x, y_-) ) ]|
++---------------------------------------------------------------------------------------+
+```
+
+#### The Bradley-Terry Preference Loss
+For every pair where response $y_+$ is preferred over response $y_-$ ($y_+ \succ y_-$):
+$$\mathcal{L}_{\text{RM}}(\boldsymbol{\theta}) = - \log \sigma\left( r_\theta(x, y_+) - r_\theta(x, y_-) \right)$$
+where $\sigma(z) = \frac{1}{1 + e^{-z}}$ is the Sigmoid activation function.
+- If $r_\theta(x, y_+) \gg r_\theta(x, y_-)$, $\sigma \to 1$, and loss $\mathcal{L} \to 0$.
+- If $r_\theta(x, y_+) \ll r_\theta(x, y_-)$, loss explodes, driving strong gradient updates to reward the superior response and penalize the inferior response.
+
+Once trained, the static scalar reward model $r_\theta(x, y)$ serves as the automated reward environment for PPO policy alignment.
+
+---
+
+## 8. Advanced Multi-Agent & Adaptive Reward Shaping Architectures
+
+To address the limitations of static manual heuristics, recent research led by **Dr. Ma Haozhe and collaborators at the National University of Singapore (NUS)** introduced three foundational adaptive reward shaping frameworks.
+
+### 8.1 ReLara: RL with an Assistant Reward Agent (Ma et al., ICML 2024)
+
+Traditional reward shaping relies on hardcoded mathematical formulas. **ReLara** decouples task execution from reward engineering by formulating reward generation as a **secondary cooperative Markov Decision Process**:
+
+```
++---------------------------------------------------------------------------------------+
+|                                    ReLara ARCHITECTURE                                |
+|                                                                                       |
+|   +---------------------------------------+   Environmental Reward r_{E_t}            |
+|   |              ENVIRONMENT              | -----------------------------+            |
+|   +---------------------------------------+                              |            |
+|         |                           ^                                    |            |
+|         | State s_t                 | Action a_t                         |            |
+|         v                           |                                    v            |
+|   +---------------------------------------+                       +-----------------+ |
+|   |          POLICY AGENT (A_P)           |                       |      SUM        | |
+|   |  Actor:  \pi_\theta: S -> A           |                       |  r_{E_t} +      | |
+|   |  Critic: Q_\phi(s, a)                 |                       |  \lambda r_{S_t}| |
+|   +---------------------------------------+                       +-----------------+ |
+|         |                                                                ^            |
+|         | State s_t, Action a_t                                          |            |
+|         v                                                                | Suggested  |
+|   +---------------------------------------+                              | Reward     |
+|   |       ASSISTANT REWARD AGENT (A_R)    |                              | r_{S_t}    |
+|   |  Actor:  \pi_\zeta: S x A -> R        | -----------------------------+            |
+|   |  Critic: Q_\eta(s, r_P)               |                                           |
+|   +---------------------------------------+                                           |
++---------------------------------------------------------------------------------------+
+```
+
+- **The Policy Agent ($\mathcal{A}_P$):** Interacts directly with the environment. It updates its parameters using an augmented composite reward:
+  $$r_t^{\text{composite}} = r_{E_t} + \lambda r_{S_t}$$
+- **The Assistant Reward Agent ($\mathcal{A}_R$):** Observes the state-action pair $(s_t, a_t)$ and generates a suggested shaping reward $r_{S_t}$.
+- By framing shaping as an active decision problem, $\mathcal{A}_R$ learns to provide optimal feedback that dynamically guides $\mathcal{A}_P$ out of exploratory deadlocks.
+
+---
+
+### 8.2 CenRA: Centralized Reward Agent for Multi-Task RL (Ma et al., NeurIPS 2025)
+
+In multi-task reinforcement learning, training distinct agents across $N$ related tasks from scratch is computationally wasteful.
+**CenRA** introduces a **Centralized Reward Agent ($\mathcal{A}^{\text{rwd}}$)** designed to extract and transfer universal task knowledge:
+
+```
++---------------------------------------------------------------------------------------+
+|                                    CenRA ARCHITECTURE                                 |
+|                                                                                       |
+|                           CENTRALIZED REWARD AGENT (A^{rwd})                          |
+|                                    ^             |                                    |
+|             Knowledge Extraction   |             | Knowledge Distillation             |
+|             from Unified Replay    |             | Knowledge Rewards r^{rwd}          |
+|                                    |             v                                    |
+|               +-----------------------------------------------+                       |
+|               |         CONCATENATED REPLAY BUFFER D          |                       |
+|               |  [ Replay D_1 ]   [ Replay D_2 ] ... [ D_N ]  |                       |
+|               +-----------------------------------------------+                       |
+|                     ^                   ^               ^                             |
+|                     |                   |               |                             |
+|               Policy Agent 1      Policy Agent 2 ...  Policy Agent N                  |
+|               Task #1             Task #2             Task #N                         |
++---------------------------------------------------------------------------------------+
+```
+
+1. Independent policy agents $\mathcal{A}_1^{\text{pol}}, \dots, \mathcal{A}_N^{\text{pol}}$ collect experience across distinct tasks into individual replay buffers $\mathcal{D}_1, \dots, \mathcal{D}_N$.
+2. The Centralized Reward Agent analyzes the concatenated buffer $\mathcal{D} = \bigcup_{i=1}^N \mathcal{D}_i$, identifying shared structural invariants and bottleneck transitions.
+3. CenRA distributes this distilled structural knowledge back to all individual policy agents via **knowledge rewards $r^{\text{rwd}}$**, drastically boosting sample efficiency in multi-task transfer regimes.
+
+---
+
+### 8.3 SASR: Self-Adaptive Success Rate-Based Reward Shaping (Ma et al., ICLR 2025)
+
+**SASR** introduces a continuous self-adaptive reward shaping mechanism that eliminates manual hyperparameter tuning by estimating localized **Bayesian success rates**:
+
+```
++---------------------------------------------------------------------------------------+
+|                                     SASR PIPELINE                                     |
+|                                                                                       |
+|   Early Learning Stage:                            Late Learning Stage:               |
+|   Sparse Trajectory Accumulation                   Abundant Trajectory Accumulation   |
+|          |                                                |                           |
+|          v                                                v                           |
+|   Partition into Success States (S)                Partition into Success States (S)  |
+|   and Failure States (F)                           and Failure States (F)             |
+|          |                                                |                           |
+|          v                                                v                           |
+|   Kernel Density Estimation (KDE)                  Kernel Density Estimation (KDE)    |
+|   + Random Fourier Features (RFF)                  + Random Fourier Features (RFF)    |
+|   Outputs smooth densities: d_S(s), d_F(s)         Outputs smooth densities: d_S(s), d_F(s)|
+|          |                                                |                           |
+|          v                                                v                           |
+|   Effective Counts: \tilde{N}_S(s), \tilde{N}_F(s) Effective Counts: \tilde{N}_S(s), \tilde{N}_F(s)|
+|          |                                                |                           |
+|          v                                                v                           |
+|   Diffuse Beta Distribution:                       Sharp, Highly Confident            |
+|   Beta(\tilde{N}_S, \tilde{N}_F)                   Beta Distribution                  |
+|          |                                                |                           |
+|          +-----------------------+------------------------+                           |
+|                                  |                                                    |
+|                                  v                                                    |
+|   Sample Expected Success Rate -> Map through f(r^S) -> Adaptive Shaped Reward R^S(s) |
++---------------------------------------------------------------------------------------+
+```
+
+#### Mathematical Mechanics of SASR
+1. **Density Estimation via Random Fourier Features (RFF):**
+   Instead of discrete counts, SASR maps continuous states $s$ into a randomized Fourier feature space to compute smooth kernel density functions for successful trajectories ($\tilde{d}_S(s)$) and failed trajectories ($\tilde{d}_F(s)$).
+2. **Bayesian Beta Distribution Modeling:**
+   The densities yield continuous effective success counts $\tilde{N}_S(s) = \tilde{d}_S(s) \times N$ and failure counts $\tilde{N}_F(s) = \tilde{d}_F(s) \times N$.
+   These define the conjugate parameters of a localized **Beta Distribution**:
+   $$\text{Success Rate}(s) \sim \text{Beta}\left( \tilde{N}_S(s), \, \tilde{N}_F(s) \right)$$
+3. **Adaptive Evolution Across Learning Stages:**
+   - In the **Early Stage**, sample counts are low, producing wide, exploratory Beta distributions with high variance.
+   - In the **Late Stage**, accumulated data produces narrow, highly peaked Beta distributions with overwhelming statistical confidence.
+4. **Shaped Reward Mapping:**
+   At every step, the agent samples an expected success rate from the localized Beta distribution and evaluates it through a calibrated mapping function $f(r^S)$ to deliver an optimal, self-adaptive shaping reward $R^S(s)$ that matures dynamically alongside agent competence.
+
+---
+
+<reviewkit>
+<takeaways>
+- **The Curse of Sparse Native Rewards:** Real-world environmental rewards are almost universally sparse, delayed, and non-informative. In zero-reward in-process states, standard Q-learning executes empty updates ($0 \leftarrow 0$), and algorithms only begin to learn after stumbling upon a rare goal state through random exploration.
+- **The Reward Shaping Paradigm:** General reward shaping reformulates the feedback landscape as $R^{\text{new}} = \alpha R^{\text{env}} + \beta R^{\text{sha}}$, converting sparse binary goals into dense intermediate milestone gradients.
+- **Exploration Shaping & RND:** Novelty bonuses reward under-explored states. While tabular counters use $1/(N(s)+1)$ and continuous domains use pseudo-counts, high-dimensional spaces deploy Random Network Distillation (RND), measuring prediction errors between a trained predictor and a frozen target network ($\|f(s) - \hat{f}_\theta(s)\|^2$).
+- **The Noisy-TV Vulnerability:** Pure prediction-error novelty is vulnerable to environmental stochastic noise (e.g., random static on a TV screen). The agent becomes hypnotized by unpredictable noise, harvesting infinite exploration bonuses while abandoning the task.
+- **Exploitation Shaping & Process Supervision:** Assigning bonuses to critical bottleneck states accelerates optimization. In LLM multi-step reasoning, Math-Shepherd replaces sparse outcome supervision with process-level step rewards ($y_{s_i}$) evaluated via automated Monte Carlo tree rollouts.
+- **Potential-Based Policy Invariance:** Arbitrary reward shaping risks policy corruption (reward gaming). Ng, Harada, and Russell proved that potential-difference shaping ($R^{\text{sha}} = \gamma \phi(s') - \phi(s)$) induces a telescoping sum cancellation along trajectories, strictly guaranteeing that the optimal policy $\pi^*$ remains identical to the native MDP.
+- **RLHF in Open-Ended Domains:** For subjective LLM generation lacking programmatic rewards, Reinforcement Learning from Human Feedback trains a regression reward model ($r_\theta(x, y) \in \mathbb{R}$) on human pairwise preference rankings using the Bradley-Terry logistic loss ($-\log \sigma(r(y_+) - r(y_-))$).
+- **Advanced Autonomous Shaping Architectures (Ma et al., NUS):**
+  - **ReLara (ICML 2024):** Decouples execution from guidance via a two-agent architecture: a Policy Agent ($\mathcal{A}_P$) executing actions and an Assistant Reward Agent ($\mathcal{A}_R$) learning shaping bonuses as a secondary MDP.
+  - **CenRA (NeurIPS 2025):** Deploys a Centralized Reward Agent ($\mathcal{A}^{\text{rwd}}$) analyzing concatenated multi-task replay buffers ($\bigcup \mathcal{D}_i$) to distill universal structural meta-knowledge across multiple policy agents.
+  - **SASR (ICLR 2025):** Formulates Self-Adaptive Success Rate shaping by computing spatial densities via Kernel Density Estimation and Random Fourier Features, modeling localized Beta distributions ($\text{Beta}(\tilde{N}_S, \tilde{N}_F)$) that transition seamlessly from early-stage exploration to late-stage exploitation.
+</takeaways>
+
+<qquiz src="questions.en.json"/>
+
+<qprompt/>
+</reviewkit>
+
+## References
+
+1. Bellemare, M., Srinivasan, S., Ostrovski, G., Schaul, T., Saxton, D., & Munos, R. (2016). Unifying count-based exploration and intrinsic motivation. *Advances in Neural Information Processing Systems (NeurIPS 2016)*, 29.
+2. Burda, Y., Edwards, H., Storkey, A., & Klimov, O. (2018). Exploration by random network distillation. *arXiv preprint arXiv:1810.12894*.
+3. Wang, P., Li, L., Shao, Z., et al. (2024). Math-shepherd: Verify and reinforce llms step-by-step without human annotations. In *Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)* (pp. 9426-9439).
+4. Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C., Mishkin, P., ... & Lowe, R. (2022). Training language models to follow instructions with human feedback. *Advances in Neural Information Processing Systems (NeurIPS 2022)*, 35, 27730-27744.
+5. Christiano, P. F., Leike, J., Brown, T., Martic, M., Legg, S., & Amodei, D. (2017). Deep reinforcement learning from human preferences. *Advances in Neural Information Processing Systems (NeurIPS 2017)*, 30.
+6. Ng, A. Y., Harada, D., & Russell, S. (1999). Policy invariance under reward transformations: Theory and application to reward shaping. In *International Conference on Machine Learning (ICML 1999)* (Vol. 99, pp. 278-287).
+7. Ma, H., Sima, K., Vo, T. V., Fu, D., & Leong, T. Y. (2024). Reward shaping for reinforcement learning with an assistant reward agent. In *Proceedings of the 41st International Conference on Machine Learning (ICML 2024)*.
+8. Ma, H., Luo, Z., Sima, K., Vo, T. V., & Leong, T. Y. (2025). Centralized reward agent for knowledge sharing and transfer in multi-task reinforcement learning. In *Proceedings of the 39th Annual Conference on Neural Information Processing Systems (NeurIPS 2025)*.
+9. Ma, H., Luo, Z., Vo, T. V., Sima, K., & Leong, T. Y. (2025). Highly efficient self-adaptive reward shaping for reinforcement learning. In *Proceedings of the 13th International Conference on Learning Representations (ICLR 2025)*.
+10. Weng, L. (2020). Exploration strategies in deep reinforcement learning. *Lil'Log*. https://lilianweng.github.io/posts/2020-06-07-exploration-drl/
+11. OpenAI. (2018). Reinforcement learning with prediction-based rewards. *OpenAI Blog*. https://openai.com/index/reinforcement-learning-with-prediction-based-rewards/
 12. Gopalan, A., & Teo, Y. M. (2025). *CS4246/5446 Reinforcement Learning and Sequential Decision Making (Version 5.0)*. National University of Singapore (NUS).

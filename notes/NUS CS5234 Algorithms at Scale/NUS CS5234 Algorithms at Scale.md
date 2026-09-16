@@ -1,13 +1,13 @@
 <meta>
 Title: NUS CS5234 Algorithms at Scale
-Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao's minimax principle, query complexity lower bounds, property testing, array monotonicity, and distribution uniformity testing.
+Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao's minimax principle, query complexity lower bounds, property testing, array monotonicity, distribution uniformity testing, reservoir sampling, Morris approximate counting, graph streaming connectivity and spanners, metric k-center NP-hardness and 2-approximation, streaming k-center in Euclidean grids, hierarchical k-median coreset trees, and minimum enclosing ball core-sets.
 Slug: nus-cs5234-algorithms-at-scale
 Output: notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.html
 CanonicalId: nus-cs5234-algorithms-at-scale
 Style: default
 EstimatedReadingTime: true
 Lang: en
-Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability
+Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset
 Status: drafting
 Published: 2026-08-20
 LastModified: 2026-09-16
@@ -2089,3 +2089,940 @@ $$\Theta\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$
 9. Batu, T., Fortnow, L., Rubinfeld, R., Smith, W. D., & White, P. (2013). Testing that distributions are close. *ACM Transactions on Algorithms (TALG)*, 9(4), 1-24.
 10. Paninski, L. (2008). A coincidence-based test for uniformity given very sparsely sampled discrete data. *IEEE Transactions on Information Theory*, 54(10), 4750-4755.
 11. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lectures 1–4)*. National University of Singapore (NUS).
+
+# Week 5 - Streaming Algorithms: Reservoir Sampling, Morris Approximate Counting, Graph Streaming, and Spanners
+
+<draft>
+- 1. The Streaming Model of Computation
+    - Foundations: Input sequence e_1, ..., e_n arriving sequentially, one-pass processing, limited working memory (O(polylog n) bits).
+    - The Resource Dilemma: Exact global statistics vs. space bottlenecks; necessity of randomized approximation.
+- 2. Streaming Sampling: Uniform Reservoir Sampling
+    - Single-Item Reservoir Sampling: Replacing current sample x with x_i with probability 1/i.
+    - Telescoping Proof of Uniformity: Pr(x = x_j) = (1/j) * prod_{k=j+1}^n (1 - 1/k) = 1/n.
+    - Space and time complexity: O(log m + log n) bits, O(1) per-item processing.
+- 3. Approximate Counting: The Morris Algorithm
+    - Motivation: Exact counter takes O(log n) bits; Morris counter consumes O(log log n) bits.
+    - Algorithm: Counter C <- C + 1 with probability 2^{-C}; estimator \\hat{A} = 2^C - 1.
+    - Expectation Analysis: Showing E[2^{C_i}] = i + 1, proving \\hat{A} is strictly unbiased (E[\\hat{A}] = A).
+    - Variance Analysis: E[X_{i+1}^2 | X_i = x] = x^2 + 3x; Var(\\hat{A}) = A(A-1)/2 < A^2 / 2.
+    - Variance Reduction via Mean Trick: Averaging 10 / \\epsilon^2 parallel counters achieves (1 +/- \\epsilon)-approximation with failure probability < 1/10 in O((1/\\epsilon^2) log log n) space.
+- 4. Graph Streaming Algorithms: The Edge Arrival Model
+    - Problem Formulation: Fixed vertex set V known in advance, stream of undirected edges e_1, ..., e_m.
+    - Streaming Connectivity: Maintaining a spanning forest F; cycle prevention; space O(n log n) bits.
+    - Streaming Bipartiteness: Odd-cycle detection via 2-colored spanning forest; early rejection; space O(n log n) bits.
+- 5. Graph Spanners in Streams
+    - Spanner Definition: Subgraph H \\subseteq G such that d_G(u, v) <= d_H(u, v) <= (2k - 1) d_G(u, v).
+    - Greedy Streaming Construction: Edge (u, v) added to H iff d_H(u, v) > 2k - 1.
+    - Stretch Factor Analysis: Inductive triangle inequality along shortest paths proving stretch <= 2k - 1.
+    - Girth Lower Bound: H contains no cycle of length <= 2k (girth >= 2k + 1).
+    - Space Bound Proof: Minimum degree d_min = O(n^{1/k}) via k-layer BFS tree; average degree \\bar{d} = O(n^{1/k}) via subgraphs with minimum degree >= \\bar{d}/4; total edges |E(H)| = O(n^{1 + 1/k}); space O(n^{1 + 1/k} log n) bits.
+</draft>
+
+The streaming model of computation addresses large-scale data processing under severe memory constraints. In traditional algorithms, the entire input resides in random-access memory (RAM). In modern planetary-scale systems—such as internet backbone routers, financial transaction tickers, sensor networks, and astronomical observatories—data arrives as an continuous, unbounded sequence of elements that must be processed in a single pass using working memory that is polylogarithmic or sublinear in the stream length $n$.
+
+This technical note explores the theoretical foundations and analysis of streaming algorithms: from uniform reservoir sampling and Morris logarithmic approximate counting to graph streaming models for connectivity, bipartiteness, and metric $(2k-1)$-spanners with provable girth bounds.
+
+---
+
+## 1. The Streaming Model of Computation
+
+### 1.1 Formal Definition & Constraints
+
+In the standard streaming model:
+1. **Unbounded Input Stream:** The input consists of a sequence of $n$ elements:
+   $$\sigma = \langle e_1, e_2, \dots, e_n \rangle$$
+   where each element $e_i$ is drawn from a universe $\mathcal{U} = \{1, 2, \dots, m\}$.
+2. **Sequential Arrival:** Elements arrive one at a time. The algorithm can only examine the current element $e_i$.
+3. **Irrevocability:** Once an element $e_i$ has been processed, it cannot be re-examined unless it is explicitly retained in working memory.
+4. **Working Space Constraint:** The algorithm has access to a working memory $\mathcal{M}$. Ideally:
+   $$|\mathcal{M}| = \mathcal{O}(\text{polylog}(n, m)) \text{ bits}$$
+   or in graph streaming, $\mathcal{O}(n \cdot \text{polylog}(n))$ bits (the **semi-streaming model**), which is strictly sublinear in the number of edges $m \le \binom{n}{2}$.
+5. **Output Objective:** At the end of the stream (or continuously upon query), output summary statistics, property testing certificates, or approximate structural representations of the underlying data.
+
+---
+
+## 2. Streaming Sampling: Uniform Reservoir Sampling
+
+### 2.1 The Problem
+
+- **Input:** A stream of $n$ numbers $\langle x_1, x_2, \dots, x_n \rangle$ where each $x_i \in \{1, 2, \dots, m\}$. The total length $n$ is **unknown in advance**.
+- **Goal:** Maintain a single sample $x$ such that at any step $n$, $x$ is chosen **uniformly at random** from the elements observed so far:
+  $$\Pr(x = x_j) = \frac{1}{n} \quad \text{for all } j \in \{1, 2, \dots, n\}$$
+
+### 2.2 Algorithm: Single-Item Reservoir Sampling
+
+```
+Algorithm: Reservoir-Sampling()
+1. Initialize working variable x <- null, counter i <- 0.
+2. For each arriving element x_i:
+3.     i <- i + 1
+4.     With probability 1 / i:
+5.         x <- x_i
+6.     With probability 1 - 1 / i:
+7.         Keep x unchanged
+8. Output x at the end of the stream.
+```
+
+### 2.3 Mathematical Proof of Uniformity
+
+We prove by induction that for any stream prefix of length $n$, every element $x_j$ ($1 \le j \le n$) has an exact probability of $1/n$ of being stored in $x$.
+
+Consider a specific element $x_j$. For $x_j$ to be the final output:
+1. It must be selected when it arrives at step $j$, which occurs with probability $\frac{1}{j}$.
+2. It must **not** be replaced at step $j+1$, which occurs with probability $1 - \frac{1}{j+1} = \frac{j}{j+1}$.
+3. It must not be replaced at any subsequent step $k$ for all $k = j+1, j+2, \dots, n$, with probability $1 - \frac{1}{k} = \frac{k-1}{k}$.
+
+Since the random decisions at each arrival step are mutually independent:
+$$\Pr(x = x_j) = \frac{1}{j} \times \prod_{k=j+1}^n \left( 1 - \frac{1}{k} \right) = \frac{1}{j} \times \left( \frac{j}{j+1} \right) \times \left( \frac{j+1}{j+2} \right) \times \dots \times \left( \frac{n-1}{n} \right)$$
+
+Notice that this forms a **telescoping product**:
+$$\prod_{k=j+1}^n \frac{k-1}{k} = \frac{j}{n}$$
+
+Multiplying by the initial selection probability:
+$$\Pr(x = x_j) = \frac{1}{j} \times \frac{j}{n} = \frac{1}{n} \quad \blacksquare$$
+
+- **Space Complexity:** Storing element $x$ takes $\lceil \log_2 m \rceil$ bits, and maintaining the index counter $i$ takes $\lceil \log_2 n \rceil$ bits. Total space is $\mathcal{O}(\log m + \log n)$ bits.
+- **Time Complexity:** $\mathcal{O}(1)$ time per arriving item.
+
+---
+
+## 3. Approximate Counting: The Morris Algorithm
+
+### 3.1 The Scalability Bottleneck of Exact Counting
+
+Consider counting the number of $1$s (denoted by $A$) in an $n$-bit binary stream:
+- An exact deterministic counter must count from $0$ up to $n$.
+- Storing an exact integer in the range $[0, n]$ requires:
+  $$S = \lceil \log_2(n + 1) \rceil \text{ bits}$$
+- If we wish to track billions of simultaneous event counters (e.g., in high-speed router line cards or distributed telemetry), allocating $32$ or $64$ bits per counter consumes massive SRAM.
+- **Question:** *Can we count approximately using significantly less space?*
+  Specifically, can we count using only $\mathcal{O}(\log\log n)$ bits?
+
+---
+
+### 3.2 The Morris Counting Algorithm (Robert Morris, 1978)
+
+Instead of storing $A$, the Morris algorithm stores an integer $C$ that represents the **order of magnitude** of $A$:
+
+```
+Algorithm: Morris-Counter()
+1. Initialize counter C <- 0.
+2. For each arriving 1:
+3.     Flip a biased coin with probability of heads = 2^{-C} (i.e., 1 / 2^C).
+4.     If heads:
+5.         C <- C + 1
+6. At the end of the stream, output:
+       \hat{A} = 2^C - 1
+```
+
+#### Intuition
+Increasing the counter from $C = i$ to $i + 1$ requires an expected number of arrivals equal to $2^i$. Thus, when the counter reaches value $C$, the expected total number of items that have arrived is:
+$$\sum_{k=0}^{C-1} 2^k = 2^C - 1$$
+
+---
+
+### 3.3 Rigorous Mathematical Analysis of Expectation
+
+Let $A$ be the true total number of $1$s in the stream.
+For each $i \in \{0, 1, \dots, A\}$, let $C_i$ denote the value of the counter $C$ after the $i$-th $1$ has been processed.
+Define the random variable:
+$$X_i = 2^{C_i}$$
+
+When the $(i+1)$-th element arrives:
+$$X_{i+1} = \begin{cases} 2^{C_i + 1} = 2 X_i & \text{with probability } \frac{1}{2^{C_i}} = \frac{1}{X_i} \\ X_i & \text{with probability } 1 - \frac{1}{X_i} \end{cases}$$
+
+We compute the conditional expectation of $X_{i+1}$ given $X_i = x$:
+$$\mathbb{E}[X_{i+1} \mid X_i = x] = (2x) \cdot \frac{1}{x} + x \cdot \left( 1 - \frac{1}{x} \right) = 2 + x - 1 = x + 1$$
+
+By the Law of Total Expectation:
+$$\mathbb{E}[X_{i+1}] = \sum_x \Pr(X_i = x) \mathbb{E}[X_{i+1} \mid X_i = x] = \sum_x \Pr(X_i = x) (x + 1) = \mathbb{E}[X_i] + 1$$
+
+We have a simple linear recurrence: $\mathbb{E}[X_{i+1}] = \mathbb{E}[X_i] + 1$.
+The base case is $C_0 = 0 \implies X_0 = 2^0 = 1$.
+Solving the recurrence:
+$$\mathbb{E}[X_A] = X_0 + A = A + 1$$
+
+Since the output estimator is $\hat{A} = X_A - 1 = 2^{C_A} - 1$:
+$$\mathbb{E}[\hat{A}] = \mathbb{E}[X_A - 1] = \mathbb{E}[X_A] - 1 = (A + 1) - 1 = A$$
+
+> **Theorem (Unbiased Estimator):**
+> The Morris counter estimator $\hat{A} = 2^C - 1$ is an **unbiased estimator** of the true stream length $A$: $\mathbb{E}[\hat{A}] = A$.
+
+---
+
+### 3.4 Rigorous Mathematical Analysis of Variance
+
+To quantify estimation error, we compute the second moment $\mathbb{E}[X_i^2]$:
+$$\mathbb{E}[X_{i+1}^2 \mid X_i = x] = (2x)^2 \cdot \frac{1}{x} + x^2 \cdot \left( 1 - \frac{1}{x} \right) = 4x + x^2 - x = x^2 + 3x$$
+
+Taking expectation over all values of $X_i$:
+$$\mathbb{E}[X_{i+1}^2] = \mathbb{E}[X_i^2] + 3 \mathbb{E}[X_i] = \mathbb{E}[X_i^2] + 3(i + 1)$$
+
+Since $X_0 = 1 \implies X_0^2 = 1$:
+$$\mathbb{E}[X_i^2] = 1 + 3 \sum_{j=1}^i j = 1 + \frac{3 i(i + 1)}{2} = \frac{3 i^2 + 3i + 2}{2}$$
+
+Now compute the variance of $X_i$:
+$$\text{Var}(X_i) = \mathbb{E}[X_i^2] - (\mathbb{E}[X_i])^2 = \left( 1 + \frac{3i(i+1)}{2} \right) - (i + 1)^2$$
+Expanding and simplifying:
+$$\text{Var}(X_i) = 1 + \frac{3i^2 + 3i}{2} - (i^2 + 2i + 1) = \frac{3i^2 + 3i - 2i^2 - 4i}{2} = \frac{i(i - 1)}{2}$$
+
+Since $\hat{A} = X_A - 1$, shifting by a constant does not alter variance:
+$$\text{Var}(\hat{A}) = \text{Var}(X_A) = \frac{A(A - 1)}{2} < \frac{A^2}{2}$$
+
+---
+
+### 3.5 Variance Reduction via the Mean Trick (Morris+)
+
+The standard deviation of a single Morris counter is $\sigma \approx \frac{A}{\sqrt{2}}$, which is of the same order as the estimate itself.
+To achieve an $(\epsilon, \delta)$-approximation:
+1. Run $k = \frac{10}{\epsilon^2}$ independent, parallel copies of the Morris algorithm: $C^{(1)}, C^{(2)}, \dots, C^{(k)}$.
+2. Compute the individual estimators: $\hat{A}_j = 2^{C^{(j)}} - 1$.
+3. Output the sample average (**The Mean Trick**):
+   $$\bar{A} = \frac{1}{k} \sum_{j=1}^k \hat{A}_j$$
+
+#### Error Bound:
+By linearity of expectation:
+$$\mathbb{E}[\bar{A}] = A$$
+Because the $k$ instances use independent random coin flips:
+$$\text{Var}(\bar{A}) = \frac{\text{Var}(\hat{A})}{k} \le \frac{A^2 / 2}{10 / \epsilon^2} = \frac{\epsilon^2 A^2}{20}$$
+
+Applying **Chebyshev's Inequality**:
+$$\Pr(|\bar{A} - A| > \epsilon A) \le \frac{\text{Var}(\bar{A})}{(\epsilon A)^2} \le \frac{\epsilon^2 A^2 / 20}{\epsilon^2 A^2} = \frac{1}{20} < \frac{1}{10}$$
+
+#### Space Complexity Analysis:
+- Since $A \le n$, the maximum value stored in any counter $C$ is $\approx \log_2 n$.
+- Storing an integer $C \le \log_2 n$ requires:
+  $$\lceil \log_2 C \rceil = \mathcal{O}(\log\log n) \text{ bits}$$
+- For $k = \mathcal{O}(1/\epsilon^2)$ independent counters:
+  $$\text{Total Space} = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\log n \right) \text{ bits}$$
+For $n = 10^{18}$ (quintillion items), $\log_2 n \approx 60$, so $\log_2\log_2 n \approx 6$ bits! Each Morris counter requires only 6 bits instead of 64 bits.
+
+---
+
+## 4. Graph Streaming Algorithms: The Edge Arrival Model
+
+### 4.1 The Edge Stream Setting
+
+In graph streaming:
+- The vertex set $V = \{1, 2, \dots, n\}$ is known in advance.
+- The edges $e_1, e_2, \dots, e_m$ of an unweighted graph $G = (V, E)$ arrive sequentially in an arbitrary order.
+- The algorithm must maintain a compact data structure to answer structural queries at stream termination.
+
+---
+
+### 4.2 Streaming Graph Connectivity
+
+- **Problem:** Determine whether the stream of edges forms a connected graph $G$.
+- **Exact Algorithm via Spanning Forest:**
+
+```
+Algorithm: Streaming-Connectivity()
+1. Initialize spanning forest F <- (V, \emptyset).
+2. When edge e = (u, v) arrives:
+3.     If u and v are NOT in the same connected component of F:
+4.         F <- F \cup {e}
+5.     Else:
+6.         Discard e (it forms a cycle within F)
+7. At the end of the stream:
+8.     If F has exactly n - 1 edges (1 connected component):
+9.         Output "Connected"
+10.    Else:
+11.        Output "Disconnected"
+```
+
+#### Correctness and Space:
+- A forest on $n$ vertices contains at most $n - 1$ edges.
+- Discarding an edge $e = (u, v)$ whose endpoints are already connected preserves the connectivity of all vertex pairs.
+- **Space Complexity:** Storing $n - 1$ edges requires $\mathcal{O}(n \log n)$ bits of memory, which is independent of the number of stream edges $m \le \binom{n}{2}$.
+
+---
+
+### 4.3 Streaming Graph Bipartiteness
+
+- **Problem:** Determine whether the input graph $G$ is bipartite.
+- **Fundamental Characterization:** A graph $G$ is bipartite if and only if it contains **no odd-length cycles**.
+
+```
+Algorithm: Streaming-Bipartiteness()
+1. Initialize forest F <- (V, \emptyset).
+2. Maintain a 2-coloring for each connected tree component in F.
+3. When edge e = (u, v) arrives:
+4.     If u and v are in different tree components of F:
+5.         Add e to F.
+6.         Merge the two trees and invert the 2-coloring of one tree if necessary
+           so that color(u) != color(v).
+7.     Else (u and v are in the same tree component):
+8.         If color(u) == color(v):
+9.             Output "No" (odd cycle detected!) and HALT.
+10.        Else (color(u) != color(v)):
+11.            Discard e (it forms an even cycle).
+12. If the stream terminates without rejection:
+13.     Output "Yes" (G is bipartite).
+```
+
+#### Proof of Correctness:
+1. **If $G$ is bipartite:** $G$ contains zero odd cycles. Every cycle formed by adding an edge to $F$ must be of even length, so `color(u) == color(v)` never occurs. The algorithm correctly outputs `Yes`.
+2. **If the algorithm outputs `Yes`:** $F$ is a spanning forest of $G$. Any forest is bipartite and admits a proper 2-coloring.
+   For every edge $e = (u, v) \notin F$, $e$ was processed and discarded because $\text{color}(u) \neq \text{color}(v)$.
+   Therefore, the 2-coloring computed on $F$ is simultaneously a valid proper 2-coloring for all edges in $E(G)$.
+   Hence $G$ is bipartite!
+
+- **Space Complexity:** Storing $F$ takes at most $n - 1$ edges $\implies \mathcal{O}(n \log n)$ bits.
+
+---
+
+## 5. Graph Spanners in Streams
+
+### 5.1 Distance Approximation via Graph Spanners
+
+In massive networks, storing all shortest path distances requires $\binom{n}{2} = \Theta(n^2)$ space.
+Can we construct a sparse subgraph $H \subseteq G$ that approximates all pairwise shortest path distances?
+
+> **Definition (Metric Spanner):**
+> Given an unweighted connected graph $G = (V, E)$ and an integer $k \ge 1$, a subgraph $H = (V, E_H)$ with $E_H \subseteq E$ is called a **$t$-spanner** (or **$(2k - 1)$-spanner**) of $G$ if for all $u, v \in V$:
+> $$d_G(u, v) \le d_H(u, v) \le (2k - 1) \cdot d_G(u, v)$$
+> The multiplicative factor $2k - 1$ is the **stretch factor** of the spanner.
+
+---
+
+### 5.2 Streaming Construction of a $(2k - 1)$-Spanner
+
+```
+Algorithm: Streaming-Spanner(k)
+1. Initialize spanner H <- (V, \emptyset).
+2. When edge e = (u, v) arrives:
+3.     Compute shortest path distance d_H(u, v) in the current subgraph H.
+4.     If d_H(u, v) > 2k - 1 (or u and v are disconnected in H):
+5.         Add e to H: E_H <- E_H \cup {(u, v)}
+6.     Else:
+7.         Discard e (e is adequately spanned by existing edges in H)
+8. Output H.
+```
+
+```
+Spanner Edge Addition Logic:
+      u o---------------------------------o v   (Arriving Edge e = (u, v))
+         \                               /
+          o---o---o--- ... ---o---o---o-o       (Alternative Path in H)
+                     Length <= 2k - 1
+  - If length <= 2k - 1: DISCARD edge e!
+  - If length > 2k - 1:  KEEP edge e in H!
+```
+
+---
+
+### 5.3 Proof of Correctness (Stretch Bound)
+
+We prove that for every pair of vertices $u, v \in V$, $d_H(u, v) \le (2k - 1) d_G(u, v)$.
+
+1. **Edge-by-Edge Stretch:**
+   Consider any edge $(u, v) \in E(G)$:
+   - **Case 1: $(u, v) \in E_H$.** Then $d_H(u, v) = 1 \le 2k - 1$.
+   - **Case 2: $(u, v) \notin E_H$.** The edge was discarded at arrival because at that instant, there existed an alternate path in $H$ connecting $u$ and $v$ of length at most $2k - 1$. Subsequent edge additions to $H$ can only decrease or preserve distances. Thus:
+     $$d_H(u, v) \le 2k - 1$$
+2. **General Path Stretch:**
+   Let $P = \langle u = v_0, v_1, v_2, \dots, v_\ell = v \rangle$ be a true shortest path between $u$ and $v$ in $G$, where $\ell = d_G(u, v)$.
+   Every step $(v_{i-1}, v_i)$ is an edge in $G$, so $d_H(v_{i-1}, v_i) \le 2k - 1$.
+   By the triangle inequality in $H$:
+   $$d_H(u, v) \le \sum_{i=1}^\ell d_H(v_{i-1}, v_i) \le \sum_{i=1}^\ell (2k - 1) = (2k - 1) \ell = (2k - 1) \cdot d_G(u, v) \quad \blacksquare$$
+
+---
+
+### 5.4 Space Analysis: The Girth Theorem
+
+How many edges can the spanner $H$ retain in the worst case?
+
+#### 1. The Girth Invariant
+> **Lemma (Girth of $H$):**
+> The subgraph $H$ contains **no cycle of length at most $2k$** (i.e., the girth of $H$ is at least $2k + 1$).
+
+*Proof:*
+Suppose for contradiction that adding edge $e = (u, v)$ creates a cycle $C$ of length $|C| \le 2k$ in $H$.
+Then prior to adding $e$, there existed a path in $H$ connecting $u$ and $v$ of length $|C| - 1 \le 2k - 1$.
+According to the algorithm rule, if $d_H(u, v) \le 2k - 1$, edge $e$ is **discarded**, not added!
+Hence, no edge can ever create a cycle of length $\le 2k$. $\blacksquare$
+
+#### 2. Bounding Minimum Degree via BFS Trees
+> **Lemma (Minimum Degree Bound):**
+> Any graph $H$ with girth $\ge 2k + 1$ has minimum degree $d_{\min} = \mathcal{O}(n^{1/k})$.
+
+*Proof:*
+Root a Breadth-First Search (BFS) tree at an arbitrary vertex $r \in V$.
+Examine the first $k$ layers of the BFS tree:
+- Because $H$ contains no cycle of length $\le 2k$, there are **no cross edges** between vertices at distance $\le k$ from $r$, and no two tree paths from $r$ can meet at depth $\le k$.
+- Thus, the first $k$ levels of the BFS tree form a **strict tree** without cycles.
+- The root $r$ has at least $d_{\min}$ children at level 1.
+- Every vertex at level $1 \le j < k$ has at least $d_{\min} - 1$ children at level $j + 1$.
+- Therefore, the number of vertices in the first $k$ levels is at least:
+  $$|V_{\text{tree}}| \ge 1 + d_{\min} \sum_{j=0}^{k-1} (d_{\min} - 1)^j \ge (d_{\min} - 1)^k$$
+Since the total number of vertices in $H$ is $n$:
+$$(d_{\min} - 1)^k \le n \implies d_{\min} - 1 \le n^{1/k} \implies d_{\min} \le n^{1/k} + 1 = \mathcal{O}(n^{1/k}) \quad \blacksquare$$
+
+#### 3. Bounding Average Degree (Bondy-Simonovits Theorem / Erdős Girth Bound)
+> **Lemma (High-Degree Subgraph):**
+> Any graph with average degree $\bar{d}$ contains a non-empty subgraph $H'$ with minimum degree:
+> $$d_{\min}(H') \ge \frac{\bar{d}}{4}$$
+
+*Proof:*
+Let $|E(H)| = m = \frac{n \bar{d}}{2}$.
+Repeatedly remove from $H$ any vertex with degree strictly less than $\frac{\bar{d}}{4}$.
+When a vertex of degree $< \bar{d}/4$ is removed, at most $\bar{d}/4$ edges are deleted.
+Even if we remove all $n$ vertices, the total number of deleted edges would be strictly less than:
+$$n \times \frac{\bar{d}}{4} = \frac{n \bar{d}}{4} = \frac{m}{2}$$
+Thus, at least $m/2$ edges survive! The process must terminate at a non-empty subgraph $H'$ where every remaining vertex has degree $\ge \bar{d}/4$. $\blacksquare$
+
+#### 4. Total Space Bound:
+Because $H' \subseteq H$, $H'$ also contains no cycle of length $\le 2k$.
+Applying the minimum degree lemma to $H'$:
+$$\frac{\bar{d}}{4} \le d_{\min}(H') \le \mathcal{O}(n^{1/k}) \implies \bar{d} = \mathcal{O}(n^{1/k})$$
+The total number of edges stored in $H$ is:
+$$|E_H| = \frac{n \bar{d}}{2} \le \mathcal{O}\left( n^{1 + 1/k} \right)$$
+
+> **Theorem (Streaming $(2k-1)$-Spanner):**
+> For any integer $k \ge 1$, the streaming spanner algorithm computes a $(2k-1)$-spanner $H$ of $G$ with at most $\mathcal{O}(n^{1 + 1/k})$ edges, using $\mathcal{O}(n^{1 + 1/k} \log n)$ bits of working memory.
+> - For $k = 2$: Computes a $3$-spanner with $\mathcal{O}(n^{1.5})$ edges.
+> - For $k = \log n$: Computes an $\mathcal{O}(\log n)$-spanner with $\mathcal{O}(n)$ edges ($\mathcal{O}(n \log n)$ bits).
+
+---
+
+<reviewkit>
+<takeaways>
+- **The Streaming Paradigm:** Algorithms process unbounded input streams in a single pass under sublinear working memory constraints ($\mathcal{O}(\text{polylog } n)$ or semi-streaming $\mathcal{O}(n \log n)$ bits).
+- **Reservoir Sampling:** Replacing the current sample $x$ with arriving element $x_i$ with probability $1/i$ yields an exact, uniform $1/n$ probability distribution across all seen elements via telescoping product cancellation.
+- **Morris Logarithmic Counting:** Replaces an exact $\mathcal{O}(\log n)$-bit counter with a probabilistic counter $C \leftarrow C + 1$ with probability $2^{-C}$. The estimator $\hat{A} = 2^C - 1$ is strictly unbiased ($\mathbb{E}[\hat{A}] = A$) with variance $\text{Var}(\hat{A}) = \frac{A(A-1)}{2} < \frac{A^2}{2}$, requiring only $\mathcal{O}(\log\log n)$ bits of memory.
+- **The Mean Trick in Morris+:** Averaging $k = 10/\epsilon^2$ parallel independent Morris counters guarantees a $(1 \pm \epsilon)$-approximation with success probability $\ge 9/10$ in $\mathcal{O}\left( \frac{\log\log n}{\epsilon^2} \right)$ space.
+- **Streaming Graph Connectivity & Bipartiteness:** Maintaining a spanning forest $F$ requires at most $n - 1$ edges ($\mathcal{O}(n \log n)$ bits). Bipartiteness is verified by 2-coloring $F$ and immediately rejecting on odd-cycle back-edges.
+- **Graph Spanner Construction:** A $(2k-1)$-spanner $H$ is constructed by greedily adding edge $(u, v)$ if and only if $d_H(u, v) > 2k - 1$. This ensures that all shortest path distances in $G$ are preserved within a multiplicative factor of $2k - 1$.
+- **Spanner Girth & Space Bounds:** Rejecting edges with $d_H(u, v) \le 2k - 1$ enforces a girth bound of $\ge 2k + 1$. By the Bondy-Simonovits theorem, any graph without cycles of length $\le 2k$ contains at most $\mathcal{O}(n^{1 + 1/k})$ edges, bounding spanner memory to $\mathcal{O}(n^{1 + 1/k} \log n)$ bits.
+</takeaways>
+
+<qquiz src="questions.en.json"/>
+
+<qprompt/>
+</reviewkit>
+
+## References
+
+1. Morris, R. (1978). Counting large numbers of events in small registers. *Communications of the ACM*, 21(10), 840-842.
+2. Flajolet, P. (1985). Approximate counting: a detailed analysis. *BIT Numerical Mathematics*, 25(1), 113-134.
+3. Vitter, J. S. (1985). Random sampling with a reservoir. *ACM Transactions on Mathematical Software (TOMS)*, 11(1), 37-57.
+4. Peleg, D., & Schäffer, A. A. (1989). Graph spanners. *Journal of Graph Theory*, 13(1), 99-116.
+5. Baswana, S., & Sen, S. (2007). A simple and linear time randomized algorithm for computing sparse spanners in weighted graphs. *Random Structures & Algorithms*, 30(4), 532-563.
+6. Bondy, J. A., & Simonovits, M. (1974). Cycles of even length in graphs. *Journal of Combinatorial Theory, Series B*, 16(2), 97-105.
+7. Muthukrishnan, S. (2005). Data streams: Algorithms and applications. *Foundations and Trends in Theoretical Computer Science*, 1(2), 117-236.
+8. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture 5: Streaming Algorithms)*. National University of Singapore (NUS).
+
+# Week 6 - Clustering Algorithms: Metric k-Center, Streaming Approximations, Coreset Trees for k-Median, and Minimum Enclosing Ball
+
+<draft>
+- 1. The Metric Clustering Framework & Objectives
+    - Metric Space Axioms: Non-negativity, symmetry, and triangle inequality d(p_i, p_k) <= d(p_i, p_j) + d(p_j, p_k).
+    - Canonical Objectives: k-Means (sum of squared distances), k-Median (sum of distances), and k-Center (minimizing maximum radius max_i d(p_i, C(p_i))).
+- 2. Metric k-Center: Hardness & Approximation Limits
+    - NP-Hardness Proof: Reduction from Dominating Set using a 1-2 metric on V.
+    - Inapproximability Theorem: Proving no (2 - \\epsilon)-approximation algorithm exists unless P = NP.
+- 3. The Gonzalez Greedy 2-Approximation Algorithm
+    - Farthest-First Traversal: Arbitrary initial center C_1, greedily choosing C_i = argmax_{p} min_{j < i} d(p, C_j).
+    - Tight 2-Approximation Proof: Pigeonhole principle over k+1 points, bounding max distance by 2 * OPT.
+    - Query Algorithm: Simulating farthest-first traversal via distance oracle in O(nk) query complexity.
+- 4. Streaming k-Center in Euclidean Bounded Spaces
+    - Euclidean Setting: Points p_i in [\\Delta]^2, one-pass arrival.
+    - Decision Testing Reduction: Given threshold guess T, testing whether OPT <= T in O(k log \\Delta) space.
+    - (2 + 2\\epsilon)-Approximation Streaming Algorithm: Running O((log \\Delta) / \\epsilon) parallel testing instances for geometric guesses T = (1+\\epsilon)^j, achieving (2 + 2\\epsilon)-approximation in O((k / \\epsilon) log^2 \\Delta) space.
+- 5. Streaming k-Median via Hierarchical Coreset Trees
+    - Problem Formulation: Minimizing sum of distances; comparison between continuous unrestricted OPT^* and discrete OPT (OPT(P) <= 2 OPT^*(P)).
+    - 2-Level Streaming Framework: Partitioning stream into sqrt{n/k} chunks of size sqrt{nk}, computing \\alpha-approximations per chunk, forming weighted coreset S, and re-clustering S.
+    - Approximation Ratio Proof: Detailed triangle inequality analysis proving (4\\alpha^2 + 4\\alpha)-approximation in O(sqrt{nk}) space.
+    - L-Level Merge-and-Reduce Tree: Achieving (4\\alpha + 4)^L approximation in O(L k n^{1/L}) space.
+- 6. 1-Center on a Plane: Minimum Enclosing Ball (MEB) & Coresets
+    - Problem Definition: Finding center C in R^2 (or R^d) minimizing max_i d(p_i, C).
+    - Boundary Extremal Property: Any half-plane through MEB center contains a boundary support point.
+    - Bădoiu-Clarkson Greedy Algorithm: Iteratively finding furthest point and expanding MEB of core-set S_i.
+    - Convergence Proof: Step-by-step recurrence \\lambda_{i+1} >= (1 + \\lambda_i^2) / 2; proving O(1/\\epsilon) iterations guarantee (1 + \\epsilon)-approximation.
+    - Dimension Independence: Core-set of size O(1/\\epsilon) completely independent of dataset size n and ambient dimension d.
+</draft>
+
+Clustering is a foundational primitive across machine learning, computational geometry, pattern recognition, and data compression. Given a collection of data points in a metric space, clustering algorithms partition the points into $k$ groups such that points within the same group are close to one another, while points in different groups are far apart.
+
+This technical note provides a comprehensive algorithmic treatment of clustering at scale: covering metric space formulations, the NP-hardness and inapproximability of $k$-center via 1-2 metrics, Gonzalez's farthest-first 2-approximation, streaming $k$-center via decision testing, streaming $k$-median coreset merge-and-reduce trees, and the Bădoiu-Clarkson dimension-independent core-set theorem for the Minimum Enclosing Ball (MEB) problem.
+
+---
+
+## 1. The Metric Clustering Framework & Objectives
+
+### 1.1 Metric Spaces
+
+Let $P = \{p_1, p_2, \dots, p_n\}$ be a dataset of $n$ points equipped with a distance function $d: P \times P \to \mathbb{R}_{\ge 0}$.
+The pair $(P, d)$ forms a **metric space** if the distance function satisfies three fundamental axioms for all points $p_i, p_j, p_k \in P$:
+1. **Identity of Indiscernibles:** $d(p_i, p_j) = 0 \iff p_i = p_j$.
+2. **Symmetry:** $d(p_i, p_j) = d(p_j, p_i)$.
+3. **Triangle Inequality:** $d(p_i, p_k) \le d(p_i, p_j) + d(p_j, p_k)$.
+
+---
+
+### 1.2 The Three Canonical Clustering Objectives
+
+Given $n$ points $P = \{p_1, \dots, p_n\}$ and an integer $k \ge 1$, the goal is to select a subset of $k$ points $\mathcal{C} = \{C_1, C_2, \dots, C_k\} \subseteq P$ (or from the ambient space) as **centers**.
+For each point $p_i \in P$, let $C(p_i) \in \mathcal{C}$ denote the closest center to $p_i$:
+$$C(p_i) = \arg\min_{C \in \mathcal{C}} d(p_i, C)$$
+
+Depending on how distances from points to their assigned centers are aggregated, the three classical clustering formulations are defined:
+
+```
++---------------------------------------------------------------------------------------------------+
+|                               CANONICAL CLUSTERING OBJECTIVES                                     |
++-------------------+----------------------------------------------------+--------------------------+
+| Formulation       | Mathematical Objective Function                    | Sensitivity / Behavior   |
++-------------------+----------------------------------------------------+--------------------------+
+| k-Center          | \min_\mathcal{C} \max_{i=1}^n d(p_i, C(p_i))       | Minimizes worst-case     |
+|                   |                                                    | radius; outlier sensitive|
++-------------------+----------------------------------------------------+--------------------------+
+| k-Median          | \min_\mathcal{C} \sum_{i=1}^n d(p_i, C(p_i))       | L_1 norm; robust to      |
+|                   |                                                    | extreme outliers         |
++-------------------+----------------------------------------------------+--------------------------+
+| k-Means           | \min_\mathcal{C} \sum_{i=1}^n d(p_i, C(p_i))^2     | L_2^2 norm; penalizes    |
+|                   |                                                    | large deviations heavily |
++-------------------+----------------------------------------------------+--------------------------+
+```
+
+All three formulations are **NP-hard** in general metric spaces, necessitating the design of rigorous approximation and streaming algorithms.
+
+---
+
+## 2. Metric k-Center: Hardness & Approximation Limits
+
+### 2.1 Problem Formulation
+- **Input:** $n$ points $P = \{p_1, \dots, p_n\}$ with metric distances $d(p_i, p_j)$, and an integer $k$.
+- **Objective:** Choose $k$ centers $\mathcal{C} \subseteq P$ to minimize the maximum cluster radius:
+  $$\Phi_{\text{center}}(\mathcal{C}) = \max_{p_i \in P} d(p_i, C(p_i))$$
+
+---
+
+### 2.2 Inapproximability Theorem via 1-2 Metric Reduction
+
+> **Theorem (NP-Hardness of $(2 - \epsilon)$-Approximation):**
+> For any constant $\epsilon > 0$, approximating the metric $k$-center problem to a factor strictly less than $2$ is **NP-hard**.
+
+#### Proof via Reduction from Dominating Set:
+We construct a polynomial-time reduction from the **Dominating Set** problem, which is known to be NP-complete.
+
+**The Dominating Set Problem:**
+- *Input:* An undirected graph $G = (V, E)$ and an integer $k$.
+- *Question:* Does there exist a dominating set $S \subseteq V$ with $|S| \le k$ such that every vertex $v \in V \setminus S$ has at least one neighbor in $S$?
+
+**Metric Construction (The 1-2 Metric):**
+Given graph $G = (V, E)$, construct a metric space on the point set $P = V$ by defining distance $d: V \times V \to \{0, 1, 2\}$:
+$$d(u, v) = \begin{cases} 0 & \text{if } u = v \\ 1 & \text{if } (u, v) \in E \\ 2 & \text{if } (u, v) \notin E \text{ and } u \neq v \end{cases}$$
+
+**Verification of Metric Axioms:**
+1. Non-negativity and identity are satisfied by construction.
+2. Symmetry holds because $G$ is undirected.
+3. **Triangle Inequality:** For any three distinct vertices $u, v, w \in V$:
+   - If $d(u, w) = 1$, then $d(u, v) + d(v, w) \ge 1 + 1 = 2 > 1$.
+   - If $d(u, w) = 2$, since $d(u, v) \ge 1$ and $d(v, w) \ge 1$, their sum is $d(u, v) + d(v, w) \ge 2 = d(u, w)$.
+   Thus, $(V, d)$ is a strictly valid metric space (called a **1-2 metric**).
+
+**The Decision Threshold:**
+- **Case 1: $G$ has a dominating set of size $\le k$.**
+  Let $S$ be this dominating set. Choose $\mathcal{C} = S$.
+  For every vertex $v \in V$:
+  - If $v \in S$, $d(v, C(v)) = d(v, v) = 0$.
+  - If $v \notin S$, since $S$ is a dominating set, $v$ has an adjacent neighbor $u \in S$, so $(u, v) \in E \implies d(v, u) = 1$.
+  Therefore, the optimal $k$-center radius is:
+  $$\text{OPT} \le 1$$
+- **Case 2: $G$ has no dominating set of size $\le k$.**
+  For *any* choice of $k$ centers $\mathcal{C} \subseteq V$, since $\mathcal{C}$ is not a dominating set, there exists at least one vertex $w \in V \setminus \mathcal{C}$ that has no neighbor in $\mathcal{C}$.
+  For this vertex $w$, $(w, c) \notin E$ for all $c \in \mathcal{C}$, which means $d(w, c) = 2$ for all $c \in \mathcal{C}$.
+  Therefore, the $k$-center radius is:
+  $$\text{OPT} = 2$$
+
+**Gap Amplification:**
+The optimal radius $\text{OPT}$ can only take values in $\{1, 2\}$:
+$$\text{OPT} = \begin{cases} 1 & \text{if } G \text{ has a dominating set of size } \le k \\ 2 & \text{if } G \text{ does not have a dominating set of size } \le k \end{cases}$$
+
+Suppose an algorithm $\mathcal{A}$ achieved an approximation ratio $\alpha < 2$, so $\alpha = 2 - \epsilon$.
+- If $\text{OPT} = 1$, $\mathcal{A}$ outputs centers with cost $\le \alpha \cdot \text{OPT} = 2 - \epsilon < 2$. Since all non-zero distances are integers in $\{1, 2\}$, the cost must be $\le 1$.
+- If $\text{OPT} = 2$, $\mathcal{A}$ outputs centers with cost $\ge \text{OPT} = 2$.
+By running $\mathcal{A}$, if the output cost is $\le 1$, we output "Yes"; if the output cost is $\ge 2$, we output "No". This decides Dominating Set in polynomial time, proving $\text{P} = \text{NP}$.
+
+> **Conclusion:**
+> A factor of **$2$** is the absolute theoretical barrier for polynomial-time metric $k$-center approximation!
+
+---
+
+## 3. The Gonzalez Greedy 2-Approximation Algorithm
+
+Teofilo Gonzalez (1985) introduced a simple, deterministic greedy algorithm that matches the theoretical lower bound of 2 exactly.
+
+### 3.1 The Farthest-First Traversal Algorithm
+
+```
+Algorithm: Gonzalez-Greedy-k-Center(P, k)
+1. Select an arbitrary point p \in P as the first center: C_1 <- p.
+2. Initialize center set \mathcal{C}_1 <- {C_1}.
+3. For i = 2, 3, ..., k:
+4.     Find the point in P that is FARTHEST from the current set of centers:
+           C_i <- \arg\max_{p \in P} \left( \min_{j < i} d(p, C_j) \right)
+5.     Add C_i to the center set: \mathcal{C}_i <- \mathcal{C}_{i-1} \cup {C_i}.
+6. Output \mathcal{C} = {C_1, C_2, \dots, C_k}.
+```
+
+---
+
+### 3.2 Tight 2-Approximation Proof
+
+Let $\mathcal{C}^* = \{C_1^*, C_2^*, \dots, C_k^*\}$ be an optimal set of $k$ centers, with optimal radius:
+$$R^* = \text{OPT} = \max_{p \in P} d(p, C^*(p))$$
+This partitions $P$ into $k$ optimal clusters $P_1^*, P_2^*, \dots, P_k^*$, where each cluster $P_j^*$ is contained within a ball of radius $R^*$ centered at $C_j^*$.
+
+```
+Optimal Cluster j with Center C_j^*:
+          p o--------------------o C_j^* --------------------o q
+             \     <= R^*      /         \      <= R^*     /
+              \               /           \               /
+               \-------------/             \-------------/
+                       d(p, q) <= d(p, C_j^*) + d(q, C_j^*) <= 2 R^*
+```
+
+1. **The $(k+1)$-th Farthest Point:**
+   Consider what would happen if the greedy algorithm executed one additional step (step $k+1$):
+   Let $C_{k+1}$ be the point in $P$ farthest from the chosen centers $\mathcal{C} = \{C_1, \dots, C_k\}$:
+   $$r = \min_{j=1}^k d(C_{k+1}, C_j) = \max_{p \in P} \min_{C \in \mathcal{C}} d(p, C)$$
+   The distance $r$ is precisely the **cost of the algorithm's clustering**.
+2. **Applying the Pigeonhole Principle:**
+   Examine the set of $k + 1$ points:
+   $$\mathcal{S} = \{C_1, C_2, \dots, C_k, C_{k+1}\}$$
+   Since there are $k+1$ points distributed across $k$ optimal clusters, by the **Pigeonhole Principle**, at least two points in $\mathcal{S}$—denote them $p$ and $q$—must belong to the **same optimal cluster** $P_j^*$.
+3. **Bounding Distance via Triangle Inequality:**
+   Since both $p$ and $q$ belong to the optimal cluster centered at $C_j^*$:
+   $$d(p, C_j^*) \le R^* \quad \text{and} \quad d(q, C_j^*) \le R^*$$
+   By the triangle inequality:
+   $$d(p, q) \le d(p, C_j^*) + d(q, C_j^*) \le R^* + R^* = 2 R^*$$
+4. **Connecting with Greedy Choices:**
+   Without loss of generality, suppose $p$ was selected before $q$ by the greedy algorithm.
+   When $q$ was selected, its distance to all previously chosen centers (which included $p$) was at least the minimum pairwise distance among all points selected up to that point.
+   Because points were chosen in strictly non-increasing order of their distance to existing centers:
+   $$d(p, q) \ge d(q, \text{centers before } q) \ge r$$
+   Combining the inequalities:
+   $$r \le d(p, q) \le 2 R^* = 2 \cdot \text{OPT} \quad \blacksquare$$
+
+> **Theorem:**
+> The Gonzalez greedy algorithm produces a solution with radius at most $2 \cdot \text{OPT}$, matching the optimal polynomial-time approximation bound.
+
+---
+
+### 3.3 Query Algorithm Complexity
+
+Suppose we access the dataset via a **distance oracle**: given point indices $i, j$, the oracle returns $d(p_i, p_j)$ in $\mathcal{O}(1)$ time.
+- To simulate the Gonzalez greedy algorithm:
+  1. Pick $C_1$ arbitrarily. Initialize an array $D[1 \dots n]$ storing $D[i] = d(p_i, C_1)$, taking $n$ queries.
+  2. In round $j$ ($2 \le j \le k$):
+     - Identify $C_j = \arg\max_{i} D[i]$ in $\mathcal{O}(n)$ time without queries.
+     - Query $d(p_i, C_j)$ for all $i \in \{1, \dots, n\}$ ($n$ oracle queries).
+     - Update minimum distances: $D[i] \leftarrow \min(D[i], d(p_i, C_j))$.
+- **Total Query Complexity:** $k$ rounds $\times n$ queries per round = $\mathcal{O}(nk)$ queries.
+
+---
+
+## 4. Streaming k-Center in Euclidean Bounded Spaces
+
+In the streaming setting, points $p_1, p_2, \dots, p_n$ arrive one by one. In general metric spaces without random access, simulating the farthest-first traversal is impossible because we cannot retroactively inspect previously discarded points.
+
+Suppose all points lie in the bounded Euclidean grid $P \subset [\Delta] \times [\Delta]$ with Euclidean distance $d(p_i, p_j) = \|p_i - p_j\|_2$.
+
+### 4.1 Reduction to a Decision Testing Problem
+
+We first solve the **decision version** of the problem with a fixed guess threshold $T > 0$:
+
+```
+Algorithm: Test-k-Center(T)
+1. Initialize center set \mathcal{C} <- \emptyset.
+2. For each arriving point p:
+3.     If there exists C \in \mathcal{C} such that d(p, C) <= 2T:
+4.         Skip p (p is already covered within radius 2T).
+5.     Else:
+6.         If |\mathcal{C}| < k:
+7.             \mathcal{C} <- \mathcal{C} \cup {p}
+8.         Else (|\mathcal{C}| == k and d(p, C) > 2T for all C \in \mathcal{C}):
+9.             Output "No" (OPT > T) and HALT.
+10. At the end of the stream:
+11.    Output the stored centers \mathcal{C}.
+```
+
+#### Analysis of the Tester:
+1. **If the algorithm outputs centers $\mathcal{C}$:**
+   Every stream point $p$ is either added to $\mathcal{C}$ or discarded because it was within distance $\le 2T$ of some center in $\mathcal{C}$. Thus, $\mathcal{C}$ covers all points within radius $2T$.
+2. **If the algorithm outputs "No":**
+   The algorithm accumulated $k$ centers $C_1, \dots, C_k$ and then encountered a point $p$ such that all $k + 1$ points in $\mathcal{C} \cup \{p\}$ have pairwise distances strictly greater than $2T$:
+   $$d(u, v) > 2T \quad \text{for all distinct } u, v \in \mathcal{C} \cup \{p\}$$
+   Any single optimal center $C^*$ can cover at most one point from this set within radius $T$ (by the triangle inequality, if $C^*$ covered two points, their distance would be $\le 2T$).
+   Since there are $k + 1$ points, **no $k$ centers can cover them within radius $T$**.
+   Therefore, $\text{OPT} > T$!
+3. **Space Complexity:** Storing $k$ points in $[\Delta]^2$ takes $\mathcal{O}(k \log \Delta)$ bits.
+
+---
+
+### 4.2 A $(2 + 2\epsilon)$-Approximation Streaming Algorithm
+
+To find the optimal radius without knowing $\text{OPT}$ in advance, we run multiple testing instances in parallel over an exponential geometric grid of guesses:
+
+```
+Algorithm: Streaming-k-Center-Approximation(\epsilon)
+1. Let T_j = (1 + \epsilon)^j for j = 0, 1, 2, ..., M, where M = O(\frac{\log \Delta}{\epsilon}).
+2. Instantiate M parallel instances of Test-k-Center(T_j).
+3. Feed each arriving stream point p to all M testing instances.
+4. At stream end:
+5.     Let T^* be the smallest threshold for which Test-k-Center(T^*) did NOT output "No".
+6.     Output the centers stored by instance Test-k-Center(T^*).
+```
+
+#### Correctness and Approximation Ratio:
+- Since $\text{Test-}k\text{-Center}(T^*)$ did not output "No", all input points are within distance $2 T^*$ of its centers.
+- Since any instance with $T < \text{OPT}/2$ would encounter $\text{OPT} > 2T$ and output "No", we must have:
+  $$T^* \ge \frac{\text{OPT}}{2}$$
+- Let $T_{\text{target}}$ be the smallest guess in our geometric grid such that $T_{\text{target}} \ge \text{OPT}$.
+  By the density of the geometric progression:
+  $$T_{\text{target}} \le (1 + \epsilon) \cdot \text{OPT}$$
+- Since $T_{\text{target}} \ge \text{OPT}$, its tester will not output "No". Because $T^*$ is the *smallest* threshold that did not output "No":
+  $$T^* \le T_{\text{target}} \le (1 + \epsilon) \cdot \text{OPT}$$
+- Therefore, the radius achieved by the output centers is at most:
+  $$\text{Radius} \le 2 T^* \le 2(1 + \epsilon) \cdot \text{OPT} = (2 + 2\epsilon) \cdot \text{OPT}$$
+
+#### Space Complexity:
+- Minimum non-zero distance is $1$; maximum distance is $\sqrt{2} \Delta = \mathcal{O}(\Delta)$.
+- Number of parallel instances: $M = \mathcal{O}\left( \frac{\log \Delta}{\epsilon} \right)$.
+- Each instance stores at most $k$ points:
+  $$\text{Total Space} = \mathcal{O}\left( \frac{k}{\epsilon} \log \Delta \right) \text{ points} = \mathcal{O}\left( \frac{k}{\epsilon} \log^2 \Delta \right) \text{ bits}$$
+
+---
+
+## 5. Streaming k-Median via Hierarchical Coreset Trees
+
+### 5.1 Problem Formulation & Discrete vs. Unrestricted Centers
+
+- **The $k$-Median Objective:** Given $n$ points $P \subset [\Delta]^2$, choose $k$ centers $\mathcal{C} \subseteq P$ to minimize the sum of distances:
+  $$\Phi_{\text{median}}(\mathcal{C}) = \sum_{p_i \in P} d(p_i, C(p_i))$$
+- Inapproximability: Getting an approximation ratio better than $1 + 2/e \approx 1.736$ is NP-hard.
+- **Unrestricted vs. Discrete Centers:**
+  Let $\text{OPT}(P)$ be the optimal cost when centers must be chosen from $P$.
+  Let $\text{OPT}^*(P)$ be the optimal cost if centers can be chosen anywhere in the continuous Euclidean plane $\mathbb{R}^2$.
+  > **Lemma (Discrete vs. Unrestricted):**
+  > $$\text{OPT}(P) \le 2 \cdot \text{OPT}^*(P)$$
+  *Proof:* Take the unrestricted optimal centers $C_1^*, \dots, C_k^*$. For each $C_j^*$, shift it to the closest point in $P$ belonging to its cluster. By the triangle inequality, moving the center increases the total distance of points in that cluster by at most the distance to the shift point, at most doubling the total cost. $\blacksquare$
+
+---
+
+### 5.2 The 2-Level Coreset Streaming Algorithm (Guha et al., 2000)
+
+We convert any offline $\alpha$-approximation $k$-median algorithm into a streaming algorithm by sacrificing approximation factor to save memory:
+
+```
+Algorithm: Streaming-k-Median-2Level(P, k)
+1. Initialize coreset S <- \emptyset.
+2. Partition the stream into \sqrt{n/k} consecutive chunks P_1, P_2, ..., P_{\sqrt{n/k}},
+   each containing m = \sqrt{nk} points.
+3. For each chunk P_j:
+4.     Run the offline \alpha-approximation algorithm on P_j to compute k centers.
+5.     For each center c, compute its weight w_c = number of points in P_j assigned to c.
+6.     Add the k weighted centers to S: S <- S \cup {(c, w_c)}.
+7. Run the \alpha-approximation algorithm on the weighted coreset S to find the final k centers \mathcal{C}.
+8. Output \mathcal{C}.
+```
+
+```
+2-Level Coreset Tree Architecture:
+  Stream:  [  P_1 (size \sqrt{nk})  ]   [  P_2 (size \sqrt{nk})  ] ... [  P_m  ]
+                   |                             |
+                   v (\alpha-approx)             v (\alpha-approx)
+  Coreset S:  [ k centers, weights ]   +   [ k centers, weights ]   ...
+                   \______________________________/
+                                  |
+                                  v (\alpha-approx on S)
+                      [ Final k Centers \mathcal{C} ]
+```
+
+- **Working Space:** The coreset $S$ contains $\sqrt{n/k} \times k = \sqrt{nk}$ points. Storing one chunk plus $S$ takes $\mathcal{O}(\sqrt{nk})$ points.
+
+---
+
+### 5.3 Approximation Ratio Proof: $(4\alpha^2 + 4\alpha)$
+
+For every point $p_i \in P$:
+- Let $s_i \in S$ be the coreset center that represents $p_i$ in its chunk.
+- Let $C_i \in \mathcal{C}$ be the final center assigned to $s_i$.
+- Let $C_i^*$ be the center assigned to $p_i$ in the global optimal solution.
+
+By the triangle inequality:
+$$d(p_i, C_i) \le d(p_i, s_i) + d(s_i, C_i)$$
+Summing over all $n$ points:
+$$\sum_{i=1}^n d(p_i, C_i) \le \sum_{i=1}^n d(p_i, s_i) + \sum_{i=1}^n d(s_i, C_i)$$
+
+1. **Bounding the First Term (Chunk Representation Error):**
+   Within each chunk $P_j$, the $\alpha$-approximation algorithm ensures:
+   $$\sum_{p_i \in P_j} d(p_i, s_i) \le \alpha \cdot \text{OPT}(P_j) \le 2\alpha \cdot \text{OPT}^*(P_j)$$
+   Summing across all chunks:
+   $$\sum_{i=1}^n d(p_i, s_i) = \sum_{j} \sum_{p_i \in P_j} d(p_i, s_i) \le 2\alpha \sum_j \text{OPT}^*(P_j) \le 2\alpha \cdot \text{OPT}^*(P) \le 2\alpha \cdot \text{OPT}$$
+2. **Bounding the Second Term (Coreset Clustering Error):**
+   Clustering the weighted coreset $S$ with the $\alpha$-approximation algorithm ensures:
+   $$\sum_{i=1}^n d(s_i, C_i) \le \alpha \cdot \text{OPT}(S) \le 2\alpha \cdot \text{OPT}^*(S)$$
+   Now evaluate the cost of clustering $S$ using the **global optimal centers** $\{C_i^*\}$:
+   $$\text{OPT}^*(S) \le \sum_{i=1}^n d(s_i, C_i^*)$$
+   Applying the triangle inequality:
+   $$d(s_i, C_i^*) \le d(s_i, p_i) + d(p_i, C_i^*)$$
+   Summing over all points:
+   $$\text{OPT}^*(S) \le \sum_{i=1}^n d(s_i, p_i) + \sum_{i=1}^n d(p_i, C_i^*) \le 2\alpha \cdot \text{OPT} + \text{OPT} = (2\alpha + 1) \cdot \text{OPT}$$
+   Substituting this back into the coreset clustering bound:
+   $$\sum_{i=1}^n d(s_i, C_i) \le 2\alpha \cdot \text{OPT}^*(S) \le 2\alpha (2\alpha + 1) \cdot \text{OPT} = (4\alpha^2 + 2\alpha) \cdot \text{OPT}$$
+3. **Combining Both Bounds:**
+   $$\sum_{i=1}^n d(p_i, C_i) \le 2\alpha \cdot \text{OPT} + (4\alpha^2 + 2\alpha) \cdot \text{OPT} = (4\alpha^2 + 4\alpha) \cdot \text{OPT} \quad \blacksquare$$
+
+---
+
+### 5.4 Multi-Level Merge-and-Reduce Trees ($L$ Levels)
+
+By generalizing the 2-level architecture into a balanced $L$-level tree:
+- Chunks of size $\mathcal{O}(k \cdot n^{1/L})$ are clustered at Level 1 into $k$ weighted centers.
+- Every $n^{1/L}$ sets of Level 1 centers are merged and re-clustered at Level 2 into $k$ centers with combined weights.
+- Repeating this recursively across $L$ hierarchical levels:
+  - **Approximation Ratio:** $(4\alpha + 4)^L$.
+  - **Working Memory:** $\mathcal{O}\left( L k \cdot n^{1/L} \right)$ points.
+- Setting $L = \mathcal{O}(1/\epsilon)$ achieves sublinear or polylogarithmic working memory!
+
+---
+
+## 6. 1-Center on a Plane: Minimum Enclosing Ball (MEB) & Coresets
+
+### 6.1 Problem Formulation & Extremal Geometry
+
+- **Input:** $n$ points $P = \{p_1, \dots, p_n\} \subset \mathbb{R}^2$ in the Euclidean plane.
+- **Objective:** Find a center point $C \in \mathbb{R}^2$ minimizing the maximum Euclidean distance to all points (the **Minimum Enclosing Ball (MEB)** problem):
+  $$\min_{C \in \mathbb{R}^2} \max_{p_i \in P} \|p_i - C\|_2$$
+- Let $R$ denote the radius of the true optimal MEB ball $\mathcal{B}(C^*, R)$ covering all points $P$.
+
+#### The Boundary Support Lemma
+> **Lemma (Half-Plane Boundary Support):**
+> Consider the optimal MEB circle $\mathcal{B}(C^*, R)$. For **any** closed half-plane whose boundary line passes through the center $C^*$, there is at least one point of $P$ on the boundary of the ball $\partial \mathcal{B}$.
+
+```
+                 MEB Boundary Extremal Property:
+                         . - ~ ~ ~ - .
+                     . '       |       ' .
+                   /           |     q   \   <- Point q on boundary
+                  /            |          \
+                 |      H_1    C*   H_2    |
+                  \            |          /
+                   \           |         /
+                     . '       |       ' .
+                         ' - _ _ _ - '
+                   Boundary Line through C*
+```
+
+*Proof:*
+Suppose for contradiction that there exists a half-plane $H_1$ through $C^*$ containing no boundary points of $P$.
+Then all boundary points lie strictly in the open interior of the opposite half-plane $H_2$.
+We can translate the center $C^*$ by an infinitesimally small distance $\epsilon > 0$ directly into $H_2$ along the normal vector to the dividing line.
+In doing so, the distances to all boundary points strictly decrease, while the distances to points in $H_1$ remain strictly less than $R$.
+Consequently, we can shrink the radius $R$ to $R - \delta$ for some $\delta > 0$ and still cover all points in $P$.
+This contradicts the minimality of $R$! $\blacksquare$
+
+- **Corollary:** The boundary $\partial \mathcal{B}$ must contain either at least 3 points, or 2 antipodal points (opposite ends of a diameter).
+
+---
+
+### 6.2 The Bădoiu-Clarkson Greedy Core-Set Algorithm (2002)
+
+```
+Algorithm: Badoiu-Clarkson-MEB(P, \epsilon)
+1. Pick an arbitrary point p \in P as the initial core-set: S_1 <- {p}.
+2. Set t = \lceil 10 / \epsilon \rceil.
+3. For i = 1, 2, ..., t:
+4.     Compute the exact MEB of the small active set S_i:
+           Let C_i be its center, and r_i be its radius.
+5.     Find the point in P farthest from C_i:
+           p^* <- \arg\max_{p \in P} d(p, C_i)
+6.     Let D_i = d(p^*, C_i).
+7.     Update the active set: S_{i+1} <- S_i \cup {p^*}.
+8. Let D = \min_{1 \le i \le t} D_i.
+9. Output the center C_{i^*} corresponding to D = D_{i^*}.
+```
+
+---
+
+### 6.3 Mathematical Convergence Proof
+
+Let $R$ be the radius of $\text{MEB}(P)$.
+Let $r_i$ be the radius of $\text{MEB}(S_i)$.
+Let $D = \min_{1 \le j \le t} D_j$.
+For every step $i$:
+$$r_i \le R \le D \le D_i$$
+Define the normalized radius ratio:
+$$\lambda_i = \frac{r_i}{D} \in [0, 1]$$
+
+#### Step 1: Proving the Recurrence $\lambda_{i+1} \ge \frac{1 + \lambda_i^2}{2}$
+Fix iteration $i$. Let $p$ be the farthest point from $C_i$, so $d(p, C_i) \ge D_i \ge D$.
+When forming $S_{i+1} = S_i \cup \{p\}$, the new MEB center is $C_{i+1}$ with radius $r_{i+1}$:
+1. Since $p \in S_{i+1}$:
+   $$r_{i+1} \ge d(p, C_{i+1}) \ge d(p, C_i) - d(C_i, C_{i+1}) \ge D - d(C_i, C_{i+1})$$
+2. Consider the half-plane through $C_i$ whose normal points directly away from $C_{i+1}$.
+   By the Half-Plane Boundary Support Lemma, there exists a point $q \in S_i$ on the boundary of $\text{MEB}(S_i)$ located in this opposite half-plane.
+   Because $q$ lies in the opposite half-plane, the angle $\angle C_{i+1} C_i q \ge 90^\circ$. By the law of cosines:
+   $$d(q, C_{i+1})^2 = r_i^2 + d(C_i, C_{i+1})^2 - 2 r_i d(C_i, C_{i+1}) \cos(\angle C_{i+1} C_i q) \ge r_i^2 + d(C_i, C_{i+1})^2$$
+   Since $q \in S_i \subset S_{i+1}$, the new radius must cover $q$:
+   $$r_{i+1} \ge d(q, C_{i+1}) \ge \sqrt{r_i^2 + d(C_i, C_{i+1})^2}$$
+
+Normalize all terms by dividing by $D$. Let $a = \frac{d(C_i, C_{i+1})}{D} \ge 0$:
+$$\lambda_{i+1} \ge \max\left( 1 - a, \, \sqrt{\lambda_i^2 + a^2} \right)$$
+The worst-case lower bound occurs when $1 - a = \sqrt{\lambda_i^2 + a^2}$:
+$$(1 - a)^2 = \lambda_i^2 + a^2 \implies 1 - 2a + a^2 = \lambda_i^2 + a^2 \implies 2a = 1 - \lambda_i^2 \implies a = \frac{1 - \lambda_i^2}{2}$$
+Substituting $a$ back:
+$$\lambda_{i+1} \ge 1 - \frac{1 - \lambda_i^2}{2} = \frac{1 + \lambda_i^2}{2}$$
+
+#### Step 2: Rate of Convergence
+Let $x_i = 1 - \lambda_i$. Since $S_1 = \{p\}$, $r_1 = 0 \implies \lambda_1 = 0 \implies x_1 = 1$.
+$$x_{i+1} = 1 - \lambda_{i+1} \le 1 - \frac{1 + \lambda_i^2}{2} = \frac{1 - \lambda_i^2}{2} = \frac{(1 - \lambda_i)(1 + \lambda_i)}{2} = x_i \cdot \frac{2 - x_i}{2} = x_i \left( 1 - \frac{x_i}{2} \right)$$
+
+Taking reciprocals:
+$$\frac{1}{x_{i+1}} \ge \frac{1}{x_i (1 - x_i / 2)} = \frac{1}{x_i} \left( 1 + \frac{x_i / 2}{1 - x_i / 2} \right) = \frac{1}{x_i} + \frac{1}{2(1 - x_i / 2)} \ge \frac{1}{x_i} + \frac{1}{2}$$
+
+By induction across $t$ iterations:
+$$\frac{1}{x_t} \ge \frac{1}{x_1} + \frac{t - 1}{2} = 1 + \frac{t - 1}{2} \ge \frac{t}{2}$$
+
+When $t \ge \frac{10}{\epsilon}$:
+$$\frac{1}{x_t} \ge \frac{5}{\epsilon} \implies x_t \le \frac{\epsilon}{5}$$
+$$\lambda_t = 1 - x_t \ge 1 - \frac{\epsilon}{5} > \frac{1}{1 + \epsilon}$$
+
+Since $\lambda_t = \frac{r_t}{D}$:
+$$\frac{r_t}{D} > \frac{1}{1 + \epsilon} \implies D \le (1 + \epsilon) r_t \le (1 + \epsilon) R \quad \blacksquare$$
+
+> **Theorem (Bădoiu-Clarkson Core-Set Theorem):**
+> For any set of $n$ points in Euclidean space $\mathbb{R}^d$ and any $\epsilon > 0$, there exists a subset (an $\epsilon$-coreset) $S \subset P$ of size $|S| = \mathcal{O}(1/\epsilon)$ such that:
+> $$\text{Radius}(\text{MEB}(S)) \le \text{Radius}(\text{MEB}(P)) \le (1 + \epsilon) \cdot \text{Radius}(\text{MEB}(S))$$
+> Crucially, the size of the core-set $\mathcal{O}(1/\epsilon)$ is **completely independent of the number of points $n$ and the ambient dimension $d$**!
+
+---
+
+<reviewkit>
+<takeaways>
+- **Metric Clustering Objectives:** $k$-center minimizes the maximum distance ($\max_i d(p_i, C(p_i))$), $k$-median minimizes the $L_1$ sum ($\sum_i d(p_i, C(p_i))$), and $k$-means minimizes the $L_2^2$ sum ($\sum_i d(p_i, C(p_i))^2$).
+- **Inapproximability of $k$-Center:** Reduction from Dominating Set using a 1-2 metric proves that no polynomial-time $(2 - \epsilon)$-approximation exists for metric $k$-center unless $\text{P} = \text{NP}$.
+- **Gonzalez 2-Approximation:** Farthest-first greedy traversal chooses points maximizing distance to existing centers. By the Pigeonhole Principle on $k+1$ points, two must share an optimal cluster, guaranteeing an optimal 2-approximation in $\mathcal{O}(nk)$ distance queries.
+- **Streaming $k$-Center via Testing:** Converts $k$-center into decision testing for threshold $T$. Running $\mathcal{O}\left(\frac{\log \Delta}{\epsilon}\right)$ parallel testers over geometric guesses $T = (1+\epsilon)^j$ achieves a $(2 + 2\epsilon)$-approximation in $\mathcal{O}\left(\frac{k}{\epsilon} \log^2 \Delta\right)$ bits.
+- **Streaming $k$-Median via Coreset Trees:** The 2-level streaming algorithm partitions streams into chunks of size $\sqrt{nk}$, computes $\alpha$-approximate centers with cluster weights, and re-clusters the coreset $S$, yielding a $(4\alpha^2 + 4\alpha)$-approximation in $\mathcal{O}(\sqrt{nk})$ space. An $L$-level tree achieves $(4\alpha + 4)^L$ approximation in $\mathcal{O}(L k n^{1/L})$ space.
+- **Minimum Enclosing Ball (MEB) 1-Center:** By the half-plane boundary support lemma, any half-plane through the MEB center contains a support point.
+- **Bădoiu-Clarkson Core-Sets:** Greedily accumulating the farthest point yields a $(1 + \epsilon)$-approximation in $t = \mathcal{O}(1/\epsilon)$ steps. The resulting core-set size $\mathcal{O}(1/\epsilon)$ is completely independent of both dataset size $n$ and ambient dimension $d$.
+</takeaways>
+
+<qquiz src="questions.en.json"/>
+
+<qprompt/>
+</reviewkit>
+
+## References
+
+1. Gonzalez, T. F. (1985). Clustering to minimize the maximum intercluster distance. *Theoretical Computer Science*, 38, 293-306.
+2. Hochbaum, D. S., & Shmoys, D. B. (1985). A best possible approximation algorithm for the $k$-center problem. *Mathematics of Operations Research*, 10(2), 180-184.
+3. Guha, S., Meyerson, A., Mishra, N., Motwani, R., & O'Callaghan, L. (2000). Clustering data streams: theory and practice. *IEEE Transactions on Knowledge and Data Engineering*, 15(3), 515-528.
+4. Bădoiu, M., Har-Peled, S., & Indyk, P. (2002). Approximate clustering via core-sets. *Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)*, 250-257.
+5. Bădoiu, M., & Clarkson, K. L. (2008). Optimal core-sets for balls. *Computational Geometry*, 40(1), 14-22.
+6. Charikar, M., O'Callaghan, L., & Panigrahy, R. (2003). Better streaming algorithms for clustering problems. *Proceedings of the 35th Annual ACM Symposium on Theory of Computing (STOC)*, 30-39.
+7. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture 6: Clustering Algorithms)*. National University of Singapore (NUS).
