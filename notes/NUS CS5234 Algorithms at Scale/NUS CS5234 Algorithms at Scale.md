@@ -1,6 +1,6 @@
 <meta>
 Title: NUS CS5234 Algorithms at Scale
-Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao's minimax principle, query complexity lower bounds, property testing, array monotonicity, distribution uniformity testing, reservoir sampling, Morris approximate counting, graph streaming connectivity and spanners, metric k-center NP-hardness and 2-approximation, streaming k-center in Euclidean grids, hierarchical k-median coreset trees, and minimum enclosing ball core-sets.
+Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, approximate median selection, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao's minimax principle, query complexity lower bounds, property testing, array monotonicity, distribution uniformity testing, reservoir sampling, Morris approximate counting, graph streaming connectivity and spanners, metric k-center NP-hardness and 2-approximation, streaming k-center in Euclidean grids, hierarchical k-median coreset trees, and minimum enclosing ball core-sets.
 Slug: nus-cs5234-algorithms-at-scale
 Output: notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.html
 CanonicalId: nus-cs5234-algorithms-at-scale
@@ -737,16 +737,26 @@ This result formalizes the solution to the classic **Coupon Collector's Problem*
     - Unbiased estimator S_hat, expectation E[S_hat] = S, variance Var(S_hat) <= n^2 / (4k).
     - Chebyshev guarantee: k = 3 / (4 eps^2) guarantees error <= eps n with probability >= 2/3.
     - The Multiplicative Hardness Dilemma: Distinguishing S = 0 from S = 1 requires Omega(n) queries.
-- 3. Universal Algorithmic Meta-Techniques
-    - The Mean Trick (Variance Reduction): Average k independent runs of an unbiased estimator; variance drops from M to M/k while preserving expectation.
+- 3. Case Study 2: Finding an eps-Approximate Median in an Array
+    - Problem Formulation: Exact median rank (1/2)n vs. eps-approximate median rank in [(1/2 - eps)n, (1/2 + eps)n].
+    - Value vs. Rank: Why rank is the fundamental scale-invariant metric; arbitrary numeric values vs. percentile bounds.
+    - Uniform Sampling Algorithm: Draw k samples with replacement, sort, output sample median.
+    - Agnostic Execution vs. Analytical Indicator Framework: Code is oblivious to ranks; indicators Y_i are mathematical tools.
+    - Chernoff Bounding: S_bad definition, E[Y] = (1/2 - eps)k, threshold matching (1 + eps)E[Y] < k/2.
+    - Parameter Reverse-Engineering: Why delta = eps for eps < 0.1.
+    - Bound simplification: Exponent < -eps^2 k / 10; setting k >= 100/eps^2 yields single-tail failure < 0.1.
+    - Symmetric Upper Tail & Union Bound: Bounding total failure < 0.2 (>= 80% success probability).
+- 4. Universal Algorithmic Meta-Techniques: The Mean Trick and Median Trick
+    - The Mean Trick (Variance Reduction): Average k independent runs of an unbiased estimator; variance drops from M to M/k while preserving expectation; Chebyshev tail decay O(1/k).
     - The Median Trick (Probability Boosting): Complete Chernoff-based proof that taking the median of k runs with success probability > 1/2 reduces error probability exponentially to 2 e^{-k/100}.
-    - Combined Mean-Median Pipeline: Achieving (eps, delta)-approximations in O((M / (eps^2 A^2)) log(1/delta)) samples.
-    - Solved Exercise (Slide 15): Boosting an estimator with Var(X) = alpha A to achieve |Y - A| < eps A with probability >= 1 - 1/n^2 using O((alpha / (eps^2 A)) log n) queries.
-- 4. Graph Query Models & Edge Counting
+    - Criticality of the > 1/2 Success Threshold: Why success <= 1/2 collapses to erroneous majorities; failure of percentile shifting against worst-case two-sided error dispersion.
+    - Solved Exercise: Median-of-Means pipeline boosting an estimator with Var(X) = alpha A to achieve |Y - A| < eps A with probability >= 1 - 1/n^2 using O((alpha / (eps^2 A)) log n) queries.
+- 5. Graph Query Models & Edge Counting
     - Graph Query Models: Adjacency Matrix (Pair Query; dense graphs) vs. Adjacency List (Degree & Neighbor Query; sparse graphs).
-    - Edge count identity: m = (1/2) sum d(v) = (1/2) n d_bar.
-    - Additive error eps n^2: sample k = O(1/eps^2) random pairs.
-    - Multiplicative (1 +- eps)-Approximation: Average degree estimation fails on star graphs (variance O(n d_bar)).
+    - The Number of Edges Problem & Handshaking Lemma: m = (1/2) sum d(v) = (1/2) n d_bar; baseline n degree queries.
+    - Additive Error Vacuousness in Sparse Graphs: Pair sampling estimates density p in sample space of size binom(n, 2) ~ n^2 / 2; absolute error is eps n^2, drowning m = O(n) sparse edges.
+    - Multiplicative Error & The Connected Graph Assumption: Distinguishing m = 0 from m = 1 requires Omega(n) queries; connectivity enforces m >= n - 1, unlocking sublinear algorithms.
+    - Star Graph Failure of Naive Degree Sampling: Extreme hub degree creates Var(d(v)) = O(n d_bar), requiring Theta(n) samples.
     - The Directed Degree Trick (Feige / Goldreich-Ron total order):
         - Definition of total order u < v based on degrees and indices.
         - Out-degree d'(u) to higher-ranked neighbors; identity sum d'(u) = m.
@@ -754,13 +764,13 @@ This result formalizes the solution to the classic **Coupon Collector's Problem*
         - High-Degree / Low-Degree Partitioning: H = top sqrt(2m) vertices, L = rest.
         - Lemma 1: For all u in L, d(u) <= sqrt(2m).
         - Lemma 2: For all u in H, d'(u) <= sqrt(2m).
-        - Variance bound proof: Var(X) <= O(n / sqrt(m)) (m/n)^2.
+        - Universal product bound d(u) d'(u) <= sqrt(2m) d(u) and second moment E[X^2] <= 2 sqrt(2) m^{1.5} / n.
         - Sample complexity: O(n / (eps^2 sqrt(m))) when m is known.
     - Density-Sensitive Search (Guessing m):
         - Geometric guesses m' in {n^2, n^2/2, ..., 1}; stopping threshold estimate > 1.5 m'.
         - Geometric series summation: O(n / (eps^2 sqrt(m))).
         - Boosting via median trick: O((n log log n) / (eps^2 sqrt(m))) queries with overall success >= 1 - O(1/log n).
-- 5. Connected Components Estimation
+- 6. Connected Components Estimation
     - Chazelle, Rubinfeld, Trevisan (2005): c(G) = sum 1 / |C_u|.
     - Bounded component size |C_u| <= 100: BFS from random vertices yields O(n / eps^2) query complexity.
     - Extension to general graphs via truncated BFS.
@@ -859,7 +869,7 @@ Can we obtain a **multiplicative $(1 \pm \epsilon)$-approximation** using $o(n)$
 > **Theorem (Multiplicative Hardness for Sparse Strings):**
 > Any randomized algorithm that achieves a multiplicative $(1 \pm \epsilon)$-approximation of $S = \sum x_i$ with success probability $\ge 2/3$ on general binary strings requires $\Omega(n)$ queries.
 
-*Proof Intuition (Slide 19):*
+*Proof Intuition:*
 Consider distinguishing between two input instances:
 - Instance $\mathcal{I}_0$: The all-zero string $x = 0^n$, where $S = 0$.
 - Instance $\mathcal{I}_1$: A string containing exactly one 1 at an unknown position $j^*$, where $S = 1$.
@@ -868,9 +878,199 @@ However, because the single 1 can occupy any of the $n$ indices uniformly, any a
 
 ---
 
-## 3. Universal Algorithmic Meta-Techniques
+## 3. Case Study 2: Finding an $\epsilon$-Approximate Median in an Array
 
-In randomized and sublinear algorithms, basic estimators often suffer from high variance or weak constant confidence. Two universal meta-techniques—the **Mean Trick** and the **Median Trick**—systematically enhance any primitive estimator into an industrial-grade $(\epsilon, \delta)$-approximation.
+Finding the median of an unsorted dataset is a foundational primitive across data analysis, order statistics, and query algorithms. In this case study, we examine how random sampling provides a provably robust, sublinear-time solution.
+
+### 3.1 Problem Definition: Exact Median vs. $\epsilon$-Approximate Median
+
+Consider an array $A = [a_1, a_2, \dots, a_n]$ containing $n$ elements.
+- **Exact Median:** In the sorted permutation of $A$, the exact median occupies rank exactly $\lceil \frac{1}{2} n \rceil$ (the 50th percentile).
+- **The Sublinear Barrier:** In an unsorted array, verifying or identifying the exact median with certainty requires inspecting $\Omega(n)$ elements in the worst case (adversarial arguments can hide the median among uninspected elements).
+- **The $\epsilon$-Approximate Median Relaxation:** We relax the requirement from finding the exact middle element to finding an element whose position in the sorted array is within an $\epsilon$-fraction of the true median:
+
+> **Formal Specification:**
+> **Output:** A value $v \in A$ whose rank in the sorted array lies in the interval:
+>
+> $$\text{rank}(v) \in \left[ \left(\frac{1}{2} - \epsilon\right)n, \; \left(\frac{1}{2} + \epsilon\right)n \right]$$
+
+#### The Fundamental Insight: Outputting a Value vs. Evaluating Acceptance by Rank
+A vital conceptual distinction lies between the **output type** and the **evaluation metric**:
+- The algorithm outputs a **concrete value** $v \in A$ (an actual number from the dataset).
+- However, the qualification of $v$ is evaluated strictly by its **rank (percentile position)** in the sorted array.
+
+```
+Sorted Array:  [  ... Too Small ...  | === Acceptable Median Band === |  ... Too Large ...  ]
+Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n              n
+                                            ^                             ^
+                                            |------ Tolerance Band -------|
+                                                    Width = 2 eps n
+```
+
+**Why Rank, Not Value Distance?**
+Because the numerical values in $A$ can be arbitrarily distributed (e.g., negative floats, billions, or tightly clustered duplicates), defining error via absolute numerical distance $|v - \text{median}|$ is ill-defined and scale-dependent. Rank provides a universal, scale-invariant percentile guarantee:
+- *Concrete Example:* Let $n = 1000$ and $\epsilon = 0.05$ ($5\%$ tolerance). The exact median has rank 500. The allowable rank range is $[(0.5 - 0.05) \times 1000, (0.5 + 0.05) \times 1000] = [450, 550]$. Any value whose true rank falls between 450 and 550 is a certified $\epsilon$-approximate median.
+
+---
+
+### 3.2 The Sampling Algorithm
+
+```
++-------------------------------------------------------------------------------+
+|                    APPROXIMATE MEDIAN SAMPLING ALGORITHM                     |
++-------------------------------------------------------------------------------+
+|                                                                               |
+|   1. Input: Array A of size n, accuracy parameter eps in (0, 0.1).            |
+|   2. Set sample size: k = ceil(100 / eps^2).                                  |
+|   3. Sample k elements x_1, x_2, ..., x_k uniformly and independently at random|
+|      from A with replacement.                                                 |
+|   4. Sort the k sampled elements: x_{(1)} <= x_{(2)} <= ... <= x_{(k)}.       |
+|   5. Output the sample median: v = x_{(ceil(k/2))}.                           |
+|                                                                               |
++-------------------------------------------------------------------------------+
+```
+
+The algorithm queries only $k = \mathcal{O}(1/\epsilon^2)$ elements—a query complexity **strictly independent of the total array size $n$**!
+
+---
+
+### 3.3 Runtime Execution vs. Theoretical Analysis Separation
+
+To appreciate the elegance of randomized query design, one must decouple **what the code does** from **how the proof works**:
+- **During Runtime Execution (The Algorithm):**
+  The program is completely agnostic to the true ranks of the sampled numbers. It simply draws $k$ elements from the array, sorts those $k$ numbers in $\mathcal{O}(k \log k)$ time, and outputs the middle element. The code neither knows nor computes any indicator variables.
+- **During Mathematical Analysis (The Proof):**
+  The indicator variables $Y_i$ and the "bad element sets" are purely **theoretical analytical instruments**. They are formulated by the theorist to prove that the simple random sample succeeds with overwhelming probability.
+
+---
+
+### 3.4 Rigorous Step-by-Step Failure Analysis & Chernoff Bounding
+
+We now rigorously derive why setting $k \ge \frac{100}{\epsilon^2}$ bounds the overall failure probability to at most $0.2$ (success probability $\ge 80\%$).
+
+#### Step 1: Definition of the "Too Small" Bad Set and Indicator Variables
+Let $S_{\text{bad}}^{\text{left}}$ be the set of elements in $A$ whose rank is strictly less than $(\frac{1}{2} - \epsilon)n$:
+$$S_{\text{bad}}^{\text{left}} = \left\{ a \in A \;\middle|\; \text{rank}(a) < \left(\frac{1}{2} - \epsilon\right)n \right\}$$
+By definition of ranks, the size of this set is exactly:
+$$|S_{\text{bad}}^{\text{left}}| = \left(\frac{1}{2} - \epsilon\right)n$$
+
+For each independent sample $i \in \{1, 2, \dots, k\}$, define the indicator random variable:
+$$Y_i = \begin{cases} 1 & \text{if the } i\text{-th drawn element } x_i \in S_{\text{bad}}^{\text{left}} \\ 0 & \text{otherwise} \end{cases}$$
+
+Since each sample is chosen uniformly at random from $n$ elements:
+$$\Pr(Y_i = 1) = \frac{|S_{\text{bad}}^{\text{left}}|}{n} = \frac{(\frac{1}{2} - \epsilon)n}{n} = \frac{1}{2} - \epsilon$$
+
+Let $Y = \sum_{i=1}^k Y_i$ denote the total number of drawn samples that belong to $S_{\text{bad}}^{\text{left}}$.
+By linearity of expectation:
+$$\mathbb{E}[Y] = \sum_{i=1}^k \mathbb{E}[Y_i] = k \cdot \left(\frac{1}{2} - \epsilon\right) = \left(\frac{1}{2} - \epsilon\right)k$$
+
+---
+
+#### Step 2: Why the Failure Event is Exactly $Y > k/2$
+When the $k$ sampled elements are sorted $x_{(1)} \le x_{(2)} \le \dots \le x_{(k)}$, the algorithm outputs the middle element $x_{(\lceil k/2 \rceil)}$.
+- If $Y \le k/2$, then at most half of the sampled elements belong to $S_{\text{bad}}^{\text{left}}$. Consequently, the middle element must lie outside $S_{\text{bad}}^{\text{left}}$, guaranteeing that its rank is at least $(\frac{1}{2} - \epsilon)n$!
+- Conversely, the sample median belongs to $S_{\text{bad}}^{\text{left}}$ (i.e., its true rank is strictly smaller than $(\frac{1}{2} - \epsilon)n$) **if and only if** strictly more than half of the samples are drawn from $S_{\text{bad}}^{\text{left}}$:
+$$\text{Failure}_{\text{left}} \iff Y > \frac{k}{2}$$
+
+Thus, the probability that the sample median is "too small" is precisely $\Pr(Y > k/2)$.
+
+---
+
+#### Step 3: Inequality 1 — Event Inclusion via Threshold Matching
+To apply the multiplicative Chernoff bound, the tail deviation must be formulated in terms of a relative deviation from the mean: $\Pr(Y > (1 + \delta)\mu)$.
+
+Let us evaluate the threshold $(1 + \epsilon)\mathbb{E}[Y]$ by substituting $\mathbb{E}[Y] = (\frac{1}{2} - \epsilon)k$:
+$$(1 + \epsilon)\mathbb{E}[Y] = (1 + \epsilon)\left(\frac{1}{2} - \epsilon\right)k = \left(\frac{1}{2} - \frac{1}{2}\epsilon - \epsilon^2\right)k$$
+
+Because $\epsilon > 0$, the subtracted term $(\frac{1}{2}\epsilon + \epsilon^2)$ is strictly positive. Therefore:
+$$\frac{1}{2} - \frac{1}{2}\epsilon - \epsilon^2 < \frac{1}{2} \implies (1 + \epsilon)\mathbb{E}[Y] < \frac{k}{2}$$
+
+**Set Inclusion Principle:**
+Because the threshold $(1 + \epsilon)\mathbb{E}[Y]$ is strictly smaller than $\frac{k}{2}$, whenever the random variable $Y$ exceeds the larger threshold $\frac{k}{2}$, it *must* also exceed the smaller threshold $(1 + \epsilon)\mathbb{E}[Y]$:
+$$\left\{ Y > \frac{k}{2} \right\} \subseteq \left\{ Y > (1 + \epsilon)\mathbb{E}[Y] \right\}$$
+
+Taking probabilities on both sides establishes the first inequality:
+$$\Pr\left( Y > \frac{k}{2} \right) \le \Pr(Y > (1 + \epsilon)\mathbb{E}[Y])$$
+
+---
+
+#### Step 4: Parameter Reverse-Engineering — Why Choose $\delta = \epsilon$?
+A natural question arises: *In the Chernoff bound $\Pr(Y > (1 + \delta)\mu)$, can $\delta$ be chosen arbitrarily, and why did we specifically set $\delta = \epsilon$?*
+
+- $\epsilon$ is a **fixed external specification** given by the problem requirement (the acceptable rank error tolerance).
+- $\delta$ is an **internal mathematical tuning parameter** in the Chernoff bound representing relative deviation from the mean.
+
+To ensure that the set inclusion $\{Y > k/2\} \subseteq \{Y > (1 + \delta)\mathbb{E}[Y]\}$ holds, we require:
+$$(1 + \delta)\mathbb{E}[Y] \le \frac{k}{2} \iff (1 + \delta)\left(\frac{1}{2} - \epsilon\right)k \le \frac{k}{2}$$
+Dividing both sides by $k(\frac{1}{2} - \epsilon)$:
+$$1 + \delta \le \frac{1/2}{1/2 - \epsilon} \implies \delta \le \frac{\epsilon}{\frac{1}{2} - \epsilon}$$
+
+Under the standard assumption that $\epsilon < 0.1$:
+$$\frac{1}{2} - \epsilon > 0.5 - 0.1 = 0.4 \implies \frac{\epsilon}{\frac{1}{2} - \epsilon} < \frac{\epsilon}{0.4} = 2.5 \epsilon$$
+Since any $\delta \le 2.5 \epsilon$ is mathematically admissible, choosing $\delta = \epsilon$ is the **cleanest and most natural canonical choice**, since $\epsilon \le 2.5 \epsilon$ unconditionally holds for all $\epsilon > 0$!
+
+---
+
+#### Step 5: Inequality 2 — Applying the Multiplicative Chernoff Bound
+Recall the canonical multiplicative Chernoff upper tail bound: for any sum of independent indicator variables $Y = \sum Y_i$ with mean $\mu = \mathbb{E}[Y]$ and deviation parameter $\delta \in (0, 1)$:
+$$\Pr(Y > (1 + \delta)\mu) \le \exp\left( -\frac{\delta^2 \mu}{3} \right)$$
+
+Substituting $\delta = \epsilon$ and $\mu = \mathbb{E}[Y] = (\frac{1}{2} - \epsilon)k$:
+$$\Pr(Y > (1 + \epsilon)\mathbb{E}[Y]) \le \exp\left( -\frac{\epsilon^2 (\frac{1}{2} - \epsilon)k}{3} \right)$$
+
+---
+
+#### Step 6: Inequality 3 — Exponent Constant Simplification for $\epsilon < 0.1$
+We now simplify the exponent $-\frac{\epsilon^2 (\frac{1}{2} - \epsilon)k}{3}$.
+Given $\epsilon < 0.1$, the linear factor satisfies:
+$$\frac{1}{2} - \epsilon > 0.5 - 0.1 = 0.4 = \frac{2}{5}$$
+
+Substituting this into the fraction:
+$$\frac{\frac{1}{2} - \epsilon}{3} > \frac{0.4}{3} = \frac{4}{30} = \frac{2}{15} \approx 0.1333 > \frac{1}{10}$$
+
+Because the exponent carries a negative sign, multiplying by a strictly larger positive constant makes the exponent more negative, thereby decreasing the exponential:
+$$-\frac{\epsilon^2 (\frac{1}{2} - \epsilon)k}{3} < -\frac{\epsilon^2 k}{10} \implies \exp\left( -\frac{\epsilon^2 (\frac{1}{2} - \epsilon)k}{3} \right) < \exp\left( -\frac{\epsilon^2 k}{10} \right)$$
+
+---
+
+#### Step 7: Sample Size Determination
+Now, we substitute the algorithmic choice of sample size $k \ge \frac{100}{\epsilon^2}$ into the simplified exponential bound:
+$$\exp\left( -\frac{\epsilon^2 k}{10} \right) \le \exp\left( -\frac{\epsilon^2 \cdot \frac{100}{\epsilon^2}}{10} \right) = \exp(-10) \approx 4.54 \times 10^{-5} \ll 0.1$$
+
+Therefore, the probability that the sample median is "too small" is bounded by:
+$$\Pr\left( \text{Failure}_{\text{left}} \right) = \Pr\left( Y > \frac{k}{2} \right) < 0.1$$
+
+---
+
+#### Step 8: Symmetric Right Tail & The Union Bound Guarantee
+By completely symmetric reasoning, define the "too large" bad set:
+$$S_{\text{bad}}^{\text{right}} = \left\{ a \in A \;\middle|\; \text{rank}(a) > \left(\frac{1}{2} + \epsilon\right)n \right\}$$
+Let $Z_i = \mathbb{I}[x_i \in S_{\text{bad}}^{\text{right}}]$ and $Z = \sum_{i=1}^k Z_i$.
+The sample median is "too large" (rank $> (\frac{1}{2} + \epsilon)n$) if and only if $Z > k/2$. Applying the identical Chernoff derivation establishes:
+$$\Pr\left( \text{Failure}_{\text{right}} \right) = \Pr\left( Z > \frac{k}{2} \right) < 0.1$$
+
+The algorithm fails if **either** the median is too small **or** the median is too large:
+$$\text{Failure} = \text{Failure}_{\text{left}} \cup \text{Failure}_{\text{right}}$$
+
+By Boole's inequality (**The Union Bound**):
+$$\Pr(\text{Failure}) \le \Pr\left( \text{Failure}_{\text{left}} \right) + \Pr\left( \text{Failure}_{\text{right}} \right) < 0.1 + 0.1 = 0.2$$
+
+Taking the complementary probability yields the overall algorithmic guarantee:
+$$\Pr(\text{Success}) = 1 - \Pr(\text{Failure}) > 1 - 0.2 = 0.8 \quad (80\%)$$
+
+> **Theorem (Approximate Median Query Guarantee):**
+> For any array $A$ of length $n$ and any tolerance $\epsilon \in (0, 0.1)$, drawing $k = \lceil 100/\epsilon^2 \rceil$ uniform samples with replacement and returning their sample median outputs an element $v$ satisfying:
+>
+> $$\text{rank}(v) \in \left[ \left(\frac{1}{2} - \epsilon\right)n, \; \left(\frac{1}{2} + \epsilon\right)n \right]$$
+>
+> with success probability at least $0.8$.
+> Furthermore, repeating the procedure $\mathcal{O}(\log(1/\delta))$ times and taking the median of medians boosts the success probability to $1 - \delta$ for any desired $\delta > 0$.
+
+---
+
+## 4. Universal Algorithmic Meta-Techniques: The Mean Trick and Median Trick
+
+In randomized and sublinear algorithms, primitive estimators frequently suffer from high variance or modest constant confidence (such as $2/3$ or $80\%$). Two universal meta-techniques—the **Mean Trick** and the **Median Trick**—provide a systematic, principled pipeline to transform any noisy base estimator into an industrial-grade $(\epsilon, \delta)$-approximation.
 
 ```
 +-------------------------------------------------------------------------------+
@@ -889,34 +1089,40 @@ In randomized and sublinear algorithms, basic estimators often suffer from high 
 
 ---
 
-### 3.1 The Mean Trick: Linear Variance Reduction (Slide 12)
+### 4.1 The Mean Trick: Linear Variance Reduction
 
-The **Mean Trick** reduces the variance of an unbiased estimator by taking the arithmetic average of multiple independent executions:
+The **Mean Trick** reduces the variance of an unbiased estimator by computing the arithmetic average of multiple independent executions:
 
 > **Theorem (Mean Trick):**
 > Let $X$ be an unbiased estimator for an unknown target parameter $A$, such that $\mathbb{E}[X] = A$ and $\text{Var}(X) = M$.
-> If we execute the estimator independently $k$ times, obtaining $X_1, X_2, \dots, X_k$, and compute their empirical average:
+> If we execute the estimator independently $k$ times to obtain $X_1, X_2, \dots, X_k$, and compute their empirical average:
 >
 > $$\bar{X} = \frac{1}{k} \sum_{i=1}^k X_i$$
 >
-> Then $\bar{X}$ remains strictly unbiased, and its variance is reduced by a factor of $k$:
+> Then $\bar{X}$ remains strictly unbiased, and its variance is scaled down by a factor of $k$:
 >
 > $$\mathbb{E}[\bar{X}] = A, \quad \text{Var}(\bar{X}) = \frac{M}{k}$$
 
-*Proof:*
+*Mathematical Proof:*
 1. By linearity of expectation:
    $$\mathbb{E}[\bar{X}] = \mathbb{E}\left[ \frac{1}{k} \sum_{i=1}^k X_i \right] = \frac{1}{k} \sum_{i=1}^k \mathbb{E}[X_i] = \frac{1}{k} \cdot k A = A$$
-2. Because the runs $X_1, \dots, X_k$ are mutually independent, all cross-covariance terms vanish ($\text{Cov}(X_i, X_j) = 0$ for $i \neq j$):
+2. Because the trials $X_1, \dots, X_k$ are mutually independent, their covariances vanish ($\text{Cov}(X_i, X_j) = 0$ for $i \ne j$). Using the quadratic scaling property of variance:
    $$\text{Var}(\bar{X}) = \text{Var}\left( \frac{1}{k} \sum_{i=1}^k X_i \right) = \frac{1}{k^2} \sum_{i=1}^k \text{Var}(X_i) = \frac{1}{k^2} \cdot k M = \frac{M}{k} \quad \blacksquare$$
+
+#### Tail Bound via Chebyshev's Inequality
+By combining the Mean Trick with Chebyshev's inequality, the probability of exceeding tolerance $\epsilon$ is bounded by:
+$$\Pr(|\bar{X} - A| \ge \epsilon) \le \frac{\text{Var}(\bar{X})}{\epsilon^2} = \frac{M}{k \epsilon^2}$$
+- **Limitation of the Mean Trick:** The failure probability decays **polynomially** as $\mathcal{O}(1/k)$.
+- To achieve an extremely small failure probability $\delta$ (e.g., $\delta = 10^{-6}$), the number of required repetitions scales as $k = \Omega(1/\delta)$, which is computationally prohibitive when $\delta$ is tiny.
 
 ---
 
-### 3.2 The Median Trick: Exponential Probability Boosting (Slide 13–14)
+### 4.2 The Median Trick: Exponential Probability Boosting
 
-While the Mean Trick dampens variance, Chebyshev's inequality guarantees only polynomial tail decay. To amplify confidence exponentially, we apply the **Median Trick**:
+While the Mean Trick dampens variance, Chebyshev's inequality guarantees only polynomial tail decay. To amplify confidence **exponentially**, we apply the **Median Trick**:
 
 > **Theorem (Median Trick):**
-> Suppose an estimation algorithm produces an estimate $X$ such that:
+> Suppose an estimation algorithm produces an estimate $X$ such that its failure probability is bounded by a constant strictly smaller than $1/2$:
 >
 > $$\Pr(|X - A| > \epsilon) \le \frac{1}{3}$$
 >
@@ -934,13 +1140,13 @@ While the Mean Trick dampens variance, Chebyshev's inequality guarantees only po
 2. **Upper Tail Analysis:**
    For each trial $i \in \{1, \dots, k\}$, define the failure indicator:
    $$Y_i = \begin{cases} 1 & \text{if } X_i > A + \epsilon \\ 0 & \text{otherwise} \end{cases}$$
-   Each $Y_i$ is a Bernoulli random variable with success parameter $p_i = \Pr(X_i > A + \epsilon) \le 1/3$.
+   Each $Y_i$ is a Bernoulli random variable with parameter $p_i = \Pr(X_i > A + \epsilon) \le 1/3$.
    Let $Y = \sum_{i=1}^k Y_i$ denote the total number of estimates that overestimate by $> \epsilon$.
    The expected number of overestimating trials is:
    $$\mu = \mathbb{E}[Y] = \sum_{i=1}^k \Pr(Y_i = 1) \le \frac{k}{3}$$
 3. **Chernoff Bound Application:**
-   The median exceeds $A + \epsilon$ if and only if $Y \ge k/2$. Expressing $k/2$ in terms of $\mu$:
-   $$\frac{k}{2} = \left( 1 + \frac{1}{2} \right) \frac{k}{3} \ge (1 + \delta)\mu \quad \text{with } \delta = \frac{1}{2}$$
+   The median exceeds $A + \epsilon$ if and only if $Y \ge k/2$. Setting $(1 + \delta)\mu = k/2$:
+   $$(1 + \delta)\frac{k}{3} = \frac{k}{2} \implies 1 + \delta = \frac{3}{2} \implies \delta = \frac{1}{2} = 0.5$$
    Applying the standard multiplicative Chernoff bound $\Pr(Y \ge (1+\delta)\mu) \le \exp(-\delta^2 \mu / 3)$:
    $$\Pr\left( Y \ge \frac{k}{2} \right) \le \exp\left( -\frac{(1/2)^2 \cdot (k/3)}{3} \right) = \exp\left( -\frac{k/12}{3} \right) = \exp\left( -\frac{k}{36} \right) < \exp\left( -\frac{k}{100} \right)$$
 4. **Lower Tail Analysis:**
@@ -950,245 +1156,405 @@ While the Mean Trick dampens variance, Chebyshev's inequality guarantees only po
    The median $\hat{A}$ fails if and only if $Y \ge k/2$ or $Z \ge k/2$. By the Union Bound:
    $$\Pr(|\hat{A} - A| > \epsilon) \le \Pr\left( Y \ge \frac{k}{2} \right) + \Pr\left( Z \ge \frac{k}{2} \right) \le 2 \exp\left( -\frac{k}{100} \right) \quad \blacksquare$$
 
-**Takeaway:**
-Taking the median of $k = \mathcal{O}(\log(1/\delta))$ independent runs drives the failure probability from a modest constant $1/3$ down to an arbitrarily small $\delta > 0$!
+#### Comparison: Mean Trick vs. Median Trick
+```
++-----------------------------------+-----------------------------------+-----------------------------------+
+| Metric                            | The Mean Trick                    | The Median Trick                  |
++-----------------------------------+-----------------------------------+-----------------------------------+
+| Mathematical Engine               | Chebyshev's Inequality            | Chernoff Bound / Order Statistics |
+| Error Decay Rate                  | Polynomial: O(1/k)                | Exponential: 2 exp(-k/100)        |
+| Cost for Failure Probability delta| k = O(1 / delta)                  | k = O(log(1 / delta))             |
+| Core Purpose                      | Dampening unbounded variance      | Driving failure prob to near-zero |
++-----------------------------------+-----------------------------------+-----------------------------------+
+```
 
 ---
 
-### 3.3 Solved Exercise: Variance-Scaling Probability Boosting (Slide 15)
+### 4.3 Deep Dive: The Criticality of the $> 1/2$ Success Threshold
+
+A strict foundational condition governs the Median Trick:
+> *"Given an estimator with success probability greater than 1/2, taking the median of independent repetitions makes the success probability arbitrarily close to 1."*
+
+**Why is Success Probability $> 1/2$ Strictly Required?**
+- **When Success $> 1/2$ (e.g., $2/3$):** Correct estimates are the **strict statistical majority**. The expected number of failures is strictly below half ($\mu < k/2$). For the median to fail, an extreme deviation from the mean must occur ($Y \ge k/2$), which the Chernoff bound crushes exponentially to 0 as $k \to \infty$.
+- **When Success $< 1/2$ (e.g., $40\%$ success, $60\%$ failure):** Failure is now the **statistical majority** ($\mu = 0.6k > k/2$). As $k \to \infty$, the sample median concentrates **almost surely in the erroneous region**! Boosting fails catastrophically.
+- **When Success $= 1/2$:** The median behaves like a fair coin toss; increasing $k$ provides zero probability amplification.
+
+#### Why Can't We Simply Take the 40th Percentile if Success is 40%?
+A natural intuitive query is: *If the algorithm succeeds with probability 40%, why not sort the $k$ samples and select the 40th percentile instead of the median?*
+
+**The Fatal Flaw: Two-Sided Error Dispersion in Worst-Case Analysis:**
+In numerical estimation problems, the $60\%$ failure probability is **split unpredictably** between two diametrically opposed failure modes:
+1. Underestimation ($X_i < A - \epsilon$)
+2. Overestimation ($X_i > A + \epsilon$)
+
+In worst-case algorithm analysis, the adversary can distribute the $60\%$ errors asymmetrically:
+- *Adversarial Case A (All errors underestimate):* $60\%$ of samples fall below $A - \epsilon$, and $40\%$ fall in $[A - \epsilon, A + \epsilon]$. If we select the 40th percentile, we pick an element with rank $0.4k$, which is **deeply inside the underestimation error band**!
+- *Adversarial Case B (All errors overestimate):* $40\%$ of samples fall in $[A - \epsilon, A + \epsilon]$, and $60\%$ fall above $A + \epsilon$. Here, the 40th percentile lands on the upper edge of the correct band.
+
+Because the algorithm cannot foresee how the $60\%$ failure probability is distributed across the left and right tails, **no fixed percentile (30%, 40%, etc.) can guarantee landing in the correct interval**.
+
+**The Pigeonhole Principle Guarantee of the Median:**
+Only when the correct estimates constitute an **absolute majority ($> 50\%$)** does their contiguous cluster in the sorted sample guaranteed to **span across the 50th percentile (median)**, regardless of whether the remaining $< 50\%$ errors are entirely on the left, entirely on the right, or split evenly.
+
+#### The Universal Engineering Remedy:
+If a base estimator achieves only $40\%$ success, one **never** applies the Median Trick directly. Instead:
+1. **Apply the Mean Trick First:** Average a modest number of samples $k_1$ to reduce variance, lifting the success probability from $40\%$ to a solid constant $> 1/2$ (e.g., $2/3$).
+2. **Apply the Median Trick Second:** Take the median of $k_2 = \mathcal{O}(\log(1/\delta))$ copies of the upgraded estimator to boost confidence to $1 - \delta$ ($99.9\%$).
+
+---
+
+### 4.4 Solved Exercise: The Two-Layer Median-of-Means Pipeline
 
 > **Exercise:**
-> Suppose we have an unbiased estimation algorithm such that $\mathbb{E}[X] = A$ and $\text{Var}(X) = \alpha \cdot A$.
-> How can we construct an estimator $Y$ such that $\Pr(|Y - A| \ge \epsilon A) \le \frac{1}{n^2}$?
+> Suppose we have an unbiased estimation algorithm such that:
+>
+> $$\mathbb{E}[X] = A, \quad \text{Var}(X) = \alpha \cdot A$$
+>
+> Construct an estimator $Y$ such that $\Pr(|Y - A| \ge \epsilon A) \le \frac{1}{n^2}$.
 
-**Two-Stage Solution:**
+#### Why Single-Technique Approaches Fail:
+- **Pure Mean Trick (Chebyshev):**
+  $$\Pr(|\bar{X} - A| \ge \epsilon A) \le \frac{\text{Var}(\bar{X})}{\epsilon^2 A^2} = \frac{\alpha A / k}{\epsilon^2 A^2} = \frac{\alpha}{k \epsilon^2 A} \le \frac{1}{n^2} \implies k \ge \frac{\alpha n^2}{\epsilon^2 A}$$
+  The sample complexity scales as $\Omega(n^2)$—a catastrophic failure of sublinear scalability!
+- **Pure Median Trick:** The base variable $X$ has unbounded variance and provides zero baseline constant probability guarantee (such as $\ge 2/3$).
 
-#### Stage 1: Variance Reduction via the Mean Trick
-To apply the Median Trick, we first need an estimator whose relative error is bounded with constant probability $\le 1/3$.
-- Run the base estimator $k_1$ times independently and compute their average $\bar{X} = \frac{1}{k_1} \sum_{i=1}^{k_1} X_i$.
-- $\mathbb{E}[\bar{X}] = A$, and $\text{Var}(\bar{X}) = \frac{\alpha A}{k_1}$.
-- By Chebyshev's inequality:
-  $$\Pr(|\bar{X} - A| \ge \epsilon A) \le \frac{\text{Var}(\bar{X})}{(\epsilon A)^2} = \frac{\alpha A / k_1}{\epsilon^2 A^2} = \frac{\alpha}{k_1 \epsilon^2 A}$$
-- To ensure this error probability is at most $1/3$:
-  $$\frac{\alpha}{k_1 \epsilon^2 A} \le \frac{1}{3} \implies k_1 = \left\lceil \frac{3\alpha}{\epsilon^2 A} \right\rceil$$
+#### The Solution: The Two-Layer "Median-of-Means" Framework
 
-#### Stage 2: Probability Boosting via the Median Trick
-Now that $\bar{X}$ satisfies $\Pr(|\bar{X} - A| \ge \epsilon A) \le 1/3$, we amplify its success probability using the Median Trick:
-- Run Stage 1 independently $k_2$ times to obtain $\bar{X}^{(1)}, \bar{X}^{(2)}, \dots, \bar{X}^{(k_2)}$.
-- Output the median: $Y = \text{median}(\bar{X}^{(1)}, \dots, \bar{X}^{(k_2)})$.
-- By the Median Trick Theorem, the failure probability is bounded by:
-  $$\Pr(|Y - A| \ge \epsilon A) \le 2 \exp\left( -\frac{k_2}{100} \right)$$
-- To achieve failure probability $\le 1/n^2$:
-  $$2 \exp\left( -\frac{k_2}{100} \right) \le \frac{1}{n^2} \implies \frac{k_2}{100} \ge \ln(2 n^2) = 2 \ln n + \ln 2 \implies k_2 = \lceil 200 \ln n + 70 \rceil = \mathcal{O}(\log n)$$
+```
++---------------------------------------------------------------------------------------+
+|                             MEDIAN-OF-MEANS ARCHITECTURE                              |
++---------------------------------------------------------------------------------------+
+|                                                                                       |
+|   Layer 1 (Mean Trick):                                                               |
+|   Sample k_1 = ceil(3 alpha / (eps^2 A)) runs -> Average X_bar                        |
+|   Chebyshev guarantee: Pr(|X_bar - A| >= eps A) <= 1/3 (Success >= 2/3)               |
+|                                     |                                                 |
+|                                     v                                                 |
+|   Layer 2 (Median Trick):                                                             |
+|   Generate k_2 = ceil(200 ln n + 70) = O(log n) independent copies of X_bar           |
+|   Compute Y = median(X_bar^(1), X_bar^(2), ..., X_bar^(k_2))                          |
+|   Chernoff guarantee: Pr(|Y - A| >= eps A) <= 2 exp(-k_2 / 100) <= 1 / n^2           |
+|                                                                                       |
++---------------------------------------------------------------------------------------+
+```
+
+1. **Layer 1: Linear Variance Reduction (The Mean Trick)**
+   Run the base estimator $k_1$ times independently and compute their average $\bar{X} = \frac{1}{k_1} \sum_{i=1}^{k_1} X_i$.
+   $$\mathbb{E}[\bar{X}] = A, \quad \text{Var}(\bar{X}) = \frac{\alpha A}{k_1}$$
+   By Chebyshev's inequality:
+   $$\Pr(|\bar{X} - A| \ge \epsilon A) \le \frac{\text{Var}(\bar{X})}{(\epsilon A)^2} = \frac{\alpha A / k_1}{\epsilon^2 A^2} = \frac{\alpha}{k_1 \epsilon^2 A}$$
+   Setting this error bound to at most $1/3$:
+   $$\frac{\alpha}{k_1 \epsilon^2 A} \le \frac{1}{3} \implies k_1 = \left\lceil \frac{3\alpha}{\epsilon^2 A} \right\rceil = \Theta\left( \frac{\alpha}{\epsilon^2 A} \right)$$
+   This produces an enhanced estimator $\bar{X}$ with guaranteed success probability $\ge 2/3$.
+
+2. **Layer 2: Exponential Probability Boosting (The Median Trick)**
+   Now that $\bar{X}$ satisfies $\Pr(|\bar{X} - A| \ge \epsilon A) \le 1/3$, we draw $k_2$ independent realizations of $\bar{X}$: $\bar{X}^{(1)}, \bar{X}^{(2)}, \dots, \bar{X}^{(k_2)}$, and output their sample median:
+   $$Y = \text{median}\left( \bar{X}^{(1)}, \bar{X}^{(2)}, \dots, \bar{X}^{(k_2)} \right)$$
+   By the Median Trick Theorem:
+   $$\Pr(|Y - A| \ge \epsilon A) \le 2 \exp\left( -\frac{k_2}{100} \right)$$
+   To enforce a failure bound of at most $1/n^2$:
+   $$2 \exp\left( -\frac{k_2}{100} \right) \le \frac{1}{n^2} \iff \exp\left( \frac{k_2}{100} \right) \ge 2 n^2 \iff \frac{k_2}{100} \ge 2 \ln n + \ln 2 \implies k_2 = \mathcal{O}(\log n)$$
 
 #### Total Sample Complexity:
-$$\text{Total Runs} = k_1 \cdot k_2 = \mathcal{O}\left( \frac{\alpha}{\epsilon^2 A} \cdot \log n \right)$$
+$$\text{Total Queries} = k_1 \cdot k_2 = \mathcal{O}\left( \frac{\alpha}{\epsilon^2 A} \cdot \log n \right)$$
+The Median-of-Means architecture converts an intractable $\mathcal{O}(n^2)$ dependency into an optimal $\mathcal{O}(\log n)$ logarithmic factor!
 
 ---
 
-## 4. Graph Query Models & Edge Counting
+## 5. Graph Query Models & Edge Counting
 
-Graph algorithms at scale operate over massive networks where reading all vertices and edges is computationally impossible.
+Graph algorithms at scale operate over massive networks where reading all vertices and edges into memory is impossible.
 
-### 4.1 Graph Query Oracles (Slide 16)
+### 5.1 Graph Query Oracles: Adjacency-Matrix vs. Adjacency-List Models
+
+Consider an undirected, unweighted graph $G = (V, E)$ with $n = |V|$ vertices and $m = |E|$ edges. Initially, the algorithm is given only the vertex set $V = \{v_1, v_2, \dots, v_n\}$ and has zero knowledge of the edge set $E$. Access to $G$ is mediated by two distinct query models:
 
 ```
 +------------------------------------+------------------------------------------+
 | Adjacency-Matrix Model             | Adjacency-List Model                     |
 +------------------------------------+------------------------------------------+
 | - Pair Query: Given vertices u, v, | - Degree Query: Given vertex v, return   |
-|   return whether (u, v) in E.      |   degree d(v).                           |
+|   return whether (u, v) in E (0/1).|   its exact degree d(v).                 |
 | - Best for DENSE graphs (|E|~n^2). | - Neighbor Query: Given vertex v and     |
-| - Cannot find neighbors without    |   index i, return i-th neighbor.         |
+| - Cannot find neighbors without    |   index i, return its i-th neighbor.     |
 |   scanning all n vertices.         | - Best for SPARSE graphs (|E|~n).        |
 +------------------------------------+------------------------------------------+
 ```
 
+- **Adjacency-Matrix Model:** In dense graphs ($m = \Theta(n^2)$), sampling random pairs $\{u, v\}$ hits edges with high probability ($p = m / \binom{n}{2} = \Theta(1)$). In sparse graphs, random pairs hit edges with probability $\mathcal{O}(1/n)$, returning almost exclusively 0s.
+- **Adjacency-List Model:** In sparse graphs ($m = \mathcal{O}(n)$), degree and neighbor queries allow algorithms to navigate directly along existing edges without searching through a sea of non-edges.
+
 ---
 
-### 4.2 Additive Edge Estimation in Dense Graphs (Slide 17–18)
+### 5.2 The Number of Edges Problem & Handshaking Lemma
 
-Let $G = (V, E)$ be an unweighted graph with $n = |V|$ vertices and $m = |E|$ edges.
-- Total possible unordered vertex pairs: $N = \binom{n}{2} = \frac{n(n-1)}{2} \approx \frac{n^2}{2}$.
-- An edge exists between a randomly chosen pair with probability $p = m / \binom{n}{2}$.
+The canonical graph query task is estimating the total edge count $m = |E|$.
 
-#### Additive Estimation Algorithm:
+#### The Handshaking Lemma:
+By Euler's handshaking lemma, each edge $(u, v) \in E$ contributes exactly 1 to the degree of $u$ and 1 to the degree of $v$:
+$$\sum_{v \in V} d(v) = 2m \implies m = \frac{1}{2} \sum_{v \in V} d(v) = \frac{n \bar{d}}{2}$$
+where $\bar{d} = \frac{1}{n} \sum d(v)$ is the average degree of $G$.
+
+#### The Naive Baseline:
+Under the adjacency-list model, querying $d(v)$ for all $n$ vertices computes $m$ exactly using $n$ degree queries.
+- **The Core Question:** *Can we compute a certified $(1 \pm \epsilon)$-multiplicative approximation of $m$ using sublinear queries ($o(n)$)?*
+
+---
+
+### 5.3 Additive Edge Estimation in Dense Graphs & Why it Fails in Sparse Graphs
+
+In the adjacency-matrix model, the algorithm samples from the space of all possible unordered vertex pairs:
+$$N = \binom{n}{2} = \frac{n(n-1)}{2} \approx \frac{1}{2}n^2$$
+The true edge density across this space is:
+$$p = \frac{m}{\binom{n}{2}}$$
+
+#### The Additive Algorithm:
 1. Sample $k$ unordered vertex pairs $\{u_i, v_i\}$ uniformly at random with replacement.
 2. Query the pair oracle for each pair. Let $X$ be the number of edges detected.
-3. Output $\hat{m} = X \cdot \frac{\binom{n}{2}}{k}$.
+3. Output the scaled estimator:
+   $$\hat{m} = X \cdot \frac{\binom{n}{2}}{k}$$
 
-By identical analysis to binary string counting:
-$$\text{Var}(\hat{m}) \le \frac{\binom{n}{2}^2}{4k} \approx \frac{n^4}{16k}$$
-Applying Chebyshev's inequality, to ensure additive error $|\hat{m} - m| \le \epsilon n^2$ with probability $\ge 2/3$:
-$$\Pr(|\hat{m} - m| \ge \epsilon n^2) \le \frac{n^4 / 16k}{\epsilon^2 n^4} = \frac{1}{16 k \epsilon^2} \le \frac{1}{3} \implies k = \mathcal{O}\left( \frac{1}{\epsilon^2} \right)$$
+By Chebyshev's inequality, to ensure additive error $|\hat{m} - m| \le \epsilon n^2$ with probability $\ge 2/3$:
+$$k = \mathcal{O}\left( \frac{1}{\epsilon^2} \right)$$
 For a failure probability bounded by $\delta$, the Median Trick amplifies this to $\mathcal{O}\left( \frac{1}{\epsilon^2} \log\left( \frac{1}{\delta} \right) \right)$ pair queries.
 
+#### Why the $\pm \epsilon n^2$ Additive Bound is Inevitable from Sampling:
+When we sample $k$ pairs, the Chernoff bound ensures that the estimated edge density $\hat{p}$ is within $\pm \epsilon$ of the true density $p$:
+$$\hat{p} \in [p - \epsilon, \; p + \epsilon]$$
+To output the total edge count $\hat{m}$, we multiply $\hat{p}$ by the total size of the sample space $\binom{n}{2}$:
+$$\hat{m} = \hat{p} \cdot \binom{n}{2} = (p \pm \epsilon) \binom{n}{2} = m \pm \epsilon \binom{n}{2} \approx m \pm \epsilon \frac{n^2}{2}$$
+Because the sample space has size $\Theta(n^2)$, **the absolute error is inevitably magnified by $n^2$**!
+
+#### Why Additive Error is Vacuous in Sparse Graphs:
+- **In Dense Graphs ($m = \Theta(n^2)$):** The true edge count is on the order of $n^2$, and the error is $\epsilon n^2$. The error acts like a relative error, providing meaningful precision.
+- **In Sparse Graphs ($m = \mathcal{O}(n)$):**
+  Consider a sparse path graph where $m = n - 1 \approx n$.
+  Suppose $n = 10^6$ and $\epsilon = 0.01$. The true number of edges is $m \approx 10^6$.
+  However, the allowable additive error is:
+  $$\epsilon n^2 = 0.01 \times (10^6)^2 = 10^{10}$$
+  The error tolerance ($10^{10}$) is **10,000 times larger than the true quantity being estimated ($10^6$)**! Such an estimate is completely devoid of practical or mathematical value.
+
 ---
 
-### 4.3 Multiplicative Edge Estimation in Connected Graphs
+### 5.4 The Transition to Multiplicative Error & The Connected Graph Assumption
 
-In sparse graphs (where $m = \mathcal{O}(n)$), an additive error of $\epsilon n^2$ is vastly larger than $m$ itself, rendering the estimate completely useless. To achieve a **multiplicative $(1 \pm \epsilon)$-approximation**, we assume $G$ is **connected** ($m \ge n - 1$) and utilize the **Adjacency-List Model**.
+To obtain meaningful estimates for sparse graphs, we must transition to a **Multiplicative $(1 \pm \epsilon)$-Approximation**:
+$$(1 - \epsilon)m \le \hat{m} \le (1 + \epsilon)m$$
+Multiplicative error scales adaptively with the true edge count $m$, preserving high relative accuracy across all density regimes.
 
-#### Why Simple Vertex Sampling Fails (Slide 20):
-The total edge count satisfies $m = \frac{1}{2} \sum_{v \in V} d(v) = \frac{n \bar{d}}{2}$.
-If we sample a vertex $v$ uniformly at random and query $d(v)$:
-- $\mathbb{E}[d(v)] = \bar{d}$.
-- In a **star graph** $K_{1, n-1}$, one hub has degree $n-1$ while $n-1$ leaves have degree 1:
-  $$\mathbb{E}[d(v)^2] = \frac{1}{n}(n-1)^2 + \frac{n-1}{n}(1^2) \approx n$$
-  $$\text{Var}(d(v)) \approx n - \bar{d}^2 = \mathcal{O}(n)$$
-  The variance-to-mean-squared ratio is:
-  $$\frac{\text{Var}(d(v))}{(\mathbb{E}[d(v)])^2} = \frac{\mathcal{O}(n)}{4} = \mathcal{O}(n)$$
-  By Chebyshev's inequality, estimating $\bar{d}$ requires $\mathcal{O}(n / \epsilon^2)$ samples—no better than inspecting the entire graph!
+#### The Lower Bound Barrier for General Sparse Graphs:
+*Can we compute a sublinear multiplicative approximation of $m$ for arbitrary sparse graphs?*
+**Theorem:** *No. Distinguishing $m = 0$ from $m = 1$ requires $\Omega(n)$ queries.*
+
+- *Proof:* Consider two graphs on $n$ vertices:
+  - Graph $G_0$: Completely empty graph ($m = 0$). All vertices have degree 0.
+  - Graph $G_1$: A graph containing exactly one isolated edge ($m = 1$), while the remaining $n - 2$ vertices are isolated ($d(v) = 0$).
+  In the adjacency-list model, only 2 vertices have $d(v) = 1$.
+  Distinguishing $G_0$ from $G_1$ requires finding at least one non-zero degree vertex among $n$ candidates. This is equivalent to searching for a 1 in a bit-string of length $n$ containing at most two 1s.
+  In the worst case, any randomized algorithm requires $\Omega(n)$ queries to discover this lone edge. Thus, sublinear multiplicative estimation is impossible without structural constraints!
+
+#### The Structural Remedy: The Connected Graph Assumption ($m \ge n - 1$)
+To bypass the pathological needle-in-a-haystack obstruction, we impose a natural structural invariant: **the graph $G$ is connected**.
+- Every connected graph on $n$ vertices contains a spanning tree, enforcing:
+  $$m \ge n - 1$$
+- This lower bound ensures that the graph cannot contain a single edge hidden in an ocean of isolated vertices.
+- Under connectivity, we will design an algorithm that achieves a multiplicative $(1 \pm \epsilon)$-approximation in:
+  $$\mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{m}} \right) \text{ queries!}$$
 
 ---
 
-### 4.4 The Directed Degree Trick (Feige / Goldreich-Ron)
+### 5.5 Step 1: Why Naive Vertex Degree Sampling Fails (The Star Graph Pathology)
 
-To break the star graph variance barrier, we impose an artificial **total ordering** on the vertices to orient all undirected edges into directed edges:
+By the Handshaking Lemma, $m = \frac{n \bar{d}}{2}$. A tempting sublinear approach is to sample vertices uniformly at random and query their degree $d(v)$ to estimate the average degree $\bar{d}$:
+$$\mathbb{E}[d(v)] = \bar{d}$$
 
-> **Definition (Total Vertex Order - Slide 21):**
-> For any two distinct vertices $u, v \in V$, define $u < v$ if and only if:
-> 1. $d(u) < d(v)$, OR
-> 2. $d(u) = d(v)$ and $\text{ID}(u) < \text{ID}(v)$.
+#### The Failure Mode: Variance Explosion on Star Graphs
+Consider a **star graph** $K_{1, n-1}$ on $n$ vertices:
+- 1 central hub with degree $n - 1 \approx n$.
+- $n - 1$ leaf vertices, each with degree 1.
+- Total edges: $m = n - 1$. Average degree: $\bar{d} = \frac{2(n-1)}{n} \approx 2$.
 
+Let us evaluate the second moment and variance of a randomly sampled vertex:
+$$\mathbb{E}[d(v)^2] = \frac{1}{n} (n - 1)^2 + \frac{n - 1}{n} (1^2) \approx \frac{n^2}{n} + 1 = n + 1$$
+$$\text{Var}(d(v)) = \mathbb{E}[d(v)^2] - (\mathbb{E}[d(v)])^2 \approx n - 2^2 = \mathcal{O}(n)$$
+
+The relative variance-to-mean-squared ratio is catastrophic:
+$$\frac{\text{Var}(d(v))}{(\mathbb{E}[d(v)])^2} \approx \frac{n}{4} = \Omega(n)$$
+
+By Chebyshev's inequality, estimating $\bar{d}$ within a constant relative factor requires drawing:
+$$k = \Theta\left( \frac{\text{Var}(d(v))}{(\mathbb{E}[d(v)])^2} \right) = \Theta(n) \text{ samples!}$$
+
+**Intuition:** A uniform sample almost always hits a leaf ($d=1$), leading the algorithm to falsely conclude the graph has very few edges. The true average is driven entirely by the rare central hub, which is sampled with probability only $1/n$. Naive vertex sampling completely fails to achieve sublinear complexity.
+
+---
+
+### 5.6 Step 2: The Directed Degree Trick (Feige / Goldreich-Ron)
+
+To neutralize the extreme variance created by dense hubs, Feige and Goldreich-Ron introduced a foundational technique: **orienting edges strictly from smaller vertices to larger vertices**.
+
+#### 1. Defining a Canonical Vertex Total Order
+We define a strict total order $\prec$ over $V$:
+
+> **Definition (Vertex Total Order):**
+> For any two vertices $u, v \in V$, $u \prec v$ if and only if:
+> 1. $d(u) < d(v)$, or
+> 2. $d(u) = d(v)$ and $\text{index}(u) < \text{index}(v)$ (lexicographic tie-breaking).
+
+#### 2. Directed Out-Degree ($d'$)
 For each vertex $u$, define its **directed out-degree** $d'(u)$ as the number of neighbors that rank strictly higher than $u$:
-$$d'(u) = |\{ v \in N(u) : u < v \}|$$
+$$d'(u) = |\{v \in V \mid (u, v) \in E \text{ and } u \prec v\}|$$
 
-```
-Undirected Edge (u, v):
-        d(u) = 2                   d(v) = 5
-       +--------+                 +--------+
-       |   u    | --------------> |   v    |   Oriented: u < v
-       +--------+                 +--------+
-      Contributes to:            Contributes to:
-        d'(u) = +1                 d'(v) = 0
-```
+**The Fundamental Invariant:**
+Every undirected edge $(u, v) \in E$ has exactly one endpoint that ranks strictly lower than the other. Thus, **every edge is counted exactly once by its lower-ranked endpoint**:
+$$\sum_{u \in V} d'(u) = m$$
+*(Notice that this sum equals $m$ directly, without dividing by 2!)*
 
-> **Fundamental Invariant:**
-> Every undirected edge $(u, v) \in E$ has exactly one endpoint that ranks strictly lower than the other under the total order. Therefore:
->
-> $$\sum_{u \in V} d'(u) = m$$
+**Why This Tames Star Graphs:**
+In the star graph $K_{1, n-1}$:
+- The central hub is the highest-ranked vertex in the entire graph. Because no neighbor ranks higher than the hub, **$d'(\text{hub}) = 0$**!
+- Each leaf vertex has degree 1, and its only neighbor (the hub) ranks higher, so $d'(\text{leaf}) = 1$.
+- The massive degree of the hub ($n-1$) is completely erased from $d'$. The $n-1$ edges are distributed uniformly across the $n-1$ leaves. Extreme variance is completely eliminated!
 
-#### The Estimator $X$ (Slide 22):
-1. Sample vertex $u$ uniformly at random from $V$ (probability $1/n$).
-2. Query degree $d(u)$.
-3. Choose neighbor index $k \in \{1, 2, \dots, d(u)\}$ uniformly at random.
-4. Query the $k$-th neighbor $v = \text{Neighbor}(u, k)$, and query $d(v)$.
-5. If $u < v$, set $X = d(u)$; otherwise set $X = 0$.
+#### 3. Constructing the Estimator $X$
+We cannot query $d'(u)$ directly from the oracle. Instead, we construct an unbiased random variable $X$ via two-step sampling:
+1. Sample a vertex $u \in V$ uniformly at random (probability $1/n$).
+2. Query $d(u)$. If $d(u) = 0$, set $X = 0$.
+3. Sample a neighbor $v$ of $u$ uniformly at random with probability $1/d(u)$ using a neighbor query.
+4. Query $d(v)$ and compare the ranks of $u$ and $v$:
+   $$X = \begin{cases} d(u) & \text{if } u \prec v \text{ (neighbor is higher-ranked)} \\ 0 & \text{if } v \prec u \text{ (neighbor is lower-ranked)} \end{cases}$$
 
-**Expectation:**
-$$\mathbb{E}[X] = \frac{1}{n} \sum_{u \in V} d(u) \cdot \Pr(u < v \mid u) = \frac{1}{n} \sum_{u \in V} d(u) \cdot \frac{d'(u)}{d(u)} = \frac{1}{n} \sum_{u \in V} d'(u) = \frac{m}{n}$$
+#### Expectation Verification:
+Conditioned on selecting vertex $u$, the probability of picking a higher-ranked neighbor is:
+$$\Pr(u \prec v \mid u) = \frac{d'(u)}{d(u)}$$
+
+Applying the law of total expectation across all $u \in V$:
+$$\mathbb{E}[X] = \sum_{u \in V} \Pr(u \text{ is chosen}) \cdot \mathbb{E}[X \mid u] = \sum_{u \in V} \frac{1}{n} \left[ d(u) \cdot \Pr(u \prec v \mid u) + 0 \cdot \Pr(v \prec u \mid u) \right]$$
+Substituting $\Pr(u \prec v \mid u) = \frac{d'(u)}{d(u)}$:
+$$\mathbb{E}[X] = \frac{1}{n} \sum_{u \in V} \left[ d(u) \cdot \frac{d'(u)}{d(u)} \right]$$
+The degree $d(u)$ in the numerator **cancels perfectly** with $d(u)$ in the denominator:
+$$\mathbb{E}[X] = \frac{1}{n} \sum_{u \in V} d'(u) = \frac{m}{n}$$
+Thus, $X$ is a strictly unbiased estimator of the edge density $m/n$!
 
 ---
 
-### 4.5 Variance Analysis via Heavy/Light Decomposition (Slides 23–24)
+### 5.7 Step 3: Variance Control Analysis via Heavy/Light Decomposition
 
-To bound $\text{Var}(X)$, we partition the vertex set into **Heavy ($H$)** and **Light ($L$)** vertices:
-- Let $H \subset V$ be the set of the $\lceil \sqrt{2m} \rceil$ highest-ranked vertices in the total order.
-- Let $L = V \setminus H$ be the remaining low-degree vertices.
+The second moment $\mathbb{E}[X^2]$ governs the variance of $X$.
+$$\mathbb{E}[X^2] = \sum_{u \in V} \frac{1}{n} \left[ d(u)^2 \cdot \frac{d'(u)}{d(u)} \right] = \frac{1}{n} \sum_{u \in V} d(u) \cdot d'(u)$$
+
+To bound the product $d(u) d'(u)$, we partition the vertex set $V$ into **Heavy ($H$)** and **Light ($L$)** vertices using the threshold $\sqrt{2m}$:
+- **$H$ (Heavy Vertices):** The set of the $\lceil \sqrt{2m} \rceil$ highest-ranked vertices under $\prec$.
+- **$L$ (Light Vertices):** The remaining vertices, $L = V \setminus H$.
 
 ```
-Total Vertex Order:
-[ Smallest Degree ] -----------------------------------------> [ Largest Degree ]
-+-----------------------------------------------+-------------------------------+
-|               Light Vertices L                |       Heavy Vertices H        |
-|               (Degree <= sqrt(2m))            |       (|H| <= sqrt(2m))       |
-+-----------------------------------------------+-------------------------------+
++-------------------------------------------------------------------------------+
+|                      HEAVY / LIGHT VERTEX DECOMPOSITION                       |
++-------------------------------------------------------------------------------+
+|                                                                               |
+|   L (Light Vertices): V \ H                       H (Heavy Vertices): Top sqrt(2m)
+|   |L| <= n                                        |H| = ceil(sqrt(2m))        |
+|   Lemma 1: For all u in L, d(u) <= sqrt(2m)       Lemma 2: For all u in H, d'(u) <= sqrt(2m)
+|                                                                               |
++-------------------------------------------------------------------------------+
 ```
 
 > **Lemma 1 (Light Vertex Degree Bound):**
-> For every vertex $u \in L$, $d(u) \le \sqrt{2m}$.
-
-*Proof:*
-Suppose for contradiction that some vertex $u \in L$ had $d(u) > \sqrt{2m}$.
-Because every vertex in $H$ ranks higher than $u$, every vertex in $H$ must also have degree at least $d(u) > \sqrt{2m}$.
-Then the sum of degrees across the vertices in $H$ alone would be:
-$$\sum_{v \in H} d(v) > |H| \cdot \sqrt{2m} = \sqrt{2m} \cdot \sqrt{2m} = 2m$$
-This contradicts the fact that the sum of degrees over the *entire graph* is exactly $2m$. Thus $d(u) \le \sqrt{2m}$. $\blacksquare$
+> For every light vertex $u \in L$, $d(u) \le \sqrt{2m}$.
+> *Proof (by Contradiction):*
+> Suppose there exists $u \in L$ with $d(u) > \sqrt{2m}$.
+> Because every vertex in $H$ ranks strictly higher than $u$ under $\prec$, every vertex in $H$ must also have degree $d(v) \ge d(u) > \sqrt{2m}$.
+> Summing degrees strictly over the subset $H$:
+> $$\sum_{v \in H} d(v) > |H| \cdot \sqrt{2m} = \sqrt{2m} \cdot \sqrt{2m} = 2m$$
+> This contradicts Euler's Handshaking Lemma, which states that the sum of degrees over the *entire* graph is exactly $2m$. Hence, $d(u) \le \sqrt{2m}$ for all $u \in L$. $\blacksquare$
 
 > **Lemma 2 (Heavy Vertex Out-Degree Bound):**
-> For every vertex $u \in H$, $d'(u) \le \sqrt{2m}$.
+> For every heavy vertex $u \in H$, $d'(u) \le \sqrt{2m}$.
+> *Proof:*
+> By definition, $d'(u)$ counts only neighbors that rank strictly higher than $u$.
+> Since $u \in H$, there are at most $|H| \le \sqrt{2m}$ vertices in the entire graph that rank higher than $u$.
+> Therefore, $u$ cannot have more than $\sqrt{2m}$ higher-ranked neighbors: $d'(u) \le \sqrt{2m}$. $\blacksquare$
 
-*Proof:*
-By definition, $d'(u)$ counts only neighbors of $u$ that rank strictly higher than $u$ in the total order.
-Because $u \in H$, and $|H| \le \sqrt{2m}$, there are at most $\sqrt{2m}$ vertices in the entire graph that rank higher than $u$.
-Consequently, $d'(u) \le |H| \le \sqrt{2m}$. $\blacksquare$
+#### The Universal Product Bound:
+Combining Lemma 1 and Lemma 2 reveals that for **every vertex in the graph**, at least one of the two terms in $d(u) d'(u)$ is upper-bounded by $\sqrt{2m}$:
+- If $u \in L$: $d(u) \le \sqrt{2m} \implies d(u) d'(u) \le \sqrt{2m} d'(u) \le \sqrt{2m} d(u)$.
+- If $u \in H$: $d'(u) \le \sqrt{2m} \implies d(u) d'(u) \le d(u) \sqrt{2m} = \sqrt{2m} d(u)$.
+
+Therefore, for all $u \in V$:
+$$d(u) \cdot d'(u) \le \sqrt{2m} \cdot d(u)$$
 
 #### Bounding the Second Moment $\mathbb{E}[X^2]$:
-$$\text{Var}(X) < \mathbb{E}[X^2] = \frac{1}{n} \sum_{u \in V} d(u)^2 \Pr(u < v \mid u) = \frac{1}{n} \sum_{u \in V} d(u) d'(u)$$
-Split the summation across $L$ and $H$:
-- For $u \in L$: $d(u) \le \sqrt{2m} \implies d(u) d'(u) \le \sqrt{2m} \cdot d'(u)$.
-- For $u \in H$: $d'(u) \le \sqrt{2m} \implies d(u) d'(u) \le \sqrt{2m} \cdot d(u)$.
+Substituting the product bound into $\mathbb{E}[X^2]$:
+$$\mathbb{E}[X^2] = \frac{1}{n} \sum_{u \in V} d(u) d'(u) \le \frac{\sqrt{2m}}{n} \sum_{u \in V} d(u)$$
+By the Handshaking Lemma, $\sum_{u \in V} d(u) = 2m$:
+$$\mathbb{E}[X^2] \le \frac{\sqrt{2m} \cdot 2m}{n} = \frac{2\sqrt{2} m^{1.5}}{n}$$
 
-Summing across all vertices:
-$$\sum_{u \in V} d(u) d'(u) \le \sum_{u \in L} \sqrt{2m} d'(u) + \sum_{u \in H} \sqrt{2m} d(u) \le \sqrt{2m} \sum_{u \in V} d'(u) + \sqrt{2m} \sum_{u \in V} d(u) = \sqrt{2m} \cdot m + \sqrt{2m} \cdot 2m = 3\sqrt{2} m^{3/2}$$
-Substituting back into the expectation:
-$$\mathbb{E}[X^2] \le \frac{3\sqrt{2} m^{3/2}}{n} = 3\sqrt{2} \cdot \frac{n}{\sqrt{m}} \cdot \left( \frac{m}{n} \right)^2 = \mathcal{O}\left( \frac{n}{\sqrt{m}} \right) \cdot (\mathbb{E}[X])^2$$
+#### Variance Upper Bound and Sample Complexity:
+Since $\text{Var}(X) = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 < \mathbb{E}[X^2]$, we factor out $(\mathbb{E}[X])^2 = (m/n)^2$:
+$$\text{Var}(X) < \frac{2\sqrt{2} m^{1.5}}{n} = \left( \frac{m}{n} \right)^2 \cdot \frac{2\sqrt{2} n}{\sqrt{m}} = (\mathbb{E}[X])^2 \cdot \mathcal{O}\left( \frac{n}{\sqrt{m}} \right)$$
 
-#### Sample Complexity when $m$ is Known:
-$$\frac{\text{Var}(X)}{(\mathbb{E}[X])^2} \le \mathcal{O}\left( \frac{n}{\sqrt{m}} \right)$$
-By Chebyshev's inequality, averaging $s = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$ independent samples of $X$ yields an estimate $\bar{X}$ such that:
-$$\Pr\left( \left| \bar{X} - \frac{m}{n} \right| \ge \epsilon \frac{m}{n} \right) \le \frac{1}{3}$$
-Multiplying $\bar{X}$ by $n$ produces a $(1 \pm \epsilon)$-multiplicative estimate of $m$ using $\mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$ queries!
+Applying Chebyshev's inequality to the average of $k$ independent samples $\bar{X}$:
+$$\Pr(|\bar{X} - \mathbb{E}[X]| \ge \epsilon \mathbb{E}[X]) \le \frac{\text{Var}(X)}{k \epsilon^2 (\mathbb{E}[X])^2} \le \frac{\mathcal{O}(n / \sqrt{m})}{k \epsilon^2}$$
+
+To ensure that the error is within $\pm \epsilon \mathbb{E}[X]$ with constant success probability $\ge 2/3$:
+$$k = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$$
+
+- **For connected sparse graphs where $m = \Theta(n)$:**
+  $$k = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{n}} \right) = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^2} \right) \ll n$$
+- **For dense graphs where $m = \Theta(n^2)$:**
+  $$k = \mathcal{O}\left( \frac{n}{\epsilon^2 \cdot n} \right) = \mathcal{O}\left( \frac{1}{\epsilon^2} \right)$$
+The query complexity is sublinear across all connected graph topologies!
 
 ---
 
-### 4.6 Density-Sensitive Search: Guessing Unknown $m$ (Slides 25–27)
+### 5.8 Step 4: Density-Sensitive Search (Guessing Unknown $m$) & Median Trick Boosting
 
-In practice, the true number of edges $m$ is unknown, so the algorithm cannot choose the optimal sample size $s = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$ in advance. We resolve this via a **density-sensitive geometric search**:
+In reality, the algorithm does not know the true value of $m$ in advance, and therefore cannot directly set the sample size $k = \Theta(n / (\epsilon^2 \sqrt{m}))$.
 
-```
-Geometric Guesses for m':
-  m' = n^2  ---->  m' = n^2 / 2  ---->  m' = n^2 / 4  ----> ... ----> m' = m / 2
-  Sample size:     Sample size:         Sample size:                   Sample size:
-  O(n / eps^2 n)   O(n / eps^2 sqrt(n^2/2))                             O(n / eps^2 sqrt(m))
-  [ Tiny sample ]                                                      [ Stops here! ]
-```
+#### Geometric Guessing (Doubling Search in Reverse):
+The algorithm searches for the correct scale of $m$ by testing a geometrically decreasing sequence of candidate guesses:
+$$m' \in \left\{ \binom{n}{2}, \; \frac{1}{2}\binom{n}{2}, \; \frac{1}{4}\binom{n}{2}, \; \dots, \; n - 1 \right\}$$
 
-#### Algorithm:
-1. Assume $\epsilon < 1/4$. Test descending geometric guesses:
-   $$m' \in \left\{ n^2, \frac{n^2}{2}, \frac{n^2}{4}, \dots, 1 \right\}$$
-2. For each guess $m'$, take $s_{m'} = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m'}} \right)$ independent samples of $X$.
-   Compute the empirical mean $\bar{X}$ and the edge estimate $\hat{m} = n \bar{X}$.
-3. **Stopping Rule:** If $\hat{m} > 1.5 m'$, **HALT** and return $\hat{m}$ as the final estimate. Otherwise, proceed to $m' / 2$.
+1. For each candidate guess $m'$, draw $k = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m'}} \right)$ samples of $X$ and compute their average $\bar{X}$.
+2. **Stopping Threshold Condition:**
+   - When $m' \gg m$ (guess is too large), the true expectation is $m/n \ll m'/n$. The observed average satisfies $n \bar{X} \ll 1.5 m'$. The algorithm safely rejects and halves $m'$.
+   - When $m'$ drops to the true scale $m' \le m$ (specifically $m' \approx m/2$), the sample size is large enough for Chebyshev's inequality to hold with high probability.
+   - The condition $n \bar{X} > 1.5 m'$ triggers! The algorithm **halts immediately** and outputs $\hat{m} = n \bar{X}$.
 
-#### Correctness Analysis:
-- **Case 1 ($m' > m$):**
-  The true mean is $m/n$. With constant probability, the estimate satisfies $\hat{m} \le m + \epsilon m' < 1.5 m'$ (since $m < m'$ and $\epsilon < 0.25$). The algorithm does not halt prematurely.
-- **Case 2 ($m' \le m$ and $m' \ge m/2$):**
-  The sample size is now large enough to guarantee $|\hat{m} - m| \le \epsilon m$.
-- **Case 3 ($m' < m/2$):**
-  $\hat{m} \ge (1 - \epsilon) m > (1 - 0.25)(2 m') = 1.5 m'$. The condition $\hat{m} > 1.5 m'$ is triggered with high probability, and the search halts!
+#### Total Query Complexity (Sum of Geometric Series):
+The total number of queries executed across all guessing rounds up to the stopping scale $m^* \approx m$ is:
+$$\sum_{j=0}^{\log(n^2 / m)} \Theta\left( \frac{n}{\epsilon^2 \sqrt{n^2 / 2^j}} \right) = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m}} \left[ \sqrt{\frac{m}{n^2}} + \dots + \frac{1}{\sqrt{2}} + 1 \right] \right)$$
+Because this is a geometric series with common ratio $\sqrt{2} > 1$, the sum is **dominated by its final term**:
+$$\sum_{i=0}^\infty 2^{-i/2} = \frac{1}{1 - 1/\sqrt{2}} = \frac{\sqrt{2}}{\sqrt{2} - 1} = \mathcal{O}(1)$$
+Thus, all preliminary guessing rounds combined cost less than the final round!
+$$\text{Total Queries} = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$$
 
-#### Total Query Complexity:
-The total queries across all rounds sum as a geometrically increasing series:
-$$\sum_{i=0}^{\log_2(n^2 / m)} \frac{n}{\epsilon^2 \sqrt{n^2 / 2^i}} = \frac{n}{\epsilon^2 \sqrt{m}} \left( 1 + \frac{1}{\sqrt{2}} + \frac{1}{2} + \frac{1}{2\sqrt{2}} + \dots \right) = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$$
-
-#### Full Probability Boosting via Median Trick (Slide 27):
-To prevent any of the $\mathcal{O}(\log n)$ geometric rounds from failing:
-1. For each round $m'$, repeat the test $k = \mathcal{O}(\log\log n)$ times and take the **median**.
-2. By the Median Trick, the error probability of each round drops to:
+#### Full Probability Boosting via the Median Trick:
+There are $\mathcal{O}(\log n)$ guessing rounds. If each round had only a constant failure probability, the union bound across all rounds would fail.
+1. For each candidate $m'$, repeat the sampling procedure $k_{\text{boost}} = \mathcal{O}(\log\log n)$ times independently and take the median.
+2. By the Median Trick, the error probability of each round drops exponentially to:
    $$\delta_{\text{round}} \le \mathcal{O}\left( \frac{1}{\log^2 n} \right)$$
-3. By the Union Bound across all $\mathcal{O}(\log n)$ rounds:
+3. Applying the Union Bound across all $\mathcal{O}(\log n)$ rounds:
    $$\Pr(\text{Any round fails}) \le \mathcal{O}(\log n) \cdot \mathcal{O}\left( \frac{1}{\log^2 n} \right) = \mathcal{O}\left( \frac{1}{\log n} \right)$$
-4. The total query complexity is:
-   $$\mathcal{O}\left( \frac{n \log\log n}{\epsilon^2 \sqrt{m}} \right)$$
+4. The overall algorithm succeeds with high probability $1 - \mathcal{O}(1/\log n) \to 1$.
+5. The final total query complexity, including probability boosting, is:
+   $$\Theta\left( \frac{n \log\log n}{\epsilon^2 \sqrt{m}} \right)$$
 
 ---
 
-### 4.7 Take-Home Exercise: Number of Connected Components (Slide 28)
+## 6. Take-Home Exercise: Number of Connected Components
 
 > **Problem:**
 > Let $G$ be an unweighted graph in the adjacency-matrix model.
 > Each connected component contains at most $B = 100$ vertices.
 > Output an estimate of the total number of connected components $c(G)$ with additive error at most $\epsilon n$ using $\mathcal{O}(n/\epsilon^2)$ queries.
 
-#### Chazelle-Rubinfeld-Trevisan Formulation (2005):
+### 6.1 Chazelle-Rubinfeld-Trevisan Formulation (2005)
 Let $\mathcal{C}$ be the collection of connected components of $G$. For any vertex $u$, let $C_u$ denote the connected component containing $u$.
 Notice the mathematical identity:
 $$c(G) = \sum_{C \in \mathcal{C}} 1 = \sum_{C \in \mathcal{C}} \sum_{u \in C} \frac{1}{|C|} = \sum_{u \in V} \frac{1}{|C_u|}$$
 
-#### Algorithm for Bounded Component Size ($|C_u| \le 100$):
+### 6.2 Algorithm for Bounded Component Size ($|C_u| \le 100$)
 1. Sample $k = \mathcal{O}(1/\epsilon^2)$ vertices $u_1, u_2, \dots, u_k$ uniformly at random from $V$.
 2. For each sampled vertex $u_i$, run Breadth-First Search (BFS) starting from $u_i$ to discover all vertices in $C_{u_i}$.
    Since $|C_{u_i}| \le 100$, each BFS makes at most $\binom{100}{2} < 5000 = \mathcal{O}(1)$ pair queries.
@@ -1199,7 +1565,7 @@ $$c(G) = \sum_{C \in \mathcal{C}} 1 = \sum_{C \in \mathcal{C}} \sum_{u \in C} \f
    Since each variable $1/|C_{u_i}| \in (0, 1]$, by Chebyshev's inequality (or Chernoff bound), setting $k = \mathcal{O}(1/\epsilon^2)$ guarantees $|\hat{c} - c(G)| \le \epsilon n$ with probability $\ge 2/3$.
    Total query complexity is $k \cdot \mathcal{O}(1) = \mathcal{O}(1/\epsilon^2)$!
 
-#### Extension to General Graphs (Unbounded Component Sizes):
+### 6.3 Extension to General Graphs (Unbounded Component Sizes)
 If component sizes are unbounded, running full BFS on a large component would take $\Omega(n^2)$ queries.
 - **Truncated BFS:** Stop the BFS as soon as it discovers $\lceil 2/\epsilon \rceil$ vertices.
 - If $|C_u| \ge 2/\epsilon$, its true contribution $1/|C_u| \le \epsilon/2$. Replacing it with 0 incurs an additive error of at most $\epsilon/2$ per vertex, which sums to at most $(\epsilon/2)n$.
@@ -1207,6 +1573,7 @@ If component sizes are unbounded, running full BFS on a large component would ta
 - Total query complexity remains sublinear: $\mathcal{O}\left( \frac{1}{\epsilon^3} \right)$ or $\mathcal{O}\left( \frac{d}{\epsilon^2} \right)$ in bounded-degree graphs!
 
 ---
+
 # Week 3 - Query Complexity Lower Bounds: Decision Trees, Yao's Minimax Principle, and Query Reductions
 
 <draft>

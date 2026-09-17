@@ -227,6 +227,44 @@
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-approximate-median-rank-chernoff",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the randomized sampling algorithm for finding an \\varepsilon-approximate median in an array of size n, why is the failure event where the sample median has rank < (1/2 - \\varepsilon)n bounded by \\Pr(Y > (1 + \\varepsilon)\\mathbb{E}[Y]), where Y is the number of samples with rank < (1/2 - \\varepsilon)n?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The sample median is too small if and only if Y > k/2; since \\mathbb{E}[Y] = (1/2 - \\varepsilon)k, we have (1 + \\varepsilon)\\mathbb{E}[Y] = (1/2 - \\varepsilon/2 - \\varepsilon^2)k < k/2, establishing the event inclusion {Y > k/2} \\subseteq {Y > (1 + \\varepsilon)\\mathbb{E}[Y]}.",
+          "response": "Correct. Let S_{bad} be the elements with rank < (1/2 - \\varepsilon)n. The sample median falls in S_{bad} if and only if strictly more than half of the samples fall in S_{bad} (Y > k/2). Since (1 + \\varepsilon)\\mathbb{E}[Y] = (1/2 - \\varepsilon/2 - \\varepsilon^2)k < k/2 for any \\varepsilon > 0, the event Y > k/2 strictly implies Y > (1 + \\varepsilon)\\mathbb{E}[Y], allowing direct application of the multiplicative Chernoff bound."
+        },
+        {
+          "id": "B",
+          "text": "Because Markov's inequality requires the threshold to be strictly less than the sample size k/2.",
+          "response": "Incorrect. The proof uses the multiplicative Chernoff bound rather than Markov's inequality."
+        },
+        {
+          "id": "C",
+          "text": "Because the sample median's numerical value is directly proportional to the arithmetic average of all elements.",
+          "response": "Incorrect. The algorithm evaluates acceptance strictly by sorted rank, not numerical value distance."
+        },
+        {
+          "id": "D",
+          "text": "Because the Chernoff bound cannot be applied unless the failure probability exceeds 1/2.",
+          "response": "Incorrect. The Chernoff bound applies for any positive mean; the condition for error probability <= 1/2 applies to the median trick."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Let S_{bad} be the set of elements with rank < (1/2 - \\varepsilon)n. In k independent uniform samples, the sample median belongs to S_{bad} if and only if strictly more than half of the samples are drawn from S_{bad}, i.e., Y > k/2. The expected count is \\mathbb{E}[Y] = (1/2 - \\varepsilon)k. Expanding (1 + \\varepsilon)\\mathbb{E}[Y] = (1/2 - \\varepsilon/2 - \\varepsilon^2)k. For any \\varepsilon > 0, this threshold is strictly smaller than k/2. Therefore, whenever Y > k/2, it necessarily exceeds (1 + \\varepsilon)\\mathbb{E}[Y], so {Y > k/2} \\subseteq {Y > (1 + \\varepsilon)\\mathbb{E}[Y]}, allowing direct application of the multiplicative Chernoff bound.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.randomized_algorithm",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
     }
   ]
 }

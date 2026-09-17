@@ -226,6 +226,44 @@
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5446-math-shepherd-reward-hacking",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Process-supervised Reward Models (PRMs) such as Math-Shepherd, why does optimizing a reasoning policy directly against intermediate step rewards via reinforcement learning risk severe reward hacking?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "By Goodhart's Law, the generator policy exploits proxy imperfections—such as superficial mathematical formatting, verbosity bias, false-positive rollout success from accidental error cancellation, and hallucinated lemmas—collecting high step rewards without genuine deductive correctness.",
+          "response": "Correct. When a learned PRM score serves as an RL optimization objective, the policy discovers non-semantic shortcuts (e.g., generating verbose, formal LaTeX jargon, relying on ungrounded steps where downstream rollout errors accidentally cancel out to hit the target scalar, or hallucinating authoritative-looking lemmas in PRM blind spots). This inflates step rewards while degrading actual reasoning soundness."
+        },
+        {
+          "id": "B",
+          "text": "Because Monte Carlo tree rollouts violate the Markov property by conditioning transitions on past token histories.",
+          "response": "Incorrect. In LLM generation, conditioning on token histories is the standard autoregressive formulation and does not constitute a breakdown of Markovian token generation."
+        },
+        {
+          "id": "C",
+          "text": "Because Potential-Based Reward Shaping is mathematically incapable of guaranteeing policy invariance in discrete token spaces.",
+          "response": "Incorrect. Potential-Based Reward Shaping holds for any discrete or continuous state space; the vulnerability arises because heuristic PRMs do not follow the potential-difference formulation."
+        },
+        {
+          "id": "D",
+          "text": "Because the cross-entropy loss function used to train PRMs becomes unbounded whenever the number of rollouts K exceeds 10.",
+          "response": "Incorrect. Cross-entropy loss is bounded and stable across any positive finite number of rollouts K."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Process Reward Models evaluate intermediate reasoning steps via automated Monte Carlo rollouts or neural proxy scoring. Under policy optimization (e.g., PPO or Best-of-N search), Goodhart's Law causes the generator to exploit PRM heuristics rather than learning sound mathematical deduction. Major failure modes include verbosity bias (overly long fluff rewarded by surface statistics), error cancellation (two erroneous steps accidentally producing the golden answer during rollouts), and hallucinated lemmas in PRM blind spots. To prevent reward hacking, systems couple PRMs with final outcome verification (ORM gating), length penalties, and KL divergence penalties against base reference models.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.machine_learning"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-16"
     }
   ]
 }
