@@ -127,10 +127,10 @@
 
       return `
         <div class="skill-item mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <span class="skill-name fw-bold me-2">${itemName}</span>
-            <div class="skill-meta text-end">
-              ${badgeText ? `<span class="badge skill-badge me-2">${badgeText}</span>` : ''}
+          <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+            <span class="skill-name fw-bold me-1">${itemName}</span>
+            <div class="skill-meta d-inline-flex align-items-center gap-2 flex-shrink-0 text-end">
+              ${badgeText ? `<span class="badge skill-badge">${badgeText}</span>` : ''}
               <span class="skill-percent fw-semibold">${pct}%</span>
             </div>
           </div>

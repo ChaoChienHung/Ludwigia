@@ -735,6 +735,60 @@
       })
       .join('');
 
+  const buildMobileInlineDetail = (event, lang, text) => {
+    if (!event) return '';
+    if (event.timelineType === 'present-cluster') {
+      const childEvents = Array.isArray(event.childEvents) ? event.childEvents : [];
+      const childMarkup = childEvents
+        .map((childEvent) => {
+          const refs = Array.isArray(childEvent.references) ? childEvent.references : [];
+          const refMarkup = buildReferencesMarkup(refs, lang, true);
+          return `
+            <div class="timeline-inline-cluster-item">
+              <div class="timeline-detail-meta-row timeline-detail-meta-row--cluster-item">
+                <span class="timeline-detail-cluster-item-meta">${buildClusterItemMeta(childEvent, text)}</span>
+                ${buildCategoryBadge(childEvent, text)}
+              </div>
+              ${buildDurationMarkup(childEvent, text)}
+              <h6>${readLocalized(childEvent.title, lang)}</h6>
+              <p class="timeline-inline-body">${readLocalized(childEvent.detail, lang) || readLocalized(childEvent.summary, lang)}</p>
+              ${refMarkup}
+            </div>
+          `;
+        })
+        .join('');
+
+      return `
+        <div class="timeline-event-inline-detail">
+          <div class="timeline-detail-links-label mb-2">${text.presentClusterListLabel}</div>
+          <div class="timeline-inline-cluster-list">
+            ${childMarkup}
+          </div>
+        </div>
+      `;
+    }
+
+    const detail = readLocalized(event.detail, lang);
+    const summary = readLocalized(event.summary, lang);
+    const hasExtraDetail = detail && detail.trim() !== summary.trim();
+    const references = Array.isArray(event.references) ? event.references : [];
+    const referenceMarkup = buildReferencesMarkup(references, lang, false);
+
+    if (!hasExtraDetail && !referenceMarkup) return '';
+
+    return `
+      <div class="timeline-event-inline-detail">
+        ${hasExtraDetail ? `<p class="timeline-inline-body">${detail}</p>` : ''}
+        ${referenceMarkup ? `
+          <div class="timeline-detail-links-section">
+            <div class="timeline-detail-links-label">${text.referencesLabel}</div>
+            ${referenceMarkup}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  };
+
   const buildEventButton = (event, index, lang, text, mobileMode) => {
     const isActive = event.id === state.activeId;
     const yearLabel = formatEventLabel(event, text);
@@ -755,17 +809,19 @@
         data-magnitude="${event.magnitude}"
         aria-pressed="${isActive ? 'true' : 'false'}"
       >
+        <span class="timeline-event-axis-slot" aria-hidden="true">
+          <span class="timeline-event-marker"></span>
+          <span class="timeline-event-connector"></span>
+        </span>
         <span class="timeline-event-card">
           <span class="timeline-event-meta">
             <span class="timeline-event-meta-label">${yearLabel}</span>
             ${buildCategoryBadge(event, text)}
           </span>
+          ${buildDurationMarkup(event, text)}
           <strong class="timeline-event-title">${title}</strong>
           <span class="timeline-event-summary">${summary}</span>
-        </span>
-        <span class="timeline-event-axis-slot" aria-hidden="true">
-          <span class="timeline-event-connector"></span>
-          <span class="timeline-event-marker"></span>
+          ${mobileMode && isActive ? buildMobileInlineDetail(event, lang, text) : ''}
         </span>
       </div>
     `;
