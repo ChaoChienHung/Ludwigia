@@ -1217,9 +1217,9 @@ def _build_style_template(
     style_css_path = os.path.join(style_dir, "style.css") if style_dir else ""
     shared_style_css_path = os.path.join(repo_dir, "assets", "css", "content-page", style_name, "style.css")
     if os.path.exists(shared_style_css_path):
-        style_css = f'<link rel="stylesheet" href="{repo_prefix}assets/css/content-page/{style_name}/style.css?v=2026-06-20-1">'
+        style_css = f'<link rel="stylesheet" href="{repo_prefix}assets/css/content-page/{style_name}/style.css?v=2026-09-25-1">'
     elif style_css_path and os.path.exists(style_css_path):
-        style_css = f'<link rel="stylesheet" href="{repo_prefix}assets/css/content-page/{style_name}/style.css?v=2026-06-20-1">'
+        style_css = f'<link rel="stylesheet" href="{repo_prefix}assets/css/content-page/{style_name}/style.css?v=2026-09-25-1">'
     else:
         style_css = ""
 

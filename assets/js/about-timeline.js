@@ -1114,6 +1114,7 @@
     window.addEventListener('pointercancel', clearPointerState);
     window.addEventListener('touchend', clearPointerState);
     window.addEventListener('resize', render);
+    window.addEventListener('orientationchange', () => setTimeout(render, 120));
     render();
     await loadTimelineData();
     render();

@@ -162,7 +162,7 @@
               <i class="fa-solid fa-chevron-left"></i>
             </button>
 
-            <div class="skill-category-pills d-flex flex-wrap justify-content-center gap-2 mx-2">
+            <div class="skill-category-pills d-flex align-items-center gap-2 mx-1 overflow-x-auto py-1">
               ${tabsHtml}
             </div>
 
@@ -191,6 +191,11 @@
     `;
 
     bindEvents(container);
+
+    const activePill = container.querySelector('.skill-category-pill.active');
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   }
 
   function bindEvents(container) {
@@ -247,6 +252,18 @@
 
     window.addEventListener('ludwig-language-changed', () => {
       render(container);
+    });
+
+    window.addEventListener('resize', () => {
+      const activePill = document.querySelector('.skill-category-pill.active');
+      if (activePill) activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        const activePill = document.querySelector('.skill-category-pill.active');
+        if (activePill) activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 120);
     });
   }
 

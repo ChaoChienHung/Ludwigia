@@ -353,7 +353,7 @@
 
     return `
       <div class="row g-4 align-items-center">
-        <div class="col-lg-6">
+        <div class="col-12 col-md-6">
           <div class="credential-image-wrapper rounded-3 overflow-hidden shadow-sm position-relative" 
                data-cred-lightbox="trigger"
                style="cursor: pointer;"
@@ -367,7 +367,7 @@
           </div>
         </div>
 
-        <div class="col-lg-6">
+        <div class="col-12 col-md-6">
           <div class="credential-info">
             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
               <span class="credential-badge-type text-uppercase">${typeLabel}</span>
@@ -618,6 +618,18 @@
 
     window.addEventListener('ludwig-language-changed', () => {
       render(container);
+    });
+
+    window.addEventListener('resize', () => {
+      const activeThumb = document.querySelector('.credential-thumb-item.active');
+      if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        const activeThumb = document.querySelector('.credential-thumb-item.active');
+        if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 120);
     });
   }
 
