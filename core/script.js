@@ -1412,6 +1412,272 @@ const isPortfolioPage = () =>
   isPortfolioLandingPage() || isProjectsPage() || isNotesPage || isNotesIndexPage() || isWritingIndexPage() || isCanvasIndexPage();
 const isMorePage = () => isMoreLandingPage() || isGardenPage() || isLabsPage() || isSettingsPage();
 
+const getMobileNavI18n = () => {
+  const lang = window.LudwigLanguage ? window.LudwigLanguage.getCurrentLang() : "en";
+  if (lang === "zh-Hans") {
+    return {
+      home: "首页",
+      portfolio: "作品集",
+      search: "搜索",
+      menu: "菜单",
+      menuTitle: "导航菜单",
+      sections: "页面章节",
+      about: "关于我",
+      aboutDesc: "个人简介与专业背景",
+      skills: "技能量表",
+      skillsDesc: "多维度技能树与熟练度",
+      credentials: "荣誉凭证",
+      credentialsDesc: "奖状、成绩单与证书展示",
+      timeline: "经历时间轴",
+      timelineDesc: "学业、工作与成长里程碑",
+      contact: "联系方式",
+      contactDesc: "电话、邮箱与社交渠道",
+      explore: "全站探索",
+      projects: "精选项目",
+      projectsDesc: "独立开发与工程作品",
+      garden: "数字花园",
+      gardenDesc: "交互式网状思辨与视觉标签",
+      labs: "实验室",
+      labsDesc: "实验性交互原型与动效",
+      settings: "偏好设置",
+      settingsDesc: "主题、调色盘、语言与动效",
+      allPages: "更多页面总览",
+      allPagesDesc: "全站地图、标签与本体论",
+      readingControls: "阅读控制",
+      toc: "大纲目录",
+      tocDesc: "快速跳转文章小节",
+      meta: "文章信息",
+      metaDesc: "标签、日期与 Markdown 导出",
+      readingMode: "沉浸阅读模式",
+      readingModeDesc: "无干扰纯净阅读视图",
+      close: "关闭"
+    };
+  }
+  if (lang === "zh-Hant") {
+    return {
+      home: "首頁",
+      portfolio: "作品集",
+      search: "搜尋",
+      menu: "選單",
+      menuTitle: "導覽選單",
+      sections: "頁面章節",
+      about: "關於我",
+      aboutDesc: "個人簡介與專業背景",
+      skills: "技能量表",
+      skillsDesc: "多維度技能樹與熟練度",
+      credentials: "榮譽憑證",
+      credentialsDesc: "獎狀、成績單與證書展示",
+      timeline: "經歷時間軸",
+      timelineDesc: "學業、工作與成長里程碑",
+      contact: "聯絡方式",
+      contactDesc: "電話、信箱與社交管道",
+      explore: "全站探索",
+      projects: "精選專案",
+      projectsDesc: "獨立開發與工程作品",
+      garden: "數位花園",
+      gardenDesc: "互動式網狀思辨與視覺標籤",
+      labs: "實驗室",
+      labsDesc: "實驗性互動原型與動效",
+      settings: "偏好設置",
+      settingsDesc: "主題、調色盤、語言與動效",
+      allPages: "更多頁面總覽",
+      allPagesDesc: "全站地圖、標籤與本體論",
+      readingControls: "閱讀控制",
+      toc: "大綱目錄",
+      tocDesc: "快速跳轉文章小節",
+      meta: "文章資訊",
+      metaDesc: "標籤、日期與 Markdown 導出",
+      readingMode: "沉浸閱讀模式",
+      readingModeDesc: "無干擾純淨閱讀視圖",
+      close: "關閉"
+    };
+  }
+  return {
+    home: "Home",
+    portfolio: "Portfolio",
+    search: "Search",
+    menu: "Menu",
+    menuTitle: "Navigation Menu",
+    sections: "Page Sections",
+    about: "About Me",
+    aboutDesc: "Personal intro and background",
+    skills: "Skills Matrix",
+    skillsDesc: "Technical and language proficiency",
+    credentials: "Credentials & Honors",
+    credentialsDesc: "Awards, transcripts & certificates",
+    timeline: "Timeline",
+    timelineDesc: "Career and academic milestones",
+    contact: "Contact",
+    contactDesc: "Reach out via email or phone",
+    explore: "Explore Site",
+    projects: "Projects",
+    projectsDesc: "Showcase of projects and works",
+    garden: "Digital Garden",
+    gardenDesc: "Visual concept map & idea garden",
+    labs: "Labs",
+    labsDesc: "Interactive experiments & visual demos",
+    settings: "Settings",
+    settingsDesc: "Theme, palette, language & motion",
+    allPages: "More Hub",
+    allPagesDesc: "Sitemap, ontology & tags",
+    readingControls: "Reading Controls",
+    toc: "Table of Contents",
+    tocDesc: "Jump to section headings",
+    meta: "Article Info",
+    metaDesc: "Tags, dates & copy markdown",
+    readingMode: "Reading Mode",
+    readingModeDesc: "Distraction-free focus view",
+    close: "Close"
+  };
+};
+
+const closeMobileNavSheet = () => {
+  document.body.classList.remove("mobile-nav-sheet-open");
+};
+
+const openMobileNavSheet = () => {
+  ensureMobileNavSheet();
+  document.body.classList.add("mobile-nav-sheet-open");
+};
+
+const toggleMobileNavSheet = () => {
+  if (document.body.classList.contains("mobile-nav-sheet-open")) {
+    closeMobileNavSheet();
+  } else {
+    openMobileNavSheet();
+  }
+};
+
+const ensureMobileNavSheet = () => {
+  let existingSheet = document.getElementById("mobile-nav-sheet");
+  let existingBackdrop = document.getElementById("mobile-nav-sheet-backdrop");
+  if (existingSheet) existingSheet.remove();
+  if (existingBackdrop) existingBackdrop.remove();
+
+  const txt = getMobileNavI18n();
+
+  const backdrop = document.createElement("div");
+  backdrop.id = "mobile-nav-sheet-backdrop";
+  backdrop.className = "mobile-nav-sheet-backdrop";
+  backdrop.addEventListener("click", closeMobileNavSheet);
+  document.body.appendChild(backdrop);
+
+  const sheet = document.createElement("div");
+  sheet.id = "mobile-nav-sheet";
+  sheet.className = "mobile-nav-sheet";
+  sheet.setAttribute("role", "dialog");
+  sheet.setAttribute("aria-modal", "true");
+  sheet.setAttribute("aria-label", txt.menuTitle);
+
+  const makeItemHtml = (iconClass, title, desc, href, actionAttr = "") => `
+    <a class="mobile-nav-sheet-item" href="${href || '#'}" ${actionAttr}>
+      <span class="mobile-nav-sheet-item-icon"><i class="${iconClass}"></i></span>
+      <span class="mobile-nav-sheet-item-copy">
+        <span class="mobile-nav-sheet-item-title">${title}</span>
+        <span class="mobile-nav-sheet-item-desc">${desc}</span>
+      </span>
+    </a>
+  `;
+
+  let bodyContent = "";
+
+  if (isHomePage()) {
+    bodyContent += `
+      <div class="mobile-nav-sheet-section-title">${txt.sections}</div>
+      ${makeItemHtml("fa-regular fa-user", txt.about, txt.aboutDesc, "#about", 'data-mobile-sheet-jump="#about"')}
+      ${makeItemHtml("fa-solid fa-chart-simple", txt.skills, txt.skillsDesc, "#skills", 'data-mobile-sheet-jump="#skills"')}
+      ${makeItemHtml("fa-solid fa-certificate", txt.credentials, txt.credentialsDesc, "#credentials", 'data-mobile-sheet-jump="#credentials"')}
+      ${makeItemHtml("fa-regular fa-clock", txt.timeline, txt.timelineDesc, "#timeline", 'data-mobile-sheet-jump="#timeline"')}
+      ${makeItemHtml("fa-regular fa-envelope", txt.contact, txt.contactDesc, "#contact", 'data-mobile-sheet-jump="#contact"')}
+      <div class="mobile-nav-sheet-section-title mt-2">${txt.explore}</div>
+      ${makeItemHtml("fa-solid fa-laptop-code", txt.projects, txt.projectsDesc, resolveProjectPath("pages/projects.html"))}
+      ${makeItemHtml("fa-solid fa-seedling", txt.garden, txt.gardenDesc, resolveProjectPath("garden/index.html"))}
+      ${makeItemHtml("fa-solid fa-flask", txt.labs, txt.labsDesc, resolveProjectPath("labs/index.html"))}
+      ${makeItemHtml("fa-solid fa-gear", txt.settings, txt.settingsDesc, "#", 'data-mobile-sheet-action="settings"')}
+      ${makeItemHtml("fa-solid fa-sitemap", txt.allPages, txt.allPagesDesc, resolveProjectPath("pages/more.html"))}
+    `;
+  } else if (isNotesPage) {
+    bodyContent += `
+      <div class="mobile-nav-sheet-section-title">${txt.readingControls}</div>
+      ${makeItemHtml("fa-solid fa-list-ul", txt.toc, txt.tocDesc, "#", 'data-mobile-sheet-action="toc"')}
+      ${makeItemHtml("fa-solid fa-circle-info", txt.meta, txt.metaDesc, "#", 'data-mobile-sheet-action="meta"')}
+      ${makeItemHtml("fa-solid fa-book-open", txt.readingMode, txt.readingModeDesc, "#", 'data-mobile-sheet-action="reading-mode"')}
+      <div class="mobile-nav-sheet-section-title mt-2">${txt.explore}</div>
+      ${makeItemHtml("fa-solid fa-house", txt.home, txt.aboutDesc, resolveProjectPath("index.html"))}
+      ${makeItemHtml("fa-regular fa-folder-open", txt.portfolio, "Notes, Writing & Canvas", resolveProjectPath("pages/portfolio.html"))}
+      ${makeItemHtml("fa-solid fa-seedling", txt.garden, txt.gardenDesc, resolveProjectPath("garden/index.html"))}
+      ${makeItemHtml("fa-solid fa-gear", txt.settings, txt.settingsDesc, "#", 'data-mobile-sheet-action="settings"')}
+      ${makeItemHtml("fa-solid fa-sitemap", txt.allPages, txt.allPagesDesc, resolveProjectPath("pages/more.html"))}
+    `;
+  } else {
+    bodyContent += `
+      <div class="mobile-nav-sheet-section-title">${txt.explore}</div>
+      ${makeItemHtml("fa-solid fa-house", txt.home, "Main landing page", resolveProjectPath("index.html"))}
+      ${makeItemHtml("fa-solid fa-laptop-code", txt.projects, txt.projectsDesc, resolveProjectPath("pages/projects.html"))}
+      ${makeItemHtml("fa-solid fa-seedling", txt.garden, txt.gardenDesc, resolveProjectPath("garden/index.html"))}
+      ${makeItemHtml("fa-solid fa-flask", txt.labs, txt.labsDesc, resolveProjectPath("labs/index.html"))}
+      ${makeItemHtml("fa-solid fa-gear", txt.settings, txt.settingsDesc, "#", 'data-mobile-sheet-action="settings"')}
+      ${makeItemHtml("fa-solid fa-sitemap", txt.allPages, txt.allPagesDesc, resolveProjectPath("pages/more.html"))}
+    `;
+  }
+
+  sheet.innerHTML = `
+    <div class="mobile-nav-sheet-handle"></div>
+    <div class="mobile-nav-sheet-header">
+      <span class="mobile-nav-sheet-title">${txt.menuTitle}</span>
+      <button type="button" class="mobile-nav-sheet-close" aria-label="${txt.close}">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="mobile-nav-sheet-body">
+      ${bodyContent}
+    </div>
+  `;
+
+  sheet.querySelector(".mobile-nav-sheet-close").addEventListener("click", closeMobileNavSheet);
+
+  sheet.querySelectorAll("[data-mobile-sheet-jump]").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeMobileNavSheet();
+      const selector = item.getAttribute("data-mobile-sheet-jump");
+      const target = document.querySelector(selector);
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: "smooth" }), 80);
+      }
+    });
+  });
+
+  sheet.querySelectorAll("[data-mobile-sheet-action]").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeMobileNavSheet();
+      const action = item.getAttribute("data-mobile-sheet-action");
+      if (action === "settings") {
+        setTimeout(() => {
+          if (typeof openSettingsModal === "function") openSettingsModal("general");
+        }, 120);
+      } else if (action === "toc") {
+        setTimeout(openNoteToc, 120);
+      } else if (action === "meta") {
+        setTimeout(openNoteMeta, 120);
+      } else if (action === "reading-mode") {
+        setTimeout(() => {
+          setReadingMode(!document.body.classList.contains("reading-mode"));
+        }, 120);
+      }
+    });
+  });
+
+  document.body.appendChild(sheet);
+};
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.body.classList.contains("mobile-nav-sheet-open")) {
+    closeMobileNavSheet();
+  }
+});
+
 const initMobileNavigation = () => {
   if (document.getElementById("mobile-bottom-nav")) return;
   if (!document.querySelector(".custom-nav")) return;
@@ -1434,9 +1700,27 @@ const initMobileNavigation = () => {
     return link;
   };
 
-  bottomNav.appendChild(makeNavLink("Portfolio", "fa-regular fa-folder-open", resolveProjectPath("pages/portfolio.html"), isPortfolioPage()));
-  bottomNav.appendChild(makeNavLink("Search", "fa-solid fa-magnifying-glass", resolveProjectPath("pages/search.html"), isSearchPage()));
-  bottomNav.appendChild(makeNavLink("More", "fa-solid fa-ellipsis", resolveProjectPath("pages/more.html"), isMorePage()));
+  const txt = getMobileNavI18n();
+
+  const homeLink = makeNavLink(txt.home, "fa-solid fa-house", resolveProjectPath("index.html"), isHomePage());
+  if (isHomePage()) {
+    homeLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+  bottomNav.appendChild(homeLink);
+
+  bottomNav.appendChild(makeNavLink(txt.portfolio, "fa-regular fa-folder-open", resolveProjectPath("pages/portfolio.html"), isPortfolioPage()));
+  bottomNav.appendChild(makeNavLink(txt.search, "fa-solid fa-magnifying-glass", resolveProjectPath("pages/search.html"), isSearchPage()));
+
+  const menuLink = makeNavLink(txt.menu, "fa-solid fa-bars", resolveProjectPath("pages/more.html"), false);
+  menuLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    toggleMobileNavSheet();
+  });
+  bottomNav.appendChild(menuLink);
+
   document.body.appendChild(bottomNav);
 };
 

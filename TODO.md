@@ -73,6 +73,15 @@
   - [ ] 守門：維持現有 `pages/projects.html#karen` / `#mentorion` / `#detoxio` / `#piggynest` / `#scriba` / `#sesame` / `#vellichor` deep link 不退化；不要把 `create_project` 做成另一個萬用 page builder
   - [ ] 交付條件：至少能用 1 個 project source 自動更新 `pages/projects.html` 的對應區塊，並定清楚後續新增/修改 project 的唯一工作流
 
+- [x] Mobile UX & UI Optimization: 全站手機版人體工學與介面優化
+  - [x] 已完成什麼：
+    1. **升級底部導覽列（Mobile Bottom Nav）與啟用 Bottom Sheet**：在 `core/script.js` 與 `assets/css/site/shared.css` 中將手機底欄升級為 4 大核心入口（`Home | Portfolio | Search | Menu`），點擊 Menu 即可滑出半透明磨砂抽屜（`mobile-nav-sheet`），支援首頁章節錨點跳轉（About, Skills, Credentials, Timeline, Contact）、全站探索入口（Projects, Garden, Labs, Settings, More Hub）以及單篇閱讀頁的大綱（TOC）、文章資訊（Meta）與專注閱讀模式切換。
+    2. **修復 Credentials 縮圖列表向右破版**：為 `.credentials-thumb-bar` 與 `.cred-thumb-strip` 補齊 `min-width: 0`、原生順暢觸控滾動與箭頭固定樣式，徹底解決原本縮圖列表將右側導航箭頭擠出螢幕外（x ≈ 899px）的嚴重跑版問題。
+    3. **重構 Timeline Scale 按鈕為 iOS 風格 Segmented Control**：將手機視口下的三顆按鈕轉為緊湊膠囊分段控制器，解決原本因字元寬度不足造成的文字擠壓與折行問題。
+    4. **修復 Tag 詳情頁 Grid 錯位重疊**：在媒體查詢中針對 `.hub-card.hub-card--stack` 與 `.tag-summary-card` 強制維持垂直 flex 流式佈局，修復標籤描述與統計卡片相互覆蓋的顯示問題。
+    5. **優化 Hero 首屏比例與搜尋框邊距**：手機下調整圓形頭像大小為 190px，避免單一照片佔滿 100vh；並調整搜尋框內部圖示與按鈕內邊距，防止 Placeholder 在 390px 寬度下被截斷。
+  - [x] Review 重點：以手機視口（<= 767.98px）確認底欄 4 鍵導覽與抽屜滑動順暢、首頁各區塊排版自然無橫向溢出、單篇筆記閱讀操作直覺，且不影響桌機端樣式。
+
 ### P2
 
 - [ ] Navbar SSOT：把全站 navbar 收斂到 `pages/_shared/navbar.html`，並讓 content/page shell 都吃同一份來源
