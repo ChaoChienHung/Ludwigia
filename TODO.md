@@ -80,7 +80,14 @@
     3. **重構 Timeline Scale 按鈕為 iOS 風格 Segmented Control**：將手機視口下的三顆按鈕轉為緊湊膠囊分段控制器，解決原本因字元寬度不足造成的文字擠壓與折行問題。
     4. **修復 Tag 詳情頁 Grid 錯位重疊**：在媒體查詢中針對 `.hub-card.hub-card--stack` 與 `.tag-summary-card` 強制維持垂直 flex 流式佈局，修復標籤描述與統計卡片相互覆蓋的顯示問題。
     5. **優化 Hero 首屏比例與搜尋框邊距**：手機下調整圓形頭像大小為 190px，避免單一照片佔滿 100vh；並調整搜尋框內部圖示與按鈕內邊距，防止 Placeholder 在 390px 寬度下被截斷。
-  - [x] Review 重點：以手機視口（<= 767.98px）確認底欄 4 鍵導覽與抽屜滑動順暢、首頁各區塊排版自然無橫向溢出、單篇筆記閱讀操作直覺，且不影響桌機端樣式。
+    6. **手機標題與內文字級微調（Responsive Clamp Typography）**：針對手機視口（<= 991.98px）以 clamp 調整 `section h2, .section-title`（收斂至 1.4rem~1.68rem）、`.hero h1 / p` 與 `.page-text`，避免大標題壓迫感過強與內文邊界過窄。
+    7. **Skills 標籤與百分比強制並排對齊（Side-by-Side Meta Alignment）**：在 `about-skills.js` 與 `shared.css` 中封裝 `.skill-meta` 為 `inline-flex` + `flex-shrink: 0` + `white-space: nowrap`，確保 Native / Full Professional 等能力標籤與百分比數字永遠維持在同一行右側對齊，徹底解決因標題長度不同導致忽而並排忽而上下疊的問題。
+    8. **Timeline 手機由上至下垂直時間軸全新重構（Vertical Top-to-Bottom Timeline）**：
+       - 在手機下將時間軸重新設計為乾淨俐落的由上至下垂直流式時間軸。
+       - 左側呈現垂直發光貫穿軸線（Spine）、精準定位之里程碑節點（Marker）與連向卡片的水平引線（Connector）。
+       - 點擊卡片時即時在卡片內部原地展開詳細內容（Inline Detail Expansion，含期間時長、詳情描述與參考連結），隱藏手機下分離的底部詳情區塊，打造直覺且極致優雅的單元卡片式閱讀體驗。
+       - 橫向旋轉手機（Landscape 844x390）自動自適應維持垂直軸線與全寬卡片，無任何橫向溢出。
+  - [x] Review 重點：以手機視口（<= 767.98px 與 390x844 / 844x390）確認底欄 4 鍵導覽、全新由上至下垂直 Timeline 節點與引線、Skills 標籤並排、標題字級舒適，桌機端橫向時間軸與各功能 100% 無退化。
 
 ### P2
 

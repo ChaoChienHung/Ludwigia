@@ -56,12 +56,23 @@
     : []);
   const ensureSortControl = () => {
     if (!toolbarEl) return null;
-    let host = toolbarEl.querySelector('[data-section-sort-host]');
+    let metaContainer = toolbarEl.querySelector('.section-landing-meta');
+    if (!metaContainer) {
+      metaContainer = document.createElement('div');
+      metaContainer.className = 'section-landing-meta';
+      if (countEl && countEl.parentElement === toolbarEl) {
+        toolbarEl.insertBefore(metaContainer, countEl);
+        metaContainer.appendChild(countEl);
+      } else {
+        toolbarEl.appendChild(metaContainer);
+      }
+    }
+    let host = metaContainer.querySelector('[data-section-sort-host]');
     if (!host) {
       host = document.createElement('div');
       host.className = 'section-sort-control';
       host.setAttribute('data-section-sort-host', '1');
-      toolbarEl.insertBefore(host, countEl || null);
+      metaContainer.appendChild(host);
     }
     if (sortControl && typeof sortControl.destroy === 'function') sortControl.destroy();
     sortControl = ui && typeof ui.createSortControl === 'function'

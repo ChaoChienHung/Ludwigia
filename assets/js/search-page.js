@@ -8,6 +8,7 @@
   const filterState = document.getElementById('garden-filter-state');
   const activeTagsContainer = document.getElementById('garden-active-tags');
   const clearTagsButton = document.getElementById('garden-clear-tags');
+  const countContainer = document.getElementById('garden-results-count');
   const searchRow = searchInput.closest('.col-lg-10');
 
   if (!searchInput || !tagsContainer || !resultsContainer || !emptyState) return;
@@ -61,14 +62,14 @@
     ));
   };
   const ensureSortControl = () => {
-    if (!searchRow) return null;
     let host = document.querySelector('[data-search-sort-host]');
-    if (!host) {
+    if (!host && searchRow) {
       host = document.createElement('div');
-      host.className = 'garden-sort-row mt-3';
+      host.className = 'garden-sort-host';
       host.setAttribute('data-search-sort-host', '1');
       searchRow.appendChild(host);
     }
+    if (!host) return null;
     if (sortControl && typeof sortControl.destroy === 'function') sortControl.destroy();
     sortControl = ui && typeof ui.createSortControl === 'function'
       ? ui.createSortControl({
@@ -203,6 +204,19 @@
     const raw = searchInput.value || '';
     const query = core ? core.normalizeText(raw).trim() : String(raw || '').toLowerCase().trim();
     const docs = getVisibleDocs(query);
+
+    if (countContainer) {
+      const lang = getUiLang();
+      const count = docs.length;
+      if (lang === 'zh-Hant') {
+        countContainer.textContent = `${count} 篇內容`;
+      } else if (lang === 'zh-Hans') {
+        countContainer.textContent = `${count} 篇内容`;
+      } else {
+        countContainer.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+      }
+      countContainer.style.display = count === 0 ? 'none' : 'block';
+    }
 
     resultsContainer.innerHTML = '';
     emptyState.style.display = docs.length === 0 ? 'block' : 'none';

@@ -52,8 +52,10 @@
     const safeTitle = title.replace(/"/g, '&quot;');
     const isZh = uiLang === 'zh-Hant' || uiLang === 'zh-Hans';
     const safeHeader = (isZh ? '可用語言' : 'Available languages').replace(/"/g, '&quot;');
-    return `<span class="section-lang-badge" aria-label="${isZh ? `可用語言：${safeTitle}` : `Available languages: ${safeTitle}`}">
+    const countLabel = isZh ? `${langs.length} 語系` : `${langs.length} langs`;
+    return `<span class="section-lang-badge" title="${isZh ? `可用語言：${safeTitle}` : `Available languages: ${safeTitle}`}" aria-label="${isZh ? `可用語言：${safeTitle}` : `Available languages: ${safeTitle}`}">
       <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
+      <span class="section-lang-badge-text">${countLabel}</span>
       <span class="section-lang-popover" aria-hidden="true">
         <span class="section-lang-popover-title">${safeHeader}</span>
         <span class="section-lang-popover-body">${safeTitle}</span>
