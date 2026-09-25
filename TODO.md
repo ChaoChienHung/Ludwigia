@@ -101,6 +101,12 @@
   - [ ] 守門：不要讓 navbar SSOT refactor 破壞 nested paths、`file://` 情境、theme/palette runtime、mobile nav 與既有 deep links（例如首頁 `#about` / `#timeline` / `#contact`）
   - [ ] 交付條件：新增 `pages/_shared/navbar.html` 並讓至少 1 個 page shell 與 1 個 content page 生成流程吃同一份來源，且確認修改 navbar 後不需再手改多份 HTML
 
+- [ ] Timeline：手機端點擊事件支援直達站內關聯文章（Direct Article Link on Event Tap）
+  - [ ] 背景與現狀：手機端 Timeline 目前收斂為極簡高可讀性單元卡片（僅呈現時間、類別、標題與 Summary 精華），已移除繁瑣的長內文與子項目原地展開，確保垂直流動乾淨不雜亂。
+  - [ ] 方向：評估讓具備延伸連結（`references` 包含 `canonical` 或站內文章連結）的事件，在手機端被點擊時，能直達導流至該篇 Note 或 Writing 文章，提升深度閱讀連貫性。
+  - [ ] 規格：定義點擊行為與視覺 hint（如標題旁或右上角呈現跳轉 icon / arrow），若無關聯文章則維持純卡片展示，不影響桌機橫向軸線與現有 references 點擊。
+  - [ ] 交付條件：實作手機點擊跳轉機制並更新 `docs/specs/timeline-design-spec.md`。
+
 
 ## Author-driven
 

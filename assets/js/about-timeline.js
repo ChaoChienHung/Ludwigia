@@ -821,7 +821,6 @@
           ${buildDurationMarkup(event, text)}
           <strong class="timeline-event-title">${title}</strong>
           <span class="timeline-event-summary">${summary}</span>
-          ${mobileMode && isActive ? buildMobileInlineDetail(event, lang, text) : ''}
         </span>
       </div>
     `;

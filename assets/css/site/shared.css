@@ -4375,33 +4375,22 @@ ol.timeline-detail-links-list::marker {
     color: color-mix(in srgb, var(--text) 85%, transparent);
   }
 
+  .timeline-detail-duration {
+    margin-bottom: 6px !important;
+    gap: 0.2rem 0.45rem !important;
+  }
+
+  .timeline-detail-duration-label {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .timeline-detail-duration-value {
+    font-size: 0.76rem !important;
+  }
+
   .timeline-event-inline-detail {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-    animation: fadeIn 0.25s ease-out;
-  }
-
-  .timeline-inline-body {
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: color-mix(in srgb, var(--text) 88%, transparent);
-    margin-bottom: 8px;
-  }
-
-  .timeline-inline-cluster-item {
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--bg-alt) 60%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-    margin-top: 8px;
-  }
-
-  .timeline-inline-cluster-item h6 {
-    font-size: 0.94rem;
-    font-weight: 700;
-    margin: 6px 0 4px;
-    color: var(--text);
+    display: none !important;
   }
 }
 
@@ -7306,18 +7295,202 @@ body.site-fab-open .site-fab-panel {
   color: var(--site-accent, var(--accent, #ff6b00));
 }
 
+/*-----------------------------------------------------------------*/
+/* Theme-Aware Category Pill & Chip Highlight Effects              */
+/*-----------------------------------------------------------------*/
+
+/* Base Active State (Default Dark / Cyber Obsidian) */
 .skill-category-pill.active,
 .credential-chip.active {
-  background: var(--site-accent, var(--accent, #ff6b00));
-  border-color: var(--site-accent, var(--accent, #ff6b00));
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--site-accent, var(--accent, #ff6b00)) 0%, color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 75%, #000000) 100%);
+  border-color: color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 90%, #ffffff);
+  color: #ffffff !important;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 80%, #ffffff),
+              0 6px 20px color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 45%, transparent),
+              0 0 28px color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 25%, transparent),
+              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transform: translateY(-1.5px);
 }
 
 .skill-category-pill.active i,
 .credential-chip.active i {
-  color: #ffffff;
+  color: #ffffff !important;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
+
+/* Light Theme: Crisp Warm-Accent Editorial Pill */
+.light-theme .skill-category-pill.active,
+.light-theme .credential-chip.active {
+  background: linear-gradient(135deg, var(--site-accent, var(--accent, #ff6b00)) 0%, color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 85%, #b23b00) 100%);
+  border-color: color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 90%, #ffffff);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--site-accent, var(--accent, #ff6b00)) 38%, transparent),
+              0 1px 4px rgba(0, 0, 0, 0.12),
+              inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  transform: translateY(-1.5px);
+}
+
+.light-theme .skill-category-pill.active i,
+.light-theme .credential-chip.active i {
+  color: #ffffff !important;
+  filter: none;
+}
+
+.light-theme .skill-category-pill:not(.active),
+.light-theme .credential-chip:not(.active) {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: var(--text, #333333);
+}
+
+.light-theme .skill-category-pill:not(.active):hover,
+.light-theme .credential-chip:not(.active):hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: var(--site-accent, var(--accent, #ff6b00));
+}
+
+/* Galaxy Theme: Celestial Nebula Gradient with Starlight Violet Glow */
+.galaxy-theme .skill-category-pill.active,
+.galaxy-theme .credential-chip.active {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #4c1d95 100%);
+  border-color: rgba(233, 213, 255, 0.85);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(221, 214, 254, 0.6),
+              0 0 22px rgba(167, 139, 250, 0.75),
+              0 0 42px rgba(124, 58, 237, 0.45),
+              inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1.5px);
+  text-shadow: 0 0 10px rgba(233, 213, 255, 0.7);
+}
+
+.galaxy-theme .skill-category-pill.active i,
+.galaxy-theme .credential-chip.active i {
+  color: #ffffff !important;
+  filter: drop-shadow(0 0 8px rgba(196, 181, 253, 0.8));
+}
+
+.galaxy-theme .skill-category-pill:not(.active),
+.galaxy-theme .credential-chip:not(.active) {
+  border-color: rgba(167, 139, 250, 0.22);
+}
+
+.galaxy-theme .skill-category-pill:not(.active):hover,
+.galaxy-theme .credential-chip:not(.active):hover {
+  background: rgba(167, 139, 250, 0.14);
+  border-color: rgba(167, 139, 250, 0.55);
+  box-shadow: 0 0 14px rgba(167, 139, 250, 0.28);
+}
+
+/* Sky Theme: Daylight Azure Cirrus Glass with Luminous Cyan Shine */
+.sky-theme .skill-category-pill.active,
+.sky-theme .credential-chip.active {
+  background: linear-gradient(135deg, #0c7fdf 0%, #38bdf8 100%);
+  border-color: #ffffff;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8),
+              0 5px 18px rgba(12, 127, 223, 0.48),
+              0 0 16px rgba(56, 189, 248, 0.4),
+              inset 0 1px 2px rgba(255, 255, 255, 0.65);
+  transform: translateY(-1.5px);
+  text-shadow: 0 1px 3px rgba(10, 50, 100, 0.4);
+}
+
+.sky-theme .skill-category-pill.active i,
+.sky-theme .credential-chip.active i {
+  color: #ffffff !important;
+  filter: drop-shadow(0 1px 3px rgba(10, 50, 100, 0.35));
+}
+
+.sky-theme .skill-category-pill:not(.active),
+.sky-theme .credential-chip:not(.active) {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(12, 127, 223, 0.25);
+  color: var(--text, #112d4d);
+}
+
+.sky-theme .skill-category-pill:not(.active):hover,
+.sky-theme .credential-chip:not(.active):hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: #0c7fdf;
+  box-shadow: 0 2px 10px rgba(12, 127, 223, 0.25);
+}
+
+/* Garden Theme: Living Botanical Emerald & Lush Forest Jade Aura */
+.garden-theme .skill-category-pill.active,
+.garden-theme .credential-chip.active {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
+  border-color: #74c69d;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(116, 198, 157, 0.6),
+              0 0 22px rgba(64, 145, 108, 0.7),
+              0 4px 14px rgba(15, 36, 27, 0.6),
+              inset 0 1px 2px rgba(216, 243, 220, 0.5);
+  transform: translateY(-1.5px);
+  text-shadow: 0 1px 4px rgba(4, 20, 14, 0.5);
+}
+
+.garden-theme .skill-category-pill.active i,
+.garden-theme .credential-chip.active i {
+  color: #d8f3dc !important;
+  filter: drop-shadow(0 0 6px rgba(116, 198, 157, 0.7));
+}
+
+.garden-theme .skill-category-pill:not(.active),
+.garden-theme .credential-chip:not(.active) {
+  border-color: rgba(64, 145, 108, 0.25);
+}
+
+.garden-theme .skill-category-pill:not(.active):hover,
+.garden-theme .credential-chip:not(.active):hover {
+  background: rgba(64, 145, 108, 0.16);
+  border-color: #40916c;
+  box-shadow: 0 0 12px rgba(64, 145, 108, 0.3);
+}
+
+/* Deep Sea & Galaxy Night Theme: Bioluminescent Abyssal Neon Cyan */
+.deep-sea-theme .skill-category-pill.active,
+.galaxy-night-theme .skill-category-pill.active,
+.deep-sea-theme .credential-chip.active,
+.galaxy-night-theme .credential-chip.active {
+  background: linear-gradient(135deg, #22b8cf 0%, #5ee7ff 100%);
+  border-color: #cffafe;
+  color: #02141e !important;
+  font-weight: 700;
+  box-shadow: 0 0 0 1px rgba(207, 250, 254, 0.8),
+              0 0 25px rgba(94, 231, 255, 0.8),
+              0 0 50px rgba(34, 184, 207, 0.45),
+              inset 0 1px 2px rgba(255, 255, 255, 0.7);
+  transform: translateY(-1.5px);
+  text-shadow: none;
+}
+
+.deep-sea-theme .skill-category-pill.active i,
+.galaxy-night-theme .skill-category-pill.active i,
+.deep-sea-theme .credential-chip.active i,
+.galaxy-night-theme .credential-chip.active i {
+  color: #02141e !important;
+  filter: none;
+}
+
+.deep-sea-theme .skill-category-pill:not(.active),
+.galaxy-night-theme .skill-category-pill:not(.active),
+.deep-sea-theme .credential-chip:not(.active),
+.galaxy-night-theme .credential-chip:not(.active) {
+  border-color: rgba(94, 231, 255, 0.22);
+}
+
+.deep-sea-theme .skill-category-pill:not(.active):hover,
+.galaxy-night-theme .skill-category-pill:not(.active):hover,
+.deep-sea-theme .credential-chip:not(.active):hover,
+.galaxy-night-theme .credential-chip:not(.active):hover {
+  background: rgba(94, 231, 255, 0.12);
+  border-color: rgba(94, 231, 255, 0.55);
+  box-shadow: 0 0 14px rgba(94, 231, 255, 0.28);
 }
 
 .skill-bar-outer {
@@ -7683,6 +7856,92 @@ body.site-fab-open .site-fab-panel {
     padding-left: 10px;
     padding-right: 10px;
   }
+
+  /* Mobile Simplifications for Skills & Credentials */
+  .skills-intro,
+  .credentials-intro {
+    display: none !important;
+  }
+
+  .skills-header,
+  .credentials-header {
+    margin-bottom: 1.1rem !important;
+  }
+
+  .skill-item-desc {
+    display: none !important;
+  }
+
+  .skill-item {
+    margin-bottom: 0.85rem !important;
+  }
+
+  .credential-description {
+    display: none !important;
+  }
+
+  /* Responsive side-by-side Type & Domain filter dropdowns on mobile */
+  .credentials-filters > div {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .credentials-filters .credential-dropdown {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: 50% !important;
+  }
+
+  .credential-filter-btn {
+    width: 100% !important;
+    padding: 6px 8px !important;
+    font-size: 0.76rem !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+  }
+
+  .credential-filter-btn > span:first-child {
+    font-size: 0.72rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .credential-filter-val {
+    font-size: 0.74rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 75px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+  }
+
+  .credential-dropdown-menu {
+    min-width: 170px !important;
+    max-width: min(280px, 88vw) !important;
+  }
+
+  .credentials-filters .credential-dropdown:last-child .credential-dropdown-menu {
+    left: auto !important;
+    right: 0 !important;
+  }
+
+  .timeline-detail-duration {
+    margin-bottom: 6px !important;
+    gap: 0.2rem 0.45rem !important;
+  }
+
+  .timeline-detail-duration-label {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .timeline-detail-duration-value {
+    font-size: 0.76rem !important;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 550px) {
@@ -7711,10 +7970,9 @@ body.site-fab-open .site-fab-panel {
     max-height: 175px !important;
   }
 
-  .credential-description {
-    padding: 0.6rem 0.85rem !important;
-    font-size: 0.84rem !important;
-    line-height: 1.45 !important;
+  .credential-description,
+  .skill-item-desc {
+    display: none !important;
   }
 
   .about-timeline-shell {
