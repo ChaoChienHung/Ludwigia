@@ -22,6 +22,23 @@
   - 如果 task 的核心是「把東西做出來」，偏 `Agent-friendly`
   - 如果 task 的核心是「決定要做成什麼樣子 / 想表達什麼」，偏 `Author-driven`
 
+- [x] Mobile Inset Grouped Settings: 手機端設定體驗重構為原生 iOS 分組卡片流（Inset Grouped Cards）
+  - [x] 已完成什麼：
+    - **取消手機分頁切換**：在小螢幕（<= 767.98px）下隱藏 General / Style 標籤，將所有設定整合為縱向連續流暢捲動之圓角群組卡片，單手滑動即可閱覽並設定全部項目。
+    - **滿版分段控制（Segmented Controls）**：語言（English / 中文 / 简体中文）、動態效果（On / Off）、Copilot（Off / Home / All）導入原生手機風格之全寬膠囊分段控制器，點選反饋即時平滑。
+    - **主題 3x2 網格與色盤流暢觸控**：主題按鈕改為 3x2 緊湊平衡網格，色盤軌道支援觸控慣性滑動，點選目標清晰防誤觸。
+    - **彈窗高度自適應**：全站設定 Modal 在手機端優化為圓角 Bottom-sheet/Modal 卡片，內容捲動與全域滾動隔離，點擊空白處與 Close 關閉無干擾。
+    - **狀態雙向同步與文檔**：`pages/settings.html` 與 Modal 保持完全相同之 `[data-settings-*]` 與 `LudwigSettingsRuntime` 契約，並更新 `AGENTS.md`、`docs/specs/system-spec.md`。
+  - [x] Review 重點：確認手機版點擊設定圖示與開啟 `pages/settings.html` 時，卡片分組清晰、分段切換流暢、各設定項目即時套用且無任何跳頁。
+
+- [x] Responsive Separation & Scoped i18n Architecture: 行動端與桌面端響應式分層架構收斂與選擇器作用域強隔離
+  - [x] 已完成什麼：
+    - **無損響應式雙態標籤**：`Credentials` 的放大預覽與下載按鈕導入宣告式雙態標籤（桌機端 `Full Preview` / `Download Document`，行動端自動切換為 `Preview` / `Download`），由純 CSS media query 控制顯示，徹底防止圖示被吃掉與版面超寬問題。
+    - **選擇器作用域隔離**：`i18n/navbar.json` 與 `core/i18n.js` 全面加上 `.custom-nav` 與 `footer` 容器作用域，行動端底部導覽列改採微觀子元素多語更新（`.mobile-bottom-nav-item span`），杜絕全域選擇器污染卡片與按鈕。
+    - **自動化契約守門**：在 `tests/test_skills_credentials_data.py` 新增 i18n 字典鍵值完整性與全域選擇器容器作用域測試（46 項測試全數 PASS）。
+    - **非退化架構文檔**：將響應式分層架構、雙態標籤模式與選擇器隔離原則寫入 `AGENTS.md`、`docs/specs/system-spec.md`、`docs/rules/guardrails.md` 及 `docs/specs/skills-credentials-spec.md`。
+  - [x] Review 重點：確認手機版首頁 Accolades 區塊預覽/下載按鈕排版舒展不擁擠、底部導覽列圖示常駐、Portfolio 頁面卡片完整保留。
+
 - [x] Standardize `<draft>` block authoring structure: Update documentation with `<draft>` outline patterns & Outcome Bias example
   - [x] 已完成什麼：已更新 `AGENTS.md`、`docs/author/writing-notes.md`（新增 `## Draft 骨架編寫規範` 及《結果偏誤》文章範例）、`docs/specs/parser-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/design/design.md`、`docs/rules/checklist.md` 與 `docs/rules/guardrails.md`
   - [x] Review 重點：確認各份文檔中的 `<draft>` 骨架約定（`重點：內容` 或層級化清單）與範例是否完整且與現有規格保持一致

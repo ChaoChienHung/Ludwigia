@@ -82,6 +82,11 @@
   - [ ] `Published` / `LastModified` 若啟用，輸出格式維持 `YYYY-MM-DD`
   - [ ] `LastModified` 的 fallback 只依賴相對穩定的 source last modified date，不把 created/birthtime 當成唯一真相
 
+- [ ] 響應式標籤與多語選擇器作用域不退化
+  - [ ] 手機與桌機長短文案分流（如 Full Preview vs Preview、Download Document vs Download）採用純 CSS 控制的雙態標籤（`<span class="*-text-desktop"></span><span class="*-text-mobile"></span>`），禁止以 JS resize 暴力替換 innerHTML 導致圖示被吃掉
+  - [ ] 全站共用 i18n 字典（`i18n/navbar.json`）中所有選擇器皆具備容器前綴（如 `.custom-nav ...`），絕不裸寫 `a[href$="..."]` 誤傷卡片或底部導航列
+  - [ ] 行動底部導覽（`#mobile-bottom-nav`）文字多語切換只鎖定內部 `span`，不整體改寫父層 `<a>`，維持 FontAwesome 圖示完整
+
 ## Content / Authoring Semantics
 
 - [ ] 頁內標題語意不退化

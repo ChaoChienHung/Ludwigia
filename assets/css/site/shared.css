@@ -3379,6 +3379,18 @@ body.modal-open {
   flex: 0 0 auto;
 }
 
+.settings-segmented-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settings-theme-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .settings-pill {
   --settings-pill-hover-source: var(--accent);
   --settings-pill-active-source: var(--accent);
@@ -3465,23 +3477,196 @@ body.modal-open {
     padding-right: 18px !important;
   }
 
+  /* Mobile Settings: iOS Inset Grouped Card Architecture */
+  .settings-modal-tabs,
+  .settings-page .settings-nav,
+  .settings-page .col-md-4.col-lg-3 {
+    display: none !important;
+  }
+
+  .settings-page .col-md-8.col-lg-9 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
   .settings-modal-layout {
-    grid-template-columns: 1fr;
-    min-height: 0;
+    display: block !important;
+    grid-template-columns: 1fr !important;
+    min-height: 0 !important;
   }
 
-  .settings-modal-tabs {
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: auto;
+  .settings-modal-panels {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
   }
 
+  .settings-modal-panel,
+  .settings-page .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+  }
+
+  .settings-page #settings-style {
+    margin-top: 14px !important;
+  }
+
+  .settings-page .tab-content {
+    margin-top: 0 !important;
+  }
+
+  .settings-page .project-card,
+  #site-settings-modal .project-card {
+    margin-bottom: 14px !important;
+    border-radius: 18px !important;
+    padding: 16px 18px !important;
+    border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent) !important;
+    background: var(--settings-surface-bg) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .settings-page .project-card:last-child,
+  #site-settings-modal .project-card:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .settings-page .project-card h3,
+  #site-settings-modal .project-card h3 {
+    font-size: 0.86rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    opacity: 0.75 !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Segmented Controls (iOS Segmented Pill Bar) */
+  .settings-segmented-group {
+    display: flex !important;
+    width: 100% !important;
+    background: color-mix(in srgb, var(--text-color) 7%, transparent) !important;
+    padding: 4px !important;
+    border-radius: 14px !important;
+    gap: 4px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .settings-segmented-group .settings-pill {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 10px !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+    padding: 8px 4px !important;
+    min-height: 36px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: var(--settings-surface-title-color) !important;
+    transform: none !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .settings-segmented-group .settings-pill.is-active {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent) !important;
+    font-weight: 700 !important;
+  }
+
+  /* Theme Grid (3x2 Native Cards) */
+  .settings-theme-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .settings-theme-grid .settings-pill {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+    padding: 9px 4px !important;
+    min-height: 40px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    transform: none !important;
+  }
+
+  .settings-theme-grid .settings-pill.is-active {
+    background: color-mix(in srgb, var(--accent) 18%, var(--settings-surface-bg)) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 1px var(--accent) !important;
+    color: var(--accent) !important;
+  }
+
+  /* Palette Carousel on Mobile */
   .settings-option-carousel {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 
   .settings-option-carousel .settings-carousel-btn {
-    display: none;
+    display: none !important;
+  }
+
+  .settings-option-track {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none !important;
+    gap: 8px !important;
+    padding: 4px 2px 6px 2px !important;
+    width: 100% !important;
+  }
+
+  .settings-option-track::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .settings-option-track .settings-pill {
+    flex: 0 0 auto !important;
+    scroll-snap-align: start !important;
+    font-size: 0.82rem !important;
+    padding: 7px 14px !important;
+    min-height: 38px !important;
+    border-radius: 999px !important;
+    transform: none !important;
+  }
+
+  /* Settings Modal Dialog on Mobile */
+  #site-settings-modal .modal-dialog {
+    margin: 12px auto !important;
+    max-width: calc(100% - 24px) !important;
+  }
+
+  #site-settings-modal .modal-content {
+    border-radius: 24px !important;
+    max-height: 86vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  #site-settings-modal .modal-header {
+    padding: 16px 20px 12px 20px !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--text-color) 8%, transparent) !important;
+  }
+
+  #site-settings-modal .modal-body {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 16px 16px 24px 16px !important;
   }
 }
 
@@ -7687,11 +7872,13 @@ body.site-fab-open .site-fab-panel {
   transition: all 0.2s ease;
 }
 
-.credential-download-text-desktop {
+.credential-download-text-desktop,
+.credential-zoom-text-desktop {
   display: inline;
 }
 
-.credential-download-text-mobile {
+.credential-download-text-mobile,
+.credential-zoom-text-mobile {
   display: none;
 }
 
@@ -7869,11 +8056,13 @@ body.site-fab-open .site-fab-panel {
     font-size: 0.84rem !important;
   }
 
-  .credential-download-text-desktop {
+  .credential-download-text-desktop,
+  .credential-zoom-text-desktop {
     display: none !important;
   }
 
-  .credential-download-text-mobile {
+  .credential-download-text-mobile,
+  .credential-zoom-text-mobile {
     display: inline !important;
   }
 

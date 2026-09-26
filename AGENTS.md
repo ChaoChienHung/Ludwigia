@@ -124,6 +124,7 @@
   - settings 內所有 selected / hover 特效（含 sidebar tabs、`Language`、`Effects`、`Theme`、`Palette`）都應跟著目前 `Palette` 走
   - `Theme` / `Palette` 本身的 preview 色只作為 preview dot 或身份提示，不應反過來接管 selected 外框/背景
   - `pages/settings.html` 若保留，必須與 modal 共用同一套 data attrs / JS API / i18n labels，不可各自長出平行邏輯
+  - **行動端 iOS 分組卡片流（Mobile Inset Grouped Settings Architecture）**：在手機端（<= 767.98px）取消 General / Style 標籤分頁切換，改為縱向連續滾動之圓角群組卡片（Inset Grouped Cards）。語言、動態效果、Copilot 等少項選擇採用滿版分段控制器（Segmented Control），色盤採用橫向流暢觸控滾動，主題採用 3x2 網格排版；桌面端維持分頁導航，行動端與桌面端完全共用同一套 `[data-settings-*]` 屬性與 `LudwigSettingsRuntime`，嚴禁產生狀態分歧
 - 小螢幕 Additional 入口若啟用，必須維持「單一角落、單一主入口」心智模型：
   - 首頁 / section landing 的 misc/FAB，與 note / writing 單篇頁的 metadata 入口，優先收斂到同一個右下角主入口
   - note / writing 的 page-level action（例如 `Outline` / `Metadata`）若不走右下角主入口，則應優先收斂到內容頁頂部 navbar 的左右兩側；不得另外再長成互搶角落的 mobile FAB
@@ -133,6 +134,13 @@
   - 手機上不應同時保留 desktop-style navbar dropdown、底部 tab bar、以及多顆漂浮入口三套平行系統
   - note / writing / canvas 單篇頁可在頂部 navbar 保留品牌 `Ludwig`，並以左右兩側按鈕承接 page-level sidebar action；這些按鈕屬於單篇頁閱讀控制，不取代 bottom nav 的 site-level 導覽
   - 所有依賴 hover 的 sidebar / reveal interaction，在手機上都必須有明確的 tap-first 入口
+- 行動端與桌面端響應式分層與標籤契約（Responsive Content & Label Contract）必須維持：
+  - **無損響應式雙態標籤（Non-Destructive Dual-Span Pattern）**：當按鈕或操作文字在手機與桌機需要長短文案分流（例如 `Full Preview` vs `Preview`、`Download Document` vs `Download`）時，一律採用宣告式雙態標籤結構（`<span class="*-text-desktop">...</span><span class="*-text-mobile">...</span>`）並由 CSS Media Query 控制顯隱；嚴禁依賴運行時 resize 事件以 JS 暴力替換 innerHTML / textContent，以防抹除內部圖示（`<i>`）或觸發畫面抖動
+  - **行動端資訊架構階層化與漸進揭露（Progressive Disclosure for Mobile）**：手機端版面優先保證結構辨識度與空間精簡度，次要說明文案、冗長副標與裝飾性描述應採用語意化類別（如 `d-none d-md-block` 或 `skill-description` 控制）優雅降級或折疊收斂，禁止各元件各自引入 ad-hoc 的破壞性刪減
+  - **資料層與呈現層嚴格解耦（SSOT Preservation）**：無論桌面端或行動端呈現如何精簡，底層資料來源永遠維持單一真相來源（`skills.json`, `credentials.json`, `timeline.json`, source `.md`），不得為行動端維護第二份平行資料
+- 全站 i18n 字典選擇器作用域強隔離契約（Scoped Namespace Isolation Contract）必須維持：
+  - 共用或導覽列語系字典（如 `i18n/navbar.json`）中的所有選擇器必須嚴格以所屬容器為前綴（如 `.custom-nav ...`），嚴禁使用無父層作用域的裸標籤/屬性選擇器（如 `a[href$="..."]`），以防止跨元件污染覆蓋獨立頁面的卡片（`.hub-card`）或行動底部導覽（`#mobile-bottom-nav`）
+  - 行動底部導覽（`#mobile-bottom-nav`）的標籤多語切換必須僅針對其專屬子元素（如 `.mobile-bottom-nav-item span`）更新文字，不得整體覆蓋父層 `<a>` 標籤，確保各按鈕的 FontAwesome 圖示（`<i>`）永不退化
 - tag 的基本語意必須維持：
   - `site:tags` 以逗號分隔
   - 若 tag 已收斂到 ontology concept，對外顯示文案應優先依目前語系選對應 label；不強制統一英文

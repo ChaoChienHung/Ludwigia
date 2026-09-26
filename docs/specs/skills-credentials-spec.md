@@ -94,4 +94,4 @@
 - 展示區包含：
   - **主視覺區 (Main Showcase)**：顯示當前選擇憑證的圖片、發照單位、日期、標題與詳細描述。
   - **縮圖選單列 (Thumbnail Carousel Bar)**：提供縮圖卡片與左右滑動按鈕。
-  - **燈箱檢視 (Lightbox Modal)**：點擊主圖片或「放大檢視 (Zoom / Full Preview)」按鈕可喚起 Modal，方便閱讀高解析度成績單或證書內容。
+  - **燈箱檢視 (Lightbox Modal) 與操作按鈕**：點擊主圖片或「檢視/預覽」按鈕可喚起 Modal，方便閱讀高解析度成績單或證書內容。操作按鈕（預覽與下載）採用無損響應式雙態標籤：桌面端顯示 `Full Preview` 與 `Download Document`，行動端自動切換為精簡的 `Preview` 與 `Download`，兼顧小螢幕排版美觀與資訊傳達。

@@ -24,6 +24,7 @@
       empty: 'No credentials found matching the selected filters.',
       zoomHint: 'Click image to expand view',
       zoomButton: 'Full Preview',
+      zoomButtonMobile: 'Preview',
       downloadButton: 'Download Document',
       downloadButtonMobile: 'Download',
       issuerLabel: 'Issued by',
@@ -43,6 +44,7 @@
       empty: '沒有符合目前篩選條件的項目。',
       zoomHint: '點擊圖片放大檢視',
       zoomButton: '全螢幕檢視',
+      zoomButtonMobile: '預覽',
       downloadButton: '下載檔案',
       downloadButtonMobile: '下載',
       issuerLabel: '頒發單位',
@@ -62,6 +64,7 @@
       empty: '没有符合当前筛选条件的项目。',
       zoomHint: '点击图片放大检视',
       zoomButton: '全屏幕检视',
+      zoomButtonMobile: '预览',
       downloadButton: '下载文件',
       downloadButtonMobile: '下载',
       issuerLabel: '颁发单位',
@@ -71,6 +74,19 @@
       modalClose: '关闭',
     },
   };
+
+  function getUiText(lang) {
+    const base = uiText[lang] || uiText['en'];
+    const dyn = window.siteTranslations && window.siteTranslations.credentials;
+    if (!dyn) return base;
+    const merged = { ...base };
+    for (const key of Object.keys(dyn)) {
+      if (dyn[key] && typeof dyn[key] === 'object' && dyn[key][lang]) {
+        merged[key] = dyn[key][lang];
+      }
+    }
+    return merged;
+  }
 
   function getLang() {
     if (langRuntime && typeof langRuntime.getCurrentLang === 'function') {
@@ -153,7 +169,7 @@
 
   function render(container) {
     const lang = getLang();
-    const txt = uiText[lang] || uiText['en'];
+    const txt = getUiText(lang);
 
     ensureModalExists(txt);
 
@@ -364,7 +380,7 @@
             ${mediaHtml}
             <div class="credential-image-overlay d-flex align-items-center justify-content-center">
               <span class="btn btn-sm btn-light shadow-sm fw-semibold">
-                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> ${txt.zoomButton}
+                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> <span class="credential-zoom-text-desktop">${txt.zoomButton}</span><span class="credential-zoom-text-mobile">${txt.zoomButtonMobile || 'Preview'}</span>
               </span>
             </div>
           </div>
@@ -389,7 +405,7 @@
               <button type="button" 
                       class="btn btn-sm btn-outline-primary rounded-pill credential-action-btn" 
                       data-cred-lightbox="trigger">
-                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> ${txt.zoomButton}
+                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> <span class="credential-zoom-text-desktop">${txt.zoomButton}</span><span class="credential-zoom-text-mobile">${txt.zoomButtonMobile || 'Preview'}</span>
               </button>
               <a href="${docSrc}" 
                  download="${currentItem.id}.${docExt}" 
@@ -408,7 +424,7 @@
     if (!itemId) return;
     state.activeItemId = itemId;
     const lang = getLang();
-    const txt = uiText[lang] || uiText['en'];
+    const txt = getUiText(lang);
 
     const currentItem = filteredItems.find((it) => it.id === itemId);
     const showcaseViewport = container.querySelector('.credentials-showcase-viewport');

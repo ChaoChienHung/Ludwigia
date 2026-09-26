@@ -394,11 +394,29 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 
 - 例：`garden/_floral_dist/`
 
+## 響應式分層架構與 i18n 作用域契約（Responsive & i18n Architecture）
+
+### 1. 行動端與桌面端響應式分流原則
+
+- **資訊密度與漸進揭露（Progressive Disclosure）**：桌面端具備充裕水平視野，可容納完整描述、裝飾副標與長操作標籤；行動端（<= 767.98px）以架構清晰度與掃讀體驗為第一優先，非關鍵描述文本採用語意化類別（如 `d-none d-md-block` 或 `skill-description`）隱藏或折疊，避免破壞排版平衡與彈性容器寬度。
+- **無損響應式雙態標籤（Non-Destructive Dual-Span Label Pattern）**：當按鈕或操作標籤在手機與桌機需要長短文案分流（例如 `Full Preview` vs `Preview`、`Download Document` vs `Download`）時，結構上一律宣告雙態 `span`：
+  ```html
+  <button class="..."><i class="..."></i> <span class="*-text-desktop">Full Text</span><span class="*-text-mobile">Short Text</span></button>
+  ```
+  並由純 CSS media query（`display: inline` / `display: none`）接管切換。嚴禁在 JS 運行時透過 `resize` 監聽動態替換 innerHTML / textContent，以徹底杜絕圖示遺失、重排抖動與非同步狀態競爭。
+- **單一真相來源（SSOT Preservation）**：無論行動端與桌面端介面如何差異化，底層資料（`credentials.json`、`skills.json`、`timeline.json`、原始 `.md`）永遠維持同一份來源，禁止為行動端複製第二套資料源。
+
+### 2. 全站 i18n 選擇器作用域強隔離契約
+
+- **容器作用域前綴強制化**：全站共用字典（如 `i18n/navbar.json`）中的所有選擇器必須明確鎖定父層命名空間（例如 `.custom-nav a[href$="..."]` 或 `footer p`），嚴格禁止裸寫 `a[href$="..."]` 等全域標籤選擇器，防止全站多語切換時誤傷非導覽列元件（如 `pages/portfolio.html` 的 `.hub-card` 或 `#mobile-bottom-nav`）。
+- **微觀子節點更新原則**：動態元件多語更新（如行動端底部導覽列）必須只鎖定專屬文字節點（如 `.mobile-bottom-nav-item span`），絕不以 `el.textContent = ...` 覆蓋整個按鈕或父層節點，確保圖示與結構永遠安全。
+
 ## CI / Guardrails（合併前自動擋壞）
 
 核心方向：
 
 - 只要改了內容或 indexer/schema，就必須重生並提交 `search/search-index.{json,js}`
 - 用自動化檢查去擋「改了 notes 忘記更新 index」與「入口頁壞掉」
+- 透過 `tests/test_skills_credentials_data.py` 自動化守門：確保所有 `i18n/navbar.json` 選擇器皆具備容器作用域，以及行動端雙態多語鍵值之完整性。
 
 若要改動這些守門規則，先確認 `AGENTS.md` 的不可退化原則仍成立。

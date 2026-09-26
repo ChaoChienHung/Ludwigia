@@ -849,7 +849,7 @@ const renderSettingsModalBody = () => {
                 <i class="fa-solid fa-question"></i>
               </button>
             </div>
-            <div class="d-flex gap-2 flex-wrap">
+            <div class="settings-segmented-group">
               <button type="button" class="settings-pill settings-pill--status" data-settings-lang="en">English</button>
               <button type="button" class="settings-pill settings-pill--status" data-settings-lang="zh-Hant">中文</button>
               <button type="button" class="settings-pill settings-pill--status" data-settings-lang="zh-Hans">简体中文</button>
@@ -860,7 +860,7 @@ const renderSettingsModalBody = () => {
         <div class="settings-modal-panel${activeTab === "style" ? " is-active" : ""}" data-settings-panel="style">
           <div class="project-card">
             <h3 class="mb-3">${text.theme}</h3>
-            <div class="d-flex gap-2 flex-wrap">
+            <div class="settings-theme-grid">
               <button type="button" class="settings-pill" data-settings-theme="dark">${text.themeLabels.dark}</button>
               <button type="button" class="settings-pill" data-settings-theme="light">${text.themeLabels.light}</button>
               <button type="button" class="settings-pill" data-settings-theme="deep-sea">${text.themeLabels["deep-sea"]}</button>
@@ -896,14 +896,14 @@ const renderSettingsModalBody = () => {
           </div>
           <div class="project-card mt-3">
             <h3 class="mb-3">${text.motion}</h3>
-            <div class="d-flex gap-2 flex-wrap">
+            <div class="settings-segmented-group">
               <button type="button" class="settings-pill settings-pill--status" data-settings-motion="on">${text.motionOn}</button>
               <button type="button" class="settings-pill settings-pill--status" data-settings-motion="off">${text.motionOff}</button>
             </div>
           </div>
           <div class="project-card mt-3">
             <h3 class="mb-3">${text.copilot}</h3>
-            <div class="d-flex gap-2 flex-wrap">
+            <div class="settings-segmented-group">
               <button type="button" class="settings-pill settings-pill--status" data-settings-copilot="off">${text.copilotLabels.off}</button>
               <button type="button" class="settings-pill settings-pill--status" data-settings-copilot="home">${text.copilotLabels.home}</button>
               <button type="button" class="settings-pill settings-pill--status" data-settings-copilot="all">${text.copilotLabels.all}</button>

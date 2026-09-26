@@ -81,6 +81,44 @@ class TestSkillsCredentialsData(unittest.TestCase):
             self.assertIn("en", item["summary"])
             self.assertIn("zh-Hant", item["summary"])
 
+    def test_credentials_i18n_dictionary(self):
+        path = os.path.join(REPO_ROOT, "i18n", "credentials.json")
+        self.assertTrue(os.path.isfile(path), f"Missing file: {path}")
+
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        required_keys = [
+            "zoomButton",
+            "zoomButtonMobile",
+            "downloadButton",
+            "downloadButtonMobile",
+            "typeLabel",
+            "categoryLabel",
+        ]
+        for key in required_keys:
+            self.assertIn(key, data)
+            self.assertIn("en", data[key])
+            self.assertIn("zh-Hant", data[key])
+            self.assertIn("zh-Hans", data[key])
+
+    def test_i18n_selector_scoping_guardrail(self):
+        nav_path = os.path.join(REPO_ROOT, "i18n", "navbar.json")
+        self.assertTrue(os.path.isfile(nav_path), f"Missing file: {nav_path}")
+
+        with open(nav_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        entries = data.get("entries", [])
+        self.assertGreater(len(entries), 0)
+
+        for entry in entries:
+            sel = entry.get("selector", "")
+            self.assertTrue(
+                sel.startswith(".custom-nav") or sel.startswith("footer"),
+                f"Global navbar entry selector '{sel}' must be scoped to '.custom-nav' or 'footer' to prevent unintended DOM overrides!",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
