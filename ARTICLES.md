@@ -331,13 +331,18 @@
     1. **Zero-shot vs. CoT $\longleftrightarrow$ 快思考（System 1）vs. 慢思考與草稿紙（System 2）**：
        - Transformer 單步前向傳播的常數算力 $O(1)$ 限制，導致 Zero-shot 只能依賴直覺分佈；CoT 的本質是動態調度測試期算力（Test-time Compute）。
        - 人類工作記憶（Working Memory）同樣受限於 4～7 個 Chunks；拿出草稿紙自言自語、外部化符號，正是利用序列 Context 緩存中間推理狀態，避免大腦 OOM。
-    2. **CoT 到 RL Planning $\longleftrightarrow$ 內部世界模型的軌跡展開（Internal Rollout）**：
+    2. **推理（Reasoning）的微觀原子機制：線索碰撞與既有知識庫的錨定結合**：
+       - **搜集線索後的推理本質**：當我們面對一道問題或搜集了一組觀察後，大腦進行的「推理」並非玄妙的靈光，而是一套嚴謹的組合搜索與約束滿足過程：
+         - **線索間的組合（Clue $\times$ Clue Synthesis）**：單一線索通常是模糊、孤立或存在多義性的。推理的核心手段之一，是將多個獨立線索拉入同一工作記憶視窗進行交叉碰撞與約束對齊（Constraint Satisfaction）。例如「線索 A（伺服器回應逾時）」與「線索 B（Redis CPU 飆升至 100%）」相互約束，瞬間排除大量無關維度。
+         - **線索與既有知識庫的結合（Clue $\times$ Knowledge Base Grounding）**：線索無法在認知真空中自行衍生結論，必須與長期記憶（人類大腦知識庫 / 模型預訓練參數 / 外部本體檢索）掛載錨定。例如將「Redis CPU 100%」與先驗知識「Redis 為單執行緒事件循環，高 CPU 通常來自 $O(N)$ 慢指令阻塞」結合，從而啟動深層因果鏈。
+         - **遞進式衍生新線索與空間剪枝（Iterative Lemma Derivation & Pruning）**：(線索 $\times$ 線索) 與 (線索 $\times$ 知識) 的交匯會催生出「中間引理（Intermediate Lemmas）」或「新衍生線索」；這些新線索再被寫回上下文草稿紙中，與既有線索展開遞迴式的下一輪化學反應。這正是 CoT（Chain of Thought）能將指數級搜尋空間一步步精準剪枝至唯一解的根本動力。
+    3. **CoT 到 RL Planning $\longleftrightarrow$ 內部世界模型的軌跡展開（Internal Rollout）**：
        - 連結強化學習（Sequential Decision Making / Model-Based RL）：Planning 是在世界模型（World Model）中做虛擬軌跡採樣。
        - CoT 的「若...則...」思考，本質就是大腦在心智世界模型裡的內部 Forward Search 與信念狀態更新。
-    3. **純思考的盲點 $\longleftrightarrow$ 為什麼必須引入 ReAct（Reason + Act）**：
+    4. **純思考的盲點 $\longleftrightarrow$ 為什麼必須引入 ReAct（Reason + Act）**：
        - 純 CoT 是開環推演（Open-loop），世界模型微小誤差隨步數放大，必然導致表徵漂移與幻覺；人類閉門造車同理。
        - ReAct（$\text{Thought} \to \text{Action} \to \text{Observation} \to \text{Thought...}$）引入閉環探針，以最小行動（Ping）刺探真實環境反饋，重置累積誤差。
-    4. **個人思維模板實踐：Plan $\to$ Execute $\to$ Summary**：
+    5. **個人思維模板實踐：Plan $\to$ Execute $\to$ Summary**：
        - **Plan（宏觀目標拆解 / HTN）**：定義問題邊界與最小驗證假說，避免過早深陷細節 DFS。
        - **Execute（微觀 ReAct 閉環）**：小步快跑，想一步、試一個動作、看真實反饋、動態調度。
        - **Summary（反思與記憶固化 / Policy Update）**：壓縮執行軌跡，將臨時上下文沉澱為長期心智模型與文檔，避免下次從零探索。
