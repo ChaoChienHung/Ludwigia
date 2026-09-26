@@ -1721,6 +1721,18 @@ const initMobileNavigation = () => {
   });
   bottomNav.appendChild(menuLink);
 
+  const updateMobileNavLabels = () => {
+    const t = getMobileNavI18n();
+    const items = bottomNav.querySelectorAll(".mobile-bottom-nav-item span");
+    if (items.length >= 4) {
+      items[0].textContent = t.home;
+      items[1].textContent = t.portfolio;
+      items[2].textContent = t.search;
+      items[3].textContent = t.menu;
+    }
+  };
+  window.addEventListener("ludwig-language-changed", updateMobileNavLabels);
+
   document.body.appendChild(bottomNav);
 };
 
