@@ -336,13 +336,19 @@
          - **線索間的組合（Clue $\times$ Clue Synthesis）**：單一線索通常是模糊、孤立或存在多義性的。推理的核心手段之一，是將多個獨立線索拉入同一工作記憶視窗進行交叉碰撞與約束對齊（Constraint Satisfaction）。例如「線索 A（伺服器回應逾時）」與「線索 B（Redis CPU 飆升至 100%）」相互約束，瞬間排除大量無關維度。
          - **線索與既有知識庫的結合（Clue $\times$ Knowledge Base Grounding）**：線索無法在認知真空中自行衍生結論，必須與長期記憶（人類大腦知識庫 / 模型預訓練參數 / 外部本體檢索）掛載錨定。例如將「Redis CPU 100%」與先驗知識「Redis 為單執行緒事件循環，高 CPU 通常來自 $O(N)$ 慢指令阻塞」結合，從而啟動深層因果鏈。
          - **遞進式衍生新線索與空間剪枝（Iterative Lemma Derivation & Pruning）**：(線索 $\times$ 線索) 與 (線索 $\times$ 知識) 的交匯會催生出「中間引理（Intermediate Lemmas）」或「新衍生線索」；這些新線索再被寫回上下文草稿紙中，與既有線索展開遞迴式的下一輪化學反應。這正是 CoT（Chain of Thought）能將指數級搜尋空間一步步精準剪枝至唯一解的根本動力。
-    3. **CoT 到 RL Planning $\longleftrightarrow$ 內部世界模型的軌跡展開（Internal Rollout）**：
+    3. **高階推理的質變：逆向目標驅動、缺口感知與假說分支預演（Backward Chaining & Epistemic Gap Awareness）**：
+       - **正向推導（Forward Chaining）vs. 逆向目標回溯（Backward Chaining）**：普通解題者只能「看菜吃飯」，拿到零散線索往前推一步算一步，線索一旦缺失便陷入迷茫或憑空幻覺；真正的高手與高階推理系統（如具備自反思能力的 DeepSeek-R1 / o1）則是**「以終為始（Goal-Driven）」**，從目標態出發進行因果倒推（Goal Regression）。
+       - **知己所缺（Epistemic Gap Awareness）**：高手心中始終維持一張因果拓撲（Causal DAG）或等式約束系統。推演時能精確定位：*「若要證明結論 $Z$，必然依賴未滿足的中間命題 $Y$；而要確認 $Y$，手中正精確缺少關鍵變數 $X_k$」*。能夠精準度量「自己到底還缺哪一塊拼圖」，是避免無效窮舉（Blind BFS）的最高心智分水嶺。
+       - **尚未得知、但先算透分支的預演能力（Hypothetical Pre-computation & Branching）**：甚至在尚未取得 $X_k$ 之前，高手已經在工作記憶中建立了條件決策樹：
+         - *「若實測確認 $X_k = \text{True}$，則成因必為方案 A，後續推導全線貫通；若 $X_k = \text{False}$，則成因必為方案 B，轉向備用分支。」*
+       - **最大資訊增益的定向探針（Maximum Information Gain & Active Probing）**：正因預先算透了分支後果，高手的探索絕非大海撈針，而是以手術刀般的精度，發起一次代價最小、卻能**帶來最高資訊增益（Value of Information, VoI）的判決性探針（Crucial Experiment / 關鍵日誌過濾 / 單一診斷測試）**。一問定乾坤、一查即確診。
+    4. **CoT 到 RL Planning $\longleftrightarrow$ 內部世界模型的軌跡展開（Internal Rollout）**：
        - 連結強化學習（Sequential Decision Making / Model-Based RL）：Planning 是在世界模型（World Model）中做虛擬軌跡採樣。
        - CoT 的「若...則...」思考，本質就是大腦在心智世界模型裡的內部 Forward Search 與信念狀態更新。
-    4. **純思考的盲點 $\longleftrightarrow$ 為什麼必須引入 ReAct（Reason + Act）**：
+    5. **純思考的盲點 $\longleftrightarrow$ 為什麼必須引入 ReAct（Reason + Act）**：
        - 純 CoT 是開環推演（Open-loop），世界模型微小誤差隨步數放大，必然導致表徵漂移與幻覺；人類閉門造車同理。
        - ReAct（$\text{Thought} \to \text{Action} \to \text{Observation} \to \text{Thought...}$）引入閉環探針，以最小行動（Ping）刺探真實環境反饋，重置累積誤差。
-    5. **個人思維模板實踐：Plan $\to$ Execute $\to$ Summary**：
+    6. **個人思維模板實踐：Plan $\to$ Execute $\to$ Summary**：
        - **Plan（宏觀目標拆解 / HTN）**：定義問題邊界與最小驗證假說，避免過早深陷細節 DFS。
        - **Execute（微觀 ReAct 閉環）**：小步快跑，想一步、試一個動作、看真實反饋、動態調度。
        - **Summary（反思與記憶固化 / Policy Update）**：壓縮執行軌跡，將臨時上下文沉澱為長期心智模型與文檔，避免下次從零探索。
