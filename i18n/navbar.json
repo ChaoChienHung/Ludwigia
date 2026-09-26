@@ -6,6 +6,8 @@
     { "selector": "[data-nav-credentials]", "text": { "en": "Achievements", "zh-Hant": "成就", "zh-Hans": "成就" } },
     { "selector": "[data-nav-timeline]", "text": { "en": "Timeline", "zh-Hant": "時間軸", "zh-Hans": "时间轴" }, "cipherText": { "en": "Chronology", "zh-Hant": "Chronology", "zh-Hans": "Chronology" } },
     { "selector": "a[href$=\"index.html#contact\"]", "text": { "en": "Contact", "zh-Hant": "聯絡方式", "zh-Hans": "联系方式" } },
+    { "selector": "a[href$=\"portfolio.html\"]", "text": { "en": "Portfolio", "zh-Hant": "作品集", "zh-Hans": "作品集" } },
+    { "selector": "a[href$=\"more.html\"]", "text": { "en": "More", "zh-Hant": "更多", "zh-Hans": "更多" } },
     { "selector": "#projectsDropdown", "text": { "en": "Projects", "zh-Hant": "專案", "zh-Hans": "项目" } },
     { "selector": "a[href$=\"notes/index.html\"]", "text": { "en": "Notes", "zh-Hant": "筆記", "zh-Hans": "笔记" }, "cipherText": { "en": "Notes", "zh-Hant": "日知", "zh-Hans": "日知" } },
     { "selector": "a[href$=\"writing/index.html\"]", "text": { "en": "Writing", "zh-Hant": "文章", "zh-Hans": "文章" }, "cipherText": { "en": "Writing", "zh-Hant": "求音", "zh-Hans": "求音" } },

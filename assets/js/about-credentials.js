@@ -25,6 +25,7 @@
       zoomHint: 'Click image to expand view',
       zoomButton: 'Full Preview',
       downloadButton: 'Download Document',
+      downloadButtonMobile: 'Download',
       issuerLabel: 'Issued by',
       dateLabel: 'Date',
       prevItem: 'Previous item',
@@ -43,6 +44,7 @@
       zoomHint: '點擊圖片放大檢視',
       zoomButton: '全螢幕檢視',
       downloadButton: '下載檔案',
+      downloadButtonMobile: '下載',
       issuerLabel: '頒發單位',
       dateLabel: '日期',
       prevItem: '上一個項目',
@@ -61,6 +63,7 @@
       zoomHint: '点击图片放大检视',
       zoomButton: '全屏幕检视',
       downloadButton: '下载文件',
+      downloadButtonMobile: '下载',
       issuerLabel: '颁发单位',
       dateLabel: '日期',
       prevItem: '上一个项目',
@@ -392,7 +395,7 @@
                  download="${currentItem.id}.${docExt}" 
                  target="_blank" 
                  class="btn btn-sm btn-outline-secondary rounded-pill credential-action-btn credential-download-btn">
-                <i class="fa-solid fa-download me-1"></i> ${txt.downloadButton}
+                <i class="fa-solid fa-download me-1"></i> <span class="credential-download-text-desktop">${txt.downloadButton}</span><span class="credential-download-text-mobile">${txt.downloadButtonMobile || 'Download'}</span>
               </a>
             </div>
           </div>

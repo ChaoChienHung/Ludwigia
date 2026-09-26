@@ -1,0 +1,36 @@
+{
+  "title": {
+    "en": "Portfolio — Ludwigia",
+    "zh-Hant": "作品集 — Ludwigia",
+    "zh-Hans": "作品集 — Ludwigia"
+  },
+  "entries": [
+    { "selector": ".hub-hero-kicker", "text": { "en": "Portfolio", "zh-Hant": "作品集", "zh-Hans": "作品集" } },
+    { "selector": ".hub-hero h1", "text": { "en": "Choose the kind of work you want to see.", "zh-Hant": "探索你想閱覽的內容維度。", "zh-Hans": "探索你想阅览的内容维度。" } },
+    { "selector": ".hub-hero p", "text": { "en": "This page groups the core content surfaces of Ludwigia. Use it when you know you want work, notes, essays, or visual pieces, but do not want to start from the homepage.", "zh-Hant": "此頁面整合了 Ludwigia 的核心內容板塊。當你想直接瀏覽專案、筆記、隨筆或視覺創作時，可從此處快速導航。", "zh-Hans": "此页面整合了 Ludwigia 的核心内容板块。当你想直接浏览项目、笔记、随笔或视觉创作时，可从此快速导航。" } },
+    { "selector": "a.hub-chip[href*=\"projects.html\"] span", "text": { "en": "Projects", "zh-Hant": "專案", "zh-Hans": "项目" } },
+    { "selector": "a.hub-chip[href*=\"notes/\"] span", "text": { "en": "Notes", "zh-Hant": "筆記", "zh-Hans": "笔记" } },
+    { "selector": "a.hub-chip[href*=\"writing/\"] span", "text": { "en": "Writing", "zh-Hant": "文章", "zh-Hans": "文章" } },
+    { "selector": "a.hub-chip[href*=\"canvas/\"] span", "text": { "en": "Canvas", "zh-Hant": "圖廊", "zh-Hans": "图廊" } },
+    { "selector": "a.hub-card[href*=\"projects.html\"] h2", "text": { "en": "Projects", "zh-Hant": "專案", "zh-Hans": "项目" } },
+    { "selector": "a.hub-card[href*=\"projects.html\"] .hub-card-cta", "text": { "en": "Open", "zh-Hant": "開啟", "zh-Hans": "打开" } },
+    { "selector": "a.hub-card[href*=\"projects.html\"] p", "text": { "en": "Shipped builds, demos, and portfolio work with a stronger product / engineering flavor.", "zh-Hant": "具備強烈工程實作與產品思維的專案作品、展示原型與落地上線產物。", "zh-Hans": "具备强烈工程实作与产品思维的项目作品、展示原型与落地上线产物。" } },
+    { "selector": "a.hub-card[href*=\"projects.html\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best when you want concrete outputs", "zh-Hant": "適合尋找具體產出與落地方案時瀏覽", "zh-Hans": "适合寻找具体产出与落地方案时浏览" } },
+    { "selector": "a.hub-card[href*=\"projects.html\"] .hub-card-list li:nth-child(2)", "text": { "en": "Good starting point for portfolio review", "zh-Hant": "評估實作能力與專案成果的最佳起點", "zh-Hans": "评估实作能力与项目成果的最佳起点" } },
+    { "selector": "a.hub-card[href*=\"notes/\"] h2", "text": { "en": "Notes", "zh-Hant": "筆記", "zh-Hans": "笔记" } },
+    { "selector": "a.hub-card[href*=\"notes/\"] .hub-card-cta", "text": { "en": "Open", "zh-Hant": "開啟", "zh-Hans": "打开" } },
+    { "selector": "a.hub-card[href*=\"notes/\"] p", "text": { "en": "Knowledge notes, study material, and structured learning content for technical topics.", "zh-Hant": "技術主題的體系化學習筆記、知識沉澱與結構化參考教材。", "zh-Hans": "技术主题的体系化学习笔记、知识沉淀与结构化参考教材。" } },
+    { "selector": "a.hub-card[href*=\"notes/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best when you want distilled understanding", "zh-Hant": "適合需要濃縮理解與底層脈絡時查閱", "zh-Hans": "适合需要浓缩理解与底层脉络时查阅" } },
+    { "selector": "a.hub-card[href*=\"notes/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Usually more structured and reference-like", "zh-Hant": "格式高度結構化，適合作為長久索引參考", "zh-Hans": "格式高度结构化，适合作为长久索引参考" } },
+    { "selector": "a.hub-card[href*=\"writing/\"] h2", "text": { "en": "Writing", "zh-Hant": "文章", "zh-Hans": "文章" } },
+    { "selector": "a.hub-card[href*=\"writing/\"] .hub-card-cta", "text": { "en": "Open", "zh-Hant": "開啟", "zh-Hans": "打开" } },
+    { "selector": "a.hub-card[href*=\"writing/\"] p", "text": { "en": "Long-form essays, reflections, and opinionated write-ups with more narrative flow.", "zh-Hant": "長篇思辨隨筆、技術洞察與具備敘事深度的原創文字紀錄。", "zh-Hans": "长篇思辨随笔、技术洞察与具备叙事深度的原创文字纪录。" } },
+    { "selector": "a.hub-card[href*=\"writing/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best when you want perspective and framing", "zh-Hant": "適合尋找觀點視角與價值思維時閱讀", "zh-Hans": "适合寻找观点视角与价值思维时阅读" } },
+    { "selector": "a.hub-card[href*=\"writing/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Often more exploratory than Notes", "zh-Hant": "兼具探索性與思想深度，篇幅更加從容", "zh-Hans": "兼具探索性与思想深度，篇幅更加从容" } },
+    { "selector": "a.hub-card[href*=\"canvas/\"] h2", "text": { "en": "Canvas", "zh-Hant": "圖廊", "zh-Hans": "图廊" } },
+    { "selector": "a.hub-card[href*=\"canvas/\"] .hub-card-cta", "text": { "en": "Open", "zh-Hant": "開啟", "zh-Hans": "打开" } },
+    { "selector": "a.hub-card[href*=\"canvas/\"] p", "text": { "en": "Visual pieces and gallery-style surfaces for content that is better browsed spatially.", "zh-Hant": "適合空間化視覺瀏覽的意象圖廊、草圖筆記與視覺概念呈現。", "zh-Hans": "适合空间化视觉浏览的意象图廊、草图笔记与视觉概念呈现。" } },
+    { "selector": "a.hub-card[href*=\"canvas/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best when you want a lighter visual browse", "zh-Hant": "適合享受輕量無負擔的視覺漫遊體驗", "zh-Hans": "适合享受轻量无负担的视觉漫游体验" } },
+    { "selector": "a.hub-card[href*=\"canvas/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Useful as a contrast to text-heavy sections", "zh-Hant": "與密集的文字區塊形成張弛有度的對比", "zh-Hans": "与密集的文字区块形成张弛有度的对比" } }
+  ]
+}

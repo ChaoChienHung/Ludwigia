@@ -127,7 +127,7 @@
 
       return `
         <div class="skill-item mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+          <div class="skill-item-header d-flex justify-content-between align-items-center mb-1 gap-2">
             <span class="skill-name fw-bold me-1">${itemName}</span>
             <div class="skill-meta d-inline-flex align-items-center gap-2 flex-shrink-0 text-end">
               ${badgeText ? `<span class="badge skill-badge">${badgeText}</span>` : ''}

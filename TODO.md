@@ -87,6 +87,13 @@
        - 左側呈現垂直發光貫穿軸線（Spine）、精準定位之里程碑節點（Marker）與連向卡片的水平引線（Connector）。
        - 點擊卡片時即時在卡片內部原地展開詳細內容（Inline Detail Expansion，含期間時長、詳情描述與參考連結），隱藏手機下分離的底部詳情區塊，打造直覺且極致優雅的單元卡片式閱讀體驗。
        - 橫向旋轉手機（Landscape 844x390）自動自適應維持垂直軸線與全寬卡片，無任何橫向溢出。
+    9. **Hub 頁面（Portfolio & More）全站架構對齊與 i18n 系統化**：
+       - 建立 `i18n/portfolio.json` 與 `i18n/more.json`，將 `pages/portfolio.html` 與 `pages/more.html` 接入 `core/i18n.js`，徹底解決 Hub 頁面語言切換失效問題。
+       - 作品集（Portfolio）四顆按鈕（`Projects | Notes | Writing | Canvas`）重構為 4 等分響應式 Grid 排版，手機與桌機均保持單行等寬並列。
+    10. **CSS 冗餘代碼清除與手機版響應式層級整理**：
+       - 清除 `shared.css` 中被 `display: none !important` 遮蔽的失效 clamp 舊規則。
+       - 技能項目重構為標題滿寬（Title Row）+ 徽章與百分比對齊（Meta Row）的雙層流式佈局，徹底根治長技能名在手機窄屏擠壓破版問題。
+       - 榮譽憑證（Accolades）下載按鈕支援 `Download` / `Download Document` 雙模文字，並調校字級比例消除「Button 大字小」視覺失衡。
   - [x] Review 重點：以手機視口（<= 767.98px 與 390x844 / 844x390）確認底欄 4 鍵導覽、全新由上至下垂直 Timeline 節點與引線、Skills 標籤並排、標題字級舒適，桌機端橫向時間軸與各功能 100% 無退化。
 
 ### P2

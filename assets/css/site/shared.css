@@ -2191,20 +2191,9 @@ section {
     font-size: clamp(1.1rem, 3.2vw, 1.25rem) !important;
   }
 
-  .skills-intro,
-  .credentials-intro {
-    font-size: clamp(0.84rem, 2.3vw, 0.9rem) !important;
-    line-height: 1.55 !important;
-  }
-
   .credential-info h4,
   .timeline-event-title {
     font-size: clamp(0.98rem, 2.8vw, 1.12rem) !important;
-  }
-
-  .credential-description {
-    font-size: clamp(0.84rem, 2.3vw, 0.9rem) !important;
-    line-height: 1.62 !important;
   }
 
   #contact h5 {
@@ -2286,23 +2275,37 @@ section {
 }
 
 .hub-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
   margin-top: 20px;
+  width: 100%;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hub-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 8px;
   border-radius: 999px;
   color: var(--text);
   text-decoration: none;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.86rem;
+  white-space: nowrap;
+  min-width: 0;
+  transition: all 0.2s ease;
+}
+
+.hub-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hub-chip:hover,
@@ -2660,7 +2663,22 @@ section {
   }
 
   .hub-chip-row {
-    justify-content: flex-start;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 16px !important;
+  }
+
+  .hub-chip {
+    padding: 7px 4px !important;
+    font-size: 0.78rem !important;
+    gap: 4px !important;
+    justify-content: center !important;
+  }
+
+  .hub-chip i {
+    font-size: 0.76rem !important;
   }
 
   .hub-card {
@@ -7669,6 +7687,14 @@ body.site-fab-open .site-fab-panel {
   transition: all 0.2s ease;
 }
 
+.credential-download-text-desktop {
+  display: inline;
+}
+
+.credential-download-text-mobile {
+  display: none;
+}
+
 /* Lightbox Modal High Priority Styles */
 #credentialModal {
   z-index: 10050 !important;
@@ -7828,11 +7854,27 @@ body.site-fab-open .site-fab-panel {
   }
 
   .credential-action-btn {
-    flex: 1 1 calc(50% - 6px);
-    text-align: center;
-    justify-content: center;
-    padding: 8px 12px;
-    font-size: 0.8rem;
+    flex: 1 1 calc(50% - 6px) !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 7px 10px !important;
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .credential-action-btn i {
+    font-size: 0.84rem !important;
+  }
+
+  .credential-download-text-desktop {
+    display: none !important;
+  }
+
+  .credential-download-text-mobile {
+    display: inline !important;
   }
 
   #credentialModal .btn-close {
@@ -7874,6 +7916,42 @@ body.site-fab-open .site-fab-panel {
 
   .skill-item {
     margin-bottom: 0.85rem !important;
+  }
+
+  /* Skill Item Mobile Layout: Prevent wrapping distortions for long skill names */
+  .skill-item-header {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: baseline !important;
+    justify-content: space-between !important;
+    gap: 2px 8px !important;
+  }
+
+  .skill-name {
+    flex: 1 1 100% !important;
+    font-size: 0.9rem !important;
+    line-height: 1.35 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    margin-bottom: 2px !important;
+  }
+
+  .skill-meta {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 3px !important;
+  }
+
+  .skill-badge {
+    font-size: 0.7rem !important;
+    padding: 2px 7px !important;
+  }
+
+  .skill-percent {
+    margin-left: auto !important;
+    font-size: 0.82rem !important;
   }
 
   .credential-description {

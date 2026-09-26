@@ -99,6 +99,8 @@
         projects: 'projects.json',
         search: 'search.json',
         settings: 'settings.json',
+        portfolio: 'portfolio.json',
+        more: 'more.json',
       };
       if (pageFiles[page]) {
         const pData = await loadModularJSON(pageFiles[page]);

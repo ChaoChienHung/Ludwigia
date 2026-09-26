@@ -1,0 +1,30 @@
+{
+  "title": {
+    "en": "More — Ludwigia",
+    "zh-Hant": "更多 — Ludwigia",
+    "zh-Hans": "更多 — Ludwigia"
+  },
+  "entries": [
+    { "selector": ".hub-hero-kicker", "text": { "en": "More", "zh-Hant": "更多", "zh-Hans": "更多" } },
+    { "selector": ".hub-hero h1", "text": { "en": "Secondary surfaces, tools, and exploration paths.", "zh-Hant": "次級頁面、輔助工具與延伸探索路徑。", "zh-Hans": "次级页面、辅助工具与延伸探索路径。" } },
+    { "selector": ".hub-hero p", "text": { "en": "Use this page for lower-frequency destinations: browsing the Garden, adjusting site preferences, or opening experimental work.", "zh-Hant": "用於造訪較低頻的站點目的地：漫遊數位花園、自訂全站環境偏好，或探索進行中的實驗性作品。", "zh-Hans": "用于造访较低频的站点目的地：漫游数字花园、自定义全站环境偏好，或探索进行中的实验性作品。" } },
+    { "selector": "a.hub-card[href*=\"garden/\"] h2", "text": { "en": "Garden", "zh-Hant": "數位花園", "zh-Hans": "数字花园" } },
+    { "selector": "a.hub-card[href*=\"garden/\"] .hub-card-cta", "text": { "en": "Explore", "zh-Hant": "漫遊", "zh-Hans": "漫游" } },
+    { "selector": "a.hub-card[href*=\"garden/\"] p", "text": { "en": "Browse by clusters, patch view, and tags when you want discovery rather than direct lookup.", "zh-Hant": "透過星群圖譜、色塊視圖與概念標籤隨機漫步，適合發散探索而非精準檢索。", "zh-Hans": "透过星群图谱、色块视图与概念标签随机漫步，适合发散探索而非精准检索。" } },
+    { "selector": "a.hub-card[href*=\"garden/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best for wandering across topics", "zh-Hant": "適合在不同知識主題間漫步串連", "zh-Hans": "适合在不同知识主题间漫步串联" } },
+    { "selector": "a.hub-card[href*=\"garden/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Useful when search feels too narrow", "zh-Hant": "當關鍵字搜尋過於狹隘時的最佳替代方案", "zh-Hans": "当关键字搜索过于狭隘时的最佳替代方案" } },
+    { "selector": "a.hub-card[href*=\"settings.html\"] h2", "text": { "en": "Settings", "zh-Hant": "偏好設定", "zh-Hans": "偏好设置" } },
+    { "selector": "a.hub-card[href*=\"settings.html\"] .hub-card-cta", "text": { "en": "Adjust", "zh-Hant": "調整", "zh-Hans": "调整" } },
+    { "selector": "a.hub-card[href*=\"settings.html\"] p", "text": { "en": "Language, theme, palette, and other cross-site preferences that shape how Ludwigia feels.", "zh-Hant": "語系切換、風格主題、強調色系與動態效果，自訂最舒適的閱讀氛圍。", "zh-Hans": "语系切换、风格主题、强调色系与动态效果，自定义最舒适的阅读氛围。" } },
+    { "selector": "a.hub-card[href*=\"settings.html\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best when you want to customize the reading environment", "zh-Hant": "適合自訂閱讀環境與視覺動效", "zh-Hans": "适合自定义阅读环境与视觉动效" } },
+    { "selector": "a.hub-card[href*=\"settings.html\"] .hub-card-list li:nth-child(2)", "text": { "en": "Keeps low-frequency controls out of the main nav", "zh-Hant": "將細部環境控制項收納於此，保持主導航清爽", "zh-Hans": "将细部环境控制项收纳于此，保持主导航清爽" } },
+    { "selector": "a.hub-card[href*=\"labs/\"] h2", "text": { "en": "Labs", "zh-Hant": "實驗室", "zh-Hans": "实验室" } },
+    { "selector": "a.hub-card[href*=\"labs/\"] .hub-card-cta", "text": { "en": "Open", "zh-Hant": "開啟", "zh-Hans": "打开" } },
+    { "selector": "a.hub-card[href*=\"labs/\"] p", "text": { "en": "Experimental pages and prototypes that are useful, interesting, or still evolving.", "zh-Hant": "兼具實用性、趣味性或仍在孵化中的實驗性頁面、互動原型與概念橋樑。", "zh-Hans": "兼具实用性、趣味性或仍在孵化中的实验性页面、互动原型与概念桥梁。" } },
+    { "selector": "a.hub-card[href*=\"labs/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best for playful or in-progress surfaces", "zh-Hant": "適合探索趣味功能與概念驗證原型", "zh-Hans": "适合探索趣味功能与概念验证原型" } },
+    { "selector": "a.hub-card[href*=\"labs/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Helps keep experiments separate from the main IA", "zh-Hant": "將實驗性功能與主站資訊架構適度解耦", "zh-Hans": "将实验性功能与主站信息架构适度解耦" } },
+    { "selector": ".hub-callout-title", "text": { "en": "Looking for content instead?", "zh-Hant": "想尋找實質內容嗎？", "zh-Hans": "想寻找实质内容吗？" } },
+    { "selector": ".hub-callout-text", "text": { "en": "Use Portfolio when you already know you want projects, notes, essays, or visual work.", "zh-Hant": "當你明確想要閱讀專案成果、筆記、思辨文章或視覺畫布時，請前往作品集。", "zh-Hans": "当你明确想要阅读项目成果、笔记、思辨文章或视觉画布时，请前往作品集。" } },
+    { "selector": "a.hub-callout-link", "text": { "en": "Go to Portfolio", "zh-Hant": "前往作品集", "zh-Hans": "前往作品集" } }
+  ]
+}
