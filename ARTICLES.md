@@ -336,6 +336,10 @@
          - **線索間的組合（Clue $\times$ Clue Synthesis）**：單一線索通常是模糊、孤立或存在多義性的。推理的核心手段之一，是將多個獨立線索拉入同一工作記憶視窗進行交叉碰撞與約束對齊（Constraint Satisfaction）。例如「線索 A（伺服器回應逾時）」與「線索 B（Redis CPU 飆升至 100%）」相互約束，瞬間排除大量無關維度。
          - **線索與既有知識庫的結合（Clue $\times$ Knowledge Base Grounding）**：線索無法在認知真空中自行衍生結論，必須與長期記憶（人類大腦知識庫 / 模型預訓練參數 / 外部本體檢索）掛載錨定。例如將「Redis CPU 100%」與先驗知識「Redis 為單執行緒事件循環，高 CPU 通常來自 $O(N)$ 慢指令阻塞」結合，從而啟動深層因果鏈。
          - **遞進式衍生新線索與空間剪枝（Iterative Lemma Derivation & Pruning）**：(線索 $\times$ 線索) 與 (線索 $\times$ 知識) 的交匯會催生出「中間引理（Intermediate Lemmas）」或「新衍生線索」；這些新線索再被寫回上下文草稿紙中，與既有線索展開遞迴式的下一輪化學反應。這正是 CoT（Chain of Thought）能將指數級搜尋空間一步步精準剪枝至唯一解的根本動力。
+       - **直覺啟發與形式符號的雙輪接力（Heuristic-Symbolic Dynamic Handover）**：
+         - **直覺啟發先行以壓制組合爆炸（Heuristic Space Pruning）**：純粹形式邏輯（Symbolic Logic）雖然保真，但演繹規則缺乏方向引導，分支度極高，起手盲目推導必然引發指數級的「組合爆炸（Combinatorial Explosion）」。因此大腦起手必然優先依賴日常生活與過往經驗觀察到的高階直覺模式作為先驗（Prior），在毫秒內剪除 99% 無效的搜索空間。
+         - **卡點時切換至形式符號（Symbolic Rigor upon Bottleneck）**：直覺依賴典型模式，無法維持過長約束且容易受認知偏誤干擾。一旦推理觸碰僵局（經驗無法直接 Pattern-match 出路徑），立刻轉化為符號、變數與嚴格邏輯演算。形式符號具備「保真演繹（Truth-preserving Deduction）」能力，能不受限於直覺經驗，機械化地穿透反直覺的複雜邏輯盲區。
+         - **符號受阻時的元模式介入（Meta-Pattern Intervention & Auxiliary Scaffolding）**：當純符號推演因缺乏路徑指引再度面臨分支發散時，不可盲目窮舉，而是再次召喚高階解題經驗（如反證法、極端值分析、構造對稱輔助線/守恆量）重塑問題空間——這正是類似 AlphaGeometry「神經直覺提出輔助構造 $\times$ 符號引擎嚴格推演」的雙大腦閉環。
     3. **高階推理的質變：逆向目標驅動、缺口感知與假說分支預演（Backward Chaining & Epistemic Gap Awareness）**：
        - **正向推導（Forward Chaining）vs. 逆向目標回溯（Backward Chaining）**：普通解題者只能「看菜吃飯」，拿到零散線索往前推一步算一步，線索一旦缺失便陷入迷茫或憑空幻覺；真正的高手與高階推理系統（如具備自反思能力的 DeepSeek-R1 / o1）則是**「以終為始（Goal-Driven）」**，從目標態出發進行因果倒推（Goal Regression）。
        - **知己所缺（Epistemic Gap Awareness）**：高手心中始終維持一張因果拓撲（Causal DAG）或等式約束系統。推演時能精確定位：*「若要證明結論 $Z$，必然依賴未滿足的中間命題 $Y$；而要確認 $Y$，手中正精確缺少關鍵變數 $X_k$」*。能夠精準度量「自己到底還缺哪一塊拼圖」，是避免無效窮舉（Blind BFS）的最高心智分水嶺。
