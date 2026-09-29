@@ -264,6 +264,310 @@
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5446-sarsa-vs-q-learning-cliff-walking",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the classic Cliff Walking grid world benchmark (Sutton & Barto Example 6.6), why does SARSA achieve a substantially higher average online return (~ -25) than Q-learning (~ -50) during training under an epsilon-greedy policy with epsilon = 0.1?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "SARSA is an on-policy TD control algorithm that evaluates the action actually executed by the behavior policy, thereby penalizing states near the cliff where exploratory random moves cause fatal falls; Q-learning is off-policy and evaluates the greedy path, frequently plunging off the cliff during epsilon-greedy exploration.",
+          "response": "Correct. Because SARSA updates Q(s, a) using the next action a' actually selected by the epsilon-greedy policy, it factors in the risk of random exploration mistakes and learns the safer upper route. In contrast, Q-learning targets max_{a'} Q(s', a'), learning the optimal cliff-edge path but suffering repeated -100 penalties during online exploration."
+        },
+        {
+          "id": "B",
+          "text": "Q-learning fails to converge when the reward function contains negative step penalties.",
+          "response": "Incorrect. Q-learning converges to Q* under standard Robbins-Monro conditions regardless of negative rewards."
+        },
+        {
+          "id": "C",
+          "text": "SARSA builds an internal transition probability model, whereas Q-learning is model-free.",
+          "response": "Incorrect. Both SARSA and Q-learning are completely model-free temporal difference methods."
+        },
+        {
+          "id": "D",
+          "text": "SARSA uses an exploration function f(u, n) with optimism bonuses, whereas Q-learning does not.",
+          "response": "Incorrect. In standard Cliff Walking, both algorithms use epsilon-greedy action selection; the performance difference stems from on-policy vs. off-policy target evaluation."
+        }
+      ],
+      "answer": "A",
+      "explanation": "SARSA evaluates the actual behavior policy (including its epsilon-greedy exploratory mistakes), causing it to downweight states adjacent to the cliff and follow the safer detour. Q-learning evaluates the greedy optimal policy (max_{a'} Q), learning the path along the cliff edge; however, when executing with epsilon = 0.1, it frequently falls into the cliff, resulting in a lower average online return during training.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.decision_making"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-greedy-adp-exploration-failure",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Why does an active Greedy Adaptive Dynamic Programming (ADP) agent fail to discover the optimal policy in environments such as the 4x3 Grid World, permanently suffering a policy loss of ~0.35?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Actions serve a dual role (earning immediate rewards vs. gathering information); a purely greedy agent only exploits its current partial transition model, never trying unvisited actions that would reveal safer or higher-reward alternative routes.",
+          "response": "Correct. Because the greedy agent never selects unvisited actions with low initial empirical counts (such as going Left from state (2,1)), its learned model never updates for those transitions. It becomes trapped in a suboptimal loop forever exploiting its current incomplete model."
+        },
+        {
+          "id": "B",
+          "text": "The linear system in policy evaluation becomes numerically singular when transition probabilities are estimated via counting.",
+          "response": "Incorrect. The transition matrix P remains stochastic and (I - gamma T) is strictly invertible for gamma < 1 (or with absorbing states)."
+        },
+        {
+          "id": "C",
+          "text": "Value iteration fails to satisfy the contraction mapping property when rewards are bounded by R_max.",
+          "response": "Incorrect. Value iteration is always a contraction with factor gamma under the max norm regardless of R_max."
+        },
+        {
+          "id": "D",
+          "text": "Maximum Likelihood Estimation (MLE) of transition probabilities is mathematically biased.",
+          "response": "Incorrect. Empirical frequency counting is consistent and asymptotically unbiased; the failure is behavioral (lack of exploration)."
+        }
+      ],
+      "answer": "A",
+      "explanation": "In active RL, actions influence both immediate rewards and the data collected to improve the model. A strictly greedy ADP agent acts only on current knowledge. At state (2,1), it repeatedly moves Right because Left was never tried, preventing the model from ever learning that moving Left allows a safe detour around the wall to the +1 goal.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.decision_making"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-deadly-triad-bairds-counterexample",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Baird's 7-state star counterexample (Sutton & Barto Chapter 11), why does semi-gradient off-policy TD(0) with linear function approximation diverge to infinity even when the reward for every transition is strictly zero (r = 0)?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The combination of function approximation (shared weight w_8 has coefficient 2 in the Headquarter state vs. 1 in branches), bootstrapping (branches pull values from the Headquarter's estimate), and off-policy sampling (behavior policy samples the Headquarter only 1/7 of the time) breaks the contraction mapping property, creating an uncontrolled positive feedback loop.",
+          "response": "Correct. In Baird's star MDP, updating branch values inflates shared weight w_8, which in turn doubles the estimated value of the Headquarter. Because the behavior policy rarely visits the Headquarter to observe the true zero reward, this positive feedback loop is never corrected, causing the composite projection-Bellman operator to have spectral radius > 1 and parameters to diverge to infinity."
+        },
+        {
+          "id": "B",
+          "text": "Linear function approximation is mathematically incompatible with all forms of Temporal Difference learning.",
+          "response": "Incorrect. On-policy TD(0) paired with linear function approximation is mathematically proven to converge by Tsitsiklis and Van Roy (1997)."
+        },
+        {
+          "id": "C",
+          "text": "Because the discount factor gamma = 0.99 is too close to 1, violating the contraction mapping condition gamma < 1.",
+          "response": "Incorrect. Any gamma < 1 is a valid discount factor for standard dynamic programming contractions; the failure arises from the Deadly Triad under off-policy sampling."
+        },
+        {
+          "id": "D",
+          "text": "Because Baird's MDP contains non-deterministic transitions with non-zero transition entropy.",
+          "response": "Incorrect. Transitions under the target and behavior actions are simple deterministic or uniform transitions; the failure is architectural due to the Deadly Triad."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Baird's counterexample demonstrates the Deadly Triad: Function Approximation + Bootstrapping + Off-Policy Learning. The shared weight w_8 in linear function approximation ties branch states to the Headquarter state. Because the behavior policy rarely visits the Headquarter (only 1/7 of transitions), the system inflates w_8 during branch updates without receiving corrective empirical feedback from the true zero reward at the Headquarter, destroying the contraction mapping property and causing parameter weights to explode to infinity.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.decision_making"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-ppo-clipped-surrogate-objective",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "How does the clipped surrogate objective in Proximal Policy Optimization (PPO), L_CLIP(theta) = E_t [ min( r_t(pi) * A_t, clip(r_t(pi), 1 - epsilon, 1 + epsilon) * A_t ) ], enforce safe and monotonic policy updates?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "By taking the minimum between the unclipped and clipped surrogate objectives, it forms a pessimistic lower bound: when advantage A_t > 0, clipping removes the incentive to push the probability ratio r_t beyond 1 + epsilon; when advantage A_t < 0, clipping prevents catastrophic over-penalization if r_t falls below 1 - epsilon.",
+          "response": "Correct. PPO's clipped objective creates a pessimistic lower bound on policy improvement. If an action was good (A_t > 0), the gradient drops to zero once r_t > 1 + epsilon, preventing overly aggressive policy leaps. If an action was bad (A_t < 0), clipping caps the penalty once r_t < 1 - epsilon, halting further negative updates and protecting policy stability."
+        },
+        {
+          "id": "B",
+          "text": "It computes the second-order Fisher Information Matrix at each step to enforce an exact Kullback-Leibler (KL) divergence constraint.",
+          "response": "Incorrect. Computing the Fisher Information Matrix and solving conjugate gradients is the mechanism of TRPO, which PPO deliberately simplifies using first-order clipping."
+        },
+        {
+          "id": "C",
+          "text": "It discards bootstrapping entirely by replacing advantage estimates with unbiased full Monte Carlo trajectory returns.",
+          "response": "Incorrect. PPO operates as an Actor-Critic algorithm that computes advantages A_t via 1-step TD errors or Generalized Advantage Estimation (GAE), which relies on bootstrapping."
+        },
+        {
+          "id": "D",
+          "text": "It converts continuous action spaces into discrete bins so standard Q-learning maximization can be computed.",
+          "response": "Incorrect. PPO directly parameterizes continuous or discrete stochastic policies without discretizing the action space."
+        }
+      ],
+      "answer": "A",
+      "explanation": "PPO uses the probability ratio r_t(pi) = pi_theta(a_t | s_t) / pi_old(a_t | s_t) and clips it within [1 - epsilon, 1 + epsilon]. Taking the minimum with the unclipped objective acts as a pessimistic bound: if A_t > 0, the objective stops increasing when r_t > 1 + epsilon, removing the incentive for excessively large policy shifts; if A_t < 0, the penalty is capped when r_t < 1 - epsilon, avoiding destructive over-correction. This provides trust-region stability using simple first-order SGD.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.decision_making"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-relara-cenra-agentic-reward-shaping",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "How do ReLara (ICML 2024) and CenRA (NeurIPS 2025) fundamentally reformulate reward shaping compared to traditional static heuristic functions?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "ReLara formulates reward shaping as an automated secondary decision-making process solved by an Assistant Reward Agent (A_R) that dynamically guides the Policy Agent (A_P), while CenRA scales this multi-agent principle to multi-task settings by deploying a Centralized Reward Agent (A^{rwd}) that distills and distributes invariant meta-knowledge across concatenated multi-task experience buffers.",
+          "response": "Correct. ReLara models reward shaping as a secondary cooperative Markov Decision Process using an Assistant Reward Agent A_R (Actor \\pi_\\zeta: S x A -> R) that learns to emit dynamic rewards r_{S_t} guiding Policy Agent A_P. CenRA extends this by aggregating experience buffers across N separate tasks into D = \bigcup D_i, from which Centralized Reward Agent A^{rwd} extracts transferable structural meta-knowledge via distillation and distributes tailored knowledge rewards r^{rwd}."
+        },
+        {
+          "id": "B",
+          "text": "Both frameworks replace reinforcement learning entirely with offline supervised imitation learning over human expert demonstrations.",
+          "response": "Incorrect. Both ReLara and CenRA operate within the reinforcement learning paradigm, using learned agents rather than supervised demonstration cloning."
+        },
+        {
+          "id": "C",
+          "text": "They enforce strict potential-difference constraints \\gamma \\phi(s') - \\phi(s) at every transition to provide theoretical policy invariance proofs.",
+          "response": "Incorrect. As highlighted by Dr. Ma in Slide 21, empirical multi-agent methods like ReLara and CenRA do not offer theoretical policy invariance guarantees; they are evaluated empirically for dramatic sample efficiency gains."
+        },
+        {
+          "id": "D",
+          "text": "They eliminate the policy actor network entirely and optimize tabular Q-learning tables via Random Network Distillation.",
+          "response": "Incorrect. Policy agents in ReLara and CenRA maintain standard Actor-Critic architectures (\\pi_\theta, Q_\\phi) for continuous or complex task execution."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Traditional reward shaping relies on rigid manual heuristics. ReLara (Ma et al., ICML 2024) treats reward generation itself as a secondary decision problem, deploying an Assistant Reward Agent A_R that observes (s_t, a_t) and outputs dynamic suggested rewards r_{S_t} to assist the Policy Agent A_P. CenRA (Ma et al., NeurIPS 2025) elevates this to multi-task reinforcement learning: individual policy agents push transitions into a concatenated replay buffer D = \bigcup D_i, from which a Centralized Reward Agent A^{rwd} distills universal meta-knowledge and distributes task-specific knowledge rewards r^{rwd}. Neither method requires manual potential engineering, achieving high sample efficiency through autonomous multi-agent coordination.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.decision_making"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-sasr-adaptive-beta-distribution",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Self-Adaptive Success Rate-based Reward Shaping (SASR; Ma et al., ICLR 2025), how does the modeled Beta distribution Beta(\tilde{N}_S(s), \tilde{N}_F(s)) dynamically balance the trade-off between exploration and exploitation across training stages?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "In the early stage, limited data results in lower effective counts (\tilde{N}_S, \tilde{N}_F), producing a diffuse Beta distribution with wide variance that encourages broad exploration; in the late stage, accumulated data yields high effective counts that form a sharp, high-confidence distribution, focusing the agent on exploitation.",
+          "response": "Correct. In SASR, spatial densities computed via KDE and Random Fourier Features yield effective counts \tilde{N}_S(s) and \tilde{N}_F(s). Early in learning, low counts produce a diffuse, wide-variance Beta distribution that reflects high epistemic uncertainty and grants high exploratory bonuses; as trajectories accumulate, the distribution contracts into a sharp, confident peak centered on the empirical success rate, focusing reward shaping on exploitative bottleneck states."
+        },
+        {
+          "id": "B",
+          "text": "The Beta distribution alternates between uniform random noise for odd episodes and static potential-based rewards for even episodes.",
+          "response": "Incorrect. SASR continuously and smoothly updates the parameters of the Beta distribution based on accumulated KDE density statistics, without heuristic alternating schedules."
+        },
+        {
+          "id": "C",
+          "text": "The parameters \tilde{N}_S and \tilde{N}_F are held fixed at 1.0, reducing the distribution to a uniform prior across all training steps.",
+          "response": "Incorrect. The effective counts \tilde{N}_S(s) = d_S(s) \times N and \tilde{N}_F(s) = d_F(s) \times N scale dynamically as the total number of collected transitions N grows."
+        },
+        {
+          "id": "D",
+          "text": "The Beta distribution is used solely to filter out Noisy-TV states by rejecting transitions whose prediction error exceeds a fixed threshold.",
+          "response": "Incorrect. SASR models the success probability of reaching task goals from state s, not neural network prediction errors as in RND."
+        }
+      ],
+      "answer": "A",
+      "explanation": "SASR models the localized success probability at state s as Beta(\tilde{N}_S(s), \tilde{N}_F(s)), where \tilde{N}_S(s) and \tilde{N}_F(s) are effective success and failure counts derived from Kernel Density Estimation with Random Fourier Features. During early learning stages, sparse data yields low counts and high variance (diffuse distribution), providing exploration bonuses to resolve uncertainty. During late learning stages, abundant data yields high counts and low variance (sharp peak), providing targeted exploitation signals that reinforce high-success trajectories toward the goal.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.reinforcement_learning",
+        "concept.machine_learning"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-mcts-uct1-exploration-exploitation",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Monte Carlo Tree Search (MCTS), how does the UCT1 action selection formula, \\pi_{UCT}(n) = \u0007rg\\max_{a \\in \\mathcal{A}(s)} [ \\hat{Q}(s, a) + c \\sqrt{\frac{\\ln N(s)}{N(s, a)}} ], mathematically balance the trade-off between exploitation and exploration?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "\\hat{Q}(s, a) acts as the exploitation term representing the average return of action a, while the exploration term c \\sqrt{\frac{\\ln N(s)}{N(s, a)}} prioritizes rarely selected actions because N(s, a) appears in the denominator, granting an infinite (+\\infty) bonus to unvisited actions (N(s, a)=0) to guarantee every action is tried at least once before exploitation.",
+          "response": "Correct. UCT1 adapts the UCB1 multi-armed bandit metric to tree search. The exploitation term \\hat{Q}(s, a) = W(s, a) / N(s, a) drives the search toward branches with historically high returns. The exploration bonus c \\sqrt{\frac{\\ln N(s)}{N(s, a)}} ensures that as the parent node is visited (N(s) grows), any neglected child action (N(s, a) small) receives an expanding bonus. Crucially, when N(s, a) = 0, the exploration term evaluates to +\\infty, guaranteeing that every available action from a state node is sampled at least once before deeper exploitation begins."
+        },
+        {
+          "id": "B",
+          "text": "It replaces heuristic evaluation with an exact linear program that computes optimal dual variables for every branch.",
+          "response": "Incorrect. MCTS and UCT1 are simulation-based online search algorithms that do not solve linear programming duals."
+        },
+        {
+          "id": "C",
+          "text": "It enforces a deterministic depth-first search that completely prunes sub-optimal branches after a single trial.",
+          "response": "Incorrect. MCTS builds an asymmetric tree dynamically without permanently pruning branches after a single trial."
+        },
+        {
+          "id": "D",
+          "text": "The numerator \\ln N(s) forces the agent to explore only child nodes whose visit count exceeds the parent node visit count.",
+          "response": "Incorrect. Child visit counts can never exceed parent visit counts, as parent visit count N(s) is the sum of all child visit counts."
+        }
+      ],
+      "answer": "A",
+      "explanation": "UCT1 (Kocsis & Szepesvári, 2006) adapts UCB1 to tree search. \\hat{Q}(s, a) reflects empirical average return (exploitation). The exploration bonus c \\sqrt{\\ln N(s) / N(s, a)} rewards under-sampled actions. When N(s, a) = 0, the exploration term is +\\infty, ensuring every untried action is selected at least once before exploitation takes over.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.decision_making",
+        "concept.reinforcement_learning"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5446-dagger-covariate-shift-resolution",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Why does standard Behavioral Cloning (BC) suffer from compounding quadratic execution errors (\\mathcal{O}(T^2 \\epsilon)) in sequential decision making, and how does Dataset Aggregation (DAgger; Ross et al., 2011) resolve this pathology?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "BC assumes training data is i.i.d., but in sequential tasks the agent actions alter future states; small initial errors drift the agent into unfamiliar states not present in expert demonstrations with zero recovery guidance. DAgger resolves this by iteratively executing the learner policy to encounter its true visited state distribution, querying the expert oracle for corrective actions on those visited states, and aggregating the dataset (\\mathcal{D}_{i+1} = \\mathcal{D}_i \\cup \\{(s, \\pi^*(s))\\}) to train on its own mistakes, reducing regret to \\mathcal{O}(T \\epsilon).",
+          "response": "Correct. Standard supervised learning relies on the independent and identically distributed (i.i.d.) assumption. In sequential settings, an agent policy \\pi_\theta dictates the state transition distribution. Under Behavioral Cloning, an initial error \\epsilon shifts the agent into an out-of-distribution state where the policy has no training data, compounding mistakes quadratically over time (\\mathcal{O}(T^2 \\epsilon)). Furthermore, expert trajectories only show optimal paths with zero recovery maneuvers. DAgger (Ross et al., 2011) eliminates this covariate shift by rolling out the learner own policy \\pi_i, gathering the states it actually encounters (including errors), asking the expert for corrective labels on those states, and augmenting the training set \\mathcal{D}_{i+1} = \\mathcal{D}_i \\cup \\{(s, \\pi^*(s))\\}, establishing a linear regret bound \\mathcal{O}(T \\epsilon)."
+        },
+        {
+          "id": "B",
+          "text": "BC requires solving an intractable minimax game against an adversary, whereas DAgger replaces neural networks with tabular lookup tables.",
+          "response": "Incorrect. Solving an adversarial minimax game describes Generative Adversarial Imitation Learning (GAIL), not BC."
+        },
+        {
+          "id": "C",
+          "text": "BC fails because human experts can only provide scalar rewards rather than action labels, while DAgger infers the latent reward function via Inverse Reinforcement Learning.",
+          "response": "Incorrect. BC and DAgger both learn policies from action labels without recovering reward functions; recovering latent rewards is the domain of Inverse Reinforcement Learning (IRL)."
+        },
+        {
+          "id": "D",
+          "text": "BC is restricted to discrete action spaces, while DAgger allows continuous action spaces by applying the Bellman optimality equation.",
+          "response": "Incorrect. BC and DAgger can both operate on continuous or discrete action spaces, and neither requires dynamic programming Bellman equations."
+        }
+      ],
+      "answer": "A",
+      "explanation": "In sequential decision making, agent actions change future states, fundamentally violating the i.i.d. assumption of supervised learning. Behavioral Cloning (BC) suffers from covariate shift: minor errors compound quadratically (\\mathcal{O}(T^2 \\epsilon)) because the agent visits states outside the demonstration distribution where it never observed recovery behaviors. DAgger (Dataset Aggregation; Ross et al., 2011) resolves distribution mismatch by iteratively executing the learner policy, collecting the states it actually encounters, querying the expert for corrective actions on those exact states, and retraining on the aggregated dataset \\mathcal{D} \\leftarrow \\mathcal{D} \\cup \\mathcal{D}_i, achieving a linear regret bound \\mathcal{O}(T \\epsilon).",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.machine_learning",
+        "concept.decision_making"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
     }
   ]
 }

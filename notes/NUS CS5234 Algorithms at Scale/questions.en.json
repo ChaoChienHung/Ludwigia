@@ -39,6 +39,44 @@
       "last_review_date": "2026-09-16"
     },
     {
+      "question_id": "cs5234-empty-bins-negative-covariance",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "When analyzing the variance of the total number of empty bins Y = sum_{j=1}^n Y_j under the balls-into-bins model (n balls thrown uniformly into n bins), why does Chebyshev's inequality guarantee tight O(sqrt(n)) concentration around E[Y] approx n/e?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The empty-bin indicator variables Y_j are negatively correlated (Cov(Y_j, Y_k) < 0), so the sum of covariance cross-terms is strictly negative, preventing an O(n^2) variance explosion and bounding Var(Y) <= sum Var(Y_j) <= n/e.",
+          "response": "Correct. Because (1 - 2/n)^n < (1 - 1/n)^{2n}, the covariance Cov(Y_j, Y_k) is strictly negative. Dropping these non-positive cross-terms bounds Var(Y) by sum Var(Y_j) <= n/e = O(n), ensuring O(sqrt(n)) concentration via Chebyshev."
+        },
+        {
+          "id": "B",
+          "text": "The empty-bin indicators are mutually independent, so all O(n^2) covariance cross-terms are identically zero.",
+          "response": "Incorrect. The indicators are not independent; if one bin is known to be empty, balls must reside in the remaining bins, creating negative correlation."
+        },
+        {
+          "id": "C",
+          "text": "Markov's inequality alone is sufficient to prove tight two-sided O(sqrt(n)) concentration.",
+          "response": "Incorrect. Markov's inequality only bounds single-sided upper tails with linear 1/alpha decay and cannot prove two-sided tight concentration."
+        },
+        {
+          "id": "D",
+          "text": "Positively correlated cross-terms cancel out symmetrically with diagonal variance terms.",
+          "response": "Incorrect. Positively correlated cross-terms would add up to O(n^2), causing variance explosion; here the cross-terms are negative, not positive."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Expanding Var(Y) = sum Var(Y_j) + 2 sum_{j < k} Cov(Y_j, Y_k). For j != k, E[Y_j Y_k] = (1 - 2/n)^n < (1 - 1/n)^{2n} = E[Y_j]E[Y_k], which proves Cov(Y_j, Y_k) < 0. Because the cross-terms are negative, Var(Y) <= sum Var(Y_j) <= n/e = O(n). By Chebyshev's inequality, deviations of scale c*sqrt(n) have probability at most 1/(c^2 e).",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.probability",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
       "question_id": "cs5234-median-trick-probability-boosting",
       "lang": "en",
       "question_type": "mcq",
@@ -265,6 +303,574 @@
       ],
       "review_status": "reviewed",
       "last_review_date": "2026-09-16"
+    },
+    {
+      "question_id": "cs5234-mean-vs-median-trick-chernoff-chebyshev",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In randomized algorithm design, why does the Mean Trick rely on Chebyshev's inequality while the Median Trick achieves exponential confidence amplification via the Chernoff bound, and when can the sample mean directly utilize Chernoff bounds?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The primitive estimator X in the Mean Trick is only assumed to have finite variance Var(X) = M and may be heavy-tailed (its MGF diverges), mathematically preventing the use of Chernoff bounds and necessitating Chebyshev's O(1/k) polynomial decay. In contrast, the Median Trick defines 0/1 indicators Z_i = I(|Y_i - C| > eps), creating strictly bounded Bernoulli variables whose MGF exists everywhere, guaranteeing exponential Chernoff concentration exp(-Omega(k)). The sample mean can only use Chernoff/Hoeffding directly if the primitive random variables are already strictly bounded (e.g., X in [0, 1]).",
+          "response": "Correct. The applicability of Chernoff bounds depends on bounded support or well-behaved MGFs. General estimators with only finite variance may have heavy tails that cause the MGF to diverge, forcing reliance on Chebyshev's inequality (with polynomial failure decay O(1/k)). The Median Trick binarizes execution outcomes into Bernoulli indicators in {0, 1}, whose MGF is universally well-behaved, allowing Chernoff bounds to amplify confidence exponentially. If primitive estimators are already bounded in [0, 1], Hoeffding/Chernoff can be applied directly to the sample mean without the Median Trick."
+        },
+        {
+          "id": "B",
+          "text": "The Mean Trick computes sample medians across batches, whereas the Median Trick averages sample means, inverting the central limit theorem.",
+          "response": "Incorrect. The Mean Trick averages independent evaluations, while the Median Trick computes the median of multiple runs."
+        },
+        {
+          "id": "C",
+          "text": "Chernoff bounds can never be applied to sample averages under any circumstances because dynamic programming contractions fail for linear operators.",
+          "response": "Incorrect. Chernoff and Hoeffding bounds apply directly to sample averages of bounded or sub-Gaussian random variables."
+        },
+        {
+          "id": "D",
+          "text": "Chebyshev's inequality requires mutual independence, whereas Chernoff bounds only require pairwise independence.",
+          "response": "Incorrect. The reverse is true: Chebyshev requires only pairwise independence, while Chernoff requires mutual independence."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Chernoff bounds require bounded support or a well-defined Moment Generating Function (MGF) in a neighborhood of 0. In the Mean Trick, a general estimator X is only assumed to have finite variance Var(X) = M; if heavy-tailed, its MGF diverges, making Chebyshev's inequality the only viable tool (yielding polynomial failure decay O(1/k) and sample size k = O(M / (eps^2 * delta))). The Median Trick converts the problem into counting failures via indicator Z_i = I(|Y_i - C| > eps) in {0, 1}. Because Bernoulli variables are strictly bounded in [0, 1], their sum satisfies the Chernoff bound unconditionally, achieving exponential confidence boosting exp(-Omega(k)) in O(log(1/delta)) repetitions. If X is already strictly bounded in [0, 1], Hoeffding/Chernoff applies directly to the sample mean, yielding O((1/eps^2) log(1/delta)) without the Median Trick.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.concentration_inequalities",
+        "concept.randomized_algorithms"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-geometric-guessing-edge-estimation-stopping-rule",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In sublinear-time edge estimation via Geometric Guessing (testing candidate guesses m' in {n^2, n^2/2, ...}), why does the algorithm stop at the very first guess where \\hat{m} \\ge 1.5 m', and why does the total query complexity across all O(log n) rounds sum to O(1) times the final round cost rather than accumulating a log n overhead?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Case a (m' > m) guarantees \\hat{m} < 1.25 m' < 1.5 m' (never stops early) and Case c (m' <= m/2) guarantees \\hat{m} >= 1.5 m' (never overshoots), squeezing the halting guess into m/4 < m' <= m (so m' = Theta(m)) and ensuring (1 +- eps) accuracy via Case b. Meanwhile, queries per round scale as 1/sqrt(m'), forming a geometric series with common ratio 1/sqrt(2) < 1 whose sum is bounded by O(1) times the final round.",
+          "response": "Correct. By Chebyshev's inequality, |\\hat{m} - m| <= eps * m * (m'/m)^{1/4}. For m' > m (Case a), \\hat{m} < 1.25 m' < 1.5 m', so the algorithm never halts prematurely. For m' <= m/2 (Case c), \\hat{m} >= (1 - eps)m >= 0.75(2m') = 1.5 m', guaranteeing halting. The halting guess satisfies m/4 < m' <= m (Theta(m)), certifying (1 +- eps) multiplicative approximation via Case b. Furthermore, queries per round scale as 1/sqrt(m') = 1/sqrt(n^2 / 2^j), producing an infinite geometric series with ratio 1/sqrt(2) that converges to 1 / (1 - 1/sqrt(2)) = O(1), absorbing the log n factor into a constant."
+        },
+        {
+          "id": "B",
+          "text": "Because if m' <= m/2, the graph becomes disconnected, forcing the adjacency matrix oracle to terminate immediately.",
+          "response": "Incorrect. The graph's physical connectivity is an intrinsic topological property independent of the algorithm's hypothetical candidate guess m'."
+        },
+        {
+          "id": "C",
+          "text": "Because the threshold 1.5 m' represents the Shannon entropy bound of the vertex degree distribution, and the query complexity uses coupon collector bounds.",
+          "response": "Incorrect. 1.5 m' is derived from Chebyshev's inequality and the 1 - eps >= 0.75 bound under eps <= 0.25, not Shannon entropy."
+        },
+        {
+          "id": "D",
+          "text": "The algorithm stops because union bound failure probabilities form a geometric series that sums to O(1), while query complexity requires O(log n) linear repetitions.",
+          "response": "Incorrect. The reverse is true: query complexity forms a convergent geometric series that sums to O(1), while failure probabilities are uniform across rounds and must be multiplied by O(log n) via the union bound."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The stopping threshold \\hat{m} >= 1.5 m' implements an automated two-sided squeeze. For m' > m, additive error is bounded by eps * m', yielding \\hat{m} < m' + 0.25 m' = 1.25 m' < 1.5 m', preventing premature termination. For m' <= m/2, Case b ensures \\hat{m} >= (1 - eps)m >= 0.75(2m') = 1.5 m', guaranteeing termination. The halting guess satisfies m/4 < m' <= m = Theta(m), ensuring the output is a valid (1 +- eps)-multiplicative approximation. The query complexity sums terms proportional to 1/sqrt(m'); reversing the index yields a geometric series with ratio 1/sqrt(2) < 1, which converges to 1/(1 - 1/sqrt(2)) = O(1), proving that all preceding rounds cost less than 2.414 times the final round.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.randomized_algorithms",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-randomized-query-matrix-adversary-correctness",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the matrix formulation of randomized query complexity (rows = inputs x, columns = random seeds r), why is correctness defined as \\min_x \\mathbb{E}_r [I(x, A_r)] \\ge 2/3 rather than requiring each individual seed A_r to succeed with probability 2/3 on input x, and what does this bound physically mean?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "For a fixed input x and a fixed random seed r, the decision tree A_r is purely deterministic and outputs either 1 (correct) or 0 (wrong) without any intermediate probability. The expectation \\mathbb{E}_r [I(x, A_r)] represents the total probability weight of random seeds that produce the correct answer for that x; requiring \\min_x \\ge 2/3 means that even on the adversary's most hostile input x, the subset of winning seeds must carry at least 2/3 of the total probability mass, while failing seeds cannot exceed 1/3.",
+          "response": "Correct. In any single matrix cell (x, r), execution is purely deterministic (I in {0, 1}), so individual seeds do not possess continuous probability values. The expectation \\mathbb{E}_r[I(x, A_r)] = \\sum_r \\mathcal{D}(r) I(x, A_r) is the weighted fraction of random seeds that answer correctly on input x. The adversary chooses the worst-case row x that minimizes this fraction (\\min_x). Demanding \\min_x \\mathbb{E}_r[I(x, A_r)] \\ge 2/3 ensures that regardless of which hostile input the adversary selects, 'winning' random seeds carry at least 2/3 of the probability distribution."
+        },
+        {
+          "id": "B",
+          "text": "Because Yao's minimax principle requires every column to be a convex combination of Nash equilibria, collapsing all cell probabilities to 2/3.",
+          "response": "Incorrect. Yao's minimax principle applies duality between mixed strategies, but individual cells (x, A_r) remain purely deterministic decision evaluations."
+        },
+        {
+          "id": "C",
+          "text": "Because individual decision trees are quantum superpositions that collapse only when the adversary measures the min_x row.",
+          "response": "Incorrect. In classical query complexity, decision trees are standard deterministic trees; randomness originates solely from the classical distribution D over seeds r."
+        },
+        {
+          "id": "D",
+          "text": "The condition \\min_x \\mathbb{E}_r [I(x, A_r)] \\ge 2/3 means that on at least 2/3 of all possible inputs x in {0, 1}^n, the algorithm succeeds with probability 1.",
+          "response": "Incorrect. The guarantee is worst-case over inputs x: the algorithm must achieve success probability >= 2/3 on EVERY valid input x, not just on a 2/3 fraction of inputs."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Once an input x and a random seed r are specified, the deterministic decision tree A_r runs non-probabilistically: it either computes the correct answer (I = 1) or fails (I = 0). The value \\mathbb{E}_r[I(x, A_r)] is the probability \\Pr_r[A_r(x) \\text{ is correct}]. An adversary chooses x to minimize this probability. Demanding \\min_x \\mathbb{E}_r[I(x, A_r)] \\ge 2/3 requires that on the hardest input x*, the probability mass of winning random seeds is at least 2/3, bounding failing seeds by at most 1/3. Because 2/3 = 1/2 + 1/6 is bounded away from random guessing (1/2), majority voting over independent runs boosts confidence exponentially via Chernoff bounds.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.randomized_algorithms",
+        "concept.decision_trees"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-upper-vs-lower-bounds-dimensions-matrix",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In algorithmic analysis, what is the fundamental conceptual distinction between an Upper Bound (\\mathcal{O}) and a Lower Bound (\\Omega), why are both typically stated with respect to Worst-Case analysis, and how do analysis scenarios (worst, average, best) decouple from asymptotic growth rates?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "An upper bound (\\mathcal{O}) evaluates a specific, concrete algorithm (proving the problem is at most this difficult), while a lower bound (\\Omega) establishes an insurmountable barrier for the problem itself across all conceivable algorithms (proving the problem is at least this difficult). Both default to worst-case analysis (\\max_x) because theoretical computer science demands universal guarantees against an adversarial input. The scenario dimension (worst vs. average vs. best) is completely orthogonal to mathematical bounds (\\mathcal{O}, \\Omega, \\Theta): for example, QuickSort has a worst-case upper bound of \\mathcal{O}(n^2) but an average-case upper bound of \\mathcal{O}(n \\log n); best-case bounds are rarely informative in robust systems design (the automotive airbag crash-testing principle).",
+          "response": "Correct. An Upper Bound is an existential guarantee (\\exists A): building one algorithm with worst-case cost O(f(n)) proves the problem is at most that hard. A Lower Bound is a universal impossibility guarantee (\\forall A): showing that every algorithm must spend at least \\Omega(g(n)) on some input proves the problem is at least that hard. When an algorithm's upper bound matches the problem's lower bound, the algorithm is optimal. Crucially, the scenario dimension (worst, average, best) is independent of mathematical asymptotics (O, \\Omega, \\Theta). QuickSort is worst-case \\Theta(n^2) and average-case \\Theta(n \\log n). Best-case bounds give no structural safety guarantee (the airbag principle)."
+        },
+        {
+          "id": "B",
+          "text": "An upper bound evaluates the problem itself, while a lower bound is restricted to a single specific algorithm; worst-case analysis applies exclusively to lower bounds, while upper bounds are computed over the average-case.",
+          "response": "Incorrect. Upper bounds evaluate specific algorithms, while lower bounds evaluate the problem across all possible algorithms. Both default to worst-case analysis."
+        },
+        {
+          "id": "C",
+          "text": "Upper bounds and lower bounds are synonymous with worst-case and best-case analysis respectively, meaning that QuickSort's upper bound is O(n^2) and its lower bound is \\Omega(n \\log n) for the same execution.",
+          "response": "Incorrect. Bounds (O, \\Omega, \\Theta) are asymptotic growth limits, while cases (worst, average, best) describe input distributions or adversary choices. They are independent orthogonal dimensions."
+        },
+        {
+          "id": "D",
+          "text": "Both upper and lower bounds must evaluate the average-case distribution; worst-case bounds are discarded whenever randomized pivot selection is introduced.",
+          "response": "Incorrect. Worst-case analysis remains the primary benchmark in complexity theory to guarantee correctness and execution limits against arbitrary inputs."
+        }
+      ],
+      "answer": "A",
+      "explanation": "An Upper Bound (O) characterizes a specific algorithm's performance ceiling (\\exists A, \\max_x Q(x, A) <= T(n)). A Lower Bound (\\Omega) characterizes the intrinsic difficulty floor of the entire problem across all possible algorithms (\\forall A, \\max_x Q(x, A) >= L(n)). Both default to worst-case analysis (\\max_x) to provide rigorous guarantees against hostile inputs. The scenario dimension (worst-case, average-case, best-case) is completely orthogonal to mathematical asymptotics (O, \\Omega, \\Theta). QuickSort exhibits a worst-case upper bound of O(n^2) (tight \\Theta(n^2)) due to pathological pivot choices, but an average-case upper bound of O(n \\log n) (tight \\Theta(n \\log n)). Best-case bounds are practically uninformative for system safety (just as a car's safety is not measured by its downhill maximum speed, but by its airbag deployment in a worst-case crash).",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.randomized_algorithms"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-yao-adversary-distribution-collapse-indistinguishability",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Yao's Minimax Principle and the definition of distributional complexity D_\\mu(P) = \\min_{A: \\mathbb{E}_{x \\sim \\mu}[I(x, A)] \\ge 2/3} \\max_x Q(x, A), why can the adversary NOT prove a lower bound by collapsing the input distribution \\mu to a single deterministic worst-case input x^* = 0^n, and how does the adversary instead manufacture indistinguishability?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "In Yao's game sequence, the adversary must announce \\mu first before the designer selects A. If the adversary collapses \\mu to a single input x^* = 0^n, the designer responds with a 0-query cheat algorithm that unconditionally outputs 0, achieving 100% accuracy on \\mu and reducing D_\\mu(P) to 0. Conversely, an unbiased uniform distribution is solved in O(1) queries. Thus, the adversary manufactures indistinguishability by compressing the support to two extremal groups (0^n vs. uniform single-one e_j in a 50/50 mixture), ensuring that observing k < n/3 zeros keeps the Bayesian posterior probability strictly below 2/3.",
+          "response": "Correct. If \\mu is supported on a single input x^*, the designer builds a deterministic algorithm A that makes 0 queries and unconditionally outputs f(x^*). This achieves 100% accuracy on \\mu with query depth 0, collapsing D_\\mu(P) to 0. Similarly, a uniform distribution has n/2 ones in expectation, which O(1) queries find with > 99.9% probability. The adversary's true strategy is manufacturing indistinguishability: compressing the distribution onto two extremal candidate groups with opposite answers (0^n vs. uniform basis vectors e_j in a 50/50 mixture), forcing any deterministic algorithm to query \\Omega(n) bits before overcoming the 2/3 confidence threshold."
+        },
+        {
+          "id": "B",
+          "text": "Because collapsing the distribution to a single input violates the law of total expectation in Fubini's theorem, rendering von Neumann's minimax theorem mathematically undefined.",
+          "response": "Incorrect. Fubini's theorem and expectation remain perfectly well-defined on degenerate Dirac delta distributions; the reason is game-theoretic (the designer responds with a 0-query algorithm)."
+        },
+        {
+          "id": "C",
+          "text": "Because deterministic algorithms are strictly forbidden from knowing the support of \\mu, and if only one input exists, quantum superposition is required.",
+          "response": "Incorrect. The designer has full access to the description of \\mu when choosing A in \\min_A."
+        },
+        {
+          "id": "D",
+          "text": "The adversary is permitted to collapse \\mu to a single input, but doing so forces the query complexity to n because no random coins can be flipped.",
+          "response": "Incorrect. If only one input exists, 0 queries are needed to answer correctly with 100% confidence, giving complexity 0 rather than n."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Yao's Minimax game establishes the sequence \\max_\\mu \\min_A: the adversary commits to \\mu first, and the algorithm designer picks the deterministic tree A second. If \\mu has support of size 1 (e.g. Pr(x = 0^n) = 1), the designer selects a constant function A(x) = 0 making 0 queries, yielding D_\\mu(P) = 0 and proving no lower bound. If \\mu is uniform, finding a 1 takes O(1) queries. To prove \\Omega(n), the adversary must manufacture indistinguishability by eliminating easy inputs (strings with >= 2 ones) and constructing a balanced 50/50 mixture of 0^n and uniform single-one basis vectors e_j, trapping any sublinear deterministic tree in Bayesian uncertainty where posterior accuracy cannot reach 2/3.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.randomized_algorithms"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-yao-minimax-three-pillars-witness-extraction",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the mathematical proof of Yao's Minimax Principle (Part 1: D_\\mu(P) \\le R(P)), why is an optimal randomized algorithm (\\mathcal{A}, \\mathcal{D}) guaranteed to achieve expected success \\ge 2/3 on an adversary-crafted input distribution \\mu, and how does this guarantee the existence of a single deterministic witness tree A_{r^*}?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Because R(P) guarantees pointwise success \\Pr[\\text{Success on } x] \\ge 2/3 for EVERY individual input x, the probability-weighted average across \\mu(x) is a convex combination of scores that are all \\ge 2/3, which must itself be \\ge 2/3. Furthermore, because the randomized algorithm is a probability distribution over deterministic trees \\sum_r p_r A_r, by the Mean Value Principle (the maximum cannot be smaller than the average), there must exist at least one deterministic tree A_{r^*} in the support achieving success \\ge 2/3 on \\mu with query depth \\le R(P). Since D_\\mu(P) is the minimum depth among all such passing trees, R(P) \\ge \\text{depth}(A_{r^*}) \\ge D_\\mu(P).",
+          "response": "Correct. Pointwise mastery guarantees that \\sum_x \\mu(x) \\Pr[\\text{Success on } x] \\ge \\sum_x \\mu(x)(2/3) = 2/3. By Fubini's theorem, this joint expectation equals \\sum_r p_r \\mathbb{E}_{x \\sim \\mu}[I(x, A_r)] \\ge 2/3. By the Mean Value Principle / Pigeonhole Principle for expectations, a convex combination cannot exceed its maximum, so \\max_r \\mathbb{E}_{x \\sim \\mu}[I(x, A_r)] \\ge 2/3, extracting a deterministic witness tree A_{r^*} that passes on \\mu. Because A_{r^*} belongs to the randomized pool, its query depth is at most R(P). By definition of D_\\mu(P) as the minimum passing tree, R(P) \\ge \\text{depth}(A_{r^*}) \\ge D_\\mu(P)."
+        },
+        {
+          "id": "B",
+          "text": "Because von Neumann's minimax theorem forces all deterministic trees in the support to have identical query complexity and identical success rates on \\mu.",
+          "response": "Incorrect. Individual trees in the support can have drastically different success rates and depths; only the maximum component is guaranteed to be at least the average."
+        },
+        {
+          "id": "C",
+          "text": "Because Chernoff bounds ensure that the majority of deterministic trees in the support have query complexity 0 on distribution \\mu.",
+          "response": "Incorrect. Chernoff bounds amplify confidence across independent runs, but do not alter tree query depth or force queries to 0."
+        },
+        {
+          "id": "D",
+          "text": "Because the adversary's distribution \\mu is required to be symmetric, which cancels all error probabilities across non-adaptive deterministic decision trees.",
+          "response": "Incorrect. Part 1 of Yao's Minimax Principle holds for ANY distribution \\mu, symmetric or asymmetric, without requiring error cancellation."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The proof relies on two directional expansions of the joint expectation E_{x, r}[I(x, A_r)]. Expanding over x first uses the randomized algorithm's pointwise contract: since E_r[I(x, A_r)] >= 2/3 for all x, the weighted average sum_x mu(x) E_r[I] >= 2/3. Expanding over r first writes this as sum_r p_r E_x[I(x, A_r)]. Since a weighted average cannot exceed its maximum, there exists a deterministic witness A_{r^*} with E_x[I(x, A_{r^*})] >= 2/3. The query depth of A_{r^*} cannot exceed the worst-case bound R(P). Because D_mu(P) minimizes query depth over all deterministic trees passing on mu, R(P) >= depth(A_{r^*}) >= D_mu(P).",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.randomized_algorithms"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-distributional-complexity-empty-club-contrapositive",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In lower bound proofs using Yao's Minimax Principle, why is establishing D_\\mu(P) \\ge k operationally reframed as proving that no deterministic algorithm making fewer than k queries can achieve expected success \\ge 2/3 on \\mu (the 'Empty Club' Principle), rather than directly finding or constructing the optimal tree?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "By definition, D_\\mu(P) is the minimum query depth among all deterministic algorithms that pass the exam on \\mu (achieve \\mathbb{E}_{x \\sim \\mu}[I(x, A)] \\ge 2/3). If one proves the contrapositive statement that every decision tree of depth < k achieves expected accuracy < 2/3, then the qualified club \\mathcal{A}_{\\text{qualified}}(\\mu) \\cap \\{A \\mid \\text{depth}(A) < k\\} is completely empty (\\emptyset). Since no passing tree exists within the < k budget, the depth of the minimum passing tree must be at least k, mathematically forcing D_\\mu(P) \\ge k without ever needing to characterize the optimal algorithm.",
+          "response": "Correct. D_\\mu(P) = \\min_{A \\in \\mathcal{A}_{\\text{qualified}}} \\text{depth}(A). To show that the minimum of a set is at least k, it is completely equivalent to showing that no element in the set has value strictly less than k. By proving that every tree A of depth < k achieves \\mathbb{E}[I] < 2/3, the set of passing trees within the < k budget is shown to be empty (\\emptyset). Consequently, any tree that passes must have depth >= k, proving D_\\mu(P) >= k."
+        },
+        {
+          "id": "B",
+          "text": "Because if any algorithm achieved success \\ge 2/3 with < k queries, Yao's minimax equality would collapse into an unsolvable linear programming degeneracy.",
+          "response": "Incorrect. Linear programming duality remains valid regardless; the contrapositive reframing is an elementary set-theoretic property of infima/minima."
+        },
+        {
+          "id": "C",
+          "text": "Because deterministic algorithms of depth < k are forbidden by information theory from computing binary decisions under non-uniform input distributions.",
+          "response": "Incorrect. Algorithms of depth < k can compute many functions; the claim is specific to problem P and hard distribution \\mu."
+        },
+        {
+          "id": "D",
+          "text": "Because the adversary's distribution \\mu dynamically increases the depth of every decision tree by a factor of 3 whenever its error rate exceeds 1/3.",
+          "response": "Incorrect. Decision trees are static graph structures whose depths are fixed before running on inputs."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Distributional query complexity is defined as a minimum over a filtered set: D_\\mu(P) = \\min \\{ \\text{depth}(A) \\mid \\mathbb{E}_{x \\sim \\mu}[I(x, A)] \\ge 2/3 \\}. Showing that \\min S >= k is mathematically identical to proving that S contains no elements < k (S \\cap (-inf, k) = \\emptyset). In lower bound proofs, we assume an arbitrary tree A of depth < k and compute its maximum achievable Bayesian success on \\mu. Showing that its success is strictly < 2/3 proves that no passing tree exists with depth < k, establishing D_\\mu(P) >= k and bypassing the impossible task of finding the global optimal tree.",
+      "difficulty": "intermediate",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.decision_trees"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-28"
+    },
+    {
+      "question_id": "cs5234-query-reduction-pushforward-distribution-yao",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In proving an \\Omega(N^2) randomized query lower bound for Graph Connectivity via reduction from the OR problem, the reduction constructs an instance consisting exclusively of two complete cliques U and V with either 0 cross-edges or exactly 1 random cross-edge. Why is evaluating an algorithm on this narrow, highly artificial sub-family of 'Two-Island Graphs' mathematically sufficient to prove an \\Omega(N^2) lower bound for ALL conceivable graphs in the universe?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Under Yao's Minimax Principle (Part 1), R(P) \\ge D_\\mu(P) holds for ANY chosen input distribution \\mu, granting the adversary total freedom to concentrate 100% of the probability measure on the Two-Island subspace via the pushforward measure \\mu_{\\text{GC}} = T_* \\mu_{\\text{OR}}. Because randomized query complexity is evaluated under worst-case inputs (\\max_{G} \\mathbb{E}[Q(G, A_r)]), any algorithm claiming to solve Graph Connectivity must succeed on every valid graph; failing or requiring \\Omega(N^2) queries on this sub-family immediately pins the universal worst-case complexity at \\ge \\Omega(N^2).",
+          "response": "Correct. Yao's Principle states that R(P) \\ge D_\\mu(P) holds for ANY distribution \\mu. The reduction mapping T mechanically pushes the hard distribution \\mu_{\\text{OR}} into graph space (\\mu_{\\text{GC}} = T_* \\mu_{\\text{OR}}), placing zero mass on 99.999% of arbitrary graphs. Since randomized algorithms are evaluated on the worst-case input (\\max_G), exhibiting a specialized sub-family that forces \\Omega(N^2) queries is entirely sufficient to lower-bound the worst-case complexity across all graphs."
+        },
+        {
+          "id": "B",
+          "text": "Because the Two-Island graph family forms a dense graph cover that is isomorphic to every planar and non-planar graph under polynomial-time query graph homeomorphisms.",
+          "response": "Incorrect. Two-Island graphs are not isomorphic to general graphs; lower bounds do not rely on graph homeomorphisms."
+        },
+        {
+          "id": "C",
+          "text": "Because Yao's Minimax Principle Part 2 requires the adversary to construct a distribution with maximal Shannon entropy across all 2^{\\binom{N}{2}} adjacency matrices.",
+          "response": "Incorrect. Part 1 of Yao's Minimax Principle requires only ANY distribution \\mu, which can be highly concentrated or biased; maximal Shannon entropy is not required and would often make problems easier to solve via random sampling."
+        },
+        {
+          "id": "D",
+          "text": "Because deterministic decision trees are forbidden by graph minors theory from distinguishing bipartite components from non-bipartite cliques in sublinear queries.",
+          "response": "Incorrect. Graph minors theory is unrelated to oracle query reductions between OR and connectivity."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The lower bound proof operates at the intersection of Yao's Minimax Principle and worst-case complexity. Yao's Principle Part 1 guarantees R(P) >= D_\\mu(P) for ANY distribution \\mu. The reduction mapping T: {0, 1}^{n^2} -> \\mathcal{G}_N pushes the hard OR distribution \\mu_{\\text{OR}} into graph space, defining the pushforward measure \\mu_{\\text{GC}} = T_* \\mu_{\\text{OR}}. Under \\mu_{\\text{GC}}, only Two-Island graphs have positive probability, while 99.999% of other graphs have measure zero. Because randomized query complexity measures the worst-case input (max_G E[Q]), an algorithm must succeed on all graphs. Thus, demonstrating that the algorithm requires \\Omega(N^2) queries on this specific adversarial sub-family pins the worst-case complexity max_G E[Q(G)] >= \\Omega(N^2).",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.randomized_algorithms"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-sortedness-multi-scale-hierarchy-a-s",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In property testing of array sortedness, consider the parameterized adversarial family A(s) constructed by partitioning (1, ..., n) into s blocks of length n/s and inverting adjacent blocks: A(s) = (A_1, A_0, A_3, A_2, ..., A_{s-1}, A_{s-2}). Why do both Algorithm 0 (checking adjacent inequalities) and Algorithm 1 (checking monotonicity of a random sample) fail to achieve sub-polynomial query complexity on this family?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Algorithm 0 checks adjacent pairs and requires \\Theta(n/s) samples because there are only s/2 inverted adjacent boundaries out of n-1; Algorithm 1 checks sampled subsequence monotonicity and requires \\Theta(\\sqrt{s}) samples by the Birthday Paradox on inverted block pairs. When an adversary chooses s = n^{2/3}, both algorithms are trapped at \\Theta(n^{1/3}) queries, proving that neither purely local checking nor purely global subsequence sampling can handle multi-scale inversions.",
+          "response": "Correct. Algorithm 0 requires Theta(n/s) samples to hit one of the s/2 boundary inversions, while Algorithm 1 requires Theta(sqrt(s)) samples to draw two elements from an inverted block pair (Chebyshev/Birthday Paradox). Setting n/s = sqrt(s) yields s = n^{2/3}, forcing both algorithms to consume Theta(n^{1/3}) queries. This proves that testers restricted to purely local or purely global sampling fail on intermediate scales, necessitating multi-scale testers like binary search."
+        },
+        {
+          "id": "B",
+          "text": "Because at s = n^{2/3}, the array satisfies the promise condition and contains exactly zero inversions.",
+          "response": "Incorrect. The array A(s) contains s/2 inverted block pairs and is eps-far from sorted for eps <= 1/2."
+        },
+        {
+          "id": "C",
+          "text": "Because Algorithm 0 runs in deterministic exponential time whenever s is an even integer.",
+          "response": "Incorrect. Algorithm 0 is a simple randomized sampling algorithm with linear query bounds, not exponential time."
+        },
+        {
+          "id": "D",
+          "text": "Because Algorithm 1 cannot be implemented on arrays with non-binary elements.",
+          "response": "Incorrect. Algorithm 1 checks monotonicity of any totally ordered numeric sample; its limitation is sample complexity, not computability."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The family A(s) interpolates between macroscopic split-halves (s=2, where Algorithm 0 needs Theta(n) while Algorithm 1 needs O(1)) and microscopic interleaved pairs (s=n, where Algorithm 0 needs O(1) while Algorithm 1 needs Omega(sqrt(n))). For general s, Algorithm 0 has only s/2 violation points and requires Theta(n/s) queries, while Algorithm 1 requires hitting both blocks of a swapped pair, needing Theta(sqrt(s)) samples by Chebyshev/Birthday Paradox analysis. Equating n/s = sqrt(s) yields s = n^{2/3}, where both methods require Theta(n^{1/3}) queries. This motivates the Ergün et al. binary search tester, which simultaneously tests all distance scales in O((log n)/eps) queries.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.complexity_theory",
+        "concept.query_algorithm"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-uniformity-testing-collision-covariance-breakdown",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the Batu et al. pairwise collision counting algorithm for uniformity testing, the collision estimator is \\hat{Y} = \\frac{1}{\\binom{k}{2}} \\sum_{1 \\le i < j \\le k} Y_{i, j}, where Y_{i, j} = \\mathbf{1}[X_i = X_j]. In the variance expansion \\text{Var}[\\hat{Y}], why are there exactly 6 \\binom{k}{3} covariance cross-terms sharing exactly one sample index, and why is each such covariance bounded by \\|\\mu\\|_2^3?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Any pair of pairs sharing exactly one index involves 3 distinct indices {a < b < c} chosen in \\binom{k}{3} ways, and there are exactly 6 matching pair assignments (e.g., i=s=a with 2 choices, i=t=b with 1 choice, j=s=b with 1 choice, j=t=c with 2 choices). The 3-way collision expectation \\mathbb{E}[Y_{i, j} Y_{i, t}] = \\sum \\mu(x)^3 = \\|\\mu\\|_3^3, and by norm monotonicity \\|\\mu\\|_3^3 \\le \\|\\mu\\|_2^3, so \\text{Cov} \\le \\|\\mu\\|_2^3.",
+          "response": "Correct. Distinct pairs (i, j) and (s, t) sharing one index involve 3 distinct sample indices {a < b < c}. There are 6 distinct assignments: (a,b)/(a,c), (a,c)/(a,b), (a,c)/(b,c), (b,c)/(a,c), (a,b)/(b,c), and (b,c)/(a,b). The 3-wise expectation is E[Y_{i, j} Y_{s, t}] = ||mu||_3^3 <= ||mu||_2^3 by norm monotonicity, yielding Cov <= ||mu||_2^3."
+        },
+        {
+          "id": "B",
+          "text": "Because there are 6 permutations of 3 elements, and Cauchy-Schwarz forces the covariance to equal the variance of the uniform distribution.",
+          "response": "Incorrect. The count arises from choosing ordered pairs of 2-element subsets sharing 1 element, not general permutations, and the covariance is bounded by ||mu||_2^3."
+        },
+        {
+          "id": "C",
+          "text": "Because the samples are drawn with replacement, creating negative covariance that cancels all 4-distinct index terms.",
+          "response": "Incorrect. Samples are drawn independently from mu, and pairs with 4 distinct indices have covariance strictly equal to 0, not negative."
+        },
+        {
+          "id": "D",
+          "text": "Because the adversary's distribution must be symmetric under the dihedral group D_3.",
+          "response": "Incorrect. The calculation holds for ANY discrete distribution mu over [n] without symmetry assumptions."
+        }
+      ],
+      "answer": "A",
+      "explanation": "For distinct pairs (i, j) and (s, t) sharing one index (e.g., i = s), the joint probability is Pr(X_i = X_j = X_t) = sum mu(x)^3 = ||mu||_3^3. By norm monotonicity, ||mu||_3 <= ||mu||_2, so ||mu||_3^3 <= ||mu||_2^3. The covariance is ||mu||_3^3 - ||mu||_2^4 <= ||mu||_2^3. To count these pairs of pairs among k samples, pick 3 distinct indices {a < b < c} in binom(k, 3) ways. Among these 3 indices, exactly 6 valid ordered pairs of pairs ((i, j), (s, t)) with i < j and s < t share one index: (a, b)/(a, c) [i=s=a], (a, c)/(a, b) [i=s=a], (a, c)/(b, c) [j=t=c], (b, c)/(a, c) [j=t=c], (a, b)/(b, c) [j=s=b], and (b, c)/(a, b) [i=t=b]. Hence the total number of 1-shared covariance terms is exactly 6 binom(k, 3).",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.probability",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-morris-approximate-counting-second-moment-recurrence",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In Morris's approximate counting algorithm, the counter $C$ is incremented with probability $2^{-C}$ upon receiving each stream element, and the transformed variable is $X_i = 2^{C_i}$. When deriving the variance $\\text{Var}[\\hat{A}]$, what is the exact algebraic mechanism ensuring that the second moment $\\mathbb{E}[(X_{i+1})^2]$ grows linearly with $\\mathbb{E}[X_i]$ rather than exploding exponentially?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Conditioning on $X_i = x$, the conditional second moment is $(2x)^2 (1/x) + x^2 (1 - 1/x) = 4x + x^2 - x = x^2 + 3x$. The coefficient of $x^2$ is exactly $1$, causing the quadratic term to pass through additively without an exponential multiplier, yielding $\\mathbb{E}[(X_{i+1})^2] = \\mathbb{E}[(X_i)^2] + 3(i + 1)$.",
+          "response": "Correct. Conditioning on X_i = x: E[(X_{i+1})^2 | X_i = x] = (2x)^2 * (1/x) + x^2 * (1 - 1/x) = 4x + x^2 - x = x^2 + 3x. Taking unconditional expectations gives E[(X_{i+1})^2] = E[(X_i)^2] + 3 E[X_i] = E[(X_i)^2] + 3(i + 1). Because the coefficient of x^2 is exactly 1, unfolding the recurrence yields 1 + (3/2)A(A+1), leading to Var[A_hat] = A(A - 1)/2 <= A^2 / 2."
+        },
+        {
+          "id": "B",
+          "text": "The counter is incremented with probability $1/i$, causing the second moment to telescope multiplicatively to $1/A^2$.",
+          "response": "Incorrect. Incrementing with probability 1/i is uniform reservoir sampling, not Morris counting. Morris increments with probability 2^{-C}."
+        },
+        {
+          "id": "C",
+          "text": "The increments at each stream step are mutually independent, so all covariance cross-terms vanish identically by Chebyshev's inequality.",
+          "response": "Incorrect. The increments at each step depend heavily on the current counter value C_i, so they are not independent increments; the analysis requires conditional expectations."
+        },
+        {
+          "id": "D",
+          "text": "The estimator subtracts the median of the counter values, which cancels all quadratic expansion terms by symmetry.",
+          "response": "Incorrect. The estimator is 2^C - 1. The cancellation of the quadratic multiplier is purely due to (2x)^2 (1/x) - x = 3x, leaving x^2 with coefficient 1."
+        }
+      ],
+      "answer": "A",
+      "explanation": "In Morris counting, when X_i = x, the counter doubles to 2x with probability 1/x and stays x with probability 1 - 1/x. The conditional second moment is E[(X_{i+1})^2 | X_i = x] = (2x)^2(1/x) + x^2(1 - 1/x) = 4x + x^2 - x = x^2 + 3x. Applying the law of total expectation gives E[(X_{i+1})^2] = E[(X_i)^2] + 3 E[X_i] = E[(X_i)^2] + 3(i + 1). Unfolding this recurrence gives E[(X_A)^2] = (X_0)^2 + 3 sum_{j=0}^{A-1}(j + 1) = 1 + (3/2)A(A + 1). Since (E[X_A])^2 = (A + 1)^2 = A^2 + 2A + 1, subtracting yields Var[A_hat] = Var[X_A] = A(A - 1)/2 <= A^2 / 2.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.probability",
+        "concept.variance"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-morris-concentration-obstacle-and-median-of-means-bridge",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "Why can the raw Morris counter estimator $\\hat{A} = 2^C - 1$ NOT achieve high-confidence concentration directly via standard concentration inequalities (Chebyshev and Chernoff), and how does the Median-of-Means framework bridge this theoretical obstacle?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "In Chebyshev's inequality, the variance $\\text{Var}[\\hat{A}] \\approx 0.5 A^2$ and the deviation scale $(\\epsilon A)^2$ are both $\\Theta(A^2)$, causing the stream length $A^2$ to cancel out completely and leaving an invariant constant bound $\\frac{1}{2\\epsilon^2}$ that never decays with $A$. Meanwhile, direct Chernoff bounds fail because $\\hat{A}$ experiences geometric leaps, causing the MGF $\\mathbb{E}[e^{t 2^C}]$ to explode double-exponentially. The Median-of-Means framework resolves this by first using the Mean Trick ($k = \\mathcal{O}(1/\\epsilon^2)$) to lower variance and achieve constant failure $p \\le 0.05$, and then defining indicator variables $Z_j = \\mathbf{1}\\{|\\bar{A}_j - A| \\ge \\epsilon A\\} \\in \\{0, 1\\}$. Because indicators are strictly bounded, Chernoff bounds apply legitimately to the binomial sum $\\sum Z_j$, yielding exponential confidence $\\le \\delta$ in $L = \\mathcal{O}(\\log(1/\\delta))$ groups.",
+          "response": "Correct. In Chebyshev's inequality, Var[A_hat] / (\\epsilon A)^2 approx (0.5 A^2) / (\\epsilon^2 A^2) = 1/(2\\epsilon^2), meaning the failure bound never decays as stream length A increases. Direct Chernoff bounds fail because the estimator 2^C - 1 jumps geometrically, creating extreme right-skewness and double-exponential MGF explosion E[e^{t 2^C}]. The Median-of-Means framework circumvents this via binarization: group averages achieve constant failure rate p <= 0.05 by the Mean Trick, and defining binary failure indicators Z_j in {0, 1} converts the median deviation into a bounded Binomial tail sum \\sum Z_j >= L/2, where Chernoff bounds legitimately apply to deliver exponential confidence <= \\delta."
+        },
+        {
+          "id": "B",
+          "text": "Because the counter increments are negatively correlated, which causes the denominator in Chebyshev's inequality to vanish while forcing the MGF to become imaginary.",
+          "response": "Incorrect. Increments in Morris counting are Markovian and non-negative; negative correlation does not occur, and the MGF is strictly real."
+        },
+        {
+          "id": "C",
+          "text": "Because Morris counting uses a deterministic register that does not possess a probability distribution until the median operator introduces entropy.",
+          "response": "Incorrect. The Morris counter register C is fully probabilistic, transitioning with probability 2^{-C} at each step."
+        },
+        {
+          "id": "D",
+          "text": "Because the stream arrival order permutes the variance by an orthogonal matrix, requiring Johnson-Lindenstrauss dimension reduction before concentration inequalities can be evaluated.",
+          "response": "Incorrect. Approximate counting does not perform high-dimensional vector projection or Johnson-Lindenstrauss flattening."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Evaluating Chebyshev's inequality on raw Morris counting yields Pr[|A_hat - A| >= \\epsilon A] <= Var[A_hat] / (\\epsilon A)^2 <= (0.5 A^2) / (\\epsilon^2 A^2) = 1/(2\\epsilon^2). The stream length A cancels out completely, so the failure upper bound never decays with A, providing zero non-trivial concentration (e.g., for \\epsilon = 0.5, bound is 2). Direct Chernoff bounds are prevented because the raw estimator 2^C - 1 is heavy-tailed with geometric jumps, causing double-exponential MGF explosion E[e^{t 2^C}]. Theoretical computer science overcomes this via Median-of-Means: (1) The Mean Trick with k = 10/\\epsilon^2 parallel counters reduces variance to A^2/(2k), achieving constant failure rate p <= 1/20 by Chebyshev; (2) The Median Trick defines binary indicator variables Z_j = 1{|A_bar_j - A| >= \\epsilon A} in {0, 1}. Because Z_j are strictly bounded i.i.d. Bernoulli trials, the median failure event \\sum Z_j >= L/2 is a tail event on a Binomial distribution, legitimately unlocking Chernoff bounds to yield failure <= \\delta with L = O(log(1/\\delta)) groups.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.probability",
+        "concept.variance",
+        "concept.concentration_inequalities"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-spanner-girth-subgraph-degree-pruning",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the proof of the Spanner Theorem (Lemma 1: any graph with girth $\\ge 2k + 1$ has at most $\\mathcal{O}(n^{1 + 1/k})$ edges), why can we NOT directly apply the BFS tree argument to the spanner $H$ itself, and how does Lemma 2 resolve this obstacle?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "A graph $H$ with high average degree $d$ could have minimum degree $d_{\\min} = 0$ or $1$ (e.g., many isolated or leaf vertices), causing the BFS tree bound $(d_{\\min}-1)^k$ to collapse to $0$. Lemma 2 proves that iteratively pruning vertices with degree $< d/4$ deletes strictly fewer than $m/2$ edges, guaranteeing a non-empty subgraph $H'$ with $d_{\\min}(H') \\ge d/4$. Since $H' \\subseteq H$, $H'$ inherits $\\text{Girth}(H') \\ge 2k + 1$, allowing the BFS tree lower bound $(d/4 - 1)^k \\le n$ to bound $d = \\mathcal{O}(n^{1/k})$.",
+          "response": "Correct. The BFS tree expansion at each layer requires high degree on EVERY node traversed. If d_min = 1, the BFS tree could just be a line of vertices. Lemma 2 cures this by pruning all vertices with degree < d/4. Even if all n' vertices were removed, fewer than n'(d/4) = m/2 edges would be deleted, so at least m/2 edges must survive, leaving a non-empty subgraph H' where every vertex has degree >= d/4. Applying the BFS tree bound to H' yields d/4 <= n^{1/k} + 1, which bounds the spanner edge count |E_H| = n d / 2 = O(n^{1 + 1/k})."
+        },
+        {
+          "id": "B",
+          "text": "Because BFS trees in graphs with girth $\\ge 2k + 1$ contain odd-length cross edges that violate the triangle inequality.",
+          "response": "Incorrect. In any graph with girth >= 2k + 1, a BFS tree up to depth k contains zero cross edges or cycle shortcuts between layers, because any shortcut would create a cycle of length <= 2k."
+        },
+        {
+          "id": "C",
+          "text": "Because the stretch factor $2k - 1$ is an odd number, which requires Eulerian tour decomposition rather than BFS tree expansion.",
+          "response": "Incorrect. The stretch factor 2k - 1 follows directly from triangle inequality; Eulerian tours are unrelated."
+        },
+        {
+          "id": "D",
+          "text": "Because the edge arrival stream can create directed cycles in $H$ that prevent BFS exploration.",
+          "response": "Incorrect. The streaming graph model assumes an undirected, unweighted graph."
+        }
+      ],
+      "answer": "A",
+      "explanation": "The BFS tree bound proves that in any graph with girth >= 2k + 1, the k-layer BFS tree from any root has size >= (d_min - 1)^k <= n, forcing d_min = O(n^{1/k}). However, the spanner H could have average degree d = Omega(n^{1/k}) while having d_min(H) = 1 (e.g., leaves attached to a dense core). Thus, we cannot bound d directly from d_min(H). Lemma 2 bridges this gap: by iteratively removing vertices of degree < d/4, at most strictly less than n * (d/4) = n d / 4 = m/2 edges are removed. Because at least m/2 edges survive, the process terminates at a non-empty subgraph H' with minimum degree >= d/4. Since H' is a subgraph of H, Girth(H') >= Girth(H) >= 2k + 1. Applying the BFS bound to H' gives d/4 <= d_min(H') = O(n^{1/k}) ==> d = O(n^{1/k}), proving |E_H| = n d / 2 = O(n^{1 + 1/k}).",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.randomized_algorithms"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-kmedian-coreset-streaming-ratio-expansion",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the approximation ratio analysis of the 2-level streaming $k$-median coreset algorithm, why does Phase 2 bound the clustering cost of the weighted coreset $w(S)$ against the true global optimal centers $C^*$ by $(4\\alpha^2 + 2\\alpha)\\text{OPT}(N)$, resulting in an overall ratio of $4\\alpha^2 + 4\\alpha$?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "Algorithm $\\mathcal{A}$ applied to $w(S)$ incurs cost at most $\\alpha \\text{OPT}(w(S)) \\le 2\\alpha \\text{OPT}^*(w(S))$ via the discrete vs. continuous lemma. Using the true optimal centers $C^*$ as continuous candidate centers for $w(S)$, the triangle inequality gives $\\sum_{i=1}^n d(s_i, C^*_i) \\le \\sum_{i=1}^n d(s_i, p_i) + \\sum_{i=1}^n d(p_i, C^*_i) \\le 2\\alpha\\text{OPT}(N) + \\text{OPT}(N) = (2\\alpha + 1)\\text{OPT}(N)$. Multiplying by $2\\alpha$ yields $(4\\alpha^2 + 2\\alpha)\\text{OPT}(N)$. Summing Phase 1's cost $2\\alpha\\text{OPT}(N)$ and Phase 2's cost yields $(4\\alpha^2 + 4\\alpha)\\text{OPT}(N)$.",
+          "response": "Correct. By the discrete vs. continuous lemma, shifting continuous centers to coreset points multiplies cost by at most 2, so Phase 2 cost is bounded by 2\\alpha OPT*(w(S)). Evaluating w(S) against the true global optimal centers C* and applying the triangle inequality through the original stream points p_i bounds OPT*(w(S)) <= 2\\alpha OPT(N) + OPT(N) = (2\\alpha + 1) OPT(N). Multiplying by 2\\alpha gives (4\\alpha^2 + 2\\alpha) OPT(N), and adding Phase 1's 2\\alpha OPT(N) gives (4\\alpha^2 + 4\\alpha) OPT(N)."
+        },
+        {
+          "id": "B",
+          "text": "Because the continuous $k$-median relaxation reduces the cost by an additional factor of $\\alpha$, transforming $(2\\alpha)^2$ into $4\\alpha^2$ without requiring the triangle inequality on the weighted points.",
+          "response": "Incorrect. Continuous relaxation allows candidate centers to be anywhere, so OPT*(w(S)) <= OPT(w(S)); the factor of 2 comes from shifting unrestricted continuous centers to points of w(S)."
+        },
+        {
+          "id": "C",
+          "text": "Because each of the $\\sqrt{n/k}$ blocks produces independent variances that add linearly, causing Chebyshev's inequality to scale the approximation ratio by $4\\alpha^2$.",
+          "response": "Incorrect. The streaming coreset analysis is deterministic and metric; it does not rely on variance addition or Chebyshev's inequality."
+        },
+        {
+          "id": "D",
+          "text": "Because Phase 2 projects $w(S)$ onto an orthogonal subspace of dimension $\\sqrt{nk}$, expanding distances by at most $(2\\alpha + 1)$ under Johnson-Lindenstrauss flattening.",
+          "response": "Incorrect. The coreset algorithm does not perform dimensional reduction or random projection."
+        }
+      ],
+      "answer": "A",
+      "explanation": "By the discrete vs. continuous lemma, shifting unrestricted continuous centers to points of w(S) incurs at most a factor of 2, so sum_{i=1}^n d(s_i, C_i) <= \\alpha OPT(w(S)) <= 2\\alpha OPT*(w(S)). Since C* is an arbitrary set of k points in continuous space, OPT*(w(S)) <= sum_{i=1}^n d(s_i, C*_i). By the triangle inequality on each term, d(s_i, C*_i) <= d(s_i, p_i) + d(p_i, C*_i). Summing over all n points: sum d(s_i, p_i) is bounded by Phase 1's cost 2\\alpha OPT(N), while sum d(p_i, C*_i) = OPT(N). Hence, OPT*(w(S)) <= (2\\alpha + 1) OPT(N). Multiplying by 2\\alpha yields (4\\alpha^2 + 2\\alpha) OPT(N). Adding Phase 1's distortion sum d(p_i, s_i) <= 2\\alpha OPT(N) through the global triangle inequality sum d(p_i, C_i) <= sum d(p_i, s_i) + sum d(s_i, C_i) gives the total bound (4\\alpha^2 + 4\\alpha) OPT(N).",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.clustering"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
+    },
+    {
+      "question_id": "cs5234-meb-greedy-coreset-recurrence-balancing",
+      "lang": "en",
+      "question_type": "mcq",
+      "prompt": "In the Bădoiu-Clarkson greedy coreset algorithm for the Minimum Enclosing Ball (MEB), how does the geometric opposition between the farthest point $p$ and a boundary support point $q$ enforce the normalized radius ratio recurrence $\\lambda_{i+1} \\ge \\frac{1 + \\lambda_i^2}{2}$, and why is the balancing parameter $\\delta = \\frac{1 - \\lambda_i^2}{2}$?",
+      "choices": [
+        {
+          "id": "A",
+          "text": "The new ball must cover the farthest point $p$ (yielding $\\lambda_{i+1} \\ge 1 - \\delta$ where $\\delta = d(C_i, C_{i+1})/R^*$) and a boundary point $q$ in the opposite half-plane (yielding $\\lambda_{i+1} \\ge \\sqrt{\\lambda_i^2 + \\delta^2}$ via the Pythagorean theorem). The adversary minimizes $\\max(1 - \\delta, \\sqrt{\\lambda_i^2 + \\delta^2})$ at their equality $1 - \\delta = \\sqrt{\\lambda_i^2 + \\delta^2} \\implies (1-\\delta)^2 = \\lambda_i^2 + \\delta^2 \\implies \\delta = \\frac{1 - \\lambda_i^2}{2}$. Substituting $\\delta$ back yields $\\lambda_{i+1} \\ge 1 - \\frac{1-\\lambda_i^2}{2} = \\frac{1+\\lambda_i^2}{2}$, establishing an $\\mathcal{O}(1/\\epsilon)$ dimension-independent convergence rate.",
+          "response": "Correct. The two geometric lower bounds are 1 - \\delta (from covering the farthest point p) and sqrt(\\lambda_i^2 + \\delta^2) (from covering the boundary support point q located in the opposite half-plane, where the angle is >= 90 degrees). The worst-case lower bound is determined by the intersection where both bounds are equal: (1 - \\delta)^2 = \\lambda_i^2 + \\delta^2 ==> 1 - 2\\delta = \\lambda_i^2 ==> \\delta = (1 - \\lambda_i^2)/2. Substituting \\delta gives \\lambda_{i+1} >= (1 + \\lambda_i^2)/2."
+        },
+        {
+          "id": "B",
+          "text": "Because the half-plane boundary support lemma guarantees that $p$ and $q$ are antipodal across $C_{i+1}$, forcing $\\delta = 1/2$ independently of $\\lambda_i$ and collapsing the recurrence to $\\lambda_{i+1} \\ge \\lambda_i + 1/2$.",
+          "response": "Incorrect. The support point q and farthest point p are not necessarily antipodal across C_{i+1}; the support lemma only guarantees q exists in the half-plane opposite to C_{i+1} from C_i, yielding angle >= 90 degrees."
+        },
+        {
+          "id": "C",
+          "text": "Because projecting onto the 2D plane through $C_i, C_{i+1},$ and $q$ preserves volumes, allowing the Cauchy-Schwarz inequality to bound $\\delta = \\frac{1 - \\lambda_i^2}{2}$.",
+          "response": "Incorrect. The bound follows directly from the Pythagorean theorem on the right/obtuse triangle formed by C_i, C_{i+1}, and q, not from volume preservation or Cauchy-Schwarz."
+        },
+        {
+          "id": "D",
+          "text": "Because the greedy step selects $p$ to minimize the variance of distances, forcing the second moment of $\\delta$ to equal $\\lambda_i^2 / 2$.",
+          "response": "Incorrect. The greedy algorithm selects the maximum distance point (farthest point), not a variance-minimizing point."
+        }
+      ],
+      "answer": "A",
+      "explanation": "When adding the farthest point p (d(p, C_i) >= R*), the triangle inequality dictates r_{i+1} >= d(p, C_{i+1}) >= R* - d(C_i, C_{i+1}), giving \\lambda_{i+1} >= 1 - \\delta. Simultaneously, by the Half-Plane Boundary Support Lemma, the opposite half-plane through C_i contains a boundary point q in S_i of the old ball with d(q, C_i) = r_i. Since the angle \\angle C_{i+1} C_i q >= 90 degrees, the Pythagorean theorem yields d(q, C_{i+1})^2 >= r_i^2 + d(C_i, C_{i+1})^2, giving \\lambda_{i+1} >= sqrt(\\lambda_i^2 + \\delta^2). The worst-case lower bound occurs when these two competing constraints meet: (1 - \\delta)^2 = \\lambda_i^2 + \\delta^2 <=> 1 - 2\\delta + \\delta^2 = \\lambda_i^2 + \\delta^2 <=> \\delta = (1 - \\lambda_i^2)/2. Substituting \\delta into 1 - \\delta gives \\lambda_{i+1} >= (1 + \\lambda_i^2)/2. For \\delta_i = 1 - \\lambda_i, this converts to 1/\\delta_{t} >= 1 + t/2, guaranteeing that in t >= 10/\\epsilon steps \\delta_t < \\epsilon/5, proving a (1 + \\epsilon)-approximation with coreset size O(1/\\epsilon) independent of dimension.",
+      "difficulty": "advanced",
+      "question_focus": "concept_understanding",
+      "tag_concepts": [
+        "concept.clustering"
+      ],
+      "review_status": "reviewed",
+      "last_review_date": "2026-09-29"
     }
   ]
 }
