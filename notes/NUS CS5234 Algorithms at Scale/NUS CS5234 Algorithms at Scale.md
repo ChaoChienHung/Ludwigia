@@ -10,11 +10,124 @@ Lang: en
 Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-09-28
+LastModified: 2026-10-01
 </meta>
 
 # NUS CS5234 Algorithms at Scale
 
+# Master Cheatsheet & Executive Quick Reference (Lec 1–5)
+
+> **Executive Overview & Exam Quick Reference:**
+> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 5 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, and lower bound proving techniques.
+
+---
+
+### I. The Three Fundamental Concentration Inequalities
+
+Let $X$ be a random variable with expectation $\mu = \mathbb{E}[X]$:
+
+| Inequality | Required Conditions | Tail Bound Formulation | Operational Sweet Spot & Intuitive Guide |
+| :--- | :--- | :--- | :--- |
+| **Markov's Inequality** | $X \ge 0$, constant $\alpha > 1$ | $\Pr[X \ge \alpha \mu] \le \frac{1}{\alpha}$ | **When you ONLY know the mean** ($\mu = \mathbb{E}[X]$) and need a rough one-sided tail bound. *Cannot prove concentration* because tail decay is only linear ($\mathcal{O}(1/\alpha)$). |
+| **Chebyshev's Inequality** | Finite variance $\text{Var}[X]$ (pairwise independence is sufficient for sums) | $\Pr[\|X - \mu\| \ge a] \le \frac{\text{Var}[X]}{a^2}$ | **When you know the variance** (or mean + variance). Natural deviation scale $a = \varepsilon \mu$. Provides two-sided polynomial decay. *Can be applied directly to final estimators.* |
+| **Chernoff Bound** | $X = \sum_{i=1}^k X_i$, where $X_i \in [0, 1]$ are **mutually independent** | - **$0 < \delta \le 1$:** $\Pr[\|X - \mu\| \ge \delta \mu] \le 2e^{-\delta^2 \mu / 3}$<br>- **$\delta > 1$:** $\Pr[X \ge (1 + \delta)\mu] \le e^{-\delta \mu / 3}$ | **When you have mean $\mu$, relative deviation $\delta \mu$, and independent bounded variables.** Delivers exponential tail decay. High confidence costs only $\mathcal{O}(\log(1/\delta))$. |
+| **Union Bound (Boole)** | Arbitrary events $A_1, A_2, \dots$ (**no independence required**) | $\Pr\left[\bigcup_i A_i\right] \le \sum_i \Pr[A_i]$ | **Pessimistic worst-case failure accumulator.** If each failure mode has negligible probability, their union remains strictly bounded. |
+
+#### One-Line Derivation of Chebyshev from Markov:
+Since $(X - \mu)^2 \ge 0$ is non-negative, applying Markov's inequality to $(X - \mu)^2$ with threshold $a^2$:
+$$\Pr[|X - \mu| \ge a] = \Pr[(X - \mu)^2 \ge a^2] \le \frac{\mathbb{E}[(X - \mu)^2]}{a^2} = \frac{\text{Var}[X]}{a^2} \quad \blacksquare$$
+
+#### Sum of Variance: Ordered vs. Unordered Indexing:
+$$\text{Var}\left[\sum_{i=1}^n X_i\right] = \sum_{i=1}^n \text{Var}[X_i] + \sum_{i \ne j} \text{Cov}(X_i, X_j) = \sum_{i=1}^n \text{Var}[X_i] + 2 \sum_{i < j} \text{Cov}(X_i, X_j)$$
+- **Do we multiply by 2?**
+    - If written as $\sum_{i \ne j}$ (ordered pairs $(i, j)$ and $(j, i)$), both permutations are already counted $\implies$ **do not multiply by 2**.
+    - If written as $\sum_{i < j}$ (unordered pairs, each pair counted once) $\implies$ **must multiply by 2**.
+- **Pairwise Independence Sweet Spot:** When $X_i$ are pairwise independent, $\text{Cov}(X_i, X_j) = 0$ for all $i \ne j$, so $\text{Var}[\sum X_i] = \sum \text{Var}[X_i]$ holds without requiring mutual independence!
+
+---
+
+### II. The Universal 5-Step Sampling & Estimation Pipeline
+
+Every query estimation problem follows a rigorous 5-step pipeline:
+
+```
++---------------------------------------------------------------------------------------------------+
+|                            THE 5-STEP SAMPLING & ESTIMATION PIPELINE                              |
++---------------------------------------------------------------------------------------------------+
+|  Step 1: Identify Ground Truth & Error Metric                                                     |
+|          - Universe size N, target truth A, density p = A / N.                                    |
+|          - Is error Additive (eps * N) or Multiplicative (eps * A)?                              |
+|            -> Decides whether sample size k is constant or density-dependent!                    |
+|                                         |                                                         |
+|                                         v                                                         |
+|  Step 2: Construct Unbiased Base Estimator                                                        |
+|          - Sample k items; let X_i be indicator for sample i.                                    |
+|          - Sample count X = sum X_i has E[X] = k * p = k * (A / N) != A.                          |
+|          - Scaled estimator Y = X * (N / k) satisfies E[Y] = A (Unbiasedness belongs to Y!).       |
+|                                         |                                                         |
+|                                         v                                                         |
+|  Step 3: Compute First and Second Moments                                                         |
+|          - Calculate E[X] and Var[X] (checking pairwise independence or computing covariance).    |
+|                                         |                                                         |
+|                                         v                                                         |
+|  Step 4: Scale Translation & Apply Concentration Bounds                                           |
+|          - Convert output error tolerance to sample count scale:                                  |
+|            |Y - A| >= eps * N  <===>  |X - mu| >= eps * k.                                        |
+|          - Apply Mean Trick for accuracy eps (Var -> Var/k) and Median Trick for confidence delta.|
+|                                         |                                                         |
+|                                         v                                                         |
+|  Step 5: Translate Sample Complexity to Query Complexity                                          |
+|          - Total Queries = (Number of samples k) * (Queries per sample).                          |
++---------------------------------------------------------------------------------------------------+
+```
+
+#### Additive vs. Multiplicative Error ($k$ "Dead" vs. "Alive"):
+- **Additive Error ($\varepsilon N$):**
+    - Relative deviation $\delta = \frac{\varepsilon N}{A} = \frac{\varepsilon}{p}$.
+    - In the Chernoff exponent: $\delta^2 \mu = \frac{\varepsilon^2}{p^2} \cdot (k p) = \frac{\varepsilon^2 k}{p} \ge \varepsilon^2 k$ (since $p \le 1$).
+    - The density $p$ drops out $\implies k = \Theta(1/\varepsilon^2)$ is **fixed ("dead")**, completely independent of $N$ and $A$!
+- **Multiplicative Error ($\varepsilon A$):**
+    - The deviation threshold on $X$ is $\varepsilon \mu$, so $\delta = \varepsilon$ directly.
+    - In the Chernoff exponent: $\delta^2 \mu = \varepsilon^2 \cdot (k p)$.
+    - The density $p$ remains trapped in the exponent $\implies k = \Theta\left(\frac{1}{\varepsilon^2 p}\right) = \Theta\left(\frac{N}{\varepsilon^2 A}\right)$ is **variable ("alive")**, exploding as target $A$ becomes sparse ($A \to 0$).
+
+#### Golden Division of Labor: Mean Trick vs. Median Trick
+- **Mean Trick (Cures Variance $\to$ Fixes Precision $\varepsilon$):**
+    - Average $k = \mathcal{O}(M / \varepsilon^2)$ independent copies of an unbiased estimator with variance $M$.
+    - Variance drops by $k$ ($\text{Var}(\bar{X}) = M/k$). Chebyshev guarantees constant failure probability $\le 1/3$ (or $0.05$).
+- **Median Trick (Cures Confidence $\to$ Fixes $\delta$):**
+    - Take the median of $r = \mathcal{O}(\log(1/\delta))$ independent runs whose individual failure probability is $\le 1/3$.
+    - By Chernoff binarization, median fails only if $> r/2$ runs fail, yielding failure probability $\le 2 e^{-r/100} \le \delta$.
+- **Formula:** Mean handles $\varepsilon$ ($\mathcal{O}(1/\varepsilon^2)$), Median handles $\delta$ ($\mathcal{O}(\log(1/\delta))$).
+
+---
+
+### III. The Three Lower Bound Weapons (Yao's Framework & Reductions)
+
+To prove that no randomized algorithm can solve problem $f$ in fewer than $q$ queries:
+
+| Technique | Core Mathematical Formulation | Operational Execution Protocol |
+| :--- | :--- | :--- |
+| **Yao's Minimax Principle (Part 1)** | $D_\mu(f) \le R(f)$ for **any** input distribution $\mu$ | 1. Construct hard distribution $\mu = \frac{1}{2}\mu_0 + \frac{1}{2}\mu_1$.<br>2. Fix an arbitrary deterministic algorithm querying $< q$ bits.<br>3. Compute probability of observing informative certificates.<br>4. Apply Bayes' theorem to show overall success probability $< 2/3$.<br>5. Conclude $D_\mu(f) \ge q \implies R(f) \ge q$. |
+| **Total Variation Distance (TVD) Transcript Method** | Optimal distinguishing success rate $= \frac{1}{2} + \frac{1}{2} \Delta_{\text{TVD}}(\nu_0, \nu_1)$ | 1. Let $\nu_0, \nu_1$ be distributions of query-answer **transcripts** under $\mu_0$ and $\mu_1$.<br>2. Prove $\Delta_{\text{TVD}}(\nu_0, \nu_1) < 1/3$ for algorithms making $< q$ queries.<br>3. Success rate $< \frac{1}{2} + \frac{1}{2}(1/3) = \frac{2}{3} \implies R(f) \ge q$. |
+| **Query Reduction** | $R(B) \ge \frac{R(A)}{C}$ | If every oracle query to instance $y$ of problem $B$ can be answered using at most $C$ queries to instance $x$ of problem $A$, then lower bound $Q$ on $A$ transfers to lower bound $Q/C$ on $B$. |
+
+---
+
+### IV. Essential Mathematical Inequalities & Limits Toolbox
+
+- **Exponential Limits:**
+    $$\left(1 - \frac{1}{n}\right)^n \le \frac{1}{e} \le \left(1 - \frac{1}{n}\right)^{n-1}$$
+    $$1 - x \le e^{-x} \quad (\forall x \in \mathbb{R})$$
+    $$e^{-2x} \le 1 - x \le e^{-x} \quad (\forall x \in [0, 1/2])$$
+- **Cauchy-Schwarz Inequality ($n$-term vector form):**
+    $$a_1^2 + a_2^2 + \dots + a_n^2 \ge \frac{1}{n} (a_1 + a_2 + \dots + a_n)^2 \iff \|w\|_2^2 \ge \frac{1}{n} \|w\|_1^2$$
+    - Equality holds if and only if $a_1 = a_2 = \dots = a_n$.
+    - *Crucial usage:* Proves Fact 2 ($\|\mu\|_2^2 \ge 1/n$ with equality at $U_n$) and Lemma 1 in Uniformity Testing ($\|\mu - U_n\|_2^2 \ge \frac{4\varepsilon^2}{n}$).
+- **Birthday Paradox Collision Bound:**
+    Drawing $k$ samples from a universe of size $N$ produces at least one collision with probability $\approx 1 - e^{-k(k-1)/(2N)}$; collisions emerge once $k = \Omega(\sqrt{N})$.
+
+---
 
 # Week 1 - Scalability Bottlenecks, Probability Foundations, Concentration Inequalities, and Balls-into-Bins
 
@@ -1400,6 +1513,49 @@ Why does the pure Median Trick require $\mathcal{O}(\log(1/\delta))$ calls witho
 | **Pure Mean (Bounded)** | Strictly bounded $X \in [0, 1]$ (or sub-Gaussian) | **Hoeffding / Chernoff Bound** | $k = \mathcal{O}\left( \frac{1}{\epsilon^2} \log \frac{1}{\delta} \right)$  *(Optimal exponential concentration)* |
 | **Median-of-Means** | Finite variance $M$ (possibly heavy-tailed / unbounded) | **Inner Mean (Chebyshev) + Outer Median (Chernoff)** | $k = \mathcal{O}\left( \frac{M}{\epsilon^2} \log \frac{1}{\delta} \right)$  *(Robust against heavy tails with optimal log-confidence)* |
 
+#### 4. Canonical Exercise: Median-of-Means with Relative Error $\varepsilon A$ and Confidence $1 - 1/n^2$
+
+> **Exercise:**
+> Suppose we are given an unbiased estimator $X$ such that $\mathbb{E}[X] = A$ and $\text{Var}[X] = \alpha A$ (where target $A \ge 1$ and $\alpha > 0$ is a known parameter).
+> Construct a composite estimator $\hat{Y}$ such that:
+>
+> $$\Pr[|\hat{Y} - A| \ge \varepsilon A] \le \frac{1}{n^2}$$
+>
+> Determine the total number of calls to the primitive estimator $X$.
+
+##### The Architectural Motivation: Why "Mean First, Then Median"?
+The Median Trick requires an admission ticket: **the individual estimator's success probability must strictly exceed $1/2$**.
+- If we applied the Median Trick directly to the raw estimator $X$, Chebyshev's inequality would yield failure probability $\le \frac{\text{Var}(X)}{(\varepsilon A)^2} = \frac{\alpha A}{\varepsilon^2 A^2} = \frac{\alpha}{\varepsilon^2 A}$.
+- If $\frac{\alpha}{\varepsilon^2 A} > \frac{1}{2}$ (which easily occurs when $\varepsilon$ is small or target $A$ is modest), the raw estimator fails more than half the time! Taking the median of such estimators would simply cause the algorithm to **fail with extreme stability**.
+- Therefore, we must deploy a two-level architecture:
+  1. **Inner Mean Trick (Cure Variance):** Average $K$ independent copies of $X$ to dampen the variance until the single-run success probability passes the $> 1/2$ threshold (e.g., reaching $\ge 99/100$).
+  2. **Outer Median Trick (Cure Confidence):** Take the median of $T$ such group averages to boost the confidence exponentially to $1 - 1/n^2$.
+
+##### Step-by-Step Construction & Proof:
+1. **Level 1 — Inner Mean Trick (Variance Dampening):**
+   Draw $K = \frac{100 \alpha}{\varepsilon^2}$ independent samples $X_{j, 1}, \dots, X_{j, K}$ and compute their sample mean:
+   $$\bar{X}_j = \frac{1}{K} \sum_{i=1}^K X_{j, i}$$
+   - **Expectation:** $\mathbb{E}[\bar{X}_j] = A$.
+   - **Variance:** $\text{Var}[\bar{X}_j] = \frac{\text{Var}[X]}{K} = \frac{\alpha A}{100 \alpha / \varepsilon^2} = \frac{\varepsilon^2 A}{100}$.
+   - **Chebyshev Guarantee:**
+     $$\Pr[|\bar{X}_j - A| \ge \varepsilon A] \le \frac{\text{Var}[\bar{X}_j]}{(\varepsilon A)^2} = \frac{\varepsilon^2 A / 100}{\varepsilon^2 A^2} = \frac{1}{100 A} \le \frac{1}{100} \quad (\text{since } A \ge 1)$$
+   - Therefore, each individual group average $\bar{X}_j$ succeeds with probability $\ge 99/100 > 1/2$ (the admission ticket is secured!).
+
+2. **Level 2 — Outer Median Trick (Confidence Boosting):**
+   Generate $T = 10 \ln(n^2) = 20 \ln n = \mathcal{O}(\log n)$ independent group averages $\bar{X}_1, \bar{X}_2, \dots, \bar{X}_T$.
+   Output the median:
+   $$\hat{Y} = \text{median}(\bar{X}_1, \dots, \bar{X}_T)$$
+   - Define failure indicator $Z_j = \mathbb{I}[|\bar{X}_j - A| \ge \varepsilon A]$, with $\mathbb{E}[Z_j] \le 1/100$.
+   - The median $\hat{Y}$ deviates by $\ge \varepsilon A$ if and only if more than half of the $T$ groups fail: $\sum_{j=1}^T Z_j \ge T/2$.
+   - By the Chernoff bound on independent Bernoulli indicators (with $\mu = T/100$ and deviation $\delta = 49$):
+     $$\Pr\left[ \sum_{j=1}^T Z_j \ge \frac{T}{2} \right] \le 2 \exp(-T / 100) \le 2 \exp(-20 \ln n / 100) \le \frac{1}{n^2}$$
+
+3. **Total Primitive Query Cost:**
+   $$\text{Total Calls} = K \times T = \left( \frac{100 \alpha}{\varepsilon^2} \right) \times (20 \ln n) = \mathcal{O}\left( \frac{\alpha \log n}{\varepsilon^2} \right) \quad \blacksquare$$
+
+> **The Universal Slogan:**
+> *Mean turns a terrible estimator into a "decent" estimator (success $> 1/2$); Median turns a "decent" estimator into an "almost infallible" estimator (success $\ge 1 - 1/\text{poly}(n)$).*
+
 ### 5.5 The Unified "Two-Knob" Sample Complexity Model: Deconstructing the $k$ Formula
 
 The Master Sample Size Table presented in Section 3.6 is not an ad-hoc collection of empirical heuristics—it is the **direct operational outcome** of the concentration inequality theory (Mean Trick, Median Trick, Chebyshev, and Chernoff).
@@ -2023,54 +2179,143 @@ The resolution lies in the fundamental difference between **exponential growth (
 
 ## 9. Take-Home Exercises and Extended Problems
 
-### 9.1 Exercise: Number of Connected Components
+### 9.1 Exercise 1: Estimating the Number of Connected Components
 
 - **Model:** Adjacency-matrix query model where querying a vertex pair $(u, v)$ returns whether edge $(u, v)$ exists.
-- **Input:** An undirected graph $G = (V, E)$ such that every connected component contains at most 100 vertices.
-- **Output:** An estimate of the total number of connected components $c(G)$ with an **additive error of at most $\epsilon \cdot n$**.
-- **Objective:** Formulate a randomized query algorithm that runs in $\mathcal{O}(n / \epsilon^2)$ queries.
-
-#### Mathematical Foundation (Chazelle, Rubinfeld, Trevisan 2005):
-Let $\mathcal{C}$ be the set of connected components of $G$. For any vertex $u \in V$, let $C_u$ denote the connected component containing $u$.
-Notice the mathematical identity:
-$$c(G) = \sum_{C \in \mathcal{C}} 1 = \sum_{C \in \mathcal{C}} \sum_{u \in C} \frac{1}{|C|} = \sum_{u \in V} \frac{1}{|C_u|}$$
-
-#### Algorithm:
-1. Sample $k = \mathcal{O}(1 / \epsilon^2)$ vertices $u_1, u_2, \dots, u_k$ independently and uniformly at random from $V$ with replacement.
-2. For each sampled vertex $u_i$, execute a Breadth-First Search (BFS) starting at $u_i$ to discover all vertices in $C_{u_i}$.
-   - Because every connected component has $|C_{u_i}| \le 100$, the BFS explores at most 100 vertices.
-   - The number of pair queries per BFS is at most $\binom{100}{2} = 4950 = \mathcal{O}(1)$.
-3. Compute the estimator:
-   $$\hat{c} = \frac{n}{k} \sum_{i=1}^k \frac{1}{|C_{u_i}|}$$
-
-#### Analysis:
-1. **Unbiasedness:**
-   $$\mathbb{E}\left[ \frac{1}{|C_{u_i}|} \right] = \frac{1}{n} \sum_{u \in V} \frac{1}{|C_u|} = \frac{c(G)}{n}$$
-   $$\mathbb{E}[\hat{c}] = \frac{n}{k} \sum_{i=1}^k \mathbb{E}\left[ \frac{1}{|C_{u_i}|} \right] = \frac{n}{k} \cdot k \cdot \frac{c(G)}{n} = c(G)$$
-2. **Variance & Concentration:**
-   Since each $X_i = \frac{1}{|C_{u_i}|} \in (0, 1]$, its variance is bounded by $\text{Var}(X_i) \le 1$.
-   By Chebyshev's inequality (or Chernoff bounds), setting $k = \mathcal{O}(1 / \epsilon^2)$ guarantees:
-   $$\Pr[|\hat{c} - c(G)| \ge \epsilon n] \le \frac{1}{3}$$
-3. **Total Query Complexity:**
-   $$\text{Total Queries} = k \cdot \binom{100}{2} = \mathcal{O}\left( \frac{1}{\epsilon^2} \right) \cdot \mathcal{O}(1) = \mathcal{O}\left( \frac{1}{\epsilon^2} \right) \ll n$$
-   *(If the query model requires $n$ queries per vertex scan, total queries is $\mathcal{O}(n / \epsilon^2)$).*
+- **Input:** An undirected graph $G = (V, E)$ on $n$ vertices.
+- **Output:** An estimate $\hat{C}$ of the total number of connected components $c(G)$ with an **additive error of at most $\epsilon \cdot n$**.
+- **The Core Strategy ("Count Components $\to$ Count 1s"):**
+  To estimate the number of connected components without duplicate counting, we want each connected component $C$ to contribute **exactly 1** to a global sum.
 
 ---
 
-### 9.2 Extended Consideration: General Graphs with Unbounded Component Sizes
+### 9.2 Special Case: Bounded Component Sizes ($|C_u| \le 100$)
 
-If component sizes are not bounded by a constant, running a full BFS on a large component could require $\Omega(n^2)$ queries.
-- **Truncated BFS Remedy:** Stop the BFS as soon as it discovers $\lceil 2 / \epsilon \rceil$ vertices.
-- **Error Analysis:**
-  - If $|C_u| \ge 2 / \epsilon$, its true contribution satisfies $\frac{1}{|C_u|} \le \frac{\epsilon}{2}$.
-  - Replacing $\frac{1}{|C_u|}$ with 0 for large components introduces an error of at most $\epsilon / 2$ per vertex.
-  - Summing across all $n$ vertices, the total truncation error is bounded by:
-    $$\sum_{u \in V} \frac{\epsilon}{2} = \frac{\epsilon \cdot n}{2}$$
-- **Query Complexity:**
-  Exploring up to $2 / \epsilon$ vertices requires at most $\mathcal{O}(1 / \epsilon^2)$ queries per sample.
-  Sampling $k = \mathcal{O}(1 / \epsilon^2)$ vertices yields a total query complexity of:
-  $$\mathcal{O}\left( \frac{1}{\epsilon^4} \right) \quad \text{or } \mathcal{O}\left( \frac{d}{\epsilon^3} \right) \text{ in degree-}d \text{ bounded graphs}$$
-  achieving sublinear query complexity without any component size upper bound!
+When every connected component has size at most $100$:
+
+#### The Minimum-Index Indicator Formulation:
+For each vertex $v_i \in V$, define the indicator:
+$$x_i = \mathbb{I}[v_i \text{ is the vertex with the minimum index in its connected component } C(v_i)]$$
+
+Because every connected component contains exactly one vertex with the minimum index:
+$$\sum_{i=1}^n x_i = c(G)$$
+
+Thus, estimating $c(G)$ reduces directly to **estimating the number of 1s in an $n$-bit binary string $x \in \{0, 1\}^n$** (Section 3)!
+
+#### Algorithm:
+1. Sample $k = \mathcal{O}(1 / \epsilon^2)$ vertices $u_1, u_2, \dots, u_k$ independently and uniformly at random from $V$ with replacement.
+2. For each sampled vertex $u_i$, execute a Breadth-First Search (BFS) starting at $u_i$ to discover all vertices in $C(u_i)$.
+   - Because $|C(u_i)| \le 100$, the BFS explores at most 100 vertices.
+   - For each explored vertex $w \in C(u_i)$, check whether $\text{index}(w) < \text{index}(u_i)$.
+   - In an adjacency-matrix model, scanning neighbors of a vertex takes at most $n$ queries; across at most 100 vertices, the BFS takes $\le 100 n = \mathcal{O}(n)$ queries.
+3. If no vertex in $C(u_i)$ has a smaller index than $u_i$, set $X_i = 1$; otherwise set $X_i = 0$.
+4. Output the scaled estimator:
+   $$\hat{c} = \frac{n}{k} \sum_{i=1}^k X_i$$
+
+#### Analysis:
+1. **Unbiasedness:**
+   $$\mathbb{E}[X_i] = \frac{1}{n} \sum_{v \in V} x_v = \frac{c(G)}{n} \implies \mathbb{E}[\hat{c}] = \frac{n}{k} \sum_{i=1}^k \mathbb{E}[X_i] = c(G)$$
+2. **Variance & Concentration:**
+   Since $X_i \in \{0, 1\}$, $\text{Var}(X_i) \le 1/4$. By Chebyshev's inequality (or Chernoff bounds), setting $k = \mathcal{O}(1/\epsilon^2)$ guarantees failure probability $\le 1/3$.
+3. **Query Complexity:**
+   $$\text{Total Queries} = k \times \mathcal{O}(n) = \mathcal{O}\left( \frac{n}{\epsilon^2} \right)$$
+
+---
+
+### 9.3 General Graphs with Unbounded Component Sizes: The Three-Stage Evolution
+
+When connected components have unbounded size, a component can contain up to $n$ vertices. Running a full BFS would require up to $\Omega(n^2)$ queries, making it impossible to deterministically check whether $v_i$ is the minimum index.
+
+We resolve this bottleneck across three progressively refined algorithms:
+
+```
++---------------------------------------------------------------------------------------------------+
+|                        EVOLUTION OF GENERAL CONNECTED COMPONENT ESTIMATORS                        |
++---------------------------------------------------------------------------------------------------+
+|  Solution 1: Truncation (Ignore Large Components)                                                 |
+|              - Drop components of size > q = 2/eps (at most eps * n / 2 such components).         |
+|              - BFS depth capped at q.                                                             |
+|              - Query Complexity: O(n / eps^3).                                                    |
+|                                         |                                                         |
+|                                         v                                                         |
+|  Solution 2: Randomized Geometric Variable R (Unbiased Weight 1/|C|)                               |
+|              - Draw R in {1, ..., n} with Pr[R >= j] = 1/j (E[R] = O(log n)).                     |
+|              - Indicator Y_v = I[BFS finishes in <= R steps] has E[Y_v] = 1/|C(v)|.               |
+|              - Query Complexity: O( (n log n) / eps^2 ).                                          |
+|                                         |                                                         |
+|                                         v                                                         |
+|  Solution 3: Combined Optimal Estimator (Truncated Geometric Variable)                            |
+|              - Cap geometric variable R at q = 2/eps (E[R] = O(log(1/eps))).                      |
+|              - Achieve optimal query complexity: O( eps^{-2} n log(1/eps) )!                      |
++---------------------------------------------------------------------------------------------------+
+```
+
+#### Solution 1: Truncation — Ignore Large Components ($\mathcal{O}(n / \epsilon^3)$)
+1. **Structural Observation:**
+   A large component contains many vertices, meaning there cannot be too many large components!
+   Specifically, the number of connected components with $|C| > q$ is strictly bounded by:
+   $$c_{\text{large}} \le \frac{n}{q}$$
+2. **Truncated Counting:**
+   Define $x_i = \mathbb{I}[|C(v_i)| \le q \text{ and } v_i \text{ is the minimum index in } C(v_i)]$, and let $c_{\text{small}} = \sum_{i=1}^n x_i$.
+   Then:
+   $$c(G) - \frac{n}{q} \le c_{\text{small}} \le c(G)$$
+3. **Parameter Setting:**
+   Set the threshold $q = \frac{2}{\epsilon}$. Then the truncation error is at most $\frac{n}{q} = \frac{\epsilon n}{2}$.
+   Setting internal estimation error tolerance to $\eta = \frac{\epsilon}{2}$ ensures the total error is $\le \frac{\epsilon n}{2} + \frac{\epsilon n}{2} = \epsilon n$.
+4. **Complexity:**
+   Each BFS explores at most $q$ vertices, requiring at most $q \cdot n = \mathcal{O}(n/\epsilon)$ queries.
+   Sampling $k = \mathcal{O}(1/\eta^2) = \mathcal{O}(1/\epsilon^2)$ vertices yields total query complexity:
+   $$\text{Total Queries} = \mathcal{O}\left( \frac{1}{\epsilon^2} \right) \times \mathcal{O}\left( \frac{n}{\epsilon} \right) = \mathcal{O}\left( \frac{n}{\epsilon^3} \right)$$
+
+---
+
+#### Solution 2: Randomized Geometric Variable $R$ — Unbiased Weight $1/|C|$ ($\mathcal{O}(n \log n / \epsilon^2)$)
+Instead of searching for a unique minimum-index leader, what if **every vertex $v \in C$ contributes a fractional weight $\frac{1}{|C|}$**?
+$$\sum_{v \in V} \frac{1}{|C(v)|} = \sum_{C \in \mathcal{C}} \sum_{v \in C} \frac{1}{|C|} = \sum_{C \in \mathcal{C}} 1 = c(G)$$
+
+How can an algorithm estimate $\frac{1}{|C(v)|}$ in sublinear time without fully exploring $C(v)$?
+
+1. **Constructing the Randomized Stopping Budget $R$:**
+   Draw an integer random variable $R \in \{1, 2, \dots, n\}$ with the probability distribution:
+   $$\Pr[R \ge j] = \frac{1}{j} \quad \iff \quad \Pr[R = j] = \frac{1}{j} - \frac{1}{j+1} = \frac{1}{j(j+1)}$$
+   The expectation of $R$ is harmonic:
+   $$\mathbb{E}[R] = \sum_{j=1}^n \Pr[R \ge j] = \sum_{j=1}^n \frac{1}{j} = H_n = \ln n + \mathcal{O}(1) = \mathcal{O}(\log n)$$
+
+2. **The Unbiased Indicator:**
+   For each sampled vertex $v$, draw $R \sim \mathcal{P}$ independently.
+   Execute BFS starting at $v$ for at most $R$ steps.
+   Define:
+   $$Y_v = \mathbb{I}[R \ge |C(v)|] = \begin{cases} 1 & \text{if BFS explores the entire component in } \le R \text{ steps} \\ 0 & \text{otherwise} \end{cases}$$
+   Then the conditional expectation is strictly:
+   $$\mathbb{E}[Y_v \mid C(v)] = \Pr[R \ge |C(v)|] = \frac{1}{|C(v)|}$$
+   $$\sum_{v \in V} \mathbb{E}[Y_v] = \sum_{v \in V} \frac{1}{|C(v)|} = c(G)$$
+
+3. **Complexity:**
+   The expected number of queries per sampled vertex is:
+   $$\mathbb{E}[R \cdot n] = n \cdot \mathbb{E}[R] = \mathcal{O}(n \log n)$$
+   With $k = \mathcal{O}(1/\epsilon^2)$ samples, total query complexity is:
+   $$\text{Total Queries} = \mathcal{O}\left( \frac{n \log n}{\epsilon^2} \right)$$
+
+---
+
+#### Solution 3: The Combined Optimal Estimator ($\mathcal{O}(\epsilon^{-2} n \log(1/\epsilon))$)
+We synthesize the best aspects of Solutions 1 and 2:
+1. **Truncated Geometric Budget:**
+   Apply the geometric random variable $R$ **only up to threshold $q = \frac{2}{\epsilon}$**:
+   - For $j \in \{1, \dots, q\}$, $\Pr[R \ge j] = 1/j$.
+   - The expected value of truncated $R$ is strictly bounded by:
+     $$\mathbb{E}[R] = \sum_{j=1}^q \frac{1}{j} = \mathcal{O}(\log q) = \mathcal{O}\left( \log \frac{1}{\epsilon} \right)$$
+2. **Execution:**
+   Run BFS from sampled vertex $v$ for at most $R \le q$ steps.
+   - If $|C(v)| \le R \le q$, set $Y_v = 1$.
+   - If BFS exceeds $R$ steps or exceeds $q$ steps, immediately abort and set $Y_v = 0$.
+3. **Error Analysis:**
+   - Truncating at $q = 2/\epsilon$ ignores components larger than $q$, introducing an additive error of at most $\frac{n}{q} = \frac{\epsilon n}{2}$.
+   - Sampling $k = \mathcal{O}(1/\epsilon^2)$ vertices estimates the truncated sum $c_{\text{small}}$ to within additive error $\frac{\epsilon n}{2}$ with probability $\ge 2/3$.
+   - By triangle inequality, total additive error is $\le \frac{\epsilon n}{2} + \frac{\epsilon n}{2} = \epsilon n$.
+4. **Optimal Query Complexity:**
+   $$\text{Total Queries} = k \times \mathbb{E}[\text{Queries per sample}] = \mathcal{O}\left( \frac{1}{\epsilon^2} \right) \times \left( n \cdot \mathbb{E}[R] \right) = \mathcal{O}\left( \frac{n \log(1/\epsilon)}{\epsilon^2} \right) \quad \blacksquare$$
+   *(In bounded-degree graphs with max degree $d$ under the adjacency-list oracle, each BFS step queries $d$ neighbors rather than $n$, reducing total queries to $\mathcal{O}\left( \frac{d \log(1/\epsilon)}{\epsilon^2} \right)$).*
 ---
 
 # Week 3 - Query Complexity Lower Bounds: Decision Trees, Yao's Minimax Principle, and Query Reductions
@@ -3366,6 +3611,80 @@ Why did we perform a reduction instead of proving Yao's Principle directly on Gr
 
 ---
 
+### 7.9 Assignment 1 · Problem 2: Locating the Unique 1 in Half-Strings ($\Theta(n)$ Bound via Yao)
+
+> **Assignment 1 · Problem 2:**
+> Let $x \in \{0, 1\}^n$ where $n$ is an even positive integer. The input string is promised to contain **exactly one 1** ($\sum_{i=1}^n x_i = 1$).
+> The problem $f(x)$ requires determining whether the unique 1 is located in the first half of the string or the second half:
+>
+> $$f(x) = \begin{cases} 0 & \text{if the unique 1 is at index } j \in \{1, 2, \dots, n/2\} \\ 1 & \text{if the unique 1 is at index } j \in \{n/2 + 1, \dots, n\} \end{cases}$$
+>
+> Prove that the randomized query complexity satisfies:
+>
+> $$R(f) = \Theta(n)$$
+
+#### 1. Upper Bound: $R(f) \le n/2 = \mathcal{O}(n)$
+We construct a simple deterministic query algorithm:
+1. Sequentially query the first $n/2$ bit positions $x_1, x_2, \dots, x_{n/2}$.
+2. If any query returns $x_i = 1$, immediately halt and output $0$ (the 1 is in the first half).
+3. If all $n/2$ queries return $0$, by the promise that exactly one 1 exists, the 1 must reside in the second half $\implies$ halt and output $1$.
+
+- **Query Count:** At most $n/2$ queries in all cases.
+- **Correctness:** 100% exact (zero error).
+- **Conclusion:** $R(f) \le D(f) \le n/2 = \mathcal{O}(n)$.
+
+---
+
+#### 2. Lower Bound: $R(f) \ge n/6 = \Omega(n)$ via Yao's Minimax Principle
+
+We apply Yao's Minimax Principle ($D_\mu(f) \le R(f)$):
+
+1. **Constructing the Hard Input Distribution $\mu$:**
+   Let $\mu$ be the uniform distribution over the $n$ standard basis vectors $\{e_1, e_2, \dots, e_n\}$, where $e_j \in \{0, 1\}^n$ contains a 1 at index $j$ and zeros elsewhere:
+   $$\Pr_{x \sim \mu}[x = e_j] = \frac{1}{n} \quad \forall j \in \{1, \dots, n\}$$
+   By symmetry:
+   $$\Pr[f(x) = 0] = \Pr[j \le n/2] = \frac{n/2}{n} = \frac{1}{2}$$
+   $$\Pr[f(x) = 1] = \Pr[j > n/2] = \frac{n/2}{n} = \frac{1}{2}$$
+
+2. **Analyzing an Arbitrary Deterministic Algorithm of Depth $q$:**
+   Fix any deterministic decision tree $A$ that makes at most $q$ queries.
+   Consider the execution path where the algorithm encounters only zeros (the all-zeros transcript).
+   Let $q_1$ be the number of queries directed to the first half $\{1, \dots, n/2\}$, and let $q_2$ be the number of queries directed to the second half $\{n/2 + 1, \dots, n\}$, with $q_1 + q_2 = q \le n$.
+
+3. **Partitioning Into Two Mutually Exclusive Events:**
+   - **Event 1 (Hit the 1):** The unique 1 is located at one of the $q$ queried positions.
+     $$\Pr[\text{Hit 1}] = \frac{q}{n}$$
+     In this case, the algorithm observes the 1 and outputs the correct half with certainty (accuracy $1$).
+   - **Event 2 (All Queries Return 0):** None of the $q$ queried positions contain the 1.
+     $$\Pr[\text{All 0s}] = \frac{n - q}{n}$$
+     Conditioned on seeing all zeros, the unique 1 is distributed **uniformly at random among the remaining $n - q$ uninspected indices**.
+     - Exactly $n/2 - q_1$ candidate locations belong to the first half.
+     - Exactly $n/2 - q_2$ candidate locations belong to the second half.
+     The optimal Bayes decision rule is to guess the half that contains more unqueried candidates:
+     $$\Pr[\text{Correct} \mid \text{All 0s}] = \frac{\max(n/2 - q_1, \; n/2 - q_2)}{n - q}$$
+
+4. **Evaluating the Total Expected Success Probability:**
+   $$\begin{aligned}
+   \mathbb{E}_{x \sim \mu}[I(x, A)] &= \Pr[\text{Hit 1}] \cdot 1 + \Pr[\text{All 0s}] \cdot \Pr[\text{Correct} \mid \text{All 0s}] \\
+   &= \frac{q}{n} \cdot 1 + \frac{n - q}{n} \cdot \frac{\max(n/2 - q_1, \; n/2 - q_2)}{n - q} \\
+   &= \frac{q + \max(n/2 - q_1, \; n/2 - q_2)}{n}
+   \end{aligned}$$
+   Because $q_1, q_2 \ge 0$, we have $\max(n/2 - q_1, \; n/2 - q_2) \le n/2$. Substituting this upper bound:
+   $$\mathbb{E}_{x \sim \mu}[I(x, A)] \le \frac{q + n/2}{n} = \frac{1}{2} + \frac{q}{n}$$
+
+5. **Deriving the Lower Bound on $q$:**
+   To satisfy the randomized correctness threshold $\mathbb{E}_{x \sim \mu}[I(x, A)] \ge 2/3$:
+   $$\frac{1}{2} + \frac{q}{n} \ge \frac{2}{3} \implies \frac{q}{n} \ge \frac{2}{3} - \frac{1}{2} = \frac{1}{6} \implies q \ge \frac{n}{6}$$
+   Hence:
+   $$D_\mu(f) \ge \frac{n}{6}$$
+   By Part 1 of Yao's Minimax Principle:
+   $$R(f) \ge D_\mu(f) \ge \frac{n}{6} = \Omega(n)$$
+
+Combining the upper and lower bounds:
+$$\frac{n}{6} \le R(f) \le \frac{n}{2} \implies R(f) = \Theta(n) \quad \blacksquare$$
+
+---
+
 ## 8. Week 3 Review Notes & Methodological Synthesis
 
 ### 8.1 Concept Chain: From Randomized Algorithms to Yao's Minimax Principle
@@ -3571,6 +3890,15 @@ Property testing relaxes the decision problem by introducing a distance paramete
 > 1. **Completeness:** If $x \in \mathcal{L}$, then $\Pr(\mathcal{T}(x) = \text{`YES'}) \ge \frac{2}{3}$. If this probability is strictly $1$, the tester is said to possess **one-sided error**.
 > 2. **Soundness:** If $x$ is $\epsilon$-far from $\mathcal{L}$, then $\Pr(\mathcal{T}(x) = \text{`NO'}) \ge \frac{2}{3}$.
 > 3. **Promise Tolerance:** If $0 < \text{dist}(x, \mathcal{L}) \le \epsilon$, the tester is permitted to output either `YES` or `NO`.
+
+> **The One-Sided Tester Mindset (Why Finding a Single Violation Suffices):**
+> Notice a profound design principle for one-sided property testers:
+> Whenever the algorithm observes **even a single violation** (such as an inversion $a_i > a_j$, an odd cycle, or a duplicate value $a_i = a_j$), it can **immediately reject and output NO without any risk of error**:
+> - If input $x$ is genuinely $\epsilon$-far, outputting NO is strictly correct.
+> - If $x$ lies in the intermediate promise buffer ($0 < \text{dist} \le \epsilon$), outputting NO is legally permitted (the promise model allows either answer).
+> - If $x \in \mathcal{L}$, no violations exist in the data whatsoever, so the tester will NEVER reject an innocent input ($\Pr(\text{Accept}) = 1$).
+>
+> Therefore, algorithm design reduces entirely to: **Ensure that when $x$ is $\epsilon$-far, the density of violations is high enough that drawing $k$ random samples will capture at least one violation with probability $\ge 2/3$.** If no violation is witnessed, outputting YES is guaranteed to be safe!
 
 ---
 
@@ -4172,7 +4500,10 @@ $$\Theta\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$
   - If $G$ is $\epsilon$-far from bipartite (meaning strictly more than $\epsilon n^2$ edges must be deleted to make $G$ bipartite), output `NO` with probability $\ge 2/3$.
   - Otherwise, output either `YES` or `NO`.
 
-#### Goldreich-Goldwasser-Ron Induced Subgraph Tester (1998):
+---
+
+### 5.1 The Goldreich-Goldwasser-Ron Induced Subgraph Tester (1998)
+
 1. Sample a subset $U \subset V$ of $k = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\left(\frac{1}{\epsilon}\right) \right)$ vertices uniformly at random.
 2. Query all $\binom{k}{2}$ vertex pairs within $U$ to construct the exact induced subgraph $G[U]$.
 3. **Decision Rule:**
@@ -4183,6 +4514,157 @@ $$\Theta\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$
 - **One-Sided Error:** If $G$ is bipartite, every induced subgraph $G[U]$ is bipartite $\implies \Pr(\text{Accept}) = 1$.
 - **Soundness:** If $G$ is $\epsilon$-far from bipartite, the random subset $U$ contains an odd cycle with probability $\ge 2/3$.
 - **Query Complexity:** $\binom{k}{2} = \mathcal{O}\left( \frac{1}{\epsilon^4} \log^2\left(\frac{1}{\epsilon}\right) \right) = \mathcal{O}(\text{poly}(1/\epsilon))$, **completely independent of the number of vertices $n$!**
+
+---
+
+### 5.2 Complete Soundness Proof: The Bad Edge Lemma & Bipartition Union Bound
+
+To prove that the tester detects an odd cycle whenever $G$ is $\epsilon$-far from bipartite:
+
+1. **Phase 1: Sampling Core Subset $C$ to Cover High-Degree Vertices:**
+   Sample a small set $C \subset V$ of size $t = \mathcal{O}(\frac{1}{\epsilon} \log \frac{1}{\epsilon})$.
+   Let $N(C)$ denote the set of vertices that have at least one neighbor in $C$.
+   - **Low-Degree Vertices:** Vertices with degree $< \frac{\epsilon n}{20}$ have incident edges numbering at most $n \cdot \frac{\epsilon n}{20} = 0.05 \epsilon n^2$.
+   - **High-Degree Vertices:** Any vertex with degree $\ge \frac{\epsilon n}{20}$ fails to connect to $C$ with probability:
+     $$\left(1 - \frac{\epsilon}{20}\right)^t \le e^{-\epsilon t / 20} \le \frac{\epsilon}{100}$$
+   By Markov's inequality, with probability $\ge 0.99$, the total number of edges outside $N(C)$ satisfies:
+   $$|E_{\text{out}}| \le 0.1 \epsilon n^2$$
+
+2. **Phase 2: The Bad Edge Structural Lemma:**
+   Consider any arbitrary 2-partition of $C$ into $(C_1, C_2)$.
+   An edge $e = (u, v) \in E$ is called a **bad edge with respect to $(C_1, C_2)$** if:
+   - Both $u$ and $v$ have neighbors in $C_1$, OR
+   - Both $u$ and $v$ have neighbors in $C_2$.
+   
+   > **Lemma (Bad Edge Density):**
+   > If $G$ is $\epsilon$-far from bipartite, then for **every possible 2-partition $(C_1, C_2)$ of $C$**, the number of bad edges is at least:
+   > $$|E_{\text{bad}}| \ge 0.9 \epsilon n^2$$
+   
+   *Proof:* Suppose there existed a 2-partition $(C_1, C_2)$ with fewer than $0.9 \epsilon n^2$ bad edges.
+   Partition $V$ by placing vertex $u$ into $V_1$ if $u$ has neighbors in $C_2$, and into $V_2$ if $u$ has neighbors in $C_1$ (breaking ties arbitrarily).
+   Any monochromatic edge in this partition must either be a bad edge or an edge outside $N(C)$.
+   The total number of monochromatic edges would be strictly less than:
+   $$|E_{\text{bad}}| + |E_{\text{out}}| < 0.9 \epsilon n^2 + 0.1 \epsilon n^2 = \epsilon n^2$$
+   Deleting these $< \epsilon n^2$ edges would make $G$ bipartite, contradicting the premise that $G$ is $\epsilon$-far from bipartite!
+
+3. **Phase 3: Sampling Witness Set $S$ & Union Bound Over $2^{|C|}$ Partitions:**
+   Sample a second independent set $S \subset V$ of size $s = \mathcal{O}(1/\epsilon)$.
+   - For a fixed 2-partition $(C_1, C_2)$, the probability that a random pair from $S$ hits a bad edge is $\ge \frac{0.9 \epsilon n^2}{\binom{n}{2}} \ge 1.8 \epsilon$.
+   - Drawing $\Theta(1/\epsilon)$ pairs in $S$, the probability that *none* of them is a bad edge decays exponentially as $\exp(-\Omega(|C|))$.
+   - Taking a union bound across all $2^{|C|}$ possible 2-partitions of $C$, with probability $\ge 0.79$, **every single bipartition has at least one bad edge with both endpoints in $S$**.
+   - If both endpoints $u, v \in S$ connect to the same side $C_1$ via paths through $w_1, w_2 \in C_1$, the path $u - w_1 - \dots - w_2 - v - u$ forms an **odd cycle** within $G[S \cup C]$.
+   - Hence, $G[U]$ contains an odd cycle with probability $\ge 0.79 > 2/3$, triggering rejection. $\blacksquare$
+
+---
+
+### 5.3 Exercise 3: Uniformity Testing Lower Bound $\Omega(\sqrt{n})$ (TVD Framework)
+
+> **Theorem:**
+> Any algorithm that distinguishes whether an unknown distribution $\mu$ equals $U_n$ versus $\Delta_{\text{TVD}}(\mu, U_n) \ge 1/4$ with probability $\ge 2/3$ requires $\Omega(\sqrt{n})$ samples.
+
+#### Proof via Yao's Minimax Principle & TVD of Transcripts:
+1. **Constructing the Two Prior Distributions:**
+   - **Hypothesis 0 ($I = 0$):** Draw $m$ independent samples from $U_n$ (let $\nu_0$ denote the joint distribution of $m$ samples in $[n]^m$).
+   - **Hypothesis 1 ($I = 1$):** First, choose a subset $S \subset [n]$ of size $|S| = n/2$ uniformly at random from all $\binom{n}{n/2}$ candidates. Then, draw $m$ independent samples from $\mu_S$, where:
+     $$\mu_S(i) = \begin{cases} \frac{2}{n} & \text{if } i \in S \\ 0 & \text{if } i \notin S \end{cases}$$
+     Let $\nu_1$ denote the joint distribution of $m$ samples in $[n]^m$.
+
+2. **Step (a) Soundness of NO-Instances:**
+   For every fixed subset $S$ with $|S| = n/2$:
+   $$\Delta_{\text{TVD}}(\mu_S, U_n) = \frac{1}{2} \sum_{i=1}^n |\mu_S(i) - 1/n| = \frac{1}{2} \left[ \frac{n}{2} \cdot \left| \frac{2}{n} - \frac{1}{n} \right| + \frac{n}{2} \cdot \left| 0 - \frac{1}{n} \right| \right] = \frac{1}{2} \left[ \frac{1}{2} + \frac{1}{2} \right] = \frac{1}{2} \ge \frac{1}{4}$$
+   Thus $\mu_S$ is always a legitimate NO-instance.
+
+3. **Step (b) Birthday Paradox Collision Probability:**
+   Let $\delta_0$ and $\delta_1$ denote the probability that an $m$-sample sequence contains at least one collision under $\nu_0$ and $\nu_1$, respectively:
+   - Under $U_n$, any two samples collide with probability $1/n \implies \delta_0 \le \binom{m}{2} \frac{1}{n}$.
+   - Under $\mu_S$, any two samples collide with probability $\frac{2}{n} \implies \delta_1 \le \binom{m}{2} \frac{2}{n}$.
+
+4. **Step (c) Total Variation Distance Between Sample Sequences:**
+   Partition the sequence space $[n]^m$ into $D$ (all-distinct sequences) and $N$ (sequences with $\ge 1$ collision).
+   - On $D$, $\nu_0(x) = (1/n)^m$ is constant for all $x \in D$.
+   - Under $\nu_1$, by symmetry over the uniform choice of $S$, every distinct sequence $x \in D$ has identical probability:
+     $$\nu_1(x) = \mathbb{E}_S \left[ \prod_{i=1}^m \mu_S(x_i) \right] = \frac{\binom{n - m}{n/2 - m}}{\binom{n}{n/2}} \cdot \left(\frac{2}{n}\right)^m \quad (\text{constant on } D)$$
+   - Therefore:
+     $$\sum_{x \in D} |\nu_0(x) - \nu_1(x)| = |\nu_0(D) - \nu_1(D)| = |(1 - \delta_0) - (1 - \delta_1)| = |\delta_1 - \delta_0|$$
+   - Evaluating the TVD:
+     $$\Delta_{\text{TVD}}(\nu_0, \nu_1) = \frac{1}{2} \sum_{x \in N} |\nu_0 - \nu_1| + \frac{1}{2} \sum_{x \in D} |\nu_0 - \nu_1| \le \frac{1}{2}(\delta_0 + \delta_1) + \frac{1}{2}|\delta_1 - \delta_0| = \max(\delta_0, \delta_1) \le \binom{m}{2} \frac{2}{n} \le \frac{m(m - 1)}{n}$$
+
+5. **Step (d) Concluding the Lower Bound:**
+   If $m \le \frac{\sqrt{n}}{2}$, then:
+   $$\Delta_{\text{TVD}}(\nu_0, \nu_1) \le \frac{m^2}{n} \le \frac{n/4}{n} = \frac{1}{4} < \frac{1}{3}$$
+   By the Single-Sample Distinguishability Proposition:
+   $$\Pr(\text{Success}) \le \frac{1}{2} + \frac{1}{2} \Delta_{\text{TVD}}(\nu_0, \nu_1) \le \frac{1}{2} + \frac{1}{8} = \frac{5}{8} < \frac{2}{3}$$
+   By Yao's Minimax Principle, any algorithm achieving $\ge 2/3$ success requires $m = \Omega(\sqrt{n})$ samples. $\blacksquare$
+
+> **Physical Intuition:**
+> With fewer than $\sqrt{n}$ samples, by the Birthday Paradox, samples from both distributions consist almost entirely of distinct values. A set of distinct items looks completely uniform under both distributions; collisions are the only statistically distinguishable signature!
+
+---
+
+### 5.4 Assignment 1 · Problem 3: Permutation Testing via Collision Detection ($\mathcal{O}(\sqrt{n/\varepsilon})$)
+
+> **Assignment 1 · Problem 3:**
+> An array $a = (a_1, a_2, \dots, a_n) \in [n]^n$ of length $n$ with entries from $\{1, 2, \dots, n\}$ has the **permutation property** ($a \in P_n$) if every value in $\{1, \dots, n\}$ appears exactly once (i.e., $a$ is a permutation of $[n]$).
+> - Distance: $\text{dist}(a, P_n) = \min_{b \in P_n} |\{i : a_i \ne b_i\}|$.
+> - Array $a$ is $\epsilon$-far from $P_n$ if $\text{dist}(a, P_n) \ge \epsilon n$.
+> Construct a one-sided tester for $P_n$ and prove its sample complexity is $\mathcal{O}(\sqrt{n/\epsilon})$.
+
+#### 1. Algorithmic Procedure:
+1. Sample a subset $I \subset \{1, 2, \dots, n\}$ of $s = \left\lceil 4 \sqrt{\frac{n}{\epsilon}} \right\rceil$ distinct indices uniformly at random without replacement.
+2. Query the oracle for $a_i$ for each $i \in I$.
+3. If there exist distinct indices $i, j \in I$ such that $a_i = a_j$ (a collision occurs), output `NO`.
+4. If all sampled values are mutually distinct, output `YES`.
+
+---
+
+#### 2. Rigorous Proof of Correctness & Complexity:
+
+##### Part 1: Distance Identity $\text{dist}(a, P_n) = n - D$
+Let $D = |\{a_1, a_2, \dots, a_n\}|$ be the number of distinct values appearing in array $a$.
+- There are $n - D$ values from $\{1, \dots, n\}$ that are completely absent from $a$. Since changing any single entry $a_i$ can introduce at most one new value, at least $n - D$ entries must be modified to include all missing values:
+  $$\text{dist}(a, P_n) \ge n - D$$
+- Conversely, for each of the $D$ unique values, preserve its first occurrence and modify all other $n - D$ duplicate entries by assigning them the $n - D$ missing values. This creates a valid permutation in exactly $n - D$ changes:
+  $$\text{dist}(a, P_n) \le n - D$$
+- Therefore:
+  $$\text{dist}(a, P_n) = n - D$$
+  An array is $\epsilon$-far from $P_n$ if and only if $n - D \ge \epsilon n$.
+
+##### Part 2: Lower Bound on Disjoint Collision Pairs
+For each value $v \in [n]$, let $c_v$ denote its count in $a$.
+The positions containing value $v$ can be partitioned into $\lfloor c_v / 2 \rfloor$ disjoint pairs of identical values.
+Summing across all values:
+$$m = \sum_{v=1}^n \left\lfloor \frac{c_v}{2} \right\rfloor \ge \sum_{v=1}^n \frac{c_v - 1}{2} = \frac{\sum c_v - \sum 1_{c_v > 0}}{2} = \frac{n - D}{2} \ge \frac{\epsilon n}{2}$$
+Thus, an $\epsilon$-far array contains at least $m \ge \frac{\epsilon n}{2}$ **mutually disjoint pairs** of indices with identical values!
+
+##### Part 3: One-Sided Error Completeness
+If $a \in P_n$, all $n$ entries are distinct. Because the algorithm samples distinct indices, all sampled values are distinct $\implies \Pr(\text{Accept}) = 1$.
+
+##### Part 4: Soundness Analysis via Chebyshev's Inequality
+Label the $m$ disjoint pairs as $P_1, P_2, \dots, P_m$.
+For each pair $k \in \{1, \dots, m\}$, define indicator:
+$$I_k = \mathbb{I}[\text{both index endpoints of pair } P_k \text{ are included in sample } I]$$
+Let $X = \sum_{k=1}^m I_k$ be the number of collision pairs captured by the sample.
+- **Expectation:**
+  $$p = \mathbb{E}[I_k] = \frac{\binom{n-2}{s-2}}{\binom{n}{s}} = \frac{s(s - 1)}{n(n - 1)}$$
+  $$\mu = \mathbb{E}[X] = m \cdot \frac{s(s - 1)}{n(n - 1)}$$
+  With $s = 4 \sqrt{n/\epsilon}$, we have $s(s - 1) \ge \frac{s^2}{2} = \frac{8n}{\epsilon}$. Since $m \ge \frac{\epsilon n}{2}$ and $n(n - 1) \le n^2$:
+  $$\mu \ge \left( \frac{\epsilon n}{2} \right) \cdot \frac{8n / \epsilon}{n^2} = 4$$
+- **Covariance of Disjoint Pairs:**
+  For any two distinct pairs $k \ne \ell$, because the pairs are disjoint, their endpoints form 4 distinct indices:
+  $$\mathbb{E}[I_k I_\ell] = \frac{\binom{n-4}{s-4}}{\binom{n}{s}} = \frac{s(s-1)(s-2)(s-3)}{n(n-1)(n-2)(n-3)} \le \left( \frac{s(s-1)}{n(n-1)} \right)^2 = \mathbb{E}[I_k] \mathbb{E}[I_\ell]$$
+  Therefore:
+  $$\text{Cov}(I_k, I_\ell) \le 0 \quad (\text{negative correlation!})$$
+- **Variance:**
+  $$\text{Var}(X) = \sum_{k=1}^m \text{Var}(I_k) + 2 \sum_{k < \ell} \text{Cov}(I_k, I_\ell) \le \sum_{k=1}^m \text{Var}(I_k) \le \sum_{k=1}^m \mathbb{E}[I_k] = \mu$$
+- **Applying Chebyshev's Inequality:**
+  The tester fails to reject only if $X = 0$:
+  $$\Pr[X = 0] \le \Pr[|X - \mu| \ge \mu] \le \frac{\text{Var}(X)}{\mu^2} \le \frac{\mu}{\mu^2} = \frac{1}{\mu} \le \frac{1}{4}$$
+  Hence, the tester correctly rejects an $\epsilon$-far array with probability:
+  $$\Pr[\text{Reject}] = \Pr[X > 0] \ge 1 - \frac{1}{4} = \frac{3}{4} \ge \frac{2}{3}$$
+
+##### Part 5: Query Complexity
+The number of sampled queries is:
+$$s = \left\lceil 4 \sqrt{\frac{n}{\epsilon}} \right\rceil = \mathcal{O}\left( \sqrt{\frac{n}{\epsilon}} \right) \quad \blacksquare$$
 
 ---
 
@@ -4202,6 +4684,10 @@ $$\Theta\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$
 - **Total Variation Distance & Yao's Transcript Method:** $\Delta_{\text{TVD}}(\mu, \gamma) = \frac{1}{2} \|\mu - \gamma\|_1 = \max_S (\mu(S) - \gamma(S))$. In single-sample distinguishing, the optimal Bayes decision rule achieves $\Pr(\text{correct}) = \frac{1}{2} + \frac{1}{2} \Delta_{\text{TVD}}(\mu, \gamma)$. In Yao's Minimax Principle, bounding the TVD between transcript distributions $\Delta_{\text{TVD}}(\nu_0, \nu_1) < 1/3$ proves that no deterministic decision tree of depth $T$ can distinguish 0-instances from 1-instances with success $\ge 2/3$, re-proving $R(\text{OR}) \ge n/3$.
 - **Uniformity Testing & Collision Probability:** Distinguishing $\mu = U_n$ from $\Delta_{\text{TVD}}(\mu, U_n) > \epsilon$ reduces to estimating collision probability $\Pr(X = Y) = \|\mu\|_2^2$, which is uniquely minimized at $U_n$ with $\|U_n\|_2^2 = 1/n$. By Cauchy-Schwarz, $\Delta_{\text{TVD}}(\mu, U_n) > \epsilon \implies \|\mu\|_2^2 \ge \frac{1 + 4\epsilon^2}{n}$. The Batu et al. pairwise collision counting estimator $\hat{Y} = \frac{1}{\binom{k}{2}} \sum_{i < j} Y_{i, j}$ is strictly unbiased ($\mathbb{E}[\hat{Y}] = \|\mu\|_2^2$). Covariance decomposition over $6\binom{k}{3}$ overlapping triplets (with $\text{Cov} \le \|\mu\|_2^3$) and $\binom{k}{2}$ diagonal pairs yields $\text{Var}[\hat{Y}] \le \frac{24}{k} \|\mu\|_2^3 + \frac{2}{k^2} \|\mu\|_2^2$, establishing sample complexity $k = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^4} \right)$ via Chebyshev's inequality (information-theoretically optimal $\Theta(\sqrt{n}/\epsilon^2)$ via Paninski).
 - **Graph Bipartiteness Testing:** In the adjacency-matrix model, the Goldreich-Goldwasser-Ron induced subgraph tester samples $k = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\frac{1}{\epsilon} \right)$ vertices and queries all $\binom{k}{2}$ pairs. It achieves one-sided error ($\Pr=1$ on bipartite graphs) and detects odd cycles on $\epsilon$-far graphs in $\mathcal{O}(\text{poly}(1/\epsilon))$ queries, completely independent of graph vertex count $n$.
+- **Assignment 1 · Problem 2 (Half-String 1-Search):** Promising exactly one 1 in $\{0, 1\}^n$, querying the first $n/2$ bits solves the problem deterministically in $n/2$ queries. Under Yao's Minimax Principle on uniform basis distribution $\{e_1, \dots, e_n\}$, conditional Bayes accuracy along the all-zero branch is bounded by $\frac{\max(n/2 - q_1, n/2 - q_2)}{n - q} \le \frac{n/2}{n - q}$, limiting overall success to $\frac{1}{2} + \frac{q}{n}$, which demands $q \ge n/6$ queries for $\ge 2/3$ correctness, establishing $R(f) = \Theta(n)$.
+- **General Connected Components 3-Stage Hierarchy:** Small components ($\le 100$) reduce to 0/1 counting via minimum-index indicator $x_i = \mathbb{I}[v_i \text{ minimum in } C(v_i)]$ in $\mathcal{O}(n/\varepsilon^2)$ queries. Unbounded components evolve through: (1) Truncation at $q = 2/\varepsilon$ in $\mathcal{O}(n/\varepsilon^3)$ queries; (2) Unbiased geometric variable $R \in [n]$ with $\Pr[R \ge j] = 1/j \implies \mathbb{E}[R] = \mathcal{O}(\log n)$, yielding indicator $Y_v = \mathbb{I}[R \ge |C(v)|]$ with $\mathbb{E}[Y_v] = 1/|C(v)|$ in $\mathcal{O}(n \log n / \varepsilon^2)$ queries; and (3) Combined optimal estimator capping $R$ at $2/\varepsilon$, reaching $\mathcal{O}(\varepsilon^{-2} n \log(1/\varepsilon))$ queries.
+- **Uniformity Testing Lower Bound $\Omega(\sqrt{n})$:** Distinguishing $U_n$ from half-support distributions $\mu_S$ requires $\Omega(\sqrt{n})$ samples. By the Birthday Paradox, drawing $m \le \sqrt{n}/2$ samples yields collision probabilities $\delta_0 \le \binom{m}{2}/n$ and $\delta_1 \le 2\binom{m}{2}/n$, bounding transcript TVD by $\Delta_{\text{TVD}}(\nu_0, \nu_1) \le \frac{m(m-1)}{n} \le 1/4 < 1/3$, which limits distinguishing success to $< 2/3$ via Yao's transcript method.
+- **Permutation Testing via Collision Detection (Assignment 1 · Problem 3):** Testing whether $a \in [n]^n$ is a permutation reduces to collision detection in $s = \mathcal{O}(\sqrt{n/\varepsilon})$ queries. Distance to permutation is $\text{dist}(a, P_n) = n - D$ ($D$ distinct values). An $\epsilon$-far array contains $m \ge \varepsilon n / 2$ disjoint collision pairs. Sampling $s = \lceil 4 \sqrt{n/\varepsilon} \rceil$ distinct entries captures $\mu \ge 4$ expected pairs; pairwise disjointness ensures negative covariance $\text{Cov}(I_k, I_\ell) \le 0$, allowing Chebyshev's inequality to bound non-detection $\Pr[X = 0] \le 1/\mu \le 1/4 \le 1/3$, guaranteeing one-sided rejection with probability $\ge 3/4$.
 </takeaways>
 
 <qquiz src="questions.en.json"/>
@@ -4481,6 +4967,12 @@ To quantify estimation fluctuations, we analyze the second moment of $X_{i+1}$:
 5. **Variance of Estimator $\hat{A}$:**
    Because $\hat{A} = X_A - 1$ and subtracting a constant does not alter variance:
    $$\text{Var}[\hat{A}] = \text{Var}[X_A] = \frac{A(A - 1)}{2} < \frac{1}{2} A^2$$
+
+> **Exam Intuition: Why Does the State Variable $x$ Cancel in Expectation but Accumulate in Variance?**
+> - **In the First Moment:** $\mathbb{E}[X_{i+1} \mid X_i = x] = (2x)\left(\frac{1}{x}\right) + x\left(1 - \frac{1}{x}\right) = 2 + x - 1 = x + 1$.
+>   The state variable $x$ **cancels out completely**, leaving a constant increment of $+1$ per arrival regardless of the current scale $x$. This yields the exact telescoping sum $\mathbb{E}[X_A] = A + 1 \implies \mathbb{E}[\hat{A}] = A$ (strict unbiasedness).
+> - **In the Second Moment:** $\mathbb{E}[X_{i+1}^2 \mid X_i = x] = (2x)^2\left(\frac{1}{x}\right) + x^2\left(1 - \frac{1}{x}\right) = 4x + x^2 - x = x^2 + 3x$.
+>   Here, the state variable $x$ **does NOT cancel**; the linear residue $+3x$ survives and accumulates across all $A$ increments into $\sum 3(i + 1) = \frac{3}{2} A(A + 1)$, directly driving the non-zero variance $\text{Var}[\hat{A}] = \frac{A(A-1)}{2} \approx \frac{1}{2} A^2$.
 
 The standard deviation is $\sigma = \sqrt{\text{Var}[\hat{A}]} \approx \frac{A}{\sqrt{2}}$, which scales linearly with the magnitude of the count. Consequently, the **relative standard deviation** remains a fixed constant:
 $$\frac{\sigma}{A} \approx \frac{1}{\sqrt{2}} \approx 70.7\%$$
@@ -4826,6 +5318,29 @@ $$\text{Total Space} = \mathcal{O}\left( n^{1 + 1/k} \log n \right) \text{ bits}
 
 - For $k = 2$: Computes a $3$-spanner with $\mathcal{O}(n^{1.5})$ edges.
 - For $k = \log n$: Computes an $\mathcal{O}(\log n)$-spanner with $\mathcal{O}(n)$ edges ($\mathcal{O}(n \log n)$ bits).
+
+---
+
+### 4.8 Unified Perspective on Graph Streaming: Deterministic Invariants & The 3-Step Proof Chain
+
+The three graph streaming algorithms (Connectivity, Bipartiteness, and Spanners) share a unified structural philosophy that distinguishes them sharply from statistical streaming sketches:
+
+| Dimension | Connectivity | Bipartiteness | $(2k - 1)$-Spanner |
+| :--- | :--- | :--- | :--- |
+| **Nature of Algorithm** | **Strictly Deterministic** | **Strictly Deterministic** | **Strictly Deterministic** |
+| **Failure Probability** | **$\delta = 0$ (Zero Error)** | **$\delta = 0$ (Zero Error)** | **$\delta = 0$ (Zero Error)** |
+| **Structural Invariant** | Acyclic spanning forest $F$ | Spanning forest $F$ + 2-coloring | Subgraph $H$ with $\text{Girth}(H) \ge 2k + 1$ |
+| **Edge Decision Rule** | Add $e$ iff $F \cup \{e\}$ has no cycle | Add $e$ iff $F \cup \{e\}$ has no cycle; reject if odd cycle | Add $e$ iff $d_H(u, v) \ge 2k$; discard if $d_H(u, v) \le 2k - 1$ |
+| **Space Complexity** | $\mathcal{O}(n \log n)$ bits | $\mathcal{O}(n \log n)$ bits | $\mathcal{O}(n^{1 + 1/k} \log n)$ bits |
+| **Underlying Guarantee** | Exact connectivity | Exact 2-colorability certificate | Triangle inequality: $d_H \le (2k - 1) d_G$ |
+
+#### The 3-Step Proof Chain for Spanner Sparsity:
+Every girth-based edge bound relies on the following three-step deductive chain:
+$$\text{Girth}(H) \ge 2k + 1 \;\xrightarrow{\text{k-layer BFS}}\; d_{\min} \le \mathcal{O}(n^{1/k}) \;\xrightarrow{\text{Degree Peeling}}\; \bar{d} \le 4 d_{\min} = \mathcal{O}(n^{1/k}) \;\xrightarrow{\text{Handshake Lemma}}\; |E_H| = \frac{n \bar{d}}{2} = \mathcal{O}(n^{1 + 1/k})$$
+
+1. **Step 1 (BFS Tree Expansion):** Because $H$ contains no cycles of length $\le 2k$, exploring a BFS tree up to depth $k$ yields an exact tree where no branches merge. The first $k$ layers contain at least $(d_{\min} - 1)^k$ vertices, forcing $(d_{\min} - 1)^k \le n \implies d_{\min} = \mathcal{O}(n^{1/k})$.
+2. **Step 2 (Degree Peeling / Average to Minimum Degree):** Iteratively removing vertices with degree $< \bar{d}/4$ deletes strictly fewer than $n \cdot (\bar{d}/4) = m/2$ edges. Thus, at least $m/2$ edges survive, guaranteeing the existence of a non-empty subgraph $H'$ with minimum degree $\ge \bar{d}/4$ and inherited girth $\ge 2k + 1$.
+3. **Step 3 (Handshake Synthesis):** Applying the BFS bound to $H'$ gives $\bar{d}/4 \le d_{\min}(H') = \mathcal{O}(n^{1/k})$, proving that the average degree $\bar{d} = \mathcal{O}(n^{1/k})$ and total edge count is $|E_H| = \mathcal{O}(n^{1 + 1/k})$.
 
 ---
 
