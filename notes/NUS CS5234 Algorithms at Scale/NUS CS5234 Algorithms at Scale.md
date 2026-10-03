@@ -1758,8 +1758,24 @@ The graph has $N = \binom{n}{2} = \frac{n(n - 1)}{2} = \Theta(n^2)$ possible ver
    $$\hat{m} = Y \cdot \frac{\binom{n}{2}}{k}$$
 
 Mapping directly to the binary string counting problem, setting $k = \Theta(1 / \epsilon^2)$ guarantees additive error at most $\epsilon n^2$ with constant success probability $\ge 2/3$.
-For target success probability $1 - \delta$, the Median Trick gives sample size:
-$$k = \Theta\left( \frac{\log(1 / \delta)}{\epsilon^2} \right)$$
+
+#### Detailed Analysis: Chebyshev for Constant Success vs. Chernoff / Median Trick for Confidence Boosting
+Let each sampled pair $i \in \{1, \dots, k\}$ have indicator $Y_i \in \{0, 1\}$ with $\Pr[Y_i = 1] = p = \frac{m}{N}$.
+The sample proportion is $\hat{p} = \frac{1}{k}\sum_{i=1}^k Y_i$, with estimate $\hat{m} = \hat{p} N$.
+The additive error requirement is $|\hat{m} - m| \le \epsilon n^2 \iff |\hat{p} - p| \le \frac{\epsilon n^2}{N} \approx 2\epsilon = \Theta(\epsilon)$.
+
+1. **Constant Success Probability via Chebyshev's Inequality ($\delta \le 1/3$):**
+   - Expectation: $\mathbb{E}[\hat{p}] = p$.
+   - Variance: $\operatorname{Var}(\hat{p}) = \frac{p(1 - p)}{k} \le \frac{1}{4k}$.
+   - By Chebyshev's inequality:
+     $$\Pr[|\hat{p} - p| \ge \epsilon] \le \frac{\operatorname{Var}(\hat{p})}{\epsilon^2} \le \frac{1}{4k\epsilon^2}$$
+   - Setting $\frac{1}{4k\epsilon^2} \le \frac{1}{3} \implies k \ge \frac{3}{4\epsilon^2} = \Theta\left(\frac{1}{\epsilon^2}\right)$.
+   - Notice that sample size $k = \Theta(1/\epsilon^2)$ is completely independent of $n$!
+2. **Confidence Amplification to $1 - \delta$ via Chernoff / Median Trick:**
+   - **Direct Hoeffding Bound:** Since $Y_i \in [0, 1]$ are i.i.d., Hoeffding's inequality yields:
+     $$\Pr[|\hat{p} - p| \ge \epsilon] \le 2e^{-2k\epsilon^2} \le \delta \iff k = \Theta\left(\frac{\log(1/\delta)}{\epsilon^2}\right)$$
+   - **Median Trick View:** Run the constant-probability estimator $r = \Theta(\log(1/\delta))$ independent times and take the median. The median fails only if more than half the runs fail ($> r/2$), which Chernoff bounds by $\le \delta$, requiring total sample size:
+     $$k = r \cdot \Theta\left(\frac{1}{\epsilon^2}\right) = \Theta\left( \frac{\log(1 / \delta)}{\epsilon^2} \right)$$
 
 ---
 
@@ -1782,6 +1798,12 @@ Under graph connectivity, there exists an algorithm making:
 $$\mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{m}} \right) \text{ queries in the adjacency-list model}$$
 that returns a $(1 + \epsilon)$-multiplicative approximation of $m$.
 
+> **Worst-Case Query Complexity for Connected Graphs:**
+> Because $m \ge n - 1 = \Theta(n)$ for any connected graph, the denominator $\sqrt{m}$ is at least $\Omega(\sqrt{n})$.
+> The **worst-case query complexity** occurs when the graph is minimally connected (such as a tree or simple path where $m = n - 1 = \Theta(n)$):
+> $$\text{Worst-Case Queries} = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{n}} \right) = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$
+> As the graph becomes denser (up to $m = \Theta(n^2)$), the query complexity smoothly improves to $\mathcal{O}(1/\epsilon^2)$.
+
 ---
 
 ## 7. Multiplicative Edge Estimator Design and Analysis
@@ -1790,16 +1812,24 @@ that returns a $(1 + \epsilon)$-multiplicative approximation of $m$.
 
 Consider estimating average degree $d_{\text{avg}}$ by uniformly sampling $t$ vertices $u_1, \dots, u_t$ and taking their sample mean $\hat{d} = \frac{1}{t}\sum d(u_i)$.
 
-1. **Expectation:** $\mathbb{E}[d(u_i)] = d_{\text{avg}}$.
+1. **Unbiased Estimator:**
+   Because each vertex $u_i$ is drawn uniformly at random from $V$:
+   $$\mathbb{E}[d(u_i)] = \frac{1}{n} \sum_{v \in V} d(v) = d_{\text{avg}}$$
+   By linearity of expectation, $\mathbb{E}[\hat{d}] = \frac{1}{t} \sum_{i=1}^t \mathbb{E}[d(u_i)] = d_{\text{avg}}$, making $\hat{d}$ an unconditionally unbiased estimator of $d_{\text{avg}}$.
 2. **Variance Bound:**
    $$\text{Var}(d(u_i)) \le \mathbb{E}[d(u_i)^2] \le n \cdot \mathbb{E}[d(u_i)] = n \cdot d_{\text{avg}}$$
    For the sample average: $\text{Var}(\hat{d}) \le \frac{n \cdot d_{\text{avg}}}{t}$.
 3. **Chebyshev Failure Probability:**
    $$\Pr[|\hat{d} - d_{\text{avg}}| \ge \epsilon \cdot d_{\text{avg}}] \le \frac{\text{Var}(\hat{d})}{\epsilon^2 d_{\text{avg}}^2} \le \frac{n \cdot d_{\text{avg}}}{t \epsilon^2 d_{\text{avg}}^2} = \frac{n}{t \epsilon^2 d_{\text{avg}}}$$
-   To bound failure by a constant, $t$ must satisfy $t = \mathcal{O}\left( \frac{n}{\epsilon^2 d_{\text{avg}}} \right)$.
-4. **The Star Graph Pathology:** In a sparse connected star graph $K_{1, n-1}$, $m = n - 1$ and $d_{\text{avg}} \approx 2 = \mathcal{O}(1)$. This forces:
-   $$t = \mathcal{O}\left( \frac{n}{\epsilon^2} \right) = \Omega(n) \text{ queries}$$
-   The central hub has degree $n - 1$, creating catastrophic variance $\text{Var}(d(u)) = \Omega(n)$. Thus, naive uniform vertex sampling fails to achieve sublinear query complexity.
+   To guarantee failure probability bounded by $\delta$, Chebyshev requires:
+   $$\frac{n}{t \epsilon^2 d_{\text{avg}}} \le \delta \implies t = \Omega\left( \frac{n}{\delta \epsilon^2 d_{\text{avg}}} \right)$$
+4. **The Star Graph Pathology (Extreme Degree Asymmetry):**
+   In a sparse connected star graph $K_{1, n-1}$, $m = n - 1$ and $d_{\text{avg}} = \frac{2(n-1)}{n} \approx 2 = \mathcal{O}(1)$. This forces:
+   $$t = \Omega\left( \frac{n}{\epsilon^2} \right) = \Omega(n) \text{ queries}$$
+   From a statistical perspective, this catastrophic failure is caused by **extreme degree asymmetry (a heavy-tailed degree distribution)**:
+   - A negligible fraction of vertices ($1/n$, the single central hub) holds a constant fraction ($\approx 1/2$) of the total degree mass ($n - 1$).
+   - This inflates the second moment $\mathbb{E}[d(u)^2] = \frac{(n-1)^2 + (n-1)\cdot 1^2}{n} \approx n$, creating explosive variance $\text{Var}(d(u)) = \Omega(n)$.
+   - A uniform sample of sublinear size $o(n)$ almost certainly misses the hub entirely, observing only leaves with degree 1 and estimating $d_{\text{avg}} \approx 1$ instead of $2$ (a $50\%$ multiplicative error).
 
 ---
 
@@ -1846,6 +1876,12 @@ $$\sum_{i=1}^n d'(v_i) = m$$
 4. **Step d:** Query the degree $d(v_j)$ of vertex $v_j$ to evaluate the relative total ordering between $v_i$ and $v_j$.
 5. **Step e:** Define random variable $X_i$:
    $$X_i = \begin{cases} d(v_i) & \text{if } v_i \prec v_j \\ 0 & \text{if } v_i \succeq v_j \end{cases}$$
+
+> **Exact Oracle Query Accounting Per Trial:**
+> Notice that generating one realization of $X_i$ requires **exactly 3 oracle queries**:
+> 1. One **degree query** on $v_i$ to obtain $d(v_i)$.
+> 2. One **neighbor query** on $(v_i, k)$ to retrieve neighbor $v_j$.
+> 3. One **degree query** on $v_j$ to obtain $d(v_j)$ (allowing total order resolution $v_i \prec v_j$).
 
 ---
 
@@ -2672,9 +2708,24 @@ Can an algorithm with good expected query complexity be converted into one with 
    - The correctness probability degrades by at most the truncation probability ($1/10$):
      $$\text{Success Probability of } (\mathcal{A}', \mathcal{D}) \ge \frac{2}{3} - \frac{1}{10} = \frac{17}{30}$$
 3. **Restoring Confidence via Majority Vote:**
-   Because $\frac{17}{30} > \frac{15}{30} = \frac{1}{2}$, the success probability remains strictly bounded away from $1/2$ by a constant gap $\epsilon = \frac{17}{30} - \frac{1}{2} = \frac{1}{15} > 0$.
-   Running $(\mathcal{A}', \mathcal{D})$ a constant number of independent times (e.g., $\Theta(1/\epsilon^2) = \mathcal{O}(1)$ times) and outputting the majority vote restores the success probability to $\ge 2/3$.
+   Because $\frac{17}{30} > \frac{15}{30} = \frac{1}{2}$, the success probability remains strictly bounded away from $1/2$ by a constant advantage margin $\gamma = \frac{17}{30} - \frac{1}{2} = \frac{1}{15} > 0$.
+   Running $(\mathcal{A}', \mathcal{D})$ a constant number of independent times (e.g., $\Theta(1/\gamma^2) = \mathcal{O}(1)$ times) and outputting the majority vote restores the success probability to $\ge 2/3$.
    The resulting worst-case query complexity remains $\mathcal{O}(1) \cdot 10q = \mathcal{O}(q)$. $\blacksquare$
+
+#### Extension: Parameterizing with Failure Probability $\delta$ & The Upper Bound Role of Truncation
+- **Why $\delta$ is Often Omitted in Standard Definitions:**
+  In standard complexity theory ($R(P)$ or $\text{BPP}$), the failure probability is conventionally fixed to $\delta = 1/3$ (or success $\ge 2/3$). Because $\delta$ is a constant, the amplification factor $\Theta(\log(1/\delta)) = \mathcal{O}(1)$ is absorbed into asymptotic notation.
+- **Explicit Dependence on Confidence $\delta$:**
+  If we demand failure probability at most $\delta \in (0, 1/2)$, Chernoff bounds dictate that taking the majority vote over $k \ge \frac{1}{2\gamma^2}\ln(1/\delta)$ independent runs achieves failure rate $\le \delta$. The resulting query complexity scales as:
+  $$R_\delta(P) = \mathcal{O}\left( q \log\frac{1}{\delta} \right)$$
+- **Conventions: Error Parameter $\epsilon$ vs. Failure Probability $\delta$:**
+  In randomized algorithms and property testing:
+  - $\epsilon$ typically denotes **approximation or tolerance distance** (e.g., additive error $\epsilon n^2$ or multiplicative ratio $1 \pm \epsilon$).
+  - $\delta$ typically denotes the **probabilistic failure budget** ($\Pr[\text{error}] \le \delta$).
+  - $\gamma = p - 1/2$ denotes the **advantage** over random coin flips.
+- **Why Constructing an Algorithm Establishes an Upper Bound on $R(P)$:**
+  $R(P)$ is the intrinsic randomized query complexity of problem $P$ (the minimum worst-case cost among *all* valid algorithms). A common confusion is mistaking algorithm analysis for lower bound proofs. When we design an algorithm with expected cost $\mathcal{O}(\sqrt{n})$, we do not directly establish $R(P)$ because the definition of $R(P)$ strictly mandates worst-case guarantees. Truncation + Majority Amplification provides the rigorous bridge: by compiling the expected-cost algorithm into a valid worst-case algorithm with cost $\mathcal{O}(\sqrt{n})$, we establish an **Upper Bound**:
+  $$R(P) \le \mathcal{O}(\sqrt{n})$$
 
 > **Methodological Rule of Thumb:**
 > - **Designing algorithms (Upper Bounds):** Work with **expected query complexity** $\max_x \mathbb{E}_r[Q(x, A_r)]$, which is often much easier to analyze mathematically.
@@ -4072,9 +4123,23 @@ Setting $k = \frac{10}{\epsilon}$ comfortably achieves success $\ge 2/3$ using $
 
 ### 2.5 General Case Limitations: Multi-Scale Inversions & The $A(s)$ Hierarchy
 
-While Algorithm 1 succeeds on binary strings and easily solves the Split-Sorted counterexample of Algorithm 0 (requiring only $k = \mathcal{O}(1/\epsilon)$ samples to hit both halves), **it fails completely on general numeric arrays with dense microscopic perturbations!**
+#### Evaluation of Algorithm 1 on the Worst-Case Instance for Algorithm 0:
+Why was Algorithm 1 proposed? Because it effortlessly solves the macroscopic Split-Sorted counterexample of Algorithm 0:
+Consider the general $\epsilon$-far split instance:
+$$A_{\text{split}} = (\epsilon n + 1, \, \epsilon n + 2, \, \dots, \, n, \quad 1, \, 2, \, \dots, \, \epsilon n)$$
+- Here, the first block of length $(1 - \epsilon)n$ contains large values, while the second block of length $\epsilon n$ contains small values.
+- Algorithm 1 successfully detects unsortedness as long as it samples at least one element from each of the two blocks.
+- It fails if and only if all $k$ sampled indices fall entirely into the first block OR entirely into the second block:
+  $$\Pr(\text{Algorithm 1 fails}) = \frac{\binom{(1 - \epsilon)n}{k} + \binom{\epsilon n}{k}}{\binom{n}{k}} \le 2 \cdot \frac{\binom{(1 - \epsilon)n}{k}}{\binom{n}{k}} \le 2(1 - \epsilon)^k \le 2e^{-\epsilon k}$$
+- To ensure failure probability $\le 1/3$:
+  $$2e^{-\epsilon k} \le \frac{1}{3} \iff e^{-\epsilon k} \le \frac{1}{6} \iff k \ge \frac{\ln 6}{\epsilon}$$
+  Thus, $k = \Theta(1/\epsilon)$ queries easily resolve this macroscopic failure mode.
+
+---
 
 #### The Birthday Paradox Trap (Interleaved Swapped Pairs):
+However, when elements are drawn from the general domain $\{1, \dots, n\}$, Algorithm 1 with $k = \mathcal{O}(1/\epsilon)$ **fails completely on general numeric arrays with dense microscopic perturbations!**
+
 Consider the array $A$ where every adjacent pair is swapped:
 $$A = (2, 1, \, 4, 3, \, 6, 5, \, \dots, \, n, n - 1)$$
 
@@ -4121,14 +4186,18 @@ To systematically compare Algorithm 0 (local checking) and Algorithm 1 (subseque
 
 1. **Algorithm 0 (Adjacent Checking):**
    - The number of inverted adjacent boundaries is exactly $s/2$.
-   - Failure probability:
-     $$p_0 = \frac{\binom{n - s/2}{k}}{\binom{n}{k}} = \prod_{i=0}^{k-1} \left(1 - \frac{s/2}{n - i}\right) \approx \left(1 - \frac{s}{2n}\right)^k$$
-   - Achieving $p_0 \le 1/3$ requires:
+   - Failure probability satisfies the tight sandwich bound:
+     $$p_0 = \frac{\binom{n - s/2}{k}}{\binom{n}{k}} = \prod_{i=0}^{k-1} \left(1 - \frac{s/2}{n - i}\right) \implies \left(1 - \frac{s}{2(n - k)}\right)^k \le p_0 \le \left(1 - \frac{s}{2n}\right)^k$$
+   - Achieving $p_0 \le 1/3$ strictly requires:
      $$k = \Theta\left(\frac{n}{s}\right)$$
 
 2. **Algorithm 1 (Subsequence Sampling):**
-   - An inversion is detected if a sample hits block $A_{2j+1}$ and another sample hits $A_{2j}$.
-   - We bound the failure probability using **Chebyshev's Inequality** (sampling with replacement):
+   - An inversion is detected if a sample hits block $A_{2j+1}$ and another sample hits $A_{2j}$ for some $j \in \{0, \dots, s/2 - 1\}$.
+   - **Lower Bound on $k$ via Union Bound:**
+     Let $\mu_1$ be the success probability. Summing over all $s/2$ inverted block pairs:
+     $$\mu_1 \le \frac{s}{2} \cdot \left(\frac{n}{s}\right)^2 \cdot \frac{\binom{n-2}{k-2}}{\binom{n}{k}} = \frac{n^2}{2s} \cdot \frac{k(k - 1)}{n(n - 1)} \le \frac{k^2}{2s}$$
+     To guarantee success $\mu_1 \ge 2/3$ (failure $\le 1/3$), we strictly require $\frac{k^2}{2s} \ge \frac{2}{3} \implies k = \Omega(\sqrt{s})$.
+   - **Upper Bound on $k$ via Chebyshev's Inequality (Sampling with Replacement):**
      Let $X_1, \dots, X_k$ be independent uniform draws from $[n]$.
      For $a < b$, define indicator $Y_{a, b} = 1$ if $X_a \in A_{2j+1}$ and $X_b \in A_{2j}$ (or vice versa) for some $j \in \{0, \dots, s/2 - 1\}$.
      $$\mathbb{E}[Y_{a, b}] = \frac{s}{2} \cdot 2 \cdot \left(\frac{n/s}{n}\right)^2 = \frac{1}{s}$$
@@ -4138,7 +4207,8 @@ To systematically compare Algorithm 0 (local checking) and Algorithm 1 (subseque
      $$\text{Var}[Y] = \binom{k}{2} \cdot \frac{1}{s} \left(1 - \frac{1}{s}\right) \le \mathbb{E}[Y]$$
      Applying Chebyshev's inequality to the failure event $\{Y = 0\}$:
      $$\Pr(\text{fails}) = \Pr[Y = 0] \le \Pr[|Y - \mathbb{E}[Y]| \ge \mathbb{E}[Y]] \le \frac{\text{Var}[Y]}{\mathbb{E}[Y]^2} \le \frac{1}{\mathbb{E}[Y]} = \frac{s}{\binom{k}{2}}$$
-   - Achieving failure $\le 1/3$ requires $\binom{k}{2} \ge 3s$, which implies:
+     Achieving failure $\le 1/3$ requires $\binom{k}{2} \ge 3s \implies k = \mathcal{O}(\sqrt{s})$.
+   - Combined with the Union Bound lower bound, this rigorously establishes:
      $$k = \Theta(\sqrt{s})$$
 
 #### The Multi-Scale Bottleneck:

@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5234-algorithms-at-scale">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-10-01">
-  <meta name="site:reading_time_minutes" content="484">
+  <meta name="site:reading_time_minutes" content="520">
   <meta name="site:source" content="notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.md">
   <script>
   (() => {
@@ -2510,7 +2510,35 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 
 <p class="mb-3">$$\hat{m} = Y \cdot \frac{\binom{n}{2}}{k}$$</p>
 
-<p class="mb-3">Mapping directly to the binary string counting problem, setting $k = \Theta(1 / \epsilon^2)$ guarantees additive error at most $\epsilon n^2$ with constant success probability $\ge 2/3$. For target success probability $1 - \delta$, the Median Trick gives sample size: $$k = \Theta\left( \frac{\log(1 / \delta)}{\epsilon^2} \right)$$</p>
+<p class="mb-3">Mapping directly to the binary string counting problem, setting $k = \Theta(1 / \epsilon^2)$ guarantees additive error at most $\epsilon n^2$ with constant success probability $\ge 2/3$.</p>
+
+<h5 class="mb-2">Detailed Analysis: Chebyshev for Constant Success vs. Chernoff / Median Trick for Confidence Boosting</h5>
+
+<p class="mb-3">Let each sampled pair $i \in \{1, \dots, k\}$ have indicator $Y_i \in \{0, 1\}$ with $\Pr[Y_i = 1] = p = \frac{m}{N}$. The sample proportion is $\hat{p} = \frac{1}{k}\sum_{i=1}^k Y_i$, with estimate $\hat{m} = \hat{p} N$. The additive error requirement is $|\hat{m} - m| \le \epsilon n^2 \iff |\hat{p} - p| \le \frac{\epsilon n^2}{N} \approx 2\epsilon = \Theta(\epsilon)$.</p>
+
+<ol class="mb-3">
+<li><strong>Constant Success Probability via Chebyshev's Inequality ($\delta \le 1/3$):</strong></li>
+</ol>
+
+<ul class="note-list">
+<li>Expectation: $\mathbb{E}[\hat{p}] = p$.</li>
+<li>Variance: $\operatorname{Var}(\hat{p}) = \frac{p(1 - p)}{k} \le \frac{1}{4k}$.</li>
+<li>By Chebyshev's inequality:
+<p class="mb-2">$$\Pr[|\hat{p} - p| \ge \epsilon] \le \frac{\operatorname{Var}(\hat{p})}{\epsilon^2} \le \frac{1}{4k\epsilon^2}$$</p></li>
+<li>Setting $\frac{1}{4k\epsilon^2} \le \frac{1}{3} \implies k \ge \frac{3}{4\epsilon^2} = \Theta\left(\frac{1}{\epsilon^2}\right)$.</li>
+<li>Notice that sample size $k = \Theta(1/\epsilon^2)$ is completely independent of $n$!</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Confidence Amplification to $1 - \delta$ via Chernoff / Median Trick:</strong></li>
+</ol>
+
+<ul class="note-list">
+<li><strong>Direct Hoeffding Bound:</strong> Since $Y_i \in [0, 1]$ are i.i.d., Hoeffding's inequality yields:
+<p class="mb-2">$$\Pr[|\hat{p} - p| \ge \epsilon] \le 2e^{-2k\epsilon^2} \le \delta \iff k = \Theta\left(\frac{\log(1/\delta)}{\epsilon^2}\right)$$</p></li>
+<li><strong>Median Trick View:</strong> Run the constant-probability estimator $r = \Theta(\log(1/\delta))$ independent times and take the median. The median fails only if more than half the runs fail ($&gt; r/2$), which Chernoff bounds by $\le \delta$, requiring total sample size:
+<p class="mb-2">$$k = r \cdot \Theta\left(\frac{1}{\epsilon^2}\right) = \Theta\left( \frac{\log(1 / \delta)}{\epsilon^2} \right)$$</p></li>
+</ul>
 
 <hr>
 
@@ -2535,6 +2563,16 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 
 <p class="mb-3">If $G$ is guaranteed to be <strong>connected</strong>, then every spanning tree requires at least $n - 1$ edges: $$m \ge n - 1$$ Under graph connectivity, there exists an algorithm making: $$\mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{m}} \right) \text{ queries in the adjacency-list model}$$ that returns a $(1 + \epsilon)$-multiplicative approximation of $m$.</p>
 
+<blockquote class="blockquote mb-3"><strong>Worst-Case Query Complexity for Connected Graphs:</strong></blockquote>
+
+<blockquote class="blockquote mb-3">Because $m \ge n - 1 = \Theta(n)$ for any connected graph, the denominator $\sqrt{m}$ is at least $\Omega(\sqrt{n})$.</blockquote>
+
+<blockquote class="blockquote mb-3">The <strong>worst-case query complexity</strong> occurs when the graph is minimally connected (such as a tree or simple path where $m = n - 1 = \Theta(n)$):</blockquote>
+
+<blockquote class="blockquote mb-3">$$\text{Worst-Case Queries} = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{n}} \right) = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$</blockquote>
+
+<blockquote class="blockquote mb-3">As the graph becomes denser (up to $m = \Theta(n^2)$), the query complexity smoothly improves to $\mathcal{O}(1/\epsilon^2)$.</blockquote>
+
 <hr>
 </section>
 
@@ -2546,7 +2584,12 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <p class="mb-3">Consider estimating average degree $d_{\text{avg}}$ by uniformly sampling $t$ vertices $u_1, \dots, u_t$ and taking their sample mean $\hat{d} = \frac{1}{t}\sum d(u_i)$.</p>
 
 <ol class="mb-3">
-<li><strong>Expectation:</strong> $\mathbb{E}[d(u_i)] = d_{\text{avg}}$.</li>
+<li><strong>Unbiased Estimator:</strong></li>
+</ol>
+
+<p class="mb-3">Because each vertex $u_i$ is drawn uniformly at random from $V$: $$\mathbb{E}[d(u_i)] = \frac{1}{n} \sum_{v \in V} d(v) = d_{\text{avg}}$$ By linearity of expectation, $\mathbb{E}[\hat{d}] = \frac{1}{t} \sum_{i=1}^t \mathbb{E}[d(u_i)] = d_{\text{avg}}$, making $\hat{d}$ an unconditionally unbiased estimator of $d_{\text{avg}}$.</p>
+
+<ol class="mb-3">
 <li><strong>Variance Bound:</strong></li>
 </ol>
 
@@ -2556,13 +2599,19 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <li><strong>Chebyshev Failure Probability:</strong></li>
 </ol>
 
-<p class="mb-3">$$\Pr[|\hat{d} - d_{\text{avg}}| \ge \epsilon \cdot d_{\text{avg}}] \le \frac{\text{Var}(\hat{d})}{\epsilon^2 d_{\text{avg}}^2} \le \frac{n \cdot d_{\text{avg}}}{t \epsilon^2 d_{\text{avg}}^2} = \frac{n}{t \epsilon^2 d_{\text{avg}}}$$ To bound failure by a constant, $t$ must satisfy $t = \mathcal{O}\left( \frac{n}{\epsilon^2 d_{\text{avg}}} \right)$.</p>
+<p class="mb-3">$$\Pr[|\hat{d} - d_{\text{avg}}| \ge \epsilon \cdot d_{\text{avg}}] \le \frac{\text{Var}(\hat{d})}{\epsilon^2 d_{\text{avg}}^2} \le \frac{n \cdot d_{\text{avg}}}{t \epsilon^2 d_{\text{avg}}^2} = \frac{n}{t \epsilon^2 d_{\text{avg}}}$$ To guarantee failure probability bounded by $\delta$, Chebyshev requires: $$\frac{n}{t \epsilon^2 d_{\text{avg}}} \le \delta \implies t = \Omega\left( \frac{n}{\delta \epsilon^2 d_{\text{avg}}} \right)$$</p>
 
 <ol class="mb-3">
-<li><strong>The Star Graph Pathology:</strong> In a sparse connected star graph $K_{1, n-1}$, $m = n - 1$ and $d_{\text{avg}} \approx 2 = \mathcal{O}(1)$. This forces:</li>
+<li><strong>The Star Graph Pathology (Extreme Degree Asymmetry):</strong></li>
 </ol>
 
-<p class="mb-3">$$t = \mathcal{O}\left( \frac{n}{\epsilon^2} \right) = \Omega(n) \text{ queries}$$ The central hub has degree $n - 1$, creating catastrophic variance $\text{Var}(d(u)) = \Omega(n)$. Thus, naive uniform vertex sampling fails to achieve sublinear query complexity.</p>
+<p class="mb-3">In a sparse connected star graph $K_{1, n-1}$, $m = n - 1$ and $d_{\text{avg}} = \frac{2(n-1)}{n} \approx 2 = \mathcal{O}(1)$. This forces: $$t = \Omega\left( \frac{n}{\epsilon^2} \right) = \Omega(n) \text{ queries}$$ From a statistical perspective, this catastrophic failure is caused by <strong>extreme degree asymmetry (a heavy-tailed degree distribution)</strong>:</p>
+
+<ul class="note-list">
+<li>A negligible fraction of vertices ($1/n$, the single central hub) holds a constant fraction ($\approx 1/2$) of the total degree mass ($n - 1$).</li>
+<li>This inflates the second moment $\mathbb{E}[d(u)^2] = \frac{(n-1)^2 + (n-1)\cdot 1^2}{n} \approx n$, creating explosive variance $\text{Var}(d(u)) = \Omega(n)$.</li>
+<li>A uniform sample of sublinear size $o(n)$ almost certainly misses the hub entirely, observing only leaves with degree 1 and estimating $d_{\text{avg}} \approx 1$ instead of $2$ (a $50\%$ multiplicative error).</li>
+</ul>
 
 <hr>
 
@@ -2616,6 +2665,16 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 </ol>
 
 <p class="mb-3">$$X_i = \begin{cases} d(v_i) &amp; \text{if } v_i \prec v_j \\ 0 &amp; \text{if } v_i \succeq v_j \end{cases}$$</p>
+
+<blockquote class="blockquote mb-3"><strong>Exact Oracle Query Accounting Per Trial:</strong></blockquote>
+
+<blockquote class="blockquote mb-3">Notice that generating one realization of $X_i$ requires <strong>exactly 3 oracle queries</strong>:</blockquote>
+
+<blockquote class="blockquote mb-3">1. One <strong>degree query</strong> on $v_i$ to obtain $d(v_i)$.</blockquote>
+
+<blockquote class="blockquote mb-3">2. One <strong>neighbor query</strong> on $(v_i, k)$ to retrieve neighbor $v_j$.</blockquote>
+
+<blockquote class="blockquote mb-3">3. One <strong>degree query</strong> on $v_j$ to obtain $d(v_j)$ (allowing total order resolution $v_i \prec v_j$).</blockquote>
 
 <hr>
 
@@ -3652,7 +3711,36 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <li><strong>Restoring Confidence via Majority Vote:</strong></li>
 </ol>
 
-<p class="mb-3">Because $\frac{17}{30} &gt; \frac{15}{30} = \frac{1}{2}$, the success probability remains strictly bounded away from $1/2$ by a constant gap $\epsilon = \frac{17}{30} - \frac{1}{2} = \frac{1}{15} &gt; 0$. Running $(\mathcal{A}', \mathcal{D})$ a constant number of independent times (e.g., $\Theta(1/\epsilon^2) = \mathcal{O}(1)$ times) and outputting the majority vote restores the success probability to $\ge 2/3$. The resulting worst-case query complexity remains $\mathcal{O}(1) \cdot 10q = \mathcal{O}(q)$. $\blacksquare$</p>
+<p class="mb-3">Because $\frac{17}{30} &gt; \frac{15}{30} = \frac{1}{2}$, the success probability remains strictly bounded away from $1/2$ by a constant advantage margin $\gamma = \frac{17}{30} - \frac{1}{2} = \frac{1}{15} &gt; 0$. Running $(\mathcal{A}', \mathcal{D})$ a constant number of independent times (e.g., $\Theta(1/\gamma^2) = \mathcal{O}(1)$ times) and outputting the majority vote restores the success probability to $\ge 2/3$. The resulting worst-case query complexity remains $\mathcal{O}(1) \cdot 10q = \mathcal{O}(q)$. $\blacksquare$</p>
+
+<h5 class="mb-2">Extension: Parameterizing with Failure Probability $\delta$ &amp; The Upper Bound Role of Truncation</h5>
+
+<ul class="note-list">
+<li><strong>Why $\delta$ is Often Omitted in Standard Definitions:</strong></li>
+</ul>
+
+<p class="mb-3">In standard complexity theory ($R(P)$ or $\text{BPP}$), the failure probability is conventionally fixed to $\delta = 1/3$ (or success $\ge 2/3$). Because $\delta$ is a constant, the amplification factor $\Theta(\log(1/\delta)) = \mathcal{O}(1)$ is absorbed into asymptotic notation.</p>
+
+<ul class="note-list">
+<li><strong>Explicit Dependence on Confidence $\delta$:</strong></li>
+</ul>
+
+<p class="mb-3">If we demand failure probability at most $\delta \in (0, 1/2)$, Chernoff bounds dictate that taking the majority vote over $k \ge \frac{1}{2\gamma^2}\ln(1/\delta)$ independent runs achieves failure rate $\le \delta$. The resulting query complexity scales as: $$R_\delta(P) = \mathcal{O}\left( q \log\frac{1}{\delta} \right)$$</p>
+
+<ul class="note-list">
+<li><strong>Conventions: Error Parameter $\epsilon$ vs. Failure Probability $\delta$:</strong></li>
+</ul>
+
+<p class="mb-3">In randomized algorithms and property testing:</p>
+
+<ul class="note-list">
+<li>$\epsilon$ typically denotes <strong>approximation or tolerance distance</strong> (e.g., additive error $\epsilon n^2$ or multiplicative ratio $1 \pm \epsilon$).</li>
+<li>$\delta$ typically denotes the <strong>probabilistic failure budget</strong> ($\Pr[\text{error}] \le \delta$).</li>
+<li>$\gamma = p - 1/2$ denotes the <strong>advantage</strong> over random coin flips.</li>
+<li><strong>Why Constructing an Algorithm Establishes an Upper Bound on $R(P)$:</strong></li>
+</ul>
+
+<p class="mb-3">$R(P)$ is the intrinsic randomized query complexity of problem $P$ (the minimum worst-case cost among <em>all</em> valid algorithms). A common confusion is mistaking algorithm analysis for lower bound proofs. When we design an algorithm with expected cost $\mathcal{O}(\sqrt{n})$, we do not directly establish $R(P)$ because the definition of $R(P)$ strictly mandates worst-case guarantees. Truncation + Majority Amplification provides the rigorous bridge: by compiling the expected-cost algorithm into a valid worst-case algorithm with cost $\mathcal{O}(\sqrt{n})$, we establish an <strong>Upper Bound</strong>: $$R(P) \le \mathcal{O}(\sqrt{n})$$</p>
 
 <blockquote class="blockquote mb-3"><strong>Methodological Rule of Thumb:</strong></blockquote>
 
@@ -5413,9 +5501,29 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 
 <h4 id="2-5-general-case-limitations-multi-scale-inversions-the-a-s-hierarchy" class="mb-2">2.5 General Case Limitations: Multi-Scale Inversions &amp; The $A(s)$ Hierarchy</h4>
 
-<p class="mb-3">While Algorithm 1 succeeds on binary strings and easily solves the Split-Sorted counterexample of Algorithm 0 (requiring only $k = \mathcal{O}(1/\epsilon)$ samples to hit both halves), <strong>it fails completely on general numeric arrays with dense microscopic perturbations!</strong></p>
+<h5 class="mb-2">Evaluation of Algorithm 1 on the Worst-Case Instance for Algorithm 0:</h5>
+
+<p class="mb-3">Why was Algorithm 1 proposed? Because it effortlessly solves the macroscopic Split-Sorted counterexample of Algorithm 0: Consider the general $\epsilon$-far split instance: $$A_{\text{split}} = (\epsilon n + 1, \, \epsilon n + 2, \, \dots, \, n, \quad 1, \, 2, \, \dots, \, \epsilon n)$$</p>
+
+<ul class="note-list">
+<li>Here, the first block of length $(1 - \epsilon)n$ contains large values, while the second block of length $\epsilon n$ contains small values.</li>
+<li>Algorithm 1 successfully detects unsortedness as long as it samples at least one element from each of the two blocks.</li>
+<li>It fails if and only if all $k$ sampled indices fall entirely into the first block OR entirely into the second block:</li>
+</ul>
+
+<p class="mb-3">$$\Pr(\text{Algorithm 1 fails}) = \frac{\binom{(1 - \epsilon)n}{k} + \binom{\epsilon n}{k}}{\binom{n}{k}} \le 2 \cdot \frac{\binom{(1 - \epsilon)n}{k}}{\binom{n}{k}} \le 2(1 - \epsilon)^k \le 2e^{-\epsilon k}$$</p>
+
+<ul class="note-list">
+<li>To ensure failure probability $\le 1/3$:</li>
+</ul>
+
+<p class="mb-3">$$2e^{-\epsilon k} \le \frac{1}{3} \iff e^{-\epsilon k} \le \frac{1}{6} \iff k \ge \frac{\ln 6}{\epsilon}$$ Thus, $k = \Theta(1/\epsilon)$ queries easily resolve this macroscopic failure mode.</p>
+
+<hr>
 
 <h5 class="mb-2">The Birthday Paradox Trap (Interleaved Swapped Pairs):</h5>
+
+<p class="mb-3">However, when elements are drawn from the general domain $\{1, \dots, n\}$, Algorithm 1 with $k = \mathcal{O}(1/\epsilon)$ <strong>fails completely on general numeric arrays with dense microscopic perturbations!</strong></p>
 
 <p class="mb-3">Consider the array $A$ where every adjacent pair is swapped: $$A = (2, 1, \, 4, 3, \, 6, 5, \, \dots, \, n, n - 1)$$</p>
 
@@ -5479,9 +5587,9 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 
 <ul class="note-list">
 <li>The number of inverted adjacent boundaries is exactly $s/2$.</li>
-<li>Failure probability:
-<p class="mb-2">$$p_0 = \frac{\binom{n - s/2}{k}}{\binom{n}{k}} = \prod_{i=0}^{k-1} \left(1 - \frac{s/2}{n - i}\right) \approx \left(1 - \frac{s}{2n}\right)^k$$</p></li>
-<li>Achieving $p_0 \le 1/3$ requires:
+<li>Failure probability satisfies the tight sandwich bound:
+<p class="mb-2">$$p_0 = \frac{\binom{n - s/2}{k}}{\binom{n}{k}} = \prod_{i=0}^{k-1} \left(1 - \frac{s/2}{n - i}\right) \implies \left(1 - \frac{s}{2(n - k)}\right)^k \le p_0 \le \left(1 - \frac{s}{2n}\right)^k$$</p></li>
+<li>Achieving $p_0 \le 1/3$ strictly requires:
 <p class="mb-2">$$k = \Theta\left(\frac{n}{s}\right)$$</p></li>
 </ul>
 
@@ -5490,8 +5598,12 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 </ol>
 
 <ul class="note-list">
-<li>An inversion is detected if a sample hits block $A_{2j+1}$ and another sample hits $A_{2j}$.</li>
-<li>We bound the failure probability using <strong>Chebyshev's Inequality</strong> (sampling with replacement):
+<li>An inversion is detected if a sample hits block $A_{2j+1}$ and another sample hits $A_{2j}$ for some $j \in \{0, \dots, s/2 - 1\}$.</li>
+<li><strong>Lower Bound on $k$ via Union Bound:</strong>
+<p class="mb-2">Let $\mu_1$ be the success probability. Summing over all $s/2$ inverted block pairs:</p>
+<p class="mb-2">$$\mu_1 \le \frac{s}{2} \cdot \left(\frac{n}{s}\right)^2 \cdot \frac{\binom{n-2}{k-2}}{\binom{n}{k}} = \frac{n^2}{2s} \cdot \frac{k(k - 1)}{n(n - 1)} \le \frac{k^2}{2s}$$</p>
+<p class="mb-2">To guarantee success $\mu_1 \ge 2/3$ (failure $\le 1/3$), we strictly require $\frac{k^2}{2s} \ge \frac{2}{3} \implies k = \Omega(\sqrt{s})$.</p></li>
+<li><strong>Upper Bound on $k$ via Chebyshev's Inequality (Sampling with Replacement):</strong>
 <p class="mb-2">Let $X_1, \dots, X_k$ be independent uniform draws from $[n]$.</p>
 <p class="mb-2">For $a &lt; b$, define indicator $Y_{a, b} = 1$ if $X_a \in A_{2j+1}$ and $X_b \in A_{2j}$ (or vice versa) for some $j \in \{0, \dots, s/2 - 1\}$.</p>
 <p class="mb-2">$$\mathbb{E}[Y_{a, b}] = \frac{s}{2} \cdot 2 \cdot \left(\frac{n/s}{n}\right)^2 = \frac{1}{s}$$</p>
@@ -5500,8 +5612,9 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <p class="mb-2">Because the indicators $Y_{a, b}$ are pairwise independent:</p>
 <p class="mb-2">$$\text{Var}[Y] = \binom{k}{2} \cdot \frac{1}{s} \left(1 - \frac{1}{s}\right) \le \mathbb{E}[Y]$$</p>
 <p class="mb-2">Applying Chebyshev's inequality to the failure event $\{Y = 0\}$:</p>
-<p class="mb-2">$$\Pr(\text{fails}) = \Pr[Y = 0] \le \Pr[|Y - \mathbb{E}[Y]| \ge \mathbb{E}[Y]] \le \frac{\text{Var}[Y]}{\mathbb{E}[Y]^2} \le \frac{1}{\mathbb{E}[Y]} = \frac{s}{\binom{k}{2}}$$</p></li>
-<li>Achieving failure $\le 1/3$ requires $\binom{k}{2} \ge 3s$, which implies:
+<p class="mb-2">$$\Pr(\text{fails}) = \Pr[Y = 0] \le \Pr[|Y - \mathbb{E}[Y]| \ge \mathbb{E}[Y]] \le \frac{\text{Var}[Y]}{\mathbb{E}[Y]^2} \le \frac{1}{\mathbb{E}[Y]} = \frac{s}{\binom{k}{2}}$$</p>
+<p class="mb-2">Achieving failure $\le 1/3$ requires $\binom{k}{2} \ge 3s \implies k = \mathcal{O}(\sqrt{s})$.</p></li>
+<li>Combined with the Union Bound lower bound, this rigorously establishes:
 <p class="mb-2">$$k = \Theta(\sqrt{s})$$</p></li>
 </ul>
 
@@ -6279,7 +6392,7 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
   <div class="note-quiz-header">
     <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
     <div class="note-quiz-controls">
-      <div class="note-quiz-progress" aria-live="polite">1 / 23</div>
+      <div class="note-quiz-progress" aria-live="polite">1 / 41</div>
       <button type="button" class="note-quiz-reset">Reset</button>
     </div>
   </div>
@@ -6557,6 +6670,222 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The support point q and farthest point p are not necessarily antipodal across C_{i+1}; the support lemma only guarantees q exists in the half-plane opposite to C_{i+1} from C_i, yielding angle &gt;= 90 degrees.">B. Because the half-plane boundary support lemma guarantees that $p$ and $q$ are antipodal across $C_{i+1}$, forcing $\delta = 1/2$ independently of $\lambda_i$ and collapsing the recurrence to $\lambda_{i+1} \ge \lambda_i + 1/2$.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The bound follows directly from the Pythagorean theorem on the right/obtuse triangle formed by C_i, C_{i+1}, and q, not from volume preservation or Cauchy-Schwarz.">C. Because projecting onto the 2D plane through $C_i, C_{i+1},$ and $q$ preserves volumes, allowing the Cauchy-Schwarz inequality to bound $\delta = \frac{1 - \lambda_i^2}{2}$.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The greedy algorithm selects the maximum distance point (farthest point), not a variance-minimizing point.">D. Because the greedy step selects $p$ to minimize the variance of distances, forcing the second moment of $\delta$ to equal $\lambda_i^2 / 2$.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="24">
+    <div class="note-quiz-question-title">What asymptotic randomized query complexity bound does the standard Yao's Minimax Principle proof establish for the OR problem on n-bit binary strings?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Randomization cannot overcome the linear query barrier for deciding OR; O(log n) is achieved only for sorted search or binary trees.">A. R(OR) = O(log n)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Under the hard mixture distribution mu = 1/2 mu_0 + 1/2 mu_1 (where mu_1 places a single 1 uniformly at random), any deterministic decision tree querying k &lt; n/3 positions has Bayes posterior accuracy strictly below 2/3 on the all-zeros branch. By Yao&#x27;s Minimax Principle, R(OR) &gt;= D_mu(OR) &gt;= n/3 = \Omega(n).">B. R(OR) = \Omega(n), specifically showing R(OR) &gt;= n/3</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. O(sqrt(n)) query complexity is achieved only in quantum query complexity via Grover&#x27;s search, not in classical randomized query complexity.">C. R(OR) &lt;= sqrt(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Theta(1) queries are sufficient under the uniform distribution U({0, 1}^n), but worst-case randomized query complexity R(OR) requires \Omega(n).">D. R(OR) = \Theta(1)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="25">
+    <div class="note-quiz-question-title">To achieve an additive error of at most eps * n^2 with constant success probability &gt;= 2/3 when estimating the number of edges m in the adjacency-matrix model, what sample size k of vertex pairs is sufficient?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The sample size for additive error does not depend on the vertex count n.">A. k = \Theta(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Linear scaling in 1/eps is insufficient to bound variance; Chebyshev requires k = \Theta(1/eps^2).">B. k = \Theta(1 / eps)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let N = \binom{n}{2} = \Theta(n^2). The sample proportion hat{p} has variance Var(hat{p}) = p(1 - p)/k &lt;= 1/(4k). By Chebyshev&#x27;s inequality, Pr[|hat{p} - p| &gt;= eps] &lt;= 1/(4k eps^2) &lt;= 1/3, requiring k = \Theta(1/eps^2), completely independent of n.">C. k = \Theta(1 / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That would be query-intensive and defeat the purpose of sublinear testing.">D. k = \Theta(n^2 / eps)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="26">
+    <div class="note-quiz-question-title">To amplify the success probability to 1 - delta for the additive estimate hat{m} (|hat{m} - m| &lt;= eps * n^2) in the adjacency-matrix model, how must the sample size k scale?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Linear scaling in 1/delta occurs when relying purely on Chebyshev without amplification; Chernoff bounds or the median trick scale logarithmically in 1/delta.">A. k = \Theta(1 / (eps^2 * delta))</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Applying Hoeffding&#x27;s inequality (or repeating the basic Chebyshev estimator \Theta(log(1/delta)) times and taking the median) reduces the failure probability from 1/3 to delta at the multiplicative cost of a factor of log(1/delta).">B. k = \Theta((log(1 / delta)) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The additive bound sample size remains completely decoupled from n.">C. k = \Theta((n * log(1 / delta)) / eps)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The relationship between precision eps and confidence delta is multiplicative (log(1/delta) / eps^2), not additive.">D. k = \Theta(1/eps^2 + 1/delta^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="27">
+    <div class="note-quiz-question-title">Under the assumption of graph connectivity, what is the query complexity in the adjacency-list model to return a (1 + eps)-multiplicative approximation of the number of edges m?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. By decomposing vertices into heavy (out-degree bounded by 2 sqrt(m)) and light (degree bounded by sqrt(2m)) sets relative to a global vertex ordering, the second moment of the estimator X_i is bounded by O(m^{3/2}/n), leading via Chebyshev to O(n / (eps^2 * sqrt(m))) queries.">A. O(n / (eps^2 * sqrt(m)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The complexity scales proportionally to n / sqrt(m), which decreases as m grows.">B. O(m / (eps^2 * sqrt(n)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This represents an unoptimized density bound rather than the sublinear bound achievable with degree-ordered neighbor sampling.">C. O(n^2 / (eps * m))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The factor of n in the numerator is necessary because sampling is conducted over the n vertices of the graph.">D. O(sqrt(m) / eps^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="28">
+    <div class="note-quiz-question-title">Given the query complexity O(n / (eps^2 * sqrt(m))) for connected graphs, what is the worst-case query complexity as a function of n (holding eps constant), and when does it occur?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The query bound O(n / sqrt(m)) is maximized when m is minimized. Because the graph is connected, m &gt;= n - 1. Substituting m = \Theta(n) yields worst-case queries O(n / sqrt(n)) = O(sqrt(n)).">A. O(sqrt(n)), when the graph is minimally connected (such as a tree or simple path, where m = n - 1 = \Theta(n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. When m = \Theta(n^2), the query complexity drops to O(n / sqrt(n^2)) = O(1), its most efficient regime.">B. O(n), when the graph is a complete clique K_n (where m = \Theta(n^2))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The complexity cannot exceed O(sqrt(n)) for any connected graph.">C. O(n^{1.5}), when the graph is bipartite</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. A bounded-degree tree still has m = n - 1, requiring O(sqrt(n)) queries.">D. O(1), when the graph has bounded degree</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="29">
+    <div class="note-quiz-question-title">In the naive uniform vertex sampling algorithm for average degree estimation, why is the sample average hat{d} = (1/t) sum_{i=1}^t d(u_i) an unbiased estimator of d_{avg}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Uniform selection over V guarantees E[d(u_i)] = (1/n) sum d(v) = d_{avg}. By linearity of expectation, E[hat{d}] = (1/t) sum E[d(u_i)] = d_{avg} holds unconditionally without requiring independence.">A. Because each vertex u_i is drawn uniformly at random from V, so E[d(u_i)] = (1/n) sum_{v in V} d(v) = d_{avg}, and expectation is linear across the sum</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Degree distributions in graphs are arbitrary and often heavy-tailed; normality is neither assumed nor true.">B. Because vertex degrees follow a Gaussian normal distribution in all undirected graphs</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The Handshaking Lemma is a structural conservation law (sum d(v) = 2m), not a probabilistic independence property.">C. Because the Handshaking Lemma forces individual degree queries to be pairwise independent</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Markov&#x27;s inequality does not eliminate variance, and the sample mean remains unbiased regardless of sample size t.">D. Because Markov's inequality eliminates sample variance when t &gt;= 30</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="30">
+    <div class="note-quiz-question-title">According to Chebyshev's inequality applied to the naive uniform vertex degree estimator hat{d} (with Var(d(u)) &lt;= n * d_{avg}), what sample size t is required to ensure Pr[|hat{d} - d_{avg}| &gt;= eps * d_{avg}] &lt;= delta?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Using Var(hat{d}) = Var(d(u)) / t &lt;= (n * d_{avg}) / t, Chebyshev&#x27;s inequality yields Pr[|hat{d} - d_{avg}| &gt;= eps * d_{avg}] &lt;= Var(hat{d}) / (eps^2 d_{avg}^2) &lt;= n / (t * eps^2 * d_{avg}). Setting this &lt;= delta forces t &gt;= n / (delta * eps^2 * d_{avg}).">A. t = \Omega(n / (delta * eps^2 * d_{avg}))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The logarithmic dependence on 1/delta requires sub-Gaussian tail concentration (e.g., Chernoff/Hoeffding bounds), whereas degree random variables can take values up to n - 1.">B. t = \Omega((log(1 / delta)) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The ratio n / d_{avg} is inverted.">C. t = \Omega(d_{avg} / (delta * eps^2 * n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality depends quadratically on the error tolerance eps^2.">D. t = \Theta(1 / (eps * delta))</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="31">
+    <div class="note-quiz-question-title">From a statistical perspective, what fundamental structural feature of graphs like the star graph K_{1, n-1} causes naive uniform vertex sampling to require \Omega(n) queries for a multiplicative approximation of average degree?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. In the star graph K_{1, n-1}, the single central hub has degree n - 1, carrying ~50% of the entire degree mass. The second moment E[d(u)^2] = ((n-1)^2 + (n-1)*1)/n \approx n inflates variance to \Omega(n). A sublinear uniform sample almost certainly misses the hub entirely, resulting in severe 50% underestimation.">A. Extreme degree asymmetry (a heavy-tailed degree distribution), where a negligible fraction of vertices (1/n) holds a constant fraction of the total degree mass, creating high second-moment variance Var(d(u)) = \Omega(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. A star graph is a bipartite tree and contains zero cycles of any length.">B. The star graph contains odd cycles that disrupt Chebyshev concentration bounds</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The star graph has diameter 2, the smallest possible non-trivial diameter.">C. The diameter of the star graph is too large for BFS traversal in sublinear time</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Uniform sampling is a completely valid probability distribution; the challenge is statistical variance, not axiomatic inconsistency.">D. Uniform sampling on trees violates the Kolmogorov probability axioms</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="32">
+    <div class="note-quiz-question-title">In the sublinear multiplicative edge estimation algorithm based on global vertex ordering, how many oracle queries (degree and neighbor queries combined) are performed in a single trial to compute one realization of X_i?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Without querying a neighbor and that neighbor&#x27;s degree, the algorithm cannot evaluate the global order relation v_i \prec v_j.">A. Exactly 1 query (only the degree query on v_i)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Step a queries degree d(v_i) (1 query). Step c queries the k-th neighbor of v_i to retrieve v_j (1 query). Step d queries degree d(v_j) (1 query) to determine whether v_i \prec v_j. Total: exactly 3 oracle queries.">B. Exactly 3 queries (degree query of v_i, k-th neighbor query of v_i, and degree query of neighbor v_j)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The neighbor oracle provides direct indexed access to the k-th neighbor in 1 query.">C. O(log n) queries via binary search over adjacency lists</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The algorithm samples a single random neighbor index k in {1, ..., d(v_i)} rather than scanning all neighbors, preserving O(1) query cost per trial.">D. d(v_i) queries to inspect all incident edges of v_i</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="33">
+    <div class="note-quiz-question-title">Using the second-moment bound Var[X_i] &lt;= E[X_i^2] = O(m^{3/2} / n) and expectation E[X_i] = m / n, how many independent samples t are required by Chebyshev's inequality to achieve a (1 +- eps)-multiplicative approximation of m with constant success probability &gt;= 2/3?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let hat{X} = (1/t) sum X_i. Chebyshev&#x27;s inequality gives Pr[|hat{X} - E[X]| &gt;= eps * E[X]] &lt;= Var(hat{X}) / (eps * E[X])^2 &lt;= Var(X_i) / (t * eps^2 * (m/n)^2). Substituting Var(X_i) = O(m^{3/2}/n) yields O((m^{3/2}/n) / (t * eps^2 * m^2/n^2)) = O(n / (t * eps^2 * sqrt(m))). Setting this &lt;= 1/3 requires t = O(n / (eps^2 * sqrt(m))).">A. t = O(n / (eps^2 * sqrt(m)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This formula does not reflect the O(m^{3/2}) variance reduction achieved through heavy/light partitioning.">B. t = O(m / (eps^2 * n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. O(sqrt(n)/eps^2) is the worst-case bound achieved specifically when m = \Theta(n); the general sample complexity is parameterized by m as O(n / (eps^2 sqrt(m))).">C. t = O(sqrt(n) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This would correspond to a much looser second-moment bound without directed orientation pruning.">D. t = O(n^2 / (eps^2 * m^2))</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="34">
+    <div class="note-quiz-question-title">In property testing of binary string sortedness, if an n-bit string is eps-far from sorted (0^* 1^*), why must its (eps * n / 2)-th leftmost 1 precede at least eps * n / 2 zeros?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let index i be the (eps*n/2)-th one. If there are &lt; eps*n/2 zeros to the right of i, changing all zeros to the right of i into 1s (&lt; eps*n/2 changes) and all ones at or to the left of i into 0s (exactly eps*n/2 changes) yields a sorted string 0...01...1 with &lt; eps*n total changes, contradicting that the string is eps-far.">A. By contradiction: if there were fewer than eps * n / 2 zeros to its right, changing those zeros to 1s and the first eps * n / 2 ones to 0s would sort the string with fewer than eps * n bit flips, contradicting eps-farness.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The presence of ones does not guarantee sortedness; inversions depend on the relative order of zeros and ones.">B. Because every binary string with at least eps * n / 2 ones is guaranteed to be sorted.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The Handshaking Lemma applies to graph degrees, not binary strings.">C. Because the Handshaking Lemma bounds the sum of bit values by eps * n / 2.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is a deterministic combinatorial structural property of Hamming distance, not a probabilistic Chebyshev bound.">D. Because Chebyshev's inequality guarantees that the second moment of zeros is bounded by eps * n / 2.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="35">
+    <div class="note-quiz-question-title">For an n-bit binary string that is eps-far from sorted, Algorithm 1 tests monotonicity by sampling k indices uniformly at random. To guarantee success probability at least 2/3 in detecting an inversion, what sample size k is sufficient?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Bounding the failure probability by union bound across the event of missing the first eps*n/2 ones (Blue set) and missing the subsequent zeros (Red set) gives Pr[failure] &lt;= 2 * (1 - eps/2)^k &lt;= 2 * e^{-eps*k/2}. Requiring this &lt;= 1/3 yields e^{-eps*k/2} &lt;= 1/6, so k &gt;= 2 ln(6) / eps, satisfied by k = 10/eps.">A. k &gt;= 2 ln(6) / eps (e.g., k = 10 / eps)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Omega(sqrt(n)) is required for dense general numeric arrays with microscopic swaps, not binary strings where O(1/eps) queries suffice.">B. k = Omega(sqrt(n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Property testing avoids reading a linear fraction of the string; O(1/eps) queries are completely sublinear and independent of n.">C. k = Theta(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The union bound on failure yields an exponential tail 2 e^{-eps*k/2}, which requires only O(1/eps), not O(1/eps^2).">D. k = Theta(1 / eps^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="36">
+    <div class="note-quiz-question-title">Why does the subsequence monotonicity tester (Algorithm 1) fail with o(sqrt(n)) queries on the general array A = (2, 1, 4, 3, 6, 5, ..., n, n - 1), despite the array being 1/2-far from sorted?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. There are n/2 independent inverted pairs. If a sample of size k draws at most one element from each pair, the sampled subsequence remains strictly sorted (e.g. choosing 2 from pair 1 and 3 from pair 2 gives 2 &lt; 3). Finding two elements from the same pair is identical to generating a collision among n/2 bins, which requires k = Omega(sqrt(n)) by the Birthday Paradox.">A. Because to witness an inversion, the sample must hit both elements of the exact same inverted pair (2j, 2j-1); sampling at most one element from each pair leaves the sampled values strictly increasing, which by the Birthday Paradox requires Omega(sqrt(n)) samples.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Fourier cancellation is unrelated to the combinatorial failure of subsequence sampling on local swaps.">B. Because adjacent pairs cancel each other out in the Fourier spectrum.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Every adjacent pair is inverted, meaning n/2 inversions exist and the array is 1/2-far from sorted.">C. Because the array satisfies the promise condition and contains zero inversions.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The array has even length n and follows standard discrete probability axioms.">D. Because the array has odd length, violating Kolmogorov axioms.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="37">
+    <div class="note-quiz-question-title">Consider the Split-Sorted array A = (n/2 + 1, ..., n, 1, ..., n/2). Why does the local adjacent checker (Algorithm 0) require Omega(n) queries to detect unsortedness with probability &gt;= 2/3, even though the array is 1/2-far from sorted?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. While sorting the array requires modifying n/2 elements (eps = 1/2), only a single adjacent pair out of n - 1 adjacent pairs is violated (at the midpoint n/2). A random sample of k adjacent pairs misses this solitary violation with probability (n-1-k)/(n-1), requiring k = Omega(n) to hit it with constant probability.">A. Because exactly one adjacent pair is inverted (at the boundary a_{n/2} = n &gt; a_{n/2+1} = 1), so sampling k adjacent pairs fails with probability (n - 1 - k)/(n - 1), which requires k &gt;= (2n - 2)/3 = Omega(n) to bound failure by 1/3.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The problem is array sortedness in the query model, not graph diameter or BFS traversal.">B. Because the array has diameter Omega(n), preventing local BFS.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The array consists of finite integers, and variance is finite; the failure is purely combinatorial.">C. Because the variance of adjacent differences is infinite.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The adjacent pair (n, 1) has length 1 (adjacent).">D. Because the array contains no inversions of length less than n/4.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="38">
+    <div class="note-quiz-question-title">Suppose a sample X is drawn with probability 1/2 from distribution mu and probability 1/2 from distribution gamma. Under the optimal Bayes decision rule, what is the exact maximum probability of correctly identifying whether X originated from mu or gamma?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Given observed sample x = i, the optimal Bayes rule picks the distribution with higher posterior: Pr[Success | x=i] = max{mu(i), gamma(i)} / (mu(i) + gamma(i)). Integrating over the mixture distribution yields (1/2) sum max{mu(i), gamma(i)}. Applying max{a, b} = (a+b)/2 + |a-b|/2 yields 1/2 + (1/4) sum |mu(i) - gamma(i)| = 1/2 + (1/2) Delta_{TVD}(mu, gamma).">A. 1/2 + (1/2) * Delta_{TVD}(mu, gamma)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. When Delta_{TVD} = 0, success should be 1/2 (random guess), whereas 1 - 0 = 1.">B. 1 - Delta_{TVD}(mu, gamma)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The operational distinguishability of TVD is linear in Delta_{TVD}, not quadratic.">C. 1/2 + Delta_{TVD}(mu, gamma)^2</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Success probability cannot drop below 1/2 because a blind coin flip achieves 1/2.">D. Delta_{TVD}(mu, gamma) / 2</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="39">
+    <div class="note-quiz-question-title">In Yao's Minimax Principle for proving randomized query lower bounds, let nu_0 and nu_1 be the distributions of query-answer transcripts generated by a deterministic decision tree of depth T on hard distributions mu_0 and mu_1. If Delta_{TVD}(nu_0, nu_1) &lt; 1/3, what does this imply about the randomized query complexity R(f)?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Any deterministic algorithm&#x27;s output is a function of its query transcript. If the TVD between transcript distributions is &lt; 1/3, the maximum distinguishing success probability is strictly bounded by 1/2 + (1/2) Delta_{TVD} &lt; 2/3. By Yao&#x27;s Minimax Principle (Part 1), R(f) &gt;= D_mu(f) &gt; T.">A. The maximum success probability of distinguishing nu_0 from nu_1 is &lt; 1/2 + (1/2)*(1/3) = 2/3, so no deterministic algorithm making T queries can achieve 2/3 accuracy, proving D_mu(f) &gt; T and hence R(f) &gt; T.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Indistinguishable transcripts imply a LOWER bound R(f) &gt; T, not an upper bound.">B. The randomized query complexity is upper-bounded by R(f) &lt;= T.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Quantum query complexity is a different model; transcript indistinguishability proves classical lower bounds.">C. The problem f can be solved in O(1) queries using quantum amplitude amplification.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Transcript distributions nu_0 and nu_1 are defined on different input distributions and compared via TVD, not joint independence.">D. The transcript distributions are mutually independent.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="40">
+    <div class="note-quiz-question-title">For any distribution mu on {1, ..., n}, if Delta_{TVD}(mu, U_n) &gt; eps, why does the 2-norm squared satisfy ||mu||_2^2 &gt;= (1 + 4 * eps^2) / n?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Delta_{TVD} &gt; eps implies ||mu - U_n||_1 &gt; 2 eps. By Cauchy-Schwarz, ||mu - U_n||_1 &lt;= sqrt(n) ||mu - U_n||_2, so ||mu - U_n||_2^2 &gt;= (2 eps)^2 / n = 4 eps^2 / n. Expanding ||mu - U_n||_2^2 = ||mu||_2^2 - 1/n yields ||mu||_2^2 = ||mu - U_n||_2^2 + 1/n &gt;= (1 + 4 eps^2)/n.">A. Because ||mu - U_n||_1 = 2 * Delta_{TVD} &gt; 2 eps, and applying Cauchy-Schwarz yields ||mu - U_n||_2^2 &gt;= (1/n) ||mu - U_n||_1^2 &gt; 4 eps^2 / n. Adding the identity ||mu||_2^2 = ||mu - U_n||_2^2 + 1/n gives the result.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. While Parseval&#x27;s identity holds, the norm separation bound follows from Cauchy-Schwarz on the L1 and L2 vector norms.">B. Because the 2-norm is preserved under all unitary Fourier transforms.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is a deterministic norm inequality on probability vectors, not an expectation bound via Markov.">C. Because Markov's inequality forces the expectation of the 2-norm to exceed (1 + 4 eps^2)/n.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The uniform distribution has ||U_n||_2^2 = 1/n.">D. Because the uniform distribution has ||U_n||_2^2 = 4 eps^2 / n.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="41">
+    <div class="note-quiz-question-title">In the Batu et al. pairwise collision counting tester for uniformity, why does Chebyshev's inequality require k = O(sqrt(n) / eps^4) samples to achieve a constant success probability &gt;= 2/3?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The gap in ||mu||_2^2 between uniform (1/n) and eps-far (&gt;= (1 + 4 eps^2)/n) is 4 eps^2 / n, requiring a relative multiplicative estimation precision of gamma = eps^2. The estimator variance is bounded by (24/k) ||mu||_2^3 + (2/k^2) ||mu||_2^2. Setting the Chebyshev bound &lt;= 1/3 requires k = O(1 / (gamma^2 ||mu||_2)) = O(sqrt(n) / gamma^2) = O(sqrt(n) / eps^4).">A. The separation threshold between U_n and an eps-far distribution is gamma = eps^2; setting relative deviation gamma on the estimator requires k = O(sqrt(n) / gamma^2) = O(sqrt(n) / eps^4) using ||mu||_2 &gt;= 1/sqrt(n).</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Collision testing compares pairs in O(1) time; the 1/eps^4 scaling arises from the variance-to-gap-squared ratio in Chebyshev&#x27;s inequality.">B. Because each collision test takes O(1/eps^2) time to verify.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The tester counts pairwise collisions among k samples, which begin occurring at k = Omega(sqrt(n)).">C. Because the birthday paradox requires O(n^2 / eps) samples to find a triple collision.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The variance of the average Y decays as O(1/k), not grows as k^4.">D. Because the variance Var[Y] grows as Theta(k^4 / n).</button>
     </div>
     <div class="note-quiz-response" aria-live="polite"></div>
   </div>
@@ -7434,7 +7763,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   <div class="note-quiz-header">
     <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
     <div class="note-quiz-controls">
-      <div class="note-quiz-progress" aria-live="polite">1 / 23</div>
+      <div class="note-quiz-progress" aria-live="polite">1 / 41</div>
       <button type="button" class="note-quiz-reset">Reset</button>
     </div>
   </div>
@@ -7712,6 +8041,222 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <button type="button" class="note-quiz-option" data-response="Incorrect. The support point q and farthest point p are not necessarily antipodal across C_{i+1}; the support lemma only guarantees q exists in the half-plane opposite to C_{i+1} from C_i, yielding angle &gt;= 90 degrees.">B. Because the half-plane boundary support lemma guarantees that $p$ and $q$ are antipodal across $C_{i+1}$, forcing $\delta = 1/2$ independently of $\lambda_i$ and collapsing the recurrence to $\lambda_{i+1} \ge \lambda_i + 1/2$.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The bound follows directly from the Pythagorean theorem on the right/obtuse triangle formed by C_i, C_{i+1}, and q, not from volume preservation or Cauchy-Schwarz.">C. Because projecting onto the 2D plane through $C_i, C_{i+1},$ and $q$ preserves volumes, allowing the Cauchy-Schwarz inequality to bound $\delta = \frac{1 - \lambda_i^2}{2}$.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The greedy algorithm selects the maximum distance point (farthest point), not a variance-minimizing point.">D. Because the greedy step selects $p$ to minimize the variance of distances, forcing the second moment of $\delta$ to equal $\lambda_i^2 / 2$.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="24">
+    <div class="note-quiz-question-title">What asymptotic randomized query complexity bound does the standard Yao's Minimax Principle proof establish for the OR problem on n-bit binary strings?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Randomization cannot overcome the linear query barrier for deciding OR; O(log n) is achieved only for sorted search or binary trees.">A. R(OR) = O(log n)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Under the hard mixture distribution mu = 1/2 mu_0 + 1/2 mu_1 (where mu_1 places a single 1 uniformly at random), any deterministic decision tree querying k &lt; n/3 positions has Bayes posterior accuracy strictly below 2/3 on the all-zeros branch. By Yao&#x27;s Minimax Principle, R(OR) &gt;= D_mu(OR) &gt;= n/3 = \Omega(n).">B. R(OR) = \Omega(n), specifically showing R(OR) &gt;= n/3</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. O(sqrt(n)) query complexity is achieved only in quantum query complexity via Grover&#x27;s search, not in classical randomized query complexity.">C. R(OR) &lt;= sqrt(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Theta(1) queries are sufficient under the uniform distribution U({0, 1}^n), but worst-case randomized query complexity R(OR) requires \Omega(n).">D. R(OR) = \Theta(1)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="25">
+    <div class="note-quiz-question-title">To achieve an additive error of at most eps * n^2 with constant success probability &gt;= 2/3 when estimating the number of edges m in the adjacency-matrix model, what sample size k of vertex pairs is sufficient?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The sample size for additive error does not depend on the vertex count n.">A. k = \Theta(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Linear scaling in 1/eps is insufficient to bound variance; Chebyshev requires k = \Theta(1/eps^2).">B. k = \Theta(1 / eps)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let N = \binom{n}{2} = \Theta(n^2). The sample proportion hat{p} has variance Var(hat{p}) = p(1 - p)/k &lt;= 1/(4k). By Chebyshev&#x27;s inequality, Pr[|hat{p} - p| &gt;= eps] &lt;= 1/(4k eps^2) &lt;= 1/3, requiring k = \Theta(1/eps^2), completely independent of n.">C. k = \Theta(1 / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That would be query-intensive and defeat the purpose of sublinear testing.">D. k = \Theta(n^2 / eps)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="26">
+    <div class="note-quiz-question-title">To amplify the success probability to 1 - delta for the additive estimate hat{m} (|hat{m} - m| &lt;= eps * n^2) in the adjacency-matrix model, how must the sample size k scale?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Linear scaling in 1/delta occurs when relying purely on Chebyshev without amplification; Chernoff bounds or the median trick scale logarithmically in 1/delta.">A. k = \Theta(1 / (eps^2 * delta))</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Applying Hoeffding&#x27;s inequality (or repeating the basic Chebyshev estimator \Theta(log(1/delta)) times and taking the median) reduces the failure probability from 1/3 to delta at the multiplicative cost of a factor of log(1/delta).">B. k = \Theta((log(1 / delta)) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The additive bound sample size remains completely decoupled from n.">C. k = \Theta((n * log(1 / delta)) / eps)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The relationship between precision eps and confidence delta is multiplicative (log(1/delta) / eps^2), not additive.">D. k = \Theta(1/eps^2 + 1/delta^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="27">
+    <div class="note-quiz-question-title">Under the assumption of graph connectivity, what is the query complexity in the adjacency-list model to return a (1 + eps)-multiplicative approximation of the number of edges m?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. By decomposing vertices into heavy (out-degree bounded by 2 sqrt(m)) and light (degree bounded by sqrt(2m)) sets relative to a global vertex ordering, the second moment of the estimator X_i is bounded by O(m^{3/2}/n), leading via Chebyshev to O(n / (eps^2 * sqrt(m))) queries.">A. O(n / (eps^2 * sqrt(m)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The complexity scales proportionally to n / sqrt(m), which decreases as m grows.">B. O(m / (eps^2 * sqrt(n)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This represents an unoptimized density bound rather than the sublinear bound achievable with degree-ordered neighbor sampling.">C. O(n^2 / (eps * m))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The factor of n in the numerator is necessary because sampling is conducted over the n vertices of the graph.">D. O(sqrt(m) / eps^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="28">
+    <div class="note-quiz-question-title">Given the query complexity O(n / (eps^2 * sqrt(m))) for connected graphs, what is the worst-case query complexity as a function of n (holding eps constant), and when does it occur?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The query bound O(n / sqrt(m)) is maximized when m is minimized. Because the graph is connected, m &gt;= n - 1. Substituting m = \Theta(n) yields worst-case queries O(n / sqrt(n)) = O(sqrt(n)).">A. O(sqrt(n)), when the graph is minimally connected (such as a tree or simple path, where m = n - 1 = \Theta(n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. When m = \Theta(n^2), the query complexity drops to O(n / sqrt(n^2)) = O(1), its most efficient regime.">B. O(n), when the graph is a complete clique K_n (where m = \Theta(n^2))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The complexity cannot exceed O(sqrt(n)) for any connected graph.">C. O(n^{1.5}), when the graph is bipartite</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. A bounded-degree tree still has m = n - 1, requiring O(sqrt(n)) queries.">D. O(1), when the graph has bounded degree</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="29">
+    <div class="note-quiz-question-title">In the naive uniform vertex sampling algorithm for average degree estimation, why is the sample average hat{d} = (1/t) sum_{i=1}^t d(u_i) an unbiased estimator of d_{avg}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Uniform selection over V guarantees E[d(u_i)] = (1/n) sum d(v) = d_{avg}. By linearity of expectation, E[hat{d}] = (1/t) sum E[d(u_i)] = d_{avg} holds unconditionally without requiring independence.">A. Because each vertex u_i is drawn uniformly at random from V, so E[d(u_i)] = (1/n) sum_{v in V} d(v) = d_{avg}, and expectation is linear across the sum</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Degree distributions in graphs are arbitrary and often heavy-tailed; normality is neither assumed nor true.">B. Because vertex degrees follow a Gaussian normal distribution in all undirected graphs</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The Handshaking Lemma is a structural conservation law (sum d(v) = 2m), not a probabilistic independence property.">C. Because the Handshaking Lemma forces individual degree queries to be pairwise independent</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Markov&#x27;s inequality does not eliminate variance, and the sample mean remains unbiased regardless of sample size t.">D. Because Markov's inequality eliminates sample variance when t &gt;= 30</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="30">
+    <div class="note-quiz-question-title">According to Chebyshev's inequality applied to the naive uniform vertex degree estimator hat{d} (with Var(d(u)) &lt;= n * d_{avg}), what sample size t is required to ensure Pr[|hat{d} - d_{avg}| &gt;= eps * d_{avg}] &lt;= delta?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Using Var(hat{d}) = Var(d(u)) / t &lt;= (n * d_{avg}) / t, Chebyshev&#x27;s inequality yields Pr[|hat{d} - d_{avg}| &gt;= eps * d_{avg}] &lt;= Var(hat{d}) / (eps^2 d_{avg}^2) &lt;= n / (t * eps^2 * d_{avg}). Setting this &lt;= delta forces t &gt;= n / (delta * eps^2 * d_{avg}).">A. t = \Omega(n / (delta * eps^2 * d_{avg}))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The logarithmic dependence on 1/delta requires sub-Gaussian tail concentration (e.g., Chernoff/Hoeffding bounds), whereas degree random variables can take values up to n - 1.">B. t = \Omega((log(1 / delta)) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The ratio n / d_{avg} is inverted.">C. t = \Omega(d_{avg} / (delta * eps^2 * n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality depends quadratically on the error tolerance eps^2.">D. t = \Theta(1 / (eps * delta))</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="31">
+    <div class="note-quiz-question-title">From a statistical perspective, what fundamental structural feature of graphs like the star graph K_{1, n-1} causes naive uniform vertex sampling to require \Omega(n) queries for a multiplicative approximation of average degree?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. In the star graph K_{1, n-1}, the single central hub has degree n - 1, carrying ~50% of the entire degree mass. The second moment E[d(u)^2] = ((n-1)^2 + (n-1)*1)/n \approx n inflates variance to \Omega(n). A sublinear uniform sample almost certainly misses the hub entirely, resulting in severe 50% underestimation.">A. Extreme degree asymmetry (a heavy-tailed degree distribution), where a negligible fraction of vertices (1/n) holds a constant fraction of the total degree mass, creating high second-moment variance Var(d(u)) = \Omega(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. A star graph is a bipartite tree and contains zero cycles of any length.">B. The star graph contains odd cycles that disrupt Chebyshev concentration bounds</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The star graph has diameter 2, the smallest possible non-trivial diameter.">C. The diameter of the star graph is too large for BFS traversal in sublinear time</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Uniform sampling is a completely valid probability distribution; the challenge is statistical variance, not axiomatic inconsistency.">D. Uniform sampling on trees violates the Kolmogorov probability axioms</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="32">
+    <div class="note-quiz-question-title">In the sublinear multiplicative edge estimation algorithm based on global vertex ordering, how many oracle queries (degree and neighbor queries combined) are performed in a single trial to compute one realization of X_i?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Without querying a neighbor and that neighbor&#x27;s degree, the algorithm cannot evaluate the global order relation v_i \prec v_j.">A. Exactly 1 query (only the degree query on v_i)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Step a queries degree d(v_i) (1 query). Step c queries the k-th neighbor of v_i to retrieve v_j (1 query). Step d queries degree d(v_j) (1 query) to determine whether v_i \prec v_j. Total: exactly 3 oracle queries.">B. Exactly 3 queries (degree query of v_i, k-th neighbor query of v_i, and degree query of neighbor v_j)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The neighbor oracle provides direct indexed access to the k-th neighbor in 1 query.">C. O(log n) queries via binary search over adjacency lists</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The algorithm samples a single random neighbor index k in {1, ..., d(v_i)} rather than scanning all neighbors, preserving O(1) query cost per trial.">D. d(v_i) queries to inspect all incident edges of v_i</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="33">
+    <div class="note-quiz-question-title">Using the second-moment bound Var[X_i] &lt;= E[X_i^2] = O(m^{3/2} / n) and expectation E[X_i] = m / n, how many independent samples t are required by Chebyshev's inequality to achieve a (1 +- eps)-multiplicative approximation of m with constant success probability &gt;= 2/3?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let hat{X} = (1/t) sum X_i. Chebyshev&#x27;s inequality gives Pr[|hat{X} - E[X]| &gt;= eps * E[X]] &lt;= Var(hat{X}) / (eps * E[X])^2 &lt;= Var(X_i) / (t * eps^2 * (m/n)^2). Substituting Var(X_i) = O(m^{3/2}/n) yields O((m^{3/2}/n) / (t * eps^2 * m^2/n^2)) = O(n / (t * eps^2 * sqrt(m))). Setting this &lt;= 1/3 requires t = O(n / (eps^2 * sqrt(m))).">A. t = O(n / (eps^2 * sqrt(m)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This formula does not reflect the O(m^{3/2}) variance reduction achieved through heavy/light partitioning.">B. t = O(m / (eps^2 * n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. O(sqrt(n)/eps^2) is the worst-case bound achieved specifically when m = \Theta(n); the general sample complexity is parameterized by m as O(n / (eps^2 sqrt(m))).">C. t = O(sqrt(n) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This would correspond to a much looser second-moment bound without directed orientation pruning.">D. t = O(n^2 / (eps^2 * m^2))</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="34">
+    <div class="note-quiz-question-title">In property testing of binary string sortedness, if an n-bit string is eps-far from sorted (0^* 1^*), why must its (eps * n / 2)-th leftmost 1 precede at least eps * n / 2 zeros?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let index i be the (eps*n/2)-th one. If there are &lt; eps*n/2 zeros to the right of i, changing all zeros to the right of i into 1s (&lt; eps*n/2 changes) and all ones at or to the left of i into 0s (exactly eps*n/2 changes) yields a sorted string 0...01...1 with &lt; eps*n total changes, contradicting that the string is eps-far.">A. By contradiction: if there were fewer than eps * n / 2 zeros to its right, changing those zeros to 1s and the first eps * n / 2 ones to 0s would sort the string with fewer than eps * n bit flips, contradicting eps-farness.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The presence of ones does not guarantee sortedness; inversions depend on the relative order of zeros and ones.">B. Because every binary string with at least eps * n / 2 ones is guaranteed to be sorted.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The Handshaking Lemma applies to graph degrees, not binary strings.">C. Because the Handshaking Lemma bounds the sum of bit values by eps * n / 2.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is a deterministic combinatorial structural property of Hamming distance, not a probabilistic Chebyshev bound.">D. Because Chebyshev's inequality guarantees that the second moment of zeros is bounded by eps * n / 2.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="35">
+    <div class="note-quiz-question-title">For an n-bit binary string that is eps-far from sorted, Algorithm 1 tests monotonicity by sampling k indices uniformly at random. To guarantee success probability at least 2/3 in detecting an inversion, what sample size k is sufficient?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Bounding the failure probability by union bound across the event of missing the first eps*n/2 ones (Blue set) and missing the subsequent zeros (Red set) gives Pr[failure] &lt;= 2 * (1 - eps/2)^k &lt;= 2 * e^{-eps*k/2}. Requiring this &lt;= 1/3 yields e^{-eps*k/2} &lt;= 1/6, so k &gt;= 2 ln(6) / eps, satisfied by k = 10/eps.">A. k &gt;= 2 ln(6) / eps (e.g., k = 10 / eps)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Omega(sqrt(n)) is required for dense general numeric arrays with microscopic swaps, not binary strings where O(1/eps) queries suffice.">B. k = Omega(sqrt(n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Property testing avoids reading a linear fraction of the string; O(1/eps) queries are completely sublinear and independent of n.">C. k = Theta(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The union bound on failure yields an exponential tail 2 e^{-eps*k/2}, which requires only O(1/eps), not O(1/eps^2).">D. k = Theta(1 / eps^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="36">
+    <div class="note-quiz-question-title">Why does the subsequence monotonicity tester (Algorithm 1) fail with o(sqrt(n)) queries on the general array A = (2, 1, 4, 3, 6, 5, ..., n, n - 1), despite the array being 1/2-far from sorted?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. There are n/2 independent inverted pairs. If a sample of size k draws at most one element from each pair, the sampled subsequence remains strictly sorted (e.g. choosing 2 from pair 1 and 3 from pair 2 gives 2 &lt; 3). Finding two elements from the same pair is identical to generating a collision among n/2 bins, which requires k = Omega(sqrt(n)) by the Birthday Paradox.">A. Because to witness an inversion, the sample must hit both elements of the exact same inverted pair (2j, 2j-1); sampling at most one element from each pair leaves the sampled values strictly increasing, which by the Birthday Paradox requires Omega(sqrt(n)) samples.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Fourier cancellation is unrelated to the combinatorial failure of subsequence sampling on local swaps.">B. Because adjacent pairs cancel each other out in the Fourier spectrum.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Every adjacent pair is inverted, meaning n/2 inversions exist and the array is 1/2-far from sorted.">C. Because the array satisfies the promise condition and contains zero inversions.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The array has even length n and follows standard discrete probability axioms.">D. Because the array has odd length, violating Kolmogorov axioms.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="37">
+    <div class="note-quiz-question-title">Consider the Split-Sorted array A = (n/2 + 1, ..., n, 1, ..., n/2). Why does the local adjacent checker (Algorithm 0) require Omega(n) queries to detect unsortedness with probability &gt;= 2/3, even though the array is 1/2-far from sorted?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. While sorting the array requires modifying n/2 elements (eps = 1/2), only a single adjacent pair out of n - 1 adjacent pairs is violated (at the midpoint n/2). A random sample of k adjacent pairs misses this solitary violation with probability (n-1-k)/(n-1), requiring k = Omega(n) to hit it with constant probability.">A. Because exactly one adjacent pair is inverted (at the boundary a_{n/2} = n &gt; a_{n/2+1} = 1), so sampling k adjacent pairs fails with probability (n - 1 - k)/(n - 1), which requires k &gt;= (2n - 2)/3 = Omega(n) to bound failure by 1/3.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The problem is array sortedness in the query model, not graph diameter or BFS traversal.">B. Because the array has diameter Omega(n), preventing local BFS.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The array consists of finite integers, and variance is finite; the failure is purely combinatorial.">C. Because the variance of adjacent differences is infinite.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The adjacent pair (n, 1) has length 1 (adjacent).">D. Because the array contains no inversions of length less than n/4.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="38">
+    <div class="note-quiz-question-title">Suppose a sample X is drawn with probability 1/2 from distribution mu and probability 1/2 from distribution gamma. Under the optimal Bayes decision rule, what is the exact maximum probability of correctly identifying whether X originated from mu or gamma?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Given observed sample x = i, the optimal Bayes rule picks the distribution with higher posterior: Pr[Success | x=i] = max{mu(i), gamma(i)} / (mu(i) + gamma(i)). Integrating over the mixture distribution yields (1/2) sum max{mu(i), gamma(i)}. Applying max{a, b} = (a+b)/2 + |a-b|/2 yields 1/2 + (1/4) sum |mu(i) - gamma(i)| = 1/2 + (1/2) Delta_{TVD}(mu, gamma).">A. 1/2 + (1/2) * Delta_{TVD}(mu, gamma)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. When Delta_{TVD} = 0, success should be 1/2 (random guess), whereas 1 - 0 = 1.">B. 1 - Delta_{TVD}(mu, gamma)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The operational distinguishability of TVD is linear in Delta_{TVD}, not quadratic.">C. 1/2 + Delta_{TVD}(mu, gamma)^2</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Success probability cannot drop below 1/2 because a blind coin flip achieves 1/2.">D. Delta_{TVD}(mu, gamma) / 2</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="39">
+    <div class="note-quiz-question-title">In Yao's Minimax Principle for proving randomized query lower bounds, let nu_0 and nu_1 be the distributions of query-answer transcripts generated by a deterministic decision tree of depth T on hard distributions mu_0 and mu_1. If Delta_{TVD}(nu_0, nu_1) &lt; 1/3, what does this imply about the randomized query complexity R(f)?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Any deterministic algorithm&#x27;s output is a function of its query transcript. If the TVD between transcript distributions is &lt; 1/3, the maximum distinguishing success probability is strictly bounded by 1/2 + (1/2) Delta_{TVD} &lt; 2/3. By Yao&#x27;s Minimax Principle (Part 1), R(f) &gt;= D_mu(f) &gt; T.">A. The maximum success probability of distinguishing nu_0 from nu_1 is &lt; 1/2 + (1/2)*(1/3) = 2/3, so no deterministic algorithm making T queries can achieve 2/3 accuracy, proving D_mu(f) &gt; T and hence R(f) &gt; T.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Indistinguishable transcripts imply a LOWER bound R(f) &gt; T, not an upper bound.">B. The randomized query complexity is upper-bounded by R(f) &lt;= T.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Quantum query complexity is a different model; transcript indistinguishability proves classical lower bounds.">C. The problem f can be solved in O(1) queries using quantum amplitude amplification.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Transcript distributions nu_0 and nu_1 are defined on different input distributions and compared via TVD, not joint independence.">D. The transcript distributions are mutually independent.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="40">
+    <div class="note-quiz-question-title">For any distribution mu on {1, ..., n}, if Delta_{TVD}(mu, U_n) &gt; eps, why does the 2-norm squared satisfy ||mu||_2^2 &gt;= (1 + 4 * eps^2) / n?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Delta_{TVD} &gt; eps implies ||mu - U_n||_1 &gt; 2 eps. By Cauchy-Schwarz, ||mu - U_n||_1 &lt;= sqrt(n) ||mu - U_n||_2, so ||mu - U_n||_2^2 &gt;= (2 eps)^2 / n = 4 eps^2 / n. Expanding ||mu - U_n||_2^2 = ||mu||_2^2 - 1/n yields ||mu||_2^2 = ||mu - U_n||_2^2 + 1/n &gt;= (1 + 4 eps^2)/n.">A. Because ||mu - U_n||_1 = 2 * Delta_{TVD} &gt; 2 eps, and applying Cauchy-Schwarz yields ||mu - U_n||_2^2 &gt;= (1/n) ||mu - U_n||_1^2 &gt; 4 eps^2 / n. Adding the identity ||mu||_2^2 = ||mu - U_n||_2^2 + 1/n gives the result.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. While Parseval&#x27;s identity holds, the norm separation bound follows from Cauchy-Schwarz on the L1 and L2 vector norms.">B. Because the 2-norm is preserved under all unitary Fourier transforms.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is a deterministic norm inequality on probability vectors, not an expectation bound via Markov.">C. Because Markov's inequality forces the expectation of the 2-norm to exceed (1 + 4 eps^2)/n.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The uniform distribution has ||U_n||_2^2 = 1/n.">D. Because the uniform distribution has ||U_n||_2^2 = 4 eps^2 / n.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="41">
+    <div class="note-quiz-question-title">In the Batu et al. pairwise collision counting tester for uniformity, why does Chebyshev's inequality require k = O(sqrt(n) / eps^4) samples to achieve a constant success probability &gt;= 2/3?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The gap in ||mu||_2^2 between uniform (1/n) and eps-far (&gt;= (1 + 4 eps^2)/n) is 4 eps^2 / n, requiring a relative multiplicative estimation precision of gamma = eps^2. The estimator variance is bounded by (24/k) ||mu||_2^3 + (2/k^2) ||mu||_2^2. Setting the Chebyshev bound &lt;= 1/3 requires k = O(1 / (gamma^2 ||mu||_2)) = O(sqrt(n) / gamma^2) = O(sqrt(n) / eps^4).">A. The separation threshold between U_n and an eps-far distribution is gamma = eps^2; setting relative deviation gamma on the estimator requires k = O(sqrt(n) / gamma^2) = O(sqrt(n) / eps^4) using ||mu||_2 &gt;= 1/sqrt(n).</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Collision testing compares pairs in O(1) time; the 1/eps^4 scaling arises from the variance-to-gap-squared ratio in Chebyshev&#x27;s inequality.">B. Because each collision test takes O(1/eps^2) time to verify.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The tester counts pairwise collisions among k samples, which begin occurring at k = Omega(sqrt(n)).">C. Because the birthday paradox requires O(n^2 / eps) samples to find a triple collision.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The variance of the average Y decays as O(1/k), not grows as k^4.">D. Because the variance Var[Y] grows as Theta(k^4 / n).</button>
     </div>
     <div class="note-quiz-response" aria-live="polite"></div>
   </div>
@@ -8370,7 +8915,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   <div class="note-quiz-header">
     <div class="note-quiz-title"><i class="fa-regular fa-circle-check me-2"></i>Quick Quiz</div>
     <div class="note-quiz-controls">
-      <div class="note-quiz-progress" aria-live="polite">1 / 23</div>
+      <div class="note-quiz-progress" aria-live="polite">1 / 41</div>
       <button type="button" class="note-quiz-reset">Reset</button>
     </div>
   </div>
@@ -8648,6 +9193,222 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <button type="button" class="note-quiz-option" data-response="Incorrect. The support point q and farthest point p are not necessarily antipodal across C_{i+1}; the support lemma only guarantees q exists in the half-plane opposite to C_{i+1} from C_i, yielding angle &gt;= 90 degrees.">B. Because the half-plane boundary support lemma guarantees that $p$ and $q$ are antipodal across $C_{i+1}$, forcing $\delta = 1/2$ independently of $\lambda_i$ and collapsing the recurrence to $\lambda_{i+1} \ge \lambda_i + 1/2$.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The bound follows directly from the Pythagorean theorem on the right/obtuse triangle formed by C_i, C_{i+1}, and q, not from volume preservation or Cauchy-Schwarz.">C. Because projecting onto the 2D plane through $C_i, C_{i+1},$ and $q$ preserves volumes, allowing the Cauchy-Schwarz inequality to bound $\delta = \frac{1 - \lambda_i^2}{2}$.</button>
 <button type="button" class="note-quiz-option" data-response="Incorrect. The greedy algorithm selects the maximum distance point (farthest point), not a variance-minimizing point.">D. Because the greedy step selects $p$ to minimize the variance of distances, forcing the second moment of $\delta$ to equal $\lambda_i^2 / 2$.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="24">
+    <div class="note-quiz-question-title">What asymptotic randomized query complexity bound does the standard Yao's Minimax Principle proof establish for the OR problem on n-bit binary strings?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Randomization cannot overcome the linear query barrier for deciding OR; O(log n) is achieved only for sorted search or binary trees.">A. R(OR) = O(log n)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Under the hard mixture distribution mu = 1/2 mu_0 + 1/2 mu_1 (where mu_1 places a single 1 uniformly at random), any deterministic decision tree querying k &lt; n/3 positions has Bayes posterior accuracy strictly below 2/3 on the all-zeros branch. By Yao&#x27;s Minimax Principle, R(OR) &gt;= D_mu(OR) &gt;= n/3 = \Omega(n).">B. R(OR) = \Omega(n), specifically showing R(OR) &gt;= n/3</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. O(sqrt(n)) query complexity is achieved only in quantum query complexity via Grover&#x27;s search, not in classical randomized query complexity.">C. R(OR) &lt;= sqrt(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Theta(1) queries are sufficient under the uniform distribution U({0, 1}^n), but worst-case randomized query complexity R(OR) requires \Omega(n).">D. R(OR) = \Theta(1)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="25">
+    <div class="note-quiz-question-title">To achieve an additive error of at most eps * n^2 with constant success probability &gt;= 2/3 when estimating the number of edges m in the adjacency-matrix model, what sample size k of vertex pairs is sufficient?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. The sample size for additive error does not depend on the vertex count n.">A. k = \Theta(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Linear scaling in 1/eps is insufficient to bound variance; Chebyshev requires k = \Theta(1/eps^2).">B. k = \Theta(1 / eps)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let N = \binom{n}{2} = \Theta(n^2). The sample proportion hat{p} has variance Var(hat{p}) = p(1 - p)/k &lt;= 1/(4k). By Chebyshev&#x27;s inequality, Pr[|hat{p} - p| &gt;= eps] &lt;= 1/(4k eps^2) &lt;= 1/3, requiring k = \Theta(1/eps^2), completely independent of n.">C. k = \Theta(1 / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. That would be query-intensive and defeat the purpose of sublinear testing.">D. k = \Theta(n^2 / eps)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="26">
+    <div class="note-quiz-question-title">To amplify the success probability to 1 - delta for the additive estimate hat{m} (|hat{m} - m| &lt;= eps * n^2) in the adjacency-matrix model, how must the sample size k scale?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Linear scaling in 1/delta occurs when relying purely on Chebyshev without amplification; Chernoff bounds or the median trick scale logarithmically in 1/delta.">A. k = \Theta(1 / (eps^2 * delta))</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Applying Hoeffding&#x27;s inequality (or repeating the basic Chebyshev estimator \Theta(log(1/delta)) times and taking the median) reduces the failure probability from 1/3 to delta at the multiplicative cost of a factor of log(1/delta).">B. k = \Theta((log(1 / delta)) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The additive bound sample size remains completely decoupled from n.">C. k = \Theta((n * log(1 / delta)) / eps)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The relationship between precision eps and confidence delta is multiplicative (log(1/delta) / eps^2), not additive.">D. k = \Theta(1/eps^2 + 1/delta^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="27">
+    <div class="note-quiz-question-title">Under the assumption of graph connectivity, what is the query complexity in the adjacency-list model to return a (1 + eps)-multiplicative approximation of the number of edges m?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. By decomposing vertices into heavy (out-degree bounded by 2 sqrt(m)) and light (degree bounded by sqrt(2m)) sets relative to a global vertex ordering, the second moment of the estimator X_i is bounded by O(m^{3/2}/n), leading via Chebyshev to O(n / (eps^2 * sqrt(m))) queries.">A. O(n / (eps^2 * sqrt(m)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The complexity scales proportionally to n / sqrt(m), which decreases as m grows.">B. O(m / (eps^2 * sqrt(n)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This represents an unoptimized density bound rather than the sublinear bound achievable with degree-ordered neighbor sampling.">C. O(n^2 / (eps * m))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The factor of n in the numerator is necessary because sampling is conducted over the n vertices of the graph.">D. O(sqrt(m) / eps^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="28">
+    <div class="note-quiz-question-title">Given the query complexity O(n / (eps^2 * sqrt(m))) for connected graphs, what is the worst-case query complexity as a function of n (holding eps constant), and when does it occur?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The query bound O(n / sqrt(m)) is maximized when m is minimized. Because the graph is connected, m &gt;= n - 1. Substituting m = \Theta(n) yields worst-case queries O(n / sqrt(n)) = O(sqrt(n)).">A. O(sqrt(n)), when the graph is minimally connected (such as a tree or simple path, where m = n - 1 = \Theta(n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. When m = \Theta(n^2), the query complexity drops to O(n / sqrt(n^2)) = O(1), its most efficient regime.">B. O(n), when the graph is a complete clique K_n (where m = \Theta(n^2))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The complexity cannot exceed O(sqrt(n)) for any connected graph.">C. O(n^{1.5}), when the graph is bipartite</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. A bounded-degree tree still has m = n - 1, requiring O(sqrt(n)) queries.">D. O(1), when the graph has bounded degree</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="29">
+    <div class="note-quiz-question-title">In the naive uniform vertex sampling algorithm for average degree estimation, why is the sample average hat{d} = (1/t) sum_{i=1}^t d(u_i) an unbiased estimator of d_{avg}?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Uniform selection over V guarantees E[d(u_i)] = (1/n) sum d(v) = d_{avg}. By linearity of expectation, E[hat{d}] = (1/t) sum E[d(u_i)] = d_{avg} holds unconditionally without requiring independence.">A. Because each vertex u_i is drawn uniformly at random from V, so E[d(u_i)] = (1/n) sum_{v in V} d(v) = d_{avg}, and expectation is linear across the sum</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Degree distributions in graphs are arbitrary and often heavy-tailed; normality is neither assumed nor true.">B. Because vertex degrees follow a Gaussian normal distribution in all undirected graphs</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The Handshaking Lemma is a structural conservation law (sum d(v) = 2m), not a probabilistic independence property.">C. Because the Handshaking Lemma forces individual degree queries to be pairwise independent</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Markov&#x27;s inequality does not eliminate variance, and the sample mean remains unbiased regardless of sample size t.">D. Because Markov's inequality eliminates sample variance when t &gt;= 30</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="30">
+    <div class="note-quiz-question-title">According to Chebyshev's inequality applied to the naive uniform vertex degree estimator hat{d} (with Var(d(u)) &lt;= n * d_{avg}), what sample size t is required to ensure Pr[|hat{d} - d_{avg}| &gt;= eps * d_{avg}] &lt;= delta?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Using Var(hat{d}) = Var(d(u)) / t &lt;= (n * d_{avg}) / t, Chebyshev&#x27;s inequality yields Pr[|hat{d} - d_{avg}| &gt;= eps * d_{avg}] &lt;= Var(hat{d}) / (eps^2 d_{avg}^2) &lt;= n / (t * eps^2 * d_{avg}). Setting this &lt;= delta forces t &gt;= n / (delta * eps^2 * d_{avg}).">A. t = \Omega(n / (delta * eps^2 * d_{avg}))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The logarithmic dependence on 1/delta requires sub-Gaussian tail concentration (e.g., Chernoff/Hoeffding bounds), whereas degree random variables can take values up to n - 1.">B. t = \Omega((log(1 / delta)) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The ratio n / d_{avg} is inverted.">C. t = \Omega(d_{avg} / (delta * eps^2 * n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Chebyshev&#x27;s inequality depends quadratically on the error tolerance eps^2.">D. t = \Theta(1 / (eps * delta))</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="31">
+    <div class="note-quiz-question-title">From a statistical perspective, what fundamental structural feature of graphs like the star graph K_{1, n-1} causes naive uniform vertex sampling to require \Omega(n) queries for a multiplicative approximation of average degree?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. In the star graph K_{1, n-1}, the single central hub has degree n - 1, carrying ~50% of the entire degree mass. The second moment E[d(u)^2] = ((n-1)^2 + (n-1)*1)/n \approx n inflates variance to \Omega(n). A sublinear uniform sample almost certainly misses the hub entirely, resulting in severe 50% underestimation.">A. Extreme degree asymmetry (a heavy-tailed degree distribution), where a negligible fraction of vertices (1/n) holds a constant fraction of the total degree mass, creating high second-moment variance Var(d(u)) = \Omega(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. A star graph is a bipartite tree and contains zero cycles of any length.">B. The star graph contains odd cycles that disrupt Chebyshev concentration bounds</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The star graph has diameter 2, the smallest possible non-trivial diameter.">C. The diameter of the star graph is too large for BFS traversal in sublinear time</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Uniform sampling is a completely valid probability distribution; the challenge is statistical variance, not axiomatic inconsistency.">D. Uniform sampling on trees violates the Kolmogorov probability axioms</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="32">
+    <div class="note-quiz-question-title">In the sublinear multiplicative edge estimation algorithm based on global vertex ordering, how many oracle queries (degree and neighbor queries combined) are performed in a single trial to compute one realization of X_i?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-response="Incorrect. Without querying a neighbor and that neighbor&#x27;s degree, the algorithm cannot evaluate the global order relation v_i \prec v_j.">A. Exactly 1 query (only the degree query on v_i)</button>
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Step a queries degree d(v_i) (1 query). Step c queries the k-th neighbor of v_i to retrieve v_j (1 query). Step d queries degree d(v_j) (1 query) to determine whether v_i \prec v_j. Total: exactly 3 oracle queries.">B. Exactly 3 queries (degree query of v_i, k-th neighbor query of v_i, and degree query of neighbor v_j)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The neighbor oracle provides direct indexed access to the k-th neighbor in 1 query.">C. O(log n) queries via binary search over adjacency lists</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The algorithm samples a single random neighbor index k in {1, ..., d(v_i)} rather than scanning all neighbors, preserving O(1) query cost per trial.">D. d(v_i) queries to inspect all incident edges of v_i</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="33">
+    <div class="note-quiz-question-title">Using the second-moment bound Var[X_i] &lt;= E[X_i^2] = O(m^{3/2} / n) and expectation E[X_i] = m / n, how many independent samples t are required by Chebyshev's inequality to achieve a (1 +- eps)-multiplicative approximation of m with constant success probability &gt;= 2/3?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let hat{X} = (1/t) sum X_i. Chebyshev&#x27;s inequality gives Pr[|hat{X} - E[X]| &gt;= eps * E[X]] &lt;= Var(hat{X}) / (eps * E[X])^2 &lt;= Var(X_i) / (t * eps^2 * (m/n)^2). Substituting Var(X_i) = O(m^{3/2}/n) yields O((m^{3/2}/n) / (t * eps^2 * m^2/n^2)) = O(n / (t * eps^2 * sqrt(m))). Setting this &lt;= 1/3 requires t = O(n / (eps^2 * sqrt(m))).">A. t = O(n / (eps^2 * sqrt(m)))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This formula does not reflect the O(m^{3/2}) variance reduction achieved through heavy/light partitioning.">B. t = O(m / (eps^2 * n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. O(sqrt(n)/eps^2) is the worst-case bound achieved specifically when m = \Theta(n); the general sample complexity is parameterized by m as O(n / (eps^2 sqrt(m))).">C. t = O(sqrt(n) / eps^2)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This would correspond to a much looser second-moment bound without directed orientation pruning.">D. t = O(n^2 / (eps^2 * m^2))</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="34">
+    <div class="note-quiz-question-title">In property testing of binary string sortedness, if an n-bit string is eps-far from sorted (0^* 1^*), why must its (eps * n / 2)-th leftmost 1 precede at least eps * n / 2 zeros?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Let index i be the (eps*n/2)-th one. If there are &lt; eps*n/2 zeros to the right of i, changing all zeros to the right of i into 1s (&lt; eps*n/2 changes) and all ones at or to the left of i into 0s (exactly eps*n/2 changes) yields a sorted string 0...01...1 with &lt; eps*n total changes, contradicting that the string is eps-far.">A. By contradiction: if there were fewer than eps * n / 2 zeros to its right, changing those zeros to 1s and the first eps * n / 2 ones to 0s would sort the string with fewer than eps * n bit flips, contradicting eps-farness.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The presence of ones does not guarantee sortedness; inversions depend on the relative order of zeros and ones.">B. Because every binary string with at least eps * n / 2 ones is guaranteed to be sorted.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The Handshaking Lemma applies to graph degrees, not binary strings.">C. Because the Handshaking Lemma bounds the sum of bit values by eps * n / 2.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is a deterministic combinatorial structural property of Hamming distance, not a probabilistic Chebyshev bound.">D. Because Chebyshev's inequality guarantees that the second moment of zeros is bounded by eps * n / 2.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="35">
+    <div class="note-quiz-question-title">For an n-bit binary string that is eps-far from sorted, Algorithm 1 tests monotonicity by sampling k indices uniformly at random. To guarantee success probability at least 2/3 in detecting an inversion, what sample size k is sufficient?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Bounding the failure probability by union bound across the event of missing the first eps*n/2 ones (Blue set) and missing the subsequent zeros (Red set) gives Pr[failure] &lt;= 2 * (1 - eps/2)^k &lt;= 2 * e^{-eps*k/2}. Requiring this &lt;= 1/3 yields e^{-eps*k/2} &lt;= 1/6, so k &gt;= 2 ln(6) / eps, satisfied by k = 10/eps.">A. k &gt;= 2 ln(6) / eps (e.g., k = 10 / eps)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Omega(sqrt(n)) is required for dense general numeric arrays with microscopic swaps, not binary strings where O(1/eps) queries suffice.">B. k = Omega(sqrt(n))</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Property testing avoids reading a linear fraction of the string; O(1/eps) queries are completely sublinear and independent of n.">C. k = Theta(n)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The union bound on failure yields an exponential tail 2 e^{-eps*k/2}, which requires only O(1/eps), not O(1/eps^2).">D. k = Theta(1 / eps^2)</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="36">
+    <div class="note-quiz-question-title">Why does the subsequence monotonicity tester (Algorithm 1) fail with o(sqrt(n)) queries on the general array A = (2, 1, 4, 3, 6, 5, ..., n, n - 1), despite the array being 1/2-far from sorted?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. There are n/2 independent inverted pairs. If a sample of size k draws at most one element from each pair, the sampled subsequence remains strictly sorted (e.g. choosing 2 from pair 1 and 3 from pair 2 gives 2 &lt; 3). Finding two elements from the same pair is identical to generating a collision among n/2 bins, which requires k = Omega(sqrt(n)) by the Birthday Paradox.">A. Because to witness an inversion, the sample must hit both elements of the exact same inverted pair (2j, 2j-1); sampling at most one element from each pair leaves the sampled values strictly increasing, which by the Birthday Paradox requires Omega(sqrt(n)) samples.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Fourier cancellation is unrelated to the combinatorial failure of subsequence sampling on local swaps.">B. Because adjacent pairs cancel each other out in the Fourier spectrum.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Every adjacent pair is inverted, meaning n/2 inversions exist and the array is 1/2-far from sorted.">C. Because the array satisfies the promise condition and contains zero inversions.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The array has even length n and follows standard discrete probability axioms.">D. Because the array has odd length, violating Kolmogorov axioms.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="37">
+    <div class="note-quiz-question-title">Consider the Split-Sorted array A = (n/2 + 1, ..., n, 1, ..., n/2). Why does the local adjacent checker (Algorithm 0) require Omega(n) queries to detect unsortedness with probability &gt;= 2/3, even though the array is 1/2-far from sorted?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. While sorting the array requires modifying n/2 elements (eps = 1/2), only a single adjacent pair out of n - 1 adjacent pairs is violated (at the midpoint n/2). A random sample of k adjacent pairs misses this solitary violation with probability (n-1-k)/(n-1), requiring k = Omega(n) to hit it with constant probability.">A. Because exactly one adjacent pair is inverted (at the boundary a_{n/2} = n &gt; a_{n/2+1} = 1), so sampling k adjacent pairs fails with probability (n - 1 - k)/(n - 1), which requires k &gt;= (2n - 2)/3 = Omega(n) to bound failure by 1/3.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The problem is array sortedness in the query model, not graph diameter or BFS traversal.">B. Because the array has diameter Omega(n), preventing local BFS.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The array consists of finite integers, and variance is finite; the failure is purely combinatorial.">C. Because the variance of adjacent differences is infinite.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The adjacent pair (n, 1) has length 1 (adjacent).">D. Because the array contains no inversions of length less than n/4.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="38">
+    <div class="note-quiz-question-title">Suppose a sample X is drawn with probability 1/2 from distribution mu and probability 1/2 from distribution gamma. Under the optimal Bayes decision rule, what is the exact maximum probability of correctly identifying whether X originated from mu or gamma?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Given observed sample x = i, the optimal Bayes rule picks the distribution with higher posterior: Pr[Success | x=i] = max{mu(i), gamma(i)} / (mu(i) + gamma(i)). Integrating over the mixture distribution yields (1/2) sum max{mu(i), gamma(i)}. Applying max{a, b} = (a+b)/2 + |a-b|/2 yields 1/2 + (1/4) sum |mu(i) - gamma(i)| = 1/2 + (1/2) Delta_{TVD}(mu, gamma).">A. 1/2 + (1/2) * Delta_{TVD}(mu, gamma)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. When Delta_{TVD} = 0, success should be 1/2 (random guess), whereas 1 - 0 = 1.">B. 1 - Delta_{TVD}(mu, gamma)</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The operational distinguishability of TVD is linear in Delta_{TVD}, not quadratic.">C. 1/2 + Delta_{TVD}(mu, gamma)^2</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Success probability cannot drop below 1/2 because a blind coin flip achieves 1/2.">D. Delta_{TVD}(mu, gamma) / 2</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="39">
+    <div class="note-quiz-question-title">In Yao's Minimax Principle for proving randomized query lower bounds, let nu_0 and nu_1 be the distributions of query-answer transcripts generated by a deterministic decision tree of depth T on hard distributions mu_0 and mu_1. If Delta_{TVD}(nu_0, nu_1) &lt; 1/3, what does this imply about the randomized query complexity R(f)?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Any deterministic algorithm&#x27;s output is a function of its query transcript. If the TVD between transcript distributions is &lt; 1/3, the maximum distinguishing success probability is strictly bounded by 1/2 + (1/2) Delta_{TVD} &lt; 2/3. By Yao&#x27;s Minimax Principle (Part 1), R(f) &gt;= D_mu(f) &gt; T.">A. The maximum success probability of distinguishing nu_0 from nu_1 is &lt; 1/2 + (1/2)*(1/3) = 2/3, so no deterministic algorithm making T queries can achieve 2/3 accuracy, proving D_mu(f) &gt; T and hence R(f) &gt; T.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Indistinguishable transcripts imply a LOWER bound R(f) &gt; T, not an upper bound.">B. The randomized query complexity is upper-bounded by R(f) &lt;= T.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Quantum query complexity is a different model; transcript indistinguishability proves classical lower bounds.">C. The problem f can be solved in O(1) queries using quantum amplitude amplification.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Transcript distributions nu_0 and nu_1 are defined on different input distributions and compared via TVD, not joint independence.">D. The transcript distributions are mutually independent.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="40">
+    <div class="note-quiz-question-title">For any distribution mu on {1, ..., n}, if Delta_{TVD}(mu, U_n) &gt; eps, why does the 2-norm squared satisfy ||mu||_2^2 &gt;= (1 + 4 * eps^2) / n?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. Delta_{TVD} &gt; eps implies ||mu - U_n||_1 &gt; 2 eps. By Cauchy-Schwarz, ||mu - U_n||_1 &lt;= sqrt(n) ||mu - U_n||_2, so ||mu - U_n||_2^2 &gt;= (2 eps)^2 / n = 4 eps^2 / n. Expanding ||mu - U_n||_2^2 = ||mu||_2^2 - 1/n yields ||mu||_2^2 = ||mu - U_n||_2^2 + 1/n &gt;= (1 + 4 eps^2)/n.">A. Because ||mu - U_n||_1 = 2 * Delta_{TVD} &gt; 2 eps, and applying Cauchy-Schwarz yields ||mu - U_n||_2^2 &gt;= (1/n) ||mu - U_n||_1^2 &gt; 4 eps^2 / n. Adding the identity ||mu||_2^2 = ||mu - U_n||_2^2 + 1/n gives the result.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. While Parseval&#x27;s identity holds, the norm separation bound follows from Cauchy-Schwarz on the L1 and L2 vector norms.">B. Because the 2-norm is preserved under all unitary Fourier transforms.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. This is a deterministic norm inequality on probability vectors, not an expectation bound via Markov.">C. Because Markov's inequality forces the expectation of the 2-norm to exceed (1 + 4 eps^2)/n.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The uniform distribution has ||U_n||_2^2 = 1/n.">D. Because the uniform distribution has ||U_n||_2^2 = 4 eps^2 / n.</button>
+    </div>
+    <div class="note-quiz-response" aria-live="polite"></div>
+  </div>
+</div>
+<div class="carousel-item">
+  <div class="note-quiz-question" data-question="41">
+    <div class="note-quiz-question-title">In the Batu et al. pairwise collision counting tester for uniformity, why does Chebyshev's inequality require k = O(sqrt(n) / eps^4) samples to achieve a constant success probability &gt;= 2/3?</div>
+    <div class="note-quiz-options">
+<button type="button" class="note-quiz-option" data-correct="1" data-response="Correct. The gap in ||mu||_2^2 between uniform (1/n) and eps-far (&gt;= (1 + 4 eps^2)/n) is 4 eps^2 / n, requiring a relative multiplicative estimation precision of gamma = eps^2. The estimator variance is bounded by (24/k) ||mu||_2^3 + (2/k^2) ||mu||_2^2. Setting the Chebyshev bound &lt;= 1/3 requires k = O(1 / (gamma^2 ||mu||_2)) = O(sqrt(n) / gamma^2) = O(sqrt(n) / eps^4).">A. The separation threshold between U_n and an eps-far distribution is gamma = eps^2; setting relative deviation gamma on the estimator requires k = O(sqrt(n) / gamma^2) = O(sqrt(n) / eps^4) using ||mu||_2 &gt;= 1/sqrt(n).</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. Collision testing compares pairs in O(1) time; the 1/eps^4 scaling arises from the variance-to-gap-squared ratio in Chebyshev&#x27;s inequality.">B. Because each collision test takes O(1/eps^2) time to verify.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The tester counts pairwise collisions among k samples, which begin occurring at k = Omega(sqrt(n)).">C. Because the birthday paradox requires O(n^2 / eps) samples to find a triple collision.</button>
+<button type="button" class="note-quiz-option" data-response="Incorrect. The variance of the average Y decays as O(1/k), not grows as k^4.">D. Because the variance Var[Y] grows as Theta(k^4 / n).</button>
     </div>
     <div class="note-quiz-response" aria-live="polite"></div>
   </div>
