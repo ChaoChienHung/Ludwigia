@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5446-reinforcement-learning-and-sequential-decision-making">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="478">
+  <meta name="site:reading_time_minutes" content="496">
   <meta name="site:source" content="notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.md">
   <script>
   (() => {
@@ -452,18 +452,22 @@
 <a class="note-toc-link level-2" href="#4-2-search-tree-structure-depth-d-slide-11">4.2 Search Tree Structure (Depth $D$; Slide 11)</a>
 <a class="note-toc-link level-2" href="#4-3-strengths-and-limitations-slide-14">4.3 Strengths and Limitations (Slide 14)</a>
 <a class="note-toc-link level-2" href="#4-4-concrete-case-study-persy-the-mars-rover-adventures-slides-12-13">4.4 Concrete Case Study: Persy the Mars Rover Adventures (Slides 12 &amp; 13)</a>
+<a class="note-toc-link level-2" href="#4-5-from-one-forced-action-to-a-return-estimate-the-missing-steps">4.5 From One Forced Action to a Return Estimate: The Missing Steps</a>
 <a class="note-toc-link level-1" href="#5-monte-carlo-tree-search-mcts-online-search-with-simulation">5. Monte Carlo Tree Search (MCTS): Online Search with Simulation</a>
 <a class="note-toc-link level-2" href="#5-1-the-anytime-property-slide-17">5.1 The Anytime Property (Slide 17)</a>
 <a class="note-toc-link level-2" href="#5-2-the-four-canonical-steps-of-mcts-slide-17-19-sb-figure-8-10">5.2 The Four Canonical Steps of MCTS (Slide 17, 19; SB Figure 8.10)</a>
 <a class="note-toc-link level-2" href="#5-3-mcts-as-online-search-in-mdps-slide-18">5.3 MCTS as Online Search in MDPs (Slide 18)</a>
+<a class="note-toc-link level-2" href="#5-4-what-the-tree-actually-stores-and-why-flat-rollouts-differ">5.4 What the Tree Actually Stores, and Why Flat Rollouts Differ</a>
 <a class="note-toc-link level-1" href="#6-upper-confidence-bounds-applied-to-trees-uct">6. Upper Confidence Bounds Applied to Trees (UCT)</a>
 <a class="note-toc-link level-2" href="#6-1-the-uct1-formula-kocsis-szepesv-ri-ecml-2006-slide-20">6.1 The UCT1 Formula (Kocsis &amp; Szepesvári, ECML 2006; Slide 20)</a>
+<a class="note-toc-link level-2" href="#6-1a-why-explore-after-every-action-has-been-tried-once">6.1a Why Explore After Every Action Has Been Tried Once?</a>
 <a class="note-toc-link level-2" href="#6-2-theoretical-convergence-properties-slide-20">6.2 Theoretical Convergence &amp; Properties (Slide 20)</a>
 <a class="note-toc-link level-2" href="#6-3-detailed-numerical-walkthrough-tic-tac-toe-slides-22-24">6.3 Detailed Numerical Walkthrough: Tic-Tac-Toe (Slides 22–24)</a>
 <a class="note-toc-link level-2" href="#6-4-persy-the-rover-discounted-planning-with-mcts-slide-25">6.4 Persy the Rover Discounted Planning with MCTS (Slide 25)</a>
 <a class="note-toc-link level-1" href="#7-alphago-zero-and-modern-mcts-variants">7. AlphaGo Zero and Modern MCTS Variants</a>
 <a class="note-toc-link level-2" href="#7-1-scaling-to-astronomical-state-spaces-slide-28">7.1 Scaling to Astronomical State Spaces (Slide 28)</a>
 <a class="note-toc-link level-2" href="#7-2-polynomial-upper-confidence-trees-puct-slide-28">7.2 Polynomial Upper Confidence Trees (PUCT; Slide 28)</a>
+<a class="note-toc-link level-2" href="#7-2a-reinforce-mcts-and-training-versus-decision-time-compute">7.2a REINFORCE, MCTS, and Training Versus Decision-Time Compute</a>
 <a class="note-toc-link level-2" href="#7-3-comparison-mcts-in-mdps-vs-mcts-in-two-player-zero-sum-games-slide-29">7.3 Comparison: MCTS in MDPs vs. MCTS in Two-Player Zero-Sum Games (Slide 29)</a>
 <a class="note-toc-link level-1" href="#8-demonstration-based-planning-imitation-learning-foundations">8. Demonstration-Based Planning &amp; Imitation Learning Foundations</a>
 <a class="note-toc-link level-2" href="#8-1-the-two-methodological-paradigms-slide-34-35">8.1 The Two Methodological Paradigms (Slide 34 &amp; 35)</a>
@@ -471,9 +475,11 @@
 <a class="note-toc-link level-2" href="#9-1-mathematical-formulation-of-behavioral-cloning-slides-38-39">9.1 Mathematical Formulation of Behavioral Cloning (Slides 38 &amp; 39)</a>
 <a class="note-toc-link level-2" href="#9-2-the-fundamental-flaw-violation-of-the-i-i-d-assumption-slide-40">9.2 The Fundamental Flaw: Violation of the i.i.d. Assumption (Slide 40)</a>
 <a class="note-toc-link level-2" href="#9-3-the-three-pathology-modes-of-behavioral-cloning-slide-40">9.3 The Three Pathology Modes of Behavioral Cloning (Slide 40)</a>
+<a class="note-toc-link level-2" href="#9-4-connection-to-autoregressive-language-models-exposure-bias">9.4 Connection to Autoregressive Language Models: Exposure Bias</a>
 <a class="note-toc-link level-1" href="#10-dataset-aggregation-dagger-interactive-imitation-learning">10. Dataset Aggregation (DAgger): Interactive Imitation Learning</a>
 <a class="note-toc-link level-2" href="#10-1-the-core-dagger-insight-slides-41-44">10.1 The Core DAgger Insight (Slides 41–44)</a>
 <a class="note-toc-link level-2" href="#10-2-the-dagger-algorithmic-loop-slides-42-44">10.2 The DAgger Algorithmic Loop (Slides 42 &amp; 44)</a>
+<a class="note-toc-link level-2" href="#10-2a-why-beta-to0-is-not-self-labeling">10.2a Why $\beta\to0$ Is Not Self-Labeling</a>
 <a class="note-toc-link level-2" href="#10-3-empirical-benchmark-autonomous-kart-racing-slide-43">10.3 Empirical Benchmark: Autonomous Kart Racing (Slide 43)</a>
 <a class="note-toc-link level-2" href="#10-4-notable-dagger-variants-innovations-slides-41-49">10.4 Notable DAgger Variants &amp; Innovations (Slides 41 &amp; 49)</a>
 <a class="note-toc-link level-1" href="#11-generative-adversarial-imitation-learning-gail">11. Generative Adversarial Imitation Learning (GAIL)</a>
@@ -9398,7 +9404,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <ul class="note-list">
 <li><strong>Conceptual Simplicity:</strong> Requires only a forward transition model and return averaging.</li>
 <li><strong>Policy Improvement under Exact Evaluation:</strong> The one-step policy improvement guarantee holds when $Q^\pi$ is evaluated exactly; finite rollout samples and horizon truncation can select a worse action.</li>
-<li><strong>High Robustness:</strong> Functions effectively even when the base rollout policy $\pi$ is completely random.</li>
+<li><strong>Simple Baselines Are Possible:</strong> A random base rollout policy can be used when no stronger heuristic exists, although weak rollouts may need many samples and may miss delayed or rare outcomes.</li>
 <li><strong>Embarrassingly Parallelizable:</strong> Trajectory simulations across actions are mutually independent and can be distributed across multi-core CPUs/GPUs.</li>
 </ul></li>
 <li><strong>Limitations:</strong>
@@ -9452,6 +9458,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3"><em>Why is the first action fixed?</em> To evaluate the isolated expected utility of candidate branch $a_L$ versus $a_R$, the first action must be clamped to the branch under test; subsequent steps are rolled out under policy $\pi$.</p>
 
+<h4 id="4-5-from-one-forced-action-to-a-return-estimate-the-missing-steps" class="mb-2">4.5 From One Forced Action to a Return Estimate: The Missing Steps</h4>
+
+<p class="mb-3">The same baseline policy $\pi$ normally evaluates <strong>every</strong> candidate action. At $s_0$, force $a_L$ in one group of simulations and $a_R$ in another. Each first action samples a potentially different next state $S_1\sim P(\cdot\mid s_0,a)$; only then does the <strong>same</strong> $\pi(\cdot\mid S_1)$ choose later actions. If $\pi$ is stochastic, repeated trials can differ even after the <em>same</em> first action. Different continuation policies per candidate are possible in another design, but then the resulting action values no longer share this simple common-baseline interpretation.</p>
+
+<p class="mb-3">For a trajectory with rewards $R_{t+1},R_{t+2},\ldots$, the return is $G_t=\sum_{k=0}^{H-1}\gamma^kR_{t+k+1}+\gamma^H\hat V(S_{t+H})$ for a cutoff at $H$, or the corresponding sum through termination. The last term is a <strong>leaf estimate</strong>; a cutoff without it silently assumes zero future value. A fast rollout means <em>sampling one continuation under a cheap rule</em>, not enumerating every continuation. A rollout can end at a terminal state, stop at a budget or depth limit, or be replaced by a learned leaf value. These choices trade computation against bias.</p>
+
+<p class="mb-3">In Persy's example, three left returns $4,6,5$ yield $5$, while three right returns $3,8,2$ yield $13/3\approx4.33$. The samples are <em>realized</em> $G_i$ values; $Q^\pi(s_0,a)$ is their unknown expectation. With only three draws, choosing left is a sample-based decision, not proof that left is truly better. The policy-improvement guarantee above requires exact $Q^\pi$ and a consistently applied policy; a random baseline is allowed but does not guarantee a good finite-sample decision.</p>
+
+<p class="mb-3">The diagram in §4.2 describes an <strong>explicit expectimax lookahead</strong> in which agent decision nodes choose actions and chance nodes aggregate possible next states. Its square node is an <em>action/chance transition</em>, not necessarily an observation in the POMDP sense. For known probabilities, the backup is $Q(s,a)=\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma V(s')]$; for sampled outcomes it is a sample mean (or a weighted mean when sampling probabilities differ). At an agent decision node, $V(s)=\max_aQ(s,a)$ <strong>if the search is optimizing there</strong>. Thus in a toy tree with left outcomes $10,4$ and right outcomes $2,8$, each equally likely, left has value $(10+4)/2=7$, right has $(2+8)/2=5$, and the root chooses left with value $7$. Add immediate rewards and discounts when present. An adversarial opponent instead chooses for its own objective (a <strong>min</strong> from our fixed perspective in a zero-sum game); an opponent is not automatically a chance node that takes an average. In a POMDP, the agent may have to plan over histories or belief states because the true hidden state is not directly observed.</p>
+
 <hr>
 </section>
 
@@ -9500,8 +9516,8 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <h4 id="5-3-mcts-as-online-search-in-mdps-slide-18" class="mb-2">5.3 MCTS as Online Search in MDPs (Slide 18)</h4>
 
 <ul class="note-list">
-<li><strong>Tree Nodes:</strong> Correspond directly to environment states $s \in \mathcal{S}$.</li>
-<li><strong>Tree Edges:</strong> Represent actions $a \in \mathcal{A}$.</li>
+<li><strong>Tree Nodes:</strong> Can represent environment states in fully observable problems; stochastic outcome branches, information states, or histories may need explicit representation depending on the problem.</li>
+<li><strong>Tree Edges:</strong> Represent chosen actions and, where needed, sampled environment outcomes.</li>
 <li><strong>Stochastic Transitions:</strong> Environment dynamics sample next states according to transition probabilities $s' \sim \mathcal{P}(s' \mid s, a)$.</li>
 <li><strong>Estimates:</strong>
 <ul class="note-list">
@@ -9518,6 +9534,33 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 </ul>
 
 <p class="mb-3">$$a^<em> = \arg\max_a \hat{Q}(s_0, a) \quad \left(\text{or } a^</em> = \arg\max_a N(s_0, a)\right)$$</p>
+
+<h4 id="5-4-what-the-tree-actually-stores-and-why-flat-rollouts-differ" class="mb-2">5.4 What the Tree Actually Stores, and Why Flat Rollouts Differ</h4>
+
+<p class="mb-3">The word <strong>Monte Carlo</strong> means that trajectories or outcomes are sampled; it does not specify <em>where</em> statistics are retained. A flat rollout evaluates root candidates, usually with a fixed sample budget per action, and may keep only root action averages. It can certainly simulate all the way to termination or use a depth cutoff, and it may cache results: “rollout” does <strong>not</strong> inherently mean “short simulation” or “no memory.” Standard MCTS makes a different structural choice: it retains visited prefixes as explicit nodes/edges, with counts and return estimates at many depths. This lets later simulations revisit and extend promising prefixes while still checking under-sampled ones. Both methods need a simulator or an equivalent way to generate future transitions. Neither automatically wins under every budget or model quality.</p>
+
+<p class="mb-3">Within <strong>one decision</strong>, MCTS starts with a root-only tree. On iteration 1 there is little to select; expansion adds a child, simulation evaluates it, and backup writes statistics. On iteration 2 the tree already exists, so selection follows stored statistics from the root to its current frontier. Repeating this cycle grows an <strong>asymmetric</strong> tree. After the real action is executed, an implementation can reuse the matching observed child as a new root, or discard/rebuild the tree if state matching, stochasticity, memory, or model mismatch makes reuse inappropriate. “The tree persists” is guaranteed across simulations of the current decision, not indefinitely across real-world decisions.</p>
+
+<p class="mb-3">Read one MCTS trial from top to bottom:</p>
+
+<ol class="mb-3">
+<li><strong>Inside the stored tree:</strong> At each fully expanded decision node, a tree policy such as UCT chooses an existing action edge. In a stochastic MDP, the sampled action can then lead to one of several successor states; implementations may represent those outcomes explicitly and keep separate edge/node statistics.</li>
+<li><strong>At the frontier:</strong> Expand an as-yet-unrepresented action/outcome according to the implementation's expansion rule. A terminal or depth-limited frontier may be evaluated immediately, with no expansion.</li>
+<li><strong>Outside the stored tree:</strong> A cheap rollout policy selects continuation actions to termination or cutoff. This simulated suffix is normally <em>not</em> stored as a full tree. A value network can replace this suffix, as in AlphaGo Zero.</li>
+<li><strong>Back along the selected path:</strong> Use the resulting return to update the nodes/edges actually traversed in the stored tree, then begin the next trial at the root.</li>
+</ol>
+
+<p class="mb-3">An action edge is <strong>created once at a given node</strong>, but can be selected and sampled many times. “Expanded once” never means “evaluated once”: every later visit may encounter a different stochastic outcome, continue farther into its subtree, and add another sample to its statistics. Nor does one trial necessarily expand every action; with three root actions, a simple UCT implementation could try TR, ML, and BR on its first three trials, then select one of the <em>existing</em> children on trial 4 and expand farther down. A particular action's node is local to its parent state; the same action label at another state is a different edge.</p>
+
+<p class="mb-3">The two sorts of <strong>backup</strong> should not be conflated. The explicit expectimax tree in §4.2 applies chance-weighted expectation and an optimizing $\max$ to <em>known child values</em>. A typical MCTS trial instead updates <strong>sample statistics</strong> along one sampled path. For an edge $e=(s,a)$ with old visit count $N$ and mean $\hat Q_N$, and a newly sampled return $g$ measured from that edge, set</p>
+
+<p class="mb-3">$$N\leftarrow N+1,\qquad W\leftarrow W+g,\qquad \hat Q_{N+1}=\frac{W}{N}=\hat Q_N+\frac{g-\hat Q_N}{N+1}.$$</p>
+
+<p class="mb-3">Here the denominator $N+1$ in the last expression is the <strong>new</strong> visit count when $N$ denotes the old count. For example, returns $10,4,7$ give successive means $10,7,7$; a new poor result revises the prior estimate rather than overwriting it. The realized $g$ is a <em>sample return</em>, whereas $\hat Q$ is the accumulated estimate. For discounted rewards, each ancestor uses the return from its own time step: $g_t=R_{t+1}+\gamma g_{t+1}$. In a two-player zero-sum game, values must also use a consistent player perspective, often changing sign at each turn. A path update does <strong>not</strong> increment unvisited siblings. A node mean records returns under the <em>changing tree/rollout policy that generated its visits</em>; it is not literally a fresh exact Bellman-max backup on every trial, nor an independent identically distributed estimate of a single fixed-policy value during adaptive search.</p>
+
+<p class="mb-3">This distinction also separates MCTS from ordinary Monte Carlo policy evaluation and REINFORCE: all can consume sampled episode returns, but policy evaluation estimates a specified policy's value, MCTS uses local tree statistics to choose simulations and a current action, and REINFORCE uses sampled returns in a gradient to update policy parameters for future states. The increment $(g-\hat Q)/(N+1)$ is an <strong>incremental sample mean</strong>, not a temporal-difference error merely because it contains a difference.</p>
+
+<p class="mb-3"><strong>Notation trap in the pasted discussion:</strong> A realized trajectory return is $G_t$, a value estimate is $\hat Q(s,a)$ or $\hat V(s)$, and a transfer function written $G(s)$ in control engineering is a different mathematical object. Recursive least squares, Kalman filters, plant drift, and frequency-domain compensation address system identification/control, not the question of updating an MCTS action mean after another sampled return. The control-system detour therefore does not supply an MCTS backup rule. The sample-mean formula above is the relevant update; if the simulator or opponent is nonstationary, plain averaging may itself need reconsideration because old samples can cease to describe the current problem.</p>
 
 <hr>
 </section>
@@ -9548,22 +9591,30 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>$\hat{Q}(s, a)$ (Exploitation Term):</strong> The empirical average return obtained from all simulation rollouts that passed through action $a$ from state $s$: $\hat{Q}(s, a) = \frac{W(s, a)}{N(s, a)}$.</li>
 <li><strong>$N(s)$:</strong> Total number of times parent state node $s$ has been visited.</li>
 <li><strong>$N(s, a)$:</strong> Number of times candidate action $a$ has been selected from state $s$.</li>
-<li><strong>$c$:</strong> Theoretical exploration constant balancing exploitation against exploration (classically $c = \sqrt{2} \approx 1.414$ for bounded rewards in $[0, 1]$).</li>
-<li><strong>$c \sqrt{\frac{\ln N(s)}{N(s, a)}}$ (Exploration Bonus):</strong> As sibling nodes are explored, $N(s)$ grows, increasing the numerator $\ln N(s)$ and granting an exploration bonus to neglected actions. When an action is unvisited ($N(s, a) = 0$), the term evaluates to $+\infty$, guaranteeing that <strong>every available action at a node is tried at least once before exploitation commences</strong>.</li>
+<li><strong>$c$:</strong> Exploration coefficient; $\sqrt{2}$ is one familiar UCB1 normalization for rewards in $[0,1]$, not a universal MCTS setting. Reward scale, formula convention, and available compute affect tuning.</li>
+<li><strong>$c \sqrt{\frac{\ln N(s)}{N(s, a)}}$ (Exploration Bonus):</strong> As sibling nodes are explored, $N(s)$ grows, increasing the numerator $\ln N(s)$ and granting an exploration bonus to neglected actions. The expression is <strong>undefined</strong> at $N(s,a)=0$; a common implementation convention assigns an unvisited action priority $+\infty$ or handles it in a separate expansion rule. If every finite action at that visited node remains eligible and search runs long enough, this tries each action before revisiting a fully expanded node. A finite deadline, very large/continuous action space, pruning, and progressive widening can prevent exhaustive coverage.</li>
 </ul>
+
+<h4 id="6-1a-why-explore-after-every-action-has-been-tried-once" class="mb-2">6.1a Why Explore After Every Action Has Been Tried Once?</h4>
+
+<p class="mb-3">Suppose three root actions each receive one rollout: A wins ($\hat Q_A=1$), B loses ($0$), and C loses ($0$). These are only <strong>one-sample estimates</strong>. Sending all remaining trials to A would trust a lucky result; splitting every later trial evenly ignores evidence that some branches may be poor. UCT adds an exploration bonus to an empirical mean, so a little-tested branch can regain priority when the parent count grows. This decides <strong>which existing edge to revisit next</strong>; it is separate from the one-time act of creating a child node. A revisit may go deeper and discover that A hides a trap, lowering A's mean and changing the next selection. UCT is used separately at each applicable decision node, not just once at the root.</p>
+
+<p class="mb-3">For the tic-tac-toe numbers in §6.3, after TR, ML, and BR have one visit each, $N_{\mathrm{root}}=3$ and the common exploration bonus is $\sqrt2\sqrt{\ln3}\approx1.482$. The resulting scores are $2.482,1.982,1.482$, so the <strong>next search trial</strong> chooses TR. That score is an internal search priority; the final executed move is chosen from root values or visits under the chosen final-action rule, without treating the exploration bonus as game utility. The example assumes a fixed X-perspective terminal score $1/0.5/0$; at opponent turns, a proper adversarial tree must account for the opponent's objective rather than maximizing X's score at every node.</p>
+
+<p class="mb-3">For a fresh node, code should explicitly handle zero visits instead of evaluating $\ln N/0$; even $N(s)=0$ needs a bootstrap convention. Thus “infinite score” is a <strong>priority convention</strong>, not an arithmetic equality obtained by dividing by zero, and it does not guarantee that a finite search will inspect every legal action. Classic UCT becomes especially expensive when branching is huge: spending a trial on each of a thousand root actions can consume the entire budget before deeper search. Candidate generation, priors, progressive widening, or other domain structure address this issue. Tree <strong>depth</strong> and action-space <strong>width</strong> are different costs; MCTS is not inherently a method only for tiny state spaces.</p>
 
 <hr>
 
 <h4 id="6-2-theoretical-convergence-properties-slide-20" class="mb-2">6.2 Theoretical Convergence &amp; Properties (Slide 20)</h4>
 
 <ol class="mb-3">
-<li><strong>Asymptotic Optimality:</strong> With a sufficient number of simulation trials, the value estimates computed by MCTS+UCT converge to the exact Bellman optimal values:</li>
+<li><strong>Asymptotic Optimality under assumptions:</strong> For suitable finite search problems, bounded returns, valid exploration, and enough simulations, UCT can converge toward optimal root decisions. It is not a finite-budget accuracy guarantee, and arbitrary rollout cutoffs, imperfect simulators, or continuous/unbounded action spaces invalidate a blanket convergence statement. In the idealized setting one seeks:</li>
 </ol>
 
 <p class="mb-3">$$\lim_{N \to \infty} \hat{Q}(s, a) = Q^*(s, a), \quad \lim_{N \to \infty} \hat{U}(s) = U(s)$$</p>
 
 <ol class="mb-3">
-<li><strong>Failure of Fixed Node Policies (Slide 26):</strong> If a fixed deterministic heuristic policy $f(s)$ is used to select actions at internal nodes, MCTS collapses into a simple flat rollout algorithm, completely forfeiting the adaptive tree-expansion benefits of MCTS.</li>
+<li><strong>Failure of a purely fixed internal selection rule (Slide 26):</strong> Replacing an adaptive, exploring tree policy with a deterministic rule $f(s)$ can repeatedly visit only one branch and miss the adaptive exploration benefit. This does not literally turn every such implementation into flat rollout; it depends on how expansion and exploration are otherwise handled.</li>
 <li><strong>Alternative Tree Policies:</strong> In addition to UCT1, internal nodes can be guided by $\epsilon$-greedy exploration or temperature-scaled Boltzmann (softmax) distributions.</li>
 </ol>
 
@@ -9778,14 +9829,22 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <p class="mb-3">$$\pi_{\text{PUCT}}(s) = \arg\max_{a \in \mathcal{A}} \left[ \hat{Q}(s, a) + c \, P(s, a) \frac{\sqrt{\sum_b N(s, b)}}{1 + N(s, a)} \right]$$</p>
 
 <ul class="note-list">
-<li><strong>$P(s, a)$ (Prior Move Probability):</strong> Supplied directly by the policy network head. Unpromising moves receive near-zero prior weight and are aggressively pruned from tree expansion.</li>
+<li><strong>$P(s, a)$ (Prior Move Probability):</strong> Supplied by the policy network head. Lower-prior moves receive less exploration pressure; a small nonzero prior does <strong>not</strong> mean a move is automatically pruned or impossible to visit. An implementation may add explicit pruning or candidate restriction separately.</li>
 <li><strong>$1 + N(s, a)$ in Denominator:</strong> Ensures that as an action is repeatedly visited, the exploration bonus decays gracefully, allowing the empirical value estimate $\hat{Q}(s, a)$ to dominate.</li>
 <li><strong>Approximate Policy Iteration:</strong>
 <ul class="note-list">
-<li><strong>Policy Improvement:</strong> Executing PUCT-guided MCTS produces an improved search policy $\boldsymbol{\pi}$ that is significantly stronger than the neural policy head $P(s, \cdot)$.</li>
-<li><strong>Policy Evaluation:</strong> Self-play games generated by MCTS search are used as supervised training targets to update network parameters $\theta$ (driving $p_\theta \to \boldsymbol{\pi}$ and $v_\theta \to z$).</li>
+<li><strong>Approximate policy improvement:</strong> PUCT-guided MCTS uses policy priors and value estimates to produce a search policy from visit counts, commonly $\pi_{\mathrm{search}}(a\mid s)\propto N(s,a)^{1/\tau}$. Search often improves play relative to raw network priors but offers no unconditional finite-budget guarantee that every searched decision is better.</li>
+<li><strong>Approximate policy evaluation and distillation:</strong> Self-play with the search policy generates terminal outcomes $z$; the value head learns to predict $z$, while the policy head learns to match search visit targets. Self-play generates data; the subsequent optimization updates $\theta$. This is a generalized policy-iteration <em>analogy</em>, not exact tabular policy evaluation.</li>
 </ul></li>
 </ul>
+
+<h4 id="7-2a-reinforce-mcts-and-training-versus-decision-time-compute" class="mb-2">7.2a REINFORCE, MCTS, and Training Versus Decision-Time Compute</h4>
+
+<p class="mb-3"><strong>REINFORCE</strong> is a Monte Carlo <em>policy-gradient training algorithm</em>: it uses sampled returns to estimate $\nabla_\theta J(\theta)$ and updates parameters of $\pi_\theta(a\mid s)$. Once trained, the policy can choose an action with one relatively cheap forward pass. <strong>MCTS</strong> is typically a <em>decision-time planning algorithm</em>: given a simulator or generative model, it spends compute on the current position, builds local statistics, and selects an action without needing to update network weights on that trial. This is the useful “training-time versus test-time” distinction from the discussion. It is a distinction of <strong>role</strong>, not an absolute division: MCTS can run during training/self-play, and a trained policy can also be used during search. REINFORCE does not require a small discrete state space, whereas ordinary UCT's requirement to explore candidate actions makes very wide or continuous action spaces difficult without additional structure. Conversely, a model-free policy may generalize well and act fast, but has no built-in lookahead at decision time; MCTS adds lookahead at the cost of simulator calls and model error.</p>
+
+<p class="mb-3">The AlphaZero-style loop makes their roles concrete. A policy/value network supplies $P(s,a)$ and $v(s)$; PUCT search uses these estimates and rules of the game; root visit counts provide a policy training target; self-play yields outcomes for value learning; optimization then updates the network. A neural prior <strong>guides allocation</strong>, rather than simply announcing three allowed moves and discarding all others. AlphaGo Zero/AlphaZero policy/value training is <strong>not literally REINFORCE</strong>: identifying every policy network with that particular gradient estimator confuses the architecture with its training loss.</p>
+
+<p class="mb-3">An optional analogy to language-model reasoning is <strong>test-time compute</strong>: a system might sample several candidate answers (best-of-$N$), keep several partial paths (beam or Tree of Thoughts), score intermediate steps with a process reward model (PRM), score finished answers with an outcome model (ORM), or use an explicit MCTS-like search with a generator and verifier. A search tree could represent prefixes of reasoning steps, with edges as proposed next steps and values from rollouts or verifiers. The analogy preserves selection, expansion, evaluation, and backup, but language does not supply a clean, known transition/reward model like a board game. A verifier score is evidence, not proof of correctness; self-consistency, symbolic checks, and tool execution assess different failure modes. “System 1/System 2” is a teaching metaphor, not an algorithmic specification. <strong>Do not infer that any named proprietary reasoning model implements MCTS, a PRM, explicit backtracking, special thought tokens, or a particular internal tree from its visible answers.</strong> Those implementation claims in the pasted discussion are not established by this course material.</p>
 
 <hr>
 
@@ -9941,6 +10000,12 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>Absence of Recovery Demonstrations:</strong> Expert datasets contain only clean, optimal executions. An expert driver never veers onto the grass; therefore, $\mathcal{D}$ contains zero examples of how to recover from near-crash states back to the roadway.</li>
 </ol>
 
+<h4 id="9-4-connection-to-autoregressive-language-models-exposure-bias" class="mb-2">9.4 Connection to Autoregressive Language Models: Exposure Bias</h4>
+
+<p class="mb-3">Behavioral cloning trains on expert-visited states but deploys on learner-visited states. In an autoregressive language model, a comparable shift arises when training uses reference prefixes (<strong>teacher forcing</strong>) while inference conditions on the model's own generated tokens. The correspondence is $s_t\leftrightarrow x_{&lt;t}$ and $a_t\leftrightarrow x_t$: an early wrong action/token changes later input, and a dataset containing only clean trajectories may give weak recovery coverage. This is commonly called <strong>exposure bias</strong> in sequence modeling. It is an analogy about distribution shift, not a proof that every language-generation failure follows the exact $O(T^2\epsilon)$ imitation-learning bound, nor that supervised fine-tuning and all behavioral-cloning settings are identical. A wrong token can be recovered from, and whether errors compound depends on the task and model.</p>
+
+<p class="mb-3">Sampling full model answers and evaluating them with a reward or preference signal is one possible way to train on model-produced trajectories. RLHF and direct preference optimization have different objectives and data requirements; DPO is not simply “PPO with generated labels,” and preference training does not guarantee recovery behavior. The central question remains: <strong>whose distribution supplies the inputs, and who supplies a valid target or feedback?</strong></p>
+
 <hr>
 </section>
 
@@ -9998,6 +10063,12 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 </ul>
 
 <p class="mb-3">$$\mathbb{E}[\text{Total Regret}] \le \mathcal{O}(T \epsilon)$$</p>
+
+<h4 id="10-2a-why-beta-to0-is-not-self-labeling" class="mb-2">10.2a Why $\beta\to0$ Is Not Self-Labeling</h4>
+
+<p class="mb-3">In $\pi_i=\beta_i\pi^<em>+(1-\beta_i)\hat\pi_i$, $\beta_i$ controls </em><em>which policy acts during data collection</em><em>, hence which state distribution is visited. The training label remains $a^</em>=\pi^<em>(s)$ from an expert oracle at </em>each visited state*. At $\beta=1$, expert actions generate largely expert states; as $\beta$ falls, learner actions expose off-course states, while the expert still labels their correct recovery actions. Think of a student driver steering slightly off center while an instructor says how to correct from that exact position. If the learner supplied its own action as the label without an external target, ordinary DAgger's supervision premise would fail. A high initial $\beta$ can help safety and coverage, but the schedule is a design choice; it does not make arbitrary learner states recoverable by the expert.</p>
+
+<p class="mb-3"><strong>Scheduled sampling in sequence-to-sequence models is related but not the same algorithm.</strong> Feeding the model's own generated prefix while retaining a reference token at the next position does not necessarily produce the expert's <em>correct continuation for that newly generated prefix</em>. DAgger assumes an oracle can label the actually visited state; a fixed reference sequence may not provide that oracle. Likewise, a PRM/reward score is feedback, not automatically a ground-truth expert action. Keeping this distinction prevents the “own inputs versus own labels” intuition from overclaiming equivalence across driving, text generation, and preference learning.</p>
 
 <hr>
 
@@ -10241,11 +10312,15 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>Decision-Time vs. Demonstration-Based Planning:</strong> Decision-time planning simulates futures locally at runtime from the current state $s_0$ to choose immediate action $a^*$; demonstration-based planning learns safe, competent global policies from expert trajectories before runtime.</li>
 <li><strong>The Four Utility Quantities:</strong> Realized return $G_t$, expected policy utility $U^\pi(s_t) = \mathbb{E}[G_t \mid s_t]$, optimal utility $U(s_t) = \max_\pi U^\pi(s_t)$, and action-utility $Q^\pi(s_t, a_t) = \mathbb{E}[G_t \mid s_t, a_t]$.</li>
 <li><strong>Rollout Algorithms:</strong> Execute one-step policy improvement at decision time by simulating $N$ trajectories under a rollout policy $\pi$ for each candidate action, evaluating $\hat{Q}^\pi(s, a) \approx \frac{1}{N} \sum G_t$.</li>
+<li><strong>Rollout Continuation:</strong> Hold each candidate first action fixed, then follow the same base policy from its resulting state. A terminal rollout uses the full return; a cutoff needs a leaf estimate or accepts truncation bias. Exact $Q^\pi$ supports policy improvement, while finite samples do not guarantee it.</li>
 <li><strong>The Four MCTS Phases:</strong> (1) <strong>Selection</strong> via a tree policy balancing exploration/exploitation; (2) <strong>Expansion</strong> of untried child nodes; (3) <strong>Simulation</strong> via fast rollouts to terminal states; (4) <strong>Backup</strong> of discounted returns $G_t$ upward to root $s_0$. MCTS is an anytime algorithm.</li>
-<li><strong>The UCT1 Selection Formula:</strong> Action selection at node $n$ follows $\pi_{\text{UCT}} = \arg\max_a [ \hat{Q}(s, a) + c \sqrt{\ln N(s) / N(s, a)} ]$. Denominator $N(s, a)$ guarantees all children are explored ($+\infty$ bonus for unvisited actions), while numerator $\ln N(s)$ forces exploration of neglected branches.</li>
+<li><strong>MCTS Memory and Backup:</strong> The tree and $N,W,\hat Q$ persist across trials for the current decision; an action edge is expanded once but revisited many times. Each new sample updates only its selected path, using $\hat Q_{N+1}=\hat Q_N+(g-\hat Q_N)/(N+1)$, with discount and player perspective handled at each ancestor.</li>
+<li><strong>The UCT1 Selection Formula:</strong> Action selection at node $n$ follows $\pi_{\text{UCT}} = \arg\max_a [ \hat{Q}(s, a) + c \sqrt{\ln N(s) / N(s, a)} ]$. Unvisited actions require a separate priority convention because the formula is undefined at $N(s,a)=0$; under ordinary finite-action UCT this encourages initial trials, while the bonus continues to allocate later trials between promising and under-sampled branches.</li>
 <li><strong>AlphaGo Zero PUCT Innovation:</strong> Replaces noisy Monte Carlo rollouts with a neural Value Head $v_\theta(s)$, and guides tree expansion via a Policy Head prior $P(s, a)$ in the PUCT formula, scaling MCTS to Go's $10^{170}$ states.</li>
+<li><strong>REINFORCE and AlphaZero Roles:</strong> REINFORCE updates a policy with sampled-return gradients during training; MCTS spends decision-time compute with a model. AlphaZero-style self-play generates search visit targets and outcomes, then network optimization learns policy priors and state values. This loop resembles approximate policy iteration, without guaranteeing improvement on every finite search.</li>
 <li><strong>The Breakdown of Supervised Learning in Sequential Decisions:</strong> Behavioral Cloning treats expert actions as supervised labels. Because agent actions alter future states, the i.i.d. assumption is violated. Minor errors cause covariate shift into unvisited states, inducing compounding quadratic errors ($\mathcal{O}(T^2 \epsilon)$) and failure to recover.</li>
 <li><strong>DAgger Resolves Distribution Mismatch:</strong> Dataset Aggregation iteratively executes the learner's own policy $\pi_i$, collects visited states, queries the expert for optimal actions on those exact visited states, and retrains on aggregated data $\mathcal{D} \cup \mathcal{D}_i$, reducing compounding error to $\mathcal{O}(T \epsilon)$.</li>
+<li><strong>DAgger's $\beta$ Distinction:</strong> Decaying $\beta$ changes who <em>visits</em> states, not who <em>labels</em> them: the expert oracle still supplies actions for learner-visited states. Scheduled sampling with fixed reference tokens lacks that general expert-on-new-prefix guarantee; BC/SFT exposure bias is a related distribution-shift analogy.</li>
 <li><strong>GAIL Adversarial Imitation:</strong> Generative Adversarial Imitation Learning matches state-action occupancy measures $\rho_\pi \approx \rho_E$ through an adversarial minimax game between a policy generator and a discriminator, eliminating the need for an interactive expert during training.</li>
 </ul></div>
       </div>
