@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.classification&quot;:{&quot;en&quot;:&quot;Classification&quot;,&quot;zh-Hant&quot;:&quot;分類&quot;,&quot;zh-Hans&quot;:&quot;分类&quot;},&quot;concept.association_rules&quot;:{&quot;en&quot;:&quot;Association Rules&quot;,&quot;zh-Hant&quot;:&quot;關聯規則&quot;,&quot;zh-Hans&quot;:&quot;关联规则&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5228-knowledge-discovery-and-data-mining">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-09-12">
-  <meta name="site:reading_time_minutes" content="100">
+  <meta name="site:last_modified_at" content="2026-10-04">
+  <meta name="site:reading_time_minutes" content="103">
   <meta name="site:source" content="notes/NUS CS5228 Knowledge Discovery and Data Mining/NUS CS5228 Knowledge Discovery and Data Mining.md">
   <script>
   (() => {
@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
-  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
 <body class="note-page note-style-default" data-i18n-page="contentPage">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
@@ -154,7 +154,8 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#week-1">Week 1</a>
+            <a class="note-toc-link level-1" href="#course-reading-architecture">Course Reading Architecture</a>
+<a class="note-toc-link level-1" href="#week-1">Week 1</a>
 <a class="note-toc-link level-1" href="#categorical-qualitative">Categorical (Qualitative)</a>
 <a class="note-toc-link level-1" href="#numerical-quantitative">Numerical (Quantitative)</a>
 <a class="note-toc-link level-1" href="#noise">Noise</a>
@@ -288,7 +289,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -314,7 +315,79 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section id="week-1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+          <section id="course-reading-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Course Reading Architecture</h3>
+
+<p class="mb-3">這門課的閱讀順序可濃縮成一條 data-to-decision pipeline：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">資料是什麼、可信嗎？
+  → 如何發現無標籤結構？
+  → 如何評估結構是否合理？
+  → 如何用標籤做 prediction？
+  → 如何把 prediction / similarity 變成 recommendation？
+  → 高維、graph、streaming 下如何維持可計算性？</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Week</th>
+<th>主問題</th>
+<th>知識累積</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1</td>
+<td>data types、quality、EDA、preprocessing</td>
+<td>建立所有後續方法的輸入契約：沒有可靠 representation，就沒有可靠 mining</td>
+</tr>
+<tr>
+<td>2</td>
+<td>clustering 的目標與 K-Means / DBSCAN</td>
+<td>從資料中找 structure，並比較 centroid-based 與 density-based assumptions</td>
+</tr>
+<tr>
+<td>3</td>
+<td>hierarchical clustering 與 cluster evaluation</td>
+<td>把「產生分群」提升為「理解 linkage、選擇尺度、判斷品質」</td>
+</tr>
+<tr>
+<td>4</td>
+<td>hierarchical / density / association pattern 的延伸</td>
+<td>將相似度與密度觀念轉成可解釋的 pattern discovery</td>
+</tr>
+<tr>
+<td>5–6</td>
+<td>association rules、classification、regression、generalization</td>
+<td>從無監督 structure 轉向有監督 prediction，並引入 loss、validation、regularization</td>
+</tr>
+<tr>
+<td>7</td>
+<td>decision trees 與 linear models</td>
+<td>建立可解釋模型與參數化模型兩種 prediction 視角</td>
+</tr>
+<tr>
+<td>8–9</td>
+<td>recommender systems、content-based、collaborative filtering</td>
+<td>把 similarity、prediction、user/item representation 合成 personalized decision</td>
+</tr>
+<tr>
+<td>10</td>
+<td>curse of dimensionality、PCA、SVD、embedding</td>
+<td>解決高維空間中距離失真、稀疏與計算成本問題</td>
+</tr>
+<tr>
+<td>11</td>
+<td>graph mining、community、centrality、data streams</td>
+<td>將資料從 table 擴展到 network 與持續到達的 stream，回收前面所有 scalability 問題</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>閱讀提示：</strong> 每個演算法都用四格定位：<code>input representation</code>、<code>assumption</code>、<code>objective</code>、<code>failure mode</code>。例如 K-Means 假設 centroid-shaped clusters，DBSCAN 假設 density connectivity；先看假設，再看公式，最後才比較 performance。</blockquote>
+</section>
+
+<section id="week-1" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Week 1</h3>
 
 <h1 class="mt-4">Types of Attributes</h1>

@@ -10,10 +10,44 @@ Lang: en
 Tags: AI Planning, Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, Decision Theory, Game Theory, Reinforcement Learning
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-09-28
+LastModified: 2026-10-04
 </meta>
 
 # NUS CS5446 Reinforcement Learning and Sequential Decision Making
+
+## Course Reading Architecture
+
+這門課不是把 Planning、Decision Theory、RL、Reward Shaping、Search 分成互不相干的技巧，而是逐步回答同一個問題：**agent 如何在環境中形成可執行、可評估、可改進的 sequential decision policy？** 建議用下面的依賴關係閱讀：
+
+```text
+Week 1  已知、確定的世界：如何表示問題並找出 plan？
+   ↓  真實世界通常有子目標、抽象層與可達性限制
+Week 2  把 planning 擴展到可組合的結構與 state abstraction
+   ↓  不只問「能不能完成」，還要問「什麼結果值得追求？」
+Week 3  Decision theory / utility / game theory：定義理性選擇
+   ↓  加入 stochastic transition 與 delayed reward
+Week 4  MDP、Bellman equation、dynamic programming、tabular RL
+   ↓  state/action 空間變大，表格不夠用
+Week 5  Function approximation、DQN、policy gradient、actor-critic
+   ↓  reward 太稀疏、太慢或不可靠，學習訊號需要設計
+Week 6  Exploration、PBRS、process reward、RLHF、多 agent reward
+   ↓  runtime search 與 demonstrations 提供另一種引導
+Week 7  Rollout、MCTS、UCT、AlphaGo Zero、imitation learning
+```
+
+每週都用同一個檢查框架閱讀：`state / action / transition / objective / information / improvement mechanism`。其中 Week 1–2 建立「如何描述與搜尋」，Week 3–4 建立「如何定義與計算價值」，Week 5–6 建立「如何在大規模或弱 reward 下學習」，Week 7 則比較「靠 runtime search」與「靠 demonstrations」兩條引導路線。
+
+| Week | 本週新增的核心問題 | 讀完後應能接到哪裡 |
+|---|---|---|
+| 1 | 如何在 deterministic、fully observable world 中表示並求解 plan？ | 為 Week 2 的 abstraction 與 real-world acting 建立語言 |
+| 2 | 如何把大問題拆成可組合的 subgoals、HTN 與 reachable sets？ | 從可行性自然過渡到 Week 3 的 preference 與 utility |
+| 3 | 如何形式化「理性」與多 agent 下的衝突／合作？ | 為 Week 4 的 MDP objective 與 value function 定義目標 |
+| 4 | 如何在不確定與 delayed feedback 下計算 policy/value？ | 為 Week 5 的 approximation 與 deep RL 暴露 scalability bottleneck |
+| 5 | 如何用 function approximator 取代表格，並處理 gradient instability？ | 為 Week 6 說明為何 reward design 會決定 exploration 與 alignment |
+| 6 | 如何提供更有用、但不改變原目標的 reward signal？ | 為 Week 7 比較 search 與 demonstrations 的 guidance |
+| 7 | 如何在決策當下搜尋，或從 expert data 學會行為？ | 回收整門課：model-based search、model-free learning、imitation 的取捨 |
+
+> **閱讀提示：** 每個新方法都先問它修補前一週的哪個瓶頸，再讀公式與演算法；這樣 DQN、PPO、PBRS、MCTS 不會變成孤立名詞，而會被看成對「狀態空間、回饋、計算預算、資料來源」不同限制的回應。
 
 
 # Week 1 - AI Planning Foundations, Classical Planning, SATPlan, and Responsible AI Governance

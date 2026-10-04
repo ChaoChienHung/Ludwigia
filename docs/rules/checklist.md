@@ -148,5 +148,6 @@
     - [ ] 若本次重構的是知識型長文：文章仍專心回答單一主問題；overview 與單一方法 deep dive 沒有被硬塞回同一篇
     - [ ] 若本次重構的是方法家族 overview：單一子方法的直覺或詳細流程沒有吃掉主要篇幅，overview 仍以方法地圖與差異軸為主
     - [ ] 若文章前段有導讀 block：它在做 `TL;DR / Focus`，而不是把分散在各段裡的 guiding questions 再重複列一次
+    - [ ] 若本次改動涉及文章/筆記撰寫：知識邏輯遵循「底層成群鋪墊、逐層向上堆疊、零跳步、零割裂」原則，無突兀的高階術語空降或概念倒置，讀者認知模型平滑遞進
     - [ ] 若本次改動涉及 `.md` source：Reading Mode / Garden 的正文抽取仍只依賴 `<meta>` + core markdown，而不依賴 extras block
     - [ ] 若本次改動涉及 list source：ordered / unordered continuation paragraph 與 nested list 縮排仍符合 4-space 規則

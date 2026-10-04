@@ -74,6 +74,11 @@
   - overview 頁不應把篇幅重心長時間停留在某一個子方法的直覺、推導或細部機制；子方法只需講到足以定位其角色與差異
   - 單一方法的 limitation / tuning / detailed trade-offs 應回到各自頁面
   - 不應把「介紹一個技術家族」與「完整講完其中數個演算法」硬塞進同一篇主文
+- 知識邏輯與閱讀流暢度契約（階層化鷹架與零割裂推進原則 / Layered Knowledge Scaffolding & Frictionless Progression Contract）：
+  - 無論是撰寫知識筆記（`notes/`）或深度長文（`writing/`），皆必須遵守「底層成群鋪墊、逐層向上堆疊、零跳躍、零割裂」的知識傳遞結構，根本性降低閱讀難度與讀者的工作記憶負荷：
+    - **底層先鋪齊成群（Clustered Foundation Layer）**：在引入任何進階機制、高階抽象或複雜架構之前，必須先在底層完整鋪墊好同一認知層級的先備地基（生活直覺、問題意識/痛點、物理或業務約束、核心線索群）。嚴禁在讀者尚未建立底層心智錨點前，突兀空降孤立的高階術語或解法。
+    - **逐層穩步向上堆疊（Hierarchical Upward Stacking）**：知識結構推進如同砌磚或深度神經網絡的多層特徵萃取，必須以底層線索為根據，向上推理/衍生出中階機制與引理（Intermediate Lemma），再進一步向上組合出頂層架構、高階抽象與極限邊界；每一層的新概念都必須有前一層作為堅固承托（Causal Scaffolding）。
+    - **消除認知斷崖與割裂感（Eliminate Cognitive Whiplash）**：嚴禁「空中樓閣」（未經底層鋪陳直接跳躍至高階結論）、「概念倒置」（用更晦澀的高階概念去解釋低階直覺）與「板塊孤島拼貼」（段落彼此缺乏因果銜接，各說各話）。底層概念若有多個維度或子分支，應成批交代清晰後，再整批/逐個上升到下一階，確保讀者的心理模型（Mental Model）平滑累積、水到渠成。
 - 若採用 Agent-assisted 寫作 workflow，前面的整理/填充/重組可以被簡化或委派，但最後的人類全盤 proofread 不得被省略
 - Markdown list authoring 規則必須穩定：
   - ordered / unordered item 若帶 continuation paragraph，該段落必須縮排 `4 spaces`

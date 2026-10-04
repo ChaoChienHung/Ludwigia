@@ -10,10 +10,31 @@ Lang: en
 Tags: Cloud Computing, Cloud Architecture, Datacenter, Virtualization, Resource Pooling
 Status: drafting
 Published: 2026-08-30
-LastModified: 2026-09-29
+LastModified: 2026-10-04
 </meta>
 
 # NUS CS5224: Cloud Computing
+
+## Course Reading Architecture
+
+CS5224 的主線是從「為什麼需要 cloud」一路下沉到「硬體如何支撐 abstraction」，再回到「應用如何利用這些 abstraction」。閱讀時不要把 virtualization、datacenter、MapReduce 當成平行章節；它們是同一個 stack 的不同層：
+
+```text
+需求與經濟動機 → reference architecture → workload placement / elasticity
+      → datacenter hardware / network / energy → virtualization / isolation
+      → multi-tier applications / MapReduce / FaaS
+```
+
+| Week | 知識角色 | 與下一週的橋接 |
+|---|---|---|
+| 1 | 定義 cloud 的 on-demand、elastic、shared-pool 特性，並說明 scaling 與 governance | 需要一個共同 vocabulary 來描述 provider、consumer、service model |
+| 2 | 用 NIST reference architecture、IaaS/PaaS/SaaS 與 responsibility boundary 統一描述 cloud | 有了抽象層後，才能問 workload 如何分布與資源如何調度 |
+| 3 | 研究 distribution、resource pooling、dynamic scalability、cloud bursting | 這些能力不是憑空出現，必須由 datacenter 的實體資源支撐 |
+| 4 | 由 hosting、server、storage、network、power/cooling 看到 cloud 的物理成本 | 硬體若直接暴露給每個 tenant，隔離與利用率會成為瓶頸 |
+| 5 | 用 hypervisor、hardware assist、container 與 multitenancy 將硬體切成可管理的 logical resources | abstraction 成熟後，才可組裝高階 application architecture |
+| 6 | 將前面各層合成 multi-tier web apps、MapReduce 與 serverless FaaS | 回到 Week 1：cloud 的價值就是以服務方式提供可伸縮的運算能力 |
+
+> **閱讀提示：** 遇到任何 cloud technology，先標記它解決的是哪一層的問題：`business demand`、`service boundary`、`resource management`、`physical infrastructure`、`isolation` 或 `application execution`。這能避免把同一個「scalability」名詞在不同層混用。
 
 # Week 1 - Cloud Computing Fundamentals: Architecture, Business Drivers, Scaling Mechanics, and Security Governance
 

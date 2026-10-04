@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.variance_reduction&quot;:{&quot;en&quot;:&quot;Variance Reduction&quot;,&quot;zh-Hant&quot;:&quot;方差降低技巧&quot;,&quot;zh-Hans&quot;:&quot;方差降低技巧&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.streaming_algorithm&quot;:{&quot;en&quot;:&quot;Streaming Algorithm&quot;,&quot;zh-Hant&quot;:&quot;串流演算法&quot;,&quot;zh-Hans&quot;:&quot;流式算法&quot;},&quot;concept.spanner&quot;:{&quot;en&quot;:&quot;Spanner&quot;,&quot;zh-Hant&quot;:&quot;跨角圖&quot;,&quot;zh-Hans&quot;:&quot;跨角图&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.metric_space&quot;:{&quot;en&quot;:&quot;Metric Space&quot;,&quot;zh-Hant&quot;:&quot;度量空間&quot;,&quot;zh-Hans&quot;:&quot;度量空间&quot;},&quot;concept.coreset&quot;:{&quot;en&quot;:&quot;Coreset&quot;,&quot;zh-Hant&quot;:&quot;核心集&quot;,&quot;zh-Hans&quot;:&quot;核心集&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5234-algorithms-at-scale">
   <meta name="site:published_at" content="2026-08-20">
-  <meta name="site:last_modified_at" content="2026-10-01">
-  <meta name="site:reading_time_minutes" content="520">
+  <meta name="site:last_modified_at" content="2026-10-04">
+  <meta name="site:reading_time_minutes" content="536">
   <meta name="site:source" content="notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.md">
   <script>
   (() => {
@@ -158,6 +158,7 @@
 <a class="note-toc-link level-2" href="#ii-the-universal-5-step-sampling-estimation-pipeline">II. The Universal 5-Step Sampling &amp; Estimation Pipeline</a>
 <a class="note-toc-link level-2" href="#iii-the-three-lower-bound-weapons-yaos-framework-reductions">III. The Three Lower Bound Weapons (Yao's Framework &amp; Reductions)</a>
 <a class="note-toc-link level-2" href="#iv-essential-mathematical-inequalities-limits-toolbox">IV. Essential Mathematical Inequalities &amp; Limits Toolbox</a>
+<a class="note-toc-link level-2" href="#v-clustering-at-scale-the-result-map">V. Clustering at Scale: The Result Map</a>
 <a class="note-toc-link level-1" href="#1-course-architecture-the-foundations-of-scalability">1. Course Architecture &amp; The Foundations of Scalability</a>
 <a class="note-toc-link level-2" href="#1-1-course-overview-operational-policy">1.1 Course Overview &amp; Operational Policy</a>
 <a class="note-toc-link level-2" href="#1-2-definition-of-algorithms-at-scale-the-fundamental-resource-bottlenecks">1.2 Definition of Algorithms at Scale &amp; The Fundamental Resource Bottlenecks</a>
@@ -178,9 +179,13 @@
 <a class="note-toc-link level-2" href="#4-3-the-chernoff-bound-exponential-tail-bounds">4.3 The Chernoff Bound &amp; Exponential Tail Bounds</a>
 <a class="note-toc-link level-2" href="#4-4-comparison-exercise-bin-load-under-m-10-n-ln-n-balls">4.4 Comparison Exercise: Bin Load under $m = 10 n \ln n$ Balls</a>
 <a class="note-toc-link level-2" href="#4-5-union-bound-booles-inequality-probability-of-no-empty-bins">4.5 Union Bound (Boole's Inequality) &amp; Probability of No Empty Bins</a>
+<a class="note-toc-link level-1" href="#week-2-reading-map-one-proof-grammar-then-a-new-application-layer">Week 2 Reading Map: One Proof Grammar, Then a New Application Layer</a>
+<a class="note-toc-link level-2" href="#the-universal-proof-grammar">The Universal Proof Grammar</a>
+<a class="note-toc-link level-2" href="#the-two-knobs-that-organize-the-whole-week">The Two Knobs That Organize the Whole Week</a>
 <a class="note-toc-link level-1" href="#1-core-concept-and-foundations-of-query-algorithms">1. Core Concept and Foundations of Query Algorithms</a>
 <a class="note-toc-link level-2" href="#1-1-the-information-bottleneck-the-query-algorithm-paradigm">1.1 The Information Bottleneck &amp; The Query Algorithm Paradigm</a>
 <a class="note-toc-link level-2" href="#1-2-two-step-analytical-framework-for-sampling-query-algorithms">1.2 Two-Step Analytical Framework for Sampling &amp; Query Algorithms</a>
+<a class="note-toc-link level-2" href="#1-3-three-different-claims-unbiasedness-accuracy-and-query-cost">1.3 Three Different Claims: Unbiasedness, Accuracy, and Query Cost</a>
 <a class="note-toc-link level-1" href="#2-chernoff-bound-formulations">2. Chernoff Bound Formulations</a>
 <a class="note-toc-link level-2" href="#2-1-the-general-setup">2.1 The General Setup</a>
 <a class="note-toc-link level-2" href="#2-2-mathematical-statements-of-the-bounds">2.2 Mathematical Statements of the Bounds</a>
@@ -248,6 +253,7 @@
 <a class="note-toc-link level-2" href="#3-4-complete-mathematical-proof-of-part-1-d-mu-p-le-r-p">3.4 Complete Mathematical Proof of Part 1 ($D_\mu(P) \le R(P)$)</a>
 <a class="note-toc-link level-2" href="#3-5-intuitive-deconstruction-the-three-pillars-of-yaos-proof">3.5 Intuitive Deconstruction: The Three Pillars of Yao's Proof</a>
 <a class="note-toc-link level-2" href="#3-6-derandomization-on-a-fixed-distribution-vs-impossibility-across-all-inputs">3.6 Derandomization on a Fixed Distribution vs. Impossibility Across All Inputs</a>
+<a class="note-toc-link level-2" href="#3-7-yaos-principle-in-plain-language-who-moves-first">3.7 Yao's Principle in Plain Language: Who Moves First?</a>
 <a class="note-toc-link level-1" href="#4-randomized-lower-bound-for-the-or-problem">4. Randomized Lower Bound for the OR Problem</a>
 <a class="note-toc-link level-2" href="#4-1-structural-analysis-existence-type-asymmetry-the-adversarys-dilemma">4.1 Structural Analysis: Existence-type Asymmetry &amp; The Adversary's Dilemma</a>
 <a class="note-toc-link level-2" href="#4-2-step-1-crafting-the-hard-input-distribution-mu">4.2 Step 1: Crafting the Hard Input Distribution $\mu$</a>
@@ -275,6 +281,7 @@
 <a class="note-toc-link level-2" href="#8-1-concept-chain-from-randomized-algorithms-to-yaos-minimax-principle">8.1 Concept Chain: From Randomized Algorithms to Yao's Minimax Principle</a>
 <a class="note-toc-link level-2" href="#8-2-comparative-showdown-of-the-three-archetypal-problems">8.2 Comparative Showdown of the Three Archetypal Problems</a>
 <a class="note-toc-link level-2" href="#8-3-universal-lower-bound-discovery-roadmap">8.3 Universal Lower-Bound Discovery Roadmap</a>
+<a class="note-toc-link level-2" href="#8-4-lower-bound-checklist-for-new-problems">8.4 Lower-Bound Checklist for New Problems</a>
 <a class="note-toc-link level-1" href="#1-the-property-testing-computational-paradigm">1. The Property Testing Computational Paradigm</a>
 <a class="note-toc-link level-2" href="#1-1-decision-problems-languages-and-properties">1.1 Decision Problems, Languages, and Properties</a>
 <a class="note-toc-link level-2" href="#1-2-formal-mathematical-framework-of-property-testing">1.2 Formal Mathematical Framework of Property Testing</a>
@@ -373,7 +380,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-01" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-01</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -400,11 +407,11 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h1 class="mt-4">Master Cheatsheet &amp; Executive Quick Reference (Lec 1–5)</h1>
+<h1 class="mt-4">Master Cheatsheet &amp; Executive Quick Reference (Lec 1–6)</h1>
 
 <blockquote class="blockquote mb-3"><strong>Executive Overview &amp; Exam Quick Reference:</strong></blockquote>
 
-<blockquote class="blockquote mb-3">This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 5 of NUS CS5234 (<em>Algorithms at Scale</em>). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, and lower bound proving techniques.</blockquote>
+<blockquote class="blockquote mb-3">This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 6 of NUS CS5234 (<em>Algorithms at Scale</em>). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, lower bound proving techniques, and clustering-at-scale results.</blockquote>
 
 <hr>
 
@@ -569,6 +576,62 @@
 <li><strong>Birthday Paradox Collision Bound:</strong>
 <p class="mb-2">Drawing $k$ samples from a universe of size $N$ produces at least one collision with probability $\approx 1 - e^{-k(k-1)/(2N)}$; collisions emerge once $k = \Omega(\sqrt{N})$.</p></li>
 </ul>
+
+<h4 id="v-clustering-at-scale-the-result-map" class="mb-2">V. Clustering at Scale: The Result Map</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Topic</th>
+<th>Core statement</th>
+<th>Why it matters</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Metric space</strong></td>
+<td>$d$ satisfies non-negativity, identity of indiscernibles, symmetry, and triangle inequality.</td>
+<td>The triangle inequality is the main proof tool for approximation guarantees.</td>
+</tr>
+<tr>
+<td><strong>$k$-center</strong></td>
+<td>Minimize $\max_i d(p_i, C(p_i))$.</td>
+<td>Controls the worst-served point, so outliers matter strongly.</td>
+</tr>
+<tr>
+<td><strong>$k$-median / $k$-means</strong></td>
+<td>Minimize $\sum_i d(p_i,C(p_i))$ / $\sum_i d(p_i,C(p_i))^2$.</td>
+<td>$k$-median is more robust; squaring makes $k$-means especially sensitive to large errors.</td>
+</tr>
+<tr>
+<td><strong>Hardness</strong></td>
+<td>A Dominating Set instance becomes a 1-2 metric with $\mathrm{OPT}\in\{1,2\}$.</td>
+<td>A ratio strictly below $2$ would distinguish the two cases and imply $\mathrm{P}=\mathrm{NP}$.</td>
+</tr>
+<tr>
+<td><strong>Gonzalez farthest-first</strong></td>
+<td>Repeatedly choose the point farthest from the current centers.</td>
+<td>Gives a tight $2$-approximation in $\mathcal{O}(nk)$ distance queries.</td>
+</tr>
+<tr>
+<td><strong>Streaming $k$-center</strong></td>
+<td>Test radius guesses with the rule “keep a point if it is farther than $2T$.”</td>
+<td>Parallel geometric guesses give a $(2+2\varepsilon)$ approximation with small memory.</td>
+</tr>
+<tr>
+<td><strong>Streaming $k$-median</strong></td>
+<td>Compress blocks into weighted centers, then solve the weighted instance.</td>
+<td>A two-level coreset uses $\mathcal{O}(\sqrt{nk})$ points and gives $(4\alpha^2+4\alpha)$ approximation.</td>
+</tr>
+<tr>
+<td><strong>MEB / 1-center</strong></td>
+<td>Farthest-point augmentation obeys $\lambda_{t+1}\ge(1+\lambda_t^2)/2$.</td>
+<td>After $\mathcal{O}(1/\varepsilon)$ iterations, the active set is a dimension-independent $(1+\varepsilon)$ coreset.</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>Clustering proof pattern:</strong> identify the right structural invariant, use triangle inequality (or a packing/pigeonhole argument), and separate the optimization objective from the resource model (query, streaming space, or coreset size).</blockquote>
 
 <hr>
 
@@ -1513,6 +1576,72 @@
 <h1 class="mt-4">Week 2 - Sublinear Query Algorithms: Counting, Variance Reduction, Probability Boosting, and Graph Edge Estimation</h1>
 </section>
 
+<section id="week-2-reading-map-one-proof-grammar-then-a-new-application-layer" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 2 Reading Map: One Proof Grammar, Then a New Application Layer</h3>
+
+<p class="mb-3">Week 2 is easiest to read as <strong>two layers built on the same analytical grammar</strong>, rather than as nine unrelated techniques.</p>
+
+<div class="note-markdown-block"><pre><code>Layer A: Sampling and estimation toolkit
+
+  Problem specification
+        ↓
+  Choose the right random variable W
+        ↓
+  Compute E[W] (and, when needed, Var[W])
+        ↓
+  Translate failure into |W - E[W]| being large
+        ↓
+  Apply Chernoff / Chebyshev / Union Bound
+        ↓
+  Tune accuracy ε and confidence δ
+
+  Sections 1 → 2 → 3 → 4 → 5
+
+Layer B: Graph edge estimation
+
+  Reuse the same grammar on a richer oracle
+        ↓
+  See why the naive estimator has too much variance
+        ↓
+  Redesign the estimator by orienting edges
+        ↓
+  Solve the unknown-m problem by geometric guessing
+
+  Sections 6 → 7 → 8 → 9</code></pre></div>
+
+<h4 id="the-universal-proof-grammar" class="mb-2">The Universal Proof Grammar</h4>
+
+<p class="mb-3">For every sampling problem in Layer A, keep asking the same five questions:</p>
+
+<ol class="mb-3">
+<li><strong>What exactly counts as success?</strong> Is the target an additive interval, a multiplicative interval, or a rank interval?</li>
+<li><strong>Which random variable should be analyzed?</strong> It may be the scaled output itself, or an auxiliary $0/1$ count that controls whether the output is good.</li>
+<li><strong>Where is its center?</strong> Compute $\mathbb{E}[W]$ and check whether it equals the target. Unbiasedness is not itself concentration; it only aligns the center of concentration with the answer we care about.</li>
+<li><strong>Can the failure event be written in a standard form?</strong> The usual destination is</li>
+</ol>
+
+<p class="mb-3">$$\Pr\left[|W-\mathbb{E}[W]|\ge \text{tolerance}\right].$$</p>
+
+<ol class="mb-3">
+<li><strong>Which tool matches the random variable?</strong> Chernoff needs a sum of independent bounded variables; Chebyshev needs a variance bound; the union bound combines several already-controlled bad events.</li>
+</ol>
+
+<p class="mb-3">The important design decision is usually Step 2. In counting, the output is a scaled count. In approximate median, the output is an order statistic, so we instead count how many samples fall in the bad lower or upper region. In graph edge estimation, we deliberately design a new estimator whose second moment is manageable.</p>
+
+<blockquote class="blockquote mb-3"><strong>Reading rule:</strong> Do not treat each section as introducing a completely new proof style. Sections 3, 4, and 5 are successive transformations of the same skeleton; Sections 6–8 apply that skeleton to a harder oracle model.</blockquote>
+
+<h4 id="the-two-knobs-that-organize-the-whole-week" class="mb-2">The Two Knobs That Organize the Whole Week</h4>
+
+<p class="mb-3">Almost every sample/query bound has two independent costs:</p>
+
+<ul class="note-list">
+<li><strong>Accuracy knob $\varepsilon$:</strong> how close the estimate must be. This is usually responsible for a $1/\varepsilon^2$ factor, with an additional $1/p$ penalty when the target is a rare event of density $p$.</li>
+<li><strong>Confidence knob $\delta$:</strong> how rarely the algorithm may fail. Chebyshev alone gives a $1/\delta$-type cost; Chernoff or median-of-means gives the much better $\log(1/\delta)$ cost.</li>
+</ul>
+
+<p class="mb-3">This is why the chapter should be read in the order “build a decent estimator first, then make it highly reliable,” not as a collection of interchangeable tricks.</p>
+</section>
+
 <section id="1-core-concept-and-foundations-of-query-algorithms" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">1. Core Concept and Foundations of Query Algorithms</h3>
 
@@ -1591,6 +1720,32 @@
 <li><strong>Concentration Inequalities:</strong> Primarily <strong>Chernoff bounds</strong> for bounded independent random variables and <strong>Chebyshev's inequality</strong> for second-moment bounded variables serve as the standard mathematical machinery to bound failure probabilities.</li>
 </ul>
 
+<h4 id="1-3-three-different-claims-unbiasedness-accuracy-and-query-cost" class="mb-2">1.3 Three Different Claims: Unbiasedness, Accuracy, and Query Cost</h4>
+
+<p class="mb-3">These claims are related, but none of them implies the others by itself:</p>
+
+<ol class="mb-3">
+<li><strong>Unbiasedness</strong> is an expectation statement:</li>
+</ol>
+
+<p class="mb-3">$$\mathbb{E}[\widehat{C}] = C.$$ It allows overestimates and underestimates to cancel over many independent runs; one individual run may still be very inaccurate.</p>
+
+<ol class="mb-3">
+<li><strong>Accuracy</strong> is a tail statement:</li>
+</ol>
+
+<p class="mb-3">$$\Pr\left[|\widehat{C}-C|&gt;\text{tolerance}\right]\le \delta.$$ This is where variance, boundedness, independence, and the choice of concentration inequality enter.</p>
+
+<ol class="mb-3">
+<li><strong>Query complexity</strong> counts oracle interactions, not the algebra used after the samples are collected. An estimator can be unbiased and accurate in principle but still be useless if one sample requires too many oracle calls.</li>
+</ol>
+
+<p class="mb-3">For the binary-counting estimator, the separation is explicit: $$\underbrace{X=\sum_{i=1}^k X_i}_{\text{sample statistic}},\qquad \underbrace{\widehat{C}=\frac{n}{k}X}_{\text{unbiased output}},\qquad \underbrace{\Pr[|\widehat{C}-C|&gt;\varepsilon n]}_{\text{concentration guarantee}}.$$ The analysis should therefore be written in this order: define the random variables, prove the expectation identity, translate the desired output error into a deviation event for $X$, and only then solve for $k$.</p>
+
+<blockquote class="blockquote mb-3"><strong>Diagnostic question:</strong> If a proposed estimator is “unbiased,” ask immediately: <em>unbiased for which quantity, with what variance, and under what failure probability?</em> The word unbiased alone is not an approximation guarantee.</blockquote>
+
+<blockquote class="blockquote mb-3"><strong>Transition to Section 2:</strong> Section 1 gives the proof grammar and the oracle model. Section 2 supplies one reusable concentration tool; it is not a separate topic to memorize in isolation.</blockquote>
+
 <hr>
 </section>
 
@@ -1634,6 +1789,8 @@
 +---------------------------------------+-----------------------+-----------------------------------------------+</code></pre></div>
 
 <p class="mb-3"><em>Key Structural Takeaway:</em> When relative deviation $\delta \le 1$, the exponent decays quadratically in $\delta$ ($-\delta^2 \mu / 3$). When $\delta &gt; 1$, the exponent transitions to linear decay in $\delta$ ($-\delta \mu / 3$), which remains exceptionally powerful for large deviations.</p>
+
+<blockquote class="blockquote mb-3"><strong>Transition to Section 3:</strong> We now use the bound immediately on the simplest nontrivial query problem: estimating the number of 1s. This first example shows the complete pipeline from problem-defined error to Chernoff-ready deviation.</blockquote>
 
 <hr>
 
@@ -1844,6 +2001,8 @@
 
 <blockquote class="blockquote mb-3">- Multiplicative estimation introduces a penalty factor of $1/p$ because estimating rare events ($p \ll 1$) demands finer absolute precision.</blockquote>
 
+<blockquote class="blockquote mb-3"><strong>Transition to Section 4:</strong> Counting lets us analyze the scaled output directly. Approximate median will use the same pipeline, but its output is an order statistic rather than a linear sum, so we will introduce an auxiliary counting variable.</blockquote>
+
 <hr>
 </section>
 
@@ -1950,6 +2109,46 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <p class="mb-3">By the <strong>Union Bound</strong>, the algorithm fails if either Condition 1 or Condition 2 fails: $$\Pr[\text{Failure}] \le \Pr[\text{Condition 1 Fails}] + \Pr[\text{Condition 2 Fails}] \le 0.1 + 0.1 = 0.2$$</p>
 
 <p class="mb-3">Consequently, the overall success probability is: $$\Pr[\text{Success}] \ge 1 - 0.2 = 0.8 \quad (80\%)$$</p>
+
+<h5 class="mb-2">Do Not Confuse the Two “Medians”</h5>
+
+<p class="mb-3">The <strong>sample median</strong> in this section is the algorithm's output: we sort sampled data values and return the middle one to approximate a population rank. The <strong>median trick</strong> in Section 5 is a meta-algorithm: we run an existing estimator several times and return the median of the resulting estimates to amplify confidence.</p>
+
+<p class="mb-3">They share the same order-statistic intuition—“the middle survives if more than half are good”—but they solve different problems:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th></th>
+<th>Sample median</th>
+<th>Median trick</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>What is being medianized?</td>
+<td>Sampled data values</td>
+<td>Independent outputs of an estimator</td>
+</tr>
+<tr>
+<td>What is the target?</td>
+<td>A rank interval in the input array</td>
+<td>The original target value within a tolerance interval</td>
+</tr>
+<tr>
+<td>What must be counted?</td>
+<td>Samples below/above the acceptable rank band</td>
+<td>Runs whose estimates are bad</td>
+</tr>
+<tr>
+<td>Why does Chernoff apply?</td>
+<td>Each sample independently lands in a bad rank region</td>
+<td>Each run independently succeeds or fails</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>Transition to Section 5:</strong> Section 4 has already shown the pattern “median failure implies at least half of the supporting events are bad.” Section 5 abstracts that pattern into a reusable confidence-amplification tool, and then combines it with the mean trick.</blockquote>
 
 <hr>
 </section>
@@ -2245,6 +2444,8 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 
 <blockquote class="blockquote mb-3"><em>Mean turns a terrible estimator into a "decent" estimator (success $&gt; 1/2$); Median turns a "decent" estimator into an "almost infallible" estimator (success $\ge 1 - 1/\text{poly}(n)$).</em></blockquote>
 
+<blockquote class="blockquote mb-3"><strong>The dependency chain inside Section 5:</strong> the mean trick lowers variance; Chebyshev turns that lower variance into a constant success probability above $1/2$; the median trick turns that constant advantage into high confidence. This is why “mean first, median second” is structural, not stylistic.</blockquote>
+
 <h4 id="5-5-the-unified-two-knob-sample-complexity-model-deconstructing-the-k-formula" class="mb-2">5.5 The Unified "Two-Knob" Sample Complexity Model: Deconstructing the $k$ Formula</h4>
 
 <p class="mb-3">The Master Sample Size Table presented in Section 3.6 is not an ad-hoc collection of empirical heuristics—it is the <strong>direct operational outcome</strong> of the concentration inequality theory (Mean Trick, Median Trick, Chebyshev, and Chernoff).</p>
@@ -2455,6 +2656,8 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 
 <p class="mb-3"><em>Best Practice:</em> In your derivations, denote the relative error parameter by $\gamma$ or $\varepsilon_{\text{rel}}$, reserving $\delta$ exclusively for the failure probability $\delta_{\text{fail}}$.</p>
 
+<blockquote class="blockquote mb-3"><strong>Transition to Layer B:</strong> Sections 1–5 are the reusable sampling toolkit. Section 6 changes the object being queried from a binary string/array to a graph, but the proof questions remain the same: what is the estimator, where is its expectation, and how does its variance scale?</blockquote>
+
 <hr>
 </section>
 
@@ -2572,6 +2775,8 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <blockquote class="blockquote mb-3">$$\text{Worst-Case Queries} = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{n}} \right) = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$</blockquote>
 
 <blockquote class="blockquote mb-3">As the graph becomes denser (up to $m = \Theta(n^2)$), the query complexity smoothly improves to $\mathcal{O}(1/\epsilon^2)$.</blockquote>
+
+<blockquote class="blockquote mb-3"><strong>Transition to Section 7:</strong> Section 6 establishes the feasibility boundary. Additive error is easy but too coarse for sparse graphs; multiplicative error is meaningful but requires structure such as connectivity. Section 7 now designs the estimator that achieves the promised connected-graph upper bound.</blockquote>
 
 <hr>
 </section>
@@ -2739,6 +2944,8 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <p class="mb-3">Applying Chebyshev's inequality: $$\Pr\left[ \left|\hat{X} - \frac{m}{n}\right| \ge \epsilon \cdot \frac{m}{n} \right] \le \frac{\text{Var}(\hat{X})}{\epsilon^2 (m/n)^2} \le \mathcal{O}\left( \frac{n}{k \epsilon^2 \sqrt{m}} \right)$$</p>
 
 <p class="mb-3">Choosing sample size: $$k = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$$ guarantees that the failure probability is bounded by a constant (such as $\le 1/3$).</p>
+
+<blockquote class="blockquote mb-3"><strong>Transition to Section 8:</strong> The estimator in Section 7 is statistically sound, but its sample size depends on the unknown edge count $m$. Section 8 resolves this circularity by separating the true quantity $m$ from an algorithmic guess $m'$ and testing guesses geometrically.</blockquote>
 
 <hr>
 </section>
@@ -3081,6 +3288,8 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
     </tbody>
   </table>
 </div>
+
+<blockquote class="blockquote mb-3"><strong>Transition to Section 9:</strong> Section 8 closes the algorithmic loop: an unknown parameter can be handled by geometric guesses, while runtime and failure probability must be summed with different tools. The remaining exercises reuse this same pattern—define the observable, identify the structural assumption, and transfer the concentration or reduction argument to a new graph task.</blockquote>
 
 <hr>
 </section>
@@ -3481,6 +3690,18 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
                               v
                 Output A_r(x) in {0, 1}</code></pre></div>
 
+<h5 class="mb-2">Random Tape Semantics: What the Seed $r$ Means</h5>
+
+<p class="mb-3">The seed $r$ should be understood as a complete <strong>random tape</strong>: once it is fixed, every future random choice is fixed as well. This handles adaptive algorithms cleanly. For example, an algorithm may choose its next index based on earlier answers; pre-sampling the entire random tape still determines that adaptive behavior because the tape only supplies the next random choice when the execution reaches it.</p>
+
+<ul class="note-list">
+<li>The distribution $\mathcal{D}$ over seeds need not be uniform. Uniform random bits are a common implementation, but the theory allows any distribution over random tapes.</li>
+<li>A single pair $(x,r)$ is deterministic: it has one output and one query count. Probability appears only after averaging over $r$ (or over $x$ under an input distribution).</li>
+<li>A deterministic algorithm can be viewed as a degenerate randomized algorithm whose seed distribution has all mass on one deterministic tree. However, when defining $D_\mu$, it is cleaner to quantify directly over all deterministic trees rather than assume that the tree must already occur in a particular randomized implementation.</li>
+</ul>
+
+<p class="mb-3">This distinction prevents a frequent mistake: $r$ is not an “extra input” chosen by the adversary. It is part of the algorithm's strategy, while $x$ is the external instance over which worst-case guarantees are required.</p>
+
 <hr>
 
 <h4 id="2-2-formal-framework-of-randomized-query-algorithms" class="mb-2">2.2 Formal Framework of Randomized Query Algorithms</h4>
@@ -3637,6 +3858,16 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <blockquote class="blockquote mb-3">- <strong>Worst-Case Success $\ge 2/3$ measures Correctness:</strong> On the most malicious input $x$, is the probability of picking a winning seed at least $2/3$? ($\min_x \mathbb{E}_r [I(x, A_r)] \ge 2/3$).</blockquote>
 
 <blockquote class="blockquote mb-3">- <strong>Core Mantra:</strong> <em>In the worst case $x$, winning seeds must have weight $\ge 2/3$; failing seeds can have weight at most $\le 1/3$.</em></blockquote>
+
+<h5 class="mb-2">The Quantifier Order to Memorize</h5>
+
+<p class="mb-3">The standard bounded-error randomized model can be read as the following sentence:</p>
+
+<blockquote class="blockquote mb-3">For <strong>every</strong> input $x$, the probability over the algorithm's seed $r$ of returning the correct answer is at least $2/3$.</blockquote>
+
+<p class="mb-3">Symbolically: $$\forall x,\qquad \mathbb{E}_{r\sim\mathcal{D}}[I(x,A_r)]\ge\frac23.$$</p>
+
+<p class="mb-3">The cost statement is separate: $$\max_{x,r}Q(x,A_r)\le q$$ for a hard worst-case query budget, or $$\max_x\mathbb{E}_r[Q(x,A_r)]\le q$$ when analyzing expected cost. Do not replace the first expression by “there exists a good seed for every input”: the good seed may depend on $x$, and a valid randomized algorithm must obtain the $2/3$ success probability from one fixed distribution $\mathcal{D}$ that works for all inputs.</p>
 
 <hr>
 
@@ -4336,6 +4567,30 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 <li><strong>Derandomizing on a FIXED distribution $\mu$ is ALWAYS possible:</strong> If an algorithm succeeds on average across $(x, r)$, the averaging argument guarantees that at least one deterministic tree $A_{r^*}$ performs at least as well as the average on that specific $\mu$.</li>
 </ul>
 
+<h4 id="3-7-yaos-principle-in-plain-language-who-moves-first" class="mb-2">3.7 Yao's Principle in Plain Language: Who Moves First?</h4>
+
+<p class="mb-3">The proof becomes much easier to remember if the roles are kept explicit:</p>
+
+<ol class="mb-3">
+<li>The lower-bound author chooses a distribution $\mu$ <strong>before</strong> the deterministic algorithm is chosen.</li>
+<li>The deterministic algorithm is allowed to know $\mu$ and tailor its queries to it.</li>
+<li>We then prove that every algorithm below the proposed query budget still has distributional success $&lt;2/3$.</li>
+<li>Since even the best algorithm that knows $\mu$ cannot pass cheaply, the randomized algorithm cannot pass cheaply either:</li>
+</ol>
+
+<p class="mb-3">$$D_\mu(P)\ge q\quad\Longrightarrow\quad R(P)\ge q.$$</p>
+
+<p class="mb-3">This explains two otherwise surprising facts:</p>
+
+<ul class="note-list">
+<li>A distribution concentrated on one input is usually a <strong>bad</strong> hard distribution: the deterministic solver can memorize the answer and ask zero queries.</li>
+<li>The proof never needs to identify the optimal deterministic tree. To show $D_\mu(P)\ge q$, it is enough to empty the entire class of trees with depth $&lt;q$ by proving that every such tree fails the $2/3$ test.</li>
+</ul>
+
+<p class="mb-3">The slogan is therefore not merely “randomness moves from the algorithm to the input.” It is:</p>
+
+<blockquote class="blockquote mb-3"><strong>Fix the input distribution first, grant the deterministic algorithm full knowledge of that distribution, and still show that insufficient queries leave it unable to distinguish the relevant cases.</strong></blockquote>
+
 <hr>
 </section>
 
@@ -4557,6 +4812,10 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
 </ul>
 
 <p class="mb-3">$$R(\text{OR}) \ge D_\mu(\text{OR}) \ge \frac{n}{3} = \Omega(n) \quad \blacksquare$$</p>
+
+<h5 class="mb-2">Why the $n/3$ Threshold Appears</h5>
+
+<p class="mb-3">The constant $1/3$ is not guessed from the final answer; it is obtained by solving the success inequality. If a deterministic algorithm makes at most $k$ queries, then under the mixture $$\mu=\tfrac12\mu_0+\tfrac12\mu_1,$$ it sees the unique $1$ with probability at most $$p\le \frac12\cdot\frac{k}{n}=\frac{k}{2n}.$$ If it outputs $0$ after an all-zero transcript, its success is at most $$p+(1-p)\cdot\frac{1/2}{1-p}=\frac12+p.$$ Thus the $2/3$ requirement forces $$\frac12+\frac{k}{2n}\ge\frac23\quad\Longrightarrow\quad k\ge\frac{n}{3}.$$ The posterior calculation gives the same result in a more explicit form. This is a useful general technique: keep the query budget symbolic, derive the best possible success as a function of $k$, and solve for the point where it reaches the target threshold.</p>
 
 <hr>
 </section>
@@ -5190,6 +5449,21 @@ Rank Index:    1                   (1/2 - eps)n                  (1/2 + eps)n   
                                  v
                      Establish R(P) Lower Bound!
 ========================================================================================</code></pre></div>
+
+<h4 id="8-4-lower-bound-checklist-for-new-problems" class="mb-2">8.4 Lower-Bound Checklist for New Problems</h4>
+
+<p class="mb-3">When facing a new query lower-bound exercise, use the following checklist before doing algebra:</p>
+
+<ol class="mb-3">
+<li><strong>Identify the pivot:</strong> Is the answer determined by finding one hidden witness (OR), by every bit collectively (XOR), or by a relational structure (graph connectivity)?</li>
+<li><strong>Choose the weapon:</strong> Use a tailored mixture and posterior argument for a hidden witness, a missing-bit/one-time-pad argument for parity, or a reduction when a known hard problem can be embedded.</li>
+<li><strong>Parameterize the budget:</strong> Assume an arbitrary deterministic algorithm with at most $k$ queries; do not insert a threshold prematurely.</li>
+<li><strong>Track only the information revealed:</strong> Bound the probability of hitting the witness, or show that an unread coordinate remains unbiased.</li>
+<li><strong>Compare with $2/3$:</strong> Derive an explicit upper bound on success and solve the inequality for $k$.</li>
+<li><strong>Quantify universally:</strong> State why the argument applies to every deterministic tree in the restricted class, then invoke Yao Part 1.</li>
+</ol>
+
+<p class="mb-3">The recurring proof skeleton is: $$\text{hard distribution} \;\to\; \text{information bottleneck} \;\to\; D_\mu(P)\text{ lower bound} \;\to\; R(P)\text{ lower bound}.$$</p>
 
 <hr>
 

@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.cloud_computing&quot;:{&quot;en&quot;:&quot;Cloud Computing&quot;,&quot;zh-Hant&quot;:&quot;雲端運算&quot;,&quot;zh-Hans&quot;:&quot;云计算&quot;},&quot;concept.cloud_architecture&quot;:{&quot;en&quot;:&quot;Cloud Architecture&quot;,&quot;zh-Hant&quot;:&quot;雲端架構&quot;,&quot;zh-Hans&quot;:&quot;云架构&quot;},&quot;concept.datacenter&quot;:{&quot;en&quot;:&quot;Datacenter&quot;,&quot;zh-Hant&quot;:&quot;資料中心&quot;,&quot;zh-Hans&quot;:&quot;数据中心&quot;},&quot;concept.virtualization&quot;:{&quot;en&quot;:&quot;Virtualization&quot;,&quot;zh-Hant&quot;:&quot;虛擬化&quot;,&quot;zh-Hans&quot;:&quot;虚拟化&quot;},&quot;concept.resource_pooling&quot;:{&quot;en&quot;:&quot;Resource Pooling&quot;,&quot;zh-Hant&quot;:&quot;資源池化&quot;,&quot;zh-Hans&quot;:&quot;资源池化&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5224-cloud-computing">
   <meta name="site:published_at" content="2026-08-30">
-  <meta name="site:last_modified_at" content="2026-09-29">
-  <meta name="site:reading_time_minutes" content="262">
+  <meta name="site:last_modified_at" content="2026-10-04">
+  <meta name="site:reading_time_minutes" content="265">
   <meta name="site:source" content="notes/NUS CS5224 Cloud Computing/NUS CS5224 Cloud Computing.md">
   <script>
   (() => {
@@ -154,7 +154,8 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#1-cloud-computing-definitions-and-core-identity">1. Cloud Computing Definitions and Core Identity</a>
+            <a class="note-toc-link level-1" href="#course-reading-architecture">Course Reading Architecture</a>
+<a class="note-toc-link level-1" href="#1-cloud-computing-definitions-and-core-identity">1. Cloud Computing Definitions and Core Identity</a>
 <a class="note-toc-link level-1" href="#2-historical-evolution-from-utility-vision-to-cloud-era">2. Historical Evolution: From Utility Vision to Cloud Era</a>
 <a class="note-toc-link level-1" href="#3-six-underlying-enabling-technologies">3. Six Underlying Enabling Technologies</a>
 <a class="note-toc-link level-1" href="#4-business-drivers-and-financial-benefits">4. Business Drivers and Financial Benefits</a>
@@ -364,7 +365,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-09-29" data-published-at="2026-08-30"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-29</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-08-30"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -390,7 +391,59 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+          <section id="course-reading-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Course Reading Architecture</h3>
+
+<p class="mb-3">CS5224 的主線是從「為什麼需要 cloud」一路下沉到「硬體如何支撐 abstraction」，再回到「應用如何利用這些 abstraction」。閱讀時不要把 virtualization、datacenter、MapReduce 當成平行章節；它們是同一個 stack 的不同層：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">需求與經濟動機 → reference architecture → workload placement / elasticity
+      → datacenter hardware / network / energy → virtualization / isolation
+      → multi-tier applications / MapReduce / FaaS</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Week</th>
+<th>知識角色</th>
+<th>與下一週的橋接</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1</td>
+<td>定義 cloud 的 on-demand、elastic、shared-pool 特性，並說明 scaling 與 governance</td>
+<td>需要一個共同 vocabulary 來描述 provider、consumer、service model</td>
+</tr>
+<tr>
+<td>2</td>
+<td>用 NIST reference architecture、IaaS/PaaS/SaaS 與 responsibility boundary 統一描述 cloud</td>
+<td>有了抽象層後，才能問 workload 如何分布與資源如何調度</td>
+</tr>
+<tr>
+<td>3</td>
+<td>研究 distribution、resource pooling、dynamic scalability、cloud bursting</td>
+<td>這些能力不是憑空出現，必須由 datacenter 的實體資源支撐</td>
+</tr>
+<tr>
+<td>4</td>
+<td>由 hosting、server、storage、network、power/cooling 看到 cloud 的物理成本</td>
+<td>硬體若直接暴露給每個 tenant，隔離與利用率會成為瓶頸</td>
+</tr>
+<tr>
+<td>5</td>
+<td>用 hypervisor、hardware assist、container 與 multitenancy 將硬體切成可管理的 logical resources</td>
+<td>abstraction 成熟後，才可組裝高階 application architecture</td>
+</tr>
+<tr>
+<td>6</td>
+<td>將前面各層合成 multi-tier web apps、MapReduce 與 serverless FaaS</td>
+<td>回到 Week 1：cloud 的價值就是以服務方式提供可伸縮的運算能力</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>閱讀提示：</strong> 遇到任何 cloud technology，先標記它解決的是哪一層的問題：<code>business demand</code>、<code>service boundary</code>、<code>resource management</code>、<code>physical infrastructure</code>、<code>isolation</code> 或 <code>application execution</code>。這能避免把同一個「scalability」名詞在不同層混用。</blockquote>
+
 <h1 class="mt-4">Week 1 - Cloud Computing Fundamentals: Architecture, Business Drivers, Scaling Mechanics, and Security Governance</h1>
 
 <p class="mb-3">Cloud computing has reshaped modern information technology from a capital-intensive infrastructure ownership model into a flexible, utility-based service paradigm. By delivering elastic computing resources over high-speed networks, cloud architectures enable organizations to scale workloads dynamically while driving innovations across Artificial Intelligence (AI), Internet of Things (IoT), and Big Data analytics.</p>

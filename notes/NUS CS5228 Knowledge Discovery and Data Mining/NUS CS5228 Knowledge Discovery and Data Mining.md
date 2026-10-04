@@ -10,10 +10,37 @@ Lang: en
 Tags: Data Mining, Clustering, Classification, Association Rules
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-09-12
+LastModified: 2026-10-04
 </meta>
 
 # NUS CS5228 Knowledge Discovery and Data Mining
+
+## Course Reading Architecture
+
+這門課的閱讀順序可濃縮成一條 data-to-decision pipeline：
+
+```text
+資料是什麼、可信嗎？
+  → 如何發現無標籤結構？
+  → 如何評估結構是否合理？
+  → 如何用標籤做 prediction？
+  → 如何把 prediction / similarity 變成 recommendation？
+  → 高維、graph、streaming 下如何維持可計算性？
+```
+
+| Week | 主問題 | 知識累積 |
+|---|---|---|
+| 1 | data types、quality、EDA、preprocessing | 建立所有後續方法的輸入契約：沒有可靠 representation，就沒有可靠 mining |
+| 2 | clustering 的目標與 K-Means / DBSCAN | 從資料中找 structure，並比較 centroid-based 與 density-based assumptions |
+| 3 | hierarchical clustering 與 cluster evaluation | 把「產生分群」提升為「理解 linkage、選擇尺度、判斷品質」 |
+| 4 | hierarchical / density / association pattern 的延伸 | 將相似度與密度觀念轉成可解釋的 pattern discovery |
+| 5–6 | association rules、classification、regression、generalization | 從無監督 structure 轉向有監督 prediction，並引入 loss、validation、regularization |
+| 7 | decision trees 與 linear models | 建立可解釋模型與參數化模型兩種 prediction 視角 |
+| 8–9 | recommender systems、content-based、collaborative filtering | 把 similarity、prediction、user/item representation 合成 personalized decision |
+| 10 | curse of dimensionality、PCA、SVD、embedding | 解決高維空間中距離失真、稀疏與計算成本問題 |
+| 11 | graph mining、community、centrality、data streams | 將資料從 table 擴展到 network 與持續到達的 stream，回收前面所有 scalability 問題 |
+
+> **閱讀提示：** 每個演算法都用四格定位：`input representation`、`assumption`、`objective`、`failure mode`。例如 K-Means 假設 centroid-shaped clusters，DBSCAN 假設 density connectivity；先看假設，再看公式，最後才比較 performance。
 
 ## Week 1
 

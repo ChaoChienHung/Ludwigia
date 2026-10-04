@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.nlp&quot;:{&quot;en&quot;:&quot;NLP&quot;,&quot;zh-Hant&quot;:&quot;自然語言處理&quot;,&quot;zh-Hans&quot;:&quot;自然语言处理&quot;},&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.information_extraction&quot;:{&quot;en&quot;:&quot;Information Extraction&quot;,&quot;zh-Hant&quot;:&quot;資訊抽取&quot;,&quot;zh-Hans&quot;:&quot;信息抽取&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5246-text-mining">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-09-12">
-  <meta name="site:reading_time_minutes" content="140">
+  <meta name="site:last_modified_at" content="2026-10-04">
+  <meta name="site:reading_time_minutes" content="143">
   <meta name="site:source" content="notes/NUS CS5246 Text Mining/NUS CS5246 Text Mining.md">
   <script>
   (() => {
@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
-  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
 <body class="note-page note-style-default" data-i18n-page="contentPage">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
@@ -154,7 +154,19 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            
+            <a class="note-toc-link level-1" href="#course-reading-architecture">Course Reading Architecture</a>
+<a class="note-toc-link level-1" href="#week-1">Week 1</a>
+<a class="note-toc-link level-1" href="#week-2">Week 2</a>
+<a class="note-toc-link level-1" href="#week-3">Week 3</a>
+<a class="note-toc-link level-1" href="#week-4">Week 4</a>
+<a class="note-toc-link level-1" href="#week-5">Week 5</a>
+<a class="note-toc-link level-1" href="#week-6">Week 6</a>
+<a class="note-toc-link level-1" href="#week-7">Week 7</a>
+<a class="note-toc-link level-1" href="#week-8">Week 8</a>
+<a class="note-toc-link level-1" href="#week-9">Week 9</a>
+<a class="note-toc-link level-1" href="#week-10">Week 10</a>
+<a class="note-toc-link level-1" href="#week-11">Week 11</a>
+<a class="note-toc-link level-1" href="#week-12">Week 12</a>
           </nav>
         </div>
       </div>
@@ -177,7 +189,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -204,7 +216,93 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">NUS CS5246 Text Mining Week 1 CS5246 Text Mining — Lecture 1 Notes</p>
+<p class="mb-3">NUS CS5246 Text Mining</p>
+</section>
+
+<section id="course-reading-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Course Reading Architecture</h3>
+
+<p class="mb-3">CS5246 是從「文字如何變成可計算的 representation」逐層走到「模型如何理解句子與跨句關係」：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">字串與 pattern → token / normalization / BoW / TF-IDF
+  → document similarity / clustering → supervised classification
+  → word representation / neural text models → sentiment
+  → sequence labeling (NER) → coreference → RNN / attention / Transformer</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Week</th>
+<th>新增能力</th>
+<th>為何接在這裡</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1–2</td>
+<td>regex、substring matching、基本 text pattern</td>
+<td>先學會在 raw string 上定義與尋找目標</td>
+</tr>
+<tr>
+<td>3</td>
+<td>tokenization、normalization、BoW、TF-IDF</td>
+<td>把字串轉成 sparse vector，讓 similarity 與 learning 成為可能</td>
+</tr>
+<tr>
+<td>4</td>
+<td>text clustering 與 linkage</td>
+<td>在沒有 labels 時利用 representation 發現主題群</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Naive Bayes、k-NN、SVM 與 evaluation</td>
+<td>加入 labels，將 similarity / features 轉成 classification</td>
+</tr>
+<tr>
+<td>6</td>
+<td>distributional hypothesis、Word2Vec、subword</td>
+<td>從手工計數 representation 轉向 learned semantic representation</td>
+</tr>
+<tr>
+<td>7</td>
+<td>MLP、CNN 等 neural text classifiers</td>
+<td>學習局部 pattern，補足 BoW 忽略詞序的缺點</td>
+</tr>
+<tr>
+<td>8</td>
+<td>sentiment 與 aspect-based sentiment</td>
+<td>將 classifier / representation 應用到 opinion structure</td>
+</tr>
+<tr>
+<td>9</td>
+<td>NER 與 sequence labeling</td>
+<td>從整篇／整句分類走向逐 token 的結構化預測</td>
+</tr>
+<tr>
+<td>10</td>
+<td>coreference / anaphora</td>
+<td>將局部 mention 連回跨句 entity，建立 discourse-level context</td>
+</tr>
+<tr>
+<td>11</td>
+<td>RNN、LSTM、GRU、Seq2Seq</td>
+<td>用 recurrent state 處理變長序列，但面對長距離梯度問題</td>
+</tr>
+<tr>
+<td>12</td>
+<td>attention、Transformer、pretrained LM</td>
+<td>用 global alignment 與 parallel representation 解決 recurrent bottleneck</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>閱讀提示：</strong> 先固定三個問題：representation 保留了什麼、丟掉了什麼？模型的 prediction unit 是 document、sentence、token 還是 span？模型如何取得上下文？這三問會把整門課串成 representation → task → context 的連續演進。</blockquote>
+</section>
+
+<section id="week-1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 1</h3>
+
+<p class="mb-3">CS5246 Text Mining — Lecture 1 Notes</p>
 
 <p class="mb-3">Working with Text — Challenges</p>
 
@@ -620,8 +718,12 @@
 <li>Uses letters, digits, punctuation, and whitespace</li>
 </ul></li>
 </ul>
+</section>
 
-<p class="mb-3">Week 2 Basic Pattern / Substring Matching</p>
+<section id="week-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 2</h3>
+
+<p class="mb-3">Basic Pattern / Substring Matching</p>
 
 <p class="mb-3">Overview</p>
 
@@ -1813,8 +1915,12 @@
 </ul></li>
 <li>Choice of normalization depends on task and language</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 3 Text as Data — Challenges</p>
+<section id="week-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 3</h3>
+
+<p class="mb-3">Text as Data — Challenges</p>
 
 <ul class="note-list">
 <li>Text = sequence of words (tokens)</li>
@@ -2045,8 +2151,12 @@
 <li>Dense embeddings provide more semantic power and efficiency</li>
 <li>Applications: text classification, sentiment analysis, search, summarization</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 4 CS5246 Text Mining — Lecture 4</p>
+<section id="week-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 4</h3>
+
+<p class="mb-3">CS5246 Text Mining — Lecture 4</p>
 
 <p class="mb-3">AGNES — Basic Algorithm</p>
 
@@ -2748,8 +2858,12 @@
 </ul></li>
 <li>Key idea: focus on relative similarities between documents for analysis</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 5 CS5246 Text Mining — Lecture 5: Text Classification (Classic ML to Deep Learning)</p>
+<section id="week-5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 5</h3>
+
+<p class="mb-3">CS5246 Text Mining — Lecture 5: Text Classification (Classic ML to Deep Learning)</p>
 
 <p class="mb-3">Text classification overview</p>
 
@@ -3745,8 +3859,12 @@
 <li>Elbow curve and silhouette scores may not reveal clear cluster structure in text data.</li>
 <li>For text clustering, internal measures can be less informative due to high dimensionality and sparsity.</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 6 Text Preprocessing Recap</p>
+<section id="week-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 6</h3>
+
+<p class="mb-3">Text Preprocessing Recap</p>
 
 <p class="mb-3">Text as string represents natural language as written. Raw source text needs to be transformed into a "proper" input for text mining methods. Text can be represented as sequences of characters or as collections of tokens:</p>
 
@@ -4067,8 +4185,12 @@
 <li>Text simplification and summarization</li>
 <li>Information extraction and knowledge graph construction</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 7 Feedforward Neural Network (MLP)</p>
+<section id="week-7" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 7</h3>
+
+<p class="mb-3">Feedforward Neural Network (MLP)</p>
 
 <ul class="note-list">
 <li>Structure:
@@ -5406,8 +5528,12 @@
 </ul></li>
 </ul></li>
 </ul>
+</section>
 
-<p class="mb-3">Week 8 Sentiment &amp; Sentiment Analysis</p>
+<section id="week-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 8</h3>
+
+<p class="mb-3">Sentiment &amp; Sentiment Analysis</p>
 
 <p class="mb-3">Basic Definitions</p>
 
@@ -6552,8 +6678,12 @@
 <li>ABSA addresses fine-grained sentiment tied to specific targets</li>
 <li>Modern systems increasingly rely on attention and multitask learning</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 9 CS5246 Week 9</p>
+<section id="week-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 9</h3>
+
+<p class="mb-3">CS5246 Week 9</p>
 
 <p class="mb-3">CS5246 Text Mining — Lecture 9 (Named Entity Recognition)</p>
 
@@ -8047,7 +8177,11 @@
 <li>NER has evolved from:</li>
 </ul>
 
-<p class="mb-3">feature engineering → probabilistic sequence models → neural representation learning with structured decoding Week 10</p>
+<p class="mb-3">feature engineering → probabilistic sequence models → neural representation learning with structured decoding</p>
+</section>
+
+<section id="week-10" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 10</h3>
 
 <ul class="note-list">
 <li>Repetition in language: referring to the same entity or concept multiple times is very common in natural language</li>
@@ -8684,8 +8818,12 @@
 <li>Core challenge remains linguistic variability and limited supervision</li>
 </ul></li>
 </ul>
+</section>
 
-<p class="mb-3">Week 11 RNN — Limitations with Long Sequences</p>
+<section id="week-11" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 11</h3>
+
+<p class="mb-3">RNN — Limitations with Long Sequences</p>
 
 <p class="mb-3">Training Issues</p>
 
@@ -9386,8 +9524,12 @@
 <li>Large Language Models (LLMs)</li>
 </ul></li>
 </ul>
+</section>
 
-<p class="mb-3">Week 12 Transformer architecture — core ideas</p>
+<section id="week-12" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 12</h3>
+
+<p class="mb-3">Transformer architecture — core ideas</p>
 
 <ul class="note-list">
 <li>Encoder–decoder without recurrence or convolution</li>

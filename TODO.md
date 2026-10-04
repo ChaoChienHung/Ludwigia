@@ -22,6 +22,15 @@
   - 如果 task 的核心是「把東西做出來」，偏 `Agent-friendly`
   - 如果 task 的核心是「決定要做成什麼樣子 / 想表達什麼」，偏 `Author-driven`
 
+- [x] Layered Scaffolding & Frictionless Progression Contract: 建立知識邏輯階層化鷹架與零割裂閱讀流契約
+  - [x] 已完成什麼：
+    - **非退化硬契約**：在 `AGENTS.md` 加入「知識邏輯與閱讀流暢度契約（階層化鷹架與零割裂推進原則）」，定調「底層成群鋪墊、逐層向上堆疊、零跳躍、零割裂」，徹底消除認知斷崖。
+    - **Backlog 寫作指南**：在 `ARTICLES.md` 頂部確立所有未來待辦長文與技術筆記必須嚴格遵守此原則。
+    - **寫作技巧與自檢清單**：在 `docs/author/writing-notes.md` 新增「階層化鷹架與零割裂知識堆疊」技巧，詳述三層鷹架模型、三大割裂反模式（空中樓閣、板塊孤島拼貼、概念倒置）與自檢清單。
+    - **第一視角演進與設計決策**：在 `docs/author/dev-notes.md`、`docs/design/design.md` 補齊作者對閱讀難度、心智模型自然生長與心智摩擦力最小化的設計脈絡。
+    - **品質守門與交付驗收**：在 `docs/rules/guardrails.md`、`docs/rules/checklist.md` 與 `README.md` 同步補全守門條目。
+  - [x] Review 重點：確認各文檔對「底層成群鋪墊、逐層向上堆疊」的闡述一致、切中痛點，並作為後續文章生成與重構的不可動搖規範。
+
 - [x] Mobile Inset Grouped Settings: 手機端設定體驗重構為原生 iOS 分組卡片流（Inset Grouped Cards）
   - [x] 已完成什麼：
     - **取消手機分頁切換**：在小螢幕（<= 767.98px）下隱藏 General / Style 標籤，將所有設定整合為縱向連續流暢捲動之圓角群組卡片，單手滑動即可閱覽並設定全部項目。

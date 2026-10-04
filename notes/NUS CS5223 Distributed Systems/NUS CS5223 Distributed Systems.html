@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;},&quot;concept.consensus&quot;:{&quot;en&quot;:&quot;Consensus&quot;,&quot;zh-Hant&quot;:&quot;共識&quot;,&quot;zh-Hans&quot;:&quot;共识&quot;},&quot;concept.fault_tolerance&quot;:{&quot;en&quot;:&quot;Fault Tolerance&quot;,&quot;zh-Hant&quot;:&quot;容錯&quot;,&quot;zh-Hans&quot;:&quot;容错&quot;},&quot;concept.system_architecture&quot;:{&quot;en&quot;:&quot;System Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5223-distributed-systems">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-09-12">
-  <meta name="site:reading_time_minutes" content="75">
+  <meta name="site:last_modified_at" content="2026-10-04">
+  <meta name="site:reading_time_minutes" content="78">
   <meta name="site:source" content="notes/NUS CS5223 Distributed Systems/NUS CS5223 Distributed Systems.md">
   <script>
   (() => {
@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
-  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
 <body class="note-page note-style-default" data-i18n-page="contentPage">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
@@ -154,7 +154,7 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            
+            <a class="note-toc-link level-1" href="#reading-architecture">Reading Architecture</a>
           </nav>
         </div>
       </div>
@@ -177,7 +177,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -204,7 +204,66 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">NUS CS5223 Distributed Systems Slide 1</p>
+<p class="mb-3">NUS CS5223 Distributed Systems</p>
+</section>
+
+<section id="reading-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Reading Architecture</h3>
+
+<p class="mb-3">這份來源目前是以 slides 與主題段落整理，沒有可靠的 Week 標記；因此以下不硬造週次，而是提供一條可從頭走到尾的 knowledge spine：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">distributed system model / communication
+  → RPC：如何讓遠端操作看起來像 local call？
+  → clocks / snapshots：沒有全域時鐘，如何描述 ordering 與 global state？
+  → transactions / consistency：多個節點如何維持 application-level correctness？
+  → replication / Paxos groups / commit：如何在 failure 下仍協調寫入？
+  → failure models：哪些保證是 system model 能支持的，哪些不能？</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>主題層</th>
+<th>閱讀時要抓的核心問題</th>
+<th>下一層的必要前提</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Model &amp; communication</td>
+<td>latency、partial failure、message passing 如何改變 local-program intuition？</td>
+<td>先知道 RPC 不能消除遠端呼叫的不確定性</td>
+</tr>
+<tr>
+<td>RPC</td>
+<td>naming、marshalling、retry、at-most/at-least-once semantics</td>
+<td>需要 ordering 與 time 的工具來分析多次呼叫</td>
+</tr>
+<tr>
+<td>Clocks &amp; snapshots</td>
+<td>physical/logical time 如何表達 happens-before 與 consistent cut？</td>
+<td>才能談跨節點事件與交易觀測</td>
+</tr>
+<tr>
+<td>Transactions &amp; consistency</td>
+<td>ACID、serializability、consistency model 如何分配 correctness 責任？</td>
+<td>分散式交易需要 replication 與 coordination</td>
+</tr>
+<tr>
+<td>Replication &amp; commit</td>
+<td>Paxos groups、2PC、write path 如何共同完成 durable commit？</td>
+<td>必須明確 failure model 與可犧牲的 availability</td>
+</tr>
+<tr>
+<td>Failure models</td>
+<td>crash、network partition、slow response 如何影響 guarantees？</td>
+<td>回頭檢查前面每項 protocol 的適用邊界</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>閱讀提示：</strong> 先分清楚三種語言：<code>事件順序</code>（clocks/snapshots）、<code>資料正確性</code>（transactions/consistency）、<code>協議可用性</code>（replication/failure）。它們互相依賴，但不能用其中一種名詞代替另外兩種。</blockquote>
+
+<p class="mb-3">Slide 1</p>
 
 <ul class="note-list">
 <li>What is a distributed system

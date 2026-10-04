@@ -10,11 +10,35 @@ Lang: en
 Tags: Machine Learning, Responsible AI, Trustworthy ML
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-09-12
+LastModified: 2026-10-04
 </meta>
 
 CS5562 Trustworthy Machine Learning
 Structured Notes on CLWE-Based Digital Signature Attacks, PRG Embedding, Quasilinear Time, MI-Based Auditing Enhancements, and Quasi-Identifiers
+
+## Knowledge Architecture
+
+這份來源目前沒有明確 Week 標記，所以用「threat model → theoretical limit → audit practice → privacy / robustness → operational defense」整理，而不虛構課程週次：
+
+```text
+數學與安全基礎
+  → cryptographic reductions：用 CLWE / PRG 證明 MI auditing 的限制
+  → auditing enhancements：讓理論威脅模型更接近實際模型行為
+  → privacy vocabulary：quasi-identifiers 與 re-identification risk
+  → poisoning / robust estimation：資料被污染時仍能估計 clean signal 嗎？
+  → LLM backdoor checklist：把前面的風險轉成可執行的防禦與監控
+```
+
+| 層次 | 先回答什麼 | 閱讀落點 |
+|---|---|---|
+| Foundations | vector space、inner product、quasilinear 是什麼語言？ | 先建立 representation、geometry、complexity 的共同詞彙 |
+| Impossibility / reduction | 若 MI auditor 成功，是否能破壞 CLWE signature 或 PRG indistinguishability？ | 分清楚「理論 lower bound」與「實務攻擊」 |
+| Audit design | static threshold 為何不足？如何加入 likelihood、shadow model、多訊號與 calibration？ | 把 abstract auditor 變成可測量的 framework |
+| Privacy | quasi-identifier 如何與 auxiliary data 造成 re-identification？ | 將 membership/privacy risk 放回資料治理脈絡 |
+| Robustness | poisoned gradients、robust mean、Bernoulli lower bound 如何限制防禦？ | 認清 noise 與 adversary bias 的統計下界 |
+| Operations | input、embedding、training、checkpoint、monitoring 各層如何防 backdoor？ | 把理論與統計限制轉成 defense checklist |
+
+> **閱讀提示：** 每個結果都標記為 `construction`、`reduction`、`statistical limit` 或 `engineering mitigation`。這四種證據的強度與用途不同；把它們分開，整份筆記就不會把「證明存在風險」誤讀成「現實中已能直接攻擊」。
 
 Digital Signatures (CLWE-Based) Attack
 - Based on embedding Learning-With-Errors (LWE)-derived digital signature structures into training data or model parameters.

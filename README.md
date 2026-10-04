@@ -27,6 +27,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Tag-first：用 tags 當作主要 cluster（小花園），搜尋與 tags 互補（找 vs 逛）
 - Progressive Enhancement：先做「能用又一致」的檢索/聚合，再逐步加上 garden metaphor 的互動與視覺
 - No duplication：不維護兩份內容；卡片、預覽、列表都是同一份 note 的不同呈現
+- Layered Scaffolding & Frictionless Progression：知識傳遞堅持「底層成群鋪墊、逐層向上堆疊、零跳步、零割裂」，降低讀者心智負荷，維持極致閱讀流暢度
 
 更完整的設計理由與決策脈絡：請看 [design.md](./docs/design/design.md)；系統設計與可驗證 spec 看 [system-spec.md](./docs/specs/system-spec.md)；第一視角的心得雜談看 [dev-notes.md](./docs/author/dev-notes.md)。
 

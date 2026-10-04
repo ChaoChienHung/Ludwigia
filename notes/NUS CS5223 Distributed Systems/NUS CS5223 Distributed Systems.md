@@ -10,10 +10,35 @@ Lang: en
 Tags: Distributed Systems, Consensus, Fault Tolerance, System Architecture
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-09-12
+LastModified: 2026-10-04
 </meta>
 
 NUS CS5223 Distributed Systems
+
+## Reading Architecture
+
+這份來源目前是以 slides 與主題段落整理，沒有可靠的 Week 標記；因此以下不硬造週次，而是提供一條可從頭走到尾的 knowledge spine：
+
+```text
+distributed system model / communication
+  → RPC：如何讓遠端操作看起來像 local call？
+  → clocks / snapshots：沒有全域時鐘，如何描述 ordering 與 global state？
+  → transactions / consistency：多個節點如何維持 application-level correctness？
+  → replication / Paxos groups / commit：如何在 failure 下仍協調寫入？
+  → failure models：哪些保證是 system model 能支持的，哪些不能？
+```
+
+| 主題層 | 閱讀時要抓的核心問題 | 下一層的必要前提 |
+|---|---|---|
+| Model & communication | latency、partial failure、message passing 如何改變 local-program intuition？ | 先知道 RPC 不能消除遠端呼叫的不確定性 |
+| RPC | naming、marshalling、retry、at-most/at-least-once semantics | 需要 ordering 與 time 的工具來分析多次呼叫 |
+| Clocks & snapshots | physical/logical time 如何表達 happens-before 與 consistent cut？ | 才能談跨節點事件與交易觀測 |
+| Transactions & consistency | ACID、serializability、consistency model 如何分配 correctness 責任？ | 分散式交易需要 replication 與 coordination |
+| Replication & commit | Paxos groups、2PC、write path 如何共同完成 durable commit？ | 必須明確 failure model 與可犧牲的 availability |
+| Failure models | crash、network partition、slow response 如何影響 guarantees？ | 回頭檢查前面每項 protocol 的適用邊界 |
+
+> **閱讀提示：** 先分清楚三種語言：`事件順序`（clocks/snapshots）、`資料正確性`（transactions/consistency）、`協議可用性`（replication/failure）。它們互相依賴，但不能用其中一種名詞代替另外兩種。
+
 Slide 1
 - What is a distributed system
   - Multiple interconnected computers
@@ -2168,4 +2193,3 @@ Key Formulas
 - Byzantine quorum requirement: n > 3f
 - Prepare Certificate: 2f+1 matching PREPAREs
 - Commit Certificate: 2f+1 matching COMMITs
-

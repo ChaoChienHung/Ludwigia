@@ -10,10 +10,38 @@ Lang: en
 Tags: NLP, Data Mining, Information Extraction, Transformers
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-09-12
+LastModified: 2026-10-04
 </meta>
 
 NUS CS5246 Text Mining
+
+## Course Reading Architecture
+
+CS5246 是從「文字如何變成可計算的 representation」逐層走到「模型如何理解句子與跨句關係」：
+
+```text
+字串與 pattern → token / normalization / BoW / TF-IDF
+  → document similarity / clustering → supervised classification
+  → word representation / neural text models → sentiment
+  → sequence labeling (NER) → coreference → RNN / attention / Transformer
+```
+
+| Week | 新增能力 | 為何接在這裡 |
+|---|---|---|
+| 1–2 | regex、substring matching、基本 text pattern | 先學會在 raw string 上定義與尋找目標 |
+| 3 | tokenization、normalization、BoW、TF-IDF | 把字串轉成 sparse vector，讓 similarity 與 learning 成為可能 |
+| 4 | text clustering 與 linkage | 在沒有 labels 時利用 representation 發現主題群 |
+| 5 | Naive Bayes、k-NN、SVM 與 evaluation | 加入 labels，將 similarity / features 轉成 classification |
+| 6 | distributional hypothesis、Word2Vec、subword | 從手工計數 representation 轉向 learned semantic representation |
+| 7 | MLP、CNN 等 neural text classifiers | 學習局部 pattern，補足 BoW 忽略詞序的缺點 |
+| 8 | sentiment 與 aspect-based sentiment | 將 classifier / representation 應用到 opinion structure |
+| 9 | NER 與 sequence labeling | 從整篇／整句分類走向逐 token 的結構化預測 |
+| 10 | coreference / anaphora | 將局部 mention 連回跨句 entity，建立 discourse-level context |
+| 11 | RNN、LSTM、GRU、Seq2Seq | 用 recurrent state 處理變長序列，但面對長距離梯度問題 |
+| 12 | attention、Transformer、pretrained LM | 用 global alignment 與 parallel representation 解決 recurrent bottleneck |
+
+> **閱讀提示：** 先固定三個問題：representation 保留了什麼、丟掉了什麼？模型的 prediction unit 是 document、sentence、token 還是 span？模型如何取得上下文？這三問會把整門課串成 representation → task → context 的連續演進。
+
 ## Week 1
 
 <draft>

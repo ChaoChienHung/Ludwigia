@@ -10,15 +10,15 @@ Lang: en
 Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-10-01
+LastModified: 2026-10-04
 </meta>
 
 # NUS CS5234 Algorithms at Scale
 
-# Master Cheatsheet & Executive Quick Reference (Lec 1–5)
+# Master Cheatsheet & Executive Quick Reference (Lec 1–6)
 
 > **Executive Overview & Exam Quick Reference:**
-> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 5 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, and lower bound proving techniques.
+> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 6 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, lower bound proving techniques, and clustering-at-scale results.
 
 ---
 
@@ -126,6 +126,21 @@ To prove that no randomized algorithm can solve problem $f$ in fewer than $q$ qu
     - *Crucial usage:* Proves Fact 2 ($\|\mu\|_2^2 \ge 1/n$ with equality at $U_n$) and Lemma 1 in Uniformity Testing ($\|\mu - U_n\|_2^2 \ge \frac{4\varepsilon^2}{n}$).
 - **Birthday Paradox Collision Bound:**
     Drawing $k$ samples from a universe of size $N$ produces at least one collision with probability $\approx 1 - e^{-k(k-1)/(2N)}$; collisions emerge once $k = \Omega(\sqrt{N})$.
+
+### V. Clustering at Scale: The Result Map
+
+| Topic | Core statement | Why it matters |
+| :--- | :--- | :--- |
+| **Metric space** | $d$ satisfies non-negativity, identity of indiscernibles, symmetry, and triangle inequality. | The triangle inequality is the main proof tool for approximation guarantees. |
+| **$k$-center** | Minimize $\max_i d(p_i, C(p_i))$. | Controls the worst-served point, so outliers matter strongly. |
+| **$k$-median / $k$-means** | Minimize $\sum_i d(p_i,C(p_i))$ / $\sum_i d(p_i,C(p_i))^2$. | $k$-median is more robust; squaring makes $k$-means especially sensitive to large errors. |
+| **Hardness** | A Dominating Set instance becomes a 1-2 metric with $\mathrm{OPT}\in\{1,2\}$. | A ratio strictly below $2$ would distinguish the two cases and imply $\mathrm{P}=\mathrm{NP}$. |
+| **Gonzalez farthest-first** | Repeatedly choose the point farthest from the current centers. | Gives a tight $2$-approximation in $\mathcal{O}(nk)$ distance queries. |
+| **Streaming $k$-center** | Test radius guesses with the rule “keep a point if it is farther than $2T$.” | Parallel geometric guesses give a $(2+2\varepsilon)$ approximation with small memory. |
+| **Streaming $k$-median** | Compress blocks into weighted centers, then solve the weighted instance. | A two-level coreset uses $\mathcal{O}(\sqrt{nk})$ points and gives $(4\alpha^2+4\alpha)$ approximation. |
+| **MEB / 1-center** | Farthest-point augmentation obeys $\lambda_{t+1}\ge(1+\lambda_t^2)/2$. | After $\mathcal{O}(1/\varepsilon)$ iterations, the active set is a dimension-independent $(1+\varepsilon)$ coreset. |
+
+> **Clustering proof pattern:** identify the right structural invariant, use triangle inequality (or a packing/pigeonhole argument), and separate the optimization objective from the resource model (query, streaming space, or coreset size).
 
 ---
 
@@ -943,6 +958,64 @@ This result formalizes the solution to the classic **Coupon Collector's Problem*
     - Extended consideration: General graphs with unbounded component sizes via Truncated BFS at ceil(2/eps); query complexity O(1/eps^3).
 </draft>
 
+## Week 2 Reading Map: One Proof Grammar, Then a New Application Layer
+
+Week 2 is easiest to read as **two layers built on the same analytical grammar**, rather than as nine unrelated techniques.
+
+```
+Layer A: Sampling and estimation toolkit
+
+  Problem specification
+        ↓
+  Choose the right random variable W
+        ↓
+  Compute E[W] (and, when needed, Var[W])
+        ↓
+  Translate failure into |W - E[W]| being large
+        ↓
+  Apply Chernoff / Chebyshev / Union Bound
+        ↓
+  Tune accuracy ε and confidence δ
+
+  Sections 1 → 2 → 3 → 4 → 5
+
+Layer B: Graph edge estimation
+
+  Reuse the same grammar on a richer oracle
+        ↓
+  See why the naive estimator has too much variance
+        ↓
+  Redesign the estimator by orienting edges
+        ↓
+  Solve the unknown-m problem by geometric guessing
+
+  Sections 6 → 7 → 8 → 9
+```
+
+### The Universal Proof Grammar
+
+For every sampling problem in Layer A, keep asking the same five questions:
+
+1. **What exactly counts as success?** Is the target an additive interval, a multiplicative interval, or a rank interval?
+2. **Which random variable should be analyzed?** It may be the scaled output itself, or an auxiliary $0/1$ count that controls whether the output is good.
+3. **Where is its center?** Compute $\mathbb{E}[W]$ and check whether it equals the target. Unbiasedness is not itself concentration; it only aligns the center of concentration with the answer we care about.
+4. **Can the failure event be written in a standard form?** The usual destination is
+   $$\Pr\left[|W-\mathbb{E}[W]|\ge \text{tolerance}\right].$$
+5. **Which tool matches the random variable?** Chernoff needs a sum of independent bounded variables; Chebyshev needs a variance bound; the union bound combines several already-controlled bad events.
+
+The important design decision is usually Step 2. In counting, the output is a scaled count. In approximate median, the output is an order statistic, so we instead count how many samples fall in the bad lower or upper region. In graph edge estimation, we deliberately design a new estimator whose second moment is manageable.
+
+> **Reading rule:** Do not treat each section as introducing a completely new proof style. Sections 3, 4, and 5 are successive transformations of the same skeleton; Sections 6–8 apply that skeleton to a harder oracle model.
+
+### The Two Knobs That Organize the Whole Week
+
+Almost every sample/query bound has two independent costs:
+
+- **Accuracy knob $\varepsilon$:** how close the estimate must be. This is usually responsible for a $1/\varepsilon^2$ factor, with an additional $1/p$ penalty when the target is a rare event of density $p$.
+- **Confidence knob $\delta$:** how rarely the algorithm may fail. Chebyshev alone gives a $1/\delta$-type cost; Chernoff or median-of-means gives the much better $\log(1/\delta)$ cost.
+
+This is why the chapter should be read in the order “build a decent estimator first, then make it highly reliable,” not as a collection of interchangeable tricks.
+
 ## 1. Core Concept and Foundations of Query Algorithms
 
 ### 1.1 The Information Bottleneck & The Query Algorithm Paradigm
@@ -1006,6 +1079,28 @@ Rigorous mathematical analysis of randomized query algorithms follows a universa
    Having an unbiased estimator is insufficient if its variance causes extreme deviations on individual runs. The theorist must prove that the probability of deviating from the mean by more than a specified tolerance is bounded by a small failure probability (e.g., $\le 1/3$, $\le 0.1$, or $\le \delta$).
    - **Concentration Inequalities:** Primarily **Chernoff bounds** for bounded independent random variables and **Chebyshev's inequality** for second-moment bounded variables serve as the standard mathematical machinery to bound failure probabilities.
 
+### 1.3 Three Different Claims: Unbiasedness, Accuracy, and Query Cost
+
+These claims are related, but none of them implies the others by itself:
+
+1. **Unbiasedness** is an expectation statement:
+   $$\mathbb{E}[\widehat{C}] = C.$$
+   It allows overestimates and underestimates to cancel over many independent runs; one individual run may still be very inaccurate.
+2. **Accuracy** is a tail statement:
+   $$\Pr\left[|\widehat{C}-C|>\text{tolerance}\right]\le \delta.$$
+   This is where variance, boundedness, independence, and the choice of concentration inequality enter.
+3. **Query complexity** counts oracle interactions, not the algebra used after the samples are collected. An estimator can be unbiased and accurate in principle but still be useless if one sample requires too many oracle calls.
+
+For the binary-counting estimator, the separation is explicit:
+$$\underbrace{X=\sum_{i=1}^k X_i}_{\text{sample statistic}},\qquad
+\underbrace{\widehat{C}=\frac{n}{k}X}_{\text{unbiased output}},\qquad
+\underbrace{\Pr[|\widehat{C}-C|>\varepsilon n]}_{\text{concentration guarantee}}.$$
+The analysis should therefore be written in this order: define the random variables, prove the expectation identity, translate the desired output error into a deviation event for $X$, and only then solve for $k$.
+
+> **Diagnostic question:** If a proposed estimator is “unbiased,” ask immediately: *unbiased for which quantity, with what variance, and under what failure probability?* The word unbiased alone is not an approximation guarantee.
+
+> **Transition to Section 2:** Section 1 gives the proof grammar and the oracle model. Section 2 supplies one reusable concentration tool; it is not a separate topic to memorize in isolation.
+
 ---
 
 ## 2. Chernoff Bound Formulations
@@ -1038,6 +1133,8 @@ For any relative deviation parameter $\delta > 0$:
 ```
 
 *Key Structural Takeaway:* When relative deviation $\delta \le 1$, the exponent decays quadratically in $\delta$ ($-\delta^2 \mu / 3$). When $\delta > 1$, the exponent transitions to linear decay in $\delta$ ($-\delta \mu / 3$), which remains exceptionally powerful for large deviations.
+
+> **Transition to Section 3:** We now use the bound immediately on the simplest nontrivial query problem: estimating the number of 1s. This first example shows the complete pipeline from problem-defined error to Chernoff-ready deviation.
 
 ---
 
@@ -1239,6 +1336,8 @@ When designing a randomized sampling or sublinear query algorithm, how many samp
 > - **For constant success ($\delta = 1/3$ or $0.1$), Chebyshev's inequality is already sufficient.**
 > - Multiplicative estimation introduces a penalty factor of $1/p$ because estimating rare events ($p \ll 1$) demands finer absolute precision.
 
+> **Transition to Section 4:** Counting lets us analyze the scaled output directly. Approximate median will use the same pipeline, but its output is an order statistic rather than a linear sum, so we will introduce an auxiliary counting variable.
+
 ---
 
 ## 4. Median Approximation
@@ -1342,6 +1441,21 @@ $$\Pr[\text{Failure}] \le \Pr[\text{Condition 1 Fails}] + \Pr[\text{Condition 2 
 
 Consequently, the overall success probability is:
 $$\Pr[\text{Success}] \ge 1 - 0.2 = 0.8 \quad (80\%)$$
+
+#### Do Not Confuse the Two “Medians”
+
+The **sample median** in this section is the algorithm's output: we sort sampled data values and return the middle one to approximate a population rank. The **median trick** in Section 5 is a meta-algorithm: we run an existing estimator several times and return the median of the resulting estimates to amplify confidence.
+
+They share the same order-statistic intuition—“the middle survives if more than half are good”—but they solve different problems:
+
+| | Sample median | Median trick |
+| :--- | :--- | :--- |
+| What is being medianized? | Sampled data values | Independent outputs of an estimator |
+| What is the target? | A rank interval in the input array | The original target value within a tolerance interval |
+| What must be counted? | Samples below/above the acceptable rank band | Runs whose estimates are bad |
+| Why does Chernoff apply? | Each sample independently lands in a bad rank region | Each run independently succeeds or fails |
+
+> **Transition to Section 5:** Section 4 has already shown the pattern “median failure implies at least half of the supporting events are bad.” Section 5 abstracts that pattern into a reusable confidence-amplification tool, and then combines it with the mean trick.
 
 ---
 
@@ -1556,6 +1670,8 @@ The Median Trick requires an admission ticket: **the individual estimator's succ
 > **The Universal Slogan:**
 > *Mean turns a terrible estimator into a "decent" estimator (success $> 1/2$); Median turns a "decent" estimator into an "almost infallible" estimator (success $\ge 1 - 1/\text{poly}(n)$).*
 
+> **The dependency chain inside Section 5:** the mean trick lowers variance; Chebyshev turns that lower variance into a constant success probability above $1/2$; the median trick turns that constant advantage into high confidence. This is why “mean first, median second” is structural, not stylistic.
+
 ### 5.5 The Unified "Two-Knob" Sample Complexity Model: Deconstructing the $k$ Formula
 
 The Master Sample Size Table presented in Section 3.6 is not an ad-hoc collection of empirical heuristics—it is the **direct operational outcome** of the concentration inequality theory (Mean Trick, Median Trick, Chebyshev, and Chernoff).
@@ -1705,6 +1821,8 @@ To prevent cognitive friction when reading the literature, maintain a strict men
 
 *Best Practice:* In your derivations, denote the relative error parameter by $\gamma$ or $\varepsilon_{\text{rel}}$, reserving $\delta$ exclusively for the failure probability $\delta_{\text{fail}}$.
 
+> **Transition to Layer B:** Sections 1–5 are the reusable sampling toolkit. Section 6 changes the object being queried from a binary string/array to a graph, but the proof questions remain the same: what is the estimator, where is its expectation, and how does its variance scale?
+
 ---
 
 ## 6. Query Algorithms on Graphs
@@ -1803,6 +1921,8 @@ that returns a $(1 + \epsilon)$-multiplicative approximation of $m$.
 > The **worst-case query complexity** occurs when the graph is minimally connected (such as a tree or simple path where $m = n - 1 = \Theta(n)$):
 > $$\text{Worst-Case Queries} = \mathcal{O}\left( \frac{n}{\epsilon^2 \sqrt{n}} \right) = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^2} \right)$$
 > As the graph becomes denser (up to $m = \Theta(n^2)$), the query complexity smoothly improves to $\mathcal{O}(1/\epsilon^2)$.
+
+> **Transition to Section 7:** Section 6 establishes the feasibility boundary. Additive error is easy but too coarse for sparse graphs; multiplicative error is meaningful but requires structure such as connectivity. Section 7 now designs the estimator that achieves the promised connected-graph upper bound.
 
 ---
 
@@ -1945,6 +2065,8 @@ $$\Pr\left[ \left|\hat{X} - \frac{m}{n}\right| \ge \epsilon \cdot \frac{m}{n} \r
 Choosing sample size:
 $$k = \Theta\left( \frac{n}{\epsilon^2 \sqrt{m}} \right)$$
 guarantees that the failure probability is bounded by a constant (such as $\le 1/3$).
+
+> **Transition to Section 8:** The estimator in Section 7 is statistically sound, but its sample size depends on the unknown edge count $m$. Section 8 resolves this circularity by separating the true quantity $m$ from an algorithmic guess $m'$ and testing guesses geometrically.
 
 ---
 
@@ -2210,6 +2332,8 @@ The resolution lies in the fundamental difference between **exponential growth (
 | :--- | :--- | :--- | :--- | :--- |
 | **Query Complexity (Runtime)** | Queries $Q(m'_j) \propto \frac{1}{\sqrt{m'_j}}$ | **Exponentially increases** (Ratio $r = 1/\sqrt{2} < 1$ in reverse) | **Infinite Geometric Series:** $\sum_{i=0}^\infty r^i = \frac{1}{1 - r} = \mathcal{O}(1)$ | The $\log n$ round count is absorbed into $\mathcal{O}(1)$; total time equals **$\mathcal{O}(1) \times \text{Final Round}$**. |
 | **Failure Probability (Risk)** | Failure events $\Pr[\text{Fail at } m'_j]$ | **Uniform / Flat** ($p_{\text{fail}} \le \frac{1}{\log^2 n}$ in every round) | **Union Bound:** $\Pr[\bigcup E_j] \le \sum \Pr[E_j]$ | Terms do not decay geometrically; the $\mathcal{O}(\log n)$ count must be **linearly multiplied**, yielding $\mathcal{O}(1/\log n)$. |
+
+> **Transition to Section 9:** Section 8 closes the algorithmic loop: an unknown parameter can be handled by geometric guesses, while runtime and failure probability must be summed with different tools. The remaining exercises reuse this same pattern—define the observable, identify the structural assumption, and transfer the concentration or reduction argument to a new graph task.
 
 ---
 
@@ -2567,6 +2691,16 @@ Notice that **Variant 1 and Variant 2 produce identical probability distribution
                 Output A_r(x) in {0, 1}
 ```
 
+#### Random Tape Semantics: What the Seed $r$ Means
+
+The seed $r$ should be understood as a complete **random tape**: once it is fixed, every future random choice is fixed as well. This handles adaptive algorithms cleanly. For example, an algorithm may choose its next index based on earlier answers; pre-sampling the entire random tape still determines that adaptive behavior because the tape only supplies the next random choice when the execution reaches it.
+
+- The distribution $\mathcal{D}$ over seeds need not be uniform. Uniform random bits are a common implementation, but the theory allows any distribution over random tapes.
+- A single pair $(x,r)$ is deterministic: it has one output and one query count. Probability appears only after averaging over $r$ (or over $x$ under an input distribution).
+- A deterministic algorithm can be viewed as a degenerate randomized algorithm whose seed distribution has all mass on one deterministic tree. However, when defining $D_\mu$, it is cleaner to quantify directly over all deterministic trees rather than assume that the tree must already occur in a particular randomized implementation.
+
+This distinction prevents a frequent mistake: $r$ is not an “extra input” chosen by the adversary. It is part of the algorithm's strategy, while $x$ is the external instance over which worst-case guarantees are required.
+
 ---
 
 ### 2.2 Formal Framework of Randomized Query Algorithms
@@ -2661,6 +2795,21 @@ A common beginner trap is thinking: *"Does algorithm $A_r$ on input $x$ succeed 
 > - **Expected Query Complexity measures Cost:** On the most malicious input $x$, what is the average number of queries? ($\max_x \mathbb{E}_r [Q(x, A_r)]$).
 > - **Worst-Case Success $\ge 2/3$ measures Correctness:** On the most malicious input $x$, is the probability of picking a winning seed at least $2/3$? ($\min_x \mathbb{E}_r [I(x, A_r)] \ge 2/3$).
 > - **Core Mantra:** *In the worst case $x$, winning seeds must have weight $\ge 2/3$; failing seeds can have weight at most $\le 1/3$.*
+
+#### The Quantifier Order to Memorize
+
+The standard bounded-error randomized model can be read as the following sentence:
+
+> For **every** input $x$, the probability over the algorithm's seed $r$ of returning the correct answer is at least $2/3$.
+
+Symbolically:
+$$\forall x,\qquad \mathbb{E}_{r\sim\mathcal{D}}[I(x,A_r)]\ge\frac23.$$
+
+The cost statement is separate:
+$$\max_{x,r}Q(x,A_r)\le q$$
+for a hard worst-case query budget, or
+$$\max_x\mathbb{E}_r[Q(x,A_r)]\le q$$
+when analyzing expected cost. Do not replace the first expression by “there exists a good seed for every input”: the good seed may depend on $x$, and a valid randomized algorithm must obtain the $2/3$ success probability from one fixed distribution $\mathcal{D}$ that works for all inputs.
 
 ---
 
@@ -3153,6 +3302,25 @@ Notice the profound game-theoretic distinction revealed by this proof:
 - **Derandomizing across ALL inputs simultaneously is impossible:** Once you fix a deterministic seed $r^*$, an adversary can inspect your fixed tree $A_{r^*}$ and construct an input that exploits its blind spots (as shown in §1.4).
 - **Derandomizing on a FIXED distribution $\mu$ is ALWAYS possible:** If an algorithm succeeds on average across $(x, r)$, the averaging argument guarantees that at least one deterministic tree $A_{r^*}$ performs at least as well as the average on that specific $\mu$.
 
+### 3.7 Yao's Principle in Plain Language: Who Moves First?
+
+The proof becomes much easier to remember if the roles are kept explicit:
+
+1. The lower-bound author chooses a distribution $\mu$ **before** the deterministic algorithm is chosen.
+2. The deterministic algorithm is allowed to know $\mu$ and tailor its queries to it.
+3. We then prove that every algorithm below the proposed query budget still has distributional success $<2/3$.
+4. Since even the best algorithm that knows $\mu$ cannot pass cheaply, the randomized algorithm cannot pass cheaply either:
+   $$D_\mu(P)\ge q\quad\Longrightarrow\quad R(P)\ge q.$$
+
+This explains two otherwise surprising facts:
+
+- A distribution concentrated on one input is usually a **bad** hard distribution: the deterministic solver can memorize the answer and ask zero queries.
+- The proof never needs to identify the optimal deterministic tree. To show $D_\mu(P)\ge q$, it is enough to empty the entire class of trees with depth $<q$ by proving that every such tree fails the $2/3$ test.
+
+The slogan is therefore not merely “randomness moves from the algorithm to the input.” It is:
+
+> **Fix the input distribution first, grant the deterministic algorithm full knowledge of that distribution, and still show that insufficient queries leave it unable to distinguish the relevant cases.**
+
 ---
 
 ## 4. Randomized Lower Bound for the OR Problem
@@ -3336,6 +3504,18 @@ $$\mathbb{E}_{x \sim \mu} [I(x, A)] < \frac{2}{3}$$
   $$D_\mu(\text{OR}) \ge \frac{n}{3}$$
 - **Applying Yao's Minimax Principle (Part 1):**
   $$R(\text{OR}) \ge D_\mu(\text{OR}) \ge \frac{n}{3} = \Omega(n) \quad \blacksquare$$
+
+#### Why the $n/3$ Threshold Appears
+
+The constant $1/3$ is not guessed from the final answer; it is obtained by solving the success inequality. If a deterministic algorithm makes at most $k$ queries, then under the mixture
+$$\mu=\tfrac12\mu_0+\tfrac12\mu_1,$$
+it sees the unique $1$ with probability at most
+$$p\le \frac12\cdot\frac{k}{n}=\frac{k}{2n}.$$
+If it outputs $0$ after an all-zero transcript, its success is at most
+$$p+(1-p)\cdot\frac{1/2}{1-p}=\frac12+p.$$
+Thus the $2/3$ requirement forces
+$$\frac12+\frac{k}{2n}\ge\frac23\quad\Longrightarrow\quad k\ge\frac{n}{3}.$$
+The posterior calculation gives the same result in a more explicit form. This is a useful general technique: keep the query budget symbolic, derive the best possible success as a function of $k$, and solve for the point where it reaches the target threshold.
 
 ---
 
@@ -3809,6 +3989,20 @@ $$\frac{n}{6} \le R(f) \le \frac{n}{2} \implies R(f) = \Theta(n) \quad \blacksqu
                      Establish R(P) Lower Bound!
 ========================================================================================
 ```
+
+### 8.4 Lower-Bound Checklist for New Problems
+
+When facing a new query lower-bound exercise, use the following checklist before doing algebra:
+
+1. **Identify the pivot:** Is the answer determined by finding one hidden witness (OR), by every bit collectively (XOR), or by a relational structure (graph connectivity)?
+2. **Choose the weapon:** Use a tailored mixture and posterior argument for a hidden witness, a missing-bit/one-time-pad argument for parity, or a reduction when a known hard problem can be embedded.
+3. **Parameterize the budget:** Assume an arbitrary deterministic algorithm with at most $k$ queries; do not insert a threshold prematurely.
+4. **Track only the information revealed:** Bound the probability of hitting the witness, or show that an unread coordinate remains unbiased.
+5. **Compare with $2/3$:** Derive an explicit upper bound on success and solve the inequality for $k$.
+6. **Quantify universally:** State why the argument applies to every deterministic tree in the restricted class, then invoke Yao Part 1.
+
+The recurring proof skeleton is:
+$$\text{hard distribution} \;\to\; \text{information bottleneck} \;\to\; D_\mu(P)\text{ lower bound} \;\to\; R(P)\text{ lower bound}.$$
 
 ---
 
@@ -6080,4 +6274,3 @@ This confirms that the greedy algorithm yields a $(1 + \epsilon)$-approximation.
 10. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture 6: Clustering Algorithms)*. National University of Singapore (NUS).
 11. Chen, Y., & Yang, M. (2026). *Note 3: Randomized Query Algorithms and Lower Bounds*. NUS CS5234 Algorithms at Scale, National University of Singapore (NUS).
 12. Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
-

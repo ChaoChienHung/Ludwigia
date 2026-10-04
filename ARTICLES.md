@@ -5,6 +5,21 @@
 
 ---
 
+## 寫作與研讀核心契約：階層化鷹架與零割裂推進（Layered Knowledge Scaffolding）
+
+所有列於本 Backlog 的筆記、長文與研讀主題，在未來起稿、撰寫與審校時，均必須嚴格遵守以下認知與傳遞原則，確保極致可讀性與親和力：
+
+1. **底層先鋪齊成群（Clustered Foundation Layer）**：
+   - 拒絕在缺乏認知基礎時空降高階名詞或機制。
+   - 遇到複雜主題時，必須先在底層將「生活直覺、問題痛點、先備條件、底層線索」成批交代完整，建立讀者心智的基石平臺。
+2. **逐層穩步向上堆疊（Hierarchical Upward Stacking）**：
+   - 結構推進如砌磚，每一層的新概念（中階機制、引理推導）必須嚴格依托於前一層的底層線索；頂層的高階架構、極限防禦與升維結論，再穩穩堆疊於中層之上。
+3. **消除認知斷崖與割裂感（Eliminate Cognitive Whiplash）**：
+   - 拒絕「空中樓閣」（無前置鋪墊的跳步演繹）、「概念倒置」（用艱澀高階概念解釋低階直覺）與「板塊孤島拼貼」（段落彼此缺乏因果推進）。
+   - 保持讀者心理模型（Mental Model）平滑累積，水到渠成，根本性降低閱讀理解難度與工作記憶負荷。
+
+---
+
 ## 一、大語言模型推理加速與投機解碼系列（LLM Inference Acceleration & Speculative Decoding）
 
 ### 1. DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation
