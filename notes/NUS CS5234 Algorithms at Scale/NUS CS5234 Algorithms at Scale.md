@@ -4977,6 +4977,40 @@ $$s = \left\lceil 4 \sqrt{\frac{n}{\epsilon}} \right\rceil = \mathcal{O}\left( \
 
 # Week 5 - Streaming Algorithms: Reservoir Sampling, Morris Approximate Counting, Graph Streaming, and Spanners
 
+## Week 5 Reading Map: Compress the Stream, Then Preserve the Property
+
+Week 5 的核心不是背四個 streaming algorithms，而是理解同一個設計問題如何逐步變難：資料不能回看、記憶體不能存完整輸入，但演算法仍要保留某個 global property。建議按以下順序閱讀：
+
+```text
+Streaming model
+  → Reservoir sampling：保留一個公平的代表樣本
+  → Morris counting：保留一個可校正的數值摘要
+  → Mean / median trick：把單次估計的波動壓到可控
+  → Graph connectivity / bipartiteness：保留足以回答結構問題的 forest
+  → Spanner：只保留少量邊，同時保證所有距離不被拉長太多
+```
+
+| 階段 | 主要問題 | 必須掌握的證明／設計工具 | 下一階段為何必要 |
+|---|---|---|---|
+| 1. Model | 一次掃描、不可回看、空間遠小於輸入，究竟限制了什麼？ | 明確區分 stream length、value universe、working memory | 沒有 model，後面的 space bound 沒有意義 |
+| 2. Reservoir sampling | 在不知道 $n$ 的情況下，如何讓每個元素最後都有 $1/n$ 機率？ | 條件機率相乘與 telescoping product | 先建立「小摘要仍可保持 exact distribution」的直覺 |
+| 3. Morris counting | 能否用 $O(\log\log n)$ bits 取代 exact counter？ | transformed variable、conditional expectation、second moment | 無偏不代表單次可靠，因此必須分析 variance |
+| 4. Probability amplification | 如何把 raw Morris 的 constant relative error 變成 $(\epsilon,\delta)$ guarantee？ | Chebyshev → mean trick；success indicator → Chernoff → median trick | 這套工具會在 graph estimator 中再次出現 |
+| 5. Graph properties | 不能存所有邊，如何保留 connectivity 或 2-colorability 所需資訊？ | spanning forest、cycle space、odd-cycle contradiction | 從「回答 property」推進到「近似 metric」 |
+| 6. Spanner | 如何刪掉大量邊，仍保證任意 pair 的 distance stretch？ | greedy distance threshold、triangle inequality、girth-to-sparsity bound | 連到下一週：同樣是以小摘要保留 global objective |
+
+### Week 5 的統一檢查表
+
+讀每個演算法時固定問五件事：
+
+1. **保留的是什麼？** 一個 sample、數值 estimator、forest，還是 sparse subgraph？
+2. **丟掉什麼？** 被丟掉的資訊是否可能影響目標問題？
+3. **正確性靠什麼？** 是機率分布保持、無偏性、concentration、圖論 invariant，還是 triangle inequality？
+4. **空間換來什麼代價？** exact 變 approximate、single-run 變 multiple independent runs，或完整 graph 變 sparse spanner？
+5. **下一個 failure mode 是什麼？** 代表樣本不夠、variance 太大、cycle 資訊消失，或 stretch / edge count 失控？
+
+> **從 Week 5 到 Week 6：** Streaming 先教我們如何在有限記憶體中保留「足以回答問題」的摘要；Clustering 接著把摘要的目標換成 geometric objective，並研究 approximation、coreset 與 metric structure 如何共同控制品質與空間。
+
 > **Document Source:** National University of Singapore (NUS)
 > - **Course:** CS5234: Algorithms at Scale (Semester 1, AY2026/2027)
 > - **Instructor:** Dr. Yu Chen

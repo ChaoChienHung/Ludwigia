@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5446-reinforcement-learning-and-sequential-decision-making">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="458">
+  <meta name="site:reading_time_minutes" content="468">
   <meta name="site:source" content="notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.md">
   <script>
   (() => {
@@ -155,6 +155,13 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#course-reading-architecture">Course Reading Architecture</a>
+<a class="note-toc-link level-1" href="#course-master-map-one-decision-problem-five-ways-to-solve-it">Course Master Map: One Decision Problem, Five Ways to Solve It</a>
+<a class="note-toc-link level-2" href="#1-the-six-questions-that-locate-every-method">1. The six questions that locate every method</a>
+<a class="note-toc-link level-2" href="#2-the-representation-ladder">2. The representation ladder</a>
+<a class="note-toc-link level-2" href="#3-algorithm-family-matrix">3. Algorithm family matrix</a>
+<a class="note-toc-link level-2" href="#4-notation-contract">4. Notation contract</a>
+<a class="note-toc-link level-2" href="#5-five-confusions-to-resolve-before-reading-formulas">5. Five confusions to resolve before reading formulas</a>
+<a class="note-toc-link level-2" href="#6-what-complete-understanding-means-for-each-week">6. What “complete understanding” means for each week</a>
 <a class="note-toc-link level-1" href="#1-foundations-of-ai-planning-the-rational-agent-architecture">1. Foundations of AI Planning &amp; The Rational Agent Architecture</a>
 <a class="note-toc-link level-2" href="#1-1-the-perception-action-communication-loop">1.1 The Perception-Action-Communication Loop</a>
 <a class="note-toc-link level-2" href="#1-2-real-world-application-domains">1.2 Real-World Application Domains</a>
@@ -347,6 +354,8 @@
 <a class="note-toc-link level-2" href="#12-1-the-complete-2x2-tabular-paradigm-matrix">12.1 The Complete 2x2 Tabular Paradigm Matrix</a>
 <a class="note-toc-link level-2" href="#12-2-the-curse-of-dimensionality-the-transition-to-function-approximation">12.2 The Curse of Dimensionality &amp; The Transition to Function Approximation</a>
 <a class="note-toc-link level-1" href="#references-4">References</a>
+<a class="note-toc-link level-1" href="#week-5-reading-guide-from-tabular-lookup-to-stable-policy-updates">Week 5 Reading Guide: From Tabular Lookup to Stable Policy Updates</a>
+<a class="note-toc-link level-2" href="#week-5">Week 5 的每一步要回答什麼</a>
 <a class="note-toc-link level-1" href="#1-scaling-sequential-decisions-the-necessity-of-function-approximation">1. Scaling Sequential Decisions: The Necessity of Function Approximation</a>
 <a class="note-toc-link level-2" href="#1-1-the-taxonomy-of-reinforcement-learning-passive-vs-active-learning">1.1 The Taxonomy of Reinforcement Learning: Passive vs. Active Learning</a>
 <a class="note-toc-link level-2" href="#1-2-approaches-to-scaling-up">1.2 Approaches to Scaling Up</a>
@@ -584,6 +593,240 @@ Week 7  Rollout、MCTS、UCT、AlphaGo Zero、imitation learning</code></pre></d
 </div>
 
 <blockquote class="blockquote mb-3"><strong>閱讀提示：</strong> 每個新方法都先問它修補前一週的哪個瓶頸，再讀公式與演算法；這樣 DQN、PPO、PBRS、MCTS 不會變成孤立名詞，而會被看成對「狀態空間、回饋、計算預算、資料來源」不同限制的回應。</blockquote>
+</section>
+
+<section id="course-master-map-one-decision-problem-five-ways-to-solve-it" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Course Master Map: One Decision Problem, Five Ways to Solve It</h3>
+
+<p class="mb-3">整門課可以用同一個抽象問題統一：在狀態 $s$ 下選擇 action $a$，環境產生下一個狀態與 reward；agent 的工作是找到一個 policy，使長期 return 最大，同時處理不確定性、計算成本與資訊不足。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Represent the world
+  → choose a plan when the model is deterministic and known
+  → choose under uncertainty when outcomes have probabilities and utilities
+  → learn values/policies when the model is unknown
+  → shape information when reward is sparse or misleading
+  → search or imitate when direct learning is too expensive or data is available</code></pre></div>
+
+<h4 id="1-the-six-questions-that-locate-every-method" class="mb-2">1. The six questions that locate every method</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>問題</th>
+<th>你要辨識的內容</th>
+<th>在本課程中的代表</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>World state</td>
+<td>state 是否完整、可觀察、是否需要 belief/history？</td>
+<td>classical state、MDP state、partial observation discussion</td>
+</tr>
+<tr>
+<td>Action consequence</td>
+<td>transition 是否 deterministic、stochastic、known、unknown？</td>
+<td>PDDL effects、MDP $T$、model-free RL</td>
+</tr>
+<tr>
+<td>Objective</td>
+<td>目標是可行性、utility、expected return，還是 imitation loss？</td>
+<td>planning goal、MEU、$V/Q$、behavior cloning</td>
+</tr>
+<tr>
+<td>Information source</td>
+<td>agent 是否知道 model、只看 reward，或擁有 expert demonstrations？</td>
+<td>planning、ADP、MC/TD、DAgger</td>
+</tr>
+<tr>
+<td>Computation location</td>
+<td>offline planning、online decision-time search，還是 training-time update？</td>
+<td>SATPlan、MCTS、DQN/PPO</td>
+</tr>
+<tr>
+<td>Failure mode</td>
+<td>state explosion、variance、distribution shift、reward hacking，或 unsafe exploration？</td>
+<td>Week 1–7 的主要 transition 動機</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="2-the-representation-ladder" class="mb-2">2. The representation ladder</h4>
+
+<div class="note-markdown-block"><pre><code class="language-text">PDDL / symbolic state
+  → utility over outcomes
+  → MDP tuple &lt;S, A, T, R, γ&gt;
+  → tabular V(s) / Q(s,a)
+  → approximate Vθ(s) / Qθ(s,a) / πθ(a|s)
+  → learned search policy, reward model, or expert-data policy</code></pre></div>
+
+<p class="mb-3">每升一層，都要問「上一層哪個假設已經不夠」：</p>
+
+<ul class="note-list">
+<li>symbolic planning 的優點是可驗證，但 flat search 會遇到 combinatorial explosion。</li>
+<li>decision theory 能比較不確定 outcome 的偏好，但單次 decision 不足以表達長期 feedback。</li>
+<li>MDP 加入 state transition 與 delayed reward，卻通常假設 model 已知。</li>
+<li>RL 拿掉 known-model 假設，但 tabular representation 無法泛化到未見 state。</li>
+<li>function approximation 能泛化，卻帶來 instability、bias、variance 與 deadly triad。</li>
+<li>reward shaping、search、imitation 都是在補充 learning signal，但可能改變 objective 或造成 distribution shift。</li>
+</ul>
+
+<h4 id="3-algorithm-family-matrix" class="mb-2">3. Algorithm family matrix</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>方法</th>
+<th>Model $T/R$</th>
+<th>是否 bootstrapping</th>
+<th>主要資料</th>
+<th>學的是什麼</th>
+<th>典型代價</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Classical planning / SATPlan</td>
+<td>已知、通常 deterministic</td>
+<td>否</td>
+<td>symbolic domain</td>
+<td>可行 action sequence</td>
+<td>state/action explosion</td>
+</tr>
+<tr>
+<td>Value / policy iteration</td>
+<td>已知 stochastic model</td>
+<td>Bellman backup</td>
+<td>model enumeration</td>
+<td>$V^*$ 或 policy</td>
+<td>需要遍歷 state/action</td>
+</tr>
+<tr>
+<td>ADP</td>
+<td>從 experience 估 model</td>
+<td>間接</td>
+<td>transition counts</td>
+<td>$hat T,hat R$ 再規劃</td>
+<td>model bias、exploration</td>
+</tr>
+<tr>
+<td>Monte Carlo</td>
+<td>不需要 model</td>
+<td>否</td>
+<td>完整 episode return</td>
+<td>$V^pi$ / control policy</td>
+<td>high variance、episode delay</td>
+</tr>
+<tr>
+<td>TD / SARSA / Q-learning</td>
+<td>不需要 model</td>
+<td>是</td>
+<td>one-step transition</td>
+<td>value / action value</td>
+<td>target bias、stability</td>
+</tr>
+<tr>
+<td>DQN</td>
+<td>不需要 model</td>
+<td>是</td>
+<td>replayed transitions</td>
+<td>deep $Q$</td>
+<td>correlated target、continuous action 不適用</td>
+</tr>
+<tr>
+<td>REINFORCE</td>
+<td>不需要 model</td>
+<td>return-based</td>
+<td>sampled trajectories</td>
+<td>stochastic policy $\pi_\theta$</td>
+<td>gradient variance</td>
+</tr>
+<tr>
+<td>Actor-Critic / PPO</td>
+<td>不需要 model</td>
+<td>critic bootstraps</td>
+<td>trajectories + value estimate</td>
+<td>policy + value</td>
+<td>critic bias、update sensitivity</td>
+</tr>
+<tr>
+<td>MCTS / rollout</td>
+<td>可用 model 或 simulator</td>
+<td>search backup</td>
+<td>simulated trajectories</td>
+<td>decision-time action</td>
+<td>per-decision computation</td>
+</tr>
+<tr>
+<td>BC / DAgger / GAIL</td>
+<td>不必有 reward model</td>
+<td>視方法而定</td>
+<td>expert / interactive labels</td>
+<td>policy matching</td>
+<td>covariate shift、expert dependence</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="4-notation-contract" class="mb-2">4. Notation contract</h4>
+
+<p class="mb-3">後續閱讀若看到不同講義符號，先對齊下面這組語意：</p>
+
+<ul class="note-list">
+<li>$s_t$：time $t$ 的 state；$a_t$：選出的 action；$s_{t+1}$：transition 後的 state。</li>
+<li>$T(s'\mid s,a)$：transition probability；$R(s,a,s')$：單一步 reward。</li>
+<li>$G_t=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}$：從 $t$ 開始的 return。</li>
+<li>$V^\pi(s)=\mathbb E_\pi[G_t\mid s_t=s]$：遵循 policy $\pi$ 的 state value。</li>
+<li>$Q^\pi(s,a)=\mathbb E_\pi[G_t\mid s_t=s,a_t=a]$：先採取 $a$ 後再遵循 $\pi$ 的 action value。</li>
+<li>$V^<em>$、$Q^</em>$：在之後採最佳行動時的 optimal values；$\pi^*$：使它們達到最大值的 policy。</li>
+<li>policy evaluation 是「固定 $\pi$，估計它多好」；control 是「改變 $\pi$，找更好的 policy」。</li>
+</ul>
+
+<h4 id="5-five-confusions-to-resolve-before-reading-formulas" class="mb-2">5. Five confusions to resolve before reading formulas</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>容易混淆</th>
+<th>正確區分</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Planning vs. RL</td>
+<td>planning 的 model 通常已知；RL 要從 interaction 推斷 value/policy</td>
+</tr>
+<tr>
+<td>Value iteration vs. policy iteration</td>
+<td>前者直接反覆套 optimality backup；後者交替 evaluation 與 improvement</td>
+</tr>
+<tr>
+<td>MC vs. TD</td>
+<td>MC 等 episode 結束才用完整 return；TD 用下一步估計 bootstrapping</td>
+</tr>
+<tr>
+<td>SARSA vs. Q-learning</td>
+<td>SARSA 評估 behavior policy 實際選的 $a'$；Q-learning 評估 greedy target $\max_{a'}Q(s',a')$</td>
+</tr>
+<tr>
+<td>Reward shaping vs. reward hacking</td>
+<td>shaping 是設計 learning signal；hacking 是 agent 利用 proxy 的漏洞而偏離真正目的</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="6-what-complete-understanding-means-for-each-week" class="mb-2">6. What “complete understanding” means for each week</h4>
+
+<p class="mb-3">每週不只要會說明名詞，還應能完成四個動作：</p>
+
+<ol class="mb-3">
+<li><strong>建模：</strong> 寫出 state、action、transition、objective 與 information assumption。</li>
+<li><strong>推導：</strong> 從目標函數推到 Bellman、gradient、update rule 或 correctness invariant。</li>
+<li><strong>比較：</strong> 說明新方法修補前一方法的哪個 bottleneck，以及它新增了什麼代價。</li>
+<li><strong>診斷：</strong> 給定一個失敗現象，判斷是 representation、exploration、variance、distribution shift、reward design 還是 computation budget 的問題。</li>
+</ol>
+
+<blockquote class="blockquote mb-3"><strong>總結：</strong> Week 1–2 解決「如何表示與分解問題」；Week 3 解決「如何定義偏好與理性」；Week 4 解決「已知／未知 stochastic dynamics 下如何計算 value」；Week 5 解決「空間太大時如何泛化與穩定學習」；Week 6 解決「reward 不足或不可靠時如何提供 guidance」；Week 7 解決「可否在決策時搜尋，或從示範資料直接學行為」。</blockquote>
 
 <h1 class="mt-4">Week 1 - AI Planning Foundations, Classical Planning, SATPlan, and Responsible AI Governance</h1>
 
@@ -6400,6 +6643,81 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <h1 class="mt-4">Week 5 - Model-Free Reinforcement Learning and Sequential Decision Making: Function Approximation, Deep Q-Networks, Policy Gradients, and Actor-Critic Methods</h1>
 </section>
 
+<section id="week-5-reading-guide-from-tabular-lookup-to-stable-policy-updates" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 5 Reading Guide: From Tabular Lookup to Stable Policy Updates</h3>
+
+<p class="mb-3">Week 5 是整門課最重要的「scaling transition」。它不是突然跳到 DQN 或 PPO，而是沿著一條必要鏈條前進：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">tabular RL cannot cover |S|
+  → approximate V/Q with features
+  → approximate Monte Carlo with supervised regression
+  → approximate TD with bootstrapped targets
+  → deadly triad explains instability
+  → DQN adds replay + target network
+  → policy gradient removes argmax / supports stochastic or continuous actions
+  → actor-critic supplies a learned baseline / critic
+  → TRPO/PPO restrict destructive policy updates</code></pre></div>
+
+<h4 id="week-5" class="mb-2">Week 5 的每一步要回答什麼</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Section</th>
+<th>核心問題</th>
+<th>關鍵新增概念</th>
+<th>主要風險</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1–2</td>
+<td>如何讓 value representation 泛化到未見 state？</td>
+<td>features、linear/non-linear approximation</td>
+<td>approximation bias</td>
+</tr>
+<tr>
+<td>3</td>
+<td>如何把完整 episode return 變成 regression target？</td>
+<td>MC target、Widrow-Hoff / SGD</td>
+<td>high variance、delayed update</td>
+</tr>
+<tr>
+<td>4</td>
+<td>如何不用等 episode 結束就更新？</td>
+<td>TD target、semi-gradient、SARSA/Q-learning</td>
+<td>bootstrapping bias</td>
+</tr>
+<tr>
+<td>5</td>
+<td>為何 function approximation + bootstrap + off-policy 會發散？</td>
+<td>deadly triad、Baird counterexample</td>
+<td>divergence / catastrophic forgetting</td>
+</tr>
+<tr>
+<td>6–7</td>
+<td>如何讓 deep Q-learning 可訓練？</td>
+<td>experience replay、target network、Double DQN</td>
+<td>replay distribution、overestimation</td>
+</tr>
+<tr>
+<td>8–9</td>
+<td>若 action space continuous 或 policy 本身要 stochastic，怎麼辦？</td>
+<td>policy gradient、REINFORCE、baseline</td>
+<td>gradient variance</td>
+</tr>
+<tr>
+<td>10–11</td>
+<td>如何同時學 policy 與 value，並避免 policy collapse？</td>
+<td>actor-critic、TRPO、PPO clipping</td>
+<td>critic bias、too-large update</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<blockquote class="blockquote mb-3"><strong>最重要的閱讀順序：</strong> 先分清楚「學的是 $V$、$Q$ 還是 $\pi$」，再判斷 target 是 full return 還是 bootstrap；最後才看 replay、baseline、trust region 這些 stabilization devices。這三層若倒過來讀，很容易只記住演算法名稱而不理解它們各自在修補什麼。</blockquote>
+</section>
+
 <section id="1-scaling-sequential-decisions-the-necessity-of-function-approximation" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">1. Scaling Sequential Decisions: The Necessity of Function Approximation</h3>
 
@@ -8191,7 +8509,9 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">In their seminal paper, <strong>Andrew Ng, Daishi Harada, and Stuart Russell (ICML 1999)</strong> proved that structuring the shaping reward as a <strong>discounted difference of a potential function</strong> theoretically guarantees that the optimal policy remains completely unchanged (Slide 21):</p>
 
-<p class="mb-3">$$R^{\text{new}}(\cdot) = \alpha R^{\text{env}}(\cdot) + \beta R^{\text{sha}}(\cdot)$$ $$R^{\text{sha}}(s, s') = \phi(s) - \gamma \phi(s') \quad \left( \text{or equivalently: } \gamma \phi(s') - \phi(s) \right)$$</p>
+<p class="mb-3">$$R^{\text{new}}(\cdot) = \alpha R^{\text{env}}(\cdot) + \beta R^{\text{sha}}(\cdot)$$ $$R^{\text{sha}}(s, s') = \phi(s) - \gamma \phi(s')$$</p>
+
+<blockquote class="blockquote mb-3"><strong>Sign convention note:</strong> Some texts define the shaping term as $\gamma\Phi(s')-\Phi(s)$ instead. Both conventions preserve the optimal policy when used consistently, because one is obtained by replacing the potential with $-\Phi$; they are not algebraically equivalent for the same fixed potential. The derivation below uses $\phi(s)-\gamma\phi(s')$.</blockquote>
 
 <h5 class="mb-2">The Telescoping Sum Proof (Slide 21)</h5>
 
@@ -8468,7 +8788,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>The Noisy-TV Vulnerability:</strong> Pure prediction-error novelty is vulnerable to environmental stochastic noise (e.g., random static on a TV screen). The agent becomes hypnotized by unpredictable noise, harvesting infinite exploration bonuses while abandoning the task.</li>
 <li><strong>Exploitation Shaping &amp; Process Supervision:</strong> Assigning bonuses to critical bottleneck states accelerates optimization. In LLM multi-step reasoning, Math-Shepherd replaces sparse outcome supervision with process-level step rewards ($y_{s_i}^{\text{SE}}$) evaluated via automated Monte Carlo tree rollouts.</li>
 <li><strong>Reward Hacking in Process Supervision:</strong> PRM-guided reasoning is vulnerable to Goodhart's Law and reward hacking: policy generators exploit PRM heuristics via verbosity bias, superficial math jargon, false-positive rollouts (accidental error cancellation), and hallucinated lemmas. Robust process supervision requires coupling PRMs with final outcome verification, length penalties, and KL divergence constraints.</li>
-<li><strong>Potential-Based Policy Invariance:</strong> Arbitrary reward shaping risks policy corruption (reward gaming). Ng, Harada, and Russell proved that potential-difference shaping ($R^{\text{sha}} = \phi(s) - \gamma \phi(s')$) induces a telescoping sum cancellation along trajectories, strictly guaranteeing that the optimal policy $\pi^*$ remains identical to the native MDP. Outside PBRS, heuristic methods lack theoretical invariance and are justified empirically by sample efficiency gains.</li>
+<li><strong>Potential-Based Policy Invariance:</strong> Arbitrary reward shaping risks policy corruption (reward gaming). Ng, Harada, and Russell proved that a consistently signed potential difference ($R^{\text{sha}} = \phi(s) - \gamma \phi(s')$, or its negative with a negated potential) induces telescoping cancellation along trajectories, guaranteeing that the optimal policy $\pi^*$ remains identical to the native MDP. Outside PBRS, heuristic methods lack theoretical invariance and are justified empirically by sample-efficiency gains.</li>
 <li><strong>RLHF in Open-Ended Domains:</strong> For subjective LLM generation lacking programmatic rewards (self-introductions, coffee shop names, LinkedIn headlines), Reinforcement Learning from Human Feedback trains a regression reward model ($r_\theta(x, y) \in \mathbb{R}$) on human pairwise preference rankings using the Bradley-Terry logistic loss ($-\log \sigma(r(y_+) - r(y_-))$).</li>
 <li><strong>Advanced Autonomous Shaping Architectures (Ma et al., NUS):</strong>
 <ul class="note-list">

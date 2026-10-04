@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5234-algorithms-at-scale">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="536">
+  <meta name="site:reading_time_minutes" content="539">
   <meta name="site:source" content="notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.md">
   <script>
   (() => {
@@ -310,6 +310,8 @@
 <a class="note-toc-link level-2" href="#5-3-exercise-3-uniformity-testing-lower-bound-omega-sqrt-n-tvd-framework">5.3 Exercise 3: Uniformity Testing Lower Bound $\Omega(\sqrt{n})$ (TVD Framework)</a>
 <a class="note-toc-link level-2" href="#5-4-assignment-1-problem-3-permutation-testing-via-collision-detection-mathcal-o-sqrt-n-varepsilon">5.4 Assignment 1 · Problem 3: Permutation Testing via Collision Detection ($\mathcal{O}(\sqrt{n/\varepsilon})$)</a>
 <a class="note-toc-link level-1" href="#references">References</a>
+<a class="note-toc-link level-1" href="#week-5-reading-map-compress-the-stream-then-preserve-the-property">Week 5 Reading Map: Compress the Stream, Then Preserve the Property</a>
+<a class="note-toc-link level-2" href="#week-5">Week 5 的統一檢查表</a>
 <a class="note-toc-link level-1" href="#1-general-concepts-and-the-streaming-model">1. General Concepts and the Streaming Model</a>
 <a class="note-toc-link level-2" href="#1-1-core-philosophy-of-streaming-algorithms">1.1 Core Philosophy of Streaming Algorithms</a>
 <a class="note-toc-link level-2" href="#1-2-formal-input-model-and-constraints">1.2 Formal Input Model and Constraints</a>
@@ -7227,6 +7229,82 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <hr>
 
 <h1 class="mt-4">Week 5 - Streaming Algorithms: Reservoir Sampling, Morris Approximate Counting, Graph Streaming, and Spanners</h1>
+</section>
+
+<section id="week-5-reading-map-compress-the-stream-then-preserve-the-property" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 5 Reading Map: Compress the Stream, Then Preserve the Property</h3>
+
+<p class="mb-3">Week 5 的核心不是背四個 streaming algorithms，而是理解同一個設計問題如何逐步變難：資料不能回看、記憶體不能存完整輸入，但演算法仍要保留某個 global property。建議按以下順序閱讀：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Streaming model
+  → Reservoir sampling：保留一個公平的代表樣本
+  → Morris counting：保留一個可校正的數值摘要
+  → Mean / median trick：把單次估計的波動壓到可控
+  → Graph connectivity / bipartiteness：保留足以回答結構問題的 forest
+  → Spanner：只保留少量邊，同時保證所有距離不被拉長太多</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>階段</th>
+<th>主要問題</th>
+<th>必須掌握的證明／設計工具</th>
+<th>下一階段為何必要</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1. Model</td>
+<td>一次掃描、不可回看、空間遠小於輸入，究竟限制了什麼？</td>
+<td>明確區分 stream length、value universe、working memory</td>
+<td>沒有 model，後面的 space bound 沒有意義</td>
+</tr>
+<tr>
+<td>2. Reservoir sampling</td>
+<td>在不知道 $n$ 的情況下，如何讓每個元素最後都有 $1/n$ 機率？</td>
+<td>條件機率相乘與 telescoping product</td>
+<td>先建立「小摘要仍可保持 exact distribution」的直覺</td>
+</tr>
+<tr>
+<td>3. Morris counting</td>
+<td>能否用 $O(\log\log n)$ bits 取代 exact counter？</td>
+<td>transformed variable、conditional expectation、second moment</td>
+<td>無偏不代表單次可靠，因此必須分析 variance</td>
+</tr>
+<tr>
+<td>4. Probability amplification</td>
+<td>如何把 raw Morris 的 constant relative error 變成 $(\epsilon,\delta)$ guarantee？</td>
+<td>Chebyshev → mean trick；success indicator → Chernoff → median trick</td>
+<td>這套工具會在 graph estimator 中再次出現</td>
+</tr>
+<tr>
+<td>5. Graph properties</td>
+<td>不能存所有邊，如何保留 connectivity 或 2-colorability 所需資訊？</td>
+<td>spanning forest、cycle space、odd-cycle contradiction</td>
+<td>從「回答 property」推進到「近似 metric」</td>
+</tr>
+<tr>
+<td>6. Spanner</td>
+<td>如何刪掉大量邊，仍保證任意 pair 的 distance stretch？</td>
+<td>greedy distance threshold、triangle inequality、girth-to-sparsity bound</td>
+<td>連到下一週：同樣是以小摘要保留 global objective</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="week-5" class="mb-2">Week 5 的統一檢查表</h4>
+
+<p class="mb-3">讀每個演算法時固定問五件事：</p>
+
+<ol class="mb-3">
+<li><strong>保留的是什麼？</strong> 一個 sample、數值 estimator、forest，還是 sparse subgraph？</li>
+<li><strong>丟掉什麼？</strong> 被丟掉的資訊是否可能影響目標問題？</li>
+<li><strong>正確性靠什麼？</strong> 是機率分布保持、無偏性、concentration、圖論 invariant，還是 triangle inequality？</li>
+<li><strong>空間換來什麼代價？</strong> exact 變 approximate、single-run 變 multiple independent runs，或完整 graph 變 sparse spanner？</li>
+<li><strong>下一個 failure mode 是什麼？</strong> 代表樣本不夠、variance 太大、cycle 資訊消失，或 stretch / edge count 失控？</li>
+</ol>
+
+<blockquote class="blockquote mb-3"><strong>從 Week 5 到 Week 6：</strong> Streaming 先教我們如何在有限記憶體中保留「足以回答問題」的摘要；Clustering 接著把摘要的目標換成 geometric objective，並研究 approximation、coreset 與 metric structure 如何共同控制品質與空間。</blockquote>
 
 <blockquote class="blockquote mb-3"><strong>Document Source:</strong> National University of Singapore (NUS)</blockquote>
 
