@@ -4093,13 +4093,60 @@ Serverless 不是「只有程式碼，其餘都不用管」：平台代管伺服
 
 從 CapEx 轉向 OpEx，是將前期購買硬體改成持續購買服務，不是把總成本消掉。自建方案比較可客製化，也較能掌握匯出與生命週期；但仍依賴 AWS，不能宣稱消除 vendor lock-in 或取得實體硬體主權。SaaS 的資料所有權與匯出能力則取決於契約，不能僅因資料存在別人的平台就判定不屬於客戶。
 
-### 1.3 為什麼照片放 object storage
+### 1.3 雲端儲存三大範式深度比較（Block Storage vs. File Storage vs. Object Storage）
 
-Block storage 把資料當磁碟區塊，file storage 提供檔案系統介面，object storage 則以 key 取得完整物件與 metadata。本案例不需要把每張圖當成本機磁碟檔案修改，反而需要獨立讀寫、HTTP 傳輸與儲存分層，因此選 S3。
+在雲端架構設計中，儲存服務的選型直接決定了系統的存取延遲、並發吞吐量、資料修改行為、維運複雜度與長期成本。Block Storage（區塊儲存）、File Storage（檔案儲存）與 Object Storage（物件儲存）三大範式的核心差異，聚焦於**資料組織結構（Data Organization Form）**、**存取協議與介面（Access Protocols）**、**效能特徵（Latency & IOPS）**以及**擴展性權衡（Scalability Trade-offs）**。
 
-本節使用一般用途 S3 bucket 的模型：bucket 是容器，object 是內容與 metadata，key 是物件名稱。`gallery-a/photo-1.jpg` 中的斜線可用來組織 prefix，**不會自行建立租戶隔離**。Bucket 名稱也不是密碼，不應把學號或個資當作必要命名資訊。
+#### 生活直覺比喻（Everyday Analogies）
 
-S3 對成功的物件寫入提供 strong read-after-write consistency；但「原圖寫入成功」不表示非同步縮圖、事件通知或 DynamoDB 狀態已完成。儲存層的一致性不能代替跨服務的工作流程協調。[AWS: S3 Strong Consistency](https://aws.amazon.com/s3/consistency/)
+- **區塊儲存（Block Storage）—— 散頁活頁紙或實體硬碟磁區**：
+  底層系統完全不關心資料代表的檔案語意、上下文或格式。它只負責根據磁區位址（Address / LBA）以極致速度讀寫固定大小的原始 Raw Chunks（區塊）。極度適合做為作業系統啟動磁碟與關聯式資料庫的底層地基。
+- **檔案儲存（File Storage）—— 辦公室樹狀公文櫃**：
+  依循經典的樹狀階層目錄與檔名結構（例如 `/department/hr/payroll.xlsx`），底層由儲存伺服器維護檔案系統與鎖定機制，允許多個客戶端主機跨區域網路透過標準協議掛載、共享與協同存取。
+- **物件儲存（Object Storage）—— 代客泊車取車票或獨立行李保管箱**：
+  客戶端交付一個完整的封裝包裹（包含原始二進位資料 Payload 加上自訂 Metadata），換取一張全域唯一的取車票（Unique Key / ID）。若要修改內容，無法在包裹內部局部打補丁，必須整包重新打包覆蓋（Immutable / WORM）；但整個儲存池幾乎具備無限水平擴展的能力。
+
+#### 核心維度深度對照矩陣（Core Dimensions Comparison Table）
+
+| 比較維度 | 區塊儲存（Block Storage） | 檔案儲存（File Storage） | 物件儲存（Object Storage） |
+|---|---|---|---|
+| **資料組織形式** | 固定大小之原始區塊（Raw Blocks），無原生檔案與目錄概念 | 樹狀階層目錄結構（Hierarchical Directory Tree，如 `/folder/file.ext`） | 平坦命名空間（Flat Namespace），以 Bucket 為容器，每個物件具備唯一 Key |
+| **元數據（Metadata）** | 極度精簡；僅限於區塊位址、長度與底層控制 Flags | 有限；包含標準屬性（檔名、大小、建立時間、POSIX 讀寫執行權限） | 豐富且高度自訂；允許任意 Key-Value Pairs 與物件本體一同存放 |
+| **存取協議 / 介面** | SCSI, iSCSI, Fibre Channel (FC), NVMe-oF（通常先格式化為檔案系統再掛載） | 網路檔案共享協議（NFS, SMB/CIFS, 9P） | 經由 HTTP/HTTPS 的 RESTful Web API（標準操作：GET, PUT, DELETE, HEAD） |
+| **修改行為** | 支援原位修改（In-place Modification），隨機讀寫速度極快 | 支援字節級（Byte-level）內部微調與檔案末端追加（Append） | 不可變（Immutable / WORM）；不支援局部修改，更新必須整包重新上傳覆蓋 |
+| **延遲與 IOPS** | 極低延遲（微秒至個位數毫秒級），極高隨機 IOPS | 中等延遲；受網路協議額外開銷與階層目錄鎖（File Locking）競爭影響 | 較高延遲（十毫秒至數百毫秒）；針對極致吞吐量（Throughput）而非事務延遲設計 |
+| **擴展性（Scalability）** | 主要為垂直擴展（Scale-up）；受限於單一儲存陣列或 SAN Fabric 物理邊界 | 中等；超大規模水平擴展時，深層目錄樹的元數據同步與鎖同步容易成為瓶頸 | 幾乎無限之水平擴展（Scale-out），容量橫跨 Petabytes (PB) 至 Exabytes (EB) |
+| **典型產品與實作** | AWS EBS, 儲存區域網路 (SAN), 本機 VM 虛擬磁碟 | AWS EFS, NetApp Filers, 傳統網路附加儲存 (NAS) | AWS S3, Google Cloud Storage (GCS), Ceph, MinIO |
+
+#### 典型架構、運作機制與適用場景（Typical Architectures & Scenarios）
+
+1. **區塊儲存（Block Storage）**：
+   - **運作機制**：將儲存卷（Volume）作為原始區塊裝置直接暴露給作業系統。作業系統將其格式化為本地檔案系統（如 ext4, XFS, NTFS 或 APFS）後直接由檔案系統驅動管理。
+   - **理想場景**：需要密集隨機 I/O 與低延遲事務處理的關聯式資料庫與 NoSQL 資料庫（例如 PostgreSQL, MySQL, Oracle, Cassandra）；虛擬機（EC2）與容器的根啟動磁區（Boot Volumes）。
+2. **檔案儲存（File Storage）**：
+   - **運作機制**：由儲存伺服器集中管理底層檔案系統與分散式鎖定機制（Distributed File Locks），透過標準網路協議向多個運算節點同時暴露共用目錄。
+   - **理想場景**：多實例運算集群或微服務需要並發讀寫共享的應用程式設定檔或原始碼；企業內部檔案共享盤、開發者 Home 目錄、CI/CD 構建快取與協同代碼空間。
+3. **物件儲存（Object Storage）**：
+   - **運作機制**：徹底拋棄階層樹。將資料內容（Data）、系統元數據（System Metadata）與自訂標籤（Custom Tags）封裝為單一不可分割的物件單元，透過全域唯一 URL/Key 進行定址。底層叢集自動跨多可用區（Multi-AZ）或多資料中心進行資料分片、糾刪碼（Erasure Coding）與冗餘複製。
+   - **理想場景**：海量非結構化資料儲存庫（高解析度照片庫、影音串流、音訊檔案、冷備份系統封存）；人工智慧與機器學習訓練資料集、分析型資料湖（Data Lakes，供 Apache Spark、Presto、Athena 查詢）；靜態網站託管與 CDN 原始來源（Origin）。
+
+#### 架構選型啟發法（Architectural Selection Heuristics）
+
+- **情境 A：高頻局部隨機修改（如資料庫 B-tree 索引頁更新）** $\longrightarrow$ **堅決選擇區塊儲存（Block Storage）**。
+- **情境 B：多機器需要並發讀寫同一套目錄，且強依賴 POSIX 檔案語意** $\longrightarrow$ **堅決選擇檔案儲存（File Storage）**。
+- **情境 C：一次寫入、多次讀取（WORM）、規模達 PB 級之非結構化靜態資產** $\longrightarrow$ **堅決選擇物件儲存（Object Storage）**。
+
+### 1.4 為什麼婚禮攝影相簿平台精確選用 Object Storage (S3)
+
+依據上述選型啟發法，婚禮攝影平台（Priya's Platform）的資產具備以下絕對特徵：
+
+1. **二進位不可變性（Immutable Binary Assets）**：攝影師後製完畢的照片屬於最終成品，使用者只會全圖瀏覽或整張下載，絕無「修改第 1024 個 byte」或局部隨機寫入的需求，完美契合 WORM 特性。
+2. **Web 協議天然對齊（HTTP Native）**：照片必須由全球瀏覽器直接請求，物件儲存直接暴露 RESTful API（GET/PUT），免除透過檔案系統掛載（Mount）的沉重開銷。
+3. **儲存生命週期與分層需求（Tiering）**：老照片可由底層直接自動轉移至 S3 Glacier 封存，這是區塊或檔案儲存難以輕量自動化實現的。
+
+在 S3 的平坦命名空間模型中：Bucket 是全域唯一的容器，Object 是二進位內容與元數據，Key 是物件全路徑名稱。`tan-mei/photo-1.jpg` 中的斜線僅僅是為人類可讀性模擬的 Prefix，**在底層完全不存在實體目錄，更不會自動建立租戶隔離**。
+
+此外，S3 對成功的物件寫入提供強一致性（Strong Read-after-Write Consistency）；但必須清楚意識到：「原圖成功寫入 S3」僅代表 S3 儲存叢集已確認落盤，**絕不代表非同步縮圖 Lambda、S3 事件通知或 DynamoDB 狀態更新已經完成**。儲存層的一致性不能替代跨服務的工作流程協調。[AWS: S3 Strong Consistency](https://aws.amazon.com/s3/consistency/)
 
 ## 2 先理解公開讀取實驗與正式架構的差異
 
@@ -4136,55 +4183,263 @@ Object Ownership 選 Bucket owner enforced 時，ACL 停用並以 policies 控�
 
 到這裡，讀者應已能回答「物件怎麼存、公開權限怎麼來」。下一步才是建立誰有資格拿到私有物件的讀寫能力。
 
-## 3 將需求拆成服務職責
+## 3 將需求拆成服務職責與雙平面網路分離
 
-| 元件 | 在此架構負責什麼 | 不負責什麼 |
+### 3.1 核心雲端服務全景與多維職責分工（High-Level Architecture & Core Services）
+
+為了解決攝影師 Priya 的高畫質照片交付、多租戶隔離、零伺服器維運與彈性成本需求，系統由以下 8 大 AWS Serverless 與託管服務精密協同：
+
+| 服務元件 | 架構角色與核心職責 | 責任邊界（不負責什麼） |
 |---|---|---|
-| Amplify Hosting | 託管 SPA、支援部署與網域配置 | 不能靠隱藏前端按鈕保護照片 |
-| Cognito User Pool | 登入、使用者身分、MFA 與 token | 不自動知道每個人屬於哪些相簿 |
-| API Gateway HTTP API | 路由與 JWT authorizer、節流 | JWT 通過不等於照片授權通過 |
-| 授權與簽章 Lambda | 檢查業務權限，決定物件與簽發短期能力 | 不必搬運每張照片的全部 bytes |
-| S3 originals / previews | 保存兩類物件，分開 IAM、事件與 lifecycle | Bucket 或 prefix 名稱本身不代表會員權限 |
-| 縮圖 Lambda | 讀取原圖、驗證並產生預覽、更新處理狀態 | 不應具有修改會員權限的能力 |
-| DynamoDB | 相簿成員、照片歸屬、處理與 restore 狀態 | 不存放照片本體 |
-| SQS 與 DLQ（演進選項） | 工作緩衝、控制消費速率、保留重試失敗訊息 | 不使 worker 的副作用自動 exactly once |
-| CloudFront（演進選項） | 預覽快取與邊緣傳輸 | 快取不代替 viewer authorization |
+| **AWS Amplify Hosting** | 託管 Single Page Application（SPA）前端靜態資產（HTML/CSS/JS），透過全球邊緣節點（Global Edge）分發，自帶 SSL/HTTPS 與 Git CI/CD 自動構建部署 | 僅負責靜態傳輸；不能靠前端隱藏按鈕或路由跳轉代替真實的相簿後端授權 |
+| **Amazon Cognito** | 客戶身分與存取管理（CIAM），以 User Pools 取代自建用戶表、密碼 Hash 與 Session 追蹤，簽發密碼學安全之 JSON Web Tokens（JWTs） | 僅證明身分合法性（Who you are）；不自動維護使用者與婚禮相簿間的業務歸屬關係 |
+| **Amazon API Gateway** | 同步 RESTful API 入口與網關守門人（Gatekeeper），在路由前進行加密 JWT 簽名校驗與請求節流（Throttling） | 僅校驗 Token 完整性與過期時間；Token 通過不等於相簿讀寫權限通過 |
+| **AWS Lambda Function A<br>（Application API）** | 執行核心業務邏輯：驗證 DynamoDB 相簿歸屬權、計算並簽發短期有效之 S3 預簽網址（Pre-Signed URLs） | 專注於中繼控制；**嚴禁直接搬運或串流高畫質照片本體**，避免運算與頻寬浪費 |
+| **AWS Lambda Function B<br>（Image Processing Worker）** | 非同步事件驅動 Worker，由 S3 `ObjectCreated` 事件觸發，將 5 MB 原圖非同步壓縮轉換為 300 KB Web 預覽圖並更新資料庫狀態 | 專注於圖片轉換；不應具備修改使用者相簿權限或簽發預簽網址的能力 |
+| **Amazon S3<br>（Originals & Previews Buckets）** | 高持久性物件儲存；以雙桶架構（Dual-Bucket）分別存放高畫質原圖與輕量預覽圖，獨立配置 IAM、事件觸發器與生命週期政策（Lifecycle） | 平坦命名空間與 Prefix 名稱本身不代表會員權限，必須維持全公開阻斷（Block Public Access） |
+| **Amazon DynamoDB** | 毫秒級延遲的 Serverless NoSQL 鍵值/文檔資料庫，維護使用者與相簿授權對應、照片資產狀態與 Glacier 取回進度 | 專注於結構化元數據；不存放照片二進位本體 |
+| **AWS IAM** | 雲端安全與身分基石，以最小權限原則（Least Privilege）為 Lambda 執行環境、API Gateway 與內部服務授予精確操作範圍 | 負責雲端資源級權限（Service-to-Resource）；不直接理解相簿業務層級的使用者身分 |
 
-選 DynamoDB 是因為已知主要查詢可以由 keys 表達，不是因為 SQL 一定不適合 serverless。若日後需要複雜關聯、報表與跨記錄交易，要重新比較資料庫及其連線管理方案。同樣地，選 Lambda 是因為縮圖是獨立短工作，不是「容器永遠比較貴」；長時間、特殊執行環境或穩定高負載可能讓容器更合適。
+### 3.2 雙平面網路分離架構（Control Plane vs. Data Plane Dual-Plane Separation）
 
-這個設計將 control plane（身分、權限、metadata、簽章）與 data plane（照片 bytes）分開。兩者都需要安全性，但不必走同一條傳輸路徑。
+本架構在網路與資料流設計上最關鍵的決策，是將**控制平面（Control Plane）**與**資料平面（Data Plane）**徹底分離：
+
+```text
+======================= 雙平面網路分離架構 =======================
+
+【Control Plane（輕量 JSON 操作）】
+Browser (SPA) ───[ HTTPS REST / JWT ]───> API Gateway ───> Lambda Function A ───> DynamoDB
+      │                                       │
+      │                                       └── (計算並回傳 S3 Pre-Signed URL 字串)
+      ▼
+【Data Plane（沉重二進位傳輸）】
+Browser (SPA) ─────────────────[ HTTP PUT / GET 直連 ]──────────────────> Amazon S3
+                               (攜帶 SigV4 預簽憑證，繞過 API/Lambda)
+```
+
+1. **控制平面（Control Plane —— 輕量 JSON 操作）**：
+   - **路徑**：`Browser (SPA) → API Gateway → Lambda Function A → DynamoDB`。
+   - **負載**：僅傳輸輕量 JSON Payload（JWT 憑證、相簿 ID、授權驗證結果、S3 預簽網址字串）。
+   - **目標**：保持極致低延遲、高吞吐與近乎為零的運算計費開銷。
+2. **資料平面（Data Plane —— 沉重二進位傳輸）**：
+   - **路徑**：`Browser (SPA) → Amazon S3 Storage Buckets`（直接透過 Pre-signed URL 進行 HTTP PUT 上傳或 HTTP GET 下載）。
+   - **負載**：承載高達 5 MB 的原始照片二進位串流（Binary Payloads）。
+   - **核心架構動機（Architectural Justification）**：
+     - **規避 API Gateway 傳輸上限**：API Gateway 對 HTTP API / REST API 強制執行 **10 MB 最大 Payload 限制**。若透過 API Gateway 上傳多張大圖或高像素 RAW 檔，極易觸發 `HTTP 413 Payload Too Large`。
+     - **消滅 Lambda 運算閒置計費（Idle Cost）**：AWS Lambda 的計費模型嚴格按「執行時間（毫秒）$\times$ 配置記憶體」收費。客戶端在慢速網路（如 4G/行動裝置）上傳 5 MB 照片可能耗時數秒；若由 Lambda 充當代理伺服器轉傳，Lambda 在 99% 的時間裡僅是在等待網路 I/O，這將導致運算帳單呈幾何級數暴增。讓瀏覽器直連 S3，Lambda 只需耗費 20 毫秒生成 URL 即可功成身退。
+
+---
 
 ## 4 從一張照片走完整個上傳與瀏覽流程
 
-### 4.1 上傳與縮圖
+### 4.1 端到端完整五階段業務工作流（Detailed Step-by-Step System Workflows）
 
-1. 管理者登入，取得適合呼叫 API 的 token；管理者帳號要求 MFA。
-2. 前端送出相簿 ID、檔案資訊與上傳意圖。後端從可信的 authorizer claims 取身分，驗證其管理權限與上傳配額。
-3. 後端產生 photo ID 與不可由客戶任意指定的 object key，建立 `pending_upload` 記錄，再簽發 PUT 或 POST 上傳資料。
-4. 瀏覽器直接將照片傳到 S3。**簽發 URL 成功不代表上傳成功**，使用者可能關閉分頁或網路中斷。
-5. 原圖寫入後，ObjectCreated 事件啟動處理流程；worker 核對上傳記錄、來源版本及資料有效性。
-6. Worker 產生預覽圖，寫入 previews bucket；成功後才將對應版本標為 `ready`。失敗則記錄錯誤並交由重試或告警處理。
-7. 前端透過已授權的狀態 API 輪詢結果；若真的需要即時推播，再另建 WebSocket 等機制，不能假設 HTTP API 自動提供推播。
+系統將照片的生命週期分為五個緊密銜接的階段：
 
-建議狀態模型是 `pending_upload → uploaded → processing → ready`，另有 `failed` 與可恢復的重試路徑。過期仍未上傳的 reservation 應清理；若 S3 寫入成功卻沒更新 metadata，需有核對與修復工作，而不是永遠停在「處理中」。
+#### Phase 1: 前端交付與初始化（Frontend Delivery and Initialization）
+1. 使用者（攝影師 Priya 或新人客戶）透過瀏覽器造訪自訂網域名稱。
+2. AWS Amplify Hosting 透過全球邊緣節點（CloudFront Edge Distributions）以最快路徑交付壓縮的靜態資產（HTML、CSS、JavaScript）。
+3. 瀏覽器在本地端啟動 Single Page Application（SPA），初始化應用程式狀態與 Cognito SDK。
 
-預覽圖 300 KB 是容量規劃的平均假設，不是每張圖都能精確壓成同一大小。實作應先規範尺寸、格式與品質，再量測輸出分布；處理圖片也要限制解碼後像素與記憶體需求。
+#### Phase 2: 身分認證與憑證取得（Identity and Authentication）
+1. 使用者於前端表單輸入登入憑據，送交 Amazon Cognito User Pool 端點。
+2. **多因子驗證（MFA）分流挑戰**：
+   - 若為管理者 Priya：Cognito 判定其屬於 `Admins` 群組，觸發 MFA 挑戰（`MFA_CHALLENGE` / `SOFTWARE_TOKEN_MFA`），前端提示輸入手機 Authenticator App 生成的 6 位數 TOTP 動態碼，驗證成功後方才簽發權限 Token。
+   - 若為新人客戶：直接使用帳號密碼完成認證，避免繁瑣的 MFA 阻礙親友看照片的流暢體驗。
+3. Cognito 驗證成功後，向瀏覽器簽發加密簽名的 JWTs（包含唯一使用者 UUID `sub`、群組資訊 `cognito:groups` 與 `email`）。
 
-### 4.2 為什麼照片不經 Lambda 轉傳
+#### Phase 3: 控制平面請求與業務權限驗證（Control Plane Request and Permission Verification）
+1. 使用者觸發業務動作（例如上傳照片或打開相簿），前端向 API Gateway 發起 REST 請求，並於 Header 附加 `Authorization: Bearer <JWT_Token>`。
+2. API Gateway 扮演守門人，利用 Cognito 公開金鑰驗證 JWT 簽名、過期時間與 Client ID。若 Token 無效或過期，立即阻斷並回傳 `HTTP 401 Unauthorized`，完全不打擾後端 Lambda。
+3. 驗證通過後，API Gateway 將請求與上下文（含提取之 `sub`）轉交 **Lambda Function A**。
+4. Lambda Function A 查詢 DynamoDB 授權表：校驗該 `sub` 是否對目標 `gallery_id` 擁有對應權限（如管理者具有上傳權，新人和親友具有預覽/下載權）。若無權限，立即回傳 `HTTP 403 Forbidden`。
+5. 授權確認無誤後，Lambda Function A 調用 AWS SDK 計算並簽發一個**臨時 S3 預簽網址（Pre-Signed URL）**，有效期限嚴格設定為 **300 秒（5 分鐘）**。
+6. Lambda 將包含預簽網址的輕量 JSON 回傳給 API Gateway，再轉交瀏覽器。
+
+#### Phase 4: 資料平面直接二進位傳輸（Data Plane Binary Transfer）
+1. 瀏覽器 JavaScript 從 JSON 回應中解析出預簽網址。
+2. 瀏覽器發起直連請求：透過 `HTTP PUT`（上傳原圖）或 `HTTP GET`（下載原圖）直連 S3 儲存桶端點。
+3. 高達 5 MB 的原始照片二進位 Payload 直接置於 HTTP Request Body 中傳輸。
+4. S3 檢驗 Query String 攜帶的 AWS Signature Version 4（SigV4）密碼學簽名、檢查簽發該 URL 的 IAM 角色權限，並確認 300 秒有效視窗尚未過期。驗證無誤後直接將物件寫入儲存叢集。
+5. **URL 有效期邊界行為（URL Expiration Semantics）**：
+   - 300 秒限制的是**傳輸發起時間（Initiation Time）**，而非傳輸完成時間。只要 HTTP PUT 請求在第 299 秒成功送達 S3 並開始建立連線傳輸，即使檔案巨大、傳輸過程耗時數分鐘，S3 亦會允許其完整傳輸完畢。
+   - 若請求在第 301 秒才發起，S3 立即阻絕並回傳 `HTTP 403 Forbidden / Request has expired`。
+   - 若使用者在相簿中停留超時，前端 SPA 具備自動靜默機制：向 API Gateway 重新請求簽發新的短期預簽網址，**婚禮相簿本身永不過期，只有具體的下載/讀取 URL 會短期失效**。
+
+#### Phase 5: 非同步圖片處理與生命週期維運（Asynchronous Image Processing & Lifecycle）
+1. S3 原始圖儲存桶確認原圖寫入完畢後，發布 `s3:ObjectCreated:*` 事件通知。
+2. 該事件非同步觸發 **Lambda Function B（Image Processing Worker）**。
+3. Lambda Function B 從 Originals Bucket 讀取 5 MB 原圖，利用圖片庫縮放生成 300 KB Web 預覽圖，寫入 Previews Bucket，並將 DynamoDB 中的照片狀態更新為 `PROCESSED`。
+4. **雙桶隔離防禦（Bucket Separation Guardrail）**：原圖與預覽圖分別存放在兩個完全獨立的 S3 Bucket。這是一道硬性安全防線，徹底杜絕縮圖產生寫入時又誤觸發相同 ObjectCreated 事件所引發的**無限遞歸計費黑洞（Infinite Recursion Loop）**。
+5. **長期成本封存（Long-Term Archival）**：300 KB 預覽圖永久保留在 S3 Standard 以供隨時即時瀏覽；S3 Lifecycle 規則設定在 **365 天**後將 5 MB 原圖自動轉移至 **S3 Glacier Flexible Retrieval** 進行極致低成本封存。
+6. **非同步取回狀態機（Glacier Restores）**：若客戶在一年後請求下載原圖，API Gateway 與 Lambda 將觸發 `s3:RestoreObject` 任務（耗時 3 至 5 小時），並將 DynamoDB 狀態標記為 `RESTORE_IN_PROGRESS`，待取回完成後通知客戶下載。
+
+---
+
+### 4.2 預簽網址底層機制與 AWS SigV4 密碼學簽章（Pre-Signed URL Mechanics & SigV4）
+
+在探討預簽網址時，口試 Viva 與工程架構中最關鍵的核心問題是：**為什麼 S3 不直接驗證使用者的 Cognito JWT，而必須繞道簽發 Pre-signed URL？**
+
+#### 為什麼 S3 不直接消費 JWT
+Amazon S3 是一個基礎設施級別的巨型物件儲存系統，它原生**完全不支援解析或校驗 Cognito User Pools 的應用程式 JWT**。S3 底層僅認可 AWS 自身的密碼學身分體系——即基於 IAM 與 AWS Signature Version 4（SigV4）的簽名認證。
+
+#### 簽名生成微觀機制（The Signing Mechanism）
+預簽網址的本質，是 **Lambda Function A 將自身從 AWS STS 獲得的短期 IAM 執行身分，透過 HMAC-SHA256 密碼學算法，臨時借貸給前端瀏覽器**：
+
+1. Lambda Function A 啟動時，其容器會自動從 AWS Security Token Service（STS）注入一組專屬 IAM 角色的臨時憑證（Access Key ID、Secret Access Key、Session Token）。
+2. 當 Lambda 執行 `s3.getSignedUrl('putObject', params)` 時，AWS SDK 會在記憶體中組織待簽名字串（Canonical Request），包含：目標 Bucket、目標 Object Key、HTTP 方法（PUT）、有效時長（300 秒）與時間戳。
+3. SDK 使用該角色的 `Secret Access Key` 與當天日期、區域、服務名稱派生出的金鑰，執行 **HMAC-SHA256** 哈希運算，產生最終簽名。
+4. 此簽名被編碼為 URL 查詢參數，形成可直接透過瀏覽器請求的完整預簽網址：
+
+```text
+https://priya-weddings-originals.s3.ap-southeast-1.amazonaws.com/tan-mei/photo01.jpg
+  ?X-Amz-Algorithm=AWS4-HMAC-SHA256
+  &X-Amz-Credential=ASIAIOSFODNN7EXAMPLE%2F20261004%2Fap-southeast-1%2Fs3%2Faws4_request
+  &X-Amz-Date=20261004T025346Z
+  &X-Amz-Expires=300
+  &X-Amz-SignedHeaders=host
+  &X-Amz-Security-Token=IQoJb3JpZ2luX2VjE...
+  &X-Amz-Signature=a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0...
+```
+
+#### 直連傳輸的真實 HTTP 請求結構（Direct Transfer HTTP Request）
+瀏覽器拿到上述 URL 後，向 S3 發起之 HTTP 請求本質如下：
+
+```http
+PUT /tan-mei/photo01.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=...&X-Amz-Signature=... HTTP/1.1
+Host: priya-weddings-originals.s3.ap-southeast-1.amazonaws.com
+Content-Type: image/jpeg
+Content-Length: 5242880
+
+<--- 此處直接置放 5 MB 原始二進位照片 Byte 流，完全不經過 API Gateway 與 Lambda --->
+```
+
+#### 預簽網址的 Bearer 特徵與安全邊界
+- **從 S3 的視角**：預簽網址是一張純粹的 **Bearer Token（持票人憑證）**。S3 在收到請求時，完全不知道也不在乎是哪個瀏覽器或自然人在發起請求；S3 僅驗證 SigV4 簽名是否合法、簽名的 IAM 角色是否有寫入權限、以及是否在 300 秒有效期內。任何人只要持有這段完整 URL，皆可直接執行指定操作。
+- **從系統架構的視角**：系統的安全性並未失控。因為這張「取車票（URL）」**只能由 Lambda Function A 在完成 API Gateway JWT 驗證與 DynamoDB 相簿擁有權查詢後，針對特定使用者、特定照片 Key、特定 HTTP 方法動態生成**。
+- **300 秒生命週期的安全防禦價值**：將期限壓縮至 5 分鐘，極大地收窄了 URL 在網路傳輸過程中若不幸遭外洩或惡意分享時的攻擊時間窗口（Attack Window）。
+
+### 4.3 為什麼照片不經 Lambda 轉傳（Payload 與計費架構分析）
 
 簽章 API 只交換小型 JSON，照片直接送往物件儲存，能減少 payload 限制、重複搬運及函式等待傳輸的時間。查核時 HTTP API 的 payload 上限是 10 MB、integration timeout 是 30 秒；不能混用成所有 API Gateway 都是 29 秒。[AWS: Quotas for configuring and running an HTTP API](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-quotas.html)
 
 本設計使用的一般 on-demand Lambda，單次執行最長 15 分鐘；同步 buffered request/response 各 6 MB、非同步 invocation payload 為 1 MB，不是舊資料的 256 KB。這些是呼叫 payload，不是 Lambda 從 S3 下載檔案時的同一限制。實際記憶體與並發配額須查帳戶，尤其新帳戶可能較低。[AWS: Lambda quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html)
 
-### 4.3 瀏覽與下載
+### 4.4 瀏覽與下載的長短期入口分工
 
 瀏覽者登入後，前端請求相簿照片清單。後端先確認 membership，回傳可見照片的 metadata 與適當的預覽存取方式；要求原圖時，再檢查 download 權限與原圖是否可立即讀取。
 
 長期入口是登入後的相簿頁，短期入口才是實際物件 URL。當預覽 URL 失效，前端重新向 API 請求時必須**重新授權**；被移除的成員不能靠「自動續簽」延續權限。
 
-## 5 多租戶授權的完整防線
+## 5 多租戶授權與雲端權限架構的完整防線
 
-### 5.1 Authentication 與 Authorization 分開回答
+在雲端無伺服器架構中，「使用者登入」與「雲端權限」是兩個截然不同、卻又必須精密銜接的維度。本節深入剖析 **Amazon Cognito vs. AWS IAM** 的邊界劃分、**最小權限原則（Least Privilege）**的 IAM Roles 設計、**DynamoDB vs. 關聯式資料庫**的架構差異，以及防禦多租戶越權（IDOR）的端到端防線。
+
+### 5.1 身份管理 vs. 雲端權限：Amazon Cognito vs. AWS IAM 深度對照
+
+| 比較維度 | Amazon Cognito | AWS Identity and Access Management (IAM) |
+|---|---|---|
+| **目標受眾（Target Audience）** | 終端業務使用者（End Users，例如攝影師 Priya 與各對婚禮新人客戶） | 雲端基礎設施、內部 AWS 服務與系統工程師（Lambda、API Gateway、DevOps 開發者） |
+| **憑證形式（Credentials Used）** | 帳號、密碼、手機 TOTP 動態碼、密碼學簽名之 JSON Web Tokens（JWTs） | 暫時性 STS Session Tokens、Access Key ID、Secret Access Key、IAM 角色 |
+| **存取範圍（Scope of Access）** | **應用程式業務層級（Application-level Business Context）**：例如判斷哪個 `sub` 可以看哪一本婚禮相簿 | **雲端資源層級（Cloud-level Resource Context）**：例如決定某個 Lambda 函式是否能對某個 S3 Bucket 執行寫入 |
+| **驗證端點（Verification Point）** | 在 API 邊界由 **API Gateway（Cognito JWT Authorizer）** 或業務程式碼進行校驗 | 由 **AWS 內部安全基礎設施（AWS SigV4 引擎）**在每次呼叫 AWS SDK API 時嚴格評估 |
+
+#### 註冊政策、邀請流與 MFA 強制安全規範
+1. **關閉公開註冊政策（Public Registration Disabled）**：
+   - 系統**完全不開放公開 Sign-up 頁面**。這杜絕了網際網路上的任意未授權惡意訪客自行在 Cognito User Pool 中建立帳號，縮小身分攻擊面。
+2. **後台邀請流（Client Invitation Flow）**：
+   - Priya 在管理後台建立新相簿條目，輸入新人的 Email 地址並點擊「Invite」。
+   - 前端發起請求，API Gateway 授權後呼叫 Lambda Function A 調用 Cognito `AdminCreateUser` API。
+   - Cognito 在 User Pool 內建立使用者、生成隨機臨時密碼或安全重設連結，並自動寄送客製化邀請信給新人。
+   - 新人點擊信件連結進入前端，設定永久密碼並啟用個人 Profile。
+3. **多因子驗證（MFA）分流強制策略**：
+   - **管理者（Priya）**：歸屬於 Cognito 的專屬 `Admins` 群組。此群組**強制啟用基於時間的一次性密碼（TOTP MFA）**。Priya 登入時，Cognito 回傳 `MFA_CHALLENGE`（或 `SOFTWARE_TOKEN_MFA`），必須輸入手機 Google Authenticator 等 App 產生的 6 位數動態碼才能換發 Token，杜絕管理者密碼外洩帶來的災難性風險。
+   - **客戶端新人與親友**：僅使用標準帳密認證，**不強制啟用 MFA**。這是 UX 與安全性的權衡，防止繁瑣的兩步驟驗證阻礙一般賓客瀏覽照片的意願。
+4. **Cognito Token 內容（JWT Claims）**：
+   - 成功認證後，Cognito 簽發之 JWT 內嵌以下關鍵 Claims：
+     - `sub`：Cognito 為使用者派發的全域唯一 UUID（如 `a1b2c3d4-e5f6-...`），作為不可篡改的系統識別碼。
+     - `cognito:groups`：使用者所屬的群組陣列（例如 `[Admins]`）。
+     - `email`：通過驗證的電子郵件信箱。
+5. **Cognito 服務註冊**：
+   - 後端各個微服務 API 並不直接向 Cognito 註冊；而是在 User Pool 中配置專屬的 **App Client**，向 Amplify 前端暴露 `UserPoolId` 與 `ClientId`，供前端 SDK 執行安全認證。
+
+---
+
+### 5.2 最小權限原則與系統 IAM Roles 邊界設計（Principle of Least Privilege）
+
+在雲端架構中，所有後端運算資源（Lambda）與網關預設皆為**零信任（Zero Trust）**，必須透過專屬 IAM Roles 精確授予最小必要權限：
+
+#### Role 1: 應用 API Lambda 角色（Application API Lambda Execution Role）
+- **承擔組件**：Lambda Function A。
+- **允許權限**：
+  - `dynamodb:GetItem`、`dynamodb:Query`：查詢使用者相簿授權表與照片元數據表。
+  - `s3:GetObject`：針對 Originals 或 Previews Bucket 計算並簽發下載用的 GET 預簽網址。
+  - `s3:PutObject`：針對 Originals Bucket 計算並簽發上傳用的 PUT 預簽網址。
+  - `s3:RestoreObject`：向 S3 Glacier 發起原圖解凍任務。
+- **嚴格限制**：**嚴禁授予 `s3:DeleteObject`** 或萬用字元 `*` 的管理權限，防止後端邏輯瑕疵導致全量照片遭誤刪。
+
+#### Role 2: 圖片處理 Worker 角色（Image Processing Worker Role）
+- **承擔組件**：Lambda Function B。
+- **允許權限**：
+  - `s3:GetObject`：**範圍嚴格限定於 Originals Bucket**（讀取原始上傳照片）。
+  - `s3:PutObject`：**範圍嚴格限定於 Previews Bucket**（寫入壓縮後的預覽圖）。
+  - `dynamodb:PutItem`、`dynamodb:UpdateItem`：將處理完畢狀態更新為 `PROCESSED`。
+- **嚴格限制**：**絕對禁止對 Originals Bucket 擁有寫入權限**（徹底杜絕事件遞歸觸發）；禁止調用 API Gateway；禁止簽發預簽網址。
+
+#### Role 3: API Gateway 執行角色（API Gateway Execution Role）
+- **承擔組件**：Amazon API Gateway。
+- **允許權限**：`lambda:InvokeFunction`，在 Cognito JWT 簽名校驗成功後轉發呼叫 Lambda Function A。
+
+#### 互動邊界：IAM、DynamoDB 與 Lambda 的協同分工
+- **Lambda 業務邏輯校驗自然人身分與業務規則**：Lambda 檢驗請求攜帶的 Cognito JWT，查詢 DynamoDB，判定該自然人 `sub` 是否有權存取 `gallery_id`。
+- **AWS IAM 校驗服務間調用權限（Service-to-Service）**：IAM 確保 Lambda 函式具備合法的 AWS 臨時憑證以執行 DynamoDB Query 與 S3 簽名。
+- **雲端架構師（Cloud Engineer）**：透過 Root / Administrator IAM 憑據登入 AWS Console 進行基礎設施部署與 Role 配置。
+- **業務管理者（Priya）**：**嚴格隔離在 AWS 管理控制台之外**，僅透過瀏覽器前端入口、使用 Cognito 帳號與 TOTP MFA 登入，絕不接觸任何 AWS IAM 權限。
+
+---
+
+### 5.3 資料儲存架構演進：Amazon DynamoDB vs. 關聯式資料庫 (RDS/PostgreSQL/MySQL)
+
+在傳統雲端系統中，開發者常直覺選擇託管的關聯式資料庫（Amazon RDS PostgreSQL 或 MySQL），但在高並發、突發流量且長時間閒置的 Serverless 攝影平台場景中，關聯式資料庫會暴露嚴重的架構矛盾：
+
+| 比較維度 | 傳統關聯式資料庫（Amazon RDS / PostgreSQL） | 雲端原生 NoSQL（Amazon DynamoDB） |
+|---|---|---|
+| **架構架構** | **運算與儲存緊密耦合（Monolithic Compute/Storage Coupling）**：由專屬虛擬機實例（EC2）掛載 EBS 磁碟 | **存算分離與多租戶共享架構（Disaggregated, Multi-Tenant Serverless）**：請求路由層與底層分散式儲存節點完全解耦 |
+| **進程模型（Process Model）** | 依賴記憶體中長時間常駐的 OS 後台 Daemon 進程（如 PostgreSQL 的 `postmaster`、WAL Writers、Background Writers、Auto-vacuum） | **基於 HTTP/HTTPS REST API 的無狀態請求驅動**：客戶端請求直接抵達共享的 Request Routers 叢集，透過一致性哈希（Consistent Hashing）路由至目標儲存分區 |
+| **記憶體快取（Memory Buffers）** | 強依賴共享記憶體池（如 Postgres `shared_buffers`、InnoDB Buffer Pool）快取磁碟資料頁；**一旦停止實例，快取池立即灰飛煙滅**，重啟時連線中斷且遭遇嚴重的 Cold-start 延遲 | 儲存層直接由 AWS SSD 叢集保證毫秒級 B-tree 操作；無連線池耗盡風險，自動適應微服務水平伸縮 |
+| **計費模型（Cost Model）** | **按預留實例 7x24 小時不間斷收費**：即使半夜零訪問，仍必須為專屬 CPU、RAM 與 EBS 儲存支付高額固定費用 | **依需求容量模式（On-Demand Capacity）**：閒置時**運算計費為 0 美元**；僅按實際讀寫請求單元（RRU/WRU）與實際儲存體積收費，精確對齊業務現金流 |
+
+---
+
+### 5.4 Priya 婚禮平台專用 DynamoDB 資料模型設計（Schema Design）
+
+為了以最小的查詢延遲滿足權限確認與生命週期管理，系統採用以下兩個核心資料表設計：
+
+#### 1. 使用者相簿授權表（User-to-Gallery Authorization Table）
+- **分區鍵（Partition Key / PK）**：`user_id`（字串，對應 Cognito 的使用者唯一 `sub` UUID，例如 `USER#a1b2c3d4...`）
+- **排序鍵（Sort Key / SK）**：`gallery_id`（字串，婚禮相簿唯一識別碼，例如 `GALLERY#tan-and-mei-wedding-2026`）
+- **屬性（Attributes）**：
+  - `role`：使用者角色（`admin` 或 `client`）
+  - `access_granted_at`：授權建立時間戳
+- **應用查詢邏輯（Application Logic）**：
+  - 當使用者試圖打開相簿 `tan-and-mei-wedding-2026` 時，Lambda 執行單點查詢：`GetItem(PK = caller_sub, SK = "GALLERY#tan-and-mei-wedding-2026")`。
+  - 若命中記錄，授權通過並判定角色；若回傳為空，說明該使用者根本不在此相簿授權名單中，立即拋出 `HTTP 403 Forbidden`。
+
+#### 2. 相簿照片資產與狀態表（Gallery Photo Assets and Status Table）
+- **分區鍵（Partition Key / PK）**：`gallery_id`（字串，例如 `GALLERY#tan-and-mei-wedding-2026`）
+- **排序鍵（Sort Key / SK）**：`photo_key`（字串，照片唯一檔案名稱，例如 `PHOTO#photo001.jpg`）
+- **屬性（Attributes）**：
+  - `original_s3_key`：原圖完整路徑（`originals/tan-mei/photo001.jpg`）
+  - `preview_s3_key`：預覽圖完整路徑（`previews/tan-mei/photo001.jpg`）
+  - `status`：生命週期狀態（`PROCESSED`、`ARCHIVED_GLACIER` 或 `RESTORE_IN_PROGRESS`）
+  - `restore_expiry`：解凍臨時副本的過期時間戳
+- **應用查詢邏輯（Application Logic）**：
+  - **縮圖完成**：Lambda Function B 產出預覽圖後，將對應記錄的 `status` 更新為 `PROCESSED`。
+  - **冷資料解凍請求**：當客戶在一年後請求下載某張老照片時，Lambda 檢查 `status`：若為 `ARCHIVED_GLACIER`，後端向 S3 發送 `s3:RestoreObject` 請求，並將此處狀態更新為 `RESTORE_IN_PROGRESS`；待解凍完畢後供客戶下載。
+
+---
+
+### 5.5 Authentication 與 Authorization 分開回答與多層防線
 
 Authentication 回答「你是誰」；authorization 回答「這個人能對這份資源做什麼」。兩個客戶都能合法登入，仍不表示能互看照片。
 
@@ -4196,7 +4451,7 @@ Authentication 回答「你是誰」；authorization 回答「這個人能對這
 
 API Gateway 的 JWT 驗證不是單純 decode，也不需要每次向 Cognito 問密碼；它使用 issuer 的公開金鑰，並可能快取金鑰。ID token 與 access token 不可因為都長得像 JWT 就混用，API route 應配置適合的 scopes 與 issuer/audience。[AWS: Control access to HTTP APIs with JWT authorizers in API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html)
 
-### 5.2 JWT 與 PKCE 各自防什麼
+### 5.6 JWT 與 PKCE 各自防什麼
 
 典型簽章 JWT 是 `header.payload.signature`。編碼不是加密：payload 可被讀取，簽章用來驗證完整性與來源，因此不要放密碼或其他秘密。後端使用 `sub` 而非可更改的 email 作為使用者識別；多個 issuer 並存時，也要把 issuer 納入身分命名空間。
 
@@ -4210,20 +4465,7 @@ SPA 不能安全保有 client secret，因此本設計使用 authorization code 
 
 User Pool 管應用使用者；Identity Pool 可將身分換成受限的 AWS 臨時憑證。本案例不選 Identity Pool，是為了把動態相簿授權集中在後端，不是因為臨時憑證必然不安全。瀏覽器仍會用預簽網址直接碰 S3，只是不領取可自行簽發其他請求的 AWS credentials。
 
-### 5.3 先列出存取模式，再設計 DynamoDB keys
-
-以下是單表設計的示意，不是部署後實際 schema：
-
-| 記錄 | PK | SK | 主要內容 |
-|---|---|---|---|
-| 成員關係 | `USER#sub` | `GALLERY#gallery-id` | role、active、授權狀態 |
-| 照片 | `GALLERY#gallery-id` | `PHOTO#photo-id` | originalKey、previewKey、sourceVersion、processingStatus |
-
-有完整 PK 與 SK 時用 GetItem 精準確認 membership；以 PK 查使用者所有相簿或某相簿所有照片時用 Query，結果多時仍需分頁，不保證一個請求就取完。若要反向列出相簿所有成員，要另外設計 index 或相應記錄，不能從上述 keys 假定免費取得。
-
-權限撤銷若要求快速反映，可在 base table 的 membership 檢查使用 strongly consistent read，並避免長效授權快取；GSI 不支援強一致讀取。即使如此，已簽發物件 URL 的撤銷仍是另一個問題。[AWS: DynamoDB read consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html)
-
-### 5.4 一次下載請求的安全判定
+### 5.7 一次下載請求的安全判定與防 IDOR 攻擊
 
 後端的判定應滿足：
 
@@ -4241,7 +4483,7 @@ $$
 
 共用 Lambda execution role 可能有多個相簿的 S3 權限；IAM 不會自動替它執行每個 Cognito 使用者的 membership 檢查。因此應用層授權是必要防線，而不是可省略的重複檢查。
 
-### 5.5 預簽網址的能力與撤銷邊界
+### 5.8 預簽網址的能力與撤銷邊界
 
 Presigned URL 是 bearer capability：持有者在有效條件下即可使用，**不是一次性 URL，也不是每次下載都重新登入**。有效期受 URL 設定及底層 signing credentials 限制；S3 在 HTTP 請求開始時檢查期限，已開始的下載不會只因跨過期限就被切斷，但過期後重連會失敗。可用 policy 的來源網路條件限制使用，不能隨意加一個 IP query 參數就期待 S3 驗證。[AWS: Download and upload objects with presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
 
@@ -4475,15 +4717,14 @@ CloudWatch 與分散式 tracing 幫助觀察延遲與失敗，但日誌應避免
 
 <reviewkit>
 <takeaways>
-- Lab 1 主線是需求、責任邊界、資料流、安全性、可靠性與成本；服務名稱只是實現手段。
-- 公開 GetObject 加上禁止 ListBucket 不等於租戶隔離；正式私有相簿仍需身分與資源授權。
-- JWT 驗證、相簿 membership、操作角色與照片歸屬是不同檢查，不可互相取代。
-- API 管 control plane，瀏覽器與 S3 交換照片 bytes；簽章成功、上傳成功與縮圖完成是不同狀態。
-- 預簽網址是可重用的短期能力；會員撤銷不自動撤銷已發 URL，更不能收回已下載副本。
-- 事件重複、亂序及中途 crash 都要能處理；固定 output key 只是冪等性的一部分。
-- 原圖 archive 與 preview 熱存取分流；restore 有等待、可讀期限與費用。
-- 年末容量不等於全年平均容量，年度下載量不能直接與月免費額度比較。
-- Serverless 不表示零總成本，Budgets 不表示硬性費用上限，versioning 不表示完整災難復原。
+- 雲端儲存三大範式選型：區塊儲存（Block）專精資料庫 B-tree 等高頻隨機修改；檔案儲存（File）依循樹狀目錄與 POSIX 共享協議；物件儲存（Object）以不可變（WORM）與 HTTP REST 協議專精 PB 級海量非結構化靜態資產。
+- 雙平面網路分離架構（Control Plane vs. Data Plane）：控制平面由 API Gateway + Lambda A + DynamoDB 交換輕量 JSON；資料平面由瀏覽器攜帶 SigV4 預簽憑證直連 S3 傳輸 5 MB 照片，徹底規避 10 MB Payload 上限並消滅 Lambda 網路 I/O 閒置計費。
+- 預簽網址底層機制：S3 原生不消費 Cognito JWT；預簽網址是 Lambda A 將自身 STS 臨時憑證透過 HMAC-SHA256 計算之 Bearer Token，300 秒有效時長大幅收窄外洩窗口，且 300 秒僅限制連線發起時間而非傳輸完成時間。
+- 雲端身分與最小權限原則：Cognito 管業務終端自然人（Priya 與新人），IAM 管雲端微服務與基礎設施；Lambda A 僅具備業務授權與簽章權限（無 Delete），Lambda B 嚴格限定讀原圖寫預覽（禁止寫原圖以防遞歸計費黑洞）。
+- 資料庫架構演進：傳統 RDS 為存算耦合、進程常駐且停止實例銷毀快取的 7x24 付費虛擬機；DynamoDB 採存算分離與 Request Router 一致性哈希，On-Demand 容量模式在系統閒置時運算計費為 0 美元。
+- 公開 GetObject 加上禁止 ListBucket 不等於租戶隔離；正式私有相簿仍需以 Cognito 驗證身分並以 DynamoDB 實體關係進行資源層級防 IDOR 檢驗。
+- 原圖 archive 與 preview 熱存取分流；365 天轉入 Glacier Flexible Retrieval，restore 為耗時 3-5 小時之狀態機，具備可讀期限與暫存副本費用。
+- 事件重複、亂序及中途 crash 都要能處理；固定 output key 只是冪等性的一部分，雙桶隔離與 deterministic versioning 才能杜絕資料覆蓋與回退。
 </takeaways>
 <qprompt/>
 </reviewkit>
