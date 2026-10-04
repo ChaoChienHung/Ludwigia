@@ -13,6 +13,16 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] CS5446 note: convert remaining Chinese passages to English
+    - 交付條件：Translate all remaining Chinese prose in the CS5446 Markdown source, rebuild its HTML, and verify the reader-facing page and English question bank contain no Chinese text.
+    - 已完成：Translated 85 Chinese lines, rebuilt the HTML with `cli.py build`, and checked the Markdown, HTML body, and `questions.en.json`; all reader-facing content is English. The search index was regenerated and is unchanged.
+    - Review 重點：Author proofread of technical phrasing, especially the course overview, progression/regression worked example, EVPI explanation, and Week 5 reading guide.
+
+- [x] CS5224 note: convert the course overview and Lab 1 to English
+    - Delivery condition: Publish the CS5224 Markdown and rebuilt HTML in English, preserve links and code blocks, and verify no Chinese remains in the reader-facing page.
+    - Completed: Rewrote the course reading guide and Lab 1 in English, rebuilt the HTML, and confirmed zero CJK characters in the Markdown and visible HTML. All 31 source links and 172 code-fence markers remain present.
+    - Review focus: Author proofread of the English technical wording and case assumptions, especially identity and authorization, S3 lifecycle, cost calculations, and the viva answers.
+
 - [x] CS5224 Lab 1 補充整合與核驗
     - 交付條件：將兩份 Lab 1 材料整合進既有 Cloud Computing 筆記，涵蓋 S3、資料流、多租戶授權、可靠性、成本與 Viva；重建 HTML／索引並通過既有測試。
     - 已完成：新增十節有前後銜接的案例、成本推算與驗收矩陣，核對 AWS 官方來源；HTML／索引重建成功，self-test 與 46 項測試通過。筆記維持 drafting，未修改實際 AWS 資源。

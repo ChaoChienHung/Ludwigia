@@ -17,41 +17,41 @@ LastModified: 2026-10-04
 
 ## Course Reading Architecture
 
-這門課不是把 Planning、Decision Theory、RL、Reward Shaping、Search 分成互不相干的技巧，而是逐步回答同一個問題：**agent 如何在環境中形成可執行、可評估、可改進的 sequential decision policy？** 建議用下面的依賴關係閱讀：
+Rather than treating Planning, Decision Theory, RL, Reward Shaping, and Search as unrelated techniques, this course progressively answers one question: **how can an agent form a sequential decision policy that it can execute, evaluate, and improve in an environment?** Read the topics through the following dependency chain:
 
 ```text
-Week 1  已知、確定的世界：如何表示問題並找出 plan？
-   ↓  真實世界通常有子目標、抽象層與可達性限制
-Week 2  把 planning 擴展到可組合的結構與 state abstraction
-   ↓  不只問「能不能完成」，還要問「什麼結果值得追求？」
-Week 3  Decision theory / utility / game theory：定義理性選擇
-   ↓  加入 stochastic transition 與 delayed reward
-Week 4  MDP、Bellman equation、dynamic programming、tabular RL
-   ↓  state/action 空間變大，表格不夠用
-Week 5  Function approximation、DQN、policy gradient、actor-critic
-   ↓  reward 太稀疏、太慢或不可靠，學習訊號需要設計
-Week 6  Exploration、PBRS、process reward、RLHF、多 agent reward
-   ↓  runtime search 與 demonstrations 提供另一種引導
-Week 7  Rollout、MCTS、UCT、AlphaGo Zero、imitation learning
+Week 1  In a known, deterministic world, how do we represent a problem and find a plan?
+   ↓  Real-world tasks often involve subgoals, abstraction, and reachability constraints
+Week 2  Extend planning to composable structures and state abstraction
+   ↓  Beyond feasibility, ask which outcomes are worth pursuing
+Week 3  Decision theory / utility / game theory: define rational choice
+   ↓  Add stochastic transitions and delayed rewards
+Week 4  MDPs, Bellman equations, dynamic programming, and tabular RL
+   ↓  State and action spaces grow too large for tables
+Week 5  Function approximation, DQN, policy gradients, and actor-critic methods
+   ↓  Sparse, delayed, or unreliable rewards call for better learning signals
+Week 6  Exploration, PBRS, process rewards, RLHF, and multi-agent rewards
+   ↓  Runtime search and demonstrations offer other forms of guidance
+Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning
 ```
 
-每週都用同一個檢查框架閱讀：`state / action / transition / objective / information / improvement mechanism`。其中 Week 1–2 建立「如何描述與搜尋」，Week 3–4 建立「如何定義與計算價值」，Week 5–6 建立「如何在大規模或弱 reward 下學習」，Week 7 則比較「靠 runtime search」與「靠 demonstrations」兩條引導路線。
+Use the same reading checklist each week: `state / action / transition / objective / information / improvement mechanism`. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; and Week 7 compares guidance from runtime search with guidance from demonstrations.
 
-| Week | 本週新增的核心問題 | 讀完後應能接到哪裡 |
+| Week | New central question | What it prepares you to study next |
 |---|---|---|
-| 1 | 如何在 deterministic、fully observable world 中表示並求解 plan？ | 為 Week 2 的 abstraction 與 real-world acting 建立語言 |
-| 2 | 如何把大問題拆成可組合的 subgoals、HTN 與 reachable sets？ | 從可行性自然過渡到 Week 3 的 preference 與 utility |
-| 3 | 如何形式化「理性」與多 agent 下的衝突／合作？ | 為 Week 4 的 MDP objective 與 value function 定義目標 |
-| 4 | 如何在不確定與 delayed feedback 下計算 policy/value？ | 為 Week 5 的 approximation 與 deep RL 暴露 scalability bottleneck |
-| 5 | 如何用 function approximator 取代表格，並處理 gradient instability？ | 為 Week 6 說明為何 reward design 會決定 exploration 與 alignment |
-| 6 | 如何提供更有用、但不改變原目標的 reward signal？ | 為 Week 7 比較 search 與 demonstrations 的 guidance |
-| 7 | 如何在決策當下搜尋，或從 expert data 學會行為？ | 回收整門課：model-based search、model-free learning、imitation 的取捨 |
+| 1 | How do we represent and solve a plan in a deterministic, fully observable world? | Establishes the language for Week 2 abstraction and real-world acting |
+| 2 | How do we decompose a large problem into composable subgoals, HTNs, and reachable sets? | Moves from feasibility to Week 3 preferences and utility |
+| 3 | How do we formalize rationality, conflict, and cooperation among agents? | Defines objectives for Week 4 MDPs and value functions |
+| 4 | How do we compute policies and values under uncertainty and delayed feedback? | Reveals the scalability bottleneck addressed by Week 5 approximation and deep RL |
+| 5 | How do function approximators replace tables, and how do we manage gradient instability? | Explains why reward design shapes Week 6 exploration and alignment |
+| 6 | How do we supply a more useful reward signal without changing the original objective? | Prepares the Week 7 comparison of search and demonstrations |
+| 7 | How do we search at decision time or learn behavior from expert data? | Connects model-based search, model-free learning, and imitation across the course |
 
-> **閱讀提示：** 每個新方法都先問它修補前一週的哪個瓶頸，再讀公式與演算法；這樣 DQN、PPO、PBRS、MCTS 不會變成孤立名詞，而會被看成對「狀態空間、回饋、計算預算、資料來源」不同限制的回應。
+> **Reading tip:** For each new method, ask which bottleneck from the previous week it addresses before studying its equations and algorithms. DQN, PPO, PBRS, and MCTS then become responses to different limits on state space, feedback, computation, and data rather than isolated names.
 
 ## Course Master Map: Represent, Evaluate, Learn, and Guide Decisions
 
-整門課共同研究 agent 如何選擇行動。Classical planning 先以達成 goal／降低 plan cost 表達目標；utility theory 再處理結果偏好；MDP/RL 才以 expected return 表達序列決策。Reward 是其中一種形式化方式，不必倒過來把所有 planning 問題都先改寫成 RL。
+The course asks how agents choose actions. Classical planning first expresses an objective as reaching a goal or reducing plan cost; utility theory then handles preferences over outcomes; and MDPs and RL use expected return to describe sequential decisions. Reward is one way to formalize an objective, but there is no need to recast every planning problem as RL.
 
 ```text
 Represent the world
@@ -64,14 +64,14 @@ Represent the world
 
 ### 1. The six questions that locate every method
 
-| 問題 | 你要辨識的內容 | 在本課程中的代表 |
+| Question | What to identify | Representative concepts in this course |
 |---|---|---|
-| World state | state 是否完整、可觀察、是否需要 belief/history？ | classical state、MDP state、partial observation discussion |
-| Action consequence | transition 是否 deterministic、stochastic、known、unknown？ | PDDL effects、MDP $T$、model-free RL |
-| Objective | 目標是可行性、utility、expected return，還是 imitation loss？ | planning goal、MEU、$V/Q$、behavior cloning |
-| Information source | agent 是否知道 model、只看 reward，或擁有 expert demonstrations？ | planning、ADP、MC/TD、DAgger |
-| Computation location | offline planning、online decision-time search，還是 training-time update？ | SATPlan、MCTS、DQN/PPO |
-| Failure mode | state explosion、variance、distribution shift、reward hacking，或 unsafe exploration？ | Week 1–7 的主要 transition 動機 |
+| World state | Is the state complete and observable, or does the agent need a belief or history? | Classical state, MDP state, partial observability |
+| Action consequence | Is the transition deterministic or stochastic, known or unknown? | PDDL effects, MDP $T$, model-free RL |
+| Objective | Is the goal feasibility, utility, expected return, or imitation loss? | Planning goals, MEU, $V/Q$, behavior cloning |
+| Information source | Does the agent know the model, observe only rewards, or have expert demonstrations? | Planning, ADP, MC/TD, DAgger |
+| Computation location | Does computation happen during offline planning, decision-time search, or training? | SATPlan, MCTS, DQN/PPO |
+| Failure mode | Is the bottleneck state explosion, variance, distribution shift, reward hacking, or unsafe exploration? | The main motivations for transitions across Weeks 1–7 |
 
 ### 2. The representation ladder
 
@@ -84,62 +84,62 @@ PDDL / symbolic state
   → learned search policy, reward model, or expert-data policy
 ```
 
-每升一層，都要問「上一層哪個假設已經不夠」：
+At every step up the ladder, ask which assumption from the previous step no longer holds:
 
-- symbolic planning 的優點是可驗證，但 flat search 會遇到 combinatorial explosion。
-- decision theory 能比較不確定 outcome 的偏好，但單次 decision 不足以表達長期 feedback。
-- MDP 加入 state transition 與 delayed reward，卻通常假設 model 已知。
-- RL 拿掉 known-model 假設，但 tabular representation 無法泛化到未見 state。
-- function approximation 能泛化，卻帶來 instability、bias、variance 與 deadly triad。
-- reward shaping、search、imitation 都是在補充 learning signal，但可能改變 objective 或造成 distribution shift。
+- Symbolic planning is verifiable, but flat search suffers from combinatorial explosion.
+- Decision theory compares preferences over uncertain outcomes, but a single decision cannot capture long-term feedback.
+- An MDP adds state transitions and delayed rewards, but often assumes the model is known.
+- RL removes the known-model assumption, but tabular representations do not generalize to unseen states.
+- Function approximation enables generalization but introduces instability, bias, variance, and the deadly triad.
+- Reward shaping, search, and imitation supplement the learning signal, but may change the objective or cause distribution shift.
 
 ### 3. Algorithm family matrix
 
-| 方法 | Model $T/R$ | 是否 bootstrapping | 主要資料 | 學的是什麼 | 典型代價 |
+| Method | Model $T/R$ | Bootstrapping? | Main data | What is learned? | Typical cost |
 |---|---|---|---|---|---|
-| Classical planning / SATPlan | 已知、通常 deterministic | 否 | symbolic domain | 可行 action sequence | state/action explosion |
-| Value / policy iteration | 已知 stochastic model | Bellman backup | model enumeration | $V^*$ 或 policy | 需要遍歷 state/action |
-| ADP | 從 experience 估 model | 間接 | transition counts | $hat T,hat R$ 再規劃 | model bias、exploration |
-| Monte Carlo | 不需要 model | 否 | 完整 episode return | $V^pi$ / control policy | high variance、episode delay |
-| TD / SARSA / Q-learning | 不需要 model | 是 | one-step transition | value / action value | target bias、stability |
-| DQN | 不需要 model | 是 | replayed transitions | deep $Q$ | correlated target、continuous action 不適用 |
-| REINFORCE | 不需要 model | return-based | sampled trajectories | stochastic policy $\pi_\theta$ | gradient variance |
-| Actor-Critic / PPO | 不需要 model | critic bootstraps | trajectories + value estimate | policy + value | critic bias、update sensitivity |
-| MCTS / rollout | 可用 model 或 simulator | search backup | simulated trajectories | decision-time action | per-decision computation |
-| BC / DAgger / GAIL | 不必有 reward model | 視方法而定 | expert / interactive labels | policy matching | covariate shift、expert dependence |
+| Classical planning / SATPlan | Known, usually deterministic | No | Symbolic domain | Feasible action sequence | State/action explosion |
+| Value / policy iteration | Known stochastic model | Bellman backups | Model enumeration | $V^*$ or a policy | Requires traversing states/actions |
+| ADP | Model estimated from experience | Indirectly | Transition counts | $\hat T,\hat R$, then planning | Model bias and exploration |
+| Monte Carlo | No model needed | No | Complete episode returns | $V^\pi$ or control policy | High variance and delayed episode feedback |
+| TD / SARSA / Q-learning | No model needed | Yes | One-step transitions | State or action value | Target bias and stability |
+| DQN | No model needed | Yes | Replayed transitions | Deep $Q$ | Correlated targets; unsuitable for continuous actions without modification |
+| REINFORCE | No model needed | Return-based | Sampled trajectories | Stochastic policy $\pi_\theta$ | Gradient variance |
+| Actor-Critic / PPO | No model needed | Critic bootstraps | Trajectories and value estimates | Policy and value | Critic bias and update sensitivity |
+| MCTS / rollout | Model or simulator available | Search backups | Simulated trajectories | Decision-time action | Per-decision computation |
+| BC / DAgger / GAIL | Reward model not required | Depends on method | Expert or interactive labels | Policy matching | Covariate shift and expert dependence |
 
 ### 4. Notation contract
 
-後續閱讀若看到不同講義符號，先對齊下面這組語意：
+When later readings use different notation, align it with these meanings first:
 
-- $s_t$：time $t$ 的 state；$a_t$：選出的 action；$s_{t+1}$：transition 後的 state。
-- $T(s'\mid s,a)$：transition probability；$R(s,a,s')$：單一步 reward。
-- $G_t=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}$：從 $t$ 開始的 return。
-- $V^\pi(s)=\mathbb E_\pi[G_t\mid s_t=s]$：遵循 policy $\pi$ 的 state value。
-- $Q^\pi(s,a)=\mathbb E_\pi[G_t\mid s_t=s,a_t=a]$：先採取 $a$ 後再遵循 $\pi$ 的 action value。
-- $V^*$、$Q^*$：在之後採最佳行動時的 optimal values；$\pi^*$：使它們達到最大值的 policy。
-- policy evaluation 是「固定 $\pi$，估計它多好」；control 是「改變 $\pi$，找更好的 policy」。
+- $s_t$: the state at time $t$; $a_t$: the chosen action; $s_{t+1}$: the state after the transition.
+- $T(s'\mid s,a)$: transition probability; $R(s,a,s')$: one-step reward.
+- $G_t=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}$: return starting at $t$.
+- $V^\pi(s)=\mathbb E_\pi[G_t\mid s_t=s]$: value of state $s$ under policy $\pi$.
+- $Q^\pi(s,a)=\mathbb E_\pi[G_t\mid s_t=s,a_t=a]$: value of taking $a$ first and then following $\pi$.
+- $V^*$ and $Q^*$: optimal values when acting optimally thereafter; $\pi^*$: a policy that attains them.
+- Policy evaluation fixes $\pi$ and estimates its quality; control changes $\pi$ to seek a better policy.
 
 ### 5. Five confusions to resolve before reading formulas
 
-| 容易混淆 | 正確區分 |
+| Common confusion | Correct distinction |
 |---|---|
-| Planning vs. RL | planning 的 model 通常已知；RL 要從 interaction 推斷 value/policy |
-| Value iteration vs. policy iteration | 前者直接反覆套 optimality backup；後者交替 evaluation 與 improvement |
-| MC vs. TD | MC 等 episode 結束才用完整 return；TD 用下一步估計 bootstrapping |
-| SARSA vs. Q-learning | SARSA 評估 behavior policy 實際選的 $a'$；Q-learning 評估 greedy target $\max_{a'}Q(s',a')$ |
-| Reward shaping vs. reward hacking | shaping 是設計 learning signal；hacking 是 agent 利用 proxy 的漏洞而偏離真正目的 |
+| Planning vs. RL | Planning usually assumes a known model; RL learns values or a policy from interaction |
+| Value iteration vs. policy iteration | The former repeatedly applies optimality backups; the latter alternates evaluation and improvement |
+| MC vs. TD | MC waits for a complete episode return; TD bootstraps from the next-step estimate |
+| SARSA vs. Q-learning | SARSA evaluates the action $a'$ actually chosen by the behavior policy; Q-learning evaluates the greedy target $\max_{a'}Q(s',a')$ |
+| Reward shaping vs. reward hacking | Shaping designs a learning signal; hacking exploits a proxy and deviates from the real objective |
 
 ### 6. What “complete understanding” means for each week
 
-每週不只要會說明名詞，還應能完成四個動作：
+For each week, you should be able to do four things, not merely define its terms:
 
-1. **建模：** 寫出 state、action、transition、objective 與 information assumption。
-2. **推導：** 從目標函數推到 Bellman、gradient、update rule 或 correctness invariant。
-3. **比較：** 說明新方法修補前一方法的哪個 bottleneck，以及它新增了什麼代價。
-4. **診斷：** 給定一個失敗現象，判斷是 representation、exploration、variance、distribution shift、reward design 還是 computation budget 的問題。
+1. **Model:** Specify the state, action, transition, objective, and information assumptions.
+2. **Derive:** Move from the objective to a Bellman equation, gradient, update rule, or correctness invariant.
+3. **Compare:** Explain which bottleneck a new method addresses and what new cost it introduces.
+4. **Diagnose:** Given a failure, decide whether representation, exploration, variance, distribution shift, reward design, or computation budget is responsible.
 
-> **總結：** Week 1–2 解決「如何表示與分解問題」；Week 3 解決「如何定義偏好與理性」；Week 4 解決「已知／未知 stochastic dynamics 下如何計算 value」；Week 5 解決「空間太大時如何泛化與穩定學習」；Week 6 解決「reward 不足或不可靠時如何提供 guidance」；Week 7 解決「可否在決策時搜尋，或從示範資料直接學行為」。
+> **Summary:** Weeks 1–2 address how to represent and decompose problems; Week 3 defines preferences and rational choice; Week 4 computes value under known or unknown stochastic dynamics; Week 5 handles generalization and stable learning in large spaces; Week 6 supplies guidance when rewards are weak or unreliable; and Week 7 compares decision-time search with learning from demonstrations.
 
 
 # Week 1 - AI Planning Foundations, Classical Planning, SATPlan, and Responsible AI Governance
@@ -605,17 +605,17 @@ While $3^n > 2^n$, backward search frequently explores far fewer nodes in practi
 
 ### 5.4 Worked Bridge: Progression, Regression, and SAT
 
-考慮 fluents $AtA,AtB,HasKey$。初始 state 是 $\{AtA,HasKey\}$，goal 是 $\{AtB,HasKey\}$；Move 的 precondition 是 $\{AtA\}$，add list 是 $\{AtB\}$，delete list 是 $\{AtA\}$。
+Consider the fluents $AtA,AtB,HasKey$. Initially the state is $\{AtA,HasKey\}$ and the goal is $\{AtB,HasKey\}$. Move has precondition $\{AtA\}$, add list $\{AtB\}$, and delete list $\{AtA\}$.
 
-Progression 把 action 套到完整 state：
+Progression applies an action to a complete state:
 $$s'=(s\setminus Del(Move))\cup Add(Move)=\{AtB,HasKey\}.$$
 
-Regression 則問「要讓 goal 在 action 後成立，action 前必須有什麼？」在 $Del(a)\cap g=\varnothing$、action 與 goal 有關的情況下：
+Regression asks what must hold before an action so that the goal holds afterward. When $Del(a)\cap g=\varnothing$ and the action is relevant to the goal:
 $$Regress(g,a)=(g\setminus Add(a))\cup Pre(a)=\{HasKey,AtA\}.$$
 
-這個 regressed goal 已被初始 state 滿足，因此找到一個一步 plan。Regression 的節點是需要成立的條件集合，不是某個唯一的完整世界；$HasKey$ 雖非 Move 的 precondition，仍須保留，因為它是尚未由 action 達成的 goal。
+The initial state satisfies this regressed goal, so we have a one-step plan. A regression node describes conditions that must hold, not a single complete world state. Although $HasKey$ is not a precondition of Move, it must remain because the action does not achieve that part of the goal.
 
-SATPlan 再把相同問題改成 time-indexed variables：$AtA_0,Move_0,AtB_1$。Precondition/effect clauses 描述「若採取 Move 會怎樣」，frame/successor-state clauses 描述「沒有 action 改變 HasKey 時，它為何繼續成立」。三種方法的 domain semantics 相同，差別是求解問題的表示方式。
+SATPlan encodes the same problem with time-indexed variables $AtA_0,Move_0,AtB_1$. Precondition and effect clauses state what Move does; frame or successor-state clauses explain why HasKey persists when no action changes it. All three methods use the same domain semantics but represent the search problem differently.
 
 ## 6. Planning as Logical Inference: Boolean Satisfiability (SATPlan)
 
@@ -2077,10 +2077,10 @@ Bayesian updating changes our belief; information has decision value only if it 
 Without information, $EU(Safe)=4$ and $EU(Risky)=4$. With perfect information, choose Risky in the good state and Safe in the bad state:
 $$EU_{\text{perfect info}}=\tfrac12(10)+\tfrac12(4)=7,\qquad EVPI=7-4=3.$$
 
-一般形式為：
+In general:
 $$EVPI=\mathbb E_s[\max_a U(a,s)]-\max_a\mathbb E_s[U(a,s)]\ge0.$$
 
-關鍵是 $\max$ 與 expectation 的順序：先看資訊再選 action，至少能模仿原本不看資訊的選擇。若資訊有成本，必須用相同 utility 尺度比較；money 的 utility 非線性時，utility 差 $3$ 不能直接解讀為願付 $3$ 元。Week 4 將一次性的「觀測後決策」延伸成每一步都影響未來的 decision process。
+The order of $\max$ and expectation matters: choosing after observing information can always imitate a choice made without that information. Compare information costs on the same utility scale; when monetary utility is nonlinear, a utility difference of $3$ is not directly a willingness to pay $3$. Week 4 extends this one-shot observation-and-choice problem to a decision process in which every step affects the future.
 
 ## 4. The Axioms of Rational Preferences
 
@@ -4282,7 +4282,7 @@ While tabular dynamic programming and tabular reinforcement learning provide exa
 
 ## Week 5 Reading Guide: From Tabular Lookup to Stable Policy Updates
 
-Week 5 是整門課最重要的「scaling transition」。它不是突然跳到 DQN 或 PPO，而是沿著一條必要鏈條前進：
+Week 5 is the course's main scaling transition. It follows a necessary chain rather than jumping straight to DQN or PPO:
 
 ```text
 tabular RL cannot cover |S|
@@ -4296,19 +4296,19 @@ tabular RL cannot cover |S|
   → TRPO/PPO restrict destructive policy updates
 ```
 
-### Week 5 的每一步要回答什麼
+### What each step in Week 5 must answer
 
-| Section | 核心問題 | 關鍵新增概念 | 主要風險 |
+| Section | Central question | New concept | Main risk |
 |---|---|---|---|
-| 1–2 | 如何讓 value representation 泛化到未見 state？ | features、linear/non-linear approximation | approximation bias |
-| 3 | 如何把完整 episode return 變成 regression target？ | MC target、Widrow-Hoff / SGD | high variance、delayed update |
-| 4 | 如何不用等 episode 結束就更新？ | TD target、semi-gradient、SARSA/Q-learning | bootstrapping bias |
-| 5 | 為何 function approximation + bootstrap + off-policy 會發散？ | deadly triad、Baird counterexample | divergence / catastrophic forgetting |
-| 6–7 | 如何讓 deep Q-learning 可訓練？ | experience replay、target network、Double DQN | replay distribution、overestimation |
-| 8–9 | 若 action space continuous 或 policy 本身要 stochastic，怎麼辦？ | policy gradient、REINFORCE、baseline | gradient variance |
-| 10–11 | 如何同時學 policy 與 value，並避免 policy collapse？ | actor-critic、TRPO、PPO clipping | critic bias、too-large update |
+| 1–2 | How can value representations generalize to unseen states? | Features and linear/nonlinear approximation | Approximation bias |
+| 3 | How can complete episode returns become regression targets? | MC targets and Widrow-Hoff / SGD | High variance and delayed updates |
+| 4 | How can we update without waiting for an episode to end? | TD targets, semi-gradients, and SARSA/Q-learning | Bootstrapping bias |
+| 5 | Why can function approximation, bootstrapping, and off-policy learning diverge? | Deadly triad and Baird counterexample | Divergence and catastrophic forgetting |
+| 6–7 | How can deep Q-learning become trainable? | Experience replay, target networks, and Double DQN | Replay distribution and overestimation |
+| 8–9 | What if actions are continuous or the policy must be stochastic? | Policy gradients, REINFORCE, and baselines | Gradient variance |
+| 10–11 | How can we learn policy and value together while avoiding policy collapse? | Actor-critic, TRPO, and PPO clipping | Critic bias and excessively large updates |
 
-> **最重要的閱讀順序：** 先分清楚「學的是 $V$、$Q$ 還是 $\pi$」，再判斷 target 是 full return 還是 bootstrap；最後才看 replay、baseline、trust region 這些 stabilization devices。這三層若倒過來讀，很容易只記住演算法名稱而不理解它們各自在修補什麼。
+> **Suggested reading order:** First identify whether a method learns $V$, $Q$, or $\pi$; then decide whether its target is a full return or a bootstrap estimate. Only after that study replay, baselines, and trust regions as stabilization tools. Reversing these layers makes it easy to memorize algorithm names without understanding the problems they solve.
 
 <draft>
 - 1. Scaling Sequential Decisions: The Necessity of Function Approximation

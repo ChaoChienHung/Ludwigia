@@ -17,27 +17,27 @@ LastModified: 2026-10-04
 
 ## Course Reading Architecture
 
-CS5224 的主線是從「為什麼需要 cloud」一路下沉到「硬體如何支撐 abstraction」，再回到「應用如何利用這些 abstraction」。閱讀時不要把 virtualization、datacenter、MapReduce 當成平行章節；它們是同一個 stack 的不同層：
+CS5224 moves from **why cloud computing is needed**, down to **how hardware supports abstraction**, and back up to **how applications use those abstractions**. Virtualization, datacenters, and MapReduce are not unrelated topics; they occupy different layers of one stack:
 
 ```text
-需求與經濟動機 → reference architecture → workload placement / elasticity
+Demand and economics → reference architecture → workload placement / elasticity
       → datacenter hardware / network / energy → virtualization / isolation
       → multi-tier applications / MapReduce / FaaS
 ```
 
-| Week | 知識角色 | 與下一週的橋接 |
+| Week | Role in the course | Bridge to the next week |
 |---|---|---|
-| 1 | 定義 cloud 的 on-demand、elastic、shared-pool 特性，並說明 scaling 與 governance | 需要一個共同 vocabulary 來描述 provider、consumer、service model |
-| 2 | 用 NIST reference architecture、IaaS/PaaS/SaaS 與 responsibility boundary 統一描述 cloud | 有了抽象層後，才能問 workload 如何分布與資源如何調度 |
-| 3 | 研究 distribution、resource pooling、dynamic scalability、cloud bursting | 這些能力不是憑空出現，必須由 datacenter 的實體資源支撐 |
-| 4 | 由 hosting、server、storage、network、power/cooling 看到 cloud 的物理成本 | 硬體若直接暴露給每個 tenant，隔離與利用率會成為瓶頸 |
-| 5 | 用 hypervisor、hardware assist、container 與 multitenancy 將硬體切成可管理的 logical resources | abstraction 成熟後，才可組裝高階 application architecture |
-| 6 | 將前面各層合成 multi-tier web apps、MapReduce 與 serverless FaaS | 回到 Week 1：cloud 的價值就是以服務方式提供可伸縮的運算能力 |
-| Lab 1 | 用攝影工作室相簿串起 service model、object storage、tenant isolation 與 event-driven FaaS | 由需求推導架構，再用權限反例、成本模型與故障情境檢驗設計 |
+| 1 | Define on-demand, elastic, shared-pool cloud properties; explain scaling and governance | Establish a common vocabulary for providers, consumers, and service models |
+| 2 | Use the NIST reference architecture, IaaS/PaaS/SaaS, and responsibility boundaries to describe cloud services | With the abstraction layers clear, examine workload placement and resource scheduling |
+| 3 | Study distribution, resource pooling, dynamic scalability, and cloud bursting | These capabilities depend on physical datacenter resources |
+| 4 | Examine hosting, servers, storage, networking, power, and cooling as physical cloud costs | Directly exposing hardware to tenants creates isolation and utilization problems |
+| 5 | Use hypervisors, hardware assistance, containers, and multitenancy to make manageable logical resources | Mature abstractions enable higher-level application architectures |
+| 6 | Combine the layers into multi-tier web applications, MapReduce, and serverless FaaS | Return to Week 1: cloud delivers scalable computing as a service |
+| Lab 1 | Connect service models, object storage, tenant isolation, and event-driven FaaS through a photography gallery | Derive architecture from requirements; test it against permission counterexamples, costs, and failure scenarios |
 
-Lab 1 置於 Week 6 後作為整合案例，不代表實驗的實際授課週次。準備實驗時可先讀 Week 1–2 的 service model 與責任邊界，再讀 Lab 1 第 1–3 節建立儲存與權限地基；理解 Week 5 的隔離與 Week 6 的 serverless 後，再接續 Lab 1 的完整資料流、安全性與維運設計。
+Lab 1 appears after Week 6 as an integration case; this placement does not assert the actual teaching week. For the lab, first read the Week 1–2 service models and responsibility boundaries, then Lab 1 sections 1–3 for storage and permissions. After Week 5 isolation and Week 6 serverless, continue with the full Lab 1 data flow, security, and operations design.
 
-> **閱讀提示：** 遇到任何 cloud technology，先標記它解決的是哪一層的問題：`business demand`、`service boundary`、`resource management`、`physical infrastructure`、`isolation` 或 `application execution`。這能避免把同一個「scalability」名詞在不同層混用。
+> **Reading tip:** For any cloud technology, identify the problem layer it serves: `business demand`, `service boundary`, `resource management`, `physical infrastructure`, `isolation`, or `application execution`. This keeps the meaning of “scalability” clear across layers.
 
 # Week 1 - Cloud Computing Fundamentals: Architecture, Business Drivers, Scaling Mechanics, and Security Governance
 
@@ -4056,240 +4056,139 @@ Modern enterprise software systems rarely rely on a single computing paradigm. I
 14. Gopalan, A., & Teo, Y. M. (2025). *CS5224 Cloud Computing (Lecture 6: Applications and Paradigms, Part 2)*. School of Computing, National University of Singapore (NUS).
 15. IBM Cloud Education. (2023). *What is Function as a Service (FaaS)?* IBM Think Topics.
 
-# Lab 1 私有攝影相簿的雲端架構與 Viva 準備
+# Lab 1: Cloud Architecture for a Private Photography Gallery and Viva Preparation
 
-本案例將前六週的概念落到同一個問題：攝影師 Priya 如何交付照片，讓新人與受邀親友方便瀏覽，同時不讓不同客戶互相看到照片，也不必全天維護伺服器？
+This case connects the first six weeks of the course: how can photographer Priya deliver wedding photos for couples and invited guests to browse conveniently, while keeping each client's gallery private and avoiding a server that must be maintained around the clock?
 
-閱讀順序是 **業務需求 → 儲存與權限地基 → 服務分工 → 資料流 → 多租戶授權 → 非同步可靠性 → 儲存生命週期與成本 → Viva 驗證**。這樣每個 AWS 服務都是為了前一節已經出現的問題而引入，而不是一串要背誦的產品名稱。
+Read in this order: **business requirements → storage and permission foundations → service responsibilities → data flow → tenant authorization → asynchronous reliability → storage lifecycle and cost → viva verification**. Each AWS service is introduced to solve a specific requirement.
 
-本節整合提供的「CS5224 Lab 1 完整知識點與 Viva 準備」與「多租戶存取控制與授權驗證機制」兩份整理。以下容量與業務情境是案例假設；架構、測試表是設計與驗收建議，**不是已部署、已測通或實際帳單的證明**。服務限制與計費規則於 2026-10-04 對照 AWS 官方文件；正式提交前仍需核對課程要求、自己的帳戶配額與區域報價。
+This section integrates the supplied *CS5224 Lab 1 Complete Knowledge Points and Viva Preparation* and *Multi-Tenant Access Control and Authorization Verification Mechanisms*. Workload figures are case assumptions. The architecture and test matrix are design proposals, **not evidence of deployment, successful testing, or actual bills**. Service limits and pricing rules were checked against AWS documentation on 2026-10-04; verify course requirements, account quotas, and regional prices before submission.
 
-## 1 從需求建立共同地基
+## 1. Establish a shared foundation from requirements
 
-### 1.1 工作量與系統範圍
+### 1.1 Workload and system scope
 
-假設每年 40 場婚禮，每場交付 400 張已後製照片，平均原圖 5 MB、預覽圖 300 KB，客戶與工作室主要位於新加坡。上傳集中在交件時段，平時以零星瀏覽為主。系統需要相簿成員管理、預覽、授權下載與長期留存；未修編 RAW 檔屬工作室內部備份，不混入這份交付平台的容量估算。
+Assume 40 weddings per year, 400 edited photos per wedding, 5 MB per original, and 300 KB per preview. Clients and the studio are mainly in Singapore. Uploads cluster around delivery dates; ordinary traffic consists mostly of occasional browsing. The service needs gallery membership, previews, authorized downloads, and long-term retention. Unedited RAW files are an internal studio backup and are excluded from this delivery platform's capacity estimate.
 
-| 需求 | 帶來的設計問題 | 後續對應機制 |
+| Requirement | Design question | Mechanism |
 |---|---|---|
-| 照片多、以整個檔案讀寫 | 如何保存大量二進位資料 | S3 object storage |
-| 不同新人不可互看 | 登入後還要判斷可以看哪一本相簿 | Cognito 身分加 DynamoDB membership |
-| 照片大、前端需快速瀏覽 | 如何避免每次都下載原圖 | 背景產生預覽圖，原圖與預覽分流 |
-| 流量有尖峰且長時間閒置 | 如何避免常駐運算，又不壓垮處理端 | Lambda、受控並發，必要時 SQS |
-| 老照片少用但不能遺失 | 如何交換成本與取回等待時間 | Lifecycle 與非同步 restore |
+| Many photos read and written as complete files | How do we store binary assets? | S3 object storage |
+| Couples must not see each other's galleries | Who can access each gallery after login? | Cognito identity plus DynamoDB membership |
+| Large originals but fast browsing | How do we avoid downloading originals for every view? | Generate previews in the background and separate them from originals |
+| Spiky demand and long idle periods | How do we avoid always-on compute without overwhelming processing? | Lambda, controlled concurrency, and SQS if needed |
+| Old photos are rarely accessed but must be retained | How do we trade storage cost against retrieval delay? | Lifecycle rules and asynchronous restore |
 
-選擇 ap-southeast-1 的設計理由是接近主要使用者與符合資料落地需求；不能直接推導「一定最低延遲」或「自動符合法規」。延遲需量測，合規需檢查具體要求；CDN、備份及支援服務的資料流也應納入範圍。
+The design chooses `ap-southeast-1` because it is near the main users and may satisfy data-location requirements. This does not prove minimum latency or regulatory compliance. Measure latency and check the actual requirements, including CDN, backup, and supporting-service data flows.
 
-### 1.2 服務模型其實是責任邊界
+### 1.2 Service models define responsibility boundaries
 
-| 模型 | 使用者仍需負責 | 供應商主要代管 | 本案例的取捨 |
+| Model | Customer responsibility | Provider responsibility | Case trade-off |
 |---|---|---|---|
-| IaaS | OS、runtime、程式、安全配置與資料 | 實體機器、虛擬化等基礎設施 | EC2 可行，但增加主機維運 |
-| PaaS | 程式、資料、部署設定與存取控制 | 平台與部分部署流程 | Amplify Hosting 適合靜態前端 |
-| FaaS | 函式、依賴套件、IAM、觸發器、資料與監控 | 執行環境與運算調度 | Lambda 適合短時間 API 與縮圖 |
-| SaaS | 帳戶、分享權限、資料使用與業務設定 | 完整應用及其平台 | 現成相簿服務可減少建置負擔 |
+| IaaS | OS, runtime, application, security configuration, and data | Physical machines and virtualization | EC2 is possible but adds host operations |
+| PaaS | Application, data, deployment settings, and access control | Platform and parts of deployment | Amplify Hosting suits a static frontend |
+| FaaS | Functions, dependencies, IAM, triggers, data, and monitoring | Execution environment and compute scheduling | Lambda suits short API calls and image conversion |
+| SaaS | Accounts, sharing permissions, data use, and business settings | Complete application and platform | An existing gallery product reduces development |
 
-Serverless 不是「只有程式碼，其餘都不用管」：平台代管伺服器，但授權漏洞、依賴更新、資料保護與成本仍是應用方責任。Scale to zero 通常指特定運算資源不再待命；S3 儲存、備份、日誌、網域或保留容量仍可能收費。
+Serverless does not mean only code needs attention. The provider manages servers, while the application owner remains responsible for authorization, dependencies, data protection, and cost. Scale to zero usually describes particular compute resources; storage, backups, logs, domains, or reserved capacity may still incur charges.
 
-從 CapEx 轉向 OpEx，是將前期購買硬體改成持續購買服務，不是把總成本消掉。自建方案比較可客製化，也較能掌握匯出與生命週期；但仍依賴 AWS，不能宣稱消除 vendor lock-in 或取得實體硬體主權。SaaS 的資料所有權與匯出能力則取決於契約，不能僅因資料存在別人的平台就判定不屬於客戶。
+Moving from CapEx to OpEx replaces upfront hardware purchases with ongoing service purchases; it does not eliminate total cost. A custom implementation offers more control over behavior, export, and retention, but still depends on AWS. SaaS ownership and export rights depend on the contract, not simply on where the data is stored.
 
-### 1.3 雲端儲存三大範式深度比較（Block Storage vs. File Storage vs. Object Storage）
+### 1.3 Block, file, and object storage
 
-在雲端架構設計中，儲存服務的選型直接決定了系統的存取延遲、並發吞吐量、資料修改行為、維運複雜度與長期成本。Block Storage（區塊儲存）、File Storage（檔案儲存）與 Object Storage（物件儲存）三大範式的核心差異，聚焦於**資料組織結構（Data Organization Form）**、**存取協議與介面（Access Protocols）**、**效能特徵（Latency & IOPS）**以及**擴展性權衡（Scalability Trade-offs）**。
+The choice affects latency, concurrent throughput, update semantics, operations, and long-term cost.
 
-#### 生活直覺比喻（Everyday Analogies）
-
-- **區塊儲存（Block Storage）—— 散頁活頁紙或實體硬碟磁區**：
-  底層系統完全不關心資料代表的檔案語意、上下文或格式。它只負責根據磁區位址（Address / LBA）以極致速度讀寫固定大小的原始 Raw Chunks（區塊）。極度適合做為作業系統啟動磁碟與關聯式資料庫的底層地基。
-- **檔案儲存（File Storage）—— 辦公室樹狀公文櫃**：
-  依循經典的樹狀階層目錄與檔名結構（例如 `/department/hr/payroll.xlsx`），底層由儲存伺服器維護檔案系統與鎖定機制，允許多個客戶端主機跨區域網路透過標準協議掛載、共享與協同存取。
-- **物件儲存（Object Storage）—— 代客泊車取車票或獨立行李保管箱**：
-  客戶端交付一個完整的封裝包裹（包含原始二進位資料 Payload 加上自訂 Metadata），換取一張全域唯一的取車票（Unique Key / ID）。若要修改內容，無法在包裹內部局部打補丁，必須整包重新打包覆蓋（Immutable / WORM）；但整個儲存池幾乎具備無限水平擴展的能力。
-
-#### 核心維度深度對照矩陣（Core Dimensions Comparison Table）
-
-| 比較維度 | 區塊儲存（Block Storage） | 檔案儲存（File Storage） | 物件儲存（Object Storage） |
+| Dimension | Block storage | File storage | Object storage |
 |---|---|---|---|
-| **資料組織形式** | 固定大小之原始區塊（Raw Blocks），無原生檔案與目錄概念 | 樹狀階層目錄結構（Hierarchical Directory Tree，如 `/folder/file.ext`） | 平坦命名空間（Flat Namespace），以 Bucket 為容器，每個物件具備唯一 Key |
-| **元數據（Metadata）** | 極度精簡；僅限於區塊位址、長度與底層控制 Flags | 有限；包含標準屬性（檔名、大小、建立時間、POSIX 讀寫執行權限） | 豐富且高度自訂；允許任意 Key-Value Pairs 與物件本體一同存放 |
-| **存取協議 / 介面** | SCSI, iSCSI, Fibre Channel (FC), NVMe-oF（通常先格式化為檔案系統再掛載） | 網路檔案共享協議（NFS, SMB/CIFS, 9P） | 經由 HTTP/HTTPS 的 RESTful Web API（標準操作：GET, PUT, DELETE, HEAD） |
-| **修改行為** | 支援原位修改（In-place Modification），隨機讀寫速度極快 | 支援字節級（Byte-level）內部微調與檔案末端追加（Append） | 不可變（Immutable / WORM）；不支援局部修改，更新必須整包重新上傳覆蓋 |
-| **延遲與 IOPS** | 極低延遲（微秒至個位數毫秒級），極高隨機 IOPS | 中等延遲；受網路協議額外開銷與階層目錄鎖（File Locking）競爭影響 | 較高延遲（十毫秒至數百毫秒）；針對極致吞吐量（Throughput）而非事務延遲設計 |
-| **擴展性（Scalability）** | 主要為垂直擴展（Scale-up）；受限於單一儲存陣列或 SAN Fabric 物理邊界 | 中等；超大規模水平擴展時，深層目錄樹的元數據同步與鎖同步容易成為瓶頸 | 幾乎無限之水平擴展（Scale-out），容量橫跨 Petabytes (PB) 至 Exabytes (EB) |
-| **典型產品與實作** | AWS EBS, 儲存區域網路 (SAN), 本機 VM 虛擬磁碟 | AWS EFS, NetApp Filers, 傳統網路附加儲存 (NAS) | AWS S3, Google Cloud Storage (GCS), Ceph, MinIO |
+| Mental model | Raw disk sectors or loose pages | Shared hierarchical filing cabinet | Complete parcel retrieved with a unique key |
+| Organization | Addressed blocks without native files | Directories and file names | Bucket and object key in a flat namespace |
+| Metadata | Minimal block controls | File attributes and permissions | Rich system and custom key-value metadata |
+| Interface | SCSI, iSCSI, Fibre Channel, NVMe-oF; often formatted and mounted | NFS, SMB/CIFS, 9P | HTTP/HTTPS APIs such as GET, PUT, DELETE, HEAD |
+| Updates | Efficient in-place random writes | Byte-level writes and appends | Replace the object for a content change; no partial update |
+| Performance | Low latency and high random IOPS | Moderate latency with network and locking overhead | Designed for scalable throughput rather than transaction latency |
+| Scaling | Often limited by an array or SAN boundary | Shared filesystem metadata and locks may bottleneck | Large horizontal scale across many objects |
+| Examples | EBS, SAN, VM disks | EFS, NAS, NetApp | S3, GCS, Ceph, MinIO |
 
-#### 典型架構、運作機制與適用場景（Typical Architectures & Scenarios）
+Block volumes expose raw devices for filesystems such as ext4, XFS, NTFS, or APFS. They suit database pages, indexes, and boot volumes where frequent random updates matter. File storage provides shared directories and file locking for multiple machines; examples include shared application files, home directories, and build caches. Object storage packages content and metadata under a key and suits photos, videos, archives, machine-learning datasets, data lakes, and CDN origins. S3 stores data redundantly across facilities according to the selected storage class.
 
-1. **區塊儲存（Block Storage）**：
-   - **運作機制**：將儲存卷（Volume）作為原始區塊裝置直接暴露給作業系統。作業系統將其格式化為本地檔案系統（如 ext4, XFS, NTFS 或 APFS）後直接由檔案系統驅動管理。
-   - **理想場景**：需要密集隨機 I/O 與低延遲事務處理的關聯式資料庫與 NoSQL 資料庫（例如 PostgreSQL, MySQL, Oracle, Cassandra）；虛擬機（EC2）與容器的根啟動磁區（Boot Volumes）。
-2. **檔案儲存（File Storage）**：
-   - **運作機制**：由儲存伺服器集中管理底層檔案系統與分散式鎖定機制（Distributed File Locks），透過標準網路協議向多個運算節點同時暴露共用目錄。
-   - **理想場景**：多實例運算集群或微服務需要並發讀寫共享的應用程式設定檔或原始碼；企業內部檔案共享盤、開發者 Home 目錄、CI/CD 構建快取與協同代碼空間。
-3. **物件儲存（Object Storage）**：
-   - **運作機制**：徹底拋棄階層樹。將資料內容（Data）、系統元數據（System Metadata）與自訂標籤（Custom Tags）封裝為單一不可分割的物件單元，透過全域唯一 URL/Key 進行定址。底層叢集自動跨多可用區（Multi-AZ）或多資料中心進行資料分片、糾刪碼（Erasure Coding）與冗餘複製。
-   - **理想場景**：海量非結構化資料儲存庫（高解析度照片庫、影音串流、音訊檔案、冷備份系統封存）；人工智慧與機器學習訓練資料集、分析型資料湖（Data Lakes，供 Apache Spark、Presto、Athena 查詢）；靜態網站託管與 CDN 原始來源（Origin）。
+**Selection heuristic:** use block storage for frequent small random updates, file storage when multiple machines need shared filesystem semantics, and object storage for large collections of complete, mostly immutable assets.
 
-#### 架構選型啟發法（Architectural Selection Heuristics）
+### 1.4 Why this gallery uses S3
 
-- **情境 A：高頻局部隨機修改（如資料庫 B-tree 索引頁更新）** $\longrightarrow$ **堅決選擇區塊儲存（Block Storage）**。
-- **情境 B：多機器需要並發讀寫同一套目錄，且強依賴 POSIX 檔案語意** $\longrightarrow$ **堅決選擇檔案儲存（File Storage）**。
-- **情境 C：一次寫入、多次讀取（WORM）、規模達 PB 級之非結構化靜態資產** $\longrightarrow$ **堅決選擇物件儲存（Object Storage）**。
+Edited photos are complete binary assets, normally viewed or downloaded as a whole. Browsers can use HTTP GET and PUT without mounting a filesystem. Lifecycle rules can move older originals to an archival class. A bucket contains objects; `tan-mei/photo-1.jpg` is an object key whose slash looks like a directory but **does not create tenant isolation**.
 
-### 1.4 為什麼婚禮攝影相簿平台精確選用 Object Storage (S3)
+S3 provides strong read-after-write consistency for successful object writes. An acknowledged original does **not** mean that an S3 notification, thumbnail worker, or DynamoDB update has finished. Cross-service workflow state still needs coordination. [AWS: S3 Strong Consistency](https://aws.amazon.com/s3/consistency/)
 
-依據上述選型啟發法，婚禮攝影平台（Priya's Platform）的資產具備以下絕對特徵：
+## 2. Distinguish the public-read exercise from the private design
 
-1. **二進位不可變性（Immutable Binary Assets）**：攝影師後製完畢的照片屬於最終成品，使用者只會全圖瀏覽或整張下載，絕無「修改第 1024 個 byte」或局部隨機寫入的需求，完美契合 WORM 特性。
-2. **Web 協議天然對齊（HTTP Native）**：照片必須由全球瀏覽器直接請求，物件儲存直接暴露 RESTful API（GET/PUT），免除透過檔案系統掛載（Mount）的沉重開銷。
-3. **儲存生命週期與分層需求（Tiering）**：老照片可由底層直接自動轉移至 S3 Glacier 封存，這是區塊或檔案儲存難以輕量自動化實現的。
+### 2.1 Part 1 demonstrates permission semantics, not client isolation
 
-在 S3 的平坦命名空間模型中：Bucket 是全域唯一的容器，Object 是二進位內容與元數據，Key 是物件全路徑名稱。`tan-mei/photo-1.jpg` 中的斜線僅僅是為人類可讀性模擬的 Prefix，**在底層完全不存在實體目錄，更不會自動建立租戶隔離**。
+For non-sensitive lab objects, granting anonymous `s3:GetObject` without `s3:ListBucket` demonstrates that reading one object and listing a bucket are separate permissions.
 
-此外，S3 對成功的物件寫入提供強一致性（Strong Read-after-Write Consistency）；但必須清楚意識到：「原圖成功寫入 S3」僅代表 S3 儲存叢集已確認落盤，**絕不代表非同步縮圖 Lambda、S3 事件通知或 DynamoDB 狀態更新已經完成**。儲存層的一致性不能替代跨服務的工作流程協調。[AWS: S3 Strong Consistency](https://aws.amazon.com/s3/consistency/)
-
-## 2 先理解公開讀取實驗與正式架構的差異
-
-### 2.1 Part 1 展示權限語意，不展示客戶隔離
-
-Part 1 若用無敏感資料的實驗桶，授予匿名 `s3:GetObject` 但不授予 `s3:ListBucket`，它展示的是「讀單一物件」與「列出物件清單」兩種權限彼此獨立：
-
-| 操作 | 資源範圍例子 | 含義 |
+| Action | Example resource | Meaning |
 |---|---|---|
-| `s3:GetObject` | `arn:aws:s3:::example-lab-bucket/gallery-a/photo-1.jpg` | 讀取指定物件 |
-| `s3:GetObject` | `arn:aws:s3:::example-lab-bucket/gallery-a/*` | 讀取此 prefix 下的物件 |
-| `s3:ListBucket` | `arn:aws:s3:::example-lab-bucket` | 列出 bucket 內容，可再以條件限制 prefix |
+| `s3:GetObject` | `arn:aws:s3:::example-lab-bucket/gallery-a/photo-1.jpg` | Read one specified object |
+| `s3:GetObject` | `arn:aws:s3:::example-lab-bucket/gallery-a/*` | Read objects under a prefix |
+| `s3:ListBucket` | `arn:aws:s3:::example-lab-bucket` | List bucket contents, possibly subject to a prefix condition |
 
-GetObject 的 ARN **不必以萬用字元結尾**；精確指定一張圖也有效。ListObjectsV2 的 `prefix` 只是查詢過濾，不是額外授權。一般 GetObject 請求在物件不存在時，有 ListBucket 權限才可獲得 404；無該權限可能得到 403，所以 403 本身不能證明物件存在。[AWS: GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
+A GetObject ARN need not end in `*`. The `prefix` parameter to ListObjectsV2 filters a query; it is not independent authorization. A missing object may produce 404 when the caller has ListBucket and 403 otherwise, so 403 alone does not establish that the object exists. [AWS: GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
 
-不能列清單不等於照片私有：知道或獲得完整公開 URL 的人仍能讀圖。移除公開 policy 可以收回未來存取，但不能收回已下載副本。因此 Part 1 不應直接用來交付客戶私密照片，實驗的成功也不能當作 Part 2 授權設計的證明。
+An unlistable public photo remains readable to anyone who knows or receives its URL. Removing the public policy stops future access but cannot recover downloaded copies. Part 1 must not be used as the private client delivery design or treated as proof of Part 2 authorization.
 
-### 2.2 Policy 與 Block Public Access 的不同責任
+### 2.2 Policies and Block Public Access have different roles
 
-Policy 主要描述誰（Principal）可以或不可以（Effect）對哪些資源（Resource）做什麼（Action），並可加上 Condition。`Version: "2012-10-17"` 是 policy 語言版本，不是本次設定的日期。身分 policy 與 resource policy 需連同組織限制、session 等相關規則評估；不能把完整 IAM 評估簡化成固定四層排序。
+Policies state principal, effect, action, resource, and optional conditions. `Version: "2012-10-17"` is the policy language version, not a configuration date. Evaluate identity and resource policies alongside relevant organization and session restrictions; IAM evaluation is not a fixed four-layer sequence.
 
-Block Public Access（BPA）是對公開存取的保護，不是授權：
-
-| 設定 | 要防止的情況 |
+| Block Public Access setting | What it guards against |
 |---|---|
-| BlockPublicAcls | 新增公開 ACL |
-| IgnorePublicAcls | 既有公開 ACL 被用來授權 |
-| BlockPublicPolicy | 寫入會被判定為公開的 bucket policy |
-| RestrictPublicBuckets | 具有公開 policy 的 bucket 被公開或跨帳戶存取，服務等例外依規則評估 |
+| BlockPublicAcls | Adding public ACLs |
+| IgnorePublicAcls | Existing public ACLs granting access |
+| BlockPublicPolicy | Writing a bucket policy classified as public |
+| RestrictPublicBuckets | Public or cross-account access through a bucket with a public policy, subject to documented exceptions |
 
-關閉 BPA 只移除對應阻擋，不會自動產生 Allow；而只改 bucket 層也未必能解除帳戶或組織層限制。Part 1 的局部關閉僅是實驗條件；Part 2 原圖與預覽桶都應保持公開存取阻斷，搭配所需最小權限。[AWS: Blocking public access to your Amazon S3 storage](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html)
+Disabling a BPA setting only removes that guard; it does not create an Allow. Account or organization settings may still apply. Narrow changes in Part 1 are experimental conditions. Both Part 2 buckets should block public access and use least-privilege policies. [AWS: Blocking public access](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html)
 
-Object Ownership 選 Bucket owner enforced 時，ACL 停用並以 policies 控制權限。若改成 Bucket owner preferred，也不是所有跨帳戶上傳都自動歸 bucket owner，還涉及上傳時的 ACL 條件。[AWS: Controlling ownership of objects and disabling ACLs for your bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html)
+With Object Ownership set to Bucket owner enforced, ACLs are disabled and policies control access. Bucket owner preferred does not automatically transfer ownership for every cross-account upload; upload ACL conditions still matter. [AWS: Object Ownership](https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html)
 
-到這裡，讀者應已能回答「物件怎麼存、公開權限怎麼來」。下一步才是建立誰有資格拿到私有物件的讀寫能力。
+Once object storage and public permissions are clear, the next question is who may receive a capability to read or write a private object.
 
-## 3 將需求拆成服務職責與雙平面網路分離
+## 3. Assign service responsibilities and separate two traffic planes
 
-### 3.1 核心雲端服務全景與多維職責分工（High-Level Architecture & Core Services）
+### 3.1 Core services
 
-為了解決攝影師 Priya 的高畫質照片交付、多租戶隔離、零伺服器維運與彈性成本需求，系統由以下 8 大 AWS Serverless 與託管服務精密協同：
-
-| 服務元件 | 架構角色與核心職責 | 責任邊界（不負責什麼） |
+| Service | Responsibility | Boundary |
 |---|---|---|
-| **AWS Amplify Hosting** | 託管 Single Page Application（SPA）前端靜態資產（HTML/CSS/JS），透過全球邊緣節點（Global Edge）分發，自帶 SSL/HTTPS 與 Git CI/CD 自動構建部署 | 僅負責靜態傳輸；不能靠前端隱藏按鈕或路由跳轉代替真實的相簿後端授權 |
-| **Amazon Cognito** | 客戶身分與存取管理（CIAM），以 User Pools 取代自建用戶表、密碼 Hash 與 Session 追蹤，簽發密碼學安全之 JSON Web Tokens（JWTs） | 僅證明身分合法性（Who you are）；不自動維護使用者與婚禮相簿間的業務歸屬關係 |
-| **Amazon API Gateway** | 同步 RESTful API 入口與網關守門人（Gatekeeper），在路由前進行加密 JWT 簽名校驗與請求節流（Throttling） | 僅校驗 Token 完整性與過期時間；Token 通過不等於相簿讀寫權限通過 |
-| **AWS Lambda Function A<br>（Application API）** | 執行核心業務邏輯：驗證 DynamoDB 相簿歸屬權、計算並簽發短期有效之 S3 預簽網址（Pre-Signed URLs） | 專注於中繼控制；**嚴禁直接搬運或串流高畫質照片本體**，避免運算與頻寬浪費 |
-| **AWS Lambda Function B<br>（Image Processing Worker）** | 非同步事件驅動 Worker，由 S3 `ObjectCreated` 事件觸發，將 5 MB 原圖非同步壓縮轉換為 300 KB Web 預覽圖並更新資料庫狀態 | 專注於圖片轉換；不應具備修改使用者相簿權限或簽發預簽網址的能力 |
-| **Amazon S3<br>（Originals & Previews Buckets）** | 高持久性物件儲存；以雙桶架構（Dual-Bucket）分別存放高畫質原圖與輕量預覽圖，獨立配置 IAM、事件觸發器與生命週期政策（Lifecycle） | 平坦命名空間與 Prefix 名稱本身不代表會員權限，必須維持全公開阻斷（Block Public Access） |
-| **Amazon DynamoDB** | 毫秒級延遲的 Serverless NoSQL 鍵值/文檔資料庫，維護使用者與相簿授權對應、照片資產狀態與 Glacier 取回進度 | 專注於結構化元數據；不存放照片二進位本體 |
-| **AWS IAM** | 雲端安全與身分基石，以最小權限原則（Least Privilege）為 Lambda 執行環境、API Gateway 與內部服務授予精確操作範圍 | 負責雲端資源級權限（Service-to-Resource）；不直接理解相簿業務層級的使用者身分 |
+| Amplify Hosting | Host and deploy static SPA assets over HTTPS | Hiding UI controls cannot replace backend authorization |
+| Cognito User Pools | Authenticate users and issue JWTs | Identity does not establish gallery membership |
+| API Gateway | Receive API requests, validate JWTs, and throttle | A valid token does not grant every gallery action |
+| Lambda A: application API | Check gallery permissions and issue short-lived S3 URLs | Should not proxy full-resolution image payloads |
+| Lambda B: image worker | Convert originals to previews and update status | Should not manage memberships or sign URLs |
+| S3 originals and previews buckets | Store assets with separate triggers, permissions, and lifecycle rules | Prefixes alone do not authorize tenants; keep public access blocked |
+| DynamoDB | Store membership, photo metadata, and restore state | Does not hold image bytes |
+| IAM | Restrict service-to-resource operations | Does not know business-level gallery membership |
 
-### 3.2 雙平面網路分離架構（Control Plane vs. Data Plane Dual-Plane Separation）
-
-本架構在網路與資料流設計上最關鍵的決策，是將**控制平面（Control Plane）**與**資料平面（Data Plane）**徹底分離：
+### 3.2 Control plane and data plane
 
 ```text
-======================= 雙平面網路分離架構 =======================
-
-【Control Plane（輕量 JSON 操作）】
-Browser (SPA) ───[ HTTPS REST / JWT ]───> API Gateway ───> Lambda Function A ───> DynamoDB
-      │                                       │
-      │                                       └── (計算並回傳 S3 Pre-Signed URL 字串)
-      ▼
-【Data Plane（沉重二進位傳輸）】
-Browser (SPA) ─────────────────[ HTTP PUT / GET 直連 ]──────────────────> Amazon S3
-                               (攜帶 SigV4 預簽憑證，繞過 API/Lambda)
+CONTROL: Browser (SPA) -- HTTPS REST + JWT --> API Gateway --> Lambda A --> DynamoDB
+                                                 Lambda A returns a short-lived S3 URL
+DATA:    Browser (SPA) -- signed HTTP PUT/GET ------------------------> Amazon S3
 ```
 
-1. **控制平面（Control Plane —— 輕量 JSON 操作）**：
-   - **路徑**：`Browser (SPA) → API Gateway → Lambda Function A → DynamoDB`。
-   - **負載**：僅傳輸輕量 JSON Payload（JWT 憑證、相簿 ID、授權驗證結果、S3 預簽網址字串）。
-   - **目標**：保持極致低延遲、高吞吐與近乎為零的運算計費開銷。
-2. **資料平面（Data Plane —— 沉重二進位傳輸）**：
-   - **路徑**：`Browser (SPA) → Amazon S3 Storage Buckets`（直接透過 Pre-signed URL 進行 HTTP PUT 上傳或 HTTP GET 下載）。
-   - **負載**：承載高達 5 MB 的原始照片二進位串流（Binary Payloads）。
-   - **核心架構動機（Architectural Justification）**：
-     - **規避 API Gateway 傳輸上限**：API Gateway 對 HTTP API / REST API 強制執行 **10 MB 最大 Payload 限制**。若透過 API Gateway 上傳多張大圖或高像素 RAW 檔，極易觸發 `HTTP 413 Payload Too Large`。
-     - **消滅 Lambda 運算閒置計費（Idle Cost）**：AWS Lambda 的計費模型嚴格按「執行時間（毫秒）$\times$ 配置記憶體」收費。客戶端在慢速網路（如 4G/行動裝置）上傳 5 MB 照片可能耗時數秒；若由 Lambda 充當代理伺服器轉傳，Lambda 在 99% 的時間裡僅是在等待網路 I/O，這將導致運算帳單呈幾何級數暴增。讓瀏覽器直連 S3，Lambda 只需耗費 20 毫秒生成 URL 即可功成身退。
+The control plane exchanges small JSON messages: identity claims, gallery IDs, authorization results, and presigned URLs. The data plane sends the approximately 5 MB image directly between browser and S3. This avoids the API Gateway payload limit and repeated copying through Lambda. Lambda duration is billed by execution time and configured memory, so making a function wait while a slow client uploads wastes compute. The specific latency and cost benefit should be measured; a 20 ms signing call is an illustrative estimate, not a guarantee.
 
----
+## 4. Follow one photo through upload and viewing
 
-## 4 從一張照片走完整個上傳與瀏覽流程
+### 4.1 Five-stage workflow
 
-### 4.1 端到端完整五階段業務工作流（Detailed Step-by-Step System Workflows）
+1. **Frontend delivery:** Priya or a client opens the site. Amplify delivers HTML, CSS, and JavaScript; the SPA initializes application state and the Cognito SDK.
+2. **Authentication:** The user signs in through the Cognito User Pool. The design requires TOTP MFA for Priya's administrator account and standard account/password login for invited clients. Cognito issues signed JWTs containing `sub`, `cognito:groups`, and `email`.
+3. **Control-plane authorization:** The browser sends `Authorization: Bearer <JWT_Token>` to API Gateway. The authorizer checks signature, expiry, issuer, and audience/client ID. Invalid tokens produce 401. Lambda A uses the trusted `sub` to check the target `gallery_id`, photo ownership, and action in DynamoDB. Unauthorized actions produce 403. Only then does it issue an operation-specific S3 URL, for example valid for 300 seconds, in a small JSON response.
+4. **Direct binary transfer:** The browser uses the URL for HTTP PUT of an original or GET of an authorized object. S3 checks SigV4, the signing role's permissions, and URL validity. Expiry is checked when the HTTP request begins; a transfer started before expiry can finish afterward, while a new request after expiry fails. An expired gallery URL can be replaced through a **fresh authorization check**; the gallery itself does not expire just because an object URL does.
+5. **Asynchronous processing and retention:** An `s3:ObjectCreated:*` notification on the originals bucket invokes Lambda B. It reads an original, creates a preview, writes to the previews bucket, and updates photo status to `PROCESSED`. Keeping originals and previews in separate buckets simplifies trigger, permission, and lifecycle boundaries and avoids accidental recursive triggering. Previews remain immediately readable in S3 Standard. The initial proposal moves originals to S3 Glacier Flexible Retrieval after 365 days; later downloads require an authorized `s3:RestoreObject` workflow and a visible `RESTORE_IN_PROGRESS` state.
 
-系統將照片的生命週期分為五個緊密銜接的階段：
+### 4.2 How presigned URLs and SigV4 work
 
-#### Phase 1: 前端交付與初始化（Frontend Delivery and Initialization）
-1. 使用者（攝影師 Priya 或新人客戶）透過瀏覽器造訪自訂網域名稱。
-2. AWS Amplify Hosting 透過全球邊緣節點（CloudFront Edge Distributions）以最快路徑交付壓縮的靜態資產（HTML、CSS、JavaScript）。
-3. 瀏覽器在本地端啟動 Single Page Application（SPA），初始化應用程式狀態與 Cognito SDK。
-
-#### Phase 2: 身分認證與憑證取得（Identity and Authentication）
-1. 使用者於前端表單輸入登入憑據，送交 Amazon Cognito User Pool 端點。
-2. **多因子驗證（MFA）分流挑戰**：
-   - 若為管理者 Priya：Cognito 判定其屬於 `Admins` 群組，觸發 MFA 挑戰（`MFA_CHALLENGE` / `SOFTWARE_TOKEN_MFA`），前端提示輸入手機 Authenticator App 生成的 6 位數 TOTP 動態碼，驗證成功後方才簽發權限 Token。
-   - 若為新人客戶：直接使用帳號密碼完成認證，避免繁瑣的 MFA 阻礙親友看照片的流暢體驗。
-3. Cognito 驗證成功後，向瀏覽器簽發加密簽名的 JWTs（包含唯一使用者 UUID `sub`、群組資訊 `cognito:groups` 與 `email`）。
-
-#### Phase 3: 控制平面請求與業務權限驗證（Control Plane Request and Permission Verification）
-1. 使用者觸發業務動作（例如上傳照片或打開相簿），前端向 API Gateway 發起 REST 請求，並於 Header 附加 `Authorization: Bearer <JWT_Token>`。
-2. API Gateway 扮演守門人，利用 Cognito 公開金鑰驗證 JWT 簽名、過期時間與 Client ID。若 Token 無效或過期，立即阻斷並回傳 `HTTP 401 Unauthorized`，完全不打擾後端 Lambda。
-3. 驗證通過後，API Gateway 將請求與上下文（含提取之 `sub`）轉交 **Lambda Function A**。
-4. Lambda Function A 查詢 DynamoDB 授權表：校驗該 `sub` 是否對目標 `gallery_id` 擁有對應權限（如管理者具有上傳權，新人和親友具有預覽/下載權）。若無權限，立即回傳 `HTTP 403 Forbidden`。
-5. 授權確認無誤後，Lambda Function A 調用 AWS SDK 計算並簽發一個**臨時 S3 預簽網址（Pre-Signed URL）**，有效期限嚴格設定為 **300 秒（5 分鐘）**。
-6. Lambda 將包含預簽網址的輕量 JSON 回傳給 API Gateway，再轉交瀏覽器。
-
-#### Phase 4: 資料平面直接二進位傳輸（Data Plane Binary Transfer）
-1. 瀏覽器 JavaScript 從 JSON 回應中解析出預簽網址。
-2. 瀏覽器發起直連請求：透過 `HTTP PUT`（上傳原圖）或 `HTTP GET`（下載原圖）直連 S3 儲存桶端點。
-3. 高達 5 MB 的原始照片二進位 Payload 直接置於 HTTP Request Body 中傳輸。
-4. S3 檢驗 Query String 攜帶的 AWS Signature Version 4（SigV4）密碼學簽名、檢查簽發該 URL 的 IAM 角色權限，並確認 300 秒有效視窗尚未過期。驗證無誤後直接將物件寫入儲存叢集。
-5. **URL 有效期邊界行為（URL Expiration Semantics）**：
-   - 300 秒限制的是**傳輸發起時間（Initiation Time）**，而非傳輸完成時間。只要 HTTP PUT 請求在第 299 秒成功送達 S3 並開始建立連線傳輸，即使檔案巨大、傳輸過程耗時數分鐘，S3 亦會允許其完整傳輸完畢。
-   - 若請求在第 301 秒才發起，S3 立即阻絕並回傳 `HTTP 403 Forbidden / Request has expired`。
-   - 若使用者在相簿中停留超時，前端 SPA 具備自動靜默機制：向 API Gateway 重新請求簽發新的短期預簽網址，**婚禮相簿本身永不過期，只有具體的下載/讀取 URL 會短期失效**。
-
-#### Phase 5: 非同步圖片處理與生命週期維運（Asynchronous Image Processing & Lifecycle）
-1. S3 原始圖儲存桶確認原圖寫入完畢後，發布 `s3:ObjectCreated:*` 事件通知。
-2. 該事件非同步觸發 **Lambda Function B（Image Processing Worker）**。
-3. Lambda Function B 從 Originals Bucket 讀取 5 MB 原圖，利用圖片庫縮放生成 300 KB Web 預覽圖，寫入 Previews Bucket，並將 DynamoDB 中的照片狀態更新為 `PROCESSED`。
-4. **雙桶隔離防禦（Bucket Separation Guardrail）**：原圖與預覽圖分別存放在兩個完全獨立的 S3 Bucket。這是一道硬性安全防線，徹底杜絕縮圖產生寫入時又誤觸發相同 ObjectCreated 事件所引發的**無限遞歸計費黑洞（Infinite Recursion Loop）**。
-5. **長期成本封存（Long-Term Archival）**：300 KB 預覽圖永久保留在 S3 Standard 以供隨時即時瀏覽；S3 Lifecycle 規則設定在 **365 天**後將 5 MB 原圖自動轉移至 **S3 Glacier Flexible Retrieval** 進行極致低成本封存。
-6. **非同步取回狀態機（Glacier Restores）**：若客戶在一年後請求下載原圖，API Gateway 與 Lambda 將觸發 `s3:RestoreObject` 任務（耗時 3 至 5 小時），並將 DynamoDB 狀態標記為 `RESTORE_IN_PROGRESS`，待取回完成後通知客戶下載。
-
----
-
-### 4.2 預簽網址底層機制與 AWS SigV4 密碼學簽章（Pre-Signed URL Mechanics & SigV4）
-
-在探討預簽網址時，口試 Viva 與工程架構中最關鍵的核心問題是：**為什麼 S3 不直接驗證使用者的 Cognito JWT，而必須繞道簽發 Pre-signed URL？**
-
-#### 為什麼 S3 不直接消費 JWT
-Amazon S3 是一個基礎設施級別的巨型物件儲存系統，它原生**完全不支援解析或校驗 Cognito User Pools 的應用程式 JWT**。S3 底層僅認可 AWS 自身的密碼學身分體系——即基於 IAM 與 AWS Signature Version 4（SigV4）的簽名認證。
-
-#### 簽名生成微觀機制（The Signing Mechanism）
-預簽網址的本質，是 **Lambda Function A 將自身從 AWS STS 獲得的短期 IAM 執行身分，透過 HMAC-SHA256 密碼學算法，臨時借貸給前端瀏覽器**：
-
-1. Lambda Function A 啟動時，其容器會自動從 AWS Security Token Service（STS）注入一組專屬 IAM 角色的臨時憑證（Access Key ID、Secret Access Key、Session Token）。
-2. 當 Lambda 執行 `s3.getSignedUrl('putObject', params)` 時，AWS SDK 會在記憶體中組織待簽名字串（Canonical Request），包含：目標 Bucket、目標 Object Key、HTTP 方法（PUT）、有效時長（300 秒）與時間戳。
-3. SDK 使用該角色的 `Secret Access Key` 與當天日期、區域、服務名稱派生出的金鑰，執行 **HMAC-SHA256** 哈希運算，產生最終簽名。
-4. 此簽名被編碼為 URL 查詢參數，形成可直接透過瀏覽器請求的完整預簽網址：
+S3 does not directly validate an application's Cognito User Pool JWT. It authorizes AWS requests with IAM and Signature Version 4. Lambda A uses its temporary execution-role credentials to sign a specific bucket, object key, HTTP method, timestamp, and expiry using SigV4's HMAC-SHA256 construction. The resulting query parameters allow the browser to perform exactly the signed S3 operation, subject to the role and bucket policies.
 
 ```text
 https://priya-weddings-originals.s3.ap-southeast-1.amazonaws.com/tan-mei/photo01.jpg
@@ -4302,172 +4201,75 @@ https://priya-weddings-originals.s3.ap-southeast-1.amazonaws.com/tan-mei/photo01
   &X-Amz-Signature=a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0...
 ```
 
-#### 直連傳輸的真實 HTTP 請求結構（Direct Transfer HTTP Request）
-瀏覽器拿到上述 URL 後，向 S3 發起之 HTTP 請求本質如下：
-
 ```http
 PUT /tan-mei/photo01.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=...&X-Amz-Signature=... HTTP/1.1
 Host: priya-weddings-originals.s3.ap-southeast-1.amazonaws.com
 Content-Type: image/jpeg
 Content-Length: 5242880
 
-<--- 此處直接置放 5 MB 原始二進位照片 Byte 流，完全不經過 API Gateway 與 Lambda --->
+<5 MB of image bytes travel directly to S3, bypassing API Gateway and Lambda>
 ```
 
-#### 預簽網址的 Bearer 特徵與安全邊界
-- **從 S3 的視角**：預簽網址是一張純粹的 **Bearer Token（持票人憑證）**。S3 在收到請求時，完全不知道也不在乎是哪個瀏覽器或自然人在發起請求；S3 僅驗證 SigV4 簽名是否合法、簽名的 IAM 角色是否有寫入權限、以及是否在 300 秒有效期內。任何人只要持有這段完整 URL，皆可直接執行指定操作。
-- **從系統架構的視角**：系統的安全性並未失控。因為這張「取車票（URL）」**只能由 Lambda Function A 在完成 API Gateway JWT 驗證與 DynamoDB 相簿擁有權查詢後，針對特定使用者、特定照片 Key、特定 HTTP 方法動態生成**。
-- **300 秒生命週期的安全防禦價值**：將期限壓縮至 5 分鐘，極大地收窄了 URL 在網路傳輸過程中若不幸遭外洩或惡意分享時的攻擊時間窗口（Attack Window）。
+A presigned URL is a **bearer capability**: S3 does not know which human holds it, and anyone with the full URL can attempt its signed operation while it remains valid. Lambda must therefore authorize the person and gallery **before** signing a specific key and method. A five-minute lifetime narrows the exposure window but does not make the URL single-use.
 
-### 4.3 為什麼照片不經 Lambda 轉傳（Payload 與計費架構分析）
+### 4.3 Why Lambda does not proxy photos
 
-簽章 API 只交換小型 JSON，照片直接送往物件儲存，能減少 payload 限制、重複搬運及函式等待傳輸的時間。查核時 HTTP API 的 payload 上限是 10 MB、integration timeout 是 30 秒；不能混用成所有 API Gateway 都是 29 秒。[AWS: Quotas for configuring and running an HTTP API](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-quotas.html)
+A signing API exchanges small JSON while photos travel directly to object storage. At the time of checking, HTTP API's payload limit was 10 MB and its integration timeout 30 seconds; do not generalize an older 29-second figure to every API Gateway configuration. [AWS: HTTP API quotas](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-quotas.html)
 
-本設計使用的一般 on-demand Lambda，單次執行最長 15 分鐘；同步 buffered request/response 各 6 MB、非同步 invocation payload 為 1 MB，不是舊資料的 256 KB。這些是呼叫 payload，不是 Lambda 從 S3 下載檔案時的同一限制。實際記憶體與並發配額須查帳戶，尤其新帳戶可能較低。[AWS: Lambda quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html)
+The on-demand Lambda used here allows up to 15 minutes per execution. Buffered synchronous request and response payloads are each limited to 6 MB; an asynchronous invocation payload is limited to 1 MB, rather than an older 256 KB figure. These limits apply to invocation payloads, not the same way to files that Lambda retrieves from S3. Check actual account memory and concurrency quotas, especially for new accounts. [AWS: Lambda quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html)
 
-### 4.4 瀏覽與下載的長短期入口分工
+### 4.4 Long-lived gallery, short-lived object access
 
-瀏覽者登入後，前端請求相簿照片清單。後端先確認 membership，回傳可見照片的 metadata 與適當的預覽存取方式；要求原圖時，再檢查 download 權限與原圖是否可立即讀取。
+After login, the frontend requests a gallery photo list. The backend checks membership and returns visible metadata and an appropriate preview access method. An original request requires a separate download permission and availability check. The durable entry point is the authenticated gallery page; object URLs are temporary. Refreshing an expired URL must repeat authorization so a removed member cannot keep obtaining new URLs.
 
-長期入口是登入後的相簿頁，短期入口才是實際物件 URL。當預覽 URL 失效，前端重新向 API 請求時必須**重新授權**；被移除的成員不能靠「自動續簽」延續權限。
+## 5. Tenant authorization and cloud permission boundaries
 
-## 5 多租戶授權與雲端權限架構的完整防線
+### 5.1 Cognito identity and IAM permissions
 
-在雲端無伺服器架構中，「使用者登入」與「雲端權限」是兩個截然不同、卻又必須精密銜接的維度。本節深入剖析 **Amazon Cognito vs. AWS IAM** 的邊界劃分、**最小權限原則（Least Privilege）**的 IAM Roles 設計、**DynamoDB vs. 關聯式資料庫**的架構差異，以及防禦多租戶越權（IDOR）的端到端防線。
-
-### 5.1 身份管理 vs. 雲端權限：Amazon Cognito vs. AWS IAM 深度對照
-
-| 比較維度 | Amazon Cognito | AWS Identity and Access Management (IAM) |
+| Dimension | Cognito | IAM |
 |---|---|---|
-| **目標受眾（Target Audience）** | 終端業務使用者（End Users，例如攝影師 Priya 與各對婚禮新人客戶） | 雲端基礎設施、內部 AWS 服務與系統工程師（Lambda、API Gateway、DevOps 開發者） |
-| **憑證形式（Credentials Used）** | 帳號、密碼、手機 TOTP 動態碼、密碼學簽名之 JSON Web Tokens（JWTs） | 暫時性 STS Session Tokens、Access Key ID、Secret Access Key、IAM 角色 |
-| **存取範圍（Scope of Access）** | **應用程式業務層級（Application-level Business Context）**：例如判斷哪個 `sub` 可以看哪一本婚禮相簿 | **雲端資源層級（Cloud-level Resource Context）**：例如決定某個 Lambda 函式是否能對某個 S3 Bucket 執行寫入 |
-| **驗證端點（Verification Point）** | 在 API 邊界由 **API Gateway（Cognito JWT Authorizer）** 或業務程式碼進行校驗 | 由 **AWS 內部安全基礎設施（AWS SigV4 引擎）**在每次呼叫 AWS SDK API 時嚴格評估 |
+| Audience | End users such as Priya, couples, and guests | AWS services and infrastructure operators |
+| Credentials | Account, password, TOTP, signed JWT | Role, STS session token, access key, secret key |
+| Scope | Application identity and claims used in gallery checks | AWS resource operations, such as Lambda writing an S3 object |
+| Verification | API authorizer and application logic | AWS authorization for signed service requests |
 
-#### 註冊政策、邀請流與 MFA 強制安全規範
-1. **關閉公開註冊政策（Public Registration Disabled）**：
-   - 系統**完全不開放公開 Sign-up 頁面**。這杜絕了網際網路上的任意未授權惡意訪客自行在 Cognito User Pool 中建立帳號，縮小身分攻擊面。
-2. **後台邀請流（Client Invitation Flow）**：
-   - Priya 在管理後台建立新相簿條目，輸入新人的 Email 地址並點擊「Invite」。
-   - 前端發起請求，API Gateway 授權後呼叫 Lambda Function A 調用 Cognito `AdminCreateUser` API。
-   - Cognito 在 User Pool 內建立使用者、生成隨機臨時密碼或安全重設連結，並自動寄送客製化邀請信給新人。
-   - 新人點擊信件連結進入前端，設定永久密碼並啟用個人 Profile。
-3. **多因子驗證（MFA）分流強制策略**：
-   - **管理者（Priya）**：歸屬於 Cognito 的專屬 `Admins` 群組。此群組**強制啟用基於時間的一次性密碼（TOTP MFA）**。Priya 登入時，Cognito 回傳 `MFA_CHALLENGE`（或 `SOFTWARE_TOKEN_MFA`），必須輸入手機 Google Authenticator 等 App 產生的 6 位數動態碼才能換發 Token，杜絕管理者密碼外洩帶來的災難性風險。
-   - **客戶端新人與親友**：僅使用標準帳密認證，**不強制啟用 MFA**。這是 UX 與安全性的權衡，防止繁瑣的兩步驟驗證阻礙一般賓客瀏覽照片的意願。
-4. **Cognito Token 內容（JWT Claims）**：
-   - 成功認證後，Cognito 簽發之 JWT 內嵌以下關鍵 Claims：
-     - `sub`：Cognito 為使用者派發的全域唯一 UUID（如 `a1b2c3d4-e5f6-...`），作為不可篡改的系統識別碼。
-     - `cognito:groups`：使用者所屬的群組陣列（例如 `[Admins]`）。
-     - `email`：通過驗證的電子郵件信箱。
-5. **Cognito 服務註冊**：
-   - 後端各個微服務 API 並不直接向 Cognito 註冊；而是在 User Pool 中配置專屬的 **App Client**，向 Amplify 前端暴露 `UserPoolId` 與 `ClientId`，供前端 SDK 執行安全認證。
+**Invitation and MFA policy:** Disable public signup. Priya creates a gallery, enters a client's email, and initiates an invitation. After an authorized API request, Lambda A can use Cognito `AdminCreateUser`; Cognito creates the account and sends a temporary-password or reset-link invitation. The client completes account setup. Priya belongs to an administrator group and must complete TOTP MFA. Clients and guests use ordinary authentication in this proposal, balancing usability and security. JWT claims include a stable `sub`, `cognito:groups`, and `email`. The frontend authenticates through a configured User Pool App Client; individual backend APIs do not each register as separate users.
 
----
+### 5.2 Least-privilege roles
 
-### 5.2 最小權限原則與系統 IAM Roles 邊界設計（Principle of Least Privilege）
-
-在雲端架構中，所有後端運算資源（Lambda）與網關預設皆為**零信任（Zero Trust）**，必須透過專屬 IAM Roles 精確授予最小必要權限：
-
-#### Role 1: 應用 API Lambda 角色（Application API Lambda Execution Role）
-- **承擔組件**：Lambda Function A。
-- **允許權限**：
-  - `dynamodb:GetItem`、`dynamodb:Query`：查詢使用者相簿授權表與照片元數據表。
-  - `s3:GetObject`：針對 Originals 或 Previews Bucket 計算並簽發下載用的 GET 預簽網址。
-  - `s3:PutObject`：針對 Originals Bucket 計算並簽發上傳用的 PUT 預簽網址。
-  - `s3:RestoreObject`：向 S3 Glacier 發起原圖解凍任務。
-- **嚴格限制**：**嚴禁授予 `s3:DeleteObject`** 或萬用字元 `*` 的管理權限，防止後端邏輯瑕疵導致全量照片遭誤刪。
-
-#### Role 2: 圖片處理 Worker 角色（Image Processing Worker Role）
-- **承擔組件**：Lambda Function B。
-- **允許權限**：
-  - `s3:GetObject`：**範圍嚴格限定於 Originals Bucket**（讀取原始上傳照片）。
-  - `s3:PutObject`：**範圍嚴格限定於 Previews Bucket**（寫入壓縮後的預覽圖）。
-  - `dynamodb:PutItem`、`dynamodb:UpdateItem`：將處理完畢狀態更新為 `PROCESSED`。
-- **嚴格限制**：**絕對禁止對 Originals Bucket 擁有寫入權限**（徹底杜絕事件遞歸觸發）；禁止調用 API Gateway；禁止簽發預簽網址。
-
-#### Role 3: API Gateway 執行角色（API Gateway Execution Role）
-- **承擔組件**：Amazon API Gateway。
-- **允許權限**：`lambda:InvokeFunction`，在 Cognito JWT 簽名校驗成功後轉發呼叫 Lambda Function A。
-
-#### 互動邊界：IAM、DynamoDB 與 Lambda 的協同分工
-- **Lambda 業務邏輯校驗自然人身分與業務規則**：Lambda 檢驗請求攜帶的 Cognito JWT，查詢 DynamoDB，判定該自然人 `sub` 是否有權存取 `gallery_id`。
-- **AWS IAM 校驗服務間調用權限（Service-to-Service）**：IAM 確保 Lambda 函式具備合法的 AWS 臨時憑證以執行 DynamoDB Query 與 S3 簽名。
-- **雲端架構師（Cloud Engineer）**：透過 Root / Administrator IAM 憑據登入 AWS Console 進行基礎設施部署與 Role 配置。
-- **業務管理者（Priya）**：**嚴格隔離在 AWS 管理控制台之外**，僅透過瀏覽器前端入口、使用 Cognito 帳號與 TOTP MFA 登入，絕不接觸任何 AWS IAM 權限。
-
----
-
-### 5.3 資料儲存架構演進：Amazon DynamoDB vs. 關聯式資料庫 (RDS/PostgreSQL/MySQL)
-
-在傳統雲端系統中，開發者常直覺選擇託管的關聯式資料庫（Amazon RDS PostgreSQL 或 MySQL），但在高並發、突發流量且長時間閒置的 Serverless 攝影平台場景中，關聯式資料庫會暴露嚴重的架構矛盾：
-
-| 比較維度 | 傳統關聯式資料庫（Amazon RDS / PostgreSQL） | 雲端原生 NoSQL（Amazon DynamoDB） |
+| Role | Required capabilities | Explicit boundary |
 |---|---|---|
-| **架構架構** | **運算與儲存緊密耦合（Monolithic Compute/Storage Coupling）**：由專屬虛擬機實例（EC2）掛載 EBS 磁碟 | **存算分離與多租戶共享架構（Disaggregated, Multi-Tenant Serverless）**：請求路由層與底層分散式儲存節點完全解耦 |
-| **進程模型（Process Model）** | 依賴記憶體中長時間常駐的 OS 後台 Daemon 進程（如 PostgreSQL 的 `postmaster`、WAL Writers、Background Writers、Auto-vacuum） | **基於 HTTP/HTTPS REST API 的無狀態請求驅動**：客戶端請求直接抵達共享的 Request Routers 叢集，透過一致性哈希（Consistent Hashing）路由至目標儲存分區 |
-| **記憶體快取（Memory Buffers）** | 強依賴共享記憶體池（如 Postgres `shared_buffers`、InnoDB Buffer Pool）快取磁碟資料頁；**一旦停止實例，快取池立即灰飛煙滅**，重啟時連線中斷且遭遇嚴重的 Cold-start 延遲 | 儲存層直接由 AWS SSD 叢集保證毫秒級 B-tree 操作；無連線池耗盡風險，自動適應微服務水平伸縮 |
-| **計費模型（Cost Model）** | **按預留實例 7x24 小時不間斷收費**：即使半夜零訪問，仍必須為專屬 CPU、RAM 與 EBS 儲存支付高額固定費用 | **依需求容量模式（On-Demand Capacity）**：閒置時**運算計費為 0 美元**；僅按實際讀寫請求單元（RRU/WRU）與實際儲存體積收費，精確對齊業務現金流 |
+| Lambda A application API | DynamoDB GetItem/Query, S3 GetObject/PutObject signing for relevant buckets, S3 RestoreObject when needed | Avoid wildcard administration and S3 DeleteObject |
+| Lambda B image worker | GetObject on originals, PutObject on previews, conditional DynamoDB status updates | No write to originals, membership administration, or URL signing |
+| API Gateway integration | Invoke the intended Lambda function after authorizer checks | No blanket access to unrelated functions |
 
----
+Lambda's application logic checks the Cognito subject and DynamoDB business rules. IAM separately determines what AWS operations Lambda's temporary role credentials can perform. Infrastructure engineers administer AWS roles through appropriately controlled IAM access. Priya administers galleries through the application with Cognito credentials, not through the AWS console.
 
-### 5.4 Priya 婚禮平台專用 DynamoDB 資料模型設計（Schema Design）
+### 5.3 DynamoDB and relational databases
 
-為了以最小的查詢延遲滿足權限確認與生命週期管理，系統採用以下兩個核心資料表設計：
+RDS PostgreSQL or MySQL remains a valid alternative, but an always-running database instance and its storage can impose fixed cost during long idle periods. Database processes and buffer pools also have startup and connection-management concerns. DynamoDB on-demand aligns request charges with sporadic traffic and offers managed partitioning, while storage, backup, and other features still cost money. Avoid claiming zero total cost during idle time or that every relational deployment is always-on; compare the selected configurations and access patterns.
 
-#### 1. 使用者相簿授權表（User-to-Gallery Authorization Table）
-- **分區鍵（Partition Key / PK）**：`user_id`（字串，對應 Cognito 的使用者唯一 `sub` UUID，例如 `USER#a1b2c3d4...`）
-- **排序鍵（Sort Key / SK）**：`gallery_id`（字串，婚禮相簿唯一識別碼，例如 `GALLERY#tan-and-mei-wedding-2026`）
-- **屬性（Attributes）**：
-  - `role`：使用者角色（`admin` 或 `client`）
-  - `access_granted_at`：授權建立時間戳
-- **應用查詢邏輯（Application Logic）**：
-  - 當使用者試圖打開相簿 `tan-and-mei-wedding-2026` 時，Lambda 執行單點查詢：`GetItem(PK = caller_sub, SK = "GALLERY#tan-and-mei-wedding-2026")`。
-  - 若命中記錄，授權通過並判定角色；若回傳為空，說明該使用者根本不在此相簿授權名單中，立即拋出 `HTTP 403 Forbidden`。
+### 5.4 Proposed DynamoDB schema
 
-#### 2. 相簿照片資產與狀態表（Gallery Photo Assets and Status Table）
-- **分區鍵（Partition Key / PK）**：`gallery_id`（字串，例如 `GALLERY#tan-and-mei-wedding-2026`）
-- **排序鍵（Sort Key / SK）**：`photo_key`（字串，照片唯一檔案名稱，例如 `PHOTO#photo001.jpg`）
-- **屬性（Attributes）**：
-  - `original_s3_key`：原圖完整路徑（`originals/tan-mei/photo001.jpg`）
-  - `preview_s3_key`：預覽圖完整路徑（`previews/tan-mei/photo001.jpg`）
-  - `status`：生命週期狀態（`PROCESSED`、`ARCHIVED_GLACIER` 或 `RESTORE_IN_PROGRESS`）
-  - `restore_expiry`：解凍臨時副本的過期時間戳
-- **應用查詢邏輯（Application Logic）**：
-  - **縮圖完成**：Lambda Function B 產出預覽圖後，將對應記錄的 `status` 更新為 `PROCESSED`。
-  - **冷資料解凍請求**：當客戶在一年後請求下載某張老照片時，Lambda 檢查 `status`：若為 `ARCHIVED_GLACIER`，後端向 S3 發送 `s3:RestoreObject` 請求，並將此處狀態更新為 `RESTORE_IN_PROGRESS`；待解凍完畢後供客戶下載。
+**Membership table:** partition key `user_id` (the Cognito `sub`, e.g. `USER#a1b2c3d4...`), sort key `gallery_id` (e.g. `GALLERY#tan-and-mei-wedding-2026`), with `role` and `access_granted_at`. For a gallery request, Lambda performs `GetItem(PK = caller_sub, SK = "GALLERY#tan-and-mei-wedding-2026")`. A missing active membership denies access.
 
----
+**Photo asset table:** partition key `gallery_id`, sort key `photo_key` (e.g. `PHOTO#photo001.jpg`), with `original_s3_key`, `preview_s3_key`, `status`, and `restore_expiry`. The worker marks a completed preview `PROCESSED`. For archived originals, an authorized download request starts or checks a restore job and records `RESTORE_IN_PROGRESS` until it can be downloaded.
 
-### 5.5 Authentication 與 Authorization 分開回答與多層防線
+### 5.5 Authentication versus authorization
 
-Authentication 回答「你是誰」；authorization 回答「這個人能對這份資源做什麼」。兩個客戶都能合法登入，仍不表示能互看照片。
+Authentication asks who the user is; authorization asks what that user may do to a particular resource. Two legitimate clients must still be unable to see each other's photos. The design uses three checks: private bucket policies and restricted service roles; JWT verification at the API boundary; and Lambda membership, role, photo ownership, and action checks before signing. Bucket separation is logical policy separation, not dedicated physical hardware isolation.
 
-本設計的三層防線是：
+JWT verification is more than decoding a token and normally uses the issuer's public keys, which may be cached. ID and access tokens are not interchangeable merely because both are JWTs; configure route scopes, issuer, and audience appropriately. [AWS: HTTP API JWT authorizers](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html)
 
-1. **儲存端政策邊界：** 兩個桶阻斷公開存取，service roles 取得各自所需權限。這是邏輯資源與政策分離，**不是專用硬體的實體隔離**，也不阻止合法的 presigned S3 請求。
-2. **API 身分驗證：** authorizer 驗證 token 的簽章、issuer、audience/client ID、時間與 route scopes，再將可信 claims 傳給 Lambda。
-3. **資源授權：** Lambda 以可信 subject 查會員記錄，確認相簿角色、照片歸屬與操作狀態，最後才選 key 與簽章。
+### 5.6 JWT and PKCE
 
-API Gateway 的 JWT 驗證不是單純 decode，也不需要每次向 Cognito 問密碼；它使用 issuer 的公開金鑰，並可能快取金鑰。ID token 與 access token 不可因為都長得像 JWT 就混用，API route 應配置適合的 scopes 與 issuer/audience。[AWS: Control access to HTTP APIs with JWT authorizers in API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html)
+A typical signed JWT has `header.payload.signature`. Encoding does not encrypt the payload; the signature protects integrity and origin. Do not store passwords or secrets in claims. Use stable `sub` rather than mutable email as the user identifier, and include issuer in the identity namespace if multiple issuers exist.
 
-### 5.6 JWT 與 PKCE 各自防什麼
+A SPA cannot safely keep a client secret. Use authorization code flow with PKCE: generate a high-entropy `code_verifier`, derive a SHA-256/Base64URL `code_challenge`, send the challenge in the authorization request, then present the verifier when exchanging the code for tokens. Intercepting a code without its verifier is insufficient. PKCE does not replace HTTPS, redirect URI validation, state/nonce checks, or XSS defenses. [AWS: PKCE](https://docs.aws.amazon.com/cognito/latest/developerguide/using-pkce-in-authorization-code.html)
 
-典型簽章 JWT 是 `header.payload.signature`。編碼不是加密：payload 可被讀取，簽章用來驗證完整性與來源，因此不要放密碼或其他秘密。後端使用 `sub` 而非可更改的 email 作為使用者識別；多個 issuer 並存時，也要把 issuer 納入身分命名空間。
+A User Pool manages application users. An Identity Pool can exchange an identity for restricted temporary AWS credentials. This design keeps dynamic gallery authorization in the backend rather than issuing browser AWS credentials; Identity Pools are a valid alternative when configured carefully.
 
-SPA 不能安全保有 client secret，因此本設計使用 authorization code flow 搭配 PKCE：
-
-1. 瀏覽器產生高熵的 `code_verifier`，以 SHA-256 與 Base64URL 產生 `code_challenge`。
-2. 授權請求送 challenge，成功登入後取得 authorization code。
-3. 換 token 時送出原始 verifier，由授權伺服器確認它與先前 challenge 相符。
-
-攔截到 code 但沒有 verifier 的攻擊者無法正常換 token。PKCE 不會修補 XSS，也不能取代 HTTPS、redirect URI 檢查與適當的 state/nonce 驗證。[AWS: Using PKCE in authorization code grants](https://docs.aws.amazon.com/cognito/latest/developerguide/using-pkce-in-authorization-code.html)
-
-User Pool 管應用使用者；Identity Pool 可將身分換成受限的 AWS 臨時憑證。本案例不選 Identity Pool，是為了把動態相簿授權集中在後端，不是因為臨時憑證必然不安全。瀏覽器仍會用預簽網址直接碰 S3，只是不領取可自行簽發其他請求的 AWS credentials。
-
-### 5.7 一次下載請求的安全判定與防 IDOR 攻擊
-
-後端的判定應滿足：
+### 5.7 Download decision and IDOR defense
 
 $$
 \operatorname{allow}
@@ -4477,96 +4279,74 @@ $$
 \land\operatorname{belongsTo}(p,g).
 $$
 
-就算前端只送 `gallery_id` 與 `photo_id`，兩者仍是**不可信輸入**。相簿 A 的合法成員把 photo ID 改成相簿 B 的照片時，不能僅驗 A 的 membership 就依全域 photo ID 發 B 的 URL；應以 A 的 partition 查照片，或明確驗證照片所屬相簿。這是防止 IDOR／跨租戶資源存取的關鍵。
+Treat `gallery_id` and `photo_id` as untrusted, even when supplied by the frontend. A member of gallery A cannot get gallery B's photo by substituting a photo ID. Query the photo under gallery A's partition or explicitly verify its gallery before selecting an S3 key. Do not accept a client-provided `s3_key`, claimed `sub`, or `role=admin` as authority. Check upload, preview, original download, and membership management separately. On database failure, return a retryable service error and fail closed; do not automatically map every internal error to 403. IAM cannot perform Cognito-user membership checks on a shared Lambda role, so application authorization remains necessary.
 
-同樣不能讓前端直接傳 `s3_key`、自行宣稱 `sub` 或以 `role=admin` 決定權限。預覽、下載原圖、上傳與管理成員是不同操作，後端應分別檢查。資料庫故障時可以回可重試的服務錯誤，但不能因為查不到權限就放行；「fail closed」不等於把所有內部錯誤都偽裝成 403。
+### 5.8 Capability and revocation limits
 
-共用 Lambda execution role 可能有多個相簿的 S3 權限；IAM 不會自動替它執行每個 Cognito 使用者的 membership 檢查。因此應用層授權是必要防線，而不是可省略的重複檢查。
+A presigned URL is not one-time and does not require a new login for every transfer. Its validity is bounded by both URL expiry and the signing credentials. S3 checks expiry when a request starts; reconnecting after expiry fails. Policy network conditions can restrict origin, but adding an arbitrary IP query parameter does not make S3 validate it. [AWS: Presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
 
-### 5.8 預簽網址的能力與撤銷邊界
+Preview URLs of 15 minutes and original URLs of 1–2 hours are possible UX/security trade-offs, not fixed recommendations; temporary credentials may expire sooner. Do not log complete URLs or persist them as long-lived gallery records. Revoking membership stops issuance of new URLs but does not necessarily invalidate an existing URL immediately. Immediate per-request revocation needs a different access path or credential/policy strategy, and already downloaded copies cannot be recovered by server-side authorization.
 
-Presigned URL 是 bearer capability：持有者在有效條件下即可使用，**不是一次性 URL，也不是每次下載都重新登入**。有效期受 URL 設定及底層 signing credentials 限制；S3 在 HTTP 請求開始時檢查期限，已開始的下載不會只因跨過期限就被切斷，但過期後重連會失敗。可用 policy 的來源網路條件限制使用，不能隨意加一個 IP query 參數就期待 S3 驗證。[AWS: Download and upload objects with presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
+## 6. Upload safety and asynchronous reliability
 
-案例可評估「預覽 15 分鐘、原圖 1–2 小時」的不同有效期，但這只是 UX 與外洩窗口的取捨，且底層憑證可能先到期。不得把 URL 寫入一般分析日誌，也不應把可長期保存的相簿資料模型直接存成一批即將過期的 URL。
+### 6.1 PUT, POST, and validation
 
-移除 membership 可以阻止新 URL 發放，卻不會自動使舊 URL 立刻失效。若需求是「撤權後每次新讀取都立即拒絕」，必須重新設計存取驗證路徑、政策或憑證撤銷方案；而已下載到客戶端的副本無法靠後端授權收回。
+A presigned PUT can sign a required Content-Type header, but `image/jpeg` in a header does not prove that the bytes are a valid JPEG. Reusing a key can overwrite an object; use distinct upload keys, version tracking, and completion state. For a size range enforced before S3 accepts an upload, a presigned POST policy can use `content-length-range`. Validate authorization, quota, actual format, and decoded image size; quarantine suspicious content if appropriate. Restricting uploads to administrators reduces exposure but does not eliminate validation. [AWS: PUT uploads](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html), [AWS SDK: presigned POST](https://docs.aws.amazon.com/botocore/latest/reference/services/s3/client/generate_presigned_post.html)
 
-## 6 上傳安全與非同步可靠性
+### 6.2 CORS is a browser mechanism
 
-### 6.1 PUT、POST 與檔案驗證
+For cross-origin browser access, configure the actual origins, GET/PUT/POST methods, request headers, and response headers that JavaScript needs. API Gateway and S3 have separate CORS settings. CORS does not block non-browser clients or replace SigV4 or membership authorization. An exposed ETag is not universally a file MD5, especially with multipart upload or encryption. [AWS: S3 CORS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/cors.html)
 
-Presigned PUT 可簽入要求的 Content-Type header，所以「PUT 完全不能限制類型」不精確；但 header 等於 image/jpeg 並不證明內容真的是合法 JPEG。相同 key 的 PUT 也可能覆蓋既有物件，因此需設計獨立上傳 key、版本追蹤與完成狀態，不能把 URL 當成天然一次性上傳票。[AWS: Uploading objects with presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html)
+### 6.3 Why use two buckets?
 
-若要在 S3 接收前表達允許的大小範圍，可用 presigned POST policy 的 `content-length-range` 與欄位條件。無論 PUT 或 POST，都應核對授權、配額與真實內容；縮圖前驗證格式、解碼大小，必要時隔離可疑檔案。只開放管理員上傳是縮小攻擊面，不是取消驗證。[AWS SDK: generate_presigned_post](https://docs.aws.amazon.com/botocore/latest/reference/services/s3/client/generate_presigned_post.html)
+If every ObjectCreated event triggers a thumbnail and the thumbnail is written into the same trigger scope, the function can recursively invoke itself. Listening only to the originals bucket and writing previews elsewhere makes the flow easy to audit. One bucket with a correct prefix filter can also work; two buckets additionally separate lifecycle, permissions, and CDN origins, not physical infrastructure. [AWS: S3 Event Notifications](https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html)
 
-### 6.2 CORS 讓瀏覽器工作，但不是權限機制
+### 6.4 Idempotency covers files and state
 
-前端與 S3 不同 origin 時，要配置實際需要的 origin、GET/PUT/POST 方法、request headers，以及 JavaScript 需要讀取的 response headers。API Gateway 與 S3 各有自己的 CORS 邊界，設定其中一個不會自動設定另一個。
+S3 events may be delivered more than once and out of order. Identify a job by source bucket, key, version ID, and conversion version. Use a deterministic output key and conditional status updates. If version 1 starts first but completes after version 2, it must not replace the newer visible preview. A retry after writing the preview but crashing before updating metadata must recognize the valid output and complete the state update. Processing locks need expiry and takeover rules; overwriting the same key alone does not prove end-to-end idempotency.
 
-CORS 不阻止非瀏覽器程式呼叫，也不能替代簽章或 membership。即使 expose ETag，也不應把 ETag 在所有 multipart／加密情境下一律當成檔案 MD5。[AWS: Using cross-origin resource sharing](https://docs.aws.amazon.com/AmazonS3/latest/userguide/cors.html)
+### 6.5 SQS and a dead-letter queue
 
-### 6.3 雙 bucket 避免什麼問題
+SQS can buffer upload bursts, control worker consumption, and expose backlog and retry behavior. Set visibility timeouts, retry limits, and a DLQ; with batches, isolate failures to avoid rerunning already successful records. Standard queues permit duplicates and reordering. FIFO deduplication and ordering do not make external S3 or DynamoDB side effects exactly-once; a consumer can fail after doing work but before acknowledging it. [AWS: Duplicate processing](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/avoding-processing-duplicates-in-multiple-producer-consumer-system.html)
 
-若所有 ObjectCreated 都觸發縮圖，而縮圖又寫回相同觸發範圍，可能遞迴啟動函式。分開 originals 與 previews，並只監聽 originals，可使這條流程更容易檢查。單 bucket 搭配正確 prefix filter 也可行；雙 bucket 的額外價值是生命週期、權限與 CDN origin 的責任分離，不是實體隔離。[AWS: Amazon S3 Event Notifications](https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html)
+S3 native event notifications do not directly target SQS FIFO. Use Standard here, or assess EventBridge routing if FIFO is needed. A DLQ requires an alert owner, diagnosis, and safe replay procedure.
 
-### 6.4 冪等性要涵蓋檔案與狀態
+## 7. Lifecycle and cold-data retrieval
 
-S3 事件設計為至少一次遞送，可能重複，也不可假定照原始寫入順序到達。因此 worker 不應「每收到一次事件就產生一個隨機新預覽圖」。
+### 7.1 Originals and previews have different access needs
 
-建議使用來源 bucket、key、version ID 與轉換版本構成工作識別，配合 deterministic output key 及條件式狀態更新。以下是設計推演：
+Interactive previews should remain immediately available. Originals may tolerate slower retrieval after delivery if downloads become rare. Choose a storage class from access requirements, not only its per-GB price.
 
-1. v1 事件先開始處理，v2 很快上傳並處理完成。
-2. 若 v1 較慢完成、仍可覆蓋「最新預覽」，畫面便倒退成舊圖。
-3. 因此將預覽與來源版本綁定，更新目前照片指標時檢查 expected version；已完成的同一工作可安全略過或重試。
-
-另一個失敗窗口是「預覽寫完，metadata 尚未更新就 crash」。重試需能辨認已存在的有效輸出並補完狀態；若用 processing lock，還要設逾時與接管方式，避免第一次 crash 讓工作永久卡死。只說「同 key 無害覆蓋」不足以證明整段流程冪等。
-
-### 6.5 SQS 與 DLQ 如何補強
-
-加入 SQS 可吸收突發上傳、控制 worker 消費速度，並使積壓與重試更可觀測；它同時幫助 backpressure 與營運管理，不只是多一個服務。設定 visibility timeout、重試次數及 DLQ，並在批次處理時避免一筆失敗造成整批已成功工作不必要地重跑。
-
-Standard queue 需容忍重複與非順序；FIFO 的去重與群組順序也不等於外部 S3／DynamoDB 副作用 exactly once，consumer 仍可能在完成後、確認前失敗。[AWS: Preventing duplicate processing in a multiple-producer/consumer system](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/avoding-processing-duplicates-in-multiple-producer-consumer-system.html)
-
-S3 原生 event notification 不直接支援 SQS FIFO destination；本案例可先用 Standard queue，需要 FIFO 時另評估 EventBridge 路由。DLQ 要有人收到告警、分析原因並安全重放，不是把錯誤移走便算完成。
-
-## 7 Lifecycle 與冷資料取回
-
-### 7.1 原圖與預覽圖的需求不同
-
-預覽是互動式相簿的一部分，應維持可即時讀取；原圖交付後若很少再下載，可接受較慢取回。這是選擇儲存等級的前提，而不是單看每 GB 最便宜的價格。
-
-| 選項 | 主要取捨 | 本案例的定位 |
+| Class | Trade-off | Role in this case |
 |---|---|---|
-| Standard | 即時讀取、較適合頻繁存取 | 新原圖與預覽 |
-| Intelligent-Tiering | 依存取情況分層，需考慮物件條件與監控費 | 行為難預測時重新評估 |
-| Standard-IA／One Zone-IA | 即時讀取但有取回與最低計費限制；單 AZ 增加風險 | 不能只因便宜就作原圖唯一副本 |
-| Glacier Instant Retrieval | 封存定位但可即時 GET | 無法接受 restore 等待時比較 |
-| Glacier Flexible Retrieval | 原圖需先 restore，再提供下載 | 少量非急迫的長期原圖 |
-| Glacier Deep Archive | 更深度封存，等待更長 | 若另規劃 RAW 備份，可獨立評估 |
+| Standard | Immediate, frequent access | New originals and previews |
+| Intelligent-Tiering | Automatic tiers with eligibility and monitoring cost | Reassess when access is unpredictable |
+| Standard-IA / One Zone-IA | Immediate access, retrieval and minimum-billing constraints; One Zone adds location risk | Do not select as the only original copy just because it is cheaper |
+| Glacier Instant Retrieval | Archive class with immediate GET | Compare when restore waiting is unacceptable |
+| Glacier Flexible Retrieval | Restore before original download | Rare, non-urgent older originals |
+| Glacier Deep Archive | Deeper archive and longer waits | Evaluate separately for RAW backups |
 
-原圖 365 天後轉冷是初始業務假設，不是由 AWS 自動證明的最佳值。應收集下載時間、物件年齡與取回需求，再比較節省的儲存費是否足以抵掉轉移、restore 與使用者等待成本。Storage Lens 的彙總洞察可輔助分析，但不能未驗證就當成每張照片的完整 last-access history。
+A 365-day transition is an initial business assumption, not an AWS-proven optimum. Gather download age and urgency, then compare storage savings with transition, restore, and waiting costs. Storage Lens aggregate insights are not automatically a complete last-access history for every photo.
 
-### 7.2 Restore 是狀態機，不是一次 GET
+### 7.2 Restore is a state machine
 
 `archived → restore_requested → restoring → restored_until(T) → archived`
 
-客戶要求封存原圖時，API 先驗 download 權限，再建立或查詢 restore 工作。若工作正在進行，回傳既有狀態；若尚未開始，發出 RestoreObject。前端顯示等待，不應先發一個以為馬上能下載的 URL。
+Check download permission before starting or inspecting a restore. Reuse an existing in-progress job; otherwise call RestoreObject. Show pending state instead of issuing a URL that implies immediate access. Standard Flexible Retrieval typically takes 3–5 hours, while Expedited is often faster and Bulk slower; these are typical times, not a per-request SLA. Deep Archive has different delays. [AWS: Archive retrieval](https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html)
 
-Flexible Retrieval 的一般 Standard restore 通常為 3–5 小時，Expedited 通常更快而 Bulk 通常更慢；這是典型時間，不是每個請求的完成 SLA。Deep Archive 的等待更長，不能把所有名為 Glacier 的類別視為相同行為。[AWS: Understanding archive retrieval options](https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html)
+On completion, record the temporary readable period and notify the user. Reauthorize at actual download time. Expiry of the restored copy does not delete the archived original, and the temporary copy adds cost.
 
-確認 restore 完成後，系統記錄可讀期限、通知使用者；使用者回來下載時仍要重新授權。Temporary restored copy 到期不表示原始封存資料被刪掉；取回期間也要把暫存副本費用納入模型。
+### 7.3 Minimum retention is not minimum object size
 
-### 7.3 最低保留期不等於最小物件大小
+Flexible Retrieval has a 90-day minimum billed retention period; Deep Archive has 180 days. Early deletion may still incur minimum-duration charges. Each archived object also has 40 KB of additional metadata: 8 KB billed at Standard and 32 KB at the archive class. This is **extra metadata**, not a 40 KB minimum object unit. [AWS: S3 pricing](https://aws.amazon.com/s3/pricing/)
 
-Flexible Retrieval 最低計費保留期為 90 天，Deep Archive 為 180 天；過早刪除可能仍有最低期限費用。兩者每個 archived object 有額外 40 KB metadata 費用，其中 8 KB 按 Standard、32 KB 按對應封存級別計費。這是**額外 metadata**，不是「40 KB 最小物件單元」。[AWS: S3 Pricing](https://aws.amazon.com/s3/pricing/)
+A lifecycle transition changes class; expiration deletes. With versioning, set noncurrent-version retention and clean up incomplete multipart uploads. One 365-day transition rule does not control every storage cost.
 
-Lifecycle 還要分清 transition 與 expiration：前者換等級，後者刪除。開啟 versioning 後需另外決定 noncurrent versions 保留策略，也要清理未完成的 multipart uploads；不能只設一條「365 天轉冷」便認為所有儲存成本都有控制。
+## 8. Use a reproducible cost model
 
-## 8 用可重算的成本模型取代單一總價
+### 8.1 Align units and time in storage
 
-### 8.1 先統一單位與存放時間
-
-假設來源中的 MB、KB 都是十進位：
+Assume the source uses decimal MB and KB:
 
 $$
 N=40\times400=16{,}000,\qquad
@@ -4577,134 +4357,128 @@ $$
 B_p=N\times300\times10^3=4.8\times10^9\text{ bytes}.
 $$
 
-原圖約 74.51 GiB、預覽約 4.47 GiB，共 78.98 GiB。S3 定價文件以 binary GB，即 $2^{30}$ bytes 計算 storage usage；換算單位不等於折扣。[AWS: S3 Pricing](https://aws.amazon.com/s3/pricing/)
+Originals are about 74.51 GiB and previews about 4.47 GiB, totaling 78.98 GiB. S3 prices storage in binary GB ($2^{30}$ bytes); converting units is not a discount. [AWS: S3 pricing](https://aws.amazon.com/s3/pricing/)
 
-年末累積容量不能直接乘 12 就當第一年實際費用。若第一年從空桶開始、全年近似均勻增加且不刪除，年平均容量約是年末一半，Standard storage 約為 $6\times78.98$ GiB-month；若全部在年初上傳並留滿一年，才約為 $12\times78.98$ GiB-month。之後的年度還要加上舊照片，不能每年都只算新的 16,000 張。
+Do not multiply year-end capacity by 12 to estimate the first year if the bucket starts empty. Under roughly uniform growth and no deletions, average first-year capacity is about half the year-end amount, around $6\times78.98$ GiB-month in Standard. All photos uploaded at the start and retained all year would yield about $12\times78.98$ GiB-month. Later years must include older photos.
 
-### 8.2 成本項目與計算方式
+### 8.2 Include every cost category
 
-令 $p_h,p_c$ 分別為本次查價的熱、冷儲存單價，$S_{h,m},S_{c,m}$ 是每月平均計費容量：
+Let $p_h,p_c$ be current hot and cold storage rates, and $S_{h,m},S_{c,m}$ average monthly billable capacities:
 
 $$
 C_{\text{storage}}
 =\sum_{m=1}^{12}(S_{h,m}p_h+S_{c,m}p_c).
 $$
 
-完整服務成本還要加上 requests、lifecycle transitions、restore requests／bytes、restore 暫存副本、internet egress、Lambda、DynamoDB、hosting、監控與版本儲存，再扣實際適用優惠；商業比較則再加開發與維護工時。
+Also count requests, lifecycle transitions, restore requests and bytes, temporary restored copies, internet egress, Lambda, DynamoDB, hosting, monitoring, and retained versions; subtract only applicable credits. A business comparison must add development and maintenance labor.
 
-| 費用 | 容易漏掉的量 |
+| Category | Commonly missed quantity |
 |---|---|
-| S3 requests | 每張圖有原圖 PUT、worker GET、預覽 PUT，之後還有讀取與可能重試 |
-| 轉冷 | 物件數乘 transition request 單價，不只計資料總量 |
-| Restore | 次數、bytes、取回等級與暫存天數 |
-| Lambda | invocation 數與配置記憶體乘執行時間 |
-| 出站傳輸 | 每月實際傳出 bytes，包含重複下載與親友瀏覽 |
-| 留存 | 非最新版本、未完成 multipart、日誌、備份／跨區副本 |
+| S3 requests | Original PUT, worker GET, preview PUT, later reads and retries |
+| Transitions | Number of objects times transition-request price |
+| Restore | Count, bytes, retrieval tier, and temporary retention days |
+| Lambda | Invocation count, configured memory, and duration |
+| Egress | Monthly bytes including repeat downloads and guest browsing |
+| Retention | Old versions, incomplete multipart uploads, logs, backups, cross-region copies |
 
-例如採用附件中「PUT 每千次 0.005 美元」作**純算術假設**，16,000 次 PUT 為 0.08 美元；但這不是整個系統寫入成本，也不是此處已驗證的新加坡即時報價。固定單價與「全年 20–40 美元」只有在所有用量、區域、價格日期與優惠前提成立時才可當估算，不能當保證。
+At an **illustrative** $0.005 per 1,000 PUTs, 16,000 PUTs cost $0.08 in simple arithmetic. This is neither total write cost nor a verified current Singapore quote. A fixed annual estimate such as $20–$40 is meaningful only with explicit usage, region, price date, and credits; it is not a guarantee.
 
-### 8.3 不要把年度流量與月額度比較
+### 8.3 Do not compare annual traffic with a monthly allowance
 
-每場原圖約 2 GB，40 場各完整下載一次合計 80 GB／年。這個數字本身不能推出超過「100 GB／月」的門檻；必須按月份分配，再加上重複下載、預覽與同帳戶其他服務。AWS 的相關月免費出站額度有跨服務／區域合併與適用範圍，正式估算應查當時方案。[AWS: Global Network FAQs](https://aws.amazon.com/about-aws/global-infrastructure/global-network/faqs/)
+Each wedding has about 2 GB of originals; one complete download for each of 40 weddings gives 80 GB **per year**. That alone does not cross a 100 GB **per month** threshold. Allocate traffic by month and include repeat downloads, previews, and other services in the account. Check current free egress terms and aggregation rules. [AWS: Global Network FAQs](https://aws.amazon.com/about-aws/global-infrastructure/global-network/faqs/)
 
-CloudFront 可以降低 origin requests 與部分 origin 流量，但終端使用者仍需收到照片 bytes。是否更便宜要比較 CDN 自己的流量、request、方案與快取命中率，不能寫成「加 CDN 就消除 egress 費」。
+CloudFront can reduce origin requests and some origin traffic, but users still receive the image bytes. Compare CDN egress, request charges, plans, and cache hit rate; a CDN does not erase delivery cost.
 
-### 8.4 Free Tier 與帳單讀法
+### 8.4 Free Tier and billing
 
-查核時新客戶方案包含註冊 credits 與有條件的額外 credits，不能把「up to 200 美元」視為所有帳戶已領滿。Free plan 最長六個月，credits 用盡可能提早結束；credits 的十二個月效期則是另一條時間軸。自己的 plan、資格與到期日應看 Billing，而不是套用別人截圖上的日期。[AWS: Free Tier FAQs](https://aws.amazon.com/free/free-tier-faqs/)
+At the time of checking, new-customer offers included signup credits and conditional additional credits. “Up to $200” does not mean every account has received $200. A free plan can last up to six months but may end when credits run out; a 12-month credit expiry is a different clock. Check the actual account's Billing plan, eligibility, and dates. [AWS: Free Tier FAQs](https://aws.amazon.com/free/free-tier-faqs/)
 
-帳單顯示 0.00 可能涉及抵扣、免費用量、四捨五入或入帳延遲。沒有 line items 與 credits 明細，不能斷定「低於 0.0001 所以沒收費」；測試時零帳單更不能證明長期免費。
+A $0.00 bill may reflect credits, free usage, rounding, or delayed posting. Without line items and credit details, do not infer an exact charge threshold or conclude that a test deployment will remain free.
 
-## 9 擴展、監控與災難復原
+## 9. Scaling, monitoring, and disaster recovery
 
-### 9.1 三倍業務先估速率與工作時間
+### 9.1 Estimate arrival rate and processing time
 
-每日 1,000 張照片與 1,000 concurrent executions 不是同一單位。令到達率為 $\lambda$ 張／秒、平均處理時間為 $t$ 秒，穩定條件下平均忙碌 worker 數約為：
+One thousand photos per day is not the same unit as 1,000 concurrent executions. If arrival rate is $\lambda$ photos per second and processing takes $t$ seconds on average, expected busy workers under stable conditions are roughly:
 
 $$
 L\approx\lambda t.
 $$
 
-例如 1,000 張在一分鐘到達，每張處理 3 秒，平均負載約 50 個同時執行的工作；若同時湧入，瞬間需求與排隊時間則不同。這是容量推算示例，不是壓測結果。需保留突發與慢任務餘裕，檢查帳戶 quota、API throttling、DynamoDB 熱點與下游速率。
+For example, 1,000 uploads in one minute with three seconds of processing each imply an average workload of about 50 concurrent jobs; an instantaneous burst produces different queueing behavior. This is a capacity example, not a load test. Allow for bursts and slow jobs, and check account quotas, API throttling, DynamoDB hot keys, and downstream limits. SQS separates upload completion from image processing but can increase the visible “processing” delay. Measure cold-start p95/p99 rather than memorizing one duration. Provisioned concurrency costs money and should follow latency goals.
 
-SQS 可讓上傳成功與處理完成分開，worker 按受控速度消費；代價是顯示「處理中」的時間增加。Cold start 應量測 p95/p99，而不是背固定秒數。Provisioned concurrency 可以改善暖機需求但需付費，是否使用應由延遲目標與成本決定。
+### 9.2 Protect both CDN origin and viewer
 
-### 9.2 CloudFront 要保護 origin，也要保護 viewer
+With CloudFront, Origin Access Control and a bucket policy can restrict S3 origin access to one distribution. That does not authorize every internet viewer of the distribution. [AWS: Restrict an S3 origin](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)
 
-若加 CDN，OAC 配合 bucket policy 限制指定 distribution 的 origin 存取；這解決 CloudFront 如何讀 S3，不代表所有網路使用者都有權看 CloudFront 上的照片。[AWS: Restrict access to an Amazon S3 origin](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)
+Use viewer-side signed URLs or signed cookies. A scoped, expiring signed cookie can avoid signing each gallery photo; its policy Resource must cover only authorized gallery paths. Browser cookie Path alone does not establish tenant isolation. Referer can be missing or spoofed. If the bucket is changed to permit only CloudFront, update the read path; do not assume old S3 presigned GET URLs still work. [AWS: Signed cookies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-signed-cookies.html)
 
-Viewer 端仍需 signed URL／signed cookie 等授權。相簿可用有明確範圍與期限的 signed cookie 減少逐張發 URL；應讓簽章 policy 的 Resource 範圍只涵蓋獲授權相簿，不能只靠瀏覽器 cookie Path 控制租戶隔離。[AWS: Use signed cookies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-signed-cookies.html)
+### 9.3 Connect monitoring to action
 
-Referer 可偽造或缺席，不能作為主要身分驗證。若 bucket 改成只允許 CloudFront 存取，前端的讀取路徑也必須同步改，不能假定舊 S3 presigned GET 仍可使用。
-
-### 9.3 監控指標要對應可採取的動作
-
-| 觀測 | 可能問題 | 建議回應 |
+| Signal | Possible issue | Response |
 |---|---|---|
-| API 401／403 明顯增加 | token 設定、過期、授權拒絕或異常探測 | 分類檢查，不直接放寬權限 |
-| 5xx、Lambda errors／timeouts | 程式或依賴服務故障 | 查 request ID、trace、近期部署 |
-| Queue age、DLQ 訊息增加 | 消費太慢、毒訊息或持續失敗 | 告警、修復、受控重放 |
-| Pending／processing 長時間不變 | 上傳放棄、事件或狀態更新缺口 | reconciliation 與工作逾時處理 |
-| Egress／request 費暴增 | 大量下載、重試或憑證被分享 | 檢查模式、縮小能力窗口與節流 |
+| Rising API 401/403 | Token configuration, expiry, denied access, or probing | Classify causes; do not loosen permissions reflexively |
+| 5xx, Lambda errors/timeouts | Code or dependency failure | Inspect request IDs, traces, and recent deployments |
+| Queue age or DLQ growth | Slow consumers, poison messages, persistent errors | Alert, repair, and replay safely |
+| Stuck pending/processing state | Abandoned upload, missing event, incomplete state update | Reconcile and apply job timeouts |
+| Egress/request spike | Heavy downloads, retries, shared capability | Investigate, limit exposure, and throttle |
 
-CloudWatch 與分散式 tracing 幫助觀察延遲與失敗，但日誌應避免保存 JWT、完整預簽網址與不必要個資。AWS Budgets 是監控／告警工具，單純設定預算**不是硬性消費上限**；通知可能落後，budget actions 也要另行設定與評估影響。[AWS: Managing your costs with AWS Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)
+CloudWatch and tracing expose latency and failures. Avoid logging JWTs, full presigned URLs, or unnecessary personal data. AWS Budgets provides monitoring and alerts, **not a hard spending cap** by default; notifications may lag, and budget actions require separate configuration. [AWS: Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html)
 
-### 9.4 耐久性、可用性與備份不是同一件事
+### 9.4 Durability, availability, and backup differ
 
-耐久性關心資料是否遺失，可用性關心現在能否取得服務。供應商的儲存耐久性設計不能防止應用程式用合法權限刪錯資料；跨 AZ 儲存也不等於完成跨區災難復原。
+Durability concerns data loss; availability concerns whether the service can be accessed now. Provider storage durability does not prevent an application with valid permissions from deleting the wrong object. Multi-AZ storage alone does not provide cross-region disaster recovery.
 
-本案例可用 versioning 防範部分誤刪與覆蓋，但舊版本會增加費用，清理策略也會改變可恢復時間。更強的刪除保護、獨立備份或跨區複製需額外設計、權限與成本；不能把 versioning 寫成「極低成本且足夠的完整備份」。
+Versioning can recover some accidental deletes and overwrites, but old versions cost money and retention rules affect recovery. Stronger deletion protection, independent backup, or cross-region replication needs separate design, permissions, and cost. Define RPO (maximum acceptable data loss) and RTO (maximum acceptable outage), then rehearse recovery of photos, metadata, memberships, and configuration. A single-region API, Cognito, or database dependency can interrupt the gallery even when S3 data remains intact.
 
-進一步要定義 RPO（最多能承受遺失多久的資料）與 RTO（最多能停機多久），並實際演練照片、metadata、membership 及設定的還原。單一 region 的 API、Cognito 與資料依賴仍可能造成區域級中斷，S3 資料完好不表示整個登入與相簿流程可用。
+## 10. Viva answers and acceptance cases
 
-## 10 Viva 的回答結構與驗收案例
+### 10.1 Answer with requirements, choice, cost, and verification
 
-### 10.1 用需求、選擇、代價與驗證回答
+A useful answer follows **requirement → selected design → trade-off → condition for changing it → verification**.
 
-好的回答不是「某服務最好」，而是：**本案例的需求是什麼 → 因此選了什麼 → 犧牲了什麼 → 在什麼條件下要換方案 → 如何驗證**。
-
-| 追問 | 回答要點 |
+| Question | Answer focus |
 |---|---|
-| 為什麼不用公開難猜 URL | 不能列舉仍可能轉傳；登入與資源授權能控制誰取得新存取能力 |
-| JWT 有效為什麼還查 DynamoDB | 身分正確不代表有該相簿權限；還要查 role 與照片歸屬 |
-| 為什麼不用 IAM user 管客戶 | 應用身分與基礎設施身分不同；用 User Pool 加後端最小權限，不宣稱任何 IAM 洩漏都等於 root |
-| 為什麼不用 Identity Pool | 集中動態業務授權較符合此設計；受限臨時 AWS 憑證仍是可行的其他方案 |
-| 為什麼雙 bucket | 分開觸發器、權限、lifecycle 與 CDN；單桶 prefix filter 同樣可能正確 |
-| 為什麼 Lambda 而非 EC2 | 短、獨立、突發任務適合按用量運算；代價是 quotas、冷啟動與分散除錯 |
-| 為什麼不是前端縮圖 | 後端可統一驗證與輸出；前端預處理仍可改善 UX，但不作唯一可信處理 |
-| 為什麼一年後轉冷 | 可被數據推翻的初始假設，必須比較成本與 restore 體驗 |
-| 為什麼不買 SaaS | 自建換得可客製化與控制面，但需計開發維運；小團隊用 SaaS 可能更划算 |
-| 如何做到三倍擴展 | 估 rate × duration、下游限額與佇列等待；不是比較每日件數與並發配額 |
+| Why not a public hard-to-guess URL? | Unlistable links can still be shared; authenticated resource authorization controls new access |
+| Why check DynamoDB after validating a JWT? | Identity does not imply gallery membership; check role and photo ownership |
+| Why not IAM users for clients? | Separate application identity from infrastructure identity; use User Pools and least-privilege backend roles |
+| Why not Identity Pools? | Backend checks fit dynamic gallery policy; restricted temporary browser credentials remain possible |
+| Why two buckets? | Separate triggers, permissions, lifecycle, and CDN origins; a correct single-bucket prefix design can also work |
+| Why Lambda instead of EC2? | Short, independent, bursty jobs fit usage billing; account for quotas, cold starts, and distributed debugging |
+| Why not thumbnail only in the frontend? | Backend output can be validated and standardized; frontend preprocessing may still improve UX |
+| Why archive after one year? | It is a falsifiable initial assumption; compare costs and restoration experience with data |
+| Why not buy SaaS? | A custom design gains control but incurs development and operations; SaaS may be cheaper for a small team |
+| How does it scale to three times demand? | Estimate rate × duration, downstream limits, and queue wait rather than comparing daily count to concurrency quota |
 
-### 10.2 最小驗收矩陣
+### 10.2 Minimum acceptance matrix
 
-以下是應執行的測試，尚未代表實際 AWS 環境已通過：
+These are **tests to run**, not claims that an AWS deployment has passed them.
 
-| 測試 | 預期安全／功能結果 |
+| Test | Expected result |
 |---|---|
-| 匿名直接 GET 正式私有物件 | 拒絕，無公開 policy 旁路 |
-| 無 token、錯 issuer／audience、過期 token | API 驗證拒絕 |
-| A 使用者改成 B 的 gallery ID | 拒絕且不簽發 URL |
-| 合法 A gallery 搭配 B photo ID | 拒絕跨相簿照片存取 |
-| Preview-only 成員要求原圖 | 拒絕 download 操作 |
-| 撤銷會員後要求新 URL | 拒絕；另記錄舊 URL 的已知有效期邊界 |
-| 簽發後未完成 upload | 不顯示 ready，過期 reservation 可回收 |
-| 重複事件與舊版本晚完成 | 不生成多餘可見照片，也不覆蓋新版本狀態 |
-| 預覽寫入後 worker crash | 重試可以收斂成正確的 ready 狀態 |
-| 上傳非圖片／超額檔案 | 依 policy、配額與內容驗證拒絕或隔離 |
-| 冷原圖尚未 restore | 顯示可追蹤等待狀態，預覽仍可讀 |
-| DLQ 堆積與備份還原 | 告警能送達，重放／還原流程經演練 |
+| Anonymous direct GET of a private object | Denied; no public-policy bypass |
+| Missing token, wrong issuer/audience, expired token | API authorizer rejects |
+| User A substitutes user B's gallery ID | Denied; no URL issued |
+| Valid gallery A with gallery B's photo ID | Cross-gallery object access denied |
+| Preview-only member requests an original | Download denied |
+| Member removed, then requests a new URL | Denied; document the old URL's remaining validity |
+| Upload issued but never completed | Not shown as ready; stale reservation recoverable |
+| Duplicate event or older version finishing late | No duplicate visible photo or rollback of current version |
+| Worker crashes after writing preview | Retry converges to correct ready state |
+| Non-image or oversized upload | Rejected or quarantined by policy and content checks |
+| Archived original not yet restored | Traceable wait state; preview remains available |
+| DLQ backlog and backup restore | Alerts arrive and replay/recovery has been rehearsed |
 
-本案例的核心不是堆出最多 AWS 圖示，而是能追蹤一張照片：誰能上傳、bytes 走哪裡、誰能讀、失敗怎麼恢復、舊資料怎麼取回、每個行為又產生什麼費用。這也把 Week 1 的經濟動機、Week 2 的責任邊界、Week 3 的彈性、Week 5 的隔離與 Week 6 的事件驅動串成同一條可檢驗的主線。
+The core of the case is tracing one photo: who can upload it, where its bytes travel, who can read it, how failures recover, how old data is restored, and what each action costs. This connects Week 1 economics, Week 2 responsibility, Week 3 elasticity, Week 5 isolation, and Week 6 event-driven execution.
 
-## 參考資料（References）
+## References
 
-### 課程與教材（Course Materials）
+### Course materials
 
-1. 使用者提供之整理：*CS5224 Lab 1 完整知識點與 Viva 準備*。案例輸入，非獨立核驗的部署紀錄。
-2. 使用者提供之整理：*多租戶存取控制與授權驗證機制*。補充設計、維運與 Viva 論點；較強的保證已在正文補上適用條件。
+1. User-provided summary, *CS5224 Lab 1 Complete Knowledge Points and Viva Preparation*. Case input, not an independently verified deployment record.
+2. User-provided summary, *Multi-Tenant Access Control and Authorization Verification Mechanisms*. Supplemental design, operations, and viva points; stronger guarantees in the text include their necessary conditions.
 
-### 技術文章（Technical Articles）
+### Technical articles
 
 1. [AWS: Download and upload objects with presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
 2. [AWS: Control access to HTTP APIs with JWT authorizers in API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html)
@@ -4717,14 +4491,14 @@ CloudWatch 與分散式 tracing 幫助觀察延遲與失敗，但日誌應避免
 
 <reviewkit>
 <takeaways>
-- 雲端儲存三大範式選型：區塊儲存（Block）專精資料庫 B-tree 等高頻隨機修改；檔案儲存（File）依循樹狀目錄與 POSIX 共享協議；物件儲存（Object）以不可變（WORM）與 HTTP REST 協議專精 PB 級海量非結構化靜態資產。
-- 雙平面網路分離架構（Control Plane vs. Data Plane）：控制平面由 API Gateway + Lambda A + DynamoDB 交換輕量 JSON；資料平面由瀏覽器攜帶 SigV4 預簽憑證直連 S3 傳輸 5 MB 照片，徹底規避 10 MB Payload 上限並消滅 Lambda 網路 I/O 閒置計費。
-- 預簽網址底層機制：S3 原生不消費 Cognito JWT；預簽網址是 Lambda A 將自身 STS 臨時憑證透過 HMAC-SHA256 計算之 Bearer Token，300 秒有效時長大幅收窄外洩窗口，且 300 秒僅限制連線發起時間而非傳輸完成時間。
-- 雲端身分與最小權限原則：Cognito 管業務終端自然人（Priya 與新人），IAM 管雲端微服務與基礎設施；Lambda A 僅具備業務授權與簽章權限（無 Delete），Lambda B 嚴格限定讀原圖寫預覽（禁止寫原圖以防遞歸計費黑洞）。
-- 資料庫架構演進：傳統 RDS 為存算耦合、進程常駐且停止實例銷毀快取的 7x24 付費虛擬機；DynamoDB 採存算分離與 Request Router 一致性哈希，On-Demand 容量模式在系統閒置時運算計費為 0 美元。
-- 公開 GetObject 加上禁止 ListBucket 不等於租戶隔離；正式私有相簿仍需以 Cognito 驗證身分並以 DynamoDB 實體關係進行資源層級防 IDOR 檢驗。
-- 原圖 archive 與 preview 熱存取分流；365 天轉入 Glacier Flexible Retrieval，restore 為耗時 3-5 小時之狀態機，具備可讀期限與暫存副本費用。
-- 事件重複、亂序及中途 crash 都要能處理；固定 output key 只是冪等性的一部分，雙桶隔離與 deterministic versioning 才能杜絕資料覆蓋與回退。
+- Block storage suits high-frequency random updates such as database index pages; file storage provides shared directory semantics; object storage serves large collections of complete static assets through HTTP APIs.
+- The control plane uses API Gateway, Lambda A, and DynamoDB for small authorization messages; the data plane transfers image bytes directly between browser and S3 with a SigV4 presigned URL.
+- S3 does not validate Cognito JWTs directly. A presigned URL is a short-lived bearer capability signed with the Lambda role's temporary AWS credentials; expiry is checked when a request begins.
+- Cognito authenticates application users; IAM authorizes AWS resource operations. Lambda A checks gallery membership and signs operations, while Lambda B reads originals and writes previews with restricted permissions.
+- A public GetObject permission without ListBucket is not tenant isolation. Private galleries require both identity validation and resource-level membership checks against IDOR.
+- Keep previews immediately available and evaluate archiving originals after 365 days; restoration is an asynchronous state machine with temporary-copy costs.
+- Handle duplicate or out-of-order events and crashes. Deterministic keys, source versions, and conditional state updates together protect against rollback and duplicate work.
+- Cost estimates must include time in storage, requests, transitions, restores, egress, compute, retained versions, and applicable credits.
 </takeaways>
 <qprompt/>
 </reviewkit>
