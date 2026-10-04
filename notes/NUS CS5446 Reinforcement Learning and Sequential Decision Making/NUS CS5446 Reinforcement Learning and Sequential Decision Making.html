@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5446-reinforcement-learning-and-sequential-decision-making">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="468">
+  <meta name="site:reading_time_minutes" content="478">
   <meta name="site:source" content="notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.md">
   <script>
   (() => {
@@ -155,7 +155,7 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#course-reading-architecture">Course Reading Architecture</a>
-<a class="note-toc-link level-1" href="#course-master-map-one-decision-problem-five-ways-to-solve-it">Course Master Map: One Decision Problem, Five Ways to Solve It</a>
+<a class="note-toc-link level-1" href="#course-master-map-represent-evaluate-learn-and-guide-decisions">Course Master Map: Represent, Evaluate, Learn, and Guide Decisions</a>
 <a class="note-toc-link level-2" href="#1-the-six-questions-that-locate-every-method">1. The six questions that locate every method</a>
 <a class="note-toc-link level-2" href="#2-the-representation-ladder">2. The representation ladder</a>
 <a class="note-toc-link level-2" href="#3-algorithm-family-matrix">3. Algorithm family matrix</a>
@@ -184,6 +184,7 @@
 <a class="note-toc-link level-2" href="#5-1-progression-forward-state-space-search">5.1 Progression (Forward State-Space Search)</a>
 <a class="note-toc-link level-2" href="#5-2-regression-backward-goal-directed-search">5.2 Regression (Backward Goal-Directed Search)</a>
 <a class="note-toc-link level-2" href="#5-3-state-space-vs-partial-description-space">5.3 State Space vs. Partial Description Space</a>
+<a class="note-toc-link level-2" href="#5-4-worked-bridge-progression-regression-and-sat">5.4 Worked Bridge: Progression, Regression, and SAT</a>
 <a class="note-toc-link level-1" href="#6-planning-as-logical-inference-boolean-satisfiability-satplan">6. Planning as Logical Inference: Boolean Satisfiability (SATPlan)</a>
 <a class="note-toc-link level-2" href="#6-1-propositional-satisfiability-reduction">6.1 Propositional Satisfiability Reduction</a>
 <a class="note-toc-link level-2" href="#6-2-the-satplan-algorithm">6.2 The SATPlan Algorithm</a>
@@ -261,6 +262,7 @@
 <a class="note-toc-link level-1" href="#3-case-studies-pandas-lunch-choice">3. Case Studies: Panda's Lunch Choice</a>
 <a class="note-toc-link level-2" href="#3-1-scenario-1-simple-lunch-choice-full-observability">3.1 Scenario 1: Simple Lunch Choice (Full Observability)</a>
 <a class="note-toc-link level-2" href="#3-2-scenario-2-partially-observable-environment-bayesian-updating">3.2 Scenario 2: Partially Observable Environment &amp; Bayesian Updating</a>
+<a class="note-toc-link level-2" href="#3-4-worked-bridge-expected-value-of-perfect-information">3.4 Worked Bridge: Expected Value of Perfect Information</a>
 <a class="note-toc-link level-1" href="#4-the-axioms-of-rational-preferences">4. The Axioms of Rational Preferences</a>
 <a class="note-toc-link level-2" href="#4-1-preference-notations-lotteries">4.1 Preference Notations &amp; Lotteries</a>
 <a class="note-toc-link level-2" href="#4-2-the-six-vnm-axioms-of-rationality">4.2 The Six VNM Axioms of Rationality</a>
@@ -320,6 +322,7 @@
 <a class="note-toc-link level-2" href="#6-1-the-bellman-optimality-equation-for-state-utility">6.1 The Bellman Optimality Equation for State Utility</a>
 <a class="note-toc-link level-2" href="#6-2-optimal-policy-extraction">6.2 Optimal Policy Extraction</a>
 <a class="note-toc-link level-2" href="#6-3-the-q-function-action-utility-function">6.3 The Q-Function (Action-Utility Function)</a>
+<a class="note-toc-link level-2" href="#6-4-a-two-state-mdp-you-can-solve-by-hand">6.4 A Two-State MDP You Can Solve by Hand</a>
 <a class="note-toc-link level-1" href="#7-value-iteration-algorithm-contraction-mapping-and-convergence-proof">7. Value Iteration: Algorithm, Contraction Mapping, and Convergence Proof</a>
 <a class="note-toc-link level-2" href="#7-1-the-value-iteration-algorithm">7.1 The Value Iteration Algorithm</a>
 <a class="note-toc-link level-2" href="#7-2-why-does-value-iteration-work">7.2 Why Does Value Iteration Work?</a>
@@ -440,7 +443,10 @@
 <a class="note-toc-link level-2" href="#2-1-formal-mdp-components-slide-5">2.1 Formal MDP Components (Slide 5)</a>
 <a class="note-toc-link level-2" href="#2-2-action-utility-q-function-and-state-utility-formulations-slide-8">2.2 Action-Utility (Q-Function) and State Utility Formulations (Slide 8)</a>
 <a class="note-toc-link level-2" href="#2-3-formal-distinction-of-utility-quantities-slide-9">2.3 Formal Distinction of Utility Quantities (Slide 9)</a>
+<a class="note-toc-link level-2" href="#2-4-from-exact-utility-to-online-estimates">2.4 From Exact Utility to Online Estimates</a>
+<a class="note-toc-link level-2" href="#2-5-bellman-expectation-vs-bellman-optimality-what-is-given-and-who-chooses">2.5 Bellman Expectation vs. Bellman Optimality: What Is Given, and Who Chooses?</a>
 <a class="note-toc-link level-1" href="#3-decision-time-planning-online-search-at-runtime">3. Decision-Time Planning: Online Search at Runtime</a>
+<a class="note-toc-link level-2" href="#3-1-search-depth-branching-and-nearsightedness">3.1 Search Depth, Branching, and Nearsightedness</a>
 <a class="note-toc-link level-1" href="#4-rollout-algorithms-one-step-lookahead-policy-improvement">4. Rollout Algorithms: One-Step Lookahead Policy Improvement</a>
 <a class="note-toc-link level-2" href="#4-1-algorithmic-mechanics-slide-10">4.1 Algorithmic Mechanics (Slide 10)</a>
 <a class="note-toc-link level-2" href="#4-2-search-tree-structure-depth-d-slide-11">4.2 Search Tree Structure (Depth $D$; Slide 11)</a>
@@ -595,10 +601,10 @@ Week 7  Rollout、MCTS、UCT、AlphaGo Zero、imitation learning</code></pre></d
 <blockquote class="blockquote mb-3"><strong>閱讀提示：</strong> 每個新方法都先問它修補前一週的哪個瓶頸，再讀公式與演算法；這樣 DQN、PPO、PBRS、MCTS 不會變成孤立名詞，而會被看成對「狀態空間、回饋、計算預算、資料來源」不同限制的回應。</blockquote>
 </section>
 
-<section id="course-master-map-one-decision-problem-five-ways-to-solve-it" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Course Master Map: One Decision Problem, Five Ways to Solve It</h3>
+<section id="course-master-map-represent-evaluate-learn-and-guide-decisions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Course Master Map: Represent, Evaluate, Learn, and Guide Decisions</h3>
 
-<p class="mb-3">整門課可以用同一個抽象問題統一：在狀態 $s$ 下選擇 action $a$，環境產生下一個狀態與 reward；agent 的工作是找到一個 policy，使長期 return 最大，同時處理不確定性、計算成本與資訊不足。</p>
+<p class="mb-3">整門課共同研究 agent 如何選擇行動。Classical planning 先以達成 goal／降低 plan cost 表達目標；utility theory 再處理結果偏好；MDP/RL 才以 expected return 表達序列決策。Reward 是其中一種形式化方式，不必倒過來把所有 planning 問題都先改寫成 RL。</p>
 
 <div class="note-markdown-block"><pre><code class="language-text">Represent the world
   → choose a plan when the model is deterministic and known
@@ -1354,6 +1360,18 @@ Week 7  Rollout、MCTS、UCT、AlphaGo Zero、imitation learning</code></pre></d
 <p class="mb-3">While $3^n &gt; 2^n$, backward search frequently explores far fewer nodes in practice because it focuses exclusively on actions causally connected to the goal, aggressively pruning branches that achieve irrelevant side effects.</p>
 
 <hr>
+
+<h4 id="5-4-worked-bridge-progression-regression-and-sat" class="mb-2">5.4 Worked Bridge: Progression, Regression, and SAT</h4>
+
+<p class="mb-3">考慮 fluents $AtA,AtB,HasKey$。初始 state 是 $\{AtA,HasKey\}$，goal 是 $\{AtB,HasKey\}$；Move 的 precondition 是 $\{AtA\}$，add list 是 $\{AtB\}$，delete list 是 $\{AtA\}$。</p>
+
+<p class="mb-3">Progression 把 action 套到完整 state： $$s'=(s\setminus Del(Move))\cup Add(Move)=\{AtB,HasKey\}.$$</p>
+
+<p class="mb-3">Regression 則問「要讓 goal 在 action 後成立，action 前必須有什麼？」在 $Del(a)\cap g=\varnothing$、action 與 goal 有關的情況下： $$Regress(g,a)=(g\setminus Add(a))\cup Pre(a)=\{HasKey,AtA\}.$$</p>
+
+<p class="mb-3">這個 regressed goal 已被初始 state 滿足，因此找到一個一步 plan。Regression 的節點是需要成立的條件集合，不是某個唯一的完整世界；$HasKey$ 雖非 Move 的 precondition，仍須保留，因為它是尚未由 action 達成的 goal。</p>
+
+<p class="mb-3">SATPlan 再把相同問題改成 time-indexed variables：$AtA_0,Move_0,AtB_1$。Precondition/effect clauses 描述「若採取 Move 會怎樣」，frame/successor-state clauses 描述「沒有 action 改變 HasKey 時，它為何繼續成立」。三種方法的 domain semantics 相同，差別是求解問題的表示方式。</p>
 </section>
 
 <section id="6-planning-as-logical-inference-boolean-satisfiability-satplan" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -2103,14 +2121,9 @@ HIERARCHICAL PLANNING (Structured Abstraction):
 <li><strong>Fundamental Challenge (Precondition Selection):</strong> In general automated planning, it is non-trivial and often undecidable to deduce automatically <em>which</em> specific preconditions can be selectively ignored across thousands of domain actions without either rendering the relaxed problem trivial (zero heuristic guidance) or retaining too much complexity.</li>
 </ul>
 
-<h5 class="mb-2">2. Ignore Delete Effects: Manhattan Distance, $h_{\max}$, $h_{\text{add}}$, and $h_{\text{FF}}$</h5>
+<h5 class="mb-2">2. Remove the Blank Precondition: Manhattan Distance</h5>
 
-<p class="mb-3">If we relax the action schema by dropping all negative effects ($\neg\text{On}(t, s_1) \land \neg\text{Blank}(s_2)$):</p>
-
-<ul class="note-list">
-<li>A tile can slide to an adjacent square <em>without vacating its current location</em> and <em>without requiring the destination cell to be blank</em>. Tiles can duplicate and freely overlap on the same grid cell.</li>
-<li>The minimal cost to move tile $t$ from $(x_1, y_1)$ to target $(x_2, y_2)$ reduces to its individual <strong>Manhattan Distance</strong> (minimum over independent copies):</li>
-</ul>
+<p class="mb-3">Keep adjacency but remove the requirement that the destination is blank. Each tile can move independently through occupied squares. Its relaxed shortest route is its <strong>Manhattan Distance</strong>:</p>
 
 <p class="mb-3">$$d_{\text{Manhattan}}(t) = |x_1 - x_2| + |y_1 - y_2|$$</p>
 
@@ -2123,25 +2136,27 @@ HIERARCHICAL PLANNING (Structured Abstraction):
 <li>Tiles 3, 4, 5, 6, 7: already at target positions $\implies \text{distance} = 0$.</li>
 </ul>
 
-<p class="mb-3">From this delete-relaxation, we obtain three standard domain-independent heuristic estimates:</p>
+<p class="mb-3">For these independent tile distances, two elementary lower bounds are:</p>
 
 <ul class="note-list">
-<li><strong>Max Heuristic ($h_{\max}$):</strong></li>
+<li><strong>Maximum Tile Distance:</strong></li>
 </ul>
 
 <p class="mb-3">$$h_{\max}(s) = \max_{i} d_{\text{Manhattan}}(t_i) = \max \{ 1, 1, 1, 0, 0, 0, 0, 0 \} = 1$$ <em>(Strictly admissible, but weak because it assumes all remaining tiles move for free).</em></p>
 
 <ul class="note-list">
-<li><strong>Additive Heuristic ($h_{\text{add}}$):</strong></li>
+<li><strong>Sum of Tile Distances (Manhattan Heuristic):</strong></li>
 </ul>
 
-<p class="mb-3">$$h_{\text{add}}(s) = \sum_{i} d_{\text{Manhattan}}(t_i) = 1 + 1 + 1 = 3$$ <em>(Highly informative and discriminative, but not guaranteed to be admissible in general PDDL domains where positive action interactions allow one action to achieve multiple subgoals).</em></p>
+<p class="mb-3">$$h_{\text{add}}(s) = \sum_{i} d_{\text{Manhattan}}(t_i) = 1 + 1 + 1 = 3$$ This sum is admissible for the puzzle because one unit-cost move moves only one numbered tile by one grid step.</p>
 
-<ul class="note-list">
-<li><strong>Fast-Forward Heuristic ($h_{\text{FF}}$):</strong></li>
-</ul>
+<p class="mb-3">Delete relaxation removes negative <strong>effects</strong>, while keeping positive <strong>preconditions</strong>, including Blank(destination). It can allow several locations to remain blank or occupied after actions, but it does not erase the blank precondition. Therefore these puzzle distances should not be identified automatically with PDDL $h_{\max}$, $h_{\text{add}}$, or $h_{\text{FF}}$.</p>
 
-<p class="mb-3">$$h_{\text{FF}}(s) = 3$$ <em>(Computes the number of actions in a greedy relaxed plan; highly informative and widely successful in satisficing planners).</em></p>
+<h5 class="mb-2">3. Why General Goal-Cost Summation Can Overcount</h5>
+
+<p class="mb-3">For a fact $p$, initialize relaxed cost $c(p)=0$ when $p$ is true, and otherwise propagate action costs until no value improves: $$c_{\max}(p)=\min_{a:p\in Add(a)}\left[c(a)+\max_{q\in Pre(a)}c_{\max}(q)\right].$$ Replacing the inner maximum by a sum defines additive propagation $c_{\text{add}}$. At the goal, aggregate by maximum for $h_{\max}$ and by sum for $h_{\text{add}}$. Empty precondition sets contribute zero.</p>
+
+<p class="mb-3">An action costing $1$ that achieves both $g_1$ and $g_2$ gives $h_{\max}=1$, $h_{\text{add}}=2$, and true optimal cost $1$. The sum pays twice for shared work. Thus $h_{\max}$ is admissible under the usual nonnegative-cost STRIPS relaxation; $h_{\text{add}}$ is not generally admissible. FF extracts a shared relaxed plan, avoiding some double counting, but greedy extraction need not find the cheapest relaxed plan.</p>
 
 <h4 id="2-4-the-fast-forward-heuristic-h-text-ff" class="mb-2">2.4 The Fast-Forward Heuristic ($h_{\text{FF}}$)</h4>
 
@@ -3193,6 +3208,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 </ol>
 
 <hr>
+
+<h4 id="3-4-worked-bridge-expected-value-of-perfect-information" class="mb-2">3.4 Worked Bridge: Expected Value of Perfect Information</h4>
+
+<p class="mb-3">Bayesian updating changes our belief; information has decision value only if it improves the action we choose. Consider two actions: Safe always yields utility $4$; Risky yields $10$ in a good state and $-2$ in a bad state. Each state initially has probability $1/2$.</p>
+
+<p class="mb-3">Without information, $EU(Safe)=4$ and $EU(Risky)=4$. With perfect information, choose Risky in the good state and Safe in the bad state: $$EU_{\text{perfect info}}=\tfrac12(10)+\tfrac12(4)=7,\qquad EVPI=7-4=3.$$</p>
+
+<p class="mb-3">一般形式為： $$EVPI=\mathbb E_s[\max_a U(a,s)]-\max_a\mathbb E_s[U(a,s)]\ge0.$$</p>
+
+<p class="mb-3">關鍵是 $\max$ 與 expectation 的順序：先看資訊再選 action，至少能模仿原本不看資訊的選擇。若資訊有成本，必須用相同 utility 尺度比較；money 的 utility 非線性時，utility 差 $3$ 不能直接解讀為願付 $3$ 元。Week 4 將一次性的「觀測後決策」延伸成每一步都影響未來的 decision process。</p>
 </section>
 
 <section id="4-the-axioms-of-rational-preferences" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -5099,6 +5124,18 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <p class="mb-3">In model-free reinforcement learning where transition probabilities $P(s' \mid s, a)$ are completely unknown, an agent possessing a learned $Q(s, a)$ table can instantly select optimal actions by taking $\arg\max_a Q(s, a)$ without needing an environmental simulator or transition model.</p>
 
 <hr>
+
+<h4 id="6-4-a-two-state-mdp-you-can-solve-by-hand" class="mb-2">6.4 A Two-State MDP You Can Solve by Hand</h4>
+
+<p class="mb-3">Let $s$ be nonterminal and $z$ terminal, with $\gamma=0.9$ and $V(z)=0$. Exit gives reward $2$ and moves to $z$. Wait gives reward $1$ and returns to $s$. These are rewards on transitions; the terminal payoff is not paid again after arrival.</p>
+
+<p class="mb-3">For the policy that always waits: $$V^\pi(s)=1+0.9V^\pi(s)\quad\Longrightarrow\quad V^\pi(s)=10.$$ For the optimal policy: $$V^<em>(s)=\max\{2,\;1+0.9V^</em>(s)\}=10.$$</p>
+
+<p class="mb-3">Starting value iteration from $V_0(s)=0$ gives $V_1(s)=2$, $V_2(s)=2.8$, $V_3(s)=3.52$, converging to $10$. The first backup prefers exiting because future value has not propagated yet. Repeated local Bellman backups communicate long-term consequences.</p>
+
+<p class="mb-3">If the current estimate is $V(s)=3$, an observed Wait transition has TD target $1+0.9(3)=3.7$, hence $\delta=0.7$. With learning rate $0.1$, the update gives $V(s)=3.07$. An Exit transition instead has target $2$, with <strong>no terminal bootstrap</strong>.</p>
+
+<p class="mb-3">Reward $1$ is immediate; return accumulates rewards over time; value $10$ is expected return under a specified policy. For an artificial rollout cutoff in a continuing task, bootstrap from the last state; for genuine termination, continuation value is zero. A task-defined finite horizon should be represented using time remaining.</p>
 </section>
 
 <section id="7-value-iteration-algorithm-contraction-mapping-and-convergence-proof" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -9133,14 +9170,14 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <ul class="note-list">
 <li><strong>State Space $\mathcal{S}$:</strong> The set of all valid environment configurations.</li>
 <li><strong>Action Space $\mathcal{A}$:</strong> The set of all valid control decisions.</li>
-<li><strong>Transition Function $\mathcal{T}$:</strong> A conditional probability distribution $\mathcal{T}(s, a, s') = \mathcal{P}(s' \mid s, a)$ satisfying the <strong>Markov property</strong>:</li>
+<li><strong>Transition Function $\mathcal{T}$:</strong> A conditional probability distribution $\mathcal{T}(s, a, s') = \mathcal{P}(s' \mid s, a)$. The <strong>Markov property</strong> says that, given the current state and action, the next-state distribution does not depend on earlier history: $\mathcal{P}(S_{t+1} \mid S_0,A_0,\ldots,S_t,A_t)=\mathcal{P}(S_{t+1} \mid S_t,A_t)$. Separately, probability normalization requires:</li>
 </ul>
 
 <p class="mb-3">$$\forall s \in \mathcal{S}, \, \forall a \in \mathcal{A}: \quad \sum_{s' \in \mathcal{S}} \mathcal{T}(s, a, s') = \sum_{s' \in \mathcal{S}} \mathcal{P}(s' \mid s, a) = 1$$</p>
 
 <ul class="note-list">
 <li><strong>Reward Function $\mathcal{R}$:</strong> Numerical feedback assigned to transitions: $\mathcal{R}: \mathcal{S} \to \mathbb{R}$, $\mathcal{R}: \mathcal{S} \times \mathcal{A} \to \mathbb{R}$, or $\mathcal{R}: \mathcal{S} \times \mathcal{A} \times \mathcal{S} \to \mathbb{R}$.</li>
-<li><strong>Discount Factor $\gamma$:</strong> A constant $0 \le \gamma \le 1$ bounding future returns.</li>
+<li><strong>Discount Factor $\gamma$:</strong> A constant $0 \le \gamma \le 1$ weighting future rewards. For a continuing infinite-horizon task with bounded rewards, $\gamma&lt;1$ keeps discounted returns finite; $\gamma=1$ needs an additional condition such as finite episodes.</li>
 </ul>
 
 <p class="mb-3">The objective of an agent is to derive an optimal policy $\pi^*: \mathcal{S} \to \mathcal{A}$ that balances immediate risk against long-term expected reward.</p>
@@ -9189,6 +9226,59 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 +---------------------------------------------------------------------------------------------------+</code></pre></div>
 
 <hr>
+
+<h4 id="2-4-from-exact-utility-to-online-estimates" class="mb-2">2.4 From Exact Utility to Online Estimates</h4>
+
+<p class="mb-3">The Bellman equations define an <strong>optimal</strong> action value $Q^*(s,a)$: take $a$ now, then act optimally. If instead the agent follows a particular rollout policy $\pi$ after the first action, the relevant quantity is $Q^\pi(s,a)=\mathbb{E}[G_t\mid S_t=s,A_t=a,\text{follow }\pi\text{ thereafter}]$. With finitely many simulated trajectories, the agent has only a sample estimate $\hat Q^\pi(s,a)$.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Quantity</th>
+<th>What it assumes about later actions</th>
+<th>How Week 7 uses it</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>$Q^*(s,a)$</td>
+<td>Optimal continuation</td>
+<td>Ideal target in the Bellman equation.</td>
+</tr>
+<tr>
+<td>$Q^\pi(s,a)$</td>
+<td>Continuation under a specified policy $\pi$</td>
+<td>Value targeted by a rollout based on $\pi$.</td>
+</tr>
+<tr>
+<td>$\hat Q^\pi(s,a)$</td>
+<td>Same continuation, estimated from finite samples</td>
+<td>Practical estimate used to choose an action now.</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Thus $\arg\max_a\hat Q^\pi(s,a)$ is the <strong>best sampled candidate under this evaluation procedure</strong>, not a guarantee of the globally optimal action. MCTS goes further by expanding promising parts of the tree and repeatedly updating action estimates; UCT's exploration bonus determines where to sample next, while the final root action is selected from the resulting estimates or visit counts.</p>
+
+<hr>
+
+<h4 id="2-5-bellman-expectation-vs-bellman-optimality-what-is-given-and-who-chooses" class="mb-2">2.5 Bellman Expectation vs. Bellman Optimality: What Is Given, and Who Chooses?</h4>
+
+<p class="mb-3">These equations answer different questions. <strong>Bellman expectation</strong> evaluates a policy $\pi$ that is already specified. The policy may be deterministic or stochastic; it chooses actions, while the equation computes their expected long-term value:</p>
+
+<p class="mb-3">$$\begin{aligned} V^\pi(s) &amp;= \sum_a \pi(a\mid s)Q^\pi(s,a), \\ Q^\pi(s,a) &amp;= \sum_{s'}P(s'\mid s,a)\left[R(s,a,s')+\gamma V^\pi(s')\right]. \end{aligned}$$</p>
+
+<p class="mb-3">The first line is a <strong>policy-weighted</strong> expectation over actions, not an unweighted average. If $\pi$ is deterministic, its selected action has probability $1$. The same policy also governs continuation after the first action. Evaluating $\pi$ does not make it greedy: $\pi$ could be random, $\epsilon$-greedy, or a fixed expert policy.</p>
+
+<p class="mb-3"><strong>Bellman optimality</strong> does not require a policy to be supplied first. It defines the best achievable value by choosing the highest-valued action at every state, including future states:</p>
+
+<p class="mb-3">$$\begin{aligned} V^<em>(s) &amp;= \max_a Q^</em>(s,a), \\ Q^<em>(s,a) &amp;= \sum_{s'}P(s'\mid s,a)\left[R(s,a,s')+\gamma V^</em>(s')\right], \\ \pi^<em>(s) &amp;\in \arg\max_a Q^</em>(s,a). \end{aligned}$$</p>
+
+<p class="mb-3">This is a coupled fixed-point relationship, so $V^<em>$ and $Q^</em>$ need not be known beforehand. <strong>Value iteration</strong> begins with an arbitrary value estimate and repeatedly applies the optimality backup; a greedy policy can be read from each current estimate, becoming optimal when the values converge under the usual finite discounted-MDP assumptions. <strong>Policy iteration</strong> instead starts with a policy, evaluates it using the expectation equation, then makes it greedy with respect to those values and repeats.</p>
+
+<p class="mb-3">For exact <strong>model-based</strong> Bellman calculations, <em>both</em> equations need the transition probabilities $P$ and rewards $R$; the difference is whether a policy is given or optimized. Sample-based methods can estimate policy values or optimal action values from experience without knowing $P$ in advance. Finally, the $\max$ in an optimality <strong>update target</strong> does not force the agent to execute that action during learning: behavior may deliberately explore, and a greedy choice from an inaccurate $\hat Q$ is not guaranteed to be truly optimal. The exact Bellman optimality equation itself is not made inaccurate by exploratory behavior.</p>
+
+<hr>
 </section>
 
 <section id="3-decision-time-planning-online-search-at-runtime" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -9200,9 +9290,17 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <ol class="mb-3">
 <li><strong>Local Tree Construction:</strong> From current state $s_0$, the agent builds a local forward search tree exploring candidate futures up to horizon $D$.</li>
-<li><strong>Immediate Action Selection:</strong> The agent computes values <em>just enough</em> to identify the best immediate action $a^* = \arg\max_a Q(s_0, a)$.</li>
+<li><strong>Immediate Action Selection:</strong> The agent estimates candidate action values under its search budget and selects an immediate action $a^* \approx \arg\max_a Q(s_0, a)$.</li>
 <li><strong>Execution and Re-rooting:</strong> The agent executes $a^*$, observes the true next state $s'$, discards (or trims) the search tree, and repeats the forward search rooted at $s'$.</li>
 </ol>
+
+<h4 id="3-1-search-depth-branching-and-nearsightedness" class="mb-2">3.1 Search Depth, Branching, and Nearsightedness</h4>
+
+<p class="mb-3">The key trade-off is <strong>which futures receive computation</strong>. If each state has roughly $b$ possible actions, an exhaustive search to depth $D$ can contain $O(b^D)$ action sequences. More state variables can make the total state space enormous, while the branching factor and horizon determine how costly a particular online search is. Decision-time planning avoids sweeping every state in the MDP, but it does not make the search tree free.</p>
+
+<p class="mb-3">Consider two actions at the current state. <strong>Take</strong> gives reward $5$ now and $0$ next step; <strong>Invest</strong> gives $0$ now and $10$ next step. With $\gamma=0.9$, a one-step search that values only immediate reward chooses Take ($5&gt;0$). A two-step search sees that Invest returns $0+0.9(10)=9$, exceeding Take's $5$. If Take is irreversible, replanning at the next state cannot recover the missed opportunity.</p>
+
+<p class="mb-3">This is a <strong>limited-horizon or poor-leaf-evaluation problem</strong>, not an inherent property of all decision-time planning. Greedy search is the extreme case of shallow lookahead with no useful continuation estimate; beam search limits how many branches survive. Rollouts can estimate returns beyond the explicit tree using a baseline policy, and MCTS allocates simulations selectively across branches. These methods can still choose poorly when the budget is too small, the simulator is inaccurate, sampling is noisy, or the rollout policy / leaf-value estimate misses delayed rewards. A deeper search, better continuation estimate, or more targeted exploration can reduce the risk, subject to runtime cost.</p>
 
 <p class="mb-3">Decision-time planning is exceptionally powerful when:</p>
 
@@ -9299,7 +9397,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>Strengths:</strong>
 <ul class="note-list">
 <li><strong>Conceptual Simplicity:</strong> Requires only a forward transition model and return averaging.</li>
-<li><strong>Guaranteed Improvement:</strong> Yields monotonic one-step policy improvement over the baseline rollout policy.</li>
+<li><strong>Policy Improvement under Exact Evaluation:</strong> The one-step policy improvement guarantee holds when $Q^\pi$ is evaluated exactly; finite rollout samples and horizon truncation can select a worse action.</li>
 <li><strong>High Robustness:</strong> Functions effectively even when the base rollout policy $\pi$ is completely random.</li>
 <li><strong>Embarrassingly Parallelizable:</strong> Trajectory simulations across actions are mutually independent and can be distributed across multi-core CPUs/GPUs.</li>
 </ul></li>

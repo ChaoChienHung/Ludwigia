@@ -11,6 +11,13 @@
 - 若變更影響 index/schema，交付條件必須包含「search-index.{json,js} 已更新並納入版本控制」
 - 若變更影響使用方式/約定/寫作語法，交付條件必須包含「文件同步」（依 `AGENTS.md` Doc Map）
 
+## Constellation Queue（待 Review）
+
+- [x] CS5224 Lab 1 補充整合與核驗
+    - 交付條件：將兩份 Lab 1 材料整合進既有 Cloud Computing 筆記，涵蓋 S3、資料流、多租戶授權、可靠性、成本與 Viva；重建 HTML／索引並通過既有測試。
+    - 已完成：新增十節有前後銜接的案例、成本推算與驗收矩陣，核對 AWS 官方來源；HTML／索引重建成功，self-test 與 46 項測試通過。筆記維持 drafting，未修改實際 AWS 資源。
+    - Review 重點：作者全盤 proofread，確認與原始 Lab 題目／實作一致；正文中的設計建議、假設容量與待執行測試不應被當成實際部署成果。
+
 ## Task Framing（Priority vs Ownership）
 
 - `P0..P4` 表示重要性 / 影響範圍，不等於實作成本
