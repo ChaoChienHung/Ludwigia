@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] MTP 系列入口與文獻資源筆記
+    - 交付條件：新增 `notes/multi-token-prediction/` 入口草稿與 29 篇方法／模型／生成式推薦資源筆記；以 canonical links 導覽，各頁提供 References 與 reviewkit/qprompt；維持 drafting，重建 HTML 與 search-index.{json,js}。
+    - 已完成：入口正文、12 篇方法／9 篇模型／8 篇推薦資源筆記與文獻地圖；一手資料核對至 2026-10-06；30 份 Markdown／HTML 均成功生成；metadata／reviewkit／可見 qprompt pane 正確，入口 canonical links 全部可解析至既有 HTML，68 個不重複來源 URL；索引重生後逐位元組相同，新草稿全數排除於公開索引，`git diff --check` 通過。
+    - Review 重點：作者全盤 proofread；確認 backbone supervision／head-only fitting／serving／RL rollout 的區分、PinRec v1 與最新版差異、GPR 架構與部署版本、採樣驗證保證、推薦 token／item 語意；個別深入正文仍待補，不視為完成研究寫作。既有 Markdown 導出限制：`reviewkit` 內的 takeaways 目前被 extractor 丟棄，已另列修復 task；source 與 HTML 重點仍保留。
+
 - [x] CS5246 / CS5228 / CS5223：整合補充材料與釐清概念
     - 交付條件：將 CS5246 問題與 BPE 化學式實作心得、CS5228 churn case 與概念補充、CS5223 Week 9 與 Paxos preemption 筆記整合進各自 source；重建 HTML 與索引，頁尾提供 reviewkit/qprompt。
     - 已完成：按概念/既有週次整合，修正 non-regular/undecidable、TF-IDF 長度偏差、ARI、PCA/t-SNE、XGBoost/stacking 誤貼、Paxos safety/leader 退位與 GFS acknowledgment 描述；提供官方/原始文獻核驗連結；三份 HTML 重建、索引重生（drafting 下內容未變），生成器 self-test 與 26 項相關測試通過。
@@ -107,6 +112,10 @@
   - [x] Review 重點：確認首頁 `#skills` 與 `#credentials` 的互動、類別切換、縮圖選單、燈箱 Modal 與深淺主題/Palette 呈現是否符合預期。
 
 ## Agent-friendly
+
+- [ ] 修復 Copy Markdown／Download Markdown 遺失 reviewkit 內 takeaways
+    - 影響範圍：`tools/content_contract.py` 的 `extract_core_markdown` 與 source-driven 內容頁 Markdown 導出；現有 note 已可重現，不是 MTP 內容新增的 parser 變更。
+    - 交付條件：`reviewkit` 內 `<takeaways>` 在純 Markdown 導出保留為 `## Key Takeaways` 加標準清單；繼續忽略 qprompt／qquiz UI 骨架，加入容器內與獨立 takeaways 的回歸驗證，確認一般正文／清單未退化；若修改語法或工作流，同步 AGENTS Doc Map 的受影響文件並重建必要生成物。
 
 ### P0
 

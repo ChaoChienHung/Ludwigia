@@ -3,3 +3,7 @@ __pycache__
 venv
 .DS_Store
 *.DS_Store
+
+# Local research outputs; authoritative content sources live in notes/.
+/research_notes/
+/reports/

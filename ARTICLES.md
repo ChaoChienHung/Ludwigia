@@ -22,6 +22,20 @@
 
 ## 一、大語言模型推理加速與投機解碼系列（LLM Inference Acceleration & Speculative Decoding）
 
+### MTP 系列：入口草稿與分篇資源（2026-10-06）
+
+- [x] 建立入口草稿與文獻資源地圖（待作者 Review）
+    - 入口：`notes/multi-token-prediction/multi-token-prediction-zh-tw.md`；由 NTP 地基接到共享表示監督、候選驗證與生成式推薦，內含四組 canonical 分篇導覽。
+    - 方法資源（12 篇）：2024 MTP、Medusa、Blockwise Parallel Decoding、Leviathan speculative decoding、ProphetNet、Hydra、tensor decomposition MTP、efficient LLM inference MTP、pretraining curriculum、Your LLM Knows the Future、P-EAGLE、Post-Training MTP Heads。
+    - 模型資源（9 篇）：DeepSeek-V3、MiMo-7B、GLM-4.5、Qwen3-Next、MiMo-V2-Flash、Qwen3.5、GLM-5、DeepSeek-V4、Nemotron 3 Ultra。
+    - 推薦資源（8 篇）：RPG、GPR、PinRec、EchoRec、UniSGR、GReF、EGA-V2、Netflix generative recommenders；Netflix future-set objective 與離散 SID 預測分開解釋。
+    - 完成範圍：先蒐集原始論文／官方文章／模型卡／作者程式並註明閱讀重點、版本、部署證據；30 篇均 drafting，分篇深入正文未完成。研究地圖：`reports/MTP 模型與方法文獻地圖.md`。
+- [ ] 作者全盤 proofread MTP 入口；確認讀者定位、術語與訓練效率／推論加速的證據邊界後，再決定發布。
+- [ ] 補完整 MTP 訓練方法筆記：還原條件資訊、loss、梯度路徑與消融，分別衡量 sample efficiency、FLOPs 與 GPU 時間。
+- [ ] 補完整多步候選與驗證筆記：比較獨立／相依 heads、聯合預測與 drafter 成本，區分 greedy／distribution／quality 保證。
+- [ ] 補完整模型工程筆記：按 backbone supervision、head-only fitting、serving、RL rollout 記錄版本與部署條件，不把整體模型收益歸因 MTP。
+- [ ] 補完整推薦筆記：先辨認 SID 組件／同 session 多興趣／連續未來商品／排序位置，再比較訓練與解碼；固定 PinRec 歷史 v1 與 GPR 所讀版本，分列 offline／A-B／shadow／full deployment 證據。
+
 ### 1. DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation
 - [ ] 規劃並撰寫 DSpark 深度技術筆記
   - **核心主題**：置信度調度（Confidence-Scheduled）投機解碼與半自迴歸生成（Semi-Autoregressive Generation, SAR）。
