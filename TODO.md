@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] CS5446 cheatsheet from the supplied course materials
+    - Delivery condition: Maintain a plain English, concept-focused `CS5446-cheatsheet.md` using original week labels, without question-specific Assignment/Tutorial answers, exam administration, lookup maps, reward shaping, or EVPI.
+    - Completed: Removed detailed problem setups, case names, numerical answer sequences, and assignment-specific models. Preserved and generalized PDDL structure/invariants, goal interaction, HTN refinement, risk/EU procedures, objective selection, MC averaging, feature adequacy, advantage, and PPO clipping. Reduced length from 11,413 to 8,872 words. Checked English text, Markdown tables, formula delimiters, section references, original week labels, and equivalence of the PPO piecewise formula to its clipped objective.
+    - Review focus: Author proofread of concept coverage and confirmed exam scope, especially reward/horizon conventions, relaxation assumptions, reachable-set bounds, and policy-gradient estimators. Brief examples illustrate concepts rather than reproduce particular questions. Week 7 retains its original label despite excluding Week 6.
+
 - [x] CS5446 note: convert remaining Chinese passages to English
     - 交付條件：Translate all remaining Chinese prose in the CS5446 Markdown source, rebuild its HTML, and verify the reader-facing page and English question bank contain no Chinese text.
     - 已完成：Translated 85 Chinese lines, rebuilt the HTML with `cli.py build`, and checked the Markdown, HTML body, and `questions.en.json`; all reader-facing content is English. The search index was regenerated and is unchanged.

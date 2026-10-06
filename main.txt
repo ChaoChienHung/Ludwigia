@@ -1,0 +1,1163 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=1.5cm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem,booktabs,tabularx,array,longtable}
+\usepackage[explicit]{titlesec}
+\usepackage{fancyhdr,lastpage}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{listings}
+\usepackage{hyperref}
+\definecolor{accent}{HTML}{2F3E9E}
+\definecolor{ink}{HTML}{1B2030}
+\definecolor{soft}{HTML}{5A6478}
+\definecolor{good}{HTML}{1C7A52}
+\definecolor{warn}{HTML}{B4560A}
+\definecolor{idea}{HTML}{7A2E7A}
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent,
+  pdftitle={CS5446 Cheatsheet: Concepts and Integrated Tutorials},
+  pdfauthor={CS5446 Study Notes},bookmarksnumbered=true}
+\color{ink}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\linespread{1.10}
+\setlength{\emergencystretch}{2em}
+\setlength{\abovedisplayskip}{5pt}
+\setlength{\belowdisplayskip}{5pt}
+\setlist[itemize]{leftmargin=1.4em,itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=2pt,topsep=3pt,parsep=0pt}
+\renewcommand{\arraystretch}{1.18}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\pagestyle{fancy}\fancyhf{}
+\lhead{\small\color{soft}CS5446 \; Reinforcement Learning}
+\rhead{\small\color{soft}Key Concepts + Tutorials 1--5}
+\cfoot{\small\color{soft}\thepage\,/\,\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\titleformat{\section}{\Large\bfseries\color{accent}}{}{0pt}{\thesection\quad #1}
+\titleformat{name=\section,numberless}{\Large\bfseries\color{accent}}{}{0pt}{#1}
+\titleformat{\subsection}{\large\bfseries\color{accent}}{}{0pt}{#1}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+\tcbset{studybox/.style={enhanced,breakable,arc=2pt,boxrule=0.6pt,
+  left=7pt,right=7pt,top=5pt,bottom=5pt,boxsep=1pt,
+  before skip=6pt,after skip=6pt,lines before break=4,fonttitle=\bfseries\small,coltitle=white}}
+\newtcolorbox{card}[1]{studybox,colback=white,colframe=accent!70,colbacktitle=accent,title={#1}}
+\newtcolorbox{idea}[1][Intuition]{studybox,colback=idea!5,colframe=idea!50,colbacktitle=idea!80,title={#1}}
+\newtcolorbox{note}[1][Common Pitfalls]{studybox,colback=warn!5,colframe=warn!50,colbacktitle=warn!85,title={#1}}
+\newtcolorbox{prf}[1][Derivation / Proof]{studybox,colback=good!4,colframe=good!50,colbacktitle=good!85,title={#1}}
+\newtcolorbox{question}[1]{studybox,colback=idea!3,colframe=idea!65,colbacktitle=idea!85,title={#1}}
+\newtcolorbox{plain}{studybox,colback=accent!4,colframe=accent!35}
+\newcommand{\key}[1]{\textbf{\color{accent}#1}}
+\newcommand{\ans}{\par\smallskip\textbf{\color{good}Solution\quad}}
+\newcommand{\pit}{\par\smallskip\textbf{\color{warn}Note\quad}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\argmax}{\operatorname*{arg\,max}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcommand{\clip}{\operatorname{clip}}
+\newcommand{\Pre}{\operatorname{Pre}}
+\newcommand{\Add}{\operatorname{Add}}
+\newcommand{\Del}{\operatorname{Del}}
+\newcommand{\Reach}{\operatorname{REACH}}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\topic}[1]{\clearpage\section{#1}}
+\lstset{basicstyle=\ttfamily\footnotesize,columns=fullflexible,
+  keepspaces=true,breaklines=true,showstringspaces=false,
+  frame=none,aboveskip=4pt,belowskip=4pt}
+\setcounter{tocdepth}{1}
+\begin{document}
+
+{\LARGE\bfseries\color{accent}CS5446\quad Concepts + Tutorials}\par
+{\large Reinforcement Learning and Sequential Decisions: Concepts First, Problems in Context}\par
+\smallskip
+\begin{plain}
+\textbf{Scope and organization:} The supplied \texttt{CS5446-cheatsheet.md} sets the priorities; \texttt{CS5446.md} supplies the core details. Tutorial 1--5 problem sheets and student slides are integrated, with Team26 T1--T3 answers independently recalculated. \textbf{T refers to tutorial numbering; W refers to lecture-note weeks.} Their week numbers differ.
+
+Blue: definitions / formulas; purple: intuition / problems; green: solutions / proofs; orange: pitfalls. Problems are \textbf{restated in English}, preserving the original conditions and subquestions. Lecture examples and supplementary exercises are labeled separately. Historical background, product lists, research projects, and repetition are condensed. Week 6 retains the key shaping distinctions and PBRS.
+\end{plain}
+\tableofcontents
+
+\section*{Quick Reference}
+\addcontentsline{toc}{section}{Quick Reference}
+\begin{card}{First identify the decision problem}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{2.4cm}Y Y@{}}
+\toprule Problem & Known information / objective & Methods \\\midrule
+Classical planning & Known deterministic model; find a goal-reaching action sequence & STRIPS, progression, regression, SATPlan \\
+Hierarchical planning & Primitive actions and method library; find an executable refinement & HTN, HLA, reachable sets \\
+One-shot decision & Probabilities and preferences; maximize expected utility & MEU, Bayes, decision tree \\
+MDP planning & Known $P,R$; maximize long-term return & VI, PI, Bellman equations \\
+RL prediction & Fixed $\pi$, unknown model; estimate $V^\pi$ & ADP, MC, TD \\
+RL control & Improve $\pi$; explore and learn good decisions & Active ADP, MC control, SARSA, Q-learning \\
+Large-state RL & Tables are impractical; generalize with shared parameters & Function approximation, DQN, PG, PPO \\
+Guided decisions & Simulator or expert data available & Rollout, MCTS; BC, DAgger, GAIL \\\bottomrule
+\end{tabularx}\par\smallskip
+\end{card}
+\begin{card}{Notation and reward timing}
+$s,a,s'$: current state, action, successor; $P(s'\mid s,a)$: transition probability; $r=R(s,a,s')$: reward for this transition. $\alpha$ is the \textbf{learning rate}; $\gamma$ is the \textbf{discount factor}.
+\[
+G_t=\sum_{k=0}^{H-1}\gamma^kR_{t+k+1},\qquad
+V^\pi(s)=\E_\pi[G_t\mid S_t=s],\quad
+Q^\pi(s,a)=\E_\pi[G_t\mid S_t=s,A_t=a].
+\]
+$G_t$ is a realized trajectory return; $V,Q$ are expectations. $V^*,Q^*$ are optimal; $\hat V,\hat Q$ are estimates. $Q^\pi$ forces action $a$ first, then follows $\pi$.
+
+\textbf{Course default: reward on entry}, $R(s,a,s')=f(s')$. A problem may instead specify $R(s,a)$ (as in Nova). $R(s,a,s')=f(s)$ is also valid; keep one convention throughout each problem. Tutorial 4 writes the reward after $a_t$ as $r_t$, equivalent to $R_{t+1}$ here.
+
+\textbf{True termination:} pay the terminal payoff upon entry, then set $V(T)=0$. An artificial time-limit truncation need not be true termination; a continuing task usually still requires bootstrapping.
+\end{card}
+\begin{card}{Value updates: identify the target, then compute the error}
+\[
+\boxed{\text{new estimate}=\text{old estimate}+\alpha(\text{target}-\text{old estimate})}
+\]
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{3cm}Y@{}}
+\toprule Method & Target / actor weight \\\midrule
+MC & $G_t$: complete episode return \\
+TD(0) & $r+\gamma V(s')$ \\
+SARSA & $r+\gamma Q(s',a')$; $a'$ is the action actually selected by the behavior policy \\
+Q-learning & $r+\gamma\max_bQ(s',b)$ \\
+DQN & $r+\gamma\max_bQ_{\theta^-}(s',b)$; fixed target network \\
+Policy evaluation & $\sum_{s'}P(s'\mid s,\pi(s))[R+\gamma V(s')]$ \\
+VI & $\max_a\sum_{s'}P(s'\mid s,a)[R+\gamma V(s')]$ \\
+REINFORCE actor & $G_t$ or $G_t-b(s_t)$, multiplying the score gradient \\
+TD Actor-Critic actor & $\delta_t=r+\gamma V_w(s')-V_w(s)$ as an advantage estimate \\\bottomrule
+\end{tabularx}\par\smallskip
+The bootstrap term is zero for a terminal transition.
+\end{card}
+\begin{note}[A consistent format for numerical updates]
+Write \textbf{old value} $\to$ \textbf{target} (using the specified pre-update values) $\to$ \textbf{error} $\to$ \textbf{multiply by $\alpha$} $\to$ \textbf{new value}. With a known model, average over all outcomes; a single-sample update changes only its specified entry or parameters.
+\end{note}
+
+\topic{Classical Planning: Representation, Search, SATPlan (W1)}
+\subsection{STRIPS / PDDL: essential semantics}
+\begin{card}{Planning problem, state, goal, action}
+$\mathcal P=\langle S,s_0,A,T,G\rangle$. A plan is an action sequence that reaches $G$ from $s_0$; a valid plan need not have minimum cost.
+
+\textbf{Classical assumptions:} known model, fully observable, deterministic, static, discrete, and usually single-agent.
+\begin{itemize}
+\item A state is a set of true ground atoms. \textbf{Closed world:} absent atoms are false; distinct object names denote distinct objects.
+\item A schema contains variables; grounding substitutes objects for them. Static type facts are normally preserved by all actions.
+\item A goal is a \textbf{partial description}: $G^+\subseteq s$ and $G^-\cap s=\varnothing$; it need not specify the entire state.
+\item $a$ is applicable iff $\Pre^+(a)\subseteq s$ and $\Pre^-(a)\cap s=\varnothing$; then apply
+\[
+\boxed{T(s,a)=(s\setminus\Del(a))\cup\Add(a).}
+\]
+\item \textbf{Frame / inertia:} facts absent from the effects remain unchanged. Check invariants such as one location per object and a clear table against the actual model.
+\end{itemize}
+The domain specifies requirements, types, predicates, and action schemas. The problem specifies the domain, objects, initial state, and goal. Declare requirements for features such as equality and typing.
+\end{card}
+\begin{plain}
+\textbf{T1 slides: logic quick reference.} $A$ is a constant; $x$ a variable; $On/2$ a binary predicate symbol; $On(x,y)$ an atom with variables; $On(A,B)$ a ground atom; $\neg Clear(B)$ a negative literal.
+$\land$: both; $\lor$: at least one; $\neg$: negation; $\forall x$: every $x$; $\exists x$: at least one $x$. $A\ne B$ compares objects, not predicates.
+\end{plain}
+
+\begin{question}{T1 P1(a--c): Middle-pop Blocks World}\label{q:t1p1}
+\textbf{Problem:} initially a tower $A/B/C$ ($A$ on top, $C$ on Table). Move the middle block $B$ onto Table and end with $A$ on $C$. The only objects are $A,B,C,Table$; Table cannot move and always has space. Write PDDL, draw a forward search tree, and give a valid plan.
+\ans Use separate actions for moving onto a block and onto Table. $x\ne fr$, $x\ne to$, and $fr\ne to$ exclude self-stacking and redundant moves. Table is an object, not a block.
+\begin{lstlisting}
+(define (domain middle-pop)
+  (:requirements :strips :typing :equality)
+  (:types block)
+  (:constants Table - object)
+  (:predicates (on ?x - block ?y - object) (clear ?x - object))
+  (:action move-to-block
+    :parameters (?x - block ?fr - object ?to - block)
+    :precondition (and (on ?x ?fr) (clear ?x) (clear ?to)
+      (not (= ?x ?fr)) (not (= ?x ?to)) (not (= ?fr ?to)))
+    :effect (and (not (on ?x ?fr)) (on ?x ?to)
+      (clear ?fr) (not (clear ?to))))
+  (:action move-to-table
+    :parameters (?x - block ?fr - block)
+    :precondition (and (on ?x ?fr) (clear ?x) (not (= ?x ?fr)))
+    :effect (and (not (on ?x ?fr)) (on ?x Table) (clear ?fr))))
+(define (problem middle-pop-instance)
+  (:domain middle-pop)
+  (:objects A B C - block)
+  (:init (on A B) (on B C) (on C Table) (clear A) (clear Table))
+  (:goal (and (on B Table) (on A C))))
+\end{lstlisting}
+Table cannot be a \texttt{move-to-block} destination, so $Clear(Table)$ is never deleted. Inertia preserves $Clear(x)$ for the moved block.
+\ans The only useful applicable action at $s_0$ is $MoveToTable(A,B)$. Then $A$ is on Table and $B/C$ remains stacked. The next layer has three successors:
+\begin{center}
+\begin{tikzpicture}[every node/.style={font=\small,align=center},edge/.style={-{Stealth},draw=accent}]
+\node (r) at (0,0) {$s_0: A/B/C$};
+\node (m) at (0,-1.0) {$s_1: A\text{ on Table},\ B/C$};
+\node (l) at (-5,-2.3) {$Move(A,Table,B)$\\Return to $s_0$ (cycle)};
+\node (c) at (0,-2.3) {$MoveToTable(B,C)$\\$A,B,C$ all on Table};
+\node (rr) at (5,-2.3) {$Move(B,C,A)$\\$B/A$, $C$ on Table};
+\node (g) at (0,-3.4) {$Move(A,Table,C)$: goal};
+\draw[edge] (r)--node[right] {$MoveToTable(A,B)$}(m);
+\draw[edge] (m)--(l);\draw[edge] (m)--(c);\draw[edge] (m)--(rr);\draw[edge] (c)--(g);
+\end{tikzpicture}
+\end{center}
+Full forward search repeatedly generates all applicable actions and prunes duplicate states. The diagram shows the first two layers and the solution branch.
+\[
+\boxed{[MoveToTable(A,B),\ MoveToTable(B,C),\ Move(A,Table,C)]}
+\]
+Three actions are minimal in this model: clear $B$ by moving $A$, move $B$, then put $A$ onto $C$.
+\end{question}
+
+\begin{question}{T5 Q1(a,b): Air Cargo grounding and applying effects}\label{q:t5q1}
+\textbf{Schemas:} Load$(c,p,a)$ requires $At(c,a),At(p,a),Cargo(c),Plane(p),Airport(a)$; it deletes $At(c,a)$ and adds $In(c,p)$. Fly$(p,fr,to)$ requires $At(p,fr),Plane(p),Airport(fr),Airport(to)$; it deletes $At(p,fr)$ and adds $At(p,to)$. \textbf{There is no $fr\ne to$ condition.}
+
+\textbf{(a)} Given $At(P_1,JFK),At(P_2,SFO)$ and all plane / airport facts, list every applicable Fly action.
+\ans Four: $Fly(P_1,JFK,JFK)$, $Fly(P_1,JFK,SFO)$, $Fly(P_2,SFO,JFK)$, $Fly(P_2,SFO,SFO)$. Self-flights are unhelpful but satisfy the schema; do not omit them.
+
+\textbf{(b)} Use the figure's initial state: $At(C_1,SFO),At(C_2,JFK),At(P_1,SFO),At(P_2,JFK)$, plus the type facts for both cargos, planes, and airports. Execute $Load(C_2,P_2,JFK)$.
+\ans All preconditions hold; $s'=(s_0\setminus\{At(C_2,JFK)\})\cup\{In(C_2,P_2)\}$. All other location and type facts persist.
+\pit The planes' locations in (a) are reversed relative to the figure in (b). Use each subquestion's own state.
+\end{question}
+
+\subsection{Progression / regression: different search objects}
+\begin{card}{Forward states and backward goal descriptions}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{2.3cm}Y Y@{}}
+\toprule & Progression & Regression \\\midrule
+Start / node & $s_0$; complete state & Goal; partial conditions \\
+Action test & Applicable & Relevant: achieves a goal literal without destroying another requirement \\
+Update & $(s\setminus\Del)\cup\Add$ & Positive-goal STRIPS: $(G\setminus\Add(a))\cup\Pre(a)$ \\
+Stop & Current state satisfies goal & $s_0$ satisfies regressed conditions \\\bottomrule
+\end{tabularx}\par\smallskip
+For positive goals, regression also requires $\Add(a)\cap G\ne\varnothing$ and $\Del(a)\cap G=\varnothing$. With negative literals, handle opposing effects and consistency. $n$ Boolean fluents allow up to $2^n$ concrete states and $3^n$ partial descriptions; a larger theoretical space need not mean more actual exploration.
+\end{card}
+\begin{idea}[Lecture example: Move and HasKey]
+$s_0=\{AtA,HasKey\}$, $G=\{AtB,HasKey\}$; Move has Pre$=\{AtA\}$, Add$=\{AtB\}$, Del$=\{AtA\}$.
+Forward gives $\{AtB,HasKey\}$; regression gives $\{AtA,HasKey\}$. HasKey remains a required goal condition even though it is not a Move precondition.
+\end{idea}
+\begin{card}{Search and correctness: key distinctions}
+BFS finds the fewest steps with finite branching and equal step costs; UCS handles differing nonnegative costs. A* uses $g+h$; admissibility means $0\le h\le h^*$. Graph search without reopening generally needs consistency: $h(s)\le c(s,a)+h(s')$.
+
+\textbf{Sound:} returned plans are valid. \textbf{Complete:} finds a plan whenever one exists. \textbf{Optimal:} minimizes the specified cost. General finite propositional STRIPS plan existence is PSPACE-complete; existence with a \textbf{polynomial length bound} is typically NP-complete. Distinguish bounded from unbounded planning.
+\end{card}
+
+\subsection{SATPlan: time indexing and preventing spontaneous changes}
+\begin{card}{Five constraint types and horizon search}
+Create fluent variables for $t=0,\ldots,H$ and action variables for $t=0,\ldots,H-1$. Encode \textbf{initial truths / falsities, goal, action preconditions / effects, frame / successor-state axioms, and mutex / action exclusivity}. Increase $H$; when satisfiable, extract the actions and replay them to validate the plan.
+\[
+F_{t+1}\leftrightarrow
+\bigvee_{a:F\in\Add(a)}a_t\ \lor\
+\left(F_t\land\neg\bigvee_{a:F\in\Del(a)}a_t\right).
+\]
+The first satisfiable horizon in a serial encoding gives the \textbf{fewest steps}, not necessarily minimum weighted cost. Parallel encoding may minimize makespan and must handle interference correctly.
+\end{card}
+\begin{idea}[Lecture example: Cake, a two-step plan]
+Initial state: $\neg Have_0\land\neg Eaten_0$; goal: $\neg Have_2\land Eaten_2$.
+\[
+\begin{aligned}
+Eat_t&\Rightarrow Have_t\land\neg Have_{t+1}\land Eaten_{t+1},\\
+Bake_t&\Rightarrow\neg Have_t\land Have_{t+1},\\
+Have_{t+1}&\leftrightarrow Bake_t\lor(Have_t\land\neg Eat_t),\\
+Eaten_{t+1}&\leftrightarrow Eat_t\lor Eaten_t,\quad
+\neg Eat_t\lor\neg Bake_t.
+\end{aligned}
+\]
+$H=1$ is infeasible; $H=2$ yields Bake, Eat. Implications alone are insufficient: Eaten could otherwise appear without a cause.
+\end{idea}
+\begin{note}[Brief reference: LFM-assisted / responsible planning]
+An LFM can generate or repair models, split subgoals, provide heuristics, and propose reusable strategies; symbolic validation is still needed. For responsible planning, use \textbf{stakeholder $\to$ risk $\to$ mitigation $\to$ trade-off}. Recognize safety, privacy, fairness, transparency, accountability, and human oversight. Case timelines and tool lists are omitted.
+\end{note}
+
+\topic{Real-World Planning: Relaxation, HTN, Reachable Sets (W2)}
+\subsection{Relaxation: preserve original solutions to obtain a lower bound}
+\begin{card}{Admissibility and heuristic comparison}
+Relax constraints while retaining action costs and all original solutions. Thus $h^*_{relaxed}\le h^*_{original}$. The \textbf{exact relaxed optimum} is a lower bound; the cost of an arbitrary relaxed plan need not be.
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{2.3cm}Y P{3.7cm}@{}}
+\toprule Heuristic & Construction & Admissible? \\\midrule
+Misplaced tiles & Remove Blank and Adjacent preconditions; each misplaced tile needs a move & Yes for standard unit-cost puzzles \\
+Manhattan & Remove Blank, retain Adjacent; sum tile grid distances & Yes for standard puzzles; exclude blank \\
+$h_{max}$ & Maximum of goal / precondition costs & Yes when components are lower bounds \\
+$h_{add}$ & Sum costs, ignoring shared actions & Generally no: may double-count \\
+$h^+$ & Optimal delete-relaxed plan cost & Yes for positive STRIPS; hard to compute \\
+$h_{FF}$ & Greedily extracted relaxed plan & Generally no: extraction need not be optimal \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+Initialize relaxed fact costs: $c(p)=0$ if $p\in s$, otherwise $\infty$; update to a fixed point:
+\[
+c_{max}(p)=\min_{a:p\in\Add(a)}\left[c(a)+\max_{q\in\Pre(a)}c_{max}(q)\right].
+\]
+Replace the inner max with a sum for $c_{add}$; aggregate goal costs using max / sum. Empty preconditions contribute zero.
+\end{card}
+\begin{prf}[T1 P2: why is ignoring delete effects a relaxation?]\label{q:t1p2}
+\textbf{Problem:} all goals and preconditions are positive literals. Why does removing negative effects relax the problem? Does this still hold with negative goals or preconditions?
+
+Reuse any original plan. Let $s_t$ be the original state and $s_t^+$ the relaxed state, with the same initial state. If $s_t\subseteq s_t^+$, each original positive precondition also holds in $s_t^+$. Relaxed actions only add facts, so $s_{t+1}\subseteq s_{t+1}^+$. By induction all original positive goals still hold; the plan and its cost are preserved.
+
+\textbf{Negative-goal counterexample:} $s_0=\{A\}$, DeleteA deletes $A$, and the goal is $\neg A$. The original problem has a one-step solution; without deletion it has none.
+
+\textbf{Negative-precondition counterexample:} execute DeleteA, then Finish with precondition $\neg A$ to add $G$. Ignoring deletion makes Finish inapplicable. \textbf{Conclusion:} the positive-STRIPS relaxation proof does not directly extend.
+\end{prf}
+\begin{note}[Common max / sum pitfall]
+One unit-cost action adds both $p,q$; goal $p\land q$. Then $h^*=h^+=h_{max}=1$, but $h_{add}=2$. The max of admissible estimates is admissible; a sum needs independence or valid cost partitioning. Manhattan is admissible for the 8-puzzle because each move shifts exactly one numbered tile one square; this is not a general rule.
+\end{note}
+
+\subsection{HTN / HLA: choosing methods and executing primitives}
+\begin{card}{Task hierarchy and possible effects}
+A \textbf{primitive action} executes directly; a \textbf{compound task / HLA} is decomposed by a method into smaller tasks. Choosing a method does not itself change the state. Maintain $(current\ state,remaining\ tasks)$; check preconditions before primitive execution and backtrack from inapplicable branches.
+
+An HLA means the \textbf{agent chooses an implementation}; it does not mean the environment randomly selects an outcome. $\widetilde{+}A$: add or leave unchanged; $\widetilde{-}A$: delete or leave unchanged; $\widetilde{\pm}A$: set true or false; definite $A$: every applicable implementation ends with $A$ true.
+
+\textbf{Serializable subgoals:} an order exists that completes each goal while later steps preserve earlier goals. Interacting goals may need preparation or interleaving. The Sussman anomaly shows that concatenating independent subplans can fail. State abstraction $f:S\to S_{abs}$ reduces search; validate its concrete refinements.
+\end{card}
+\begin{question}{T1 P3(A,B): derive HLA summaries and check four refinements}\label{q:t1p3}
+\textbf{Primitive library: }
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{1cm}Y Y P{1cm}Y Y@{}}
+\toprule & Pre & Effect & & Pre & Effect \\\midrule
+$P_1$ & $\neg A$ & $A$ & $P_6$ & $\neg B$ & $A\land\neg C$ \\
+$P_2$ & $A$ & $B$ & $P_7$ & $\neg B$ & $\neg C$ \\
+$P_3$ & $A$ & $\neg B$ & $P_8$ & $\neg B\land\neg C$ & $D$ \\
+$P_4$ & $\neg B$ & $A\land C$ & $P_9$ & $D$ & $E$ \\
+$P_5$ & $\neg B$ & $C$ & $P_{10}$ & $\neg B\land D$ & $E$ \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+\textbf{(A)} $H_1$: $[P_1,P_2]$, $[P_1,P_3]$; $H_2$: $[P_4]$, $[P_5]$, $[P_6]$, $[P_7]$; $H_3$: $[P_8,P_9]$, $[P_8,P_{10}]$. Find preconditions and effects.
+\ans
+\[
+\begin{array}{c|l|l}
+ &\text{Precondition}&\text{Net effect summary}\\\hline
+H_1&\neg A&A\land\widetilde{\pm}B\\
+H_2&\neg B&\widetilde{+}A\land\widetilde{\pm}C\\
+H_3&\neg B\land\neg C&D\land E
+\end{array}
+\]
+$H_2$ does not guarantee $A$: $P_5,P_7$ do not add it, only preserve its old value. $H_3$ need not initially require $D$, because $P_8$ establishes it first.
+
+\textbf{(B)} Initial state $\neg A\land B$ (all other facts false by CWA); goal $E$. Select feasible combinations:
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{0.6cm}Y P{1.2cm}Y@{}}
+\toprule & Sequence & Result & Reason \\\midrule
+(i) & $H_1(P_1,P_3),H_2(P_6),H_3(P_8,P_9)$ & Valid & Establish $A,\neg B$, then $\neg C$, then $D,E$ \\
+(ii) & $H_1(P_1,P_3),H_2(P_7),H_3(P_8,P_{10})$ & Valid & $\neg B,\neg C$ hold; $P_8$ establishes $D$ \\
+(iii) & $H_1(P_1,P_2),H_2(P_4),H_3(P_8,P_9)$ & Invalid & $B$ is true; $P_4$ requires $\neg B$ \\
+(iv) & $H_1(P_1,P_2),H_2(P_5),H_3(P_8,P_9)$ & Invalid & $B$ is true; $P_5$ requires $\neg B$ \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+\pit Correct choices: \textbf{(i), (ii)}. Trace each primitive implementation; HLA names and possible-effect summaries alone are insufficient.
+\end{question}
+
+\subsection{Reachable-set bounds: justified conclusions only}
+\begin{card}{Lower / upper bounds and goal intersections}
+$R=\Reach(s,\vec h)$ is the set of endpoints of all \textbf{executable} primitive refinements.
+\[
+\Reach(s,[h_1,h_2])=\bigcup_{s'\in\Reach(s,h_1)}\Reach(s',h_2),
+\qquad R^-\subseteq R\subseteq R^+.
+\]
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{5.0cm}Y@{}}
+\toprule Condition & Safe conclusion \\\midrule
+$R^+\cap G=\varnothing$ & No successful refinement; prune \\
+$R^-\cap G\ne\varnothing$ & At least one successful refinement exists \\
+$R^+\cap G\ne\varnothing$ or $G\subseteq R^+$ & Actual reachability is unproven \\
+$R^-\cap G=\varnothing$ & Success is unproven; failure does not follow \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+Existence does not mean every refinement succeeds. Downward-refinement guarantees require reliable abstraction and implementation descriptions, not merely optimistic summaries.
+\end{card}
+\begin{question}{T5 Q2: what do optimistic and pessimistic bounds establish?}\label{q:t5q2}
+\textbf{Problem:} does $G\subseteq R^+$ establish high-level plan success? Does $R^-\cap G=\varnothing$ establish failure?
+\ans \textbf{Neither.} Take $G=\{g\}$, $R^-=\{b\}$, $R^+=\{b,g\}$. Actual $R$ could be $\{b\}$ (failure) or $\{b,g\}$ (a successful refinement exists); both satisfy the bounds. Refine further or obtain tighter information.
+\end{question}
+
+\topic{Utility, Risk, and Rational Decision Making (W3)}
+\subsection{MEU: form beliefs, then compare utilities}
+\begin{card}{Expected utility and value of information}
+\[
+EU(a)=\sum_s b(s)\sum_{s'}P(s'\mid s,a)U(s'),\qquad a^*=\argmax_a EU(a).
+\]
+After observing $o$, update by Bayes: $b(s\mid o)\propto P(o\mid s)b(s)$. \textbf{Utility of the average}, $U(\E[X])$, generally differs from \textbf{average utility}, $\E[U(X)]$. Rationality means MEU given available information, not a good realized outcome every time.
+\[
+EVPI=\E_s[\max_aU(a,s)]-\max_a\E_s[U(a,s)]\ge0.
+\]
+Free information can be ignored, so optimal expected utility cannot decrease. Utility units need not equal a monetary willingness to pay.
+\end{card}
+\begin{idea}[Lecture example: Panda's Bayesian decision]
+$P(B)=1/2$. Bamboo yields utility 10 if present and 0 otherwise; berries yield a sure 4.
+$P(rustling\mid B)=0.2$, $P(rustling\mid\neg B)=0.6$.
+\[
+P(B\mid rustling)=\frac{0.2(0.5)}{0.2(0.5)+0.6(0.5)}=0.25,
+\quad P(B\mid no\ rustling)=\frac{0.8}{0.8+0.4}=\frac23.
+\]
+With rustling: grove EU$=2.5<4$, choose berries. Without rustling: EU$=20/3>4$, choose grove. Prior EU$=5$. Free sensing gives optimal EU$=0.4(4)+0.6(20/3)=5.6$, an information gain of 0.6 utility units.
+\end{idea}
+
+\subsection{Preference axioms and utility matching}
+\begin{card}{Six preference axioms: names, notation, and intuition}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{3.2cm}Y@{}}
+\toprule Axiom & Essential statement \\\midrule
+Orderability / completeness & Any two lotteries can be compared: $A\succ B$, $B\succ A$, or $A\sim B$ \\
+Transitivity & $A\succ B,\ B\succ C\Rightarrow A\succ C$ \\
+Continuity & If $A\succ B\succ C$, some $p$ satisfies $B\sim[p,A;1-p,C]$ \\
+Substitutability / independence & Replacing equivalent lotteries in the same mixture preserves preference; strict preference is also preserved at nonzero mixture weights \\
+Monotonicity & For the same best / worst prizes, a higher probability of the best prize is preferred \\
+Decomposability & Flatten compound lotteries: multiply probabilities and merge identical outcomes \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+Under the relevant axioms, expected utility represents preferences. Normalize $U(best)=1,U(worst)=0$; if $x\sim[p,best;1-p,worst]$, then $U(x)=p$.
+\textbf{Uniqueness is only up to positive affine transformation:} $U_1=k_1U_2+k_2$, $k_1>0$.
+\end{card}
+\begin{question}{T2 P1 Part A: Utility Matchmaker}\label{q:t2p1}
+$L_1=[1,1]$; $L_2=[0.5,2;0.5,0]$; $L_3=[1,2]$.Adam: $L_2\sim L_1$; Bing: $L_1\succ L_2$; Candy: $L_3\sim L_2$; Diana: $L_2\succ L_1$.Match $x^2,x,\sqrt{x},$ None.
+\ans
+\begin{center}
+\begin{tabular}{@{}lccc l@{}}
+\toprule $U(x)$ & $EU(L_1)$ & $EU(L_2)$ & $EU(L_3)$ & Student \\\midrule
+$x^2$ & 1 & 2 & 4 & Diana \\
+$x$ & 1 & 1 & 2 & Adam \\
+$\sqrt{x}$ & 1 & $\sqrt2/2$ & $\sqrt2$ & Bing \\\bottomrule
+\end{tabular}
+\end{center}
+Candy matches None. $U(2)=\frac12U(2)+\frac12U(0)$ requires $U(2)=U(0)$, which none of these increasing utilities satisfies.
+
+\tcbbreak
+\textbf{Part B:} do $U_1=k_1U_2+k_2$ and $k_1>0$ imply identical preferences?
+\ans $EU_1(L)=k_1EU_2(L)+k_2$ because $\sum_i p_i=1$; all rankings and indifferences are preserved.
+\pit Slide extension: $k_1<0$ reverses strict preferences; $k_1=0$ makes all lotteries indifferent. A general monotone nonlinear transformation need not preserve lottery preferences.
+\end{question}
+
+\subsection{Risk attitude, CE, insurance}
+\begin{card}{Final wealth, certainty equivalent, risk premium}
+Apply utility to final wealth $W+X$, not the gain / loss $X$ alone when taking logs.
+\[
+EU=\sum_i p_iU(W+x_i),\quad CE=U^{-1}(EU),\quad RP=\E[W+X]-CE.
+\]
+If CE is defined as a \textbf{net payoff}, subtract $W$ before comparing it with $\E[X]$. Both consistent conventions give the same risk premium.
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{2.5cm}Y Y@{}}
+\toprule Attitude & Utility curvature & CE versus expected wealth \\\midrule
+Risk-averse & Increasing concave; Jensen: $\E U(X)\le U(\E X)$ & $CE\le EV$, $RP\ge0$ \\
+Risk-neutral & Increasing affine & $CE=EV$, $RP=0$ \\
+Risk-seeking & Increasing convex & $CE\ge EV$, $RP\le0$ \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+Strict inequalities require strict curvature and a nondegenerate lottery. $U(x)=\ln x$ requires positive final wealth; $\ln(1+x)$ has a different domain.
+\end{card}
+\begin{question}{T2 P2(a--c) and slide extension: PacBaby insurance}\label{q:t2p2}
+PacBaby has \$100. With probability 0.2 it is all stolen; $U(x)=\ln(1+x)$. Insurance costs \$30 and pays \$70 if theft occurs, leaving final wealth \$70 in either outcome.
+\ans
+\[
+\begin{aligned}
+EU(no\ insurance)&=0.8\ln101+0.2\ln1\approx3.69210,\\
+EU(insurance)&=\ln71\approx4.26268>3.69210.
+\end{aligned}
+\]
+\textbf{(a,b)} Buy insurance. Expected wealth is 80 without insurance and 70 with it; MEU differs from EMV.
+\textbf{(c)} PacIncome's expected profit is $30-0.2(70)=\boxed{16}$; profit is $-40$ after theft and $30$ otherwise.
+
+\textbf{CE / RP extension:} $\ln(1+CE)=0.8\ln101$, so
+\[
+CE=101^{0.8}-1\approx39.12889,\qquad RP=80-CE\approx40.87111.
+\]
+For a new full-insurance contract guaranteeing final wealth $100-p$, the maximum acceptable premium satisfies $100-p_{max}=CE$, giving $p_{max}\approx60.87111$. \textbf{This is a different contract, not the original fixed-70 payout with an arbitrarily changed premium.}
+\pit Risk transfer can raise the buyer's utility and give the seller positive expected profit without creating money.
+\end{question}
+
+\begin{question}{T5 Q3: Alex's two coin games}\label{q:t5q3}
+Game 1: one fair coin, 100 for heads and 0 for tails. Game 2: two independent fair coins, 50 per head. Alex prefers Game 2. Show that Alex prefers a sure 50 to Game 1.
+\ans Assume expected utility represents the preferences. Let $u_x=U(x)$:
+\[
+EU(G_1)=\tfrac12u_{100}+\tfrac12u_0,
+\quad EU(G_2)=\tfrac14u_{100}+\tfrac12u_{50}+\tfrac14u_0.
+\]
+$EU(G_2)>EU(G_1)$ implies $\frac12u_{50}>\frac14(u_{100}+u_0)$, hence $u_{50}>EU(G_1)$.
+\pit Only these preferences and EU axioms are needed; global concavity of Alex's utility curve is unnecessary.
+\end{question}
+\begin{question}{T5 Q4(a--d): Alice's log wealth and A--B--A pattern}\label{q:t5q4}
+$U(x)=\ln x$. A: gain \$10,000 with probability 0.2, or \$1,000 with 0.8. B: gain \$3,000 with probability 0.9, or \textbf{lose} \$2,000 with 0.1. Compare current wealth $W=2500,5000,10000$.
+\ans
+\[
+EU_A(W)=0.2\ln(W+10000)+0.8\ln(W+1000),
+\]
+\[
+EU_B(W)=0.9\ln(W+3000)+0.1\ln(W-2000).
+\]
+\begin{center}
+\begin{tabular}{@{}rrrr@{}}
+\toprule $W$ & $EU_A$ & $EU_B$ & Choice \\\midrule
+2500 & 8.41511138 & 8.37271384 & A \\
+5000 & 8.88277289 & 8.88911390 & B \\
+10000 & 9.42521795 & 9.42415385 & A \\\bottomrule
+\end{tabular}
+\end{center}
+\textbf{(d)} This is rational: risk aversion under log utility does not imply a single preference switch between two lotteries as $W$ varies. At low wealth B's loss is severe; B wins at intermediate wealth; at high wealth the smaller risk penalty allows A's higher EMV (2800 versus 2500) to matter more.
+\pit At $W=10000$, the difference is only about 0.001064; early rounding can reverse the result. Do not take $\ln(-2000)$.
+\end{question}
+
+\subsection{Allais paradox: a contradiction of independence}
+\begin{question}{T2 P3(a,b): one EU model cannot give both $B\succ A$ and $C\succ D$}\label{q:t2p3}
+A: 80\% chance of 4000; B: sure 3000; C: 20\% chance of 4000; D: 25\% chance of 3000; all remaining outcomes are 0. Common preferences are $B\succ A$ and $C\succ D$.
+\ans Normalize $U(0)=0$. The first requires $U(3000)>0.8U(4000)$; the second requires $0.2U(4000)>0.25U(3000)$, or $0.8U(4000)>U(3000)$: a contradiction.
+
+\textbf{(b) Decomposability and substitutability:}
+\[
+C\sim[0.25,A;0.75,0],\qquad D\sim[0.25,B;0.75,0].
+\]
+If $B\succ A$, substituting in the same 0.25 mixture should give $D\succ C$. The observed $C\succ D$ violates independence / substitutability.
+\pit Comparing EMVs alone misses the issue; even concave utility cannot satisfy both strict inequalities.
+\end{question}
+
+\subsection{Decision trees and game theory: essential judgments}
+\begin{card}{Average at chance nodes; maximize at decision nodes}
+Backward induction: use $\sum p_iU_i$ at chance nodes and $\max_iU_i$ at decision nodes. Influence diagrams have decision, chance, and utility nodes. Informational edges show what is known before a decision; not every edge is causal.
+
+\textbf{Lecture Persy tool example:} after Battery failure, resend EU$=0.3(0.8)=0.24>0.2$; root EU$=0.75+0.25(0.24)=0.81$. Solar resend$=0.8(0.8)=0.64>0.2$; root$=0.6+0.4(0.64)=0.856$; no tool$=0.4$. Choose Solar and resend after failure.
+
+\textbf{Nash equilibrium:} no player can improve their own utility by changing strategy alone while others' strategies stay fixed. \textbf{Dominant strategy:} better regardless of the opponent's choice. \textbf{Pareto improvement:} someone benefits and nobody is worse off.
+\end{card}
+\begin{idea}[Lecture example: Pandas' Dilemma]
+Payoffs are listed as (row panda, column panda):
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule & Keep & Share \\\midrule
+Keep & $(1,1)$ & $(5,0)$ \\
+Share & $(0,5)$ & $(3,3)$ \\\bottomrule
+\end{tabular}
+\end{center}
+Keep strictly dominates for both: unique NE $(Keep,Keep)$. $(Share,Share)$ benefits both, but deviation earns 5. Condorcet cycles can occur despite transitive individual rankings.
+\end{idea}
+
+\topic{MDP Modeling: State, Reward, Discount (W4)}
+\subsection{Markov means a sufficient state representation}
+\begin{card}{Specify the MDP and horizon completely}
+$\mathcal M=(S,A,P,R,\gamma)$; also specify initial distribution, termination, and horizon. Successor probabilities sum to 1 for every $(s,a)$.
+\[
+P(S_{t+1}\mid S_0,A_0,\ldots,S_t,A_t)=P(S_{t+1}\mid S_t,A_t).
+\]
+Include anything affecting transitions or rewards, such as battery, inventory, and pending actions. For a finite horizon include time remaining; with partial observability use a belief or history representation.
+
+\textbf{Infinite discounted:} if $0\le\gamma<1$ and $|r|\le R_{max}$, then $|G|\le R_{max}/(1-\gamma)$. A finite stationary discounted MDP has a deterministic stationary optimal policy.
+\textbf{Finite horizon:} $V_0(s)=0$ (replace this boundary if terminal utility is specified),
+\[
+V_h(s)=\max_a\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma V_{h-1}(s')].
+\]
+The optimal policy generally depends on remaining time. $\gamma=0$ considers only immediate reward; larger $\gamma$ values give more weight to the future. Continuing total reward may diverge at $\gamma=1$; eventual termination alone does not ensure finite expected duration or return.
+\end{card}
+
+\begin{question}{T5 Q5: $10\times10$ Grid World with one- or two-step actions}\label{q:t5q5}
+Goal $g=(10,10)$. Each elapsed clock step while nonterminal costs 0.05; reaching the goal pays 100 and terminates. Up / Down / Left / Right moves in the intended direction with probability 0.8, or either perpendicular direction with 0.1. Duration is one or two steps, each with probability 0.5. No new movement may be chosen before completion. Build a Markov MDP.
+\ans \textbf{Explicit assumptions:} direction and duration are independent; boundary collisions leave position unchanged.
+\begin{itemize}
+\item \textbf{State:} $(x,0)$ means ready; $(x,a,1)$ means action $a$ is pending with one clock step remaining. $x\in\{1,\ldots,10\}^2$; $(g,0)$ is terminal.
+\item \textbf{Actions:} four directions when ready; only WAIT when pending; none at terminal (or a zero-reward absorbing dummy).
+\item Let $T(x'\mid x,a)$ be the spatial transition kernel, merging wall-collision probabilities into $x$. Then
+\[
+\begin{aligned}
+P((x',0)\mid(x,0),a)&=0.5T(x'\mid x,a),\\
+P((x,a,1)\mid(x,0),a)&=0.5,\\
+P((x',0)\mid(x,a,1),WAIT)&=T(x'\mid x,a).
+\end{aligned}
+\]
+\item \textbf{Reward:} interpreting the cost as applying to every clock step that starts in a non-goal state,
+\[
+R(s,u,s')=-0.05+100\ind\{s'=(g,0)\},\qquad s\ne(g,0).
+\]
+The pending step also costs 0.05; goal-entry net reward is 99.95; subsequent reward is zero. If the instructor exempts goal entry from the step cost, change that transition to 100 consistently.
+\end{itemize}
+Example: UP from ready $(5,5)$ leads to ready $(5,6),(4,5),(6,5)$ with probabilities 0.4, 0.05, 0.05, and to pending $((5,5),UP,1)$ with probability 0.5; they sum to 1.
+\pit Position alone, or an unspecified busy flag, is insufficient: pending UP and pending RIGHT have different successor distributions.
+
+\textbf{Optional:} $t=2$ is not itself a horizon or deadline. Without a specified $\gamma$, current state, and terminal-time objective, no unique numerical action follows. For $\gamma<1$, use VI / PI on the augmented MDP: WAIT when pending and a greedy movement when ready. Undiscounted stochastic shortest paths require appropriate proper-policy assumptions.
+\end{question}
+
+\subsection{Nova: discounting can change the optimal policy}
+\begin{question}{T3 P1 Part 1(a,b,d): policy switches in two-state Nova}\label{q:t3p1discount}
+$c=charged,l=low$; $E=eco,B=boost$. Reward here depends on $(s,a)$, not the next state.
+\begin{center}
+\begin{tabular}{@{}ccrrr@{}}
+\toprule $s$ & $a$ & $P(c\mid s,a)$ & $P(l\mid s,a)$ & $R(s,a)$ \\\midrule
+$c$ & $E$ & 0.95 & 0.05 & 7 \\
+$c$ & $B$ & 0.70 & 0.30 & 10 \\
+$l$ & $E$ & 0.50 & 0.50 & 0 \\
+$l$ & $B$ & 0.10 & 0.90 & 2 \\\bottomrule
+\end{tabular}
+\end{center}
+The four deterministic stationary policies are $[E,E],[E,B],[B,E],[B,B]$, written as $[\pi(c),\pi(l)]$.
+\ans \textbf{(a,d)} $\gamma^k$ weights a reward $k$ steps ahead; rough effective horizon is $1/(1-\gamma)$. For $\gamma=0.6,0.9$ it is about 2.5 and 10 steps. Larger discount factors value future battery levels more, but \textbf{both choose $[B,E]$ here}. $\gamma$ may represent an independent continuation probability, not $P(c\mid s,a)$. At $\gamma=1$ total reward diverges, so infinite values cannot rank these policies.
+
+\textbf{(b) Derive policy switches:} let $\Delta=V_c-V_l$. Then
+\[
+Q(c,E)-Q(c,B)=-3+0.25\gamma\Delta,\quad
+Q(l,E)-Q(l,B)=-2+0.40\gamma\Delta.
+\]
+Choose E when charged if $\gamma\Delta\ge12$, and when low if $\gamma\Delta\ge5$. For a fixed policy with $p_c,p_l,r_c,r_l$,
+\[
+\Delta^\pi=\frac{r_c-r_l}{1-\gamma(p_c-p_l)}.
+\]
+\begin{center}
+\begin{tabular}{@{}lcl@{}}
+\toprule Discount range & Unique optimal policy & Example \\\midrule
+$0\le\gamma<5/11$ & $[B,B]$ & $\gamma=0.2$ \\
+$5/11<\gamma<30/31$ & $[B,E]$ & $\gamma=0.8$ \\
+$30/31<\gamma<1$ & $[E,E]$ & $\gamma=0.99$ \\\bottomrule
+\end{tabular}
+\end{center}
+At $5/11$, E and B tie at low; at $30/31$, they tie at charged. Adjacent policies are both optimal at each boundary. $[E,B]$ requires both $\gamma\Delta\ge12$ and $\gamma\Delta\le5$, so it cannot be optimal in the original model.
+\end{question}
+\begin{question}{T3 P1 Part 1(c): change one model entry to make [eco,boost] optimal}\label{q:t3p1modify}
+\textbf{Problem:} change the model or discount so that charged chooses E and low chooses B.
+\ans Changing only $\gamma$ cannot work because the thresholds conflict. Set $\gamma=0.8$ and \textbf{change only} $R(l,E)=\rho=-3.1$. Evaluate $[E,B]$:
+\[
+V_c=7+0.8(0.95V_c+0.05V_l),\quad
+V_l=2+0.8(0.1V_c+0.9V_l),
+\]
+This gives $(V_c,V_l)=(31.875,16.25)$. Greedy check:
+\[
+Q(c,E)=31.875>31.75=Q(c,B),\quad
+Q(l,B)=16.25>16.15=Q(l,E).
+\]
+Thus $[E,B]$ is uniquely optimal. If only this entry changes, $Q(l,E)=\rho+19.25$, so $\rho\le-3$ makes the policy optimal and $\rho<-3$ makes it strictly optimal.
+\pit Changing the fewest entries does not establish the smallest numerical modification over all possible reward and probability changes.
+\end{question}
+
+\topic{Dynamic Programming: Bellman, VI, PI (W4)}
+\subsection{Expectation / optimality: place the max correctly}
+\begin{card}{Bellman equations and the relation between $V$ and $Q$}
+For a fixed stochastic policy:
+\[
+\boxed{V^\pi(s)=\sum_a\pi(a\mid s)\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma V^\pi(s')].}
+\]
+For deterministic $\pi$, retain only $a=\pi(s)$. \textbf{Evaluation has no max.}
+\[
+\begin{aligned}
+V^*(s)&=\max_a\sum_{s'}P(s'\mid s,a)[R+\gamma V^*(s')],\\
+Q^*(s,a)&=\sum_{s'}P(s'\mid s,a)[R+\gamma\max_bQ^*(s',b)],\\
+V^*(s)&=\max_aQ^*(s,a),\qquad \pi^*(s)\in\argmax_aQ^*(s,a).
+\end{aligned}
+\]
+For fixed $\pi$, $V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a)$, \textbf{not} $\max_aQ^\pi(s,a)$.
+\end{card}
+\begin{idea}[Why does $\max_a\E_{s'}$ differ from $\E_{s'}\max_a$?]
+The agent chooses an action before the environment samples the outcome. Moving max inside the expectation effectively lets the agent choose after observing the outcome, generally overestimating value. Bellman's decomposition follows from $G_t=R_{t+1}+\gamma G_{t+1}$.
+\end{idea}
+
+\subsection{Value iteration: one optimality backup per sweep}
+\begin{card}{Synchronous VI, complexity, convergence}
+Initialize $V_0$; every synchronous sweep reads the complete old vector:
+\[
+Q_{k+1}(s,a)=\sum_{s'}P(s'\mid s,a)[R+\gamma V_k(s')],
+\quad V_{k+1}(s)=\max_aQ_{k+1}(s,a).
+\]
+A finite dense model costs $O(|S|^2|A|)$ per sweep; sparse cost depends on nonzero transitions. Extract a policy by one-step lookahead from the final $V$.
+
+For a finite bounded discounted MDP, the Bellman optimality operator $B$ satisfies:
+\[
+\|BV-BW\|_\infty\le\gamma\|V-W\|_\infty,
+\qquad \|V_k-V^*\|_\infty\le\gamma^k\|V_0-V^*\|_\infty.
+\]
+\textbf{State which vector the stopping bound concerns:} if $d_k=\|V_{k+1}-V_k\|_\infty$, then
+\[
+\|V_k-V^*\|_\infty\le\frac{d_k}{1-\gamma},\qquad
+\|V_{k+1}-V^*\|_\infty\le\frac{\gamma d_k}{1-\gamma}.
+\]
+For $0<\gamma<1$, $d_k\le\epsilon(1-\gamma)/\gamma$ ensures new-vector error $\le\epsilon$. If $\|\hat V-V^*\|\le\epsilon$, a policy greedy with respect to $\hat V$ has loss at most $2\gamma\epsilon/(1-\gamma)$.
+\end{card}
+\begin{prf}[A short contraction-proof template]
+For any $s$, use $|\max_a x_a-\max_a y_a|\le\max_a|x_a-y_a|$; reward terms cancel:
+\[
+|(BV)(s)-(BW)(s)|\le\gamma\max_a\sum_{s'}P(s'\mid s,a)|V(s')-W(s')|
+\le\gamma\|V-W\|_\infty.
+\]
+Take the maximum over $s$. Since $\gamma<1$, there is a unique fixed point and convergence. This proof does not directly apply at $\gamma=1$.
+\end{prf}
+
+\subsection{Policy iteration: evaluate a fixed policy, then improve}
+\begin{card}{Linear evaluation and the policy-improvement theorem}
+\[
+V^\pi=r^\pi+\gamma P^\pi V^\pi,
+\quad (I-\gamma P^\pi)V^\pi=r^\pi.
+\]
+Solve small systems directly (dense cost $O(|S|^3)$); use iterative evaluation for larger systems. Improvement:
+\[
+\pi_{new}(s)\in\argmax_a\sum_{s'}P(s'\mid s,a)[R+\gamma V^\pi(s')].
+\]
+If $Q^\pi(s,\pi_{new}(s))\ge V^\pi(s)$ for every $s$, then $V^{\pi_{new}}\ge V^\pi$. Expand $V^\pi\le B^{\pi_{new}}V^\pi$ repeatedly; the tail $\gamma^kV^\pi$ vanishes. Preserve the old action at ties or break ties consistently to avoid needless cycling.
+\end{card}
+
+\begin{question}{T3 P1 Part 2(a--d): Nova, VI versus exact PI}\label{q:t3p1dp}
+Use the original Nova model with $\gamma=0.8$, $V^{(0)}=[0,0]$, and all initial Q values zero.
+\ans \textbf{(a)} First model backup: $Q^{(1)}(c,E)=7,Q^{(1)}(c,B)=10,Q^{(1)}(l,E)=0,Q^{(1)}(l,B)=2$.
+\textbf{(b)} $V^{(1)}=[10,2]$.
+\textbf{(c) VI:} read the complete old vector $[10,2]$:
+\[
+\begin{array}{ll}
+Q^{(2)}(c,E)=7+0.8(0.95\cdot10+0.05\cdot2)=14.68,&
+Q^{(2)}(c,B)=16.08,\\
+Q^{(2)}(l,E)=0.8(0.5\cdot10+0.5\cdot2)=4.80,&
+Q^{(2)}(l,B)=4.24.
+\end{array}
+\]
+Thus $\boxed{V^{(2)}_{VI}=[16.08,4.80]}$. \textbf{PI:} the lookahead from $V^{(1)}$ gives greedy policy $[B,E]$; then \textbf{evaluate this fixed policy exactly}:
+\[
+\begin{cases}
+V_c=10+0.8(0.7V_c+0.3V_l),\\
+V_l=0.8(0.5V_c+0.5V_l).
+\end{cases}
+\quad
+\begin{bmatrix}0.44&-0.24\\-0.40&0.60\end{bmatrix}
+\begin{bmatrix}V_c\\V_l\end{bmatrix}=
+\begin{bmatrix}10\\0\end{bmatrix}.
+\]
+$V_l=\frac23V_c$, giving
+\[
+\boxed{V^{[B,E]}=\left[\frac{250}{7},\frac{500}{21}\right]
+\approx[35.71429,23.80952].}
+\]
+\textbf{(d) Optimality check: }
+\begin{center}
+\begin{tabular}{@{}lrrl@{}}
+\toprule State & $Q(E)$ & $Q(B)$ & Greedy \\\midrule
+Charged & 35.09524 & 35.71429 & B \\
+Low & 23.80952 & 22.00000 & E \\\bottomrule
+\end{tabular}
+\end{center}
+The greedy policy remains $[B,E]$, so its value also satisfies Bellman optimality and equals $V^*$.
+\pit One VI sweep and exact policy evaluation are different operations and need not yield the same numbers.
+\end{question}
+
+\begin{idea}[Lecture Grid World: merge wall-bounce probabilities]
+A $4\times3$ grid has wall $(2,2)$ and terminals $(4,3),(4,2)$. Up from $(1,1)$ reaches $(1,2)$ with 0.8, $(2,1)$ with 0.1, and stays with 0.1.
+If every one of these transitions has reward $-0.04$:
+\[
+Q_{k+1}((1,1),Up)=-0.04+\gamma[0.8V_k(1,2)+0.1V_k(2,1)+0.1V_k(1,1)].
+\]
+Up from $(1,2)$ has both sideways drifts blocked, yielding self-loop probability 0.2. A larger living penalty can encourage quicker exit; the actual policy still depends on $\gamma$, rewards, and transitions, so avoid memorizing inconsistent numerical thresholds.
+\end{idea}
+
+\topic{Tabular RL: ADP, MC, TD, SARSA, Q-learning (W4)}
+\subsection{Prediction / control and model-based / model-free}
+\begin{card}{Four categories and bootstrapping}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{3cm}Y Y@{}}
+\toprule & Model-based & Model-free \\\midrule
+Prediction (fixed $\pi$) & Passive ADP: learn $\hat P,\hat R$ and evaluate $\pi$ & MC prediction, TD prediction \\
+Control (improve $\pi$) & Active ADP: learn model, plan, and explore & MC control, SARSA, Q-learning \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+\textbf{ADP:} $\hat P(s'\mid s,a)=N(s,a,s')/N(s,a)$; estimate $\hat R$ from corresponding reward averages, then plan in the learned model. Small counts do not imply accurate probabilities.
+
+\textbf{MC:} wait until episode completion to obtain $G_t$ and average state / state-action returns. No bootstrap; usually high variance. First-visit counts only the first visit per episode; every-visit counts all visits. Keep the denominator consistent. Incremental mean: $V\leftarrow V+(G-V)/N$.
+
+\textbf{TD(0):} $\delta=r+\gamma V(s')-V(s)$, $V(s)\leftarrow V(s)+\alpha\delta$. Immediate update with bootstrapping; the target inherits estimation bias. Bellman equality holds in \textbf{expectation}, not exactly for every stochastic sample.
+\end{card}
+\begin{question}{T5 Q6(a--c): passive RL on $S_0\to S_1\to S_2$}\label{q:t5q6}
+$S_2$ terminal; $R(S_0\to S_1)=0$, $R(S_1\to S_2)=1$; fixed policy $\pi$.
+\ans \textbf{MC:} after termination, $G_0=\gamma,G_1=1$; add complete returns to each state's average; $V(S_2)=0$.
+
+\textbf{TD(0):} update after each transition. Starting at zero with $\alpha=1$, step 1 gives $V(S_0)\leftarrow0+\gamma\cdot0=0$; step 2 gives $V(S_1)\leftarrow1+\gamma\cdot0=1$. \textbf{The same episode does not automatically revisit the $S_0$ update}; the next $S_0\to S_1$ yields $\gamma$.
+
+\textbf{ADP:} learn $\hat P,\hat R$ from counts and rewards. The deterministic model has $P(S_1\mid S_0)=P(S_2\mid S_1)=1$. Solve Bellman equations: $V(S_1)=1,V(S_0)=\gamma,V(S_2)=0$.
+\pit Passive RL keeps the policy fixed and has no action maximization. ADP needs a model; MC / TD need no explicit transition model.
+\end{question}
+
+\begin{card}{$n$-step TD and TD($\lambda$): endpoints and weights}
+\[
+G_t^{(n)}=\sum_{k=0}^{n-1}\gamma^kR_{t+k+1}+\gamma^nV(S_{t+n}).
+\]
+If termination occurs earlier, truncate the reward sum and set continuation to zero. For an episode ending at $T$, let $m=T-t$:
+\[
+G_t^\lambda=(1-\lambda)\sum_{n=1}^{m-1}\lambda^{n-1}G_t^{(n)}+\lambda^{m-1}G_t.
+\]
+$\lambda=0$ gives one-step TD; $\lambda=1$ gives the MC return. Do not substitute $\lambda=1$ into an infinite-series expression and conclude $0\times\infty$.
+Backward accumulating trace: $e_t(s)=\gamma\lambda e_{t-1}(s)+\ind\{s=S_t\}$, $V(s)\leftarrow V(s)+\alpha\delta_te_t(s)$. Exact online / forward-view equivalence depends on the algorithm variant and parameter-update convention.
+\end{card}
+
+\subsection{SARSA / Q-learning: same reward, different continuation}
+\begin{card}{On-policy, off-policy, and exploration}
+\[
+\begin{aligned}
+\text{SARSA:}\quad Q(s,a)&\leftarrow Q(s,a)+\alpha[r+\gamma Q(s',a')-Q(s,a)],\\
+\text{Q-learning:}\quad Q(s,a)&\leftarrow Q(s,a)+\alpha[r+\gamma\max_bQ(s',b)-Q(s,a)].
+\end{aligned}
+\]
+SARSA's target policy equals its behavior policy. Q-learning uses a greedy target, while data may come from exploratory behavior. Q-learning \textbf{still uses each observed reward}; only its continuation choice is evaluated greedily.
+
+$\epsilon$-greedy with one greedy action and $m$ actions: $P(greedy)=1-\epsilon+\epsilon/m$; others have $\epsilon/m$. GLIE requires infinite exploration and asymptotic greediness. \textbf{$\epsilon_t\to0$ alone is insufficient}; coverage still needs appropriate conditions.
+
+Tabular convergence commonly requires bounded rewards, sufficient visits, $\sum_n\alpha_n=\infty$, and $\sum_n\alpha_n^2<\infty$. SARSA optimal-control convergence also needs suitable GLIE. With appropriate coverage, Q-learning need not have an eventually greedy behavior policy. Neural approximation does not directly inherit these guarantees.
+\end{card}
+\begin{idea}[Cliff walking: why the safer route can emerge]
+With fixed $\epsilon>0$, SARSA values future exploratory mistakes and may choose a route farther from the cliff. Q-learning learns the shorter greedy edge route, while its exploratory behavior can still fall. This is a benchmark result, \textbf{not a universal theorem that SARSA is risk-averse or safe}.
+Optimism can use $f(u,n)=R^+$ when $n<N_e$ and $u$ otherwise, encouraging less-tried actions. A finite threshold is not proof of infinite exploration.
+\end{idea}
+
+\begin{question}{T3 P2(a--f): Aster, compare four active RL methods}\label{q:t3p2}
+$s_0$ offers $a,b$; $s_1$ offers $c,d$; $T$ is terminal and $\gamma=0.8$.
+Prior counts: $(s_0,a)\to s_1$ with reward 0 occurred 4 times; $(s_0,b)\to T$ with reward 6 occurred 3 times; $(s_0,b)\to s_1$ with reward $-2$ occurred once, followed by $d$ with reward 5 into $T$.
+New episode: $s_0\xrightarrow{b,-2}s_1\xrightarrow{d,5}T$.
+
+\textbf{(a) Active ADP:} update counts \textbf{after the new first transition}, with $U(s_1)=4,U(T)=0$.
+\ans $\hat P(s_1\mid s_0,a)=1$; $\hat P(T\mid s_0,b)=3/5$, $\hat P(s_1\mid s_0,b)=2/5$.
+\[
+Q_{model}(s_0,a)=0+0.8(4)=3.2,
+\]
+\[
+Q_{model}(s_0,b)=\tfrac35(6)+\tfrac25[-2+0.8(4)]=\boxed{4.08}.
+\]
+Greedy action is $b$.
+
+\textbf{(b) MC control:} previous complete returns are $6,6,6,2$.
+\ans The new return is $G_0=-2+0.8(5)=2$; average all five:
+\[
+\boxed{Q_{MC}(s_0,b)=(6+6+6+2+2)/5=4.4.}
+\]
+
+\textbf{(c) TD control:} $\alpha=0.5$; old values $Q(s_0,a)=3,Q(s_0,b)=2$, $Q(s_1,c)=4,Q(s_1,d)=1$; behavior chooses $d$.
+\ans
+\[
+\begin{array}{l|rrr}
+&\text{target}&\delta&\text{new }Q(s_0,b)\\\hline
+SARSA&-2+0.8(1)=-1.2&-3.2&\boxed{0.4}\\
+Q\text{-learning}&-2+0.8(4)=1.2&-0.8&\boxed{1.6}
+\end{array}
+\]
+The second transition $(s_1,d,5,T)$ has target 5; both methods update $Q(s_1,d)$ to $1+0.5(5-1)=3$. \textbf{They do not automatically recompute the just-updated $Q(s_0,b)$.}
+
+\textbf{(d)} If the next behavior action is $c$, SARSA's target becomes 1.2 and new Q becomes 1.6. Q-learning stays at 1.6 because it uses the greedy max.
+
+\textbf{(e) Comparison:}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{2.2cm}Y Y@{}}
+\toprule Method & Learned quantity / target & Policy improvement \\\midrule
+Active ADP & $\hat P,\hat R$; model expectation & Planning in the learned MDP and exploration \\
+MC control & $Q$; mean completed $G_t$ & Improve action selection using return averages \\
+SARSA & $Q$; actual $a'$ bootstrap & Evaluate and improve the exploring policy \\
+Q-learning & $Q$; greedy max bootstrap & Improve via an off-policy optimality target \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+\textbf{(f)} Every method needs exploration: always choosing the currently better $a$ may prevent discovering $b$'s benefit. Model-based methods also cannot estimate an entirely untried action.
+\pit The ADP / MC / SARSA / Q-learning values 4.08, 4.4, 0.4, 1.6 use different information and targets; different answers are expected.
+\end{question}
+\begin{plain}\label{q:t3optional}
+\textbf{T3 Optional P3(a,b) and slide worksheet: short-answer template.} Choose a human learning scenario and map state, action, feedback / reward, policy, and learning signal. Example: problem type, solution strategy, feedback, strategy selection, prediction error. TD errors can describe some behavioral learning signals, but human motivation need not reduce to a fixed scalar reward.
+Worksheet: $V(s)=5,r=1,V(s')=7,\gamma=0.8$ gives target$=6.6$, $\delta=1.6$: better than currently predicted. In neuroscience discussions, distinguish prediction-error-like activity from pleasure.
+\end{plain}
+
+\topic{Function Approximation and DQN (W5)}
+\subsection{Regression / optimization: objectives and gradient directions}
+\begin{card}{T4 P1(a--c): Linear regression, gradient descent, deep learning}\label{q:t4p1}
+\textbf{(a)} Linear prediction $\hat V_\theta(s)=\theta^\top\phi(s)$ fits target $y$ with loss $\frac12(y-\hat V)^2$. Features are linear in parameters, not necessarily in inputs.
+\textbf{(b)} Gradient descent minimizes loss: $\theta\leftarrow\theta-\alpha\nabla L$. For squared loss this is $\theta\leftarrow\theta+\alpha(y-\hat V)\nabla\hat V$. Maximize return with gradient \textbf{ascent}.
+\textbf{(c)} Deep networks stack nonlinear layers and use backpropagation to compute parameter gradients, learning representations and outputs. Shared parameters enable compactness and generalization, but may also underfit, interfere, or become unstable.
+\end{card}
+\begin{card}{Semi-gradients for MC, TD, and approximate Q-learning}
+\[
+\begin{aligned}
+\text{Approx. MC:}\quad &\theta\leftarrow\theta+\alpha(G_t-\hat V_\theta(s))\nabla_\theta\hat V_\theta(s),\\
+\text{Approx. TD:}\quad &\delta=r+\gamma\hat V_\theta(s')-\hat V_\theta(s),\quad
+\theta\leftarrow\theta+\alpha\delta\nabla_\theta\hat V_\theta(s),\\
+\text{Approx. Q:}\quad &\delta=r+\gamma\max_b\hat Q_\theta(s',b)-\hat Q_\theta(s,a),\\
+&\theta\leftarrow\theta+\alpha\delta\nabla_\theta\hat Q_\theta(s,a).
+\end{aligned}
+\]
+\textbf{Semi-gradient:} compute the target with old parameters, then treat it as fixed when differentiating. Do not differentiate through the successor estimate. For a linear model, the gradient is the current-state feature vector $\phi(s)$. SARSA replaces max with the actual $a'$.
+\end{card}
+
+\begin{question}{T4 P2: TD parameter updates for coordinates and distance features}\label{q:t4p2}
+\[
+\hat U_\theta(x,y)=\theta_0+\theta_1x+\theta_2y+\theta_3d(x,y),
+\quad d=\sqrt{(x-x_g)^2+(y-y_g)^2}.
+\]
+Given transition $(s,r,s')$, learning rate $\alpha$, and discount $\gamma$, write the updates.
+\ans Use \textbf{one common set of pre-update parameters} to compute
+\[
+\delta=r+\gamma\hat U_\theta(x',y')-\hat U_\theta(x,y),\quad
+\nabla_\theta\hat U=(1,x,y,d)^\top.
+\]
+\[
+\boxed{\theta_0\mathrel{+}=\alpha\delta,\quad
+\theta_1\mathrel{+}=\alpha\delta x,\quad
+\theta_2\mathrel{+}=\alpha\delta y,\quad
+\theta_3\mathrel{+}=\alpha\delta d.}
+\]
+\pit Differentiate with respect to $\theta$, not $x,y$; no coordinate derivative of distance is needed. A terminal successor has zero continuation.
+\end{question}
+
+\begin{question}{T4 P3(a--c): tabular Q and limitations of $Q(x,a)=\beta_ax$}\label{q:t4p3}
+$x\in\{0,1\}$, actions $a_1,a_2$; $\gamma=0.9,\alpha=0.5$.
+\textbf{(a)} All Q values initially zero. Process $(0,a_1,10,1)$, then $(1,a_2,-5,0)$.
+\ans First target: 10, giving $Q(0,a_1)=5$. The next-state max for the second update is 5, so target$=-5+0.9(5)=-0.5$ and $Q(1,a_2)=-0.25$.
+\begin{center}
+\begin{tabular}{@{}ccrr@{}}
+\toprule & $x$ & $Q(x,a_1)$ & $Q(x,a_2)$ \\\midrule
+After step 1 & 0 & 5 & 0 \\
+ & 1 & 0 & 0 \\\midrule
+After step 2 & 0 & 5 & 0 \\
+ & 1 & 0 & $-0.25$ \\\bottomrule
+\end{tabular}
+\end{center}
+\textbf{(b)} Use $Q(x,a_1)=\beta_1x,Q(x,a_2)=\beta_2x$, initially $\beta_1=\beta_2=0$. \textbf{This subquestion changes the first sample to} $(1,a_1,10,1)$; the second remains $(1,a_2,-5,0)$.
+\ans First, $\delta=10$ and $\partial Q/\partial\beta_1=x=1$, giving $(\beta_1,\beta_2)=(5,0)$.
+For the second update, both Q values at $x'=0$ are \textbf{always zero}. Thus target$=-5$, $\delta=-5$, and $\beta_2=-2.5$, giving $(5,-2.5)$.
+
+\textbf{(c)} With sufficient coverage, a table can fully represent this small finite state space. The original approximator forces $Q(0,a_1)=Q(0,a_2)=0$, so even unlimited data cannot learn nonzero values there. Add action-specific intercepts, $Q(x,a)=b_a+\beta_ax$, or use one-hot state-action features.
+\pit The first samples differ between subquestions; these numbers are not a same-data comparison. Without a complete MDP, two observations cannot establish that $Q^*$ has been found.
+\end{question}
+
+\subsection{Deadly triad and DQN: stabilization is not a proof}
+\begin{card}{Deadly triad = function approximation + bootstrap + off-policy}
+Shared parameters couple estimates, bootstrapping makes targets move, and off-policy sampling changes the data distribution. Together these \textbf{can cause divergence}; divergence is not inevitable in every instance.
+Baird-type counterexamples show instability even with linear features and zero rewards. On-policy linear \textbf{prediction} has convergence results under suitable sampling and step-size assumptions; this does not imply all neural SARSA implementations are stable.
+\end{card}
+\begin{card}{DQN loop and Double DQN}
+\begin{enumerate}
+\item Interact using $\epsilon$-greedy online $Q_\theta$; store $(s,a,r,s',done)$ in replay.
+\item Random minibatches reduce correlation between adjacent samples and reuse data; they do not automatically produce stationary i.i.d. samples.
+\item Use fixed target parameters $\theta^-$ to compute
+\[
+y=r+\gamma(1-done)\max_bQ_{\theta^-}(s',b).
+\]
+\item Minimize $\frac12(y-Q_\theta(s,a))^2$, holding the target fixed; periodically copy or slowly mix target parameters $\theta^-$.
+\end{enumerate}
+Replay addresses correlated samples and reuse; a target network reduces moving-target instability. Neither gives a \textbf{general convergence guarantee}. Vanilla DQN's max is practical for small discrete action sets; continuous control often uses an actor.
+
+\textbf{Double DQN:} select with the online network, evaluate with the target network:
+\[
+y=r+\gamma(1-done)Q_{\theta^-}\bigl(s',\argmax_bQ_\theta(s',b)\bigr).
+\]
+This reduces overestimation from coupling max selection and evaluation. Prioritized replay changes sampling and needs attention to bias / correction; distributional variants learn return distributions.
+\end{card}
+
+\topic{Policy Gradient, REINFORCE, Actor-Critic, PPO (W5)}
+\subsection{Optimize the policy directly}
+\begin{card}{Stochastic policy, score gradient, advantage}
+Softmax: $\pi_\theta(a\mid s)=\exp h_\theta(s,a)/\sum_b\exp h_\theta(s,b)$. Continuous policies can use parameterized Gaussian distributions; direct policy learning avoids enumerating a continuous argmax.
+
+For $J(\theta)=\E[\sum_{t=0}^{T-1}\gamma^tR_{t+1}]$, an episodic estimator is
+\[
+\widehat{\nabla J}=\sum_{t=0}^{T-1}\gamma^tG_t\nabla_\theta\log\pi_\theta(a_t\mid s_t).
+\]
+A discounted-visitation formulation of the policy-gradient theorem may absorb $\gamma^t$ into the sampling / occupancy convention. State the definition of $J$ before applying the formula.
+\[
+A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s),\qquad
+\sum_a\pi(a\mid s)A^\pi(s,a)=0.
+\]
+$A>0$: this action is better than the current policy's average; $A<0$: worse. The sign of the immediate reward alone is insufficient.
+\end{card}
+\begin{question}{T4 P4(a--c): Persy learns camera-to-action with REINFORCE}\label{q:t4p4}
+From camera state $s_t$, Persy samples forward / left / right / stop with a stochastic policy. The tutorial writes the reward after $a_t$ as $r_t$; $G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_k$.
+
+\textbf{(a)} Why use $\nabla_\theta\log\pi_\theta(a_t\mid s_t)G_t$?
+\ans The score gradient gives a direction for changing the sampled action's probability. $G_t$ measures continuation quality and samples $Q^\pi(s_t,a_t)$. Ascent reinforces actions with high returns; handle time weighting according to the stated objective.
+
+\textbf{(b)} How does $G_t-b(s_t)$ help, and why is $b=V^\pi$ a useful reference?
+\ans It removes the state's common return level, usually reducing gradient variance and comparing relative performance. If the baseline does not depend on the sampled action:
+\[
+\E_a[b(s)\nabla\log\pi(a\mid s)]
+=b(s)\sum_a\nabla\pi(a\mid s)=b(s)\nabla1=0.
+\]
+Thus the expected score gradient is unchanged. $V^\pi$ is expected return from the state; $G_t$ is one realized return. $G_t-V^\pi(s_t)$ is a sampled advantage. \textbf{$V^\pi$ is not the exact minimum-variance baseline in every case.}
+
+\textbf{(c)} Three rewards: $r_0=1,r_1=0,r_2=2$, with $\gamma=0.9$.
+\ans $\boxed{G_0=1+0.9(0)+0.9^2(2)=2.62}$; $\boxed{G_1=0+0.9(2)=1.8}$; $G_2=2$.
+\pit Even if the baseline has parameters, detach the baseline / advantage in the actor score estimator. An action-dependent baseline cannot directly use the identity above.
+\end{question}
+
+\subsection{Actor-Critic: an earlier learning signal from the critic}
+\begin{card}{TD advantage, actor / critic updates}
+\[
+\delta_t=r+\gamma(1-done)V_w(s')-V_w(s).
+\]
+Actor: $\theta\leftarrow\theta+\alpha\widehat A_t\nabla_\theta\log\pi_\theta(a\mid s)$; critic: $w\leftarrow w+\eta\delta_t\nabla_wV_w(s)$, using e.g. $\widehat A_t=\delta_t$. For a strictly discounted episodic objective, handle $\gamma^t$ consistently in the actor as well.
+
+With an exact $V^\pi$ critic, $\E[\delta_t\mid s,a]=A^\pi(s,a)$. An approximate critic introduces bias, but permits earlier updates and often lower variance.
+REINFORCE with a learned MC baseline can still avoid bootstrapping; a value network alone does not make it one-step TD Actor-Critic.
+\end{card}
+
+\subsection{TRPO / PPO: limit excessively large policy changes}
+\begin{card}{Surrogate objectives, ratios, and sign-dependent clipping}
+Practical TRPO form: maximize $\E[\rho_t\widehat A_t]$ subject to mean KL$\le\delta_{KL}$; constrained optimization controls the policy shift.
+Let $\rho_t=\pi_\theta(a_t\mid s_t)/\pi_{old}(a_t\mid s_t)$. The tutorial uses $r_t(\theta)$; here $\rho$ avoids confusion with rewards.
+\[
+\boxed{L^{CLIP}(\theta)=\hat\E_t\left[
+\min\{\rho_t\widehat A_t,\clip(\rho_t,1-\epsilon,1+\epsilon)\widehat A_t\}\right].}
+\]
+This is a \textbf{maximization} objective; a minimizing optimizer uses its negative as the loss.
+\[
+L(\rho,A)=\begin{cases}
+A\min(\rho,1+\epsilon),&A\ge0,\\
+A\max(\rho,1-\epsilon),&A<0.
+\end{cases}
+\]
+For a good action, increasing probability stops adding benefit beyond the upper bound. For a bad action, decreasing probability stops adding benefit below the lower bound. Changes in harmful directions remain penalized.
+\end{card}
+\begin{question}{T4 P5(a--e): Spacecraft PPO calculation}\label{q:t4p5}
+\textbf{(a)} The ratio compares current versus old probabilities of the \textbf{same sampled action}. A ratio above 1 means its probability increased.
+\textbf{(b)} $\widehat A>0$ means better than baseline: increase probability. For $\widehat A<0$, decrease it.
+\textbf{(c,d)} $\epsilon=0.2,\rho=1.3,\widehat A=2$.
+\ans $\clip(1.3,0.8,1.2)=1.2$; unclipped $u=1.3(2)=2.6$, clipped $c=1.2(2)=2.4$. Thus $\boxed{L_t^{CLIP}=\min(2.6,2.4)=2.4}$.
+
+\textbf{(e)} TRPO explicitly constrains KL and is more expensive to solve. PPO uses a simpler first-order clipped surrogate and reuses a batch for a limited number of epochs. It \textbf{does not guarantee} hard bounds on every probability ratio, a hard KL constraint, or unconditional monotonic improvement.
+\pit Multiply by the advantage before taking min, especially for negative advantages. Do not take min of the ratios first.
+\end{question}
+\begin{idea}[Supplementary exercise: clipping with negative advantage]
+$\epsilon=0.2,A=-2$. If $\rho=0.7$, unclipped$=-1.4$, clipped$=-1.6$, and min$=-1.6$ (benefit from reducing a bad action is saturated). If $\rho=1.3$, the terms are $-2.6,-2.4$, and min$=-2.6$ (increasing a bad action is still penalized).
+\end{idea}
+\begin{note}[Data roles in a PPO iteration]
+Freeze $\pi_{old}$ for the batch; collect rollouts and old probabilities; compute returns / advantages with the critic; update actor and critic for several minibatch epochs; then collect data with the \textbf{new policy}. Arbitrary old replay data is not a standard on-policy PPO batch without further handling.
+\end{note}
+
+\topic{Reward Shaping: Core Essentials (W6)}
+\begin{card}{Sparse reward, intrinsic bonus, reward hacking}
+General shaping: $R'=cR+\beta F$. Sparse or delayed feedback makes learning signals difficult to obtain. Extra feedback can accelerate exploration but may change the objective.
+\begin{itemize}
+\item Count bonus: $\beta/(N(s)+1)$ decreases with visits; continuous states need density estimates or pseudo-counts for similar states.
+\item RND: frozen random target $f(s)$, trainable predictor $\hat f(s)$; bonus$=\|f(s)-\hat f(s)\|^2$. The target is \textbf{permanently frozen}, unlike DQN's synchronized target network.
+\item Noisy-TV: useless novelty or unpredictable signals attract the agent; novelty is not task progress. RND reduces some stochasticity issues of dynamics prediction, but is not immune to every form of observation noise.
+\item Reward hacking: repeatedly pick up / drop a key or cross a bottleneck to collect bonuses; the proxy score rises while the true objective worsens.
+\end{itemize}
+\end{card}
+\begin{prf}[Potential-based reward shaping: policy invariance]
+Use the standard convention $F(s,s')=\gamma\Phi(s')-\Phi(s)$, with $c>0$ and fixed $\beta$.
+\[
+\sum_{t=0}^{H-1}\gamma^tF(S_t,S_{t+1})
+=-\Phi(S_0)+\gamma^H\Phi(S_H).
+\]
+With infinite discounted returns and bounded $\Phi$, the tail vanishes. For an episode ending at $H$, safely set \textbf{all terminal potentials to zero}, making the tail independent of the path. Then
+\[
+V'^\pi(s)=cV^\pi(s)-\beta\Phi(s),\qquad
+Q'^\pi(s,a)=cQ^\pi(s,a)-\beta\Phi(s).
+\]
+From the same starting state, all actions / policies receive the same additive shift, preserving rankings.
+\textbf{The original notes use the opposite sign}, $\phi(s)-\gamma\phi(s')$, equivalent to setting $\Phi=-\phi$. The two expressions are not equal for the same fixed potential.
+\end{prf}
+\begin{note}[A constant bonus need not preserve the optimal policy]
+In random-length episodes, adding a constant per step can favor prolonging or ending the episode. Affine invariance of one-shot utility does not establish safety of arbitrary episodic reward shifts. Naive bonuses and learned reward agents generally lack PBRS guarantees.
+\end{note}
+\begin{plain}
+\textbf{Recognition only:} RLHF learns a reward model from human preference pairs using the pairwise loss
+$-\log\sigma(r_\psi(x,y^+)-r_\psi(x,y^-))$, followed by policy optimization.
+ORM evaluates complete outcomes; PRM evaluates intermediate steps. Preference rewards are also proxies and can suffer from gaming or poor generalization. Detailed multi-agent shaping frameworks and research cases are omitted.
+\end{plain}
+
+\topic{Guided Decisions: Rollout, MCTS, Imitation (W7)}
+\subsection{Decision-time planning: extra computation with a simulator}
+\begin{card}{Rollout: first action $a$, then the same base policy}
+For each candidate $a$, fix the first action and sample continuations with the same $\pi$:
+\[
+\hat Q^\pi(s,a)=\frac1N\sum_{i=1}^NG^{(i)}(s,a),\qquad
+\hat a=\argmax_a\hat Q^\pi(s,a).
+\]
+At cutoff $H$, the return may include $\gamma^H\hat V(s_H)$. Omitting it assumes a zero tail and may introduce truncation bias.
+Exact greedy one-step improvement with respect to $Q^\pi$ has a policy-improvement guarantee; finite noisy estimates need not improve the policy every time.
+
+\textbf{Lecture Persy example:} Left samples $4,6,5$, mean$=5$; Right samples $3,8,2$, mean$=13/3$. Choose Left, but three samples do not prove its true value is higher.
+\end{card}
+\begin{card}{Four MCTS stages and UCT}
+\textbf{Selection $\to$ Expansion $\to$ Simulation / leaf evaluation $\to$ Backup}. Retain tree statistics for the current decision. An edge is added once but can be revisited and sampled many times; the entire rollout suffix is usually not added to the tree.
+\[
+N\leftarrow N+1,\quad W\leftarrow W+g,\quad
+\hat Q_{new}=\hat Q_{old}+\frac{g-\hat Q_{old}}{N_{old}+1}.
+\]
+Each ancestor uses the \textbf{return from its own starting point}: $g_t=r_{t+1}+\gamma g_{t+1}$. Update only the traversed path. This is an incremental sample mean; the difference term does not make it a TD error.
+\[
+\boxed{UCT(s,a)=\hat Q(s,a)+c\sqrt{\frac{\ln N(s)}{N(s,a)}}.}
+\]
+Q supplies exploitation; the bonus supplies exploration and increases as visits decrease. Handle unvisited actions with a separate priority convention rather than dividing by zero. UCT selects actions \textbf{during simulation}; the final root recommendation often uses visit counts or values, depending on the implementation.
+Anytime means an answer can be returned from current statistics and more budget can improve estimates; a finite budget does not guarantee optimality.
+\end{card}
+\begin{idea}[Lecture UCT example: three root trials]
+TR / ML / BR each have one visit and returns $1,0.5,0$; root $N=3,W=1.5$. With $c=\sqrt2$, the shared bonus is $\sqrt{2\ln3}\approx1.4823$. UCT scores are $2.4823,1.9823,1.4823$. The next \textbf{simulation} selects TR and continues through its existing subtree.
+If $\hat Q_{old}=7,N_{old}=3$ and the new return is $g=3$, the new mean is $7+(3-7)/4=6$.
+\end{idea}
+\begin{card}{PUCT / AlphaGo Zero: recognition-level summary}
+A policy / value network provides prior $P(s,a)$ and leaf value $v(s)$:
+\[
+PUCT=\hat Q(s,a)+cP(s,a)\frac{\sqrt{\sum_bN(s,b)}}{1+N(s,a)}.
+\]
+Self-play MCTS visit distributions provide policy targets; terminal outcomes provide value targets; learned values replace random rollouts. Low prior does not mean automatic pruning. Alternating zero-sum games need a consistent player perspective, often reversing signs at each level.
+Network training and decision-time search have distinct roles. AlphaGo Zero's policy-target training is not directly REINFORCE.
+\end{card}
+
+\subsection{Learning from demonstrations: the policy shapes the data distribution}
+\begin{card}{BC, DAgger, IRL, and GAIL compared}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{1.6cm}Y Y@{}}
+\toprule Method & Target / mechanism & Main limitation \\\midrule
+BC & $L=-\E_{(s,a_E)\sim D_E}\log\pi_\theta(a_E\mid s)$ & Expert and deployed-learner state distributions differ; errors compound \\
+DAgger & Roll out learner / mixture; ask expert for actions at visited states; aggregate and retrain & Requires an interactive expert oracle \\
+IRL & Infer a reward explaining expert behavior, then plan / learn & Rewards are nonunique: many can explain the same behavior \\
+GAIL & Discriminate expert / learner $(s,a)$; use RL to match occupancy & Needs learner interaction; optimization and coverage limitations \\\bottomrule
+\end{tabularx}\par\smallskip
+\normalsize
+BC errors can push the agent outside the expert corridor; recovery examples matter. Worst-case BC loss can reach $O(H^2\epsilon)$. Under suitable no-regret and expert-cost assumptions, DAgger can obtain a bound linear in the horizon; \textbf{$O(H\epsilon)$ is not unconditional for every task}.
+\end{card}
+\begin{idea}[DAgger: distinguish who visits states from who labels them]
+Collection policy: $\pi_i=\beta_i\pi_E+(1-\beta_i)\hat\pi_i$. As $\beta_i\to0$, the \textbf{learner determines visited states}. New labels remain the \textbf{expert's actions}, $a_E=\pi_E(s)$, not the learner's self-assigned answers.
+Aggregate $D\leftarrow D\cup\{(s,\pi_E(s))\}$, then retrain while retaining old data. DAgger is more than collecting extra expert trajectories. Fixed reference tokens need not be the expert's correct continuation for a new prefix.
+\end{idea}
+\begin{note}[Distinguish three Monte Carlo uses]
+MC evaluation estimates fixed-policy values; MCTS uses local tree statistics to select the \textbf{current action}; REINFORCE uses returns to estimate a \textbf{policy-parameter gradient}. Shared use of sampled trajectories does not make them the same algorithm.
+\end{note}
+
+\topic{Problem Index and Final Checks}
+\begin{card}{Tutorial 1--5 coverage map: duplicate versions merged}
+\small
+\par\smallskip
+\begin{tabularx}{\linewidth}{@{}P{2.9cm}Y r@{}}
+\toprule Original question & Integrated topic / content & Page \\\midrule
+T1 P1(a--c) & Blocks World PDDL, forward tree, three-step plan & \pageref{q:t1p1} \\
+T1 P2 & Delete relaxation proof + negative-condition counterexamples & \pageref{q:t1p2} \\
+T1 P3(A,B) & HLA summaries + four refinement options & \pageref{q:t1p3} \\
+T2 P1(A,B) & Utility matching, positive affine proof & \pageref{q:t2p1} \\
+T2 P2(a--c) & PacBaby insurance; slide CE / premium extension & \pageref{q:t2p2} \\
+T2 P3(a,b) & Allais contradiction, mixture / independence proof & \pageref{q:t2p3} \\
+T3 P1 Part 1(a,b,d) & Nova discount, policy-switch thresholds & \pageref{q:t3p1discount} \\
+T3 P1 Part 1(c) & Nova minimal-entry modification & \pageref{q:t3p1modify} \\
+T3 P1 Part 2(a--d) & Nova first backup, VI, PI, optimality check & \pageref{q:t3p1dp} \\
+T3 P2(a--f) & Aster ADP / MC / SARSA / Q-learning & \pageref{q:t3p2} \\
+T3 Optional P3(a,b) & Human-learning mapping, RPE worksheet & \pageref{q:t3optional} \\
+T4 P1(a--c) & Regression, gradient descent, deep learning & \pageref{q:t4p1} \\
+T4 P2 & Coordinate / distance semi-gradient TD & \pageref{q:t4p2} \\
+T4 P3(a--c) & Tabular vs feature-based Q updates & \pageref{q:t4p3} \\
+T4 P4(a--c) & REINFORCE score, baseline, discounted returns & \pageref{q:t4p4} \\
+T4 P5(a--e) & PPO ratio / sign / clip / min / TRPO & \pageref{q:t4p5} \\
+T5 Q1(a,b) & Air Cargo grounding and Load & \pageref{q:t5q1} \\
+T5 Q2 & Optimistic / pessimistic set counterexample & \pageref{q:t5q2} \\
+T5 Q3 & Alex coin lotteries, sure 50 inequality & \pageref{q:t5q3} \\
+T5 Q4(a--d) & Alice final wealth, A--B--A & \pageref{q:t5q4} \\
+T5 Q5 + Optional & Delayed-movement augmented MDP & \pageref{q:t5q5} \\
+T5 Q6(a--c) & Passive MC / TD / ADP & \pageref{q:t5q6} \\\bottomrule
+\end{tabularx}\par\smallskip
+\end{card}
+\begin{note}[Ten final checks]
+\begin{enumerate}
+\item A goal is a partial description; facts outside the effects persist.
+\item Ground actions obey the schema's actual constraints; do not add distinctness to Fly if absent.
+\item Optimistic goal intersection does not prove success; no pessimistic intersection does not prove failure.
+\item Compute utility for each outcome, then average; log requires \textbf{positive final wealth}.
+\item Keep reward timing consistent; count terminal reward once and set terminal value to zero.
+\item Synchronous VI reads the old vector; PI evaluation fixes a policy and has no max.
+\item SARSA uses the actual next action; Q-learning uses the next-state greedy max.
+\item Detach semi-gradient targets; parameter gradients use current features, not successor features.
+\item PPO multiplies by advantage before min; clipping is not a hard ratio bound.
+\item Include pending actions in the state; DAgger labels come from the expert; MCTS updates only its traversed path.
+\end{enumerate}
+\end{note}
+\begin{plain}
+\textbf{Source mapping:} T1--T5 primarily follow the \texttt{CSXX46\_AY2627\_1\_Week*\_Tutorial*} problem sheets. Corresponding CS5446 / Tutorial3\_MDP / Tutorial4 / Tutorial5 student slides supply semantics, reviews, and extensions. Team26 T1--T3 provides reference answers; numerical results and conditions were checked independently rather than treating every team statement as a theorem.
+
+\textbf{Condensation policy:} omit agent / AI timelines, product and competition lists, regulatory detail, LLM project proposals, promotional research results, and repeated MDP introductions. Retain core definitions and assumptions, frequent formulas, necessary short proofs, all formal tutorial problems, and short answers to optional questions.
+
+\textbf{Supplementary verification references:} Ng, Harada \& Russell (1999), \href{https://people.eecs.berkeley.edu/~russell/papers/icml99-shaping.pdf}{Policy Invariance under Reward Transformations}; Schulman et al. (2017), \href{https://arxiv.org/abs/1707.06347}{Proximal Policy Optimization Algorithms}. These support the PBRS and PPO formulations respectively; the rest is primarily reorganized from the supplied course materials.
+\end{plain}
+\end{document}

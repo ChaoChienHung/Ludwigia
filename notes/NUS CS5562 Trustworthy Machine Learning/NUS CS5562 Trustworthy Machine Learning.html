@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NUS CS5562: Trustworthy Machine Learning — Ludwig</title>
   <meta name="garden:tags" content="Machine Learning, Responsible AI, Trustworthy ML">
-  <meta name="garden:summary" content="Structured notes for NUS CS5562 Trustworthy Machine Learning, exploring CLWE-based digital signature attacks, PRG embedding, membership inference auditing enhancements, and privacy safeguards.">
+  <meta name="garden:summary" content="Structured notes for NUS CS5562 Trustworthy Machine Learning, exploring latent representations, vector database security, model inversion attacks, CLWE signature reductions, and robust defense limits.">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.machine_learning,concept.responsible_ai,concept.trustworthy_ml">
   <meta name="site:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.responsible_ai&quot;:{&quot;en&quot;:&quot;Responsible AI&quot;,&quot;zh-Hant&quot;:&quot;負責任 AI&quot;,&quot;zh-Hans&quot;:&quot;负责任 AI&quot;},&quot;concept.trustworthy_ml&quot;:{&quot;en&quot;:&quot;Trustworthy ML&quot;,&quot;zh-Hant&quot;:&quot;可信機器學習&quot;,&quot;zh-Hans&quot;:&quot;可信机器学习&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5562-trustworthy-machine-learning">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="24">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="43">
   <meta name="site:source" content="notes/NUS CS5562 Trustworthy Machine Learning/NUS CS5562 Trustworthy Machine Learning.md">
   <script>
   (() => {
@@ -155,6 +155,14 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#knowledge-architecture">Knowledge Architecture</a>
+<a class="note-toc-link level-1" href="#latent-space-representations-vector-databases-and-model-inversion-attacks">Latent Space Representations, Vector Databases, and Model Inversion Attacks</a>
+<a class="note-toc-link level-2" href="#1-from-raw-inputs-to-latent-metric-spaces">1. From Raw Inputs to Latent Metric Spaces</a>
+<a class="note-toc-link level-2" href="#2-metric-equivalence-euclidean-distance-vs-cosine-similarity-on-unit-hyperspheres">2. Metric Equivalence: Euclidean Distance vs. Cosine Similarity on Unit Hyperspheres</a>
+<a class="note-toc-link level-2" href="#3-the-vector-database-infrastructure-in-modern-ai">3. The Vector Database Infrastructure in Modern AI</a>
+<a class="note-toc-link level-2" href="#4-threat-model-vector-database-compromise-and-embedding-exfiltration">4. Threat Model: Vector Database Compromise and Embedding Exfiltration</a>
+<a class="note-toc-link level-2" href="#5-model-inversion-attacks-on-embeddings">5. Model Inversion Attacks on Embeddings</a>
+<a class="note-toc-link level-2" href="#6-why-exact-match-is-not-required-the-epsilon-neighborhood-threat">6. Why Exact Match Is Not Required: The $\epsilon$-Neighborhood Threat</a>
+<a class="note-toc-link level-2" href="#7-defenses-and-countermeasures-in-trustworthy-ml">7. Defenses and Countermeasures in Trustworthy ML</a>
           </nav>
         </div>
       </div>
@@ -177,7 +185,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -213,6 +221,8 @@
 <p class="mb-3">這份來源目前沒有明確 Week 標記，所以用「threat model → theoretical limit → audit practice → privacy / robustness → operational defense」整理，而不虛構課程週次：</p>
 
 <div class="note-markdown-block"><pre><code class="language-text">數學與安全基礎
+  → representation &amp; geometry：vector space、inner product、Euclidean vs. Cosine equivalence、latent embeddings
+  → vector databases &amp; model inversion：embedding leakage、biometric reconstruction 與 ϵ-ball 威脅
   → cryptographic reductions：用 CLWE / PRG 證明 MI auditing 的限制
   → auditing enhancements：讓理論威脅模型更接近實際模型行為
   → privacy vocabulary：quasi-identifiers 與 re-identification risk
@@ -229,8 +239,13 @@
     <tbody>
 <tr>
 <td>Foundations</td>
-<td>vector space、inner product、quasilinear 是什麼語言？</td>
+<td>vector space、inner product、Euclidean 與 Cosine 等價幾何、quasilinear 是什麼語言？</td>
 <td>先建立 representation、geometry、complexity 的共同詞彙</td>
+</tr>
+<tr>
+<td>Latent Privacy</td>
+<td>vector DB 洩漏時，embedding 能否被還原？為何不需要完全相等？</td>
+<td>探討 Model Inversion、生物特徵還原與 $\epsilon$-ball 鄰域威脅</td>
 </tr>
 <tr>
 <td>Impossibility / reduction</td>
@@ -424,6 +439,274 @@
 <li>R^3 is a specific 3D real inner product space used in physics and geometry.</li>
 <li>The cross product is not part of the definition of a vector space; it is an additional operation specific to 3D.</li>
 </ul>
+
+<hr>
+</section>
+
+<section id="latent-space-representations-vector-databases-and-model-inversion-attacks" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Latent Space Representations, Vector Databases, and Model Inversion Attacks</h3>
+
+<h4 id="1-from-raw-inputs-to-latent-metric-spaces" class="mb-2">1. From Raw Inputs to Latent Metric Spaces</h4>
+
+<p class="mb-3">In modern machine learning systems, high-dimensional raw data $\mathcal{X}$ (such as facial photos, biometric voiceprints, medical records, or text corpora) are projected into a compact, continuous $d$-dimensional representation space via an encoder or feature extractor:</p>
+
+<p class="mb-3">$$f_\theta: \mathcal{X} \to \mathcal{Z} \subseteq \mathbb{R}^d$$</p>
+
+<ul class="note-list">
+<li><strong>Latent Space as an Inner Product Metric Space</strong>: The latent representation space $\mathcal{Z} \subseteq \mathbb{R}^d$ is equipped with an inner product $\langle u, v \rangle$, which induces a natural Euclidean ($\ell_2$) metric $\|u - v\|_2$ and cosine similarity measure:
+<p class="mb-2">$$\cos(u, v) = \frac{\langle u, v \rangle}{\|u\|_2 \|v\|_2}$$</p></li>
+<li><strong>Metric Topology and Neighborhood Preservation</strong>: Trained with representation learning objectives (such as metric learning, contrastive losses like InfoNCE/Triplet Loss, or self-supervised encoders), the mapping preserves semantic proximity:
+<ul class="note-list">
+<li><strong>Semantically or perceptually related inputs map to proximate vectors in latent space</strong>: If $x_1$ and $x_2$ depict the same person's face under varied lighting or camera angles, $\|f_\theta(x_1) - f_\theta(x_2)\|_2 \le \epsilon$.</li>
+<li><strong>Dissimilar inputs are separated towards near-orthogonality</strong>: Semantically unrelated concepts are pushed apart such that $\langle f_\theta(x_1), f_\theta(x_3) \rangle \approx 0$.</li>
+</ul></li>
+</ul>
+
+<h4 id="2-metric-equivalence-euclidean-distance-vs-cosine-similarity-on-unit-hyperspheres" class="mb-2">2. Metric Equivalence: Euclidean Distance vs. Cosine Similarity on Unit Hyperspheres</h4>
+
+<p class="mb-3">Before analyzing vector storage and inversion dynamics, we must establish the precise geometric duality between <strong>Euclidean distance</strong> ($\ell_2$) and <strong>Cosine similarity</strong> on normalized representations.</p>
+
+<h5 class="mb-2">General Concepts &amp; Definitions</h5>
+
+<ul class="note-list">
+<li><strong>Euclidean Distance ($\ell_2$)</strong>: Measures the straight-line Cartesian separation between two coordinate points $u, v \in \mathbb{R}^d$:</li>
+</ul>
+
+<p class="mb-3">$$\|u - v\|_2 = \sqrt{\sum_{i=1}^d (u_i - v_i)^2}$$</p>
+
+<ul class="note-list">
+<li><strong>Cosine Similarity</strong>: Measures the cosine of the angle $\theta$ between two non-zero directional vectors, invariant to arbitrary scaling:</li>
+</ul>
+
+<p class="mb-3">$$\cos\theta = \frac{\langle u, v \rangle}{\|u\|_2 \|v\|_2} = \frac{u \cdot v}{\|u\|_2 \|v\|_2}$$</p>
+
+<ul class="note-list">
+<li><strong>Direct Dependence on Angle</strong>: When vectors are normalized to unit length ($\|u\|_2 = \|v\|_2 = 1$), Euclidean distance and cosine similarity are directly and monotonically related. The distance depends <strong>strictly and solely on the angle $\theta$</strong> subtended between them.</li>
+</ul>
+
+<h5 class="mb-2">Mathematical Derivation</h5>
+
+<p class="mb-3">For unit vectors satisfying $\|u\|_2 = \|v\|_2 = 1$, the cosine similarity simplifies directly to the Euclidean inner product:</p>
+
+<p class="mb-3">$$\cos\theta = u \cdot v$$</p>
+
+<p class="mb-3">Expanding the squared Euclidean distance using inner product properties:</p>
+
+<p class="mb-3">$$\begin{aligned} \|u - v\|_2^2 &amp;= (u - v) \cdot (u - v) \\ &amp;= u \cdot u - 2(u \cdot v) + v \cdot v \\ &amp;= \|u\|_2^2 + \|v\|_2^2 - 2(u \cdot v) \\ &amp;= 1 + 1 - 2\cos\theta \\ &amp;= 2(1 - \cos\theta) \end{aligned}$$</p>
+
+<p class="mb-3">Taking the square root yields the closed-form relationship expressing Euclidean distance purely in terms of cosine similarity:</p>
+
+<p class="mb-3">$$\|u - v\|_2 = \sqrt{2(1 - \cos\theta)}$$</p>
+
+<p class="mb-3">Conversely, cosine similarity is uniquely determined by the squared Euclidean distance:</p>
+
+<p class="mb-3">$$\cos\theta = 1 - \frac{1}{2}\|u - v\|_2^2$$</p>
+
+<h5 class="mb-2">Geometric Interpretation: Chord Length vs. Arc Length</h5>
+
+<div class="note-markdown-block"><pre><code class="language-text">                  Unit Circle / Sphere (S^{d-1})
+                          +y
+                           |
+                        (u)*
+                       /   | '.
+                      /    |   '.  Arc length: s = θ (Geodesic)
+                     /     |     '.
+                    /      |       '.
+                   /  θ    | Chord   *(v)
+                  /________|________/
+                (0,0)      |        \
+                           |         +x</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>Geometry on the Hypersphere</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Normalized embeddings reside on the surface of a unit hypersphere $\mathbb{S}^{d-1} = \{x \in \mathbb{R}^d : \|x\|_2 = 1\}$.</li>
+<li><strong>Euclidean distance</strong> $\|u - v\|_2$ corresponds to the straight-line <strong>chord length</strong> puncturing through the interior of the sphere between points $u$ and $v$.</li>
+<li><strong>Cosine similarity</strong> reflects the central angle $\theta$, which governs the <strong>arc length</strong> (geodesic distance along the sphere surface: $s = r \cdot \theta = \theta$).</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Small Angle Equivalence (Local Linearization)</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>For small angular separations ($\theta \ll 1$), applying Taylor expansion $\cos\theta \approx 1 - \frac{\theta^2}{2}$:
+<p class="mb-2">$$\|u - v\|_2 = \sqrt{2\left(1 - \left(1 - \frac{\theta^2}{2}\right)\right)} = \sqrt{\theta^2} = \theta$$</p></li>
+<li>Hence, for proximate semantics, <strong>chord length asymptotically equals arc length</strong>, confirming linear proportionality between Euclidean distance and angular distance.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Boundary and Extremal Regimes</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li><strong>Identical Orientation</strong> ($\theta = 0^\circ$): $\cos\theta = 1 \implies \|u - v\|_2 = \sqrt{2(1 - 1)} = 0$ (coincident points, maximum similarity).</li>
+<li><strong>Orthogonal Separation</strong> ($\theta = 90^\circ$): $\cos\theta = 0 \implies \|u - v\|_2 = \sqrt{2(1 - 0)} = \sqrt{2} \approx 1.414$ (uncorrelated features).</li>
+<li><strong>Opposite / Antipodal Orientation</strong> ($\theta = 180^\circ$): $\cos\theta = -1 \implies \|u - v\|_2 = \sqrt{2(1 - (-1))} = 2$ (antipodal points across the diameter, maximum dissimilarity).</li>
+</ul>
+
+<h5 class="mb-2">Systems and Trustworthy ML Implications</h5>
+
+<ul class="note-list">
+<li><strong>Interchangeability in Vector Databases</strong>: Because the function $g(t) = \sqrt{2(1 - t)}$ is strictly monotonically decreasing for $t \in [-1, 1]$, <strong>ranking nearest neighbors by ascending Euclidean distance ($\ell_2$) produces the exact same permutation as ranking by descending cosine similarity (or descending inner product / MIPS)</strong>. Enterprise vector databases (FAISS, Milvus, Pinecone) enforce $\ell_2$-normalization upon insertion, allowing hardware BLAS GEMM dot-product routines to accelerate cosine similarity searches without angular trigonometric overhead.</li>
+<li><strong>Model Inversion and Adversarial Optimization</strong>: In feature inversion attacks against normalized embeddings, minimizing Euclidean loss is strictly identical to maximizing directional cosine alignment:</li>
+</ul>
+
+<p class="mb-3">$$\nabla_{\hat{x}} \|f_\theta(\hat{x}) - v\|_2^2 = -2 \nabla_{\hat{x}} \cos(f_\theta(\hat{x}), v)$$ An attacker optimizing an inversion objective via Euclidean distance implicitly navigates the geodesic arc on the representation hypersphere.</p>
+
+<h4 id="3-the-vector-database-infrastructure-in-modern-ai" class="mb-2">3. The Vector Database Infrastructure in Modern AI</h4>
+
+<p class="mb-3">To avoid executing redundant, computationally heavy neural forward passes on every retrieval, enterprise AI and Retrieval-Augmented Generation (RAG) architectures store and query high-dimensional embeddings using specialized <strong>Vector Databases</strong> (such as Milvus, Pinecone, FAISS, Qdrant, and Chroma):</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">[ Raw Input x ] ──&gt; [ Encoder f_θ ] ──&gt; [ Vector Embedding v ∈ R^d ]
+                                                    │
+                                                    ▼
+                                         ┌─────────────────────┐
+                                         │   Vector Database   │
+                                         │ (HNSW / IVF-PQ Index)│
+                                         └──────────┬──────────┘
+                                                    │ ANN Retrieval
+[ Query q ] ────&gt; [ Query Vector q_v ] ─────────────┼──────────┐
+                                                    ▼          ▼
+                                         [ Top-k Context Embeddings ]
+                                                    │
+                                                    ▼
+                                         [ LLM / Downstream Reasoner ]</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Storage &amp; Indexing Efficiency</strong>: Rather than performing exhaustive linear scans $\mathcal{O}(N \cdot d)$ across $N$ database records, vector databases construct Approximate Nearest Neighbor (ANN) indexing structures (e.g., Hierarchical Navigable Small World graphs / HNSW, or Inverted File with Product Quantization / IVF-PQ). These indices compress storage and enable sub-linear $\mathcal{O}(\log N)$ similarity queries over billions of vectors.</li>
+<li><strong>LLM and Agent Retrieval Pipeline</strong>: Large Language Models (LLMs) and multimodal agents treat the vector database as an external, long-term semantic memory. During inference, user prompts are vectorized into query points $q \in \mathbb{R}^d$, the database retrieves top-$k$ nearest neighbor vectors, and the resulting context is fed into downstream models for reasoning and synthesis.</li>
+</ul>
+
+<h4 id="4-threat-model-vector-database-compromise-and-embedding-exfiltration" class="mb-2">4. Threat Model: Vector Database Compromise and Embedding Exfiltration</h4>
+
+<div id="the-embeddings-are-irreversible-hashes-fallacy" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-shield-halved me-2"></i>The "Embeddings Are Irreversible Hashes" Fallacy</h4><p class="mb-3">A frequent assumption in engineering teams is that dense vector embeddings are <em>one-way lossy hashes</em> analogous to cryptographic digests (such as SHA-256). Because embeddings are floating-point coordinate arrays devoid of raw pixels, text characters, or schema field names, systems frequently store them without encryption-at-rest or fine-grained field-level privacy controls.</p>
+
+<p class="mb-3"><strong>Trustworthy ML Reality</strong>: Continuous latent vectors preserve rich semantic, geometric, and biometric correlations. When a vector database snapshot, index file, or network query bus is exfiltrated, adversaries can execute <strong>Model Inversion Attacks (Feature Inversion)</strong> to reconstruct high-fidelity raw inputs.</p></div>
+
+<h5 class="mb-2">Adversarial Assumptions</h5>
+
+<ul class="note-list">
+<li><strong>Attacker's Access</strong>:
+<ul class="note-list">
+<li>The adversary gains unauthorized access to the vector database and obtains stored embedding vectors $\{v_i\}_{i=1}^m \subset \mathbb{R}^d$.</li>
+<li>The adversary has either <strong>white-box</strong> access to the encoder $f_\theta$ (model weights and architecture) or <strong>black-box</strong> query access to a surrogate encoder trained on a similar public domain.</li>
+</ul></li>
+<li><strong>Attacker's Objective</strong>:
+<ul class="note-list">
+<li>Invert the target embedding $v = f_\theta(x)$ to reconstruct the victim's raw input $x \in \mathcal{X}$ (e.g., facial portraits, biometric signatures, confidential medical notes, proprietary corporate documents).</li>
+</ul></li>
+</ul>
+
+<h4 id="5-model-inversion-attacks-on-embeddings" class="mb-2">5. Model Inversion Attacks on Embeddings</h4>
+
+<p class="mb-3">Model Inversion (MI) in the embedding regime formulates the problem of inverting the non-linear forward mapping $f_\theta: \mathcal{X} \to \mathbb{R}^d$:</p>
+
+<h5 class="mb-2">Paradigm A: Optimization-Based Inversion</h5>
+
+<p class="mb-3">Given a stolen embedding $v$, the adversary solves an optimization problem directly over the input domain $\mathcal{X}$ or over the latent space of a generative prior:</p>
+
+<p class="mb-3">$$\hat{x}^* = \arg\min_{\hat{x} \in \mathcal{X}} \left( \mathcal{L}_{\text{dist}}(f_\theta(\hat{x}), v) + \lambda \mathcal{R}(\hat{x}) \right)$$</p>
+
+<ul class="note-list">
+<li>$\mathcal{L}_{\text{dist}}(f_\theta(\hat{x}), v)$: Distance in representation space (e.g., $\|f_\theta(\hat{x}) - v\|_2^2$ or $1 - \cos(f_\theta(\hat{x}), v)$).</li>
+<li>$\mathcal{R}(\hat{x})$: Data prior regularizer (e.g., Total Variation, DeepDream priors, or GAN/Diffusion generative priors $z \mapsto G(z)$) that penalizes unnatural high-frequency artifacts and restricts $\hat{x}$ to the manifold of natural images or human text.</li>
+</ul>
+
+<h5 class="mb-2">Paradigm B: Learning-Based Inversion (Surrogate Inversion Decoders / Vec2X)</h5>
+
+<p class="mb-3">Instead of running iterative gradient descent for every target vector, the adversary trains a parametric decoder network $G_\phi: \mathbb{R}^d \to \mathcal{X}$ (e.g., Vec2Face, Vec2Text) on auxiliary public data $\mathcal{D}_{\text{aux}}$:</p>
+
+<p class="mb-3">$$\min_\phi \mathbb{E}_{x \sim \mathcal{D}_{\text{aux}}} \left[ \mathcal{L}_{\text{recon}}(G_\phi(f_\theta(x)), x) \right]$$</p>
+
+<p class="mb-3">Once trained, passing any leaked embedding vector $v$ into $G_\phi$ yields an immediate, high-fidelity reconstruction: $\hat{x} = G_\phi(v)$.</p>
+
+<h4 id="6-why-exact-match-is-not-required-the-epsilon-neighborhood-threat" class="mb-2">6. Why Exact Match Is Not Required: The $\epsilon$-Neighborhood Threat</h4>
+
+<p class="mb-3">A foundational insight in Trustworthy ML is that <strong>the reconstructed vector does NOT need to match the original embedding identically to breach privacy or impersonate an identity</strong>.</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">               Latent Metric Space (R^d)
+      ─────────────────────────────────────────
+             .-"'"-.          ε-Ball: B(v, τ)
+           .'       '.        All points inside this ball
+          /     v     \       are accepted as victim's identity
+         |   (Target)  |
+         |        \    |      Reconstructed Vector: v̂
+         |         v̂   |      ||v̂ - v|| ≤ τ
+          \           /
+           '.       .'
+             '-...-'</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>Biometric Verification Thresholds ($\tau$-Tolerance)</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Real-world biometric authentication systems (such as face unlock, automated border control, and biometric attendance) never demand exact vector identity ($v_1 = v_2$) because natural sensor noise, camera angles, and facial expressions cause continuous deviations.</li>
+<li>Authentication decisions rely on a metric tolerance threshold $\tau$:
+<p class="mb-2">$$\operatorname{Match}(x_1, x_2) = \mathbf{1}\left( d(f_\theta(x_1), f_\theta(x_2)) \le \tau \right)$$</p></li>
+<li>Consequently, any reconstructed candidate $\hat{x}$ whose representation falls within the metric ball $\mathcal{B}(v, \tau) = \{v' : \|v' - v\| \le \tau\}$ <strong>successfully impersonates the victim and bypasses biometric access controls</strong>.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Dense Semantic Equivalence in Latent Manifolds</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Because representation learning enforces smooth latent transitions, all points within an $\epsilon$-neighborhood $\mathcal{B}(v, \epsilon)$ correspond to semantically and perceptually equivalent real-world features (e.g., eye shape, nose geometry, jawline, skin tone, or semantic meaning of text).</li>
+<li>Generative decoders conditioned on any point $\hat{v} \in \mathcal{B}(v, \epsilon)$ synthesize photorealistic portraits that human evaluators and automated classifiers confidently recognize as the victim.</li>
+</ul>
+
+<ol class="mb-3">
+<li><strong>Quantization and Approximation Resilience</strong>:</li>
+</ol>
+
+<ul class="note-list">
+<li>Even if the vector database uses lossy vector quantization (e.g., Product Quantization / PQ) to reduce storage, the quantized vectors remain well within the $\epsilon$-neighborhood of the true representations, providing sufficient signal for attackers to execute inversion.</li>
+</ul>
+
+<h4 id="7-defenses-and-countermeasures-in-trustworthy-ml" class="mb-2">7. Defenses and Countermeasures in Trustworthy ML</h4>
+
+<p class="mb-3">Mitigating model inversion risks in vector databases requires defenses across algorithmic, cryptographic, and operational layers:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Defense Layer</th>
+<th>Mechanism &amp; Technique</th>
+<th>Privacy Principle</th>
+<th>Trade-offs &amp; Limitations</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Differential Privacy</strong></td>
+<td>DP-Noise Injection ($(\epsilon, \delta)$-DP)</td>
+<td>Inject calibrated Gaussian or Laplacian noise before indexing: $v_{\text{priv}} = v + \mathcal{N}(0, \sigma^2 I)$</td>
+<td>Provides provable privacy bounds against inversion; excessive noise degrades top-$k$ ANN retrieval recall</td>
+</tr>
+<tr>
+<td><strong>Non-Invertible Projections</strong></td>
+<td>Cancellable Biometrics / Random Projections</td>
+<td>Apply irreversible, key-dependent non-linear transformations (e.g., BioHashing) to embeddings</td>
+<td>If the database is compromised, the projection key can be revoked and re-issued without invalidating the physical biometric</td>
+</tr>
+<tr>
+<td><strong>Cryptographic Search</strong></td>
+<td>Homomorphic Encryption (FHE) &amp; SMPC</td>
+<td>Index vectors and compute similarity distances (inner products / $\ell_2$) directly over encrypted ciphertexts</td>
+<td>Eliminates plaintext vector leakage at rest and in transit; introduces significant computational and latency overhead</td>
+</tr>
+<tr>
+<td><strong>Operational Hardening</strong></td>
+<td>Honey-Vectors &amp; Query Auditing</td>
+<td>Embed canary vectors into the database and monitor access logs for systematic exploratory queries or mass exfiltration</td>
+<td>Detects reconnaissance and database dumping; requires real-time anomaly detection infrastructure</td>
+</tr>
+    </tbody>
+  </table>
+</div>
 
 <hr>
 
@@ -932,6 +1215,73 @@
 <p class="mb-3">Primary To-read Articles: https://arxiv.org/abs/2204.06974</p>
 
 <p class="mb-3">Primary To-read Articles: https://arxiv.org/pdf/2301.13188 https://arxiv.org/pdf/2311.17035 https://arxiv.org/pdf/1802.08232 https://messlab.moyix.net/papers/badnets_ieeeaccess19.pdf https://arxiv.org/pdf/2112.03570 https://arxiv.org/pdf/1610.05820 https://arxiv.org/pdf/2305.18462 https://www.statslab.cam.ac.uk/Dept/People/djsteaching/S1B-17-07-simple-hypotheses-4.pdf https://arxiv.org/pdf/2312.03262 https://arxiv.org/pdf/2402.07841 https://arxiv.org/pdf/2407.15100</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>Representations as Metric Spaces</strong>: ML models map inputs into high-dimensional latent vectors ($\mathbb{R}^d$); distance metrics ($\ell_2$, Cosine) capture semantic similarity, forming the operational foundation of Vector Databases and LLM RAG pipelines.
+<ul class="note-list">
+<li><strong>Unit Hypersphere Metric Equivalence</strong>: For normalized unit vectors ($\|u\|_2 = \|v\|_2 = 1$), Euclidean distance and cosine similarity are interchangeable monotonic measures governed purely by angle $\theta$: $\|u - v\|_2 = \sqrt{2(1 - \cos\theta)}$. Euclidean distance measures chord length while cosine similarity reflects angular orientation; sorting by ascending $\ell_2$ distance is strictly identical to sorting by descending cosine similarity.</li>
+<li><strong>The Embedding Leakage Threat</strong>: Vector embeddings are NOT one-way cryptographic hashes. When vector databases are compromised, adversaries can execute Model Inversion Attacks to reconstruct raw inputs (e.g., facial portraits, biometrics, sensitive text).</li>
+<li><strong>The $\epsilon$-Ball Principle</strong>: Model inversion does not require reconstructing the exact target vector. Because biometric verification and semantic classifiers operate on threshold balls $\mathcal{B}(v, \tau)$, any candidate vector within the neighborhood $\tau$ successfully impersonates the victim and exposes private identity.</li>
+<li><strong>Audit Hardness Reductions</strong>: CLWE digital signatures and PRG embeddings establish theoretical limits showing that under standard cryptographic hardness assumptions, perfect membership inference auditing is impossible in worst-case constructions.</li>
+<li><strong>Robust Estimation &amp; Poisoning Limits</strong>: When defending against gradient poisoning, the fundamental statistical noise of clean data (Bernoulli variance $\sigma$) imposes an unavoidable minimum bias lower bound $\Omega(\sigma)$ on any robust aggregator.</li>
+<li><strong>Defense-in-Depth for Latent Privacy</strong>: Safeguarding vector databases requires combining Differential Privacy (DP-embeddings), non-invertible/cancellable projections, cryptographic search (FHE/SMPC), and strict operational access controls.</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

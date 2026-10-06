@@ -1,6 +1,6 @@
 <meta>
 Title: NUS IS5126: Hands-on with Applied Analytics
-Summary: Structured notes for NUS IS5126 Hands-on with Applied Analytics, covering batch normalization dynamics, GAN training stability, skip connections, bottlenecks, and production API workflows.
+Summary: Comprehensive structured notes for NUS IS5126 Hands-on with Applied Analytics, covering analytics roles, foundation models, supervised and unsupervised learning, ensemble methods, deep learning architectures across modalities, and production deployment workflows.
 Slug: nus-is5126-hands-on-with-applied-analytics
 Output: notes/NUS IS5126 Hands-on with Applied Analytics/NUS IS5126 Hands-on with Applied Analytics.html
 CanonicalId: nus-is5126-hands-on-with-applied-analytics
@@ -10,11 +10,69 @@ Lang: en
 Tags: Machine Learning, Deep Learning, Applied Analytics
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-09-12
+LastModified: 2026-10-06
 </meta>
 
 NUS IS5126 Hands-on with Applied Analytics
-Structured Notes on BatchNorm, GAN Training, Skip Connections, Bottlenecks, and FastAPI in Data Science Workflows
+Structured Notes on Analytics Roles, Machine Learning, Ensembles, Deep Learning Architectures, and Production Workflows
+
+## Knowledge Architecture
+
+這份筆記涵蓋 NUS IS5126 Applied Analytics 的端到端架構：從資料角色與分析管線、傳統機器學習、特徵降維與集成方法，延伸至深度學習架構與生產級微服務部署：
+
+```text
+應用分析與 AI 知識地圖
+  → roles & paradigms: Data Scientist, ML vs DL practitioners, Foundation Models (FMs)
+  → data pipeline & EDA: collection, cleaning, transformation, leakage prevention
+  → classical machine learning: linear/logistic regression, assumptions, decision trees, ROC-AUC
+  → unsupervised learning: k-means, Davies-Bouldin index, hierarchical clustering & dendrograms
+  → dimensionality reduction: curse of dimensionality, PCA eigen-decomposition, t-SNE
+  → ensemble learning: bias-variance trade-off, bagging, boosting (AdaBoost/XGBoost), stacking
+  → deep learning foundations: ANN neurons, backpropagation, optimizers, regularization, depth
+  → deep learning architectures & modalities: CNNs, RNNs, LSTMs, Transformers, Autoencoders, GANs
+  → production deployment & APIs: FastAPI, PyTorch lifecycle, Streamlit dashboards
+```
+
+| 層次 | 核心問題 | 學習要點與技術落點 |
+|---|---|---|
+| **Roles & Paradigms** | Data Scientist、ML 工程師、DL 工程師與 Foundation Models 的分工界限為何？ | 統計詮釋 vs 手工特徵工程 vs 神經網絡架構探索 vs 多任務基礎模型 |
+| **Pipeline & EDA** | 資料如何從 Raw Data 流入商業決策？ | 資料漏斗、清洗標準化、Crawl4AI、Vanna 與向量資料庫整合 |
+| **Supervised Learning** | 線性模型何時可信？分類決策邊界如何評估？ | 線性迴歸 6 大統計假設、殘差變異、混淆矩陣、Precision/Recall/F1 與 ROC-AUC |
+| **Unsupervised Learning** | 無標籤資料如何分群？如何客觀決定最佳分群數 $k$？ | k-means、Elbow Method、Silhouette Score、Davies-Bouldin 緊湊度與分離度公式 |
+| **Dimensionality Reduction** | 為何需要降維？線性 PCA 與非線性 t-SNE 的差異何在？PCA 如何協助非線性模型 (MLP)？ | 維度詛咒、共變異數矩陣特徵分解、線性降維去相關性、解開線性混淆、KL 散度局部結構保持、Perplexity 調校 |
+| **Ensemble Methods** | 弱學習器如何組合成強學習器？Bagging 與 Boosting 如何切分 Bias 與 Variance？ | 硬/軟投票、Bootstrap 取樣、隨機森林 OOB、AdaBoost 樣本重權、XGBoost 正則、Stacking 元學習 |
+| **Deep Learning** | 為何深層網絡能免除特徵工程？梯度消失如何克服？ | 階層式語意抽象、感受野、He 初始化、ReLU/GELU、BatchNorm/LayerNorm、AdamW |
+| **Modalities & Sequential** | 視覺、序列語音與結構化資料如何選型？為何從 LSTM 演進到 Transformer？ | CNN 卷積權重共享、RNN 時間反向傳播 (BPTT)、LSTM 三門控機制、自注意力機制 |
+| **Production & MLOps** | 訓練完成的模型如何落地為微服務與互動儀表板？ | PyTorch `train()`/`eval()` 切換、`torch.no_grad()`、FastAPI OpenAPI 契約、Streamlit 應用 |
+
+---
+
+## Analytics Roles and AI Paradigms
+
+### 1. The Evolving Spectrum of Analytics Roles
+
+In data-driven organizations, analytical roles differ fundamentally in where they allocate engineering effort, their reliance on statistical theory, and how they interact with models:
+
+- **Data Scientist Role**:
+    - **Focus**: Applying in-depth knowledge of statistics, probability, and exploratory analytics to interpret complex business data.
+    - **Deliverables**: Formulating hypotheses, extracting empirical insights, designing A/B tests, and translating quantitative patterns into strategic decision-making.
+- **Machine Learning (ML) Practitioners**:
+    - **Focus**: Feature engineering, data curation, model selection, and tabular optimization.
+    - **Workflow**: ML practitioners spend a significant portion of their time optimizing traditional learning algorithms (e.g., Ridge, XGBoost, LightGBM), engineering informative domain features, testing interaction terms, and tuning hyperparameters.
+    - **Inductive Bias**: Heavy reliance on domain-specific feature engineering; algorithms rely on explicit tabular representations.
+- **Deep Learning (DL) Practitioners**:
+    - **Focus**: Architectural modeling, representation learning, and computational scaling.
+    - **Workflow**: In contrast to classical ML engineers, deep learning practitioners spend almost no time manually engineering features. Instead, they allocate their time designing and experimenting with diverse Artificial Neural Network (ANN) architectures (CNNs, LSTMs, Transformers, Autoencoders), activation functions, normalization schemes, and optimization schedules.
+    - **Inductive Bias**: The network automatically extracts hierarchical feature representations directly from raw, unstructured inputs (pixels, audio waveforms, raw text tokens).
+- **Generative AI & Foundation Models (FMs)**:
+    - **Core Paradigm**: Generative AI is powered by very large machine learning models—commonly known as **Foundation Models (FMs)**—that are pre-trained on vast, internet-scale datasets using self-supervised learning.
+    - **Single-Task vs. Multi-Task Capabilities**:
+        - *Traditional ML/DL Models*: Strictly single-task oriented. A sentiment analysis model requires task-specific training and cannot perform translation or summarization.
+        - *Foundation Models*: A single pre-trained FM acts as a generalized zero-shot / few-shot engine capable of executing diverse downstream tasks (e.g., code generation, document summarization, reasoning, and entity extraction) without task-specific retraining.
+
+---
+
+## Core Exam Quick Reference: BatchNorm, GANs, ResNet & API Workflows
 
 Batch Normalization (BatchNorm)
 - Applied during both training and inference.
@@ -395,333 +453,362 @@ Model Validation or Evaluation
 - Train-Validation-Test Split: Training, validation, and test sets (e.g., 70-15-15); validation tunes hyperparameters
 - K-Fold Cross-Validation: Divide dataset into K folds; train K times using K-1 folds for training, 1 for validation
 
-Confusion Matrix
-- Actual vs Predicted
-  - True Positive (TP): Correctly predicts positive
-  - True Negative (TN): Correctly predicts negative
-  - False Positive (FP, Type I Error): Incorrectly predicts positive
-  - False Negative (FN, Type II Error): Incorrectly predicts negative
+Confusion Matrix and Evaluation Metrics
+- **The Confusion Matrix Structure**:
+    - Each row represents the actual ground-truth class, while each column represents the predicted class.
+    - **True Positive (TP)**: Correctly predicted positive instance.
+    - **True Negative (TN)**: Correctly predicted negative instance.
+    - **False Positive (FP / Type I Error)**: Negative instance incorrectly predicted as positive (false alarm).
+    - **False Negative (FN / Type II Error)**: Positive instance incorrectly predicted as negative (missed detection).
 
-Metrics for Classification
-- Accuracy: (TP + TN) / Total; good for balanced datasets
-- Precision: TP / (TP + FP); fewer false positives
-- Recall / Sensitivity: TP / (TP + FN); fewer false negatives
-- F1 Score: 2 * (Precision * Recall) / (Precision + Recall); useful for imbalanced datasets
+| Actual \ Predicted | Predicted Positive | Predicted Negative |
+|---|---|---|
+| **Actual Positive** | **TP** (True Positive) | **FN** (False Negative, Type II) |
+| **Actual Negative** | **FP** (False Positive, Type I) | **TN** (True Negative) |
 
-Metrics for Regression
-- Mean Squared Error (MSE)
-- Root Mean Squared Error (RMSE)
-- Mean Absolute Error (MAE)
-- R-squared
+- **Metrics for Classification**:
+    - **Accuracy**: $\frac{TP + TN}{TP + TN + FP + FN}$ (Percentage of correctly classified samples; reliable only when classes are balanced).
+    - **Precision**: $\frac{TP}{TP + FP}$ (Fraction of predicted positives that are truly positive. High precision is critical when false positives carry severe costs, such as email spam filtering or capital-intensive investments).
+    - **Recall (Sensitivity)**: $\frac{TP}{TP + FN}$ (Fraction of actual positives successfully identified. High recall is paramount when false negatives are unacceptable, such as disease screening, cancer diagnosis, or fraud detection).
+    - **F1 Score**: $2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$ (Harmonic mean of precision and recall. Penalizes extreme trade-offs between precision and recall; indispensable on imbalanced datasets).
 
-Supervised vs Unsupervised Learning
-- Supervised: Labeled data, predicts outcomes, guided by examples
-- Unsupervised: No labels, discovers patterns, exploratory analysis
+- **Receiver Operating Characteristic (ROC) Curve and ROC-AUC**:
+    - **ROC Curve**: A graphical plot illustrating classifier diagnostic ability by plotting **True Positive Rate (TPR / Sensitivity / Recall)** against **False Positive Rate (FPR / $1 - \text{Specificity}$)** across all possible decision thresholds:
+        - $\text{TPR} = \frac{TP}{TP + FN}$
+        - $\text{FPR} = \frac{FP}{FP + TN}$
+    - **Threshold Dynamics & Trade-offs**:
+        - *Lowering the classification threshold*: The model classifies more samples as positive $\to$ TPR increases (fewer false negatives), but FPR also increases (more false alarms).
+        - *Raising the classification threshold*: The model becomes more conservative $\to$ FPR decreases (fewer false alarms), but TPR also decreases (more false negatives).
+    - **ROC Area Under the Curve (ROC-AUC)**:
+        - A single scalar metric summarizing performance across all classification thresholds, measuring the probability that the model ranks a randomly chosen positive sample higher than a randomly chosen negative sample.
+        - $\text{AUC} = 0.5$: Model has no discrimination capacity (equivalent to random coin tossing).
+        - $0.7 \le \text{AUC} < 0.8$: Acceptable discrimination.
+        - $0.8 \le \text{AUC} < 0.9$: Excellent discrimination.
+        - $\text{AUC} = 1.0$: Perfect classification separation.
 
-Common Issues in Machine Learning
-- Imbalanced Datasets: Unequal class distribution can bias model
-- Dirty Data: Missing, duplicated, irrelevant, or misformatted
-- Feature Irrelevance: Features may not support problem statement
-- Data preprocessing is critical for accuracy
+- **Supervised Learning – Classification Algorithms & Model Capabilities**:
+    - **Linear & Logistic Regression**:
+        - Formulates a single separating linear hyperplane: $z = w^T x + b$, mapped to class probability via $\sigma(z) = \frac{1}{1 + e^{-z}}$.
+        - **Linear Separability Constraint**: Fundamentally restricted to linearly separable distributions. If data boundaries are non-linear, linear models completely fail unless explicit polynomial terms or interaction features are manually engineered.
+    - **Decision Trees (Recursive Partitioning)**:
+        - Greedy recursive partitioning algorithm that splits the feature space into axis-aligned hyper-rectangles using single-feature orthogonal thresholds ($X_j \le \theta$).
+        - Node splitting minimizes impurity, commonly evaluated via **Gini Impurity**:
+            $$G = 1 - \sum_{i=1}^C p_i^2 \in [0, 1]$$
+            where $G = 0$ represents complete node purity and $G = 1 - 1/C$ denotes maximum disorder.
+        - **Key Limitations & Fragility under Strong Feature Interactions**:
+            - *High Variance*: Hard binary thresholding makes trees highly sensitive to local noise and slight perturbations in training data.
+            - *Struggle with Correlated Features & Diagonal Boundaries*: Because splits are strictly single-feature orthogonal cuts, diagonal relationships ($X_1 + X_2 > c$) or complex non-linear feature interactions force the tree to construct fragmented, jagged "staircase" approximations. This causes tree depth to explode into overly verbose, convoluted rules that overfit training noise and generalize poorly to unseen data.
+    - **Multi-Layer Perceptron (MLP / Deep Baseline)**:
+        - Serves as the naive, flexible baseline for deep learning, leveraging stacked dense layers with non-linear activations (ReLU, GELU) to approximate arbitrary non-linear decision boundaries.
+        - *Trade-offs*: Highly parameter-intensive, lower computational and sample efficiency, and struggles when input features are entangled and collinear (the network must expend early hidden capacity learning to decorrelate features).
+    - **Random Forests**:
+        - Ensemble learning method that trains an ensemble of decorrelated decision trees independently using bootstrap aggregation (bagging) and random feature subspacing at each candidate split.
+        - Predictions are aggregated via majority voting (classification) or mean averaging (regression), substantially suppressing the high variance of individual decision trees.
 
-Supervised Learning – Regression
-- Ordinary Least Squares Linear Regression
-- Lasso: Linear model with L1 regularization
-- Ridge: Linear least squares with L2 regularization
-- ElasticNet: Linear regression with combined L1 & L2 regularization
-- Decision Tree Regressor
-- Random Forest Regressor
-- Linear Support Vector Regression (SVR)
+- **Supervised Learning – Regression Algorithms and Metrics**:
+    - **Linear Regression**:
+        - Models the continuous dependent target variable $y$ as a linear combination of independent predictor variables $X$:
+            $$y = \beta_0 + \sum_{j=1}^p \beta_j X_j + \varepsilon$$
+        - Solved analytically via Ordinary Least Squares (OLS) or iteratively via **Gradient Descent** minimizing the Mean Squared Error (MSE) loss function.
+    - **Common Regression Metrics**:
+        - **Mean Squared Error (MSE)**: $\frac{1}{n} \sum (y_i - \hat{y}_i)^2$ (heavily penalizes large outlier errors).
+        - **Root Mean Squared Error (RMSE)**: $\sqrt{\text{MSE}}$ (interpretable in the identical physical units as target $y$).
+        - **Mean Absolute Error (MAE)**: $\frac{1}{n} \sum |y_i - \hat{y}_i|$ (linear penalty, robust to outliers).
+        - **R-squared ($R^2$)**: $1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$ (proportion of total target variance explained by predictors; artificially inflates as non-informative features are added).
+        - **Adjusted R-squared**: Penalizes model complexity:
+            $$R^2_{\text{adj}} = 1 - \left[ \frac{(1 - R^2)(n - 1)}{n - p - 1} \right]$$
+            Increases only if newly added predictors improve predictive capability beyond random chance.
+    - **Regularized Regression Variants**:
+        - **Lasso Regression (L1)**: Adds penalty $\lambda \sum |\beta_j|$; drives uninformative coefficients to exact zero, performing automatic feature selection.
+        - **Ridge Regression (L2)**: Adds penalty $\lambda \sum \beta_j^2$; shrinks coefficients towards zero, mitigating multicollinearity and high variance.
+        - **ElasticNet**: Combines L1 and L2 penalties via hyperparameter $\alpha$ (total regularization) and $\rho$ (L1 ratio).
 
-Week 4: Introduction to Machine Learning: Unsupervised Learning, Clustering, Dimensionality Reduction & Ensemble Methods
+Week 4: Unsupervised Learning, Dimensionality Reduction & Ensemble Methods
 
-📘 Unsupervised Learning & Clustering
+### 1. Unsupervised Learning and Clustering
 
-1. Unsupervised Learning
-- Learns patterns from unlabeled data.
-- No target labels to predict.
-- Useful for large datasets or where labeling is costly.
-- Goals: Discover hidden patterns, group similar points, reduce dimensionality.
+Unsupervised learning discovers hidden patterns, groupings, and intrinsic distributions in unlabeled datasets without human supervision:
 
-2. Applications
-- Clustering: Group similar data points (customer segmentation, document clustering, image segmentation).
-- Dimensionality Reduction: Reduce features while preserving information (PCA, t-SNE).
-
-3. k-Means Clustering
-- Partitions data into k clusters based on similarity.
-- Minimizes distance to cluster centroid.
-- Steps:
-  1. Choose k.
-  2. Initialize centroids.
-  3. Assign points to nearest centroid.
-  4. Update centroids.
-  5. Repeat until convergence.
-
-4. Choosing k
-- Elbow Method: Plot SSE vs k; choose elbow point.
-- Silhouette Score: -1 to 1; higher = better clustering.
-- Davies-Bouldin Index: Lower = better (compact, well-separated clusters).
-
-5. Hierarchical Clustering
-- Builds hierarchy instead of predefined k.
-- Agglomerative: Bottom-up → merge closest clusters.
-- Divisive: Top-down → split clusters.
-- Dendrogram: Tree diagram showing cluster hierarchy.
-- Cut dendrogram at threshold to get cluster count.
-
-6. Python Libraries
-- NumPy, Pandas: Data handling
-- Matplotlib: Visualization
-- scikit-learn: KMeans, StandardScaler, Silhouette/Davies-Bouldin
-- scipy.cluster.hierarchy: dendrogram, linkage, fcluster
-
-✅ Recap
-- Unsupervised learning = no labels, discover patterns.
-- Clustering = group based on similarity.
-- k-Means = centroid-based, requires k.
-- Hierarchical = tree-based; visualized via dendrogram.
-
----
-
-📘 Dimensionality Reduction
-
-1. Dimensionality
-- Number of independent features.
-- High dimensions → sparse data, harder pattern detection.
-
-2. Curse of Dimensionality
-- Distances lose meaning; requires exponentially more data.
-- Risk of overfitting.
-
-3. Why Reduce Dimensions?
-- Efficiency, noise reduction, visualization, storage.
-
-4. Feature Selection vs Feature Extraction
-- Selection: Keep important original features (correlation, mutual info, chi-square).
-- Extraction: Create new features (e.g., PCA components).
-
-5. Techniques Overview
-
-| Technique | Type | Use Case | Strengths |
-|-----------|------|----------|-----------|
-| PCA | Linear | Preprocessing | Fast, interpretable |
-| t-SNE | Non-linear | Visualization | Preserves local structure |
-| Autoencoders | Non-linear | Complex datasets | Deep learning compatible |
-
-6. PCA (Principal Component Analysis)
-- Simplifies high-dimensional data, preserves variance.
-- Steps:
-  1. Represent data as matrix.
-  2. Compute covariance matrix.
-  3. Eigen decomposition → eigenvalues/variance, eigenvectors/directions.
-  4. Select top k eigenvectors → project data.
-- Applications: Image compression, gene expression.
-
-7. t-SNE
-- Non-linear visualization technique.
-- Preserves local relationships.
-- Converts high-dimensional distances → probabilities, maps to 2D/3D.
-- Computationally expensive; mainly for visualization.
-- Applications: MNIST digit visualization, customer segmentation.
-
-✅ Key Takeaways
-- Dimensionality reduction improves computation, noise reduction, visualization.
-- PCA: linear, fast, for preprocessing.
-- t-SNE: non-linear, for visualization.
+- **k-Means Clustering**:
+    - Centroid-based partitioning that divides $n$ observations into $k$ non-overlapping clusters by minimizing the within-cluster sum of squared errors (SSE / inertia):
+        $$\arg\min_{\mathcal{C}} \sum_{i=1}^k \sum_{x \in \mathcal{C}_i} \|x - \mu_i\|^2$$
+    - Iterative process: (1) Initialize $k$ centroids; (2) Assign each observation to its nearest centroid; (3) Recompute centroid coordinates as cluster means; (4) Repeat until convergence.
+    - Features must be standardized prior to clustering to prevent variables with larger numerical scales from dominating distance computations.
+- **Objective Evaluation of Cluster Number ($k$)**:
+    - **Elbow Method**: Plots SSE against candidate values of $k$; the "elbow" point marks where diminishing returns occur (subjective and sensitive to noise).
+    - **Silhouette Score**: Evaluates cluster cohesion against separation for each sample:
+        $$s = \frac{b - a}{\max(a, b)} \in [-1, 1]$$
+        where $a$ is mean intra-cluster distance and $b$ is mean nearest-cluster distance. Higher values indicate well-separated, compact clusters.
+    - **Davies-Bouldin Index (Formal Step-by-Step Calculation)**:
+        - Evaluates average similarity between each cluster and its most similar cluster. Lower values denote superior clustering (compact and isolated); ideal score is $0$.
+        - **Step 1: Compute intra-cluster compactness and inter-cluster separation**:
+            - $s_i$: Average distance between all points in cluster $i$ and their centroid $\mu_i$ (compactness).
+            - $d_{ij} = \|\mu_i - \mu_j\|$: Euclidean distance between centroids of clusters $i$ and $j$ (separation).
+        - **Step 2: Calculate maximum similarity ratio for each cluster**:
+            $$R_i = \max_{j \ne i} \left( \frac{s_i + s_j}{d_{ij}} \right)$$
+        - **Step 3: Average across the dataset**:
+            $$DB = \frac{1}{k} \sum_{i=1}^k R_i$$
+        - Select the parameter $k$ that minimizes $DB$.
+- **Hierarchical Clustering**:
+    - Constructs a multi-level nested tree of clusters without requiring a pre-specified $k$:
+        - *Agglomerative (Bottom-Up)*: Starts with $n$ individual clusters; iteratively merges the two most similar clusters based on linkage criteria (Ward's, complete, average, single).
+        - *Divisive (Top-Down)*: Starts with one unified cluster containing all data points; recursively splits clusters.
+    - **Dendrogram Interpretation**:
+        - Vertical branch height quantifies distance/dissimilarity at which clusters merge.
+        - Merge order indicates relative cluster proximity: clusters merging lower down are substantially more similar than those merging near the top.
+        - Cutting the dendrogram horizontally at a chosen height threshold extracts the final discrete clusters.
 
 ---
 
-📘 Ensemble Methods
+### 2. Dimensionality Reduction
 
-1. Ensemble Learning
-- Combines multiple models to improve performance.
-- Categories: Bagging, Boosting, Stacking.
+- **The Curse of Dimensionality**:
+    - As the number of features $d$ increases, the volume of feature space grows exponentially, causing available data points to become extremely sparse.
+    - In high dimensions, Euclidean distances concentrate (all pairwise distances become nearly equal), degrading distance-based algorithms (k-NN, k-means).
+    - Overfitting risk spikes because models memorize spurious high-dimensional noise rather than true data-generating patterns.
+- **Feature Selection vs. Feature Extraction**:
+    - *Feature Selection*: Retains a subset of original features, discarding redundant or noisy predictors (e.g., Pearson correlation, mutual information, Chi-square tests).
+    - *Feature Extraction*: Projects high-dimensional data onto a lower-dimensional subspace, synthesizing new composite features (e.g., PCA, t-SNE, Autoencoders).
+- **Principal Component Analysis (PCA)**:
+    - **Core Purpose & Covariance Decoupling**:
+        - A deterministic dimensionality reduction technique that transforms original features into a new coordinate system of mutually **uncorrelated** variables called **Principal Components (PCs)**.
+        - Deconstructs the empirical **Covariance Matrix** $\Sigma \in \mathbb{R}^{d \times d}$ (where diagonal elements represent variance and off-diagonal elements represent pairwise covariance), extracting and ranking the orthogonal axes that account for the maximum variance.
+    - **Mathematical Formulation (Eigen Decomposition)**:
+        $$\Sigma v_i = \lambda_i v_i$$
+        - *Eigenvectors* ($v_i$): Orthogonal principal directions ($\|v_i\| = 1$, $v_i^T v_j = 0$ for $i \ne j$) along which the data exhibits maximum variance.
+        - *Eigenvalues* ($\lambda_i$): Scalars quantifying the absolute variance captured along eigenvector $v_i$.
+        - *Projection Matrix*: Sorting eigenvectors by descending $\lambda_i$ yields the projection matrix $W_k = [v_1, v_2, \dots, v_k] \in \mathbb{R}^{d \times k}$, mapping original centered data $X$ to decorrelated low-dimensional coordinates:
+            $$Z = X W_k$$
+    - **Decorrelation Advantage (去相關性)**:
+        - In the transformed space, the covariance between any two distinct principal components is strictly zero:
+            $$\operatorname{Cov}(Z_i, Z_j) = 0 \quad (\forall i \ne j)$$
+        - Eliminating multicollinearity provides immense value to downstream algorithms, particularly flexible neural models like Multi-Layer Perceptrons (MLPs), which can learn complex interactions across uncorrelated axes far more efficiently.
+    - **The Non-Linearity Reality Check (PCA Limitations)**:
+        - **PCA is strictly a linear transformation**: It computes linear combinations of original features ($z = \sum w_i x_i$).
+        - **Does NOT create non-linear features**: PCA cannot synthesize polynomial, exponential, or curved interaction terms.
+        - **Does NOT directly capture non-linear relationships**: If data lies on a non-linear manifold (e.g., Swiss roll, concentric rings), PCA simply flattens or projects the geometry linearly, often conflating distinct non-linear clusters.
+    - **Why and How PCA Indirectly Empowers Non-Linear Models (MLPs)**:
+        - While PCA cannot extract non-linear patterns on its own, its linear orthogonalization dramatically enhances an MLP's capacity to learn underlying non-linear manifolds:
+            1. **Eliminating Linear Collinearity & Relieving Hidden Layer Burden**: When raw features are strongly correlated, early hidden layers in an MLP are forced to expend model capacity and gradient updates learning how to disentangle redundant linear dependencies. Post-PCA, features are already decorrelated; the MLP can immediately dedicate its expressive capacity and non-linear activations (ReLU, GELU) to modeling genuine non-linear relationships.
+            2. **Cleanly Exposing Confounded Non-linear Interactions**: In raw feature space, complex non-linear relationships are frequently obscured or confounded by dominant linear correlations. Projecting onto orthogonal principal components decouples the linear dependencies, presenting non-linear interactions in a clean coordinate system where decision boundaries are easier to partition.
+            3. **Suppressing Overfitting via Variance Truncation**: Truncating low-eigenvalue components filters out high-frequency noise and redundant channels. Constrained to salient variance directions, MLPs (which are prone to memorizing noise in unregularized high dimensions) generalize substantially better on test sets.
+    - **Architectural Synthesis: PCA as the "Linear Noise Cleaner"**:
+        - PCA's true role in modern pipelines is **linear dimensionality reduction + orthogonal decorrelation**.
+        - Think of PCA as **"cleaning linear noise and collinearity"**: it standardizes and decouples the input geometry, liberating deep non-linear architectures (MLPs) to fully focus on discovering complex non-linear structures.
+- **t-Distributed Stochastic Neighbor Embedding (t-SNE)**:
+    - Non-linear technique designed specifically for 2D/3D visual exploratory analysis.
+    - Converts pairwise Euclidean distances into conditional probabilities in high-dimensional space and student-t probabilities in low-dimensional space.
+    - Optimizes embedding coordinates by minimizing the **Kullback-Leibler (KL) Divergence** between high- and low-dimensional probability distributions via gradient descent.
+    - **Perplexity Parameter (5 to 50)**: Balances attention between preserving local neighborhood clusters (low perplexity) vs. maintaining global layout (high perplexity).
+    - **Crucial Diagnostic Nature**: t-SNE does not preserve global distances or densities and is non-deterministic. It is strictly a visual clustering diagnostic, NOT a valid preprocessing feature extractor for downstream predictive models.
 
-2. Why Use Ensembles?
-- Reduce bias/variance, improve generalization, more robust.
+---
 
-3. Bias-Variance Trade-off
-- Bias = underfitting; Variance = overfitting
-- Ensemble aims to balance bias & variance.
+### 3. Ensemble Methods for Data Analysis
 
-4. Voting Ensembles
-- Hard Voting: majority class wins.
-- Soft Voting: average probabilities; higher confidence dominates.
+- **Core Principles of Ensemble Learning**:
+    - Combines multiple machine learning models (base learners) to produce a combined predictor with superior accuracy and stability.
+    - Base learners make distinct, uncorrelated errors; ensembling averages out individual mistakes to bolster generalization.
+- **The Bias-Variance Trade-off in Ensembles**:
+    - High-bias models oversimplify data relationships (underfitting).
+    - High-variance models capture noise and fluctuate with training perturbations (overfitting).
+    - Ensembles balance this trade-off: **Bagging** primarily reduces variance, while **Boosting** systematically reduces both bias and variance.
+- **Voting Ensembles**:
+    - **Hard Voting**: Final prediction is the majority class vote among base classifiers.
+    - **Soft Voting**: Predictions are weighted by class probabilities; the class with the highest average probability wins. Requires well-calibrated base models and allows confident models to exert greater influence.
+- **Bagging (Bootstrap Aggregating)**:
+    - Generates $B$ distinct training sets by sampling $N$ instances with replacement (bootstrapping).
+    - Trains independent base models in parallel across each subset.
+    - Aggregation: Averages predictions for regression; applies majority voting for classification.
+    - Primarily suppresses variance without increasing model bias; particularly effective for high-variance learners like unpruned decision trees.
+- **Random Forests**:
+    - An ensemble of decision trees integrating bagging with **random feature subspacing**: at each split node, only a random subset of features (typically $\sqrt{p}$ for classification, $p/3$ for regression) is considered.
+    - De-correlates individual trees, preventing dominant features from dictating every tree's root structure.
+    - **Out-of-Bag (OOB) Error Estimation**:
+        - Each bootstrap sample omits approximately $(1 - 1/n)^n \approx 36.8\%$ of training instances.
+        - These unused out-of-bag samples serve as an intrinsic validation set to estimate generalization error without a separate validation split.
+    - Generates intrinsic feature importance rankings by tracking reduction in Gini impurity or OOB accuracy degradation upon permuting feature values.
+- **Boosting**:
+    - Sequential ensemble technique where each subsequent model focuses on instances misclassified by earlier models.
+    - Converts weak learners (e.g., decision stumps with performance slightly better than random guessing) into strong, highly accurate learners.
+    - **Adaptive Reweighting**:
+        - Initially, all training points carry equal weight $w_i = 1/N$.
+        - After each round, weights of misclassified instances increase, while weights of correctly classified instances decrease.
+        - Subsequent models prioritize harder, previously missed data points.
+- **Bagging vs. Boosting Comparison**:
 
-5. Bagging (Bootstrap Aggregating)
-- Create multiple datasets via bootstrap sampling.
-- Train independent models → reduce variance.
-- Final prediction: regression → average; classification → majority vote.
+| Dimension | Bagging (e.g., Random Forest) | Boosting (e.g., AdaBoost, XGBoost) |
+|---|---|---|
+| **Model Building** | Parallel & Independent | Sequential & Iterative |
+| **Sample Weighting** | Equal probability (bootstrap with replacement) | Dynamic reweighting based on prior errors |
+| **Error Reduction** | Primarily reduces **variance** | Reduces both **bias and variance** |
+| **Base Learner Type** | Complex, high-variance learners (deep trees) | Simple, high-bias weak learners (shallow stumps) |
+| **Overfitting Risk** | Low (adding trees does not overfit) | Higher (sensitive to noisy labels and outliers) |
 
-6. Random Forest
-- Bagging + decision trees; random subset of features at each split.
-- Reduces overfitting, assesses feature importance.
-- Prediction: classification → majority vote; regression → average.
+- **AdaBoost (Adaptive Boosting)**:
+    - Adjusts sample weights exponentially based on misclassification rates.
+    - Sensitive to noisy labels and extreme outliers because it forces later models to aggressively fit anomalies.
+- **XGBoost (eXtreme Gradient Boosting)**:
+    - Highly scalable, parallelized gradient boosting framework.
+    - Formulates objective using a second-order Taylor expansion (gradients and Hessians).
+    - Incorporates explicit L1 ($\alpha$) and L2 ($\lambda$) leaf weight regularization into the objective to prevent overfitting.
+    - Employs shrinkage learning rate ($\eta$) and feature/row subsampling to control variance.
+- **Stacking (Stacked Generalization)**:
+    - Trains multiple heterogeneous base learners (e.g., Random Forest, SVM, k-NN) on the same dataset.
+    - Uses out-of-fold cross-validated predictions of base models as input features to train a higher-level **meta-learner** (commonly Logistic Regression).
+    - The meta-learner learns optimal linear or non-linear weightings across distinct algorithm families.
 
-7. Out-of-Bag (OOB) Error
-- ~1/3 of data unused in each bootstrap → used to estimate error.
+---
 
-8. Boosting
-- Sequential ensemble; each model focuses on previous errors.
-- Reduces both bias & variance.
+Week 5: Deep Learning Foundations, Architectural Scaling, and Modalities
 
-9. Boosting vs Bagging
+### 1. Introduction to Deep Learning
 
-| Aspect | Boosting | Bagging |
-|--------|---------|--------|
-| Model Building | Sequential | Independent |
-| Error Focus | Misclassified points | All points equally |
-| Purpose | Reduce bias & variance | Reduce variance |
-| Training | Weighted points | Bootstrap subsets |
-| Overfitting Risk | Higher | Lower |
-| Common Algorithms | AdaBoost, Gradient Boosting, XGBoost | Random Forest |
+#### 1.1 What Is Deep Learning
+- Deep learning scales artificial neural networks by significantly increasing network depth (the number of successive hidden processing layers).
+- Rather than manually designing handcrafted features, each layer transforms representations from the previous layer, establishing an automated **hierarchy of features**:
+    - **Early layers**: Extract simple, localized patterns (e.g., edges, pixel gradients, phonemes, characters).
+    - **Middle layers**: Compose parts and structural motifs (e.g., corners, textures, syllable patterns, phrases).
+    - **Late layers**: Synthesize high-level abstract semantics (e.g., entire object categories, speaker identities, document intent).
+- **Core Paradigm Shift**: Deep learning automatically discovers optimal data representations end-to-end directly from raw data, eliminating manual feature engineering.
 
-10. AdaBoost
-- Sequentially corrects errors of weak learners.
-- Sensitive to noise.
+#### 1.2 Fundamental Layer Types
+- **Dense Layer (Fully Connected / Multi-Layer Perceptron / MLP)**:
+    $$\text{output} = f(W x + b)$$
+    Every input unit connects to every output neuron; parameterized by weight matrix $W \in \mathbb{R}^{m \times d}$ and bias vector $b \in \mathbb{R}^m$, followed by non-linear activation $f$.
+    - *The Canonical Deep Learning Baseline*: MLPs serve as the naive universal approximator for non-linear modeling, capable of learning complex decision boundaries across arbitrary tabular and vector inputs.
+    - *Practical Drawbacks*:
+        - High parameter footprint ($\mathcal{O}(d \cdot m)$ weights per layer) and memory overhead.
+        - Lower parameter and sample efficiency compared to architectures with spatial or temporal inductive biases (CNNs, Transformers).
+        - Learning efficiency suffers when raw input features are collinear and entangled, as early hidden layers must spend capacity untangling redundant linear correlations rather than discovering pure non-linear patterns.
+- **Convolutional Layer**:
+    Slides a compact learnable parameter kernel over the input tensor to detect local spatial/temporal motifs with weight sharing and stride/padding controls.
 
-11. XGBoost
-- Efficient gradient boosting.
-- Regularization (L1/L2), parallel computing.
-- Iteratively fits residuals to trees.
+#### 1.3 Depth and Hierarchical Representation Power
+- Depth expands the effective receptive field and enables exponential expressive efficiency compared to shallow networks of identical parameter count.
+- Paired with parameter-sharing inductive biases (convolutions in vision, recurrence or self-attention in language).
 
-12. Stacking
-- Combines base models using meta-learner.
-- Steps:
-  1. Train base models.
-  2. Base predictions → features for meta-learner.
-  3. Meta-learner combines predictions for final output.
-- Meta-learner often logistic regression.
+---
 
-✅ Key Python Libraries
-- scikit-learn: Bagging, Boosting, Stacking implementations.
-- XGBoost: Efficient gradient boosting.
+### 2. Optimization and Regularization in Deep Networks
 
-Week 4: Introduction to Machine Learning
+#### 2.1 Gradient Flow Challenges
+- **Vanishing Gradients**: Across many stacked layers, continuous multiplication of small derivatives ($< 1$) causes gradients to shrink exponentially as they propagate backward to early layers, stalling training.
+- **Exploding Gradients**: Repeated multiplication of derivatives $> 1$ leads to unbounded gradient growth, causing numerical instability, `NaN` errors, and divergent oscillations.
 
-Unsupervised Learning
-- Learning patterns from unlabeled data
-- No target labels or outputs
-- Useful for large datasets or expensive labeling
-- Goals: discover hidden patterns, group similar data points, reduce dimensionality
+#### 2.2 Modern Optimizers
+- **SGD (Stochastic Gradient Descent)**: Updates parameters in the direction of the mini-batch negative gradient; foundational but prone to oscillation in steep ravines.
+- **Momentum SGD**: Introduces an exponential moving average of past gradients (velocity) to accelerate along consistent directions and dampen oscillations.
+- **Adam (Adaptive Moment Estimation)**: Maintains running estimates of both the first moment (mean gradient) and second uncentered moment (variance) to adapt learning rates per parameter.
+- **AdamW**: Decouples L2 weight decay from the gradient update calculations, preventing regularization distortion in adaptive optimizers and significantly improving generalization.
 
-Applications
-- Clustering: group data points by similarity (customer segmentation, document clustering, image segmentation)
-- Dimensionality Reduction: reduce features while preserving information (PCA, t-SNE)
+#### 2.3 Regularization Techniques
+- **Weight Decay (L2 Regularization)**: Adds a penalty on squared weight norms $\frac{1}{2} \lambda \|w\|^2$ to the loss function, preventing weights from growing excessively large.
+- **Dropout**: Randomly zeroes out a fraction $p$ of hidden activations during each training forward pass, preventing complex co-adaptation of neurons.
+- **Stochastic Depth**: Randomly bypasses entire residual blocks during training while utilizing the full depth at test time, accelerating training and acting as an architectural ensemble.
+- **Data Augmentation**: Synthesizes label-preserving perturbations (crops, rotations, color jitter) to enrich the training distribution.
+- **Early Stopping**: Halts gradient updates when validation loss fails to improve across a pre-defined patience window.
 
-k-Means Clustering
-- Partitions data into k clusters by minimizing distance to cluster centroids
-- Steps: choose k, initialize centroids, assign points, update centroids, repeat until convergence
-- Standardize features before clustering
-- Python: scikit-learn KMeans.fit_predict()
+---
 
-Choosing Number of Clusters (k)
-- Important for clustering quality
-- Methods: Elbow method (plot SSE), Silhouette score (max value), Davies-Bouldin Index (lower is better)
+### 3. Network Depth and Practical Engineering Considerations
 
-Hierarchical Clustering
-- Builds hierarchy instead of pre-defined k
-- Types: Agglomerative (bottom-up), Divisive (top-down)
-- Visualized with dendrograms (height = distance, merge order shows similarity)
-- Cutting dendrogram at threshold height determines cluster count
+#### 3.1 Shallow vs. Deep Networks
+- *Shallow Networks*: One or two hidden layers; limited expressive capacity; require extensive manual feature engineering.
+- *Deep Networks*: Multiple non-linear compositions yielding rich semantic hierarchies, but requiring careful initialization and gradient highways.
 
-Key Python Libraries
-- NumPy, Pandas: data handling
-- Matplotlib: visualization
-- scikit-learn: KMeans, StandardScaler, clustering metrics
-- scipy.cluster.hierarchy: dendrogram, linkage, fcluster
+#### 3.2 Practical Stability Engineering
+- **Weight Initialization**:
+    - Poor initialization triggers immediate vanishing or exploding gradients.
+    - **He (Kaiming) Initialization**: Specifically designed for ReLU/GELU activations, drawing weights with variance $\text{Var}(W) = 2 / n_{\text{in}}$ to maintain activation variance across deep stacks.
+- **Activation Function Selection**:
+    - Deep networks avoid saturating activations (Sigmoid and Tanh) in hidden layers because their derivatives approach zero for large positive or negative values.
+    - Non-saturating activations—**ReLU**, **GELU** (Gaussian Error Linear Unit), and **SiLU** (Swish)—are preferred to sustain gradient flow.
+    - **Softmax** is reserved for the final output layer to convert raw logits into normalized categorical probability distributions.
+- **Normalization Layers**:
+    - **Batch Normalization (BatchNorm)**: Normalizes activations across the mini-batch during training; uses running population statistics at inference.
+    - **Layer Normalization (LayerNorm)**: Normalizes across feature dimensions independently per sample; ideal for sequential models, Transformers, and variable batch sizes.
+- **Gradient Control & Numerical Precision**:
+    - **Gradient Clipping**: Enforces a maximum threshold on gradient norms ($\|\nabla_w L\| \le \text{threshold}$) to eliminate exploding gradient spikes.
+    - **Mixed Precision (FP16/BF16)**: Accelerates matrix computations and reduces memory footprint while maintaining numerical stability.
+    - **Automatic Differentiation (Autograd)**: Constructs dynamic computation graphs to compute exact reverse-mode derivatives via the chain rule.
 
-Dimensionality Reduction
-- Dimensionality: number of independent features
-- Curse of dimensionality: high dimensions → sparse data, harder patterns, risk of overfitting
-- Benefits: efficiency, noise reduction, visualization, storage reduction
-- Feature Selection: keep important features (correlation, mutual information, chi-square)
-- Feature Extraction: create new features (e.g., PCA)
-- Techniques: PCA (linear, fast, interpretable), t-SNE (non-linear, preserves local structure, visualization), Autoencoders (non-linear, deep learning)
-- PCA: compute covariance matrix, eigen decomposition, select top eigenvectors, project data
-- t-SNE: convert distances to probabilities, map to 2D/3D, optimize with KL divergence, mainly for visualization
+---
 
-Week 4: Ensemble Methods
+### 4. Receptive Field and Transfer Learning
 
-Ensemble Learning
-- Combine multiple models to improve performance
-- Categories: Bagging, Boosting, Stacking
-- Goal: improve generalization, reduce bias/variance
+- **Receptive Field Expansion**:
+    - In spatial and temporal networks, the receptive field is the specific sub-region of the input that influences a particular neuron's activation.
+    - Successive convolutional and pooling layers progressively expand this field of view; early neurons observe tiny pixel neighborhoods, while late neurons observe the entire visual scene.
+- **Transfer Learning Principles**:
+    - Early layer representations (edges, textures, color gradients) are universal and generic across natural data distributions.
+    - **Fine-Tuning**: Practitioners freeze generic early layers and fine-tune only task-specific deeper layers on target domain data, drastically reducing data and compute requirements.
 
-Bias-Variance Trade-off
-- Bias: error from simple models (underfitting)
-- Variance: error from sensitivity to data (overfitting)
-- Total error = Bias² + Variance + Irreducible error
-- Bagging reduces variance, Boosting reduces bias & variance
+---
 
-Voting Ensembles
-- Hard voting: majority class wins
-- Soft voting: average predicted probabilities
+### 5. Deep Learning Architectures Across Modalities
 
-Bagging
-- Bootstrap sampling → multiple datasets
-- Train separate models → reduce variance
-- Random Forest: bagging with decision trees, random feature selection, reduces overfitting, can assess feature importance
-- Out-of-Bag error: ~1/3 data not used, evaluate performance without validation set
+- **Computer Vision (Images & Video)**:
+    - Relies on **Convolutional Neural Networks (CNNs)** and Vision Transformers (ViTs).
+    - Early layers capture local edges and textures; intermediate layers extract parts and silhouettes; final layers classify complex semantic objects.
+- **Natural Language Processing (Text & Speech)**:
+    - Sequence processing capturing syntactic relationships and long-range semantic intent.
+    - Transitioned from Recurrent Neural Networks (RNNs, LSTMs) to self-attention **Transformers**.
+- **Audio and Speech Processing**:
+    - Processes raw waveforms or spectrograms; early layers capture phonemes and formant frequencies; deeper layers infer speaker traits, transcription, and emotion.
+- **Tabular and Structured Data**:
+    - Uses deep multi-layer perceptrons (MLPs) paired with **Entity Embeddings** to map high-cardinality categorical variables into continuous dense representations, capturing non-linear cross-feature interactions.
 
-Boosting
-- Sequential model training, focus on previous errors
-- Reduce bias & variance
-- AdaBoost: weak learners, sensitive to noise
-- XGBoost: gradient boosting with regularization, handles large datasets, iterative residual fitting
+---
 
-Stacking
-- Meta-learner combines predictions from multiple base models
-- Steps: train base models → predictions become features → train meta-learner
-- Common meta-learner: logistic regression
+### 6. Convolutional Neural Networks (CNNs)
 
-Week 5: Neural Networks
+- **Motivation**: Dense networks scale poorly on spatial images (a $1000 \times 1000 \times 3$ image produces 3 million inputs per neuron, causing parameter explosion).
+- **Core Operations**:
+    - **2D Convolution**: Slides learnable kernels over input feature maps, computing local dot products.
+    - **Weight Sharing**: The same kernel weights are applied across all spatial locations, drastically reducing parameter count and enforcing **translation equivariance**.
+    - **Stride & Padding**: Stride controls step size; padding controls boundary conservation (`same` vs. `valid`).
+- **Pooling Layers**:
+    - Downsample spatial dimensions to reduce computation and confer translation invariance.
+    - **Max Pooling**: Retains the most prominent local feature activation.
+    - **Average Pooling**: Smooths feature representations.
+- **Fully Connected Head**: Concludes the CNN architecture, combining spatial feature maps into final prediction logits.
 
-Neural Networks
-- Computational models inspired by biological neurons
-- Layers: input, hidden, output
-- Neurons: compute weighted sum + bias, apply activation function
+---
 
-Components
-- Input layer: receives features
-- Hidden layers: intermediate processing
-- Output layer: produces predictions
+### 7. Recurrent Neural Networks (RNNs)
 
-Mathematical Representation
-- z = Σ(wi * xi) + b
-- Activation: a = f(z)
+- **Sequence Modeling**:
+    - Designed to process sequential data $x = (x_1, x_2, \dots, x_T)$ where current outputs depend on past history.
+    - **Recurrent Hidden State**: Maintains internal temporal memory:
+        $$h_t = \tanh(W_{hh} h_{t-1} + W_{xh} x_t + b)$$
+    - Weights $W_{hh}, W_{xh}$ are shared across all time steps.
+- **Backpropagation Through Time (BPTT)**:
+    - The recurrent network is unrolled across time steps, computing loss gradients with respect to weights via the chain rule backwards through the entire sequence.
+- **The Sequential Gradient Bottleneck**:
+    - Repeated multiplication of transition matrix $W_{hh}$ over long sequences causes severe vanishing or exploding gradients, rendering basic RNNs incapable of learning long-term dependencies.
 
-Activation Functions
-- ReLU: [0, ∞), hidden layers
-- Sigmoid: (0,1), binary classification
-- Tanh: (-1,1), hidden layers
-- Softmax: probabilities, multi-class classification
+---
 
-Forward Propagation
-- Pass input through network to compute output
+### 8. Long Short-Term Memory (LSTM) and Gated Recurrent Units (GRUs)
 
-Loss Functions
-- Measure prediction error
-- MSE: regression
-- Binary cross-entropy: binary classification
+- **LSTM Memory Architecture**:
+    - Solves the vanishing gradient problem by maintaining an additive **Cell State ($C_t$)** alongside the hidden state ($h_t$), regulated by three multiplicative gates:
+    - **Forget Gate ($f_t$)**: Decides what past information to discard: $f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)$.
+    - **Input Gate ($i_t$)**: Selects which new candidate values $\tilde{C}_t$ to store in the cell state: $i_t = \sigma(W_i [h_{t-1}, x_t] + b_i)$.
+    - **Cell State Update**: Linear additive combination preventing vanishing gradients: $C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t$.
+    - **Output Gate ($o_t$)**: Filters the cell state to produce the updated hidden state: $h_t = o_t \odot \tanh(C_t)$.
+- **GRUs (Gated Recurrent Units)**:
+    - Simplified variant combining the cell state and hidden state, using only two gates: an **Update Gate** (merging forget and input behavior) and a **Reset Gate**. More computationally efficient while maintaining long-range memory.
 
-Backpropagation
-- Compute gradients with chain rule
-- Adjust weights to minimize loss
+---
 
-Gradient Descent
-- Update weights using gradients
-- Learning rate controls step size
+### 9. Beyond Recurrence: The Transition to Transformers
 
-Neural Network Class
-- Initialize weights & biases
-- Forward: compute activations
-- Compute cost: cross-entropy for classification
-- Backward: compute gradients
-- Train: iterate forward, cost, backward, update weights
-
-Saving & Loading Models
-- Use pickle to save/load trained neural network objects
+- While LSTMs alleviate vanishing gradients, their fundamentally sequential recurrence prevents parallelization across time steps during training.
+- **The Transformer Architecture**:
+    - Eliminates recurrence entirely in favor of **Multi-Head Self-Attention**.
+    - Allows all sequence positions to interact directly in $\mathcal{O}(1)$ path length, enabling massive parallelization across modern GPU clusters and laying the foundation for modern Large Language Models and Foundation Models.
 
 Clusters in K-Means vs t-SNE
 1. Different Goals and Methods
@@ -1690,3 +1777,18 @@ def run_streamlit_app(port=8501):
 # Run the Streamlit app
 streamlit_process = run_streamlit_app()
 ```
+
+<reviewkit>
+  <takeaways>
+    - **Analytics Roles & Paradigms**: Data Scientists interpret data through statistical inference; ML practitioners focus on manual feature engineering and tabular optimization; DL practitioners model representations directly via ANN architectures; Foundation Models (FMs) act as multi-task pre-trained generalists.
+    - **Linear Regression Foundations**: Relies on 6 core statistical assumptions (Linearity, Independence of errors, Homoscedasticity, Normality of residuals, Absence of multicollinearity, No endogeneity). Adjusted R² penalizes non-informative predictors.
+    - **Classification Evaluation & ROC-AUC**: Precision penalizes false positives, Recall penalizes false negatives, and F1 score provides their harmonic mean. The ROC curve maps TPR vs FPR across thresholds, with AUC summarizing overall discrimination power.
+    - **Clustering & Objective Metrics**: k-means minimizes within-cluster inertia, evaluated via the Elbow method, Silhouette score, and Davies-Bouldin index (ratio of intra-cluster compactness $s_i$ to inter-cluster centroid separation $d_{ij}$, where lower indicates superior clustering).
+    - **Dimensionality Reduction & PCA Decorrelation**: PCA performs eigen-decomposition on the covariance matrix to project data onto orthogonal, decorrelated principal axes. While PCA is strictly linear and does not capture non-linear relationships directly, eliminating linear collinearity relieves non-linear models (MLPs) from untangling redundant features, allowing hidden units to dedicate full capacity to learning non-linear manifolds. In contrast, t-SNE minimizes KL-divergence exclusively for non-linear exploratory visualization.
+    - **Ensemble Learning Trade-offs**: Bagging trains independent models on bootstrap samples to reduce variance (Random Forests with random feature selection and OOB evaluation); Boosting trains sequential models reweighting misclassified samples to reduce both bias and variance (AdaBoost, regularized XGBoost); Stacking uses a meta-learner to combine heterogeneous models.
+    - **Deep Learning Architecture & Scaling**: Depth enables automatic hierarchical feature extraction. Gradient stability in deep stacks requires proper initialization (He init), non-saturating activations (ReLU/GELU), normalization (BatchNorm/LayerNorm), and adaptive optimizers (Adam/AdamW).
+    - **Modalities & Sequential Evolution**: CNNs exploit spatial translation invariance via weight sharing and pooling; RNNs handle temporal sequences via recurrent hidden states but suffer from vanishing gradients across BPTT; LSTMs solve this via additive memory cells and 3 multiplicative gates; Transformers replace sequential recurrence entirely with parallel self-attention.
+  </takeaways>
+  <qprompt/>
+</reviewkit>
+

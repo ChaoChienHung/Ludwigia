@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NUS IS5126: Hands-on with Applied Analytics — Ludwig</title>
   <meta name="garden:tags" content="Machine Learning, Deep Learning, Applied Analytics">
-  <meta name="garden:summary" content="Structured notes for NUS IS5126 Hands-on with Applied Analytics, covering batch normalization dynamics, GAN training stability, skip connections, bottlenecks, and production API workflows.">
+  <meta name="garden:summary" content="Comprehensive structured notes for NUS IS5126 Hands-on with Applied Analytics, covering analytics roles, foundation models, supervised and unsupervised learning, ensemble methods, deep learning architectures across modalities, and production deployment workflows.">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.machine_learning,concept.deep_learning,concept.applied_analytics">
   <meta name="site:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.applied_analytics&quot;:{&quot;en&quot;:&quot;Applied Analytics&quot;,&quot;zh-Hant&quot;:&quot;應用分析&quot;,&quot;zh-Hans&quot;:&quot;应用分析&quot;}}">
   <meta name="site:canonical_id" content="nus-is5126-hands-on-with-applied-analytics">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-09-12">
-  <meta name="site:reading_time_minutes" content="77">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="103">
   <meta name="site:source" content="notes/NUS IS5126 Hands-on with Applied Analytics/NUS IS5126 Hands-on with Applied Analytics.md">
   <script>
   (() => {
@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
-  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
 <body class="note-page note-style-default" data-i18n-page="contentPage">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
@@ -154,7 +154,23 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#explanation">Explanation:</a>
+            <a class="note-toc-link level-1" href="#knowledge-architecture">Knowledge Architecture</a>
+<a class="note-toc-link level-1" href="#analytics-roles-and-ai-paradigms">Analytics Roles and AI Paradigms</a>
+<a class="note-toc-link level-2" href="#1-the-evolving-spectrum-of-analytics-roles">1. The Evolving Spectrum of Analytics Roles</a>
+<a class="note-toc-link level-1" href="#core-exam-quick-reference-batchnorm-gans-resnet-api-workflows">Core Exam Quick Reference: BatchNorm, GANs, ResNet &amp; API Workflows</a>
+<a class="note-toc-link level-2" href="#1-unsupervised-learning-and-clustering">1. Unsupervised Learning and Clustering</a>
+<a class="note-toc-link level-2" href="#2-dimensionality-reduction">2. Dimensionality Reduction</a>
+<a class="note-toc-link level-2" href="#3-ensemble-methods-for-data-analysis">3. Ensemble Methods for Data Analysis</a>
+<a class="note-toc-link level-2" href="#1-introduction-to-deep-learning">1. Introduction to Deep Learning</a>
+<a class="note-toc-link level-2" href="#2-optimization-and-regularization-in-deep-networks">2. Optimization and Regularization in Deep Networks</a>
+<a class="note-toc-link level-2" href="#3-network-depth-and-practical-engineering-considerations">3. Network Depth and Practical Engineering Considerations</a>
+<a class="note-toc-link level-2" href="#4-receptive-field-and-transfer-learning">4. Receptive Field and Transfer Learning</a>
+<a class="note-toc-link level-2" href="#5-deep-learning-architectures-across-modalities">5. Deep Learning Architectures Across Modalities</a>
+<a class="note-toc-link level-2" href="#6-convolutional-neural-networks-cnns">6. Convolutional Neural Networks (CNNs)</a>
+<a class="note-toc-link level-2" href="#7-recurrent-neural-networks-rnns">7. Recurrent Neural Networks (RNNs)</a>
+<a class="note-toc-link level-2" href="#8-long-short-term-memory-lstm-and-gated-recurrent-units-grus">8. Long Short-Term Memory (LSTM) and Gated Recurrent Units (GRUs)</a>
+<a class="note-toc-link level-2" href="#9-beyond-recurrence-the-transition-to-transformers">9. Beyond Recurrence: The Transition to Transformers</a>
+<a class="note-toc-link level-1" href="#explanation">Explanation:</a>
 <a class="note-toc-link level-1" href="#summary">Summary:</a>
 <a class="note-toc-link level-1" href="#key-assumptions-of-linear-regression">📊 Key Assumptions of Linear Regression</a>
 <a class="note-toc-link level-2" href="#1-linearity">1. 📈 Linearity</a>
@@ -187,7 +203,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-09-12" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-09-12</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -214,7 +230,126 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">NUS IS5126 Hands-on with Applied Analytics Structured Notes on BatchNorm, GAN Training, Skip Connections, Bottlenecks, and FastAPI in Data Science Workflows</p>
+<p class="mb-3">NUS IS5126 Hands-on with Applied Analytics Structured Notes on Analytics Roles, Machine Learning, Ensembles, Deep Learning Architectures, and Production Workflows</p>
+</section>
+
+<section id="knowledge-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Knowledge Architecture</h3>
+
+<p class="mb-3">這份筆記涵蓋 NUS IS5126 Applied Analytics 的端到端架構：從資料角色與分析管線、傳統機器學習、特徵降維與集成方法，延伸至深度學習架構與生產級微服務部署：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">應用分析與 AI 知識地圖
+  → roles &amp; paradigms: Data Scientist, ML vs DL practitioners, Foundation Models (FMs)
+  → data pipeline &amp; EDA: collection, cleaning, transformation, leakage prevention
+  → classical machine learning: linear/logistic regression, assumptions, decision trees, ROC-AUC
+  → unsupervised learning: k-means, Davies-Bouldin index, hierarchical clustering &amp; dendrograms
+  → dimensionality reduction: curse of dimensionality, PCA eigen-decomposition, t-SNE
+  → ensemble learning: bias-variance trade-off, bagging, boosting (AdaBoost/XGBoost), stacking
+  → deep learning foundations: ANN neurons, backpropagation, optimizers, regularization, depth
+  → deep learning architectures &amp; modalities: CNNs, RNNs, LSTMs, Transformers, Autoencoders, GANs
+  → production deployment &amp; APIs: FastAPI, PyTorch lifecycle, Streamlit dashboards</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>層次</th>
+<th>核心問題</th>
+<th>學習要點與技術落點</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Roles &amp; Paradigms</strong></td>
+<td>Data Scientist、ML 工程師、DL 工程師與 Foundation Models 的分工界限為何？</td>
+<td>統計詮釋 vs 手工特徵工程 vs 神經網絡架構探索 vs 多任務基礎模型</td>
+</tr>
+<tr>
+<td><strong>Pipeline &amp; EDA</strong></td>
+<td>資料如何從 Raw Data 流入商業決策？</td>
+<td>資料漏斗、清洗標準化、Crawl4AI、Vanna 與向量資料庫整合</td>
+</tr>
+<tr>
+<td><strong>Supervised Learning</strong></td>
+<td>線性模型何時可信？分類決策邊界如何評估？</td>
+<td>線性迴歸 6 大統計假設、殘差變異、混淆矩陣、Precision/Recall/F1 與 ROC-AUC</td>
+</tr>
+<tr>
+<td><strong>Unsupervised Learning</strong></td>
+<td>無標籤資料如何分群？如何客觀決定最佳分群數 $k$？</td>
+<td>k-means、Elbow Method、Silhouette Score、Davies-Bouldin 緊湊度與分離度公式</td>
+</tr>
+<tr>
+<td><strong>Dimensionality Reduction</strong></td>
+<td>為何需要降維？線性 PCA 與非線性 t-SNE 的差異何在？PCA 如何協助非線性模型 (MLP)？</td>
+<td>維度詛咒、共變異數矩陣特徵分解、線性降維去相關性、解開線性混淆、KL 散度局部結構保持、Perplexity 調校</td>
+</tr>
+<tr>
+<td><strong>Ensemble Methods</strong></td>
+<td>弱學習器如何組合成強學習器？Bagging 與 Boosting 如何切分 Bias 與 Variance？</td>
+<td>硬/軟投票、Bootstrap 取樣、隨機森林 OOB、AdaBoost 樣本重權、XGBoost 正則、Stacking 元學習</td>
+</tr>
+<tr>
+<td><strong>Deep Learning</strong></td>
+<td>為何深層網絡能免除特徵工程？梯度消失如何克服？</td>
+<td>階層式語意抽象、感受野、He 初始化、ReLU/GELU、BatchNorm/LayerNorm、AdamW</td>
+</tr>
+<tr>
+<td><strong>Modalities &amp; Sequential</strong></td>
+<td>視覺、序列語音與結構化資料如何選型？為何從 LSTM 演進到 Transformer？</td>
+<td>CNN 卷積權重共享、RNN 時間反向傳播 (BPTT)、LSTM 三門控機制、自注意力機制</td>
+</tr>
+<tr>
+<td><strong>Production &amp; MLOps</strong></td>
+<td>訓練完成的模型如何落地為微服務與互動儀表板？</td>
+<td>PyTorch <code>train()</code>/<code>eval()</code> 切換、<code>torch.no_grad()</code>、FastAPI OpenAPI 契約、Streamlit 應用</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="analytics-roles-and-ai-paradigms" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Analytics Roles and AI Paradigms</h3>
+
+<h4 id="1-the-evolving-spectrum-of-analytics-roles" class="mb-2">1. The Evolving Spectrum of Analytics Roles</h4>
+
+<p class="mb-3">In data-driven organizations, analytical roles differ fundamentally in where they allocate engineering effort, their reliance on statistical theory, and how they interact with models:</p>
+
+<ul class="note-list">
+<li><strong>Data Scientist Role</strong>:
+<ul class="note-list">
+<li><strong>Focus</strong>: Applying in-depth knowledge of statistics, probability, and exploratory analytics to interpret complex business data.</li>
+<li><strong>Deliverables</strong>: Formulating hypotheses, extracting empirical insights, designing A/B tests, and translating quantitative patterns into strategic decision-making.</li>
+</ul></li>
+<li><strong>Machine Learning (ML) Practitioners</strong>:
+<ul class="note-list">
+<li><strong>Focus</strong>: Feature engineering, data curation, model selection, and tabular optimization.</li>
+<li><strong>Workflow</strong>: ML practitioners spend a significant portion of their time optimizing traditional learning algorithms (e.g., Ridge, XGBoost, LightGBM), engineering informative domain features, testing interaction terms, and tuning hyperparameters.</li>
+<li><strong>Inductive Bias</strong>: Heavy reliance on domain-specific feature engineering; algorithms rely on explicit tabular representations.</li>
+</ul></li>
+<li><strong>Deep Learning (DL) Practitioners</strong>:
+<ul class="note-list">
+<li><strong>Focus</strong>: Architectural modeling, representation learning, and computational scaling.</li>
+<li><strong>Workflow</strong>: In contrast to classical ML engineers, deep learning practitioners spend almost no time manually engineering features. Instead, they allocate their time designing and experimenting with diverse Artificial Neural Network (ANN) architectures (CNNs, LSTMs, Transformers, Autoencoders), activation functions, normalization schemes, and optimization schedules.</li>
+<li><strong>Inductive Bias</strong>: The network automatically extracts hierarchical feature representations directly from raw, unstructured inputs (pixels, audio waveforms, raw text tokens).</li>
+</ul></li>
+<li><strong>Generative AI &amp; Foundation Models (FMs)</strong>:
+<ul class="note-list">
+<li><strong>Core Paradigm</strong>: Generative AI is powered by very large machine learning models—commonly known as <strong>Foundation Models (FMs)</strong>—that are pre-trained on vast, internet-scale datasets using self-supervised learning.</li>
+<li><strong>Single-Task vs. Multi-Task Capabilities</strong>:
+<ul class="note-list">
+<li><em>Traditional ML/DL Models</em>: Strictly single-task oriented. A sentiment analysis model requires task-specific training and cannot perform translation or summarization.</li>
+<li><em>Foundation Models</em>: A single pre-trained FM acts as a generalized zero-shot / few-shot engine capable of executing diverse downstream tasks (e.g., code generation, document summarization, reasoning, and entity extraction) without task-specific retraining.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="core-exam-quick-reference-batchnorm-gans-resnet-api-workflows" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Core Exam Quick Reference: BatchNorm, GANs, ResNet &amp; API Workflows</h3>
 
 <p class="mb-3">Batch Normalization (BatchNorm)</p>
 
@@ -701,619 +836,583 @@ df = pd.read_html(str(table))[0]</code></pre></div>
 <li>K-Fold Cross-Validation: Divide dataset into K folds; train K times using K-1 folds for training, 1 for validation</li>
 </ul>
 
-<p class="mb-3">Confusion Matrix</p>
+<p class="mb-3">Confusion Matrix and Evaluation Metrics</p>
 
 <ul class="note-list">
-<li>Actual vs Predicted
+<li><strong>The Confusion Matrix Structure</strong>:
 <ul class="note-list">
-<li>True Positive (TP): Correctly predicts positive</li>
-<li>True Negative (TN): Correctly predicts negative</li>
-<li>False Positive (FP, Type I Error): Incorrectly predicts positive</li>
-<li>False Negative (FN, Type II Error): Incorrectly predicts negative</li>
+<li>Each row represents the actual ground-truth class, while each column represents the predicted class.</li>
+<li><strong>True Positive (TP)</strong>: Correctly predicted positive instance.</li>
+<li><strong>True Negative (TN)</strong>: Correctly predicted negative instance.</li>
+<li><strong>False Positive (FP / Type I Error)</strong>: Negative instance incorrectly predicted as positive (false alarm).</li>
+<li><strong>False Negative (FN / Type II Error)</strong>: Positive instance incorrectly predicted as negative (missed detection).</li>
 </ul></li>
 </ul>
 
-<p class="mb-3">Metrics for Classification</p>
-
-<ul class="note-list">
-<li>Accuracy: (TP + TN) / Total; good for balanced datasets</li>
-<li>Precision: TP / (TP + FP); fewer false positives</li>
-<li>Recall / Sensitivity: TP / (TP + FN); fewer false negatives</li>
-<li>F1 Score: 2 <em> (Precision </em> Recall) / (Precision + Recall); useful for imbalanced datasets</li>
-</ul>
-
-<p class="mb-3">Metrics for Regression</p>
-
-<ul class="note-list">
-<li>Mean Squared Error (MSE)</li>
-<li>Root Mean Squared Error (RMSE)</li>
-<li>Mean Absolute Error (MAE)</li>
-<li>R-squared</li>
-</ul>
-
-<p class="mb-3">Supervised vs Unsupervised Learning</p>
-
-<ul class="note-list">
-<li>Supervised: Labeled data, predicts outcomes, guided by examples</li>
-<li>Unsupervised: No labels, discovers patterns, exploratory analysis</li>
-</ul>
-
-<p class="mb-3">Common Issues in Machine Learning</p>
-
-<ul class="note-list">
-<li>Imbalanced Datasets: Unequal class distribution can bias model</li>
-<li>Dirty Data: Missing, duplicated, irrelevant, or misformatted</li>
-<li>Feature Irrelevance: Features may not support problem statement</li>
-<li>Data preprocessing is critical for accuracy</li>
-</ul>
-
-<p class="mb-3">Supervised Learning – Regression</p>
-
-<ul class="note-list">
-<li>Ordinary Least Squares Linear Regression</li>
-<li>Lasso: Linear model with L1 regularization</li>
-<li>Ridge: Linear least squares with L2 regularization</li>
-<li>ElasticNet: Linear regression with combined L1 &amp; L2 regularization</li>
-<li>Decision Tree Regressor</li>
-<li>Random Forest Regressor</li>
-<li>Linear Support Vector Regression (SVR)</li>
-</ul>
-
-<p class="mb-3">Week 4: Introduction to Machine Learning: Unsupervised Learning, Clustering, Dimensionality Reduction &amp; Ensemble Methods</p>
-
-<p class="mb-3">📘 Unsupervised Learning &amp; Clustering</p>
-
-<ol class="mb-3">
-<li>Unsupervised Learning</li>
-</ol>
-
-<ul class="note-list">
-<li>Learns patterns from unlabeled data.</li>
-<li>No target labels to predict.</li>
-<li>Useful for large datasets or where labeling is costly.</li>
-<li>Goals: Discover hidden patterns, group similar points, reduce dimensionality.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Applications</li>
-</ol>
-
-<ul class="note-list">
-<li>Clustering: Group similar data points (customer segmentation, document clustering, image segmentation).</li>
-<li>Dimensionality Reduction: Reduce features while preserving information (PCA, t-SNE).</li>
-</ul>
-
-<ol class="mb-3">
-<li>k-Means Clustering</li>
-</ol>
-
-<ul class="note-list">
-<li><strong>Partitions</strong> data into k clusters based on similarity.</li>
-<li>Minimizes distance to cluster centroid.</li>
-<li>Steps:</li>
-</ul>
-
-<ol class="mb-3">
-<li>Choose k.</li>
-<li>Initialize centroids.</li>
-<li>Assign points to nearest centroid.</li>
-<li>Update centroids.</li>
-<li>Repeat until convergence.</li>
-<li>Choosing k</li>
-</ol>
-
-<ul class="note-list">
-<li>Elbow Method: Plot SSE vs k; choose elbow point.</li>
-<li>Silhouette Score: -1 to 1; higher = better clustering.</li>
-<li>Davies-Bouldin Index: Lower = better (compact, well-separated clusters).</li>
-</ul>
-
-<ol class="mb-3">
-<li>Hierarchical Clustering</li>
-</ol>
-
-<ul class="note-list">
-<li>Builds hierarchy instead of predefined k.</li>
-<li>Agglomerative: Bottom-up → merge closest clusters.</li>
-<li>Divisive: Top-down → split clusters.</li>
-<li>Dendrogram: Tree diagram showing cluster hierarchy.</li>
-<li>Cut dendrogram at threshold to get cluster count.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Python Libraries</li>
-</ol>
-
-<ul class="note-list">
-<li>NumPy, Pandas: Data handling</li>
-<li>Matplotlib: Visualization</li>
-<li>scikit-learn: KMeans, StandardScaler, Silhouette/Davies-Bouldin</li>
-<li>scipy.cluster.hierarchy: dendrogram, linkage, fcluster</li>
-</ul>
-
-<p class="mb-3">✅ Recap</p>
-
-<ul class="note-list">
-<li>Unsupervised learning = no labels, discover patterns.</li>
-<li>Clustering = group based on similarity.</li>
-<li>k-Means = centroid-based, requires k.</li>
-<li>Hierarchical = tree-based; visualized via dendrogram.</li>
-</ul>
-
-<hr>
-
-<p class="mb-3">📘 Dimensionality Reduction</p>
-
-<ol class="mb-3">
-<li>Dimensionality</li>
-</ol>
-
-<ul class="note-list">
-<li>Number of independent features.</li>
-<li>High dimensions → sparse data, harder pattern detection.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Curse of Dimensionality</li>
-</ol>
-
-<ul class="note-list">
-<li>Distances lose meaning; requires exponentially more data.</li>
-<li>Risk of overfitting.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Why Reduce Dimensions?</li>
-</ol>
-
-<ul class="note-list">
-<li>Efficiency, noise reduction, visualization, storage.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Feature Selection vs Feature Extraction</li>
-</ol>
-
-<ul class="note-list">
-<li>Selection: Keep important original features (correlation, mutual info, chi-square).</li>
-<li>Extraction: Create new features (e.g., PCA components).</li>
-</ul>
-
-<ol class="mb-3">
-<li>Techniques Overview</li>
-</ol>
-
 <div class="note-table-wrap mb-3">
   <table class="note-table">
     <thead><tr>
-<th>Technique</th>
-<th>Type</th>
-<th>Use Case</th>
-<th>Strengths</th>
+<th>Actual \ Predicted</th>
+<th>Predicted Positive</th>
+<th>Predicted Negative</th>
     </tr></thead>
     <tbody>
 <tr>
-<td>PCA</td>
-<td>Linear</td>
-<td>Preprocessing</td>
-<td>Fast, interpretable</td>
+<td><strong>Actual Positive</strong></td>
+<td><strong>TP</strong> (True Positive)</td>
+<td><strong>FN</strong> (False Negative, Type II)</td>
 </tr>
 <tr>
-<td>t-SNE</td>
-<td>Non-linear</td>
-<td>Visualization</td>
-<td>Preserves local structure</td>
-</tr>
-<tr>
-<td>Autoencoders</td>
-<td>Non-linear</td>
-<td>Complex datasets</td>
-<td>Deep learning compatible</td>
+<td><strong>Actual Negative</strong></td>
+<td><strong>FP</strong> (False Positive, Type I)</td>
+<td><strong>TN</strong> (True Negative)</td>
 </tr>
     </tbody>
   </table>
 </div>
 
-<ol class="mb-3">
-<li>PCA (Principal Component Analysis)</li>
-</ol>
-
 <ul class="note-list">
-<li>Simplifies high-dimensional data, preserves variance.</li>
-<li>Steps:</li>
+<li><strong>Metrics for Classification</strong>:
+<ul class="note-list">
+<li><strong>Accuracy</strong>: $\frac{TP + TN}{TP + TN + FP + FN}$ (Percentage of correctly classified samples; reliable only when classes are balanced).</li>
+<li><strong>Precision</strong>: $\frac{TP}{TP + FP}$ (Fraction of predicted positives that are truly positive. High precision is critical when false positives carry severe costs, such as email spam filtering or capital-intensive investments).</li>
+<li><strong>Recall (Sensitivity)</strong>: $\frac{TP}{TP + FN}$ (Fraction of actual positives successfully identified. High recall is paramount when false negatives are unacceptable, such as disease screening, cancer diagnosis, or fraud detection).</li>
+<li><strong>F1 Score</strong>: $2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$ (Harmonic mean of precision and recall. Penalizes extreme trade-offs between precision and recall; indispensable on imbalanced datasets).</li>
+</ul></li>
+<li><strong>Receiver Operating Characteristic (ROC) Curve and ROC-AUC</strong>:
+<ul class="note-list">
+<li><strong>ROC Curve</strong>: A graphical plot illustrating classifier diagnostic ability by plotting <strong>True Positive Rate (TPR / Sensitivity / Recall)</strong> against <strong>False Positive Rate (FPR / $1 - \text{Specificity}$)</strong> across all possible decision thresholds:
+<ul class="note-list">
+<li>$\text{TPR} = \frac{TP}{TP + FN}$</li>
+<li>$\text{FPR} = \frac{FP}{FP + TN}$</li>
+</ul></li>
+<li><strong>Threshold Dynamics &amp; Trade-offs</strong>:
+<ul class="note-list">
+<li><em>Lowering the classification threshold</em>: The model classifies more samples as positive $\to$ TPR increases (fewer false negatives), but FPR also increases (more false alarms).</li>
+<li><em>Raising the classification threshold</em>: The model becomes more conservative $\to$ FPR decreases (fewer false alarms), but TPR also decreases (more false negatives).</li>
+</ul></li>
+<li><strong>ROC Area Under the Curve (ROC-AUC)</strong>:
+<ul class="note-list">
+<li>A single scalar metric summarizing performance across all classification thresholds, measuring the probability that the model ranks a randomly chosen positive sample higher than a randomly chosen negative sample.</li>
+<li>$\text{AUC} = 0.5$: Model has no discrimination capacity (equivalent to random coin tossing).</li>
+<li>$0.7 \le \text{AUC} &lt; 0.8$: Acceptable discrimination.</li>
+<li>$0.8 \le \text{AUC} &lt; 0.9$: Excellent discrimination.</li>
+<li>$\text{AUC} = 1.0$: Perfect classification separation.</li>
+</ul></li>
+</ul></li>
+<li><strong>Supervised Learning – Classification Algorithms &amp; Model Capabilities</strong>:
+<ul class="note-list">
+<li><strong>Linear &amp; Logistic Regression</strong>:
+<ul class="note-list">
+<li>Formulates a single separating linear hyperplane: $z = w^T x + b$, mapped to class probability via $\sigma(z) = \frac{1}{1 + e^{-z}}$.</li>
+<li><strong>Linear Separability Constraint</strong>: Fundamentally restricted to linearly separable distributions. If data boundaries are non-linear, linear models completely fail unless explicit polynomial terms or interaction features are manually engineered.</li>
+</ul></li>
+<li><strong>Decision Trees (Recursive Partitioning)</strong>:
+<ul class="note-list">
+<li>Greedy recursive partitioning algorithm that splits the feature space into axis-aligned hyper-rectangles using single-feature orthogonal thresholds ($X_j \le \theta$).</li>
+<li>Node splitting minimizes impurity, commonly evaluated via <strong>Gini Impurity</strong>:
+<p class="mb-2">$$G = 1 - \sum_{i=1}^C p_i^2 \in [0, 1]$$</p>
+<p class="mb-2">where $G = 0$ represents complete node purity and $G = 1 - 1/C$ denotes maximum disorder.</p></li>
+<li><strong>Key Limitations &amp; Fragility under Strong Feature Interactions</strong>:
+<ul class="note-list">
+<li><em>High Variance</em>: Hard binary thresholding makes trees highly sensitive to local noise and slight perturbations in training data.</li>
+<li><em>Struggle with Correlated Features &amp; Diagonal Boundaries</em>: Because splits are strictly single-feature orthogonal cuts, diagonal relationships ($X_1 + X_2 &gt; c$) or complex non-linear feature interactions force the tree to construct fragmented, jagged "staircase" approximations. This causes tree depth to explode into overly verbose, convoluted rules that overfit training noise and generalize poorly to unseen data.</li>
+</ul></li>
+</ul></li>
+<li><strong>Multi-Layer Perceptron (MLP / Deep Baseline)</strong>:
+<ul class="note-list">
+<li>Serves as the naive, flexible baseline for deep learning, leveraging stacked dense layers with non-linear activations (ReLU, GELU) to approximate arbitrary non-linear decision boundaries.</li>
+<li><em>Trade-offs</em>: Highly parameter-intensive, lower computational and sample efficiency, and struggles when input features are entangled and collinear (the network must expend early hidden capacity learning to decorrelate features).</li>
+</ul></li>
+<li><strong>Random Forests</strong>:
+<ul class="note-list">
+<li>Ensemble learning method that trains an ensemble of decorrelated decision trees independently using bootstrap aggregation (bagging) and random feature subspacing at each candidate split.</li>
+<li>Predictions are aggregated via majority voting (classification) or mean averaging (regression), substantially suppressing the high variance of individual decision trees.</li>
+</ul></li>
+</ul></li>
+<li><strong>Supervised Learning – Regression Algorithms and Metrics</strong>:
+<ul class="note-list">
+<li><strong>Linear Regression</strong>:
+<ul class="note-list">
+<li>Models the continuous dependent target variable $y$ as a linear combination of independent predictor variables $X$:
+<p class="mb-2">$$y = \beta_0 + \sum_{j=1}^p \beta_j X_j + \varepsilon$$</p></li>
+<li>Solved analytically via Ordinary Least Squares (OLS) or iteratively via <strong>Gradient Descent</strong> minimizing the Mean Squared Error (MSE) loss function.</li>
+</ul></li>
+<li><strong>Common Regression Metrics</strong>:
+<ul class="note-list">
+<li><strong>Mean Squared Error (MSE)</strong>: $\frac{1}{n} \sum (y_i - \hat{y}_i)^2$ (heavily penalizes large outlier errors).</li>
+<li><strong>Root Mean Squared Error (RMSE)</strong>: $\sqrt{\text{MSE}}$ (interpretable in the identical physical units as target $y$).</li>
+<li><strong>Mean Absolute Error (MAE)</strong>: $\frac{1}{n} \sum |y_i - \hat{y}_i|$ (linear penalty, robust to outliers).</li>
+<li><strong>R-squared ($R^2$)</strong>: $1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$ (proportion of total target variance explained by predictors; artificially inflates as non-informative features are added).</li>
+<li><strong>Adjusted R-squared</strong>: Penalizes model complexity:
+<p class="mb-2">$$R^2_{\text{adj}} = 1 - \left[ \frac{(1 - R^2)(n - 1)}{n - p - 1} \right]$$</p>
+<p class="mb-2">Increases only if newly added predictors improve predictive capability beyond random chance.</p></li>
+</ul></li>
+<li><strong>Regularized Regression Variants</strong>:
+<ul class="note-list">
+<li><strong>Lasso Regression (L1)</strong>: Adds penalty $\lambda \sum |\beta_j|$; drives uninformative coefficients to exact zero, performing automatic feature selection.</li>
+<li><strong>Ridge Regression (L2)</strong>: Adds penalty $\lambda \sum \beta_j^2$; shrinks coefficients towards zero, mitigating multicollinearity and high variance.</li>
+<li><strong>ElasticNet</strong>: Combines L1 and L2 penalties via hyperparameter $\alpha$ (total regularization) and $\rho$ (L1 ratio).</li>
+</ul></li>
+</ul></li>
 </ul>
 
-<ol class="mb-3">
-<li>Represent data as matrix.</li>
-<li>Compute covariance matrix.</li>
-<li>Eigen decomposition → eigenvalues/variance, eigenvectors/directions.</li>
-<li>Select top k eigenvectors → project data.</li>
-</ol>
+<p class="mb-3">Week 4: Unsupervised Learning, Dimensionality Reduction &amp; Ensemble Methods</p>
+
+<h4 id="1-unsupervised-learning-and-clustering" class="mb-2">1. Unsupervised Learning and Clustering</h4>
+
+<p class="mb-3">Unsupervised learning discovers hidden patterns, groupings, and intrinsic distributions in unlabeled datasets without human supervision:</p>
 
 <ul class="note-list">
-<li>Applications: Image compression, gene expression.</li>
-</ul>
-
-<ol class="mb-3">
-<li>t-SNE</li>
-</ol>
-
+<li><strong>k-Means Clustering</strong>:
 <ul class="note-list">
-<li>Non-linear visualization technique.</li>
-<li>Preserves local relationships.</li>
-<li>Converts high-dimensional distances → probabilities, maps to 2D/3D.</li>
-<li>Computationally expensive; mainly for visualization.</li>
-<li>Applications: MNIST digit visualization, customer segmentation.</li>
-</ul>
-
-<p class="mb-3">✅ Key Takeaways</p>
-
+<li>Centroid-based partitioning that divides $n$ observations into $k$ non-overlapping clusters by minimizing the within-cluster sum of squared errors (SSE / inertia):
+<p class="mb-2">$$\arg\min_{\mathcal{C}} \sum_{i=1}^k \sum_{x \in \mathcal{C}_i} \|x - \mu_i\|^2$$</p></li>
+<li>Iterative process: (1) Initialize $k$ centroids; (2) Assign each observation to its nearest centroid; (3) Recompute centroid coordinates as cluster means; (4) Repeat until convergence.</li>
+<li>Features must be standardized prior to clustering to prevent variables with larger numerical scales from dominating distance computations.</li>
+</ul></li>
+<li><strong>Objective Evaluation of Cluster Number ($k$)</strong>:
 <ul class="note-list">
-<li>Dimensionality reduction improves computation, noise reduction, visualization.</li>
-<li>PCA: linear, fast, for preprocessing.</li>
-<li>t-SNE: non-linear, for visualization.</li>
+<li><strong>Elbow Method</strong>: Plots SSE against candidate values of $k$; the "elbow" point marks where diminishing returns occur (subjective and sensitive to noise).</li>
+<li><strong>Silhouette Score</strong>: Evaluates cluster cohesion against separation for each sample:
+<p class="mb-2">$$s = \frac{b - a}{\max(a, b)} \in [-1, 1]$$</p>
+<p class="mb-2">where $a$ is mean intra-cluster distance and $b$ is mean nearest-cluster distance. Higher values indicate well-separated, compact clusters.</p></li>
+<li><strong>Davies-Bouldin Index (Formal Step-by-Step Calculation)</strong>:
+<ul class="note-list">
+<li>Evaluates average similarity between each cluster and its most similar cluster. Lower values denote superior clustering (compact and isolated); ideal score is $0$.</li>
+<li><strong>Step 1: Compute intra-cluster compactness and inter-cluster separation</strong>:
+<ul class="note-list">
+<li>$s_i$: Average distance between all points in cluster $i$ and their centroid $\mu_i$ (compactness).</li>
+<li>$d_{ij} = \|\mu_i - \mu_j\|$: Euclidean distance between centroids of clusters $i$ and $j$ (separation).</li>
+</ul></li>
+<li><strong>Step 2: Calculate maximum similarity ratio for each cluster</strong>:
+<p class="mb-2">$$R_i = \max_{j \ne i} \left( \frac{s_i + s_j}{d_{ij}} \right)$$</p></li>
+<li><strong>Step 3: Average across the dataset</strong>:
+<p class="mb-2">$$DB = \frac{1}{k} \sum_{i=1}^k R_i$$</p></li>
+<li>Select the parameter $k$ that minimizes $DB$.</li>
+</ul></li>
+</ul></li>
+<li><strong>Hierarchical Clustering</strong>:
+<ul class="note-list">
+<li>Constructs a multi-level nested tree of clusters without requiring a pre-specified $k$:
+<ul class="note-list">
+<li><em>Agglomerative (Bottom-Up)</em>: Starts with $n$ individual clusters; iteratively merges the two most similar clusters based on linkage criteria (Ward's, complete, average, single).</li>
+<li><em>Divisive (Top-Down)</em>: Starts with one unified cluster containing all data points; recursively splits clusters.</li>
+</ul></li>
+<li><strong>Dendrogram Interpretation</strong>:
+<ul class="note-list">
+<li>Vertical branch height quantifies distance/dissimilarity at which clusters merge.</li>
+<li>Merge order indicates relative cluster proximity: clusters merging lower down are substantially more similar than those merging near the top.</li>
+<li>Cutting the dendrogram horizontally at a chosen height threshold extracts the final discrete clusters.</li>
+</ul></li>
+</ul></li>
 </ul>
 
 <hr>
 
-<p class="mb-3">📘 Ensemble Methods</p>
-
-<ol class="mb-3">
-<li>Ensemble Learning</li>
-</ol>
+<h4 id="2-dimensionality-reduction" class="mb-2">2. Dimensionality Reduction</h4>
 
 <ul class="note-list">
-<li>Combines multiple models to improve performance.</li>
-<li>Categories: Bagging, Boosting, Stacking.</li>
+<li><strong>The Curse of Dimensionality</strong>:
+<ul class="note-list">
+<li>As the number of features $d$ increases, the volume of feature space grows exponentially, causing available data points to become extremely sparse.</li>
+<li>In high dimensions, Euclidean distances concentrate (all pairwise distances become nearly equal), degrading distance-based algorithms (k-NN, k-means).</li>
+<li>Overfitting risk spikes because models memorize spurious high-dimensional noise rather than true data-generating patterns.</li>
+</ul></li>
+<li><strong>Feature Selection vs. Feature Extraction</strong>:
+<ul class="note-list">
+<li><em>Feature Selection</em>: Retains a subset of original features, discarding redundant or noisy predictors (e.g., Pearson correlation, mutual information, Chi-square tests).</li>
+<li><em>Feature Extraction</em>: Projects high-dimensional data onto a lower-dimensional subspace, synthesizing new composite features (e.g., PCA, t-SNE, Autoencoders).</li>
+</ul></li>
+<li><strong>Principal Component Analysis (PCA)</strong>:
+<ul class="note-list">
+<li><strong>Core Purpose &amp; Covariance Decoupling</strong>:
+<ul class="note-list">
+<li>A deterministic dimensionality reduction technique that transforms original features into a new coordinate system of mutually <strong>uncorrelated</strong> variables called <strong>Principal Components (PCs)</strong>.</li>
+<li>Deconstructs the empirical <strong>Covariance Matrix</strong> $\Sigma \in \mathbb{R}^{d \times d}$ (where diagonal elements represent variance and off-diagonal elements represent pairwise covariance), extracting and ranking the orthogonal axes that account for the maximum variance.</li>
+</ul></li>
+<li><strong>Mathematical Formulation (Eigen Decomposition)</strong>:
+<p class="mb-2">$$\Sigma v_i = \lambda_i v_i$$</p>
+<ul class="note-list">
+<li><em>Eigenvectors</em> ($v_i$): Orthogonal principal directions ($\|v_i\| = 1$, $v_i^T v_j = 0$ for $i \ne j$) along which the data exhibits maximum variance.</li>
+<li><em>Eigenvalues</em> ($\lambda_i$): Scalars quantifying the absolute variance captured along eigenvector $v_i$.</li>
+<li><em>Projection Matrix</em>: Sorting eigenvectors by descending $\lambda_i$ yields the projection matrix $W_k = [v_1, v_2, \dots, v_k] \in \mathbb{R}^{d \times k}$, mapping original centered data $X$ to decorrelated low-dimensional coordinates:
+<p class="mb-2">$$Z = X W_k$$</p></li>
+</ul></li>
+<li><strong>Decorrelation Advantage (去相關性)</strong>:
+<ul class="note-list">
+<li>In the transformed space, the covariance between any two distinct principal components is strictly zero:
+<p class="mb-2">$$\operatorname{Cov}(Z_i, Z_j) = 0 \quad (\forall i \ne j)$$</p></li>
+<li>Eliminating multicollinearity provides immense value to downstream algorithms, particularly flexible neural models like Multi-Layer Perceptrons (MLPs), which can learn complex interactions across uncorrelated axes far more efficiently.</li>
+</ul></li>
+<li><strong>The Non-Linearity Reality Check (PCA Limitations)</strong>:
+<ul class="note-list">
+<li><strong>PCA is strictly a linear transformation</strong>: It computes linear combinations of original features ($z = \sum w_i x_i$).</li>
+<li><strong>Does NOT create non-linear features</strong>: PCA cannot synthesize polynomial, exponential, or curved interaction terms.</li>
+<li><strong>Does NOT directly capture non-linear relationships</strong>: If data lies on a non-linear manifold (e.g., Swiss roll, concentric rings), PCA simply flattens or projects the geometry linearly, often conflating distinct non-linear clusters.</li>
+</ul></li>
+<li><strong>Why and How PCA Indirectly Empowers Non-Linear Models (MLPs)</strong>:
+<ul class="note-list">
+<li>While PCA cannot extract non-linear patterns on its own, its linear orthogonalization dramatically enhances an MLP's capacity to learn underlying non-linear manifolds:
+<p class="mb-2">1. <strong>Eliminating Linear Collinearity &amp; Relieving Hidden Layer Burden</strong>: When raw features are strongly correlated, early hidden layers in an MLP are forced to expend model capacity and gradient updates learning how to disentangle redundant linear dependencies. Post-PCA, features are already decorrelated; the MLP can immediately dedicate its expressive capacity and non-linear activations (ReLU, GELU) to modeling genuine non-linear relationships.</p>
+<p class="mb-2">2. <strong>Cleanly Exposing Confounded Non-linear Interactions</strong>: In raw feature space, complex non-linear relationships are frequently obscured or confounded by dominant linear correlations. Projecting onto orthogonal principal components decouples the linear dependencies, presenting non-linear interactions in a clean coordinate system where decision boundaries are easier to partition.</p>
+<p class="mb-2">3. <strong>Suppressing Overfitting via Variance Truncation</strong>: Truncating low-eigenvalue components filters out high-frequency noise and redundant channels. Constrained to salient variance directions, MLPs (which are prone to memorizing noise in unregularized high dimensions) generalize substantially better on test sets.</p></li>
+</ul></li>
+<li><strong>Architectural Synthesis: PCA as the "Linear Noise Cleaner"</strong>:
+<ul class="note-list">
+<li>PCA's true role in modern pipelines is <strong>linear dimensionality reduction + orthogonal decorrelation</strong>.</li>
+<li>Think of PCA as <strong>"cleaning linear noise and collinearity"</strong>: it standardizes and decouples the input geometry, liberating deep non-linear architectures (MLPs) to fully focus on discovering complex non-linear structures.</li>
+</ul></li>
+</ul></li>
+<li><strong>t-Distributed Stochastic Neighbor Embedding (t-SNE)</strong>:
+<ul class="note-list">
+<li>Non-linear technique designed specifically for 2D/3D visual exploratory analysis.</li>
+<li>Converts pairwise Euclidean distances into conditional probabilities in high-dimensional space and student-t probabilities in low-dimensional space.</li>
+<li>Optimizes embedding coordinates by minimizing the <strong>Kullback-Leibler (KL) Divergence</strong> between high- and low-dimensional probability distributions via gradient descent.</li>
+<li><strong>Perplexity Parameter (5 to 50)</strong>: Balances attention between preserving local neighborhood clusters (low perplexity) vs. maintaining global layout (high perplexity).</li>
+<li><strong>Crucial Diagnostic Nature</strong>: t-SNE does not preserve global distances or densities and is non-deterministic. It is strictly a visual clustering diagnostic, NOT a valid preprocessing feature extractor for downstream predictive models.</li>
+</ul></li>
 </ul>
 
-<ol class="mb-3">
-<li>Why Use Ensembles?</li>
-</ol>
+<hr>
+
+<h4 id="3-ensemble-methods-for-data-analysis" class="mb-2">3. Ensemble Methods for Data Analysis</h4>
 
 <ul class="note-list">
-<li>Reduce bias/variance, improve generalization, more robust.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Bias-Variance Trade-off</li>
-</ol>
-
+<li><strong>Core Principles of Ensemble Learning</strong>:
 <ul class="note-list">
-<li>Bias = underfitting; Variance = overfitting</li>
-<li>Ensemble aims to balance bias &amp; variance.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Voting Ensembles</li>
-</ol>
-
+<li>Combines multiple machine learning models (base learners) to produce a combined predictor with superior accuracy and stability.</li>
+<li>Base learners make distinct, uncorrelated errors; ensembling averages out individual mistakes to bolster generalization.</li>
+</ul></li>
+<li><strong>The Bias-Variance Trade-off in Ensembles</strong>:
 <ul class="note-list">
-<li>Hard Voting: majority class wins.</li>
-<li>Soft Voting: average probabilities; higher confidence dominates.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Bagging (Bootstrap Aggregating)</li>
-</ol>
-
+<li>High-bias models oversimplify data relationships (underfitting).</li>
+<li>High-variance models capture noise and fluctuate with training perturbations (overfitting).</li>
+<li>Ensembles balance this trade-off: <strong>Bagging</strong> primarily reduces variance, while <strong>Boosting</strong> systematically reduces both bias and variance.</li>
+</ul></li>
+<li><strong>Voting Ensembles</strong>:
 <ul class="note-list">
-<li>Create multiple datasets via bootstrap sampling.</li>
-<li>Train independent models → reduce variance.</li>
-<li>Final prediction: regression → average; classification → majority vote.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Random Forest</li>
-</ol>
-
+<li><strong>Hard Voting</strong>: Final prediction is the majority class vote among base classifiers.</li>
+<li><strong>Soft Voting</strong>: Predictions are weighted by class probabilities; the class with the highest average probability wins. Requires well-calibrated base models and allows confident models to exert greater influence.</li>
+</ul></li>
+<li><strong>Bagging (Bootstrap Aggregating)</strong>:
 <ul class="note-list">
-<li>Bagging + decision trees; random subset of features at each split.</li>
-<li>Reduces overfitting, assesses feature importance.</li>
-<li>Prediction: classification → majority vote; regression → average.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Out-of-Bag (OOB) Error</li>
-</ol>
-
+<li>Generates $B$ distinct training sets by sampling $N$ instances with replacement (bootstrapping).</li>
+<li>Trains independent base models in parallel across each subset.</li>
+<li>Aggregation: Averages predictions for regression; applies majority voting for classification.</li>
+<li>Primarily suppresses variance without increasing model bias; particularly effective for high-variance learners like unpruned decision trees.</li>
+</ul></li>
+<li><strong>Random Forests</strong>:
 <ul class="note-list">
-<li>~1/3 of data unused in each bootstrap → used to estimate error.</li>
-</ul>
-
-<ol class="mb-3">
-<li>Boosting</li>
-</ol>
-
+<li>An ensemble of decision trees integrating bagging with <strong>random feature subspacing</strong>: at each split node, only a random subset of features (typically $\sqrt{p}$ for classification, $p/3$ for regression) is considered.</li>
+<li>De-correlates individual trees, preventing dominant features from dictating every tree's root structure.</li>
+<li><strong>Out-of-Bag (OOB) Error Estimation</strong>:
 <ul class="note-list">
-<li>Sequential ensemble; each model focuses on previous errors.</li>
-<li>Reduces both bias &amp; variance.</li>
+<li>Each bootstrap sample omits approximately $(1 - 1/n)^n \approx 36.8\%$ of training instances.</li>
+<li>These unused out-of-bag samples serve as an intrinsic validation set to estimate generalization error without a separate validation split.</li>
+</ul></li>
+<li>Generates intrinsic feature importance rankings by tracking reduction in Gini impurity or OOB accuracy degradation upon permuting feature values.</li>
+</ul></li>
+<li><strong>Boosting</strong>:
+<ul class="note-list">
+<li>Sequential ensemble technique where each subsequent model focuses on instances misclassified by earlier models.</li>
+<li>Converts weak learners (e.g., decision stumps with performance slightly better than random guessing) into strong, highly accurate learners.</li>
+<li><strong>Adaptive Reweighting</strong>:
+<ul class="note-list">
+<li>Initially, all training points carry equal weight $w_i = 1/N$.</li>
+<li>After each round, weights of misclassified instances increase, while weights of correctly classified instances decrease.</li>
+<li>Subsequent models prioritize harder, previously missed data points.</li>
+</ul></li>
+</ul></li>
+<li><strong>Bagging vs. Boosting Comparison</strong>:</li>
 </ul>
-
-<ol class="mb-3">
-<li>Boosting vs Bagging</li>
-</ol>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
     <thead><tr>
-<th>Aspect</th>
-<th>Boosting</th>
-<th>Bagging</th>
+<th>Dimension</th>
+<th>Bagging (e.g., Random Forest)</th>
+<th>Boosting (e.g., AdaBoost, XGBoost)</th>
     </tr></thead>
     <tbody>
 <tr>
-<td>Model Building</td>
-<td>Sequential</td>
-<td>Independent</td>
+<td><strong>Model Building</strong></td>
+<td>Parallel &amp; Independent</td>
+<td>Sequential &amp; Iterative</td>
 </tr>
 <tr>
-<td>Error Focus</td>
-<td>Misclassified points</td>
-<td>All points equally</td>
+<td><strong>Sample Weighting</strong></td>
+<td>Equal probability (bootstrap with replacement)</td>
+<td>Dynamic reweighting based on prior errors</td>
 </tr>
 <tr>
-<td>Purpose</td>
-<td>Reduce bias &amp; variance</td>
-<td>Reduce variance</td>
+<td><strong>Error Reduction</strong></td>
+<td>Primarily reduces <strong>variance</strong></td>
+<td>Reduces both <strong>bias and variance</strong></td>
 </tr>
 <tr>
-<td>Training</td>
-<td>Weighted points</td>
-<td>Bootstrap subsets</td>
+<td><strong>Base Learner Type</strong></td>
+<td>Complex, high-variance learners (deep trees)</td>
+<td>Simple, high-bias weak learners (shallow stumps)</td>
 </tr>
 <tr>
-<td>Overfitting Risk</td>
-<td>Higher</td>
-<td>Lower</td>
-</tr>
-<tr>
-<td>Common Algorithms</td>
-<td>AdaBoost, Gradient Boosting, XGBoost</td>
-<td>Random Forest</td>
+<td><strong>Overfitting Risk</strong></td>
+<td>Low (adding trees does not overfit)</td>
+<td>Higher (sensitive to noisy labels and outliers)</td>
 </tr>
     </tbody>
   </table>
 </div>
 
-<ol class="mb-3">
-<li>AdaBoost</li>
-</ol>
-
 <ul class="note-list">
-<li>Sequentially corrects errors of weak learners.</li>
-<li>Sensitive to noise.</li>
+<li><strong>AdaBoost (Adaptive Boosting)</strong>:
+<ul class="note-list">
+<li>Adjusts sample weights exponentially based on misclassification rates.</li>
+<li>Sensitive to noisy labels and extreme outliers because it forces later models to aggressively fit anomalies.</li>
+</ul></li>
+<li><strong>XGBoost (eXtreme Gradient Boosting)</strong>:
+<ul class="note-list">
+<li>Highly scalable, parallelized gradient boosting framework.</li>
+<li>Formulates objective using a second-order Taylor expansion (gradients and Hessians).</li>
+<li>Incorporates explicit L1 ($\alpha$) and L2 ($\lambda$) leaf weight regularization into the objective to prevent overfitting.</li>
+<li>Employs shrinkage learning rate ($\eta$) and feature/row subsampling to control variance.</li>
+</ul></li>
+<li><strong>Stacking (Stacked Generalization)</strong>:
+<ul class="note-list">
+<li>Trains multiple heterogeneous base learners (e.g., Random Forest, SVM, k-NN) on the same dataset.</li>
+<li>Uses out-of-fold cross-validated predictions of base models as input features to train a higher-level <strong>meta-learner</strong> (commonly Logistic Regression).</li>
+<li>The meta-learner learns optimal linear or non-linear weightings across distinct algorithm families.</li>
+</ul></li>
 </ul>
 
-<ol class="mb-3">
-<li>XGBoost</li>
-</ol>
+<hr>
+
+<p class="mb-3">Week 5: Deep Learning Foundations, Architectural Scaling, and Modalities</p>
+
+<h4 id="1-introduction-to-deep-learning" class="mb-2">1. Introduction to Deep Learning</h4>
+
+<h5 class="mb-2">1.1 What Is Deep Learning</h5>
 
 <ul class="note-list">
-<li>Efficient gradient boosting.</li>
-<li>Regularization (L1/L2), parallel computing.</li>
-<li>Iteratively fits residuals to trees.</li>
+<li>Deep learning scales artificial neural networks by significantly increasing network depth (the number of successive hidden processing layers).</li>
+<li>Rather than manually designing handcrafted features, each layer transforms representations from the previous layer, establishing an automated <strong>hierarchy of features</strong>:
+<ul class="note-list">
+<li><strong>Early layers</strong>: Extract simple, localized patterns (e.g., edges, pixel gradients, phonemes, characters).</li>
+<li><strong>Middle layers</strong>: Compose parts and structural motifs (e.g., corners, textures, syllable patterns, phrases).</li>
+<li><strong>Late layers</strong>: Synthesize high-level abstract semantics (e.g., entire object categories, speaker identities, document intent).</li>
+</ul></li>
+<li><strong>Core Paradigm Shift</strong>: Deep learning automatically discovers optimal data representations end-to-end directly from raw data, eliminating manual feature engineering.</li>
 </ul>
 
-<ol class="mb-3">
-<li>Stacking</li>
-</ol>
+<h5 class="mb-2">1.2 Fundamental Layer Types</h5>
 
 <ul class="note-list">
-<li>Combines base models using meta-learner.</li>
-<li>Steps:</li>
+<li><strong>Dense Layer (Fully Connected / Multi-Layer Perceptron / MLP)</strong>:
+<p class="mb-2">$$\text{output} = f(W x + b)$$</p>
+<p class="mb-2">Every input unit connects to every output neuron; parameterized by weight matrix $W \in \mathbb{R}^{m \times d}$ and bias vector $b \in \mathbb{R}^m$, followed by non-linear activation $f$.</p>
+<ul class="note-list">
+<li><em>The Canonical Deep Learning Baseline</em>: MLPs serve as the naive universal approximator for non-linear modeling, capable of learning complex decision boundaries across arbitrary tabular and vector inputs.</li>
+<li><em>Practical Drawbacks</em>:
+<ul class="note-list">
+<li>High parameter footprint ($\mathcal{O}(d \cdot m)$ weights per layer) and memory overhead.</li>
+<li>Lower parameter and sample efficiency compared to architectures with spatial or temporal inductive biases (CNNs, Transformers).</li>
+<li>Learning efficiency suffers when raw input features are collinear and entangled, as early hidden layers must spend capacity untangling redundant linear correlations rather than discovering pure non-linear patterns.</li>
+</ul></li>
+</ul></li>
+<li><strong>Convolutional Layer</strong>:
+<p class="mb-2">Slides a compact learnable parameter kernel over the input tensor to detect local spatial/temporal motifs with weight sharing and stride/padding controls.</p></li>
 </ul>
 
-<ol class="mb-3">
-<li>Train base models.</li>
-<li>Base predictions → features for meta-learner.</li>
-<li>Meta-learner combines predictions for final output.</li>
-</ol>
+<h5 class="mb-2">1.3 Depth and Hierarchical Representation Power</h5>
 
 <ul class="note-list">
-<li>Meta-learner often logistic regression.</li>
+<li>Depth expands the effective receptive field and enables exponential expressive efficiency compared to shallow networks of identical parameter count.</li>
+<li>Paired with parameter-sharing inductive biases (convolutions in vision, recurrence or self-attention in language).</li>
 </ul>
 
-<p class="mb-3">✅ Key Python Libraries</p>
+<hr>
+
+<h4 id="2-optimization-and-regularization-in-deep-networks" class="mb-2">2. Optimization and Regularization in Deep Networks</h4>
+
+<h5 class="mb-2">2.1 Gradient Flow Challenges</h5>
 
 <ul class="note-list">
-<li>scikit-learn: Bagging, Boosting, Stacking implementations.</li>
-<li>XGBoost: Efficient gradient boosting.</li>
+<li><strong>Vanishing Gradients</strong>: Across many stacked layers, continuous multiplication of small derivatives ($&lt; 1$) causes gradients to shrink exponentially as they propagate backward to early layers, stalling training.</li>
+<li><strong>Exploding Gradients</strong>: Repeated multiplication of derivatives $&gt; 1$ leads to unbounded gradient growth, causing numerical instability, <code>NaN</code> errors, and divergent oscillations.</li>
 </ul>
 
-<p class="mb-3">Week 4: Introduction to Machine Learning</p>
-
-<p class="mb-3">Unsupervised Learning</p>
+<h5 class="mb-2">2.2 Modern Optimizers</h5>
 
 <ul class="note-list">
-<li>Learning patterns from unlabeled data</li>
-<li>No target labels or outputs</li>
-<li>Useful for large datasets or expensive labeling</li>
-<li>Goals: discover hidden patterns, group similar data points, reduce dimensionality</li>
+<li><strong>SGD (Stochastic Gradient Descent)</strong>: Updates parameters in the direction of the mini-batch negative gradient; foundational but prone to oscillation in steep ravines.</li>
+<li><strong>Momentum SGD</strong>: Introduces an exponential moving average of past gradients (velocity) to accelerate along consistent directions and dampen oscillations.</li>
+<li><strong>Adam (Adaptive Moment Estimation)</strong>: Maintains running estimates of both the first moment (mean gradient) and second uncentered moment (variance) to adapt learning rates per parameter.</li>
+<li><strong>AdamW</strong>: Decouples L2 weight decay from the gradient update calculations, preventing regularization distortion in adaptive optimizers and significantly improving generalization.</li>
 </ul>
 
-<p class="mb-3">Applications</p>
+<h5 class="mb-2">2.3 Regularization Techniques</h5>
 
 <ul class="note-list">
-<li>Clustering: group data points by similarity (customer segmentation, document clustering, image segmentation)</li>
-<li>Dimensionality Reduction: reduce features while preserving information (PCA, t-SNE)</li>
+<li><strong>Weight Decay (L2 Regularization)</strong>: Adds a penalty on squared weight norms $\frac{1}{2} \lambda \|w\|^2$ to the loss function, preventing weights from growing excessively large.</li>
+<li><strong>Dropout</strong>: Randomly zeroes out a fraction $p$ of hidden activations during each training forward pass, preventing complex co-adaptation of neurons.</li>
+<li><strong>Stochastic Depth</strong>: Randomly bypasses entire residual blocks during training while utilizing the full depth at test time, accelerating training and acting as an architectural ensemble.</li>
+<li><strong>Data Augmentation</strong>: Synthesizes label-preserving perturbations (crops, rotations, color jitter) to enrich the training distribution.</li>
+<li><strong>Early Stopping</strong>: Halts gradient updates when validation loss fails to improve across a pre-defined patience window.</li>
 </ul>
 
-<p class="mb-3">k-Means Clustering</p>
+<hr>
+
+<h4 id="3-network-depth-and-practical-engineering-considerations" class="mb-2">3. Network Depth and Practical Engineering Considerations</h4>
+
+<h5 class="mb-2">3.1 Shallow vs. Deep Networks</h5>
 
 <ul class="note-list">
-<li><strong>Partitions</strong> data into k clusters by minimizing distance to cluster centroids</li>
-<li>Steps: choose k, initialize centroids, assign points, update centroids, repeat until convergence</li>
-<li>Standardize features before clustering</li>
-<li>Python: scikit-learn KMeans.fit_predict()</li>
+<li><em>Shallow Networks</em>: One or two hidden layers; limited expressive capacity; require extensive manual feature engineering.</li>
+<li><em>Deep Networks</em>: Multiple non-linear compositions yielding rich semantic hierarchies, but requiring careful initialization and gradient highways.</li>
 </ul>
 
-<p class="mb-3">Choosing Number of Clusters (k)</p>
+<h5 class="mb-2">3.2 Practical Stability Engineering</h5>
 
 <ul class="note-list">
-<li>Important for clustering quality</li>
-<li>Methods: Elbow method (plot SSE), Silhouette score (max value), Davies-Bouldin Index (lower is better)</li>
+<li><strong>Weight Initialization</strong>:
+<ul class="note-list">
+<li>Poor initialization triggers immediate vanishing or exploding gradients.</li>
+<li><strong>He (Kaiming) Initialization</strong>: Specifically designed for ReLU/GELU activations, drawing weights with variance $\text{Var}(W) = 2 / n_{\text{in}}$ to maintain activation variance across deep stacks.</li>
+</ul></li>
+<li><strong>Activation Function Selection</strong>:
+<ul class="note-list">
+<li>Deep networks avoid saturating activations (Sigmoid and Tanh) in hidden layers because their derivatives approach zero for large positive or negative values.</li>
+<li>Non-saturating activations—<strong>ReLU</strong>, <strong>GELU</strong> (Gaussian Error Linear Unit), and <strong>SiLU</strong> (Swish)—are preferred to sustain gradient flow.</li>
+<li><strong>Softmax</strong> is reserved for the final output layer to convert raw logits into normalized categorical probability distributions.</li>
+</ul></li>
+<li><strong>Normalization Layers</strong>:
+<ul class="note-list">
+<li><strong>Batch Normalization (BatchNorm)</strong>: Normalizes activations across the mini-batch during training; uses running population statistics at inference.</li>
+<li><strong>Layer Normalization (LayerNorm)</strong>: Normalizes across feature dimensions independently per sample; ideal for sequential models, Transformers, and variable batch sizes.</li>
+</ul></li>
+<li><strong>Gradient Control &amp; Numerical Precision</strong>:
+<ul class="note-list">
+<li><strong>Gradient Clipping</strong>: Enforces a maximum threshold on gradient norms ($\|\nabla_w L\| \le \text{threshold}$) to eliminate exploding gradient spikes.</li>
+<li><strong>Mixed Precision (FP16/BF16)</strong>: Accelerates matrix computations and reduces memory footprint while maintaining numerical stability.</li>
+<li><strong>Automatic Differentiation (Autograd)</strong>: Constructs dynamic computation graphs to compute exact reverse-mode derivatives via the chain rule.</li>
+</ul></li>
 </ul>
 
-<p class="mb-3">Hierarchical Clustering</p>
+<hr>
+
+<h4 id="4-receptive-field-and-transfer-learning" class="mb-2">4. Receptive Field and Transfer Learning</h4>
 
 <ul class="note-list">
-<li>Builds hierarchy instead of pre-defined k</li>
-<li>Types: Agglomerative (bottom-up), Divisive (top-down)</li>
-<li>Visualized with dendrograms (height = distance, merge order shows similarity)</li>
-<li>Cutting dendrogram at threshold height determines cluster count</li>
+<li><strong>Receptive Field Expansion</strong>:
+<ul class="note-list">
+<li>In spatial and temporal networks, the receptive field is the specific sub-region of the input that influences a particular neuron's activation.</li>
+<li>Successive convolutional and pooling layers progressively expand this field of view; early neurons observe tiny pixel neighborhoods, while late neurons observe the entire visual scene.</li>
+</ul></li>
+<li><strong>Transfer Learning Principles</strong>:
+<ul class="note-list">
+<li>Early layer representations (edges, textures, color gradients) are universal and generic across natural data distributions.</li>
+<li><strong>Fine-Tuning</strong>: Practitioners freeze generic early layers and fine-tune only task-specific deeper layers on target domain data, drastically reducing data and compute requirements.</li>
+</ul></li>
 </ul>
 
-<p class="mb-3">Key Python Libraries</p>
+<hr>
+
+<h4 id="5-deep-learning-architectures-across-modalities" class="mb-2">5. Deep Learning Architectures Across Modalities</h4>
 
 <ul class="note-list">
-<li>NumPy, Pandas: data handling</li>
-<li>Matplotlib: visualization</li>
-<li>scikit-learn: KMeans, StandardScaler, clustering metrics</li>
-<li>scipy.cluster.hierarchy: dendrogram, linkage, fcluster</li>
+<li><strong>Computer Vision (Images &amp; Video)</strong>:
+<ul class="note-list">
+<li>Relies on <strong>Convolutional Neural Networks (CNNs)</strong> and Vision Transformers (ViTs).</li>
+<li>Early layers capture local edges and textures; intermediate layers extract parts and silhouettes; final layers classify complex semantic objects.</li>
+</ul></li>
+<li><strong>Natural Language Processing (Text &amp; Speech)</strong>:
+<ul class="note-list">
+<li>Sequence processing capturing syntactic relationships and long-range semantic intent.</li>
+<li>Transitioned from Recurrent Neural Networks (RNNs, LSTMs) to self-attention <strong>Transformers</strong>.</li>
+</ul></li>
+<li><strong>Audio and Speech Processing</strong>:
+<ul class="note-list">
+<li>Processes raw waveforms or spectrograms; early layers capture phonemes and formant frequencies; deeper layers infer speaker traits, transcription, and emotion.</li>
+</ul></li>
+<li><strong>Tabular and Structured Data</strong>:
+<ul class="note-list">
+<li>Uses deep multi-layer perceptrons (MLPs) paired with <strong>Entity Embeddings</strong> to map high-cardinality categorical variables into continuous dense representations, capturing non-linear cross-feature interactions.</li>
+</ul></li>
 </ul>
 
-<p class="mb-3">Dimensionality Reduction</p>
+<hr>
+
+<h4 id="6-convolutional-neural-networks-cnns" class="mb-2">6. Convolutional Neural Networks (CNNs)</h4>
 
 <ul class="note-list">
-<li>Dimensionality: number of independent features</li>
-<li>Curse of dimensionality: high dimensions → sparse data, harder patterns, risk of overfitting</li>
-<li>Benefits: efficiency, noise reduction, visualization, storage reduction</li>
-<li>Feature Selection: keep important features (correlation, mutual information, chi-square)</li>
-<li>Feature Extraction: create new features (e.g., PCA)</li>
-<li>Techniques: PCA (linear, fast, interpretable), t-SNE (non-linear, preserves local structure, visualization), Autoencoders (non-linear, deep learning)</li>
-<li>PCA: compute covariance matrix, eigen decomposition, select top eigenvectors, project data</li>
-<li>t-SNE: convert distances to probabilities, map to 2D/3D, optimize with KL divergence, mainly for visualization</li>
+<li><strong>Motivation</strong>: Dense networks scale poorly on spatial images (a $1000 \times 1000 \times 3$ image produces 3 million inputs per neuron, causing parameter explosion).</li>
+<li><strong>Core Operations</strong>:
+<ul class="note-list">
+<li><strong>2D Convolution</strong>: Slides learnable kernels over input feature maps, computing local dot products.</li>
+<li><strong>Weight Sharing</strong>: The same kernel weights are applied across all spatial locations, drastically reducing parameter count and enforcing <strong>translation equivariance</strong>.</li>
+<li><strong>Stride &amp; Padding</strong>: Stride controls step size; padding controls boundary conservation (<code>same</code> vs. <code>valid</code>).</li>
+</ul></li>
+<li><strong>Pooling Layers</strong>:
+<ul class="note-list">
+<li>Downsample spatial dimensions to reduce computation and confer translation invariance.</li>
+<li><strong>Max Pooling</strong>: Retains the most prominent local feature activation.</li>
+<li><strong>Average Pooling</strong>: Smooths feature representations.</li>
+</ul></li>
+<li><strong>Fully Connected Head</strong>: Concludes the CNN architecture, combining spatial feature maps into final prediction logits.</li>
 </ul>
 
-<p class="mb-3">Week 4: Ensemble Methods</p>
+<hr>
 
-<p class="mb-3">Ensemble Learning</p>
+<h4 id="7-recurrent-neural-networks-rnns" class="mb-2">7. Recurrent Neural Networks (RNNs)</h4>
 
 <ul class="note-list">
-<li>Combine multiple models to improve performance</li>
-<li>Categories: Bagging, Boosting, Stacking</li>
-<li>Goal: improve generalization, reduce bias/variance</li>
+<li><strong>Sequence Modeling</strong>:
+<ul class="note-list">
+<li>Designed to process sequential data $x = (x_1, x_2, \dots, x_T)$ where current outputs depend on past history.</li>
+<li><strong>Recurrent Hidden State</strong>: Maintains internal temporal memory:
+<p class="mb-2">$$h_t = \tanh(W_{hh} h_{t-1} + W_{xh} x_t + b)$$</p></li>
+<li>Weights $W_{hh}, W_{xh}$ are shared across all time steps.</li>
+</ul></li>
+<li><strong>Backpropagation Through Time (BPTT)</strong>:
+<ul class="note-list">
+<li>The recurrent network is unrolled across time steps, computing loss gradients with respect to weights via the chain rule backwards through the entire sequence.</li>
+</ul></li>
+<li><strong>The Sequential Gradient Bottleneck</strong>:
+<ul class="note-list">
+<li>Repeated multiplication of transition matrix $W_{hh}$ over long sequences causes severe vanishing or exploding gradients, rendering basic RNNs incapable of learning long-term dependencies.</li>
+</ul></li>
 </ul>
 
-<p class="mb-3">Bias-Variance Trade-off</p>
+<hr>
+
+<h4 id="8-long-short-term-memory-lstm-and-gated-recurrent-units-grus" class="mb-2">8. Long Short-Term Memory (LSTM) and Gated Recurrent Units (GRUs)</h4>
 
 <ul class="note-list">
-<li>Bias: error from simple models (underfitting)</li>
-<li>Variance: error from sensitivity to data (overfitting)</li>
-<li>Total error = Bias² + Variance + Irreducible error</li>
-<li>Bagging reduces variance, Boosting reduces bias &amp; variance</li>
+<li><strong>LSTM Memory Architecture</strong>:
+<ul class="note-list">
+<li>Solves the vanishing gradient problem by maintaining an additive <strong>Cell State ($C_t$)</strong> alongside the hidden state ($h_t$), regulated by three multiplicative gates:</li>
+<li><strong>Forget Gate ($f_t$)</strong>: Decides what past information to discard: $f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)$.</li>
+<li><strong>Input Gate ($i_t$)</strong>: Selects which new candidate values $\tilde{C}_t$ to store in the cell state: $i_t = \sigma(W_i [h_{t-1}, x_t] + b_i)$.</li>
+<li><strong>Cell State Update</strong>: Linear additive combination preventing vanishing gradients: $C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t$.</li>
+<li><strong>Output Gate ($o_t$)</strong>: Filters the cell state to produce the updated hidden state: $h_t = o_t \odot \tanh(C_t)$.</li>
+</ul></li>
+<li><strong>GRUs (Gated Recurrent Units)</strong>:
+<ul class="note-list">
+<li>Simplified variant combining the cell state and hidden state, using only two gates: an <strong>Update Gate</strong> (merging forget and input behavior) and a <strong>Reset Gate</strong>. More computationally efficient while maintaining long-range memory.</li>
+</ul></li>
 </ul>
 
-<p class="mb-3">Voting Ensembles</p>
+<hr>
+
+<h4 id="9-beyond-recurrence-the-transition-to-transformers" class="mb-2">9. Beyond Recurrence: The Transition to Transformers</h4>
 
 <ul class="note-list">
-<li>Hard voting: majority class wins</li>
-<li>Soft voting: average predicted probabilities</li>
-</ul>
-
-<p class="mb-3">Bagging</p>
-
+<li>While LSTMs alleviate vanishing gradients, their fundamentally sequential recurrence prevents parallelization across time steps during training.</li>
+<li><strong>The Transformer Architecture</strong>:
 <ul class="note-list">
-<li>Bootstrap sampling → multiple datasets</li>
-<li>Train separate models → reduce variance</li>
-<li>Random Forest: bagging with decision trees, random feature selection, reduces overfitting, can assess feature importance</li>
-<li>Out-of-Bag error: ~1/3 data not used, evaluate performance without validation set</li>
-</ul>
-
-<p class="mb-3">Boosting</p>
-
-<ul class="note-list">
-<li>Sequential model training, focus on previous errors</li>
-<li>Reduce bias &amp; variance</li>
-<li>AdaBoost: weak learners, sensitive to noise</li>
-<li>XGBoost: gradient boosting with regularization, handles large datasets, iterative residual fitting</li>
-</ul>
-
-<p class="mb-3">Stacking</p>
-
-<ul class="note-list">
-<li>Meta-learner combines predictions from multiple base models</li>
-<li>Steps: train base models → predictions become features → train meta-learner</li>
-<li>Common meta-learner: logistic regression</li>
-</ul>
-
-<p class="mb-3">Week 5: Neural Networks</p>
-
-<p class="mb-3">Neural Networks</p>
-
-<ul class="note-list">
-<li>Computational models inspired by biological neurons</li>
-<li>Layers: input, hidden, output</li>
-<li>Neurons: compute weighted sum + bias, apply activation function</li>
-</ul>
-
-<p class="mb-3">Components</p>
-
-<ul class="note-list">
-<li>Input layer: receives features</li>
-<li>Hidden layers: intermediate processing</li>
-<li>Output layer: produces predictions</li>
-</ul>
-
-<p class="mb-3">Mathematical Representation</p>
-
-<ul class="note-list">
-<li>z = Σ(wi * xi) + b</li>
-<li>Activation: a = f(z)</li>
-</ul>
-
-<p class="mb-3">Activation Functions</p>
-
-<ul class="note-list">
-<li>ReLU: [0, ∞), hidden layers</li>
-<li>Sigmoid: (0,1), binary classification</li>
-<li>Tanh: (-1,1), hidden layers</li>
-<li>Softmax: probabilities, multi-class classification</li>
-</ul>
-
-<p class="mb-3">Forward Propagation</p>
-
-<ul class="note-list">
-<li>Pass input through network to compute output</li>
-</ul>
-
-<p class="mb-3">Loss Functions</p>
-
-<ul class="note-list">
-<li>Measure prediction error</li>
-<li>MSE: regression</li>
-<li>Binary cross-entropy: binary classification</li>
-</ul>
-
-<p class="mb-3">Backpropagation</p>
-
-<ul class="note-list">
-<li>Compute gradients with chain rule</li>
-<li>Adjust weights to minimize loss</li>
-</ul>
-
-<p class="mb-3">Gradient Descent</p>
-
-<ul class="note-list">
-<li>Update weights using gradients</li>
-<li>Learning rate controls step size</li>
-</ul>
-
-<p class="mb-3">Neural Network Class</p>
-
-<ul class="note-list">
-<li>Initialize weights &amp; biases</li>
-<li>Forward: compute activations</li>
-<li>Compute cost: cross-entropy for classification</li>
-<li>Backward: compute gradients</li>
-<li>Train: iterate forward, cost, backward, update weights</li>
-</ul>
-
-<p class="mb-3">Saving &amp; Loading Models</p>
-
-<ul class="note-list">
-<li>Use pickle to save/load trained neural network objects</li>
+<li>Eliminates recurrence entirely in favor of <strong>Multi-Head Self-Attention</strong>.</li>
+<li>Allows all sequence positions to interact directly in $\mathcal{O}(1)$ path length, enabling massive parallelization across modern GPU clusters and laying the foundation for modern Large Language Models and Foundation Models.</li>
+</ul></li>
 </ul>
 
 <p class="mb-3">Clusters in K-Means vs t-SNE</p>
@@ -2753,6 +2852,74 @@ def run_streamlit_app(port=8501):
 
 # Run the Streamlit app
 streamlit_process = run_streamlit_app()</code></pre></div>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>Analytics Roles &amp; Paradigms</strong>: Data Scientists interpret data through statistical inference; ML practitioners focus on manual feature engineering and tabular optimization; DL practitioners model representations directly via ANN architectures; Foundation Models (FMs) act as multi-task pre-trained generalists.
+<ul class="note-list">
+<li><strong>Linear Regression Foundations</strong>: Relies on 6 core statistical assumptions (Linearity, Independence of errors, Homoscedasticity, Normality of residuals, Absence of multicollinearity, No endogeneity). Adjusted R² penalizes non-informative predictors.</li>
+<li><strong>Classification Evaluation &amp; ROC-AUC</strong>: Precision penalizes false positives, Recall penalizes false negatives, and F1 score provides their harmonic mean. The ROC curve maps TPR vs FPR across thresholds, with AUC summarizing overall discrimination power.</li>
+<li><strong>Clustering &amp; Objective Metrics</strong>: k-means minimizes within-cluster inertia, evaluated via the Elbow method, Silhouette score, and Davies-Bouldin index (ratio of intra-cluster compactness $s_i$ to inter-cluster centroid separation $d_{ij}$, where lower indicates superior clustering).</li>
+<li><strong>Dimensionality Reduction &amp; PCA Decorrelation</strong>: PCA performs eigen-decomposition on the covariance matrix to project data onto orthogonal, decorrelated principal axes. While PCA is strictly linear and does not capture non-linear relationships directly, eliminating linear collinearity relieves non-linear models (MLPs) from untangling redundant features, allowing hidden units to dedicate full capacity to learning non-linear manifolds. In contrast, t-SNE minimizes KL-divergence exclusively for non-linear exploratory visualization.</li>
+<li><strong>Ensemble Learning Trade-offs</strong>: Bagging trains independent models on bootstrap samples to reduce variance (Random Forests with random feature selection and OOB evaluation); Boosting trains sequential models reweighting misclassified samples to reduce both bias and variance (AdaBoost, regularized XGBoost); Stacking uses a meta-learner to combine heterogeneous models.</li>
+<li><strong>Deep Learning Architecture &amp; Scaling</strong>: Depth enables automatic hierarchical feature extraction. Gradient stability in deep stacks requires proper initialization (He init), non-saturating activations (ReLU/GELU), normalization (BatchNorm/LayerNorm), and adaptive optimizers (Adam/AdamW).</li>
+<li><strong>Modalities &amp; Sequential Evolution</strong>: CNNs exploit spatial translation invariance via weight sharing and pooling; RNNs handle temporal sequences via recurrent hidden states but suffer from vanishing gradients across BPTT; LSTMs solve this via additive memory cells and 3 multiplicative gates; Transformers replace sequential recurrence entirely with parallel self-attention.</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
 </section>
         </div>
       </div>
