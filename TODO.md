@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] CS5246 / CS5228 / CS5223：整合補充材料與釐清概念
+    - 交付條件：將 CS5246 問題與 BPE 化學式實作心得、CS5228 churn case 與概念補充、CS5223 Week 9 與 Paxos preemption 筆記整合進各自 source；重建 HTML 與索引，頁尾提供 reviewkit/qprompt。
+    - 已完成：按概念/既有週次整合，修正 non-regular/undecidable、TF-IDF 長度偏差、ARI、PCA/t-SNE、XGBoost/stacking 誤貼、Paxos safety/leader 退位與 GFS acknowledgment 描述；提供官方/原始文獻核驗連結。
+    - Review 重點：作者全盤 proofread；確認課堂慣例、BPE marker/化學式辨識與 token IDs 的實作一致性、churn 實驗數值及 Phase1A/timer 實際程式。未提供的結果與程式行為均未視為已驗證。
+
 - [x] CS5446 cheatsheet from the supplied course materials
     - Delivery condition: Maintain a plain English, concept-focused `CS5446-cheatsheet.md` using original week labels, without question-specific Assignment/Tutorial answers, exam administration, lookup maps, reward shaping, or EVPI.
     - Completed: Removed detailed problem setups, case names, numerical answer sequences, and assignment-specific models. Preserved and generalized PDDL structure/invariants, goal interaction, HTN refinement, risk/EU procedures, objective selection, MC averaging, feature adequacy, advantage, and PPO clipping. Reduced length from 11,413 to 8,872 words. Checked English text, Markdown tables, formula delimiters, section references, original week labels, and equivalence of the PPO piecewise formula to its clipped objective.

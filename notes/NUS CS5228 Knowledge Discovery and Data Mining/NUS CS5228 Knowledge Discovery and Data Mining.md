@@ -10,7 +10,7 @@ Lang: en
 Tags: Data Mining, Clustering, Classification, Association Rules
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-10-04
+LastModified: 2026-10-06
 </meta>
 
 # NUS CS5228 Knowledge Discovery and Data Mining
@@ -144,6 +144,16 @@ LastModified: 2026-10-04
   - Knowledge discovery process
   - Data preparation: quality, EDA, preprocessing
 - Preprocessing is crucial for meaningful, efficient, valid analysis
+### Categorical encoding: representation changes the geometry
+
+For a nominal attribute with 50 categories, one-hot encoding typically creates 50 indicators (49 with a dropped reference category). This is sparse and explicit, but increases dimension and may hurt distance-based methods or small-sample models. It does not necessarily degrade every algorithm; regularized models and suitable sparse implementations can work well.
+
+Binary encoding assigns category codes and represents each using roughly `ceil(log2(50)) = 6` bits, with implementation-dependent conventions. It saves dimensions but introduces arbitrary shared-bit relationships, so compactness alone does not establish better predictive performance. Integer codes similarly introduce artificial order/distances. “Pseudo encoding” is not a standard method name; specify whether it means ordinal codes, binary encoding, hashing, target encoding, or learned embeddings.
+
+Target encoding replaces a category with a smoothed target statistic and can help supervised prediction with high cardinality. It risks leakage and overfitting, especially for rare categories. Training encodings should exclude a row's own label through cross-fitting; validation/test data must use mappings learned only from the appropriate training fold. Scikit-learn's `TargetEncoder.fit_transform(X, y)` cross-fits training encodings, whereas `fit(X, y).transform(X)` does not. Put it inside the validation pipeline. See the [TargetEncoder documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.TargetEncoder.html).
+
+For unsupervised customer segmentation, using churn-derived target encodings changes the task to label-informed grouping. Keep churn labels out of clustering inputs when the goal is independent behavioral structure.
+
 ## Week 2
 
 <draft>
@@ -1077,6 +1087,14 @@ Summary:
 - Evaluation metrics vary by data and task
 - KNN: intuitive, but sensitive to choice of k, scaling, dimensionality, and distance metric
 - Proper preprocessing, validation, and careful metric selection are essential for reliable model performance
+### Association rules: why start with single items, and what lift evaluates
+
+Apriori first finds frequent 1-itemsets even though useful rules typically involve multiple items. If an item is below minimum support, every itemset containing it is also below support. This downward-closure property prunes larger candidates before expensive counting.
+
+For rule `X → Y`, confidence is `P(Y|X)` and lift is `P(Y|X)/P(Y)`, equivalently `P(X,Y)/(P(X)P(Y))`. A popular consequent can produce high confidence even without association; lift compares the observed co-occurrence to the independence baseline. Lift above `1` suggests positive association, `1` suggests independence, and below `1` suggests negative association. Lift evaluates candidate rules; it neither discovers them by itself nor establishes causation. Rare, low-support rules can still have unstable large lift.
+
+Jaccard similarity instead compares two sets as `|A ∩ B| / |A ∪ B|`, ignoring joint absences. This makes it useful for asymmetric binary features such as item presence, where shared zeros need not be evidence of similarity.
+
 ## Week 6
 
 <draft>
@@ -2369,6 +2387,12 @@ Gradient Descent doesn’t get stuck in the local minimum when using Linear Regr
 - Gradient Descent applies to both; Normal Equation applies only to Linear Regression
 - Data normalization affects interpretability and regularization behavior
 - Logistic Regression can be extended to multi-class problems
+### Decision-tree reproducibility and nearest-neighbor geometry
+
+A greedy tree chooses the locally best split at each node; it does not search all tree structures for a global optimum. Reproducibility is a separate question: fixed data, implementation, settings, and random state can give the same tree, while randomized feature ordering or tie-breaking can change it. Random forests deliberately introduce randomness through sampling and feature selection.
+
+In 1-NN, each training point owns a Voronoi cell under the chosen distance. With Euclidean distance, candidate boundaries lie on perpendicular bisectors between points; only shared cell faces between different classes contribute to the classification boundary. Connecting pairwise midpoints is not a general construction. More neighbors often smooth the boundary, while very large `k` may favor the majority class. Neighbor voting is over labeled training examples, not a count of query words belonging to each class. Duplicate points with conflicting labels require a tie/data-quality policy; arbitrarily adding noise is not a universal fix.
+
 ## Week 8
 
 <draft>
@@ -3751,3 +3775,83 @@ Case 2: 2^k >> m ➜ 1 - e^(-m/(2^k)) ≈ 1 - (1 - m/(2^k)) ≈  m/(2^k) ≈ 0
 - patterns = statistical analysis
 - General principle:
   - Trade-off: speed / resource-efficiency vs. accuracy / errors
+
+
+## Applied Case Study: Customer Churn Segmentation and Prediction
+
+This case connects Week 1 preprocessing, Weeks 2–3 clustering/evaluation, Weeks 6–7 supervised models, and Week 10 dimensionality reduction. Start with two distinct questions: **what behavioral segments exist**, and **which customers are likely to churn**? Segmentation need not reproduce a binary churn label, while a churn predictor should be judged against that label on held-out customers.
+
+The supplied project notes describe observations and a selected model but contain no dataset, plots, fitted models, or validation scores. Feature rankings and model comparisons below are therefore reported project observations, not independently verified results. The XGBoost and stacking descriptions are conceptual replacements for mistakenly copied clustering text.
+
+### 1. Establish the data and evaluation contract
+
+Check missing values, duplicates, feature types, category frequencies, and churn prevalence. Imbalanced categories are not themselves target-class imbalance; inspect both. In an illustrative 85:15 non-churn/churn split, always predicting non-churn gives 85% accuracy and zero churn recall. Report minority-class metrics and a baseline rather than accuracy alone.
+
+Split before fitting imputers, scalers, encoders, PCA, feature selection, or resampling. For supervised cross-validation, fit these within each training fold. For behavioral clustering, remove the target and post-outcome variables, encode categories with a defensible distance interpretation, and scale numerical features so units do not dominate distance. Check redundancy between minutes and charges: if charges are a deterministic rate multiple of minutes, including both double-weights one behavior.
+
+### 2. Interpret the reported churn signals cautiously
+
+| Reported feature signal | Possible interpretation | What still needs checking |
+|---|---|---|
+| `International plan`: strongest positive signal | Plan holders appear more likely to churn | Association measure, coding, sample counts, plan pricing and confounders |
+| `Customer service calls`: second strongest positive signal | Repeated support contact may indicate dissatisfaction | Timing of calls, issue severity, reverse causation |
+| `Total day charge` / `Total day minutes`: notable positive signals | Higher usage/bills may be associated with switching | Charge–minute redundancy, plan differences, nonlinear effects |
+| International/evening charges and minutes: milder positives | Additional usage/cost associations | Uncertainty and interactions with plans |
+| `Voice mail plan` / `Number vmail messages`: weak negative signals | Some engaged customers may churn less | Small effect sizes, confounding and generalization |
+
+“Positive” must refer to a specified statistic, such as a correlation or model coefficient under known coding. These observations motivate hypotheses; they do not prove that higher bills cause churn or that changing a feature would prevent it. Use held-out performance and suitable model interpretation to distinguish univariate associations from conditional prediction effects.
+
+### 3. PCA, t-SNE, and feature selection serve different purposes
+
+With 19+ features, direct joint visualization is difficult. **PCA** gives linear components maximizing retained variance; choosing enough components for at least 80% explained variance is a project rule, not a guarantee of class/cluster separation. **t-SNE** gives a nonlinear 2D view emphasizing local neighborhoods. It is a separate method, not PCA, and apparent gaps or bridges in its plot do not establish density structure in the original clustering space.
+
+The proposed feature-selection heuristic fits PCA on standardized base features, then ranks original columns by `score_j = sum_{r=1}^m |loading_{jr}|` over retained components and selects the top eight. Record whether “loading” means component coefficients or coefficients scaled by the square root of eigenvalues; the rankings can differ. This heuristic identifies participation in variance directions, not churn relevance, causal importance, or guaranteed clustering quality. One-hot variables may need grouping back to their source attribute so high-cardinality attributes do not gain undue influence.
+
+Feature selection retains original columns; PCA projection replaces them with components. Compare the eight-column heuristic to all suitable features and projected components, using stability and internal evaluation. Fit the selection within folds if it becomes part of a predictive pipeline.
+
+### 4. Partition-based segmentation: K-Means, K-Medians, X-Means
+
+K-Means minimizes within-cluster squared Euclidean distance (WCSS/SSE). Sweep candidate `k` values and inspect diminishing WCSS improvement, silhouette, cluster sizes, stability, and useful profiles. An elbow is a heuristic and may be unclear; silhouette measures separation but does not ensure it is good.
+
+K-Medians minimizes absolute deviations under an L1/Manhattan objective and uses coordinate-wise medians, often reducing sensitivity to extreme values. X-Means considers splitting clusters and uses a criterion such as BIC under its modeling assumptions to choose among alternatives. They optimize different objectives, so raw SSE alone is not a fair universal comparison. SSE can be computed for other partitions, but may misrepresent non-globular or density-based clusters and should not be treated as universally meaningless outside K-Means.
+
+The project notes report that K-Means produced more useful segments than K-Medians and X-Means and was selected. A reviewable conclusion still needs the chosen `k`, preprocessing, seeds, score table, sizes, and interpretable profiles. “More significant” should mean a specified practical or statistical comparison, not simply a more attractive plot.
+
+After clustering, profile each segment's usage, churn rate, population, and uncertainty. Different segments can each contain both churners and non-churners. A segment with elevated churn can be actionable without forming a pure churn cluster.
+
+### 5. DBSCAN, noise, and multi-criteria evaluation
+
+DBSCAN groups density-connected points and labels some as noise. It does not require an explicit `k`, but `eps`, `min_samples`, representation, and distance jointly determine the resulting clusters. A k-distance plot can suggest an `eps` range; align the neighbor convention with the implementation's treatment of the point itself. Evaluate several plausible settings rather than assuming one visible elbow gives the answer.
+
+A connected-looking t-SNE plot is only a motivation to investigate, not proof that DBSCAN cannot work. In high dimension, distances can concentrate; varying density can also make a single global `eps` inappropriate. Inspect neighborhoods and results in the actual clustering representation.
+
+**ARI** compares pairs of points in two partitions and adjusts agreement for chance. Cluster IDs need not match ground-truth class IDs. Fragmenting one true class into many clusters creates pairwise disagreements and can lower ARI; ARI is not generally immune to oversegmentation. It also does not directly reward minimum segment sizes or business usability. See the [ARI definition](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_rand_score.html).
+
+For exploratory segmentation, churn labels are outcomes rather than necessarily the true behavioral partition. ARI against churn is an optional label-alignment diagnostic, not the main objective. If ARI is used to tune DBSCAN, the selection becomes label-informed and needs independent validation. State how noise is handled: treating every `−1` point as one cluster implies that all noise points share membership; excluding noise changes the evaluated population.
+
+The pasted notes propose multi-criteria optimization but do not specify a completed formula or selected parameters. A defensible evaluation would report internal separation, noise fraction, minimum cluster size, stability, interpretability, and post-hoc churn profiles together. Silhouette requires a suitable number of nonempty labels and depends on distance/shape assumptions; if computed only on non-noise points, report coverage too.
+
+### 6. Supervised churn models: XGBoost and stacking
+
+XGBoost builds an additive ensemble of decision trees, improving a loss objective while regularizing tree complexity. For churn, this is supervised binary classification, not customer partitioning or elbow selection. Tune tree depth, learning rate, number of boosting rounds, sampling, and regularization through validation; class weighting can be evaluated when the target is imbalanced. The [XGBoost model tutorial](https://xgboost.readthedocs.io/en/stable/tutorials/model.html) explains the additive objective.
+
+A stacking classifier combines base-model predictions using a learned final estimator. Train that estimator on out-of-fold base predictions so it does not learn from overly optimistic in-sample scores. Preprocessing belongs inside each base pipeline; evaluate the full stack on data held out from all fitting/tuning. Stacking may improve complementary models, but adds complexity and is not automatically better than the strongest single model. See the [StackingClassifier documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.StackingClassifier.html).
+
+### 7. GridSearchCV scoring and the operating threshold
+
+| Metric | Main question | Practical implication |
+|---|---|---|
+| Accuracy | What proportion of all labels is correct? | Can hide failure to find the minority class |
+| Precision | Of predicted churners, how many truly churn? | Relevant when unnecessary interventions are costly |
+| Recall | Of actual churners, how many are found? | Relevant when missing churn is costly |
+| F1 | What is the harmonic balance of precision and recall? | Gives both equal emphasis at a chosen threshold |
+| ROC-AUC | How well are churners ranked above non-churners? | Threshold-independent ranking measure; inspect alongside operational metrics |
+| Average precision / PR curve | How does positive precision vary with recall? | Useful additional view when positive cases are rare |
+
+Choose `GridSearchCV` scoring according to the decision objective, possibly using multiple metrics with a declared refit criterion. ROC-AUC is useful but not automatically the best or most stable choice under imbalance. For precision–recall evaluation, average precision and trapezoidal PR area are distinct summaries. See the [scikit-learn precision–recall example](https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html).
+
+After model selection, choose a threshold on validation/out-of-fold predictions using intervention cost, missed-churn cost, capacity, or a target precision/recall. Changing a threshold changes precision, recall, and F1, but does not improve a fixed ranking's ROC-AUC. Evaluate the frozen model and threshold once on the test set; report the confusion matrix and business-relevant metrics. Similar fold scores indicate some consistency, not proof that a dataset represents future customers.
+
+<reviewkit>
+<qprompt/>
+</reviewkit>

@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.distributed_systems&quot;:{&quot;en&quot;:&quot;Distributed Systems&quot;,&quot;zh-Hant&quot;:&quot;分散式系統&quot;,&quot;zh-Hans&quot;:&quot;分布式系统&quot;},&quot;concept.consensus&quot;:{&quot;en&quot;:&quot;Consensus&quot;,&quot;zh-Hant&quot;:&quot;共識&quot;,&quot;zh-Hans&quot;:&quot;共识&quot;},&quot;concept.fault_tolerance&quot;:{&quot;en&quot;:&quot;Fault Tolerance&quot;,&quot;zh-Hant&quot;:&quot;容錯&quot;,&quot;zh-Hans&quot;:&quot;容错&quot;},&quot;concept.system_architecture&quot;:{&quot;en&quot;:&quot;System Architecture&quot;,&quot;zh-Hant&quot;:&quot;系統架構&quot;,&quot;zh-Hans&quot;:&quot;系统架构&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5223-distributed-systems">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="78">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="87">
   <meta name="site:source" content="notes/NUS CS5223 Distributed Systems/NUS CS5223 Distributed Systems.md">
   <script>
   (() => {
@@ -155,6 +155,12 @@
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#reading-architecture">Reading Architecture</a>
+<a class="note-toc-link level-1" href="#week-9-consensus-and-real-systems">Week 9: Consensus and Real Systems</a>
+<a class="note-toc-link level-2" href="#from-agreement-to-a-fault-tolerant-service">From agreement to a fault-tolerant service</a>
+<a class="note-toc-link level-2" href="#paxos-implementation-note-higher-phase1a-ballots-and-isactive">Paxos implementation note: higher Phase1A ballots and `isActive`</a>
+<a class="note-toc-link level-2" href="#chubby-publish-a-leader-then-fence-stale-work">Chubby: publish a leader, then fence stale work</a>
+<a class="note-toc-link level-2" href="#read-heavy-coordination-leases-and-cache-invalidation">Read-heavy coordination: leases and cache invalidation</a>
+<a class="note-toc-link level-2" href="#gfs-separate-successful-records-from-failed-regions">GFS: separate successful records from failed regions</a>
           </nav>
         </div>
       </div>
@@ -177,7 +183,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -210,7 +216,7 @@
 <section id="reading-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Reading Architecture</h3>
 
-<p class="mb-3">這份來源目前是以 slides 與主題段落整理，沒有可靠的 Week 標記；因此以下不硬造週次，而是提供一條可從頭走到尾的 knowledge spine：</p>
+<p class="mb-3">這份來源混合 slides、主題段落與部分明確週次；以下以 knowledge spine 導讀，已確認的 Week 9 保留週次，其餘不額外推定：</p>
 
 <div class="note-markdown-block"><pre><code class="language-text">distributed system model / communication
   → RPC：如何讓遠端操作看起來像 local call？
@@ -2431,8 +2437,44 @@
 <li>Provides strong consistency, fault tolerance, and durability.</li>
 <li>Trade-off: high latency and increased complexity.</li>
 </ul>
+</section>
 
-<p class="mb-3">Week 9 Chubby — Distributed Coordination Service</p>
+<section id="week-9-consensus-and-real-systems" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 9: Consensus and Real Systems</h3>
+
+<h4 id="from-agreement-to-a-fault-tolerant-service" class="mb-2">From agreement to a fault-tolerant service</h4>
+
+<p class="mb-3">Single-decree Paxos chooses one value. Multi-decree/Multi-Paxos organizes choices into log slots; replicas apply a decided prefix in the same order to a deterministic state machine. State machine replication then makes the agreed log useful to clients. Raft provides another replicated-log consensus design with explicit leader-election and log-management structure.</p>
+
+<p class="mb-3">The key design question is where agreement is necessary. Critical coordination and metadata may need consensus, while bulk data can use a different replication contract. Chubby and GFS illustrate this division: reliable coordination does not imply that every data write runs Paxos.</p>
+
+<h4 id="paxos-implementation-note-higher-phase1a-ballots-and-isactive" class="mb-2">Paxos implementation note: higher Phase1A ballots and <code>isActive</code></h4>
+
+<p class="mb-3">Suppose <code>handlePhase1A</code> receives a ballot higher than the server's current promised ballot, and the server also acts as proposer/leader. Promising the new ballot means it will no longer accept lower-ballot proposals. If it treats <code>isActive</code> as authority to send Phase2A or leader heartbeats, clearing that flag aligns its local behavior with the observed ballot change.</p>
+
+<p class="mb-3">This does <strong>not</strong> mean that Paxos safety requires exactly one node to believe it is leader at every instant. Competing proposers are allowed; safety comes from quorum intersection, monotonic acceptor promises, and the Phase 1 rule that preserves previously accepted/chosen values. A higher Phase1A also does not prove its sender has already won a quorum. The distinction between safety and stable leadership for progress is developed in <a class="note-inline-link" href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf" target="_blank" rel="noopener noreferrer">Lamport's Paxos Made Simple</a>.</p>
+
+<p class="mb-3">Why step down locally?</p>
+
+<ul class="note-list">
+<li>It avoids new proposals under an obsolete ballot and reduces wasted retries/traffic.</li>
+<li>It prevents stale leader heartbeats from interfering with failure detection if receivers treat them as evidence of authority.</li>
+<li>It helps a higher-ballot contender complete recovery instead of repeatedly competing with the old proposer.</li>
+</ul>
+
+<p class="mb-3">One higher promise alone does not prove every old-ballot proposal will fail: another quorum might still be reachable. Nevertheless, a local promise is evidence of preemption, and stepping down is a conventional progress/efficiency policy. Acceptors' promises increase monotonically; they do not alternate freely between lower and higher ballots. Livelock arises when proposers keep generating still-higher ballots and preempting one another.</p>
+
+<p class="mb-3">The update should be conditional on a valid higher ballot. Duplicate same-ballot Phase1A messages should normally be handled idempotently, and older ballots should not force a current leader to resign. Preserve accepted entries and decided slots; changing <code>isActive</code> is not erasing consensus history. Delayed timers should check both current ballot and activity before sending; followers still need election/failure-detection timers. To become active again, complete Phase 1 with a quorum and reconcile accepted values.</p>
+
+<p class="mb-3">Repeated elections are better addressed through failure-detection timeouts, backoff/jitter, and eventual stable leadership. “Thundering herd” specifically describes many actors reacting together to an event; a single preempting ballot is not itself a herd. Without the actual handler and timer source, these are implementation invariants to review, not confirmation that one particular assignment line is indispensable.</p>
+
+<h4 id="chubby-publish-a-leader-then-fence-stale-work" class="mb-2">Chubby: publish a leader, then fence stale work</h4>
+
+<p class="mb-3">The familiar pattern is to open <code>/ls/cell/service/primary</code>, try to acquire its lock, and publish the holder's address. Other clients read/watch that file. Failing to acquire a lock does not automatically elect a backup or prove an address has already been published: applications need startup/retry and membership policies.</p>
+
+<p class="mb-3">A sequencer identifies a particular lock acquisition so the receiving resource can reject delayed work from an old holder. The lock controls current ownership; checking the sequencer/fencing token protects against operations already in flight. An advisory lock is safe only when the relevant application/resource participates in the protocol.</p>
+
+<p class="mb-3">Chubby — Distributed Coordination Service</p>
 
 <p class="mb-3">Overview</p>
 
@@ -2543,7 +2585,7 @@
 <li>The primary then writes its address into Chubby so others can discover it.</li>
 <li>When another server tries to acquire the lock, it finds that the lock is already held.</li>
 <li>By reading the state stored in Chubby, it learns the identity of the current primary.</li>
-<li>As the next available server, it assumes the role of backup.</li>
+<li>The application may assign it a backup role according to a separate membership/replication policy; lock acquisition alone does not assign that role.</li>
 <li>Clients query Chubby to determine the current primary, and Chubby returns the primary server’s address.</li>
 </ol>
 
@@ -2620,7 +2662,7 @@
 </ul></li>
 <li>Master obtains lease and renews while up (e.g., 10 seconds)</li>
 <li>Master can process reads alone if holding lease</li>
-<li>If master fails, need to wait 10s before new master can respond to requests</li>
+<li>After master failure, a new master must obey the lease protocol before serving reads; the remaining old lease and recovery determine delay, not a fixed ten seconds for every failure</li>
 <li>Allows serving reads locally without consensus</li>
 <li>Tradeoff:
 <ul class="note-list">
@@ -2644,7 +2686,7 @@
 </ul></li>
 </ul>
 
-<p class="mb-3">Note: Before a client sends a SetContents operation to Chubby, Chubby first issues cache invalidation messages to all clients. Each client acknowledges the invalidation, and only after receiving these acknowledgments does Chubby allow the write to proceed.</p>
+<p class="mb-3">Note: After the master receives a modifying request such as SetContents, it invalidates the affected cached state. The modification proceeds after each relevant client has acknowledged invalidation or its cache lease has expired; it does not require a live acknowledgment from a failed client forever.</p>
 
 <p class="mb-3">Question: Is it safe for clients to read from their local cache before it has received invalidation request? Answer: Yes, it is safe, and it does not violate linearizability—but only because of how Chubby enforces ordering.</p>
 
@@ -2704,12 +2746,9 @@
 
 <ul class="note-list">
 <li>Clients maintain leases via periodically sending messages (KeepAlive)</li>
-<li>Clients rely on responses from Chubby’s KeepAlive mechanism to confirm that their session is still active; if these responses stop, the client assumes its lease has expired.</li>
-<li>On failure:
-<ul class="note-list">
-<li>Locks released</li>
-<li>Cache invalidated</li>
-</ul></li>
+<li>KeepAlive responses renew session leases and carry events/invalidation.</li>
+<li>If the local lease deadline passes, the client enters jeopardy, disables its cache, and waits through a grace period to determine whether the session survives. A missing response is not immediate proof that the master has already expired the session.</li>
+<li>Actual session expiration invalidates handles/cache and leads to lock release under the service protocol.</li>
 </ul>
 
 <p class="mb-3">Proxies</p>
@@ -2748,6 +2787,14 @@
 </ul>
 
 <p class="mb-3">“Readers will be unsurprised to learn that the failover code, which is exercised far less often than other parts of the system, has been a rich source of interesting bugs.”</p>
+
+<h4 id="read-heavy-coordination-leases-and-cache-invalidation" class="mb-2">Read-heavy coordination: leases and cache invalidation</h4>
+
+<p class="mb-3">The master read lease and client session/cache leases serve different purposes. A master needs valid leadership and current committed state to serve local reads; client leases justify cached state and resource ownership. Lease safety depends on the protocol's timing assumptions, not simply on selecting a convenient duration such as ten seconds.</p>
+
+<p class="mb-3">During invalidation, an old cached read can still precede the pending write's linearization point. The master prevents new cachable copies of the affected node until outstanding invalidations finish, while uncached reads remain possible. KeepAlive carries invalidations and acknowledgments. These details and the session jeopardy/grace-period behavior follow the <a class="note-inline-link" href="https://storage.googleapis.com/gweb-research2023-media/pubtools/4444.pdf" target="_blank" rel="noopener noreferrer">Chubby paper, Sections 2.7–2.8</a>.</p>
+
+<p class="mb-3">Batching amortizes consensus overhead but may add waiting latency; partitioning creates independent consensus groups but complicates cross-group operations. Proxies aggregate session traffic. The supplied lecture figures (~50,000 clients, ~22,000 files, ~2,000 RPC/s, ~93% KeepAlive, &lt;0.07% writes) describe one historical workload rather than protocol limits. Likewise, “~1,000 Paxos ops/s” and “four message delays” are baseline/path assumptions, not universal Paxos guarantees: established Multi-Paxos leaders avoid repeating Phase 1 on every slot. Rare failover paths deserve explicit testing because common-case throughput measurements do not establish recovery correctness.</p>
 
 <p class="mb-3">Google File System (GFS)</p>
 
@@ -2824,7 +2871,7 @@
 
 <ul class="note-list">
 <li>Files split into fixed-size chunks (64MB)</li>
-<li>Each chunk replicated (3+ chunkservers)</li>
+<li>Each chunk normally has three replicas; replication is configurable and failures can temporarily reduce the count.</li>
 </ul>
 
 <p class="mb-3">Components</p>
@@ -2839,7 +2886,7 @@
 </ul></li>
 <li>Stores metadata in memory</li>
 <li>Does NOT store file data</li>
-<li>Actually a replicated system using shadow masters</li>
+<li>Persistent metadata changes are protected by a replicated operation log; checkpoints speed recovery. Shadow masters provide additional read availability.</li>
 </ul>
 
 <p class="mb-3">Chunkservers</p>
@@ -2851,7 +2898,7 @@
 <p class="mb-3">Shadow Masters</p>
 
 <ul class="note-list">
-<li>Replicated metadata for fault tolerance</li>
+<li>Replay the operation log and provide read-only metadata access that may lag; this is not a strongly consistent active-master quorum</li>
 </ul>
 
 <p class="mb-3">Key Property</p>
@@ -2903,8 +2950,8 @@
 <p class="mb-3">The design of the Google File System (GFS) shares some similarities with Paxos, such as using a primary to coordinate replicas, but there are key differences:</p>
 
 <ol class="mb-3">
-<li>Client interaction: In GFS, the client pushes data directly to the nearest replica. In Paxos, the client must send the request to the Proposer or Leader.</li>
-<li>Consensus mechanism: GFS does not run a full consensus protocol like Paxos. The primary orders writes and instructs replicas, but it does not wait for a majority to agree before responding. As a result, GFS can acknowledge the client before achieving majority consensus. In contrast, Paxos requires the primary to wait for acknowledgments from a majority of replicas before confirming success. Note that in GFS, if all replicas fail to apply a write, the operation may still be reported as failed.</li>
+<li>Client interaction: In GFS, bulk data is pushed directly through chunk replicas, separately from mutation-control messages. A typical Multi-Paxos service routes client commands through its leader; client transport is a service design choice rather than a core Paxos safety requirement.</li>
+<li>Replication contract: GFS chunk mutations are not Paxos log decisions. After secondaries respond, the primary reports the outcome; errors at any replica are reported to the client and may leave a partially applied mutation. Success is not defined as a Paxos majority vote. In Paxos, a quorum of acceptances makes a value chosen; a state-machine service may additionally wait for application before replying.</li>
 </ol>
 
 <p class="mb-3">Important clarification</p>
@@ -3008,7 +3055,7 @@
 <ul class="note-list">
 <li>Append is atomic</li>
 <li>Written region is defined</li>
-<li>Interleaving regions are inconsistent</li>
+<li>Successful record regions are defined; intervening padding/duplicate regions may be inconsistent.</li>
 </ul>
 
 <p class="mb-3">Issues</p>
@@ -3110,6 +3157,14 @@
 <li>Push complexity to system design instead of application logic</li>
 </ul></li>
 </ul>
+
+<h4 id="gfs-separate-successful-records-from-failed-regions" class="mb-2">GFS: separate successful records from failed regions</h4>
+
+<p class="mb-3">For ordinary writes, distinguish <strong>consistent</strong> (readers agree across replicas) from <strong>defined</strong> (the region also reflects a complete mutation). Concurrent successful writes can leave consistent but undefined regions; a failed write can leave replica disagreement. Retrying does not make arbitrary overwritten data recoverable automatically.</p>
+
+<p class="mb-3">Record append lets the system select an offset and guarantees an atomic record at least once on success. A full chunk may be padded before retrying in the next chunk; failures/retries can produce duplicate records and gaps. Applications therefore use checksums and unique IDs to validate and deduplicate records. Atomic append is not exactly-once delivery. The metadata log and read-only shadow masters also have different recovery roles, as described in the <a class="note-inline-link" href="https://storage.googleapis.com/gweb-research2023-media/pubtools/4446.pdf" target="_blank" rel="noopener noreferrer">GFS paper, Sections 2.6, 3.3, and 5.1</a>.</p>
+
+<p class="mb-3">The lecture's later scale figures (~50 million files, ~10 PB) should be read as historical context, not measurements from the original 2003 paper. The design lesson remains: Chubby protects coordination with strong semantics, while GFS chooses a workload-specific storage contract and shifts record validation/deduplication to applications. Compare assumptions and acknowledgment conditions before describing either system as “strong” or “weak”.</p>
 
 <p class="mb-3">Week 10 CS5223 Distributed Systems – Weak Consistency (Week 10)</p>
 
@@ -3612,6 +3667,48 @@
 <li>Prepare Certificate: 2f+1 matching PREPAREs</li>
 <li>Commit Certificate: 2f+1 matching COMMITs</li>
 </ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

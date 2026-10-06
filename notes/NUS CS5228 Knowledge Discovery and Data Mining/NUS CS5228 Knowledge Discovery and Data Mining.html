@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.classification&quot;:{&quot;en&quot;:&quot;Classification&quot;,&quot;zh-Hant&quot;:&quot;分類&quot;,&quot;zh-Hans&quot;:&quot;分类&quot;},&quot;concept.association_rules&quot;:{&quot;en&quot;:&quot;Association Rules&quot;,&quot;zh-Hant&quot;:&quot;關聯規則&quot;,&quot;zh-Hans&quot;:&quot;关联规则&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5228-knowledge-discovery-and-data-mining">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="103">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="119">
   <meta name="site:source" content="notes/NUS CS5228 Knowledge Discovery and Data Mining/NUS CS5228 Knowledge Discovery and Data Mining.md">
   <script>
   (() => {
@@ -167,6 +167,7 @@
 <a class="note-toc-link level-1" href="#data-transformation">Data Transformation</a>
 <a class="note-toc-link level-1" href="#data-discretization">Data Discretization</a>
 <a class="note-toc-link level-1" href="#one-hot-encoding">One-Hot Encoding</a>
+<a class="note-toc-link level-2" href="#categorical-encoding-representation-changes-the-geometry">Categorical encoding: representation changes the geometry</a>
 <a class="note-toc-link level-1" href="#week-2">Week 2</a>
 <a class="note-toc-link level-1" href="#nature-of-data">Nature of Data</a>
 <a class="note-toc-link level-2" href="#types-of-attributes-2">Types of Attributes</a>
@@ -210,6 +211,7 @@
 <a class="note-toc-link level-1" href="#summary-clustering">Summary — Clustering</a>
 <a class="note-toc-link level-1" href="#week-4">Week 4</a>
 <a class="note-toc-link level-1" href="#week-5">Week 5</a>
+<a class="note-toc-link level-2" href="#association-rules-why-start-with-single-items-and-what-lift-evaluates">Association rules: why start with single items, and what lift evaluates</a>
 <a class="note-toc-link level-1" href="#week-6">Week 6</a>
 <a class="note-toc-link level-1" href="#week-7">Week 7</a>
 <a class="note-toc-link level-1" href="#overview">Overview</a>
@@ -237,6 +239,7 @@
 <a class="note-toc-link level-1" href="#gradient-descent">Gradient Descent</a>
 <a class="note-toc-link level-1" href="#polynomial-logistic-regression">Polynomial Logistic Regression</a>
 <a class="note-toc-link level-1" href="#practical-implementation">Practical Implementation</a>
+<a class="note-toc-link level-2" href="#decision-tree-reproducibility-and-nearest-neighbor-geometry">Decision-tree reproducibility and nearest-neighbor geometry</a>
 <a class="note-toc-link level-1" href="#week-8">Week 8</a>
 <a class="note-toc-link level-1" href="#basic-assumption">Basic Assumption</a>
 <a class="note-toc-link level-1" href="#linear-regression-2">Linear Regression</a>
@@ -267,6 +270,14 @@
 <a class="note-toc-link level-1" href="#week-9">Week 9</a>
 <a class="note-toc-link level-1" href="#week-10">Week 10</a>
 <a class="note-toc-link level-1" href="#week-11">Week 11</a>
+<a class="note-toc-link level-1" href="#applied-case-study-customer-churn-segmentation-and-prediction">Applied Case Study: Customer Churn Segmentation and Prediction</a>
+<a class="note-toc-link level-2" href="#1-establish-the-data-and-evaluation-contract">1. Establish the data and evaluation contract</a>
+<a class="note-toc-link level-2" href="#2-interpret-the-reported-churn-signals-cautiously">2. Interpret the reported churn signals cautiously</a>
+<a class="note-toc-link level-2" href="#3-pca-t-sne-and-feature-selection-serve-different-purposes">3. PCA, t-SNE, and feature selection serve different purposes</a>
+<a class="note-toc-link level-2" href="#4-partition-based-segmentation-k-means-k-medians-x-means">4. Partition-based segmentation: K-Means, K-Medians, X-Means</a>
+<a class="note-toc-link level-2" href="#5-dbscan-noise-and-multi-criteria-evaluation">5. DBSCAN, noise, and multi-criteria evaluation</a>
+<a class="note-toc-link level-2" href="#6-supervised-churn-models-xgboost-and-stacking">6. Supervised churn models: XGBoost and stacking</a>
+<a class="note-toc-link level-2" href="#7-gridsearchcv-scoring-and-the-operating-threshold">7. GridSearchCV scoring and the operating threshold</a>
           </nav>
         </div>
       </div>
@@ -289,7 +300,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -554,6 +565,16 @@
 </ul></li>
 <li>Preprocessing is crucial for meaningful, efficient, valid analysis</li>
 </ul>
+
+<h4 id="categorical-encoding-representation-changes-the-geometry" class="mb-2">Categorical encoding: representation changes the geometry</h4>
+
+<p class="mb-3">For a nominal attribute with 50 categories, one-hot encoding typically creates 50 indicators (49 with a dropped reference category). This is sparse and explicit, but increases dimension and may hurt distance-based methods or small-sample models. It does not necessarily degrade every algorithm; regularized models and suitable sparse implementations can work well.</p>
+
+<p class="mb-3">Binary encoding assigns category codes and represents each using roughly <code>ceil(log2(50)) = 6</code> bits, with implementation-dependent conventions. It saves dimensions but introduces arbitrary shared-bit relationships, so compactness alone does not establish better predictive performance. Integer codes similarly introduce artificial order/distances. “Pseudo encoding” is not a standard method name; specify whether it means ordinal codes, binary encoding, hashing, target encoding, or learned embeddings.</p>
+
+<p class="mb-3">Target encoding replaces a category with a smoothed target statistic and can help supervised prediction with high cardinality. It risks leakage and overfitting, especially for rare categories. Training encodings should exclude a row's own label through cross-fitting; validation/test data must use mappings learned only from the appropriate training fold. Scikit-learn's <code>TargetEncoder.fit_transform(X, y)</code> cross-fits training encodings, whereas <code>fit(X, y).transform(X)</code> does not. Put it inside the validation pipeline. See the <a class="note-inline-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.TargetEncoder.html" target="_blank" rel="noopener noreferrer">TargetEncoder documentation</a>.</p>
+
+<p class="mb-3">For unsupervised customer segmentation, using churn-derived target encodings changes the task to label-informed grouping. Keep churn labels out of clustering inputs when the goal is independent behavioral structure.</p>
 </section>
 
 <section id="week-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -2053,6 +2074,14 @@
 <li>KNN: intuitive, but sensitive to choice of k, scaling, dimensionality, and distance metric</li>
 <li>Proper preprocessing, validation, and careful metric selection are essential for reliable model performance</li>
 </ul>
+
+<h4 id="association-rules-why-start-with-single-items-and-what-lift-evaluates" class="mb-2">Association rules: why start with single items, and what lift evaluates</h4>
+
+<p class="mb-3">Apriori first finds frequent 1-itemsets even though useful rules typically involve multiple items. If an item is below minimum support, every itemset containing it is also below support. This downward-closure property prunes larger candidates before expensive counting.</p>
+
+<p class="mb-3">For rule <code>X → Y</code>, confidence is <code>P(Y|X)</code> and lift is <code>P(Y|X)/P(Y)</code>, equivalently <code>P(X,Y)/(P(X)P(Y))</code>. A popular consequent can produce high confidence even without association; lift compares the observed co-occurrence to the independence baseline. Lift above <code>1</code> suggests positive association, <code>1</code> suggests independence, and below <code>1</code> suggests negative association. Lift evaluates candidate rules; it neither discovers them by itself nor establishes causation. Rare, low-support rules can still have unstable large lift.</p>
+
+<p class="mb-3">Jaccard similarity instead compares two sets as <code>|A ∩ B| / |A ∪ B|</code>, ignoring joint absences. This makes it useful for asymmetric binary features such as item presence, where shared zeros need not be evidence of similarity.</p>
 </section>
 
 <section id="week-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -4061,6 +4090,12 @@
 <li>Data normalization affects interpretability and regularization behavior</li>
 <li>Logistic Regression can be extended to multi-class problems</li>
 </ul>
+
+<h4 id="decision-tree-reproducibility-and-nearest-neighbor-geometry" class="mb-2">Decision-tree reproducibility and nearest-neighbor geometry</h4>
+
+<p class="mb-3">A greedy tree chooses the locally best split at each node; it does not search all tree structures for a global optimum. Reproducibility is a separate question: fixed data, implementation, settings, and random state can give the same tree, while randomized feature ordering or tie-breaking can change it. Random forests deliberately introduce randomness through sampling and feature selection.</p>
+
+<p class="mb-3">In 1-NN, each training point owns a Voronoi cell under the chosen distance. With Euclidean distance, candidate boundaries lie on perpendicular bisectors between points; only shared cell faces between different classes contribute to the classification boundary. Connecting pairwise midpoints is not a general construction. More neighbors often smooth the boundary, while very large <code>k</code> may favor the majority class. Neighbor voting is over labeled training examples, not a count of query words belonging to each class. Duplicate points with conflicting labels require a tie/data-quality policy; arbitrarily adding noise is not a universal fix.</p>
 </section>
 
 <section id="week-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -6378,6 +6413,187 @@
 <li>Trade-off: speed / resource-efficiency vs. accuracy / errors</li>
 </ul></li>
 </ul>
+</section>
+
+<section id="applied-case-study-customer-churn-segmentation-and-prediction" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Applied Case Study: Customer Churn Segmentation and Prediction</h3>
+
+<p class="mb-3">This case connects Week 1 preprocessing, Weeks 2–3 clustering/evaluation, Weeks 6–7 supervised models, and Week 10 dimensionality reduction. Start with two distinct questions: <strong>what behavioral segments exist</strong>, and <strong>which customers are likely to churn</strong>? Segmentation need not reproduce a binary churn label, while a churn predictor should be judged against that label on held-out customers.</p>
+
+<p class="mb-3">The supplied project notes describe observations and a selected model but contain no dataset, plots, fitted models, or validation scores. Feature rankings and model comparisons below are therefore reported project observations, not independently verified results. The XGBoost and stacking descriptions are conceptual replacements for mistakenly copied clustering text.</p>
+
+<h4 id="1-establish-the-data-and-evaluation-contract" class="mb-2">1. Establish the data and evaluation contract</h4>
+
+<p class="mb-3">Check missing values, duplicates, feature types, category frequencies, and churn prevalence. Imbalanced categories are not themselves target-class imbalance; inspect both. In an illustrative 85:15 non-churn/churn split, always predicting non-churn gives 85% accuracy and zero churn recall. Report minority-class metrics and a baseline rather than accuracy alone.</p>
+
+<p class="mb-3">Split before fitting imputers, scalers, encoders, PCA, feature selection, or resampling. For supervised cross-validation, fit these within each training fold. For behavioral clustering, remove the target and post-outcome variables, encode categories with a defensible distance interpretation, and scale numerical features so units do not dominate distance. Check redundancy between minutes and charges: if charges are a deterministic rate multiple of minutes, including both double-weights one behavior.</p>
+
+<h4 id="2-interpret-the-reported-churn-signals-cautiously" class="mb-2">2. Interpret the reported churn signals cautiously</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Reported feature signal</th>
+<th>Possible interpretation</th>
+<th>What still needs checking</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><code>International plan</code>: strongest positive signal</td>
+<td>Plan holders appear more likely to churn</td>
+<td>Association measure, coding, sample counts, plan pricing and confounders</td>
+</tr>
+<tr>
+<td><code>Customer service calls</code>: second strongest positive signal</td>
+<td>Repeated support contact may indicate dissatisfaction</td>
+<td>Timing of calls, issue severity, reverse causation</td>
+</tr>
+<tr>
+<td><code>Total day charge</code> / <code>Total day minutes</code>: notable positive signals</td>
+<td>Higher usage/bills may be associated with switching</td>
+<td>Charge–minute redundancy, plan differences, nonlinear effects</td>
+</tr>
+<tr>
+<td>International/evening charges and minutes: milder positives</td>
+<td>Additional usage/cost associations</td>
+<td>Uncertainty and interactions with plans</td>
+</tr>
+<tr>
+<td><code>Voice mail plan</code> / <code>Number vmail messages</code>: weak negative signals</td>
+<td>Some engaged customers may churn less</td>
+<td>Small effect sizes, confounding and generalization</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">“Positive” must refer to a specified statistic, such as a correlation or model coefficient under known coding. These observations motivate hypotheses; they do not prove that higher bills cause churn or that changing a feature would prevent it. Use held-out performance and suitable model interpretation to distinguish univariate associations from conditional prediction effects.</p>
+
+<h4 id="3-pca-t-sne-and-feature-selection-serve-different-purposes" class="mb-2">3. PCA, t-SNE, and feature selection serve different purposes</h4>
+
+<p class="mb-3">With 19+ features, direct joint visualization is difficult. <strong>PCA</strong> gives linear components maximizing retained variance; choosing enough components for at least 80% explained variance is a project rule, not a guarantee of class/cluster separation. <strong>t-SNE</strong> gives a nonlinear 2D view emphasizing local neighborhoods. It is a separate method, not PCA, and apparent gaps or bridges in its plot do not establish density structure in the original clustering space.</p>
+
+<p class="mb-3">The proposed feature-selection heuristic fits PCA on standardized base features, then ranks original columns by <code>score_j = sum_{r=1}^m |loading_{jr}|</code> over retained components and selects the top eight. Record whether “loading” means component coefficients or coefficients scaled by the square root of eigenvalues; the rankings can differ. This heuristic identifies participation in variance directions, not churn relevance, causal importance, or guaranteed clustering quality. One-hot variables may need grouping back to their source attribute so high-cardinality attributes do not gain undue influence.</p>
+
+<p class="mb-3">Feature selection retains original columns; PCA projection replaces them with components. Compare the eight-column heuristic to all suitable features and projected components, using stability and internal evaluation. Fit the selection within folds if it becomes part of a predictive pipeline.</p>
+
+<h4 id="4-partition-based-segmentation-k-means-k-medians-x-means" class="mb-2">4. Partition-based segmentation: K-Means, K-Medians, X-Means</h4>
+
+<p class="mb-3">K-Means minimizes within-cluster squared Euclidean distance (WCSS/SSE). Sweep candidate <code>k</code> values and inspect diminishing WCSS improvement, silhouette, cluster sizes, stability, and useful profiles. An elbow is a heuristic and may be unclear; silhouette measures separation but does not ensure it is good.</p>
+
+<p class="mb-3">K-Medians minimizes absolute deviations under an L1/Manhattan objective and uses coordinate-wise medians, often reducing sensitivity to extreme values. X-Means considers splitting clusters and uses a criterion such as BIC under its modeling assumptions to choose among alternatives. They optimize different objectives, so raw SSE alone is not a fair universal comparison. SSE can be computed for other partitions, but may misrepresent non-globular or density-based clusters and should not be treated as universally meaningless outside K-Means.</p>
+
+<p class="mb-3">The project notes report that K-Means produced more useful segments than K-Medians and X-Means and was selected. A reviewable conclusion still needs the chosen <code>k</code>, preprocessing, seeds, score table, sizes, and interpretable profiles. “More significant” should mean a specified practical or statistical comparison, not simply a more attractive plot.</p>
+
+<p class="mb-3">After clustering, profile each segment's usage, churn rate, population, and uncertainty. Different segments can each contain both churners and non-churners. A segment with elevated churn can be actionable without forming a pure churn cluster.</p>
+
+<h4 id="5-dbscan-noise-and-multi-criteria-evaluation" class="mb-2">5. DBSCAN, noise, and multi-criteria evaluation</h4>
+
+<p class="mb-3">DBSCAN groups density-connected points and labels some as noise. It does not require an explicit <code>k</code>, but <code>eps</code>, <code>min_samples</code>, representation, and distance jointly determine the resulting clusters. A k-distance plot can suggest an <code>eps</code> range; align the neighbor convention with the implementation's treatment of the point itself. Evaluate several plausible settings rather than assuming one visible elbow gives the answer.</p>
+
+<p class="mb-3">A connected-looking t-SNE plot is only a motivation to investigate, not proof that DBSCAN cannot work. In high dimension, distances can concentrate; varying density can also make a single global <code>eps</code> inappropriate. Inspect neighborhoods and results in the actual clustering representation.</p>
+
+<p class="mb-3"><strong>ARI</strong> compares pairs of points in two partitions and adjusts agreement for chance. Cluster IDs need not match ground-truth class IDs. Fragmenting one true class into many clusters creates pairwise disagreements and can lower ARI; ARI is not generally immune to oversegmentation. It also does not directly reward minimum segment sizes or business usability. See the <a class="note-inline-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_rand_score.html" target="_blank" rel="noopener noreferrer">ARI definition</a>.</p>
+
+<p class="mb-3">For exploratory segmentation, churn labels are outcomes rather than necessarily the true behavioral partition. ARI against churn is an optional label-alignment diagnostic, not the main objective. If ARI is used to tune DBSCAN, the selection becomes label-informed and needs independent validation. State how noise is handled: treating every <code>−1</code> point as one cluster implies that all noise points share membership; excluding noise changes the evaluated population.</p>
+
+<p class="mb-3">The pasted notes propose multi-criteria optimization but do not specify a completed formula or selected parameters. A defensible evaluation would report internal separation, noise fraction, minimum cluster size, stability, interpretability, and post-hoc churn profiles together. Silhouette requires a suitable number of nonempty labels and depends on distance/shape assumptions; if computed only on non-noise points, report coverage too.</p>
+
+<h4 id="6-supervised-churn-models-xgboost-and-stacking" class="mb-2">6. Supervised churn models: XGBoost and stacking</h4>
+
+<p class="mb-3">XGBoost builds an additive ensemble of decision trees, improving a loss objective while regularizing tree complexity. For churn, this is supervised binary classification, not customer partitioning or elbow selection. Tune tree depth, learning rate, number of boosting rounds, sampling, and regularization through validation; class weighting can be evaluated when the target is imbalanced. The <a class="note-inline-link" href="https://xgboost.readthedocs.io/en/stable/tutorials/model.html" target="_blank" rel="noopener noreferrer">XGBoost model tutorial</a> explains the additive objective.</p>
+
+<p class="mb-3">A stacking classifier combines base-model predictions using a learned final estimator. Train that estimator on out-of-fold base predictions so it does not learn from overly optimistic in-sample scores. Preprocessing belongs inside each base pipeline; evaluate the full stack on data held out from all fitting/tuning. Stacking may improve complementary models, but adds complexity and is not automatically better than the strongest single model. See the <a class="note-inline-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.StackingClassifier.html" target="_blank" rel="noopener noreferrer">StackingClassifier documentation</a>.</p>
+
+<h4 id="7-gridsearchcv-scoring-and-the-operating-threshold" class="mb-2">7. GridSearchCV scoring and the operating threshold</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Metric</th>
+<th>Main question</th>
+<th>Practical implication</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Accuracy</td>
+<td>What proportion of all labels is correct?</td>
+<td>Can hide failure to find the minority class</td>
+</tr>
+<tr>
+<td>Precision</td>
+<td>Of predicted churners, how many truly churn?</td>
+<td>Relevant when unnecessary interventions are costly</td>
+</tr>
+<tr>
+<td>Recall</td>
+<td>Of actual churners, how many are found?</td>
+<td>Relevant when missing churn is costly</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>What is the harmonic balance of precision and recall?</td>
+<td>Gives both equal emphasis at a chosen threshold</td>
+</tr>
+<tr>
+<td>ROC-AUC</td>
+<td>How well are churners ranked above non-churners?</td>
+<td>Threshold-independent ranking measure; inspect alongside operational metrics</td>
+</tr>
+<tr>
+<td>Average precision / PR curve</td>
+<td>How does positive precision vary with recall?</td>
+<td>Useful additional view when positive cases are rare</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Choose <code>GridSearchCV</code> scoring according to the decision objective, possibly using multiple metrics with a declared refit criterion. ROC-AUC is useful but not automatically the best or most stable choice under imbalance. For precision–recall evaluation, average precision and trapezoidal PR area are distinct summaries. See the <a class="note-inline-link" href="https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html" target="_blank" rel="noopener noreferrer">scikit-learn precision–recall example</a>.</p>
+
+<p class="mb-3">After model selection, choose a threshold on validation/out-of-fold predictions using intervention cost, missed-churn cost, capacity, or a target precision/recall. Changing a threshold changes precision, recall, and F1, but does not improve a fixed ranking's ROC-AUC. Evaluate the frozen model and threshold once on the test set; report the confusion matrix and business-relevant metrics. Similar fold scores indicate some consistency, not proof that a dataset represents future customers.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

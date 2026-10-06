@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.nlp&quot;:{&quot;en&quot;:&quot;NLP&quot;,&quot;zh-Hant&quot;:&quot;自然語言處理&quot;,&quot;zh-Hans&quot;:&quot;自然语言处理&quot;},&quot;concept.data_mining&quot;:{&quot;en&quot;:&quot;Data Mining&quot;,&quot;zh-Hant&quot;:&quot;資料探勘&quot;,&quot;zh-Hans&quot;:&quot;数据挖掘&quot;},&quot;concept.information_extraction&quot;:{&quot;en&quot;:&quot;Information Extraction&quot;,&quot;zh-Hant&quot;:&quot;資訊抽取&quot;,&quot;zh-Hans&quot;:&quot;信息抽取&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5246-text-mining">
   <meta name="site:published_at" content="2026-09-12">
-  <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="143">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="162">
   <meta name="site:source" content="notes/NUS CS5246 Text Mining/NUS CS5246 Text Mining.md">
   <script>
   (() => {
@@ -156,10 +156,21 @@
           <nav class="note-toc">
             <a class="note-toc-link level-1" href="#course-reading-architecture">Course Reading Architecture</a>
 <a class="note-toc-link level-1" href="#week-1">Week 1</a>
+<a class="note-toc-link level-2" href="#expressivity-and-keyword-filter-errors">Expressivity and keyword-filter errors</a>
 <a class="note-toc-link level-1" href="#week-2">Week 2</a>
+<a class="note-toc-link level-2" href="#pattern-matching-literals-alternatives-and-assertions">Pattern matching: literals, alternatives, and assertions</a>
+<a class="note-toc-link level-2" href="#finite-memory-non-regular-is-different-from-undecidable">Finite memory: non-regular is different from undecidable</a>
+<a class="note-toc-link level-2" href="#choosing-token-granularity-for-the-task">Choosing token granularity for the task</a>
+<a class="note-toc-link level-2" href="#bpe-learning-merges-and-applying-them-to-a-new-word">BPE: learning merges and applying them to a new word</a>
+<a class="note-toc-link level-2" href="#bpe-implementation-note-punctuation-and-protected-chemical-formulas">BPE implementation note: punctuation and protected chemical formulas</a>
+<a class="note-toc-link level-2" href="#lemmas-and-normalization-cost">Lemmas and normalization cost</a>
 <a class="note-toc-link level-1" href="#week-3">Week 3</a>
+<a class="note-toc-link level-2" href="#interpreting-sparse-vectors-and-term-weights">Interpreting sparse vectors and term weights</a>
+<a class="note-toc-link level-2" href="#local-order-semantic-similarity-and-author-style">Local order, semantic similarity, and author style</a>
 <a class="note-toc-link level-1" href="#week-4">Week 4</a>
 <a class="note-toc-link level-1" href="#week-5">Week 5</a>
+<a class="note-toc-link level-2" href="#naive-bayes-class-ranking-probability-and-boundaries">Naive Bayes: class ranking, probability, and boundaries</a>
+<a class="note-toc-link level-2" href="#reading-a-near-zero-silhouette-score">Reading a near-zero silhouette score</a>
 <a class="note-toc-link level-1" href="#week-6">Week 6</a>
 <a class="note-toc-link level-1" href="#week-7">Week 7</a>
 <a class="note-toc-link level-1" href="#week-8">Week 8</a>
@@ -189,7 +200,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06" data-published-at="2026-09-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -718,6 +729,12 @@
 <li>Uses letters, digits, punctuation, and whitespace</li>
 </ul></li>
 </ul>
+
+<h4 id="expressivity-and-keyword-filter-errors" class="mb-2">Expressivity and keyword-filter errors</h4>
+
+<p class="mb-3">A keyword filter observes surface strings, whereas a moderation decision concerns meaning in context. Expressivity allows the same intended meaning to appear as a paraphrase, euphemism, spelling variant, or algospeak. In a context where “PDF file” substitutes for “pedophile”, the relevant meaning remains but the literal keyword disappears: a filter that searches only for that keyword produces a <strong>false negative</strong>. This describes evasion of the intended rule, not a claim that every mention of the word should be blocked.</p>
+
+<p class="mb-3">Adding “PDF file” to a blacklist may recover some missed cases, but also flags ordinary document-format discussions, increasing false positives. The underlying problem is a many-to-many relationship between surface form and meaning; context-sensitive interpretation and evaluation on evolving variants matter more than a permanently fixed keyword list.</p>
 </section>
 
 <section id="week-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -1494,7 +1511,7 @@
 <li>Can you build a RegEx / FSA for natural language sentences like:
 <ul class="note-list">
 <li>"It's Wednesday night, I'm out…"</li>
-<li>Answer: Undecidable (natural language sentences are generally context-sensitive, not regular)</li>
+<li>Answer: No general classical RegEx captures unrestricted natural-language structure. This is an expressivity limitation, not a proof that language membership is undecidable; see the clarification below.</li>
 </ul></li>
 </ul>
 
@@ -1567,7 +1584,7 @@
 <li>Limitations:
 <ul class="note-list">
 <li>Characters lack semantic meaning</li>
-<li>Suitable only for word-level tasks (e.g., classifying names)</li>
+<li>Particularly useful when spelling patterns matter (e.g., classifying names); character models can also be used for broader NLP tasks.</li>
 </ul></li>
 </ul>
 
@@ -1632,7 +1649,7 @@
 <li>Token Segmenter:
 <ul class="note-list">
 <li>Tokenizes new words by applying learned merges in order</li>
-<li>Example: "newer" → "new", "er_"</li>
+<li>Under the listed merges, "newer" → "new", "e", "r", "_". Producing "er_" would require additional learned merges.</li>
 </ul></li>
 </ul>
 
@@ -1915,6 +1932,134 @@
 </ul></li>
 <li>Choice of normalization depends on task and language</li>
 </ul>
+
+<h4 id="pattern-matching-literals-alternatives-and-assertions" class="mb-2">Pattern matching: literals, alternatives, and assertions</h4>
+
+<p class="mb-3">A fixed pattern such as <code>cat</code> specifies one exact character sequence. A character set such as <code>[cat]</code> specifies alternatives for <strong>one position</strong>: it matches <code>c</code>, <code>a</code>, or <code>t</code>, not the string <code>cat</code>. A general RegEx composes literals, sets, repetition, and alternatives to describe a family of strings; fixed-pattern matching is a special case. For example, <code>cat[0-9]+</code> matches a literal prefix followed by one or more digits. Case sensitivity depends on the matching configuration.</p>
+
+<p class="mb-3">Assertions test a position without consuming its surrounding characters. The word boundary <code>\b</code> succeeds at a transition between a word character and a non-word character, including eligible string edges; its own matched span has length zero. In <code>\bcat\b</code>, only <code>cat</code> consumes text. “Word character” is engine-dependent: Python's Unicode <code>\w</code> includes Unicode alphanumeric characters and underscore, rather than only ASCII letters.</p>
+
+<p class="mb-3">Positive lookbehind <code>(?&lt;=B)A</code> first requires that pattern <code>B</code> match immediately before the current position, then matches <code>A</code> starting there. In <code>(?&lt;=USD )\d+</code> applied to <code>USD 120</code>, the result is <code>120</code>; <code>USD </code> is checked but excluded from the returned span. Python's standard <code>re</code> requires fixed-length lookbehind patterns. These mechanics are documented in the <a class="note-inline-link" href="https://docs.python.org/3/library/re.html" target="_blank" rel="noopener noreferrer">Python RegEx reference</a>.</p>
+
+<h4 id="finite-memory-non-regular-is-different-from-undecidable" class="mb-2">Finite memory: non-regular is different from undecidable</h4>
+
+<p class="mb-3">Classical RegEx, deterministic finite automata, and nondeterministic finite automata have the same expressive power: <strong>regular languages</strong> (Type 3 in the Chomsky Hierarchy). Concatenation builds paths, alternation builds choices, and repetition builds loops. A regular language may contain infinitely many strings, such as <code>a*</code>; its limit is finite-state memory, not a maximum string length.</p>
+
+<p class="mb-3">Consider strings of <code>n</code> opening brackets followed by exactly <code>n</code> closing brackets, for arbitrary <code>n</code>. After the openings, a recognizer must distinguish every possible count to know how many closings remain. An FSA has only finitely many states, so two different opening counts eventually share a state and cannot be distinguished by subsequent input. This language is context-free (Type 2), recognizable with a stack, but non-regular. If <code>n</code> has a fixed finite bound, enumeration makes the restricted language regular. See <a class="note-inline-link" href="https://courses.cs.cornell.edu/cs4120/2023sp/notes/" target="_blank" rel="noopener noreferrer">Cornell's compiler notes</a>.</p>
+
+<p class="mb-3"><strong>Undecidable</strong> means that no algorithm can always halt and correctly decide membership for every input under the given formal specification. Matching a supplied classical RegEx against a finite string is decidable. Equal-count brackets are also decidable using a counter/stack even though classical RegEx cannot express them. Non-regularity, natural-language ambiguity, and slow backtracking therefore do not establish undecidability. Deciding whether an arbitrary Turing-machine-described language is regular is a different, undecidable problem. Modern regex engines may add non-regular features such as backreferences or recursion; distinguish those extensions from classical RegEx.</p>
+
+<h4 id="choosing-token-granularity-for-the-task" class="mb-2">Choosing token granularity for the task</h4>
+
+<p class="mb-3">The <strong>vocabulary</strong> is the set of distinct token types available to the representation, usually learned from a training corpus or supplied in advance, with any special tokens explicitly included. A token occurrence is one instance of a type; repeated occurrences do not create new vocabulary entries. Character, word, and subword tokenizers therefore define different vocabularies and different sequence lengths.</p>
+
+<p class="mb-3">Character tokens have little standalone lexical meaning, yet their sequences contain informative spelling patterns. For classifying names by likely linguistic origin, prefixes, suffixes, character combinations, and transliteration conventions may be more useful than dictionary semantics. Characters also permit generalization to unseen names. Such patterns provide probabilistic evidence about a name's form, not certainty about a person's ethnicity or nationality.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Task or constraint</th>
+<th>Character-based</th>
+<th>Word-based</th>
+<th>Subword-based</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Spelling correction</td>
+<td>Exposes insertions, deletions, substitutions, and transpositions; typo remains representable</td>
+<td>Whole misspelling may become OOV; dictionary candidates and sentence context can still help</td>
+<td>Often preserves familiar pieces of a misspelling, but splits may change unexpectedly</td>
+</tr>
+<tr>
+<td>Vocabulary size</td>
+<td>Small alphabet</td>
+<td>Potentially very large vocabulary</td>
+<td>Controlled intermediate vocabulary</td>
+</tr>
+<tr>
+<td>Sequence length</td>
+<td>Usually longest</td>
+<td>Usually shortest</td>
+<td>Between characters and whole words</td>
+</tr>
+<tr>
+<td>Meaning and generalization</td>
+<td>Model must compose character patterns</td>
+<td>Whole-word identity is explicit; rare words have little evidence</td>
+<td>Reuses frequent pieces across words; pieces need not be meaningful morphemes</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Word-based tokenization is attractive for direct lexical features but faces OOV words and a large vocabulary. Subwords trade longer sequences and less direct meaning per token for reusable pieces and better rare-word coverage. Full byte coverage can avoid unknown strings; character BPE still needs a policy for unseen characters.</p>
+
+<p class="mb-3">For social media, whitespace splitting treats <code>#NLPisCool</code> as one unit; a punctuation-aware tokenizer might instead return <code>#</code> and <code>NLPisCool</code>. Neither automatically discovers <code>NLP</code>, <code>is</code>, and <code>Cool</code>. Hashtag segmentation needs extra cues such as case changes, a lexicon, or a learned segmenter, and all-lowercase hashtags can remain ambiguous.</p>
+
+<h4 id="bpe-learning-merges-and-applying-them-to-a-new-word" class="mb-2">BPE: learning merges and applying them to a new word</h4>
+
+<p class="mb-3">A <strong>token learner</strong> fits the vocabulary and ordered merge rules on a corpus. A <strong>token segmenter</strong> applies those frozen rules to new input; it does not relearn pair frequencies from each new word. In basic BPE, the learner counts adjacent token pairs, merges the most frequent pair, updates the corpus, and repeats until the merge budget or vocabulary limit is reached. Corpus word frequencies weight the pair counts. This extends the subword approach described by <a class="note-inline-link" href="https://aclanthology.org/P16-1162/" target="_blank" rel="noopener noreferrer">Sennrich, Haddow, and Birch (2016)</a>.</p>
+
+<p class="mb-3">For a new word:</p>
+
+<ol class="mb-3">
+<li>Apply the same normalization and pre-tokenization used in training.</li>
+<li>Initialize its sequence with characters/bytes and the configured boundary markers or protected units.</li>
+<li>Find adjacent pairs present in the learned merge table.</li>
+<li>Apply the eligible pair with the earliest learned rank, using the tokenizer's consistent occurrence policy.</li>
+<li>Repeat until no eligible pair remains, then map the resulting pieces to vocabulary IDs.</li>
+</ol>
+
+<p class="mb-3">With rules <code>(l,o) → lo</code>, <code>(lo,w) → low</code>, <code>(e,r) → er</code>, <code>(er,&lt;/w&gt;) → er&lt;/w&gt;</code> in that order, <code>lower</code> starts as <code>l o w e r &lt;/w&gt;</code> and becomes <code>lo w e r &lt;/w&gt;</code>, then <code>low e r &lt;/w&gt;</code>, then <code>low er &lt;/w&gt;</code>, and finally <code>low er&lt;/w&gt;</code>. The rules determine the result; a longest-dictionary-word heuristic is not the definition of BPE.</p>
+
+<h4 id="bpe-implementation-note-punctuation-and-protected-chemical-formulas" class="mb-2">BPE implementation note: punctuation and protected chemical formulas</h4>
+
+<p class="mb-3">The implementation idea here uses a custom pre-tokenizer: separate punctuation such as <code>.</code> and <code>,</code> before splitting whitespace-delimited units, and preserve recognized chemical formulas as atomic pieces. Merely calling <code>split(' ')</code> leaves punctuation attached to words and handles repeated spaces poorly. Literal-space splitting also differs from <code>split()</code>, which collapses whitespace; choose according to whether exact whitespace reconstruction is required. Punctuation separation must avoid breaking decimals, abbreviations, or notation used inside a formula.</p>
+
+<p class="mb-3">Keep three marker concepts distinct:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Marker</th>
+<th>Meaning</th>
+<th>Where it belongs</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><code>&lt;/w&gt;</code> or a configured suffix marker</td>
+<td>End of a pre-tokenized word/unit</td>
+<td>Appended to that unit under the training convention</td>
+</tr>
+<tr>
+<td><code>Ġ</code> in a GPT-2-style byte representation</td>
+<td>Encoded preceding space</td>
+<td>Prefix/space representation; not an end marker</td>
+</tr>
+<tr>
+<td>Newline / end-of-line marker</td>
+<td>Actual line boundary</td>
+<td>Only where the source contains a line ending</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">The original “set of all letters” initialization supplies distinct base characters. A set loses frequency and order, so it cannot replace the ordered corpus sequences used to count adjacent pairs. When assigning IDs, use a deterministic ordering rather than relying on set iteration. Protecting <code>H2O</code> as an atomic piece also requires registering that protected piece in the vocabulary; its individual characters being present is insufficient.</p>
+
+<p class="mb-3">If a pre-token contains exactly one protected formula, the proposed shortcut is to attach its word-end marker directly. However, <code>len(pieces) == 1</code> means only “one piece”, not “chemical formula”: an ordinary one-character word or punctuation can satisfy it too. Use an explicit formula-recognition result or token-type flag; any heuristic false positives should be measured rather than assumed harmless.</p>
+
+<p class="mb-3">A rare formula may never receive a learned merge with <code>&lt;/w&gt;</code> or a preceding space. Thus “do not split the formula” does not guarantee “encode its boundary in the same token”. Depending on the vocabulary, <code>Ġ</code> plus <code>H2O</code> may remain two tokens. It is not inevitable that every formula costs exactly one more token than every normal word; both outcomes depend on the learned pieces and boundary convention.</p>
+
+<p class="mb-3">Before <code>_generate_sequence</code> returns, one possible <strong>custom tokenizer rule</strong> is to combine an existing leading <code>Ġ</code> with the first formula piece. Another is to combine the formula with its suffix marker. These are separate policies: apply each consistently during training and inference, preserve whether a space actually existed, and register the resulting composite token/ID. A manual combination is forced boundary handling, not a merge justified by BPE frequency. Without the implementation source, these are design notes rather than a verified code fix.</p>
+
+<p class="mb-3">Useful cases to check are <code>H2O</code>, <code> H2O</code>, <code>H2O,</code>, <code>NaCl.</code>, multiple spaces, a real newline, an unseen formula, and an ordinary one-piece token. Check token IDs, boundary placement, and reconstruction under the chosen normalization policy, not just the number of tokens.</p>
+
+<h4 id="lemmas-and-normalization-cost" class="mb-2">Lemmas and normalization cost</h4>
+
+<p class="mb-3">A <strong>lemma</strong> is the dictionary/citation form representing an inflected lexeme, such as <code>go</code> for <code>went</code>, <code>mouse</code> for <code>mice</code>, or the verb <code>run</code> for <code>running</code>. Selection may depend on part of speech and context; it is not simply the shortest spelling.</p>
+
+<p class="mb-3">Stemming typically applies inexpensive affix rules without a lexicon, sometimes producing nonwords such as <code>cri</code>. Lemmatization typically uses morphological rules and lexical resources, with POS/context analysis when needed. It usually requires more storage and computation, but can handle irregular forms and preserve valid dictionary forms. Exact cost depends on implementation: a lookup-only lemmatizer need not run a separate POS model. Both should be judged by the downstream task rather than normalization strength alone.</p>
 </section>
 
 <section id="week-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -2135,7 +2280,7 @@
 <li>TDM matrices are extremely sparse (e.g., 98%+ zero entries)</li>
 <li>Additional handcrafted features can be combined with VSM vectors</li>
 <li>Normalization needed when features have different scales</li>
-<li>TF-IDF is not effective for:
+<li>TF-IDF can be less informative for:
 <ul class="note-list">
 <li>Very short texts</li>
 <li>Highly repetitive or domain-specific frequent words</li>
@@ -2151,6 +2296,26 @@
 <li>Dense embeddings provide more semantic power and efficiency</li>
 <li>Applications: text classification, sentiment analysis, search, summarization</li>
 </ul>
+
+<h4 id="interpreting-sparse-vectors-and-term-weights" class="mb-2">Interpreting sparse vectors and term weights</h4>
+
+<p class="mb-3">For a vector with vocabulary size <code>|V|</code>, <strong>sparsity</strong> is the fraction of zero coordinates: <code>1 − nnz / |V|</code>, where <code>nnz</code> counts nonzero entries. A document uses only a small subset of the corpus vocabulary, so its vector can be high-dimensional yet mostly zero. Sparse storage saves memory; it does not restore missing semantic relationships.</p>
+
+<p class="mb-3">Binary weights record presence only: one occurrence and fifty occurrences both receive <code>1</code>. TF-IDF also uses within-document frequency and downweights terms occurring in many documents. Its importance estimate is lexical and corpus-relative, not a guarantee of semantic relevance.</p>
+
+<p class="mb-3"><strong>Sublinear TF scaling</strong> makes the weight grow more slowly than the raw count, commonly <code>tf' = 1 + ln(tf)</code> for positive counts and <code>0</code> for absent terms. Repeating a term fifty times then produces about <code>4.912</code> rather than <code>50</code>. Sublinear TF dampens repetition, but does not by itself normalize document length.</p>
+
+<p class="mb-3">For query <code>apple fruit</code>, let document A contain both terms once and B contain both fifty times. Raw-count or unnormalized TF-IDF dot products favor B: IDF is identical for the same terms in both documents. Binary weighting removes the repetition advantage; <strong>L2-normalized TF-IDF with cosine similarity</strong> addresses the length effect while retaining graded term weights. If B is exactly fifty copies of A, their normalized vectors are identical and their cosine scores tie. If B contains additional unrelated text, the directions differ and no tie is guaranteed. See the <a class="note-inline-link" href="https://scikit-learn.org/stable/modules/feature_extraction.html" target="_blank" rel="noopener noreferrer">scikit-learn feature-extraction guide</a>.</p>
+
+<p class="mb-3">TF-IDF can be less informative for very short texts with little overlap, very small/homogeneous corpora with weak IDF contrast, noisy typos receiving high IDF, or tasks dominated by synonyms, negation, and long-range relationships. Domain-specific frequent words may be important despite low IDF. These are limitations, not a claim that TF-IDF always fails on short or technical documents.</p>
+
+<h4 id="local-order-semantic-similarity-and-author-style" class="mb-2">Local order, semantic similarity, and author style</h4>
+
+<p class="mb-3">Word bigrams distinguish <code>dog bites man</code> (<code>dog bites</code>, <code>bites man</code>) from <code>man bites dog</code> (<code>man bites</code>, <code>bites dog</code>) even though their unigram bags coincide. N-grams preserve adjacency inside each feature, but a bag of n-grams still loses global order across occurrences; larger <code>n</code> expands vocabulary and sparsity.</p>
+
+<p class="mb-3">Different one-hot word vectors have dot product <code>0</code> and Euclidean distance <code>sqrt(2)</code>, whether the words are synonyms or unrelated. Learned embeddings share dimensions and use training signals such as context to organize similarity. Their quality depends on those signals; similar context can also put antonyms near one another.</p>
+
+<p class="mb-3">For <strong>authorship attribution</strong>, extract character n-grams, function-word frequencies, punctuation/capitalization habits, average word and sentence lengths, vocabulary richness, POS distributions, and selected word n-grams. Style can persist across topics, whereas content words may reveal topic rather than author. Preserve stylistic case and stopwords, normalize count features appropriately, and evaluate across topics to check that the classifier is learning authorship rather than subject matter.</p>
 </section>
 
 <section id="week-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -3859,6 +4024,24 @@
 <li>Elbow curve and silhouette scores may not reveal clear cluster structure in text data.</li>
 <li>For text clustering, internal measures can be less informative due to high dimensionality and sparsity.</li>
 </ul>
+
+<h4 id="naive-bayes-class-ranking-probability-and-boundaries" class="mb-2">Naive Bayes: class ranking, probability, and boundaries</h4>
+
+<p class="mb-3">For a fixed input <code>x</code>, Bayes' rule gives <code>P(y|x) = P(x|y)P(y)/P(x)</code>. The positive denominator is shared across candidate classes, so it cancels in <code>argmax_y</code>; it does not disappear from an actual posterior probability. To report probabilities, normalize scores over all classes: <code>P(x) = sum_y P(x|y)P(y)</code> for an exhaustive class set. In log space, subtract <code>logsumexp</code> of all class log-scores. Unnormalized scores for different documents are not comparable as posterior probabilities.</p>
+
+<p class="mb-3">The <strong>class prior</strong> <code>P(y)</code> describes class prevalence before observing this document; estimate it from class document counts or supply a deployment prior. The <strong>likelihood</strong> <code>P(x|y)</code> describes evidence under a class. Multinomial Naive Bayes estimates per-word probabilities using token counts within that class, usually with smoothing. Class priors are also distinct from Bayesian priors over model parameters, which can justify smoothed estimates.</p>
+
+<p class="mb-3">If <code>x</code> contains <code>A B C</code> once each, with each likelihood <code>0.1</code> in Spam and class prior <code>0.5</code>, the standard classification log-score using natural logarithms is:</p>
+
+<p class="mb-3">$$ s_{Spam} = \ln(0.5) + 3\ln(0.1) = \ln(0.0005) \approx -7.6009. $$</p>
+
+<p class="mb-3">This omits the document-count multinomial coefficient shared across classes, as usual for ranking. It is not the log posterior until normalized against the other class scores. With base-10 logs, the corresponding score is approximately <code>−3.3010</code>; log base changes scale, not rankings.</p>
+
+<p class="mb-3">Multinomial Naive Bayes uses <code>s_y(x) = log P(y) + sum_j x_j log P(w_j|y)</code>. Here <code>x_j</code> is a count, so repeated terms contribute repeatedly: the model <strong>does account for frequency</strong>, while ignoring order and conditional feature interactions. Pairwise class-score equality forms a hyperplane in this count-feature space. A neural network with nonlinear hidden activations can learn nonlinear boundaries and interactions; a network made entirely of affine layers still reduces to a linear map. Other Naive Bayes variants, such as Gaussian NB with unequal class variances, need not have linear boundaries. The <a class="note-inline-link" href="https://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html" target="_blank" rel="noopener noreferrer">Stanford IR text</a> derives the multinomial classification rule.</p>
+
+<h4 id="reading-a-near-zero-silhouette-score" class="mb-2">Reading a near-zero silhouette score</h4>
+
+<p class="mb-3">For 10,000 document vectors, a mean silhouette coefficient of <code>0.05</code> suggests weak separation under the chosen representation and distance: within-cluster distances are often close to nearest-other-cluster distances. It does not prove every cluster is poor, or that no useful segmentation exists. Inspect per-cluster scores, sizes, representative texts, stability across seeds, and preprocessing/metric choices before accepting the result. K-Means produces a partition even without strong natural clusters; high-dimensional sparse text may need normalized features, dimensionality reduction, or a different representation. See the <a class="note-inline-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html" target="_blank" rel="noopener noreferrer">silhouette definition</a>.</p>
 </section>
 
 <section id="week-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -10362,6 +10545,48 @@
 <li>Blind use → produces errors</li>
 </ul></li>
 </ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

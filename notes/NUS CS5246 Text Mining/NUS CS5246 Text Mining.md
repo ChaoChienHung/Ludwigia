@@ -10,7 +10,7 @@ Lang: en
 Tags: NLP, Data Mining, Information Extraction, Transformers
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-10-04
+LastModified: 2026-10-06
 </meta>
 
 NUS CS5246 Text Mining
@@ -290,6 +290,12 @@ Text as written natural language
 - Writing:
   - Visual representation of spoken language
   - Uses letters, digits, punctuation, and whitespace
+### Expressivity and keyword-filter errors
+
+A keyword filter observes surface strings, whereas a moderation decision concerns meaning in context. Expressivity allows the same intended meaning to appear as a paraphrase, euphemism, spelling variant, or algospeak. In a context where “PDF file” substitutes for “pedophile”, the relevant meaning remains but the literal keyword disappears: a filter that searches only for that keyword produces a **false negative**. This describes evasion of the intended rule, not a claim that every mention of the word should be blocked.
+
+Adding “PDF file” to a blacklist may recover some missed cases, but also flags ordinary document-format discussions, increasing false positives. The underlying problem is a many-to-many relationship between surface form and meaning; context-sensitive interpretation and evaluation on evolving variants matter more than a permanently fixed keyword list.
+
 ## Week 2
 
 <draft>
@@ -740,7 +746,7 @@ Limitations of RegEx
 Quick Quiz Example
 - Can you build a RegEx / FSA for natural language sentences like:
   - "It's Wednesday night, I'm out…"
-  - Answer: Undecidable (natural language sentences are generally context-sensitive, not regular)
+  - Answer: No general classical RegEx captures unrestricted natural-language structure. This is an expressivity limitation, not a proof that language membership is undecidable; see the clarification below.
 
 Summary
 - Powers of RegEx:
@@ -783,7 +789,7 @@ Three Basic Approaches
    - Easy to implement (RegEx: . matches all characters)
    - Limitations:
      - Characters lack semantic meaning
-     - Suitable only for word-level tasks (e.g., classifying names)
+     - Particularly useful when spelling patterns matter (e.g., classifying names); character models can also be used for broader NLP tasks.
    
 2. Word-based
    - Split text into words, numbers, punctuation
@@ -820,7 +826,7 @@ BPE Token Learner (example)
   - (e, s), (es, t), (est, _), (l, o), (lo, w), (n, e), (ne, w), (new, est_)
 - Token Segmenter:
   - Tokenizes new words by applying learned merges in order
-  - Example: "newer" → "new", "er_"
+  - Under the listed merges, "newer" → "new", "e", "r", "_". Producing "er_" would require additional learned merges.
 
 Subword Tokenization Challenges
 
@@ -973,6 +979,81 @@ Summary of Text Preprocessing
     - Stemming
     - Lemmatization
 - Choice of normalization depends on task and language
+### Pattern matching: literals, alternatives, and assertions
+
+A fixed pattern such as `cat` specifies one exact character sequence. A character set such as `[cat]` specifies alternatives for **one position**: it matches `c`, `a`, or `t`, not the string `cat`. A general RegEx composes literals, sets, repetition, and alternatives to describe a family of strings; fixed-pattern matching is a special case. For example, `cat[0-9]+` matches a literal prefix followed by one or more digits. Case sensitivity depends on the matching configuration.
+
+Assertions test a position without consuming its surrounding characters. The word boundary `\b` succeeds at a transition between a word character and a non-word character, including eligible string edges; its own matched span has length zero. In `\bcat\b`, only `cat` consumes text. “Word character” is engine-dependent: Python's Unicode `\w` includes Unicode alphanumeric characters and underscore, rather than only ASCII letters.
+
+Positive lookbehind `(?<=B)A` first requires that pattern `B` match immediately before the current position, then matches `A` starting there. In `(?<=USD )\d+` applied to `USD 120`, the result is `120`; `USD ` is checked but excluded from the returned span. Python's standard `re` requires fixed-length lookbehind patterns. These mechanics are documented in the [Python RegEx reference](https://docs.python.org/3/library/re.html).
+
+### Finite memory: non-regular is different from undecidable
+
+Classical RegEx, deterministic finite automata, and nondeterministic finite automata have the same expressive power: **regular languages** (Type 3 in the Chomsky Hierarchy). Concatenation builds paths, alternation builds choices, and repetition builds loops. A regular language may contain infinitely many strings, such as `a*`; its limit is finite-state memory, not a maximum string length.
+
+Consider strings of `n` opening brackets followed by exactly `n` closing brackets, for arbitrary `n`. After the openings, a recognizer must distinguish every possible count to know how many closings remain. An FSA has only finitely many states, so two different opening counts eventually share a state and cannot be distinguished by subsequent input. This language is context-free (Type 2), recognizable with a stack, but non-regular. If `n` has a fixed finite bound, enumeration makes the restricted language regular. See [Cornell's compiler notes](https://courses.cs.cornell.edu/cs4120/2023sp/notes/).
+
+**Undecidable** means that no algorithm can always halt and correctly decide membership for every input under the given formal specification. Matching a supplied classical RegEx against a finite string is decidable. Equal-count brackets are also decidable using a counter/stack even though classical RegEx cannot express them. Non-regularity, natural-language ambiguity, and slow backtracking therefore do not establish undecidability. Deciding whether an arbitrary Turing-machine-described language is regular is a different, undecidable problem. Modern regex engines may add non-regular features such as backreferences or recursion; distinguish those extensions from classical RegEx.
+
+### Choosing token granularity for the task
+
+The **vocabulary** is the set of distinct token types available to the representation, usually learned from a training corpus or supplied in advance, with any special tokens explicitly included. A token occurrence is one instance of a type; repeated occurrences do not create new vocabulary entries. Character, word, and subword tokenizers therefore define different vocabularies and different sequence lengths.
+
+Character tokens have little standalone lexical meaning, yet their sequences contain informative spelling patterns. For classifying names by likely linguistic origin, prefixes, suffixes, character combinations, and transliteration conventions may be more useful than dictionary semantics. Characters also permit generalization to unseen names. Such patterns provide probabilistic evidence about a name's form, not certainty about a person's ethnicity or nationality.
+
+| Task or constraint | Character-based | Word-based | Subword-based |
+|---|---|---|---|
+| Spelling correction | Exposes insertions, deletions, substitutions, and transpositions; typo remains representable | Whole misspelling may become OOV; dictionary candidates and sentence context can still help | Often preserves familiar pieces of a misspelling, but splits may change unexpectedly |
+| Vocabulary size | Small alphabet | Potentially very large vocabulary | Controlled intermediate vocabulary |
+| Sequence length | Usually longest | Usually shortest | Between characters and whole words |
+| Meaning and generalization | Model must compose character patterns | Whole-word identity is explicit; rare words have little evidence | Reuses frequent pieces across words; pieces need not be meaningful morphemes |
+
+Word-based tokenization is attractive for direct lexical features but faces OOV words and a large vocabulary. Subwords trade longer sequences and less direct meaning per token for reusable pieces and better rare-word coverage. Full byte coverage can avoid unknown strings; character BPE still needs a policy for unseen characters.
+
+For social media, whitespace splitting treats `#NLPisCool` as one unit; a punctuation-aware tokenizer might instead return `#` and `NLPisCool`. Neither automatically discovers `NLP`, `is`, and `Cool`. Hashtag segmentation needs extra cues such as case changes, a lexicon, or a learned segmenter, and all-lowercase hashtags can remain ambiguous.
+
+### BPE: learning merges and applying them to a new word
+
+A **token learner** fits the vocabulary and ordered merge rules on a corpus. A **token segmenter** applies those frozen rules to new input; it does not relearn pair frequencies from each new word. In basic BPE, the learner counts adjacent token pairs, merges the most frequent pair, updates the corpus, and repeats until the merge budget or vocabulary limit is reached. Corpus word frequencies weight the pair counts. This extends the subword approach described by [Sennrich, Haddow, and Birch (2016)](https://aclanthology.org/P16-1162/).
+
+For a new word:
+
+1. Apply the same normalization and pre-tokenization used in training.
+2. Initialize its sequence with characters/bytes and the configured boundary markers or protected units.
+3. Find adjacent pairs present in the learned merge table.
+4. Apply the eligible pair with the earliest learned rank, using the tokenizer's consistent occurrence policy.
+5. Repeat until no eligible pair remains, then map the resulting pieces to vocabulary IDs.
+
+With rules `(l,o) → lo`, `(lo,w) → low`, `(e,r) → er`, `(er,</w>) → er</w>` in that order, `lower` starts as `l o w e r </w>` and becomes `lo w e r </w>`, then `low e r </w>`, then `low er </w>`, and finally `low er</w>`. The rules determine the result; a longest-dictionary-word heuristic is not the definition of BPE.
+
+### BPE implementation note: punctuation and protected chemical formulas
+
+The implementation idea here uses a custom pre-tokenizer: separate punctuation such as `.` and `,` before splitting whitespace-delimited units, and preserve recognized chemical formulas as atomic pieces. Merely calling `split(' ')` leaves punctuation attached to words and handles repeated spaces poorly. Literal-space splitting also differs from `split()`, which collapses whitespace; choose according to whether exact whitespace reconstruction is required. Punctuation separation must avoid breaking decimals, abbreviations, or notation used inside a formula.
+
+Keep three marker concepts distinct:
+
+| Marker | Meaning | Where it belongs |
+|---|---|---|
+| `</w>` or a configured suffix marker | End of a pre-tokenized word/unit | Appended to that unit under the training convention |
+| `Ġ` in a GPT-2-style byte representation | Encoded preceding space | Prefix/space representation; not an end marker |
+| Newline / end-of-line marker | Actual line boundary | Only where the source contains a line ending |
+
+The original “set of all letters” initialization supplies distinct base characters. A set loses frequency and order, so it cannot replace the ordered corpus sequences used to count adjacent pairs. When assigning IDs, use a deterministic ordering rather than relying on set iteration. Protecting `H2O` as an atomic piece also requires registering that protected piece in the vocabulary; its individual characters being present is insufficient.
+
+If a pre-token contains exactly one protected formula, the proposed shortcut is to attach its word-end marker directly. However, `len(pieces) == 1` means only “one piece”, not “chemical formula”: an ordinary one-character word or punctuation can satisfy it too. Use an explicit formula-recognition result or token-type flag; any heuristic false positives should be measured rather than assumed harmless.
+
+A rare formula may never receive a learned merge with `</w>` or a preceding space. Thus “do not split the formula” does not guarantee “encode its boundary in the same token”. Depending on the vocabulary, `Ġ` plus `H2O` may remain two tokens. It is not inevitable that every formula costs exactly one more token than every normal word; both outcomes depend on the learned pieces and boundary convention.
+
+Before `_generate_sequence` returns, one possible **custom tokenizer rule** is to combine an existing leading `Ġ` with the first formula piece. Another is to combine the formula with its suffix marker. These are separate policies: apply each consistently during training and inference, preserve whether a space actually existed, and register the resulting composite token/ID. A manual combination is forced boundary handling, not a merge justified by BPE frequency. Without the implementation source, these are design notes rather than a verified code fix.
+
+Useful cases to check are `H2O`, ` H2O`, `H2O,`, `NaCl.`, multiple spaces, a real newline, an unseen formula, and an ordinary one-piece token. Check token IDs, boundary placement, and reconstruction under the chosen normalization policy, not just the number of tokens.
+
+### Lemmas and normalization cost
+
+A **lemma** is the dictionary/citation form representing an inflected lexeme, such as `go` for `went`, `mouse` for `mice`, or the verb `run` for `running`. Selection may depend on part of speech and context; it is not simply the shortest spelling.
+
+Stemming typically applies inexpensive affix rules without a lexicon, sometimes producing nonwords such as `cri`. Lemmatization typically uses morphological rules and lexical resources, with POS/context analysis when needed. It usually requires more storage and computation, but can handle irregular forms and preserve valid dictionary forms. Exact cost depends on implementation: a lookup-only lemmatizer need not run a separate POS model. Both should be judged by the downstream task rather than normalization strength alone.
+
 ## Week 3
 
 <draft>
@@ -1102,7 +1183,7 @@ Practical Notes
 - TDM matrices are extremely sparse (e.g., 98%+ zero entries)
 - Additional handcrafted features can be combined with VSM vectors
 - Normalization needed when features have different scales
-- TF-IDF is not effective for:
+- TF-IDF can be less informative for:
   - Very short texts
   - Highly repetitive or domain-specific frequent words
 - Solutions: use embeddings or domain-specific weighting schemes
@@ -1112,6 +1193,26 @@ Summary
 - Enables similarity computations, keyword extraction, document search, clustering, classification
 - Dense embeddings provide more semantic power and efficiency
 - Applications: text classification, sentiment analysis, search, summarization
+### Interpreting sparse vectors and term weights
+
+For a vector with vocabulary size `|V|`, **sparsity** is the fraction of zero coordinates: `1 − nnz / |V|`, where `nnz` counts nonzero entries. A document uses only a small subset of the corpus vocabulary, so its vector can be high-dimensional yet mostly zero. Sparse storage saves memory; it does not restore missing semantic relationships.
+
+Binary weights record presence only: one occurrence and fifty occurrences both receive `1`. TF-IDF also uses within-document frequency and downweights terms occurring in many documents. Its importance estimate is lexical and corpus-relative, not a guarantee of semantic relevance.
+
+**Sublinear TF scaling** makes the weight grow more slowly than the raw count, commonly `tf' = 1 + ln(tf)` for positive counts and `0` for absent terms. Repeating a term fifty times then produces about `4.912` rather than `50`. Sublinear TF dampens repetition, but does not by itself normalize document length.
+
+For query `apple fruit`, let document A contain both terms once and B contain both fifty times. Raw-count or unnormalized TF-IDF dot products favor B: IDF is identical for the same terms in both documents. Binary weighting removes the repetition advantage; **L2-normalized TF-IDF with cosine similarity** addresses the length effect while retaining graded term weights. If B is exactly fifty copies of A, their normalized vectors are identical and their cosine scores tie. If B contains additional unrelated text, the directions differ and no tie is guaranteed. See the [scikit-learn feature-extraction guide](https://scikit-learn.org/stable/modules/feature_extraction.html).
+
+TF-IDF can be less informative for very short texts with little overlap, very small/homogeneous corpora with weak IDF contrast, noisy typos receiving high IDF, or tasks dominated by synonyms, negation, and long-range relationships. Domain-specific frequent words may be important despite low IDF. These are limitations, not a claim that TF-IDF always fails on short or technical documents.
+
+### Local order, semantic similarity, and author style
+
+Word bigrams distinguish `dog bites man` (`dog bites`, `bites man`) from `man bites dog` (`man bites`, `bites dog`) even though their unigram bags coincide. N-grams preserve adjacency inside each feature, but a bag of n-grams still loses global order across occurrences; larger `n` expands vocabulary and sparsity.
+
+Different one-hot word vectors have dot product `0` and Euclidean distance `sqrt(2)`, whether the words are synonyms or unrelated. Learned embeddings share dimensions and use training signals such as context to organize similarity. Their quality depends on those signals; similar context can also put antonyms near one another.
+
+For **authorship attribution**, extract character n-grams, function-word frequencies, punctuation/capitalization habits, average word and sentence lengths, vocabulary richness, POS distributions, and selected word n-grams. Style can persist across topics, whereas content words may reveal topic rather than author. Preserve stylistic case and stopwords, normalize count features appropriately, and evaluate across topics to check that the classifier is learning authorship rather than subject matter.
+
 ## Week 4
 
 <draft>
@@ -2088,6 +2189,26 @@ Examples & Observations
 - K-Means on random or high-dimensional sparse data (e.g., document vectors) often shows poor internal measure signals.  
 - Elbow curve and silhouette scores may not reveal clear cluster structure in text data.  
 - For text clustering, internal measures can be less informative due to high dimensionality and sparsity.
+### Naive Bayes: class ranking, probability, and boundaries
+
+For a fixed input `x`, Bayes' rule gives `P(y|x) = P(x|y)P(y)/P(x)`. The positive denominator is shared across candidate classes, so it cancels in `argmax_y`; it does not disappear from an actual posterior probability. To report probabilities, normalize scores over all classes: `P(x) = sum_y P(x|y)P(y)` for an exhaustive class set. In log space, subtract `logsumexp` of all class log-scores. Unnormalized scores for different documents are not comparable as posterior probabilities.
+
+The **class prior** `P(y)` describes class prevalence before observing this document; estimate it from class document counts or supply a deployment prior. The **likelihood** `P(x|y)` describes evidence under a class. Multinomial Naive Bayes estimates per-word probabilities using token counts within that class, usually with smoothing. Class priors are also distinct from Bayesian priors over model parameters, which can justify smoothed estimates.
+
+If `x` contains `A B C` once each, with each likelihood `0.1` in Spam and class prior `0.5`, the standard classification log-score using natural logarithms is:
+
+$$
+s_{Spam} = \ln(0.5) + 3\ln(0.1) = \ln(0.0005) \approx -7.6009.
+$$
+
+This omits the document-count multinomial coefficient shared across classes, as usual for ranking. It is not the log posterior until normalized against the other class scores. With base-10 logs, the corresponding score is approximately `−3.3010`; log base changes scale, not rankings.
+
+Multinomial Naive Bayes uses `s_y(x) = log P(y) + sum_j x_j log P(w_j|y)`. Here `x_j` is a count, so repeated terms contribute repeatedly: the model **does account for frequency**, while ignoring order and conditional feature interactions. Pairwise class-score equality forms a hyperplane in this count-feature space. A neural network with nonlinear hidden activations can learn nonlinear boundaries and interactions; a network made entirely of affine layers still reduces to a linear map. Other Naive Bayes variants, such as Gaussian NB with unequal class variances, need not have linear boundaries. The [Stanford IR text](https://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html) derives the multinomial classification rule.
+
+### Reading a near-zero silhouette score
+
+For 10,000 document vectors, a mean silhouette coefficient of `0.05` suggests weak separation under the chosen representation and distance: within-cluster distances are often close to nearest-other-cluster distances. It does not prove every cluster is poor, or that no useful segmentation exists. Inspect per-cluster scores, sizes, representative texts, stability across seeds, and preprocessing/metric choices before accepting the result. K-Means produces a partition even without strong natural clusters; high-dimensional sparse text may need normalized features, dimensionality reduction, or a different representation. See the [silhouette definition](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html).
+
 ## Week 6
 
 <draft>
@@ -5984,3 +6105,8 @@ Final perspective
 
   - Good use → amplifies you  
   - Blind use → produces errors  
+
+
+<reviewkit>
+<qprompt/>
+</reviewkit>

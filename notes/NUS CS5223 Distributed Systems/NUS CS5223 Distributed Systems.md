@@ -10,14 +10,14 @@ Lang: en
 Tags: Distributed Systems, Consensus, Fault Tolerance, System Architecture
 Status: drafting
 Published: 2026-09-12
-LastModified: 2026-10-04
+LastModified: 2026-10-06
 </meta>
 
 NUS CS5223 Distributed Systems
 
 ## Reading Architecture
 
-這份來源目前是以 slides 與主題段落整理，沒有可靠的 Week 標記；因此以下不硬造週次，而是提供一條可從頭走到尾的 knowledge spine：
+這份來源混合 slides、主題段落與部分明確週次；以下以 knowledge spine 導讀，已確認的 Week 9 保留週次，其餘不額外推定：
 
 ```text
 distributed system model / communication
@@ -1463,7 +1463,38 @@ System Composition
   - Two-Phase Commit (atomicity).
 - Provides strong consistency, fault tolerance, and durability.
 - Trade-off: high latency and increased complexity.
-Week 9
+## Week 9: Consensus and Real Systems
+
+### From agreement to a fault-tolerant service
+
+Single-decree Paxos chooses one value. Multi-decree/Multi-Paxos organizes choices into log slots; replicas apply a decided prefix in the same order to a deterministic state machine. State machine replication then makes the agreed log useful to clients. Raft provides another replicated-log consensus design with explicit leader-election and log-management structure.
+
+The key design question is where agreement is necessary. Critical coordination and metadata may need consensus, while bulk data can use a different replication contract. Chubby and GFS illustrate this division: reliable coordination does not imply that every data write runs Paxos.
+
+### Paxos implementation note: higher Phase1A ballots and `isActive`
+
+Suppose `handlePhase1A` receives a ballot higher than the server's current promised ballot, and the server also acts as proposer/leader. Promising the new ballot means it will no longer accept lower-ballot proposals. If it treats `isActive` as authority to send Phase2A or leader heartbeats, clearing that flag aligns its local behavior with the observed ballot change.
+
+This does **not** mean that Paxos safety requires exactly one node to believe it is leader at every instant. Competing proposers are allowed; safety comes from quorum intersection, monotonic acceptor promises, and the Phase 1 rule that preserves previously accepted/chosen values. A higher Phase1A also does not prove its sender has already won a quorum. The distinction between safety and stable leadership for progress is developed in [Lamport's Paxos Made Simple](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf).
+
+Why step down locally?
+
+- It avoids new proposals under an obsolete ballot and reduces wasted retries/traffic.
+- It prevents stale leader heartbeats from interfering with failure detection if receivers treat them as evidence of authority.
+- It helps a higher-ballot contender complete recovery instead of repeatedly competing with the old proposer.
+
+One higher promise alone does not prove every old-ballot proposal will fail: another quorum might still be reachable. Nevertheless, a local promise is evidence of preemption, and stepping down is a conventional progress/efficiency policy. Acceptors' promises increase monotonically; they do not alternate freely between lower and higher ballots. Livelock arises when proposers keep generating still-higher ballots and preempting one another.
+
+The update should be conditional on a valid higher ballot. Duplicate same-ballot Phase1A messages should normally be handled idempotently, and older ballots should not force a current leader to resign. Preserve accepted entries and decided slots; changing `isActive` is not erasing consensus history. Delayed timers should check both current ballot and activity before sending; followers still need election/failure-detection timers. To become active again, complete Phase 1 with a quorum and reconcile accepted values.
+
+Repeated elections are better addressed through failure-detection timeouts, backoff/jitter, and eventual stable leadership. “Thundering herd” specifically describes many actors reacting together to an event; a single preempting ballot is not itself a herd. Without the actual handler and timer source, these are implementation invariants to review, not confirmation that one particular assignment line is indispensable.
+
+### Chubby: publish a leader, then fence stale work
+
+The familiar pattern is to open `/ls/cell/service/primary`, try to acquire its lock, and publish the holder's address. Other clients read/watch that file. Failing to acquire a lock does not automatically elect a backup or prove an address has already been published: applications need startup/retry and membership policies.
+
+A sequencer identifies a particular lock acquisition so the receiving resource can reject delayed work from an old holder. The lock controls current ownership; checking the sequencer/fencing token protects against operations already in flight. An advisory lock is safe only when the relevant application/resource participates in the protocol.
+
 Chubby — Distributed Coordination Service
 
 Overview
@@ -1532,7 +1563,7 @@ Example: Primary–Backup using Chubby (instead of a view server)
 3. The primary then writes its address into Chubby so others can discover it.
 4. When another server tries to acquire the lock, it finds that the lock is already held.
 5. By reading the state stored in Chubby, it learns the identity of the current primary.
-6. As the next available server, it assumes the role of backup.
+6. The application may assign it a backup role according to a separate membership/replication policy; lock acquisition alone does not assign that role.
 7. Clients query Chubby to determine the current primary, and Chubby returns the primary server’s address.
 
 Notes
@@ -1585,7 +1616,7 @@ Leases (for Reads)
   - Just need to ensure master hasn’t changed
 - Master obtains lease and renews while up (e.g., 10 seconds)
 - Master can process reads alone if holding lease
-- If master fails, need to wait 10s before new master can respond to requests
+- After master failure, a new master must obey the lease protocol before serving reads; the remaining old lease and recovery determine delay, not a fixed ten seconds for every failure
 - Allows serving reads locally without consensus
 - Tradeoff:
   - Faster reads
@@ -1600,8 +1631,7 @@ Caching
   - Sends invalidation on updates
 
 Note:
-Before a client sends a SetContents operation to Chubby, Chubby first issues cache invalidation messages to all clients.
-Each client acknowledges the invalidation, and only after receiving these acknowledgments does Chubby allow the write to proceed.
+After the master receives a modifying request such as SetContents, it invalidates the affected cached state. The modification proceeds after each relevant client has acknowledged invalidation or its cache lease has expired; it does not require a live acknowledgment from a failed client forever.
 
 Question: Is it safe for clients to read from their local cache before it has received invalidation request?
 Answer: Yes, it is safe, and it does not violate linearizability—but only because of how Chubby enforces ordering. 
@@ -1640,10 +1670,9 @@ What happens if a client holding a lock/file cache fails?
 
 KeepAlive Mechanism
 - Clients maintain leases via periodically sending messages (KeepAlive)
-- Clients rely on responses from Chubby’s KeepAlive mechanism to confirm that their session is still active; if these responses stop, the client assumes its lease has expired.
-- On failure:
-  - Locks released
-  - Cache invalidated
+- KeepAlive responses renew session leases and carry events/invalidation.
+- If the local lease deadline passes, the client enters jeopardy, disables its cache, and waits through a grace period to determine whether the session survives. A missing response is not immediate proof that the master has already expired the session.
+- Actual session expiration invalidates handles/cache and leads to lock release under the service protocol.
 
 Proxies
 - KeepAlives and invalidations are a huge percentage of load
@@ -1667,6 +1696,14 @@ Real System Stats
   - <0.07% = writes
 
 “Readers will be unsurprised to learn that the failover code, which is exercised far less often than other parts of the system, has been a rich source of interesting bugs.”
+
+### Read-heavy coordination: leases and cache invalidation
+
+The master read lease and client session/cache leases serve different purposes. A master needs valid leadership and current committed state to serve local reads; client leases justify cached state and resource ownership. Lease safety depends on the protocol's timing assumptions, not simply on selecting a convenient duration such as ten seconds.
+
+During invalidation, an old cached read can still precede the pending write's linearization point. The master prevents new cachable copies of the affected node until outstanding invalidations finish, while uncached reads remain possible. KeepAlive carries invalidations and acknowledgments. These details and the session jeopardy/grace-period behavior follow the [Chubby paper, Sections 2.7–2.8](https://storage.googleapis.com/gweb-research2023-media/pubtools/4444.pdf).
+
+Batching amortizes consensus overhead but may add waiting latency; partitioning creates independent consensus groups but complicates cross-group operations. Proxies aggregate session traffic. The supplied lecture figures (~50,000 clients, ~22,000 files, ~2,000 RPC/s, ~93% KeepAlive, <0.07% writes) describe one historical workload rather than protocol limits. Likewise, “~1,000 Paxos ops/s” and “four message delays” are baseline/path assumptions, not universal Paxos guarantees: established Multi-Paxos leaders avoid repeating Phase 1 on every slot. Rare failover paths deserve explicit testing because common-case throughput measurements do not establish recovery correctness.
 
 Google File System (GFS)
 
@@ -1712,7 +1749,7 @@ GFS Architecture
 
 File Structure
 - Files split into fixed-size chunks (64MB)
-- Each chunk replicated (3+ chunkservers)
+- Each chunk normally has three replicas; replication is configurable and failures can temporarily reduce the count.
 
 Components
 
@@ -1722,13 +1759,13 @@ Master
   - Chunk ID → list of chunkserver holding it
 - Stores metadata in memory
 - Does NOT store file data
-- Actually a replicated system using shadow masters
+- Persistent metadata changes are protected by a replicated operation log; checkpoints speed recovery. Shadow masters provide additional read availability.
 
 Chunkservers
 - Store actual data
 
 Shadow Masters
-- Replicated metadata for fault tolerance
+- Replay the operation log and provide read-only metadata access that may lag; this is not a strongly consistent active-master quorum
 
 Key Property
 - Single logical master (simplifies design)
@@ -1762,8 +1799,8 @@ Properties
 Note: Comparison with Paxos
 
 The design of the Google File System (GFS) shares some similarities with Paxos, such as using a primary to coordinate replicas, but there are key differences:
-1. Client interaction: In GFS, the client pushes data directly to the nearest replica. In Paxos, the client must send the request to the Proposer or Leader.
-2. Consensus mechanism: GFS does not run a full consensus protocol like Paxos. The primary orders writes and instructs replicas, but it does not wait for a majority to agree before responding. As a result, GFS can acknowledge the client before achieving majority consensus. In contrast, Paxos requires the primary to wait for acknowledgments from a majority of replicas before confirming success. Note that in GFS, if all replicas fail to apply a write, the operation may still be reported as failed.
+1. Client interaction: In GFS, bulk data is pushed directly through chunk replicas, separately from mutation-control messages. A typical Multi-Paxos service routes client commands through its leader; client transport is a service design choice rather than a core Paxos safety requirement.
+2. Replication contract: GFS chunk mutations are not Paxos log decisions. After secondaries respond, the primary reports the outcome; errors at any replica are reported to the client and may leave a partially applied mutation. Success is not defined as a Paxos majority vote. In Paxos, a quorum of acceptances makes a value chosen; a state-machine service may additionally wait for application before replying.
 
 Important clarification
 
@@ -1823,7 +1860,7 @@ Behavior
 Guarantees
 - Append is atomic
 - Written region is defined
-- Interleaving regions are inconsistent
+- Successful record regions are defined; intervening padding/duplicate regions may be inconsistent.
 
 Issues
 - Duplicate records possible
@@ -1886,6 +1923,14 @@ Shared Insight
   - Trade strict guarantees for scalability
   - Optimize for common-case workloads
   - Push complexity to system design instead of application logic
+### GFS: separate successful records from failed regions
+
+For ordinary writes, distinguish **consistent** (readers agree across replicas) from **defined** (the region also reflects a complete mutation). Concurrent successful writes can leave consistent but undefined regions; a failed write can leave replica disagreement. Retrying does not make arbitrary overwritten data recoverable automatically.
+
+Record append lets the system select an offset and guarantees an atomic record at least once on success. A full chunk may be padded before retrying in the next chunk; failures/retries can produce duplicate records and gaps. Applications therefore use checksums and unique IDs to validate and deduplicate records. Atomic append is not exactly-once delivery. The metadata log and read-only shadow masters also have different recovery roles, as described in the [GFS paper, Sections 2.6, 3.3, and 5.1](https://storage.googleapis.com/gweb-research2023-media/pubtools/4446.pdf).
+
+The lecture's later scale figures (~50 million files, ~10 PB) should be read as historical context, not measurements from the original 2003 paper. The design lesson remains: Chubby protects coordination with strong semantics, while GFS chooses a workload-specific storage contract and shifts record validation/deduplication to applications. Compare assumptions and acknowledgment conditions before describing either system as “strong” or “weak”.
+
 Week 10
 CS5223 Distributed Systems – Weak Consistency (Week 10)
 
@@ -2193,3 +2238,8 @@ Key Formulas
 - Byzantine quorum requirement: n > 3f
 - Prepare Certificate: 2f+1 matching PREPAREs
 - Commit Certificate: 2f+1 matching COMMITs
+
+
+<reviewkit>
+<qprompt/>
+</reviewkit>
