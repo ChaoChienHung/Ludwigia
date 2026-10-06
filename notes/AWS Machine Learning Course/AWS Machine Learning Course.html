@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AWS Machine Learning Course — Ludwig</title>
+  <meta name="garden:tags" content="Cloud Computing, Machine Learning, Deep Learning, NLP">
+  <meta name="garden:summary" content="Comprehensive structured notes for AWS Academy Machine Learning Foundations, exploring the end-to-end ML lifecycle on AWS, including problem framing, serverless ETL with AWS Glue, statistical EDA, Amazon SageMaker training and automated tuning, time-series forecasting with Canvas, computer vision with Rekognition, NLP services, and Generative AI with Amazon Q Developer and Bedrock.">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="published">
+  <meta name="site:tag_concepts" content="concept.cloud_computing,concept.machine_learning,concept.deep_learning,concept.nlp">
+  <meta name="site:tag_labels" content="{&quot;concept.cloud_computing&quot;:{&quot;en&quot;:&quot;Cloud Computing&quot;,&quot;zh-Hant&quot;:&quot;雲端運算&quot;,&quot;zh-Hans&quot;:&quot;云计算&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.nlp&quot;:{&quot;en&quot;:&quot;NLP&quot;,&quot;zh-Hant&quot;:&quot;自然語言處理&quot;,&quot;zh-Hans&quot;:&quot;自然语言处理&quot;}}">
+  <meta name="site:canonical_id" content="aws-machine-learning-course">
+  <meta name="site:published_at" content="2026-10-06">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="40">
+  <meta name="site:source" content="notes/AWS Machine Learning Course/AWS Machine Learning Course.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">AWS Machine Learning Course</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#knowledge-architecture">Knowledge Architecture</a>
+<a class="note-toc-link level-1" href="#1-machine-learning-pipelines-and-business-problem-framing">1. Machine Learning Pipelines and Business Problem Framing</a>
+<a class="note-toc-link level-2" href="#1-1-the-machine-learning-pipeline-paradigm">1.1 The Machine Learning Pipeline Paradigm</a>
+<a class="note-toc-link level-2" href="#1-2-defining-business-objectives-vs-ml-objectives">1.2 Defining Business Objectives vs. ML Objectives</a>
+<a class="note-toc-link level-2" href="#1-3-problem-suitability-and-simplicity-validation">1.3 Problem Suitability and Simplicity Validation</a>
+<a class="note-toc-link level-2" href="#1-4-benchmark-datasets-in-the-ml-curriculum">1.4 Benchmark Datasets in the ML Curriculum</a>
+<a class="note-toc-link level-1" href="#2-data-sourcing-serverless-etl-with-aws-glue-and-security-governance">2. Data Sourcing, Serverless ETL with AWS Glue, and Security Governance</a>
+<a class="note-toc-link level-2" href="#2-1-the-data-sourcing-hierarchy">2.1 The Data Sourcing Hierarchy</a>
+<a class="note-toc-link level-2" href="#2-2-serverless-etl-with-aws-glue">2.2 Serverless ETL with AWS Glue</a>
+<a class="note-toc-link level-2" href="#2-3-event-driven-etl-pipelines">2.3 Event-Driven ETL Pipelines</a>
+<a class="note-toc-link level-2" href="#2-4-programmatic-etl-with-python-boto3">2.4 Programmatic ETL with Python (`boto3`)</a>
+<a class="note-toc-link level-2" href="#2-5-security-iam-and-compliance-auditing">2.5 Security, IAM, and Compliance Auditing</a>
+<a class="note-toc-link level-1" href="#3-exploratory-data-analysis-descriptive-statistics-and-anomaly-diagnosis">3. Exploratory Data Analysis, Descriptive Statistics, and Anomaly Diagnosis</a>
+<a class="note-toc-link level-2" href="#3-1-univariate-statistics-central-tendency-and-dispersion">3.1 Univariate Statistics: Central Tendency and Dispersion</a>
+<a class="note-toc-link level-2" href="#3-2-visualizing-feature-distributions">3.2 Visualizing Feature Distributions</a>
+<a class="note-toc-link level-2" href="#3-3-multivariate-statistics-and-correlation-analysis">3.3 Multivariate Statistics and Correlation Analysis</a>
+<a class="note-toc-link level-1" href="#4-feature-engineering-dirty-data-and-selection-strategies">4. Feature Engineering, Dirty Data, and Selection Strategies</a>
+<a class="note-toc-link level-2" href="#4-1-taxonomy-of-missing-data">4.1 Taxonomy of Missing Data</a>
+<a class="note-toc-link level-2" href="#4-2-outlier-remediation-strategies">4.2 Outlier Remediation Strategies</a>
+<a class="note-toc-link level-2" href="#4-3-feature-selection-methodologies">4.3 Feature Selection Methodologies</a>
+<a class="note-toc-link level-1" href="#5-amazon-sagemaker-training-paradigms-hpo-and-autopilot">5. Amazon SageMaker Training Paradigms, HPO, and Autopilot</a>
+<a class="note-toc-link level-2" href="#5-1-the-four-model-training-approaches-in-sagemaker">5.1 The Four Model Training Approaches in SageMaker</a>
+<a class="note-toc-link level-2" href="#5-2-key-sagemaker-built-in-algorithms">5.2 Key SageMaker Built-in Algorithms</a>
+<a class="note-toc-link level-2" href="#5-3-automated-hyperparameter-tuning-hpo">5.3 Automated Hyperparameter Tuning (HPO)</a>
+<a class="note-toc-link level-2" href="#5-4-amazon-sagemaker-autopilot-automl">5.4 Amazon SageMaker Autopilot (AutoML)</a>
+<a class="note-toc-link level-1" href="#6-time-series-forecasting-and-amazon-sagemaker-canvas">6. Time-Series Forecasting and Amazon SageMaker Canvas</a>
+<a class="note-toc-link level-2" href="#6-1-foundations-of-temporal-data-modeling">6.1 Foundations of Temporal Data Modeling</a>
+<a class="note-toc-link level-2" href="#6-2-preprocessing-and-frequency-alignment">6.2 Preprocessing and Frequency Alignment</a>
+<a class="note-toc-link level-2" href="#6-3-amazon-sagemaker-canvas-for-no-code-forecasting">6.3 Amazon SageMaker Canvas for No-Code Forecasting</a>
+<a class="note-toc-link level-2" href="#6-4-programmatic-endpoint-invocation-via-python">6.4 Programmatic Endpoint Invocation via Python</a>
+<a class="note-toc-link level-1" href="#7-computer-vision-with-amazon-rekognition-and-ground-truth">7. Computer Vision with Amazon Rekognition and Ground Truth</a>
+<a class="note-toc-link level-2" href="#7-1-amazon-rekognition-architecture">7.1 Amazon Rekognition Architecture</a>
+<a class="note-toc-link level-2" href="#7-2-facial-detection-vs-facial-search">7.2 Facial Detection vs. Facial Search</a>
+<a class="note-toc-link level-2" href="#7-3-responsible-ai-and-ethical-computer-vision">7.3 Responsible AI and Ethical Computer Vision</a>
+<a class="note-toc-link level-2" href="#7-4-stored-video-vs-streaming-video-architectures">7.4 Stored Video vs. Streaming Video Architectures</a>
+<a class="note-toc-link level-2" href="#7-5-custom-labels-and-amazon-sagemaker-ground-truth">7.5 Custom Labels and Amazon SageMaker Ground Truth</a>
+<a class="note-toc-link level-1" href="#8-natural-language-processing-pipelines-and-aws-language-services">8. Natural Language Processing Pipelines and AWS Language Services</a>
+<a class="note-toc-link level-2" href="#8-1-classical-nlp-text-preprocessing-pipeline">8.1 Classical NLP Text Preprocessing Pipeline</a>
+<a class="note-toc-link level-2" href="#8-2-text-vectorization-bow-vs-tf-idf">8.2 Text Vectorization: BoW vs. TF-IDF</a>
+<a class="note-toc-link level-2" href="#8-3-contextual-semantics-pos-tagging-and-named-entity-recognition-ner">8.3 Contextual Semantics, POS Tagging, and Named Entity Recognition (NER)</a>
+<a class="note-toc-link level-2" href="#8-4-aws-managed-natural-language-services">8.4 AWS Managed Natural Language Services</a>
+<a class="note-toc-link level-1" href="#9-generative-ai-foundation-models-and-amazon-q-developer">9. Generative AI, Foundation Models, and Amazon Q Developer</a>
+<a class="note-toc-link level-2" href="#9-1-the-generative-ai-paradigm-shift">9.1 The Generative AI Paradigm Shift</a>
+<a class="note-toc-link level-2" href="#9-2-the-aws-generative-ai-stack">9.2 The AWS Generative AI Stack</a>
+<a class="note-toc-link level-2" href="#9-3-amazon-q-developer-across-the-software-development-lifecycle-sdlc">9.3 Amazon Q Developer across the Software Development Lifecycle (SDLC)</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06" data-published-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">Structured Study Notes on AWS Academy Machine Learning Foundations: Pipeline Implementation, Amazon SageMaker, Serverless ETL, Time-Series Forecasting, Computer Vision, NLP, and Generative AI.</p>
+</section>
+
+<section id="knowledge-architecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Knowledge Architecture</h3>
+
+<p class="mb-3">This course establishes an end-to-end engineering roadmap for designing, training, deploying, and operating production-grade machine learning workflows on Amazon Web Services (AWS):</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">AWS Machine Learning Foundations Roadmap
+  ├── Problem Framing &amp; Sourcing: business metrics → ML objectives → benchmark datasets
+  ├── Data Engineering &amp; ETL: AWS Glue (Data Catalog, Dynamic Frames, Crawlers), S3, IAM, CloudTrail
+  ├── Exploratory Data Analysis: descriptive statistics, univariate/multivariate distributions, outliers
+  ├── Feature Engineering: MCAR/MAR/MNAR missingness, filter/wrapper/embedded feature selection
+  ├── SageMaker Model Training: built-in algorithms, bring-your-own-containers (BYOC), HPO, Autopilot
+  ├── Time-Series Forecasting: trends, seasonality, stationarity, DeepAR+, SageMaker Canvas &amp; endpoints
+  ├── Computer Vision: Amazon Rekognition (facial analysis, video streaming), Custom Labels, Ground Truth
+  ├── Natural Language Processing: text preprocessing (NLTK), BoW, TF-IDF, Comprehend, Lex, Transcribe
+  └── Generative AI &amp; Developer Tools: Foundation Models (FMs), Bedrock, JumpStart, Amazon Q Developer</code></pre></div>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Lifecycle Layer</th>
+<th>Core Challenge Addressed</th>
+<th>Primary AWS Services &amp; Techniques</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>1. Business Framing</strong></td>
+<td>How to translate qualitative organizational goals into quantitative ML objectives?</td>
+<td>Problem taxonomy, benchmark datasets (Wine, Car, Vertebral), ROI metrics</td>
+</tr>
+<tr>
+<td><strong>2. Data Ingestion &amp; ETL</strong></td>
+<td>How to crawl, catalog, and transform distributed semi-structured data serverlessly?</td>
+<td>AWS Glue Data Catalog, Dynamic Frames, Spark ETL, S3, IAM, CloudTrail</td>
+</tr>
+<tr>
+<td><strong>3. Statistical EDA</strong></td>
+<td>How to diagnose distribution shapes, skewness, class imbalances, and multicollinearity?</td>
+<td>Pandas, Seaborn heatmaps, box plots, IQR outlier bounds, correlation matrices</td>
+</tr>
+<tr>
+<td><strong>4. Feature Engineering</strong></td>
+<td>How to treat missing data mechanisms and prune redundant predictors?</td>
+<td>MCAR/MAR/MNAR taxonomy, imputation, filter / wrapper / embedded selection</td>
+</tr>
+<tr>
+<td><strong>5. Model Training &amp; MLOps</strong></td>
+<td>How to train, scale, and automatically tune models across compute clusters?</td>
+<td>Amazon SageMaker built-in algorithms, BYOC, Bayesian HPO, SageMaker Autopilot</td>
+</tr>
+<tr>
+<td><strong>6. Forecasting &amp; Time-Series</strong></td>
+<td>How to model temporal dependencies, autocorrelation, and seasonality without code?</td>
+<td>SageMaker Canvas, DeepAR+, Prophet, holiday schedules, real-time endpoints</td>
+</tr>
+<tr>
+<td><strong>7. Computer Vision</strong></td>
+<td>How to execute face analysis, video streaming inference, and custom object detection?</td>
+<td>Amazon Rekognition, Kinesis Video Streams, Custom Labels, SageMaker Ground Truth</td>
+</tr>
+<tr>
+<td><strong>8. Natural Language Processing</strong></td>
+<td>How to preprocess unstructured corpora and orchestrate conversational AI?</td>
+<td>Tokenization, TF-IDF, Amazon Comprehend, Amazon Lex, Transcribe, Polly</td>
+</tr>
+<tr>
+<td><strong>9. Generative AI &amp; Modern SDLC</strong></td>
+<td>How to leverage Foundation Models and accelerate developer productivity?</td>
+<td>Amazon Bedrock, SageMaker JumpStart, Amazon Q Developer across SDLC</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="1-machine-learning-pipelines-and-business-problem-framing" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Machine Learning Pipelines and Business Problem Framing</h3>
+
+<h4 id="1-1-the-machine-learning-pipeline-paradigm" class="mb-2">1.1 The Machine Learning Pipeline Paradigm</h4>
+
+<p class="mb-3">A machine learning pipeline provides a modular, reproducible architectural blueprint that decouples raw ingestion from model inference. While this curriculum primarily focuses on <strong>supervised learning</strong>, identical architectural stages underpin unsupervised clustering and reinforcement learning workflows.</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">[ Business Goal ] ──&gt; [ Frame as ML Problem ] ──&gt; [ Data Ingestion &amp; ETL ]
+                                                              │
+                                                              ▼
+[ Production Endpoint ] &lt;── [ Model Evaluation ] &lt;── [ Model Training &amp; HPO ]</code></pre></div>
+
+<h4 id="1-2-defining-business-objectives-vs-ml-objectives" class="mb-2">1.2 Defining Business Objectives vs. ML Objectives</h4>
+
+<p class="mb-3">A common failure mode in enterprise data initiatives is treating machine learning as an isolated modeling exercise rather than a means to achieve a measurable business outcome.</p>
+
+<ul class="note-list">
+<li><strong>Fundamental Business Discovery Questions</strong>:
+<ul class="note-list">
+<li>What specific business outcome does the organization intend to achieve?</li>
+<li>How is the operational task executed today (e.g., manual rules, heuristic spreadsheets, legacy software)?</li>
+<li>How will organizational leadership quantify success?</li>
+<li>How will predictions be operationalized in downstream software systems?</li>
+<li>What implicit operational assumptions exist, and who are the designated domain experts?</li>
+</ul></li>
+<li><strong>Translating Qualitative Goals into Quantitative Metrics</strong>:
+<ul class="note-list">
+<li><em>Example (Credit Card Fraud Detection)</em>:
+<ul class="note-list">
+<li><strong>Business Motivation</strong>: Mitigate revenue loss and prevent customer churn caused by fraudulent transactions.</li>
+<li><strong>Business Metric</strong>: Achieve a 10% reduction in chargeback fraud claims within 6 months.</li>
+<li><strong>ML Formulation</strong>: Frame as a <strong>Supervised Binary Classification</strong> task predicting $y \in \{0, 1\}$ (0: Legitimate, 1: Fraudulent) using historical labeled transactions.</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h4 id="1-3-problem-suitability-and-simplicity-validation" class="mb-2">1.3 Problem Suitability and Simplicity Validation</h4>
+
+<p class="mb-3">Before provisioning cloud compute, practitioners must rigorously validate the problem:</p>
+
+<ol class="mb-3">
+<li><strong>Appropriateness</strong>: Is machine learning strictly superior to a deterministic rule-based system? (Rules are cheaper, perfectly explainable, and zero-latency).</li>
+<li><strong>Data Availability</strong>: Are sufficient historical observations available with trustworthy ground-truth labels?</li>
+<li><strong>Acceptable Performance Baseline</strong>: What is the minimum acceptable threshold for deployment (e.g., Recall $\ge 0.95$ at Precision $\ge 0.80$)?</li>
+<li><strong>Occam's Razor</strong>: Always establish a simple baseline (heuristic rule or linear model) before introducing complex deep ensembles.</li>
+</ol>
+
+<h4 id="1-4-benchmark-datasets-in-the-ml-curriculum" class="mb-2">1.4 Benchmark Datasets in the ML Curriculum</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Dataset</th>
+<th>Feature Nature</th>
+<th>Target &amp; Task Type</th>
+<th>Core Educational Purpose</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Wine Quality</strong></td>
+<td>11 continuous physicochemical features</td>
+<td>Sensory quality score (Discrete ordinal $\to$ Regression or Binary Classification)</td>
+<td>Demonstrating summary statistics, box-plot outlier detection, skewness correction, and feature scaling.</td>
+</tr>
+<tr>
+<td><strong>Car Evaluation</strong></td>
+<td>6 categorical attributes (buying, maint, doors, persons, lug_boot, safety)</td>
+<td>Purchase acceptability (<code>unacc</code>, <code>acc</code>, <code>good</code>, <code>vgood</code>)</td>
+<td>Categorical encoding, frequency tables, and addressing severe <strong>class imbalance</strong> (<code>unacc</code> constitutes ~70%).</td>
+</tr>
+<tr>
+<td><strong>Vertebral Column</strong></td>
+<td>6 biomechanical continuous features</td>
+<td>Spinal diagnosis (Normal, Disk Hernia, Spondylolisthesis)</td>
+<td>Multi-class vs. Binary classification, evaluating confusion matrices, end-to-end SageMaker training.</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="2-data-sourcing-serverless-etl-with-aws-glue-and-security-governance" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Data Sourcing, Serverless ETL with AWS Glue, and Security Governance</h3>
+
+<h4 id="2-1-the-data-sourcing-hierarchy" class="mb-2">2.1 The Data Sourcing Hierarchy</h4>
+
+<p class="mb-3">Enterprise machine learning depends on combining heterogeneous data across three primary domains:</p>
+
+<ul class="note-list">
+<li><strong>Private Data</strong>: Proprietary organizational records (transaction logs, ERP/CRM databases, clickstream events).</li>
+<li><strong>Commercial Data</strong>: Third-party curated feeds acquired through <strong>AWS Data Exchange</strong> or AWS Marketplace.</li>
+<li><strong>Open-Source Data</strong>: Public domain corpora and government repositories (subject to license compliance).</li>
+</ul>
+
+<h4 id="2-2-serverless-etl-with-aws-glue" class="mb-2">2.2 Serverless ETL with AWS Glue</h4>
+
+<p class="mb-3"><strong>AWS Glue</strong> is a fully managed, serverless Extract, Transform, and Load (ETL) service designed to orchestrate data preparation pipelines across Amazon S3, Amazon RDS, and Amazon Redshift.</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">[ Data Sources ]             [ AWS Glue Service ]               [ Consumers ]
+ (S3 / RDS / Redshift)
+          │
+          ├──&gt; [ Glue Crawler ] ──&gt; [ Glue Data Catalog ] ───&gt; Amazon Athena / Redshift
+          │                                  │
+          └──&gt; [ Spark ETL Job ] &lt;───────────┘
+                     │
+                     ▼
+           [ Amazon S3 Target ] ─────────────────────────────&gt; Amazon SageMaker</code></pre></div>
+
+<h5 class="mb-2">Core Components of AWS Glue</h5>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>AWS Glue Data Catalog</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>A centralized metadata repository storing structural table definitions, partition schemas, and column datatypes.</li>
+<li>Uniformly queried by downstream analytics services including <strong>Amazon Athena</strong>, <strong>Amazon Redshift Spectrum</strong>, and <strong>Amazon EMR</strong>.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>AWS Glue Crawlers</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Automated background scanners that connect to source data stores, execute built-in classifiers to infer schemas and file formats (CSV, JSON, Parquet, ORC), and register metadata tables in the Catalog.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>ETL Execution Engine</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Automatically generates distributed Python or Scala Apache Spark code.</li>
+<li>Executes distributed data transformations across ephemeral Spark clusters without manual infrastructure provisioning.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>AWS Glue Dynamic Frames</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>An advanced distributed abstraction extending Apache Spark DataFrames.</li>
+<li><strong>Self-Describing Records</strong>: Dynamic Frames track schema per individual record rather than imposing a fixed global schema at ingestion, making them resilient to schema drift and irregular semi-structured data.</li>
+<li>Seamlessly converted to and from native Spark DataFrames via <code>.toDF()</code> and <code>DynamicFrame.fromDF()</code>.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>AWS Glue ML Transforms</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Built-in machine learning capabilities such as <strong>FindDuplicates</strong>, which learns probabilistic record linkage to deduplicate customer profiles across dirty datasets.</li>
+</ul>
+</li>
+</ol>
+
+<h4 id="2-3-event-driven-etl-pipelines" class="mb-2">2.3 Event-Driven ETL Pipelines</h4>
+
+<p class="mb-3">Rather than relying purely on cron-based scheduling, modern MLOps pipelines utilize event-driven triggers for near real-time ingestion:</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">[ S3: ObjectCreated Event ] ──&gt; [ AWS Lambda ] ──&gt; [ Glue StartJobRun API ] ──&gt; [ Processed S3 Data ]</code></pre></div>
+
+<h4 id="2-4-programmatic-etl-with-python-boto3" class="mb-2">2.4 Programmatic ETL with Python (<code>boto3</code>)</h4>
+
+<p class="mb-3">For lightweight preprocessing inside Jupyter notebooks where managed Glue jobs represent unnecessary overhead, data scientists write direct extraction scripts using the AWS SDK for Python (<code>boto3</code>):</p>
+
+<div class="note-markdown-block"><pre><code class="language-python">import boto3
+import requests
+import zipfile
+import os
+import io
+
+url = "https://example.com/raw-dataset.zip"
+staging_folder = "./extracts"
+target_bucket = "enterprise-ml-data-lake"
+
+# Download and extract in-memory stream
+response = requests.get(url, stream=True)
+with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+    archive.extractall(staging_folder)
+
+# Upload extracted files to Amazon S3
+s3_client = boto3.client("s3")
+for entry in os.scandir(staging_folder):
+    if entry.is_file():
+        s3_client.upload_file(
+            Filename=entry.path,
+            Bucket=target_bucket,
+            Key=f"raw/{entry.name}"
+        )</code></pre></div>
+
+<h4 id="2-5-security-iam-and-compliance-auditing" class="mb-2">2.5 Security, IAM, and Compliance Auditing</h4>
+
+<ul class="note-list">
+<li><strong>AWS Identity and Access Management (IAM)</strong>:
+<ul class="note-list">
+<li>Enforces least-privilege role-based access control (RBAC).</li>
+<li>SageMaker execution roles must specify granular S3 resource ARNs rather than wildcard access (<code>"Action": "s3:*", "Resource": "*"</code>).</li>
+</ul></li>
+<li><strong>Data Encryption</strong>:
+<ul class="note-list">
+<li><strong>Encryption at Rest</strong>: Mandatory for regulated financial and healthcare data. Amazon S3 default encryption (SSE-S3) or AWS Key Management Service (SSE-KMS) with customer-managed keys (CMKs).</li>
+<li><strong>Encryption in Transit</strong>: Enforced via TLS 1.2/1.3 across all service endpoints and internal cluster inter-node communications.</li>
+</ul></li>
+<li><strong>Audit Logging with AWS CloudTrail</strong>:
+<ul class="note-list">
+<li>Records all AWS API calls, user identities, source IP addresses, and timestamps across the console, SDKs, and CLI.</li>
+<li>Provides non-repudiable audit logs for compliance standards (HIPAA, PCI-DSS, GDPR).</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="3-exploratory-data-analysis-descriptive-statistics-and-anomaly-diagnosis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Exploratory Data Analysis, Descriptive Statistics, and Anomaly Diagnosis</h3>
+
+<p class="mb-3">Exploratory Data Analysis (EDA) establishes the quantitative foundation of the machine learning pipeline, uncovering distribution geometries, anomalies, and feature interactions prior to training.</p>
+
+<h4 id="3-1-univariate-statistics-central-tendency-and-dispersion" class="mb-2">3.1 Univariate Statistics: Central Tendency and Dispersion</h4>
+
+<ul class="note-list">
+<li><strong>Mean vs. Median</strong>:
+<ul class="note-list">
+<li><strong>Mean</strong> ($\mu = \frac{1}{n} \sum x_i$): Arithmetic center; optimal for symmetric, normally distributed features; highly vulnerable to extreme outlier distortion.</li>
+<li><strong>Median</strong>: 50th percentile rank; robust to skewness and extreme outliers; superior metric for skewed variables (e.g., income, transaction amounts).</li>
+</ul></li>
+<li><strong>Dispersion Metrics</strong>: Variance ($\sigma^2$), Standard Deviation ($\sigma$), Interquartile Range (IQR), and Skewness.</li>
+</ul>
+
+<div class="note-markdown-block"><pre><code class="language-python">import pandas as pd
+
+# Comprehensive numerical overview
+df.describe()
+
+# Granular univariate inspections
+mean_val = df["sulphates"].mean()
+median_val = df["sulphates"].median()
+skew_val = df["sulphates"].skew()
+
+# Grouped distribution checks
+df.groupby("quality")["sulphates"].mean()</code></pre></div>
+
+<h4 id="3-2-visualizing-feature-distributions" class="mb-2">3.2 Visualizing Feature Distributions</h4>
+
+<div class="note-markdown-block"><pre><code class="language-text">       Histogram &amp; KDE                Box Plot (Tukey's IQR Method)
+         (Frequency)
+          ┌───┐                          Outliers: x &gt; Q3 + 1.5*IQR
+       ┌──┤   ├──┐                         o   o
+       │  │   │  │   ┌──┐               |───[     |     ]───|
+     ──┴──┴───┴──┴───┴──┴──            Min   Q1  Med   Q3   Max</code></pre></div>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Histograms</strong>: Binned bar frequencies revealing modality (unimodal vs. bimodal), spread, and skewness.</strong><br>
+  
+  
+</li>
+<li>
+  <strong><strong>Kernel Density Estimation (KDE)</strong>: Non-parametric continuous probability density curves removing discrete bin-width bias.</strong><br>
+  
+  
+</li>
+<li>
+  <strong><strong>Box Plots (Tukey Method)</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><strong>Box Span</strong>: First quartile ($Q_1$, 25th percentile) to third quartile ($Q_3$, 75th percentile).</li>
+<li><strong>Interquartile Range</strong>: $\text{IQR} = Q_3 - Q_1$.</li>
+<li><strong>Whiskers</strong>: Extend to the furthest data point within $1.5 \times \text{IQR}$ from box edges.</li>
+<li><strong>Outliers</strong>: Data points falling beyond the whiskers ($x &lt; Q_1 - 1.5\text{IQR}$ or $x &gt; Q_3 + 1.5\text{IQR}$).</li>
+</ul>
+</li>
+</ol>
+
+<h4 id="3-3-multivariate-statistics-and-correlation-analysis" class="mb-2">3.3 Multivariate Statistics and Correlation Analysis</h4>
+
+<ul class="note-list">
+<li><strong>Pairwise Scatter Plot Matrices</strong>: Reveal non-linear relationships, multi-cluster groupings, and feature redundancy.</li>
+<li><strong>Labeled Scatter Plots</strong>: Project samples using class-specific markers/colors to visually assess linear separability before modeling.</li>
+<li><strong>Pearson Correlation Matrix</strong>:
+<p class="mb-2">$$r_{xy} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}} \in [-1, 1]$$</p>
+<ul class="note-list">
+<li>Measures <em>strictly linear</em> association. $r = 0$ implies the absence of linear correlation, but does <strong>not</strong> rule out complex non-linear relationships.</li>
+</ul></li>
+<li><strong>Seaborn Correlation Heatmaps</strong>: Color-coded visualization (diverging palettes like <code>BrBG</code>) to immediately spot multicollinearity.</li>
+</ul>
+
+<hr>
+</section>
+
+<section id="4-feature-engineering-dirty-data-and-selection-strategies" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Feature Engineering, Dirty Data, and Selection Strategies</h3>
+
+<h4 id="4-1-taxonomy-of-missing-data" class="mb-2">4.1 Taxonomy of Missing Data</h4>
+
+<p class="mb-3">Handling missing values requires diagnosing the statistical mechanism underlying the missingness:</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Missing Data Mechanisms
+  ├── MCAR (Missing Completely at Random): P(Missing) independent of observed &amp; unobserved data
+  │     └── Resolution: Listwise deletion or simple mean/median imputation is unbiased.
+  ├── MAR (Missing at Random): P(Missing) depends strictly on observed data
+  │     └── Resolution: Multiple imputation (MICE) or maximum likelihood methods.
+  └── MNAR (Missing Not at Random): P(Missing) depends on the unobserved value itself
+        └── Resolution: Pattern-mixture modeling or explicit missingness indicator features.</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Imputation Paradigms</strong>:
+<ul class="note-list">
+<li><strong>Univariate Imputation</strong>: Replacing missing entries using a single column's central tendency (mean, median, mode).</li>
+<li><strong>Multivariate Imputation</strong>: Imputing values conditionally using predictive models based on all other observed features (e.g., k-NN imputation, regression imputation).</li>
+</ul></li>
+</ul>
+
+<h4 id="4-2-outlier-remediation-strategies" class="mb-2">4.2 Outlier Remediation Strategies</h4>
+
+<p class="mb-3">Outliers are not inherently erroneous; they can represent rare, high-value phenomena (e.g., financial fraud). Indiscriminate removal introduces sampling bias:</p>
+
+<ol class="mb-3">
+<li><strong>Deletion</strong>: Valid only when extreme values are definitively traced to hardware malfunction or human data-entry error.</li>
+<li><strong>Mathematical Transformation</strong>: Applying variance-stabilizing functions (e.g., Natural Logarithm $y = \ln(1 + x)$ or Box-Cox) to compress the long right tail and restore normality.</li>
+<li><strong>Capping / Imputation (Winsorization)</strong>: Clamping extreme values at the 1st and 99th percentiles or replacing them with the median.</li>
+</ol>
+
+<h4 id="4-3-feature-selection-methodologies" class="mb-2">4.3 Feature Selection Methodologies</h4>
+
+<p class="mb-3">Feature selection curtails overfitting, accelerates training throughput, and removes noisy or collinear dimensions:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Strategy</th>
+<th>Operational Mechanism</th>
+<th>Advantages</th>
+<th>Trade-offs &amp; Limitations</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Filter Methods</strong></td>
+<td>Evaluates statistical properties of features independently of the predictive model (Pearson $r$, ANOVA $F$-test, Chi-square $\chi^2$, Mutual Information).</td>
+<td>Extremely fast, $\mathcal{O}(d)$ computation, scalable to millions of rows, model-agnostic.</td>
+<td>Ignores feature interactions; may select redundant features or discard features that perform well in ensembles.</td>
+</tr>
+<tr>
+<td><strong>Wrapper Methods</strong></td>
+<td>Uses a target model as an evaluation engine, searching feature subsets iteratively (Forward Stepwise Selection, Backward Elimination, RFE).</td>
+<td>Discovers optimal feature subsets tailored specifically to the model's inductive biases.</td>
+<td>Computationally expensive ($\mathcal{O}(2^d)$ without heuristics), severe risk of overfitting validation sets.</td>
+</tr>
+<tr>
+<td><strong>Embedded Methods</strong></td>
+<td>Feature selection occurs intrinsically during model optimization (L1 Lasso penalization, Decision Tree split criteria).</td>
+<td>Balances computational efficiency with interaction awareness; directly penalizes complexity.</td>
+<td>Tied strictly to specific algorithms (e.g., linear models or tree ensembles).</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="5-amazon-sagemaker-training-paradigms-hpo-and-autopilot" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Amazon SageMaker Training Paradigms, HPO, and Autopilot</h3>
+
+<h4 id="5-1-the-four-model-training-approaches-in-sagemaker" class="mb-2">5.1 The Four Model Training Approaches in SageMaker</h4>
+
+<p class="mb-3">Amazon SageMaker isolates compute infrastructure from development environments, launching ephemeral EC2 training clusters that automatically pull container images, ingest S3 data channels, execute training, and persist model artifacts.</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">SageMaker Model Training Paradigms
+  ├── 1. Built-in Algorithms: Fully managed, AWS-optimized containers (XGBoost, Linear Learner, K-Means)
+  ├── 2. Prebuilt Framework Containers: Bring-Your-Own-Script (PyTorch, TensorFlow, Scikit-learn, HuggingFace)
+  ├── 3. Custom Docker Containers (BYOC): Complete environment control (R, Julia, custom C++ runtimes)
+  └── 4. AWS Marketplace: Third-party commercial pre-trained or specialized algorithms</code></pre></div>
+
+<h4 id="5-2-key-sagemaker-built-in-algorithms" class="mb-2">5.2 Key SageMaker Built-in Algorithms</h4>
+
+<ul class="note-list">
+<li><strong>XGBoost</strong>: Highly optimized implementation of gradient boosted decision trees for tabular classification, regression, and ranking. Automatically handles missing values and sparse inputs.</li>
+<li><strong>Linear Learner</strong>: High-throughput distributed linear classification and regression. Concurrently explores multiple objective functions and loss formulations in parallel, selecting the optimal model based on validation metrics.</li>
+<li><strong>K-Means</strong>: Distributed clustering that optimizes within-cluster sum of squares ($\text{SSE}$). Operates efficiently over streaming datasets using mini-batch Lloyd iterations.</li>
+<li><strong>Factorization Machines</strong>: Specialized for high-dimensional sparse datasets (recommendation engines and CTR click prediction), capturing second-order pairwise feature interactions.</li>
+</ul>
+
+<h4 id="5-3-automated-hyperparameter-tuning-hpo" class="mb-2">5.3 Automated Hyperparameter Tuning (HPO)</h4>
+
+<p class="mb-3">SageMaker Hyperparameter Tuning treats model optimization as a black-box optimization task, exploring hyperparameter spaces using <strong>Bayesian Optimization</strong>:</p>
+
+<ul class="note-list">
+<li><strong>Optimization Mechanics</strong>: Constructs a Gaussian Process surrogate model that maps hyperparameter configurations to validation objective metrics (e.g., maximizing Validation ROC-AUC, minimizing Validation RMSE).</li>
+<li><strong>HPO Best Practices</strong>:
+<p class="mb-2">1. <strong>Prioritize Impactful Parameters</strong>: Tuning all parameters simultaneously induces combinatorial explosion. Restrict searches to the top 3–4 hyperparameter dimensions (e.g., learning rate, max depth, subsample).</p>
+<p class="mb-2">2. <strong>Narrow the Search Space</strong>: Tight, informed bounds converge significantly faster than broad ranges.</p>
+<p class="mb-2">3. <strong>Sequential Execution</strong>: Run tuning jobs sequentially or with low parallelism ($2\text{--}4$ concurrent jobs); sequential iterations allow the Bayesian optimizer to incorporate learnings from previous trials.</p>
+<p class="mb-2">4. <strong>Logarithmic Scaling</strong>: Hyperparameters spanning multiple orders of magnitude (e.g., learning rate $\in [10^{-5}, 10^{-1}]$) must be explicitly tuned on a logarithmic scale.</p></li>
+</ul>
+
+<h4 id="5-4-amazon-sagemaker-autopilot-automl" class="mb-2">5.4 Amazon SageMaker Autopilot (AutoML)</h4>
+
+<p class="mb-3"><strong>Amazon SageMaker Autopilot</strong> provides transparent, fully automated machine learning:</p>
+
+<ul class="note-list">
+<li><strong>Autonomous Workflow</strong>: Given tabular data in S3 and a target column, Autopilot automatically infers problem type (regression, binary/multiclass classification), handles missing data, engineers candidate feature pipelines, trains and tunes multiple algorithm pipelines (XGBoost, Linear Learner, Deep MLP ensembles).</li>
+<li><strong>White-Box Transparency</strong>: Unlike black-box AutoML platforms, Autopilot generates two fully inspectable Jupyter notebooks:
+<p class="mb-2">1. <em>Data Exploration Notebook</em>: Details discovered statistics, correlations, and data quality issues.</p>
+<p class="mb-2">2. <em>Candidate Generation Notebook</em>: Contains the exact Python code used to engineer features and configure tuning jobs.</p></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="6-time-series-forecasting-and-amazon-sagemaker-canvas" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. Time-Series Forecasting and Amazon SageMaker Canvas</h3>
+
+<h4 id="6-1-foundations-of-temporal-data-modeling" class="mb-2">6.1 Foundations of Temporal Data Modeling</h4>
+
+<p class="mb-3">Forecasting models sequential observations where the temporal ordering contains structural predictive signal, fundamentally violating standard independent and identically distributed (i.i.d.) assumptions.</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Time Series Decomposition
+  Y(t) = Trend(t) + Seasonal(t) + Cyclical(t) + Irregular(t)</code></pre></div>
+
+<ul class="note-list">
+<li><strong>Core Temporal Patterns</strong>:
+<ul class="note-list">
+<li><strong>Trend</strong>: Long-term directional movement (upward, downward, stationary).</li>
+<li><strong>Seasonality</strong>: Strict periodic fluctuations occurring at fixed, known intervals (hourly, daily, weekly, annual).</li>
+<li><strong>Cyclical</strong>: Long-term oscillations lacking a fixed calendar period (e.g., macroeconomic business cycles).</li>
+<li><strong>Irregular / Noise</strong>: Random stochastic residuals remaining after removing structural components.</li>
+</ul></li>
+<li><strong>Stationarity</strong>: A time series is strictly stationary if its mean, variance, and autocovariance remain invariant over time. Classical linear models (ARIMA) require stationarity, achieved via differencing or detrending.</li>
+<li><strong>Autocorrelation</strong>: Measures correlation between observations separated by time lag $k$:
+<p class="mb-2">$$\text{Autocorr}(k) = \frac{\sum_{t=k+1}^T (y_t - \bar{y})(y_{t-k} - \bar{y})}{\sum_{t=1}^T (y_t - \bar{y})^2}$$</p></li>
+</ul>
+
+<h4 id="6-2-preprocessing-and-frequency-alignment" class="mb-2">6.2 Preprocessing and Frequency Alignment</h4>
+
+<ul class="note-list">
+<li><strong>Timestamp Normalization</strong>: Enforce UTC standardization; resolve daylight savings shifts and daylight alignment.</li>
+<li><strong>Imputation for Time Series</strong>:
+<ul class="note-list">
+<li>*Forward Fill (<code>ffill</code>)*: Carry forward the last observed value (assumes persistence).</li>
+<li><em>Moving Average / Spline Interpolation</em>: Estimates missing points based on surrounding local trajectories.</li>
+<li><em>Zero Fill</em>: Appropriate when missing entries indicate zero real-world activity (e.g., zero retail transactions on store closures).</li>
+<li>*Caution on Backward Fill (<code>bfill</code>)<em>: Risks catastrophic </em><em>lookahead data leakage</em>* if applied improperly across historical training splits.</li>
+</ul></li>
+<li><strong>Resampling</strong>:
+<ul class="note-list">
+<li><em>Downsampling</em> (High $\to$ Low frequency): Aggregating hourly transactions into daily sums.</li>
+<li><em>Upsampling</em> (Low $\to$ High frequency): Requires interpolation or curve modeling.</li>
+</ul></li>
+</ul>
+
+<h4 id="6-3-amazon-sagemaker-canvas-for-no-code-forecasting" class="mb-2">6.3 Amazon SageMaker Canvas for No-Code Forecasting</h4>
+
+<p class="mb-3"><strong>Amazon SageMaker Canvas</strong> provides a visual, no-code interface allowing business analysts to build ML models:</p>
+
+<ul class="note-list">
+<li><strong>Build Types</strong>:
+<ul class="note-list">
+<li><em>Quick Build</em>: Generates rapid prototype models within minutes for initial feasibility checks.</li>
+<li><em>Standard Build</em>: Executes exhaustive feature generation and hyperparameter search for production deployment.</li>
+</ul></li>
+<li><strong>Advanced Forecasting Capabilities</strong>:
+<ul class="note-list">
+<li><strong>Group Column</strong>: Generates individualized forecasts per entity (e.g., store ID, SKU product category).</li>
+<li><strong>Holiday Schedules</strong>: Integrates national calendar events across 251 countries to account for retail surges.</li>
+<li><strong>What-If Scenario Modeling</strong>: Allows users to dynamically alter feature values (e.g., simulating price discounts) to visualize projected demand shifts.</li>
+</ul></li>
+</ul>
+
+<h4 id="6-4-programmatic-endpoint-invocation-via-python" class="mb-2">6.4 Programmatic Endpoint Invocation via Python</h4>
+
+<p class="mb-3">Once deployed to a production SageMaker endpoint, forecasting models are queried in real time via <code>boto3</code>:</p>
+
+<div class="note-markdown-block"><pre><code class="language-python">import boto3
+import pandas as pd
+
+# Prepare real-time payload
+payload_df = pd.read_csv("./forecast-query.csv")
+csv_payload = payload_df.to_csv(index=False).encode("utf-8")
+
+# Initialize runtime client
+runtime_client = boto3.client("runtime.sagemaker")
+
+# Invoke deployed endpoint
+response = runtime_client.invoke_endpoint(
+    EndpointName="canvas-demand-forecast-prod",
+    ContentType="text/csv",
+    Body=csv_payload,
+    Accept="application/json"
+)
+
+forecast_results = response["Body"].read().decode("utf-8")</code></pre></div>
+
+<hr>
+</section>
+
+<section id="7-computer-vision-with-amazon-rekognition-and-ground-truth" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. Computer Vision with Amazon Rekognition and Ground Truth</h3>
+
+<h4 id="7-1-amazon-rekognition-architecture" class="mb-2">7.1 Amazon Rekognition Architecture</h4>
+
+<p class="mb-3"><strong>Amazon Rekognition</strong> delivers fully managed computer vision APIs powered by deep convolutional networks and vision transformers, eliminating the need for custom model training for standard vision tasks.</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Rekognition Vision Capabilities
+  ├── Image Analysis: Face Detection, Facial Verification (1:1), Face Collections (1:N)
+  ├── Stored Video Analysis: Asynchronous pipeline (S3 ──&gt; Rekognition ──&gt; SNS ──&gt; SQS ──&gt; Get* API)
+  ├── Streaming Video Analysis: Real-time (Kinesis Video Streams ──&gt; Stream Processor ──&gt; Kinesis Data Streams)
+  └── Custom Object Detection: Amazon Rekognition Custom Labels</code></pre></div>
+
+<h4 id="7-2-facial-detection-vs-facial-search" class="mb-2">7.2 Facial Detection vs. Facial Search</h4>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong>**Facial Detection (<code>DetectFaces</code>)**:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Identifies all human faces within an image.</li>
+<li><strong>Bounding Box</strong>: Normalized coordinate ratios $[x_{\text{min}}, y_{\text{min}}, \text{width}, \text{height}] \in [0, 1]$.</li>
+<li><strong>Facial Landmarks</strong>: Precise pixel coordinates for anatomical keypoints (pupils, nose tip, mouth edges).</li>
+<li><strong>Attributes &amp; Confidence</strong>: Inferred attributes (glasses, beard, facial pose: roll/pitch/yaw) accompanied by confidence scores $[0, 100]$.</li>
+</ul>
+</li>
+<li>
+  <strong>**Facial Search against Collections (<code>SearchFacesByImage</code>)**:</strong><br>
+  
+<p class="mb-2">$$\text{Match}(\mathbf{v}_{\text{query}}, \mathbf{v}_{\text{target}}) \ge \tau_{\text{threshold}}$$</p>
+  <ul class="mb-0 mt-2">
+<li>Operates over an indexed vector collection of known identities (<code>CreateCollection</code>).</li>
+<li>Stored records contain dense biometric embedding vectors mapped to an <code>ExternalImageId</code>.</li>
+<li>Returns matched identities ranked by similarity score:</li>
+</ul>
+</li>
+</ol>
+
+<h4 id="7-3-responsible-ai-and-ethical-computer-vision" class="mb-2">7.3 Responsible AI and Ethical Computer Vision</h4>
+
+<div id="ethical-mandate-in-biometric-verification" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-scale-balanced me-2"></i>Ethical Mandate in Biometric Verification</h4><p class="mb-3">Rekognition facial detections evaluate visual surface appearance, not internal emotional reality or immutable legal identity. Emotions (happy, sad, calm) represent appearance-derived estimates.</p>
+
+<p class="mb-3"><strong>Human-in-the-Loop Obligation</strong>: In sensitive, high-stakes deployments (such as law enforcement or border security), automated facial recognition outputs must never serve as the sole autonomous decision-maker. Systems must establish human-in-the-loop validation, explicit confidence thresholds, and rigorous audit trails.</p></div>
+
+<h4 id="7-4-stored-video-vs-streaming-video-architectures" class="mb-2">7.4 Stored Video vs. Streaming Video Architectures</h4>
+
+<ul class="note-list">
+<li><strong>Stored Video Processing (Asynchronous Pipeline)</strong>:
+<ul class="note-list">
+<li>Videos are staged in Amazon S3.</li>
+<li>Analysis is initiated via asynchronous APIs (<code>StartFaceDetection</code>, <code>StartLabelDetection</code>, <code>StartPersonTracking</code>).</li>
+<li>Completion events publish to an <strong>Amazon SNS</strong> topic, routed to an <strong>Amazon SQS</strong> queue for reliable message polling.</li>
+<li>Final results with millisecond timestamps are retrieved via matching <code>Get*</code> APIs (<code>GetFaceDetection</code>).</li>
+</ul></li>
+<li><strong>Streaming Video Processing (Real-Time Pipeline)</strong>:
+<ul class="note-list">
+<li>High-throughput video feeds stream continuously into <strong>Amazon Kinesis Video Streams (KVS)</strong>.</li>
+<li>An Amazon Rekognition Video <strong>Stream Processor</strong> samples designated frames.</li>
+<li>Real-time detection records are emitted into an <strong>Amazon Kinesis Data Stream (KDS)</strong> for downstream consumption.</li>
+</ul></li>
+</ul>
+
+<h4 id="7-5-custom-labels-and-amazon-sagemaker-ground-truth" class="mb-2">7.5 Custom Labels and Amazon SageMaker Ground Truth</h4>
+
+<ul class="note-list">
+<li><strong>Amazon Rekognition Custom Labels</strong>:
+<ul class="note-list">
+<li>Extends pre-trained vision models to recognize proprietary, domain-specific objects or defect patterns.</li>
+<li>Evaluated via <code>DetectCustomLabels</code> with <code>MinConfidence</code> and <code>MaxResults</code> parameters.</li>
+</ul></li>
+<li><strong>Amazon SageMaker Ground Truth</strong>:
+<ul class="note-list">
+<li>A managed data annotation service enabling workflows across private internal teams, third-party vendor workforces, or public crowds (Amazon Mechanical Turk).</li>
+<li>Features <strong>Active Learning</strong>: SageMaker automatically labels high-confidence images while routing ambiguous samples to human annotators, cutting annotation costs by up to 70%.</li>
+</ul></li>
+</ul>
+
+<hr>
+</section>
+
+<section id="8-natural-language-processing-pipelines-and-aws-language-services" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. Natural Language Processing Pipelines and AWS Language Services</h3>
+
+<h4 id="8-1-classical-nlp-text-preprocessing-pipeline" class="mb-2">8.1 Classical NLP Text Preprocessing Pipeline</h4>
+
+<p class="mb-3">Natural language text requires systematic tokenization and normalization before vectorization:</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Raw Text ──&gt; [ Stop Words Removal ] ──&gt; [ Lemmatization / Stemming ] ──&gt; [ Tokenization ] ──&gt; [ Vectorization ]</code></pre></div>
+
+<div class="note-markdown-block"><pre><code class="language-python">import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+
+nltk.download(["punkt", "stopwords", "wordnet"])
+
+raw_text = "This machine learning pipeline is running smoothly."
+
+# Tokenize and normalize
+tokens = word_tokenize(raw_text.lower())
+stop_words = set(stopwords.words("english"))
+lemmatizer = WordNetLemmatizer()
+
+cleaned_tokens = [
+    lemmatizer.lemmatize(t) for t in tokens
+    if t.isalpha() and t not in stop_words
+]
+# Result: ['machine', 'learning', 'pipeline', 'running', 'smoothly']</code></pre></div>
+
+<h4 id="8-2-text-vectorization-bow-vs-tf-idf" class="mb-2">8.2 Text Vectorization: BoW vs. TF-IDF</h4>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Bag of Words (BoW)</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li>Constructs a vocabulary index of all unique terms across the corpus.</li>
+<li>Represents each document as a sparse vector of raw term frequencies: $\mathbf{x} = [c(w_1), c(w_2), \dots, c(w_V)]$.</li>
+<li><em>Limitation</em>: Ignores grammar, word order, and context; treats common words with equal prominence.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>TF-IDF (Term Frequency – Inverse Document Frequency)</strong>:</strong><br>
+  
+<p class="mb-2">$$\text{TF-IDF}(t, d, D) = \text{TF}(t, d) \times \log\left(\frac{|D|}{1 + |\{d \in D : t \in d\}|}\right)$$</p>
+  <ul class="mb-0 mt-2">
+<li>Downweights ubiquitous terms that appear across all documents (e.g., "system", "report") while boosting distinctive, informative terms:</li>
+</ul>
+</li>
+</ol>
+
+<h4 id="8-3-contextual-semantics-pos-tagging-and-named-entity-recognition-ner" class="mb-2">8.3 Contextual Semantics, POS Tagging, and Named Entity Recognition (NER)</h4>
+
+<ul class="note-list">
+<li><strong>Part of Speech (POS) Tagging</strong>: Disambiguates syntactic role based on local sentence context (e.g., distinguishing "apple" as a fruit vs. "Apple" as a corporate entity).</li>
+<li><strong>Coreference Resolution</strong>: Identifies when distinct linguistic phrases or pronouns refer to the identical real-world entity (e.g., "The algorithm was deployed. <em>It</em> processed 10,000 requests.").</li>
+<li><strong>Named Entity Recognition (NER)</strong>: Locates and categorizes key spans into pre-defined categories (Person, Location, Organization, Date). When combined with enterprise <strong>Knowledge Graphs</strong>, NER bridges unstructured text with structured relational insights.</li>
+</ul>
+
+<h4 id="8-4-aws-managed-natural-language-services" class="mb-2">8.4 AWS Managed Natural Language Services</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>AWS Service</th>
+<th>Core Capability</th>
+<th>Target Architecture &amp; Integration</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td><strong>Amazon Comprehend</strong></td>
+<td>Unsupervised &amp; supervised NLP: sentiment analysis, entity extraction, key phrase detection, PII redaction, topic modeling.</td>
+<td>Serverless REST API; integrates directly with S3 buckets for batch document analysis.</td>
+</tr>
+<tr>
+<td><strong>Amazon Lex</strong></td>
+<td>Conversational AI engine powering Amazon Alexa: multi-turn dialogue, intent classification, and slot filling.</td>
+<td>Integrated with AWS Lambda for business fulfillment logic and Amazon Connect for contact centers.</td>
+</tr>
+<tr>
+<td><strong>Amazon Transcribe</strong></td>
+<td>Automatic speech recognition (ASR): converts audio/video speech into text transcripts with punctuation and timestamps.</td>
+<td>Batch processing via S3 or real-time streaming via WebSockets/gRPC.</td>
+</tr>
+<tr>
+<td><strong>Amazon Polly</strong></td>
+<td>Text-to-Speech (TTS): synthesizes lifelike human speech from text using deep learning neural TTS voices.</td>
+<td>Supports Speech Synthesis Markup Language (SSML) for pitch, rate, and pronunciation control.</td>
+</tr>
+<tr>
+<td><strong>Amazon Translate</strong></td>
+<td>Neural Machine Translation (NMT): fast, high-quality language translation across hundreds of language pairs.</td>
+<td>Real-time text translation and batch document translation with custom terminology support.</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+</section>
+
+<section id="9-generative-ai-foundation-models-and-amazon-q-developer" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">9. Generative AI, Foundation Models, and Amazon Q Developer</h3>
+
+<h4 id="9-1-the-generative-ai-paradigm-shift" class="mb-2">9.1 The Generative AI Paradigm Shift</h4>
+
+<p class="mb-3">Unlike traditional predictive machine learning models that are strictly task-specific (trained exclusively for binary fraud detection or housing regression), <strong>Generative AI</strong> is powered by massive <strong>Foundation Models (FMs)</strong>:</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">Predictive ML (Task-Specific)         Generative AI (Foundation Models)
+  [ Input X ]                           [ Prompt / Multimodal Input ]
+       │                                              │
+       ▼                                              ▼
+ [ Task Model ] ──&gt; [ Specific Label ]       [ Pre-trained Foundation Model ]
+                                                      │
+                                                      ├──&gt; Text Generation / Summarization
+                                                      ├──&gt; Code Synthesis &amp; Refactoring
+                                                      └──&gt; Multimodal Reasoning</code></pre></div>
+
+<h4 id="9-2-the-aws-generative-ai-stack" class="mb-2">9.2 The AWS Generative AI Stack</h4>
+
+<p class="mb-3">AWS organizes generative AI services across three primary architectural tiers:</p>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Top Tier (Applications)</strong>: Ready-to-use GenAI applications like <strong>Amazon Q Developer</strong> and Amazon Q Business.</strong><br>
+  
+  
+</li>
+<li>
+  <strong><strong>Middle Tier (Tools &amp; Foundation Models)</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><strong>Amazon Bedrock</strong>: A fully managed serverless API providing access to leading Foundation Models (Anthropic Claude, Meta Llama, Amazon Titan, Cohere, AI21 Labs) with enterprise guardrails, RAG integration, and fine-tuning.</li>
+<li><strong>Amazon SageMaker JumpStart</strong>: An ML hub offering one-click deployment of open-weights foundation models onto dedicated SageMaker instances.</li>
+</ul>
+</li>
+<li>
+  <strong><strong>Bottom Tier (Infrastructure &amp; Custom Silicon)</strong>:</strong><br>
+  
+  <ul class="mb-0 mt-2">
+<li><strong>AWS Trainium</strong>: Custom application-specific integrated circuits (ASICs) optimized for cost-effective distributed model training.</li>
+<li><strong>AWS Inferentia</strong>: Purpose-built high-throughput, low-latency deep learning inference chips.</li>
+</ul>
+</li>
+</ol>
+
+<h4 id="9-3-amazon-q-developer-across-the-software-development-lifecycle-sdlc" class="mb-2">9.3 Amazon Q Developer across the Software Development Lifecycle (SDLC)</h4>
+
+<p class="mb-3"><strong>Amazon Q Developer</strong> is a generative AI assistant embedded across IDEs (VS Code, JetBrains), the AWS Management Console, and the command-line interface:</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">                        Amazon Q Developer Across the SDLC
+   Plan                Create             Test &amp; Secure          Operate            Modernize
+┌──────────┐        ┌──────────┐        ┌──────────────┐       ┌──────────┐       ┌───────────┐
+│ Best     │───────&gt;│ In-line  │───────&gt;│ Unit Test    │──────&gt;│ Runtime  │──────&gt;│ Java/Code │
+│ Practice │        │ Code     │        │ Gen &amp; SAST   │       │ Debugging│       │ Upgrades  │
+│ Guidance │        │ Complete │        │ Vuln Scans   │       │ &amp; VPC Ops│       │ via Agents│
+└──────────┘        └──────────┘        └──────────────┘       └──────────┘       └───────────┘</code></pre></div>
+
+<ol class="mb-3">
+<li><strong>Plan</strong>: Provides contextual architectural recommendations aligned with the <strong>AWS Well-Architected Framework</strong>, answering cloud configuration queries inside the IDE.</li>
+<li><strong>Create</strong>: Emits multi-line inline code suggestions in Python, Java, JavaScript, and Go; synthesizes full application features directly from natural language specifications.</li>
+<li><strong>Test and Secure</strong>: Generates unit test suites and performs Static Application Security Testing (SAST), highlighting vulnerabilities (e.g., SQL injection, hardcoded credentials) and proposing inline remediation diffs.</li>
+<li><strong>Operate</strong>: Integrates with Amazon CloudWatch and AWS Lambda to diagnose runtime execution errors, and connects with <strong>VPC Reachability Analyzer</strong> to troubleshoot networking misconfigurations.</li>
+<li><strong>Modernize</strong>: The <strong>Amazon Q Developer Agent for Code Transformation</strong> automates multi-version runtime upgrades (e.g., upgrading legacy Java 8/11 applications to Java 17).</li>
+</ol>
+
+<hr>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>Business-to-ML Translation</strong>: Every machine learning initiative must originate from a measurable business objective (e.g., reducing chargeback fraud claims by 10% within 6 months) rather than an isolated modeling metric.
+<ul class="note-list">
+<li><strong>Serverless Data Engineering</strong>: AWS Glue couples the Glue Data Catalog with distributed Spark ETL engines; Glue Dynamic Frames provide schema-on-read flexibility for heterogeneous semi-structured sources.</li>
+<li><strong>Statistical Rigor in EDA</strong>: Central tendency must balance mean (for symmetric distributions) and median (for skewed distributions). Outliers are identified via Tukey's IQR boundaries ($1.5 \times \text{IQR}$) and should be log-transformed or winsorized rather than blindly deleted.</li>
+<li><strong>Missing Data Taxonomy</strong>: Missing Completely at Random (MCAR) permits listwise deletion; Missing at Random (MAR) demands multiple imputation; Missing Not at Random (MNAR) requires modeling the missingness mechanism directly.</li>
+<li><strong>Feature Selection Strategies</strong>: Filter methods rank features statistically ($\mathcal{O}(d)$); Wrapper methods evaluate subsets using target models ($\mathcal{O}(2^d)$); Embedded methods incorporate selection directly into optimization (Lasso L1 penalty).</li>
+<li><strong>SageMaker Training Ecosystem</strong>: Built-in algorithms (XGBoost, Linear Learner, K-Means) provide pre-optimized distributed execution; Bayesian HPO optimizes hyperparameters sequentially; Autopilot delivers automated model building with transparent Jupyter notebooks.</li>
+<li><strong>Forecasting with Canvas</strong>: Time series violate i.i.d. assumptions through autocorrelation and seasonality. SageMaker Canvas delivers no-code forecasting models supporting group-level segmentation, holiday calendars, and real-time endpoint deployment.</li>
+<li><strong>Ethical Vision with Rekognition</strong>: Amazon Rekognition handles facial detection, 1:N face collection matching, and Kinesis streaming video analysis; biometric verification in sensitive applications strictly mandates human-in-the-loop review.</li>
+<li><strong>Classical vs. Generative AI</strong>: Traditional NLP pipelines utilize NLTK preprocessing and TF-IDF vectorization; modern generative AI leverages Foundation Models (FMs) via Amazon Bedrock and developer tools like Amazon Q Developer to accelerate the end-to-end SDLC.</li>
+</ul></li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

@@ -1,5 +1,91 @@
 [
   {
+    "title": "AWS Machine Learning Course",
+    "url": "../notes/AWS%20Machine%20Learning%20Course/AWS%20Machine%20Learning%20Course.html",
+    "path": "notes/AWS Machine Learning Course/AWS Machine Learning Course.html",
+    "section": "notes",
+    "tags": [
+      "Cloud Computing",
+      "Machine Learning",
+      "Deep Learning",
+      "NLP"
+    ],
+    "tag_concepts": [
+      "concept.cloud_computing",
+      "concept.machine_learning",
+      "concept.deep_learning",
+      "concept.nlp"
+    ],
+    "tag_labels": {
+      "concept.cloud_computing": {
+        "en": "Cloud Computing",
+        "zh-Hant": "雲端運算",
+        "zh-Hans": "云计算"
+      },
+      "concept.machine_learning": {
+        "en": "Machine Learning",
+        "zh-Hant": "機器學習",
+        "zh-Hans": "机器学习"
+      },
+      "concept.deep_learning": {
+        "en": "Deep Learning",
+        "zh-Hant": "深度學習",
+        "zh-Hans": "深度学习"
+      },
+      "concept.nlp": {
+        "en": "NLP",
+        "zh-Hant": "自然語言處理",
+        "zh-Hans": "自然语言处理"
+      }
+    },
+    "summary": "Comprehensive structured notes for AWS Academy Machine Learning Foundations, exploring the end-to-end ML lifecycle on AWS, including problem framing, serverless ETL with AWS Glue, statistical EDA, Amazon SageMaker training and automated tuning, time-series forecasting with Canvas, computer vision with Rekognition, NLP services, and Generative AI with Amazon Q Developer and Bedrock.",
+    "content": "AWS Machine Learning Course Structured Study Notes on AWS Academy Machine Learning Foundations: Pipeline Implementation, Amazon SageMaker, Serverless ETL, Time-Series Forecasting, Computer Vision, NLP, and Generative AI. Knowledge Architecture This course establishes an end-to-end engineering roadmap for designing, training, deploying, and operating production-grade machine learning workflows on Amazon Web Services (AWS): text AWS Machine Learning Foundations Roadmap ├── Problem Framing & Sourcing: business metrics → ML objectives → benchmark datasets ├── Data Engineering & ETL: AWS Glue (Data Catalog, Dynamic Frames, Crawlers), S3, IAM, CloudTrail ├── Exploratory Data Analysis: descriptive statistics, univariate/multivariate distributions, outliers ├── Feature Engineering: MCAR/MAR/MNAR missingness, filter/wrapper/embedded feature selection ├── SageMaker Model Training: built-in algorithms, bring-your-own-containers (BYOC), HPO, Autopilot ├── Time-Series Forecasting: trends, seasonality, stationarity, DeepAR+, SageMaker Canvas & endpoints ├── Computer Vision: Amazon Rekognition (facial analysis, video streaming), Custom Labels, Ground Truth ├── Natural Language Processing: text preprocessing (NLTK), BoW, TF-IDF, Comprehend, Lex, Transcribe └── Generative AI & Developer Tools: Foundation Models (FMs), Bedrock, JumpStart, Amazon Q Developer | Lifecycle Layer | Core Challenge Addressed | Primary AWS Services & Techniques | |---|---|---| | 1. Business Framing | How to translate qualitative organizational goals into quantitative ML objectives? | Problem taxonomy, benchmark datasets (Wine, Car, Vertebral), ROI metrics | | 2. Data Ingestion & ETL | How to crawl, catalog, and transform distributed semi-structured data serverlessly? | AWS Glue Data Catalog, Dynamic Frames, Spark ETL, S3, IAM, CloudTrail | | 3. Statistical EDA | How to diagnose distribution shapes, skewness, class imbalances, and multicollinearity? | Pandas, Seaborn heatmaps, box plots, IQR outlier bounds, correlation matrices | | 4. Feature Engineering | How to treat missing data mechanisms and prune redundant predictors? | MCAR/MAR/MNAR taxonomy, imputation, filter / wrapper / embedded selection | | 5. Model Training & MLOps | How to train, scale, and automatically tune models across compute clusters? | Amazon SageMaker built-in algorithms, BYOC, Bayesian HPO, SageMaker Autopilot | | 6. Forecasting & Time-Series | How to model temporal dependencies, autocorrelation, and seasonality without code? | SageMaker Canvas, DeepAR+, Prophet, holiday schedules, real-time endpoints | | 7. Computer Vision | How to execute face analysis, video streaming inference, and custom object detection? | Amazon Rekognition, Kinesis Video Streams, Custom Labels, SageMaker Ground Truth | | 8. Natural Language Processing | How to preprocess unstructured corpora and orchestrate conversational AI? | Tokenization, TF-IDF, Amazon Comprehend, Amazon Lex, Transcribe, Polly | | 9. Generative AI & Modern SDLC | How to leverage Foundation Models and accelerate developer productivity? | Amazon Bedrock, SageMaker JumpStart, Amazon Q Developer across SDLC | --- Machine Learning Pipelines and Business Problem Framing 1.1 The Machine Learning Pipeline Paradigm A machine learning pipeline provides a modular, reproducible architectural blueprint that decouples raw ingestion from model inference. While this curriculum primarily focuses on supervised learning, identical architectural stages underpin unsupervised clustering and reinforcement learning workflows. text [ Business Goal ] ──> [ Frame as ML Problem ] ──> [ Data Ingestion & ETL ] │ ▼ [ Production Endpoint ] <── [ Model Evaluation ] <── [ Model Training & HPO ] 1.2 Defining Business Objectives vs. ML Objectives A common failure mode in enterprise data initiatives is treating machine learning as an isolated modeling exercise rather than a means to achieve a measurable business outcome. Fundamental Business Discovery Questions: What specific business outcome does the organization intend to achieve? How is the operational task executed today (e.g., manual rules, heuristic spreadsheets, legacy software)? How will organizational leadership quantify success? How will predictions be operationalized in downstream software systems? What implicit operational assumptions exist, and who are the designated domain experts? Translating Qualitative Goals into Quantitative Metrics: Example (Credit Card Fraud Detection): Business Motivation: Mitigate revenue loss and prevent customer churn caused by fraudulent transactions. Business Metric: Achieve a 10% reduction in chargeback fraud claims within 6 months. ML Formulation: Frame as a Supervised Binary Classification task predicting $y \\in \\{0, 1\\}$ (0: Legitimate, 1: Fraudulent) using historical labeled transactions. 1.3 Problem Suitability and Simplicity Validation Before provisioning cloud compute, practitioners must rigorously validate the problem: Appropriateness: Is machine learning strictly superior to a deterministic rule-based system? (Rules are cheaper, perfectly explainable, and zero-latency). Data Availability: Are sufficient historical observations available with trustworthy ground-truth labels? Acceptable Performance Baseline: What is the minimum acceptable threshold for deployment (e.g., Recall $\\ge 0.95$ at Precision $\\ge 0.80$)? Occam's Razor: Always establish a simple baseline (heuristic rule or linear model) before introducing complex deep ensembles. 1.4 Benchmark Datasets in the ML Curriculum | Dataset | Feature Nature | Target & Task Type | Core Educational Purpose | |---|---|---|---| | Wine Quality | 11 continuous physicochemical features | Sensory quality score (Discrete ordinal $\\to$ Regression or Binary Classification) | Demonstrating summary statistics, box-plot outlier detection, skewness correction, and feature scaling. | | Car Evaluation | 6 categorical attributes (buying, maint, doors, persons, lugboot, safety) | Purchase acceptability (unacc, acc, good, vgood) | Categorical encoding, frequency tables, and addressing severe class imbalance (unacc constitutes ~70%). | | Vertebral Column | 6 biomechanical continuous features | Spinal diagnosis (Normal, Disk Hernia, Spondylolisthesis) | Multi-class vs. Binary classification, evaluating confusion matrices, end-to-end SageMaker training. | --- Data Sourcing, Serverless ETL with AWS Glue, and Security Governance 2.1 The Data Sourcing Hierarchy Enterprise machine learning depends on combining heterogeneous data across three primary domains: Private Data: Proprietary organizational records (transaction logs, ERP/CRM databases, clickstream events). Commercial Data: Third-party curated feeds acquired through AWS Data Exchange or AWS Marketplace. Open-Source Data: Public domain corpora and government repositories (subject to license compliance). 2.2 Serverless ETL with AWS Glue AWS Glue is a fully managed, serverless Extract, Transform, and Load (ETL) service designed to orchestrate data preparation pipelines across Amazon S3, Amazon RDS, and Amazon Redshift. text [ Data Sources ] [ AWS Glue Service ] [ Consumers ] (S3 / RDS / Redshift) │ ├──> [ Glue Crawler ] ──> [ Glue Data Catalog ] ───> Amazon Athena / Redshift │ │ └──> [ Spark ETL Job ] <───────────┘ │ ▼ [ Amazon S3 Target ] ─────────────────────────────> Amazon SageMaker Core Components of AWS Glue AWS Glue Data Catalog: A centralized metadata repository storing structural table definitions, partition schemas, and column datatypes. Uniformly queried by downstream analytics services including Amazon Athena, Amazon Redshift Spectrum, and Amazon EMR. AWS Glue Crawlers: Automated background scanners that connect to source data stores, execute built-in classifiers to infer schemas and file formats (CSV, JSON, Parquet, ORC), and register metadata tables in the Catalog. ETL Execution Engine: Automatically generates distributed Python or Scala Apache Spark code. Executes distributed data transformations across ephemeral Spark clusters without manual infrastructure provisioning. AWS Glue Dynamic Frames: An advanced distributed abstraction extending Apache Spark DataFrames. Self-Describing Records: Dynamic Frames track schema per individual record rather than imposing a fixed global schema at ingestion, making them resilient to schema drift and irregular semi-structured data. Seamlessly converted to and from native Spark DataFrames via .toDF() and DynamicFrame.fromDF(). AWS Glue ML Transforms: Built-in machine learning capabilities such as FindDuplicates, which learns probabilistic record linkage to deduplicate customer profiles across dirty datasets. 2.3 Event-Driven ETL Pipelines Rather than relying purely on cron-based scheduling, modern MLOps pipelines utilize event-driven triggers for near real-time ingestion: text [ S3: ObjectCreated Event ] ──> [ AWS Lambda ] ──> [ Glue StartJobRun API ] ──> [ Processed S3 Data ] 2.4 Programmatic ETL with Python (boto3) For lightweight preprocessing inside Jupyter notebooks where managed Glue jobs represent unnecessary overhead, data scientists write direct extraction scripts using the AWS SDK for Python (boto3): python import boto3 import requests import zipfile import os import io url = \"https://example.com/raw-dataset.zip\" stagingfolder = \"./extracts\" targetbucket = \"enterprise-ml-data-lake\" Download and extract in-memory stream response = requests.get(url, stream=True) with zipfile.ZipFile(io.BytesIO(response.content)) as archive: archive.extractall(stagingfolder) Upload extracted files to Amazon S3 s3client = boto3.client(\"s3\") for entry in os.scandir(stagingfolder): if entry.isfile(): s3client.uploadfile( Filename=entry.path, Bucket=targetbucket, Key=f\"raw/{entry.name}\" ) 2.5 Security, IAM, and Compliance Auditing AWS Identity and Access Management (IAM): Enforces least-privilege role-based access control (RBAC). SageMaker execution roles must specify granular S3 resource ARNs rather than wildcard access (\"Action\": \"s3:\", \"Resource\": \"\"). Data Encryption: Encryption at Rest: Mandatory for regulated financial and healthcare data. Amazon S3 default encryption (SSE-S3) or AWS Key Management Service (SSE-KMS) with customer-managed keys (CMKs). Encryption in Transit: Enforced via TLS 1.2/1.3 across all service endpoints and internal cluster inter-node communications. Audit Logging with AWS CloudTrail: Records all AWS API calls, user identities, source IP addresses, and timestamps across the console, SDKs, and CLI. Provides non-repudiable audit logs for compliance standards (HIPAA, PCI-DSS, GDPR). --- Exploratory Data Analysis, Descriptive Statistics, and Anomaly Diagnosis Exploratory Data Analysis (EDA) establishes the quantitative foundation of the machine learning pipeline, uncovering distribution geometries, anomalies, and feature interactions prior to training. 3.1 Univariate Statistics: Central Tendency and Dispersion Mean vs. Median: Mean ($\\mu = \\frac{1}{n} \\sum xi$): Arithmetic center; optimal for symmetric, normally distributed features; highly vulnerable to extreme outlier distortion. Median: 50th percentile rank; robust to skewness and extreme outliers; superior metric for skewed variables (e.g., income, transaction amounts). Dispersion Metrics: Variance ($\\sigma^2$), Standard Deviation ($\\sigma$), Interquartile Range (IQR), and Skewness. python import pandas as pd Comprehensive numerical overview df.describe() Granular univariate inspections meanval = df[\"sulphates\"].mean() medianval = df[\"sulphates\"].median() skewval = df[\"sulphates\"].skew() Grouped distribution checks df.groupby(\"quality\")[\"sulphates\"].mean() 3.2 Visualizing Feature Distributions text Histogram & KDE Box Plot (Tukey's IQR Method) (Frequency) ┌───┐ Outliers: x > Q3 + 1.5IQR ┌──┤ ├──┐ o o │ │ │ │ ┌──┐ |───[ | ]───| ──┴──┴───┴──┴───┴──┴── Min Q1 Med Q3 Max Histograms: Binned bar frequencies revealing modality (unimodal vs. bimodal), spread, and skewness. Kernel Density Estimation (KDE): Non-parametric continuous probability density curves removing discrete bin-width bias. Box Plots (Tukey Method): Box Span: First quartile ($Q1$, 25th percentile) to third quartile ($Q3$, 75th percentile). Interquartile Range: $\\text{IQR} = Q3 - Q1$. Whiskers: Extend to the furthest data point within $1.5 \\times \\text{IQR}$ from box edges. Outliers: Data points falling beyond the whiskers ($x < Q1 - 1.5\\text{IQR}$ or $x > Q3 + 1.5\\text{IQR}$). 3.3 Multivariate Statistics and Correlation Analysis Pairwise Scatter Plot Matrices: Reveal non-linear relationships, multi-cluster groupings, and feature redundancy. Labeled Scatter Plots: Project samples using class-specific markers/colors to visually assess linear separability before modeling. Pearson Correlation Matrix: $$r{xy} = \\frac{\\sum (xi - \\bar{x})(yi - \\bar{y})}{\\sqrt{\\sum (xi - \\bar{x})^2 \\sum (yi - \\bar{y})^2}} \\in [-1, 1]$$ Measures strictly linear association. $r = 0$ implies the absence of linear correlation, but does not rule out complex non-linear relationships. Seaborn Correlation Heatmaps: Color-coded visualization (diverging palettes like BrBG) to immediately spot multicollinearity. --- Feature Engineering, Dirty Data, and Selection Strategies 4.1 Taxonomy of Missing Data Handling missing values requires diagnosing the statistical mechanism underlying the missingness: text Missing Data Mechanisms ├── MCAR (Missing Completely at Random): P(Missing) independent of observed & unobserved data │ └── Resolution: Listwise deletion or simple mean/median imputation is unbiased. ├── MAR (Missing at Random): P(Missing) depends strictly on observed data │ └── Resolution: Multiple imputation (MICE) or maximum likelihood methods. └── MNAR (Missing Not at Random): P(Missing) depends on the unobserved value itself └── Resolution: Pattern-mixture modeling or explicit missingness indicator features. Imputation Paradigms: Univariate Imputation: Replacing missing entries using a single column's central tendency (mean, median, mode). Multivariate Imputation: Imputing values conditionally using predictive models based on all other observed features (e.g., k-NN imputation, regression imputation). 4.2 Outlier Remediation Strategies Outliers are not inherently erroneous; they can represent rare, high-value phenomena (e.g., financial fraud). Indiscriminate removal introduces sampling bias: Deletion: Valid only when extreme values are definitively traced to hardware malfunction or human data-entry error. Mathematical Transformation: Applying variance-stabilizing functions (e.g., Natural Logarithm $y = \\ln(1 + x)$ or Box-Cox) to compress the long right tail and restore normality. Capping / Imputation (Winsorization): Clamping extreme values at the 1st and 99th percentiles or replacing them with the median. 4.3 Feature Selection Methodologies Feature selection curtails overfitting, accelerates training throughput, and removes noisy or collinear dimensions: | Strategy | Operational Mechanism | Advantages | Trade-offs & Limitations | |---|---|---|---| | Filter Methods | Evaluates statistical properties of features independently of the predictive model (Pearson $r$, ANOVA $F$-test, Chi-square $\\chi^2$, Mutual Information). | Extremely fast, $\\mathcal{O}(d)$ computation, scalable to millions of rows, model-agnostic. | Ignores feature interactions; may select redundant features or discard features that perform well in ensembles. | | Wrapper Methods | Uses a target model as an evaluation engine, searching feature subsets iteratively (Forward Stepwise Selection, Backward Elimination, RFE). | Discovers optimal feature subsets tailored specifically to the model's inductive biases. | Computationally expensive ($\\mathcal{O}(2^d)$ without heuristics), severe risk of overfitting validation sets. | | Embedded Methods | Feature selection occurs intrinsically during model optimization (L1 Lasso penalization, Decision Tree split criteria). | Balances computational efficiency with interaction awareness; directly penalizes complexity. | Tied strictly to specific algorithms (e.g., linear models or tree ensembles). | --- Amazon SageMaker Training Paradigms, HPO, and Autopilot 5.1 The Four Model Training Approaches in SageMaker Amazon SageMaker isolates compute infrastructure from development environments, launching ephemeral EC2 training clusters that automatically pull container images, ingest S3 data channels, execute training, and persist model artifacts. text SageMaker Model Training Paradigms ├── 1. Built-in Algorithms: Fully managed, AWS-optimized containers (XGBoost, Linear Learner, K-Means) ├── 2. Prebuilt Framework Containers: Bring-Your-Own-Script (PyTorch, TensorFlow, Scikit-learn, HuggingFace) ├── 3. Custom Docker Containers (BYOC): Complete environment control (R, Julia, custom C++ runtimes) └── 4. AWS Marketplace: Third-party commercial pre-trained or specialized algorithms 5.2 Key SageMaker Built-in Algorithms XGBoost: Highly optimized implementation of gradient boosted decision trees for tabular classification, regression, and ranking. Automatically handles missing values and sparse inputs. Linear Learner: High-throughput distributed linear classification and regression. Concurrently explores multiple objective functions and loss formulations in parallel, selecting the optimal model based on validation metrics. K-Means: Distributed clustering that optimizes within-cluster sum of squares ($\\text{SSE}$). Operates efficiently over streaming datasets using mini-batch Lloyd iterations. Factorization Machines: Specialized for high-dimensional sparse datasets (recommendation engines and CTR click prediction), capturing second-order pairwise feature interactions. 5.3 Automated Hyperparameter Tuning (HPO) SageMaker Hyperparameter Tuning treats model optimization as a black-box optimization task, exploring hyperparameter spaces using Bayesian Optimization: Optimization Mechanics: Constructs a Gaussian Process surrogate model that maps hyperparameter configurations to validation objective metrics (e.g., maximizing Validation ROC-AUC, minimizing Validation RMSE). HPO Best Practices: Prioritize Impactful Parameters: Tuning all parameters simultaneously induces combinatorial explosion. Restrict searches to the top 3–4 hyperparameter dimensions (e.g., learning rate, max depth, subsample). Narrow the Search Space: Tight, informed bounds converge significantly faster than broad ranges. Sequential Execution: Run tuning jobs sequentially or with low parallelism ($2\\text{--}4$ concurrent jobs); sequential iterations allow the Bayesian optimizer to incorporate learnings from previous trials. Logarithmic Scaling: Hyperparameters spanning multiple orders of magnitude (e.g., learning rate $\\in [10^{-5}, 10^{-1}]$) must be explicitly tuned on a logarithmic scale. 5.4 Amazon SageMaker Autopilot (AutoML) Amazon SageMaker Autopilot provides transparent, fully automated machine learning: Autonomous Workflow: Given tabular data in S3 and a target column, Autopilot automatically infers problem type (regression, binary/multiclass classification), handles missing data, engineers candidate feature pipelines, trains and tunes multiple algorithm pipelines (XGBoost, Linear Learner, Deep MLP ensembles). White-Box Transparency: Unlike black-box AutoML platforms, Autopilot generates two fully inspectable Jupyter notebooks: Data Exploration Notebook: Details discovered statistics, correlations, and data quality issues. Candidate Generation Notebook: Contains the exact Python code used to engineer features and configure tuning jobs. --- Time-Series Forecasting and Amazon SageMaker Canvas 6.1 Foundations of Temporal Data Modeling Forecasting models sequential observations where the temporal ordering contains structural predictive signal, fundamentally violating standard independent and identically distributed (i.i.d.) assumptions. text Time Series Decomposition Y(t) = Trend(t) + Seasonal(t) + Cyclical(t) + Irregular(t) Core Temporal Patterns: Trend: Long-term directional movement (upward, downward, stationary). Seasonality: Strict periodic fluctuations occurring at fixed, known intervals (hourly, daily, weekly, annual). Cyclical: Long-term oscillations lacking a fixed calendar period (e.g., macroeconomic business cycles). Irregular / Noise: Random stochastic residuals remaining after removing structural components. Stationarity: A time series is strictly stationary if its mean, variance, and autocovariance remain invariant over time. Classical linear models (ARIMA) require stationarity, achieved via differencing or detrending. Autocorrelation: Measures correlation between observations separated by time lag $k$: $$\\text{Autocorr}(k) = \\frac{\\sum{t=k+1}^T (yt - \\bar{y})(y{t-k} - \\bar{y})}{\\sum{t=1}^T (yt - \\bar{y})^2}$$ 6.2 Preprocessing and Frequency Alignment Timestamp Normalization: Enforce UTC standardization; resolve daylight savings shifts and daylight alignment. Imputation for Time Series: Forward Fill (ffill): Carry forward the last observed value (assumes persistence). Moving Average / Spline Interpolation: Estimates missing points based on surrounding local trajectories. Zero Fill: Appropriate when missing entries indicate zero real-world activity (e.g., zero retail transactions on store closures). Caution on Backward Fill (bfill): Risks catastrophic lookahead data leakage if applied improperly across historical training splits. Resampling: Downsampling (High $\\to$ Low frequency): Aggregating hourly transactions into daily sums. Upsampling (Low $\\to$ High frequency): Requires interpolation or curve modeling. 6.3 Amazon SageMaker Canvas for No-Code Forecasting Amazon SageMaker Canvas provides a visual, no-code interface allowing business analysts to build ML models: Build Types: Quick Build: Generates rapid prototype models within minutes for initial feasibility checks. Standard Build: Executes exhaustive feature generation and hyperparameter search for production deployment. Advanced Forecasting Capabilities: Group Column: Generates individualized forecasts per entity (e.g., store ID, SKU product category). Holiday Schedules: Integrates national calendar events across 251 countries to account for retail surges. What-If Scenario Modeling: Allows users to dynamically alter feature values (e.g., simulating price discounts) to visualize projected demand shifts. 6.4 Programmatic Endpoint Invocation via Python Once deployed to a production SageMaker endpoint, forecasting models are queried in real time via boto3: python import boto3 import pandas as pd Prepare real-time payload payloaddf = pd.readcsv(\"./forecast-query.csv\") csvpayload = payloaddf.tocsv(index=False).encode(\"utf-8\") Initialize runtime client runtimeclient = boto3.client(\"runtime.sagemaker\") Invoke deployed endpoint response = runtimeclient.invokeendpoint( EndpointName=\"canvas-demand-forecast-prod\", ContentType=\"text/csv\", Body=csvpayload, Accept=\"application/json\" ) forecastresults = response[\"Body\"].read().decode(\"utf-8\") --- Computer Vision with Amazon Rekognition and Ground Truth 7.1 Amazon Rekognition Architecture Amazon Rekognition delivers fully managed computer vision APIs powered by deep convolutional networks and vision transformers, eliminating the need for custom model training for standard vision tasks. text Rekognition Vision Capabilities ├── Image Analysis: Face Detection, Facial Verification (1:1), Face Collections (1:N) ├── Stored Video Analysis: Asynchronous pipeline (S3 ──> Rekognition ──> SNS ──> SQS ──> Get API) ├── Streaming Video Analysis: Real-time (Kinesis Video Streams ──> Stream Processor ──> Kinesis Data Streams) └── Custom Object Detection: Amazon Rekognition Custom Labels 7.2 Facial Detection vs. Facial Search Facial Detection (DetectFaces): Identifies all human faces within an image. Bounding Box: Normalized coordinate ratios $[x{\\text{min}}, y{\\text{min}}, \\text{width}, \\text{height}] \\in [0, 1]$. Facial Landmarks: Precise pixel coordinates for anatomical keypoints (pupils, nose tip, mouth edges). Attributes & Confidence: Inferred attributes (glasses, beard, facial pose: roll/pitch/yaw) accompanied by confidence scores $[0, 100]$. Facial Search against Collections (SearchFacesByImage): Operates over an indexed vector collection of known identities (CreateCollection). Stored records contain dense biometric embedding vectors mapped to an ExternalImageId. Returns matched identities ranked by similarity score: $$\\text{Match}(\\mathbf{v}{\\text{query}}, \\mathbf{v}{\\text{target}}) \\ge \\tau{\\text{threshold}}$$ 7.3 Responsible AI and Ethical Computer Vision 7.4 Stored Video vs. Streaming Video Architectures Stored Video Processing (Asynchronous Pipeline): Videos are staged in Amazon S3. Analysis is initiated via asynchronous APIs (StartFaceDetection, StartLabelDetection, StartPersonTracking). Completion events publish to an Amazon SNS topic, routed to an Amazon SQS queue for reliable message polling. Final results with millisecond timestamps are retrieved via matching Get APIs (GetFaceDetection). Streaming Video Processing (Real-Time Pipeline): High-throughput video feeds stream continuously into Amazon Kinesis Video Streams (KVS). An Amazon Rekognition Video Stream Processor samples designated frames. Real-time detection records are emitted into an Amazon Kinesis Data Stream (KDS) for downstream consumption. 7.5 Custom Labels and Amazon SageMaker Ground Truth Amazon Rekognition Custom Labels: Extends pre-trained vision models to recognize proprietary, domain-specific objects or defect patterns. Evaluated via DetectCustomLabels with MinConfidence and MaxResults parameters. Amazon SageMaker Ground Truth: A managed data annotation service enabling workflows across private internal teams, third-party vendor workforces, or public crowds (Amazon Mechanical Turk). Features Active Learning: SageMaker automatically labels high-confidence images while routing ambiguous samples to human annotators, cutting annotation costs by up to 70%. --- Natural Language Processing Pipelines and AWS Language Services 8.1 Classical NLP Text Preprocessing Pipeline Natural language text requires systematic tokenization and normalization before vectorization: text Raw Text ──> [ Stop Words Removal ] ──> [ Lemmatization / Stemming ] ──> [ Tokenization ] ──> [ Vectorization ] python import nltk from nltk.corpus import stopwords from nltk.stem import WordNetLemmatizer from nltk.tokenize import wordtokenize nltk.download([\"punkt\", \"stopwords\", \"wordnet\"]) rawtext = \"This machine learning pipeline is running smoothly.\" Tokenize and normalize tokens = wordtokenize(rawtext.lower()) stopwords = set(stopwords.words(\"english\")) lemmatizer = WordNetLemmatizer() cleanedtokens = [ lemmatizer.lemmatize(t) for t in tokens if t.isalpha() and t not in stopwords ] Result: ['machine', 'learning', 'pipeline', 'running', 'smoothly'] 8.2 Text Vectorization: BoW vs. TF-IDF Bag of Words (BoW): Constructs a vocabulary index of all unique terms across the corpus. Represents each document as a sparse vector of raw term frequencies: $\\mathbf{x} = [c(w1), c(w2), \\dots, c(w_V)]$. Limitation: Ignores grammar, word order, and context; treats common words with equal prominence. TF-IDF (Term Frequency – Inverse Document Frequency): Downweights ubiquitous terms that appear across all documents (e.g., \"system\", \"report\") while boosting distinctive, informative terms: $$\\text{TF-IDF}(t, d, D) = \\text{TF}(t, d) \\times \\log\\left(\\frac{|D|}{1 + |\\{d \\in D : t \\in d\\}|}\\right)$$ 8.3 Contextual Semantics, POS Tagging, and Named Entity Recognition (NER) Part of Speech (POS) Tagging: Disambiguates syntactic role based on local sentence context (e.g., distinguishing \"apple\" as a fruit vs. \"Apple\" as a corporate entity). Coreference Resolution: Identifies when distinct linguistic phrases or pronouns refer to the identical real-world entity (e.g., \"The algorithm was deployed. It processed 10,000 requests.\"). Named Entity Recognition (NER): Locates and categorizes key spans into pre-defined categories (Person, Location, Organization, Date). When combined with enterprise Knowledge Graphs, NER bridges unstructured text with structured relational insights. 8.4 AWS Managed Natural Language Services | AWS Service | Core Capability | Target Architecture & Integration | |---|---|---| | Amazon Comprehend | Unsupervised & supervised NLP: sentiment analysis, entity extraction, key phrase detection, PII redaction, topic modeling. | Serverless REST API; integrates directly with S3 buckets for batch document analysis. | | Amazon Lex | Conversational AI engine powering Amazon Alexa: multi-turn dialogue, intent classification, and slot filling. | Integrated with AWS Lambda for business fulfillment logic and Amazon Connect for contact centers. | | Amazon Transcribe | Automatic speech recognition (ASR): converts audio/video speech into text transcripts with punctuation and timestamps. | Batch processing via S3 or real-time streaming via WebSockets/gRPC. | | Amazon Polly | Text-to-Speech (TTS): synthesizes lifelike human speech from text using deep learning neural TTS voices. | Supports Speech Synthesis Markup Language (SSML) for pitch, rate, and pronunciation control. | | Amazon Translate | Neural Machine Translation (NMT): fast, high-quality language translation across hundreds of language pairs. | Real-time text translation and batch document translation with custom terminology support. | --- Generative AI, Foundation Models, and Amazon Q Developer 9.1 The Generative AI Paradigm Shift Unlike traditional predictive machine learning models that are strictly task-specific (trained exclusively for binary fraud detection or housing regression), Generative AI is powered by massive Foundation Models (FMs): text Predictive ML (Task-Specific) Generative AI (Foundation Models) [ Input X ] [ Prompt / Multimodal Input ] │ │ ▼ ▼ [ Task Model ] ──> [ Specific Label ] [ Pre-trained Foundation Model ] │ ├──> Text Generation / Summarization ├──> Code Synthesis & Refactoring └──> Multimodal Reasoning 9.2 The AWS Generative AI Stack AWS organizes generative AI services across three primary architectural tiers: Top Tier (Applications): Ready-to-use GenAI applications like Amazon Q Developer and Amazon Q Business. Middle Tier (Tools & Foundation Models): Amazon Bedrock: A fully managed serverless API providing access to leading Foundation Models (Anthropic Claude, Meta Llama, Amazon Titan, Cohere, AI21 Labs) with enterprise guardrails, RAG integration, and fine-tuning. Amazon SageMaker JumpStart: An ML hub offering one-click deployment of open-weights foundation models onto dedicated SageMaker instances. Bottom Tier (Infrastructure & Custom Silicon): AWS Trainium: Custom application-specific integrated circuits (ASICs) optimized for cost-effective distributed model training. AWS Inferentia: Purpose-built high-throughput, low-latency deep learning inference chips. 9.3 Amazon Q Developer across the Software Development Lifecycle (SDLC) Amazon Q Developer is a generative AI assistant embedded across IDEs (VS Code, JetBrains), the AWS Management Console, and the command-line interface: text Amazon Q Developer Across the SDLC Plan Create Test & Secure Operate Modernize ┌──────────┐ ┌──────────┐ ┌──────────────┐ ┌──────────┐ ┌───────────┐ │ Best │───────>│ In-line │───────>│ Unit Test │──────>│ Runtime │──────>│ Java/Code │ │ Practice │ │ Code │ │ Gen & SAST │ │ Debugging│ │ Upgrades │ │ Guidance │ │ Complete │ │ Vuln Scans │ │ & VPC Ops│ │ via Agents│ └──────────┘ └──────────┘ └──────────────┘ └──────────┘ └───────────┘ Plan: Provides contextual architectural recommendations aligned with the AWS Well-Architected Framework, answering cloud configuration queries inside the IDE. Create: Emits multi-line inline code suggestions in Python, Java, JavaScript, and Go; synthesizes full application features directly from natural language specifications. Test and Secure: Generates unit test suites and performs Static Application Security Testing (SAST), highlighting vulnerabilities (e.g., SQL injection, hardcoded credentials) and proposing inline remediation diffs. Operate: Integrates with Amazon CloudWatch and AWS Lambda to diagnose runtime execution errors, and connects with VPC Reachability Analyzer to troubleshoot networking misconfigurations. Modernize: The Amazon Q Developer Agent for Code Transformation** automates multi-version runtime upgrades (e.g., upgrading legacy Java 8/11 applications to Java 17). ---",
+    "content_markdown": "# AWS Machine Learning Course\n\nStructured Study Notes on AWS Academy Machine Learning Foundations: Pipeline Implementation, Amazon SageMaker, Serverless ETL, Time-Series Forecasting, Computer Vision, NLP, and Generative AI.\n\n## Knowledge Architecture\n\nThis course establishes an end-to-end engineering roadmap for designing, training, deploying, and operating production-grade machine learning workflows on Amazon Web Services (AWS):\n\n```text\nAWS Machine Learning Foundations Roadmap\n  ├── Problem Framing & Sourcing: business metrics → ML objectives → benchmark datasets\n  ├── Data Engineering & ETL: AWS Glue (Data Catalog, Dynamic Frames, Crawlers), S3, IAM, CloudTrail\n  ├── Exploratory Data Analysis: descriptive statistics, univariate/multivariate distributions, outliers\n  ├── Feature Engineering: MCAR/MAR/MNAR missingness, filter/wrapper/embedded feature selection\n  ├── SageMaker Model Training: built-in algorithms, bring-your-own-containers (BYOC), HPO, Autopilot\n  ├── Time-Series Forecasting: trends, seasonality, stationarity, DeepAR+, SageMaker Canvas & endpoints\n  ├── Computer Vision: Amazon Rekognition (facial analysis, video streaming), Custom Labels, Ground Truth\n  ├── Natural Language Processing: text preprocessing (NLTK), BoW, TF-IDF, Comprehend, Lex, Transcribe\n  └── Generative AI & Developer Tools: Foundation Models (FMs), Bedrock, JumpStart, Amazon Q Developer\n```\n\n| Lifecycle Layer | Core Challenge Addressed | Primary AWS Services & Techniques |\n|---|---|---|\n| **1. Business Framing** | How to translate qualitative organizational goals into quantitative ML objectives? | Problem taxonomy, benchmark datasets (Wine, Car, Vertebral), ROI metrics |\n| **2. Data Ingestion & ETL** | How to crawl, catalog, and transform distributed semi-structured data serverlessly? | AWS Glue Data Catalog, Dynamic Frames, Spark ETL, S3, IAM, CloudTrail |\n| **3. Statistical EDA** | How to diagnose distribution shapes, skewness, class imbalances, and multicollinearity? | Pandas, Seaborn heatmaps, box plots, IQR outlier bounds, correlation matrices |\n| **4. Feature Engineering** | How to treat missing data mechanisms and prune redundant predictors? | MCAR/MAR/MNAR taxonomy, imputation, filter / wrapper / embedded selection |\n| **5. Model Training & MLOps** | How to train, scale, and automatically tune models across compute clusters? | Amazon SageMaker built-in algorithms, BYOC, Bayesian HPO, SageMaker Autopilot |\n| **6. Forecasting & Time-Series** | How to model temporal dependencies, autocorrelation, and seasonality without code? | SageMaker Canvas, DeepAR+, Prophet, holiday schedules, real-time endpoints |\n| **7. Computer Vision** | How to execute face analysis, video streaming inference, and custom object detection? | Amazon Rekognition, Kinesis Video Streams, Custom Labels, SageMaker Ground Truth |\n| **8. Natural Language Processing** | How to preprocess unstructured corpora and orchestrate conversational AI? | Tokenization, TF-IDF, Amazon Comprehend, Amazon Lex, Transcribe, Polly |\n| **9. Generative AI & Modern SDLC** | How to leverage Foundation Models and accelerate developer productivity? | Amazon Bedrock, SageMaker JumpStart, Amazon Q Developer across SDLC |\n\n---\n\n## 1. Machine Learning Pipelines and Business Problem Framing\n\n### 1.1 The Machine Learning Pipeline Paradigm\n\nA machine learning pipeline provides a modular, reproducible architectural blueprint that decouples raw ingestion from model inference. While this curriculum primarily focuses on **supervised learning**, identical architectural stages underpin unsupervised clustering and reinforcement learning workflows.\n\n```text\n[ Business Goal ] ──> [ Frame as ML Problem ] ──> [ Data Ingestion & ETL ]\n                                                              │\n                                                              ▼\n[ Production Endpoint ] <── [ Model Evaluation ] <── [ Model Training & HPO ]\n```\n\n### 1.2 Defining Business Objectives vs. ML Objectives\n\nA common failure mode in enterprise data initiatives is treating machine learning as an isolated modeling exercise rather than a means to achieve a measurable business outcome.\n\n- **Fundamental Business Discovery Questions**:\n    - What specific business outcome does the organization intend to achieve?\n    - How is the operational task executed today (e.g., manual rules, heuristic spreadsheets, legacy software)?\n    - How will organizational leadership quantify success?\n    - How will predictions be operationalized in downstream software systems?\n    - What implicit operational assumptions exist, and who are the designated domain experts?\n- **Translating Qualitative Goals into Quantitative Metrics**:\n    - *Example (Credit Card Fraud Detection)*:\n        - **Business Motivation**: Mitigate revenue loss and prevent customer churn caused by fraudulent transactions.\n        - **Business Metric**: Achieve a 10% reduction in chargeback fraud claims within 6 months.\n        - **ML Formulation**: Frame as a **Supervised Binary Classification** task predicting $y \\in \\{0, 1\\}$ (0: Legitimate, 1: Fraudulent) using historical labeled transactions.\n\n### 1.3 Problem Suitability and Simplicity Validation\n\nBefore provisioning cloud compute, practitioners must rigorously validate the problem:\n1. **Appropriateness**: Is machine learning strictly superior to a deterministic rule-based system? (Rules are cheaper, perfectly explainable, and zero-latency).\n2. **Data Availability**: Are sufficient historical observations available with trustworthy ground-truth labels?\n3. **Acceptable Performance Baseline**: What is the minimum acceptable threshold for deployment (e.g., Recall $\\ge 0.95$ at Precision $\\ge 0.80$)?\n4. **Occam's Razor**: Always establish a simple baseline (heuristic rule or linear model) before introducing complex deep ensembles.\n\n### 1.4 Benchmark Datasets in the ML Curriculum\n\n| Dataset | Feature Nature | Target & Task Type | Core Educational Purpose |\n|---|---|---|---|\n| **Wine Quality** | 11 continuous physicochemical features | Sensory quality score (Discrete ordinal $\\to$ Regression or Binary Classification) | Demonstrating summary statistics, box-plot outlier detection, skewness correction, and feature scaling. |\n| **Car Evaluation** | 6 categorical attributes (buying, maint, doors, persons, lug_boot, safety) | Purchase acceptability (`unacc`, `acc`, `good`, `vgood`) | Categorical encoding, frequency tables, and addressing severe **class imbalance** (`unacc` constitutes ~70%). |\n| **Vertebral Column** | 6 biomechanical continuous features | Spinal diagnosis (Normal, Disk Hernia, Spondylolisthesis) | Multi-class vs. Binary classification, evaluating confusion matrices, end-to-end SageMaker training. |\n\n---\n\n## 2. Data Sourcing, Serverless ETL with AWS Glue, and Security Governance\n\n### 2.1 The Data Sourcing Hierarchy\n\nEnterprise machine learning depends on combining heterogeneous data across three primary domains:\n- **Private Data**: Proprietary organizational records (transaction logs, ERP/CRM databases, clickstream events).\n- **Commercial Data**: Third-party curated feeds acquired through **AWS Data Exchange** or AWS Marketplace.\n- **Open-Source Data**: Public domain corpora and government repositories (subject to license compliance).\n\n### 2.2 Serverless ETL with AWS Glue\n\n**AWS Glue** is a fully managed, serverless Extract, Transform, and Load (ETL) service designed to orchestrate data preparation pipelines across Amazon S3, Amazon RDS, and Amazon Redshift.\n\n```text\n[ Data Sources ]             [ AWS Glue Service ]               [ Consumers ]\n (S3 / RDS / Redshift)\n          │\n          ├──> [ Glue Crawler ] ──> [ Glue Data Catalog ] ───> Amazon Athena / Redshift\n          │                                  │\n          └──> [ Spark ETL Job ] <───────────┘\n                     │\n                     ▼\n           [ Amazon S3 Target ] ─────────────────────────────> Amazon SageMaker\n```\n\n#### Core Components of AWS Glue\n1. **AWS Glue Data Catalog**:\n    - A centralized metadata repository storing structural table definitions, partition schemas, and column datatypes.\n    - Uniformly queried by downstream analytics services including **Amazon Athena**, **Amazon Redshift Spectrum**, and **Amazon EMR**.\n2. **AWS Glue Crawlers**:\n    - Automated background scanners that connect to source data stores, execute built-in classifiers to infer schemas and file formats (CSV, JSON, Parquet, ORC), and register metadata tables in the Catalog.\n3. **ETL Execution Engine**:\n    - Automatically generates distributed Python or Scala Apache Spark code.\n    - Executes distributed data transformations across ephemeral Spark clusters without manual infrastructure provisioning.\n4. **AWS Glue Dynamic Frames**:\n    - An advanced distributed abstraction extending Apache Spark DataFrames.\n    - **Self-Describing Records**: Dynamic Frames track schema per individual record rather than imposing a fixed global schema at ingestion, making them resilient to schema drift and irregular semi-structured data.\n    - Seamlessly converted to and from native Spark DataFrames via `.toDF()` and `DynamicFrame.fromDF()`.\n5. **AWS Glue ML Transforms**:\n    - Built-in machine learning capabilities such as **FindDuplicates**, which learns probabilistic record linkage to deduplicate customer profiles across dirty datasets.\n\n### 2.3 Event-Driven ETL Pipelines\n\nRather than relying purely on cron-based scheduling, modern MLOps pipelines utilize event-driven triggers for near real-time ingestion:\n\n```text\n[ S3: ObjectCreated Event ] ──> [ AWS Lambda ] ──> [ Glue StartJobRun API ] ──> [ Processed S3 Data ]\n```\n\n### 2.4 Programmatic ETL with Python (`boto3`)\n\nFor lightweight preprocessing inside Jupyter notebooks where managed Glue jobs represent unnecessary overhead, data scientists write direct extraction scripts using the AWS SDK for Python (`boto3`):\n\n```python\nimport boto3\nimport requests\nimport zipfile\nimport os\nimport io\n\nurl = \"https://example.com/raw-dataset.zip\"\nstaging_folder = \"./extracts\"\ntarget_bucket = \"enterprise-ml-data-lake\"\n\n# Download and extract in-memory stream\nresponse = requests.get(url, stream=True)\nwith zipfile.ZipFile(io.BytesIO(response.content)) as archive:\n    archive.extractall(staging_folder)\n\n# Upload extracted files to Amazon S3\ns3_client = boto3.client(\"s3\")\nfor entry in os.scandir(staging_folder):\n    if entry.is_file():\n        s3_client.upload_file(\n            Filename=entry.path,\n            Bucket=target_bucket,\n            Key=f\"raw/{entry.name}\"\n        )\n```\n\n### 2.5 Security, IAM, and Compliance Auditing\n\n- **AWS Identity and Access Management (IAM)**:\n    - Enforces least-privilege role-based access control (RBAC).\n    - SageMaker execution roles must specify granular S3 resource ARNs rather than wildcard access (`\"Action\": \"s3:*\", \"Resource\": \"*\"`).\n- **Data Encryption**:\n    - **Encryption at Rest**: Mandatory for regulated financial and healthcare data. Amazon S3 default encryption (SSE-S3) or AWS Key Management Service (SSE-KMS) with customer-managed keys (CMKs).\n    - **Encryption in Transit**: Enforced via TLS 1.2/1.3 across all service endpoints and internal cluster inter-node communications.\n- **Audit Logging with AWS CloudTrail**:\n    - Records all AWS API calls, user identities, source IP addresses, and timestamps across the console, SDKs, and CLI.\n    - Provides non-repudiable audit logs for compliance standards (HIPAA, PCI-DSS, GDPR).\n\n---\n\n## 3. Exploratory Data Analysis, Descriptive Statistics, and Anomaly Diagnosis\n\nExploratory Data Analysis (EDA) establishes the quantitative foundation of the machine learning pipeline, uncovering distribution geometries, anomalies, and feature interactions prior to training.\n\n### 3.1 Univariate Statistics: Central Tendency and Dispersion\n\n- **Mean vs. Median**:\n    - **Mean** ($\\mu = \\frac{1}{n} \\sum x_i$): Arithmetic center; optimal for symmetric, normally distributed features; highly vulnerable to extreme outlier distortion.\n    - **Median**: 50th percentile rank; robust to skewness and extreme outliers; superior metric for skewed variables (e.g., income, transaction amounts).\n- **Dispersion Metrics**: Variance ($\\sigma^2$), Standard Deviation ($\\sigma$), Interquartile Range (IQR), and Skewness.\n\n```python\nimport pandas as pd\n\n# Comprehensive numerical overview\ndf.describe()\n\n# Granular univariate inspections\nmean_val = df[\"sulphates\"].mean()\nmedian_val = df[\"sulphates\"].median()\nskew_val = df[\"sulphates\"].skew()\n\n# Grouped distribution checks\ndf.groupby(\"quality\")[\"sulphates\"].mean()\n```\n\n### 3.2 Visualizing Feature Distributions\n\n```text\n       Histogram & KDE                Box Plot (Tukey's IQR Method)\n         (Frequency)\n          ┌───┐                          Outliers: x > Q3 + 1.5*IQR\n       ┌──┤   ├──┐                         o   o\n       │  │   │  │   ┌──┐               |───[     |     ]───|\n     ──┴──┴───┴──┴───┴──┴──            Min   Q1  Med   Q3   Max\n```\n\n1. **Histograms**: Binned bar frequencies revealing modality (unimodal vs. bimodal), spread, and skewness.\n2. **Kernel Density Estimation (KDE)**: Non-parametric continuous probability density curves removing discrete bin-width bias.\n3. **Box Plots (Tukey Method)**:\n    - **Box Span**: First quartile ($Q_1$, 25th percentile) to third quartile ($Q_3$, 75th percentile).\n    - **Interquartile Range**: $\\text{IQR} = Q_3 - Q_1$.\n    - **Whiskers**: Extend to the furthest data point within $1.5 \\times \\text{IQR}$ from box edges.\n    - **Outliers**: Data points falling beyond the whiskers ($x < Q_1 - 1.5\\text{IQR}$ or $x > Q_3 + 1.5\\text{IQR}$).\n\n### 3.3 Multivariate Statistics and Correlation Analysis\n\n- **Pairwise Scatter Plot Matrices**: Reveal non-linear relationships, multi-cluster groupings, and feature redundancy.\n- **Labeled Scatter Plots**: Project samples using class-specific markers/colors to visually assess linear separability before modeling.\n- **Pearson Correlation Matrix**:\n    $$r_{xy} = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum (x_i - \\bar{x})^2 \\sum (y_i - \\bar{y})^2}} \\in [-1, 1]$$\n    - Measures *strictly linear* association. $r = 0$ implies the absence of linear correlation, but does **not** rule out complex non-linear relationships.\n- **Seaborn Correlation Heatmaps**: Color-coded visualization (diverging palettes like `BrBG`) to immediately spot multicollinearity.\n\n---\n\n## 4. Feature Engineering, Dirty Data, and Selection Strategies\n\n### 4.1 Taxonomy of Missing Data\n\nHandling missing values requires diagnosing the statistical mechanism underlying the missingness:\n\n```text\nMissing Data Mechanisms\n  ├── MCAR (Missing Completely at Random): P(Missing) independent of observed & unobserved data\n  │     └── Resolution: Listwise deletion or simple mean/median imputation is unbiased.\n  ├── MAR (Missing at Random): P(Missing) depends strictly on observed data\n  │     └── Resolution: Multiple imputation (MICE) or maximum likelihood methods.\n  └── MNAR (Missing Not at Random): P(Missing) depends on the unobserved value itself\n        └── Resolution: Pattern-mixture modeling or explicit missingness indicator features.\n```\n\n- **Imputation Paradigms**:\n    - **Univariate Imputation**: Replacing missing entries using a single column's central tendency (mean, median, mode).\n    - **Multivariate Imputation**: Imputing values conditionally using predictive models based on all other observed features (e.g., k-NN imputation, regression imputation).\n\n### 4.2 Outlier Remediation Strategies\n\nOutliers are not inherently erroneous; they can represent rare, high-value phenomena (e.g., financial fraud). Indiscriminate removal introduces sampling bias:\n1. **Deletion**: Valid only when extreme values are definitively traced to hardware malfunction or human data-entry error.\n2. **Mathematical Transformation**: Applying variance-stabilizing functions (e.g., Natural Logarithm $y = \\ln(1 + x)$ or Box-Cox) to compress the long right tail and restore normality.\n3. **Capping / Imputation (Winsorization)**: Clamping extreme values at the 1st and 99th percentiles or replacing them with the median.\n\n### 4.3 Feature Selection Methodologies\n\nFeature selection curtails overfitting, accelerates training throughput, and removes noisy or collinear dimensions:\n\n| Strategy | Operational Mechanism | Advantages | Trade-offs & Limitations |\n|---|---|---|---|\n| **Filter Methods** | Evaluates statistical properties of features independently of the predictive model (Pearson $r$, ANOVA $F$-test, Chi-square $\\chi^2$, Mutual Information). | Extremely fast, $\\mathcal{O}(d)$ computation, scalable to millions of rows, model-agnostic. | Ignores feature interactions; may select redundant features or discard features that perform well in ensembles. |\n| **Wrapper Methods** | Uses a target model as an evaluation engine, searching feature subsets iteratively (Forward Stepwise Selection, Backward Elimination, RFE). | Discovers optimal feature subsets tailored specifically to the model's inductive biases. | Computationally expensive ($\\mathcal{O}(2^d)$ without heuristics), severe risk of overfitting validation sets. |\n| **Embedded Methods** | Feature selection occurs intrinsically during model optimization (L1 Lasso penalization, Decision Tree split criteria). | Balances computational efficiency with interaction awareness; directly penalizes complexity. | Tied strictly to specific algorithms (e.g., linear models or tree ensembles). |\n\n---\n\n## 5. Amazon SageMaker Training Paradigms, HPO, and Autopilot\n\n### 5.1 The Four Model Training Approaches in SageMaker\n\nAmazon SageMaker isolates compute infrastructure from development environments, launching ephemeral EC2 training clusters that automatically pull container images, ingest S3 data channels, execute training, and persist model artifacts.\n\n```text\nSageMaker Model Training Paradigms\n  ├── 1. Built-in Algorithms: Fully managed, AWS-optimized containers (XGBoost, Linear Learner, K-Means)\n  ├── 2. Prebuilt Framework Containers: Bring-Your-Own-Script (PyTorch, TensorFlow, Scikit-learn, HuggingFace)\n  ├── 3. Custom Docker Containers (BYOC): Complete environment control (R, Julia, custom C++ runtimes)\n  └── 4. AWS Marketplace: Third-party commercial pre-trained or specialized algorithms\n```\n\n### 5.2 Key SageMaker Built-in Algorithms\n\n- **XGBoost**: Highly optimized implementation of gradient boosted decision trees for tabular classification, regression, and ranking. Automatically handles missing values and sparse inputs.\n- **Linear Learner**: High-throughput distributed linear classification and regression. Concurrently explores multiple objective functions and loss formulations in parallel, selecting the optimal model based on validation metrics.\n- **K-Means**: Distributed clustering that optimizes within-cluster sum of squares ($\\text{SSE}$). Operates efficiently over streaming datasets using mini-batch Lloyd iterations.\n- **Factorization Machines**: Specialized for high-dimensional sparse datasets (recommendation engines and CTR click prediction), capturing second-order pairwise feature interactions.\n\n### 5.3 Automated Hyperparameter Tuning (HPO)\n\nSageMaker Hyperparameter Tuning treats model optimization as a black-box optimization task, exploring hyperparameter spaces using **Bayesian Optimization**:\n\n- **Optimization Mechanics**: Constructs a Gaussian Process surrogate model that maps hyperparameter configurations to validation objective metrics (e.g., maximizing Validation ROC-AUC, minimizing Validation RMSE).\n- **HPO Best Practices**:\n    1. **Prioritize Impactful Parameters**: Tuning all parameters simultaneously induces combinatorial explosion. Restrict searches to the top 3–4 hyperparameter dimensions (e.g., learning rate, max depth, subsample).\n    2. **Narrow the Search Space**: Tight, informed bounds converge significantly faster than broad ranges.\n    3. **Sequential Execution**: Run tuning jobs sequentially or with low parallelism ($2\\text{--}4$ concurrent jobs); sequential iterations allow the Bayesian optimizer to incorporate learnings from previous trials.\n    4. **Logarithmic Scaling**: Hyperparameters spanning multiple orders of magnitude (e.g., learning rate $\\in [10^{-5}, 10^{-1}]$) must be explicitly tuned on a logarithmic scale.\n\n### 5.4 Amazon SageMaker Autopilot (AutoML)\n\n**Amazon SageMaker Autopilot** provides transparent, fully automated machine learning:\n- **Autonomous Workflow**: Given tabular data in S3 and a target column, Autopilot automatically infers problem type (regression, binary/multiclass classification), handles missing data, engineers candidate feature pipelines, trains and tunes multiple algorithm pipelines (XGBoost, Linear Learner, Deep MLP ensembles).\n- **White-Box Transparency**: Unlike black-box AutoML platforms, Autopilot generates two fully inspectable Jupyter notebooks:\n    1. *Data Exploration Notebook*: Details discovered statistics, correlations, and data quality issues.\n    2. *Candidate Generation Notebook*: Contains the exact Python code used to engineer features and configure tuning jobs.\n\n---\n\n## 6. Time-Series Forecasting and Amazon SageMaker Canvas\n\n### 6.1 Foundations of Temporal Data Modeling\n\nForecasting models sequential observations where the temporal ordering contains structural predictive signal, fundamentally violating standard independent and identically distributed (i.i.d.) assumptions.\n\n```text\nTime Series Decomposition\n  Y(t) = Trend(t) + Seasonal(t) + Cyclical(t) + Irregular(t)\n```\n\n- **Core Temporal Patterns**:\n    - **Trend**: Long-term directional movement (upward, downward, stationary).\n    - **Seasonality**: Strict periodic fluctuations occurring at fixed, known intervals (hourly, daily, weekly, annual).\n    - **Cyclical**: Long-term oscillations lacking a fixed calendar period (e.g., macroeconomic business cycles).\n    - **Irregular / Noise**: Random stochastic residuals remaining after removing structural components.\n- **Stationarity**: A time series is strictly stationary if its mean, variance, and autocovariance remain invariant over time. Classical linear models (ARIMA) require stationarity, achieved via differencing or detrending.\n- **Autocorrelation**: Measures correlation between observations separated by time lag $k$:\n    $$\\text{Autocorr}(k) = \\frac{\\sum_{t=k+1}^T (y_t - \\bar{y})(y_{t-k} - \\bar{y})}{\\sum_{t=1}^T (y_t - \\bar{y})^2}$$\n\n### 6.2 Preprocessing and Frequency Alignment\n\n- **Timestamp Normalization**: Enforce UTC standardization; resolve daylight savings shifts and daylight alignment.\n- **Imputation for Time Series**:\n    - *Forward Fill (`ffill`)*: Carry forward the last observed value (assumes persistence).\n    - *Moving Average / Spline Interpolation*: Estimates missing points based on surrounding local trajectories.\n    - *Zero Fill*: Appropriate when missing entries indicate zero real-world activity (e.g., zero retail transactions on store closures).\n    - *Caution on Backward Fill (`bfill`)*: Risks catastrophic **lookahead data leakage** if applied improperly across historical training splits.\n- **Resampling**:\n    - *Downsampling* (High $\\to$ Low frequency): Aggregating hourly transactions into daily sums.\n    - *Upsampling* (Low $\\to$ High frequency): Requires interpolation or curve modeling.\n\n### 6.3 Amazon SageMaker Canvas for No-Code Forecasting\n\n**Amazon SageMaker Canvas** provides a visual, no-code interface allowing business analysts to build ML models:\n- **Build Types**:\n    - *Quick Build*: Generates rapid prototype models within minutes for initial feasibility checks.\n    - *Standard Build*: Executes exhaustive feature generation and hyperparameter search for production deployment.\n- **Advanced Forecasting Capabilities**:\n    - **Group Column**: Generates individualized forecasts per entity (e.g., store ID, SKU product category).\n    - **Holiday Schedules**: Integrates national calendar events across 251 countries to account for retail surges.\n    - **What-If Scenario Modeling**: Allows users to dynamically alter feature values (e.g., simulating price discounts) to visualize projected demand shifts.\n\n### 6.4 Programmatic Endpoint Invocation via Python\n\nOnce deployed to a production SageMaker endpoint, forecasting models are queried in real time via `boto3`:\n\n```python\nimport boto3\nimport pandas as pd\n\n# Prepare real-time payload\npayload_df = pd.read_csv(\"./forecast-query.csv\")\ncsv_payload = payload_df.to_csv(index=False).encode(\"utf-8\")\n\n# Initialize runtime client\nruntime_client = boto3.client(\"runtime.sagemaker\")\n\n# Invoke deployed endpoint\nresponse = runtime_client.invoke_endpoint(\n    EndpointName=\"canvas-demand-forecast-prod\",\n    ContentType=\"text/csv\",\n    Body=csv_payload,\n    Accept=\"application/json\"\n)\n\nforecast_results = response[\"Body\"].read().decode(\"utf-8\")\n```\n\n---\n\n## 7. Computer Vision with Amazon Rekognition and Ground Truth\n\n### 7.1 Amazon Rekognition Architecture\n\n**Amazon Rekognition** delivers fully managed computer vision APIs powered by deep convolutional networks and vision transformers, eliminating the need for custom model training for standard vision tasks.\n\n```text\nRekognition Vision Capabilities\n  ├── Image Analysis: Face Detection, Facial Verification (1:1), Face Collections (1:N)\n  ├── Stored Video Analysis: Asynchronous pipeline (S3 ──> Rekognition ──> SNS ──> SQS ──> Get* API)\n  ├── Streaming Video Analysis: Real-time (Kinesis Video Streams ──> Stream Processor ──> Kinesis Data Streams)\n  └── Custom Object Detection: Amazon Rekognition Custom Labels\n```\n\n### 7.2 Facial Detection vs. Facial Search\n\n1. **Facial Detection (`DetectFaces`)**:\n    - Identifies all human faces within an image.\n    - **Bounding Box**: Normalized coordinate ratios $[x_{\\text{min}}, y_{\\text{min}}, \\text{width}, \\text{height}] \\in [0, 1]$.\n    - **Facial Landmarks**: Precise pixel coordinates for anatomical keypoints (pupils, nose tip, mouth edges).\n    - **Attributes & Confidence**: Inferred attributes (glasses, beard, facial pose: roll/pitch/yaw) accompanied by confidence scores $[0, 100]$.\n2. **Facial Search against Collections (`SearchFacesByImage`)**:\n    - Operates over an indexed vector collection of known identities (`CreateCollection`).\n    - Stored records contain dense biometric embedding vectors mapped to an `ExternalImageId`.\n    - Returns matched identities ranked by similarity score:\n      $$\\text{Match}(\\mathbf{v}_{\\text{query}}, \\mathbf{v}_{\\text{target}}) \\ge \\tau_{\\text{threshold}}$$\n\n### 7.3 Responsible AI and Ethical Computer Vision\n\n### 7.4 Stored Video vs. Streaming Video Architectures\n\n- **Stored Video Processing (Asynchronous Pipeline)**:\n    - Videos are staged in Amazon S3.\n    - Analysis is initiated via asynchronous APIs (`StartFaceDetection`, `StartLabelDetection`, `StartPersonTracking`).\n    - Completion events publish to an **Amazon SNS** topic, routed to an **Amazon SQS** queue for reliable message polling.\n    - Final results with millisecond timestamps are retrieved via matching `Get*` APIs (`GetFaceDetection`).\n- **Streaming Video Processing (Real-Time Pipeline)**:\n    - High-throughput video feeds stream continuously into **Amazon Kinesis Video Streams (KVS)**.\n    - An Amazon Rekognition Video **Stream Processor** samples designated frames.\n    - Real-time detection records are emitted into an **Amazon Kinesis Data Stream (KDS)** for downstream consumption.\n\n### 7.5 Custom Labels and Amazon SageMaker Ground Truth\n\n- **Amazon Rekognition Custom Labels**:\n    - Extends pre-trained vision models to recognize proprietary, domain-specific objects or defect patterns.\n    - Evaluated via `DetectCustomLabels` with `MinConfidence` and `MaxResults` parameters.\n- **Amazon SageMaker Ground Truth**:\n    - A managed data annotation service enabling workflows across private internal teams, third-party vendor workforces, or public crowds (Amazon Mechanical Turk).\n    - Features **Active Learning**: SageMaker automatically labels high-confidence images while routing ambiguous samples to human annotators, cutting annotation costs by up to 70%.\n\n---\n\n## 8. Natural Language Processing Pipelines and AWS Language Services\n\n### 8.1 Classical NLP Text Preprocessing Pipeline\n\nNatural language text requires systematic tokenization and normalization before vectorization:\n\n```text\nRaw Text ──> [ Stop Words Removal ] ──> [ Lemmatization / Stemming ] ──> [ Tokenization ] ──> [ Vectorization ]\n```\n\n```python\nimport nltk\nfrom nltk.corpus import stopwords\nfrom nltk.stem import WordNetLemmatizer\nfrom nltk.tokenize import word_tokenize\n\nnltk.download([\"punkt\", \"stopwords\", \"wordnet\"])\n\nraw_text = \"This machine learning pipeline is running smoothly.\"\n\n# Tokenize and normalize\ntokens = word_tokenize(raw_text.lower())\nstop_words = set(stopwords.words(\"english\"))\nlemmatizer = WordNetLemmatizer()\n\ncleaned_tokens = [\n    lemmatizer.lemmatize(t) for t in tokens\n    if t.isalpha() and t not in stop_words\n]\n# Result: ['machine', 'learning', 'pipeline', 'running', 'smoothly']\n```\n\n### 8.2 Text Vectorization: BoW vs. TF-IDF\n\n1. **Bag of Words (BoW)**:\n    - Constructs a vocabulary index of all unique terms across the corpus.\n    - Represents each document as a sparse vector of raw term frequencies: $\\mathbf{x} = [c(w_1), c(w_2), \\dots, c(w_V)]$.\n    - *Limitation*: Ignores grammar, word order, and context; treats common words with equal prominence.\n2. **TF-IDF (Term Frequency – Inverse Document Frequency)**:\n    - Downweights ubiquitous terms that appear across all documents (e.g., \"system\", \"report\") while boosting distinctive, informative terms:\n      $$\\text{TF-IDF}(t, d, D) = \\text{TF}(t, d) \\times \\log\\left(\\frac{|D|}{1 + |\\{d \\in D : t \\in d\\}|}\\right)$$\n\n### 8.3 Contextual Semantics, POS Tagging, and Named Entity Recognition (NER)\n\n- **Part of Speech (POS) Tagging**: Disambiguates syntactic role based on local sentence context (e.g., distinguishing \"apple\" as a fruit vs. \"Apple\" as a corporate entity).\n- **Coreference Resolution**: Identifies when distinct linguistic phrases or pronouns refer to the identical real-world entity (e.g., \"The algorithm was deployed. *It* processed 10,000 requests.\").\n- **Named Entity Recognition (NER)**: Locates and categorizes key spans into pre-defined categories (Person, Location, Organization, Date). When combined with enterprise **Knowledge Graphs**, NER bridges unstructured text with structured relational insights.\n\n### 8.4 AWS Managed Natural Language Services\n\n| AWS Service | Core Capability | Target Architecture & Integration |\n|---|---|---|\n| **Amazon Comprehend** | Unsupervised & supervised NLP: sentiment analysis, entity extraction, key phrase detection, PII redaction, topic modeling. | Serverless REST API; integrates directly with S3 buckets for batch document analysis. |\n| **Amazon Lex** | Conversational AI engine powering Amazon Alexa: multi-turn dialogue, intent classification, and slot filling. | Integrated with AWS Lambda for business fulfillment logic and Amazon Connect for contact centers. |\n| **Amazon Transcribe** | Automatic speech recognition (ASR): converts audio/video speech into text transcripts with punctuation and timestamps. | Batch processing via S3 or real-time streaming via WebSockets/gRPC. |\n| **Amazon Polly** | Text-to-Speech (TTS): synthesizes lifelike human speech from text using deep learning neural TTS voices. | Supports Speech Synthesis Markup Language (SSML) for pitch, rate, and pronunciation control. |\n| **Amazon Translate** | Neural Machine Translation (NMT): fast, high-quality language translation across hundreds of language pairs. | Real-time text translation and batch document translation with custom terminology support. |\n\n---\n\n## 9. Generative AI, Foundation Models, and Amazon Q Developer\n\n### 9.1 The Generative AI Paradigm Shift\n\nUnlike traditional predictive machine learning models that are strictly task-specific (trained exclusively for binary fraud detection or housing regression), **Generative AI** is powered by massive **Foundation Models (FMs)**:\n\n```text\nPredictive ML (Task-Specific)         Generative AI (Foundation Models)\n  [ Input X ]                           [ Prompt / Multimodal Input ]\n       │                                              │\n       ▼                                              ▼\n [ Task Model ] ──> [ Specific Label ]       [ Pre-trained Foundation Model ]\n                                                      │\n                                                      ├──> Text Generation / Summarization\n                                                      ├──> Code Synthesis & Refactoring\n                                                      └──> Multimodal Reasoning\n```\n\n### 9.2 The AWS Generative AI Stack\n\nAWS organizes generative AI services across three primary architectural tiers:\n1. **Top Tier (Applications)**: Ready-to-use GenAI applications like **Amazon Q Developer** and Amazon Q Business.\n2. **Middle Tier (Tools & Foundation Models)**:\n    - **Amazon Bedrock**: A fully managed serverless API providing access to leading Foundation Models (Anthropic Claude, Meta Llama, Amazon Titan, Cohere, AI21 Labs) with enterprise guardrails, RAG integration, and fine-tuning.\n    - **Amazon SageMaker JumpStart**: An ML hub offering one-click deployment of open-weights foundation models onto dedicated SageMaker instances.\n3. **Bottom Tier (Infrastructure & Custom Silicon)**:\n    - **AWS Trainium**: Custom application-specific integrated circuits (ASICs) optimized for cost-effective distributed model training.\n    - **AWS Inferentia**: Purpose-built high-throughput, low-latency deep learning inference chips.\n\n### 9.3 Amazon Q Developer across the Software Development Lifecycle (SDLC)\n\n**Amazon Q Developer** is a generative AI assistant embedded across IDEs (VS Code, JetBrains), the AWS Management Console, and the command-line interface:\n\n```text\n                        Amazon Q Developer Across the SDLC\n   Plan                Create             Test & Secure          Operate            Modernize\n┌──────────┐        ┌──────────┐        ┌──────────────┐       ┌──────────┐       ┌───────────┐\n│ Best     │───────>│ In-line  │───────>│ Unit Test    │──────>│ Runtime  │──────>│ Java/Code │\n│ Practice │        │ Code     │        │ Gen & SAST   │       │ Debugging│       │ Upgrades  │\n│ Guidance │        │ Complete │        │ Vuln Scans   │       │ & VPC Ops│       │ via Agents│\n└──────────┘        └──────────┘        └──────────────┘       └──────────┘       └───────────┘\n```\n\n1. **Plan**: Provides contextual architectural recommendations aligned with the **AWS Well-Architected Framework**, answering cloud configuration queries inside the IDE.\n2. **Create**: Emits multi-line inline code suggestions in Python, Java, JavaScript, and Go; synthesizes full application features directly from natural language specifications.\n3. **Test and Secure**: Generates unit test suites and performs Static Application Security Testing (SAST), highlighting vulnerabilities (e.g., SQL injection, hardcoded credentials) and proposing inline remediation diffs.\n4. **Operate**: Integrates with Amazon CloudWatch and AWS Lambda to diagnose runtime execution errors, and connects with **VPC Reachability Analyzer** to troubleshoot networking misconfigurations.\n5. **Modernize**: The **Amazon Q Developer Agent for Code Transformation** automates multi-version runtime upgrades (e.g., upgrading legacy Java 8/11 applications to Java 17).\n\n---",
+    "preview_markdown": "# AWS Machine Learning Course\n\nStructured Study Notes on AWS Academy Machine Learning Foundations: Pipeline Implementation, Amazon SageMaker, Serverless ETL, Time-Series Forecasting, Computer Vision, NLP, and Generative AI.\n\n## Knowledge Architecture\n\nThis course establishes an end-to-end engineering roadmap for designing, training, deploying, and operating production-grade machine learning workflows on Amazon Web Services (AWS):\n\n```text\nAWS Machine Learning Foundations Roadmap",
+    "reading_time_minutes": 40,
+    "published_at": "2026-10-06",
+    "last_modified_at": "2026-10-06",
+    "cover": "",
+    "lang": "en",
+    "canonical_id": "aws-machine-learning-course",
+    "status": "published",
+    "pinned": false,
+    "priority": 0.0,
+    "kind": "content",
+    "related": [
+      {
+        "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
+        "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
+        "score": 0.079107
+      },
+      {
+        "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
+        "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
+        "score": 0.066206
+      },
+      {
+        "url": "../notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
+        "path": "notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
+        "score": 0.057828
+      },
+      {
+        "url": "../notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
+        "path": "notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
+        "score": 0.056197
+      },
+      {
+        "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+        "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
+        "score": 0.026007
+      },
+      {
+        "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
+        "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
+        "score": 0.005801
+      }
+    ]
+  },
+  {
     "title": "集中不等式：從極限定理到尾端界限",
     "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
     "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
@@ -49,32 +135,32 @@
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.345259
+        "score": 0.347533
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.14032
+        "score": 0.142239
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.138371
+        "score": 0.140155
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.136961
+        "score": 0.139008
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.13533
+        "score": 0.137517
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.118432
+        "score": 0.120282
       }
     ]
   },
@@ -121,32 +207,32 @@
       {
         "url": "../notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
         "path": "notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
-        "score": 0.306
+        "score": 0.304634
       },
       {
         "url": "../notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
         "path": "notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
-        "score": 0.285236
+        "score": 0.283571
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
-        "score": 0.278426
+        "score": 0.281381
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
-        "score": 0.035009
+        "score": 0.032434
+      },
+      {
+        "url": "../notes/AWS%20Machine%20Learning%20Course/AWS%20Machine%20Learning%20Course.html",
+        "path": "notes/AWS Machine Learning Course/AWS Machine Learning Course.html",
+        "score": 0.026007
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.011139
-      },
-      {
-        "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.010891
+        "score": 0.01113
       }
     ]
   },
@@ -200,32 +286,32 @@
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.502241
+        "score": 0.505608
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.438129
+        "score": 0.440909
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.374388
+        "score": 0.377303
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.330718
+        "score": 0.333918
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.145304
+        "score": 0.146886
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.127552
+        "score": 0.129249
       }
     ]
   },
@@ -286,32 +372,32 @@
       {
         "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
-        "score": 0.306
+        "score": 0.304634
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
-        "score": 0.298986
+        "score": 0.30094
       },
       {
         "url": "../notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
         "path": "notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
-        "score": 0.19581
+        "score": 0.191141
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
-        "score": 0.106985
+        "score": 0.099993
+      },
+      {
+        "url": "../notes/AWS%20Machine%20Learning%20Course/AWS%20Machine%20Learning%20Course.html",
+        "path": "notes/AWS Machine Learning Course/AWS Machine Learning Course.html",
+        "score": 0.056197
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.007646
-      },
-      {
-        "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.006788
+        "score": 0.007741
       }
     ]
   },
@@ -400,32 +486,32 @@
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.330718
+        "score": 0.333918
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.256064
+        "score": 0.258516
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.19592
+        "score": 0.198736
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.176176
+        "score": 0.178888
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.111972
+        "score": 0.114121
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.109665
+        "score": 0.111793
       }
     ]
   },
@@ -479,27 +565,32 @@
       {
         "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
-        "score": 0.285236
+        "score": 0.283571
       },
       {
         "url": "../notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
         "path": "notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
-        "score": 0.19581
+        "score": 0.191141
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
-        "score": 0.075149
+        "score": 0.0746
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
-        "score": 0.066428
+        "score": 0.063299
+      },
+      {
+        "url": "../notes/AWS%20Machine%20Learning%20Course/AWS%20Machine%20Learning%20Course.html",
+        "path": "notes/AWS Machine Learning Course/AWS Machine Learning Course.html",
+        "score": 0.057828
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.046652
+        "score": 0.046909
       }
     ]
   },
@@ -560,32 +651,32 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.345259
+        "score": 0.347533
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.146482
+        "score": 0.14881
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.119942
+        "score": 0.121951
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.11191
+        "score": 0.113724
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.10356
+        "score": 0.105534
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.094246
+        "score": 0.096054
       }
     ]
   },
@@ -653,32 +744,32 @@
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.438129
+        "score": 0.440909
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.423155
+        "score": 0.426397
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.398451
+        "score": 0.400932
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.19592
+        "score": 0.198736
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.134098
+        "score": 0.135671
       },
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.082591
+        "score": 0.084028
       }
     ]
   },
@@ -753,32 +844,32 @@
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.47257
+        "score": 0.476074
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.398451
+        "score": 0.400932
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.374388
+        "score": 0.377303
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.176176
+        "score": 0.178888
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.136961
+        "score": 0.139008
       },
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.10356
+        "score": 0.105534
       }
     ]
   },
@@ -846,32 +937,32 @@
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.502241
+        "score": 0.505608
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.47257
+        "score": 0.476074
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.423155
+        "score": 0.426397
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.256064
+        "score": 0.258516
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.14032
+        "score": 0.142239
       },
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.11191
+        "score": 0.113724
       }
     ]
   },
@@ -925,32 +1016,32 @@
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.230662
+        "score": 0.233936
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.179757
+        "score": 0.182699
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
-        "score": 0.16015
+        "score": 0.162519
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.138371
+        "score": 0.140155
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.134098
+        "score": 0.135671
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.127552
+        "score": 0.129249
       }
     ]
   },
@@ -1004,27 +1095,32 @@
       {
         "url": "../notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
         "path": "notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
-        "score": 0.106985
+        "score": 0.099993
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-en.html",
-        "score": 0.105799
+        "score": 0.098727
+      },
+      {
+        "url": "../notes/AWS%20Machine%20Learning%20Course/AWS%20Machine%20Learning%20Course.html",
+        "path": "notes/AWS Machine Learning Course/AWS Machine Learning Course.html",
+        "score": 0.079107
       },
       {
         "url": "../notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
         "path": "notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
-        "score": 0.066428
+        "score": 0.063299
       },
       {
         "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
-        "score": 0.035009
+        "score": 0.032434
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.023441
+        "score": 0.023757
       }
     ]
   },
@@ -1078,32 +1174,32 @@
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.206699
+        "score": 0.208782
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.16015
+        "score": 0.162519
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.126657
+        "score": 0.128739
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.082427
+        "score": 0.083933
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.07672
+        "score": 0.077932
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.063725
+        "score": 0.064938
       }
     ]
   },
@@ -1164,32 +1260,32 @@
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
-        "score": 0.206699
+        "score": 0.208782
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.179757
+        "score": 0.182699
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.168468
+        "score": 0.171236
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.145304
+        "score": 0.146886
       },
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.119942
+        "score": 0.121951
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.118432
+        "score": 0.120282
       }
     ]
   },
@@ -1264,27 +1360,32 @@
       {
         "url": "../notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
         "path": "notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html",
-        "score": 0.298986
+        "score": 0.30094
       },
       {
         "url": "../notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
         "path": "notes/discovering-hidden-structures-what-clustering-really-does/discovering-hidden-structures-what-clustering-really-does-en.html",
-        "score": 0.278426
+        "score": 0.281381
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-en.html",
-        "score": 0.105799
+        "score": 0.098727
       },
       {
         "url": "../notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
         "path": "notes/k-means-clustering-around-centers/k-means-clustering-around-centers-en.html",
-        "score": 0.075149
+        "score": 0.0746
+      },
+      {
+        "url": "../notes/AWS%20Machine%20Learning%20Course/AWS%20Machine%20Learning%20Course.html",
+        "path": "notes/AWS Machine Learning Course/AWS Machine Learning Course.html",
+        "score": 0.066206
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.027422
+        "score": 0.027755
       }
     ]
   },
@@ -1359,32 +1460,32 @@
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.230662
+        "score": 0.233936
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.168468
+        "score": 0.171236
       },
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.146482
+        "score": 0.14881
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.13533
+        "score": 0.137517
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
-        "score": 0.126657
+        "score": 0.128739
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.109665
+        "score": 0.111793
       }
     ]
   }
