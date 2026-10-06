@@ -15,7 +15,7 @@
 
 - [x] CS5246 / CS5228 / CS5223：整合補充材料與釐清概念
     - 交付條件：將 CS5246 問題與 BPE 化學式實作心得、CS5228 churn case 與概念補充、CS5223 Week 9 與 Paxos preemption 筆記整合進各自 source；重建 HTML 與索引，頁尾提供 reviewkit/qprompt。
-    - 已完成：按概念/既有週次整合，修正 non-regular/undecidable、TF-IDF 長度偏差、ARI、PCA/t-SNE、XGBoost/stacking 誤貼、Paxos safety/leader 退位與 GFS acknowledgment 描述；提供官方/原始文獻核驗連結。
+    - 已完成：按概念/既有週次整合，修正 non-regular/undecidable、TF-IDF 長度偏差、ARI、PCA/t-SNE、XGBoost/stacking 誤貼、Paxos safety/leader 退位與 GFS acknowledgment 描述；提供官方/原始文獻核驗連結；三份 HTML 重建、索引重生（drafting 下內容未變），生成器 self-test 與 26 項相關測試通過。
     - Review 重點：作者全盤 proofread；確認課堂慣例、BPE marker/化學式辨識與 token IDs 的實作一致性、churn 實驗數值及 Phase1A/timer 實際程式。未提供的結果與程式行為均未視為已驗證。
 
 - [x] CS5446 cheatsheet from the supplied course materials
