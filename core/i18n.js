@@ -45,6 +45,7 @@
         { selector: '.custom-nav [data-nav-skills]', text: { en: 'Skills', 'zh-Hant': '專業能力', 'zh-Hans': '专业能力' } },
         { selector: '.custom-nav [data-nav-credentials]', text: { en: 'Achievements', 'zh-Hant': '成就', 'zh-Hans': '成就' } },
         { selector: '.custom-nav [data-nav-timeline]', text: { en: 'Timeline', 'zh-Hant': '時間軸', 'zh-Hans': '时间轴' }, cipherText: { en: 'Chronology', 'zh-Hant': 'Chronology', 'zh-Hans': 'Chronology' } },
+        { selector: '.custom-nav [data-nav-future-plans]', text: { en: 'Future Plans', 'zh-Hant': '未來計畫', 'zh-Hans': '未来计划' } },
         { selector: '.custom-nav a[href$="index.html#contact"]', text: { en: 'Contact', 'zh-Hant': '聯絡方式', 'zh-Hans': '联系方式' } },
         { selector: '.custom-nav a[href$="portfolio.html"]', text: { en: 'Portfolio', 'zh-Hant': '作品集', 'zh-Hans': '作品集' } },
         { selector: '.custom-nav a[href$="more.html"]', text: { en: 'More', 'zh-Hant': '更多', 'zh-Hans': '更多' } },

@@ -3685,6 +3685,7 @@ body.modal-open {
 
 #future-plans {
   padding-top: 44px;
+  scroll-margin-top: 80px;
 }
 
 .future-plans-intro {
