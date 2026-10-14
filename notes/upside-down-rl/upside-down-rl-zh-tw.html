@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Upside-Down RL：用想達成的結果指揮下一個動作 — Ludwig</title>
+  <meta name="garden:tags" content="強化學習, Upside-Down RL, return conditioning, 監督式學習">
+  <meta name="garden:summary" content="理解 Upside-Down RL 如何把期望回報與時間範圍當成指令，以回頭標記的經驗訓練行為模型，並對照 Decision Transformer。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,,,concept.supervised_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.supervised_learning&quot;:{&quot;en&quot;:&quot;Supervised Learning&quot;,&quot;zh-Hant&quot;:&quot;監督式學習&quot;,&quot;zh-Hans&quot;:&quot;监督学习&quot;}}">
+  <meta name="site:canonical_id" content="upside-down-rl">
+  <meta name="site:last_modified_at" content="2026-10-10">
+  <meta name="site:reading_time_minutes" content="7">
+  <meta name="site:source" content="notes/upside-down-rl/upside-down-rl-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Upside-Down RL：用想達成的結果指揮下一個動作</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 指令多了哪兩個條件？</a>
+<a class="note-toc-link level-1" href="#2">2. 沒有現成的「願望標籤」，怎麼訓練？</a>
+<a class="note-toc-link level-1" href="#3-decision-transformer">3. 為什麼值得和 Decision Transformer 一起讀？</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-10</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">一般強化學習常先問「這個動作未來可能拿到多少分？」，再依預測選動作。Upside-Down RL（UDRL）把方向翻過來：先給模型一個<strong>想拿到的回報</strong>及<strong>剩餘時間範圍</strong>，直接問「在目前情境與這個指令下，下一步該做什麼？」這也是名稱中 <em>Upside-Down</em> 的意思。<a class="note-inline-link" href="https://arxiv.org/abs/1912.02875" target="_blank" rel="noopener noreferrer">概念報告</a></p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 指令多了哪兩個條件？</h3>
+
+<p class="mb-3">UDRL 的行為模型讀取目前狀態（必要時包含歷史）與一個指令 <code>c = (目標回報, 剩餘步數)</code>，輸出動作。目標回報表示想得到多少獎勵；剩餘步數表示希望在多長時間內達成。相同狀態下，「五步內爭取高回報」與「二十步內達成較低回報」是不同條件，模型可以據此選擇不同行動。<a class="note-inline-link" href="https://arxiv.org/html/1912.02877" target="_blank" rel="noopener noreferrer">實作論文 §2</a></p>
+</section>
+
+<section id="2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 沒有現成的「願望標籤」，怎麼訓練？</h3>
+
+<p class="mb-3">先收集真實互動軌跡，再從軌跡中選一段：起點的狀態、該段第一個動作，以及這段<strong>實際取得的總回報與耗費步數</strong>。把後兩個結果回頭當成起點的指令，就得到一筆監督式樣本：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">輸入：起點狀態 +「在 H 步得到 R 回報」
+標籤：該段實際採取的第一個動作</code></pre></div>
+
+<p class="mb-3">這叫用已發生的結果<strong>回頭標記指令</strong>。模型學的是「過去在某種結果條件下採取過什麼動作」，而不是直接預測環境獎勵。實作論文再用訓好的行為模型與環境互動、收集新軌跡、更新資料集，形成反覆改進的循環。<a class="note-inline-link" href="https://arxiv.org/html/1912.02877" target="_blank" rel="noopener noreferrer">實作論文 §2–3</a></p>
+
+<p class="mb-3">互動時，若已收到獎勵，就從剩餘目標回報扣除；時間往前一步，就把剩餘步數減一。這讓下一步的指令仍表示「接下來還希望完成什麼」。<a class="note-inline-link" href="https://arxiv.org/html/1912.02877" target="_blank" rel="noopener noreferrer">實作論文 §2</a></p>
+</section>
+
+<section id="3-decision-transformer" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 為什麼值得和 Decision Transformer 一起讀？</h3>
+
+<p class="mb-3">UDRL 早於 <a class="note-content-link" data-canonical-id="decision-transformer" href="../decision-transformer/decision-transformer-zh-tw.html">Decision Transformer（DT）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Decision Transformer：把離線強化學習改寫成條件式序列預測</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">強化學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從行為複製的限制出發，理解 Decision Transformer 如何用目標回報、狀態與動作組成序列，以及訓練與部署時的回報更新。</span></span></span></a>，清楚提出<strong>用期望結果條件化動作預測</strong>的觀點。DT 沿著相近想法，把離線軌跡排成 <code>RTG, state, action</code> 的 token 序列，用因果 Transformer 訓練；原始 UDRL 的指令則同時含回報與時間範圍，實作工作也強調互動收集與再訓練。它們共享「結果條件 → 行動」的方向，但資料流程與模型形式不同。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">DT 原論文 §2–3</a>；<a class="note-inline-link" href="https://arxiv.org/abs/1912.02877" target="_blank" rel="noopener noreferrer">UDRL 實作論文</a></p>
+
+<p class="mb-3">需要守住一個界線：指令是<strong>要求</strong>，不是<strong>保證</strong>。若資料裡沒有對應高回報的可學行為，只把數字調高，不會憑空產生成功策略。實作論文也討論模型可能忽略指令的問題，因此如何讓條件真正影響行動，是方法是否有效的關鍵。<a class="note-inline-link" href="https://arxiv.org/html/1912.02877" target="_blank" rel="noopener noreferrer">實作論文 §3–4</a></p>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>Schmidhuber, J. (2019/2020). Reinforcement Learning Upside Down: Don’t Predict Rewards - Just Map Them to Actions. <em>arXiv preprint</em>. <a class="note-inline-link" href="https://arxiv.org/abs/1912.02875" target="_blank" rel="noopener noreferrer">arXiv:1912.02875</a>。</li>
+<li>Srivastava, R. K., Shyam, P., Mutz, F., Jaśkowski, W., &amp; Schmidhuber, J. (2019). Training Agents using Upside-Down Reinforcement Learning. <em>arXiv preprint</em>. <a class="note-inline-link" href="https://arxiv.org/abs/1912.02877" target="_blank" rel="noopener noreferrer">arXiv:1912.02877</a>。</li>
+<li>Chen, L., et al. (2021). Decision Transformer: Reinforcement Learning via Sequence Modeling. <em>Advances in Neural Information Processing Systems 34</em>. <a class="note-inline-link" href="https://proceedings.neurips.cc/paper_files/paper/2021/hash/7f489f642a0ddb10272b5c31057f0663-Abstract.html" target="_blank" rel="noopener noreferrer">NeurIPS 論文頁</a>。</li>
+</ol>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>UDRL 用目標回報與剩餘步數作指令，直接預測下一個動作。</li>
+<li>指令可由已完成的軌跡片段回頭標記，再以監督式學習訓練。</li>
+<li>它是 DT 的重要概念前驅；兩者的模型形式與資料收集流程不同。</li>
+<li>模型必須真正使用指令，而且目標仍受可學經驗的範圍限制。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

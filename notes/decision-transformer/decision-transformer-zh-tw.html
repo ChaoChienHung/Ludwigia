@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Decision Transformer：把離線強化學習改寫成條件式序列預測 — Ludwig</title>
+  <meta name="garden:tags" content="強化學習, offline reinforcement learning, Decision Transformer, sequence modeling">
+  <meta name="garden:summary" content="從行為複製的限制出發，理解 Decision Transformer 如何用目標回報、狀態與動作組成序列，以及訓練與部署時的回報更新。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,,,">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;}}">
+  <meta name="site:canonical_id" content="decision-transformer">
+  <meta name="site:last_modified_at" content="2026-10-10">
+  <meta name="site:reading_time_minutes" content="9">
+  <meta name="site:source" content="notes/decision-transformer/decision-transformer-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Decision Transformer：把離線強化學習改寫成條件式序列預測</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1">1. 先釐清「目標回報」是什麼</a>
+<a class="note-toc-link level-1" href="#2-transformer">2. 軌跡如何變成 Transformer 的輸入？</a>
+<a class="note-toc-link level-1" href="#3">3. 訓練與推理各做什麼？</a>
+<a class="note-toc-link level-1" href="#4">4. 它與其他路線差在哪裡？</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-10</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">想像我們只有一批已完成的遊戲紀錄：每一步有哪些<strong>狀態</strong>、採取什麼<strong>動作</strong>、得到多少<strong>獎勵</strong>。最直接的行為複製會模仿紀錄裡所有動作；但資料有好局也有壞局，同一種狀態附近可能出現品質不同的行動。我們需要一個額外線索，告訴模型「這次要模仿哪一類結果」。<a class="note-inline-link" href="https://proceedings.neurips.cc/paper_files/paper/2021/hash/7f489f642a0ddb10272b5c31057f0663-Abstract.html" target="_blank" rel="noopener noreferrer">原論文摘要</a></p>
+
+<p class="mb-3">Decision Transformer（DT）的做法是：把<strong>期望達成的回報</strong>當成輸入條件，連同先前狀態與動作交給因果 Transformer，預測下一個動作。這讓離線強化學習問題可以用序列模型和監督式損失來處理。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §3</a></p>
+</section>
+
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 先釐清「目標回報」是什麼</h3>
+
+<p class="mb-3">一條軌跡在時間點 <code>t</code> 的 <strong>return-to-go（RTG）</strong>，是從該步到軌跡結束的獎勵總和：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">RTG_t = r_t + r_(t+1) + ... + r_T</code></pre></div>
+
+<p class="mb-3">例如某條軌跡後續三步的獎勵是 <code>1, 0, 2</code>，相應的 RTG 是 <code>3, 2, 2</code>。訓練時，RTG 由<strong>已完成軌跡的實際獎勵</strong>倒推；部署時，起點的 RTG 則由我們指定為<strong>希望達到的回報</strong>。因此，推理輸入中的高目標只是條件，並非模型已保證能拿到的成績。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §3.1–3.2</a></p>
+</section>
+
+<section id="2-transformer" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 軌跡如何變成 Transformer 的輸入？</h3>
+
+<p class="mb-3">DT 將每一步排成三種 token：<code>(RTG_t, state_t, action_t)</code>。連續多步串起來，形如：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">RTG_1, state_1, action_1, RTG_2, state_2, action_2, ...</code></pre></div>
+
+<p class="mb-3">模型只看得到目前以前的 token。在 <code>RTG_t</code> 與 <code>state_t</code> 之後，它預測 <code>action_t</code>；動作發生後，環境才給出獎勵和下一個狀態。實作會取最近 <code>K</code> 步作上下文，並為各 token 加入時間步資訊。<strong>RTG、狀態、動作都是輸入序列中的不同位置</strong>，不是先產生一個商品或動作候選，再啟動 reasoning。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §3.1</a></p>
+</section>
+
+<section id="3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. 訓練與推理各做什麼？</h3>
+
+<p class="mb-3">訓練時，從固定的離線軌跡切出片段，給模型 RTG、狀態和先前動作，要求它還原資料裡的下一個動作。離散動作可用分類損失，連續動作可用迴歸損失。主要目標是<strong>動作預測</strong>；原始 DT 不需要先學一個 Q 值函數，也不靠 Bellman backup 更新價值。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §3.1</a></p>
+
+<p class="mb-3">推理時先選目標回報 <code>R</code>，輸入當前狀態，產生並執行動作。環境回傳本步獎勵 <code>r</code> 後，把下一步的剩餘目標設為 <code>R - r</code>，再加入新狀態繼續預測。這裡的減法是<strong>更新尚未達成的回報條件</strong>，不是重新訓練模型。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §3.2</a></p>
+</section>
+
+<section id="4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 它與其他路線差在哪裡？</h3>
+
+<p class="mb-3">一般行為複製只問「在這個狀態，資料中的人做了什麼？」DT 還問「<strong>要達到這個回報</strong>時，資料中相應的行動模式是什麼？」傳統 value-based 離線 RL 則會估計動作價值，再用價值來選動作。DT 沒有把這個估值步驟放進核心訓練目標。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §1、§3</a></p>
+
+<p class="mb-3">這個「由期望結果反過來決定動作」的觀念，早於 DT 就出現在 <a class="note-content-link" data-canonical-id="upside-down-rl" href="../upside-down-rl/upside-down-rl-zh-tw.html">Upside-Down RL<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Upside-Down RL：用想達成的結果指揮下一個動作</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">強化學習</span><span class="note-content-link-preview-tag">Upside-Down RL</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">理解 Upside-Down RL 如何把期望回報與時間範圍當成指令，以回頭標記的經驗訓練行為模型，並對照 Decision Transformer。</span></span></span></a>。兩者都用結果條件做監督式動作學習；原始 Upside-Down RL 的指令還明確包含<strong>剩餘時間範圍</strong>，而 DT 用 <strong>RTG／狀態／動作的因果序列</strong>與離線軌跡訓練。DT 論文也明確列出 Upside-Down RL 為相關工作。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">DT 原論文 §2</a>；<a class="note-inline-link" href="https://arxiv.org/abs/1912.02875" target="_blank" rel="noopener noreferrer">Upside-Down RL 原文</a></p>
+
+<p class="mb-3">最後要注意：把目標回報設得比資料中任何軌跡都高，模型仍可能輸出動作，但<strong>高條件不等於高績效保證</strong>。它學到的是資料支持的條件式行為；超出資料範圍時能否泛化，要靠實驗驗證。這是從訓練設定推得的實務邊界，而非單憑輸入目標就能消除的問題。</p>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>Chen, L., et al. (2021). Decision Transformer: Reinforcement Learning via Sequence Modeling. <em>Advances in Neural Information Processing Systems 34</em>. <a class="note-inline-link" href="https://proceedings.neurips.cc/paper_files/paper/2021/hash/7f489f642a0ddb10272b5c31057f0663-Abstract.html" target="_blank" rel="noopener noreferrer">NeurIPS 論文頁</a>。</li>
+<li>Schmidhuber, J. (2019/2020). Reinforcement Learning Upside Down: Don’t Predict Rewards - Just Map Them to Actions. <em>arXiv preprint</em>. <a class="note-inline-link" href="https://arxiv.org/abs/1912.02875" target="_blank" rel="noopener noreferrer">arXiv:1912.02875</a>。</li>
+</ol>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>DT 用目標回報、狀態、動作的因果序列，預測下一個動作。</li>
+<li>訓練 RTG 由軌跡的實際獎勵倒推；推理 RTG 是指定目標，獲得獎勵後逐步扣除。</li>
+<li>核心訓練是監督式動作預測，不依賴 Q 值學習或 Bellman backup。</li>
+<li>Upside-Down RL 是重要前驅；高目標條件本身不保證模型能超出資料能力。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

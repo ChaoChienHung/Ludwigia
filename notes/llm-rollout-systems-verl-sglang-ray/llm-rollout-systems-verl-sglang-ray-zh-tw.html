@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>LLM Rollout 系統地圖：veRL、Resharding、SGLang 與 Ray — Ludwig</title>
+  <meta name="garden:tags" content="llm systems, verl, sglang, radixattention, ray, kv cache">
+  <meta name="garden:summary" content="從「產生回答後更新模型」的一次循環出發，理解 veRL 3D-HybridEngine 的權重重分片、SGLang DSL 與 RadixAttention，以及 Ray 的分散式協調角色。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:canonical_id" content="llm-rollout-systems-verl-sglang-ray">
+  <meta name="site:last_modified_at" content="2026-10-11">
+  <meta name="site:reading_time_minutes" content="7">
+  <meta name="site:source" content="notes/llm-rollout-systems-verl-sglang-ray/llm-rollout-systems-verl-sglang-ray-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">LLM Rollout 系統地圖：veRL、Resharding、SGLang 與 Ray</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#verl-3d-hybridengine">veRL 3D-HybridEngine：切換的是權重布局</a>
+<a class="note-toc-link level-1" href="#sglang">SGLang：生成流程的描述與執行</a>
+<a class="note-toc-link level-1" href="#ray-worker">Ray：讓工作在多個 worker 上跑</a>
+<a class="note-toc-link level-1" href="#section">一次循環怎麼串起來？</a>
+<a class="note-toc-link level-1" href="#section-2">複習時自問</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-11"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-11</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">LLM 的線上強化學習要反覆做兩件事：<strong>用目前策略產生回答（rollout），再根據回答更新模型（training）</strong>。兩個階段使用同一組策略權重，但對 GPU 的需求不同。生成階段關心同時處理多少 prompt 和 KV cache；訓練階段還要放梯度、optimizer state，並執行反向傳播。這個差異是理解下列系統名詞的共同起點。</p>
+</section>
+
+<section id="verl-3d-hybridengine" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">veRL 3D-HybridEngine：切換的是權重布局</h3>
+
+<p class="mb-3">「3D」指 pipeline、tensor、data 三種平行維度（PP／TP／DP）。訓練時可能讓四張 GPU 各存模型的一部分，一起訓練；生成時則可能改為每兩張 GPU 組成一份可推論的模型，形成兩組同時服務不同 prompt。<strong>Resharding</strong> 是從訓練布局轉成生成布局、再轉回來時，把權重重新分配到各張 GPU；模型的數值與任務沒有因此改變。</p>
+
+<p class="mb-3">為減少切換成本，HybridFlow 論文安排生成階段的 GPU 分組，使每張 GPU 盡量沿用原本訓練時已有的權重塊，只交換缺少的部分。論文所稱的「zero memory redundancy」是指<strong>因訓練／生成布局切換而多保留的權重冗餘</strong>，不是整個訓練過程不需要重複權重，更不是 KV cache、梯度或 optimizer state 都不佔記憶體。重新分片仍需要通訊。veRL 現有文件也列出 FSDP 與 vLLM 之間的權重轉換管理。</p>
+</section>
+
+<section id="sglang" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">SGLang：生成流程的描述與執行</h3>
+
+<p class="mb-3">SGLang 原論文把系統分成兩層：前端 DSL（domain-specific language，特定領域語言）描述多次模型呼叫、選擇與分支；後端 runtime 真正執行生成。DSL 的 <code>gen</code>、<code>select</code>、<code>fork</code> 等概念讓「先生成，再依結果分支，最後彙整」變得易寫。<strong>DSL 是編排語意，不是 GPU kernel，也不是 veRL 的重分片機制。</strong> 實際 API 隨專案版本可能演進，這裡描述的是原論文的設計。</p>
+
+<p class="mb-3">生成時，不同請求可能有完全相同的前綴，例如共用 system prompt，或一段對話歷史後分成兩條回覆。相同 token 前綴的 KV cache 可以重用。SGLang 的 <strong>RadixAttention</strong> 用 radix tree 對前綴與 KV cache 建立索引，配合淘汰及排程政策，減少前綴重算。這是<strong>精確前綴重用</strong>；兩個 prompt 語意相似但 token 不同，不能因此直接共用 cache。它也不改變 attention 的數學定義。</p>
+</section>
+
+<section id="ray-worker" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Ray：讓工作在多個 worker 上跑</h3>
+
+<p class="mb-3">Ray 提供分散式 task、actor、資源排程等基礎能力。veRL 可透過 Ray worker 協調 actor、rollout 等工作在不同程序或機器上執行。Ray 知道「這個工作需要哪些資源、要在哪裡運行」，但<strong>具體如何分片權重是 veRL／訓練與推論後端的邏輯；如何管理 KV cache 是推論引擎的邏輯</strong>。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">一次循環怎麼串起來？</h3>
+
+<ol class="mb-3">
+<li>Ray 協調分散式 worker；veRL 安排訓練與生成階段的工作。</li>
+<li>若採用共置的 HybridEngine，veRL 在生成前把 actor 權重轉成適合推論的布局。</li>
+<li>推論引擎產生回答；若選用 SGLang，其 RadixAttention 可在前綴命中時重用 KV cache。應用程式也可能使用 DSL 描述多輪或分支生成流程。</li>
+<li>veRL 收集回答與獎勵，把權重轉回訓練所需布局，再更新 actor。</li>
+</ol>
+
+<p class="mb-3">這是<strong>可以組合的一個例子</strong>：veRL 也可搭配其他 rollout 後端；使用 SGLang runtime 不代表一定要寫它的 DSL，使用 Ray 也不代表一定有 RadixAttention。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">複習時自問</h3>
+
+<ol class="mb-3">
+<li>Resharding 轉移的是權重還是模型學到的知識？</li>
+<li>RadixAttention 何時能重用 cache？語意相似是否足夠？</li>
+<li>Ray 與 veRL 各自負責哪一層？</li>
+</ol>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ul class="note-list">
+<li><a class="note-inline-link" href="https://arxiv.org/html/2409.19256" target="_blank" rel="noopener noreferrer">HybridFlow：3D-HybridEngine 與 resharding</a></li>
+<li><a class="note-inline-link" href="https://verl.readthedocs.io/en/latest/workers/engine_workers.html" target="_blank" rel="noopener noreferrer">veRL：Engine Workers</a></li>
+<li><a class="note-inline-link" href="https://verl-doc.readthedocs.io/en/latest/workers/fsdp_workers.html" target="_blank" rel="noopener noreferrer">veRL：FSDP Backend 與 sharding manager</a></li>
+<li><a class="note-inline-link" href="https://arxiv.org/html/2312.07104" target="_blank" rel="noopener noreferrer">SGLang：DSL 與 RadixAttention 原論文</a></li>
+<li><a class="note-inline-link" href="https://docs.ray.io/en/latest/ray-core/key-concepts.html" target="_blank" rel="noopener noreferrer">Ray：Core Concepts</a></li>
+</ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>veRL 的 resharding 調整訓練與生成階段間的權重布局；「零冗餘」有明確的切換成本範圍。</li>
+<li>SGLang 原論文的 DSL 描述多次生成流程；RadixAttention 重用精確共享前綴的 KV cache。</li>
+<li>Ray 管分散式工作與資源協調，權重重分片與 KV cache 政策由上層系統實作。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

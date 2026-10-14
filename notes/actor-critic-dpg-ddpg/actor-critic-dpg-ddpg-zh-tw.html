@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>從 Actor-Critic 到 DPG、DDPG：連續動作的決策與穩定訓練 — Ludwig</title>
+  <meta name="garden:tags" content="強化學習, actor-critic, dpg, ddpg, continuous control">
+  <meta name="garden:summary" content="從連續動作的問題出發，釐清 Actor-Critic、確定性策略梯度與 DDPG 的關係，並用四個網路、經驗回放和探索噪聲理解實際訓練。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,,,,">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;}}">
+  <meta name="site:canonical_id" content="actor-critic-dpg-ddpg">
+  <meta name="site:last_modified_at" content="2026-10-11">
+  <meta name="site:reading_time_minutes" content="8">
+  <meta name="site:source" content="notes/actor-critic-dpg-ddpg/actor-critic-dpg-ddpg-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">從 Actor-Critic 到 DPG、DDPG：連續動作的決策與穩定訓練</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">三個名稱各自回答什麼</a>
+<a class="note-toc-link level-1" href="#dpg">為什麼 DPG 可以直接輸出一個動作？</a>
+<a class="note-toc-link level-1" href="#ddpg">DDPG 為什麼有四個網路？</a>
+<a class="note-toc-link level-1" href="#section-2">複習時自問</a>
+<a class="note-toc-link level-1" href="#references">References</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-11"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-11</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">想像機器手臂要決定關節力矩。動作不是「左／右」兩個選項，而是連續數值。Actor 可以直接輸出力矩；Critic 則估計「在這個狀態做這個動作，之後總共能得到多少回報」。這先建立了兩個角色，接下來才有「如何更新 Actor」以及「如何穩定訓練」兩個不同問題。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">三個名稱各自回答什麼</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>名稱</th>
+<th>回答的問題</th>
+<th>核心</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Actor-Critic</td>
+<td>決策和評估由誰負責？</td>
+<td>Actor 選動作，Critic 提供學習訊號；是一類架構，不指定唯一更新公式。</td>
+</tr>
+<tr>
+<td>DPG</td>
+<td>確定性 Actor 要如何更新？</td>
+<td>用 Critic 對動作的梯度，沿著讓 Q 值提高的方向更新 Actor；它既有策略梯度定理，也有相應的 off-policy 演算法。</td>
+</tr>
+<tr>
+<td>DDPG</td>
+<td>如何用深度網路實作 DPG？</td>
+<td>深度 Actor／Critic 加上 replay buffer、緩慢更新的 target networks 和探索噪聲。</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">所以 DDPG 是 Actor-Critic 家族中的一個具體方法，使用 DPG 的梯度結果；三者不是同義詞。DPG 原論文也提出了 off-policy actor-critic 演算法，不應只被說成一條純理論公式。</p>
+</section>
+
+<section id="dpg" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">為什麼 DPG 可以直接輸出一個動作？</h3>
+
+<p class="mb-3">令確定性 Actor 為 $a=\mu_\theta(s)$，Critic 為 $Q_\phi(s,a)$。固定狀態 $s$ 看，若稍微改動 Actor 參數，動作會變；動作變了，Critic 的評價也會變。鏈鎖律給出更新方向：</p>
+
+<p class="mb-3">$$\nabla_\theta J \approx \mathbb{E}_{s\sim\rho}\left[\left.\nabla_a Q_\phi(s,a)\right|_{a=\mu_\theta(s)}\nabla_\theta\mu_\theta(s)\right].$$</p>
+
+<p class="mb-3">直覺就是：Critic 告訴 Actor「力矩往哪邊調會更好」，Actor 再調整自己的參數。這個表達式省掉對連續動作分佈的逐一抽樣或積分，但不代表隨機策略梯度一定不可行，也不保證梯度估計在所有情況下方差較低。訓練時仍需要探索；DDPG 常以 $\mu_\theta(s)+\text{noise}$ 和環境互動。</p>
+</section>
+
+<section id="ddpg" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">DDPG 為什麼有四個網路？</h3>
+
+<p class="mb-3">學習中的 Critic 若同時拿自己不斷變動的預測當標籤，很容易追逐移動目標。因此 DDPG 將正在更新的網路和用來構造目標的網路分開：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>網路</th>
+<th>工作</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Actor $\mu_\theta$</td>
+<td>產生目前策略的動作，接受策略梯度更新。</td>
+</tr>
+<tr>
+<td>Critic $Q_\phi$</td>
+<td>評估狀態與動作，擬合 Bellman 目標。</td>
+</tr>
+<tr>
+<td>Target Actor $\mu_{\theta'}$</td>
+<td>在下一個狀態提供目標動作。</td>
+</tr>
+<tr>
+<td>Target Critic $Q_{\phi'}$</td>
+<td>對該目標動作提供下一步 Q 值。</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">從 replay buffer 抽出 $(s,a,r,s',d)$，其中 $d$ 表示是否終止，Critic 的目標是</p>
+
+<p class="mb-3">$$y=r+\gamma(1-d)Q_{\phi'}\!\left(s',\mu_{\theta'}(s')\right).$$</p>
+
+<p class="mb-3">Critic 讓 $Q_\phi(s,a)$ 靠近 $y$；Actor 則沿上節的梯度更新。完成後，兩個 target network 才緩慢追上線上網路：$\theta'\leftarrow\tau\theta+(1-\tau)\theta'$，$\phi'\leftarrow\tau\phi+(1-\tau)\phi'$，其中 $\tau$ 很小。<strong>「複製一份」指的是 target network；Actor 和 Critic 本來就是不同職責的兩個網路。</strong></p>
+
+<p class="mb-3">Replay buffer 讓更新可以重用過去的互動，並減輕連續採集資料的時間相關性。它和 target networks 是從 DQN 借來的穩定化思路；確定性 Actor 處理連續動作則來自 DPG。這些設計改善可訓練性，但 DDPG 仍可能受 Q 值高估、超參數及探索方式影響，不能理解成普遍「解決」連續控制。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">複習時自問</h3>
+
+<ol class="mb-3">
+<li>Target Actor 是用來探索，還是用來構造 Bellman target？</li>
+<li>確定性策略在訓練時為何仍需噪聲？</li>
+<li>為何 DPG 不等於 DDPG，也不只是 Actor-Critic 的別名？</li>
+</ol>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ul class="note-list">
+<li><a class="note-inline-link" href="https://proceedings.mlr.press/v32/silver14.html" target="_blank" rel="noopener noreferrer">Silver et al., Deterministic Policy Gradient Algorithms, ICML 2014</a></li>
+<li><a class="note-inline-link" href="https://arxiv.org/abs/1509.02971" target="_blank" rel="noopener noreferrer">Lillicrap et al., Continuous Control with Deep Reinforcement Learning, 2015</a></li>
+</ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Actor-Critic 是分工架構；DPG 給確定性 Actor 的更新方向；DDPG 是深度網路版本的具體演算法。</li>
+<li>DDPG 的四個網路是在線 Actor／Critic 與緩慢更新的 target Actor／Critic；target network 負責穩定 Bellman 目標。</li>
+<li>確定性輸出不等於沒有探索；與環境互動時仍須加入探索噪聲。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

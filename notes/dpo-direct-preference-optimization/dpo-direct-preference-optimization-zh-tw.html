@@ -12,8 +12,8 @@
   <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.dpo&quot;:{&quot;en&quot;:&quot;DPO&quot;,&quot;zh-Hant&quot;:&quot;DPO (直接偏好優化)&quot;,&quot;zh-Hans&quot;:&quot;DPO (直接偏好优化)&quot;},&quot;concept.rlhf&quot;:{&quot;en&quot;:&quot;RLHF&quot;,&quot;zh-Hant&quot;:&quot;RLHF (人類回饋強化學習)&quot;,&quot;zh-Hans&quot;:&quot;RLHF (人类反馈强化学习)&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;}}">
   <meta name="site:canonical_id" content="dpo-direct-preference-optimization">
   <meta name="site:published_at" content="2026-08-29">
-  <meta name="site:last_modified_at" content="2026-08-29">
-  <meta name="site:reading_time_minutes" content="10">
+  <meta name="site:last_modified_at" content="2026-10-08">
+  <meta name="site:reading_time_minutes" content="14">
   <meta name="site:source" content="notes/dpo-direct-preference-optimization/dpo-direct-preference-optimization-zh-tw.md">
   <script>
   (() => {
@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
-  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
 <body class="note-page note-style-default" data-i18n-page="contentPage">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
@@ -161,6 +161,8 @@
 <a class="note-toc-link level-2" href="#4-dpo-dpo-loss">4. DPO 損失函數 (DPO Loss)</a>
 <a class="note-toc-link level-1" href="#dpo-loss">DPO Loss 的物理語意與梯度解析</a>
 <a class="note-toc-link level-1" href="#dpo">DPO 的優勢與局限性</a>
+<a class="note-toc-link level-1" href="#log-pi-theta-y-x">實作檢查：正確計算 $\log \pi_\theta(y|x)$</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
           </nav>
         </div>
       </div>
@@ -183,7 +185,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-08-29" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-29</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-08" data-published-at="2026-08-29"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-08</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -212,7 +214,7 @@
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
 <p class="mb-3">在大語言模型（LLM）的偏好對齊領域，傳統 RLHF (PPO) 雖然效果顯著，但其訓練過程極不穩定、超參數敏感，且需要同時載入四個大型神經網路。由 Rafailov 等人於 2023 年提出的 <strong>DPO（Direct Preference Optimization，直接偏好優化）</strong>，打破了「偏好對齊必須依賴強化學習（RL）」的迷思。</p>
 
-<p class="mb-3">DPO 的核心數學貢獻在於：<strong>證明了帶 KL 散逸約束的 RLHF 最優策略，可以用 Reward Model 的閉式解（Closed-Form Solution）精確替換</strong>。透過將隱性獎勵函數（Implicit Reward Function）直接參數化為策略模型本身，DPO 將繁複的 RLHF 轉化為標準的離線二元交叉熵（Binary Cross-Entropy）分類優化。</p>
+<p class="mb-3">DPO 的核心數學貢獻在於：<strong>帶 KL 懲罰的獎勵最大化問題，其最優策略有閉式解；反過來可用策略與參考模型的對數機率比表示獎勵差。</strong> 在 Bradley–Terry 偏好模型等假設下，這讓我們不必顯式訓練 Reward Model 或執行 PPO，就能用離線偏好配對直接優化策略。閉式解描述的是理想化的最優策略；有限模型、有限且有噪聲的資料，不保證訓練結果與 RLHF 完全等價。</p>
 
 <p class="mb-3">本文將帶領讀者完整還原 DPO 的數學推導過程、損失函數語意，並剖析其與 PPO/GRPO 的長短板。</p>
 </section>
@@ -232,17 +234,21 @@
 
 <h4 id="2-closed-form-solution" class="mb-2">2. 最優策略的閉式解 (Closed-Form Solution)</h4>
 
-<p class="mb-3">數學上可以證明（利用 Gibbs 分佈與 Jensen 不等式），上述優化問題的最優策略 $\pi^*$ 滿足如下關係：</p>
+<p class="mb-3">固定一個 Prompt $x$，令 $\pi(y|x)$ 為待求的分佈。把 KL 項展開，並用拉格朗日乘子 $\lambda$ 約束 $\sum_y \pi(y|x)=1$。對每個 $\pi(y|x)$ 求導並令其為零：</p>
+
+<p class="mb-3">$$r(x,y)-\beta\left(\log\frac{\pi(y|x)}{\pi_{\text{ref}}(y|x)}+1\right)+\lambda=0$$</p>
+
+<p class="mb-3">移項、取指數後，所有與 $y$ 無關的項併入正規化常數，可得最優策略 $\pi^*$：</p>
 
 <p class="mb-3">$$\pi^*(y|x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y|x) \exp \left( \frac{1}{\beta} r(x, y) \right)$$</p>
 
-<p class="mb-3">其中 $Z(x) = \sum_y \pi_{\text{ref}}(y|x) \exp \left( \frac{1}{\beta} r(x, y) \right)$ 為歸一化配分函數（Partition Function）。</p>
+<p class="mb-3">其中 $Z(x) = \sum_y \pi_{\text{ref}}(y|x) \exp \left( \frac{1}{\beta} r(x, y) \right)$ 為歸一化配分函數（Partition Function）：先以 $e^{r/\beta}$ 放大高獎勵回答的權重，再用 $Z(x)$ 讓機率總和回到 1。$\beta$ 越大，獎勵造成的重新加權越溫和，策略越接近參考模型。</p>
 
 <p class="mb-3">將兩邊取對數並移項，我們可以導出<strong>隱性獎勵函數（Implicit Reward Function）</strong> 的精確表達式：</p>
 
 <p class="mb-3">$$r(x, y) = \beta \log \frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta \log Z(x)$$</p>
 
-<div class="note-callout mb-3"><p class="mb-2"><strong>核心神來之筆：將 Reward 重參數化為 Policy</strong></p><p class="mb-2">這個公式意味著：<strong>我們不需要單獨訓練一個 Reward Model $r(x, y)$！</strong> 只要我們知道當前 Policy $\pi_\theta$ 與 Reference Policy $\pi_{\text{ref}}$ 對回答 $y$ 的相對概率比值，就能直接推算出該回答隱含的 Reward 得分。</p></div>
+<div class="note-callout mb-3"><p class="mb-2"><strong>核心神來之筆：將 Reward 重參數化為 Policy</strong></p><p class="mb-2">這個公式意味著：<strong>我們不需要單獨訓練一個 Reward Model $r(x, y)$！</strong> 對同一個 Prompt 的兩個回答，Policy 與 Reference Policy 的對數機率比足以求出<strong>獎勵差</strong>；單個回答的絕對獎勵仍含有 $\beta\log Z(x)$。DPO 訓練時以參數化模型 $\pi_\theta$ 取代理論上的 $\pi^*$，從偏好資料學到對應的隱性獎勵差。</p></div>
 
 <h4 id="3-bradley-terry" class="mb-2">3. 結合 Bradley-Terry 偏好模型</h4>
 
@@ -252,28 +258,30 @@
 
 <p class="mb-3">$$P(y_w \succ y_l | x) = \sigma (r(x, y_w) - r(x, y_l))$$</p>
 
-<p class="mb-3">其中 $\sigma(t) = \frac{1}{1 + e^{-t}}$ 為 Sigmoid 函數。</p>
+<p class="mb-3">其中 $\sigma(t) = \frac{1}{1 + e^{-t}}$ 為 Sigmoid 函數：分數相同時偏好機率為 $0.5$，分數差為 $1$ 時約為 $0.73$。它只依賴兩個回答的分數差；這種 logistic 成對比較形式也出現在推薦系統的 BPR，只是 BPR 通常比較使用者對兩個物品的預測分數，而 DPO 使用語言模型相對於參考模型的對數機率比。</p>
 
-<p class="mb-3">將我們剛剛導出的隱性獎勵公式代入 Bradley-Terry 模型中，注意項 $\beta \log Z(x)$ 在相減時<strong>完全抵消</strong>：</p>
+<p class="mb-3">將剛剛的獎勵公式分別套用在 $y_w$ 與 $y_l$。因為兩個回答共享同一個 Prompt $x$，其 $\beta\log Z(x)$ 相同，相減時<strong>完全抵消</strong>，因此無須枚舉所有可能回答來計算配分函數：</p>
 
 <p class="mb-3">$$r(x, y_w) - r(x, y_l) = \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}$$</p>
 
 <h4 id="4-dpo-dpo-loss" class="mb-2">4. DPO 損失函數 (DPO Loss)</h4>
 
-<p class="mb-3">對偏好對數據極大化對數似然（Negative Log-Likelihood），便得到極簡的 <strong>DPO Loss</strong>：</p>
+<p class="mb-3">令 $\Delta_\theta=r_\theta(x,y_w)-r_\theta(x,y_l)$。Bradley–Terry 模型把 $\sigma(\Delta_\theta)$ 視為人會選 $y_w$ 的機率。資料中的標籤是「$y_w$ 勝出」（二元標籤 1），所以最大化其對數似然，等同最小化該標籤的二元交叉熵 $-\log\sigma(\Delta_\theta)$。用可訓練的 $\pi_\theta$ 取代理論上的 $\pi^<em>$，並對固定的偏好資料集取平均，即得 </em><em>DPO Loss</em>*：</p>
 
 <p class="mb-3">$$\mathcal{L}_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} \right) \right]$$</p>
+
+<p class="mb-3">這是「監督式形式的偏好優化」，但不是一般只模仿 chosen 回答的 SFT：它同時比較 chosen 與 rejected，並以固定的 Reference Policy 為基準。例如兩個回答相對於參考模型的機率都提高兩倍，兩個 log-ratio 同增 $\log 2$，差距不變；只有 chosen 的<strong>相對</strong>變化大於 rejected，DPO 的偏好分數才提高。</p>
 </section>
 
 <section id="dpo-loss" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">DPO Loss 的物理語意與梯度解析</h3>
 
-<p class="mb-3">對 DPO Loss 求關於參數 $\theta$ 的梯度，可以揭示其背後的動態調節機制：</p>
+<p class="mb-3">定義 $\hat r_\theta(x,y)=\beta\log[\pi_\theta(y|x)/\pi_{\text{ref}}(y|x)]$；同一 Prompt 的兩個 $\hat r$ 相減即為上節的 $\Delta_\theta$。對 DPO Loss 求關於參數 $\theta$ 的梯度，可看出其動態權重：</p>
 
 <p class="mb-3">$$\nabla_\theta \mathcal{L}_{\text{DPO}}(\theta) = -\beta \mathbb{E}_{(x, y_w, y_l)} \left[ \underbrace{\sigma \left( \hat{r}_\theta(x, y_l) - \hat{r}_\theta(x, y_w) \right)}_{\text{動態標量權重 (Dynamic Weight)}} \left( \nabla_\theta \log \pi_\theta(y_w|x) - \nabla_\theta \log \pi_\theta(y_l|x) \right) \right]$$</p>
 
 <ul class="note-list">
-<li><strong>方向指引</strong>：梯度會<strong>推高</strong>勝出回答 $\log \pi_\theta(y_w|x)$ 的生成概率，同時<strong>壓低</strong>失敗回答 $\log \pi_\theta(y_l|x)$ 的生成概率。</li>
+<li><strong>方向指引</strong>：對單個配對，梯度的直接目標是提高 $\log\pi_\theta(y_w|x)-\log\pi_\theta(y_l|x)$。由於模型參數共享且機率須正規化，不能保證每次更新都讓 chosen 的絕對機率上升、rejected 的絕對機率下降；應觀察的是兩者的<strong>相對差距</strong>。</li>
 <li><strong>動態權重（Dynamic Weighting）</strong>：當模型已經能很好地區分 $y_w$ 與 $y_l$（即估算的隱性獎勵差很大時），Sigmoid 權重趨近於 0，梯度更新自動變小；反之，若模型誤判（將 $y_l$ 評高於 $y_w$），權重會增大，給予強烈的校正梯度。</li>
 </ul>
 </section>
@@ -288,9 +296,9 @@
 </ul>
 
 <ol class="mb-3">
-<li><strong>無 Sampling 開銷</strong>：不需要在訓練時調用模型大量生成文本。</li>
-<li><strong>架構極簡</strong>：省去 Critic Model 與 Reward Model，訓練速度快數倍，顯存開銷小。</li>
-<li><strong>穩定收斂</strong>：標準的二元交叉熵 Loss，無 RL 中的方差爆炸與 Policy 崩塌隱患。</li>
+<li><strong>無線上採樣開銷</strong>：原版 DPO 使用固定的偏好配對，訓練步驟不需要重新生成回答。</li>
+<li><strong>架構較簡</strong>：省去顯式 Reward Model 與 Critic，但仍須計算可訓練 Policy 和固定 Reference Policy 對配對的 log-probability；實際速度及記憶體收益取決於實作。</li>
+<li><strong>訓練流程較直接</strong>：可用一般反向傳播，免去 PPO 的採樣與價值估計；仍可能遇到資料噪聲、模型退化或超參數問題。</li>
 </ol>
 
 <ul class="note-list">
@@ -298,12 +306,38 @@
 </ul>
 
 <ol class="mb-3">
-<li><strong>高度依賴離線偏好集</strong>：DPO 無法探索離線資料庫 $\mathcal{D}$ 以外的未知輸出空間（No Active Exploration）。</li>
+<li><strong>原版缺少線上探索</strong>：固定資料集沒有對未收集的回答提供直接偏好訊號；模型仍可泛化到未見回答，但缺少訓練中主動生成與評估新候選的迴圈。這是原版離線資料設定的限制，不是「沒有顯式 Reward Model」必然造成的限制。</li>
 <li><strong>對標註噪聲敏感</strong>：若離線資料中存在錯誤的偏好標註，DPO 容易過擬合錯誤樣本。</li>
-<li><strong>長鏈條推理 (CoT) 瓶頸</strong>：在數學、程式碼等需要多步推理的任務中，DPO 很難單靠離線成對數據引發自發的推理進化，此時 GRPO / PPO 的 Online 反饋仍具備顯著優勢。</li>
+<li><strong>資料覆蓋與信用分配</strong>：整段回答的成對偏好不直接指出哪一步推理有功或有錯；在可驗證任務中，線上採樣及結果回饋可能提供更多新訊號，但 PPO / GRPO 的序列級獎勵也不會自動解決 token 級信用分配。</li>
 </ol>
 
 <p class="mb-3">&lt;/callout&gt;</p>
+</section>
+
+<section id="log-pi-theta-y-x" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">實作檢查：正確計算 $\log \pi_\theta(y|x)$</h3>
+
+<p class="mb-3">原始 DPO 的序列機率遵循自迴歸分解：</p>
+
+<p class="mb-3">$$\log \pi_\theta(y|x)=\sum_{t=1}^{|y|}\log\pi_\theta(y_t\mid x,y_{&lt;t})$$</p>
+
+<p class="mb-3">閱讀 Deepak Kumar Sahoo 的示意訓練迴圈時，尤其要檢查以下三點；該篇程式片段不宜直接視為正確的 DPO 實作。</p>
+
+<ol class="mb-3">
+<li><strong>下一 token 對齊</strong>：位置 $t$ 的 logits 預測位置 $t+1$ 的 token。若手動 <code>gather</code>，需對齊 <code>logits[:, :-1]</code> 與 <code>input_ids[:, 1:]</code>；原片段把未位移的 logits 與同位置 token 配對。</li>
+<li><strong>只保留回答 token</strong>：遮住 Prompt 與 padding，保留回答（以及若納入序列定義的 EOS）之 log-probability。原片段傳入 Prompt IDs 卻未用來製作回答遮罩。若兩個回答共享完全相同的 Prompt 且使用總和，Prompt 項在差分中原可抵消；配合平均或不同截斷時不可仰賴此性質。</li>
+<li><strong>跨 token 求總和</strong>：整段回答的機率是 token 條件機率之乘積，因此 log-probability 必須求<strong>總和</strong>。原片段使用平均值，算的是每 token 幾何平均機率，已不是原始 DPO 目標。總和與平均都可能帶來不同的長度效應，不能單憑平均法斷言偏差方向。</li>
+</ol>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<ol class="mb-3">
+<li>Rafailov, R., Sharma, A., Mitchell, E., Manning, C. D., Ermon, S., &amp; Finn, C. (2023). <a class="note-inline-link" href="https://arxiv.org/abs/2305.18290" target="_blank" rel="noopener noreferrer">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</a>. NeurIPS 2023。</li>
+<li>Sahoo, D. K. (2025). <a class="note-inline-link" href="https://medium.com/the-synaptic-stack/direct-preference-optimization-dpo-an-in-depth-analysis-62a3d1f343a4" target="_blank" rel="noopener noreferrer">Direct Preference Optimization (DPO): An In-depth Analysis</a>. <em>The Synaptic Stack</em>。其中手寫訓練迴圈僅作概念示意，見上節校正。</li>
+<li>Rendle, S., Freudenthaler, C., Gantner, Z., &amp; Schmidt-Thieme, L. (2009). <a class="note-inline-link" href="https://proceedings.mlr.press/r7/rendle09a.html" target="_blank" rel="noopener noreferrer">BPR: Bayesian Personalized Ranking from Implicit Feedback</a>. UAI 2009。</li>
+</ol>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
@@ -325,7 +359,7 @@
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
 <li>DPO (Direct Preference Optimization) 證明了帶 KL 懲罰的最優 RLHF 策略，可將 Reward 重參數化為 Policy 與 Reference Model 的 Log-Ratio。</li>
 <li>DPO 將 RLHF 簡化為離線二元交叉熵 Loss：$\mathcal{L}_{\text{DPO}} = -\mathbb{E} [\log \sigma( \beta \log \frac{\pi_\theta(y_w)}{\pi_{\text{ref}}(y_w)} - \beta \log \frac{\pi_\theta(y_l)}{\pi_{\text{ref}}(y_l)} )]$。</li>
-<li>DPO 免去了在訓練期線上 Sampling、Critic 網路與 Reward Model，但在探索能力 (Exploration) 與長鏈條推理進化上弱於 Online RL (如 GRPO)。</li>
+<li>原版 DPO 免去訓練期線上採樣、Critic 與顯式 Reward Model；固定偏好資料限制了直接探索新候選的能力，但不代表模型無法泛化，或在線上回饋方法必然較好。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

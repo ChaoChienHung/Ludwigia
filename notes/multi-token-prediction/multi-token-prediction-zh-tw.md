@@ -9,7 +9,7 @@ ContentDir: notes
 Lang: zh-Hant
 Tags: large language models, multi-token prediction, speculative decoding, generative recommendation
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-10-07
 EstimatedReadingTime: true
 </meta>
 
@@ -21,84 +21,66 @@ EstimatedReadingTime: true
 
 # Multi-Token Prediction：從更好的訓練到更快的生成
 
-語言模型通常接著已有文字，預測下一個 token。既然最後需要生成整段回答，能不能讓模型在同一個位置多看幾步，同時為接下來的 token 做準備？Multi-Token Prediction（MTP，多 token 預測）就是圍繞這個問題的一族設計。
+大語言模型能接續一段文字、完成一段程式，背後常有一個共同的訓練任務：根據已經出現的 token，預測下一個。這就是 Next-Token Prediction（NTP，下一個 token 預測）。它看起來簡單，卻能讓模型從大量文字與程式中反覆練習如何接續前文。
 
-它有兩條值得分開理解的用途：**訓練時，以額外預測任務監督主模型；推論時，以便宜的多 token 候選減少昂貴的生成步驟。** 兩者可以共存，也可以只採其一。本文先建立共同直覺，再接到論文、模型與生成式推薦的深入筆記。
+## NTP 的力量，以及它留下的兩個問題
 
-## 先分清楚：訓練看得到答案，生成還沒有答案
+假設一段文字被切成 `A B C D`。以 NTP 訓練時，模型會看 `A` 預測 `B`、看 `A B` 預測 `C`，再看 `A B C` 預測 `D`。一段訓練序列的許多位置都能提供監督；任務也與自迴歸生成時「根據前文決定下一個 token」的形式相符。NTP 並非只讓整段文字產生一個答案，也不是無法學到長距離關係。
 
-假設一段文字被切成 `A B C D`。Next-Token Prediction（NTP）會讓模型看 `A` 預測 `B`、看 `A B` 預測 `C`，再看 `A B C` 預測 `D`。因此，一段訓練序列的許多位置都會提供監督，並不是整段文章只有一個答案。
+但仍有兩個值得追問的空間。**第一，同一個位置的直接預測目標只有下一個 token：如果也要求模型預測更遠的未來，會不會提供有用的額外監督？** 第二，生成一段回答時，模型還不知道自己下一步會選什麼，必須先產生它，才能沿著這條路繼續寫；能不能減少反覆等待主模型的時間？第二個問題來自自迴歸解碼的序列依賴，不能簡單歸咎於 NTP 的訓練 loss。
 
-訓練時，正確的 `B C D` 已經存在。模型可以一次讀入序列，透過 causal attention mask 讓每個位置只使用當前及之前的資訊，再平行計算各位置的預測與 loss。生成時則不同：模型還不知道自己會選哪個 `B`，必須先產生它，才能把它放入 context 決定 `C`。**訓練中的平行計算，與生成時的序列依賴，是兩件事。** [Gloeckle et al., 2024](https://proceedings.mlr.press/v235/gloeckle24a.html)
+訓練時，正確的 `B C D` 已經存在。模型可以一次讀入序列，透過 causal attention mask 讓每個位置只使用當前及之前的資訊，平行計算各位置的預測與 loss。生成時沒有未來的正確答案，要先選出 `B`，才能把它接回前文決定 `C`。**訓練能平行計算許多位置，並不表示生成也能直接一次決定整段文字。**
 
-這個差別同時帶出兩個問題：同一個 prefix 能否提供更豐富的學習訊號？推論時又能否預先猜一小段，減少主模型反覆執行？MTP 的兩條用途由此展開。
+## MTP：共同的問題，不同的實作
 
-## 多預測幾步，究竟增加了什麼？
+Multi-Token Prediction（MTP，多 token 預測）從第一個問題出發：在某個前文位置，除了下一個 token，也嘗試預測後面更多位置。它可以讓主模型接收額外的未來位置監督；如果這些預測還能便宜地提出合理候選，也可能服務第二個問題。不過，**MTP 是一個方法家族，不是一套固定的 heads、loss 或解碼流程**；兩種用途可以結合，也可以分開。[Gloeckle et al., 2024](https://proceedings.mlr.press/v235/gloeckle24a.html)；[DeepSeek-V3, §2.2](https://arxiv.org/html/2412.19437v2)
 
-先看一個最容易理解的版本：共享 backbone 產生 `A` 的表示，再交給不同預測頭。第一個 head 預測 `B`，第二個 head 預測 `C`，第三個 head 預測 `D`。與 NTP 相比，預測 `C` 的第二個 head 此時尚未看到正確的 `B`，必須從更早的資訊估計較遠的未來。
+沿用 `A B C D` 的例子：看見 `A` 後，除了預測 `B`，還可以增加對 `C`、`D` 的預測。但要理解任何一種實作，還得問三件事：
 
-這個**獨立預測頭版本**可簡化寫成：
+1. **預測什麼？** 是分別預測幾個未來位置，還是建模整段候選的關係？到了推薦系統，token 甚至可能代表商品編碼或不同商品。
+2. **較遠的預測看見什麼？** 可以讓多個 head 都只依賴同一段前文，也可以讓後續模組接上中間 token 或前一步的表示。這會改變候選之間的一致性與計算方式。
+3. **額外訓練更新誰？** 若 loss 回傳到共享主模型，它可能改變 backbone 學到的表示；若凍結主模型、只訓練附加 heads，主要得到的是候選預測能力，不能直接宣稱主模型本身變強。
 
-$$
-\mathcal{L}_{\mathrm{NTP}}=-\sum_t\log p(x_{t+1}\mid x_{\leq t}),
-$$
-
-$$
-\mathcal{L}_{\mathrm{MTP}}=-\sum_t\sum_{k=1}^{K}\lambda_k\log q_k(x_{t+k}\mid x_{\leq t}).
-$$
-
-其中 $k$ 是預測距離，$\lambda_k$ 控制各任務權重。共同訓練時，各 head 的誤差會透過共享表示回傳到 backbone；因此，改變的不只有輸出數量，也包括主模型受到的學習壓力。[Gloeckle et al., 2024, §2](https://arxiv.org/html/2404.19737v1)
-
-但這不是所有 MTP 的通式。有些設計讓後續預測依賴中間 token 或前一個模組，有些研究直接建模多 token 的聯合分布。獨立 heads 各自猜到機率最高的 token，也不代表拼起來就是一致的延續。比較方法前，必須先問：**每一步究竟看到了哪些資訊？** [Hydra](https://arxiv.org/abs/2402.05109)；[Tensor decomposition MTP](https://arxiv.org/abs/2410.17765)
+例如，<content-link canonical="multi-token-prediction-gloeckle-2024">Gloeckle 等人的 MTP</content-link>以共享主幹與獨立 heads 研究多未來位置監督；<content-link canonical="deepseek-v3-mtp">DeepSeek-V3</content-link>改用逐層相接的 MTP 模組，保留中間 token 的因果鏈。這兩種設計都能回答「能否多預測幾步」，卻不能共用同一張架構圖或同一個 loss 公式。[Gloeckle et al., 2024, §2](https://arxiv.org/html/2404.19737v1)；[DeepSeek-V3, §2.2](https://arxiv.org/html/2412.19437v2)
 
 ## 為什麼可能讓主模型學得更好？
 
-只要求預測下一步時，一些局部線索就足以降低 loss；要求同一表示支援更遠的預測，則增加了保留相關結構的壓力。例如程式中某個分支選擇會影響後續多個 token，未來位置的監督可能讓這個選擇得到更多學習訊號。
+若同一個表示除了要預測下一步，還要支援更遠的位置，它可能更需要保留對後續有用的資訊。例如程式中的分支選擇會影響後面一串 token；未來位置的 loss 可能讓相關線索得到更多直接監督。這是理解 MTP 可能有用的直覺，不是所有任務都會改善的保證。
 
-這是合理的機制解釋，但不能直接跳成「模型學會規劃」。Gloeckle 等人把部分原因討論明確列為推測，並以程式生成與合成任務實驗檢查效果；自然語言任務並非全面改善。**機制假說說明我們為何期待有效，實驗才說明在哪些條件下觀察到有效。** [Gloeckle et al., 2024, §3–5](https://arxiv.org/html/2404.19737v1)
+不能因此直接說「模型學會規劃」。<content-link canonical="multi-token-prediction-gloeckle-2024">Gloeckle 等人的研究</content-link>同時討論這種機制假說，並用程式與其他任務測試；不同任務的收益並不一致。入口篇先保留這個證據邊界，架構、實驗與機制討論放到該篇細讀。[Gloeckle et al., 2024, §3–5](https://arxiv.org/html/2404.19737v1)
 
-另一個必要區分是梯度流向。如果 backbone 凍結，只訓練新 heads，改善的是候選生成能力；不能據此宣稱主模型被訓練得更好。Medusa-1 與 Medusa-2 分別展示 frozen-backbone 與 joint-training 路線。[Cai et al., 2024](https://proceedings.mlr.press/v235/cai24b.html)
+也要記得前一節的梯度問題。<content-link canonical="medusa">Medusa</content-link>同時討論凍結 backbone 只訓練 heads，以及共同調整主模型的路線；兩者可能改善的對象不同。[Cai et al., 2024](https://proceedings.mlr.press/v235/cai24b.html)
 
-所以「提升訓練效率」至少要拆成同資料量的表現、達到同表現所需的 token 數，以及 FLOPs／實際 GPU 時間。額外任務會增加成本；資料利用更好，不代表訓練時間自動更短。2024 MTP 論文的實測訓練時間仍高於其 NTP baseline，幅度也隨模型規模而異；作者將部分成本歸因於 FSDP 通訊與計算重疊的實作，因此不能把它當成所有 MTP 實作的固定代價。[Gloeckle et al., 2024, Appendix C](https://arxiv.org/html/2404.19737v1)
+所以「提升訓練效率」至少要拆成同資料量的表現、達到同表現所需的 token 數，以及 FLOPs／實際 GPU 時間。額外任務會增加成本；資料利用更好，不代表訓練時間自動更短。每篇方法筆記會分開核對這些指標，而不是把它們合成一個「更有效」。
 
 ## 多 token 候選，如何變成更快的生成？
 
-現在回到推論：如果便宜的 heads 能先提出 `B C D`，主模型可以一次對這段候選進行評估。驗證器依所選規則決定可接受的前綴；錯誤位置之後的候選不能直接沿用，需要修正並重新提出候選。減少的，是主模型必須依序執行的解碼輪次；總 FLOPs 未必減少。[Stern et al., 2018](https://papers.nips.cc/paper/8212-blockwise-parallel-decoding-for-deep-autoregressive-models)
+現在回到推論：如果附加 heads 或模組能先提出 `B C D`，主模型就有機會一次評估這段候選，再依選定的規則接受其中可用的前綴。錯誤位置之後的候選不能直接沿用，需要修正並重新提出。<content-link canonical="blockwise-parallel-decoding">Blockwise Parallel Decoding</content-link>是理解「先猜一段、再驗證」的早期入口；減少的主要是主模型必須依序執行的輪次，總 FLOPs 未必減少。[Stern et al., 2018](https://papers.nips.cc/paper/8212-blockwise-parallel-decoding-for-deep-autoregressive-models)
 
-速度直覺可用一個粗略成本式理解：
-
-$$
-\text{每個輸出 token 的時間}\approx
-\frac{\text{候選生成成本}+\text{驗證成本}}{\text{每輪平均實際輸出的 token 數}}.
-$$
-
-候選越多，不一定越快；還要看接受前綴是否夠長、驗證是否昂貴，以及批次與硬體能否有效利用平行計算。這個式子只是教學近似，完整系統還有排程、記憶體與 kernel 開銷。
+速度收益取決於候選有多便宜、每輪平均能接受多少 token，以及驗證、排程與硬體執行成本。**候選越多，不一定越快。** 具體的候選樹、接受規則與延遲數字，適合回到各方法筆記比較。
 
 這裡也能看清 MTP 與 speculative decoding 的關係：前者描述多步預測的模型或訓練設計，後者描述「提出候選、驗證與接受」的解碼程序。Speculative decoding 可以使用獨立小模型作為 drafter，不必採用 MTP；MTP 也可以只在訓練中使用。[Leviathan et al., 2023](https://proceedings.mlr.press/v202/leviathan23a.html)
 
-最後，**保留 greedy 結果、保留採樣分布、維持評測品質，是三種不同保證。** Exact speculative sampling 需要對應的接受與修正採樣規則；Medusa 的 typical acceptance 則允許改變原始採樣分布。閱讀「品質不下降」的加速報告時，不能自動補上分布完全相同的結論。[Leviathan et al., 2023](https://proceedings.mlr.press/v202/leviathan23a.html)；[Medusa, §2.3](https://arxiv.org/html/2401.10774v3)
+最後，**保留 greedy 結果、保留採樣分布、維持評測品質，是三種不同保證。** <content-link canonical="speculative-decoding-leviathan-2023">Leviathan 等人的 speculative decoding</content-link>討論如何保留目標採樣分布；<content-link canonical="medusa">Medusa</content-link>的 typical acceptance 則採不同取捨。閱讀「品質不下降」的加速報告時，不能自動補上分布完全相同的結論。[Leviathan et al., 2023](https://proceedings.mlr.press/v202/leviathan23a.html)；[Medusa, §2.3](https://arxiv.org/html/2401.10774v3)
 
-## 用代表案例定位方法，而不是把所有模型混成一種
+## 代表模式：先看它解決什麼問題
 
-| 代表案例 | 最適合理解的問題 | 閱讀時的關鍵區分 |
-| --- | --- | --- |
-| Gloeckle 等人的 MTP | 多未來位置監督如何影響共享表示 | 預訓練目標與推論用途分開衡量 |
-| DeepSeek-V3 | 原生 MTP 如何兼顧訓練與推論 | 輔助模組可在推論移除，保留主模型收益 |
-| Medusa | 既有模型如何增加多步候選能力 | 凍結／共同訓練，以及驗證契約 |
-| MiMo-7B | 不同訓練階段能否優化不同對象 | 聯合預訓練與後續 head-only fitting |
-| Qwen3-Next、GLM-5 | 多步訓練如何對齊實際候選生成 | 官方採用描述不等於獨立訓練消融 |
+這些案例不是同一架構的不同品牌。入口篇只標出各自想解的問題與關鍵差異；運作細節、收益和實驗條件留在對應分篇。
 
-DeepSeek-V3 是雙用途的清楚案例：MTP auxiliary objective 參與主模型訓練；推論時可移除，也可用於 speculative decoding。MiMo-7B 則把聯合預訓練與凍結主模型後的額外 head 訓練分成階段。[DeepSeek-V3, §2.2](https://arxiv.org/html/2412.19437v2)；[MiMo, §2.2](https://arxiv.org/html/2505.07608v1)
+- <content-link canonical="multi-token-prediction-gloeckle-2024">Gloeckle 等人的 MTP</content-link>：讓共享主幹同時接收多個未來位置的監督，研究這會如何影響主模型；另探索已訓練 heads 的推論用途。
+- <content-link canonical="deepseek-v3-mtp">DeepSeek-V3</content-link>：用相依的 MTP 模組保留預測的因果鏈；輔助目標參與訓練，模組在一般推論可移除，也能用於候選生成。[DeepSeek-V3, §2.2](https://arxiv.org/html/2412.19437v2)
+- <content-link canonical="medusa">Medusa</content-link>：聚焦既有模型的多步候選與驗證；比較只訓練 heads 和共同調整模型的路線。[Cai et al., 2024](https://proceedings.mlr.press/v235/cai24b.html)
+- <content-link canonical="mimo-7b-mtp">MiMo-7B</content-link>：把聯合預訓練與凍結主模型後的額外 head 訓練分成階段，分別服務主模型與候選品質。[MiMo, §2.2](https://arxiv.org/html/2505.07608v1)
 
-近年的 Qwen3-Next 與 GLM-5 也明確使用 MTP／多步訓練。這些資料適合追蹤工程方向，但整個模型同時改變的架構、資料與訓練流程很多，不能把總體性能提升全部歸因給 MTP。加速 RL rollout 又是另一種訓練效率：更快生成訓練樣本，不等於學到同能力所需資料更少。[Qwen 官方文章](https://qwen.ai/blog?id=qwen3-next)；[GLM-5](https://arxiv.org/abs/2602.15763)
+<content-link canonical="qwen3-next-mtp">Qwen3-Next</content-link>、<content-link canonical="glm-5-mtp">GLM-5</content-link> 等模型也提供工程採用案例，但模型同時改變了架構、資料與訓練流程，不能把整體提升全部歸因 MTP。加速 RL rollout 又是另一種「訓練效率」：更快生成訓練樣本，不等於學到同能力所需資料更少。[Qwen 官方文章](https://qwen.ai/blog?id=qwen3-next)；[GLM-5](https://arxiv.org/abs/2602.15763)
 
 ## 生成式推薦：先問 token 代表什麼
 
 在推薦系統中，多 token 可能是同一件商品的多個編碼，也可能代表多個商品或未來互動。理解這個差異，可以先讀 <content-link canonical="semantic-id-in-generative-recommendation">Semantic ID：生成式推薦如何表示商品</content-link>。
 
-RPG 把一個商品表示為無序的長 Semantic ID，平行預測其各個組件，並用圖約束解碼避免無效 ID。它解決的是同一商品的編碼生成，不是預測使用者接下來多次互動，也不等同於 LLM 的 draft-and-verify。[Hou et al., 2025](https://arxiv.org/abs/2506.05781)
+<content-link canonical="rpg-generative-recommendation">RPG</content-link> 把一個商品表示為無序的長 Semantic ID，平行預測其各個組件，並用圖約束解碼避免無效 ID。它解決的是同一商品的編碼生成，不是預測使用者接下來多次互動，也不等同於 LLM 的 draft-and-verify。[Hou et al., 2025](https://arxiv.org/abs/2506.05781)
 
-GPR 則以 MTP 表達多個興趣方向，再接價值對齊與策略優化；作者報告已部署於騰訊微信視頻號廣告系統。這是產業採用案例，但整體業務收益不能單獨歸因給 MTP。EchoRec 的研究方向又不同：以未來多個商品的監督輔助主模型。**推薦領域的「多」究竟指編碼組件、並存興趣，還是時間上連續的商品，必須逐篇確認。** [Zhang et al., 2025](https://arxiv.org/abs/2511.10138)；[EchoRec](https://arxiv.org/abs/2608.14011)
+<content-link canonical="gpr-generative-recommendation">GPR</content-link> 則以 MTP 表達多個興趣方向，再接價值對齊與策略優化；作者報告已部署於騰訊微信視頻號廣告系統。這是產業採用案例，但整體業務收益不能單獨歸因給 MTP。<content-link canonical="echorec">EchoRec</content-link> 的研究方向又不同：以未來多個商品的監督輔助主模型。**推薦領域的「多」究竟指編碼組件、並存興趣，還是時間上連續的商品，必須逐篇確認。** [Zhang et al., 2025](https://arxiv.org/abs/2511.10138)；[EchoRec](https://arxiv.org/abs/2608.14011)
 
 ## 收益的邊界，決定我們該怎麼比較
 
@@ -141,6 +123,7 @@ GPR 則以 MTP 表達多個興趣方向，再接價值對齊與策略優化；�
 - <content-link canonical="medusa">Medusa：多預測頭與候選樹</content-link>
 - <content-link canonical="hydra-decoding">Hydra：候選之間的序列依賴</content-link>
 - <content-link canonical="p-eagle">P-EAGLE：平行 drafting 與可擴展訓練</content-link>
+- <content-link canonical="bebop-mtp-rl-rollout">Bebop：拒絕採樣、TV loss 與 RL rollout 加速</content-link>
 
 相關背景也可參考原始 [EAGLE](https://arxiv.org/abs/2401.15077) 與 [EAGLE-3](https://arxiv.org/abs/2503.01840)；不能把整個 EAGLE 家族一概等同於獨立 MTP heads。
 

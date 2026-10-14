@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>MTFM：跨業務共用行為骨幹並擴大 Target 表示 — Ludwig</title>
+  <meta name="garden:tags" content="推薦系統, MTFM, Meituan, multi-scenario, target attention">
+  <meta name="garden:summary" content="從美團多場景推薦的特徵不一致與長序列成本出發，理解 H/R/T tokens、動態遮罩、Hybrid Target Attention 與 Target Scale-Up。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,,,,">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;}}">
+  <meta name="site:canonical_id" content="mtfm">
+  <meta name="site:last_modified_at" content="2026-10-09">
+  <meta name="site:reading_time_minutes" content="7">
+  <meta name="site:source" content="notes/mtfm/mtfm-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">MTFM：跨業務共用行為骨幹並擴大 Target 表示</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-token">1. 三類 token 各有責任</a>
+<a class="note-toc-link level-1" href="#2-full-target-attention">2. 為何同時有 Full 與 Target Attention？</a>
+<a class="note-toc-link level-1" href="#3-target-scale-up-token">3. Target Scale-Up：一個候選為何要多個 token？</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+<a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
+<a class="note-toc-link level-2" href="#technical-articles">技術文章（Technical Articles）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-09"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-09</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">外賣首頁、頻道頁與其他場景都需要理解同一位使用者，但各自的候選、特徵欄位和預測目標不完全相同。若每個場景維護獨立排序模型，長行為序列與工程流程會被重複計算。MTFM（Meituan Foundation Model for Recommendation）在 <a class="note-content-link" data-canonical-id="mtgr" href="../mtgr/mtgr-zh-tw.html">MTGR<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">MTGR：在序列骨幹中保留工業排序的交叉特徵</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">MTGR</span><span class="note-content-link-preview-tag">Meituan</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">理解美團 MTGR 為何將 HSTU 類序列建模與 DLRM 特徵結合，以及 user-level 聚合、動態 mask 和判別式目標的角色。</span></span></span></a> 之上，嘗試共用長期興趣骨幹，同時讓不同場景保留自己的輸入與任務頭。<a class="note-inline-link" href="https://arxiv.org/abs/2602.11235" target="_blank" rel="noopener noreferrer">原論文</a></p>
+</section>
+
+<section id="1-token" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 三類 token 各有責任</h3>
+
+<p class="mb-3"><strong>H-token</strong> 放跨場景的歷史行為，<strong>R-token</strong> 放較近的即時行為，<strong>T-token</strong> 放這次待評估目標的候選、情境及交叉特徵。不同業務可用自己的 tokenizer 轉換各自的 T 特徵，不必硬把所有場景欄位排成一模一樣的表格；長期與即時的使用者線索則可共用。<a class="note-inline-link" href="https://tech.meituan.com/2026/09/22/Meituan-Foundation-Model-for-Recommendation.html" target="_blank" rel="noopener noreferrer">美團技術文章 §3.1</a></p>
+
+<div class="note-markdown-block"><pre><code class="language-text">共用 H：長期行為 ──┐
+共用 R：即時行為 ──┼→ 共享骨幹 → 各業務的預測頭
+場景 T：本次候選 ──┘</code></pre></div>
+
+<p class="mb-3">Mask 維持時間與候選邊界：T 只能看到當時已發生的 R；同請求的不同候選不能互看，否則一件商品的分數會受到同批其他候選影響。<a class="note-inline-link" href="https://tech.meituan.com/2026/09/22/Meituan-Foundation-Model-for-Recommendation.html" target="_blank" rel="noopener noreferrer">美團技術文章 §3.2</a></p>
+</section>
+
+<section id="2-full-target-attention" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. 為何同時有 Full 與 Target Attention？</h3>
+
+<p class="mb-3">讓全部長序列在每一層互相注意，成本高；但完全不讓歷史內部交互，也可能失去有效訊號。MTFM 因而穿插少數 <strong>Full Self-Attention</strong> 層與較多 <strong>Target Attention</strong> 層，把更多運算集中在要輸出分數的 T 側。這是計算分配策略，不是 T-token 從此不讀歷史。<a class="note-inline-link" href="https://tech.meituan.com/2026/09/22/Meituan-Foundation-Model-for-Recommendation.html" target="_blank" rel="noopener noreferrer">美團技術文章 §3.3</a></p>
+</section>
+
+<section id="3-target-scale-up-token" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Target Scale-Up：一個候選為何要多個 token？</h3>
+
+<p class="mb-3">若候選側同時攜帶使用者、情境、商品及交叉特徵，把它們擠成一個向量可能過度壓縮。MTFM 的一個版本用 AutoSplit 將每個 target 的特徵映射成<strong>四個 token embeddings</strong>，並為不同 token 配置投影與 FFN，再做 token mixing。這不是「四個不同候選商品」，而是<strong>同一個待評估目標的四個表示位置</strong>。<a class="note-inline-link" href="https://tech.meituan.com/2026/09/22/Meituan-Foundation-Model-for-Recommendation.html" target="_blank" rel="noopener noreferrer">美團技術文章 §3.3.2</a></p>
+
+<p class="mb-3">訓練時，MTFM 把同一使用者多個場景的曝光聚在一起，共用昂貴的長序列計算；部署時仍可按各業務取其相關部分。這是<strong>多場景精排統一</strong>，不等同於 <a class="note-content-link" data-canonical-id="onetrans-v2" href="../onetrans-v2/onetrans-v2-zh-tw.html">OneTrans-V2<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">OneTrans-V2：一個使用者脈絡服務召回、粗排與精排</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">OneTrans-V2</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從三級推薦流水線的重複歷史計算出發，理解 OneTrans-V2 的階段 token、生成式召回、SNT、跨階段快取與其限制。</span></span></span></a> 所做的跨召回、粗排、精排三階段統一。<a class="note-inline-link" href="https://tech.meituan.com/2026/09/22/Meituan-Foundation-Model-for-Recommendation.html" target="_blank" rel="noopener noreferrer">美團技術文章 §3.4–4</a></p>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<h4 id="academic-literature" class="mb-2">學術論文（Academic Literature）</h4>
+
+<ol class="mb-3">
+<li>Song, X., et al. (2026). MTFM: A Scalable and Alignment-free Foundation Model for Industrial Recommendation in Meituan. <em>KDD 2026</em>. <a class="note-inline-link" href="https://doi.org/10.1145/3770855.3818452" target="_blank" rel="noopener noreferrer">DOI</a>；<a class="note-inline-link" href="https://arxiv.org/abs/2602.11235" target="_blank" rel="noopener noreferrer">arXiv:2602.11235</a>。</li>
+</ol>
+
+<h4 id="technical-articles" class="mb-2">技術文章（Technical Articles）</h4>
+
+<ol class="mb-3">
+<li><a class="note-inline-link" href="https://tech.meituan.com/2026/09/22/Meituan-Foundation-Model-for-Recommendation.html" target="_blank" rel="noopener noreferrer">美团技术团队：MTFM：美团统一推荐基座大模型在外卖多业务场景的落地实践</a>。</li>
+</ol>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>H/R/T 分別承載歷史、即時行為與待評估 target；T 可保留場景差異。</li>
+<li>Hybrid Target Attention 把更多計算放在候選側，仍讓候選讀取使用者脈絡。</li>
+<li>四個 target tokens 是同一候選的多個表示，不是四件商品。</li>
+<li>MTFM 統一多業務精排；OneTrans-V2 統一推薦流水線的三個階段。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

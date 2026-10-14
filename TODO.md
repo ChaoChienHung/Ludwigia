@@ -13,6 +13,36 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] 首頁底部 Future Plans 區塊
+    - 交付條件：在首頁 Timeline 之後、Contact 之前呈現 fact verifier 的個人延伸構想；三語文案與 Theme/Palette 響應式樣式可用，並清楚標示尚在構想階段。
+    - 已完成：新增 Future Plans 卡片，概述證據推理、信心校準、可重現評估及學期後的第一步；保留原 Future Plan 待辦供後續實際研究。
+    - Review 重點：作者確認首頁公開文案與放置位置是否符合個人表達；此處不代表專案已啟動。
+
+- [x] Bebop 的 MTP／RL rollout 文獻筆記
+    - 交付條件：在 `notes/` 建立繁體中文 source 與可再現 HTML，從 MTP 入口可抵達；具備一手 References、reviewkit/takeaways/qprompt；維持 drafting，重建搜尋索引並確認草稿不公開。
+    - 已完成：記錄 target-only 與 rejection sampling 的接受規則、多步 TV loss、RL 前訓練與凍結預測頭的配置，以及接受率／rollout／整體訓練速度的證據邊界。
+    - Review 重點：作者全盤 proofread；核對熵與接受率分析的適用條件、TV loss 和候選分布的系統成本，以及最高 1.8 倍加速所對應的實驗設定。
+
+- [x] 四篇技術複習筆記：DPG／DDPG、GRPO 變體、cuDNN fusion、veRL／SGLang／Ray
+    - 交付條件：在 `notes/` 建立四篇繁體中文 source 與可再現 HTML；各篇有 metadata、原始文獻／官方文件、reviewkit/takeaways/qprompt；維持 drafting，不進公開搜尋索引。
+    - 已完成：以「問題與底層機制 → 方法差異 → 例子 → 邊界」整理先前討論；校正 DPG 不只是定理、Dr. GRPO 共用長度因子的尺度意義、GSPO clipping 證據範圍，以及 resharding 零冗餘的適用範圍；四篇 HTML 已生成，索引重生且內容未變。
+    - Review 重點：作者全盤 proofread；確認四篇的拆分方式與複習深度，特別檢查 DPG 梯度的近似條件、ARPO soft 歸因、GSPO 的 clipping 解讀及 cuDNN／SGLang 的版本用語。
+
+- [x] 文章草稿：為什麼機率世界到處都是 log？
+    - 交付條件：在 `writing/` 建立繁體中文 source 與可再現 HTML；串起機率連乘、資訊量與熵、最大概似／交叉熵／KL、sigmoid 梯度與 Log Derivative Trick；drafting 不進公開索引。
+    - 已完成：完成分層推導與公式，標出獨立性、固定目標分佈及參數依賴等適用前提；已生成 HTML 並更新索引。
+    - Review 重點：作者全盤 proofread；確認敘事語氣與篇幅，特別檢查從交叉熵轉到抽樣梯度的銜接；確認後再決定是否發布。
+
+- [x] Decision Transformer 與 Upside-Down RL 兩篇強化學習筆記
+    - 交付條件：各有獨立繁體中文 source 與可再現 HTML；具備 metadata、References、reviewkit/qprompt；相互引用可解析，草稿不進公開索引。
+    - 已完成：分別梳理 DT 的 RTG／序列化／訓推流程，以及 UDRL 的回報與時間指令／回頭標記；引用原論文，保留兩者差異。
+    - Review 重點：作者全盤 proofread；檢查回報條件的例子、UDRL 與 DT 的歷史關係及篇幅深度。
+
+- [x] 七篇推薦模型架構筆記：DLRM、HSTU、ULTRA-HSTU、MTGR、MTFM、OneTrans、OneTrans-V2
+    - 交付條件：每個方法各有獨立繁體中文 source 筆記與可再現 HTML，具備 metadata、References、reviewkit/qprompt；交叉引用可解析，草稿不進公開索引。
+    - 已完成：七篇依「問題 → 資料／token → 核心機制 → 成本與邊界」撰寫；以原論文與美團官方技術文章核對關鍵敘述；重建 HTML，確認 drafting 與 canonical links。
+    - Review 重點：作者全盤 proofread；特別確認 HSTU／MTGR 的 generative 與 discriminative 目標、OneTrans 與 V2 的系統邊界、MTFM 論文與技術文章的版本差異及各篇篇幅深度。
+
 - [x] MTP 系列入口與文獻資源筆記
     - 交付條件：新增 `notes/multi-token-prediction/` 入口草稿與 29 篇方法／模型／生成式推薦資源筆記；以 canonical links 導覽，各頁提供 References 與 reviewkit/qprompt；維持 drafting，重建 HTML 與 search-index.{json,js}。
     - 已完成：入口正文、12 篇方法／9 篇模型／8 篇推薦資源筆記與文獻地圖；一手資料核對至 2026-10-06；30 份 Markdown／HTML 均成功生成；metadata／reviewkit／可見 qprompt pane 正確，入口 canonical links 全部可解析至既有 HTML，68 個不重複來源 URL；索引重生後逐位元組相同，新草稿全數排除於公開索引，`git diff --check` 通過。
@@ -412,3 +442,10 @@
    - 可一起放進候選清單的方向還包含：傳統 embedding retrieval baseline、reranker、hybrid retrieval，甚至未來若要做內容推薦，也可延伸成「retrieval first, recommendation second」的實驗框架
    - 也可一併研究 `vector database` 與相關 retrieval infrastructure，例如索引建立、ANN search、metadata filtering、hybrid search 與 reranking pipeline，避免只測模型本身而忽略整體系統設計
    - 下一步：先定義新 repo 的 scope，是偏 document retrieval benchmark、站內 related-content / recommendation prototype，還是較泛化的 retrieval lab；再決定第一批要驗證的資料集、評估指標、baseline 與技術棧
+
+## Future Plan
+
+- [ ] 學期結束後，評估將 fact verifier 發展成個人延伸專案。
+    - 方向：聚焦 evidence reasoning、信心校準與可重現的 verifier 評估；是否加入檢索／controller，等獨立 baseline 完成後再決定。
+    - 起步：另建新 repo，依自己的設計重新實作並重跑需要引用的實驗；先盤點團隊程式、資料、權重與實驗紀錄的授權和貢獻來源，再決定哪些內容能公開。
+    - 交付條件：形成獨立的問題定義、資料與程式來源清單、可重現 baseline，以及公開前的授權檢查結果。

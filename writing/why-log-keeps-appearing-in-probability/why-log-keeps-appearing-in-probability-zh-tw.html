@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>為什麼機率世界到處都是 log？從資訊量到策略梯度的共同結構</title>
+  <meta name="garden:tags" content="機率學, information theory, 機器學習, cross entropy, 強化學習">
+  <meta name="garden:summary" content="從獨立事件的機率相乘出發，理解對數如何連起資訊量、熵、最大概似、交叉熵、sigmoid 梯度與 Log Derivative Trick，以及這些應用各自不同的目的。">
+  <meta name="site:lang" content="zh-Hant">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.probability,,concept.machine_learning,,concept.reinforcement_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;}}">
+  <meta name="site:canonical_id" content="why-log-keeps-appearing-in-probability">
+  <meta name="site:last_modified_at" content="2026-10-10">
+  <meta name="site:reading_time_minutes" content="9">
+  <meta name="site:source" content="writing/why-log-keeps-appearing-in-probability/why-log-keeps-appearing-in-probability-zh-tw.md">
+  <script>
+  (() => {
+    try {
+      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+      if (theme === "light") document.documentElement.classList.add("light-theme");
+      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+      if (theme === "sky") document.documentElement.classList.add("sky-theme");
+      if (theme === "garden") document.documentElement.classList.add("garden-theme");
+      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+      if (palette === "ember") document.documentElement.classList.add("palette-ember");
+      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
+      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
+      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
+      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
+      if (palette === "sky") document.documentElement.classList.add("palette-sky");
+      if (palette === "garden") document.documentElement.classList.add("palette-garden");
+      if (palette === "grove") document.documentElement.classList.add("palette-grove");
+      if (palette === "red") document.documentElement.classList.add("palette-red");
+      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
+      if (palette === "ash") document.documentElement.classList.add("palette-ash");
+    } catch (e) {}
+  })();
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">為什麼機率世界到處都是 log？從資訊量到策略梯度的共同結構</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">第一層：事件一起發生時，機率如何組合？</a>
+<a class="note-toc-link level-1" href="#section-2">第二層：從可相加的「意外程度」到熵</a>
+<a class="note-toc-link level-1" href="#section-3">第三層：從資料機率到交叉熵</a>
+<a class="note-toc-link level-1" href="#sigmoid">第四層：sigmoid 與交叉熵為什麼算起來特別整齊？</a>
+<a class="note-toc-link level-1" href="#log-derivative-trick">第五層：Log Derivative Trick 回答的是另一個梯度問題</a>
+<a class="note-toc-link level-1" href="#log">回頭看：log 的優雅有邊界</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-10"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-10</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">學交叉熵時會看到 $\log p$，學資訊理論時會看到 $-\log p$，到了策略梯度又遇上 $\nabla\log p$。這很容易讓人產生一個直覺：當初把 log 放進機率公式的人，似乎一口氣替後面所有問題找到了捷徑。</p>
+
+<p class="mb-3">這個直覺抓到了重要的共通點，但還可以再往下一層看：<strong>機率經常透過乘法組合，而我們經常需要一個能逐項累加的量。</strong> 對數剛好把這兩種結構接起來。接下來幾個應用會沿著這個地基長出來；它們共享同一個工具，卻各自回答不同問題。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">第一層：事件一起發生時，機率如何組合？</h3>
+
+<p class="mb-3">先想像連續擲兩次公平硬幣。兩次都出現正面的機率是 $\frac12\times\frac12=\frac14$。如果連擲十次、每次都記錄結果，某一條指定序列的機率就要把十個條件機率乘起來。更一般地，序列的聯合機率可由鏈式法則寫成：</p>
+
+<p class="mb-3">$$p(x_1,\ldots,x_T)=\prod_{t=1}^{T}p(x_t\mid x_1,\ldots,x_{t-1}).$$</p>
+
+<p class="mb-3">這裡不需要假設每一步獨立；只有在獨立時，條件機率才進一步簡化為各自的 $p(x_t)$。但無論如何，<strong>整體機率是逐步相乘</strong>。當序列很長，乘積不利於閱讀、比較與求導。我們想把每一步的貢獻攤開來看，而不是始終抱著一個連乘式。</p>
+
+<p class="mb-3">對數提供了精確的轉換：</p>
+
+<p class="mb-3">$$\log(ab)=\log a+\log b,\qquad \log p(x_1,\ldots,x_T)=\sum_{t=1}^{T}\log p(x_t\mid x_{&lt;t}).$$</p>
+
+<p class="mb-3">這是後面整篇文章的地基：<strong>機率可以乘起來，對數機率可以加起來。</strong></p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">第二層：從可相加的「意外程度」到熵</h3>
+
+<p class="mb-3">如果一件事的機率越低，我們越覺得意外，那麼它的資訊量應該越高。若兩件獨立事件一起發生，我們也希望總資訊量是兩件事資訊量的和。用 $I(x)=-\log p(x)$ 表示，就同時滿足這兩個方向：</p>
+
+<p class="mb-3">$$I(x,y)=-\log[p(x)p(y)]=I(x)+I(y)\quad\text{（$x,y$ 獨立時）}.$$</p>
+
+<p class="mb-3">負號讓小於或等於 $1$ 的機率對應非負資訊量。機率 $1$ 的必然事件給出 $0$；機率越接近 $0$，資訊量越大。對數底數決定單位：底數 $2$ 對應 bit，自然對數則常用於微積分與機器學習。</p>
+
+<p class="mb-3">但資訊量描述的是<strong>一次具體結果</strong>。如果想知道整個分佈平均會帶來多少資訊，就依各結果的發生機率取平均：</p>
+
+<p class="mb-3">$$H(p)=\mathbb E_{x\sim p}[-\log p(x)] =-\sum_x p(x)\log p(x).$$</p>
+
+<p class="mb-3">這就是熵。先有「事件機率相乘、資訊量相加」這個底層需求，才自然走到單次結果的 $-\log p$，再上升到整個分佈的平均資訊量。</p>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">第三層：從資料機率到交叉熵</h3>
+
+<p class="mb-3">換一個問題：手上已經有輸入與標籤 $(x_i,y_i)$，我們希望模型 $p_\theta$ 對各筆輸入的正確答案給較高機率。最大概似估計要最大化這些觀察的聯合機率。在給定模型下，若各筆標籤在其輸入條件下相互獨立，就有：</p>
+
+<p class="mb-3">$$\max_\theta\prod_{i=1}^{N}p_\theta(y_i\mid x_i) \quad\Longleftrightarrow\quad \min_\theta-\sum_{i=1}^{N}\log p_\theta(y_i\mid x_i).$$</p>
+
+<p class="mb-3">log 是嚴格遞增的，所以取 log 不會改變最大值的位置；加上負號後，最大化變成最小化。原本的連乘也變成了逐筆可加的損失。在分類任務中，若標籤是 one-hot，單筆負對數概似 $-\log p_\theta(y\mid x)$ 正好是該筆的交叉熵。</p>
+
+<p class="mb-3">如果把真實標籤分佈記為 $q$、模型預測記為 $p_\theta$，平均交叉熵寫成：</p>
+
+<p class="mb-3">$$H(q,p_\theta)=-\sum_y q(y)\log p_\theta(y).$$</p>
+
+<p class="mb-3">這也解釋了它和 KL 散度的關係：</p>
+
+<p class="mb-3">$$D_{\mathrm{KL}}(q\|p_\theta)=H(q,p_\theta)-H(q).$$</p>
+
+<p class="mb-3">當 $q$ 固定時，$H(q)$ 不隨 $\theta$ 改變。因此，<strong>最小化交叉熵和最小化 $D_{\mathrm{KL}}(q\|p_\theta)$ 有相同的最優解</strong>。從資料訓練的路徑看，負對數概似是直接入口；從分佈比較的路徑看，同一個目標又能讀成「讓模型靠近 $q$」。這兩種說法相容，但 KL 並非每次寫下 log 損失的唯一動機。</p>
+</section>
+
+<section id="sigmoid" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">第四層：sigmoid 與交叉熵為什麼算起來特別整齊？</h3>
+
+<p class="mb-3">二元分類時，讓模型先輸出 logit $z$，再用 $p=\sigma(z)=1/(1+e^{-z})$ 轉成正類機率。標籤 $y\in\{0,1\}$ 的損失為：</p>
+
+<p class="mb-3">$$L=-y\log p-(1-y)\log(1-p).$$</p>
+
+<p class="mb-3">此時 $\frac{dp}{dz}=p(1-p)$。依連鎖律：</p>
+
+<p class="mb-3">$$\frac{dL}{dz} =\left(-\frac{y}{p}+\frac{1-y}{1-p}\right)p(1-p) =p-y.$$</p>
+
+<p class="mb-3">這個 $p-y$ 很有意思：預測機率和正確標籤的差，直接成為對 logit 的修正訊號。log 損失求導產生的分母，與 sigmoid 求導產生的因子在此抵消。</p>
+
+<p class="mb-3">這份整齊不是「任意函數搭配 log 都會自動變簡單」；它來自 <strong>Bernoulli 機率模型、sigmoid 參數化與負對數概似</strong> 彼此相配。</p>
+</section>
+
+<section id="log-derivative-trick" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">第五層：Log Derivative Trick 回答的是另一個梯度問題</h3>
+
+<p class="mb-3">前面的交叉熵，是在固定資料上評估模型預測。現在換成另一種情況：資料本身要從隨參數 $\theta$ 改變的分佈 $p_\theta$ 抽出來，例如策略與環境互動產生的軌跡。我們要最大化：</p>
+
+<p class="mb-3">$$J(\theta)=\mathbb E_{x\sim p_\theta}[f(x)].$$</p>
+
+<p class="mb-3">若 $f$ 不直接依賴 $\theta$，而且可以把求導移入求和或積分，就能使用恆等式 $\nabla_\theta p_\theta(x)=p_\theta(x)\nabla_\theta\log p_\theta(x)$：</p>
+
+<p class="mb-3">$$\nabla_\theta J =\int f(x)\nabla_\theta p_\theta(x)\,dx =\mathbb E_{x\sim p_\theta} \left[f(x)\nabla_\theta\log p_\theta(x)\right].$$</p>
+
+<p class="mb-3">關鍵不在於把原本的積分「算完」，而在於把梯度改寫成<strong>可從 $p_\theta$ 抽樣、逐筆計算後再平均</strong>的形式。對數機率的梯度在這裡常叫 score function。若 $f$ 本身也直接依賴 $\theta$，則還要加上 $\mathbb E_{p_\theta}[\nabla_\theta f_\theta(x)]$，不能只留下 score-function 那一項。</p>
+
+<p class="mb-3">放進策略梯度時，$x$ 是一整條軌跡 $\tau$，$f(x)$ 是其回報 $R(\tau)$。軌跡機率由策略與環境轉移機率逐步相乘；若環境轉移及初始狀態分佈都不依賴 $\theta$，對數微分後便留下每一步策略的對數機率梯度之和。於是可以用抽到的軌跡與回報來估計策略梯度，而不必知道環境轉移機率的數值。</p>
+
+<p class="mb-3">這裡的 log 和交叉熵裡的 log <strong>不是在做同一件事</strong>：交叉熵用它定義對預測的損失；Log Derivative Trick 用它改寫分佈的梯度。兩者之所以能相遇，是因為它們都在處理機率模型，並都從對數的代數與微分性質受益。</p>
+</section>
+
+<section id="log" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">回頭看：log 的優雅有邊界</h3>
+
+<p class="mb-3">從事件機率的連乘出發，我們依序得到了可相加的資訊量、熵、逐筆可加的負對數概似、交叉熵，以及可供抽樣估計的 score function。它們不是「一個公式套遍所有地方」，而是同一種底層結構在不同問題上的延伸：<strong>乘起來的機率，可以透過 log 拆成可理解、可累加、可微分的部分。</strong></p>
+
+<p class="mb-3">同時，每一步都帶著自己的前提。$\log p$ 需要在所討論結果上有正機率；交叉熵與 KL 的等價說法要求目標分佈固定；Log Derivative Trick 的簡式要求 $f$ 不直接依賴參數，並能合法交換求導與期望。看清這些邊界後，log 的優雅才不會被誤讀成一把無條件通用的鑰匙。</p>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

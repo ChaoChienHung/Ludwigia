@@ -34,6 +34,7 @@
 - [ ] 補完整 MTP 訓練方法筆記：還原條件資訊、loss、梯度路徑與消融，分別衡量 sample efficiency、FLOPs 與 GPU 時間。
 - [ ] 補完整多步候選與驗證筆記：比較獨立／相依 heads、聯合預測與 drafter 成本，區分 greedy／distribution／quality 保證。
 - [ ] 補完整模型工程筆記：按 backbone supervision、head-only fitting、serving、RL rollout 記錄版本與部署條件，不把整體模型收益歸因 MTP。
+- [x] 增補 Bebop 的 MTP／RL rollout 資源筆記（2026-10-11；待作者 Review）：`notes/bebop-mtp-rl-rollout/bebop-mtp-rl-rollout-zh-tw.md`。已分開記錄拒絕採樣接受率、多步 TV loss、rollout 與整體 RL 加速；後續深讀需核對成本與跨設定適用性。
 - [ ] 補完整推薦筆記：先辨認 SID 組件／同 session 多興趣／連續未來商品／排序位置，再比較訓練與解碼；固定 PinRec 歷史 v1 與 GPR 所讀版本，分列 offline／A-B／shadow／full deployment 證據。
 
 ### 1. DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation

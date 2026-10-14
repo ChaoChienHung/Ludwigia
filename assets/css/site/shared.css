@@ -3683,6 +3683,66 @@ body.modal-open {
   font-size: 1.2rem;
 }
 
+#future-plans {
+  padding-top: 44px;
+}
+
+.future-plans-intro {
+  max-width: 640px;
+  margin: 0 auto 28px;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+}
+
+.future-plan-card {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid color-mix(in srgb, var(--border-color) 75%, var(--accent) 25%);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--bg) 72%, var(--bg-alt) 28%);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.12);
+}
+
+.future-plan-status {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.future-plan-card h3 {
+  margin-bottom: 14px;
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+}
+
+.future-plan-card p {
+  margin-bottom: 0;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+}
+
+.future-plan-card .future-plan-next {
+  margin-top: 18px;
+  color: color-mix(in srgb, var(--text) 72%, transparent);
+  font-size: 0.94rem;
+}
+
+@media (max-width: 767.98px) {
+  #future-plans {
+    padding-top: 24px;
+  }
+
+  .future-plan-card {
+    border-radius: 22px;
+  }
+}
+
 .about-timeline-shell {
   position: relative;
   margin-top: clamp(36px, 6vw, 64px);
@@ -8309,4 +8369,3 @@ body.site-fab-open .site-fab-panel {
     padding: 2px 8px !important;
   }
 }
-
