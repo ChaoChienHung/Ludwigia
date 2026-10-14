@@ -59,6 +59,17 @@
     return obj[lang] || obj['zh-Hant'] || obj['en'] || '';
   }
 
+  function revealActivePill(pill) {
+    const strip = pill?.closest('.skill-category-pills');
+    if (!strip) return;
+    const stripRect = strip.getBoundingClientRect();
+    const pillRect = pill.getBoundingClientRect();
+    const delta = pillRect.left < stripRect.left
+      ? pillRect.left - stripRect.left
+      : (pillRect.right > stripRect.right ? pillRect.right - stripRect.right : 0);
+    if (delta) strip.scrollBy({ left: delta, behavior: 'smooth' });
+  }
+
   async function fetchSkillsData() {
     try {
       const res = await fetch(dataPath);
@@ -194,7 +205,7 @@
 
     const activePill = container.querySelector('.skill-category-pill.active');
     if (activePill) {
-      activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      revealActivePill(activePill);
     }
   }
 
@@ -256,13 +267,13 @@
 
     window.addEventListener('resize', () => {
       const activePill = document.querySelector('.skill-category-pill.active');
-      if (activePill) activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      revealActivePill(activePill);
     });
 
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
         const activePill = document.querySelector('.skill-category-pill.active');
-        if (activePill) activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        revealActivePill(activePill);
       }, 120);
     });
   }

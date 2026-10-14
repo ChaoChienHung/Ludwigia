@@ -22,11 +22,11 @@
       }
     },
     { "selector": "#future-plans [data-future-plans-heading]", "text": { "en": "Future Plans", "zh-Hant": "未來計畫", "zh-Hans": "未来计划" } },
-    { "selector": "#future-plans [data-future-plans-intro]", "text": { "en": "A direction I hope to explore after this semester.", "zh-Hant": "這學期結束後，我想繼續探索的一個方向。", "zh-Hans": "这学期结束后，我想继续探索的一个方向。" } },
+    { "selector": "#future-plans [data-future-plans-intro]", "text": { "en": "A direction I hope to explore in the future.", "zh-Hant": "未來想繼續探索的一個方向。", "zh-Hans": "未来想继续探索的一个方向。" } },
     { "selector": "#future-plans [data-future-plan-status]", "text": { "en": "Exploring", "zh-Hant": "構想中", "zh-Hans": "构想中" } },
     { "selector": "#future-plans [data-future-plan-title]", "text": { "en": "Fact verification as a personal project", "zh-Hant": "將事實查核發展為個人專案", "zh-Hans": "将事实核查发展为个人项目" } },
     { "selector": "#future-plans [data-future-plan-description]", "text": { "en": "I hope to develop an independent fact verifier focused on reasoning over evidence, calibrating confidence, and reproducible evaluation. I would start with a clear baseline, then decide whether retrieval or a controller would help.", "zh-Hant": "我想嘗試獨立開發一套事實查核系統，聚焦證據推理、信心校準與可重現的評估。先建立清楚的基準系統，再判斷是否需要加入檢索或控制器。", "zh-Hans": "我想尝试独立开发一套事实核查系统，聚焦证据推理、信心校准与可复现的评估。先建立清楚的基准系统，再判断是否需要加入检索或控制器。" } },
-    { "selector": "#future-plans [data-future-plan-next]", "text": { "en": "First step: define the task and build an independent baseline after the semester.", "zh-Hant": "第一步：學期結束後，定義問題並建立獨立的基準系統。", "zh-Hans": "第一步：学期结束后，定义问题并建立独立的基准系统。" } },
+    { "selector": "#future-plans [data-future-plan-next]", "text": { "en": "First step: define the task and build an independent baseline.", "zh-Hant": "第一步：定義問題並建立獨立的基準系統。", "zh-Hans": "第一步：定义问题并建立独立的基准系统。" } },
     { "selector": "#contact h2", "text": { "en": "Contact", "zh-Hant": "聯絡方式", "zh-Hans": "联系方式" } },
     { "selector": "#contact h5:nth-of-type(1)", "text": { "en": "Phone", "zh-Hant": "電話", "zh-Hans": "电话" } },
     { "selector": "#contact h5:nth-of-type(2)", "text": { "en": "Email", "zh-Hant": "電子郵件", "zh-Hans": "电子邮件" } }

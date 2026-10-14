@@ -15,7 +15,7 @@
 
 - [x] 首頁底部 Future Plans 區塊
     - 交付條件：在首頁 Timeline 之後、Contact 之前呈現 fact verifier 的個人延伸構想；三語文案與 Theme/Palette 響應式樣式可用，並清楚標示尚在構想階段。
-    - 已完成：新增 Future Plans 卡片，概述證據推理、信心校準、可重現評估及學期後的第一步；保留原 Future Plan 待辦供後續實際研究。
+    - 已完成：新增 Future Plans 卡片，概述證據推理、信心校準、可重現評估及規劃中的第一步；保留原 Future Plan 待辦供後續實際研究。
     - Review 重點：作者確認首頁公開文案與放置位置是否符合個人表達；此處不代表專案已啟動。
 
 - [x] Bebop 的 MTP／RL rollout 文獻筆記

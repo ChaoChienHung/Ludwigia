@@ -107,6 +107,17 @@
     return obj[lang] || obj['zh-Hant'] || obj['en'] || '';
   }
 
+  function revealActiveThumb(thumb) {
+    const strip = thumb?.closest('.cred-thumb-strip');
+    if (!strip) return;
+    const stripRect = strip.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+    const delta = thumbRect.left < stripRect.left
+      ? thumbRect.left - stripRect.left
+      : (thumbRect.right > stripRect.right ? thumbRect.right - stripRect.right : 0);
+    if (delta) strip.scrollBy({ left: delta, behavior: 'smooth' });
+  }
+
   function ensureModalExists(txt) {
     let modalEl = document.getElementById('credentialModal');
     if (!modalEl) {
@@ -437,7 +448,7 @@
       const bId = btn.getAttribute('data-cred-item-id');
       if (bId === itemId) {
         btn.classList.add('active');
-        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        revealActiveThumb(btn);
       } else {
         btn.classList.remove('active');
       }
@@ -641,13 +652,13 @@
 
     window.addEventListener('resize', () => {
       const activeThumb = document.querySelector('.credential-thumb-item.active');
-      if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      revealActiveThumb(activeThumb);
     });
 
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
         const activeThumb = document.querySelector('.credential-thumb-item.active');
-        if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        revealActiveThumb(activeThumb);
       }, 120);
     });
   }
