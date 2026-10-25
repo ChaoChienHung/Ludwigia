@@ -601,20 +601,20 @@
       }
     },
     {
-      "id": "antigravity",
+      "id": "ludwigia",
       "name": "Ludwigia",
-      "gender": "ai",
-      "role": "Garden AI",
-      "avatar": "⚡",
+      "gender": "female",
+      "role": "數位花園守護者 / Core Agent",
+      "avatar": "🌺",
       "zone": "ai_studio",
-      "spawn": { "x": 24.5, "y": 3.0 },
-      "nameColor": "#22d3ee",
+      "spawn": { "x": 23.8, "y": 6.8 },
+      "nameColor": "#ec4899",
       "appearance": {
-        "skin": "#c7d2fe",
-        "hair": "#1e1b4b",
-        "shirt": "#06b6d4",
-        "pants": "#0f172a",
-        "hairStyle": 0
+        "skin": "#fdf2f8",
+        "hair": "#be185d",
+        "shirt": "#ec4899",
+        "pants": "#1e1b4b",
+        "hairStyle": 1
       },
       "dialogues": {
         "zh-TW": [
@@ -729,7 +729,7 @@
       "role": "Reasoning AI",
       "avatar": "🧡",
       "zone": "ai_studio",
-      "spawn": { "x": 21.5, "y": 6.5 },
+      "spawn": { "x": 24.8, "y": 3.8 },
       "nameColor": "#fb923c",
       "appearance": {
         "skin": "#ffedd5",
@@ -790,7 +790,7 @@
       "role": "Conversational AI",
       "avatar": "🟢",
       "zone": "ai_studio",
-      "spawn": { "x": 25.0, "y": 6.5 },
+      "spawn": { "x": 20.2, "y": 6.8 },
       "nameColor": "#4ade80",
       "appearance": {
         "skin": "#dcfce7",
