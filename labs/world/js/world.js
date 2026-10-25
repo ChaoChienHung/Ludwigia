@@ -507,8 +507,8 @@
               c.state = 'idle';
               c.isWalking = false;
               c.walkTimer = 0;
-              // Natural short rest between wanderings (1.2 to 3.2 seconds)
-              c.timer = 1.2 + Math.random() * 2.0;
+              // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
+              c.timer = 2.5 + Math.random() * 3.5;
             }
           } else {
             c.x += (dx / dist) * step;
@@ -539,68 +539,119 @@
 
             while (!valid && attempts < 16) {
               attempts++;
+
+              // Shared Multi-Zone Ecological Anchors
+              const plazaAnchors = [
+                { x: 12.0, y: 14.5 }, // Fountain West Promenade
+                { x: 17.0, y: 14.5 }, // Fountain East Promenade
+                { x: 14.5, y: 11.8 }, // Fountain North Promenade
+                { x: 14.5, y: 16.5 }, // Fountain South Promenade
+                { x: 13.0, y: 12.5 }, // Fountain NW Edge
+                { x: 16.0, y: 12.5 }, // Fountain NE Edge
+                { x: 13.0, y: 16.5 }, // Fountain SW Edge
+                { x: 16.0, y: 16.5 }, // Fountain SE Edge
+                { x: 14.5, y: 10.4 }, // North Cherry Bench Walkway
+                { x: 14.5, y: 18.5 }, // South Cherry Bench Walkway
+                { x: 21.2, y: 14.5 }, // East Courtyard Promenade
+                { x: 6.8, y: 13.5 },  // West Terrace Walkway
+                { x: 14.5, y: 5.8 },  // North Walkway between House & AI Studio
+                { x: 14.5, y: 21.6 }, // South Walkway between Dorm & Library
+                { x: 11.2, y: 14.5 }, // Central West Path Intersection
+                { x: 17.8, y: 14.5 }  // Central East Path Intersection
+              ];
+
+              const libraryAnchors = [
+                { x: 19.6, y: 20.8 }, // Banker Desk Left Chair
+                { x: 21.3, y: 19.5 }, // Banker Desk Center Seat
+                { x: 23.2, y: 20.8 }, // Banker Desk Right Chair
+                { x: 19.2, y: 18.2 }, // Book Wall West Ladder
+                { x: 21.5, y: 18.8 }, // Book Wall Center Aisle
+                { x: 25.5, y: 18.2 }, // Book Wall East Section
+                { x: 19.2, y: 19.2 }, // West Archival Bookshelf
+                { x: 23.2, y: 23.0 }, // Wingback Armchair Lounge
+                { x: 24.5, y: 21.5 }, // Reading Nook Rug Side
+                { x: 24.2, y: 20.2 }, // Terrarium Display
+                { x: 21.5, y: 23.5 }, // Celestial Globe Aisle
+                { x: 22.0, y: 24.5 }, // Antique Rug Center
+                { x: 24.6, y: 24.2 }, // Rare Book Vitrine
+                { x: 19.2, y: 21.6 }  // Library Entrance Threshold
+              ];
+
+              const aiStudioAnchors = [
+                { x: 21.2, y: 2.8 }, // Server Cabinets Aisle
+                { x: 24.0, y: 3.2 }, // AI Command Desk Chair
+                { x: 25.4, y: 5.0 }, // Glass Whiteboard
+                { x: 21.5, y: 7.2 }, // Espresso Bar Stool
+                { x: 22.5, y: 5.2 }, // Studio Center Lounge
+                { x: 18.8, y: 5.6 }  // AI Studio Threshold
+              ];
+
+              const dormAnchors = [
+                { x: 2.5, y: 19.8 }, // Bed 1 Happy Wang
+                { x: 2.5, y: 23.6 }, // Bed 2 Kerry Chang
+                { x: 7.0, y: 19.8 }, // Bed 3 Clark Wu
+                { x: 7.0, y: 23.6 }, // Bed 4 Jerry Chung
+                { x: 2.8, y: 21.6 }, // Common Lounge Sofa & Guitar
+                { x: 4.8, y: 19.8 }, // North Aisle
+                { x: 4.8, y: 23.6 }, // South Aisle
+                { x: 8.5, y: 21.6 }  // Dorm Doorway Threshold
+              ];
+
               if (c.zone === 'house') {
                 targetX = 1.5 + Math.random() * 7.0;
                 targetY = 1.5 + Math.random() * 7.0;
-              } else if (c.zone === 'dorm_211') {
-                // Men's Dorm 11 Room 211 crew wandering ecosystem:
-                // Happy Wang, Kerry Chang, Clark Wu, Jerry Chung, Billy Fang
-                // They hang out inside 211 (desks, loft beds, classic sofa lounge, aisle)
-                // AND stroll outside 211 (stone porch, garden walkway, cherry tree grove, fountain approach)!
-                const isInside = c.x < 9.6;
-                // If currently inside, 45% chance to venture outside; if outside, 50% chance to head back in
-                const targetOutside = isInside ? (Math.random() < 0.45) : (Math.random() < 0.52);
-
-                if (targetOutside) {
-                  // Outdoor area around 211:
-                  const outdoorAnchors = [
-                    { x: 11.0, y: 21.6 }, // Outdoor porch / doorway threshold
-                    { x: 12.2, y: 21.6 }, // Walkway intersection outside 211
-                    { x: 12.0, y: 18.8 }, // Near north cherry tree & park bench
-                    { x: 12.0, y: 24.2 }, // Southwest lawn walkway
-                    { x: 13.6, y: 20.2 }, // Approach to central fountain promenade
-                    { x: 13.6, y: 22.8 }  // South garden promenade
-                  ];
-
-                  if (Math.random() < 0.5) {
-                    const spot = outdoorAnchors[Math.floor(Math.random() * outdoorAnchors.length)];
-                    targetX = spot.x + (Math.random() - 0.5) * 0.8;
-                    targetY = spot.y + (Math.random() - 0.5) * 0.8;
-                  } else {
-                    targetX = 10.6 + Math.random() * 3.6;
-                    targetY = 18.2 + Math.random() * 6.3;
-                  }
-                } else {
-                  // Indoor Dorm 211:
-                  const indoorAnchors = [
-                    { x: 2.5, y: 19.8 }, // Bed 1 (Happy Wang)
-                    { x: 2.5, y: 23.6 }, // Bed 2 (Kerry Chang)
-                    { x: 7.0, y: 19.8 }, // Bed 3 (Clark Wu)
-                    { x: 7.0, y: 23.6 }, // Bed 4 (Jerry Chung)
-                    { x: 2.8, y: 21.6 }, // Common Lounge (Billy Fang & Guitar)
-                    { x: 4.8, y: 19.8 }, // North aisle
-                    { x: 4.8, y: 23.6 }, // South aisle
-                    { x: 8.5, y: 21.6 }  // Inside doorway threshold
-                  ];
-
-                  if (Math.random() < 0.5) {
-                    const spot = indoorAnchors[Math.floor(Math.random() * indoorAnchors.length)];
-                    targetX = spot.x + (Math.random() - 0.5) * 0.6;
-                    targetY = spot.y + (Math.random() - 0.5) * 0.6;
-                  } else {
-                    targetX = 2.2 + Math.random() * 6.4;
-                    targetY = 18.5 + Math.random() * 6.5;
-                  }
-                }
               } else if (c.zone === 'ai_studio') {
-                targetX = 19.5 + Math.random() * 6.5;
-                targetY = 2.0 + Math.random() * 6.5;
+                // AI Studio Agents (Ludwigia, Gemini, Claude, ChatGPT):
+                // Roam inside AI Studio, stroll across Garden Social Plaza, or visit Grand Library!
+                const roll = Math.random();
+                let chosenPool;
+                if (roll < 0.35) {
+                  chosenPool = aiStudioAnchors;
+                } else if (roll < 0.70) {
+                  chosenPool = plazaAnchors;
+                } else {
+                  chosenPool = libraryAnchors;
+                }
+                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+                targetX = spot.x + (Math.random() - 0.5) * 0.5;
+                targetY = spot.y + (Math.random() - 0.5) * 0.5;
               } else if (c.zone === 'library') {
-                targetX = 19.8 + Math.random() * 6.5;
-                targetY = 18.5 + Math.random() * 6.5;
+                // Grand Library Scholars (Haolei Pei, Bo Han Wu):
+                // Explore Library study desks/stacks or take a refreshing stroll in Garden Social Plaza!
+                const roll = Math.random();
+                let chosenPool;
+                if (roll < 0.45) {
+                  chosenPool = libraryAnchors;
+                } else if (roll < 0.85) {
+                  chosenPool = plazaAnchors;
+                } else {
+                  chosenPool = aiStudioAnchors;
+                }
+                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+                targetX = spot.x + (Math.random() - 0.5) * 0.5;
+                targetY = spot.y + (Math.random() - 0.5) * 0.5;
+              } else if (c.zone === 'dorm_211') {
+                // Men's Dorm 211 crew (Happy, Kerry, Clark, Jerry, Billy):
+                // Hang out in dorm, chill around Garden Social Plaza, or head over to study in Grand Library!
+                const roll = Math.random();
+                let chosenPool;
+                if (roll < 0.35) {
+                  chosenPool = dormAnchors;
+                } else if (roll < 0.70) {
+                  chosenPool = plazaAnchors;
+                } else {
+                  chosenPool = libraryAnchors;
+                }
+                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+                targetX = spot.x + (Math.random() - 0.5) * 0.5;
+                targetY = spot.y + (Math.random() - 0.5) * 0.5;
               } else {
-                targetX = 11.5 + Math.random() * 6.0;
-                targetY = 9.0 + Math.random() * 11.0;
+                // General Plaza roaming
+                const roll = Math.random();
+                const chosenPool = roll < 0.6 ? plazaAnchors : libraryAnchors;
+                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+                targetX = spot.x + (Math.random() - 0.5) * 0.5;
+                targetY = spot.y + (Math.random() - 0.5) * 0.5;
               }
 
               if (this.nav.isWalkable(targetX, targetY)) {
