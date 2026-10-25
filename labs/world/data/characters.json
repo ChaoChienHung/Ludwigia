@@ -517,56 +517,18 @@
       "dialogues": {
         "zh-TW": [
           [
-            "最少我不是最送的！"
+            "最少我不是最送的"
           ],
           [
             "阿明都不洗澡... 超噁..."
-          ],
-          [
-            "喲！歡迎光臨 211！",
-            "你看我桌上這兩台電競螢幕，一邊開著 3D 即時光影渲染一邊調神經網絡，宿舍這冷氣吹著太舒服了！",
-            "待會打完這場 Code Review，我們一起去中庭噴水池散步透透氣！"
-          ],
-          [
-            "嘿！兄弟！你注意到底下這張人體工學椅了嗎？熬夜寫代碼腰靠最重要了！",
-            "211 寢室的設備都是我們精心配置的，效率直接拉滿！"
-          ],
-          [
-            "我正在跑 GPU 叢集的吞吐量測試，宿舍的百兆光纖速度還真給力！",
-            "有需要幫忙跑大型模型推理隨時找我，算力管夠！"
-          ],
-          [
-            "Happy 和 Billy 剛剛又在討論今晚要開黑玩什麼，寢室生活就是這麼多采多姿！"
-          ],
-          [
-            "歡迎隨時來串門子！想試試我這組客製化機械鍵盤的手感嗎？青軸手感超清脆！"
           ]
         ],
         "en": [
           [
-            "At least I am not the one feeding the most!"
+            "At least I am not the one feeding the most"
           ],
           [
             "A-Ming literally never takes a shower... so gross..."
-          ],
-          [
-            "Yo! Welcome to 211!",
-            "Check out my dual display rig—real-time 3D rendering on one screen, neural net training on the other, AC running crisp!",
-            "After this code review, let's take a stroll around the fountain plaza!"
-          ],
-          [
-            "Hey bro! That ergonomic lumbar chair is a lifesaver for late-night coding sessions!",
-            "We built out 211 for peak developer productivity and comfort."
-          ],
-          [
-            "Benchmarking GPU cluster throughput right now; dorm gigabit fiber is super solid!",
-            "Need help running heavy inference jobs? Just holler!"
-          ],
-          [
-            "Happy and Billy are already debating which game to co-op tonight—dorm life at its finest!"
-          ],
-          [
-            "Drop by anytime! Want to try out this custom mechanical keyboard? The tactile switches feel crisp!"
           ]
         ]
       },

@@ -328,7 +328,7 @@
       } else if (player.x >= 17.5 && player.x <= 27.5 && player.y >= 16.5 && player.y <= 26.5) {
         currentZone = 'library';
         isInsideAnyHouse = true;
-        statusMessage = "Grand Library • 知識藏書閣與典雅閱覽室";
+        statusMessage = "Central Library • 知識藏書閣與典雅閱覽室";
       }
 
       this.currentZone = currentZone;
@@ -864,13 +864,13 @@
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
           this.ctx.fillStyle = '#1e293b';
-          this.ctx.fillRect(-32, -8, 64, 16);
+          this.ctx.fillRect(-39, -8.5, 78, 17);
           this.ctx.strokeStyle = '#94a3b8';
           this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-32, -8, 64, 16);
+          this.ctx.strokeRect(-39, -8.5, 78, 17);
           this.ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
           this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-30, -6, 60, 12);
+          this.ctx.strokeRect(-37, -6.5, 74, 13);
           this.ctx.fillStyle = '#f8fafc';
           this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           this.ctx.textAlign = 'center';
@@ -1431,18 +1431,18 @@
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
           this.ctx.fillStyle = '#451a03';
-          this.ctx.fillRect(-28, -8, 56, 16);
+          this.ctx.fillRect(-41, -8.5, 82, 17);
           this.ctx.strokeStyle = '#d97706';
           this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-28, -8, 56, 16);
+          this.ctx.strokeRect(-41, -8.5, 82, 17);
           this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
           this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-26, -6, 52, 12);
+          this.ctx.strokeRect(-39, -6.5, 78, 13);
           this.ctx.fillStyle = '#fbbf24';
           this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('GRAND LIBRARY', 0, 0);
+          this.ctx.fillText('CENTRAL LIBRARY', 0, 0);
           this.ctx.restore();
           this.ctx.restore();
         }
