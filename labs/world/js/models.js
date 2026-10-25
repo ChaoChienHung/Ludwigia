@@ -9,7 +9,9 @@
     isoToScreen,
     HOUSE_MAX_X, HOUSE_MAX_Y,
     DORM_MIN_X, DORM_MAX_X, DORM_MIN_Y, DORM_MAX_Y,
-    AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y
+    AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y,
+    SCHOOL_MIN_X, SCHOOL_MAX_X, SCHOOL_MIN_Y, SCHOOL_MAX_Y,
+    DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y
   } = window.LudwigWorldEngine;
 
   class WorldModels {
@@ -1940,6 +1942,417 @@
       ctx.arc(tPos.x, tPos.y - 1.5, 2.2, 0, Math.PI * 2);
       ctx.arc(tPos.x + 4, tPos.y - 2, 1.8, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    // ========================================================================
+    // 5. ZONE 5: SANMIN HIGH SCHOOL CLASSROOM MODELS (SW2)
+    // ========================================================================
+
+    // --- Classic Taiwanese Classroom Blackboard & Clock (x: gx, y: gy) ---
+    drawSchoolBlackboard(ctx, gx, gy, ox, oy, width = 4.2) {
+      const H = 0.95;
+      const elev = 0.85;
+
+      // Wooden Frame
+      this.drawBox(ctx, gx, gy, elev - 0.05, 0.12, width, H + 0.10, '#854d0e', '#713f12', '#713f12', ox, oy);
+
+      // Deep Matte Green Slate Blackboard Surface
+      this.drawBox(ctx, gx + 0.02, gy + 0.10, elev, 0.08, width - 0.20, H, '#1b3b2b', '#12261c', '#12261c', ox, oy);
+
+      // Chalk Tray at Bottom
+      this.drawBox(ctx, gx, gy, elev - 0.08, 0.22, width, 0.06, '#a16207', '#78350f', '#78350f', ox, oy);
+
+      // Felt Eraser and Colored Chalk Sticks
+      const pEraser = isoToScreen(gx + 0.10, gy + 0.6, elev - 0.02, ox, oy);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(pEraser.x - 4, pEraser.y - 2, 8, 4);
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(pEraser.x - 4, pEraser.y + 2, 8, 2);
+
+      const pChalk1 = isoToScreen(gx + 0.10, gy + 1.2, elev - 0.02, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(pChalk1.x - 2, pChalk1.y - 1, 6, 2);
+
+      const pChalk2 = isoToScreen(gx + 0.10, gy + 1.4, elev - 0.02, ox, oy);
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(pChalk2.x - 2, pChalk2.y - 1, 6, 2);
+
+      // Handwritten Chalk Equations and Curves on Blackboard
+      const bp1 = isoToScreen(gx + 0.06, gy + 1.0, elev + 0.55, ox, oy);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      // Parabolic curve & axis
+      ctx.moveTo(bp1.x - 12, bp1.y + 10);
+      ctx.quadraticCurveTo(bp1.x, bp1.y - 8, bp1.x + 14, bp1.y + 12);
+      ctx.stroke();
+
+      // Math equation text simulation: f(x) = x^2 - 4x + 3
+      const bp2 = isoToScreen(gx + 0.06, gy + 2.2, elev + 0.60, ox, oy);
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.90)';
+      ctx.font = 'bold 9px monospace';
+      ctx.fillText('f(x)=ax²+bx+c', bp2.x - 16, bp2.y);
+
+      const bp3 = isoToScreen(gx + 0.06, gy + 2.2, elev + 0.32, ox, oy);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.font = '8px monospace';
+      ctx.fillText('lim Δx→0 (Δy/Δx)', bp3.x - 16, bp3.y);
+
+      // Wall-Mounted Round Classroom Clock above the Blackboard
+      const cp = isoToScreen(gx + 0.06, gy + width / 2, elev + H + 0.35, ox, oy);
+      ctx.fillStyle = '#f8fafc';
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(cp.x, cp.y, 8.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Clock hands pointing to 10:10
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cp.x, cp.y); ctx.lineTo(cp.x - 3.5, cp.y - 4);
+      ctx.moveTo(cp.x, cp.y); ctx.lineTo(cp.x + 4, cp.y - 3);
+      ctx.stroke();
+    }
+
+    // --- Teacher Lecture Podium (x: gx, y: gy) ---
+    drawTeacherPodium(ctx, gx, gy, ox, oy) {
+      const W = 0.95;
+      const D = 0.75;
+      const H = 0.95;
+
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Wooden Podium Body
+      this.drawBox(ctx, gx, gy, 0, W, D, H, '#a16207', '#78350f', '#854d0e', ox, oy);
+
+      // Top Angled Surface Rim
+      this.drawBox(ctx, gx, gy, H, W, D, 0.06, '#ca8a04', '#92400e', '#a16207', ox, oy);
+
+      // Teacher Textbook & Red Grading Pen
+      const topP = isoToScreen(gx + 0.45, gy + 0.35, H + 0.07, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(topP.x - 3, topP.y, 6, 4, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#dc2626'; // Red pen
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(topP.x + 4, topP.y - 2); ctx.lineTo(topP.x + 9, topP.y + 3);
+      ctx.stroke();
+
+      // Small Gooseneck Microphone
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(topP.x - 8, topP.y + 4);
+      ctx.quadraticCurveTo(topP.x - 10, topP.y - 8, topP.x - 6, topP.y - 12);
+      ctx.stroke();
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(topP.x - 6, topP.y - 12, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- Taiwanese High School Student Desk & Chair Combo ---
+    drawStudentDesk(ctx, gx, gy, options = {}, ox, oy) {
+      const W = 1.05;
+      const D = 0.75;
+      const deskH = 0.65;
+      const backpackCol = options.backpackColor || '#0284c7';
+
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // 4 Metal Tubular Legs
+      const legR = '#1e293b';
+      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, gx + W - 0.13, gy + 0.05, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + D - 0.13, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, gx + W - 0.13, gy + D - 0.13, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
+
+      // Metal Lower Book Shelf
+      this.drawBox(ctx, gx + 0.06, gy + 0.06, deskH - 0.18, W - 0.12, D - 0.12, 0.04, '#475569', '#334155', '#334155', ox, oy);
+      // Stored textbooks in shelf
+      this.drawBox(ctx, gx + 0.15, gy + 0.15, deskH - 0.14, 0.65, 0.45, 0.08, '#38bdf8', '#0284c7', '#0369a1', ox, oy);
+
+      // Warm Honey-Toned Wooden Desktop
+      this.drawBox(ctx, gx, gy, deskH, W, D, 0.06, '#d97706', '#b45309', '#92400e', ox, oy);
+
+      // Pen Groove and Supplies on Desktop
+      const dP = isoToScreen(gx + 0.35, gy + 0.20, deskH + 0.06, ox, oy);
+      // Open Workbook
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(dP.x + 6, dP.y + 2, 7, 5, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      // Blue & Red Pens
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(dP.x - 8, dP.y - 3); ctx.lineTo(dP.x - 2, dP.y - 1);
+      ctx.stroke();
+
+      // School Backpack hanging on the side hook
+      const bpPos = isoToScreen(gx + W + 0.04, gy + 0.35, deskH - 0.15, ox, oy);
+      ctx.fillStyle = backpackCol;
+      ctx.beginPath();
+      ctx.ellipse(bpPos.x, bpPos.y, 4.5, 7, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Student Chair (tucked neatly into the back of the desk)
+      const cGx = gx + 0.20;
+      const cGy = gy + D + 0.15;
+      const cW = 0.65;
+      const cD = 0.55;
+      const seatH = 0.38;
+
+      this.drawDropShadow(ctx, cGx, cGy, cW, cD, ox, oy);
+      // 4 Chair Legs
+      this.drawBox(ctx, cGx + 0.04, cGy + 0.04, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, cGx + cW - 0.10, cGy + 0.04, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, cGx + 0.04, cGy + cD - 0.10, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, cGx + cW - 0.10, cGy + cD - 0.10, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
+
+      // Wooden Curved Chair Seat
+      this.drawBox(ctx, cGx, cGy, seatH, cW, cD, 0.04, '#b45309', '#92400e', '#78350f', ox, oy);
+
+      // Chair Backrest Uprights and Curved Wooden Slat
+      this.drawBox(ctx, cGx + 0.05, cGy + cD - 0.08, seatH, 0.05, 0.05, 0.32, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, cGx + cW - 0.10, cGy + cD - 0.08, seatH, 0.05, 0.05, 0.32, legR, legR, legR, ox, oy);
+      this.drawBox(ctx, cGx, cGy + cD - 0.08, seatH + 0.25, cW, 0.06, 0.08, '#b45309', '#92400e', '#78350f', ox, oy);
+    }
+
+    // --- Classroom Cork Bulletin Board on Back Wall ---
+    drawClassroomBulletinBoard(ctx, gx, gy, ox, oy, width = 3.2) {
+      const H = 0.85;
+      const elev = 0.90;
+
+      // Dark Wood Frame
+      this.drawBox(ctx, gx, gy, elev - 0.04, width, 0.12, H + 0.08, '#78350f', '#5c2b16', '#5c2b16', ox, oy);
+      // Cork Surface
+      this.drawBox(ctx, gx + 0.08, gy + 0.02, elev, width - 0.16, 0.08, H, '#d97706', '#b45309', '#b45309', ox, oy);
+
+      // Pinned colorful paper notices (Schedule, announcements)
+      const b1 = isoToScreen(gx + 0.6, gy + 0.06, elev + 0.45, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(b1.x - 7, b1.y - 9, 14, 18);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(b1.x - 5, b1.y - 7, 10, 3);
+
+      const b2 = isoToScreen(gx + 1.6, gy + 0.06, elev + 0.40, ox, oy);
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(b2.x - 8, b2.y - 10, 16, 20);
+      ctx.fillStyle = '#f97316';
+      ctx.fillRect(b2.x - 6, b2.y - 8, 12, 3);
+
+      const b3 = isoToScreen(gx + 2.5, gy + 0.06, elev + 0.45, ox, oy);
+      ctx.fillStyle = '#86efac';
+      ctx.fillRect(b3.x - 6, b3.y - 8, 12, 16);
+    }
+
+    // --- Classroom Storage Cubbies / Locker Shelves ---
+    drawClassroomLockers(ctx, gx, gy, ox, oy, width = 2.4) {
+      const H = 1.15;
+      this.drawDropShadow(ctx, gx, gy, width, 0.65, ox, oy);
+
+      // Cabinet Casing
+      this.drawBox(ctx, gx, gy, 0, width, 0.65, H, '#a16207', '#78350f', '#854d0e', ox, oy);
+
+      // Cubby dividers
+      this.drawBox(ctx, gx + width / 2 - 0.02, gy + 0.05, 0.05, 0.04, 0.55, H - 0.1, '#78350f', '#5c2b16', '#5c2b16', ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + 0.05, H / 2, width - 0.1, 0.55, 0.04, '#78350f', '#5c2b16', '#5c2b16', ox, oy);
+    }
+
+    // ========================================================================
+    // 6. ZONE 6: DOUYIN / TIKTOK TECH OFFICE EQUIPMENT (SE2)
+    // ========================================================================
+
+    // --- Modern Dual-Monitor Engineering Workstation & Ergonomic Chair ---
+    drawOfficeWorkstation(ctx, gx, gy, options = {}, ox, oy) {
+      const W = 1.80;
+      const D = 0.95;
+      const deskH = 0.68;
+      const isStanding = options.isStanding || false;
+      const actualH = isStanding ? 0.95 : deskH;
+
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Matte Black Motorized Frame Legs
+      const legCol = '#0f172a';
+      this.drawBox(ctx, gx + 0.10, gy + 0.10, 0, 0.10, D - 0.20, actualH, legCol, legCol, legCol, ox, oy);
+      this.drawBox(ctx, gx + W - 0.20, gy + 0.10, 0, 0.10, D - 0.20, actualH, legCol, legCol, legCol, ox, oy);
+
+      // Premium Chamfered Slate/Carbon Desktop
+      this.drawBox(ctx, gx, gy, actualH, W, D, 0.06, '#1e293b', '#0f172a', '#0f172a', ox, oy);
+
+      // Oversized Felt Desk Mat
+      this.drawBox(ctx, gx + 0.20, gy + 0.15, actualH + 0.06, W - 0.40, D - 0.25, 0.015, '#334155', '#1e293b', '#1e293b', ox, oy);
+
+      // Dual Ultrawide Displays on Articulating Arms
+      // Monitor 1: Code Editor with Syntax Highlighting
+      const m1_X = gx + 0.25;
+      const m1_Y = gy + 0.12;
+      this.drawBox(ctx, m1_X + 0.35, m1_Y, actualH + 0.06, 0.08, 0.08, 0.35, legCol, legCol, legCol, ox, oy);
+      this.drawBox(ctx, m1_X, m1_Y, actualH + 0.35, 0.75, 0.08, 0.48, '#0f172a', '#020617', '#020617', ox, oy);
+      // Glowing IDE Display Face
+      const s1 = isoToScreen(m1_X + 0.02, m1_Y + 0.08, actualH + 0.38, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(s1.x, s1.y - 18, 22, 14);
+      // Colorful code lines
+      ctx.fillStyle = '#38bdf8'; ctx.fillRect(s1.x + 2, s1.y - 16, 8, 1.5);
+      ctx.fillStyle = '#4ade80'; ctx.fillRect(s1.x + 2, s1.y - 13, 14, 1.5);
+      ctx.fillStyle = '#f43f5e'; ctx.fillRect(s1.x + 4, s1.y - 10, 10, 1.5);
+      ctx.fillStyle = '#fbbf24'; ctx.fillRect(s1.x + 2, s1.y - 7, 16, 1.5);
+
+      // Monitor 2: Live Douyin Algorithm Telemetry with Cyan & Magenta Glow!
+      const m2_X = gx + 0.95;
+      const m2_Y = gy + 0.12;
+      this.drawBox(ctx, m2_X + 0.35, m2_Y, actualH + 0.06, 0.08, 0.08, 0.35, legCol, legCol, legCol, ox, oy);
+      this.drawBox(ctx, m2_X, m2_Y, actualH + 0.35, 0.75, 0.08, 0.48, '#0f172a', '#020617', '#020617', ox, oy);
+      const s2 = isoToScreen(m2_X + 0.02, m2_Y + 0.08, actualH + 0.38, ox, oy);
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(s2.x, s2.y - 18, 22, 14);
+      // Neon Algorithm Curves (Cyan & Magenta TikTok theme)
+      ctx.strokeStyle = '#25f4ee';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(s2.x + 2, s2.y - 8); ctx.lineTo(s2.x + 8, s2.y - 14); ctx.lineTo(s2.x + 14, s2.y - 9); ctx.lineTo(s2.x + 20, s2.y - 15);
+      ctx.stroke();
+      ctx.strokeStyle = '#fe2c55';
+      ctx.beginPath();
+      ctx.moveTo(s2.x + 2, s2.y - 6); ctx.lineTo(s2.x + 9, s2.y - 10); ctx.lineTo(s2.x + 15, s2.y - 6); ctx.lineTo(s2.x + 20, s2.y - 12);
+      ctx.stroke();
+
+      // Mechanical RGB Keyboard & Ergonomic Mouse
+      const kbP = isoToScreen(gx + 0.65, gy + 0.50, actualH + 0.08, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(kbP.x - 8, kbP.y - 3, 16, 6);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(kbP.x - 7, kbP.y - 2, 14, 1);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.ellipse(kbP.x + 12, kbP.y, 2.5, 4, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Open MacBook Pro on Laptop Stand (Right side)
+      const mbP = isoToScreen(gx + 1.45, gy + 0.45, actualH + 0.08, ox, oy);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.ellipse(mbP.x, mbP.y, 7, 5, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(mbP.x - 5, mbP.y - 12, 10, 8);
+
+      // Ceramic Coffee Mug
+      const mugP = isoToScreen(gx + 0.35, gy + 0.55, actualH + 0.08, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(mugP.x, mugP.y, 3, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ergonomic Mesh Chair (Aeron Style)
+      if (!isStanding) {
+        const chX = gx + 0.55;
+        const chY = gy + D + 0.20;
+        this.drawDropShadow(ctx, chX, chY, 0.70, 0.70, ox, oy);
+
+        // 5-Star Caster Base
+        const cP = isoToScreen(chX + 0.35, chY + 0.35, 0, ox, oy);
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(cP.x, cP.y, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pneumatic Lift Cylinder
+        this.drawBox(ctx, chX + 0.30, chY + 0.30, 0, 0.10, 0.10, 0.40, '#475569', '#334155', '#334155', ox, oy);
+
+        // Breathable Mesh Seat & Lumbar Back
+        this.drawBox(ctx, chX + 0.10, chY + 0.10, 0.40, 0.50, 0.50, 0.06, '#1e293b', '#0f172a', '#0f172a', ox, oy);
+        this.drawBox(ctx, chX + 0.12, chY + 0.45, 0.46, 0.46, 0.08, 0.42, '#1e293b', '#0f172a', '#0f172a', ox, oy);
+        // Headrest
+        this.drawBox(ctx, chX + 0.22, chY + 0.48, 0.90, 0.26, 0.06, 0.12, '#334155', '#1e293b', '#1e293b', ox, oy);
+      }
+    }
+
+    // --- Glass Conference Meeting Table (x: gx, y: gy) ---
+    drawOfficeMeetingTable(ctx, gx, gy, ox, oy) {
+      const W = 2.40;
+      const D = 1.40;
+      const H = 0.68;
+
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Brushed Steel Frame & Legs
+      const legC = '#475569';
+      this.drawBox(ctx, gx + 0.15, gy + 0.15, 0, 0.10, 0.10, H, legC, legC, legC, ox, oy);
+      this.drawBox(ctx, gx + W - 0.25, gy + 0.15, 0, 0.10, 0.10, H, legC, legC, legC, ox, oy);
+      this.drawBox(ctx, gx + 0.15, gy + D - 0.25, 0, 0.10, 0.10, H, legC, legC, legC, ox, oy);
+      this.drawBox(ctx, gx + W - 0.25, gy + D - 0.25, 0, 0.10, 0.10, H, legC, legC, legC, ox, oy);
+
+      // Smoked Glass Table Surface with Cyan Sheen
+      this.drawBox(ctx, gx, gy, H, W, D, 0.06, 'rgba(30, 41, 59, 0.90)', '#0f172a', '#0f172a', ox, oy);
+
+      // Center Aluminum Cable Box & Power Ports
+      this.drawBox(ctx, gx + W / 2 - 0.40, gy + D / 2 - 0.12, H + 0.06, 0.80, 0.24, 0.02, '#94a3b8', '#64748b', '#64748b', ox, oy);
+
+      // Two Slim Laptops Open on Table
+      const lp1 = isoToScreen(gx + 0.65, gy + 0.70, H + 0.07, ox, oy);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(lp1.x - 7, lp1.y - 4, 14, 8);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(lp1.x - 6, lp1.y - 12, 12, 8);
+
+      const lp2 = isoToScreen(gx + 1.75, gy + 0.70, H + 0.07, ox, oy);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(lp2.x - 7, lp2.y - 4, 14, 8);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(lp2.x - 6, lp2.y - 12, 12, 8);
+    }
+
+    // --- Developer Compute Tower & High-Throughput Rig ---
+    drawOfficeServerStation(ctx, gx, gy, ox, oy) {
+      const W = 0.90;
+      const D = 0.90;
+      const H = 1.70;
+
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Matte Black Chassis
+      this.drawBox(ctx, gx, gy, 0, W, D, H, '#0f172a', '#020617', '#020617', ox, oy);
+
+      // Acrylic Door with Pulsing TikTok-Themed LEDs
+      const time = performance.now() * 0.004;
+      const sf0 = isoToScreen(gx + W, gy, 0.05, ox, oy);
+      const sf1 = isoToScreen(gx + W, gy + D, 0.05, ox, oy);
+      const sf2 = isoToScreen(gx + W, gy + D, H - 0.05, ox, oy);
+      const sf3 = isoToScreen(gx + W, gy, H - 0.05, ox, oy);
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+      ctx.beginPath();
+      ctx.moveTo(sf0.x, sf0.y); ctx.lineTo(sf1.x, sf1.y); ctx.lineTo(sf2.x, sf2.y); ctx.lineTo(sf3.x, sf3.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Pulsing Neon Edge
+      ctx.strokeStyle = Math.sin(time) > 0 ? '#25f4ee' : '#fe2c55';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Blinking Node LEDs
+      for (let s = 0.25; s < H - 0.15; s += 0.24) {
+        const lp = isoToScreen(gx + W, gy + 0.35, s, ox, oy);
+        const blinkCyan = Math.sin(time * 3 + s * 6) > 0;
+        const blinkPink = Math.cos(time * 2.5 + s * 4) > 0;
+        ctx.fillStyle = blinkCyan ? '#25f4ee' : '#0e7490';
+        ctx.fillRect(lp.x, lp.y - 2, 3, 2);
+        ctx.fillStyle = blinkPink ? '#fe2c55' : '#881337';
+        ctx.fillRect(lp.x + 5, lp.y - 2, 3, 2);
+      }
     }
   }
 

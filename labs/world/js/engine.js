@@ -9,7 +9,7 @@
   const TW = 64; // Isometric tile width
   const TH = 32; // Isometric tile height
   const MAP_W = 28; // World map width
-  const MAP_H = 28; // World map height
+  const MAP_H = 44; // World map height (expanded to accommodate Sanmin High School & Douyin Office)
 
   // --- Building Zone Coordinates ---
   // Zone 1: Ludwig's Family Residence (NW)
@@ -33,6 +33,18 @@
   const LIB_MAX_X = 27;
   const LIB_MIN_Y = 17;
   const LIB_MAX_Y = 26;
+
+  // Zone 5: Sanmin High School Classroom (SW2)
+  const SCHOOL_MIN_X = 0;
+  const SCHOOL_MAX_X = 9;
+  const SCHOOL_MIN_Y = 33;
+  const SCHOOL_MAX_Y = 42;
+
+  // Zone 6: Douyin / TikTok Tech Office (SE2)
+  const DOUYIN_MIN_X = 18;
+  const DOUYIN_MAX_X = 27;
+  const DOUYIN_MIN_Y = 33;
+  const DOUYIN_MAX_Y = 42;
 
   // --- Axonometric Coordinate Projections ---
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {
@@ -390,6 +402,8 @@
     DORM_MIN_X, DORM_MAX_X, DORM_MIN_Y, DORM_MAX_Y,
     AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y,
     LIB_MIN_X, LIB_MAX_X, LIB_MIN_Y, LIB_MAX_Y,
+    SCHOOL_MIN_X, SCHOOL_MAX_X, SCHOOL_MIN_Y, SCHOOL_MAX_Y,
+    DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,

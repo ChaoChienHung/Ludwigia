@@ -11,6 +11,8 @@
     DORM_MIN_X, DORM_MAX_X, DORM_MIN_Y, DORM_MAX_Y,
     AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y,
     LIB_MIN_X, LIB_MAX_X, LIB_MIN_Y, LIB_MAX_Y,
+    SCHOOL_MIN_X, SCHOOL_MAX_X, SCHOOL_MIN_Y, SCHOOL_MAX_Y,
+    DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,
@@ -40,6 +42,8 @@
       this.wallAlphaDorm = 1.0;
       this.wallAlphaAi = 1.0;
       this.wallAlphaLib = 1.0;
+      this.wallAlphaSchool = 1.0;
+      this.wallAlphaDouyin = 1.0;
 
       // Day / Night mood
       this.mood = 'auto';
@@ -51,6 +55,8 @@
       this.doorDormOpen = 0.0;
       this.doorAiOpen = 0.0;
       this.doorLibOpen = 0.0;
+      this.doorSchoolOpen = 0.0;
+      this.doorDouyinOpen = 0.0;
 
       // Particles
       this.particles = [];
@@ -140,15 +146,57 @@
       this.nav.setBlock(13.8, 17.5, 1.4, 0.5, true);
       this.nav.setBlock(22.2, 13.5, 1.4, 0.5, true);
       this.nav.setBlock(5.2, 12.5, 1.4, 0.5, true);
+      this.nav.setBlock(13.8, 29.5, 1.4, 0.5, true); // South Avenue Bench
 
-      // Trees (Only block the exact tile of the 0.35x0.35 trunk; completely eliminates phantom multi-tile blocking)
+      // 5. Sanmin High School Classroom (SW2: x: 0..9, y: 33..42)
+      this.nav.setBlock(0, SCHOOL_MIN_Y, 10, 0.6, true);             // North Wall (y: 33)
+      this.nav.setBlock(0, SCHOOL_MIN_Y, 0.6, 10, true);             // West Wall (x: 0)
+      this.nav.setBlock(0, SCHOOL_MAX_Y + 1, 10, 0.6, true);         // South Wall (y: 43)
+      // East Wall Doorway at y: 36.5 to 38.8 (keep tiles 37 and 38 100% open)
+      this.nav.setBlock(SCHOOL_MAX_X + 1, SCHOOL_MIN_Y, 0.6, 3.5, true);  // East Wall Top (y: 33 to 36.5)
+      this.nav.setBlock(SCHOOL_MAX_X + 1, 39.0, 0.6, 4.0, true);          // East Wall Bottom (y: 39 to 43)
+
+      // Classroom Furniture Obstacles
+      this.nav.setBlock(0.2, 34.0, 0.6, 3.8, true); // Blackboard Wall Area
+      this.nav.setBlock(1.5, 34.2, 1.0, 0.8, true); // Teacher Podium
+      // 9 Student Desks in 3x3 Grid
+      this.nav.setBlock(1.8, 36.0, 1.1, 0.8, true);
+      this.nav.setBlock(4.6, 36.0, 1.1, 0.8, true);
+      this.nav.setBlock(7.4, 36.0, 1.1, 0.8, true);
+      this.nav.setBlock(1.8, 38.4, 1.1, 0.8, true);
+      this.nav.setBlock(4.6, 38.4, 1.1, 0.8, true);
+      this.nav.setBlock(7.4, 38.4, 1.1, 0.8, true);
+      this.nav.setBlock(1.8, 40.8, 1.1, 0.8, true);
+      this.nav.setBlock(4.6, 40.8, 1.1, 0.8, true);
+      this.nav.setBlock(7.4, 40.8, 1.1, 0.8, true);
+      this.nav.setBlock(1.5, 42.2, 2.4, 0.65, true); // Lockers & Storage
+
+      // 6. Douyin / TikTok Tech Office (SE2: x: 18..27, y: 33..42)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 10, 0.6, true);           // North Wall (y: 33)
+      this.nav.setBlock(DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 0.6, 10, true);       // East Wall (x: 28)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 10, 0.6, true);       // South Wall (y: 43)
+      // West Wall Doorway at y: 36.5 to 38.8 (keep tiles 37 and 38 100% open)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 0.6, 3.5, true);          // West Wall Top (y: 33 to 36.5)
+      this.nav.setBlock(DOUYIN_MIN_X, 39.0, 0.6, 4.0, true);                  // West Wall Bottom (y: 39 to 43)
+
+      // Tech Office Furniture Obstacles
+      this.nav.setBlock(19.5, 34.5, 1.8, 1.0, true); // Dev Workstation 1
+      this.nav.setBlock(23.5, 34.5, 1.8, 1.0, true); // Dev Workstation 2 (Standing)
+      this.nav.setBlock(19.5, 39.5, 1.8, 1.0, true); // Dev Workstation 3
+      this.nav.setBlock(23.5, 39.5, 1.8, 1.0, true); // Dev Workstation 4
+      this.nav.setBlock(22.0, 37.0, 2.4, 1.4, true); // Conference Table
+      this.nav.setBlock(26.2, 34.2, 0.9, 0.9, true); // Server Compute Rig
+
+      // Trees (Only block the exact tile of the 0.35x0.35 trunk)
       const treeBlocks = [
         [13, 2], [16, 2],
         [14, 8],
         [16, 18],
         [13, 25], [16, 25],
         [20, 12], [24, 12],
-        [21, 15], [25, 15]
+        [21, 15], [25, 15],
+        [13, 28], [16, 28],
+        [13, 35], [16, 35]
       ];
       treeBlocks.forEach(([tx, ty]) => {
         const trunkX = Math.floor(tx + 0.35);
@@ -161,7 +209,7 @@
       for (let i = 0; i < 45; i++) {
         this.particles.push({
           x: 9 + Math.random() * 16,
-          y: 1 + Math.random() * 25,
+          y: 1 + Math.random() * 41,
           z: 1 + Math.random() * 2.8,
           vz: -0.012 - Math.random() * 0.02,
           vx: 0.01 + Math.random() * 0.02,
@@ -329,6 +377,14 @@
         currentZone = 'library';
         isInsideAnyHouse = true;
         statusMessage = "Central Library • 知識藏書閣與典雅閱覽室";
+      } else if (player.x <= 9.8 && player.y >= 32.5 && player.y <= 42.8) {
+        currentZone = 'sanmin_school';
+        isInsideAnyHouse = true;
+        statusMessage = "Sanmin High School • 青春回憶與三民高中教室";
+      } else if (player.x >= 17.5 && player.x <= 27.5 && player.y >= 32.5 && player.y <= 42.8) {
+        currentZone = 'douyin_office';
+        isInsideAnyHouse = true;
+        statusMessage = "Douyin Office • 抖音演算法研發辦公室";
       }
 
       this.currentZone = currentZone;
@@ -355,6 +411,12 @@
       const targetWallLib = (this.currentZone === 'library') ? 0.32 : 1.0;
       this.wallAlphaLib += (targetWallLib - this.wallAlphaLib) * Math.min(1.0, dt * 6.0);
 
+      const targetWallSchool = (this.currentZone === 'sanmin_school') ? 0.32 : 1.0;
+      this.wallAlphaSchool += (targetWallSchool - this.wallAlphaSchool) * Math.min(1.0, dt * 6.0);
+
+      const targetWallDouyin = (this.currentZone === 'douyin_office') ? 0.32 : 1.0;
+      this.wallAlphaDouyin += (targetWallDouyin - this.wallAlphaDouyin) * Math.min(1.0, dt * 6.0);
+
       // 2. Multi-Door Proximity Sensors
       const nearLudwigDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 5.65) < 2.4);
       this.doorLudwigOpen += ((nearLudwigDoor ? 1.0 : 0.0) - this.doorLudwigOpen) * Math.min(1.0, dt * 5.0);
@@ -370,6 +432,12 @@
 
       const nearLibDoor = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 21.65) < 2.4);
       this.doorLibOpen += ((nearLibDoor ? 1.0 : 0.0) - this.doorLibOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearSchoolDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 37.65) < 2.4);
+      this.doorSchoolOpen += ((nearSchoolDoor ? 1.0 : 0.0) - this.doorSchoolOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearDouyinDoor = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 37.65) < 2.4);
+      this.doorDouyinOpen += ((nearDouyinDoor ? 1.0 : 0.0) - this.doorDouyinOpen) * Math.min(1.0, dt * 5.0);
 
       // Status text
       const statusEl = document.getElementById('status-text');
@@ -607,6 +675,24 @@
                 { x: 8.5, y: 5.5 }  // House East Entrance Threshold
               ];
 
+              const schoolAnchors = [
+                { x: 3.2, y: 35.0 }, // Teacher Area
+                { x: 3.2, y: 37.2 }, // Center Classroom Aisle
+                { x: 6.0, y: 37.2 }, // Side Classroom Aisle
+                { x: 3.2, y: 39.5 }, // Back Student Desks
+                { x: 5.5, y: 41.5 }, // Noticeboard / Lockers
+                { x: 8.5, y: 37.6 }  // School Door Threshold
+              ];
+
+              const douyinAnchors = [
+                { x: 21.0, y: 35.5 }, // Dev Workstation 1 & 2
+                { x: 25.0, y: 35.5 }, // Standing Desk Area
+                { x: 22.5, y: 37.5 }, // Conference Table
+                { x: 21.0, y: 40.0 }, // Dev Workstation 3 & 4
+                { x: 24.5, y: 39.0 }, // Douyin Logo Center
+                { x: 19.2, y: 37.6 }  // Douyin Door Threshold
+              ];
+
               const zoneAnchorMap = {
                 house: houseAnchors,
                 ludwig_house: houseAnchors,
@@ -614,16 +700,22 @@
                 dorm_211: dormAnchors,
                 ai_studio: aiStudioAnchors,
                 library: libraryAnchors,
-                plaza: plazaAnchors
+                plaza: plazaAnchors,
+                sanmin_school: schoolAnchors,
+                school: schoolAnchors,
+                douyin_office: douyinAnchors,
+                douyin: douyinAnchors
               };
 
               const rawVisited = c.visitedZones;
               const visitedPool = Array.isArray(rawVisited) && rawVisited.length > 0
                 ? rawVisited
                 : (c.zone === 'house' ? ['house', 'plaza'] :
-                   c.zone === 'ai_studio' ? ['ai_studio', 'plaza', 'library'] :
-                   c.zone === 'library' ? ['library', 'plaza', 'ai_studio'] :
-                   c.zone === 'dorm_211' ? ['dorm_211', 'plaza', 'library'] :
+                   c.zone === 'ai_studio' ? ['ai_studio', 'plaza', 'library', 'douyin_office'] :
+                   c.zone === 'library' ? ['library', 'plaza', 'ai_studio', 'sanmin_school'] :
+                   c.zone === 'dorm_211' ? ['dorm_211', 'plaza', 'library', 'sanmin_school'] :
+                   c.zone === 'sanmin_school' ? ['sanmin_school', 'plaza', 'dorm_211'] :
+                   c.zone === 'douyin_office' ? ['douyin_office', 'plaza', 'ai_studio'] :
                    [c.zone, 'plaza']);
 
               // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
@@ -696,27 +788,45 @@
         if (p.z <= 0 || p.x > MAP_W || p.y > MAP_H) {
           p.z = 2.2 + Math.random() * 0.5;
           p.x = 9 + Math.random() * 16;
-          p.y = 1 + Math.random() * 25;
+          p.y = 1 + Math.random() * 41;
         }
       });
     }
 
-    // --- Terrain Renderer for 28x28 Campus ---
+    // --- Terrain Renderer for Campus (expanded to MAP_W x MAP_H) ---
     drawTerrain(ctx, ox, oy) {
+      // 10x10 Douyin / TikTok Musical Note Tile Pattern
+      // C = Cyan (#25f4ee), M = Magenta (#fe2c55), W = White (#ffffff), . = Dark Slate
+      const DOUYIN_FLOOR_TILES = [
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', 'C', 'W', 'M', 'M', '.'],
+        ['.', '.', '.', '.', 'C', 'W', 'W', '.', 'M', '.'],
+        ['.', '.', '.', '.', 'C', 'W', 'M', '.', '.', '.'],
+        ['.', '.', '.', '.', 'C', 'W', 'M', '.', '.', '.'],
+        ['.', 'C', 'W', '.', 'C', 'W', 'M', '.', '.', '.'],
+        ['C', 'W', '.', 'W', 'W', 'W', 'M', '.', '.', '.'],
+        ['C', 'W', 'W', 'W', 'M', 'M', '.', '.', '.', '.'],
+        ['.', 'C', 'M', 'M', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
+      ];
+
       for (let x = 0; x < MAP_W; x++) {
         for (let y = 0; y < MAP_H; y++) {
           const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
           const isDorm = (x <= DORM_MAX_X && y >= DORM_MIN_Y && y <= DORM_MAX_Y);
           const isAi = (x >= AI_MIN_X && x <= AI_MAX_X && y >= AI_MIN_Y && y <= AI_MAX_Y);
           const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
-          const isInsideBuilding = isLudwig || isDorm || isAi || isLib;
+          const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
+          const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
+          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin;
 
-          // Cobblestone Pathways connecting doorways and central plaza
+          // Cobblestone Pathways connecting doorways, central plaza, and south sector
           const isPath = (
-            (x >= 10 && x <= 11 && y >= 4 && y <= 23) ||
+            (x >= 10 && x <= 11 && y >= 4 && y <= 39) ||
             (y >= 5 && y <= 6 && x >= 10 && x <= 19) ||
             (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
-            (y >= 20 && y <= 22 && x >= 10 && x <= 19)
+            (y >= 20 && y <= 22 && x >= 10 && x <= 19) ||
+            (y >= 36 && y <= 38 && x >= 10 && x <= 19)
           );
 
           ctx.save();
@@ -724,6 +834,8 @@
           else if (this.currentZone === 'dorm_211' && !isDorm) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'ai_studio' && !isAi) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'library' && !isLib) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'sanmin_school' && !isSchool) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'douyin_office' && !isDouyin) ctx.globalAlpha = this.outsideAlpha;
 
           const p0 = isoToScreen(x, y, 0, ox, oy);
           const p1 = isoToScreen(x + 1, y, 0, ox, oy);
@@ -742,6 +854,23 @@
           } else if (isLib) {
             // Classic Dark Walnut Parquet Floor with Amber Sheen
             ctx.fillStyle = (x + y) % 2 === 0 ? '#451a03' : '#3b180a';
+          } else if (isSchool) {
+            // Classic Taiwanese Classroom Polished Honey Wood Parquet
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#dfb88e' : '#ce9e72';
+          } else if (isDouyin) {
+            // High-Tech Cyber Floor Tiles forming the Douyin / TikTok Musical Note Logo
+            const rx = x - DOUYIN_MIN_X;
+            const ry = y - DOUYIN_MIN_Y;
+            const tChar = (DOUYIN_FLOOR_TILES[ry] && DOUYIN_FLOOR_TILES[ry][rx]) || '.';
+            if (tChar === 'C') {
+              ctx.fillStyle = '#25f4ee'; // Cyan note edge
+            } else if (tChar === 'M') {
+              ctx.fillStyle = '#fe2c55'; // Magenta / Pink note edge
+            } else if (tChar === 'W') {
+              ctx.fillStyle = '#ffffff'; // Crisp White note core
+            } else {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#0f172a' : '#1a2234'; // Sleek dark slate
+            }
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -764,6 +893,20 @@
             ctx.strokeStyle = 'rgba(6, 182, 212, 0.55)';
             ctx.lineWidth = 2;
             ctx.stroke();
+          }
+
+          // Subtle Neon Edge Glow for Douyin Floor Logo
+          if (isDouyin) {
+            const rx = x - DOUYIN_MIN_X;
+            const ry = y - DOUYIN_MIN_Y;
+            const tChar = (DOUYIN_FLOOR_TILES[ry] && DOUYIN_FLOOR_TILES[ry][rx]) || '.';
+            if (tChar === 'C' || tChar === 'M' || tChar === 'W') {
+              ctx.strokeStyle = tChar === 'C' ? 'rgba(37, 244, 238, 0.45)' :
+                                tChar === 'M' ? 'rgba(254, 44, 85, 0.45)' :
+                                'rgba(255, 255, 255, 0.65)';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            }
           }
 
           ctx.restore();
@@ -1484,7 +1627,375 @@
         }
       });
 
-      // === 5. CENTRAL COURTYARD: BENCHES, FOUNTAIN & TREES ===
+      // === 5. ZONE 5: SANMIN HIGH SCHOOL (ROW 3 WEST, x: 0..9, y: 33..42) ===
+      // Classroom NW Exterior Wall with Windows (along x = 0, y: 33 to 43)
+      list.push({
+        xMin: -0.15, xMax: 0.35,
+        yMin: SCHOOL_MIN_Y, yMax: SCHOOL_MAX_Y + 1,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, 0.25, (SCHOOL_MAX_Y + 1) - SCHOOL_MIN_Y, H, wallT, null, wallR, ox, oy);
+
+          // Classroom High Windows (y: 35.0 to 37.5 and 38.5 to 41.0, z: 1.15 to 2.15)
+          const sw1_0 = isoToScreen(0.26, 35.0, 1.15, ox, oy);
+          const sw1_1 = isoToScreen(0.26, 37.5, 1.15, ox, oy);
+          const sw1_2 = isoToScreen(0.26, 37.5, 2.15, ox, oy);
+          const sw1_3 = isoToScreen(0.26, 35.0, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(224, 242, 254, 0.5)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(sw1_0.x, sw1_0.y); this.ctx.lineTo(sw1_1.x, sw1_1.y); this.ctx.lineTo(sw1_2.x, sw1_2.y); this.ctx.lineTo(sw1_3.x, sw1_3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#0284c7';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+
+          const sw2_0 = isoToScreen(0.26, 38.5, 1.15, ox, oy);
+          const sw2_1 = isoToScreen(0.26, 41.0, 1.15, ox, oy);
+          const sw2_2 = isoToScreen(0.26, 41.0, 2.15, ox, oy);
+          const sw2_3 = isoToScreen(0.26, 38.5, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(224, 242, 254, 0.5)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(sw2_0.x, sw2_0.y); this.ctx.lineTo(sw2_1.x, sw2_1.y); this.ctx.lineTo(sw2_2.x, sw2_2.y); this.ctx.lineTo(sw2_3.x, sw2_3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#0284c7';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+        }
+      });
+
+      // Classroom North Partition Wall (along y = 33, x: 0 to 10)
+      list.push({
+        xMin: 0, xMax: SCHOOL_MAX_X + 1,
+        yMin: SCHOOL_MIN_Y - 0.1, yMax: SCHOOL_MIN_Y + 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, (SCHOOL_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
+        }
+      });
+
+      // Classroom East Entrance Wall & Doorway (along x = 10, y: 33 to 43)
+      const schoolSE_X = SCHOOL_MAX_X + 1;
+      list.push({
+        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.35,
+        yMin: SCHOOL_MIN_Y, yMax: 36.5,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
+          this.models.drawBox(this.ctx, schoolSE_X, SCHOOL_MIN_Y, 0, 0.25, 36.5 - SCHOOL_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
+        }
+      });
+      list.push({
+        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.35,
+        yMin: 38.8, yMax: SCHOOL_MAX_Y + 1,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
+          this.models.drawBox(this.ctx, schoolSE_X, 38.8, 0, 0.25, (SCHOOL_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Classroom Interactive Double Doors
+      const schoolDoorAngle = this.doorSchoolOpen * 1.35;
+      const schoolDoorW = 1.15;
+      const sdnTipX = schoolSE_X + Math.sin(schoolDoorAngle) * schoolDoorW;
+      const sdnTipY = 36.5 + Math.cos(schoolDoorAngle) * schoolDoorW;
+      const sdsTipX = schoolSE_X + Math.sin(schoolDoorAngle) * schoolDoorW;
+      const sdsTipY = 38.8 - Math.cos(schoolDoorAngle) * schoolDoorW;
+      list.push({
+        xMin: Math.min(schoolSE_X, sdnTipX, sdsTipX) - 0.15,
+        xMax: Math.max(schoolSE_X, sdnTipX, sdsTipX) + 0.15,
+        yMin: 36.4,
+        yMax: 38.9,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
+          this.drawDoorLeaf(schoolSE_X, 36.5, sdnTipX, sdnTipY, ox, oy);
+          this.drawDoorLeaf(schoolSE_X, 38.8, sdsTipX, sdsTipY, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Lintel beam over classroom door
+      list.push({
+        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.35,
+        yMin: 36.45, yMax: 38.85,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
+          this.models.drawBox(this.ctx, schoolSE_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Sanmin High School Entrance Plaque (Green & Gold)
+      list.push({
+        xMin: schoolSE_X + 0.15, xMax: schoolSE_X + 0.45,
+        yMin: 36.5, yMax: 38.95,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
+          const plq = isoToScreen(schoolSE_X + 0.26, 37.65, 2.48, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#064e3b'; // Forest pine green
+          this.ctx.fillRect(-32, -8, 64, 16);
+          this.ctx.strokeStyle = '#f59e0b'; // Gold border
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-32, -8, 64, 16);
+          this.ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-30, -6, 60, 12);
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('三民高中 • 經典教室', 0, 0);
+          this.ctx.restore();
+          this.ctx.restore();
+        }
+      });
+
+      // Classroom Interior Props
+      // 1. Blackboard
+      list.push({
+        xMin: 0.1, xMax: 0.8, yMin: 34.0, yMax: 38.0,
+        draw: () => this.models.drawSchoolBlackboard(this.ctx, 0.25, 34.0, ox, oy)
+      });
+
+      // 2. Teacher Podium
+      list.push({
+        xMin: 1.2, xMax: 2.4, yMin: 34.2, yMax: 35.1,
+        draw: () => this.models.drawTeacherPodium(this.ctx, 1.2, 34.2, ox, oy)
+      });
+
+      // 3. Neatly Arranged Student Desks & Chairs (3 columns x 3 rows)
+      const sCols = [1.8, 4.6, 7.4];
+      const sRows = [36.0, 38.4, 40.8];
+      for (const cx of sCols) {
+        for (const ry of sRows) {
+          list.push({
+            xMin: cx, xMax: cx + 1.4, yMin: ry, yMax: ry + 1.1,
+            draw: () => this.models.drawStudentDesk(this.ctx, cx, ry, ox, oy)
+          });
+        }
+      }
+
+      // 4. Classroom Lockers along South Wall
+      list.push({
+        xMin: 1.5, xMax: 4.0, yMin: 41.8, yMax: 42.5,
+        draw: () => this.models.drawClassroomLockers(this.ctx, 1.5, 41.8, ox, oy)
+      });
+
+      // 5. Classroom Cork Bulletin Board
+      list.push({
+        xMin: 4.8, xMax: 7.2, yMin: 42.0, yMax: 42.5,
+        draw: () => this.models.drawClassroomBulletinBoard(this.ctx, 4.8, 42.2, ox, oy)
+      });
+
+      // 6. Classroom South Boundary Skirting
+      list.push({
+        xMin: 0, xMax: SCHOOL_MAX_X + 1,
+        yMin: SCHOOL_MAX_Y + 0.9, yMax: SCHOOL_MAX_Y + 1.2,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, SCHOOL_MAX_Y + 1, 0, (SCHOOL_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, ox, oy);
+        }
+      });
+
+      // === 6. ZONE 6: DOUYIN / TIKTOK TECH OFFICE (ROW 3 EAST, x: 18..27, y: 33..42) ===
+      // Office North Partition Wall with Clerestory Glass (along y = 33, x: 18 to 28)
+      list.push({
+        xMin: DOUYIN_MIN_X - 0.15, xMax: DOUYIN_MAX_X + 1.0,
+        yMin: DOUYIN_MIN_Y - 0.15, yMax: DOUYIN_MIN_Y + 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MIN_Y, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
+
+          // Sleek Cyan/Magenta Frosted Clerestory Glass Windows
+          const dw1_0 = isoToScreen(20.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
+          const dw1_1 = isoToScreen(23.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
+          const dw1_2 = isoToScreen(23.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
+          const dw1_3 = isoToScreen(20.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(37, 244, 238, 0.35)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(dw1_0.x, dw1_0.y); this.ctx.lineTo(dw1_1.x, dw1_1.y); this.ctx.lineTo(dw1_2.x, dw1_2.y); this.ctx.lineTo(dw1_3.x, dw1_3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#25f4ee';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+
+          const dw2_0 = isoToScreen(24.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
+          const dw2_1 = isoToScreen(27.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
+          const dw2_2 = isoToScreen(27.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
+          const dw2_3 = isoToScreen(24.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(254, 44, 85, 0.35)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(dw2_0.x, dw2_0.y); this.ctx.lineTo(dw2_1.x, dw2_1.y); this.ctx.lineTo(dw2_2.x, dw2_2.y); this.ctx.lineTo(dw2_3.x, dw2_3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#fe2c55';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+        }
+      });
+
+      // Office SE Exterior Wall with Panoramic Windows (along x = 28, y: 33 to 43)
+      list.push({
+        xMin: DOUYIN_MAX_X + 0.85, xMax: DOUYIN_MAX_X + 1.35,
+        yMin: DOUYIN_MIN_Y, yMax: DOUYIN_MAX_Y + 1,
+        draw: () => {
+          this.models.drawBox(this.ctx, DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 0, 0.25, (DOUYIN_MAX_Y + 1) - DOUYIN_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+        }
+      });
+
+      // Office NW Entrance Wall & High-Tech Sliding Doors (along x = 18, y: 33 to 43)
+      const douyinNW_X = DOUYIN_MIN_X;
+      list.push({
+        xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.35,
+        yMin: DOUYIN_MIN_Y, yMax: 36.5,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 0, 0.25, 36.5 - DOUYIN_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
+        }
+      });
+      list.push({
+        xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.35,
+        yMin: 38.8, yMax: DOUYIN_MAX_Y + 1,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 0, 0.25, (DOUYIN_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Office Lintel Beam over door (z: 2.15 to H)
+      list.push({
+        xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.35,
+        yMin: 36.45, yMax: 38.85,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+          this.models.drawBox(this.ctx, douyinNW_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Office High-Tech Bi-Parting Smart Glass Sliding Doors
+      const douyinSlideOffset = this.doorDouyinOpen * 1.05;
+      list.push({
+        xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.15,
+        yMin: 36.4, yMax: 38.9,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+
+          // Left leaf (sliding north)
+          const dgL0 = isoToScreen(douyinNW_X, 36.55 - douyinSlideOffset, 0, ox, oy);
+          const dgL1 = isoToScreen(douyinNW_X, 37.60 - douyinSlideOffset, 0, ox, oy);
+          const dgL2 = isoToScreen(douyinNW_X, 37.60 - douyinSlideOffset, 2.10, ox, oy);
+          const dgL3 = isoToScreen(douyinNW_X, 36.55 - douyinSlideOffset, 2.10, ox, oy);
+          this.ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(dgL0.x, dgL0.y); this.ctx.lineTo(dgL1.x, dgL1.y); this.ctx.lineTo(dgL2.x, dgL2.y); this.ctx.lineTo(dgL3.x, dgL3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#25f4ee'; // Douyin Cyan edge
+          this.ctx.lineWidth = 1.6;
+          this.ctx.stroke();
+
+          // Right leaf (sliding south)
+          const dgR0 = isoToScreen(douyinNW_X, 37.70 + douyinSlideOffset, 0, ox, oy);
+          const dgR1 = isoToScreen(douyinNW_X, 38.75 + douyinSlideOffset, 0, ox, oy);
+          const dgR2 = isoToScreen(douyinNW_X, 38.75 + douyinSlideOffset, 2.10, ox, oy);
+          const dgR3 = isoToScreen(douyinNW_X, 37.70 + douyinSlideOffset, 2.10, ox, oy);
+          this.ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(dgR0.x, dgR0.y); this.ctx.lineTo(dgR1.x, dgR1.y); this.ctx.lineTo(dgR2.x, dgR2.y); this.ctx.lineTo(dgR3.x, dgR3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#fe2c55'; // Douyin Magenta edge
+          this.ctx.lineWidth = 1.6;
+          this.ctx.stroke();
+
+          this.ctx.restore();
+        }
+      });
+
+      // Douyin Office Cyber Plaque (Neon Cyan & Magenta)
+      list.push({
+        xMin: douyinNW_X - 0.25, xMax: douyinNW_X + 0.15,
+        yMin: 36.5, yMax: 38.95,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+          const plq = isoToScreen(douyinNW_X - 0.02, 37.65, 2.48, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#0f172a';
+          this.ctx.fillRect(-34, -8, 68, 16);
+          this.ctx.strokeStyle = '#25f4ee';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-34, -8, 68, 16);
+          this.ctx.strokeStyle = '#fe2c55';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-32, -6, 64, 12);
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('TikTok • 抖音辦公室', 0, 0);
+          this.ctx.restore();
+          this.ctx.restore();
+        }
+      });
+
+      // Douyin Office Props
+      // 1. 4 Modern Developer Workstations with Ultrawide Displays
+      list.push({
+        xMin: 19.5, xMax: 21.7, yMin: 34.5, yMax: 35.9,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.5, 34.5, ox, oy)
+      });
+      list.push({
+        xMin: 23.5, xMax: 25.7, yMin: 34.5, yMax: 35.9,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 23.5, 34.5, ox, oy)
+      });
+      list.push({
+        xMin: 19.5, xMax: 21.7, yMin: 39.5, yMax: 40.9,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.5, 39.5, ox, oy)
+      });
+      list.push({
+        xMin: 23.5, xMax: 25.7, yMin: 39.5, yMax: 40.9,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 23.5, 39.5, ox, oy)
+      });
+
+      // 2. Glass Conference & Brainstorming Table
+      list.push({
+        xMin: 21.5, xMax: 24.5, yMin: 36.5, yMax: 38.0,
+        draw: () => this.models.drawOfficeMeetingTable(this.ctx, 21.5, 36.5, ox, oy)
+      });
+
+      // 3. AI Compute Cluster / Server Rig
+      list.push({
+        xMin: 26.0, xMax: 27.2, yMin: 34.0, yMax: 35.5,
+        draw: () => this.models.drawOfficeServerStation(this.ctx, 26.0, 34.0, ox, oy)
+      });
+
+      // 4. Douyin Office South Boundary Skirting
+      list.push({
+        xMin: DOUYIN_MIN_X, xMax: DOUYIN_MAX_X + 1,
+        yMin: DOUYIN_MAX_Y + 0.9, yMax: DOUYIN_MAX_Y + 1.2,
+        draw: () => {
+          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.20, 0.35, wallT, wallL, null, ox, oy);
+        }
+      });
+
+      // === 7. CENTRAL COURTYARD & SOUTH AVENUE: BENCHES, FOUNTAIN & TREES ===
       // Fountain
       list.push({
         xMin: 13.0, xMax: 16.0, yMin: 13.0, yMax: 16.0,
@@ -1496,7 +2007,8 @@
         { gx: 13.5, gy: 9.5 },  // North Plaza Lawn (facing fountain from grass, clear of east-west path)
         { gx: 13.5, gy: 17.5 }, // South Plaza Lawn (facing fountain from grass, clear of south path)
         { gx: 22.0, gy: 13.5 }, // East Central Lawn (peaceful reading bench between AI Studio and Library)
-        { gx: 5.0,  gy: 12.5 }  // Ludwig's South Garden Terrace (private lawn bench below house terrace)
+        { gx: 5.0,  gy: 12.5 }, // Ludwig's South Garden Terrace (private lawn bench below house terrace)
+        { gx: 13.5, gy: 30.5 }  // South Promenade Lawn (scenic rest area between Classroom and Office)
       ];
       benches.forEach(b => {
         list.push({
@@ -1512,7 +2024,9 @@
         [16, 18],               // South-central lawn pocket (flanking south park bench on the right)
         [13, 25], [16, 25],     // South garden lawn (well south of path y=22)
         [20, 12], [24, 12],     // East central lawn north grove
-        [21, 15], [25, 15]      // East central lawn south grove
+        [21, 15], [25, 15],     // East central lawn south grove
+        [13, 28], [16, 28],     // South promenade entrance trees
+        [13, 35], [16, 35]      // South avenue central boulevard grove
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
