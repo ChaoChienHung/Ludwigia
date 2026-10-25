@@ -607,9 +607,9 @@
       this.drawBox(ctx, gx, gy, 0, 0.85, 2.0, 0.42, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
       // High Backrest
       this.drawBox(ctx, gx, gy, 0.42, 0.28, 2.0, 0.55, '#1d4ed8', '#1e40af', '#1e3a8a', ox, oy);
-      // Soft Armrests
-      this.drawBox(ctx, gx, gy, 0.42, 0.85, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
-      this.drawBox(ctx, gx, gy + 1.78, 0.42, 0.85, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // Soft Armrests (Flush with front face of backrest, extending to front edge of seat)
+      this.drawBox(ctx, gx + 0.28, gy, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      this.drawBox(ctx, gx + 0.28, gy + 1.78, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
       // Fluffy Throw Pillows
       this.drawBox(ctx, gx + 0.28, gy + 0.25, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
       this.drawBox(ctx, gx + 0.28, gy + 1.40, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
@@ -882,9 +882,9 @@
       this.drawBox(ctx, gx, gy, 0, 0.85, 2.0, 0.42, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
       // High Backrest
       this.drawBox(ctx, gx, gy, 0.42, 0.28, 2.0, 0.55, '#1d4ed8', '#1e40af', '#1e3a8a', ox, oy);
-      // Soft Armrests
-      this.drawBox(ctx, gx, gy, 0.42, 0.85, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
-      this.drawBox(ctx, gx, gy + 1.78, 0.42, 0.85, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // Soft Armrests (Flush with front face of backrest, extending to front edge of seat)
+      this.drawBox(ctx, gx + 0.28, gy, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      this.drawBox(ctx, gx + 0.28, gy + 1.78, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
       // Fluffy Orange Throw Pillows
       this.drawBox(ctx, gx + 0.28, gy + 0.25, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
       this.drawBox(ctx, gx + 0.28, gy + 1.40, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
