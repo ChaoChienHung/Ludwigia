@@ -118,11 +118,14 @@
       this.nav.setBlock(LIB_MAX_X + 1, LIB_MIN_Y, 1, 10, true); // East Wall
       this.nav.setBlock(LIB_MIN_X, LIB_MAX_Y + 1, 10, 1, true); // South Wall
 
-      this.nav.setBlock(19.8, 17.2, 7.2, 0.8, true); // Grand Book Walls
+      this.nav.setBlock(18.4, 17.2, 8.4, 0.8, true); // Grand North Book Walls
+      this.nav.setBlock(18.2, 17.6, 0.8, 2.6, true); // West Wall Library Stack
+      this.nav.setBlock(22.5, 18.4, 1.0, 0.7, true); // Mobile Library Book Cart
       this.nav.setBlock(20.0, 20.0, 2.5, 1.4, true); // Long Banker Study Table
+      this.nav.setBlock(24.8, 19.2, 1.0, 1.0, true); // Botanical Terrarium Pedestal
       this.nav.setBlock(23.8, 22.0, 2.2, 2.0, true); // Wingback Reading Nook
       this.nav.setBlock(20.5, 23.8, 1.0, 1.0, true); // Celestial Armillary Globe
-      this.nav.setBlock(24.8, 19.2, 1.0, 1.0, true); // Botanical Terrarium Pedestal
+      this.nav.setBlock(24.2, 24.8, 2.5, 0.7, true); // Rare Book Vitrine
 
       // 5. Central Plaza & Park
       this.nav.setBlock(13, 13, 3, 3, true); // Fountain
@@ -1321,38 +1324,56 @@
       });
 
       // Library Interior Furniture:
-      // 1. Grand Mahogany Book Walls with Brass Rolling Ladder
+      // 1. Grand Mahogany Book Walls with Brass Rolling Ladders (North Wall)
       list.push({
-        xMin: 19.8, xMax: 23.2, yMin: 17.2, yMax: 18.0,
-        draw: () => this.models.drawLibraryBookWall(this.ctx, 19.8, 17.2, ox, oy)
+        xMin: 18.4, xMax: 22.5, yMin: 17.2, yMax: 18.0,
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 18.4, 17.2, ox, oy, 4.1, 1)
       });
       list.push({
-        xMin: 23.6, xMax: 27.0, yMin: 17.2, yMax: 18.0,
-        draw: () => this.models.drawLibraryBookWall(this.ctx, 23.6, 17.2, ox, oy)
+        xMin: 22.7, xMax: 26.8, yMin: 17.2, yMax: 18.0,
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 22.7, 17.2, ox, oy, 4.1, 2)
       });
 
-      // 2. Long Walnut Banker's Study Table with Emerald Lamp
+      // 1B. West Wall Library Corner Stack (Floor-to-Ceiling Shelves)
+      list.push({
+        xMin: 18.1, xMax: 18.9, yMin: 17.6, yMax: 20.4,
+        draw: () => this.models.drawLibraryWestBookWall(this.ctx, 18.2, 17.6, ox, oy, 2.6)
+      });
+
+      // 1C. Mobile Library Book Cart (Scholarly Book Trolley)
+      list.push({
+        xMin: 22.4, xMax: 23.5, yMin: 18.4, yMax: 19.2,
+        draw: () => this.models.drawLibraryBookCart(this.ctx, 22.5, 18.4, ox, oy)
+      });
+
+      // 2. Long Walnut Banker's Study Table with Emerald Lamp & Folios
       list.push({
         xMin: 20.0, xMax: 22.6, yMin: 20.0, yMax: 21.4,
         draw: () => this.models.drawBankerDesk(this.ctx, 20.0, 20.0, ox, oy)
       });
 
-      // 3. Tufted Leather Wingback Reading Nook & Rug
+      // 3. Botanical Terrarium Pedestal
+      list.push({
+        xMin: 24.8, xMax: 26.0, yMin: 19.2, yMax: 20.4,
+        draw: () => this.models.drawTerrarium(this.ctx, 24.8, 19.2, ox, oy)
+      });
+
+      // 4. Tufted Leather Wingback Reading Nook & Rug & Novel Stack
       list.push({
         xMin: 23.8, xMax: 26.2, yMin: 22.0, yMax: 24.2,
         draw: () => this.models.drawWingbackReadingNook(this.ctx, 23.8, 22.0, ox, oy)
       });
 
-      // 4. Standing Brass Celestial Armillary Globe
+      // 5. Standing Brass Celestial Armillary Globe
       list.push({
         xMin: 20.2, xMax: 21.4, yMin: 23.6, yMax: 24.8,
         draw: () => this.models.drawCelestialGlobe(this.ctx, 20.8, 24.2, ox, oy)
       });
 
-      // 5. Botanical Terrarium Pedestal
+      // 6. Illuminated Rare Book Vitrine & Manuscript Cabinet (SE Alcove)
       list.push({
-        xMin: 24.8, xMax: 26.0, yMin: 19.2, yMax: 20.4,
-        draw: () => this.models.drawTerrarium(this.ctx, 24.8, 19.2, ox, oy)
+        xMin: 24.2, xMax: 26.8, yMin: 24.8, yMax: 25.5,
+        draw: () => this.models.drawRareBookVitrine(this.ctx, 24.3, 24.8, ox, oy)
       });
 
       // 6. Library South Boundary Skirting (along y = LIB_MAX_Y + 1 = 27, x: 18 to 28)

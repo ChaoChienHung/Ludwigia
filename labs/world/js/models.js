@@ -1253,80 +1253,367 @@
     // ZONE 4: LUDWIGIA GRAND LIBRARY & BOTANICAL READING HALL
     // =========================================================================
 
-    // --- 1. Grand Mahogany Book Wall with Brass Rolling Ladder ---
-    drawLibraryBookWall(ctx, gx, gy, ox, oy) {
-      const W = 3.2, D = 0.55, H = 2.3;
-      const cFrame = '#3f1d12';
-      const cSide = '#2b110a';
-      const cTop = '#542516';
+    // --- 1. Grand Mahogany Book Wall with Brass Rolling Ladder (North Wall) ---
+    drawLibraryBookWall(ctx, gx, gy, ox, oy, W = 3.6, ladderStyle = 1) {
+      const D = 0.55, H = 2.3;
+      const postW = 0.08;
 
       // Drop shadow
       this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
 
-      // Main Bookshelf Casing
-      this.drawBox(ctx, gx, gy, 0, W, D, H, cTop, cSide, cFrame, ox, oy);
+      // 1. Dark interior back-wall lining (gives deep dimensional recess behind books)
+      this.drawBox(ctx, gx + 0.04, gy + 0.04, 0.08, W - 0.08, 0.05, H - 0.16, '#261008', '#180803', '#1e0b04', ox, oy);
 
-      // 4 Internal Shelves & Realistic Book Rows
-      const shelvesY = [0.15, 0.72, 1.30, 1.88];
-      const bookColors = ['#991b1b', '#166534', '#1e40af', '#854d0e', '#581c87', '#0f766e', '#b45309'];
+      // 2. Heavy Molded Base Plinth
+      this.drawBox(ctx, gx, gy, 0, W, D, 0.12, '#542516', '#2b110a', '#3f1d12', ox, oy);
 
-      shelvesY.forEach((sz, shelfIdx) => {
-        // Shelf plank
-        this.drawBox(ctx, gx + 0.05, gy + 0.04, sz, W - 0.1, D - 0.05, 0.05, '#78350f', '#451a03', '#92400e', ox, oy);
+      // 3. Side upright pillars and central architectural column
+      this.drawBox(ctx, gx, gy, 0.12, postW, D, H - 0.20, '#542516', '#2b110a', '#3f1d12', ox, oy);
+      this.drawBox(ctx, gx + W - postW, gy, 0.12, postW, D, H - 0.20, '#542516', '#2b110a', '#3f1d12', ox, oy);
+      const midX = gx + W / 2 - postW / 2;
+      this.drawBox(ctx, midX, gy, 0.12, postW, D, H - 0.20, '#5c2b16', '#2e1207', '#451a03', ox, oy);
 
-        // Populate row with dense books
-        const bookCount = 9;
-        const bWidth = (W - 0.25) / bookCount;
-        for (let i = 0; i < bookCount; i++) {
-          const bx = gx + 0.12 + i * bWidth;
-          const bH = 0.42 + ((i * 7 + shelfIdx * 3) % 5) * 0.025;
-          const bColor = bookColors[(i * 3 + shelfIdx * 2) % bookColors.length];
-          this.drawBox(ctx, bx, gy + 0.1, sz + 0.05, bWidth * 0.85, D * 0.7, bH, '#fde68a', '#d97706', bColor, ox, oy);
-        }
+      // 4. Five Shelves Across the 2 Bays
+      const shelvesZ = [0.12, 0.52, 0.92, 1.32, 1.72];
+      const shelfH = 0.045;
+      const shelfD = D - 0.04;
+
+      const palette = [
+        { spine: '#881337', rib: '#fde047', top: '#fef3c7', side: '#4c0519' }, // Burgundy / Gold
+        { spine: '#1e3a8a', rib: '#93c5fd', top: '#f8fafc', side: '#0f172a' }, // Oxford Blue / Silver
+        { spine: '#14532d', rib: '#86efac', top: '#f0fdf4', side: '#052e16' }, // Forest Green / Gold
+        { spine: '#78350f', rib: '#fef08a', top: '#fef3c7', side: '#451a03' }, // Antique Leather
+        { spine: '#581c87', rib: '#f5d0fe', top: '#faf5ff', side: '#3b0764' }, // Royal Plum
+        { spine: '#991b1b', rib: '#fde047', top: '#fef3c7', side: '#450a0a' }, // Crimson
+        { spine: '#0f766e', rib: '#99f6e4', top: '#f0fdfa', side: '#134e4a' }, // Deep Teal
+        { spine: '#b45309', rib: '#fef08a', top: '#fef3c7', side: '#78350f' }, // Amber Folio
+        { spine: '#312e81', rib: '#c7d2fe', top: '#e0e7ff', side: '#1e1b4b' }  // Midnight Indigo
+      ];
+
+      shelvesZ.forEach((sz, shelfIdx) => {
+        // Shelf plank across the whole width
+        this.drawBox(ctx, gx + postW * 0.5, gy + 0.04, sz, W - postW, shelfD, shelfH, '#78350f', '#451a03', '#5c2b16', ox, oy);
+
+        // Populate Left Bay and Right Bay
+        const bays = [
+          { startX: gx + postW + 0.02, endX: midX - 0.02 },
+          { startX: midX + postW + 0.02, endX: gx + W - postW - 0.02 }
+        ];
+
+        bays.forEach((bay, bayIdx) => {
+          const bayW = bay.endX - bay.startX;
+          const numBooks = 13;
+          const bookW = bayW / numBooks;
+
+          // Brass bookends at ends
+          const beLeft = isoToScreen(bay.startX, gy + D - 0.02, sz + shelfH, ox, oy);
+          ctx.fillStyle = '#d97706';
+          ctx.fillRect(beLeft.x - 2, beLeft.y - 8, 3, 8);
+
+          for (let b = 0; b < numBooks; b++) {
+            const bx = bay.startX + b * bookW;
+            const seed = (shelfIdx * 17 + bayIdx * 11 + b * 7);
+            const p = palette[seed % palette.length];
+            const bH = 0.31 + (seed % 5) * 0.015;
+            const bDepth = shelfD * 0.85;
+
+            // Book 3D Box
+            this.drawBox(ctx, bx, gy + 0.08, sz + shelfH, bookW * 0.88, bDepth, bH, p.top, p.spine, p.side, ox, oy);
+
+            // Embossed Gold Spine Ribs on the front-facing spine
+            const pSpineBottom = isoToScreen(bx + bookW * 0.44, gy + 0.08 + bDepth, sz + shelfH, ox, oy);
+            const spineScreenH = bH * 32;
+            ctx.strokeStyle = p.rib;
+            ctx.lineWidth = 0.8;
+            for (let rib = 1; rib <= 3; rib++) {
+              const ry = pSpineBottom.y - spineScreenH * (0.22 * rib + 0.12);
+              ctx.beginPath();
+              ctx.moveTo(pSpineBottom.x - 2.5, ry);
+              ctx.lineTo(pSpineBottom.x + 2.5, ry);
+              ctx.stroke();
+            }
+          }
+
+          const beRight = isoToScreen(bay.endX, gy + D - 0.02, sz + shelfH, ox, oy);
+          ctx.fillStyle = '#d97706';
+          ctx.fillRect(beRight.x - 1, beRight.y - 8, 3, 8);
+        });
       });
 
-      // Brass Rolling Ladder Rail
-      const railZ = 1.95;
-      const r0 = isoToScreen(gx, gy + D + 0.05, railZ, ox, oy);
-      const r1 = isoToScreen(gx + W, gy + D + 0.05, railZ, ox, oy);
+      // 5. Crown Cornice / Header with Dentil Moulding
+      this.drawBox(ctx, gx - 0.04, gy - 0.02, H - 0.12, W + 0.08, D + 0.06, 0.14, '#6b2a16', '#341308', '#4a1b0d', ox, oy);
+      // Gold inlay cornice band
+      const cP0 = isoToScreen(gx - 0.04, gy + D + 0.04, H - 0.04, ox, oy);
+      const cP1 = isoToScreen(gx + W + 0.04, gy + D + 0.04, H - 0.04, ox, oy);
       ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 2.2;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cP0.x, cP0.y);
+      ctx.lineTo(cP1.x, cP1.y);
+      ctx.stroke();
+
+      // 6. Brass Rolling Ladder Rail
+      const railZ = 1.88;
+      const r0 = isoToScreen(gx - 0.06, gy + D + 0.06, railZ, ox, oy);
+      const r1 = isoToScreen(gx + W + 0.06, gy + D + 0.06, railZ, ox, oy);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2.4;
       ctx.beginPath();
       ctx.moveTo(r0.x, r0.y);
       ctx.lineTo(r1.x, r1.y);
       ctx.stroke();
 
-      // Slanted Wooden Rolling Ladder
-      const lx = gx + W * 0.65;
-      const lTop = isoToScreen(lx, gy + D + 0.06, railZ, ox, oy);
-      const lBot = isoToScreen(lx, gy + D + 0.45, 0, ox, oy);
-      ctx.strokeStyle = '#451a03';
-      ctx.lineWidth = 2.8;
+      // Brass Brackets along Rail
+      for (const t of [0.08, 0.5, 0.92]) {
+        const bp = isoToScreen(gx + W * t, gy + D + 0.06, railZ, ox, oy);
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(bp.x, bp.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 7. Slanted Rolling Ladder (position varies by ladderStyle)
+      const ladderXRatio = ladderStyle === 1 ? 0.35 : 0.72;
+      const lx = gx + W * ladderXRatio;
+      const lTop = isoToScreen(lx, gy + D + 0.07, railZ, ox, oy);
+      const lBot = isoToScreen(lx, gy + D + 0.48, 0, ox, oy);
+
+      // Brass ladder hook at top
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.0;
       ctx.beginPath();
-      ctx.moveTo(lTop.x - 3, lTop.y); ctx.lineTo(lBot.x - 3, lBot.y);
-      ctx.moveTo(lTop.x + 3, lTop.y); ctx.lineTo(lBot.x + 3, lBot.y);
+      ctx.arc(lTop.x, lTop.y - 3, 3, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Ladder Rungs
-      for (let r = 1; r <= 6; r++) {
-        const t = r / 7;
+      // Ladder side rails
+      ctx.strokeStyle = '#3b180a';
+      ctx.lineWidth = 3.0;
+      ctx.beginPath();
+      ctx.moveTo(lTop.x - 3.5, lTop.y); ctx.lineTo(lBot.x - 3.5, lBot.y);
+      ctx.moveTo(lTop.x + 3.5, lTop.y); ctx.lineTo(lBot.x + 3.5, lBot.y);
+      ctx.stroke();
+
+      // Brass ladder rungs
+      for (let r = 1; r <= 7; r++) {
+        const t = r / 8;
         const rx = lTop.x * (1 - t) + lBot.x * t;
         const ry = lTop.y * (1 - t) + lBot.y * t;
-        ctx.strokeStyle = '#78350f';
-        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 1.8;
         ctx.beginPath();
         ctx.moveTo(rx - 3.5, ry); ctx.lineTo(rx + 3.5, ry);
         ctx.stroke();
       }
 
-      // Trailing Ivy on Top Cornice
-      const topP = isoToScreen(gx + 0.4, gy + 0.1, H, ox, oy);
+      // Brass caster wheels at bottom
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(lBot.x - 3.5, lBot.y + 1, 2, 0, Math.PI * 2);
+      ctx.arc(lBot.x + 3.5, lBot.y + 1, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 8. Cascading Ivy along Cornice
+      const ivyStartX = ladderStyle === 1 ? gx + 0.5 : gx + W - 0.9;
+      const topP = isoToScreen(ivyStartX, gy + 0.05, H, ox, oy);
       ctx.fillStyle = '#15803d';
       ctx.beginPath();
-      ctx.arc(topP.x, topP.y + 4, 5, 0, Math.PI * 2);
-      ctx.arc(topP.x + 8, topP.y + 7, 4, 0, Math.PI * 2);
-      ctx.arc(topP.x + 14, topP.y + 11, 3.5, 0, Math.PI * 2);
+      ctx.arc(topP.x, topP.y + 3, 5.5, 0, Math.PI * 2);
+      ctx.arc(topP.x + 7, topP.y + 6, 4.5, 0, Math.PI * 2);
+      ctx.arc(topP.x + 13, topP.y + 11, 4, 0, Math.PI * 2);
+      ctx.arc(topP.x + 18, topP.y + 17, 3, 0, Math.PI * 2);
+      ctx.arc(topP.x + 22, topP.y + 24, 2.5, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    // --- 1B. West Wall Library Stack (Spines Face East (+X), Visible on Right Face) ---
+    drawLibraryWestBookWall(ctx, gx, gy, ox, oy, len = 2.6) {
+      const W = 0.55, D = len, H = 2.2;
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Base plinth
+      this.drawBox(ctx, gx, gy, 0, W, D, 0.12, '#542516', '#2b110a', '#3f1d12', ox, oy);
+
+      // Back lining along West wall
+      this.drawBox(ctx, gx, gy + 0.04, 0.12, 0.06, D - 0.08, H - 0.20, '#261008', '#180803', '#1e0b04', ox, oy);
+
+      // Shelves (5 tiers)
+      const shelvesZ = [0.12, 0.52, 0.92, 1.32, 1.72];
+      const shelfH = 0.045;
+
+      const palette = [
+        { spine: '#991b1b', rib: '#fde047', top: '#fef3c7', left: '#450a0a' },
+        { spine: '#1e40af', rib: '#93c5fd', top: '#f8fafc', left: '#172554' },
+        { spine: '#166534', rib: '#86efac', top: '#f0fdf4', left: '#052e16' },
+        { spine: '#854d0e', rib: '#fef08a', top: '#fef3c7', left: '#451a03' },
+        { spine: '#6b21a8', rib: '#f5d0fe', top: '#faf5ff', left: '#3b0764' },
+        { spine: '#0f766e', rib: '#99f6e4', top: '#f0fdfa', left: '#134e4a' },
+        { spine: '#b45309', rib: '#fde047', top: '#fef3c7', left: '#78350f' }
+      ];
+
+      shelvesZ.forEach((sz, shelfIdx) => {
+        // Shelf plank extending along Y
+        this.drawBox(ctx, gx + 0.04, gy + 0.04, sz, W - 0.04, D - 0.08, shelfH, '#78350f', '#451a03', '#5c2b16', ox, oy);
+
+        // Books placed along Y with spines facing East (+X face)
+        const numBooks = 12;
+        const bookStep = (D - 0.16) / numBooks;
+        for (let b = 0; b < numBooks; b++) {
+          const by = gy + 0.08 + b * bookStep;
+          const seed = shelfIdx * 13 + b * 5;
+          const p = palette[seed % palette.length];
+          const bH = 0.31 + (seed % 4) * 0.015;
+
+          // Book box with spine on rightCol (+X face)
+          this.drawBox(ctx, gx + 0.08, by, sz + shelfH, W * 0.82, bookStep * 0.88, bH, p.top, p.left, p.spine, ox, oy);
+
+          // Gold spine ribbing on the +X facing spine
+          const spPoint = isoToScreen(gx + 0.08 + W * 0.82, by + bookStep * 0.44, sz + shelfH, ox, oy);
+          const spineH = bH * 32;
+          ctx.strokeStyle = p.rib;
+          ctx.lineWidth = 0.8;
+          for (let rib = 1; rib <= 3; rib++) {
+            const ry = spPoint.y - spineH * (0.22 * rib + 0.12);
+            ctx.beginPath();
+            ctx.moveTo(spPoint.x - 2, ry);
+            ctx.lineTo(spPoint.x + 2, ry);
+            ctx.stroke();
+          }
+        }
+      });
+
+      // Top Cornice
+      this.drawBox(ctx, gx - 0.02, gy - 0.02, H - 0.12, W + 0.06, D + 0.04, 0.14, '#6b2a16', '#341308', '#4a1b0d', ox, oy);
+    }
+
+    // --- 1C. Mobile Library Book Cart / Scholarly Book Trolley ---
+    drawLibraryBookCart(ctx, gx, gy, ox, oy) {
+      const W = 0.95, D = 0.55, H = 0.82;
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // 4 Brass Casters
+      const casterCol = '#d97706';
+      const cR = 0.04;
+      for (const [cx, cy] of [[gx + 0.08, gy + 0.08], [gx + W - 0.12, gy + 0.08], [gx + 0.08, gy + D - 0.12], [gx + W - 0.12, gy + D - 0.12]]) {
+        this.drawBox(ctx, cx, cy, 0, cR, cR, 0.08, casterCol, '#92400e', '#b45309', ox, oy);
+      }
+
+      // Wooden Side Panels & Curved Handles
+      const sideW = 0.05;
+      this.drawBox(ctx, gx, gy, 0.08, sideW, D, H - 0.08, '#542516', '#2b110a', '#3f1d12', ox, oy);
+      this.drawBox(ctx, gx + W - sideW, gy, 0.08, sideW, D, H - 0.08, '#542516', '#2b110a', '#3f1d12', ox, oy);
+
+      // Brass Push Handles at ends
+      const hL = isoToScreen(gx + sideW / 2, gy + D / 2, H + 0.08, ox, oy);
+      const hR = isoToScreen(gx + W - sideW / 2, gy + D / 2, H + 0.08, ox, oy);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+      ctx.arc(hL.x, hL.y, 4, 0, Math.PI * 2);
+      ctx.arc(hR.x, hR.y, 4, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Two Tiers of Shelves
+      const tiers = [0.14, 0.48];
+      const bColors = ['#991b1b', '#1e40af', '#166534', '#854d0e', '#581c87', '#0f766e', '#b45309'];
+
+      tiers.forEach((tz, tIdx) => {
+        // Shelf bottom
+        this.drawBox(ctx, gx + sideW, gy + 0.04, tz, W - sideW * 2, D - 0.08, 0.04, '#78350f', '#451a03', '#5c2b16', ox, oy);
+
+        // Row of 7 books on each shelf
+        const numBooks = 7;
+        const bW = (W - sideW * 2 - 0.04) / numBooks;
+        for (let i = 0; i < numBooks; i++) {
+          const bx = gx + sideW + 0.02 + i * bW;
+          const col = bColors[(tIdx * 4 + i * 3) % bColors.length];
+          const bH = 0.24 + ((i * 3) % 4) * 0.015;
+          this.drawBox(ctx, bx, gy + 0.08, tz + 0.04, bW * 0.88, D * 0.72, bH, '#fde68a', col, '#451a03', ox, oy);
+
+          // Spine rib
+          const sp = isoToScreen(bx + bW * 0.44, gy + 0.08 + D * 0.72, tz + 0.04, ox, oy);
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(sp.x - 2, sp.y - bH * 14);
+          ctx.lineTo(sp.x + 2, sp.y - bH * 14);
+          ctx.stroke();
+        }
+      });
+    }
+
+    // --- 1D. Illuminated Rare Book Vitrine & Manuscript Cabinet ---
+    drawRareBookVitrine(ctx, gx, gy, ox, oy) {
+      const W = 2.4, D = 0.55, H = 1.9;
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Dark Walnut Base Cabinet
+      this.drawBox(ctx, gx, gy, 0, W, D, 0.45, '#542516', '#2b110a', '#3f1d12', ox, oy);
+
+      // Brass door pulls on lower cabinet
+      const pL = isoToScreen(gx + W * 0.35, gy + D + 0.01, 0.25, ox, oy);
+      const pR = isoToScreen(gx + W * 0.65, gy + D + 0.01, 0.25, ox, oy);
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(pL.x, pL.y, 2, 0, Math.PI * 2);
+      ctx.arc(pR.x, pR.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Interior Velvet Display Cavity
+      this.drawBox(ctx, gx + 0.06, gy + 0.04, 0.45, W - 0.12, 0.04, H - 0.55, '#3b0764', '#1e053a', '#2e0854', ox, oy);
+
+      // Glass Shelves with illuminated rare codices & scrolls
+      const glassZ = [0.85, 1.30];
+      glassZ.forEach((gz, gIdx) => {
+        // Brass / Glass shelf
+        this.drawBox(ctx, gx + 0.06, gy + 0.04, gz, W - 0.12, D - 0.06, 0.03, 'rgba(186, 230, 253, 0.75)', 'rgba(56, 189, 248, 0.5)', '#0284c7', ox, oy);
+
+        // Displayed items: antique codices on brass stands, rolled scrolls
+        const codexCol = gIdx === 0 ? '#991b1b' : '#1e3a8a';
+        this.drawBox(ctx, gx + 0.35, gy + 0.12, gz + 0.03, 0.45, 0.32, 0.25, '#fef3c7', codexCol, '#78350f', ox, oy);
+        
+        // Antique rolled parchment scroll with scarlet ribbon
+        const sP = isoToScreen(gx + 1.25, gy + 0.25, gz + 0.03, ox, oy);
+        ctx.fillStyle = '#fef3c7';
+        ctx.beginPath();
+        ctx.ellipse(sP.x, sP.y - 4, 14, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#dc2626';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(sP.x, sP.y - 7);
+        ctx.lineTo(sP.x, sP.y - 1);
+        ctx.stroke();
+
+        // Leather bound volume with brass clasp
+        this.drawBox(ctx, gx + 1.65, gy + 0.12, gz + 0.03, 0.42, 0.30, 0.28, '#fef08a', '#14532d', '#052e16', ox, oy);
+      });
+
+      // Fluted Corner Pilasters
+      const pw = 0.07;
+      this.drawBox(ctx, gx, gy, 0.45, pw, D, H - 0.55, '#542516', '#2b110a', '#3f1d12', ox, oy);
+      this.drawBox(ctx, gx + W - pw, gy, 0.45, pw, D, H - 0.55, '#542516', '#2b110a', '#3f1d12', ox, oy);
+
+      // Top Carved Pediment & Cornice
+      this.drawBox(ctx, gx - 0.03, gy - 0.02, H - 0.10, W + 0.06, D + 0.04, 0.12, '#6b2a16', '#341308', '#4a1b0d', ox, oy);
+
+      // Subtle Glass reflection across the front
+      const g0 = isoToScreen(gx + 0.08, gy + D, 0.48, ox, oy);
+      const g1 = isoToScreen(gx + W - 0.08, gy + D, 0.48, ox, oy);
+      const g2 = isoToScreen(gx + W - 0.08, gy + D, H - 0.12, ox, oy);
+      const g3 = isoToScreen(gx + 0.08, gy + D, H - 0.12, ox, oy);
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.12)';
+      ctx.beginPath();
+      ctx.moveTo(g0.x, g0.y); ctx.lineTo(g1.x, g1.y); ctx.lineTo(g2.x, g2.y); ctx.lineTo(g3.x, g3.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Diagonal glass glare sheen
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(g0.x + 20, g0.y - 10);
+      ctx.lineTo(g3.x + 45, g3.y + 15);
+      ctx.stroke();
     }
 
     // --- 2. Long Walnut Banker's Study Table with Emerald Lamp ---
@@ -1410,8 +1697,37 @@
         ctx.stroke();
       }
 
+      // Leather-Bound Scholarly Folio Stack on Right Side of Desk
+      // Folio 1 (bottom): Burgundy volume
+      this.drawBox(ctx, gx + 1.48, gy + 0.46, H, 0.52, 0.42, 0.045, '#fef3c7', '#881337', '#4c0519', ox, oy);
+      // Folio 2 (middle): Emerald volume
+      this.drawBox(ctx, gx + 1.50, gy + 0.48, H + 0.045, 0.48, 0.38, 0.04, '#fef3c7', '#14532d', '#052e16', ox, oy);
+      // Folio 3 (top): Oxford Blue volume, slightly askew
+      this.drawBox(ctx, gx + 1.52, gy + 0.51, H + 0.085, 0.44, 0.35, 0.038, '#fef3c7', '#1e3a8a', '#0f172a', ox, oy);
+
+      // Trailing Scarlet Ribbon Bookmark from top folio
+      const rib0 = isoToScreen(gx + 1.70, gy + 0.52, H + 0.12, ox, oy);
+      const rib1 = isoToScreen(gx + 1.76, gy + 0.90, H + 0.005, ox, oy);
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(rib0.x, rib0.y);
+      ctx.quadraticCurveTo(rib0.x + 8, rib0.y + 12, rib1.x, rib1.y);
+      ctx.stroke();
+
+      // Brass Reading Spectacles on Desk
+      const specP = isoToScreen(gx + 1.15, gy + 0.45, H + 0.005, ox, oy);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.arc(specP.x - 3.5, specP.y, 2.5, 0, Math.PI * 2);
+      ctx.arc(specP.x + 3.5, specP.y, 2.5, 0, Math.PI * 2);
+      ctx.moveTo(specP.x - 1, specP.y - 1);
+      ctx.lineTo(specP.x + 1, specP.y - 1);
+      ctx.stroke();
+
       // Brass Magnifying Glass & Inkwell
-      const inkP = isoToScreen(gx + 1.8, gy + 0.4, H + 0.01, ox, oy);
+      const inkP = isoToScreen(gx + 1.82, gy + 0.35, H + 0.01, ox, oy);
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
       ctx.arc(inkP.x, inkP.y, 2.5, 0, Math.PI * 2);
@@ -1451,16 +1767,23 @@
       this.drawBox(ctx, gx + 0.3, gy + 0.3, 0.42, 0.9, 0.22, 0.25, '#92400e', '#78350f', '#b45309', ox, oy);
       this.drawBox(ctx, gx + 0.3, gy + 1.08, 0.42, 0.9, 0.22, 0.25, '#92400e', '#78350f', '#b45309', ox, oy);
 
-      // 3. Side Round Table with Tea
-      this.drawBox(ctx, gx + 1.4, gy + 0.4, 0, 0.4, 0.4, 0.52, '#78350f', '#451a03', '#92400e', ox, oy);
-      const teaP = isoToScreen(gx + 1.6, gy + 0.6, 0.53, ox, oy);
+      // 3. Side Round Table with Novel Stack & Tea
+      this.drawBox(ctx, gx + 1.4, gy + 0.35, 0, 0.5, 0.5, 0.52, '#78350f', '#451a03', '#92400e', ox, oy);
+
+      // Stack of 3 novels on side table
+      this.drawBox(ctx, gx + 1.42, gy + 0.38, 0.52, 0.24, 0.18, 0.035, '#fef3c7', '#881337', '#4c0519', ox, oy);
+      this.drawBox(ctx, gx + 1.44, gy + 0.40, 0.555, 0.22, 0.16, 0.032, '#fef3c7', '#166534', '#052e16', ox, oy);
+      this.drawBox(ctx, gx + 1.45, gy + 0.42, 0.587, 0.20, 0.15, 0.030, '#fef3c7', '#1e40af', '#0f172a', ox, oy);
+
+      // Steaming Earl Grey Tea with saucer
+      const teaP = isoToScreen(gx + 1.72, gy + 0.62, 0.53, ox, oy);
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.ellipse(teaP.x, teaP.y, 3, 1.5, 0, 0, Math.PI * 2);
+      ctx.ellipse(teaP.x, teaP.y, 3.5, 1.8, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#78350f'; // Earl grey tea
       ctx.beginPath();
-      ctx.arc(teaP.x, teaP.y - 1, 1.8, 0, Math.PI * 2);
+      ctx.arc(teaP.x, teaP.y - 1, 2.0, 0, Math.PI * 2);
       ctx.fill();
 
       // 4. Vintage Brass Floor Lamp
