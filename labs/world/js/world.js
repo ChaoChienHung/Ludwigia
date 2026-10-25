@@ -617,8 +617,8 @@
                 plaza: plazaAnchors
               };
 
-              const rawVisited = c.visitedZones || c.visited || c.roamZones;
-              let visitedPool = Array.isArray(rawVisited) && rawVisited.length > 0
+              const rawVisited = c.visitedZones;
+              const visitedPool = Array.isArray(rawVisited) && rawVisited.length > 0
                 ? rawVisited
                 : (c.zone === 'house' ? ['house', 'plaza'] :
                    c.zone === 'ai_studio' ? ['ai_studio', 'plaza', 'library'] :
