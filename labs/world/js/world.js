@@ -90,6 +90,7 @@
       this.nav.setBlock(6.2, 17.5, 2.2, 1.6, true);   // Clark Wu (Bed 3)
       this.nav.setBlock(1.0, 24.5, 2.2, 1.6, true);   // Kerry Chang (Bed 2)
       this.nav.setBlock(6.2, 24.5, 2.2, 1.6, true);   // Jerry Chung (Bed 4)
+      this.nav.setBlock(3.6, 20.8, 1.9, 2.0, true);   // Dorm Lounge Classic Sofa & Table
 
       // 3. Ludwigia AI Research Studio (NE: x: 18..27, y: 0..9)
       this.nav.setBlock(AI_MIN_X, 0, 10, 1, true);
@@ -879,6 +880,12 @@
       list.push({
         xMin: 6.2, xMax: 8.4, yMin: 23.8, yMax: 26.0,
         draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 24.5, { duvetColor: '#7c3aed', screenColor: '#c084fc', facing: 'north' }, ox, oy)
+      });
+
+      // Dorm Common Lounge: Beloved Classic Blue Sofa, Orange Pillows & Coffee Table (Billy Fang's hangout)
+      list.push({
+        xMin: 3.6, xMax: 5.8, yMin: 20.6, yMax: 22.8,
+        draw: () => this.models.drawDormCommonArea(this.ctx, 3.6, 20.8, ox, oy)
       });
 
       // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===

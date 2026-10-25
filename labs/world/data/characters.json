@@ -550,7 +550,7 @@
       "role": "室友 (Dorm 211)",
       "avatar": "🤠",
       "zone": "dorm_211",
-      "spawn": { "x": 4.6, "y": 21.6 },
+      "spawn": { "x": 3.2, "y": 21.6 },
       "nameColor": "#34d399",
       "appearance": {
         "skin": "#f5d0b5",
@@ -562,38 +562,40 @@
       "dialogues": {
         "zh-TW": [
           [
-            "嘿！兄弟！歡迎來到 211！站在這條寬敞明朗的中央走廊，兩邊就是大家熱血敲代碼的基地！",
-            "我正在調吉他弦呢，等大家專案收尾，今晚走道一坐，直接來場 211 寢室不插電音樂之夜！"
+            "嘿！兄弟！快坐快坐！歡迎來到 211！",
+            "這張深藍大沙發是全寢室最舒服的地方！我正在調吉他弦呢，等大家專案收尾，今晚來場 211 寢室不插電音樂之夜！"
           ],
           [
-            "喲！你也在逛 211 啊？大家桌前各自奮戰，走道中間聊天串門最自在了！"
+            "喲！你也在逛 211 啊？",
+            "別客氣，坐沙發放鬆一下！大家在兩側上床下桌奮戰，中間這組沙發就是最佳充電站，心情整個開闊起來！"
           ],
           [
-            "我剛去全家補貨了一整箱排骨雞麵跟大罐麥香，宵夜戰備物資充足，隨時歡迎取用！"
+            "宵夜戰備物資充足，隨時歡迎取用！坐在沙發上聽聽歌、聊聊代碼，這才是大學宿舍的靈魂！"
           ],
           [
-            "彈把民謠吉他，看著窗外飄落的櫻花，這就是最愜意的大學校園時光。"
+            "Happy、Clark、Kerry 跟 Jerry 都在桌前爆肝衝刺，我們在沙發這邊隨時幫大家加油打氣！"
           ],
           [
-            "兄弟，等等要不要一起去中央廣場走走？噴水池那邊的微風很舒服喔！"
+            "祝你在這座小世界玩得開心！隨時歡迎來 211 沙發區串門子！"
           ]
         ],
         "en": [
           [
-            "Hey bro! Welcome to 211! Standing here in the wide central corridor, surrounded by everyone's coding setups, is pure energy!",
-            "Tuning my acoustic guitar right now; once everyone wraps up their code, we're having an unplugged dorm jam right in the aisle!"
+            "Hey bro! Grab a seat! Welcome to 211!",
+            "This deep blue couch is the comfiest spot in the house! Tuning my acoustic guitar right now—once everyone wraps up their code, we're having an unplugged jam night!"
           ],
           [
-            "Yo! Touring 211? Everyone's in the zone at their desks, and this central walkway is the best spot to hang out!"
+            "Yo! Touring 211?",
+            "Make yourself at home on the sofa! Everyone is locked in at their loft desks, so this lounge couch is the ultimate recharge station!"
           ],
           [
-            "Just restocked a whole crate of instant noodles and cold brew—midnight study rations are 100% secured!"
+            "Midnight study rations are 100% secured! Sitting back on the couch, jamming tunes, and talking tech is the true dorm soul!"
           ],
           [
-            "Strumming acoustic melodies while watching cherry blossoms outside—classic university nostalgia at its finest."
+            "Happy, Clark, Kerry, and Jerry are crushing code at their desks; we're holding down the couch keeping team morale high!"
           ],
           [
-            "Bro, want to head over to the central fountain in a bit? The plaza breeze is awesome right now!"
+            "Enjoy exploring this world! Drop by the 211 couch anytime to hang out!"
           ]
         ]
       }

@@ -576,37 +576,45 @@
       this.drawBox(ctx, gx + 0.15, gy + 0.25, matZ + 0.22, 0.48, 0.85, 0.12, '#ffffff', '#f1f5f9', '#e2e8f0', ox, oy);
     }
 
-    // --- Dorm 11-211 Common Lounge Area (Mini Fridge, Kettle, Snacks, Beanbag) ---
+    // --- Dorm 11-211 Common Lounge Area (Beloved Classic Blue Sofa, Orange Pillows, Coffee Table & Guitar) ---
     drawDormCommonArea(ctx, gx, gy, ox, oy) {
-      // Dorm Geometric Room Rug
-      const dr0 = isoToScreen(gx - 0.2, gy - 0.2, 0.01, ox, oy);
-      const dr1 = isoToScreen(gx + 1.8, gy - 0.2, 0.01, ox, oy);
-      const dr2 = isoToScreen(gx + 1.8, gy + 1.8, 0.01, ox, oy);
-      const dr3 = isoToScreen(gx - 0.2, gy + 1.8, 0.01, ox, oy);
-      ctx.fillStyle = '#1e3a8a';
+      // Warm Terra-cotta Area Rug with Gold Trim (Matching the living room aesthetic)
+      const r0 = isoToScreen(gx - 0.2, gy - 0.2, 0.01, ox, oy);
+      const r1 = isoToScreen(gx + 2.4, gy - 0.2, 0.01, ox, oy);
+      const r2 = isoToScreen(gx + 2.4, gy + 2.2, 0.01, ox, oy);
+      const r3 = isoToScreen(gx - 0.2, gy + 2.2, 0.01, ox, oy);
+      ctx.fillStyle = '#9a3412';
       ctx.beginPath();
-      ctx.moveTo(dr0.x, dr0.y); ctx.lineTo(dr1.x, dr1.y); ctx.lineTo(dr2.x, dr2.y); ctx.lineTo(dr3.x, dr3.y);
+      ctx.moveTo(r0.x, r0.y); ctx.lineTo(r1.x, r1.y); ctx.lineTo(r2.x, r2.y); ctx.lineTo(r3.x, r3.y);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Compact Dorm Mini Fridge (with Microwave on top)
-      this.drawBox(ctx, gx, gy, 0, 0.70, 0.70, 0.85, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
-      // Microwave Oven
-      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.85, 0.60, 0.55, 0.35, '#1e293b', '#0f172a', '#020617', ox, oy);
+      // Deep Blue Comfortable Sofa (Classic Lounge Sofa)
+      // Seat Base
+      this.drawBox(ctx, gx, gy, 0, 0.85, 2.0, 0.42, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // High Backrest
+      this.drawBox(ctx, gx, gy, 0.42, 0.28, 2.0, 0.55, '#1d4ed8', '#1e40af', '#1e3a8a', ox, oy);
+      // Soft Armrests
+      this.drawBox(ctx, gx, gy, 0.42, 0.85, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      this.drawBox(ctx, gx, gy + 1.78, 0.42, 0.85, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // Fluffy Orange Throw Pillows
+      this.drawBox(ctx, gx + 0.28, gy + 0.25, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
+      this.drawBox(ctx, gx + 0.28, gy + 1.40, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
 
-      // Low Snack Table with Instant Ramen & Soda Cans
-      this.drawBox(ctx, gx + 0.90, gy + 0.25, 0, 0.75, 0.75, 0.35, '#78350f', '#58240a', '#451a03', ox, oy);
-      const ramenP = isoToScreen(gx + 1.25, gy + 0.60, 0.36, ox, oy);
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(ramenP.x - 4, ramenP.y - 6, 8, 6); // Instant noodle cup
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(ramenP.x + 6, ramenP.y - 5, 4, 5); // Beverage can
+      // Low Solid Walnut Coffee Table
+      this.drawBox(ctx, gx + 1.15, gy + 0.45, 0, 0.80, 1.10, 0.32, '#78350f', '#58240a', '#451a03', ox, oy);
+      // White Cup on Table
+      const cupP = isoToScreen(gx + 1.55, gy + 1.0, 0.33, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(cupP.x, cupP.y, 4, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Billy's Acoustic Guitar resting against the table
-      const gP = isoToScreen(gx + 1.65, gy + 0.85, 0.25, ox, oy);
+      // Billy's Acoustic Guitar resting against the sofa armrest
+      const gP = isoToScreen(gx + 0.35, gy + 2.05, 0.25, ox, oy);
       ctx.fillStyle = '#d97706';
       ctx.beginPath();
       ctx.ellipse(gP.x, gP.y, 6, 9, 0.3, 0, Math.PI * 2);
