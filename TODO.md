@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] CS5446 與 CS5224 課程講義／習題補充
+    - 交付條件：CS5446 source 涵蓋 model-based RL、game theory 與 Tutorial 5–8 的可核對例題；CS5224 source 涵蓋應用範例、IaC、pricing／TCO；兩篇 HTML 重建，草稿維持不進公開索引。
+    - 已完成：比對並沿用兩篇原有 Week 1–7／Week 1–6 內容，新增兩門課的缺漏章節、來源盤點與習題演算；全面複查後補上熊貓賽局的逐格最佳反應、IaC 工具與授權的課件日期說明，以及 k-means 距離的數學邊界；HTML 與搜尋索引已重生，章節 reviewkit、數值抽查與生成器自測通過。
+    - Review 重點：作者全盤 proofread，特別核對 Team 8 學生解答、Tutorial 8 Chicken 混合均衡 $3/14$、CS5224 影片三階段 AWS 資料流與 TCO 圖表占比；學生提交不視為官方答案，圖表占比不能當成絕對總成本。
+
 - [x] 首頁底部 Future Plans 區塊與導覽
     - 交付條件：在首頁 Timeline 之後、Contact 之前呈現 fact verifier 的個人延伸構想；三語文案與 Theme/Palette 響應式樣式可用，Home 下拉選單可抵達此區塊，Skills/Credentials 載入時不會自動捲走 cover。
     - 已完成：新增 Future Plans 卡片與 navbar 入口；修正 Skills/Credentials 橫向選單在載入時帶動整頁捲動的問題；保留原 Future Plan 待辦供後續實際研究。

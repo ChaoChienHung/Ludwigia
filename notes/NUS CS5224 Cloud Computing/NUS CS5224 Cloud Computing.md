@@ -1,6 +1,6 @@
 <meta>
 Title: NUS CS5224: Cloud Computing
-Summary: Lecture and study notes for NUS CS5224 Cloud Computing, from cloud foundations and datacenter infrastructure to virtualization, MapReduce, and serverless applications, with a Lab 1 photography platform case study covering S3, tenant authorization, asynchronous processing, lifecycle costs, reliability, and viva preparation.
+Summary: Lecture and study notes for NUS CS5224 Cloud Computing, from cloud foundations and datacenter infrastructure to virtualization, MapReduce, serverless applications, example applications, Infrastructure as Code, pricing and TCO, with a Lab 1 photography platform case study covering S3, tenant authorization, asynchronous processing, lifecycle costs, reliability, and viva preparation.
 Slug: nus-cs5224-cloud-computing
 Output: notes/NUS CS5224 Cloud Computing/NUS CS5224 Cloud Computing.html
 CanonicalId: nus-cs5224-cloud-computing
@@ -10,7 +10,7 @@ Lang: en
 Tags: Cloud Computing, Cloud Architecture, Datacenter, Virtualization, Resource Pooling
 Status: drafting
 Published: 2026-08-30
-LastModified: 2026-10-04
+LastModified: 2026-10-24
 </meta>
 
 # NUS CS5224: Cloud Computing
@@ -23,6 +23,7 @@ CS5224 moves from **why cloud computing is needed**, down to **how hardware supp
 Demand and economics → reference architecture → workload placement / elasticity
       → datacenter hardware / network / energy → virtualization / isolation
       → multi-tier applications / MapReduce / FaaS
+      → concrete workloads / reproducible infrastructure / cost decisions
 ```
 
 | Week | Role in the course | Bridge to the next week |
@@ -33,9 +34,12 @@ Demand and economics → reference architecture → workload placement / elastic
 | 4 | Examine hosting, servers, storage, networking, power, and cooling as physical cloud costs | Directly exposing hardware to tenants creates isolation and utilization problems |
 | 5 | Use hypervisors, hardware assistance, containers, and multitenancy to make manageable logical resources | Mature abstractions enable higher-level application architectures |
 | 6 | Combine the layers into multi-tier web applications, MapReduce, and serverless FaaS | Return to Week 1: cloud delivers scalable computing as a service |
+| 8 | Apply MapReduce to k-means and design a video SaaS pipeline | Move from named services to end-to-end workload and data-flow reasoning |
+| 9 | Express desired resources as Infrastructure as Code | Make deployment repeatable, reviewable, and recoverable |
+| 10 | Model metered cloud costs and datacenter TCO | Compare architectures with consistent assumptions and utilization |
 | Lab 1 | Connect service models, object storage, tenant isolation, and event-driven FaaS through a photography gallery | Derive architecture from requirements; test it against permission counterexamples, costs, and failure scenarios |
 
-Lab 1 appears after Week 6 as an integration case; this placement does not assert the actual teaching week. For the lab, first read the Week 1–2 service models and responsibility boundaries, then Lab 1 sections 1–3 for storage and permissions. After Week 5 isolation and Week 6 serverless, continue with the full Lab 1 data flow, security, and operations design.
+Lab 1 appears after the later lecture chapters as an integration case; this placement does not assert the actual teaching week. For the lab, first read the Week 1–2 service models and responsibility boundaries, then Lab 1 sections 1–3 for storage and permissions. After Week 5 isolation and Week 6 serverless, continue with the full Lab 1 data flow, security, and operations design.
 
 > **Reading tip:** For any cloud technology, identify the problem layer it serves: `business demand`, `service boundary`, `resource management`, `physical infrastructure`, `isolation`, or `application execution`. This keeps the meaning of “scalability” clear across layers.
 
@@ -4055,6 +4059,305 @@ Modern enterprise software systems rarely rely on a single computing paradigm. I
 13. Jonas, E., Schleier-Smith, J., Sreekanti, V., Tsai, C. C., Khandelwal, A., Pu, Q., Shankar, V., Carreira, J. M., Krauth, K., Yadwadkar, N., Gonzalez, J. E., Popa, R. A., Stoica, I., & Patterson, D. A. (2019). Cloud programming simplified: A Berkeley view on serverless computing. *Communications of the ACM*, 62(10), 44-54.
 14. Gopalan, A., & Teo, Y. M. (2025). *CS5224 Cloud Computing (Lecture 6: Applications and Paradigms, Part 2)*. School of Computing, National University of Singapore (NUS).
 15. IBM Cloud Education. (2023). *What is Function as a Service (FaaS)?* IBM Think Topics.
+
+# Week 8 - Example Cloud Applications: Iterative K-Means and Video-Sharing SaaS
+
+<draft>
+- 1. Start with the workload and data characteristics before choosing cloud products.
+- 2. K-means: distance, assignment, centroid update, iterative MapReduce and EMR/S3 deployment.
+- 3. Video SaaS: upload, CPU-heavy encoding, I/O-heavy streaming, independent scaling and cost.
+- 4. Explain how IaaS/PaaS/SaaS responsibilities appear in both examples.
+</draft>
+
+
+Weeks 1–6 built the stack from physical resources to VMs, application tiers, MapReduce, and FaaS. The next lectures ask three practical questions: **how does a real workload fit these abstractions, how do we reproduce its infrastructure, and how do we compare its cost?** A design is incomplete if it names services but cannot explain its data flow, deployment process, and cost drivers.
+
+## 1. From MapReduce to two complete applications
+
+### 1.1 K-means clustering on MapReduce
+
+K-means groups $m$ objects represented by $n$-dimensional attribute vectors into $k<m$ clusters. Each iteration has an **assignment** step and an **update** step. Given centroids $\mu_1,\ldots,\mu_k$, assign point $x_i$ to $c_i=\arg\min_j d(x_i,\mu_j)$; then recompute $\mu_j=\frac1{|C_j|}\sum_{i\in C_j}x_i$. Repeat until assignments or centroids stabilize, or a chosen iteration limit is reached. The familiar objective is within-cluster squared Euclidean distance $\sum_i\|x_i-\mu_{c_i}\|_2^2$; the lecture's broader phrase “minimize intra-cluster and maximize inter-cluster distances” is intuition rather than this exact objective. Euclidean distance is a $2$-norm; a valid metric also needs non-negativity, identity of indiscernibles, symmetry, and the triangle inequality.
+
+For the usual $p$-norm distance $\|x-y\|_p=(\sum_i|x_i-y_i|^p)^{1/p}$, the metric guarantee requires **$p\geq1$**. The slide's wording “$p>0$” is too broad: when $0<p<1$, this expression generally violates the triangle inequality. The triangle inequality itself uses $\leq$, since equality is possible. These mathematical corrections matter if a reader tries to generalize the Euclidean example to other distances.
+
+The lecture's Twitter example represents each user by two attributes: $\log_2(\text{followers})$ and $\log_2(\text{followees})$. The log transform dampens large outliers before distance comparisons. Input key is a user ID and value is the two-feature vector. A mapper reads a point and current centroid set, computes distances, and emits **cluster ID as key, point or partial statistics as value**. The shuffle groups assignments by cluster; a reducer computes the new centroid and member count. Each iteration needs the *new* centroids distributed to the next map pass. This is iterative MapReduce, so repeated jobs and data movement can be costly compared with an in-memory engine.
+
+The example uses S3 for input/code/output storage and Amazon EMR as the managed data-processing cluster. Four reported cluster sizes are 23,904; 22,125; 5,166; and 25,074, with centroids in log-feature space. For the cluster of 5,166 users, centroid coordinates $(5.051,2.712)$ mean approximately $2^{5.051}\approx33$ followers and $2^{2.712}\approx6.6$ followees; **do not interpret log coordinates as raw counts**. The lecture observes that clusters with similar follower/followee dimensions have more members, but this dataset alone does not prove a universal social-network rule. Choice of $k$, initialization, feature scaling, empty clusters, and stopping criteria affect the result.
+
+### 1.2 One complete map–shuffle–reduce iteration
+
+Suppose points $x_1=(0,0)$, $x_2=(2,0)$, and $x_3=(9,0)$ start with centroids $\mu_A=(0,0)$ and $\mu_B=(10,0)$. Mappers send the first two points under key A and the third under key B. Shuffle groups values as $A:[(0,0),(2,0)]$ and $B:[(9,0)]$. Reducers produce new centroids $\mu_A=(1,0)$ and $\mu_B=(9,0)$ with counts 2 and 1. The next iteration must use these outputs as inputs; a single MapReduce pass is not the full k-means algorithm. If clusters are badly initialized, the algorithm may converge to a local optimum; running several seeds and comparing within-cluster cost helps, though the lecture's cloud example chiefly emphasizes deployment and key-value flow.
+
+The Twitter input value contains two log-transformed features. Logarithms reduce the dominance of high-follower outliers, but zero counts require an explicit transform convention such as $\log_2(1+x)$; the slide's encoded examples should not be read as prescribing one universal zero-handling rule. Cluster sizes and centroids are outputs of a particular dataset and chosen $k$, not general population estimates.
+
+## 2. Video-sharing SaaS: upload, encode, stream
+
+The second application must accept videos in different formats, convert them to streamable renditions, and deliver them to many viewers. Upload and streaming are I/O-heavy; encoding is CPU-heavy. Separate those workloads so a burst of viewers does not starve transcode jobs.
+
+| Stage | Main path | Capacity and reliability question |
+|---|---|---|
+| Upload | Browser → upload interface → object storage | How are large files transferred, authenticated, checked, and made durable? |
+| Encoding | New-object event / job queue → workers → transcoded renditions and metadata | How are CPU-intensive jobs retried, deduplicated, and scaled independently? |
+| Streaming | Viewer → web/app tier or CDN → prepared video segments in storage | How are bandwidth, cache hit rate, adaptive formats, and egress cost controlled? |
+
+The lecture illustrates EC2 web servers, S3 object storage, cloud-managed components, and alternative IaaS/PaaS/SaaS responsibilities. For a production design, a queue between upload and encoding decouples arrival rate from processing capacity; idempotent job IDs prevent retries from producing duplicate outputs. Multiple renditions can support different devices and network conditions. A CDN reduces repeated origin transfer for popular objects but does not eliminate outbound transfer charges. If user accounts are intentionally outside the lecture's scope, do not silently claim that the sample architecture solves authorization; a real SaaS must add identity, tenant permissions, abuse controls, and content policy.
+
+### 2.1 Trace a single upload through the architecture
+
+A browser uploads a file through a front-end service or directly to object storage using a scoped upload grant. After durable storage acknowledges it, metadata records the object and an encoding job is queued. A worker takes the job, reads the original, transcodes to the chosen streaming format/renditions, writes outputs to object storage, and marks the video ready. A viewer then retrieves metadata and the prepared segments, ideally through cache/CDN paths. This separation allows upload servers, encoding workers, and streaming delivery to scale by their own bottleneck. Do not hold a synchronous browser request open for the entire transcode. A failed worker should leave a retriable job and an honest status, not a published broken link.
+
+### 2.2 Service model and bottleneck comparison
+
+| Component | What the lecture demonstrates | Capacity driver | What the application owner still decides |
+|---|---|---|---|
+| EC2 / web tier | IaaS compute for front-end connections | Concurrent uploads and API requests | Instance configuration, application deployment, load balancing |
+| S3 / storage | Durable cloud object service | Video bytes, copies, requests | Object naming, access control, retention |
+| Encoding workers | Parallel conversion work | CPU/GPU time per source minute | Codec, resolution ladder, queue concurrency, retry rules |
+| Streaming tier / CDN | Delivery to many viewers | Peak throughput and outbound bytes | Cache strategy, authorization, regional reach |
+
+The lecture compares traditional hosting and cloud costs under an example workload (about 50 uploads daily). Convert that to a monthly model only after stating assumptions about video size, encode minutes per upload, number of renditions, viewer count, watch time, storage retention, and egress. A small upload count can still produce large viewing bandwidth; sizing from uploads alone is misleading. This application makes the Week 6 service-model distinction concrete: IaaS gives control over server setup, PaaS or managed media services reduce operational burden, and SaaS is the delivered video product from the viewer's perspective.
+
+### 2.3 Read the lecture architecture diagrams as a data flow
+
+The slide sequence gives a more specific reference architecture than the generic three-stage table above. On **upload**, a browser sends a raw video through an Elastic Load Balancer to EC2 web servers in an Auto Scaling Group. The web tier writes the raw file to an S3 raw-files bucket, records application data in an RDS database, and sends a processing message to SQS. The diagram's numbered arrows place the queue after the upload/metadata path; the browser does not wait for encoding to finish. The lecture uses EC2 and RDS as illustrative service choices, not as a proof that every video SaaS requires those exact products.
+
+On **encoding**, EC2 encoder workers in a separate Auto Scaling Group poll SQS, download the raw file from the raw-files bucket, transcode it (the lecture names `ffmpeg`), then upload the encoded result to a separate S3 encoded-files bucket. A worker should acknowledge its queue message only after the output is durably written and job state is updated. This operational consequence follows from the diagram's asynchronous flow; the slide itself does not spell out a complete retry protocol. The two buckets make original and deliverable objects distinct, which supports different retention and access rules.
+
+On **streaming**, a viewer's browser/media player receives encoded video through CloudFront, whose origin is the encoded-files bucket. The video need not pass back through the upload web servers. Cache behavior and authorization still need design; CloudFront speeds distribution but does not by itself choose who may watch a file. The full path is:
+
+```text
+Browser upload → Load Balancer → EC2 web tier → S3 raw files
+                                     ↓ metadata       ↓ message
+                                    RDS             SQS
+                                                     ↓ poll
+                                 EC2 encoder workers ← S3 raw files
+                                          ↓ transcode
+                                     S3 encoded files → CloudFront → Viewer
+```
+
+This diagram explains why the tiers scale independently: upload depends on incoming connections and raw-byte ingress, encoding on CPU minutes and queue depth, streaming on read throughput and egress. A direct-to-S3 browser upload is a possible alternative architecture, but it is **not** the flow drawn in the lecture.
+
+### 2.4 Lecture workload and capacity arithmetic
+
+The lecture's worked workload assumes about **50 uploads/day**, each a **100 MB** HD movie. In decimal units that is $50\times100\text{ MB}=5\text{ GB/day}$, or about **150 GB/month** for a 30-day month, *before* encoded renditions, thumbnails, old versions, or replication. Each encode takes about one minute, so 50 uploads imply at least 50 encoder-minutes per day; that average does not tell us peak concurrent jobs. A burst of 50 simultaneous uploads could create an encoding queue even if average daily compute is small.
+
+The viewing side assumes **500 streams/day** of 100 MB each, or $50\text{ GB/day}\approx1.5\text{ TB/month}$ of delivered data, assuming viewers consume the full movie and decimal units. This is ten times the uploaded daily volume. Streaming egress can therefore dominate the bill even when storage grows modestly. If viewers abandon early or adaptive streaming selects lower bitrates, delivered bytes fall; if popular videos are replayed repeatedly, they rise. The lecture asks for traditional-versus-cloud, inter-cloud, and intra-cloud comparisons. Each comparison must use the same upload/stream counts, time horizon, region, and delivery quality.
+
+### 2.5 Stage-by-stage service responsibility
+
+The lecture's diagrams classify EC2, S3, auto scaling, Elastic Load Balancer, and SQS as cloud infrastructure services supporting the upload and encode pipeline; the SaaS provider still assembles them into the actual video product. `ffmpeg` is the video encoder in the illustration, not a managed cloud service by itself. CloudFront is an edge delivery service for streaming; the user-facing media player and the completed application belong to the delivered SaaS experience. Do not infer from the classification table that an S3 bucket automatically performs encoding or that a CDN supplies authentication. Every stage still needs explicit ownership of access rules, errors, and data lifecycle.
+
+
+<reviewkit>
+<takeaways>
+- An iterative algorithm needs repeated map–shuffle–reduce passes; current centroids must reach the next pass.
+- Input and output key-value schemas determine where parallelism and grouping occur.
+- A video SaaS has distinct upload, encoding, and streaming paths with different bottlenecks.
+- Compare architecture choices using complete data flow and cost assumptions.
+</takeaways>
+<qprompt/>
+</reviewkit>
+
+## References
+
+- Gopalan, A. *Lecture 08 - Example Applications.pdf*, CS5224, AY2026/27 Semester 1, 41 slides.
+- Gopalan, A. *Lecture 07 - Applications and Paradigms (Part 2).pdf*, MapReduce and FaaS foundation.
+
+---
+
+# Week 9 - Infrastructure as Code: Repeatable Cloud Environments and Terraform
+
+<draft>
+- 1. Identify what infrastructure must be managed and why manual drift occurs.
+- 2. Compare imperative and declarative approaches.
+- 3. Link pets/cattle to repeatability and recovery.
+- 4. Compare provider-native and independent tools.
+- 5. Work through Terraform write, plan, apply, state, dependencies and modules.
+- 6. Identify security, state, and tool-sprawl pitfalls.
+</draft>
+
+The prior application designs contain many dependent resources. IaC turns that dependency graph into a reviewable source artifact so deployment can be repeated and changed deliberately.
+
+## 1. Infrastructure as Code (IaC)
+
+A cloud environment consists of VMs, networks, databases, load balancers, storage, identity rules, and their dependencies. Clicking through a console or maintaining ad hoc scripts becomes slow, error-prone, and vulnerable to **configuration drift**: the actual environment diverges from the intended design. IaC expresses infrastructure in versioned source so a tool can create, update, and review environments consistently. It enables code review, CI/CD integration, automated testing, documentation, repeatable recovery, and collaboration.
+
+### 1.1 Imperative and declarative approaches
+
+| Approach | Author describes | Benefit | Limit |
+|---|---|---|---|
+| Imperative | Ordered operations: create network, then subnet, then VM | Direct control over individual steps; simple one-off tasks | Must track current state and edge cases; reruns may not be idempotent |
+| Declarative | Desired resources and properties | Tool calculates changes, handles dependencies, and can converge after drift | Less step-level control; state management and abstraction can add complexity |
+
+“Declarative” does not mean the operator can ignore dependencies or side effects. The tool compares desired and recorded/observed state, produces a plan, and applies provider API calls; a wrong desired state can still delete a needed resource. The **pets vs cattle** distinction is operational: a pet server is named and repaired individually, while cattle instances are reproducibly configured and replaced. IaC makes interchangeable instances easier, but persistent databases still require explicit data durability and recovery planning.
+
+### 1.2 Drift and the pets-versus-cattle distinction
+
+Drift arises when console edits, emergency fixes, or automated services change live resources without matching source updates. Detect it by comparing actual state with declared and recorded state; resolve it by updating source to accept a justified change or by reconciling the environment to the reviewed source. Do not blindly reapply a template when the live divergence contains data or a needed emergency fix. In a cattle model, instances can be replaced from common configuration, but database data and stateful dependencies must be externalized and backed up. IaC automates resource creation, not data recovery by itself.
+
+## 2. Tools and Terraform workflow
+
+The lecture surveys provider tools (AWS CloudFormation/CDK, Azure Resource Manager, Google Infrastructure Manager) and independent tools (Terraform, Pulumi). Provider-native tools follow one cloud's resource model; cross-cloud tools offer a common workflow but do not erase differences among provider services. Terraform describes resources in configuration, calls providers through APIs, builds a dependency graph, and records managed infrastructure in a **state file**. Modules package reusable collections of resources. Pulumi uses general-purpose programming languages to define infrastructure.
+
+The tool distinctions in the slides are more specific. **CloudFormation** manages AWS resources from declarative templates; **AWS CDK** lets authors define resources in familiar programming languages and synthesizes a CloudFormation deployment. **Azure Resource Manager** groups and redeploys Azure resources from templates and integrates Azure role-based access control. **Google Infrastructure Manager** deploys Terraform configurations to Google Cloud; application deployment is a separate concern handled by services such as Cloud Build/Cloud Deploy. The deck dates Google Deployment Manager's discontinuation to **1 April 2026** and notes Terraform's **Business Source License from 2023**. Treat both as dated statements from the supplied lecture, and check current provider documentation before relying on service status or license terms for a real project.
+
+A safe Terraform cycle is: **write** configuration → initialize providers/modules → **plan** and inspect the proposed diff → **apply** reviewed changes → observe actual resources and drift → update configuration or state deliberately. The lecture demonstrates editing `main.tf`, versioning changes, viewing a plan, and applying it. State is operationally sensitive: store it with access control and locking for shared work, avoid committing secrets in state or configuration, and review destructive plans. CI can run syntax, policy, and plan checks before an authorized apply. Keep application deployment and infrastructure provisioning as related but distinct processes: creating a cluster does not automatically deploy correct application code.
+
+### 2.1 Terraform configuration, plan, graph, and state
+
+A resource block declares a desired object, such as an S3 bucket, while providers translate resource operations to cloud APIs. References between resources create a dependency graph so independent objects can be created in parallel and dependent ones in order. A module groups reusable resources with inputs and outputs. The state file maps declarations to real resource identities; losing or corrupting it can make the next plan misleading. A plan is a proposed diff based on current knowledge, so inspect it close to apply time and control concurrent writers with locking. Version-control configuration and module versions; protect credentials and state separately.
+
+A practical review asks: Which resources will be **created, changed, or destroyed**? Will a change recreate a database or public endpoint? Does the plan alter IAM scope, network exposure, storage retention, or encryption? Are application deployments sequenced after required infrastructure? A successful apply proves only that provider API changes completed; monitoring and functional checks must verify the deployed service.
+
+### 2.2 Compare tool boundaries through one bucket
+
+A minimal Terraform-style resource declaration can express an S3 bucket and tags:
+
+```hcl
+resource "aws_s3_bucket" "example" {
+  bucket = "example-course-bucket-unique-name"
+  tags = {
+    Name        = "Example bucket"
+    Environment = "Dev"
+  }
+}
+```
+
+This describes a desired object; it does **not** create the bucket until a provider is configured and an apply is authorized. Bucket names are globally constrained, so the literal illustrative name may be unavailable. The lecture's Pulumi contrast expresses a similar resource using a familiar programming language and exports the resulting identifier. CloudFormation and Azure Resource Manager use provider-native resource models; Google Infrastructure Manager deploys Terraform configurations to Google Cloud. The correct choice depends on team language, target clouds, policy controls, state handling, and operational familiarity.
+
+### 2.3 A reviewable change sequence
+
+1. Put the infrastructure configuration in version control and initialize the tool/providers.
+2. Change a resource property in a branch and run a plan. Read the *operations*, not merely the final count of resources.
+3. Review security effects: public exposure, IAM permissions, encryption, backup, network routes, and data retention.
+4. Apply the reviewed change with controlled credentials and serialized state access.
+5. Confirm the live resource, test application behavior, and monitor for drift.
+6. If a live emergency edit occurs, reconcile it back into source or deliberately revert it after the incident.
+
+The lecture's command sequence (`git init`, edit `main.tf`, `terraform init`, `terraform plan`, commit, `terraform apply`) illustrates this lifecycle. For team workflows, applying an old plan after the environment has changed is hazardous. State must be backed up and access-controlled; code review alone does not protect a secret copied into provider arguments or state. Policy-as-Code can reject known-bad configurations, GitOps can connect reviewed repository state to deployment, and self-healing systems add **monitor → analyze → remedy** loops. None of these removes the need to verify the real outcome.
+
+
+IaC pitfalls in the lecture include tool sprawl, security and compliance mistakes, and the limits of automation. A self-healing system needs monitoring plus explicit recovery behavior; a declarative template alone does not detect every runtime failure. The design question is not “which tool has more features?” but “can the team reproduce the environment, review changes, control access, and recover after failure?”
+
+<reviewkit>
+<takeaways>
+- IaC records desired infrastructure so changes can be reviewed and reproduced.
+- Declarative tools reconcile desired and observed state; their plans can still be destructive.
+- Terraform uses providers, resources, dependency graphs, modules and sensitive state.
+- Replaceable compute needs separate persistence and recovery design.
+</takeaways>
+<qprompt/>
+</reviewkit>
+
+## References
+
+- Gopalan, A. *Lecture 09 - Infrastructure as Code.pdf*, CS5224, AY2026/27 Semester 1, 41 slides.
+
+---
+
+# Week 10 - Cloud Pricing and Total Cost of Ownership
+
+<draft>
+- 1. Separate price, metered usage and total cost.
+- 2. Compare IaaS, PaaS, SaaS and integrated/separate SaaS billing.
+- 3. Build compute, network, storage and service usage ledgers.
+- 4. Include Capex, Opex, capital, integration and lock-in costs.
+- 5. Compare datacenter server cases under utilization changes.
+- 6. Perform sensitivity and break-even analysis with common assumptions.
+</draft>
+
+Choosing a lower unit price is not the same as minimizing cost. The workload's duration, data movement, utilization, commitment, and operational labor determine the total.
+
+## 1. Pricing models, usage metrics, and total cost of ownership
+
+A **price** is a unit charge, such as per compute second, GB-month, GB transferred, user-month, or 1,000 requests. A **cost** is that price multiplied by measured use, plus fixed fees and operational work. Cloud providers price to cover service design and operation while accounting for sharing, utilization, competition, and regulation. Consumers choose pricing commitments according to workload predictability and interruption tolerance.
+
+### 1.1 Match pricing to workload shape
+
+- **IaaS:** VM type/size and run duration, storage allocation and I/O, network transfer, and sometimes licensed software. On-demand suits uncertain short runs; reservations or savings commitments trade flexibility for lower rates on predictable baseline use. Interruptible/spot capacity can lower batch cost but requires checkpoints and retry logic.
+- **PaaS:** Compute and storage plus managed platform, development tooling, and possible license charges. Compare the total managed-service bill with labor and risk saved, not just VM unit prices.
+- **SaaS:** Subscription modules, nominated users, transaction volume, or combinations. Under integrated pricing the SaaS provider pays its IaaS host and bundles that cost into the customer bill; under separate pricing the customer pays SaaS and hosting providers separately. Identify who bears scaling and egress risk.
+
+Pricing varies by region, resource type, billing interval, discount tier, and payment schedule. Lecture examples are teaching snapshots; use a dated provider quote before any real purchase decision. Distinguish metered usage from provisioned capacity: an idle allocated resource can still incur a charge.
+
+## 2. Build a complete usage ledger
+
+| Meter | Quantity to calculate | Common omission |
+|---|---|---|
+| Network | Inbound, outbound, inter-region/inter-cloud, and intra-cloud bytes by path | Assuming all internal or inbound traffic is free |
+| Compute | Instance type × running hours; reserved commitment; serverless requests and execution duration | Counting only CPU-active time for a running VM |
+| Storage | Average GB held × months, storage class, requests and I/O | Counting only final data size, not intermediate and replicated copies |
+| Service | User-months, subscription period, API transactions | Forgetting minimum fees or tier changes |
+| Operations | Monitoring, backup, support, security, integration, staff time | Comparing provider bill with on-prem hardware alone |
+
+For a tiered network price, split bytes across tiers rather than applying the cheapest marginal rate to all traffic. Use the same region, currency, time horizon, workload, availability target, and service level on both sides of a comparison. Project demand scenarios (baseline, peak, and growth) because an architecture's cost changes with utilization.
+
+## 3. TCO comparison and utilization
+
+The lecture's datacenter TCO decomposition is **datacenter depreciation + datacenter operating cost + server depreciation + server operating cost**. CAPEX includes construction, hardware, and initial deployment, spread over useful life; OPEX includes power, cooling, maintenance, salaries, licensing, and recurring services. Additional decision costs include financing/cost of capital, migration and integration effort, and provider lock-in/exit cost. Existing investment is a sunk cost for a forward-looking decision: it should be recorded for accounting, but should not by itself justify continuing a more expensive future option.
+
+The three lecture cases compare high-end servers, lower-cost but higher-power servers, and the latter at 50% datacenter utilization. Cheap purchase price can lose once electricity and space are included. Low utilization raises **cost per useful workload unit** because fixed datacenter and server costs are spread across less work. A useful metric is $\text{unit TCO}=\text{total relevant cost over period}/\text{completed workload units}$, with latency and availability held comparable. Without numeric values from the slide diagrams, no exact case ranking is claimed; the point is to change one assumption at a time and trace its effect through CAPEX, OPEX, and utilized capacity.
+
+### 3.1 Read the three TCO charts correctly
+
+I inspected the lecture's original chart images because the pie labels were not present in extracted PDF text. The figures show **cost composition percentages**, not absolute TCO totals. Selected readable shares are:
+
+| Case | Server amortization | Datacenter amortization | Server power | PUE overhead | What changes |
+|---|---:|---:|---:|---:|---|
+| A: high-end servers | 65.9% | 7.3% | 3.8% | 3.0% | Server purchase/depreciation dominates the displayed mix |
+| B: lower-cost, higher-power servers | 29.5% | 18.5% | 14.3% | 11.5% | Cheaper server capital is offset by larger power and datacenter shares |
+| C: B with 50% datacenter utilization | 17.3% | 32.4% | 8.4% | 8.4% | Fixed datacenter components consume more of the useful-capacity cost mix |
+
+A pie chart's percentages sum to roughly 100% *within each case*; comparing 65.9% in A with 29.5% in B does **not** establish that A spends more dollars on servers or that B has lower total cost. The slides provide no clearly readable absolute cost total next to these pies. The A chart also appears to mismatch some small outside labels and inside slice percentages, so the table uses only the unambiguous major categories. The valid conclusion is compositional: server choice and utilization can shift the dominant cost drivers. An absolute A/B/C ranking requires the underlying cost amounts and useful work delivered.
+
+### 3.2 A reusable break-even model
+
+Let fixed on-prem annual cost be $F$, incremental on-prem workload cost $c_p$ per unit, cloud fixed subscription/support cost $S$, and cloud marginal workload cost $c_c$. For annual volume $x$, compare $C_p(x)=F+c_px$ with $C_c(x)=S+c_cx$. If $c_c>c_p$, the equal-cost threshold is $x^*=(F-S)/(c_c-c_p)$ when the numerator and denominator have compatible signs; below or above it, inspect the inequalities rather than assuming cloud always wins at low volume. Add migration cost to the cloud side over the chosen amortization horizon and model data egress separately if it grows nonlinearly with $x$. This toy equation is a reasoning aid, not a quote from the provider.
+
+In the lecture's Case A/B/C comparison, changing server efficiency and utilization alters both numerator and denominator of cost per useful work. At 50% utilization, a nominally cheaper server fleet may need about twice the capacity for the same sustained useful work if all else is equal. The diagrams must be read with their actual depreciation and energy values before assigning a numerical winner. Sensitivity analysis should vary power price, useful life, utilization, peak reserve, staff effort and traffic, not just purchase price.
+
+### 3.3 Tiered price calculation and unit discipline
+
+Suppose, solely as an arithmetic exercise, the first 1 GB of monthly transfer is free, the next 999 GB cost S$0.01/GB, and any remaining bytes cost S$0.005/GB. A month with 1,500 GB has charge $999(0.01)+500(0.005)=\text{S\$}12.49$ under those simplified tiers. Applying S$0.005 to all 1,500 GB would undercount the bill. Real provider bills may separate destination, direction, service, region, and taxes; the lecture's rates illustrate tiering rather than a current provider quote.
+
+Compute charges require a compatible unit. A VM rate per second is multiplied by *allocated running seconds*, often subject to a minimum billing duration; a reserved commitment has upfront and recurring components whether the workload fully uses it or not. Storage is typically GB-month: an object held for half a month contributes about half a GB-month per GB, subject to the provider's class-specific minimums. Service pricing may count subscribed users or request-response transactions. Converting every category to the same monthly or yearly horizon prevents adding unrelated quantities.
+
+### 3.4 Provider, consumer, and SaaS-provider viewpoints
+
+A cloud provider chooses prices while balancing datacenter design/operation, resource sharing, volume discounts, competition, and regulation. A cloud consumer compares expected bills with an on-prem alternative. A SaaS provider sits on both sides: it buys cloud capacity and sells an application, either bundling hosting into the SaaS fee (integrated pricing) or billing the customer separately for hosting and application use. If the customer pays separately, specify who controls the hosting account, whose data-transfer bill it is, and who responds to a usage spike. A low software subscription can hide a high infrastructure bill if these responsibilities are unclear.
+
+## 4. End-to-end decision checklist
+
+1. Describe workload arrival, storage growth, peak-to-average ratio, data transfer, latency, resilience, and compliance requirements.
+2. Choose an architecture and deployment model, then map every resource to a meter and rate.
+3. Estimate costs across the same horizon as the on-prem option, including staff and migration effort.
+4. Vary utilization, demand, egress, and commitment assumptions; compute a break-even point where possible.
+5. Review the IaC plan and the estimated bill whenever a design change adds a resource, replication path, or new data movement.
+
+### 4.1 Dated course-administration note from the lecture
+
+Slide 29 of the supplied Lecture 10 deck lists a test for **3 November 2026, 18:30–20:00, LT17**, using Examplify with a non-secure blocked-internet mode. It describes an open-book mix of MCQ, MRQ, and structured questions, emphasizing application over recall. This is a record of the supplied slide, not a live schedule confirmation; use current course announcements for any change of venue, time, or allowed materials.
+
+<reviewkit>
+<takeaways>
+- Price is a unit rate; cost needs time, usage, fixed charges and operations.
+- Compare cloud with on-prem TCO over the same workload, horizon and service level.
+- Include network egress, requests, storage copies, reserved commitments and labor.
+- Low datacenter utilization raises cost per useful workload unit.
+- Sensitivity analysis exposes which assumptions decide the result.
+</takeaways>
+<qprompt/>
+</reviewkit>
+
+## References
+
+- Gopalan, A. *Lecture 10 - Pricing Models and Modeling TCO.pdf*, CS5224, AY2026/27 Semester 1, 32 slides.
+
+## Source audit for Weeks 8–10
+
+- *Lecture 05 - Virtualisation and Multitenancy* and *Lecture 06/07 - Applications and Paradigms* are already covered in the existing Weeks 5–6; their content was checked for continuity. The new sections derive from *Lecture 08 - Example Applications* (41 slides), *Lecture 09 - Infrastructure as Code* (41 slides), and *Lecture 10 - Pricing Models and Modeling TCO* (32 slides).
+- The video architecture and TCO pie charts were visually checked from the original slides. Chart percentages are recorded as within-case shares; their absolute totals are not supplied, and ambiguous small labels are not used.
+
 
 # Lab 1: Cloud Architecture for a Private Photography Gallery and Viva Preparation
 

@@ -37,6 +37,20 @@
   - `core/script.js`（沿用 `initSkyGardenAmbience()` 掛載點，必要時為 `garden-ambient` 補日光層）
 - 備註: 僅借鑑「fixed background canvas + 上層 light beams + content-anchored spotlight」的分層概念與色彩節奏；實作需維持 Ludwigia 現有 `Theme` / `Effects` / `pointer-events:none` 契約，不直接搬運原站結構或素材。當前 Ludwigia 僅在首頁啟用這層較強的日光 ambience，避免干擾搜尋結果與長文閱讀頁。
 
+### Ludwig's World & Studio（等軸 2.5D 虛擬生活空間與社交世界）
+
+- **Source 1**: **whatsmyagentdoing Github**: [Charonyuu/whatsmyagentdoing](https://github.com/Charonyuu/whatsmyagentdoing) (MIT License)
+- **Source 2**: **Heart Island 政策心島**: [puma.taipei/heart-island](https://puma.taipei/heart-island)
+- **套用範圍**: 
+  - 2.5D 等軸（Isometric）Canvas 空間渲染架構、地圖瓦片深度排序（Painter's algorithm）、微縮角色步態狀態機。
+  - 多區域地圖架構（室內家屋與室外社交廣場）、自訂訪客暱稱、頭頂浮動名牌、鍵盤/虛擬十字鍵/點擊多模態移動、鄰近對話觸發系統與 Web Audio 環境音效。
+- **實作位置**:
+  - `space/index.html`（Ludwig's World 主頁面）
+  - `space/space.js`（純原生 Canvas 等軸引擎、角色狀態機、對話系統、A* 網格尋路與 Web Audio 合成器）
+  - `space/space.css`（響應式介面、虛擬十字鍵 D-Pad、RPG 對話視窗與名牌系統）
+  - `docs/specs/isometric-world-spec.md`（完整系統與技術規格文件）
+- **備註**: 融合了 `Charonyuu/whatsmyagentdoing` 的純前端 2D Isometric Office 幾何渲染技術，以及 `Heart Island` 的大地圖探索、角色名牌與沉浸式互動氛圍；將其打造成屬於 Ludwig 與家人（Yully、Wu Yen Chao、Luena）、好友（Clark Wu、Billy Fang、Jerry Chung、Happy Wang、Kerry Chang、Haolei Pei、Bo Han Wu）及 AI 夥伴們（Antigravity、Gemini、Claude、ChatGPT）的自給自足虛擬世界。
+
 ## 借鑑來源（部分採用）
 
 - Clouds（texture/motion cue）: https://codepen.io/ajv/pen/XKOEeX

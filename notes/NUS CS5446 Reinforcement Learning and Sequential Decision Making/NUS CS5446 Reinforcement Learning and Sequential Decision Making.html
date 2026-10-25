@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NUS CS5446 Reinforcement Learning and Sequential Decision Making — Ludwig</title>
   <meta name="garden:tags" content="AI Planning, Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, Decision Theory, Game Theory, Reinforcement Learning">
-  <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5446 Reinforcement Learning and Sequential Decision Making (AI Planning and Decision Systems), covering AI planning foundations, classical planning (STRIPS, PDDL, SATPlan), LFM-assisted modern planning, scalable heuristics (HTN), rational decision theory, utility theory, game theory, Markov decision processes, model-free reinforcement learning, value function approximation, Deep Q-Networks (DQN), policy gradients, REINFORCE, Actor-Critic methods, advanced trust-region policy search (TRPO, PPO), reward shaping (potential-based policy invariance, exploration bonuses with pseudo-counts and RND, exploitation bottleneck discovery, process reward models, RLHF preference alignment, advanced multi-agent reward architectures ReLara, CenRA, SASR), and guided sequential decision making (decision-time online search, rollout algorithms, Monte Carlo Tree Search, UCT, AlphaGo Zero PUCT, demonstration-based offline planning, Behavioral Cloning covariate shift, DAgger interactive dataset aggregation, and Generative Adversarial Imitation Learning GAIL).">
+  <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5446 Reinforcement Learning and Sequential Decision Making (AI Planning and Decision Systems), covering AI planning foundations, classical planning (STRIPS, PDDL, SATPlan), LFM-assisted modern planning, scalable heuristics (HTN), rational decision theory, utility theory, game theory, Markov decision processes, model-free reinforcement learning, value function approximation, Deep Q-Networks (DQN), policy gradients, REINFORCE, Actor-Critic methods, advanced trust-region policy search (TRPO, PPO), reward shaping (potential-based policy invariance, exploration bonuses with pseudo-counts and RND, exploitation bottleneck discovery, process reward models, RLHF preference alignment, advanced multi-agent reward architectures ReLara, CenRA, SASR), model-based RL and world models, strategic game theory, and guided sequential decision making (decision-time online search, rollout algorithms, Monte Carlo Tree Search, UCT, AlphaGo Zero PUCT, demonstration-based offline planning, Behavioral Cloning covariate shift, DAgger interactive dataset aggregation, and Generative Adversarial Imitation Learning GAIL).">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.ai_planning,concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning,concept.decision_theory,concept.game_theory,concept.reinforcement_learning">
   <meta name="site:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;},&quot;concept.decision_theory&quot;:{&quot;en&quot;:&quot;Decision Theory&quot;,&quot;zh-Hant&quot;:&quot;決策理論&quot;,&quot;zh-Hans&quot;:&quot;决策理论&quot;},&quot;concept.game_theory&quot;:{&quot;en&quot;:&quot;Game Theory&quot;,&quot;zh-Hant&quot;:&quot;賽局理論&quot;,&quot;zh-Hans&quot;:&quot;博弈论&quot;},&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5446-reinforcement-learning-and-sequential-decision-making">
   <meta name="site:published_at" content="2026-08-20">
-  <meta name="site:last_modified_at" content="2026-10-04">
-  <meta name="site:reading_time_minutes" content="498">
+  <meta name="site:last_modified_at" content="2026-10-24">
+  <meta name="site:reading_time_minutes" content="551">
   <meta name="site:source" content="notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.md">
   <script>
   (() => {
@@ -489,6 +489,44 @@
 <a class="note-toc-link level-2" href="#12-2-imitation-learning-software-ecosystem-slide-50">12.2 Imitation Learning Software Ecosystem (Slide 50)</a>
 <a class="note-toc-link level-2" href="#12-3-high-level-synthesis-comparative-trade-off-matrix">12.3 High-Level Synthesis: Comparative Trade-Off Matrix</a>
 <a class="note-toc-link level-1" href="#references-7">References</a>
+<a class="note-toc-link level-1" href="#1-model-based-reinforcement-learning-learn-a-model-then-choose-how-to-use-it">1. Model-based reinforcement learning: learn a model, then choose how to use it</a>
+<a class="note-toc-link level-2" href="#1-1-learning-a-model-from-a-transition-dataset">1.1 Learning a model from a transition dataset</a>
+<a class="note-toc-link level-2" href="#1-2-from-model-error-to-planning-error">1.2 From model error to planning error</a>
+<a class="note-toc-link level-2" href="#1-3-four-uses-of-the-same-learned-model">1.3 Four uses of the same learned model</a>
+<a class="note-toc-link level-2" href="#1-4-world-model-architectures-and-their-different-compute-locations">1.4 World-model architectures and their different compute locations</a>
+<a class="note-toc-link level-1" href="#2-value-equivalence-model-error-and-decision-sensitive-prediction">2. Value equivalence, model error, and decision-sensitive prediction</a>
+<a class="note-toc-link level-1" href="#3-background-planning-versus-decision-time-planning">3. Background planning versus decision-time planning</a>
+<a class="note-toc-link level-2" href="#3-1-a-concrete-dyna-q-loop">3.1 A concrete Dyna-Q loop</a>
+<a class="note-toc-link level-2" href="#3-2-full-expectation-versus-simulation-variance">3.2 Full expectation versus simulation variance</a>
+<a class="note-toc-link level-1" href="#4-latent-world-models-in-detail">4. Latent world models in detail</a>
+<a class="note-toc-link level-2" href="#4-1-what-is-learned-and-what-is-optimized">4.1 What is learned and what is optimized</a>
+<a class="note-toc-link level-2" href="#4-2-compare-learning-signals-and-failure-controls">4.2 Compare learning signals and failure controls</a>
+<a class="note-toc-link level-2" href="#4-3-emerging-directions-are-extensions-not-proven-replacements">4.3 Emerging directions are extensions, not proven replacements</a>
+<a class="note-toc-link level-1" href="#5-what-the-model-based-addendum-actually-adds">5. What the model-based addendum actually adds</a>
+<a class="note-toc-link level-1" href="#6-worked-tutorial-7-answer-map-and-synthesis">6. Worked Tutorial 7 answer map and synthesis</a>
+<a class="note-toc-link level-1" href="#references-8">References</a>
+<a class="note-toc-link level-1" href="#1-game-theory-from-a-fixed-environment-to-strategic-opponents">1. Game theory: from a fixed environment to strategic opponents</a>
+<a class="note-toc-link level-2" href="#1-1-strategic-dependence-and-game-types">1.1 Strategic dependence and game types</a>
+<a class="note-toc-link level-2" href="#1-2-solving-pure-games-without-confusing-stability-and-welfare">1.2 Solving pure games without confusing stability and welfare</a>
+<a class="note-toc-link level-2" href="#1-3-worked-pure-strategy-reasoning">1.3 Worked pure-strategy reasoning</a>
+<a class="note-toc-link level-1" href="#2-tutorial-8-matrix-solutions">2. Tutorial 8 matrix solutions</a>
+<a class="note-toc-link level-2" href="#2-1-derive-mixed-strategies-by-indifference">2.1 Derive mixed strategies by indifference</a>
+<a class="note-toc-link level-2" href="#2-2-battle-of-the-sexes-calculations">2.2 Battle of the Sexes calculations</a>
+<a class="note-toc-link level-2" href="#2-3-tutorial-8-decide-whether-an-interaction-is-a-game">2.3 Tutorial 8: decide whether an interaction is a game</a>
+<a class="note-toc-link level-1" href="#3-minimax-zero-sum-games-and-morra">3. Minimax, zero-sum games, and Morra</a>
+<a class="note-toc-link level-2" href="#3-1-three-finger-morra-derivation">3.1 Three-finger Morra derivation</a>
+<a class="note-toc-link level-1" href="#4-computational-scope-and-extensions-beyond-one-shot-games">4. Computational scope and extensions beyond one-shot games</a>
+<a class="note-toc-link level-1" href="#5-tutorial-8-source-and-comparison">5. Tutorial 8 source and comparison</a>
+<a class="note-toc-link level-1" href="#references-9">References</a>
+<a class="note-toc-link level-1" href="#1-tutorial-5-and-6-connect-the-foundations-to-worked-decisions">1. Tutorial 5 and 6: connect the foundations to worked decisions</a>
+<a class="note-toc-link level-2" href="#1-1-classical-planning-and-reachable-sets">1.1 Classical planning and reachable sets</a>
+<a class="note-toc-link level-2" href="#1-2-preference-and-logarithmic-utility">1.2 Preference and logarithmic utility</a>
+<a class="note-toc-link level-2" href="#1-3-modeling-delayed-actions-as-an-mdp">1.3 Modeling delayed actions as an MDP</a>
+<a class="note-toc-link level-2" href="#1-4-passive-rl-learning-rules">1.4 Passive RL learning rules</a>
+<a class="note-toc-link level-2" href="#1-5-rollout-mcts-uct-and-imitation">1.5 Rollout, MCTS, UCT, and imitation</a>
+<a class="note-toc-link level-1" href="#2-tutorial-5-problem-by-problem-checklist">2. Tutorial 5 problem-by-problem checklist</a>
+<a class="note-toc-link level-1" href="#3-tutorial-6-problem-by-problem-checklist">3. Tutorial 6 problem-by-problem checklist</a>
+<a class="note-toc-link level-1" href="#source-audit-for-these-chapters">Source audit for these chapters</a>
           </nav>
         </div>
       </div>
@@ -511,7 +549,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-04" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-04</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-24" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-24</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -554,9 +592,13 @@ Week 5  Function approximation, DQN, policy gradients, and actor-critic methods
    ↓  Sparse, delayed, or unreliable rewards call for better learning signals
 Week 6  Exploration, PBRS, process rewards, RLHF, and multi-agent rewards
    ↓  Runtime search and demonstrations offer other forms of guidance
-Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning</code></pre></div>
+Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning
+   ↓  Learn a simulator instead of assuming one is given
+Week 10  Model-based RL, Dyna-Q, world models, MuZero, DreamerV3, TD-MPC2
+   ↓  Other agents also make strategic choices
+Week 11  Best responses, Nash equilibrium, Pareto optimality, mixed strategies</code></pre></div>
 
-<p class="mb-3">Use the same reading checklist each week: <code>state / action / transition / objective / information / improvement mechanism</code>. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; and Week 7 compares guidance from runtime search with guidance from demonstrations.</p>
+<p class="mb-3">Use the same reading checklist each week: <code>state / action / transition / objective / information / improvement mechanism</code>. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; Week 7 compares guidance from runtime search with guidance from demonstrations, Week 10 learns a model for planning, and Week 11 introduces strategic opponents.</p>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
@@ -599,7 +641,17 @@ Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning</code></pre></
 <tr>
 <td>7</td>
 <td>How do we search at decision time or learn behavior from expert data?</td>
-<td>Connects model-based search, model-free learning, and imitation across the course</td>
+<td>Connects search, learning, and imitation</td>
+</tr>
+<tr>
+<td>10</td>
+<td>How do learned models support planning and policy improvement?</td>
+<td>Distinguishes background updates, online search, latent models, and model error</td>
+</tr>
+<tr>
+<td>11</td>
+<td>How do choices change when other agents choose strategically?</td>
+<td>Adds best response, equilibrium, and welfare to single-agent rationality</td>
 </tr>
     </tbody>
   </table>
@@ -839,7 +891,7 @@ Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning</code></pre></
 <li><strong>Diagnose:</strong> Given a failure, decide whether representation, exploration, variance, distribution shift, reward design, or computation budget is responsible.</li>
 </ol>
 
-<blockquote class="blockquote mb-3"><strong>Summary:</strong> Weeks 1–2 address how to represent and decompose problems; Week 3 defines preferences and rational choice; Week 4 computes value under known or unknown stochastic dynamics; Week 5 handles generalization and stable learning in large spaces; Week 6 supplies guidance when rewards are weak or unreliable; and Week 7 compares decision-time search with learning from demonstrations.</blockquote>
+<blockquote class="blockquote mb-3"><strong>Summary:</strong> Weeks 1–2 address how to represent and decompose problems; Week 3 defines preferences and rational choice; Week 4 computes value under known or unknown stochastic dynamics; Week 5 handles generalization and stable learning in large spaces; Week 6 supplies guidance when rewards are weak or unreliable; Week 7 compares decision-time search with learning from demonstrations; later chapters add learned world models and strategic multi-agent choices.</blockquote>
 
 <h1 class="mt-4">Week 1 - AI Planning Foundations, Classical Planning, SATPlan, and Responsible AI Governance</h1>
 
@@ -10586,6 +10638,731 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li>Gavenski, N., Rodrigues, O., &amp; Luck, M. (2024). Imitation learning: A survey of learning methods, environments and metrics. <em>arXiv preprint arXiv:2404.19456</em>.</li>
 <li>Li, Y., &amp; Zhang, C. (2024). Agnostic interactive imitation learning: New theory and practical algorithms. In <em>Proceedings of the 41st International Conference on Machine Learning (ICML 2024)</em>.</li>
 </ol>
+
+<hr>
+
+<h1 class="mt-4">Week 10 - Model-Based Reinforcement Learning: Learned Dynamics, Planning, Dyna-Q, and Latent World Models</h1>
+
+<p class="mb-3">The earlier weeks supplied two ways to improve a policy: learn directly from experience, or search from the current state with a simulator. <strong>Model-based RL connects them</strong> by learning the simulator itself. Game theory then changes the environment assumption: another decision maker may adapt to our policy, so a single-agent optimal response need not be stable.</p>
+</section>
+
+<section id="1-model-based-reinforcement-learning-learn-a-model-then-choose-how-to-use-it" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Model-based reinforcement learning: learn a model, then choose how to use it</h3>
+
+<p class="mb-3">A learned model $\hat M=(\hat P,\hat R)$ estimates the distribution of next states and rewards from observed $(s,a,r,s')$ transitions. It is useful because simulated transitions can supplement costly real interaction. Its quality must be judged by downstream decisions, not merely one-step prediction accuracy: a small error near a decision boundary can reverse an action ranking, while a visually imperfect latent model can still preserve the reward and value information needed for planning.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Model family</th>
+<th>What it represents</th>
+<th>Strength</th>
+<th>Main failure mode</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Tabular counts / ADP</td>
+<td>$\hat P(s'\mid s,a)$ and mean rewards for observed pairs</td>
+<td>Interpretable, exact enumeration in small spaces</td>
+<td>Sparse visits and state explosion</td>
+</tr>
+<tr>
+<td>Deterministic regression</td>
+<td>A single predicted next state $\hat s'=f_\eta(s,a)$</td>
+<td>Simple and cheap</td>
+<td>Conditional mean may be an impossible state</td>
+</tr>
+<tr>
+<td>Probabilistic dynamics</td>
+<td>Multiple possible outcomes or their distribution</td>
+<td>Preserves multimodality and risk</td>
+<td>Harder likelihood estimation and sampling</td>
+</tr>
+<tr>
+<td>Neural / latent world model</td>
+<td>Compressed state with learned transition, reward, and often value heads</td>
+<td>Handles pixels and large observations</td>
+<td>Representation may omit decision-critical information</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">For example, if the next lateral position is $-1$ or $+1$ with equal probability while $0$ lies inside an obstacle, squared-error deterministic regression predicts the conditional mean $0$. This minimizes prediction loss but describes an unsafe, impossible outcome. A distributional model retains both branches. In Tutorial 7, if both outcomes pay $1$, $U(-1)=4$, $U(+1)=8$, and $\gamma=.9$, the correct one-step expectation is $\tfrac12(1+.9\cdot4)+\tfrac12(1+.9\cdot8)=6.4$. A single model sample gives either $4.6$ or $8.2$; its expectation is still $6.4$, but its variance affects individual updates.</p>
+
+<h4 id="1-1-learning-a-model-from-a-transition-dataset" class="mb-2">1.1 Learning a model from a transition dataset</h4>
+
+<p class="mb-3">A model is not automatically available merely because an MDP is written as $(S,A,P,R,\gamma)$. The agent must collect tuples $(s_t,a_t,r_{t+1},s_{t+1})$, choose a representation, fit it, and continually check whether it predicts consequences under the <em>current</em> policy. In a small discrete MDP, the maximum-likelihood transition estimate is</p>
+
+<p class="mb-3">$$\hat P(s'\mid s,a)=\frac{N(s,a,s')}{N(s,a)},\qquad \hat R(s,a,s')=\operatorname{mean}\{r_i:(s_i,a_i,s'_i)=(s,a,s')\}.$$</p>
+
+<p class="mb-3">The denominator requires $N(s,a)&gt;0$; unvisited pairs need a prior, smoothing convention, exploration, or explicit “unknown” handling. A zero empirical count is not proof that an outcome is impossible. If a state-action pair has seen 3 left outcomes and 1 right outcome, the unsmoothed model predicts $(.75,.25)$; as more transitions arrive, both the estimate and its uncertainty change.</p>
+
+<p class="mb-3">For continuous vector states, a linear model can predict $\hat s'=W_as+b_a$ per discrete action. A neural model generalizes across states but still needs a loss function and training data. A deterministic squared-error model estimates $\mathbb E[s'\mid s,a]$ when it can represent the optimum; that is why multimodal outcomes can collapse to the unsafe mean in Tutorial 7. A probabilistic model estimates a distribution, often by maximizing log likelihood. For images or complex sensors, an encoder $z=E_\eta(o)$ may compress observations before dynamics are learned. The representation must retain enough information to predict rewards and action consequences; reconstruction fidelity is one diagnostic, not the only objective.</p>
+
+<h4 id="1-2-from-model-error-to-planning-error" class="mb-2">1.2 From model error to planning error</h4>
+
+<p class="mb-3">One-step prediction loss is a local score. A planner uses the model recursively, so its own candidate actions determine the future inputs to the model. Errors can compound with depth and move imagined states outside the training distribution. Worse, optimization can select a trajectory because the model is <em>wrongly</em> optimistic there. Evaluate both held-out one-step predictions and multi-step returns on real rollouts when safe. For an uncertain action, consider shorter search, uncertainty penalties, or more real samples. A very accurate model of irrelevant visual detail may be less useful than a compact value-equivalent model that preserves reward-relevant events.</p>
+
+<h4 id="1-3-four-uses-of-the-same-learned-model" class="mb-2">1.3 Four uses of the same learned model</h4>
+
+<ol class="mb-3">
+<li><strong>Direct model solving:</strong> substitute $\hat P,\hat R$ into Bellman backups and solve or iterate: $Q(s,a)\leftarrow\sum_{s'}\hat P(s'\mid s,a)[\hat R(s,a,s')+\gamma\max_{a'}Q(s',a')]$. This uses all modeled branches, but may be expensive over large spaces.</li>
+<li><strong>Q-planning:</strong> sample a simulated $(s,a,r,s')$ and apply a Q-learning backup, $Q(s,a)\leftarrow Q(s,a)+\alpha[r+\gamma\max_{a'}Q(s',a')-Q(s,a)]$. Background samples can update a value function without new real-world transitions.</li>
+<li><strong>Decision-time planning:</strong> MCTS or MPC starts at the current state, spends compute on relevant futures, acts, and replans. MCTS grows a sampled search tree; MPC optimizes a finite action sequence and executes only its first action so later observations can correct model error.</li>
+<li><strong>Integrated learning and planning:</strong> Dyna-Q learns from actual transitions, updates the model, and performs several simulated Q updates between real interactions. The real data anchors the model; planning reuses it.</li>
+</ol>
+
+<p class="mb-3"><strong>Tutorial 7 worked backup.</strong> With branch probabilities $(.75,.25)$, branch rewards $(2,-2)$, next-state values $(6,2)$, $\gamma=.9$, $Q(s,a)=3$, and $\alpha=.5$, full-model target is $.75(2+.9\cdot6)+.25(-2+.9\cdot2)=5.5$. The update is $3+.5(5.5-3)=4.25$. If Q-planning samples only the second branch, its target is $-0.2$ and update is $3+.5(-.2-3)=1.4$. Neither contradicts the other: one integrates over the model; the other is one noisy sample. Repeated unbiased samples approach the model expectation, subject to learning and sampling conditions.</p>
+
+<h4 id="1-4-world-model-architectures-and-their-different-compute-locations" class="mb-2">1.4 World-model architectures and their different compute locations</h4>
+
+<ul class="note-list">
+<li><strong>MuZero</strong> learns a latent dynamics model, reward prediction, policy prior, and value prediction for MCTS. It need not reconstruct future camera frames if its latent state supports the quantities the search needs. Search improves action selection at decision time; training uses search targets to improve the network.</li>
+<li><strong>DreamerV3</strong> learns a recurrent latent world model and trains actor and critic through imagined trajectories. Much of its policy improvement happens during training in imagination; inaccurate long imagined rollouts can bias the actor. Keep horizons controlled and validate against real experience.</li>
+<li><strong>TD-MPC2</strong> learns latent dynamics jointly with reward and value estimates, then optimizes short action sequences at decision time. A terminal $\hat Q$ represents value beyond the finite horizon: $\hat G=\sum_{h=0}^{H-1}\gamma^h\hat r_{t+h}+\gamma^H\hat Q_{\mathrm{terminal}}$. Receding-horizon replanning limits commitment to mistaken predictions. In Tutorial 7, A has $(2,2),\hat Q=6$ and B has $(3,3),\hat Q=1$ with $\gamma=.9$: $G_A=2+1.8+.81(6)=8.66$; $G_B=3+2.7+.81(1)=6.51$, so A wins despite B's larger immediate rewards.</li>
+</ul>
+
+<p class="mb-3">Model error compounds with rollout depth and can make an agent exploit model artifacts. Evaluate on held-out real transitions <em>and</em> task return; use uncertainty-aware or shorter-horizon planning, real-data refresh, and model ensembles when appropriate. Model-based methods are attractive when real samples are expensive and the model is accurate enough to improve decisions; they are not automatically better than model-free methods.</p>
+</section>
+
+<section id="2-value-equivalence-model-error-and-decision-sensitive-prediction" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Value equivalence, model error, and decision-sensitive prediction</h3>
+
+<p class="mb-3">A model is useful when it induces the right value updates for the policies and value functions being considered. For a policy $\pi$ and candidate value $v$, write its Bellman operator as $(\mathcal T_M^\pi v)(s)=\mathbb E_{a\sim\pi,s'\sim P_M}[R_M(s,a,s')+\gamma v(s')]$. Two models are <strong>value equivalent relative to a selected class</strong> $\Pi,\mathcal V$ if these operators agree for all relevant $\pi\in\Pi$ and $v\in\mathcal V$. This is a task-relative criterion, not a claim that the models reconstruct identical observations. A latent model can discard visually irrelevant pixels while retaining action rankings; it fails if the discarded feature changes reward, transition risk, or a later decision.</p>
+
+<p class="mb-3">The conditional-mean obstacle example above illustrates the opposite: low squared prediction error can still create a fictitious state. A stochastic model represents outcome probabilities; if a safety constraint is nonlinear, planning on the mean can be especially misleading. Calibration and evaluation must examine state distributions reached by the <em>learned policy</em>, because a planner may intentionally seek places where its model is overoptimistic. Longer open-loop rollouts amplify one-step error. Shorter horizons, uncertainty penalties, ensembles, real-world validation, and frequent replanning each address a different part of that problem.</p>
+</section>
+
+<section id="3-background-planning-versus-decision-time-planning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Background planning versus decision-time planning</h3>
+
+<p class="mb-3">Background Q-planning samples state-action pairs for value updates before the next decision; it amortizes computation across future visits. Decision-time MCTS and MPC concentrate compute at the current state. MCTS performs selection, model-based expansion, leaf simulation or evaluation, and return backup; learned transitions make its branches possible. MPC evaluates short action sequences, applies only the first action, observes the actual successor, and solves again. For Tutorial 7's sequences A $(3,4)$ and B $(4,2)$ with $\gamma=.9$, A scores $3+.9(4)=6.6$ and B scores $4+.9(2)=5.8$; A's first action is executed, then the horizon moves forward. This rolling update limits commitment to a mistaken path, although it cannot eliminate model bias.</p>
+
+<p class="mb-3">Dyna-Q combines real and imagined experience in one loop: (i) act and observe $(s,a,r,s')$, (ii) update Q from the real transition, (iii) update the model, (iv) repeat $k$ simulated transition/Q updates. Increasing $k$ saves real samples if the model is sound, but can amplify an inaccurate model. Prioritized sweeping is a related improvement that spends simulated updates on states whose value changes are likely to matter to predecessors; its exact priority scheme is beyond the supplied lecture's core Dyna-Q loop.</p>
+
+<h4 id="3-1-a-concrete-dyna-q-loop" class="mb-2">3.1 A concrete Dyna-Q loop</h4>
+
+<div class="note-markdown-block"><pre><code class="language-text">Initialize Q and a model M; collect real experience.
+For every real transition (s, a, r, s_next):
+    Q[s,a] += alpha * (r + gamma * max_b Q[s_next,b] - Q[s,a])
+    M.update(s, a, r, s_next)
+    Repeat k times:
+        choose a previously observed (u,b)
+        (r_hat, v_hat) = M.sample(u,b)
+        Q[u,b] += alpha * (r_hat + gamma * max_c Q[v_hat,c] - Q[u,b])</code></pre></div>
+
+<p class="mb-3">The first Q update learns from the environment; the loop after it learns from <em>imagined</em> experience. The model can be tabular or approximated. If $k=0$, this is ordinary Q-learning. As $k$ grows, each real sample is reused more, which can improve sample efficiency. But if a doorway closes while the learned model still says it is open, planning may repeatedly reinforce an invalid route. Model refresh and continued real exploration are therefore necessary. The lecture's Dyna-Q architecture depicts these two streams meeting at the same value learner.</p>
+
+<h4 id="3-2-full-expectation-versus-simulation-variance" class="mb-2">3.2 Full expectation versus simulation variance</h4>
+
+<p class="mb-3">A full-model Bellman backup weights <em>all</em> modeled outcomes, while a sampled backup uses one outcome. Let $Y=\hat R(s,a,S')+\gamma\max_bQ(S',b)$ for $S'\sim\hat P(\cdot\mid s,a)$. The full target is $\mathbb E_{\hat P}[Y]$; one Q-planning step uses a realization $Y_i$. Averaging $m$ independent model samples has variance $\operatorname{Var}(Y)/m$ if the model and Q values are held fixed, explaining why sampling can be cheap but noisy. That statement does not remove <strong>model bias</strong>: infinitely many samples converge to the learned model's expectation, which may still differ from the real environment's expectation.</p>
+</section>
+
+<section id="4-latent-world-models-in-detail" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Latent world models in detail</h3>
+
+<p class="mb-3"><strong>MuZero's interface.</strong> A representation function maps observation history to latent state; a dynamics function maps latent state and action to a new latent state and predicted reward; a prediction function outputs policy prior and value. MCTS uses these quantities for search. Training unrolls the latent dynamics on stored trajectories and compares predicted rewards, values, and policy targets with observed rewards and search-improved targets. The learned state need not reconstruct images; it must support planning-relevant predictions.</p>
+
+<p class="mb-3"><strong>DreamerV3's interface.</strong> A recurrent state-space model has a deterministic recurrent history state $h_t$ and a stochastic latent state $z_t$. With observations, a posterior infers $z_t$; during imagination, a prior predicts it without new observations. The world model learns reconstruction/prediction, reward, and continuation information from real replay. Imagined rollouts then train an actor and critic. At execution the actor can select actions without running an MCTS tree every step. If the world model rewards an impossible imagined trajectory, the actor may exploit that artifact; limiting imagination horizon and refreshing the replay buffer help bound the error.</p>
+
+<p class="mb-3"><strong>TD-MPC2's interface.</strong> Learned latent dynamics and reward predictions support a finite-horizon optimizer at each decision. The terminal Q-value estimates what lies beyond the short planning horizon, preventing a candidate from winning solely through immediate reward. Joint temporal-difference and model learning makes the representation decision-relevant. Because the optimizer replans, only the first action is committed. Model error still changes candidate rankings, especially when predictions are extrapolated far from real data.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Architecture</th>
+<th>Where it primarily improves behavior</th>
+<th>Search at action time?</th>
+<th>What the model must predict</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>MuZero</td>
+<td>Search targets plus decision-time MCTS</td>
+<td>Yes</td>
+<td>Latent dynamics, reward, prior, value</td>
+</tr>
+<tr>
+<td>DreamerV3</td>
+<td>Actor–critic training in imagination</td>
+<td>Usually no tree search in deployment</td>
+<td>Posterior/prior latent dynamics, reward, continuation</td>
+</tr>
+<tr>
+<td>TD-MPC2</td>
+<td>Short-horizon latent optimization with terminal value</td>
+<td>Yes</td>
+<td>Latent dynamics, reward, terminal action value</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="4-1-what-is-learned-and-what-is-optimized" class="mb-2">4.1 What is learned and what is optimized</h4>
+
+<p class="mb-3">MuZero, DreamerV3, and TD-MPC2 all use latent states but optimize different objects. MuZero trains representation, dynamics, and prediction networks to support search; its policy target is informed by MCTS visit counts. DreamerV3 trains a world model from replay, imagines latent trajectories, and differentiates or estimates policy improvement through an actor–critic objective. TD-MPC2 couples temporal-difference value learning to short model rollouts, then repeatedly optimizes candidate action sequences online. The distinction is <strong>where model-generated trajectories enter policy improvement</strong>: search targets, imagined training, or per-decision sequence optimization.</p>
+
+<p class="mb-3">For TD-MPC2, the terminal value term $\gamma^H\hat Q(z_{t+H},a_{t+H})$ reduces short-horizon myopia but imports approximation error from the learned critic. DreamerV3 can suffer if its actor exploits unrealistic imagined rewards; TD-MPC2 can suffer if an optimizer selects high-scoring but physically impossible latent trajectories. Real-data validation, conservative horizons, and uncertainty-aware ranking are relevant to both, but they enter at different points in the pipeline.</p>
+
+<h4 id="4-2-compare-learning-signals-and-failure-controls" class="mb-2">4.2 Compare learning signals and failure controls</h4>
+
+<p class="mb-3">The lecture's technical comparison is sharper than “both use latent models.” DreamerV3 fits prediction/dynamics terms and a critic from <strong>imagined $\lambda$-returns</strong>, then improves an actor on those imagined trajectories. TD-MPC2 uses latent-consistency, reward, and value losses, trains Q with temporal-difference targets, and uses a learned policy prior to help short-horizon MPC at decision time. MuZero instead trains its representation/dynamics/prediction functions against reward, value, and search-policy targets, and obtains its next action through MCTS. Thus a failure in a shared model can enter through different channels: Dreamer's training targets, TD-MPC2's online candidate ranking, or MuZero's search tree and training targets.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Method</th>
+<th>Model use</th>
+<th>Compute location</th>
+<th>Immediate output</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Active ADP</td>
+<td>Bellman backups under learned $\hat P,\hat R$</td>
+<td>Background/global solving</td>
+<td>Value or policy</td>
+</tr>
+<tr>
+<td>Q-planning</td>
+<td>One-step simulated transitions</td>
+<td>Background</td>
+<td>Q updates</td>
+</tr>
+<tr>
+<td>Dyna-Q</td>
+<td>Real updates plus learned-model updates</td>
+<td>Background between actions</td>
+<td>Q updates/policy</td>
+</tr>
+<tr>
+<td>MCTS / MuZero</td>
+<td>Branch and evaluate simulated futures</td>
+<td>Decision time</td>
+<td>Search-improved current action</td>
+</tr>
+<tr>
+<td>MPC / TD-MPC2</td>
+<td>Optimize a short predicted sequence, then replan</td>
+<td>Decision time</td>
+<td>First action of sequence</td>
+</tr>
+<tr>
+<td>DreamerV3</td>
+<td>Train actor/critic on imagined latent trajectories</td>
+<td>Training time</td>
+<td>Deployed policy and critic</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="4-3-emerging-directions-are-extensions-not-proven-replacements" class="mb-2">4.3 Emerging directions are extensions, not proven replacements</h4>
+
+<p class="mb-3">The lecture's closing map points from compact latent control models toward controllable interactive simulators and broad predictive representations. It lists examples of interactive world simulation (Genie 3), world foundation models (V-JEPA 2), joint world–action modeling, and physical-AI world models. The shared research question is whether an agent can predict action-conditioned futures accurately and cheaply enough for training, testing, or control across many tasks. The slide is a direction map; the present note makes no claim that these systems satisfy a common benchmark or replace MuZero, DreamerV3, or TD-MPC2. As models grow broader, the same value-equivalence and model-bias checks remain necessary.</p>
+</section>
+
+<section id="5-what-the-model-based-addendum-actually-adds" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. What the model-based addendum actually adds</h3>
+
+<p class="mb-3">The two-page addendum contains an annotated Dyna-Q flow and a cross-course agent-paradigm diagram. The first visually confirms the branch structure used above: one real transition updates Q directly <strong>and</strong> updates the model; the model then generates extra transitions for further Q updates; the improved Q/policy changes later behavior. The diagram does not imply that simulated transitions are new independent evidence about the real world. They reuse a learned approximation of earlier evidence.</p>
+
+<p class="mb-3">The second slide places symbolic planning, tabular RL, neural model-free RL, learned world models, and responsible autonomy on a teaching progression. Its final column adds <strong>constraints, uncertainty, human guidance, reliability and alignment</strong> to competence. These are design requirements layered over the methods, not a theorem that one agent generation replaces all earlier ones. A system can combine symbolic safety rules, learned values, a world model, online search, and human oversight. When comparing methods, ask which information is available, which objective is optimized, where computation happens, and how mistakes are detected before deployment.</p>
+</section>
+
+<section id="6-worked-tutorial-7-answer-map-and-synthesis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. Worked Tutorial 7 answer map and synthesis</h3>
+
+<p class="mb-3">Problem 1 distinguishes expected Bellman integration from one noisy Q-planning sample. Problem 2 demonstrates why a conditional mean can be physically impossible. Problem 3 classifies Q-planning as background work and MCTS/MPC as decision-time work, computes $6.6&gt;5.8$ for the two MPC sequences, and explains why MuZero can plan without pixel reconstruction. Problem 4 contrasts DreamerV3's imagined policy learning with TD-MPC2's receding-horizon action choice; its terminal-value example gives $8.66&gt;6.51$. In every case, specify whether the result is an expectation under the model, a single stochastic model draw, or an observed environment transition.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>A learned dynamics model is useful only when it preserves decision-relevant consequences.</li>
+<li>Full-model Bellman backups integrate branches; Q-planning uses simulated samples; Dyna-Q mixes real and simulated updates.</li>
+<li>MCTS and MPC focus compute at decision time. MPC executes one action and replans.</li>
+<li>MuZero searches with a latent model; DreamerV3 trains a policy in imagination; TD-MPC2 optimizes short latent rollouts with a terminal value.</li>
+<li>Model bias can compound across imagined steps and be exploited by the planner.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ul class="note-list">
+<li>Gopalan, A. <em>Lecture-rl-model-based.pdf</em>, CS4246/CS5446, AY2026/27 Semester 1, 64 slides; two-slide addendum.</li>
+<li>Sutton, R. S., &amp; Barto, A. G. (2018). <em>Reinforcement Learning: An Introduction</em> (2nd ed.), planning and learning chapters.</li>
+<li>Schrittwieser, J., et al. (2020). Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model. <em>Nature</em>.</li>
+<li>Hafner, D., et al. (2025). Mastering Diverse Domains through World Models. <em>Nature</em>.</li>
+<li>Hansen, N., et al. (2024). TD-MPC2: Scalable, Robust World Models for Continuous Control. <em>ICLR</em>.</li>
+<li><em>CSXX46 AY2026/27 Week 10 Tutorial 7: Model-Based Reinforcement Learning</em>.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">Week 11 - Game Theory: Strategic Interaction, Nash Equilibrium, Welfare, and Minimax</h1>
+
+<p class="mb-3">The decision-theory chapter asks what one agent should do when uncertainty is exogenous. Here the uncertainty includes other agents' choices. An outcome may be individually stable yet collectively poor, which is why equilibrium and welfare must be checked separately.</p>
+</section>
+
+<section id="1-game-theory-from-a-fixed-environment-to-strategic-opponents" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Game theory: from a fixed environment to strategic opponents</h3>
+
+<p class="mb-3">The lecture opens with <strong>Bobo and Almo's bamboo dilemma</strong>. Each panda simultaneously chooses whether to keep a grove secret or share its location. With Bobo's payoff first, the four outcomes are:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Bobo \\ Almo</th>
+<th>Keep</th>
+<th>Share</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Keep</td>
+<td>$(1,1)$</td>
+<td>$(5,0)$</td>
+</tr>
+<tr>
+<td>Share</td>
+<td>$(0,5)$</td>
+<td>$(3,3)$</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">If Almo keeps, Bobo gets 1 by keeping versus 0 by sharing; if Almo shares, Bobo gets 5 by keeping versus 3 by sharing. Thus <strong>Keep strictly dominates Share</strong> for Bobo, and the same reasoning applies to Almo. The unique Nash equilibrium is $(Keep,Keep)=(1,1)$. Yet $(Share,Share)=(3,3)$ improves <em>both</em> pandas' payoffs and raises total payoff from 2 to 6. This establishes the lecture's central distinction: individually stable behavior need not be Pareto efficient or maximize joint welfare. The slide calls this efficiency gap a price of anarchy; a numerical price-of-anarchy ratio would require specifying its exact welfare convention and the set of equilibria.</p>
+
+<p class="mb-3">A normal-form game specifies players, each player's available strategies, and payoff $u_i(a_1,\ldots,a_n)$. <strong>Best response</strong> maximizes one player's payoff while holding others' actions fixed. A <strong>Nash equilibrium (NE)</strong> is a profile in which every action is a best response; it says no one gains by deviating alone, not that the outcome maximizes collective welfare. An outcome is <strong>Pareto optimal</strong> when no other outcome makes at least one player better off without making anyone worse off. A dominant strategy is a best response regardless of opponents' actions; domination permits eliminating a strategy before searching for NE.</p>
+
+<p class="mb-3">To solve a small matrix, mark the row player's maximum in each column and the column player's maximum in each row. Cells marked for both are pure NE. Check Pareto efficiency separately against <em>every</em> other cell. If no pure equilibrium exists or randomized commitment matters, assign probabilities and make every action in a player's mixed-strategy support yield equal expected payoff; actions outside support must do no better.</p>
+
+<h4 id="1-1-strategic-dependence-and-game-types" class="mb-2">1.1 Strategic dependence and game types</h4>
+
+<p class="mb-3">Specify players $N$, each player's available action set $A_i$, payoff $u_i(a_1,\ldots,a_n)$, and what each knows when acting. A simultaneous normal-form game is represented by a matrix; a sequential game requires a tree and information sets. “Non-cooperative” means each actor chooses its own strategy rather than binding jointly enforceable actions; their payoffs may still align. Pure competition is zero-sum, whereas coordination may improve both payoffs. A rational best response depends on beliefs about others; Nash equilibrium asks for mutual consistency of those best responses.</p>
+
+<h4 id="1-2-solving-pure-games-without-confusing-stability-and-welfare" class="mb-2">1.2 Solving pure games without confusing stability and welfare</h4>
+
+<p class="mb-3">For each column, mark row payoff maxima; for each row, mark column payoff maxima. Intersections are pure NE. A dominant strategy wins against every possible opponent action; a weakly dominant strategy may tie. Strictly dominated actions can be removed without losing an equilibrium in which they are played, while careless removal of weakly dominated actions can change the equilibrium set. Pareto efficiency compares <em>outcomes</em>, not incentives: Prisoner's Dilemma has a stable $(T,T)$ that is dominated by $(R,R)$.</p>
+
+<h4 id="1-3-worked-pure-strategy-reasoning" class="mb-2">1.3 Worked pure-strategy reasoning</h4>
+
+<p class="mb-3"><strong>Prisoner's Dilemma.</strong> If Al testifies, Bo gets $-5$ by testifying and $-10$ by refusing; if Al refuses, Bo gets $0$ by testifying and $-1$ by refusing. Thus Bo's best response is testimony in both columns. By symmetry, Al also testifies. The unique pure NE is $(T,T)=(-5,-5)$. Yet $(R,R)=(-1,-1)$ makes both better off, proving that NE need not be Pareto optimal. The two asymmetric outcomes are also Pareto efficient because improving the harmed player would reduce the other player's payoff.</p>
+
+<p class="mb-3"><strong>Astro/Bolt coordination.</strong> If Bolt chooses Blu-ray, Astro prefers Blu-ray (9 versus $-1$); if Bolt chooses DVD, Astro prefers DVD (5 versus $-1$). Bolt has the corresponding responses. Thus $(B,B)$ and $(D,D)$ are both NE. Since $(B,B)=(9,9)$ dominates every other cell, only it is Pareto optimal. Equilibrium analysis alone does not explain how the players coordinate on it; communication, conventions, or focal points can matter.</p>
+
+<p class="mb-3"><strong>Stag Hunt.</strong> Each player prefers Stag when the other chooses Stag (4 versus 3) and Hare when the other chooses Hare (2 versus 0). This yields $(S,S)$ and $(H,H)$ as NE. Stag–Stag is payoff dominant; Hare–Hare is safer when one fears the other will not coordinate. This distinction is the intuitive reason a collectively better equilibrium may not be selected.</p>
+</section>
+
+<section id="2-tutorial-8-matrix-solutions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Tutorial 8 matrix solutions</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Game</th>
+<th>Pure NE</th>
+<th>Pareto-optimal outcomes</th>
+<th>Mixed equilibrium, when requested</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Prisoner's dilemma: $(T,T)=(-5,-5)$, $(T,R)=(0,-10)$, $(R,T)=(-10,0)$, $(R,R)=(-1,-1)$</td>
+<td>$(T,T)$; testify strictly dominates refuse</td>
+<td>$(T,R),(R,T),(R,R)$</td>
+<td>None needed</td>
+</tr>
+<tr>
+<td>Astro/Bolt coordination: $(B,B)=(9,9)$, $(B,D)=(-1,-4)$, $(D,B)=(-1,-3)$, $(D,D)=(5,5)$</td>
+<td>$(B,B),(D,D)$</td>
+<td>$(B,B)$ only</td>
+<td>A mixed NE also exists, but both prefer coordination on B</td>
+</tr>
+<tr>
+<td>Matching pennies, row wants a match</td>
+<td>No pure NE</td>
+<td>All four outcomes (each is zero-sum with no joint improvement)</td>
+<td>Each plays H with probability $1/2$; game value $0$</td>
+</tr>
+<tr>
+<td>Stag hunt: $(S,S)=(4,4)$, $(S,H)=(0,3)$, $(H,S)=(3,0)$, $(H,H)=(2,2)$</td>
+<td>$(S,S),(H,H)$</td>
+<td>$(S,S)$</td>
+<td>Risk can favor the lower-payoff H equilibrium</td>
+</tr>
+<tr>
+<td>Chicken: $(St,St)=(-10,-10)$, $(St,Sw)=(3,1)$, $(Sw,St)=(1,3)$, $(Sw,Sw)=(0,0)$</td>
+<td>$(St,Sw),(Sw,St)$</td>
+<td>The two asymmetric outcomes</td>
+<td>Symmetry gives $P(St)=3/14$: against opponent $q$, $EU(St)=3-13q$, $EU(Sw)=q$</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">For Battle of the Sexes, husband is row and wife column; $(F,F)=(1,2)$, $(C,C)=(2,1)$, mismatches $(0,0)$. Both matched cells are pure NE and Pareto optimal. Let wife choose F with probability $q$; husband is indifferent when $q=2(1-q)$, so $q=2/3$. Let husband choose F with probability $p$; wife is indifferent when $2p=1-p$, so $p=1/3$. At the mixed NE, husband and wife each receive $2/3$. Pure $(F,F)$ yields $(1,2)$; pure $(C,C)$ yields $(2,1)$. Each independently taking their favorite gives mismatch $(0,0)$; uniform independent randomization yields $(3/4,3/4)$.</p>
+
+<p class="mb-3"><strong>Three-finger Morra.</strong> If E receives the even total and O receives the odd total, E's payoff matrix, with rows E showing $1,2,3$ and columns O showing $1,2,3$, is</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>E \\ O</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>-3</td>
+<td>4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>-3</td>
+<td>4</td>
+<td>-5</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4</td>
+<td>-5</td>
+<td>6</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">The matrix is symmetric. The distribution $(1/4,1/2,1/4)$ gives every opposing pure choice expected payoff $0$; both players using it is a minimax equilibrium with value $0$. A deterministic choice can be countered. This is a two-player zero-sum game, so minimax reasoning applies.</p>
+
+<h4 id="2-1-derive-mixed-strategies-by-indifference" class="mb-2">2.1 Derive mixed strategies by indifference</h4>
+
+<p class="mb-3">For a two-action player mixing with positive probability on both actions, each supported action must have equal expected payoff against the opponent's mixture. Solve the linear equality for the opponent's probability, then reverse roles. Verify the probability lies in $[0,1]$ and that no excluded action performs better. In matching pennies, symmetry yields $1/2$ each and no pure NE. In chicken, if the opponent chooses Straight with probability $q$, Straight yields $3-13q$ while Swerve yields $q$; equality gives $q=3/14$. A mixed equilibrium is a distribution over play, not a player switching at random because they are indifferent in a single realized game.</p>
+
+<h4 id="2-2-battle-of-the-sexes-calculations" class="mb-2">2.2 Battle of the Sexes calculations</h4>
+
+<p class="mb-3">Let the husband choose F with probability $p$ and wife choose F with probability $q$. Husband's expected payoff from F is $q$, from Concert is $2(1-q)$, so his mixing requires $q=2/3$. Wife's expected payoff from F is $2p$, from Concert is $1-p$, so her mixing requires $p=1/3$. Substituting either action gives each expected utility $2/3$. The two pure NE produce $(1,2)$ and $(2,1)$; each partner choosing their <em>own</em> favorite independently produces a mismatch and $(0,0)$. Under uniform independent choices, each gets $(1+2)/4=3/4$. That is an expectation over four cells, not a Nash equilibrium: either player would want to change their mix against a uniform opponent.</p>
+
+<h4 id="2-3-tutorial-8-decide-whether-an-interaction-is-a-game" class="mb-2">2.3 Tutorial 8: decide whether an interaction is a game</h4>
+
+<p class="mb-3">The test is <strong>strategic interdependence</strong>: one actor's best choice depends on another actor's choice and payoffs. OPEC output, supplier negotiation, nuts/bolts standards, and executive option-plan bargaining can be modeled as games when actors choose strategically. A single airline hiring decision or a government's plant decision under exogenous demand is ordinary decision-making <em>unless</em> competing applicants, airlines, regulators, or strategic demand responses are explicitly modeled. Names of organizations alone do not determine whether a problem is a game; specify players, actions, and payoffs first.</p>
+</section>
+
+<section id="3-minimax-zero-sum-games-and-morra" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Minimax, zero-sum games, and Morra</h3>
+
+<p class="mb-3">In a two-player zero-sum game, $u_E=-u_O$. E can maximize its guaranteed payoff, $\max_p\min_q p^TAq$, while O minimizes E's best attainable payoff, $\min_q\max_p p^TAq$. The finite-game minimax theorem makes these values equal and produces mutually optimal mixed strategies. This is stronger than merely checking one pure action against another: the opponent can adapt to a predictable pure action.</p>
+
+<p class="mb-3">For the lecture's two-finger Morra with E payoff matrix $[[2,-3],[-3,4]]$, indifference gives $P(1)=7/12$, $P(2)=5/12$ for both players, and E's value is $-1/12$. Tutorial 8 extends the action set to three fingers; its symmetric $3\times3$ matrix and equilibrium $(1/4,1/2,1/4)$ are worked below. The two variants must not be conflated.</p>
+
+<h4 id="3-1-three-finger-morra-derivation" class="mb-2">3.1 Three-finger Morra derivation</h4>
+
+<p class="mb-3">The total finger count fixes the transfer: even totals give E $+f$, odd totals E $-f$. The E payoff matrix is $A=\begin{pmatrix}2&amp;-3&amp;4\\-3&amp;4&amp;-5\\4&amp;-5&amp;6\end{pmatrix}$. Let both players mix with $p=(1/4,1/2,1/4)$. Each column against E's mix has expected payoff $p^TA=(0,0,0)$, so E guarantees at least zero. Each row against O's same mix has payoff $Ap=(0,0,0)$, so O holds E to at most zero. Both bounds meet at value $0$, establishing a minimax equilibrium. This proof verifies all pure deviations, not merely indifference among the selected actions.</p>
+</section>
+
+<section id="4-computational-scope-and-extensions-beyond-one-shot-games" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Computational scope and extensions beyond one-shot games</h3>
+
+<p class="mb-3">The lecture focuses on non-cooperative single-move games because normal-form matrices let us see best responses directly. Every finite game has at least one Nash equilibrium when mixed strategies are allowed. In a two-player zero-sum matrix game, minimax strategies can be computed efficiently with linear programming. Computing a Nash equilibrium of a general finite game is PPAD-complete, so the small 2×2 indifference exercises are <strong>not</strong> a general scalable algorithm for arbitrary multi-agent games. This matters when moving from a classroom payoff matrix to a large strategic AI system.</p>
+
+<p class="mb-3">The assumptions also matter. The matrix model treats each player's actions, payoffs and information as known and rationally optimized. Real participants can have bounded rationality, hidden preferences, noisy observations and changing incentives. Sequential and repeated games add history, reputation and credible commitments; Bayesian games add uncertainty about player types; stochastic/Markov games combine strategic choice with evolving states; mechanism design asks how to choose rules that make desired behavior individually attractive. Multi-agent RL studies how strategies are learned through interaction, where the opponents' adaptation makes the effective environment nonstationary from one learner's perspective. These extensions are named in the lecture as directions beyond the present one-shot methods, not solved by the Nash tables above.</p>
+
+<p class="mb-3">For trustworthy AI, stability alone is insufficient: a stable joint policy can be unsafe, unfair or Pareto dominated. Specify the real human and institutional incentives, then evaluate safety constraints, welfare and distributional effects as separate criteria. The lecture's game-theory framework helps expose these questions; it does not itself certify alignment.</p>
+</section>
+
+<section id="5-tutorial-8-source-and-comparison" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Tutorial 8 source and comparison</h3>
+
+<p class="mb-3">The lecture's chicken payoff example is not numerically identical to the Tutorial 8 chicken matrix; the indifference probability above applies to <strong>Tutorial 8</strong>. Use the given matrix rather than memorizing a probability. Battle of the Sexes has two pure coordination equilibria and one mixed equilibrium; its randomization yields lower expected payoffs than successful coordination. Equilibrium predicts stability conditional on assumptions about rationality and knowledge, but does not choose between multiple equilibria or guarantee fair outcomes.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>A game requires strategic interdependence, not merely several named organizations.</li>
+<li>Pure Nash equilibrium is a mutual best response; Pareto efficiency is a separate outcome comparison.</li>
+<li>Mixed equilibria equalize expected payoffs of actions in support.</li>
+<li>In finite two-player zero-sum games, maximin and minimax agree.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ul class="note-list">
+<li>Gopalan, A. <em>Lecture-game.pdf</em>, CS4246/CS5446, AY2026/27 Semester 1, 69 slides. The “(1)” download is the same deck.</li>
+<li><em>CSXX46 AY2026/27 Week 11 Tutorial 8: Game Theory (Students)</em>.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">Tutorial 5–6: Mid-Term Foundations and Guided Decision-Making Practice</h1>
+
+<p class="mb-3">These tutorials revisit earlier chapters. Each solution starts by naming the relevant assumption or state representation, performs the calculation, and then states what the calculation does <em>not</em> establish. The Team 8 PDF is a student submission and therefore supporting context, not an answer key.</p>
+</section>
+
+<section id="1-tutorial-5-and-6-connect-the-foundations-to-worked-decisions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Tutorial 5 and 6: connect the foundations to worked decisions</h3>
+
+<h4 id="1-1-classical-planning-and-reachable-sets" class="mb-2">1.1 Classical planning and reachable sets</h4>
+
+<p class="mb-3">To ground $Fly(p,from,to)$, enumerate aircraft and airport objects and retain bindings satisfying every precondition. The supplied schema does <strong>not</strong> require $from\ne to$, so the four applicable bindings are $Fly(P1,JFK,JFK)$, $Fly(P1,JFK,SFO)$, $Fly(P2,SFO,JFK)$, and $Fly(P2,SFO,SFO)$; two are spurious self-flights. The scanned Team 8 solution verifies this directly. In its separate initial state, $Load(C2,P2,JFK)$ is applicable: delete $At(C2,JFK)$, add $In(C2,P2)$, and keep unaffected facts. More generally, an inapplicable action has no legal successor; an applicable STRIPS action yields $(s\setminus DEL)\cup ADD$. For abstract plans, an optimistic reachable-set intersection with the goal proves only <em>possibility</em>, not guaranteed achievement. An empty pessimistic intersection says success is not guaranteed; it does not rule out success if the optimistic set intersects.</p>
+
+<h4 id="1-2-preference-and-logarithmic-utility" class="mb-2">1.2 Preference and logarithmic utility</h4>
+
+<p class="mb-3">Game 1 pays $100$ or $0$ equally; Game 2 pays $0,50,100$ with probabilities $.25,.5,.25$. Both have expected money $50$, but Game 2 is less spread out. The crucial identity is $L_2=\tfrac12[\$50]+\tfrac12L_1$, whereas $L_1=\tfrac12L_1+\tfrac12L_1$. Under the expected-utility independence axiom, $L_2\succ L_1$ therefore implies the sure $50\succ L_1$. This argument needs the independence axiom, not an additional assumption of globally concave utility. For Tutorial 5's logarithmic utility question, compute $EU_A=.2\ln(w+10000)+.8\ln(w+1000)$ and $EU_B=.9\ln(w+3000)+.1\ln(w-2000)$ for each stated initial wealth $w\in\{2500,5000,10000\}$; compare expected <em>utility of final wealth</em>, never $\ln$ of expected gain. The scanned Team 8 calculations give $EU_A/EU_B\approx8.4151/8.3727$ at $w=2500$ (A), $8.8828/8.8891$ at $w=5000$ (B), and $9.4252/9.4242$ at $w=10000$ (A). The A → B → A pattern is plausible because the downside of B becomes less painful as wealth grows, while A has the larger expected monetary gain ($2800$ versus $2500$).</p>
+
+<h4 id="1-3-modeling-delayed-actions-as-an-mdp" class="mb-2">1.3 Modeling delayed actions as an MDP</h4>
+
+<p class="mb-3">A grid cell alone is not Markov when a movement may still be pending. Use idle states $(x,y,\varnothing)$ and pending states $(x,y,a)$; a chosen action's direction outcome is sampled according to $.8/.1/.1$. Half the time movement completes in one step; half the time the state becomes pending for one step, where the only permitted action is wait, before completing. Specify whether the sampled direction is stored with the pending state or sampled on completion; either is valid if transitions are consistent. Charge the per-time-step cost during the waiting step too, and pay the terminal reward on arrival. Solve a finite-horizon question by backward induction only after an initial state, boundary behavior, and terminal convention are specified.</p>
+
+<h4 id="1-4-passive-rl-learning-rules" class="mb-2">1.4 Passive RL learning rules</h4>
+
+<p class="mb-3">Monte Carlo waits for the full $S_0\to S_1\to S_2$ episode and backs up realized returns; one episode gives $G(S_1)=1$ and $G(S_0)=\gamma$. TD(0) updates $S_0$ immediately toward $0+\gamma U(S_1)$, then $S_1$ toward $1+\gamma U(S_2)$; it bootstraps from estimates. ADP learns transition and reward estimates, then evaluates the fixed policy by Bellman solving or iteration. These methods differ in <em>when</em> they update and whether they use a learned model.</p>
+
+<h4 id="1-5-rollout-mcts-uct-and-imitation" class="mb-2">1.5 Rollout, MCTS, UCT, and imitation</h4>
+
+<p class="mb-3">Tutorial 6's rollout returns give $\hat Q(s_0,L)=(4+6+5)/3=5$ and $\hat Q(s_0,R)=(3+8+2)/3=13/3$, so choose L. MCTS retains tree statistics across simulations instead of restarting independent rollouts. If a state has $M$ variables with $n$ values each, the state space has $n^M$ states. With two action choices and two stochastic outcomes per action, a complete depth-$D$ action/outcome tree is $O(4^D)$ nodes and edges; $T$ MCTS trials of depth at most $D$ use $O(TD)$ simulated steps and at most $O(TD)$ new nodes, commonly fewer. For the tutorial's UCT convention $\hat Q+c\sqrt{\log_2 N(s)/N(s,a)}$, $N(s)=16$, $c=1$: Move scores $.5+\sqrt{4/8}\approx1.207$ and Scan scores $1+\sqrt{4/8}\approx1.707$; select Scan. A new Scan rollout of $.6$ updates its count to $9$ and mean to $(8\cdot1+.6)/9\approx.956$. Feature-based softmax imitation shares parameters across similar rover states, unlike a separate tabular probability per state; DAgger addresses behavioral cloning's compounding off-distribution errors by asking an expert to label states visited by the learned policy and aggregating those examples.</p>
+</section>
+
+<section id="2-tutorial-5-problem-by-problem-checklist" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Tutorial 5 problem-by-problem checklist</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Problem</th>
+<th>Given evidence</th>
+<th>Required reasoning</th>
+<th>Frequent error</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1. Air cargo</td>
+<td>Ground predicates and action schemas</td>
+<td>Check every precondition before applying add/delete lists</td>
+<td>Excluding same-airport Fly without an inequality precondition</td>
+</tr>
+<tr>
+<td>2. Reachable sets</td>
+<td>Optimistic and pessimistic sets</td>
+<td>Separate possible from guaranteed goal reachability</td>
+<td>Reading an optimistic superset as a proof of success</td>
+</tr>
+<tr>
+<td>3. Preferences</td>
+<td>Two lotteries with equal expected money</td>
+<td>Use independence to compare sure $50$ with Game 1</td>
+<td>Inferring utility from money expectation alone</td>
+</tr>
+<tr>
+<td>4. Log utility</td>
+<td>Initial wealth and gain/loss outcomes</td>
+<td>Take expected logs of <strong>final wealth</strong></td>
+<td>Taking the log of expected dollars</td>
+</tr>
+<tr>
+<td>5. Delayed MDP</td>
+<td>Position, unfinished movement, random duration</td>
+<td>Add pending-action state and wait-only action</td>
+<td>Treating position alone as Markov</td>
+</tr>
+<tr>
+<td>6. Passive RL</td>
+<td>Fixed $S_0\to S_1\to S_2$ path</td>
+<td>Distinguish episode returns, TD targets, learned model</td>
+<td>Treating ADP as model-free or TD as Monte Carlo</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section id="3-tutorial-6-problem-by-problem-checklist" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Tutorial 6 problem-by-problem checklist</h3>
+
+<p class="mb-3">The rollout problem averages three simulated returns per initial action before choosing; it does not prove either action is globally optimal. The MCTS problem makes the curse of dimensionality concrete: $n^M$ global states versus a depth-$D$ local tree, with UCT allocating trials selectively. The Scan backpropagation update is an incremental mean, $\hat Q_{new}=\hat Q_{old}+(G-\hat Q_{old})/(N+1)$, giving $1+(.6-1)/9\approx.956$. The imitation problem asks why feature sharing generalizes beyond visited states and why deployment distribution shift requires DAgger's expert labels on the learner's own states. Human teleoperation is useful when safe demonstrations exist, but expensive expert time, imperfect behavior, and unobserved state features limit it.</p>
+</section>
+
+<section id="source-audit-for-these-chapters" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Source audit for these chapters</h3>
+
+<ul class="note-list">
+<li>New lecture concepts: <em>Lecture-rl-model-based.pdf</em> (64 slides), <em>Lecture-rl-model-based-addendum.pdf</em> (2 diagram slides, visually checked), and <em>Lecture-game.pdf</em> (69 slides). <em>Lecture-game (1).pdf</em> is a duplicate copy of the same 69-slide deck. Existing Weeks 6–7 already cover <em>Lecture-RL-Reward-Shaping.pdf</em> and <em>Lecture-guided-SDM.pdf</em> in depth; these chapters integrate their tutorials without copying those weeks again.</li>
+<li>Practice: <em>CSXX46 Week7 Tutorial5 Mid-Term Review</em>, <em>Tutorial6_W9_Student</em>, <em>CSXX46 Week10 Tutorial7 MBRL</em>, and <em>CSXX46 Week11 Tutorial8 Game Theory Students</em>. The Week 7 review and <em>Tutorial5_Team8.pdf</em> contain image-based material. I visually checked the seven-page Team 8 submission for the planning bindings, utility calculations, delayed-action MDP, and passive-RL explanations. This is a student submission, not an official answer key; its claims are identified or independently derived above.</li>
+</ul>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Grounded planning actions must satisfy the literal schema; do not add unstated constraints.</li>
+<li>Expected money and expected utility can rank lotteries differently.</li>
+<li>A delayed action requires pending state to preserve the Markov property.</li>
+<li>MC waits for returns, TD bootstraps, and ADP learns a model.</li>
+<li>MCTS reuses search statistics; DAgger corrects the learner's encountered states.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
 </section>
         </div>
       </div>

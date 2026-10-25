@@ -23,6 +23,11 @@
     { "selector": "a.hub-card[href*=\"labs/\"] p", "text": { "en": "Experimental pages and prototypes that are useful, interesting, or still evolving.", "zh-Hant": "兼具實用性、趣味性或仍在孵化中的實驗性頁面、互動原型與概念橋樑。", "zh-Hans": "兼具实用性、趣味性或仍在孵化中的实验性页面、互动原型与概念桥梁。" } },
     { "selector": "a.hub-card[href*=\"labs/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best for playful or in-progress surfaces", "zh-Hant": "適合探索趣味功能與概念驗證原型", "zh-Hans": "适合探索趣味功能与概念验证原型" } },
     { "selector": "a.hub-card[href*=\"labs/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Helps keep experiments separate from the main IA", "zh-Hant": "將實驗性功能與主站資訊架構適度解耦", "zh-Hans": "将实验性功能与主站信息架构适度解耦" } },
+    { "selector": "a.hub-card[href*=\"space/\"] h2", "text": { "en": "Studio", "zh-Hant": "慢活研究室", "zh-Hans": "慢活研究室" } },
+    { "selector": "a.hub-card[href*=\"space/\"] .hub-card-cta", "text": { "en": "Enter", "zh-Hant": "進入", "zh-Hans": "进入" } },
+    { "selector": "a.hub-card[href*=\"space/\"] p", "text": { "en": "An agent-free, isometric personal creative sanctuary with dynamic lighting, ambient sounds, library, and cozy companion.", "zh-Hant": "獨立於 Agent 之外的個人等軸 2.5D 創作空間，具備即時光照、白噪音音效、專案陳列與貓咪互動。", "zh-Hans": "独立于 Agent 之外的个人等轴 2.5D 创作空间，具备实时光照、白噪音音效、项目陈列与猫咪互动。" } },
+    { "selector": "a.hub-card[href*=\"space/\"] .hub-card-list li:nth-child(1)", "text": { "en": "Best for relaxing, exploring research notes, or listening to lo-fi audio", "zh-Hant": "適合放鬆小憩、回顧研究筆記或聆聽 Lo-Fi 環境白噪音", "zh-Hans": "适合放松小憩、回顾研究笔记或聆听 Lo-Fi 环境白噪音" } },
+    { "selector": "a.hub-card[href*=\"space/\"] .hub-card-list li:nth-child(2)", "text": { "en": "Interactive 2.5D space with live time of day and feline friend", "zh-Hant": "具備擬真晝夜光影與貓咪相伴的 2.5D 沉浸式互動房間", "zh-Hans": "具备拟真昼夜光影与猫咪相伴的 2.5D 沉浸式互动房间" } },
     { "selector": ".hub-callout-title", "text": { "en": "Looking for content instead?", "zh-Hant": "想尋找實質內容嗎？", "zh-Hans": "想寻找实质内容吗？" } },
     { "selector": ".hub-callout-text", "text": { "en": "Use Portfolio when you already know you want projects, notes, essays, or visual work.", "zh-Hant": "當你明確想要閱讀專案成果、筆記、思辨文章或視覺畫布時，請前往作品集。", "zh-Hans": "当你明确想要阅读项目成果、笔记、思辨文章或视觉画布时，请前往作品集。" } },
     { "selector": "a.hub-callout-link", "text": { "en": "Go to Portfolio", "zh-Hant": "前往作品集", "zh-Hans": "前往作品集" } }
