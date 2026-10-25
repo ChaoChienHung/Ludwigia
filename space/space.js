@@ -16,10 +16,24 @@
   // --- Map Constants ---
   const TW = 64; // Tile width
   const TH = 32; // Tile height
-  const MAP_W = 22;
-  const MAP_H = 22;
+  const MAP_W = 28;
+  const MAP_H = 28;
+
+  // Zone 1: Ludwig's Family Residence (NW)
   const HOUSE_MAX_X = 9;
   const HOUSE_MAX_Y = 9;
+
+  // Zone 2: Men's Dormitory 11 Room 211 (SW)
+  const DORM_MIN_X = 0;
+  const DORM_MAX_X = 9;
+  const DORM_MIN_Y = 17;
+  const DORM_MAX_Y = 26;
+
+  // Zone 3: Ludwigia AI Research Studio (NE)
+  const AI_MIN_X = 18;
+  const AI_MAX_X = 27;
+  const AI_MIN_Y = 0;
+  const AI_MAX_Y = 9;
 
   // Iso projection
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {
@@ -352,8 +366,10 @@
       this.particles = [];
       this.initParticles();
 
-      // Dynamic Interactive Entrance Double Door
-      this.doorOpenProgress = 0.0;
+      // Dynamic Interactive Entrance Doors for all buildings
+      this.doorLudwigOpen = 0.0;
+      this.doorDormOpen = 0.0;
+      this.doorAiOpen = 0.0;
 
       // Input keys
       this.keys = {};
@@ -365,45 +381,72 @@
     }
 
     setupWorldObstacles() {
-      // 1. House Outer Walls
-      // NW Wall: y = 0, x in 0..HOUSE_MAX_X
-      // NE Wall: x = 0, y in 0..HOUSE_MAX_Y
-      // SE Wall along x = HOUSE_MAX_X with wide double doorway at y = 4..6
+      // === 1. Zone 1: Ludwig's Family Residence (NW, x: 0..9, y: 0..9) ===
       this.nav.setBlock(HOUSE_MAX_X, 0, 1, 4, true);
       this.nav.setBlock(HOUSE_MAX_X, 7, 1, 3, true);
-
-      // SW Wall along y = HOUSE_MAX_Y with porch entry at x = 4..6
       this.nav.setBlock(0, HOUSE_MAX_Y, 4, 1, true);
       this.nav.setBlock(7, HOUSE_MAX_Y, 3, 1, true);
 
-      // 2. House Furniture
-      // Master Bed (x: 1, y: 1)
-      this.nav.setBlock(1, 1, 2, 2.2, true);
-      // Developer Desk & Chairs (x: 6, y: 1)
-      this.nav.setBlock(6, 1, 2.5, 1.2, true);
-      // Large Bookshelf (x: 0, y: 4)
-      this.nav.setBlock(0, 4, 1, 2.5, true);
-      // Living Room Sofa & Coffee Table (x: 2, y: 5)
-      this.nav.setBlock(2, 5, 2.5, 2, true);
-      // Dining Table Set (x: 6, y: 5)
-      this.nav.setBlock(6, 5, 2.2, 2, true);
+      // Furniture
+      this.nav.setBlock(1, 1, 2, 2.2, true);     // Master Bed
+      this.nav.setBlock(6, 1, 2.5, 1.2, true);   // Developer Desk
+      this.nav.setBlock(0, 4, 1, 2.5, true);     // Bookshelf
+      this.nav.setBlock(2, 5, 2.5, 2, true);     // Living Room Sofa & Rug
+      this.nav.setBlock(6, 5, 2.2, 2, true);     // Dining Table Set
 
-      // 3. Courtyard Furniture & Decor
-      // Grand Fountain (x: 14, y: 10)
-      this.nav.setBlock(14, 10, 3, 3, true);
+      // === 2. Zone 2: Men's Dormitory 11 Room 211 (SW, x: 0..9, y: 17..26) ===
+      // Outer Walls: NW (y=17), NE (x=0), SE (x=10, door at y=20.5..22.8), SW (y=27)
+      this.nav.setBlock(0, DORM_MIN_Y, 10, 1, true);
+      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 1, 3.5, true);
+      this.nav.setBlock(DORM_MAX_X + 1, 23.2, 1, 3.8, true);
+      this.nav.setBlock(0, DORM_MAX_Y + 1, 10, 1, true);
 
-      // Trees
+      // 4 Loft Bed/Desk Units (上床下桌)
+      this.nav.setBlock(1, 18, 2.2, 1.5, true);  // Bed 1 (Happy Wang)
+      this.nav.setBlock(1, 23, 2.2, 1.5, true);  // Bed 2 (Kerry Chang)
+      this.nav.setBlock(6.8, 18, 2.2, 1.5, true);// Bed 3 (Clark Wu)
+      this.nav.setBlock(6.8, 23, 2.2, 1.5, true);// Bed 4 (Jerry Chung)
+
+      // Dorm Common Lounge / Mini Fridge & Snack Table (Billy Fang's spot)
+      this.nav.setBlock(4.2, 20.2, 1.6, 1.6, true);
+
+      // === 3. Zone 3: Ludwigia AI Research Studio (NE, x: 18..27, y: 0..9) ===
+      // Outer Walls: NW (y=0), NE (x=18, door at y=4.5..6.8), SE (x=28), SW (y=10)
+      this.nav.setBlock(AI_MIN_X, 0, 10, 1, true);
+      this.nav.setBlock(AI_MIN_X, 0, 1, 4.5, true);
+      this.nav.setBlock(AI_MIN_X, 7.0, 1, 3.0, true);
+      this.nav.setBlock(AI_MAX_X + 1, 0, 1, 10, true);
+      this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 10, 1, true);
+
+      // AI Studio Equipment
+      this.nav.setBlock(19.5, 1.2, 2.0, 1.4, true); // Dual 42U Server Cabinets
+      this.nav.setBlock(23.5, 1.2, 2.5, 1.4, true); // Ultrawide AI Command Desk
+      this.nav.setBlock(26.2, 4.0, 0.8, 2.5, true); // Neural Whiteboard
+      this.nav.setBlock(19.5, 7.2, 1.8, 1.4, true); // Espresso Bar
+      this.nav.setBlock(23.5, 6.8, 2.2, 1.6, true); // AI Research Pod Lounge
+
+      // === 4. Central Courtyard, Plaza & Park ===
+      // Grand Fountain (x: 13, y: 13)
+      this.nav.setBlock(13, 13, 3, 3, true);
+
+      // Park Benches & Cafe Tables
+      this.nav.setBlock(11, 10, 1.6, 0.7, true);
+      this.nav.setBlock(16, 10, 1.6, 0.7, true);
+      this.nav.setBlock(11, 17, 1.6, 0.7, true);
+      this.nav.setBlock(16, 17, 1.6, 0.7, true);
+      this.nav.setBlock(13.5, 8.0, 1.5, 1.5, true);
+      this.nav.setBlock(13.5, 19.5, 1.5, 1.5, true);
+
+      // Lush Plaza Trees
       const treeBlocks = [
-        [11, 2], [17, 2], [11, 16], [17, 16],
-        [14, 2], [19, 9], [14, 18], [4, 14], [7, 14],
-        [12, 6], [17, 6], [10, 12]
+        [11, 2], [14, 2], [16, 2],
+        [11, 6], [16, 6],
+        [11, 14], [16, 14],
+        [11, 21], [16, 21],
+        [11, 25], [14, 25], [16, 25],
+        [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
       ];
       treeBlocks.forEach(([tx, ty]) => this.nav.setBlock(tx, ty, 1.2, 1.2, true));
-
-      // Outdoor Benches & Cafe Tables
-      this.nav.setBlock(11, 9, 1.5, 1, true);
-      this.nav.setBlock(18, 11, 1.5, 1, true);
-      this.nav.setBlock(15, 5, 2, 2, true); // Tech Pavilion canopy
     }
 
     initCharacters() {

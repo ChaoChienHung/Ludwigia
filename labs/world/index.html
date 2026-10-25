@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Ludwigia World — 數位花園小世界</title>
+  <meta name="garden:tags" content="Ludwigia, World, Campus, Isometric, Interactive, Family, Friends, Dorm211, AIStudio">
+  <meta name="garden:summary" content="屬於 Ludwig、家人、大學好友與 AI 夥伴們的 2.5D 虛擬校園生活世界，包含家庭居所、男11 211宿舍與 AI 工作室。">
+
+  <!-- Theme & Palette Preload (Ludwigia Contract) -->
+  <script>
+    (() => {
+      try {
+        const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+        if (theme === "light") document.documentElement.classList.add("light-theme");
+        if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+        if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+        if (theme === "sky") document.documentElement.classList.add("sky-theme");
+        if (theme === "garden") document.documentElement.classList.add("garden-theme");
+        const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+        if (palette) document.documentElement.classList.add(`palette-${palette}`);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="world.css?v=2026-10-25-modular">
+</head>
+<body class="space-body">
+
+  <!-- Fullscreen Interactive Canvas Viewport -->
+  <div class="space-viewport">
+    <canvas id="space-canvas"></canvas>
+  </div>
+
+  <!-- Top Navigation & Controls HUD -->
+  <div class="hud-layer hud-topbar">
+    <div class="hud-glass-panel">
+      <a href="../index.html" class="hud-brand" title="返回 Labs 實驗室">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span class="brand-text">Labs</span>
+      </a>
+      <span class="hud-brand-tag">World</span>
+    </div>
+
+    <!-- Mood / Time of Day Switcher -->
+    <div class="hud-glass-panel">
+      <button type="button" class="hud-btn active" data-mood="auto" title="依目前時間自動採光">
+        <i class="fa-regular fa-clock"></i>
+        <span class="d-none d-md-inline">Auto</span>
+      </button>
+      <button type="button" class="hud-btn" data-mood="day" title="清晨 / 白天晴光">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+      <button type="button" class="hud-btn" data-mood="sunset" title="黃昏落日金色餘暉">
+        <i class="fa-solid fa-cloud-sun"></i>
+      </button>
+      <button type="button" class="hud-btn" data-mood="night" title="靜謐月光與繁星夜空">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <button type="button" class="hud-btn" data-mood="galaxy" title="深邃銀河星雲氣氛">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </button>
+    </div>
+
+    <!-- Ambient Audio & Citation Trigger -->
+    <div class="hud-glass-panel">
+      <button type="button" class="hud-btn active" data-audio="off" title="靜音">
+        <i class="fa-solid fa-volume-xmark"></i>
+      </button>
+      <button type="button" class="hud-btn" data-audio="ambient" title="環境白噪音與自然水聲">
+        <i class="fa-solid fa-water"></i>
+      </button>
+      <button type="button" class="hud-btn" id="btn-citation" title="開源引用與技術致謝">
+        <i class="fa-solid fa-book-bookmark"></i>
+        <span class="d-none d-md-inline">致謝</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Top Center Status / Thought Indicator -->
+  <div class="hud-layer hud-status-pill">
+    <div class="hud-status-dot"></div>
+    <span id="status-text">Ludwigia World • 數位花園小世界</span>
+  </div>
+
+  <!-- Proximity Dialogue Prompt -->
+  <div class="proximity-prompt" id="proximity-prompt">
+    <i class="fa-solid fa-comments text-accent"></i>
+    <span>[空白鍵 / 點擊] 與 <span id="prompt-name" style="color: var(--space-accent);"></span> 交談</span>
+  </div>
+
+  <!-- Bottom Right Controls Tip -->
+  <div class="hud-layer hud-bottombar">
+    <div class="hud-glass-panel control-tips">
+      <div><span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> 或 <span class="key-badge">方向鍵</span> 移動</div>
+      <div><span class="key-badge">空白鍵</span> 對話</div>
+      <div><span class="key-badge">點擊地面</span> 尋路</div>
+    </div>
+  </div>
+
+  <!-- Mobile Virtual D-Pad (Touch Devices) -->
+  <div class="mobile-dpad">
+    <div class="dpad-center"></div>
+    <button type="button" class="dpad-btn dpad-up" id="dpad-up" aria-label="向上移動"><i class="fa-solid fa-chevron-up"></i></button>
+    <button type="button" class="dpad-btn dpad-down" id="dpad-down" aria-label="向下移動"><i class="fa-solid fa-chevron-down"></i></button>
+    <button type="button" class="dpad-btn dpad-left" id="dpad-left" aria-label="向左移動"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="dpad-btn dpad-right" id="dpad-right" aria-label="向右移動"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+
+  <!-- RPG Dialogue Box Overlay -->
+  <div class="dialogue-overlay" id="dialogue-overlay">
+    <div class="dialogue-content">
+      <div class="dialogue-avatar" id="dialogue-avatar">🧑‍💻</div>
+      <div class="dialogue-main">
+        <div class="dialogue-speaker-row">
+          <span class="dialogue-name" id="dialogue-name">Ludwig</span>
+          <span class="dialogue-role" id="dialogue-role">Host</span>
+        </div>
+        <div class="dialogue-text" id="dialogue-text">歡迎來到我的世界！</div>
+        <div class="dialogue-footer">
+          <button type="button" class="dialogue-next-btn" id="dialogue-next">
+            <span>繼續</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WELCOME POPUP: Visitor Name Selection -->
+  <div class="space-modal-backdrop" id="modal-welcome-name">
+    <div class="space-modal">
+      <div class="space-modal-header">
+        <div class="space-modal-title">
+          <i class="fa-solid fa-house-chimney-user text-accent"></i>
+          <span>歡迎來到屬於我們的世界！</span>
+        </div>
+      </div>
+      <div class="space-modal-body">
+        <p>在這裡，你將走進 Ludwig 的家、男11 211寢室、AI 智慧研究室與中央噴泉花園，與大家相遇交談。</p>
+        <p style="margin-top: 10px; font-weight: 600;">請告訴我們該怎麼稱呼你？</p>
+
+        <form id="form-set-name">
+          <input type="text" id="visitor-name-input" class="name-form-input" placeholder="例如：Traveler、訪客或你的名字" maxlength="16" autofocus required>
+          <button type="submit" class="btn-primary-action">
+            <i class="fa-solid fa-person-walking-arrow-right"></i>
+            <span>進入世界開始探索</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CITATION & ATTRIBUTION MODAL -->
+  <div class="space-modal-backdrop" id="modal-citation">
+    <div class="space-modal">
+      <div class="space-modal-header">
+        <div class="space-modal-title">
+          <i class="fa-solid fa-book-bookmark text-accent"></i>
+          <span>引用與開源技術致謝（Citations & References）</span>
+        </div>
+        <button type="button" class="space-modal-close" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="space-modal-body">
+        <p>本虛擬空間之開發由衷借鑑並致謝以下優秀的開源專案與設計理念：</p>
+
+        <div class="citation-box">
+          <strong>主要幾何與 Canvas 架構引用：</strong><br>
+          <strong>whatsmyagentdoing Github</strong>: <a href="https://github.com/Charonyuu/whatsmyagentdoing" target="_blank" rel="noopener noreferrer">Charonyuu/whatsmyagentdoing</a>（MIT License）<br>
+          <em>借鑑項目：純前端 2.5D Canvas 等軸投影數學模型、瓦片幾何映射、Painter's 深度排序算法與微縮像素角色步態渲染。</em>
+        </div>
+
+        <div class="citation-box">
+          <strong>大地圖漫步與多區域互動設計：</strong><br>
+          <strong>Heart Island 政策心島</strong>: <a href="https://puma.taipei/heart-island" target="_blank" rel="noopener noreferrer">puma.taipei/heart-island</a><br>
+          <em>借鑑項目：大地圖多區域自由探索、角色動態浮動名牌、時段切換控制與鄰近敘事對話體驗。</em>
+        </div>
+
+        <h4 style="font-size: 0.95rem; margin: 16px 0 6px; font-weight: 600;">自研特點與 Ludwigia 專屬特色：</h4>
+        <ul style="padding-left: 20px; font-size: 0.88rem; color: var(--space-text-secondary); line-height: 1.6;">
+          <li><strong>屬於真實人物的溫馨生活空間</strong>：結合 Ludwig 的家庭、男11 211大學好友群與 AI 夥伴的立體社交天地。</li>
+          <li><strong>資料與代碼徹底解耦</strong>：所有角色裝飾、性別、分區與五套隨機中英雙語對話皆由外部 <code>characters.json</code> 單一真相來源驅動。</li>
+          <li><strong>零外部音檔 Web Audio 合成</strong>：瀏覽器端純數學即時合成微風白噪音、噴泉水流聲與舒緩調和弦。</li>
+          <li><strong>詳細技術規格</strong>：完整技術細節請參閱站內文檔 <a href="../../docs/specs/isometric-world-spec.md" target="_blank" style="color: var(--space-accent);"><code>docs/specs/isometric-world-spec.md</code></a>。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Scripts -->
+  <script src="js/engine.js?v=2026-10-25-1"></script>
+  <script src="js/models.js?v=2026-10-25-1"></script>
+  <script src="js/characters.js?v=2026-10-25-1"></script>
+  <script src="js/world.js?v=2026-10-25-1"></script>
+
+  <!-- Initialization & UI Binding -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('space-canvas');
+      const world = new window.LudwigiaWorld(canvas);
+
+      // Name Modal Handling
+      const modalWelcome = document.getElementById('modal-welcome-name');
+      const formSetName = document.getElementById('form-set-name');
+      const inputName = document.getElementById('visitor-name-input');
+      const savedName = localStorage.getItem('ludwigia_visitor_name');
+
+      if (!savedName) {
+        modalWelcome.classList.add('open');
+        inputName.focus();
+      }
+
+      formSetName.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = inputName.value.trim();
+        if (val) {
+          localStorage.setItem('ludwigia_visitor_name', val);
+          if (world.charManager.player) {
+            world.charManager.player.name = val;
+          }
+          modalWelcome.classList.remove('open');
+        }
+      });
+
+      // Mood Switcher Buttons
+      document.querySelectorAll('[data-mood]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-mood]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          world.mood = btn.dataset.mood;
+        });
+      });
+
+      // Audio Switcher Buttons
+      document.querySelectorAll('[data-audio]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-audio]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          if (btn.dataset.audio === 'off') {
+            world.audio.stop();
+          } else {
+            world.audio.start();
+          }
+        });
+      });
+
+      // Citations Modal
+      const modalCitation = document.getElementById('modal-citation');
+      document.getElementById('btn-citation')?.addEventListener('click', () => {
+        modalCitation.classList.add('open');
+      });
+      document.querySelectorAll('.space-modal-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+          modalCitation.classList.remove('open');
+        });
+      });
+      modalCitation?.addEventListener('click', (e) => {
+        if (e.target === modalCitation) modalCitation.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

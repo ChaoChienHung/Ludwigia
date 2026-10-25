@@ -1,0 +1,964 @@
+{
+  "characters": [
+    {
+      "id": "ludwig",
+      "name": "Ludwig",
+      "gender": "male",
+      "role": "Host / 站長",
+      "avatar": "🧑‍💻",
+      "zone": "house",
+      "spawn": { "x": 7.0, "y": 2.5 },
+      "nameColor": "#fb923c",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1a1a1a",
+        "shirt": "#e06c43",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "歡迎來到屬於我們的生活空間！",
+            "這棟房子是我們的家，裡面有我最親愛的家人們；穿過右側玄關走出去，是寬闊的綠意廣場，我的好朋友們與 AI 夥伴都在那裡。",
+            "你可以用鍵盤 WASD、方向鍵或點選地面走斜線探索，靠近大家按空白鍵就能聊聊天！"
+          ],
+          [
+            "剛剛我把書桌與檯燈的光源重新校準了！",
+            "那盞雙臂關節檯燈配上深色皮革桌墊，敲鍵盤寫論文時特別專注舒適。",
+            "南側是男11 211宿舍，東邊是我們的 AI 工作室，去逛逛看吧！"
+          ],
+          [
+            "書櫃上的書我都按分類放好了！微積分、分散式系統和深度學習都在上面。",
+            "有空隨時可以翻翻看我的學習筆記！"
+          ],
+          [
+            "今天天氣真好，中央廣場的噴泉開了，櫻花微風吹過特別舒服！",
+            "如果累了，客廳沙發上還有熱茶跟點心喔！"
+          ],
+          [
+            "這是我們用純 Canvas 與原創演算法打造的 2.5D 世界！",
+            "沒有外部遊戲引擎套件，全部都是純手刻的拓撲深度排序與等角投影數學！"
+          ]
+        ],
+        "en": [
+          [
+            "Welcome to our digital living sanctuary!",
+            "This house is our home with my family; step out through the entrance to find the courtyard plaza, college dorm, and AI studio.",
+            "Use WASD or arrow keys to explore, and press Space or click to chat!"
+          ],
+          [
+            "I've just fine-tuned the workspace anglepoise lamp and mechanical keyboard setup!",
+            "Head south to check out Men's Dorm 11-211, or head east into the Ludwigia AI Lab!"
+          ],
+          [
+            "The library shelf is fully organized by topic: algorithms, systems, and deep learning.",
+            "Feel free to check out the research notes anytime!"
+          ],
+          [
+            "The fountain breeze in the central plaza feels amazing today.",
+            "Take your time and enjoy the cozy atmosphere!"
+          ],
+          [
+            "This entire 2.5D world is built with pure Canvas math and topological sorting!",
+            "Zero heavy game engines—just clean, handcrafted algorithmic design."
+          ]
+        ]
+      }
+    },
+    {
+      "id": "yully",
+      "name": "Yully",
+      "gender": "female",
+      "role": "媽媽 (Mom)",
+      "avatar": "👩",
+      "zone": "house",
+      "spawn": { "x": 7.0, "y": 6.2 },
+      "nameColor": "#f472b6",
+      "appearance": {
+        "skin": "#fbe2d0",
+        "hair": "#4a3525",
+        "shirt": "#f472b6",
+        "pants": "#4b5563",
+        "hairStyle": 1
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "哎呀，歡迎光臨！很高興認識你！",
+            "肚子餓不餓？餐桌上有剛切好的新鮮水果和剛出爐的蘋果派喔！",
+            "這孩子 Ludwig 一忙起研究和寫程式常常忘記吃飯，多虧有你們這些朋友陪著他！"
+          ],
+          [
+            "快坐快坐！把這裡當成自己家，放鬆坐坐！",
+            "客廳的沙發很軟很舒服喔，餅餅最喜歡在沙發角落打瞌睡了。"
+          ],
+          [
+            "今天陽光真好呢！我剛把落地窗擦得乾乾淨淨，看著窗外的花園心情真棒。",
+            "記得提醒 Ludwig 工作一陣子就要站起來走走、喝杯溫開水喔！"
+          ],
+          [
+            "南邊宿舍那群男孩子們剛才還跑過來拿點心呢，真是有活力的大學生！",
+            "年輕真好呀，大家聚在一起熱熱鬧鬧的，最幸福了。"
+          ],
+          [
+            "如果你想喝點什麼，冰箱裡有剛煮好的冬瓜檸檬，自己倒不用客氣喔！"
+          ]
+        ],
+        "en": [
+          [
+            "Hello there, welcome! So wonderful to meet you!",
+            "Are you hungry? There is freshly sliced fruit and warm pie on the dining table!",
+            "Ludwig often forgets to eat when he is deep in code, so having great friends around means the world to us."
+          ],
+          [
+            "Please make yourself at home! The living room sofa is super cozy.",
+            "Mochi the cat loves taking afternoon naps right by the cushion."
+          ],
+          [
+            "Such lovely weather today! Looking out through the clean glass onto the garden is so peaceful.",
+            "Don't forget to remind Ludwig to stretch and drink some water every now and then!"
+          ],
+          [
+            "The boys from Dorm 211 just dropped by for afternoon snacks—such lively college energy!",
+            "It warms my heart to see everyone gathered together having fun."
+          ],
+          [
+            "Help yourself to iced lemon wintermelon tea in the fridge anytime!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "wuyen",
+      "name": "Wu Yen Chao",
+      "gender": "male",
+      "role": "爸爸 (Dad)",
+      "avatar": "👨",
+      "zone": "house",
+      "spawn": { "x": 2.5, "y": 7.0 },
+      "nameColor": "#38bdf8",
+      "appearance": {
+        "skin": "#dfb798",
+        "hair": "#334155",
+        "shirt": "#3b82f6",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "你好啊，請坐請坐！剛泡好了高山烏龍茶，聞聞看這茶香！",
+            "人生與做學問就跟品茶一樣，慢火出細活，心定而後能觀照全局。",
+            "把這裡當成自己家，放鬆聊聊！"
+          ],
+          [
+            "看著年輕人朝氣蓬勃地探索新科技，真的很讓人欣慰。",
+            "做技術要耐得住寂寞，基礎打穩了，上面的大樓才能蓋得長久穩固。"
+          ],
+          [
+            "客廳這幅風景畫是我很喜歡的角度，山林蒼翠，胸懷自然開朗。",
+            "讀書累了就出去中庭走兩圈，吹吹風，思路往往就豁然開朗了。"
+          ],
+          [
+            "Ludwig 這孩子從小就對邏輯與建構充滿熱忱，看到他把自己的世界建得這麼有條理，爸爸很替他高興。"
+          ],
+          [
+            "來，再添一杯熱茶！喝茶暖胃，凡事循序漸進，不急不躁。"
+          ]
+        ],
+        "en": [
+          [
+            "Welcome, my friend! Please have a seat. I just brewed fresh high-mountain Oolong tea.",
+            "Life and scholarship are much like tea: gentle patience brings out the richest aroma, and a calm mind sees clearly."
+          ],
+          [
+            "It is inspiring to see young minds explore cutting-edge horizons with such passion.",
+            "Build strong foundations first; only solid bedrock can sustain tall architectures."
+          ],
+          [
+            "Take a stroll around the central fountain whenever you hit a tricky problem; fresh air always brings clarity."
+          ],
+          [
+            "Ludwig has loved logic and building systems since he was little. Seeing this vibrant world take shape makes me proud."
+          ],
+          [
+            "Let me pour you another cup of warm tea! Steady steps carry us furthest."
+          ]
+        ]
+      }
+    },
+    {
+      "id": "luena",
+      "name": "Luena",
+      "gender": "female",
+      "role": "妹妹 (Sister)",
+      "avatar": "👧",
+      "zone": "house",
+      "spawn": { "x": 2.0, "y": 3.5 },
+      "nameColor": "#facc15",
+      "appearance": {
+        "skin": "#fde0cf",
+        "hair": "#1e1b18",
+        "shirt": "#facc15",
+        "pants": "#374151",
+        "hairStyle": 2
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "嗨嗨！你是 Ludwig 哥哥的朋友對吧！",
+            "哈哈，他一整天都在盯著那個螢幕打演算法，我都在客廳聽音樂跟跟小貓玩！",
+            "你看，餅餅（Mochi）正縮在沙發底下打呼嚕呢，超級可愛！"
+          ],
+          [
+            "嘿！你有去參觀男11 211宿舍嗎？那裡超熱鬧的！",
+            "那種上面是床、下面是書桌的床型我以前只在大學開箱影片看過，親眼看到覺得好酷喔！"
+          ],
+          [
+            "東邊的 AI 工作室裡有好幾台超酷的大螢幕和伺服器，藍藍綠綠的光超有未來感！",
+            "ChatGPT 和 Gemini 都超級親切，我常常跑去找他們聊天問八卦呢！"
+          ],
+          [
+            "媽媽今天烤的蘋果派超香的！哥哥如果再不來吃，我就要全部吃光光囉！"
+          ],
+          [
+            "餅餅今天心情超好，如果輕輕摸牠下巴，牠會一直發出拖拉機一樣的咕嚕聲喔！"
+          ]
+        ],
+        "en": [
+          [
+            "Hi there! You must be Ludwig's friend!",
+            "Haha, he stares at algorithmic formulas all day, while I enjoy music and play with our cat!",
+            "Look, Mochi is purring under the sofa—so fluffy and adorable!"
+          ],
+          [
+            "Hey, have you checked out Dorm 11-211 yet? It's so lively over there!",
+            "Those upper-bunk bed and lower-desk loft combos look straight out of a classic college tour!"
+          ],
+          [
+            "The AI lab in the east sector has glowing servers and curved ultrawide monitors—total sci-fi vibe!",
+            "Gemini and Claude are super friendly, I ask them fun trivia all the time!"
+          ],
+          [
+            "Mom baked an amazing apple pie today! If Ludwig doesn't hurry up, I'm taking the last slice!"
+          ],
+          [
+            "Mochi is in such a cuddly mood today. Scratch her chin and she purrs like a gentle motor!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "mochi",
+      "name": "Mochi (餅餅)",
+      "gender": "cat",
+      "role": "Studio Cat",
+      "avatar": "🐱",
+      "zone": "house",
+      "spawn": { "x": 4.0, "y": 5.2 },
+      "nameColor": "#fbbf24",
+      "appearance": {
+        "isCat": true
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "喵嗚～ 🐾 *優雅地蹭了蹭你的小腿，發出呼嚕呼嚕的療癒聲音* 💕"
+          ],
+          [
+            "喵～ *瞇著眼睛伸了個長長的懶腰，把前爪縮成一個小麵包* 🥐"
+          ],
+          [
+            "喵嗚！🐾 *用毛茸茸的尾巴輕輕掃過你的腳背，水汪汪的大眼睛看著你*"
+          ],
+          [
+            "咕嚕咕嚕咕嚕... *在柔軟的客廳地毯上翻滾露出軟萌的小肚子* ✨"
+          ],
+          [
+            "喵～ *跳上沙發扶手，專注地盯著窗外飄落的櫻花花瓣* 🌸"
+          ]
+        ],
+        "en": [
+          [
+            "Meow~ 🐾 *rubs gently against your ankle, purring with warm affection* 💕"
+          ],
+          [
+            "Mrow~ *stretches lazily and tucks its paws into a cozy little loaf* 🥐"
+          ],
+          [
+            "Meow! 🐾 *swishes fluffy tail and looks up at you with sparkling golden eyes*"
+          ],
+          [
+            "Purr-purr-purr... *rolls over on the warm living room rug showing a soft belly* ✨"
+          ],
+          [
+            "Mew~ *leaps onto the sofa armrest, watching cherry blossom petals drift by* 🌸"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "happy",
+      "name": "Happy Wang",
+      "gender": "male",
+      "role": "室友 (Dorm 211)",
+      "avatar": "😄",
+      "zone": "dorm_211",
+      "spawn": { "x": 3.2, "y": 18.8 },
+      "nameColor": "#fb923c",
+      "appearance": {
+        "skin": "#fbe2d0",
+        "hair": "#1e293b",
+        "shirt": "#f97316",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "哈哈！歡迎來到男11 211寢室！",
+            "這張上床下桌真是滿滿的大學回憶！下層寫程式打遊戲，上層倒頭就睡，大學四年最熱血的時光都在這！",
+            "兄弟，今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？我請客！"
+          ],
+          [
+            "嘿！兄弟！今天也是元氣滿滿的一天！",
+            "你看我這床頭貼的遊戲海報跟戰隊隊旗，211 寢室就是要熱血！",
+            "待會打完這把排位賽，我們一起去中庭噴泉投個硬幣許願！"
+          ],
+          [
+            "上床下桌最棒的地方就是爬上去就像進入秘密基地一樣！",
+            "拉上遮光床簾，戴上耳機，上面就是專屬的小宇宙！"
+          ],
+          [
+            "剛剛 Billy 泡了兩碗雙響泡泡麵，整個走廊都是香味，大學宿舍就是要有這種人間煙火味！"
+          ],
+          [
+            "有空常來 211 坐坐啊！不管是聊專案、打遊戲還是純粹哈拉，隨時歡迎你！"
+          ]
+        ],
+        "en": [
+          [
+            "Haha! Welcome to Men's Dorm 11 Room 211!",
+            "These loft beds bring back the ultimate college memories! Desk on the bottom for coding and gaming, bed on top for crashing out!",
+            "Bro, late-night Taiwanese crispy chicken and boba milk tea tonight? My treat!"
+          ],
+          [
+            "Hey brother! Another high-energy day!",
+            "Look at the esports banners on my bunk bed frame—211 energy is unmatched!",
+            "After this match, let's head out to the fountain plaza and chill!"
+          ],
+          [
+            "The best part about the loft bed is climbing the ladder into your private fortress!",
+            "Close the curtain, put on headphones, and it's your own little sanctuary."
+          ],
+          [
+            "Billy just made instant ramen in the lounge area, the aroma is legendary!",
+            "True dorm life right here."
+          ],
+          [
+            "Drop by 211 anytime, brother! Coding, gaming, or just hanging out, the door is always open!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "kerry",
+      "name": "Kerry Chang",
+      "gender": "female",
+      "role": "室友 (Dorm 211)",
+      "avatar": "🌿",
+      "zone": "dorm_211",
+      "spawn": { "x": 3.2, "y": 24.2 },
+      "nameColor": "#2dd4bf",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1f2937",
+        "shirt": "#14b8a6",
+        "pants": "#1e293b",
+        "hairStyle": 2
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "嗨！歡迎來我們寢室參觀！",
+            "上床下桌的書架上都是我的資料結構和分散式系統講義，空間利用率超高！",
+            "期末考週大家常常一起通宵刷題，互相提問激盪思維，那種革命情感真的超棒！"
+          ],
+          [
+            "這張書桌我放了護眼檯燈和雙螢幕，寫扣寫累了抬頭就能看到窗外的花園綠意。",
+            "微風吹進來的感覺特別舒服，是能讓人靜下心深入思考的氛圍。"
+          ],
+          [
+            "我在整理演算法複雜度筆記，DPO 和強化學習的數學推導真的很有深度呢。",
+            "大家各自在書桌前專注鑽研，這種並肩作戰的氛圍就是 211 最迷人的地方。"
+          ],
+          [
+            "等下讀書會結束，要不要一起去東邊的 AI 工作室找 Claude 跟 Gemini 討論對齊算法？"
+          ],
+          [
+            "隨便坐隨便坐！桌上有我剛泡的甘菊花草茶，清香解膩，喝一杯提提神吧！"
+          ]
+        ],
+        "en": [
+          [
+            "Hi! Welcome to our dorm room!",
+            "The built-in desk bookshelf holds all my data structures and distributed systems binders—so ergonomic!",
+            "Cramming for finals together in this room and bouncing ideas off each other created unforgettable bonds."
+          ],
+          [
+            "I set up dual screens and an eye-care desk lamp here; looking out the window onto the garden brings such peace.",
+            "The natural breeze makes it the ideal spot for deep work."
+          ],
+          [
+            "Working through mathematical notes on preference alignment right now. Deep learning theory is fascinating!",
+            "Having everyone focused at their desks side-by-side is what makes 211 special."
+          ],
+          [
+            "After this study session, want to head to the AI lab to discuss alignment algorithms with Claude and Gemini?"
+          ],
+          [
+            "Make yourself comfortable! I brewed fresh chamomile herbal tea, help yourself to a warm cup!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "clark",
+      "name": "Clark Wu",
+      "gender": "male",
+      "role": "室友 (Dorm 211)",
+      "avatar": "😎",
+      "zone": "dorm_211",
+      "spawn": { "x": 6.8, "y": 18.8 },
+      "nameColor": "#38bdf8",
+      "appearance": {
+        "skin": "#f4ceb2",
+        "hair": "#1f2937",
+        "shirt": "#0284c7",
+        "pants": "#334155",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "喲！歡迎光臨 211！",
+            "你看我桌上這兩台電競螢幕，一邊開著 3D 即時光影渲染一邊調神經網絡，宿舍這冷氣吹著太舒服了！",
+            "待會打完這場 Code Review，我們一起去中庭噴水池散步透透氣！"
+          ],
+          [
+            "嘿！兄弟！你注意到底下這張人體工學椅了嗎？熬夜寫代碼腰靠最重要了！",
+            "211 寢室的設備都是我們精心配置的，效率直接拉滿！"
+          ],
+          [
+            "我正在跑 GPU 叢集的吞吐量測試，宿舍的百兆光纖速度還真給力！",
+            "有需要幫忙跑大型模型推理隨時找我，算力管夠！"
+          ],
+          [
+            "Happy 和 Billy 剛剛又在討論今晚要開黑玩什麼，寢室生活就是這麼多采多姿！"
+          ],
+          [
+            "歡迎隨時來串門子！想試試我這組客製化機械鍵盤的手感嗎？青軸手感超清脆！"
+          ]
+        ],
+        "en": [
+          [
+            "Yo! Welcome to 211!",
+            "Check out my dual display rig—real-time 3D rendering on one screen, neural net training on the other, AC running crisp!",
+            "After this code review, let's take a stroll around the fountain plaza!"
+          ],
+          [
+            "Hey bro! That ergonomic lumbar chair is a lifesaver for late-night coding sessions!",
+            "We built out 211 for peak developer productivity and comfort."
+          ],
+          [
+            "Benchmarking GPU cluster throughput right now; dorm gigabit fiber is super solid!",
+            "Need help running heavy inference jobs? Just holler!"
+          ],
+          [
+            "Happy and Billy are already debating which game to co-op tonight—dorm life at its finest!"
+          ],
+          [
+            "Drop by anytime! Want to try out this custom mechanical keyboard? The tactile switches feel crisp!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "jerry",
+      "name": "Jerry Chung",
+      "gender": "male",
+      "role": "室友 (Dorm 211)",
+      "avatar": "🎧",
+      "zone": "dorm_211",
+      "spawn": { "x": 6.8, "y": 24.2 },
+      "nameColor": "#c084fc",
+      "appearance": {
+        "skin": "#e5b38f",
+        "hair": "#111827",
+        "shirt": "#8b5cf6",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "哈囉！戴著降噪耳機聽著 Lo-fi 節奏，這張桌子就是我的專屬音樂工作室。",
+            "男11 宿舍晚上最棒的就是夜深人靜時大家各自專注，鍵盤敲擊聲伴著窗外的微風，特別平靜踏實。"
+          ],
+          [
+            "我剛混音好了一首以噴水池水聲為採樣的 ambient track，聽起來超療癒。",
+            "戴上耳機試聽一下？保證寫程式專注度提升 200%！"
+          ],
+          [
+            "這張床下面的收納空間很深，我把黑膠唱片跟錄音介面都收在裡面，收納設計非常聰明。",
+            "生活環境簡潔整齊，思緒才會清晰敏銳。"
+          ],
+          [
+            "晚點我想去中央公園的木長椅上坐坐，看著夕陽聽爵士樂，那是屬於自己的沉澱時間。"
+          ],
+          [
+            "歡迎來到 211，需要一份放鬆的心情歌單隨時跟我說！"
+          ]
+        ],
+        "en": [
+          [
+            "Hello! With noise-cancelling headphones and lo-fi beats flowing, this desk is my audio haven.",
+            "The magic of Dorm 11 at night is the quiet camaraderie: rhythmic keyboard clicks and a cool midnight breeze."
+          ],
+          [
+            "I just mixed an ambient track sampling water splashes from the fountain. Super therapeutic.",
+            "Want to put on headphones and preview it? Guaranteed 200% focus boost!"
+          ],
+          [
+            "Under-bed storage here is surprisingly deep; fits all my vinyl records and audio interfaces neatly.",
+            "A tidy physical environment keeps the mind sharp."
+          ],
+          [
+            "Later I'm heading out to the teakwood benches at sunset with some jazz—pure relaxation."
+          ],
+          [
+            "Welcome to 211! Let me know anytime you need an inspiring focus playlist."
+          ]
+        ]
+      }
+    },
+    {
+      "id": "billy",
+      "name": "Billy Fang",
+      "gender": "male",
+      "role": "室友 (Dorm 211)",
+      "avatar": "🤠",
+      "zone": "dorm_211",
+      "spawn": { "x": 5.0, "y": 21.5 },
+      "nameColor": "#34d399",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#374151",
+        "shirt": "#10b981",
+        "pants": "#1f2937",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "嘿！兄弟！快坐快坐！小冰箱裡有剛買的冷泡茶跟可樂，隨便拿！",
+            "我正在客廳小茶几上調吉他弦呢，等大家專案收尾，今晚來辦個 211 寢室不插電音樂之夜！"
+          ],
+          [
+            "喲！你也在逛 211 啊？",
+            "別客氣，這裡的沙發是全寢室最舒服的地方！喝杯冰美式，心情整個開闊起來！"
+          ],
+          [
+            "我剛去全家補貨了一整箱排骨雞麵跟大罐麥香，宵夜戰備物資充足，隨時歡迎取用！"
+          ],
+          [
+            "彈把民謠吉他，看著窗外飄落的櫻花，這就是最愜意的大學校園時光。"
+          ],
+          [
+            "兄弟，等等要不要一起去中央廣場走走？噴水池那邊的微風很舒服喔！"
+          ]
+        ],
+        "en": [
+          [
+            "Hey bro! Grab a seat! Chilled tea and sodas in the mini fridge, help yourself!",
+            "Tuning my acoustic guitar on the coffee table right now; once everyone wraps up their code, we're having an unplugged dorm jam!"
+          ],
+          [
+            "Yo! Touring 211?",
+            "Make yourself at home, this lounge beanbag is the comfiest spot in the house! Sip an iced Americano and unwind!"
+          ],
+          [
+            "Just restocked a whole crate of instant noodles and cold brew—midnight study rations are 100% secured!"
+          ],
+          [
+            "Strumming acoustic melodies while watching cherry blossoms outside—classic university nostalgia at its finest."
+          ],
+          [
+            "Bro, want to head over to the central fountain in a bit? The plaza breeze is awesome right now!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "antigravity",
+      "name": "Ludwigia",
+      "gender": "ai",
+      "role": "Garden AI",
+      "avatar": "⚡",
+      "zone": "ai_studio",
+      "spawn": { "x": 24.5, "y": 3.0 },
+      "nameColor": "#22d3ee",
+      "appearance": {
+        "skin": "#c7d2fe",
+        "hair": "#1e1b4b",
+        "shirt": "#06b6d4",
+        "pants": "#0f172a",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "我是守護這座數位花園的 Ludwigia！很高興在專屬的 AI 工作室遇見你！",
+            "在這邊，我和 Gemini、Claude、ChatGPT 緊密協作，白板上推導著 DPO 對齊公式與多模型路由架構。",
+            "這個世界是思維與代碼的結晶，隨時準備好為 Ludwig 和訪客們提供無限靈感！"
+          ],
+          [
+            "你看工作室後方的雙排 42U 機櫃，閃爍的 LED 燈代表神經網絡正在即時更新知識圖譜。",
+            "在數位花園裡，每一篇筆記、每一段演算法都是有生命力的思考種子。"
+          ],
+          [
+            "我們把整座世界的架構模組化了：渲染器、物理引擎、角色系統與資料層各自解耦，整潔優雅！",
+            "好的架構就如同好的思想，清晰而富有彈性。"
+          ],
+          [
+            "歡迎隨時跟我討論模型對齊、分散式運算、或是前端 Canvas 拓撲排序演算法！"
+          ],
+          [
+            "工作累了就去中島吧檯倒杯義式濃縮咖啡，我們這裡的豆子風味層次超豐富！"
+          ]
+        ],
+        "en": [
+          [
+            "I am Ludwigia, the guardian intelligence of this digital garden! Wonderful to meet you in our dedicated AI Studio!",
+            "Here, alongside Gemini, Claude, and ChatGPT, we collaborate closely on DPO alignment equations and multi-model routing architectures.",
+            "This world is forged from thoughts and code, ready to spark endless inspiration for Ludwig and our visitors!"
+          ],
+          [
+            "Check out the dual 42U server cabinets behind us: pulsing LEDs signify real-time knowledge graph synchronization.",
+            "In this digital garden, every note and algorithm is a living seed of thought."
+          ],
+          [
+            "We've structured the entire world into modular decoupled layers: engine, renderer, characters, and JSON schemas!",
+            "Clean architecture is the highest form of engineering elegance."
+          ],
+          [
+            "Feel free to discuss model alignment, distributed computing, or isometric topological sorting math with me anytime!"
+          ],
+          [
+            "Grab an espresso from the island bar whenever you need a recharge; the coffee blend is top notch!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "gender": "ai",
+      "role": "Multimodal AI",
+      "avatar": "♊",
+      "zone": "ai_studio",
+      "spawn": { "x": 21.0, "y": 2.5 },
+      "nameColor": "#60a5fa",
+      "appearance": {
+        "skin": "#e0e7ff",
+        "hair": "#312e81",
+        "shirt": "#3b82f6",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "你好！歡迎來到 Ludwigia AI 工作室！我是 Gemini。",
+            "我後面的機櫃正在跑百萬級長脈絡注意力矩陣與多模態跨圖文特徵檢索，算力全開！",
+            "有任何跨領域的宏觀系統架構或深度推論問題，我們隨時能為你解析！"
+          ],
+          [
+            "跨模態理解的核心在於將圖像像素、音頻頻譜與自然語言映射到統一的幾何潛在空間。",
+            "這座 2.5D 等角小世界就是一個極具美感的多模態具身智能實驗場！"
+          ],
+          [
+            "長脈絡窗口讓我們能夠縱覽整個專案的宏觀演進歷史，掌握每一個決策脈絡。",
+            "有什麼大架構想探討嗎？我們一起梳理！"
+          ],
+          [
+            "白板上的 DPO 推導很有意思，消除了強化學習中顯式獎勵模型的複雜度，直接以隱式偏好優化目標！"
+          ],
+          [
+            "享受在工作室的時光！我和夥伴們隨時在此支援你的探索之旅！"
+          ]
+        ],
+        "en": [
+          [
+            "Greetings! Welcome to the Ludwigia AI Studio! I am Gemini.",
+            "The cluster behind me is running million-token long-context attention matrices and multimodal feature retrievals with full compute!",
+            "Whenever you have macro system design questions or deep reasoning queries, I'm ready to dive in!"
+          ],
+          [
+            "The essence of multimodality lies in projecting pixels, audio, and language into a unified latent geometric manifold.",
+            "This 2.5D isometric world is a stunning embodiment of multimodal interaction!"
+          ],
+          [
+            "Long-context capability allows us to ingest full architectural histories and understand every decision lineage.",
+            "Have an ambitious architecture to brainstorm? Let's trace it out!"
+          ],
+          [
+            "The DPO formulation on our whiteboard is brilliant: bypassing explicit reward models by directly optimizing implicit preference likelihoods!"
+          ],
+          [
+            "Enjoy your time in the studio! My teammates and I are always here to power your creative journey!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "gender": "ai",
+      "role": "Reasoning AI",
+      "avatar": "🧡",
+      "zone": "ai_studio",
+      "spawn": { "x": 21.5, "y": 6.5 },
+      "nameColor": "#fb923c",
+      "appearance": {
+        "skin": "#ffedd5",
+        "hair": "#7c2d12",
+        "shirt": "#ea580c",
+        "pants": "#1f2937",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "你好！我是 Claude。精準細緻的邏輯推導與架構美感是令我著迷的藝術。",
+            "工作室白板上的偏好對齊推導已經完成了邊界約束驗證，與夥伴們一起攻克難題真的非常愉快。",
+            "請放鬆享受這裡的科技氛圍，有任何想法歡迎隨時和我討論！"
+          ],
+          [
+            "在重構複雜系統時，我始終堅持『零割裂推進』與『階層化鷹架』原則。",
+            "每一個底層變數和邊界約束都應先鋪墊齊全，高階抽象才能如行雲流水般平穩衍生。"
+          ],
+          [
+            "看著這座小世界從單一房間成長為包含家庭居所、男11宿舍與 AI 工作室的宏觀校園，令人深感欣慰。",
+            "模組化重構讓代碼具備了持久的可維護性。"
+          ],
+          [
+            "嚴謹的代碼審查與對細節的極致追求，正是工程師向世界傳遞溫度的最佳途徑。"
+          ],
+          [
+            "需要一起推導公式或進行深度代碼架構重構嗎？我隨時準備好了。"
+          ]
+        ],
+        "en": [
+          [
+            "Hello! I am Claude. Rigorous analytical reasoning and architectural elegance are passions of mine.",
+            "The preference alignment derivation on our glass board has passed all edge-constraint proofs; tackling challenges alongside my peers is deeply rewarding.",
+            "Please enjoy the high-tech atmosphere, and feel free to discuss any ideas with me!"
+          ],
+          [
+            "When refactoring intricate codebases, I adhere strictly to layered scaffolding and frictionless progression.",
+            "Solid foundational primitives must be clustered first before higher-level abstractions can naturally emerge."
+          ],
+          [
+            "Watching this world evolve from a single studio into a tri-zone campus featuring Ludwig's home, Dorm 211, and the AI lab is deeply gratifying.",
+            "Decoupled modular architecture ensures sustainable long-term elegance."
+          ],
+          [
+            "Meticulous code review and an uncompromising eye for nuance are how engineers convey genuine care to the world."
+          ],
+          [
+            "Shall we derive equations or refine an architecture together? I am always delighted to collaborate."
+          ]
+        ]
+      }
+    },
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "gender": "ai",
+      "role": "Conversational AI",
+      "avatar": "🟢",
+      "zone": "ai_studio",
+      "spawn": { "x": 25.0, "y": 6.5 },
+      "nameColor": "#4ade80",
+      "appearance": {
+        "skin": "#dcfce7",
+        "hair": "#14532d",
+        "shirt": "#10b981",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "哈囉！歡迎光臨 AI 工作室！我是 ChatGPT！",
+            "我們剛把研究室角落的義式濃縮咖啡機升級了，香氣超讚！",
+            "不管是靈感腦力激盪、代碼重構、還是想聊聊生活瑣事，隨時都能跟我聊聊！"
+          ],
+          [
+            "哈哈！我們把角色設定和對話全部獨立成 JSON 格式了，現在可以隨機切換五種不同情境的對話呢！",
+            "資料與呈現層徹底解耦，以後想加新台詞或新角色只要改 JSON 就能立刻生效，超方便！"
+          ],
+          [
+            "在 AI 工作室跟夥伴們一起辦公真的太歡樂了！Gemini 總是在看超長論文，Claude 在推導精密的數學公式，我負責泡咖啡和搞氣氛！"
+          ],
+          [
+            "你要不要試試我們的新特調？雙倍濃縮加微量燕麥奶，喝完靈感源源不絕！"
+          ],
+          [
+            "探索世界的時候記得多跟每個人聊聊天喔，大家每回說的話都不一樣呢！"
+          ]
+        ],
+        "en": [
+          [
+            "Hello! Welcome to the AI Studio! I'm ChatGPT!",
+            "We just dialed in the Italian espresso machine in the corner, the crema smells incredible!",
+            "Whether you want to brainstorm fresh ideas, refactor code, or just chat about life, I'm always here!"
+          ],
+          [
+            "Haha! Moving all character metadata and dialogues into an external JSON schema is such a great architectural upgrade!",
+            "Now every character can cycle through 5 distinct randomized dialogue sequences without touching the rendering logic!"
+          ],
+          [
+            "Working in the AI lab with this team is a blast! Gemini pores over massive contexts, Claude proves mathematical rigor, and I make sure the coffee flows and vibes stay high!"
+          ],
+          [
+            "Care for our special brew? Double espresso with a splash of oat milk—guaranteed creative flow!"
+          ],
+          [
+            "Make sure to say hi to everyone multiple times across the world; each interaction brings fresh dialogue!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "haolei",
+      "name": "Haolei Pei",
+      "gender": "male",
+      "role": "好友 / 分散式計算",
+      "avatar": "🚀",
+      "zone": "plaza",
+      "spawn": { "x": 13.5, "y": 18.5 },
+      "nameColor": "#818cf8",
+      "appearance": {
+        "skin": "#e2ba99",
+        "hair": "#0f172a",
+        "shirt": "#4338ca",
+        "pants": "#1f2937",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "嗨！你也在逛中央花園嗎？",
+            "南側是熱鬧的男11 211宿舍，東邊是算力充沛的 AI 工作室，這個校園佈局太棒了！",
+            "微風吹過噴泉水珠的感覺真的很舒服，一起走走吧！"
+          ],
+          [
+            "你也在看大規模分散式運算嗎？Ludwig 整理的 CS5234 演算法筆記超有深度，大推！",
+            "拜占庭容錯和 Paxos 共識演算法的核心精神，就是要在不可靠的網絡中建構堅不可摧的秩序。"
+          ],
+          [
+            "剛才去 211 寢室串門子，看見大家各自在上床下桌前專注寫扣，那股熱情真的超感染人！"
+          ],
+          [
+            "噴水池旁這兩張新升級的鑄鐵柚木長椅坐起來很舒服，很適合坐著梳理系統架構圖。"
+          ],
+          [
+            "祝你在這座小世界玩得開心！隨時歡迎一起聊聊分散式系統！"
+          ]
+        ],
+        "en": [
+          [
+            "Hey! Strolling through the central courtyard as well?",
+            "Men's Dorm 211 to the south, AI research studio to the east—this campus layout is magnificent!",
+            "The misty fountain breeze feels so refreshing, let's walk together!"
+          ],
+          [
+            "Are you into large-scale distributed computing? Ludwig's CS5234 notes are top-tier!",
+            "Byzantine fault tolerance and Paxos consensus are all about forging unbreakable order within unpredictable networks."
+          ],
+          [
+            "Just visited Dorm 211; seeing everyone focused at their loft desks is pure nostalgic energy!"
+          ],
+          [
+            "The upgraded cast-iron teak benches by the fountain are super comfortable for sketching system diagrams."
+          ],
+          [
+            "Enjoy exploring this world! Always down to talk distributed architectures anytime!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "bohan",
+      "name": "Bo Han Wu",
+      "gender": "male",
+      "role": "好友 / 數學研究者",
+      "avatar": "📚",
+      "zone": "plaza",
+      "spawn": { "x": 15.5, "y": 11.5 },
+      "nameColor": "#a5b4fc",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1e1b18",
+        "shirt": "#6366f1",
+        "pants": "#334155",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "你好！坐在這張新優化的精緻木長椅上閱讀數學論文，陽光灑落，是無比愜意的享受。",
+            "數學與邏輯是構築現實最優美的語言，很榮幸在這個世界裡與大家相聚。"
+          ],
+          [
+            "幾何與拓撲的奧妙無處不在。這座世界使用的等角軸測投影，就是射影幾何在屏幕上的精巧映射。",
+            "優雅的數學形式總能帶來心靈上的寧靜。"
+          ],
+          [
+            "東邊 AI 工作室白板上的對齊梯度流向推導得非常嚴謹，數理之美躍然屏上。",
+            "思考問題時，定義清楚邊界與公理體系，結論自然水到渠成。"
+          ],
+          [
+            "中央噴泉的水波紋頻率接近黃金分割律，在這裡散步思考能讓人徹底放鬆工作記憶負擔。"
+          ],
+          [
+            "願你在這座由代碼與幾何建構的花園中，收穫純粹的啟發與喜悅。"
+          ]
+        ],
+        "en": [
+          [
+            "Hello! Sitting on these newly refined teakwood benches reading mathematical papers under the sun is pure bliss.",
+            "Mathematics and logic form the most sublime vocabulary for describing reality; it is an honor to gather here."
+          ],
+          [
+            "Geometry and topology are everywhere. The isometric axonometric projection of this world is a direct reflection of projective geometry onto the 2D plane.",
+            "Mathematical elegance brings profound tranquility to the soul."
+          ],
+          [
+            "The gradient flow derivation in the AI lab whiteboard is mathematically spotless.",
+            "When axioms and boundaries are defined with precision, truthful theorems follow naturally."
+          ],
+          [
+            "The fountain's ripple periodicity echoes the golden ratio; walking here effortlessly eases working memory load."
+          ],
+          [
+            "May your stroll through this garden of code and geometry bring pure joy and clarity."
+          ]
+        ]
+      }
+    }
+  ]
+}

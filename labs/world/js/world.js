@@ -1,0 +1,1034 @@
+// ============================================================================
+// Ludwigia World Controller — Main Orchestrator & Game Loop
+// ============================================================================
+
+(function(window) {
+  'use strict';
+
+  const {
+    TW, TH, MAP_W, MAP_H,
+    HOUSE_MAX_X, HOUSE_MAX_Y,
+    DORM_MIN_X, DORM_MAX_X, DORM_MIN_Y, DORM_MAX_Y,
+    AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y,
+    isoToScreen, screenToIso,
+    NavGrid,
+    sortIsometricEntities,
+    AmbientAudio
+  } = window.LudwigWorldEngine;
+
+  class LudwigiaWorld {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.audio = new AmbientAudio();
+      this.nav = new NavGrid(MAP_W, MAP_H);
+      this.models = new window.LudwigWorldModels(this);
+      this.charManager = new window.LudwigWorldCharacters(this);
+
+      // Camera & Zoom State
+      this.zoom = 1.35;
+      this.targetZoom = 1.35;
+      this.outsideAlpha = 0.35;
+      this.targetOutsideAlpha = 0.35;
+      this.panX = 0;
+      this.panY = 0;
+      this.currentZone = 'ludwig_house';
+
+      // Day / Night mood
+      this.mood = 'auto';
+      this.currentTimeState = 'day';
+
+      // Door Proximity Progress (0 = closed, 1 = fully open)
+      this.doorLudwigOpen = 0.0;
+      this.doorLudwigSideOpen = 0.0;
+      this.doorDormOpen = 0.0;
+      this.doorAiOpen = 0.0;
+
+      // Particles
+      this.particles = [];
+      this.initParticles();
+
+      // Input keys
+      this.keys = {};
+      this.bindEvents();
+
+      // Setup Obstacles
+      this.setupWorldObstacles();
+
+      // Load Characters from JSON
+      this.charManager.loadCharacters('data/characters.json').then(() => {
+        // Start Loop
+        this.lastTime = performance.now();
+        requestAnimationFrame(this.loop.bind(this));
+      });
+    }
+
+    setupWorldObstacles() {
+      // 1. Ludwig's Family Residence (NW: x: 0..9, y: 0..9)
+      this.nav.setBlock(HOUSE_MAX_X, 0, 1, 4, true);
+      this.nav.setBlock(HOUSE_MAX_X, 7, 1, 3, true);
+      this.nav.setBlock(0, HOUSE_MAX_Y, 4, 1, true);
+      this.nav.setBlock(7, HOUSE_MAX_Y, 3, 1, true);
+
+      this.nav.setBlock(1, 1, 2.2, 2.3, true);   // Master Bed
+      this.nav.setBlock(6, 1, 2.5, 1.2, true);   // Desk
+      this.nav.setBlock(0, 3.8, 0.8, 2.6, true); // Bookshelf
+      this.nav.setBlock(2, 5, 2.5, 2.0, true);   // Sofa & Rug
+      this.nav.setBlock(6, 5, 2.0, 1.8, true);   // Dining Table
+
+      // 2. Men's Dormitory 11 Room 211 (SW: x: 0..9, y: 17..26)
+      this.nav.setBlock(0, DORM_MIN_Y, 10, 1, true);
+      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 1, 3.5, true);
+      this.nav.setBlock(DORM_MAX_X + 1, 23.2, 1, 3.8, true);
+      this.nav.setBlock(0, DORM_MAX_Y + 1, 10, 1, true);
+
+      // 4 Loft Bed/Desk Combos
+      this.nav.setBlock(1, 18, 2.2, 1.5, true);   // Happy Wang
+      this.nav.setBlock(1, 23, 2.2, 1.5, true);   // Kerry Chang
+      this.nav.setBlock(6.8, 18, 2.2, 1.5, true); // Clark Wu
+      this.nav.setBlock(6.8, 23, 2.2, 1.5, true); // Jerry Chung
+      this.nav.setBlock(4.2, 20.2, 1.6, 1.6, true); // Lounge table
+
+      // 3. Ludwigia AI Research Studio (NE: x: 18..27, y: 0..9)
+      this.nav.setBlock(AI_MIN_X, 0, 10, 1, true);
+      this.nav.setBlock(AI_MIN_X, 0, 1, 4.5, true);
+      this.nav.setBlock(AI_MIN_X, 7.0, 1, 3.0, true);
+      this.nav.setBlock(AI_MAX_X + 1, 0, 1, 10, true);
+      this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 10, 1, true);
+
+      this.nav.setBlock(19.5, 1.2, 2.0, 1.4, true); // Server Cabinets
+      this.nav.setBlock(23.5, 1.2, 2.5, 1.4, true); // AI Command Desk
+      this.nav.setBlock(26.2, 4.0, 0.8, 2.5, true); // Whiteboard
+      this.nav.setBlock(19.5, 7.2, 1.8, 1.4, true); // Espresso Bar
+      this.nav.setBlock(23.5, 6.8, 2.2, 1.6, true); // Lounge Pod
+
+      // 4. Central Plaza & Park
+      this.nav.setBlock(13, 13, 3, 3, true); // Fountain
+
+      // Park Benches
+      this.nav.setBlock(11, 10, 1.6, 0.7, true);
+      this.nav.setBlock(16, 10, 1.6, 0.7, true);
+      this.nav.setBlock(11, 17, 1.6, 0.7, true);
+      this.nav.setBlock(16, 17, 1.6, 0.7, true);
+
+      // Trees
+      const treeBlocks = [
+        [11, 2], [14, 2], [16, 2],
+        [11, 6], [16, 6],
+        [11, 14], [16, 14],
+        [11, 21], [16, 21],
+        [11, 25], [14, 25], [16, 25],
+        [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
+      ];
+      treeBlocks.forEach(([tx, ty]) => this.nav.setBlock(tx, ty, 1.2, 1.2, true));
+    }
+
+    initParticles() {
+      for (let i = 0; i < 45; i++) {
+        this.particles.push({
+          x: 9 + Math.random() * 16,
+          y: 1 + Math.random() * 25,
+          z: 1 + Math.random() * 2.8,
+          vz: -0.012 - Math.random() * 0.02,
+          vx: 0.01 + Math.random() * 0.02,
+          vy: 0.005 + Math.random() * 0.015,
+          color: Math.random() > 0.45 ? 'rgba(251, 207, 232, 0.75)' : 'rgba(186, 230, 253, 0.65)',
+          size: 2 + Math.random() * 2.5
+        });
+      }
+    }
+
+    bindEvents() {
+      window.addEventListener('resize', this.resize.bind(this));
+      this.resize();
+
+      // Keyboard Controls
+      window.addEventListener('keydown', (e) => {
+        this.keys[e.key.toLowerCase()] = true;
+        if (e.key === ' ' || e.key === 'Enter') {
+          if (this.charManager.proximityTarget) {
+            e.preventDefault();
+            this.charManager.openDialogue(this.charManager.proximityTarget);
+          }
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        this.keys[e.key.toLowerCase()] = false;
+      });
+
+      // Mobile Virtual D-Pad
+      const dpadMap = {
+        'dpad-up': { dx: 0, dy: -1 },
+        'dpad-down': { dx: 0, dy: 1 },
+        'dpad-left': { dx: -1, dy: 0 },
+        'dpad-right': { dx: 1, dy: 0 }
+      };
+
+      Object.entries(dpadMap).forEach(([id, dir]) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+
+        const startMove = (e) => { e.preventDefault(); this.dpadDir = dir; };
+        const endMove = (e) => { e.preventDefault(); if (this.dpadDir === dir) this.dpadDir = null; };
+
+        btn.addEventListener('touchstart', startMove, { passive: false });
+        btn.addEventListener('touchend', endMove, { passive: false });
+        btn.addEventListener('mousedown', startMove);
+        btn.addEventListener('mouseup', endMove);
+      });
+
+      // Click to Move
+      this.canvas.addEventListener('click', (e) => {
+        const rect = this.canvas.getBoundingClientRect();
+        const sx = e.clientX - rect.left;
+        const sy = e.clientY - rect.top;
+        const { ox, oy } = this.getOrigin();
+
+        const adjSx = (sx - ox) / this.zoom + ox;
+        const adjSy = (sy - oy) / this.zoom + oy;
+        const { gx, gy } = screenToIso(adjSx, adjSy, ox, oy);
+
+        const player = this.charManager.player;
+        if (!player) return;
+
+        // Click on NPC to talk
+        const clickedNpc = this.charManager.characters.find(c => {
+          if (c.isPlayer) return false;
+          return Math.hypot(c.x - gx, c.y - gy) < 1.3;
+        });
+
+        if (clickedNpc) {
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: clickedNpc.x, y: clickedNpc.y });
+          this.charManager.openDialogue(clickedNpc);
+        } else if (this.nav.isWalkable(gx, gy)) {
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: gx, y: gy });
+        }
+      });
+
+      document.getElementById('proximity-prompt')?.addEventListener('click', () => {
+        if (this.charManager.proximityTarget) {
+          this.charManager.openDialogue(this.charManager.proximityTarget);
+        }
+      });
+
+      this.canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.08 : 0.92;
+        this.zoom = Math.max(0.65, Math.min(2.0, this.zoom * factor));
+      }, { passive: false });
+    }
+
+    resize() {
+      const rect = this.canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = rect.width * dpr;
+      this.canvas.height = rect.height * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = rect.width;
+      this.height = rect.height;
+    }
+
+    getOrigin() {
+      const p = this.charManager.player || { x: 7.2, y: 7.2 };
+      const screenPos = isoToScreen(p.x, p.y, 0, 0, 0);
+      return {
+        ox: this.width / 2 - screenPos.x + this.panX,
+        oy: this.height / 2 - screenPos.y + this.panY
+      };
+    }
+
+    computeTimeState() {
+      if (this.mood !== 'auto') {
+        this.currentTimeState = this.mood;
+        return;
+      }
+      const hour = new Date().getHours();
+      if (hour >= 6 && hour < 16) this.currentTimeState = 'day';
+      else if (hour >= 16 && hour < 19) this.currentTimeState = 'sunset';
+      else if (hour >= 19 && hour < 23) this.currentTimeState = 'night';
+      else this.currentTimeState = 'galaxy';
+    }
+
+    // --- Physics, Anti-Crowding, Movement & Simulation Loop ---
+    update(dt) {
+      this.computeTimeState();
+
+      const player = this.charManager.player;
+      if (!player) return;
+
+      // 1. Zone Detection & Dynamic Camera
+      let currentZone = 'plaza';
+      let isInsideAnyHouse = false;
+      let statusMessage = "Courtyard Plaza • 綠意花園與社交廣場";
+
+      if (player.x <= 9.8 && player.y <= 9.8) {
+        currentZone = 'ludwig_house';
+        isInsideAnyHouse = true;
+        statusMessage = "Ludwig's House • 溫馨客廳與起居室";
+      } else if (player.x <= 9.8 && player.y >= 16.5 && player.y <= 26.5) {
+        currentZone = 'dorm_211';
+        isInsideAnyHouse = true;
+        statusMessage = "男11 211 宿舍 • 青春熱血的大學生活";
+      } else if (player.x >= 17.5 && player.x <= 27.5 && player.y <= 9.8) {
+        currentZone = 'ai_studio';
+        isInsideAnyHouse = true;
+        statusMessage = "AI Studio • Ludwigia 智慧研究室";
+      }
+
+      this.currentZone = currentZone;
+      this.targetZoom = isInsideAnyHouse ? 1.35 : 0.88;
+      this.targetOutsideAlpha = isInsideAnyHouse ? 0.35 : 1.0;
+
+      // Smooth camera transition
+      this.zoom += (this.targetZoom - this.zoom) * 0.05;
+      this.outsideAlpha += (this.targetOutsideAlpha - this.outsideAlpha) * 0.05;
+
+      // 2. Multi-Door Proximity Sensors
+      const nearLudwigDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 5.65) < 2.4);
+      this.doorLudwigOpen += ((nearLudwigDoor ? 1.0 : 0.0) - this.doorLudwigOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearLudwigSideDoor = this.charManager.characters.some(c => Math.hypot(c.x - 5.65, c.y - 10.0) < 2.4);
+      this.doorLudwigSideOpen += ((nearLudwigSideDoor ? 1.0 : 0.0) - this.doorLudwigSideOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearDormDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 21.8) < 2.4);
+      this.doorDormOpen += ((nearDormDoor ? 1.0 : 0.0) - this.doorDormOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearAiDoor = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 5.65) < 2.4);
+      this.doorAiOpen += ((nearAiDoor ? 1.0 : 0.0) - this.doorAiOpen) * Math.min(1.0, dt * 5.0);
+
+      // Status text
+      const statusEl = document.getElementById('status-text');
+      if (statusEl) statusEl.textContent = statusMessage;
+
+      // 3. Player Movement with Walking Animation Fix
+      let kx = 0, ky = 0;
+      const k = this.keys;
+      if (k['w'] || k['arrowup'])    { kx -= 1; ky -= 1; }
+      if (k['s'] || k['arrowdown'])  { kx += 1; ky += 1; }
+      if (k['a'] || k['arrowleft'])  { kx -= 1; ky += 1; }
+      if (k['d'] || k['arrowright']) { kx += 1; ky -= 1; }
+
+      if (this.dpadDir) {
+        const d = this.dpadDir;
+        if (d.dy < 0) { kx -= 1; ky -= 1; }
+        if (d.dy > 0) { kx += 1; ky += 1; }
+        if (d.dx < 0) { kx -= 1; ky -= 1; }
+        if (d.dx > 0) { kx += 1; ky += 1; }
+      }
+
+      let playerActuallyMoved = false;
+
+      if (kx !== 0 || ky !== 0) {
+        player.path = [];
+        const len = Math.hypot(kx, ky);
+        const step = (player.speed * dt) / len;
+        const nx = player.x + kx * step;
+        const ny = player.y + ky * step;
+
+        if (this.nav.isWalkableRadius(nx, ny, 0.32)) {
+          player.x = nx;
+          player.y = ny;
+          player.facing = kx >= ky ? 1 : -1;
+          playerActuallyMoved = true;
+        } else if (this.nav.isWalkableRadius(nx, player.y, 0.32)) {
+          player.x = nx;
+          player.facing = kx >= 0 ? 1 : -1;
+          playerActuallyMoved = true;
+        } else if (this.nav.isWalkableRadius(player.x, ny, 0.32)) {
+          player.y = ny;
+          player.facing = ky >= 0 ? 1 : -1;
+          playerActuallyMoved = true;
+        }
+      } else if (player.path && player.path.length > 0) {
+        const next = player.path[0];
+        const dx = next.x - player.x;
+        const dy = next.y - player.y;
+        const dist = Math.hypot(dx, dy);
+        const step = player.speed * dt;
+
+        if (dist <= step) {
+          player.x = next.x;
+          player.y = next.y;
+          player.path.shift();
+        } else {
+          player.x += (dx / dist) * step;
+          player.y += (dy / dist) * step;
+          player.facing = dx >= dy ? 1 : -1;
+        }
+        playerActuallyMoved = true;
+      }
+
+      player.isWalking = playerActuallyMoved;
+      if (playerActuallyMoved) {
+        player.walkTimer = (player.walkTimer || 0) + dt * 10.0;
+      } else {
+        player.walkTimer = 0;
+      }
+
+      // 4. Anti-Crowding Social Distance Force (>= 1.6 tiles)
+      const MIN_DIST = 1.6;
+      const chars = this.charManager.characters;
+      for (let i = 0; i < chars.length; i++) {
+        for (let j = i + 1; j < chars.length; j++) {
+          const c1 = chars[i];
+          const c2 = chars[j];
+          const dx = c1.x - c2.x;
+          const dy = c1.y - c2.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 0.001 && dist < MIN_DIST) {
+            const push = (MIN_DIST - dist) * 0.4 * dt;
+            const px = (dx / dist) * push;
+            const py = (dy / dist) * push;
+
+            if (!c1.isPlayer && this.nav.isWalkableRadius(c1.x + px, c1.y + py, 0.32)) {
+              c1.x += px; c1.y += py;
+            }
+            if (!c2.isPlayer && this.nav.isWalkableRadius(c2.x - px, c2.y - py, 0.32)) {
+              c2.x -= px; c2.y -= py;
+            }
+          }
+        }
+      }
+
+      // 5. Autonomous NPC Wander
+      chars.forEach(c => {
+        if (c.isPlayer) return;
+
+        if (c.path && c.path.length > 0) {
+          const next = c.path[0];
+          const dx = next.x - c.x;
+          const dy = next.y - c.y;
+          const dist = Math.hypot(dx, dy);
+          const step = c.speed * dt;
+
+          if (dist <= step) {
+            c.x = next.x; c.y = next.y;
+            c.path.shift();
+            if (c.path.length === 0) {
+              c.state = 'idle';
+              c.isWalking = false;
+              c.walkTimer = 0;
+            }
+          } else {
+            c.x += (dx / dist) * step;
+            c.y += (dy / dist) * step;
+            c.facing = dx >= dy ? 1 : -1;
+            c.isWalking = true;
+            c.walkTimer = (c.walkTimer || 0) + dt * 10.0;
+          }
+        } else {
+          c.isWalking = false;
+          c.walkTimer = 0;
+        }
+
+        c.timer -= dt;
+        if (c.timer <= 0) {
+          c.timer = 5 + Math.random() * 8;
+          if (c.isCat) {
+            c.state = Math.random() > 0.5 ? 'sleeping' : 'walking';
+            if (c.state === 'walking') {
+              const catSpots = [{ x: 4.5, y: 7.5 }, { x: 7.5, y: 4.5 }, { x: 3.5, y: 3.5 }, { x: 5.5, y: 6.5 }];
+              const dest = catSpots[Math.floor(Math.random() * catSpots.length)];
+              c.path = this.nav.findPath({ x: c.x, y: c.y }, dest);
+            }
+          } else {
+            let targetX, targetY;
+            let attempts = 0;
+            let valid = false;
+
+            while (!valid && attempts < 8) {
+              attempts++;
+              if (c.zone === 'house') {
+                targetX = 1.5 + Math.random() * 7.0;
+                targetY = 1.5 + Math.random() * 7.0;
+              } else if (c.zone === 'dorm_211') {
+                targetX = 2.0 + Math.random() * 6.0;
+                targetY = 18.0 + Math.random() * 7.0;
+              } else if (c.zone === 'ai_studio') {
+                targetX = 19.5 + Math.random() * 6.5;
+                targetY = 2.0 + Math.random() * 6.5;
+              } else {
+                targetX = 11.5 + Math.random() * 6.0;
+                targetY = 9.0 + Math.random() * 11.0;
+              }
+
+              if (this.nav.isWalkable(targetX, targetY)) {
+                const crowded = chars.some(other => other !== c && Math.hypot(other.x - targetX, other.y - targetY) < 1.8);
+                if (!crowded) valid = true;
+              }
+            }
+
+            if (valid) {
+              c.path = this.nav.findPath({ x: c.x, y: c.y }, { x: targetX, y: targetY });
+              c.state = 'walking';
+            }
+          }
+        }
+      });
+
+      // 6. Proximity Check for Space/Enter Dialogue Prompt
+      let closest = null;
+      let minDist = 1.8;
+      chars.forEach(c => {
+        if (c.isPlayer) return;
+        const d = Math.hypot(c.x - player.x, c.y - player.y);
+        if (d < minDist) {
+          minDist = d;
+          closest = c;
+        }
+      });
+      this.charManager.proximityTarget = closest;
+
+      const promptEl = document.getElementById('proximity-prompt');
+      if (promptEl) {
+        if (closest) {
+          promptEl.classList.add('visible');
+          document.getElementById('prompt-name').textContent = closest.name;
+        } else {
+          promptEl.classList.remove('visible');
+        }
+      }
+
+      // 7. Update Floating Ambient Particles
+      this.particles.forEach(p => {
+        p.z += p.vz;
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.z <= 0 || p.x > MAP_W || p.y > MAP_H) {
+          p.z = 2.2 + Math.random() * 0.5;
+          p.x = 9 + Math.random() * 16;
+          p.y = 1 + Math.random() * 25;
+        }
+      });
+    }
+
+    // --- Terrain Renderer for 28x28 Campus ---
+    drawTerrain(ctx, ox, oy) {
+      for (let x = 0; x < MAP_W; x++) {
+        for (let y = 0; y < MAP_H; y++) {
+          const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
+          const isDorm = (x <= DORM_MAX_X && y >= DORM_MIN_Y && y <= DORM_MAX_Y);
+          const isAi = (x >= AI_MIN_X && x <= AI_MAX_X && y >= AI_MIN_Y && y <= AI_MAX_Y);
+          const isInsideBuilding = isLudwig || isDorm || isAi;
+
+          // Cobblestone Pathways connecting doorways and central plaza
+          const isPath = (
+            (x >= 10 && x <= 11 && y >= 4 && y <= 23) ||
+            (y >= 5 && y <= 6 && x >= 10 && x <= 19) ||
+            (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
+            (y >= 20 && y <= 21 && x >= 10 && x <= 19)
+          );
+
+          ctx.save();
+          if (this.currentZone === 'ludwig_house' && !isLudwig) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'dorm_211' && !isDorm) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'ai_studio' && !isAi) ctx.globalAlpha = this.outsideAlpha;
+
+          const p0 = isoToScreen(x, y, 0, ox, oy);
+          const p1 = isoToScreen(x + 1, y, 0, ox, oy);
+          const p2 = isoToScreen(x + 1, y + 1, 0, ox, oy);
+          const p3 = isoToScreen(x, y + 1, 0, ox, oy);
+
+          if (isLudwig) {
+            // Warm Alternating Oak Parquet Flooring
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#cbaf90' : '#be9f80';
+          } else if (isDorm) {
+            // Taiwanese University Dorm Terrazzo Composite Flooring
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#cbd5e1' : '#94a3b8';
+          } else if (isAi) {
+            // Futuristic Dark Cyber Slate Tiles
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#0f172a' : '#1e293b';
+          } else if (isPath) {
+            // Cobblestone Paved Paths
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
+          } else {
+            // Lush Green Campus Lawn
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#4f772d' : '#456b27';
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.strokeStyle = isInsideBuilding ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.05)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Cyber Floor Neon Runners in AI Studio
+          if (isAi && (x === AI_MIN_X + 4 || y === AI_MIN_Y + 5)) {
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.55)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+
+          ctx.restore();
+        }
+      }
+    }
+
+    // --- Collect All World Props & Entities for Topological Sorting ---
+    collectWorldEntities(ox, oy) {
+      const list = [];
+      const isDark = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
+      const wallL = isDark ? '#2a2e38' : '#e8e2d2';
+      const wallR = isDark ? '#1f232b' : '#d8d1be';
+      const H = 2.8;
+
+      // === 1. ZONE 1: LUDWIG'S HOUSE ===
+      // SE Dividing Wall Left Segment (dL, y: 0 to 4.5)
+      list.push({
+        xMin: HOUSE_MAX_X + 0.9, xMax: HOUSE_MAX_X + 1.1,
+        yMin: 0, yMax: 4.5,
+        draw: () => {
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 0, 0, 0.01, 4.5, H, null, null, wallR, ox, oy);
+        }
+      });
+      // SE Dividing Wall Right Segment (dR, y: 6.8 to HOUSE_MAX_Y + 1)
+      list.push({
+        xMin: HOUSE_MAX_X + 0.9, xMax: HOUSE_MAX_X + 1.1,
+        yMin: 6.8, yMax: HOUSE_MAX_Y + 1,
+        draw: () => {
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.01, (HOUSE_MAX_Y + 1) - 6.8, H, null, null, wallR, ox, oy);
+        }
+      });
+      // SE Doorway Lintel Arch
+      list.push({
+        xMin: HOUSE_MAX_X + 0.9, xMax: HOUSE_MAX_X + 1.1,
+        yMin: 4.5, yMax: 6.8,
+        draw: () => {
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
+        }
+      });
+
+      // Interactive Double Doors (Ludwig's House)
+      const doorAngle1 = this.doorLudwigOpen * 1.35;
+      const doorW = 1.15;
+      const hx = HOUSE_MAX_X + 1.0;
+      const nTipX = hx + Math.sin(doorAngle1) * doorW;
+      const nTipY = 4.5 + Math.cos(doorAngle1) * doorW;
+      list.push({
+        xMin: Math.min(hx, nTipX) - 0.1, xMax: Math.max(hx, nTipX) + 0.1,
+        yMin: 4.4, yMax: Math.max(4.5 + doorW, nTipY) + 0.1,
+        draw: () => {
+          this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, ox, oy);
+        }
+      });
+      const sTipX = hx + Math.sin(doorAngle1) * doorW;
+      const sTipY = 6.8 - Math.cos(doorAngle1) * doorW;
+      list.push({
+        xMin: Math.min(hx, sTipX) - 0.1, xMax: Math.max(hx, sTipX) + 0.1,
+        yMin: Math.min(6.8 - doorW, sTipY) - 0.1, yMax: 6.9,
+        draw: () => {
+          this.drawDoorLeaf(hx, 6.8, sTipX, sTipY, ox, oy);
+        }
+      });
+
+      // SW Side Wall & Terrace Railings (along y = HOUSE_MAX_Y + 1 = 10)
+      const swY = HOUSE_MAX_Y + 1.0;
+      // Left Porch Railing (x: 0 to 4.5)
+      list.push({
+        xMin: 0, xMax: 4.5, yMin: swY - 0.1, yMax: swY + 0.1,
+        draw: () => this.models.drawPorchRailing(this.ctx, 0, swY, 4.5, ox, oy)
+      });
+      // Right Porch Railing (x: 6.8 to 10)
+      list.push({
+        xMin: 6.8, xMax: 10.0, yMin: swY - 0.1, yMax: swY + 0.1,
+        draw: () => this.models.drawPorchRailing(this.ctx, 6.8, swY, 3.2, ox, oy)
+      });
+      // SW Side Doorway Archway Lintel
+      list.push({
+        xMin: 4.5, xMax: 6.8, yMin: swY - 0.1, yMax: swY + 0.1,
+        draw: () => {
+          this.models.drawBox(this.ctx, 4.5, swY, 2.2, 2.3, 0.01, H - 2.2, null, wallL, null, ox, oy);
+        }
+      });
+
+      // Side Porch Woven Coir Mat
+      list.push({
+        xMin: 4.8, xMax: 6.5, yMin: swY + 0.15, yMax: swY + 0.85,
+        draw: () => {
+          const sm0 = isoToScreen(4.8, swY + 0.15, 0.01, ox, oy);
+          const sm1 = isoToScreen(6.5, swY + 0.15, 0.01, ox, oy);
+          const sm2 = isoToScreen(6.5, swY + 0.85, 0.01, ox, oy);
+          const sm3 = isoToScreen(4.8, swY + 0.85, 0.01, ox, oy);
+          this.ctx.fillStyle = '#b45309';
+          this.ctx.beginPath();
+          this.ctx.moveTo(sm0.x, sm0.y); this.ctx.lineTo(sm1.x, sm1.y); this.ctx.lineTo(sm2.x, sm2.y); this.ctx.lineTo(sm3.x, sm3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+        }
+      });
+
+      // Interactive Side Terrace Double Doors (Swings open into south garden porch)
+      const sideDoorAngle = this.doorLudwigSideOpen * 1.35;
+      const wTipX = 4.5 + Math.cos(sideDoorAngle) * doorW;
+      const wTipY = swY + Math.sin(sideDoorAngle) * doorW;
+      list.push({
+        xMin: 4.4, xMax: 5.7,
+        yMin: swY - 0.1, yMax: Math.max(swY + doorW, wTipY) + 0.1,
+        draw: () => {
+          this.drawDoorLeaf(4.5, swY, wTipX, wTipY, ox, oy);
+        }
+      });
+      const eTipX = 6.8 - Math.cos(sideDoorAngle) * doorW;
+      const eTipY = swY + Math.sin(sideDoorAngle) * doorW;
+      list.push({
+        xMin: 5.6, xMax: 6.9,
+        yMin: swY - 0.1, yMax: Math.max(swY + doorW, eTipY) + 0.1,
+        draw: () => {
+          this.drawDoorLeaf(6.8, swY, eTipX, eTipY, ox, oy);
+        }
+      });
+
+      // House Furniture Props
+      list.push({
+        xMin: 1.0, xMax: 3.1, yMin: 1.0, yMax: 3.3,
+        draw: () => this.models.drawMasterBed(this.ctx, 1.0, 1.0, ox, oy)
+      });
+      list.push({
+        xMin: 6.0, xMax: 8.5, yMin: 1.0, yMax: 2.2,
+        draw: () => this.models.drawDeveloperDesk(this.ctx, 6.0, 1.0, ox, oy)
+      });
+      list.push({
+        xMin: 0.1, xMax: 0.8, yMin: 3.8, yMax: 6.4,
+        draw: () => this.models.drawBookshelf(this.ctx, 0.1, 3.8, ox, oy)
+      });
+      list.push({
+        xMin: 2.0, xMax: 4.5, yMin: 5.0, yMax: 7.0,
+        draw: () => this.models.drawLivingRoom(this.ctx, 2.0, 5.0, ox, oy)
+      });
+      list.push({
+        xMin: 6.0, xMax: 8.2, yMin: 5.0, yMax: 6.8,
+        draw: () => this.models.drawDiningTable(this.ctx, 6.0, 5.0, ox, oy)
+      });
+
+      // === 2. ZONE 2: MEN'S DORMITORY 11 ROOM 211 ===
+      // Dorm SE Walls & Door
+      const dormSE_X = DORM_MAX_X + 1;
+      list.push({
+        xMin: dormSE_X - 0.1, xMax: dormSE_X + 0.1,
+        yMin: DORM_MIN_Y, yMax: 20.5,
+        draw: () => {
+          this.models.drawBox(this.ctx, dormSE_X, DORM_MIN_Y, 0, 0.01, 20.5 - DORM_MIN_Y, H, null, null, wallR, ox, oy);
+        }
+      });
+      list.push({
+        xMin: dormSE_X - 0.1, xMax: dormSE_X + 0.1,
+        yMin: 22.8, yMax: DORM_MAX_Y + 1,
+        draw: () => {
+          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.01, (DORM_MAX_Y + 1) - 22.8, H, null, null, wallR, ox, oy);
+        }
+      });
+      // Dorm Door Arch & Blue Enamel Plaque "男11 211"
+      list.push({
+        xMin: dormSE_X - 0.1, xMax: dormSE_X + 0.1,
+        yMin: 20.5, yMax: 22.8,
+        draw: () => {
+          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
+          // Blue Enamel Plaque
+          const plq = isoToScreen(dormSE_X, 21.65, 2.45, ox, oy);
+          this.ctx.fillStyle = '#1e3a8a';
+          this.ctx.fillRect(plq.x - 22, plq.y - 8, 44, 16);
+          this.ctx.strokeStyle = '#ffffff';
+          this.ctx.lineWidth = 1;
+          this.ctx.strokeRect(plq.x - 22, plq.y - 8, 44, 16);
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.fillText('男11 211', plq.x, plq.y + 3);
+        }
+      });
+
+      // Dorm Interactive Door
+      const dormDoorAngle = this.doorDormOpen * 1.35;
+      const dTipX = dormSE_X + Math.sin(dormDoorAngle) * 1.15;
+      const dTipY = 20.5 + Math.cos(dormDoorAngle) * 1.15;
+      list.push({
+        xMin: Math.min(dormSE_X, dTipX) - 0.1, xMax: Math.max(dormSE_X, dTipX) + 0.1,
+        yMin: 20.4, yMax: 22.9,
+        draw: () => {
+          this.drawDoorLeaf(dormSE_X, 20.5, dTipX, dTipY, ox, oy);
+        }
+      });
+
+      // 4 Loft Bed/Desk Combos
+      // Bed 1 (Happy Wang: x: 1, y: 18)
+      list.push({
+        xMin: 1.0, xMax: 3.2, yMin: 18.0, yMax: 19.5,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 18.0, { duvetColor: '#ea580c', screenColor: '#f97316' }, ox, oy)
+      });
+      // Bed 2 (Kerry Chang: x: 1, y: 23)
+      list.push({
+        xMin: 1.0, xMax: 3.2, yMin: 23.0, yMax: 24.5,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 23.0, { duvetColor: '#0d9488', screenColor: '#2dd4bf' }, ox, oy)
+      });
+      // Bed 3 (Clark Wu: x: 6.8, y: 18)
+      list.push({
+        xMin: 6.8, xMax: 9.0, yMin: 18.0, yMax: 19.5,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.8, 18.0, { duvetColor: '#1d4ed8', screenColor: '#38bdf8' }, ox, oy)
+      });
+      // Bed 4 (Jerry Chung: x: 6.8, y: 23)
+      list.push({
+        xMin: 6.8, xMax: 9.0, yMin: 23.0, yMax: 24.5,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.8, 23.0, { duvetColor: '#7c3aed', screenColor: '#c084fc' }, ox, oy)
+      });
+
+      // Dorm Common Lounge Table & Mini Fridge
+      list.push({
+        xMin: 4.2, xMax: 5.8, yMin: 20.2, yMax: 21.8,
+        draw: () => this.models.drawDormCommonArea(this.ctx, 4.2, 20.2, ox, oy)
+      });
+
+      // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===
+      // AI Studio Entrance Walls & Plaque
+      list.push({
+        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        yMin: 0, yMax: 4.5,
+        draw: () => {
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.01, 4.5, H, null, null, wallR, ox, oy);
+        }
+      });
+      list.push({
+        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        yMin: 6.8, yMax: 10,
+        draw: () => {
+          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.01, 3.2, H, null, null, wallR, ox, oy);
+        }
+      });
+      // AI Studio Neon Plaque
+      list.push({
+        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        yMin: 4.5, yMax: 6.8,
+        draw: () => {
+          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
+          const plq = isoToScreen(AI_MIN_X, 5.65, 2.45, ox, oy);
+          this.ctx.fillStyle = '#0f172a';
+          this.ctx.fillRect(plq.x - 30, plq.y - 8, 60, 16);
+          this.ctx.strokeStyle = '#06b6d4';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(plq.x - 30, plq.y - 8, 60, 16);
+          this.ctx.fillStyle = '#22d3ee';
+          this.ctx.font = 'bold 8px monospace';
+          this.ctx.textAlign = 'center';
+          this.ctx.fillText('AI STUDIO', plq.x, plq.y + 3);
+        }
+      });
+
+      // AI Studio Sliding Glass Door
+      const aiSlideOffset = this.doorAiOpen * 1.5;
+      list.push({
+        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        yMin: 4.5, yMax: 6.8,
+        draw: () => {
+          const dg0 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 0, ox, oy);
+          const dg1 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 0, ox, oy);
+          const dg2 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 2.15, ox, oy);
+          const dg3 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(6, 182, 212, 0.35)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(dg0.x, dg0.y); this.ctx.lineTo(dg1.x, dg1.y); this.ctx.lineTo(dg2.x, dg2.y); this.ctx.lineTo(dg3.x, dg3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#06b6d4';
+          this.ctx.lineWidth = 1.5;
+          this.ctx.stroke();
+        }
+      });
+
+      // AI Studio Equipment
+      list.push({
+        xMin: 19.5, xMax: 21.3, yMin: 1.2, yMax: 2.4,
+        draw: () => this.models.drawServerRacks(this.ctx, 19.5, 1.2, ox, oy)
+      });
+      list.push({
+        xMin: 23.5, xMax: 26.0, yMin: 1.2, yMax: 2.4,
+        draw: () => this.models.drawAiCommandDesk(this.ctx, 23.5, 1.2, ox, oy)
+      });
+      list.push({
+        xMin: 26.2, xMax: 27.0, yMin: 4.0, yMax: 6.4,
+        draw: () => this.models.drawGlassWhiteboard(this.ctx, 26.2, 4.0, ox, oy)
+      });
+      list.push({
+        xMin: 19.5, xMax: 21.3, yMin: 7.2, yMax: 8.4,
+        draw: () => this.models.drawEspressoBar(this.ctx, 19.5, 7.2, ox, oy)
+      });
+
+      // === 4. CENTRAL COURTYARD: BENCHES, FOUNTAIN & TREES ===
+      // Fountain
+      list.push({
+        xMin: 13.0, xMax: 16.0, yMin: 13.0, yMax: 16.0,
+        draw: () => this.models.drawGrandFountain(this.ctx, 13.0, 13.0, ox, oy)
+      });
+
+      // Refined Park Benches
+      const benches = [
+        { gx: 11, gy: 10 }, { gx: 16, gy: 10 },
+        { gx: 11, gy: 17 }, { gx: 16, gy: 17 }
+      ];
+      benches.forEach(b => {
+        list.push({
+          xMin: b.gx, xMax: b.gx + 1.6, yMin: b.gy, yMax: b.gy + 0.65,
+          draw: () => this.models.drawParkBench(this.ctx, b.gx, b.gy, ox, oy)
+        });
+      });
+
+      // Lush Flowering Trees
+      const trees = [
+        [11, 2], [14, 2], [16, 2],
+        [11, 6], [16, 6],
+        [11, 14], [16, 14],
+        [11, 21], [16, 21],
+        [11, 25], [14, 25], [16, 25],
+        [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
+      ];
+      trees.forEach(([tx, ty]) => {
+        list.push({
+          xMin: tx, xMax: tx + 1.0, yMin: ty, yMax: ty + 1.0,
+          draw: () => this.models.drawTree(this.ctx, tx, ty, ox, oy)
+        });
+      });
+
+      // === 5. CHARACTERS ===
+      this.charManager.characters.forEach(c => {
+        list.push({
+          isChar: true,
+          xMin: c.x - 0.25, xMax: c.x + 0.25,
+          yMin: c.y - 0.25, yMax: c.y + 0.25,
+          draw: () => this.charManager.drawCharacter(this.ctx, c, ox, oy)
+        });
+      });
+
+      return list;
+    }
+
+    drawDoorLeaf(hx, hy, tx, ty, ox, oy) {
+      const H = 2.15;
+      const b0 = isoToScreen(hx, hy, 0, ox, oy);
+      const b1 = isoToScreen(tx, ty, 0, ox, oy);
+      const t1 = isoToScreen(tx, ty, H, ox, oy);
+      const t0 = isoToScreen(hx, hy, H, ox, oy);
+
+      // Cedar Door Frame
+      this.ctx.fillStyle = '#92400e';
+      this.ctx.beginPath();
+      this.ctx.moveTo(b0.x, b0.y); this.ctx.lineTo(b1.x, b1.y); this.ctx.lineTo(t1.x, t1.y); this.ctx.lineTo(t0.x, t0.y);
+      this.ctx.closePath();
+      this.ctx.fill();
+      this.ctx.strokeStyle = '#78350f';
+      this.ctx.lineWidth = 2.5;
+      this.ctx.stroke();
+
+      // Lower Wood Inset Panel
+      const dx = tx - hx;
+      const dy = ty - hy;
+      const lp0 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 0.15, ox, oy);
+      const lp1 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 0.15, ox, oy);
+      const lp2 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 0.75, ox, oy);
+      const lp3 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 0.75, ox, oy);
+      this.ctx.fillStyle = '#78350f';
+      this.ctx.beginPath();
+      this.ctx.moveTo(lp0.x, lp0.y); this.ctx.lineTo(lp1.x, lp1.y); this.ctx.lineTo(lp2.x, lp2.y); this.ctx.lineTo(lp3.x, lp3.y);
+      this.ctx.closePath();
+      this.ctx.fill();
+
+      // Upper Frosted Glass Pane
+      const gp0 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 0.88, ox, oy);
+      const gp1 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 0.88, ox, oy);
+      const gp2 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 2.02, ox, oy);
+      const gp3 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 2.02, ox, oy);
+      this.ctx.fillStyle = 'rgba(224, 242, 254, 0.45)';
+      this.ctx.beginPath();
+      this.ctx.moveTo(gp0.x, gp0.y); this.ctx.lineTo(gp1.x, gp1.y); this.ctx.lineTo(gp2.x, gp2.y); this.ctx.lineTo(gp3.x, gp3.y);
+      this.ctx.closePath();
+      this.ctx.fill();
+      this.ctx.strokeStyle = '#78350f';
+      this.ctx.lineWidth = 1.2;
+      this.ctx.stroke();
+
+      // Brass Handle
+      const hPos = isoToScreen(hx + dx * 0.86, hy + dy * 0.86, 0.98, ox, oy);
+      this.ctx.fillStyle = '#f59e0b';
+      this.ctx.fillRect(hPos.x - 2, hPos.y - 10, 4, 16);
+    }
+
+    // --- Atmospheric Full-Screen Lighting Overlay ---
+    drawLightingOverlay(ctx) {
+      const w = this.width;
+      const h = this.height;
+
+      if (this.currentTimeState === 'sunset') {
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, 'rgba(249, 115, 22, 0.18)');
+        grad.addColorStop(0.5, 'rgba(236, 72, 153, 0.14)');
+        grad.addColorStop(1, 'rgba(124, 58, 237, 0.18)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+      } else if (this.currentTimeState === 'night') {
+        const rad = ctx.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, h * 0.9);
+        rad.addColorStop(0, 'rgba(15, 23, 42, 0.32)');
+        rad.addColorStop(1, 'rgba(2, 6, 23, 0.72)');
+        ctx.fillStyle = rad;
+        ctx.fillRect(0, 0, w, h);
+      } else if (this.currentTimeState === 'galaxy') {
+        const grad = ctx.createLinearGradient(0, 0, w, h);
+        grad.addColorStop(0, 'rgba(88, 28, 135, 0.38)');
+        grad.addColorStop(0.5, 'rgba(30, 27, 75, 0.48)');
+        grad.addColorStop(1, 'rgba(15, 23, 42, 0.65)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+      }
+    }
+
+    // --- Main Render Frame Loop ---
+    loop(now) {
+      const dt = Math.min(0.1, (now - this.lastTime) / 1000);
+      this.lastTime = now;
+
+      this.update(dt);
+
+      const ctx = this.ctx;
+      ctx.clearRect(0, 0, this.width, this.height);
+
+      ctx.save();
+      const { ox, oy } = this.getOrigin();
+      ctx.translate(ox, oy);
+      ctx.scale(this.zoom, this.zoom);
+      ctx.translate(-ox, -oy);
+
+      // 1. Draw Map Terrain
+      this.drawTerrain(ctx, ox, oy);
+
+      // 2. Collect and Sort Entities
+      const entities = this.collectWorldEntities(ox, oy);
+      const sorted = sortIsometricEntities(entities);
+
+      // 3. Render Depth-Sorted Entities
+      sorted.forEach(e => {
+        try { e.draw(); } catch(err) { console.error('Render entity error:', err); }
+      });
+
+      // 4. Render Ambient Particles
+      this.particles.forEach(p => {
+        const pt = isoToScreen(p.x, p.y, p.z, ox, oy);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.restore();
+
+      // 5. Full-Screen Lighting Overlay (Drawn in screen space)
+      this.drawLightingOverlay(ctx);
+
+      requestAnimationFrame(this.loop.bind(this));
+    }
+  }
+
+  // Export to Global Scope
+  window.LudwigiaWorld = LudwigiaWorld;
+
+})(window);
