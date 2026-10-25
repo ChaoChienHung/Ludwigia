@@ -691,14 +691,13 @@
       const bedBaseZ = 1.35;
       const facing = config.facing || 'south'; // 'south' = desk opens south (into room); 'north' = desk opens north (into room)
 
-      // 1. Four Structural Dark Iron Posts (rising from z: 0 to H)
+      // 1. Structural Dark Iron Posts (rising from z: 0 to H)
       const postCol = '#334155';
       const postL = '#1e293b';
       const postR = '#0f172a';
       const pw = 0.08;
       this.drawBox(ctx, gx, gy, 0, pw, pw, H, postCol, postL, postR, ox, oy);
       this.drawBox(ctx, gx + W - pw, gy, 0, pw, pw, H, postCol, postL, postR, ox, oy);
-      this.drawBox(ctx, gx + W - pw, gy + D - pw, 0, pw, pw, H, postCol, postL, postR, ox, oy);
       this.drawBox(ctx, gx, gy + D - pw, 0, pw, pw, H, postCol, postL, postR, ox, oy);
 
       // 2. LOWER LEVEL: Study Desk Tabletop (z = deskH)
@@ -822,6 +821,10 @@
 
       // White Fluffy Pillow at Head
       this.drawBox(ctx, gx + 0.15, gy + 0.25, matZ + 0.22, 0.48, 0.85, 0.12, '#ffffff', '#f1f5f9', '#e2e8f0', ox, oy);
+
+      // 4. Foreground Structural Dark Iron Post (Front-Right / Bottom-Right Corner at gx + W - pw, gy + D - pw)
+      // Drawn after desk and mattress so it seamlessly encloses the corner and rises from z: 0 to H
+      this.drawBox(ctx, gx + W - pw, gy + D - pw, 0, pw, pw, H, postCol, postL, postR, ox, oy);
     }
 
     // --- Dorm 11-211 Common Lounge Area (Beloved Classic Blue Sofa, Orange Pillows, Coffee Table & Guitar) ---
