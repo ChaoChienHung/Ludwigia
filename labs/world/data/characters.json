@@ -415,7 +415,8 @@
       "name": "Kerry Chang",
       "gender": "male",
       "role": "室友 (Dorm 211)",
-      "avatar": "🧑‍💻",
+      "avatar": "assets/avatars/kerry.png",
+      "avatarFallback": "🧑‍💻",
       "zone": "dorm_211",
       "spawn": {
         "x": 2.1,
@@ -592,8 +593,7 @@
       "dialogues": {
         "zh-TW": [
           [
-            "你是水蛭喔？",
-            "一直吸一直吸……借個衛生紙吸、開個熱點吸，現在連泡麵湯都要吸一口！😂"
+            "你是水蛭喔？"
           ],
           [
             "哈囉！戴著降噪耳機聽著 Lo-fi 節奏，這張桌子就是我的專屬音樂工作室。",
@@ -616,8 +616,7 @@
         ],
         "en": [
           [
-            "Are you a leech or what?!",
-            "Sucking everything dry... borrowing my tissues, latching onto my hotspot, and now you want a sip of my instant ramen broth too?! 😂"
+            "Are you a leech or what?!"
           ],
           [
             "Hello! With noise-cancelling headphones and lo-fi beats flowing, this desk is my audio haven.",
@@ -1044,24 +1043,6 @@
           ],
           [
             "That is awesome!"
-          ],
-          [
-            "Hey! Strolling through the central courtyard as well?",
-            "Men's Dorm 211 to the south, AI research studio to the east—this campus layout is magnificent!",
-            "The misty fountain breeze feels so refreshing, let's walk together!"
-          ],
-          [
-            "Are you into large-scale distributed computing? Ludwig's CS5234 notes are top-tier!",
-            "Byzantine fault tolerance and Paxos consensus are all about forging unbreakable order within unpredictable networks."
-          ],
-          [
-            "Just visited Dorm 211; seeing everyone focused at their loft desks is pure nostalgic energy!"
-          ],
-          [
-            "The upgraded cast-iron teak benches by the fountain are super comfortable for sketching system diagrams."
-          ],
-          [
-            "Enjoy exploring this world! Always down to talk distributed architectures anytime!"
           ]
         ]
       },
@@ -1074,7 +1055,7 @@
       "id": "bohan",
       "name": "Bo Han Wu",
       "gender": "male",
-      "role": "好友 / 數學與拓撲研究者",
+      "role": "好友",
       "avatar": "📚",
       "zone": "library",
       "spawn": {
@@ -1092,61 +1073,19 @@
       "dialogues": {
         "zh-TW": [
           [
-            "你們先去吃吧，我不餓",
-            "這道證明還差兩個邊界引理……等我推完這頁流形度量再去覓食！"
-          ],
-          [
-            "歡迎來到 Ludwigia 典雅藏書閣！坐在這張長形胡桃木閱覽桌前，這盞祖母綠玻璃銀行燈的柔和光暈令人無比沉靜。",
-            "空氣中瀰漫著古老羊皮紙、硬皮書封與微溫油墨的清香，是鑽研數理最高境界的理想聖地。"
-          ],
-          [
-            "桌上這份手稿正推導著黎曼流形與非歐幾何的度量張量。在絕對安靜的閱覽廳裡，心智能與純粹的公理體系直接對話。",
-            "數學與拓撲的優雅形式，往往能為複雜的工程難題提供最澄澈的結構解答。"
-          ],
-          [
-            "這面直通穹頂的桃花心木大書牆令人嘆為觀止！滑軌黃銅梯可以直達最頂層的經典數學巨著與計算認識論專著。",
-            "每當卡在某個定理的引理證明時，爬上梯子隨手翻開一本幾何拓撲文獻，靈感往往就在字裡行間自然浮現。"
-          ],
-          [
-            "你看角落那座古黃銅渾天儀（Celestial Armillary Globe），它精妙地展現了球面三角學與天體力學的幾何交響。",
-            "古人僅憑圓規、量角器與嚴密幾何，就能描繪出星體運行的軌跡，這種對宇宙秩序的敬畏至今仍激勵著我們。"
-          ],
-          [
-            "剛才和坐在絲絨單人扶手椅上品 Earl Grey 的 Haolei 討論了一下分散式一致性協議的拓撲不變量，收穫頗豐！",
-            "願你在這座由代碼與幾何建構的藏書閣中，收穫最純粹的心靈啟發與智識喜悅。"
+            "你們先去吃吧，我不餓"
           ]
         ],
         "en": [
           [
-            "You guys go ahead and eat first, I am not hungry.",
-            "I am just two boundary lemmas away from finishing this proof... I will hunt for food once I wrap up this page of metric manifolds!"
-          ],
-          [
-            "Welcome to the Grand Library! Sitting here at this long polished walnut study table under the warm green glow of the banker's lamp brings profound focus.",
-            "The gentle scent of aged parchment, hardcover bookcloth, and warm printer's ink creates the ultimate sanctuary for mathematical rigor."
-          ],
-          [
-            "I'm working through metric tensor derivations on Riemannian manifolds. In the stillness of this reading hall, one's mind connects directly with foundational axioms.",
-            "Sublime geometric abstractions always unveil the most transparent architectures for complex engineering."
-          ],
-          [
-            "This floor-to-ceiling mahogany book wall is truly breathtaking! The brass rolling ladder glides effortlessly to reach the foundational archives of epistemology and topology.",
-            "Whenever an analytical proof feels blocked, browsing these classic volumes with a brass magnifying glass sparks instant clarity."
-          ],
-          [
-            "Notice the antique brass armillary globe standing by the arched window? It embodies the harmony between spherical trigonometry and celestial kinematics.",
-            "Ancient astronomers mapped orbital symmetries with compasses and pure deduction—a timeless tribute to the beauty of logic."
-          ],
-          [
-            "Haolei and I were just chatting about topological invariants in distributed consensus while he was sipping Earl Grey tea in the leather wingback nook.",
-            "May your time in this sanctuary of books and geometry bring sublime inspiration and mental clarity."
+            "You guys go ahead and eat first, I am not hungry."
           ]
         ]
       },
       "name_zh": "吳柏翰",
       "name_en": "Bo Han Wu",
-      "role_zh": "好友 / 數學與拓撲研究者",
-      "role_en": "Friend / Math & Topology"
+      "role_zh": "好友",
+      "role_en": "Friend"
     }
   ]
 }
