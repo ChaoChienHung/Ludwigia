@@ -961,34 +961,34 @@
       ctx.fillStyle = '#38bdf8';
       ctx.fillText('CLUSTER-GPU-01 • DPO LOSS', 11, 4.5);
 
-      // Coordinate Grid Lines
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.25)';
-      ctx.lineWidth = 0.6;
+      // Coordinate Grid Lines (Faint horizontal reference lines)
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.20)';
+      ctx.lineWidth = 0.5;
       ctx.beginPath();
-      ctx.moveTo(4, 15); ctx.lineTo(50, 15);
-      ctx.moveTo(4, 10); ctx.lineTo(50, 10);
+      ctx.moveTo(4, 7.5); ctx.lineTo(50, 7.5);
+      ctx.moveTo(4, 11.5); ctx.lineTo(50, 11.5);
       ctx.stroke();
 
-      // Cyan Loss Curve
+      // Cyan Loss Curve (Gentle decaying convergence curve, stays within safe middle band)
       ctx.strokeStyle = '#22d3ee';
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(4, 14.5);
-      ctx.bezierCurveTo(15, 14, 25, 9, 50, 6.5);
+      ctx.moveTo(4, 7.2);
+      ctx.bezierCurveTo(15, 9.5, 28, 10.6, 50, 10.8);
       ctx.stroke();
 
-      // Purple Reference Margin Curve
+      // Purple Reference Margin Curve (Subtle reference baseline tracking below primary loss)
       ctx.strokeStyle = '#a855f7';
       ctx.lineWidth = 0.9;
       ctx.beginPath();
-      ctx.moveTo(4, 13.5);
-      ctx.bezierCurveTo(18, 12, 30, 11, 50, 8.5);
+      ctx.moveTo(4, 8.2);
+      ctx.bezierCurveTo(16, 10.0, 30, 11.2, 50, 11.4);
       ctx.stroke();
 
-      // Telemetry Metric
+      // Telemetry Metric (Cleanly separated at bottom margin)
       ctx.fillStyle = '#34d399';
-      ctx.font = '3px monospace';
-      ctx.fillText('loss: 0.1428 | lr: 5e-6', 4, 14);
+      ctx.font = '2.8px monospace';
+      ctx.fillText('loss: 0.1428 | lr: 5e-6', 4, 14.5);
 
       ctx.restore();
     }
@@ -1033,48 +1033,53 @@
       ctx.translate(pTL.x, pTL.y);
       ctx.transform(1, -0.5, 0, 1, 0, 0); // Shear along Y axis (-0.5 slope)
 
-      // Section Header: Direct Preference Optimization
+      // Section Header: Direct Preference Optimization (Scaled to fit within panel)
       ctx.fillStyle = '#0284c7';
-      ctx.font = 'bold 4.4px monospace';
-      ctx.fillText('DIRECT PREFERENCE OPTIMIZATION (DPO)', 4, 7);
+      ctx.font = 'bold 2.8px monospace';
+      ctx.fillText('DIRECT PREFERENCE OPTIMIZATION', 4, 6.5);
 
       // Cyan Underline
       ctx.strokeStyle = 'rgba(2, 132, 199, 0.6)';
       ctx.lineWidth = 0.8;
       ctx.beginPath();
-      ctx.moveTo(4, 9); ctx.lineTo(68, 9);
+      ctx.moveTo(4, 8.5); ctx.lineTo(54, 8.5);
       ctx.stroke();
 
       // Formula Line 1: DPO Objective Loss Function
       ctx.fillStyle = '#0369a1';
-      ctx.font = '3.9px monospace';
-      ctx.fillText('L_DPO(θ;π_ref) = -E[log σ(β log(π_θ/π_ref))]', 4, 16);
+      ctx.font = '2.5px monospace';
+      ctx.fillText('L(θ) = -E[log σ(β·log(π_θ/π_ref))]', 4, 14.5);
 
       // Formula Line 2: Alignment Pipeline Flow
       ctx.fillStyle = '#047857';
-      ctx.font = '3.7px monospace';
-      ctx.fillText('Prompt ➔ SFT ➔ Preference Pairs ➔ Implicit Reward', 4, 23.5);
+      ctx.font = '2.4px monospace';
+      ctx.fillText('Prompt → SFT → Pairs → Implicit Reward', 4, 21.5);
 
       // Formula Line 3: Gradient Vector Flow
       ctx.fillStyle = '#7c3aed';
-      ctx.font = '3.5px monospace';
-      ctx.fillText('∇_θ L = -β·E[σ(r_l - r_w)·(∇log π_θ(w) - ∇log π_θ(l))]', 4, 30.5);
+      ctx.font = '2.3px monospace';
+      ctx.fillText('∇_θ L = -β·E[σ(-Δr)·(∇log π_w - ∇log π_l)]', 4, 28.5);
 
       // Mini Coordinate Axes for Implicit Reward Margin
       ctx.strokeStyle = 'rgba(100, 116, 139, 0.45)';
       ctx.lineWidth = 0.6;
       ctx.beginPath();
-      ctx.moveTo(4, 40); ctx.lineTo(66, 40); // x-axis
-      ctx.moveTo(4, 40); ctx.lineTo(4, 34);  // y-axis
+      ctx.moveTo(4, 38); ctx.lineTo(54, 38); // x-axis
+      ctx.moveTo(4, 38); ctx.lineTo(4, 32);  // y-axis
       ctx.stroke();
 
       // Sigmoid Preference Probability Curve on Glass
       ctx.strokeStyle = '#0891b2';
       ctx.lineWidth = 1.1;
       ctx.beginPath();
-      ctx.moveTo(5, 39.5);
-      ctx.bezierCurveTo(20, 39.5, 36, 35.5, 64, 35.5);
+      ctx.moveTo(5, 37.5);
+      ctx.bezierCurveTo(18, 37.5, 32, 34.0, 52, 34.0);
       ctx.stroke();
+
+      // Curve formula annotation
+      ctx.fillStyle = '#0891b2';
+      ctx.font = '2.2px monospace';
+      ctx.fillText('P(w ≻ l) = σ(r_w - r_l)', 12, 32.5);
 
       ctx.restore();
     }
