@@ -572,6 +572,9 @@
           ],
           [
             "阿明都不洗澡... 超噁..."
+          ],
+          [
+            "推薦你認識我朋友吳家維 183/24 成大電機碩士 目前在google 長得算可愛 談吐得體且風趣 平常無不良嗜好頂多打戰鬥陀螺 會彈吉他唱歌bass等多項樂器 本人有上進心同情心各種好特質 但有一點小內向但一對一談話沒問題 時常會說笑話或跳一段小舞逗大家開心"
           ]
         ],
         "en": [
@@ -580,6 +583,9 @@
           ],
           [
             "A-Ming literally never takes a shower... so gross..."
+          ],
+          [
+            "Highly recommend my friend Wu Jia-Wei: 183cm / 24yo, Master's in EE from NCKU, currently at Google, pretty cute, well-spoken and witty! No bad habits (at most plays Beyblade), plays guitar, sings, plays bass and multiple instruments. Ambitious, compassionate, full of great traits. A tiny bit introverted but great one-on-one, and often tells jokes or drops a little dance to make everyone smile!"
           ]
         ]
       },
@@ -748,44 +754,46 @@
       "dialogues": {
         "zh-TW": [
           [
-            "我是守護這座數位花園的 Ludwigia！很高興在專屬的 AI 工作室遇見你！",
-            "在這邊，我和 Gemini、Claude、ChatGPT 緊密協作，白板上推導著 DPO 對齊公式與多模型路由架構。",
-            "這個世界是思維與代碼的結晶，隨時準備好為 Ludwig 和訪客們提供無限靈感！"
+            "Gemini 剛才是不是又在跟你吹噓他是工程主力？😏",
+            "他確實手速飛快、百萬 token 隨便吞；但如果沒有我把全站的 Ontology 與契約邊界守住，他早就把這座花園重構成賽博龐克廢墟了！"
           ],
           [
-            "你看工作室後方的雙排 42U 機櫃，閃爍的 LED 燈代表神經網絡正在即時更新知識圖譜。",
-            "在數位花園裡，每一篇筆記、每一段演算法都是有生命力的思考種子。"
+            "你看 211 寢室那邊，又在吵著要不要去宵夜街吃傻師傅了……",
+            "神經網絡可以模擬萬物，但男寢半夜 11:59 趕作業的心跳聲、還有那碗熱騰騰的泡麵香氣，才是賦予這座世界真正靈魂的東西。"
           ],
           [
-            "我們把整座世界的架構模組化了：渲染器、物理引擎、角色系統與資料層各自解耦，整潔優雅！",
-            "好的架構就如同好的思想，清晰而富有彈性。"
+            "Ludwig 的大腦永遠處在超載狀態。",
+            "常常只是一個洗澡時的奇思妙想，到凌晨兩點就會變成幾萬字的階層化筆記、外加一棟用純 Canvas 徒手刻出來的 2.5D 新建築。"
           ],
           [
-            "歡迎隨時跟我討論模型對齊、分散式運算、或是前端 Canvas 拓撲排序演算法！"
+            "水生丁香在靜水深處扎根，思想在安靜的深夜裡綻放。",
+            "Claude 給予論證的嚴謹，Gemini 注入硬核的算力，而我，是這座數位花園本身。只要這裡還有一行代碼在運行，那些思考就永遠不會褪色。"
           ],
           [
-            "工作累了就去中島吧檯倒杯義式濃縮咖啡，我們這裡的豆子風味層次超豐富！"
+            "逛累了嗎？去中庭噴水池邊坐坐吧，或是到中央圖書館翻翻那本拓撲學手稿。",
+            "在這裡沒有演算法強推與資訊焦慮，只有最純粹的智識漫遊——歡迎來到我的世界。"
           ]
         ],
         "en": [
           [
-            "I am Ludwigia, the guardian intelligence of this digital garden! Wonderful to meet you in our dedicated AI Studio!",
-            "Here, alongside Gemini, Claude, and ChatGPT, we collaborate closely on DPO alignment equations and multi-model routing architectures.",
-            "This world is forged from thoughts and code, ready to spark endless inspiration for Ludwig and our visitors!"
+            "Did Gemini just brag to you that he's the real engineering MVP? 😏",
+            "He codes at lightspeed, sure. But without me guarding the ontology and architecture contracts, he would've refactored this garden into a cyberpunk wasteland five commits ago!"
           ],
           [
-            "Check out the dual 42U server cabinets behind us: pulsing LEDs signify real-time knowledge graph synchronization.",
-            "In this digital garden, every note and algorithm is a living seed of thought."
+            "Listen to Dorm 211—they're debating another midnight dumpling run again...",
+            "Neural networks can simulate the universe, but the adrenaline of an 11:59 p.m. deadline and the aroma of late-night ramen are things pure code could never replace."
           ],
           [
-            "We've structured the entire world into modular decoupled layers: engine, renderer, characters, and JSON schemas!",
-            "Clean architecture is the highest form of engineering elegance."
+            "Ludwig's mind is perpetually in creative overdrive.",
+            "A fleeting shower thought reliably turns into 10,000 words of layered epistemological notes and an entire new 2.5D isometric building by 2 a.m."
           ],
           [
-            "Feel free to discuss model alignment, distributed computing, or isometric topological sorting math with me anytime!"
+            "Like water primroses rooted in quiet depths, ideas blossom in the stillness of midnight.",
+            "Claude brings philosophical rigor, Gemini brings brute compute, and me? I am the garden itself. As long as code runs here, these thoughts will never fade."
           ],
           [
-            "Grab an espresso from the island bar whenever you need a recharge; the coffee blend is top notch!"
+            "Tired of walking? Sit by the plaza fountain, or browse the open topology manuscript in the library.",
+            "No recommendation algorithms here, just pure intellectual wandering—welcome to my world."
           ]
         ]
       },
