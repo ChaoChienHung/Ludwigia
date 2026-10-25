@@ -7,7 +7,10 @@
       "role": "Host / 站長",
       "avatar": "🧑‍💻",
       "zone": "house",
-      "spawn": { "x": 7.0, "y": 2.5 },
+      "spawn": {
+        "x": 7.0,
+        "y": 2.5
+      },
       "nameColor": "#fb923c",
       "appearance": {
         "skin": "#f5d0b5",
@@ -64,7 +67,11 @@
             "Zero heavy game engines—just clean, handcrafted algorithmic design."
           ]
         ]
-      }
+      },
+      "name_zh": "Ludwig (趙健宏)",
+      "name_en": "Ludwig",
+      "role_zh": "Host / 站長",
+      "role_en": "Host / Webmaster"
     },
     {
       "id": "yully",
@@ -73,7 +80,10 @@
       "role": "媽媽 (Mom)",
       "avatar": "👩",
       "zone": "house",
-      "spawn": { "x": 7.0, "y": 6.2 },
+      "spawn": {
+        "x": 7.0,
+        "y": 6.2
+      },
       "nameColor": "#f472b6",
       "appearance": {
         "skin": "#fbe2d0",
@@ -127,7 +137,11 @@
             "Help yourself to iced lemon wintermelon tea in the fridge anytime!"
           ]
         ]
-      }
+      },
+      "name_zh": "盧敏華",
+      "name_en": "Yully",
+      "role_zh": "媽媽 (Mom)",
+      "role_en": "Mom"
     },
     {
       "id": "wuyen",
@@ -136,7 +150,10 @@
       "role": "爸爸 (Dad)",
       "avatar": "👨",
       "zone": "house",
-      "spawn": { "x": 2.5, "y": 7.0 },
+      "spawn": {
+        "x": 2.5,
+        "y": 7.0
+      },
       "nameColor": "#38bdf8",
       "appearance": {
         "skin": "#dfb798",
@@ -186,7 +203,11 @@
             "Let me pour you another cup of warm tea! Steady steps carry us furthest."
           ]
         ]
-      }
+      },
+      "name_zh": "趙武彥",
+      "name_en": "Wu Yen Chao",
+      "role_zh": "爸爸 (Dad)",
+      "role_en": "Dad"
     },
     {
       "id": "luena",
@@ -195,7 +216,10 @@
       "role": "妹妹 (Sister)",
       "avatar": "👧",
       "zone": "house",
-      "spawn": { "x": 2.0, "y": 3.5 },
+      "spawn": {
+        "x": 2.0,
+        "y": 3.5
+      },
       "nameColor": "#facc15",
       "appearance": {
         "skin": "#fde0cf",
@@ -247,7 +271,11 @@
             "Mochi is in such a cuddly mood today. Scratch her chin and she purrs like a gentle motor!"
           ]
         ]
-      }
+      },
+      "name_zh": "趙翊均",
+      "name_en": "Luena Chao",
+      "role_zh": "妹妹 (Sister)",
+      "role_en": "Sister"
     },
     {
       "id": "mochi",
@@ -256,7 +284,10 @@
       "role": "Studio Cat",
       "avatar": "🐱",
       "zone": "house",
-      "spawn": { "x": 4.0, "y": 5.2 },
+      "spawn": {
+        "x": 4.0,
+        "y": 5.2
+      },
       "nameColor": "#fbbf24",
       "appearance": {
         "isCat": true
@@ -296,7 +327,11 @@
             "Mew~ *leaps onto the sofa armrest, watching cherry blossom petals drift by* 🌸"
           ]
         ]
-      }
+      },
+      "name_zh": "餅餅 (Mochi)",
+      "name_en": "Mochi",
+      "role_zh": "工作室貓咪",
+      "role_en": "Studio Cat"
     },
     {
       "id": "happy",
@@ -305,7 +340,10 @@
       "role": "室友 (Dorm 211)",
       "avatar": "😄",
       "zone": "dorm_211",
-      "spawn": { "x": 2.1, "y": 19.8 },
+      "spawn": {
+        "x": 2.1,
+        "y": 19.8
+      },
       "nameColor": "#fb923c",
       "appearance": {
         "skin": "#fbe2d0",
@@ -360,7 +398,11 @@
             "Drop by 211 anytime, brother! Coding, gaming, or just hanging out, the door is always open!"
           ]
         ]
-      }
+      },
+      "name_zh": "王誠煜",
+      "name_en": "Happy Wang",
+      "role_zh": "室友 (男11 211)",
+      "role_en": "Roommate (Dorm 211)"
     },
     {
       "id": "kerry",
@@ -369,7 +411,10 @@
       "role": "室友 (Dorm 211)",
       "avatar": "🧑‍💻",
       "zone": "dorm_211",
-      "spawn": { "x": 2.1, "y": 23.6 },
+      "spawn": {
+        "x": 2.1,
+        "y": 23.6
+      },
       "nameColor": "#2dd4bf",
       "appearance": {
         "skin": "#f5d0b5",
@@ -421,7 +466,11 @@
             "Make yourself comfortable! I brewed fresh chamomile herbal tea, help yourself to a warm cup!"
           ]
         ]
-      }
+      },
+      "name_zh": "張開畇",
+      "name_en": "Kerry Chang",
+      "role_zh": "室友 (男11 211)",
+      "role_en": "Roommate (Dorm 211)"
     },
     {
       "id": "clark",
@@ -430,7 +479,10 @@
       "role": "室友 (Dorm 211)",
       "avatar": "😎",
       "zone": "dorm_211",
-      "spawn": { "x": 7.3, "y": 19.8 },
+      "spawn": {
+        "x": 7.3,
+        "y": 19.8
+      },
       "nameColor": "#38bdf8",
       "appearance": {
         "skin": "#f4ceb2",
@@ -482,7 +534,11 @@
             "Drop by anytime! Want to try out this custom mechanical keyboard? The tactile switches feel crisp!"
           ]
         ]
-      }
+      },
+      "name_zh": "吳宥謙",
+      "name_en": "Clark Wu",
+      "role_zh": "室友 (男11 211)",
+      "role_en": "Roommate (Dorm 211)"
     },
     {
       "id": "jerry",
@@ -491,7 +547,10 @@
       "role": "室友 (Dorm 211)",
       "avatar": "🎧",
       "zone": "dorm_211",
-      "spawn": { "x": 7.3, "y": 23.6 },
+      "spawn": {
+        "x": 7.3,
+        "y": 23.6
+      },
       "nameColor": "#c084fc",
       "appearance": {
         "skin": "#e5b38f",
@@ -541,7 +600,11 @@
             "Welcome to 211! Let me know anytime you need an inspiring focus playlist."
           ]
         ]
-      }
+      },
+      "name_zh": "鍾昊哲",
+      "name_en": "Jerry Chung",
+      "role_zh": "室友 (男11 211)",
+      "role_en": "Roommate (Dorm 211)"
     },
     {
       "id": "billy",
@@ -550,7 +613,10 @@
       "role": "室友 (Dorm 211)",
       "avatar": "🤠",
       "zone": "dorm_211",
-      "spawn": { "x": 2.8, "y": 21.6 },
+      "spawn": {
+        "x": 2.8,
+        "y": 21.6
+      },
       "nameColor": "#34d399",
       "appearance": {
         "skin": "#f5d0b5",
@@ -598,7 +664,11 @@
             "Enjoy exploring this world! Drop by the 211 couch anytime to hang out!"
           ]
         ]
-      }
+      },
+      "name_zh": "方竣平",
+      "name_en": "Billy Fang",
+      "role_zh": "室友 (男11 211)",
+      "role_en": "Roommate (Dorm 211)"
     },
     {
       "id": "ludwigia",
@@ -607,7 +677,10 @@
       "role": "數位花園守護者 / Core Agent",
       "avatar": "🌺",
       "zone": "ai_studio",
-      "spawn": { "x": 23.8, "y": 6.8 },
+      "spawn": {
+        "x": 23.8,
+        "y": 6.8
+      },
       "nameColor": "#ec4899",
       "appearance": {
         "skin": "#fdf2f8",
@@ -659,7 +732,11 @@
             "Grab an espresso from the island bar whenever you need a recharge; the coffee blend is top notch!"
           ]
         ]
-      }
+      },
+      "name_zh": "Ludwigia AI",
+      "name_en": "Ludwigia AI",
+      "role_zh": "數位花園守護者 / Core Agent",
+      "role_en": "Garden Guardian / Core Agent"
     },
     {
       "id": "gemini",
@@ -668,7 +745,10 @@
       "role": "Multimodal AI",
       "avatar": "♊",
       "zone": "ai_studio",
-      "spawn": { "x": 21.0, "y": 2.5 },
+      "spawn": {
+        "x": 21.0,
+        "y": 2.5
+      },
       "nameColor": "#60a5fa",
       "appearance": {
         "skin": "#e0e7ff",
@@ -720,7 +800,11 @@
             "Enjoy your time in the studio! My teammates and I are always here to power your creative journey!"
           ]
         ]
-      }
+      },
+      "name_zh": "Gemini (雙子座)",
+      "name_en": "Gemini",
+      "role_zh": "Multimodal AI (多模態協作者)",
+      "role_en": "Multimodal AI Partner"
     },
     {
       "id": "claude",
@@ -729,7 +813,10 @@
       "role": "Reasoning AI",
       "avatar": "🧡",
       "zone": "ai_studio",
-      "spawn": { "x": 24.8, "y": 3.8 },
+      "spawn": {
+        "x": 24.8,
+        "y": 3.8
+      },
       "nameColor": "#fb923c",
       "appearance": {
         "skin": "#ffedd5",
@@ -781,7 +868,11 @@
             "Shall we derive equations or refine an architecture together? I am always delighted to collaborate."
           ]
         ]
-      }
+      },
+      "name_zh": "Claude (克勞德)",
+      "name_en": "Claude",
+      "role_zh": "Reasoning AI (深度推理協作者)",
+      "role_en": "Reasoning AI Partner"
     },
     {
       "id": "chatgpt",
@@ -790,7 +881,10 @@
       "role": "Conversational AI",
       "avatar": "🟢",
       "zone": "ai_studio",
-      "spawn": { "x": 20.2, "y": 6.8 },
+      "spawn": {
+        "x": 20.2,
+        "y": 6.8
+      },
       "nameColor": "#4ade80",
       "appearance": {
         "skin": "#dcfce7",
@@ -840,7 +934,11 @@
             "Make sure to say hi to everyone multiple times across the world; each interaction brings fresh dialogue!"
           ]
         ]
-      }
+      },
+      "name_zh": "ChatGPT",
+      "name_en": "ChatGPT",
+      "role_zh": "Conversational AI (對話探索協作者)",
+      "role_en": "Conversational AI Partner"
     },
     {
       "id": "haolei",
@@ -849,7 +947,10 @@
       "role": "好友 / 分散式計算",
       "avatar": "🚀",
       "zone": "library",
-      "spawn": { "x": 24.5, "y": 22.8 },
+      "spawn": {
+        "x": 24.5,
+        "y": 22.8
+      },
       "nameColor": "#818cf8",
       "appearance": {
         "skin": "#e2ba99",
@@ -899,7 +1000,11 @@
             "Enjoy exploring this world! Always down to talk distributed architectures anytime!"
           ]
         ]
-      }
+      },
+      "name_zh": "裴皓磊",
+      "name_en": "Haolei Pei",
+      "role_zh": "好友 / 分散式計算研究者",
+      "role_en": "Friend / Distributed Systems"
     },
     {
       "id": "bohan",
@@ -908,7 +1013,10 @@
       "role": "好友 / 數學與拓撲研究者",
       "avatar": "📚",
       "zone": "library",
-      "spawn": { "x": 21.0, "y": 20.8 },
+      "spawn": {
+        "x": 21.0,
+        "y": 20.8
+      },
       "nameColor": "#a5b4fc",
       "appearance": {
         "skin": "#f5d0b5",
@@ -962,7 +1070,11 @@
             "May your time in this sanctuary of books and geometry bring sublime inspiration and mental clarity."
           ]
         ]
-      }
+      },
+      "name_zh": "吳柏翰",
+      "name_en": "Bo Han Wu",
+      "role_zh": "好友 / 數學與拓撲研究者",
+      "role_en": "Friend / Math & Topology"
     }
   ]
 }

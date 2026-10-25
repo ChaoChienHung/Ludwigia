@@ -26,14 +26,37 @@
       }
     }
 
+    getLangKey() {
+      const raw = (this.world && this.world.lang) || localStorage.getItem('site_lang_v1') || document.documentElement.getAttribute('lang') || 'zh-Hant';
+      const lowered = String(raw).toLowerCase();
+      return (lowered === 'en' || lowered.startsWith('en-')) ? 'en' : 'zh-TW';
+    }
+
+    updateLanguage(lang) {
+      if (this.world) this.world.lang = lang;
+      const promptName = document.getElementById('prompt-name');
+      if (promptName && this.proximityTarget) {
+        promptName.textContent = this.proximityTarget.name;
+      }
+      if (this.activeDialogueChar) {
+        const nameEl = document.getElementById('dialogue-name');
+        const roleEl = document.getElementById('dialogue-role');
+        if (nameEl) nameEl.textContent = this.activeDialogueChar.name;
+        if (roleEl) roleEl.textContent = this.activeDialogueChar.role;
+      }
+    }
+
     initFromData(charList) {
       // Create Visitor Player
       const visitorName = localStorage.getItem('ludwigia_visitor_name') || 'Visitor';
+      const playerNameI18n = { 'zh-TW': visitorName, 'en': visitorName };
+      const playerRoleI18n = { 'zh-TW': '探索者 / 訪客', 'en': 'Explorer / Visitor' };
+
       this.player = {
         id: 'player',
-        name: visitorName,
+        nameI18n: playerNameI18n,
+        roleI18n: playerRoleI18n,
         isPlayer: true,
-        role: 'Explorer / 訪客',
         avatar: '🧭',
         x: 4.8, y: 3.8, z: 0,
         facing: 1,
@@ -49,14 +72,49 @@
         walkTimer: 0
       };
 
+      Object.defineProperty(this.player, 'name', {
+        get: () => {
+          const lk = this.getLangKey();
+          return playerNameI18n[lk] || visitorName;
+        },
+        set: (v) => {
+          playerNameI18n['zh-TW'] = v;
+          playerNameI18n['en'] = v;
+        },
+        configurable: true,
+        enumerable: true
+      });
+
+      Object.defineProperty(this.player, 'role', {
+        get: () => {
+          const lk = this.getLangKey();
+          return playerRoleI18n[lk] || playerRoleI18n['zh-TW'];
+        },
+        set: (v) => {
+          playerRoleI18n['zh-TW'] = v;
+          playerRoleI18n['en'] = v;
+        },
+        configurable: true,
+        enumerable: true
+      });
+
       this.characters = [this.player];
 
       charList.forEach(c => {
-        this.characters.push({
+        const nameI18n = {
+          'zh-TW': c.name_zh || (typeof c.name === 'object' ? c.name['zh-TW'] : c.name),
+          'en': c.name_en || (typeof c.name === 'object' ? c.name['en'] : c.name)
+        };
+        const roleI18n = {
+          'zh-TW': c.role_zh || (typeof c.role === 'object' ? c.role['zh-TW'] : c.role),
+          'en': c.role_en || (typeof c.role === 'object' ? c.role['en'] : c.role)
+        };
+
+        const charObj = {
           id: c.id,
-          name: c.name,
+          nameI18n,
+          roleI18n,
           gender: c.gender || 'male',
-          role: c.role || 'Resident',
           avatar: c.avatar || '👤',
           zone: c.zone || 'plaza',
           x: c.spawn ? c.spawn.x : 14,
@@ -77,7 +135,35 @@
           state: 'idle',
           isWalking: false,
           walkTimer: 0
+        };
+
+        Object.defineProperty(charObj, 'name', {
+          get: () => {
+            const lk = this.getLangKey();
+            return nameI18n[lk] || nameI18n['zh-TW'] || nameI18n['en'] || c.name;
+          },
+          set: (v) => {
+            nameI18n['zh-TW'] = v;
+            nameI18n['en'] = v;
+          },
+          configurable: true,
+          enumerable: true
         });
+
+        Object.defineProperty(charObj, 'role', {
+          get: () => {
+            const lk = this.getLangKey();
+            return roleI18n[lk] || roleI18n['zh-TW'] || roleI18n['en'] || c.role || 'Resident';
+          },
+          set: (v) => {
+            roleI18n['zh-TW'] = v;
+            roleI18n['en'] = v;
+          },
+          configurable: true,
+          enumerable: true
+        });
+
+        this.characters.push(charObj);
       });
     }
 
@@ -86,8 +172,8 @@
       const overlay = document.getElementById('dialogue-overlay');
       if (!overlay) return;
 
-      const lang = localStorage.getItem('site_lang_v1') || 'zh-TW';
-      const langKey = lang === 'en' ? 'en' : 'zh-TW';
+      this.activeDialogueChar = char;
+      const langKey = this.getLangKey();
 
       document.getElementById('dialogue-avatar').textContent = char.avatar || '💬';
       document.getElementById('dialogue-name').textContent = char.name;
@@ -107,12 +193,17 @@
       textEl.textContent = lines[0];
 
       const nextBtn = document.getElementById('dialogue-next');
+      const btnSpan = nextBtn ? nextBtn.querySelector('span') : null;
+      if (btnSpan) btnSpan.textContent = (lines.length <= 1) ? (langKey === 'en' ? 'Done' : '結束') : (langKey === 'en' ? 'Next' : '繼續');
+
       nextBtn.onclick = () => {
         lineIdx++;
         if (lineIdx < lines.length) {
           textEl.textContent = lines[lineIdx];
+          if (btnSpan) btnSpan.textContent = (lineIdx === lines.length - 1) ? (langKey === 'en' ? 'Done' : '結束') : (langKey === 'en' ? 'Next' : '繼續');
         } else {
           overlay.classList.remove('open');
+          this.activeDialogueChar = null;
         }
       };
 

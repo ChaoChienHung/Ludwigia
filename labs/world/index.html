@@ -66,8 +66,12 @@
       </button>
     </div>
 
-    <!-- Ambient Audio & Citation Trigger -->
+    <!-- Ambient Audio, Language Switcher & Citation Trigger -->
     <div class="hud-glass-panel">
+      <button type="button" class="hud-btn" id="btn-lang-toggle" title="切換語言 / Switch Language">
+        <i class="fa-solid fa-globe"></i>
+        <span id="lang-indicator">繁中</span>
+      </button>
       <button type="button" class="hud-btn active" data-audio="off" title="靜音">
         <i class="fa-solid fa-volume-xmark"></i>
       </button>
@@ -76,7 +80,7 @@
       </button>
       <button type="button" class="hud-btn" id="btn-citation" title="開源引用與技術致謝">
         <i class="fa-solid fa-book-bookmark"></i>
-        <span class="d-none d-md-inline">致謝</span>
+        <span class="d-none d-md-inline" id="citation-label">致謝</span>
       </button>
     </div>
   </div>
@@ -90,15 +94,15 @@
   <!-- Proximity Dialogue Prompt -->
   <div class="proximity-prompt" id="proximity-prompt">
     <i class="fa-solid fa-comments text-accent"></i>
-    <span>[空白鍵 / 點擊] 與 <span id="prompt-name" style="color: var(--space-accent);"></span> 交談</span>
+    <span id="proximity-prompt-text">[空白鍵 / 點擊] 與 <span id="prompt-name" style="color: var(--space-accent);"></span> 交談</span>
   </div>
 
   <!-- Bottom Right Controls Tip -->
   <div class="hud-layer hud-bottombar">
     <div class="hud-glass-panel control-tips">
-      <div><span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> 或 <span class="key-badge">方向鍵</span> 移動</div>
-      <div><span class="key-badge">空白鍵</span> 對話</div>
-      <div><span class="key-badge">點擊地面</span> 尋路</div>
+      <div id="tip-move"><span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> 或 <span class="key-badge">方向鍵</span> 移動</div>
+      <div id="tip-talk"><span class="key-badge">空白鍵</span> 對話</div>
+      <div id="tip-path"><span class="key-badge">點擊地面</span> 尋路</div>
     </div>
   </div>
 
@@ -262,6 +266,77 @@
       });
       modalCitation?.addEventListener('click', (e) => {
         if (e.target === modalCitation) modalCitation.classList.remove('open');
+      });
+
+      // Dynamic Language Switcher Handling
+      const applyLanguage = (lang) => {
+        const raw = String(lang || '').toLowerCase();
+        const normalized = (raw === 'en' || raw.startsWith('en-')) ? 'en' : 'zh-TW';
+        document.documentElement.setAttribute('lang', normalized === 'en' ? 'en' : 'zh-Hant');
+        world.lang = normalized;
+        if (world.charManager) {
+          world.charManager.updateLanguage(normalized);
+        }
+
+        const langIndicator = document.getElementById('lang-indicator');
+        if (langIndicator) langIndicator.textContent = normalized === 'en' ? 'EN' : '繁中';
+
+        const statusText = document.getElementById('status-text');
+        if (statusText) {
+          statusText.textContent = normalized === 'en' ? 'Ludwigia World • Digital Living Sanctuary' : 'Ludwigia World • 數位花園小世界';
+        }
+
+        const citationLabel = document.getElementById('citation-label');
+        if (citationLabel) {
+          citationLabel.textContent = normalized === 'en' ? 'Credits' : '致謝';
+        }
+
+        const promptText = document.getElementById('proximity-prompt-text');
+        if (promptText) {
+          const currentTargetName = world.charManager?.proximityTarget?.name || '';
+          if (normalized === 'en') {
+            promptText.innerHTML = '[Space / Tap] Talk to <span id="prompt-name" style="color: var(--space-accent);">' + currentTargetName + '</span>';
+          } else {
+            promptText.innerHTML = '[空白鍵 / 點擊] 與 <span id="prompt-name" style="color: var(--space-accent);">' + currentTargetName + '</span> 交談';
+          }
+        }
+
+        const tipMove = document.getElementById('tip-move');
+        const tipTalk = document.getElementById('tip-talk');
+        const tipPath = document.getElementById('tip-path');
+        if (tipMove) {
+          tipMove.innerHTML = normalized === 'en'
+            ? '<span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> or <span class="key-badge">Arrows</span> Move'
+            : '<span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> 或 <span class="key-badge">方向鍵</span> 移動';
+        }
+        if (tipTalk) {
+          tipTalk.innerHTML = normalized === 'en'
+            ? '<span class="key-badge">Space</span> Talk'
+            : '<span class="key-badge">空白鍵</span> 對話';
+        }
+        if (tipPath) {
+          tipPath.innerHTML = normalized === 'en'
+            ? '<span class="key-badge">Click ground</span> Pathfind'
+            : '<span class="key-badge">點擊地面</span> 尋路';
+        }
+      };
+
+      const initialLang = localStorage.getItem('site_lang_v1') || 'zh-TW';
+      applyLanguage(initialLang);
+
+      document.getElementById('btn-lang-toggle')?.addEventListener('click', () => {
+        const cur = (localStorage.getItem('site_lang_v1') || 'zh-TW').toLowerCase();
+        const next = (cur === 'en' || cur.startsWith('en-')) ? 'zh-TW' : 'en';
+        localStorage.setItem('site_lang_v1', next);
+        applyLanguage(next);
+        window.dispatchEvent(new CustomEvent('ludwig-language-changed', { detail: { lang: next } }));
+      });
+
+      window.addEventListener('ludwig-language-changed', (e) => {
+        if (e.detail?.lang) applyLanguage(e.detail.lang);
+      });
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'site_lang_v1' && e.newValue) applyLanguage(e.newValue);
       });
     });
   </script>
