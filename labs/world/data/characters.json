@@ -1149,6 +1149,53 @@
       ]
     },
     {
+      "id": "weihao",
+      "name": {
+        "zh-TW": "徐偉豪",
+        "en": "Weihao Xu"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "實習生同事 (抖音)",
+        "en": "Intern Colleague (Douyin)"
+      },
+      "avatar": "🧋",
+      "zone": "douyin_office",
+      "spawn": {
+        "x": 20.5,
+        "y": 40.5
+      },
+      "nameColor": "#818cf8",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1e1b18",
+        "shirt": "#4f46e5",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "這個 bug 我抓了一整個下午，終於給它修掉了！"
+          ],
+          [
+            "下午要不要叫杯手搖飲？我看看滿減券……"
+          ]
+        ],
+        "en": [
+          [
+            "I tracked this bug all afternoon and finally squashed it!"
+          ],
+          [
+            "Wanna order boba this afternoon? Let me check the discount coupons..."
+          ]
+        ]
+      },
+      "visitedZones": [
+        "douyin_office"
+      ]
+    },
+    {
       "id": "bohan",
       "name": {
         "zh-TW": "吳柏翰",
