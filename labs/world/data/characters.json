@@ -836,8 +836,8 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "Multimodal AI (多模態協作者)",
-        "en": "Multimodal AI Partner"
+        "zh-TW": "多模態 AI",
+        "en": "Multimodal AI"
       },
       "avatar": "assets/avatars/gemini.png",
       "avatarFallback": "♊",
@@ -906,8 +906,8 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "Reasoning AI (深度推理協作者)",
-        "en": "Reasoning AI Partner"
+        "zh-TW": "深度推理 AI",
+        "en": "Reasoning AI"
       },
       "avatar": "assets/avatars/claude.png",
       "avatarFallback": "🧡",
@@ -982,8 +982,8 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "Conversational AI (對話探索協作者)",
-        "en": "Conversational AI Partner"
+        "zh-TW": "對話探索 AI",
+        "en": "Conversational AI"
       },
       "avatar": "assets/avatars/chatgpt.png",
       "avatarFallback": "🟢",
