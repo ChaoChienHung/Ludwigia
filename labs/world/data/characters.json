@@ -1196,6 +1196,53 @@
       ]
     },
     {
+      "id": "chenxin",
+      "name": {
+        "zh-TW": "劉晨馨",
+        "en": "Chen Xin Liu"
+      },
+      "gender": "female",
+      "role": {
+        "zh-TW": "實習生同事 (抖音)",
+        "en": "Intern Colleague (Douyin)"
+      },
+      "avatar": "✨",
+      "zone": "douyin_office",
+      "spawn": {
+        "x": 24.5,
+        "y": 40.5
+      },
+      "nameColor": "#f472b6",
+      "appearance": {
+        "skin": "#fdf2f8",
+        "hair": "#374151",
+        "shirt": "#f472b6",
+        "pants": "#1e1b4b",
+        "hairStyle": 1
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "大家今天的晨會同步過進度了嗎？"
+          ],
+          [
+            "這份 Figma 設計稿的元件邊距好細緻，切圖很有成就感！"
+          ]
+        ],
+        "en": [
+          [
+            "Has everyone synced on today's standup updates?"
+          ],
+          [
+            "The component spacing in this Figma mockup is super crisp, slicing it is so satisfying!"
+          ]
+        ]
+      },
+      "visitedZones": [
+        "douyin_office"
+      ]
+    },
+    {
       "id": "bohan",
       "name": {
         "zh-TW": "吳柏翰",
