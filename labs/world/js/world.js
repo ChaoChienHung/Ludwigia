@@ -10,6 +10,7 @@
     HOUSE_MAX_X, HOUSE_MAX_Y,
     DORM_MIN_X, DORM_MAX_X, DORM_MIN_Y, DORM_MAX_Y,
     AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y,
+    LIB_MIN_X, LIB_MAX_X, LIB_MIN_Y, LIB_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,
@@ -43,6 +44,7 @@
       this.doorLudwigSideOpen = 0.0;
       this.doorDormOpen = 0.0;
       this.doorAiOpen = 0.0;
+      this.doorLibOpen = 0.0;
 
       // Particles
       this.particles = [];
@@ -102,7 +104,20 @@
       this.nav.setBlock(19.5, 7.2, 1.8, 1.4, true); // Espresso Bar
       this.nav.setBlock(23.5, 6.8, 2.2, 1.6, true); // Lounge Pod
 
-      // 4. Central Plaza & Park
+      // 4. Zone 4: Ludwigia Grand Library (SE: 18..27, 17..26)
+      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 10, 1, true); // North Wall
+      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1, 3.5, true); // West Wall Top
+      this.nav.setBlock(LIB_MIN_X, 22.8, 1, 4.2, true); // West Wall Bottom
+      this.nav.setBlock(LIB_MAX_X + 1, LIB_MIN_Y, 1, 10, true); // East Wall
+      this.nav.setBlock(LIB_MIN_X, LIB_MAX_Y + 1, 10, 1, true); // South Wall
+
+      this.nav.setBlock(19.8, 17.2, 7.2, 0.8, true); // Grand Book Walls
+      this.nav.setBlock(20.0, 20.0, 2.5, 1.4, true); // Long Banker Study Table
+      this.nav.setBlock(23.8, 22.0, 2.2, 2.0, true); // Wingback Reading Nook
+      this.nav.setBlock(20.5, 23.8, 1.0, 1.0, true); // Celestial Armillary Globe
+      this.nav.setBlock(24.8, 19.2, 1.0, 1.0, true); // Botanical Terrarium Pedestal
+
+      // 5. Central Plaza & Park
       this.nav.setBlock(13, 13, 3, 3, true); // Fountain
 
       // Park Benches
@@ -118,7 +133,7 @@
         [11, 14], [16, 14],
         [16, 21],
         [11, 25], [14, 25], [16, 25],
-        [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
+        [20, 13], [24, 13]
       ];
       treeBlocks.forEach(([tx, ty]) => this.nav.setBlock(tx, ty, 1.2, 1.2, true));
     }
@@ -287,6 +302,10 @@
         currentZone = 'ai_studio';
         isInsideAnyHouse = true;
         statusMessage = "AI Studio • Ludwigia 智慧研究室";
+      } else if (player.x >= 17.5 && player.x <= 27.5 && player.y >= 16.5 && player.y <= 26.5) {
+        currentZone = 'library';
+        isInsideAnyHouse = true;
+        statusMessage = "Grand Library • 知識藏書閣與典雅閱覽室";
       }
 
       this.currentZone = currentZone;
@@ -309,6 +328,9 @@
 
       const nearAiDoor = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 5.65) < 2.4);
       this.doorAiOpen += ((nearAiDoor ? 1.0 : 0.0) - this.doorAiOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearLibDoor = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 21.65) < 2.4);
+      this.doorLibOpen += ((nearLibDoor ? 1.0 : 0.0) - this.doorLibOpen) * Math.min(1.0, dt * 5.0);
 
       // Status text
       const statusEl = document.getElementById('status-text');
@@ -527,20 +549,22 @@
           const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
           const isDorm = (x <= DORM_MAX_X && y >= DORM_MIN_Y && y <= DORM_MAX_Y);
           const isAi = (x >= AI_MIN_X && x <= AI_MAX_X && y >= AI_MIN_Y && y <= AI_MAX_Y);
-          const isInsideBuilding = isLudwig || isDorm || isAi;
+          const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
+          const isInsideBuilding = isLudwig || isDorm || isAi || isLib;
 
           // Cobblestone Pathways connecting doorways and central plaza
           const isPath = (
             (x >= 10 && x <= 11 && y >= 4 && y <= 23) ||
             (y >= 5 && y <= 6 && x >= 10 && x <= 19) ||
             (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
-            (y >= 20 && y <= 21 && x >= 10 && x <= 19)
+            (y >= 20 && y <= 22 && x >= 10 && x <= 19)
           );
 
           ctx.save();
           if (this.currentZone === 'ludwig_house' && !isLudwig) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'dorm_211' && !isDorm) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'ai_studio' && !isAi) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'library' && !isLib) ctx.globalAlpha = this.outsideAlpha;
 
           const p0 = isoToScreen(x, y, 0, ox, oy);
           const p1 = isoToScreen(x + 1, y, 0, ox, oy);
@@ -556,6 +580,9 @@
           } else if (isAi) {
             // Futuristic Dark Cyber Slate Tiles
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0f172a' : '#1e293b';
+          } else if (isLib) {
+            // Classic Dark Walnut Parquet Floor with Amber Sheen
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#451a03' : '#3b180a';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -872,7 +899,88 @@
         draw: () => this.models.drawEspressoBar(this.ctx, 19.5, 7.2, ox, oy)
       });
 
-      // === 4. CENTRAL COURTYARD: BENCHES, FOUNTAIN & TREES ===
+      // === 4. ZONE 4: LUDWIGIA GRAND LIBRARY & BOTANICAL READING HALL ===
+      // Library NW Entrance Walls & Bronze Plaque
+      list.push({
+        xMin: LIB_MIN_X - 0.1, xMax: LIB_MIN_X + 0.1,
+        yMin: LIB_MIN_Y, yMax: 20.5,
+        draw: () => {
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.01, 3.5, H, null, null, wallR, ox, oy);
+        }
+      });
+      list.push({
+        xMin: LIB_MIN_X - 0.1, xMax: LIB_MIN_X + 0.1,
+        yMin: 22.8, yMax: LIB_MAX_Y + 1,
+        draw: () => {
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.01, 4.2, H, null, null, wallR, ox, oy);
+        }
+      });
+      list.push({
+        xMin: LIB_MIN_X - 0.1, xMax: LIB_MIN_X + 0.1,
+        yMin: 20.5, yMax: 22.8,
+        draw: () => {
+          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
+          const plq = isoToScreen(LIB_MIN_X, 21.65, 2.45, ox, oy);
+          this.ctx.fillStyle = '#451a03';
+          this.ctx.fillRect(plq.x - 34, plq.y - 8, 68, 16);
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(plq.x - 34, plq.y - 8, 68, 16);
+          this.ctx.fillStyle = '#fbbf24';
+          this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.fillText('GRAND LIBRARY', plq.x, plq.y + 3);
+        }
+      });
+
+      // Library Double Mahogany Swinging Doors
+      const libDoorAngle = this.doorLibOpen * 1.35;
+      const libTipX = LIB_MIN_X + Math.sin(libDoorAngle) * 1.15;
+      const libTipY = 20.5 + Math.cos(libDoorAngle) * 1.15;
+      list.push({
+        xMin: Math.min(LIB_MIN_X, libTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libTipX) + 0.1,
+        yMin: 20.4, yMax: 22.9,
+        draw: () => {
+          this.drawDoorLeaf(LIB_MIN_X, 20.5, libTipX, libTipY, ox, oy);
+        }
+      });
+
+      // Library Interior Furniture:
+      // 1. Grand Mahogany Book Walls with Brass Rolling Ladder
+      list.push({
+        xMin: 19.8, xMax: 23.2, yMin: 17.2, yMax: 18.0,
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 19.8, 17.2, ox, oy)
+      });
+      list.push({
+        xMin: 23.6, xMax: 27.0, yMin: 17.2, yMax: 18.0,
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 23.6, 17.2, ox, oy)
+      });
+
+      // 2. Long Walnut Banker's Study Table with Emerald Lamp
+      list.push({
+        xMin: 20.0, xMax: 22.6, yMin: 20.0, yMax: 21.4,
+        draw: () => this.models.drawBankerDesk(this.ctx, 20.0, 20.0, ox, oy)
+      });
+
+      // 3. Tufted Leather Wingback Reading Nook & Rug
+      list.push({
+        xMin: 23.8, xMax: 26.2, yMin: 22.0, yMax: 24.2,
+        draw: () => this.models.drawWingbackReadingNook(this.ctx, 23.8, 22.0, ox, oy)
+      });
+
+      // 4. Standing Brass Celestial Armillary Globe
+      list.push({
+        xMin: 20.2, xMax: 21.4, yMin: 23.6, yMax: 24.8,
+        draw: () => this.models.drawCelestialGlobe(this.ctx, 20.8, 24.2, ox, oy)
+      });
+
+      // 5. Botanical Terrarium Pedestal
+      list.push({
+        xMin: 24.8, xMax: 26.0, yMin: 19.2, yMax: 20.4,
+        draw: () => this.models.drawTerrarium(this.ctx, 24.8, 19.2, ox, oy)
+      });
+
+      // === 5. CENTRAL COURTYARD: BENCHES, FOUNTAIN & TREES ===
       // Fountain
       list.push({
         xMin: 13.0, xMax: 16.0, yMin: 13.0, yMax: 16.0,
@@ -898,7 +1006,7 @@
         [11, 14], [16, 14],
         [16, 21],
         [11, 25], [14, 25], [16, 25],
-        [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
+        [20, 13], [24, 13]
       ];
       trees.forEach(([tx, ty]) => {
         list.push({

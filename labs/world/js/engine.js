@@ -28,6 +28,12 @@
   const AI_MIN_Y = 0;
   const AI_MAX_Y = 9;
 
+  // Zone 4: Ludwigia Grand Library & Botanical Reading Hall (SE)
+  const LIB_MIN_X = 18;
+  const LIB_MAX_X = 27;
+  const LIB_MIN_Y = 17;
+  const LIB_MAX_Y = 26;
+
   // --- Axonometric Coordinate Projections ---
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {
     return {
@@ -359,6 +365,7 @@
     HOUSE_MAX_X, HOUSE_MAX_Y,
     DORM_MIN_X, DORM_MAX_X, DORM_MIN_Y, DORM_MAX_Y,
     AI_MIN_X, AI_MAX_X, AI_MIN_Y, AI_MAX_Y,
+    LIB_MIN_X, LIB_MAX_X, LIB_MIN_Y, LIB_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,

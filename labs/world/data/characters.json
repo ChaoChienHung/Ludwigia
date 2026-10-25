@@ -848,8 +848,8 @@
       "gender": "male",
       "role": "好友 / 分散式計算",
       "avatar": "🚀",
-      "zone": "plaza",
-      "spawn": { "x": 13.5, "y": 18.5 },
+      "zone": "library",
+      "spawn": { "x": 24.5, "y": 22.8 },
       "nameColor": "#818cf8",
       "appearance": {
         "skin": "#e2ba99",
@@ -905,10 +905,10 @@
       "id": "bohan",
       "name": "Bo Han Wu",
       "gender": "male",
-      "role": "好友 / 數學研究者",
+      "role": "好友 / 數學與拓撲研究者",
       "avatar": "📚",
-      "zone": "plaza",
-      "spawn": { "x": 15.5, "y": 11.5 },
+      "zone": "library",
+      "spawn": { "x": 21.0, "y": 20.8 },
       "nameColor": "#a5b4fc",
       "appearance": {
         "skin": "#f5d0b5",
@@ -920,42 +920,46 @@
       "dialogues": {
         "zh-TW": [
           [
-            "你好！坐在這張新優化的精緻木長椅上閱讀數學論文，陽光灑落，是無比愜意的享受。",
-            "數學與邏輯是構築現實最優美的語言，很榮幸在這個世界裡與大家相聚。"
+            "歡迎來到 Ludwigia 典雅藏書閣！坐在這張長形胡桃木閱覽桌前，這盞祖母綠玻璃銀行燈的柔和光暈令人無比沉靜。",
+            "空氣中瀰漫著古老羊皮紙、硬皮書封與微溫油墨的清香，是鑽研數理最高境界的理想聖地。"
           ],
           [
-            "幾何與拓撲的奧妙無處不在。這座世界使用的等角軸測投影，就是射影幾何在屏幕上的精巧映射。",
-            "優雅的數學形式總能帶來心靈上的寧靜。"
+            "桌上這份手稿正推導著黎曼流形與非歐幾何的度量張量。在絕對安靜的閱覽廳裡，心智能與純粹的公理體系直接對話。",
+            "數學與拓撲的優雅形式，往往能為複雜的工程難題提供最澄澈的結構解答。"
           ],
           [
-            "東邊 AI 工作室白板上的對齊梯度流向推導得非常嚴謹，數理之美躍然屏上。",
-            "思考問題時，定義清楚邊界與公理體系，結論自然水到渠成。"
+            "這面直通穹頂的桃花心木大書牆令人嘆為觀止！滑軌黃銅梯可以直達最頂層的經典數學巨著與計算認識論專著。",
+            "每當卡在某個定理的引理證明時，爬上梯子隨手翻開一本幾何拓撲文獻，靈感往往就在字裡行間自然浮現。"
           ],
           [
-            "中央噴泉的水波紋頻率接近黃金分割律，在這裡散步思考能讓人徹底放鬆工作記憶負擔。"
+            "你看角落那座古黃銅渾天儀（Celestial Armillary Globe），它精妙地展現了球面三角學與天體力學的幾何交響。",
+            "古人僅憑圓規、量角器與嚴密幾何，就能描繪出星體運行的軌跡，這種對宇宙秩序的敬畏至今仍激勵著我們。"
           ],
           [
-            "願你在這座由代碼與幾何建構的花園中，收穫純粹的啟發與喜悅。"
+            "剛才和坐在絲絨單人扶手椅上品 Earl Grey 的 Haolei 討論了一下分散式一致性協議的拓撲不變量，收穫頗豐！",
+            "願你在這座由代碼與幾何建構的藏書閣中，收穫最純粹的心靈啟發與智識喜悅。"
           ]
         ],
         "en": [
           [
-            "Hello! Sitting on these newly refined teakwood benches reading mathematical papers under the sun is pure bliss.",
-            "Mathematics and logic form the most sublime vocabulary for describing reality; it is an honor to gather here."
+            "Welcome to the Grand Library! Sitting here at this long polished walnut study table under the warm green glow of the banker's lamp brings profound focus.",
+            "The gentle scent of aged parchment, hardcover bookcloth, and warm printer's ink creates the ultimate sanctuary for mathematical rigor."
           ],
           [
-            "Geometry and topology are everywhere. The isometric axonometric projection of this world is a direct reflection of projective geometry onto the 2D plane.",
-            "Mathematical elegance brings profound tranquility to the soul."
+            "I'm working through metric tensor derivations on Riemannian manifolds. In the stillness of this reading hall, one's mind connects directly with foundational axioms.",
+            "Sublime geometric abstractions always unveil the most transparent architectures for complex engineering."
           ],
           [
-            "The gradient flow derivation in the AI lab whiteboard is mathematically spotless.",
-            "When axioms and boundaries are defined with precision, truthful theorems follow naturally."
+            "This floor-to-ceiling mahogany book wall is truly breathtaking! The brass rolling ladder glides effortlessly to reach the foundational archives of epistemology and topology.",
+            "Whenever an analytical proof feels blocked, browsing these classic volumes with a brass magnifying glass sparks instant clarity."
           ],
           [
-            "The fountain's ripple periodicity echoes the golden ratio; walking here effortlessly eases working memory load."
+            "Notice the antique brass armillary globe standing by the arched window? It embodies the harmony between spherical trigonometry and celestial kinematics.",
+            "Ancient astronomers mapped orbital symmetries with compasses and pure deduction—a timeless tribute to the beauty of logic."
           ],
           [
-            "May your stroll through this garden of code and geometry bring pure joy and clarity."
+            "Haolei and I were just chatting about topological invariants in distributed consensus while he was sipping Earl Grey tea in the leather wingback nook.",
+            "May your time in this sanctuary of books and geometry bring sublime inspiration and mental clarity."
           ]
         ]
       }

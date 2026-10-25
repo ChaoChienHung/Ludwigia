@@ -810,6 +810,325 @@
       ctx.arc(p.x + 8, p.y - 4, 13, 0, Math.PI * 2);
       ctx.fill();
     }
+
+    // =========================================================================
+    // ZONE 4: LUDWIGIA GRAND LIBRARY & BOTANICAL READING HALL
+    // =========================================================================
+
+    // --- 1. Grand Mahogany Book Wall with Brass Rolling Ladder ---
+    drawLibraryBookWall(ctx, gx, gy, ox, oy) {
+      const W = 3.2, D = 0.55, H = 2.3;
+      const cFrame = '#3f1d12';
+      const cSide = '#2b110a';
+      const cTop = '#542516';
+
+      // Drop shadow
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Main Bookshelf Casing
+      this.drawBox(ctx, gx, gy, 0, W, D, H, cTop, cSide, cFrame, ox, oy);
+
+      // 4 Internal Shelves & Realistic Book Rows
+      const shelvesY = [0.15, 0.72, 1.30, 1.88];
+      const bookColors = ['#991b1b', '#166534', '#1e40af', '#854d0e', '#581c87', '#0f766e', '#b45309'];
+
+      shelvesY.forEach((sz, shelfIdx) => {
+        // Shelf plank
+        this.drawBox(ctx, gx + 0.05, gy + 0.04, sz, W - 0.1, D - 0.05, 0.05, '#78350f', '#451a03', '#92400e', ox, oy);
+
+        // Populate row with dense books
+        const bookCount = 9;
+        const bWidth = (W - 0.25) / bookCount;
+        for (let i = 0; i < bookCount; i++) {
+          const bx = gx + 0.12 + i * bWidth;
+          const bH = 0.42 + ((i * 7 + shelfIdx * 3) % 5) * 0.025;
+          const bColor = bookColors[(i * 3 + shelfIdx * 2) % bookColors.length];
+          this.drawBox(ctx, bx, gy + 0.1, sz + 0.05, bWidth * 0.85, D * 0.7, bH, '#fde68a', '#d97706', bColor, ox, oy);
+        }
+      });
+
+      // Brass Rolling Ladder Rail
+      const railZ = 1.95;
+      const r0 = isoToScreen(gx, gy + D + 0.05, railZ, ox, oy);
+      const r1 = isoToScreen(gx + W, gy + D + 0.05, railZ, ox, oy);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(r0.x, r0.y);
+      ctx.lineTo(r1.x, r1.y);
+      ctx.stroke();
+
+      // Slanted Wooden Rolling Ladder
+      const lx = gx + W * 0.65;
+      const lTop = isoToScreen(lx, gy + D + 0.06, railZ, ox, oy);
+      const lBot = isoToScreen(lx, gy + D + 0.45, 0, ox, oy);
+      ctx.strokeStyle = '#451a03';
+      ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      ctx.moveTo(lTop.x - 3, lTop.y); ctx.lineTo(lBot.x - 3, lBot.y);
+      ctx.moveTo(lTop.x + 3, lTop.y); ctx.lineTo(lBot.x + 3, lBot.y);
+      ctx.stroke();
+
+      // Ladder Rungs
+      for (let r = 1; r <= 6; r++) {
+        const t = r / 7;
+        const rx = lTop.x * (1 - t) + lBot.x * t;
+        const ry = lTop.y * (1 - t) + lBot.y * t;
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(rx - 3.5, ry); ctx.lineTo(rx + 3.5, ry);
+        ctx.stroke();
+      }
+
+      // Trailing Ivy on Top Cornice
+      const topP = isoToScreen(gx + 0.4, gy + 0.1, H, ox, oy);
+      ctx.fillStyle = '#15803d';
+      ctx.beginPath();
+      ctx.arc(topP.x, topP.y + 4, 5, 0, Math.PI * 2);
+      ctx.arc(topP.x + 8, topP.y + 7, 4, 0, Math.PI * 2);
+      ctx.arc(topP.x + 14, topP.y + 11, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- 2. Long Walnut Banker's Study Table with Emerald Lamp ---
+    drawBankerDesk(ctx, gx, gy, ox, oy) {
+      const W = 2.4, D = 1.2, H = 0.72;
+
+      // Drop shadow
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // Solid Sturdy Legs
+      const legR = 0.07;
+      const legColor = '#291209';
+      this.drawBox(ctx, gx + 0.1, gy + 0.1, 0, legR, legR, H, null, null, legColor, ox, oy);
+      this.drawBox(ctx, gx + W - 0.17, gy + 0.1, 0, legR, legR, H, null, null, legColor, ox, oy);
+      this.drawBox(ctx, gx + 0.1, gy + D - 0.17, 0, legR, legR, H, null, null, legColor, ox, oy);
+      this.drawBox(ctx, gx + W - 0.17, gy + D - 0.17, 0, legR, legR, H, null, null, legColor, ox, oy);
+
+      // Polished Dark Walnut Tabletop
+      this.drawBox(ctx, gx, gy, H - 0.06, W, D, 0.06, '#5c2b16', '#3b180a', '#4a200e', ox, oy);
+
+      // Emerald Green Banker's Lamp in Center
+      const lx = gx + W / 2;
+      const ly = gy + D / 2;
+      const lBase = isoToScreen(lx, ly, H, ox, oy);
+
+      // Brass base & neck
+      ctx.fillStyle = '#d97706';
+      ctx.beginPath();
+      ctx.ellipse(lBase.x, lBase.y, 4, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(lBase.x, lBase.y);
+      ctx.lineTo(lBase.x, lBase.y - 10);
+      ctx.stroke();
+
+      // Emerald green cylindrical glass shade
+      ctx.fillStyle = '#059669';
+      ctx.strokeStyle = '#047857';
+      ctx.lineWidth = 1.0;
+      this.roundRect(ctx, lBase.x - 7, lBase.y - 14, 14, 5.5, 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Warm downward emerald reading light aura
+      const glow = ctx.createRadialGradient(lBase.x, lBase.y - 2, 2, lBase.x, lBase.y - 2, 24);
+      glow.addColorStop(0, 'rgba(167, 243, 208, 0.45)');
+      glow.addColorStop(0.5, 'rgba(52, 211, 153, 0.20)');
+      glow.addColorStop(1, 'rgba(5, 150, 105, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.ellipse(lBase.x, lBase.y - 2, 24, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Open Manuscript on Table
+      const mPos = isoToScreen(gx + 0.6, gy + 0.6, H + 0.01, ox, oy);
+      ctx.fillStyle = '#fef3c7';
+      ctx.fillRect(mPos.x - 8, mPos.y - 5, 16, 10);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(mPos.x - 8, mPos.y - 5, 16, 10);
+      // Faint lines of calligraphy / math
+      ctx.strokeStyle = '#92400e';
+      ctx.beginPath();
+      ctx.moveTo(mPos.x - 6, mPos.y - 2); ctx.lineTo(mPos.x - 2, mPos.y - 2);
+      ctx.moveTo(mPos.x - 6, mPos.y + 1); ctx.lineTo(mPos.x - 2, mPos.y + 1);
+      ctx.moveTo(mPos.x + 2, mPos.y - 2); ctx.lineTo(mPos.x + 6, mPos.y - 2);
+      ctx.moveTo(mPos.x + 2, mPos.y + 1); ctx.lineTo(mPos.x + 6, mPos.y + 1);
+      ctx.stroke();
+
+      // Brass Magnifying Glass & Inkwell
+      const inkP = isoToScreen(gx + 1.8, gy + 0.4, H + 0.01, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(inkP.x, inkP.y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(inkP.x, inkP.y); ctx.lineTo(inkP.x + 4, inkP.y - 8);
+      ctx.stroke();
+    }
+
+    // --- 3. Tufted Leather Wingback Armchair & Reading Nook ---
+    drawWingbackReadingNook(ctx, gx, gy, ox, oy) {
+      // 1. Woven Persian Rug
+      const rugP = isoToScreen(gx - 0.2, gy - 0.2, 0, ox, oy);
+      const rW = 2.0, rD = 1.8;
+      const b0 = isoToScreen(gx - 0.2, gy - 0.2, 0.005, ox, oy);
+      const b1 = isoToScreen(gx - 0.2 + rW, gy - 0.2, 0.005, ox, oy);
+      const b2 = isoToScreen(gx - 0.2 + rW, gy - 0.2 + rD, 0.005, ox, oy);
+      const b3 = isoToScreen(gx - 0.2, gy - 0.2 + rD, 0.005, ox, oy);
+      ctx.fillStyle = '#831843'; // Deep wine red
+      ctx.beginPath();
+      ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.lineTo(b2.x, b2.y); ctx.lineTo(b3.x, b3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // 2. Cognac Tufted Leather Armchair
+      this.drawDropShadow(ctx, gx + 0.3, gy + 0.3, 1.2, 1.1, ox, oy);
+      // Seat cushion
+      this.drawBox(ctx, gx + 0.3, gy + 0.3, 0.22, 1.1, 1.0, 0.32, '#b45309', '#78350f', '#92400e', ox, oy);
+      // High Wingback backrest
+      this.drawBox(ctx, gx + 0.3, gy + 0.3, 0.54, 0.25, 1.0, 0.82, '#b45309', '#78350f', '#92400e', ox, oy);
+      // Armrests
+      this.drawBox(ctx, gx + 0.3, gy + 0.3, 0.42, 0.9, 0.22, 0.25, '#92400e', '#78350f', '#b45309', ox, oy);
+      this.drawBox(ctx, gx + 0.3, gy + 1.08, 0.42, 0.9, 0.22, 0.25, '#92400e', '#78350f', '#b45309', ox, oy);
+
+      // 3. Side Round Table with Tea
+      this.drawBox(ctx, gx + 1.4, gy + 0.4, 0, 0.4, 0.4, 0.52, '#78350f', '#451a03', '#92400e', ox, oy);
+      const teaP = isoToScreen(gx + 1.6, gy + 0.6, 0.53, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(teaP.x, teaP.y, 3, 1.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#78350f'; // Earl grey tea
+      ctx.beginPath();
+      ctx.arc(teaP.x, teaP.y - 1, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4. Vintage Brass Floor Lamp
+      const lampBase = isoToScreen(gx + 0.1, gy + 1.3, 0, ox, oy);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(lampBase.x, lampBase.y);
+      ctx.lineTo(lampBase.x, lampBase.y - 38);
+      ctx.stroke();
+
+      // Scalloped fabric shade
+      ctx.fillStyle = '#fef3c7';
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(lampBase.x - 7, lampBase.y - 34);
+      ctx.lineTo(lampBase.x + 7, lampBase.y - 34);
+      ctx.lineTo(lampBase.x + 9, lampBase.y - 26);
+      ctx.lineTo(lampBase.x - 9, lampBase.y - 26);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Warm radial floor lamp glow
+      const lampGlow = ctx.createRadialGradient(lampBase.x, lampBase.y - 26, 2, lampBase.x, lampBase.y - 10, 32);
+      lampGlow.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
+      lampGlow.addColorStop(0.5, 'rgba(253, 224, 71, 0.18)');
+      lampGlow.addColorStop(1, 'rgba(234, 179, 8, 0)');
+      ctx.fillStyle = lampGlow;
+      ctx.beginPath();
+      ctx.ellipse(lampBase.x, lampBase.y - 10, 32, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- 4. Standing Brass Celestial Armillary Globe ---
+    drawCelestialGlobe(ctx, gx, gy, ox, oy) {
+      const gPos = isoToScreen(gx, gy, 0, ox, oy);
+
+      // Soft drop shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+      ctx.beginPath();
+      ctx.ellipse(gPos.x, gPos.y, 10, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Carved Wooden Tripod Pedestal
+      ctx.strokeStyle = '#451a03';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(gPos.x, gPos.y - 12); ctx.lineTo(gPos.x - 6, gPos.y);
+      ctx.moveTo(gPos.x, gPos.y - 12); ctx.lineTo(gPos.x + 6, gPos.y);
+      ctx.moveTo(gPos.x, gPos.y - 12); ctx.lineTo(gPos.x, gPos.y + 2);
+      ctx.stroke();
+
+      // Vertical Brass Spindle
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+      ctx.moveTo(gPos.x, gPos.y - 12);
+      ctx.lineTo(gPos.x, gPos.y - 20);
+      ctx.stroke();
+
+      // Celestial Armillary Rings (渾天儀金色同心環)
+      const cy = gPos.y - 26;
+      ctx.lineWidth = 1.5;
+
+      // Outer Meridian Ring
+      ctx.strokeStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(gPos.x, cy, 9, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Slanted Equator Ring
+      ctx.strokeStyle = '#d97706';
+      ctx.beginPath();
+      ctx.ellipse(gPos.x, cy, 9, 4, Math.PI / 4, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Center miniature celestial sphere
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(gPos.x, cy, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- 5. Botanical Terrarium & Exotic Indoor Ferns ---
+    drawTerrarium(ctx, gx, gy, ox, oy) {
+      this.drawDropShadow(ctx, gx, gy, 0.8, 0.8, ox, oy);
+
+      // Wooden Pedestal
+      this.drawBox(ctx, gx, gy, 0, 0.8, 0.8, 0.55, '#5c2b16', '#3b180a', '#4a200e', ox, oy);
+
+      // Glass Geometric Terrarium Casing
+      const tPos = isoToScreen(gx + 0.4, gy + 0.4, 0.55, ox, oy);
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.42)';
+      ctx.strokeStyle = '#b45309'; // Copper solder joints
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(tPos.x, tPos.y - 8, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Lush Indoor Mini Fern & Succulents
+      ctx.fillStyle = '#16a34a';
+      ctx.beginPath();
+      ctx.arc(tPos.x - 2, tPos.y - 6, 4, 0, Math.PI * 2);
+      ctx.arc(tPos.x + 3, tPos.y - 7, 3.5, 0, Math.PI * 2);
+      ctx.arc(tPos.x, tPos.y - 11, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Polished River Pebbles
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.arc(tPos.x - 4, tPos.y - 2, 2, 0, Math.PI * 2);
+      ctx.arc(tPos.x, tPos.y - 1.5, 2.2, 0, Math.PI * 2);
+      ctx.arc(tPos.x + 4, tPos.y - 2, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
   // Export to Global Scope

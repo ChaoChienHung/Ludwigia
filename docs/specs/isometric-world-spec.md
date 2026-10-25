@@ -61,9 +61,9 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
 
 ---
 
-## 4. 三大核心分區與空間佈局（Tri-Zone Campus Layout）
+## 4. 四大生活與研究聚落空間佈局（Four Quad Campuses Architecture）
 
-地圖規格擴展至 $28 \times 28$ 瓦片，劃分為三大獨立建築群與中央社交綠意廣場：
+地圖規格擴展至 $28 \times 28$ 瓦片，劃分為四大獨立建築聚落與中央社交綠意十字大道：
 
 ```
 [Zone 1: Ludwig's House] (NW)             [Zone 3: Ludwigia AI Studio] (NE)
@@ -73,24 +73,42 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
                  \                               /
                   +-----------------------------+
                   |  中央廣場 Central Plaza     |
-                  |  (Haolei Pei, Bo Han Wu)    |
                   |  雙層宏偉石造噴水池 (Fountain) |
                   |  鑄鐵柚木長椅 / 櫻花林蔭道  |
                   +-----------------------------+
-                                 |
-                  [Zone 2: 男11 211 宿舍] (SW)
-                  (Happy, Kerry, Clark, Jerry, Billy)
-                  - 4 座經典上床下桌 (Loft Bed/Desk)
-                  - 寢室門牌 "男11 211" / 共享小冰箱吉他客廳
+                 /                               \
+[Zone 2: 男11 211 宿舍] (SW)              [Zone 4: 典雅藏書閣 Grand Library] (SE)
+(Happy, Kerry, Clark, Jerry, Billy)       (Bo Han Wu, Haolei Pei)
+- 4 座經典上床下桌 (Loft Bed/Desk)        - 通頂桃花心木大書牆 / 滑軌黃銅梯
+- 寢室門牌 "男11 211" / 共享小冰箱吉他    - 祖母綠玻璃銀行燈胡桃木長桌 / 渾天儀
+- 實木進口雙開門                          - 酒紅波斯地毯單人扶手椅 / 玻璃溫室
 ```
 
-### 4.1 雙向開闔互動門系統（Multi-Directional Doorway System）
-- **正門東南雙開實木門（SE Entrance Double Doors）**：設於 $x = 10, y = 4.5..6.8$，當角色靠近至 2.4 格以內時，向庭院外側平滑旋轉 77 度開啟。
-- **側邊西南景觀露台雙開門（SW Side Terrace Doors）**：設於 $y = 10, x = 4.5..6.8$，連接客廳與南側戶外走廊，角色靠近時雙向平滑向外旋開，門外鋪設椰棕編織迎賓地墊。
-- **男11 211 寢室門**：設於東南牆 $x = 10, y = 20.5..22.8$，上方懸掛經典藍底白字「男11 211」琺瑯金屬門牌。
-- **AI 工作室滑動玻璃門**：設於西南牆 $x = 18, y = 4.5..6.8$，門頭發光霓虹標牌「AI STUDIO」，靠近時自動向兩側無聲平移滑動。
+### 4.1 四大象限互動門系統（Quad Multi-Directional Doorway System）
+- **Zone 1 正門東南雙開實木門（SE Entrance Double Doors）**：設於 $x = 10, y = 4.5..6.8$，當角色靠近至 2.4 格以內時，向庭院外側平滑旋轉 77 度開啟。
+- **Zone 1 側邊西南景觀露台雙開門（SW Side Terrace Doors）**：設於 $y = 10, x = 4.5..6.8$，連接客廳與南側戶外走廊，角色靠近時雙向平滑向外旋開，門外鋪設椰棕編織迎賓地墊。
+- **Zone 2 男11 211 寢室門**：設於東南牆 $x = 10, y = 20.5..22.8$，上方懸掛經典藍底白字「男11 211」琺瑯金屬門牌，靠近自動外旋開啟。
+- **Zone 3 AI 工作室滑動玻璃門**：設於西南牆 $x = 18, y = 4.5..6.8$，門頭發光霓虹標牌「AI STUDIO」，靠近時自動向兩側無聲平移滑動。
+- **Zone 4 典雅藏書閣實木大門**：設於西北牆 $x = 18, y = 20.5..22.8$，門頭配備浮雕金屬標牌「GRAND LIBRARY」，靠近時自動向外旋開。
 
-### 4.2 零錯位精準家具建模（Architectural Geometry Fixes）
+### 4.2 典雅花園藏書閣專屬建模（Zone 4 Library Architectural Models）
+- **通頂桃花心木大書牆與滑軌黃銅梯（Grand Library Book Wall & Rolling Ladder）**：
+  - 4 層深紅桃花心木立體書櫃，緊密陳列上百本各色精裝典籍與燙金書脊。
+  - 櫃頂裝飾新古典雕花線板與垂落常春藤藤蔓。
+  - 橫向延伸拋光黃銅滑軌（Brass Rail），配備精巧木製滾輪滑梯，營造古典學術圖書館的深邃歷史感。
+- **長形胡桃木銀行家閱覽桌（Long Banker's Study Table）**：
+  - 實木倒角胡桃木長桌，中央陳列古董祖母綠綠色玻璃銀行燈（Emerald Banker's Lamp），在地板與桌面投射出溫潤的綠寶石徑向擴散光暈。
+  - 桌面攤開正在演算的幾何手稿、墨水瓶與拋光黃銅放大鏡。
+- **酒紅波斯地毯與皮革單人扶手椅（Cognac Wingback Reading Nook）**：
+  - 地面鋪設帶流蘇邊緣的酒紅菱形波斯編織地毯。
+  - 放置焦糖干邑色拉扣皮革單人高背扶手椅（Wingback Chair），搭配黃銅鉚釘收邊。
+  - 邊几擺放骨瓷熱伯爵茶（Earl Grey），上方立式黃銅復古立燈向下投射溫暖金黃閱讀光圈。
+- **古黃銅渾天儀（Celestial Armillary Globe）**：
+  - 經典三腳雕花木座，托起多層同心黃銅旋轉赤道環、黃道環與金屬樞軸，象徵球面幾何與天體軌道的數理交響。
+- **六角玻璃植物溫室箱（Botanical Terrarium Case）**：
+  - 黑色銅條鑲邊六角立體玻璃箱，內部滋養微型波士頓蕨、翠綠苔蘚與溪流鵝卵石，為嚴謹的學術藏書閣注入自然生機。
+
+### 4.3 經典精準家具建模（Architectural Geometry Fixes）
 - **開發工作桌與懸臂檯燈（Desk & Anglepoise Lamp）**：
   - 炭黑皮革桌墊（Charcoal Mat）精準置中於桌面（$z = 0.725$），上置 75% 背光機械鍵盤與人體工學滑鼠。
   - 開發筆電置中開屏，副螢幕穩固架設於右側金屬支架，螢幕朝向使用者。
