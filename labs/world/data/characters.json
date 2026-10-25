@@ -1018,6 +1018,18 @@
       "dialogues": {
         "zh-TW": [
           [
+            "我們晚點對一對？",
+            "把這幾個模組的接口和邊界條件重新過一遍，確認預期一致！"
+          ],
+          [
+            "我感覺不對呀，應該有根因沒查出來……",
+            "不能只看表面現象，再把日誌和核心時序抓出來 trace 一遍！"
+          ],
+          [
+            "太帥了！",
+            "這個架構設計簡潔又優雅，直接把複雜度降了一個量級！"
+          ],
+          [
             "嗨！你也在逛中央花園嗎？",
             "南側是熱鬧的男11 211宿舍，東邊是算力充沛的 AI 工作室，這個校園佈局太棒了！",
             "微風吹過噴泉水珠的感覺真的很舒服，一起走走吧！"
@@ -1037,6 +1049,18 @@
           ]
         ],
         "en": [
+          [
+            "Let us sync up later?",
+            "We should double check the module interfaces and boundary conditions to make sure we are completely aligned!"
+          ],
+          [
+            "Something feels off, there must be a root cause we have not uncovered yet...",
+            "We cannot just patch the surface symptoms; let us pull the full trace logs and dig down to the bedrock!"
+          ],
+          [
+            "Too clean! / That is awesome!",
+            "This architecture is so elegant and sharp, cuts the complexity right down!"
+          ],
           [
             "Hey! Strolling through the central courtyard as well?",
             "Men's Dorm 211 to the south, AI research studio to the east—this campus layout is magnificent!",
