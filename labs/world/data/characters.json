@@ -1102,6 +1102,53 @@
       ]
     },
     {
+      "id": "baisen",
+      "name": {
+        "zh-TW": "陳泊霖",
+        "en": "Baisen Chen"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "實習生同事 (抖音)",
+        "en": "Intern Colleague (Douyin)"
+      },
+      "avatar": "💻",
+      "zone": "douyin_office",
+      "spawn": {
+        "x": 24.5,
+        "y": 35.5
+      },
+      "nameColor": "#38bdf8",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#0f172a",
+        "shirt": "#0284c7",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "今天 PR 跑完 CI/CD 了嗎？"
+          ],
+          [
+            "中午要不要去吃公司食堂？今天好像有酸菜魚！"
+          ]
+        ],
+        "en": [
+          [
+            "Did your PR pass the CI/CD pipeline yet?"
+          ],
+          [
+            "Want to hit the cafeteria for lunch? I think they have Sichuan fish today!"
+          ]
+        ]
+      },
+      "visitedZones": [
+        "douyin_office"
+      ]
+    },
+    {
       "id": "bohan",
       "name": {
         "zh-TW": "吳柏翰",
