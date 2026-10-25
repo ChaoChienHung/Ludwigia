@@ -942,7 +942,7 @@
         xMin: 0, xMax: DORM_MAX_X + 1,
         yMin: DORM_MIN_Y - 0.1, yMax: DORM_MIN_Y + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, (DORM_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy);
+          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, (DORM_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
           // Cork Noticeboard at y = 17.26, x: 3.8..6.2, z: 1.15..1.85
           const cb0 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.15, ox, oy);
           const cb1 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.15, ox, oy);
@@ -1162,7 +1162,84 @@
         draw: () => this.models.drawEspressoBar(this.ctx, 19.5, 7.2, ox, oy)
       });
 
+      // AI Studio South Wall (along y = AI_MAX_Y + 1 = 10, x: 18 to 28)
+      // Facing the central lawn with panoramic Cyber Glass Observation Window
+      const aiSouthY = AI_MAX_Y + 1.0;
+      list.push({
+        xMin: AI_MIN_X - 0.15, xMax: AI_MAX_X + 1.0,
+        yMin: aiSouthY - 0.15, yMax: aiSouthY + 0.35,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
+          this.models.drawBox(this.ctx, AI_MIN_X, aiSouthY, 0, (AI_MAX_X + 1) - AI_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy);
+
+          // Panoramic Cyber Glass Observation Window (x: 21.0 to 26.5, z: 0.85 to 1.95)
+          const cw0 = isoToScreen(21.0, aiSouthY + 0.26, 0.85, ox, oy);
+          const cw1 = isoToScreen(26.5, aiSouthY + 0.26, 0.85, ox, oy);
+          const cw2 = isoToScreen(26.5, aiSouthY + 0.26, 1.95, ox, oy);
+          const cw3 = isoToScreen(21.0, aiSouthY + 0.26, 1.95, ox, oy);
+          this.ctx.fillStyle = 'rgba(6, 182, 212, 0.45)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(cw0.x, cw0.y); this.ctx.lineTo(cw1.x, cw1.y); this.ctx.lineTo(cw2.x, cw2.y); this.ctx.lineTo(cw3.x, cw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#06b6d4';
+          this.ctx.lineWidth = 1.5;
+          this.ctx.stroke();
+
+          // Cyber Window Horizontal Dividing Mullion (z: 1.40)
+          const cm0 = isoToScreen(21.0, aiSouthY + 0.26, 1.40, ox, oy);
+          const cm1 = isoToScreen(26.5, aiSouthY + 0.26, 1.40, ox, oy);
+          this.ctx.strokeStyle = 'rgba(34, 211, 238, 0.7)';
+          this.ctx.lineWidth = 1.0;
+          this.ctx.beginPath();
+          this.ctx.moveTo(cm0.x, cm0.y); this.ctx.lineTo(cm1.x, cm1.y);
+          this.ctx.stroke();
+
+          this.ctx.restore();
+        }
+      });
+
       // === 4. ZONE 4: LUDWIGIA GRAND LIBRARY & BOTANICAL READING HALL ===
+      // Library North Partition Wall (along y = LIB_MIN_Y = 17, x: 18 to 28)
+      // Solid architectural wall behind Grand Mahogany Bookcases facing the lawn
+      list.push({
+        xMin: LIB_MIN_X - 0.15, xMax: LIB_MAX_X + 1.0,
+        yMin: LIB_MIN_Y - 0.15, yMax: LIB_MIN_Y + 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
+
+          // Exterior Classical Stained Glass Clerestory Windows (facing lawn at y = 17.0, z: 1.25 to 2.15)
+          // Window 1 (x: 20.0 to 22.8)
+          const lw0 = isoToScreen(20.0, LIB_MIN_Y - 0.01, 1.25, ox, oy);
+          const lw1 = isoToScreen(22.8, LIB_MIN_Y - 0.01, 1.25, ox, oy);
+          const lw2 = isoToScreen(22.8, LIB_MIN_Y - 0.01, 2.15, ox, oy);
+          const lw3 = isoToScreen(20.0, LIB_MIN_Y - 0.01, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(251, 191, 36, 0.45)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(lw0.x, lw0.y); this.ctx.lineTo(lw1.x, lw1.y); this.ctx.lineTo(lw2.x, lw2.y); this.ctx.lineTo(lw3.x, lw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+
+          // Window 2 (x: 23.8 to 26.6)
+          const rw0 = isoToScreen(23.8, LIB_MIN_Y - 0.01, 1.25, ox, oy);
+          const rw1 = isoToScreen(26.6, LIB_MIN_Y - 0.01, 1.25, ox, oy);
+          const rw2 = isoToScreen(26.6, LIB_MIN_Y - 0.01, 2.15, ox, oy);
+          const rw3 = isoToScreen(23.8, LIB_MIN_Y - 0.01, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(251, 191, 36, 0.45)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(rw0.x, rw0.y); this.ctx.lineTo(rw1.x, rw1.y); this.ctx.lineTo(rw2.x, rw2.y); this.ctx.lineTo(rw3.x, rw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+        }
+      });
+
       // Library NW Entrance Walls & Bronze Plaque
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
@@ -1261,6 +1338,15 @@
       list.push({
         xMin: 24.8, xMax: 26.0, yMin: 19.2, yMax: 20.4,
         draw: () => this.models.drawTerrarium(this.ctx, 24.8, 19.2, ox, oy)
+      });
+
+      // 6. Library South Boundary Skirting (along y = LIB_MAX_Y + 1 = 27, x: 18 to 28)
+      list.push({
+        xMin: LIB_MIN_X, xMax: LIB_MAX_X + 1,
+        yMin: LIB_MAX_Y + 0.9, yMax: LIB_MAX_Y + 1.2,
+        draw: () => {
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MAX_Y + 1, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.20, 0.35, wallT, wallL, null, ox, oy);
+        }
       });
 
       // === 5. CENTRAL COURTYARD: BENCHES, FOUNTAIN & TREES ===

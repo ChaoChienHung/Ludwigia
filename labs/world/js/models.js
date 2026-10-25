@@ -18,7 +18,7 @@
     }
 
     // --- Isometric 3D Solid Box Primitive (Fully Closed Solid Surfaces) ---
-    drawBox(ctx, gx, gy, gz, dx, dy, dz, topCol, leftCol, rightCol, ox, oy) {
+    drawBox(ctx, gx, gy, gz, dx, dy, dz, topCol, leftCol, rightCol, ox, oy, backCol = null) {
       const b0 = isoToScreen(gx, gy, gz, ox, oy);
       const b1 = isoToScreen(gx + dx, gy, gz, ox, oy);
       const b2 = isoToScreen(gx + dx, gy + dy, gz, ox, oy);
@@ -31,6 +31,15 @@
 
       const lCol = leftCol || rightCol;
       const rCol = rightCol || leftCol;
+
+      // North / Back-facing Exterior Face (facing diagonally top-right on screen: b0 -> b1 -> t1 -> t0)
+      if (backCol) {
+        ctx.fillStyle = backCol;
+        ctx.beginPath();
+        ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.lineTo(t1.x, t1.y); ctx.lineTo(t0.x, t0.y);
+        ctx.closePath();
+        ctx.fill();
+      }
 
       // Left Visible Face (Front-Left on screen, facing diagonally bottom-left: b3 -> b2)
       if (lCol) {
