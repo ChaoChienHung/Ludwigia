@@ -1144,6 +1144,96 @@
         "library",
         "plaza"
       ]
+    },
+    {
+      "id": "zhenyan",
+      "name": {
+        "zh-TW": "凌振嚴",
+        "en": "Zhen Yan Lin"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "高中同學 (三民高中)",
+        "en": "Classmate (Sanmin High)"
+      },
+      "avatar": "🎒",
+      "zone": "sanmin_school",
+      "spawn": {
+        "x": 2.3,
+        "y": 37.2
+      },
+      "nameColor": "#38bdf8",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1e1b18",
+        "shirt": "#0284c7",
+        "pants": "#334155",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "大哥別鬧拉……"
+          ]
+        ],
+        "en": [
+          [
+            "Bro, don't mess around..."
+          ]
+        ]
+      },
+      "visitedZones": [
+        "sanmin_school",
+        "plaza"
+      ]
+    },
+    {
+      "id": "willkane",
+      "name": {
+        "zh-TW": "林浥翔",
+        "en": "willkane"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "高中同學 (三民高中)",
+        "en": "Classmate (Sanmin High)"
+      },
+      "avatar": "✏️",
+      "zone": "sanmin_school",
+      "spawn": {
+        "x": 5.1,
+        "y": 37.2
+      },
+      "nameColor": "#34d399",
+      "appearance": {
+        "skin": "#e2ba99",
+        "hair": "#292524",
+        "shirt": "#059669",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "下課要不要去福利社買飲料？"
+          ],
+          [
+            "這題數學公式我推出來了！"
+          ]
+        ],
+        "en": [
+          [
+            "Want to grab drinks at the school store after class?"
+          ],
+          [
+            "I finally derived this math formula on the board!"
+          ]
+        ]
+      },
+      "visitedZones": [
+        "sanmin_school",
+        "plaza"
+      ]
     }
   ]
 }
