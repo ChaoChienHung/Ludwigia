@@ -80,7 +80,7 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
 [Zone 2: 男11 211 宿舍] (SW)              [Zone 4: 典雅藏書閣 Grand Library] (SE)
 (Happy, Kerry, Clark, Jerry, Billy)       (Bo Han Wu, Haolei Pei)
 - 4 座經典上床下桌 (Loft Bed/Desk)        - 通頂桃花心木大書牆 / 滑軌黃銅梯
-- 寢室門牌 "男11 211" / 共享小冰箱吉他    - 祖母綠玻璃銀行燈胡桃木長桌 / 渾天儀
+- 寢室門牌 "男11 211" / 寬敞開闊中央動線    - 祖母綠玻璃銀行燈胡桃木長桌 / 渾天儀
 - 實木進口雙開門                          - 酒紅波斯地毯單人扶手椅 / 玻璃溫室
 ```
 
@@ -101,7 +101,7 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
   - 北側排（Happy Wang & Clark Wu, $y = 17.5$）：書桌與旋轉椅朝南開向中央走廊，椅子正對書桌/床鋪，椅背朝向走道。
   - 南側排（Kerry Chang & Jerry Chung, $y = 24.5$）：書桌與旋轉椅朝北開向中央走廊，椅子正對書桌/床鋪，椅背朝向走道。
   - 兩側椅背在中央走廊互相背對（背靠背），兩排床鋪橫向正對彼此，符合標準台灣大學四人寢室生活格局。
-  - 中央走廊設有共用交誼區（Billy Fang、小冰箱、吉他、冷飲與抱枕地毯）。
+  - 中央走廊維持開闊通暢之核心動線（Billy Fang 於走道中央自在彈奏吉他談笑，無多餘茶几或冰箱阻礙，走道視野明朗俐落）。
 
 ### 4.3 典雅花園藏書閣專屬建模（Zone 4 Library Architectural Models）
 - **通頂桃花心木大書牆與滑軌黃銅梯（Grand Library Book Wall & Rolling Ladder）**：
