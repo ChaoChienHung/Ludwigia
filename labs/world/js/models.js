@@ -285,97 +285,203 @@
       ctx.strokeRect(mugPos.x - 3, mugPos.y - 7, 6, 7);
     }
 
-    // --- Architectural 4-Tier Bookshelf (Cleanly Aligned against Wall, x: 0, y: 4) ---
+    // --- Architectural 4-Tier Bookshelf (Solid Frame, Clear Corners, Recessed Books, x: 0.1, y: 3.8) ---
     drawBookshelf(ctx, gx, gy, ox, oy) {
       const W = 0.65;  // Depth along X
       const L = 2.50;  // Length along Y
-      const H = 2.40;  // Height
+      const H = 2.45;  // Total Height
 
-      // 1. Backing Wall Panel & Sturdy Side Uprights
-      // Left Upright Stile (at y = gy)
-      this.drawBox(ctx, gx, gy, 0, W, 0.08, H, '#78350f', '#58240a', '#451a03', ox, oy);
-      // Right Upright Stile (at y = gy + L)
-      this.drawBox(ctx, gx, gy + L - 0.08, 0, W, 0.08, H, '#78350f', '#58240a', '#451a03', ox, oy);
-      // Back Panel
-      this.drawBox(ctx, gx, gy, 0, 0.06, L, H, '#58240a', '#451a03', '#311202', ox, oy);
-      // Top Cornice Trim
-      this.drawBox(ctx, gx, gy, H - 0.06, W, L, 0.06, '#92400e', '#78350f', '#58240a', ox, oy);
+      // Helper quad drawers with exact isometric perspective
+      const fillFront = (x, y0, y1, z0, z1, col) => {
+        const p0 = isoToScreen(x, y0, z0, ox, oy);
+        const p1 = isoToScreen(x, y1, z0, ox, oy);
+        const p2 = isoToScreen(x, y1, z1, ox, oy);
+        const p3 = isoToScreen(x, y0, z1, ox, oy);
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+        ctx.closePath();
+        ctx.fill();
+      };
 
-      // 2. Four Solid Horizontal Shelves
-      const shelvesZ = [0.15, 0.75, 1.35, 1.95];
-      shelvesZ.forEach(sz => {
-        this.drawBox(ctx, gx, gy, sz, W, L, 0.05, '#92400e', '#78350f', '#58240a', ox, oy);
-      });
+      const fillSide = (x0, x1, y, z0, z1, col) => {
+        const p0 = isoToScreen(x0, y, z0, ox, oy);
+        const p1 = isoToScreen(x1, y, z0, ox, oy);
+        const p2 = isoToScreen(x1, y, z1, ox, oy);
+        const p3 = isoToScreen(x0, y, z1, ox, oy);
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+        ctx.closePath();
+        ctx.fill();
+      };
 
-      // 3. Books Mathematically Sitting Directly ON Shelves (Zero Floating!)
-      // Shelf 1 (sz = 0.20): Heavy Hardcover Volumes
-      const s1Books = [
-        { y: 0.15, len: 0.28, h: 0.46, col: '#1e3a8a' }, // Navy
-        { y: 0.45, len: 0.22, h: 0.44, col: '#065f46' }, // Emerald
-        { y: 0.70, len: 0.35, h: 0.48, col: '#b45309' }, // Leather
-        { y: 1.10, len: 0.30, h: 0.45, col: '#831843' }, // Burgundy
-        { y: 1.45, len: 0.26, h: 0.42, col: '#1e293b' }, // Dark Slate
-        { y: 1.75, len: 0.35, h: 0.47, col: '#0369a1' }  // Blue
+      const fillTop = (x0, x1, y0, y1, z, col) => {
+        const p0 = isoToScreen(x0, y0, z, ox, oy);
+        const p1 = isoToScreen(x1, y0, z, ox, oy);
+        const p2 = isoToScreen(x1, y1, z, ox, oy);
+        const p3 = isoToScreen(x0, y1, z, ox, oy);
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+        ctx.closePath();
+        ctx.fill();
+      };
+
+      const backX = gx + 0.06;
+      const frontX = gx + W;
+      const yStart = gy;
+      const yEnd = gy + L;
+
+      // 1. Backing Wall Panel & Base Plinth
+      // Dark Cavity Backing (Inside the bookshelf)
+      fillFront(backX, yStart + 0.04, yEnd - 0.04, 0.14, H - 0.10, '#2d1406');
+      // Left Inner Panel
+      fillSide(backX, frontX, yStart + 0.04, 0.14, H - 0.10, '#3a1a08');
+      
+      // Bottom Base Plinth (Elevates bookcase from ground)
+      fillFront(frontX, yStart, yEnd, 0, 0.14, '#78350f');
+      fillSide(gx, frontX, yEnd, 0, 0.14, '#58240a');
+      fillTop(backX, frontX, yStart, yEnd, 0.14, '#92400e');
+
+      // 2. Shelves & Books (Rendered strictly tier by tier from bottom to top)
+      // Books depth: sits from backX + 0.03 to backX + 0.36 (recessed inside by ~0.23 units from front edge!)
+      const bBackX = backX + 0.03;
+      const bFrontX = backX + 0.36;
+
+      const renderBook = (y0, y1, zBase, h, col, foil) => {
+        // Front Spine (facing room, South-East)
+        fillFront(bFrontX, y0, y1, zBase, zBase + h, col);
+        if (foil) {
+          fillFront(bFrontX + 0.002, y0 + 0.02, y1 - 0.02, zBase + h * 0.70, zBase + h * 0.70 + 0.025, '#fbbf24');
+          fillFront(bFrontX + 0.002, y0 + 0.02, y1 - 0.02, zBase + h * 0.30, zBase + h * 0.30 + 0.025, '#fbbf24');
+        }
+        // Top Page Edge (Antique white paper)
+        fillTop(bBackX, bFrontX, y0, y1, zBase + h, '#fef3c7');
+        // Right Side (visible when book is at the right edge of a group)
+        fillSide(bBackX, bFrontX, y1, zBase, zBase + h, '#0f172a');
+      };
+
+      // Tier 1 Books (z = 0.14): Heavy Academic Volumes
+      const t1Books = [
+        { y: yStart + 0.12, w: 0.22, h: 0.44, col: '#1e3a8a', foil: true },
+        { y: yStart + 0.36, w: 0.20, h: 0.42, col: '#065f46', foil: true },
+        { y: yStart + 0.58, w: 0.26, h: 0.46, col: '#b45309', foil: true },
+        { y: yStart + 0.86, w: 0.22, h: 0.40, col: '#831843', foil: true },
+        { y: yStart + 1.34, w: 0.24, h: 0.45, col: '#1e293b', foil: true },
+        { y: yStart + 1.60, w: 0.28, h: 0.43, col: '#0369a1', foil: true },
+        { y: yStart + 1.90, w: 0.22, h: 0.41, col: '#4338ca', foil: true },
+        { y: yStart + 2.14, w: 0.22, h: 0.44, col: '#047857', foil: true }
       ];
-      s1Books.forEach(b => {
-        this.drawBox(ctx, gx + 0.08, gy + b.y, 0.20, 0.48, b.len, b.h, b.col, '#1e293b', '#0f172a', ox, oy);
-        // Gold foil spine rib
-        const rPos = isoToScreen(gx + 0.56, gy + b.y + b.len * 0.5, 0.20 + b.h * 0.65, ox, oy);
-        ctx.fillStyle = '#fbbf24';
-        ctx.fillRect(rPos.x - 2, rPos.y - 1, 4, 1.5);
-      });
+      t1Books.forEach(b => renderBook(b.y, b.y + b.w, 0.14, b.h, b.col, b.foil));
 
-      // Shelf 2 (sz = 0.80): Textbooks & Stacked Reference Manuals
-      const s2Books = [
-        { y: 0.15, len: 0.32, h: 0.44, col: '#0d9488' }, // Teal
-        { y: 0.50, len: 0.28, h: 0.42, col: '#d97706' }, // Amber
-        { y: 0.82, len: 0.30, h: 0.46, col: '#4f46e5' }, // Indigo
-        { y: 1.15, len: 0.25, h: 0.40, col: '#7c3aed' }  // Purple
+      // Shelf 2 Plank (z = 0.70)
+      fillTop(backX, frontX, yStart, yEnd, 0.70, '#92400e');
+      fillFront(frontX, yStart, yEnd, 0.65, 0.70, '#78350f');
+      fillSide(gx, frontX, yEnd, 0.65, 0.70, '#58240a');
+
+      // Tier 2 Books (z = 0.70): Textbooks & Math Treatises
+      const t2Books = [
+        { y: yStart + 0.12, w: 0.25, h: 0.42, col: '#0d9488', foil: true },
+        { y: yStart + 0.39, w: 0.24, h: 0.40, col: '#d97706', foil: true },
+        { y: yStart + 0.65, w: 0.28, h: 0.44, col: '#4f46e5', foil: true },
+        { y: yStart + 1.34, w: 0.26, h: 0.42, col: '#7c3aed', foil: true },
+        { y: yStart + 1.62, w: 0.22, h: 0.38, col: '#be123c', foil: true }
       ];
-      s2Books.forEach(b => {
-        this.drawBox(ctx, gx + 0.08, gy + b.y, 0.80, 0.48, b.len, b.h, b.col, '#1e293b', '#0f172a', ox, oy);
-      });
-      // Horizontal Stack on Shelf 2
-      this.drawBox(ctx, gx + 0.08, gy + 1.55, 0.80, 0.46, 0.65, 0.08, '#ea580c', '#c2410c', '#9a3412', ox, oy);
-      this.drawBox(ctx, gx + 0.08, gy + 1.58, 0.88, 0.44, 0.60, 0.08, '#0284c7', '#0369a1', '#075985', ox, oy);
+      t2Books.forEach(b => renderBook(b.y, b.y + b.w, 0.70, b.h, b.col, b.foil));
 
-      // Shelf 3 (sz = 1.40): Literature & Terracotta Potted Plant
-      const s3Books = [
-        { y: 0.15, len: 0.24, h: 0.40, col: '#be123c' },
-        { y: 0.42, len: 0.26, h: 0.42, col: '#15803d' },
-        { y: 0.72, len: 0.30, h: 0.38, col: '#a16207' },
-        { y: 1.05, len: 0.22, h: 0.42, col: '#0284c7' }
+      // Horizontal Stacked Books on Tier 2 Right Bay
+      const hx0 = bBackX, hx1 = bFrontX + 0.04;
+      const hy0 = yStart + 1.88, hy1 = yStart + 2.38;
+      // Book 1
+      fillFront(hx1, hy0, hy1, 0.70, 0.77, '#ea580c');
+      fillSide(hx0, hx1, hy1, 0.70, 0.77, '#9a3412');
+      fillTop(hx0, hx1, hy0, hy1, 0.77, '#c2410c');
+      // Book 2
+      fillFront(hx1 - 0.02, hy0 + 0.03, hy1 - 0.03, 0.77, 0.84, '#0284c7');
+      fillSide(hx0, hx1 - 0.02, hy1 - 0.03, 0.77, 0.84, '#075985');
+      fillTop(hx0, hx1 - 0.02, hy0 + 0.03, hy1 - 0.03, 0.84, '#0369a1');
+
+      // Shelf 3 Plank (z = 1.28)
+      fillTop(backX, frontX, yStart, yEnd, 1.28, '#92400e');
+      fillFront(frontX, yStart, yEnd, 1.23, 1.28, '#78350f');
+      fillSide(gx, frontX, yEnd, 1.23, 1.28, '#58240a');
+
+      // Tier 3 Books (z = 1.28)
+      const t3Books = [
+        { y: yStart + 0.12, w: 0.24, h: 0.42, col: '#e11d48', foil: true },
+        { y: yStart + 0.38, w: 0.22, h: 0.39, col: '#15803d', foil: true },
+        { y: yStart + 0.62, w: 0.26, h: 0.41, col: '#a16207', foil: true },
+        { y: yStart + 1.34, w: 0.24, h: 0.40, col: '#0284c7', foil: true },
+        { y: yStart + 1.60, w: 0.22, h: 0.38, col: '#6d28d9', foil: true }
       ];
-      s3Books.forEach(b => {
-        this.drawBox(ctx, gx + 0.08, gy + b.y, 1.40, 0.46, b.len, b.h, b.col, '#1e293b', '#0f172a', ox, oy);
-      });
+      t3Books.forEach(b => renderBook(b.y, b.y + b.w, 1.28, b.h, b.col, b.foil));
 
-      // Terracotta Succulent Plant on Shelf 3 (firmly at z = 1.40)
-      const potX = gx + 0.22;
-      const potY = gy + 1.75;
-      this.drawBox(ctx, potX, potY, 1.40, 0.30, 0.30, 0.20, '#ea580c', '#c2410c', '#9a3412', ox, oy);
-      const leafPos = isoToScreen(potX + 0.15, potY + 0.15, 1.62, ox, oy);
-      ctx.fillStyle = '#22c55e';
+      // Delicate Potted Succulent on Tier 3 (firmly placed on the shelf)
+      const potY = yStart + 2.05;
+      fillFront(bFrontX - 0.02, potY - 0.12, potY + 0.12, 1.28, 1.44, '#c2410c');
+      fillSide(bBackX + 0.08, bFrontX - 0.02, potY + 0.12, 1.28, 1.44, '#9a3412');
+      fillTop(bBackX + 0.08, bFrontX - 0.02, potY - 0.12, potY + 0.12, 1.44, '#7c2d12');
+      // Green succulent rosettes
+      const succulentP = isoToScreen(bBackX + 0.18, potY, 1.46, ox, oy);
+      ctx.fillStyle = '#10b981';
       ctx.beginPath();
-      ctx.arc(leafPos.x, leafPos.y, 7, 0, Math.PI * 2);
+      ctx.arc(succulentP.x, succulentP.y - 2, 6, 0, Math.PI * 2);
+      ctx.arc(succulentP.x - 4, succulentP.y - 5, 4, 0, Math.PI * 2);
+      ctx.arc(succulentP.x + 4, succulentP.y - 5, 4, 0, Math.PI * 2);
       ctx.fill();
 
-      // Shelf 4 / Top (sz = 2.00): Archival Binders & Trailing Ivy
-      const s4Books = [
-        { y: 0.15, len: 0.30, h: 0.32, col: '#334155' },
-        { y: 0.48, len: 0.30, h: 0.32, col: '#334155' },
-        { y: 0.81, len: 0.30, h: 0.32, col: '#334155' }
+      // Shelf 4 Plank (z = 1.86)
+      fillTop(backX, frontX, yStart, yEnd, 1.86, '#92400e');
+      fillFront(frontX, yStart, yEnd, 1.81, 1.86, '#78350f');
+      fillSide(gx, frontX, yEnd, 1.81, 1.86, '#58240a');
+
+      // Tier 4 Books / Archival Binders (z = 1.86)
+      const t4Books = [
+        { y: yStart + 0.14, w: 0.26, h: 0.36, col: '#334155', foil: false },
+        { y: yStart + 0.42, w: 0.26, h: 0.36, col: '#334155', foil: false },
+        { y: yStart + 0.70, w: 0.26, h: 0.36, col: '#334155', foil: false },
+        { y: yStart + 1.34, w: 0.26, h: 0.36, col: '#475569', foil: false },
+        { y: yStart + 1.62, w: 0.26, h: 0.36, col: '#475569', foil: false },
+        { y: yStart + 1.90, w: 0.26, h: 0.36, col: '#475569', foil: false }
       ];
-      s4Books.forEach(b => {
-        this.drawBox(ctx, gx + 0.08, gy + b.y, 2.00, 0.46, b.len, b.h, b.col, '#1e293b', '#0f172a', ox, oy);
+      t4Books.forEach(b => {
+        renderBook(b.y, b.y + b.w, 1.86, b.h, b.col, false);
+        // White archive label on spine
+        fillFront(bFrontX + 0.002, b.y + 0.06, b.y + b.w - 0.06, 1.86 + 0.12, 1.86 + 0.24, '#f8fafc');
       });
 
-      // Delicate English Ivy trailing down the side
-      const ivyTip = isoToScreen(gx + 0.58, gy + L - 0.02, 2.00, ox, oy);
+      // 3. FRONT ARCHITECTURAL CASING, CORNERS & DIVISION STILES (Drawn LAST on top!)
+      const cFrame = '#78350f';
+      const cSide = '#58240a';
+      const cTop = '#92400e';
+
+      // Left Vertical Front Stile (y = yStart)
+      fillFront(frontX, yStart, yStart + 0.08, 0, H - 0.12, cFrame);
+      // Right Vertical Front Stile (y = yEnd - 0.08)
+      fillFront(frontX, yEnd - 0.08, yEnd, 0, H - 0.12, cFrame);
+      // Central Vertical Bay Divider Stile (y = mid)
+      const midY = (yStart + yEnd) / 2;
+      fillFront(frontX, midY - 0.04, midY + 0.04, 0.14, H - 0.12, '#6b2d0b');
+
+      // Right Solid Side Panel (Whole outer wall facing South-West)
+      fillSide(gx, frontX, yEnd, 0, H, cSide);
+
+      // Top Projecting Cornice Crown Molding
+      const cx0 = gx - 0.04, cx1 = frontX + 0.04;
+      const cy0 = yStart - 0.04, cy1 = yEnd + 0.04;
+      fillFront(cx1, cy0, cy1, H - 0.12, H, cTop);
+      fillSide(cx0, cx1, cy1, H - 0.12, H, cFrame);
+      fillTop(cx0, cx1, cy0, cy1, H, '#a16207');
+
+      // Delicate ivy vine cascading gracefully along the side panel (never obscuring books!)
+      const ivyX = cx1 - 0.02;
+      const ivyY = cy1 + 0.01;
+      const ivyStart = isoToScreen(ivyX, ivyY, H - 0.06, ox, oy);
       ctx.fillStyle = '#16a34a';
-      for (let step = 0; step < 7; step++) {
+      for (let s = 0; s < 6; s++) {
         ctx.beginPath();
-        ctx.arc(ivyTip.x - 2 + (step % 2) * 4, ivyTip.y + step * 7, 3.5, 0, Math.PI * 2);
+        ctx.arc(ivyStart.x + ((s % 2) ? 3 : -2), ivyStart.y + s * 9, 3.5, 0, Math.PI * 2);
         ctx.fill();
       }
     }
