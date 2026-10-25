@@ -307,7 +307,7 @@
       if (player.x <= 9.8 && player.y <= 9.8) {
         currentZone = 'ludwig_house';
         isInsideAnyHouse = true;
-        statusMessage = "Ludwig's House • 溫馨客廳與起居室";
+        statusMessage = "Ludwig's Home • 溫馨客廳與起居室";
       } else if (player.x <= 9.8 && player.y >= 16.5 && player.y <= 26.5) {
         currentZone = 'dorm_211';
         isInsideAnyHouse = true;
@@ -764,18 +764,18 @@
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
           this.ctx.fillStyle = '#1e293b';
-          this.ctx.fillRect(-30, -9, 60, 18);
+          this.ctx.fillRect(-34, -9, 68, 18);
           this.ctx.strokeStyle = '#94a3b8';
           this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-30, -9, 60, 18);
+          this.ctx.strokeRect(-34, -9, 68, 18);
           this.ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
           this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-28, -7, 56, 14);
+          this.ctx.strokeRect(-32, -7, 64, 14);
           this.ctx.fillStyle = '#f8fafc';
           this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('LUDWIGIA', 0, 0);
+          this.ctx.fillText("Ludwig's Home", 0, 0);
           this.ctx.restore();
           this.ctx.restore();
         }
