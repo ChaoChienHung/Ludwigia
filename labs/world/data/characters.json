@@ -763,7 +763,8 @@
         "zh-TW": "數位花園守護者 / Core Agent",
         "en": "Garden Guardian / Core Agent"
       },
-      "avatar": "🌺",
+      "avatar": "assets/avatars/ludwigia.png",
+      "avatarFallback": "🌺",
       "zone": "ai_studio",
       "spawn": {
         "x": 23.8,
