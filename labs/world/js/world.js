@@ -140,7 +140,7 @@
       const treeBlocks = [
         [13, 2], [16, 2],
         [14, 8],
-        [14, 18],
+        [16, 17.5],
         [13, 25], [16, 25],
         [20, 12], [24, 12],
         [21, 15], [25, 15]
@@ -1436,7 +1436,7 @@
       const trees = [
         [13, 2], [16, 2],       // North garden lawn (well north of path y=5)
         [14, 8],                // North-central lawn pocket (between path y=6 and fountain)
-        [14, 18],               // South-central lawn pocket (between fountain and path y=20)
+        [16, 17.5],             // South-central lawn pocket (flanking south park bench on the right)
         [13, 25], [16, 25],     // South garden lawn (well south of path y=22)
         [20, 12], [24, 12],     // East central lawn north grove
         [21, 15], [25, 15]      // East central lawn south grove
