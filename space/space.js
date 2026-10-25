@@ -352,6 +352,9 @@
       this.particles = [];
       this.initParticles();
 
+      // Dynamic Interactive Entrance Double Door
+      this.doorOpenProgress = 0.0;
+
       // Input keys
       this.keys = {};
       this.bindEvents();
@@ -484,7 +487,7 @@
         { id: 'clark', name: 'Clark Wu', role: '好友', avatar: '😎', x: 12.0, y: 4.5, skin: '#f4ceb2', hair: '#1f2937', shirt: '#0284c7', pants: '#334155', hairStyle: 0, nameColor: '#38bdf8', dialogue: ["嘿！好久不見！ Ludwig 這個世界做得真有意思，我們隨時都準備好迎接新的冒險了！"] },
         { id: 'billy', name: 'Billy Fang', role: '好友', avatar: '🤠', x: 15.0, y: 7.5, skin: '#f5d0b5', hair: '#374151', shirt: '#10b981', pants: '#1f2937', hairStyle: 0, nameColor: '#34d399', dialogue: ["喲！你也在逛廣場啊？這邊風景真棒，喝杯冰美式，心情整個開闊起來！"] },
         { id: 'jerry', name: 'Jerry Chung', role: '好友', avatar: '🎧', x: 11.5, y: 11.5, skin: '#e5b38f', hair: '#111827', shirt: '#8b5cf6', pants: '#1e293b', hairStyle: 0, nameColor: '#c084fc', dialogue: ["哈囉！在噴水池旁聽音樂散步超放鬆的，這就是最好的慢活步調。"] },
-        { id: 'happy', name: 'Happy Wang', role: '好友', avatar: '✨', x: 17.5, y: 11.5, skin: '#fbe2d0', hair: '#78350f', shirt: '#f97316', pants: '#374151', hairStyle: 1, nameColor: '#fb923c', dialogue: ["嗨！今天也要充滿朝氣喔！保持微笑，美好的事情自然會發生！"] },
+        { id: 'happy', name: 'Happy Wang', role: '好友', avatar: '😄', x: 17.5, y: 11.5, skin: '#fbe2d0', hair: '#1e293b', shirt: '#f97316', pants: '#1e293b', hairStyle: 0, nameColor: '#fb923c', dialogue: ["嗨！兄弟！今天也是元氣滿滿的一天！在廣場散步喝咖啡超棒的！"] },
         { id: 'kerry', name: 'Kerry Chang', role: '好友', avatar: '🌿', x: 12.5, y: 15.5, skin: '#f5d0b5', hair: '#1f2937', shirt: '#14b8a6', pants: '#1e293b', hairStyle: 2, nameColor: '#2dd4bf', dialogue: ["你好呀！很喜歡這裡微風吹過櫻花樹的感覺，常常能激盪出深刻的思辨火花。"] },
         { id: 'haolei', name: 'Haolei Pei', role: '好友', avatar: '🚀', x: 18.0, y: 14.5, skin: '#e2ba99', hair: '#0f172a', shirt: '#4338ca', pants: '#1f2937', hairStyle: 0, nameColor: '#818cf8', dialogue: ["嗨！你也在看大規模分散式運算嗎？Ludwig 整理的 CS5234 演算法筆記超有深度，大推！"] },
         { id: 'bohan', name: 'Bo Han Wu', role: '好友', avatar: '📚', x: 15.5, y: 17.0, skin: '#f5d0b5', hair: '#1e1b18', shirt: '#6366f1', pants: '#334155', hairStyle: 0, nameColor: '#a5b4fc', dialogue: ["你好！數學與邏輯是建構現實最優美的語言，很榮幸在這個世界裡與大家相聚。"] }
@@ -679,6 +682,13 @@
       // Smooth zoom and opacity transition
       this.zoom += (this.targetZoom - this.zoom) * 0.05;
       this.outsideAlpha += (this.targetOutsideAlpha - this.outsideAlpha) * 0.05;
+
+      // Dynamic Entrance Door Proximity Sensor
+      const doorCenterX = HOUSE_MAX_X + 1.0;
+      const doorCenterY = 5.65;
+      const someoneNearDoor = this.characters.some(c => Math.hypot(c.x - doorCenterX, c.y - doorCenterY) < 2.4);
+      const targetDoorOpen = someoneNearDoor ? 1.0 : 0.0;
+      this.doorOpenProgress += (targetDoorOpen - this.doorOpenProgress) * Math.min(1.0, dt * 5.0);
 
       // Update status text
       const statusEl = document.getElementById('status-text');
@@ -930,10 +940,10 @@
       });
       ctx.restore();
 
-      // 5. Environmental Lighting Overlay
-      this.drawLightingOverlay(ctx, ox, oy);
-
       ctx.restore();
+
+      // 5. Environmental Lighting Overlay (Full Viewport Coverage)
+      this.drawLightingOverlay(ctx);
 
       requestAnimationFrame(this.loop.bind(this));
     }
@@ -1121,6 +1131,79 @@
       }
     }
 
+    // --- Modern Japanese-Inspired Entrance Double Door Leaf ---
+    drawDoorLeaf(ctx, hx, hy, tx, ty, isNorth, ox, oy) {
+      const H = 2.15;
+      const b0 = isoToScreen(hx, hy, 0, ox, oy);
+      const b1 = isoToScreen(tx, ty, 0, ox, oy);
+      const t1 = isoToScreen(tx, ty, H, ox, oy);
+      const t0 = isoToScreen(hx, hy, H, ox, oy);
+
+      // Solid Cedar Door Leaf Outer Frame
+      ctx.fillStyle = '#92400e';
+      ctx.beginPath();
+      ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.lineTo(t1.x, t1.y); ctx.lineTo(t0.x, t0.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Lower Wood Bevel Panel (z: 0.15 to 0.75)
+      const dx = tx - hx;
+      const dy = ty - hy;
+      const lp0 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 0.15, ox, oy);
+      const lp1 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 0.15, ox, oy);
+      const lp2 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 0.75, ox, oy);
+      const lp3 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 0.75, ox, oy);
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.moveTo(lp0.x, lp0.y); ctx.lineTo(lp1.x, lp1.y); ctx.lineTo(lp2.x, lp2.y); ctx.lineTo(lp3.x, lp3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#5c2b09';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Upper Inset Frosted Glass Pane (z: 0.88 to 2.02)
+      const gp0 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 0.88, ox, oy);
+      const gp1 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 0.88, ox, oy);
+      const gp2 = isoToScreen(hx + dx * 0.88, hy + dy * 0.88, 2.02, ox, oy);
+      const gp3 = isoToScreen(hx + dx * 0.12, hy + dy * 0.12, 2.02, ox, oy);
+
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.45)';
+      ctx.beginPath();
+      ctx.moveTo(gp0.x, gp0.y); ctx.lineTo(gp1.x, gp1.y); ctx.lineTo(gp2.x, gp2.y); ctx.lineTo(gp3.x, gp3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Diagonal Glass Sheen Reflection
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(gp0.x + (gp1.x - gp0.x) * 0.35, gp0.y + (gp1.y - gp0.y) * 0.35);
+      ctx.lineTo(gp3.x + (gp2.x - gp3.x) * 0.75, gp3.y + (gp2.y - gp3.y) * 0.75);
+      ctx.stroke();
+
+      // Vertical Brushed Brass Push/Pull Handle
+      const hPos = isoToScreen(hx + dx * 0.86, hy + dy * 0.86, 0.98, ox, oy);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(hPos.x - 2, hPos.y - 12, 4, 18);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(hPos.x - 2, hPos.y - 12, 4, 18);
+
+      // Brass Hinges on Wall Hinge Post
+      const hg1 = isoToScreen(hx, hy, 0.35, ox, oy);
+      const hg2 = isoToScreen(hx, hy, 1.85, ox, oy);
+      ctx.fillStyle = '#d97706';
+      ctx.fillRect(hg1.x - 2.5, hg1.y - 4, 5, 8);
+      ctx.fillRect(hg2.x - 2.5, hg2.y - 4, 5, 8);
+    }
+
     // --- Rich Isometric Props & Depth-Sorted Architecture ---
     collectWorldProps(list, ox, oy) {
       const isDark = this.currentTimeState === 'night' || this.currentTimeState === 'galaxy';
@@ -1178,6 +1261,65 @@
         }
       });
 
+      // 3b. Cozy Woven Coir Welcome Porch Mat (outside door at x: 10.15 to 10.95, y: 4.8 to 6.5)
+      list.push({
+        xMin: HOUSE_MAX_X + 1.15, xMax: HOUSE_MAX_X + 1.95,
+        yMin: 4.8, yMax: 6.5,
+        draw: () => {
+          const m0 = isoToScreen(HOUSE_MAX_X + 1.15, 4.8, 0.01, ox, oy);
+          const m1 = isoToScreen(HOUSE_MAX_X + 1.95, 4.8, 0.01, ox, oy);
+          const m2 = isoToScreen(HOUSE_MAX_X + 1.95, 6.5, 0.01, ox, oy);
+          const m3 = isoToScreen(HOUSE_MAX_X + 1.15, 6.5, 0.01, ox, oy);
+          this.ctx.fillStyle = '#b45309'; // Warm golden coir mat
+          this.ctx.beginPath();
+          this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y); this.ctx.lineTo(m2.x, m2.y); this.ctx.lineTo(m3.x, m3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#78350f';
+          this.ctx.lineWidth = 1.5;
+          this.ctx.stroke();
+
+          // Geometric diamond border inside mat
+          const im0 = isoToScreen(HOUSE_MAX_X + 1.25, 4.95, 0.015, ox, oy);
+          const im1 = isoToScreen(HOUSE_MAX_X + 1.85, 4.95, 0.015, ox, oy);
+          const im2 = isoToScreen(HOUSE_MAX_X + 1.85, 6.35, 0.015, ox, oy);
+          const im3 = isoToScreen(HOUSE_MAX_X + 1.25, 6.35, 0.015, ox, oy);
+          this.ctx.strokeStyle = '#fef08a';
+          this.ctx.lineWidth = 1;
+          this.ctx.beginPath();
+          this.ctx.moveTo(im0.x, im0.y); this.ctx.lineTo(im1.x, im1.y); this.ctx.lineTo(im2.x, im2.y); this.ctx.lineTo(im3.x, im3.y);
+          this.ctx.closePath();
+          this.ctx.stroke();
+        }
+      });
+
+      // 3c. Dynamic Grand Double Entrance Doors (Smooth proximity swing animation)
+      const doorAngle = this.doorOpenProgress * 1.35; // 0 to ~77 degrees swing open into courtyard
+      const doorW = 1.15;
+      const hx = HOUSE_MAX_X + 1.0;
+
+      // North Leaf (Hinged at y: 4.5, swings outward towards positive X)
+      const nTipX = hx + Math.sin(doorAngle) * doorW;
+      const nTipY = 4.5 + Math.cos(doorAngle) * doorW;
+      list.push({
+        xMin: Math.min(hx, nTipX) - 0.1, xMax: Math.max(hx, nTipX) + 0.1,
+        yMin: 4.4, yMax: Math.max(4.5 + doorW, nTipY) + 0.1,
+        draw: () => {
+          this.drawDoorLeaf(this.ctx, hx, 4.5, nTipX, nTipY, true, ox, oy);
+        }
+      });
+
+      // South Leaf (Hinged at y: 6.8, swings outward towards positive X)
+      const sTipX = hx + Math.sin(doorAngle) * doorW;
+      const sTipY = 6.8 - Math.cos(doorAngle) * doorW;
+      list.push({
+        xMin: Math.min(hx, sTipX) - 0.1, xMax: Math.max(hx, sTipX) + 0.1,
+        yMin: Math.min(6.8 - doorW, sTipY) - 0.1, yMax: 6.9,
+        draw: () => {
+          this.drawDoorLeaf(this.ctx, hx, 6.8, sTipX, sTipY, false, ox, oy);
+        }
+      });
+
       // 4. SW Front Porch Railing (along y = HOUSE_MAX_Y + 1)
       // Left Porch Railing (x: 0 to 4.0)
       list.push({
@@ -1200,22 +1342,41 @@
       // 5. Master Bed (x: 1, y: 1)
       list.push({
         xMin: 1.0, xMax: 3.0,
-        yMin: 1.0, yMax: 3.4,
+        yMin: 1.0, yMax: 4.0,
         draw: () => {
-          // Wooden Frame
-          this.drawBox(this.ctx, 1, 1, 0, 2.0, 2.4, 0.4, '#78350f', '#5c2b09', '#451a03', ox, oy);
-          // Headboard
-          this.drawBox(this.ctx, 1, 1, 0.4, 0.3, 2.4, 0.8, '#92400e', '#78350f', '#5c2b09', ox, oy);
-          // Mattress & Duvet
-          this.drawBox(this.ctx, 1.3, 1.1, 0.35, 1.6, 2.2, 0.25, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
-          // Folded Terracotta Blanket
-          this.drawBox(this.ctx, 2.0, 1.1, 0.42, 0.8, 2.2, 0.2, '#c2410c', '#9a3412', '#7c2d12', ox, oy);
-          // Pillows
-          const pil1 = isoToScreen(1.5, 1.4, 0.6, ox, oy);
-          const pil2 = isoToScreen(1.5, 2.4, 0.6, ox, oy);
-          this.ctx.fillStyle = '#ffffff';
-          this.ctx.fillRect(pil1.x - 8, pil1.y - 6, 16, 10);
-          this.ctx.fillRect(pil2.x - 8, pil2.y - 6, 16, 10);
+          const ctx = this.ctx;
+          // Wooden Bedstead Frame
+          this.drawBox(ctx, 1, 1, 0, 2.0, 2.4, 0.4, '#78350f', '#5c2b09', '#451a03', ox, oy);
+          // Headboard with carved vertical paneling
+          this.drawBox(ctx, 1, 1, 0.4, 0.3, 2.4, 0.85, '#92400e', '#78350f', '#5c2b09', ox, oy);
+          // Plush Mattress
+          this.drawBox(ctx, 1.25, 1.08, 0.35, 1.65, 2.24, 0.28, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
+          // Folded Terracotta Duvet
+          this.drawBox(ctx, 1.9, 1.08, 0.42, 0.95, 2.24, 0.22, '#c2410c', '#9a3412', '#7c2d12', ox, oy);
+          // Soft Pillows with indents
+          const pil1 = isoToScreen(1.5, 1.4, 0.62, ox, oy);
+          const pil2 = isoToScreen(1.5, 2.4, 0.62, ox, oy);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.ellipse(pil1.x, pil1.y, 10, 6, -0.3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(pil2.x, pil2.y, 10, 6, -0.3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Bedside Nightstand
+          this.drawBox(ctx, 1.0, 3.45, 0, 0.7, 0.55, 0.45, '#78350f', '#5c2b09', '#451a03', ox, oy);
+          // Small Bedside Lamp
+          const blamp = isoToScreen(1.35, 3.7, 0.45, ox, oy);
+          ctx.fillStyle = '#fef08a';
+          ctx.beginPath();
+          ctx.arc(blamp.x, blamp.y - 8, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#78350f';
+          ctx.fillRect(blamp.x - 1.5, blamp.y - 4, 3, 4);
         }
       });
 
@@ -1224,48 +1385,248 @@
         xMin: 6.0, xMax: 8.5,
         yMin: 1.0, yMax: 2.2,
         draw: () => {
-          // Walnut Desk
-          this.drawBox(this.ctx, 6, 1, 0, 2.5, 1.2, 0.75, '#854d0e', '#713f12', '#542d0c', ox, oy);
-          // Dual Curved Monitors
-          const m1 = isoToScreen(6.6, 1.3, 0.75, ox, oy);
-          const m2 = isoToScreen(7.7, 1.3, 0.75, ox, oy);
-          this.drawScreen(this.ctx, m1.x, m1.y, true);
-          this.drawScreen(this.ctx, m2.x, m2.y, false);
+          const ctx = this.ctx;
+          // Walnut Desk Main Body
+          this.drawBox(ctx, 6, 1, 0, 2.5, 1.2, 0.72, '#92400e', '#78350f', '#58240a', ox, oy);
+          // Chamfered Beveled Top Surface
+          this.drawBox(ctx, 5.96, 0.96, 0.68, 2.58, 1.28, 0.05, '#b45309', '#92400e', '#78350f', ox, oy);
 
-          // Desk Lamp with glowing cone
-          const lamp = isoToScreen(6.2, 1.1, 0.75, ox, oy);
-          this.ctx.fillStyle = '#eab308';
-          this.ctx.fillRect(lamp.x - 2, lamp.y - 18, 4, 18);
-          this.ctx.beginPath();
-          this.ctx.arc(lamp.x, lamp.y - 18, 6, 0, Math.PI * 2);
-          this.ctx.fill();
+          // Charcoal Leather Desk Mat
+          const mat0 = isoToScreen(6.4, 1.15, 0.73, ox, oy);
+          const mat1 = isoToScreen(8.2, 1.15, 0.73, ox, oy);
+          const mat2 = isoToScreen(8.2, 2.05, 0.73, ox, oy);
+          const mat3 = isoToScreen(6.4, 2.05, 0.73, ox, oy);
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.moveTo(mat0.x, mat0.y); ctx.lineTo(mat1.x, mat1.y); ctx.lineTo(mat2.x, mat2.y); ctx.lineTo(mat3.x, mat3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = '#334155';
+          ctx.lineWidth = 1;
+          ctx.stroke();
 
-          // Warm desk light pool
-          this.ctx.fillStyle = 'rgba(254, 240, 138, 0.18)';
-          this.ctx.beginPath();
-          this.ctx.moveTo(lamp.x, lamp.y - 18);
-          this.ctx.lineTo(lamp.x - 24, lamp.y + 12);
-          this.ctx.lineTo(lamp.x + 24, lamp.y + 12);
-          this.ctx.closePath();
-          this.ctx.fill();
+          // 75% Mechanical Keyboard
+          const kb0 = isoToScreen(6.8, 1.5, 0.74, ox, oy);
+          const kb1 = isoToScreen(7.6, 1.5, 0.74, ox, oy);
+          const kb2 = isoToScreen(7.6, 1.9, 0.74, ox, oy);
+          const kb3 = isoToScreen(6.8, 1.9, 0.74, ox, oy);
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.moveTo(kb0.x, kb0.y); ctx.lineTo(kb1.x, kb1.y); ctx.lineTo(kb2.x, kb2.y); ctx.lineTo(kb3.x, kb3.y);
+          ctx.closePath();
+          ctx.fill();
+          // Backlit Keycap Rows
+          for (let r = 0; r < 3; r++) {
+            const kp0 = isoToScreen(6.9, 1.58 + r * 0.1, 0.75, ox, oy);
+            const kp1 = isoToScreen(7.5, 1.58 + r * 0.1, 0.75, ox, oy);
+            ctx.beginPath();
+            ctx.moveTo(kp0.x, kp0.y); ctx.lineTo(kp1.x, kp1.y);
+            ctx.strokeStyle = r === 1 ? '#34d399' : '#818cf8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+
+          // Ergonomic Wireless Mouse
+          const mousePos = isoToScreen(7.9, 1.7, 0.74, ox, oy);
+          ctx.fillStyle = '#475569';
+          ctx.beginPath();
+          ctx.ellipse(mousePos.x, mousePos.y, 4, 2.5, -0.4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Ceramic Coffee Mug with Rising Steam
+          const mugPos = isoToScreen(8.25, 1.25, 0.73, ox, oy);
+          ctx.fillStyle = '#f8fafc';
+          ctx.beginPath();
+          ctx.arc(mugPos.x, mugPos.y - 4, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#451a03'; // Coffee inside
+          ctx.beginPath();
+          ctx.ellipse(mugPos.x, mugPos.y - 5.5, 3, 1.8, 0, 0, Math.PI * 2);
+          ctx.fill();
+          // Rising steam
+          const steamTick = performance.now() * 0.003;
+          const sOff1 = Math.sin(steamTick) * 2.5;
+          const sOff2 = Math.cos(steamTick * 1.3) * 2;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(mugPos.x - 1, mugPos.y - 7);
+          ctx.quadraticCurveTo(mugPos.x + sOff1, mugPos.y - 14, mugPos.x + sOff2, mugPos.y - 20);
+          ctx.stroke();
+
+          // Dual Curved Ultra-wide Monitors on Stand
+          const mon1 = isoToScreen(6.6, 1.3, 0.75, ox, oy);
+          const mon2 = isoToScreen(7.7, 1.3, 0.75, ox, oy);
+          this.drawScreen(ctx, mon1.x, mon1.y, true);
+          this.drawScreen(ctx, mon2.x, mon2.y, false);
+
+          // Architect Articulated Anglepoise Desk Lamp
+          // Heavy circular base
+          const lampBase = isoToScreen(6.25, 1.2, 0.73, ox, oy);
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.ellipse(lampBase.x, lampBase.y, 7, 3.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#eab308'; // Brass accent ring
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Joint Elbow 1
+          const elbow1 = { x: lampBase.x + 3, y: lampBase.y - 16 };
+          // Joint Elbow 2
+          const elbow2 = { x: lampBase.x + 14, y: lampBase.y - 26 };
+          // Lamp head pointing down towards the keyboard
+          const head = { x: lampBase.x + 22, y: lampBase.y - 17 };
+
+          // Double articulated brass rods
+          ctx.strokeStyle = '#d97706'; // Warm brushed brass
+          ctx.lineWidth = 2.2;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(lampBase.x, lampBase.y - 2);
+          ctx.lineTo(elbow1.x, elbow1.y);
+          ctx.lineTo(elbow2.x, elbow2.y);
+          ctx.lineTo(head.x, head.y);
+          ctx.stroke();
+
+          // Hinge pivot screws
+          ctx.fillStyle = '#fef08a';
+          ctx.beginPath();
+          ctx.arc(elbow1.x, elbow1.y, 2, 0, Math.PI * 2);
+          ctx.arc(elbow2.x, elbow2.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Conical lampshade
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.moveTo(head.x - 6, head.y - 5);
+          ctx.lineTo(head.x + 8, head.y - 1);
+          ctx.lineTo(head.x + 2, head.y + 7);
+          ctx.lineTo(head.x - 9, head.y + 3);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = '#d97706';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          // Glowing warm interior bulb
+          ctx.fillStyle = '#fef08a';
+          ctx.beginPath();
+          ctx.arc(head.x - 2, head.y + 4, 3, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Soft ambient radial glow pool over desk
+          const poolTarget = isoToScreen(6.9, 1.5, 0.74, ox, oy);
+          const lampGrad = ctx.createRadialGradient(poolTarget.x, poolTarget.y, 4, poolTarget.x, poolTarget.y, 42);
+          lampGrad.addColorStop(0, 'rgba(254, 240, 138, 0.32)');
+          lampGrad.addColorStop(0.5, 'rgba(254, 240, 138, 0.12)');
+          lampGrad.addColorStop(1, 'rgba(254, 240, 138, 0)');
+          ctx.fillStyle = lampGrad;
+          ctx.beginPath();
+          ctx.ellipse(poolTarget.x, poolTarget.y, 42, 22, -0.3, 0, Math.PI * 2);
+          ctx.fill();
         }
       });
 
-      // 7. Large Tiered Bookshelf (x: 0, y: 4)
+      // 7. Large Architectural Tiered Bookshelf (x: 0, y: 4)
       list.push({
         xMin: 0.0, xMax: 0.9,
         yMin: 4.0, yMax: 6.8,
         draw: () => {
-          this.drawBox(this.ctx, 0, 4, 0, 0.9, 2.8, 2.2, '#5c3a21', '#452b18', '#342012', ox, oy);
-          const colors = ['#dc2626', '#2563eb', '#16a34a', '#d97706', '#9333ea', '#0891b2', '#f97316'];
-          for (let tier = 0; tier < 3; tier++) {
-            const tz = 0.4 + tier * 0.6;
-            for (let b = 0; b < 7; b++) {
-              const bPos = isoToScreen(0.4, 4.3 + b * 0.35, tz, ox, oy);
-              this.ctx.fillStyle = colors[(tier * 7 + b) % colors.length];
-              this.ctx.fillRect(bPos.x - 2, bPos.y - 14, 4, 14);
-            }
+          const ctx = this.ctx;
+          // Outer Wooden Frame & Backboard
+          // Backing panel against NE wall
+          this.drawBox(ctx, 0, 4.0, 0, 0.2, 2.8, 2.3, '#3e2716', '#2b1b10', '#1c1109', ox, oy);
+          // Bottom Plinth
+          this.drawBox(ctx, 0, 4.0, 0, 0.9, 2.8, 0.12, '#5c3a21', '#452b18', '#342012', ox, oy);
+          // Top Cornice
+          this.drawBox(ctx, 0, 4.0, 2.22, 0.95, 2.84, 0.1, '#78350f', '#5c3a21', '#452b18', ox, oy);
+          // North Side Upright Panel
+          this.drawBox(ctx, 0.1, 4.0, 0.1, 0.8, 0.1, 2.15, '#5c3a21', '#452b18', '#342012', ox, oy);
+          // South Side Upright Panel
+          this.drawBox(ctx, 0.1, 6.7, 0.1, 0.8, 0.1, 2.15, '#5c3a21', '#452b18', '#342012', ox, oy);
+
+          // 3 Internal Horizontal Wooden Shelves (giving 4 tiers total)
+          const shelfHeights = [0.65, 1.20, 1.75];
+          shelfHeights.forEach(sz => {
+            this.drawBox(ctx, 0.1, 4.05, sz, 0.8, 2.68, 0.06, '#78350f', '#5c3a21', '#452b18', ox, oy);
+          });
+
+          // --- Books on Tier 1 (z = 0.12): Heavy Academic Volumes & Hardcovers ---
+          const t1Colors = ['#881337', '#1e3a8a', '#065f46', '#78350f', '#4338ca', '#991b1b'];
+          for (let b = 0; b < 6; b++) {
+            const by = 4.25 + b * 0.28;
+            const bh = 0.42 + (b % 3) * 0.04;
+            this.drawBox(ctx, 0.25, by, 0.12, 0.55, 0.22, bh, t1Colors[b], '#1c1917', '#0c0a09', ox, oy);
+            // Gold foil spine bar
+            const sp = isoToScreen(0.8, by + 0.11, 0.12 + bh * 0.7, ox, oy);
+            ctx.fillStyle = '#fef08a';
+            ctx.fillRect(sp.x - 1, sp.y - 1, 2, 4);
           }
+          // Horizontal stacked books at end of Tier 1
+          this.drawBox(ctx, 0.25, 6.1, 0.12, 0.55, 0.5, 0.14, '#15803d', '#14532d', '#052e16', ox, oy);
+          this.drawBox(ctx, 0.25, 6.12, 0.26, 0.52, 0.46, 0.12, '#ea580c', '#9a3412', '#7c2d12', ox, oy);
+
+          // --- Books on Tier 2 (z = 0.71): Tech & Math Textbooks ---
+          const t2Colors = ['#0284c7', '#7c3aed', '#ea580c', '#059669', '#d97706', '#2563eb'];
+          for (let b = 0; b < 5; b++) {
+            const by = 4.3 + b * 0.26;
+            this.drawBox(ctx, 0.25, by, 0.71, 0.55, 0.2, 0.38, t2Colors[b], '#1c1917', '#0c0a09', ox, oy);
+          }
+          // Leaning book on Tier 2
+          const leanBase = isoToScreen(0.5, 5.9, 0.71, ox, oy);
+          ctx.save();
+          ctx.fillStyle = '#dc2626';
+          ctx.beginPath();
+          ctx.moveTo(leanBase.x - 3, leanBase.y);
+          ctx.lineTo(leanBase.x + 5, leanBase.y - 4);
+          ctx.lineTo(leanBase.x + 12, leanBase.y - 20);
+          ctx.lineTo(leanBase.x + 4, leanBase.y - 16);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+
+          // --- Tier 3 (z = 1.26): Books + Potted Succulent Plant ---
+          for (let b = 0; b < 4; b++) {
+            const by = 4.3 + b * 0.24;
+            this.drawBox(ctx, 0.25, by, 1.26, 0.55, 0.18, 0.36, ['#64748b', '#0d9488', '#e11d48', '#d97706'][b], '#1c1917', '#0c0a09', ox, oy);
+          }
+          // Terracotta succulent pot
+          const potCenter = isoToScreen(0.5, 5.8, 1.26, ox, oy);
+          ctx.fillStyle = '#c2410c'; // Terracotta pot
+          ctx.beginPath();
+          ctx.ellipse(potCenter.x, potCenter.y - 2, 7, 4, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillRect(potCenter.x - 6, potCenter.y - 9, 12, 7);
+          ctx.fillStyle = '#10b981'; // Green succulent rosettes
+          for (let a = 0; a < 5; a++) {
+            const ang = (a / 5) * Math.PI * 2;
+            ctx.beginPath();
+            ctx.ellipse(potCenter.x + Math.cos(ang) * 5, potCenter.y - 11 + Math.sin(ang) * 3, 4, 3, ang, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // --- Tier 4 (z = 1.81): Books + Hanging English Ivy Vine ---
+          for (let b = 0; b < 4; b++) {
+            const by = 5.3 + b * 0.26;
+            this.drawBox(ctx, 0.25, by, 1.81, 0.55, 0.2, 0.34, ['#475569', '#3b82f6', '#10b981', '#f59e0b'][b], '#1c1917', '#0c0a09', ox, oy);
+          }
+          // Trailing ivy draping down from top shelf
+          const ivyStart = isoToScreen(0.7, 4.15, 1.81, ox, oy);
+          ctx.strokeStyle = '#15803d';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(ivyStart.x, ivyStart.y);
+          ctx.quadraticCurveTo(ivyStart.x + 4, ivyStart.y + 16, ivyStart.x - 2, ivyStart.y + 32);
+          ctx.quadraticCurveTo(ivyStart.x + 3, ivyStart.y + 44, ivyStart.x, ivyStart.y + 54);
+          ctx.stroke();
+          // Ivy leaves
+          ctx.fillStyle = '#22c55e';
+          [8, 18, 28, 38, 48].forEach(dy => {
+            ctx.beginPath();
+            ctx.ellipse(ivyStart.x + ((dy % 12) - 4), ivyStart.y + dy, 3.5, 2.5, 0.4, 0, Math.PI * 2);
+            ctx.fill();
+          });
         }
       });
 
@@ -1826,18 +2187,32 @@
       return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
     }
 
-    drawLightingOverlay(ctx, ox, oy) {
+    drawLightingOverlay(ctx) {
       if (this.currentTimeState === 'day') return;
 
       ctx.save();
+      const w = this.width;
+      const h = this.height;
+
       if (this.currentTimeState === 'sunset') {
-        ctx.fillStyle = 'rgba(255, 120, 40, 0.14)';
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, 'rgba(251, 146, 60, 0.16)');
+        grad.addColorStop(0.6, 'rgba(234, 88, 12, 0.12)');
+        grad.addColorStop(1, 'rgba(124, 45, 18, 0.22)');
+        ctx.fillStyle = grad;
       } else if (this.currentTimeState === 'night') {
-        ctx.fillStyle = 'rgba(10, 20, 50, 0.32)';
+        const grad = ctx.createRadialGradient(w / 2, h / 2, 80, w / 2, h / 2, Math.max(w, h) * 0.75);
+        grad.addColorStop(0, 'rgba(15, 23, 42, 0.26)');
+        grad.addColorStop(1, 'rgba(2, 6, 23, 0.55)');
+        ctx.fillStyle = grad;
       } else if (this.currentTimeState === 'galaxy') {
-        ctx.fillStyle = 'rgba(60, 20, 80, 0.28)';
+        const grad = ctx.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, Math.max(w, h) * 0.75);
+        grad.addColorStop(0, 'rgba(88, 28, 135, 0.20)');
+        grad.addColorStop(1, 'rgba(15, 23, 42, 0.52)');
+        ctx.fillStyle = grad;
       }
-      ctx.fillRect(0, 0, this.width, this.height);
+
+      ctx.fillRect(0, 0, w, h);
       ctx.restore();
     }
 
