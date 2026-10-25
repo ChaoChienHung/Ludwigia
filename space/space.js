@@ -437,12 +437,12 @@
       this.nav.setBlock(13.5, 8.0, 1.5, 1.5, true);
       this.nav.setBlock(13.5, 19.5, 1.5, 1.5, true);
 
-      // Lush Plaza Trees
+      // Lush Plaza Trees (Doorways kept open and unobstructed)
       const treeBlocks = [
         [11, 2], [14, 2], [16, 2],
-        [11, 6], [16, 6],
+        [16, 6],
         [11, 14], [16, 14],
-        [11, 21], [16, 21],
+        [16, 21],
         [11, 25], [14, 25], [16, 25],
         [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
       ];
@@ -1812,7 +1812,6 @@
         { gx: 14, gy: 18, sakura: true },
         { gx: 4, gy: 14, sakura: false },
         { gx: 7, gy: 14, sakura: true },
-        { gx: 12, gy: 6, sakura: false },
         { gx: 17, gy: 6, sakura: true },
         { gx: 10, gy: 12, sakura: false }
       ];

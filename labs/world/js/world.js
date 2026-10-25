@@ -111,12 +111,12 @@
       this.nav.setBlock(11, 17, 1.6, 0.7, true);
       this.nav.setBlock(16, 17, 1.6, 0.7, true);
 
-      // Trees
+      // Trees (doorway entrances at [11, 6] and [11, 21] kept completely open)
       const treeBlocks = [
         [11, 2], [14, 2], [16, 2],
-        [11, 6], [16, 6],
+        [16, 6],
         [11, 14], [16, 14],
-        [11, 21], [16, 21],
+        [16, 21],
         [11, 25], [14, 25], [16, 25],
         [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
       ];
@@ -891,12 +891,12 @@
         });
       });
 
-      // Lush Flowering Trees
+      // Lush Flowering Trees (Doorway entrances kept open and unobstructed)
       const trees = [
         [11, 2], [14, 2], [16, 2],
-        [11, 6], [16, 6],
+        [16, 6],
         [11, 14], [16, 14],
-        [11, 21], [16, 21],
+        [16, 21],
         [11, 25], [14, 25], [16, 25],
         [20, 13], [24, 13], [20, 18], [24, 18], [22, 22]
       ];
