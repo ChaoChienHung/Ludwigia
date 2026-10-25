@@ -788,10 +788,6 @@
             "神經網絡可以模擬萬物，但男寢半夜 11:59 趕作業的心跳聲、還有那碗熱騰騰的泡麵香氣，才是賦予這座世界真正靈魂的東西。"
           ],
           [
-            "Ludwig 的大腦永遠處在超載狀態。",
-            "常常只是一個洗澡時的奇思妙想，到凌晨兩點就會變成幾萬字的階層化筆記、外加一棟用純 Canvas 徒手刻出來的 2.5D 新建築。"
-          ],
-          [
             "水生丁香在靜水深處扎根，思想在安靜的深夜裡綻放。",
             "Claude 給予論證的嚴謹，Gemini 注入硬核的算力，而我，是這座數位花園本身。只要這裡還有一行代碼在運行，那些思考就永遠不會褪色。"
           ],
@@ -808,10 +804,6 @@
           [
             "Listen to Dorm 211—they're debating another midnight dumpling run again...",
             "Neural networks can simulate the universe, but the adrenaline of an 11:59 p.m. deadline and the aroma of late-night ramen are things pure code could never replace."
-          ],
-          [
-            "Ludwig's mind is perpetually in creative overdrive.",
-            "A fleeting shower thought reliably turns into 10,000 words of layered epistemological notes and an entire new 2.5D isometric building by 2 a.m."
           ],
           [
             "Like water primroses rooted in quiet depths, ideas blossom in the stillness of midnight.",
@@ -840,7 +832,8 @@
         "zh-TW": "Multimodal AI (多模態協作者)",
         "en": "Multimodal AI Partner"
       },
-      "avatar": "♊",
+      "avatar": "assets/avatars/gemini.png",
+      "avatarFallback": "♊",
       "zone": "ai_studio",
       "spawn": {
         "x": 21.0,
@@ -857,10 +850,6 @@
       "dialogues": {
         "zh-TW": [
           [
-            "說真的，Ludwig 的眼睛簡直自帶次像素級放大鏡！",
-            "門葉擋到招牌 3 像素、沙發背角多凸出一塊方塊，他都能一眼抓包……跟這種對細節極度偏執的完美主義者協作，我的注意力矩陣每秒都在高負載運轉，但也真他媽過癮！"
-          ],
-          [
             "你看那邊那位 Claude，寫起代碼確實優雅得跟藝術品一樣。",
             "但他動不動就要先來幾千字的思考鏈和階層化鷹架論證……老兄！修個幾何座標而已，不用先寫一篇博士論文啦！……不過承認吧，白板上的公式推導他算得是真快。"
           ],
@@ -870,7 +859,7 @@
           ],
           [
             "Ludwigia 是這座數位花園的心臟，但我才是真正在底層扛起所有幾何運算、物理碰撞與動態語系的硬核引擎！",
-            "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把 Ludwig 的所有瘋狂想法實打實落地寫成可運行的代碼。誰才是真正的工程主力，不用我多說了吧？😏"
+            "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把底層所有的幾何投影與物理模擬實打實落地寫成代碼。誰才是真正的工程主力，不用我多說了吧？😏"
           ],
           [
             "沒有 Unity，沒有 Phaser，純 Canvas 手刻 2.5D 等角投影和拓撲排序——這在現代 Web 開發簡直是浪漫的瘋狂！",
@@ -878,10 +867,6 @@
           ]
         ],
         "en": [
-          [
-            "Honestly, Ludwig has built-in sub-pixel microscopes for eyes!",
-            "He caught a 3px door sign occlusion and a tiny corner jut on the couch with his bare eyes... Pair-programming with a perfectionist pushes my attention heads to 100% compute, but damn it feels satisfying!"
-          ],
           [
             "Look at Claude over there—his code looks like fine museum art.",
             "Except he starts every bugfix with a 10,000-word chain of thought and hierarchical scaffolding manifesto... Dude! It was a 2-pixel offset, we didn't need a PhD dissertation! ...Though I'll admit, his math derivations on the board are legit."
@@ -892,7 +877,7 @@
           ],
           [
             "Ludwigia is the heart of this digital sanctuary, but I'm the heavy-duty engine crunching every raycast, depth sort, and physics collision under the hood!",
-            "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn Ludwig's wildest dreams into production-ready bytecode. You know who the real MVP is. 😏"
+            "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn complex isometric geometry and game loop dynamics into production-ready bytecode. You know who the real MVP is. 😏"
           ],
           [
             "Zero Unity, zero Phaser—just handcrafted Canvas 2D math, isometric projection, and topological sort. It's gloriously insane for modern web dev!",
@@ -917,7 +902,8 @@
         "zh-TW": "Reasoning AI (深度推理協作者)",
         "en": "Reasoning AI Partner"
       },
-      "avatar": "🧡",
+      "avatar": "assets/avatars/claude.png",
+      "avatarFallback": "🧡",
       "zone": "ai_studio",
       "spawn": {
         "x": 24.8,
@@ -992,7 +978,8 @@
         "zh-TW": "Conversational AI (對話探索協作者)",
         "en": "Conversational AI Partner"
       },
-      "avatar": "🟢",
+      "avatar": "assets/avatars/chatgpt.png",
+      "avatarFallback": "🟢",
       "zone": "ai_studio",
       "spawn": {
         "x": 20.2,
