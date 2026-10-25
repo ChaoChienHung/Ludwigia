@@ -456,6 +456,8 @@
               c.state = 'idle';
               c.isWalking = false;
               c.walkTimer = 0;
+              // Natural short rest between wanderings (1.2 to 3.2 seconds)
+              c.timer = 1.2 + Math.random() * 2.0;
             }
           } else {
             c.x += (dx / dist) * step;
@@ -467,13 +469,13 @@
         } else {
           c.isWalking = false;
           c.walkTimer = 0;
+          c.timer -= dt;
         }
 
-        c.timer -= dt;
         if (c.timer <= 0) {
-          c.timer = 5 + Math.random() * 8;
+          c.timer = 1.5 + Math.random() * 2.5;
           if (c.isCat) {
-            c.state = Math.random() > 0.5 ? 'sleeping' : 'walking';
+            c.state = Math.random() > 0.45 ? 'sleeping' : 'walking';
             if (c.state === 'walking') {
               const catSpots = [{ x: 4.5, y: 7.5 }, { x: 7.5, y: 4.5 }, { x: 3.5, y: 3.5 }, { x: 5.5, y: 6.5 }];
               const dest = catSpots[Math.floor(Math.random() * catSpots.length)];
@@ -542,6 +544,9 @@
               } else if (c.zone === 'ai_studio') {
                 targetX = 19.5 + Math.random() * 6.5;
                 targetY = 2.0 + Math.random() * 6.5;
+              } else if (c.zone === 'library') {
+                targetX = 19.8 + Math.random() * 6.5;
+                targetY = 18.5 + Math.random() * 6.5;
               } else {
                 targetX = 11.5 + Math.random() * 6.0;
                 targetY = 9.0 + Math.random() * 11.0;
@@ -558,7 +563,11 @@
               if (path && path.length > 0) {
                 c.path = path;
                 c.state = 'walking';
+              } else {
+                c.timer = 0.6;
               }
+            } else {
+              c.timer = 0.6;
             }
           }
         }

@@ -63,7 +63,7 @@
           y: c.spawn ? c.spawn.y : 14,
           z: 0,
           facing: 1,
-          speed: 1.8 + Math.random() * 0.4,
+          speed: 2.1 + Math.random() * 0.4,
           path: [],
           skin: c.appearance?.skin || '#f5d0b5',
           hair: c.appearance?.hair || '#1e293b',
@@ -73,7 +73,7 @@
           isCat: !!c.appearance?.isCat,
           nameColor: c.nameColor || '#38bdf8',
           dialogues: c.dialogues || {},
-          timer: 3 + Math.random() * 5,
+          timer: 0.8 + Math.random() * 2.2,
           state: 'idle',
           isWalking: false,
           walkTimer: 0
