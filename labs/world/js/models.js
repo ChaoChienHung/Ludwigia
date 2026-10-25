@@ -17,7 +17,7 @@
       this.world = world;
     }
 
-    // --- Isometric 3D Solid Box Primitive ---
+    // --- Isometric 3D Solid Box Primitive (Fully Closed Solid Surfaces) ---
     drawBox(ctx, gx, gy, gz, dx, dy, dz, topCol, leftCol, rightCol, ox, oy) {
       const b0 = isoToScreen(gx, gy, gz, ox, oy);
       const b1 = isoToScreen(gx + dx, gy, gz, ox, oy);
@@ -29,25 +29,25 @@
       const t2 = isoToScreen(gx + dx, gy + dy, gz + dz, ox, oy);
       const t3 = isoToScreen(gx, gy + dy, gz + dz, ox, oy);
 
-      // Left Face
+      // Left Visible Face (Front-Left on screen, facing South-East: b3 -> b2)
       if (leftCol) {
         ctx.fillStyle = leftCol;
-        ctx.beginPath();
-        ctx.moveTo(b0.x, b0.y); ctx.lineTo(b3.x, b3.y); ctx.lineTo(t3.x, t3.y); ctx.lineTo(t0.x, t0.y);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      // Right Face
-      if (rightCol) {
-        ctx.fillStyle = rightCol;
         ctx.beginPath();
         ctx.moveTo(b3.x, b3.y); ctx.lineTo(b2.x, b2.y); ctx.lineTo(t2.x, t2.y); ctx.lineTo(t3.x, t3.y);
         ctx.closePath();
         ctx.fill();
       }
 
-      // Top Face
+      // Right Visible Face (Front-Right on screen, facing South-West: b2 -> b1)
+      if (rightCol) {
+        ctx.fillStyle = rightCol;
+        ctx.beginPath();
+        ctx.moveTo(b2.x, b2.y); ctx.lineTo(b1.x, b1.y); ctx.lineTo(t1.x, t1.y); ctx.lineTo(t2.x, t2.y);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Top Visible Face (t0 -> t1 -> t2 -> t3)
       if (topCol) {
         ctx.fillStyle = topCol;
         ctx.beginPath();
@@ -1069,17 +1069,54 @@
       ctx.restore();
     }
 
-    // --- Espresso & Beverage Bar (x: 19.5, y: 7.2) ---
+    // --- Espresso & Beverage Bar (Solid Marble Island & Chrome Machine, x: 19.5, y: 7.2) ---
     drawEspressoBar(ctx, gx, gy, ox, oy) {
-      // Marble Countertop Island
+      // Marble Countertop Island (w: 1.8, d: 1.2, h: 0.85)
       this.drawBox(ctx, gx, gy, 0, 1.80, 1.20, 0.85, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
 
-      // Italian Chrome Espresso Machine
+      // Italian Chrome Espresso Machine (w: 0.70, d: 0.55, h: 0.45)
       this.drawBox(ctx, gx + 0.45, gy + 0.35, 0.85, 0.70, 0.55, 0.45, '#94a3b8', '#64748b', '#475569', ox, oy);
-      // Steam & Ceramic Mugs
-      const mP = isoToScreen(gx + 1.35, gy + 0.65, 0.86, ox, oy);
-      ctx.fillStyle = '#f97316';
-      ctx.fillRect(mP.x - 4, mP.y - 7, 8, 7);
+
+      const barTopZ = 0.85;
+      const mBaseZ = barTopZ + 0.45;
+      // Chrome cup warming tray on top of machine
+      const mTop = isoToScreen(gx + 0.80, gy + 0.62, mBaseZ, ox, oy);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.beginPath();
+      ctx.ellipse(mTop.x, mTop.y, 8, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ceramic Coffee Mug with Saucer & Latte Art
+      const mP = isoToScreen(gx + 1.40, gy + 0.65, barTopZ + 0.01, ox, oy);
+      // Saucer
+      ctx.fillStyle = '#f1f5f9';
+      ctx.beginPath();
+      ctx.ellipse(mP.x, mP.y, 8, 4.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Orange ceramic mug body
+      ctx.fillStyle = '#ea580c';
+      ctx.beginPath();
+      ctx.ellipse(mP.x, mP.y - 4, 5.5, 3.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Rich Crema / Coffee surface
+      ctx.fillStyle = '#b45309';
+      ctx.beginPath();
+      ctx.ellipse(mP.x, mP.y - 4, 4, 2.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(mP.x, mP.y - 4, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Glass Water Carafe
+      const cP = isoToScreen(gx + 0.25, gy + 0.85, barTopZ + 0.01, ox, oy);
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.65)';
+      ctx.beginPath();
+      ctx.ellipse(cP.x, cP.y - 6, 4, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
 
     // ========================================================================
