@@ -2,9 +2,15 @@
   "characters": [
     {
       "id": "ludwig",
-      "name": "Ludwig",
+      "name": {
+        "zh-TW": "Ludwig (趙健宏)",
+        "en": "Ludwig"
+      },
       "gender": "male",
-      "role": "Host / 站長",
+      "role": {
+        "zh-TW": "Host / 站長",
+        "en": "Host / Webmaster"
+      },
       "avatar": "🧑‍💻",
       "zone": "house",
       "spawn": {
@@ -68,10 +74,6 @@
           ]
         ]
       },
-      "name_zh": "Ludwig (趙健宏)",
-      "name_en": "Ludwig",
-      "role_zh": "Host / 站長",
-      "role_en": "Host / Webmaster",
       "visitedZones": [
         "house",
         "plaza",
@@ -82,9 +84,15 @@
     },
     {
       "id": "yully",
-      "name": "Yully",
+      "name": {
+        "zh-TW": "盧敏華",
+        "en": "Yully"
+      },
       "gender": "female",
-      "role": "媽媽 (Mom)",
+      "role": {
+        "zh-TW": "媽媽 (Mom)",
+        "en": "Mom"
+      },
       "avatar": "👩",
       "zone": "house",
       "spawn": {
@@ -145,10 +153,6 @@
           ]
         ]
       },
-      "name_zh": "盧敏華",
-      "name_en": "Yully",
-      "role_zh": "媽媽 (Mom)",
-      "role_en": "Mom",
       "visitedZones": [
         "house",
         "plaza",
@@ -158,9 +162,15 @@
     },
     {
       "id": "wuyen",
-      "name": "Wu Yen Chao",
+      "name": {
+        "zh-TW": "趙武彥",
+        "en": "Wu Yen Chao"
+      },
       "gender": "male",
-      "role": "爸爸 (Dad)",
+      "role": {
+        "zh-TW": "爸爸 (Dad)",
+        "en": "Dad"
+      },
       "avatar": "👨",
       "zone": "house",
       "spawn": {
@@ -229,10 +239,6 @@
           ]
         ]
       },
-      "name_zh": "趙武彥",
-      "name_en": "Wu Yen Chao",
-      "role_zh": "爸爸 (Dad)",
-      "role_en": "Dad",
       "visitedZones": [
         "house",
         "plaza",
@@ -242,9 +248,15 @@
     },
     {
       "id": "luena",
-      "name": "Luena",
+      "name": {
+        "zh-TW": "趙翊均",
+        "en": "Luena Chao"
+      },
       "gender": "female",
-      "role": "妹妹 (Sister)",
+      "role": {
+        "zh-TW": "妹妹 (Sister)",
+        "en": "Sister"
+      },
       "avatar": "👧",
       "zone": "house",
       "spawn": {
@@ -303,10 +315,6 @@
           ]
         ]
       },
-      "name_zh": "趙翊均",
-      "name_en": "Luena Chao",
-      "role_zh": "妹妹 (Sister)",
-      "role_en": "Sister",
       "visitedZones": [
         "house",
         "plaza",
@@ -316,9 +324,15 @@
     },
     {
       "id": "mochi",
-      "name": "Mochi (餅餅)",
+      "name": {
+        "zh-TW": "餅餅 (Mochi)",
+        "en": "Mochi"
+      },
       "gender": "cat",
-      "role": "Studio Cat",
+      "role": {
+        "zh-TW": "工作室貓咪",
+        "en": "Studio Cat"
+      },
       "avatar": "🐱",
       "zone": "house",
       "spawn": {
@@ -365,10 +379,6 @@
           ]
         ]
       },
-      "name_zh": "餅餅 (Mochi)",
-      "name_en": "Mochi",
-      "role_zh": "工作室貓咪",
-      "role_en": "Studio Cat",
       "visitedZones": [
         "house",
         "plaza",
@@ -377,9 +387,15 @@
     },
     {
       "id": "happy",
-      "name": "Happy Wang",
+      "name": {
+        "zh-TW": "王誠煜",
+        "en": "Happy Wang"
+      },
       "gender": "male",
-      "role": "室友 (Dorm 211)",
+      "role": {
+        "zh-TW": "室友 (男11 211)",
+        "en": "Roommate (Dorm 211)"
+      },
       "avatar": "😄",
       "zone": "dorm_211",
       "spawn": {
@@ -447,10 +463,6 @@
           ]
         ]
       },
-      "name_zh": "王誠煜",
-      "name_en": "Happy Wang",
-      "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)",
       "visitedZones": [
         "dorm_211",
         "plaza"
@@ -458,9 +470,15 @@
     },
     {
       "id": "kerry",
-      "name": "Kerry Chang",
+      "name": {
+        "zh-TW": "張開畇",
+        "en": "Kerry Chang"
+      },
       "gender": "male",
-      "role": "室友 (Dorm 211)",
+      "role": {
+        "zh-TW": "室友 (男11 211)",
+        "en": "Roommate (Dorm 211)"
+      },
       "avatar": "assets/avatars/kerry.png",
       "avatarFallback": "🧑‍💻",
       "zone": "dorm_211",
@@ -536,10 +554,6 @@
           ]
         ]
       },
-      "name_zh": "張開畇",
-      "name_en": "Kerry Chang",
-      "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)",
       "visitedZones": [
         "dorm_211",
         "plaza",
@@ -548,9 +562,15 @@
     },
     {
       "id": "clark",
-      "name": "Clark Wu",
+      "name": {
+        "zh-TW": "吳宥謙",
+        "en": "Clark Wu"
+      },
       "gender": "male",
-      "role": "室友 (Dorm 211)",
+      "role": {
+        "zh-TW": "室友 (男11 211)",
+        "en": "Roommate (Dorm 211)"
+      },
       "avatar": "😎",
       "zone": "dorm_211",
       "spawn": {
@@ -589,10 +609,6 @@
           ]
         ]
       },
-      "name_zh": "吳宥謙",
-      "name_en": "Clark Wu",
-      "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)",
       "visitedZones": [
         "dorm_211",
         "plaza"
@@ -600,9 +616,15 @@
     },
     {
       "id": "jerry",
-      "name": "Jerry Chung",
+      "name": {
+        "zh-TW": "鍾昊哲",
+        "en": "Jerry Chung"
+      },
       "gender": "male",
-      "role": "室友 (Dorm 211)",
+      "role": {
+        "zh-TW": "室友 (男11 211)",
+        "en": "Roommate (Dorm 211)"
+      },
       "avatar": "🎧",
       "zone": "dorm_211",
       "spawn": {
@@ -671,10 +693,6 @@
           ]
         ]
       },
-      "name_zh": "鍾昊哲",
-      "name_en": "Jerry Chung",
-      "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)",
       "visitedZones": [
         "dorm_211",
         "plaza"
@@ -682,9 +700,15 @@
     },
     {
       "id": "billy",
-      "name": "Billy Fang",
+      "name": {
+        "zh-TW": "方竣平",
+        "en": "Billy Fang"
+      },
       "gender": "male",
-      "role": "室友 (Dorm 211)",
+      "role": {
+        "zh-TW": "室友 (男11 211)",
+        "en": "Roommate (Dorm 211)"
+      },
       "avatar": "🤠",
       "zone": "dorm_211",
       "spawn": {
@@ -723,10 +747,6 @@
           ]
         ]
       },
-      "name_zh": "方竣平",
-      "name_en": "Billy Fang",
-      "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)",
       "visitedZones": [
         "dorm_211",
         "plaza"
@@ -734,9 +754,15 @@
     },
     {
       "id": "ludwigia",
-      "name": "Ludwigia",
+      "name": {
+        "zh-TW": "Ludwigia AI",
+        "en": "Ludwigia AI"
+      },
       "gender": "female",
-      "role": "數位花園守護者 / Core Agent",
+      "role": {
+        "zh-TW": "數位花園守護者 / Core Agent",
+        "en": "Garden Guardian / Core Agent"
+      },
       "avatar": "🌺",
       "zone": "ai_studio",
       "spawn": {
@@ -797,10 +823,6 @@
           ]
         ]
       },
-      "name_zh": "Ludwigia AI",
-      "name_en": "Ludwigia AI",
-      "role_zh": "數位花園守護者 / Core Agent",
-      "role_en": "Garden Guardian / Core Agent",
       "visitedZones": [
         "ai_studio",
         "plaza",
@@ -809,9 +831,15 @@
     },
     {
       "id": "gemini",
-      "name": "Gemini",
+      "name": {
+        "zh-TW": "Gemini (雙子座)",
+        "en": "Gemini"
+      },
       "gender": "ai",
-      "role": "Multimodal AI",
+      "role": {
+        "zh-TW": "Multimodal AI (多模態協作者)",
+        "en": "Multimodal AI Partner"
+      },
       "avatar": "♊",
       "zone": "ai_studio",
       "spawn": {
@@ -872,10 +900,6 @@
           ]
         ]
       },
-      "name_zh": "Gemini (雙子座)",
-      "name_en": "Gemini",
-      "role_zh": "Multimodal AI (多模態協作者)",
-      "role_en": "Multimodal AI Partner",
       "visitedZones": [
         "ai_studio",
         "plaza",
@@ -884,9 +908,15 @@
     },
     {
       "id": "claude",
-      "name": "Claude",
+      "name": {
+        "zh-TW": "Claude (克勞德)",
+        "en": "Claude"
+      },
       "gender": "ai",
-      "role": "Reasoning AI",
+      "role": {
+        "zh-TW": "Reasoning AI (深度推理協作者)",
+        "en": "Reasoning AI Partner"
+      },
       "avatar": "🧡",
       "zone": "ai_studio",
       "spawn": {
@@ -945,10 +975,6 @@
           ]
         ]
       },
-      "name_zh": "Claude (克勞德)",
-      "name_en": "Claude",
-      "role_zh": "Reasoning AI (深度推理協作者)",
-      "role_en": "Reasoning AI Partner",
       "visitedZones": [
         "ai_studio",
         "plaza",
@@ -957,9 +983,15 @@
     },
     {
       "id": "chatgpt",
-      "name": "ChatGPT",
+      "name": {
+        "zh-TW": "ChatGPT",
+        "en": "ChatGPT"
+      },
       "gender": "ai",
-      "role": "Conversational AI",
+      "role": {
+        "zh-TW": "Conversational AI (對話探索協作者)",
+        "en": "Conversational AI Partner"
+      },
       "avatar": "🟢",
       "zone": "ai_studio",
       "spawn": {
@@ -1016,10 +1048,6 @@
           ]
         ]
       },
-      "name_zh": "ChatGPT",
-      "name_en": "ChatGPT",
-      "role_zh": "Conversational AI (對話探索協作者)",
-      "role_en": "Conversational AI Partner",
       "visitedZones": [
         "ai_studio",
         "plaza",
@@ -1028,9 +1056,15 @@
     },
     {
       "id": "haolei",
-      "name": "Haolei Pei",
+      "name": {
+        "zh-TW": "裴皓磊",
+        "en": "Haolei Pei"
+      },
       "gender": "male",
-      "role": "好友 / 分散式計算",
+      "role": {
+        "zh-TW": "好友 / 分散式計算研究者",
+        "en": "Friend / Distributed Systems"
+      },
       "avatar": "🚀",
       "zone": "library",
       "spawn": {
@@ -1069,10 +1103,6 @@
           ]
         ]
       },
-      "name_zh": "裴皓磊",
-      "name_en": "Haolei Pei",
-      "role_zh": "好友 / 分散式計算研究者",
-      "role_en": "Friend / Distributed Systems",
       "visitedZones": [
         "library",
         "plaza",
@@ -1081,9 +1111,15 @@
     },
     {
       "id": "bohan",
-      "name": "Bo Han Wu",
+      "name": {
+        "zh-TW": "吳柏翰",
+        "en": "Bo Han Wu"
+      },
       "gender": "male",
-      "role": "室友 (Dorm 211)",
+      "role": {
+        "zh-TW": "室友 (男11 211)",
+        "en": "Roommate (Dorm 211)"
+      },
       "avatar": "📚",
       "zone": "dorm_211",
       "spawn": {
@@ -1110,10 +1146,6 @@
           ]
         ]
       },
-      "name_zh": "吳柏翰",
-      "name_en": "Bo Han Wu",
-      "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)",
       "visitedZones": [
         "dorm_211",
         "library",

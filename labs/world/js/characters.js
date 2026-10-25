@@ -131,13 +131,15 @@
       this.characters = [this.player];
 
       charList.forEach(c => {
+        const nameObj = (typeof c.name === 'object' && c.name) ? c.name : null;
+        const roleObj = (typeof c.role === 'object' && c.role) ? c.role : null;
         const nameI18n = {
-          'zh-TW': c.name_zh || (typeof c.name === 'object' ? c.name['zh-TW'] : c.name),
-          'en': c.name_en || (typeof c.name === 'object' ? c.name['en'] : c.name)
+          'zh-TW': (nameObj && (nameObj['zh-TW'] || nameObj.zh || nameObj['zh-Hant'])) || c.name_zh || (typeof c.name === 'string' ? c.name : '') || '',
+          'en': (nameObj && (nameObj['en'] || nameObj.en_US)) || c.name_en || (typeof c.name === 'string' ? c.name : '') || ''
         };
         const roleI18n = {
-          'zh-TW': c.role_zh || (typeof c.role === 'object' ? c.role['zh-TW'] : c.role),
-          'en': c.role_en || (typeof c.role === 'object' ? c.role['en'] : c.role)
+          'zh-TW': (roleObj && (roleObj['zh-TW'] || roleObj.zh || roleObj['zh-Hant'])) || c.role_zh || (typeof c.role === 'string' ? c.role : '') || 'Resident',
+          'en': (roleObj && (roleObj['en'] || roleObj.en_US)) || c.role_en || (typeof c.role === 'string' ? c.role : '') || 'Resident'
         };
 
         const charObj = {
@@ -171,7 +173,10 @@
         Object.defineProperty(charObj, 'name', {
           get: () => {
             const lk = this.getLangKey();
-            return nameI18n[lk] || nameI18n['zh-TW'] || nameI18n['en'] || c.name;
+            const val = nameI18n[lk] || nameI18n['zh-TW'] || nameI18n['en'];
+            if (val && typeof val === 'string') return val;
+            if (typeof c.name === 'string') return c.name;
+            return c.id || '';
           },
           set: (v) => {
             nameI18n['zh-TW'] = v;
@@ -184,7 +189,10 @@
         Object.defineProperty(charObj, 'role', {
           get: () => {
             const lk = this.getLangKey();
-            return roleI18n[lk] || roleI18n['zh-TW'] || roleI18n['en'] || c.role || 'Resident';
+            const val = roleI18n[lk] || roleI18n['zh-TW'] || roleI18n['en'];
+            if (val && typeof val === 'string') return val;
+            if (typeof c.role === 'string') return c.role;
+            return 'Resident';
           },
           set: (v) => {
             roleI18n['zh-TW'] = v;

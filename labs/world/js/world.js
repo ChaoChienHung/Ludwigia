@@ -803,41 +803,35 @@
           this.ctx.restore();
         }
       });
-      // SE Doorway Lintel Beam (z: 2.15 to H)
-      list.push({
-        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
-        yMin: 4.5, yMax: 6.8,
-        draw: () => {
-          this.ctx.save();
-          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
-          this.ctx.restore();
-        }
-      });
-
       // Interactive Double Doors (Ludwig's House)
       const doorAngle1 = this.doorLudwigOpen * 1.35;
       const doorW = 1.15;
       const hx = HOUSE_MAX_X + 1.0;
       const nTipX = hx + Math.sin(doorAngle1) * doorW;
       const nTipY = 4.5 + Math.cos(doorAngle1) * doorW;
-      list.push({
-        xMin: Math.min(hx, nTipX) - 0.1, xMax: Math.max(hx, nTipX) + 0.1,
-        yMin: 4.4, yMax: Math.max(4.5 + doorW, nTipY) + 0.1,
-        draw: () => {
-          this.ctx.save();
-          this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, ox, oy);
-          this.ctx.restore();
-        }
-      });
       const sTipX = hx + Math.sin(doorAngle1) * doorW;
       const sTipY = 6.8 - Math.cos(doorAngle1) * doorW;
       list.push({
-        xMin: Math.min(hx, sTipX) - 0.1, xMax: Math.max(hx, sTipX) + 0.1,
-        yMin: Math.min(6.8 - doorW, sTipY) - 0.1, yMax: 6.9,
+        xMin: Math.min(hx, nTipX, sTipX) - 0.15,
+        xMax: Math.max(hx, nTipX, sTipX) + 0.15,
+        yMin: 4.4,
+        yMax: 6.9,
         draw: () => {
           this.ctx.save();
+          this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, ox, oy);
           this.drawDoorLeaf(hx, 6.8, sTipX, sTipY, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // SE Doorway Lintel Beam (z: 2.15 to H, covers door tops cleanly)
+      list.push({
+        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
+        yMin: 4.45, yMax: 6.85,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           this.ctx.restore();
         }
       });
@@ -1060,40 +1054,35 @@
           this.ctx.restore();
         }
       });
-      // Lintel beam over door (z: 2.15 to H)
-      list.push({
-        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
-        yMin: 20.5, yMax: 22.8,
-        draw: () => {
-          this.ctx.save();
-          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
-          this.ctx.restore();
-        }
-      });
-
       // Dorm Interactive Double Doors
       const dormDoorAngle = this.doorDormOpen * 1.35;
       const dormDoorW = 1.15;
       const dnTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
       const dnTipY = 20.5 + Math.cos(dormDoorAngle) * dormDoorW;
-      list.push({
-        xMin: Math.min(dormSE_X, dnTipX) - 0.1, xMax: Math.max(dormSE_X, dnTipX) + 0.1,
-        yMin: 20.4, yMax: Math.max(20.5 + dormDoorW, dnTipY) + 0.1,
-        draw: () => {
-          this.ctx.save();
-          this.drawDoorLeaf(dormSE_X, 20.5, dnTipX, dnTipY, ox, oy);
-          this.ctx.restore();
-        }
-      });
       const dsTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
       const dsTipY = 22.8 - Math.cos(dormDoorAngle) * dormDoorW;
       list.push({
-        xMin: Math.min(dormSE_X, dsTipX) - 0.1, xMax: Math.max(dormSE_X, dsTipX) + 0.1,
-        yMin: Math.min(22.8 - dormDoorW, dsTipY) - 0.1, yMax: 22.9,
+        xMin: Math.min(dormSE_X, dnTipX, dsTipX) - 0.15,
+        xMax: Math.max(dormSE_X, dnTipX, dsTipX) + 0.15,
+        yMin: 20.4,
+        yMax: 22.9,
         draw: () => {
           this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
+          this.drawDoorLeaf(dormSE_X, 20.5, dnTipX, dnTipY, ox, oy);
           this.drawDoorLeaf(dormSE_X, 22.8, dsTipX, dsTipY, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Lintel beam over door (z: 2.15 to H, covers door tops cleanly)
+      list.push({
+        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
+        yMin: 20.45, yMax: 22.85,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
+          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           this.ctx.restore();
         }
       });
@@ -1371,40 +1360,35 @@
           this.ctx.restore();
         }
       });
-      // Lintel beam over library door (z: 2.15 to H)
-      list.push({
-        xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
-        yMin: 20.5, yMax: 22.8,
-        draw: () => {
-          this.ctx.save();
-          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
-          this.ctx.restore();
-        }
-      });
-
       // Library Double Mahogany Swinging Doors
       const libDoorAngle = this.doorLibOpen * 1.35;
       const libDoorW = 1.15;
       const libnTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
       const libnTipY = 20.5 + Math.cos(libDoorAngle) * libDoorW;
-      list.push({
-        xMin: Math.min(LIB_MIN_X, libnTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libnTipX) + 0.1,
-        yMin: 20.4, yMax: Math.max(20.5 + libDoorW, libnTipY) + 0.1,
-        draw: () => {
-          this.ctx.save();
-          this.drawDoorLeaf(LIB_MIN_X, 20.5, libnTipX, libnTipY, ox, oy);
-          this.ctx.restore();
-        }
-      });
       const libsTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
       const libsTipY = 22.8 - Math.cos(libDoorAngle) * libDoorW;
       list.push({
-        xMin: Math.min(LIB_MIN_X, libsTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libsTipX) + 0.1,
-        yMin: Math.min(22.8 - libDoorW, libsTipY) - 0.1, yMax: 22.9,
+        xMin: Math.min(LIB_MIN_X, libnTipX, libsTipX) - 0.15,
+        xMax: Math.max(LIB_MIN_X, libnTipX, libsTipX) + 0.15,
+        yMin: 20.4,
+        yMax: 22.9,
         draw: () => {
           this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
+          this.drawDoorLeaf(LIB_MIN_X, 20.5, libnTipX, libnTipY, ox, oy);
           this.drawDoorLeaf(LIB_MIN_X, 22.8, libsTipX, libsTipY, ox, oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Lintel beam over library door (z: 2.15 to H, covers door tops cleanly)
+      list.push({
+        xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
+        yMin: 20.45, yMax: 22.85,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
+          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           this.ctx.restore();
         }
       });
@@ -1551,7 +1535,7 @@
     }
 
     drawDoorLeaf(hx, hy, tx, ty, ox, oy, plaqueText) {
-      const H = 2.06;
+      const H = 2.15;
       const b0 = isoToScreen(hx, hy, 0, ox, oy);
       const b1 = isoToScreen(tx, ty, 0, ox, oy);
       const t1 = isoToScreen(tx, ty, H, ox, oy);
