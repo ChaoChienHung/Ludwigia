@@ -803,7 +803,6 @@
         yMin: 4.4, yMax: Math.max(4.5 + doorW, nTipY) + 0.1,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, ox, oy);
           this.ctx.restore();
         }
@@ -815,7 +814,6 @@
         yMin: Math.min(6.8 - doorW, sTipY) - 0.1, yMax: 6.9,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(hx, 6.8, sTipX, sTipY, ox, oy);
           this.ctx.restore();
         }
@@ -892,7 +890,6 @@
         yMin: swY - 0.1, yMax: Math.max(swY + doorW, wTipY) + 0.1,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(4.5, swY, wTipX, wTipY, ox, oy);
           this.ctx.restore();
         }
@@ -904,7 +901,6 @@
         yMin: swY - 0.1, yMax: Math.max(swY + doorW, eTipY) + 0.1,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(6.8, swY, eTipX, eTipY, ox, oy);
           this.ctx.restore();
         }
@@ -1052,7 +1048,6 @@
         yMin: 20.4, yMax: Math.max(20.5 + dormDoorW, dnTipY) + 0.1,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.drawDoorLeaf(dormSE_X, 20.5, dnTipX, dnTipY, ox, oy);
           this.ctx.restore();
         }
@@ -1064,7 +1059,6 @@
         yMin: Math.min(22.8 - dormDoorW, dsTipY) - 0.1, yMax: 22.9,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.drawDoorLeaf(dormSE_X, 22.8, dsTipX, dsTipY, ox, oy);
           this.ctx.restore();
         }
@@ -1342,7 +1336,6 @@
         yMin: 20.4, yMax: Math.max(20.5 + libDoorW, libnTipY) + 0.1,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.drawDoorLeaf(LIB_MIN_X, 20.5, libnTipX, libnTipY, ox, oy);
           this.ctx.restore();
         }
@@ -1354,7 +1347,6 @@
         yMin: Math.min(22.8 - libDoorW, libsTipY) - 0.1, yMax: 22.9,
         draw: () => {
           this.ctx.save();
-          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.drawDoorLeaf(LIB_MIN_X, 22.8, libsTipX, libsTipY, ox, oy);
           this.ctx.restore();
         }

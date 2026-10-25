@@ -69,6 +69,40 @@
       }
     }
 
+    // --- Soft Ambient Drop Shadow on Floor Plane ---
+    drawDropShadow(ctx, gx, gy, w, d, ox, oy) {
+      const s0 = isoToScreen(gx, gy, 0, ox, oy);
+      const s1 = isoToScreen(gx + w, gy, 0, ox, oy);
+      const s2 = isoToScreen(gx + w, gy + d, 0, ox, oy);
+      const s3 = isoToScreen(gx, gy + d, 0, ox, oy);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+      ctx.beginPath();
+      ctx.moveTo(s0.x, s0.y); ctx.lineTo(s1.x, s1.y); ctx.lineTo(s2.x, s2.y); ctx.lineTo(s3.x, s3.y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // --- Rounded Rectangle Helper Primitive ---
+    roundRect(ctx, x, y, w, h, r = 0) {
+      ctx.beginPath();
+      if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(x, y, w, h, r);
+      } else {
+        if (r > w / 2) r = w / 2;
+        if (r > h / 2) r = h / 2;
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.arcTo(x + w, y, x + w, y + r, r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+        ctx.lineTo(x + r, y + h);
+        ctx.arcTo(x, y + h, x, y + h - r, r);
+        ctx.lineTo(x, y + r);
+        ctx.arcTo(x, y, x + r, y, r);
+        ctx.closePath();
+      }
+    }
+
     // --- Modern Japanese-Inspired Terrace Railing along South Garden ---
     drawPorchRailing(ctx, gx, gy, len, ox, oy) {
       const H = 0.55;
