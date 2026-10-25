@@ -592,6 +592,10 @@
       "dialogues": {
         "zh-TW": [
           [
+            "你是水蛭喔？",
+            "一直吸一直吸……借個衛生紙吸、開個熱點吸，現在連泡麵湯都要吸一口！😂"
+          ],
+          [
             "哈囉！戴著降噪耳機聽著 Lo-fi 節奏，這張桌子就是我的專屬音樂工作室。",
             "男11 宿舍晚上最棒的就是夜深人靜時大家各自專注，鍵盤敲擊聲伴著窗外的微風，特別平靜踏實。"
           ],
@@ -611,6 +615,10 @@
           ]
         ],
         "en": [
+          [
+            "Are you a leech or what?!",
+            "Sucking everything dry... borrowing my tissues, latching onto my hotspot, and now you want a sip of my instant ramen broth too?! 😂"
+          ],
           [
             "Hello! With noise-cancelling headphones and lo-fi beats flowing, this desk is my audio haven.",
             "The magic of Dorm 11 at night is the quiet camaraderie: rhythmic keyboard clicks and a cool midnight breeze."
@@ -1084,6 +1092,10 @@
       "dialogues": {
         "zh-TW": [
           [
+            "你們先去吃吧，我不餓",
+            "這道證明還差兩個邊界引理……等我推完這頁流形度量再去覓食！"
+          ],
+          [
             "歡迎來到 Ludwigia 典雅藏書閣！坐在這張長形胡桃木閱覽桌前，這盞祖母綠玻璃銀行燈的柔和光暈令人無比沉靜。",
             "空氣中瀰漫著古老羊皮紙、硬皮書封與微溫油墨的清香，是鑽研數理最高境界的理想聖地。"
           ],
@@ -1105,6 +1117,10 @@
           ]
         ],
         "en": [
+          [
+            "You guys go ahead and eat first, I am not hungry.",
+            "I am just two boundary lemmas away from finishing this proof... I will hunt for food once I wrap up this page of metric manifolds!"
+          ],
           [
             "Welcome to the Grand Library! Sitting here at this long polished walnut study table under the warm green glow of the banker's lamp brings profound focus.",
             "The gentle scent of aged parchment, hardcover bookcloth, and warm printer's ink creates the ultimate sanctuary for mathematical rigor."
