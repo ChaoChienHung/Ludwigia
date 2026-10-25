@@ -41,8 +41,38 @@
       if (this.activeDialogueChar) {
         const nameEl = document.getElementById('dialogue-name');
         const roleEl = document.getElementById('dialogue-role');
+        const avatarEl = document.getElementById('dialogue-avatar');
         if (nameEl) nameEl.textContent = this.activeDialogueChar.name;
         if (roleEl) roleEl.textContent = this.activeDialogueChar.role;
+        if (avatarEl) this.renderAvatar(avatarEl, this.activeDialogueChar);
+      }
+    }
+
+    renderAvatar(avatarEl, char) {
+      if (!avatarEl) return;
+      const av = (char && char.avatar) ? String(char.avatar).trim() : '';
+      const fallback = (char && char.avatarFallback) || (char && char.isCat ? '🐱' : '👤');
+      const isImg = av && (
+        av.includes('/') ||
+        /\.(png|jpe?g|webp|svg|gif|avif)$/i.test(av) ||
+        av.startsWith('data:') ||
+        av.startsWith('http:') ||
+        av.startsWith('https:')
+      );
+
+      if (isImg) {
+        avatarEl.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = av;
+        img.alt = char.name || 'Avatar';
+        img.onerror = () => {
+          avatarEl.innerHTML = '';
+          avatarEl.textContent = fallback;
+        };
+        avatarEl.appendChild(img);
+      } else {
+        avatarEl.innerHTML = '';
+        avatarEl.textContent = av || fallback || '💬';
       }
     }
 
@@ -115,7 +145,8 @@
           nameI18n,
           roleI18n,
           gender: c.gender || 'male',
-          avatar: c.avatar || '👤',
+          avatar: c.avatar || (c.isCat ? '🐱' : '👤'),
+          avatarFallback: c.avatarFallback || (c.isCat ? '🐱' : '👤'),
           zone: c.zone || 'plaza',
           x: c.spawn ? c.spawn.x : 14,
           y: c.spawn ? c.spawn.y : 14,
@@ -175,7 +206,7 @@
       this.activeDialogueChar = char;
       const langKey = this.getLangKey();
 
-      document.getElementById('dialogue-avatar').textContent = char.avatar || '💬';
+      this.renderAvatar(document.getElementById('dialogue-avatar'), char);
       document.getElementById('dialogue-name').textContent = char.name;
       document.getElementById('dialogue-role').textContent = char.role || 'Resident';
 
