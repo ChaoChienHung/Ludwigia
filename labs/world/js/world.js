@@ -142,9 +142,19 @@
       window.addEventListener('resize', this.resize.bind(this));
       this.resize();
 
-      // Keyboard Controls
+      // Keyboard Controls (Support both e.key and e.code for Mac/IME compatibility)
       window.addEventListener('keydown', (e) => {
-        this.keys[e.key.toLowerCase()] = true;
+        const k = e.key ? e.key.toLowerCase() : '';
+        const c = e.code ? e.code.toLowerCase() : '';
+        if (k) this.keys[k] = true;
+        if (c) this.keys[c] = true;
+
+        // Prevent browser scrolling with game controls
+        if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', ' '].includes(k) ||
+            ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'keyw', 'keya', 'keys', 'keyd', 'space'].includes(c)) {
+          e.preventDefault();
+        }
+
         if (e.key === ' ' || e.key === 'Enter') {
           if (this.charManager.proximityTarget) {
             e.preventDefault();
@@ -154,7 +164,10 @@
       });
 
       window.addEventListener('keyup', (e) => {
-        this.keys[e.key.toLowerCase()] = false;
+        const k = e.key ? e.key.toLowerCase() : '';
+        const c = e.code ? e.code.toLowerCase() : '';
+        if (k) this.keys[k] = false;
+        if (c) this.keys[c] = false;
       });
 
       // Mobile Virtual D-Pad
@@ -301,13 +314,13 @@
       const statusEl = document.getElementById('status-text');
       if (statusEl) statusEl.textContent = statusMessage;
 
-      // 3. Player Movement with Walking Animation Fix
+      // 3. Player Movement with Reliable Walking Animation
       let kx = 0, ky = 0;
       const k = this.keys;
-      if (k['w'] || k['arrowup'])    { kx -= 1; ky -= 1; }
-      if (k['s'] || k['arrowdown'])  { kx += 1; ky += 1; }
-      if (k['a'] || k['arrowleft'])  { kx -= 1; ky += 1; }
-      if (k['d'] || k['arrowright']) { kx += 1; ky -= 1; }
+      if (k['w'] || k['arrowup'] || k['keyw'])    { kx -= 1; ky -= 1; }
+      if (k['s'] || k['arrowdown'] || k['keys'])  { kx += 1; ky += 1; }
+      if (k['a'] || k['arrowleft'] || k['keya'])  { kx -= 1; ky += 1; }
+      if (k['d'] || k['arrowright'] || k['keyd']) { kx += 1; ky -= 1; }
 
       if (this.dpadDir) {
         const d = this.dpadDir;
@@ -317,6 +330,7 @@
         if (d.dx > 0) { kx += 1; ky += 1; }
       }
 
+      const isInputActive = (kx !== 0 || ky !== 0) || !!this.dpadDir;
       let playerActuallyMoved = false;
 
       if (kx !== 0 || ky !== 0) {
@@ -359,8 +373,10 @@
         playerActuallyMoved = true;
       }
 
-      player.isWalking = playerActuallyMoved;
-      if (playerActuallyMoved) {
+      // Crucial: Walking is active whenever player is actively driving movement or moving along path
+      const isWalking = isInputActive || (player.path && player.path.length > 0) || playerActuallyMoved;
+      player.isWalking = isWalking;
+      if (isWalking) {
         player.walkTimer = (player.walkTimer || 0) + dt * 10.0;
       } else {
         player.walkTimer = 0;

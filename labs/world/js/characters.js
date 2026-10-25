@@ -185,9 +185,9 @@
       }
 
       // 3. Human Character Model with Walking Animation
-      const isWalking = !!c.isWalking;
-      const animTime = c.walkTimer || 0;
-      const bob = isWalking ? Math.sin(animTime) * 2.5 : 0;
+      const isWalking = !!c.isWalking || (c.path && c.path.length > 0);
+      const animTime = isWalking ? (c.walkTimer || performance.now() * 0.009) : 0;
+      const bob = isWalking ? Math.abs(Math.sin(animTime)) * -2.0 : 0;
       const px = pos.x;
       const py = pos.y + bob;
 
@@ -195,17 +195,20 @@
       ctx.fillStyle = c.pants || '#1e293b';
       if (isWalking) {
         const swing = Math.sin(animTime) * 4.5;
-        ctx.fillRect(px - 5 + swing, py - 12, 3.5, 12);
-        ctx.fillRect(px + 1.5 - swing, py - 12, 3.5, 12);
+        // Animated alternating leg stride with realistic vertical step lift
+        const leftLift = Math.max(0, swing * 0.6);
+        const rightLift = Math.max(0, -swing * 0.6);
+        ctx.fillRect(px - 4.5 + swing, py - 12 - leftLift, 3.5, 12);
+        ctx.fillRect(px + 1.0 - swing, py - 12 - rightLift, 3.5, 12);
 
         // Arms swinging in counter-motion
         ctx.fillStyle = c.shirt || '#e06c43';
-        ctx.fillRect(px - 9 - swing * 0.4, py - 24, 2.5, 9);
-        ctx.fillRect(px + 6.5 + swing * 0.4, py - 24, 2.5, 9);
+        ctx.fillRect(px - 9 - swing * 0.5, py - 24, 2.5, 9);
+        ctx.fillRect(px + 6.5 + swing * 0.5, py - 24, 2.5, 9);
       } else {
-        // Standing Still
+        // Standing Still (neutral upright posture)
         ctx.fillRect(px - 4.5, py - 12, 3.5, 12);
-        ctx.fillRect(px + 1, py - 12, 3.5, 12);
+        ctx.fillRect(px + 1.0, py - 12, 3.5, 12);
 
         ctx.fillStyle = c.shirt || '#e06c43';
         ctx.fillRect(px - 9, py - 24, 2.5, 9);

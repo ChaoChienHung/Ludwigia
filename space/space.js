@@ -578,9 +578,18 @@
       window.addEventListener('resize', this.resize.bind(this));
       this.resize();
 
-      // Keyboard Controls
+      // Keyboard Controls (Support both e.key and e.code for Mac/IME compatibility)
       window.addEventListener('keydown', (e) => {
-        this.keys[e.key.toLowerCase()] = true;
+        const k = e.key ? e.key.toLowerCase() : '';
+        const c = e.code ? e.code.toLowerCase() : '';
+        if (k) this.keys[k] = true;
+        if (c) this.keys[c] = true;
+
+        if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', ' '].includes(k) ||
+            ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'keyw', 'keya', 'keys', 'keyd', 'space'].includes(c)) {
+          e.preventDefault();
+        }
+
         if (e.key === ' ' || e.key === 'Enter') {
           if (this.proximityTarget) {
             e.preventDefault();
@@ -590,7 +599,10 @@
       });
 
       window.addEventListener('keyup', (e) => {
-        this.keys[e.key.toLowerCase()] = false;
+        const k = e.key ? e.key.toLowerCase() : '';
+        const c = e.code ? e.code.toLowerCase() : '';
+        if (k) this.keys[k] = false;
+        if (c) this.keys[c] = false;
       });
 
       // Mobile Virtual D-Pad
@@ -743,10 +755,11 @@
 
       // 1. Player Movement from Keyboard / D-Pad
       let kx = 0, ky = 0;
-      if (this.keys['w'] || this.keys['arrowup'])    { kx -= 1; ky -= 1; }
-      if (this.keys['s'] || this.keys['arrowdown'])  { kx += 1; ky += 1; }
-      if (this.keys['a'] || this.keys['arrowleft'])  { kx -= 1; ky += 1; }
-      if (this.keys['d'] || this.keys['arrowright']) { kx += 1; ky -= 1; }
+      const k = this.keys;
+      if (k['w'] || k['arrowup'] || k['keyw'])    { kx -= 1; ky -= 1; }
+      if (k['s'] || k['arrowdown'] || k['keys'])  { kx += 1; ky += 1; }
+      if (k['a'] || k['arrowleft'] || k['keya'])  { kx -= 1; ky += 1; }
+      if (k['d'] || k['arrowright'] || k['keyd']) { kx += 1; ky -= 1; }
 
       if (this.dpadDir) {
         const d = this.dpadDir;
@@ -789,6 +802,8 @@
           this.player.facing = dx >= dy ? 1 : -1;
         }
       }
+
+      this.player.isWalking = (kx !== 0 || ky !== 0) || !!this.dpadDir || (this.player.path && this.player.path.length > 0);
 
       // 2. Anti-Crowding Social Distance Separation Force (>= 1.5 tiles)
       const MIN_DIST = 1.6;
@@ -2127,21 +2142,33 @@
         this.drawNameTag(ctx, pos.x, pos.y - 36, c);
         return;
       } else {
-        const time = performance.now() * 0.007;
-        const isWalking = (c.path && c.path.length > 0) || (c.isPlayer && (this.keys['w'] || this.keys['s'] || this.keys['a'] || this.keys['d'] || this.dpadDir));
-        const bob = isWalking ? Math.sin(time) * 2.5 : 0;
+        const isWalking = !!c.isWalking || (c.path && c.path.length > 0) || (c.isPlayer && (this.keys['w'] || this.keys['s'] || this.keys['a'] || this.keys['d'] || this.keys['arrowup'] || this.keys['arrowdown'] || this.keys['arrowleft'] || this.keys['arrowright'] || this.keys['keyw'] || this.keys['keya'] || this.keys['keys'] || this.keys['keyd'] || this.dpadDir));
+        const time = isWalking ? performance.now() * 0.009 : 0;
+        const bob = isWalking ? Math.abs(Math.sin(time)) * -2.0 : 0;
         const px = pos.x;
         const py = pos.y + bob;
 
         // Pants / Legs
         ctx.fillStyle = c.pants || '#1e293b';
         if (isWalking) {
-          const swing = Math.sin(time) * 4;
-          ctx.fillRect(px - 5 + swing, py - 12, 3.5, 12);
-          ctx.fillRect(px + 1.5 - swing, py - 12, 3.5, 12);
+          const swing = Math.sin(time) * 4.5;
+          const leftLift = Math.max(0, swing * 0.6);
+          const rightLift = Math.max(0, -swing * 0.6);
+          ctx.fillRect(px - 4.5 + swing, py - 12 - leftLift, 3.5, 12);
+          ctx.fillRect(px + 1.0 - swing, py - 12 - rightLift, 3.5, 12);
+
+          // Arms
+          ctx.fillStyle = c.shirt || '#e06c43';
+          ctx.fillRect(px - 9 - swing * 0.5, py - 24, 2.5, 9);
+          ctx.fillRect(px + 6.5 + swing * 0.5, py - 24, 2.5, 9);
         } else {
           ctx.fillRect(px - 4.5, py - 12, 3.5, 12);
-          ctx.fillRect(px + 1, py - 12, 3.5, 12);
+          ctx.fillRect(px + 1.0, py - 12, 3.5, 12);
+
+          // Arms
+          ctx.fillStyle = c.shirt || '#e06c43';
+          ctx.fillRect(px - 9, py - 24, 2.5, 9);
+          ctx.fillRect(px + 6.5, py - 24, 2.5, 9);
         }
 
         // Shirt
