@@ -35,6 +35,12 @@
       this.panY = 0;
       this.currentZone = 'ludwig_house';
 
+      // Dynamic Cutaway Wall Alphas (1.0 = solid exterior when outside; ~0.32 = cutaway when inside)
+      this.wallAlphaHouse = 0.32; // starts inside house
+      this.wallAlphaDorm = 1.0;
+      this.wallAlphaAi = 1.0;
+      this.wallAlphaLib = 1.0;
+
       // Day / Night mood
       this.mood = 'auto';
       this.currentTimeState = 'day';
@@ -320,6 +326,22 @@
       // Smooth camera transition
       this.zoom += (this.targetZoom - this.zoom) * 0.05;
       this.outsideAlpha += (this.targetOutsideAlpha - this.outsideAlpha) * 0.05;
+
+      // Dynamic Wall Cutaway Transparency:
+      // When looking from outside, building walls are solid (opacity: 1.0).
+      // When player goes inside a room, that room's camera-facing dividing walls become cutaway (opacity: ~0.32)
+      // so the interior desks, beds, furniture and characters are fully visible!
+      const targetWallHouse = (this.currentZone === 'ludwig_house') ? 0.32 : 1.0;
+      this.wallAlphaHouse += (targetWallHouse - this.wallAlphaHouse) * Math.min(1.0, dt * 6.0);
+
+      const targetWallDorm = (this.currentZone === 'dorm_211') ? 0.32 : 1.0;
+      this.wallAlphaDorm += (targetWallDorm - this.wallAlphaDorm) * Math.min(1.0, dt * 6.0);
+
+      const targetWallAi = (this.currentZone === 'ai_studio') ? 0.32 : 1.0;
+      this.wallAlphaAi += (targetWallAi - this.wallAlphaAi) * Math.min(1.0, dt * 6.0);
+
+      const targetWallLib = (this.currentZone === 'library') ? 0.32 : 1.0;
+      this.wallAlphaLib += (targetWallLib - this.wallAlphaLib) * Math.min(1.0, dt * 6.0);
 
       // 2. Multi-Door Proximity Sensors
       const nearLudwigDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 5.65) < 2.4);
@@ -694,7 +716,10 @@
         xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
         yMin: 0, yMax: 4.5,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       // SE Dividing Wall Right Segment (dR, y: 6.8 to HOUSE_MAX_Y + 1)
@@ -702,7 +727,10 @@
         xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
         yMin: 6.8, yMax: HOUSE_MAX_Y + 1.25,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.25, (HOUSE_MAX_Y + 1) - 6.8, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       // SE Doorway Lintel Beam (z: 2.15 to H) & Mounted Lintel Plaque
@@ -710,6 +738,8 @@
         xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           const plq = isoToScreen(HOUSE_MAX_X + 1, 5.65, 2.40, ox, oy);
           this.ctx.save();
@@ -729,6 +759,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText('LUDWIGIA', 0, 0);
           this.ctx.restore();
+          this.ctx.restore();
         }
       });
 
@@ -742,7 +773,10 @@
         xMin: Math.min(hx, nTipX) - 0.1, xMax: Math.max(hx, nTipX) + 0.1,
         yMin: 4.4, yMax: Math.max(4.5 + doorW, nTipY) + 0.1,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, ox, oy);
+          this.ctx.restore();
         }
       });
       const sTipX = hx + Math.sin(doorAngle1) * doorW;
@@ -751,7 +785,10 @@
         xMin: Math.min(hx, sTipX) - 0.1, xMax: Math.max(hx, sTipX) + 0.1,
         yMin: Math.min(6.8 - doorW, sTipY) - 0.1, yMax: 6.9,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(hx, 6.8, sTipX, sTipY, ox, oy);
+          this.ctx.restore();
         }
       });
 
@@ -761,6 +798,8 @@
       list.push({
         xMin: -0.1, xMax: 4.5, yMin: swY - 0.15, yMax: swY + 0.35,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, 0, swY, 0, 4.5, 0.25, H, wallT, wallL, wallR, ox, oy);
           // Panoramic Frosted Glass Window inset into South Wall (z: 0.85 to 1.85)
           const wp0 = isoToScreen(0.8, swY + 0.12, 0.85, ox, oy);
@@ -775,20 +814,27 @@
           this.ctx.strokeStyle = '#92400e';
           this.ctx.lineWidth = 1.8;
           this.ctx.stroke();
+          this.ctx.restore();
         }
       });
       // Right Wall Segment (x: 6.8 to 10)
       list.push({
         xMin: 6.8, xMax: 10.25, yMin: swY - 0.15, yMax: swY + 0.35,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, 6.8, swY, 0, 3.2, 0.25, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       // SW Side Doorway Lintel Beam (z: 2.15 to H)
       list.push({
         xMin: 4.5, xMax: 6.8, yMin: swY - 0.15, yMax: swY + 0.35,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, 4.5, swY, 2.15, 2.3, 0.25, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
 
@@ -816,7 +862,10 @@
         xMin: 4.4, xMax: 5.7,
         yMin: swY - 0.1, yMax: Math.max(swY + doorW, wTipY) + 0.1,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(4.5, swY, wTipX, wTipY, ox, oy);
+          this.ctx.restore();
         }
       });
       const eTipX = 6.8 - Math.cos(sideDoorAngle) * doorW;
@@ -825,7 +874,10 @@
         xMin: 5.6, xMax: 6.9,
         yMin: swY - 0.1, yMax: Math.max(swY + doorW, eTipY) + 0.1,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.drawDoorLeaf(6.8, swY, eTipX, eTipY, ox, oy);
+          this.ctx.restore();
         }
       });
 
@@ -914,7 +966,10 @@
         xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
         yMin: DORM_MIN_Y, yMax: 20.5,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.models.drawBox(this.ctx, dormSE_X, DORM_MIN_Y, 0, 0.25, 20.5 - DORM_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       // Wall segment right of door (y: 22.8 to 27)
@@ -922,7 +977,10 @@
         xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
         yMin: 22.8, yMax: DORM_MAX_Y + 1,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1) - 22.8, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       // Lintel beam over door (z: 2.15 to H) & Mounted Lintel Plaque
@@ -930,6 +988,8 @@
         xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
         yMin: 20.5, yMax: 22.8,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           const plq = isoToScreen(dormSE_X, 21.65, 2.40, ox, oy);
           this.ctx.save();
@@ -949,6 +1009,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText('男11 211', 0, 0);
           this.ctx.restore();
+          this.ctx.restore();
         }
       });
 
@@ -960,7 +1021,10 @@
         xMin: Math.min(dormSE_X, dTipX) - 0.1, xMax: Math.max(dormSE_X, dTipX) + 0.1,
         yMin: 20.4, yMax: 22.9,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.drawDoorLeaf(dormSE_X, 20.5, dTipX, dTipY, ox, oy, '男11 211');
+          this.ctx.restore();
         }
       });
 
@@ -1010,14 +1074,20 @@
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 0, yMax: 4.5,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
           this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       list.push({
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 6.8, yMax: 10,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
           this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       // AI Studio Neon Plaque & Lintel (Sheared along Y axis -0.5 slope)
@@ -1025,6 +1095,8 @@
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
           this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           const plq = isoToScreen(AI_MIN_X, 5.65, 2.40, ox, oy);
           this.ctx.save();
@@ -1044,6 +1116,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText('AI STUDIO', 0, 0);
           this.ctx.restore();
+          this.ctx.restore();
         }
       });
 
@@ -1053,6 +1126,8 @@
         xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
           const dg0 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 0, ox, oy);
           const dg1 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 0, ox, oy);
           const dg2 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 2.15, ox, oy);
@@ -1065,6 +1140,7 @@
           this.ctx.strokeStyle = '#06b6d4';
           this.ctx.lineWidth = 1.5;
           this.ctx.stroke();
+          this.ctx.restore();
         }
       });
 
@@ -1092,20 +1168,28 @@
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: LIB_MIN_Y, yMax: 20.5,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.25, 3.5, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: 22.8, yMax: LIB_MAX_Y + 1,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, 4.2, H, wallT, wallL, wallR, ox, oy);
+          this.ctx.restore();
         }
       });
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: 20.5, yMax: 22.8,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           const plq = isoToScreen(LIB_MIN_X, 21.65, 2.40, ox, oy);
           this.ctx.save();
@@ -1125,6 +1209,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText('GRAND LIBRARY', 0, 0);
           this.ctx.restore();
+          this.ctx.restore();
         }
       });
 
@@ -1136,7 +1221,10 @@
         xMin: Math.min(LIB_MIN_X, libTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libTipX) + 0.1,
         yMin: 20.4, yMax: 22.9,
         draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.drawDoorLeaf(LIB_MIN_X, 20.5, libTipX, libTipY, ox, oy);
+          this.ctx.restore();
         }
       });
 
