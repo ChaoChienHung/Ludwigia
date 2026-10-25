@@ -623,31 +623,31 @@
       const wallL = isDark ? '#2a2e38' : '#e8e2d2';
       const wallR = isDark ? '#1f232b' : '#d8d1be';
       const wallT = isDark ? '#334155' : '#f1f5f9';
-      const H = 2.8;
+      const H = 2.55; // Slightly taller than the doors (2.15m), providing solid lintel & architectural wall structure
 
       // === 1. ZONE 1: LUDWIG'S HOUSE ===
       // SE Dividing Wall Left Segment (dL, y: 0 to 4.5)
       list.push({
-        xMin: HOUSE_MAX_X + 0.9, xMax: HOUSE_MAX_X + 1.1,
+        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
         yMin: 0, yMax: 4.5,
         draw: () => {
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 0, 0, 0.01, 4.5, H, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, ox, oy);
         }
       });
       // SE Dividing Wall Right Segment (dR, y: 6.8 to HOUSE_MAX_Y + 1)
       list.push({
-        xMin: HOUSE_MAX_X + 0.9, xMax: HOUSE_MAX_X + 1.1,
-        yMin: 6.8, yMax: HOUSE_MAX_Y + 1,
+        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
+        yMin: 6.8, yMax: HOUSE_MAX_Y + 1.25,
         draw: () => {
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.01, (HOUSE_MAX_Y + 1) - 6.8, H, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.25, (HOUSE_MAX_Y + 1) - 6.8, H, wallT, wallL, wallR, ox, oy);
         }
       });
-      // SE Doorway Lintel Arch
+      // SE Doorway Lintel Beam (z: 2.15 to H)
       list.push({
-        xMin: HOUSE_MAX_X + 0.9, xMax: HOUSE_MAX_X + 1.1,
+        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
         }
       });
 
@@ -674,23 +674,40 @@
         }
       });
 
-      // SW Side Wall & Terrace Railings (along y = HOUSE_MAX_Y + 1 = 10)
+      // SW Side Wall & Terrace Doorway (along y = HOUSE_MAX_Y + 1 = 10)
       const swY = HOUSE_MAX_Y + 1.0;
-      // Left Porch Railing (x: 0 to 4.5)
+      // Left Wall Segment (x: 0 to 4.5) with Inset Modern Window
       list.push({
-        xMin: 0, xMax: 4.5, yMin: swY - 0.1, yMax: swY + 0.1,
-        draw: () => this.models.drawPorchRailing(this.ctx, 0, swY, 4.5, ox, oy)
-      });
-      // Right Porch Railing (x: 6.8 to 10)
-      list.push({
-        xMin: 6.8, xMax: 10.0, yMin: swY - 0.1, yMax: swY + 0.1,
-        draw: () => this.models.drawPorchRailing(this.ctx, 6.8, swY, 3.2, ox, oy)
-      });
-      // SW Side Doorway Archway Lintel
-      list.push({
-        xMin: 4.5, xMax: 6.8, yMin: swY - 0.1, yMax: swY + 0.1,
+        xMin: -0.1, xMax: 4.5, yMin: swY - 0.15, yMax: swY + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, 4.5, swY, 2.2, 2.3, 0.01, H - 2.2, null, wallL, null, ox, oy);
+          this.models.drawBox(this.ctx, 0, swY, 0, 4.5, 0.25, H, wallT, wallL, wallR, ox, oy);
+          // Panoramic Frosted Glass Window inset into South Wall (z: 0.85 to 1.85)
+          const wp0 = isoToScreen(0.8, swY + 0.12, 0.85, ox, oy);
+          const wp1 = isoToScreen(3.8, swY + 0.12, 0.85, ox, oy);
+          const wp2 = isoToScreen(3.8, swY + 0.12, 1.85, ox, oy);
+          const wp3 = isoToScreen(0.8, swY + 0.12, 1.85, ox, oy);
+          this.ctx.fillStyle = 'rgba(224, 242, 254, 0.55)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(wp0.x, wp0.y); this.ctx.lineTo(wp1.x, wp1.y); this.ctx.lineTo(wp2.x, wp2.y); this.ctx.lineTo(wp3.x, wp3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#92400e';
+          this.ctx.lineWidth = 1.8;
+          this.ctx.stroke();
+        }
+      });
+      // Right Wall Segment (x: 6.8 to 10)
+      list.push({
+        xMin: 6.8, xMax: 10.25, yMin: swY - 0.15, yMax: swY + 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, 6.8, swY, 0, 3.2, 0.25, H, wallT, wallL, wallR, ox, oy);
+        }
+      });
+      // SW Side Doorway Lintel Beam (z: 2.15 to H)
+      list.push({
+        xMin: 4.5, xMax: 6.8, yMin: swY - 0.15, yMax: swY + 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, 4.5, swY, 2.15, 2.3, 0.25, H - 2.15, wallT, wallL, wallR, ox, oy);
         }
       });
 
@@ -891,26 +908,26 @@
       // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===
       // AI Studio Entrance Walls & Plaque
       list.push({
-        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 0, yMax: 4.5,
         draw: () => {
-          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.01, 4.5, H, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, ox, oy);
         }
       });
       list.push({
-        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 6.8, yMax: 10,
         draw: () => {
-          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.01, 3.2, H, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, H, wallT, wallL, wallR, ox, oy);
         }
       });
-      // AI Studio Neon Plaque
+      // AI Studio Neon Plaque & Lintel
       list.push({
-        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
+        xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
-          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
-          const plq = isoToScreen(AI_MIN_X, 5.65, 2.45, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          const plq = isoToScreen(AI_MIN_X, 5.65, 2.40, ox, oy);
           this.ctx.fillStyle = '#0f172a';
           this.ctx.fillRect(plq.x - 30, plq.y - 8, 60, 16);
           this.ctx.strokeStyle = '#06b6d4';
@@ -965,25 +982,25 @@
       // === 4. ZONE 4: LUDWIGIA GRAND LIBRARY & BOTANICAL READING HALL ===
       // Library NW Entrance Walls & Bronze Plaque
       list.push({
-        xMin: LIB_MIN_X - 0.1, xMax: LIB_MIN_X + 0.1,
+        xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: LIB_MIN_Y, yMax: 20.5,
         draw: () => {
-          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.01, 3.5, H, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.25, 3.5, H, wallT, wallL, wallR, ox, oy);
         }
       });
       list.push({
-        xMin: LIB_MIN_X - 0.1, xMax: LIB_MIN_X + 0.1,
+        xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: 22.8, yMax: LIB_MAX_Y + 1,
         draw: () => {
-          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.01, 4.2, H, null, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, 4.2, H, wallT, wallL, wallR, ox, oy);
         }
       });
       list.push({
-        xMin: LIB_MIN_X - 0.1, xMax: LIB_MIN_X + 0.1,
+        xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: 20.5, yMax: 22.8,
         draw: () => {
-          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
-          const plq = isoToScreen(LIB_MIN_X, 21.65, 2.45, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          const plq = isoToScreen(LIB_MIN_X, 21.65, 2.40, ox, oy);
           this.ctx.fillStyle = '#451a03';
           this.ctx.fillRect(plq.x - 34, plq.y - 8, 68, 16);
           this.ctx.strokeStyle = '#d97706';
