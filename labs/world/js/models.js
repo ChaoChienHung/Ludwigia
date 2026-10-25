@@ -29,18 +29,21 @@
       const t2 = isoToScreen(gx + dx, gy + dy, gz + dz, ox, oy);
       const t3 = isoToScreen(gx, gy + dy, gz + dz, ox, oy);
 
-      // Left Visible Face (Front-Left on screen, facing South-East: b3 -> b2)
-      if (leftCol) {
-        ctx.fillStyle = leftCol;
+      const lCol = leftCol || rightCol;
+      const rCol = rightCol || leftCol;
+
+      // Left Visible Face (Front-Left on screen, facing diagonally bottom-left: b3 -> b2)
+      if (lCol) {
+        ctx.fillStyle = lCol;
         ctx.beginPath();
         ctx.moveTo(b3.x, b3.y); ctx.lineTo(b2.x, b2.y); ctx.lineTo(t2.x, t2.y); ctx.lineTo(t3.x, t3.y);
         ctx.closePath();
         ctx.fill();
       }
 
-      // Right Visible Face (Front-Right on screen, facing South-West: b2 -> b1)
-      if (rightCol) {
-        ctx.fillStyle = rightCol;
+      // Right Visible Face (Front-Right on screen, facing diagonally bottom-right: b2 -> b1)
+      if (rCol) {
+        ctx.fillStyle = rCol;
         ctx.beginPath();
         ctx.moveTo(b2.x, b2.y); ctx.lineTo(b1.x, b1.y); ctx.lineTo(t1.x, t1.y); ctx.lineTo(t2.x, t2.y);
         ctx.closePath();
@@ -579,44 +582,8 @@
     }
 
     // --- Dining Table Set (Solid Turned Teak Table, 4 Legs, Scandinavian Dining Chairs, x: 6, y: 5) ---
+    // --- Dining Table Set (Solid Turned Teak Table, 4 Legs, Scandinavian Dining Chairs, x: 6, y: 5) ---
     drawDiningTable(ctx, gx, gy, ox, oy) {
-      // Helper quad drawers with exact isometric perspective
-      const fillFront = (x, y0, y1, z0, z1, col) => {
-        const p0 = isoToScreen(x, y0, z0, ox, oy);
-        const p1 = isoToScreen(x, y1, z0, ox, oy);
-        const p2 = isoToScreen(x, y1, z1, ox, oy);
-        const p3 = isoToScreen(x, y0, z1, ox, oy);
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-        ctx.closePath();
-        ctx.fill();
-      };
-
-      const fillSide = (x0, x1, y, z0, z1, col) => {
-        const p0 = isoToScreen(x0, y, z0, ox, oy);
-        const p1 = isoToScreen(x1, y, z0, ox, oy);
-        const p2 = isoToScreen(x1, y, z1, ox, oy);
-        const p3 = isoToScreen(x0, y, z1, ox, oy);
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-        ctx.closePath();
-        ctx.fill();
-      };
-
-      const fillTop = (x0, x1, y0, y1, z, col) => {
-        const p0 = isoToScreen(x0, y0, z, ox, oy);
-        const p1 = isoToScreen(x1, y0, z, ox, oy);
-        const p2 = isoToScreen(x1, y1, z, ox, oy);
-        const p3 = isoToScreen(x0, y1, z, ox, oy);
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-        ctx.closePath();
-        ctx.fill();
-      };
-
       // 1. Soft Ambient Floor Shadow under table
       const s0 = isoToScreen(gx + 0.25, gy + 0.10, 0.01, ox, oy);
       const s1 = isoToScreen(gx + 1.85, gy + 0.10, 0.01, ox, oy);
@@ -628,60 +595,45 @@
       ctx.closePath();
       ctx.fill();
 
+      const cLeg = '#78350f', cLegL = '#58240a', cLegR = '#451a03';
+      const cTop = '#b45309', cTopL = '#92400e', cTopR = '#78350f';
+      const cApron = '#78350f', cApronL = '#58240a', cApronR = '#451a03';
+
       // 2. North Chair (Across the table, facing South towards room)
-      // Drawn first so table naturally occludes it
-      const ncx0 = gx + 0.75, ncx1 = gx + 1.35;
-      const ncy0 = gy - 0.25, ncy1 = gy + 0.15;
-      // Legs
-      const drawChairLeg = (lx, ly, lz1) => {
-        fillFront(lx + 0.05, ly, ly + 0.05, 0, lz1, '#78350f');
-        fillSide(lx, lx + 0.05, ly + 0.05, 0, lz1, '#58240a');
-      };
-      drawChairLeg(ncx0 + 0.02, ncy0 + 0.02, 0.44);
-      drawChairLeg(ncx1 - 0.07, ncy0 + 0.02, 0.44);
-      drawChairLeg(ncx0 + 0.02, ncy1 - 0.07, 0.44);
-      drawChairLeg(ncx1 - 0.07, ncy1 - 0.07, 0.44);
-      // Seat
-      fillTop(ncx0, ncx1, ncy0, ncy1, 0.44, '#e2e8f0');
-      fillFront(ncx1, ncy0, ncy1, 0.40, 0.44, '#cbd5e1');
-      fillSide(ncx0, ncx1, ncy1, 0.40, 0.44, '#94a3b8');
-      // Backrest (at North edge, y = ncy0)
-      fillFront(ncx1, ncy0, ncy0 + 0.05, 0.44, 0.82, '#92400e');
-      fillSide(ncx0, ncx1, ncy0 + 0.05, 0.44, 0.82, '#78350f');
-      fillTop(ncx0, ncx1, ncy0, ncy0 + 0.05, 0.82, '#b45309');
+      const ncx = gx + 0.75, ncy = gy - 0.25;
+      const chW = 0.60, chD = 0.40, chH = 0.44;
+      // 4 Chair Legs
+      this.drawBox(ctx, ncx + 0.03, ncy + 0.03, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, ncx + chW - 0.08, ncy + 0.03, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, ncx + 0.03, ncy + chD - 0.08, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, ncx + chW - 0.08, ncy + chD - 0.08, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      // Padded Linen Seat Cushion
+      this.drawBox(ctx, ncx, ncy, chH - 0.04, chW, chD, 0.05, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+      // Backrest along North edge
+      this.drawBox(ctx, ncx, ncy, chH, chW, 0.06, 0.38, cTop, cTopL, cTopR, ox, oy);
 
       // 3. Dining Table (w: 1.5, d: 1.1, H: 0.74)
-      const tx0 = gx + 0.30, tx1 = gx + 1.80;
-      const ty0 = gy + 0.15, ty1 = gy + 1.25;
-      const legW = 0.08;
-      const tH = 0.74, topThick = 0.06, underH = tH - topThick;
+      const tx = gx + 0.30, ty = gy + 0.15;
+      const tW = 1.50, tD = 1.10, tH = 0.74;
+      const legW = 0.09;
+      const topThick = 0.06;
+      const underH = tH - topThick;
 
       // 4 Solid Turned Table Legs
-      const drawTableLeg = (lx, ly) => {
-        fillFront(lx + legW, ly, ly + legW, 0, underH, '#92400e');
-        fillSide(lx, lx + legW, ly + legW, 0, underH, '#78350f');
-        fillSide(lx, lx + legW, ly, 0, underH, '#58240a');
-      };
-      // Back-Left (NW)
-      drawTableLeg(tx0 + 0.06, ty0 + 0.06);
-      // Back-Right (NE)
-      drawTableLeg(tx1 - 0.14, ty0 + 0.06);
-      // Front-Left (SW)
-      drawTableLeg(tx0 + 0.06, ty1 - 0.14);
-      // Front-Right (SE)
-      drawTableLeg(tx1 - 0.14, ty1 - 0.14);
+      this.drawBox(ctx, tx + 0.05, ty + 0.05, 0, legW, legW, underH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, tx + tW - legW - 0.05, ty + 0.05, 0, legW, legW, underH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, tx + 0.05, ty + tD - legW - 0.05, 0, legW, legW, underH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, tx + tW - legW - 0.05, ty + tD - legW - 0.05, 0, legW, legW, underH, cLeg, cLegL, cLegR, ox, oy);
 
-      // Table Underframe Apron Rails (connecting legs under top)
-      fillFront(tx1 - 0.09, ty0 + 0.10, ty1 - 0.10, underH - 0.08, underH, '#78350f');
-      fillSide(tx0 + 0.10, tx1 - 0.10, ty1 - 0.09, underH - 0.08, underH, '#58240a');
+      // Table Underframe Apron Rails
+      this.drawBox(ctx, tx + 0.05, ty + tD - legW - 0.03, underH - 0.08, tW - 0.10, 0.04, 0.08, cApron, cApronL, cApronR, ox, oy);
+      this.drawBox(ctx, tx + tW - legW - 0.03, ty + 0.05, underH - 0.08, 0.04, tD - 0.10, 0.08, cApron, cApronL, cApronR, ox, oy);
 
-      // Tabletop Solid Teak Board
-      fillTop(tx0, tx1, ty0, ty1, tH, '#b45309');
-      fillFront(tx1, ty0, ty1, underH, tH, '#92400e');
-      fillSide(tx0, tx1, ty1, underH, tH, '#78350f');
+      // Solid Teak Tabletop Board
+      this.drawBox(ctx, tx, ty, underH, tW, tD, topThick, cTop, cTopL, cTopR, ox, oy);
 
       // 4. Fresh Fruit Centerpiece on Ceramic Plate
-      const fP = isoToScreen((tx0 + tx1) / 2, (ty0 + ty1) / 2, tH, ox, oy);
+      const fP = isoToScreen(tx + tW / 2, ty + tD / 2, tH, ox, oy);
       // Ceramic Platter
       ctx.fillStyle = '#f8fafc';
       ctx.strokeStyle = '#e2e8f0';
@@ -705,32 +657,16 @@
       ctx.fill();
 
       // 5. South Chair (Foreground, facing North into table)
-      // Drawn after table so it correctly overlaps the table foreground
-      const scx0 = gx + 0.75, scx1 = gx + 1.35;
-      const scy0 = gy + 1.30, scy1 = gy + 1.70;
-      // 4 Slender Wooden Legs
-      drawChairLeg(scx0 + 0.02, scy0 + 0.02, 0.44);
-      drawChairLeg(scx1 - 0.07, scy0 + 0.02, 0.44);
-      drawChairLeg(scx0 + 0.02, scy1 - 0.07, 0.44);
-      drawChairLeg(scx1 - 0.07, scy1 - 0.07, 0.44);
-      // Padded Linen Seat
-      fillTop(scx0, scx1, scy0, scy1, 0.44, '#e2e8f0');
-      fillFront(scx1, scy0, scy1, 0.40, 0.44, '#cbd5e1');
-      fillSide(scx0, scx1, scy1, 0.40, 0.44, '#94a3b8');
-      // Backrest Posts & Curved Rail (at South edge, facing North)
-      fillFront(scx0 + 0.05, scy1 - 0.05, scy1, 0.44, 0.82, '#92400e');
-      fillSide(scx0, scx0 + 0.05, scy1, 0.44, 0.82, '#78350f');
-      fillFront(scx1, scy1 - 0.05, scy1, 0.44, 0.82, '#92400e');
-      fillSide(scx1 - 0.05, scx1, scy1, 0.44, 0.82, '#78350f');
-      // Top Curved Backrest Rail
-      fillTop(scx0, scx1, scy1 - 0.06, scy1, 0.82, '#b45309');
-      fillFront(scx1, scy1 - 0.06, scy1, 0.76, 0.82, '#92400e');
-      fillSide(scx0, scx1, scy1, 0.76, 0.82, '#78350f');
-      // Vertical spindle slats in chair backrest
-      const sMid1 = scx0 + (scx1 - scx0) * 0.35;
-      const sMid2 = scx0 + (scx1 - scx0) * 0.65;
-      fillFront(sMid1 + 0.02, scy1 - 0.03, scy1, 0.44, 0.76, '#78350f');
-      fillFront(sMid2 + 0.02, scy1 - 0.03, scy1, 0.44, 0.76, '#78350f');
+      const scx = gx + 0.75, scy = gy + 1.35;
+      // 4 Chair Legs
+      this.drawBox(ctx, scx + 0.03, scy + 0.03, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, scx + chW - 0.08, scy + 0.03, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, scx + 0.03, scy + chD - 0.08, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      this.drawBox(ctx, scx + chW - 0.08, scy + chD - 0.08, 0, 0.05, 0.05, chH, cLeg, cLegL, cLegR, ox, oy);
+      // Padded Linen Seat Cushion
+      this.drawBox(ctx, scx, scy, chH - 0.04, chW, chD, 0.05, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+      // Backrest along South edge
+      this.drawBox(ctx, scx, scy + chD - 0.06, chH, chW, 0.06, 0.38, cTop, cTopL, cTopR, ox, oy);
     }
 
     // ========================================================================
