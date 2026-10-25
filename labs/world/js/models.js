@@ -152,11 +152,19 @@
 
       // 3. 75% Mechanical Keyboard on the Mat
       this.drawBox(ctx, gx + 0.85, gy + 0.62, 0.73, 0.80, 0.28, 0.035, '#0f172a', '#1e293b', '#334155', ox, oy);
-      // Keycap Backlit Rows
-      const kbP = isoToScreen(gx + 1.25, gy + 0.76, 0.765, ox, oy);
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.85)';
-      ctx.fillRect(kbP.x - 12, kbP.y - 2, 24, 2);
-      ctx.fillRect(kbP.x - 10, kbP.y + 2, 20, 2);
+      // Keycap Backlit Rows (along isometric X axis on the keyboard top face)
+      const kbY1 = gy + 0.70;
+      const kbY2 = gy + 0.78;
+      const k1a = isoToScreen(gx + 0.92, kbY1, 0.766, ox, oy);
+      const k1b = isoToScreen(gx + 1.58, kbY1, 0.766, ox, oy);
+      const k2a = isoToScreen(gx + 0.95, kbY2, 0.766, ox, oy);
+      const k2b = isoToScreen(gx + 1.55, kbY2, 0.766, ox, oy);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(k1a.x, k1a.y); ctx.lineTo(k1b.x, k1b.y);
+      ctx.moveTo(k2a.x, k2a.y); ctx.lineTo(k2b.x, k2b.y);
+      ctx.stroke();
 
       // 4. Primary Developer Laptop (Open on desk mat facing forward)
       const lapX = gx + 0.80;
@@ -177,14 +185,40 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // Glowing IDE Lines on Laptop Screen
-      const lpC = isoToScreen(lapX + 0.37, lapY, 0.95, ox, oy);
+      // Glowing IDE Lines on Laptop Screen (in true +0.5 isometric screen perspective)
+      const lsTL = isoToScreen(lapX + 0.05, lapY, 1.12, ox, oy);
+      ctx.save();
+      ctx.translate(lsTL.x, lsTL.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Shear along X axis (+0.5 slope)
+
+      // Tab Bar
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, 20, 1.8);
       ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(lpC.x - 12, lpC.y - 8, 22, 2);
-      ctx.fillRect(lpC.x - 8, lpC.y - 4, 16, 2);
-      ctx.fillStyle = '#34d399';
-      ctx.fillRect(lpC.x - 12, lpC.y, 20, 2);
-      ctx.fillRect(lpC.x - 6, lpC.y + 4, 14, 2);
+      ctx.fillRect(1, 0.4, 4, 1);
+
+      // Syntax-highlighted code lines
+      ctx.fillStyle = '#38bdf8'; // Cyan keyword
+      ctx.fillRect(1, 2.8, 6, 1.2);
+      ctx.fillStyle = '#f472b6'; // Pink identifier
+      ctx.fillRect(8, 2.8, 7, 1.2);
+
+      ctx.fillStyle = '#34d399'; // Emerald function / string
+      ctx.fillRect(3, 4.8, 12, 1.2);
+
+      ctx.fillStyle = '#a78bfa'; // Purple statement
+      ctx.fillRect(3, 6.8, 8, 1.2);
+      ctx.fillStyle = '#fbbf24'; // Amber parameter
+      ctx.fillRect(12, 6.8, 4, 1.2);
+
+      ctx.fillStyle = '#38bdf8'; // Cyan closing
+      ctx.fillRect(1, 8.8, 10, 1.2);
+
+      // Glowing cursor
+      ctx.fillStyle = '#67e8f9';
+      ctx.fillRect(12, 8.8, 1.2, 1.2);
+
+      ctx.restore();
 
       // 5. Secondary Ultrawide Monitor (Stands firmly on aluminum stand on right side of desk)
       const monStandX = gx + 1.85;
@@ -205,14 +239,34 @@
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Mon Visualizer Lines
-      const msC = isoToScreen(monStandX + 0.32, monStandY, 1.12, ox, oy);
-      ctx.fillStyle = '#818cf8';
-      ctx.fillRect(msC.x - 10, msC.y - 6, 18, 2);
-      ctx.fillStyle = '#c084fc';
-      ctx.fillRect(msC.x - 7, msC.y - 2, 14, 2);
+      // Mon Visualizer Lines (in true +0.5 isometric screen perspective)
+      const msTL = isoToScreen(monStandX + 0.05, monStandY, 1.31, ox, oy);
+      ctx.save();
+      ctx.translate(msTL.x, msTL.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Shear along X axis (+0.5 slope)
+
+      // Telemetry / Terminal Header Bar
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, 17, 1.8);
+      ctx.fillStyle = '#a855f7';
+      ctx.fillRect(1, 0.4, 2, 1);
       ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(msC.x - 10, msC.y + 3, 16, 2);
+      ctx.fillRect(4, 0.4, 2, 1);
+
+      // Terminal Visualizer Lines
+      ctx.fillStyle = '#818cf8';
+      ctx.fillRect(1, 2.8, 12, 1.2);
+      ctx.fillStyle = '#c084fc';
+      ctx.fillRect(1, 4.8, 9, 1.2);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(3, 6.8, 11, 1.2);
+      ctx.fillStyle = '#34d399';
+      ctx.fillRect(1, 8.8, 8, 1.2);
+      // Activity indicator
+      ctx.fillStyle = '#22d3ee';
+      ctx.fillRect(10, 8.8, 4, 1.2);
+
+      ctx.restore();
 
       // 6. Architect Anglepoise Desk Lamp (Stable on back-left desk corner at gx + 0.15, gy + 0.15)
       const lampBaseX = gx + 0.22;
@@ -732,12 +786,16 @@
         ctx.lineWidth = 1.2;
         ctx.stroke();
 
-        // Glowing Code Screen
-        const dC = isoToScreen(gx + 1.05, gy + 0.30, deskH + 0.22, ox, oy);
+        // Glowing Code Screen (in true +0.5 isometric screen perspective)
+        const dTL = isoToScreen(gx + 0.75, gy + 0.30, deskH + 0.39, ox, oy);
+        ctx.save();
+        ctx.translate(dTL.x, dTL.y);
+        ctx.transform(1, 0.5, 0, 1, 0, 0);
         ctx.fillStyle = scrCol;
-        ctx.fillRect(dC.x - 14, dC.y - 7, 26, 2);
-        ctx.fillRect(dC.x - 10, dC.y - 3, 20, 2);
-        ctx.fillRect(dC.x - 14, dC.y + 2, 22, 2);
+        ctx.fillRect(1, 2, 18, 1.4);
+        ctx.fillRect(4, 4.2, 13, 1.4);
+        ctx.fillRect(1, 6.4, 15, 1.4);
+        ctx.restore();
 
         // Safety Guardrails on South edge (gy + D - pw)
         const railZ = matZ + 0.30;
@@ -777,12 +835,16 @@
         ctx.lineWidth = 1.2;
         ctx.stroke();
 
-        // Glowing Code Screen
-        const dC = isoToScreen(gx + 1.05, gy + D - 0.30, deskH + 0.22, ox, oy);
+        // Glowing Code Screen (in true +0.5 isometric screen perspective)
+        const dTL = isoToScreen(gx + 0.75, gy + D - 0.30, deskH + 0.39, ox, oy);
+        ctx.save();
+        ctx.translate(dTL.x, dTL.y);
+        ctx.transform(1, 0.5, 0, 1, 0, 0);
         ctx.fillStyle = scrCol;
-        ctx.fillRect(dC.x - 14, dC.y - 7, 26, 2);
-        ctx.fillRect(dC.x - 10, dC.y - 3, 20, 2);
-        ctx.fillRect(dC.x - 14, dC.y + 2, 22, 2);
+        ctx.fillRect(1, 2, 18, 1.4);
+        ctx.fillRect(4, 4.2, 13, 1.4);
+        ctx.fillRect(1, 6.4, 15, 1.4);
+        ctx.restore();
 
         // Safety Guardrails on North edge (gy)
         const railZ = matZ + 0.30;
@@ -1372,21 +1434,33 @@
       ctx.ellipse(lBase.x, lBase.y - 2, 24, 12, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Open Manuscript on Table
-      const mPos = isoToScreen(gx + 0.6, gy + 0.6, H + 0.01, ox, oy);
+      // Open Manuscript on Table (True isometric rhombus on tabletop surface)
+      const m0 = isoToScreen(gx + 0.55, gy + 0.45, H + 0.005, ox, oy);
+      const m1 = isoToScreen(gx + 0.95, gy + 0.45, H + 0.005, ox, oy);
+      const m2 = isoToScreen(gx + 0.95, gy + 0.75, H + 0.005, ox, oy);
+      const m3 = isoToScreen(gx + 0.55, gy + 0.75, H + 0.005, ox, oy);
       ctx.fillStyle = '#fef3c7';
-      ctx.fillRect(mPos.x - 8, mPos.y - 5, 16, 10);
+      ctx.beginPath();
+      ctx.moveTo(m0.x, m0.y); ctx.lineTo(m1.x, m1.y); ctx.lineTo(m2.x, m2.y); ctx.lineTo(m3.x, m3.y);
+      ctx.closePath();
+      ctx.fill();
       ctx.strokeStyle = '#d97706';
       ctx.lineWidth = 0.8;
-      ctx.strokeRect(mPos.x - 8, mPos.y - 5, 16, 10);
-      // Faint lines of calligraphy / math
-      ctx.strokeStyle = '#92400e';
-      ctx.beginPath();
-      ctx.moveTo(mPos.x - 6, mPos.y - 2); ctx.lineTo(mPos.x - 2, mPos.y - 2);
-      ctx.moveTo(mPos.x - 6, mPos.y + 1); ctx.lineTo(mPos.x - 2, mPos.y + 1);
-      ctx.moveTo(mPos.x + 2, mPos.y - 2); ctx.lineTo(mPos.x + 6, mPos.y - 2);
-      ctx.moveTo(mPos.x + 2, mPos.y + 1); ctx.lineTo(mPos.x + 6, mPos.y + 1);
       ctx.stroke();
+
+      // Faint lines of calligraphy / math along isometric X
+      ctx.strokeStyle = '#92400e';
+      ctx.lineWidth = 0.8;
+      for (const my of [0.53, 0.61, 0.67]) {
+        const l0a = isoToScreen(gx + 0.58, gy + my, H + 0.006, ox, oy);
+        const l0b = isoToScreen(gx + 0.72, gy + my, H + 0.006, ox, oy);
+        const l1a = isoToScreen(gx + 0.78, gy + my, H + 0.006, ox, oy);
+        const l1b = isoToScreen(gx + 0.92, gy + my, H + 0.006, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(l0a.x, l0a.y); ctx.lineTo(l0b.x, l0b.y);
+        ctx.moveTo(l1a.x, l1a.y); ctx.lineTo(l1b.x, l1b.y);
+        ctx.stroke();
+      }
 
       // Brass Magnifying Glass & Inkwell
       const inkP = isoToScreen(gx + 1.8, gy + 0.4, H + 0.01, ox, oy);
