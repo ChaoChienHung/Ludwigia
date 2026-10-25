@@ -2502,6 +2502,118 @@
       ctx.quadraticCurveTo(teaP.x + Math.sin(t * 3) * 3, teaP.y - 6, teaP.x, steamY);
       ctx.stroke();
     }
+
+    // --- 11. Architectural Campus Monument Sign / Pylon Totem (園區迎賓景觀導引立碑) ---
+    drawEntranceTotem(ctx, gx, gy, type, ox, oy) {
+      // 1. Foundation Slab & Shadow
+      this.drawDropShadow(ctx, gx, gy, 0.7, 0.45, ox, oy);
+      this.drawBox(ctx, gx, gy, 0, 0.65, 0.35, 0.14, '#334155', '#1e293b', '#475569', ox, oy);
+
+      // 2. Standing Monument Pillar (Width 0.55 along X, Depth 0.12 along Y, Height 1.25)
+      const pX = gx + 0.05, pY = gy + 0.10;
+      let topCol = '#1e293b', leftCol = '#0f172a', rightCol = '#334155';
+      if (type === 'lib') {
+        topCol = '#78350f'; leftCol = '#451a03'; rightCol = '#92400e';
+      }
+      this.drawBox(ctx, pX, pY, 0.14, 0.55, 0.14, 1.25, topCol, leftCol, rightCol, ox, oy);
+
+      // 3. Front Face Sign (Facing South-West / Camera at constant Y)
+      const frontY = pY + 0.142;
+      const centerZ = 0.78;
+      const cp = isoToScreen(pX + 0.275, frontY, centerZ, ox, oy);
+
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
+
+      if (type === 'ai') {
+        // AI Studio Cyber Totem
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(-38, -19, 76, 38);
+        ctx.strokeStyle = '#06b6d4';
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(-38, -19, 76, 38);
+        ctx.strokeStyle = 'rgba(34, 211, 238, 0.45)';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(-36, -17, 72, 34);
+
+        // Icon & Dual-Language Typography
+        ctx.fillStyle = '#22d3ee';
+        ctx.font = 'bold 8.5px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('⚡ AI STUDIO', 0, -6);
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('智慧研究室', 0, 7);
+
+        // Top Pulsing LED
+        const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
+        ctx.restore();
+        ctx.fillStyle = Math.sin(performance.now() * 0.005) > 0 ? '#22d3ee' : '#0891b2';
+        ctx.beginPath();
+        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (type === 'lib') {
+        // Grand Library Scholar Bronze Totem
+        ctx.fillStyle = '#451a03';
+        ctx.fillRect(-42, -19, 84, 38);
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(-42, -19, 84, 38);
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(-40, -17, 80, 34);
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('📖 GRAND LIBRARY', 0, -6);
+
+        ctx.fillStyle = '#fef3c7';
+        ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('知識藏書閣', 0, 7);
+
+        // Top Brass Finial
+        const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
+        ctx.restore();
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (type === 'douyin') {
+        // Douyin Tech Office Totem
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(-40, -19, 80, 38);
+        ctx.strokeStyle = '#25f4ee';
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(-40, -19, 80, 38);
+        ctx.strokeStyle = '#fe2c55';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(-38, -17, 76, 34);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🎵 TIKTOK OFFICE', 0, -6);
+
+        ctx.fillStyle = '#25f4ee';
+        ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('抖音研發辦公室', 0, 7);
+
+        const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
+        ctx.restore();
+        ctx.fillStyle = '#fe2c55';
+        ctx.beginPath();
+        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.restore();
+      }
+    }
   }
 
   // Export to Global Scope

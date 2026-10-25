@@ -151,6 +151,11 @@
       // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
       this.nav.setBlock(2.7, 13.8, 1.8, 1.3, true);
 
+      // Campus Landmark Monument Totems (Facing the Courtyard Avenue)
+      this.nav.setBlock(16.5, 7.2, 0.65, 0.35, true);  // AI Studio Monument Totem
+      this.nav.setBlock(16.5, 23.2, 0.65, 0.35, true); // Grand Library Monument Totem
+      this.nav.setBlock(16.5, 39.2, 0.65, 0.35, true); // Douyin Office Monument Totem
+
       // 5. Sanmin High School Classroom (SW2: x: 0..9, y: 33..42)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 10, 0.6, true);             // North Wall (y: 33)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 0.6, 10, true);             // West Wall (x: 0)
@@ -1364,33 +1369,60 @@
         }
       });
 
-      // AI Studio Neon Plaque (Mounted on exterior lintel wall in foreground)
+      // AI Studio Entrance Cyber Canopy & Front-Facing (South-Facing) Portico Plaque
       list.push({
-        xMin: AI_MIN_X - 0.25, xMax: AI_MIN_X + 0.15,
+        xMin: 17.1, xMax: 18.15,
         yMin: 4.5, yMax: 6.95,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          const plq = isoToScreen(AI_MIN_X - 0.02, 5.65, 2.48, ox, oy);
+
+          // 1. Sleek Floating Cyber Canopy Roof Slab (Extending outward over the door toward the courtyard)
+          this.models.drawBox(this.ctx, 17.2, 4.5, 2.20, 0.85, 2.30, 0.15, '#0f172a', '#06b6d4', '#1e293b', ox, oy);
+
+          // 2. Under-Canopy Cyber Neon Underside Glow (Facing courtyard)
+          const ug0 = isoToScreen(17.2, 4.5, 2.20, ox, oy);
+          const ug1 = isoToScreen(18.0, 4.5, 2.20, ox, oy);
+          const ug2 = isoToScreen(18.0, 6.8, 2.20, ox, oy);
+          const ug3 = isoToScreen(17.2, 6.8, 2.20, ox, oy);
+          this.ctx.fillStyle = 'rgba(6, 182, 212, 0.22)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(ug0.x, ug0.y); this.ctx.lineTo(ug1.x, ug1.y); this.ctx.lineTo(ug2.x, ug2.y); this.ctx.lineTo(ug3.x, ug3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+
+          // 3. Front-Facing (South-Facing) Lintel Plaque
+          // Mounted along the South edge of the canopy (at y = 6.85, facing +Y directly towards camera)
+          const plq = isoToScreen(17.62, 6.86, 2.28, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
+
           this.ctx.fillStyle = '#0f172a';
-          this.ctx.fillRect(-30, -8, 60, 16);
+          this.ctx.fillRect(-38, -9, 76, 18);
           this.ctx.strokeStyle = '#06b6d4';
-          this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-30, -8, 60, 16);
-          this.ctx.strokeStyle = 'rgba(34, 211, 238, 0.4)';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.strokeRect(-38, -9, 76, 18);
+          this.ctx.strokeStyle = 'rgba(34, 211, 238, 0.5)';
           this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-28, -6, 56, 12);
+          this.ctx.strokeRect(-36, -7, 72, 14);
+
           this.ctx.fillStyle = '#22d3ee';
-          this.ctx.font = 'bold 8.5px monospace';
+          this.ctx.font = 'bold 9px monospace';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('AI STUDIO', 0, 0);
+          this.ctx.fillText('⚡ AI STUDIO', 0, 0);
+
           this.ctx.restore();
           this.ctx.restore();
         }
+      });
+
+      // AI Studio Campus Landmark Monument Totem (Standing proudly on the entrance lawn facing courtyard)
+      list.push({
+        xMin: 16.4, xMax: 17.2,
+        yMin: 7.1, yMax: 7.6,
+        draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 7.2, 'ai', ox, oy)
       });
 
       // AI Studio Equipment
@@ -1543,33 +1575,59 @@
         }
       });
 
-      // Grand Library Bronze Plaque (Exterior Wall Face Foreground)
+      // Grand Library Entrance Classical Portico Canopy & Front-Facing (South-Facing) Bronze Plaque
       list.push({
-        xMin: LIB_MIN_X - 0.25, xMax: LIB_MIN_X + 0.15,
+        xMin: 17.1, xMax: 18.15,
         yMin: 20.5, yMax: 22.95,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          const plq = isoToScreen(LIB_MIN_X - 0.02, 21.65, 2.48, ox, oy);
+
+          // 1. Classical Mahogany Portico Canopy (Extending outward over the entrance door)
+          this.models.drawBox(this.ctx, 17.2, 20.5, 2.20, 0.85, 2.30, 0.15, '#78350f', '#451a03', '#92400e', ox, oy);
+
+          // 2. Warm Amber Underside Illumination
+          const ug0 = isoToScreen(17.2, 20.5, 2.20, ox, oy);
+          const ug1 = isoToScreen(18.0, 20.5, 2.20, ox, oy);
+          const ug2 = isoToScreen(18.0, 22.8, 2.20, ox, oy);
+          const ug3 = isoToScreen(17.2, 22.8, 2.20, ox, oy);
+          this.ctx.fillStyle = 'rgba(251, 191, 36, 0.20)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(ug0.x, ug0.y); this.ctx.lineTo(ug1.x, ug1.y); this.ctx.lineTo(ug2.x, ug2.y); this.ctx.lineTo(ug3.x, ug3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+
+          // 3. Front-Facing (South-Facing) Lintel Plaque (Directly facing camera!)
+          const plq = isoToScreen(17.62, 22.86, 2.28, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
+
           this.ctx.fillStyle = '#451a03';
-          this.ctx.fillRect(-41, -8.5, 82, 17);
+          this.ctx.fillRect(-44, -9, 88, 18);
           this.ctx.strokeStyle = '#d97706';
-          this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-41, -8.5, 82, 17);
-          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.strokeRect(-44, -9, 88, 18);
+          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
           this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-39, -6.5, 78, 13);
+          this.ctx.strokeRect(-42, -7, 84, 14);
+
           this.ctx.fillStyle = '#fbbf24';
-          this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", serif';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('CENTRAL LIBRARY', 0, 0);
+          this.ctx.fillText('📖 GRAND LIBRARY', 0, 0);
+
           this.ctx.restore();
           this.ctx.restore();
         }
+      });
+
+      // Grand Library Campus Landmark Monument Totem (Standing proudly on the entrance lawn facing courtyard)
+      list.push({
+        xMin: 16.4, xMax: 17.2,
+        yMin: 23.1, yMax: 23.6,
+        draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 23.2, 'lib', ox, oy)
       });
 
       // Library Interior Furniture:
@@ -1933,33 +1991,59 @@
         }
       });
 
-      // Douyin Office Cyber Plaque (Neon Cyan & Magenta)
+      // Douyin Office High-Tech Cyber Canopy & Front-Facing (South-Facing) Lintel Plaque
       list.push({
-        xMin: douyinNW_X - 0.25, xMax: douyinNW_X + 0.15,
+        xMin: 17.1, xMax: 18.15,
         yMin: 36.5, yMax: 38.95,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          const plq = isoToScreen(douyinNW_X - 0.02, 37.65, 2.48, ox, oy);
+
+          // 1. High-Tech Floating Glass Canopy (Extending outward over the entrance door)
+          this.models.drawBox(this.ctx, 17.2, 36.5, 2.20, 0.85, 2.30, 0.15, '#0f172a', '#25f4ee', '#1e293b', ox, oy);
+
+          // 2. Cyan / Magenta Edge Illumination on Canopy Underside
+          const ug0 = isoToScreen(17.2, 36.5, 2.20, ox, oy);
+          const ug1 = isoToScreen(18.0, 36.5, 2.20, ox, oy);
+          const ug2 = isoToScreen(18.0, 38.8, 2.20, ox, oy);
+          const ug3 = isoToScreen(17.2, 38.8, 2.20, ox, oy);
+          this.ctx.fillStyle = 'rgba(37, 244, 238, 0.20)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(ug0.x, ug0.y); this.ctx.lineTo(ug1.x, ug1.y); this.ctx.lineTo(ug2.x, ug2.y); this.ctx.lineTo(ug3.x, ug3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+
+          // 3. Front-Facing (South-Facing) Lintel Plaque (Directly facing camera!)
+          const plq = isoToScreen(17.62, 38.86, 2.28, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
+
           this.ctx.fillStyle = '#0f172a';
-          this.ctx.fillRect(-34, -8, 68, 16);
+          this.ctx.fillRect(-38, -9, 76, 18);
           this.ctx.strokeStyle = '#25f4ee';
-          this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-34, -8, 68, 16);
+          this.ctx.lineWidth = 1.4;
+          this.ctx.strokeRect(-38, -9, 76, 18);
           this.ctx.strokeStyle = '#fe2c55';
           this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-32, -6, 64, 12);
+          this.ctx.strokeRect(-36, -7, 72, 14);
+
           this.ctx.fillStyle = '#ffffff';
           this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('TikTok • 抖音辦公室', 0, 0);
+          this.ctx.fillText('🎵 TIKTOK • 抖音', 0, 0);
+
           this.ctx.restore();
           this.ctx.restore();
         }
+      });
+
+      // Douyin Office Campus Landmark Monument Totem (Standing proudly on the entrance lawn facing courtyard)
+      list.push({
+        xMin: 16.4, xMax: 17.2,
+        yMin: 39.1, yMax: 39.6,
+        draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 39.2, 'douyin', ox, oy)
       });
 
       // Douyin Office Props
