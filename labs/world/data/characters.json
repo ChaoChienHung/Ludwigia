@@ -761,12 +761,12 @@
     {
       "id": "ludwigia",
       "name": {
-        "zh-TW": "Ludwigia AI",
+        "zh-TW": "Ludwigia",
         "en": "Ludwigia AI"
       },
       "gender": "female",
       "role": {
-        "zh-TW": "數位花園守護者 / Core Agent",
+        "zh-TW": "數位花園守護者",
         "en": "Garden Guardian / Core Agent"
       },
       "avatar": "assets/avatars/ludwigia.png",
@@ -836,7 +836,7 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "多模態 AI",
+        "zh-TW": "多模態",
         "en": "Multimodal AI"
       },
       "avatar": "assets/avatars/gemini.png",
@@ -906,7 +906,7 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "深度推理 AI",
+        "zh-TW": "深度推理",
         "en": "Reasoning AI"
       },
       "avatar": "assets/avatars/claude.png",
@@ -982,7 +982,7 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "對話探索 AI",
+        "zh-TW": "對話探索",
         "en": "Conversational AI"
       },
       "avatar": "assets/avatars/chatgpt.png",
