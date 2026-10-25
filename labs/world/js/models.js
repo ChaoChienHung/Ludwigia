@@ -924,7 +924,7 @@
       ctx.closePath();
       ctx.stroke();
 
-      // Triple Curved Displays showing Neural Loss Curves & Graph Visualizers
+      // Triple Curved Displays Frame (along X axis at gy + 0.20)
       const ds0 = isoToScreen(gx + 0.35, gy + 0.20, 0.75, ox, oy);
       const ds1 = isoToScreen(gx + 2.15, gy + 0.20, 0.75, ox, oy);
       const ds2 = isoToScreen(gx + 2.15, gy + 0.20, 1.35, ox, oy);
@@ -938,14 +938,49 @@
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Real-Time Loss Graph Curves
-      const gC = isoToScreen(gx + 1.25, gy + 0.20, 1.05, ox, oy);
-      ctx.fillStyle = '#22d3ee';
-      ctx.fillRect(gC.x - 24, gC.y - 8, 48, 2);
-      ctx.fillStyle = '#a855f7';
-      ctx.fillRect(gC.x - 20, gC.y - 2, 40, 2);
+      // Real-Time Loss Graph Curves in Exact Screen Perspective (+0.5 isometric shear along X)
+      const scrTL = isoToScreen(gx + 0.40, gy + 0.20, 1.32, ox, oy);
+      ctx.save();
+      ctx.translate(scrTL.x, scrTL.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Shear along X axis (+0.5 slope)
+
+      // Top Status Indicators
+      ctx.fillStyle = '#06b6d4'; ctx.fillRect(2, 2, 2, 2);
+      ctx.fillStyle = '#10b981'; ctx.fillRect(6, 2, 2, 2);
+      ctx.font = 'bold 3.2px monospace';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('CLUSTER-GPU-01 • DPO LOSS', 11, 4.5);
+
+      // Coordinate Grid Lines
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.25)';
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(4, 15); ctx.lineTo(50, 15);
+      ctx.moveTo(4, 10); ctx.lineTo(50, 10);
+      ctx.stroke();
+
+      // Cyan Loss Curve
+      ctx.strokeStyle = '#22d3ee';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(4, 14.5);
+      ctx.bezierCurveTo(15, 14, 25, 9, 50, 6.5);
+      ctx.stroke();
+
+      // Purple Reference Margin Curve
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(4, 13.5);
+      ctx.bezierCurveTo(18, 12, 30, 11, 50, 8.5);
+      ctx.stroke();
+
+      // Telemetry Metric
       ctx.fillStyle = '#34d399';
-      ctx.fillRect(gC.x - 24, gC.y + 4, 32, 2);
+      ctx.font = '3px monospace';
+      ctx.fillText('loss: 0.1428 | lr: 5e-6', 4, 14);
+
+      ctx.restore();
     }
 
     // --- Frosted Glass Whiteboard with DPO Math & Architecture (x: 26.2, y: 4.0) ---
@@ -958,7 +993,7 @@
       // Chrome Frame
       this.drawBox(ctx, gx, gy, baseZ, W, L, H, '#94a3b8', '#64748b', '#475569', ox, oy);
 
-      // Translucent Frosted Glass
+      // Translucent Frosted Glass Panel
       const g0 = isoToScreen(gx, gy + 0.05, baseZ + 0.05, ox, oy);
       const g1 = isoToScreen(gx, gy + L - 0.05, baseZ + 0.05, ox, oy);
       const g2 = isoToScreen(gx, gy + L - 0.05, baseZ + H - 0.05, ox, oy);
@@ -969,14 +1004,69 @@
       ctx.closePath();
       ctx.fill();
 
-      // Formulas written on glass
-      const fPos = isoToScreen(gx, gy + 1.20, baseZ + 0.85, ox, oy);
+      // Whiteboard Stand Legs (Two Chrome Support Posts to Floor)
+      const leg1 = isoToScreen(gx, gy + 0.25, 0, ox, oy);
+      const leg1T = isoToScreen(gx, gy + 0.25, baseZ, ox, oy);
+      const leg2 = isoToScreen(gx, gy + L - 0.25, 0, ox, oy);
+      const leg2T = isoToScreen(gx, gy + L - 0.25, baseZ, ox, oy);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(leg1.x, leg1.y); ctx.lineTo(leg1T.x, leg1T.y);
+      ctx.moveTo(leg2.x, leg2.y); ctx.lineTo(leg2T.x, leg2T.y);
+      ctx.stroke();
+
+      // Mathematical Formulas Projected in Exact Isometric Perspective (-0.5 shear along Y)
+      // Top-Left corner of the whiteboard writing surface in screen coordinates
+      const pTL = isoToScreen(gx, gy + L - 0.12, baseZ + H - 0.14, ox, oy);
+      ctx.save();
+      ctx.translate(pTL.x, pTL.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Shear along Y axis (-0.5 slope)
+
+      // Section Header: Direct Preference Optimization
       ctx.fillStyle = '#0284c7';
-      ctx.font = 'bold 9px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('L_DPO = -E[log σ(β log π_θ/π_ref)]', fPos.x, fPos.y);
-      ctx.fillStyle = '#059669';
-      ctx.fillText('Prompt -> SFT -> Preference -> Align', fPos.x, fPos.y + 12);
+      ctx.font = 'bold 4.4px monospace';
+      ctx.fillText('DIRECT PREFERENCE OPTIMIZATION (DPO)', 4, 7);
+
+      // Cyan Underline
+      ctx.strokeStyle = 'rgba(2, 132, 199, 0.6)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(4, 9); ctx.lineTo(68, 9);
+      ctx.stroke();
+
+      // Formula Line 1: DPO Objective Loss Function
+      ctx.fillStyle = '#0369a1';
+      ctx.font = '3.9px monospace';
+      ctx.fillText('L_DPO(θ;π_ref) = -E[log σ(β log(π_θ/π_ref))]', 4, 16);
+
+      // Formula Line 2: Alignment Pipeline Flow
+      ctx.fillStyle = '#047857';
+      ctx.font = '3.7px monospace';
+      ctx.fillText('Prompt ➔ SFT ➔ Preference Pairs ➔ Implicit Reward', 4, 23.5);
+
+      // Formula Line 3: Gradient Vector Flow
+      ctx.fillStyle = '#7c3aed';
+      ctx.font = '3.5px monospace';
+      ctx.fillText('∇_θ L = -β·E[σ(r_l - r_w)·(∇log π_θ(w) - ∇log π_θ(l))]', 4, 30.5);
+
+      // Mini Coordinate Axes for Implicit Reward Margin
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.45)';
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(4, 40); ctx.lineTo(66, 40); // x-axis
+      ctx.moveTo(4, 40); ctx.lineTo(4, 34);  // y-axis
+      ctx.stroke();
+
+      // Sigmoid Preference Probability Curve on Glass
+      ctx.strokeStyle = '#0891b2';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(5, 39.5);
+      ctx.bezierCurveTo(20, 39.5, 36, 35.5, 64, 35.5);
+      ctx.stroke();
+
+      ctx.restore();
     }
 
     // --- Espresso & Beverage Bar (x: 19.5, y: 7.2) ---
