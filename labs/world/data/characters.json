@@ -550,7 +550,7 @@
       "role": "室友 (Dorm 211)",
       "avatar": "🤠",
       "zone": "dorm_211",
-      "spawn": { "x": 3.2, "y": 21.6 },
+      "spawn": { "x": 2.8, "y": 21.6 },
       "nameColor": "#34d399",
       "appearance": {
         "skin": "#f5d0b5",

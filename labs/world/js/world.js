@@ -229,6 +229,10 @@
 
         if (clickedNpc) {
           player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: clickedNpc.x, y: clickedNpc.y });
+          clickedNpc.path = [];
+          clickedNpc.isWalking = false;
+          clickedNpc.timer = 8;
+          clickedNpc.facing = player.x >= clickedNpc.x ? 1 : -1;
           this.charManager.openDialogue(clickedNpc);
         } else if (this.nav.isWalkable(gx, gy)) {
           player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: gx, y: gy });
@@ -480,14 +484,61 @@
             let attempts = 0;
             let valid = false;
 
-            while (!valid && attempts < 8) {
+            while (!valid && attempts < 16) {
               attempts++;
               if (c.zone === 'house') {
                 targetX = 1.5 + Math.random() * 7.0;
                 targetY = 1.5 + Math.random() * 7.0;
               } else if (c.zone === 'dorm_211') {
-                targetX = 2.0 + Math.random() * 6.0;
-                targetY = 18.0 + Math.random() * 7.0;
+                // Men's Dorm 11 Room 211 crew wandering ecosystem:
+                // Happy Wang, Kerry Chang, Clark Wu, Jerry Chung, Billy Fang
+                // They hang out inside 211 (desks, loft beds, classic sofa lounge, aisle)
+                // AND stroll outside 211 (stone porch, garden walkway, cherry tree grove, fountain approach)!
+                const isInside = c.x < 9.6;
+                // If currently inside, 45% chance to venture outside; if outside, 50% chance to head back in
+                const targetOutside = isInside ? (Math.random() < 0.45) : (Math.random() < 0.52);
+
+                if (targetOutside) {
+                  // Outdoor area around 211:
+                  const outdoorAnchors = [
+                    { x: 11.0, y: 21.6 }, // Outdoor porch / doorway threshold
+                    { x: 12.2, y: 21.6 }, // Walkway intersection outside 211
+                    { x: 12.0, y: 18.8 }, // Near north cherry tree & park bench
+                    { x: 12.0, y: 24.2 }, // Southwest lawn walkway
+                    { x: 13.6, y: 20.2 }, // Approach to central fountain promenade
+                    { x: 13.6, y: 22.8 }  // South garden promenade
+                  ];
+
+                  if (Math.random() < 0.5) {
+                    const spot = outdoorAnchors[Math.floor(Math.random() * outdoorAnchors.length)];
+                    targetX = spot.x + (Math.random() - 0.5) * 0.8;
+                    targetY = spot.y + (Math.random() - 0.5) * 0.8;
+                  } else {
+                    targetX = 10.6 + Math.random() * 3.6;
+                    targetY = 18.2 + Math.random() * 6.3;
+                  }
+                } else {
+                  // Indoor Dorm 211:
+                  const indoorAnchors = [
+                    { x: 2.5, y: 19.8 }, // Bed 1 (Happy Wang)
+                    { x: 2.5, y: 23.6 }, // Bed 2 (Kerry Chang)
+                    { x: 7.0, y: 19.8 }, // Bed 3 (Clark Wu)
+                    { x: 7.0, y: 23.6 }, // Bed 4 (Jerry Chung)
+                    { x: 2.8, y: 21.6 }, // Common Lounge (Billy Fang & Guitar)
+                    { x: 4.8, y: 19.8 }, // North aisle
+                    { x: 4.8, y: 23.6 }, // South aisle
+                    { x: 8.5, y: 21.6 }  // Inside doorway threshold
+                  ];
+
+                  if (Math.random() < 0.5) {
+                    const spot = indoorAnchors[Math.floor(Math.random() * indoorAnchors.length)];
+                    targetX = spot.x + (Math.random() - 0.5) * 0.6;
+                    targetY = spot.y + (Math.random() - 0.5) * 0.6;
+                  } else {
+                    targetX = 2.2 + Math.random() * 6.4;
+                    targetY = 18.5 + Math.random() * 6.5;
+                  }
+                }
               } else if (c.zone === 'ai_studio') {
                 targetX = 19.5 + Math.random() * 6.5;
                 targetY = 2.0 + Math.random() * 6.5;
@@ -497,14 +548,17 @@
               }
 
               if (this.nav.isWalkable(targetX, targetY)) {
-                const crowded = chars.some(other => other !== c && Math.hypot(other.x - targetX, other.y - targetY) < 1.8);
+                const crowded = chars.some(other => other !== c && Math.hypot(other.x - targetX, other.y - targetY) < 1.4);
                 if (!crowded) valid = true;
               }
             }
 
             if (valid) {
-              c.path = this.nav.findPath({ x: c.x, y: c.y }, { x: targetX, y: targetY });
-              c.state = 'walking';
+              const path = this.nav.findPath({ x: c.x, y: c.y }, { x: targetX, y: targetY });
+              if (path && path.length > 0) {
+                c.path = path;
+                c.state = 'walking';
+              }
             }
           }
         }

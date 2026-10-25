@@ -105,16 +105,29 @@
     }
 
     findPath(start, goal) {
-      const sx = Math.max(0, Math.min(this.w - 1, Math.floor(start.x)));
-      const sy = Math.max(0, Math.min(this.h - 1, Math.floor(start.y)));
+      let sx = Math.max(0, Math.min(this.w - 1, Math.floor(start.x)));
+      let sy = Math.max(0, Math.min(this.h - 1, Math.floor(start.y)));
       let gx = Math.max(0, Math.min(this.w - 1, Math.floor(goal.x)));
       let gy = Math.max(0, Math.min(this.h - 1, Math.floor(goal.y)));
+
+      if (!this.isWalkable(sx, sy)) {
+        const startNeighbors = [
+          { x: sx + 1, y: sy }, { x: sx - 1, y: sy },
+          { x: sx, y: sy + 1 }, { x: sx, y: sy - 1 },
+          { x: sx + 1, y: sy + 1 }, { x: sx - 1, y: sy - 1 },
+          { x: sx + 1, y: sy - 1 }, { x: sx - 1, y: sy + 1 }
+        ];
+        const sFree = startNeighbors.find(n => this.isWalkable(n.x, n.y));
+        if (sFree) { sx = sFree.x; sy = sFree.y; }
+        else return [];
+      }
 
       if (!this.isWalkable(gx, gy)) {
         const neighbors = [
           { x: gx + 1, y: gy }, { x: gx - 1, y: gy },
           { x: gx, y: gy + 1 }, { x: gx, y: gy - 1 },
-          { x: gx + 1, y: gy + 1 }, { x: gx - 1, y: gy - 1 }
+          { x: gx + 1, y: gy + 1 }, { x: gx - 1, y: gy - 1 },
+          { x: gx + 1, y: gy - 1 }, { x: gx - 1, y: gy + 1 }
         ];
         const free = neighbors.find(n => this.isWalkable(n.x, n.y));
         if (free) { gx = free.x; gy = free.y; }
