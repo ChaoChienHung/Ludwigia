@@ -148,6 +148,9 @@
       this.nav.setBlock(5.2, 12.5, 1.4, 0.5, true);
       this.nav.setBlock(13.8, 29.5, 1.4, 0.5, true); // South Avenue Bench
 
+      // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
+      this.nav.setBlock(2.7, 13.8, 1.8, 1.3, true);
+
       // 5. Sanmin High School Classroom (SW2: x: 0..9, y: 33..42)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 10, 0.6, true);             // North Wall (y: 33)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 0.6, 10, true);             // West Wall (x: 0)
@@ -365,6 +368,10 @@
         currentZone = 'ludwig_house';
         isInsideAnyHouse = true;
         statusMessage = "Ludwig's Home • 溫馨客廳與起居室";
+      } else if (player.x <= 9.8 && player.y >= 10.0 && player.y <= 16.4) {
+        currentZone = 'garden_terrace';
+        isInsideAnyHouse = false;
+        statusMessage = "Garden Terrace • 露天花園與石雕棋盤";
       } else if (player.x <= 9.8 && player.y >= 16.5 && player.y <= 26.5) {
         currentZone = 'dorm_211';
         isInsideAnyHouse = true;
@@ -2015,6 +2022,12 @@
           xMin: b.gx, xMax: b.gx + 1.6, yMin: b.gy, yMax: b.gy + 0.65,
           draw: () => this.models.drawParkBench(this.ctx, b.gx, b.gy, ox, oy)
         });
+      });
+
+      // Garden Stone Chess Table & Drum Stools (Ludwig's South Lawn Terrace)
+      list.push({
+        xMin: 2.5, xMax: 4.8, yMin: 13.5, yMax: 15.5,
+        draw: () => this.models.drawGardenChessTable(this.ctx, 2.8, 13.8, ox, oy)
       });
 
       // Lush Flowering Trees (Beautifying gardens and park lawns, with all corridors, pathways & doorways 100% open)

@@ -2354,6 +2354,154 @@
         ctx.fillRect(lp.x + 5, lp.y - 2, 3, 2);
       }
     }
+
+    // --- 10. Garden Stone Chessboard & Drum Stools (戶外石雕棋盤桌與石鼓凳) ---
+    drawGardenChessTable(ctx, gx, gy, ox, oy) {
+      // 1. Natural Slate Paving Slab (Under table and stools on grass)
+      this.drawDropShadow(ctx, gx - 0.2, gy - 0.2, 2.0, 1.8, ox, oy);
+      const paverP0 = isoToScreen(gx - 0.2, gy - 0.2, 0.005, ox, oy);
+      const paverP1 = isoToScreen(gx + 1.8, gy - 0.2, 0.005, ox, oy);
+      const paverP2 = isoToScreen(gx + 1.8, gy + 1.6, 0.005, ox, oy);
+      const paverP3 = isoToScreen(gx - 0.2, gy + 1.6, 0.005, ox, oy);
+      ctx.fillStyle = '#64748b'; // Slate stone
+      ctx.beginPath();
+      ctx.moveTo(paverP0.x, paverP0.y); ctx.lineTo(paverP1.x, paverP1.y); ctx.lineTo(paverP2.x, paverP2.y); ctx.lineTo(paverP3.x, paverP3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Inner flagstone joint lines
+      const j0 = isoToScreen(gx - 0.2, gy + 0.7, 0.006, ox, oy);
+      const j1 = isoToScreen(gx + 1.8, gy + 0.7, 0.006, ox, oy);
+      const j2 = isoToScreen(gx + 0.8, gy - 0.2, 0.006, ox, oy);
+      const j3 = isoToScreen(gx + 0.8, gy + 1.6, 0.006, ox, oy);
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(j0.x, j0.y); ctx.lineTo(j1.x, j1.y);
+      ctx.moveTo(j2.x, j2.y); ctx.lineTo(j3.x, j3.y);
+      ctx.stroke();
+
+      // 2. West Stone Drum Stool (石鼓凳 1)
+      const st1X = gx - 0.05, st1Y = gy + 0.45;
+      this.drawDropShadow(ctx, st1X, st1Y, 0.5, 0.5, ox, oy);
+      this.drawBox(ctx, st1X + 0.05, st1Y + 0.05, 0, 0.40, 0.40, 0.10, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      this.drawBox(ctx, st1X, st1Y, 0.10, 0.50, 0.50, 0.20, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawBox(ctx, st1X + 0.05, st1Y + 0.05, 0.30, 0.40, 0.40, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+
+      // 3. Central Carved Stone Chess Table (主石桌)
+      const tblX = gx + 0.40, tblY = gy + 0.35;
+      this.drawDropShadow(ctx, tblX, tblY, 0.9, 0.9, ox, oy);
+      this.drawBox(ctx, tblX + 0.15, tblY + 0.15, 0, 0.55, 0.55, 0.12, '#cbd5e1', '#64748b', '#94a3b8', ox, oy);
+      this.drawBox(ctx, tblX + 0.25, tblY + 0.25, 0.12, 0.35, 0.35, 0.40, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawBox(ctx, tblX, tblY, 0.52, 0.85, 0.85, 0.12, '#f8fafc', '#94a3b8', '#cbd5e1', ox, oy);
+
+      // 4. Inset Wooden/Slate Chessboard (小棋盤)
+      const bSize = 0.64;
+      const bX = tblX + (0.85 - bSize) / 2;
+      const bY = tblY + (0.85 - bSize) / 2;
+      const bZ = 0.645;
+      this.drawBox(ctx, bX, bY, bZ, bSize, bSize, 0.025, '#78350f', '#451a03', '#92400e', ox, oy);
+
+      // 8x8 Checkered Chess Grid
+      const sqSize = (bSize - 0.06) / 8;
+      const startX = bX + 0.03;
+      const startY = bY + 0.03;
+      const gridZ = bZ + 0.026;
+
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          const isDark = (r + c) % 2 === 1;
+          const q0 = isoToScreen(startX + c * sqSize, startY + r * sqSize, gridZ, ox, oy);
+          const q1 = isoToScreen(startX + (c + 1) * sqSize, startY + r * sqSize, gridZ, ox, oy);
+          const q2 = isoToScreen(startX + (c + 1) * sqSize, startY + (r + 1) * sqSize, gridZ, ox, oy);
+          const q3 = isoToScreen(startX + c * sqSize, startY + (r + 1) * sqSize, gridZ, ox, oy);
+
+          ctx.fillStyle = isDark ? '#b45309' : '#fef3c7';
+          ctx.beginPath();
+          ctx.moveTo(q0.x, q0.y); ctx.lineTo(q1.x, q1.y); ctx.lineTo(q2.x, q2.y); ctx.lineTo(q3.x, q3.y);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // 3D Miniature Chess Pieces Mid-Game
+      const whitePieces = [
+        [1, 1], [2, 0], [3, 2], [4, 4], [6, 1], [7, 0]
+      ];
+      whitePieces.forEach(([r, c]) => {
+        const px = startX + (c + 0.5) * sqSize;
+        const py = startY + (r + 0.5) * sqSize;
+        const pt = isoToScreen(px, py, gridZ, ox, oy);
+        const top = isoToScreen(px, py, gridZ + 0.055, ox, oy);
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        ctx.beginPath();
+        ctx.arc(pt.x + 1, pt.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(top.x, top.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      const blackPieces = [
+        [0, 6], [1, 5], [3, 3], [5, 4], [6, 6]
+      ];
+      blackPieces.forEach(([r, c]) => {
+        const px = startX + (c + 0.5) * sqSize;
+        const py = startY + (r + 0.5) * sqSize;
+        const pt = isoToScreen(px, py, gridZ, ox, oy);
+        const top = isoToScreen(px, py, gridZ + 0.055, ox, oy);
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        ctx.beginPath();
+        ctx.arc(pt.x + 1, pt.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(top.x, top.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      // 5. East Stone Drum Stool (石鼓凳 2)
+      const st2X = gx + 1.25, st2Y = gy + 0.45;
+      this.drawDropShadow(ctx, st2X, st2Y, 0.5, 0.5, ox, oy);
+      this.drawBox(ctx, st2X + 0.05, st2Y + 0.05, 0, 0.40, 0.40, 0.10, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      this.drawBox(ctx, st2X, st2Y, 0.10, 0.50, 0.50, 0.20, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawBox(ctx, st2X + 0.05, st2Y + 0.05, 0.30, 0.40, 0.40, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+
+      // 6. Ceramic Tea Set on Corner of Table
+      const teaP = isoToScreen(tblX + 0.74, tblY + 0.12, 0.645, ox, oy);
+      ctx.fillStyle = '#065f46';
+      ctx.beginPath();
+      ctx.arc(teaP.x, teaP.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#047857';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // Soft Rising Steam Curl
+      const t = performance.now() * 0.002;
+      const steamY = teaP.y - 4 - (t * 8 % 8);
+      const steamAlpha = Math.max(0, 1 - (teaP.y - steamY) / 12);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${steamAlpha * 0.5})`;
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(teaP.x, teaP.y - 2);
+      ctx.quadraticCurveTo(teaP.x + Math.sin(t * 3) * 3, teaP.y - 6, teaP.x, steamY);
+      ctx.stroke();
+    }
   }
 
   // Export to Global Scope
