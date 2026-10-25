@@ -591,7 +591,8 @@
                 { x: 2.5, y: 23.6 }, // Bed 2 Kerry Chang
                 { x: 7.0, y: 19.8 }, // Bed 3 Clark Wu
                 { x: 7.0, y: 23.6 }, // Bed 4 Jerry Chung
-                { x: 2.8, y: 21.6 }, // Common Lounge Sofa & Guitar
+                { x: 2.8, y: 21.6 }, // Common Lounge Sofa & Guitar (Billy)
+                { x: 5.8, y: 21.6 }, // Common Lounge Study Table (Bo Han)
                 { x: 4.8, y: 19.8 }, // North Aisle
                 { x: 4.8, y: 23.6 }, // South Aisle
                 { x: 8.5, y: 21.6 }  // Dorm Doorway Threshold

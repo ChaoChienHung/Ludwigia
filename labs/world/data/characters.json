@@ -637,64 +637,24 @@
       "dialogues": {
         "zh-TW": [
           [
-            "欸走拉，吃宵？",
-            "中央大門集合，宵夜街走起！"
+            "欸走拉，吃宵？"
           ],
           [
-            "欸走啊，要不要去宵夜街？",
-            "今天晚上特別想吃炸物跟熱湯！"
+            "欸走啊，要不要去宵夜街？"
           ],
           [
-            "欸走啊，一起去吃傻師傅！",
-            "傻師傅湯包配酸辣湯，絕配！"
-          ],
-          [
-            "嘿！兄弟！快坐快坐！歡迎來到 211！",
-            "這張深藍大沙發是全寢室最舒服的地方！我正在調吉他弦呢，等大家專案收尾，今晚來場 211 寢室不插電音樂之夜！"
-          ],
-          [
-            "喲！你也在逛 211 啊？",
-            "別客氣，坐沙發放鬆一下！大家在兩側上床下桌奮戰，中間這組沙發就是最佳充電站，心情整個開闊起來！"
-          ],
-          [
-            "宵夜戰備物資充足，隨時歡迎取用！坐在沙發上聽聽歌、聊聊代碼，這才是大學宿舍的靈魂！"
-          ],
-          [
-            "Happy、Clark、Kerry 跟 Jerry 都在桌前爆肝衝刺，我們在沙發這邊隨時幫大家加油打氣！"
-          ],
-          [
-            "祝你在這座小世界玩得開心！隨時歡迎來 211 沙發區串門子！"
+            "欸走啊，一起去吃傻師傅！"
           ]
         ],
         "en": [
           [
-            "Hey let us go, late-night snack run?",
-            "Meet at the main gate, midnight food street let us roll!"
+            "Hey let us go, late-night snack run?"
           ],
           [
-            "Hey let us go, wanna hit the midnight food street?",
-            "Seriously craving hot soup and fried chicken tonight!"
+            "Hey let us go, wanna hit the midnight food street?"
           ],
           [
-            "Hey let us go, grab Sha-Shi-Fu dumplings together!",
-            "Steamed soup dumplings with hot and sour soup, absolute perfection!"
-          ],
-          [
-            "Hey bro! Grab a seat! Welcome to 211!",
-            "This deep blue couch is the comfiest spot in the house! Tuning my acoustic guitar right now—once everyone wraps up their code, we're having an unplugged jam night!"
-          ],
-          [
-            "Yo! Touring 211?",
-            "Make yourself at home on the sofa! Everyone is locked in at their loft desks, so this lounge couch is the ultimate recharge station!"
-          ],
-          [
-            "Midnight study rations are 100% secured! Sitting back on the couch, jamming tunes, and talking tech is the true dorm soul!"
-          ],
-          [
-            "Happy, Clark, Kerry, and Jerry are crushing code at their desks; we're holding down the couch keeping team morale high!"
-          ],
-          [
-            "Enjoy exploring this world! Drop by the 211 couch anytime to hang out!"
+            "Hey let us go, grab Sha-Shi-Fu dumplings together!"
           ]
         ]
       },
@@ -1027,12 +987,12 @@
       "id": "bohan",
       "name": "Bo Han Wu",
       "gender": "male",
-      "role": "好友",
+      "role": "室友 (Dorm 211)",
       "avatar": "📚",
-      "zone": "library",
+      "zone": "dorm_211",
       "spawn": {
-        "x": 21.0,
-        "y": 20.8
+        "x": 5.8,
+        "y": 21.6
       },
       "nameColor": "#a5b4fc",
       "appearance": {
@@ -1056,8 +1016,8 @@
       },
       "name_zh": "吳柏翰",
       "name_en": "Bo Han Wu",
-      "role_zh": "好友",
-      "role_en": "Friend"
+      "role_zh": "室友 (男11 211)",
+      "role_en": "Roommate (Dorm 211)"
     }
   ]
 }
