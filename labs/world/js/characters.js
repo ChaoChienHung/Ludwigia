@@ -35,7 +35,7 @@
         isPlayer: true,
         role: 'Explorer / 訪客',
         avatar: '🧭',
-        x: 7.2, y: 7.2, z: 0,
+        x: 4.8, y: 3.8, z: 0,
         facing: 1,
         speed: 3.2,
         path: [],

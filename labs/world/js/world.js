@@ -73,16 +73,16 @@
 
     setupWorldObstacles() {
       // 1. Ludwig's Family Residence (NW: x: 0..9, y: 0..9)
-      this.nav.setBlock(HOUSE_MAX_X, 0, 1, 4, true);
-      this.nav.setBlock(HOUSE_MAX_X, 7, 1, 3, true);
-      this.nav.setBlock(0, HOUSE_MAX_Y, 4, 1, true);
-      this.nav.setBlock(7, HOUSE_MAX_Y, 3, 1, true);
+      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 0.6, 4.5, true);   // East Wall Top (y: 0 to 4.5)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 6.8, 0.6, 3.2, true); // East Wall Bottom (y: 6.8 to 10)
+      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 4.5, 0.6, true);   // South Terrace Wall Left (x: 0 to 4.5)
+      this.nav.setBlock(6.8, HOUSE_MAX_Y + 1, 3.2, 0.6, true); // South Terrace Wall Right (x: 6.8 to 10)
 
-      this.nav.setBlock(1, 1, 2.2, 2.3, true);   // Master Bed
-      this.nav.setBlock(6, 1, 2.5, 1.2, true);   // Desk
-      this.nav.setBlock(0, 3.8, 0.8, 2.6, true); // Bookshelf
-      this.nav.setBlock(2, 5, 2.5, 2.0, true);   // Sofa & Rug
-      this.nav.setBlock(6, 5, 2.0, 1.8, true);   // Dining Table
+      this.nav.setBlock(1.0, 1.0, 2.2, 2.3, true); // Master Bed
+      this.nav.setBlock(6.0, 1.0, 2.5, 1.2, true); // Desk
+      this.nav.setBlock(0.0, 3.8, 0.8, 2.6, true); // Bookshelf
+      this.nav.setBlock(2.0, 5.0, 2.5, 2.0, true); // Sofa & Rug
+      this.nav.setBlock(6.0, 5.0, 1.8, 1.4, true); // Dining Table
 
       // 2. Men's Dormitory 11 Room 211 (SW: x: 0..9, y: 17..26)
       this.nav.setBlock(0, DORM_MIN_Y, 10, 0.6, true);           // NE Wall
@@ -127,22 +127,22 @@
       // 5. Central Plaza & Park
       this.nav.setBlock(13, 13, 3, 3, true); // Fountain
 
-      // Park Benches
-      this.nav.setBlock(11, 10, 1.6, 0.7, true);
-      this.nav.setBlock(16, 10, 1.6, 0.7, true);
-      this.nav.setBlock(11, 17, 1.6, 0.7, true);
-      this.nav.setBlock(16, 17, 1.6, 0.7, true);
+      // Park Benches (Placed on grass, clear of all paths)
+      this.nav.setBlock(13.5, 9.5, 1.6, 0.7, true);
+      this.nav.setBlock(13.5, 17.5, 1.6, 0.7, true);
+      this.nav.setBlock(22.0, 13.5, 1.6, 0.7, true);
+      this.nav.setBlock(5.0, 12.5, 1.6, 0.7, true);
 
-      // Trees (doorway entrances at [11, 6] and [11, 21] kept completely open)
+      // Trees (placed in lawn and garden groves, with all cobblestone thoroughfares wide open)
       const treeBlocks = [
-        [11, 2], [14, 2], [16, 2],
-        [16, 6],
-        [11, 14], [16, 14],
-        [16, 21],
-        [11, 25], [14, 25], [16, 25],
-        [20, 13], [24, 13]
+        [13, 2], [16, 2],
+        [14, 8],
+        [14, 18],
+        [13, 25], [16, 25],
+        [20, 12], [24, 12],
+        [21, 15], [25, 15]
       ];
-      treeBlocks.forEach(([tx, ty]) => this.nav.setBlock(tx, ty, 1.2, 1.2, true));
+      treeBlocks.forEach(([tx, ty]) => this.nav.setBlock(tx, ty, 1.1, 1.1, true));
     }
 
     initParticles() {
@@ -389,19 +389,34 @@
         const nx = player.x + kx * step;
         const ny = player.y + ky * step;
 
-        if (this.nav.isWalkableRadius(nx, ny, 0.32)) {
+        const r = 0.22;
+        if (this.nav.isWalkableRadius(nx, ny, r)) {
           player.x = nx;
           player.y = ny;
           player.facing = kx >= ky ? 1 : -1;
           playerActuallyMoved = true;
-        } else if (this.nav.isWalkableRadius(nx, player.y, 0.32)) {
+        } else if (this.nav.isWalkableRadius(nx, player.y, r)) {
           player.x = nx;
           player.facing = kx >= 0 ? 1 : -1;
           playerActuallyMoved = true;
-        } else if (this.nav.isWalkableRadius(player.x, ny, 0.32)) {
+        } else if (this.nav.isWalkableRadius(player.x, ny, r)) {
           player.y = ny;
           player.facing = ky >= 0 ? 1 : -1;
           playerActuallyMoved = true;
+        } else if (!this.nav.isWalkableRadius(player.x, player.y, r)) {
+          // Unstuck escape fallback: if player was placed near an obstacle boundary,
+          // allow moving towards open ground
+          if (this.nav.isWalkable(nx, ny)) {
+            player.x = nx;
+            player.y = ny;
+            playerActuallyMoved = true;
+          } else if (this.nav.isWalkable(nx, player.y)) {
+            player.x = nx;
+            playerActuallyMoved = true;
+          } else if (this.nav.isWalkable(player.x, ny)) {
+            player.y = ny;
+            playerActuallyMoved = true;
+          }
         }
       } else if (player.path && player.path.length > 0) {
         const next = player.path[0];
@@ -1356,10 +1371,12 @@
         draw: () => this.models.drawGrandFountain(this.ctx, 13.0, 13.0, ox, oy)
       });
 
-      // Refined Park Benches
+      // Refined Park Benches (Placed on grass, completely clear of all pathways)
       const benches = [
-        { gx: 11, gy: 10 }, { gx: 16, gy: 10 },
-        { gx: 11, gy: 17 }, { gx: 16, gy: 17 }
+        { gx: 13.5, gy: 9.5 },  // North Plaza Lawn (facing fountain from grass, clear of east-west path)
+        { gx: 13.5, gy: 17.5 }, // South Plaza Lawn (facing fountain from grass, clear of south path)
+        { gx: 22.0, gy: 13.5 }, // East Central Lawn (peaceful reading bench between AI Studio and Library)
+        { gx: 5.0,  gy: 12.5 }  // Ludwig's South Garden Terrace (private lawn bench below house terrace)
       ];
       benches.forEach(b => {
         list.push({
@@ -1368,14 +1385,14 @@
         });
       });
 
-      // Lush Flowering Trees (Doorway entrances kept open and unobstructed)
+      // Lush Flowering Trees (Beautifying gardens and park lawns, with all corridors, pathways & doorways 100% open)
       const trees = [
-        [11, 2], [14, 2], [16, 2],
-        [16, 6],
-        [11, 14], [16, 14],
-        [16, 21],
-        [11, 25], [14, 25], [16, 25],
-        [20, 13], [24, 13]
+        [13, 2], [16, 2],       // North garden lawn (well north of path y=5)
+        [14, 8],                // North-central lawn pocket (between path y=6 and fountain)
+        [14, 18],               // South-central lawn pocket (between fountain and path y=20)
+        [13, 25], [16, 25],     // South garden lawn (well south of path y=22)
+        [20, 12], [24, 12],     // East central lawn north grove
+        [21, 15], [25, 15]      // East central lawn south grove
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
