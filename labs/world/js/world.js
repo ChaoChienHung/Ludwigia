@@ -110,11 +110,10 @@
       this.nav.setBlock(AI_MAX_X + 1, 0, 1, 10, true);
       this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 10, 1, true);
 
-      this.nav.setBlock(19.5, 1.2, 2.0, 1.4, true); // Server Cabinets
-      this.nav.setBlock(23.5, 1.2, 2.5, 1.4, true); // AI Command Desk
-      this.nav.setBlock(26.2, 4.0, 0.8, 2.5, true); // Whiteboard
-      this.nav.setBlock(19.5, 7.2, 1.8, 1.4, true); // Espresso Bar
-      this.nav.setBlock(23.5, 6.8, 2.2, 1.6, true); // Lounge Pod
+      this.nav.setBlock(19.2, 1.2, 1.7, 1.1, true); // Server Cabinets
+      this.nav.setBlock(23.5, 1.2, 2.5, 1.1, true); // AI Command Desk
+      this.nav.setBlock(26.5, 4.0, 0.5, 2.4, true); // Whiteboard
+      this.nav.setBlock(19.2, 7.2, 1.7, 1.1, true); // Espresso Bar
 
       // 4. Zone 4: Ludwigia Grand Library (SE: 18..27, 17..26)
       this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 10, 1, true); // North Wall
