@@ -355,6 +355,10 @@
       "dialogues": {
         "zh-TW": [
           [
+            "這把贏了就睡！",
+            "……兄弟別走啊，再排一把，這把穩贏的！"
+          ],
+          [
             "哈哈！歡迎來到男11 211寢室！",
             "這張上床下桌真是滿滿的大學回憶！下層寫程式打遊戲，上層倒頭就睡，大學四年最熱血的時光都在這！",
             "兄弟，今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？我請客！"
@@ -376,6 +380,10 @@
           ]
         ],
         "en": [
+          [
+            "Win this match and I am sleeping, I swear!",
+            "...Bro do not go yet, just queue one more, this one is an easy win!"
+          ],
           [
             "Haha! Welcome to Men's Dorm 11 Room 211!",
             "These loft beds bring back the ultimate college memories! Desk on the bottom for coding and gaming, bed on top for crashing out!",
@@ -426,6 +434,14 @@
       "dialogues": {
         "zh-TW": [
           [
+            "健宏，你可以幫我關一下鬧鐘嗎……",
+            "（翻了個身繼續拉棉被）"
+          ],
+          [
+            "（11:59 p.m.）欸你幫我錄一下，我要傳給助教看，我明明沒遲交！",
+            "快點快點！倒數三十秒了啊啊啊！"
+          ],
+          [
             "嗨！歡迎來我們寢室參觀！",
             "上床下桌的書架上都是我的資料結構和分散式系統講義，空間利用率超高！",
             "期末考週大家常常一起通宵刷題，互相提問激盪思維，那種革命情感真的超棒！"
@@ -446,6 +462,14 @@
           ]
         ],
         "en": [
+          [
+            "Chien-Hung, can you help me turn off my alarm clock please...",
+            "*(rolls over and pulls the blanket back up)*"
+          ],
+          [
+            "(11:59 p.m.) Hey record this screen for me quick! I need to show the TA I literally submitted before deadline!",
+            "Hurry hurry! Thirty seconds on the clock, ahhhh!"
+          ],
           [
             "Hi! Welcome to our dorm room!",
             "The built-in desk bookshelf holds all my data structures and distributed systems binders—so ergonomic!",
@@ -494,6 +518,10 @@
       "dialogues": {
         "zh-TW": [
           [
+            "最少我不是最送的！",
+            "你看戰績表，我這波團戰輸出還是全隊第二高好嗎！"
+          ],
+          [
             "喲！歡迎光臨 211！",
             "你看我桌上這兩台電競螢幕，一邊開著 3D 即時光影渲染一邊調神經網絡，宿舍這冷氣吹著太舒服了！",
             "待會打完這場 Code Review，我們一起去中庭噴水池散步透透氣！"
@@ -514,6 +542,10 @@
           ]
         ],
         "en": [
+          [
+            "At least I am not the one feeding the most!",
+            "Look at the damage chart, my teamfight output was still second highest, okay?!"
+          ],
           [
             "Yo! Welcome to 211!",
             "Check out my dual display rig—real-time 3D rendering on one screen, neural net training on the other, AC running crisp!",
@@ -628,6 +660,18 @@
       "dialogues": {
         "zh-TW": [
           [
+            "欸走拉，吃宵？",
+            "中央大門集合，宵夜街走起！"
+          ],
+          [
+            "欸走啊，要不要去宵夜街？",
+            "今天晚上特別想吃炸物跟熱湯！"
+          ],
+          [
+            "欸走啊，一起去吃傻師傅！",
+            "傻師傅湯包配酸辣湯，絕配！"
+          ],
+          [
             "嘿！兄弟！快坐快坐！歡迎來到 211！",
             "這張深藍大沙發是全寢室最舒服的地方！我正在調吉他弦呢，等大家專案收尾，今晚來場 211 寢室不插電音樂之夜！"
           ],
@@ -646,6 +690,18 @@
           ]
         ],
         "en": [
+          [
+            "Hey let us go, late-night snack run?",
+            "Meet at the main gate, midnight food street let us roll!"
+          ],
+          [
+            "Hey let us go, wanna hit the midnight food street?",
+            "Seriously craving hot soup and fried chicken tonight!"
+          ],
+          [
+            "Hey let us go, grab Sha-Shi-Fu dumplings together!",
+            "Steamed soup dumplings with hot and sour soup, absolute perfection!"
+          ],
           [
             "Hey bro! Grab a seat! Welcome to 211!",
             "This deep blue couch is the comfiest spot in the house! Tuning my acoustic guitar right now—once everyone wraps up their code, we're having an unplugged jam night!"
