@@ -71,7 +71,14 @@
       "name_zh": "Ludwig (趙健宏)",
       "name_en": "Ludwig",
       "role_zh": "Host / 站長",
-      "role_en": "Host / Webmaster"
+      "role_en": "Host / Webmaster",
+      "visitedZones": [
+        "house",
+        "plaza",
+        "dorm_211",
+        "ai_studio",
+        "library"
+      ]
     },
     {
       "id": "yully",
@@ -141,7 +148,11 @@
       "name_zh": "盧敏華",
       "name_en": "Yully",
       "role_zh": "媽媽 (Mom)",
-      "role_en": "Mom"
+      "role_en": "Mom",
+      "visitedZones": [
+        "house",
+        "plaza"
+      ]
     },
     {
       "id": "wuyen",
@@ -207,7 +218,11 @@
       "name_zh": "趙武彥",
       "name_en": "Wu Yen Chao",
       "role_zh": "爸爸 (Dad)",
-      "role_en": "Dad"
+      "role_en": "Dad",
+      "visitedZones": [
+        "house",
+        "plaza"
+      ]
     },
     {
       "id": "luena",
@@ -275,7 +290,11 @@
       "name_zh": "趙翊均",
       "name_en": "Luena Chao",
       "role_zh": "妹妹 (Sister)",
-      "role_en": "Sister"
+      "role_en": "Sister",
+      "visitedZones": [
+        "house",
+        "plaza"
+      ]
     },
     {
       "id": "mochi",
@@ -331,7 +350,11 @@
       "name_zh": "餅餅 (Mochi)",
       "name_en": "Mochi",
       "role_zh": "工作室貓咪",
-      "role_en": "Studio Cat"
+      "role_en": "Studio Cat",
+      "visitedZones": [
+        "house",
+        "plaza"
+      ]
     },
     {
       "id": "happy",
@@ -408,7 +431,11 @@
       "name_zh": "王誠煜",
       "name_en": "Happy Wang",
       "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)"
+      "role_en": "Roommate (Dorm 211)",
+      "visitedZones": [
+        "dorm_211",
+        "plaza"
+      ]
     },
     {
       "id": "kerry",
@@ -493,7 +520,12 @@
       "name_zh": "張開畇",
       "name_en": "Kerry Chang",
       "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)"
+      "role_en": "Roommate (Dorm 211)",
+      "visitedZones": [
+        "dorm_211",
+        "plaza",
+        "library"
+      ]
     },
     {
       "id": "clark",
@@ -535,7 +567,11 @@
       "name_zh": "吳宥謙",
       "name_en": "Clark Wu",
       "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)"
+      "role_en": "Roommate (Dorm 211)",
+      "visitedZones": [
+        "dorm_211",
+        "plaza"
+      ]
     },
     {
       "id": "jerry",
@@ -613,7 +649,11 @@
       "name_zh": "鍾昊哲",
       "name_en": "Jerry Chung",
       "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)"
+      "role_en": "Roommate (Dorm 211)",
+      "visitedZones": [
+        "dorm_211",
+        "plaza"
+      ]
     },
     {
       "id": "billy",
@@ -661,7 +701,11 @@
       "name_zh": "方竣平",
       "name_en": "Billy Fang",
       "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)"
+      "role_en": "Roommate (Dorm 211)",
+      "visitedZones": [
+        "dorm_211",
+        "plaza"
+      ]
     },
     {
       "id": "ludwigia",
@@ -729,7 +773,12 @@
       "name_zh": "Ludwigia AI",
       "name_en": "Ludwigia AI",
       "role_zh": "數位花園守護者 / Core Agent",
-      "role_en": "Garden Guardian / Core Agent"
+      "role_en": "Garden Guardian / Core Agent",
+      "visitedZones": [
+        "ai_studio",
+        "plaza",
+        "library"
+      ]
     },
     {
       "id": "gemini",
@@ -799,7 +848,12 @@
       "name_zh": "Gemini (雙子座)",
       "name_en": "Gemini",
       "role_zh": "Multimodal AI (多模態協作者)",
-      "role_en": "Multimodal AI Partner"
+      "role_en": "Multimodal AI Partner",
+      "visitedZones": [
+        "ai_studio",
+        "plaza",
+        "library"
+      ]
     },
     {
       "id": "claude",
@@ -867,7 +921,12 @@
       "name_zh": "Claude (克勞德)",
       "name_en": "Claude",
       "role_zh": "Reasoning AI (深度推理協作者)",
-      "role_en": "Reasoning AI Partner"
+      "role_en": "Reasoning AI Partner",
+      "visitedZones": [
+        "ai_studio",
+        "plaza",
+        "library"
+      ]
     },
     {
       "id": "chatgpt",
@@ -933,7 +992,12 @@
       "name_zh": "ChatGPT",
       "name_en": "ChatGPT",
       "role_zh": "Conversational AI (對話探索協作者)",
-      "role_en": "Conversational AI Partner"
+      "role_en": "Conversational AI Partner",
+      "visitedZones": [
+        "ai_studio",
+        "plaza",
+        "library"
+      ]
     },
     {
       "id": "haolei",
@@ -981,7 +1045,12 @@
       "name_zh": "裴皓磊",
       "name_en": "Haolei Pei",
       "role_zh": "好友 / 分散式計算研究者",
-      "role_en": "Friend / Distributed Systems"
+      "role_en": "Friend / Distributed Systems",
+      "visitedZones": [
+        "library",
+        "plaza",
+        "ai_studio"
+      ]
     },
     {
       "id": "bohan",
@@ -1017,7 +1086,12 @@
       "name_zh": "吳柏翰",
       "name_en": "Bo Han Wu",
       "role_zh": "室友 (男11 211)",
-      "role_en": "Roommate (Dorm 211)"
+      "role_en": "Roommate (Dorm 211)",
+      "visitedZones": [
+        "dorm_211",
+        "library",
+        "plaza"
+      ]
     }
   ]
 }

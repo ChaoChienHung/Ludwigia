@@ -598,62 +598,51 @@
                 { x: 8.5, y: 21.6 }  // Dorm Doorway Threshold
               ];
 
-              if (c.zone === 'house') {
-                targetX = 1.5 + Math.random() * 7.0;
-                targetY = 1.5 + Math.random() * 7.0;
-              } else if (c.zone === 'ai_studio') {
-                // AI Studio Agents (Ludwigia, Gemini, Claude, ChatGPT):
-                // Roam inside AI Studio, stroll across Garden Social Plaza, or visit Grand Library!
-                const roll = Math.random();
-                let chosenPool;
-                if (roll < 0.35) {
-                  chosenPool = aiStudioAnchors;
-                } else if (roll < 0.70) {
-                  chosenPool = plazaAnchors;
+              const houseAnchors = [
+                { x: 3.5, y: 3.5 }, // Living Room Rug Center
+                { x: 5.5, y: 3.5 }, // Sectional Sofa Corner
+                { x: 2.5, y: 6.5 }, // Dining Table
+                { x: 7.2, y: 6.5 }, // Kitchen Island / Bar
+                { x: 5.0, y: 7.5 }, // South Terrace French Doors
+                { x: 8.5, y: 5.5 }  // House East Entrance Threshold
+              ];
+
+              const zoneAnchorMap = {
+                house: houseAnchors,
+                ludwig_house: houseAnchors,
+                dorm: dormAnchors,
+                dorm_211: dormAnchors,
+                ai_studio: aiStudioAnchors,
+                library: libraryAnchors,
+                plaza: plazaAnchors
+              };
+
+              const rawVisited = c.visitedZones || c.visited || c.roamZones;
+              let visitedPool = Array.isArray(rawVisited) && rawVisited.length > 0
+                ? rawVisited
+                : (c.zone === 'house' ? ['house', 'plaza'] :
+                   c.zone === 'ai_studio' ? ['ai_studio', 'plaza', 'library'] :
+                   c.zone === 'library' ? ['library', 'plaza', 'ai_studio'] :
+                   c.zone === 'dorm_211' ? ['dorm_211', 'plaza', 'library'] :
+                   [c.zone, 'plaza']);
+
+              // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
+              let chosenZone;
+              if (visitedPool.includes(c.zone) && visitedPool.length > 1) {
+                if (Math.random() < 0.40) {
+                  chosenZone = c.zone;
                 } else {
-                  chosenPool = libraryAnchors;
+                  const others = visitedPool.filter(z => z !== c.zone);
+                  chosenZone = others[Math.floor(Math.random() * others.length)];
                 }
-                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-                targetX = spot.x + (Math.random() - 0.5) * 0.5;
-                targetY = spot.y + (Math.random() - 0.5) * 0.5;
-              } else if (c.zone === 'library') {
-                // Grand Library Scholars (Haolei Pei, Bo Han Wu):
-                // Explore Library study desks/stacks or take a refreshing stroll in Garden Social Plaza!
-                const roll = Math.random();
-                let chosenPool;
-                if (roll < 0.45) {
-                  chosenPool = libraryAnchors;
-                } else if (roll < 0.85) {
-                  chosenPool = plazaAnchors;
-                } else {
-                  chosenPool = aiStudioAnchors;
-                }
-                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-                targetX = spot.x + (Math.random() - 0.5) * 0.5;
-                targetY = spot.y + (Math.random() - 0.5) * 0.5;
-              } else if (c.zone === 'dorm_211') {
-                // Men's Dorm 211 crew (Happy, Kerry, Clark, Jerry, Billy):
-                // Hang out in dorm, chill around Garden Social Plaza, or head over to study in Grand Library!
-                const roll = Math.random();
-                let chosenPool;
-                if (roll < 0.35) {
-                  chosenPool = dormAnchors;
-                } else if (roll < 0.70) {
-                  chosenPool = plazaAnchors;
-                } else {
-                  chosenPool = libraryAnchors;
-                }
-                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-                targetX = spot.x + (Math.random() - 0.5) * 0.5;
-                targetY = spot.y + (Math.random() - 0.5) * 0.5;
               } else {
-                // General Plaza roaming
-                const roll = Math.random();
-                const chosenPool = roll < 0.6 ? plazaAnchors : libraryAnchors;
-                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-                targetX = spot.x + (Math.random() - 0.5) * 0.5;
-                targetY = spot.y + (Math.random() - 0.5) * 0.5;
+                chosenZone = visitedPool[Math.floor(Math.random() * visitedPool.length)];
               }
+
+              const chosenPool = zoneAnchorMap[chosenZone] || plazaAnchors;
+              const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+              targetX = spot.x + (Math.random() - 0.5) * 0.5;
+              targetY = spot.y + (Math.random() - 0.5) * 0.5;
 
               if (this.nav.isWalkable(targetX, targetY)) {
                 const crowded = chars.some(other => other !== c && Math.hypot(other.x - targetX, other.y - targetY) < 1.4);
