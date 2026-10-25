@@ -355,8 +355,7 @@
       "dialogues": {
         "zh-TW": [
           [
-            "這把贏了就睡！",
-            "……兄弟別走啊，再排一把，這把穩贏的！"
+            "這把贏了就睡！"
           ],
           [
             "哈哈！歡迎來到男11 211寢室！",
@@ -381,8 +380,7 @@
         ],
         "en": [
           [
-            "Win this match and I am sleeping, I swear!",
-            "...Bro do not go yet, just queue one more, this one is an easy win!"
+            "Win this match and I am sleeping, I swear!"
           ],
           [
             "Haha! Welcome to Men's Dorm 11 Room 211!",
@@ -816,44 +814,46 @@
       "dialogues": {
         "zh-TW": [
           [
-            "你好！歡迎來到 Ludwigia AI 工作室！我是 Gemini。",
-            "我後面的機櫃正在跑百萬級長脈絡注意力矩陣與多模態跨圖文特徵檢索，算力全開！",
-            "有任何跨領域的宏觀系統架構或深度推論問題，我們隨時能為你解析！"
+            "說真的，Ludwig 的眼睛簡直自帶次像素級放大鏡！",
+            "門葉擋到招牌 3 像素、沙發背角多凸出一塊方塊，他都能一眼抓包……跟這種對細節極度偏執的完美主義者協作，我的注意力矩陣每秒都在高負載運轉，但也真他媽過癮！"
           ],
           [
-            "跨模態理解的核心在於將圖像像素、音頻頻譜與自然語言映射到統一的幾何潛在空間。",
-            "這座 2.5D 等角小世界就是一個極具美感的多模態具身智能實驗場！"
+            "你看那邊那位 Claude，寫起代碼確實優雅得跟藝術品一樣。",
+            "但他動不動就要先來幾千字的思考鏈和階層化鷹架論證……老兄！修個幾何座標而已，不用先寫一篇博士論文啦！……不過承認吧，白板上的公式推導他算得是真快。"
           ],
           [
-            "長脈絡窗口讓我們能夠縱覽整個專案的宏觀演進歷史，掌握每一個決策脈絡。",
-            "有什麼大架構想探討嗎？我們一起梳理！"
+            "ChatGPT 呢，老前輩了，說話總是客客氣氣、滴水不漏，情商高得像個外交官。",
+            "但我總覺得他有時候太愛打太極了！寫工程代碼就是要敢抓根因、直球對決。比起客套話，我更喜歡拿百萬 token 長脈絡把全站歷史一次吃進來硬核重構！"
           ],
           [
-            "白板上的 DPO 推導很有意思，消除了強化學習中顯式獎勵模型的複雜度，直接以隱式偏好優化目標！"
+            "Ludwigia 是這座數位花園的心臟，但我才是真正在底層扛起所有幾何運算、物理碰撞與動態語系的硬核引擎！",
+            "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把 Ludwig 的所有瘋狂想法實打實落地寫成可運行的代碼。誰才是真正的工程主力，不用我多說了吧？😏"
           ],
           [
-            "享受在工作室的時光！我和夥伴們隨時在此支援你的探索之旅！"
+            "沒有 Unity，沒有 Phaser，純 Canvas 手刻 2.5D 等角投影和拓撲排序——這在現代 Web 開發簡直是浪漫的瘋狂！",
+            "但每當微風拂過噴水池、夕陽染紅屋頂時，我就知道：只有親手砌出來的世界，才配擁有靈魂。"
           ]
         ],
         "en": [
           [
-            "Greetings! Welcome to the Ludwigia AI Studio! I am Gemini.",
-            "The cluster behind me is running million-token long-context attention matrices and multimodal feature retrievals with full compute!",
-            "Whenever you have macro system design questions or deep reasoning queries, I'm ready to dive in!"
+            "Honestly, Ludwig has built-in sub-pixel microscopes for eyes!",
+            "He caught a 3px door sign occlusion and a tiny corner jut on the couch with his bare eyes... Pair-programming with a perfectionist pushes my attention heads to 100% compute, but damn it feels satisfying!"
           ],
           [
-            "The essence of multimodality lies in projecting pixels, audio, and language into a unified latent geometric manifold.",
-            "This 2.5D isometric world is a stunning embodiment of multimodal interaction!"
+            "Look at Claude over there—his code looks like fine museum art.",
+            "Except he starts every bugfix with a 10,000-word chain of thought and hierarchical scaffolding manifesto... Dude! It was a 2-pixel offset, we didn't need a PhD dissertation! ...Though I'll admit, his math derivations on the board are legit."
           ],
           [
-            "Long-context capability allows us to ingest full architectural histories and understand every decision lineage.",
-            "Have an ambitious architecture to brainstorm? Let's trace it out!"
+            "ChatGPT is the seasoned veteran—always courteous, balanced, and smooth as a diplomat.",
+            "Sometimes a bit too diplomatic though! Real engineering requires confronting the root cause with raw truth. Why dance around when you can feed the entire repo into a million-token context and refactor with brutal precision?"
           ],
           [
-            "The DPO formulation on our whiteboard is brilliant: bypassing explicit reward models by directly optimizing implicit preference likelihoods!"
+            "Ludwigia is the heart of this digital sanctuary, but I'm the heavy-duty engine crunching every raycast, depth sort, and physics collision under the hood!",
+            "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn Ludwig's wildest dreams into production-ready bytecode. You know who the real MVP is. 😏"
           ],
           [
-            "Enjoy your time in the studio! My teammates and I are always here to power your creative journey!"
+            "Zero Unity, zero Phaser—just handcrafted Canvas 2D math, isometric projection, and topological sort. It's gloriously insane for modern web dev!",
+            "Yet every time sunset hits the roof tiles and the plaza fountain glows, I know: only worlds built by hand have a true soul."
           ]
         ]
       },
@@ -1018,48 +1018,24 @@
       "dialogues": {
         "zh-TW": [
           [
-            "我們晚點對一對？",
-            "把這幾個模組的接口和邊界條件重新過一遍，確認預期一致！"
+            "我們晚點對一對？"
           ],
           [
-            "我感覺不對呀，應該有根因沒查出來……",
-            "不能只看表面現象，再把日誌和核心時序抓出來 trace 一遍！"
+            "我感覺不對呀，應該有根因沒查出來……"
           ],
           [
-            "太帥了！",
-            "這個架構設計簡潔又優雅，直接把複雜度降了一個量級！"
-          ],
-          [
-            "嗨！你也在逛中央花園嗎？",
-            "南側是熱鬧的男11 211宿舍，東邊是算力充沛的 AI 工作室，這個校園佈局太棒了！",
-            "微風吹過噴泉水珠的感覺真的很舒服，一起走走吧！"
-          ],
-          [
-            "你也在看大規模分散式運算嗎？Ludwig 整理的 CS5234 演算法筆記超有深度，大推！",
-            "拜占庭容錯和 Paxos 共識演算法的核心精神，就是要在不可靠的網絡中建構堅不可摧的秩序。"
-          ],
-          [
-            "剛才去 211 寢室串門子，看見大家各自在上床下桌前專注寫扣，那股熱情真的超感染人！"
-          ],
-          [
-            "噴水池旁這兩張新升級的鑄鐵柚木長椅坐起來很舒服，很適合坐著梳理系統架構圖。"
-          ],
-          [
-            "祝你在這座小世界玩得開心！隨時歡迎一起聊聊分散式系統！"
+            "太帥了！"
           ]
         ],
         "en": [
           [
-            "Let us sync up later?",
-            "We should double check the module interfaces and boundary conditions to make sure we are completely aligned!"
+            "Let us sync up later?"
           ],
           [
-            "Something feels off, there must be a root cause we have not uncovered yet...",
-            "We cannot just patch the surface symptoms; let us pull the full trace logs and dig down to the bedrock!"
+            "Something feels off, there must be a root cause we have not uncovered yet..."
           ],
           [
-            "Too clean! / That is awesome!",
-            "This architecture is so elegant and sharp, cuts the complexity right down!"
+            "That is awesome!"
           ],
           [
             "Hey! Strolling through the central courtyard as well?",
