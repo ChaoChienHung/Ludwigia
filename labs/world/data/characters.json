@@ -517,8 +517,10 @@
       "dialogues": {
         "zh-TW": [
           [
-            "最少我不是最送的！",
-            "你看戰績表，我這波團戰輸出還是全隊第二高好嗎！"
+            "最少我不是最送的！"
+          ],
+          [
+            "阿明都不洗澡... 超噁..."
           ],
           [
             "喲！歡迎光臨 211！",
@@ -542,8 +544,10 @@
         ],
         "en": [
           [
-            "At least I am not the one feeding the most!",
-            "Look at the damage chart, my teamfight output was still second highest, okay?!"
+            "At least I am not the one feeding the most!"
+          ],
+          [
+            "A-Ming literally never takes a shower... so gross..."
           ],
           [
             "Yo! Welcome to 211!",
