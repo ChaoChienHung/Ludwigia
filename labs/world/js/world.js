@@ -1031,17 +1031,30 @@
         }
       });
 
-      // Dorm Interactive Door with Mounted "男11 211" Plaque
+      // Dorm Interactive Double Doors (Matching Lintel Bronze Plaque)
       const dormDoorAngle = this.doorDormOpen * 1.35;
-      const dTipX = dormSE_X + Math.sin(dormDoorAngle) * 1.15;
-      const dTipY = 20.5 + Math.cos(dormDoorAngle) * 1.15;
+      const dormDoorW = 1.15;
+      const dnTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
+      const dnTipY = 20.5 + Math.cos(dormDoorAngle) * dormDoorW;
       list.push({
-        xMin: Math.min(dormSE_X, dTipX) - 0.1, xMax: Math.max(dormSE_X, dTipX) + 0.1,
-        yMin: 20.4, yMax: 22.9,
+        xMin: Math.min(dormSE_X, dnTipX) - 0.1, xMax: Math.max(dormSE_X, dnTipX) + 0.1,
+        yMin: 20.4, yMax: Math.max(20.5 + dormDoorW, dnTipY) + 0.1,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.drawDoorLeaf(dormSE_X, 20.5, dTipX, dTipY, ox, oy, '男11 211');
+          this.drawDoorLeaf(dormSE_X, 20.5, dnTipX, dnTipY, ox, oy);
+          this.ctx.restore();
+        }
+      });
+      const dsTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
+      const dsTipY = 22.8 - Math.cos(dormDoorAngle) * dormDoorW;
+      list.push({
+        xMin: Math.min(dormSE_X, dsTipX) - 0.1, xMax: Math.max(dormSE_X, dsTipX) + 0.1,
+        yMin: Math.min(22.8 - dormDoorW, dsTipY) - 0.1, yMax: 22.9,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
+          this.drawDoorLeaf(dormSE_X, 22.8, dsTipX, dsTipY, ox, oy);
           this.ctx.restore();
         }
       });
@@ -1310,15 +1323,28 @@
 
       // Library Double Mahogany Swinging Doors
       const libDoorAngle = this.doorLibOpen * 1.35;
-      const libTipX = LIB_MIN_X + Math.sin(libDoorAngle) * 1.15;
-      const libTipY = 20.5 + Math.cos(libDoorAngle) * 1.15;
+      const libDoorW = 1.15;
+      const libnTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
+      const libnTipY = 20.5 + Math.cos(libDoorAngle) * libDoorW;
       list.push({
-        xMin: Math.min(LIB_MIN_X, libTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libTipX) + 0.1,
-        yMin: 20.4, yMax: 22.9,
+        xMin: Math.min(LIB_MIN_X, libnTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libnTipX) + 0.1,
+        yMin: 20.4, yMax: Math.max(20.5 + libDoorW, libnTipY) + 0.1,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.drawDoorLeaf(LIB_MIN_X, 20.5, libTipX, libTipY, ox, oy);
+          this.drawDoorLeaf(LIB_MIN_X, 20.5, libnTipX, libnTipY, ox, oy);
+          this.ctx.restore();
+        }
+      });
+      const libsTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
+      const libsTipY = 22.8 - Math.cos(libDoorAngle) * libDoorW;
+      list.push({
+        xMin: Math.min(LIB_MIN_X, libsTipX) - 0.1, xMax: Math.max(LIB_MIN_X, libsTipX) + 0.1,
+        yMin: Math.min(22.8 - libDoorW, libsTipY) - 0.1, yMax: 22.9,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
+          this.drawDoorLeaf(LIB_MIN_X, 22.8, libsTipX, libsTipY, ox, oy);
           this.ctx.restore();
         }
       });
