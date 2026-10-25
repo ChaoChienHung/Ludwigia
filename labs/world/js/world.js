@@ -642,12 +642,30 @@
           this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.25, (HOUSE_MAX_Y + 1) - 6.8, H, wallT, wallL, wallR, ox, oy);
         }
       });
-      // SE Doorway Lintel Beam (z: 2.15 to H)
+      // SE Doorway Lintel Beam (z: 2.15 to H) & Mounted Lintel Plaque
       list.push({
         xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
           this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          const plq = isoToScreen(HOUSE_MAX_X + 1, 5.65, 2.40, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#1e293b';
+          this.ctx.fillRect(-30, -9, 60, 18);
+          this.ctx.strokeStyle = '#94a3b8';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-30, -9, 60, 18);
+          this.ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-28, -7, 56, 14);
+          this.ctx.fillStyle = '#f8fafc';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('LUDWIGIA', 0, 0);
+          this.ctx.restore();
         }
       });
 
@@ -844,12 +862,30 @@
           this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1) - 22.8, H, wallT, wallL, wallR, ox, oy);
         }
       });
-      // Lintel beam over door (z: 2.15 to H)
+      // Lintel beam over door (z: 2.15 to H) & Mounted Lintel Plaque
       list.push({
         xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
         yMin: 20.5, yMax: 22.8,
         draw: () => {
           this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          const plq = isoToScreen(dormSE_X, 21.65, 2.40, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#1e3a8a';
+          this.ctx.fillRect(-28, -9, 56, 18);
+          this.ctx.strokeStyle = '#38bdf8';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-28, -9, 56, 18);
+          this.ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-26, -7, 52, 14);
+          this.ctx.fillStyle = '#f0f9ff';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('男11 211', 0, 0);
+          this.ctx.restore();
         }
       });
 
@@ -921,22 +957,30 @@
           this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, H, wallT, wallL, wallR, ox, oy);
         }
       });
-      // AI Studio Neon Plaque & Lintel
+      // AI Studio Neon Plaque & Lintel (Sheared along Y axis -0.5 slope)
       list.push({
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 4.5, yMax: 6.8,
         draw: () => {
           this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           const plq = isoToScreen(AI_MIN_X, 5.65, 2.40, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
           this.ctx.fillStyle = '#0f172a';
-          this.ctx.fillRect(plq.x - 30, plq.y - 8, 60, 16);
+          this.ctx.fillRect(-32, -9, 64, 18);
           this.ctx.strokeStyle = '#06b6d4';
           this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(plq.x - 30, plq.y - 8, 60, 16);
+          this.ctx.strokeRect(-32, -9, 64, 18);
+          this.ctx.strokeStyle = 'rgba(34, 211, 238, 0.4)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-30, -7, 60, 14);
           this.ctx.fillStyle = '#22d3ee';
-          this.ctx.font = 'bold 8px monospace';
+          this.ctx.font = 'bold 8.5px monospace';
           this.ctx.textAlign = 'center';
-          this.ctx.fillText('AI STUDIO', plq.x, plq.y + 3);
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('AI STUDIO', 0, 0);
+          this.ctx.restore();
         }
       });
 
@@ -1001,15 +1045,23 @@
         draw: () => {
           this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
           const plq = isoToScreen(LIB_MIN_X, 21.65, 2.40, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
           this.ctx.fillStyle = '#451a03';
-          this.ctx.fillRect(plq.x - 34, plq.y - 8, 68, 16);
+          this.ctx.fillRect(-36, -9, 72, 18);
           this.ctx.strokeStyle = '#d97706';
           this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(plq.x - 34, plq.y - 8, 68, 16);
+          this.ctx.strokeRect(-36, -9, 72, 18);
+          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-34, -7, 68, 14);
           this.ctx.fillStyle = '#fbbf24';
-          this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
           this.ctx.textAlign = 'center';
-          this.ctx.fillText('GRAND LIBRARY', plq.x, plq.y + 3);
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('GRAND LIBRARY', 0, 0);
+          this.ctx.restore();
         }
       });
 
@@ -1152,22 +1204,34 @@
       this.ctx.lineWidth = 1.2;
       this.ctx.stroke();
 
-      // Mounted Door Plaque (e.g. 男11 211 on the door itself)
+      // Mounted Door Plaque (e.g. 男11 211 on the door itself, dynamically sheared with door slope)
       if (plaqueText) {
         const pMidX = hx + dx * 0.50;
         const pMidY = hy + dy * 0.50;
         const pp = isoToScreen(pMidX, pMidY, 1.45, ox, oy);
+        const screenDx = b1.x - b0.x;
+        const screenDy = b1.y - b0.y;
+        const slope = Math.abs(screenDx) > 0.001 ? (screenDy / screenDx) : (screenDy > 0 ? 0.5 : -0.5);
+
         this.ctx.save();
+        this.ctx.translate(pp.x, pp.y);
+        this.ctx.transform(1, slope, 0, 1, 0, 0);
+
         this.ctx.fillStyle = '#1e3a8a';
-        this.ctx.fillRect(pp.x - 22, pp.y - 8, 44, 16);
+        this.ctx.fillRect(-22, -8, 44, 16);
         this.ctx.strokeStyle = '#ffffff';
         this.ctx.lineWidth = 1.2;
-        this.ctx.strokeRect(pp.x - 22, pp.y - 8, 44, 16);
+        this.ctx.strokeRect(-22, -8, 44, 16);
+
+        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        this.ctx.lineWidth = 0.8;
+        this.ctx.strokeRect(-20, -6, 40, 12);
+
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(plaqueText, pp.x, pp.y);
+        this.ctx.fillText(plaqueText, 0, 0);
         this.ctx.restore();
       }
 
