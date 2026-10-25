@@ -449,6 +449,7 @@
       const H = 2.25; // Total frame height
       const deskH = 0.70;
       const bedBaseZ = 1.35;
+      const facing = config.facing || 'south'; // 'south' = desk opens south (into room); 'north' = desk opens north (into room)
 
       // 1. Four Structural Dark Iron Posts (rising from z: 0 to H)
       const postCol = '#334155';
@@ -465,37 +466,106 @@
 
       // Under-desk Bookshelf with colorful textbooks
       this.drawBox(ctx, gx + 0.10, gy + 0.10, 0.08, 0.35, D - 0.20, 0.45, '#78350f', '#58240a', '#451a03', ox, oy);
-      // Desk Ergonomic Swivel Chair
-      this.drawBox(ctx, gx + 0.85, gy + D + 0.05, 0, 0.48, 0.48, 0.45, '#1e293b', '#0f172a', '#020617', ox, oy);
-      this.drawBox(ctx, gx + 0.85, gy + D + 0.05, 0.45, 0.12, 0.48, 0.42, '#334155', '#1e293b', '#0f172a', ox, oy);
 
-      // Laptop / Workstation Display on Desk
       const scrCol = config.screenColor || '#38bdf8';
-      const deskScr0 = isoToScreen(gx + 0.70, gy + 0.30, deskH + 0.02, ox, oy);
-      const deskScr1 = isoToScreen(gx + 1.45, gy + 0.30, deskH + 0.02, ox, oy);
-      const deskScr2 = isoToScreen(gx + 1.45, gy + 0.30, deskH + 0.42, ox, oy);
-      const deskScr3 = isoToScreen(gx + 0.70, gy + 0.30, deskH + 0.42, ox, oy);
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.moveTo(deskScr0.x, deskScr0.y); ctx.lineTo(deskScr1.x, deskScr1.y); ctx.lineTo(deskScr2.x, deskScr2.y); ctx.lineTo(deskScr3.x, deskScr3.y);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#334155';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+      const matZ = bedBaseZ + 0.10;
 
-      // Glowing Code Screen
-      const dC = isoToScreen(gx + 1.05, gy + 0.30, deskH + 0.22, ox, oy);
-      ctx.fillStyle = scrCol;
-      ctx.fillRect(dC.x - 14, dC.y - 7, 26, 2);
-      ctx.fillRect(dC.x - 10, dC.y - 3, 20, 2);
-      ctx.fillRect(dC.x - 14, dC.y + 2, 22, 2);
+      if (facing === 'south') {
+        // --- NORTH ROW BED: Desk & Ladder face South (+Y, into room) ---
+        // Ergonomic Swivel Chair (Seat faces North into desk; backrest faces South into central aisle)
+        this.drawBox(ctx, gx + 0.85, gy + D + 0.06, 0, 0.48, 0.48, 0.45, '#1e293b', '#0f172a', '#020617', ox, oy);
+        // Backrest on South edge (aisle side)
+        this.drawBox(ctx, gx + 0.85, gy + D + 0.44, 0.45, 0.48, 0.10, 0.42, '#334155', '#1e293b', '#0f172a', ox, oy);
 
-      // 3. UPPER LEVEL: Bed Platform, Mattress & Guardrails
+        // Laptop / Workstation Display on Desk facing South
+        const deskScr0 = isoToScreen(gx + 0.70, gy + 0.30, deskH + 0.02, ox, oy);
+        const deskScr1 = isoToScreen(gx + 1.45, gy + 0.30, deskH + 0.02, ox, oy);
+        const deskScr2 = isoToScreen(gx + 1.45, gy + 0.30, deskH + 0.42, ox, oy);
+        const deskScr3 = isoToScreen(gx + 0.70, gy + 0.30, deskH + 0.42, ox, oy);
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.moveTo(deskScr0.x, deskScr0.y); ctx.lineTo(deskScr1.x, deskScr1.y); ctx.lineTo(deskScr2.x, deskScr2.y); ctx.lineTo(deskScr3.x, deskScr3.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Glowing Code Screen
+        const dC = isoToScreen(gx + 1.05, gy + 0.30, deskH + 0.22, ox, oy);
+        ctx.fillStyle = scrCol;
+        ctx.fillRect(dC.x - 14, dC.y - 7, 26, 2);
+        ctx.fillRect(dC.x - 10, dC.y - 3, 20, 2);
+        ctx.fillRect(dC.x - 14, dC.y + 2, 22, 2);
+
+        // Safety Guardrails on South edge (gy + D - pw)
+        const railZ = matZ + 0.30;
+        this.drawBox(ctx, gx, gy + D - pw, railZ, W, pw, 0.06, '#64748b', '#475569', '#334155', ox, oy);
+        this.drawBox(ctx, gx, gy + D - pw, railZ - 0.15, W, pw, 0.05, '#64748b', '#475569', '#334155', ox, oy);
+
+        // Access Steel Ladder on front-right (gy + D + 0.02)
+        const ladX = gx + W - 0.35;
+        const ladY = gy + D + 0.02;
+        for (let rZ = 0.20; rZ <= bedBaseZ; rZ += 0.28) {
+          const lp0 = isoToScreen(ladX, ladY, rZ, ox, oy);
+          const lp1 = isoToScreen(ladX + 0.28, ladY, rZ, ox, oy);
+          ctx.strokeStyle = '#94a3b8';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(lp0.x, lp0.y); ctx.lineTo(lp1.x, lp1.y);
+          ctx.stroke();
+        }
+      } else {
+        // --- SOUTH ROW BED: Desk & Ladder face North (-Y, into room) ---
+        // Ergonomic Swivel Chair (Seat faces South into desk; backrest faces North into central aisle)
+        this.drawBox(ctx, gx + 0.85, gy - 0.54, 0, 0.48, 0.48, 0.45, '#1e293b', '#0f172a', '#020617', ox, oy);
+        // Backrest on North edge (aisle side)
+        this.drawBox(ctx, gx + 0.85, gy - 0.54, 0.45, 0.48, 0.10, 0.42, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+        // Laptop / Workstation Display on Desk facing North
+        const deskScr0 = isoToScreen(gx + 0.70, gy + D - 0.30, deskH + 0.02, ox, oy);
+        const deskScr1 = isoToScreen(gx + 1.45, gy + D - 0.30, deskH + 0.02, ox, oy);
+        const deskScr2 = isoToScreen(gx + 1.45, gy + D - 0.30, deskH + 0.42, ox, oy);
+        const deskScr3 = isoToScreen(gx + 0.70, gy + D - 0.30, deskH + 0.42, ox, oy);
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.moveTo(deskScr0.x, deskScr0.y); ctx.lineTo(deskScr1.x, deskScr1.y); ctx.lineTo(deskScr2.x, deskScr2.y); ctx.lineTo(deskScr3.x, deskScr3.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Glowing Code Screen
+        const dC = isoToScreen(gx + 1.05, gy + D - 0.30, deskH + 0.22, ox, oy);
+        ctx.fillStyle = scrCol;
+        ctx.fillRect(dC.x - 14, dC.y - 7, 26, 2);
+        ctx.fillRect(dC.x - 10, dC.y - 3, 20, 2);
+        ctx.fillRect(dC.x - 14, dC.y + 2, 22, 2);
+
+        // Safety Guardrails on North edge (gy)
+        const railZ = matZ + 0.30;
+        this.drawBox(ctx, gx, gy, railZ, W, pw, 0.06, '#64748b', '#475569', '#334155', ox, oy);
+        this.drawBox(ctx, gx, gy, railZ - 0.15, W, pw, 0.05, '#64748b', '#475569', '#334155', ox, oy);
+
+        // Access Steel Ladder on front-right (gy - 0.02)
+        const ladX = gx + W - 0.35;
+        const ladY = gy - 0.02;
+        for (let rZ = 0.20; rZ <= bedBaseZ; rZ += 0.28) {
+          const lp0 = isoToScreen(ladX, ladY, rZ, ox, oy);
+          const lp1 = isoToScreen(ladX + 0.28, ladY, rZ, ox, oy);
+          ctx.strokeStyle = '#94a3b8';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(lp0.x, lp0.y); ctx.lineTo(lp1.x, lp1.y);
+          ctx.stroke();
+        }
+      }
+
+      // 3. UPPER LEVEL: Bed Platform, Mattress & Duvet
       // Platform Base
       this.drawBox(ctx, gx + 0.04, gy + 0.04, bedBaseZ, W - 0.08, D - 0.08, 0.10, '#334155', '#1e293b', '#0f172a', ox, oy);
       // Thick Mattress
-      const matZ = bedBaseZ + 0.10;
       this.drawBox(ctx, gx + 0.08, gy + 0.08, matZ, W - 0.16, D - 0.16, 0.22, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
 
       // Cozy Quilt / Duvet (themed color for each roommate)
@@ -504,24 +574,6 @@
 
       // White Fluffy Pillow at Head
       this.drawBox(ctx, gx + 0.15, gy + 0.25, matZ + 0.22, 0.48, 0.85, 0.12, '#ffffff', '#f1f5f9', '#e2e8f0', ox, oy);
-
-      // Upper Safety Guardrails (防跌護欄)
-      const railZ = matZ + 0.30;
-      this.drawBox(ctx, gx, gy + D - pw, railZ, W, pw, 0.06, '#64748b', '#475569', '#334155', ox, oy);
-      this.drawBox(ctx, gx, gy + D - pw, railZ - 0.15, W, pw, 0.05, '#64748b', '#475569', '#334155', ox, oy);
-
-      // 4. Access Steel Ladder (Attached to front-right)
-      const ladX = gx + W - 0.35;
-      const ladY = gy + D + 0.02;
-      for (let rZ = 0.20; rZ <= bedBaseZ; rZ += 0.28) {
-        const lp0 = isoToScreen(ladX, ladY, rZ, ox, oy);
-        const lp1 = isoToScreen(ladX + 0.28, ladY, rZ, ox, oy);
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(lp0.x, lp0.y); ctx.lineTo(lp1.x, lp1.y);
-        ctx.stroke();
-      }
     }
 
     // --- Dorm 11-211 Common Lounge Area (Mini Fridge, Kettle, Snacks, Beanbag) ---

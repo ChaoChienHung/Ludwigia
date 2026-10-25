@@ -79,17 +79,18 @@
       this.nav.setBlock(6, 5, 2.0, 1.8, true);   // Dining Table
 
       // 2. Men's Dormitory 11 Room 211 (SW: x: 0..9, y: 17..26)
-      this.nav.setBlock(0, DORM_MIN_Y, 10, 1, true);
-      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 1, 3.5, true);
-      this.nav.setBlock(DORM_MAX_X + 1, 23.2, 1, 3.8, true);
-      this.nav.setBlock(0, DORM_MAX_Y + 1, 10, 1, true);
+      this.nav.setBlock(0, DORM_MIN_Y, 10, 0.6, true);           // NE Wall
+      this.nav.setBlock(0, DORM_MIN_Y, 0.6, 10, true);           // NW Wall
+      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 0.6, 3.5, true);  // SE Wall Top
+      this.nav.setBlock(DORM_MAX_X + 1, 22.8, 0.6, 4.2, true);        // SE Wall Bottom
+      this.nav.setBlock(0, DORM_MAX_Y + 1, 10, 0.6, true);       // SW Wall
 
       // 4 Loft Bed/Desk Combos
-      this.nav.setBlock(1, 18, 2.2, 1.5, true);   // Happy Wang
-      this.nav.setBlock(1, 23, 2.2, 1.5, true);   // Kerry Chang
-      this.nav.setBlock(6.8, 18, 2.2, 1.5, true); // Clark Wu
-      this.nav.setBlock(6.8, 23, 2.2, 1.5, true); // Jerry Chung
-      this.nav.setBlock(4.2, 20.2, 1.6, 1.6, true); // Lounge table
+      this.nav.setBlock(1.0, 17.5, 2.2, 1.6, true);   // Happy Wang (Bed 1)
+      this.nav.setBlock(6.2, 17.5, 2.2, 1.6, true);   // Clark Wu (Bed 3)
+      this.nav.setBlock(1.0, 24.5, 2.2, 1.6, true);   // Kerry Chang (Bed 2)
+      this.nav.setBlock(6.2, 24.5, 2.2, 1.6, true);   // Jerry Chung (Bed 4)
+      this.nav.setBlock(3.8, 20.8, 1.8, 1.6, true);   // Lounge table & mini fridge
 
       // 3. Ludwigia AI Research Studio (NE: x: 18..27, y: 0..9)
       this.nav.setBlock(AI_MIN_X, 0, 10, 1, true);
@@ -621,6 +622,7 @@
       const isDark = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
       const wallL = isDark ? '#2a2e38' : '#e8e2d2';
       const wallR = isDark ? '#1f232b' : '#d8d1be';
+      const wallT = isDark ? '#334155' : '#f1f5f9';
       const H = 2.8;
 
       // === 1. ZONE 1: LUDWIG'S HOUSE ===
@@ -752,43 +754,89 @@
       });
 
       // === 2. ZONE 2: MEN'S DORMITORY 11 ROOM 211 ===
-      // Dorm SE Walls & Door
-      const dormSE_X = DORM_MAX_X + 1;
+      // 1. Northwest Back Wall (along x = 0, y: 17 to 27)
       list.push({
-        xMin: dormSE_X - 0.1, xMax: dormSE_X + 0.1,
-        yMin: DORM_MIN_Y, yMax: 20.5,
+        xMin: -0.1, xMax: 0.35,
+        yMin: DORM_MIN_Y, yMax: DORM_MAX_Y + 1,
         draw: () => {
-          this.models.drawBox(this.ctx, dormSE_X, DORM_MIN_Y, 0, 0.01, 20.5 - DORM_MIN_Y, H, null, null, wallR, ox, oy);
-        }
-      });
-      list.push({
-        xMin: dormSE_X - 0.1, xMax: dormSE_X + 0.1,
-        yMin: 22.8, yMax: DORM_MAX_Y + 1,
-        draw: () => {
-          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.01, (DORM_MAX_Y + 1) - 22.8, H, null, null, wallR, ox, oy);
-        }
-      });
-      // Dorm Door Arch & Blue Enamel Plaque "男11 211"
-      list.push({
-        xMin: dormSE_X - 0.1, xMax: dormSE_X + 0.1,
-        yMin: 20.5, yMax: 22.8,
-        draw: () => {
-          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.2, 0.01, 2.3, H - 2.2, null, null, wallR, ox, oy);
-          // Blue Enamel Plaque
-          const plq = isoToScreen(dormSE_X, 21.65, 2.45, ox, oy);
-          this.ctx.fillStyle = '#1e3a8a';
-          this.ctx.fillRect(plq.x - 22, plq.y - 8, 44, 16);
-          this.ctx.strokeStyle = '#ffffff';
-          this.ctx.lineWidth = 1;
-          this.ctx.strokeRect(plq.x - 22, plq.y - 8, 44, 16);
-          this.ctx.fillStyle = '#ffffff';
-          this.ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, sans-serif';
-          this.ctx.textAlign = 'center';
-          this.ctx.fillText('男11 211', plq.x, plq.y + 3);
+          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, 0.25, (DORM_MAX_Y + 1) - DORM_MIN_Y, H, wallT, null, wallR, ox, oy);
+          // Large Dorm Window at x = 0.26, y: 20.8..23.2, z: 1.15..2.15
+          const w0 = isoToScreen(0.26, 20.8, 1.15, ox, oy);
+          const w1 = isoToScreen(0.26, 23.2, 1.15, ox, oy);
+          const w2 = isoToScreen(0.26, 23.2, 2.15, ox, oy);
+          const w3 = isoToScreen(0.26, 20.8, 2.15, ox, oy);
+          this.ctx.fillStyle = 'rgba(186, 230, 253, 0.55)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(w0.x, w0.y); this.ctx.lineTo(w1.x, w1.y); this.ctx.lineTo(w2.x, w2.y); this.ctx.lineTo(w3.x, w3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#334155';
+          this.ctx.lineWidth = 1.5;
+          this.ctx.stroke();
+
+          // University Hackathon Poster at x = 0.26, y: 18.2..19.6, z: 1.15..1.95
+          const hp0 = isoToScreen(0.26, 18.2, 1.15, ox, oy);
+          const hp1 = isoToScreen(0.26, 19.6, 1.15, ox, oy);
+          const hp2 = isoToScreen(0.26, 19.6, 1.95, ox, oy);
+          const hp3 = isoToScreen(0.26, 18.2, 1.95, ox, oy);
+          this.ctx.fillStyle = '#0284c7';
+          this.ctx.beginPath();
+          this.ctx.moveTo(hp0.x, hp0.y); this.ctx.lineTo(hp1.x, hp1.y); this.ctx.lineTo(hp2.x, hp2.y); this.ctx.lineTo(hp3.x, hp3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
         }
       });
 
-      // Dorm Interactive Door
+      // 2. Northeast Partition Wall (along y = 17, x: 0 to 10)
+      list.push({
+        xMin: 0, xMax: DORM_MAX_X + 1,
+        yMin: DORM_MIN_Y - 0.1, yMax: DORM_MIN_Y + 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, (DORM_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy);
+          // Cork Noticeboard at y = 17.26, x: 3.8..6.2, z: 1.15..1.85
+          const cb0 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.15, ox, oy);
+          const cb1 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.15, ox, oy);
+          const cb2 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.85, ox, oy);
+          const cb3 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.85, ox, oy);
+          this.ctx.fillStyle = '#b45309';
+          this.ctx.beginPath();
+          this.ctx.moveTo(cb0.x, cb0.y); this.ctx.lineTo(cb1.x, cb1.y); this.ctx.lineTo(cb2.x, cb2.y); this.ctx.lineTo(cb3.x, cb3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#78350f';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+        }
+      });
+
+      // 3. Southeast Entrance Wall with Doorway
+      const dormSE_X = DORM_MAX_X + 1;
+      // Wall segment left of door (y: 17 to 20.5)
+      list.push({
+        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
+        yMin: DORM_MIN_Y, yMax: 20.5,
+        draw: () => {
+          this.models.drawBox(this.ctx, dormSE_X, DORM_MIN_Y, 0, 0.25, 20.5 - DORM_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+        }
+      });
+      // Wall segment right of door (y: 22.8 to 27)
+      list.push({
+        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
+        yMin: 22.8, yMax: DORM_MAX_Y + 1,
+        draw: () => {
+          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1) - 22.8, H, wallT, wallL, wallR, ox, oy);
+        }
+      });
+      // Lintel beam over door (z: 2.15 to H)
+      list.push({
+        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
+        yMin: 20.5, yMax: 22.8,
+        draw: () => {
+          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+        }
+      });
+
+      // Dorm Interactive Door with Mounted "男11 211" Plaque
       const dormDoorAngle = this.doorDormOpen * 1.35;
       const dTipX = dormSE_X + Math.sin(dormDoorAngle) * 1.15;
       const dTipY = 20.5 + Math.cos(dormDoorAngle) * 1.15;
@@ -796,36 +844,48 @@
         xMin: Math.min(dormSE_X, dTipX) - 0.1, xMax: Math.max(dormSE_X, dTipX) + 0.1,
         yMin: 20.4, yMax: 22.9,
         draw: () => {
-          this.drawDoorLeaf(dormSE_X, 20.5, dTipX, dTipY, ox, oy);
+          this.drawDoorLeaf(dormSE_X, 20.5, dTipX, dTipY, ox, oy, '男11 211');
         }
       });
 
-      // 4 Loft Bed/Desk Combos
-      // Bed 1 (Happy Wang: x: 1, y: 18)
+      // 4. Southwest Boundary Skirting
       list.push({
-        xMin: 1.0, xMax: 3.2, yMin: 18.0, yMax: 19.5,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 18.0, { duvetColor: '#ea580c', screenColor: '#f97316' }, ox, oy)
-      });
-      // Bed 2 (Kerry Chang: x: 1, y: 23)
-      list.push({
-        xMin: 1.0, xMax: 3.2, yMin: 23.0, yMax: 24.5,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 23.0, { duvetColor: '#0d9488', screenColor: '#2dd4bf' }, ox, oy)
-      });
-      // Bed 3 (Clark Wu: x: 6.8, y: 18)
-      list.push({
-        xMin: 6.8, xMax: 9.0, yMin: 18.0, yMax: 19.5,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.8, 18.0, { duvetColor: '#1d4ed8', screenColor: '#38bdf8' }, ox, oy)
-      });
-      // Bed 4 (Jerry Chung: x: 6.8, y: 23)
-      list.push({
-        xMin: 6.8, xMax: 9.0, yMin: 23.0, yMax: 24.5,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.8, 23.0, { duvetColor: '#7c3aed', screenColor: '#c084fc' }, ox, oy)
+        xMin: 0, xMax: DORM_MAX_X + 1,
+        yMin: DORM_MAX_Y + 0.9, yMax: DORM_MAX_Y + 1.2,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, DORM_MAX_Y + 1, 0, (DORM_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, ox, oy);
+        }
       });
 
-      // Dorm Common Lounge Table & Mini Fridge
+      // 5. Four Symmetrical Loft Bed/Desk Combos Facing Each Other
+      // NORTH ROW BEDS (facing: 'south' into room, chair back faces south towards central aisle)
+      // Bed 1 (Happy Wang: x: 1.0, y: 17.5)
       list.push({
-        xMin: 4.2, xMax: 5.8, yMin: 20.2, yMax: 21.8,
-        draw: () => this.models.drawDormCommonArea(this.ctx, 4.2, 20.2, ox, oy)
+        xMin: 1.0, xMax: 3.2, yMin: 17.5, yMax: 19.5,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 17.5, { duvetColor: '#ea580c', screenColor: '#f97316', facing: 'south' }, ox, oy)
+      });
+      // Bed 3 (Clark Wu: x: 6.2, y: 17.5)
+      list.push({
+        xMin: 6.2, xMax: 8.4, yMin: 17.5, yMax: 19.5,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 17.5, { duvetColor: '#1d4ed8', screenColor: '#38bdf8', facing: 'south' }, ox, oy)
+      });
+
+      // SOUTH ROW BEDS (facing: 'north' into room, chair back faces north towards central aisle)
+      // Bed 2 (Kerry Chang: x: 1.0, y: 24.5)
+      list.push({
+        xMin: 1.0, xMax: 3.2, yMin: 23.8, yMax: 26.0,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 24.5, { duvetColor: '#0d9488', screenColor: '#2dd4bf', facing: 'north' }, ox, oy)
+      });
+      // Bed 4 (Jerry Chung: x: 6.2, y: 24.5)
+      list.push({
+        xMin: 6.2, xMax: 8.4, yMin: 23.8, yMax: 26.0,
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 24.5, { duvetColor: '#7c3aed', screenColor: '#c084fc', facing: 'north' }, ox, oy)
+      });
+
+      // Dorm Common Lounge Table & Mini Fridge (Billy Fang in the central aisle)
+      list.push({
+        xMin: 3.8, xMax: 5.6, yMin: 20.6, yMax: 22.4,
+        draw: () => this.models.drawDormCommonArea(this.ctx, 3.8, 20.8, ox, oy)
       });
 
       // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===
@@ -1031,7 +1091,7 @@
       return list;
     }
 
-    drawDoorLeaf(hx, hy, tx, ty, ox, oy) {
+    drawDoorLeaf(hx, hy, tx, ty, ox, oy, plaqueText) {
       const H = 2.15;
       const b0 = isoToScreen(hx, hy, 0, ox, oy);
       const b1 = isoToScreen(tx, ty, 0, ox, oy);
@@ -1074,6 +1134,25 @@
       this.ctx.strokeStyle = '#78350f';
       this.ctx.lineWidth = 1.2;
       this.ctx.stroke();
+
+      // Mounted Door Plaque (e.g. 男11 211 on the door itself)
+      if (plaqueText) {
+        const pMidX = hx + dx * 0.50;
+        const pMidY = hy + dy * 0.50;
+        const pp = isoToScreen(pMidX, pMidY, 1.45, ox, oy);
+        this.ctx.save();
+        this.ctx.fillStyle = '#1e3a8a';
+        this.ctx.fillRect(pp.x - 22, pp.y - 8, 44, 16);
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = 1.2;
+        this.ctx.strokeRect(pp.x - 22, pp.y - 8, 44, 16);
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(plaqueText, pp.x, pp.y);
+        this.ctx.restore();
+      }
 
       // Brass Handle
       const hPos = isoToScreen(hx + dx * 0.86, hy + dy * 0.86, 0.98, ox, oy);
