@@ -397,11 +397,14 @@
 
       // Crucial: Walking is active whenever player is actively driving movement or moving along path
       const isWalking = isInputActive || (player.path && player.path.length > 0) || playerActuallyMoved;
-      player.isWalking = isWalking;
       if (isWalking) {
-        player.walkTimer = (player.walkTimer || 0) + dt * 10.0;
+        player.walkLingerTimer = 0.22;
+        player.isWalking = true;
+      } else if ((player.walkLingerTimer || 0) > 0) {
+        player.walkLingerTimer -= dt;
+        player.isWalking = true;
       } else {
-        player.walkTimer = 0;
+        player.isWalking = false;
       }
 
       // 4. Anti-Crowding Social Distance Force (>= 1.6 tiles)
