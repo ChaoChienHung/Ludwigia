@@ -1234,6 +1234,54 @@
         "sanmin_school",
         "plaza"
       ]
+    },
+    {
+      "id": "chunlong",
+      "name": {
+        "zh-TW": "陳俊龍",
+        "en": "Chun Long Chen"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "高中同學 (三民高中)",
+        "en": "Classmate (Sanmin High)"
+      },
+      "avatar": "🏀",
+      "zone": "sanmin_school",
+      "spawn": {
+        "x": 7.9,
+        "y": 37.2
+      },
+      "nameColor": "#60a5fa",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#18181b",
+        "shirt": "#2563eb",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "放學要不要去打球？"
+          ],
+          [
+            "今天午餐吃什麼？便當要冷掉了啦！"
+          ]
+        ],
+        "en": [
+          [
+            "Wanna go play ball after school?"
+          ],
+          [
+            "What are we having for lunch today? The lunchbox is getting cold!"
+          ]
+        ]
+      },
+      "visitedZones": [
+        "sanmin_school",
+        "plaza"
+      ]
     }
   ]
 }
