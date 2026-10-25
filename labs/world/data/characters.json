@@ -151,7 +151,9 @@
       "role_en": "Mom",
       "visitedZones": [
         "house",
-        "plaza"
+        "plaza",
+        "ai_studio",
+        "library"
       ]
     },
     {
@@ -176,6 +178,12 @@
       "dialogues": {
         "zh-TW": [
           [
+            "我去公園走走"
+          ],
+          [
+            "我去公園下棋"
+          ],
+          [
             "你好啊，請坐請坐！剛泡好了高山烏龍茶，聞聞看這茶香！",
             "人生與做學問就跟品茶一樣，慢火出細活，心定而後能觀照全局。",
             "把這裡當成自己家，放鬆聊聊！"
@@ -196,6 +204,12 @@
           ]
         ],
         "en": [
+          [
+            "I'm heading out to the park for a stroll."
+          ],
+          [
+            "I'm heading to the park to play chess."
+          ],
           [
             "Welcome, my friend! Please have a seat. I just brewed fresh high-mountain Oolong tea.",
             "Life and scholarship are much like tea: gentle patience brings out the richest aroma, and a calm mind sees clearly."
@@ -221,7 +235,9 @@
       "role_en": "Dad",
       "visitedZones": [
         "house",
-        "plaza"
+        "plaza",
+        "ai_studio",
+        "library"
       ]
     },
     {
@@ -293,7 +309,9 @@
       "role_en": "Sister",
       "visitedZones": [
         "house",
-        "plaza"
+        "plaza",
+        "ai_studio",
+        "library"
       ]
     },
     {
@@ -353,7 +371,8 @@
       "role_en": "Studio Cat",
       "visitedZones": [
         "house",
-        "plaza"
+        "plaza",
+        "library"
       ]
     },
     {
