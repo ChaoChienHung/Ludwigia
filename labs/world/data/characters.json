@@ -1056,14 +1056,14 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "好友 / 分散式計算研究者",
-        "en": "Friend / Distributed Systems"
+        "zh-TW": "抖音實習 Mentor",
+        "en": "Douyin Internship Mentor"
       },
       "avatar": "🚀",
-      "zone": "library",
+      "zone": "douyin_office",
       "spawn": {
-        "x": 24.5,
-        "y": 22.8
+        "x": 21.0,
+        "y": 35.5
       },
       "nameColor": "#818cf8",
       "appearance": {
@@ -1098,9 +1098,8 @@
         ]
       },
       "visitedZones": [
-        "library",
-        "plaza",
-        "ai_studio"
+        "douyin_office",
+        "plaza"
       ]
     },
     {
