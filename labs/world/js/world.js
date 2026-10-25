@@ -73,22 +73,26 @@
 
     setupWorldObstacles() {
       // 1. Ludwig's Family Residence (NW: x: 0..9, y: 0..9)
-      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 0.6, 4.5, true);   // East Wall Top (y: 0 to 4.5)
-      this.nav.setBlock(HOUSE_MAX_X + 1, 6.8, 0.6, 3.2, true); // East Wall Bottom (y: 6.8 to 10)
-      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 4.5, 0.6, true);   // South Terrace Wall Left (x: 0 to 4.5)
-      this.nav.setBlock(6.8, HOUSE_MAX_Y + 1, 3.2, 0.6, true); // South Terrace Wall Right (x: 6.8 to 10)
+      // East Wall Doorway at y: 4.5 to 6.8 (keep tiles 5 and 6 100% open)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 0.6, 4.2, true);   // East Wall Top (y: 0 to 4.2)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 7.0, 0.6, 3.0, true); // East Wall Bottom (y: 7.0 to 10)
+      // South Terrace Doorway at x: 4.5 to 6.8 (keep tiles 5 and 6 100% open)
+      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 4.2, 0.6, true);   // South Terrace Wall Left (x: 0 to 4.2)
+      this.nav.setBlock(7.0, HOUSE_MAX_Y + 1, 3.0, 0.6, true); // South Terrace Wall Right (x: 7.0 to 10)
 
       this.nav.setBlock(1.0, 1.0, 2.2, 2.3, true); // Master Bed
       this.nav.setBlock(6.0, 1.0, 2.5, 1.2, true); // Desk
       this.nav.setBlock(0.0, 3.8, 0.8, 2.6, true); // Bookshelf
-      this.nav.setBlock(2.0, 5.0, 2.5, 2.0, true); // Sofa & Rug
+      this.nav.setBlock(2.0, 5.0, 0.85, 2.0, true); // Living Room Sofa (accurate base footprint, rug is walkable)
+      this.nav.setBlock(3.3, 5.5, 0.85, 1.0, true); // Coffee Table
       this.nav.setBlock(6.0, 5.0, 1.8, 1.4, true); // Dining Table
 
       // 2. Men's Dormitory 11 Room 211 (SW: x: 0..9, y: 17..26)
       this.nav.setBlock(0, DORM_MIN_Y, 10, 0.6, true);           // NE Wall
       this.nav.setBlock(0, DORM_MIN_Y, 0.6, 10, true);           // NW Wall
-      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 0.6, 3.5, true);  // SE Wall Top
-      this.nav.setBlock(DORM_MAX_X + 1, 22.8, 0.6, 4.2, true);        // SE Wall Bottom
+      // SE Wall Doorway at y: 20.5 to 22.8 (keep tiles 21 and 22 100% open)
+      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 0.6, 3.2, true);  // SE Wall Top (y: 17 to 20.2)
+      this.nav.setBlock(DORM_MAX_X + 1, 23.0, 0.6, 4.0, true);        // SE Wall Bottom (y: 23.0 to 27)
       this.nav.setBlock(0, DORM_MAX_Y + 1, 10, 0.6, true);       // SW Wall
 
       // 4 Loft Bed/Desk Combos
@@ -100,7 +104,8 @@
 
       // 3. Ludwigia AI Research Studio (NE: x: 18..27, y: 0..9)
       this.nav.setBlock(AI_MIN_X, 0, 10, 1, true);
-      this.nav.setBlock(AI_MIN_X, 0, 1, 4.5, true);
+      // West Doorway at y: 4.5 to 7.0 (keep tiles 5 and 6 100% open)
+      this.nav.setBlock(AI_MIN_X, 0, 1, 4.2, true);
       this.nav.setBlock(AI_MIN_X, 7.0, 1, 3.0, true);
       this.nav.setBlock(AI_MAX_X + 1, 0, 1, 10, true);
       this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 10, 1, true);
@@ -113,8 +118,9 @@
 
       // 4. Zone 4: Ludwigia Grand Library (SE: 18..27, 17..26)
       this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 10, 1, true); // North Wall
-      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1, 3.5, true); // West Wall Top
-      this.nav.setBlock(LIB_MIN_X, 22.8, 1, 4.2, true); // West Wall Bottom
+      // West Doorway at y: 20.5 to 22.8 (keep tiles 21 and 22 100% open)
+      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1, 3.2, true); // West Wall Top (y: 17 to 20.2)
+      this.nav.setBlock(LIB_MIN_X, 23.0, 1, 4.0, true); // West Wall Bottom (y: 23.0 to 27)
       this.nav.setBlock(LIB_MAX_X + 1, LIB_MIN_Y, 1, 10, true); // East Wall
       this.nav.setBlock(LIB_MIN_X, LIB_MAX_Y + 1, 10, 1, true); // South Wall
 
@@ -130,22 +136,26 @@
       // 5. Central Plaza & Park
       this.nav.setBlock(13, 13, 3, 3, true); // Fountain
 
-      // Park Benches (Placed on grass, clear of all paths)
-      this.nav.setBlock(13.5, 9.5, 1.6, 0.7, true);
-      this.nav.setBlock(13.5, 17.5, 1.6, 0.7, true);
-      this.nav.setBlock(22.0, 13.5, 1.6, 0.7, true);
-      this.nav.setBlock(5.0, 12.5, 1.6, 0.7, true);
+      // Park Benches (Precise seat footprints, keeping surrounding lawn and paths 100% open)
+      this.nav.setBlock(13.8, 9.5, 1.4, 0.5, true);
+      this.nav.setBlock(13.8, 17.5, 1.4, 0.5, true);
+      this.nav.setBlock(22.2, 13.5, 1.4, 0.5, true);
+      this.nav.setBlock(5.2, 12.5, 1.4, 0.5, true);
 
-      // Trees (placed in lawn and garden groves, with all cobblestone thoroughfares wide open)
+      // Trees (Only block the exact tile of the 0.35x0.35 trunk; completely eliminates phantom multi-tile blocking)
       const treeBlocks = [
         [13, 2], [16, 2],
         [14, 8],
-        [16, 17.5],
+        [16, 18],
         [13, 25], [16, 25],
         [20, 12], [24, 12],
         [21, 15], [25, 15]
       ];
-      treeBlocks.forEach(([tx, ty]) => this.nav.setBlock(tx, ty, 1.1, 1.1, true));
+      treeBlocks.forEach(([tx, ty]) => {
+        const trunkX = Math.floor(tx + 0.35);
+        const trunkY = Math.floor(ty + 0.35);
+        this.nav.setBlock(trunkX, trunkY, 1, 1, true);
+      });
     }
 
     initParticles() {
@@ -392,21 +402,23 @@
         const nx = player.x + kx * step;
         const ny = player.y + ky * step;
 
-        const r = 0.22;
+        const r = 0.16;
         if (this.nav.isWalkableRadius(nx, ny, r)) {
           player.x = nx;
           player.y = ny;
           player.facing = kx >= ky ? 1 : -1;
           playerActuallyMoved = true;
         } else if (this.nav.isWalkableRadius(nx, player.y, r)) {
+          // Smooth slide along X axis
           player.x = nx;
           player.facing = kx >= 0 ? 1 : -1;
           playerActuallyMoved = true;
         } else if (this.nav.isWalkableRadius(player.x, ny, r)) {
+          // Smooth slide along Y axis
           player.y = ny;
           player.facing = ky >= 0 ? 1 : -1;
           playerActuallyMoved = true;
-        } else if (!this.nav.isWalkableRadius(player.x, player.y, r)) {
+        } else {
           // Unstuck escape fallback: if player was placed near an obstacle boundary,
           // allow moving towards open ground
           if (this.nav.isWalkable(nx, ny)) {
@@ -1436,7 +1448,7 @@
       const trees = [
         [13, 2], [16, 2],       // North garden lawn (well north of path y=5)
         [14, 8],                // North-central lawn pocket (between path y=6 and fountain)
-        [16, 17.5],             // South-central lawn pocket (flanking south park bench on the right)
+        [16, 18],               // South-central lawn pocket (flanking south park bench on the right)
         [13, 25], [16, 25],     // South garden lawn (well south of path y=22)
         [20, 12], [24, 12],     // East central lawn north grove
         [21, 15], [25, 15]      // East central lawn south grove

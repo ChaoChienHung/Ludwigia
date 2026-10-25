@@ -60,9 +60,20 @@
     }
 
     setBlock(x, y, bw = 1, bh = 1, isBlocked = true) {
-      for (let ix = Math.floor(x); ix < x + bw && ix < this.w; ix++) {
-        for (let iy = Math.floor(y); iy < y + bh && iy < this.h; iy++) {
-          if (ix >= 0 && iy >= 0) this.blocked[ix][iy] = isBlocked;
+      const minX = Math.floor(x);
+      const maxX = Math.floor(x + bw - 0.001);
+      const minY = Math.floor(y);
+      const maxY = Math.floor(y + bh - 0.001);
+      for (let ix = minX; ix <= maxX && ix < this.w; ix++) {
+        for (let iy = minY; iy <= maxY && iy < this.h; iy++) {
+          if (ix >= 0 && iy >= 0) {
+            // Require meaningful geometric overlap (>= 0.28 tile) in both axes to prevent phantom boundary tile blocks
+            const overlapX = Math.min(ix + 1, x + bw) - Math.max(ix, x);
+            const overlapY = Math.min(iy + 1, y + bh) - Math.max(iy, y);
+            if (overlapX >= 0.28 && overlapY >= 0.28) {
+              this.blocked[ix][iy] = isBlocked;
+            }
+          }
         }
       }
     }
@@ -74,7 +85,7 @@
       return !this.blocked[ix][iy];
     }
 
-    isWalkableRadius(gx, gy, r = 0.32) {
+    isWalkableRadius(gx, gy, r = 0.18) {
       return this.isWalkable(gx - r, gy - r) &&
              this.isWalkable(gx + r, gy - r) &&
              this.isWalkable(gx - r, gy + r) &&
