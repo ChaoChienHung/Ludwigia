@@ -1606,10 +1606,24 @@
         "user": {
           "zh-TW": [
             [
+              "這週六去你家喔",
+              "沒差啊，反正我會一直按你家門鈴"
+            ],
+            [
+              "5點15了喔？我要趕回去倒垃圾了！"
+            ],
+            [
               "大哥別鬧拉……"
             ]
           ],
           "en": [
+            [
+              "Heading over to your place this Saturday.",
+              "Doesn't matter, I'll just keep ringing your doorbell anyway."
+            ],
+            [
+              "Is it 5:15 already?! I gotta rush home to take out the trash!"
+            ],
             [
               "Bro, don't mess around..."
             ]
@@ -1617,10 +1631,12 @@
         },
         "self": {
           "zh-TW": [
-            "下課要不要去球場？"
+            "下課要不要去球場？",
+            "5點15了喔？我要趕回去倒垃圾了！"
           ],
           "en": [
-            "Maybe a game at the court after class."
+            "Maybe a game at the court after class.",
+            "Is it 5:15 already?! Gotta rush home to take out the trash!"
           ]
         }
       },
