@@ -332,11 +332,28 @@
         window.dispatchEvent(new CustomEvent('ludwig-language-changed', { detail: { lang: next } }));
       });
 
+      const applyThemePalette = () => {
+        const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
+        document.documentElement.classList.remove("light-theme", "deep-sea-theme", "galaxy-theme", "sky-theme", "garden-theme");
+        if (theme === "light") document.documentElement.classList.add("light-theme");
+        if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
+        if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
+        if (theme === "sky") document.documentElement.classList.add("sky-theme");
+        if (theme === "garden") document.documentElement.classList.add("garden-theme");
+
+        const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
+        document.documentElement.className = document.documentElement.className.replace(/\bpalette-\S+/g, "").trim();
+        if (palette) document.documentElement.classList.add(`palette-${palette}`);
+      };
+
       window.addEventListener('ludwig-language-changed', (e) => {
         if (e.detail?.lang) applyLanguage(e.detail.lang);
       });
+      window.addEventListener('ludwig-theme-changed', applyThemePalette);
+      window.addEventListener('ludwig-palette-changed', applyThemePalette);
       window.addEventListener('storage', (e) => {
         if (e.key === 'site_lang_v1' && e.newValue) applyLanguage(e.newValue);
+        if (e.key === 'theme' || e.key === 'site_palette_v1') applyThemePalette();
       });
     });
   </script>
