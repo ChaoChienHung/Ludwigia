@@ -531,13 +531,25 @@
           dialogues: {
             'zh-TW': [
               { speaker: 'bohan', text: '阿方在房間嗎？那我要去上他的床。', delay: 2.0 },
-              { speaker: 'bohan', text: '幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。', delay: 2.2 },
               { speaker: 'billy', text: '我不知道啊，有群人一直上我的床。下來！', delay: 2.2 }
             ],
             'en': [
               { speaker: 'bohan', text: "Is Ah-Fang in the room? Gonna climb onto his bed.", delay: 2.0 },
-              { speaker: 'bohan', text: "Why so stingy? Your bed is everyone's bed, let's crash together!", delay: 2.2 },
               { speaker: 'billy', text: "People keep climbing on my bed... Get down!", delay: 2.2 }
+            ]
+          }
+        },
+        {
+          zone: 'dorm_211',
+          participants: ['bohan', 'billy'],
+          dialogues: {
+            'zh-TW': [
+              { speaker: 'bohan', text: '幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。', delay: 2.2 },
+              { speaker: 'billy', text: '我真的快中風了！下來！', delay: 2.2 }
+            ],
+            'en': [
+              { speaker: 'bohan', text: "Why so stingy? Your bed is everyone's bed, let's crash together!", delay: 2.2 },
+              { speaker: 'billy', text: "I am literally about to have a stroke! Get down!", delay: 2.2 }
             ]
           }
         },
