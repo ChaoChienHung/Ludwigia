@@ -602,8 +602,9 @@
       "dialogues": {
         "zh-TW": [
           [
-            "老開桌上那兩顆火龍果都爛到出汁了... 超噁...",
-            "兩顆爛掉的火龍果對應兩顆爛掉的期中考"
+            "老開桌上那兩顆火龍果都爛到出汁了...",
+            "超噁...",
+            "兩顆爛掉的火龍果對應兩顆爛掉的期中考。"
           ],
           [
             "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。"
@@ -629,7 +630,8 @@
         ],
         "en": [
           [
-            "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out... so gross...",
+            "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...",
+            "Super gross...",
             "Two rotten dragon fruits perfectly correspond to two rotten midterm exams."
           ],
           [
@@ -1568,6 +1570,702 @@
         "sanmin_school",
         "plaza"
       ]
+    }
+  ],
+  "conversations": [
+    {
+      "id": "dorm_211_bed_complaint",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["clark", "billy"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "clark", "text": "阿方的床真的很舒服欸。", "delay": 2.2 },
+          { "speaker": "billy", "text": "我真的快中風了！下來！", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "clark", "text": "Ah-Fang's bed is seriously so comfy.", "delay": 2.2 },
+          { "speaker": "billy", "text": "I am literally about to have a stroke! Get down!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "dorm_211_bed_climb",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["bohan", "billy"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "bohan", "text": "阿方在房間嗎？那我要去上他的床。", "delay": 2.0 },
+          { "speaker": "billy", "text": "我不知道啊，有群人一直上我的床。下來！", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "bohan", "text": "Is Ah-Fang in the room? Gonna climb onto his bed.", "delay": 2.0 },
+          { "speaker": "billy", "text": "People keep climbing on my bed... Get down!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "dorm_211_bed_stingy",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["bohan", "billy"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "bohan", "text": "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。", "delay": 2.2 },
+          { "speaker": "billy", "text": "我真的快中風了！下來！", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "bohan", "text": "Why so stingy? Your bed is everyone's bed, let's crash together!", "delay": 2.2 },
+          { "speaker": "billy", "text": "I am literally about to have a stroke! Get down!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "dorm_211_wheat_cookies",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["clark", "billy"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "clark", "text": "這阿方的方塊酥，你要吃嗎？還滿好吃的。", "delay": 2.2 },
+          { "speaker": "billy", "text": "我不知道啊，有群人一直偷拿我的方塊酥。想吃不會自己買喔？", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "clark", "text": "These are Ah-Fang's wheat square cookies, want some? Pretty good.", "delay": 2.2 },
+          { "speaker": "billy", "text": "People keep stealing my cookies. Buy your own!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "dorm_211_ipv4_dragonfruit",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["billy", "clark"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "billy", "text": "老開的期中考，猜一個IPv4地址：0.0.0.0", "delay": 2.4 },
+          { "speaker": "clark", "text": "老開桌上那兩顆火龍果都爛到出汁了...", "delay": 2.0 },
+          { "speaker": "clark", "text": "超噁...", "delay": 1.6 },
+          { "speaker": "clark", "text": "兩顆爛掉的火龍果對應兩顆爛掉的期中考", "delay": 2.4 }
+        ],
+        "en": [
+          { "speaker": "billy", "text": "Lao-Kai's midterm score, guess an IPv4 address: 0.0.0.0", "delay": 2.4 },
+          { "speaker": "clark", "text": "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...", "delay": 2.0 },
+          { "speaker": "clark", "text": "Super gross...", "delay": 1.6 },
+          { "speaker": "clark", "text": "Two rotten dragon fruits perfectly correspond to two rotten midterms.", "delay": 2.4 }
+        ]
+      }
+    },
+    {
+      "id": "dorm_211_zhu_ziqing",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["clark", "jerry"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "clark", "text": "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。", "delay": 2.2 },
+          { "speaker": "jerry", "text": "你是水蛭喔？台北是我家後花園。", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "clark", "text": "Lao-Kai's silhouette taking the Probability final gives pure Zhu Ziqing vibes.", "delay": 2.2 },
+          { "speaker": "jerry", "text": "Are you a leech? Taipei is basically my backyard.", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "dorm_211_midnight_snack",
+      "zone": "dorm_211",
+      "maxDistance": 3.8,
+      "participants": ["happy", "billy"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "happy", "text": "這把贏了就睡！今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？", "delay": 2.2 },
+          { "speaker": "billy", "text": "欸走拉，吃宵！一起去吃傻師傅！", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "happy", "text": "Win this match and sleep! Midnight Taiwanese chicken tonight?", "delay": 2.2 },
+          { "speaker": "billy", "text": "Let's go! Midnight snack run together!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "douyin_defense_bug",
+      "zone": "douyin_office",
+      "maxDistance": 3.8,
+      "participants": ["weihao", "baisen"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "weihao", "text": "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！", "delay": 2.2 },
+          { "speaker": "baisen", "text": "這個 bug 我抓了一整個下午，終於給它修掉了！", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "weihao", "text": "So annoying, I have no idea what to say for my defense!", "delay": 2.2 },
+          { "speaker": "baisen", "text": "Squashed this bug after tracking it all afternoon!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "douyin_model_boba",
+      "zone": "douyin_office",
+      "maxDistance": 3.8,
+      "participants": ["da", "weihao"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "da", "text": "這個演算法模型明天上線，大家今晚先對一下指標。", "delay": 2.2 },
+          { "speaker": "weihao", "text": "下午要不要叫杯手搖飲？我看看滿減券……", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "da", "text": "This model goes live tomorrow, let's sync metrics.", "delay": 2.2 },
+          { "speaker": "weihao", "text": "Order boba this afternoon? Let me check discount coupons...", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "douyin_figma_standup",
+      "zone": "douyin_office",
+      "maxDistance": 3.8,
+      "participants": ["chenxin", "baisen"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "chenxin", "text": "這版 Figma 設計稿的元件間距很舒服，切起版來太爽了！", "delay": 2.2 },
+          { "speaker": "baisen", "text": "大家今天站會的進度都同步了嗎？", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "chenxin", "text": "Component spacing in Figma is super crisp, slicing it is great!", "delay": 2.2 },
+          { "speaker": "baisen", "text": "Has everyone synced on today's standup updates?", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "ai_studio_ideas_reasoning",
+      "zone": "ai_studio",
+      "maxDistance": 3.8,
+      "participants": ["chatgpt", "claude"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "chatgpt", "text": "嗨！今天想探索什麼新想法或有趣的知識？", "delay": 2.2 },
+          { "speaker": "claude", "text": "我可以為你提供嚴密、結構化且深度的推理分析。", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "chatgpt", "text": "Hi! What new ideas or knowledge would you like to explore today?", "delay": 2.2 },
+          { "speaker": "claude", "text": "I can provide rigorous, structured and deep analytical reasoning.", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "ai_studio_multimodal_garden",
+      "zone": "ai_studio",
+      "maxDistance": 3.8,
+      "participants": ["gemini", "ludwigia"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "gemini", "text": "我擅長融合多模態資訊，文字、圖像與程式碼都能靈活掌握！", "delay": 2.2 },
+          { "speaker": "ludwigia", "text": "歡迎來到數位花園！每一株思想都在這裡茁壯成長。", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "gemini", "text": "I seamlessly bridge multimodal context: text, images and code!", "delay": 2.2 },
+          { "speaker": "ludwigia", "text": "Welcome to the Digital Garden! Every thought blooms here.", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "sanmin_apple_pen",
+      "zone": "sanmin_school",
+      "maxDistance": 3.8,
+      "participants": ["benny", "zhenyan"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "benny", "text": "I have a pen, I have an apple. Uh! Apple pen!", "delay": 2.2 },
+          { "speaker": "zhenyan", "text": "下課要不要去打球？", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "benny", "text": "I have a pen, I have an apple. Uh! Apple pen!", "delay": 2.2 },
+          { "speaker": "zhenyan", "text": "Wanna go shoot hoops after class?", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "sanmin_geometry_lunch",
+      "zone": "sanmin_school",
+      "maxDistance": 3.8,
+      "participants": ["zhewei", "youting"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "zhewei", "text": "這題數學解析幾何也太難了吧，算到頭好痛……", "delay": 2.2 },
+          { "speaker": "youting", "text": "午餐便當我要吃大雞腿！", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "zhewei", "text": "This analytic geometry problem is brutal...", "delay": 2.2 },
+          { "speaker": "youting", "text": "For lunch bento I definitely want the big chicken leg!", "delay": 2.2 }
+        ]
+      }
+    },
+    {
+      "id": "ludwig_house_family_care",
+      "zone": "ludwig_house",
+      "maxDistance": 3.8,
+      "participants": ["dad", "mom"],
+      "dialogues": {
+        "zh-TW": [
+          { "speaker": "dad", "text": "吃飯了沒？今天外面天氣挺不錯的。", "delay": 2.2 },
+          { "speaker": "mom", "text": "出門記得多穿件外套！別著涼了。", "delay": 2.2 }
+        ],
+        "en": [
+          { "speaker": "dad", "text": "Have you eaten yet? Weather is lovely outside.", "delay": 2.2 },
+          { "speaker": "mom", "text": "Remember to bring a jacket when going out!", "delay": 2.2 }
+        ]
+      }
+    }
+  ],
+  "conversationPairs": [
+    {
+      "participants": [
+        "clark",
+        "billy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "clark",
+            "text": "阿方的床真的很舒服欸。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "我真的快中風了！下來！",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "clark",
+            "text": "Ah-Fang's bed is seriously so comfy.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "I am literally about to have a stroke! Get down!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "bohan",
+        "billy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "bohan",
+            "text": "阿方在房間嗎？那我要去上他的床。",
+            "delay": 2
+          },
+          {
+            "speaker": "billy",
+            "text": "我不知道啊，有群人一直上我的床。下來！",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "bohan",
+            "text": "Is Ah-Fang in the room? Gonna climb onto his bed.",
+            "delay": 2
+          },
+          {
+            "speaker": "billy",
+            "text": "People keep climbing on my bed... Get down!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "bohan",
+        "billy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "bohan",
+            "text": "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "我真的快中風了！下來！",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "bohan",
+            "text": "Why so stingy? Your bed is everyone's bed, let's crash together!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "I am literally about to have a stroke! Get down!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "clark",
+        "billy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "clark",
+            "text": "這阿方的方塊酥，你要吃嗎？還滿好吃的。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "我不知道啊，有群人一直偷拿我的方塊酥。想吃不會自己買喔？",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "clark",
+            "text": "These are Ah-Fang's wheat square cookies, want some? Pretty good.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "People keep stealing my cookies. Buy your own!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "billy",
+        "clark"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "billy",
+            "text": "老開的期中考，猜一個IPv4地址：0.0.0.0",
+            "delay": 2.4
+          },
+          {
+            "speaker": "clark",
+            "text": "老開桌上那兩顆火龍果都爛到出汁了... 兩顆爛掉的火龍果對應兩顆爛掉的期中考",
+            "delay": 2.4
+          }
+        ],
+        "en": [
+          {
+            "speaker": "billy",
+            "text": "Lao-Kai's midterm score, guess an IPv4 address: 0.0.0.0",
+            "delay": 2.4
+          },
+          {
+            "speaker": "clark",
+            "text": "Those two rotten dragon fruits correspond to two rotten midterms...",
+            "delay": 2.4
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "clark",
+        "jerry"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "clark",
+            "text": "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "jerry",
+            "text": "你是水蛭喔？台北是我家後花園。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "clark",
+            "text": "Lao-Kai's silhouette taking the Probability final gives pure Zhu Ziqing vibes.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "jerry",
+            "text": "Are you a leech? Taipei is basically my backyard.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "happy",
+        "billy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "happy",
+            "text": "這把贏了就睡！今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "欸走拉，吃宵！一起去吃傻師傅！",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "happy",
+            "text": "Win this match and sleep! Midnight Taiwanese chicken tonight?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "billy",
+            "text": "Let's go! Midnight snack run together!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "weihao",
+        "baisen"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "weihao",
+            "text": "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！",
+            "delay": 2.2
+          },
+          {
+            "speaker": "baisen",
+            "text": "這個 bug 我抓了一整個下午，終於給它修掉了！",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "weihao",
+            "text": "So annoying, I have no idea what to say for my defense!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "baisen",
+            "text": "Squashed this bug after tracking it all afternoon!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "haolei",
+        "weihao"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "haolei",
+            "text": "這個演算法模型明天上線，大家今晚先對一下指標。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "weihao",
+            "text": "下午要不要叫杯手搖飲？我看看滿減券……",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "haolei",
+            "text": "This model goes live tomorrow, let's sync metrics.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "weihao",
+            "text": "Order boba this afternoon? Let me check discount coupons...",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "chenxin",
+        "baisen"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "chenxin",
+            "text": "這版 Figma 設計稿的元件間距很舒服，切起版來太爽了！",
+            "delay": 2.2
+          },
+          {
+            "speaker": "baisen",
+            "text": "大家今天站會的進度都同步了嗎？",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "chenxin",
+            "text": "Component spacing in Figma is super crisp, slicing it is great!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "baisen",
+            "text": "Has everyone synced on today's standup updates?",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "chatgpt",
+        "claude"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "chatgpt",
+            "text": "嗨！今天想探索什麼新想法或有趣的知識？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "claude",
+            "text": "我可以為你提供嚴密、結構化且深度的推理分析。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "chatgpt",
+            "text": "Hi! What new ideas or knowledge would you like to explore today?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "claude",
+            "text": "I can provide rigorous, structured and deep analytical reasoning.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "gemini",
+        "ludwigia"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "gemini",
+            "text": "我擅長融合多模態資訊，文字、圖像與程式碼都能靈活掌握！",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwigia",
+            "text": "歡迎來到數位花園！每一株思想都在這裡茁壯成長。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "gemini",
+            "text": "I seamlessly bridge multimodal context: text, images and code!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwigia",
+            "text": "Welcome to the Digital Garden! Every thought blooms here.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "benny",
+        "zhenyan"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "benny",
+            "text": "I have a pen, I have an apple. Uh! Apple pen!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "zhenyan",
+            "text": "下課要不要去打球？",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "benny",
+            "text": "I have a pen, I have an apple. Uh! Apple pen!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "zhenyan",
+            "text": "Wanna go shoot hoops after class?",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "wuyen",
+        "yully"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "wuyen",
+            "text": "吃飯了沒？今天外面天氣挺不錯的。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "yully",
+            "text": "出門記得多穿件外套！別著涼了。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "wuyen",
+            "text": "Have you eaten yet? Weather is lovely outside.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "yully",
+            "text": "Remember to bring a jacket when going out!",
+            "delay": 2.2
+          }
+        ]
+      }
     }
   ]
 }

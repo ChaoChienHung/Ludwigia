@@ -16,7 +16,7 @@
       this.autoChatTimer = 3.0 + Math.random() * 2.0;
       this.dialogueQueue = [];
       this.queueTimer = 0;
-      this.conversationPairs = this.initConversationPairs();
+      this.conversationPairs = [];
     }
 
     async loadCharacters(jsonPath = 'data/characters.json') {
@@ -25,9 +25,30 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         this.initFromData(data.characters);
+        const rawConv = data.conversations || data.conversationPairs;
+        const validated = this.validateConversationPairs(rawConv);
+        this.conversationPairs = validated.length > 0 ? validated : (typeof this.initConversationPairs === 'function' ? this.initConversationPairs() : []);
       } catch (err) {
         console.warn('Failed to load characters.json, using fallback:', err);
       }
+    }
+
+    validateConversationPairs(pairs) {
+      if (!Array.isArray(pairs)) return [];
+      const ids = new Set(this.characters.map(char => char.id));
+      return pairs.filter((pair, index) => {
+        const participants = pair && pair.participants;
+        const valid = Array.isArray(participants) && participants.length === 2 &&
+          participants.every(id => ids.has(id)) &&
+          ['zh-TW', 'en'].every(lang => {
+            const lines = pair.dialogues && pair.dialogues[lang];
+            return Array.isArray(lines) && lines.length > 0 &&
+              lines.every(line => participants.includes(line.speaker) &&
+                typeof line.text === 'string' && line.text.trim());
+          });
+        if (!valid) console.warn(`Skipping invalid conversation pair ${index} in characters.json`);
+        return valid;
+      });
     }
 
     getLangKey() {
@@ -507,227 +528,6 @@
       }
     }
 
-    // --- Autonomous Dialogues & Multi-Character Conversational Interactions ---
-    initConversationPairs() {
-      return [
-        // === 1. Dorm 211 Group (男11 211寢室爆笑日常) ===
-        {
-          zone: 'dorm_211',
-          participants: ['clark', 'billy'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'clark', text: '阿方的床真的很舒服欸。', delay: 2.2 },
-              { speaker: 'billy', text: '我真的快中風了！下來！', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'clark', text: "Ah-Fang's bed is seriously so comfy.", delay: 2.2 },
-              { speaker: 'billy', text: "I am literally about to have a stroke! Get down!", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'dorm_211',
-          participants: ['bohan', 'billy'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'bohan', text: '阿方在房間嗎？那我要去上他的床。', delay: 2.0 },
-              { speaker: 'billy', text: '我不知道啊，有群人一直上我的床。下來！', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'bohan', text: "Is Ah-Fang in the room? Gonna climb onto his bed.", delay: 2.0 },
-              { speaker: 'billy', text: "People keep climbing on my bed... Get down!", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'dorm_211',
-          participants: ['bohan', 'billy'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'bohan', text: '幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。', delay: 2.2 },
-              { speaker: 'billy', text: '我真的快中風了！下來！', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'bohan', text: "Why so stingy? Your bed is everyone's bed, let's crash together!", delay: 2.2 },
-              { speaker: 'billy', text: "I am literally about to have a stroke! Get down!", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'dorm_211',
-          participants: ['clark', 'billy'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'clark', text: '這阿方的方塊酥，你要吃嗎？還滿好吃的。', delay: 2.2 },
-              { speaker: 'billy', text: '我不知道啊，有群人一直偷拿我的方塊酥。想吃不會自己買喔？', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'clark', text: "These are Ah-Fang's wheat square cookies, want some? Pretty good.", delay: 2.2 },
-              { speaker: 'billy', text: "People keep stealing my cookies. Buy your own!", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'dorm_211',
-          participants: ['billy', 'clark'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'billy', text: '老開的期中考，猜一個IPv4地址：0.0.0.0', delay: 2.4 },
-              { speaker: 'clark', text: '老開桌上那兩顆火龍果都爛到出汁了... 兩顆爛掉的火龍果對應兩顆爛掉的期中考', delay: 2.4 }
-            ],
-            'en': [
-              { speaker: 'billy', text: "Lao-Kai's midterm score, guess an IPv4 address: 0.0.0.0", delay: 2.4 },
-              { speaker: 'clark', text: "Those two rotten dragon fruits correspond to two rotten midterms...", delay: 2.4 }
-            ]
-          }
-        },
-        {
-          zone: 'dorm_211',
-          participants: ['clark', 'jerry'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'clark', text: '老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。', delay: 2.2 },
-              { speaker: 'jerry', text: '你是水蛭喔？台北是我家後花園。', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'clark', text: "Lao-Kai's silhouette taking the Probability final gives pure Zhu Ziqing vibes.", delay: 2.2 },
-              { speaker: 'jerry', text: "Are you a leech? Taipei is basically my backyard.", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'dorm_211',
-          participants: ['happy', 'billy'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'happy', text: '這把贏了就睡！今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？', delay: 2.2 },
-              { speaker: 'billy', text: '欸走拉，吃宵！一起去吃傻師傅！', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'happy', text: "Win this match and sleep! Midnight Taiwanese chicken tonight?", delay: 2.2 },
-              { speaker: 'billy', text: "Let's go! Midnight snack run together!", delay: 2.2 }
-            ]
-          }
-        },
-        // === 2. Douyin Office Group (抖音演算法研發辦公室) ===
-        {
-          zone: 'douyin_office',
-          participants: ['weihao', 'baisen'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'weihao', text: '好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！', delay: 2.2 },
-              { speaker: 'baisen', text: '這個 bug 我抓了一整個下午，終於給它修掉了！', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'weihao', text: "So annoying, I have no idea what to say for my defense!", delay: 2.2 },
-              { speaker: 'baisen', text: "Squashed this bug after tracking it all afternoon!", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'douyin_office',
-          participants: ['da', 'weihao'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'da', text: '這個演算法模型明天上線，大家今晚先對一下指標。', delay: 2.2 },
-              { speaker: 'weihao', text: '下午要不要叫杯手搖飲？我看看滿減券……', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'da', text: "This model goes live tomorrow, let's sync metrics.", delay: 2.2 },
-              { speaker: 'weihao', text: "Order boba this afternoon? Let me check discount coupons...", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'douyin_office',
-          participants: ['chenxin', 'baisen'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'chenxin', text: '這版 Figma 設計稿的元件間距很舒服，切起版來太爽了！', delay: 2.2 },
-              { speaker: 'baisen', text: '大家今天站會的進度都同步了嗎？', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'chenxin', text: "Component spacing in Figma is super crisp, slicing it is great!", delay: 2.2 },
-              { speaker: 'baisen', text: "Has everyone synced on today's standup updates?", delay: 2.2 }
-            ]
-          }
-        },
-        // === 3. AI Studio Group (前瞻智慧實驗室) ===
-        {
-          zone: 'ai_studio',
-          participants: ['chatgpt', 'claude'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'chatgpt', text: '嗨！今天想探索什麼新想法或有趣的知識？', delay: 2.2 },
-              { speaker: 'claude', text: '我可以為你提供嚴密、結構化且深度的推理分析。', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'chatgpt', text: "Hi! What new ideas or knowledge would you like to explore today?", delay: 2.2 },
-              { speaker: 'claude', text: "I can provide rigorous, structured and deep analytical reasoning.", delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'ai_studio',
-          participants: ['gemini', 'ludwigia'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'gemini', text: '我擅長融合多模態資訊，文字、圖像與程式碼都能靈活掌握！', delay: 2.2 },
-              { speaker: 'ludwigia', text: '歡迎來到數位花園！每一株思想都在這裡茁壯成長。', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'gemini', text: "I seamlessly bridge multimodal context: text, images and code!", delay: 2.2 },
-              { speaker: 'ludwigia', text: "Welcome to the Digital Garden! Every thought blooms here.", delay: 2.2 }
-            ]
-          }
-        },
-        // === 4. Sanmin High School Group (三民高中校園) ===
-        {
-          zone: 'sanmin_school',
-          participants: ['benny', 'zhenyan'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'benny', text: 'I have a pen, I have an apple. Uh! Apple pen!', delay: 2.2 },
-              { speaker: 'zhenyan', text: '下課要不要去打球？', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'benny', text: 'I have a pen, I have an apple. Uh! Apple pen!', delay: 2.2 },
-              { speaker: 'zhenyan', text: 'Wanna go shoot hoops after class?', delay: 2.2 }
-            ]
-          }
-        },
-        {
-          zone: 'sanmin_school',
-          participants: ['zhewei', 'youting'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'zhewei', text: '這題數學解析幾何也太難了吧，算到頭好痛……', delay: 2.2 },
-              { speaker: 'youting', text: '午餐便當我要吃大雞腿！', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'zhewei', text: "This analytic geometry problem is brutal...", delay: 2.2 },
-              { speaker: 'youting', text: "For lunch bento I definitely want the big chicken leg!", delay: 2.2 }
-            ]
-          }
-        },
-        // === 5. Ludwig's House Group (路德維希的家) ===
-        {
-          zone: 'ludwig_house',
-          participants: ['dad', 'mom'],
-          dialogues: {
-            'zh-TW': [
-              { speaker: 'dad', text: '吃飯了沒？今天外面天氣挺不錯的。', delay: 2.2 },
-              { speaker: 'mom', text: '出門記得多穿件外套！別著涼了。', delay: 2.2 }
-            ],
-            'en': [
-              { speaker: 'dad', text: "Have you eaten yet? Weather is lovely outside.", delay: 2.2 },
-              { speaker: 'mom', text: "Remember to bring a jacket when going out!", delay: 2.2 }
-            ]
-          }
-        }
-      ];
-    }
-
     // --- Autonomous Dialogue Update Loop ---
     update(dt) {
       // 1. Update active speech bubble timers & smooth alpha fade
@@ -789,31 +589,65 @@
 
         const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
         const inSameZone = (p1.zone && p2.zone && p1.zone === p2.zone);
-        if (dist < 5.0 || inSameZone) {
-          const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
-          if (!lines || lines.length === 0) continue;
+        if (!inSameZone) continue;
 
-          // First character speaks
-          const first = lines[0];
-          const speaker1 = this.characters.find(c => c.id === first.speaker);
-          if (speaker1) {
-            this.triggerSpeechBubble(speaker1, first.text, 3.8);
-          }
+        const maxDist = pair.maxDistance || 3.8;
 
-          // Queue remaining replies
-          this.dialogueQueue = [];
-          for (let i = 1; i < lines.length; i++) {
-            const item = lines[i];
-            this.dialogueQueue.push({
-              speakerId: item.speaker,
-              text: item.text,
-              duration: 3.8,
-              nextDelay: item.delay || 2.2
-            });
+        // If characters are in the same zone but too far apart, guide them to approach each other first
+        if (dist > maxDist) {
+          if (dist <= 7.0 && this.world && this.world.nav) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            if (!p1.path || p1.path.length === 0) {
+              const path1 = this.world.nav.findPath({ x: p1.x, y: p1.y }, { x: midX, y: midY });
+              if (path1 && path1.length > 0) {
+                p1.path = path1;
+                p1.isWalking = true;
+              }
+            }
+            if (!p2.path || p2.path.length === 0) {
+              const path2 = this.world.nav.findPath({ x: p2.x, y: p2.y }, { x: midX, y: midY });
+              if (path2 && path2.length > 0) {
+                p2.path = path2;
+                p2.isWalking = true;
+              }
+            }
           }
-          this.queueTimer = lines[0].delay || 2.2;
-          return;
+          continue;
         }
+
+        // Within conversational proximity: pause wandering, face each other, and converse!
+        const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
+        if (!lines || lines.length === 0) continue;
+
+        p1.path = []; p1.isWalking = false;
+        p2.path = []; p2.isWalking = false;
+        const dx = p2.x - p1.x;
+        p1.facing = dx >= 0 ? 1 : -1;
+        p2.facing = dx >= 0 ? -1 : 1;
+        p1.timer = 6.0;
+        p2.timer = 6.0;
+
+        // First character speaks
+        const first = lines[0];
+        const speaker1 = this.characters.find(c => c.id === first.speaker);
+        if (speaker1) {
+          this.triggerSpeechBubble(speaker1, first.text, 3.8);
+        }
+
+        // Queue remaining replies
+        this.dialogueQueue = [];
+        for (let i = 1; i < lines.length; i++) {
+          const item = lines[i];
+          this.dialogueQueue.push({
+            speakerId: item.speaker,
+            text: item.text,
+            duration: 3.8,
+            nextDelay: item.delay || 2.2
+          });
+        }
+        this.queueTimer = lines[0].delay || 2.2;
+        return;
       }
 
       // Fallback: Pick a single random NPC to say an ambient thought
