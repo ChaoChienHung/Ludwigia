@@ -996,7 +996,7 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "對話探索",
+        "zh-TW": "對話探索 AI",
         "en": "Conversational AI"
       },
       "avatar": "assets/avatars/chatgpt.png",
