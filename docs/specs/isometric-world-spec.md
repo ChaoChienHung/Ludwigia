@@ -1,19 +1,19 @@
 # Ludwigia Isometric World Specification (等軸 2.5D 虛擬生活空間與社交世界技術規格)
 
-本文件詳細記載 Ludwigia 虛擬生活校園空間（`labs/world/`）的完整技術架構、數學模型、渲染管線、狀態機與互動機制，作為全站等軸世界的單一真相來源（SSOT）。
+本文件詳細記載 Ludwigia 虛擬生活校園空間（`labs/world/`）的完整技術架構、數學模型、渲染管線、狀態機與原創演算法，作為全站等軸世界的單一真相來源（SSOT）。
 
 ---
 
 ## 1. 系統架構與模組化設計（Modular Architecture & Tech Stack）
 
-本系統為**零外部肥大依賴（Zero Heavy Dependencies）**的純前端純 Canvas 引擎，經高內聚、低耦合原則重構為清晰的模組化目錄結構：
+本系統為**零外部肥大依賴（Zero Heavy Dependencies）**的純前端純 Canvas 2D 引擎，經高內聚、低耦合原則重構為清晰的模組化目錄結構：
 
 ```
 labs/world/
 ├── index.html              # 入口頁面與 UI 綁定（HUD、晝夜切換、音效、對話框）
 ├── world.css               # 磨砂玻璃（Glassmorphism）與全響應式版型樣式表
 ├── data/
-│   └── characters.json     # 單一真相來源：角色性別、外觀裝扮、分區與五套隨機中英雙語對話
+│   └── characters.json     # 單一真相來源：23 位角色、性別、外觀裝扮、初始坐標與隨機中英雙語對話
 └── js/
     ├── engine.js           # 核心數學模型、等角投影、NavGrid 8 向 A* 尋路、Kahn 拓撲排序與 Web Audio
     ├── models.js           # 3D 幾何家具模型庫（精密書桌檯燈、零浮空書櫃、4座上床下桌、機櫃、白板、柚木長椅、噴泉）
@@ -25,7 +25,7 @@ labs/world/
 
 ## 2. 幾何投影與座標系轉換（Isometric Mathematics）
 
-系統採用經典的 2:1 等軸測投影（Isometric Projection），其網格菱形寬高比為 $TW:TH = 64\text{px}:32\text{px}$，地圖擴展為 $28 \times 28$ 宏觀校園地圖。
+系統採用經典的 2:1 等軸測投影（Isometric Axonometric Projection），其網格菱形寬高比為 $TW:TH = 64\text{px}:32\text{px}$，地圖擴展為 $28 \times 44$ 宏觀校園地圖。
 
 ### 2.1 網格座標轉螢幕像素（Iso-to-Screen）
 給定網格座標 $(g_x, g_y, g_z)$ 與視窗錨點 $(o_x, o_y)$，其螢幕座標 $(s_x, s_y)$ 為：
@@ -43,14 +43,14 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
 ## 3. 深度排序與 2.5D 拓撲遮擋演算法（Topological Occlusion & Depth Pipeline）
 
 ### 3.1 2.5D 幾何包圍盒拓撲排序演算法（Topological Sort with Kahn's Algorithm）
-為根本解決任何前後穿越破圖，Ludwigia 引入了基於地面軸對齊包圍盒（AABB $[x_{min}, x_{max}] \times [y_{min}, y_{max}]$）的拓撲遮擋圖排序：
+為根本解決前後穿越破圖與書櫃/模型閃爍（Flickering / Glitch），Ludwigia 引入了基於地面軸對齊包圍盒（AABB $[x_{min}, x_{max}] \times [y_{min}, y_{max}]$）的拓撲遮擋圖排序：
 1. **實體 AABB 定義**：
    - 每個動態角色定義微小包圍半徑：$[c.x - 0.25, c.x + 0.25] \times [c.y - 0.25, c.y + 0.25]$。
    - 每個家具、樹木基座、噴水池底座與隔斷牆段均定義精準的實體佔地範圍 $[x_{min}, x_{max}] \times [y_{min}, y_{max}]$。
 2. **等軸測遮擋依賴判斷（`isBehind(B, A)`）**：
    當且僅當物體 $B$ 在幾何上位於物體 $A$ 的等軸視角後方（亦即 $A$ 會遮擋 $B$，$B$ 必須先於 $A$ 繪製）時成立：
    - **X 軸後方且 Y 投影重疊**：$B.x_{max} \le A.x_{min}$ 且 $(B.y_{max} > A.y_{min} \land B.y_{min} < A.y_{max})$。
-   - **Y 軸後方且 X 投影重疊**：$B.y_{max} \le A.y_{min}$ 且 $(B.x_{max} > A.x_{min} \land B.x_{min} < A.x_{max})$。
+   - **Y 軸後方且 X 投影重疊**：$B.y_{max} \le A.x_{min}$ 且 $(B.x_{max} > A.x_{min} \land B.x_{min} < A.x_{max})$。
    - **雙軸完全後方**：$B.x_{max} \le A.x_{min} \land B.y_{max} \le A.y_{min}$。
    - **角色與角色間**：直接比較地面接觸點基準深淺度 $\text{baseDepth} = (c.x + c.y)$。
 3. **有向無環圖拓撲建構與 Kahn 演算法排程**：
@@ -61,151 +61,122 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
 
 ---
 
-## 4. 四大生活與研究聚落空間佈局（Four Quad Campuses Architecture）
+## 4. 六大生活與研究聚落空間佈局（Six Quad Campuses Architecture）
 
-地圖規格擴展至 $28 \times 28$ 瓦片，劃分為四大獨立建築聚落與中央社交綠意十字大道：
+地圖規格擴展至 $28 \times 44$ 瓦片，劃分為六大獨立建築聚落與縱向貫穿的中央社交綠意十字大道：
 
 ```
-[Zone 1: Ludwig's House] (NW)             [Zone 3: Ludwigia AI Studio] (NE)
-(Ludwig, Mom, Dad, Luena, Mochi)          (Gemini, Ludwigia, Claude, ChatGPT)
-- 正門雙扇門 (SE) / 側邊露台雙扇門 (SW)       - 雙排42U伺服器機櫃 / 曲面指令台
-- 檯燈與鍵盤皮革桌墊 / 零浮空精裝書櫃        - 玻璃白板 DPO 公式 / 義式咖啡吧
-                 \                               /
-                  +-----------------------------+
-                  |  中央廣場 Central Plaza     |
-                  |  雙層宏偉石造噴水池 (Fountain) |
-                  |  鑄鐵柚木長椅 / 櫻花林蔭道  |
-                  +-----------------------------+
-                 /                               \
-[Zone 2: 男11 211 宿舍] (SW)              [Zone 4: 典雅藏書閣 Grand Library] (SE)
-(Happy, Kerry, Clark, Jerry, Billy)       (Bo Han Wu, Haolei Pei)
-- 4 座經典上床下桌 (Loft Bed/Desk)        - 通頂桃花心木大書牆 / 滑軌黃銅梯
-- 寢室門牌 "男11 211" / 經典深藍舒適沙發    - 祖母綠玻璃銀行燈胡桃木長桌 / 渾天儀
-- 實木進口雙開門                          - 酒紅波斯地毯單人扶手椅 / 玻璃溫室
+[Zone 1: 站長家宅 Ludwig's House] (NW, y: 0..9)          [Zone 3: AI 前瞻實驗室 AI Studio] (NE, y: 0..9)
+(趙健宏, 媽媽, 爸爸, 妹妹, 餅餅)                           (ChatGPT, Gemini, Claude)
+- 正門雙扇門 (SE) / 側邊露台雙扇門 (SW)                      - 雙排42U伺服器機櫃 / 曲面指令台
+- 檯燈與鍵盤皮革桌墊 / 零浮空精裝書櫃                       - 玻璃白板 DPO 公式 / 義式咖啡吧
+                 \                                              /
+                  +--------------------------------------------+
+                  |  中央廣場與噴泉大道 Central Plaza Avenue    |
+                  |  雙層宏偉石造噴水池 (Fountain)              |
+                  |  鑄鐵柚木長椅 / 櫻花林蔭道 / 景觀紀念地標柱  |
+                  +--------------------------------------------+
+                 /                                              \
+[Zone 2: 男11 211 宿舍] (SW, y: 17..26)                  [Zone 4: 典雅藏書閣 Grand Library] (SE, y: 17..26)
+(張哲瑋, 王品翔, 林子傑, 黃昱翔, 柯克偉, 吳哲, 吳柏翰, 吳宥謙) (知識藏書閣門樑招牌 / 典籍閱覽席)
+- 4 座經典上床下桌 (Loft Bed/Desk)                       - 通頂桃花心木大書牆 / 滑軌黃銅梯
+- 寢室門牌 "男11 211" / 經典深藍舒適沙發                   - 祖母綠玻璃銀行燈胡桃木長桌 / 渾天儀
+- 實木進口雙開門                                         - 酒紅波斯地毯單人扶手椅 / 玻璃溫室
+                 |                                              |
+[Zone 5: 三民高中 • 經典教室] (SW2, y: 33..42)            [Zone 6: 抖音研發中心 Douyin Tech Office] (SE2, y: 33..42)
+(凌振嚴, 林浥翔, 陳俊龍, 賴柏廷)                         (裴皓磊, 陳泊霖, 徐偉豪, 劉晨馨)
+- 北面主牆置中翡翠大黑板 (5.2格) / 頂部掛鐘              - 6組工程師升降雙螢幕工作站 (Aeron 人體工學椅)
+- 黑板正前方置中教師講台                                  - 抖音官方彩色光暈地面發光標誌 (TikTok Emblem)
+- 4列整齊學生課桌椅 (中央 1.55格主走道)                   - 現代科技茶水間咖啡吧檯 (Coffee & Refreshment Bar)
+- 西面雙採光大窗 / 南面置物儲物櫃與公佈欄                - 內側門樑科技標牌 / 全景外向玻璃帷幕
 ```
 
-### 4.1 四大象限互動門與高於門扇之實體圍牆系統（Quad Doorway & Elevated Wall Enclosure System）
-- **實體牆高高於門扇契約（Elevated Wall & Lintel Height Contract）**：全區門扇高度統一為 $H_{door} = 2.15$；全區進口與側邊實體外牆高度統一設定為 $H_{wall} = 2.55$，厚度 $0.25$，門頭跨接 $z = 2.15..2.55$ 的立體門楣過樑（Lintel Beam），杜絕門扇浮動於低矮圍欄之上，確保建築結構高於門面、視覺沉穩。
-- **Zone 1 正門東南雙開實木門（SE Entrance Double Doors）**：設於 $x = 10, y = 4.5..6.8$，左右兩側由 $H = 2.55$ 的實體米白厚牆牢固承托，門楣過樑無縫閉合頂部；靠近至 2.4 格以內時向庭院平滑旋轉 77 度開啟。
-- **Zone 1 側邊西南景觀露台雙開門（SW Side Terrace Doors）**：設於 $y = 10, x = 4.5..6.8$，連接客廳與南側戶外走廊，兩側設有 $H = 2.55$ 實木邊界外牆並內嵌觀景景觀大窗，頂部配備實體門楣過樑，雙向平滑向外旋開，門外鋪設椰棕編織迎賓地墊。
-- **Zone 2 男11 211 寢室門**：設於東南實體進口外牆 $x = 10, y = 20.5..22.8$，雙開雪松實木門板上方直接嵌掛經典藍底白字「男11 211」琺瑯金屬門牌，隨門扇平滑旋轉開啟；門頭頂樑配備深色建築門楣標牌。
-- **Zone 3 AI 工作室滑動玻璃門**：設於西南牆 $x = 18, y = 4.5..6.8$，兩側為 $H = 2.55$ 實體厚牆，門楣過樑嵌掛發光霓虹標牌「AI STUDIO」，靠近時自動向兩側無聲平移滑動。
-- **Zone 4 典雅藏書閣實木大門**：設於西北牆 $x = 18, y = 20.5..22.8$，兩側為 $H = 2.55$ 實體深木厚牆，門頭配備浮雕金屬標牌「GRAND LIBRARY」，靠近時自動向外旋開。
-
-### 4.2 男11 211 寢室立體架構（Zone 2 Dormitory Architecture）
-- **完整立體四壁圍蔽（Solid Room Enclosure）**：
-  - **西北實體後主牆（NW Back Wall, $x = 0$）**：高度 $2.6$，嵌有高處磨砂校園宿舍採光窗與黑客松宣傳海報。
-  - **東北實木隔間牆（NE Partition Wall, $y = 17$）**：高度 $2.6$，表面配備軟木公佈欄、課表與日程便利貼。
-  - **東南門面外牆（SE Entrance Wall, $x = 10$）**：雙段實體外牆結合中央門框頂樑，徹底杜絕懸空浮動感。
-  - **西南低矮側邊護壁板（SW Skirting Boundary, $y = 27$）**：低高度立體邊界線，維持等角視角立體透視框景。
-- **正對對稱上床下桌系統（Symmetrical Facing Loft Bed Units）**：
-  - 北側排（Happy Wang & Clark Wu, $y = 17.5$）：書桌與旋轉椅朝南開向中央走廊，椅子正對書桌/床鋪，椅背朝向走道。
-  - 南側排（Kerry Chang & Jerry Chung, $y = 24.5$）：書桌與旋轉椅朝北開向中央走廊，椅子正對書桌/床鋪，椅背朝向走道。
-  - 兩側椅背在中央走廊互相背對（背靠背），兩排床鋪橫向正對彼此，符合標準台灣大學四人寢室生活格局。
-  - 中央交誼區設有深藍舒適經典沙發（軟質扶手、高靠背、蓬鬆暖橘抱枕、胡桃木咖啡桌、茶杯與民謠吉他，Billy Fang 在此自在談笑彈琴，重現最溫暖舒適的大學寢室交誼靈魂）。
-
-### 4.3 典雅花園藏書閣專屬建模（Zone 4 Library Architectural Models）
-- **通頂桃花心木大書牆與滑軌黃銅梯（Grand Library Book Wall & Rolling Ladder）**：
-  - 4 層深紅桃花心木立體書櫃，緊密陳列上百本各色精裝典籍與燙金書脊。
-  - 櫃頂裝飾新古典雕花線板與垂落常春藤藤蔓。
-  - 橫向延伸拋光黃銅滑軌（Brass Rail），配備精巧木製滾輪滑梯，營造古典學術圖書館的深邃歷史感。
-- **長形胡桃木銀行家閱覽桌（Long Banker's Study Table）**：
-  - 實木倒角胡桃木長桌，中央陳列古董祖母綠綠色玻璃銀行燈（Emerald Banker's Lamp），在地板與桌面投射出溫潤的綠寶石徑向擴散光暈。
-  - 桌面攤開正在演算的幾何手稿、墨水瓶與拋光黃銅放大鏡。
-- **酒紅波斯地毯與皮革單人扶手椅（Cognac Wingback Reading Nook）**：
-  - 地面鋪設帶流蘇邊緣的酒紅菱形波斯編織地毯。
-  - 放置焦糖干邑色拉扣皮革單人高背扶手椅（Wingback Chair），搭配黃銅鉚釘收邊。
-  - 邊几擺放骨瓷熱伯爵茶（Earl Grey），上方立式黃銅復古立燈向下投射溫暖金黃閱讀光圈。
-- **古黃銅渾天儀（Celestial Armillary Globe）**：
-  - 經典三腳雕花木座，托起多層同心黃銅旋轉赤道環、黃道環與金屬樞軸，象徵球面幾何與天體軌道的數理交響。
-- **六角玻璃植物溫室箱（Botanical Terrarium Case）**：
-  - 黑色銅條鑲邊六角立體玻璃箱，內部滋養微型波士頓蕨、翠綠苔蘚與溪流鵝卵石，為嚴謹的學術藏書閣注入自然生機。
-
-### 4.4 經典精準家具建模（Architectural Geometry Fixes）
-- **開發工作桌與懸臂檯燈（Desk & Anglepoise Lamp）**：
-  - 炭黑皮革桌墊（Charcoal Mat）精準置中於桌面（$z = 0.725$），上置 75% 背光機械鍵盤與人體工學滑鼠。
-  - 開發筆電置中開屏，副螢幕穩固架設於右側金屬支架，螢幕朝向使用者。
-  - 雙臂關節懸臂檯燈固定於桌子後左角落，圓形厚重黃銅底座扎實貼合桌面，懸臂往前傾斜延伸，燈罩朝下在鍵盤與桌墊投射柔和的黃金半徑徑向光圈。
-- **四層北歐實木書櫃（Aligned Bookshelf）**：
-  - 書櫃穩固貼合西北實牆（$x: 0.1, y: 3.8..6.4$），擁有四層水平實木隔板（$z = 0.15, 0.75, 1.35, 1.95$）。
-  - 所有書籍底部高度嚴格吻合隔板頂部表面（$z_{book\_base} = z_{shelf}$），垂直站立成排，零錯位、零懸空；三層放置陶土多肉盆栽，頂層點綴英國常春藤垂蔓。
-- **男11 211 四座上床下桌（Loft Bed / Desk Units）**：
-  - 實木/黑鐵立柱（高 $2.25$ 格），下層配備完整大書桌、顯示器、書架與人體工學旋轉椅。
-  - 上層為厚床墊、防摔安全護欄（雙橫桿）、床頭軟枕與各室友代表色之蓬鬆被褥。
-  - 右前側固定金屬直爬梯，踏階清晰立體。
-- **高質感鑄鐵柚木長椅（Refined Park Benches）**：
-  - 弧形雕花深色鑄鐵側架與扶手（附金屬光澤倒角）。
-  - 三根平行的弧面柚木座板與雙根人體工學靠背條，帶自然木紋，地面投射微縮柔和接觸陰影。
+### 4.1 六大象限互動門與立體過樑門楣（Quad Doorways & Lintel Beams）
+- **實體外牆與門楣高度契約**：門扇高度統一 $H_{door} = 2.15$；實體外牆統一 $H_{wall} = 2.55$；門頭跨接 $z = 2.15..2.55$ 的立體過樑（Lintel Beam），確保門面結構堅實。
+- **Zone 1 正門與露台雙開門**：靠近至 2.4 格以內時向庭院平滑旋轉開啟。
+- **Zone 2 男11 211 寢室門**：雙開實木門嵌掛經典藍底白字「男11 211」琺瑯金屬門牌。
+- **Zone 3 AI 工作室滑門**：感應靠近時向兩側無聲平移滑動。
+- **Zone 4 藏書閣大門**：門頭配備浮雕金屬標牌「GRAND LIBRARY」，靠近時自動旋開。
+- **Zone 5 三民高中教室門**：門扇上方懸掛「三民高中」牌匾，靠近時自動旋開。
+- **Zone 6 抖音科技辦公室門**：科技感懸臂感應推開。
 
 ---
 
 ## 5. 動態角色系統與 JSON 資料解耦（Character System & Data Decoupling）
 
 ### 5.1 資料層單一真相來源（`characters.json`）
-所有 16 位常駐角色的屬性均完整收斂於 `data/characters.json`：
-- **基礎資訊**：`id`, `name`, `gender` (`male` / `female` / `ai` / `cat`), `role`, `avatar`, `zone`
+所有 23 位常駐角色（涵蓋家人、大學室友、AI 夥伴、國高中同學、抖音研發同事）之屬性均以 `data/characters.json` 為單一真相來源（SSOT），執行期動態加載並響應多語系切換：
+- **基礎資訊**：`id`, `name` (`zh-TW` / `en`), `gender` (`male` / `female` / `ai` / `cat`), `role` (`zh-TW` / `en`), `avatar`, `zone`
 - **外觀特徵**：`skin`, `hair`, `hairStyle`, `shirt`, `pants`, `nameColor`
-- **多語系隨機對話池**：每位角色內建 5 套獨立且富有個性的對話情境（含 `zh-TW` 與 `en` 雙語），每次互動時由 `CharacterManager` 隨機抽選，徹底告別單一重複台詞。
+- **初始坐標**：`spawn` (`x`, `y`)
+- **多語系隨機對話池**：每位角色內建多套獨立且富有個性的情境對話（含 `zh-TW` 與 `en` 雙語），每次互動時由 `CharacterManager` 隨機抽選，徹底告別單一重複台詞。
+- **角色名冊（共 23 位）**：
+  1. **Zone 1 站長家庭**：趙健宏 (`ludwig`, 站長)、媽媽 (`yully`)、爸爸 (`wuyen`)、妹妹 (`luena`)、橘貓餅餅 (`mochi`)
+  2. **Zone 2 男11 211 寢室室友**：王品翔 (`happy`)、張哲瑋 (`kerry`)、柯克偉 (`clark`)、林子傑 (`jerry`)、黃昱翔 (`billy`)、吳哲 (`billy`)、吳柏翰 (`bohan`)
+  3. **Zone 3 AI 前瞻實驗室**：Ludwigia (`ludwigia`)、Gemini (`gemini`)、Claude (`claude`)、ChatGPT (`chatgpt`)
+  4. **Zone 5 高中 / 國中同學**：凌振嚴 (`zhenyan`)、林浥翔 (`willkane`)、陳俊龍 (`chunlong`)、賴柏廷 (`benny`)
+  5. **Zone 6 抖音研發中心同事**：裴皓磊 (`haolei`)、陳泊霖 (`baisen`)、徐偉豪 (`weihao`)、劉晨馨 (`chenxin`)
 
-### 5.2 步態動力學與雙向擺臂腿修復（Walk Animation Physics）
+### 5.2 步態動力學與雙向擺臂腿渲染（Walk Animation Physics）
 - 移動狀態由 `c.isWalking` 與 `c.walkTimer` 統轄，無論採用鍵盤 WASD、方向鍵、手機 D-Pad 或滑鼠 A* 尋路，均無差別驅動步態計時器。
 - **下肢交替擺腿**：雙腿沿正弦曲線交替前後擺動（$\Delta leg = \pm \sin(walkTimer) \times 4.5\text{px}$）。
 - **上肢反向擺臂**：雙手臂與對側雙腿維持物理反向擺動（$\Delta arm = \mp \Delta leg \times 0.4$），營造自然協調的走動節奏。
 - **身體重心起伏**：軀幹與頭部伴隨步伐產生垂直微幅諧振（$\Delta bob = \sin(walkTimer) \times 2.5\text{px}$）。
 - **停止靜止收步**：停止移動時立即重置 `walkTimer = 0`，雙腿平行筆直站立，手臂自然垂落，絕無卡死跨步現象。
-  - **Luena**（妹妹 / 活潑幽默、分享校園與生活趣事）
-  - **Mochi**（橘貓餅餅 / 蜷縮打盹、伸懶腰與巡視家裡）
-
-### 4.2 戶外庭園與廣場（Courtyard & Plaza, $10 \le x < 22, 0 \le y < 22$）
-- **環境地景**：鵝卵石大道、雙層宏偉石造噴泉（漣漪擴散動畫）、12 棵以上櫻花與綠蔭大樹、遮陽傘咖啡座與景觀長椅。
-- **聚集好友**：
-  - **Clark Wu**, **Billy Fang**, **Jerry Chung**, **Happy Wang**, **Kerry Chang**, **Haolei Pei**, **Bo Han Wu**。
-- **科技角落（Tech Pavilion）**：
-  - **Ludwigia**, **Gemini**, **Claude**, **ChatGPT**。
 
 ---
 
-## 5. 實體狀態機、防群聚排斥力與斜向平滑尋路（Entity AI & Physics）
+## 6. 原創演算法與物理狀態機（Original Algorithms & Physics Engine）
 
-### 5.1 防人物穿越與防群聚排斥力（Social Distance Repulsion）
-- 為消除人物重疊與穿牆感，系統實施雙層約束：
-  - **靜態網格碰撞（Static Collision Matrix）**：嚴格標記牆體與家具邊界，禁止穿透。
-  - **動態防群聚排斥力（Anti-Crowding Force）**：每影格檢測所有人物間距，若兩人間距 $< 1.6$ 瓦片，即施加反比於距離的排斥向量 $\vec{v}_{\text{repulse}}$，使所有人自然散開保持至少 $1 \sim 2$ 格的舒適社交距離。
-  - **目標空曠驗證**：NPC 漫步選點時，若目標周圍 $1.8$ 格內已有其他人，自動重新隨機選點，杜絕扎堆聚集。
+### 6.1 視口中心錨定縮放演算法（Centered Viewport Zoom Focus）
+為了杜絕相機縮放時以世界原點為基準所導致的畫面漂移，鏡頭縮放以屏幕中心 $(cx, cy) = (width/2, height/2)$ 為軸心：
+- **畫面渲染座標變換**：
+  $$\text{ctx.translate}(cx, cy) \to \text{ctx.scale}(zoom, zoom) \to \text{ctx.translate}(-cx, -cy)$$
+- **螢幕點擊逆投影對齊**：
+  $$adjS_x = \frac{s_x - cx}{zoom} + cx, \quad adjS_y = \frac{s_y - cy}{zoom} + cy$$
+  再將 $(adjS_x, adjS_y)$ 傳入 `screenToIso(adjSx, adjSy, ox, oy)` 逆推網格座標，確保玩家在遠端分區建築（如三民高中教室、抖音辦公室）縮放視角時，點擊尋路與焦點永遠 100% 準確無漂移。
 
-### 5.2 8 方向對角平滑尋路（Diagonal A* & Line-of-Sight Smoothing）
-- 支援直向與斜向共 8 個移動方向（斜向代價 $\sqrt{2} \approx 1.414$）。
-- 導入視線射線穿透（Line-of-Sight Raycasting）簡化中間鋸齒折點，玩家點選地面時能以自然流暢的直線/斜線直線抵達目的地。
+### 6.2 等軸測牆面剪切與幾何斜度對齊（Isometric Wall Projection Shear Matrices）
+為保證掛在建築牆面上的黑板、掛鐘、門楣牌匾自然依附牆面角度，系統嚴格應用剪切變換矩陣：
+- **北向與南向橫牆（沿 X 軸）**：使用剪切矩陣 `(1, 0.5, 0, 1, 0, 0)`，使平面物體自然平行於等軸側北牆。
+- **東向與西向縱牆（沿 Y 軸）**：使用剪切矩陣 `(1, -0.5, 0, 1, 0, 0)`，使平面物體自然平行於等軸側西牆。
+- 杜絕在傾斜牆面進行水平裸繪，保證全場景 2.5D 透視視角嚴格自洽。
 
-### 5.3 智能室內外動態鏡頭縮放與穿透（Dynamic Camera & Opacity）
-- **在房內時（Indoor Focus）**：
-  - 鏡頭自動平滑 Zoom In（$1.35\times$），聚焦於室內精緻家具與家庭溫馨互動。
-  - 室外世界自動半透明化（`outsideAlpha = 0.32`），降低外部視覺干擾。
-- **走出房門後（Outdoor Expansion）**：
-  - 鏡頭平滑 Zoom Out（$0.95\times$），宏觀展現整座噴水池、樹林與廣場好友。
-  - 室外世界恢復 $100\%$ 不透明度。
+### 6.3 防人物重疊與社交防群聚排斥力場（Social Distance Repulsion Field）
+為消除 NPC 重疊與扎堆，系統在更新迴圈實施排斥向量場：
+- 每影格檢測所有人物對之歐幾里得距離 $d = \text{hypot}(\Delta x, \Delta y)$。
+- 當 $d < d_{min}$（閾值 $1.4$ 瓦片）時，計算反比排斥向量：
+  $$\vec{F}_{push} = \frac{\Delta \vec{r}}{d} \times (d_{min} - d) \times 0.4 \times dt$$
+- 分別在非玩家實體上施加平滑推力向量，並進行 `NavGrid.isWalkableRadius` 邊界校驗，確保人物自然散開至舒適社交距離且不穿牆。
+- **目標空曠驗證**：NPC 漫步選點時，若目標周圍 $1.4$ 格內已有其他人，自動放棄並重新選點。
 
-### 5.4 簡約浮動名牌（Minimalist Clean Name Tags）
-- 摒棄刺眼的亮色外框，改採低調精緻的半透明深灰磨砂膠囊（`rgba(15,23,42,0.78)`），搭配俐落純白字體，視覺乾淨且不遮蔽畫面。
+### 6.4 8 方向對角 A* 與視線射線穿透平滑演算法（Diagonal A* & Line-of-Sight Raycasting）
+- 支援直向（Cost 1.0）與對角斜向（Cost $\sqrt{2} \approx 1.414$）移動，在對角移動時加入兩側鄰格連通性檢驗（Prevent Corner-Cutting）。
+- **射線穿透路徑平滑（Bresenham-based LOS Smoothing）**：
+  從路徑起點向終點方向逆向尋找最遠之無障礙直視節點（Line of Sight），略過中途冗餘的階梯狀折點，使人物移動路徑呈現自然的直線與斜線推進。
+
+### 6.5 全站 Design System 與即時色盤聯動契約（Theme & Palette Contract）
+- HUD 玻璃擬態面板、狀態文字、互動提示與高亮選框繼承全站 11 套色盤 Design Tokens（`--space-accent`, `--space-accent-glow` 等）。
+- 監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 自定義 DOM 事件，跨頁切換風格時動態無感重繪，零刷新維護視覺一致性。
 
 ---
 
-## 6. 音訊合成管線（Web Audio Synthesizer）
+## 7. 音訊合成管線（Web Audio Procedural Synthesizer）
 
-完全不依賴外部音檔，於瀏覽器端即時合成：
+系統完全不加載任何外部 mp3/wav 靜態音檔，純粹透過 Web Audio API 於瀏覽器端即時程序化數學合成環境聲景：
 1. **Rain Mode（雨聲）**：
-   - 生成白噪音 Buffer。
-   - 通過 `BiquadFilterNode`（Lowpass 800Hz, Q=1.2）模擬細密雨點。
+   - 生成 2 秒雙聲道白噪音緩衝區（White Noise Buffer，振幅隨機分佈於 $[-1, 1]$）。
+   - 通過 `BiquadFilterNode`（Lowpass 800Hz, Q=1.2）濾波，模擬雨滴敲擊瓦片與樹葉的低頻細密聲響。
 2. **Vinyl Mode（黑膠唱片）**：
    - 60Hz 交流電底噪與微弱三角波。
    - 隨機週期觸發短暫 Delta 脈衝類比黑膠細微爆裂聲。
 3. **Cafe Mode（暖調和弦）**：
-   - F-Major 7th（$174.61\text{Hz}, 220.00\text{Hz}, 261.63\text{Hz}, 329.63\text{Hz}$）。
-   - 搭配超低頻振盪器（LFO 0.15Hz）實現緩慢呼吸感的立體聲聲景。
+   - F-Major 7th 四音振盪器（$174.61\text{Hz}, 220.00\text{Hz}, 261.63\text{Hz}, 329.63\text{Hz}$）。
+   - 搭配超低頻振盪器（LFO 0.15Hz）調製振幅與立體聲聲像，實現緩慢呼吸感的沉浸式背景音效。
 
 ---
 
-## 7. 外部參考來源與授權聲明（Citations & Attributions）
+## 8. 外部參考來源與授權聲明（Citations & Attributions）
 
 本空間開發過程參考並借鑑下列優秀開源專案與設計概念：
 1. **whatsmyagentdoing**（MIT License, Charonyuu）：

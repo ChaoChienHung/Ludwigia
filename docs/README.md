@@ -56,6 +56,7 @@
 - `docs/specs/timeline-design-spec.md`：`About Me` 下 timeline 的正式設計規格
 - `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
 - `docs/specs/citation-spec.md`：參考文獻（References）結構、APA/IEEE 引用格式、真實驗核與原語言留存 spec
+- `docs/specs/isometric-world-spec.md`：等軸 2.5D 虛擬生活空間、原創演算法（拓撲遮擋、視口中心縮放、牆面剪切投影）與社交世界技術規格
 
 ### Design
 
@@ -99,6 +100,7 @@
 - 想看「`<meta>` 欄位與 head/index mapping」：看 `docs/specs/content-metadata-spec.md`
 - 想看「翻譯 workflow 的 source contract」：看 `docs/specs/translation-spec.md`
 - 想看「參考文獻引用格式、標題與原語言留存」：看 `docs/specs/citation-spec.md`
+- 想看「等軸 2.5D 世界、原創渲染演算法與角色系統」：看 `docs/specs/isometric-world-spec.md`
 - 想看「為什麼這樣設計 / 最後怎麼定」：看 `docs/design/design.md`
 - 想看「這次改動要跑什麼 / 哪些底線不能退」：看 `docs/rules/`
 - 想看「擴充某一類能力時要盤哪些檔」：看 `docs/guide/`
