@@ -407,8 +407,8 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "好友 (常客 · 男11 211)",
-        "en": "Friend (Frequent Visitor · Dorm 211)"
+        "zh-TW": "大學同學",
+        "en": "College Classmate"
       },
       "avatar": "😄",
       "zone": "dorm_211",
@@ -490,8 +490,8 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "室友 (男11 211)",
-        "en": "Roommate (Dorm 211)"
+        "zh-TW": "中央大學室友",
+        "en": "NCU Roommate"
       },
       "avatar": "assets/avatars/kerry.png",
       "avatarFallback": "🧑‍💻",
@@ -582,8 +582,8 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "室友 (男11 211)",
-        "en": "Roommate (Dorm 211)"
+        "zh-TW": "中央大學室友",
+        "en": "NCU Roommate"
       },
       "avatar": "😎",
       "zone": "dorm_211",
@@ -642,8 +642,8 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "室友 (男11 211)",
-        "en": "Roommate (Dorm 211)"
+        "zh-TW": "中央大學室友",
+        "en": "NCU Roommate"
       },
       "avatar": "🎧",
       "zone": "dorm_211",
@@ -726,8 +726,8 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "室友 (男11 211)",
-        "en": "Roommate (Dorm 211)"
+        "zh-TW": "中央大學室友",
+        "en": "NCU Roommate"
       },
       "avatar": "🤠",
       "zone": "dorm_211",
@@ -1190,6 +1190,9 @@
       "dialogues": {
         "zh-TW": [
           [
+            "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！"
+          ],
+          [
             "這個 bug 我抓了一整個下午，終於給它修掉了！"
           ],
           [
@@ -1197,6 +1200,9 @@
           ]
         ],
         "en": [
+          [
+            "So annoying, I have no idea what to say for my defense, there's basically nothing to talk about!"
+          ],
           [
             "I tracked this bug all afternoon and finally squashed it!"
           ],

@@ -941,6 +941,13 @@
           ctx.restore();
         }
       }
+
+      // Render Permanent Ground Plane Decals (e.g. Official TikTok Floor Emblem)
+      // Rendered at floor level so characters and 3D furniture naturally render ON TOP of it without depth sorting popping
+      ctx.save();
+      if (this.currentZone !== 'douyin_office') ctx.globalAlpha = this.outsideAlpha;
+      this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
+      ctx.restore();
     }
 
     // --- Collect All World Props & Entities for Topological Sorting ---
@@ -2077,11 +2084,6 @@
         draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 38.0, 'douyin', ox, oy)
       });
 
-      // Official TikTok Circular Tech Floor Emblem (High-resolution ground decal with chromatic shift)
-      list.push({
-        xMin: 21.3, xMax: 24.3, yMin: 36.0, yMax: 39.0,
-        draw: () => this.models.drawTikTokFloorEmblem(this.ctx, 22.8, 37.5, 1.5, ox, oy)
-      });
 
       // Douyin Office Props: 6 Modern Developer Workstations with Ultrawide Displays & Aeron Chairs
       // North Pod
@@ -2125,7 +2127,7 @@
 
       // Office Tech Coffee & Refreshment Bar
       list.push({
-        xMin: 26.4, xMax: 27.8, yMin: 38.5, yMax: 39.8,
+        xMin: 26.4, xMax: 27.8, yMin: 38.5, yMax: 39.2,
         draw: () => this.models.drawOfficeCoffeeBar(this.ctx, 26.4, 38.5, ox, oy)
       });
 

@@ -2404,8 +2404,12 @@
       ctx.closePath();
       ctx.fill();
 
-      // Pulsing Neon Edge
-      ctx.strokeStyle = Math.sin(time) > 0 ? '#25f4ee' : '#fe2c55';
+      // Smooth Dual-Tone Cyan/Magenta Edge Blend
+      const factor = Math.sin(time) * 0.5 + 0.5;
+      const nr = Math.round(37 * factor + 254 * (1 - factor));
+      const ng = Math.round(244 * factor + 44 * (1 - factor));
+      const nb = Math.round(238 * factor + 85 * (1 - factor));
+      ctx.strokeStyle = `rgb(${nr}, ${ng}, ${nb})`;
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
@@ -2614,12 +2618,6 @@
         ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.fillText('智慧研究室', 0, 7);
 
-        // Top Pulsing LED
-        const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
-        ctx.fillStyle = Math.sin(performance.now() * 0.005) > 0 ? '#22d3ee' : '#0891b2';
-        ctx.beginPath();
-        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
-        ctx.fill();
       } else if (type === 'lib') {
         // Grand Library Scholar Bronze Totem
         ctx.fillStyle = '#451a03';
@@ -2640,13 +2638,6 @@
         ctx.fillStyle = '#fef3c7';
         ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.fillText('知識藏書閣', 0, 7);
-
-        // Top Brass Finial
-        const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
-        ctx.fillStyle = '#fbbf24';
-        ctx.beginPath();
-        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
-        ctx.fill();
       } else if (type === 'douyin') {
         // Douyin Tech Office Totem
         ctx.fillStyle = '#0f172a';
@@ -2667,14 +2658,27 @@
         ctx.fillStyle = '#25f4ee';
         ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.fillText('抖音研發辦公室', 0, 7);
+      }
+      ctx.restore();
 
-        const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
+      // 4. Top Monument Finial Indicator (Drawn in clean world coordinates outside sheared plaque context)
+      const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
+      if (type === 'ai') {
+        ctx.fillStyle = Math.sin(performance.now() * 0.005) > 0 ? '#22d3ee' : '#0891b2';
+        ctx.beginPath();
+        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (type === 'lib') {
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (type === 'douyin') {
         ctx.fillStyle = '#fe2c55';
         ctx.beginPath();
         ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.restore();
     }
 
     // --- 12. TikTok / Douyin Official Floor Emblem (Ground Decal) ---
