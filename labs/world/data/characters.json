@@ -1557,7 +1557,7 @@
             "別來沾邊，死得很快"
           ],
           "en": [
-            "Ah-Fang's bed really comfier.",
+            "Ah-Fang's bed is really comfortable.",
             "Don't cross me, you won't last long."
           ]
         }
@@ -2346,6 +2346,38 @@
             "speaker": "zhenyan",
             "text": "I'm playing psychological warfare here.",
             "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwigia",
+        "ludwig"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwigia",
+            "text": "老哥，你還有很多筆記沒整理耶，要不要整理一下？",
+            "delay": 2.4
+          },
+          {
+            "speaker": "ludwig",
+            "text": "好啦...",
+            "delay": 2.0
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwigia",
+            "text": "Bro, you still have tons of notes to organize. How about tidying them up?",
+            "delay": 2.4
+          },
+          {
+            "speaker": "ludwig",
+            "text": "Alright, alright...",
+            "delay": 2.0
           }
         ]
       }
