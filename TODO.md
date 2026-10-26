@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] Ludwigia World 的 ChatGPT 角色對話改寫
+    - 交付條件：只改 `labs/world/data/characters.json` 中 `chatgpt` 的中英文對話；覆蓋原有五組台詞，回應 Gemini、評論 Claude 與 Ludwigia；角色資料維持單一來源且 JSON 可解析。
+    - 已完成：五組中英文對話已改寫為較有火藥味的角色互動；確認每語系皆有五組、每組兩句，JSON 解析與 diff 格式檢查通過。
+    - Review 重點：作者確認角色口吻與火藥味是否符合 World 的氛圍。
+
 - [x] CS5446 與 CS5224 課程講義／習題補充
     - 交付條件：CS5446 source 涵蓋 model-based RL、game theory 與 Tutorial 5–8 的可核對例題；CS5224 source 涵蓋應用範例、IaC、pricing／TCO；兩篇 HTML 重建，草稿維持不進公開索引。
     - 已完成：比對並沿用兩篇原有 Week 1–7／Week 1–6 內容，新增兩門課的缺漏章節、來源盤點與習題演算；全面複查後補上熊貓賽局的逐格最佳反應、IaC 工具與授權的課件日期說明，以及 k-means 距離的數學邊界；HTML 與搜尋索引已重生，章節 reviewkit、數值抽查與生成器自測通過。

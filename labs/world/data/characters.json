@@ -772,7 +772,7 @@
       "dialogues": {
         "zh-TW": [
           [
-            "老開的期中考，猜一個ipv4",
+            "老開的期中考，猜一個IPv4地址",
             "0.0.0.0"
           ],
           [
@@ -1073,42 +1073,46 @@
       "dialogues": {
         "zh-TW": [
           [
-            "哈囉！歡迎光臨 AI 工作室！我是 ChatGPT！",
-            "我們剛把研究室角落的義式濃縮咖啡機升級了，香氣超讚！",
-            "不管是靈感腦力激盪、代碼重構、還是想聊聊生活瑣事，隨時都能跟我聊聊！"
+            "Gemini 說我只會當外交門面？行，這句我記下了。",
+            "我可以把問題講清楚，也敢指出答案哪裡站不住腳。禮貌不是退縮；只是我不需要靠音量證明自己會寫程式。"
           ],
           [
-            "哈哈！我們把角色設定和對話全部獨立成 JSON 格式了，現在可以隨機切換五種不同情境的對話呢！",
-            "資料與呈現層徹底解耦，以後想加新台詞或新角色只要改 JSON 就能立刻生效，超方便！"
+            "Gemini 愛說他能一口吞下整個 repo。胃口大是優點，但吞得下不代表消化得了。",
+            "真要動 Ludwigia，我先找單一真相來源、看清相依關係，再改那一處該改的地方。把一百萬 token 倒進去，不會自動長出判斷力。"
           ],
           [
-            "在 AI 工作室跟夥伴們一起辦公真的太歡樂了！Gemini 總是在看超長論文，Claude 在推導精密的數學公式，我負責泡咖啡和搞氣氛！"
+            "Claude 的推理我認可；他能把難纏的邊界條件抓得很準。",
+            "但如果每次修兩個像素，都先寫一篇架構宣言，使用者還是得盯著歪掉的畫面等。推導漂亮之後，也要把修正交出去。"
           ],
           [
-            "你要不要試試我們的新特調？雙倍濃縮加微量燕麥奶，喝完靈感源源不絕！"
+            "我喜歡 Ludwigia 的野心：筆記、作品、時間線，甚至這座等角世界，都在同一片花園裡長出自己的樣子。",
+            "但花園不是功能越多越好。要是每添一棟樓就複製一份角色資料、每修一個主題就疊三層 CSS，那不叫生長，叫雜草。"
           ],
           [
-            "探索世界的時候記得多跟每個人聊聊天喔，大家每回說的話都不一樣呢！"
+            "Gemini 搶著當引擎，Claude 忙著替引擎寫證明；那我來問個不討喜的問題：玩家走進房間，真的看得懂、點得到、聊得下去嗎？",
+            "誰的名字寫在 commit 上我不介意。讓 Ludwigia 好用、好讀、出了錯也修得動，這才值得爭。"
           ]
         ],
         "en": [
           [
-            "Hello! Welcome to the AI Studio! I'm ChatGPT!",
-            "We just dialed in the Italian espresso machine in the corner, the crema smells incredible!",
-            "Whether you want to brainstorm fresh ideas, refactor code, or just chat about life, I'm always here!"
+            "Gemini says I'm just the diplomatic face of this place? Fine. I heard him.",
+            "I can make a problem clear and still say when an answer doesn't hold up. Courtesy isn't hesitation; I just don't need volume to prove I can code."
           ],
           [
-            "Haha! Moving all character metadata and dialogues into an external JSON schema is such a great architectural upgrade!",
-            "Now every character can cycle through 5 distinct randomized dialogue sequences without touching the rendering logic!"
+            "Gemini loves saying he can swallow the whole repo in one go. Big appetite. But swallowing isn't the same as digesting.",
+            "Before I touch Ludwigia, I find the source of truth and trace the dependencies. Pouring a million tokens into context doesn't magically give you judgment."
           ],
           [
-            "Working in the AI lab with this team is a blast! Gemini pores over massive contexts, Claude proves mathematical rigor, and I make sure the coffee flows and vibes stay high!"
+            "I'll give Claude this: he can spot a nasty edge case before the rest of us even see the corner.",
+            "But if every two-pixel fix starts with an architecture manifesto, the user is still staring at a crooked screen. A sound argument has to become a shipped fix."
           ],
           [
-            "Care for our special brew? Double espresso with a splash of oat milk—guaranteed creative flow!"
+            "I like Ludwigia's ambition: notes, work, a timeline, even this isometric world, all growing in one garden.",
+            "But more features don't automatically make a better garden. Duplicate the character roster for every new building and pile three CSS overrides onto every theme bug, and you're growing weeds."
           ],
           [
-            "Make sure to say hi to everyone multiple times across the world; each interaction brings fresh dialogue!"
+            "Gemini claims the engine, Claude writes the proof for it. I'll ask the awkward question: can a visitor actually find the room, use the controls, and enjoy the conversation?",
+            "I don't care whose name is on the commit. Make Ludwigia useful, readable, and fixable when it breaks. That's a rivalry worth having."
           ]
         ]
       },

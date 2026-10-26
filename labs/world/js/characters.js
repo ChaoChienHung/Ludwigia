@@ -560,11 +560,11 @@
           participants: ['billy', 'clark'],
           dialogues: {
             'zh-TW': [
-              { speaker: 'billy', text: '老開的期中考，猜一個ipv4：0.0.0.0', delay: 2.4 },
+              { speaker: 'billy', text: '老開的期中考，猜一個IPv4地址：0.0.0.0', delay: 2.4 },
               { speaker: 'clark', text: '老開桌上那兩顆火龍果都爛到出汁了... 兩顆爛掉的火龍果對應兩顆爛掉的期中考', delay: 2.4 }
             ],
             'en': [
-              { speaker: 'billy', text: "Lao-Kai's midterm score, guess an IPv4: 0.0.0.0", delay: 2.4 },
+              { speaker: 'billy', text: "Lao-Kai's midterm score, guess an IPv4 address: 0.0.0.0", delay: 2.4 },
               { speaker: 'clark', text: "Those two rotten dragon fruits correspond to two rotten midterms...", delay: 2.4 }
             ]
           }
