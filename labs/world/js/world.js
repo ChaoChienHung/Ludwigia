@@ -57,6 +57,12 @@
       this.doorLibOpen = 0.0;
       this.doorSchoolOpen = 0.0;
       this.doorDouyinOpen = 0.0;
+      this.douyinGateTimer = 2.0;
+      this.douyinGateOpen = 0.0;
+      this.douyinGateAnim = 0.0;
+      this.douyinGateState = 'closed';
+      this.douyinGateMessage = '';
+      this.douyinGateBlocked = true;
 
       // Particles
       this.particles = [];
@@ -487,8 +493,78 @@
       const nearSchoolDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 37.65) < 2.4);
       this.doorSchoolOpen += ((nearSchoolDoor ? 1.0 : 0.0) - this.doorSchoolOpen) * Math.min(1.0, dt * 5.0);
 
-      const nearDouyinDoor = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 37.65) < 2.4);
-      this.doorDouyinOpen += ((nearDouyinDoor ? 1.0 : 0.0) - this.doorDouyinOpen) * Math.min(1.0, dt * 5.0);
+      // 2. Douyin Office Erratic Speed Gate State Machine ("開關時機難以捉摸、不定期開關搞人心態")
+      const playerNearDouyin = (Math.hypot(player.x - 18.0, player.y - 37.65) < 3.2);
+      const anyCharNearDouyin = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 37.65) < 2.6);
+
+      this.douyinGateTimer -= dt;
+
+      if (this.douyinGateTimer <= 0) {
+        if (this.douyinGateOpen > 0) {
+          // Gate is currently OPEN -> decide to close it!
+          this.douyinGateOpen = 0.0;
+          this.douyinGateState = 'closed';
+          // Next closed duration: unpredictable! (1.5 to 4.2 seconds)
+          this.douyinGateTimer = 1.5 + Math.random() * 2.7;
+          this.douyinGateMessage = "🔒 閘門已鎖定 • 隨機審批中...";
+        } else {
+          // Gate is currently CLOSED -> erratic behavior!
+          const roll = Math.random();
+          if (playerNearDouyin || anyCharNearDouyin) {
+            // Someone is waiting! 搞人心態 time:
+            if (roll < 0.35) {
+              // Tease mode: opens briefly or half-way for 0.45s then snaps shut!
+              this.douyinGateOpen = 0.35;
+              this.douyinGateState = 'tease';
+              this.douyinGateTimer = 0.48;
+              this.douyinGateMessage = "⚠️ 工卡感應異常！請勿尾隨！";
+            } else if (roll < 0.75) {
+              // Quick pass mode: opens fully for only 1.2 ~ 1.8 seconds! (快步通過)
+              this.douyinGateOpen = 1.0;
+              this.douyinGateState = 'open';
+              this.douyinGateTimer = 1.2 + Math.random() * 0.7;
+              this.douyinGateMessage = "🟢 閘門放行 • 請在 1.5 秒內快步通過！";
+            } else if (roll < 0.90) {
+              // Generous open: 3.5 seconds
+              this.douyinGateOpen = 1.0;
+              this.douyinGateState = 'open';
+              this.douyinGateTimer = 3.2 + Math.random() * 1.0;
+              this.douyinGateMessage = "🟢 訪客通行已核准";
+            } else {
+              // Strict lockdown hesitation: stays closed for another 2.5s!
+              this.douyinGateOpen = 0.0;
+              this.douyinGateState = 'locked';
+              this.douyinGateTimer = 2.5 + Math.random() * 1.5;
+              this.douyinGateMessage = "⏳ 權限審批佇列排隊中，請耐心等待...";
+            }
+          } else {
+            // Idle background opening/closing
+            if (roll < 0.25) {
+              this.douyinGateOpen = 1.0;
+              this.douyinGateTimer = 1.5 + Math.random() * 1.5;
+            } else {
+              this.douyinGateOpen = 0.0;
+              this.douyinGateTimer = 2.0 + Math.random() * 3.0;
+            }
+          }
+        }
+      }
+
+      // Smooth mechanical animation: snaps shut faster than it opens!
+      const gateSpeed = (this.douyinGateOpen === 0.0) ? 9.5 : 6.5;
+      this.douyinGateAnim += (this.douyinGateOpen - this.douyinGateAnim) * Math.min(1.0, dt * gateSpeed);
+
+      // Physical navigation mesh collision update
+      const isGatePassable = (this.douyinGateAnim > 0.65);
+      if (this.douyinGateBlocked === isGatePassable) {
+        this.douyinGateBlocked = !isGatePassable;
+        // Doorway corridor is x: 18.0, y: 36.8 to 38.4
+        this.nav.setBlock(18.0, 36.8, 0.45, 1.8, !isGatePassable);
+      }
+
+      if (playerNearDouyin && this.douyinGateMessage) {
+        statusMessage = `Douyin Office • ${this.douyinGateMessage}`;
+      }
 
       // Status text
       const statusEl = document.getElementById('status-text');
@@ -1982,43 +2058,22 @@
         }
       });
 
-      // Office High-Tech Bi-Parting Smart Glass Sliding Doors
-      const douyinSlideOffset = this.doorDouyinOpen * 1.05;
+      // Douyin Office High-Tech Optical Speed Gate Turnstile (透明速通門閘機)
       list.push({
-        xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.15,
+        xMin: douyinNW_X - 0.25, xMax: douyinNW_X + 0.85,
         yMin: 36.4, yMax: 38.9,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-
-          // Left leaf (sliding north)
-          const dgL0 = isoToScreen(douyinNW_X, 36.55 - douyinSlideOffset, 0, ox, oy);
-          const dgL1 = isoToScreen(douyinNW_X, 37.60 - douyinSlideOffset, 0, ox, oy);
-          const dgL2 = isoToScreen(douyinNW_X, 37.60 - douyinSlideOffset, 2.10, ox, oy);
-          const dgL3 = isoToScreen(douyinNW_X, 36.55 - douyinSlideOffset, 2.10, ox, oy);
-          this.ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
-          this.ctx.beginPath();
-          this.ctx.moveTo(dgL0.x, dgL0.y); this.ctx.lineTo(dgL1.x, dgL1.y); this.ctx.lineTo(dgL2.x, dgL2.y); this.ctx.lineTo(dgL3.x, dgL3.y);
-          this.ctx.closePath();
-          this.ctx.fill();
-          this.ctx.strokeStyle = '#25f4ee'; // Douyin Cyan edge
-          this.ctx.lineWidth = 1.6;
-          this.ctx.stroke();
-
-          // Right leaf (sliding south)
-          const dgR0 = isoToScreen(douyinNW_X, 37.70 + douyinSlideOffset, 0, ox, oy);
-          const dgR1 = isoToScreen(douyinNW_X, 38.75 + douyinSlideOffset, 0, ox, oy);
-          const dgR2 = isoToScreen(douyinNW_X, 38.75 + douyinSlideOffset, 2.10, ox, oy);
-          const dgR3 = isoToScreen(douyinNW_X, 37.70 + douyinSlideOffset, 2.10, ox, oy);
-          this.ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
-          this.ctx.beginPath();
-          this.ctx.moveTo(dgR0.x, dgR0.y); this.ctx.lineTo(dgR1.x, dgR1.y); this.ctx.lineTo(dgR2.x, dgR2.y); this.ctx.lineTo(dgR3.x, dgR3.y);
-          this.ctx.closePath();
-          this.ctx.fill();
-          this.ctx.strokeStyle = '#fe2c55'; // Douyin Magenta edge
-          this.ctx.lineWidth = 1.6;
-          this.ctx.stroke();
-
+          this.models.drawDouyinSpeedGate(
+            this.ctx,
+            douyinNW_X,
+            37.65,
+            this.douyinGateAnim,
+            this.douyinGateOpen >= 0.5,
+            ox,
+            oy
+          );
           this.ctx.restore();
         }
       });

@@ -602,6 +602,19 @@
       "dialogues": {
         "zh-TW": [
           [
+            "老開桌上那兩顆火龍果都爛到出汁了... 超噁...",
+            "兩顆爛掉的火龍果對應兩顆爛掉的期中考"
+          ],
+          [
+            "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。"
+          ],
+          [
+            "這阿方的方塊酥，你要吃嗎？還滿好吃的。"
+          ],
+          [
+            "阿方的床真的很舒服欸。"
+          ],
+          [
             "最少我不是最送的。"
           ],
           [
@@ -615,6 +628,19 @@
           ]
         ],
         "en": [
+          [
+            "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out... so gross...",
+            "Two rotten dragon fruits perfectly correspond to two rotten midterm exams."
+          ],
+          [
+            "Lao-Kai's silhouette taking the Probability & Statistics final... looking at it truly brings tears to one's eyes, giving pure Zhu Ziqing's 'Retreating Figure' vibes."
+          ],
+          [
+            "These are Ah-Fang's crispy wheat square cookies, want some? They're actually pretty tasty."
+          ],
+          [
+            "Ah-Fang's bed is seriously so comfy."
+          ],
           [
             "At least I am not the one feeding the most."
           ],
@@ -746,6 +772,21 @@
       "dialogues": {
         "zh-TW": [
           [
+            "老開的期中考，猜一個ipv4",
+            "0.0.0.0"
+          ],
+          [
+            "我不知道啊，有群人一直偷拿我的方塊酥。",
+            "想吃不會自己買喔？"
+          ],
+          [
+            "我不知道啊，有群人一直上我的床。",
+            "下來！"
+          ],
+          [
+            "我真的快中風了！下來！"
+          ],
+          [
             "欸走拉，吃宵？"
           ],
           [
@@ -756,6 +797,21 @@
           ]
         ],
         "en": [
+          [
+            "Lao-Kai's midterm exam score, guess an IPv4 address.",
+            "0.0.0.0"
+          ],
+          [
+            "I have no idea, there is a group of people who keep stealing my wheat square cookies.",
+            "If you wanna eat them, why don't you buy your own?!"
+          ],
+          [
+            "I have no idea, there is a group of people who keep climbing onto my bed.",
+            "Get down!"
+          ],
+          [
+            "I am literally about to have a stroke! Get down!"
+          ],
           [
             "Hey let us go, late-night snack run?"
           ],
@@ -1290,10 +1346,24 @@
       "dialogues": {
         "zh-TW": [
           [
+            "阿方在房間嗎？那我要去上他的床。",
+            "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。"
+          ],
+          [
+            "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。"
+          ],
+          [
             "你們先去吃吧，我不餓。"
           ]
         ],
         "en": [
+          [
+            "Is Ah-Fang in the room? Then I am gonna go climb onto his bed.",
+            "Why be so stingy? Your bed is everyone's bed, let's just crash together!"
+          ],
+          [
+            "Why be so stingy? Your bed is everyone's bed, let's just crash together!"
+          ],
           [
             "You guys go ahead and eat first, I am not hungry."
           ]

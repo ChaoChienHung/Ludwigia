@@ -2977,6 +2977,155 @@
       // Clear Water Dispenser with Blue Reservoir
       this.drawBox(ctx, gx + 1.05, gy + 0.12, H, 0.25, 0.25, 0.48, 'rgba(56, 189, 248, 0.75)', '#0284c7', '#0369a1', ox, oy);
     }
+
+    // --- 15. Douyin High-Tech Transparent Speed Gate Turnstile (透明速通門閘機) ---
+    // High-visibility transparent safety glass barrier with stainless turnstiles & unpredictable opening cycles
+    drawDouyinSpeedGate(ctx, gx, gy, gateAnim = 0.0, isOpen = false, ox, oy) {
+      const northPedY = 36.52;
+      const southPedY = 38.48;
+      const pedW = 0.35;
+      const pedD = 0.30;
+      const pedH = 0.96;
+
+      // 1. Drop Shadows for Turnstile Stanchions
+      this.drawDropShadow(ctx, gx - 0.12, northPedY, pedW, pedD, ox, oy);
+      this.drawDropShadow(ctx, gx - 0.12, southPedY, pedW, pedD, ox, oy);
+
+      // 2. Stainless Steel Pedestals (North & South Stanchions)
+      const stColorTop = '#1e293b';
+      const stColorLeft = '#0f172a';
+      const stColorRight = '#334155';
+      this.drawBox(ctx, gx - 0.12, northPedY, 0, pedW, pedD, pedH, stColorTop, stColorLeft, stColorRight, ox, oy);
+      this.drawBox(ctx, gx - 0.12, southPedY, 0, pedW, pedD, pedH, stColorTop, stColorLeft, stColorRight, ox, oy);
+
+      // 3. NFC Swiping Plate & Status Indicators on Stanchions
+      const drawPedestalHUD = (py) => {
+        // NFC Scanner glass pad on top
+        const pad = isoToScreen(gx + 0.05, py + 0.15, pedH + 0.01, ox, oy);
+        ctx.fillStyle = '#020617';
+        ctx.beginPath();
+        ctx.ellipse(pad.x, pad.y, 8, 4, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = isOpen ? '#22c55e' : '#ef4444';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Direction / Access indicator light facing courtyard (-X)
+        const ind = isoToScreen(gx - 0.12, py + 0.15, pedH * 0.65, ox, oy);
+        ctx.fillStyle = isOpen ? '#22c55e' : '#ef4444';
+        ctx.shadowColor = isOpen ? '#22c55e' : '#ef4444';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(ind.x - 3, ind.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      };
+      drawPedestalHUD(northPedY);
+      drawPedestalHUD(southPedY);
+
+      // 4. Two Highly Visible Transparent Barrier Wings ("看得出來的那種透明閘門")
+      // Passage is between 36.85 and 38.45. Center is at 37.65.
+      const wingLength = 0.78;
+      const swingAngle = gateAnim * (Math.PI * 0.44); // 0 to ~79 degrees into room (+X)
+
+      const drawGlassWing = (hingeX, hingeY, isNorth) => {
+        const sign = isNorth ? 1 : -1;
+        // In closed state: points towards center (+Y for North, -Y for South)
+        // In open state: swings inward into the room (+X)
+        const tipX = hingeX + Math.sin(swingAngle) * wingLength;
+        const tipY = hingeY + sign * Math.cos(swingAngle) * wingLength;
+
+        const zBot = 0.18;
+        const zTop = 1.12;
+
+        const b0 = isoToScreen(hingeX, hingeY, zBot, ox, oy);
+        const b1 = isoToScreen(tipX, tipY, zBot, ox, oy);
+        const t1 = isoToScreen(tipX, tipY, zTop, ox, oy);
+        const t0 = isoToScreen(hingeX, hingeY, zTop, ox, oy);
+
+        // Glass Body with luminous frosted reflection
+        const grad = ctx.createLinearGradient(b0.x, b0.y, t1.x, t1.y);
+        grad.addColorStop(0.0, 'rgba(37, 244, 238, 0.38)');
+        grad.addColorStop(0.4, 'rgba(255, 255, 255, 0.48)'); // Bright frosted glass reflection
+        grad.addColorStop(0.7, 'rgba(37, 244, 238, 0.28)');
+        grad.addColorStop(1.0, 'rgba(254, 44, 85, 0.32)');  // Douyin Magenta accent
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(b0.x, b0.y);
+        ctx.lineTo(b1.x, b1.y);
+        ctx.lineTo(t1.x, t1.y);
+        ctx.lineTo(t0.x, t0.y);
+        ctx.closePath();
+        ctx.fill();
+
+        // Distinct Outlines ("看得出來的那種")
+        // Luminous Cyan Top Rim
+        ctx.strokeStyle = '#25f4ee';
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.moveTo(t0.x, t0.y);
+        ctx.lineTo(t1.x, t1.y);
+        ctx.stroke();
+
+        // Leading Impact Strip (Bright White Rubber Bumper at the tip where wings meet)
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(b1.x, b1.y);
+        ctx.lineTo(t1.x, t1.y);
+        ctx.stroke();
+
+        // Bottom Edge with Magenta accent
+        ctx.strokeStyle = '#fe2c55';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(b0.x, b0.y);
+        ctx.lineTo(b1.x, b1.y);
+        ctx.stroke();
+
+        // Frosted Etched Safety Warning Stripes (2 crisp horizontal bands across the glass)
+        const drawEtchBand = (zRatio) => {
+          const ez = zBot + (zTop - zBot) * zRatio;
+          const e0 = isoToScreen(hingeX, hingeY, ez, ox, oy);
+          const e1 = isoToScreen(tipX, tipY, ez, ox, oy);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.lineWidth = 1.0;
+          ctx.beginPath();
+          ctx.moveTo(e0.x, e0.y);
+          ctx.lineTo(e1.x, e1.y);
+          ctx.stroke();
+        };
+        drawEtchBand(0.40);
+        drawEtchBand(0.70);
+
+        // Hinge Pivot Column
+        const h0 = isoToScreen(hingeX, hingeY, 0.12, ox, oy);
+        const h1 = isoToScreen(hingeX, hingeY, 1.18, ox, oy);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(h0.x, h0.y);
+        ctx.lineTo(h1.x, h1.y);
+        ctx.stroke();
+      };
+
+      // Draw North & South Wings
+      drawGlassWing(gx + 0.05, 36.85, true);
+      drawGlassWing(gx + 0.05, 38.45, false);
+
+      // 5. Center Lock Icon on Glass when closed
+      if (gateAnim < 0.35) {
+        const lockP = isoToScreen(gx + 0.05, 37.65, 0.72, ox, oy);
+        ctx.fillStyle = isOpen ? '#22c55e' : '#ef4444';
+        ctx.beginPath();
+        ctx.arc(lockP.x, lockP.y, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+      }
+    }
   }
 
   // Export to Global Scope
