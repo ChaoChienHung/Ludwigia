@@ -850,7 +850,7 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "多模態",
+        "zh-TW": "多模態 AI",
         "en": "Multimodal AI"
       },
       "avatar": "assets/avatars/gemini.png",
@@ -920,7 +920,7 @@
       },
       "gender": "ai",
       "role": {
-        "zh-TW": "深度推理",
+        "zh-TW": "深度推理 AI",
         "en": "Reasoning AI"
       },
       "avatar": "assets/avatars/claude.png",
