@@ -1422,6 +1422,54 @@
         "sanmin_school",
         "plaza"
       ]
+    },
+    {
+      "id": "benny",
+      "name": {
+        "zh-TW": "賴柏廷",
+        "en": "Benny Lai"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "高中同學 (三民高中)",
+        "en": "Classmate (Sanmin High)"
+      },
+      "avatar": "🏃",
+      "zone": "sanmin_school",
+      "spawn": {
+        "x": 3.6,
+        "y": 38.8
+      },
+      "nameColor": "#a78bfa",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1c1917",
+        "shirt": "#0284c7",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "zh-TW": [
+          [
+            "下一節是什麼課？該不會要隨堂小考吧！"
+          ],
+          [
+            "等下鐘聲響了一起衝福利社買點心！"
+          ]
+        ],
+        "en": [
+          [
+            "What class is next? Don't tell me there's a pop quiz!"
+          ],
+          [
+            "Let's rush to the school store for snacks as soon as the bell rings!"
+          ]
+        ]
+      },
+      "visitedZones": [
+        "sanmin_school",
+        "plaza"
+      ]
     }
   ]
 }
