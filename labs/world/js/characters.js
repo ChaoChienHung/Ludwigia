@@ -590,8 +590,10 @@
         if (now - (p1.lastSpokeTime || 0) < 10000 || now - (p2.lastSpokeTime || 0) < 10000) continue;
 
         const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        const inSameZone = (p1.zone && p2.zone && p1.zone === p2.zone);
-        if (!inSameZone) continue;
+        const shareLocation = (p1.zone === p2.zone) ||
+          (p1.visitedZones && p2.visitedZones && p1.visitedZones.some(z => p2.visitedZones.includes(z))) ||
+          (dist <= 4.0);
+        if (!shareLocation) continue;
 
         const maxDist = pair.maxDistance || 3.8;
 
