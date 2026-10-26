@@ -900,7 +900,10 @@
         }
       });
 
-      // 6. Proximity Check for Space/Enter Dialogue Prompt with Hysteresis (prevents threshold flickering)
+      // 6. Autonomous NPC Dialogues & Speech Bubble Dynamics
+      this.charManager.update(dt);
+
+      // 7. Proximity Check for Space/Enter Dialogue Prompt with Hysteresis (prevents threshold flickering)
       let closest = null;
       // Enter threshold is 1.85 tiles; exit threshold is 2.30 tiles to prevent rapid toggling
       const threshold = this.charManager.proximityTarget ? 2.30 : 1.85;
