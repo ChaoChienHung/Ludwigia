@@ -2066,25 +2066,25 @@
       "dialogues": {
         "zh-TW": [
           {
-            "speaker": "bohan",
-            "text": "你們先去吃吧，我不餓。",
+            "speaker": "jerry",
+            "text": "你是水蛭喔？",
             "delay": 2.2
           },
           {
-            "speaker": "jerry",
-            "text": "你是水蛭喔？",
+            "speaker": "bohan",
+            "text": "你們先去吃吧，我不餓。",
             "delay": 2.2
           }
         ],
         "en": [
           {
-            "speaker": "bohan",
-            "text": "You guys go ahead and eat first, I am not hungry.",
+            "speaker": "jerry",
+            "text": "Are you a leech or what?!",
             "delay": 2.2
           },
           {
-            "speaker": "jerry",
-            "text": "Are you a leech or what?!",
+            "speaker": "bohan",
+            "text": "You guys go ahead and eat first, I am not hungry.",
             "delay": 2.2
           }
         ]
