@@ -2887,10 +2887,10 @@
         ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🏫 三民高中 • 經典教室', 0, -4.5);
+        ctx.fillText('🏫 三民高中', 0, -4.5);
 
         ctx.fillStyle = '#fef08a';
         ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';

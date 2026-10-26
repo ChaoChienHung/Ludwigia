@@ -1757,10 +1757,10 @@
           this.ctx.lineWidth = 0.8;
           this.ctx.strokeRect(-30, -6, 60, 12);
           this.ctx.fillStyle = '#ffffff';
-          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('三民高中 • 經典教室', 0, 0);
+          this.ctx.fillText('三民高中', 0, 0);
           this.ctx.restore();
           this.ctx.restore();
         }
