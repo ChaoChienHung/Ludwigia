@@ -1477,6 +1477,9 @@
       "dialogues": {
         "zh-TW": [
           [
+            "I have a pen, I have an apple. Uh! Apple pen!"
+          ],
+          [
             "下一節是什麼課？該不會要隨堂小考吧！"
           ],
           [
@@ -1484,6 +1487,9 @@
           ]
         ],
         "en": [
+          [
+            "I have a pen, I have an apple. Uh! Apple pen!"
+          ],
           [
             "What class is next? Don't tell me there's a pop quiz!"
           ],
