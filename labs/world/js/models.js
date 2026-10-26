@@ -2136,29 +2136,6 @@
       // Warm Light Oak / Peach Wooden Desktop (Matching Image 1: light wood desktop with bevel)
       this.drawBox(ctx, gx, gy, deskH, W, D, 0.06, '#f59e0b', '#d97706', '#b45309', ox, oy);
 
-      // Pencil Groove & Workbook on Desktop
-      const dP = isoToScreen(gx + 0.35, gy + 0.20, deskH + 0.06, ox, oy);
-      // Open Workbook
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.ellipse(dP.x + 6, dP.y + 2, 7, 5, 0.1, 0, Math.PI * 2);
-      ctx.fill();
-      // Blue & Red Pens
-      ctx.strokeStyle = '#2563eb';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(dP.x - 8, dP.y - 3); ctx.lineTo(dP.x - 2, dP.y - 1);
-      ctx.stroke();
-
-      // School Backpack hanging on the side hook
-      const bpPos = isoToScreen(gx + W + 0.04, gy + 0.35, deskH - 0.15, ox, oy);
-      ctx.fillStyle = backpackCol;
-      ctx.beginPath();
-      ctx.ellipse(bpPos.x, bpPos.y, 4.5, 7, 0.1, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
 
       // Student Chair (tucked neatly into the back of the desk, facing North!)
       const cGx = gx + 0.20;
