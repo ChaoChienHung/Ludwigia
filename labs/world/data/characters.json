@@ -1815,6 +1815,66 @@
         "sanmin_school",
         "plaza"
       ]
+    },
+    {
+      "id": "kunhong",
+      "name": {
+        "zh-TW": "徐堃閎",
+        "en": "Kun Hong Hsu"
+      },
+      "gender": "male",
+      "role": {
+        "zh-TW": "高中同學",
+        "en": "High School Classmate"
+      },
+      "avatar": "🎒",
+      "zone": "sanmin_school",
+      "spawn": {
+        "x": 7.4,
+        "y": 36.4
+      },
+      "nameColor": "#38bdf8",
+      "appearance": {
+        "skin": "#f5d0b5",
+        "hair": "#1e293b",
+        "shirt": "#0284c7",
+        "pants": "#1e293b",
+        "hairStyle": 0
+      },
+      "dialogues": {
+        "user": {
+          "zh-TW": [
+            [
+              "不要碰我肩膀！"
+            ],
+            [
+              "我不喜歡別人碰我肩膀。"
+            ]
+          ],
+          "en": [
+            [
+              "Don't touch my shoulder!"
+            ],
+            [
+              "I don't like people touching my shoulder."
+            ]
+          ]
+        },
+        "self": {
+          "zh-TW": [
+            "別碰我肩膀……",
+            "我不喜歡別人碰我肩膀。"
+          ],
+          "en": [
+            "Don't touch my shoulder...",
+            "I don't like people touching my shoulder."
+          ]
+        }
+      },
+      "visitedZones": [
+        "sanmin_school",
+        "plaza"
+      ]
     }
   ],
   "npcDialogues": [
