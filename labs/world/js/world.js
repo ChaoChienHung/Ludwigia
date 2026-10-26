@@ -394,36 +394,45 @@
       const player = this.charManager.player;
       if (!player) return;
 
-      // 1. Zone Detection & Dynamic Camera
+      // 1. Zone Detection & Dynamic Camera with Hysteresis (buffer of 0.35 tiles to prevent doorway threshold flickering)
+      const prevZone = this.currentZone || 'plaza';
       let currentZone = 'plaza';
       let isInsideAnyHouse = false;
       let statusMessage = "Courtyard Plaza • 綠意花園與社交廣場";
 
-      if (player.x <= 9.8 && player.y <= 9.8) {
+      // Helper function to check rectangular zone with hysteresis
+      const checkZone = (zoneId, minX, maxX, minY, maxY) => {
+        const isCurrentlyIn = (prevZone === zoneId);
+        const margin = isCurrentlyIn ? 0.35 : -0.15; // Stay inside longer, require clear exit before leaving
+        return (player.x >= minX - margin && player.x <= maxX + margin &&
+                player.y >= minY - margin && player.y <= maxY + margin);
+      };
+
+      if (checkZone('ludwig_house', 0, 9.8, 0, 9.8)) {
         currentZone = 'ludwig_house';
         isInsideAnyHouse = true;
         statusMessage = "Ludwig's Home • 溫馨客廳與起居室";
-      } else if (player.x <= 9.8 && player.y >= 10.0 && player.y <= 16.4) {
+      } else if (checkZone('garden_terrace', 0, 9.8, 10.0, 16.4)) {
         currentZone = 'garden_terrace';
         isInsideAnyHouse = false;
         statusMessage = "Garden Terrace • 露天花園與石雕棋盤";
-      } else if (player.x <= 9.8 && player.y >= 16.5 && player.y <= 26.5) {
+      } else if (checkZone('dorm_211', 0, 9.8, 16.5, 26.5)) {
         currentZone = 'dorm_211';
         isInsideAnyHouse = true;
         statusMessage = "男11 211 宿舍 • 青春熱血的大學生活";
-      } else if (player.x >= 17.5 && player.x <= 27.5 && player.y <= 9.8) {
+      } else if (checkZone('ai_studio', 17.5, 27.5, 0, 9.8)) {
         currentZone = 'ai_studio';
         isInsideAnyHouse = true;
         statusMessage = "AI Studio • Ludwigia 智慧研究室";
-      } else if (player.x >= 17.5 && player.x <= 27.5 && player.y >= 16.5 && player.y <= 26.5) {
+      } else if (checkZone('library', 17.5, 27.5, 16.5, 26.5)) {
         currentZone = 'library';
         isInsideAnyHouse = true;
         statusMessage = "Central Library • 知識藏書閣與典雅閱覽室";
-      } else if (player.x <= 9.8 && player.y >= 32.5 && player.y <= 42.8) {
+      } else if (checkZone('sanmin_school', 0, 9.8, 32.5, 42.8)) {
         currentZone = 'sanmin_school';
         isInsideAnyHouse = true;
         statusMessage = "Sanmin High School • 青春回憶與三民高中教室";
-      } else if (player.x >= 17.5 && player.x <= 27.5 && player.y >= 32.5 && player.y <= 42.8) {
+      } else if (checkZone('douyin_office', 17.5, 27.5, 32.5, 42.8)) {
         currentZone = 'douyin_office';
         isInsideAnyHouse = true;
         statusMessage = "Douyin Office • 抖音演算法研發辦公室";
@@ -815,9 +824,11 @@
         }
       });
 
-      // 6. Proximity Check for Space/Enter Dialogue Prompt
+      // 6. Proximity Check for Space/Enter Dialogue Prompt with Hysteresis (prevents threshold flickering)
       let closest = null;
-      let minDist = 1.8;
+      // Enter threshold is 1.85 tiles; exit threshold is 2.30 tiles to prevent rapid toggling
+      const threshold = this.charManager.proximityTarget ? 2.30 : 1.85;
+      let minDist = threshold;
       chars.forEach(c => {
         if (c.isPlayer) return;
         const d = Math.hypot(c.x - player.x, c.y - player.y);

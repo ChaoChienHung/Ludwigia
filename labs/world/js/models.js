@@ -2616,7 +2616,6 @@
 
         // Top Pulsing LED
         const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
-        ctx.restore();
         ctx.fillStyle = Math.sin(performance.now() * 0.005) > 0 ? '#22d3ee' : '#0891b2';
         ctx.beginPath();
         ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
@@ -2644,7 +2643,6 @@
 
         // Top Brass Finial
         const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
-        ctx.restore();
         ctx.fillStyle = '#fbbf24';
         ctx.beginPath();
         ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
@@ -2671,14 +2669,12 @@
         ctx.fillText('抖音研發辦公室', 0, 7);
 
         const topP = isoToScreen(pX + 0.275, pY + 0.07, 1.40, ox, oy);
-        ctx.restore();
         ctx.fillStyle = '#fe2c55';
         ctx.beginPath();
         ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
         ctx.fill();
-      } else {
-        ctx.restore();
       }
+      ctx.restore();
     }
 
     // --- 12. TikTok / Douyin Official Floor Emblem (Ground Decal) ---
