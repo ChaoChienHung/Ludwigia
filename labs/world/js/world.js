@@ -231,8 +231,27 @@
       window.addEventListener('resize', this.resize.bind(this));
       this.resize();
 
+      // Helper: check if keyboard inputs should be captured for character controls
+      const isTypingOrModalActive = (e) => {
+        // If user is focused on an input, textarea, or contenteditable
+        const target = e.target;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+          return true;
+        }
+        // If any modal (name selection, citation) or dialogue overlay is currently open
+        if (document.querySelector('.space-modal-backdrop.open') || document.querySelector('.dialogue-overlay.open')) {
+          return true;
+        }
+        return false;
+      };
+
       // Keyboard Controls (Support both e.key and e.code for Mac/IME compatibility)
       window.addEventListener('keydown', (e) => {
+        if (isTypingOrModalActive(e)) {
+          // If typing in input or in modal/dialogue, do not trigger player movement keys
+          return;
+        }
+
         const k = e.key ? e.key.toLowerCase() : '';
         const c = e.code ? e.code.toLowerCase() : '';
         if (k) this.keys[k] = true;
@@ -259,6 +278,11 @@
         if (c) this.keys[c] = false;
       });
 
+      // Clear all active keys when window loses focus or modal opens
+      window.addEventListener('blur', () => {
+        this.keys = {};
+      });
+
       // Mobile Virtual D-Pad
       const dpadMap = {
         'dpad-up': { dx: 0, dy: -1 },
@@ -282,6 +306,11 @@
 
       // Click to Move
       this.canvas.addEventListener('click', (e) => {
+        // Prevent click-to-move when modal is open
+        if (document.querySelector('.space-modal-backdrop.open') || document.querySelector('.dialogue-overlay.open')) {
+          return;
+        }
+
         const rect = this.canvas.getBoundingClientRect();
         const sx = e.clientX - rect.left;
         const sy = e.clientY - rect.top;
@@ -457,6 +486,22 @@
       if (statusEl) statusEl.textContent = statusMessage;
 
       // 3. Player Movement with Reliable Walking Animation
+      const isModalOrInputActive = () => {
+        const activeEl = document.activeElement;
+        if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+          return true;
+        }
+        if (document.querySelector('.space-modal-backdrop.open') || document.querySelector('.dialogue-overlay.open')) {
+          return true;
+        }
+        return false;
+      };
+
+      if (isModalOrInputActive()) {
+        this.keys = {};
+        this.dpadDir = null;
+      }
+
       let kx = 0, ky = 0;
       const k = this.keys;
       if (k['w'] || k['arrowup'] || k['keyw'])    { kx -= 1; ky -= 1; }
