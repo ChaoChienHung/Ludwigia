@@ -151,10 +151,10 @@
       // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
       this.nav.setBlock(2.7, 13.8, 1.8, 1.3, true);
 
-      // Campus Landmark Monument Totems (Facing the Courtyard Avenue)
-      this.nav.setBlock(16.5, 7.2, 0.65, 0.35, true);  // AI Studio Monument Totem
-      this.nav.setBlock(16.5, 23.2, 0.65, 0.35, true); // Grand Library Monument Totem
-      this.nav.setBlock(16.5, 39.2, 0.65, 0.35, true); // Douyin Office Monument Totem
+      // Campus Landmark Monument Totems (Placed on the open grass lawn facing courtyard avenue)
+      this.nav.setBlock(15.5, 7.2, 0.65, 0.35, true);  // AI Studio Monument Totem
+      this.nav.setBlock(15.5, 22.0, 0.65, 0.35, true); // Grand Library Monument Totem
+      this.nav.setBlock(15.5, 38.0, 0.65, 0.35, true); // Douyin Office Monument Totem
 
       // 5. Sanmin High School Classroom (SW2: x: 0..9, y: 33..42)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 10, 0.6, true);             // North Wall (y: 33)
@@ -165,12 +165,12 @@
       this.nav.setBlock(SCHOOL_MAX_X + 1, 39.0, 0.6, 4.0, true);          // East Wall Bottom (y: 39 to 43)
 
       // Classroom Furniture Obstacles
-      this.nav.setBlock(0.2, 34.0, 0.6, 3.8, true); // Blackboard Wall Area
-      this.nav.setBlock(1.5, 34.2, 1.0, 0.8, true); // Teacher Podium
-      // 16 Student Desks in 4x4 Grid
-      for (const cx of [2.2, 4.4, 6.6, 8.5]) {
-        for (const ry of [35.8, 37.4, 39.0, 40.6]) {
-          this.nav.setBlock(cx + 0.1, ry + 0.1, 0.85, 0.55, true);
+      this.nav.setBlock(2.4, 33.1, 5.2, 0.4, true); // Blackboard Wall Area (North Wall)
+      this.nav.setBlock(4.4, 34.4, 1.1, 0.8, true); // Teacher Podium (Centered)
+      // 16 Student Desks in 4x4 Grid with Center Aisle
+      for (const cx of [1.6, 3.2, 5.8, 7.4]) {
+        for (const ry of [36.2, 37.8, 39.4, 41.0]) {
+          this.nav.setBlock(cx + 0.08, ry + 0.08, 0.85, 0.55, true);
         }
       }
       this.nav.setBlock(1.5, 42.2, 2.4, 0.65, true); // Lockers & Storage
@@ -286,9 +286,11 @@
         const sx = e.clientX - rect.left;
         const sy = e.clientY - rect.top;
         const { ox, oy } = this.getOrigin();
+        const cx = this.width / 2;
+        const cy = this.height / 2;
 
-        const adjSx = (sx - ox) / this.zoom + ox;
-        const adjSy = (sy - oy) / this.zoom + oy;
+        const adjSx = (sx - cx) / this.zoom + cx;
+        const adjSy = (sy - cy) / this.zoom + cy;
         const { gx, gy } = screenToIso(adjSx, adjSy, ox, oy);
 
         const player = this.charManager.player;
@@ -687,12 +689,12 @@
               ];
 
               const schoolAnchors = [
-                { x: 3.2, y: 35.0 }, // Teacher Area
-                { x: 3.2, y: 37.2 }, // Center Classroom Aisle
-                { x: 6.0, y: 37.2 }, // Side Classroom Aisle
-                { x: 3.2, y: 39.5 }, // Back Student Desks
-                { x: 5.5, y: 41.5 }, // Noticeboard / Lockers
-                { x: 8.5, y: 37.6 }  // School Door Threshold
+                { x: 5.0, y: 35.0 }, // Teacher Area / Blackboard Center
+                { x: 5.0, y: 37.0 }, // Center Classroom Aisle (Front)
+                { x: 5.0, y: 39.5 }, // Center Classroom Aisle (Mid)
+                { x: 5.0, y: 41.8 }, // Center Classroom Aisle (Back) / Bulletin
+                { x: 9.0, y: 37.6 }, // East Classroom Entrance Threshold
+                { x: 0.8, y: 38.5 }  // West Window Side Aisle
               ];
 
               const douyinAnchors = [
@@ -1369,11 +1371,11 @@
         }
       });
 
-      // AI Studio Campus Landmark Monument Totem (Standing proudly on the entrance lawn facing courtyard)
+      // AI Studio Campus Landmark Monument Totem (Standing proudly on open entrance lawn facing courtyard)
       list.push({
-        xMin: 16.4, xMax: 17.2,
-        yMin: 7.1, yMax: 7.6,
-        draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 7.2, 'ai', ox, oy)
+        xMin: 15.3, xMax: 16.2,
+        yMin: 7.0, yMax: 7.6,
+        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 7.2, 'ai', ox, oy)
       });
 
       // AI Studio Equipment
@@ -1437,7 +1439,7 @@
       // Solid architectural wall behind Grand Mahogany Bookcases facing the lawn
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MAX_X + 1.0,
-        yMin: LIB_MIN_Y - 0.15, yMax: LIB_MIN_Y + 0.35,
+        yMin: LIB_MIN_Y - 0.15, yMax: LIB_MIN_Y + 0.18,
         draw: () => {
           this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
 
@@ -1552,30 +1554,50 @@
         }
       });
 
-      // Grand Library Campus Landmark Monument Totem (Standing proudly on the entrance lawn facing courtyard)
+      // Grand Library Campus Landmark Monument Totem (Standing proudly on open entrance lawn facing courtyard)
       list.push({
-        xMin: 16.4, xMax: 17.2,
-        yMin: 23.1, yMax: 23.6,
-        draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 23.2, 'lib', ox, oy)
+        xMin: 15.3, xMax: 16.2,
+        yMin: 21.8, yMax: 22.5,
+        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 22.0, 'lib', ox, oy)
       });
 
-      // Grand Library Interior Feature Brand Wall Sign (Mounted high on interior North partition wall, facing South towards camera!)
+      // Grand Library Interior Door Lintel Brand Sign (Mounted on inner face of entrance doorway)
       list.push({
-        xMin: 20.8, xMax: 24.4, yMin: 17.15, yMax: 17.35,
+        xMin: 18.15, xMax: 18.35, yMin: 20.6, yMax: 22.7,
         draw: () => {
-          this.models.drawInteriorBrandSign(this.ctx, 22.6, 17.24, 2.48, 'library', ox, oy);
+          const plq = isoToScreen(18.26, 21.65, 2.48, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#451a03';
+          this.ctx.fillRect(-38, -9, 76, 18);
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-38, -9, 76, 18);
+          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-36, -7, 72, 14);
+          this.ctx.fillStyle = '#fbbf24';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('📖 知識藏書閣', 0, -3.5);
+          this.ctx.fillStyle = '#fde68a';
+          this.ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.fillText('GRAND LIBRARY', 0, 4.5);
+          this.ctx.restore();
         }
       });
 
       // Library Interior Furniture:
       // 1. Grand Mahogany Book Walls with Brass Rolling Ladders (North Wall)
       list.push({
-        xMin: 18.4, xMax: 22.5, yMin: 17.2, yMax: 18.0,
-        draw: () => this.models.drawLibraryBookWall(this.ctx, 18.4, 17.2, ox, oy, 4.1, 1)
+        xMin: 18.4, xMax: 22.5, yMin: 17.20, yMax: 18.00,
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 18.4, 17.20, ox, oy, 4.1, 1)
       });
       list.push({
-        xMin: 22.7, xMax: 26.8, yMin: 17.2, yMax: 18.0,
-        draw: () => this.models.drawLibraryBookWall(this.ctx, 22.7, 17.2, ox, oy, 4.1, 2)
+        xMin: 22.7, xMax: 26.8, yMin: 17.20, yMax: 18.00,
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 22.7, 17.20, ox, oy, 4.1, 2)
       });
 
       // 1B. West Wall Library Corner Stack (Floor-to-Ceiling Shelves)
@@ -1674,11 +1696,10 @@
           this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, (SCHOOL_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
         }
       });
+      // Classroom Front-Facing Blackboard & Clock (Centered on North Wall, facing South towards students!)
       list.push({
-        xMin: 3.5, xMax: 6.5, yMin: SCHOOL_MIN_Y + 0.15, yMax: SCHOOL_MIN_Y + 0.35,
-        draw: () => {
-          this.models.drawInteriorBrandSign(this.ctx, 5.0, SCHOOL_MIN_Y + 0.26, 2.45, 'school', ox, oy);
-        }
+        xMin: 2.2, xMax: 7.8, yMin: SCHOOL_MIN_Y + 0.08, yMax: SCHOOL_MIN_Y + 0.28,
+        draw: () => this.models.drawSchoolBlackboard(this.ctx, 2.4, SCHOOL_MIN_Y + 0.12, ox, oy, 5.2)
       });
 
       // Classroom East Entrance Wall & Doorway (along x = 10, y: 33 to 43)
@@ -1767,28 +1788,22 @@
       });
 
       // Classroom Interior Props
-      // 1. Blackboard
+      // 1. Teacher Podium (Centered right in front of blackboard & middle aisle)
       list.push({
-        xMin: 0.1, xMax: 0.8, yMin: 34.0, yMax: 38.0,
-        draw: () => this.models.drawSchoolBlackboard(this.ctx, 0.25, 34.0, ox, oy)
+        xMin: 4.3, xMax: 5.6, yMin: 34.3, yMax: 35.3,
+        draw: () => this.models.drawTeacherPodium(this.ctx, 4.4, 34.4, ox, oy)
       });
 
-      // 2. Teacher Podium
-      list.push({
-        xMin: 1.2, xMax: 2.4, yMin: 34.2, yMax: 35.1,
-        draw: () => this.models.drawTeacherPodium(this.ctx, 1.2, 34.2, ox, oy)
-      });
-
-      // 3. Neatly Arranged Student Desks & Chairs (4 columns x 4 rows = 16 desks)
-      const sCols = [2.2, 4.4, 6.6, 8.5];
-      const sRows = [35.8, 37.4, 39.0, 40.6];
+      // 2. Neatly Arranged Student Desks & Chairs (4 columns x 4 rows = 16 desks with center aisle)
+      const sCols = [1.6, 3.2, 5.8, 7.4];
+      const sRows = [36.2, 37.8, 39.4, 41.0];
       const bpColors = ['#0284c7', '#ef4444', '#10b981', '#8b5cf6', '#f59e0b', '#06b6d4'];
       let dIdx = 0;
       for (const cx of sCols) {
         for (const ry of sRows) {
           const bpColor = bpColors[(dIdx++) % bpColors.length];
           list.push({
-            xMin: cx, xMax: cx + 1.25, yMin: ry, yMax: ry + 1.20,
+            xMin: cx, xMax: cx + 1.25, yMin: ry, yMax: ry + 1.45,
             draw: () => this.models.drawStudentDesk(this.ctx, cx, ry, ox, oy, { backpackColor: bpColor })
           });
         }
@@ -1971,11 +1986,39 @@
         }
       });
 
-      // Douyin Office Campus Landmark Monument Totem (Standing proudly on the entrance lawn facing courtyard)
+      // Douyin Tech Office Interior Door Lintel Brand Sign (Mounted on inner face of entrance doorway)
       list.push({
-        xMin: 16.4, xMax: 17.2,
-        yMin: 39.1, yMax: 39.6,
-        draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 39.2, 'douyin', ox, oy)
+        xMin: 18.15, xMax: 18.35, yMin: 36.6, yMax: 38.7,
+        draw: () => {
+          const plq = isoToScreen(18.26, 37.65, 2.48, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#020617';
+          this.ctx.fillRect(-40, -9, 80, 18);
+          this.ctx.strokeStyle = '#25f4ee';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-40, -9, 80, 18);
+          this.ctx.strokeStyle = '#fe2c55';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-38, -7, 76, 14);
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('🎵 抖音研發中心', 0, -3.5);
+          this.ctx.fillStyle = '#25f4ee';
+          this.ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.fillText('TIKTOK TECH LAB', 0, 4.5);
+          this.ctx.restore();
+        }
+      });
+
+      // Douyin Office Campus Landmark Monument Totem (Standing proudly on open entrance lawn facing courtyard)
+      list.push({
+        xMin: 15.3, xMax: 16.2,
+        yMin: 37.8, yMax: 38.5,
+        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 38.0, 'douyin', ox, oy)
       });
 
       // Official TikTok Circular Tech Floor Emblem (High-resolution ground decal with chromatic shift)
@@ -2219,9 +2262,11 @@
 
       ctx.save();
       const { ox, oy } = this.getOrigin();
-      ctx.translate(ox, oy);
+      const cx = this.width / 2;
+      const cy = this.height / 2;
+      ctx.translate(cx, cy);
       ctx.scale(this.zoom, this.zoom);
-      ctx.translate(-ox, -oy);
+      ctx.translate(-cx, -cy);
 
       // 1. Draw Map Terrain
       this.drawTerrain(ctx, ox, oy);

@@ -90,7 +90,7 @@
       },
       "gender": "female",
       "role": {
-        "zh-TW": "媽媽 (Mom)",
+        "zh-TW": "媽媽",
         "en": "Mom"
       },
       "avatar": "👩",
@@ -109,6 +109,10 @@
       },
       "dialogues": {
         "zh-TW": [
+          [
+            "記得不要太晚睡，",
+            "每天盡量不要超過12點才睡。"
+          ],
           [
             "哎呀，歡迎光臨！很高興認識你！",
             "肚子餓不餓？餐桌上有剛切好的新鮮水果和剛出爐的蘋果派喔！",
@@ -131,6 +135,10 @@
           ]
         ],
         "en": [
+          [
+            "Remember not to stay up too late,",
+            "Try your best not to sleep past midnight every day."
+          ],
           [
             "Hello there, welcome! So wonderful to meet you!",
             "Are you hungry? There is freshly sliced fruit and warm pie on the dining table!",
@@ -168,7 +176,7 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "爸爸 (Dad)",
+        "zh-TW": "爸爸",
         "en": "Dad"
       },
       "avatar": "👨",
@@ -187,6 +195,9 @@
       },
       "dialogues": {
         "zh-TW": [
+          [
+            "早安！"
+          ],
           [
             "我去公園走走。"
           ],
@@ -214,6 +225,9 @@
           ]
         ],
         "en": [
+          [
+            "Good morning!"
+          ],
           [
             "I'm heading out to the park for a stroll."
           ],
@@ -254,7 +268,7 @@
       },
       "gender": "female",
       "role": {
-        "zh-TW": "妹妹 (Sister)",
+        "zh-TW": "妹妹",
         "en": "Sister"
       },
       "avatar": "👧",
@@ -1293,14 +1307,14 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "高中同學 (三民高中)",
-        "en": "Classmate (Sanmin High)"
+        "zh-TW": "國中同學",
+        "en": "Junior High Classmate"
       },
       "avatar": "🎒",
       "zone": "sanmin_school",
       "spawn": {
-        "x": 2.3,
-        "y": 37.2
+        "x": 3.2,
+        "y": 36.4
       },
       "nameColor": "#38bdf8",
       "appearance": {
@@ -1335,14 +1349,14 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "高中同學 (三民高中)",
-        "en": "Classmate (Sanmin High)"
+        "zh-TW": "國中同學",
+        "en": "Junior High Classmate"
       },
       "avatar": "✏️",
       "zone": "sanmin_school",
       "spawn": {
-        "x": 5.1,
-        "y": 37.2
+        "x": 5.8,
+        "y": 36.4
       },
       "nameColor": "#34d399",
       "appearance": {
@@ -1355,6 +1369,9 @@
       "dialogues": {
         "zh-TW": [
           [
+            "有人燒我創世神裡的房子..."
+          ],
+          [
             "下課要不要去福利社買飲料？"
           ],
           [
@@ -1362,6 +1379,9 @@
           ]
         ],
         "en": [
+          [
+            "Someone burned down my house in Minecraft..."
+          ],
           [
             "Want to grab drinks at the school store after class?"
           ],
@@ -1383,14 +1403,14 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "高中同學 (三民高中)",
-        "en": "Classmate (Sanmin High)"
+        "zh-TW": "高中同學",
+        "en": "High School Classmate"
       },
       "avatar": "🏀",
       "zone": "sanmin_school",
       "spawn": {
-        "x": 7.9,
-        "y": 37.2
+        "x": 1.6,
+        "y": 38.0
       },
       "nameColor": "#60a5fa",
       "appearance": {
@@ -1403,6 +1423,9 @@
       "dialogues": {
         "zh-TW": [
           [
+            "生日快樂呀！"
+          ],
+          [
             "放學要不要去打球？"
           ],
           [
@@ -1410,6 +1433,9 @@
           ]
         ],
         "en": [
+          [
+            "Happy birthday!"
+          ],
           [
             "Wanna go play ball after school?"
           ],
@@ -1431,14 +1457,14 @@
       },
       "gender": "male",
       "role": {
-        "zh-TW": "高中同學 (三民高中)",
-        "en": "Classmate (Sanmin High)"
+        "zh-TW": "高中同學",
+        "en": "High School Classmate"
       },
       "avatar": "🏃",
       "zone": "sanmin_school",
       "spawn": {
-        "x": 3.6,
-        "y": 38.8
+        "x": 7.4,
+        "y": 38.0
       },
       "nameColor": "#a78bfa",
       "appearance": {

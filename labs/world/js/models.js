@@ -1948,73 +1948,99 @@
     // 5. ZONE 5: SANMIN HIGH SCHOOL CLASSROOM MODELS (SW2)
     // ========================================================================
 
-    // --- Classic Taiwanese Classroom Blackboard & Clock (x: gx, y: gy) ---
-    drawSchoolBlackboard(ctx, gx, gy, ox, oy, width = 4.2) {
-      const H = 0.95;
-      const elev = 0.85;
+    // --- Classic Front-Facing Classroom Blackboard & Clock (Centered on North Wall, facing South towards students) ---
+    drawSchoolBlackboard(ctx, gx, gy, ox, oy, width = 5.2) {
+      const H = 1.10;
+      const elev = 0.90;
+      const centerX = gx + width / 2;
 
-      // Wooden Frame
-      this.drawBox(ctx, gx, gy, elev - 0.05, 0.12, width, H + 0.10, '#854d0e', '#713f12', '#713f12', ox, oy);
+      // 1. Wooden Outer Frame & Depth Box along North Wall (running along X, facing +Y)
+      this.drawBox(ctx, gx, gy, elev - 0.05, width, 0.08, H + 0.10, '#854d0e', '#713f12', '#58240a', ox, oy);
 
-      // Deep Matte Green Slate Blackboard Surface
-      this.drawBox(ctx, gx + 0.02, gy + 0.10, elev, 0.08, width - 0.20, H, '#1b3b2b', '#12261c', '#12261c', ox, oy);
+      // 2. Front Blackboard Face (Facing South-West / Camera at constant Y = gy + 0.085)
+      const cp = isoToScreen(centerX, gy + 0.085, elev + H / 2, ox, oy);
+      const Wpx = (width - 0.16) * 32;
+      const Hpx = H * 32;
 
-      // Chalk Tray at Bottom
-      this.drawBox(ctx, gx, gy, elev - 0.08, 0.22, width, 0.06, '#a16207', '#78350f', '#78350f', ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared flat onto the South-facing North partition wall!
 
-      // Felt Eraser and Colored Chalk Sticks
-      const pEraser = isoToScreen(gx + 0.10, gy + 0.6, elev - 0.02, ox, oy);
-      ctx.fillStyle = '#475569';
-      ctx.fillRect(pEraser.x - 4, pEraser.y - 2, 8, 4);
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(pEraser.x - 4, pEraser.y + 2, 8, 2);
+      // Deep Matte Emerald Chalkboard Face (Matching Image 1!)
+      ctx.fillStyle = '#1b4332';
+      ctx.fillRect(-Wpx / 2, -Hpx / 2, Wpx, Hpx);
 
-      const pChalk1 = isoToScreen(gx + 0.10, gy + 1.2, elev - 0.02, ox, oy);
+      // Fine Inner Wood Inlay Border
+      ctx.strokeStyle = '#a16207';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(-Wpx / 2, -Hpx / 2, Wpx, Hpx);
+
+      // Aluminum / Wood Bottom Chalk Tray
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(-Wpx / 2, Hpx / 2 - 3, Wpx, 4);
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-Wpx / 2, Hpx / 2 - 3, Wpx, 4);
+
+      // Yellow Chalk Eraser in the Center (Exactly like Image 1!)
+      ctx.fillStyle = '#eab308'; // Bright yellow felt eraser
+      ctx.fillRect(-12, Hpx / 2 - 6, 24, 4.5);
+      ctx.fillStyle = '#713f12'; // Wood backing
+      ctx.fillRect(-12, Hpx / 2 - 1.5, 24, 1.5);
+
+      // White and Colored Chalk Sticks on Tray
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(pChalk1.x - 2, pChalk1.y - 1, 6, 2);
+      ctx.fillRect(-32, Hpx / 2 - 4, 7, 2);
+      ctx.fillStyle = '#f87171'; // Red chalk
+      ctx.fillRect(-42, Hpx / 2 - 4, 6, 2);
+      ctx.fillStyle = '#60a5fa'; // Blue chalk
+      ctx.fillRect(24, Hpx / 2 - 4, 6, 2);
 
-      const pChalk2 = isoToScreen(gx + 0.10, gy + 1.4, elev - 0.02, ox, oy);
-      ctx.fillStyle = '#fef08a';
-      ctx.fillRect(pChalk2.x - 2, pChalk2.y - 1, 6, 2);
-
-      // Handwritten Chalk Equations and Curves on Blackboard
-      const bp1 = isoToScreen(gx + 0.06, gy + 1.0, elev + 0.55, ox, oy);
+      // Handwritten White Chalk Formulas & Parabola Diagram
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      // Parabolic curve & axis
-      ctx.moveTo(bp1.x - 12, bp1.y + 10);
-      ctx.quadraticCurveTo(bp1.x, bp1.y - 8, bp1.x + 14, bp1.y + 12);
+      // Parabola graph on left side
+      ctx.moveTo(-Wpx / 2 + 18, 8);
+      ctx.quadraticCurveTo(-Wpx / 2 + 35, -14, -Wpx / 2 + 52, 8);
       ctx.stroke();
 
-      // Math equation text simulation: f(x) = x^2 - 4x + 3
-      const bp2 = isoToScreen(gx + 0.06, gy + 2.2, elev + 0.60, ox, oy);
-      ctx.fillStyle = 'rgba(254, 240, 138, 0.90)';
+      // Math Equations
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.95)';
       ctx.font = 'bold 9px monospace';
-      ctx.fillText('f(x)=ax²+bx+c', bp2.x - 16, bp2.y);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('f(x)=ax²+bx+c', -Wpx / 2 + 60, -6);
 
-      const bp3 = isoToScreen(gx + 0.06, gy + 2.2, elev + 0.32, ox, oy);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.font = '8px monospace';
-      ctx.fillText('lim Δx→0 (Δy/Δx)', bp3.x - 16, bp3.y);
+      ctx.fillText('lim Δx→0 (Δy/Δx)', -Wpx / 2 + 60, 6);
 
-      // Wall-Mounted Round Classroom Clock above the Blackboard
-      const cp = isoToScreen(gx + 0.06, gy + width / 2, elev + H + 0.35, ox, oy);
-      ctx.fillStyle = '#f8fafc';
-      ctx.strokeStyle = '#eab308';
-      ctx.lineWidth = 1.8;
+      ctx.restore();
+
+      // 3. Wall-Mounted Round Classroom Clock above the Blackboard Center
+      const clockCenter = isoToScreen(centerX, gy + 0.085, elev + H + 0.32, ox, oy);
+      ctx.save();
+      ctx.translate(clockCenter.x, clockCenter.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2.0;
       ctx.beginPath();
-      ctx.arc(cp.x, cp.y, 8.5, 0, Math.PI * 2);
+      ctx.arc(0, 0, 9, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // Clock hands pointing to 10:10
+      // Clock tick marks and hands (pointing to 10:10)
       ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = 1.4;
       ctx.beginPath();
-      ctx.moveTo(cp.x, cp.y); ctx.lineTo(cp.x - 3.5, cp.y - 4);
-      ctx.moveTo(cp.x, cp.y); ctx.lineTo(cp.x + 4, cp.y - 3);
+      ctx.moveTo(0, 0); ctx.lineTo(-3.5, -4);
+      ctx.moveTo(0, 0); ctx.lineTo(4.5, -2);
       ctx.stroke();
+
+      ctx.restore();
     }
 
     // --- Teacher Lecture Podium (x: gx, y: gy) ---
@@ -2056,7 +2082,7 @@
       ctx.fill();
     }
 
-    // --- Taiwanese High School Student Desk & Chair Combo ---
+    // --- Taiwanese High School Student Desk & Chair Combo (Matching Image 1) ---
     drawStudentDesk(ctx, gx, gy, arg4, arg5, arg6) {
       let ox = 0, oy = 0, options = {};
       if (typeof arg4 === 'number' && typeof arg5 === 'number') {
@@ -2069,28 +2095,48 @@
         oy = arg6 || 0;
       }
       const W = 1.05;
-      const D = 0.75;
+      const D = 0.72;
       const deskH = 0.65;
       const backpackCol = options.backpackColor || '#0284c7';
 
       this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
 
-      // 4 Metal Tubular Legs
-      const legR = '#1e293b';
-      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, gx + W - 0.13, gy + 0.05, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, gx + 0.05, gy + D - 0.13, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, gx + W - 0.13, gy + D - 0.13, 0, 0.08, 0.08, deskH, legR, legR, legR, ox, oy);
+      // 4 Light Painted Tubular Steel Legs (Matching Image 1: clean light metal legs)
+      const legR = '#cbd5e1';
+      const legL = '#94a3b8';
+      const legT = '#f1f5f9';
+      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0, 0.07, 0.07, deskH, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, gx + W - 0.12, gy + 0.05, 0, 0.07, 0.07, deskH, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + D - 0.12, 0, 0.07, 0.07, deskH, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, gx + W - 0.12, gy + D - 0.12, 0, 0.07, 0.07, deskH, legT, legL, legR, ox, oy);
 
-      // Metal Lower Book Shelf
-      this.drawBox(ctx, gx + 0.06, gy + 0.06, deskH - 0.18, W - 0.12, D - 0.12, 0.04, '#475569', '#334155', '#334155', ox, oy);
-      // Stored textbooks in shelf
-      this.drawBox(ctx, gx + 0.15, gy + 0.15, deskH - 0.14, 0.65, 0.45, 0.08, '#38bdf8', '#0284c7', '#0369a1', ox, oy);
+      // White/Cream Under-Desk Book Cubby Box (Matching Image 1: white book storage box with opening facing student!)
+      this.drawBox(ctx, gx + 0.06, gy + 0.06, deskH - 0.22, W - 0.12, D - 0.12, 0.18, '#ffffff', '#e2e8f0', '#cbd5e1', ox, oy);
+      // Hollow cubby opening on the front face (facing South towards student)
+      const op0 = isoToScreen(gx + 0.10, gy + D - 0.058, deskH - 0.20, ox, oy);
+      const op1 = isoToScreen(gx + W - 0.10, gy + D - 0.058, deskH - 0.20, ox, oy);
+      const op2 = isoToScreen(gx + W - 0.10, gy + D - 0.058, deskH - 0.06, ox, oy);
+      const op3 = isoToScreen(gx + 0.10, gy + D - 0.058, deskH - 0.06, ox, oy);
+      ctx.fillStyle = '#64748b'; // Inner shadow of book cubby
+      ctx.beginPath();
+      ctx.moveTo(op0.x, op0.y); ctx.lineTo(op1.x, op1.y); ctx.lineTo(op2.x, op2.y); ctx.lineTo(op3.x, op3.y);
+      ctx.closePath();
+      ctx.fill();
+      // Stored textbook inside cubby
+      const bk0 = isoToScreen(gx + 0.18, gy + D - 0.057, deskH - 0.18, ox, oy);
+      const bk1 = isoToScreen(gx + W - 0.25, gy + D - 0.057, deskH - 0.18, ox, oy);
+      const bk2 = isoToScreen(gx + W - 0.25, gy + D - 0.057, deskH - 0.11, ox, oy);
+      const bk3 = isoToScreen(gx + 0.18, gy + D - 0.057, deskH - 0.11, ox, oy);
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(bk0.x, bk0.y); ctx.lineTo(bk1.x, bk1.y); ctx.lineTo(bk2.x, bk2.y); ctx.lineTo(bk3.x, bk3.y);
+      ctx.closePath();
+      ctx.fill();
 
-      // Warm Honey-Toned Wooden Desktop
-      this.drawBox(ctx, gx, gy, deskH, W, D, 0.06, '#d97706', '#b45309', '#92400e', ox, oy);
+      // Warm Light Oak / Peach Wooden Desktop (Matching Image 1: light wood desktop with bevel)
+      this.drawBox(ctx, gx, gy, deskH, W, D, 0.06, '#f59e0b', '#d97706', '#b45309', ox, oy);
 
-      // Pen Groove and Supplies on Desktop
+      // Pencil Groove & Workbook on Desktop
       const dP = isoToScreen(gx + 0.35, gy + 0.20, deskH + 0.06, ox, oy);
       // Open Workbook
       ctx.fillStyle = '#ffffff';
@@ -2114,7 +2160,7 @@
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Student Chair (tucked neatly into the back of the desk)
+      // Student Chair (tucked neatly into the back of the desk, facing North!)
       const cGx = gx + 0.20;
       const cGy = gy + D + 0.15;
       const cW = 0.65;
@@ -2122,19 +2168,19 @@
       const seatH = 0.38;
 
       this.drawDropShadow(ctx, cGx, cGy, cW, cD, ox, oy);
-      // 4 Chair Legs
-      this.drawBox(ctx, cGx + 0.04, cGy + 0.04, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, cGx + cW - 0.10, cGy + 0.04, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, cGx + 0.04, cGy + cD - 0.10, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, cGx + cW - 0.10, cGy + cD - 0.10, 0, 0.06, 0.06, seatH, legR, legR, legR, ox, oy);
+      // 4 Chair Legs (light tubular metal)
+      this.drawBox(ctx, cGx + 0.04, cGy + 0.04, 0, 0.05, 0.05, seatH, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, cGx + cW - 0.09, cGy + 0.04, 0, 0.05, 0.05, seatH, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, cGx + 0.04, cGy + cD - 0.09, 0, 0.05, 0.05, seatH, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, cGx + cW - 0.09, cGy + cD - 0.09, 0, 0.05, 0.05, seatH, legT, legL, legR, ox, oy);
 
-      // Wooden Curved Chair Seat
-      this.drawBox(ctx, cGx, cGy, seatH, cW, cD, 0.04, '#b45309', '#92400e', '#78350f', ox, oy);
+      // Wooden Curved Chair Seat (Matching Image 1: warm light oak wood)
+      this.drawBox(ctx, cGx, cGy, seatH, cW, cD, 0.04, '#f59e0b', '#d97706', '#b45309', ox, oy);
 
-      // Chair Backrest Uprights and Curved Wooden Slat
-      this.drawBox(ctx, cGx + 0.05, cGy + cD - 0.08, seatH, 0.05, 0.05, 0.32, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, cGx + cW - 0.10, cGy + cD - 0.08, seatH, 0.05, 0.05, 0.32, legR, legR, legR, ox, oy);
-      this.drawBox(ctx, cGx, cGy + cD - 0.08, seatH + 0.25, cW, 0.06, 0.08, '#b45309', '#92400e', '#78350f', ox, oy);
+      // Chair Backrest Uprights & Curved Wooden Slat
+      this.drawBox(ctx, cGx + 0.05, cGy + cD - 0.07, seatH, 0.04, 0.04, 0.32, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, cGx + cW - 0.09, cGy + cD - 0.07, seatH, 0.04, 0.04, 0.32, legT, legL, legR, ox, oy);
+      this.drawBox(ctx, cGx, cGy + cD - 0.07, seatH + 0.24, cW, 0.05, 0.09, '#f59e0b', '#d97706', '#b45309', ox, oy);
     }
 
     // --- Classroom Cork Bulletin Board on Back Wall ---
