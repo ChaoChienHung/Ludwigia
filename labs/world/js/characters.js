@@ -24,10 +24,8 @@
         const res = await fetch(jsonPath);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        this.initFromData(data.characters);
-        const rawConv = data.conversations || data.conversationPairs;
-        const validated = this.validateConversationPairs(rawConv);
-        this.conversationPairs = validated.length > 0 ? validated : (typeof this.initConversationPairs === 'function' ? this.initConversationPairs() : []);
+        const rawConv = data.npcDialogues || data.conversations || data.conversationPairs;
+        this.conversationPairs = this.validateConversationPairs(rawConv);
       } catch (err) {
         console.warn('Failed to load characters.json, using fallback:', err);
       }
@@ -244,13 +242,11 @@
       document.getElementById('dialogue-name').textContent = char.name;
       document.getElementById('dialogue-role').textContent = char.role || 'Resident';
 
-      // Pick randomly among the character's available dialogue options
+      // Player-initiated dialogue has its own pool; ambient lines never appear here.
       let lines = ["Hello!"];
-      if (char.dialogues && char.dialogues[langKey] && char.dialogues[langKey].length > 0) {
-        const pool = char.dialogues[langKey];
+      const pool = char.dialogues?.user?.[langKey] || char.dialogues?.user?.['zh-TW'];
+      if (pool && pool.length > 0) {
         lines = pool[Math.floor(Math.random() * pool.length)];
-      } else if (char.dialogue) {
-        lines = Array.isArray(char.dialogue) ? char.dialogue : [char.dialogue];
       }
 
       let lineIdx = 0;
@@ -575,8 +571,14 @@
 
       const langKey = this.getLangKey();
       const now = performance.now();
+      if (Math.random() < 0.5) {
+        if (!this.tryTriggerNpcDialogue(langKey, now)) this.tryTriggerSelfDialogue(langKey, now);
+      } else if (!this.tryTriggerSelfDialogue(langKey, now)) {
+        this.tryTriggerNpcDialogue(langKey, now);
+      }
+    }
 
-      // Check paired conversations first
+    tryTriggerNpcDialogue(langKey, now) {
       const pairs = this.conversationPairs.slice().sort(() => Math.random() - 0.5);
 
       for (const pair of pairs) {
@@ -647,22 +649,20 @@
           });
         }
         this.queueTimer = lines[0].delay || 2.2;
-        return;
+        return true;
       }
+      return false;
+    }
 
-      // Fallback: Pick a single random NPC to say an ambient thought
-      const eligible = this.characters.filter(c => !c.isPlayer && !c.speechBubble && (now - (c.lastSpokeTime || 0) > 12000));
-      if (eligible.length > 0) {
-        const char = eligible[Math.floor(Math.random() * eligible.length)];
-        const pool = char.dialogues && (char.dialogues[langKey] || char.dialogues['zh-TW']);
-        if (pool && pool.length > 0) {
-          const choice = pool[Math.floor(Math.random() * pool.length)];
-          const line = Array.isArray(choice) ? choice[0] : choice;
-          if (line) {
-            this.triggerSpeechBubble(char, line, 3.8);
-          }
-        }
-      }
+    tryTriggerSelfDialogue(langKey, now) {
+      const eligible = this.characters.filter(c => !c.isPlayer && !c.speechBubble &&
+        now - (c.lastSpokeTime || 0) > 12000 &&
+        (c.dialogues?.self?.[langKey] || c.dialogues?.self?.['zh-TW'])?.length);
+      if (!eligible.length) return false;
+      const char = eligible[Math.floor(Math.random() * eligible.length)];
+      const pool = char.dialogues.self[langKey] || char.dialogues.self['zh-TW'];
+      this.triggerSpeechBubble(char, pool[Math.floor(Math.random() * pool.length)], 3.8);
+      return true;
     }
 
     triggerSpeechBubble(char, text, duration = 3.8) {

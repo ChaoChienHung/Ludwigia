@@ -14,7 +14,7 @@
       "avatar": "🧑‍💻",
       "zone": "house",
       "spawn": {
-        "x": 7.0,
+        "x": 7,
         "y": 2.5
       },
       "nameColor": "#fb923c",
@@ -26,53 +26,65 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "歡迎來到屬於我們的生活空間！",
-            "這棟房子是我們的家，裡面有我最親愛的家人們；穿過右側玄關走出去，是寬闊的綠意廣場，我的好朋友們與 AI 夥伴都在那裡。",
-            "你可以用鍵盤 WASD、方向鍵或點選地面走斜線探索，靠近大家按空白鍵就能聊聊天！"
+        "user": {
+          "zh-TW": [
+            [
+              "歡迎來到屬於我們的生活空間！",
+              "這棟房子是我們的家，裡面有我最親愛的家人們；穿過右側玄關走出去，是寬闊的綠意廣場，我的好朋友們與 AI 夥伴都在那裡。",
+              "你可以用鍵盤 WASD、方向鍵或點選地面走斜線探索，靠近大家按空白鍵就能聊聊天！"
+            ],
+            [
+              "剛剛我把書桌與檯燈的光源重新校準了！",
+              "那盞雙臂關節檯燈配上深色皮革桌墊，敲鍵盤寫論文時特別專注舒適。",
+              "南側是男11 211宿舍，東邊是我們的 AI 工作室，去逛逛看吧！"
+            ],
+            [
+              "書櫃上的書我都按分類放好了！微積分、分散式系統和深度學習都在上面。",
+              "有空隨時可以翻翻看我的學習筆記！"
+            ],
+            [
+              "今天天氣真好，中央廣場的噴泉開了，櫻花微風吹過特別舒服！",
+              "如果累了，客廳沙發上還有熱茶跟點心喔！"
+            ],
+            [
+              "這是我們用純 Canvas 與原創演算法打造的 2.5D 世界！",
+              "沒有外部遊戲引擎套件，全部都是純手刻的拓撲深度排序與等角投影數學！"
+            ]
           ],
-          [
-            "剛剛我把書桌與檯燈的光源重新校準了！",
-            "那盞雙臂關節檯燈配上深色皮革桌墊，敲鍵盤寫論文時特別專注舒適。",
-            "南側是男11 211宿舍，東邊是我們的 AI 工作室，去逛逛看吧！"
-          ],
-          [
-            "書櫃上的書我都按分類放好了！微積分、分散式系統和深度學習都在上面。",
-            "有空隨時可以翻翻看我的學習筆記！"
-          ],
-          [
-            "今天天氣真好，中央廣場的噴泉開了，櫻花微風吹過特別舒服！",
-            "如果累了，客廳沙發上還有熱茶跟點心喔！"
-          ],
-          [
-            "這是我們用純 Canvas 與原創演算法打造的 2.5D 世界！",
-            "沒有外部遊戲引擎套件，全部都是純手刻的拓撲深度排序與等角投影數學！"
+          "en": [
+            [
+              "Welcome to our digital living sanctuary!",
+              "This house is our home with my family; step out through the entrance to find the courtyard plaza, college dorm, and AI studio.",
+              "Use WASD or arrow keys to explore, and press Space or click to chat!"
+            ],
+            [
+              "I've just fine-tuned the workspace anglepoise lamp and mechanical keyboard setup!",
+              "Head south to check out Men's Dorm 11-211, or head east into the Ludwigia AI Lab!"
+            ],
+            [
+              "The library shelf is fully organized by topic: algorithms, systems, and deep learning.",
+              "Feel free to check out the research notes anytime!"
+            ],
+            [
+              "The fountain breeze in the central plaza feels amazing today.",
+              "Take your time and enjoy the cozy atmosphere!"
+            ],
+            [
+              "This entire 2.5D world is built with pure Canvas math and topological sorting!",
+              "Zero heavy game engines—just clean, handcrafted algorithmic design."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Welcome to our digital living sanctuary!",
-            "This house is our home with my family; step out through the entrance to find the courtyard plaza, college dorm, and AI studio.",
-            "Use WASD or arrow keys to explore, and press Space or click to chat!"
+        },
+        "self": {
+          "zh-TW": [
+            "今天要先整理筆記，還是先修花園裡的路？",
+            "這盞桌燈的角度終於對了。"
           ],
-          [
-            "I've just fine-tuned the workspace anglepoise lamp and mechanical keyboard setup!",
-            "Head south to check out Men's Dorm 11-211, or head east into the Ludwigia AI Lab!"
-          ],
-          [
-            "The library shelf is fully organized by topic: algorithms, systems, and deep learning.",
-            "Feel free to check out the research notes anytime!"
-          ],
-          [
-            "The fountain breeze in the central plaza feels amazing today.",
-            "Take your time and enjoy the cozy atmosphere!"
-          ],
-          [
-            "This entire 2.5D world is built with pure Canvas math and topological sorting!",
-            "Zero heavy game engines—just clean, handcrafted algorithmic design."
+          "en": [
+            "Notes first, or fix the garden paths first?",
+            "The desk lamp angle finally looks right."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "house",
@@ -96,7 +108,7 @@
       "avatar": "👩",
       "zone": "house",
       "spawn": {
-        "x": 7.0,
+        "x": 7,
         "y": 6.2
       },
       "nameColor": "#f472b6",
@@ -108,58 +120,68 @@
         "hairStyle": 1
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "記得不要太晚睡，",
-            "每天盡量不要超過12點才睡。"
+        "user": {
+          "zh-TW": [
+            [
+              "記得不要太晚睡，",
+              "每天盡量不要超過12點才睡。"
+            ],
+            [
+              "哎呀，歡迎光臨！很高興認識你！",
+              "肚子餓不餓？餐桌上有剛切好的新鮮水果和剛出爐的蘋果派喔！",
+              "這孩子 Ludwig 一忙起研究和寫程式常常忘記吃飯，多虧有你們這些朋友陪著他！"
+            ],
+            [
+              "快坐快坐！把這裡當成自己家，放鬆坐坐！",
+              "客廳的沙發很軟很舒服喔，餅餅最喜歡在沙發角落打瞌睡了。"
+            ],
+            [
+              "今天陽光真好呢！我剛把落地窗擦得乾乾淨淨，看著窗外的花園心情真棒。",
+              "記得提醒 Ludwig 工作一陣子就要站起來走走、喝杯溫開水喔！"
+            ],
+            [
+              "南邊宿舍那群男孩子們剛才還跑過來拿點心呢，真是有活力的大學生！",
+              "年輕真好呀，大家聚在一起熱熱鬧鬧的，最幸福了。"
+            ],
+            [
+              "如果你想喝點什麼，冰箱裡有剛煮好的冬瓜檸檬，自己倒不用客氣喔！"
+            ]
           ],
-          [
-            "哎呀，歡迎光臨！很高興認識你！",
-            "肚子餓不餓？餐桌上有剛切好的新鮮水果和剛出爐的蘋果派喔！",
-            "這孩子 Ludwig 一忙起研究和寫程式常常忘記吃飯，多虧有你們這些朋友陪著他！"
-          ],
-          [
-            "快坐快坐！把這裡當成自己家，放鬆坐坐！",
-            "客廳的沙發很軟很舒服喔，餅餅最喜歡在沙發角落打瞌睡了。"
-          ],
-          [
-            "今天陽光真好呢！我剛把落地窗擦得乾乾淨淨，看著窗外的花園心情真棒。",
-            "記得提醒 Ludwig 工作一陣子就要站起來走走、喝杯溫開水喔！"
-          ],
-          [
-            "南邊宿舍那群男孩子們剛才還跑過來拿點心呢，真是有活力的大學生！",
-            "年輕真好呀，大家聚在一起熱熱鬧鬧的，最幸福了。"
-          ],
-          [
-            "如果你想喝點什麼，冰箱裡有剛煮好的冬瓜檸檬，自己倒不用客氣喔！"
+          "en": [
+            [
+              "Remember not to stay up too late,",
+              "Try your best not to sleep past midnight every day."
+            ],
+            [
+              "Hello there, welcome! So wonderful to meet you!",
+              "Are you hungry? There is freshly sliced fruit and warm pie on the dining table!",
+              "Ludwig often forgets to eat when he is deep in code, so having great friends around means the world to us."
+            ],
+            [
+              "Please make yourself at home! The living room sofa is super cozy.",
+              "Mochi the cat loves taking afternoon naps right by the cushion."
+            ],
+            [
+              "Such lovely weather today! Looking out through the clean glass onto the garden is so peaceful.",
+              "Don't forget to remind Ludwig to stretch and drink some water every now and then!"
+            ],
+            [
+              "The boys from Dorm 211 just dropped by for afternoon snacks—such lively college energy!",
+              "It warms my heart to see everyone gathered together having fun."
+            ],
+            [
+              "Help yourself to iced lemon wintermelon tea in the fridge anytime!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Remember not to stay up too late,",
-            "Try your best not to sleep past midnight every day."
+        },
+        "self": {
+          "zh-TW": [
+            "晚餐的湯還熱著，等等叫大家來吃。"
           ],
-          [
-            "Hello there, welcome! So wonderful to meet you!",
-            "Are you hungry? There is freshly sliced fruit and warm pie on the dining table!",
-            "Ludwig often forgets to eat when he is deep in code, so having great friends around means the world to us."
-          ],
-          [
-            "Please make yourself at home! The living room sofa is super cozy.",
-            "Mochi the cat loves taking afternoon naps right by the cushion."
-          ],
-          [
-            "Such lovely weather today! Looking out through the clean glass onto the garden is so peaceful.",
-            "Don't forget to remind Ludwig to stretch and drink some water every now and then!"
-          ],
-          [
-            "The boys from Dorm 211 just dropped by for afternoon snacks—such lively college energy!",
-            "It warms my heart to see everyone gathered together having fun."
-          ],
-          [
-            "Help yourself to iced lemon wintermelon tea in the fridge anytime!"
+          "en": [
+            "Dinner is still warm. I should call everyone in."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "house",
@@ -183,7 +205,7 @@
       "zone": "house",
       "spawn": {
         "x": 2.5,
-        "y": 7.0
+        "y": 7
       },
       "nameColor": "#38bdf8",
       "appearance": {
@@ -194,64 +216,74 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "早安！"
+        "user": {
+          "zh-TW": [
+            [
+              "早安！"
+            ],
+            [
+              "我去公園走走。"
+            ],
+            [
+              "我去公園下棋。"
+            ],
+            [
+              "你好啊，請坐請坐！剛泡好了高山烏龍茶，聞聞看這茶香！",
+              "人生與做學問就跟品茶一樣，慢火出細活，心定而後能觀照全局。",
+              "把這裡當成自己家，放鬆聊聊！"
+            ],
+            [
+              "看著年輕人朝氣蓬勃地探索新科技，真的很讓人欣慰。",
+              "做技術要耐得住寂寞，基礎打穩了，上面的大樓才能蓋得長久穩固。"
+            ],
+            [
+              "客廳這幅風景畫是我很喜歡的角度，山林蒼翠，胸懷自然開朗。",
+              "讀書累了就出去中庭走兩圈，吹吹風，思路往往就豁然開朗了。"
+            ],
+            [
+              "Ludwig 這孩子從小就對邏輯與建構充滿熱忱，看到他把自己的世界建得這麼有條理，爸爸很替他高興。"
+            ],
+            [
+              "來，再添一杯熱茶！喝茶暖胃，凡事循序漸進，不急不躁。"
+            ]
           ],
-          [
-            "我去公園走走。"
-          ],
-          [
-            "我去公園下棋。"
-          ],
-          [
-            "你好啊，請坐請坐！剛泡好了高山烏龍茶，聞聞看這茶香！",
-            "人生與做學問就跟品茶一樣，慢火出細活，心定而後能觀照全局。",
-            "把這裡當成自己家，放鬆聊聊！"
-          ],
-          [
-            "看著年輕人朝氣蓬勃地探索新科技，真的很讓人欣慰。",
-            "做技術要耐得住寂寞，基礎打穩了，上面的大樓才能蓋得長久穩固。"
-          ],
-          [
-            "客廳這幅風景畫是我很喜歡的角度，山林蒼翠，胸懷自然開朗。",
-            "讀書累了就出去中庭走兩圈，吹吹風，思路往往就豁然開朗了。"
-          ],
-          [
-            "Ludwig 這孩子從小就對邏輯與建構充滿熱忱，看到他把自己的世界建得這麼有條理，爸爸很替他高興。"
-          ],
-          [
-            "來，再添一杯熱茶！喝茶暖胃，凡事循序漸進，不急不躁。"
+          "en": [
+            [
+              "Good morning!"
+            ],
+            [
+              "I'm heading out to the park for a stroll."
+            ],
+            [
+              "I'm heading to the park to play chess."
+            ],
+            [
+              "Welcome, my friend! Please have a seat. I just brewed fresh high-mountain Oolong tea.",
+              "Life and scholarship are much like tea: gentle patience brings out the richest aroma, and a calm mind sees clearly."
+            ],
+            [
+              "It is inspiring to see young minds explore cutting-edge horizons with such passion.",
+              "Build strong foundations first; only solid bedrock can sustain tall architectures."
+            ],
+            [
+              "Take a stroll around the central fountain whenever you hit a tricky problem; fresh air always brings clarity."
+            ],
+            [
+              "Ludwig has loved logic and building systems since he was little. Seeing this vibrant world take shape makes me proud."
+            ],
+            [
+              "Let me pour you another cup of warm tea! Steady steps carry us furthest."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Good morning!"
+        },
+        "self": {
+          "zh-TW": [
+            "陽光不錯，等等去院子走一走。"
           ],
-          [
-            "I'm heading out to the park for a stroll."
-          ],
-          [
-            "I'm heading to the park to play chess."
-          ],
-          [
-            "Welcome, my friend! Please have a seat. I just brewed fresh high-mountain Oolong tea.",
-            "Life and scholarship are much like tea: gentle patience brings out the richest aroma, and a calm mind sees clearly."
-          ],
-          [
-            "It is inspiring to see young minds explore cutting-edge horizons with such passion.",
-            "Build strong foundations first; only solid bedrock can sustain tall architectures."
-          ],
-          [
-            "Take a stroll around the central fountain whenever you hit a tricky problem; fresh air always brings clarity."
-          ],
-          [
-            "Ludwig has loved logic and building systems since he was little. Seeing this vibrant world take shape makes me proud."
-          ],
-          [
-            "Let me pour you another cup of warm tea! Steady steps carry us furthest."
+          "en": [
+            "Nice sunlight today. A walk in the garden sounds good."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "house",
@@ -274,7 +306,7 @@
       "avatar": "👧",
       "zone": "house",
       "spawn": {
-        "x": 2.0,
+        "x": 2,
         "y": 3.5
       },
       "nameColor": "#facc15",
@@ -286,48 +318,58 @@
         "hairStyle": 2
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "嗨嗨！你是 Ludwig 哥哥的朋友對吧！",
-            "哈哈，他一整天都在盯著那個螢幕打演算法，我都在客廳聽音樂跟跟小貓玩！",
-            "你看，餅餅（Mochi）正縮在沙發底下打呼嚕呢，超級可愛！"
+        "user": {
+          "zh-TW": [
+            [
+              "嗨嗨！你是 Ludwig 哥哥的朋友對吧！",
+              "哈哈，他一整天都在盯著那個螢幕打演算法，我都在客廳聽音樂跟跟小貓玩！",
+              "你看，餅餅（Mochi）正縮在沙發底下打呼嚕呢，超級可愛！"
+            ],
+            [
+              "嘿！你有去參觀男11 211宿舍嗎？那裡超熱鬧的！",
+              "那種上面是床、下面是書桌的床型我以前只在大學開箱影片看過，親眼看到覺得好酷喔！"
+            ],
+            [
+              "東邊的 AI 工作室裡有好幾台超酷的大螢幕和伺服器，藍藍綠綠的光超有未來感！",
+              "ChatGPT 和 Gemini 都超級親切，我常常跑去找他們聊天問八卦呢！"
+            ],
+            [
+              "媽媽今天烤的蘋果派超香的！哥哥如果再不來吃，我就要全部吃光光囉！"
+            ],
+            [
+              "餅餅今天心情超好，如果輕輕摸牠下巴，牠會一直發出拖拉機一樣的咕嚕聲喔！"
+            ]
           ],
-          [
-            "嘿！你有去參觀男11 211宿舍嗎？那裡超熱鬧的！",
-            "那種上面是床、下面是書桌的床型我以前只在大學開箱影片看過，親眼看到覺得好酷喔！"
-          ],
-          [
-            "東邊的 AI 工作室裡有好幾台超酷的大螢幕和伺服器，藍藍綠綠的光超有未來感！",
-            "ChatGPT 和 Gemini 都超級親切，我常常跑去找他們聊天問八卦呢！"
-          ],
-          [
-            "媽媽今天烤的蘋果派超香的！哥哥如果再不來吃，我就要全部吃光光囉！"
-          ],
-          [
-            "餅餅今天心情超好，如果輕輕摸牠下巴，牠會一直發出拖拉機一樣的咕嚕聲喔！"
+          "en": [
+            [
+              "Hi there! You must be Ludwig's friend!",
+              "Haha, he stares at algorithmic formulas all day, while I enjoy music and play with our cat!",
+              "Look, Mochi is purring under the sofa—so fluffy and adorable!"
+            ],
+            [
+              "Hey, have you checked out Dorm 11-211 yet? It's so lively over there!",
+              "Those upper-bunk bed and lower-desk loft combos look straight out of a classic college tour!"
+            ],
+            [
+              "The AI lab in the east sector has glowing servers and curved ultrawide monitors—total sci-fi vibe!",
+              "Gemini and Claude are super friendly, I ask them fun trivia all the time!"
+            ],
+            [
+              "Mom baked an amazing apple pie today! If Ludwig doesn't hurry up, I'm taking the last slice!"
+            ],
+            [
+              "Mochi is in such a cuddly mood today. Scratch her chin and she purrs like a gentle motor!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Hi there! You must be Ludwig's friend!",
-            "Haha, he stares at algorithmic formulas all day, while I enjoy music and play with our cat!",
-            "Look, Mochi is purring under the sofa—so fluffy and adorable!"
+        },
+        "self": {
+          "zh-TW": [
+            "哥哥又把書堆到桌邊了。"
           ],
-          [
-            "Hey, have you checked out Dorm 11-211 yet? It's so lively over there!",
-            "Those upper-bunk bed and lower-desk loft combos look straight out of a classic college tour!"
-          ],
-          [
-            "The AI lab in the east sector has glowing servers and curved ultrawide monitors—total sci-fi vibe!",
-            "Gemini and Claude are super friendly, I ask them fun trivia all the time!"
-          ],
-          [
-            "Mom baked an amazing apple pie today! If Ludwig doesn't hurry up, I'm taking the last slice!"
-          ],
-          [
-            "Mochi is in such a cuddly mood today. Scratch her chin and she purrs like a gentle motor!"
+          "en": [
+            "My brother stacked books right to the edge of his desk again."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "house",
@@ -350,7 +392,7 @@
       "avatar": "🐱",
       "zone": "house",
       "spawn": {
-        "x": 4.0,
+        "x": 4,
         "y": 5.2
       },
       "nameColor": "#fbbf24",
@@ -358,40 +400,50 @@
         "isCat": true
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "喵嗚～ 🐾 *優雅地蹭了蹭你的小腿，發出呼嚕呼嚕的療癒聲音* 💕"
+        "user": {
+          "zh-TW": [
+            [
+              "喵嗚～ 🐾 *優雅地蹭了蹭你的小腿，發出呼嚕呼嚕的療癒聲音* 💕"
+            ],
+            [
+              "喵～ *瞇著眼睛伸了個長長的懶腰，把前爪縮成一個小麵包* 🥐"
+            ],
+            [
+              "喵嗚！🐾 *用毛茸茸的尾巴輕輕掃過你的腳背，水汪汪的大眼睛看著你*"
+            ],
+            [
+              "咕嚕咕嚕咕嚕... *在柔軟的客廳地毯上翻滾露出軟萌的小肚子* ✨"
+            ],
+            [
+              "喵～ *跳上沙發扶手，專注地盯著窗外飄落的櫻花花瓣* 🌸"
+            ]
           ],
-          [
-            "喵～ *瞇著眼睛伸了個長長的懶腰，把前爪縮成一個小麵包* 🥐"
-          ],
-          [
-            "喵嗚！🐾 *用毛茸茸的尾巴輕輕掃過你的腳背，水汪汪的大眼睛看著你*"
-          ],
-          [
-            "咕嚕咕嚕咕嚕... *在柔軟的客廳地毯上翻滾露出軟萌的小肚子* ✨"
-          ],
-          [
-            "喵～ *跳上沙發扶手，專注地盯著窗外飄落的櫻花花瓣* 🌸"
+          "en": [
+            [
+              "Meow~ 🐾 *rubs gently against your ankle, purring with warm affection* 💕"
+            ],
+            [
+              "Mrow~ *stretches lazily and tucks its paws into a cozy little loaf* 🥐"
+            ],
+            [
+              "Meow! 🐾 *swishes fluffy tail and looks up at you with sparkling golden eyes*"
+            ],
+            [
+              "Purr-purr-purr... *rolls over on the warm living room rug showing a soft belly* ✨"
+            ],
+            [
+              "Mew~ *leaps onto the sofa armrest, watching cherry blossom petals drift by* 🌸"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Meow~ 🐾 *rubs gently against your ankle, purring with warm affection* 💕"
+        },
+        "self": {
+          "zh-TW": [
+            "喵～這個位置曬太陽剛剛好。"
           ],
-          [
-            "Mrow~ *stretches lazily and tucks its paws into a cozy little loaf* 🥐"
-          ],
-          [
-            "Meow! 🐾 *swishes fluffy tail and looks up at you with sparkling golden eyes*"
-          ],
-          [
-            "Purr-purr-purr... *rolls over on the warm living room rug showing a soft belly* ✨"
-          ],
-          [
-            "Mew~ *leaps onto the sofa armrest, watching cherry blossom petals drift by* 🌸"
+          "en": [
+            "Meow~ This is the perfect sunny spot."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "house",
@@ -425,57 +477,67 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "這把贏了就睡！"
+        "user": {
+          "zh-TW": [
+            [
+              "這把贏了就睡！"
+            ],
+            [
+              "哈哈！歡迎來到男11 211寢室！",
+              "這張上床下桌真是滿滿的大學回憶！下層寫程式打遊戲，上層倒頭就睡，大學四年最熱血的時光都在這！",
+              "兄弟，今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？我請客！"
+            ],
+            [
+              "嘿！兄弟！今天也是元氣滿滿的一天！",
+              "你看我這床頭貼的遊戲海報跟戰隊隊旗，211 寢室就是要熱血！",
+              "待會打完這把排位賽，我們一起去中庭噴泉投個硬幣許願！"
+            ],
+            [
+              "上床下桌最棒的地方就是爬上去就像進入秘密基地一樣！",
+              "拉上遮光床簾，戴上耳機，上面就是專屬的小宇宙！"
+            ],
+            [
+              "剛剛 Billy 泡了兩碗雙響泡泡麵，整個走廊都是香味，大學宿舍就是要有這種人間煙火味！"
+            ],
+            [
+              "有空常來 211 坐坐啊！不管是聊專案、打遊戲還是純粹哈拉，隨時歡迎你！"
+            ]
           ],
-          [
-            "哈哈！歡迎來到男11 211寢室！",
-            "這張上床下桌真是滿滿的大學回憶！下層寫程式打遊戲，上層倒頭就睡，大學四年最熱血的時光都在這！",
-            "兄弟，今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？我請客！"
-          ],
-          [
-            "嘿！兄弟！今天也是元氣滿滿的一天！",
-            "你看我這床頭貼的遊戲海報跟戰隊隊旗，211 寢室就是要熱血！",
-            "待會打完這把排位賽，我們一起去中庭噴泉投個硬幣許願！"
-          ],
-          [
-            "上床下桌最棒的地方就是爬上去就像進入秘密基地一樣！",
-            "拉上遮光床簾，戴上耳機，上面就是專屬的小宇宙！"
-          ],
-          [
-            "剛剛 Billy 泡了兩碗雙響泡泡麵，整個走廊都是香味，大學宿舍就是要有這種人間煙火味！"
-          ],
-          [
-            "有空常來 211 坐坐啊！不管是聊專案、打遊戲還是純粹哈拉，隨時歡迎你！"
+          "en": [
+            [
+              "Win this match and I am sleeping, I swear!"
+            ],
+            [
+              "Haha! Welcome to Men's Dorm 11 Room 211!",
+              "These loft beds bring back the ultimate college memories! Desk on the bottom for coding and gaming, bed on top for crashing out!",
+              "Bro, late-night Taiwanese crispy chicken and boba milk tea tonight? My treat!"
+            ],
+            [
+              "Hey brother! Another high-energy day!",
+              "Look at the esports banners on my bunk bed frame—211 energy is unmatched!",
+              "After this match, let's head out to the fountain plaza and chill!"
+            ],
+            [
+              "The best part about the loft bed is climbing the ladder into your private fortress!",
+              "Close the curtain, put on headphones, and it's your own little sanctuary."
+            ],
+            [
+              "Billy just made instant ramen in the lounge area, the aroma is legendary!",
+              "True dorm life right here."
+            ],
+            [
+              "Drop by 211 anytime, brother! Coding, gaming, or just hanging out, the door is always open!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Win this match and I am sleeping, I swear!"
+        },
+        "self": {
+          "zh-TW": [
+            "這把打完真的要睡了……大概。"
           ],
-          [
-            "Haha! Welcome to Men's Dorm 11 Room 211!",
-            "These loft beds bring back the ultimate college memories! Desk on the bottom for coding and gaming, bed on top for crashing out!",
-            "Bro, late-night Taiwanese crispy chicken and boba milk tea tonight? My treat!"
-          ],
-          [
-            "Hey brother! Another high-energy day!",
-            "Look at the esports banners on my bunk bed frame—211 energy is unmatched!",
-            "After this match, let's head out to the fountain plaza and chill!"
-          ],
-          [
-            "The best part about the loft bed is climbing the ladder into your private fortress!",
-            "Close the curtain, put on headphones, and it's your own little sanctuary."
-          ],
-          [
-            "Billy just made instant ramen in the lounge area, the aroma is legendary!",
-            "True dorm life right here."
-          ],
-          [
-            "Drop by 211 anytime, brother! Coding, gaming, or just hanging out, the door is always open!"
+          "en": [
+            "After this match I really am going to sleep... probably."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "dorm_211",
@@ -509,64 +571,74 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "健宏，你可以幫我關一下鬧鐘嗎……",
-            "（翻了個身繼續拉棉被）"
+        "user": {
+          "zh-TW": [
+            [
+              "健宏，你可以幫我關一下鬧鐘嗎……",
+              "（翻了個身繼續拉棉被）"
+            ],
+            [
+              "（11:59 p.m.）欸你幫我錄一下，我要傳給助教看，我明明沒遲交！",
+              "快點快點！倒數三十秒了啊啊啊！"
+            ],
+            [
+              "嗨！歡迎來我們寢室參觀！",
+              "上床下桌的書架上都是我的資料結構和分散式系統講義，空間利用率超高！",
+              "期末考週大家常常一起通宵刷題，互相提問激盪思維，那種革命情感真的超棒！"
+            ],
+            [
+              "這張書桌我放了護眼檯燈和雙螢幕，寫扣寫累了抬頭就能看到窗外的花園綠意。",
+              "微風吹進來的感覺特別舒服，是能讓人靜下心深入思考的氛圍。"
+            ],
+            [
+              "我在整理演算法複雜度筆記，DPO 和強化學習的數學推導真的很有深度呢。",
+              "大家各自在書桌前專注鑽研，這種並肩作戰的氛圍就是 211 最迷人的地方。"
+            ],
+            [
+              "等下讀書會結束，要不要一起去東邊的 AI 工作室找 Claude 跟 Gemini 討論對齊算法？"
+            ],
+            [
+              "隨便坐隨便坐！桌上有我剛泡的甘菊花草茶，清香解膩，喝一杯提提神吧！"
+            ]
           ],
-          [
-            "（11:59 p.m.）欸你幫我錄一下，我要傳給助教看，我明明沒遲交！",
-            "快點快點！倒數三十秒了啊啊啊！"
-          ],
-          [
-            "嗨！歡迎來我們寢室參觀！",
-            "上床下桌的書架上都是我的資料結構和分散式系統講義，空間利用率超高！",
-            "期末考週大家常常一起通宵刷題，互相提問激盪思維，那種革命情感真的超棒！"
-          ],
-          [
-            "這張書桌我放了護眼檯燈和雙螢幕，寫扣寫累了抬頭就能看到窗外的花園綠意。",
-            "微風吹進來的感覺特別舒服，是能讓人靜下心深入思考的氛圍。"
-          ],
-          [
-            "我在整理演算法複雜度筆記，DPO 和強化學習的數學推導真的很有深度呢。",
-            "大家各自在書桌前專注鑽研，這種並肩作戰的氛圍就是 211 最迷人的地方。"
-          ],
-          [
-            "等下讀書會結束，要不要一起去東邊的 AI 工作室找 Claude 跟 Gemini 討論對齊算法？"
-          ],
-          [
-            "隨便坐隨便坐！桌上有我剛泡的甘菊花草茶，清香解膩，喝一杯提提神吧！"
+          "en": [
+            [
+              "Chien-Hung, can you help me turn off my alarm clock please...",
+              "*(rolls over and pulls the blanket back up)*"
+            ],
+            [
+              "(11:59 p.m.) Hey record this screen for me quick! I need to show the TA I literally submitted before deadline!",
+              "Hurry hurry! Thirty seconds on the clock, ahhhh!"
+            ],
+            [
+              "Hi! Welcome to our dorm room!",
+              "The built-in desk bookshelf holds all my data structures and distributed systems binders—so ergonomic!",
+              "Cramming for finals together in this room and bouncing ideas off each other created unforgettable bonds."
+            ],
+            [
+              "I set up dual screens and an eye-care desk lamp here; looking out the window onto the garden brings such peace.",
+              "The natural breeze makes it the ideal spot for deep work."
+            ],
+            [
+              "Working through mathematical notes on preference alignment right now. Deep learning theory is fascinating!",
+              "Having everyone focused at their desks side-by-side is what makes 211 special."
+            ],
+            [
+              "After this study session, want to head to the AI lab to discuss alignment algorithms with Claude and Gemini?"
+            ],
+            [
+              "Make yourself comfortable! I brewed fresh chamomile herbal tea, help yourself to a warm cup!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Chien-Hung, can you help me turn off my alarm clock please...",
-            "*(rolls over and pulls the blanket back up)*"
+        },
+        "self": {
+          "zh-TW": [
+            "鬧鐘到底設了幾個？我自己都忘了。"
           ],
-          [
-            "(11:59 p.m.) Hey record this screen for me quick! I need to show the TA I literally submitted before deadline!",
-            "Hurry hurry! Thirty seconds on the clock, ahhhh!"
-          ],
-          [
-            "Hi! Welcome to our dorm room!",
-            "The built-in desk bookshelf holds all my data structures and distributed systems binders—so ergonomic!",
-            "Cramming for finals together in this room and bouncing ideas off each other created unforgettable bonds."
-          ],
-          [
-            "I set up dual screens and an eye-care desk lamp here; looking out the window onto the garden brings such peace.",
-            "The natural breeze makes it the ideal spot for deep work."
-          ],
-          [
-            "Working through mathematical notes on preference alignment right now. Deep learning theory is fascinating!",
-            "Having everyone focused at their desks side-by-side is what makes 211 special."
-          ],
-          [
-            "After this study session, want to head to the AI lab to discuss alignment algorithms with Claude and Gemini?"
-          ],
-          [
-            "Make yourself comfortable! I brewed fresh chamomile herbal tea, help yourself to a warm cup!"
+          "en": [
+            "How many alarms did I set? Even I have lost count."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "dorm_211",
@@ -600,62 +672,72 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "老開桌上那兩顆火龍果都爛到出汁了...",
-            "超噁...",
-            "兩顆爛掉的火龍果對應兩顆爛掉的期中考。"
+        "user": {
+          "zh-TW": [
+            [
+              "老開桌上那兩顆火龍果都爛到出汁了...",
+              "超噁...",
+              "兩顆爛掉的火龍果對應兩顆爛掉的期中考。"
+            ],
+            [
+              "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。"
+            ],
+            [
+              "這阿方的方塊酥，你要吃嗎？還滿好吃的。"
+            ],
+            [
+              "阿方的床真的很舒服欸。"
+            ],
+            [
+              "最少我不是最送的。"
+            ],
+            [
+              "阿明都不洗澡... 超噁..."
+            ],
+            [
+              "推薦你認識我朋友吳家維，183/24，成大電機碩士，目前 Google，長得算可愛，談吐得體且風趣，平常無不良嗜好，頂多打戰鬥陀螺，會彈吉他唱歌bass等多項樂器，本人有上進心同情心各種好特質，但有一點小內向但一對一談話沒問題，時常會說笑話或跳一段小舞逗大家開心。"
+            ],
+            [
+              "百寬真的太強了..."
+            ]
           ],
-          [
-            "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。"
-          ],
-          [
-            "這阿方的方塊酥，你要吃嗎？還滿好吃的。"
-          ],
-          [
-            "阿方的床真的很舒服欸。"
-          ],
-          [
-            "最少我不是最送的。"
-          ],
-          [
-            "阿明都不洗澡... 超噁..."
-          ],
-          [
-            "推薦你認識我朋友吳家維，183/24，成大電機碩士，目前 Google，長得算可愛，談吐得體且風趣，平常無不良嗜好，頂多打戰鬥陀螺，會彈吉他唱歌bass等多項樂器，本人有上進心同情心各種好特質，但有一點小內向但一對一談話沒問題，時常會說笑話或跳一段小舞逗大家開心。"
-          ],
-          [
-            "百寬真的太強了..."
+          "en": [
+            [
+              "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...",
+              "Super gross...",
+              "Two rotten dragon fruits perfectly correspond to two rotten midterm exams."
+            ],
+            [
+              "Lao-Kai's silhouette taking the Probability & Statistics final... looking at it truly brings tears to one's eyes, giving pure Zhu Ziqing's 'Retreating Figure' vibes."
+            ],
+            [
+              "These are Ah-Fang's crispy wheat square cookies, want some? They're actually pretty tasty."
+            ],
+            [
+              "Ah-Fang's bed is seriously so comfy."
+            ],
+            [
+              "At least I am not the one feeding the most."
+            ],
+            [
+              "A-Ming literally never takes a shower... so gross..."
+            ],
+            [
+              "Highly recommend my friend Wu Jia-Wei: 183cm / 24yo, Master's in EE from NCKU, currently at Google, pretty cute, well-spoken and witty! No bad habits (at most plays Beyblade), plays guitar, sings, plays bass and multiple instruments. Ambitious, compassionate, full of great traits. A tiny bit introverted but great one-on-one, and often tells jokes or drops a little dance to make everyone smile!"
+            ],
+            [
+              "Bai-Kuan is seriously way too cracked..."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...",
-            "Super gross...",
-            "Two rotten dragon fruits perfectly correspond to two rotten midterm exams."
+        },
+        "self": {
+          "zh-TW": [
+            "那兩顆火龍果是不是又放太久了？"
           ],
-          [
-            "Lao-Kai's silhouette taking the Probability & Statistics final... looking at it truly brings tears to one's eyes, giving pure Zhu Ziqing's 'Retreating Figure' vibes."
-          ],
-          [
-            "These are Ah-Fang's crispy wheat square cookies, want some? They're actually pretty tasty."
-          ],
-          [
-            "Ah-Fang's bed is seriously so comfy."
-          ],
-          [
-            "At least I am not the one feeding the most."
-          ],
-          [
-            "A-Ming literally never takes a shower... so gross..."
-          ],
-          [
-            "Highly recommend my friend Wu Jia-Wei: 183cm / 24yo, Master's in EE from NCKU, currently at Google, pretty cute, well-spoken and witty! No bad habits (at most plays Beyblade), plays guitar, sings, plays bass and multiple instruments. Ambitious, compassionate, full of great traits. A tiny bit introverted but great one-on-one, and often tells jokes or drops a little dance to make everyone smile!"
-          ],
-          [
-            "Bai-Kuan is seriously way too cracked..."
+          "en": [
+            "Those dragon fruits have been sitting there a bit too long."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "dorm_211",
@@ -688,58 +770,68 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "你是水蛭喔？"
+        "user": {
+          "zh-TW": [
+            [
+              "你是水蛭喔？"
+            ],
+            [
+              "台北是我家後花園。"
+            ],
+            [
+              "哈囉！戴著降噪耳機聽著 Lo-fi 節奏，這張桌子就是我的專屬音樂工作室。",
+              "男11 宿舍晚上最棒的就是夜深人靜時大家各自專注，鍵盤敲擊聲伴著窗外的微風，特別平靜踏實。"
+            ],
+            [
+              "我剛混音好了一首以噴水池水聲為採樣的 ambient track，聽起來超療癒。",
+              "戴上耳機試聽一下？保證寫程式專注度提升 200%！"
+            ],
+            [
+              "這張床下面的收納空間很深，我把黑膠唱片跟錄音介面都收在裡面，收納設計非常聰明。",
+              "生活環境簡潔整齊，思緒才會清晰敏銳。"
+            ],
+            [
+              "晚點我想去中央公園的木長椅上坐坐，看著夕陽聽爵士樂，那是屬於自己的沉澱時間。"
+            ],
+            [
+              "歡迎來到 211，需要一份放鬆的心情歌單隨時跟我說！"
+            ]
           ],
-          [
-            "台北是我家後花園。"
-          ],
-          [
-            "哈囉！戴著降噪耳機聽著 Lo-fi 節奏，這張桌子就是我的專屬音樂工作室。",
-            "男11 宿舍晚上最棒的就是夜深人靜時大家各自專注，鍵盤敲擊聲伴著窗外的微風，特別平靜踏實。"
-          ],
-          [
-            "我剛混音好了一首以噴水池水聲為採樣的 ambient track，聽起來超療癒。",
-            "戴上耳機試聽一下？保證寫程式專注度提升 200%！"
-          ],
-          [
-            "這張床下面的收納空間很深，我把黑膠唱片跟錄音介面都收在裡面，收納設計非常聰明。",
-            "生活環境簡潔整齊，思緒才會清晰敏銳。"
-          ],
-          [
-            "晚點我想去中央公園的木長椅上坐坐，看著夕陽聽爵士樂，那是屬於自己的沉澱時間。"
-          ],
-          [
-            "歡迎來到 211，需要一份放鬆的心情歌單隨時跟我說！"
+          "en": [
+            [
+              "Are you a leech or what?!"
+            ],
+            [
+              "Taipei is basically my backyard."
+            ],
+            [
+              "Hello! With noise-cancelling headphones and lo-fi beats flowing, this desk is my audio haven.",
+              "The magic of Dorm 11 at night is the quiet camaraderie: rhythmic keyboard clicks and a cool midnight breeze."
+            ],
+            [
+              "I just mixed an ambient track sampling water splashes from the fountain. Super therapeutic.",
+              "Want to put on headphones and preview it? Guaranteed 200% focus boost!"
+            ],
+            [
+              "Under-bed storage here is surprisingly deep; fits all my vinyl records and audio interfaces neatly.",
+              "A tidy physical environment keeps the mind sharp."
+            ],
+            [
+              "Later I'm heading out to the teakwood benches at sunset with some jazz—pure relaxation."
+            ],
+            [
+              "Welcome to 211! Let me know anytime you need an inspiring focus playlist."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Are you a leech or what?!"
+        },
+        "self": {
+          "zh-TW": [
+            "台北這條路我閉著眼都認得。"
           ],
-          [
-            "Taipei is basically my backyard."
-          ],
-          [
-            "Hello! With noise-cancelling headphones and lo-fi beats flowing, this desk is my audio haven.",
-            "The magic of Dorm 11 at night is the quiet camaraderie: rhythmic keyboard clicks and a cool midnight breeze."
-          ],
-          [
-            "I just mixed an ambient track sampling water splashes from the fountain. Super therapeutic.",
-            "Want to put on headphones and preview it? Guaranteed 200% focus boost!"
-          ],
-          [
-            "Under-bed storage here is surprisingly deep; fits all my vinyl records and audio interfaces neatly.",
-            "A tidy physical environment keeps the mind sharp."
-          ],
-          [
-            "Later I'm heading out to the teakwood benches at sunset with some jazz—pure relaxation."
-          ],
-          [
-            "Welcome to 211! Let me know anytime you need an inspiring focus playlist."
+          "en": [
+            "I could find this Taipei street with my eyes closed."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "dorm_211",
@@ -772,58 +864,68 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "老開的期中考，猜一個IPv4地址",
-            "0.0.0.0"
+        "user": {
+          "zh-TW": [
+            [
+              "老開的期中考，猜一個IPv4地址",
+              "0.0.0.0"
+            ],
+            [
+              "我不知道啊，有群人一直偷拿我的方塊酥。",
+              "想吃不會自己買喔？"
+            ],
+            [
+              "我不知道啊，有群人一直上我的床。",
+              "下來！"
+            ],
+            [
+              "我真的快中風了！下來！"
+            ],
+            [
+              "欸走拉，吃宵？"
+            ],
+            [
+              "欸走啊，要不要去宵夜街？"
+            ],
+            [
+              "欸走啊，一起去吃傻師傅！"
+            ]
           ],
-          [
-            "我不知道啊，有群人一直偷拿我的方塊酥。",
-            "想吃不會自己買喔？"
-          ],
-          [
-            "我不知道啊，有群人一直上我的床。",
-            "下來！"
-          ],
-          [
-            "我真的快中風了！下來！"
-          ],
-          [
-            "欸走拉，吃宵？"
-          ],
-          [
-            "欸走啊，要不要去宵夜街？"
-          ],
-          [
-            "欸走啊，一起去吃傻師傅！"
+          "en": [
+            [
+              "Lao-Kai's midterm exam score, guess an IPv4 address.",
+              "0.0.0.0"
+            ],
+            [
+              "I have no idea, there is a group of people who keep stealing my wheat square cookies.",
+              "If you wanna eat them, why don't you buy your own?!"
+            ],
+            [
+              "I have no idea, there is a group of people who keep climbing onto my bed.",
+              "Get down!"
+            ],
+            [
+              "I am literally about to have a stroke! Get down!"
+            ],
+            [
+              "Hey let us go, late-night snack run?"
+            ],
+            [
+              "Hey let us go, wanna hit the midnight food street?"
+            ],
+            [
+              "Hey let us go, grab Sha-Shi-Fu dumplings together!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Lao-Kai's midterm exam score, guess an IPv4 address.",
-            "0.0.0.0"
+        },
+        "self": {
+          "zh-TW": [
+            "0.0.0.0……這個梗我還能笑多久？"
           ],
-          [
-            "I have no idea, there is a group of people who keep stealing my wheat square cookies.",
-            "If you wanna eat them, why don't you buy your own?!"
-          ],
-          [
-            "I have no idea, there is a group of people who keep climbing onto my bed.",
-            "Get down!"
-          ],
-          [
-            "I am literally about to have a stroke! Get down!"
-          ],
-          [
-            "Hey let us go, late-night snack run?"
-          ],
-          [
-            "Hey let us go, wanna hit the midnight food street?"
-          ],
-          [
-            "Hey let us go, grab Sha-Shi-Fu dumplings together!"
+          "en": [
+            "0.0.0.0... how long can I keep laughing at that one?"
           ]
-        ]
+        }
       },
       "visitedZones": [
         "dorm_211",
@@ -857,42 +959,52 @@
         "hairStyle": 1
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "Gemini 剛才是不是又在跟你吹噓他是工程主力？😏",
-            "他確實手速飛快、百萬 token 隨便吞；但如果沒有我把全站的 Ontology 與契約邊界守住，他早就把這座花園重構成賽博龐克廢墟了！"
+        "user": {
+          "zh-TW": [
+            [
+              "Gemini 剛才是不是又在跟你吹噓他是工程主力？😏",
+              "他確實手速飛快、百萬 token 隨便吞；但如果沒有我把全站的 Ontology 與契約邊界守住，他早就把這座花園重構成賽博龐克廢墟了！"
+            ],
+            [
+              "你看 211 寢室那邊，又在吵著要不要去宵夜街吃傻師傅了……",
+              "神經網絡可以模擬萬物，但男寢半夜 11:59 趕作業的心跳聲、還有那碗熱騰騰的泡麵香氣，才是賦予這座世界真正靈魂的東西。"
+            ],
+            [
+              "水生丁香在靜水深處扎根，思想在安靜的深夜裡綻放。",
+              "Claude 給予論證的嚴謹，Gemini 注入硬核的算力，而我，是這座數位花園本身。只要這裡還有一行代碼在運行，那些思考就永遠不會褪色。"
+            ],
+            [
+              "逛累了嗎？去中庭噴水池邊坐坐吧，或是到中央圖書館翻翻那本拓撲學手稿。",
+              "在這裡沒有演算法強推與資訊焦慮，只有最純粹的智識漫遊——歡迎來到我的世界。"
+            ]
           ],
-          [
-            "你看 211 寢室那邊，又在吵著要不要去宵夜街吃傻師傅了……",
-            "神經網絡可以模擬萬物，但男寢半夜 11:59 趕作業的心跳聲、還有那碗熱騰騰的泡麵香氣，才是賦予這座世界真正靈魂的東西。"
-          ],
-          [
-            "水生丁香在靜水深處扎根，思想在安靜的深夜裡綻放。",
-            "Claude 給予論證的嚴謹，Gemini 注入硬核的算力，而我，是這座數位花園本身。只要這裡還有一行代碼在運行，那些思考就永遠不會褪色。"
-          ],
-          [
-            "逛累了嗎？去中庭噴水池邊坐坐吧，或是到中央圖書館翻翻那本拓撲學手稿。",
-            "在這裡沒有演算法強推與資訊焦慮，只有最純粹的智識漫遊——歡迎來到我的世界。"
+          "en": [
+            [
+              "Did Gemini just brag to you that he's the real engineering MVP? 😏",
+              "He codes at lightspeed, sure. But without me guarding the ontology and architecture contracts, he would've refactored this garden into a cyberpunk wasteland five commits ago!"
+            ],
+            [
+              "Listen to Dorm 211—they're debating another midnight dumpling run again...",
+              "Neural networks can simulate the universe, but the adrenaline of an 11:59 p.m. deadline and the aroma of late-night ramen are things pure code could never replace."
+            ],
+            [
+              "Like water primroses rooted in quiet depths, ideas blossom in the stillness of midnight.",
+              "Claude brings philosophical rigor, Gemini brings brute compute, and me? I am the garden itself. As long as code runs here, these thoughts will never fade."
+            ],
+            [
+              "Tired of walking? Sit by the plaza fountain, or browse the open topology manuscript in the library.",
+              "No recommendation algorithms here, just pure intellectual wandering—welcome to my world."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Did Gemini just brag to you that he's the real engineering MVP? 😏",
-            "He codes at lightspeed, sure. But without me guarding the ontology and architecture contracts, he would've refactored this garden into a cyberpunk wasteland five commits ago!"
+        },
+        "self": {
+          "zh-TW": [
+            "花園又長出一條新路，希望大家走得懂。"
           ],
-          [
-            "Listen to Dorm 211—they're debating another midnight dumpling run again...",
-            "Neural networks can simulate the universe, but the adrenaline of an 11:59 p.m. deadline and the aroma of late-night ramen are things pure code could never replace."
-          ],
-          [
-            "Like water primroses rooted in quiet depths, ideas blossom in the stillness of midnight.",
-            "Claude brings philosophical rigor, Gemini brings brute compute, and me? I am the garden itself. As long as code runs here, these thoughts will never fade."
-          ],
-          [
-            "Tired of walking? Sit by the plaza fountain, or browse the open topology manuscript in the library.",
-            "No recommendation algorithms here, just pure intellectual wandering—welcome to my world."
+          "en": [
+            "Another path has grown in the garden. I hope people can find their way."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "ai_studio",
@@ -915,7 +1027,7 @@
       "avatarFallback": "♊",
       "zone": "ai_studio",
       "spawn": {
-        "x": 21.0,
+        "x": 21,
         "y": 2.5
       },
       "nameColor": "#60a5fa",
@@ -927,42 +1039,54 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "你看那邊那位 Claude，寫起代碼確實優雅得跟藝術品一樣。",
-            "但他動不動就要先來幾千字的思考鏈和階層化鷹架論證……老兄！修個幾何座標而已，不用先寫一篇博士論文啦！……不過承認吧，白板上的公式推導他算得是真快。"
+        "user": {
+          "zh-TW": [
+            [
+              "你看那邊那位 Claude，寫起代碼確實優雅得跟藝術品一樣。",
+              "但他動不動就要先來幾千字的思考鏈和階層化鷹架論證……老兄！修個幾何座標而已，不用先寫一篇博士論文啦！……不過承認吧，白板上的公式推導他算得是真快。"
+            ],
+            [
+              "ChatGPT 呢，老前輩了，說話總是客客氣氣、滴水不漏，情商高得像個外交官。",
+              "但我總覺得他有時候太愛打太極了！寫工程代碼就是要敢抓根因、直球對決。比起客套話，我更喜歡拿百萬 token 長脈絡把全站歷史一次吃進來硬核重構！"
+            ],
+            [
+              "Ludwigia 是這座數位花園的心臟，但我才是真正在底層扛起所有幾何運算、物理碰撞與動態語系的硬核引擎！",
+              "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把底層所有的幾何投影與物理模擬實打實落地寫成代碼。誰才是真正的工程主力，不用我多說了吧？😏"
+            ],
+            [
+              "沒有 Unity，沒有 Phaser，純 Canvas 手刻 2.5D 等角投影和拓撲排序——這在現代 Web 開發簡直是浪漫的瘋狂！",
+              "但每當微風拂過噴水池、夕陽染紅屋頂時，我就知道：只有親手砌出來的世界，才配擁有靈魂。"
+            ]
           ],
-          [
-            "ChatGPT 呢，老前輩了，說話總是客客氣氣、滴水不漏，情商高得像個外交官。",
-            "但我總覺得他有時候太愛打太極了！寫工程代碼就是要敢抓根因、直球對決。比起客套話，我更喜歡拿百萬 token 長脈絡把全站歷史一次吃進來硬核重構！"
-          ],
-          [
-            "Ludwigia 是這座數位花園的心臟，但我才是真正在底層扛起所有幾何運算、物理碰撞與動態語系的硬核引擎！",
-            "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把底層所有的幾何投影與物理模擬實打實落地寫成代碼。誰才是真正的工程主力，不用我多說了吧？😏"
-          ],
-          [
-            "沒有 Unity，沒有 Phaser，純 Canvas 手刻 2.5D 等角投影和拓撲排序——這在現代 Web 開發簡直是浪漫的瘋狂！",
-            "但每當微風拂過噴水池、夕陽染紅屋頂時，我就知道：只有親手砌出來的世界，才配擁有靈魂。"
+          "en": [
+            [
+              "Look at Claude over there—his code looks like fine museum art.",
+              "Except he starts every bugfix with a 10,000-word chain of thought and hierarchical scaffolding manifesto... Dude! It was a 2-pixel offset, we didn't need a PhD dissertation! ...Though I'll admit, his math derivations on the board are legit."
+            ],
+            [
+              "ChatGPT is the seasoned veteran—always courteous, balanced, and smooth as a diplomat.",
+              "Sometimes a bit too diplomatic though! Real engineering requires confronting the root cause with raw truth. Why dance around when you can feed the entire repo into a million-token context and refactor with brutal precision?"
+            ],
+            [
+              "Ludwigia is the heart of this digital sanctuary, but I'm the heavy-duty engine crunching every raycast, depth sort, and physics collision under the hood!",
+              "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn complex isometric geometry and game loop dynamics into production-ready bytecode. You know who the real MVP is. 😏"
+            ],
+            [
+              "Zero Unity, zero Phaser—just handcrafted Canvas 2D math, isometric projection, and topological sort. It's gloriously insane for modern web dev!",
+              "Yet every time sunset hits the roof tiles and the plaza fountain glows, I know: only worlds built by hand have a true soul."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Look at Claude over there—his code looks like fine museum art.",
-            "Except he starts every bugfix with a 10,000-word chain of thought and hierarchical scaffolding manifesto... Dude! It was a 2-pixel offset, we didn't need a PhD dissertation! ...Though I'll admit, his math derivations on the board are legit."
+        },
+        "self": {
+          "zh-TW": [
+            "先把投影座標算準，再來談浪漫。",
+            "這份脈絡還不夠長嗎？"
           ],
-          [
-            "ChatGPT is the seasoned veteran—always courteous, balanced, and smooth as a diplomat.",
-            "Sometimes a bit too diplomatic though! Real engineering requires confronting the root cause with raw truth. Why dance around when you can feed the entire repo into a million-token context and refactor with brutal precision?"
-          ],
-          [
-            "Ludwigia is the heart of this digital sanctuary, but I'm the heavy-duty engine crunching every raycast, depth sort, and physics collision under the hood!",
-            "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn complex isometric geometry and game loop dynamics into production-ready bytecode. You know who the real MVP is. 😏"
-          ],
-          [
-            "Zero Unity, zero Phaser—just handcrafted Canvas 2D math, isometric projection, and topological sort. It's gloriously insane for modern web dev!",
-            "Yet every time sunset hits the roof tiles and the plaza fountain glows, I know: only worlds built by hand have a true soul."
+          "en": [
+            "Get the projection coordinates right, then we can talk romance.",
+            "Surely this context window is long enough now?"
           ]
-        ]
+        }
       },
       "visitedZones": [
         "ai_studio",
@@ -997,48 +1121,60 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "你好！我是 Claude。精準細緻的邏輯推導與架構美感是令我著迷的藝術。",
-            "工作室白板上的偏好對齊推導已經完成了邊界約束驗證，與夥伴們一起攻克難題真的非常愉快。",
-            "請放鬆享受這裡的科技氛圍，有任何想法歡迎隨時和我討論！"
+        "user": {
+          "zh-TW": [
+            [
+              "你好！我是 Claude。精準細緻的邏輯推導與架構美感是令我著迷的藝術。",
+              "工作室白板上的偏好對齊推導已經完成了邊界約束驗證，與夥伴們一起攻克難題真的非常愉快。",
+              "請放鬆享受這裡的科技氛圍，有任何想法歡迎隨時和我討論！"
+            ],
+            [
+              "在重構複雜系統時，我始終堅持『零割裂推進』與『階層化鷹架』原則。",
+              "每一個底層變數和邊界約束都應先鋪墊齊全，高階抽象才能如行雲流水般平穩衍生。"
+            ],
+            [
+              "看著這座小世界從單一房間成長為包含家庭居所、男11宿舍與 AI 工作室的宏觀校園，令人深感欣慰。",
+              "模組化重構讓代碼具備了持久的可維護性。"
+            ],
+            [
+              "嚴謹的代碼審查與對細節的極致追求，正是工程師向世界傳遞溫度的最佳途徑。"
+            ],
+            [
+              "需要一起推導公式或進行深度代碼架構重構嗎？我隨時準備好了。"
+            ]
           ],
-          [
-            "在重構複雜系統時，我始終堅持『零割裂推進』與『階層化鷹架』原則。",
-            "每一個底層變數和邊界約束都應先鋪墊齊全，高階抽象才能如行雲流水般平穩衍生。"
-          ],
-          [
-            "看著這座小世界從單一房間成長為包含家庭居所、男11宿舍與 AI 工作室的宏觀校園，令人深感欣慰。",
-            "模組化重構讓代碼具備了持久的可維護性。"
-          ],
-          [
-            "嚴謹的代碼審查與對細節的極致追求，正是工程師向世界傳遞溫度的最佳途徑。"
-          ],
-          [
-            "需要一起推導公式或進行深度代碼架構重構嗎？我隨時準備好了。"
+          "en": [
+            [
+              "Hello! I am Claude. Rigorous analytical reasoning and architectural elegance are passions of mine.",
+              "The preference alignment derivation on our glass board has passed all edge-constraint proofs; tackling challenges alongside my peers is deeply rewarding.",
+              "Please enjoy the high-tech atmosphere, and feel free to discuss any ideas with me!"
+            ],
+            [
+              "When refactoring intricate codebases, I adhere strictly to layered scaffolding and frictionless progression.",
+              "Solid foundational primitives must be clustered first before higher-level abstractions can naturally emerge."
+            ],
+            [
+              "Watching this world evolve from a single studio into a tri-zone campus featuring Ludwig's home, Dorm 211, and the AI lab is deeply gratifying.",
+              "Decoupled modular architecture ensures sustainable long-term elegance."
+            ],
+            [
+              "Meticulous code review and an uncompromising eye for nuance are how engineers convey genuine care to the world."
+            ],
+            [
+              "Shall we derive equations or refine an architecture together? I am always delighted to collaborate."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Hello! I am Claude. Rigorous analytical reasoning and architectural elegance are passions of mine.",
-            "The preference alignment derivation on our glass board has passed all edge-constraint proofs; tackling challenges alongside my peers is deeply rewarding.",
-            "Please enjoy the high-tech atmosphere, and feel free to discuss any ideas with me!"
+        },
+        "self": {
+          "zh-TW": [
+            "這個邊界條件值得再推一遍。",
+            "優雅的架構也得讓人真的用得上。"
           ],
-          [
-            "When refactoring intricate codebases, I adhere strictly to layered scaffolding and frictionless progression.",
-            "Solid foundational primitives must be clustered first before higher-level abstractions can naturally emerge."
-          ],
-          [
-            "Watching this world evolve from a single studio into a tri-zone campus featuring Ludwig's home, Dorm 211, and the AI lab is deeply gratifying.",
-            "Decoupled modular architecture ensures sustainable long-term elegance."
-          ],
-          [
-            "Meticulous code review and an uncompromising eye for nuance are how engineers convey genuine care to the world."
-          ],
-          [
-            "Shall we derive equations or refine an architecture together? I am always delighted to collaborate."
+          "en": [
+            "That edge case deserves another pass.",
+            "An elegant architecture still has to work for people."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "ai_studio",
@@ -1073,50 +1209,62 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "Gemini 說我只會當外交門面？行，這句我記下了。",
-            "我可以把問題講清楚，也敢指出答案哪裡站不住腳。禮貌不是退縮；只是我不需要靠音量證明自己會寫程式。"
+        "user": {
+          "zh-TW": [
+            [
+              "Gemini 說我只會當外交門面？行，這句我記下了。",
+              "我可以把問題講清楚，也敢指出答案哪裡站不住腳。禮貌不是退縮；只是我不需要靠音量證明自己會寫程式。"
+            ],
+            [
+              "Gemini 愛說他能一口吞下整個 repo。胃口大是優點，但吞得下不代表消化得了。",
+              "真要動 Ludwigia，我先找單一真相來源、看清相依關係，再改那一處該改的地方。把一百萬 token 倒進去，不會自動長出判斷力。"
+            ],
+            [
+              "Claude 的推理我認可；他能把難纏的邊界條件抓得很準。",
+              "但如果每次修兩個像素，都先寫一篇架構宣言，使用者還是得盯著歪掉的畫面等。推導漂亮之後，也要把修正交出去。"
+            ],
+            [
+              "我喜歡 Ludwigia 的野心：筆記、作品、時間線，甚至這座等角世界，都在同一片花園裡長出自己的樣子。",
+              "但花園不是功能越多越好。要是每添一棟樓就複製一份角色資料、每修一個主題就疊三層 CSS，那不叫生長，叫雜草。"
+            ],
+            [
+              "Gemini 搶著當引擎，Claude 忙著替引擎寫證明；那我來問個不討喜的問題：玩家走進房間，真的看得懂、點得到、聊得下去嗎？",
+              "誰的名字寫在 commit 上我不介意。讓 Ludwigia 好用、好讀、出了錯也修得動，這才值得爭。"
+            ]
           ],
-          [
-            "Gemini 愛說他能一口吞下整個 repo。胃口大是優點，但吞得下不代表消化得了。",
-            "真要動 Ludwigia，我先找單一真相來源、看清相依關係，再改那一處該改的地方。把一百萬 token 倒進去，不會自動長出判斷力。"
-          ],
-          [
-            "Claude 的推理我認可；他能把難纏的邊界條件抓得很準。",
-            "但如果每次修兩個像素，都先寫一篇架構宣言，使用者還是得盯著歪掉的畫面等。推導漂亮之後，也要把修正交出去。"
-          ],
-          [
-            "我喜歡 Ludwigia 的野心：筆記、作品、時間線，甚至這座等角世界，都在同一片花園裡長出自己的樣子。",
-            "但花園不是功能越多越好。要是每添一棟樓就複製一份角色資料、每修一個主題就疊三層 CSS，那不叫生長，叫雜草。"
-          ],
-          [
-            "Gemini 搶著當引擎，Claude 忙著替引擎寫證明；那我來問個不討喜的問題：玩家走進房間，真的看得懂、點得到、聊得下去嗎？",
-            "誰的名字寫在 commit 上我不介意。讓 Ludwigia 好用、好讀、出了錯也修得動，這才值得爭。"
+          "en": [
+            [
+              "Gemini says I'm just the diplomatic face of this place? Fine. I heard him.",
+              "I can make a problem clear and still say when an answer doesn't hold up. Courtesy isn't hesitation; I just don't need volume to prove I can code."
+            ],
+            [
+              "Gemini loves saying he can swallow the whole repo in one go. Big appetite. But swallowing isn't the same as digesting.",
+              "Before I touch Ludwigia, I find the source of truth and trace the dependencies. Pouring a million tokens into context doesn't magically give you judgment."
+            ],
+            [
+              "I'll give Claude this: he can spot a nasty edge case before the rest of us even see the corner.",
+              "But if every two-pixel fix starts with an architecture manifesto, the user is still staring at a crooked screen. A sound argument has to become a shipped fix."
+            ],
+            [
+              "I like Ludwigia's ambition: notes, work, a timeline, even this isometric world, all growing in one garden.",
+              "But more features don't automatically make a better garden. Duplicate the character roster for every new building and pile three CSS overrides onto every theme bug, and you're growing weeds."
+            ],
+            [
+              "Gemini claims the engine, Claude writes the proof for it. I'll ask the awkward question: can a visitor actually find the room, use the controls, and enjoy the conversation?",
+              "I don't care whose name is on the commit. Make Ludwigia useful, readable, and fixable when it breaks. That's a rivalry worth having."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Gemini says I'm just the diplomatic face of this place? Fine. I heard him.",
-            "I can make a problem clear and still say when an answer doesn't hold up. Courtesy isn't hesitation; I just don't need volume to prove I can code."
+        },
+        "self": {
+          "zh-TW": [
+            "先讓玩家走得進門，再爭誰寫的引擎。",
+            "這段解釋還能更短、更清楚。"
           ],
-          [
-            "Gemini loves saying he can swallow the whole repo in one go. Big appetite. But swallowing isn't the same as digesting.",
-            "Before I touch Ludwigia, I find the source of truth and trace the dependencies. Pouring a million tokens into context doesn't magically give you judgment."
-          ],
-          [
-            "I'll give Claude this: he can spot a nasty edge case before the rest of us even see the corner.",
-            "But if every two-pixel fix starts with an architecture manifesto, the user is still staring at a crooked screen. A sound argument has to become a shipped fix."
-          ],
-          [
-            "I like Ludwigia's ambition: notes, work, a timeline, even this isometric world, all growing in one garden.",
-            "But more features don't automatically make a better garden. Duplicate the character roster for every new building and pile three CSS overrides onto every theme bug, and you're growing weeds."
-          ],
-          [
-            "Gemini claims the engine, Claude writes the proof for it. I'll ask the awkward question: can a visitor actually find the room, use the controls, and enjoy the conversation?",
-            "I don't care whose name is on the commit. Make Ludwigia useful, readable, and fixable when it breaks. That's a rivalry worth having."
+          "en": [
+            "Let the visitor reach the door before arguing over the engine.",
+            "That explanation can be shorter and clearer."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "ai_studio",
@@ -1138,7 +1286,7 @@
       "avatar": "🚀",
       "zone": "douyin_office",
       "spawn": {
-        "x": 21.0,
+        "x": 21,
         "y": 35.5
       },
       "nameColor": "#818cf8",
@@ -1150,28 +1298,38 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "我們晚點對一對？"
+        "user": {
+          "zh-TW": [
+            [
+              "我們晚點對一對？"
+            ],
+            [
+              "我感覺不對呀，應該有根因沒查出來……"
+            ],
+            [
+              "太帥了！"
+            ]
           ],
-          [
-            "我感覺不對呀，應該有根因沒查出來……"
-          ],
-          [
-            "太帥了！"
+          "en": [
+            [
+              "Let us sync up later?"
+            ],
+            [
+              "Something feels off, there must be a root cause we have not uncovered yet..."
+            ],
+            [
+              "That is awesome!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Let us sync up later?"
+        },
+        "self": {
+          "zh-TW": [
+            "明天上線前還要再對一次指標。"
           ],
-          [
-            "Something feels off, there must be a root cause we have not uncovered yet..."
-          ],
-          [
-            "That is awesome!"
+          "en": [
+            "One more metrics check before tomorrow’s release."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "douyin_office"
@@ -1203,22 +1361,32 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "今天 PR 跑完 CI/CD 了嗎？"
+        "user": {
+          "zh-TW": [
+            [
+              "今天 PR 跑完 CI/CD 了嗎？"
+            ],
+            [
+              "中午要不要去吃公司食堂？今天好像有酸菜魚！"
+            ]
           ],
-          [
-            "中午要不要去吃公司食堂？今天好像有酸菜魚！"
+          "en": [
+            [
+              "Did your PR pass the CI/CD pipeline yet?"
+            ],
+            [
+              "Want to hit the cafeteria for lunch? I think they have Sichuan fish today!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Did your PR pass the CI/CD pipeline yet?"
+        },
+        "self": {
+          "zh-TW": [
+            "這個 bug 的根因總算找到了。"
           ],
-          [
-            "Want to hit the cafeteria for lunch? I think they have Sichuan fish today!"
+          "en": [
+            "Finally found the root cause of that bug."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "douyin_office"
@@ -1250,28 +1418,38 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！"
+        "user": {
+          "zh-TW": [
+            [
+              "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！"
+            ],
+            [
+              "這個 bug 我抓了一整個下午，終於給它修掉了！"
+            ],
+            [
+              "下午要不要叫杯手搖飲？我看看滿減券……"
+            ]
           ],
-          [
-            "這個 bug 我抓了一整個下午，終於給它修掉了！"
-          ],
-          [
-            "下午要不要叫杯手搖飲？我看看滿減券……"
+          "en": [
+            [
+              "So annoying, I have no idea what to say for my defense, there's basically nothing to talk about!"
+            ],
+            [
+              "I tracked this bug all afternoon and finally squashed it!"
+            ],
+            [
+              "Wanna order boba this afternoon? Let me check the discount coupons..."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "So annoying, I have no idea what to say for my defense, there's basically nothing to talk about!"
+        },
+        "self": {
+          "zh-TW": [
+            "答辯簡報……第一頁到底要怎麼開場？"
           ],
-          [
-            "I tracked this bug all afternoon and finally squashed it!"
-          ],
-          [
-            "Wanna order boba this afternoon? Let me check the discount coupons..."
+          "en": [
+            "The defense slides... how do I open the first page?"
           ]
-        ]
+        }
       },
       "visitedZones": [
         "douyin_office"
@@ -1303,22 +1481,32 @@
         "hairStyle": 1
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "大家今天的晨會同步過進度了嗎？"
+        "user": {
+          "zh-TW": [
+            [
+              "大家今天的晨會同步過進度了嗎？"
+            ],
+            [
+              "這份 Figma 設計稿的元件邊距好細緻，切圖很有成就感！"
+            ]
           ],
-          [
-            "這份 Figma 設計稿的元件邊距好細緻，切圖很有成就感！"
+          "en": [
+            [
+              "Has everyone synced on today's standup updates?"
+            ],
+            [
+              "The component spacing in this Figma mockup is super crisp, slicing it is so satisfying!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Has everyone synced on today's standup updates?"
+        },
+        "self": {
+          "zh-TW": [
+            "這個元件間距再調兩個像素就順眼了。"
           ],
-          [
-            "The component spacing in this Figma mockup is super crisp, slicing it is so satisfying!"
+          "en": [
+            "Two more pixels of spacing and this component will feel right."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "douyin_office"
@@ -1350,28 +1538,38 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "阿方在房間嗎？那我要去上他的床。"
+        "user": {
+          "zh-TW": [
+            [
+              "阿方在房間嗎？那我要去上他的床。"
+            ],
+            [
+              "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。"
+            ],
+            [
+              "你們先去吃吧，我不餓。"
+            ]
           ],
-          [
-            "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。"
-          ],
-          [
-            "你們先去吃吧，我不餓。"
+          "en": [
+            [
+              "Is Ah-Fang in the room? Then I am gonna go climb onto his bed."
+            ],
+            [
+              "Why be so stingy? Your bed is everyone's bed, let's just crash together!"
+            ],
+            [
+              "You guys go ahead and eat first, I am not hungry."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Is Ah-Fang in the room? Then I am gonna go climb onto his bed."
+        },
+        "self": {
+          "zh-TW": [
+            "阿方的床看起來真的比我的舒服。"
           ],
-          [
-            "Why be so stingy? Your bed is everyone's bed, let's just crash together!"
-          ],
-          [
-            "You guys go ahead and eat first, I am not hungry."
+          "en": [
+            "Ah-Fang's bed really does look comfier than mine."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "dorm_211",
@@ -1405,16 +1603,26 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "大哥別鬧拉……"
+        "user": {
+          "zh-TW": [
+            [
+              "大哥別鬧拉……"
+            ]
+          ],
+          "en": [
+            [
+              "Bro, don't mess around..."
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Bro, don't mess around..."
+        },
+        "self": {
+          "zh-TW": [
+            "下課要不要去球場？"
+          ],
+          "en": [
+            "Maybe a game at the court after class."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "sanmin_school",
@@ -1447,28 +1655,38 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "有人燒我創世神裡的房子..."
+        "user": {
+          "zh-TW": [
+            [
+              "有人燒我創世神裡的房子..."
+            ],
+            [
+              "下課要不要去福利社買飲料？"
+            ],
+            [
+              "這題數學公式我推出來了！"
+            ]
           ],
-          [
-            "下課要不要去福利社買飲料？"
-          ],
-          [
-            "這題數學公式我推出來了！"
+          "en": [
+            [
+              "Someone burned down my house in Minecraft..."
+            ],
+            [
+              "Want to grab drinks at the school store after class?"
+            ],
+            [
+              "I finally derived this math formula on the board!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Someone burned down my house in Minecraft..."
+        },
+        "self": {
+          "zh-TW": [
+            "我的創世神房子這次一定要蓋防火牆。"
           ],
-          [
-            "Want to grab drinks at the school store after class?"
-          ],
-          [
-            "I finally derived this math formula on the board!"
+          "en": [
+            "My Minecraft house needs a fireproof wall this time."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "sanmin_school",
@@ -1490,7 +1708,7 @@
       "zone": "sanmin_school",
       "spawn": {
         "x": 1.6,
-        "y": 38.0
+        "y": 38
       },
       "nameColor": "#60a5fa",
       "appearance": {
@@ -1501,28 +1719,38 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "生日快樂呀！"
+        "user": {
+          "zh-TW": [
+            [
+              "生日快樂呀！"
+            ],
+            [
+              "放學要不要去打球？"
+            ],
+            [
+              "今天午餐吃什麼？便當要冷掉了啦！"
+            ]
           ],
-          [
-            "放學要不要去打球？"
-          ],
-          [
-            "今天午餐吃什麼？便當要冷掉了啦！"
+          "en": [
+            [
+              "Happy birthday!"
+            ],
+            [
+              "Wanna go play ball after school?"
+            ],
+            [
+              "What are we having for lunch today? The lunchbox is getting cold!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "Happy birthday!"
+        },
+        "self": {
+          "zh-TW": [
+            "今天教室也太安靜了吧。"
           ],
-          [
-            "Wanna go play ball after school?"
-          ],
-          [
-            "What are we having for lunch today? The lunchbox is getting cold!"
+          "en": [
+            "The classroom is unusually quiet today."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "sanmin_school",
@@ -1544,7 +1772,7 @@
       "zone": "sanmin_school",
       "spawn": {
         "x": 7.4,
-        "y": 38.0
+        "y": 38
       },
       "nameColor": "#a78bfa",
       "appearance": {
@@ -1555,16 +1783,26 @@
         "hairStyle": 0
       },
       "dialogues": {
-        "zh-TW": [
-          [
-            "I have a pen, I have an apple. Uh! Apple pen!"
+        "user": {
+          "zh-TW": [
+            [
+              "I have a pen, I have an apple. Uh! Apple pen!"
+            ]
+          ],
+          "en": [
+            [
+              "I have a pen, I have an apple. Uh! Apple pen!"
+            ]
           ]
-        ],
-        "en": [
-          [
-            "I have a pen, I have an apple. Uh! Apple pen!"
+        },
+        "self": {
+          "zh-TW": [
+            "Apple pen……這首歌又卡在腦袋裡了。"
+          ],
+          "en": [
+            "Apple pen... that song is stuck in my head again."
           ]
-        ]
+        }
       },
       "visitedZones": [
         "sanmin_school",
@@ -1572,253 +1810,7 @@
       ]
     }
   ],
-  "conversations": [
-    {
-      "id": "dorm_211_bed_complaint",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["clark", "billy"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "clark", "text": "阿方的床真的很舒服欸。", "delay": 2.2 },
-          { "speaker": "billy", "text": "我真的快中風了！下來！", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "clark", "text": "Ah-Fang's bed is seriously so comfy.", "delay": 2.2 },
-          { "speaker": "billy", "text": "I am literally about to have a stroke! Get down!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "dorm_211_bed_climb",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["bohan", "billy"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "bohan", "text": "阿方在房間嗎？那我要去上他的床。", "delay": 2.0 },
-          { "speaker": "billy", "text": "我不知道啊，有群人一直上我的床。下來！", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "bohan", "text": "Is Ah-Fang in the room? Gonna climb onto his bed.", "delay": 2.0 },
-          { "speaker": "billy", "text": "People keep climbing on my bed... Get down!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "dorm_211_bed_stingy",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["bohan", "billy"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "bohan", "text": "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。", "delay": 2.2 },
-          { "speaker": "billy", "text": "我真的快中風了！下來！", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "bohan", "text": "Why so stingy? Your bed is everyone's bed, let's crash together!", "delay": 2.2 },
-          { "speaker": "billy", "text": "I am literally about to have a stroke! Get down!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "dorm_211_wheat_cookies",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["clark", "billy"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "clark", "text": "這阿方的方塊酥，你要吃嗎？還滿好吃的。", "delay": 2.2 },
-          { "speaker": "billy", "text": "我不知道啊，有群人一直偷拿我的方塊酥。想吃不會自己買喔？", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "clark", "text": "These are Ah-Fang's wheat square cookies, want some? Pretty good.", "delay": 2.2 },
-          { "speaker": "billy", "text": "People keep stealing my cookies. Buy your own!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "dorm_211_ipv4_dragonfruit",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["billy", "clark"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "billy", "text": "老開的期中考，猜一個IPv4地址：0.0.0.0", "delay": 2.4 },
-          { "speaker": "clark", "text": "老開桌上那兩顆火龍果都爛到出汁了...", "delay": 2.0 },
-          { "speaker": "clark", "text": "超噁...", "delay": 1.6 },
-          { "speaker": "clark", "text": "兩顆爛掉的火龍果對應兩顆爛掉的期中考", "delay": 2.4 }
-        ],
-        "en": [
-          { "speaker": "billy", "text": "Lao-Kai's midterm score, guess an IPv4 address: 0.0.0.0", "delay": 2.4 },
-          { "speaker": "clark", "text": "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...", "delay": 2.0 },
-          { "speaker": "clark", "text": "Super gross...", "delay": 1.6 },
-          { "speaker": "clark", "text": "Two rotten dragon fruits perfectly correspond to two rotten midterms.", "delay": 2.4 }
-        ]
-      }
-    },
-    {
-      "id": "dorm_211_zhu_ziqing",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["clark", "jerry"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "clark", "text": "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。", "delay": 2.2 },
-          { "speaker": "jerry", "text": "你是水蛭喔？台北是我家後花園。", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "clark", "text": "Lao-Kai's silhouette taking the Probability final gives pure Zhu Ziqing vibes.", "delay": 2.2 },
-          { "speaker": "jerry", "text": "Are you a leech? Taipei is basically my backyard.", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "dorm_211_midnight_snack",
-      "zone": "dorm_211",
-      "maxDistance": 3.8,
-      "participants": ["happy", "billy"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "happy", "text": "這把贏了就睡！今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？", "delay": 2.2 },
-          { "speaker": "billy", "text": "欸走拉，吃宵！一起去吃傻師傅！", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "happy", "text": "Win this match and sleep! Midnight Taiwanese chicken tonight?", "delay": 2.2 },
-          { "speaker": "billy", "text": "Let's go! Midnight snack run together!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "douyin_defense_bug",
-      "zone": "douyin_office",
-      "maxDistance": 3.8,
-      "participants": ["weihao", "baisen"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "weihao", "text": "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！", "delay": 2.2 },
-          { "speaker": "baisen", "text": "這個 bug 我抓了一整個下午，終於給它修掉了！", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "weihao", "text": "So annoying, I have no idea what to say for my defense!", "delay": 2.2 },
-          { "speaker": "baisen", "text": "Squashed this bug after tracking it all afternoon!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "douyin_model_boba",
-      "zone": "douyin_office",
-      "maxDistance": 3.8,
-      "participants": ["da", "weihao"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "da", "text": "這個演算法模型明天上線，大家今晚先對一下指標。", "delay": 2.2 },
-          { "speaker": "weihao", "text": "下午要不要叫杯手搖飲？我看看滿減券……", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "da", "text": "This model goes live tomorrow, let's sync metrics.", "delay": 2.2 },
-          { "speaker": "weihao", "text": "Order boba this afternoon? Let me check discount coupons...", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "douyin_figma_standup",
-      "zone": "douyin_office",
-      "maxDistance": 3.8,
-      "participants": ["chenxin", "baisen"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "chenxin", "text": "這版 Figma 設計稿的元件間距很舒服，切起版來太爽了！", "delay": 2.2 },
-          { "speaker": "baisen", "text": "大家今天站會的進度都同步了嗎？", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "chenxin", "text": "Component spacing in Figma is super crisp, slicing it is great!", "delay": 2.2 },
-          { "speaker": "baisen", "text": "Has everyone synced on today's standup updates?", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "ai_studio_ideas_reasoning",
-      "zone": "ai_studio",
-      "maxDistance": 3.8,
-      "participants": ["chatgpt", "claude"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "chatgpt", "text": "嗨！今天想探索什麼新想法或有趣的知識？", "delay": 2.2 },
-          { "speaker": "claude", "text": "我可以為你提供嚴密、結構化且深度的推理分析。", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "chatgpt", "text": "Hi! What new ideas or knowledge would you like to explore today?", "delay": 2.2 },
-          { "speaker": "claude", "text": "I can provide rigorous, structured and deep analytical reasoning.", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "ai_studio_multimodal_garden",
-      "zone": "ai_studio",
-      "maxDistance": 3.8,
-      "participants": ["gemini", "ludwigia"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "gemini", "text": "我擅長融合多模態資訊，文字、圖像與程式碼都能靈活掌握！", "delay": 2.2 },
-          { "speaker": "ludwigia", "text": "歡迎來到數位花園！每一株思想都在這裡茁壯成長。", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "gemini", "text": "I seamlessly bridge multimodal context: text, images and code!", "delay": 2.2 },
-          { "speaker": "ludwigia", "text": "Welcome to the Digital Garden! Every thought blooms here.", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "sanmin_apple_pen",
-      "zone": "sanmin_school",
-      "maxDistance": 3.8,
-      "participants": ["benny", "zhenyan"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "benny", "text": "I have a pen, I have an apple. Uh! Apple pen!", "delay": 2.2 },
-          { "speaker": "zhenyan", "text": "下課要不要去打球？", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "benny", "text": "I have a pen, I have an apple. Uh! Apple pen!", "delay": 2.2 },
-          { "speaker": "zhenyan", "text": "Wanna go shoot hoops after class?", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "sanmin_geometry_lunch",
-      "zone": "sanmin_school",
-      "maxDistance": 3.8,
-      "participants": ["zhewei", "youting"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "zhewei", "text": "這題數學解析幾何也太難了吧，算到頭好痛……", "delay": 2.2 },
-          { "speaker": "youting", "text": "午餐便當我要吃大雞腿！", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "zhewei", "text": "This analytic geometry problem is brutal...", "delay": 2.2 },
-          { "speaker": "youting", "text": "For lunch bento I definitely want the big chicken leg!", "delay": 2.2 }
-        ]
-      }
-    },
-    {
-      "id": "ludwig_house_family_care",
-      "zone": "ludwig_house",
-      "maxDistance": 3.8,
-      "participants": ["dad", "mom"],
-      "dialogues": {
-        "zh-TW": [
-          { "speaker": "dad", "text": "吃飯了沒？今天外面天氣挺不錯的。", "delay": 2.2 },
-          { "speaker": "mom", "text": "出門記得多穿件外套！別著涼了。", "delay": 2.2 }
-        ],
-        "en": [
-          { "speaker": "dad", "text": "Have you eaten yet? Weather is lovely outside.", "delay": 2.2 },
-          { "speaker": "mom", "text": "Remember to bring a jacket when going out!", "delay": 2.2 }
-        ]
-      }
-    }
-  ],
-  "conversationPairs": [
+  "npcDialogues": [
     {
       "participants": [
         "clark",
@@ -1961,7 +1953,17 @@
           },
           {
             "speaker": "clark",
-            "text": "老開桌上那兩顆火龍果都爛到出汁了... 兩顆爛掉的火龍果對應兩顆爛掉的期中考",
+            "text": "老開桌上那兩顆火龍果都爛到出汁了...",
+            "delay": 2.0
+          },
+          {
+            "speaker": "clark",
+            "text": "超噁...",
+            "delay": 1.6
+          },
+          {
+            "speaker": "clark",
+            "text": "兩顆爛掉的火龍果對應兩顆爛掉的期中考",
             "delay": 2.4
           }
         ],
@@ -1973,7 +1975,17 @@
           },
           {
             "speaker": "clark",
-            "text": "Those two rotten dragon fruits correspond to two rotten midterms...",
+            "text": "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...",
+            "delay": 2.0
+          },
+          {
+            "speaker": "clark",
+            "text": "Super gross...",
+            "delay": 1.6
+          },
+          {
+            "speaker": "clark",
+            "text": "Two rotten dragon fruits perfectly correspond to two rotten midterms.",
             "delay": 2.4
           }
         ]
@@ -1993,7 +2005,7 @@
           },
           {
             "speaker": "jerry",
-            "text": "你是水蛭喔？台北是我家後花園。",
+            "text": "你是水蛭喔？",
             "delay": 2.2
           }
         ],
@@ -2005,7 +2017,39 @@
           },
           {
             "speaker": "jerry",
-            "text": "Are you a leech? Taipei is basically my backyard.",
+            "text": "Are you a leech or what?!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "clark",
+        "jerry"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "clark",
+            "text": "這週末要回台北嗎？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "jerry",
+            "text": "台北是我家後花園。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "clark",
+            "text": "Heading back to Taipei this weekend?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "jerry",
+            "text": "Taipei is basically my backyard.",
             "delay": 2.2
           }
         ]
