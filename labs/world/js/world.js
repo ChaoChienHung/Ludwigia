@@ -238,23 +238,51 @@
       this.resize();
 
       // Helper: check if keyboard inputs should be captured for character controls
-      const isTypingOrModalActive = (e) => {
-        // If user is focused on an input, textarea, or contenteditable
+      const isTypingActive = (e) => {
         const target = e.target;
-        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
-          return true;
-        }
-        // If any modal (name selection, citation) or dialogue overlay is currently open
-        if (document.querySelector('.space-modal-backdrop.open') || document.querySelector('.dialogue-overlay.open')) {
-          return true;
-        }
-        return false;
+        return Boolean(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable));
       };
 
       // Keyboard Controls (Support both e.key and e.code for Mac/IME compatibility)
       window.addEventListener('keydown', (e) => {
-        if (isTypingOrModalActive(e)) {
-          // If typing in input or in modal/dialogue, do not trigger player movement keys
+        if (isTypingActive(e)) {
+          return;
+        }
+
+        // --- RPG Dialogue Box Keyboard Navigation (Enter / Space / Escape) ---
+        const dialogueOverlay = document.getElementById('dialogue-overlay');
+        const isDialogueOpen = dialogueOverlay && dialogueOverlay.classList.contains('open');
+
+        if (isDialogueOpen) {
+          const isAdvanceKey = e.key === ' ' || e.key === 'Enter' || e.code === 'Space' || e.code === 'Enter';
+          const isEscapeKey = e.key === 'Escape' || e.code === 'Escape';
+
+          if (isAdvanceKey) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.repeat) return; // Prevent runaway auto-skipping if holding down key
+            const nextBtn = document.getElementById('dialogue-next');
+            if (nextBtn) nextBtn.click();
+            return;
+          }
+
+          if (isEscapeKey) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.charManager) {
+              this.charManager.closeDialogue();
+            } else {
+              dialogueOverlay.classList.remove('open');
+            }
+            return;
+          }
+
+          // While dialogue box is active, suppress any player movement or canvas hotkeys
+          return;
+        }
+
+        // If any modal (name selection, citation) is currently open, suppress controls
+        if (document.querySelector('.space-modal-backdrop.open')) {
           return;
         }
 
@@ -269,9 +297,10 @@
           e.preventDefault();
         }
 
-        if (e.key === ' ' || e.key === 'Enter') {
-          if (this.charManager.proximityTarget) {
+        if (e.key === ' ' || e.key === 'Enter' || e.code === 'Space' || e.code === 'Enter') {
+          if (this.charManager && this.charManager.proximityTarget) {
             e.preventDefault();
+            if (e.repeat) return;
             this.charManager.openDialogue(this.charManager.proximityTarget);
           }
         }

@@ -237,7 +237,7 @@
       textEl.textContent = lines[0];
 
       const nextBtn = document.getElementById('dialogue-next');
-      const btnSpan = nextBtn ? nextBtn.querySelector('span') : null;
+      const btnSpan = nextBtn ? (nextBtn.querySelector('.dialogue-btn-label') || nextBtn.querySelector('span')) : null;
       if (btnSpan) btnSpan.textContent = (lines.length <= 1) ? (langKey === 'en' ? 'Done' : '結束') : (langKey === 'en' ? 'Next' : '繼續');
 
       nextBtn.onclick = () => {
@@ -246,12 +246,18 @@
           textEl.textContent = lines[lineIdx];
           if (btnSpan) btnSpan.textContent = (lineIdx === lines.length - 1) ? (langKey === 'en' ? 'Done' : '結束') : (langKey === 'en' ? 'Next' : '繼續');
         } else {
-          overlay.classList.remove('open');
-          this.activeDialogueChar = null;
+          this.closeDialogue();
         }
       };
 
       overlay.classList.add('open');
+    }
+
+    closeDialogue() {
+      const overlay = document.getElementById('dialogue-overlay');
+      if (overlay) overlay.classList.remove('open');
+      this.activeDialogueChar = null;
+      if (this.world) this.world.keys = {};
     }
 
     // --- Name Tag Glass Pill with Thematic Colors ---

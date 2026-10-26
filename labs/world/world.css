@@ -529,6 +529,18 @@ body.space-body {
   transform: translateY(-1px);
 }
 
+.dialogue-key-hint {
+  font-size: 0.72rem;
+  opacity: 0.88;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 1px 6px;
+  border-radius: 5px;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
 /* Name Input Form inside Welcome Modal */
 .name-form-input {
   width: 100%;
@@ -612,5 +624,8 @@ body.space-body {
     bottom: 16px;
     width: 95%;
     padding: 14px;
+  }
+  .dialogue-key-hint {
+    display: none;
   }
 }
