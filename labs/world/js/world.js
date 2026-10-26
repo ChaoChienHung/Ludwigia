@@ -167,16 +167,12 @@
       // Classroom Furniture Obstacles
       this.nav.setBlock(0.2, 34.0, 0.6, 3.8, true); // Blackboard Wall Area
       this.nav.setBlock(1.5, 34.2, 1.0, 0.8, true); // Teacher Podium
-      // 9 Student Desks in 3x3 Grid
-      this.nav.setBlock(1.8, 36.0, 1.1, 0.8, true);
-      this.nav.setBlock(4.6, 36.0, 1.1, 0.8, true);
-      this.nav.setBlock(7.4, 36.0, 1.1, 0.8, true);
-      this.nav.setBlock(1.8, 38.4, 1.1, 0.8, true);
-      this.nav.setBlock(4.6, 38.4, 1.1, 0.8, true);
-      this.nav.setBlock(7.4, 38.4, 1.1, 0.8, true);
-      this.nav.setBlock(1.8, 40.8, 1.1, 0.8, true);
-      this.nav.setBlock(4.6, 40.8, 1.1, 0.8, true);
-      this.nav.setBlock(7.4, 40.8, 1.1, 0.8, true);
+      // 16 Student Desks in 4x4 Grid
+      for (const cx of [2.2, 4.4, 6.6, 8.5]) {
+        for (const ry of [35.8, 37.4, 39.0, 40.6]) {
+          this.nav.setBlock(cx + 0.1, ry + 0.1, 0.85, 0.55, true);
+        }
+      }
       this.nav.setBlock(1.5, 42.2, 2.4, 0.65, true); // Lockers & Storage
 
       // 6. Douyin / TikTok Tech Office (SE2: x: 18..27, y: 33..42)
@@ -188,12 +184,15 @@
       this.nav.setBlock(DOUYIN_MIN_X, 39.0, 0.6, 4.0, true);                  // West Wall Bottom (y: 39 to 43)
 
       // Tech Office Furniture Obstacles
-      this.nav.setBlock(19.5, 34.5, 1.8, 1.0, true); // Dev Workstation 1
-      this.nav.setBlock(23.5, 34.5, 1.8, 1.0, true); // Dev Workstation 2 (Standing)
-      this.nav.setBlock(19.5, 39.5, 1.8, 1.0, true); // Dev Workstation 3
-      this.nav.setBlock(23.5, 39.5, 1.8, 1.0, true); // Dev Workstation 4
-      this.nav.setBlock(22.0, 37.0, 2.4, 1.4, true); // Conference Table
-      this.nav.setBlock(26.2, 34.2, 0.9, 0.9, true); // Server Compute Rig
+      this.nav.setBlock(19.2, 34.4, 1.6, 0.85, true); // Workstation 1
+      this.nav.setBlock(22.2, 34.4, 1.6, 0.85, true); // Workstation 2 (Standing)
+      this.nav.setBlock(25.2, 34.4, 1.6, 0.85, true); // Workstation 3
+      this.nav.setBlock(19.2, 40.2, 1.6, 0.85, true); // Workstation 4
+      this.nav.setBlock(22.2, 40.2, 1.6, 0.85, true); // Workstation 5
+      this.nav.setBlock(25.2, 40.2, 1.6, 0.85, true); // Workstation 6 (Standing)
+      this.nav.setBlock(24.5, 37.0, 2.2, 1.2, true);  // Conference Meeting Table
+      this.nav.setBlock(26.4, 33.8, 0.8, 0.8, true);  // Compute Rig
+      this.nav.setBlock(26.5, 38.6, 1.2, 0.65, true); // Coffee & Pantry Bar
 
       // Trees (Only block the exact tile of the 0.35x0.35 trunk)
       const treeBlocks = [
@@ -807,21 +806,6 @@
 
     // --- Terrain Renderer for Campus (expanded to MAP_W x MAP_H) ---
     drawTerrain(ctx, ox, oy) {
-      // 10x10 Douyin / TikTok Musical Note Tile Pattern
-      // C = Cyan (#25f4ee), M = Magenta (#fe2c55), W = White (#ffffff), . = Dark Slate
-      const DOUYIN_FLOOR_TILES = [
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', 'C', 'W', 'M', 'M', '.'],
-        ['.', '.', '.', '.', 'C', 'W', 'W', '.', 'M', '.'],
-        ['.', '.', '.', '.', 'C', 'W', 'M', '.', '.', '.'],
-        ['.', '.', '.', '.', 'C', 'W', 'M', '.', '.', '.'],
-        ['.', 'C', 'W', '.', 'C', 'W', 'M', '.', '.', '.'],
-        ['C', 'W', '.', 'W', 'W', 'W', 'M', '.', '.', '.'],
-        ['C', 'W', 'W', 'W', 'M', 'M', '.', '.', '.', '.'],
-        ['.', 'C', 'M', 'M', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
-      ];
-
       for (let x = 0; x < MAP_W; x++) {
         for (let y = 0; y < MAP_H; y++) {
           const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
@@ -870,19 +854,8 @@
             // Classic Taiwanese Classroom Polished Honey Wood Parquet
             ctx.fillStyle = (x + y) % 2 === 0 ? '#dfb88e' : '#ce9e72';
           } else if (isDouyin) {
-            // High-Tech Cyber Floor Tiles forming the Douyin / TikTok Musical Note Logo
-            const rx = x - DOUYIN_MIN_X;
-            const ry = y - DOUYIN_MIN_Y;
-            const tChar = (DOUYIN_FLOOR_TILES[ry] && DOUYIN_FLOOR_TILES[ry][rx]) || '.';
-            if (tChar === 'C') {
-              ctx.fillStyle = '#25f4ee'; // Cyan note edge
-            } else if (tChar === 'M') {
-              ctx.fillStyle = '#fe2c55'; // Magenta / Pink note edge
-            } else if (tChar === 'W') {
-              ctx.fillStyle = '#ffffff'; // Crisp White note core
-            } else {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#0f172a' : '#1a2234'; // Sleek dark slate
-            }
+            // High-Tech Cyber Carbon Slate Floor Tiles
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -905,20 +878,6 @@
             ctx.strokeStyle = 'rgba(6, 182, 212, 0.55)';
             ctx.lineWidth = 2;
             ctx.stroke();
-          }
-
-          // Subtle Neon Edge Glow for Douyin Floor Logo
-          if (isDouyin) {
-            const rx = x - DOUYIN_MIN_X;
-            const ry = y - DOUYIN_MIN_Y;
-            const tChar = (DOUYIN_FLOOR_TILES[ry] && DOUYIN_FLOOR_TILES[ry][rx]) || '.';
-            if (tChar === 'C' || tChar === 'M' || tChar === 'W') {
-              ctx.strokeStyle = tChar === 'C' ? 'rgba(37, 244, 238, 0.45)' :
-                                tChar === 'M' ? 'rgba(254, 44, 85, 0.45)' :
-                                'rgba(255, 255, 255, 0.65)';
-              ctx.lineWidth = 1.5;
-              ctx.stroke();
-            }
           }
 
           ctx.restore();
@@ -1369,7 +1328,22 @@
         }
       });
 
-      // AI Studio Entrance Cyber Canopy & Front-Facing (South-Facing) Portico Plaque
+      // AI Studio North Partition Wall & Interior Feature Brand Sign (facing South towards camera!)
+      list.push({
+        xMin: AI_MIN_X - 0.15, xMax: AI_MAX_X + 1.0,
+        yMin: -0.15, yMax: 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, (AI_MAX_X + 1) - AI_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
+        }
+      });
+      list.push({
+        xMin: 21.0, xMax: 24.5, yMin: 0.15, yMax: 0.35,
+        draw: () => {
+          this.models.drawInteriorBrandSign(this.ctx, 22.8, 0.26, 2.45, 'ai', ox, oy);
+        }
+      });
+
+      // AI Studio Entrance Cyber Canopy
       list.push({
         xMin: 17.1, xMax: 18.15,
         yMin: 4.5, yMax: 6.95,
@@ -1391,29 +1365,6 @@
           this.ctx.closePath();
           this.ctx.fill();
 
-          // 3. Front-Facing (South-Facing) Lintel Plaque
-          // Mounted along the South edge of the canopy (at y = 6.85, facing +Y directly towards camera)
-          const plq = isoToScreen(17.62, 6.86, 2.28, ox, oy);
-          this.ctx.save();
-          this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
-
-          this.ctx.fillStyle = '#0f172a';
-          this.ctx.fillRect(-38, -9, 76, 18);
-          this.ctx.strokeStyle = '#06b6d4';
-          this.ctx.lineWidth = 1.4;
-          this.ctx.strokeRect(-38, -9, 76, 18);
-          this.ctx.strokeStyle = 'rgba(34, 211, 238, 0.5)';
-          this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-36, -7, 72, 14);
-
-          this.ctx.fillStyle = '#22d3ee';
-          this.ctx.font = 'bold 9px monospace';
-          this.ctx.textAlign = 'center';
-          this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('⚡ AI STUDIO', 0, 0);
-
-          this.ctx.restore();
           this.ctx.restore();
         }
       });
@@ -1597,28 +1548,6 @@
           this.ctx.closePath();
           this.ctx.fill();
 
-          // 3. Front-Facing (South-Facing) Lintel Plaque (Directly facing camera!)
-          const plq = isoToScreen(17.62, 22.86, 2.28, ox, oy);
-          this.ctx.save();
-          this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
-
-          this.ctx.fillStyle = '#451a03';
-          this.ctx.fillRect(-44, -9, 88, 18);
-          this.ctx.strokeStyle = '#d97706';
-          this.ctx.lineWidth = 1.4;
-          this.ctx.strokeRect(-44, -9, 88, 18);
-          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
-          this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-42, -7, 84, 14);
-
-          this.ctx.fillStyle = '#fbbf24';
-          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", serif';
-          this.ctx.textAlign = 'center';
-          this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('📖 GRAND LIBRARY', 0, 0);
-
-          this.ctx.restore();
           this.ctx.restore();
         }
       });
@@ -1628,6 +1557,14 @@
         xMin: 16.4, xMax: 17.2,
         yMin: 23.1, yMax: 23.6,
         draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 23.2, 'lib', ox, oy)
+      });
+
+      // Grand Library Interior Feature Brand Wall Sign (Mounted high on interior North partition wall, facing South towards camera!)
+      list.push({
+        xMin: 20.8, xMax: 24.4, yMin: 17.15, yMax: 17.35,
+        draw: () => {
+          this.models.drawInteriorBrandSign(this.ctx, 22.6, 17.24, 2.48, 'library', ox, oy);
+        }
       });
 
       // Library Interior Furniture:
@@ -1729,12 +1666,18 @@
         }
       });
 
-      // Classroom North Partition Wall (along y = 33, x: 0 to 10)
+      // Classroom North Partition Wall & Interior Feature Academic Banner (facing South towards camera!)
       list.push({
         xMin: 0, xMax: SCHOOL_MAX_X + 1,
         yMin: SCHOOL_MIN_Y - 0.1, yMax: SCHOOL_MIN_Y + 0.35,
         draw: () => {
           this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, (SCHOOL_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
+        }
+      });
+      list.push({
+        xMin: 3.5, xMax: 6.5, yMin: SCHOOL_MIN_Y + 0.15, yMax: SCHOOL_MIN_Y + 0.35,
+        draw: () => {
+          this.models.drawInteriorBrandSign(this.ctx, 5.0, SCHOOL_MIN_Y + 0.26, 2.45, 'school', ox, oy);
         }
       });
 
@@ -1836,14 +1779,17 @@
         draw: () => this.models.drawTeacherPodium(this.ctx, 1.2, 34.2, ox, oy)
       });
 
-      // 3. Neatly Arranged Student Desks & Chairs (3 columns x 3 rows)
-      const sCols = [1.8, 4.6, 7.4];
-      const sRows = [36.0, 38.4, 40.8];
+      // 3. Neatly Arranged Student Desks & Chairs (4 columns x 4 rows = 16 desks)
+      const sCols = [2.2, 4.4, 6.6, 8.5];
+      const sRows = [35.8, 37.4, 39.0, 40.6];
+      const bpColors = ['#0284c7', '#ef4444', '#10b981', '#8b5cf6', '#f59e0b', '#06b6d4'];
+      let dIdx = 0;
       for (const cx of sCols) {
         for (const ry of sRows) {
+          const bpColor = bpColors[(dIdx++) % bpColors.length];
           list.push({
-            xMin: cx, xMax: cx + 1.4, yMin: ry, yMax: ry + 1.1,
-            draw: () => this.models.drawStudentDesk(this.ctx, cx, ry, ox, oy)
+            xMin: cx, xMax: cx + 1.25, yMin: ry, yMax: ry + 1.20,
+            draw: () => this.models.drawStudentDesk(this.ctx, cx, ry, ox, oy, { backpackColor: bpColor })
           });
         }
       }
@@ -1903,6 +1849,14 @@
           this.ctx.strokeStyle = '#fe2c55';
           this.ctx.lineWidth = 1.2;
           this.ctx.stroke();
+        }
+      });
+
+      // Douyin Office Interior Feature Brand Wall Sign (Mounted on interior North partition wall, facing South towards camera!)
+      list.push({
+        xMin: 21.0, xMax: 24.6, yMin: DOUYIN_MIN_Y + 0.15, yMax: DOUYIN_MIN_Y + 0.35,
+        draw: () => {
+          this.models.drawInteriorBrandSign(this.ctx, 22.8, DOUYIN_MIN_Y + 0.26, 2.45, 'douyin', ox, oy);
         }
       });
 
@@ -1991,7 +1945,7 @@
         }
       });
 
-      // Douyin Office High-Tech Cyber Canopy & Front-Facing (South-Facing) Lintel Plaque
+      // Douyin Office High-Tech Cyber Canopy
       list.push({
         xMin: 17.1, xMax: 18.15,
         yMin: 36.5, yMax: 38.95,
@@ -2013,28 +1967,6 @@
           this.ctx.closePath();
           this.ctx.fill();
 
-          // 3. Front-Facing (South-Facing) Lintel Plaque (Directly facing camera!)
-          const plq = isoToScreen(17.62, 38.86, 2.28, ox, oy);
-          this.ctx.save();
-          this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, 0.5, 0, 1, 0, 0); // Front-facing isometric orientation (parallel to X axis)
-
-          this.ctx.fillStyle = '#0f172a';
-          this.ctx.fillRect(-38, -9, 76, 18);
-          this.ctx.strokeStyle = '#25f4ee';
-          this.ctx.lineWidth = 1.4;
-          this.ctx.strokeRect(-38, -9, 76, 18);
-          this.ctx.strokeStyle = '#fe2c55';
-          this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-36, -7, 72, 14);
-
-          this.ctx.fillStyle = '#ffffff';
-          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-          this.ctx.textAlign = 'center';
-          this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('🎵 TIKTOK • 抖音', 0, 0);
-
-          this.ctx.restore();
           this.ctx.restore();
         }
       });
@@ -2046,38 +1978,59 @@
         draw: () => this.models.drawEntranceTotem(this.ctx, 16.5, 39.2, 'douyin', ox, oy)
       });
 
-      // Douyin Office Props
-      // 1. 4 Modern Developer Workstations with Ultrawide Displays
+      // Official TikTok Circular Tech Floor Emblem (High-resolution ground decal with chromatic shift)
       list.push({
-        xMin: 19.5, xMax: 21.7, yMin: 34.5, yMax: 35.9,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.5, 34.5, ox, oy)
-      });
-      list.push({
-        xMin: 23.5, xMax: 25.7, yMin: 34.5, yMax: 35.9,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 23.5, 34.5, ox, oy)
-      });
-      list.push({
-        xMin: 19.5, xMax: 21.7, yMin: 39.5, yMax: 40.9,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.5, 39.5, ox, oy)
-      });
-      list.push({
-        xMin: 23.5, xMax: 25.7, yMin: 39.5, yMax: 40.9,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 23.5, 39.5, ox, oy)
+        xMin: 21.3, xMax: 24.3, yMin: 36.0, yMax: 39.0,
+        draw: () => this.models.drawTikTokFloorEmblem(this.ctx, 22.8, 37.5, 1.5, ox, oy)
       });
 
-      // 2. Glass Conference & Brainstorming Table
+      // Douyin Office Props: 6 Modern Developer Workstations with Ultrawide Displays & Aeron Chairs
+      // North Pod
       list.push({
-        xMin: 21.5, xMax: 24.5, yMin: 36.5, yMax: 38.0,
-        draw: () => this.models.drawOfficeMeetingTable(this.ctx, 21.5, 36.5, ox, oy)
+        xMin: 19.2, xMax: 21.4, yMin: 34.4, yMax: 35.8,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.2, 34.4, ox, oy)
+      });
+      list.push({
+        xMin: 22.2, xMax: 24.4, yMin: 34.4, yMax: 35.8,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 22.2, 34.4, ox, oy, { isStanding: true })
+      });
+      list.push({
+        xMin: 25.2, xMax: 27.4, yMin: 34.4, yMax: 35.8,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 25.2, 34.4, ox, oy)
+      });
+      // South Pod
+      list.push({
+        xMin: 19.2, xMax: 21.4, yMin: 40.2, yMax: 41.6,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.2, 40.2, ox, oy)
+      });
+      list.push({
+        xMin: 22.2, xMax: 24.4, yMin: 40.2, yMax: 41.6,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 22.2, 40.2, ox, oy)
+      });
+      list.push({
+        xMin: 25.2, xMax: 27.4, yMin: 40.2, yMax: 41.6,
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 25.2, 40.2, ox, oy, { isStanding: true })
       });
 
-      // 3. AI Compute Cluster / Server Rig
+      // Glass Conference & Brainstorming Table
       list.push({
-        xMin: 26.0, xMax: 27.2, yMin: 34.0, yMax: 35.5,
-        draw: () => this.models.drawOfficeServerStation(this.ctx, 26.0, 34.0, ox, oy)
+        xMin: 24.5, xMax: 27.2, yMin: 36.8, yMax: 38.3,
+        draw: () => this.models.drawOfficeMeetingTable(this.ctx, 24.5, 36.8, ox, oy)
       });
 
-      // 4. Douyin Office South Boundary Skirting
+      // AI Compute Cluster / Server Rig
+      list.push({
+        xMin: 26.2, xMax: 27.4, yMin: 33.6, yMax: 35.0,
+        draw: () => this.models.drawOfficeServerStation(this.ctx, 26.2, 33.6, ox, oy)
+      });
+
+      // Office Tech Coffee & Refreshment Bar
+      list.push({
+        xMin: 26.4, xMax: 27.8, yMin: 38.5, yMax: 39.8,
+        draw: () => this.models.drawOfficeCoffeeBar(this.ctx, 26.4, 38.5, ox, oy)
+      });
+
+      // Douyin Office South Boundary Skirting
       list.push({
         xMin: DOUYIN_MIN_X, xMax: DOUYIN_MAX_X + 1,
         yMin: DOUYIN_MAX_Y + 0.9, yMax: DOUYIN_MAX_Y + 1.2,

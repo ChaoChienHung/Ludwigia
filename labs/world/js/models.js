@@ -2057,7 +2057,17 @@
     }
 
     // --- Taiwanese High School Student Desk & Chair Combo ---
-    drawStudentDesk(ctx, gx, gy, options = {}, ox, oy) {
+    drawStudentDesk(ctx, gx, gy, arg4, arg5, arg6) {
+      let ox = 0, oy = 0, options = {};
+      if (typeof arg4 === 'number' && typeof arg5 === 'number') {
+        ox = arg4;
+        oy = arg5;
+        options = arg6 || {};
+      } else {
+        options = arg4 || {};
+        ox = arg5 || 0;
+        oy = arg6 || 0;
+      }
       const W = 1.05;
       const D = 0.75;
       const deskH = 0.65;
@@ -2173,7 +2183,17 @@
     // ========================================================================
 
     // --- Modern Dual-Monitor Engineering Workstation & Ergonomic Chair ---
-    drawOfficeWorkstation(ctx, gx, gy, options = {}, ox, oy) {
+    drawOfficeWorkstation(ctx, gx, gy, arg4, arg5, arg6) {
+      let ox = 0, oy = 0, options = {};
+      if (typeof arg4 === 'number' && typeof arg5 === 'number') {
+        ox = arg4;
+        oy = arg5;
+        options = arg6 || {};
+      } else {
+        options = arg4 || {};
+        ox = arg5 || 0;
+        oy = arg6 || 0;
+      }
       const W = 1.80;
       const D = 0.95;
       const deskH = 0.68;
@@ -2613,6 +2633,303 @@
       } else {
         ctx.restore();
       }
+    }
+
+    // --- 12. TikTok / Douyin Official Floor Emblem (Ground Decal) ---
+    // Renders the official circular black disc with cyan/magenta chromatic aberration musical note
+    drawTikTokFloorEmblem(ctx, cx, cy, radiusTiles = 1.5, ox, oy) {
+      const center = isoToScreen(cx, cy, 0.005, ox, oy);
+      // In 2:1 isometric projection on ground plane:
+      const R = radiusTiles * 32 * 1.414;
+
+      ctx.save();
+      ctx.translate(center.x, center.y);
+      ctx.scale(1, 0.5); // Project 2D upright coordinates into 2:1 isometric floor ellipse
+
+      // 1. Black Circular Disc Base
+      ctx.fillStyle = '#010204';
+      ctx.beginPath();
+      ctx.arc(0, 0, R, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Outer Dual Rim (Cyan & Magenta tech glow)
+      ctx.strokeStyle = '#25f4ee';
+      ctx.lineWidth = 3.0;
+      ctx.stroke();
+
+      ctx.strokeStyle = '#fe2c55';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(0, 0, R - 2.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 2. Official TikTok Musical Note with Chromatic Aberration
+      const scale = R * 0.016;
+
+      const drawSingleNote = (shiftX, shiftY, fillCol) => {
+        ctx.save();
+        ctx.translate(shiftX, shiftY);
+        ctx.fillStyle = fillCol;
+
+        ctx.beginPath();
+
+        // Note Head Outer: Center (-10 * scale, 14 * scale), radius 16 * scale
+        const hx = -10 * scale;
+        const hy = 14 * scale;
+        const rOut = 16 * scale;
+        const stemW = 8.5 * scale;
+        const stemRight = hx + rOut; // -10 + 16 = +6 * scale
+        const stemLeft = stemRight - stemW; // -2.5 * scale
+        const stemTop = -30 * scale;
+
+        // Outer Head Arc (from bottom around to stem connection)
+        ctx.arc(hx, hy, rOut, Math.PI * 0.5, Math.PI * 1.5, false);
+        // Connect to top of head
+        ctx.lineTo(stemLeft, hy);
+        // Up along left side of stem
+        ctx.lineTo(stemLeft, stemTop);
+        // Top of stem (flat)
+        ctx.lineTo(stemRight, stemTop);
+
+        // Flag / Hook Outer Curve (sweeping right and down)
+        ctx.bezierCurveTo(
+          stemRight + 12 * scale, stemTop,
+          24 * scale, stemTop + 8 * scale,
+          24 * scale, -10 * scale
+        );
+        // Flag bottom edge
+        ctx.lineTo(24 * scale - 7 * scale, -10 * scale - 2 * scale);
+        // Flag Inner Curve back to stem
+        ctx.bezierCurveTo(
+          16 * scale, stemTop + 14 * scale,
+          stemRight + 2 * scale, stemTop + 12 * scale,
+          stemRight, stemTop + 16 * scale
+        );
+        // Down along right side of stem
+        ctx.lineTo(stemRight, hy);
+        // Complete the outer head bottom arc
+        ctx.arc(hx, hy, rOut, 0, Math.PI * 0.5, false);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      };
+
+      // Chromatic Shift Offsets
+      const offset = 2.4 * scale;
+
+      // Pass 1: Cyan (#00f2fe) shifted Top-Left
+      drawSingleNote(-offset, -offset, '#00f2fe');
+
+      // Pass 2: Magenta (#fe2c55) shifted Bottom-Right
+      drawSingleNote(offset, offset, '#fe2c55');
+
+      // Pass 3: Crisp Pure White (#ffffff) in the Center
+      drawSingleNote(0, 0, '#ffffff');
+
+      // Inner Cutout Hole for Note Head (creates the authentic hollow ring!)
+      // Cyan inner offset hole
+      ctx.fillStyle = '#010204';
+      ctx.beginPath();
+      ctx.arc(-10 * scale - offset, 14 * scale - offset, 7.5 * scale, 0, Math.PI * 2);
+      ctx.fill();
+      // Magenta inner offset hole
+      ctx.fillStyle = '#fe2c55';
+      ctx.beginPath();
+      ctx.arc(-10 * scale + offset, 14 * scale + offset, 7.5 * scale, 0, Math.PI * 2);
+      ctx.fill();
+      // Center black hole
+      ctx.fillStyle = '#010204';
+      ctx.beginPath();
+      ctx.arc(-10 * scale, 14 * scale, 7.5 * scale, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // --- 13. Interior Architectural Brand Wall Sign (室內特色形象招牌主牆) ---
+    // Mounted on the South-facing interior North wall of each major campus building,
+    // providing 100% unobstructed, front-facing brand identity for visitors!
+    drawInteriorBrandSign(ctx, gx, gy, gz, type, ox, oy) {
+      const center = isoToScreen(gx, gy, gz, ox, oy);
+
+      ctx.save();
+      ctx.translate(center.x, center.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared flat onto the South-facing North partition wall!
+
+      if (type === 'library') {
+        // Grand Scholar Library: Carved Walnut & Gilded Bronze Plaque with Museum Spotlight
+        const W = 118;
+        const H = 26;
+
+        // Ambient Warm Downlight Cone on the wall
+        const grad = ctx.createRadialGradient(0, -6, 2, 0, 10, 50);
+        grad.addColorStop(0, 'rgba(251, 191, 36, 0.28)');
+        grad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(-W, -H, W * 2, H * 3);
+
+        // Dark Walnut Wood Backing Board
+        ctx.fillStyle = '#270e04';
+        ctx.fillRect(-W / 2, -H / 2, W, H);
+
+        // Gilded Brass Fillet Outer Frame
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 1.6;
+        ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+        // Gold Inlay Inner Border
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(-W / 2 + 2.5, -H / 2 + 2.5, W - 5, H - 5);
+
+        // Typography
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 8.5px "Times New Roman", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('📖 GRAND SCHOLAR ARCHIVE & LIBRARY', 0, -4.5);
+
+        ctx.fillStyle = '#fef3c7';
+        ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('路德維希亞 • 皇家總圖書館', 0, 5.5);
+
+      } else if (type === 'ai') {
+        // AI Research Studio: Cyber Obsidian & Electric Cyan Neon Panel
+        const W = 112;
+        const H = 26;
+
+        // Cyan Neon Ambient Backlight
+        const grad = ctx.createRadialGradient(0, 0, 4, 0, 0, 45);
+        grad.addColorStop(0, 'rgba(6, 182, 212, 0.28)');
+        grad.addColorStop(1, 'rgba(6, 182, 212, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(-W, -H, W * 2, H * 2.5);
+
+        // Obsidian Glass Face
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(-W / 2, -H / 2, W, H);
+
+        // Electric Cyan Border
+        ctx.strokeStyle = '#06b6d4';
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+        // Inner Tech Corner Bracket Lines
+        ctx.strokeStyle = 'rgba(34, 211, 238, 0.6)';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(-W / 2 + 2.5, -H / 2 + 2.5, W - 5, H - 5);
+
+        // Pulsing Neon Text
+        ctx.fillStyle = '#22d3ee';
+        ctx.font = 'bold 8.5px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('⚡ LUDWIGIA AI RESEARCH LAB', 0, -4.5);
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('人工智慧前瞻實驗室 • AGENT LAB', 0, 5.5);
+
+      } else if (type === 'douyin') {
+        // Douyin Tech Office: Matte Carbon Fiber & Dual Cyan/Magenta Neon Wall
+        const W = 116;
+        const H = 26;
+
+        // Cyan/Magenta Ambient Backlight
+        const grad = ctx.createRadialGradient(0, 0, 4, 0, 0, 48);
+        grad.addColorStop(0, 'rgba(37, 244, 238, 0.22)');
+        grad.addColorStop(0.5, 'rgba(254, 44, 85, 0.18)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(-W, -H, W * 2, H * 2.5);
+
+        // Matte Carbon Panel
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(-W / 2, -H / 2, W, H);
+
+        // Dual Border: Cyan Top/Left, Magenta Bottom/Right
+        ctx.strokeStyle = '#25f4ee';
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+        ctx.strokeStyle = '#fe2c55';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
+
+        // Typography
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🎵 TIKTOK • 抖音研發中心', 0, -4.5);
+
+        ctx.fillStyle = '#25f4ee';
+        ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('ALGORITHM & MULTIMODAL ENGINEERING', 0, 5.5);
+
+      } else if (type === 'school') {
+        // Sanmin High School: Evergreen & Brass Academic Lintel Board
+        const W = 110;
+        const H = 25;
+
+        // Dark Wood Frame
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(-W / 2 - 2, -H / 2 - 2, W + 4, H + 4);
+
+        // Forest Pine Board Face
+        ctx.fillStyle = '#064e3b';
+        ctx.fillRect(-W / 2, -H / 2, W, H);
+
+        // Gold Inner Fillet
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🏫 三民高中 • 經典教室', 0, -4.5);
+
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('誠 • 敬 • 勤 • 毅', 0, 5.5);
+      }
+
+      ctx.restore();
+    }
+
+    // --- 14. Modern Office Tech Coffee & Refreshment Bar ---
+    drawOfficeCoffeeBar(ctx, gx, gy, ox, oy) {
+      const W = 1.40;
+      const D = 0.70;
+      const H = 0.88;
+
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
+
+      // White Quartz Counter Cabinet with Light Wood Trim
+      this.drawBox(ctx, gx, gy, 0, W, D, H, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
+
+      // Matte Black Espresso Machine
+      this.drawBox(ctx, gx + 0.15, gy + 0.12, H, 0.40, 0.35, 0.42, '#0f172a', '#1e293b', '#1e293b', ox, oy);
+      // Silver Portafilter
+      this.drawBox(ctx, gx + 0.22, gy + 0.44, H + 0.18, 0.10, 0.12, 0.04, '#cbd5e1', '#94a3b8', '#94a3b8', ox, oy);
+
+      // Glass Snack / Fruit Bowl
+      const fP = isoToScreen(gx + 0.82, gy + 0.28, H + 0.08, ox, oy);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.beginPath();
+      ctx.ellipse(fP.x, fP.y, 7, 5, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      // Apples & Oranges
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.arc(fP.x - 2, fP.y - 2, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath(); ctx.arc(fP.x + 3, fP.y - 1, 3, 0, Math.PI * 2); ctx.fill();
+
+      // Clear Water Dispenser with Blue Reservoir
+      this.drawBox(ctx, gx + 1.05, gy + 0.12, H, 0.25, 0.25, 0.48, 'rgba(56, 189, 248, 0.75)', '#0284c7', '#0369a1', ox, oy);
     }
   }
 
