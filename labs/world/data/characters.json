@@ -773,9 +773,6 @@
         "user": {
           "zh-TW": [
             [
-              "你是水蛭喔？"
-            ],
-            [
               "台北是我家後花園。"
             ],
             [
@@ -798,9 +795,6 @@
             ]
           ],
           "en": [
-            [
-              "Are you a leech or what?!"
-            ],
             [
               "Taipei is basically my backyard."
             ],
@@ -1545,9 +1539,6 @@
             ],
             [
               "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。"
-            ],
-            [
-              "你們先去吃吧，我不餓。"
             ]
           ],
           "en": [
@@ -1556,9 +1547,6 @@
             ],
             [
               "Why be so stingy? Your bed is everyone's bed, let's just crash together!"
-            ],
-            [
-              "You guys go ahead and eat first, I am not hungry."
             ]
           ]
         },
@@ -1631,11 +1619,11 @@
         },
         "self": {
           "zh-TW": [
-            "下課要不要去球場？",
+            "今天要不要打？",
             "5點15了喔？我要趕回去倒垃圾了！"
           ],
           "en": [
-            "Maybe a game at the court after class.",
+            "Wanna play today?",
             "Is it 5:15 already?! Gotta rush home to take out the trash!"
           ]
         }
@@ -2009,14 +1997,14 @@
     },
     {
       "participants": [
-        "clark",
+        "bohan",
         "jerry"
       ],
       "dialogues": {
         "zh-TW": [
           {
-            "speaker": "clark",
-            "text": "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。",
+            "speaker": "bohan",
+            "text": "你們先去吃吧，我不餓。",
             "delay": 2.2
           },
           {
@@ -2027,8 +2015,8 @@
         ],
         "en": [
           {
-            "speaker": "clark",
-            "text": "Lao-Kai's silhouette taking the Probability final gives pure Zhu Ziqing vibes.",
+            "speaker": "bohan",
+            "text": "You guys go ahead and eat first, I am not hungry.",
             "delay": 2.2
           },
           {
