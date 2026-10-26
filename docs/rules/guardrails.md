@@ -38,6 +38,9 @@
 
 ## UI / UX（可讀性優先）
 
+- [ ] World 的角色資料與三類對話只由 `labs/world/data/characters.json` 維護；`characters.js` 只排程與渲染，不寫第二份 NPC 對話。環境獨白不得偷用玩家對話的首句。
+- [ ] World 的 11 組 palette 基色與主站共用 `assets/css/site/palette-tokens.css`；`world.css` 只映射 token 與定義 World surface，不維護平行色碼表。
+
 - [ ] Core vs Additional 的入口分層不退化（navbar 不因實驗功能膨脹；實驗入口優先放到 Additional surface）
   - [ ] `Labs` 維持為 concept page / prototype 的 landing，而不是把實驗入口回塞到主導航
 

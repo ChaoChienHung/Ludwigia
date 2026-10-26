@@ -96,3 +96,6 @@ python3 cli.py test
 
 3. **Ontology Concept Tag 對齊**：
    - 若新增標籤 (Tags)，請同時檢查 `data/Ontology/` 內的 Concept Label，確保各語系皆有齊備的名稱定義。
+
+4. **World 角色台詞**：
+   - `labs/world/data/characters.json` 的 `dialogues.user`、`dialogues.self` 與頂層 `npcDialogues` 各自維護 `zh-TW` / `en`；互聊的 `speaker` 是角色 ID，不翻譯。缺少當前語系時由 runtime 退回繁體中文。

@@ -43,7 +43,7 @@
 
 ### 1. 全站 tokens
 
-- 檔案：`assets/css/site/shared.css`
+- 檔案：`assets/css/site/palette-tokens.css`（palette 基色，主站與 World 共用）及 `assets/css/site/shared.css`（主站 theme surface）
 - 至少補齊：
   - `--bg`
   - `--bg-alt`

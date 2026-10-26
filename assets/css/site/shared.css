@@ -1,9 +1,7 @@
+@import url('./palette-tokens.css');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-  --palette-accent-dark: #ff6b00;
-  --palette-accent-light: #ff6b00;
-  --default-palette-preview: #ff6b00;
   --ui-control-hover-fill: 12%;
   --ui-control-hover-border: 26%;
   --ui-control-hover-ring: 12%;
@@ -59,9 +57,6 @@ html {
 }
 
 .light-theme {
-  --palette-accent-dark: #b45309;
-  --palette-accent-light: #9a3412;
-  --default-palette-preview: #9a3412;
   --ui-control-hover-fill: 10%;
   --ui-control-hover-border: 22%;
   --ui-control-hover-ring: 10%;
@@ -102,9 +97,6 @@ html {
 
 .deep-sea-theme,
 .galaxy-night-theme {
-  --palette-accent-dark: #5ee7ff;
-  --palette-accent-light: #22b8cf;
-  --default-palette-preview: #5ee7ff;
   --bg: #050e16;
   --bg-alt: #071c26;
   --text: rgba(236, 242, 255, 0.96);
@@ -139,9 +131,6 @@ html {
 }
 
 .galaxy-theme {
-  --palette-accent-dark: #a78bfa;
-  --palette-accent-light: #7c3aed;
-  --default-palette-preview: #a78bfa;
   --bg: #03040c;
   --bg-alt: #120f2a;
   --text: rgba(242, 240, 255, 0.96);
@@ -172,9 +161,6 @@ html {
 }
 
 .sky-theme {
-  --palette-accent-dark: #33a4ff;
-  --palette-accent-light: #0c7fdf;
-  --default-palette-preview: #33a4ff;
   --bg: #7ed0ff;
   --bg-alt: #a7e0ff;
   --text: rgba(17, 45, 77, 0.96);
@@ -205,9 +191,6 @@ html {
 }
 
 .garden-theme {
-  --palette-accent-dark: #40916c;
-  --palette-accent-light: #2d6a4f;
-  --default-palette-preview: #40916c;
   --bg: #0f241b;
   --bg-alt: #173327;
   --text: rgba(233, 246, 236, 0.97);
@@ -236,62 +219,6 @@ html {
   --entry-hover-tag-bg: rgba(81, 154, 114, 0.28);
   --entry-hover-tag-border: rgba(141, 219, 175, 0.38);
 }
-
-.palette-ember {
-  --palette-accent-dark: #ff6b00;
-  --palette-accent-light: #ff6b00;
-}
-
-.palette-cedar {
-  --palette-accent-dark: #9a3412;
-  --palette-accent-light: #9a3412;
-}
-
-.palette-abyss {
-  --palette-accent-dark: #5ee7ff;
-  --palette-accent-light: #22b8cf;
-}
-
-.palette-nebula {
-  --palette-accent-dark: #a78bfa;
-  --palette-accent-light: #7c3aed;
-}
-
-.palette-galaxy {
-  --palette-accent-dark: #60a5fa;
-  --palette-accent-light: #2563eb;
-}
-
-.palette-sky {
-  --palette-accent-dark: #33a4ff;
-  --palette-accent-light: #0c7fdf;
-}
-
-.palette-garden {
-  --palette-accent-dark: #34d399;
-  --palette-accent-light: #047857;
-}
-
-.palette-grove {
-  --palette-accent-dark: #40916c;
-  --palette-accent-light: #2d6a4f;
-}
-
-.palette-red {
-  --palette-accent-dark: #f87171;
-  --palette-accent-light: #b91c1c;
-}
-
-.palette-yellow {
-  --palette-accent-dark: #f59e0b;
-  --palette-accent-light: #a16207;
-}
-
-.palette-ash {
-  --palette-accent-dark: #e5e7eb;
-  --palette-accent-light: #6b7280;
-}
-
 
 /*------*/
 /* Base */

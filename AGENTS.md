@@ -39,11 +39,11 @@
   - `Skills` 必須維持類別分組與頁籤/箭頭控制，確保多個技能面板共用顯示空間，隨技能成長仍能維持空間精簡
   - `Credentials` 必須維持 `Type` 與 `Domain/Category` 雙維度篩選、主視覺展示區、縮圖導覽列與 Modal 燈箱放大檢視能力；視覺元件必須完全繼承全站 Theme 與 Palette Design Tokens
 - 若 `labs/world/`（Ludwigia World 虛擬空間）啟用 source-driven 社交與建築資料（例如 `labs/world/data/characters.json`），必須維持：
-  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `characters.json` 為單一真相來源；前端執行期（`characters.js`）負責解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
+  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `characters.json` 為單一真相來源；單人對話須區分 `dialogues.user`（玩家主動交談）與 `dialogues.self`（環境獨白），角色互聊只維護頂層 `npcDialogues`，後兩者可隨機觸發；前端執行期（`characters.js`）負責解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
   - **鏡頭縮放以視口中心/玩家為軸心（Centered Viewport Zoom Focus）**：鏡頭 `zoom` 縮放與點擊尋路逆投影必須永遠以視口幾何中心（即焦點玩家所在之屏幕中心）為錨定軸心，不得退化為以世界原點 `(ox, oy)` 為縮放中心，確保玩家走入任何遠端分區建築（如三民高中、抖音研發中心）時皆能精準聚焦於室內與角色，杜絕畫面失焦偏移
   - **等軸測牆面剪切與幾何斜度對齊契約（Isometric Wall Projection Contract）**：建築牆面上的黑板、掛鐘、門樑招牌等平面裝飾，必須與所依附的牆面軸向傾角精確匹配：北向與南向橫牆（沿 X 軸）必須使用 `(1, 0.5, 0, 1, 0, 0)` 剪切矩陣；東向與西向縱牆（沿 Y 軸）必須使用 `(1, -0.5, 0, 1, 0, 0)` 剪切矩陣；文字、算式與圖表嚴禁水平裸繪
   - **拓撲深度排序無閉環契約（Cycle-Free Topological Depth Sorting）**：立體建築牆體、門樑、大型家具（如圖書館大型落地書櫃、教室課桌椅群）之包圍盒邊界（Bounding Box）必須嚴格維持前/後景拓撲因果分層（例如後牆 `yMax` 嚴格小於或等於家具 `yMin`），嚴禁在家具背後疊加重疊包圍盒之裝飾，杜絕在人物走動時觸發深度閉環而產生模型閃爍（Flickering / Glitch）或破面消失
-  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`labs/world/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須全面繼承全站 11 套色盤 Design Tokens（`--space-accent` / `--space-accent-glow`）與多主題樣式，並實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪，不依賴網頁重新載入
+  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`labs/world/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 World 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
 - `qprompt` 的基本語意若啟用，必須維持：
   - prompt 本體由 `<qprompt>...</qprompt>` 或 `<qprompt/>` 再現性生成
   - 若 placeholder 出現在 `reviewkit` 內，就渲染成該 `reviewkit` 的 prompt pane

@@ -139,6 +139,8 @@ python3 -m http.server 8000
 - 若修 theme 視覺時發現需要一直疊 override，優先回頭整理底層 token / selector / variable pipeline，而不是繼續堆例外規則
 - 未來若要新增 / 調整 theme、palette 或 settings controls，優先先看 `docs/guide/theme-palette-guide.md`
 
+`labs/world/` 的角色台詞只編輯 `labs/world/data/characters.json`：每位角色的 `dialogues.user` 是點擊後的多句對話，`dialogues.self` 是隨機環境獨白；頂層 `npcDialogues` 是兩位角色的隨機互聊，`participants` 與每句 `speaker` 都須引用現有角色 `id`。兩種環境對話隨機擇一，無可用台詞時才退到另一種。World 的 palette 值與主站共用 `assets/css/site/palette-tokens.css`；新增色盤只改這個 token 檔，不在 `world.css` 另抄一份。
+
 ## Garden UI（獨立設計）
 
 - Garden 入口頁為 `garden/index.html`，使用獨立 UI，不依賴主站 Theme/Palette

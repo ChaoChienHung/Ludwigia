@@ -76,7 +76,7 @@
       this.setupWorldObstacles();
 
       // Load Characters from JSON
-      this.charManager.loadCharacters('data/characters.json').then(() => {
+      this.charManager.loadCharacters('data/characters.json?v=2026-10-26-dialogues').then(() => {
         // Start Loop
         this.lastTime = performance.now();
         requestAnimationFrame(this.loop.bind(this));

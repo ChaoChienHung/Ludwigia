@@ -1,0 +1,49 @@
+/* Shared palette values for the main site and Ludwigia World. */
+:root {
+  --palette-accent-dark: #ff6b00;
+  --palette-accent-light: #ff6b00;
+  --default-palette-preview: #ff6b00;
+}
+
+.light-theme {
+  --palette-accent-dark: #b45309;
+  --palette-accent-light: #9a3412;
+  --default-palette-preview: #9a3412;
+}
+
+.deep-sea-theme,
+.galaxy-night-theme {
+  --palette-accent-dark: #5ee7ff;
+  --palette-accent-light: #22b8cf;
+  --default-palette-preview: #5ee7ff;
+}
+
+.galaxy-theme {
+  --palette-accent-dark: #a78bfa;
+  --palette-accent-light: #7c3aed;
+  --default-palette-preview: #a78bfa;
+}
+
+.sky-theme {
+  --palette-accent-dark: #33a4ff;
+  --palette-accent-light: #0c7fdf;
+  --default-palette-preview: #33a4ff;
+}
+
+.garden-theme {
+  --palette-accent-dark: #40916c;
+  --palette-accent-light: #2d6a4f;
+  --default-palette-preview: #40916c;
+}
+
+.palette-ember { --palette-accent-dark: #ff6b00; --palette-accent-light: #ff6b00; }
+.palette-cedar { --palette-accent-dark: #9a3412; --palette-accent-light: #9a3412; }
+.palette-abyss { --palette-accent-dark: #5ee7ff; --palette-accent-light: #22b8cf; }
+.palette-nebula { --palette-accent-dark: #a78bfa; --palette-accent-light: #7c3aed; }
+.palette-galaxy { --palette-accent-dark: #60a5fa; --palette-accent-light: #2563eb; }
+.palette-sky { --palette-accent-dark: #33a4ff; --palette-accent-light: #0c7fdf; }
+.palette-garden { --palette-accent-dark: #34d399; --palette-accent-light: #047857; }
+.palette-grove { --palette-accent-dark: #40916c; --palette-accent-light: #2d6a4f; }
+.palette-red { --palette-accent-dark: #f87171; --palette-accent-light: #b91c1c; }
+.palette-yellow { --palette-accent-dark: #f59e0b; --palette-accent-light: #a16207; }
+.palette-ash { --palette-accent-dark: #e5e7eb; --palette-accent-light: #6b7280; }

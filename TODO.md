@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] Ludwigia World 對話資料與色盤來源收斂
+    - 交付條件：玩家對話、角色獨白、NPC 互聊在 `characters.json` 分欄維護並保持中英雙語；後兩類隨機觸發；主站與 World 共用 palette 基色，文件與驗證同步完成。
+    - 已完成：23 位角色拆成 `dialogues.user/self`、15 組有效互聊收斂為 `npcDialogues`，移除重複與失效 ID；World 的 Theme／Palette 套用函式與 11 組 palette 基色各收斂到一處。
+    - Review 重點：作者在 World 實際走動，確認環境獨白／互聊節奏與 11 套 palette 在 HUD 上的可讀性。
+
 - [x] Ludwigia World 的 ChatGPT 角色對話改寫
     - 交付條件：只改 `labs/world/data/characters.json` 中 `chatgpt` 的中英文對話；覆蓋原有五組台詞，回應 Gemini、評論 Claude 與 Ludwigia；角色資料維持單一來源且 JSON 可解析。
     - 已完成：五組中英文對話已改寫為較有火藥味的角色互動；確認每語系皆有五組、每組兩句，JSON 解析與 diff 格式檢查通過。

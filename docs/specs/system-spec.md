@@ -413,6 +413,8 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 
 ## CI / Guardrails（合併前自動擋壞）
 
+`labs/world/` 的社交內容以 `data/characters.json` 為唯一來源：角色的 `dialogues.user` 是玩家主動對話序列，`dialogues.self` 是環境獨白，頂層 `npcDialogues` 是兩位現有角色的對話序列。三類皆須提供 `zh-TW` 與 `en`；環境排程只在獨白和 NPC 互聊間隨機選擇，缺席時退到另一類，不拿玩家對話冒充獨白。主站與 World 的 palette 基色共用 `assets/css/site/palette-tokens.css`，World 的 surface 差異仍由 `world.css` 管理。
+
 核心方向：
 
 - 只要改了內容或 indexer/schema，就必須重生並提交 `search/search-index.{json,js}`

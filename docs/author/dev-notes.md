@@ -285,3 +285,4 @@ estimated reading time 這件事我也開始覺得不能太天真。一般網頁
 - 首頁 `Skills` 與 `Credentials & Honors` 區塊我維持了資料與渲染分離：`data/Skills/skills.json` 與 `data/Credentials/credentials.json` 作為單一真相來源，前端以類別切換與 Modal 燈箱處理展示，兼顧資料可維護性與畫面精簡度。
 - 圖片資源重構：我將 `assets/images/` 整理為明確的領域子資料夾 (`defaults/`, `hero/`, `projects/`, `copilot/`, `credentials/`)，徹底解決根目錄散亂與路徑不可控技術債。
 - 可擴充 Key-Based 多語言架構 (根目錄 `i18n/*.json`)：將 UI 標籤與動態組件翻譯劃分至模組化 JSON 字典檔，搭配 HTML 聲明式 `data-i18n-key` 與 `LudwigI18n.t()` 全域 Helper API，使未來新增全新語系（如 `ja` / `de`）只需調整 JSON 與語系切換選單即可自動擴充。
+- World 角色資料曾同時有 `conversations` / `conversationPairs`，而單人台詞又被拿來兼作玩家對話與環境獨白。我把它收斂成 `dialogues.user`、`dialogues.self`、`npcDialogues` 三個情境；無效角色 ID 的互聊不能再靠 runtime 靜默跳過。World 色盤也不再另抄 11 組值，而是讀主站共用 token；改 palette 時只需要找一個來源。

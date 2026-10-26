@@ -16,7 +16,7 @@
       this.autoChatTimer = 3.0 + Math.random() * 2.0;
       this.dialogueQueue = [];
       this.queueTimer = 0;
-      this.conversationPairs = [];
+      this.npcDialogues = [];
     }
 
     async loadCharacters(jsonPath = 'data/characters.json') {
@@ -24,14 +24,14 @@
         const res = await fetch(jsonPath);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const rawConv = data.npcDialogues || data.conversations || data.conversationPairs;
-        this.conversationPairs = this.validateConversationPairs(rawConv);
+        this.initFromData(data.characters);
+        this.npcDialogues = this.validateNpcDialogues(data.npcDialogues);
       } catch (err) {
         console.warn('Failed to load characters.json, using fallback:', err);
       }
     }
 
-    validateConversationPairs(pairs) {
+    validateNpcDialogues(pairs) {
       if (!Array.isArray(pairs)) return [];
       const ids = new Set(this.characters.map(char => char.id));
       return pairs.filter((pair, index) => {
@@ -579,7 +579,7 @@
     }
 
     tryTriggerNpcDialogue(langKey, now) {
-      const pairs = this.conversationPairs.slice().sort(() => Math.random() - 0.5);
+      const pairs = this.npcDialogues.slice().sort(() => Math.random() - 0.5);
 
       for (const pair of pairs) {
         const p1 = this.characters.find(c => c.id === pair.participants[0]);

@@ -31,6 +31,10 @@
   - [ ] `python3 cli.py test` 中的 `test_skills_credentials_data.py` 測試通過
   - [ ] 若同時存在多個 ongoing `period`，尾端的 `Present / 至今` 會被收斂成單一 cluster，點進 detail 後仍能看到各個 ongoing phase
   - [ ] 若 timeline 使用 `category`，event card / detail card 的 badge 正常顯示，且沒有另外長出與 palette 打架的固定 category 配色
+- [ ] 若本次改動涉及 `labs/world/`：
+  - [ ] `characters.json` 的 `dialogues.user`、`dialogues.self`、`npcDialogues` 均有中英文；互聊 participants / speaker ID 都存在，玩家對話不會作為環境獨白
+  - [ ] 環境獨白與 NPC 互聊皆能觸發；角色距離不足時互聊仍遵守接近／分區條件
+  - [ ] World 與主站讀同一份 `palette-tokens.css`，切 Theme／Palette 後 HUD accent 即時更新
 - [ ] 若本次改動涉及全站 navbar / page shell shared source：
   - [ ] `pages/_shared/navbar.html` 仍是 navbar SSOT；沒有在 `tools/content_styles/_shared/` 或單頁 HTML 平行長出第二份真相來源
   - [ ] 內容頁若需要 navbar，生成流程會讀 `pages/_shared/navbar.html`，而不是改成 runtime fetch 導致 `file://` 壞掉

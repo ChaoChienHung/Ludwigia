@@ -11,23 +11,31 @@
 
   <!-- Theme & Palette Preload (Ludwigia Contract) -->
   <script>
-    (() => {
-      try {
+    window.LudwigWorldAppearance = (() => {
+      const root = document.documentElement;
+      const themeClasses = ["light-theme", "deep-sea-theme", "galaxy-theme", "sky-theme", "garden-theme"];
+      const apply = () => {
+        root.classList.remove(...themeClasses);
         const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
-        if (theme === "light") document.documentElement.classList.add("light-theme");
-        if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
-        if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
-        if (theme === "sky") document.documentElement.classList.add("sky-theme");
-        if (theme === "garden") document.documentElement.classList.add("garden-theme");
+        const selected = (theme === "deep-sea" || theme === "galaxy-night")
+          ? "deep-sea-theme" : `${theme}-theme`;
+        if (themeClasses.includes(selected)) root.classList.add(selected);
+
+        for (const name of [...root.classList]) {
+          if (name.startsWith("palette-")) root.classList.remove(name);
+        }
         const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
-        if (palette) document.documentElement.classList.add(`palette-${palette}`);
-      } catch (e) {}
+        if (/^[a-z0-9-]+$/.test(palette)) root.classList.add(`palette-${palette}`);
+      };
+      try { apply(); } catch (e) { /* localStorage may be unavailable */ }
+      return { apply };
     })();
   </script>
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="world.css?v=2026-10-25-modular">
+  <link rel="stylesheet" href="../../assets/css/site/palette-tokens.css">
+  <link rel="stylesheet" href="world.css?v=2026-10-26-ssot">
 </head>
 <body class="space-body">
 
@@ -190,7 +198,7 @@
         <h4 style="font-size: 0.95rem; margin: 16px 0 6px; font-weight: 600;">自研特點與 Ludwigia 專屬特色：</h4>
         <ul style="padding-left: 20px; font-size: 0.88rem; color: var(--space-text-secondary); line-height: 1.6;">
           <li><strong>屬於真實人物的溫馨生活空間</strong>：結合 Ludwig 的家庭、男11 211大學好友群與 AI 夥伴的立體社交天地。</li>
-          <li><strong>資料與代碼徹底解耦</strong>：所有角色裝飾、性別、分區與五套隨機中英雙語對話皆由外部 <code>characters.json</code> 單一真相來源驅動。</li>
+          <li><strong>資料與代碼徹底解耦</strong>：角色外觀、分區與中英雙語的玩家對話、環境獨白、角色互聊皆由 <code>characters.json</code> 單一真相來源驅動。</li>
           <li><strong>零外部音檔 Web Audio 合成</strong>：瀏覽器端純數學即時合成微風白噪音、噴泉水流聲與舒緩調和弦。</li>
           <li><strong>詳細技術規格</strong>：完整技術細節請參閱站內文檔 <a href="../../docs/specs/isometric-world-spec.md" target="_blank" style="color: var(--space-accent);"><code>docs/specs/isometric-world-spec.md</code></a>。</li>
         </ul>
@@ -201,7 +209,7 @@
   <!-- Modular Scripts -->
   <script src="js/engine.js?v=2026-10-25-19"></script>
   <script src="js/models.js?v=2026-10-25-19"></script>
-  <script src="js/characters.js?v=2026-10-25-19"></script>
+  <script src="js/characters.js?v=2026-10-26-ssot"></script>
   <script src="js/world.js?v=2026-10-25-19"></script>
 
   <!-- Initialization & UI Binding -->
@@ -333,19 +341,7 @@
         window.dispatchEvent(new CustomEvent('ludwig-language-changed', { detail: { lang: next } }));
       });
 
-      const applyThemePalette = () => {
-        const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
-        document.documentElement.classList.remove("light-theme", "deep-sea-theme", "galaxy-theme", "sky-theme", "garden-theme");
-        if (theme === "light") document.documentElement.classList.add("light-theme");
-        if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
-        if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
-        if (theme === "sky") document.documentElement.classList.add("sky-theme");
-        if (theme === "garden") document.documentElement.classList.add("garden-theme");
-
-        const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
-        document.documentElement.className = document.documentElement.className.replace(/\bpalette-\S+/g, "").trim();
-        if (palette) document.documentElement.classList.add(`palette-${palette}`);
-      };
+      const applyThemePalette = window.LudwigWorldAppearance.apply;
 
       window.addEventListener('ludwig-language-changed', (e) => {
         if (e.detail?.lang) applyLanguage(e.detail.lang);

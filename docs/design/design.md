@@ -577,3 +577,7 @@ Copilot 也是類似的取捨：我不想把功能直接砍掉，但它常駐時
 
 - **Skills 的空間膨脹問題**：技能數量若隨時間增加，逐項列出會導致首頁垂直長度失控。因此採用「**主題分類 + 定高視窗 + 左右/頁籤切換**」，讓所有技能類別共用同一區塊視窗，兼顧高度擴充性與畫面精簡度。
 - **Achievements 的名實相符與檢視體驗**：單純使用 "Achievements" 容易被誤解為僅限獲獎；故升格為 **Credentials & Honors (榮譽與憑證)**，並設計 `Type`（種類：獎狀、成績單、證書、感謝狀）與 `Domain`（領域：學術、工程、體育、志工）雙維度篩選。搭配主展示視窗、縮圖 Option Bar 與 Modal 放大燈箱，滿足讀者仔細查閱成績單或證書文字的需求。
+
+### 14. World 的對話與色盤責任邊界
+
+玩家點擊、角色自言自語、角色彼此聊天是三種不同情境，因此在 `characters.json` 分別存為 `dialogues.user`、`dialogues.self` 與 `npcDialogues`。環境排程隨機選後兩種，避免角色把對玩家說的歡迎詞當成自言自語。色盤只應有一份基色定義：`palette-tokens.css` 供主站與 World 共用；World 只定義自己的背景 surface 和 accent 映射，避免每增一套 palette 就複製一整排色碼。

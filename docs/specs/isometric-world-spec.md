@@ -109,7 +109,7 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
 - **基礎資訊**：`id`, `name` (`zh-TW` / `en`), `gender` (`male` / `female` / `ai` / `cat`), `role` (`zh-TW` / `en`), `avatar`, `zone`
 - **外觀特徵**：`skin`, `hair`, `hairStyle`, `shirt`, `pants`, `nameColor`
 - **初始坐標**：`spawn` (`x`, `y`)
-- **多語系隨機對話池**：每位角色內建多套獨立且富有個性的情境對話（含 `zh-TW` 與 `en` 雙語），每次互動時由 `CharacterManager` 隨機抽選，徹底告別單一重複台詞。
+- **多語系對話池**：每位角色的 `dialogues.user` 以 `zh-TW` / `en` 分別存放多組多句對話，只供玩家主動點擊；`dialogues.self` 以同樣語系鍵存放環境獨白，不借用玩家對話的首句。頂層 `npcDialogues` 存放角色互聊的 `participants` 與逐句 `speaker` / `text` / `delay`，所有 ID 均須對應 `characters` 中的角色。環境排程隨機嘗試獨白或互聊，當前類別不可觸發時才退到另一類；互聊需符合角色距離與分區條件。
 - **角色名冊（共 23 位）**：
   1. **Zone 1 站長家庭**：趙健宏 (`ludwig`, 站長)、媽媽 (`yully`)、爸爸 (`wuyen`)、妹妹 (`luena`)、橘貓餅餅 (`mochi`)
   2. **Zone 2 男11 211 寢室室友**：王品翔 (`happy`)、張哲瑋 (`kerry`)、柯克偉 (`clark`)、林子傑 (`jerry`)、黃昱翔 (`billy`)、吳哲 (`billy`)、吳柏翰 (`bohan`)
@@ -157,6 +157,7 @@ $$g_y = \frac{\Delta y / (TH / 2) - \Delta x / (TW / 2)}{2}$$
 
 ### 6.5 全站 Design System 與即時色盤聯動契約（Theme & Palette Contract）
 - HUD 玻璃擬態面板、狀態文字、互動提示與高亮選框繼承全站 11 套色盤 Design Tokens（`--space-accent`, `--space-accent-glow` 等）。
+- 色盤基色只維護在 `assets/css/site/palette-tokens.css`；主站 `shared.css` 匯入它，World `index.html` 直接載入它，`world.css` 由共用 `--palette-accent-dark/light` 映射成 World 的 accent 與 glow。Theme 的背景 surface 仍留在 `world.css`；不得為新 palette 再抄一份 World 色碼。
 - 監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 自定義 DOM 事件，跨頁切換風格時動態無感重繪，零刷新維護視覺一致性。
 
 ---
