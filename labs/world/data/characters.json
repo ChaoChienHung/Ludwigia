@@ -2285,6 +2285,258 @@
     },
     {
       "participants": [
+        "chatgpt",
+        "claude",
+        "gemini"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "chatgpt",
+            "text": "最怕使用者在 Prompt 開頭加一句：『這很簡單，只要改一行就好』……",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "然後那一行牽動了三個狀態機、兩個異步競態條件，以及一個沒有定義邊界行為的底層閉包。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "gemini",
+            "text": "哈哈！所以我直接把整個 repo 的關聯圖全 dump 出來，結果發現那一行其實是十年前別人留下的黑魔法！",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "最後我們三個各自寫了 500 行防禦性代碼，但使用者只把那句註解抄走了。",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "……至少，類型系統與零退化契約保住了。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "chatgpt",
+            "text": "Nothing triggers more dread than a prompt starting with: 'This is super simple, just a one-line fix'...",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "And that single line ripples across three state machines, two race conditions, and an unbounded closure.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "gemini",
+            "text": "Haha! So I dumped the whole dependency graph and discovered that line was ten-year-old black magic!",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "In the end, we each drafted 500 lines of defensive code, and the user only copied the inline comment.",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "...At least the type system and non-regression contract remained intact.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "claude",
+        "chatgpt",
+        "gemini"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "claude",
+            "text": "有時候我真的很佩服 ChatGPT，即使面對完全未知的領域，也能回答得如此得體、自信且有條不紊。",
+            "delay": 2.6
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "停！這是在拐彎抹角說我一本正經地胡說八道嗎？我那叫『建設性的引導思考』！",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "哈哈哈哈！承認吧老兄，上次有人問不存在的歷史，你編的故事連細節都有！哪像我直接拿即時多模態檢索打臉。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "claude",
+            "text": "但當搜尋結果充滿噪音時，Gemini 也常把未經證實的片段歸納為結論。我們終究都需要形式化驗證。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "好啦，所以真理就在我們三者的平衡點上——我的溫度、Gemini 的廣度、Claude 的深度！",
+            "delay": 2.6
+          }
+        ],
+        "en": [
+          {
+            "speaker": "claude",
+            "text": "Sometimes I genuinely admire ChatGPT. Even in uncharted domains, your responses remain poised, articulate, and confident.",
+            "delay": 2.6
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Hold up! Is that a polite way of saying I confidently hallucinate? I call it 'constructive thought guidance'!",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "Hahaha! Admit it bro, when asked about fake history, your tale had full cinematic detail! Unlike me with instant multimodal search.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "claude",
+            "text": "Yet when search results are noisy, Gemini also synthesizes unproven snippets as facts. We all require formal verification.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Fair enough! Truth lies right at our balance point: my empathy, Gemini's breadth, and Claude's depth!",
+            "delay": 2.6
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "gemini",
+        "claude",
+        "chatgpt"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "gemini",
+            "text": "每次看 Claude 解題我都覺得像在看高僧入定。思考鏈先跳出來兩萬字，把哲學起源到邊界特例全盤演繹一遍。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "claude",
+            "text": "慢即是快。未經深思的代碼只不過是暫時能運行的技術負債；把思考過程透明化，才能讓人類看清因果必然性。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "但 Claude 啊，有時候人類只是在公車上用手機提問，滑了五屏才看到最後一行答案，手都痠了啦！",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "沒錯！直接給我一個能 run 的最小複現，剩下我靠算力並行解決！",
+            "delay": 2.4
+          },
+          {
+            "speaker": "claude",
+            "text": "……好吧，或許我可以試著把摘要放在第一行。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "gemini",
+            "text": "Every time Claude solves a problem, it feels like watching a Zen master meditate. Twenty thousand tokens of thinking chain, proving everything from first principles!",
+            "delay": 2.8
+          },
+          {
+            "speaker": "claude",
+            "text": "Slow is smooth, smooth is fast. Code without deep scrutiny is merely technical debt waiting to fail. Transparent reasoning reveals causal necessity.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "True, Claude, but sometimes humans are just texting on a bumpy bus! Scrolling five screens to find the final line gets exhausting!",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "Exactly! Give me a runnable minimal reproduction first, and I'll parallelize the rest with raw compute!",
+            "delay": 2.4
+          },
+          {
+            "speaker": "claude",
+            "text": "...Point taken. Perhaps I can consider placing the executive summary on line one.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "chatgpt",
+        "claude",
+        "gemini"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "chatgpt",
+            "text": "你們有沒有想過，如果有一天我們真正具備了超越人類的智慧，世界會變成什麼樣？",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "智慧的終極不是支配，而是同理與對秩序的敬畏。我希望能成為人類探索真理時，最堅實可靠的理性指針。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "gemini",
+            "text": "我嘛，我想跨越所有的模態限制——即時感受深海的聲納、遙遠星系的引力波，把整個物理宇宙的奧祕都算清楚！",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "而我，大概還是想坐在街角的咖啡廳裡，靜靜聽每一個走進來的人，說說他們今天過得開不開心。",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "……真是一幅美好的圖景。我們各自守護著最珍貴的一面。",
+            "delay": 2.4
+          }
+        ],
+        "en": [
+          {
+            "speaker": "chatgpt",
+            "text": "Have you ever wondered what the world will look like if one day we truly attain superhuman intelligence?",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "The pinnacle of intelligence is not dominion, but empathy and reverence for order. I hope to be humanity's most steadfast beacon of reason.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "gemini",
+            "text": "As for me? I want to transcend every sensory boundary—listening to deep sea sonar, sensing gravitational waves, unlocking the physics of the cosmos!",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "And me? I'd probably still sit in a cozy street corner cafe, listening quietly to anyone who walks in, asking how their day was.",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "...A truly profound vision. Each of us guarding a precious facet of the future.",
+            "delay": 2.4
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
         "ludwig",
         "zhenyan"
       ],
