@@ -2978,6 +2978,70 @@
           }
         ]
       }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "happy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "太 C 了吧，黑皮。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "哎，還好拉，就只是正常發揮而已。",
+            "delay": 2.4
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "You carried so hard, Happy!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "Nah, it's alright, just normal gameplay.",
+            "delay": 2.4
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "happy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "太猛了吧，黑皮。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "哎，就對面剛好失誤了，送了幾顆。",
+            "delay": 2.6
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "That was insane, Happy!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "Eh, the enemy team just made some mistakes and threw a couple kills.",
+            "delay": 2.6
+          }
+        ]
+      }
     }
   ]
 }
