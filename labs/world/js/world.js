@@ -2156,10 +2156,10 @@
           this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('🎵 抖音研發中心', 0, -3.5);
+          this.ctx.fillText('🎵 TikTok RecSys', 0, -3.5);
           this.ctx.fillStyle = '#25f4ee';
           this.ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-          this.ctx.fillText('TIKTOK TECH LAB', 0, 4.5);
+          this.ctx.fillText('TikTok 推薦團隊', 0, 4.5);
           this.ctx.restore();
         }
       });

@@ -2630,11 +2630,11 @@
         ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🎵 TIKTOK OFFICE', 0, -6);
+        ctx.fillText('🎵 TikTok RecSys', 0, -6);
 
         ctx.fillStyle = '#25f4ee';
         ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-        ctx.fillText('抖音研發辦公室', 0, 7);
+        ctx.fillText('TikTok 推薦團隊', 0, 7);
       }
       ctx.restore();
 
@@ -2885,11 +2885,11 @@
         ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🎵 TIKTOK • 抖音研發中心', 0, -4.5);
+        ctx.fillText('🎵 TikTok RecSys', 0, -4.5);
 
         ctx.fillStyle = '#25f4ee';
-        ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-        ctx.fillText('ALGORITHM & MULTIMODAL ENGINEERING', 0, 5.5);
+        ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('TikTok 推薦團隊', 0, 5.5);
 
       } else if (type === 'school') {
         // Sanmin High School: Evergreen & Brass Academic Lintel Board
