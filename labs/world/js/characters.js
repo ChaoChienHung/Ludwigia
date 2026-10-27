@@ -177,7 +177,7 @@
           y: c.spawn ? c.spawn.y : 14,
           z: 0,
           facing: 1,
-          speed: 2.1 + Math.random() * 0.4,
+          speed: 1.75 + Math.random() * 0.35,
           path: [],
           skin: c.appearance?.skin || '#f5d0b5',
           hair: c.appearance?.hair || '#1e293b',
@@ -187,7 +187,7 @@
           isCat: !!c.appearance?.isCat,
           nameColor: c.nameColor || '#38bdf8',
           dialogues: c.dialogues || {},
-          timer: 0.8 + Math.random() * 2.2,
+          timer: 3.0 + Math.random() * 5.0,
           state: 'idle',
           isWalking: false,
           walkTimer: 0
@@ -626,10 +626,11 @@
         const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
         if (!lines || lines.length === 0) continue;
 
+        const totalDialogueTime = lines.reduce((sum, item) => sum + (item.delay || 2.2), 0) + 3.5;
         for (const c of group) {
           c.path = []; c.isWalking = false;
           c.facing = (centerX - c.x >= 0) ? 1 : -1;
-          c.timer = 6.0;
+          c.timer = Math.max(8.0, totalDialogueTime);
         }
 
         // First character speaks
