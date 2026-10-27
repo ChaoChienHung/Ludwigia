@@ -3097,6 +3097,82 @@
           }
         ]
       }
+    },
+    {
+      "participants": [
+        "clark",
+        "happy",
+        "jerry",
+        "billy",
+        "ludwig"
+      ],
+      "maxDistance": 6.5,
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "clark",
+            "text": "今天有局嗎？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "等我一下，我十點後能打。",
+            "delay": 2.4
+          },
+          {
+            "speaker": "jerry",
+            "text": "喔喔好啊，那我也打一下好了。",
+            "delay": 2.5
+          },
+          {
+            "speaker": "clark",
+            "text": "阿方來一下啦，別打暴雪了，趕快載 LoL 啦。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "billy",
+            "text": "好啦，等一下啦。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwig",
+            "text": "那我也要打，我們這樣剛好五排。",
+            "delay": 2.8
+          }
+        ],
+        "en": [
+          {
+            "speaker": "clark",
+            "text": "Anyone up for a game today?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "Give me a sec, I can play after ten.",
+            "delay": 2.4
+          },
+          {
+            "speaker": "jerry",
+            "text": "Oh cool, sure, I'll hop in for a bit too then.",
+            "delay": 2.5
+          },
+          {
+            "speaker": "clark",
+            "text": "Come on Billy, stop playing Blizzard games, hurry up and install LoL!",
+            "delay": 2.8
+          },
+          {
+            "speaker": "billy",
+            "text": "Alright, hold on a bit.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwig",
+            "text": "Count me in too, that makes a full five-stack!",
+            "delay": 2.8
+          }
+        ]
+      }
     }
   ]
 }
