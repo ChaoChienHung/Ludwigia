@@ -269,44 +269,12 @@
         "user": {
           "zh-TW": [
             [
-              "嗨嗨！你是 Ludwig 哥哥的朋友對吧！",
-              "哈哈，他一整天都在盯著那個螢幕打演算法，我都在客廳聽音樂跟跟小貓玩！",
-              "你看，餅餅（Mochi）正縮在沙發底下打呼嚕呢，超級可愛！"
-            ],
-            [
-              "嘿！你有去參觀男11 211宿舍嗎？那裡超熱鬧的！",
-              "那種上面是床、下面是書桌的床型我以前只在大學開箱影片看過，親眼看到覺得好酷喔！"
-            ],
-            [
-              "東邊的 AI 工作室裡有好幾台超酷的大螢幕和伺服器，藍藍綠綠的光超有未來感！",
-              "ChatGPT 和 Gemini 都超級親切，我常常跑去找他們聊天問八卦呢！"
-            ],
-            [
-              "媽媽今天烤的蘋果派超香的！哥哥如果再不來吃，我就要全部吃光光囉！"
-            ],
-            [
-              "餅餅今天心情超好，如果輕輕摸牠下巴，牠會一直發出拖拉機一樣的咕嚕聲喔！"
+              "Gemini 沒 token 了..."
             ]
           ],
           "en": [
             [
-              "Hi there! You must be Ludwig's friend!",
-              "Haha, he stares at algorithmic formulas all day, while I enjoy music and play with our cat!",
-              "Look, Mochi is purring under the sofa—so fluffy and adorable!"
-            ],
-            [
-              "Hey, have you checked out Dorm 11-211 yet? It's so lively over there!",
-              "Those upper-bunk bed and lower-desk loft combos look straight out of a classic college tour!"
-            ],
-            [
-              "The AI lab in the east sector has glowing servers and curved ultrawide monitors—total sci-fi vibe!",
-              "Gemini and Claude are super friendly, I ask them fun trivia all the time!"
-            ],
-            [
-              "Mom baked an amazing apple pie today! If Ludwig doesn't hurry up, I'm taking the last slice!"
-            ],
-            [
-              "Mochi is in such a cuddly mood today. Scratch her chin and she purrs like a gentle motor!"
+              "Gemini ran out of tokens..."
             ]
           ]
         },
@@ -2796,6 +2764,238 @@
             "speaker": "ludwig",
             "text": "Sounds great, let's go!",
             "delay": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "luena",
+        "ludwig"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "luena",
+            "text": "Gemini 沒 token 了...",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwig",
+            "text": "...你是用了多少？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "luena",
+            "text": "我根本沒什麼用...",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "luena",
+            "text": "Gemini ran out of tokens...",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwig",
+            "text": "...How much did you even use?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "luena",
+            "text": "I barely used it at all...",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "luena"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "我有買 Claude，如果你想寫 code 的話，Claude Opus 5.5 還滿好用的，你也能用，跟之前那個是一樣的帳號。",
+            "delay": 4.2
+          },
+          {
+            "speaker": "luena",
+            "text": "好啊，那我也想用",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "I subscribed to Claude. If you want to code, Claude Opus 5.5 is pretty great. You can use it too—same account as before.",
+            "delay": 4.2
+          },
+          {
+            "speaker": "luena",
+            "text": "Nice, I want to use it too!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "luena",
+        "ludwig"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "luena",
+            "text": "我最近看『Given』，其實很好看欸，你要不要一起看？",
+            "delay": 3.0
+          },
+          {
+            "speaker": "ludwig",
+            "text": "你在看什麼？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "luena",
+            "text": "我在看『Banana Fish』，還滿好看的。",
+            "delay": 2.5
+          },
+          {
+            "speaker": "ludwig",
+            "text": "那我看一下。",
+            "delay": 2.0
+          }
+        ],
+        "en": [
+          {
+            "speaker": "luena",
+            "text": "I've been watching 'Given' lately, it's actually really good. Want to watch together?",
+            "delay": 3.0
+          },
+          {
+            "speaker": "ludwig",
+            "text": "What are you watching?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "luena",
+            "text": "I'm watching 'Banana Fish', it's super good.",
+            "delay": 2.5
+          },
+          {
+            "speaker": "ludwig",
+            "text": "Alright, I'll take a look.",
+            "delay": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "luena"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "你這是在看什麼劇？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "luena",
+            "text": "『光陰的故事』，我覺得他還滿還原國民黨那時候剛來台灣的那幾年，裡面也有個叫復邦的。",
+            "delay": 4.5
+          },
+          {
+            "speaker": "ludwig",
+            "text": "那我也看一下。",
+            "delay": 2.0
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "What show are you watching?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "luena",
+            "text": "'Time Story'. I think it realistically depicts the early years after the KMT arrived in Taiwan, and there's a character named Fubang in it too.",
+            "delay": 4.5
+          },
+          {
+            "speaker": "ludwig",
+            "text": "Let me check it out too.",
+            "delay": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "luena",
+        "ludwig"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "luena",
+            "text": "我等下要看『光陰的故事』，你要看嗎？",
+            "delay": 2.6
+          },
+          {
+            "speaker": "ludwig",
+            "text": "好呀！",
+            "delay": 2.0
+          }
+        ],
+        "en": [
+          {
+            "speaker": "luena",
+            "text": "I'm going to watch 'Time Story' later, wanna watch?",
+            "delay": 2.6
+          },
+          {
+            "speaker": "ludwig",
+            "text": "Sure!",
+            "delay": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "luena",
+        "wuyen"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "luena",
+            "text": "爸爸要不要也一起看『光陰的故事』，我覺得他裡面有很多劇情刻畫得滿好的，以那個年代來說，算是很超前。",
+            "delay": 4.8
+          },
+          {
+            "speaker": "wuyen",
+            "text": "好啊，等下看一下。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "luena",
+            "text": "Dad, do you want to watch 'Time Story' together too? Many of the storylines are really well written—quite ahead of its time for that era.",
+            "delay": 4.8
+          },
+          {
+            "speaker": "wuyen",
+            "text": "Sure, I'll take a look in a bit.",
+            "delay": 2.2
           }
         ]
       }
