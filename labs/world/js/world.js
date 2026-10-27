@@ -747,8 +747,8 @@
               c.state = 'idle';
               c.isWalking = false;
               c.walkTimer = 0;
-              // Relaxed rest while observing/enjoying spot (8.0 to 18.0 seconds)
-              c.timer = 8.0 + Math.random() * 10.0;
+              // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
+              c.timer = 2.5 + Math.random() * 3.5;
             }
           } else {
             c.x += (dx / dist) * step;
@@ -764,15 +764,9 @@
         }
 
         if (c.timer <= 0) {
-          // 40% chance for humanoid NPCs to stay idle longer, relaxing and enjoying their space
-          if (!c.isCat && Math.random() < 0.4) {
-            c.timer = 6.0 + Math.random() * 8.0;
-            return;
-          }
-
-          c.timer = 5.0 + Math.random() * 6.0;
+          c.timer = 1.5 + Math.random() * 2.5;
           if (c.isCat) {
-            c.state = Math.random() > 0.35 ? 'sleeping' : 'walking';
+            c.state = Math.random() > 0.45 ? 'sleeping' : 'walking';
             if (c.state === 'walking') {
               const catSpots = [{ x: 4.5, y: 7.5 }, { x: 7.5, y: 4.5 }, { x: 3.5, y: 3.5 }, { x: 5.5, y: 6.5 }];
               const dest = catSpots[Math.floor(Math.random() * catSpots.length)];
@@ -926,10 +920,10 @@
                 c.path = path;
                 c.state = 'walking';
               } else {
-                c.timer = 3.5 + Math.random() * 3.0;
+                c.timer = 0.8 + Math.random() * 0.8;
               }
             } else {
-              c.timer = 3.5 + Math.random() * 3.0;
+              c.timer = 0.8 + Math.random() * 0.8;
             }
           }
         }
