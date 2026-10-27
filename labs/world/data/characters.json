@@ -196,6 +196,12 @@
             ],
             [
               "我去公園下棋。"
+            ],
+            [
+              "要去吃飯了嗎？"
+            ],
+            [
+              "等等要出去送貨。"
             ]
           ],
           "en": [
@@ -207,15 +213,23 @@
             ],
             [
               "I'm heading to the park to play chess."
+            ],
+            [
+              "Heading out to eat?"
+            ],
+            [
+              "I need to head out and make a delivery in a bit."
             ]
           ]
         },
         "self": {
           "zh-TW": [
-            "陽光不錯，等等去院子走一走。"
+            "陽光不錯，等等去院子走一走。",
+            "等等要出去送貨。"
           ],
           "en": [
-            "Nice sunlight today. A walk in the garden sounds good."
+            "Nice sunlight today. A walk in the garden sounds good.",
+            "Need to head out to make a delivery in a bit."
           ]
         }
       },
