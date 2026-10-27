@@ -636,17 +636,19 @@
         const first = lines[0];
         const speaker1 = this.characters.find(c => c.id === first.speaker);
         if (speaker1) {
-          this.triggerSpeechBubble(speaker1, first.text, 3.8);
+          const firstDuration = first.duration || (first.delay ? Math.max(3.8, first.delay + 1.2) : 3.8);
+          this.triggerSpeechBubble(speaker1, first.text, firstDuration);
         }
 
         // Queue remaining replies
         this.dialogueQueue = [];
         for (let i = 1; i < lines.length; i++) {
           const item = lines[i];
+          const itemDuration = item.duration || (item.delay ? Math.max(3.8, item.delay + 1.2) : 3.8);
           this.dialogueQueue.push({
             speakerId: item.speaker,
             text: item.text,
-            duration: 3.8,
+            duration: itemDuration,
             nextDelay: item.delay || 2.2
           });
         }
