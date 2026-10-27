@@ -1649,7 +1649,8 @@
         "zh-TW": "國中同學",
         "en": "Junior High Classmate"
       },
-      "avatar": "✏️",
+      "avatar": "assets/avatars/willkane.png",
+      "avatarFallback": "✏️",
       "zone": "sanmin_school",
       "spawn": {
         "x": 5.8,
