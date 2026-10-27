@@ -112,6 +112,12 @@
               "健宏，媽媽知道你很有上進心、很努力，可是你也要有足夠的時間休息，因為這樣你才有更清晰的思考能力，身體也能得到足夠的休息，不要為了太衝，忘了時間吃飯，睡覺。",
               "媽媽看到你這樣拼，心裡既高興，但同時也不捨。高興是高興你很懂事，但也不捨你總是太晚睡。",
               "記得，熬夜可以，可是不要長期，吃飯要吃好一點，不要太省。"
+            ],
+            [
+              "晚餐煮好了，可以來吃飯了。"
+            ],
+            [
+              "怎麼了，寶貝？"
             ]
           ],
           "en": [
@@ -127,15 +133,23 @@
               "Chien-Hung, Mom knows you are ambitious and working so hard, but you need enough rest. That's how your thinking stays sharp and your body recovers. Don't push so hard that you forget to eat and sleep.",
               "Seeing you strive like this makes my heart both proud and aching. Proud because you are so sensible, but aching because you always stay up so late.",
               "Remember: staying up late once in a while is okay, but never long-term. Eat better meals, and don't skimp on food."
+            ],
+            [
+              "Dinner is ready, come on over and eat!"
+            ],
+            [
+              "What's on your mind, sweetie?"
             ]
           ]
         },
         "self": {
           "zh-TW": [
-            "不要太累，記得休息。"
+            "不要太累，記得休息。",
+            "晚餐煮好了，可以來吃飯了。"
           ],
           "en": [
-            "Don't push yourself too hard, remember to get some rest."
+            "Don't push yourself too hard, remember to get some rest.",
+            "Dinner is ready, time to eat."
           ]
         }
       },
