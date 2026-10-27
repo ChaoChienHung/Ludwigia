@@ -11,7 +11,8 @@
         "zh-TW": "站長",
         "en": "Host / Webmaster"
       },
-      "avatar": "🧑‍💻",
+      "avatar": "assets/avatars/ludwig.jpg",
+      "avatarFallback": "🧑‍💻",
       "zone": "house",
       "spawn": {
         "x": 7,
