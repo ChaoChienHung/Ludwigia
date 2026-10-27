@@ -399,24 +399,7 @@
               "這把贏了就睡！"
             ],
             [
-              "哈哈！歡迎來到男11 211寢室！",
-              "這張上床下桌真是滿滿的大學回憶！下層寫程式打遊戲，上層倒頭就睡，大學四年最熱血的時光都在這！",
-              "兄弟，今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？我請客！"
-            ],
-            [
-              "嘿！兄弟！今天也是元氣滿滿的一天！",
-              "你看我這床頭貼的遊戲海報跟戰隊隊旗，211 寢室就是要熱血！",
-              "待會打完這把排位賽，我們一起去中庭噴泉投個硬幣許願！"
-            ],
-            [
-              "上床下桌最棒的地方就是爬上去就像進入秘密基地一樣！",
-              "拉上遮光床簾，戴上耳機，上面就是專屬的小宇宙！"
-            ],
-            [
-              "剛剛 Billy 泡了兩碗雙響泡泡麵，整個走廊都是香味，大學宿舍就是要有這種人間煙火味！"
-            ],
-            [
-              "有空常來 211 坐坐啊！不管是聊專案、打遊戲還是純粹哈拉，隨時歡迎你！"
+              "好啊都這樣啊，那我走。"
             ]
           ],
           "en": [
@@ -424,25 +407,7 @@
               "Win this match and I am sleeping, I swear!"
             ],
             [
-              "Haha! Welcome to Men's Dorm 11 Room 211!",
-              "These loft beds bring back the ultimate college memories! Desk on the bottom for coding and gaming, bed on top for crashing out!",
-              "Bro, late-night Taiwanese crispy chicken and boba milk tea tonight? My treat!"
-            ],
-            [
-              "Hey brother! Another high-energy day!",
-              "Look at the esports banners on my bunk bed frame—211 energy is unmatched!",
-              "After this match, let's head out to the fountain plaza and chill!"
-            ],
-            [
-              "The best part about the loft bed is climbing the ladder into your private fortress!",
-              "Close the curtain, put on headphones, and it's your own little sanctuary."
-            ],
-            [
-              "Billy just made instant ramen in the lounge area, the aroma is legendary!",
-              "True dorm life right here."
-            ],
-            [
-              "Drop by 211 anytime, brother! Coding, gaming, or just hanging out, the door is always open!"
+              "Fine, if that's how it's gonna be, I'm out."
             ]
           ]
         },
@@ -2995,6 +2960,70 @@
           {
             "speaker": "wuyen",
             "text": "Sure, I'll take a look in a bit.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "happy",
+        "clark"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "happy",
+            "text": "好啊都這樣啊，那我走。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "話也不是這樣說的...",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "happy",
+            "text": "Fine, if that's how it's gonna be, I'm out.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "That's not what I meant at all...",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "happy",
+        "clark"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "happy",
+            "text": "好啊都這樣啊，那我離開。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "不是這樣，不是那個意思 xD",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "happy",
+            "text": "Fine, if that's how it is, I'll just leave.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "No, wait, that's not what I meant xD",
             "delay": 2.2
           }
         ]
