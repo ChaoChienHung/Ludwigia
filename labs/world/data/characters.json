@@ -270,20 +270,46 @@
           "zh-TW": [
             [
               "Gemini 沒 token 了..."
+            ],
+            [
+              "我最近看『Given』，其實很好看欸，你要不要一起看？"
+            ],
+            [
+              "我在看『Banana Fish』，還滿好看的。"
+            ],
+            [
+              "『光陰的故事』我覺得還滿還原國民黨剛來台灣的那幾年，裡面也有個叫復邦的。"
+            ],
+            [
+              "我等下要看『光陰的故事』，你要看嗎？"
             ]
           ],
           "en": [
             [
               "Gemini ran out of tokens..."
+            ],
+            [
+              "I've been watching 'Given' lately, it's actually really good. Want to watch together?"
+            ],
+            [
+              "I'm watching 'Banana Fish', it's super good."
+            ],
+            [
+              "'Time Story' realistically depicts the early years after the KMT arrived in Taiwan, and there's a character named Fubang in it too."
+            ],
+            [
+              "I'm going to watch 'Time Story' in a bit, wanna watch?"
             ]
           ]
         },
         "self": {
           "zh-TW": [
-            "哥哥又把書堆到桌邊了。"
+            "哥哥又把書堆到桌邊了。",
+            "等下要來看『光陰的故事』。"
           ],
           "en": [
-            "My brother stacked books right to the edge of his desk again."
+            "My brother stacked books right to the edge of his desk again.",
+            "Gonna watch 'Time Story' in a bit."
           ]
         }
       },
