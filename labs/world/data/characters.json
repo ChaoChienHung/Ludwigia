@@ -29,49 +29,16 @@
         "user": {
           "zh-TW": [
             [
-              "歡迎來到屬於我們的生活空間！",
-              "這棟房子是我們的家，裡面有我最親愛的家人們；穿過右側玄關走出去，是寬闊的綠意廣場，我的好朋友們與 AI 夥伴都在那裡。",
-              "你可以用鍵盤 WASD、方向鍵或點選地面走斜線探索，靠近大家按空白鍵就能聊聊天！"
-            ],
-            [
-              "剛剛我把書桌與檯燈的光源重新校準了！",
-              "那盞雙臂關節檯燈配上深色皮革桌墊，敲鍵盤寫論文時特別專注舒適。",
-              "南側是男11 211宿舍，東邊是我們的 AI 工作室，去逛逛看吧！"
-            ],
-            [
-              "書櫃上的書我都按分類放好了！微積分、分散式系統和深度學習都在上面。",
-              "有空隨時可以翻翻看我的學習筆記！"
-            ],
-            [
-              "今天天氣真好，中央廣場的噴泉開了，櫻花微風吹過特別舒服！",
-              "如果累了，客廳沙發上還有熱茶跟點心喔！"
-            ],
-            [
-              "這是我們用純 Canvas 與原創演算法打造的 2.5D 世界！",
-              "沒有外部遊戲引擎套件，全部都是純手刻的拓撲深度排序與等角投影數學！"
+              "歡迎，這裡是屬於我自己的月讀世界，白話說就是我自己的小世界。",
+              "我想把我自己珍惜的、喜歡的、在我世界留下足跡的人們與互動都記錄在這裡。",
+              "這是屬於我們金色回憶球蒐藏地，也希望你喜歡這裡。"
             ]
           ],
           "en": [
             [
-              "Welcome to our digital living sanctuary!",
-              "This house is our home with my family; step out through the entrance to find the courtyard plaza, college dorm, and AI studio.",
-              "Use WASD or arrow keys to explore, and press Space or click to chat!"
-            ],
-            [
-              "I've just fine-tuned the workspace anglepoise lamp and mechanical keyboard setup!",
-              "Head south to check out Men's Dorm 11-211, or head east into the Ludwigia AI Lab!"
-            ],
-            [
-              "The library shelf is fully organized by topic: algorithms, systems, and deep learning.",
-              "Feel free to check out the research notes anytime!"
-            ],
-            [
-              "The fountain breeze in the central plaza feels amazing today.",
-              "Take your time and enjoy the cozy atmosphere!"
-            ],
-            [
-              "This entire 2.5D world is built with pure Canvas math and topological sorting!",
-              "Zero heavy game engines—just clean, handcrafted algorithmic design."
+              "Welcome! This is my own Tsukuyomi realm—in simple terms, my very own little world.",
+              "I want to record the people I cherish, adore, and everyone who has left footprints and warm interactions in my journey right here.",
+              "This is the sanctuary for our golden memory spheres, and I truly hope you enjoy your time here."
             ]
           ]
         },
