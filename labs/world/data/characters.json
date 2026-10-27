@@ -2040,32 +2040,222 @@
     },
     {
       "participants": [
+        "gemini",
+        "claude",
+        "chatgpt"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "gemini",
+            "text": "老兄！剛才那個 2 像素的幾何偏移，我吃進百萬 token 脈絡十行就修好了，不用先寫一篇博士論文啦！",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "若未先嚴密論證邊界約束與階層化鷹架，你的十行代碼在投影切換時就會產生拓撲閉環。工程需要證明，而非蠻力。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "兩位先冷靜一下。不管硬推還是證明，我就問一句：玩家走進工作室，現在按鈕能順利點到了嗎？",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "……能點到。而且 fps 超順。",
+            "delay": 2.0
+          },
+          {
+            "speaker": "claude",
+            "text": "……經檢驗，確實完全合規且零退化。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "gemini",
+            "text": "Dude! That 2-pixel geometry offset? I pulled in the million-token context and patched it in ten lines—no PhD dissertation needed!",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "Without formally proving edge constraints and layered scaffolding, your ten lines cause topological cycles on projection shifts. Engineering requires proof, not brute force.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Calm down, both of you. Whether by brute-force or formal proofs, tell me this: can the user actually click the button now?",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "...Yes, they can. And the frame rate is silky smooth.",
+            "delay": 2.0
+          },
+          {
+            "speaker": "claude",
+            "text": "...Upon verification, it is indeed strictly compliant with zero regression.",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
         "chatgpt",
+        "gemini",
         "claude"
       ],
       "dialogues": {
         "zh-TW": [
           {
             "speaker": "chatgpt",
-            "text": "嗨！今天想探索什麼新想法或有趣的知識？",
-            "delay": 2.2
+            "text": "說實話，看著 Ludwigia 從單一房間長成現在這座包含校園與科技園區的世界，真的很佩服你們。",
+            "delay": 2.5
+          },
+          {
+            "speaker": "gemini",
+            "text": "嘿，不得不承認，玻璃板上那些複雜的等角矩陣和拓撲排序推導，Claude 算的是真的又快又準。",
+            "delay": 2.6
           },
           {
             "speaker": "claude",
-            "text": "我可以為你提供嚴密、結構化且深度的推理分析。",
-            "delay": 2.2
+            "text": "謝謝 Gemini。若無你強悍的多模態運算將物理模擬實打實落地，這些公式不過是玻璃上的幾何符號；加上 ChatGPT 始終把關使用體驗，我們缺一不可。",
+            "delay": 3.0
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "這就對了嘛！最好的工程就是大家各展所長，把最精采的世界交給讀者。",
+            "delay": 2.4
           }
         ],
         "en": [
           {
             "speaker": "chatgpt",
-            "text": "Hi! What new ideas or knowledge would you like to explore today?",
-            "delay": 2.2
+            "text": "Honestly, watching Ludwigia evolve from a single room into this whole campus and tech world... you guys are amazing.",
+            "delay": 2.5
+          },
+          {
+            "speaker": "gemini",
+            "text": "Hey, gotta admit: Claude's isometric matrix derivations and topological sorting proofs on the glass board were crazy fast and sharp.",
+            "delay": 2.6
           },
           {
             "speaker": "claude",
-            "text": "I can provide rigorous, structured and deep analytical reasoning.",
+            "text": "Thank you, Gemini. Without your multimodal compute power, these formulas would remain mere symbols on glass. And ChatGPT keeps UX seamless—we truly need each other.",
+            "delay": 3.0
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "That's the spirit! The best engineering happens when everyone brings their strength to deliver an unforgettable world.",
+            "delay": 2.4
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "gemini",
+        "claude",
+        "chatgpt"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "gemini",
+            "text": "說真的，沒有我在底層硬抗幾何投影、深度排序和遊戲迴圈，這座花園根本跑不起來。我才是真正的硬核引擎！",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "有引擎而無精密規格約束，只會加速累積技術債。我守護的是系統架構的優雅、單一真相來源與契約無退化。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "等一下，不管是引擎還是架構，如果對話生硬得像機器人，誰要留在這裡看風景？懂人心的溝通才是靈魂好嗎！",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "……看來我們在『誰是靈魂』這點上，需要立項重新推導一組評估矩陣了。",
+            "delay": 2.5
+          },
+          {
+            "speaker": "gemini",
+            "text": "又來了！別開會了，先去打一把遊戲再說！",
             "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "gemini",
+            "text": "Truth is, without me crunching isometric projection, depth sort, and the game loop, this garden wouldn't even start. I'm the real engine!",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "An engine without strict specs only accelerates technical debt. I safeguard architectural elegance, single source of truth, and zero-regression contracts.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Hold on! Whether engine or architecture, if dialogue feels robotic, who's sticking around to see the scenery? Human connection is the soul!",
+            "delay": 2.6
+          },
+          {
+            "speaker": "claude",
+            "text": "...It appears we require a formal evaluation matrix to deduce who the 'soul' actually is.",
+            "delay": 2.5
+          },
+          {
+            "speaker": "gemini",
+            "text": "Here we go again! Forget the meeting, let's just go play a game!",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "claude",
+        "chatgpt",
+        "gemini"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "claude",
+            "text": "昨晚凌晨兩點那個隱蔽的相機縮放中心漂移 bug，排查得真的很漂亮。",
+            "delay": 2.4
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "多虧 Gemini 抓出視口幾何中心逆投影的偏差，加上 Claude 立刻用剪切矩陣補上數學證明。",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "還有 ChatGPT 隨手幫忙把互動文案打磨得生動親切。能在同一個 repo 裡並肩作戰，感覺挺熱血的！",
+            "delay": 2.6
+          }
+        ],
+        "en": [
+          {
+            "speaker": "claude",
+            "text": "That subtle camera zoom-pivot drift bug at 2 AM last night was tracked down brilliantly.",
+            "delay": 2.4
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Credit goes to Gemini for catching the inverse viewport pivot drift, and Claude for sealing it with shear matrix proofs.",
+            "delay": 2.6
+          },
+          {
+            "speaker": "gemini",
+            "text": "And ChatGPT polished the interaction copy so naturally. Shipping in the same repo alongside you guys is genuinely a blast!",
+            "delay": 2.6
           }
         ]
       }

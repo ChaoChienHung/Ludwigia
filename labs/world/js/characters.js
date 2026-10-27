@@ -36,7 +36,7 @@
       const ids = new Set(this.characters.map(char => char.id));
       return pairs.filter((pair, index) => {
         const participants = pair && pair.participants;
-        const valid = Array.isArray(participants) && participants.length === 2 &&
+        const valid = Array.isArray(participants) && participants.length >= 2 &&
           participants.every(id => ids.has(id)) &&
           ['zh-TW', 'en'].every(lang => {
             const lines = pair.dialogues && pair.dialogues[lang];
@@ -582,55 +582,55 @@
       const pairs = this.npcDialogues.slice().sort(() => Math.random() - 0.5);
 
       for (const pair of pairs) {
-        const p1 = this.characters.find(c => c.id === pair.participants[0]);
-        const p2 = this.characters.find(c => c.id === pair.participants[1]);
-        if (!p1 || !p2) continue;
+        const group = pair.participants.map(id => this.characters.find(c => c.id === id));
+        if (group.some(c => !c)) continue;
 
-        // Ensure characters haven't spoken within the last 10 seconds
-        if (now - (p1.lastSpokeTime || 0) < 10000 || now - (p2.lastSpokeTime || 0) < 10000) continue;
+        // Ensure no character in the group has spoken within the last 10 seconds
+        if (group.some(c => now - (c.lastSpokeTime || 0) < 10000)) continue;
 
-        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        const shareLocation = (p1.zone === p2.zone) ||
-          (p1.visitedZones && p2.visitedZones && p1.visitedZones.some(z => p2.visitedZones.includes(z))) ||
-          (dist <= 4.0);
+        const maxDist = pair.maxDistance || (group.length > 2 ? 4.5 : 3.8);
+        const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
+        const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
+
+        // Check if all characters in the group are close to conversation center
+        const allNear = group.every(c => Math.hypot(c.x - centerX, c.y - centerY) <= maxDist);
+
+        const firstZone = group[0].zone;
+        const shareLocation = group.every(c =>
+          c.zone === firstZone ||
+          (c.visitedZones && group[0].visitedZones && c.visitedZones.some(z => group[0].visitedZones.includes(z))) ||
+          Math.hypot(c.x - centerX, c.y - centerY) <= 4.5
+        );
         if (!shareLocation) continue;
 
-        const maxDist = pair.maxDistance || 3.8;
-
-        // If characters are in the same zone but too far apart, guide them to approach each other first
-        if (dist > maxDist) {
-          if (dist <= 7.0 && this.world && this.world.nav) {
-            const midX = (p1.x + p2.x) / 2;
-            const midY = (p1.y + p2.y) / 2;
-            if (!p1.path || p1.path.length === 0) {
-              const path1 = this.world.nav.findPath({ x: p1.x, y: p1.y }, { x: midX, y: midY });
-              if (path1 && path1.length > 0) {
-                p1.path = path1;
-                p1.isWalking = true;
-              }
-            }
-            if (!p2.path || p2.path.length === 0) {
-              const path2 = this.world.nav.findPath({ x: p2.x, y: p2.y }, { x: midX, y: midY });
-              if (path2 && path2.length > 0) {
-                p2.path = path2;
-                p2.isWalking = true;
+        // If characters share zone but are spread apart, guide them to approach conversation center
+        if (!allNear) {
+          if (this.world && this.world.nav) {
+            for (const c of group) {
+              const d = Math.hypot(c.x - centerX, c.y - centerY);
+              if (d > maxDist && d <= 7.0) {
+                if (!c.path || c.path.length === 0) {
+                  const path = this.world.nav.findPath({ x: c.x, y: c.y }, { x: centerX, y: centerY });
+                  if (path && path.length > 0) {
+                    c.path = path;
+                    c.isWalking = true;
+                  }
+                }
               }
             }
           }
           continue;
         }
 
-        // Within conversational proximity: pause wandering, face each other, and converse!
+        // Within conversational proximity: pause wandering, face toward group center, and converse!
         const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
         if (!lines || lines.length === 0) continue;
 
-        p1.path = []; p1.isWalking = false;
-        p2.path = []; p2.isWalking = false;
-        const dx = p2.x - p1.x;
-        p1.facing = dx >= 0 ? 1 : -1;
-        p2.facing = dx >= 0 ? -1 : 1;
-        p1.timer = 6.0;
-        p2.timer = 6.0;
+        for (const c of group) {
+          c.path = []; c.isWalking = false;
+          c.facing = (centerX - c.x >= 0) ? 1 : -1;
+          c.timer = 6.0;
+        }
 
         // First character speaks
         const first = lines[0];

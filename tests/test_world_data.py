@@ -25,12 +25,14 @@ class WorldDataContractTests(unittest.TestCase):
 
         for pair in data["npcDialogues"]:
             participants = pair["participants"]
-            self.assertEqual(len(participants), 2)
-            p0, p1 = participants[0], participants[1]
-            p0_zones = {characters[p0]["zone"], *characters[p0].get("visitedZones", [])}
-            p1_zones = {characters[p1]["zone"], *characters[p1].get("visitedZones", [])}
-            self.assertTrue(bool(p0_zones & p1_zones),
-                            f"{p0} and {p1} must share at least one zone to converse")
+            self.assertGreaterEqual(len(participants), 2)
+            for p in participants:
+                self.assertIn(p, characters)
+            p0_zones = {characters[participants[0]]["zone"], *characters[participants[0]].get("visitedZones", [])}
+            for p in participants[1:]:
+                p_zones = {characters[p]["zone"], *characters[p].get("visitedZones", [])}
+                self.assertTrue(bool(p0_zones & p_zones),
+                                f"{participants[0]} and {p} must share at least one zone to converse")
             for lang in ("zh-TW", "en"):
                 lines = pair["dialogues"][lang]
                 self.assertTrue(lines)
