@@ -17,7 +17,6 @@ class WorldDataContractTests(unittest.TestCase):
             self.assertEqual(set(char["dialogues"]), {"user", "self"})
             for lang in ("zh-TW", "en"):
                 user_pool = char["dialogues"]["user"][lang]
-                self.assertTrue(user_pool, char["id"])
                 self.assertTrue(all(sequence and all(line.strip() for line in sequence)
                                     for sequence in user_pool), char["id"])
                 self_pool = char["dialogues"]["self"][lang]

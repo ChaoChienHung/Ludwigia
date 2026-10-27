@@ -1222,30 +1222,12 @@
       },
       "dialogues": {
         "user": {
-          "zh-TW": [
-            [
-              "今天 PR 跑完 CI/CD 了嗎？"
-            ],
-            [
-              "中午要不要去吃公司食堂？今天好像有酸菜魚！"
-            ]
-          ],
-          "en": [
-            [
-              "Did your PR pass the CI/CD pipeline yet?"
-            ],
-            [
-              "Want to hit the cafeteria for lunch? I think they have Sichuan fish today!"
-            ]
-          ]
+          "zh-TW": [],
+          "en": []
         },
         "self": {
-          "zh-TW": [
-            "這個 bug 的根因總算找到了。"
-          ],
-          "en": [
-            "Finally found the root cause of that bug."
-          ]
+          "zh-TW": [],
+          "en": []
         }
       },
       "visitedZones": [
@@ -1282,23 +1264,11 @@
           "zh-TW": [
             [
               "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！"
-            ],
-            [
-              "這個 bug 我抓了一整個下午，終於給它修掉了！"
-            ],
-            [
-              "下午要不要叫杯手搖飲？我看看滿減券……"
             ]
           ],
           "en": [
             [
               "So annoying, I have no idea what to say for my defense, there's basically nothing to talk about!"
-            ],
-            [
-              "I tracked this bug all afternoon and finally squashed it!"
-            ],
-            [
-              "Wanna order boba this afternoon? Let me check the discount coupons..."
             ]
           ]
         },
@@ -1345,33 +1315,17 @@
           "zh-TW": [
             [
               "明天霸王茶姬打折，請你喝奶茶。"
-            ],
-            [
-              "大家今天的晨會同步過進度了嗎？"
-            ],
-            [
-              "這份 Figma 設計稿的元件邊距好細緻，切圖很有成就感！"
             ]
           ],
           "en": [
             [
               "CHAGEE is having a sale tomorrow, milk tea is on me!"
-            ],
-            [
-              "Has everyone synced on today's standup updates?"
-            ],
-            [
-              "The component spacing in this Figma mockup is super crisp, slicing it is so satisfying!"
             ]
           ]
         },
         "self": {
-          "zh-TW": [
-            "這個元件間距再調兩個像素就順眼了。"
-          ],
-          "en": [
-            "Two more pixels of spacing and this component will feel right."
-          ]
+          "zh-TW": [],
+          "en": []
         }
       },
       "visitedZones": [
