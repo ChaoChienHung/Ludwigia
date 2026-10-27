@@ -2008,243 +2008,31 @@
     },
     {
       "participants": [
-        "billy",
-        "clark"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "billy",
-            "text": "老開的期中考，猜一個IPv4地址：0.0.0.0",
-            "delay": 2.4
-          },
-          {
-            "speaker": "clark",
-            "text": "老開桌上那兩顆火龍果都爛到出汁了...",
-            "delay": 2.0
-          },
-          {
-            "speaker": "clark",
-            "text": "超噁...",
-            "delay": 1.6
-          },
-          {
-            "speaker": "clark",
-            "text": "兩顆爛掉的火龍果對應兩顆爛掉的期中考",
-            "delay": 2.4
-          }
-        ],
-        "en": [
-          {
-            "speaker": "billy",
-            "text": "Lao-Kai's midterm score, guess an IPv4 address: 0.0.0.0",
-            "delay": 2.4
-          },
-          {
-            "speaker": "clark",
-            "text": "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...",
-            "delay": 2.0
-          },
-          {
-            "speaker": "clark",
-            "text": "Super gross...",
-            "delay": 1.6
-          },
-          {
-            "speaker": "clark",
-            "text": "Two rotten dragon fruits perfectly correspond to two rotten midterms.",
-            "delay": 2.4
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
         "bohan",
         "jerry"
       ],
       "dialogues": {
         "zh-TW": [
           {
-            "speaker": "jerry",
-            "text": "你是水蛭喔？",
+            "speaker": "bohan",
+            "text": "你們先去吃吧，我不餓。",
             "delay": 2.2
           },
           {
-            "speaker": "bohan",
-            "text": "你們先去吃吧，我不餓。",
+            "speaker": "jerry",
+            "text": "你是水蛭喔？",
             "delay": 2.2
           }
         ],
         "en": [
-          {
-            "speaker": "jerry",
-            "text": "Are you a leech or what?!",
-            "delay": 2.2
-          },
           {
             "speaker": "bohan",
             "text": "You guys go ahead and eat first, I am not hungry.",
             "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "clark",
-        "jerry"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "clark",
-            "text": "這週末要回台北嗎？",
-            "delay": 2.2
           },
           {
             "speaker": "jerry",
-            "text": "台北是我家後花園。",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "clark",
-            "text": "Heading back to Taipei this weekend?",
-            "delay": 2.2
-          },
-          {
-            "speaker": "jerry",
-            "text": "Taipei is basically my backyard.",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "happy",
-        "billy"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "happy",
-            "text": "這把贏了就睡！今晚宵夜要不要叫鹹酥雞跟大杯微糖微冰？",
-            "delay": 2.2
-          },
-          {
-            "speaker": "billy",
-            "text": "欸走拉，吃宵！一起去吃傻師傅！",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "happy",
-            "text": "Win this match and sleep! Midnight Taiwanese chicken tonight?",
-            "delay": 2.2
-          },
-          {
-            "speaker": "billy",
-            "text": "Let's go! Midnight snack run together!",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "weihao",
-        "baisen"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "weihao",
-            "text": "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！",
-            "delay": 2.2
-          },
-          {
-            "speaker": "baisen",
-            "text": "這個 bug 我抓了一整個下午，終於給它修掉了！",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "weihao",
-            "text": "So annoying, I have no idea what to say for my defense!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "baisen",
-            "text": "Squashed this bug after tracking it all afternoon!",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "haolei",
-        "weihao"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "haolei",
-            "text": "這個演算法模型明天上線，大家今晚先對一下指標。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "weihao",
-            "text": "下午要不要叫杯手搖飲？我看看滿減券……",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "haolei",
-            "text": "This model goes live tomorrow, let's sync metrics.",
-            "delay": 2.2
-          },
-          {
-            "speaker": "weihao",
-            "text": "Order boba this afternoon? Let me check discount coupons...",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "chenxin",
-        "baisen"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "chenxin",
-            "text": "這版 Figma 設計稿的元件間距很舒服，切起版來太爽了！",
-            "delay": 2.2
-          },
-          {
-            "speaker": "baisen",
-            "text": "大家今天站會的進度都同步了嗎？",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "chenxin",
-            "text": "Component spacing in Figma is super crisp, slicing it is great!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "baisen",
-            "text": "Has everyone synced on today's standup updates?",
+            "text": "Are you a leech or what?!",
             "delay": 2.2
           }
         ]
@@ -2277,102 +2065,6 @@
           {
             "speaker": "claude",
             "text": "I can provide rigorous, structured and deep analytical reasoning.",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "gemini",
-        "ludwigia"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "gemini",
-            "text": "我擅長融合多模態資訊，文字、圖像與程式碼都能靈活掌握！",
-            "delay": 2.2
-          },
-          {
-            "speaker": "ludwigia",
-            "text": "歡迎來到數位花園！每一株思想都在這裡茁壯成長。",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "gemini",
-            "text": "I seamlessly bridge multimodal context: text, images and code!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "ludwigia",
-            "text": "Welcome to the Digital Garden! Every thought blooms here.",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "benny",
-        "zhenyan"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "benny",
-            "text": "I have a pen, I have an apple. Uh! Apple pen!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "zhenyan",
-            "text": "下課要不要去打球？",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "benny",
-            "text": "I have a pen, I have an apple. Uh! Apple pen!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "zhenyan",
-            "text": "Wanna go shoot hoops after class?",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "wuyen",
-        "yully"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "wuyen",
-            "text": "吃飯了沒？今天外面天氣挺不錯的。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "yully",
-            "text": "出門記得多穿件外套！別著涼了。",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "wuyen",
-            "text": "Have you eaten yet? Weather is lovely outside.",
-            "delay": 2.2
-          },
-          {
-            "speaker": "yully",
-            "text": "Remember to bring a jacket when going out!",
             "delay": 2.2
           }
         ]
