@@ -845,7 +845,8 @@
         "zh-TW": "中央大學室友",
         "en": "NCU Roommate"
       },
-      "avatar": "🤠",
+      "avatar": "assets/avatars/billy.png",
+      "avatarFallback": "🤠",
       "zone": "dorm_211",
       "spawn": {
         "x": 2.8,
