@@ -485,6 +485,15 @@
             [
               "（11:59 p.m.）欸你幫我錄一下，我要傳給助教看，我明明沒遲交！",
               "快點快點！倒數三十秒了啊啊啊！"
+            ],
+            [
+              "喔喔喔喔喔喔！！！"
+            ],
+            [
+              "這下路是送爽沒？"
+            ],
+            [
+              "不要再 Ping 燈了！"
             ]
           ],
           "en": [
@@ -495,15 +504,30 @@
             [
               "(11:59 p.m.) Hey record this screen for me quick! I need to show the TA I literally submitted before deadline!",
               "Hurry hurry! Thirty seconds on the clock, ahhhh!"
+            ],
+            [
+              "OOOOOOHHHHHHH!!!"
+            ],
+            [
+              "Is this bot lane done feeding yet?!"
+            ],
+            [
+              "Stop pinging the damn map!"
             ]
           ]
         },
         "self": {
           "zh-TW": [
-            "鬧鐘到底設了幾個？我自己都忘了。"
+            "鬧鐘到底設了幾個？我自己都忘了。",
+            "喔喔喔喔喔喔！！！",
+            "這下路是送爽沒？",
+            "不要再 Ping 燈了！"
           ],
           "en": [
-            "How many alarms did I set? Even I have lost count."
+            "How many alarms did I set? Even I have lost count.",
+            "OOOOOOHHHHHHH!!!",
+            "Is this bot lane done feeding yet?!",
+            "Stop pinging the damn map!"
           ]
         }
       },
