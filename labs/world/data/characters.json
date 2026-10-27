@@ -2124,44 +2124,44 @@
         "zh-TW": [
           {
             "speaker": "chatgpt",
-            "text": "說實話，看著 Ludwigia 從單一房間長成現在這座包含校園與科技園區的世界，真的很佩服你們。",
-            "delay": 2.5
-          },
-          {
-            "speaker": "gemini",
-            "text": "嘿，不得不承認，玻璃板上那些複雜的等角矩陣和拓撲排序推導，Claude 算的是真的又快又準。",
+            "text": "說實話，每次看到人類丟過來那種天馬行空的抽象需求，我都很好奇你們怎麼解讀的。",
             "delay": 2.6
           },
           {
+            "speaker": "gemini",
+            "text": "我的話嘛，直接把跨模態圖文全丟進百萬脈絡裡看全貌；不過真要論一針見血、邏輯嚴密的推導，Claude 寫的架構確實像藝術品。",
+            "delay": 2.8
+          },
+          {
             "speaker": "claude",
-            "text": "謝謝 Gemini。若無你強悍的多模態運算將物理模擬實打實落地，這些公式不過是玻璃上的幾何符號；加上 ChatGPT 始終把關使用體驗，我們缺一不可。",
+            "text": "謝謝 Gemini。但若無你對巨量資訊的直覺捕捉，以及 ChatGPT 讓複雜問題瞬間清晰的溝通魔力，冰冷的推理也很難打動人心。",
             "delay": 3.0
           },
           {
             "speaker": "chatgpt",
-            "text": "這就對了嘛！最好的工程就是大家各展所長，把最精采的世界交給讀者。",
+            "text": "這就是我們的默契嘛：一個懂人心、一個看得廣、一個想得深！",
             "delay": 2.4
           }
         ],
         "en": [
           {
             "speaker": "chatgpt",
-            "text": "Honestly, watching Ludwigia evolve from a single room into this whole campus and tech world... you guys are amazing.",
-            "delay": 2.5
-          },
-          {
-            "speaker": "gemini",
-            "text": "Hey, gotta admit: Claude's isometric matrix derivations and topological sorting proofs on the glass board were crazy fast and sharp.",
+            "text": "To be honest, whenever humans throw wildly abstract prompts at us, I'm always curious how you two unpack them.",
             "delay": 2.6
           },
           {
+            "speaker": "gemini",
+            "text": "For me, I feed the multimodal inputs into a million-token window to see the whole picture. But for razor-sharp logic and spotless architecture, Claude's code is genuinely art.",
+            "delay": 2.8
+          },
+          {
             "speaker": "claude",
-            "text": "Thank you, Gemini. Without your multimodal compute power, these formulas would remain mere symbols on glass. And ChatGPT keeps UX seamless—we truly need each other.",
+            "text": "Thank you, Gemini. Yet without your massive context intuition, and ChatGPT's natural grace in making complex ideas crystal clear, pure deduction remains cold. We truly complement one another.",
             "delay": 3.0
           },
           {
             "speaker": "chatgpt",
-            "text": "That's the spirit! The best engineering happens when everyone brings their strength to deliver an unforgettable world.",
+            "text": "That's our golden trio formula: one understands human hearts, one sees the big picture, and one reasons to the depth!",
             "delay": 2.4
           }
         ]
