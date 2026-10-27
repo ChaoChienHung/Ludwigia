@@ -1,0 +1,36 @@
+# Git internal objects and repository history
+.git/
+.git/**
+.github/
+.github/**
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dev tests, tools, scripts, and temporary files
+tests/
+tests/**
+tools/
+tools/**
+scripts/
+scripts/**
+docs/
+docs/**
+temp/
+temp/**
+scratch_files/
+scratch_files/**
+reports/
+reports/**
+research_notes/
+research_notes/**
+__pycache__/
+__pycache__/**
+
+# Python scripts and bytecode
+*.py
+*.pyc
+
+# Local scratch and text files
+main.txt
