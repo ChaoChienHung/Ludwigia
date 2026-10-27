@@ -494,6 +494,9 @@
             ],
             [
               "不要再 Ping 燈了！"
+            ],
+            [
+              "我覺得玩薩科的都是心理變態。"
             ]
           ],
           "en": [
@@ -513,6 +516,9 @@
             ],
             [
               "Stop pinging the damn map!"
+            ],
+            [
+              "I honestly think anyone who plays Shaco is a psychopath."
             ]
           ]
         },
@@ -521,13 +527,15 @@
             "鬧鐘到底設了幾個？我自己都忘了。",
             "喔喔喔喔喔喔！！！",
             "這下路是送爽沒？",
-            "不要再 Ping 燈了！"
+            "不要再 Ping 燈了！",
+            "我覺得玩薩科的都是心理變態。"
           ],
           "en": [
             "How many alarms did I set? Even I have lost count.",
             "OOOOOOHHHHHHH!!!",
             "Is this bot lane done feeding yet?!",
-            "Stop pinging the damn map!"
+            "Stop pinging the damn map!",
+            "I honestly think anyone who plays Shaco is a psychopath."
           ]
         }
       },
