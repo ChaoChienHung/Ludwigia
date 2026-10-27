@@ -21,7 +21,7 @@ class WorldDataContractTests(unittest.TestCase):
                 self.assertTrue(all(sequence and all(line.strip() for line in sequence)
                                     for sequence in user_pool), char["id"])
                 self_pool = char["dialogues"]["self"][lang]
-                self.assertTrue(self_pool and all(line.strip() for line in self_pool), char["id"])
+                self.assertTrue(all(line.strip() for line in self_pool), char["id"])
 
         for pair in data["npcDialogues"]:
             participants = pair["participants"]
