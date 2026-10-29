@@ -387,6 +387,20 @@
   - [x] Persist：位置/開關已用 localStorage 保存，且已提供 reset 入口
   - [ ] Perf/Fail-safe：載入失敗時自動降級（不報錯、不阻塞），並記錄最小 debug 資訊（僅 dev）
 
+- [ ] Ludwigia World：對話情境動態 Avatar 與表情差分系統（Dynamic Dialogue Expressions & Avatar Switching）
+  - [ ] 核心概念：在玩家（User）與角色（NPC / AI / 夥伴）互動對話時，打破目前單一靜態頭像限制，隨台詞情緒、情境或發話者動態切換 Avatar（例如：思考、微笑、驚訝、吐槽、自信等表情差分，或是雙向對話視角切換）。
+  - [ ] 資料層（SSOT Contract）：
+    - 擴充 `labs/world/data/characters/<id>/character.json` 之頭像定義，支援多態頭像／表情字典（如 `"avatars": { "default": "...", "thinking": "...", "smug": "...", "shocked": "..." }`），並維持向後相容（若無 `avatars` 字典則回退至單一 `avatar` 與 `avatarFallback`）。
+    - 對話台詞標籤協議（Dialogue Expression Tags）：在 `dialogues.user` 台詞中支援輕量情緒標籤（如 `"[smug] Gemini 說我只會當外交門面？行，這句我記下了。"` 或 `"[thinking] 真要動 Ludwigia..."`），保留文字可讀性並在執行期解析時自動提取表情代碼，正文移除標籤後乾淨呈現。
+    - 雙向發話者支援（Speaker Switching）：可選支援 `[speaker:player]` 或 `[speaker:npc]`，在對話推進到玩家發問／吐槽時，頭像與稱謂動態切換為玩家（Visitor / 羅盤 🧭），營造如同文字冒險（Visual Novel）般的雙向對話沉浸感。
+  - [ ] 建置與編譯（Pipeline）：
+    - 更新 `tools/build_world_data.py`（與 `cli.py build-world`），確保多態頭像映射與標籤台詞能正確編譯至快取檔 `labs/world/data/characters.json`，且通過 JSON 結構驗證。
+  - [ ] 執行期與 UI 動態渲染（Runtime & UX）：
+    - `labs/world/js/characters.js`：升級 `openDialogue` 推進邏輯（`lineIdx` 迭代）與 `renderAvatar`，即時比對台詞情緒鍵值，平滑重繪或過渡頭像容器 `#dialogue-avatar`。
+    - 轉場動態（Expression Transition）：切換表情時注入輕微微動態（如 CSS `avatar-pop` / `avatar-fade`），提升角色靈動感。
+    - 容錯與降級（Fail-safe）：若特定表情資源遺失或載入失敗，優雅回退至該角色之 default avatar 或 emoji fallback，杜絕破圖或破壞版面排版。
+  - [ ] 交付條件：完成資料規格定義、台詞標籤解析、至少挑選 1~2 位角色（如 `chatgpt` 或 `ludwigia`）建立多表情示例，在 World 對話彈窗中點擊「繼續 / Next」時能精準且平滑切換對應表情，且編譯腳本與既有靜態角色資料相容性測試通過。
+
 ### P3
 
 - [ ] Notes：評估做一個圖書館風格的 landing，作為 notes 的另一種入口敘事
