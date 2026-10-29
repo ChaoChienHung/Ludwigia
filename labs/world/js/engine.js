@@ -231,29 +231,36 @@
     }
   }
 
-  // --- Topological Isometric Sorting (Kahn's Algorithm on Occlusion Graph) ---
+  // --- Topological Isometric Sorting (Cycle-Free Kahn's Algorithm on Occlusion Graph) ---
   function sortIsometricEntities(entities) {
     const n = entities.length;
     for (let i = 0; i < n; i++) {
       const e = entities[i];
+      e.idx = i;
       e.baseDepth = (e.xMin + e.xMax + e.yMin + e.yMax) / 2;
     }
 
     function isBehind(b, a) {
-      if (b.isChar && a.isChar) {
-        return b.baseDepth < a.baseDepth;
-      }
-      const overlapY = (b.yMax > a.yMin && b.yMin < a.yMax);
-      if (b.xMax <= a.xMin && overlapY) return true;
-
       const overlapX = (b.xMax > a.xMin && b.xMin < a.xMax);
-      if (b.yMax <= a.yMin && overlapX) return true;
+      const overlapY = (b.yMax > a.yMin && b.yMin < a.yMax);
 
+      // If bounding boxes overlap in both axes (e.g. corner intersection, character collision)
+      if (overlapX && overlapY) {
+        if (b.baseDepth !== a.baseDepth) {
+          return b.baseDepth < a.baseDepth;
+        }
+        return b.idx < a.idx;
+      }
+
+      // Non-overlapping in at least one axis: standard isometric occlusion causality
+      if (b.xMax <= a.xMin && overlapY) return true;
+      if (b.yMax <= a.yMin && overlapX) return true;
       if (b.xMax <= a.xMin && b.yMax <= a.yMin) return true;
+
       return false;
     }
 
-    const inDegree = new Array(n).fill(0);
+    const inDegree = new Int32Array(n);
     const adj = Array.from({ length: n }, () => []);
 
     for (let i = 0; i < n; i++) {
@@ -273,28 +280,39 @@
     queue.sort((a, b) => entities[a].baseDepth - entities[b].baseDepth);
 
     const sorted = [];
-    while (queue.length > 0) {
+    const inQueueOrSorted = new Uint8Array(n);
+    for (let k = 0; k < queue.length; k++) inQueueOrSorted[queue[k]] = 1;
+
+    while (sorted.length < n) {
+      if (queue.length === 0) {
+        // Cycle-breaking recovery: pop the unvisited node with the smallest baseDepth
+        let best = -1;
+        let bestDepth = Infinity;
+        for (let i = 0; i < n; i++) {
+          if (!inQueueOrSorted[i] && entities[i].baseDepth < bestDepth) {
+            bestDepth = entities[i].baseDepth;
+            best = i;
+          }
+        }
+        if (best === -1) break;
+        queue.push(best);
+        inQueueOrSorted[best] = 1;
+      }
+
       const u = queue.shift();
       sorted.push(entities[u]);
 
-      for (const v of adj[u]) {
+      for (let k = 0; k < adj[u].length; k++) {
+        const v = adj[u][k];
         inDegree[v]--;
-        if (inDegree[v] === 0) {
+        if (inDegree[v] === 0 && !inQueueOrSorted[v]) {
           queue.push(v);
+          inQueueOrSorted[v] = 1;
           queue.sort((a, b) => entities[a].baseDepth - entities[b].baseDepth);
         }
       }
     }
 
-    if (sorted.length < n) {
-      const included = new Set(sorted);
-      const remaining = [];
-      for (let i = 0; i < n; i++) {
-        if (!included.has(entities[i])) remaining.push(entities[i]);
-      }
-      remaining.sort((a, b) => a.baseDepth - b.baseDepth);
-      return sorted.concat(remaining);
-    }
     return sorted;
   }
 

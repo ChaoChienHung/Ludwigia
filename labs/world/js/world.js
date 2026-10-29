@@ -1327,25 +1327,15 @@
         }
       });
 
-      // SE Doorway Lintel Beam (z: 2.15 to H, covers door tops cleanly)
+      // SE Doorway Lintel Beam & Mounted Home Plaque
       list.push({
-        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
-        yMin: 4.45, yMax: 6.85,
+        xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.45,
+        yMin: 4.45, yMax: 6.95,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
-          this.ctx.restore();
-        }
-      });
 
-      // Mounted Lintel Plaque (Exterior Wall Face Foreground)
-      list.push({
-        xMin: HOUSE_MAX_X + 1.15, xMax: HOUSE_MAX_X + 1.45,
-        yMin: 4.5, yMax: 6.95,
-        draw: () => {
-          this.ctx.save();
-          if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
           const plq = isoToScreen(HOUSE_MAX_X + 1.26, 5.65, 2.48, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
@@ -1364,6 +1354,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText("Ludwig's Home", 0, 0);
           this.ctx.restore();
+
           this.ctx.restore();
         }
       });
@@ -1578,25 +1569,15 @@
         }
       });
 
-      // Lintel beam over door (z: 2.15 to H, covers door tops cleanly)
+      // Lintel beam & Mounted Bronze Plaque over Dorm 211 door
       list.push({
-        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
-        yMin: 20.45, yMax: 22.85,
+        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.45,
+        yMin: 20.45, yMax: 22.95,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
-          this.ctx.restore();
-        }
-      });
 
-      // Dorm 211 Lintel Bronze Plaque (Exterior Wall Face Foreground)
-      list.push({
-        xMin: dormSE_X + 0.15, xMax: dormSE_X + 0.45,
-        yMin: 20.5, yMax: 22.95,
-        draw: () => {
-          this.ctx.save();
-          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
           const plq = isoToScreen(dormSE_X + 0.26, 21.65, 2.48, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
@@ -1615,6 +1596,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText('男11 211', 0, 0);
           this.ctx.restore();
+
           this.ctx.restore();
         }
       });
@@ -1903,7 +1885,7 @@
         }
       });
 
-      // Lintel beam over library door (z: 2.15 to H, covers door tops cleanly)
+      // Lintel beam & Mounted Brand Sign over library door
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: 20.45, yMax: 22.85,
@@ -1911,6 +1893,29 @@
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
           this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+
+          const plq = isoToScreen(18.26, 21.65, 2.48, ox, oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          this.ctx.fillStyle = '#451a03';
+          this.ctx.fillRect(-38, -9, 76, 18);
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.strokeRect(-38, -9, 76, 18);
+          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+          this.ctx.lineWidth = 0.8;
+          this.ctx.strokeRect(-36, -7, 72, 14);
+          this.ctx.fillStyle = '#fbbf24';
+          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('📖 知識藏書閣', 0, -3.5);
+          this.ctx.fillStyle = '#fde68a';
+          this.ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          this.ctx.fillText('GRAND LIBRARY', 0, 4.5);
+          this.ctx.restore();
+
           this.ctx.restore();
         }
       });
@@ -1946,34 +1951,6 @@
         xMin: 15.3, xMax: 16.2,
         yMin: 21.8, yMax: 22.5,
         draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 22.0, 'lib', ox, oy)
-      });
-
-      // Grand Library Interior Door Lintel Brand Sign (Mounted on inner face of entrance doorway)
-      list.push({
-        xMin: 18.15, xMax: 18.35, yMin: 20.6, yMax: 22.7,
-        draw: () => {
-          const plq = isoToScreen(18.26, 21.65, 2.48, ox, oy);
-          this.ctx.save();
-          this.ctx.translate(plq.x, plq.y);
-          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
-          this.ctx.fillStyle = '#451a03';
-          this.ctx.fillRect(-38, -9, 76, 18);
-          this.ctx.strokeStyle = '#d97706';
-          this.ctx.lineWidth = 1.2;
-          this.ctx.strokeRect(-38, -9, 76, 18);
-          this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
-          this.ctx.lineWidth = 0.8;
-          this.ctx.strokeRect(-36, -7, 72, 14);
-          this.ctx.fillStyle = '#fbbf24';
-          this.ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-          this.ctx.textAlign = 'center';
-          this.ctx.textBaseline = 'middle';
-          this.ctx.fillText('📖 知識藏書閣', 0, -3.5);
-          this.ctx.fillStyle = '#fde68a';
-          this.ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-          this.ctx.fillText('GRAND LIBRARY', 0, 4.5);
-          this.ctx.restore();
-        }
       });
 
       // Library Interior Furniture:
@@ -2075,18 +2052,14 @@
         }
       });
 
-      // Classroom North Partition Wall & Interior Feature Academic Banner (facing South towards camera!)
+      // Classroom North Partition Wall & Integrated Blackboard (facing South towards students)
       list.push({
         xMin: 0, xMax: SCHOOL_MAX_X + 1,
         yMin: SCHOOL_MIN_Y - 0.1, yMax: SCHOOL_MIN_Y + 0.35,
         draw: () => {
           this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, (SCHOOL_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
+          this.models.drawSchoolBlackboard(this.ctx, 2.4, SCHOOL_MIN_Y + 0.12, ox, oy, 5.2);
         }
-      });
-      // Classroom Front-Facing Blackboard & Clock (Centered on North Wall, facing South towards students!)
-      list.push({
-        xMin: 2.2, xMax: 7.8, yMin: SCHOOL_MIN_Y + 0.08, yMax: SCHOOL_MIN_Y + 0.28,
-        draw: () => this.models.drawSchoolBlackboard(this.ctx, 2.4, SCHOOL_MIN_Y + 0.12, ox, oy, 5.2)
       });
 
       // Classroom East Entrance Wall & Doorway (along x = 10, y: 33 to 43)
@@ -2133,25 +2106,15 @@
         }
       });
 
-      // Lintel beam over classroom door
+      // Lintel beam & Mounted Entrance Plaque over classroom door
       list.push({
-        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.35,
-        yMin: 36.45, yMax: 38.85,
+        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.45,
+        yMin: 36.45, yMax: 38.95,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
           this.models.drawBox(this.ctx, schoolSE_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
-          this.ctx.restore();
-        }
-      });
 
-      // Sanmin High School Entrance Plaque (Green & Gold)
-      list.push({
-        xMin: schoolSE_X + 0.15, xMax: schoolSE_X + 0.45,
-        yMin: 36.5, yMax: 38.95,
-        draw: () => {
-          this.ctx.save();
-          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
           const plq = isoToScreen(schoolSE_X + 0.26, 37.65, 2.48, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
@@ -2170,6 +2133,7 @@
           this.ctx.textBaseline = 'middle';
           this.ctx.fillText('三民高中', 0, 0);
           this.ctx.restore();
+
           this.ctx.restore();
         }
       });
@@ -2326,9 +2290,9 @@
         }
       });
 
-      // Douyin Office High-Tech Cyber Canopy
+      // Douyin Office High-Tech Cyber Canopy & Mounted Brand Sign
       list.push({
-        xMin: 17.1, xMax: 18.15,
+        xMin: 17.1, xMax: 18.35,
         yMin: 36.5, yMax: 38.95,
         draw: () => {
           this.ctx.save();
@@ -2348,14 +2312,7 @@
           this.ctx.closePath();
           this.ctx.fill();
 
-          this.ctx.restore();
-        }
-      });
-
-      // Douyin Tech Office Interior Door Lintel Brand Sign (Mounted on inner face of entrance doorway)
-      list.push({
-        xMin: 18.15, xMax: 18.35, yMin: 36.6, yMax: 38.7,
-        draw: () => {
+          // 3. Brand Sign mounted on entrance doorway
           const plq = isoToScreen(18.26, 37.65, 2.48, ox, oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
@@ -2376,6 +2333,8 @@
           this.ctx.fillStyle = '#25f4ee';
           this.ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           this.ctx.fillText('TikTok 推薦團隊', 0, 4.5);
+          this.ctx.restore();
+
           this.ctx.restore();
         }
       });
