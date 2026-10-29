@@ -71,8 +71,8 @@
   },
   "visitedZones": [
     "house",
-    "plaza",
-    "ai_studio",
-    "library"
+    "cafe",
+    "library",
+    "plaza"
   ]
 }

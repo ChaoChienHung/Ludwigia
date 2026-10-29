@@ -216,6 +216,29 @@
         const trunkY = Math.floor(ty + 0.35);
         this.nav.setBlock(trunkX, trunkY, 1, 1, true);
       });
+
+      // 7. Campus Basketball Court Obstacles (West x: 1..8, y: 27..32)
+      this.nav.setBlock(1.0, 29.2, 0.65, 0.70, true); // Basketball Hoop Base
+      this.nav.setBlock(7.2, 27.2, 0.45, 0.90, true); // Ball Rack
+      this.nav.setBlock(4.0, 26.8, 1.60, 0.65, true); // Bench
+
+      // 8. Midnight Snack Street Obstacles (Central/East x: 10..23, y: 27..32)
+      this.nav.setBlock(16.2, 27.2, 1.50, 0.85, true); // Fried Chicken Stall
+      this.nav.setBlock(20.2, 27.2, 1.50, 0.85, true); // Boba Tea Stall
+      this.nav.setBlock(16.2, 30.8, 1.50, 0.85, true); // Luwei Cart
+      this.nav.setBlock(20.2, 30.8, 1.10, 1.10, true); // Table & Stools
+      this.nav.setBlock(10.0, 28.5, 0.35, 0.35, true); // Archway Left Pillar
+      this.nav.setBlock(12.8, 28.5, 0.35, 0.35, true); // Archway Right Pillar
+
+      // 9. South Boulevard Twin Streetlights & Signpost
+      this.nav.setBlock(11.2, 42.4, 0.35, 0.35, true); // Streetlight Left
+      this.nav.setBlock(17.2, 42.4, 0.35, 0.35, true); // Streetlight Right
+      this.nav.setBlock(14.2, 42.8, 0.35, 0.35, true); // Portal Signpost
+
+      // 10. Botanical Garden Cafe Obstacles (East x: 19..26, y: 10..16)
+      this.nav.setBlock(20.2, 11.0, 2.30, 0.95, true); // Artisan Cafe Counter Pavilion
+      this.nav.setBlock(21.0, 13.8, 0.85, 0.85, true); // Patio Table & Chairs 1
+      this.nav.setBlock(24.2, 12.6, 0.85, 0.85, true); // Patio Table & Chairs 2
     }
 
     initParticles() {
@@ -471,6 +494,18 @@
         currentZone = 'douyin_office';
         isInsideAnyHouse = true;
         statusMessage = "Douyin Office • 抖音演算法研發辦公室";
+      } else if (checkZone('basketball_court', 0.8, 8.8, 26.6, 32.8)) {
+        currentZone = 'basketball_court';
+        isInsideAnyHouse = false;
+        statusMessage = "Campus Basketball Court • 青春熱血的街頭籃球場 🏀";
+      } else if (checkZone('night_market', 9.5, 23.5, 26.6, 32.8)) {
+        currentZone = 'night_market';
+        isInsideAnyHouse = false;
+        statusMessage = "Midnight Snack Street • 燈火通明的深夜宵夜街 🏮";
+      } else if (checkZone('cafe', 18.5, 26.5, 9.8, 16.4)) {
+        currentZone = 'cafe';
+        isInsideAnyHouse = false;
+        statusMessage = "Botanical Garden Cafe • 靜謐文青的露天咖啡館 ☕";
       }
 
       this.currentZone = currentZone;
@@ -782,6 +817,7 @@
 
               // Shared Multi-Zone Ecological Anchors
               const plazaAnchors = [
+                // 1. Central Fountain Promenade & Walkways
                 { x: 12.0, y: 14.5 }, // Fountain West Promenade
                 { x: 17.0, y: 14.5 }, // Fountain East Promenade
                 { x: 14.5, y: 11.8 }, // Fountain North Promenade
@@ -797,7 +833,34 @@
                 { x: 14.5, y: 5.8 },  // North Walkway between House & AI Studio
                 { x: 14.5, y: 21.6 }, // South Walkway between Dorm & Library
                 { x: 11.2, y: 14.5 }, // Central West Path Intersection
-                { x: 17.8, y: 14.5 }  // Central East Path Intersection
+                { x: 17.8, y: 14.5 }, // Central East Path Intersection
+
+                // 2. Garden Terrace & Stone Chess Table Lawn (West)
+                { x: 3.6, y: 14.5 },  // Standing beside Stone Chess Table
+                { x: 4.8, y: 13.8 },  // Spectating Lawn around Chessboard
+                { x: 5.2, y: 12.2 },  // Private Garden Lawn Bench
+
+                // 3. North Plaza Lawn & Blossom Canopy (North)
+                { x: 13.5, y: 10.2 }, // North Park Bench Lawn Seat
+                { x: 12.5, y: 8.5 },  // Blossom Tree Shade (West)
+                { x: 15.2, y: 8.2 },  // Blossom Tree Shade (East)
+                { x: 13.8, y: 7.2 },  // North Lawn Grove
+
+                // 4. South Plaza Lawn & Rest Grove (Central South)
+                { x: 13.5, y: 18.2 }, // South Park Bench Lawn Seat
+                { x: 15.2, y: 19.0 }, // South Shaded Lawn
+                { x: 12.8, y: 20.0 }, // Central Southern Grass Pocket
+
+                // 5. East Central Lawn & Sunlit Grove (East between AI Studio & Library)
+                { x: 22.0, y: 14.2 }, // East Reading Bench Lawn
+                { x: 23.5, y: 12.8 }, // East Open Lawn Sunbathing
+                { x: 24.8, y: 14.2 }, // East Pine Grove Shade
+                { x: 21.5, y: 11.8 }, // East Quiet Greenery Corner
+
+                // 6. South Avenue Promenade Lawn (South Sector)
+                { x: 13.5, y: 31.2 }, // South Avenue Park Bench Lawn
+                { x: 15.0, y: 29.8 }, // South Avenue Shaded Boulevard Lawn
+                { x: 12.5, y: 29.2 }  // Boulevard West Grass
               ];
 
               const libraryAnchors = [
@@ -865,6 +928,32 @@
                 { x: 19.2, y: 37.6 }  // Douyin Door Threshold
               ];
 
+              const basketballAnchors = [
+                { x: 3.5, y: 29.5 }, // Free Throw Line
+                { x: 5.5, y: 29.5 }, // Top of Three-Point Key
+                { x: 2.2, y: 29.5 }, // Layup Under Basket
+                { x: 4.8, y: 31.2 }, // Right Wing Three-Point Corner
+                { x: 4.8, y: 27.8 }, // Left Wing Three-Point Corner
+                { x: 5.0, y: 27.2 }  // Sideline Bench Area
+              ];
+
+              const nightMarketAnchors = [
+                { x: 17.0, y: 28.5 }, // Ordering at Fried Chicken Stall
+                { x: 21.0, y: 28.5 }, // Waiting for Boba Milk Tea
+                { x: 17.0, y: 30.0 }, // Sampling Warm Luwei Broth
+                { x: 21.0, y: 30.0 }, // Seated at Red Stool Round Table
+                { x: 14.5, y: 29.5 }, // Strolling along Midnight Street Center
+                { x: 11.5, y: 29.5 }  // Entering through Night Market Archway
+              ];
+
+              const cafeAnchors = [
+                { x: 21.3, y: 12.4 }, // Barista Counter Order Spot
+                { x: 21.0, y: 14.8 }, // Under Patio Umbrella 1 (South)
+                { x: 24.2, y: 13.6 }, // Under Patio Umbrella 2 (East)
+                { x: 23.5, y: 11.5 }, // Outdoor Terrace Deck Stroll
+                { x: 25.2, y: 15.0 }  // Shaded Garden Terrace Corner
+              ];
+
               const zoneAnchorMap = {
                 house: houseAnchors,
                 ludwig_house: houseAnchors,
@@ -876,19 +965,25 @@
                 sanmin_school: schoolAnchors,
                 school: schoolAnchors,
                 douyin_office: douyinAnchors,
-                douyin: douyinAnchors
+                douyin: douyinAnchors,
+                basketball_court: basketballAnchors,
+                basketball: basketballAnchors,
+                night_market: nightMarketAnchors,
+                snack_street: nightMarketAnchors,
+                cafe: cafeAnchors,
+                garden_cafe: cafeAnchors
               };
 
               const rawVisited = c.visitedZones;
               const visitedPool = Array.isArray(rawVisited) && rawVisited.length > 0
                 ? rawVisited
-                : (c.zone === 'house' ? ['house', 'plaza', 'library', 'ai_studio'] :
-                   c.zone === 'ai_studio' ? ['ai_studio', 'library', 'plaza'] :
-                   c.zone === 'library' ? ['library', 'plaza', 'ai_studio'] :
-                   c.zone === 'dorm_211' ? ['dorm_211', 'library', 'plaza', 'ai_studio'] :
-                   c.zone === 'sanmin_school' ? ['sanmin_school', 'library', 'plaza', 'ai_studio'] :
-                   c.zone === 'douyin_office' ? ['douyin_office', 'library', 'plaza', 'ai_studio'] :
-                   [c.zone, 'library', 'plaza', 'ai_studio']);
+                : (c.zone === 'house' ? ['house', 'cafe', 'library', 'plaza'] :
+                   c.zone === 'ai_studio' ? ['ai_studio', 'cafe', 'library', 'plaza'] :
+                   c.zone === 'library' ? ['library', 'plaza', 'cafe'] :
+                   c.zone === 'dorm_211' ? ['dorm_211', 'basketball_court', 'night_market', 'library', 'plaza'] :
+                   c.zone === 'sanmin_school' ? ['sanmin_school', 'basketball_court', 'library', 'plaza'] :
+                   c.zone === 'douyin_office' ? ['douyin_office', 'cafe', 'library', 'plaza'] :
+                   [c.zone, 'cafe', 'library', 'plaza']);
 
               // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
               let chosenZone;
@@ -980,6 +1075,9 @@
           const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
           const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
           const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
+          const isBasketball = (x >= 1 && x <= 8 && y >= 27 && y <= 32);
+          const isNightMarket = (x >= 10 && x <= 23 && y >= 27 && y <= 32);
+          const isCafe = (x >= 19 && x <= 26 && y >= 10 && y <= 16);
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin;
 
           // Cobblestone Pathways connecting doorways, central plaza, and south sector
@@ -1022,6 +1120,20 @@
           } else if (isDouyin) {
             // High-Tech Cyber Carbon Slate Floor Tiles
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
+          } else if (isBasketball) {
+            // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf
+            const isKey = (x >= 1 && x <= 4 && y >= 28 && y <= 30);
+            if (isKey) {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
+            } else {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#15803d' : '#166534';
+            }
+          } else if (isNightMarket) {
+            // Midnight Snack Street — Midnight Slate Cobblestones
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
+          } else if (isCafe) {
+            // Botanical Garden Cafe — Warm Cedar Outdoor Decking
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#b45309' : '#92400e';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -1056,6 +1168,36 @@
       if (this.currentZone !== 'douyin_office') ctx.globalAlpha = this.outsideAlpha;
       this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
       ctx.restore();
+
+      // Basketball Court Boundary & Key Markings (Rendered on ground plane)
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.lineWidth = 1.8;
+
+      // Key Rectangle (x: 1.0 to 4.0, y: 28.0 to 31.0)
+      const k0 = isoToScreen(1.0, 28.0, 0, ox, oy);
+      const k1 = isoToScreen(4.2, 28.0, 0, ox, oy);
+      const k2 = isoToScreen(4.2, 31.0, 0, ox, oy);
+      const k3 = isoToScreen(1.0, 31.0, 0, ox, oy);
+      ctx.beginPath();
+      ctx.moveTo(k0.x, k0.y); ctx.lineTo(k1.x, k1.y); ctx.lineTo(k2.x, k2.y); ctx.lineTo(k3.x, k3.y);
+      ctx.stroke();
+
+      // Free throw circle top
+      const ftP = isoToScreen(4.2, 29.5, 0, ox, oy);
+      ctx.beginPath();
+      ctx.ellipse(ftP.x, ftP.y, 16, 8, 0, -Math.PI / 2, Math.PI / 2);
+      ctx.stroke();
+
+      // Three-point arc (centered at basket base x: 1.2, y: 29.5)
+      const bCenter = isoToScreen(1.2, 29.5, 0, ox, oy);
+      ctx.beginPath();
+      ctx.ellipse(bCenter.x, bCenter.y, 48, 24, 0, -Math.PI / 2.3, Math.PI / 2.3);
+      ctx.stroke();
+      ctx.restore();
+
+      // Render 3D Diorama Floating Island Crust along outer borders
+      this.models.drawDioramaCrust(ctx, MAP_W, MAP_H, ox, oy);
     }
 
     // --- Collect All World Props & Entities for Topological Sorting ---
@@ -2271,6 +2413,113 @@
           xMin: tx, xMax: tx + 1.0, yMin: ty, yMax: ty + 1.0,
           draw: () => this.models.drawTree(this.ctx, tx, ty, ox, oy)
         });
+      });
+
+      // === 8. CAMPUS BASKETBALL COURT (West Sector x: 1..8, y: 27..32) ===
+      // Basketball Hoop (Positioned at West boundary line facing east towards court)
+      list.push({
+        xMin: 1.0, xMax: 2.4, yMin: 29.0, yMax: 30.2,
+        draw: () => this.models.drawBasketballHoop(this.ctx, 1.0, 29.2, ox, oy)
+      });
+
+      // Metallic Ball Rack with Spalding Basketballs
+      list.push({
+        xMin: 7.2, xMax: 7.8, yMin: 27.2, yMax: 28.2,
+        draw: () => this.models.drawBasketballRack(this.ctx, 7.2, 27.2, ox, oy)
+      });
+
+      // Court Sideline Rest Bench
+      list.push({
+        xMin: 4.0, xMax: 5.6, yMin: 26.8, yMax: 27.5,
+        draw: () => this.models.drawParkBench(this.ctx, 4.0, 26.8, ox, oy)
+      });
+
+      // === 9. MIDNIGHT SNACK STREET (Central/East Sector x: 10..23, y: 27..32) ===
+      // Entrance Archway "🏮 宵夜街 • MIDNIGHT SNACK HUB 🏮"
+      list.push({
+        xMin: 10.0, xMax: 13.2, yMin: 28.2, yMax: 28.8,
+        draw: () => this.models.drawNightMarketArch(this.ctx, 10.0, 28.4, ox, oy)
+      });
+
+      // Stall 1: Taiwanese Fried Chicken & Salt Crispy Chicken (North row)
+      list.push({
+        xMin: 16.0, xMax: 17.6, yMin: 27.2, yMax: 28.2,
+        draw: () => this.models.drawSnackStallFriedChicken(this.ctx, 16.0, 27.2, ox, oy)
+      });
+
+      // Stall 2: Boba Milk Tea & Fresh Brew Hub (North row)
+      list.push({
+        xMin: 20.0, xMax: 21.6, yMin: 27.2, yMax: 28.2,
+        draw: () => this.models.drawSnackStallBobaTea(this.ctx, 20.0, 27.2, ox, oy)
+      });
+
+      // Stall 3: Steaming Luwei & Oden Cart (South row)
+      list.push({
+        xMin: 16.0, xMax: 17.6, yMin: 30.8, yMax: 31.8,
+        draw: () => this.models.drawSnackStallLuwei(this.ctx, 16.0, 30.8, ox, oy)
+      });
+
+      // Stall 4: Street Corner Foldable Table & Iconic Red Plastic Stools (South row)
+      list.push({
+        xMin: 20.0, xMax: 21.2, yMin: 30.8, yMax: 31.8,
+        draw: () => this.models.drawNightMarketTable(this.ctx, 20.0, 30.8, ox, oy)
+      });
+
+      // Overhead Hanging Fairy Lights Strand (North & South overhead lines)
+      list.push({
+        xMin: 14.0, xMax: 22.0, yMin: 27.4, yMax: 27.6,
+        draw: () => this.models.drawFairyLights(this.ctx, 14.0, 27.5, 2.7, 22.5, 27.5, 2.7, ox, oy)
+      });
+      list.push({
+        xMin: 14.0, xMax: 22.0, yMin: 31.4, yMax: 31.6,
+        draw: () => this.models.drawFairyLights(this.ctx, 14.0, 31.5, 2.7, 22.5, 31.5, 2.7, ox, oy)
+      });
+
+      // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (y: 42..43) ===
+      list.push({
+        xMin: 11.2, xMax: 11.6, yMin: 42.4, yMax: 42.8,
+        draw: () => this.models.drawStreetlight(this.ctx, 11.2, 42.4, ox, oy)
+      });
+      list.push({
+        xMin: 17.2, xMax: 17.6, yMin: 42.4, yMax: 42.8,
+        draw: () => this.models.drawStreetlight(this.ctx, 17.2, 42.4, ox, oy)
+      });
+      list.push({
+        xMin: 14.2, xMax: 15.2, yMin: 42.8, yMax: 43.2,
+        draw: () => this.models.drawRoadPortalSign(this.ctx, 14.2, 42.8, ox, oy)
+      });
+
+      // === 11. PERIMETER GREEN HEDGES (Framing Outer Boundaries) ===
+      const hedges = [
+        { gx: 12.0, gy: 0.2, lx: 4.0, ly: 0.6 },  // North Plaza Garden Edge
+        { gx: 27.2, gy: 11.0, lx: 0.6, ly: 5.0 }, // East Central Lawn Border
+        { gx: 0.2,  gy: 27.0, lx: 0.6, ly: 6.0 }, // Basketball Court West Fence
+        { gx: 27.2, gy: 27.0, lx: 0.6, ly: 6.0 }  // Night Market East Border
+      ];
+      hedges.forEach(h => {
+        list.push({
+          xMin: h.gx, xMax: h.gx + h.lx, yMin: h.gy, yMax: h.gy + h.ly,
+          draw: () => this.models.drawPerimeterHedge(this.ctx, h.gx, h.gy, ox, oy, h.lx, h.ly)
+        });
+      });
+
+      // === 12. BOTANICAL GARDEN ARTISAN CAFE (East Lawn x: 19..26, y: 10..16) ===
+      // Artisan Espresso Bar Pavilion
+      list.push({
+        xMin: 20.2, xMax: 22.6, yMin: 11.0, yMax: 12.1,
+        draw: () => this.models.drawCafePavilion(this.ctx, 20.2, 11.2, ox, oy)
+      });
+
+      // Garden Patio Umbrella Table 1 (South Deck)
+      list.push({
+        xMin: 21.0, xMax: 22.0, yMin: 13.8, yMax: 14.8,
+        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 21.0, 13.8, ox, oy)
+      });
+
+      // Garden Patio Umbrella Table 2 (East Deck)
+      list.push({
+        xMin: 24.2, xMax: 25.2, yMin: 12.6, yMax: 13.6,
+        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 24.2, 12.6, ox, oy)
       });
 
       // === 5. CHARACTERS ===

@@ -94,8 +94,9 @@
   },
   "visitedZones": [
     "dorm_211",
+    "basketball_court",
+    "night_market",
     "library",
-    "plaza",
-    "ai_studio"
+    "plaza"
   ]
 }

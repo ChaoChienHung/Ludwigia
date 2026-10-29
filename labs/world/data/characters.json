@@ -71,7 +71,10 @@
         "dorm_211",
         "ai_studio",
         "library",
-        "sanmin_school"
+        "sanmin_school",
+        "basketball_court",
+        "night_market",
+        "cafe"
       ]
     },
     {
@@ -155,9 +158,9 @@
       },
       "visitedZones": [
         "house",
-        "plaza",
-        "ai_studio",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -233,9 +236,9 @@
       },
       "visitedZones": [
         "house",
-        "plaza",
-        "ai_studio",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -311,9 +314,9 @@
       },
       "visitedZones": [
         "house",
-        "plaza",
-        "ai_studio",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -385,8 +388,9 @@
       },
       "visitedZones": [
         "house",
-        "plaza",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -444,9 +448,10 @@
       },
       "visitedZones": [
         "dorm_211",
+        "basketball_court",
+        "night_market",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -545,9 +550,10 @@
       },
       "visitedZones": [
         "dorm_211",
+        "basketball_court",
+        "night_market",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -646,9 +652,10 @@
       },
       "visitedZones": [
         "dorm_211",
+        "basketball_court",
+        "night_market",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -700,9 +707,10 @@
       },
       "visitedZones": [
         "dorm_211",
+        "basketball_court",
+        "night_market",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -797,9 +805,10 @@
       },
       "visitedZones": [
         "dorm_211",
+        "basketball_court",
+        "night_market",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -878,8 +887,9 @@
       },
       "visitedZones": [
         "ai_studio",
-        "plaza",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -960,8 +970,9 @@
       },
       "visitedZones": [
         "ai_studio",
-        "plaza",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -1048,8 +1059,9 @@
       },
       "visitedZones": [
         "ai_studio",
-        "plaza",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -1138,8 +1150,9 @@
       },
       "visitedZones": [
         "ai_studio",
-        "plaza",
-        "library"
+        "cafe",
+        "library",
+        "plaza"
       ]
     },
     {
@@ -1203,9 +1216,9 @@
       },
       "visitedZones": [
         "douyin_office",
+        "cafe",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1245,9 +1258,9 @@
       },
       "visitedZones": [
         "douyin_office",
+        "cafe",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1299,9 +1312,9 @@
       },
       "visitedZones": [
         "douyin_office",
+        "cafe",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1349,9 +1362,9 @@
       },
       "visitedZones": [
         "douyin_office",
+        "cafe",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1411,9 +1424,10 @@
       },
       "visitedZones": [
         "dorm_211",
+        "basketball_court",
+        "night_market",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1481,9 +1495,9 @@
       },
       "visitedZones": [
         "sanmin_school",
+        "basketball_court",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1548,9 +1562,9 @@
       },
       "visitedZones": [
         "sanmin_school",
+        "basketball_court",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1614,9 +1628,9 @@
       },
       "visitedZones": [
         "sanmin_school",
+        "basketball_court",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1668,9 +1682,9 @@
       },
       "visitedZones": [
         "sanmin_school",
+        "basketball_court",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     },
     {
@@ -1728,9 +1742,9 @@
       },
       "visitedZones": [
         "sanmin_school",
+        "basketball_court",
         "library",
-        "plaza",
-        "ai_studio"
+        "plaza"
       ]
     }
   ],
