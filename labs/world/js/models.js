@@ -3739,6 +3739,295 @@
       ctx.moveTo(tip.x, tip.y); ctx.lineTo(up.x + 26, up.y + 5);
       ctx.stroke();
     }
+
+    // =========================================================================
+    // ESPORTS CYBER CAFE & THE HOWLING ABYSS (ARAM) ARENA
+    // =========================================================================
+
+    // --- 15. Cyber Cafe Holographic Entrance Marquee ---
+    drawCyberCafeSign(ctx, gx, gy, ox, oy) {
+      // Twin Dark Steel Truss Pillars
+      this.drawBox(ctx, gx, gy, 0, 0.35, 0.35, 2.70, '#1e293b', '#0f172a', '#020617', ox, oy);
+      this.drawBox(ctx, gx + 3.0, gy, 0, 0.35, 0.35, 2.70, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // Overhead Cyber Billboard Backing
+      this.drawBox(ctx, gx - 0.15, gy - 0.05, 2.65, 3.60, 0.45, 0.65, '#0f172a', '#020617', '#000000', ox, oy);
+
+      const cp = isoToScreen(gx + 1.65, gy + 0.15, 2.95, ox, oy);
+      // Neon Glow Background Bar
+      ctx.shadowColor = '#06b6d4';
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillRect(cp.x - 85, cp.y - 8, 170, 16);
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 9.5px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⚡ 召喚師電競網咖 • CYBER LAN LOUNGE ⚡', cp.x, cp.y);
+    }
+
+    // --- 16. High-Refresh Curved Gaming Rig & RGB Battle Station ---
+    drawCyberCafeRig(ctx, gx, gy, ox, oy, isRedSide = false) {
+      // Carbon fiber desk surface
+      this.drawBox(ctx, gx, gy, 0, 1.35, 0.75, 0.72, '#0f172a', '#020617', '#1e293b', ox, oy);
+
+      // Curved Ultrawide Gaming Monitor
+      this.drawBox(ctx, gx + 0.30, gy + 0.12, 0.72, 0.75, 0.14, 0.45, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // Screen Display (Glowing League of Legends ARAM / Rift Match)
+      const sp0 = isoToScreen(gx + 0.32, gy + 0.24, 0.78, ox, oy);
+      const sp1 = isoToScreen(gx + 1.02, gy + 0.24, 0.78, ox, oy);
+      const st1 = isoToScreen(gx + 1.02, gy + 0.24, 1.15, ox, oy);
+      const st0 = isoToScreen(gx + 0.32, gy + 0.24, 1.15, ox, oy);
+
+      ctx.fillStyle = isRedSide ? '#ef4444' : '#0284c7';
+      ctx.beginPath();
+      ctx.moveTo(sp0.x, sp0.y); ctx.lineTo(sp1.x, sp1.y); ctx.lineTo(st1.x, st1.y); ctx.lineTo(st0.x, st0.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mini Health Bar & Map lines on screen
+      ctx.fillStyle = '#22c55e';
+      const hpBar = isoToScreen(gx + 0.65, gy + 0.25, 1.12, ox, oy);
+      ctx.fillRect(hpBar.x - 12, hpBar.y, 24, 2);
+
+      // RGB Backlit Keyboard & Mouse Pad
+      const kp = isoToScreen(gx + 0.65, gy + 0.52, 0.73, ox, oy);
+      ctx.fillStyle = isRedSide ? 'rgba(239, 68, 68, 0.75)' : 'rgba(6, 182, 212, 0.75)';
+      ctx.fillRect(kp.x - 10, kp.y - 3, 20, 7);
+
+      // Liquid-Cooled Tempered Glass PC Tower with Internal RGB LEDs
+      this.drawBox(ctx, gx + 1.12, gy + 0.15, 0.72, 0.20, 0.48, 0.42, '#38bdf8', '#0284c7', '#0f172a', ox, oy);
+
+      // Ergonomic Racing Bucket Gaming Chair
+      const chairCol = isRedSide ? '#dc2626' : '#2563eb';
+      // Seat Cushion
+      this.drawBox(ctx, gx + 0.50, gy + 0.82, 0, 0.38, 0.38, 0.45, chairCol, '#1e293b', '#0f172a', ox, oy);
+      // High Racing Backrest
+      this.drawBox(ctx, gx + 0.50, gy + 0.82, 0.45, 0.10, 0.38, 0.55, chairCol, '#1e293b', '#0f172a', ox, oy);
+      // Headrest Pillow
+      this.drawBox(ctx, gx + 0.50, gy + 0.90, 0.95, 0.10, 0.22, 0.10, '#f8fafc', '#94a3b8', '#64748b', ox, oy);
+    }
+
+    // --- 17. Cyber Cafe Snack & Instant Ramen Bar ---
+    drawCyberSnackBar(ctx, gx, gy, ox, oy) {
+      // Counter Base
+      this.drawBox(ctx, gx, gy, 0, 1.80, 0.85, 0.85, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // Two Steaming Ramen Bowls with Poached Egg
+      const r1 = isoToScreen(gx + 0.50, gy + 0.40, 0.88, ox, oy);
+      const r2 = isoToScreen(gx + 1.15, gy + 0.40, 0.88, ox, oy);
+      [r1, r2].forEach(rp => {
+        // Red bowl
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.ellipse(rp.x, rp.y, 6, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Golden yolk egg
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y - 1, 2, 0, Math.PI * 2);
+        ctx.fill();
+        // Steam
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y - 6, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Coca-Cola & Monster Energy Cans
+      const canP = isoToScreen(gx + 1.55, gy + 0.35, 0.88, ox, oy);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(canP.x - 2, canP.y - 5, 4, 6);
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(canP.x + 3, canP.y - 5, 4, 6);
+    }
+
+    // --- 18. Ancient Howling Abyss Turret (Freljord Rune Obelisk) ---
+    drawAbyssTurret(ctx, gx, gy, ox, oy) {
+      // Tier 1 Octagonal Base (Frost-carved stone)
+      this.drawBox(ctx, gx, gy, 0, 1.60, 1.60, 0.70, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // Tier 2 Tapered Turret Column with Carved Ancient Runes
+      this.drawBox(ctx, gx + 0.20, gy + 0.20, 0.70, 1.20, 1.20, 1.20, '#475569', '#334155', '#1e293b', ox, oy);
+
+      // Glowing Cyan Rune Bands on Turret
+      const rP = isoToScreen(gx + 0.80, gy + 0.80, 1.30, ox, oy);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.0;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(rP.x, rP.y, 14, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Tier 3 Floating Hextech Core Crystal (Hovering at z: 2.1 to 2.8)
+      const coreP = isoToScreen(gx + 0.80, gy + 0.80, 2.35, ox, oy);
+
+      // Cyan Aura Glow
+      const glow = ctx.createRadialGradient(coreP.x, coreP.y, 2, coreP.x, coreP.y, 26);
+      glow.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+      glow.addColorStop(0.5, 'rgba(14, 165, 233, 0.35)');
+      glow.addColorStop(1, 'rgba(14, 165, 233, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(coreP.x, coreP.y, 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sharp Diamond Core Gemstone
+      ctx.fillStyle = '#e0f2fe';
+      ctx.beginPath();
+      ctx.moveTo(coreP.x, coreP.y - 12);
+      ctx.lineTo(coreP.x + 8, coreP.y);
+      ctx.lineTo(coreP.x, coreP.y + 12);
+      ctx.lineTo(coreP.x - 8, coreP.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+
+    // --- 19. Floating Emerald Health Relic (ARAM Health Pack) ---
+    drawHealthRelic(ctx, gx, gy, ox, oy) {
+      // Ground Rune Circle on Snow
+      const baseP = isoToScreen(gx + 0.50, gy + 0.50, 0.02, ox, oy);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.ellipse(baseP.x, baseP.y, 16, 9, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Floating Emerald Health Cross
+      const floatZ = 0.65 + Math.sin(performance.now() * 0.003) * 0.08;
+      const crossP = isoToScreen(gx + 0.50, gy + 0.50, floatZ, ox, oy);
+
+      // Green Aura Glow
+      const glow = ctx.createRadialGradient(crossP.x, crossP.y, 2, crossP.x, crossP.y, 16);
+      glow.addColorStop(0, 'rgba(52, 211, 153, 0.85)');
+      glow.addColorStop(0.6, 'rgba(16, 185, 129, 0.25)');
+      glow.addColorStop(1, 'rgba(16, 185, 129, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(crossP.x, crossP.y, 16, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Glowing Green Cross
+      ctx.fillStyle = '#6ee7b7';
+      ctx.fillRect(crossP.x - 2, crossP.y - 7, 4, 14);
+      ctx.fillRect(crossP.x - 7, crossP.y - 2, 14, 4);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.0;
+      ctx.strokeRect(crossP.x - 2, crossP.y - 7, 4, 14);
+      ctx.strokeRect(crossP.x - 7, crossP.y - 2, 14, 4);
+    }
+
+    // --- 20. Adorable Fluffy Snow Poro (with Tongue & Horns) ---
+    drawPoro(ctx, gx, gy, ox, oy) {
+      const p = isoToScreen(gx + 0.35, gy + 0.35, 0.20, ox, oy);
+
+      // Fluffy White Body (Round sphere)
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 9.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Curved Brown Ram Horns
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2.0;
+      // Left Horn
+      ctx.beginPath();
+      ctx.arc(p.x - 6, p.y - 7, 4, Math.PI, Math.PI * 1.8);
+      ctx.stroke();
+      // Right Horn
+      ctx.beginPath();
+      ctx.arc(p.x + 6, p.y - 7, 4, Math.PI * 1.2, Math.PI * 2);
+      ctx.stroke();
+
+      // Big Cute Black Eyes
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(p.x - 3.5, p.y - 1.5, 1.8, 0, Math.PI * 2);
+      ctx.arc(p.x + 3.5, p.y - 1.5, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      // Eye Highlights
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(p.x - 3.8, p.y - 2.0, 0.7, 0, Math.PI * 2);
+      ctx.arc(p.x + 3.2, p.y - 2.0, 0.7, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Iconic Long Pink Tongue Hanging Out!
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 4.5, 3.2, 5.0, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Little Paws
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(p.x - 5, p.y + 7.5, 2.2, 0, Math.PI * 2);
+      ctx.arc(p.x + 5, p.y + 7.5, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- 21. Epic Floating Howling Abyss Nexus Core Crystal ---
+    drawAbyssNexus(ctx, gx, gy, ox, oy) {
+      // Heavy Octagonal Stone & Hextech Plinth
+      this.drawBox(ctx, gx, gy, 0, 2.00, 2.00, 0.65, '#1e293b', '#0f172a', '#020617', ox, oy);
+      // Gold Hextech Inlay Ring
+      this.drawBox(ctx, gx + 0.20, gy + 0.20, 0.65, 1.60, 1.60, 0.20, '#eab308', '#ca8a04', '#a16207', ox, oy);
+
+      // Center Hovering Giant Nexus Crystal
+      const floatZ = 1.65 + Math.sin(performance.now() * 0.002) * 0.12;
+      const nexP = isoToScreen(gx + 1.00, gy + 1.00, floatZ, ox, oy);
+
+      // Huge Nexus Pulsing Blue Aura
+      const aura = ctx.createRadialGradient(nexP.x, nexP.y, 4, nexP.x, nexP.y, 42);
+      aura.addColorStop(0, 'rgba(56, 189, 248, 0.95)');
+      aura.addColorStop(0.4, 'rgba(14, 165, 233, 0.45)');
+      aura.addColorStop(1, 'rgba(14, 165, 233, 0)');
+      ctx.fillStyle = aura;
+      ctx.beginPath();
+      ctx.arc(nexP.x, nexP.y, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Grand Multi-faceted Crystal Core
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(nexP.x, nexP.y - 24);
+      ctx.lineTo(nexP.x + 16, nexP.y - 5);
+      ctx.lineTo(nexP.x + 12, nexP.y + 20);
+      ctx.lineTo(nexP.x, nexP.y + 28);
+      ctx.lineTo(nexP.x - 12, nexP.y + 20);
+      ctx.lineTo(nexP.x - 16, nexP.y - 5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#e0f2fe';
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      // Rotating Golden Orbital Wing Blades
+      const angle = (performance.now() * 0.0015);
+      for (let i = 0; i < 3; i++) {
+        const a = angle + (i * Math.PI * 2) / 3;
+        const oxBlade = Math.cos(a) * 28;
+        const oyBlade = Math.sin(a) * 14;
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.ellipse(nexP.x + oxBlade, nexP.y + oyBlade, 6, 12, a, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ca8a04';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+      }
+    }
   }
 
   // Export to Global Scope

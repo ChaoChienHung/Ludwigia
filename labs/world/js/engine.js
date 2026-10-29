@@ -9,7 +9,7 @@
   const TW = 64; // Isometric tile width
   const TH = 32; // Isometric tile height
   const MAP_W = 28; // World map width
-  const MAP_H = 44; // World map height (expanded to accommodate Sanmin High School & Douyin Office)
+  const MAP_H = 58; // World map height (expanded for Esports Cyber Cafe & Howling Abyss)
 
   // --- Building Zone Coordinates ---
   // Zone 1: Ludwig's Family Residence (NW)

@@ -239,6 +239,25 @@
       this.nav.setBlock(20.2, 11.0, 2.30, 0.95, true); // Artisan Cafe Counter Pavilion
       this.nav.setBlock(21.0, 13.8, 0.85, 0.85, true); // Patio Table & Chairs 1
       this.nav.setBlock(24.2, 12.6, 0.85, 0.85, true); // Patio Table & Chairs 2
+
+      // 11. Cyber LAN Lounge Obstacles (x: 1..11, y: 45..53)
+      this.nav.setBlock(1.0, 44.8, 4.0, 0.45, true);   // North Wall Left
+      this.nav.setBlock(7.0, 44.8, 4.5, 0.45, true);   // North Wall Right (Entrance at 5..7)
+      this.nav.setBlock(0.8, 44.8, 0.45, 8.5, true);   // West Wall
+      this.nav.setBlock(1.0, 53.2, 10.5, 0.45, true);  // South Wall
+      this.nav.setBlock(11.2, 44.8, 0.45, 3.2, true);  // East Wall Top
+      this.nav.setBlock(11.2, 50.0, 0.45, 3.5, true);  // East Wall Bottom (Doorway to Abyss at 48..50)
+      this.nav.setBlock(2.2, 46.2, 1.4, 0.8, true);    // Blue Rig 1
+      this.nav.setBlock(4.2, 46.2, 1.4, 0.8, true);    // Blue Rig 2
+      this.nav.setBlock(6.2, 46.2, 1.4, 0.8, true);    // Blue Rig 3
+      this.nav.setBlock(2.2, 50.2, 1.4, 0.8, true);    // Red Rig 1
+      this.nav.setBlock(4.2, 50.2, 1.4, 0.8, true);    // Red Rig 2
+      this.nav.setBlock(6.2, 50.2, 1.4, 0.8, true);    // Red Rig 3
+      this.nav.setBlock(8.5, 47.8, 1.8, 0.85, true);   // Snack & Ramen Bar
+
+      // 12. Howling Abyss ARAM Obstacles (x: 13..25, y: 45..56)
+      this.nav.setBlock(15.0, 46.5, 1.6, 1.6, true);   // Ancient Turret Plinth
+      this.nav.setBlock(21.0, 53.0, 2.0, 2.0, true);   // Giant Nexus Base
     }
 
     initParticles() {
@@ -506,6 +525,14 @@
         currentZone = 'cafe';
         isInsideAnyHouse = false;
         statusMessage = "Botanical Garden Cafe • 靜謐文青的露天咖啡館 ☕";
+      } else if (checkZone('cyber_cafe', 0.8, 11.5, 44.5, 53.5)) {
+        currentZone = 'cyber_cafe';
+        isInsideAnyHouse = true;
+        statusMessage = "Howling Abyss Cyber • 召喚師電競網咖 🎮";
+      } else if (checkZone('howling_abyss', 12.0, 26.5, 44.5, 57.0)) {
+        currentZone = 'howling_abyss';
+        isInsideAnyHouse = false;
+        statusMessage = "The Howling Abyss • 冰封咆哮深淵戰場 ❄️";
       }
 
       this.currentZone = currentZone;
@@ -954,6 +981,25 @@
                 { x: 25.2, y: 15.0 }  // Shaded Garden Terrace Corner
               ];
 
+              const cyberAnchors = [
+                { x: 3.0, y: 47.5 }, // Blue Side Gaming Station 1
+                { x: 5.0, y: 47.5 }, // Blue Side Gaming Station 2
+                { x: 7.0, y: 47.5 }, // Blue Side Gaming Station 3
+                { x: 3.0, y: 51.5 }, // Red Side Gaming Station 1
+                { x: 5.0, y: 51.5 }, // Red Side Gaming Station 2
+                { x: 8.8, y: 49.0 }, // Hot Ramen & Coke Counter
+                { x: 6.0, y: 49.5 }  // Cyber Cafe Central Lobby
+              ];
+
+              const abyssAnchors = [
+                { x: 15.8, y: 48.0 }, // Under Ancient Turret Shadow
+                { x: 18.5, y: 49.5 }, // Standing upon Health Relic Shrine
+                { x: 17.5, y: 48.5 }, // Petting Fluffy Poro 1
+                { x: 20.8, y: 51.8 }, // Feeding Poro-Snack to Poro 2
+                { x: 22.0, y: 54.0 }, // In front of the Glowing Nexus
+                { x: 19.5, y: 46.5 }  // Frost Rune Bridge Walkway
+              ];
+
               const zoneAnchorMap = {
                 house: houseAnchors,
                 ludwig_house: houseAnchors,
@@ -971,7 +1017,11 @@
                 night_market: nightMarketAnchors,
                 snack_street: nightMarketAnchors,
                 cafe: cafeAnchors,
-                garden_cafe: cafeAnchors
+                garden_cafe: cafeAnchors,
+                cyber_cafe: cyberAnchors,
+                cyber: cyberAnchors,
+                howling_abyss: abyssAnchors,
+                abyss: abyssAnchors
               };
 
               const rawVisited = c.visitedZones;
@@ -980,10 +1030,10 @@
                 : (c.zone === 'house' ? ['house', 'cafe', 'library', 'plaza'] :
                    c.zone === 'ai_studio' ? ['ai_studio', 'cafe', 'library', 'plaza'] :
                    c.zone === 'library' ? ['library', 'plaza', 'cafe'] :
-                   c.zone === 'dorm_211' ? ['dorm_211', 'basketball_court', 'night_market', 'library', 'plaza'] :
-                   c.zone === 'sanmin_school' ? ['sanmin_school', 'basketball_court', 'library', 'plaza'] :
-                   c.zone === 'douyin_office' ? ['douyin_office', 'cafe', 'library', 'plaza'] :
-                   [c.zone, 'cafe', 'library', 'plaza']);
+                   c.zone === 'dorm_211' ? ['dorm_211', 'basketball_court', 'night_market', 'cyber_cafe', 'howling_abyss', 'library', 'plaza'] :
+                   c.zone === 'sanmin_school' ? ['sanmin_school', 'basketball_court', 'cyber_cafe', 'howling_abyss', 'library', 'plaza'] :
+                   c.zone === 'douyin_office' ? ['douyin_office', 'cafe', 'cyber_cafe', 'library', 'plaza'] :
+                   [c.zone, 'cafe', 'cyber_cafe', 'howling_abyss', 'library', 'plaza']);
 
               // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
               let chosenZone;
@@ -1060,7 +1110,7 @@
         if (p.z <= 0 || p.x > MAP_W || p.y > MAP_H) {
           p.z = 2.2 + Math.random() * 0.5;
           p.x = 9 + Math.random() * 16;
-          p.y = 1 + Math.random() * 41;
+          p.y = 1 + Math.random() * 55;
         }
       });
     }
@@ -1078,15 +1128,18 @@
           const isBasketball = (x >= 1 && x <= 8 && y >= 27 && y <= 32);
           const isNightMarket = (x >= 10 && x <= 23 && y >= 27 && y <= 32);
           const isCafe = (x >= 19 && x <= 26 && y >= 10 && y <= 16);
-          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin;
+          const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
+          const isAbyssBridge = (x >= 13 && x <= 25 && y >= 45 && y <= 56);
+          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber;
 
-          // Cobblestone Pathways connecting doorways, central plaza, and south sector
+          // Cobblestone Pathways connecting doorways, central plaza, south sector and cyber/abyss
           const isPath = (
             (x >= 10 && x <= 11 && y >= 4 && y <= 39) ||
             (y >= 5 && y <= 6 && x >= 10 && x <= 19) ||
             (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
             (y >= 20 && y <= 22 && x >= 10 && x <= 19) ||
-            (y >= 36 && y <= 38 && x >= 10 && x <= 19)
+            (y >= 36 && y <= 38 && x >= 10 && x <= 19) ||
+            (x >= 5 && x <= 14 && y >= 42 && y <= 45)  // South avenue connector into Cyber & Abyss
           );
 
           ctx.save();
@@ -1096,6 +1149,7 @@
           else if (this.currentZone === 'library' && !isLib) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'sanmin_school' && !isSchool) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'douyin_office' && !isDouyin) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'cyber_cafe' && !isCyber) ctx.globalAlpha = this.outsideAlpha;
 
           const p0 = isoToScreen(x, y, 0, ox, oy);
           const p1 = isoToScreen(x + 1, y, 0, ox, oy);
@@ -1134,6 +1188,15 @@
           } else if (isCafe) {
             // Botanical Garden Cafe — Warm Cedar Outdoor Decking
             ctx.fillStyle = (x + y) % 2 === 0 ? '#b45309' : '#92400e';
+          } else if (isCyber) {
+            // Cyber LAN Lounge — High-Tech Carbon Soundproof Carpet
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
+          } else if (isAbyssBridge) {
+            // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Runestones & Snow
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#1e293b' : '#0f172a';
+          } else if (y >= 45) {
+            // Frost Chasm Void Depths
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#020617' : '#030712';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -2520,6 +2583,64 @@
       list.push({
         xMin: 24.2, xMax: 25.2, yMin: 12.6, yMax: 13.6,
         draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 24.2, 12.6, ox, oy)
+      });
+
+      // === 13. CYBER LAN LOUNGE / 召喚師電競網咖 (West x: 1..11, y: 45..53) ===
+      // Neon Marquee Sign at North Entrance
+      list.push({
+        xMin: 3.5, xMax: 5.5, yMin: 44.5, yMax: 44.9,
+        draw: () => this.models.drawCyberCafeSign(this.ctx, 4.0, 44.6, ox, oy)
+      });
+
+      // Blue Team Battle Stations (North Row)
+      [2.2, 4.2, 6.2].forEach(rx => {
+        list.push({
+          xMin: rx, xMax: rx + 1.4, yMin: 46.2, yMax: 47.1,
+          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 46.2, ox, oy, false)
+        });
+      });
+
+      // Red Team Battle Stations (South Row)
+      [2.2, 4.2, 6.2].forEach(rx => {
+        list.push({
+          xMin: rx, xMax: rx + 1.4, yMin: 50.2, yMax: 51.1,
+          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 50.2, ox, oy, true)
+        });
+      });
+
+      // Ramen & Monster Snack Counter
+      list.push({
+        xMin: 8.5, xMax: 10.3, yMin: 47.8, yMax: 49.3,
+        draw: () => this.models.drawCyberSnackBar(this.ctx, 8.5, 47.8, ox, oy)
+      });
+
+      // === 14. HOWLING ABYSS ARAM BRIDGE / 咆哮深淵長橋 (East x: 13..25, y: 45..56) ===
+      // Ancient Freljordian Turret
+      list.push({
+        xMin: 14.8, xMax: 16.6, yMin: 46.3, yMax: 48.1,
+        draw: () => this.models.drawAbyssTurret(this.ctx, 15.0, 46.5, ox, oy)
+      });
+
+      // Emerald Health Relic
+      list.push({
+        xMin: 18.2, xMax: 19.4, yMin: 49.2, yMax: 50.4,
+        draw: () => this.models.drawHealthRelic(this.ctx, 18.5, 49.5, ox, oy)
+      });
+
+      // Fluffy Snow Poros
+      list.push({
+        xMin: 17.0, xMax: 17.8, yMin: 47.8, yMax: 48.6,
+        draw: () => this.models.drawPoro(this.ctx, 17.2, 48.0, ox, oy)
+      });
+      list.push({
+        xMin: 20.3, xMax: 21.1, yMin: 51.3, yMax: 52.1,
+        draw: () => this.models.drawPoro(this.ctx, 20.5, 51.5, ox, oy)
+      });
+
+      // Hextech Nexus Crystal
+      list.push({
+        xMin: 20.7, xMax: 23.0, yMin: 52.7, yMax: 55.0,
+        draw: () => this.models.drawAbyssNexus(this.ctx, 21.0, 53.0, ox, oy)
       });
 
       // === 5. CHARACTERS ===

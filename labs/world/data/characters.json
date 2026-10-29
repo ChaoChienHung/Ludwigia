@@ -74,7 +74,9 @@
         "sanmin_school",
         "basketball_court",
         "night_market",
-        "cafe"
+        "cafe",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -390,7 +392,8 @@
         "house",
         "cafe",
         "library",
-        "plaza"
+        "plaza",
+        "howling_abyss"
       ]
     },
     {
@@ -451,7 +454,9 @@
         "basketball_court",
         "night_market",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -553,7 +558,9 @@
         "basketball_court",
         "night_market",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -655,7 +662,9 @@
         "basketball_court",
         "night_market",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -710,7 +719,9 @@
         "basketball_court",
         "night_market",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -808,7 +819,9 @@
         "basketball_court",
         "night_market",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -1218,7 +1231,8 @@
         "douyin_office",
         "cafe",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe"
       ]
     },
     {
@@ -1260,7 +1274,8 @@
         "douyin_office",
         "cafe",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe"
       ]
     },
     {
@@ -1314,7 +1329,8 @@
         "douyin_office",
         "cafe",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe"
       ]
     },
     {
@@ -1364,7 +1380,8 @@
         "douyin_office",
         "cafe",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe"
       ]
     },
     {
@@ -1427,7 +1444,9 @@
         "basketball_court",
         "night_market",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -1497,7 +1516,9 @@
         "sanmin_school",
         "basketball_court",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -1564,7 +1585,9 @@
         "sanmin_school",
         "basketball_court",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -1630,7 +1653,9 @@
         "sanmin_school",
         "basketball_court",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -1684,7 +1709,9 @@
         "sanmin_school",
         "basketball_court",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     },
     {
@@ -1744,7 +1771,9 @@
         "sanmin_school",
         "basketball_court",
         "library",
-        "plaza"
+        "plaza",
+        "cyber_cafe",
+        "howling_abyss"
       ]
     }
   ],
