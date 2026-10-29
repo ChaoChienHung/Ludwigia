@@ -238,10 +238,12 @@
       this.nav.setBlock(17.2, 42.4, 0.35, 0.35, true); // Streetlight Right
       this.nav.setBlock(14.2, 42.8, 0.35, 0.35, true); // Portal Signpost
 
-      // 10. Botanical Garden Cafe Obstacles (East x: 19..26, y: 10..16)
-      this.nav.setBlock(20.2, 11.0, 2.30, 0.95, true); // Artisan Cafe Counter Pavilion
-      this.nav.setBlock(21.0, 13.8, 0.85, 0.85, true); // Patio Table & Chairs 1
-      this.nav.setBlock(24.2, 12.6, 0.85, 0.85, true); // Patio Table & Chairs 2
+      // 10. Botanical Garden Cafe Obstacles (Northeast x: 28..43, y: 2..19)
+      this.nav.setBlock(33.0, 5.0, 2.30, 0.95, true); // Artisan Cafe Counter Pavilion
+      this.nav.setBlock(30.0, 10.0, 0.85, 0.85, true); // Patio Table & Chairs 1
+      this.nav.setBlock(36.0, 10.0, 0.85, 0.85, true); // Patio Table & Chairs 2
+      this.nav.setBlock(33.0, 14.0, 0.85, 0.85, true); // Patio Table & Chairs 3
+      this.nav.setBlock(19.5, 13.0, 1.40, 0.65, true); // Former Cafe Park Bench in Central Promenade
 
       // 11. Cyber LAN Lounge Obstacles (x: 1..11, y: 45..53)
       this.nav.setBlock(1.0, 44.8, 4.0, 0.45, true);   // North Wall Left
@@ -531,10 +533,10 @@
         currentZone = 'night_market';
         isInsideAnyHouse = false;
         statusMessage = "Midnight Snack Street • 燈火通明的深夜宵夜街 🏮";
-      } else if (checkZone('cafe', 18.5, 26.5, 9.8, 16.4)) {
+      } else if (checkZone('cafe', 27.5, 43.5, 1.5, 19.5)) {
         currentZone = 'cafe';
         isInsideAnyHouse = false;
-        statusMessage = "Botanical Garden Cafe • 靜謐文青的露天咖啡館 ☕";
+        statusMessage = "Botanical Garden Cafe • 靜謐文青的露天森林咖啡館 ☕";
       } else if (checkZone('cyber_cafe', 0.8, 11.5, 44.5, 53.5)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
@@ -987,11 +989,12 @@
               ];
 
               const cafeAnchors = [
-                { x: 21.3, y: 12.4 }, // Barista Counter Order Spot
-                { x: 21.0, y: 14.8 }, // Under Patio Umbrella 1 (South)
-                { x: 24.2, y: 13.6 }, // Under Patio Umbrella 2 (East)
-                { x: 23.5, y: 11.5 }, // Outdoor Terrace Deck Stroll
-                { x: 25.2, y: 15.0 }  // Shaded Garden Terrace Corner
+                { x: 34.2, y: 6.5 },  // Barista Counter Order Spot
+                { x: 30.0, y: 11.2 }, // Under Patio Umbrella 1 (West Deck)
+                { x: 36.0, y: 11.2 }, // Under Patio Umbrella 2 (East Deck)
+                { x: 33.0, y: 15.2 }, // Under Patio Umbrella 3 (South Deck)
+                { x: 38.5, y: 8.0 },  // Sunny Garden Terrace Stroll
+                { x: 29.5, y: 15.0 }  // Shaded Botanical Garden Trail
               ];
 
               const cyberAnchors = [
@@ -1140,7 +1143,7 @@
           const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
           const isBasketball = (x >= 1 && x <= 10 && y >= 24 && y <= 33);
           const isNightMarket = (x >= 28 && x <= 37 && y >= 22 && y <= 36);
-          const isCafe = (x >= 19 && x <= 26 && y >= 10 && y <= 16);
+          const isCafe = (x >= 28 && x <= 43 && y >= 2 && y <= 19);
           const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
           const isAbyssBridge = (x >= 13 && x <= 25 && y >= 45 && y <= 56);
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber;
@@ -1148,10 +1151,11 @@
           // Cobblestone Pathways connecting doorways, central plaza, south sector, night market and cyber/abyss
           const isPath = (
             (x >= 10 && x <= 11 && y >= 4 && y <= 39) ||
-            (y >= 5 && y <= 6 && x >= 10 && x <= 19) ||
+            (y >= 5 && y <= 6 && x >= 10 && x <= 34) ||   // Paved East walkway into Botanical Garden Cafe!
             (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
+            (x >= 21 && x <= 23 && y >= 10 && y <= 17) || // Paved promenade in former cafe spot linking AI Studio & Library!
             (y >= 20 && y <= 22 && x >= 10 && x <= 19) ||
-            (y >= 27 && y <= 29 && x >= 10 && x <= 28) || // Pathway directly connecting Central Plaza to East Night Market!
+            (y >= 27 && y <= 29 && x >= 10 && x <= 32) || // Pathway directly connecting Central Plaza to East Night Market!
             (y >= 36 && y <= 38 && x >= 10 && x <= 19) ||
             (x >= 5 && x <= 14 && y >= 42 && y <= 45)  // South avenue connector into Cyber & Abyss
           );
@@ -2547,9 +2551,10 @@
       // === 11. PERIMETER GREEN HEDGES (Framing Outer Boundaries) ===
       const hedges = [
         { gx: 12.0, gy: 0.2, lx: 4.0, ly: 0.6 },  // North Plaza Garden Edge
-        { gx: 27.2, gy: 11.0, lx: 0.6, ly: 5.0 }, // Central Lawn Border
+        { gx: 28.0, gy: 0.2, lx: 15.0, ly: 0.6 }, // Botanical Cafe North Garden Border
+        { gx: 43.2, gy: 1.0, lx: 0.6, ly: 18.0 }, // Botanical Cafe East Outer Border
         { gx: 0.2,  gy: 24.0, lx: 0.6, ly: 9.5 }, // Basketball Court West Fence
-        { gx: 37.2, gy: 22.0, lx: 0.6, ly: 14.5 } // Night Market East Border
+        { gx: 43.2, gy: 21.0, lx: 0.6, ly: 15.5 } // Night Market East Outer Border
       ];
       hedges.forEach(h => {
         list.push({
@@ -2558,23 +2563,35 @@
         });
       });
 
-      // === 12. BOTANICAL GARDEN ARTISAN CAFE (East Lawn x: 19..26, y: 10..16) ===
+      // === 12. BOTANICAL GARDEN ARTISAN CAFE (Northeast x: 28..43, y: 2..19) ===
       // Artisan Espresso Bar Pavilion
       list.push({
-        xMin: 20.2, xMax: 22.6, yMin: 11.0, yMax: 12.1,
-        draw: () => this.models.drawCafePavilion(this.ctx, 20.2, 11.2, ox, oy)
+        xMin: 33.0, xMax: 35.4, yMin: 5.0, yMax: 6.1,
+        draw: () => this.models.drawCafePavilion(this.ctx, 33.0, 5.2, ox, oy)
       });
 
-      // Garden Patio Umbrella Table 1 (South Deck)
+      // Garden Patio Umbrella Table 1 (West Deck)
       list.push({
-        xMin: 21.0, xMax: 22.0, yMin: 13.8, yMax: 14.8,
-        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 21.0, 13.8, ox, oy)
+        xMin: 30.0, xMax: 31.0, yMin: 10.0, yMax: 11.0,
+        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 30.0, 10.0, ox, oy)
       });
 
       // Garden Patio Umbrella Table 2 (East Deck)
       list.push({
-        xMin: 24.2, xMax: 25.2, yMin: 12.6, yMax: 13.6,
-        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 24.2, 12.6, ox, oy)
+        xMin: 36.0, xMax: 37.0, yMin: 10.0, yMax: 11.0,
+        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 36.0, 10.0, ox, oy)
+      });
+
+      // Garden Patio Umbrella Table 3 (South Deck)
+      list.push({
+        xMin: 33.0, xMax: 34.0, yMin: 14.0, yMax: 15.0,
+        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 33.0, 14.0, ox, oy)
+      });
+
+      // Central-East Promenade Park Bench (in former cafe lawn x: 19..26, y: 10..16)
+      list.push({
+        xMin: 19.5, xMax: 20.8, yMin: 13.0, yMax: 13.7,
+        draw: () => this.models.drawParkBench(this.ctx, 19.5, 13.0, ox, oy)
       });
 
       // === 13. CYBER LAN LOUNGE / 召喚師電競網咖 (West x: 1..11, y: 45..53) ===
