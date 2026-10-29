@@ -1,0 +1,100 @@
+{
+  "id": "kerry",
+  "name": {
+    "zh-TW": "張開畇",
+    "en": "Kerry Chang"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "中央大學室友",
+    "en": "NCU Roommate"
+  },
+  "avatar": "assets/avatars/kerry.png",
+  "avatarFallback": "🧑‍💻",
+  "zone": "dorm_211",
+  "spawn": {
+    "x": 2.1,
+    "y": 23.6
+  },
+  "nameColor": "#2dd4bf",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#1f2937",
+    "shirt": "#14b8a6",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "健宏，你可以幫我關一下鬧鐘嗎……",
+          "（翻了個身繼續拉棉被）"
+        ],
+        [
+          "（11:59 p.m.）欸你幫我錄一下，我要傳給助教看，我明明沒遲交！",
+          "快點快點！倒數三十秒了啊啊啊！"
+        ],
+        [
+          "喔喔喔喔喔喔！！！"
+        ],
+        [
+          "這下路是送爽沒？"
+        ],
+        [
+          "不要再 Ping 燈了！"
+        ],
+        [
+          "我覺得玩薩科的都是心理變態。"
+        ],
+        [
+          "健宏，你看我這把老葛戰績跟鬼一樣。"
+        ],
+        [
+          "我就佛耶戈 main 啊。"
+        ]
+      ],
+      "en": [
+        [
+          "Chien-Hung, can you help me turn off my alarm clock please...",
+          "*(rolls over and pulls the blanket back up)*"
+        ],
+        [
+          "(11:59 p.m.) Hey record this screen for me quick! I need to show the TA I literally submitted before deadline!",
+          "Hurry hurry! Thirty seconds on the clock, ahhhh!"
+        ],
+        [
+          "OOOOOOHHHHHHH!!!"
+        ],
+        [
+          "Is this bot lane done feeding yet?!"
+        ],
+        [
+          "Stop pinging the damn map!"
+        ],
+        [
+          "I honestly think anyone who plays Shaco is a psychopath."
+        ],
+        [
+          "Chien-Hung, look at my Graves KDA this game, it's straight up godlike."
+        ],
+        [
+          "I'm literally a Viego main."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "鬧鐘到底設了幾個？我自己都忘了。"
+      ],
+      "en": [
+        "How many alarms did I set? Even I have lost count."
+      ]
+    }
+  },
+  "visitedZones": [
+    "dorm_211",
+    "plaza",
+    "library"
+  ]
+}

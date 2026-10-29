@@ -1864,6 +1864,210 @@
     },
     {
       "participants": [
+        "happy",
+        "clark"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "happy",
+            "text": "好啊都這樣啊，那我走。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "話也不是這樣說的...",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "happy",
+            "text": "Fine, if that's how it's gonna be, I'm out.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "That's not what I meant at all...",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "happy",
+        "clark"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "happy",
+            "text": "好啊都這樣啊，那我離開。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "不是這樣，不是那個意思 xD",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "happy",
+            "text": "Fine, if that's how it is, I'll just leave.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "clark",
+            "text": "No, wait, that's not what I meant xD",
+            "delay": 2.2
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "happy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "太 C 了吧，黑皮。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "哎，還好拉，就只是正常發揮而已。",
+            "delay": 2.4
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "You carried so hard, Happy!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "Nah, it's alright, just normal gameplay.",
+            "delay": 2.4
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "happy"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "太猛了吧，黑皮。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "哎，就對面剛好失誤了，送了幾顆。",
+            "delay": 2.6
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "That was insane, Happy!",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "Eh, the enemy team just made some mistakes and threw a couple kills.",
+            "delay": 2.6
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "clark",
+        "happy",
+        "jerry",
+        "billy",
+        "ludwig"
+      ],
+      "maxDistance": 6.5,
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "clark",
+            "text": "今天有局嗎？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "等我一下，我十點後能打。",
+            "delay": 2.4
+          },
+          {
+            "speaker": "jerry",
+            "text": "喔喔好啊，那我也打一下好了。",
+            "delay": 2.5
+          },
+          {
+            "speaker": "clark",
+            "text": "阿方來一下啦，別打暴雪了，趕快載 LoL 啦。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "billy",
+            "text": "好啦，等一下啦。",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwig",
+            "text": "那我也要打，我們這樣剛好五排。",
+            "delay": 2.8
+          }
+        ],
+        "en": [
+          {
+            "speaker": "clark",
+            "text": "Anyone up for a game today?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "happy",
+            "text": "Give me a sec, I can play after ten.",
+            "delay": 2.4
+          },
+          {
+            "speaker": "jerry",
+            "text": "Oh cool, sure, I'll hop in for a bit too then.",
+            "delay": 2.5
+          },
+          {
+            "speaker": "clark",
+            "text": "Come on Billy, stop playing Blizzard games, hurry up and install LoL!",
+            "delay": 2.8
+          },
+          {
+            "speaker": "billy",
+            "text": "Alright, hold on a bit.",
+            "delay": 2.2
+          },
+          {
+            "speaker": "ludwig",
+            "text": "Count me in too, that makes a full five-stack!",
+            "delay": 2.8
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
         "gemini",
         "claude",
         "chatgpt"
@@ -2338,38 +2542,6 @@
     },
     {
       "participants": [
-        "ludwig",
-        "zhenyan"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "ludwig",
-            "text": "大哥，你這空大也太醜了吧？",
-            "delay": 2.2
-          },
-          {
-            "speaker": "zhenyan",
-            "text": "我這打的是心理戰。",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "ludwig",
-            "text": "Bro, that whiffed ult was hideous...",
-            "delay": 2.2
-          },
-          {
-            "speaker": "zhenyan",
-            "text": "I'm playing psychological warfare here.",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
         "ludwigia",
         "ludwig"
       ],
@@ -2396,6 +2568,38 @@
             "speaker": "ludwig",
             "text": "Alright, alright...",
             "delay": 2.0
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "ludwig",
+        "zhenyan"
+      ],
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "ludwig",
+            "text": "大哥，你這空大也太醜了吧？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "zhenyan",
+            "text": "我這打的是心理戰。",
+            "delay": 2.2
+          }
+        ],
+        "en": [
+          {
+            "speaker": "ludwig",
+            "text": "Bro, that whiffed ult was hideous...",
+            "delay": 2.2
+          },
+          {
+            "speaker": "zhenyan",
+            "text": "I'm playing psychological warfare here.",
+            "delay": 2.2
           }
         ]
       }
@@ -2902,210 +3106,6 @@
             "speaker": "wuyen",
             "text": "Sure, I'll take a look in a bit.",
             "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "happy",
-        "clark"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "happy",
-            "text": "好啊都這樣啊，那我走。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "clark",
-            "text": "話也不是這樣說的...",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "happy",
-            "text": "Fine, if that's how it's gonna be, I'm out.",
-            "delay": 2.2
-          },
-          {
-            "speaker": "clark",
-            "text": "That's not what I meant at all...",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "happy",
-        "clark"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "happy",
-            "text": "好啊都這樣啊，那我離開。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "clark",
-            "text": "不是這樣，不是那個意思 xD",
-            "delay": 2.2
-          }
-        ],
-        "en": [
-          {
-            "speaker": "happy",
-            "text": "Fine, if that's how it is, I'll just leave.",
-            "delay": 2.2
-          },
-          {
-            "speaker": "clark",
-            "text": "No, wait, that's not what I meant xD",
-            "delay": 2.2
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "ludwig",
-        "happy"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "ludwig",
-            "text": "太 C 了吧，黑皮。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "happy",
-            "text": "哎，還好拉，就只是正常發揮而已。",
-            "delay": 2.4
-          }
-        ],
-        "en": [
-          {
-            "speaker": "ludwig",
-            "text": "You carried so hard, Happy!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "happy",
-            "text": "Nah, it's alright, just normal gameplay.",
-            "delay": 2.4
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "ludwig",
-        "happy"
-      ],
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "ludwig",
-            "text": "太猛了吧，黑皮。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "happy",
-            "text": "哎，就對面剛好失誤了，送了幾顆。",
-            "delay": 2.6
-          }
-        ],
-        "en": [
-          {
-            "speaker": "ludwig",
-            "text": "That was insane, Happy!",
-            "delay": 2.2
-          },
-          {
-            "speaker": "happy",
-            "text": "Eh, the enemy team just made some mistakes and threw a couple kills.",
-            "delay": 2.6
-          }
-        ]
-      }
-    },
-    {
-      "participants": [
-        "clark",
-        "happy",
-        "jerry",
-        "billy",
-        "ludwig"
-      ],
-      "maxDistance": 6.5,
-      "dialogues": {
-        "zh-TW": [
-          {
-            "speaker": "clark",
-            "text": "今天有局嗎？",
-            "delay": 2.2
-          },
-          {
-            "speaker": "happy",
-            "text": "等我一下，我十點後能打。",
-            "delay": 2.4
-          },
-          {
-            "speaker": "jerry",
-            "text": "喔喔好啊，那我也打一下好了。",
-            "delay": 2.5
-          },
-          {
-            "speaker": "clark",
-            "text": "阿方來一下啦，別打暴雪了，趕快載 LoL 啦。",
-            "delay": 2.8
-          },
-          {
-            "speaker": "billy",
-            "text": "好啦，等一下啦。",
-            "delay": 2.2
-          },
-          {
-            "speaker": "ludwig",
-            "text": "那我也要打，我們這樣剛好五排。",
-            "delay": 2.8
-          }
-        ],
-        "en": [
-          {
-            "speaker": "clark",
-            "text": "Anyone up for a game today?",
-            "delay": 2.2
-          },
-          {
-            "speaker": "happy",
-            "text": "Give me a sec, I can play after ten.",
-            "delay": 2.4
-          },
-          {
-            "speaker": "jerry",
-            "text": "Oh cool, sure, I'll hop in for a bit too then.",
-            "delay": 2.5
-          },
-          {
-            "speaker": "clark",
-            "text": "Come on Billy, stop playing Blizzard games, hurry up and install LoL!",
-            "delay": 2.8
-          },
-          {
-            "speaker": "billy",
-            "text": "Alright, hold on a bit.",
-            "delay": 2.2
-          },
-          {
-            "speaker": "ludwig",
-            "text": "Count me in too, that makes a full five-stack!",
-            "delay": 2.8
           }
         ]
       }

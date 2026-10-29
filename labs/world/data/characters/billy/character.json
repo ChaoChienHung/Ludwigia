@@ -1,0 +1,95 @@
+{
+  "id": "billy",
+  "name": {
+    "zh-TW": "方竣平",
+    "en": "Billy Fang"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "中央大學室友",
+    "en": "NCU Roommate"
+  },
+  "avatar": "assets/avatars/billy.png",
+  "avatarFallback": "🤠",
+  "zone": "dorm_211",
+  "spawn": {
+    "x": 2.8,
+    "y": 21.6
+  },
+  "nameColor": "#34d399",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#374151",
+    "shirt": "#10b981",
+    "pants": "#1f2937",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "老開的期中考，猜一個IPv4地址",
+          "0.0.0.0"
+        ],
+        [
+          "我不知道啊，有群人一直偷拿我的方塊酥。",
+          "想吃不會自己買喔？"
+        ],
+        [
+          "我不知道啊，有群人一直上我的床。",
+          "下來！"
+        ],
+        [
+          "我真的快中風了！下來！"
+        ],
+        [
+          "欸走拉，吃宵？"
+        ],
+        [
+          "欸走啊，要不要去宵夜街？"
+        ],
+        [
+          "欸走啊，一起去吃傻師傅！"
+        ]
+      ],
+      "en": [
+        [
+          "Lao-Kai's midterm exam score, guess an IPv4 address.",
+          "0.0.0.0"
+        ],
+        [
+          "I have no idea, there is a group of people who keep stealing my wheat square cookies.",
+          "If you wanna eat them, why don't you buy your own?!"
+        ],
+        [
+          "I have no idea, there is a group of people who keep climbing onto my bed.",
+          "Get down!"
+        ],
+        [
+          "I am literally about to have a stroke! Get down!"
+        ],
+        [
+          "Hey let us go, late-night snack run?"
+        ],
+        [
+          "Hey let us go, wanna hit the midnight food street?"
+        ],
+        [
+          "Hey let us go, grab Sha-Shi-Fu dumplings together!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "0.0.0.0……這個梗我還能笑多久？"
+      ],
+      "en": [
+        "0.0.0.0... how long can I keep laughing at that one?"
+      ]
+    }
+  },
+  "visitedZones": [
+    "dorm_211",
+    "plaza"
+  ]
+}

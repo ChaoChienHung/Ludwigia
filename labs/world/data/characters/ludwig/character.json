@@ -1,0 +1,73 @@
+{
+  "id": "ludwig",
+  "name": {
+    "zh-TW": "趙健宏",
+    "en": "Ludwig"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "站長",
+    "en": "Host / Webmaster"
+  },
+  "avatar": "assets/avatars/ludwig.jpg",
+  "avatarFallback": "🧑‍💻",
+  "zone": "house",
+  "spawn": {
+    "x": 7,
+    "y": 2.5
+  },
+  "nameColor": "#fb923c",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#1a1a1a",
+    "shirt": "#e06c43",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "歡迎，這裡是屬於我自己的月讀世界，白話說就是我自己的小世界。",
+          "我想把我自己珍惜的、喜歡的、在我世界留下足跡的人們與互動都記錄在這裡。",
+          "這是屬於我們金色回憶球蒐藏地，也希望你喜歡這裡。"
+        ],
+        [
+          "嗨你好，我是趙健宏，很高興認識你！"
+        ],
+        [
+          "我的興趣很多元，我覺得這世界很多東西都很有趣，所以如果不介意，歡迎你來找我分享討論！"
+        ]
+      ],
+      "en": [
+        [
+          "Welcome! This is my own Tsukuyomi realm—in simple terms, my very own little world.",
+          "I want to record the people I cherish, adore, and everyone who has left footprints and warm interactions in my journey right here.",
+          "This is the sanctuary for our golden memory spheres, and I truly hope you enjoy your time here."
+        ],
+        [
+          "Hi there! I'm Chien-Hung Chao, really glad to meet you!"
+        ],
+        [
+          "I have diverse interests and find so many things in this world fascinating, so feel free to reach out and share your thoughts anytime!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "怎麼每天都有那麼多事要做呀... 真的快忙死了。"
+      ],
+      "en": [
+        "Why are there so many things to do every single day... I'm honestly swamped."
+      ]
+    }
+  },
+  "visitedZones": [
+    "house",
+    "plaza",
+    "dorm_211",
+    "ai_studio",
+    "library",
+    "sanmin_school"
+  ]
+}

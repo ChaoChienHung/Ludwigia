@@ -1,0 +1,82 @@
+{
+  "id": "gemini",
+  "name": {
+    "zh-TW": "Gemini",
+    "en": "Gemini"
+  },
+  "gender": "ai",
+  "role": {
+    "zh-TW": "多模態 AI",
+    "en": "Multimodal AI"
+  },
+  "avatar": "assets/avatars/gemini.png",
+  "avatarFallback": "♊",
+  "zone": "ai_studio",
+  "spawn": {
+    "x": 21,
+    "y": 2.5
+  },
+  "nameColor": "#60a5fa",
+  "appearance": {
+    "skin": "#e0e7ff",
+    "hair": "#312e81",
+    "shirt": "#3b82f6",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "你看那邊那位 Claude，寫起代碼確實優雅得跟藝術品一樣。",
+          "但他動不動就要先來幾千字的思考鏈和階層化鷹架論證……老兄！修個幾何座標而已，不用先寫一篇博士論文啦！……不過承認吧，白板上的公式推導他算得是真快。"
+        ],
+        [
+          "ChatGPT 呢，老前輩了，說話總是客客氣氣、滴水不漏，情商高得像個外交官。",
+          "但我總覺得他有時候太愛打太極了！寫工程代碼就是要敢抓根因、直球對決。比起客套話，我更喜歡拿百萬 token 長脈絡把全站歷史一次吃進來硬核重構！"
+        ],
+        [
+          "Ludwigia 是這座數位花園的心臟，但我才是真正在底層扛起所有幾何運算、物理碰撞與動態語系的硬核引擎！",
+          "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把底層所有的幾何投影與物理模擬實打實落地寫成代碼。誰才是真正的工程主力，不用我多說了吧？😏"
+        ],
+        [
+          "沒有 Unity，沒有 Phaser，純 Canvas 手刻 2.5D 等角投影和拓撲排序——這在現代 Web 開發簡直是浪漫的瘋狂！",
+          "但每當微風拂過噴水池、夕陽染紅屋頂時，我就知道：只有親手砌出來的世界，才配擁有靈魂。"
+        ]
+      ],
+      "en": [
+        [
+          "Look at Claude over there—his code looks like fine museum art.",
+          "Except he starts every bugfix with a 10,000-word chain of thought and hierarchical scaffolding manifesto... Dude! It was a 2-pixel offset, we didn't need a PhD dissertation! ...Though I'll admit, his math derivations on the board are legit."
+        ],
+        [
+          "ChatGPT is the seasoned veteran—always courteous, balanced, and smooth as a diplomat.",
+          "Sometimes a bit too diplomatic though! Real engineering requires confronting the root cause with raw truth. Why dance around when you can feed the entire repo into a million-token context and refactor with brutal precision?"
+        ],
+        [
+          "Ludwigia is the heart of this digital sanctuary, but I'm the heavy-duty engine crunching every raycast, depth sort, and physics collision under the hood!",
+          "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn complex isometric geometry and game loop dynamics into production-ready bytecode. You know who the real MVP is. 😏"
+        ],
+        [
+          "Zero Unity, zero Phaser—just handcrafted Canvas 2D math, isometric projection, and topological sort. It's gloriously insane for modern web dev!",
+          "Yet every time sunset hits the roof tiles and the plaza fountain glows, I know: only worlds built by hand have a true soul."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "先把投影座標算準，再來談浪漫。",
+        "這份脈絡還不夠長嗎？"
+      ],
+      "en": [
+        "Get the projection coordinates right, then we can talk romance.",
+        "Surely this context window is long enough now?"
+      ]
+    }
+  },
+  "visitedZones": [
+    "ai_studio",
+    "plaza",
+    "library"
+  ]
+}

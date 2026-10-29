@@ -1,0 +1,99 @@
+{
+  "id": "clark",
+  "name": {
+    "zh-TW": "吳宥謙",
+    "en": "Clark Wu"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "中央大學室友",
+    "en": "NCU Roommate"
+  },
+  "avatar": "assets/avatars/clark.png",
+  "avatarFallback": "😎",
+  "zone": "dorm_211",
+  "spawn": {
+    "x": 7.3,
+    "y": 19.8
+  },
+  "nameColor": "#38bdf8",
+  "appearance": {
+    "skin": "#f4ceb2",
+    "hair": "#1f2937",
+    "shirt": "#0284c7",
+    "pants": "#334155",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "老開桌上那兩顆火龍果都爛到出汁了...",
+          "超噁...",
+          "兩顆爛掉的火龍果對應兩顆爛掉的期中考。"
+        ],
+        [
+          "老開機統期末考的那個背景... 看得真的很讓人鼻酸，有朱自清的背影的感覺。"
+        ],
+        [
+          "這阿方的方塊酥，你要吃嗎？還滿好吃的。"
+        ],
+        [
+          "阿方的床真的很舒服欸。"
+        ],
+        [
+          "最少我不是最送的。"
+        ],
+        [
+          "阿明都不洗澡... 超噁..."
+        ],
+        [
+          "推薦你認識我朋友吳家維，183/24，成大電機碩士，目前 Google，長得算可愛，談吐得體且風趣，平常無不良嗜好，頂多打戰鬥陀螺，會彈吉他唱歌bass等多項樂器，本人有上進心同情心各種好特質，但有一點小內向但一對一談話沒問題，時常會說笑話或跳一段小舞逗大家開心。"
+        ],
+        [
+          "百寬真的太強了..."
+        ]
+      ],
+      "en": [
+        [
+          "Those two dragon fruits on Lao-Kai's desk rotted until juice leaked out...",
+          "Super gross...",
+          "Two rotten dragon fruits perfectly correspond to two rotten midterm exams."
+        ],
+        [
+          "Lao-Kai's silhouette taking the Probability & Statistics final... looking at it truly brings tears to one's eyes, giving pure Zhu Ziqing's 'Retreating Figure' vibes."
+        ],
+        [
+          "These are Ah-Fang's crispy wheat square cookies, want some? They're actually pretty tasty."
+        ],
+        [
+          "Ah-Fang's bed is seriously so comfy."
+        ],
+        [
+          "At least I am not the one feeding the most."
+        ],
+        [
+          "A-Ming literally never takes a shower... so gross..."
+        ],
+        [
+          "Highly recommend my friend Wu Jia-Wei: 183cm / 24yo, Master's in EE from NCKU, currently at Google, pretty cute, well-spoken and witty! No bad habits (at most plays Beyblade), plays guitar, sings, plays bass and multiple instruments. Ambitious, compassionate, full of great traits. A tiny bit introverted but great one-on-one, and often tells jokes or drops a little dance to make everyone smile!"
+        ],
+        [
+          "Bai-Kuan is seriously way too cracked..."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "那兩顆火龍果是不是又放太久了？"
+      ],
+      "en": [
+        "Those dragon fruits have been sitting there a bit too long."
+      ]
+    }
+  },
+  "visitedZones": [
+    "dorm_211",
+    "plaza"
+  ]
+}

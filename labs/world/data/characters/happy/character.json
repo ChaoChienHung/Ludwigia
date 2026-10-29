@@ -1,0 +1,58 @@
+{
+  "id": "happy",
+  "name": {
+    "zh-TW": "王誠煜",
+    "en": "Happy Wang"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "大學同學",
+    "en": "College Classmate"
+  },
+  "avatar": "😄",
+  "zone": "dorm_211",
+  "spawn": {
+    "x": 2.1,
+    "y": 19.8
+  },
+  "nameColor": "#fb923c",
+  "appearance": {
+    "skin": "#fbe2d0",
+    "hair": "#1e293b",
+    "shirt": "#f97316",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "我感覺還能再打一下，我們拖到後期能贏。"
+        ],
+        [
+          "好啊都這樣啊，那我走。"
+        ]
+      ],
+      "en": [
+        [
+          "I feel like we can keep playing, we can win if we drag it to the late game."
+        ],
+        [
+          "Fine, if that's how it's gonna be, I'm out."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "等我一下，我想一下這裡為什麼會有問題。"
+      ],
+      "en": [
+        "Hold on, let me think about why there's an issue here."
+      ]
+    }
+  },
+  "visitedZones": [
+    "dorm_211",
+    "plaza"
+  ]
+}

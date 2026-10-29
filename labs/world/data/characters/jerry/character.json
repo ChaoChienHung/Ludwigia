@@ -1,0 +1,52 @@
+{
+  "id": "jerry",
+  "name": {
+    "zh-TW": "鍾昊哲",
+    "en": "Jerry Chung"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "中央大學室友",
+    "en": "NCU Roommate"
+  },
+  "avatar": "🎧",
+  "zone": "dorm_211",
+  "spawn": {
+    "x": 7.3,
+    "y": 23.6
+  },
+  "nameColor": "#c084fc",
+  "appearance": {
+    "skin": "#e5b38f",
+    "hair": "#111827",
+    "shirt": "#8b5cf6",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "台北是我家後花園。"
+        ]
+      ],
+      "en": [
+        [
+          "Taipei is basically my backyard."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "台北這條路我閉著眼都認得。"
+      ],
+      "en": [
+        "I could find this Taipei street with my eyes closed."
+      ]
+    }
+  },
+  "visitedZones": [
+    "dorm_211",
+    "plaza"
+  ]
+}

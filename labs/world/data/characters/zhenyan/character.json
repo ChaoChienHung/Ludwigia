@@ -1,0 +1,68 @@
+{
+  "id": "zhenyan",
+  "name": {
+    "zh-TW": "凌振嚴",
+    "en": "Zhen Yan Lin"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "國中同學",
+    "en": "Junior High Classmate"
+  },
+  "avatar": "🎒",
+  "zone": "sanmin_school",
+  "spawn": {
+    "x": 3.2,
+    "y": 36.4
+  },
+  "nameColor": "#38bdf8",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#1e1b18",
+    "shirt": "#0284c7",
+    "pants": "#334155",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "這週六去你家喔",
+          "沒差啊，反正我會一直按你家門鈴"
+        ],
+        [
+          "5點15分了喔？我要趕回去倒垃圾了！"
+        ],
+        [
+          "大哥別鬧拉……"
+        ]
+      ],
+      "en": [
+        [
+          "Heading over to your place this Saturday.",
+          "Doesn't matter, I'll just keep ringing your doorbell anyway."
+        ],
+        [
+          "Is it 5:15 already?! I gotta rush home to take out the trash!"
+        ],
+        [
+          "Bro, don't mess around..."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "今天要不要打？",
+        "5點15了喔？我要趕回去倒垃圾了！"
+      ],
+      "en": [
+        "Wanna play today?",
+        "Is it 5:15 already?! Gotta rush home to take out the trash!"
+      ]
+    }
+  },
+  "visitedZones": [
+    "sanmin_school",
+    "plaza"
+  ]
+}

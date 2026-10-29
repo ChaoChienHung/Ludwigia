@@ -1,0 +1,51 @@
+{
+  "id": "weihao",
+  "name": {
+    "zh-TW": "徐偉豪",
+    "en": "Weihao Xu"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "抖音實習生同事",
+    "en": "Douyin Intern Colleague"
+  },
+  "avatar": "🧋",
+  "zone": "douyin_office",
+  "spawn": {
+    "x": 20.5,
+    "y": 40.5
+  },
+  "nameColor": "#818cf8",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#1e1b18",
+    "shirt": "#4f46e5",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "好煩呀，我答辯都不知道要講啥，沒啥可以講的內容呀！"
+        ]
+      ],
+      "en": [
+        [
+          "So annoying, I have no idea what to say for my defense, there's basically nothing to talk about!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "答辯簡報……第一頁到底要怎麼開場？"
+      ],
+      "en": [
+        "The defense slides... how do I open the first page?"
+      ]
+    }
+  },
+  "visitedZones": [
+    "douyin_office"
+  ]
+}

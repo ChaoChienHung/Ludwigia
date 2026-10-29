@@ -1,0 +1,52 @@
+{
+  "id": "benny",
+  "name": {
+    "zh-TW": "賴柏廷",
+    "en": "Benny Lai"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "高中同學",
+    "en": "High School Classmate"
+  },
+  "avatar": "🏃",
+  "zone": "sanmin_school",
+  "spawn": {
+    "x": 7.4,
+    "y": 38
+  },
+  "nameColor": "#a78bfa",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#1c1917",
+    "shirt": "#0284c7",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "I have a pen, I have an apple. Uh! Apple pen!"
+        ]
+      ],
+      "en": [
+        [
+          "I have a pen, I have an apple. Uh! Apple pen!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "Apple pen……這首歌又卡在腦袋裡了。"
+      ],
+      "en": [
+        "Apple pen... that song is stuck in my head again."
+      ]
+    }
+  },
+  "visitedZones": [
+    "sanmin_school",
+    "plaza"
+  ]
+}

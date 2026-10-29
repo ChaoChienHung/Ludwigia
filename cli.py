@@ -120,6 +120,13 @@ def cmd_index(_: argparse.Namespace) -> None:
     _run([sys.executable, os.path.join("search", "indexer.py")])
 
 
+def cmd_build_world(args: argparse.Namespace) -> None:
+    argv = [sys.executable, os.path.join("tools", "build_world_data.py")]
+    if getattr(args, "check", False):
+        argv.append("--check")
+    _run(argv)
+
+
 def cmd_test(_: argparse.Namespace) -> None:
     _run([sys.executable, "tools/create_content.py", "--self-test"])
     _run([sys.executable, "-m", "unittest"])
@@ -343,6 +350,10 @@ def main() -> None:
     p_scan_information.add_argument("source")
     p_scan_information.add_argument("--json", action="store_true")
     p_scan_information.set_defaults(func=cmd_scan_information)
+
+    p_build_world = sub.add_parser("build-world")
+    p_build_world.add_argument("--check", action="store_true")
+    p_build_world.set_defaults(func=cmd_build_world)
 
     args = parser.parse_args()
     args.func(args)

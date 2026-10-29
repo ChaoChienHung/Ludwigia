@@ -63,6 +63,13 @@ class WorldDataContractTests(unittest.TestCase):
             user_lines = characters[char_id]["dialogues"]["user"]["zh-TW"]
             self.assertNotIn(phrase, [line for sequence in user_lines for line in sequence])
 
+    def test_world_data_bundle_is_up_to_date(self):
+        from tools.build_world_data import compile_world_data
+        compiled = compile_world_data()
+        current = (ROOT / "labs/world/data/characters.json").read_text(encoding="utf-8")
+        self.assertEqual(compiled, current,
+                         "characters.json is out of date with characters/ and interactions/. Run 'python3 tools/build_world_data.py'")
+
 
 if __name__ == "__main__":
     unittest.main()

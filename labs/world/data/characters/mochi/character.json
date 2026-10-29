@@ -1,0 +1,73 @@
+{
+  "id": "mochi",
+  "name": {
+    "zh-TW": "餅餅 (Mochi)",
+    "en": "Mochi"
+  },
+  "gender": "cat",
+  "role": {
+    "zh-TW": "工作室貓咪",
+    "en": "Studio Cat"
+  },
+  "avatar": "🐱",
+  "zone": "house",
+  "spawn": {
+    "x": 4,
+    "y": 5.2
+  },
+  "nameColor": "#fbbf24",
+  "appearance": {
+    "isCat": true
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "喵嗚～ 🐾 *優雅地蹭了蹭你的小腿，發出呼嚕呼嚕的療癒聲音* 💕"
+        ],
+        [
+          "喵～ *瞇著眼睛伸了個長長的懶腰，把前爪縮成一個小麵包* 🥐"
+        ],
+        [
+          "喵嗚！🐾 *用毛茸茸的尾巴輕輕掃過你的腳背，水汪汪的大眼睛看著你*"
+        ],
+        [
+          "咕嚕咕嚕咕嚕... *在柔軟的客廳地毯上翻滾露出軟萌的小肚子* ✨"
+        ],
+        [
+          "喵～ *跳上沙發扶手，專注地盯著窗外飄落的櫻花花瓣* 🌸"
+        ]
+      ],
+      "en": [
+        [
+          "Meow~ 🐾 *rubs gently against your ankle, purring with warm affection* 💕"
+        ],
+        [
+          "Mrow~ *stretches lazily and tucks its paws into a cozy little loaf* 🥐"
+        ],
+        [
+          "Meow! 🐾 *swishes fluffy tail and looks up at you with sparkling golden eyes*"
+        ],
+        [
+          "Purr-purr-purr... *rolls over on the warm living room rug showing a soft belly* ✨"
+        ],
+        [
+          "Mew~ *leaps onto the sofa armrest, watching cherry blossom petals drift by* 🌸"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "喵～這個位置曬太陽剛剛好。"
+      ],
+      "en": [
+        "Meow~ This is the perfect sunny spot."
+      ]
+    }
+  },
+  "visitedZones": [
+    "house",
+    "plaza",
+    "library"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "bohan",
+  "name": {
+    "zh-TW": "吳柏翰",
+    "en": "Bo Han Wu"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "大學同學",
+    "en": "College Classmate"
+  },
+  "avatar": "📚",
+  "zone": "dorm_211",
+  "spawn": {
+    "x": 5.8,
+    "y": 21.6
+  },
+  "nameColor": "#a5b4fc",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#1e1b18",
+    "shirt": "#6366f1",
+    "pants": "#334155",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "阿方在房間嗎？那我要去上他的床。"
+        ],
+        [
+          "幹麻那麼小氣，你的床就是大家的床啊，一起躺嘛。"
+        ]
+      ],
+      "en": [
+        [
+          "Is Ah-Fang in the room? Then I am gonna go climb onto his bed."
+        ],
+        [
+          "Why be so stingy? Your bed is everyone's bed, let's just crash together!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "阿方的床真的很舒服。",
+        "別來沾邊，死得很快"
+      ],
+      "en": [
+        "Ah-Fang's bed is really comfortable.",
+        "Don't cross me, you won't last long."
+      ]
+    }
+  },
+  "visitedZones": [
+    "dorm_211",
+    "library",
+    "plaza"
+  ]
+}

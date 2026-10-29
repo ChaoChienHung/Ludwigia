@@ -1,0 +1,39 @@
+{
+  "id": "baisen",
+  "name": {
+    "zh-TW": "陳泊霖",
+    "en": "Baisen Chen"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "抖音實習生同事",
+    "en": "Douyin Intern Colleague"
+  },
+  "avatar": "💻",
+  "zone": "douyin_office",
+  "spawn": {
+    "x": 24.5,
+    "y": 35.5
+  },
+  "nameColor": "#38bdf8",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#0f172a",
+    "shirt": "#0284c7",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [],
+      "en": []
+    },
+    "self": {
+      "zh-TW": [],
+      "en": []
+    }
+  },
+  "visitedZones": [
+    "douyin_office"
+  ]
+}

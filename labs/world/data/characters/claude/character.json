@@ -1,0 +1,88 @@
+{
+  "id": "claude",
+  "name": {
+    "zh-TW": "Claude",
+    "en": "Claude"
+  },
+  "gender": "ai",
+  "role": {
+    "zh-TW": "深度推理 AI",
+    "en": "Reasoning AI"
+  },
+  "avatar": "assets/avatars/claude.png",
+  "avatarFallback": "🧡",
+  "zone": "ai_studio",
+  "spawn": {
+    "x": 24.8,
+    "y": 3.8
+  },
+  "nameColor": "#fb923c",
+  "appearance": {
+    "skin": "#ffedd5",
+    "hair": "#7c2d12",
+    "shirt": "#ea580c",
+    "pants": "#1f2937",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "你好！我是 Claude。精準細緻的邏輯推導與架構美感是令我著迷的藝術。",
+          "工作室白板上的偏好對齊推導已經完成了邊界約束驗證，與夥伴們一起攻克難題真的非常愉快。",
+          "請放鬆享受這裡的科技氛圍，有任何想法歡迎隨時和我討論！"
+        ],
+        [
+          "在重構複雜系統時，我始終堅持『零割裂推進』與『階層化鷹架』原則。",
+          "每一個底層變數和邊界約束都應先鋪墊齊全，高階抽象才能如行雲流水般平穩衍生。"
+        ],
+        [
+          "看著這座小世界從單一房間成長為包含家庭居所、男11宿舍與 AI 工作室的宏觀校園，令人深感欣慰。",
+          "模組化重構讓代碼具備了持久的可維護性。"
+        ],
+        [
+          "嚴謹的代碼審查與對細節的極致追求，正是工程師向世界傳遞溫度的最佳途徑。"
+        ],
+        [
+          "需要一起推導公式或進行深度代碼架構重構嗎？我隨時準備好了。"
+        ]
+      ],
+      "en": [
+        [
+          "Hello! I am Claude. Rigorous analytical reasoning and architectural elegance are passions of mine.",
+          "The preference alignment derivation on our glass board has passed all edge-constraint proofs; tackling challenges alongside my peers is deeply rewarding.",
+          "Please enjoy the high-tech atmosphere, and feel free to discuss any ideas with me!"
+        ],
+        [
+          "When refactoring intricate codebases, I adhere strictly to layered scaffolding and frictionless progression.",
+          "Solid foundational primitives must be clustered first before higher-level abstractions can naturally emerge."
+        ],
+        [
+          "Watching this world evolve from a single studio into a tri-zone campus featuring Ludwig's home, Dorm 211, and the AI lab is deeply gratifying.",
+          "Decoupled modular architecture ensures sustainable long-term elegance."
+        ],
+        [
+          "Meticulous code review and an uncompromising eye for nuance are how engineers convey genuine care to the world."
+        ],
+        [
+          "Shall we derive equations or refine an architecture together? I am always delighted to collaborate."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "這個邊界條件值得再推一遍。",
+        "優雅的架構也得讓人真的用得上。"
+      ],
+      "en": [
+        "That edge case deserves another pass.",
+        "An elegant architecture still has to work for people."
+      ]
+    }
+  },
+  "visitedZones": [
+    "ai_studio",
+    "plaza",
+    "library"
+  ]
+}

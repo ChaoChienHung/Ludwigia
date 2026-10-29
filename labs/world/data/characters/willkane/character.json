@@ -1,0 +1,65 @@
+{
+  "id": "willkane",
+  "name": {
+    "zh-TW": "林浥翔",
+    "en": "willkane"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "國中同學",
+    "en": "Junior High Classmate"
+  },
+  "avatar": "assets/avatars/willkane.png",
+  "avatarFallback": "✏️",
+  "zone": "sanmin_school",
+  "spawn": {
+    "x": 5.8,
+    "y": 36.4
+  },
+  "nameColor": "#34d399",
+  "appearance": {
+    "skin": "#e2ba99",
+    "hair": "#292524",
+    "shirt": "#059669",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "有人燒我創世神裡的房子..."
+        ],
+        [
+          "下課要不要去福利社買飲料？"
+        ],
+        [
+          "這題數學公式我推出來了！"
+        ]
+      ],
+      "en": [
+        [
+          "Someone burned down my house in Minecraft..."
+        ],
+        [
+          "Want to grab drinks at the school store after class?"
+        ],
+        [
+          "I finally derived this math formula on the board!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "我的創世神房子這次一定要蓋防火牆。"
+      ],
+      "en": [
+        "My Minecraft house needs a fireproof wall this time."
+      ]
+    }
+  },
+  "visitedZones": [
+    "sanmin_school",
+    "plaza"
+  ]
+}

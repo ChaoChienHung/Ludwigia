@@ -1,0 +1,63 @@
+{
+  "id": "haolei",
+  "name": {
+    "zh-TW": "裴皓磊",
+    "en": "Haolei Pei"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "抖音實習 Mentor",
+    "en": "Douyin Internship Mentor"
+  },
+  "avatar": "🚀",
+  "zone": "douyin_office",
+  "spawn": {
+    "x": 21,
+    "y": 35.5
+  },
+  "nameColor": "#818cf8",
+  "appearance": {
+    "skin": "#e2ba99",
+    "hair": "#0f172a",
+    "shirt": "#4338ca",
+    "pants": "#1f2937",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "我們晚點對一對？"
+        ],
+        [
+          "我感覺不對呀，應該有根因沒查出來……"
+        ],
+        [
+          "太帥了！"
+        ]
+      ],
+      "en": [
+        [
+          "Let us sync up later?"
+        ],
+        [
+          "Something feels off, there must be a root cause we have not uncovered yet..."
+        ],
+        [
+          "That is awesome!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "明天上線前還要再對一次指標。"
+      ],
+      "en": [
+        "One more metrics check before tomorrow’s release."
+      ]
+    }
+  },
+  "visitedZones": [
+    "douyin_office"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "wuyen",
+  "name": {
+    "zh-TW": "趙武彥",
+    "en": "Wu Yen Chao"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "爸爸",
+    "en": "Dad"
+  },
+  "avatar": "👨",
+  "zone": "house",
+  "spawn": {
+    "x": 2.5,
+    "y": 7
+  },
+  "nameColor": "#38bdf8",
+  "appearance": {
+    "skin": "#dfb798",
+    "hair": "#334155",
+    "shirt": "#3b82f6",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "早安！"
+        ],
+        [
+          "我去公園走走。"
+        ],
+        [
+          "我去公園下棋。"
+        ],
+        [
+          "要去吃飯了嗎？"
+        ],
+        [
+          "等等要出去送貨。"
+        ]
+      ],
+      "en": [
+        [
+          "Good morning!"
+        ],
+        [
+          "I'm heading out to the park for a stroll."
+        ],
+        [
+          "I'm heading to the park to play chess."
+        ],
+        [
+          "Heading out to eat?"
+        ],
+        [
+          "I need to head out and make a delivery in a bit."
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "等等去公園走走。"
+      ],
+      "en": [
+        "Heading to the park for a stroll in a bit."
+      ]
+    }
+  },
+  "visitedZones": [
+    "house",
+    "plaza",
+    "ai_studio",
+    "library"
+  ]
+}

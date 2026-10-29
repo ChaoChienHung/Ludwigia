@@ -1,0 +1,64 @@
+{
+  "id": "chunlong",
+  "name": {
+    "zh-TW": "陳俊龍",
+    "en": "Chun Long Chen"
+  },
+  "gender": "male",
+  "role": {
+    "zh-TW": "高中同學",
+    "en": "High School Classmate"
+  },
+  "avatar": "🏀",
+  "zone": "sanmin_school",
+  "spawn": {
+    "x": 1.6,
+    "y": 38
+  },
+  "nameColor": "#60a5fa",
+  "appearance": {
+    "skin": "#f5d0b5",
+    "hair": "#18181b",
+    "shirt": "#2563eb",
+    "pants": "#1e293b",
+    "hairStyle": 0
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "生日快樂呀！"
+        ],
+        [
+          "放學要不要去打球？"
+        ],
+        [
+          "今天午餐吃什麼？便當要冷掉了啦！"
+        ]
+      ],
+      "en": [
+        [
+          "Happy birthday!"
+        ],
+        [
+          "Wanna go play ball after school?"
+        ],
+        [
+          "What are we having for lunch today? The lunchbox is getting cold!"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "今天教室也太安靜了吧。"
+      ],
+      "en": [
+        "The classroom is unusually quiet today."
+      ]
+    }
+  },
+  "visitedZones": [
+    "sanmin_school",
+    "plaza"
+  ]
+}
