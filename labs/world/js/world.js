@@ -217,18 +217,21 @@
         this.nav.setBlock(trunkX, trunkY, 1, 1, true);
       });
 
-      // 7. Campus Basketball Court Obstacles (West x: 1..8, y: 27..32)
-      this.nav.setBlock(1.0, 29.2, 0.65, 0.70, true); // Basketball Hoop Base
-      this.nav.setBlock(7.2, 27.2, 0.45, 0.90, true); // Ball Rack
-      this.nav.setBlock(4.0, 26.8, 1.60, 0.65, true); // Bench
+      // 7. Campus Basketball Court Obstacles (West x: 1..11, y: 24..33)
+      this.nav.setBlock(1.0, 27.8, 0.65, 0.70, true); // Basketball Hoop Base
+      this.nav.setBlock(7.5, 24.5, 0.45, 0.90, true); // Ball Rack
+      this.nav.setBlock(4.5, 24.2, 1.60, 0.65, true); // Player Bench
 
-      // 8. Midnight Snack Street Obstacles (Central/East x: 10..23, y: 27..32)
-      this.nav.setBlock(16.2, 27.2, 1.50, 0.85, true); // Fried Chicken Stall
-      this.nav.setBlock(20.2, 27.2, 1.50, 0.85, true); // Boba Tea Stall
-      this.nav.setBlock(16.2, 30.8, 1.50, 0.85, true); // Luwei Cart
-      this.nav.setBlock(20.2, 30.8, 1.10, 1.10, true); // Table & Stools
-      this.nav.setBlock(10.0, 28.5, 0.35, 0.35, true); // Archway Left Pillar
-      this.nav.setBlock(12.8, 28.5, 0.35, 0.35, true); // Archway Right Pillar
+      // 8. Midnight Snack Street Obstacles (East Wing x: 28..38, y: 22..36)
+      this.nav.setBlock(28.5, 23.2, 0.35, 0.35, true); // Archway Left Pillar
+      this.nav.setBlock(31.2, 23.2, 0.35, 0.35, true); // Archway Right Pillar
+      this.nav.setBlock(35.0, 24.5, 1.50, 0.85, true); // Fried Chicken Stall
+      this.nav.setBlock(35.0, 28.5, 1.50, 0.85, true); // Boba Tea Stall
+      this.nav.setBlock(35.0, 32.5, 1.50, 0.85, true); // Shaved Ice Stall
+      this.nav.setBlock(29.0, 26.5, 1.50, 0.85, true); // Luwei Stall
+      this.nav.setBlock(29.0, 30.5, 1.50, 0.85, true); // Yakitori Skewers Stall
+      this.nav.setBlock(32.0, 27.5, 1.10, 1.10, true); // Table & Stools 1
+      this.nav.setBlock(32.0, 31.5, 1.10, 1.10, true); // Table & Stools 2
 
       // 9. South Boulevard Twin Streetlights & Signpost
       this.nav.setBlock(11.2, 42.4, 0.35, 0.35, true); // Streetlight Left
@@ -520,11 +523,11 @@
         currentZone = 'douyin_office';
         isInsideAnyHouse = true;
         statusMessage = "Douyin Office • 抖音演算法研發辦公室";
-      } else if (checkZone('basketball_court', 0.8, 8.8, 26.6, 32.8)) {
+      } else if (checkZone('basketball_court', 0.8, 11.2, 23.5, 33.5)) {
         currentZone = 'basketball_court';
         isInsideAnyHouse = false;
-        statusMessage = "Campus Basketball Court • 青春熱血的街頭籃球場 🏀";
-      } else if (checkZone('night_market', 9.5, 23.5, 26.6, 32.8)) {
+        statusMessage = "Campus Basketball Court • 青春熱血的陽光運動場 🏀";
+      } else if (checkZone('night_market', 27.5, 38.5, 21.5, 37.0)) {
         currentZone = 'night_market';
         isInsideAnyHouse = false;
         statusMessage = "Midnight Snack Street • 燈火通明的深夜宵夜街 🏮";
@@ -963,21 +966,24 @@
               ];
 
               const basketballAnchors = [
-                { x: 3.5, y: 29.5 }, // Free Throw Line
-                { x: 5.5, y: 29.5 }, // Top of Three-Point Key
-                { x: 2.2, y: 29.5 }, // Layup Under Basket
-                { x: 4.8, y: 31.2 }, // Right Wing Three-Point Corner
-                { x: 4.8, y: 27.8 }, // Left Wing Three-Point Corner
-                { x: 5.0, y: 27.2 }  // Sideline Bench Area
+                { x: 5.5, y: 28.5 }, // Top of the Key
+                { x: 4.0, y: 28.5 }, // Free Throw Line
+                { x: 2.2, y: 28.5 }, // Under the West Hoop
+                { x: 8.5, y: 28.5 }, // Right Half-Court
+                { x: 6.0, y: 26.0 }, // Left Wing Three-Point Corner
+                { x: 6.0, y: 31.0 }, // Right Wing Corner
+                { x: 5.0, y: 25.2 }  // Sideline Team Bench Area
               ];
 
               const nightMarketAnchors = [
-                { x: 17.0, y: 28.5 }, // Ordering at Fried Chicken Stall
-                { x: 21.0, y: 28.5 }, // Waiting for Boba Milk Tea
-                { x: 17.0, y: 30.0 }, // Sampling Warm Luwei Broth
-                { x: 21.0, y: 30.0 }, // Seated at Red Stool Round Table
-                { x: 14.5, y: 29.5 }, // Strolling along Midnight Street Center
-                { x: 11.5, y: 29.5 }  // Entering through Night Market Archway
+                { x: 34.0, y: 25.5 }, // Ordering at Fried Chicken Stall
+                { x: 34.0, y: 29.5 }, // Waiting for Boba Milk Tea
+                { x: 30.8, y: 27.5 }, // Sampling Warm Luwei Broth
+                { x: 30.8, y: 31.5 }, // Snacking at Skewers Cart
+                { x: 32.5, y: 28.5 }, // Seated at Red Stool Round Table 1
+                { x: 32.5, y: 32.5 }, // Seated at Red Stool Round Table 2
+                { x: 33.0, y: 34.5 }, // Enjoying Fresh Mango Shaved Ice
+                { x: 30.0, y: 24.5 }  // Entering through Night Market Archway
               ];
 
               const cafeAnchors = [
@@ -1132,19 +1138,20 @@
           const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
           const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
           const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
-          const isBasketball = (x >= 1 && x <= 8 && y >= 27 && y <= 32);
-          const isNightMarket = (x >= 10 && x <= 23 && y >= 27 && y <= 32);
+          const isBasketball = (x >= 1 && x <= 10 && y >= 24 && y <= 33);
+          const isNightMarket = (x >= 28 && x <= 37 && y >= 22 && y <= 36);
           const isCafe = (x >= 19 && x <= 26 && y >= 10 && y <= 16);
           const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
           const isAbyssBridge = (x >= 13 && x <= 25 && y >= 45 && y <= 56);
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber;
 
-          // Cobblestone Pathways connecting doorways, central plaza, south sector and cyber/abyss
+          // Cobblestone Pathways connecting doorways, central plaza, south sector, night market and cyber/abyss
           const isPath = (
             (x >= 10 && x <= 11 && y >= 4 && y <= 39) ||
             (y >= 5 && y <= 6 && x >= 10 && x <= 19) ||
             (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
             (y >= 20 && y <= 22 && x >= 10 && x <= 19) ||
+            (y >= 27 && y <= 29 && x >= 10 && x <= 28) || // Pathway directly connecting Central Plaza to East Night Market!
             (y >= 36 && y <= 38 && x >= 10 && x <= 19) ||
             (x >= 5 && x <= 14 && y >= 42 && y <= 45)  // South avenue connector into Cyber & Abyss
           );
@@ -1183,15 +1190,20 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
           } else if (isBasketball) {
             // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf
-            const isKey = (x >= 1 && x <= 4 && y >= 28 && y <= 30);
+            const isKey = (x >= 1 && x <= 4 && y >= 27 && y <= 30);
             if (isKey) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
             } else {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#15803d' : '#166534';
             }
           } else if (isNightMarket) {
-            // Midnight Snack Street — Midnight Slate Cobblestones
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
+            // Midnight Snack Street — Midnight Slate Cobblestones & Festive Red Curbs
+            const isCurb = (x === 28 || x === 37);
+            if (isCurb) {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
+            } else {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
+            }
           } else if (isCafe) {
             // Botanical Garden Cafe — Warm Cedar Outdoor Decking
             ctx.fillStyle = (x + y) % 2 === 0 ? '#b45309' : '#92400e';
@@ -2448,64 +2460,74 @@
         });
       });
 
-      // === 8. CAMPUS BASKETBALL COURT (West Sector x: 1..8, y: 27..32) ===
+      // === 8. CAMPUS BASKETBALL COURT (West Sector x: 1..11, y: 24..33) ===
       // Basketball Hoop (Positioned at West boundary line facing east towards court)
       list.push({
-        xMin: 1.0, xMax: 2.4, yMin: 29.0, yMax: 30.2,
-        draw: () => this.models.drawBasketballHoop(this.ctx, 1.0, 29.2, ox, oy)
+        xMin: 1.0, xMax: 2.4, yMin: 27.6, yMax: 28.8,
+        draw: () => this.models.drawBasketballHoop(this.ctx, 1.0, 27.8, ox, oy)
       });
 
       // Metallic Ball Rack with Spalding Basketballs
       list.push({
-        xMin: 7.2, xMax: 7.8, yMin: 27.2, yMax: 28.2,
-        draw: () => this.models.drawBasketballRack(this.ctx, 7.2, 27.2, ox, oy)
+        xMin: 7.5, xMax: 8.1, yMin: 24.5, yMax: 25.5,
+        draw: () => this.models.drawBasketballRack(this.ctx, 7.5, 24.5, ox, oy)
       });
 
       // Court Sideline Rest Bench
       list.push({
-        xMin: 4.0, xMax: 5.6, yMin: 26.8, yMax: 27.5,
-        draw: () => this.models.drawParkBench(this.ctx, 4.0, 26.8, ox, oy)
+        xMin: 4.5, xMax: 6.1, yMin: 24.2, yMax: 24.9,
+        draw: () => this.models.drawParkBench(this.ctx, 4.5, 24.2, ox, oy)
       });
 
-      // === 9. MIDNIGHT SNACK STREET (Central/East Sector x: 10..23, y: 27..32) ===
+      // === 9. MIDNIGHT SNACK STREET (East Wing Sector x: 28..38, y: 22..36) ===
       // Entrance Archway "🏮 宵夜街 • MIDNIGHT SNACK HUB 🏮"
       list.push({
-        xMin: 10.0, xMax: 13.2, yMin: 28.2, yMax: 28.8,
-        draw: () => this.models.drawNightMarketArch(this.ctx, 10.0, 28.4, ox, oy)
+        xMin: 28.5, xMax: 31.8, yMin: 23.0, yMax: 23.8,
+        draw: () => this.models.drawNightMarketArch(this.ctx, 28.5, 23.2, ox, oy)
       });
 
-      // Stall 1: Taiwanese Fried Chicken & Salt Crispy Chicken (North row)
+      // Stall 1: Taiwanese Fried Chicken & Salt Crispy Chicken (East row)
       list.push({
-        xMin: 16.0, xMax: 17.6, yMin: 27.2, yMax: 28.2,
-        draw: () => this.models.drawSnackStallFriedChicken(this.ctx, 16.0, 27.2, ox, oy)
+        xMin: 35.0, xMax: 36.6, yMin: 24.5, yMax: 25.5,
+        draw: () => this.models.drawSnackStallFriedChicken(this.ctx, 35.0, 24.5, ox, oy)
       });
 
-      // Stall 2: Boba Milk Tea & Fresh Brew Hub (North row)
+      // Stall 2: Boba Milk Tea & Fresh Brew Hub (East row)
       list.push({
-        xMin: 20.0, xMax: 21.6, yMin: 27.2, yMax: 28.2,
-        draw: () => this.models.drawSnackStallBobaTea(this.ctx, 20.0, 27.2, ox, oy)
+        xMin: 35.0, xMax: 36.6, yMin: 28.5, yMax: 29.5,
+        draw: () => this.models.drawSnackStallBobaTea(this.ctx, 35.0, 28.5, ox, oy)
       });
 
-      // Stall 3: Steaming Luwei & Oden Cart (South row)
+      // Stall 3: Steaming Luwei & Oden Cart (West row)
       list.push({
-        xMin: 16.0, xMax: 17.6, yMin: 30.8, yMax: 31.8,
-        draw: () => this.models.drawSnackStallLuwei(this.ctx, 16.0, 30.8, ox, oy)
+        xMin: 29.0, xMax: 30.6, yMin: 26.5, yMax: 27.5,
+        draw: () => this.models.drawSnackStallLuwei(this.ctx, 29.0, 26.5, ox, oy)
       });
 
-      // Stall 4: Street Corner Foldable Table & Iconic Red Plastic Stools (South row)
+      // Stall 4: Street Corner Foldable Table & Iconic Red Plastic Stools 1 (Center aisle)
       list.push({
-        xMin: 20.0, xMax: 21.2, yMin: 30.8, yMax: 31.8,
-        draw: () => this.models.drawNightMarketTable(this.ctx, 20.0, 30.8, ox, oy)
+        xMin: 32.0, xMax: 33.2, yMin: 27.5, yMax: 28.5,
+        draw: () => this.models.drawNightMarketTable(this.ctx, 32.0, 27.5, ox, oy)
       });
 
-      // Overhead Hanging Fairy Lights Strand (North & South overhead lines)
+      // Stall 5: Street Corner Foldable Table & Iconic Red Plastic Stools 2 (Center aisle)
       list.push({
-        xMin: 14.0, xMax: 22.0, yMin: 27.4, yMax: 27.6,
-        draw: () => this.models.drawFairyLights(this.ctx, 14.0, 27.5, 2.7, 22.5, 27.5, 2.7, ox, oy)
+        xMin: 32.0, xMax: 33.2, yMin: 31.5, yMax: 32.5,
+        draw: () => this.models.drawNightMarketTable(this.ctx, 32.0, 31.5, ox, oy)
+      });
+
+      // Overhead Hanging Fairy Lights Strands across East Night Market
+      list.push({
+        xMin: 29.0, xMax: 36.5, yMin: 25.4, yMax: 25.6,
+        draw: () => this.models.drawFairyLights(this.ctx, 29.0, 25.5, 2.7, 36.5, 25.5, 2.7, ox, oy)
       });
       list.push({
-        xMin: 14.0, xMax: 22.0, yMin: 31.4, yMax: 31.6,
-        draw: () => this.models.drawFairyLights(this.ctx, 14.0, 31.5, 2.7, 22.5, 31.5, 2.7, ox, oy)
+        xMin: 29.0, xMax: 36.5, yMin: 29.4, yMax: 29.6,
+        draw: () => this.models.drawFairyLights(this.ctx, 29.0, 29.5, 2.7, 36.5, 29.5, 2.7, ox, oy)
+      });
+      list.push({
+        xMin: 29.0, xMax: 36.5, yMin: 33.4, yMax: 33.6,
+        draw: () => this.models.drawFairyLights(this.ctx, 29.0, 33.5, 2.7, 36.5, 33.5, 2.7, ox, oy)
       });
 
       // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (y: 42..43) ===
@@ -2525,9 +2547,9 @@
       // === 11. PERIMETER GREEN HEDGES (Framing Outer Boundaries) ===
       const hedges = [
         { gx: 12.0, gy: 0.2, lx: 4.0, ly: 0.6 },  // North Plaza Garden Edge
-        { gx: 27.2, gy: 11.0, lx: 0.6, ly: 5.0 }, // East Central Lawn Border
-        { gx: 0.2,  gy: 27.0, lx: 0.6, ly: 6.0 }, // Basketball Court West Fence
-        { gx: 27.2, gy: 27.0, lx: 0.6, ly: 6.0 }  // Night Market East Border
+        { gx: 27.2, gy: 11.0, lx: 0.6, ly: 5.0 }, // Central Lawn Border
+        { gx: 0.2,  gy: 24.0, lx: 0.6, ly: 9.5 }, // Basketball Court West Fence
+        { gx: 37.2, gy: 22.0, lx: 0.6, ly: 14.5 } // Night Market East Border
       ];
       hedges.forEach(h => {
         list.push({

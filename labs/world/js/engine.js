@@ -8,7 +8,7 @@
   // --- Map & Projection Constants ---
   const TW = 64; // Isometric tile width
   const TH = 32; // Isometric tile height
-  const MAP_W = 28; // World map width
+  const MAP_W = 38; // World map width (expanded to 38 for spacious East Midnight Snack District)
   const MAP_H = 58; // World map height (expanded for Esports Cyber Cafe & Howling Abyss)
 
   // --- Building Zone Coordinates ---
