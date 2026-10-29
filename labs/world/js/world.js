@@ -261,16 +261,23 @@
     }
 
     initParticles() {
-      for (let i = 0; i < 45; i++) {
+      const dreamColors = [
+        'rgba(251, 207, 232, 0.85)', // Pastel cherry blossom
+        'rgba(244, 114, 182, 0.78)', // Dream pink petal
+        'rgba(253, 164, 175, 0.80)', // Soft rose glow
+        'rgba(249, 168, 212, 0.75)', // Ethereal blush
+        'rgba(224, 231, 255, 0.65)'  // Starlight pearl
+      ];
+      for (let i = 0; i < 65; i++) {
         this.particles.push({
-          x: 9 + Math.random() * 16,
-          y: 1 + Math.random() * 41,
-          z: 1 + Math.random() * 2.8,
-          vz: -0.012 - Math.random() * 0.02,
-          vx: 0.01 + Math.random() * 0.02,
-          vy: 0.005 + Math.random() * 0.015,
-          color: Math.random() > 0.45 ? 'rgba(251, 207, 232, 0.75)' : 'rgba(186, 230, 253, 0.65)',
-          size: 2 + Math.random() * 2.5
+          x: 1 + Math.random() * 26,
+          y: 1 + Math.random() * 56,
+          z: 0.5 + Math.random() * 3.2,
+          vz: -0.008 - Math.random() * 0.015,
+          vx: 0.008 + Math.random() * 0.018,
+          vy: 0.004 + Math.random() * 0.012,
+          color: dreamColors[Math.floor(Math.random() * dreamColors.length)],
+          size: 2.2 + Math.random() * 2.8
         });
       }
     }
@@ -1108,9 +1115,9 @@
         p.x += p.vx;
         p.y += p.vy;
         if (p.z <= 0 || p.x > MAP_W || p.y > MAP_H) {
-          p.z = 2.2 + Math.random() * 0.5;
-          p.x = 9 + Math.random() * 16;
-          p.y = 1 + Math.random() * 55;
+          p.z = 2.4 + Math.random() * 0.8;
+          p.x = 1 + Math.random() * 26;
+          p.y = 1 + Math.random() * 56;
         }
       });
     }
@@ -1195,8 +1202,8 @@
             // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Runestones & Snow
             ctx.fillStyle = (x + y) % 2 === 0 ? '#1e293b' : '#0f172a';
           } else if (y >= 45) {
-            // Frost Chasm Void Depths
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#020617' : '#030712';
+            // Dreamscape Chasm of Clouds — Ethereal Pastel Pink & Nebula Sea
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#2d1428' : '#220d1f';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -1210,7 +1217,11 @@
           ctx.closePath();
           ctx.fill();
 
-          ctx.strokeStyle = isInsideBuilding ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.05)';
+          if (y >= 45 && !isCyber && !isAbyssBridge && !isPath) {
+            ctx.strokeStyle = 'rgba(244, 114, 182, 0.22)';
+          } else {
+            ctx.strokeStyle = isInsideBuilding ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.05)';
+          }
           ctx.lineWidth = 1;
           ctx.stroke();
 
@@ -2744,25 +2755,39 @@
 
       if (this.currentTimeState === 'sunset') {
         const grad = ctx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, 'rgba(249, 115, 22, 0.18)');
-        grad.addColorStop(0.5, 'rgba(236, 72, 153, 0.14)');
-        grad.addColorStop(1, 'rgba(124, 58, 237, 0.18)');
+        grad.addColorStop(0, 'rgba(251, 146, 60, 0.18)');
+        grad.addColorStop(0.45, 'rgba(244, 114, 182, 0.20)');
+        grad.addColorStop(0.80, 'rgba(236, 72, 153, 0.18)');
+        grad.addColorStop(1, 'rgba(147, 51, 234, 0.20)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
       } else if (this.currentTimeState === 'night') {
-        const rad = ctx.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, h * 0.9);
-        rad.addColorStop(0, 'rgba(15, 23, 42, 0.32)');
-        rad.addColorStop(1, 'rgba(2, 6, 23, 0.72)');
+        const rad = ctx.createRadialGradient(w / 2, h / 2, h * 0.25, w / 2, h / 2, h * 0.95);
+        rad.addColorStop(0, 'rgba(15, 23, 42, 0.28)');
+        rad.addColorStop(0.65, 'rgba(28, 14, 38, 0.48)');
+        rad.addColorStop(1, 'rgba(54, 18, 52, 0.65)');
         ctx.fillStyle = rad;
         ctx.fillRect(0, 0, w, h);
       } else if (this.currentTimeState === 'galaxy') {
         const grad = ctx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, 'rgba(88, 28, 135, 0.38)');
-        grad.addColorStop(0.5, 'rgba(30, 27, 75, 0.48)');
-        grad.addColorStop(1, 'rgba(15, 23, 42, 0.65)');
+        grad.addColorStop(0, 'rgba(157, 23, 77, 0.35)');
+        grad.addColorStop(0.5, 'rgba(112, 26, 117, 0.42)');
+        grad.addColorStop(1, 'rgba(24, 24, 58, 0.55)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
       }
+
+      // --- Universal Dream Pink Ambient Edge Aura (夢境粉邊緣氛圍光暈) ---
+      const t = performance.now() * 0.001;
+      const pulse = 0.88 + Math.sin(t * 1.5) * 0.12;
+      const maxR = Math.hypot(w / 2, h / 2);
+      const dreamVignette = ctx.createRadialGradient(w / 2, h / 2, maxR * 0.42, w / 2, h / 2, maxR);
+      dreamVignette.addColorStop(0, 'rgba(244, 114, 182, 0)');
+      dreamVignette.addColorStop(0.68, `rgba(244, 114, 182, ${0.08 * pulse})`);
+      dreamVignette.addColorStop(0.88, `rgba(236, 72, 153, ${0.17 * pulse})`);
+      dreamVignette.addColorStop(1.0, `rgba(219, 39, 119, ${0.28 * pulse})`);
+      ctx.fillStyle = dreamVignette;
+      ctx.fillRect(0, 0, w, h);
     }
 
     // --- Main Render Frame Loop ---

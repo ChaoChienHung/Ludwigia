@@ -3117,6 +3117,36 @@
       const soilCol = isDark ? '#382314' : '#653b1b';
       const rockCol = isDark ? '#111827' : '#1e293b';
       const shadowCol = 'rgba(0, 0, 0, 0.35)';
+      const tNow = performance.now() * 0.001;
+
+      // 1. Dream Pink Cloud Sea (夢境粉雲海) — Floating beneath the cliff before cliff is drawn
+      for (let x = 0; x < mapW; x += 1.5) {
+        const floatY = Math.sin(tNow * 1.4 + x * 0.7) * 4;
+        const cp = isoToScreen(x + 0.75, mapH, -depth - 0.28, ox, oy);
+        const rad = 28 + Math.sin(tNow + x) * 6;
+        const cGrad = ctx.createRadialGradient(cp.x, cp.y + floatY, 3, cp.x, cp.y + floatY, rad);
+        cGrad.addColorStop(0, 'rgba(251, 207, 232, 0.45)');
+        cGrad.addColorStop(0.5, 'rgba(244, 114, 182, 0.28)');
+        cGrad.addColorStop(1, 'rgba(244, 114, 182, 0)');
+        ctx.fillStyle = cGrad;
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y + floatY, rad, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      for (let y = 0; y < mapH; y += 1.5) {
+        const floatY = Math.sin(tNow * 1.4 + y * 0.7) * 4;
+        const cp = isoToScreen(mapW, y + 0.75, -depth - 0.28, ox, oy);
+        const rad = 28 + Math.sin(tNow + y) * 6;
+        const cGrad = ctx.createRadialGradient(cp.x, cp.y + floatY, 3, cp.x, cp.y + floatY, rad);
+        cGrad.addColorStop(0, 'rgba(251, 207, 232, 0.45)');
+        cGrad.addColorStop(0.5, 'rgba(244, 114, 182, 0.28)');
+        cGrad.addColorStop(1, 'rgba(244, 114, 182, 0)');
+        ctx.fillStyle = cGrad;
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y + floatY, rad, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // A. South-facing Exposed Cliff Face (along y = mapH, from x = 0 to mapW)
       // Draw segment by segment to preserve depth shading
@@ -3204,6 +3234,28 @@
         ctx.moveTo(t0.x, t0.y); ctx.lineTo(t1.x, t1.y);
         ctx.stroke();
       }
+
+      // 3. Glowing Dream Pink Aurora Rim along the entire lower cliff foundation
+      ctx.save();
+      ctx.strokeStyle = 'rgba(244, 114, 182, 0.65)';
+      ctx.lineWidth = 2.2;
+      ctx.shadowColor = '#f472b6';
+      ctx.shadowBlur = 8;
+      // South cliff baseline
+      const sb0 = isoToScreen(0, mapH, -depth, ox, oy);
+      const sb1 = isoToScreen(mapW, mapH, -depth, ox, oy);
+      ctx.beginPath();
+      ctx.moveTo(sb0.x, sb0.y);
+      ctx.lineTo(sb1.x, sb1.y);
+      ctx.stroke();
+      // East cliff baseline
+      const eb0 = isoToScreen(mapW, 0, -depth, ox, oy);
+      const eb1 = isoToScreen(mapW, mapH, -depth, ox, oy);
+      ctx.beginPath();
+      ctx.moveTo(eb0.x, eb0.y);
+      ctx.lineTo(eb1.x, eb1.y);
+      ctx.stroke();
+      ctx.restore();
     }
 
     // --- 2. Trimmed Perimeter Boxwood Hedge ---
