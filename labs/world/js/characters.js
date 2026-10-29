@@ -173,6 +173,7 @@
           avatar: c.avatar || (c.isCat ? '🐱' : '👤'),
           avatarFallback: c.avatarFallback || (c.isCat ? '🐱' : '👤'),
           zone: c.zone || 'plaza',
+          visitedZones: Array.isArray(c.visitedZones) ? [...c.visitedZones] : null,
           x: c.spawn ? c.spawn.x : 14,
           y: c.spawn ? c.spawn.y : 14,
           z: 0,

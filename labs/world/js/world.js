@@ -882,13 +882,13 @@
               const rawVisited = c.visitedZones;
               const visitedPool = Array.isArray(rawVisited) && rawVisited.length > 0
                 ? rawVisited
-                : (c.zone === 'house' ? ['house', 'plaza'] :
-                   c.zone === 'ai_studio' ? ['ai_studio', 'plaza', 'library', 'douyin_office'] :
-                   c.zone === 'library' ? ['library', 'plaza', 'ai_studio', 'sanmin_school'] :
-                   c.zone === 'dorm_211' ? ['dorm_211', 'plaza', 'library', 'sanmin_school'] :
-                   c.zone === 'sanmin_school' ? ['sanmin_school', 'plaza', 'dorm_211'] :
-                   c.zone === 'douyin_office' ? ['douyin_office', 'plaza', 'ai_studio'] :
-                   [c.zone, 'plaza']);
+                : (c.zone === 'house' ? ['house', 'plaza', 'library', 'ai_studio'] :
+                   c.zone === 'ai_studio' ? ['ai_studio', 'library', 'plaza'] :
+                   c.zone === 'library' ? ['library', 'plaza', 'ai_studio'] :
+                   c.zone === 'dorm_211' ? ['dorm_211', 'library', 'plaza', 'ai_studio'] :
+                   c.zone === 'sanmin_school' ? ['sanmin_school', 'library', 'plaza', 'ai_studio'] :
+                   c.zone === 'douyin_office' ? ['douyin_office', 'library', 'plaza', 'ai_studio'] :
+                   [c.zone, 'library', 'plaza', 'ai_studio']);
 
               // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
               let chosenZone;

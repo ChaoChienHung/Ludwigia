@@ -279,7 +279,7 @@
               "我覺得『光陰的故事』還滿還原國民黨剛來台灣的那幾年，裡面也有個叫復邦的。"
             ],
             [
-              "我等下要看『光陰的故事』，你要一起看嗎？"
+              "我們等下要看『光陰的故事』，你要看嗎？"
             ]
           ],
           "en": [
@@ -444,7 +444,9 @@
       },
       "visitedZones": [
         "dorm_211",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -543,8 +545,9 @@
       },
       "visitedZones": [
         "dorm_211",
+        "library",
         "plaza",
-        "library"
+        "ai_studio"
       ]
     },
     {
@@ -643,7 +646,9 @@
       },
       "visitedZones": [
         "dorm_211",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -695,7 +700,9 @@
       },
       "visitedZones": [
         "dorm_211",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -790,7 +797,9 @@
       },
       "visitedZones": [
         "dorm_211",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1193,7 +1202,10 @@
         }
       },
       "visitedZones": [
-        "douyin_office"
+        "douyin_office",
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1232,7 +1244,10 @@
         }
       },
       "visitedZones": [
-        "douyin_office"
+        "douyin_office",
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1283,7 +1298,10 @@
         }
       },
       "visitedZones": [
-        "douyin_office"
+        "douyin_office",
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1330,7 +1348,10 @@
         }
       },
       "visitedZones": [
-        "douyin_office"
+        "douyin_office",
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1391,7 +1412,8 @@
       "visitedZones": [
         "dorm_211",
         "library",
-        "plaza"
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1459,7 +1481,9 @@
       },
       "visitedZones": [
         "sanmin_school",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1524,7 +1548,9 @@
       },
       "visitedZones": [
         "sanmin_school",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1588,7 +1614,9 @@
       },
       "visitedZones": [
         "sanmin_school",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1640,7 +1668,9 @@
       },
       "visitedZones": [
         "sanmin_school",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     },
     {
@@ -1698,7 +1728,9 @@
       },
       "visitedZones": [
         "sanmin_school",
-        "plaza"
+        "library",
+        "plaza",
+        "ai_studio"
       ]
     }
   ],

@@ -46,6 +46,9 @@
     }
   },
   "visitedZones": [
-    "douyin_office"
+    "douyin_office",
+    "library",
+    "plaza",
+    "ai_studio"
   ]
 }
