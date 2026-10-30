@@ -3569,9 +3569,41 @@
         ctx.shadowBlur = 0;
       });
 
-      // 3. Rear Food Truck Kitchen & Serving Counter (gy + 0.1 to gy + 1.7)
-      // Solid warm wood drop-side serving bar (木質側掀吧台板)
+      // 3. Rear Food Truck Kitchen & Serving Counter (gy + 0.15 to gy + 1.70)
+      // Solid warm wood drop-side serving bar box
       this.drawBox(ctx, gx + 0.05, gy + 0.15, 0.35, 1.55, 1.55, 0.48, '#854d0e', '#713f12', '#582b0c', ox, oy);
+
+      // Solid West-facing wood front panel (facing street along Y-axis)
+      const fw0 = isoToScreen(gx + 0.05, gy + 0.15, 0.35, ox, oy);
+      const fw1 = isoToScreen(gx + 0.05, gy + 1.70, 0.35, ox, oy);
+      const fw2 = isoToScreen(gx + 0.05, gy + 1.70, 0.83, ox, oy);
+      const fw3 = isoToScreen(gx + 0.05, gy + 0.15, 0.83, ox, oy);
+      ctx.fillStyle = '#854d0e';
+      ctx.beginPath();
+      ctx.moveTo(fw0.x, fw0.y); ctx.lineTo(fw1.x, fw1.y); ctx.lineTo(fw2.x, fw2.y); ctx.lineTo(fw3.x, fw3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#582b0c';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Wood Counter Front Menu Plaque
+      const cp = isoToScreen(gx + 0.05, gy + 0.925, 0.59, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis truck counter
+      ctx.fillStyle = '#1c1917';
+      ctx.fillRect(-45, -7, 90, 14);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 1.0;
+      ctx.strokeRect(-45, -7, 90, 14);
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('炒泡麵 • 特調飲品 🚚', 0, 0);
+      ctx.restore();
+
       // Stainless steel kitchen counter surface
       this.drawBox(ctx, gx + 0.12, gy + 0.20, 0.83, 1.40, 1.45, 0.08, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
 
@@ -3629,18 +3661,6 @@
       ctx.fillText('餐車', 0, 0);
       ctx.shadowBlur = 0;
       ctx.restore();
-
-      // 7. Wood Counter Side Signboard: "又好吃 炒泡麵 • 飲品"
-      const cp = isoToScreen(gx + 0.04, gy + 0.92, 0.58, ox, oy);
-      ctx.save();
-      ctx.translate(cp.x, cp.y);
-      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis truck side counter
-      ctx.fillStyle = '#fef08a';
-      ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('又好吃 炒泡麵 • 特調飲品 🚚', 0, 0);
-      ctx.restore();
     }
 
     // --- 8. NCU Midnight Snack Street 2: Famous 「好兇蛋餅 / 無敵蛋餅」 ---
@@ -3648,14 +3668,45 @@
     drawEggPancakeStall(ctx, gx, gy, ox, oy) {
       const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
 
-      // 1. Stainless Steel Prep Counter Base
+      // 1. Stainless Steel Prep Counter Base (x: gx to gx+1.45, y: gy to gy+1.85, z: 0 to 0.85)
       this.drawBox(ctx, gx, gy, 0, 1.45, 1.85, 0.85, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
 
+      // Solid West-facing Stainless Steel Front Panel (facing street along Y-axis)
+      const w0 = isoToScreen(gx, gy, 0, ox, oy);
+      const w1 = isoToScreen(gx, gy + 1.85, 0, ox, oy);
+      const w2 = isoToScreen(gx, gy + 1.85, 0.85, ox, oy);
+      const w3 = isoToScreen(gx, gy, 0.85, ox, oy);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.moveTo(w0.x, w0.y); ctx.lineTo(w1.x, w1.y); ctx.lineTo(w2.x, w2.y); ctx.lineTo(w3.x, w3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Front Counter Plaque Signboard: "無敵蛋餅 • 招牌現煎 🍳"
+      const cp = isoToScreen(gx, gy + 0.925, 0.44, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis stall counter
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(-52, -8, 104, 16);
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(-52, -8, 104, 16);
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('無敵蛋餅 • 招牌現煎 🍳', 0, 0);
+      ctx.restore();
+
       // 2. Heavy-Duty Teppanyaki Sizzling Flat-top Griddle (平底鐵板煎台)
-      this.drawBox(ctx, gx + 0.15, gy + 0.20, 0.85, 1.15, 0.80, 0.10, '#475569', '#334155', '#1e293b', ox, oy);
+      this.drawBox(ctx, gx + 0.15, gy + 0.18, 0.85, 1.15, 0.82, 0.10, '#334155', '#1e293b', '#0f172a', ox, oy);
       // Golden Egg Pancakes Sizzling on Griddle
-      const ep0 = isoToScreen(gx + 0.45, gy + 0.45, 0.96, ox, oy);
-      const ep1 = isoToScreen(gx + 0.85, gy + 0.70, 0.96, ox, oy);
+      const ep0 = isoToScreen(gx + 0.45, gy + 0.45, 0.97, ox, oy);
+      const ep1 = isoToScreen(gx + 0.85, gy + 0.70, 0.97, ox, oy);
       [ep0, ep1].forEach(ep => {
         ctx.fillStyle = '#fbbf24';
         ctx.beginPath();
@@ -3677,13 +3728,23 @@
       ctx.fillRect(b1.x - 2, b1.y - 12, 4, 12);
 
       // 4. Stainless Steel Canopy Poles
-      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
-      this.drawBox(ctx, gx + 1.35, gy + 0.05, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
-      this.drawBox(ctx, gx + 0.05, gy + 1.75, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
-      this.drawBox(ctx, gx + 1.35, gy + 1.75, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.85, 0.05, 0.05, 1.20, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 1.35, gy + 0.05, 0.85, 0.05, 0.05, 1.20, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + 1.75, 0.85, 0.05, 0.05, 1.20, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 1.35, gy + 1.75, 0.85, 0.05, 0.05, 1.20, '#94a3b8', '#64748b', '#475569', ox, oy);
 
-      // Stainless Steel Canopy Roof
-      this.drawBox(ctx, gx - 0.05, gy - 0.05, 2.05, 1.55, 1.95, 0.18, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      // Stainless Steel Canopy Roof (Z: 2.05 to 2.21)
+      this.drawBox(ctx, gx - 0.05, gy - 0.05, 2.05, 1.55, 1.95, 0.16, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      // Canopy Roof West Edge Face (gives solid roof thickness)
+      const rw0 = isoToScreen(gx - 0.05, gy - 0.05, 2.05, ox, oy);
+      const rw1 = isoToScreen(gx - 0.05, gy + 1.90, 2.05, ox, oy);
+      const rw2 = isoToScreen(gx - 0.05, gy + 1.90, 2.21, ox, oy);
+      const rw3 = isoToScreen(gx - 0.05, gy - 0.05, 2.21, ox, oy);
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.moveTo(rw0.x, rw0.y); ctx.lineTo(rw1.x, rw1.y); ctx.lineTo(rw2.x, rw2.y); ctx.lineTo(rw3.x, rw3.y);
+      ctx.closePath();
+      ctx.fill();
 
       // Warm Incandescent Heat Lamp hanging over counter
       const lp = isoToScreen(gx + 0.65, gy + 0.70, 1.85, ox, oy);
@@ -3697,21 +3758,24 @@
       ctx.fill();
       ctx.shadowBlur = 0;
 
-      // 5. ICONIC ROUND YELLOW SIGNBOARD 「好兇蛋餅」 (復刻實體招牌)
-      const signP = isoToScreen(gx + 0.05, gy + 0.25, 2.20, ox, oy);
+      // 5. ICONIC ROUND YELLOW SIGNBOARD 「無敵蛋餅」 (復刻實體招牌)
+      // Steel Mounting Pole extending from canopy roof corner
+      this.drawBox(ctx, gx + 0.05, gy + 0.20, 2.21, 0.05, 0.05, 0.32, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      const signP = isoToScreen(gx + 0.075, gy + 0.225, 2.52, ox, oy);
       ctx.save();
       ctx.translate(signP.x, signP.y);
       if (isNight) {
         ctx.shadowColor = '#facc15';
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 12;
       }
       // Bright Yellow Circle
       ctx.fillStyle = '#facc15';
       ctx.beginPath();
-      ctx.arc(0, 0, 15, 0, Math.PI * 2);
+      ctx.arc(0, 0, 14, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 2.0;
+      ctx.lineWidth = 2.2;
       ctx.stroke();
 
       // Bold Black Calligraphic Text 「無敵 蛋餅」
@@ -3719,22 +3783,10 @@
       ctx.font = '900 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('無敵', 0, -4);
+      ctx.fillText('無敵', 0, -3.5);
       ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
-      ctx.fillText('蛋餅', 0, 4);
+      ctx.fillText('蛋餅', 0, 4.5);
       ctx.shadowBlur = 0;
-      ctx.restore();
-
-      // Front Counter Signboard
-      const cp = isoToScreen(gx + 0.04, gy + 1.05, 0.58, ox, oy);
-      ctx.save();
-      ctx.translate(cp.x, cp.y);
-      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis stall counter
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('無敵蛋餅 • 招牌現煎宵夜 🍳', 0, 0);
       ctx.restore();
     }
 
@@ -3743,63 +3795,112 @@
     drawShaShiFuDumplings(ctx, gx, gy, ox, oy) {
       const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
 
-      // 1. Solid Storefront Building Structure (x: gx to gx+3.6, y: gy to gy+3.2, z: 2.65)
-      // Building Brick/Concrete Walls (Back & Sides)
-      this.drawBox(ctx, gx, gy, 0, 3.80, 0.25, 2.65, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy); // North Wall
-      this.drawBox(ctx, gx + 3.55, gy, 0, 0.25, 3.40, 2.65, '#991b1b', '#7f1d1d', '#450a0a', ox, oy); // East Back Wall
-      this.drawBox(ctx, gx, gy + 3.15, 0, 3.80, 0.25, 2.65, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy); // South Wall
+      // 1. Building Exterior Walls (Back & Sides)
+      // North Wall (Back-Right, along X: x: gx to gx+3.80, y: gy, z: 0 to 2.65)
+      this.drawBox(ctx, gx, gy, 0, 3.80, 0.25, 2.65, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy);
+      // East Back Wall (Back, along Y: x: gx+3.55, y: gy to gy+3.20, z: 0 to 2.65)
+      this.drawBox(ctx, gx + 3.55, gy, 0, 0.25, 3.20, 2.65, '#991b1b', '#7f1d1d', '#450a0a', ox, oy);
+      // South Wall (Front-Left cutaway: x: gx to gx+3.80, y: gy+2.95, z: 0 to 2.65)
+      this.drawBox(ctx, gx, gy + 2.95, 0, 3.80, 0.25, 2.65, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy);
 
-      // Store Interior Floor & Warm Fluorescent Illumination
-      const in0 = isoToScreen(gx + 0.20, gy + 0.20, 0, ox, oy);
-      const in1 = isoToScreen(gx + 3.50, gy + 0.20, 0, ox, oy);
-      const in2 = isoToScreen(gx + 3.50, gy + 3.15, 0, ox, oy);
-      const in3 = isoToScreen(gx + 0.20, gy + 3.15, 0, ox, oy);
-      ctx.fillStyle = '#f1f5f9';
+      // 2. Interior Floor Plane
+      const in0 = isoToScreen(gx + 0.15, gy + 0.25, 0, ox, oy);
+      const in1 = isoToScreen(gx + 3.55, gy + 0.25, 0, ox, oy);
+      const in2 = isoToScreen(gx + 3.55, gy + 2.95, 0, ox, oy);
+      const in3 = isoToScreen(gx + 0.15, gy + 2.95, 0, ox, oy);
+      ctx.fillStyle = '#f8fafc';
       ctx.beginPath();
       ctx.moveTo(in0.x, in0.y); ctx.lineTo(in1.x, in1.y); ctx.lineTo(in2.x, in2.y); ctx.lineTo(in3.x, in3.y);
       ctx.closePath();
       ctx.fill();
 
-      // Interior Dine-In Tables & Stools
-      this.drawBox(ctx, gx + 1.85, gy + 0.65, 0, 1.20, 0.85, 0.68, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
-      this.drawBox(ctx, gx + 1.85, gy + 1.95, 0, 1.20, 0.85, 0.68, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
-      // Stools
-      [gx + 1.55, gx + 3.15].forEach(sx => {
-        this.drawBox(ctx, sx, gy + 0.85, 0, 0.25, 0.25, 0.38, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
-        this.drawBox(ctx, sx, gy + 2.15, 0, 0.25, 0.25, 0.38, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
-      });
-
-      // 2. Right Half: Classic Taiwanese Corrugated Steel Roll-Up Shutter Garage Door (鐵捲門)
-      this.drawBox(ctx, gx, gy + 2.15, 0, 0.18, 1.05, 2.15, '#94a3b8', '#64748b', '#475569', ox, oy);
-      // Corrugated Shutter Horizontal Grooves
-      for (let sz = 0.2; sz < 2.1; sz += 0.22) {
-        const r0 = isoToScreen(gx + 0.05, gy + 2.15, sz, ox, oy);
-        const r1 = isoToScreen(gx + 0.05, gy + 3.15, sz, ox, oy);
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(r0.x, r0.y); ctx.lineTo(r1.x, r1.y);
-        ctx.stroke();
+      // Interior Floor Warm Illumination Glow
+      if (isNight) {
+        ctx.fillStyle = 'rgba(254, 240, 138, 0.08)';
+        ctx.fill();
       }
 
-      // 3. Left Half: Street-Facing Cooking & Ordering Front Counter (y: gy to gy + 2.05)
-      this.drawBox(ctx, gx, gy + 0.05, 0, 1.45, 2.05, 0.88, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
-      // Stainless Steel Steaming Station Tabletop
-      this.drawBox(ctx, gx - 0.05, gy + 0.05, 0.88, 1.55, 2.05, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+      // 3. Dine-In Area: Neatly arranged tables and stools against the East/Back wall (gx + 2.1 to 3.4)
+      // Dining Table 1 (Clean wooden dine-in table with stainless steel edge)
+      this.drawBox(ctx, gx + 2.20, gy + 0.60, 0, 1.05, 0.75, 0.65, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+      // Red Plastic Night-Market Dining Stools
+      const stools = [
+        { sx: gx + 2.00, sy: gy + 0.85 },
+        { sx: gx + 3.25, sy: gy + 0.85 },
+        { sx: gx + 2.60, sy: gy + 0.35 }
+      ];
+      stools.forEach(s => {
+        this.drawBox(ctx, s.sx, s.sy, 0, 0.22, 0.22, 0.35, '#ef4444', '#dc2626', '#b91c1c', ox, oy);
+      });
 
-      // Bamboo Steamers (三疊竹蒸籠，中央宵夜街靈魂)
+      // Table Condiment Tray (Soy sauce & vinegar cruets + chopstick dispenser)
+      const cpP = isoToScreen(gx + 2.95, gy + 0.85, 0.67, ox, oy);
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(cpP.x - 3, cpP.y - 7, 3, 7);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(cpP.x + 1, cpP.y - 8, 3, 8);
+
+      // 4. Street-Facing Dumpling Cooking & Prep Front Counter (West facade: x: gx to gx+0.85, y: gy+0.05 to gy+1.85)
+      // Solid Counter Base Box
+      this.drawBox(ctx, gx, gy + 0.05, 0, 0.85, 1.80, 0.85, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+
+      // Solid West-Facing Counter Front Panel (facing street along Y-axis)
+      const fw0 = isoToScreen(gx, gy + 0.05, 0, ox, oy);
+      const fw1 = isoToScreen(gx, gy + 1.85, 0, ox, oy);
+      const fw2 = isoToScreen(gx, gy + 1.85, 0.85, ox, oy);
+      const fw3 = isoToScreen(gx, gy + 0.05, 0.85, ox, oy);
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath();
+      ctx.moveTo(fw0.x, fw0.y); ctx.lineTo(fw1.x, fw1.y); ctx.lineTo(fw2.x, fw2.y); ctx.lineTo(fw3.x, fw3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#b91c1c';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Stainless Steel Countertop Rim
+      this.drawBox(ctx, gx - 0.03, gy + 0.03, 0.85, 0.91, 1.84, 0.06, '#f8fafc', '#cbd5e1', '#94a3b8', ox, oy);
+      // West Rim Lip Face
+      const rlw0 = isoToScreen(gx - 0.03, gy + 0.03, 0.85, ox, oy);
+      const rlw1 = isoToScreen(gx - 0.03, gy + 1.87, 0.85, ox, oy);
+      const rlw2 = isoToScreen(gx - 0.03, gy + 1.87, 0.91, ox, oy);
+      const rlw3 = isoToScreen(gx - 0.03, gy + 0.03, 0.91, ox, oy);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.moveTo(rlw0.x, rlw0.y); ctx.lineTo(rlw1.x, rlw1.y); ctx.lineTo(rlw2.x, rlw2.y); ctx.lineTo(rlw3.x, rlw3.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Counter Front Banner: "湯包 • 排骨酥 • 蒸餃 🥟"
+      const cpBanner = isoToScreen(gx, gy + 0.95, 0.43, ox, oy);
+      ctx.save();
+      ctx.translate(cpBanner.x, cpBanner.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis counter face
+      ctx.fillStyle = '#991b1b';
+      ctx.fillRect(-52, -8, 104, 16);
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(-52, -8, 104, 16);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('湯包 • 排骨酥 • 蒸餃 🥟', 0, 0);
+      ctx.restore();
+
+      // 5. Authentic Bamboo Steamers (三疊竹蒸籠，中央宵夜街現蒸熱氣)
       const steamerStacks = [
-        { sx: gx + 0.35, sy: gy + 0.50 },
-        { sx: gx + 0.75, sy: gy + 0.85 },
-        { sx: gx + 0.35, sy: gy + 1.35 }
+        { sx: gx + 0.28, sy: gy + 0.45, tiers: 3 },
+        { sx: gx + 0.50, sy: gy + 0.90, tiers: 3 },
+        { sx: gx + 0.28, sy: gy + 1.35, tiers: 2 }
       ];
       steamerStacks.forEach((st, idx) => {
-        for (let tier = 0; tier < 3; tier++) {
-          const sz = 0.96 + tier * 0.16;
+        for (let tier = 0; tier < st.tiers; tier++) {
+          const sz = 0.92 + tier * 0.16;
           const sp = isoToScreen(st.sx, st.sy, sz, ox, oy);
-          ctx.fillStyle = (tier === 2) ? '#b45309' : '#d97706';
+          ctx.fillStyle = (tier === st.tiers - 1) ? '#b45309' : '#d97706';
           ctx.beginPath();
-          ctx.ellipse(sp.x, sp.y, 8, 4.5, 0, 0, Math.PI * 2);
+          ctx.ellipse(sp.x, sp.y, 7.5, 4.2, 0, 0, Math.PI * 2);
           ctx.fill();
           ctx.strokeStyle = '#78350f';
           ctx.lineWidth = 1.0;
@@ -3809,19 +3910,36 @@
         // Rising Steam Animation
         const steamTime = (performance.now() * 0.002 + idx * 1.5) % 3;
         const steamAlpha = Math.max(0, 0.65 - steamTime * 0.2);
-        const topP = isoToScreen(st.sx, st.sy, 1.48 + steamTime * 0.35, ox, oy);
+        const topP = isoToScreen(st.sx, st.sy, 1.40 + steamTime * 0.35, ox, oy);
         ctx.fillStyle = `rgba(255, 255, 255, ${steamAlpha})`;
         ctx.beginPath();
-        ctx.arc(topP.x - 2, topP.y - 2, 5 + steamTime * 2.5, 0, Math.PI * 2);
-        ctx.arc(topP.x + 3, topP.y - 6, 6 + steamTime * 2.5, 0, Math.PI * 2);
+        ctx.arc(topP.x - 2, topP.y - 2, 4 + steamTime * 2.2, 0, Math.PI * 2);
+        ctx.arc(topP.x + 3, topP.y - 6, 5 + steamTime * 2.2, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // 4. LARGE RED STOREFRONT SIGNBOARD 「傻師傅湯包」 (大紅底白字經典店面橫幅招牌)
-      this.drawBox(ctx, gx - 0.08, gy, 2.15, 0.28, 3.25, 0.65, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+      // 6. Roll-up Shutter Garage Lintel over Entrance (y: gy+1.85 to gy+2.95)
+      this.drawBox(ctx, gx - 0.02, gy + 1.85, 2.10, 0.14, 1.10, 0.25, '#64748b', '#475569', '#334155', ox, oy);
+
+      // 7. LARGE RED STOREFRONT SIGNBOARD 「傻師傅湯包」 (大紅底白字經典店面橫幅招牌)
+      this.drawBox(ctx, gx - 0.06, gy, 2.15, 0.22, 2.95, 0.50, '#dc2626', '#b91c1c', '#7f1d1d', ox, oy);
+
+      // Solid West Face of Storefront Signboard
+      const sw0 = isoToScreen(gx - 0.06, gy, 2.15, ox, oy);
+      const sw1 = isoToScreen(gx - 0.06, gy + 2.95, 2.15, ox, oy);
+      const sw2 = isoToScreen(gx - 0.06, gy + 2.95, 2.65, ox, oy);
+      const sw3 = isoToScreen(gx - 0.06, gy, 2.65, ox, oy);
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath();
+      ctx.moveTo(sw0.x, sw0.y); ctx.lineTo(sw1.x, sw1.y); ctx.lineTo(sw2.x, sw2.y); ctx.lineTo(sw3.x, sw3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#b91c1c';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
 
       // Signboard Text along Y-axis front
-      const signP = isoToScreen(gx - 0.02, gy + 1.62, 2.45, ox, oy);
+      const signP = isoToScreen(gx - 0.06, gy + 1.48, 2.40, ox, oy);
       ctx.save();
       ctx.translate(signP.x, signP.y);
       ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis storefront fascia
@@ -3830,45 +3948,51 @@
         ctx.shadowBlur = 12;
       }
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('傻師傅湯包', 0, 0);
       ctx.shadowBlur = 0;
       ctx.restore();
 
-      // 5. Protruding Vertical Box Sign 「傻師傅 湯包」 (立體外凸招牌)
-      const vertP = isoToScreen(gx - 0.05, gy + 0.15, 2.95, ox, oy);
+      // 8. Protruding Vertical Lightbox Sign 「傻師傅 湯包」 (立體外凸招牌)
+      // Dual Iron Wall Mounting Brackets
+      this.drawBox(ctx, gx - 0.22, gy + 0.12, 2.45, 0.22, 0.05, 0.05, '#1e293b', '#0f172a', '#020617', ox, oy);
+      this.drawBox(ctx, gx - 0.22, gy + 0.12, 2.80, 0.22, 0.05, 0.05, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // Sign Box (x: gx-0.28 to gx-0.18, y: gy+0.05 to gy+0.35, z: 2.30 to 2.95)
+      this.drawBox(ctx, gx - 0.28, gy + 0.05, 2.30, 0.10, 0.30, 0.65, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+
+      // Sign Box West Face
+      const sbw0 = isoToScreen(gx - 0.28, gy + 0.05, 2.30, ox, oy);
+      const sbw1 = isoToScreen(gx - 0.28, gy + 0.35, 2.30, ox, oy);
+      const sbw2 = isoToScreen(gx - 0.28, gy + 0.35, 2.95, ox, oy);
+      const sbw3 = isoToScreen(gx - 0.28, gy + 0.05, 2.95, ox, oy);
+      ctx.fillStyle = '#b91c1c';
+      ctx.beginPath();
+      ctx.moveTo(sbw0.x, sbw0.y); ctx.lineTo(sbw1.x, sbw1.y); ctx.lineTo(sbw2.x, sbw2.y); ctx.lineTo(sbw3.x, sbw3.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Vertical text on the West face
+      const vertP = isoToScreen(gx - 0.28, gy + 0.20, 2.62, ox, oy);
       ctx.save();
       ctx.translate(vertP.x, vertP.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0);
       if (isNight) {
         ctx.shadowColor = '#ef4444';
         ctx.shadowBlur = 10;
       }
-      ctx.fillStyle = '#b91c1c';
-      ctx.fillRect(-11, -20, 22, 40);
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.4;
-      ctx.strokeRect(-10, -19, 20, 38);
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('傻師傅', 0, -7);
-      ctx.fillText('湯包', 0, 7);
+      ctx.fillText('傻師傅', 0, -6);
+      ctx.fillText('湯包', 0, 6);
       ctx.shadowBlur = 0;
-      ctx.restore();
-
-      // 6. Lower Counter Front Banner: "湯包 • 排骨酥 • 蒸餃"
-      const cp = isoToScreen(gx - 0.02, gy + 1.05, 0.45, ox, oy);
-      ctx.save();
-      ctx.translate(cp.x, cp.y);
-      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis counter
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('湯包 • 排骨酥 • 蒸餃 🥟', 0, 0);
       ctx.restore();
     }
 

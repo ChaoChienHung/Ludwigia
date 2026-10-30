@@ -291,11 +291,13 @@
       // 9. Central Midnight Snack Street Obstacles (East Wing x: 32..38, y: 33..44 — Slender 2.5-tile road)
       this.nav.setBlock(31.5, 33.0, 3.2, 0.40, true);  // Archway
       this.nav.setBlock(35.0, 34.2, 1.60, 2.80, true); // Blue Food Truck (小貨車餐車)
-      this.nav.setBlock(34.0, 34.2, 0.40, 0.70, true); // Food Truck Ground Signboard
       this.nav.setBlock(35.0, 37.8, 1.60, 2.00, true); // 無敵蛋餅 (Egg Pancake Stall)
-      this.nav.setBlock(34.0, 37.8, 0.40, 0.70, true); // 無敵蛋餅 Ground Signboard
-      this.nav.setBlock(34.8, 41.0, 3.80, 3.20, true); // 傻師傅湯包 (Storefront Building)
-      this.nav.setBlock(34.0, 41.0, 0.40, 0.70, true); // 傻師傅湯包 Ground Signboard
+      // 傻師傅湯包 (Storefront Building Walls & Front Counter)
+      this.nav.setBlock(34.8, 41.0, 0.95, 1.85, true); // Front Dumpling Cooking Counter
+      this.nav.setBlock(34.8, 41.0, 3.80, 0.30, true); // North Wall
+      this.nav.setBlock(38.3, 41.0, 0.30, 3.20, true); // East Back Wall
+      this.nav.setBlock(34.8, 43.95, 3.80, 0.25, true); // South Wall
+      this.nav.setBlock(36.8, 41.5, 1.30, 0.85, true); // Interior Dining Table & Stools
       this.nav.setBlock(31.2, 35.5, 0.50, 0.90, true); // Parked Scooter 1 (West curb)
       this.nav.setBlock(31.2, 38.5, 0.50, 0.90, true); // Parked Scooter 2 (West curb)
 
@@ -2847,32 +2849,17 @@
         xMin: 35.0, xMax: 36.8, yMin: 34.2, yMax: 37.2,
         draw: () => this.models.drawFoodTruck(this.ctx, 35.0, 34.2, this.ox, this.oy)
       });
-      // Ground-Standing Pole Signboard for Food Truck (插在路邊的立地看板)
-      list.push({
-        xMin: 33.8, xMax: 34.4, yMin: 34.2, yMax: 35.0,
-        draw: () => this.models.drawGroundStandingSign(this.ctx, 34.0, 34.2, '炒泡麵餐車', '特調飲品 • 深夜食堂', '#0284c7', '#ffffff', this.ox, this.oy, '🚚')
-      });
 
       // Food Stall 2: Famous 「無敵蛋餅」 with iconic round yellow sign & sizzling griddle
       list.push({
         xMin: 35.0, xMax: 36.6, yMin: 37.8, yMax: 39.8,
         draw: () => this.models.drawEggPancakeStall(this.ctx, 35.0, 37.8, this.ox, this.oy)
       });
-      // Ground-Standing Pole Signboard for 「無敵蛋餅」 (插在路邊的黃色立地看板)
-      list.push({
-        xMin: 33.8, xMax: 34.4, yMin: 37.8, yMax: 38.6,
-        draw: () => this.models.drawGroundStandingSign(this.ctx, 34.0, 37.8, '無敵蛋餅', '特調辣醬 • 酥皮現煎', '#facc15', '#0f172a', this.ox, this.oy, '🍳')
-      });
 
       // Food Stall 3: Legendary 「傻師傅湯包」 Storefront Shop Building (實體店面建築)
       list.push({
         xMin: 34.8, xMax: 38.6, yMin: 41.0, yMax: 44.2,
         draw: () => this.models.drawShaShiFuDumplings(this.ctx, 34.8, 41.0, this.ox, this.oy)
-      });
-      // Ground-Standing Pole Signboard for 「傻師傅湯包」 (插在路邊的紅色立地看板)
-      list.push({
-        xMin: 33.8, xMax: 34.4, yMin: 41.0, yMax: 41.8,
-        draw: () => this.models.drawGroundStandingSign(this.ctx, 34.0, 41.0, '傻師傅湯包', '熱氣現蒸 • 排骨酥湯', '#dc2626', '#ffffff', this.ox, this.oy, '🥟')
       });
 
       // West Curb: Parked Scooters outside (along x = 31.2)
