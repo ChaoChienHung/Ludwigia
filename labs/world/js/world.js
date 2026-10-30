@@ -1923,14 +1923,14 @@
           this.ctx.restore();
         }
       });
-      // Wall segment right of door (y: 22.8 to 27)
+      // Wall segment right of door (y: 22.8 to 27.25)
       list.push({
         xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.35,
-        yMin: 22.8, yMax: DORM_MAX_Y + 1,
+        yMin: 22.8, yMax: DORM_MAX_Y + 1.25,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1) - 22.8, H, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1.25) - 22.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1988,15 +1988,6 @@
         }
       });
 
-      // 4. Southwest Boundary Skirting
-      list.push({
-        xMin: 0, xMax: DORM_MAX_X + 1,
-        yMin: DORM_MAX_Y + 0.9, yMax: DORM_MAX_Y + 1.2,
-        draw: () => {
-          this.models.drawBox(this.ctx, 0, DORM_MAX_Y + 1, 0, (DORM_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
-        }
-      });
-
       // 5. Four Symmetrical Loft Bed/Desk Combos Facing Each Other
       // NORTH ROW BEDS (facing: 'south' into room, chair back faces south towards central aisle)
       // Bed 1 (Happy Wang: x: 1.0, y: 17.5)
@@ -2048,13 +2039,13 @@
           this.models.drawBox(this.ctx, 0, dormSouthY, 0, wLen, 0.25, 0.85, wallT, wallL, wallR, this.ox, this.oy);
           // Upper Lintel Wall (z: 2.15 to H)
           this.models.drawBox(this.ctx, 0, dormSouthY, 2.15, wLen, 0.25, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
-          // Concrete Pier Columns: Left (0..0.8), Center (4.6..5.4), Right (9.2..10.0)
-          this.models.drawBox(this.ctx, 0, dormSouthY, 0.85, 0.8, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
-          this.models.drawBox(this.ctx, 4.6, dormSouthY, 0.85, 0.8, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
-          this.models.drawBox(this.ctx, 9.2, dormSouthY, 0.85, 0.8, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
+          // Concrete Pier Columns: Left (0..0.35), Center (4.85..5.15), Right (9.65..10.0 flush with East wall)
+          this.models.drawBox(this.ctx, 0, dormSouthY, 0.85, 0.35, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 4.85, dormSouthY, 0.85, 0.30, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 9.65, dormSouthY, 0.85, 0.35, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
 
-          // Dual Campus Casement Windows (Bay 1: x: 0.8 to 4.6, Bay 2: x: 5.4 to 9.2, z: 0.85 to 2.15)
-          [ { x0: 0.8, x1: 4.6 }, { x0: 5.4, x1: 9.2 } ].forEach(bay => {
+          // Dual Campus Casement Windows (Bay 1: x: 0.35 to 4.85, Bay 2: x: 5.15 to 9.65, z: 0.85 to 2.15)
+          [ { x0: 0.35, x1: 4.85 }, { x0: 5.15, x1: 9.65 } ].forEach(bay => {
             const p0 = isoToScreen(bay.x0, dormSouthY + 0.12, 0.85, this.ox, this.oy);
             const p1 = isoToScreen(bay.x1, dormSouthY + 0.12, 0.85, this.ox, this.oy);
             const p2 = isoToScreen(bay.x1, dormSouthY + 0.12, 2.15, this.ox, this.oy);
@@ -2297,11 +2288,11 @@
       });
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
-        yMin: 22.8, yMax: LIB_MAX_Y + 1,
+        yMin: 22.8, yMax: LIB_MAX_Y + 1.25,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, 4.2, H, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, (LIB_MAX_Y + 1.25) - 22.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2564,11 +2555,11 @@
       });
       list.push({
         xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.35,
-        yMin: 38.8, yMax: SCHOOL_MAX_Y + 1,
+        yMin: 38.8, yMax: SCHOOL_MAX_Y + 1.25,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
-          this.models.drawBox(this.ctx, schoolSE_X, 38.8, 0, 0.25, (SCHOOL_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, schoolSE_X, 38.8, 0, 0.25, (SCHOOL_MAX_Y + 1.25) - 38.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2676,13 +2667,13 @@
           this.models.drawBox(this.ctx, 0, schoolSouthY, 0, wLen, 0.25, 0.90, '#d1d5db', '#9ca3af', '#6b7280', this.ox, this.oy);
           // Upper Lintel Wall (z: 2.15 to H)
           this.models.drawBox(this.ctx, 0, schoolSouthY, 2.15, wLen, 0.25, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
-          // Concrete Pillars: Left (0..0.8), Center (4.6..5.4), Right (9.2..10.0)
-          this.models.drawBox(this.ctx, 0, schoolSouthY, 0.90, 0.8, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
-          this.models.drawBox(this.ctx, 4.6, schoolSouthY, 0.90, 0.8, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
-          this.models.drawBox(this.ctx, 9.2, schoolSouthY, 0.90, 0.8, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
+          // Concrete Pillars: Left (0..0.35), Center (4.85..5.15), Right (9.65..10.0 flush with East wall)
+          this.models.drawBox(this.ctx, 0, schoolSouthY, 0.90, 0.35, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 4.85, schoolSouthY, 0.90, 0.30, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 9.65, schoolSouthY, 0.90, 0.35, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
 
-          // Corridor Windows with Retro Green Frames (Bay 1: 0.8 to 4.6, Bay 2: 5.4 to 9.2)
-          [ { x0: 0.8, x1: 4.6 }, { x0: 5.4, x1: 9.2 } ].forEach(bay => {
+          // Corridor Windows with Retro Green Frames (Bay 1: 0.35 to 4.85, Bay 2: 5.15 to 9.65)
+          [ { x0: 0.35, x1: 4.85 }, { x0: 5.15, x1: 9.65 } ].forEach(bay => {
             const p0 = isoToScreen(bay.x0, schoolSouthY + 0.12, 0.90, this.ox, this.oy);
             const p1 = isoToScreen(bay.x1, schoolSouthY + 0.12, 0.90, this.ox, this.oy);
             const p2 = isoToScreen(bay.x1, schoolSouthY + 0.12, 2.15, this.ox, this.oy);
