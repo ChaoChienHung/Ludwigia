@@ -3008,14 +3008,35 @@
         draw: () => this.models.drawGardenChessTable(this.ctx, 2.6, 13.8, this.ox, this.oy)
       });
 
-      // Lush Flowering Trees (Beautifying gardens and park lawns, placed 100% strictly on grass)
+      // Lush Flowering Trees (Beautifying gardens and park lawns, placed 100% strictly on true grass)
       const trees = [
-        [10.5, 2], [10.5, 8], [10.5, 23], [10.5, 31], [10.5, 38], // West lawn
-        [16.5, 2], [16.5, 8], [16.5, 23], [16.5, 31], [16.5, 38], // East lawn
-        [28.5, 4],                                                 // AI & East Promenade lawn buffer
-        [28.5, 21.5],                                               // Wide green park corridor between Library and Basketball Court
-        [36.5, 11], [40.5, 13],                                    // Wide green park between Cafe and Basketball Court
-        [36.5, 29], [40.5, 30.5]                                   // Wide lawn buffer between Basketball Court and Night Market
+        // 1. Ludwig's House South Lawn Terrace Garden (x: 0..9, y: 10..16)
+        [1.5, 11.5],
+        [7.5, 15.0],
+
+        // 2. West Campus Greenway & Park (x: 0..9, y: 27..32 — between Dorm 211 and Sanmin High)
+        [1.8, 27.8],
+        [7.5, 27.8],
+        [1.8, 31.5],
+        [7.5, 31.5],
+
+        // 3. East Promenade Lawn Buffer (x: 28..30, y: 0..9 — east of AI Studio)
+        [28.5, 3.5],
+        [28.5, 7.5],
+
+        // 4. East Park Corridor (x: 28..34, y: 17..26 — between Library and Basketball Court)
+        [28.5, 24.5],
+        [33.5, 24.5],
+
+        // 5. Campus Grand Central Park (x: 33..46, y: 8..16 — between Cafe and Basketball Court)
+        [36.5, 11.0],
+        [40.5, 13.0],
+        [43.5, 9.5],
+        [36.0, 15.0],
+
+        // 6. South Lawn Buffer (x: 35..46, y: 27..32 — south of Basketball Court)
+        [36.5, 29.0],
+        [41.5, 30.0]
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
@@ -3029,10 +3050,6 @@
         furnitureId: 'bench_west_greenway',
         xMin: 4.5, xMax: 6.1, yMin: 29.0, yMax: 29.65,
         draw: () => this.models.drawParkBench(this.ctx, 4.5, 29.0, this.ox, this.oy)
-      });
-      list.push({
-        xMin: 2.0, xMax: 3.5, yMin: 28.0, yMax: 29.5,
-        draw: () => this.models.drawTree(this.ctx, 2.5, 28.5, this.ox, this.oy)
       });
 
       // === 9. CENTRAL MIDNIGHT SNACK STREET (中央宵夜街 x: 32..38, y: 33..44 — Slender 2.5-tile road) ===
