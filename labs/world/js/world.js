@@ -216,10 +216,10 @@
       this.nav.setBlock(25.2, 12.0, 1.6, 0.5, true);  // East Avenue East Bench (Court & Cafe side)
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);   // West Greenway North Edge Bench
       this.nav.setBlock(11.0, 43.0, 1.6, 0.5, true);  // South Avenue North Edge Bench
-      this.nav.setBlock(1.8, 11.8, 1.6, 0.5, true);   // Garden Stone Terrace Bench beside Xiangqi Table (Lawn)
+      this.nav.setBlock(1.8, 11.6, 1.6, 0.45, true);   // Garden Stone Terrace Bench beside Xiangqi Table (Lawn)
 
       // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
-      this.nav.setBlock(2.7, 13.8, 1.8, 1.3, true);
+      this.nav.setBlock(3.6, 14.2, 1.8, 1.3, true);
 
       // Campus Landmark Monument Totems (Placed on the open grass lawn facing courtyard avenue)
       this.nav.setBlock(15.5, 7.2, 0.65, 0.35, true);  // AI Studio Monument Totem
@@ -266,13 +266,12 @@
 
       // Trees (Lush trees placed 100% strictly on green grass lawns, keeping all road tiles open)
       const treeBlocks = [
-        [10.5, 2], [10.5, 8], [10.5, 23], [10.5, 31], [10.5, 38], // West grass lawn strip
-        [16.5, 2], [16.5, 8], [16.5, 23], [16.5, 31], [16.5, 38], // East grass lawn strip
-        [28.5, 4],                                                 // AI & East Promenade lawn buffer
-        [28.5, 21.5],                                               // Wide green park corridor between Library and Basketball Court
-        [36.5, 11], [40.5, 13],                                    // Wide green park between Cafe and Basketball Court
-        [36.5, 29], [40.5, 30.5],                                  // Wide lawn buffer between Basketball Court and Night Market
-        [2.5, 28.5]                                                // West Greenway shaded tree
+        [1.5, 11.2], [7.5, 15.0],
+        [2.0, 28.5], [7.5, 28.5], [2.0, 31.5], [7.5, 31.5],
+        [34.5, 2.5], [34.5, 6.5],
+        [35.0, 18.5], [35.5, 24.0], [38.5, 24.5],
+        [36.5, 9.5], [41.5, 10.5], [45.5, 13.5],
+        [43.5, 29.0], [48.5, 29.5]
       ];
       treeBlocks.forEach(([tx, ty]) => {
         const trunkX = Math.floor(tx + 0.35);
@@ -282,7 +281,6 @@
 
       // 7. West Campus Greenway (x: 0..9, y: 27..32 — Peaceful lawn between Dorm 211 and Sanmin High)
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);    // Greenway Shaded Park Bench along path roadside
-      this.nav.setBlock(2.5, 28.5, 1.0, 1.0, true);    // Greenway Shaded Tree
 
       // 8. Campus Basketball Court Obstacles (East Dedicated Athletic Ground x: 41..52, y: 17..26)
       this.nav.setBlock(41.2, 21.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline)
@@ -1501,24 +1499,20 @@
           const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 17);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance
           const isEastWestAve2 = (y >= 12 && y <= 16 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (flush with Library North Wall)
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
-          const isEastWestAve3 = (y >= 19 && y <= 20 && x >= 0 && x <= 27);        // Street between Home/Terrace and Dorm 211 / Library
-          const isWestGreenwayAve = (y >= 29 && y <= 30 && x >= 0 && x <= 12);     // West Greenway Street between Dorm 211 and Sanmin High
-          const isEastWestAve4 = (y >= 33 && y <= 34 && x >= 0 && x <= 32);        // Street between Classroom and Douyin Office ↔ East Spine
-          const isEastWestAve5 = (y >= 43 && y <= 45 && x >= 0 && x <= 27);        // South Boulevard avenue
           const isNightMarketConnector = (y >= 33 && y <= 34 && x >= 30 && x <= 34); // Branch connecting East Spine to narrow Night Market street
           const isSouthSectorConnector = (x >= 5 && x <= 14 && y >= 43 && y <= 45); // South Connector to Cyber & Abyss
 
           // East Campus Basketball Court Direct Paved Access
           const isBasketballEntrance = (x >= 32 && x <= 41 && y >= 20 && y <= 22); // Direct paved avenue from East Spine into Basketball Court West Sideline
 
-          // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds)
-          const isLudwigDoorSpur = (x >= 10 && x <= 11 && y >= 5 && y <= 6);
+          // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds only)
+          const isLudwigDoorSpur = (x >= 10 && x <= 12 && y >= 5 && y <= 6);
           const isLudwigTerraceSpur = (y >= 10 && y <= 11 && x >= 5 && x <= 6);
-          const isDormDoorSpur = (x >= 10 && x <= 11 && y >= 21 && y <= 22);
-          const isSchoolDoorSpur = (x >= 10 && x <= 11 && y >= 37 && y <= 38);
-          const isAiDoorSpur = (x >= 16 && x <= 17 && y >= 5 && y <= 6);
-          const isLibDoorSpur = (x >= 16 && x <= 17 && y >= 21 && y <= 22);
-          const isDouyinDoorSpur = (x >= 16 && x <= 17 && y >= 37 && y <= 38);
+          const isDormDoorSpur = (x >= 10 && x <= 12 && y >= 21 && y <= 22);
+          const isSchoolDoorSpur = (x >= 10 && x <= 12 && y >= 37 && y <= 38);
+          const isAiDoorSpur = (x >= 15 && x <= 18 && y >= 5 && y <= 6);
+          const isLibDoorSpur = (x >= 15 && x <= 18 && y >= 21 && y <= 22);
+          const isDouyinDoorSpur = (x >= 15 && x <= 18 && y >= 37 && y <= 38);
           const isCafeDoorSpur = (x >= 32 && x <= 33 && y >= 4 && y <= 6);
 
           const isPath = (
@@ -1527,10 +1521,6 @@
             isEastWestAve1 ||
             isEastWestAve2 ||
             isGardenTerracePath ||
-            isEastWestAve3 ||
-            isWestGreenwayAve ||
-            isEastWestAve4 ||
-            isEastWestAve5 ||
             isNightMarketConnector ||
             isSouthSectorConnector ||
             isBasketballEntrance ||
@@ -3183,7 +3173,7 @@
         { gx: 10.8, gy: 12.0, furnitureId: 'bench_boulevard_north' }, // Central Plaza North Edge Bench
         { gx: 18.2, gy: 12.0, furnitureId: 'bench_central_east' },     // East Avenue West Bench (Plaza side)
         { gx: 25.2, gy: 12.0, furnitureId: 'bench_east_lawn' },         // East Avenue East Bench (Court & Cafe side)
-        { gx: 1.8,  gy: 11.8, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (Lawn, clear of doorway)
+        { gx: 1.8,  gy: 11.6, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (Lawn, clear of doorway)
         { gx: 11.0, gy: 43.0, furnitureId: 'bench_south_avenue' }      // South Avenue North Edge Bench
       ];
       benches.forEach(b => {
@@ -3196,33 +3186,33 @@
 
       // Garden Stone Chinese Chess Table & Drum Stools (Ludwig's South Lawn Terrace)
       list.push({
-        xMin: 2.4, xMax: 4.5, yMin: 13.5, yMax: 15.6,
-        draw: () => this.models.drawGardenChessTable(this.ctx, 2.6, 13.8, this.ox, this.oy)
+        xMin: 3.4, xMax: 5.5, yMin: 14.0, yMax: 16.0,
+        draw: () => this.models.drawGardenChessTable(this.ctx, 3.6, 14.2, this.ox, this.oy)
       });
 
       // Lush Flowering Trees (Beautifying gardens and park lawns, placed 100% strictly on true grass)
       const trees = [
         // 1. Ludwig's House South Lawn Terrace Garden (x: 0..9, y: 10..16)
-        [1.5, 11.5],
+        [1.5, 11.2],
         [7.5, 15.0],
 
         // 2. West Campus Greenway & Park (x: 0..9, y: 27..32 — between Dorm 211 and Sanmin High)
-        [1.8, 27.8],
-        [7.5, 27.8],
-        [1.8, 31.5],
+        [2.0, 28.5],
+        [7.5, 28.5],
+        [2.0, 31.5],
         [7.5, 31.5],
 
-        // 3. East Promenade Lawn Buffer (x: 28..30, y: 0..9 — east of AI Studio)
-        [28.5, 3.5],
-        [28.5, 7.5],
+        // 3. East Promenade Lawn Buffer (x: 33..40, y: 0..9 — east of East Promenade, framing Cafe)
+        [34.5, 2.5],
+        [34.5, 6.5],
 
-        // 4. East Park Corridor (x: 28..40, y: 17..26 — vast peaceful park between Library and Basketball Court)
-        [28.5, 20.0],
-        [28.5, 24.5],
-        [34.0, 24.5],
+        // 4. East Park Corridor (x: 33..40, y: 17..26 — vast peaceful park between East Promenade and Basketball Court)
+        [35.0, 18.5],
+        [35.5, 24.0],
+        [38.5, 24.5],
 
         // 5. Campus Grand Central Park (x: 33..46, y: 8..16 — between Cafe and Basketball Court)
-        [34.5, 10.5],
+        [36.5, 9.5],
         [41.5, 10.5],
         [45.5, 13.5],
 

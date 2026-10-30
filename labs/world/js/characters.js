@@ -48,7 +48,7 @@
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 44.8, y: 17.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
 
         // Garden Terrace Chinese Chess Bench beside Xiangqi Table (z = 0.42, exact seat center)
-        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 12.15, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.05 }, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
+        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 11.95, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.15 }, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
 
         // Gray Road North Edge Benches (Placed on the northern edge of gray paved roads, facing south onto the road)
         { id: 'bench_boulevard_north', type: 'seat', zone: 'plaza', x: 11.6, y: 12.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '中庭廣場北緣長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
@@ -125,9 +125,11 @@
         const nav = this.world.nav;
         if (!nav.isWalkableRadius(char.x, char.y, 0.16)) {
           const probes = [
-            { dx: 0, dy: 0.25 }, { dx: 0, dy: -0.25 }, { dx: 0.25, dy: 0 }, { dx: -0.25, dy: 0 },
-            { dx: 0, dy: 0.5 }, { dx: 0, dy: -0.5 }, { dx: 0.5, dy: 0 }, { dx: -0.5, dy: 0 },
-            { dx: 0, dy: 0.9 }, { dx: 0, dy: -0.9 }, { dx: 0.9, dy: 0 }, { dx: -0.9, dy: 0 }
+            { dx: 0, dy: 0.35 }, { dx: 0, dy: -0.35 }, { dx: 0.35, dy: 0 }, { dx: -0.35, dy: 0 },
+            { dx: 0.35, dy: 0.35 }, { dx: -0.35, dy: 0.35 }, { dx: 0.35, dy: -0.35 }, { dx: -0.35, dy: -0.35 },
+            { dx: 0, dy: 0.75 }, { dx: 0, dy: -0.75 }, { dx: 0.75, dy: 0 }, { dx: -0.75, dy: 0 },
+            { dx: 0.75, dy: 0.75 }, { dx: -0.75, dy: 0.75 }, { dx: 0.75, dy: -0.75 }, { dx: -0.75, dy: -0.75 },
+            { dx: 0, dy: 1.2 }, { dx: 0, dy: -1.2 }, { dx: 1.2, dy: 0 }, { dx: -1.2, dy: 0 }
           ];
           for (const p of probes) {
             if (nav.isWalkableRadius(char.x + p.dx, char.y + p.dy, 0.16)) {
