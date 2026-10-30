@@ -3505,7 +3505,7 @@
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Inner Target Box (White square)
+      // Inner Target Box (Red rectangle)
       const tb0 = isoToScreen(bbX, bbY + 0.28, 2.65, ox, oy);
       const tb1 = isoToScreen(bbX, bbY + 0.68, 2.65, ox, oy);
       const tt1 = isoToScreen(bbX, bbY + 0.68, 2.95, ox, oy);
@@ -3517,21 +3517,70 @@
       ctx.closePath();
       ctx.stroke();
 
-      // Heavy-duty Orange Rim
-      const rimP = isoToScreen(bbX + 0.25, bbY + 0.48, 2.62, ox, oy);
-      ctx.strokeStyle = '#ea580c';
-      ctx.lineWidth = 2.2;
+      // Steel Mounting Bracket Connecting Backboard to Rim
+      const mnt0 = isoToScreen(bbX, bbY + 0.48, 2.62, ox, oy);
+      const mnt1 = isoToScreen(bbX + 0.12, bbY + 0.48, 2.62, ox, oy);
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.8;
       ctx.beginPath();
-      ctx.arc(rimP.x, rimP.y, 6.5, 0, Math.PI * 2);
+      ctx.moveTo(mnt0.x, mnt0.y); ctx.lineTo(mnt1.x, mnt1.y);
       ctx.stroke();
 
-      // White Nylon Netting
+      // True Isometric Horizontal Orange Rim (Ring extending eastward into court)
+      const rcX = bbX + 0.30;
+      const rcY = bbY + 0.48;
+      const rcZ = 2.62;
+      const R_rim = 0.20;
+      const rimSegs = 20;
+
+      ctx.save();
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      const topNetPts = [];
+      for (let i = 0; i < rimSegs; i++) {
+        const a = (i / rimSegs) * Math.PI * 2;
+        const rx = rcX + R_rim * Math.cos(a);
+        const ry = rcY + R_rim * Math.sin(a);
+        const pt = isoToScreen(rx, ry, rcZ, ox, oy);
+        topNetPts.push(pt);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // True 3D White Nylon Netting (Hanging downwards along -Z axis)
+      const netBtmZ = 2.22;
+      const R_netBtm = 0.09;
+      const btmNetPts = [];
+      for (let i = 0; i < rimSegs; i++) {
+        const a = (i / rimSegs) * Math.PI * 2;
+        const bx = rcX + R_netBtm * Math.cos(a);
+        const by = rcY + R_netBtm * Math.sin(a);
+        btmNetPts.push(isoToScreen(bx, by, netBtmZ, ox, oy));
+      }
+
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.lineWidth = 1.0;
       ctx.beginPath();
-      ctx.moveTo(rimP.x - 5, rimP.y); ctx.lineTo(rimP.x - 2, rimP.y + 9);
-      ctx.lineTo(rimP.x + 2, rimP.y + 9); ctx.lineTo(rimP.x + 5, rimP.y);
+      // Draw 10 braided vertical & cross nylon cords
+      const cordStep = 2;
+      for (let i = 0; i < rimSegs; i += cordStep) {
+        ctx.moveTo(topNetPts[i].x, topNetPts[i].y);
+        ctx.lineTo(btmNetPts[i].x, btmNetPts[i].y);
+        const nextIdx = (i + cordStep) % rimSegs;
+        ctx.moveTo(topNetPts[i].x, topNetPts[i].y);
+        ctx.lineTo(btmNetPts[nextIdx].x, btmNetPts[nextIdx].y);
+      }
+      // Bottom Net Loop
+      for (let i = 0; i < rimSegs; i++) {
+        if (i === 0) ctx.moveTo(btmNetPts[0].x, btmNetPts[0].y);
+        else ctx.lineTo(btmNetPts[i].x, btmNetPts[i].y);
+      }
+      ctx.closePath();
       ctx.stroke();
+      ctx.restore();
     }
 
     // --- 6. Metal Ball Rack with Spalding Basketballs ---

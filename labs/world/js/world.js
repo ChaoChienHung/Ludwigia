@@ -1573,12 +1573,12 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
           } else if (isBasketball) {
             // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf
-            const isKey = (x >= 41 && x <= 45 && y >= 20 && y <= 23);
+            const isKey = (x >= 41 && x <= 45 && y >= 20 && y <= 22);
             const isBorder = (x === 41 || x === 52 || y === 17 || y === 26);
-            if (isBorder) {
-              ctx.fillStyle = '#c2410c'; // Terracotta court apron
-            } else if (isKey) {
+            if (isKey) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
+            } else if (isBorder) {
+              ctx.fillStyle = '#c2410c'; // Terracotta court apron
             } else {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#15803d' : '#166534';
             }
@@ -1657,49 +1657,89 @@
       this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
       ctx.restore();
 
-      // Basketball Court Boundary & Key Markings (Rendered on ground plane at x: 41..52, y: 17..26)
+      // Basketball Court Boundary & Key Markings (True Isometric Ground Projection at x: 41..52, y: 17..26)
       ctx.save();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
       ctx.lineWidth = 1.8;
 
-      // Key Rectangle (x: 41.5 to 45.5, y: 20.0 to 23.0)
-      const k0 = isoToScreen(41.5, 20.0, 0, ox, oy);
-      const k1 = isoToScreen(45.5, 20.0, 0, ox, oy);
-      const k2 = isoToScreen(45.5, 23.0, 0, ox, oy);
-      const k3 = isoToScreen(41.5, 23.0, 0, ox, oy);
+      // Mathematical Helper: True Isometric Circle Arc in World Space
+      const drawIsoArc = (xc, yc, z, r, startAngle, endAngle, segs = 32) => {
+        ctx.beginPath();
+        for (let i = 0; i <= segs; i++) {
+          const a = startAngle + (endAngle - startAngle) * (i / segs);
+          const pt = isoToScreen(xc + r * Math.cos(a), yc + r * Math.sin(a), z, ox, oy);
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.stroke();
+      };
+
+      // 1. Key Rectangle (Red Paint Boundary: baseline x: 41.2 to free-throw line x: 46.0, y: 20.0 to 23.0)
+      const k0 = isoToScreen(41.2, 20.0, 0, ox, oy);
+      const k1 = isoToScreen(46.0, 20.0, 0, ox, oy);
+      const k2 = isoToScreen(46.0, 23.0, 0, ox, oy);
+      const k3 = isoToScreen(41.2, 23.0, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(k0.x, k0.y); ctx.lineTo(k1.x, k1.y); ctx.lineTo(k2.x, k2.y); ctx.lineTo(k3.x, k3.y);
       ctx.stroke();
 
-      // Free throw circle top (centered at x: 45.5, y: 21.5)
-      const ftP = isoToScreen(45.5, 21.5, 0, ox, oy);
+      // 2. Free Throw Circle (Centered at Free Throw Line midpoint: x=46.0, y=21.5, radius r=1.5)
+      // Solid outer semi-circle facing into the court (x >= 46.0, angle from -pi/2 to pi/2)
+      drawIsoArc(46.0, 21.5, 0, 1.5, -Math.PI / 2, Math.PI / 2, 28);
+      // Dashed inner semi-circle inside the key (x <= 46.0, angle from pi/2 to 3*pi/2)
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      drawIsoArc(46.0, 21.5, 0, 1.5, Math.PI / 2, 3 * Math.PI / 2, 24);
+      ctx.restore();
+
+      // 3. Restricted Area Arc (No-charge semi-circle under the basket: centered at x=42.0, y=21.5, r=0.90)
+      drawIsoArc(42.0, 21.5, 0, 0.90, -Math.PI / 2, Math.PI / 2, 20);
+
+      // 4. Three-Point Line (Pro-court arc centered at x=42.0, y=21.5 with corner straight sections)
+      // Radius r = 5.6, corner line offset dy = 3.5 (y = 18.0 and 25.0)
+      const tpR = 5.6;
+      const tpDy = 3.5;
+      const tpDx = Math.sqrt(tpR * tpR - tpDy * tpDy); // ~4.37
+      const tpStraightEndX = 42.0 + tpDx; // ~46.37
+      const tpAngStart = Math.atan2(-tpDy, tpDx);
+      const tpAngEnd = Math.atan2(tpDy, tpDx);
+
+      // North straight sideline section (y = 18.0, x: 41.2 to 46.37)
+      const tpN0 = isoToScreen(41.2, 18.0, 0, ox, oy);
+      const tpN1 = isoToScreen(tpStraightEndX, 18.0, 0, ox, oy);
       ctx.beginPath();
-      ctx.ellipse(ftP.x, ftP.y, 16, 8, 0, -Math.PI / 2, Math.PI / 2);
+      ctx.moveTo(tpN0.x, tpN0.y); ctx.lineTo(tpN1.x, tpN1.y);
       ctx.stroke();
 
-      // Three-point arc (centered at basket base x: 41.5, y: 21.5)
-      const bCenter = isoToScreen(41.5, 21.5, 0, ox, oy);
+      // South straight sideline section (y = 25.0, x: 41.2 to 46.37)
+      const tpS0 = isoToScreen(41.2, 25.0, 0, ox, oy);
+      const tpS1 = isoToScreen(tpStraightEndX, 25.0, 0, ox, oy);
       ctx.beginPath();
-      ctx.ellipse(bCenter.x, bCenter.y, 50, 25, 0, -Math.PI / 2.3, Math.PI / 2.3);
+      ctx.moveTo(tpS0.x, tpS0.y); ctx.lineTo(tpS1.x, tpS1.y);
       ctx.stroke();
 
-      // Court Perimeter White Line (x: 41.2 to 51.8, y: 17.2 to 25.8)
+      // Curved Three-Point Arc seamlessly bridging the two straight sections
+      drawIsoArc(42.0, 21.5, 0, tpR, tpAngStart, tpAngEnd, 36);
+
+      // 5. Court Perimeter White Line (x: 41.2 to 51.8, y: 17.2 to 25.8)
       const c0 = isoToScreen(41.2, 17.2, 0, ox, oy);
       const c1 = isoToScreen(51.8, 17.2, 0, ox, oy);
       const c2 = isoToScreen(51.8, 25.8, 0, ox, oy);
       const c3 = isoToScreen(41.2, 25.8, 0, ox, oy);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.lineWidth = 1.6;
       ctx.beginPath();
       ctx.moveTo(c0.x, c0.y); ctx.lineTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(c3.x, c3.y); ctx.lineTo(c0.x, c0.y);
       ctx.stroke();
 
-      // Half-court line at x: 48.0
-      const hc0 = isoToScreen(48.0, 17.2, 0, ox, oy);
-      const hc1 = isoToScreen(48.0, 25.8, 0, ox, oy);
+      // 6. Half-court line at x: 51.8 & Center Circle Semi-Arc (r=1.8)
+      const hc0 = isoToScreen(51.8, 17.2, 0, ox, oy);
+      const hc1 = isoToScreen(51.8, 25.8, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(hc0.x, hc0.y); ctx.lineTo(hc1.x, hc1.y);
       ctx.stroke();
+      // Center Circle semi-arc (facing left into court: x <= 51.8, angle from pi/2 to 3*pi/2)
+      drawIsoArc(51.8, 21.5, 0, 1.8, Math.PI / 2, 3 * Math.PI / 2, 24);
       ctx.restore();
 
       // Render 3D Diorama Floating Island Crust along outer borders
