@@ -46,6 +46,18 @@
   const DOUYIN_MIN_Y = 33;
   const DOUYIN_MAX_Y = 42;
 
+  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 33..39, y: 2..7 — compact cozy indoor shop)
+  const CAFE_MIN_X = 33;
+  const CAFE_MAX_X = 39;
+  const CAFE_MIN_Y = 2;
+  const CAFE_MAX_Y = 7;
+
+  // Zone 8: Campus Basketball Court (East Dedicated Athletic Ground: x: 30..41, y: 17..26 — separated athletic plot)
+  const COURT_MIN_X = 30;
+  const COURT_MAX_X = 41;
+  const COURT_MIN_Y = 17;
+  const COURT_MAX_Y = 26;
+
   // --- Axonometric Coordinate Projections ---
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {
     return {
@@ -241,11 +253,26 @@
     }
 
     function isBehind(b, a) {
+      // 1. Explicit Furniture-User Hierarchy
+      // If 'a' is a character resting on furniture 'b', furniture MUST be drawn first (behind)
+      if (a.isChar && a.char && a.char.furniture && b.furnitureId && a.char.furniture.id === b.furnitureId) {
+        return true;
+      }
+      if (b.isChar && b.char && b.char.furniture && a.furnitureId && b.char.furniture.id === a.furnitureId) {
+        return false;
+      }
+
       const overlapX = (b.xMax > a.xMin && b.xMin < a.xMax);
       const overlapY = (b.yMax > a.yMin && b.yMin < a.yMax);
 
-      // If bounding boxes overlap in both axes (e.g. corner intersection, character collision)
+      // If bounding boxes overlap in both axes (e.g. corner intersection, elevated item on ground)
       if (overlapX && overlapY) {
+        // Vertical elevation check: lower elevation draws first
+        const bZ = (b.isChar && b.char ? (b.char.z || 0) : (b.z || 0));
+        const aZ = (a.isChar && a.char ? (a.char.z || 0) : (a.z || 0));
+        if (Math.abs(bZ - aZ) > 0.15) {
+          return bZ < aZ;
+        }
         if (b.baseDepth !== a.baseDepth) {
           return b.baseDepth < a.baseDepth;
         }
@@ -422,6 +449,8 @@
     LIB_MIN_X, LIB_MAX_X, LIB_MIN_Y, LIB_MAX_Y,
     SCHOOL_MIN_X, SCHOOL_MAX_X, SCHOOL_MIN_Y, SCHOOL_MAX_Y,
     DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y,
+    CAFE_MIN_X, CAFE_MAX_X, CAFE_MIN_Y, CAFE_MAX_Y,
+    COURT_MIN_X, COURT_MAX_X, COURT_MIN_Y, COURT_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,

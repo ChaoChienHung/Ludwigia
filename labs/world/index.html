@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Ludwigia World — 數位花園小世界</title>
   <meta name="garden:tags" content="Ludwigia, World, Campus, Isometric, Interactive, Family, Friends, Dorm211, AIStudio">
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32x32.png">
-  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 
   <!-- Theme & Palette Preload (Ludwigia Contract) -->
   <script>
@@ -38,6 +38,26 @@
   <link rel="stylesheet" href="world.css?v=2026-10-29-dream-pink">
 </head>
 <body class="space-body">
+
+  <!-- Cipher Easter Egg Secret Lock Overlay -->
+  <div id="cipher-lock-overlay" class="cipher-lock-overlay">
+    <div class="cipher-lock-card">
+      <div class="cipher-lock-icon">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+      <h2>Ludwigia World · 秘密維度</h2>
+      <p class="cipher-lock-desc">
+        這是一座由彩蛋密語守護的立體數位花園。<br>
+        請鍵入通關密語以解鎖次元大門：
+      </p>
+      <form id="cipher-lock-form" class="cipher-lock-form">
+        <input type="text" id="cipher-lock-input" placeholder="鍵入名字以解鎖..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button type="submit" class="cipher-lock-btn"><i class="fa-solid fa-key"></i> 解鎖</button>
+      </form>
+      <div id="cipher-lock-error" class="cipher-lock-error"></div>
+      <div class="cipher-lock-hint">提示：輸入站長的名（你早已熟知於心）</div>
+    </div>
+  </div>
 
   <!-- Fullscreen Interactive Canvas Viewport -->
   <div class="space-viewport">
@@ -105,11 +125,18 @@
     <span id="proximity-prompt-text">[空白鍵 / 點擊] 與 <span id="prompt-name" style="color: var(--space-accent);"></span> 交談</span>
   </div>
 
+  <!-- Interactive Furniture Prompt (Bed / Sitting) -->
+  <div class="proximity-prompt furniture-prompt" id="furniture-prompt">
+    <i class="fa-solid fa-bed text-accent" id="furniture-icon"></i>
+    <span id="furniture-prompt-text">[E / 點擊] 上床睡覺</span>
+  </div>
+
   <!-- Bottom Right Controls Tip -->
   <div class="hud-layer hud-bottombar">
     <div class="hud-glass-panel control-tips">
       <div id="tip-move"><span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> 或 <span class="key-badge">方向鍵</span> 移動</div>
       <div id="tip-talk"><span class="key-badge">空白鍵</span> 對話</div>
+      <div id="tip-interact"><span class="key-badge">E</span> 上床 / 坐下</div>
       <div id="tip-path"><span class="key-badge">點擊地面</span> 尋路</div>
     </div>
   </div>
@@ -312,6 +339,7 @@
 
         const tipMove = document.getElementById('tip-move');
         const tipTalk = document.getElementById('tip-talk');
+        const tipInteract = document.getElementById('tip-interact');
         const tipPath = document.getElementById('tip-path');
         if (tipMove) {
           tipMove.innerHTML = normalized === 'en'
@@ -322,6 +350,11 @@
           tipTalk.innerHTML = normalized === 'en'
             ? '<span class="key-badge">Space</span> Talk'
             : '<span class="key-badge">空白鍵</span> 對話';
+        }
+        if (tipInteract) {
+          tipInteract.innerHTML = normalized === 'en'
+            ? '<span class="key-badge">E</span> Rest / Bed'
+            : '<span class="key-badge">E</span> 上床 / 坐下';
         }
         if (tipPath) {
           tipPath.innerHTML = normalized === 'en'
@@ -340,6 +373,81 @@
         applyLanguage(next);
         window.dispatchEvent(new CustomEvent('ludwig-language-changed', { detail: { lang: next } }));
       });
+
+      // Cipher Mode Easter Egg Gate
+      (() => {
+        const checkUnlocked = () => {
+          try {
+            return sessionStorage.getItem('ludwig_cipher_mode_v1') === '1' ||
+                   localStorage.getItem('ludwig_cipher_mode_v1') === '1';
+          } catch (e) {
+            return false;
+          }
+        };
+
+        const overlay = document.getElementById('cipher-lock-overlay');
+        if (!overlay) return;
+        if (checkUnlocked()) {
+          overlay.classList.add('unlocked');
+          return;
+        }
+        const form = document.getElementById('cipher-lock-form');
+        const input = document.getElementById('cipher-lock-input');
+        const errEl = document.getElementById('cipher-lock-error');
+
+        const unlock = () => {
+          try {
+            sessionStorage.setItem('ludwig_cipher_mode_v1', '1');
+            localStorage.setItem('ludwig_cipher_mode_v1', '1');
+          } catch (e) {}
+          overlay.classList.add('unlocked');
+        };
+
+        const isMatch = (val) => {
+          const v = String(val || '').trim().toLowerCase();
+          return v === 'ludwig' || v === '趙健宏' || v === '健宏';
+        };
+
+        if (input) {
+          input.addEventListener('input', () => {
+            if (isMatch(input.value)) {
+              unlock();
+            }
+          });
+        }
+
+        if (form) {
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (isMatch(input?.value)) {
+              unlock();
+            } else {
+              if (errEl) errEl.textContent = '密語不正確，請再試一次。';
+            }
+          });
+        }
+
+        // Background key listener for "ludwig" (case-insensitive + IME code fallback)
+        let buffer = '';
+        window.addEventListener('keydown', (e) => {
+          if (overlay.classList.contains('unlocked')) return;
+          if (e.target === input) return;
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+          let char = '';
+          if (e.key && e.key.length === 1 && /[a-z]/i.test(e.key)) {
+            char = e.key.toLowerCase();
+          } else if (e.code && /^Key[A-Z]$/i.test(e.code)) {
+            char = e.code.slice(3).toLowerCase();
+          }
+          if (char) {
+            buffer = (buffer + char).slice(-6);
+            if (buffer === 'ludwig') {
+              unlock();
+            }
+          }
+        });
+      })();
 
       const applyThemePalette = window.LudwigWorldAppearance.apply;
 

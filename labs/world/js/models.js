@@ -2402,14 +2402,15 @@
       }
     }
 
-    // --- 10. Garden Stone Chessboard & Drum Stools (戶外石雕棋盤桌與石鼓凳) ---
+    // --- 10. Garden Stone Chinese Chess Table & Drum Stools (戶外石雕象棋桌與石鼓凳) ---
+    // Modeled with authentic Chinese Xiangqi (楚河漢界、九宮格、木質圓形紅黑棋子，呼應爸爸下象棋)
     drawGardenChessTable(ctx, gx, gy, ox, oy) {
       // 1. Natural Slate Paving Slab (Under table and stools on grass)
-      this.drawDropShadow(ctx, gx - 0.2, gy - 0.2, 2.0, 1.8, ox, oy);
+      this.drawDropShadow(ctx, gx - 0.2, gy - 0.2, 2.0, 1.9, ox, oy);
       const paverP0 = isoToScreen(gx - 0.2, gy - 0.2, 0.005, ox, oy);
       const paverP1 = isoToScreen(gx + 1.8, gy - 0.2, 0.005, ox, oy);
-      const paverP2 = isoToScreen(gx + 1.8, gy + 1.6, 0.005, ox, oy);
-      const paverP3 = isoToScreen(gx - 0.2, gy + 1.6, 0.005, ox, oy);
+      const paverP2 = isoToScreen(gx + 1.8, gy + 1.7, 0.005, ox, oy);
+      const paverP3 = isoToScreen(gx - 0.2, gy + 1.7, 0.005, ox, oy);
       ctx.fillStyle = '#64748b'; // Slate stone
       ctx.beginPath();
       ctx.moveTo(paverP0.x, paverP0.y); ctx.lineTo(paverP1.x, paverP1.y); ctx.lineTo(paverP2.x, paverP2.y); ctx.lineTo(paverP3.x, paverP3.y);
@@ -2419,11 +2420,11 @@
       ctx.lineWidth = 1.0;
       ctx.stroke();
 
-      // Inner flagstone joint lines
-      const j0 = isoToScreen(gx - 0.2, gy + 0.7, 0.006, ox, oy);
-      const j1 = isoToScreen(gx + 1.8, gy + 0.7, 0.006, ox, oy);
+      // Flagstone joint lines
+      const j0 = isoToScreen(gx - 0.2, gy + 0.75, 0.006, ox, oy);
+      const j1 = isoToScreen(gx + 1.8, gy + 0.75, 0.006, ox, oy);
       const j2 = isoToScreen(gx + 0.8, gy - 0.2, 0.006, ox, oy);
-      const j3 = isoToScreen(gx + 0.8, gy + 1.6, 0.006, ox, oy);
+      const j3 = isoToScreen(gx + 0.8, gy + 1.7, 0.006, ox, oy);
       ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
       ctx.lineWidth = 0.8;
       ctx.beginPath();
@@ -2432,107 +2433,195 @@
       ctx.stroke();
 
       // 2. West Stone Drum Stool (石鼓凳 1)
-      const st1X = gx - 0.05, st1Y = gy + 0.45;
-      this.drawDropShadow(ctx, st1X, st1Y, 0.5, 0.5, ox, oy);
-      this.drawBox(ctx, st1X + 0.05, st1Y + 0.05, 0, 0.40, 0.40, 0.10, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
-      this.drawBox(ctx, st1X, st1Y, 0.10, 0.50, 0.50, 0.20, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
-      this.drawBox(ctx, st1X + 0.05, st1Y + 0.05, 0.30, 0.40, 0.40, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+      const st1X = gx - 0.05, st1Y = gy + 0.50;
+      this.drawDropShadow(ctx, st1X, st1Y, 0.45, 0.45, ox, oy);
+      this.drawBox(ctx, st1X + 0.05, st1Y + 0.05, 0, 0.35, 0.35, 0.10, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      this.drawBox(ctx, st1X, st1Y, 0.10, 0.45, 0.45, 0.20, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawBox(ctx, st1X + 0.05, st1Y + 0.05, 0.30, 0.35, 0.35, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
 
-      // 3. Central Carved Stone Chess Table (主石桌)
+      // 3. Central Carved Stone Table (主石桌)
       const tblX = gx + 0.40, tblY = gy + 0.35;
-      this.drawDropShadow(ctx, tblX, tblY, 0.9, 0.9, ox, oy);
-      this.drawBox(ctx, tblX + 0.15, tblY + 0.15, 0, 0.55, 0.55, 0.12, '#cbd5e1', '#64748b', '#94a3b8', ox, oy);
-      this.drawBox(ctx, tblX + 0.25, tblY + 0.25, 0.12, 0.35, 0.35, 0.40, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
-      this.drawBox(ctx, tblX, tblY, 0.52, 0.85, 0.85, 0.12, '#f8fafc', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawDropShadow(ctx, tblX, tblY, 0.95, 0.95, ox, oy);
+      this.drawBox(ctx, tblX + 0.15, tblY + 0.15, 0, 0.60, 0.60, 0.12, '#cbd5e1', '#64748b', '#94a3b8', ox, oy);
+      this.drawBox(ctx, tblX + 0.25, tblY + 0.25, 0.12, 0.40, 0.40, 0.40, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawBox(ctx, tblX, tblY, 0.52, 0.90, 0.90, 0.12, '#f8fafc', '#94a3b8', '#cbd5e1', ox, oy);
 
-      // 4. Inset Wooden/Slate Chessboard (小棋盤)
-      const bSize = 0.64;
-      const bX = tblX + (0.85 - bSize) / 2;
-      const bY = tblY + (0.85 - bSize) / 2;
+      // 4. Inset Chinese Chessboard (傳統木質象棋棋盤)
+      const bW = 0.74; // Width along X (9 columns)
+      const bH = 0.80; // Height along Y (10 rows)
+      const bX = tblX + (0.90 - bW) / 2;
+      const bY = tblY + (0.90 - bH) / 2;
       const bZ = 0.645;
-      this.drawBox(ctx, bX, bY, bZ, bSize, bSize, 0.025, '#78350f', '#451a03', '#92400e', ox, oy);
 
-      // 8x8 Checkered Chess Grid
-      const sqSize = (bSize - 0.06) / 8;
-      const startX = bX + 0.03;
-      const startY = bY + 0.03;
-      const gridZ = bZ + 0.026;
+      // Dark Aged Ebony Border Trim
+      this.drawBox(ctx, bX - 0.02, bY - 0.02, bZ, bW + 0.04, bH + 0.04, 0.025, '#451a03', '#270e02', '#1a0801', ox, oy);
+      // Warm Beech Wood Playing Surface
+      this.drawBox(ctx, bX, bY, bZ + 0.015, bW, bH, 0.015, '#fde68a', '#d97706', '#b45309', ox, oy);
 
-      for (let r = 0; r < 8; r++) {
-        for (let c = 0; c < 8; c++) {
-          const isDark = (r + c) % 2 === 1;
-          const q0 = isoToScreen(startX + c * sqSize, startY + r * sqSize, gridZ, ox, oy);
-          const q1 = isoToScreen(startX + (c + 1) * sqSize, startY + r * sqSize, gridZ, ox, oy);
-          const q2 = isoToScreen(startX + (c + 1) * sqSize, startY + (r + 1) * sqSize, gridZ, ox, oy);
-          const q3 = isoToScreen(startX + c * sqSize, startY + (r + 1) * sqSize, gridZ, ox, oy);
+      const gridZ = bZ + 0.031;
+      const marginX = 0.045;
+      const marginY = 0.045;
+      const startX = bX + marginX;
+      const startY = bY + marginY;
+      const colW = (bW - marginX * 2) / 8; // 8 intervals for 9 columns
+      const rowH = (bH - marginY * 2) / 9; // 9 intervals for 10 rows
 
-          ctx.fillStyle = isDark ? '#b45309' : '#fef3c7';
-          ctx.beginPath();
-          ctx.moveTo(q0.x, q0.y); ctx.lineTo(q1.x, q1.y); ctx.lineTo(q2.x, q2.y); ctx.lineTo(q3.x, q3.y);
-          ctx.closePath();
-          ctx.fill();
-        }
+      // 5. Draw Xiangqi Grid Lines
+      ctx.strokeStyle = '#451a03';
+      ctx.lineWidth = 0.9;
+
+      // 10 Horizontal lines (r = 0 to 9)
+      for (let r = 0; r <= 9; r++) {
+        const pLeft = isoToScreen(startX, startY + r * rowH, gridZ, ox, oy);
+        const pRight = isoToScreen(startX + 8 * colW, startY + r * rowH, gridZ, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(pLeft.x, pLeft.y);
+        ctx.lineTo(pRight.x, pRight.y);
+        ctx.stroke();
       }
 
-      // 3D Miniature Chess Pieces Mid-Game
-      const whitePieces = [
-        [1, 1], [2, 0], [3, 2], [4, 4], [6, 1], [7, 0]
-      ];
-      whitePieces.forEach(([r, c]) => {
-        const px = startX + (c + 0.5) * sqSize;
-        const py = startY + (r + 0.5) * sqSize;
-        const pt = isoToScreen(px, py, gridZ, ox, oy);
-        const top = isoToScreen(px, py, gridZ + 0.055, ox, oy);
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      // Vertical lines (c = 0 to 8)
+      // Outer border columns (0 and 8) run all the way from row 0 to 9
+      [0, 8].forEach(c => {
+        const pTop = isoToScreen(startX + c * colW, startY, gridZ, ox, oy);
+        const pBottom = isoToScreen(startX + c * colW, startY + 9 * rowH, gridZ, ox, oy);
         ctx.beginPath();
-        ctx.arc(pt.x + 1, pt.y, 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#f8fafc';
-        ctx.strokeStyle = '#e2e8f0';
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.arc(top.x, top.y, 2.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(pTop.x, pTop.y);
+        ctx.lineTo(pBottom.x, pBottom.y);
         ctx.stroke();
       });
 
-      const blackPieces = [
-        [0, 6], [1, 5], [3, 3], [5, 4], [6, 6]
-      ];
-      blackPieces.forEach(([r, c]) => {
-        const px = startX + (c + 0.5) * sqSize;
-        const py = startY + (r + 0.5) * sqSize;
-        const pt = isoToScreen(px, py, gridZ, ox, oy);
-        const top = isoToScreen(px, py, gridZ + 0.055, ox, oy);
+      // Internal columns (1 to 7) are interrupted by the River (楚河漢界) between r = 4 and r = 5
+      for (let c = 1; c <= 7; c++) {
+        // Red side (rows 0 to 4)
+        const p0 = isoToScreen(startX + c * colW, startY, gridZ, ox, oy);
+        const p1 = isoToScreen(startX + c * colW, startY + 4 * rowH, gridZ, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
 
+        // Black side (rows 5 to 9)
+        const p2 = isoToScreen(startX + c * colW, startY + 5 * rowH, gridZ, ox, oy);
+        const p3 = isoToScreen(startX + c * colW, startY + 9 * rowH, gridZ, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+        ctx.stroke();
+      }
+
+      // 6. The Nine Palaces (九宮格 diagonal cross lines)
+      // Red Palace: cols 3..5, rows 0..2
+      const rP0 = isoToScreen(startX + 3 * colW, startY, gridZ, ox, oy);
+      const rP1 = isoToScreen(startX + 5 * colW, startY + 2 * rowH, gridZ, ox, oy);
+      const rP2 = isoToScreen(startX + 5 * colW, startY, gridZ, ox, oy);
+      const rP3 = isoToScreen(startX + 3 * colW, startY + 2 * rowH, gridZ, ox, oy);
+      ctx.beginPath();
+      ctx.moveTo(rP0.x, rP0.y); ctx.lineTo(rP1.x, rP1.y);
+      ctx.moveTo(rP2.x, rP2.y); ctx.lineTo(rP3.x, rP3.y);
+      ctx.stroke();
+
+      // Black Palace: cols 3..5, rows 7..9
+      const bP0 = isoToScreen(startX + 3 * colW, startY + 7 * rowH, gridZ, ox, oy);
+      const bP1 = isoToScreen(startX + 5 * colW, startY + 9 * rowH, gridZ, ox, oy);
+      const bP2 = isoToScreen(startX + 5 * colW, startY + 7 * rowH, gridZ, ox, oy);
+      const bP3 = isoToScreen(startX + 3 * colW, startY + 9 * rowH, gridZ, ox, oy);
+      ctx.beginPath();
+      ctx.moveTo(bP0.x, bP0.y); ctx.lineTo(bP1.x, bP1.y);
+      ctx.moveTo(bP2.x, bP2.y); ctx.lineTo(bP3.x, bP3.y);
+      ctx.stroke();
+
+      // 7. River Calligraphy: "楚 河" & "漢 界"
+      const riverMidY = startY + 4.5 * rowH;
+      const riv1 = isoToScreen(startX + 2 * colW, riverMidY, gridZ, ox, oy);
+      const riv2 = isoToScreen(startX + 6 * colW, riverMidY, gridZ, ox, oy);
+
+      ctx.save();
+      ctx.translate(riv1.x, riv1.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto table surface
+      ctx.fillStyle = '#78350f';
+      ctx.font = 'bold 6.5px "PingFang TC", "Songti TC", "Kaiti TC", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('楚 河', 0, 0);
+      ctx.restore();
+
+      ctx.save();
+      ctx.translate(riv2.x, riv2.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0);
+      ctx.fillStyle = '#78350f';
+      ctx.font = 'bold 6.5px "PingFang TC", "Songti TC", "Kaiti TC", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('漢 界', 0, 0);
+      ctx.restore();
+
+      // 8. Authentic Chinese Chess Pieces (圓形木質紅黑象棋子，精巧尺寸不重疊)
+      const xiangqiPieces = [
+        // Red Pieces (紅方)
+        { c: 4, r: 0, char: '帥', isRed: true },
+        { c: 3, r: 1, char: '仕', isRed: true },
+        { c: 6, r: 2, char: '相', isRed: true },
+        { c: 2, r: 2, char: '傌', isRed: true },
+        { c: 8, r: 2, char: '俥', isRed: true },
+        { c: 4, r: 2, char: '炮', isRed: true }, // 當頭炮
+        { c: 4, r: 4, char: '兵', isRed: true },
+
+        // Black Pieces (黑方)
+        { c: 4, r: 9, char: '將', isRed: false },
+        { c: 5, r: 8, char: '士', isRed: false },
+        { c: 2, r: 9, char: '象', isRed: false },
+        { c: 7, r: 7, char: '馬', isRed: false },
+        { c: 0, r: 8, char: '車', isRed: false },
+        { c: 1, r: 7, char: '砲', isRed: false },
+        { c: 4, r: 5, char: '卒', isRed: false }  // 對頂卒
+      ];
+
+      xiangqiPieces.forEach(p => {
+        const px = startX + p.c * colW;
+        const py = startY + p.r * rowH;
+        const botP = isoToScreen(px, py, gridZ, ox, oy);
+        const topP = isoToScreen(px, py, gridZ + 0.025, ox, oy);
+
+        // Ground drop shadow
         ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
         ctx.beginPath();
-        ctx.arc(pt.x + 1, pt.y, 2, 0, Math.PI * 2);
+        ctx.ellipse(botP.x + 0.3, botP.y + 0.3, 2.3, 1.4, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#0f172a';
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 0.8;
+        // Wooden counter disc rim
+        ctx.fillStyle = '#b45309';
         ctx.beginPath();
-        ctx.arc(top.x, top.y, 2.5, 0, Math.PI * 2);
+        ctx.ellipse(topP.x, topP.y + 0.6, 2.1, 1.3, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        // Wooden counter disc top (ivory / beech wood face)
+        ctx.fillStyle = '#fef3c7';
+        ctx.beginPath();
+        ctx.ellipse(topP.x, topP.y, 2.0, 1.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = p.isRed ? '#dc2626' : '#1e293b';
+        ctx.lineWidth = 0.5;
         ctx.stroke();
+
+        // Character text (delicate and crisp calligraphy)
+        ctx.fillStyle = p.isRed ? '#dc2626' : '#0f172a';
+        ctx.font = 'bold 2.8px "PingFang TC", "Songti TC", "Microsoft YaHei", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.char, topP.x, topP.y + 0.2);
       });
 
-      // 5. East Stone Drum Stool (石鼓凳 2)
-      const st2X = gx + 1.25, st2Y = gy + 0.45;
-      this.drawDropShadow(ctx, st2X, st2Y, 0.5, 0.5, ox, oy);
-      this.drawBox(ctx, st2X + 0.05, st2Y + 0.05, 0, 0.40, 0.40, 0.10, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
-      this.drawBox(ctx, st2X, st2Y, 0.10, 0.50, 0.50, 0.20, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
-      this.drawBox(ctx, st2X + 0.05, st2Y + 0.05, 0.30, 0.40, 0.40, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+      // 9. East Stone Drum Stool (石鼓凳 2)
+      const st2X = gx + 1.25, st2Y = gy + 0.50;
+      this.drawDropShadow(ctx, st2X, st2Y, 0.45, 0.45, ox, oy);
+      this.drawBox(ctx, st2X + 0.05, st2Y + 0.05, 0, 0.35, 0.35, 0.10, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      this.drawBox(ctx, st2X, st2Y, 0.10, 0.45, 0.45, 0.20, '#e2e8f0', '#94a3b8', '#cbd5e1', ox, oy);
+      this.drawBox(ctx, st2X + 0.05, st2Y + 0.05, 0.30, 0.35, 0.35, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
 
-      // 6. Ceramic Tea Set on Corner of Table
-      const teaP = isoToScreen(tblX + 0.74, tblY + 0.12, 0.645, ox, oy);
+      // 10. Ceramic Tea Set on Corner of Table
+      const teaP = isoToScreen(tblX + 0.78, tblY + 0.14, 0.645, ox, oy);
       ctx.fillStyle = '#065f46';
       ctx.beginPath();
-      ctx.arc(teaP.x, teaP.y, 3, 0, Math.PI * 2);
+      ctx.arc(teaP.x, teaP.y, 3.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#047857';
       ctx.lineWidth = 0.8;
@@ -3328,11 +3417,15 @@
       ctx.stroke();
 
       const cp = isoToScreen(gx + 0.45, gy + 0.5, 1.60, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto X-axis highway sign face
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 9px sans-serif';
+      ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('三民路 ➔ 校園大道', cp.x, cp.y);
+      ctx.fillText('三民路 ➔ 校園大道', 0, 0);
+      ctx.restore();
     }
 
     // --- 5. Streetball Basketball Hoop (West Sector) ---
@@ -3418,137 +3511,454 @@
       });
     }
 
-    // --- 7. Midnight Snack Stall 1: Taiwanese Fried Chicken & Salt Crispy Chicken ---
-    drawSnackStallFriedChicken(ctx, gx, gy, ox, oy) {
-      // Stainless steel cart base
-      this.drawBox(ctx, gx, gy, 0, 1.45, 0.85, 0.85, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+    // --- 7. NCU Midnight Snack Street 1: Iconic Blue Food Truck (小貨車改裝餐車) ---
+    // Modeled after authentic Central University campus festival & midnight food truck
+    drawFoodTruck(ctx, gx, gy, ox, oy) {
+      const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
 
-      // Heated glass food display case (amber glow inside)
-      this.drawBox(ctx, gx + 0.15, gy + 0.12, 0.85, 1.15, 0.62, 0.45, 'rgba(253, 224, 71, 0.45)', 'rgba(251, 191, 36, 0.35)', 'rgba(245, 158, 11, 0.35)', ox, oy);
+      // 1. Truck Chassis & 4 Rubber Wheels with Silver Hubcaps
+      const wheelPositions = [
+        { wx: gx + 0.1, wy: gy + 0.5 },
+        { wx: gx + 1.4, wy: gy + 0.5 },
+        { wx: gx + 0.1, wy: gy + 2.2 },
+        { wx: gx + 1.4, wy: gy + 2.2 }
+      ];
+      wheelPositions.forEach(w => {
+        this.drawBox(ctx, w.wx, w.wy, 0, 0.18, 0.42, 0.34, '#1e293b', '#0f172a', '#020617', ox, oy);
+        const wp = isoToScreen(w.wx + 0.09, w.wy + 0.21, 0.17, ox, oy);
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath();
+        ctx.arc(wp.x, wp.y, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+      });
 
-      // Golden fried cutlets & bites inside
-      const pCutlet = isoToScreen(gx + 0.70, gy + 0.42, 0.95, ox, oy);
-      ctx.fillStyle = '#d97706';
+      // Dark steel lower frame chassis
+      this.drawBox(ctx, gx + 0.15, gy + 0.3, 0.18, 1.35, 2.4, 0.22, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // 2. Front Driver Cab (South end: gy + 1.7 to gy + 2.7)
+      // Metallic Central Blue Cab Body (中華菱利經典藍)
+      this.drawBox(ctx, gx + 0.1, gy + 1.7, 0.35, 1.45, 1.05, 0.72, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // Windshield & Cab Roof
+      this.drawBox(ctx, gx + 0.15, gy + 1.75, 1.07, 1.35, 0.95, 0.52, '#3b82f6', '#1d4ed8', '#1e3a8a', ox, oy);
+      // Front Windshield Glass
+      const ws0 = isoToScreen(gx + 0.18, gy + 2.68, 0.98, ox, oy);
+      const ws1 = isoToScreen(gx + 1.47, gy + 2.68, 0.98, ox, oy);
+      const ws2 = isoToScreen(gx + 1.47, gy + 2.68, 1.50, ox, oy);
+      const ws3 = isoToScreen(gx + 0.18, gy + 2.68, 1.50, ox, oy);
+      ctx.fillStyle = 'rgba(147, 197, 253, 0.75)';
       ctx.beginPath();
-      ctx.ellipse(pCutlet.x, pCutlet.y, 9, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#78350f';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      // Four metal canopy awning poles
-      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.85, 0.06, 0.06, 1.15, '#475569', '#334155', '#1e293b', ox, oy);
-      this.drawBox(ctx, gx + 1.35, gy + 0.05, 0.85, 0.06, 0.06, 1.15, '#475569', '#334155', '#1e293b', ox, oy);
-      this.drawBox(ctx, gx + 0.05, gy + 0.75, 0.85, 0.06, 0.06, 1.15, '#475569', '#334155', '#1e293b', ox, oy);
-      this.drawBox(ctx, gx + 1.35, gy + 0.75, 0.85, 0.06, 0.06, 1.15, '#475569', '#334155', '#1e293b', ox, oy);
-
-      // Red night market canopy awning
-      this.drawBox(ctx, gx - 0.05, gy - 0.05, 2.00, 1.55, 0.95, 0.22, '#ef4444', '#dc2626', '#b91c1c', ox, oy);
-
-      // Front Signage Banner "現炸香雞排"
-      const sp0 = isoToScreen(gx + 0.10, gy + 0.86, 0.55, ox, oy);
-      const sp1 = isoToScreen(gx + 1.35, gy + 0.86, 0.55, ox, oy);
-      const st1 = isoToScreen(gx + 1.35, gy + 0.86, 0.80, ox, oy);
-      const st0 = isoToScreen(gx + 0.10, gy + 0.86, 0.80, ox, oy);
-      ctx.fillStyle = '#b91c1c';
-      ctx.beginPath();
-      ctx.moveTo(sp0.x, sp0.y); ctx.lineTo(sp1.x, sp1.y); ctx.lineTo(st1.x, st1.y); ctx.lineTo(st0.x, st0.y);
+      ctx.moveTo(ws0.x, ws0.y); ctx.lineTo(ws1.x, ws1.y); ctx.lineTo(ws2.x, ws2.y); ctx.lineTo(ws3.x, ws3.y);
       ctx.closePath();
       ctx.fill();
-
-      const cp = isoToScreen(gx + 0.72, gy + 0.87, 0.68, ox, oy);
-      ctx.fillStyle = '#fef08a';
-      ctx.font = 'bold 8.5px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('現炸香雞排 • 鹽酥雞', cp.x, cp.y);
-    }
-
-    // --- 8. Midnight Snack Stall 2: Boba Milk Tea & Fresh Brew Hub ---
-    drawSnackStallBobaTea(ctx, gx, gy, ox, oy) {
-      // Natural warm wood counter base
-      this.drawBox(ctx, gx, gy, 0, 1.45, 0.85, 0.85, '#dfb88e', '#b4855a', '#855933', ox, oy);
-
-      // Tea Dispensers & Sealer Machine
-      this.drawBox(ctx, gx + 0.20, gy + 0.15, 0.85, 0.35, 0.35, 0.50, '#94a3b8', '#64748b', '#475569', ox, oy); // Tea Urn 1 (Black Tea)
-      this.drawBox(ctx, gx + 0.65, gy + 0.15, 0.85, 0.35, 0.35, 0.50, '#38bdf8', '#0284c7', '#0369a1', ox, oy); // Tea Urn 2 (Oolong Tea)
-      this.drawBox(ctx, gx + 1.10, gy + 0.20, 0.85, 0.28, 0.32, 0.42, '#f43f5e', '#e11d48', '#be123c', ox, oy); // Sealing Machine
-
-      // Cup with Boba Straw
-      const cupP = isoToScreen(gx + 0.70, gy + 0.62, 0.95, ox, oy);
-      ctx.fillStyle = '#fef3c7'; // Milk tea color
-      ctx.beginPath();
-      ctx.ellipse(cupP.x, cupP.y, 4, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#0284c7';
+      ctx.strokeStyle = '#1e3a8a';
       ctx.lineWidth = 1.0;
       ctx.stroke();
 
-      // Canopy Poles
-      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.85, 0.06, 0.06, 1.15, '#78350f', '#58240a', '#451a03', ox, oy);
-      this.drawBox(ctx, gx + 1.35, gy + 0.05, 0.85, 0.06, 0.06, 1.15, '#78350f', '#58240a', '#451a03', ox, oy);
-      this.drawBox(ctx, gx + 0.05, gy + 0.75, 0.85, 0.06, 0.06, 1.15, '#78350f', '#58240a', '#451a03', ox, oy);
-      this.drawBox(ctx, gx + 1.35, gy + 0.75, 0.85, 0.06, 0.06, 1.15, '#78350f', '#58240a', '#451a03', ox, oy);
-
-      // Striped Teal/White Canopy Awning
-      this.drawBox(ctx, gx - 0.05, gy - 0.05, 2.00, 1.55, 0.95, 0.20, '#06b6d4', '#0891b2', '#0e7490', ox, oy);
-
-      // Signboard "波霸黑糖珍奶"
-      const cp = isoToScreen(gx + 0.72, gy + 0.87, 0.68, ox, oy);
-      ctx.fillStyle = '#0e7490';
-      ctx.font = 'bold 8.5px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('手搖茶 • 黑糖波霸鮮奶 🧋', cp.x, cp.y);
-    }
-
-    // --- 9. Midnight Snack Stall 3: Steaming Luwei & Oden Cart ---
-    drawSnackStallLuwei(ctx, gx, gy, ox, oy) {
-      // Japanese / Taiwanese Wooden Cart Base
-      this.drawBox(ctx, gx, gy, 0, 1.45, 0.85, 0.80, '#b45309', '#92400e', '#78350f', ox, oy);
-
-      // Divided Stainless Steel Simmering Vat
-      this.drawBox(ctx, gx + 0.20, gy + 0.15, 0.80, 0.70, 0.55, 0.20, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
-
-      // Ingredients Platter (tofu, kelp, meatballs)
-      this.drawBox(ctx, gx + 0.98, gy + 0.15, 0.80, 0.40, 0.55, 0.15, '#fde68a', '#d97706', '#b45309', ox, oy);
-
-      // Hanging Paper Lanterns on Corner Poles
-      const l1 = isoToScreen(gx + 0.05, gy + 0.85, 1.70, ox, oy);
-      const l2 = isoToScreen(gx + 1.40, gy + 0.85, 1.70, ox, oy);
-      [l1, l2].forEach(lp => {
-        ctx.fillStyle = '#ef4444';
+      // Front Headlights & Chrome Bumper
+      const hlLeft = isoToScreen(gx + 0.25, gy + 2.76, 0.55, ox, oy);
+      const hlRight = isoToScreen(gx + 1.35, gy + 2.76, 0.55, ox, oy);
+      [hlLeft, hlRight].forEach(hl => {
+        ctx.fillStyle = isNight ? '#fef08a' : '#f8fafc';
+        if (isNight) {
+          ctx.shadowColor = '#fef08a';
+          ctx.shadowBlur = 8;
+        }
         ctx.beginPath();
-        ctx.arc(lp.x, lp.y, 5.5, 0, Math.PI * 2);
+        ctx.arc(hl.x, hl.y, 3.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.0;
-        ctx.stroke();
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 6.5px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('滷', lp.x, lp.y);
+        ctx.shadowBlur = 0;
       });
 
-      // Wooden Slatted Roof
-      this.drawBox(ctx, gx - 0.05, gy - 0.05, 1.95, 1.55, 0.95, 0.18, '#78350f', '#58240a', '#451a03', ox, oy);
+      // 3. Rear Food Truck Kitchen & Serving Counter (gy + 0.1 to gy + 1.7)
+      // Solid warm wood drop-side serving bar (木質側掀吧台板)
+      this.drawBox(ctx, gx + 0.05, gy + 0.15, 0.35, 1.55, 1.55, 0.48, '#854d0e', '#713f12', '#582b0c', ox, oy);
+      // Stainless steel kitchen counter surface
+      this.drawBox(ctx, gx + 0.12, gy + 0.20, 0.83, 1.40, 1.45, 0.08, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
 
-      // Gentle Rising Steam over hot broth
-      const steamP = isoToScreen(gx + 0.55, gy + 0.42, 1.15, ox, oy);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+      // Sizzling Noodle Wok & Condiments on Counter
+      const wokP = isoToScreen(gx + 0.65, gy + 0.85, 0.93, ox, oy);
+      ctx.fillStyle = '#0f172a';
       ctx.beginPath();
-      ctx.arc(steamP.x - 2, steamP.y - 4, 4.5, 0, Math.PI * 2);
-      ctx.arc(steamP.x + 3, steamP.y - 9, 6.0, 0, Math.PI * 2);
+      ctx.ellipse(wokP.x, wokP.y, 8, 4.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Steam over wok
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.beginPath();
+      ctx.arc(wokP.x, wokP.y - 6, 4, 0, Math.PI * 2);
+      ctx.arc(wokP.x + 3, wokP.y - 11, 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Front Banner "經典古早味滷味"
-      const cp = isoToScreen(gx + 0.72, gy + 0.87, 0.62, ox, oy);
-      ctx.fillStyle = '#fef3c7';
-      ctx.font = 'bold 8.5px sans-serif';
+      // 4. White Canopy Support Poles
+      const polePositions = [
+        { px: gx + 0.1, py: gy + 0.15 },
+        { px: gx + 1.5, py: gy + 0.15 },
+        { px: gx + 0.1, py: gy + 1.65 },
+        { px: gx + 1.5, py: gy + 1.65 }
+      ];
+      polePositions.forEach(p => {
+        this.drawBox(ctx, p.px, p.py, 0.88, 0.06, 0.06, 1.15, '#f8fafc', '#cbd5e1', '#94a3b8', ox, oy);
+      });
+
+      // 5. Classic Striped Retractable Awning (藍白條紋遮陽篷，真實復刻中央大學餐車)
+      this.drawBox(ctx, gx - 0.05, gy + 0.05, 2.00, 1.75, 1.70, 0.22, '#0284c7', '#0369a1', '#075985', ox, oy);
+      // Striped awning accents along X-axis
+      for (let s = 0; s < 4; s++) {
+        const sx = gx - 0.02 + s * 0.44;
+        this.drawBox(ctx, sx, gy + 0.08, 2.02, 0.22, 1.64, 0.20, '#ffffff', '#e2e8f0', '#cbd5e1', ox, oy);
+      }
+
+      // 6. Rooftop Circular Backlit Lightbox Sign (車頂圓形招牌)
+      const signP = isoToScreen(gx + 0.82, gy + 0.90, 2.30, ox, oy);
+      ctx.save();
+      ctx.translate(signP.x, signP.y);
+      if (isNight) {
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 10;
+      }
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(0, 0, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('古早味熱氣滷味 • 黑輪', cp.x, cp.y);
+      ctx.fillText('餐車', 0, 0);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 7. Wood Counter Side Signboard: "又好吃 炒泡麵 • 飲品"
+      const cp = isoToScreen(gx + 0.04, gy + 0.92, 0.58, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis truck side counter
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('又好吃 炒泡麵 • 特調飲品 🚚', 0, 0);
+      ctx.restore();
+    }
+
+    // --- 8. NCU Midnight Snack Street 2: Famous 「好兇蛋餅 / 無敵蛋餅」 ---
+    // Modeled after user photo of the famous NCU egg pancake stall with iconic round yellow sign
+    drawEggPancakeStall(ctx, gx, gy, ox, oy) {
+      const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
+
+      // 1. Stainless Steel Prep Counter Base
+      this.drawBox(ctx, gx, gy, 0, 1.45, 1.85, 0.85, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+
+      // 2. Heavy-Duty Teppanyaki Sizzling Flat-top Griddle (平底鐵板煎台)
+      this.drawBox(ctx, gx + 0.15, gy + 0.20, 0.85, 1.15, 0.80, 0.10, '#475569', '#334155', '#1e293b', ox, oy);
+      // Golden Egg Pancakes Sizzling on Griddle
+      const ep0 = isoToScreen(gx + 0.45, gy + 0.45, 0.96, ox, oy);
+      const ep1 = isoToScreen(gx + 0.85, gy + 0.70, 0.96, ox, oy);
+      [ep0, ep1].forEach(ep => {
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.ellipse(ep.x, ep.y, 7, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+      });
+
+      // 3. Tall Tower of Folded White Takeaway Paper Meal Boxes (外帶紙餐盒堆疊)
+      this.drawBox(ctx, gx + 0.20, gy + 1.20, 0.85, 0.45, 0.45, 0.65, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
+      // Sauce Squeeze Bottles (Red Sweet Chili & Dark Thick Soy Sauce)
+      const b0 = isoToScreen(gx + 0.85, gy + 1.30, 0.95, ox, oy);
+      const b1 = isoToScreen(gx + 1.05, gy + 1.40, 0.95, ox, oy);
+      ctx.fillStyle = '#ef4444'; // Red Sweet Chili
+      ctx.fillRect(b0.x - 2, b0.y - 12, 4, 12);
+      ctx.fillStyle = '#78350f'; // Dark Thick Soy Sauce
+      ctx.fillRect(b1.x - 2, b1.y - 12, 4, 12);
+
+      // 4. Stainless Steel Canopy Poles
+      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 1.35, gy + 0.05, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + 1.75, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
+      this.drawBox(ctx, gx + 1.35, gy + 1.75, 0.85, 0.06, 0.06, 1.25, '#94a3b8', '#64748b', '#475569', ox, oy);
+
+      // Stainless Steel Canopy Roof
+      this.drawBox(ctx, gx - 0.05, gy - 0.05, 2.05, 1.55, 1.95, 0.18, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+
+      // Warm Incandescent Heat Lamp hanging over counter
+      const lp = isoToScreen(gx + 0.65, gy + 0.70, 1.85, ox, oy);
+      ctx.fillStyle = '#fef08a';
+      if (isNight) {
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 12;
+      }
+      ctx.beginPath();
+      ctx.arc(lp.x, lp.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // 5. ICONIC ROUND YELLOW SIGNBOARD 「好兇蛋餅」 (復刻實體招牌)
+      const signP = isoToScreen(gx + 0.05, gy + 0.25, 2.20, ox, oy);
+      ctx.save();
+      ctx.translate(signP.x, signP.y);
+      if (isNight) {
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 10;
+      }
+      // Bright Yellow Circle
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.arc(0, 0, 15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      // Bold Black Calligraphic Text 「無敵 蛋餅」
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '900 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('無敵', 0, -4);
+      ctx.font = 'bold 7px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.fillText('蛋餅', 0, 4);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // Front Counter Signboard
+      const cp = isoToScreen(gx + 0.04, gy + 1.05, 0.58, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis stall counter
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('無敵蛋餅 • 招牌現煎宵夜 🍳', 0, 0);
+      ctx.restore();
+    }
+
+    // --- 9. NCU Midnight Snack Street 3: Famous 「傻師傅湯包」 (實體店鋪建築) ---
+    // Modeled after user photo of legendary NCU back-door dumpling shop — authentic 1-story storefront building
+    drawShaShiFuDumplings(ctx, gx, gy, ox, oy) {
+      const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
+
+      // 1. Solid Storefront Building Structure (x: gx to gx+3.6, y: gy to gy+3.2, z: 2.65)
+      // Building Brick/Concrete Walls (Back & Sides)
+      this.drawBox(ctx, gx, gy, 0, 3.80, 0.25, 2.65, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy); // North Wall
+      this.drawBox(ctx, gx + 3.55, gy, 0, 0.25, 3.40, 2.65, '#991b1b', '#7f1d1d', '#450a0a', ox, oy); // East Back Wall
+      this.drawBox(ctx, gx, gy + 3.15, 0, 3.80, 0.25, 2.65, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy); // South Wall
+
+      // Store Interior Floor & Warm Fluorescent Illumination
+      const in0 = isoToScreen(gx + 0.20, gy + 0.20, 0, ox, oy);
+      const in1 = isoToScreen(gx + 3.50, gy + 0.20, 0, ox, oy);
+      const in2 = isoToScreen(gx + 3.50, gy + 3.15, 0, ox, oy);
+      const in3 = isoToScreen(gx + 0.20, gy + 3.15, 0, ox, oy);
+      ctx.fillStyle = '#f1f5f9';
+      ctx.beginPath();
+      ctx.moveTo(in0.x, in0.y); ctx.lineTo(in1.x, in1.y); ctx.lineTo(in2.x, in2.y); ctx.lineTo(in3.x, in3.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Interior Dine-In Tables & Stools
+      this.drawBox(ctx, gx + 1.85, gy + 0.65, 0, 1.20, 0.85, 0.68, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      this.drawBox(ctx, gx + 1.85, gy + 1.95, 0, 1.20, 0.85, 0.68, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      // Stools
+      [gx + 1.55, gx + 3.15].forEach(sx => {
+        this.drawBox(ctx, sx, gy + 0.85, 0, 0.25, 0.25, 0.38, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+        this.drawBox(ctx, sx, gy + 2.15, 0, 0.25, 0.25, 0.38, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+      });
+
+      // 2. Right Half: Classic Taiwanese Corrugated Steel Roll-Up Shutter Garage Door (鐵捲門)
+      this.drawBox(ctx, gx, gy + 2.15, 0, 0.18, 1.05, 2.15, '#94a3b8', '#64748b', '#475569', ox, oy);
+      // Corrugated Shutter Horizontal Grooves
+      for (let sz = 0.2; sz < 2.1; sz += 0.22) {
+        const r0 = isoToScreen(gx + 0.05, gy + 2.15, sz, ox, oy);
+        const r1 = isoToScreen(gx + 0.05, gy + 3.15, sz, ox, oy);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(r0.x, r0.y); ctx.lineTo(r1.x, r1.y);
+        ctx.stroke();
+      }
+
+      // 3. Left Half: Street-Facing Cooking & Ordering Front Counter (y: gy to gy + 2.05)
+      this.drawBox(ctx, gx, gy + 0.05, 0, 1.45, 2.05, 0.88, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+      // Stainless Steel Steaming Station Tabletop
+      this.drawBox(ctx, gx - 0.05, gy + 0.05, 0.88, 1.55, 2.05, 0.08, '#f1f5f9', '#cbd5e1', '#94a3b8', ox, oy);
+
+      // Bamboo Steamers (三疊竹蒸籠，中央宵夜街靈魂)
+      const steamerStacks = [
+        { sx: gx + 0.35, sy: gy + 0.50 },
+        { sx: gx + 0.75, sy: gy + 0.85 },
+        { sx: gx + 0.35, sy: gy + 1.35 }
+      ];
+      steamerStacks.forEach((st, idx) => {
+        for (let tier = 0; tier < 3; tier++) {
+          const sz = 0.96 + tier * 0.16;
+          const sp = isoToScreen(st.sx, st.sy, sz, ox, oy);
+          ctx.fillStyle = (tier === 2) ? '#b45309' : '#d97706';
+          ctx.beginPath();
+          ctx.ellipse(sp.x, sp.y, 8, 4.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#78350f';
+          ctx.lineWidth = 1.0;
+          ctx.stroke();
+        }
+
+        // Rising Steam Animation
+        const steamTime = (performance.now() * 0.002 + idx * 1.5) % 3;
+        const steamAlpha = Math.max(0, 0.65 - steamTime * 0.2);
+        const topP = isoToScreen(st.sx, st.sy, 1.48 + steamTime * 0.35, ox, oy);
+        ctx.fillStyle = `rgba(255, 255, 255, ${steamAlpha})`;
+        ctx.beginPath();
+        ctx.arc(topP.x - 2, topP.y - 2, 5 + steamTime * 2.5, 0, Math.PI * 2);
+        ctx.arc(topP.x + 3, topP.y - 6, 6 + steamTime * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 4. LARGE RED STOREFRONT SIGNBOARD 「傻師傅湯包」 (大紅底白字經典店面橫幅招牌)
+      this.drawBox(ctx, gx - 0.08, gy, 2.15, 0.28, 3.25, 0.65, '#dc2626', '#b91c1c', '#991b1b', ox, oy);
+
+      // Signboard Text along Y-axis front
+      const signP = isoToScreen(gx - 0.02, gy + 1.62, 2.45, ox, oy);
+      ctx.save();
+      ctx.translate(signP.x, signP.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis storefront fascia
+      if (isNight) {
+        ctx.shadowColor = '#fca5a5';
+        ctx.shadowBlur = 12;
+      }
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('傻師傅湯包', 0, 0);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 5. Protruding Vertical Box Sign 「傻師傅 湯包」 (立體外凸招牌)
+      const vertP = isoToScreen(gx - 0.05, gy + 0.15, 2.95, ox, oy);
+      ctx.save();
+      ctx.translate(vertP.x, vertP.y);
+      if (isNight) {
+        ctx.shadowColor = '#ef4444';
+        ctx.shadowBlur = 10;
+      }
+      ctx.fillStyle = '#b91c1c';
+      ctx.fillRect(-11, -20, 22, 40);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.4;
+      ctx.strokeRect(-10, -19, 20, 38);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('傻師傅', 0, -7);
+      ctx.fillText('湯包', 0, 7);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 6. Lower Counter Front Banner: "湯包 • 排骨酥 • 蒸餃"
+      const cp = isoToScreen(gx - 0.02, gy + 1.05, 0.45, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis counter
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('湯包 • 排骨酥 • 蒸餃 🥟', 0, 0);
+      ctx.restore();
+    }
+
+    // --- 10. Ground-Standing Street Pole Signboard (插在地上的立式看板招牌) ---
+    drawGroundStandingSign(ctx, gx, gy, title, subtitle, bgColor, textColor, ox, oy, icon = '') {
+      const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
+
+      // Sturdy Dual Metal Ground Stakes / Pole (Z = 0 to 1.15)
+      this.drawBox(ctx, gx + 0.05, gy + 0.10, 0, 0.06, 0.06, 1.15, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + 0.70, 0, 0.06, 0.06, 1.15, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // Ground Concrete Base Block
+      this.drawBox(ctx, gx, gy + 0.05, 0, 0.16, 0.75, 0.14, '#94a3b8', '#64748b', '#475569', ox, oy);
+
+      // Signboard Panel (Facing West towards road / sheared along Y-axis)
+      const sp = isoToScreen(gx + 0.04, gy + 0.42, 0.95, ox, oy);
+      ctx.save();
+      ctx.translate(sp.x, sp.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis
+
+      const W = 48;
+      const H = 30;
+
+      if (isNight) {
+        ctx.shadowColor = bgColor || '#facc15';
+        ctx.shadowBlur = 8;
+      }
+      // Board Background
+      ctx.fillStyle = bgColor || '#facc15';
+      ctx.fillRect(-W / 2, -H / 2, W, H);
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+      // Main Text
+      ctx.fillStyle = textColor || '#0f172a';
+      ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText((icon ? icon + ' ' : '') + title, 0, subtitle ? -5 : 0);
+
+      // Subtitle
+      if (subtitle) {
+        ctx.font = '6px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+        ctx.fillText(subtitle, 0, 7);
+      }
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+
+    // --- 10. Classic Parked Taiwanese Scooter (中央宵夜街經典路邊機車群) ---
+    // Modeled after the scooters lined up on the asphalt street in NCU Night Market
+    drawScooter(ctx, gx, gy, color, ox, oy) {
+      const col = color || '#0284c7';
+
+      // Dual Rubber Wheels with Hubs
+      this.drawBox(ctx, gx + 0.12, gy + 0.10, 0, 0.15, 0.22, 0.25, '#1e293b', '#0f172a', '#020617', ox, oy);
+      this.drawBox(ctx, gx + 0.12, gy + 0.65, 0, 0.15, 0.22, 0.25, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // Scooter Body Chassis
+      this.drawBox(ctx, gx + 0.10, gy + 0.18, 0.15, 0.22, 0.58, 0.35, col, '#0f172a', '#020617', ox, oy);
+
+      // Cushioned Black Seat
+      this.drawBox(ctx, gx + 0.08, gy + 0.20, 0.50, 0.24, 0.42, 0.12, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // Front Handlebar Cowl & Headlight
+      this.drawBox(ctx, gx + 0.10, gy + 0.68, 0.45, 0.20, 0.18, 0.35, col, '#0f172a', '#020617', ox, oy);
+      const hlP = isoToScreen(gx + 0.20, gy + 0.86, 0.72, ox, oy);
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(hlP.x, hlP.y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rear Metal Cargo Rack & Tail Light
+      const tlP = isoToScreen(gx + 0.20, gy + 0.12, 0.45, ox, oy);
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(tlP.x, tlP.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- Backward Compatibility Aliases ---
+    drawSnackStallFriedChicken(ctx, gx, gy, ox, oy) {
+      this.drawEggPancakeStall(ctx, gx, gy, ox, oy);
+    }
+    drawSnackStallBobaTea(ctx, gx, gy, ox, oy) {
+      this.drawFoodTruck(ctx, gx, gy, ox, oy);
+    }
+    drawSnackStallLuwei(ctx, gx, gy, ox, oy) {
+      this.drawShaShiFuDumplings(ctx, gx, gy, ox, oy);
     }
 
     // --- 10. Street Corner Foldable Table & Iconic Red Plastic Stools ---
@@ -3601,17 +4011,34 @@
       const cp = isoToScreen(gx + 1.55, gy + 0.15, 2.95, ox, oy);
       const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
 
-      // Neon Glow
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto X-axis archway beam!
+
+      const W = 180;
+      const H = 22;
+
+      // Crimson Lacquer Backing Board
+      ctx.fillStyle = '#7f1d1d';
+      ctx.fillRect(-W / 2, -H / 2, W, H);
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 1.4;
+      ctx.strokeRect(-W / 2, -H / 2, W, H);
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.4)';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
+
       if (isNight) {
         ctx.shadowColor = '#facc15';
         ctx.shadowBlur = 10;
       }
       ctx.fillStyle = '#fef08a';
-      ctx.font = 'bold 10px sans-serif';
+      ctx.font = 'bold 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('🏮 宵夜街 • MIDNIGHT SNACK HUB 🏮', cp.x, cp.y);
+      ctx.fillText('🏮 宵夜街 • MIDNIGHT SNACK HUB 🏮', 0, 0);
       ctx.shadowBlur = 0;
+      ctx.restore();
     }
 
     // --- 12. Overhead Hanging Fairy Lights Strand ---
@@ -3661,135 +4088,294 @@
       }
     }
 
-    // --- 13. Botanical Garden Artisan Cafe Pavilion ---
-    drawCafePavilion(ctx, gx, gy, ox, oy) {
-      // Warm Nordic Walnut Wood Counter Base
-      this.drawBox(ctx, gx, gy, 0, 2.30, 0.95, 0.90, '#b45309', '#92400e', '#78350f', ox, oy);
+    // =========================================================================
+    // LUDWIGIA INDOOR SPECIALTY CAFE (溫馨文青的室內精品咖啡館)
+    // =========================================================================
 
-      // Italian Espresso Machine (Silver & Chrome)
-      this.drawBox(ctx, gx + 0.35, gy + 0.20, 0.90, 0.65, 0.45, 0.45, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
-      // Dual Portafilters
-      const pFilt = isoToScreen(gx + 0.68, gy + 0.65, 1.05, ox, oy);
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(pFilt.x - 3, pFilt.y - 2, 6, 3);
+    // --- 13. Indoor Barista Counter & Commercial Espresso Machine ---
+    drawCafeBarCounter(ctx, gx, gy, ox, oy) {
+      // Warm Dark Walnut Base with Brass Base Kickplate
+      this.drawBox(ctx, gx, gy, 0, 2.80, 1.10, 0.92, '#78350f', '#58240a', '#451a03', ox, oy);
+      // Polished Calacatta Gold White Marble Countertop Overhang
+      this.drawBox(ctx, gx - 0.05, gy - 0.05, 0.92, 2.90, 1.20, 0.10, '#f8fafc', '#e2e8f0', '#cbd5e1', ox, oy);
 
-      // Glass Pastry Display Vitrine (Pastries inside: Croissants & Matcha Cake)
-      this.drawBox(ctx, gx + 1.25, gy + 0.18, 0.90, 0.85, 0.55, 0.40, 'rgba(255, 255, 255, 0.45)', 'rgba(241, 245, 249, 0.35)', 'rgba(226, 232, 240, 0.35)', ox, oy);
-      const pCroissant = isoToScreen(gx + 1.65, gy + 0.45, 1.02, ox, oy);
-      ctx.fillStyle = '#d97706';
+      // Commercial Dual-Group Chrome Espresso Machine (La Marzocco Style)
+      this.drawBox(ctx, gx + 0.35, gy + 0.25, 1.02, 0.90, 0.60, 0.55, '#f1f5f9', '#94a3b8', '#64748b', ox, oy);
+      // Cup Warming Top Tray with Inset Ceramic Cups
+      this.drawBox(ctx, gx + 0.40, gy + 0.30, 1.57, 0.80, 0.50, 0.06, '#334155', '#1e293b', '#0f172a', ox, oy);
+      const cp1 = isoToScreen(gx + 0.55, gy + 0.45, 1.63, ox, oy);
+      const cp2 = isoToScreen(gx + 0.90, gy + 0.45, 1.63, ox, oy);
+      [cp1, cp2].forEach(c => {
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      });
+
+      // Chrome Dual Group Heads & Portafilters
+      const pf1 = isoToScreen(gx + 0.65, gy + 0.82, 1.15, ox, oy);
+      const pf2 = isoToScreen(gx + 0.95, gy + 0.82, 1.15, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      [pf1, pf2].forEach(p => {
+        ctx.fillRect(p.x - 3, p.y - 2, 6, 4);
+      });
+
+      // Conical Burr Coffee Grinder (Matte Black)
+      this.drawBox(ctx, gx + 1.35, gy + 0.30, 1.02, 0.35, 0.40, 0.68, '#1e293b', '#0f172a', '#020617', ox, oy);
+      // Transparent Bean Hopper with Roasted Coffee Beans
+      this.drawBox(ctx, gx + 1.38, gy + 0.33, 1.70, 0.28, 0.32, 0.30, 'rgba(254, 215, 170, 0.5)', 'rgba(217, 119, 6, 0.4)', 'rgba(180, 83, 9, 0.4)', ox, oy);
+
+      // Glass Pastry Showcase (Displaying Basque Cheesecake & Butter Croissants)
+      this.drawBox(ctx, gx + 1.85, gy + 0.20, 1.02, 0.90, 0.65, 0.45, 'rgba(241, 245, 249, 0.45)', 'rgba(226, 232, 240, 0.35)', 'rgba(203, 213, 225, 0.35)', ox, oy);
+      // Pastries inside
+      const pCroissant = isoToScreen(gx + 2.10, gy + 0.45, 1.12, ox, oy);
+      const pCake = isoToScreen(gx + 2.50, gy + 0.50, 1.12, ox, oy);
+      ctx.fillStyle = '#d97706'; // Golden Croissant
       ctx.beginPath();
       ctx.ellipse(pCroissant.x, pCroissant.y, 5, 3, 0, 0, Math.PI * 2);
       ctx.fill();
-
-      // Four Matte Black Steel Canopy Posts
-      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.90, 0.08, 0.08, 1.35, '#334155', '#1e293b', '#0f172a', ox, oy);
-      this.drawBox(ctx, gx + 2.18, gy + 0.05, 0.90, 0.08, 0.08, 1.35, '#334155', '#1e293b', '#0f172a', ox, oy);
-      this.drawBox(ctx, gx + 0.05, gy + 0.82, 0.90, 0.08, 0.08, 1.35, '#334155', '#1e293b', '#0f172a', ox, oy);
-      this.drawBox(ctx, gx + 2.18, gy + 0.82, 0.90, 0.08, 0.08, 1.35, '#334155', '#1e293b', '#0f172a', ox, oy);
-
-      // Modern Cedar Slatted Canopy Awning
-      this.drawBox(ctx, gx - 0.10, gy - 0.10, 2.25, 2.50, 1.15, 0.22, '#78350f', '#58240a', '#451a03', ox, oy);
-
-      // Cafe Menu Chalkboard A-Frame Sign
-      const b0 = isoToScreen(gx - 0.50, gy + 0.30, 0, ox, oy);
-      const b1 = isoToScreen(gx - 0.20, gy + 0.30, 0, ox, oy);
-      const t1 = isoToScreen(gx - 0.20, gy + 0.30, 0.75, ox, oy);
-      const t0 = isoToScreen(gx - 0.50, gy + 0.30, 0.75, ox, oy);
-      ctx.fillStyle = '#1e293b';
+      ctx.fillStyle = '#78350f'; // Basque Cheesecake slice
       ctx.beginPath();
-      ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.lineTo(t1.x, t1.y); ctx.lineTo(t0.x, t0.y);
+      ctx.moveTo(pCake.x, pCake.y - 3); ctx.lineTo(pCake.x + 4, pCake.y + 3); ctx.lineTo(pCake.x - 4, pCake.y + 3);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = '#92400e';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
 
-      const mbP = isoToScreen(gx - 0.35, gy + 0.30, 0.45, ox, oy);
-      ctx.fillStyle = '#fef08a';
-      ctx.font = 'bold 7px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('COFFEE ☕', mbP.x, mbP.y);
-
-      // Main Fascia Signboard "BOTANICAL CAFE"
-      const cp = isoToScreen(gx + 1.15, gy + 0.95, 2.38, ox, oy);
-      ctx.fillStyle = '#fef3c7';
-      ctx.font = 'bold 9.5px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('☕ BOTANICAL CAFE • 露天精品咖啡', cp.x, cp.y);
+      // Ceramic Takeaway Cup Stack
+      const cupStack = isoToScreen(gx + 0.15, gy + 0.50, 1.02, ox, oy);
+      ctx.fillStyle = '#fed7aa';
+      ctx.fillRect(cupStack.x - 3, cupStack.y - 8, 6, 8);
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 0.6;
+      ctx.strokeRect(cupStack.x - 3, cupStack.y - 8, 6, 8);
     }
 
-    // --- 14. Garden Patio Umbrella Table with Woven Chairs ---
-    drawPatioUmbrellaTable(ctx, gx, gy, ox, oy) {
-      // Wood Terrace Coffee Table
-      this.drawBox(ctx, gx + 0.35, gy + 0.35, 0, 0.12, 0.12, 0.65, '#475569', '#334155', '#1e293b', ox, oy); // Leg
-      const tp = isoToScreen(gx + 0.41, gy + 0.41, 0.65, ox, oy);
-      ctx.fillStyle = '#dfb88e';
+    // --- 14. Cafe Wall Chalkboard Menu (Mounted on North Transversal Wall) ---
+    drawCafeMenuBoard(ctx, gx, gy, ox, oy) {
+      const p = isoToScreen(gx, gy, 1.45, ox, oy);
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto X-axis transversal wall!
+
+      const W = 110;
+      const H = 64;
+
+      // Dark Slate Blackboard with Teak Frame
+      ctx.fillStyle = '#451a03';
+      ctx.fillRect(-W / 2 - 2, -H / 2 - 2, W + 4, H + 4);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(-W / 2, -H / 2, W, H);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 1.0;
+      ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+      // Chalkboard Menu Typography
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 7.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('☕ SPECIALTY COFFEE', 0, -20);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '6px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('• Espresso / Americano', -W / 2 + 8, -8);
+      ctx.fillText('• Flat White / Latte', -W / 2 + 8, 2);
+      ctx.fillText('• Hand-Drip Single Origin', -W / 2 + 8, 12);
+      ctx.fillText('• Basque Cheesecake', -W / 2 + 8, 22);
+      ctx.restore();
+    }
+
+    // --- 15. Indoor Lounge Coffee Table & Leather Armchairs ---
+    drawCafeLoungeTable(ctx, gx, gy, ox, oy) {
+      // Woven Nordic Area Rug on Parquet Floor
+      const r0 = isoToScreen(gx - 0.35, gy - 0.35, 0.01, ox, oy);
+      const r1 = isoToScreen(gx + 1.85, gy - 0.35, 0.01, ox, oy);
+      const r2 = isoToScreen(gx + 1.85, gy + 1.65, 0.01, ox, oy);
+      const r3 = isoToScreen(gx - 0.35, gy + 1.65, 0.01, ox, oy);
+      ctx.fillStyle = '#fef3c7';
       ctx.beginPath();
-      ctx.ellipse(tp.x, tp.y, 16, 9, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#92400e';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-
-      // 2 Latte Cups with Heart Foam Art
-      const cup1 = { x: tp.x - 5, y: tp.y - 2 };
-      const cup2 = { x: tp.x + 5, y: tp.y + 1 };
-      [cup1, cup2].forEach(c => {
-        ctx.fillStyle = '#fef3c7';
-        ctx.beginPath();
-        ctx.arc(c.x, c.y, 3.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#78350f';
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-        // Coffee Foam
-        ctx.fillStyle = '#b45309';
-        ctx.beginPath();
-        ctx.arc(c.x, c.y, 2.2, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // 2 Wicker Armchairs
-      const chairs = [
-        { cx: gx + 0.05, cy: gy + 0.40 },
-        { cx: gx + 0.78, cy: gy + 0.40 }
-      ];
-      chairs.forEach(c => {
-        this.drawBox(ctx, c.cx, c.cy, 0, 0.32, 0.32, 0.42, '#d97706', '#b45309', '#92400e', ox, oy);
-        // Chair Backrest
-        this.drawBox(ctx, c.cx, c.cy, 0.42, 0.08, 0.32, 0.35, '#b45309', '#92400e', '#78350f', ox, oy);
-      });
-
-      // Center Umbrella Pole
-      this.drawBox(ctx, gx + 0.38, gy + 0.38, 0.65, 0.06, 0.06, 1.65, '#334155', '#1e293b', '#0f172a', ox, oy);
-
-      // Large Cream Canvas Patio Umbrella Canopy
-      const up = isoToScreen(gx + 0.41, gy + 0.41, 2.30, ox, oy);
-      const tip = isoToScreen(gx + 0.41, gy + 0.41, 2.65, ox, oy);
-
-      ctx.fillStyle = '#fef9c3'; // Cream canvas
-      ctx.beginPath();
-      ctx.moveTo(tip.x, tip.y);
-      ctx.lineTo(up.x - 26, up.y + 5);
-      ctx.lineTo(up.x, up.y + 16);
-      ctx.lineTo(up.x + 26, up.y + 5);
-      ctx.lineTo(up.x, up.y - 12);
+      ctx.moveTo(r0.x, r0.y); ctx.lineTo(r1.x, r1.y); ctx.lineTo(r2.x, r2.y); ctx.lineTo(r3.x, r3.y);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = '#ca8a04';
+      ctx.strokeStyle = '#d97706';
       ctx.lineWidth = 1.0;
       ctx.stroke();
 
-      // Umbrella Rib Struts
-      ctx.strokeStyle = '#a16207';
-      ctx.lineWidth = 0.8;
+      // Solid Walnut Round Coffee Table
+      this.drawBox(ctx, gx + 0.65, gy + 0.55, 0, 0.12, 0.12, 0.55, '#451a03', '#3b180a', '#291006', ox, oy); // Table base
+      const tp = isoToScreen(gx + 0.71, gy + 0.61, 0.55, ox, oy);
+      ctx.fillStyle = '#78350f';
       ctx.beginPath();
-      ctx.moveTo(tip.x, tip.y); ctx.lineTo(up.x, up.y + 16);
-      ctx.moveTo(tip.x, tip.y); ctx.lineTo(up.x - 26, up.y + 5);
-      ctx.moveTo(tip.x, tip.y); ctx.lineTo(up.x + 26, up.y + 5);
+      ctx.ellipse(tp.x, tp.y, 18, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#451a03';
+      ctx.lineWidth = 1.2;
       ctx.stroke();
+
+      // 2 Steaming Ceramic Mugs with Heart Foam Latte Art
+      const cup1 = { x: tp.x - 5, y: tp.y - 2 };
+      const cup2 = { x: tp.x + 6, y: tp.y + 1 };
+      [cup1, cup2].forEach(c => {
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+        // Coffee Surface & Foam
+        ctx.fillStyle = '#92400e';
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fef3c7'; // Cream heart dot
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 1.0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 2 Comfortable Upholstered Armchairs
+      // Chair 1 (West: facing inward)
+      this.drawBox(ctx, gx + 0.05, gy + 0.45, 0, 0.45, 0.45, 0.38, '#c2410c', '#9a3412', '#7c2d12', ox, oy);
+      this.drawBox(ctx, gx + 0.05, gy + 0.45, 0.38, 0.10, 0.45, 0.38, '#9a3412', '#7c2d12', '#431407', ox, oy); // Backrest
+      // Chair 2 (East: facing inward)
+      this.drawBox(ctx, gx + 1.25, gy + 0.45, 0, 0.45, 0.45, 0.38, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 1.60, gy + 0.45, 0.38, 0.10, 0.45, 0.38, '#1e293b', '#0f172a', '#020617', ox, oy); // Backrest
+    }
+
+    // --- 16. Window-Facing Timber Bar Counter & Stools ---
+    drawCafeWindowBar(ctx, gx, gy, ox, oy) {
+      // Long Oak Window Counter
+      this.drawBox(ctx, gx, gy, 0, 2.40, 0.45, 0.90, '#d97706', '#b45309', '#92400e', ox, oy);
+
+      // 2 High Wooden Barstools with Footrests
+      const stools = [gx + 0.45, gx + 1.65];
+      stools.forEach(sx => {
+        this.drawBox(ctx, sx, gy - 0.40, 0, 0.30, 0.30, 0.65, '#78350f', '#58240a', '#451a03', ox, oy);
+        // Brass Footrest Ring
+        const sP = isoToScreen(sx + 0.15, gy - 0.25, 0.65, ox, oy);
+        ctx.fillStyle = '#ca8a04';
+        ctx.beginPath();
+        ctx.ellipse(sP.x, sP.y, 8, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Open MacBook / Laptop on the Window Bar
+      this.drawBox(ctx, gx + 0.90, gy + 0.10, 0.90, 0.45, 0.32, 0.04, '#cbd5e1', '#94a3b8', '#64748b', ox, oy);
+      // Open Screen tilted
+      const sp = isoToScreen(gx + 1.12, gy + 0.12, 0.94, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(sp.x - 6, sp.y - 12, 12, 10);
+      ctx.fillStyle = '#38bdf8'; // Glowing Code Screen
+      ctx.fillRect(sp.x - 5, sp.y - 11, 10, 8);
+
+      // Glass of Iced Cold Brew with Straw
+      const iced = isoToScreen(gx + 1.60, gy + 0.20, 0.90, ox, oy);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.fillRect(iced.x - 2, iced.y - 7, 4, 7);
+      ctx.fillStyle = '#451a03'; // Coffee
+      ctx.fillRect(iced.x - 2, iced.y - 5, 4, 5);
+      // Straw
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(iced.x, iced.y - 5); ctx.lineTo(iced.x + 2, iced.y - 11);
+      ctx.stroke();
+    }
+
+    // --- 17. Indoor Tall Potted Monstera / Fiddle-Leaf Fig ---
+    drawCafeIndoorPlant(ctx, gx, gy, ox, oy) {
+      // Modern Terracotta Cylindrical Planter
+      this.drawBox(ctx, gx, gy, 0, 0.55, 0.55, 0.60, '#ea580c', '#c2410c', '#9a3412', ox, oy);
+      // Soil
+      const sp = isoToScreen(gx + 0.27, gy + 0.27, 0.60, ox, oy);
+      ctx.fillStyle = '#291006';
+      ctx.beginPath();
+      ctx.ellipse(sp.x, sp.y, 9, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Lush Broad Emerald Leaves
+      const leaves = [
+        { dx: -10, dy: -12, rx: 9, ry: 5, rot: -0.4, color: '#16a34a' },
+        { dx: 8, dy: -14, rx: 11, ry: 6, rot: 0.35, color: '#15803d' },
+        { dx: -12, dy: -22, rx: 12, ry: 7, rot: -0.2, color: '#22c55e' },
+        { dx: 6, dy: -24, rx: 13, ry: 7, rot: 0.4, color: '#16a34a' },
+        { dx: 0, dy: -32, rx: 14, ry: 8, rot: 0.05, color: '#15803d' }
+      ];
+      leaves.forEach(l => {
+        ctx.save();
+        ctx.translate(sp.x + l.dx, sp.y + l.dy);
+        ctx.rotate(l.rot);
+        ctx.fillStyle = l.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, l.rx, l.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#14532d';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // --- 18. Modern Industrial Corner Bookshelf ---
+    drawCafeBookshelf(ctx, gx, gy, ox, oy) {
+      // Matte Black Steel Frame & Oak Shelves
+      this.drawBox(ctx, gx, gy, 0, 1.20, 0.45, 1.85, '#78350f', '#58240a', '#451a03', ox, oy);
+
+      // Colorful Coffee Table & Tech Books on Shelves
+      const books = [
+        { z: 0.45, dx: 0.20, color: '#38bdf8' },
+        { z: 0.45, dx: 0.45, color: '#f59e0b' },
+        { z: 0.45, dx: 0.70, color: '#ec4899' },
+        { z: 1.05, dx: 0.25, color: '#10b981' },
+        { z: 1.05, dx: 0.55, color: '#8b5cf6' },
+        { z: 1.05, dx: 0.85, color: '#f97316' }
+      ];
+      books.forEach(b => {
+        this.drawBox(ctx, gx + b.dx, gy + 0.08, b.z, 0.20, 0.28, 0.45, b.color, '#1e293b', '#0f172a', ox, oy);
+      });
+    }
+
+    // --- 19. Suspended Brass Pendant Lamp with Warm Lighting Cone ---
+    drawCafePendantLamp(ctx, gx, gy, z = 2.2, ox, oy) {
+      const lampP = isoToScreen(gx, gy, z, ox, oy);
+      const floorP = isoToScreen(gx, gy, 0, ox, oy);
+
+      // Thin Steel Cable from Ceiling
+      const ceilP = isoToScreen(gx, gy, 3.2, ox, oy);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(ceilP.x, ceilP.y);
+      ctx.lineTo(lampP.x, lampP.y);
+      ctx.stroke();
+
+      // Brass Dome Lampshade
+      ctx.fillStyle = '#ca8a04';
+      ctx.beginPath();
+      ctx.arc(lampP.x, lampP.y, 6, Math.PI, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Warm Amber Bulb & Ambient Light Glow
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(lampP.x, lampP.y + 2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Soft Warm Light Circle on Floor
+      const grad = ctx.createRadialGradient(floorP.x, floorP.y, 2, floorP.x, floorP.y, 35);
+      grad.addColorStop(0, 'rgba(253, 224, 71, 0.22)');
+      grad.addColorStop(1, 'rgba(253, 224, 71, 0.0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(floorP.x, floorP.y, 35, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
     }
 
     // =========================================================================
@@ -3806,18 +4392,43 @@
       this.drawBox(ctx, gx - 0.15, gy - 0.05, 2.65, 3.60, 0.45, 0.65, '#0f172a', '#020617', '#000000', ox, oy);
 
       const cp = isoToScreen(gx + 1.65, gy + 0.15, 2.95, ox, oy);
-      // Neon Glow Background Bar
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto X-axis billboard face!
+
+      const W = 186;
+      const H = 22;
+
+      // Neon Gradient Border & Ambient Glow
+      const grad = ctx.createLinearGradient(-W / 2, 0, W / 2, 0);
+      grad.addColorStop(0, '#06b6d4');
+      grad.addColorStop(0.5, '#3b82f6');
+      grad.addColorStop(1, '#8b5cf6');
+
+      // Cyber Carbon Face Plate
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(-W / 2, -H / 2, W, H);
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.6;
       ctx.shadowColor = '#06b6d4';
-      ctx.shadowBlur = 12;
-      ctx.fillStyle = '#06b6d4';
-      ctx.fillRect(cp.x - 85, cp.y - 8, 170, 16);
+      ctx.shadowBlur = 10;
+      ctx.strokeRect(-W / 2, -H / 2, W, H);
       ctx.shadowBlur = 0;
 
+      // Inner Circuit Corner Accents
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.45)';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
+
+      // High-Tech Clean Typography
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 9.5px sans-serif';
+      ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('⚡ 召喚師電競網咖 • CYBER LAN LOUNGE ⚡', cp.x, cp.y);
+      ctx.fillText('⚡ 召喚師電競網咖 • CYBER LAN LOUNGE ⚡', 0, 0);
+
+      ctx.restore();
     }
 
     // --- 16. High-Refresh Curved Gaming Rig & RGB Battle Station ---
@@ -3897,16 +4508,193 @@
       ctx.fillRect(canP.x + 3, canP.y - 5, 4, 6);
     }
 
-    // --- 18. Ancient Howling Abyss Turret (Freljord Rune Obelisk) ---
+    // --- 18. Freljordian Horned Guardian Statue (Ancient Warrior with Suspension Chains) ---
+    drawAbyssGuardianStatue(ctx, gx, gy, ox, oy, isNorthSide = true) {
+      // 1. Heavy Stone Cantilever Pier extending over the chasm
+      this.drawBox(ctx, gx, gy, 0, 1.30, 1.30, 0.45, '#1e293b', '#0f172a', '#090d16', ox, oy);
+
+      // 2. Heavy Seated Stone Warrior Torso & Shoulders
+      this.drawBox(ctx, gx + 0.15, gy + 0.15, 0.45, 1.00, 1.00, 0.95, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // 3. Helm & Horns (Center at z: 1.40)
+      const hP = isoToScreen(gx + 0.65, gy + 0.65, 1.45, ox, oy);
+
+      // Carved Stern Stone Helmet
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.arc(hP.x, hP.y, 13, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      // Glowing Cold Cyan Slit Eyes
+      ctx.fillStyle = '#38bdf8';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 6;
+      ctx.fillRect(hP.x - 6, hP.y - 1, 3.5, 2);
+      ctx.fillRect(hP.x + 2.5, hP.y - 1, 3.5, 2);
+      ctx.shadowBlur = 0;
+
+      // Massive Curved Ram Horns
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 3.6;
+      ctx.beginPath();
+      // Left Ram Horn
+      ctx.arc(hP.x - 9, hP.y - 7, 9, Math.PI * 0.9, Math.PI * 1.9, false);
+      // Right Ram Horn
+      ctx.arc(hP.x + 9, hP.y - 7, 9, Math.PI * 1.1, Math.PI * 0.1, true);
+      ctx.stroke();
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Heavy Iron Suspension Chain Ring & Chains Plunging into the Abyss
+      const ringP = isoToScreen(gx + 0.65, gy + 0.65, 0.40, ox, oy);
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 3.0;
+      ctx.beginPath();
+      ctx.arc(ringP.x, ringP.y, 7, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Iron Links plunging downward into the dark chasm
+      const chainOffsetY = isNorthSide ? -18 : 28;
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(ringP.x, ringP.y);
+      ctx.bezierCurveTo(ringP.x, ringP.y + chainOffsetY * 0.5, ringP.x + 8, ringP.y + chainOffsetY * 0.8, ringP.x + 12, ringP.y + chainOffsetY * 1.6);
+      ctx.stroke();
+    }
+
+    // --- 19. Parapet Fire Brazier (Warm Orange Glow on Frost Stone) ---
+    drawAbyssBrazier(ctx, gx, gy, ox, oy) {
+      // Carved Stone Pedestal
+      this.drawBox(ctx, gx, gy, 0, 0.65, 0.65, 0.65, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // Wrought-iron Tripod Bowl at z: 0.65
+      const bP = isoToScreen(gx + 0.32, gy + 0.32, 0.68, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(bP.x, bP.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Warm Amber Glow onto Surrounding Frost Stone
+      const pulse = 0.85 + Math.sin(performance.now() * 0.007) * 0.15;
+      const glow = ctx.createRadialGradient(bP.x, bP.y, 2, bP.x, bP.y, 28 * pulse);
+      glow.addColorStop(0, 'rgba(251, 146, 60, 0.65)');
+      glow.addColorStop(0.45, 'rgba(249, 115, 22, 0.28)');
+      glow.addColorStop(1, 'rgba(234, 88, 12, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(bP.x, bP.y, 28 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Animated Leaping Fire Flame
+      const fH = 9 + Math.sin(performance.now() * 0.015) * 3;
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.moveTo(bP.x - 4, bP.y);
+      ctx.quadraticCurveTo(bP.x - 3, bP.y - fH * 0.6, bP.x, bP.y - fH);
+      ctx.quadraticCurveTo(bP.x + 3, bP.y - fH * 0.6, bP.x + 4, bP.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // White Hot Flame Core
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(bP.x, bP.y - 2, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- 20. Stone Balustrade / Railing Wall Segment with Frost Cap ---
+    drawAbyssParapetSegment(ctx, gx, gy, lenX, lenY, ox, oy) {
+      // Stone Parapet Base
+      this.drawBox(ctx, gx, gy, 0, lenX, lenY, 0.50, '#334155', '#1e293b', '#0f172a', ox, oy);
+      // Frosted Blue Stone Cap
+      this.drawBox(ctx, gx - 0.04, gy - 0.04, 0.50, lenX + 0.08, lenY + 0.08, 0.10, '#93c5fd', '#60a5fa', '#3b82f6', ox, oy);
+    }
+
+    // --- 21. Broken Railing Gap with Dangling Heavy Chains ---
+    drawAbyssBrokenRailing(ctx, gx, gy, ox, oy, isNorthSide = true) {
+      // Jagged Fractured Stone Pedestals on either side of gap
+      this.drawBox(ctx, gx, gy, 0, 0.40, 0.40, 0.42, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 1.20, gy, 0, 0.40, 0.40, 0.38, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // Wooden Repair Plank across the gap
+      this.drawBox(ctx, gx + 0.30, gy + 0.05, 0.35, 1.00, 0.30, 0.08, '#b45309', '#92400e', '#78350f', ox, oy);
+
+      // Heavy Dangling Chains falling into the Abyss
+      const cP1 = isoToScreen(gx + 0.45, gy + 0.20, 0.30, ox, oy);
+      const cP2 = isoToScreen(gx + 1.15, gy + 0.20, 0.30, ox, oy);
+      const dy = isNorthSide ? -24 : 32;
+
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(cP1.x, cP1.y);
+      ctx.quadraticCurveTo(cP1.x - 4, cP1.y + dy * 0.6, cP1.x - 2, cP1.y + dy);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(cP2.x, cP2.y);
+      ctx.quadraticCurveTo(cP2.x + 6, cP2.y + dy * 0.7, cP2.x + 4, cP2.y + dy);
+      ctx.stroke();
+    }
+
+    // --- 22. Ancient Bridge Entrance Rune Obelisk (West Gateway) ---
+    drawAbyssEntranceGateway(ctx, gx, gy, ox, oy) {
+      // Stepped Foundation
+      this.drawBox(ctx, gx, gy, 0, 0.80, 0.80, 0.40, '#1e293b', '#0f172a', '#020617', ox, oy);
+      // Tall Carved Obelisk
+      this.drawBox(ctx, gx + 0.10, gy + 0.10, 0.40, 0.60, 0.60, 1.80, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // Glowing Cyan Nordic Runes
+      const rP = isoToScreen(gx + 0.40, gy + 0.40, 1.30, ox, oy);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 6;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(rP.x, rP.y - 10);
+      ctx.lineTo(rP.x, rP.y + 10);
+      ctx.moveTo(rP.x - 5, rP.y - 4);
+      ctx.lineTo(rP.x + 5, rP.y + 4);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Icy Frost Spire on Top
+      const topP = isoToScreen(gx + 0.40, gy + 0.40, 2.25, ox, oy);
+      ctx.fillStyle = '#bae6fd';
+      ctx.beginPath();
+      ctx.moveTo(topP.x - 6, topP.y);
+      ctx.lineTo(topP.x, topP.y - 14);
+      ctx.lineTo(topP.x + 6, topP.y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // --- 23. Ancient Howling Abyss Turret (Freljord Rune Obelisk) ---
     drawAbyssTurret(ctx, gx, gy, ox, oy) {
+      // Ground Runic Targeting Circle Ring
+      const groundP = isoToScreen(gx + 0.80, gy + 0.80, 0.02, ox, oy);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.ellipse(groundP.x, groundP.y, 48, 24, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
       // Tier 1 Octagonal Base (Frost-carved stone)
       this.drawBox(ctx, gx, gy, 0, 1.60, 1.60, 0.70, '#334155', '#1e293b', '#0f172a', ox, oy);
 
       // Tier 2 Tapered Turret Column with Carved Ancient Runes
-      this.drawBox(ctx, gx + 0.20, gy + 0.20, 0.70, 1.20, 1.20, 1.20, '#475569', '#334155', '#1e293b', ox, oy);
+      this.drawBox(ctx, gx + 0.20, gy + 0.20, 0.70, 1.20, 1.20, 1.30, '#475569', '#334155', '#1e293b', ox, oy);
 
       // Glowing Cyan Rune Bands on Turret
-      const rP = isoToScreen(gx + 0.80, gy + 0.80, 1.30, ox, oy);
+      const rP = isoToScreen(gx + 0.80, gy + 0.80, 1.40, ox, oy);
       ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 2.0;
       ctx.shadowColor = '#38bdf8';
@@ -3916,41 +4704,108 @@
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Tier 3 Floating Hextech Core Crystal (Hovering at z: 2.1 to 2.8)
-      const coreP = isoToScreen(gx + 0.80, gy + 0.80, 2.35, ox, oy);
+      // Tier 3 Floating Hextech Core Crystal (Hovering at z: 2.35)
+      const coreP = isoToScreen(gx + 0.80, gy + 0.80, 2.45, ox, oy);
 
       // Cyan Aura Glow
-      const glow = ctx.createRadialGradient(coreP.x, coreP.y, 2, coreP.x, coreP.y, 26);
-      glow.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
-      glow.addColorStop(0.5, 'rgba(14, 165, 233, 0.35)');
+      const glow = ctx.createRadialGradient(coreP.x, coreP.y, 2, coreP.x, coreP.y, 30);
+      glow.addColorStop(0, 'rgba(56, 189, 248, 0.90)');
+      glow.addColorStop(0.5, 'rgba(14, 165, 233, 0.40)');
       glow.addColorStop(1, 'rgba(14, 165, 233, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(coreP.x, coreP.y, 26, 0, Math.PI * 2);
+      ctx.arc(coreP.x, coreP.y, 30, 0, Math.PI * 2);
       ctx.fill();
 
       // Sharp Diamond Core Gemstone
       ctx.fillStyle = '#e0f2fe';
       ctx.beginPath();
-      ctx.moveTo(coreP.x, coreP.y - 12);
-      ctx.lineTo(coreP.x + 8, coreP.y);
-      ctx.lineTo(coreP.x, coreP.y + 12);
-      ctx.lineTo(coreP.x - 8, coreP.y);
+      ctx.moveTo(coreP.x, coreP.y - 14);
+      ctx.lineTo(coreP.x + 9, coreP.y);
+      ctx.lineTo(coreP.x, coreP.y + 14);
+      ctx.lineTo(coreP.x - 9, coreP.y);
       ctx.closePath();
       ctx.fill();
       ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 1.4;
+      ctx.lineWidth = 1.6;
       ctx.stroke();
+
+      // Turret Top Horn Spikes
+      ctx.fillStyle = '#64748b';
+      ctx.beginPath();
+      ctx.moveTo(coreP.x - 14, coreP.y + 6);
+      ctx.lineTo(coreP.x - 18, coreP.y - 8);
+      ctx.lineTo(coreP.x - 10, coreP.y + 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(coreP.x + 14, coreP.y + 6);
+      ctx.lineTo(coreP.x + 18, coreP.y - 8);
+      ctx.lineTo(coreP.x + 10, coreP.y + 2);
+      ctx.closePath();
+      ctx.fill();
     }
 
-    // --- 19. Floating Emerald Health Relic (ARAM Health Pack) ---
+    // --- 24. Freljordian Inhibitor (Ancient Arcane Crystal Core) ---
+    drawAbyssInhibitor(ctx, gx, gy, ox, oy) {
+      // Tier 1 Hexagonal Stone Dais
+      this.drawBox(ctx, gx, gy, 0, 1.40, 1.40, 0.50, '#1e293b', '#0f172a', '#020617', ox, oy);
+      // Gold Hextech Runic Ring
+      this.drawBox(ctx, gx + 0.15, gy + 0.15, 0.50, 1.10, 1.10, 0.15, '#eab308', '#ca8a04', '#a16207', ox, oy);
+
+      // Hovering Arcane Crystal Core
+      const floatZ = 1.10 + Math.sin(performance.now() * 0.003) * 0.08;
+      const cP = isoToScreen(gx + 0.70, gy + 0.70, floatZ, ox, oy);
+
+      // Cyan Aura
+      const glow = ctx.createRadialGradient(cP.x, cP.y, 2, cP.x, cP.y, 24);
+      glow.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+      glow.addColorStop(0.5, 'rgba(14, 165, 233, 0.30)');
+      glow.addColorStop(1, 'rgba(14, 165, 233, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cP.x, cP.y, 24, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Octagonal Floating Inhibitor Crystal
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(cP.x, cP.y - 12);
+      ctx.lineTo(cP.x + 8, cP.y - 4);
+      ctx.lineTo(cP.x + 8, cP.y + 6);
+      ctx.lineTo(cP.x, cP.y + 14);
+      ctx.lineTo(cP.x - 8, cP.y + 6);
+      ctx.lineTo(cP.x - 8, cP.y - 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#e0f2fe';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // 3 Orbiting Floating Rune Stones
+      const angle = performance.now() * 0.002;
+      for (let i = 0; i < 3; i++) {
+        const a = angle + (i * Math.PI * 2) / 3;
+        const oxS = Math.cos(a) * 16;
+        const oyS = Math.sin(a) * 8;
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath();
+        ctx.arc(cP.x + oxS, cP.y + oyS, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+      }
+    }
+
+    // --- 25. Floating Emerald Health Relic (ARAM Health Pack) ---
     drawHealthRelic(ctx, gx, gy, ox, oy) {
       // Ground Rune Circle on Snow
       const baseP = isoToScreen(gx + 0.50, gy + 0.50, 0.02, ox, oy);
       ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 1.8;
       ctx.beginPath();
-      ctx.ellipse(baseP.x, baseP.y, 16, 9, 0, 0, Math.PI * 2);
+      ctx.ellipse(baseP.x, baseP.y, 18, 10, 0, 0, Math.PI * 2);
       ctx.stroke();
 
       // Floating Emerald Health Cross
@@ -3958,28 +4813,62 @@
       const crossP = isoToScreen(gx + 0.50, gy + 0.50, floatZ, ox, oy);
 
       // Green Aura Glow
-      const glow = ctx.createRadialGradient(crossP.x, crossP.y, 2, crossP.x, crossP.y, 16);
+      const glow = ctx.createRadialGradient(crossP.x, crossP.y, 2, crossP.x, crossP.y, 18);
       glow.addColorStop(0, 'rgba(52, 211, 153, 0.85)');
       glow.addColorStop(0.6, 'rgba(16, 185, 129, 0.25)');
       glow.addColorStop(1, 'rgba(16, 185, 129, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(crossP.x, crossP.y, 16, 0, Math.PI * 2);
+      ctx.arc(crossP.x, crossP.y, 18, 0, Math.PI * 2);
       ctx.fill();
 
       // Glowing Green Cross
       ctx.fillStyle = '#6ee7b7';
-      ctx.fillRect(crossP.x - 2, crossP.y - 7, 4, 14);
-      ctx.fillRect(crossP.x - 7, crossP.y - 2, 14, 4);
+      ctx.fillRect(crossP.x - 2.5, crossP.y - 8, 5, 16);
+      ctx.fillRect(crossP.x - 8, crossP.y - 2.5, 16, 5);
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.0;
-      ctx.strokeRect(crossP.x - 2, crossP.y - 7, 4, 14);
-      ctx.strokeRect(crossP.x - 7, crossP.y - 2, 14, 4);
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(crossP.x - 2.5, crossP.y - 8, 5, 16);
+      ctx.strokeRect(crossP.x - 8, crossP.y - 2.5, 16, 5);
     }
 
-    // --- 20. Adorable Fluffy Snow Poro (with Tongue & Horns) ---
-    drawPoro(ctx, gx, gy, ox, oy) {
+    // --- 26. Multi-Mood Snow Poros (Snack / Tongue / Sleep / Hop) ---
+    drawPoro(ctx, gx, gy, ox, oy, mood = 'tongue') {
       const p = isoToScreen(gx + 0.35, gy + 0.35, 0.20, ox, oy);
+
+      if (mood === 'sleep') {
+        // Curled up sleeping snowball
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y + 2, 8.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+
+        // Horns resting flat
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.arc(p.x - 5, p.y - 3, 3, Math.PI, Math.PI * 1.8);
+        ctx.arc(p.x + 5, p.y - 3, 3, Math.PI * 1.2, Math.PI * 2);
+        ctx.stroke();
+
+        // Sleeping slit eyes (^_^)
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(p.x - 3, p.y + 1, 2, Math.PI, 0);
+        ctx.arc(p.x + 3, p.y + 1, 2, Math.PI, 0);
+        ctx.stroke();
+
+        // 'zZ' drift
+        const zP = isoToScreen(gx + 0.35, gy + 0.35, 0.65 + Math.sin(performance.now() * 0.002) * 0.05, ox, oy);
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.85)';
+        ctx.font = 'bold 8px sans-serif';
+        ctx.fillText('zZ', zP.x + 6, zP.y - 4);
+        return;
+      }
 
       // Fluffy White Body (Round sphere)
       ctx.fillStyle = '#f8fafc';
@@ -3993,11 +4882,9 @@
       // Curved Brown Ram Horns
       ctx.strokeStyle = '#78350f';
       ctx.lineWidth = 2.0;
-      // Left Horn
       ctx.beginPath();
       ctx.arc(p.x - 6, p.y - 7, 4, Math.PI, Math.PI * 1.8);
       ctx.stroke();
-      // Right Horn
       ctx.beginPath();
       ctx.arc(p.x + 6, p.y - 7, 4, Math.PI * 1.2, Math.PI * 2);
       ctx.stroke();
@@ -4008,18 +4895,28 @@
       ctx.arc(p.x - 3.5, p.y - 1.5, 1.8, 0, Math.PI * 2);
       ctx.arc(p.x + 3.5, p.y - 1.5, 1.8, 0, Math.PI * 2);
       ctx.fill();
-      // Eye Highlights
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(p.x - 3.8, p.y - 2.0, 0.7, 0, Math.PI * 2);
       ctx.arc(p.x + 3.2, p.y - 2.0, 0.7, 0, Math.PI * 2);
       ctx.fill();
 
-      // Iconic Long Pink Tongue Hanging Out!
-      ctx.fillStyle = '#f43f5e';
-      ctx.beginPath();
-      ctx.ellipse(p.x, p.y + 4.5, 3.2, 5.0, 0, 0, Math.PI * 2);
-      ctx.fill();
+      if (mood === 'snack') {
+        // Holding a delicious Poro-Snax cookie
+        ctx.fillStyle = '#d97706';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y + 4, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      } else {
+        // Iconic Long Pink Tongue Hanging Out!
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 4.5, 3.2, 5.0, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Little Paws
       ctx.fillStyle = '#94a3b8';
@@ -4029,54 +4926,95 @@
       ctx.fill();
     }
 
-    // --- 21. Epic Floating Howling Abyss Nexus Core Crystal ---
+    // --- 27. Freljord Frost Crystal Brush (ARAM Mid-Lane Tall Grass) ---
+    drawAbyssBrush(ctx, gx, gy, ox, oy) {
+      const bP = isoToScreen(gx + 0.50, gy + 0.50, 0, ox, oy);
+      // Ice blades
+      const blades = [
+        { dx: -10, dy: -6, h: 18, color: '#38bdf8' },
+        { dx: -4,  dy: -8, h: 24, color: '#e0f2fe' },
+        { dx: 2,   dy: -7, h: 22, color: '#7dd3fc' },
+        { dx: 8,   dy: -5, h: 16, color: '#0ea5e9' }
+      ];
+      blades.forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.moveTo(bP.x + b.dx - 2, bP.y + b.dy);
+        ctx.lineTo(bP.x + b.dx, bP.y + b.dy - b.h);
+        ctx.lineTo(bP.x + b.dx + 2, bP.y + b.dy);
+        ctx.closePath();
+        ctx.fill();
+      });
+    }
+
+    // --- 28. Floating Broken Abyss Chasm Crag & Suspended Chains ---
+    drawAbyssChasmPillar(ctx, gx, gy, ox, oy) {
+      // Floating Jagged Stone Pillar in the Mist
+      this.drawBox(ctx, gx, gy, -0.40, 1.10, 1.10, 1.20, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // Cyan Rune Inscription
+      const rP = isoToScreen(gx + 0.55, gy + 0.55, 0.40, ox, oy);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 1.4;
+      ctx.strokeRect(rP.x - 5, rP.y - 8, 10, 16);
+
+      // Heavy Iron Anchor Chain spanning towards bridge
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(rP.x, rP.y);
+      ctx.lineTo(rP.x - 25, rP.y + 18);
+      ctx.stroke();
+    }
+
+    // --- 29. Epic Floating Howling Abyss Nexus Core Crystal ---
     drawAbyssNexus(ctx, gx, gy, ox, oy) {
       // Heavy Octagonal Stone & Hextech Plinth
-      this.drawBox(ctx, gx, gy, 0, 2.00, 2.00, 0.65, '#1e293b', '#0f172a', '#020617', ox, oy);
+      this.drawBox(ctx, gx, gy, 0, 2.20, 2.20, 0.65, '#1e293b', '#0f172a', '#020617', ox, oy);
       // Gold Hextech Inlay Ring
-      this.drawBox(ctx, gx + 0.20, gy + 0.20, 0.65, 1.60, 1.60, 0.20, '#eab308', '#ca8a04', '#a16207', ox, oy);
+      this.drawBox(ctx, gx + 0.20, gy + 0.20, 0.65, 1.80, 1.80, 0.20, '#eab308', '#ca8a04', '#a16207', ox, oy);
 
       // Center Hovering Giant Nexus Crystal
-      const floatZ = 1.65 + Math.sin(performance.now() * 0.002) * 0.12;
-      const nexP = isoToScreen(gx + 1.00, gy + 1.00, floatZ, ox, oy);
+      const floatZ = 1.70 + Math.sin(performance.now() * 0.002) * 0.14;
+      const nexP = isoToScreen(gx + 1.10, gy + 1.10, floatZ, ox, oy);
 
       // Huge Nexus Pulsing Blue Aura
-      const aura = ctx.createRadialGradient(nexP.x, nexP.y, 4, nexP.x, nexP.y, 42);
+      const aura = ctx.createRadialGradient(nexP.x, nexP.y, 4, nexP.x, nexP.y, 46);
       aura.addColorStop(0, 'rgba(56, 189, 248, 0.95)');
       aura.addColorStop(0.4, 'rgba(14, 165, 233, 0.45)');
       aura.addColorStop(1, 'rgba(14, 165, 233, 0)');
       ctx.fillStyle = aura;
       ctx.beginPath();
-      ctx.arc(nexP.x, nexP.y, 42, 0, Math.PI * 2);
+      ctx.arc(nexP.x, nexP.y, 46, 0, Math.PI * 2);
       ctx.fill();
 
       // Grand Multi-faceted Crystal Core
       ctx.fillStyle = '#38bdf8';
       ctx.beginPath();
-      ctx.moveTo(nexP.x, nexP.y - 24);
-      ctx.lineTo(nexP.x + 16, nexP.y - 5);
-      ctx.lineTo(nexP.x + 12, nexP.y + 20);
-      ctx.lineTo(nexP.x, nexP.y + 28);
-      ctx.lineTo(nexP.x - 12, nexP.y + 20);
-      ctx.lineTo(nexP.x - 16, nexP.y - 5);
+      ctx.moveTo(nexP.x, nexP.y - 26);
+      ctx.lineTo(nexP.x + 18, nexP.y - 6);
+      ctx.lineTo(nexP.x + 13, nexP.y + 22);
+      ctx.lineTo(nexP.x, nexP.y + 30);
+      ctx.lineTo(nexP.x - 13, nexP.y + 22);
+      ctx.lineTo(nexP.x - 18, nexP.y - 6);
       ctx.closePath();
       ctx.fill();
       ctx.strokeStyle = '#e0f2fe';
-      ctx.lineWidth = 2.0;
+      ctx.lineWidth = 2.2;
       ctx.stroke();
 
       // Rotating Golden Orbital Wing Blades
       const angle = (performance.now() * 0.0015);
       for (let i = 0; i < 3; i++) {
         const a = angle + (i * Math.PI * 2) / 3;
-        const oxBlade = Math.cos(a) * 28;
-        const oyBlade = Math.sin(a) * 14;
+        const oxBlade = Math.cos(a) * 32;
+        const oyBlade = Math.sin(a) * 16;
         ctx.fillStyle = '#facc15';
         ctx.beginPath();
-        ctx.ellipse(nexP.x + oxBlade, nexP.y + oyBlade, 6, 12, a, 0, Math.PI * 2);
+        ctx.ellipse(nexP.x + oxBlade, nexP.y + oyBlade, 7, 14, a, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#ca8a04';
-        ctx.lineWidth = 1.0;
+        ctx.lineWidth = 1.2;
         ctx.stroke();
       }
     }

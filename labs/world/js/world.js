@@ -13,6 +13,8 @@
     LIB_MIN_X, LIB_MAX_X, LIB_MIN_Y, LIB_MAX_Y,
     SCHOOL_MIN_X, SCHOOL_MAX_X, SCHOOL_MIN_Y, SCHOOL_MAX_Y,
     DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y,
+    CAFE_MIN_X, CAFE_MAX_X, CAFE_MIN_Y, CAFE_MAX_Y,
+    COURT_MIN_X, COURT_MAX_X, COURT_MIN_Y, COURT_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,
@@ -44,6 +46,7 @@
       this.wallAlphaLib = 1.0;
       this.wallAlphaSchool = 1.0;
       this.wallAlphaDouyin = 1.0;
+      this.wallAlphaCafe = 1.0;
 
       // Day / Night mood
       this.mood = 'auto';
@@ -75,12 +78,70 @@
       // Setup Obstacles
       this.setupWorldObstacles();
 
+      // Camera Smoothing & Cinematic Dialogue Framing
+      this.baseZoom = 1.35;
+      this.cinematicZoomBoost = 0.0;
+      this.camTargetX = 7.2;
+      this.camTargetY = 7.2;
+      this.camCurrentX = 7.2;
+      this.camCurrentY = 7.2;
+      this.cinematicTarget = null;
+
+      // Time-Sliced Pathfinding Queue (Throttles NPC A* to 1 per frame)
+      this.pathQueue = [];
+
+      // Current render origin coordinates for static entity draw calls
+      this.ox = 0;
+      this.oy = 0;
+
+      // Zero-GC Pre-baked Static World Entities
+      this.staticEntities = this.buildStaticWorldEntities();
+
       // Load Characters from JSON
       this.charManager.loadCharacters('data/characters.json?v=2026-10-26-dialogues').then(() => {
         // Start Loop
         this.lastTime = performance.now();
         requestAnimationFrame(this.loop.bind(this));
       });
+    }
+
+    get isDark() {
+      return (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
+    }
+    get wallL() {
+      return this.isDark ? '#2a2e38' : '#e8e2d2';
+    }
+    get wallR() {
+      return this.isDark ? '#1f232b' : '#d8d1be';
+    }
+    get wallT() {
+      return this.isDark ? '#334155' : '#f1f5f9';
+    }
+
+    setCinematicFocus(player, char) {
+      if (!char) return;
+      const px = player ? player.x : char.x;
+      const py = player ? player.y : char.y;
+      this.cinematicTarget = {
+        x: (px + char.x) * 0.5,
+        y: (py + char.y) * 0.5
+      };
+      this.cinematicZoomBoost = 0.25;
+    }
+
+    clearCinematicFocus() {
+      this.cinematicTarget = null;
+      this.cinematicZoomBoost = 0.0;
+    }
+
+    requestNpcPath(char, targetX, targetY) {
+      if (!char || char.isPlayer) return;
+      const existing = this.pathQueue.find(q => q.char === char);
+      if (existing) {
+        existing.target = { x: targetX, y: targetY };
+      } else {
+        this.pathQueue.push({ char, target: { x: targetX, y: targetY } });
+      }
     }
 
     setupWorldObstacles() {
@@ -147,12 +208,12 @@
       // 5. Central Plaza & Park
       this.nav.setBlock(13, 13, 3, 3, true); // Fountain
 
-      // Park Benches (Precise seat footprints, keeping surrounding lawn and paths 100% open)
-      this.nav.setBlock(13.8, 9.5, 1.4, 0.5, true);
-      this.nav.setBlock(13.8, 17.5, 1.4, 0.5, true);
-      this.nav.setBlock(22.2, 13.5, 1.4, 0.5, true);
-      this.nav.setBlock(5.2, 12.5, 1.4, 0.5, true);
-      this.nav.setBlock(13.8, 29.5, 1.4, 0.5, true); // South Avenue Bench
+      // Park Benches (Placed precisely on the North edge of gray paved paths, facing south onto the road)
+      this.nav.setBlock(10.8, 12.0, 1.6, 0.5, true);  // Central Plaza North Edge Bench
+      this.nav.setBlock(21.0, 12.0, 1.6, 0.5, true);  // East Avenue North Edge Bench
+      this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);   // West Greenway North Edge Bench
+      this.nav.setBlock(11.0, 43.0, 1.6, 0.5, true);  // South Avenue North Edge Bench
+      this.nav.setBlock(4.8, 13.8, 1.6, 0.5, true);   // Garden Stone Terrace Bench beside Xiangqi Table
 
       // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
       this.nav.setBlock(2.7, 13.8, 1.8, 1.3, true);
@@ -200,16 +261,14 @@
       this.nav.setBlock(26.4, 33.8, 0.8, 0.8, true);  // Compute Rig
       this.nav.setBlock(26.5, 38.6, 1.2, 0.65, true); // Coffee & Pantry Bar
 
-      // Trees (Only block the exact tile of the 0.35x0.35 trunk)
+      // Trees (Lush trees placed 100% strictly on green grass lawns, keeping all road tiles open)
       const treeBlocks = [
-        [13, 2], [16, 2],
-        [14, 8],
-        [16, 18],
-        [13, 25], [16, 25],
-        [20, 12], [24, 12],
-        [21, 15], [25, 15],
-        [13, 28], [16, 28],
-        [13, 35], [16, 35]
+        [10.5, 2], [10.5, 8], [10.5, 23], [10.5, 31], [10.5, 38], // West grass lawn strip
+        [16.5, 2], [16.5, 8], [16.5, 23], [16.5, 31], [16.5, 38], // East grass lawn strip
+        [30.5, 4],                                                 // AI & Cafe lawn buffer
+        [34.0, 11], [37.5, 13],                                    // Wide 8-tile green park between Cafe and Basketball Court
+        [34.0, 29], [37.5, 30],                                    // Wide 6-tile lawn buffer between Basketball Court and Night Market
+        [2.5, 28.5]                                                // West Greenway shaded tree
       ];
       treeBlocks.forEach(([tx, ty]) => {
         const trunkX = Math.floor(tx + 0.35);
@@ -217,33 +276,44 @@
         this.nav.setBlock(trunkX, trunkY, 1, 1, true);
       });
 
-      // 7. Campus Basketball Court Obstacles (West x: 1..11, y: 24..33)
-      this.nav.setBlock(1.0, 27.8, 0.65, 0.70, true); // Basketball Hoop Base
-      this.nav.setBlock(7.5, 24.5, 0.45, 0.90, true); // Ball Rack
-      this.nav.setBlock(4.5, 24.2, 1.60, 0.65, true); // Player Bench
+      // 7. West Campus Greenway (x: 0..9, y: 27..32 — Peaceful lawn between Dorm 211 and Sanmin High)
+      this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);    // Greenway Shaded Park Bench along path roadside
+      this.nav.setBlock(2.5, 28.5, 1.0, 1.0, true);    // Greenway Shaded Tree
 
-      // 8. Midnight Snack Street Obstacles (East Wing x: 28..38, y: 22..36)
-      this.nav.setBlock(28.5, 23.2, 0.35, 0.35, true); // Archway Left Pillar
-      this.nav.setBlock(31.2, 23.2, 0.35, 0.35, true); // Archway Right Pillar
-      this.nav.setBlock(35.0, 24.5, 1.50, 0.85, true); // Fried Chicken Stall
-      this.nav.setBlock(35.0, 28.5, 1.50, 0.85, true); // Boba Tea Stall
-      this.nav.setBlock(35.0, 32.5, 1.50, 0.85, true); // Shaved Ice Stall
-      this.nav.setBlock(29.0, 26.5, 1.50, 0.85, true); // Luwei Stall
-      this.nav.setBlock(29.0, 30.5, 1.50, 0.85, true); // Yakitori Skewers Stall
-      this.nav.setBlock(32.0, 27.5, 1.10, 1.10, true); // Table & Stools 1
-      this.nav.setBlock(32.0, 31.5, 1.10, 1.10, true); // Table & Stools 2
+      // 8. Campus Basketball Court Obstacles (East Dedicated Athletic Ground x: 30..41, y: 17..26)
+      this.nav.setBlock(30.2, 21.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline)
+      this.nav.setBlock(36.5, 17.2, 0.45, 0.90, true);  // Metallic Ball Rack (North sideline)
+      this.nav.setBlock(33.0, 17.2, 1.60, 0.65, true);  // Court Rest Bench (North sideline)
+      this.nav.setBlock(30.0, 16.8, 11.2, 0.4, true);   // North Boundary Fence
+      this.nav.setBlock(41.0, 17.0, 0.4, 9.4, true);    // East Boundary Fence
+      this.nav.setBlock(30.0, 26.2, 11.2, 0.4, true);   // South Boundary Fence
 
-      // 9. South Boulevard Twin Streetlights & Signpost
+      // 9. Central Midnight Snack Street Obstacles (East Wing x: 32..38, y: 33..44 — Slender 2.5-tile road)
+      this.nav.setBlock(31.5, 33.0, 3.2, 0.40, true);  // Archway
+      this.nav.setBlock(35.0, 34.2, 1.60, 2.80, true); // Blue Food Truck (小貨車餐車)
+      this.nav.setBlock(34.0, 34.2, 0.40, 0.70, true); // Food Truck Ground Signboard
+      this.nav.setBlock(35.0, 37.8, 1.60, 2.00, true); // 無敵蛋餅 (Egg Pancake Stall)
+      this.nav.setBlock(34.0, 37.8, 0.40, 0.70, true); // 無敵蛋餅 Ground Signboard
+      this.nav.setBlock(34.8, 41.0, 3.80, 3.20, true); // 傻師傅湯包 (Storefront Building)
+      this.nav.setBlock(34.0, 41.0, 0.40, 0.70, true); // 傻師傅湯包 Ground Signboard
+      this.nav.setBlock(31.2, 35.5, 0.50, 0.90, true); // Parked Scooter 1 (West curb)
+      this.nav.setBlock(31.2, 38.5, 0.50, 0.90, true); // Parked Scooter 2 (West curb)
+
+      // 10. South Boulevard Twin Streetlights & Signpost
       this.nav.setBlock(11.2, 42.4, 0.35, 0.35, true); // Streetlight Left
       this.nav.setBlock(17.2, 42.4, 0.35, 0.35, true); // Streetlight Right
       this.nav.setBlock(14.2, 42.8, 0.35, 0.35, true); // Portal Signpost
 
-      // 10. Botanical Garden Cafe Obstacles (Northeast x: 28..43, y: 2..19)
-      this.nav.setBlock(33.0, 5.0, 2.30, 0.95, true); // Artisan Cafe Counter Pavilion
-      this.nav.setBlock(30.0, 10.0, 0.85, 0.85, true); // Patio Table & Chairs 1
-      this.nav.setBlock(36.0, 10.0, 0.85, 0.85, true); // Patio Table & Chairs 2
-      this.nav.setBlock(33.0, 14.0, 0.85, 0.85, true); // Patio Table & Chairs 3
-      this.nav.setBlock(19.5, 13.0, 1.40, 0.65, true); // Former Cafe Park Bench in Central Promenade
+      // 11. Ludwigia Indoor Cafe Obstacles (Compact Cozy Indoor Building x: 33..39, y: 2..7)
+      this.nav.setBlock(33.0, 2.0, 6.5, 0.5, true);    // North Wall
+      this.nav.setBlock(39.0, 2.0, 0.5, 5.5, true);    // East Wall
+      this.nav.setBlock(33.0, 7.0, 6.5, 0.5, true);    // South Wall (with panoramic window)
+      // West Wall (Entrance doorway at y: 4.2 to 5.6)
+      this.nav.setBlock(33.0, 2.0, 0.5, 2.2, true);    // West Wall Top
+      this.nav.setBlock(33.0, 5.6, 0.5, 1.8, true);    // West Wall Bottom
+      // Indoor Cafe Furniture
+      this.nav.setBlock(36.5, 2.8, 2.2, 1.0, true);    // Barista Bar & Espresso Station
+      this.nav.setBlock(34.5, 4.0, 1.2, 1.2, true);    // Indoor Lounge Table & Chairs
 
       // 11. Cyber LAN Lounge Obstacles (x: 1..11, y: 45..53)
       this.nav.setBlock(1.0, 44.8, 4.0, 0.45, true);   // North Wall Left
@@ -260,9 +330,15 @@
       this.nav.setBlock(6.2, 50.2, 1.4, 0.8, true);    // Red Rig 3
       this.nav.setBlock(8.5, 47.8, 1.8, 0.85, true);   // Snack & Ramen Bar
 
-      // 12. Howling Abyss ARAM Obstacles (x: 13..25, y: 45..56)
-      this.nav.setBlock(15.0, 46.5, 1.6, 1.6, true);   // Ancient Turret Plinth
-      this.nav.setBlock(21.0, 53.0, 2.0, 2.0, true);   // Giant Nexus Base
+      // 12. Howling Abyss ARAM Obstacles (Grand Suspension Bridge x: 13..41.5, y: 48..53)
+      this.nav.setBlock(13.0, 47.3, 28.5, 0.5, true);  // North Bridge Stone Parapet (blocks falling into North Abyss)
+      this.nav.setBlock(13.0, 53.3, 28.5, 0.5, true);  // South Bridge Stone Parapet (blocks falling into South Abyss)
+      this.nav.setBlock(41.2, 47.5, 0.6, 6.0, true);   // East Bridge Terminus Railing
+      this.nav.setBlock(12.8, 47.2, 0.8, 0.8, true);   // West Entrance Gateway North Obelisk
+      this.nav.setBlock(12.8, 52.8, 0.8, 0.8, true);   // West Entrance Gateway South Obelisk
+      this.nav.setBlock(19.2, 49.8, 1.6, 1.6, true);   // Ancient Outer Turret Plinth
+      this.nav.setBlock(29.5, 49.8, 1.4, 1.4, true);   // Freljordian Inhibitor Dais
+      this.nav.setBlock(37.8, 49.5, 2.2, 2.2, true);   // Grand Nexus Core Platform
     }
 
     initParticles() {
@@ -358,6 +434,28 @@
             this.charManager.openDialogue(this.charManager.proximityTarget);
           }
         }
+
+        // Key E for Interactive Object / Furniture (Climbing into bed, sitting on sofa or stool)
+        if (e.key === 'e' || e.key === 'E' || e.code === 'KeyE') {
+          if (this.charManager) {
+            const player = this.charManager.player;
+            if (player && player.furniture) {
+              e.preventDefault();
+              this.charManager.leaveFurniture(player);
+            } else if (this.charManager.furnitureTarget) {
+              e.preventDefault();
+              this.charManager.useFurniture(player, this.charManager.furnitureTarget);
+            }
+          }
+        }
+
+        // If player moves while on furniture, automatically stand up
+        if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(k) ||
+            ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'keyw', 'keya', 'keys', 'keyd'].includes(c)) {
+          if (this.charManager && this.charManager.player && this.charManager.player.furniture) {
+            this.charManager.leaveFurniture(this.charManager.player);
+          }
+        }
       });
 
       window.addEventListener('keyup', (e) => {
@@ -414,6 +512,11 @@
         const player = this.charManager.player;
         if (!player) return;
 
+        // If player is on furniture and clicks to move, stand up first
+        if (player.furniture) {
+          this.charManager.leaveFurniture(player);
+        }
+
         // Click on NPC to talk
         const clickedNpc = this.charManager.characters.find(c => {
           if (c.isPlayer) return false;
@@ -438,10 +541,87 @@
         }
       });
 
+      document.getElementById('furniture-prompt')?.addEventListener('click', () => {
+        if (this.charManager) {
+          const player = this.charManager.player;
+          if (player && player.furniture) {
+            this.charManager.leaveFurniture(player);
+          } else if (this.charManager.furnitureTarget) {
+            this.charManager.useFurniture(player, this.charManager.furnitureTarget);
+          }
+        }
+      });
+
+      // Touch Gesture Support: Pinch-to-Zoom & Drag-to-Pan / Tap-to-Move
+      let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+      let initialPinchDist = null, initialPinchZoom = 1.35;
+      let isTouchDragging = false;
+
+      this.canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          touchStartTime = performance.now();
+          isTouchDragging = false;
+        } else if (e.touches.length === 2) {
+          e.preventDefault();
+          const t1 = e.touches[0];
+          const t2 = e.touches[1];
+          initialPinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          initialPinchZoom = this.zoom;
+        }
+      }, { passive: false });
+
+      this.canvas.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1) {
+          const dx = e.touches[0].clientX - touchStartX;
+          const dy = e.touches[0].clientY - touchStartY;
+          if (Math.hypot(dx, dy) > 8) {
+            isTouchDragging = true;
+            this.panX += dx * 0.7;
+            this.panY += dy * 0.7;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+          }
+        } else if (e.touches.length === 2 && initialPinchDist) {
+          e.preventDefault();
+          const t1 = e.touches[0];
+          const t2 = e.touches[1];
+          const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          if (currentDist > 10) {
+            const scale = currentDist / initialPinchDist;
+            this.zoom = Math.max(0.65, Math.min(2.2, initialPinchZoom * scale));
+            this.baseZoom = this.zoom;
+          }
+        }
+      }, { passive: false });
+
+      this.canvas.addEventListener('touchend', (e) => {
+        if (e.touches.length === 0) {
+          initialPinchDist = null;
+          const elapsed = performance.now() - touchStartTime;
+          if (!isTouchDragging && elapsed < 320) {
+            const touch = e.changedTouches[0];
+            if (touch) {
+              const clickEvent = new MouseEvent('click', {
+                clientX: touch.clientX,
+                clientY: touch.clientY,
+                bubbles: true
+              });
+              this.canvas.dispatchEvent(clickEvent);
+            }
+          }
+          isTouchDragging = false;
+        } else if (e.touches.length === 1) {
+          initialPinchDist = null;
+        }
+      }, { passive: false });
+
       this.canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
         const factor = e.deltaY < 0 ? 1.08 : 0.92;
         this.zoom = Math.max(0.65, Math.min(2.0, this.zoom * factor));
+        this.baseZoom = this.zoom;
       }, { passive: false });
     }
 
@@ -456,12 +636,27 @@
     }
 
     getOrigin() {
-      const p = this.charManager.player || { x: 7.2, y: 7.2 };
-      const screenPos = isoToScreen(p.x, p.y, 0, 0, 0);
+      const screenPos = isoToScreen(this.camCurrentX, this.camCurrentY, 0, 0, 0);
       return {
         ox: this.width / 2 - screenPos.x + this.panX,
         oy: this.height / 2 - screenPos.y + this.panY
       };
+    }
+
+    getZoneAt(x, y) {
+      if (x <= 9.8 && y <= 9.8) return 'ludwig_house';
+      if (x <= 9.8 && y >= 10.0 && y <= 16.4) return 'garden_terrace';
+      if (x <= 9.8 && y >= 16.5 && y <= 26.5) return 'dorm_211';
+      if (x >= 17.5 && x <= 27.5 && y <= 9.8) return 'ai_studio';
+      if (x >= 17.5 && x <= 27.5 && y >= 16.5 && y <= 26.5) return 'library';
+      if (x <= 9.8 && y >= 32.5 && y <= 42.8) return 'sanmin_school';
+      if (x >= 17.5 && x <= 27.5 && y >= 32.5 && y <= 42.8) return 'douyin_office';
+      if (x >= 28.0 && x <= 37.5 && y >= 11.0 && y <= 20.8) return 'basketball_court';
+      if (x >= 27.5 && x <= 36.5 && y >= 21.5 && y <= 35.0) return 'night_market';
+      if (x >= 29.0 && x <= 37.5 && y >= 2.0 && y <= 10.5) return 'cafe';
+      if (x >= 0.8 && x <= 11.5 && y >= 44.5 && y <= 53.5) return 'cyber_cafe';
+      if (x >= 12.0 && x <= 42.5 && y >= 46.5 && y <= 55.5) return 'howling_abyss';
+      return 'plaza';
     }
 
     computeTimeState() {
@@ -480,8 +675,39 @@
     update(dt) {
       this.computeTimeState();
 
+      // 0. Time-Sliced Pathfinding Queue (throttled to 1 NPC A* search per frame)
+      if (this.pathQueue && this.pathQueue.length > 0) {
+        const req = this.pathQueue.shift();
+        if (req && req.char && !req.char.isPlayer) {
+          const path = this.nav.findPath({ x: req.char.x, y: req.char.y }, req.target);
+          if (path && path.length > 0) {
+            req.char.path = path;
+            req.char.state = 'walking';
+          } else {
+            req.char.timer = 1.0 + Math.random() * 1.0;
+          }
+        }
+      }
+
       const player = this.charManager.player;
       if (!player) return;
+
+      // Smooth Camera Tracking & Cinematic Dialogue Framing
+      let focusX = player.x;
+      let focusY = player.y;
+      if (this.cinematicTarget) {
+        focusX = this.cinematicTarget.x;
+        focusY = this.cinematicTarget.y;
+      }
+      this.camTargetX = focusX;
+      this.camTargetY = focusY;
+
+      const camSpeed = 1 - Math.exp(-8 * dt);
+      this.camCurrentX += (this.camTargetX - this.camCurrentX) * camSpeed;
+      this.camCurrentY += (this.camTargetY - this.camCurrentY) * camSpeed;
+
+      const targetZoom = this.baseZoom + this.cinematicZoomBoost;
+      this.zoom += (targetZoom - this.zoom) * camSpeed;
 
       // 1. Zone Detection & Dynamic Camera with Hysteresis (buffer of 0.35 tiles to prevent doorway threshold flickering)
       const prevZone = this.currentZone || 'plaza';
@@ -525,23 +751,23 @@
         currentZone = 'douyin_office';
         isInsideAnyHouse = true;
         statusMessage = "Douyin Office • 抖音演算法研發辦公室";
-      } else if (checkZone('basketball_court', 0.8, 11.2, 23.5, 33.5)) {
+      } else if (checkZone('basketball_court', 28.0, 37.5, 11.0, 20.8)) {
         currentZone = 'basketball_court';
         isInsideAnyHouse = false;
         statusMessage = "Campus Basketball Court • 青春熱血的陽光運動場 🏀";
-      } else if (checkZone('night_market', 27.5, 38.5, 21.5, 37.0)) {
+      } else if (checkZone('night_market', 27.5, 36.5, 21.5, 35.0)) {
         currentZone = 'night_market';
         isInsideAnyHouse = false;
-        statusMessage = "Midnight Snack Street • 燈火通明的深夜宵夜街 🏮";
-      } else if (checkZone('cafe', 27.5, 43.5, 1.5, 19.5)) {
+        statusMessage = "中央宵夜街 • NCU Midnight Snack Street 🏮";
+      } else if (checkZone('cafe', 29.0, 37.5, 2.0, 10.5)) {
         currentZone = 'cafe';
-        isInsideAnyHouse = false;
-        statusMessage = "Botanical Garden Cafe • 靜謐文青的露天森林咖啡館 ☕";
+        isInsideAnyHouse = true;
+        statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
       } else if (checkZone('cyber_cafe', 0.8, 11.5, 44.5, 53.5)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
         statusMessage = "Howling Abyss Cyber • 召喚師電競網咖 🎮";
-      } else if (checkZone('howling_abyss', 12.0, 26.5, 44.5, 57.0)) {
+      } else if (checkZone('howling_abyss', 12.0, 42.5, 46.5, 55.5)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;
         statusMessage = "The Howling Abyss • 冰封咆哮深淵戰場 ❄️";
@@ -576,6 +802,9 @@
 
       const targetWallDouyin = (this.currentZone === 'douyin_office') ? 0.32 : 1.0;
       this.wallAlphaDouyin += (targetWallDouyin - this.wallAlphaDouyin) * Math.min(1.0, dt * 6.0);
+
+      const targetWallCafe = (this.currentZone === 'cafe') ? 0.32 : 1.0;
+      this.wallAlphaCafe += (targetWallCafe - this.wallAlphaCafe) * Math.min(1.0, dt * 6.0);
 
       // 2. Multi-Door Proximity Sensors
       const nearLudwigDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 5.65) < 2.4);
@@ -818,11 +1047,23 @@
             c.x = next.x; c.y = next.y;
             c.path.shift();
             if (c.path.length === 0) {
-              c.state = 'idle';
               c.isWalking = false;
               c.walkTimer = 0;
-              // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
-              c.timer = 2.5 + Math.random() * 3.5;
+              // Check if arrived near an unoccupied bench/chair
+              const nearSeat = this.charManager.furnitureSpots.find(s =>
+                s.type === 'seat' &&
+                Math.hypot(s.x - c.x, s.y - c.y) < 1.6 &&
+                !this.charManager.isSpotOccupied(s, c)
+              );
+              if (nearSeat && Math.random() < 0.65) {
+                this.charManager.useFurniture(c, nearSeat);
+                // Rest on bench enjoying the scenery for 8 to 18 seconds
+                c.timer = 8.0 + Math.random() * 10.0;
+              } else {
+                c.state = 'idle';
+                // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
+                c.timer = 2.5 + Math.random() * 3.5;
+              }
             }
           } else {
             c.x += (dx / dist) * step;
@@ -838,13 +1079,16 @@
         }
 
         if (c.timer <= 0) {
+          if (c.furniture) {
+            this.charManager.leaveFurniture(c);
+          }
           c.timer = 1.5 + Math.random() * 2.5;
           if (c.isCat) {
             c.state = Math.random() > 0.45 ? 'sleeping' : 'walking';
             if (c.state === 'walking') {
               const catSpots = [{ x: 4.5, y: 7.5 }, { x: 7.5, y: 4.5 }, { x: 3.5, y: 3.5 }, { x: 5.5, y: 6.5 }];
               const dest = catSpots[Math.floor(Math.random() * catSpots.length)];
-              c.path = this.nav.findPath({ x: c.x, y: c.y }, dest);
+              this.requestNpcPath(c, dest.x, dest.y);
             }
           } else {
             let targetX, targetY;
@@ -929,14 +1173,13 @@
               ];
 
               const dormAnchors = [
-                { x: 2.5, y: 19.8 }, // Bed 1 Happy Wang
-                { x: 2.5, y: 23.6 }, // Bed 2 Kerry Chang
-                { x: 7.0, y: 19.8 }, // Bed 3 Clark Wu
-                { x: 7.0, y: 23.6 }, // Bed 4 Jerry Chung
-                { x: 2.8, y: 21.6 }, // Common Lounge Sofa & Guitar (Billy)
-                { x: 5.8, y: 21.6 }, // Common Lounge Study Table (Bo Han)
-                { x: 4.8, y: 19.8 }, // North Aisle
-                { x: 4.8, y: 23.6 }, // South Aisle
+                { x: 2.1, y: 18.2 }, // Bed 1 Happy Wang
+                { x: 2.1, y: 25.2 }, // Bed 2 Kerry Chang
+                { x: 7.2, y: 18.2 }, // Bed 3 Clark Wu
+                { x: 7.2, y: 25.2 }, // Bed 4 Jerry Chung / Billy's Bed
+                { x: 4.8, y: 19.5 }, // Common Lounge Sofa & Guitar
+                { x: 4.8, y: 22.0 }, // Central Room Aisle
+                { x: 4.8, y: 24.5 }, // Guitar Corner
                 { x: 8.5, y: 21.6 }  // Dorm Doorway Threshold
               ];
 
@@ -968,33 +1211,31 @@
               ];
 
               const basketballAnchors = [
-                { x: 5.5, y: 28.5 }, // Top of the Key
-                { x: 4.0, y: 28.5 }, // Free Throw Line
-                { x: 2.2, y: 28.5 }, // Under the West Hoop
-                { x: 8.5, y: 28.5 }, // Right Half-Court
-                { x: 6.0, y: 26.0 }, // Left Wing Three-Point Corner
-                { x: 6.0, y: 31.0 }, // Right Wing Corner
-                { x: 5.0, y: 25.2 }  // Sideline Team Bench Area
+                { x: 33.5, y: 15.5 }, // Top of the Key
+                { x: 32.2, y: 15.5 }, // Free Throw Line
+                { x: 29.8, y: 15.5 }, // Under the West Basketball Hoop
+                { x: 35.5, y: 15.5 }, // Right Half-Court Aisle
+                { x: 32.0, y: 13.0 }, // Left Wing Three-Point Corner
+                { x: 32.0, y: 18.0 }, // Right Wing Corner
+                { x: 33.2, y: 12.2 }  // Sideline Team Bench Area
               ];
 
               const nightMarketAnchors = [
-                { x: 34.0, y: 25.5 }, // Ordering at Fried Chicken Stall
-                { x: 34.0, y: 29.5 }, // Waiting for Boba Milk Tea
-                { x: 30.8, y: 27.5 }, // Sampling Warm Luwei Broth
-                { x: 30.8, y: 31.5 }, // Snacking at Skewers Cart
-                { x: 32.5, y: 28.5 }, // Seated at Red Stool Round Table 1
-                { x: 32.5, y: 32.5 }, // Seated at Red Stool Round Table 2
-                { x: 33.0, y: 34.5 }, // Enjoying Fresh Mango Shaved Ice
-                { x: 30.0, y: 24.5 }  // Entering through Night Market Archway
+                { x: 31.0, y: 23.5 }, // Ordering at Blue Food Truck (小貨車炒泡麵)
+                { x: 31.0, y: 27.2 }, // Waiting for Sizzling Egg Pancake (無敵蛋餅)
+                { x: 31.2, y: 30.5 }, // Steaming Dumplings & Rib Soup (傻師傅湯包店面)
+                { x: 28.5, y: 25.5 }, // Seated at West Lawn Red Stool Round Table
+                { x: 29.5, y: 31.0 }, // Checking out Parked Scooters
+                { x: 31.0, y: 22.8 }, // Entering under Central Night Market Archway
+                { x: 31.0, y: 33.5 }  // Strolling along the Narrow Night Market Street
               ];
 
               const cafeAnchors = [
-                { x: 34.2, y: 6.5 },  // Barista Counter Order Spot
-                { x: 30.0, y: 11.2 }, // Under Patio Umbrella 1 (West Deck)
-                { x: 36.0, y: 11.2 }, // Under Patio Umbrella 2 (East Deck)
-                { x: 33.0, y: 15.2 }, // Under Patio Umbrella 3 (South Deck)
-                { x: 38.5, y: 8.0 },  // Sunny Garden Terrace Stroll
-                { x: 29.5, y: 15.0 }  // Shaded Botanical Garden Trail
+                { x: 33.2, y: 5.5 },  // Barista Counter Order Spot
+                { x: 31.0, y: 7.5 },  // Indoor Lounge Table & Armchairs
+                { x: 34.5, y: 8.5 },  // Window-Facing Bar Stool Counter
+                { x: 35.5, y: 4.0 },  // Barista Espresso Machine Station
+                { x: 30.0, y: 6.2 }   // Indoor Cafe Glass Entrance Doorway
               ];
 
               const cyberAnchors = [
@@ -1008,12 +1249,16 @@
               ];
 
               const abyssAnchors = [
-                { x: 15.8, y: 48.0 }, // Under Ancient Turret Shadow
-                { x: 18.5, y: 49.5 }, // Standing upon Health Relic Shrine
-                { x: 17.5, y: 48.5 }, // Petting Fluffy Poro 1
-                { x: 20.8, y: 51.8 }, // Feeding Poro-Snack to Poro 2
-                { x: 22.0, y: 54.0 }, // In front of the Glowing Nexus
-                { x: 19.5, y: 46.5 }  // Frost Rune Bridge Walkway
+                { x: 14.5, y: 50.5 }, // West Gateway Approach
+                { x: 17.5, y: 49.0 }, // Parapet Fire Brazier Glow
+                { x: 21.5, y: 51.5 }, // Flanking Ancient Turret
+                { x: 24.5, y: 52.0 }, // West Health Relic Shrine
+                { x: 27.5, y: 49.2 }, // Mid-Lane Frost Brush Ambush Spot
+                { x: 31.0, y: 52.0 }, // Guarding Inhibitor Crystal
+                { x: 34.5, y: 49.0 }, // East Health Relic Shrine
+                { x: 37.0, y: 50.5 }, // Nexus Platform Approach
+                { x: 40.0, y: 50.5 }, // Gazing in Awe at Grand Nexus Core
+                { x: 23.0, y: 49.2 }  // Petting Poros in the Lane
               ];
 
               const zoneAnchorMap = {
@@ -1076,13 +1321,7 @@
             }
 
             if (valid) {
-              const path = this.nav.findPath({ x: c.x, y: c.y }, { x: targetX, y: targetY });
-              if (path && path.length > 0) {
-                c.path = path;
-                c.state = 'walking';
-              } else {
-                c.timer = 0.8 + Math.random() * 0.8;
-              }
+              this.requestNpcPath(c, targetX, targetY);
             } else {
               c.timer = 0.8 + Math.random() * 0.8;
             }
@@ -1118,6 +1357,43 @@
         }
       }
 
+      // 7.1 Proximity Check for Furniture Prompt (Beds, Sofas, Stools)
+      let closestFurniture = null;
+      let minFurnDist = 1.6;
+      if (this.charManager.furnitureSpots) {
+        this.charManager.furnitureSpots.forEach(f => {
+          const d = Math.hypot(f.x - player.x, f.y - player.y);
+          if (d < minFurnDist) {
+            minFurnDist = d;
+            closestFurniture = f;
+          }
+        });
+      }
+      this.charManager.furnitureTarget = closestFurniture;
+
+      const furnPromptEl = document.getElementById('furniture-prompt');
+      if (furnPromptEl) {
+        if (player.furniture) {
+          furnPromptEl.classList.add('visible');
+          const isZh = (this.charManager.getLangKey() === 'zh-TW');
+          furnPromptEl.innerHTML = `<i class="fa-solid fa-person-walking-arrow-right text-accent"></i> <span>[E / 點擊] ${isZh ? '起身' : 'Stand Up'}</span>`;
+        } else if (closestFurniture) {
+          furnPromptEl.classList.add('visible');
+          const isZh = (this.charManager.getLangKey() === 'zh-TW');
+          const occupant = this.charManager.getOccupant(closestFurniture);
+          if (occupant) {
+            const occName = occupant.name || (isZh ? '有人' : 'Someone');
+            furnPromptEl.innerHTML = `<i class="fa-solid fa-user-clock text-accent"></i> <span>[${occName} ${isZh ? '正坐著休息' : 'is resting'}]</span>`;
+          } else {
+            const icon = (closestFurniture.type === 'bed') ? 'fa-bed' : 'fa-chair';
+            const label = isZh ? closestFurniture.labelZh : closestFurniture.labelEn;
+            furnPromptEl.innerHTML = `<i class="fa-solid ${icon} text-accent"></i> <span>[E / 點擊] ${label}</span>`;
+          }
+        } else {
+          furnPromptEl.classList.remove('visible');
+        }
+      }
+
       // 7. Update Floating Ambient Particles
       this.particles.forEach(p => {
         p.z += p.vz;
@@ -1131,33 +1407,86 @@
       });
     }
 
-    // --- Terrain Renderer for Campus (expanded to MAP_W x MAP_H) ---
+    // --- Terrain Renderer for Campus (expanded to MAP_W x MAP_H with Viewport Culling) ---
     drawTerrain(ctx, ox, oy) {
+      const cx = this.width / 2;
+      const cy = this.height / 2;
+      const margin = 140 / this.zoom;
+      const minX = cx - (cx / this.zoom) - margin;
+      const maxX = cx + (cx / this.zoom) + margin;
+      const minY = cy - (cy / this.zoom) - margin;
+      const maxY = cy + (cy / this.zoom) + margin;
+
       for (let x = 0; x < MAP_W; x++) {
         for (let y = 0; y < MAP_H; y++) {
+          // High-performance Viewport Culling (skips ~80% off-screen ground tiles)
+          const pCenter = isoToScreen(x + 0.5, y + 0.5, 0, ox, oy);
+          if (pCenter.x < minX || pCenter.x > maxX || pCenter.y < minY || pCenter.y > maxY) {
+            continue;
+          }
+
           const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
           const isDorm = (x <= DORM_MAX_X && y >= DORM_MIN_Y && y <= DORM_MAX_Y);
           const isAi = (x >= AI_MIN_X && x <= AI_MAX_X && y >= AI_MIN_Y && y <= AI_MAX_Y);
           const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
           const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
           const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
-          const isBasketball = (x >= 1 && x <= 10 && y >= 24 && y <= 33);
-          const isNightMarket = (x >= 28 && x <= 37 && y >= 22 && y <= 36);
-          const isCafe = (x >= 28 && x <= 43 && y >= 2 && y <= 19);
+          const isBasketball = (x >= 30 && x <= 41 && y >= 17 && y <= 26);
+          const isNightMarket = (x >= 32 && x <= 34 && y >= 33 && y <= 44);
+          const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
           const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
-          const isAbyssBridge = (x >= 13 && x <= 25 && y >= 45 && y <= 56);
-          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber;
+          const isAbyssBridge = (
+            (x >= 13 && x <= 41 && y >= 48 && y <= 53) ||
+            (x >= 11 && x <= 13 && y >= 48 && y <= 50) // Ramp connector from Cyber Cafe
+          );
+          const isAbyssChasm = (
+            x >= 12 && x <= 43 && y >= 44 && y <= 57 && !isCyber && !isAbyssBridge
+          );
+          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe;
 
-          // Cobblestone Pathways connecting doorways, central plaza, south sector, night market and cyber/abyss
+          // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
+          const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
+          const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 33);         // Row 1: Ludwig's Home ↔ AI Studio ↔ Cafe Entrance (x=33)
+          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 30);        // Central Cross Street & Plaza Axis ↔ Basketball Court Entrance (x=30)
+          const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
+          const isEastWestAve3 = (y >= 19 && y <= 20 && x >= 0 && x <= 27);        // Street between Home/Terrace and Dorm 211 / Library
+          const isWestGreenwayAve = (y >= 29 && y <= 30 && x >= 0 && x <= 12);     // West Greenway Street between Dorm 211 and Sanmin High
+          const isEastWestAve4 = (y >= 33 && y <= 34 && x >= 0 && x <= 27);        // Street between Classroom and Douyin Office
+          const isEastWestAve5 = (y >= 43 && y <= 45 && x >= 0 && x <= 27);        // South Boulevard avenue
+          const isNightMarketConnector = (y >= 33 && y <= 34 && x >= 27 && x <= 32); // Branch connecting East Avenue to narrow Night Market street
+          const isSouthSectorConnector = (x >= 5 && x <= 14 && y >= 43 && y <= 45); // South Connector to Cyber & Abyss
+
+          // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds)
+          const isLudwigDoorSpur = (x >= 10 && x <= 11 && y >= 5 && y <= 6);
+          const isLudwigTerraceSpur = (y >= 10 && y <= 11 && x >= 5 && x <= 6);
+          const isDormDoorSpur = (x >= 10 && x <= 11 && y >= 21 && y <= 22);
+          const isSchoolDoorSpur = (x >= 10 && x <= 11 && y >= 37 && y <= 38);
+          const isAiDoorSpur = (x >= 16 && x <= 17 && y >= 5 && y <= 6);
+          const isLibDoorSpur = (x >= 16 && x <= 17 && y >= 21 && y <= 22);
+          const isDouyinDoorSpur = (x >= 16 && x <= 17 && y >= 37 && y <= 38);
+          const isCafeDoorSpur = (x >= 32 && x <= 33 && y >= 4 && y <= 6);
+          const isBasketballEntrance = (x >= 29 && x <= 30 && y >= 20 && y <= 22); // Direct entrance into Basketball Court
+
           const isPath = (
-            (x >= 10 && x <= 11 && y >= 4 && y <= 39) ||
-            (y >= 5 && y <= 6 && x >= 10 && x <= 34) ||   // Paved East walkway into Botanical Garden Cafe!
-            (x >= 12 && x <= 16 && y >= 12 && y <= 16) ||
-            (x >= 21 && x <= 23 && y >= 10 && y <= 17) || // Paved promenade in former cafe spot linking AI Studio & Library!
-            (y >= 20 && y <= 22 && x >= 10 && x <= 19) ||
-            (y >= 27 && y <= 29 && x >= 10 && x <= 32) || // Pathway directly connecting Central Plaza to East Night Market!
-            (y >= 36 && y <= 38 && x >= 10 && x <= 19) ||
-            (x >= 5 && x <= 14 && y >= 42 && y <= 45)  // South avenue connector into Cyber & Abyss
+            isMainNorthSouthSpine ||
+            isEastWestAve1 ||
+            isEastWestAve2 ||
+            isGardenTerracePath ||
+            isEastWestAve3 ||
+            isWestGreenwayAve ||
+            isEastWestAve4 ||
+            isEastWestAve5 ||
+            isNightMarketConnector ||
+            isSouthSectorConnector ||
+            isLudwigDoorSpur ||
+            isLudwigTerraceSpur ||
+            isDormDoorSpur ||
+            isSchoolDoorSpur ||
+            isAiDoorSpur ||
+            isLibDoorSpur ||
+            isDouyinDoorSpur ||
+            isCafeDoorSpur ||
+            isBasketballEntrance
           );
 
           ctx.save();
@@ -1167,6 +1496,7 @@
           else if (this.currentZone === 'library' && !isLib) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'sanmin_school' && !isSchool) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'douyin_office' && !isDouyin) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'cafe' && !isCafe) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'cyber_cafe' && !isCyber) ctx.globalAlpha = this.outsideAlpha;
 
           const p0 = isoToScreen(x, y, 0, ox, oy);
@@ -1194,32 +1524,43 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
           } else if (isBasketball) {
             // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf
-            const isKey = (x >= 1 && x <= 4 && y >= 27 && y <= 30);
-            if (isKey) {
+            const isKey = (x >= 30 && x <= 34 && y >= 20 && y <= 23);
+            const isBorder = (x === 30 || x === 41 || y === 17 || y === 26);
+            if (isBorder) {
+              ctx.fillStyle = '#c2410c'; // Terracotta court apron
+            } else if (isKey) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
             } else {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#15803d' : '#166534';
             }
           } else if (isNightMarket) {
-            // Midnight Snack Street — Midnight Slate Cobblestones & Festive Red Curbs
-            const isCurb = (x === 28 || x === 37);
-            if (isCurb) {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
+            // Central Midnight Snack Street — Slender Authentic Taiwanese Asphalt Roadway
+            const isCenterDash = (x === 33 && y % 2 === 0);
+            if (isCenterDash) {
+              ctx.fillStyle = '#facc15'; // Yellow dashed line
             } else {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b'; // Dark asphalt
             }
           } else if (isCafe) {
-            // Botanical Garden Cafe — Warm Cedar Outdoor Decking
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#b45309' : '#92400e';
+            // Ludwigia Indoor Specialty Cafe — Warm Walnut Herringbone Wood Floor
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#58240a' : '#451a03';
           } else if (isCyber) {
             // Cyber LAN Lounge — High-Tech Carbon Soundproof Carpet
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
           } else if (isAbyssBridge) {
-            // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Runestones & Snow
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#1e293b' : '#0f172a';
+            // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Flagstones & Snow Edges
+            const isEdge = (y === 48 || y === 53);
+            if (isEdge) {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
+            } else {
+              ctx.fillStyle = (x + y) % 2 === 0 ? '#1a2738' : '#23344a';
+            }
+          } else if (isAbyssChasm) {
+            // Deep Bottomless Frozen Abyss Chasm Void
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#020617' : '#050f22';
           } else if (y >= 45) {
             // Dreamscape Chasm of Clouds — Ethereal Pastel Pink & Nebula Sea
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#2d1428' : '#220d1f';
+            ctx.fillStyle = (x + y) % 2 === 0 ? 'rgba(251, 207, 232, 0.40)' : 'rgba(244, 114, 182, 0.35)';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -1233,13 +1574,21 @@
           ctx.closePath();
           ctx.fill();
 
-          if (y >= 45 && !isCyber && !isAbyssBridge && !isPath) {
-            ctx.strokeStyle = 'rgba(244, 114, 182, 0.22)';
-          } else {
-            ctx.strokeStyle = isInsideBuilding ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.05)';
+          if (isAbyssChasm || isAbyssBridge || (y >= 45 && !isCyber && !isPath)) {
+            ctx.strokeStyle = isAbyssChasm ? 'rgba(56, 189, 248, 0.08)' : (isAbyssBridge ? 'rgba(147, 197, 253, 0.20)' : 'rgba(244, 114, 182, 0.22)');
+            ctx.lineWidth = 1;
+            ctx.stroke();
           }
-          ctx.lineWidth = 1;
-          ctx.stroke();
+
+          // Centerline Glowing Arcane Rune Inlays on Bridge Spine
+          if (isAbyssBridge && (y === 50 || y === 51) && x >= 14 && x <= 40) {
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+            ctx.lineWidth = 1.6;
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
 
           // Cyber Floor Neon Runners in AI Studio
           if (isAi && (x === AI_MIN_X + 4 || y === AI_MIN_Y + 5)) {
@@ -1259,30 +1608,48 @@
       this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
       ctx.restore();
 
-      // Basketball Court Boundary & Key Markings (Rendered on ground plane)
+      // Basketball Court Boundary & Key Markings (Rendered on ground plane at x: 30..41, y: 17..26)
       ctx.save();
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.lineWidth = 1.8;
 
-      // Key Rectangle (x: 1.0 to 4.0, y: 28.0 to 31.0)
-      const k0 = isoToScreen(1.0, 28.0, 0, ox, oy);
-      const k1 = isoToScreen(4.2, 28.0, 0, ox, oy);
-      const k2 = isoToScreen(4.2, 31.0, 0, ox, oy);
-      const k3 = isoToScreen(1.0, 31.0, 0, ox, oy);
+      // Key Rectangle (x: 30.5 to 34.5, y: 20.0 to 23.0)
+      const k0 = isoToScreen(30.5, 20.0, 0, ox, oy);
+      const k1 = isoToScreen(34.5, 20.0, 0, ox, oy);
+      const k2 = isoToScreen(34.5, 23.0, 0, ox, oy);
+      const k3 = isoToScreen(30.5, 23.0, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(k0.x, k0.y); ctx.lineTo(k1.x, k1.y); ctx.lineTo(k2.x, k2.y); ctx.lineTo(k3.x, k3.y);
       ctx.stroke();
 
-      // Free throw circle top
-      const ftP = isoToScreen(4.2, 29.5, 0, ox, oy);
+      // Free throw circle top (centered at x: 34.5, y: 21.5)
+      const ftP = isoToScreen(34.5, 21.5, 0, ox, oy);
       ctx.beginPath();
       ctx.ellipse(ftP.x, ftP.y, 16, 8, 0, -Math.PI / 2, Math.PI / 2);
       ctx.stroke();
 
-      // Three-point arc (centered at basket base x: 1.2, y: 29.5)
-      const bCenter = isoToScreen(1.2, 29.5, 0, ox, oy);
+      // Three-point arc (centered at basket base x: 30.5, y: 21.5)
+      const bCenter = isoToScreen(30.5, 21.5, 0, ox, oy);
       ctx.beginPath();
-      ctx.ellipse(bCenter.x, bCenter.y, 48, 24, 0, -Math.PI / 2.3, Math.PI / 2.3);
+      ctx.ellipse(bCenter.x, bCenter.y, 50, 25, 0, -Math.PI / 2.3, Math.PI / 2.3);
+      ctx.stroke();
+
+      // Court Perimeter White Line (x: 30.2 to 40.8, y: 17.2 to 25.8)
+      const c0 = isoToScreen(30.2, 17.2, 0, ox, oy);
+      const c1 = isoToScreen(40.8, 17.2, 0, ox, oy);
+      const c2 = isoToScreen(40.8, 25.8, 0, ox, oy);
+      const c3 = isoToScreen(30.2, 25.8, 0, ox, oy);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(c0.x, c0.y); ctx.lineTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(c3.x, c3.y); ctx.lineTo(c0.x, c0.y);
+      ctx.stroke();
+
+      // Half-court line at x: 37.0
+      const hc0 = isoToScreen(37.0, 17.2, 0, ox, oy);
+      const hc1 = isoToScreen(37.0, 25.8, 0, ox, oy);
+      ctx.beginPath();
+      ctx.moveTo(hc0.x, hc0.y); ctx.lineTo(hc1.x, hc1.y);
       ctx.stroke();
       ctx.restore();
 
@@ -1291,12 +1658,11 @@
     }
 
     // --- Collect All World Props & Entities for Topological Sorting ---
-    collectWorldEntities(ox, oy) {
+    buildStaticWorldEntities() {
       const list = [];
-      const isDark = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
-      const wallL = isDark ? '#2a2e38' : '#e8e2d2';
-      const wallR = isDark ? '#1f232b' : '#d8d1be';
-      const wallT = isDark ? '#334155' : '#f1f5f9';
+      const wallL = this.wallL;
+      const wallR = this.wallR;
+      const wallT = this.wallT;
       const H = 2.55; // Slightly taller than the doors (2.15m), providing solid lintel & architectural wall structure
 
       // === 1. ZONE 1: LUDWIG'S HOUSE ===
@@ -1307,7 +1673,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1318,27 +1684,27 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.25, (HOUSE_MAX_Y + 1) - 6.8, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 6.8, 0, 0.25, (HOUSE_MAX_Y + 1) - 6.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
       // Interactive Double Doors (Ludwig's House)
-      const doorAngle1 = this.doorLudwigOpen * 1.35;
       const doorW = 1.15;
       const hx = HOUSE_MAX_X + 1.0;
-      const nTipX = hx + Math.sin(doorAngle1) * doorW;
-      const nTipY = 4.5 + Math.cos(doorAngle1) * doorW;
-      const sTipX = hx + Math.sin(doorAngle1) * doorW;
-      const sTipY = 6.8 - Math.cos(doorAngle1) * doorW;
       list.push({
-        xMin: Math.min(hx, nTipX, sTipX) - 0.15,
-        xMax: Math.max(hx, nTipX, sTipX) + 0.15,
+        xMin: hx - 0.25,
+        xMax: hx + 1.35,
         yMin: 4.4,
         yMax: 6.9,
         draw: () => {
+          const doorAngle1 = this.doorLudwigOpen * 1.35;
+          const nTipX = hx + Math.sin(doorAngle1) * doorW;
+          const nTipY = 4.5 + Math.cos(doorAngle1) * doorW;
+          const sTipX = hx + Math.sin(doorAngle1) * doorW;
+          const sTipY = 6.8 - Math.cos(doorAngle1) * doorW;
           this.ctx.save();
-          this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, ox, oy);
-          this.drawDoorLeaf(hx, 6.8, sTipX, sTipY, ox, oy);
+          this.drawDoorLeaf(hx, 4.5, nTipX, nTipY, this.ox, this.oy);
+          this.drawDoorLeaf(hx, 6.8, sTipX, sTipY, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1350,9 +1716,9 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
 
-          const plq = isoToScreen(HOUSE_MAX_X + 1.26, 5.65, 2.48, ox, oy);
+          const plq = isoToScreen(HOUSE_MAX_X + 1.26, 5.65, 2.48, this.ox, this.oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
@@ -1383,12 +1749,12 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, 0, swY, 0, 4.5, 0.25, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, 0, swY, 0, 4.5, 0.25, H, wallT, wallL, wallR, this.ox, this.oy);
           // Panoramic Frosted Glass Window inset into South Wall (z: 0.85 to 1.85)
-          const wp0 = isoToScreen(0.8, swY + 0.12, 0.85, ox, oy);
-          const wp1 = isoToScreen(3.8, swY + 0.12, 0.85, ox, oy);
-          const wp2 = isoToScreen(3.8, swY + 0.12, 1.85, ox, oy);
-          const wp3 = isoToScreen(0.8, swY + 0.12, 1.85, ox, oy);
+          const wp0 = isoToScreen(0.8, swY + 0.12, 0.85, this.ox, this.oy);
+          const wp1 = isoToScreen(3.8, swY + 0.12, 0.85, this.ox, this.oy);
+          const wp2 = isoToScreen(3.8, swY + 0.12, 1.85, this.ox, this.oy);
+          const wp3 = isoToScreen(0.8, swY + 0.12, 1.85, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(224, 242, 254, 0.55)';
           this.ctx.beginPath();
           this.ctx.moveTo(wp0.x, wp0.y); this.ctx.lineTo(wp1.x, wp1.y); this.ctx.lineTo(wp2.x, wp2.y); this.ctx.lineTo(wp3.x, wp3.y);
@@ -1406,7 +1772,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, 6.8, swY, 0, 3.2, 0.25, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, 6.8, swY, 0, 3.2, 0.25, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1416,7 +1782,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, 4.5, swY, 2.15, 2.3, 0.25, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, 4.5, swY, 2.15, 2.3, 0.25, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1425,10 +1791,10 @@
       list.push({
         xMin: 4.8, xMax: 6.5, yMin: swY + 0.15, yMax: swY + 0.85,
         draw: () => {
-          const sm0 = isoToScreen(4.8, swY + 0.15, 0.01, ox, oy);
-          const sm1 = isoToScreen(6.5, swY + 0.15, 0.01, ox, oy);
-          const sm2 = isoToScreen(6.5, swY + 0.85, 0.01, ox, oy);
-          const sm3 = isoToScreen(4.8, swY + 0.85, 0.01, ox, oy);
+          const sm0 = isoToScreen(4.8, swY + 0.15, 0.01, this.ox, this.oy);
+          const sm1 = isoToScreen(6.5, swY + 0.15, 0.01, this.ox, this.oy);
+          const sm2 = isoToScreen(6.5, swY + 0.85, 0.01, this.ox, this.oy);
+          const sm3 = isoToScreen(4.8, swY + 0.85, 0.01, this.ox, this.oy);
           this.ctx.fillStyle = '#b45309';
           this.ctx.beginPath();
           this.ctx.moveTo(sm0.x, sm0.y); this.ctx.lineTo(sm1.x, sm1.y); this.ctx.lineTo(sm2.x, sm2.y); this.ctx.lineTo(sm3.x, sm3.y);
@@ -1438,50 +1804,43 @@
       });
 
       // Interactive Side Terrace Double Doors (Swings open into south garden porch)
-      const sideDoorAngle = this.doorLudwigSideOpen * 1.35;
-      const wTipX = 4.5 + Math.cos(sideDoorAngle) * doorW;
-      const wTipY = swY + Math.sin(sideDoorAngle) * doorW;
       list.push({
-        xMin: 4.4, xMax: 5.7,
-        yMin: swY - 0.1, yMax: Math.max(swY + doorW, wTipY) + 0.1,
+        xMin: 4.4, xMax: 6.9,
+        yMin: swY - 0.1, yMax: swY + 1.45,
         draw: () => {
+          const sideDoorAngle = this.doorLudwigSideOpen * 1.35;
+          const wTipX = 4.5 + Math.cos(sideDoorAngle) * doorW;
+          const wTipY = swY + Math.sin(sideDoorAngle) * doorW;
+          const eTipX = 6.8 - Math.cos(sideDoorAngle) * doorW;
+          const eTipY = swY + Math.sin(sideDoorAngle) * doorW;
           this.ctx.save();
-          this.drawDoorLeaf(4.5, swY, wTipX, wTipY, ox, oy);
-          this.ctx.restore();
-        }
-      });
-      const eTipX = 6.8 - Math.cos(sideDoorAngle) * doorW;
-      const eTipY = swY + Math.sin(sideDoorAngle) * doorW;
-      list.push({
-        xMin: 5.6, xMax: 6.9,
-        yMin: swY - 0.1, yMax: Math.max(swY + doorW, eTipY) + 0.1,
-        draw: () => {
-          this.ctx.save();
-          this.drawDoorLeaf(6.8, swY, eTipX, eTipY, ox, oy);
+          this.drawDoorLeaf(4.5, swY, wTipX, wTipY, this.ox, this.oy);
+          this.drawDoorLeaf(6.8, swY, eTipX, eTipY, this.ox, this.oy);
           this.ctx.restore();
         }
       });
 
       // House Furniture Props
       list.push({
+        furnitureId: 'ludwig_bed',
         xMin: 1.0, xMax: 3.1, yMin: 1.0, yMax: 3.3,
-        draw: () => this.models.drawMasterBed(this.ctx, 1.0, 1.0, ox, oy)
+        draw: () => this.models.drawMasterBed(this.ctx, 1.0, 1.0, this.ox, this.oy)
       });
       list.push({
         xMin: 6.0, xMax: 8.5, yMin: 1.0, yMax: 2.2,
-        draw: () => this.models.drawDeveloperDesk(this.ctx, 6.0, 1.0, ox, oy)
+        draw: () => this.models.drawDeveloperDesk(this.ctx, 6.0, 1.0, this.ox, this.oy)
       });
       list.push({
         xMin: 0.1, xMax: 0.8, yMin: 3.8, yMax: 6.4,
-        draw: () => this.models.drawBookshelf(this.ctx, 0.1, 3.8, ox, oy)
+        draw: () => this.models.drawBookshelf(this.ctx, 0.1, 3.8, this.ox, this.oy)
       });
       list.push({
         xMin: 2.0, xMax: 4.5, yMin: 5.0, yMax: 7.0,
-        draw: () => this.models.drawLivingRoom(this.ctx, 2.0, 5.0, ox, oy)
+        draw: () => this.models.drawLivingRoom(this.ctx, 2.0, 5.0, this.ox, this.oy)
       });
       list.push({
         xMin: 6.0, xMax: 8.2, yMin: 5.0, yMax: 6.8,
-        draw: () => this.models.drawDiningTable(this.ctx, 6.0, 5.0, ox, oy)
+        draw: () => this.models.drawDiningTable(this.ctx, 6.0, 5.0, this.ox, this.oy)
       });
 
       // === 2. ZONE 2: MEN'S DORMITORY 11 ROOM 211 ===
@@ -1490,12 +1849,12 @@
         xMin: -0.1, xMax: 0.35,
         yMin: DORM_MIN_Y, yMax: DORM_MAX_Y + 1,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, 0.25, (DORM_MAX_Y + 1) - DORM_MIN_Y, H, wallT, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, 0.25, (DORM_MAX_Y + 1) - DORM_MIN_Y, H, wallT, null, wallR, this.ox, this.oy);
           // Large Dorm Window at x = 0.26, y: 20.8..23.2, z: 1.15..2.15
-          const w0 = isoToScreen(0.26, 20.8, 1.15, ox, oy);
-          const w1 = isoToScreen(0.26, 23.2, 1.15, ox, oy);
-          const w2 = isoToScreen(0.26, 23.2, 2.15, ox, oy);
-          const w3 = isoToScreen(0.26, 20.8, 2.15, ox, oy);
+          const w0 = isoToScreen(0.26, 20.8, 1.15, this.ox, this.oy);
+          const w1 = isoToScreen(0.26, 23.2, 1.15, this.ox, this.oy);
+          const w2 = isoToScreen(0.26, 23.2, 2.15, this.ox, this.oy);
+          const w3 = isoToScreen(0.26, 20.8, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(186, 230, 253, 0.55)';
           this.ctx.beginPath();
           this.ctx.moveTo(w0.x, w0.y); this.ctx.lineTo(w1.x, w1.y); this.ctx.lineTo(w2.x, w2.y); this.ctx.lineTo(w3.x, w3.y);
@@ -1506,10 +1865,10 @@
           this.ctx.stroke();
 
           // University Hackathon Poster at x = 0.26, y: 18.2..19.6, z: 1.15..1.95
-          const hp0 = isoToScreen(0.26, 18.2, 1.15, ox, oy);
-          const hp1 = isoToScreen(0.26, 19.6, 1.15, ox, oy);
-          const hp2 = isoToScreen(0.26, 19.6, 1.95, ox, oy);
-          const hp3 = isoToScreen(0.26, 18.2, 1.95, ox, oy);
+          const hp0 = isoToScreen(0.26, 18.2, 1.15, this.ox, this.oy);
+          const hp1 = isoToScreen(0.26, 19.6, 1.15, this.ox, this.oy);
+          const hp2 = isoToScreen(0.26, 19.6, 1.95, this.ox, this.oy);
+          const hp3 = isoToScreen(0.26, 18.2, 1.95, this.ox, this.oy);
           this.ctx.fillStyle = '#0284c7';
           this.ctx.beginPath();
           this.ctx.moveTo(hp0.x, hp0.y); this.ctx.lineTo(hp1.x, hp1.y); this.ctx.lineTo(hp2.x, hp2.y); this.ctx.lineTo(hp3.x, hp3.y);
@@ -1523,12 +1882,12 @@
         xMin: 0, xMax: DORM_MAX_X + 1,
         yMin: DORM_MIN_Y - 0.1, yMax: DORM_MIN_Y + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, (DORM_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
+          this.models.drawBox(this.ctx, 0, DORM_MIN_Y, 0, (DORM_MAX_X + 1), 0.25, H, wallT, wallL, null, this.ox, this.oy, wallR);
           // Cork Noticeboard at y = 17.26, x: 3.8..6.2, z: 1.15..1.85
-          const cb0 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.15, ox, oy);
-          const cb1 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.15, ox, oy);
-          const cb2 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.85, ox, oy);
-          const cb3 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.85, ox, oy);
+          const cb0 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.15, this.ox, this.oy);
+          const cb1 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.15, this.ox, this.oy);
+          const cb2 = isoToScreen(6.2, DORM_MIN_Y + 0.26, 1.85, this.ox, this.oy);
+          const cb3 = isoToScreen(3.8, DORM_MIN_Y + 0.26, 1.85, this.ox, this.oy);
           this.ctx.fillStyle = '#b45309';
           this.ctx.beginPath();
           this.ctx.moveTo(cb0.x, cb0.y); this.ctx.lineTo(cb1.x, cb1.y); this.ctx.lineTo(cb2.x, cb2.y); this.ctx.lineTo(cb3.x, cb3.y);
@@ -1549,7 +1908,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.models.drawBox(this.ctx, dormSE_X, DORM_MIN_Y, 0, 0.25, 20.5 - DORM_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, dormSE_X, DORM_MIN_Y, 0, 0.25, 20.5 - DORM_MIN_Y, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1560,27 +1919,27 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1) - 22.8, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, dormSE_X, 22.8, 0, 0.25, (DORM_MAX_Y + 1) - 22.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
       // Dorm Interactive Double Doors
-      const dormDoorAngle = this.doorDormOpen * 1.35;
       const dormDoorW = 1.15;
-      const dnTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
-      const dnTipY = 20.5 + Math.cos(dormDoorAngle) * dormDoorW;
-      const dsTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
-      const dsTipY = 22.8 - Math.cos(dormDoorAngle) * dormDoorW;
       list.push({
-        xMin: Math.min(dormSE_X, dnTipX, dsTipX) - 0.15,
-        xMax: Math.max(dormSE_X, dnTipX, dsTipX) + 0.15,
+        xMin: dormSE_X - 0.25,
+        xMax: dormSE_X + 1.35,
         yMin: 20.4,
         yMax: 22.9,
         draw: () => {
+          const dormDoorAngle = this.doorDormOpen * 1.35;
+          const dnTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
+          const dnTipY = 20.5 + Math.cos(dormDoorAngle) * dormDoorW;
+          const dsTipX = dormSE_X + Math.sin(dormDoorAngle) * dormDoorW;
+          const dsTipY = 22.8 - Math.cos(dormDoorAngle) * dormDoorW;
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.drawDoorLeaf(dormSE_X, 20.5, dnTipX, dnTipY, ox, oy);
-          this.drawDoorLeaf(dormSE_X, 22.8, dsTipX, dsTipY, ox, oy);
+          this.drawDoorLeaf(dormSE_X, 20.5, dnTipX, dnTipY, this.ox, this.oy);
+          this.drawDoorLeaf(dormSE_X, 22.8, dsTipX, dsTipY, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1592,9 +1951,9 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
 
-          const plq = isoToScreen(dormSE_X + 0.26, 21.65, 2.48, ox, oy);
+          const plq = isoToScreen(dormSE_X + 0.26, 21.65, 2.48, this.ox, this.oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
@@ -1622,7 +1981,7 @@
         xMin: 0, xMax: DORM_MAX_X + 1,
         yMin: DORM_MAX_Y + 0.9, yMax: DORM_MAX_Y + 1.2,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, DORM_MAX_Y + 1, 0, (DORM_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, ox, oy);
+          this.models.drawBox(this.ctx, 0, DORM_MAX_Y + 1, 0, (DORM_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
         }
       });
 
@@ -1630,31 +1989,35 @@
       // NORTH ROW BEDS (facing: 'south' into room, chair back faces south towards central aisle)
       // Bed 1 (Happy Wang: x: 1.0, y: 17.5)
       list.push({
+        furnitureId: 'dorm_bed_happy',
         xMin: 1.0, xMax: 3.2, yMin: 17.5, yMax: 19.5,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 17.5, { duvetColor: '#ea580c', screenColor: '#f97316', facing: 'south' }, ox, oy)
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 17.5, { duvetColor: '#ea580c', screenColor: '#f97316', facing: 'south' }, this.ox, this.oy)
       });
       // Bed 3 (Clark Wu: x: 6.2, y: 17.5)
       list.push({
+        furnitureId: 'dorm_bed_clark',
         xMin: 6.2, xMax: 8.4, yMin: 17.5, yMax: 19.5,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 17.5, { duvetColor: '#1d4ed8', screenColor: '#38bdf8', facing: 'south' }, ox, oy)
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 17.5, { duvetColor: '#1d4ed8', screenColor: '#38bdf8', facing: 'south' }, this.ox, this.oy)
       });
 
       // SOUTH ROW BEDS (facing: 'north' into room, chair back faces north towards central aisle)
       // Bed 2 (Kerry Chang: x: 1.0, y: 24.5)
       list.push({
+        furnitureId: 'dorm_bed_kerry',
         xMin: 1.0, xMax: 3.2, yMin: 23.8, yMax: 26.0,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 24.5, { duvetColor: '#0d9488', screenColor: '#2dd4bf', facing: 'north' }, ox, oy)
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 1.0, 24.5, { duvetColor: '#0d9488', screenColor: '#2dd4bf', facing: 'north' }, this.ox, this.oy)
       });
       // Bed 4 (Jerry Chung: x: 6.2, y: 24.5)
       list.push({
+        furnitureId: 'dorm_bed_billy',
         xMin: 6.2, xMax: 8.4, yMin: 23.8, yMax: 26.0,
-        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 24.5, { duvetColor: '#7c3aed', screenColor: '#c084fc', facing: 'north' }, ox, oy)
+        draw: () => this.models.drawLoftBedDesk(this.ctx, 6.2, 24.5, { duvetColor: '#7c3aed', screenColor: '#c084fc', facing: 'north' }, this.ox, this.oy)
       });
 
       // Dorm Common Lounge: Beloved Classic Blue Sofa, Orange Pillows & Coffee Table (Billy Fang's hangout)
       list.push({
         xMin: 3.6, xMax: 5.8, yMin: 20.6, yMax: 22.8,
-        draw: () => this.models.drawDormCommonArea(this.ctx, 3.6, 20.8, ox, oy)
+        draw: () => this.models.drawDormCommonArea(this.ctx, 3.6, 20.8, this.ox, this.oy)
       });
 
       // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===
@@ -1665,7 +2028,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1675,7 +2038,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1686,23 +2049,23 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
 
       // AI Studio Sliding Glass Door
-      const aiSlideOffset = this.doorAiOpen * 1.5;
       list.push({
-        xMin: AI_MIN_X - 0.1, xMax: AI_MIN_X + 0.1,
-        yMin: 4.5, yMax: 6.8,
+        xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.15,
+        yMin: 4.5, yMax: 8.5,
         draw: () => {
+          const aiSlideOffset = this.doorAiOpen * 1.5;
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          const dg0 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 0, ox, oy);
-          const dg1 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 0, ox, oy);
-          const dg2 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 2.06, ox, oy);
-          const dg3 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 2.06, ox, oy);
+          const dg0 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 0, this.ox, this.oy);
+          const dg1 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 0, this.ox, this.oy);
+          const dg2 = isoToScreen(AI_MIN_X, 6.7 + aiSlideOffset, 2.06, this.ox, this.oy);
+          const dg3 = isoToScreen(AI_MIN_X, 4.6 + aiSlideOffset, 2.06, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(6, 182, 212, 0.35)';
           this.ctx.beginPath();
           this.ctx.moveTo(dg0.x, dg0.y); this.ctx.lineTo(dg1.x, dg1.y); this.ctx.lineTo(dg2.x, dg2.y); this.ctx.lineTo(dg3.x, dg3.y);
@@ -1720,13 +2083,13 @@
         xMin: AI_MIN_X - 0.15, xMax: AI_MAX_X + 1.0,
         yMin: -0.15, yMax: 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, (AI_MAX_X + 1) - AI_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, (AI_MAX_X + 1) - AI_MIN_X, 0.25, H, wallT, wallL, wallR, this.ox, this.oy, wallR);
         }
       });
       list.push({
         xMin: 21.0, xMax: 24.5, yMin: 0.15, yMax: 0.35,
         draw: () => {
-          this.models.drawInteriorBrandSign(this.ctx, 22.8, 0.26, 2.45, 'ai', ox, oy);
+          this.models.drawInteriorBrandSign(this.ctx, 22.8, 0.26, 2.45, 'ai', this.ox, this.oy);
         }
       });
 
@@ -1739,13 +2102,13 @@
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
 
           // 1. Sleek Floating Cyber Canopy Roof Slab (Extending outward over the door toward the courtyard)
-          this.models.drawBox(this.ctx, 17.2, 4.5, 2.20, 0.85, 2.30, 0.15, '#0f172a', '#06b6d4', '#1e293b', ox, oy);
+          this.models.drawBox(this.ctx, 17.2, 4.5, 2.20, 0.85, 2.30, 0.15, '#0f172a', '#06b6d4', '#1e293b', this.ox, this.oy);
 
           // 2. Under-Canopy Cyber Neon Underside Glow (Facing courtyard)
-          const ug0 = isoToScreen(17.2, 4.5, 2.20, ox, oy);
-          const ug1 = isoToScreen(18.0, 4.5, 2.20, ox, oy);
-          const ug2 = isoToScreen(18.0, 6.8, 2.20, ox, oy);
-          const ug3 = isoToScreen(17.2, 6.8, 2.20, ox, oy);
+          const ug0 = isoToScreen(17.2, 4.5, 2.20, this.ox, this.oy);
+          const ug1 = isoToScreen(18.0, 4.5, 2.20, this.ox, this.oy);
+          const ug2 = isoToScreen(18.0, 6.8, 2.20, this.ox, this.oy);
+          const ug3 = isoToScreen(17.2, 6.8, 2.20, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(6, 182, 212, 0.22)';
           this.ctx.beginPath();
           this.ctx.moveTo(ug0.x, ug0.y); this.ctx.lineTo(ug1.x, ug1.y); this.ctx.lineTo(ug2.x, ug2.y); this.ctx.lineTo(ug3.x, ug3.y);
@@ -1760,25 +2123,25 @@
       list.push({
         xMin: 15.3, xMax: 16.2,
         yMin: 7.0, yMax: 7.6,
-        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 7.2, 'ai', ox, oy)
+        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 7.2, 'ai', this.ox, this.oy)
       });
 
       // AI Studio Equipment
       list.push({
         xMin: 19.5, xMax: 21.3, yMin: 1.2, yMax: 2.4,
-        draw: () => this.models.drawServerRacks(this.ctx, 19.5, 1.2, ox, oy)
+        draw: () => this.models.drawServerRacks(this.ctx, 19.5, 1.2, this.ox, this.oy)
       });
       list.push({
         xMin: 23.5, xMax: 26.0, yMin: 1.2, yMax: 2.4,
-        draw: () => this.models.drawAiCommandDesk(this.ctx, 23.5, 1.2, ox, oy)
+        draw: () => this.models.drawAiCommandDesk(this.ctx, 23.5, 1.2, this.ox, this.oy)
       });
       list.push({
         xMin: 26.2, xMax: 27.0, yMin: 4.0, yMax: 6.4,
-        draw: () => this.models.drawGlassWhiteboard(this.ctx, 26.2, 4.0, ox, oy)
+        draw: () => this.models.drawGlassWhiteboard(this.ctx, 26.2, 4.0, this.ox, this.oy)
       });
       list.push({
         xMin: 19.5, xMax: 21.3, yMin: 7.2, yMax: 8.4,
-        draw: () => this.models.drawEspressoBar(this.ctx, 19.5, 7.2, ox, oy)
+        draw: () => this.models.drawEspressoBar(this.ctx, 19.5, 7.2, this.ox, this.oy)
       });
 
       // AI Studio South Wall (along y = AI_MAX_Y + 1 = 10, x: 18 to 28)
@@ -1790,13 +2153,13 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, aiSouthY, 0, (AI_MAX_X + 1) - AI_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, aiSouthY, 0, (AI_MAX_X + 1) - AI_MIN_X, 0.25, H, wallT, wallL, wallR, this.ox, this.oy);
 
           // Panoramic Cyber Glass Observation Window (x: 21.0 to 26.5, z: 0.85 to 1.95)
-          const cw0 = isoToScreen(21.0, aiSouthY + 0.26, 0.85, ox, oy);
-          const cw1 = isoToScreen(26.5, aiSouthY + 0.26, 0.85, ox, oy);
-          const cw2 = isoToScreen(26.5, aiSouthY + 0.26, 1.95, ox, oy);
-          const cw3 = isoToScreen(21.0, aiSouthY + 0.26, 1.95, ox, oy);
+          const cw0 = isoToScreen(21.0, aiSouthY + 0.26, 0.85, this.ox, this.oy);
+          const cw1 = isoToScreen(26.5, aiSouthY + 0.26, 0.85, this.ox, this.oy);
+          const cw2 = isoToScreen(26.5, aiSouthY + 0.26, 1.95, this.ox, this.oy);
+          const cw3 = isoToScreen(21.0, aiSouthY + 0.26, 1.95, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(6, 182, 212, 0.45)';
           this.ctx.beginPath();
           this.ctx.moveTo(cw0.x, cw0.y); this.ctx.lineTo(cw1.x, cw1.y); this.ctx.lineTo(cw2.x, cw2.y); this.ctx.lineTo(cw3.x, cw3.y);
@@ -1807,8 +2170,8 @@
           this.ctx.stroke();
 
           // Cyber Window Horizontal Dividing Mullion (z: 1.40)
-          const cm0 = isoToScreen(21.0, aiSouthY + 0.26, 1.40, ox, oy);
-          const cm1 = isoToScreen(26.5, aiSouthY + 0.26, 1.40, ox, oy);
+          const cm0 = isoToScreen(21.0, aiSouthY + 0.26, 1.40, this.ox, this.oy);
+          const cm1 = isoToScreen(26.5, aiSouthY + 0.26, 1.40, this.ox, this.oy);
           this.ctx.strokeStyle = 'rgba(34, 211, 238, 0.7)';
           this.ctx.lineWidth = 1.0;
           this.ctx.beginPath();
@@ -1826,14 +2189,14 @@
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MAX_X + 1.0,
         yMin: LIB_MIN_Y - 0.15, yMax: LIB_MIN_Y + 0.18,
         draw: () => {
-          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.25, H, wallT, wallL, wallR, this.ox, this.oy, wallR);
 
           // Exterior Classical Stained Glass Clerestory Windows (facing lawn at y = 17.0, z: 1.25 to 2.15)
           // Window 1 (x: 20.0 to 22.8)
-          const lw0 = isoToScreen(20.0, LIB_MIN_Y - 0.01, 1.25, ox, oy);
-          const lw1 = isoToScreen(22.8, LIB_MIN_Y - 0.01, 1.25, ox, oy);
-          const lw2 = isoToScreen(22.8, LIB_MIN_Y - 0.01, 2.15, ox, oy);
-          const lw3 = isoToScreen(20.0, LIB_MIN_Y - 0.01, 2.15, ox, oy);
+          const lw0 = isoToScreen(20.0, LIB_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const lw1 = isoToScreen(22.8, LIB_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const lw2 = isoToScreen(22.8, LIB_MIN_Y - 0.01, 2.15, this.ox, this.oy);
+          const lw3 = isoToScreen(20.0, LIB_MIN_Y - 0.01, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(251, 191, 36, 0.45)';
           this.ctx.beginPath();
           this.ctx.moveTo(lw0.x, lw0.y); this.ctx.lineTo(lw1.x, lw1.y); this.ctx.lineTo(lw2.x, lw2.y); this.ctx.lineTo(lw3.x, lw3.y);
@@ -1844,10 +2207,10 @@
           this.ctx.stroke();
 
           // Window 2 (x: 23.8 to 26.6)
-          const rw0 = isoToScreen(23.8, LIB_MIN_Y - 0.01, 1.25, ox, oy);
-          const rw1 = isoToScreen(26.6, LIB_MIN_Y - 0.01, 1.25, ox, oy);
-          const rw2 = isoToScreen(26.6, LIB_MIN_Y - 0.01, 2.15, ox, oy);
-          const rw3 = isoToScreen(23.8, LIB_MIN_Y - 0.01, 2.15, ox, oy);
+          const rw0 = isoToScreen(23.8, LIB_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const rw1 = isoToScreen(26.6, LIB_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const rw2 = isoToScreen(26.6, LIB_MIN_Y - 0.01, 2.15, this.ox, this.oy);
+          const rw3 = isoToScreen(23.8, LIB_MIN_Y - 0.01, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(251, 191, 36, 0.45)';
           this.ctx.beginPath();
           this.ctx.moveTo(rw0.x, rw0.y); this.ctx.lineTo(rw1.x, rw1.y); this.ctx.lineTo(rw2.x, rw2.y); this.ctx.lineTo(rw3.x, rw3.y);
@@ -1866,7 +2229,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.25, 3.5, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.25, 3.5, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1876,27 +2239,27 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, 4.2, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, 4.2, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
       // Library Double Mahogany Swinging Doors
-      const libDoorAngle = this.doorLibOpen * 1.35;
       const libDoorW = 1.15;
-      const libnTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
-      const libnTipY = 20.5 + Math.cos(libDoorAngle) * libDoorW;
-      const libsTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
-      const libsTipY = 22.8 - Math.cos(libDoorAngle) * libDoorW;
       list.push({
-        xMin: Math.min(LIB_MIN_X, libnTipX, libsTipX) - 0.15,
-        xMax: Math.max(LIB_MIN_X, libnTipX, libsTipX) + 0.15,
+        xMin: LIB_MIN_X - 0.25,
+        xMax: LIB_MIN_X + 1.35,
         yMin: 20.4,
         yMax: 22.9,
         draw: () => {
+          const libDoorAngle = this.doorLibOpen * 1.35;
+          const libnTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
+          const libnTipY = 20.5 + Math.cos(libDoorAngle) * libDoorW;
+          const libsTipX = LIB_MIN_X + Math.sin(libDoorAngle) * libDoorW;
+          const libsTipY = 22.8 - Math.cos(libDoorAngle) * libDoorW;
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.drawDoorLeaf(LIB_MIN_X, 20.5, libnTipX, libnTipY, ox, oy);
-          this.drawDoorLeaf(LIB_MIN_X, 22.8, libsTipX, libsTipY, ox, oy);
+          this.drawDoorLeaf(LIB_MIN_X, 20.5, libnTipX, libnTipY, this.ox, this.oy);
+          this.drawDoorLeaf(LIB_MIN_X, 22.8, libsTipX, libsTipY, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -1908,9 +2271,9 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
 
-          const plq = isoToScreen(18.26, 21.65, 2.48, ox, oy);
+          const plq = isoToScreen(18.26, 21.65, 2.48, this.ox, this.oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
@@ -1945,13 +2308,13 @@
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
 
           // 1. Classical Mahogany Portico Canopy (Extending outward over the entrance door)
-          this.models.drawBox(this.ctx, 17.2, 20.5, 2.20, 0.85, 2.30, 0.15, '#78350f', '#451a03', '#92400e', ox, oy);
+          this.models.drawBox(this.ctx, 17.2, 20.5, 2.20, 0.85, 2.30, 0.15, '#78350f', '#451a03', '#92400e', this.ox, this.oy);
 
           // 2. Warm Amber Underside Illumination
-          const ug0 = isoToScreen(17.2, 20.5, 2.20, ox, oy);
-          const ug1 = isoToScreen(18.0, 20.5, 2.20, ox, oy);
-          const ug2 = isoToScreen(18.0, 22.8, 2.20, ox, oy);
-          const ug3 = isoToScreen(17.2, 22.8, 2.20, ox, oy);
+          const ug0 = isoToScreen(17.2, 20.5, 2.20, this.ox, this.oy);
+          const ug1 = isoToScreen(18.0, 20.5, 2.20, this.ox, this.oy);
+          const ug2 = isoToScreen(18.0, 22.8, 2.20, this.ox, this.oy);
+          const ug3 = isoToScreen(17.2, 22.8, 2.20, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(251, 191, 36, 0.20)';
           this.ctx.beginPath();
           this.ctx.moveTo(ug0.x, ug0.y); this.ctx.lineTo(ug1.x, ug1.y); this.ctx.lineTo(ug2.x, ug2.y); this.ctx.lineTo(ug3.x, ug3.y);
@@ -1966,60 +2329,60 @@
       list.push({
         xMin: 15.3, xMax: 16.2,
         yMin: 21.8, yMax: 22.5,
-        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 22.0, 'lib', ox, oy)
+        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 22.0, 'lib', this.ox, this.oy)
       });
 
       // Library Interior Furniture:
       // 1. Grand Mahogany Book Walls with Brass Rolling Ladders (North Wall)
       list.push({
         xMin: 18.4, xMax: 22.5, yMin: 17.20, yMax: 18.00,
-        draw: () => this.models.drawLibraryBookWall(this.ctx, 18.4, 17.20, ox, oy, 4.1, 1)
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 18.4, 17.20, this.ox, this.oy, 4.1, 1)
       });
       list.push({
         xMin: 22.7, xMax: 26.8, yMin: 17.20, yMax: 18.00,
-        draw: () => this.models.drawLibraryBookWall(this.ctx, 22.7, 17.20, ox, oy, 4.1, 2)
+        draw: () => this.models.drawLibraryBookWall(this.ctx, 22.7, 17.20, this.ox, this.oy, 4.1, 2)
       });
 
       // 1B. West Wall Library Corner Stack (Floor-to-Ceiling Shelves)
       list.push({
         xMin: 18.1, xMax: 18.9, yMin: 17.6, yMax: 20.4,
-        draw: () => this.models.drawLibraryWestBookWall(this.ctx, 18.2, 17.6, ox, oy, 2.6)
+        draw: () => this.models.drawLibraryWestBookWall(this.ctx, 18.2, 17.6, this.ox, this.oy, 2.6)
       });
 
       // 1C. Mobile Library Book Cart (Scholarly Book Trolley)
       list.push({
         xMin: 22.4, xMax: 23.5, yMin: 18.4, yMax: 19.2,
-        draw: () => this.models.drawLibraryBookCart(this.ctx, 22.5, 18.4, ox, oy)
+        draw: () => this.models.drawLibraryBookCart(this.ctx, 22.5, 18.4, this.ox, this.oy)
       });
 
       // 2. Long Walnut Banker's Study Table with Emerald Lamp & Folios
       list.push({
         xMin: 20.0, xMax: 22.6, yMin: 20.0, yMax: 21.4,
-        draw: () => this.models.drawBankerDesk(this.ctx, 20.0, 20.0, ox, oy)
+        draw: () => this.models.drawBankerDesk(this.ctx, 20.0, 20.0, this.ox, this.oy)
       });
 
       // 3. Botanical Terrarium Pedestal
       list.push({
         xMin: 24.8, xMax: 26.0, yMin: 19.2, yMax: 20.4,
-        draw: () => this.models.drawTerrarium(this.ctx, 24.8, 19.2, ox, oy)
+        draw: () => this.models.drawTerrarium(this.ctx, 24.8, 19.2, this.ox, this.oy)
       });
 
       // 4. Tufted Leather Wingback Reading Nook & Rug & Novel Stack
       list.push({
         xMin: 23.8, xMax: 26.2, yMin: 22.0, yMax: 24.2,
-        draw: () => this.models.drawWingbackReadingNook(this.ctx, 23.8, 22.0, ox, oy)
+        draw: () => this.models.drawWingbackReadingNook(this.ctx, 23.8, 22.0, this.ox, this.oy)
       });
 
       // 5. Standing Brass Celestial Armillary Globe
       list.push({
         xMin: 20.2, xMax: 21.4, yMin: 23.6, yMax: 24.8,
-        draw: () => this.models.drawCelestialGlobe(this.ctx, 20.8, 24.2, ox, oy)
+        draw: () => this.models.drawCelestialGlobe(this.ctx, 20.8, 24.2, this.ox, this.oy)
       });
 
       // 6. Illuminated Rare Book Vitrine & Manuscript Cabinet (SE Alcove)
       list.push({
         xMin: 24.2, xMax: 26.8, yMin: 24.8, yMax: 25.5,
-        draw: () => this.models.drawRareBookVitrine(this.ctx, 24.3, 24.8, ox, oy)
+        draw: () => this.models.drawRareBookVitrine(this.ctx, 24.3, 24.8, this.ox, this.oy)
       });
 
       // 6. Library South Boundary Skirting (along y = LIB_MAX_Y + 1 = 27, x: 18 to 28)
@@ -2027,7 +2390,7 @@
         xMin: LIB_MIN_X, xMax: LIB_MAX_X + 1,
         yMin: LIB_MAX_Y + 0.9, yMax: LIB_MAX_Y + 1.2,
         draw: () => {
-          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MAX_Y + 1, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.20, 0.35, wallT, wallL, null, ox, oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MAX_Y + 1, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
         }
       });
 
@@ -2037,13 +2400,13 @@
         xMin: -0.15, xMax: 0.35,
         yMin: SCHOOL_MIN_Y, yMax: SCHOOL_MAX_Y + 1,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, 0.25, (SCHOOL_MAX_Y + 1) - SCHOOL_MIN_Y, H, wallT, null, wallR, ox, oy);
+          this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, 0.25, (SCHOOL_MAX_Y + 1) - SCHOOL_MIN_Y, H, wallT, null, wallR, this.ox, this.oy);
 
           // Classroom High Windows (y: 35.0 to 37.5 and 38.5 to 41.0, z: 1.15 to 2.15)
-          const sw1_0 = isoToScreen(0.26, 35.0, 1.15, ox, oy);
-          const sw1_1 = isoToScreen(0.26, 37.5, 1.15, ox, oy);
-          const sw1_2 = isoToScreen(0.26, 37.5, 2.15, ox, oy);
-          const sw1_3 = isoToScreen(0.26, 35.0, 2.15, ox, oy);
+          const sw1_0 = isoToScreen(0.26, 35.0, 1.15, this.ox, this.oy);
+          const sw1_1 = isoToScreen(0.26, 37.5, 1.15, this.ox, this.oy);
+          const sw1_2 = isoToScreen(0.26, 37.5, 2.15, this.ox, this.oy);
+          const sw1_3 = isoToScreen(0.26, 35.0, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(224, 242, 254, 0.5)';
           this.ctx.beginPath();
           this.ctx.moveTo(sw1_0.x, sw1_0.y); this.ctx.lineTo(sw1_1.x, sw1_1.y); this.ctx.lineTo(sw1_2.x, sw1_2.y); this.ctx.lineTo(sw1_3.x, sw1_3.y);
@@ -2053,10 +2416,10 @@
           this.ctx.lineWidth = 1.2;
           this.ctx.stroke();
 
-          const sw2_0 = isoToScreen(0.26, 38.5, 1.15, ox, oy);
-          const sw2_1 = isoToScreen(0.26, 41.0, 1.15, ox, oy);
-          const sw2_2 = isoToScreen(0.26, 41.0, 2.15, ox, oy);
-          const sw2_3 = isoToScreen(0.26, 38.5, 2.15, ox, oy);
+          const sw2_0 = isoToScreen(0.26, 38.5, 1.15, this.ox, this.oy);
+          const sw2_1 = isoToScreen(0.26, 41.0, 1.15, this.ox, this.oy);
+          const sw2_2 = isoToScreen(0.26, 41.0, 2.15, this.ox, this.oy);
+          const sw2_3 = isoToScreen(0.26, 38.5, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(224, 242, 254, 0.5)';
           this.ctx.beginPath();
           this.ctx.moveTo(sw2_0.x, sw2_0.y); this.ctx.lineTo(sw2_1.x, sw2_1.y); this.ctx.lineTo(sw2_2.x, sw2_2.y); this.ctx.lineTo(sw2_3.x, sw2_3.y);
@@ -2073,8 +2436,8 @@
         xMin: 0, xMax: SCHOOL_MAX_X + 1,
         yMin: SCHOOL_MIN_Y - 0.1, yMax: SCHOOL_MIN_Y + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, (SCHOOL_MAX_X + 1), 0.25, H, wallT, wallL, null, ox, oy, wallR);
-          this.models.drawSchoolBlackboard(this.ctx, 2.4, SCHOOL_MIN_Y + 0.12, ox, oy, 5.2);
+          this.models.drawBox(this.ctx, 0, SCHOOL_MIN_Y, 0, (SCHOOL_MAX_X + 1), 0.25, H, wallT, wallL, null, this.ox, this.oy, wallR);
+          this.models.drawSchoolBlackboard(this.ctx, 2.4, SCHOOL_MIN_Y + 0.12, this.ox, this.oy, 5.2);
         }
       });
 
@@ -2086,7 +2449,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
-          this.models.drawBox(this.ctx, schoolSE_X, SCHOOL_MIN_Y, 0, 0.25, 36.5 - SCHOOL_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, schoolSE_X, SCHOOL_MIN_Y, 0, 0.25, 36.5 - SCHOOL_MIN_Y, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2096,28 +2459,28 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
-          this.models.drawBox(this.ctx, schoolSE_X, 38.8, 0, 0.25, (SCHOOL_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, schoolSE_X, 38.8, 0, 0.25, (SCHOOL_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
 
       // Classroom Interactive Double Doors
-      const schoolDoorAngle = this.doorSchoolOpen * 1.35;
       const schoolDoorW = 1.15;
-      const sdnTipX = schoolSE_X + Math.sin(schoolDoorAngle) * schoolDoorW;
-      const sdnTipY = 36.5 + Math.cos(schoolDoorAngle) * schoolDoorW;
-      const sdsTipX = schoolSE_X + Math.sin(schoolDoorAngle) * schoolDoorW;
-      const sdsTipY = 38.8 - Math.cos(schoolDoorAngle) * schoolDoorW;
       list.push({
-        xMin: Math.min(schoolSE_X, sdnTipX, sdsTipX) - 0.15,
-        xMax: Math.max(schoolSE_X, sdnTipX, sdsTipX) + 0.15,
+        xMin: schoolSE_X - 0.25,
+        xMax: schoolSE_X + 1.35,
         yMin: 36.4,
         yMax: 38.9,
         draw: () => {
+          const schoolDoorAngle = this.doorSchoolOpen * 1.35;
+          const sdnTipX = schoolSE_X + Math.sin(schoolDoorAngle) * schoolDoorW;
+          const sdnTipY = 36.5 + Math.cos(schoolDoorAngle) * schoolDoorW;
+          const sdsTipX = schoolSE_X + Math.sin(schoolDoorAngle) * schoolDoorW;
+          const sdsTipY = 38.8 - Math.cos(schoolDoorAngle) * schoolDoorW;
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
-          this.drawDoorLeaf(schoolSE_X, 36.5, sdnTipX, sdnTipY, ox, oy);
-          this.drawDoorLeaf(schoolSE_X, 38.8, sdsTipX, sdsTipY, ox, oy);
+          this.drawDoorLeaf(schoolSE_X, 36.5, sdnTipX, sdnTipY, this.ox, this.oy);
+          this.drawDoorLeaf(schoolSE_X, 38.8, sdsTipX, sdsTipY, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2129,9 +2492,9 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
-          this.models.drawBox(this.ctx, schoolSE_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, schoolSE_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
 
-          const plq = isoToScreen(schoolSE_X + 0.26, 37.65, 2.48, ox, oy);
+          const plq = isoToScreen(schoolSE_X + 0.26, 37.65, 2.48, this.ox, this.oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
@@ -2158,7 +2521,7 @@
       // 1. Teacher Podium (Centered right in front of blackboard & middle aisle)
       list.push({
         xMin: 4.3, xMax: 5.6, yMin: 34.3, yMax: 35.3,
-        draw: () => this.models.drawTeacherPodium(this.ctx, 4.4, 34.4, ox, oy)
+        draw: () => this.models.drawTeacherPodium(this.ctx, 4.4, 34.4, this.ox, this.oy)
       });
 
       // 2. Neatly Arranged Student Desks & Chairs (4 columns x 4 rows = 16 desks with center aisle)
@@ -2171,7 +2534,7 @@
           const bpColor = bpColors[(dIdx++) % bpColors.length];
           list.push({
             xMin: cx, xMax: cx + 1.25, yMin: ry, yMax: ry + 1.45,
-            draw: () => this.models.drawStudentDesk(this.ctx, cx, ry, ox, oy, { backpackColor: bpColor })
+            draw: () => this.models.drawStudentDesk(this.ctx, cx, ry, this.ox, this.oy, { backpackColor: bpColor })
           });
         }
       }
@@ -2179,13 +2542,13 @@
       // 4. Classroom Lockers along South Wall
       list.push({
         xMin: 1.5, xMax: 4.0, yMin: 41.8, yMax: 42.5,
-        draw: () => this.models.drawClassroomLockers(this.ctx, 1.5, 41.8, ox, oy)
+        draw: () => this.models.drawClassroomLockers(this.ctx, 1.5, 41.8, this.ox, this.oy)
       });
 
       // 5. Classroom Cork Bulletin Board
       list.push({
         xMin: 4.8, xMax: 7.2, yMin: 42.0, yMax: 42.5,
-        draw: () => this.models.drawClassroomBulletinBoard(this.ctx, 4.8, 42.2, ox, oy)
+        draw: () => this.models.drawClassroomBulletinBoard(this.ctx, 4.8, 42.2, this.ox, this.oy)
       });
 
       // 6. Classroom South Boundary Skirting
@@ -2193,7 +2556,7 @@
         xMin: 0, xMax: SCHOOL_MAX_X + 1,
         yMin: SCHOOL_MAX_Y + 0.9, yMax: SCHOOL_MAX_Y + 1.2,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, SCHOOL_MAX_Y + 1, 0, (SCHOOL_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, ox, oy);
+          this.models.drawBox(this.ctx, 0, SCHOOL_MAX_Y + 1, 0, (SCHOOL_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
         }
       });
 
@@ -2203,13 +2566,13 @@
         xMin: DOUYIN_MIN_X - 0.15, xMax: DOUYIN_MAX_X + 1.0,
         yMin: DOUYIN_MIN_Y - 0.15, yMax: DOUYIN_MIN_Y + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MIN_Y, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.25, H, wallT, wallL, wallR, ox, oy, wallR);
+          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MIN_Y, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.25, H, wallT, wallL, wallR, this.ox, this.oy, wallR);
 
           // Sleek Cyan/Magenta Frosted Clerestory Glass Windows
-          const dw1_0 = isoToScreen(20.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
-          const dw1_1 = isoToScreen(23.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
-          const dw1_2 = isoToScreen(23.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
-          const dw1_3 = isoToScreen(20.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
+          const dw1_0 = isoToScreen(20.0, DOUYIN_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const dw1_1 = isoToScreen(23.0, DOUYIN_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const dw1_2 = isoToScreen(23.0, DOUYIN_MIN_Y - 0.01, 2.15, this.ox, this.oy);
+          const dw1_3 = isoToScreen(20.0, DOUYIN_MIN_Y - 0.01, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(37, 244, 238, 0.35)';
           this.ctx.beginPath();
           this.ctx.moveTo(dw1_0.x, dw1_0.y); this.ctx.lineTo(dw1_1.x, dw1_1.y); this.ctx.lineTo(dw1_2.x, dw1_2.y); this.ctx.lineTo(dw1_3.x, dw1_3.y);
@@ -2219,10 +2582,10 @@
           this.ctx.lineWidth = 1.2;
           this.ctx.stroke();
 
-          const dw2_0 = isoToScreen(24.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
-          const dw2_1 = isoToScreen(27.0, DOUYIN_MIN_Y - 0.01, 1.25, ox, oy);
-          const dw2_2 = isoToScreen(27.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
-          const dw2_3 = isoToScreen(24.0, DOUYIN_MIN_Y - 0.01, 2.15, ox, oy);
+          const dw2_0 = isoToScreen(24.0, DOUYIN_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const dw2_1 = isoToScreen(27.0, DOUYIN_MIN_Y - 0.01, 1.25, this.ox, this.oy);
+          const dw2_2 = isoToScreen(27.0, DOUYIN_MIN_Y - 0.01, 2.15, this.ox, this.oy);
+          const dw2_3 = isoToScreen(24.0, DOUYIN_MIN_Y - 0.01, 2.15, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(254, 44, 85, 0.35)';
           this.ctx.beginPath();
           this.ctx.moveTo(dw2_0.x, dw2_0.y); this.ctx.lineTo(dw2_1.x, dw2_1.y); this.ctx.lineTo(dw2_2.x, dw2_2.y); this.ctx.lineTo(dw2_3.x, dw2_3.y);
@@ -2238,7 +2601,7 @@
       list.push({
         xMin: 21.0, xMax: 24.6, yMin: DOUYIN_MIN_Y + 0.15, yMax: DOUYIN_MIN_Y + 0.35,
         draw: () => {
-          this.models.drawInteriorBrandSign(this.ctx, 22.8, DOUYIN_MIN_Y + 0.26, 2.45, 'douyin', ox, oy);
+          this.models.drawInteriorBrandSign(this.ctx, 22.8, DOUYIN_MIN_Y + 0.26, 2.45, 'douyin', this.ox, this.oy);
         }
       });
 
@@ -2247,7 +2610,7 @@
         xMin: DOUYIN_MAX_X + 0.85, xMax: DOUYIN_MAX_X + 1.35,
         yMin: DOUYIN_MIN_Y, yMax: DOUYIN_MAX_Y + 1,
         draw: () => {
-          this.models.drawBox(this.ctx, DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 0, 0.25, (DOUYIN_MAX_Y + 1) - DOUYIN_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 0, 0.25, (DOUYIN_MAX_Y + 1) - DOUYIN_MIN_Y, H, wallT, wallL, wallR, this.ox, this.oy);
         }
       });
 
@@ -2259,7 +2622,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 0, 0.25, 36.5 - DOUYIN_MIN_Y, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 0, 0.25, 36.5 - DOUYIN_MIN_Y, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2269,7 +2632,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 0, 0.25, (DOUYIN_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 0, 0.25, (DOUYIN_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2281,7 +2644,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          this.models.drawBox(this.ctx, douyinNW_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, ox, oy);
+          this.models.drawBox(this.ctx, douyinNW_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2299,8 +2662,8 @@
             37.65,
             this.douyinGateAnim,
             this.douyinGateOpen >= 0.5,
-            ox,
-            oy
+            this.ox,
+            this.oy
           );
           this.ctx.restore();
         }
@@ -2315,13 +2678,13 @@
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
 
           // 1. High-Tech Floating Glass Canopy (Extending outward over the entrance door)
-          this.models.drawBox(this.ctx, 17.2, 36.5, 2.20, 0.85, 2.30, 0.15, '#0f172a', '#25f4ee', '#1e293b', ox, oy);
+          this.models.drawBox(this.ctx, 17.2, 36.5, 2.20, 0.85, 2.30, 0.15, '#0f172a', '#25f4ee', '#1e293b', this.ox, this.oy);
 
           // 2. Cyan / Magenta Edge Illumination on Canopy Underside
-          const ug0 = isoToScreen(17.2, 36.5, 2.20, ox, oy);
-          const ug1 = isoToScreen(18.0, 36.5, 2.20, ox, oy);
-          const ug2 = isoToScreen(18.0, 38.8, 2.20, ox, oy);
-          const ug3 = isoToScreen(17.2, 38.8, 2.20, ox, oy);
+          const ug0 = isoToScreen(17.2, 36.5, 2.20, this.ox, this.oy);
+          const ug1 = isoToScreen(18.0, 36.5, 2.20, this.ox, this.oy);
+          const ug2 = isoToScreen(18.0, 38.8, 2.20, this.ox, this.oy);
+          const ug3 = isoToScreen(17.2, 38.8, 2.20, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(37, 244, 238, 0.20)';
           this.ctx.beginPath();
           this.ctx.moveTo(ug0.x, ug0.y); this.ctx.lineTo(ug1.x, ug1.y); this.ctx.lineTo(ug2.x, ug2.y); this.ctx.lineTo(ug3.x, ug3.y);
@@ -2329,7 +2692,7 @@
           this.ctx.fill();
 
           // 3. Brand Sign mounted on entrance doorway
-          const plq = isoToScreen(18.26, 37.65, 2.48, ox, oy);
+          const plq = isoToScreen(18.26, 37.65, 2.48, this.ox, this.oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
@@ -2359,7 +2722,7 @@
       list.push({
         xMin: 15.3, xMax: 16.2,
         yMin: 37.8, yMax: 38.5,
-        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 38.0, 'douyin', ox, oy)
+        draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 38.0, 'douyin', this.ox, this.oy)
       });
 
 
@@ -2367,46 +2730,46 @@
       // North Pod
       list.push({
         xMin: 19.2, xMax: 21.4, yMin: 34.4, yMax: 35.8,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.2, 34.4, ox, oy)
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.2, 34.4, this.ox, this.oy)
       });
       list.push({
         xMin: 22.2, xMax: 24.4, yMin: 34.4, yMax: 35.8,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 22.2, 34.4, ox, oy, { isStanding: true })
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 22.2, 34.4, this.ox, this.oy, { isStanding: true })
       });
       list.push({
         xMin: 25.2, xMax: 27.4, yMin: 34.4, yMax: 35.8,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 25.2, 34.4, ox, oy)
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 25.2, 34.4, this.ox, this.oy)
       });
       // South Pod
       list.push({
         xMin: 19.2, xMax: 21.4, yMin: 40.2, yMax: 41.6,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.2, 40.2, ox, oy)
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 19.2, 40.2, this.ox, this.oy)
       });
       list.push({
         xMin: 22.2, xMax: 24.4, yMin: 40.2, yMax: 41.6,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 22.2, 40.2, ox, oy)
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 22.2, 40.2, this.ox, this.oy)
       });
       list.push({
         xMin: 25.2, xMax: 27.4, yMin: 40.2, yMax: 41.6,
-        draw: () => this.models.drawOfficeWorkstation(this.ctx, 25.2, 40.2, ox, oy, { isStanding: true })
+        draw: () => this.models.drawOfficeWorkstation(this.ctx, 25.2, 40.2, this.ox, this.oy, { isStanding: true })
       });
 
       // Glass Conference & Brainstorming Table
       list.push({
         xMin: 24.5, xMax: 27.2, yMin: 36.8, yMax: 38.3,
-        draw: () => this.models.drawOfficeMeetingTable(this.ctx, 24.5, 36.8, ox, oy)
+        draw: () => this.models.drawOfficeMeetingTable(this.ctx, 24.5, 36.8, this.ox, this.oy)
       });
 
       // AI Compute Cluster / Server Rig
       list.push({
         xMin: 26.2, xMax: 27.4, yMin: 33.6, yMax: 35.0,
-        draw: () => this.models.drawOfficeServerStation(this.ctx, 26.2, 33.6, ox, oy)
+        draw: () => this.models.drawOfficeServerStation(this.ctx, 26.2, 33.6, this.ox, this.oy)
       });
 
       // Office Tech Coffee & Refreshment Bar
       list.push({
         xMin: 26.4, xMax: 27.8, yMin: 38.5, yMax: 39.2,
-        draw: () => this.models.drawOfficeCoffeeBar(this.ctx, 26.4, 38.5, ox, oy)
+        draw: () => this.models.drawOfficeCoffeeBar(this.ctx, 26.4, 38.5, this.ox, this.oy)
       });
 
       // Douyin Office South Boundary Skirting
@@ -2414,7 +2777,7 @@
         xMin: DOUYIN_MIN_X, xMax: DOUYIN_MAX_X + 1,
         yMin: DOUYIN_MAX_Y + 0.9, yMax: DOUYIN_MAX_Y + 1.2,
         draw: () => {
-          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.20, 0.35, wallT, wallL, null, ox, oy);
+          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
         }
       });
 
@@ -2422,190 +2785,324 @@
       // Fountain
       list.push({
         xMin: 13.0, xMax: 16.0, yMin: 13.0, yMax: 16.0,
-        draw: () => this.models.drawGrandFountain(this.ctx, 13.0, 13.0, ox, oy)
+        draw: () => this.models.drawGrandFountain(this.ctx, 13.0, 13.0, this.ox, this.oy)
       });
 
       // Refined Park Benches (Placed on grass, completely clear of all pathways)
       const benches = [
-        { gx: 13.5, gy: 9.5 },  // North Plaza Lawn (facing fountain from grass, clear of east-west path)
-        { gx: 13.5, gy: 17.5 }, // South Plaza Lawn (facing fountain from grass, clear of south path)
-        { gx: 22.0, gy: 13.5 }, // East Central Lawn (peaceful reading bench between AI Studio and Library)
-        { gx: 5.0,  gy: 12.5 }, // Ludwig's South Garden Terrace (private lawn bench below house terrace)
-        { gx: 13.5, gy: 30.5 }  // South Promenade Lawn (scenic rest area between Classroom and Office)
+        { gx: 10.8, gy: 12.0, furnitureId: 'bench_boulevard_north' }, // Central Plaza North Edge Bench
+        { gx: 21.0, gy: 12.0, furnitureId: 'bench_central_east' },     // East Avenue North Edge Bench
+        { gx: 5.2,  gy: 12.0, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (North Edge of Cobblestone Path)
+        { gx: 11.0, gy: 43.0, furnitureId: 'bench_south_avenue' }      // South Avenue North Edge Bench
       ];
       benches.forEach(b => {
         list.push({
+          furnitureId: b.furnitureId,
           xMin: b.gx, xMax: b.gx + 1.6, yMin: b.gy, yMax: b.gy + 0.65,
-          draw: () => this.models.drawParkBench(this.ctx, b.gx, b.gy, ox, oy)
+          draw: () => this.models.drawParkBench(this.ctx, b.gx, b.gy, this.ox, this.oy)
         });
       });
 
-      // Garden Stone Chess Table & Drum Stools (Ludwig's South Lawn Terrace)
+      // Garden Stone Chinese Chess Table & Drum Stools (Ludwig's South Lawn Terrace)
       list.push({
-        xMin: 2.5, xMax: 4.8, yMin: 13.5, yMax: 15.5,
-        draw: () => this.models.drawGardenChessTable(this.ctx, 2.8, 13.8, ox, oy)
+        xMin: 2.4, xMax: 4.5, yMin: 13.5, yMax: 15.6,
+        draw: () => this.models.drawGardenChessTable(this.ctx, 2.6, 13.8, this.ox, this.oy)
       });
 
-      // Lush Flowering Trees (Beautifying gardens and park lawns, with all corridors, pathways & doorways 100% open)
+      // Lush Flowering Trees (Beautifying gardens and park lawns, placed 100% strictly on grass)
       const trees = [
-        [13, 2], [16, 2],       // North garden lawn (well north of path y=5)
-        [14, 8],                // North-central lawn pocket (between path y=6 and fountain)
-        [16, 18],               // South-central lawn pocket (flanking south park bench on the right)
-        [13, 25], [16, 25],     // South garden lawn (well south of path y=22)
-        [20, 12], [24, 12],     // East central lawn north grove
-        [21, 15], [25, 15],     // East central lawn south grove
-        [13, 28], [16, 28],     // South promenade entrance trees
-        [13, 35], [16, 35]      // South avenue central boulevard grove
+        [10.5, 2], [10.5, 8], [10.5, 23], [10.5, 31], [10.5, 38], // West lawn
+        [16.5, 2], [16.5, 8], [16.5, 23], [16.5, 31], [16.5, 38], // East lawn
+        [30.5, 4],                                                 // AI & Cafe lawn buffer
+        [34.0, 11], [37.5, 13],                                    // Wide 8-tile green park between Cafe and Basketball Court
+        [34.0, 29], [37.5, 30]                                     // Wide 6-tile lawn buffer between Basketball Court and Night Market
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
           xMin: tx, xMax: tx + 1.0, yMin: ty, yMax: ty + 1.0,
-          draw: () => this.models.drawTree(this.ctx, tx, ty, ox, oy)
+          draw: () => this.models.drawTree(this.ctx, tx, ty, this.ox, this.oy)
         });
       });
 
-      // === 8. CAMPUS BASKETBALL COURT (West Sector x: 1..11, y: 24..33) ===
-      // Basketball Hoop (Positioned at West boundary line facing east towards court)
+      // === 8. WEST CAMPUS GREENWAY & LAWN PARK (x: 0..9, y: 27..32 — between Dorm 211 and Sanmin High) ===
       list.push({
-        xMin: 1.0, xMax: 2.4, yMin: 27.6, yMax: 28.8,
-        draw: () => this.models.drawBasketballHoop(this.ctx, 1.0, 27.8, ox, oy)
+        furnitureId: 'bench_west_greenway',
+        xMin: 4.5, xMax: 6.1, yMin: 29.0, yMax: 29.65,
+        draw: () => this.models.drawParkBench(this.ctx, 4.5, 29.0, this.ox, this.oy)
+      });
+      list.push({
+        xMin: 2.0, xMax: 3.5, yMin: 28.0, yMax: 29.5,
+        draw: () => this.models.drawTree(this.ctx, 2.5, 28.5, this.ox, this.oy)
       });
 
-      // Metallic Ball Rack with Spalding Basketballs
+      // === 9. CENTRAL MIDNIGHT SNACK STREET (中央宵夜街 x: 32..38, y: 33..44 — Slender 2.5-tile road) ===
+      // Entrance Archway "🏮 中央宵夜街 • NCU MIDNIGHT SNACK STREET 🏮"
       list.push({
-        xMin: 7.5, xMax: 8.1, yMin: 24.5, yMax: 25.5,
-        draw: () => this.models.drawBasketballRack(this.ctx, 7.5, 24.5, ox, oy)
+        xMin: 31.5, xMax: 34.7, yMin: 33.0, yMax: 33.6,
+        draw: () => this.models.drawNightMarketArch(this.ctx, 31.5, 33.0, this.ox, this.oy)
       });
 
-      // Court Sideline Rest Bench
+      // Food Stall 1: Authentic NCU Blue Food Truck (經典小貨車改裝炒泡麵餐車)
       list.push({
-        xMin: 4.5, xMax: 6.1, yMin: 24.2, yMax: 24.9,
-        draw: () => this.models.drawParkBench(this.ctx, 4.5, 24.2, ox, oy)
+        xMin: 35.0, xMax: 36.8, yMin: 34.2, yMax: 37.2,
+        draw: () => this.models.drawFoodTruck(this.ctx, 35.0, 34.2, this.ox, this.oy)
+      });
+      // Ground-Standing Pole Signboard for Food Truck (插在路邊的立地看板)
+      list.push({
+        xMin: 33.8, xMax: 34.4, yMin: 34.2, yMax: 35.0,
+        draw: () => this.models.drawGroundStandingSign(this.ctx, 34.0, 34.2, '炒泡麵餐車', '特調飲品 • 深夜食堂', '#0284c7', '#ffffff', this.ox, this.oy, '🚚')
       });
 
-      // === 9. MIDNIGHT SNACK STREET (East Wing Sector x: 28..38, y: 22..36) ===
-      // Entrance Archway "🏮 宵夜街 • MIDNIGHT SNACK HUB 🏮"
+      // Food Stall 2: Famous 「無敵蛋餅」 with iconic round yellow sign & sizzling griddle
       list.push({
-        xMin: 28.5, xMax: 31.8, yMin: 23.0, yMax: 23.8,
-        draw: () => this.models.drawNightMarketArch(this.ctx, 28.5, 23.2, ox, oy)
+        xMin: 35.0, xMax: 36.6, yMin: 37.8, yMax: 39.8,
+        draw: () => this.models.drawEggPancakeStall(this.ctx, 35.0, 37.8, this.ox, this.oy)
+      });
+      // Ground-Standing Pole Signboard for 「無敵蛋餅」 (插在路邊的黃色立地看板)
+      list.push({
+        xMin: 33.8, xMax: 34.4, yMin: 37.8, yMax: 38.6,
+        draw: () => this.models.drawGroundStandingSign(this.ctx, 34.0, 37.8, '無敵蛋餅', '特調辣醬 • 酥皮現煎', '#facc15', '#0f172a', this.ox, this.oy, '🍳')
       });
 
-      // Stall 1: Taiwanese Fried Chicken & Salt Crispy Chicken (East row)
+      // Food Stall 3: Legendary 「傻師傅湯包」 Storefront Shop Building (實體店面建築)
       list.push({
-        xMin: 35.0, xMax: 36.6, yMin: 24.5, yMax: 25.5,
-        draw: () => this.models.drawSnackStallFriedChicken(this.ctx, 35.0, 24.5, ox, oy)
+        xMin: 34.8, xMax: 38.6, yMin: 41.0, yMax: 44.2,
+        draw: () => this.models.drawShaShiFuDumplings(this.ctx, 34.8, 41.0, this.ox, this.oy)
+      });
+      // Ground-Standing Pole Signboard for 「傻師傅湯包」 (插在路邊的紅色立地看板)
+      list.push({
+        xMin: 33.8, xMax: 34.4, yMin: 41.0, yMax: 41.8,
+        draw: () => this.models.drawGroundStandingSign(this.ctx, 34.0, 41.0, '傻師傅湯包', '熱氣現蒸 • 排骨酥湯', '#dc2626', '#ffffff', this.ox, this.oy, '🥟')
       });
 
-      // Stall 2: Boba Milk Tea & Fresh Brew Hub (East row)
+      // West Curb: Parked Scooters outside (along x = 31.2)
       list.push({
-        xMin: 35.0, xMax: 36.6, yMin: 28.5, yMax: 29.5,
-        draw: () => this.models.drawSnackStallBobaTea(this.ctx, 35.0, 28.5, ox, oy)
+        xMin: 31.0, xMax: 31.6, yMin: 35.5, yMax: 36.5,
+        draw: () => this.models.drawScooter(this.ctx, 31.2, 35.5, '#f8fafc', this.ox, this.oy)
+      });
+      list.push({
+        xMin: 31.0, xMax: 31.6, yMin: 38.5, yMax: 39.5,
+        draw: () => this.models.drawScooter(this.ctx, 31.2, 38.5, '#1e3a8a', this.ox, this.oy)
       });
 
-      // Stall 3: Steaming Luwei & Oden Cart (West row)
+      // Overhead Hanging Street Fairy Lights Strands across narrow NCU Night Market Street
       list.push({
-        xMin: 29.0, xMax: 30.6, yMin: 26.5, yMax: 27.5,
-        draw: () => this.models.drawSnackStallLuwei(this.ctx, 29.0, 26.5, ox, oy)
-      });
-
-      // Stall 4: Street Corner Foldable Table & Iconic Red Plastic Stools 1 (Center aisle)
-      list.push({
-        xMin: 32.0, xMax: 33.2, yMin: 27.5, yMax: 28.5,
-        draw: () => this.models.drawNightMarketTable(this.ctx, 32.0, 27.5, ox, oy)
-      });
-
-      // Stall 5: Street Corner Foldable Table & Iconic Red Plastic Stools 2 (Center aisle)
-      list.push({
-        xMin: 32.0, xMax: 33.2, yMin: 31.5, yMax: 32.5,
-        draw: () => this.models.drawNightMarketTable(this.ctx, 32.0, 31.5, ox, oy)
-      });
-
-      // Overhead Hanging Fairy Lights Strands across East Night Market
-      list.push({
-        xMin: 29.0, xMax: 36.5, yMin: 25.4, yMax: 25.6,
-        draw: () => this.models.drawFairyLights(this.ctx, 29.0, 25.5, 2.7, 36.5, 25.5, 2.7, ox, oy)
+        xMin: 31.5, xMax: 34.8, yMin: 34.0, yMax: 34.2,
+        draw: () => this.models.drawFairyLights(this.ctx, 31.5, 34.0, 2.5, 34.8, 34.0, 2.5, this.ox, this.oy)
       });
       list.push({
-        xMin: 29.0, xMax: 36.5, yMin: 29.4, yMax: 29.6,
-        draw: () => this.models.drawFairyLights(this.ctx, 29.0, 29.5, 2.7, 36.5, 29.5, 2.7, ox, oy)
-      });
-      list.push({
-        xMin: 29.0, xMax: 36.5, yMin: 33.4, yMax: 33.6,
-        draw: () => this.models.drawFairyLights(this.ctx, 29.0, 33.5, 2.7, 36.5, 33.5, 2.7, ox, oy)
+        xMin: 31.5, xMax: 34.8, yMin: 38.0, yMax: 38.2,
+        draw: () => this.models.drawFairyLights(this.ctx, 31.5, 38.0, 2.5, 34.8, 38.0, 2.5, this.ox, this.oy)
       });
 
       // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (y: 42..43) ===
       list.push({
         xMin: 11.2, xMax: 11.6, yMin: 42.4, yMax: 42.8,
-        draw: () => this.models.drawStreetlight(this.ctx, 11.2, 42.4, ox, oy)
+        draw: () => this.models.drawStreetlight(this.ctx, 11.2, 42.4, this.ox, this.oy)
       });
       list.push({
         xMin: 17.2, xMax: 17.6, yMin: 42.4, yMax: 42.8,
-        draw: () => this.models.drawStreetlight(this.ctx, 17.2, 42.4, ox, oy)
+        draw: () => this.models.drawStreetlight(this.ctx, 17.2, 42.4, this.ox, this.oy)
       });
       list.push({
         xMin: 14.2, xMax: 15.2, yMin: 42.8, yMax: 43.2,
-        draw: () => this.models.drawRoadPortalSign(this.ctx, 14.2, 42.8, ox, oy)
+        draw: () => this.models.drawRoadPortalSign(this.ctx, 14.2, 42.8, this.ox, this.oy)
       });
 
-      // === 11. PERIMETER GREEN HEDGES (Framing Outer Boundaries) ===
-      const hedges = [
-        { gx: 12.0, gy: 0.2, lx: 4.0, ly: 0.6 },  // North Plaza Garden Edge
-        { gx: 28.0, gy: 0.2, lx: 15.0, ly: 0.6 }, // Botanical Cafe North Garden Border
-        { gx: 43.2, gy: 1.0, lx: 0.6, ly: 18.0 }, // Botanical Cafe East Outer Border
-        { gx: 0.2,  gy: 24.0, lx: 0.6, ly: 9.5 }, // Basketball Court West Fence
-        { gx: 43.2, gy: 21.0, lx: 0.6, ly: 15.5 } // Night Market East Outer Border
-      ];
-      hedges.forEach(h => {
-        list.push({
-          xMin: h.gx, xMax: h.gx + h.lx, yMin: h.gy, yMax: h.gy + h.ly,
-          draw: () => this.models.drawPerimeterHedge(this.ctx, h.gx, h.gy, ox, oy, h.lx, h.ly)
-        });
-      });
-
-      // === 12. BOTANICAL GARDEN ARTISAN CAFE (Northeast x: 28..43, y: 2..19) ===
-      // Artisan Espresso Bar Pavilion
+      // === 11. CAMPUS BASKETBALL COURT (East Dedicated Athletic Ground x: 30..41, y: 17..26) ===
+      // Basketball Hoop (Positioned at West boundary line facing east towards court)
       list.push({
-        xMin: 33.0, xMax: 35.4, yMin: 5.0, yMax: 6.1,
-        draw: () => this.models.drawCafePavilion(this.ctx, 33.0, 5.2, ox, oy)
+        xMin: 30.0, xMax: 31.8, yMin: 21.0, yMax: 22.4,
+        draw: () => this.models.drawBasketballHoop(this.ctx, 30.2, 21.2, this.ox, this.oy)
       });
 
-      // Garden Patio Umbrella Table 1 (West Deck)
+      // Metallic Ball Rack with Spalding Basketballs (North sideline)
       list.push({
-        xMin: 30.0, xMax: 31.0, yMin: 10.0, yMax: 11.0,
-        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 30.0, 10.0, ox, oy)
+        xMin: 36.2, xMax: 37.0, yMin: 16.9, yMax: 17.9,
+        draw: () => this.models.drawBasketballRack(this.ctx, 36.5, 17.2, this.ox, this.oy)
       });
 
-      // Garden Patio Umbrella Table 2 (East Deck)
+      // Court Sideline Rest Bench (North sideline, with exact seat center)
       list.push({
-        xMin: 36.0, xMax: 37.0, yMin: 10.0, yMax: 11.0,
-        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 36.0, 10.0, ox, oy)
+        furnitureId: 'basketball_bench',
+        xMin: 32.8, xMax: 34.6, yMin: 16.9, yMax: 17.8,
+        draw: () => this.models.drawParkBench(this.ctx, 33.0, 17.2, this.ox, this.oy)
       });
 
-      // Garden Patio Umbrella Table 3 (South Deck)
+      // Protective Sports Boundary Fences (North, East, South)
       list.push({
-        xMin: 33.0, xMax: 34.0, yMin: 14.0, yMax: 15.0,
-        draw: () => this.models.drawPatioUmbrellaTable(this.ctx, 33.0, 14.0, ox, oy)
+        xMin: 30.0, xMax: 41.0, yMin: 16.8, yMax: 17.2,
+        draw: () => this.models.drawPerimeterHedge(this.ctx, 30.0, 16.9, this.ox, this.oy, 11.0, 0.3)
+      });
+      list.push({
+        xMin: 40.8, xMax: 41.2, yMin: 17.0, yMax: 26.2,
+        draw: () => this.models.drawPerimeterHedge(this.ctx, 41.0, 17.0, this.ox, this.oy, 0.3, 9.2)
+      });
+      list.push({
+        xMin: 30.0, xMax: 41.0, yMin: 26.0, yMax: 26.4,
+        draw: () => this.models.drawPerimeterHedge(this.ctx, 30.0, 26.1, this.ox, this.oy, 11.0, 0.3)
       });
 
-      // Central-East Promenade Park Bench (in former cafe lawn x: 19..26, y: 10..16)
+      // === 12. LUDWIGIA INDOOR SPECIALTY CAFE (Compact Cozy Building x: 33..39, y: 2..7) ===
+      // North Wall (y = 2, x: 33 to 39)
+      list.push({
+        xMin: 32.9, xMax: 39.1, yMin: 1.8, yMax: 2.2,
+        draw: () => {
+          this.ctx.save();
+          this.models.drawBox(this.ctx, 33.0, 2.0, 0, 6.2, 0.25, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          // Blackboard menu mounted on North Wall (X-axis transversal shear)
+          this.models.drawCafeMenuBoard(this.ctx, 35.5, 2.15, this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+
+      // East Wall (x = 39, y: 2 to 7)
+      list.push({
+        xMin: 38.9, xMax: 39.3, yMin: 2.0, yMax: 7.1,
+        draw: () => {
+          this.ctx.save();
+          this.models.drawBox(this.ctx, 39.0, 2.0, 0, 0.25, 5.0, 2.7, '#58240a', '#451a03', '#291006', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+
+      // South Wall with Floor-to-Ceiling Panoramic Glass Window (y = 7, x: 33 to 39)
+      list.push({
+        xMin: 32.9, xMax: 39.1, yMin: 6.8, yMax: 7.3,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
+          // Timber Frame Base & Top
+          this.models.drawBox(this.ctx, 33.0, 7.0, 0, 6.2, 0.25, 0.55, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 7.0, 2.45, 6.2, 0.25, 0.25, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+
+          // Floor-to-Ceiling Glass Window Panels (x: 33.5 to 38.5, z: 0.55 to 2.45)
+          const g0 = isoToScreen(33.5, 7.12, 0.55, this.ox, this.oy);
+          const g1 = isoToScreen(38.5, 7.12, 0.55, this.ox, this.oy);
+          const g2 = isoToScreen(38.5, 7.12, 2.45, this.ox, this.oy);
+          const g3 = isoToScreen(33.5, 7.12, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(224, 242, 254, 0.35)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(g0.x, g0.y); this.ctx.lineTo(g1.x, g1.y); this.ctx.lineTo(g2.x, g2.y); this.ctx.lineTo(g3.x, g3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#b45309';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+
+          // Mullion divider lines
+          [35.2, 36.8].forEach(mx => {
+            const m0 = isoToScreen(mx, 7.12, 0.55, this.ox, this.oy);
+            const m1 = isoToScreen(mx, 7.12, 2.45, this.ox, this.oy);
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+          this.ctx.restore();
+        }
+      });
+
+      // West Facade Wall (x = 33, y: 2 to 7) with Entrance Doorway at y: 4.2 to 5.6
+      // West Wall Top Segment (y: 2.0 to 4.2)
+      list.push({
+        xMin: 32.8, xMax: 33.3, yMin: 2.0, yMax: 4.2,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
+          this.models.drawBox(this.ctx, 33.0, 2.0, 0, 0.25, 2.2, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+      // West Wall Bottom Segment (y: 5.6 to 7.0)
+      list.push({
+        xMin: 32.8, xMax: 33.3, yMin: 5.6, yMax: 7.1,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
+          this.models.drawBox(this.ctx, 33.0, 5.6, 0, 0.25, 1.4, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+      // West Entrance Doorway Lintel Beam & Mounted Signboard
+      list.push({
+        xMin: 32.8, xMax: 33.4, yMin: 4.1, yMax: 5.7,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
+          this.models.drawBox(this.ctx, 33.0, 4.2, 2.25, 0.25, 1.4, 0.45, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+
+          // Illuminated Entrance Plaque (Sheared on Y-axis longitudinal wall)
+          const plq = isoToScreen(32.95, 4.9, 2.45, this.ox, this.oy);
+          this.ctx.save();
+          this.ctx.translate(plq.x, plq.y);
+          this.ctx.transform(1, -0.5, 0, 1, 0, 0);
+          const W = 88;
+          const H = 18;
+          this.ctx.fillStyle = '#451a03';
+          this.ctx.fillRect(-W / 2, -H / 2, W, H);
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.strokeRect(-W / 2, -H / 2, W, H);
+          this.ctx.fillStyle = '#fef3c7';
+          this.ctx.font = 'bold 8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          this.ctx.textAlign = 'center';
+          this.ctx.textBaseline = 'middle';
+          this.ctx.fillText('☕ LUDWIGIA CAFE', 0, 0);
+          this.ctx.restore();
+
+          this.ctx.restore();
+        }
+      });
+
+      // Interior Barista Bar & Commercial Espresso Machine
+      list.push({
+        xMin: 36.2, xMax: 38.8, yMin: 2.6, yMax: 3.8,
+        draw: () => this.models.drawCafeBarCounter(this.ctx, 36.5, 2.8, this.ox, this.oy)
+      });
+
+      // Interior Lounge Table & Leather Armchairs
+      list.push({
+        furnitureId: 'cafe_chair',
+        xMin: 34.0, xMax: 35.8, yMin: 3.8, yMax: 5.2,
+        draw: () => this.models.drawCafeLoungeTable(this.ctx, 34.5, 4.2, this.ox, this.oy)
+      });
+
+      // Tall Indoor Potted Monstera Plant
+      list.push({
+        xMin: 37.8, xMax: 38.7, yMin: 2.1, yMax: 2.9,
+        draw: () => this.models.drawCafeIndoorPlant(this.ctx, 38.0, 2.3, this.ox, this.oy)
+      });
+
+      // Corner Bookshelf
+      list.push({
+        xMin: 38.0, xMax: 38.8, yMin: 4.4, yMax: 5.8,
+        draw: () => this.models.drawCafeBookshelf(this.ctx, 38.2, 4.6, this.ox, this.oy)
+      });
+
+      // Suspended Warm Pendant Lamp
+      list.push({
+        xMin: 34.8, xMax: 35.3, yMin: 4.0, yMax: 4.5,
+        draw: () => this.models.drawCafePendantLamp(this.ctx, 35.0, 4.2, 2.2, this.ox, this.oy)
+      });
+
+      // Central-East Promenade Park Bench (in central lawn x: 19..26, y: 10..16)
       list.push({
         xMin: 19.5, xMax: 20.8, yMin: 13.0, yMax: 13.7,
-        draw: () => this.models.drawParkBench(this.ctx, 19.5, 13.0, ox, oy)
+        draw: () => this.models.drawParkBench(this.ctx, 19.5, 13.0, this.ox, this.oy)
       });
 
       // === 13. CYBER LAN LOUNGE / 召喚師電競網咖 (West x: 1..11, y: 45..53) ===
       // Neon Marquee Sign at North Entrance
       list.push({
         xMin: 3.5, xMax: 5.5, yMin: 44.5, yMax: 44.9,
-        draw: () => this.models.drawCyberCafeSign(this.ctx, 4.0, 44.6, ox, oy)
+        draw: () => this.models.drawCyberCafeSign(this.ctx, 4.0, 44.6, this.ox, this.oy)
       });
 
       // Blue Team Battle Stations (North Row)
       [2.2, 4.2, 6.2].forEach(rx => {
         list.push({
           xMin: rx, xMax: rx + 1.4, yMin: 46.2, yMax: 47.1,
-          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 46.2, ox, oy, false)
+          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 46.2, this.ox, this.oy, false)
         });
       });
 
@@ -2613,55 +3110,218 @@
       [2.2, 4.2, 6.2].forEach(rx => {
         list.push({
           xMin: rx, xMax: rx + 1.4, yMin: 50.2, yMax: 51.1,
-          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 50.2, ox, oy, true)
+          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 50.2, this.ox, this.oy, true)
         });
       });
 
       // Ramen & Monster Snack Counter
       list.push({
         xMin: 8.5, xMax: 10.3, yMin: 47.8, yMax: 49.3,
-        draw: () => this.models.drawCyberSnackBar(this.ctx, 8.5, 47.8, ox, oy)
+        draw: () => this.models.drawCyberSnackBar(this.ctx, 8.5, 47.8, this.ox, this.oy)
       });
 
-      // === 14. HOWLING ABYSS ARAM BRIDGE / 咆哮深淵長橋 (East x: 13..25, y: 45..56) ===
-      // Ancient Freljordian Turret
+      // === 14. HOWLING ABYSS ARAM BRIDGE / 咆哮深淵長橋 (Grand Suspension Bridge x: 13..41.5, y: 48..53) ===
+      // West Gateway Entrance Rune Obelisks
       list.push({
-        xMin: 14.8, xMax: 16.6, yMin: 46.3, yMax: 48.1,
-        draw: () => this.models.drawAbyssTurret(this.ctx, 15.0, 46.5, ox, oy)
+        xMin: 12.8, xMax: 13.6, yMin: 47.2, yMax: 48.0,
+        draw: () => this.models.drawAbyssEntranceGateway(this.ctx, 12.8, 47.2, this.ox, this.oy)
+      });
+      list.push({
+        xMin: 12.8, xMax: 13.6, yMin: 52.8, yMax: 53.6,
+        draw: () => this.models.drawAbyssEntranceGateway(this.ctx, 12.8, 52.8, this.ox, this.oy)
       });
 
-      // Emerald Health Relic
-      list.push({
-        xMin: 18.2, xMax: 19.4, yMin: 49.2, yMax: 50.4,
-        draw: () => this.models.drawHealthRelic(this.ctx, 18.5, 49.5, ox, oy)
-      });
-
-      // Fluffy Snow Poros
-      list.push({
-        xMin: 17.0, xMax: 17.8, yMin: 47.8, yMax: 48.6,
-        draw: () => this.models.drawPoro(this.ctx, 17.2, 48.0, ox, oy)
-      });
-      list.push({
-        xMin: 20.3, xMax: 21.1, yMin: 51.3, yMax: 52.1,
-        draw: () => this.models.drawPoro(this.ctx, 20.5, 51.5, ox, oy)
-      });
-
-      // Hextech Nexus Crystal
-      list.push({
-        xMin: 20.7, xMax: 23.0, yMin: 52.7, yMax: 55.0,
-        draw: () => this.models.drawAbyssNexus(this.ctx, 21.0, 53.0, ox, oy)
-      });
-
-      // === 5. CHARACTERS ===
-      this.charManager.characters.forEach(c => {
+      // North Balustrade Railing Segments
+      const northRailingIntervals = [
+        { gx: 13.6, len: 1.4 },
+        { gx: 16.3, len: 1.2 },
+        { gx: 18.2, len: 3.8 },
+        { gx: 23.3, len: 1.2 },
+        { gx: 27.2, len: 3.3 },
+        { gx: 31.8, len: 3.2 },
+        { gx: 35.7, len: 2.3 },
+        { gx: 39.3, len: 1.9 }
+      ];
+      northRailingIntervals.forEach(r => {
         list.push({
-          isChar: true,
-          xMin: c.x - 0.25, xMax: c.x + 0.25,
-          yMin: c.y - 0.25, yMax: c.y + 0.25,
-          draw: () => this.charManager.drawCharacter(this.ctx, c, ox, oy)
+          xMin: r.gx, xMax: r.gx + r.len, yMin: 47.3, yMax: 47.7,
+          draw: () => this.models.drawAbyssParapetSegment(this.ctx, r.gx, 47.3, r.len, 0.40, this.ox, this.oy)
         });
       });
 
+      // South Balustrade Railing Segments
+      const southRailingIntervals = [
+        { gx: 13.6, len: 1.9 },
+        { gx: 16.2, len: 2.3 },
+        { gx: 19.8, len: 1.7 },
+        { gx: 22.8, len: 1.7 },
+        { gx: 25.2, len: 2.3 },
+        { gx: 28.8, len: 2.7 },
+        { gx: 32.2, len: 1.3 },
+        { gx: 34.2, len: 2.3 },
+        { gx: 37.8, len: 3.4 }
+      ];
+      southRailingIntervals.forEach(r => {
+        list.push({
+          xMin: r.gx, xMax: r.gx + r.len, yMin: 53.3, yMax: 53.7,
+          draw: () => this.models.drawAbyssParapetSegment(this.ctx, r.gx, 53.3, r.len, 0.40, this.ox, this.oy)
+        });
+      });
+
+      // East Bridge Terminus Railing
+      list.push({
+        xMin: 41.2, xMax: 41.6, yMin: 47.5, yMax: 53.5,
+        draw: () => this.models.drawAbyssParapetSegment(this.ctx, 41.2, 47.5, 0.40, 6.00, this.ox, this.oy)
+      });
+
+      // Broken Railing Gaps with Dangling Chains
+      list.push({
+        xMin: 24.5, xMax: 26.1, yMin: 47.2, yMax: 47.7,
+        draw: () => this.models.drawAbyssBrokenRailing(this.ctx, 24.5, 47.3, this.ox, this.oy, true)
+      });
+      list.push({
+        xMin: 21.5, xMax: 22.8, yMin: 53.2, yMax: 53.7,
+        draw: () => this.models.drawAbyssBrokenRailing(this.ctx, 21.5, 53.3, this.ox, this.oy, false)
+      });
+
+      // Glowing Fire Braziers on Parapets (Flickering Orange Flame on Frost Stone)
+      const braziers = [
+        { gx: 17.5, gy: 47.3 },
+        { gx: 26.5, gy: 47.3 },
+        { gx: 35.0, gy: 47.3 },
+        { gx: 15.5, gy: 53.3 },
+        { gx: 24.5, gy: 53.3 },
+        { gx: 33.5, gy: 53.3 }
+      ];
+      braziers.forEach(b => {
+        list.push({
+          xMin: b.gx, xMax: b.gx + 0.65, yMin: b.gy, yMax: b.gy + 0.65,
+          draw: () => this.models.drawAbyssBrazier(this.ctx, b.gx, b.gy, this.ox, this.oy)
+        });
+      });
+
+      // Giant Horned Freljordian Guardian Statues (holding heavy suspension chains over the abyss!)
+      const statues = [
+        { gx: 15.0, gy: 46.8, isNorth: true },
+        { gx: 22.0, gy: 46.8, isNorth: true },
+        { gx: 30.5, gy: 46.8, isNorth: true },
+        { gx: 38.0, gy: 46.8, isNorth: true },
+        { gx: 18.5, gy: 53.5, isNorth: false },
+        { gx: 27.5, gy: 53.5, isNorth: false },
+        { gx: 36.5, gy: 53.5, isNorth: false }
+      ];
+      statues.forEach(s => {
+        list.push({
+          xMin: s.gx, xMax: s.gx + 1.30, yMin: s.gy, yMax: s.gy + 1.30,
+          draw: () => this.models.drawAbyssGuardianStatue(this.ctx, s.gx, s.gy, this.ox, this.oy, s.isNorth)
+        });
+      });
+
+      // Floating Broken Abyss Chasm Crags & Anchor Chains in the Deep Void
+      const chasmPillars = [
+        { gx: 20.0, gy: 44.5 },
+        { gx: 33.0, gy: 44.2 },
+        { gx: 25.0, gy: 55.8 },
+        { gx: 35.5, gy: 56.0 }
+      ];
+      chasmPillars.forEach(cp => {
+        list.push({
+          xMin: cp.gx, xMax: cp.gx + 1.10, yMin: cp.gy, yMax: cp.gy + 1.10,
+          draw: () => this.models.drawAbyssChasmPillar(this.ctx, cp.gx, cp.gy, this.ox, this.oy)
+        });
+      });
+
+      // Ancient Outer Turret (Frost Obelisk with Floating Laser Gem & Target Ring)
+      list.push({
+        xMin: 19.2, xMax: 20.8, yMin: 49.8, yMax: 51.4,
+        draw: () => this.models.drawAbyssTurret(this.ctx, 19.2, 49.8, this.ox, this.oy)
+      });
+
+      // West Emerald Health Relic
+      list.push({
+        xMin: 23.6, xMax: 24.8, yMin: 51.4, yMax: 52.6,
+        draw: () => this.models.drawHealthRelic(this.ctx, 24.0, 51.8, this.ox, this.oy)
+      });
+
+      // Mid-Lane Freljord Frost Brush Patches
+      list.push({
+        xMin: 26.5, xMax: 27.5, yMin: 49.0, yMax: 49.8,
+        draw: () => this.models.drawAbyssBrush(this.ctx, 26.8, 49.2, this.ox, this.oy)
+      });
+      list.push({
+        xMin: 27.5, xMax: 28.5, yMin: 49.0, yMax: 49.8,
+        draw: () => this.models.drawAbyssBrush(this.ctx, 27.8, 49.2, this.ox, this.oy)
+      });
+
+      // Freljordian Inhibitor (Hexagonal Dais & Floating Arcane Core Crystal)
+      list.push({
+        xMin: 29.5, xMax: 30.9, yMin: 49.8, yMax: 51.2,
+        draw: () => this.models.drawAbyssInhibitor(this.ctx, 29.5, 49.8, this.ox, this.oy)
+      });
+
+      // East Emerald Health Relic
+      list.push({
+        xMin: 34.1, xMax: 35.3, yMin: 48.4, yMax: 49.6,
+        draw: () => this.models.drawHealthRelic(this.ctx, 34.5, 48.8, this.ox, this.oy)
+      });
+
+      // The Grand Nexus Core Platform (Pulsing Nexus Crystal & Rotating Golden Orbital Blades)
+      list.push({
+        xMin: 37.8, xMax: 40.0, yMin: 49.5, yMax: 51.7,
+        draw: () => this.models.drawAbyssNexus(this.ctx, 37.8, 49.5, this.ox, this.oy)
+      });
+
+      // Fluffy Snow Poros (Snack / Tongue / Sleep / Hop)
+      list.push({
+        xMin: 17.2, xMax: 17.8, yMin: 49.2, yMax: 49.8,
+        draw: () => this.models.drawPoro(this.ctx, 17.5, 49.5, this.ox, this.oy, 'snack')
+      });
+      list.push({
+        xMin: 23.2, xMax: 23.8, yMin: 50.5, yMax: 51.1,
+        draw: () => this.models.drawPoro(this.ctx, 23.5, 50.8, this.ox, this.oy, 'tongue')
+      });
+      list.push({
+        xMin: 27.7, xMax: 28.3, yMin: 51.9, yMax: 52.5,
+        draw: () => this.models.drawPoro(this.ctx, 28.0, 52.2, this.ox, this.oy, 'sleep')
+      });
+      list.push({
+        xMin: 32.7, xMax: 33.3, yMin: 49.2, yMax: 49.8,
+        draw: () => this.models.drawPoro(this.ctx, 33.0, 49.5, this.ox, this.oy, 'tongue')
+      });
+      list.push({
+        xMin: 36.7, xMax: 37.3, yMin: 51.7, yMax: 52.3,
+        draw: () => this.models.drawPoro(this.ctx, 37.0, 52.0, this.ox, this.oy, 'snack')
+      });
+
+      // Pre-calculate midpoint bounds for fast O(1) viewport culling
+      list.forEach(e => {
+        e.midX = (e.xMin + e.xMax) * 0.5;
+        e.midY = (e.yMin + e.yMax) * 0.5;
+        e.z = e.z || 0;
+      });
+
+      return list;
+    }
+
+    // Backwards-compatible entity collector
+    collectWorldEntities(ox, oy) {
+      this.ox = ox;
+      this.oy = oy;
+      if (!this.staticEntities) {
+        this.staticEntities = this.buildStaticWorldEntities();
+      }
+      const list = [...this.staticEntities];
+      this.charManager.characters.forEach(c => {
+        list.push({
+          isChar: true,
+          char: c,
+          xMin: c.x - 0.25, xMax: c.x + 0.25,
+          yMin: c.y - 0.25, yMax: c.y + 0.25,
+          z: c.z || 0,
+          furnitureId: c.furniture ? c.furniture.id : null,
+          draw: () => this.charManager.drawCharacter(this.ctx, c, ox, oy)
+        });
+      });
       return list;
     }
 
@@ -2751,41 +3411,67 @@
       const w = this.width;
       const h = this.height;
 
+      // 1. Time-of-day subtle ambient tone
       if (this.currentTimeState === 'sunset') {
         const grad = ctx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, 'rgba(251, 146, 60, 0.18)');
-        grad.addColorStop(0.45, 'rgba(244, 114, 182, 0.20)');
-        grad.addColorStop(0.80, 'rgba(236, 72, 153, 0.18)');
-        grad.addColorStop(1, 'rgba(147, 51, 234, 0.20)');
+        grad.addColorStop(0, 'rgba(251, 146, 60, 0.12)');
+        grad.addColorStop(0.5, 'rgba(244, 114, 182, 0.08)');
+        grad.addColorStop(1, 'rgba(147, 51, 234, 0.10)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
       } else if (this.currentTimeState === 'night') {
         const rad = ctx.createRadialGradient(w / 2, h / 2, h * 0.25, w / 2, h / 2, h * 0.95);
-        rad.addColorStop(0, 'rgba(15, 23, 42, 0.28)');
-        rad.addColorStop(0.65, 'rgba(28, 14, 38, 0.48)');
-        rad.addColorStop(1, 'rgba(54, 18, 52, 0.65)');
+        rad.addColorStop(0, 'rgba(15, 23, 42, 0.10)');
+        rad.addColorStop(0.70, 'rgba(28, 14, 38, 0.20)');
+        rad.addColorStop(1, 'rgba(54, 18, 52, 0.32)');
         ctx.fillStyle = rad;
         ctx.fillRect(0, 0, w, h);
       } else if (this.currentTimeState === 'galaxy') {
         const grad = ctx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, 'rgba(157, 23, 77, 0.35)');
-        grad.addColorStop(0.5, 'rgba(112, 26, 117, 0.42)');
-        grad.addColorStop(1, 'rgba(24, 24, 58, 0.55)');
+        grad.addColorStop(0, 'rgba(99, 102, 241, 0.12)');
+        grad.addColorStop(0.5, 'rgba(168, 85, 247, 0.10)');
+        grad.addColorStop(1, 'rgba(24, 24, 58, 0.22)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
       }
 
-      // --- Universal Dream Pink Ambient Edge Aura (夢境粉邊緣氛圍光暈) ---
-      const t = performance.now() * 0.001;
-      const pulse = 0.88 + Math.sin(t * 1.5) * 0.12;
-      const maxR = Math.hypot(w / 2, h / 2);
-      const dreamVignette = ctx.createRadialGradient(w / 2, h / 2, maxR * 0.42, w / 2, h / 2, maxR);
-      dreamVignette.addColorStop(0, 'rgba(244, 114, 182, 0)');
-      dreamVignette.addColorStop(0.68, `rgba(244, 114, 182, ${0.08 * pulse})`);
-      dreamVignette.addColorStop(0.88, `rgba(236, 72, 153, ${0.17 * pulse})`);
-      dreamVignette.addColorStop(1.0, `rgba(219, 39, 119, ${0.28 * pulse})`);
-      ctx.fillStyle = dreamVignette;
-      ctx.fillRect(0, 0, w, h);
+      // 2. The Howling Abyss: Volumetric God Rays & Swirling Frost Blizzard
+      if (this.player && this.player.y >= 44 && this.player.x >= 10) {
+        ctx.save();
+        const t = performance.now() * 0.001;
+        // 1. Diagonal Volumetric Light Beams (streaming from top-left, matching the iconic ARAM map!)
+        const beamPulse = 0.82 + Math.sin(t * 1.6) * 0.18;
+        const numRays = 4;
+        for (let i = 0; i < numRays; i++) {
+          const rayX = (w * 0.12) + (i * w * 0.22) + Math.sin(t * 0.4 + i) * 30;
+          const rayWidth = 70 + (i % 2) * 35;
+          const beamGrad = ctx.createLinearGradient(rayX, 0, rayX + h * 0.55, h);
+          beamGrad.addColorStop(0, `rgba(224, 242, 254, ${0.20 * beamPulse})`);
+          beamGrad.addColorStop(0.35, `rgba(56, 189, 248, ${0.11 * beamPulse})`);
+          beamGrad.addColorStop(0.80, 'rgba(14, 165, 233, 0.02)');
+          beamGrad.addColorStop(1, 'rgba(14, 165, 233, 0)');
+          ctx.fillStyle = beamGrad;
+          ctx.beginPath();
+          ctx.moveTo(rayX - rayWidth * 0.4, 0);
+          ctx.lineTo(rayX + rayWidth * 0.4, 0);
+          ctx.lineTo(rayX + h * 0.55 + rayWidth, h);
+          ctx.lineTo(rayX + h * 0.55 - rayWidth, h);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // 2. Swirling Frost Snowflakes & Ice Shards Drifting in the Wind
+        ctx.fillStyle = 'rgba(240, 249, 255, 0.72)';
+        for (let j = 0; j < 32; j++) {
+          const fx = ((j * 137.5 + t * 50) % w);
+          const fy = ((j * 91.3 + t * 70) % h);
+          const size = 1.1 + (j % 3) * 0.7;
+          ctx.beginPath();
+          ctx.arc(fx, fy, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
     }
 
     // --- Main Render Frame Loop ---
@@ -2800,6 +3486,9 @@
 
       ctx.save();
       const { ox, oy } = this.getOrigin();
+      this.ox = ox;
+      this.oy = oy;
+
       const cx = this.width / 2;
       const cy = this.height / 2;
       ctx.translate(cx, cy);
@@ -2809,9 +3498,45 @@
       // 1. Draw Map Terrain
       this.drawTerrain(ctx, ox, oy);
 
-      // 2. Collect and Sort Entities
-      const entities = this.collectWorldEntities(ox, oy);
-      const sorted = sortIsometricEntities(entities);
+      // 2. Collect and Sort Entities with Zero-GC Viewport Culling
+      const margin = 160 / this.zoom;
+      const minX = cx - (cx / this.zoom) - margin;
+      const maxX = cx + (cx / this.zoom) + margin;
+      const minY = cy - (cy / this.zoom) - margin;
+      const maxY = cy + (cy / this.zoom) + margin;
+
+      // Filter visible static entities (zero allocations)
+      const visibleEntities = [];
+      const staticCount = this.staticEntities ? this.staticEntities.length : 0;
+      for (let i = 0; i < staticCount; i++) {
+        const e = this.staticEntities[i];
+        const pt = isoToScreen(e.midX, e.midY, e.z || 0, ox, oy);
+        if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
+          visibleEntities.push(e);
+        }
+      }
+
+      // Add dynamic characters
+      const chars = this.charManager ? this.charManager.characters : [];
+      for (let i = 0; i < chars.length; i++) {
+        const c = chars[i];
+        const pt = isoToScreen(c.x, c.y, c.z || 0, ox, oy);
+        if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
+          visibleEntities.push({
+            isChar: true,
+            char: c,
+            xMin: c.x - 0.25,
+            xMax: c.x + 0.25,
+            yMin: c.y - 0.25,
+            yMax: c.y + 0.25,
+            z: c.z || 0,
+            furnitureId: c.furniture ? c.furniture.id : null,
+            draw: () => this.charManager.drawCharacter(ctx, c, ox, oy)
+          });
+        }
+      }
+
+      const sorted = sortIsometricEntities(visibleEntities);
 
       // 3. Render Depth-Sorted Entities
       sorted.forEach(e => {

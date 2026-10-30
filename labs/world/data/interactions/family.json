@@ -504,5 +504,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "family_departure_chorus_farewell",
+    "name": {
+      "zh-TW": "全家人出門異口同聲道別",
+      "en": "Family Departure Farewell in Unison"
+    },
+    "type": "location_event",
+    "requiredZone": "house",
+    "participants": [
+      "wuyen",
+      "ludwig",
+      "luena",
+      "yully"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "wuyen",
+          "text": "那我先出去了喔。",
+          "delay": 2.2
+        },
+        {
+          "speaker": "ludwig",
+          "text": "好，路上小心喔。",
+          "delay": 0
+        },
+        {
+          "speaker": "luena",
+          "text": "好，路上小心喔。",
+          "delay": 0
+        },
+        {
+          "speaker": "yully",
+          "text": "好，路上小心喔。",
+          "delay": 3.2
+        }
+      ],
+      "en": [
+        {
+          "speaker": "wuyen",
+          "text": "I'm heading out now.",
+          "delay": 2.2
+        },
+        {
+          "speaker": "ludwig",
+          "text": "Okay, drive safe!",
+          "delay": 0
+        },
+        {
+          "speaker": "luena",
+          "text": "Okay, drive safe!",
+          "delay": 0
+        },
+        {
+          "speaker": "yully",
+          "text": "Okay, drive safe!",
+          "delay": 3.2
+        }
+      ]
+    }
   }
 ]

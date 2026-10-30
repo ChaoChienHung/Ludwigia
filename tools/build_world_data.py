@@ -26,7 +26,7 @@ DEFAULT_CHAR_ORDER = [
 
 # Preferred order of interaction files for canonical presentation
 DEFAULT_INTERACTION_ORDER = [
-    "dorm.json", "ai.json", "school.json", "family.json", "douyin.json"
+    "dorm.json", "market.json", "basketball.json", "ai.json", "school.json", "family.json", "douyin.json"
 ]
 
 

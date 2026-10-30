@@ -13,10 +13,101 @@
       this.characters = [];
       this.player = null;
       this.proximityTarget = null;
+      this.furnitureTarget = null;
+      this.furnitureSpots = this.initFurnitureSpots();
       this.autoChatTimer = 3.0 + Math.random() * 2.0;
       this.dialogueQueue = [];
       this.queueTimer = 0;
       this.npcDialogues = [];
+    }
+
+    initFurnitureSpots() {
+      return [
+        // Dorm 211 Loft Beds (上床下桌, upper bunk platform at z = 1.45)
+        { id: 'dorm_bed_happy', type: 'bed', zone: 'dorm_211', x: 2.1, y: 18.2, z: 1.45, facing: 1, name: 'Happy 的床', duvetColor: '#ea580c', labelZh: '上床睡覺', labelEn: 'Sleep in Bed' },
+        { id: 'dorm_bed_clark', type: 'bed', zone: 'dorm_211', x: 7.2, y: 18.2, z: 1.45, facing: -1, name: 'Clark 的床', duvetColor: '#1d4ed8', labelZh: '上床睡覺', labelEn: 'Sleep in Bed' },
+        { id: 'dorm_bed_kerry', type: 'bed', zone: 'dorm_211', x: 2.1, y: 25.2, z: 1.45, facing: 1, name: 'Kerry 的床', duvetColor: '#0d9488', labelZh: '上床睡覺', labelEn: 'Sleep in Bed' },
+        { id: 'dorm_bed_billy', type: 'bed', zone: 'dorm_211', x: 7.2, y: 25.2, z: 1.45, facing: -1, name: '阿方的床', duvetColor: '#7c3aed', labelZh: '上阿方的床', labelEn: "Climb Ah-Fang's Bed" },
+
+        // Ludwig's House Master Bed (z = 0.40)
+        { id: 'ludwig_bed', type: 'bed', zone: 'ludwig_house', x: 2.0, y: 2.0, z: 0.40, facing: 1, name: 'Ludwig 的主臥床', duvetColor: '#1e3a8a', labelZh: '上床休息', labelEn: 'Sleep in Bed' },
+
+        // Dorm 211 Lounge Blue Sofa (z = 0.42)
+        { id: 'dorm_sofa', type: 'seat', zone: 'dorm_211', x: 4.8, y: 19.5, z: 0.42, facing: 1, name: '宿舍經典沙發', labelZh: '坐上沙發', labelEn: 'Sit on Sofa' },
+
+        // Central Midnight Snack Street Table Red Stools (z = 0.30)
+        { id: 'market_stool', type: 'seat', zone: 'night_market', x: 28.5, y: 25.5, z: 0.30, facing: 1, name: '宵夜街紅色圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
+
+        // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.35)
+        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.5, y: 4.2, z: 0.35, facing: 1, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
+
+        // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
+        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 33.8, y: 17.55, z: 0.42, facing: 1, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
+
+        // Garden Terrace Chinese Chess Bench beside Xiangqi Table (z = 0.42, exact seat center)
+        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 6.0, y: 12.35, z: 0.42, facing: 1, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
+
+        // Gray Road North Edge Benches (Placed on the northern edge of gray paved roads, facing south onto the road)
+        { id: 'bench_boulevard_north', type: 'seat', zone: 'plaza', x: 11.6, y: 12.35, z: 0.42, facing: 1, name: '中庭廣場北緣長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
+        { id: 'bench_central_east', type: 'seat', zone: 'plaza', x: 21.8, y: 12.35, z: 0.42, facing: 1, name: '東向大道北緣長椅', labelZh: '坐下看書', labelEn: 'Sit & Read' },
+        { id: 'bench_west_greenway', type: 'seat', zone: 'plaza', x: 5.3, y: 29.35, z: 0.42, facing: 1, name: '西區綠廊北緣長椅', labelZh: '坐下小憩', labelEn: 'Sit & Rest' },
+        { id: 'bench_south_avenue', type: 'seat', zone: 'plaza', x: 11.8, y: 43.35, z: 0.42, facing: 1, name: '南區大道北緣長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' }
+      ];
+    }
+
+    isSpotOccupied(spot, excludingChar = null) {
+      if (!spot) return false;
+      return this.characters.some(c => c !== excludingChar && c.furniture && c.furniture.id === spot.id);
+    }
+
+    getOccupant(spot) {
+      if (!spot) return null;
+      return this.characters.find(c => c.furniture && c.furniture.id === spot.id);
+    }
+
+    useFurniture(char, spot) {
+      if (!char || !spot) return false;
+      if (this.isSpotOccupied(spot, char)) return false;
+
+      char.furniture = spot;
+      char.state = (spot.type === 'bed') ? 'lying' : 'sitting';
+      char.x = spot.x;
+      char.y = spot.y;
+      char.z = spot.z || 0;
+      char.facing = spot.facing || 1;
+      char.path = [];
+      char.isWalking = false;
+      char.snoreSeed = Math.random() * 5.0;
+
+      // Special banter: if someone climbs into Billy's bed, Billy gets frustrated!
+      if (spot.id === 'dorm_bed_billy') {
+        const billy = this.characters.find(c => c.id === 'billy');
+        if (billy && char.id !== 'billy') {
+          const lk = this.getLangKey();
+          const txt = (lk === 'en') ? "I literally can't... People keep climbing on my bed! Get down!" : "我真的快中風了！有群人一直上我的床，快給我下來！";
+          setTimeout(() => {
+            this.triggerSpeechBubble(billy, txt, 4.2);
+          }, 600);
+        }
+      }
+      return true;
+    }
+
+    leaveFurniture(char) {
+      if (!char || !char.furniture) return;
+      const f = char.furniture;
+      char.state = 'idle';
+      char.z = 0;
+      if (f.type === 'bed') {
+        if (char.x > 5.0) {
+          char.x = Math.max(4.2, char.x - 1.4);
+        } else {
+          char.x = Math.min(4.0, char.x + 1.4);
+        }
+      } else if (f.type === 'seat') {
+        char.y = char.y + ((f.facing && f.facing > 0) ? 0.6 : -0.6);
+      }
+      char.furniture = null;
     }
 
     async loadCharacters(jsonPath = 'data/characters.json') {
@@ -269,13 +360,21 @@
       };
 
       overlay.classList.add('open');
+      if (this.world && this.world.setCinematicFocus) {
+        this.world.setCinematicFocus(this.player, char);
+      }
     }
 
     closeDialogue() {
       const overlay = document.getElementById('dialogue-overlay');
       if (overlay) overlay.classList.remove('open');
       this.activeDialogueChar = null;
-      if (this.world) this.world.keys = {};
+      if (this.world) {
+        this.world.keys = {};
+        if (this.world.clearCinematicFocus) {
+          this.world.clearCinematicFocus();
+        }
+      }
     }
 
     // --- Name Tag Glass Pill with Thematic Colors ---
@@ -343,7 +442,127 @@
         return;
       }
 
-      // 3. Human Character Model with Walking Animation
+      // 3. Human Character Model with Walking Animation & States
+      // Specialized State: Lying down on Bed (Sleeping with Animated Snoring zZ)
+      if (c.state === 'lying') {
+        const facingDir = c.facing || 1;
+        const headX = pos.x - 7 * facingDir;
+        const headY = pos.y - 6;
+
+        // Soft White Fluffy Pillow under head
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(headX, headY, 7.5, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Sleeping Head
+        ctx.fillStyle = c.skin || '#f5d0b5';
+        ctx.beginPath();
+        ctx.arc(headX, headY - 2, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = c.hair || '#1a1a1a';
+        ctx.beginPath();
+        ctx.arc(headX, headY - 4, 6.2, Math.PI * 0.9, Math.PI * 2.1);
+        ctx.fill();
+
+        // Peaceful Closed Sleeping Eyes (^ ^)
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(headX + 1 * facingDir, headY - 2);
+        ctx.lineTo(headX + 3 * facingDir, headY - 3);
+        ctx.lineTo(headX + 5 * facingDir, headY - 2);
+        ctx.stroke();
+
+        // Tucked-in Cozy Bed Blanket / Quilt Covering Body
+        const quiltCol = (c.furniture && c.furniture.duvetColor) || c.shirt || '#ea580c';
+        ctx.fillStyle = quiltCol;
+        this.roundRect(ctx, pos.x - 8, pos.y - 5, 17, 13, 3);
+        ctx.fill();
+
+        // White folded top sheet hem
+        ctx.fillStyle = '#f8fafc';
+        this.roundRect(ctx, pos.x - 8, pos.y - 7, 17, 3.5, 1.5);
+        ctx.fill();
+
+        // Floating Animated Snoring Particles (z Z z drifting up)
+        const snoreSeed = c.snoreSeed || 0;
+        const snoreTime = (performance.now() * 0.0018 + snoreSeed) % 3;
+        for (let i = 0; i < 3; i++) {
+          const prog = (snoreTime + i * 1.0) % 3;
+          const zAlpha = Math.max(0, 0.9 - prog * 0.3);
+          const zOffset = prog * 16;
+          const zX = headX + facingDir * (4 + prog * 4) + Math.sin(prog * 2) * 3;
+          const zY = headY - 8 - zOffset;
+          ctx.fillStyle = `rgba(186, 230, 253, ${zAlpha})`;
+          ctx.font = `bold ${8 + prog * 2.2}px monospace`;
+          ctx.fillText('z', zX, zY);
+        }
+
+        // Character Name Tag & Speech Bubble
+        this.drawNameTag(ctx, pos.x, pos.y - 32, c);
+        if (c.speechBubble) this.drawSpeechBubble(ctx, pos.x, pos.y - 46, c);
+        return;
+      }
+
+      // Specialized State: Sitting upright on Chair / Stool / Sofa
+      if (c.state === 'sitting') {
+        const sitY = pos.y;
+
+        // Seated Pants & Thighs (resting naturally on seat surface at sitY)
+        ctx.fillStyle = c.pants || '#1e293b';
+        ctx.fillRect(pos.x - 5.5, sitY - 5, 11, 4.5); // Thighs extending forward
+        ctx.fillRect(pos.x - 4.5, sitY - 1, 3.2, 7.5); // Left lower leg hanging down
+        ctx.fillRect(pos.x + 1.2, sitY - 1, 3.2, 7.5); // Right lower leg hanging down
+
+        // Seated Torso
+        ctx.fillStyle = c.shirt || '#e06c43';
+        this.roundRect(ctx, pos.x - 6.5, sitY - 17, 13, 12, 3);
+        ctx.fill();
+
+        // Relaxed hands resting on knees
+        ctx.fillStyle = c.skin || '#f5d0b5';
+        ctx.beginPath();
+        ctx.arc(pos.x - 3, sitY - 2, 2, 0, Math.PI * 2);
+        ctx.arc(pos.x + 3, sitY - 2, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Head
+        ctx.fillStyle = c.skin || '#f5d0b5';
+        ctx.beginPath();
+        ctx.arc(pos.x, sitY - 23, 6.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = c.hair || '#1a1a1a';
+        ctx.beginPath();
+        ctx.arc(pos.x, sitY - 25, 7.2, Math.PI * 0.9, Math.PI * 2.1);
+        ctx.fill();
+        ctx.fillRect(pos.x - 7, sitY - 25, 2.5, 5);
+        ctx.fillRect(pos.x + 4.5, sitY - 25, 2.5, 5);
+
+        // Eyes
+        ctx.fillStyle = '#0f172a';
+        if (c.facing >= 0) {
+          ctx.fillRect(pos.x + 1, sitY - 24, 1.5, 2.5);
+          ctx.fillRect(pos.x + 4, sitY - 24, 1.5, 2.5);
+        } else {
+          ctx.fillRect(pos.x - 5, sitY - 24, 1.5, 2.5);
+          ctx.fillRect(pos.x - 2, sitY - 24, 1.5, 2.5);
+        }
+
+        // Character Name Tag & Speech Bubble
+        this.drawNameTag(ctx, pos.x, pos.y - 38, c);
+        if (c.speechBubble) this.drawSpeechBubble(ctx, pos.x, pos.y - 50, c);
+        return;
+      }
+
+      // Standard Human Character Model with Walking Animation
       const hasActiveInput = c.isPlayer && this.world && this.world.keys && (
         !!this.world.keys['w'] || !!this.world.keys['s'] || !!this.world.keys['a'] || !!this.world.keys['d'] ||
         !!this.world.keys['arrowup'] || !!this.world.keys['arrowdown'] || !!this.world.keys['arrowleft'] || !!this.world.keys['arrowright'] ||
@@ -544,16 +763,17 @@
         }
       });
 
-      // 2. Process conversation queue sequence
+      // 2. Process conversation queue sequence (supports simultaneous chorus lines when nextDelay === 0)
       if (this.dialogueQueue.length > 0) {
         this.queueTimer -= dt;
-        if (this.queueTimer <= 0) {
+        while (this.queueTimer <= 0 && this.dialogueQueue.length > 0) {
           const nextItem = this.dialogueQueue.shift();
           const targetChar = this.characters.find(c => c.id === nextItem.speakerId);
           if (targetChar) {
             this.triggerSpeechBubble(targetChar, nextItem.text, nextItem.duration || 3.8);
           }
-          this.queueTimer = nextItem.nextDelay || 2.2;
+          this.queueTimer = (nextItem.nextDelay !== undefined) ? nextItem.nextDelay : 2.2;
+          if (this.queueTimer > 0) break;
         }
         return;
       }
@@ -603,6 +823,36 @@
           Math.hypot(c.x - centerX, c.y - centerY) <= 4.5
         );
         if (!shareLocation) continue;
+
+        // Location-Restricted Events Contract:
+        // If dialogue/event specifies requiredZone, ensure the conversation group is currently inside that zone!
+        if (pair.requiredZone) {
+          const reqZone = pair.requiredZone;
+          const currentZone = this.world && this.world.getZoneAt ? this.world.getZoneAt(centerX, centerY) : group[0].zone;
+          const isHouse = (reqZone === 'house' || reqZone === 'ludwig_house') && (currentZone === 'ludwig_house' || group[0].zone === 'house');
+          const isDorm = (reqZone === 'dorm_211') && (currentZone === 'dorm_211' || group[0].zone === 'dorm_211');
+          const matchesZone = (currentZone === reqZone) || isHouse || isDorm;
+          if (!matchesZone) continue;
+        }
+
+        // Bed Occupancy Action for Dorm Events (e.g. Late-Night Bed Chat)
+        if (pair.occupyBeds && this.furnitureSpots) {
+          const dormBedMap = {
+            billy: 'dorm_bed_billy',
+            clark: 'dorm_bed_clark',
+            jerry: 'dorm_bed_kerry',
+            ludwig: 'dorm_bed_happy'
+          };
+          for (const c of group) {
+            const bedId = dormBedMap[c.id];
+            if (bedId) {
+              const spot = this.furnitureSpots.find(f => f.id === bedId);
+              if (spot && c.furniture !== spot) {
+                this.useFurniture(c, spot);
+              }
+            }
+          }
+        }
 
         // If characters share zone but are spread apart, guide them to approach conversation center
         if (!allNear) {

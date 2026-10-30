@@ -4,6 +4,7 @@
       "clark",
       "billy"
     ],
+    "requiredZone": "dorm_211",
     "dialogues": {
       "zh-TW": [
         {
@@ -36,6 +37,7 @@
       "bohan",
       "billy"
     ],
+    "requiredZone": "dorm_211",
     "dialogues": {
       "zh-TW": [
         {
@@ -68,6 +70,7 @@
       "bohan",
       "billy"
     ],
+    "requiredZone": "dorm_211",
     "dialogues": {
       "zh-TW": [
         {
@@ -100,6 +103,7 @@
       "clark",
       "billy"
     ],
+    "requiredZone": "dorm_211",
     "dialogues": {
       "zh-TW": [
         {
@@ -359,6 +363,108 @@
           "speaker": "ludwig",
           "text": "Count me in too, that makes a full five-stack!",
           "delay": 2.8
+        }
+      ]
+    }
+  },
+  {
+    "id": "dorm_211_late_night_bed_chat",
+    "name": {
+      "zh-TW": "男十一舍 211 四人深夜寢室夜聊",
+      "en": "Men's Dorm 211 Late-Night Bed Chat"
+    },
+    "type": "location_event",
+    "requiredZone": "dorm_211",
+    "occupyBeds": true,
+    "participants": [
+      "clark",
+      "jerry",
+      "billy",
+      "ludwig"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "clark",
+          "text": "你們都還沒睡嗎？怎麼還沒睡？",
+          "delay": 2.6
+        },
+        {
+          "speaker": "jerry",
+          "text": "睡不著啊，聊一下啦。你覺得我們班哪個女生最好看？",
+          "delay": 2.8
+        },
+        {
+          "speaker": "billy",
+          "text": "又在問這個！對了，黑皮是不是有交女朋友呀？",
+          "delay": 2.8
+        },
+        {
+          "speaker": "ludwig",
+          "text": "好像有聽說欸。那老開後來怎麼樣了？",
+          "delay": 2.8
+        },
+        {
+          "speaker": "clark",
+          "text": "老開喔？他八成又戴著耳機打程式打到早上了。",
+          "delay": 2.6
+        },
+        {
+          "speaker": "billy",
+          "text": "真的假的啦，明天早八微積分會爬不起來啦，快睡啦！",
+          "delay": 2.8
+        },
+        {
+          "speaker": "jerry",
+          "text": "好啦好啦，大家晚安。",
+          "delay": 2.2
+        },
+        {
+          "speaker": "ludwig",
+          "text": "晚安，關燈囉。",
+          "delay": 2.2
+        }
+      ],
+      "en": [
+        {
+          "speaker": "clark",
+          "text": "Are you guys not asleep yet? Why are you still awake?",
+          "delay": 2.6
+        },
+        {
+          "speaker": "jerry",
+          "text": "Can't fall asleep, let's chat! Which girl in our class do you think is prettiest?",
+          "delay": 2.8
+        },
+        {
+          "speaker": "billy",
+          "text": "Asking that again! By the way, did Happy get a girlfriend lately?",
+          "delay": 2.8
+        },
+        {
+          "speaker": "ludwig",
+          "text": "I think I heard something! What about Kerry, what happened with him lately?",
+          "delay": 2.8
+        },
+        {
+          "speaker": "clark",
+          "text": "Kerry? He's probably wearing headphones coding until dawn again.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "billy",
+          "text": "Seriously? We won't make it to tomorrow's 8 AM calculus, sleep already!",
+          "delay": 2.8
+        },
+        {
+          "speaker": "jerry",
+          "text": "Alright alright, good night everyone.",
+          "delay": 2.2
+        },
+        {
+          "speaker": "ludwig",
+          "text": "Good night, turning off the lights.",
+          "delay": 2.2
         }
       ]
     }

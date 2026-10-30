@@ -111,7 +111,7 @@ const isCipherEditableTarget = (target) => {
 
 const getSavedCipherMode = () => {
   try {
-    return sessionStorage.getItem(CIPHER_MODE_KEY) === "1";
+    return sessionStorage.getItem(CIPHER_MODE_KEY) === "1" || localStorage.getItem(CIPHER_MODE_KEY) === "1";
   } catch (e) {}
   return false;
 };
@@ -190,6 +190,7 @@ const setCipherMode = (enabled, options = {}) => {
   if (persist) {
     try {
       sessionStorage.setItem(CIPHER_MODE_KEY, on ? "1" : "0");
+      localStorage.setItem(CIPHER_MODE_KEY, on ? "1" : "0");
     } catch (e) {}
   }
   if (notify) {
@@ -503,12 +504,20 @@ window.LudwigCompanionSettings = {
 let cipherInputBuffer = "";
 window.addEventListener("keydown", (event) => {
   if (!isCipherModeRouteAllowed()) return;
-  if (event.defaultPrevented || event.isComposing) return;
+  if (event.defaultPrevented) return;
   if (event.metaKey || event.ctrlKey || event.altKey) return;
   if (isCipherEditableTarget(event.target)) return;
+
+  let char = "";
   const key = String(event.key || "");
-  if (key.length !== 1 || !/[a-z]/i.test(key)) return;
-  cipherInputBuffer = `${cipherInputBuffer}${key.toLowerCase()}`.slice(-CIPHER_INPUT_MAX);
+  if (key.length === 1 && /[a-z]/i.test(key)) {
+    char = key.toLowerCase();
+  } else if (event.code && /^Key[A-Z]$/i.test(event.code)) {
+    char = event.code.slice(3).toLowerCase();
+  }
+  if (!char) return;
+
+  cipherInputBuffer = `${cipherInputBuffer}${char}`.slice(-CIPHER_INPUT_MAX);
   if (cipherInputBuffer === CIPHER_TRIGGER) {
     cipherInputBuffer = "";
     window.LudwigCipherMode.toggle({ persist: true, notify: true });

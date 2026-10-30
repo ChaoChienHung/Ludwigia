@@ -1,0 +1,69 @@
+[
+  {
+    "participants": [
+      "clark",
+      "bohan"
+    ],
+    "requiredZone": "basketball_court",
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "clark",
+          "text": "三對三半場缺一，要不要來挑一場？",
+          "delay": 2.2
+        },
+        {
+          "speaker": "bohan",
+          "text": "等我熱身一下，今天三分球手感火燙喔！",
+          "delay": 2.2
+        }
+      ],
+      "en": [
+        {
+          "speaker": "clark",
+          "text": "3-on-3 half court short one player, wanna play a match?",
+          "delay": 2.2
+        },
+        {
+          "speaker": "bohan",
+          "text": "Let me warm up, my three-pointer touch is on fire today!",
+          "delay": 2.2
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "jerry",
+      "kerry"
+    ],
+    "requiredZone": "basketball_court",
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "jerry",
+          "text": "防守別放水啊，切入禁區要頂住！",
+          "delay": 2.2
+        },
+        {
+          "speaker": "kerry",
+          "text": "放心，這記追魂麻辣鍋我蓋定了。",
+          "delay": 2.2
+        }
+      ],
+      "en": [
+        {
+          "speaker": "jerry",
+          "text": "Don't slack on defense, hold the paint against the drive!",
+          "delay": 2.2
+        },
+        {
+          "speaker": "kerry",
+          "text": "Don't worry, this chase-down block is all mine.",
+          "delay": 2.2
+        }
+      ]
+    }
+  }
+]
+
