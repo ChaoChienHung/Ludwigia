@@ -268,7 +268,7 @@
       const treeBlocks = [
         [1.0, 13.5], [7.5, 15.0],
         [2.2, 30.0], [7.5, 30.0],
-        [34.5, 2.5], [34.5, 6.5],
+        [41.5, 2.5], [41.5, 6.5],
         [35.0, 18.5], [35.5, 24.0], [38.5, 24.5],
         [36.5, 9.5], [41.5, 10.5], [45.5, 13.5],
         [43.5, 29.0], [48.5, 29.5]
@@ -3442,9 +3442,9 @@
         [2.2, 30.0],
         [7.5, 30.0],
 
-        // 3. East Promenade Lawn Buffer (x: 33..40, y: 0..9 — east of East Promenade, framing Cafe)
-        [34.5, 2.5],
-        [34.5, 6.5],
+        // 3. East Lawn Buffer (x: 40..50, y: 0..8 — open park lawn east of Cafe)
+        [41.5, 2.5],
+        [41.5, 6.5],
 
         // 4. East Park Corridor (x: 33..40, y: 17..26 — vast peaceful park between East Promenade and Basketball Court)
         [35.0, 18.5],
