@@ -266,17 +266,15 @@
 
       // Trees (Lush trees placed 100% strictly on green grass lawns, keeping all road tiles open)
       const treeBlocks = [
-        [1.0, 13.5], [7.5, 15.0],
-        [2.2, 30.0], [7.5, 30.0],
-        [41.5, 2.5], [41.5, 6.5],
-        [35.0, 18.5], [35.5, 24.0], [38.5, 24.5],
-        [36.5, 9.5], [41.5, 10.5], [45.5, 13.5],
-        [43.5, 29.0], [48.5, 29.5]
+        [1, 14], [8, 15],
+        [2, 30], [8, 30],
+        [42, 3], [42, 7],
+        [35, 19], [36, 24], [39, 25],
+        [37, 10], [42, 11], [46, 14],
+        [44, 29], [49, 30]
       ];
       treeBlocks.forEach(([tx, ty]) => {
-        const trunkX = Math.floor(tx + 0.35);
-        const trunkY = Math.floor(ty + 0.35);
-        this.nav.setBlock(trunkX, trunkY, 1, 1, true);
+        this.nav.setBlock(tx, ty, 1.0, 1.0, true);
       });
 
       // 7. West Campus Greenway (x: 0..9, y: 27..32 — Peaceful lawn between Dorm 211 and Sanmin High)
@@ -3434,31 +3432,31 @@
 
       // Lush Flowering Trees (Beautifying gardens and park lawns, placed 100% strictly on true grass)
       const trees = [
-        // 1. Ludwig's House South Lawn Terrace Garden (x: 0..9, y: 10..16)
-        [1.0, 13.5],
-        [7.5, 15.0],
+        // 1. Ludwig's House South Lawn Terrace Garden (x: 0..9, y: 11..16)
+        [1, 14],
+        [8, 15],
 
-        // 2. West Campus Greenway & Park (x: 0..9, y: 27..32 — between Dorm 211 and Sanmin High)
-        [2.2, 30.0],
-        [7.5, 30.0],
+        // 2. West Campus Greenway & Park (x: 0..9, y: 28..32 — between Dorm 211 and Sanmin High)
+        [2, 30],
+        [8, 30],
 
-        // 3. East Lawn Buffer (x: 40..50, y: 0..8 — open park lawn east of Cafe)
-        [41.5, 2.5],
-        [41.5, 6.5],
+        // 3. East Lawn Buffer (x: 40..50, y: 1..8 — open park lawn east of Cafe)
+        [42, 3],
+        [42, 7],
 
-        // 4. East Park Corridor (x: 33..40, y: 17..26 — vast peaceful park between East Promenade and Basketball Court)
-        [35.0, 18.5],
-        [35.5, 24.0],
-        [38.5, 24.5],
+        // 4. East Park Corridor (x: 34..40, y: 18..25 — vast peaceful park between East Promenade and Basketball Court)
+        [35, 19],
+        [36, 24],
+        [39, 25],
 
-        // 5. Campus Grand Central Park (x: 33..46, y: 8..16 — between Cafe and Basketball Court)
-        [36.5, 9.5],
-        [41.5, 10.5],
-        [45.5, 13.5],
+        // 5. Campus Grand Central Park (x: 34..46, y: 9..15 — between Cafe and Basketball Court)
+        [37, 10],
+        [42, 11],
+        [46, 14],
 
-        // 6. South Lawn Buffer (x: 41..52, y: 27..32 — south of Basketball Court)
-        [43.5, 29.0],
-        [48.5, 29.5]
+        // 6. South Lawn Buffer (x: 42..51, y: 28..32 — south of Basketball Court)
+        [44, 29],
+        [49, 30]
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
