@@ -1715,6 +1715,7 @@
       list.push({
         xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.45,
         yMin: 4.45, yMax: 6.95,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
@@ -1948,8 +1949,9 @@
 
       // Lintel beam & Mounted Bronze Plaque over Dorm 211 door
       list.push({
-        xMin: dormSE_X - 0.15, xMax: dormSE_X + 0.45,
-        yMin: 20.45, yMax: 22.95,
+        xMin: dormSE_X - 0.25, xMax: dormSE_X + 1.35,
+        yMin: 20.4, yMax: 22.9,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
@@ -2268,8 +2270,9 @@
 
       // Lintel beam & Mounted Brand Sign over library door
       list.push({
-        xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
-        yMin: 20.45, yMax: 22.85,
+        xMin: LIB_MIN_X - 0.25, xMax: LIB_MIN_X + 1.35,
+        yMin: 20.4, yMax: 22.9,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
@@ -2489,8 +2492,9 @@
 
       // Lintel beam & Mounted Entrance Plaque over classroom door
       list.push({
-        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 0.45,
-        yMin: 36.45, yMax: 38.95,
+        xMin: schoolSE_X - 0.25, xMax: schoolSE_X + 1.35,
+        yMin: 36.4, yMax: 38.9,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
@@ -2641,8 +2645,9 @@
 
       // Office Lintel Beam over door (z: 2.15 to H)
       list.push({
-        xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.35,
-        yMin: 36.45, yMax: 38.85,
+        xMin: douyinNW_X - 0.25, xMax: douyinNW_X + 0.85,
+        yMin: 36.4, yMax: 38.9,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
@@ -3013,6 +3018,7 @@
       // West Entrance Doorway Lintel Beam & Mounted Signboard
       list.push({
         xMin: 32.8, xMax: 33.4, yMin: 4.1, yMax: 5.7,
+        z: 2.25,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
