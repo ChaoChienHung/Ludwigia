@@ -266,8 +266,8 @@
 
       // Trees (Lush trees placed 100% strictly on green grass lawns, keeping all road tiles open)
       const treeBlocks = [
-        [1.5, 11.2], [7.5, 15.0],
-        [2.0, 28.5], [7.5, 28.5], [2.0, 31.5], [7.5, 31.5],
+        [1.0, 13.5], [7.5, 15.0],
+        [2.2, 30.0], [7.5, 30.0],
         [34.5, 2.5], [34.5, 6.5],
         [35.0, 18.5], [35.5, 24.0], [38.5, 24.5],
         [36.5, 9.5], [41.5, 10.5], [45.5, 13.5],
@@ -2051,7 +2051,7 @@
 
       // Lintel beam & Mounted Bronze Plaque over Dorm 211 door
       list.push({
-        xMin: dormSE_X - 0.25, xMax: dormSE_X + 1.35,
+        xMin: dormSE_X - 0.15, xMax: dormSE_X + 1.35,
         yMin: 20.4, yMax: 22.9,
         z: 2.15,
         draw: () => {
@@ -2121,7 +2121,7 @@
       // Dormitory South Exterior Wall with Dual Campus Casement Windows (along y = DORM_MAX_Y + 1 = 27, x: 0 to 10)
       const dormSouthY = DORM_MAX_Y + 1.0;
       list.push({
-        xMin: -0.1, xMax: DORM_MAX_X + 1.1,
+        xMin: -0.1, xMax: DORM_MAX_X + 0.70,
         yMin: dormSouthY - 0.15, yMax: dormSouthY + 0.35,
         draw: () => {
           this.ctx.save();
@@ -2769,7 +2769,7 @@
 
       // Lintel beam & Mounted Entrance Plaque over classroom door
       list.push({
-        xMin: schoolSE_X - 0.25, xMax: schoolSE_X + 1.35,
+        xMin: schoolSE_X - 0.15, xMax: schoolSE_X + 1.35,
         yMin: 36.4, yMax: 38.9,
         z: 2.15,
         draw: () => {
@@ -2837,7 +2837,7 @@
       // 6. Classroom South Exterior Wall with Retro Corridor Windows (along y = SCHOOL_MAX_Y + 1 = 43, x: 0 to 10)
       const schoolSouthY = SCHOOL_MAX_Y + 1.0;
       list.push({
-        xMin: -0.1, xMax: SCHOOL_MAX_X + 1.1,
+        xMin: -0.1, xMax: SCHOOL_MAX_X + 0.70,
         yMin: schoolSouthY - 0.15, yMax: schoolSouthY + 0.35,
         draw: () => {
           this.ctx.save();
@@ -3193,14 +3193,12 @@
       // Lush Flowering Trees (Beautifying gardens and park lawns, placed 100% strictly on true grass)
       const trees = [
         // 1. Ludwig's House South Lawn Terrace Garden (x: 0..9, y: 10..16)
-        [1.5, 11.2],
+        [1.0, 13.5],
         [7.5, 15.0],
 
         // 2. West Campus Greenway & Park (x: 0..9, y: 27..32 — between Dorm 211 and Sanmin High)
-        [2.0, 28.5],
-        [7.5, 28.5],
-        [2.0, 31.5],
-        [7.5, 31.5],
+        [2.2, 30.0],
+        [7.5, 30.0],
 
         // 3. East Promenade Lawn Buffer (x: 33..40, y: 0..9 — east of East Promenade, framing Cafe)
         [34.5, 2.5],
