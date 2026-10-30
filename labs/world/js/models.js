@@ -4315,7 +4315,7 @@
 
     // --- 15. Indoor Lounge Coffee Table & Leather Armchairs ---
     drawCafeLoungeTable(ctx, gx, gy, ox, oy) {
-      // Woven Nordic Area Rug on Parquet Floor
+      // 1. Woven Nordic Area Rug on Parquet Floor
       const r0 = isoToScreen(gx - 0.35, gy - 0.35, 0.01, ox, oy);
       const r1 = isoToScreen(gx + 1.85, gy - 0.35, 0.01, ox, oy);
       const r2 = isoToScreen(gx + 1.85, gy + 1.65, 0.01, ox, oy);
@@ -4329,7 +4329,14 @@
       ctx.lineWidth = 1.0;
       ctx.stroke();
 
-      // Solid Walnut Round Coffee Table
+      // 2. Background Armchair (North-West / Red Armchair — BEHIND table)
+      // Drawn before table so the round tabletop naturally occludes and frames it!
+      const c1X = gx - 0.05;
+      const c1Y = gy + 0.42;
+      this.drawBox(ctx, c1X, c1Y, 0, 0.45, 0.45, 0.38, '#c2410c', '#9a3412', '#7c2d12', ox, oy);
+      this.drawBox(ctx, c1X, c1Y, 0.38, 0.10, 0.45, 0.38, '#9a3412', '#7c2d12', '#431407', ox, oy); // Backrest
+
+      // 3. Middle Layer: Solid Walnut Round Coffee Table & Steaming Mugs
       this.drawBox(ctx, gx + 0.65, gy + 0.55, 0, 0.12, 0.12, 0.55, '#451a03', '#3b180a', '#291006', ox, oy); // Table base
       const tp = isoToScreen(gx + 0.71, gy + 0.61, 0.55, ox, oy);
       ctx.fillStyle = '#78350f';
@@ -4362,13 +4369,12 @@
         ctx.fill();
       });
 
-      // 2 Comfortable Upholstered Armchairs
-      // Chair 1 (West: facing inward)
-      this.drawBox(ctx, gx + 0.05, gy + 0.45, 0, 0.45, 0.45, 0.38, '#c2410c', '#9a3412', '#7c2d12', ox, oy);
-      this.drawBox(ctx, gx + 0.05, gy + 0.45, 0.38, 0.10, 0.45, 0.38, '#9a3412', '#7c2d12', '#431407', ox, oy); // Backrest
-      // Chair 2 (East: facing inward)
-      this.drawBox(ctx, gx + 1.25, gy + 0.45, 0, 0.45, 0.45, 0.38, '#334155', '#1e293b', '#0f172a', ox, oy);
-      this.drawBox(ctx, gx + 1.60, gy + 0.45, 0.38, 0.10, 0.45, 0.38, '#1e293b', '#0f172a', '#020617', ox, oy); // Backrest
+      // 4. Foreground Armchair (South-East / Navy Armchair — IN FRONT of table)
+      // Drawn after table so it naturally renders in front of table edge!
+      const c2X = gx + 1.25;
+      const c2Y = gy + 0.45;
+      this.drawBox(ctx, c2X, c2Y, 0, 0.45, 0.45, 0.38, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, c2X + 0.35, c2Y, 0.38, 0.10, 0.45, 0.38, '#1e293b', '#0f172a', '#020617', ox, oy); // Backrest
     }
 
     // --- 16. Window-Facing Timber Bar Counter & Stools ---
