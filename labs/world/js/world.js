@@ -146,6 +146,8 @@
 
     setupWorldObstacles() {
       // 1. Ludwig's Family Residence (NW: x: 0..9, y: 0..9)
+      this.nav.setBlock(0, 0, 10, 0.6, true);                  // Northeast Wall (y: 0)
+      this.nav.setBlock(0, 0, 0.6, 10, true);                  // Northwest Wall (x: 0)
       // East Wall Doorway at y: 4.5 to 6.8 (keep tiles 5 and 6 100% open)
       this.nav.setBlock(HOUSE_MAX_X + 1, 0, 0.6, 4.2, true);   // East Wall Top (y: 0 to 4.2)
       this.nav.setBlock(HOUSE_MAX_X + 1, 7.0, 0.6, 3.0, true); // East Wall Bottom (y: 7.0 to 10)
@@ -1478,19 +1480,18 @@
           // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
           const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
           const isEastNorthSouthSpine = (x >= 30 && x <= 32 && y >= 4 && y <= 34);  // East Promenade Spine (connects Cafe ↔ Plaza Ave ↔ Basketball ↔ Night Market)
-          const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 39);         // Row 1: Ludwig's Home ↔ AI Studio ↔ East Spine ↔ Cafe Entrance
-          const isEastWestAve2 = (y >= 12 && y <= 16 && x >= 10 && x <= 41);        // Central Cross Street & Plaza Axis ↔ East Spine ↔ Court West Plaza (flush with Library North Wall)
+          const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 17);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance
+          const isEastWestAve2 = (y >= 12 && y <= 16 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (flush with Library North Wall)
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
           const isEastWestAve3 = (y >= 19 && y <= 20 && x >= 0 && x <= 27);        // Street between Home/Terrace and Dorm 211 / Library
           const isWestGreenwayAve = (y >= 29 && y <= 30 && x >= 0 && x <= 12);     // West Greenway Street between Dorm 211 and Sanmin High
           const isEastWestAve4 = (y >= 33 && y <= 34 && x >= 0 && x <= 32);        // Street between Classroom and Douyin Office ↔ East Spine
           const isEastWestAve5 = (y >= 43 && y <= 45 && x >= 0 && x <= 27);        // South Boulevard avenue
-          const isNightMarketConnector = (y >= 33 && y <= 34 && x >= 30 && x <= 39); // Branch connecting East Spine to narrow Night Market street
+          const isNightMarketConnector = (y >= 33 && y <= 34 && x >= 30 && x <= 34); // Branch connecting East Spine to narrow Night Market street
           const isSouthSectorConnector = (x >= 5 && x <= 14 && y >= 43 && y <= 45); // South Connector to Cyber & Abyss
 
-          // East Campus Athletic & Promenade Loop
-          const isCafeToCourtPromenade = (x >= 37 && x <= 39 && y >= 6 && y <= 22); // Direct scenic promenade linking Cafe ↔ Ave 2 ↔ Court
-          const isBasketballEntrance = (x >= 37 && x <= 41 && y >= 20 && y <= 22); // Direct paved avenue into Basketball Court West Sideline
+          // East Campus Basketball Court Direct Paved Access
+          const isBasketballEntrance = (x >= 32 && x <= 41 && y >= 20 && y <= 22); // Direct paved avenue from East Spine into Basketball Court West Sideline
 
           // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds)
           const isLudwigDoorSpur = (x >= 10 && x <= 11 && y >= 5 && y <= 6);
@@ -1514,7 +1515,6 @@
             isEastWestAve5 ||
             isNightMarketConnector ||
             isSouthSectorConnector ||
-            isCafeToCourtPromenade ||
             isBasketballEntrance ||
             isLudwigDoorSpur ||
             isLudwigTerraceSpur ||
@@ -1703,6 +1703,64 @@
       const H = 2.55; // Slightly taller than the doors (2.15m), providing solid lintel & architectural wall structure
 
       // === 1. ZONE 1: LUDWIG'S HOUSE ===
+      // Ludwig's House Northwest Back Wall (along x = 0, y: 0 to 10)
+      list.push({
+        xMin: -0.15, xMax: 0.35,
+        yMin: 0, yMax: HOUSE_MAX_Y + 1.0,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, 0, 0, 0.25, HOUSE_MAX_Y + 1, H, wallT, null, wallR, this.ox, this.oy);
+          // Bedroom West Scenic Window at x = 0.26, y: 2.0..4.0, z: 1.15..2.15
+          const bw0 = isoToScreen(0.26, 2.0, 1.15, this.ox, this.oy);
+          const bw1 = isoToScreen(0.26, 4.0, 1.15, this.ox, this.oy);
+          const bw2 = isoToScreen(0.26, 4.0, 2.15, this.ox, this.oy);
+          const bw3 = isoToScreen(0.26, 2.0, 2.15, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(224, 242, 254, 0.55)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(bw0.x, bw0.y); this.ctx.lineTo(bw1.x, bw1.y); this.ctx.lineTo(bw2.x, bw2.y); this.ctx.lineTo(bw3.x, bw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#92400e';
+          this.ctx.lineWidth = 1.6;
+          this.ctx.stroke();
+        }
+      });
+
+      // Ludwig's House Northeast Partition Wall (along y = 0, x: 0 to 10)
+      list.push({
+        xMin: 0, xMax: HOUSE_MAX_X + 1.0,
+        yMin: -0.15, yMax: 0.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, 0, 0, 0, HOUSE_MAX_X + 1, 0.25, H, wallT, wallL, null, this.ox, this.oy, wallR);
+          // Master Bedroom Clerestory Window at y = 0.26, x: 1.2..3.5, z: 1.25..2.05
+          const nw0 = isoToScreen(1.2, 0.26, 1.25, this.ox, this.oy);
+          const nw1 = isoToScreen(3.5, 0.26, 1.25, this.ox, this.oy);
+          const nw2 = isoToScreen(3.5, 0.26, 2.05, this.ox, this.oy);
+          const nw3 = isoToScreen(1.2, 0.26, 2.05, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(224, 242, 254, 0.55)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(nw0.x, nw0.y); this.ctx.lineTo(nw1.x, nw1.y); this.ctx.lineTo(nw2.x, nw2.y); this.ctx.lineTo(nw3.x, nw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#92400e';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // Living Room Modern Framed Artwork at y = 0.26, x: 6.8..8.8, z: 1.15..1.95
+          const ap0 = isoToScreen(6.8, 0.26, 1.15, this.ox, this.oy);
+          const ap1 = isoToScreen(8.8, 0.26, 1.15, this.ox, this.oy);
+          const ap2 = isoToScreen(8.8, 0.26, 1.95, this.ox, this.oy);
+          const ap3 = isoToScreen(6.8, 0.26, 1.95, this.ox, this.oy);
+          this.ctx.fillStyle = '#0f766e';
+          this.ctx.beginPath();
+          this.ctx.moveTo(ap0.x, ap0.y); this.ctx.lineTo(ap1.x, ap1.y); this.ctx.lineTo(ap2.x, ap2.y); this.ctx.lineTo(ap3.x, ap3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#f59e0b';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+        }
+      });
+
       // SE Dividing Wall Left Segment (dL, y: 0 to 4.5)
       list.push({
         xMin: HOUSE_MAX_X + 0.85, xMax: HOUSE_MAX_X + 1.35,
@@ -2102,24 +2160,86 @@
       });
 
       // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===
-      // AI Studio Entrance Walls & Plaque
+      // AI Studio West Facade Floor-to-Ceiling Panoramic Glass Window (North Segment, y: 0 to 4.5)
       list.push({
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 0, yMax: 4.5,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.25, 4.5, H, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 1. Dark Titanium Base Sill & Top Header Beams
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0, 0.25, 4.5, 0.40, '#0f172a', '#1e293b', '#334155', this.ox, this.oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 2.45, 0.25, 4.5, H - 2.45, '#0f172a', '#1e293b', '#334155', this.ox, this.oy);
+
+          // 2. Solid Corner Mullion Pillars
+          this.models.drawBox(this.ctx, AI_MIN_X, 0, 0.40, 0.25, 0.6, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 4.2, 0.40, 0.25, 0.3, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Floor-to-Ceiling Cyan Glazed Glass Panel (y: 0.6 to 4.2, z: 0.40 to 2.45)
+          const gw0 = isoToScreen(AI_MIN_X + 0.12, 0.6, 0.40, this.ox, this.oy);
+          const gw1 = isoToScreen(AI_MIN_X + 0.12, 4.2, 0.40, this.ox, this.oy);
+          const gw2 = isoToScreen(AI_MIN_X + 0.12, 4.2, 2.45, this.ox, this.oy);
+          const gw3 = isoToScreen(AI_MIN_X + 0.12, 0.6, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(6, 182, 212, 0.28)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#06b6d4';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // 4. Vertical Slim Mullion Dividers
+          [1.8, 3.0].forEach(my => {
+            const m0 = isoToScreen(AI_MIN_X + 0.12, my, 0.40, this.ox, this.oy);
+            const m1 = isoToScreen(AI_MIN_X + 0.12, my, 2.45, this.ox, this.oy);
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+
           this.ctx.restore();
         }
       });
+
+      // AI Studio West Facade Floor-to-Ceiling Panoramic Glass Window (South Segment, y: 6.8 to 10)
       list.push({
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 6.8, yMax: 10,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, H, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 1. Dark Titanium Base Sill & Top Header Beams
+          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0, 0.25, 3.2, 0.40, '#0f172a', '#1e293b', '#334155', this.ox, this.oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 2.45, 0.25, 3.2, H - 2.45, '#0f172a', '#1e293b', '#334155', this.ox, this.oy);
+
+          // 2. Solid Corner Mullion Pillars
+          this.models.drawBox(this.ctx, AI_MIN_X, 6.8, 0.40, 0.25, 0.3, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 9.4, 0.40, 0.25, 0.6, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Floor-to-Ceiling Cyan Glazed Glass Panel (y: 7.1 to 9.4, z: 0.40 to 2.45)
+          const gw0 = isoToScreen(AI_MIN_X + 0.12, 7.1, 0.40, this.ox, this.oy);
+          const gw1 = isoToScreen(AI_MIN_X + 0.12, 9.4, 0.40, this.ox, this.oy);
+          const gw2 = isoToScreen(AI_MIN_X + 0.12, 9.4, 2.45, this.ox, this.oy);
+          const gw3 = isoToScreen(AI_MIN_X + 0.12, 7.1, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(6, 182, 212, 0.28)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#06b6d4';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // 4. Vertical Slim Mullion Divider
+          const m0 = isoToScreen(AI_MIN_X + 0.12, 8.25, 0.40, this.ox, this.oy);
+          const m1 = isoToScreen(AI_MIN_X + 0.12, 8.25, 2.45, this.ox, this.oy);
+          this.ctx.beginPath();
+          this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+          this.ctx.stroke();
+
           this.ctx.restore();
         }
       });
@@ -2303,24 +2423,86 @@
         }
       });
 
-      // Library NW Entrance Walls & Bronze Plaque
+      // Library West Facade Floor-to-Ceiling Botanical Panoramic Glass Window (North Segment, y: 17 to 20.5)
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: LIB_MIN_Y, yMax: 20.5,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.25, 3.5, H, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 1. Classical Mahogany Base Sill & Top Header Beams
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0, 0.25, 3.5, 0.40, '#58240a', '#451a03', '#291006', this.ox, this.oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 2.45, 0.25, 3.5, H - 2.45, '#58240a', '#451a03', '#291006', this.ox, this.oy);
+
+          // 2. Solid Corner Mahogany Pillars
+          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MIN_Y, 0.40, 0.25, 0.6, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 20.2, 0.40, 0.25, 0.3, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Floor-to-Ceiling Warm Amber Glazed Glass Panel (y: 17.6 to 20.2, z: 0.40 to 2.45)
+          const gw0 = isoToScreen(LIB_MIN_X + 0.12, 17.6, 0.40, this.ox, this.oy);
+          const gw1 = isoToScreen(LIB_MIN_X + 0.12, 20.2, 0.40, this.ox, this.oy);
+          const gw2 = isoToScreen(LIB_MIN_X + 0.12, 20.2, 2.45, this.ox, this.oy);
+          const gw3 = isoToScreen(LIB_MIN_X + 0.12, 17.6, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(254, 243, 199, 0.30)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // 4. Vertical Slim Bronze Mullion Divider
+          const m0 = isoToScreen(LIB_MIN_X + 0.12, 18.9, 0.40, this.ox, this.oy);
+          const m1 = isoToScreen(LIB_MIN_X + 0.12, 18.9, 2.45, this.ox, this.oy);
+          this.ctx.beginPath();
+          this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+          this.ctx.stroke();
+
           this.ctx.restore();
         }
       });
+
+      // Library West Facade Floor-to-Ceiling Botanical Panoramic Glass Window (South Segment, y: 22.8 to 27.25)
       list.push({
         xMin: LIB_MIN_X - 0.15, xMax: LIB_MIN_X + 0.35,
         yMin: 22.8, yMax: LIB_MAX_Y + 1.25,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, (LIB_MAX_Y + 1.25) - 22.8, H, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 1. Classical Mahogany Base Sill & Top Header Beams
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0, 0.25, (LIB_MAX_Y + 1.25) - 22.8, 0.40, '#58240a', '#451a03', '#291006', this.ox, this.oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 2.45, 0.25, (LIB_MAX_Y + 1.25) - 22.8, H - 2.45, '#58240a', '#451a03', '#291006', this.ox, this.oy);
+
+          // 2. Solid Corner Mahogany Pillars
+          this.models.drawBox(this.ctx, LIB_MIN_X, 22.8, 0.40, 0.25, 0.3, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 26.5, 0.40, 0.25, (LIB_MAX_Y + 1.25) - 26.5, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Floor-to-Ceiling Warm Amber Glazed Glass Panel (y: 23.1 to 26.5, z: 0.40 to 2.45)
+          const gw0 = isoToScreen(LIB_MIN_X + 0.12, 23.1, 0.40, this.ox, this.oy);
+          const gw1 = isoToScreen(LIB_MIN_X + 0.12, 26.5, 0.40, this.ox, this.oy);
+          const gw2 = isoToScreen(LIB_MIN_X + 0.12, 26.5, 2.45, this.ox, this.oy);
+          const gw3 = isoToScreen(LIB_MIN_X + 0.12, 23.1, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(254, 243, 199, 0.30)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#d97706';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // 4. Vertical Slim Bronze Mullion Dividers
+          [24.2, 25.3].forEach(my => {
+            const m0 = isoToScreen(LIB_MIN_X + 0.12, my, 0.40, this.ox, this.oy);
+            const m1 = isoToScreen(LIB_MIN_X + 0.12, my, 2.45, this.ox, this.oy);
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+
           this.ctx.restore();
         }
       });
