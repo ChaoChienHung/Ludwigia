@@ -146,14 +146,14 @@
 
     setupWorldObstacles() {
       // 1. Ludwig's Family Residence (NW: x: 0..9, y: 0..9)
-      this.nav.setBlock(0, 0, 10, 0.6, true);                  // Northeast Wall (y: 0)
-      this.nav.setBlock(0, 0, 0.6, 10, true);                  // Northwest Wall (x: 0)
-      // East Wall Doorway at y: 4.5 to 6.8 (keep tiles 5 and 6 100% open)
-      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 0.6, 4.2, true);   // East Wall Top (y: 0 to 4.2)
-      this.nav.setBlock(HOUSE_MAX_X + 1, 7.0, 0.6, 3.0, true); // East Wall Bottom (y: 7.0 to 10)
-      // South Terrace Doorway at x: 4.5 to 6.8 (keep tiles 5 and 6 100% open)
-      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 4.2, 0.6, true);   // South Terrace Wall Left (x: 0 to 4.2)
-      this.nav.setBlock(7.0, HOUSE_MAX_Y + 1, 3.0, 0.6, true); // South Terrace Wall Right (x: 7.0 to 10)
+      this.nav.setBlock(0, 0, 11.0, 1.0, true);                  // Northeast Wall (y: 0, x: 0..10)
+      this.nav.setBlock(0, 0, 1.0, 11.0, true);                  // Northwest Wall (x: 0, y: 0..10)
+      // East Wall Doorway at y: 5..6 (keep tiles 5 and 6 100% open)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 1.0, 5.0, true);     // East Wall Top (y: 0..4 at x: 10)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 7.0, 1.0, 4.0, true);   // East Wall Bottom (y: 7..10 at x: 10)
+      // South Terrace Doorway at x: 5..6 (keep tiles 5 and 6 100% open)
+      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 5.0, 1.0, true);     // South Terrace Wall Left (x: 0..4 at y: 10)
+      this.nav.setBlock(7.0, HOUSE_MAX_Y + 1, 4.0, 1.0, true);   // South Terrace Wall Right (x: 7..10 at y: 10)
 
       this.nav.setBlock(1.0, 1.0, 2.2, 2.3, true); // Master Bed
       this.nav.setBlock(6.0, 1.0, 2.5, 1.2, true); // Desk
@@ -163,12 +163,12 @@
       this.nav.setBlock(6.0, 5.0, 1.8, 1.4, true); // Dining Table
 
       // 2. Men's Dormitory 11 Room 211 (SW: x: 0..9, y: 17..26)
-      this.nav.setBlock(0, DORM_MIN_Y, 10, 0.6, true);           // NE Wall
-      this.nav.setBlock(0, DORM_MIN_Y, 0.6, 10, true);           // NW Wall
-      // SE Wall Doorway at y: 20.5 to 22.8 (keep tiles 21 and 22 100% open)
-      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 0.6, 3.2, true);  // SE Wall Top (y: 17 to 20.2)
-      this.nav.setBlock(DORM_MAX_X + 1, 23.0, 0.6, 4.0, true);        // SE Wall Bottom (y: 23.0 to 27)
-      this.nav.setBlock(0, DORM_MAX_Y + 1, 10, 0.6, true);       // SW Wall
+      this.nav.setBlock(0, DORM_MIN_Y, 11.0, 1.0, true);         // North Wall (y: 17, x: 0..10)
+      this.nav.setBlock(0, DORM_MIN_Y, 1.0, 11.0, true);         // West Wall (x: 0, y: 17..27)
+      this.nav.setBlock(0, DORM_MAX_Y + 1, 11.0, 1.0, true);     // South Wall (y: 27, x: 0..10)
+      // SE Wall Doorway at y: 21..22 (keep tiles 21 and 22 100% open)
+      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 1.0, 4.0, true);  // SE Wall Top (y: 17..20 at x: 10)
+      this.nav.setBlock(DORM_MAX_X + 1, 23.0, 1.0, 5.0, true);        // SE Wall Bottom (y: 23..27 at x: 10)
 
       // 4 Loft Bed/Desk Combos
       this.nav.setBlock(1.0, 17.5, 2.2, 1.6, true);   // Happy Wang (Bed 1)
@@ -178,12 +178,12 @@
       this.nav.setBlock(3.6, 20.8, 1.9, 2.0, true);   // Dorm Lounge Classic Sofa & Table
 
       // 3. Ludwigia AI Research Studio (NE: x: 18..27, y: 0..9)
-      this.nav.setBlock(AI_MIN_X, 0, 10, 1, true);
-      // West Doorway at y: 4.5 to 7.0 (keep tiles 5 and 6 100% open)
-      this.nav.setBlock(AI_MIN_X, 0, 1, 4.2, true);
-      this.nav.setBlock(AI_MIN_X, 7.0, 1, 3.0, true);
-      this.nav.setBlock(AI_MAX_X + 1, 0, 1, 10, true);
-      this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 10, 1, true);
+      this.nav.setBlock(AI_MIN_X, 0, 11.0, 1.0, true);               // North Wall (y: 0, x: 18..28)
+      this.nav.setBlock(AI_MAX_X + 1, 0, 1.0, 11.0, true);           // East Wall (x: 28, y: 0..10)
+      this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 11.0, 1.0, true);   // South Wall (y: 10, x: 18..28)
+      // West Doorway at y: 5..6 (keep tiles 5 and 6 100% open)
+      this.nav.setBlock(AI_MIN_X, 0, 1.0, 5.0, true);                // West Wall Top (y: 0..4 at x: 18)
+      this.nav.setBlock(AI_MIN_X, 7.0, 1.0, 4.0, true);              // West Wall Bottom (y: 7..10 at x: 18)
 
       this.nav.setBlock(19.2, 1.2, 1.7, 1.1, true); // Server Cabinets
       this.nav.setBlock(23.5, 1.2, 2.5, 1.1, true); // AI Command Desk
@@ -191,12 +191,12 @@
       this.nav.setBlock(19.2, 7.2, 1.7, 1.1, true); // Espresso Bar
 
       // 4. Zone 4: Ludwigia Grand Library (SE: 18..27, 17..26)
-      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 10, 1, true); // North Wall
-      // West Doorway at y: 20.5 to 22.8 (keep tiles 21 and 22 100% open)
-      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1, 3.2, true); // West Wall Top (y: 17 to 20.2)
-      this.nav.setBlock(LIB_MIN_X, 23.0, 1, 4.0, true); // West Wall Bottom (y: 23.0 to 27)
-      this.nav.setBlock(LIB_MAX_X + 1, LIB_MIN_Y, 1, 10, true); // East Wall
-      this.nav.setBlock(LIB_MIN_X, LIB_MAX_Y + 1, 10, 1, true); // South Wall
+      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 11.0, 1.0, true);     // North Wall (y: 17, x: 18..28)
+      this.nav.setBlock(LIB_MAX_X + 1, LIB_MIN_Y, 1.0, 11.0, true); // East Wall (x: 28, y: 17..27)
+      this.nav.setBlock(LIB_MIN_X, LIB_MAX_Y + 1, 11.0, 1.0, true); // South Wall (y: 27, x: 18..28)
+      // West Doorway at y: 21..22 (keep tiles 21 and 22 100% open)
+      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1.0, 4.0, true);      // West Wall Top (y: 17..20 at x: 18)
+      this.nav.setBlock(LIB_MIN_X, 23.0, 1.0, 5.0, true);           // West Wall Bottom (y: 23..27 at x: 18)
 
       this.nav.setBlock(18.4, 17.2, 8.4, 0.8, true); // Grand North Book Walls
       this.nav.setBlock(18.2, 17.6, 0.8, 2.6, true); // West Wall Library Stack
@@ -227,12 +227,12 @@
       this.nav.setBlock(15.5, 38.0, 0.65, 0.35, true); // Douyin Office Monument Totem
 
       // 5. Sanmin High School Classroom (SW2: x: 0..9, y: 33..42)
-      this.nav.setBlock(0, SCHOOL_MIN_Y, 10, 0.6, true);             // North Wall (y: 33)
-      this.nav.setBlock(0, SCHOOL_MIN_Y, 0.6, 10, true);             // West Wall (x: 0)
-      this.nav.setBlock(0, SCHOOL_MAX_Y + 1, 10, 0.6, true);         // South Wall (y: 43)
-      // East Wall Doorway at y: 36.5 to 38.8 (keep tiles 37 and 38 100% open)
-      this.nav.setBlock(SCHOOL_MAX_X + 1, SCHOOL_MIN_Y, 0.6, 3.5, true);  // East Wall Top (y: 33 to 36.5)
-      this.nav.setBlock(SCHOOL_MAX_X + 1, 39.0, 0.6, 4.0, true);          // East Wall Bottom (y: 39 to 43)
+      this.nav.setBlock(0, SCHOOL_MIN_Y, 11.0, 1.0, true);          // North Wall (y: 33, x: 0..10)
+      this.nav.setBlock(0, SCHOOL_MIN_Y, 1.0, 11.0, true);          // West Wall (x: 0, y: 33..43)
+      this.nav.setBlock(0, SCHOOL_MAX_Y + 1, 11.0, 1.0, true);      // South Wall (y: 43, x: 0..10)
+      // East Wall Doorway at y: 37..38 (keep tiles 37 and 38 100% open)
+      this.nav.setBlock(SCHOOL_MAX_X + 1, SCHOOL_MIN_Y, 1.0, 4.0, true); // East Wall Top (y: 33..36 at x: 10)
+      this.nav.setBlock(SCHOOL_MAX_X + 1, 39.0, 1.0, 5.0, true);         // East Wall Bottom (y: 39..43 at x: 10)
 
       // Classroom Furniture Obstacles
       this.nav.setBlock(2.4, 33.1, 5.2, 0.4, true); // Blackboard Wall Area (North Wall)
@@ -246,12 +246,12 @@
       this.nav.setBlock(1.5, 42.2, 2.4, 0.65, true); // Lockers & Storage
 
       // 6. Douyin / TikTok Tech Office (SE2: x: 18..27, y: 33..42)
-      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 10, 0.6, true);           // North Wall (y: 33)
-      this.nav.setBlock(DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 0.6, 10, true);       // East Wall (x: 28)
-      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 10, 0.6, true);       // South Wall (y: 43)
-      // West Wall Doorway at y: 36.5 to 38.8 (keep tiles 37 and 38 100% open)
-      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 0.6, 3.5, true);          // West Wall Top (y: 33 to 36.5)
-      this.nav.setBlock(DOUYIN_MIN_X, 39.0, 0.6, 4.0, true);                  // West Wall Bottom (y: 39 to 43)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 11.0, 1.0, true);     // North Wall (y: 33, x: 18..28)
+      this.nav.setBlock(DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 1.0, 11.0, true); // East Wall (x: 28, y: 33..43)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 11.0, 1.0, true); // South Wall (y: 43, x: 18..28)
+      // West Wall Doorway at y: 37..38 (keep tiles 37 and 38 100% open)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 1.0, 4.0, true);      // West Wall Top (y: 33..36 at x: 18)
+      this.nav.setBlock(DOUYIN_MIN_X, 39.0, 1.0, 5.0, true);              // West Wall Bottom (y: 39..43 at x: 18)
 
       // Tech Office Furniture Obstacles
       this.nav.setBlock(19.2, 34.4, 1.6, 0.85, true); // Workstation 1
