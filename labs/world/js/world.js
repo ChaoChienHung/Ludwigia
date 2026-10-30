@@ -1054,7 +1054,8 @@
               // Check if arrived near an unoccupied bench/chair
               const nearSeat = this.charManager.furnitureSpots.find(s =>
                 s.type === 'seat' &&
-                Math.hypot(s.x - c.x, s.y - c.y) < 1.6 &&
+                (!s.zone || s.zone === 'plaza' || s.zone === c.zone) &&
+                Math.hypot(s.x - c.x, s.y - c.y) < 1.15 &&
                 !this.charManager.isSpotOccupied(s, c)
               );
               if (nearSeat && Math.random() < 0.65) {
@@ -1361,9 +1362,11 @@
 
       // 7.1 Proximity Check for Furniture Prompt (Beds, Sofas, Stools)
       let closestFurniture = null;
-      let minFurnDist = 1.6;
+      let minFurnDist = 1.25;
       if (this.charManager.furnitureSpots) {
         this.charManager.furnitureSpots.forEach(f => {
+          // If furniture belongs to an indoor room, player must be in that zone
+          if (f.zone && f.zone !== 'plaza' && f.zone !== this.currentZone) return;
           const d = Math.hypot(f.x - player.x, f.y - player.y);
           if (d < minFurnDist) {
             minFurnDist = d;
@@ -1838,6 +1841,7 @@
         draw: () => this.models.drawBookshelf(this.ctx, 0.1, 3.8, this.ox, this.oy)
       });
       list.push({
+        furnitureId: 'ludwig_sofa',
         xMin: 2.0, xMax: 4.5, yMin: 5.0, yMax: 7.0,
         draw: () => this.models.drawLivingRoom(this.ctx, 2.0, 5.0, this.ox, this.oy)
       });
@@ -2020,6 +2024,7 @@
 
       // Dorm Common Lounge: Beloved Classic Blue Sofa, Orange Pillows & Coffee Table (Billy Fang's hangout)
       list.push({
+        furnitureId: 'dorm_sofa',
         xMin: 3.6, xMax: 5.8, yMin: 20.6, yMax: 22.8,
         draw: () => this.models.drawDormCommonArea(this.ctx, 3.6, 20.8, this.ox, this.oy)
       });
@@ -3271,6 +3276,7 @@
 
       // Central-East Promenade Park Bench (in central lawn x: 19..26, y: 10..16)
       list.push({
+        furnitureId: 'bench_east_lawn',
         xMin: 19.5, xMax: 20.8, yMin: 13.0, yMax: 13.7,
         draw: () => this.models.drawParkBench(this.ctx, 19.5, 13.0, this.ox, this.oy)
       });

@@ -32,14 +32,17 @@
         // Ludwig's House Master Bed (z = 0.40)
         { id: 'ludwig_bed', type: 'bed', zone: 'ludwig_house', x: 2.0, y: 2.0, z: 0.40, facing: 1, name: 'Ludwig 的主臥床', duvetColor: '#1e3a8a', labelZh: '上床休息', labelEn: 'Sleep in Bed' },
 
-        // Dorm 211 Lounge Blue Sofa (z = 0.42)
-        { id: 'dorm_sofa', type: 'seat', zone: 'dorm_211', x: 4.8, y: 19.5, z: 0.42, facing: 1, name: '宿舍經典沙發', labelZh: '坐上沙發', labelEn: 'Sit on Sofa' },
+        // Ludwig's House Living Room Blue Sofa (z = 0.42, exact seat cushion center)
+        { id: 'ludwig_sofa', type: 'seat', zone: 'ludwig_house', x: 2.55, y: 6.0, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '客廳舒適藍沙發', labelZh: '坐上沙發', labelEn: 'Sit on Sofa' },
 
-        // Central Midnight Snack Street Table Red Stools (z = 0.30)
-        { id: 'market_stool', type: 'seat', zone: 'night_market', x: 28.5, y: 25.5, z: 0.30, facing: 1, name: '宵夜街紅色圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
+        // Dorm 211 Lounge Blue Sofa (z = 0.42, exact seat cushion center on sofa, NOT on floor!)
+        { id: 'dorm_sofa', type: 'seat', zone: 'dorm_211', x: 4.15, y: 21.8, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '宿舍經典沙發', labelZh: '坐上沙發', labelEn: 'Sit on Sofa' },
 
-        // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.35)
-        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.5, y: 4.2, z: 0.35, facing: 1, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
+        // Central Midnight Snack Street 傻師傅湯包 Red Dining Stool (z = 0.35, inside restaurant dining table)
+        { id: 'market_stool', type: 'seat', zone: 'night_market', x: 36.9, y: 41.85, z: 0.35, facing: 1, exitOffset: { dx: -0.6, dy: 0 }, name: '傻師傅內用紅圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
+
+        // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.38, armchair seat)
+        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.8, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: 0.6, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 33.8, y: 17.55, z: 0.42, facing: 1, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
@@ -50,6 +53,7 @@
         // Gray Road North Edge Benches (Placed on the northern edge of gray paved roads, facing south onto the road)
         { id: 'bench_boulevard_north', type: 'seat', zone: 'plaza', x: 11.6, y: 12.35, z: 0.42, facing: 1, name: '中庭廣場北緣長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
         { id: 'bench_central_east', type: 'seat', zone: 'plaza', x: 21.8, y: 12.35, z: 0.42, facing: 1, name: '東向大道北緣長椅', labelZh: '坐下看書', labelEn: 'Sit & Read' },
+        { id: 'bench_east_lawn', type: 'seat', zone: 'plaza', x: 20.3, y: 13.35, z: 0.42, facing: 1, name: '草坪景觀長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' },
         { id: 'bench_west_greenway', type: 'seat', zone: 'plaza', x: 5.3, y: 29.35, z: 0.42, facing: 1, name: '西區綠廊北緣長椅', labelZh: '坐下小憩', labelEn: 'Sit & Rest' },
         { id: 'bench_south_avenue', type: 'seat', zone: 'plaza', x: 11.8, y: 43.35, z: 0.42, facing: 1, name: '南區大道北緣長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' }
       ];
@@ -99,13 +103,21 @@
       char.state = 'idle';
       char.z = 0;
       if (f.type === 'bed') {
-        if (char.x > 5.0) {
+        if (f.id === 'ludwig_bed') {
+          char.x = 3.4;
+          char.y = 2.2;
+        } else if (char.x > 5.0) {
           char.x = Math.max(4.2, char.x - 1.4);
         } else {
           char.x = Math.min(4.0, char.x + 1.4);
         }
       } else if (f.type === 'seat') {
-        char.y = char.y + ((f.facing && f.facing > 0) ? 0.6 : -0.6);
+        if (f.exitOffset) {
+          char.x += f.exitOffset.dx || 0;
+          char.y += f.exitOffset.dy || 0;
+        } else {
+          char.y = char.y + ((f.facing && f.facing > 0) ? 0.6 : -0.6);
+        }
       }
       char.furniture = null;
     }
