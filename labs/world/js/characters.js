@@ -45,7 +45,7 @@
         { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.8, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: 0.6, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
-        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 33.8, y: 17.55, z: 0.42, facing: 1, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
+        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 38.8, y: 17.55, z: 0.42, facing: 1, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
 
         // Garden Terrace Chinese Chess Bench beside Xiangqi Table (z = 0.42, exact seat center)
         { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 12.15, z: 0.42, facing: 1, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },

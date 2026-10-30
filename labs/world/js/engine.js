@@ -8,7 +8,7 @@
   // --- Map & Projection Constants ---
   const TW = 64; // Isometric tile width
   const TH = 32; // Isometric tile height
-  const MAP_W = 44; // World map width (expanded to 44 for Botanical Garden Cafe & East Night Market)
+  const MAP_W = 48; // World map width (expanded to 48 for generous East Campus greenway & wide athletic park)
   const MAP_H = 58; // World map height (expanded for Esports Cyber Cafe & Howling Abyss)
 
   // --- Building Zone Coordinates ---
