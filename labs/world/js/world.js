@@ -3509,14 +3509,18 @@
         draw: () => this.models.drawScooter(this.ctx, 31.2, 38.5, '#1e3a8a', this.ox, this.oy)
       });
 
-      // Overhead Hanging Street Fairy Lights Strands across narrow NCU Night Market Street
+      // Overhead Hanging Street Fairy Lights Strands across narrow NCU Night Market Street (Elevated above all stalls)
       list.push({
-        xMin: 31.5, xMax: 34.8, yMin: 34.0, yMax: 34.2,
-        draw: () => this.models.drawFairyLights(this.ctx, 31.5, 34.0, 2.5, 34.8, 34.0, 2.5, this.ox, this.oy)
+        xMin: 31.4, xMax: 34.9, yMin: 33.7, yMax: 33.9,
+        draw: () => this.models.drawFairyLights(this.ctx, 31.4, 33.8, 2.85, 34.8, 33.8, 2.85, this.ox, this.oy)
       });
       list.push({
-        xMin: 31.5, xMax: 34.8, yMin: 38.0, yMax: 38.2,
-        draw: () => this.models.drawFairyLights(this.ctx, 31.5, 38.0, 2.5, 34.8, 38.0, 2.5, this.ox, this.oy)
+        xMin: 31.4, xMax: 34.9, yMin: 37.4, yMax: 37.6,
+        draw: () => this.models.drawFairyLights(this.ctx, 31.4, 37.5, 2.85, 34.8, 37.5, 2.85, this.ox, this.oy)
+      });
+      list.push({
+        xMin: 31.4, xMax: 34.9, yMin: 40.3, yMax: 40.5,
+        draw: () => this.models.drawFairyLights(this.ctx, 31.4, 40.4, 2.85, 34.8, 40.4, 2.85, this.ox, this.oy)
       });
 
       // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (y: 42..43) ===
