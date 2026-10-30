@@ -609,12 +609,13 @@
       this.drawBox(ctx, gx, gy, 0, 0.85, 2.0, 0.42, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
       // High Backrest
       this.drawBox(ctx, gx, gy, 0.42, 0.28, 2.0, 0.55, '#1d4ed8', '#1e40af', '#1e3a8a', ox, oy);
-      // Soft Armrests (Flush with front face of backrest, extending to front edge of seat)
+      // North Armrest (Top-Right on screen, gy to gy+0.22)
       this.drawBox(ctx, gx + 0.28, gy, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // Fluffy Throw Pillows (Drawn before South armrest so South armrest naturally frames the pillow without occlusion glitch!)
+      this.drawBox(ctx, gx + 0.30, gy + 0.26, 0.42, 0.24, 0.32, 0.25, '#f59e0b', '#d97706', '#b45309', ox, oy);
+      this.drawBox(ctx, gx + 0.30, gy + 1.42, 0.42, 0.24, 0.32, 0.25, '#f59e0b', '#d97706', '#b45309', ox, oy);
+      // South Armrest (Bottom-Left on screen, gy+1.78 to gy+2.00)
       this.drawBox(ctx, gx + 0.28, gy + 1.78, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
-      // Fluffy Throw Pillows
-      this.drawBox(ctx, gx + 0.28, gy + 0.25, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
-      this.drawBox(ctx, gx + 0.28, gy + 1.40, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
 
       // Low Solid Walnut Coffee Table
       this.drawBox(ctx, gx + 1.25, gy + 0.45, 0, 0.85, 1.10, 0.32, '#78350f', '#58240a', '#451a03', ox, oy);
@@ -884,12 +885,13 @@
       this.drawBox(ctx, gx, gy, 0, 0.85, 2.0, 0.42, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
       // High Backrest
       this.drawBox(ctx, gx, gy, 0.42, 0.28, 2.0, 0.55, '#1d4ed8', '#1e40af', '#1e3a8a', ox, oy);
-      // Soft Armrests (Flush with front face of backrest, extending to front edge of seat)
+      // North Armrest (Top-Right on screen, gy to gy+0.22)
       this.drawBox(ctx, gx + 0.28, gy, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
+      // Fluffy Orange Throw Pillows (Drawn before South armrest so South armrest naturally frames the pillow without occlusion glitch!)
+      this.drawBox(ctx, gx + 0.30, gy + 0.26, 0.42, 0.24, 0.32, 0.25, '#f59e0b', '#d97706', '#b45309', ox, oy);
+      this.drawBox(ctx, gx + 0.30, gy + 1.42, 0.42, 0.24, 0.32, 0.25, '#f59e0b', '#d97706', '#b45309', ox, oy);
+      // South Armrest (Bottom-Left on screen, gy+1.78 to gy+2.00)
       this.drawBox(ctx, gx + 0.28, gy + 1.78, 0.42, 0.57, 0.22, 0.32, '#2563eb', '#1d4ed8', '#1e40af', ox, oy);
-      // Fluffy Orange Throw Pillows
-      this.drawBox(ctx, gx + 0.28, gy + 0.25, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
-      this.drawBox(ctx, gx + 0.28, gy + 1.40, 0.44, 0.28, 0.35, 0.28, '#f59e0b', '#d97706', '#b45309', ox, oy);
 
       // Low Solid Walnut Coffee Table
       this.drawBox(ctx, gx + 1.15, gy + 0.45, 0, 0.80, 1.10, 0.32, '#78350f', '#58240a', '#451a03', ox, oy);
