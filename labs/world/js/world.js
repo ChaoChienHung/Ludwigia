@@ -1501,7 +1501,7 @@
           const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
           const isEastNorthSouthSpine = (x >= 30 && x <= 32 && y >= 4 && y <= 34);  // East Promenade Spine (connects Cafe ↔ Plaza Ave ↔ Basketball ↔ Night Market)
           const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 17);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance
-          const isEastWestAve2 = (y >= 12 && y <= 16 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (flush with Library North Wall)
+          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (width 3, with 2-tile grass buffer along Library North Wall)
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
           const isNightMarketConnector = (y >= 33 && y <= 34 && x >= 30 && x <= 34); // Branch connecting East Spine to narrow Night Market street
           const isSouthSectorConnector = (x >= 5 && x <= 14 && y >= 43 && y <= 45); // South Connector to Cyber & Abyss
