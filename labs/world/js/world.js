@@ -942,6 +942,11 @@
       let playerActuallyMoved = false;
 
       if (kx !== 0 || ky !== 0) {
+        // If player is sitting or lying down, immediately stand up upon movement input
+        if (player.furniture && this.charManager) {
+          this.charManager.leaveFurniture(player);
+        }
+
         player.path = [];
         const len = Math.hypot(kx, ky);
         const step = (player.speed * dt) / len;
@@ -965,18 +970,37 @@
           player.facing = ky >= 0 ? 1 : -1;
           playerActuallyMoved = true;
         } else {
-          // Unstuck escape fallback: if player was placed near an obstacle boundary,
-          // allow moving towards open ground
-          if (this.nav.isWalkable(nx, ny)) {
-            player.x = nx;
-            player.y = ny;
-            playerActuallyMoved = true;
-          } else if (this.nav.isWalkable(nx, player.y)) {
-            player.x = nx;
-            playerActuallyMoved = true;
-          } else if (this.nav.isWalkable(player.x, ny)) {
-            player.y = ny;
-            playerActuallyMoved = true;
+          // Robust Unstuck Escape: probe forward along input direction for the nearest walkable position
+          let popped = false;
+          for (let dist = 0.08; dist <= 1.6; dist += 0.08) {
+            const px = player.x + (kx / len) * dist;
+            const py = player.y + (ky / len) * dist;
+            if (this.nav.isWalkable(px, py)) {
+              player.x = px;
+              player.y = py;
+              player.facing = kx >= ky ? 1 : -1;
+              playerActuallyMoved = true;
+              popped = true;
+              break;
+            }
+          }
+          if (!popped && !this.nav.isWalkable(player.x, player.y)) {
+            // Radial omnidirectional escape if completely enclosed
+            const angles = [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4, -Math.PI / 4, 3 * Math.PI / 4, -3 * Math.PI / 4];
+            for (let dist = 0.15; dist <= 1.6; dist += 0.15) {
+              for (const ang of angles) {
+                const px = player.x + Math.cos(ang) * dist;
+                const py = player.y + Math.sin(ang) * dist;
+                if (this.nav.isWalkable(px, py)) {
+                  player.x = px;
+                  player.y = py;
+                  playerActuallyMoved = true;
+                  popped = true;
+                  break;
+                }
+              }
+              if (popped) break;
+            }
           }
         }
       } else if (player.path && player.path.length > 0) {

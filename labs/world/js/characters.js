@@ -45,17 +45,17 @@
         { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.8, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: 0.6, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
-        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 38.8, y: 17.55, z: 0.42, facing: 1, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
+        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 38.8, y: 17.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
 
         // Garden Terrace Chinese Chess Bench beside Xiangqi Table (z = 0.42, exact seat center)
-        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 12.15, z: 0.42, facing: 1, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
+        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 12.15, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.05 }, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
 
         // Gray Road North Edge Benches (Placed on the northern edge of gray paved roads, facing south onto the road)
-        { id: 'bench_boulevard_north', type: 'seat', zone: 'plaza', x: 11.6, y: 12.35, z: 0.42, facing: 1, name: '中庭廣場北緣長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
-        { id: 'bench_central_east', type: 'seat', zone: 'plaza', x: 19.0, y: 12.35, z: 0.42, facing: 1, name: '東向大道西側長椅', labelZh: '坐下看書', labelEn: 'Sit & Read' },
-        { id: 'bench_east_lawn', type: 'seat', zone: 'plaza', x: 26.0, y: 12.35, z: 0.42, facing: 1, name: '東向大道東側長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
-        { id: 'bench_west_greenway', type: 'seat', zone: 'plaza', x: 5.3, y: 29.35, z: 0.42, facing: 1, name: '西區綠廊北緣長椅', labelZh: '坐下小憩', labelEn: 'Sit & Rest' },
-        { id: 'bench_south_avenue', type: 'seat', zone: 'plaza', x: 11.8, y: 43.35, z: 0.42, facing: 1, name: '南區大道北緣長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' }
+        { id: 'bench_boulevard_north', type: 'seat', zone: 'plaza', x: 11.6, y: 12.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '中庭廣場北緣長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
+        { id: 'bench_central_east', type: 'seat', zone: 'plaza', x: 19.0, y: 12.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '東向大道西側長椅', labelZh: '坐下看書', labelEn: 'Sit & Read' },
+        { id: 'bench_east_lawn', type: 'seat', zone: 'plaza', x: 26.0, y: 12.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '東向大道東側長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
+        { id: 'bench_west_greenway', type: 'seat', zone: 'plaza', x: 5.3, y: 29.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '西區綠廊北緣長椅', labelZh: '坐下小憩', labelEn: 'Sit & Rest' },
+        { id: 'bench_south_avenue', type: 'seat', zone: 'plaza', x: 11.8, y: 43.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '南區大道北緣長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' }
       ];
     }
 
@@ -116,7 +116,26 @@
           char.x += f.exitOffset.dx || 0;
           char.y += f.exitOffset.dy || 0;
         } else {
-          char.y = char.y + ((f.facing && f.facing > 0) ? 0.6 : -0.6);
+          char.y = char.y + ((f.facing && f.facing > 0) ? 1.1 : -1.1);
+        }
+      }
+
+      // Guarantee the character lands on a 100% walkable, unblocked position
+      if (this.world && this.world.nav) {
+        const nav = this.world.nav;
+        if (!nav.isWalkableRadius(char.x, char.y, 0.16)) {
+          const probes = [
+            { dx: 0, dy: 0.25 }, { dx: 0, dy: -0.25 }, { dx: 0.25, dy: 0 }, { dx: -0.25, dy: 0 },
+            { dx: 0, dy: 0.5 }, { dx: 0, dy: -0.5 }, { dx: 0.5, dy: 0 }, { dx: -0.5, dy: 0 },
+            { dx: 0, dy: 0.9 }, { dx: 0, dy: -0.9 }, { dx: 0.9, dy: 0 }, { dx: -0.9, dy: 0 }
+          ];
+          for (const p of probes) {
+            if (nav.isWalkableRadius(char.x + p.dx, char.y + p.dy, 0.16)) {
+              char.x += p.dx;
+              char.y += p.dy;
+              break;
+            }
+          }
         }
       }
       char.furniture = null;
