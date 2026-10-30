@@ -5042,7 +5042,34 @@
       const floatZ = 1.10 + Math.sin(performance.now() * 0.003) * 0.08;
       const cP = isoToScreen(gx + 0.70, gy + 0.70, floatZ, ox, oy);
 
-      // Cyan Aura
+      // 3 Orbiting Floating Rune Stones (Split into Back/Front Depth Passes)
+      const angle = performance.now() * 0.002;
+      const stones = [];
+      for (let i = 0; i < 3; i++) {
+        const a = angle + (i * Math.PI * 2) / 3;
+        const oxS = Math.cos(a) * 16;
+        const oyS = Math.sin(a) * 8;
+        stones.push({
+          x: cP.x + oxS,
+          y: cP.y + oyS,
+          isBack: oyS < 0
+        });
+      }
+
+      const drawStone = (s) => {
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+      };
+
+      // 1. Draw BACK stones (behind the crystal in 3D orbit)
+      stones.filter(s => s.isBack).forEach(drawStone);
+
+      // 2. Cyan Aura
       const glow = ctx.createRadialGradient(cP.x, cP.y, 2, cP.x, cP.y, 24);
       glow.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
       glow.addColorStop(0.5, 'rgba(14, 165, 233, 0.30)');
@@ -5052,7 +5079,7 @@
       ctx.arc(cP.x, cP.y, 24, 0, Math.PI * 2);
       ctx.fill();
 
-      // Octagonal Floating Inhibitor Crystal
+      // 3. Octagonal Floating Inhibitor Crystal (occludes back stones)
       ctx.fillStyle = '#38bdf8';
       ctx.beginPath();
       ctx.moveTo(cP.x, cP.y - 12);
@@ -5067,20 +5094,8 @@
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // 3 Orbiting Floating Rune Stones
-      const angle = performance.now() * 0.002;
-      for (let i = 0; i < 3; i++) {
-        const a = angle + (i * Math.PI * 2) / 3;
-        const oxS = Math.cos(a) * 16;
-        const oyS = Math.sin(a) * 8;
-        ctx.fillStyle = '#94a3b8';
-        ctx.beginPath();
-        ctx.arc(cP.x + oxS, cP.y + oyS, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 1.0;
-        ctx.stroke();
-      }
+      // 4. Draw FRONT stones (in front of the crystal in 3D orbit)
+      stones.filter(s => !s.isBack).forEach(drawStone);
     }
 
     // --- 25. Floating Emerald Health Relic (ARAM Health Pack) ---
@@ -5263,7 +5278,41 @@
       const floatZ = 1.70 + Math.sin(performance.now() * 0.002) * 0.14;
       const nexP = isoToScreen(gx + 1.10, gy + 1.10, floatZ, ox, oy);
 
-      // Huge Nexus Pulsing Blue Aura
+      // Prepare 3 Rotating Golden Orbital Wing Blades (Split into Back/Front Depth Passes)
+      const angle = (performance.now() * 0.0015);
+      const blades = [];
+      for (let i = 0; i < 3; i++) {
+        const a = angle + (i * Math.PI * 2) / 3;
+        const oxBlade = Math.cos(a) * 32;
+        const oyBlade = Math.sin(a) * 16;
+        blades.push({
+          x: nexP.x + oxBlade,
+          y: nexP.y + oyBlade,
+          angle: a,
+          isBack: oyBlade < 0
+        });
+      }
+
+      const drawBlade = (b) => {
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, 7, 14, b.angle, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ca8a04';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Inner Hextech Rune Gleam
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, 3, 7, b.angle, 0, Math.PI * 2);
+        ctx.fill();
+      };
+
+      // 1. Draw BACK orbital blades (behind the crystal in 3D orbit)
+      blades.filter(b => b.isBack).forEach(drawBlade);
+
+      // 2. Huge Nexus Pulsing Blue Aura
       const aura = ctx.createRadialGradient(nexP.x, nexP.y, 4, nexP.x, nexP.y, 46);
       aura.addColorStop(0, 'rgba(56, 189, 248, 0.95)');
       aura.addColorStop(0.4, 'rgba(14, 165, 233, 0.45)');
@@ -5273,7 +5322,7 @@
       ctx.arc(nexP.x, nexP.y, 46, 0, Math.PI * 2);
       ctx.fill();
 
-      // Grand Multi-faceted Crystal Core
+      // 3. Grand Multi-faceted Crystal Core (Naturally occludes back blades)
       ctx.fillStyle = '#38bdf8';
       ctx.beginPath();
       ctx.moveTo(nexP.x, nexP.y - 26);
@@ -5288,20 +5337,17 @@
       ctx.lineWidth = 2.2;
       ctx.stroke();
 
-      // Rotating Golden Orbital Wing Blades
-      const angle = (performance.now() * 0.0015);
-      for (let i = 0; i < 3; i++) {
-        const a = angle + (i * Math.PI * 2) / 3;
-        const oxBlade = Math.cos(a) * 32;
-        const oyBlade = Math.sin(a) * 16;
-        ctx.fillStyle = '#facc15';
-        ctx.beginPath();
-        ctx.ellipse(nexP.x + oxBlade, nexP.y + oyBlade, 7, 14, a, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#ca8a04';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-      }
+      // Crystal Inner Facet Gleam Shading
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.beginPath();
+      ctx.moveTo(nexP.x, nexP.y - 26);
+      ctx.lineTo(nexP.x + 18, nexP.y - 6);
+      ctx.lineTo(nexP.x, nexP.y + 6);
+      ctx.closePath();
+      ctx.fill();
+
+      // 4. Draw FRONT orbital blades (in front of the crystal in 3D orbit)
+      blades.filter(b => !b.isBack).forEach(drawBlade);
     }
   }
 
