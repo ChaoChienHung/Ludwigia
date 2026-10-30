@@ -747,3 +747,162 @@ body.space-body {
   font-size: 0.78rem;
   color: #94a3b8;
 }
+
+/* ============================================================
+   HUD Isometric Compass Widget
+   ============================================================ */
+.hud-compass-wrapper {
+  position: absolute;
+  top: 74px;
+  left: 16px;
+  z-index: 100;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.hud-compass-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 8px 8px;
+  border-radius: 16px;
+  background: var(--space-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--space-border);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+.hud-compass-panel:hover {
+  border-color: var(--space-accent);
+  box-shadow: 0 8px 24px var(--space-accent-glow);
+}
+
+.compass-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--space-text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.compass-dial {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+.compass-ring {
+  fill: rgba(15, 23, 42, 0.45);
+  stroke: rgba(148, 163, 184, 0.3);
+  stroke-width: 1.2;
+}
+
+.compass-inner-ring {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.2);
+  stroke-width: 0.8;
+  stroke-dasharray: 2 2;
+}
+
+.compass-axis {
+  stroke: rgba(148, 163, 184, 0.22);
+  stroke-width: 0.8;
+}
+
+.compass-needle {
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+
+.needle-north {
+  fill: #ef4444;
+  filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.6));
+}
+
+.needle-north-dark {
+  fill: #b91c1c;
+}
+
+.needle-east {
+  fill: #38bdf8;
+  filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.4));
+}
+
+.needle-south {
+  fill: #94a3b8;
+}
+
+.needle-west {
+  fill: #cbd5e1;
+}
+
+.needle-group {
+  opacity: 0.85;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.needle-group.active {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--space-accent));
+}
+
+.needle-group.active .compass-needle {
+  stroke: #ffffff;
+  stroke-width: 0.6;
+}
+
+.compass-pivot {
+  fill: #f8fafc;
+  stroke: #334155;
+  stroke-width: 1;
+}
+
+.compass-pivot-dot {
+  fill: #ef4444;
+}
+
+.compass-label {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 7.2px;
+  font-weight: 800;
+  fill: #94a3b8;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  transition: fill 0.2s ease;
+}
+
+.label-n {
+  fill: #f87171;
+  font-weight: 900;
+}
+
+.label-e {
+  fill: #38bdf8;
+  font-weight: 900;
+}
+
+.compass-coords {
+  font-size: 0.65rem;
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--space-text-secondary);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .hud-compass-wrapper {
+    top: 66px;
+    left: 10px;
+    transform: scale(0.85);
+    transform-origin: top left;
+  }
+}

@@ -113,6 +113,55 @@
     </div>
   </div>
 
+  <!-- Isometric HUD Compass Widget -->
+  <div class="hud-layer hud-compass-wrapper" id="hud-compass" title="全景等軸測指南針 (Isometric Compass)">
+    <div class="hud-glass-panel hud-compass-panel">
+      <div class="compass-header">
+        <i class="fa-solid fa-compass text-accent"></i>
+        <span class="compass-title" id="compass-title">指南針</span>
+      </div>
+      <svg class="compass-dial" viewBox="0 0 80 80" width="76" height="76">
+        <!-- Isometric Background Rings -->
+        <polygon points="40,14 74,40 40,66 6,40" class="compass-ring" />
+        <polygon points="40,18 70,40 40,62 10,40" class="compass-inner-ring" />
+
+        <!-- Axis Lines -->
+        <line x1="16.7" y1="51.6" x2="63.3" y2="28.4" class="compass-axis" />
+        <line x1="16.7" y1="28.4" x2="63.3" y2="51.6" class="compass-axis" />
+
+        <!-- Needles -->
+        <!-- North: -Y (Up-Right ↗) -->
+        <g id="needle-group-n" class="needle-group">
+          <polygon points="40,40 37.5,37 63.3,28.4 42.5,39" class="compass-needle needle-north" />
+          <polygon points="40,40 42.5,39 63.3,28.4 39,36" class="compass-needle needle-north-dark" />
+        </g>
+        <!-- East: +X (Down-Right ↘) -->
+        <g id="needle-group-e" class="needle-group">
+          <polygon points="40,40 42.5,41 63.3,51.6 37.5,43" class="compass-needle needle-east" />
+        </g>
+        <!-- South: +Y (Down-Left ↙) -->
+        <g id="needle-group-s" class="needle-group">
+          <polygon points="40,40 42.5,43 16.7,51.6 37.5,41" class="compass-needle needle-south" />
+        </g>
+        <!-- West: -X (Up-Left ↖) -->
+        <g id="needle-group-w" class="needle-group">
+          <polygon points="40,40 37.5,39 16.7,28.4 42.5,37" class="compass-needle needle-west" />
+        </g>
+
+        <!-- Center Pivot -->
+        <circle cx="40" cy="40" r="3.5" class="compass-pivot" />
+        <circle cx="40" cy="40" r="1.5" class="compass-pivot-dot" />
+
+        <!-- Cardinal Labels -->
+        <text x="68" y="24" class="compass-label label-n" id="compass-lbl-n">北 N</text>
+        <text x="68" y="58" class="compass-label label-e" id="compass-lbl-e">東 E</text>
+        <text x="12" y="58" class="compass-label label-s" id="compass-lbl-s">南 S</text>
+        <text x="12" y="24" class="compass-label label-w" id="compass-lbl-w">西 W</text>
+      </svg>
+      <div class="compass-coords" id="compass-coords">X: 0 · Y: 0</div>
+    </div>
+  </div>
+
   <!-- Top Center Status / Thought Indicator -->
   <div class="hud-layer hud-status-pill">
     <div class="hud-status-dot"></div>
@@ -361,6 +410,17 @@
             ? '<span class="key-badge">Click ground</span> Pathfind'
             : '<span class="key-badge">點擊地面</span> 尋路';
         }
+
+        const compassTitle = document.getElementById('compass-title');
+        if (compassTitle) compassTitle.textContent = normalized === 'en' ? 'Compass' : '指南針';
+        const lblN = document.getElementById('compass-lbl-n');
+        const lblE = document.getElementById('compass-lbl-e');
+        const lblS = document.getElementById('compass-lbl-s');
+        const lblW = document.getElementById('compass-lbl-w');
+        if (lblN) lblN.textContent = normalized === 'en' ? 'N' : '北 N';
+        if (lblE) lblE.textContent = normalized === 'en' ? 'E' : '東 E';
+        if (lblS) lblS.textContent = normalized === 'en' ? 'S' : '南 S';
+        if (lblW) lblW.textContent = normalized === 'en' ? 'W' : '西 W';
       };
 
       const initialLang = localStorage.getItem('site_lang_v1') || 'zh-TW';
