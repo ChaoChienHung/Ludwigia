@@ -3077,34 +3077,137 @@
         }
       });
 
-      // Office SE Exterior Wall with Panoramic Windows (along x = 28, y: 33 to 43)
+      // Douyin Office East Facade Floor-to-Ceiling Cyber Panoramic Glass Curtain Wall (along x = 28, y: 33 to 43)
       list.push({
         xMin: DOUYIN_MAX_X + 0.85, xMax: DOUYIN_MAX_X + 1.35,
         yMin: DOUYIN_MIN_Y, yMax: DOUYIN_MAX_Y + 1,
         draw: () => {
-          this.models.drawBox(this.ctx, DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 0, 0.25, (DOUYIN_MAX_Y + 1) - DOUYIN_MIN_Y, H, wallT, wallL, wallR, this.ox, this.oy);
+          const ex = DOUYIN_MAX_X + 1.0;
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+
+          // 1. Matte Black Carbon Base Sill & Top Structural Slab
+          this.models.drawBox(this.ctx, ex, DOUYIN_MIN_Y, 0, 0.25, 10.0, 0.40, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+          this.models.drawBox(this.ctx, ex, DOUYIN_MIN_Y, 2.45, 0.25, 10.0, H - 2.45, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+
+          // 2. Titanium Structural Pillars: North, Center, South
+          this.models.drawBox(this.ctx, ex, DOUYIN_MIN_Y, 0.40, 0.25, 0.6, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, ex, 37.7, 0.40, 0.25, 0.6, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, ex, DOUYIN_MAX_Y + 0.4, 0.40, 0.25, 0.6, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Dual Cyber Cyan Panoramic Glass Bays
+          [ { y0: 33.6, y1: 37.7 }, { y0: 38.3, y1: 42.4 } ].forEach(bay => {
+            const gw0 = isoToScreen(ex + 0.12, bay.y0, 0.40, this.ox, this.oy);
+            const gw1 = isoToScreen(ex + 0.12, bay.y1, 0.40, this.ox, this.oy);
+            const gw2 = isoToScreen(ex + 0.12, bay.y1, 2.45, this.ox, this.oy);
+            const gw3 = isoToScreen(ex + 0.12, bay.y0, 2.45, this.ox, this.oy);
+            this.ctx.fillStyle = 'rgba(37, 244, 238, 0.25)';
+            this.ctx.beginPath();
+            this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.strokeStyle = '#25f4ee';
+            this.ctx.lineWidth = 1.4;
+            this.ctx.stroke();
+
+            // Vertical slim mullion in middle of bay
+            const my = (bay.y0 + bay.y1) / 2;
+            const m0 = isoToScreen(ex + 0.12, my, 0.40, this.ox, this.oy);
+            const m1 = isoToScreen(ex + 0.12, my, 2.45, this.ox, this.oy);
+            this.ctx.lineWidth = 0.9;
+            this.ctx.strokeStyle = '#3f3f46';
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+
+          this.ctx.restore();
         }
       });
 
-      // Office NW Entrance Wall & High-Tech Sliding Doors (along x = 18, y: 33 to 43)
+      // Office NW Entrance Wall & High-Tech Panoramic Glass Windows (along x = 18, y: 33 to 43)
       const douyinNW_X = DOUYIN_MIN_X;
+
+      // West Entrance North Segment (y: 33.0 to 36.5)
       list.push({
         xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.35,
         yMin: DOUYIN_MIN_Y, yMax: 36.5,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 0, 0.25, 36.5 - DOUYIN_MIN_Y, H, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 1. Matte Black Carbon Base Sill & Top Structural Beam
+          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 0, 0.25, 3.5, 0.40, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 2.45, 0.25, 3.5, H - 2.45, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+
+          // 2. Corner Structural Titanium Pillars
+          this.models.drawBox(this.ctx, douyinNW_X, DOUYIN_MIN_Y, 0.40, 0.25, 0.4, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, douyinNW_X, 36.2, 0.40, 0.25, 0.3, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Cyber Cyan Glazed Glass Panel (y: 33.4 to 36.2, z: 0.40 to 2.45)
+          const gw0 = isoToScreen(douyinNW_X + 0.12, 33.4, 0.40, this.ox, this.oy);
+          const gw1 = isoToScreen(douyinNW_X + 0.12, 36.2, 0.40, this.ox, this.oy);
+          const gw2 = isoToScreen(douyinNW_X + 0.12, 36.2, 2.45, this.ox, this.oy);
+          const gw3 = isoToScreen(douyinNW_X + 0.12, 33.4, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(37, 244, 238, 0.25)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#25f4ee';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // 4. Vertical Slim Mullion Divider
+          const m0 = isoToScreen(douyinNW_X + 0.12, 34.8, 0.40, this.ox, this.oy);
+          const m1 = isoToScreen(douyinNW_X + 0.12, 34.8, 2.45, this.ox, this.oy);
+          this.ctx.beginPath();
+          this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+          this.ctx.stroke();
+
           this.ctx.restore();
         }
       });
+
+      // West Entrance South Segment (y: 38.8 to 43.0)
       list.push({
         xMin: douyinNW_X - 0.15, xMax: douyinNW_X + 0.35,
         yMin: 38.8, yMax: DOUYIN_MAX_Y + 1,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 0, 0.25, (DOUYIN_MAX_Y + 1) - 38.8, H, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 1. Matte Black Carbon Base Sill & Top Structural Beam
+          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 0, 0.25, 4.2, 0.40, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 2.45, 0.25, 4.2, H - 2.45, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+
+          // 2. Corner Structural Titanium Pillars
+          this.models.drawBox(this.ctx, douyinNW_X, 38.8, 0.40, 0.25, 0.3, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, douyinNW_X, 42.5, 0.40, 0.25, 0.5, 2.05, wallT, wallL, wallR, this.ox, this.oy);
+
+          // 3. Cyber Cyan Glazed Glass Panel (y: 39.1 to 42.5, z: 0.40 to 2.45)
+          const gw0 = isoToScreen(douyinNW_X + 0.12, 39.1, 0.40, this.ox, this.oy);
+          const gw1 = isoToScreen(douyinNW_X + 0.12, 42.5, 0.40, this.ox, this.oy);
+          const gw2 = isoToScreen(douyinNW_X + 0.12, 42.5, 2.45, this.ox, this.oy);
+          const gw3 = isoToScreen(douyinNW_X + 0.12, 39.1, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(37, 244, 238, 0.25)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(gw0.x, gw0.y); this.ctx.lineTo(gw1.x, gw1.y); this.ctx.lineTo(gw2.x, gw2.y); this.ctx.lineTo(gw3.x, gw3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#25f4ee';
+          this.ctx.lineWidth = 1.4;
+          this.ctx.stroke();
+
+          // 4. Vertical Slim Mullion Dividers
+          [40.2, 41.4].forEach(my => {
+            const m0 = isoToScreen(douyinNW_X + 0.12, my, 0.40, this.ox, this.oy);
+            const m1 = isoToScreen(douyinNW_X + 0.12, my, 2.45, this.ox, this.oy);
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+
           this.ctx.restore();
         }
       });
