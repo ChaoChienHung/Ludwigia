@@ -3423,10 +3423,10 @@
       ctx.translate(cp.x, cp.y);
       ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto X-axis highway sign face
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.font = 'bold 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('三民路 ➔ 校園大道', 0, 0);
+      ctx.fillText('三民路', 0, 0);
       ctx.restore();
     }
 
