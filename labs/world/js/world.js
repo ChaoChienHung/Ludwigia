@@ -2024,6 +2024,55 @@
         draw: () => this.models.drawDormCommonArea(this.ctx, 3.6, 20.8, this.ox, this.oy)
       });
 
+      // Dormitory South Exterior Wall with Dual Campus Casement Windows (along y = DORM_MAX_Y + 1 = 27, x: 0 to 10)
+      const dormSouthY = DORM_MAX_Y + 1.0;
+      list.push({
+        xMin: -0.1, xMax: DORM_MAX_X + 1.1,
+        yMin: dormSouthY - 0.15, yMax: dormSouthY + 0.35,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
+          const isNight = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
+          const wLen = (DORM_MAX_X + 1); // 10.0
+
+          // Lower Base Wall (z: 0 to 0.85)
+          this.models.drawBox(this.ctx, 0, dormSouthY, 0, wLen, 0.25, 0.85, wallT, wallL, wallR, this.ox, this.oy);
+          // Upper Lintel Wall (z: 2.15 to H)
+          this.models.drawBox(this.ctx, 0, dormSouthY, 2.15, wLen, 0.25, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          // Concrete Pier Columns: Left (0..0.8), Center (4.6..5.4), Right (9.2..10.0)
+          this.models.drawBox(this.ctx, 0, dormSouthY, 0.85, 0.8, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 4.6, dormSouthY, 0.85, 0.8, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 9.2, dormSouthY, 0.85, 0.8, 0.25, 1.30, wallT, wallL, wallR, this.ox, this.oy);
+
+          // Dual Campus Casement Windows (Bay 1: x: 0.8 to 4.6, Bay 2: x: 5.4 to 9.2, z: 0.85 to 2.15)
+          [ { x0: 0.8, x1: 4.6 }, { x0: 5.4, x1: 9.2 } ].forEach(bay => {
+            const p0 = isoToScreen(bay.x0, dormSouthY + 0.12, 0.85, this.ox, this.oy);
+            const p1 = isoToScreen(bay.x1, dormSouthY + 0.12, 0.85, this.ox, this.oy);
+            const p2 = isoToScreen(bay.x1, dormSouthY + 0.12, 2.15, this.ox, this.oy);
+            const p3 = isoToScreen(bay.x0, dormSouthY + 0.12, 2.15, this.ox, this.oy);
+            this.ctx.fillStyle = isNight ? 'rgba(254, 240, 138, 0.22)' : 'rgba(224, 242, 254, 0.35)';
+            this.ctx.beginPath();
+            this.ctx.moveTo(p0.x, p0.y); this.ctx.lineTo(p1.x, p1.y); this.ctx.lineTo(p2.x, p2.y); this.ctx.lineTo(p3.x, p3.y);
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.strokeStyle = '#64748b';
+            this.ctx.lineWidth = 1.4;
+            this.ctx.stroke();
+
+            // Window Mullions (vertical dividers)
+            const midX = (bay.x0 + bay.x1) / 2;
+            const m0 = isoToScreen(midX, dormSouthY + 0.12, 0.85, this.ox, this.oy);
+            const m1 = isoToScreen(midX, dormSouthY + 0.12, 2.15, this.ox, this.oy);
+            this.ctx.lineWidth = 1.0;
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+
+          this.ctx.restore();
+        }
+      });
+
       // === 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO ===
       // AI Studio Entrance Walls & Plaque
       list.push({
@@ -2390,12 +2439,58 @@
         draw: () => this.models.drawRareBookVitrine(this.ctx, 24.3, 24.8, this.ox, this.oy)
       });
 
-      // 6. Library South Boundary Skirting (along y = LIB_MAX_Y + 1 = 27, x: 18 to 28)
+      // 6. Library South Exterior Wall with Classical Reading Windows (along y = LIB_MAX_Y + 1 = 27, x: 18 to 28)
+      const libSouthY = LIB_MAX_Y + 1.0;
       list.push({
-        xMin: LIB_MIN_X, xMax: LIB_MAX_X + 1,
-        yMin: LIB_MAX_Y + 0.9, yMax: LIB_MAX_Y + 1.2,
+        xMin: LIB_MIN_X - 0.1, xMax: LIB_MAX_X + 1.1,
+        yMin: libSouthY - 0.15, yMax: libSouthY + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, LIB_MIN_X, LIB_MAX_Y + 1, 0, (LIB_MAX_X + 1) - LIB_MIN_X, 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
+          this.ctx.save();
+          if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
+          const isNight = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
+          const wLen = (LIB_MAX_X + 1) - LIB_MIN_X; // 10.0
+
+          // Lower Walnut Plinth Base Wall (z: 0 to 0.70)
+          this.models.drawBox(this.ctx, LIB_MIN_X, libSouthY, 0, wLen, 0.25, 0.70, '#451a03', '#331402', '#260e01', this.ox, this.oy);
+          // Upper Arch Cornice / Lintel Wall (z: 2.20 to H)
+          this.models.drawBox(this.ctx, LIB_MIN_X, libSouthY, 2.20, wLen, 0.25, H - 2.20, '#451a03', '#331402', '#260e01', this.ox, this.oy);
+          // Classical Pilasters / Columns at x: 18.0..18.6, 21.0..21.6, 24.4..25.0, 27.4..28.0
+          const cols = [18.0, 21.0, 24.4, 27.4];
+          cols.forEach(cx => {
+            this.models.drawBox(this.ctx, cx, libSouthY, 0.70, 0.6, 0.25, 1.50, '#58240a', '#451a03', '#331402', this.ox, this.oy);
+          });
+
+          // Classical Library Reading Window Bays
+          const bays = [
+            { x0: 18.6, x1: 21.0 },
+            { x0: 21.6, x1: 24.4 },
+            { x0: 25.0, x1: 27.4 }
+          ];
+          bays.forEach(bay => {
+            const p0 = isoToScreen(bay.x0, libSouthY + 0.12, 0.70, this.ox, this.oy);
+            const p1 = isoToScreen(bay.x1, libSouthY + 0.12, 0.70, this.ox, this.oy);
+            const p2 = isoToScreen(bay.x1, libSouthY + 0.12, 2.20, this.ox, this.oy);
+            const p3 = isoToScreen(bay.x0, libSouthY + 0.12, 2.20, this.ox, this.oy);
+            this.ctx.fillStyle = isNight ? 'rgba(254, 243, 199, 0.28)' : 'rgba(219, 234, 254, 0.35)';
+            this.ctx.beginPath();
+            this.ctx.moveTo(p0.x, p0.y); this.ctx.lineTo(p1.x, p1.y); this.ctx.lineTo(p2.x, p2.y); this.ctx.lineTo(p3.x, p3.y);
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.strokeStyle = '#b45309'; // Warm brass/amber framing
+            this.ctx.lineWidth = 1.3;
+            this.ctx.stroke();
+
+            // Vertical mullion
+            const midX = (bay.x0 + bay.x1) / 2;
+            const m0 = isoToScreen(midX, libSouthY + 0.12, 0.70, this.ox, this.oy);
+            const m1 = isoToScreen(midX, libSouthY + 0.12, 2.20, this.ox, this.oy);
+            this.ctx.lineWidth = 0.9;
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+
+          this.ctx.restore();
         }
       });
 
@@ -2557,12 +2652,62 @@
         draw: () => this.models.drawClassroomBulletinBoard(this.ctx, 4.8, 42.2, this.ox, this.oy)
       });
 
-      // 6. Classroom South Boundary Skirting
+      // 6. Classroom South Exterior Wall with Retro Corridor Windows (along y = SCHOOL_MAX_Y + 1 = 43, x: 0 to 10)
+      const schoolSouthY = SCHOOL_MAX_Y + 1.0;
       list.push({
-        xMin: 0, xMax: SCHOOL_MAX_X + 1,
-        yMin: SCHOOL_MAX_Y + 0.9, yMax: SCHOOL_MAX_Y + 1.2,
+        xMin: -0.1, xMax: SCHOOL_MAX_X + 1.1,
+        yMin: schoolSouthY - 0.15, yMax: schoolSouthY + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, 0, SCHOOL_MAX_Y + 1, 0, (SCHOOL_MAX_X + 1), 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
+          this.ctx.save();
+          if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
+          const isNight = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
+          const wLen = SCHOOL_MAX_X + 1; // 10.0
+
+          // Lower Wainscot Wall (z: 0 to 0.90) - retro classroom wainscot
+          this.models.drawBox(this.ctx, 0, schoolSouthY, 0, wLen, 0.25, 0.90, '#d1d5db', '#9ca3af', '#6b7280', this.ox, this.oy);
+          // Upper Lintel Wall (z: 2.15 to H)
+          this.models.drawBox(this.ctx, 0, schoolSouthY, 2.15, wLen, 0.25, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          // Concrete Pillars: Left (0..0.8), Center (4.6..5.4), Right (9.2..10.0)
+          this.models.drawBox(this.ctx, 0, schoolSouthY, 0.90, 0.8, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 4.6, schoolSouthY, 0.90, 0.8, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 9.2, schoolSouthY, 0.90, 0.8, 0.25, 1.25, wallT, wallL, wallR, this.ox, this.oy);
+
+          // Corridor Windows with Retro Green Frames (Bay 1: 0.8 to 4.6, Bay 2: 5.4 to 9.2)
+          [ { x0: 0.8, x1: 4.6 }, { x0: 5.4, x1: 9.2 } ].forEach(bay => {
+            const p0 = isoToScreen(bay.x0, schoolSouthY + 0.12, 0.90, this.ox, this.oy);
+            const p1 = isoToScreen(bay.x1, schoolSouthY + 0.12, 0.90, this.ox, this.oy);
+            const p2 = isoToScreen(bay.x1, schoolSouthY + 0.12, 2.15, this.ox, this.oy);
+            const p3 = isoToScreen(bay.x0, schoolSouthY + 0.12, 2.15, this.ox, this.oy);
+            this.ctx.fillStyle = isNight ? 'rgba(254, 240, 138, 0.20)' : 'rgba(209, 250, 229, 0.32)';
+            this.ctx.beginPath();
+            this.ctx.moveTo(p0.x, p0.y); this.ctx.lineTo(p1.x, p1.y); this.ctx.lineTo(p2.x, p2.y); this.ctx.lineTo(p3.x, p3.y);
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.strokeStyle = '#10b981'; // Nostalgic Sanmin green
+            this.ctx.lineWidth = 1.3;
+            this.ctx.stroke();
+
+            // Multi-pane classroom window grid (horizontal transom + 2 vertical mullions)
+            const midY_Z = (0.90 + 2.15) / 2;
+            const h0 = isoToScreen(bay.x0, schoolSouthY + 0.12, midY_Z, this.ox, this.oy);
+            const h1 = isoToScreen(bay.x1, schoolSouthY + 0.12, midY_Z, this.ox, this.oy);
+            this.ctx.lineWidth = 0.9;
+            this.ctx.beginPath();
+            this.ctx.moveTo(h0.x, h0.y); this.ctx.lineTo(h1.x, h1.y);
+            this.ctx.stroke();
+
+            const stepX = (bay.x1 - bay.x0) / 3;
+            for (let i = 1; i <= 2; i++) {
+              const mx = bay.x0 + stepX * i;
+              const v0 = isoToScreen(mx, schoolSouthY + 0.12, 0.90, this.ox, this.oy);
+              const v1 = isoToScreen(mx, schoolSouthY + 0.12, 2.15, this.ox, this.oy);
+              this.ctx.beginPath();
+              this.ctx.moveTo(v0.x, v0.y); this.ctx.lineTo(v1.x, v1.y);
+              this.ctx.stroke();
+            }
+          });
+
+          this.ctx.restore();
         }
       });
 
@@ -2779,12 +2924,58 @@
         draw: () => this.models.drawOfficeCoffeeBar(this.ctx, 26.4, 38.5, this.ox, this.oy)
       });
 
-      // Douyin Office South Boundary Skirting
+      // Douyin Office South Panoramic Glass Curtain Wall (along y = DOUYIN_MAX_Y + 1 = 43, x: 18 to 28)
+      const douyinSouthY = DOUYIN_MAX_Y + 1.0;
       list.push({
-        xMin: DOUYIN_MIN_X, xMax: DOUYIN_MAX_X + 1,
-        yMin: DOUYIN_MAX_Y + 0.9, yMax: DOUYIN_MAX_Y + 1.2,
+        xMin: DOUYIN_MIN_X - 0.1, xMax: DOUYIN_MAX_X + 1.1,
+        yMin: douyinSouthY - 0.15, yMax: douyinSouthY + 0.35,
         draw: () => {
-          this.models.drawBox(this.ctx, DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 0, (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X, 0.20, 0.35, wallT, wallL, null, this.ox, this.oy);
+          this.ctx.save();
+          if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
+          const isNight = (this.currentTimeState === 'night' || this.currentTimeState === 'galaxy');
+          const wLen = (DOUYIN_MAX_X + 1) - DOUYIN_MIN_X; // 10.0
+
+          // Matte Black Carbon Base (z: 0 to 0.40)
+          this.models.drawBox(this.ctx, DOUYIN_MIN_X, douyinSouthY, 0, wLen, 0.25, 0.40, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+          // Matte Black Structural Top Slab (z: 2.30 to H)
+          this.models.drawBox(this.ctx, DOUYIN_MIN_X, douyinSouthY, 2.30, wLen, 0.25, H - 2.30, '#18181b', '#09090b', '#040405', this.ox, this.oy);
+          // Dark Steel Edge Pillars: Left (18.0..18.7), Center (22.65..23.35), Right (27.3..28.0)
+          this.models.drawBox(this.ctx, 18.0, douyinSouthY, 0.40, 0.7, 0.25, 1.90, '#27272a', '#18181b', '#09090b', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 22.65, douyinSouthY, 0.40, 0.7, 0.25, 1.90, '#27272a', '#18181b', '#09090b', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 27.3, douyinSouthY, 0.40, 0.7, 0.25, 1.90, '#27272a', '#18181b', '#09090b', this.ox, this.oy);
+
+          // Panoramic Glass Curtain Wall with Douyin Brand Tint (Bay 1: 18.7..22.65, Bay 2: 23.35..27.3)
+          [ { x0: 18.7, x1: 22.65 }, { x0: 23.35, x1: 27.3 } ].forEach(bay => {
+            const p0 = isoToScreen(bay.x0, douyinSouthY + 0.12, 0.40, this.ox, this.oy);
+            const p1 = isoToScreen(bay.x1, douyinSouthY + 0.12, 0.40, this.ox, this.oy);
+            const p2 = isoToScreen(bay.x1, douyinSouthY + 0.12, 2.30, this.ox, this.oy);
+            const p3 = isoToScreen(bay.x0, douyinSouthY + 0.12, 2.30, this.ox, this.oy);
+            this.ctx.fillStyle = isNight ? 'rgba(37, 244, 238, 0.18)' : 'rgba(224, 242, 254, 0.32)';
+            this.ctx.beginPath();
+            this.ctx.moveTo(p0.x, p0.y); this.ctx.lineTo(p1.x, p1.y); this.ctx.lineTo(p2.x, p2.y); this.ctx.lineTo(p3.x, p3.y);
+            this.ctx.closePath();
+            this.ctx.fill();
+
+            // Douyin Cyber Glow Edges (Cyan #25f4ee)
+            this.ctx.strokeStyle = '#25f4ee';
+            this.ctx.lineWidth = 1.2;
+            this.ctx.stroke();
+
+            // Modern floor-to-ceiling glass panel seams (2 vertical seams per bay)
+            const stepX = (bay.x1 - bay.x0) / 3;
+            for (let i = 1; i <= 2; i++) {
+              const mx = bay.x0 + stepX * i;
+              const s0 = isoToScreen(mx, douyinSouthY + 0.12, 0.40, this.ox, this.oy);
+              const s1 = isoToScreen(mx, douyinSouthY + 0.12, 2.30, this.ox, this.oy);
+              this.ctx.lineWidth = 0.8;
+              this.ctx.strokeStyle = '#3f3f46';
+              this.ctx.beginPath();
+              this.ctx.moveTo(s0.x, s0.y); this.ctx.lineTo(s1.x, s1.y);
+              this.ctx.stroke();
+            }
+          });
+
+          this.ctx.restore();
         }
       });
 
