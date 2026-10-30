@@ -210,7 +210,8 @@
 
       // Park Benches (Placed precisely on the North edge of gray paved paths, facing south onto the road)
       this.nav.setBlock(10.8, 12.0, 1.6, 0.5, true);  // Central Plaza North Edge Bench
-      this.nav.setBlock(21.0, 12.0, 1.6, 0.5, true);  // East Avenue North Edge Bench
+      this.nav.setBlock(18.2, 12.0, 1.6, 0.5, true);  // East Avenue West Bench (Plaza side)
+      this.nav.setBlock(25.2, 12.0, 1.6, 0.5, true);  // East Avenue East Bench (Court & Cafe side)
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);   // West Greenway North Edge Bench
       this.nav.setBlock(11.0, 43.0, 1.6, 0.5, true);  // South Avenue North Edge Bench
       this.nav.setBlock(1.8, 11.8, 1.6, 0.5, true);   // Garden Stone Terrace Bench beside Xiangqi Table (Lawn)
@@ -2994,7 +2995,8 @@
       // Refined Park Benches (Placed on grass, completely clear of all pathways)
       const benches = [
         { gx: 10.8, gy: 12.0, furnitureId: 'bench_boulevard_north' }, // Central Plaza North Edge Bench
-        { gx: 21.0, gy: 12.0, furnitureId: 'bench_central_east' },     // East Avenue North Edge Bench
+        { gx: 18.2, gy: 12.0, furnitureId: 'bench_central_east' },     // East Avenue West Bench (Plaza side)
+        { gx: 25.2, gy: 12.0, furnitureId: 'bench_east_lawn' },         // East Avenue East Bench (Court & Cafe side)
         { gx: 1.8,  gy: 11.8, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (Lawn, clear of doorway)
         { gx: 11.0, gy: 43.0, furnitureId: 'bench_south_avenue' }      // South Avenue North Edge Bench
       ];
@@ -3274,12 +3276,6 @@
         draw: () => this.models.drawCafePendantLamp(this.ctx, 35.0, 4.2, 2.2, this.ox, this.oy)
       });
 
-      // Central-East Promenade Park Bench (in central lawn x: 19..26, y: 10..16)
-      list.push({
-        furnitureId: 'bench_east_lawn',
-        xMin: 19.5, xMax: 20.8, yMin: 13.0, yMax: 13.7,
-        draw: () => this.models.drawParkBench(this.ctx, 19.5, 13.0, this.ox, this.oy)
-      });
 
       // === 13. CYBER LAN LOUNGE / 召喚師電競網咖 (West x: 1..11, y: 45..53) ===
       // Neon Marquee Sign at North Entrance
