@@ -3362,6 +3362,53 @@
       ctx.fill();
     }
 
+    // --- 2B. High Campus Sports Perimeter Fence & Safety Netting Wall ---
+    drawSportsFence(ctx, gx, gy, ox, oy, lenX = 1.0, lenY = 1.0) {
+      const H = 2.45;
+      const baseH = 0.45;
+      const postW = 0.16;
+
+      // 1. Heavy Concrete Sports Base Curb with Emerald Coating
+      this.drawBox(ctx, gx, gy, 0, lenX, lenY, baseH, '#059669', '#047857', '#065f46', ox, oy);
+
+      // 2. Top Steel Header Tension Rail
+      this.drawBox(ctx, gx, gy, H - 0.12, lenX, lenY, 0.12, '#475569', '#334155', '#1e293b', ox, oy);
+
+      // 3. Middle Tension Wire Cable
+      this.drawBox(ctx, gx, gy, 1.45, lenX, lenY, 0.05, '#64748b', '#475569', '#334155', ox, oy);
+
+      // 4. Semi-Transparent Chain-Link Safety Mesh
+      const m0 = isoToScreen(gx, gy, baseH, ox, oy);
+      const m1 = isoToScreen(gx + lenX, gy + lenY, baseH, ox, oy);
+      const m2 = isoToScreen(gx + lenX, gy + lenY, H - 0.12, ox, oy);
+      const m3 = isoToScreen(gx, gy, H - 0.12, ox, oy);
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+      ctx.beginPath();
+      ctx.moveTo(m0.x, m0.y); ctx.lineTo(m1.x, m1.y); ctx.lineTo(m2.x, m2.y); ctx.lineTo(m3.x, m3.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Mesh Grid Border Lines
+      ctx.strokeStyle = 'rgba(52, 211, 153, 0.50)';
+      ctx.lineWidth = 1.0;
+      ctx.stroke();
+
+      // Intermediate Vertical Support Posts along the fence span
+      const isX = lenX >= lenY;
+      const totalLen = isX ? lenX : lenY;
+      const postSpacing = 2.2;
+      const count = Math.max(1, Math.round(totalLen / postSpacing));
+      for (let i = 0; i <= count; i++) {
+        const t = i / count;
+        const px = isX ? gx + t * (lenX - postW) : gx;
+        const py = isX ? gy : gy + t * (lenY - postW);
+        this.drawBox(ctx, px, py, baseH, postW, postW, H - baseH, '#334155', '#1e293b', '#0f172a', ox, oy);
+      }
+      ctx.restore();
+    }
+
     // --- 3. Classic Campus Twin-Lantern Streetlight ---
     drawStreetlight(ctx, gx, gy, ox, oy) {
       const H = 2.45;

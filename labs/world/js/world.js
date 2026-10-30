@@ -286,9 +286,13 @@
       this.nav.setBlock(41.2, 21.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline)
       this.nav.setBlock(47.5, 17.2, 0.45, 0.90, true);  // Metallic Ball Rack (North sideline)
       this.nav.setBlock(44.0, 17.2, 1.60, 0.65, true);  // Court Rest Bench (North sideline)
-      this.nav.setBlock(41.0, 16.8, 11.2, 0.4, true);   // North Boundary Fence
-      this.nav.setBlock(52.0, 17.0, 0.4, 9.4, true);    // East Boundary Fence
-      this.nav.setBlock(41.0, 26.2, 11.2, 0.4, true);   // South Boundary Fence
+
+      // Solid Sports Perimeter Walls & Boundary Enclosure (Impassable borders)
+      this.nav.setBlock(41.0, 16.0, 11.2, 1.0, true);   // North Boundary Wall (blocks y=16 from x=41 to 52)
+      this.nav.setBlock(53.0, 16.0, 1.0, 12.0, true);   // East Boundary Wall (blocks x=53 from y=16 to 27)
+      this.nav.setBlock(41.0, 27.0, 11.2, 1.0, true);   // South Boundary Wall (blocks y=27 from x=41 to 52)
+      this.nav.setBlock(40.0, 16.0, 1.0, 4.0, true);    // West Wing North Wall (blocks x=40, y=16..19)
+      this.nav.setBlock(40.0, 23.0, 1.0, 4.0, true);    // West Wing South Wall (blocks x=40, y=23..26)
 
       // 9. Central Midnight Snack Street Obstacles (East Wing x: 32..38, y: 33..44 — Slender 2.5-tile road)
       this.nav.setBlock(31.5, 33.0, 3.2, 0.40, true);  // Archway
@@ -987,8 +991,8 @@
           player.y = ny;
           player.facing = ky >= 0 ? 1 : -1;
           playerActuallyMoved = true;
-        } else {
-          // Robust Unstuck Escape: probe forward along input direction for the nearest walkable position
+        } else if (!this.nav.isWalkable(player.x, player.y)) {
+          // Robust Unstuck Escape: ONLY active if player is already trapped inside an invalid/blocked tile
           let popped = false;
           for (let dist = 0.08; dist <= 1.6; dist += 0.08) {
             const px = player.x + (kx / len) * dist;
@@ -1002,7 +1006,7 @@
               break;
             }
           }
-          if (!popped && !this.nav.isWalkable(player.x, player.y)) {
+          if (!popped) {
             // Radial omnidirectional escape if completely enclosed
             const angles = [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.PI / 4, -Math.PI / 4, 3 * Math.PI / 4, -3 * Math.PI / 4];
             for (let dist = 0.15; dist <= 1.6; dist += 0.15) {
@@ -3395,29 +3399,42 @@
 
       // Metallic Ball Rack with Spalding Basketballs (North sideline)
       list.push({
-        xMin: 47.2, xMax: 48.0, yMin: 16.9, yMax: 17.9,
+        xMin: 47.2, xMax: 48.0, yMin: 16.95, yMax: 17.9,
         draw: () => this.models.drawBasketballRack(this.ctx, 47.5, 17.2, this.ox, this.oy)
       });
 
       // Court Sideline Rest Bench (North sideline, with exact seat center)
       list.push({
         furnitureId: 'basketball_bench',
-        xMin: 43.8, xMax: 45.6, yMin: 16.9, yMax: 17.8,
+        xMin: 43.8, xMax: 45.6, yMin: 16.95, yMax: 17.8,
         draw: () => this.models.drawParkBench(this.ctx, 44.0, 17.2, this.ox, this.oy)
       });
 
-      // Protective Sports Boundary Fences (North, East, South)
+      // Protective Campus Sports Perimeter Walls & High Steel Safety Netting (North, East, South, West wings)
+      // 1. North Sideline High Sports Wall & Mesh (y: 16.7 to 16.9)
       list.push({
-        xMin: 41.0, xMax: 52.0, yMin: 16.8, yMax: 17.2,
-        draw: () => this.models.drawPerimeterHedge(this.ctx, 41.0, 16.9, this.ox, this.oy, 11.0, 0.3)
+        xMin: 41.0, xMax: 52.0, yMin: 16.65, yMax: 16.92,
+        draw: () => this.models.drawSportsFence(this.ctx, 41.0, 16.70, this.ox, this.oy, 11.0, 0.22)
       });
+      // 2. East Baseline High Sports Wall & Mesh (x: 51.9 to 52.2)
       list.push({
-        xMin: 51.8, xMax: 52.2, yMin: 17.0, yMax: 26.2,
-        draw: () => this.models.drawPerimeterHedge(this.ctx, 52.0, 17.0, this.ox, this.oy, 0.3, 9.2)
+        xMin: 51.85, xMax: 52.25, yMin: 16.95, yMax: 26.05,
+        draw: () => this.models.drawSportsFence(this.ctx, 51.95, 17.0, this.ox, this.oy, 0.22, 9.1)
       });
+      // 3. South Sideline High Sports Wall & Mesh (y: 26.08 to 26.3)
       list.push({
-        xMin: 41.0, xMax: 52.0, yMin: 26.0, yMax: 26.4,
-        draw: () => this.models.drawPerimeterHedge(this.ctx, 41.0, 26.1, this.ox, this.oy, 11.0, 0.3)
+        xMin: 41.0, xMax: 52.0, yMin: 26.08, yMax: 26.35,
+        draw: () => this.models.drawSportsFence(this.ctx, 41.0, 26.10, this.ox, this.oy, 11.0, 0.22)
+      });
+      // 4. West Entrance North Wing High Sports Wall & Mesh (x: 40.9 to 41.1, y: 17.0 to 19.8)
+      list.push({
+        xMin: 40.85, xMax: 41.15, yMin: 16.95, yMax: 19.8,
+        draw: () => this.models.drawSportsFence(this.ctx, 40.90, 17.0, this.ox, this.oy, 0.22, 2.8)
+      });
+      // 5. West Entrance South Wing High Sports Wall & Mesh (x: 40.9 to 41.1, y: 22.2 to 26.05)
+      list.push({
+        xMin: 40.85, xMax: 41.15, yMin: 22.2, yMax: 26.05,
+        draw: () => this.models.drawSportsFence(this.ctx, 40.90, 22.2, this.ox, this.oy, 0.22, 3.85)
       });
 
       // === 12. LUDWIGIA INDOOR SPECIALTY CAFE (Compact Cozy Building x: 33..39, y: 2..7) ===
