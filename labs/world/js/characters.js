@@ -45,7 +45,7 @@
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 33.8, y: 17.55, z: 0.42, facing: 1, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
 
         // Garden Terrace Chinese Chess Bench beside Xiangqi Table (z = 0.42, exact seat center)
-        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 6.0, y: 12.35, z: 0.42, facing: 1, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
+        { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 12.15, z: 0.42, facing: 1, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
 
         // Gray Road North Edge Benches (Placed on the northern edge of gray paved roads, facing south onto the road)
         { id: 'bench_boulevard_north', type: 'seat', zone: 'plaza', x: 11.6, y: 12.35, z: 0.42, facing: 1, name: '中庭廣場北緣長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },

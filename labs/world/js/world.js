@@ -213,7 +213,7 @@
       this.nav.setBlock(21.0, 12.0, 1.6, 0.5, true);  // East Avenue North Edge Bench
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);   // West Greenway North Edge Bench
       this.nav.setBlock(11.0, 43.0, 1.6, 0.5, true);  // South Avenue North Edge Bench
-      this.nav.setBlock(4.8, 13.8, 1.6, 0.5, true);   // Garden Stone Terrace Bench beside Xiangqi Table
+      this.nav.setBlock(1.8, 11.8, 1.6, 0.5, true);   // Garden Stone Terrace Bench beside Xiangqi Table (Lawn)
 
       // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
       this.nav.setBlock(2.7, 13.8, 1.8, 1.3, true);
@@ -2794,7 +2794,7 @@
       const benches = [
         { gx: 10.8, gy: 12.0, furnitureId: 'bench_boulevard_north' }, // Central Plaza North Edge Bench
         { gx: 21.0, gy: 12.0, furnitureId: 'bench_central_east' },     // East Avenue North Edge Bench
-        { gx: 5.2,  gy: 12.0, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (North Edge of Cobblestone Path)
+        { gx: 1.8,  gy: 11.8, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (Lawn, clear of doorway)
         { gx: 11.0, gy: 43.0, furnitureId: 'bench_south_avenue' }      // South Avenue North Edge Bench
       ];
       benches.forEach(b => {
