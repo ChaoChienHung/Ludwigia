@@ -298,12 +298,13 @@
       this.nav.setBlock(31.5, 33.0, 3.2, 0.40, true);  // Archway
       this.nav.setBlock(35.0, 34.2, 1.60, 2.80, true); // Blue Food Truck (小貨車餐車)
       this.nav.setBlock(35.0, 37.8, 1.60, 2.00, true); // 無敵蛋餅 (Egg Pancake Stall)
-      // 傻師傅湯包 (Storefront Building Walls & Front Counter)
-      this.nav.setBlock(34.8, 41.0, 0.95, 1.85, true); // Front Dumpling Cooking Counter
-      this.nav.setBlock(34.8, 41.0, 3.80, 0.30, true); // North Wall
-      this.nav.setBlock(38.3, 41.0, 0.30, 3.20, true); // East Back Wall
-      this.nav.setBlock(34.8, 43.95, 3.80, 0.25, true); // South Wall
-      this.nav.setBlock(36.8, 41.5, 1.30, 0.85, true); // Interior Dining Table & Stools
+      // 傻師傅湯包 (Storefront Building Walls & Front Counter - Impassable boundary)
+      this.nav.setBlock(34.0, 40.5, 5.0, 1.0, true);   // North Wall (blocks row 41 along building width)
+      this.nav.setBlock(38.0, 41.0, 1.0, 3.5, true);   // East Back Wall (blocks column 38 along y=41..44)
+      this.nav.setBlock(34.0, 44.0, 5.0, 1.0, true);   // South Wall (blocks row 44 along building width)
+      this.nav.setBlock(34.0, 41.0, 2.0, 2.0, true);   // Front Cooking Counter (blocks tiles 34, 35 at y=41, 42)
+      this.nav.setBlock(36.8, 41.6, 1.2, 0.9, true);   // Interior Dining Table & Stools
+      // Keeps doorway at x = 34, y = 43 100% open for official entrance
       this.nav.setBlock(31.2, 35.5, 0.50, 0.90, true); // Parked Scooter 1 (West curb)
       this.nav.setBlock(31.2, 38.5, 0.50, 0.90, true); // Parked Scooter 2 (West curb)
 
@@ -313,15 +314,15 @@
       this.nav.setBlock(14.2, 42.8, 0.35, 0.35, true); // Portal Signpost
 
       // 11. Ludwigia Indoor Cafe Obstacles (Compact Cozy Indoor Building x: 33..39, y: 2..7)
-      this.nav.setBlock(33.0, 2.0, 6.5, 0.5, true);    // North Wall
-      this.nav.setBlock(39.0, 2.0, 0.5, 5.5, true);    // East Wall
-      this.nav.setBlock(33.0, 7.0, 6.5, 0.5, true);    // South Wall (with panoramic window)
-      // West Wall (Entrance doorway at y: 4.2 to 5.6)
-      this.nav.setBlock(33.0, 2.0, 0.5, 2.2, true);    // West Wall Top
-      this.nav.setBlock(33.0, 5.6, 0.5, 1.8, true);    // West Wall Bottom
+      this.nav.setBlock(33.0, 2.0, 7.0, 1.0, true);    // North Wall (blocks row 2 from x=33 to 39)
+      this.nav.setBlock(39.0, 2.0, 1.0, 6.0, true);    // East Wall (blocks column 39 from y=2 to 7)
+      this.nav.setBlock(33.0, 7.0, 7.0, 1.0, true);    // South Wall (with panoramic window, blocks row 7)
+      // West Wall (Entrance doorway at y: 4.0 to 6.0 - tiles 4 and 5 open)
+      this.nav.setBlock(33.0, 2.0, 1.0, 2.0, true);    // West Wall Top (blocks tile 33 at y=2, 3)
+      this.nav.setBlock(33.0, 6.0, 1.0, 2.0, true);    // West Wall Bottom (blocks tile 33 at y=6, 7)
       // Indoor Cafe Furniture
-      this.nav.setBlock(36.5, 2.8, 2.2, 1.0, true);    // Barista Bar & Espresso Station
-      this.nav.setBlock(34.5, 4.0, 1.2, 1.2, true);    // Indoor Lounge Table & Chairs
+      this.nav.setBlock(36.5, 2.8, 2.5, 1.2, true);    // Barista Bar & Espresso Station (blocks x=37,38 at y=3)
+      this.nav.setBlock(35.0, 4.4, 1.4, 1.2, true);    // Indoor Lounge Table (leaves aisle x=33..34, y=4..5 open)
 
       // 11. Cyber LAN Lounge Obstacles (x: 1..11, y: 45..53)
       this.nav.setBlock(1.0, 44.8, 4.0, 0.45, true);   // North Wall Left
@@ -1272,21 +1273,20 @@
               ];
 
               const nightMarketAnchors = [
-                { x: 31.0, y: 23.5 }, // Ordering at Blue Food Truck (小貨車炒泡麵)
-                { x: 31.0, y: 27.2 }, // Waiting for Sizzling Egg Pancake (無敵蛋餅)
-                { x: 31.2, y: 30.5 }, // Steaming Dumplings & Rib Soup (傻師傅湯包店面)
-                { x: 28.5, y: 25.5 }, // Seated at West Lawn Red Stool Round Table
-                { x: 29.5, y: 31.0 }, // Checking out Parked Scooters
-                { x: 31.0, y: 22.8 }, // Entering under Central Night Market Archway
-                { x: 31.0, y: 33.5 }  // Strolling along the Narrow Night Market Street
+                { x: 33.0, y: 35.5 }, // Ordering at Blue Food Truck (小貨車炒泡麵)
+                { x: 33.0, y: 38.5 }, // Waiting for Sizzling Egg Pancake (無敵蛋餅)
+                { x: 33.0, y: 42.0 }, // Ordering at ShaShiFu Dumpling Front Counter (傻師傅湯包外帶)
+                { x: 36.5, y: 43.0 }, // Seated inside ShaShiFu Dine-In Table (傻師傅湯包內用)
+                { x: 32.0, y: 33.5 }, // Entering under Central Night Market Archway
+                { x: 32.5, y: 40.0 }  // Strolling along the Narrow Night Market Street
               ];
 
               const cafeAnchors = [
-                { x: 33.2, y: 5.5 },  // Barista Counter Order Spot
-                { x: 31.0, y: 7.5 },  // Indoor Lounge Table & Armchairs
-                { x: 34.5, y: 8.5 },  // Window-Facing Bar Stool Counter
-                { x: 35.5, y: 4.0 },  // Barista Espresso Machine Station
-                { x: 30.0, y: 6.2 }   // Indoor Cafe Glass Entrance Doorway
+                { x: 34.5, y: 3.5 },  // Barista Counter Order Spot
+                { x: 37.0, y: 4.5 },  // Indoor Reading Nook & Bookshelf
+                { x: 36.0, y: 6.0 },  // Window-Facing Sunlit Lounge
+                { x: 34.0, y: 5.0 },  // Indoor Cafe Entrance Lobby
+                { x: 32.0, y: 5.0 }   // Outdoor Cafe Glass Entrance Patio
               ];
 
               const cyberAnchors = [
