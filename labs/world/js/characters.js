@@ -557,9 +557,8 @@
           ctx.fillText('z', zX, zY);
         }
 
-        // Character Name Tag & Speech Bubble
+        // Character Name Tag (Speech Bubble rendered in top-most overlay pass)
         this.drawNameTag(ctx, pos.x, pos.y - 32, c);
-        if (c.speechBubble) this.drawSpeechBubble(ctx, pos.x, pos.y - 46, c);
         return;
       }
 
@@ -609,9 +608,8 @@
           ctx.fillRect(pos.x - 2, sitY - 24, 1.5, 2.5);
         }
 
-        // Character Name Tag & Speech Bubble
+        // Character Name Tag (Speech Bubble rendered in top-most overlay pass)
         this.drawNameTag(ctx, pos.x, pos.y - 38, c);
-        if (c.speechBubble) this.drawSpeechBubble(ctx, pos.x, pos.y - 50, c);
         return;
       }
 
@@ -698,13 +696,8 @@
         ctx.fillRect(px - 2, py - 32, 1.5, 2.5);
       }
 
-      // Character Name Tag Pill
+      // Character Name Tag Pill (Speech Bubble rendered in top-most overlay pass)
       this.drawNameTag(ctx, pos.x, pos.y - 44, c);
-
-      // Autonomous Speech Bubble
-      if (c.speechBubble) {
-        this.drawSpeechBubble(ctx, pos.x, pos.y - 56, c);
-      }
     }
 
     // --- Adorable Studio Cat (Mochi) ---
@@ -792,8 +785,19 @@
 
       ctx.restore();
       this.drawNameTag(ctx, pos.x, pos.y - 28, c);
-      if (c.speechBubble) {
-        this.drawSpeechBubble(ctx, pos.x, pos.y - 40, c);
+    }
+
+    // --- Top-Most Speech Bubble Overlay Pass (Never occluded by buildings or walls) ---
+    drawSpeechBubblesOverlay(ctx, ox, oy) {
+      for (let i = 0; i < this.characters.length; i++) {
+        const c = this.characters[i];
+        if (!c || !c.speechBubble) continue;
+        const pos = isoToScreen(c.x, c.y, c.z || 0, ox, oy);
+        let offsetY = 56;
+        if (c.isCat) offsetY = 40;
+        else if (c.state === 'lying') offsetY = 46;
+        else if (c.state === 'sitting') offsetY = 50;
+        this.drawSpeechBubble(ctx, pos.x, pos.y - offsetY, c);
       }
     }
 

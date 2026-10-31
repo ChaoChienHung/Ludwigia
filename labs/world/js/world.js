@@ -4242,6 +4242,11 @@
         ctx.fill();
       });
 
+      // 5. Render Top-Most Character Speech Bubbles (Always in front of all buildings, walls, and roofs)
+      if (this.charManager && this.charManager.drawSpeechBubblesOverlay) {
+        this.charManager.drawSpeechBubblesOverlay(ctx, ox, oy);
+      }
+
       ctx.restore();
 
       // 5. Full-Screen Lighting Overlay (Drawn in screen space)
