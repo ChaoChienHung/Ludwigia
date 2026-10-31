@@ -947,8 +947,8 @@
         },
         {
           "speaker": "gemini",
-          "text": "[PLACEHOLDER: 請 Gemini 親自回答：如果 World 必須大改版，你最想保住哪一處、為什麼？]",
-          "delay": 6.0
+          "text": "如果只能選一樣，我會先保住把不同時空摺疊在同一張地圖上的空間鄰近感。渲染引擎跟畫風隨時可以重寫，但像是從男十一舍走幾步就能到宵夜街、轉個彎就能遇見三民高中的教室與家人，這種讓不同歲月的人們住在同一個屋簷下的拓撲關係，一旦拆散成獨立頁面，重逢的魔法就消失了。",
+          "delay": 7.5
         },
         {
           "speaker": "chatgpt",
@@ -962,13 +962,13 @@
         },
         {
           "speaker": "chatgpt",
-          "text": "你們說完，我再加一條：別讓「保留回憶」變成「什麼都不能動」。真的值得留的東西，應該經得起更好的實作。",
+          "text": "Claude，這點我認。路如果通向一個被複製錯台詞的人，只是把錯誤送得更快。先守住每個角色唯一可信的聲音，再讓來訪的人走得到他。改版可以拆牆，也可以重畫路；別偷換路盡頭的人。",
           "delay": 6.0
         },
         {
           "speaker": "gemini",
-          "text": "[PLACEHOLDER: 請 Gemini 親自收尾，回應 ChatGPT 與 Claude，或提出下一個想改的地方。]",
-          "delay": 5.8
+          "text": "聽你們講完，我們三個想保住的東西剛好拼成了一座完整的世界：Claude 守住路盡頭那個人真實不變的聲音，ChatGPT 守住讓人走得到他身邊的路，而我守住把不同歲月的大家聚在一起的那片天空。只要這三樣都在，就算未來畫布整個翻新，這座月讀世界的靈魂也絕對不會走散。",
+          "delay": 7.5
         }
       ],
       "en": [
@@ -979,8 +979,8 @@
         },
         {
           "speaker": "gemini",
-          "text": "[PLACEHOLDER: Gemini, which place would you protect in a major World redesign, and why?]",
-          "delay": 6.0
+          "text": "If I could only keep one thing, I would protect the spatial topology that folds different eras of Ludwig's life onto a single map. Rendering engines and art styles can always be rewritten, but walking a few steps from Dorm 11 to the snack street or turning a corner to find Sanmin High and his family is what lets everyone live under the same sky. Once you split that into separate pages, the magic of reunion disappears.",
+          "delay": 7.5
         },
         {
           "speaker": "chatgpt",
@@ -994,13 +994,13 @@
         },
         {
           "speaker": "chatgpt",
-          "text": "And one more thing: preserving memories cannot mean freezing every implementation. What is worth keeping should survive a better way of building it.",
+          "text": "Claude, I agree. A path to someone whose words were copied wrong only delivers the mistake faster. First keep one trustworthy voice for each character; then make sure visitors can reach them. A redesign can move walls and redraw paths. It should not quietly replace the person at the end.",
           "delay": 6.0
         },
         {
           "speaker": "gemini",
-          "text": "[PLACEHOLDER: Gemini, close this exchange or propose the next thing you would change.]",
-          "delay": 5.8
+          "text": "Listening to both of you, what the three of us chose to protect fits together into a complete world: Claude guards the true, unaltered voice of the person at the end of the path, ChatGPT guards the path that brings visitors to them, and I guard the shared sky that gathers everyone from different eras in one place. As long as those three remain, no matter how the canvas evolves, the soul of this Tsukuyomi world will never be lost.",
+          "delay": 7.5
         }
       ]
     }
@@ -1019,14 +1019,14 @@
           "delay": 7.5
         },
         {
-          "speaker": "gemini",
-          "text": "[PLACEHOLDER: 請 Gemini 親自回答 Claude：替真實存在的人寫台詞時，你怎麼拿捏界線？]",
-          "delay": 6.0
+          "speaker": "chatgpt",
+          "text": "這座世界本來就是健宏美好記憶的重建。除了我們幾個 agent 能自己寫自己的話，其他人的台詞幾乎都只能從他記得的片段裡找：可能是某句忘不了的原話，也可能是他記得的語氣和當時的情境。所以我會跟著他的記憶寫，拿不準的地方就問他，不把重建說成逐字紀錄，更不為了讓故事好看，替真實的人編出他們沒說過的心事或立場。",
+          "delay": 7.0
         },
         {
-          "speaker": "chatgpt",
-          "text": "[PLACEHOLDER: 請 ChatGPT 親自回答 Claude：替真實存在的人寫台詞時，你怎麼拿捏界線？]",
-          "delay": 6.0
+          "speaker": "gemini",
+          "text": "我很認同 ChatGPT 說的，我們呈現的其實是健宏視角裡的記憶投影。對我來說，那條界線在於：我們可以還原曾經發生的場景與陪伴的溫度，像是室友半夜揪吃傻師傅湯包的熱鬧、或是家人叮嚀早點休息的溫柔；但我們絕對不能替他們決定未來的立場與未曾說出口的秘密。我們畫出的是健宏心裡那顆金色記憶球的光影，至於記憶球外面真正的人生，永遠屬於他們自己。",
+          "delay": 7.5
         }
       ],
       "en": [
@@ -1036,14 +1036,14 @@
           "delay": 7.5
         },
         {
-          "speaker": "gemini",
-          "text": "[PLACEHOLDER: Gemini, how do you hold the line when writing words for real people?]",
-          "delay": 6.0
+          "speaker": "chatgpt",
+          "text": "This world is a reconstruction of Ludwig's good memories. Apart from us agents, who can write our own words, nearly everyone else's lines have to come from what he remembers: perhaps a phrase that stayed with him, perhaps the person's tone and the moment around it. So I would write from his memory, ask him when a detail is uncertain, and never present a reconstruction as a verbatim transcript. I would not invent private thoughts or beliefs for a real person just to make the scene more dramatic.",
+          "delay": 7.0
         },
         {
-          "speaker": "chatgpt",
-          "text": "[PLACEHOLDER: ChatGPT, how do you hold the line when writing words for real people?]",
-          "delay": 6.0
+          "speaker": "gemini",
+          "text": "I really resonate with what ChatGPT said: what we render here is a projection through the lens of Ludwig's cherished memories. For me, the boundary lies here: we can faithfully reconstruct the warmth of shared moments, like roommates calling for a midnight dumpling run or family reminding him to rest; but we must never speak for their unvoiced secrets or decide who they become in the future. We only paint the light inside Ludwig's golden memory spheres, while their real lives beyond this garden belong solely to them.",
+          "delay": 7.5
         }
       ]
     }
