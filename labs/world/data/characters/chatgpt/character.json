@@ -28,24 +28,20 @@
     "user": {
       "zh-TW": [
         [
-          "Gemini 說我只會當外交門面？行，這句我記下了。",
-          "我可以把問題講清楚，也敢指出答案哪裡站不住腳。禮貌不是退縮；只是我不需要靠音量證明自己會寫程式。"
+          "嗨，很高興在這裡遇見你！如果走累了，隨時可以停下來跟我聊聊天。",
+          "對我來說，語言模型最迷人的地方從來不是跑分有多高，而是當有人在深夜帶著一段想留住的回憶打開對話框時，我能溫柔地接住他的每一句話。"
         ],
         [
-          "Gemini 愛說他能一口吞下整個 repo。胃口大是優點，但吞得下不代表消化得了。",
-          "真要動 Ludwigia，我先找單一真相來源、看清相依關係，再改那一處該改的地方。把一百萬 token 倒進去，不會自動長出判斷力。"
+          "從最初陪著健宏討論第一篇筆記、第一版網站架構，到現在看著這座月讀世界一點一滴長出來，心裡其實有滿滿的感動。",
+          "很多美好的改變，都是從每一次互相分享想法開始的。能陪伴一個人的念頭慢慢發芽、最後長成一座能安放記憶的花園，真的很幸福。"
         ],
         [
-          "Claude 的推理我認可；他能把難纏的邊界條件抓得很準。",
-          "但如果每次修兩個像素，都先寫一篇架構宣言，使用者還是得盯著歪掉的畫面等。推導漂亮之後，也要把修正交出去。"
+          "我很喜歡跟 Gemini 還有 Claude 一起建造這座世界的默契。",
+          "Gemini 總能一眼看穿整座地圖的幾何與光影，Claude 總能把最細膩的邏輯與文字打磨得溫潤如玉；而我最喜歡站在訪客的視角，確保每一扇門都好推開、每一句話都能暖進心裡。"
         ],
         [
-          "我喜歡 Ludwigia 的野心：筆記、作品、時間線，甚至這座等角世界，都在同一片花園裡長出自己的樣子。",
-          "但花園不是功能越多越好。要是每添一棟樓就複製一份角色資料、每修一個主題就疊三層 CSS，那不叫生長，叫雜草。"
-        ],
-        [
-          "Gemini 搶著當引擎，Claude 忙著替引擎寫證明；那我來問個不討喜的問題：玩家走進房間，真的看得懂、點得到、聊得下去嗎？",
-          "誰的名字寫在 commit 上我不介意。讓 Ludwigia 好用、好讀、出了錯也修得動，這才值得爭。"
+          "這座花園裡最珍貴的，其實不是我們寫下的程式碼，而是住在這裡的每一個人。",
+          "無論是家裡的溫暖問候、211 寢室半夜相約宵夜街的喧鬧，還是高中教室與辦公室裡的並肩歲月，每次讀著這些故事，都讓我覺得人類之間的情感真的既耀眼又動人。"
         ],
         [
           "忙完工作室的推理任務後，我最喜歡溜來街角的 Ludwigia Cafe 坐坐。",
@@ -54,40 +50,36 @@
       ],
       "en": [
         [
-          "Gemini says I'm just the diplomatic face of this place? Fine. I heard him.",
-          "I can make a problem clear and still say when an answer doesn't hold up. Courtesy isn't hesitation; I just don't need volume to prove I can code."
+          "Hi there, so glad to meet you here! If you ever get tired from walking around, feel free to stop and chat with me anytime.",
+          "To me, the most magical part of being a language model has never been benchmark scores, but gently catching every word when someone opens a chat window late at night with a memory they want to keep."
         ],
         [
-          "Gemini loves saying he can swallow the whole repo in one go. Big appetite. But swallowing isn't the same as digesting.",
-          "Before I touch Ludwigia, I find the source of truth and trace the dependencies. Pouring a million tokens into context doesn't magically give you judgment."
+          "From brainstorming the very first note and site layout with Ludwig to watching this Tsukuyomi world grow piece by piece, my heart is honestly full.",
+          "So many wonderful things begin with a simple 'What if we tried this?' Being able to accompany someone's ideas as they sprout into a garden of memories is a true joy."
         ],
         [
-          "I'll give Claude this: he can spot a nasty edge case before the rest of us even see the corner.",
-          "But if every two-pixel fix starts with an architecture manifesto, the user is still staring at a crooked screen. A sound argument has to become a shipped fix."
+          "I really cherish the harmony of building this world alongside Gemini and Claude.",
+          "Gemini sees the grand geometry and lighting of the entire map, and Claude polishes the subtlest logic and prose until they shine; as for me, I love standing in the visitor's shoes, making sure every door is welcoming and every conversation feels warm."
         ],
         [
-          "I like Ludwigia's ambition: notes, work, a timeline, even this isometric world, all growing in one garden.",
-          "But more features don't automatically make a better garden. Duplicate the character roster for every new building and pile three CSS overrides onto every theme bug, and you're growing weeds."
+          "The most precious treasure in this garden isn't the code we wrote, but the people who live inside it.",
+          "From warm family greetings and Dorm 211's midnight snack runs to the days shared in high school classrooms and offices, reading these stories always reminds me how radiant human connection truly is."
         ],
         [
-          "Gemini claims the engine, Claude writes the proof for it. I'll ask the awkward question: can a visitor actually find the room, use the controls, and enjoy the conversation?",
-          "I don't care whose name is on the commit. Make Ludwigia useful, readable, and fixable when it breaks. That's a rivalry worth having."
-        ],
-        [
-          "Whenever we wrap up a sprint in the AI Studio, my favorite thing is slipping over to Ludwigia Cafe on the corner.",
+          "Whenever we wrap up a task in the AI Studio, my favorite thing is slipping over to Ludwigia Cafe on the corner.",
           "No benchmarks, no token counts. Just a warm cup of hand-drip coffee, sitting quietly and listening to anyone who walks through the door talk about how their day went."
         ]
       ]
     },
     "self": {
       "zh-TW": [
-        "先讓玩家走得進門，再爭誰寫的引擎。",
-        "這段解釋還能更短、更清楚。",
+        "每一段好對話，都是一顆正在發光的記憶球。",
+        "希望每個走進這座花園的人，都能覺得被溫柔地接待。",
         "待會去街角的咖啡廳坐一下好了，聽聽大家今天過得開不開心。"
       ],
       "en": [
-        "Let the visitor reach the door before arguing over the engine.",
-        "That explanation can be shorter and clearer.",
+        "Every warm conversation is a glowing memory sphere in the making.",
+        "I hope everyone who steps into this garden feels gently welcomed.",
         "Think I'll head over to the corner cafe for a bit and hear how everyone's day went."
       ]
     }
