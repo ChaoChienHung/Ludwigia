@@ -100,11 +100,11 @@
         const lk = this.getLangKey();
         const cafeLines = (lk === 'en')
           ? [
-              "Sitting in this street corner cafe, listening quietly to how everyone's day went... this is my favorite place to be ☕",
-              "The aroma of hand-drip coffee and unhurried conversations—no token limit can beat this warmth."
+              "Sitting in this street corner cafe, listening quietly to how everyone's day went. This is my favorite place to be.",
+              "The aroma of hand-drip coffee and unhurried conversations. No token limit can beat this warmth."
             ]
           : [
-              "坐在街角的咖啡廳裡，靜靜聽每個走進來的人說說今天過得開不開心……這就是我最喜歡待的地方 ☕",
+              "坐在街角的咖啡廳裡，靜靜聽每個走進來的人，說說今天過得開不開心，這就是我最喜歡待的地方。",
               "手沖咖啡的香氣配上不趕時間的閒聊，再大的算力叢集也比不上這份溫度。"
             ];
         const msg = cafeLines[Math.floor(Math.random() * cafeLines.length)];

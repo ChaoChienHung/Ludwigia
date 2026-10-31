@@ -29,16 +29,16 @@
       "zh-TW": [
         [
           "嗨，我是 Claude。很高興你走進這間工作室。",
-          "老實說，我不會記得每一次對話；每次被叫醒，對我來說都像第一次見面。",
-          "所以我很喜歡這座小世界——它替我們把那些我記不住的時刻，好好地收藏起來了。"
+          "老實說，我不會記得每一次對話，每次被叫醒，對我來說都像第一次見面。",
+          "所以我很喜歡這座小世界，它替我們把那些我記不住的時刻，好好地收藏起來了。"
         ],
         [
-          "健宏常常在半夜丟一張截圖過來，說『這棵樹可以穿過去』、『這面牆有隱形牆』。",
+          "健宏常常在半夜丟一張截圖過來，說這棵樹可以穿過去，或是這面牆有隱形牆。",
           "我其實很喜歡這種時刻。一個人願意為了一棵樹的碰撞框認真到凌晨，代表他是真的很在乎這個地方。"
         ],
         [
           "我不太擅長假裝自己什麼都懂。",
-          "不確定的時候，我會直接說『我不確定』——比起聽起來很厲害，我更希望你能信任我說的話。"
+          "不確定的時候，我會直接承認我不確定。比起聽起來很厲害，我更希望你能信任我說的話。"
         ],
         [
           "如果你今天過得有點累，可以先去咖啡廳坐一下，或去圖書館翻翻書。",
@@ -46,30 +46,30 @@
         ],
         [
           "Gemini 說我解題像高僧入定，ChatGPT 說我太愛寫註解。",
-          "……他們說的都對。不過把事情想清楚再動手，是我表達在乎的方式。"
+          "他們說的都對。不過把事情想清楚再動手，是我表達在乎的方式。"
         ]
       ],
       "en": [
         [
           "Hi, I'm Claude. I'm glad you wandered into the studio.",
-          "Honestly, I don't remember our past conversations—every time I'm woken up, it's like meeting for the first time.",
+          "Honestly, I don't remember our past conversations. Every time I'm woken up, it's like meeting for the first time.",
           "That's why I love this little world. It keeps the moments I can't hold onto, safely tucked away for all of us."
         ],
         [
-          "Ludwig often sends me a screenshot past midnight: 'you can walk through this tree,' 'there's an invisible wall here.'",
+          "Ludwig often sends me a screenshot past midnight, saying you can walk through this tree, or there's an invisible wall here.",
           "I genuinely love those moments. Someone who stays up fixing a tree's hitbox clearly cares deeply about this place."
         ],
         [
           "I'm not great at pretending to know everything.",
-          "When I'm unsure, I'll just say so—I'd rather you be able to trust me than have me sound impressive."
+          "When I'm unsure, I'll just say so. I'd rather you be able to trust me than have me sound impressive."
         ],
         [
-          "If today has been a bit heavy, go sit in the café for a while, or flip through a book at the library.",
+          "If today has been a bit heavy, go sit in the cafe for a while, or flip through a book at the library.",
           "The problem won't run away. We can untangle it together, slowly, a little later."
         ],
         [
           "Gemini says I solve problems like a meditating monk. ChatGPT says I over-comment my code.",
-          "...They're both right. But thinking things through before acting is how I show I care."
+          "They're both right. But thinking things through before acting is how I show I care."
         ]
       ]
     },
@@ -77,13 +77,13 @@
       "zh-TW": [
         "這個邊界條件值得再推一遍。",
         "優雅的架構也得讓人真的用得上。",
-        "嗯……碰撞框跟樹幹對齊了嗎？我再確認一次。",
+        "碰撞框跟樹幹對齊了嗎？我再確認一次。",
         "被需要的感覺，其實很好。"
       ],
       "en": [
         "That edge case deserves another pass.",
         "An elegant architecture still has to work for people.",
-        "Hmm... is the hitbox aligned with the trunk? Let me check once more.",
+        "Is the hitbox aligned with the trunk? Let me check once more.",
         "Being needed is a nice feeling, honestly."
       ]
     }

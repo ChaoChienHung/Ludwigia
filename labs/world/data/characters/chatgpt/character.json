@@ -49,7 +49,7 @@
         ],
         [
           "忙完工作室的推理任務後，我最喜歡溜來街角的 Ludwigia Cafe 坐坐。",
-          "不談 benchmark、也不管 token 長度，就點一杯手沖咖啡，靜靜聽每一個推門走進來的人說說他們今天過得開不開心。"
+          "不談指標，也不管 token 長度，就點一杯手沖咖啡，靜靜聽每一個推門走進來的人，說說他們今天過得開不開心。"
         ]
       ],
       "en": [
@@ -75,7 +75,7 @@
         ],
         [
           "Whenever we wrap up a sprint in the AI Studio, my favorite thing is slipping over to Ludwigia Cafe on the corner.",
-          "No benchmarks, no token counts—just a warm cup of hand-drip coffee, sitting quietly and listening to anyone who walks through the door talk about how their day went."
+          "No benchmarks, no token counts. Just a warm cup of hand-drip coffee, sitting quietly and listening to anyone who walks through the door talk about how their day went."
         ]
       ]
     },
@@ -83,12 +83,12 @@
       "zh-TW": [
         "先讓玩家走得進門，再爭誰寫的引擎。",
         "這段解釋還能更短、更清楚。",
-        "待會去街角的咖啡廳坐一下好了，聽聽大家今天過得開不開心 ☕"
+        "待會去街角的咖啡廳坐一下好了，聽聽大家今天過得開不開心。"
       ],
       "en": [
         "Let the visitor reach the door before arguing over the engine.",
         "That explanation can be shorter and clearer.",
-        "Think I'll head over to the corner cafe for a bit and hear how everyone's day went ☕"
+        "Think I'll head over to the corner cafe for a bit and hear how everyone's day went."
       ]
     }
   },
