@@ -10,24 +10,24 @@
         {
           "speaker": "clark",
           "text": "走啊吃宵夜！無敵蛋餅要加辣嗎？",
-          "delay": 2.2
+          "delay": 3.8
         },
         {
           "speaker": "billy",
           "text": "我要加爆甜辣醬！再來一杯紅茶。",
-          "delay": 2.2
+          "delay": 3.8
         }
       ],
       "en": [
         {
           "speaker": "clark",
           "text": "Let's grab midnight snacks! Want chili on your egg pancake?",
-          "delay": 2.2
+          "delay": 3.8
         },
         {
           "speaker": "billy",
           "text": "Extra sweet chili sauce for me! And a classic iced black tea.",
-          "delay": 2.2
+          "delay": 3.8
         }
       ]
     }
@@ -43,24 +43,24 @@
         {
           "speaker": "bohan",
           "text": "傻師傅湯包一定要配一碗熱騰騰的排骨酥湯。",
-          "delay": 2.2
+          "delay": 4.2
         },
         {
           "speaker": "jerry",
           "text": "懂吃喔！竹蒸籠剛掀開超香超燙的。",
-          "delay": 2.2
+          "delay": 3.9
         }
       ],
       "en": [
         {
           "speaker": "bohan",
           "text": "Sha Shi Fu soup dumplings must be paired with steaming hot crispy rib soup.",
-          "delay": 2.2
+          "delay": 4.2
         },
         {
           "speaker": "jerry",
           "text": "You know good food! Fresh out of the bamboo steamer, super aromatic.",
-          "delay": 2.2
+          "delay": 3.9
         }
       ]
     }
@@ -76,27 +76,26 @@
         {
           "speaker": "happy",
           "text": "那輛藍色小貨車餐車的炒泡麵真的香到犯規。",
-          "delay": 2.2
+          "delay": 4.2
         },
         {
           "speaker": "clark",
           "text": "老闆說今天還有特調飲品，趕快去排隊！",
-          "delay": 2.2
+          "delay": 4.0
         }
       ],
       "en": [
         {
           "speaker": "happy",
           "text": "The fried instant noodles from the blue food truck smell insanely good.",
-          "delay": 2.2
+          "delay": 4.2
         },
         {
           "speaker": "clark",
           "text": "The chef said there's a signature drink today, let's queue up!",
-          "delay": 2.2
+          "delay": 4.0
         }
       ]
     }
   }
 ]
-

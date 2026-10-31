@@ -943,7 +943,13 @@
         const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
         if (!lines || lines.length === 0) continue;
 
-        const totalDialogueTime = lines.reduce((sum, item) => sum + (item.delay || 2.2), 0) + 3.5;
+        const getEffectiveDelay = (item) => {
+          if (item.delay === 0) return 0;
+          const readTime = this.estimateReadTime(item.text);
+          return Math.max(item.delay || 3.2, readTime);
+        };
+
+        const totalDialogueTime = lines.reduce((sum, item) => sum + getEffectiveDelay(item), 0) + 4.5;
         for (const c of group) {
           c.path = []; c.isWalking = false;
           c.facing = (centerX - c.x >= 0) ? 1 : -1;
@@ -952,9 +958,10 @@
 
         // First character speaks
         const first = lines[0];
+        const firstDelay = getEffectiveDelay(first);
         const speaker1 = this.characters.find(c => c.id === first.speaker);
         if (speaker1) {
-          const firstDuration = first.duration || (first.delay ? Math.max(3.8, first.delay + 1.2) : 3.8);
+          const firstDuration = first.duration || Math.max(4.8, firstDelay + 1.6);
           this.triggerSpeechBubble(speaker1, first.text, firstDuration);
         }
 
@@ -962,18 +969,32 @@
         this.dialogueQueue = [];
         for (let i = 1; i < lines.length; i++) {
           const item = lines[i];
-          const itemDuration = item.duration || (item.delay ? Math.max(3.8, item.delay + 1.2) : 3.8);
+          const effDelay = getEffectiveDelay(item);
+          const itemDuration = item.duration || Math.max(4.8, effDelay + 1.6);
           this.dialogueQueue.push({
             speakerId: item.speaker,
             text: item.text,
             duration: itemDuration,
-            nextDelay: item.delay || 2.2
+            nextDelay: effDelay
           });
         }
-        this.queueTimer = lines[0].delay || 2.2;
+        this.queueTimer = firstDelay;
         return true;
       }
       return false;
+    }
+
+    estimateReadTime(text) {
+      if (!text) return 3.2;
+      const str = String(text);
+      // CJK characters take ~0.07s each; Latin characters take ~0.032s each, with a 2.8s base
+      let cjkCount = 0;
+      for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) > 0x2E80) cjkCount++;
+      }
+      const otherCount = str.length - cjkCount;
+      const estimated = 2.8 + cjkCount * 0.07 + otherCount * 0.032;
+      return Math.min(8.0, Math.max(3.4, estimated));
     }
 
     tryTriggerSelfDialogue(langKey, now) {
@@ -983,7 +1004,9 @@
       if (!eligible.length) return false;
       const char = eligible[Math.floor(Math.random() * eligible.length)];
       const pool = char.dialogues.self[langKey] || char.dialogues.self['zh-TW'];
-      this.triggerSpeechBubble(char, pool[Math.floor(Math.random() * pool.length)], 3.8);
+      const text = pool[Math.floor(Math.random() * pool.length)];
+      const duration = Math.max(4.8, this.estimateReadTime(text) + 1.4);
+      this.triggerSpeechBubble(char, text, duration);
       return true;
     }
 

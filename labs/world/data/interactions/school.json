@@ -9,24 +9,24 @@
         {
           "speaker": "ludwig",
           "text": "大哥，你這空大也太醜了吧？",
-          "delay": 2.2
+          "delay": 3.7
         },
         {
           "speaker": "zhenyan",
           "text": "我這打的是心理戰。",
-          "delay": 2.2
+          "delay": 3.4
         }
       ],
       "en": [
         {
           "speaker": "ludwig",
           "text": "Bro, that whiffed ult was hideous...",
-          "delay": 2.2
+          "delay": 3.7
         },
         {
           "speaker": "zhenyan",
           "text": "I'm playing psychological warfare here.",
-          "delay": 2.2
+          "delay": 3.4
         }
       ]
     }
