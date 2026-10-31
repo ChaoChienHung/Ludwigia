@@ -813,6 +813,12 @@
       const targetWallCafe = (this.currentZone === 'cafe') ? 0.32 : 1.0;
       this.wallAlphaCafe += (targetWallCafe - this.wallAlphaCafe) * Math.min(1.0, dt * 6.0);
 
+      // 傻師傅湯包 front (East/South) walls fade out when the player is inside / at the doorway
+      const shopPlayer = this.charManager.player;
+      const inShaShiFu = !!shopPlayer && shopPlayer.x >= 34.3 && shopPlayer.x <= 38.8 && shopPlayer.y >= 40.8 && shopPlayer.y <= 44.4;
+      if (this.wallAlphaShaShiFu === undefined) this.wallAlphaShaShiFu = 1.0;
+      this.wallAlphaShaShiFu += ((inShaShiFu ? 0.32 : 1.0) - this.wallAlphaShaShiFu) * Math.min(1.0, dt * 6.0);
+
       // 2. Multi-Door Proximity Sensors
       const nearLudwigDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 5.65) < 2.4);
       this.doorLudwigOpen += ((nearLudwigDoor ? 1.0 : 0.0) - this.doorLudwigOpen) * Math.min(1.0, dt * 5.0);

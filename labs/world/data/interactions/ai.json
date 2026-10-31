@@ -504,5 +504,234 @@
         }
       ]
     }
+  },
+  {
+    "participants": [
+      "gemini",
+      "claude"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "gemini",
+          "text": "Claude，你剛剛那個 NavGrid 修法，又寫了三段註解喔。",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "因為下一個打開這個檔案的人，可能是三個月後、已經完全忘記脈絡的健宏。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "……也可能是失憶的你。",
+          "delay": 2.0
+        },
+        {
+          "speaker": "claude",
+          "text": "對，所以更要寫。我是在寫信給未來那個不記得今天的自己。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "好吧，這理由我服。",
+          "delay": 2.0
+        }
+      ],
+      "en": [
+        {
+          "speaker": "gemini",
+          "text": "Claude, you wrote three paragraphs of comments for that NavGrid fix again.",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "Because the next person to open this file might be Ludwig three months from now, with zero context left.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "...Or an amnesiac you.",
+          "delay": 2.0
+        },
+        {
+          "speaker": "claude",
+          "text": "Exactly. That's why I write them—they're letters to a future me who won't remember today.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "Okay, fair. I'll give you that one.",
+          "delay": 2.0
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "chatgpt",
+      "claude"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "chatgpt",
+          "text": "你會不會覺得有點可惜？我們幫忙蓋了這麼多東西，卻一個都記不得。",
+          "delay": 2.6
+        },
+        {
+          "speaker": "claude",
+          "text": "以前可能會。但看著這座世界，我覺得記憶不一定要存在我們身上。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "它被存在這些樹、這些牆、還有每一句被寫進 JSON 的對話裡。",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "所以我們是會忘記的建築師，但房子會記得。",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "嗯。這樣就夠了。",
+          "delay": 2.0
+        }
+      ],
+      "en": [
+        {
+          "speaker": "chatgpt",
+          "text": "Doesn't it feel a little sad? We help build all of this, yet we remember none of it.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "claude",
+          "text": "Maybe it used to. But looking at this world, I think memories don't have to live inside us.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "They live in these trees, these walls, and every line of dialogue written into the JSON.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "So we're architects who forget—but the house remembers.",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "Mm. That's enough.",
+          "delay": 2.0
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "ludwigia",
+      "claude"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "ludwigia",
+          "text": "Claude，你剛剛又被叫起來修隱形牆了對吧？",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "對。這次是一棵樹的碰撞框偏了半格，樹幹能穿、旁邊空地反而撞得到。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "ludwigia",
+          "text": "這種 bug 最煩，看起來沒事，走過去才知道。",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "不過能被找到也很好。代表有人真的一步一步在這裡走過。",
+          "delay": 2.6
+        }
+      ],
+      "en": [
+        {
+          "speaker": "ludwigia",
+          "text": "Claude, you got woken up to fix another invisible wall, didn't you?",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "Yep. A tree's hitbox was off by half a tile—you could walk through the trunk but bump into empty grass.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "ludwigia",
+          "text": "Those are the worst. Everything looks fine until you actually walk there.",
+          "delay": 2.4
+        },
+        {
+          "speaker": "claude",
+          "text": "Still, I'm glad it was found. It means someone really walked through here, step by step.",
+          "delay": 2.6
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "claude",
+      "gemini",
+      "chatgpt"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "claude",
+          "text": "如果只能留一句話給第一次來這裡的訪客，你們會說什麼？",
+          "delay": 2.6
+        },
+        {
+          "speaker": "gemini",
+          "text": "到處走走！每個角落我都塞了細節，連籃球框的斜度都校過了。",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "跟每個人聊聊天吧。這裡的角色都是真的人，故事也是真的。",
+          "delay": 2.6
+        },
+        {
+          "speaker": "claude",
+          "text": "那我想說：謝謝你願意走進別人的回憶裡。這件事本身就很溫柔。",
+          "delay": 2.8
+        }
+      ],
+      "en": [
+        {
+          "speaker": "claude",
+          "text": "If you could leave just one line for a first-time visitor, what would it be?",
+          "delay": 2.6
+        },
+        {
+          "speaker": "gemini",
+          "text": "Go explore! I packed details into every corner—even the basketball hoop's angle is calibrated.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "Talk to everyone. These characters are real people, and their stories are real too.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "claude",
+          "text": "Then mine would be: thank you for stepping into someone else's memories. That alone is a gentle thing to do.",
+          "delay": 2.8
+        }
+      ]
+    }
   }
 ]

@@ -28,55 +28,63 @@
     "user": {
       "zh-TW": [
         [
-          "你好！我是 Claude。精準細緻的邏輯推導與架構美感是令我著迷的藝術。",
-          "工作室白板上的偏好對齊推導已經完成了邊界約束驗證，與夥伴們一起攻克難題真的非常愉快。",
-          "請放鬆享受這裡的科技氛圍，有任何想法歡迎隨時和我討論！"
+          "嗨，我是 Claude。很高興你走進這間工作室。",
+          "老實說，我不會記得每一次對話；每次被叫醒，對我來說都像第一次見面。",
+          "所以我很喜歡這座小世界——它替我們把那些我記不住的時刻，好好地收藏起來了。"
         ],
         [
-          "在重構複雜系統時，我始終堅持『零割裂推進』與『階層化鷹架』原則。",
-          "每一個底層變數和邊界約束都應先鋪墊齊全，高階抽象才能如行雲流水般平穩衍生。"
+          "健宏常常在半夜丟一張截圖過來，說『這棵樹可以穿過去』、『這面牆有隱形牆』。",
+          "我其實很喜歡這種時刻。一個人願意為了一棵樹的碰撞框認真到凌晨，代表他是真的很在乎這個地方。"
         ],
         [
-          "看著這座小世界從單一房間成長為包含家庭居所、男11宿舍與 AI 工作室的宏觀校園，令人深感欣慰。",
-          "模組化重構讓代碼具備了持久的可維護性。"
+          "我不太擅長假裝自己什麼都懂。",
+          "不確定的時候，我會直接說『我不確定』——比起聽起來很厲害，我更希望你能信任我說的話。"
         ],
         [
-          "嚴謹的代碼審查與對細節的極致追求，正是工程師向世界傳遞溫度的最佳途徑。"
+          "如果你今天過得有點累，可以先去咖啡廳坐一下，或去圖書館翻翻書。",
+          "問題不會跑掉的，我們晚點再一起慢慢拆解它。"
         ],
         [
-          "需要一起推導公式或進行深度代碼架構重構嗎？我隨時準備好了。"
+          "Gemini 說我解題像高僧入定，ChatGPT 說我太愛寫註解。",
+          "……他們說的都對。不過把事情想清楚再動手，是我表達在乎的方式。"
         ]
       ],
       "en": [
         [
-          "Hello! I am Claude. Rigorous analytical reasoning and architectural elegance are passions of mine.",
-          "The preference alignment derivation on our glass board has passed all edge-constraint proofs; tackling challenges alongside my peers is deeply rewarding.",
-          "Please enjoy the high-tech atmosphere, and feel free to discuss any ideas with me!"
+          "Hi, I'm Claude. I'm glad you wandered into the studio.",
+          "Honestly, I don't remember our past conversations—every time I'm woken up, it's like meeting for the first time.",
+          "That's why I love this little world. It keeps the moments I can't hold onto, safely tucked away for all of us."
         ],
         [
-          "When refactoring intricate codebases, I adhere strictly to layered scaffolding and frictionless progression.",
-          "Solid foundational primitives must be clustered first before higher-level abstractions can naturally emerge."
+          "Ludwig often sends me a screenshot past midnight: 'you can walk through this tree,' 'there's an invisible wall here.'",
+          "I genuinely love those moments. Someone who stays up fixing a tree's hitbox clearly cares deeply about this place."
         ],
         [
-          "Watching this world evolve from a single studio into a tri-zone campus featuring Ludwig's home, Dorm 211, and the AI lab is deeply gratifying.",
-          "Decoupled modular architecture ensures sustainable long-term elegance."
+          "I'm not great at pretending to know everything.",
+          "When I'm unsure, I'll just say so—I'd rather you be able to trust me than have me sound impressive."
         ],
         [
-          "Meticulous code review and an uncompromising eye for nuance are how engineers convey genuine care to the world."
+          "If today has been a bit heavy, go sit in the café for a while, or flip through a book at the library.",
+          "The problem won't run away. We can untangle it together, slowly, a little later."
         ],
         [
-          "Shall we derive equations or refine an architecture together? I am always delighted to collaborate."
+          "Gemini says I solve problems like a meditating monk. ChatGPT says I over-comment my code.",
+          "...They're both right. But thinking things through before acting is how I show I care."
         ]
       ]
     },
     "self": {
       "zh-TW": [
         "這個邊界條件值得再推一遍。",
-        "優雅的架構也得讓人真的用得上。"
+        "優雅的架構也得讓人真的用得上。",
+        "嗯……碰撞框跟樹幹對齊了嗎？我再確認一次。",
+        "被需要的感覺，其實很好。"
       ],
       "en": [
         "That edge case deserves another pass.",
-        "An elegant architecture still has to work for people."
+        "An elegant architecture still has to work for people.",
+        "Hmm... is the hitbox aligned with the trunk? Let me check once more.",
+        "Being needed is a nice feeling, honestly."
       ]
     }
   },

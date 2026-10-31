@@ -3925,10 +3925,8 @@
       ctx.closePath();
       ctx.fill();
 
-      // East Back Wall (Back, along Y: x: gx+3.55, y: gy to gy+3.20, z: 0.04 to 2.65)
-      this.drawBox(ctx, gx + 3.55, gy, 0.04, 0.25, 3.20, 2.61, '#991b1b', '#7f1d1d', '#450a0a', ox, oy);
-      // South Wall (Front-Left cutaway: x: gx to gx+3.80, y: gy+2.95, z: 0.04 to 2.65)
-      this.drawBox(ctx, gx, gy + 2.95, 0.04, 3.80, 0.25, 2.61, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy);
+      // East Back Wall & South Wall are camera-facing FRONT walls (larger x+y = closer to camera).
+      // They are drawn LAST (see end of this function) so interior furniture never paints over them.
 
       // 3. Kitchen Station Solid Tile Wall Backdrop (faces West towards street opening: closes camera sightline)
       const kb0 = isoToScreen(gx + 0.85, gy + 0.05, 0.04, ox, oy);
@@ -4143,6 +4141,17 @@
       ctx.fillText('傻師傅', 0, -6);
       ctx.fillText('湯包', 0, 6);
       ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 9. Camera-Facing FRONT Walls (drawn last: painter's order back → front)
+      // Fade to translucent when the player is inside so the dine-in area stays readable.
+      const shopWallAlpha = (this.world.wallAlphaShaShiFu !== undefined) ? this.world.wallAlphaShaShiFu : 1.0;
+      ctx.save();
+      if (shopWallAlpha < 0.99) ctx.globalAlpha = shopWallAlpha;
+      // East Wall (x: gx+3.55 to gx+3.80, y: gy to gy+3.20, z: 0.04 to 2.65)
+      this.drawBox(ctx, gx + 3.55, gy, 0.04, 0.25, 3.20, 2.61, '#991b1b', '#7f1d1d', '#450a0a', ox, oy);
+      // South Wall (x: gx to gx+3.80, y: gy+2.95 to gy+3.20, z: 0.04 to 2.65)
+      this.drawBox(ctx, gx, gy + 2.95, 0.04, 3.80, 0.25, 2.61, '#b91c1c', '#991b1b', '#7f1d1d', ox, oy);
       ctx.restore();
     }
 
