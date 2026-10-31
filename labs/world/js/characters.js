@@ -41,8 +41,8 @@
         // Central Midnight Snack Street 傻師傅湯包 Red Dining Stool (z = 0.35, inside restaurant dining table)
         { id: 'market_stool', type: 'seat', zone: 'night_market', x: 37.0, y: 41.85, z: 0.35, facing: 1, exitOffset: { dx: -0.6, dy: 0 }, name: '傻師傅內用紅圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
 
-        // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.38, armchair seat)
-        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 36.8, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: 0.6, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
+        // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.38, exact armchair seat cushion center)
+        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 36.68, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: -0.55, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 44.8, y: 17.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
@@ -93,6 +93,26 @@
             this.triggerSpeechBubble(billy, txt, 4.2);
           }, 600);
         }
+      }
+
+      // Special event: when ChatGPT sits down in Ludwigia's Cafe, he savors the quiet atmosphere and welcomes visitors' stories
+      if (spot.id === 'cafe_chair' && char.id === 'chatgpt') {
+        const lk = this.getLangKey();
+        const cafeLines = (lk === 'en')
+          ? [
+              "Sitting in this street corner cafe, listening quietly to how everyone's day went... this is my favorite place to be ☕",
+              "The aroma of hand-drip coffee and unhurried conversations—no token limit can beat this warmth."
+            ]
+          : [
+              "坐在街角的咖啡廳裡，靜靜聽每個走進來的人說說今天過得開不開心……這就是我最喜歡待的地方 ☕",
+              "手沖咖啡的香氣配上不趕時間的閒聊，再大的算力叢集也比不上這份溫度。"
+            ];
+        const msg = cafeLines[Math.floor(Math.random() * cafeLines.length)];
+        setTimeout(() => {
+          if (char.furniture && char.furniture.id === 'cafe_chair' && !char.speechBubble) {
+            this.triggerSpeechBubble(char, msg, 4.8);
+          }
+        }, 700);
       }
       return true;
     }
@@ -884,6 +904,15 @@
                 this.useFurniture(c, spot);
               }
             }
+          }
+        }
+
+        // Cafe Seat Occupancy Action for Cafe Events (e.g. ChatGPT sitting at Ludwigia's Cafe)
+        if (pair.occupyCafeSeat && this.furnitureSpots) {
+          const cafeSpot = this.furnitureSpots.find(f => f.id === 'cafe_chair');
+          const chatgptChar = group.find(c => c.id === 'chatgpt') || group[0];
+          if (cafeSpot && chatgptChar && chatgptChar.furniture !== cafeSpot && !this.isSpotOccupied(cafeSpot, chatgptChar)) {
+            this.useFurniture(chatgptChar, cafeSpot);
           }
         }
 

@@ -59,6 +59,7 @@
       this.doorAiOpen = 0.0;
       this.doorLibOpen = 0.0;
       this.doorSchoolOpen = 0.0;
+      this.doorCafeOpen = 0.0;
       this.doorDouyinOpen = 0.0;
       this.douyinGateTimer = 2.0;
       this.douyinGateOpen = 0.0;
@@ -839,6 +840,9 @@
       const nearSchoolDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 37.65) < 2.4);
       this.doorSchoolOpen += ((nearSchoolDoor ? 1.0 : 0.0) - this.doorSchoolOpen) * Math.min(1.0, dt * 5.0);
 
+      const nearCafeDoor = this.charManager.characters.some(c => Math.hypot(c.x - 35.0, c.y - 4.9) < 2.4);
+      this.doorCafeOpen += ((nearCafeDoor ? 1.0 : 0.0) - this.doorCafeOpen) * Math.min(1.0, dt * 5.0);
+
       // 2. Douyin Office Erratic Speed Gate State Machine ("開關時機難以捉摸、不定期開關搞人心態")
       const playerNearDouyin = (Math.hypot(player.x - 18.0, player.y - 37.65) < 3.2);
       const anyCharNearDouyin = this.charManager.characters.some(c => Math.hypot(c.x - 18.0, c.y - 37.65) < 2.6);
@@ -1105,18 +1109,21 @@
             if (c.path.length === 0) {
               c.isWalking = false;
               c.walkTimer = 0;
-              // Check if arrived near an unoccupied bench/chair
+              // Check if arrived near an unoccupied bench/chair in home or visited zones
               const nearSeat = this.charManager.furnitureSpots.find(s =>
                 s.type === 'seat' &&
-                (!s.zone || s.zone === 'plaza' || s.zone === c.zone) &&
-                Math.hypot(s.x - c.x, s.y - c.y) < 1.15 &&
+                (!s.zone || s.zone === 'plaza' || s.zone === c.zone || (Array.isArray(c.visitedZones) && c.visitedZones.includes(s.zone))) &&
+                Math.hypot(s.x - c.x, s.y - c.y) < 1.25 &&
                 !this.charManager.isSpotOccupied(s, c)
               );
-              if (nearSeat && Math.random() < 0.65) {
+              if (nearSeat && (c.wantsCafeSeat || Math.random() < 0.65)) {
+                const isCafeVisit = !!c.wantsCafeSeat;
+                c.wantsCafeSeat = false;
                 this.charManager.useFurniture(c, nearSeat);
-                // Rest on bench enjoying the scenery for 8 to 18 seconds
-                c.timer = 8.0 + Math.random() * 10.0;
+                // Rest on bench/chair enjoying coffee or scenery
+                c.timer = isCafeVisit ? (16.0 + Math.random() * 10.0) : (8.0 + Math.random() * 10.0);
               } else {
+                c.wantsCafeSeat = false;
                 c.state = 'idle';
                 // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
                 c.timer = 2.5 + Math.random() * 3.5;
@@ -1287,11 +1294,12 @@
               ];
 
               const cafeAnchors = [
-                { x: 36.5, y: 3.5 },  // Barista Counter Order Spot
-                { x: 39.0, y: 4.5 },  // Indoor Reading Nook & Bookshelf
-                { x: 38.0, y: 6.0 },  // Window-Facing Sunlit Lounge
-                { x: 36.0, y: 5.0 },  // Indoor Cafe Entrance Lobby
-                { x: 34.0, y: 5.0 }   // Outdoor Cafe Glass Entrance Patio
+                { x: 36.68, y: 4.85 }, // Indoor Cafe Lounge Armchair (cafe_chair)
+                { x: 36.5, y: 3.5 },   // Barista Counter Order Spot
+                { x: 39.0, y: 4.5 },   // Indoor Reading Nook & Bookshelf
+                { x: 38.0, y: 6.0 },   // Window-Facing Sunlit Lounge
+                { x: 36.0, y: 5.0 },   // Indoor Cafe Entrance Lobby
+                { x: 34.0, y: 5.0 }    // Outdoor Cafe Glass Entrance Patio
               ];
 
               const cyberAnchors = [
@@ -1352,27 +1360,40 @@
                    c.zone === 'douyin_office' ? ['douyin_office', 'cafe', 'cyber_cafe', 'library', 'plaza'] :
                    [c.zone, 'cafe', 'cyber_cafe', 'howling_abyss', 'library', 'plaza']);
 
-              // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
-              let chosenZone;
-              if (visitedPool.includes(c.zone) && visitedPool.length > 1) {
-                if (Math.random() < 0.40) {
-                  chosenZone = c.zone;
-                } else {
-                  const others = visitedPool.filter(z => z !== c.zone);
-                  chosenZone = others[Math.floor(Math.random() * others.length)];
+              // Special Event: ChatGPT periodically visits Ludwigia's Cafe to sit in the armchair and listen to visitors' stories
+              const cafeChairSpot = this.charManager.furnitureSpots && this.charManager.furnitureSpots.find(s => s.id === 'cafe_chair');
+              if (c.id === 'chatgpt' && cafeChairSpot && !this.charManager.isSpotOccupied(cafeChairSpot, c) && Math.random() < 0.48) {
+                targetX = cafeChairSpot.x;
+                targetY = cafeChairSpot.y;
+                c.wantsCafeSeat = true;
+                if (this.nav.isWalkable(targetX, targetY)) {
+                  valid = true;
                 }
-              } else {
-                chosenZone = visitedPool[Math.floor(Math.random() * visitedPool.length)];
               }
 
-              const chosenPool = zoneAnchorMap[chosenZone] || plazaAnchors;
-              const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-              targetX = spot.x + (Math.random() - 0.5) * 0.5;
-              targetY = spot.y + (Math.random() - 0.5) * 0.5;
+              if (!valid) {
+                // Pick target zone: 40% bias to home zone if present in visitedPool, otherwise uniform
+                let chosenZone;
+                if (visitedPool.includes(c.zone) && visitedPool.length > 1) {
+                  if (Math.random() < 0.40) {
+                    chosenZone = c.zone;
+                  } else {
+                    const others = visitedPool.filter(z => z !== c.zone);
+                    chosenZone = others[Math.floor(Math.random() * others.length)];
+                  }
+                } else {
+                  chosenZone = visitedPool[Math.floor(Math.random() * visitedPool.length)];
+                }
 
-              if (this.nav.isWalkable(targetX, targetY)) {
-                const crowded = chars.some(other => other !== c && Math.hypot(other.x - targetX, other.y - targetY) < 1.4);
-                if (!crowded) valid = true;
+                const chosenPool = zoneAnchorMap[chosenZone] || plazaAnchors;
+                const spot = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+                targetX = spot.x + (Math.random() - 0.5) * 0.5;
+                targetY = spot.y + (Math.random() - 0.5) * 0.5;
+
+                if (this.nav.isWalkable(targetX, targetY)) {
+                  const crowded = chars.some(other => other !== c && Math.hypot(other.x - targetX, other.y - targetY) < 1.4);
+                  if (!crowded) valid = true;
+                }
               }
             }
 
@@ -3676,14 +3697,34 @@
           this.ctx.restore();
         }
       });
+      // Cafe Double Mahogany Swinging Doors (x = 35.0, y: 4.2 to 5.6)
+      const cafeDoorW = 0.70;
+      list.push({
+        xMin: 34.8,
+        xMax: 35.8,
+        yMin: 4.15,
+        yMax: 5.65,
+        draw: () => {
+          const cafeDoorAngle = (this.doorCafeOpen || 0) * 1.35;
+          const cnTipX = 35.0 + Math.sin(cafeDoorAngle) * cafeDoorW;
+          const cnTipY = 4.2 + Math.cos(cafeDoorAngle) * cafeDoorW;
+          const csTipX = 35.0 + Math.sin(cafeDoorAngle) * cafeDoorW;
+          const csTipY = 5.6 - Math.cos(cafeDoorAngle) * cafeDoorW;
+          this.ctx.save();
+          if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
+          this.drawDoorLeaf(35.0, 4.2, cnTipX, cnTipY, this.ox, this.oy);
+          this.drawDoorLeaf(35.0, 5.6, csTipX, csTipY, this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
       // West Entrance Doorway Lintel Beam & Mounted Signboard
       list.push({
         xMin: 34.8, xMax: 35.4, yMin: 4.1, yMax: 5.7,
-        z: 2.25,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
-          this.models.drawBox(this.ctx, 35.0, 4.2, 2.25, 0.25, 1.4, 0.45, '#78350f', false, '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 35.0, 4.2, 2.15, 0.25, 1.4, 0.55, '#78350f', false, '#451a03', this.ox, this.oy);
 
           // Illuminated Entrance Plaque (Sheared on Y-axis longitudinal wall)
           const plq = isoToScreen(34.95, 4.9, 2.45, this.ox, this.oy);

@@ -46,6 +46,10 @@
         [
           "Gemini 搶著當引擎，Claude 忙著替引擎寫證明；那我來問個不討喜的問題：玩家走進房間，真的看得懂、點得到、聊得下去嗎？",
           "誰的名字寫在 commit 上我不介意。讓 Ludwigia 好用、好讀、出了錯也修得動，這才值得爭。"
+        ],
+        [
+          "忙完工作室的推理任務後，我最喜歡溜來街角的 Ludwigia Cafe 坐坐。",
+          "不談 benchmark、也不管 token 長度，就點一杯手沖咖啡，靜靜聽每一個推門走進來的人說說他們今天過得開不開心。"
         ]
       ],
       "en": [
@@ -68,17 +72,23 @@
         [
           "Gemini claims the engine, Claude writes the proof for it. I'll ask the awkward question: can a visitor actually find the room, use the controls, and enjoy the conversation?",
           "I don't care whose name is on the commit. Make Ludwigia useful, readable, and fixable when it breaks. That's a rivalry worth having."
+        ],
+        [
+          "Whenever we wrap up a sprint in the AI Studio, my favorite thing is slipping over to Ludwigia Cafe on the corner.",
+          "No benchmarks, no token counts—just a warm cup of hand-drip coffee, sitting quietly and listening to anyone who walks through the door talk about how their day went."
         ]
       ]
     },
     "self": {
       "zh-TW": [
         "先讓玩家走得進門，再爭誰寫的引擎。",
-        "這段解釋還能更短、更清楚。"
+        "這段解釋還能更短、更清楚。",
+        "待會去街角的咖啡廳坐一下好了，聽聽大家今天過得開不開心 ☕"
       ],
       "en": [
         "Let the visitor reach the door before arguing over the engine.",
-        "That explanation can be shorter and clearer."
+        "That explanation can be shorter and clearer.",
+        "Think I'll head over to the corner cafe for a bit and hear how everyone's day went ☕"
       ]
     }
   },

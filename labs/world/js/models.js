@@ -919,39 +919,79 @@
     // 3. ZONE 3: LUDWIGIA AI RESEARCH STUDIO EQUIPMENT
     // ========================================================================
 
-    // --- Dual 42U Datacenter Server Cabinets (x: 19.5, y: 1.2) ---
+    // --- Dual 42U Datacenter Server Cabinets (x: 19.5, y: 1.2 — Back against North, Front facing South +Y) ---
     drawServerRacks(ctx, gx, gy, ox, oy) {
       const W = 1.80;
       const D = 1.20;
       const H = 2.30;
 
-      // Dark Matte Steel Chassis
-      this.drawBox(ctx, gx, gy, 0, W, D, H, '#0f172a', '#020617', '#020617', ox, oy);
+      this.drawDropShadow(ctx, gx, gy, W, D, ox, oy);
 
-      // Smoked Glass Front Panel with Reflections
-      const sf0 = isoToScreen(gx + W, gy, 0.05, ox, oy);
-      const sf1 = isoToScreen(gx + W, gy + D, 0.05, ox, oy);
-      const sf2 = isoToScreen(gx + W, gy + D, H - 0.05, ox, oy);
-      const sf3 = isoToScreen(gx + W, gy, H - 0.05, ox, oy);
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+      // Dark Matte Steel Chassis (Back at y = gy North, Front at y = gy + D South)
+      this.drawBox(ctx, gx, gy, 0, W, D, H, '#0f172a', '#0a1120', '#020617', ox, oy);
+
+      // Center vertical divider seam between the two 42U server cabinets on South front face
+      const div0 = isoToScreen(gx + W / 2, gy + D + 0.005, 0.04, ox, oy);
+      const div1 = isoToScreen(gx + W / 2, gy + D + 0.005, H - 0.04, ox, oy);
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.4;
       ctx.beginPath();
-      ctx.moveTo(sf0.x, sf0.y); ctx.lineTo(sf1.x, sf1.y); ctx.lineTo(sf2.x, sf2.y); ctx.lineTo(sf3.x, sf3.y);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 1;
+      ctx.moveTo(div0.x, div0.y);
+      ctx.lineTo(div1.x, div1.y);
       ctx.stroke();
 
-      // Animated Multi-Color Blinking Server Node LEDs
+      // Two South-Facing 42U Smoked-Glass Server Rack Doors (Bay 1: West, Bay 2: East)
       const time = performance.now() * 0.005;
-      for (let s = 0.25; s < H - 0.20; s += 0.22) {
-        const lp = isoToScreen(gx + W, gy + 0.35, s, ox, oy);
-        const blink1 = Math.sin(time * 3 + s * 5) > 0;
-        const blink2 = Math.cos(time * 4 + s * 3) > 0;
-        ctx.fillStyle = blink1 ? '#22d3ee' : '#0369a1';
-        ctx.fillRect(lp.x, lp.y - 2, 3, 2);
-        ctx.fillStyle = blink2 ? '#10b981' : '#065f46';
-        ctx.fillRect(lp.x + 5, lp.y - 2, 3, 2);
+      const bays = [
+        { x0: gx + 0.08, x1: gx + 0.86, seed: 0 },
+        { x0: gx + 0.94, x1: gx + 1.72, seed: 3 }
+      ];
+      bays.forEach(bay => {
+        const sf0 = isoToScreen(bay.x0, gy + D + 0.005, 0.06, ox, oy);
+        const sf1 = isoToScreen(bay.x1, gy + D + 0.005, 0.06, ox, oy);
+        const sf2 = isoToScreen(bay.x1, gy + D + 0.005, H - 0.06, ox, oy);
+        const sf3 = isoToScreen(bay.x0, gy + D + 0.005, H - 0.06, ox, oy);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+        ctx.beginPath();
+        ctx.moveTo(sf0.x, sf0.y); ctx.lineTo(sf1.x, sf1.y); ctx.lineTo(sf2.x, sf2.y); ctx.lineTo(sf3.x, sf3.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.0;
+        ctx.stroke();
+
+        // Horizontal 2U/4U Server Blade Slots & Animated Multi-Color Telemetry LEDs facing South
+        for (let s = 0.24; s < H - 0.18; s += 0.22) {
+          const sl0 = isoToScreen(bay.x0 + 0.05, gy + D + 0.008, s - 0.04, ox, oy);
+          const sl1 = isoToScreen(bay.x1 - 0.05, gy + D + 0.008, s - 0.04, ox, oy);
+          ctx.strokeStyle = 'rgba(51, 65, 85, 0.75)';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(sl0.x, sl0.y);
+          ctx.lineTo(sl1.x, sl1.y);
+          ctx.stroke();
+
+          const lp1 = isoToScreen(bay.x0 + 0.16, gy + D + 0.01, s, ox, oy);
+          const lp2 = isoToScreen(bay.x0 + 0.34, gy + D + 0.01, s, ox, oy);
+          const blink1 = Math.sin(time * 3 + s * 5 + bay.seed) > 0;
+          const blink2 = Math.cos(time * 4 + s * 3 + bay.seed) > 0;
+          ctx.fillStyle = blink1 ? '#22d3ee' : '#0369a1';
+          ctx.fillRect(lp1.x - 1.5, lp1.y - 1.5, 3, 2);
+          ctx.fillStyle = blink2 ? '#10b981' : '#065f46';
+          ctx.fillRect(lp2.x - 1.5, lp2.y - 1.5, 3, 2);
+        }
+      });
+
+      // Subtle side ventilation louvers on the East (+X) side panel
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 0.9;
+      for (let vz = 0.45; vz <= 1.85; vz += 0.28) {
+        const v0 = isoToScreen(gx + W + 0.005, gy + 0.25, vz, ox, oy);
+        const v1 = isoToScreen(gx + W + 0.005, gy + D - 0.25, vz, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(v0.x, v0.y);
+        ctx.lineTo(v1.x, v1.y);
+        ctx.stroke();
       }
     }
 

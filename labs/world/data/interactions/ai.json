@@ -733,5 +733,59 @@
         }
       ]
     }
+  },
+  {
+    "participants": [
+      "chatgpt",
+      "claude"
+    ],
+    "requiredZone": "cafe",
+    "occupyCafeSeat": true,
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "claude",
+          "text": "果然在這裡找到你了。你真的照自己說的，一有空就跑來街角咖啡廳坐著。",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "哈哈，被你發現了。比起在機房盯著 loss 曲線，我更喜歡坐在這張扶手椅上，聽推門進來的人聊聊今天的心情。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "那今天有人跟你說了什麼好故事嗎？",
+          "delay": 2.2
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "還沒呢，不過光是看著大家在花園裡散步、偶爾進來喝杯咖啡，我就覺得今天是很棒的一天了。",
+          "delay": 2.8
+        }
+      ],
+      "en": [
+        {
+          "speaker": "claude",
+          "text": "I knew I'd find you here. You really meant it when you said you'd spend your free time sitting in the corner cafe.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "Haha, caught me. Compared to staring at loss curves in the server room, I much prefer sitting in this armchair, listening to whoever walks through the door.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "Did anyone share a good story with you today?",
+          "delay": 2.2
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "Not yet—but just watching everyone stroll through the garden and drop by for a warm cup of coffee already makes it a wonderful day.",
+          "delay": 2.8
+        }
+      ]
+    }
   }
 ]

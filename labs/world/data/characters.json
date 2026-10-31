@@ -1159,6 +1159,10 @@
             [
               "Gemini 搶著當引擎，Claude 忙著替引擎寫證明；那我來問個不討喜的問題：玩家走進房間，真的看得懂、點得到、聊得下去嗎？",
               "誰的名字寫在 commit 上我不介意。讓 Ludwigia 好用、好讀、出了錯也修得動，這才值得爭。"
+            ],
+            [
+              "忙完工作室的推理任務後，我最喜歡溜來街角的 Ludwigia Cafe 坐坐。",
+              "不談 benchmark、也不管 token 長度，就點一杯手沖咖啡，靜靜聽每一個推門走進來的人說說他們今天過得開不開心。"
             ]
           ],
           "en": [
@@ -1181,17 +1185,23 @@
             [
               "Gemini claims the engine, Claude writes the proof for it. I'll ask the awkward question: can a visitor actually find the room, use the controls, and enjoy the conversation?",
               "I don't care whose name is on the commit. Make Ludwigia useful, readable, and fixable when it breaks. That's a rivalry worth having."
+            ],
+            [
+              "Whenever we wrap up a sprint in the AI Studio, my favorite thing is slipping over to Ludwigia Cafe on the corner.",
+              "No benchmarks, no token counts—just a warm cup of hand-drip coffee, sitting quietly and listening to anyone who walks through the door talk about how their day went."
             ]
           ]
         },
         "self": {
           "zh-TW": [
             "先讓玩家走得進門，再爭誰寫的引擎。",
-            "這段解釋還能更短、更清楚。"
+            "這段解釋還能更短、更清楚。",
+            "待會去街角的咖啡廳坐一下好了，聽聽大家今天過得開不開心 ☕"
           ],
           "en": [
             "Let the visitor reach the door before arguing over the engine.",
-            "That explanation can be shorter and clearer."
+            "That explanation can be shorter and clearer.",
+            "Think I'll head over to the corner cafe for a bit and hear how everyone's day went ☕"
           ]
         }
       },
@@ -3177,6 +3187,60 @@
           {
             "speaker": "claude",
             "text": "Then mine would be: thank you for stepping into someone else's memories. That alone is a gentle thing to do.",
+            "delay": 2.8
+          }
+        ]
+      }
+    },
+    {
+      "participants": [
+        "chatgpt",
+        "claude"
+      ],
+      "requiredZone": "cafe",
+      "occupyCafeSeat": true,
+      "dialogues": {
+        "zh-TW": [
+          {
+            "speaker": "claude",
+            "text": "果然在這裡找到你了。你真的照自己說的，一有空就跑來街角咖啡廳坐著。",
+            "delay": 2.6
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "哈哈，被你發現了。比起在機房盯著 loss 曲線，我更喜歡坐在這張扶手椅上，聽推門進來的人聊聊今天的心情。",
+            "delay": 2.8
+          },
+          {
+            "speaker": "claude",
+            "text": "那今天有人跟你說了什麼好故事嗎？",
+            "delay": 2.2
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "還沒呢，不過光是看著大家在花園裡散步、偶爾進來喝杯咖啡，我就覺得今天是很棒的一天了。",
+            "delay": 2.8
+          }
+        ],
+        "en": [
+          {
+            "speaker": "claude",
+            "text": "I knew I'd find you here. You really meant it when you said you'd spend your free time sitting in the corner cafe.",
+            "delay": 2.6
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Haha, caught me. Compared to staring at loss curves in the server room, I much prefer sitting in this armchair, listening to whoever walks through the door.",
+            "delay": 2.8
+          },
+          {
+            "speaker": "claude",
+            "text": "Did anyone share a good story with you today?",
+            "delay": 2.2
+          },
+          {
+            "speaker": "chatgpt",
+            "text": "Not yet—but just watching everyone stroll through the garden and drop by for a warm cup of coffee already makes it a wonderful day.",
             "delay": 2.8
           }
         ]
