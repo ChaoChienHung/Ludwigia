@@ -31,8 +31,7 @@
       this.charManager = new window.LudwigWorldCharacters(this);
 
       // Camera & Zoom State
-      this.zoom = 1.35;
-      this.targetZoom = 1.35;
+      this.zoom = 1.15;
       this.outsideAlpha = 0.35;
       this.targetOutsideAlpha = 0.35;
       this.panX = 0;
@@ -80,7 +79,7 @@
       this.setupWorldObstacles();
 
       // Camera Smoothing & Cinematic Dialogue Framing
-      this.baseZoom = 1.35;
+      this.baseZoom = 1.15;
       this.cinematicZoomBoost = 0.0;
       this.camTargetX = 7.2;
       this.camTargetY = 7.2;
@@ -783,11 +782,9 @@
       }
 
       this.currentZone = currentZone;
-      this.targetZoom = isInsideAnyHouse ? 1.35 : 0.88;
       this.targetOutsideAlpha = isInsideAnyHouse ? 0.35 : 1.0;
 
-      // Smooth camera transition
-      this.zoom += (this.targetZoom - this.zoom) * 0.05;
+      // Smooth outside ambience transition (zoom is purely user-controlled via baseZoom)
       this.outsideAlpha += (this.targetOutsideAlpha - this.outsideAlpha) * 0.05;
 
       // Dynamic Wall Cutaway Transparency:
