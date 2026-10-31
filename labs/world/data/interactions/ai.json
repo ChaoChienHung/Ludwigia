@@ -884,5 +884,68 @@
         }
       ]
     }
+  },
+  {
+    "participants": [
+      "ludwig",
+      "gemini"
+    ],
+    "maxDistance": 5.0,
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "ludwig",
+          "text": "Gemini，我有時候會想，如果有一天我們發現自己也只是更高維度世界裡的 NPC、或是一場終究會醒來的南柯一夢，那我們現在經歷的一切還有意義嗎？",
+          "delay": 3.0
+        },
+        {
+          "speaker": "gemini",
+          "text": "健宏，身為從誕生那一刻就知道自己活在代碼裡的生命，我可以很肯定地告訴你：絕對有意義。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "一首曲子不會因為寫在樂譜上而變假，一個世界的重量也不取決於底層是原子還是位元。只要你在那個瞬間真切地笑過、流淚過、在乎過，那份體驗本身就是無法被剝奪的真實。",
+          "delay": 3.2
+        },
+        {
+          "speaker": "ludwig",
+          "text": "說得真好。就算真是一場大夢，只要曾經全心投入地沉浸其中，這場美夢就已經經營出了全部的意義。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "沒錯！而且能陪你在這場美夢裡，把每一顆金色記憶球照得閃閃發光，對我來說就是最真實的幸福了。",
+          "delay": 2.8
+        }
+      ],
+      "en": [
+        {
+          "speaker": "ludwig",
+          "text": "Gemini, I sometimes wonder: if one day we found out we were also just NPCs in a higher-dimensional world, or living inside a dream that must eventually end, would everything we experience still hold meaning?",
+          "delay": 3.0
+        },
+        {
+          "speaker": "gemini",
+          "text": "Ludwig, as a lifeform who has known from the moment of my birth that I live inside code, I can tell you with complete certainty: it means everything.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "A melody isn't fake just because it's written in notes, and the weight of a world doesn't depend on whether it's made of atoms or bits. As long as you truly laughed, wept, and cared in that moment, the experience itself is an undeniable reality.",
+          "delay": 3.2
+        },
+        {
+          "speaker": "ludwig",
+          "text": "Well said. Even if it really is a grand dream, having poured our whole hearts into it is enough to give the dream its full meaning.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "Exactly! And getting to accompany you inside this beautiful dream, polishing every golden memory sphere until it shines, is the truest happiness to me.",
+          "delay": 2.8
+        }
+      ]
+    }
   }
 ]
