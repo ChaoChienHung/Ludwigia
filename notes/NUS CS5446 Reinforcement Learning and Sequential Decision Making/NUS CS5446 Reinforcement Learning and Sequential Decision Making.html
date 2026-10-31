@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NUS CS5446 Reinforcement Learning and Sequential Decision Making — Ludwig</title>
   <meta name="garden:tags" content="AI Planning, Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, Decision Theory, Game Theory, Reinforcement Learning">
-  <meta name="garden:summary" content="Comprehensive lecture and study notes for NUS CS5446 Reinforcement Learning and Sequential Decision Making (AI Planning and Decision Systems), covering AI planning foundations, classical planning (STRIPS, PDDL, SATPlan), LFM-assisted modern planning, scalable heuristics (HTN), rational decision theory, utility theory, game theory, Markov decision processes, model-free reinforcement learning, value function approximation, Deep Q-Networks (DQN), policy gradients, REINFORCE, Actor-Critic methods, advanced trust-region policy search (TRPO, PPO), reward shaping (potential-based policy invariance, exploration bonuses with pseudo-counts and RND, exploitation bottleneck discovery, process reward models, RLHF preference alignment, advanced multi-agent reward architectures ReLara, CenRA, SASR), model-based RL and world models, strategic game theory, and guided sequential decision making (decision-time online search, rollout algorithms, Monte Carlo Tree Search, UCT, AlphaGo Zero PUCT, demonstration-based offline planning, Behavioral Cloning covariate shift, DAgger interactive dataset aggregation, and Generative Adversarial Imitation Learning GAIL).">
+  <meta name="garden:summary" content="Detailed NUS CS5446 lecture and tutorial notes on classical and hierarchical planning, decision and utility theory, MDPs, model-free and model-based RL, reward shaping, decision-time search and imitation learning, strategic game theory, and foundation-model-based decision systems with SFT, RLHF, DPO, RLAIF, GRPO, tool use, and human oversight.">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
   <meta name="site:tag_concepts" content="concept.ai_planning,concept.classical_planning,concept.strips,concept.pddl,concept.satplan,concept.automated_reasoning,concept.decision_theory,concept.game_theory,concept.reinforcement_learning">
   <meta name="site:tag_labels" content="{&quot;concept.ai_planning&quot;:{&quot;en&quot;:&quot;AI Planning&quot;,&quot;zh-Hant&quot;:&quot;人工智慧規劃&quot;,&quot;zh-Hans&quot;:&quot;人工智能规划&quot;},&quot;concept.classical_planning&quot;:{&quot;en&quot;:&quot;Classical Planning&quot;,&quot;zh-Hant&quot;:&quot;古典規劃&quot;,&quot;zh-Hans&quot;:&quot;古典规划&quot;},&quot;concept.strips&quot;:{&quot;en&quot;:&quot;STRIPS&quot;,&quot;zh-Hant&quot;:&quot;STRIPS&quot;,&quot;zh-Hans&quot;:&quot;STRIPS&quot;},&quot;concept.pddl&quot;:{&quot;en&quot;:&quot;PDDL&quot;,&quot;zh-Hant&quot;:&quot;PDDL&quot;,&quot;zh-Hans&quot;:&quot;PDDL&quot;},&quot;concept.satplan&quot;:{&quot;en&quot;:&quot;SATPlan&quot;,&quot;zh-Hant&quot;:&quot;SATPlan&quot;,&quot;zh-Hans&quot;:&quot;SATPlan&quot;},&quot;concept.automated_reasoning&quot;:{&quot;en&quot;:&quot;Automated Reasoning&quot;,&quot;zh-Hant&quot;:&quot;自動推理&quot;,&quot;zh-Hans&quot;:&quot;自动推理&quot;},&quot;concept.decision_theory&quot;:{&quot;en&quot;:&quot;Decision Theory&quot;,&quot;zh-Hant&quot;:&quot;決策理論&quot;,&quot;zh-Hans&quot;:&quot;决策理论&quot;},&quot;concept.game_theory&quot;:{&quot;en&quot;:&quot;Game Theory&quot;,&quot;zh-Hant&quot;:&quot;賽局理論&quot;,&quot;zh-Hans&quot;:&quot;博弈论&quot;},&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5446-reinforcement-learning-and-sequential-decision-making">
   <meta name="site:published_at" content="2026-08-20">
-  <meta name="site:last_modified_at" content="2026-10-24">
-  <meta name="site:reading_time_minutes" content="551">
+  <meta name="site:last_modified_at" content="2026-10-31">
+  <meta name="site:reading_time_minutes" content="592">
   <meta name="site:source" content="notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.md">
   <script>
   (() => {
@@ -43,6 +43,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -60,7 +63,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -489,6 +492,10 @@
 <a class="note-toc-link level-2" href="#12-2-imitation-learning-software-ecosystem-slide-50">12.2 Imitation Learning Software Ecosystem (Slide 50)</a>
 <a class="note-toc-link level-2" href="#12-3-high-level-synthesis-comparative-trade-off-matrix">12.3 High-Level Synthesis: Comparative Trade-Off Matrix</a>
 <a class="note-toc-link level-1" href="#references-7">References</a>
+<a class="note-toc-link level-1" href="#1-choose-the-right-mathematical-object-before-calculating">1. Choose the right mathematical object before calculating</a>
+<a class="note-toc-link level-1" href="#2-a-four-step-answer-routine-for-the-review-problems">2. A four-step answer routine for the review problems</a>
+<a class="note-toc-link level-1" href="#3-bridge-to-the-next-lecture">3. Bridge to the next lecture</a>
+<a class="note-toc-link level-1" href="#references-8">References</a>
 <a class="note-toc-link level-1" href="#1-model-based-reinforcement-learning-learn-a-model-then-choose-how-to-use-it">1. Model-based reinforcement learning: learn a model, then choose how to use it</a>
 <a class="note-toc-link level-2" href="#1-1-learning-a-model-from-a-transition-dataset">1.1 Learning a model from a transition dataset</a>
 <a class="note-toc-link level-2" href="#1-2-from-model-error-to-planning-error">1.2 From model error to planning error</a>
@@ -502,28 +509,44 @@
 <a class="note-toc-link level-2" href="#4-1-what-is-learned-and-what-is-optimized">4.1 What is learned and what is optimized</a>
 <a class="note-toc-link level-2" href="#4-2-compare-learning-signals-and-failure-controls">4.2 Compare learning signals and failure controls</a>
 <a class="note-toc-link level-2" href="#4-3-emerging-directions-are-extensions-not-proven-replacements">4.3 Emerging directions are extensions, not proven replacements</a>
+<a class="note-toc-link level-2" href="#4-4-read-the-training-targets-not-only-the-architecture-names">4.4 Read the training targets, not only the architecture names</a>
 <a class="note-toc-link level-1" href="#5-what-the-model-based-addendum-actually-adds">5. What the model-based addendum actually adds</a>
 <a class="note-toc-link level-1" href="#6-worked-tutorial-7-answer-map-and-synthesis">6. Worked Tutorial 7 answer map and synthesis</a>
-<a class="note-toc-link level-1" href="#references-8">References</a>
+<a class="note-toc-link level-1" href="#references-9">References</a>
 <a class="note-toc-link level-1" href="#1-game-theory-from-a-fixed-environment-to-strategic-opponents">1. Game theory: from a fixed environment to strategic opponents</a>
 <a class="note-toc-link level-2" href="#1-1-strategic-dependence-and-game-types">1.1 Strategic dependence and game types</a>
 <a class="note-toc-link level-2" href="#1-2-solving-pure-games-without-confusing-stability-and-welfare">1.2 Solving pure games without confusing stability and welfare</a>
 <a class="note-toc-link level-2" href="#1-3-worked-pure-strategy-reasoning">1.3 Worked pure-strategy reasoning</a>
 <a class="note-toc-link level-1" href="#2-tutorial-8-matrix-solutions">2. Tutorial 8 matrix solutions</a>
 <a class="note-toc-link level-2" href="#2-1-derive-mixed-strategies-by-indifference">2.1 Derive mixed strategies by indifference</a>
+<a class="note-toc-link level-2" href="#2-1a-two-finger-morra-derive-both-probabilities-and-the-value">2.1a Two-finger Morra: derive both probabilities and the value</a>
+<a class="note-toc-link level-2" href="#2-1b-coordination-and-chicken-check-the-calculation-against-the-game">2.1b Coordination and chicken: check the calculation against the game</a>
 <a class="note-toc-link level-2" href="#2-2-battle-of-the-sexes-calculations">2.2 Battle of the Sexes calculations</a>
 <a class="note-toc-link level-2" href="#2-3-tutorial-8-decide-whether-an-interaction-is-a-game">2.3 Tutorial 8: decide whether an interaction is a game</a>
 <a class="note-toc-link level-1" href="#3-minimax-zero-sum-games-and-morra">3. Minimax, zero-sum games, and Morra</a>
 <a class="note-toc-link level-2" href="#3-1-three-finger-morra-derivation">3.1 Three-finger Morra derivation</a>
 <a class="note-toc-link level-1" href="#4-computational-scope-and-extensions-beyond-one-shot-games">4. Computational scope and extensions beyond one-shot games</a>
 <a class="note-toc-link level-1" href="#5-tutorial-8-source-and-comparison">5. Tutorial 8 source and comparison</a>
-<a class="note-toc-link level-1" href="#references-9">References</a>
+<a class="note-toc-link level-1" href="#references-10">References</a>
+<a class="note-toc-link level-1" href="#1-from-an-mdp-to-an-agentic-system">1. From an MDP to an agentic system</a>
+<a class="note-toc-link level-1" href="#2-human-guided-learning-demonstrations-and-preferences">2. Human-guided learning: demonstrations and preferences</a>
+<a class="note-toc-link level-2" href="#2-1-work-a-preference-pair-through-the-two-objectives">2.1 Work a preference pair through the two objectives</a>
+<a class="note-toc-link level-1" href="#3-integrated-reasoning-and-planning">3. Integrated reasoning and planning</a>
+<a class="note-toc-link level-1" href="#4-ai-guided-learning-from-outcomes-and-processes">4. AI-guided learning from outcomes and processes</a>
+<a class="note-toc-link level-1" href="#5-evaluation-capability-and-alignment-are-separate-measurements">5. Evaluation: capability and alignment are separate measurements</a>
+<a class="note-toc-link level-2" href="#5-1-work-one-agentic-task-through-the-complete-loop">5.1 Work one agentic task through the complete loop</a>
+<a class="note-toc-link level-2" href="#5-2-design-an-evaluation-that-can-catch-attractive-failure">5.2 Design an evaluation that can catch attractive failure</a>
+<a class="note-toc-link level-1" href="#references-11">References</a>
 <a class="note-toc-link level-1" href="#1-tutorial-5-and-6-connect-the-foundations-to-worked-decisions">1. Tutorial 5 and 6: connect the foundations to worked decisions</a>
 <a class="note-toc-link level-2" href="#1-1-classical-planning-and-reachable-sets">1.1 Classical planning and reachable sets</a>
 <a class="note-toc-link level-2" href="#1-2-preference-and-logarithmic-utility">1.2 Preference and logarithmic utility</a>
 <a class="note-toc-link level-2" href="#1-3-modeling-delayed-actions-as-an-mdp">1.3 Modeling delayed actions as an MDP</a>
 <a class="note-toc-link level-2" href="#1-4-passive-rl-learning-rules">1.4 Passive RL learning rules</a>
 <a class="note-toc-link level-2" href="#1-5-rollout-mcts-uct-and-imitation">1.5 Rollout, MCTS, UCT, and imitation</a>
+<a class="note-toc-link level-2" href="#1-6-tutorial-5-a-fully-markov-delayed-movement-model">1.6 Tutorial 5: a fully Markov delayed-movement model</a>
+<a class="note-toc-link level-2" href="#1-7-tutorial-5-compare-mc-td-0-and-adp-on-the-same-episode">1.7 Tutorial 5: compare MC, TD(0), and ADP on the same episode</a>
+<a class="note-toc-link level-2" href="#1-8-tutorial-6-exhaustive-tree-versus-mcts-accounting">1.8 Tutorial 6: exhaustive tree versus MCTS accounting</a>
+<a class="note-toc-link level-2" href="#1-9-tutorial-6-what-feature-sharing-and-dagger-actually-change">1.9 Tutorial 6: what feature sharing and DAgger actually change</a>
 <a class="note-toc-link level-1" href="#2-tutorial-5-problem-by-problem-checklist">2. Tutorial 5 problem-by-problem checklist</a>
 <a class="note-toc-link level-1" href="#3-tutorial-6-problem-by-problem-checklist">3. Tutorial 6 problem-by-problem checklist</a>
 <a class="note-toc-link level-1" href="#source-audit-for-these-chapters">Source audit for these chapters</a>
@@ -549,7 +572,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-24" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-24</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-31" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-31</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -593,12 +616,16 @@ Week 5  Function approximation, DQN, policy gradients, and actor-critic methods
 Week 6  Exploration, PBRS, process rewards, RLHF, and multi-agent rewards
    ↓  Runtime search and demonstrations offer other forms of guidance
 Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning
+   ↓  Mid-term consolidation and test
+Week 8  Mid-term review of planning, utility, MDPs, and RL foundations
    ↓  Learn a simulator instead of assuming one is given
-Week 10  Model-based RL, Dyna-Q, world models, MuZero, DreamerV3, TD-MPC2
+Week 9  Model-based RL, Dyna-Q, world models, MuZero, DreamerV3, TD-MPC2
    ↓  Other agents also make strategic choices
-Week 11  Best responses, Nash equilibrium, Pareto optimality, mixed strategies</code></pre></div>
+Week 10  Best responses, Nash equilibrium, Pareto optimality, mixed strategies
+   ↓  Integrate models, tools, plans, feedback, and human constraints
+Week 11  Foundation-model-based decision systems and human–AI alignment</code></pre></div>
 
-<p class="mb-3">Use the same reading checklist each week: <code>state / action / transition / objective / information / improvement mechanism</code>. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; Week 7 compares guidance from runtime search with guidance from demonstrations, Week 10 learns a model for planning, and Week 11 introduces strategic opponents.</p>
+<p class="mb-3">Use the same reading checklist each week: <code>state / action / transition / objective / information / improvement mechanism</code>. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; Week 7 compares guidance from runtime search with guidance from demonstrations, Week 8 consolidates the mid-term material, Week 9 learns a model for planning, Week 10 introduces strategic opponents, and Week 11 integrates foundation models with human alignment. These lecture weeks follow <em>Course Overview</em>, slide 3; Tutorial 6/7/8 are labeled Weeks 9/10/11 on their own sheets and therefore lag the corresponding lecture topics.</p>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
@@ -644,14 +671,24 @@ Week 11  Best responses, Nash equilibrium, Pareto optimality, mixed strategies</
 <td>Connects search, learning, and imitation</td>
 </tr>
 <tr>
-<td>10</td>
+<td>8</td>
+<td>Which planning, utility, MDP and RL assumptions survive mixed review problems?</td>
+<td>Mid-term test; no new lecture deck is assigned in the course overview</td>
+</tr>
+<tr>
+<td>9</td>
 <td>How do learned models support planning and policy improvement?</td>
 <td>Distinguishes background updates, online search, latent models, and model error</td>
 </tr>
 <tr>
-<td>11</td>
+<td>10</td>
 <td>How do choices change when other agents choose strategically?</td>
 <td>Adds best response, equilibrium, and welfare to single-agent rationality</td>
+</tr>
+<tr>
+<td>11</td>
+<td>How can foundation models assist planning and learn from human or AI feedback?</td>
+<td>Integrates tool execution, preference optimization, verification, and oversight</td>
 </tr>
     </tbody>
   </table>
@@ -10641,9 +10678,153 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <hr>
 
-<h1 class="mt-4">Week 10 - Model-Based Reinforcement Learning: Learned Dynamics, Planning, Dyna-Q, and Latent World Models</h1>
+<h1 class="mt-4">Week 8 - Mid-Term Consolidation: Planning, Utility, MDP State Design, and Passive RL</h1>
 
-<p class="mb-3">The earlier weeks supplied two ways to improve a policy: learn directly from experience, or search from the current state with a simulator. <strong>Model-based RL connects them</strong> by learning the simulator itself. Game theory then changes the environment assumption: another decision maker may adapt to our policy, so a single-agent optimal response need not be stable.</p>
+<p class="mb-3">The supplied <em>Course Overview</em>, slide 3, assigns the <strong>mid-term test</strong> to Week 8 and no new lecture topic. The official Tutorial 5 sheet is labeled <strong>Week 7: Mid-Term Review</strong>. This chapter therefore consolidates earlier material rather than pretending that Week 8 introduced a new algorithm. The detailed problem-by-problem worked answers appear in the Tutorial 5–6 practice chapter below; the questions here are the cross-topic checks that reveal whether the first seven weeks form one coherent decision model.</p>
+</section>
+
+<section id="1-choose-the-right-mathematical-object-before-calculating" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Choose the right mathematical object before calculating</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Question type</th>
+<th>Object needed</th>
+<th>First check</th>
+<th>What a correct result establishes</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Classical planning</td>
+<td>Grounded facts and action schemas</td>
+<td>Are all preconditions true in the current state?</td>
+<td>An applicable action and its add/delete successor</td>
+</tr>
+<tr>
+<td>Abstract planning</td>
+<td>Optimistic and pessimistic reachable sets</td>
+<td>Are these over- or under-approximations?</td>
+<td>A possibility in the optimistic estimate or a certified result under the stated pessimistic-set semantics; not guaranteed real-world success from optimism alone</td>
+</tr>
+<tr>
+<td>Preference/utility</td>
+<td>Lotteries over <strong>final wealth</strong> or outcomes</td>
+<td>Are probabilities normalized and utility applied before averaging?</td>
+<td>A ranking under the specified utility representation</td>
+</tr>
+<tr>
+<td>Delayed stochastic control</td>
+<td>A Markov state including action progress</td>
+<td>Can the next state/reward distribution be determined from it and the legal action?</td>
+<td>A well-defined MDP, before trying to compute a policy</td>
+</tr>
+<tr>
+<td>Passive RL</td>
+<td>Fixed policy plus experience</td>
+<td>Does the method wait for returns, bootstrap, or learn a model?</td>
+<td>A value estimate for that policy, not necessarily an optimal policy</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">The review sheet deliberately mixes these objects. A grounded <code>Fly</code> action uses logical preconditions, not expected value. A gamble ranking uses expected <em>utility</em>, not a search tree. A robot with a pending movement needs a state variable recording that commitment before a Bellman equation is valid. Passive RL evaluates a fixed policy, while active control compares actions. Naming this object first prevents the most common category mistakes.</p>
+</section>
+
+<section id="2-a-four-step-answer-routine-for-the-review-problems" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. A four-step answer routine for the review problems</h3>
+
+<ol class="mb-3">
+<li><strong>Copy the given model exactly.</strong> Do not add a “from ≠ to” flight condition if the schema omits it. Do not assume a discount factor or boundary rule that the question does not state.</li>
+<li><strong>Identify state and timing.</strong> For a delayed robot move, distinguish ready and pending states and charge the non-goal cost at each elapsed step. For a lottery, add gain/loss to initial wealth before applying $\ln$.</li>
+<li><strong>Compute using the matching rule.</strong> STRIPS successor is $(s\setminus Del)\cup Add$; expected utility is $\sum_i p_iU(x_i)$; a Bellman backup averages next-state values; a Monte Carlo update uses completed returns.</li>
+<li><strong>State the inference limit.</strong> Optimistic reachable sets do not prove guaranteed success; a value for one fixed policy is not an optimal control solution; one episode or one sampled model outcome does not prove a population expectation.</li>
+</ol>
+
+<p class="mb-3">For the review's two-coin preference problem, equal expected dollars are insufficient: the correct bridge is that Game 2 is a half chance of a sure $50$ and a half chance of Game 1. Under the expected-utility independence assumption, preferring Game 2 implies preferring the sure $50$ to Game 1. For the passive $S_0\to S_1\to S_2$ trajectory, the actual values are $U^\pi(S_2)=0$, $U^\pi(S_1)=1$, and $U^\pi(S_0)=\gamma$, but MC, TD(0), and ADP reach or approximate them through different evidence and update schedules. Those derivations are expanded in the tutorial chapter.</p>
+</section>
+
+<section id="3-bridge-to-the-next-lecture" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Bridge to the next lecture</h3>
+
+<p class="mb-3">The first seven weeks either use a known planning model, estimate values directly from experience, or use a provided simulator for decision-time search. Week 9 asks what happens when the simulator itself must be learned from transitions. The Week 8 review exposes the prerequisite: a model needs explicit state, action, reward, and transition semantics. If the delayed robot's pending state is omitted, a learned dynamics model built on cell coordinates alone would inherit a non-Markov representation and produce unreliable plans even with a powerful neural network.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Week 8 is mid-term consolidation in the supplied course overview, not a new lecture method.</li>
+<li>Use the official Tutorial 5 Week 7 review to test planning, utility, delayed MDP, and passive-RL prerequisites.</li>
+<li>State the model, compute with the matching rule, and say exactly what the answer proves.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ul class="note-list">
+<li><em>Course Overview.pdf</em>, CS4246/CS5446, slide 3 (Week 8 mid-term schedule).</li>
+<li><em>Tutorial5.pdf</em>, official AY2026/27 Tutorial 5 Week 7 Mid-Term Review, 4 pages.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">Week 9 - Model-Based Reinforcement Learning: Learned Dynamics, Planning, Dyna-Q, and Latent World Models</h1>
+
+<p class="mb-3">The earlier weeks supplied two ways to improve a policy: learn directly from experience, or search from the current state with a simulator. <strong>Model-based RL connects them</strong> by learning the simulator itself. The course overview places this lecture in <strong>Week 9</strong>; its corresponding Tutorial 7 sheet is labeled <strong>Week 10</strong>, one week later. Game theory then changes the environment assumption: another decision maker may adapt to our policy, so a single-agent optimal response need not be stable.</p>
 </section>
 
 <section id="1-model-based-reinforcement-learning-learn-a-model-then-choose-how-to-use-it" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -10861,6 +11042,16 @@ For every real transition (s, a, r, s_next):
 <h4 id="4-3-emerging-directions-are-extensions-not-proven-replacements" class="mb-2">4.3 Emerging directions are extensions, not proven replacements</h4>
 
 <p class="mb-3">The lecture's closing map points from compact latent control models toward controllable interactive simulators and broad predictive representations. It lists examples of interactive world simulation (Genie 3), world foundation models (V-JEPA 2), joint world–action modeling, and physical-AI world models. The shared research question is whether an agent can predict action-conditioned futures accurately and cheaply enough for training, testing, or control across many tasks. The slide is a direction map; the present note makes no claim that these systems satisfy a common benchmark or replace MuZero, DreamerV3, or TD-MPC2. As models grow broader, the same value-equivalence and model-bias checks remain necessary.</p>
+
+<h4 id="4-4-read-the-training-targets-not-only-the-architecture-names" class="mb-2">4.4 Read the training targets, not only the architecture names</h4>
+
+<p class="mb-3"><strong>MuZero.</strong> Starting from real observation history $o_{\le t}$, a representation network produces latent $z_t=h(o_{\le t})$. The dynamics network unrolls $z_{t,k+1},\hat r_{t,k+1}=g(z_{t,k},a_{t+k})$, and the prediction network outputs policy prior and value $(p_{t,k},v_{t,k})=f(z_{t,k})$. MCTS uses these quantities to choose an action. During training, unrolled reward predictions are compared with observed rewards, value predictions with return/value targets, and policy predictions with the search-improved MCTS policy. This is why the model can be useful without reconstructing the next camera image: it is trained to preserve consequences that affect search. A bad latent representation can still fail if it merges situations with different rewards or action outcomes.</p>
+
+<p class="mb-3"><strong>DreamerV3.</strong> A recurrent state-space model maintains deterministic history $h_t$ and stochastic latent $z_t$. On a real transition, the posterior $q_\eta(z_{t+1}\mid h_{t+1},o_{t+1})$ can use the observed next frame; in imagination, the prior $p_\eta(z_{t+1}\mid h_{t+1})$ must predict without that observation. World-model losses include observation, reward and continuation prediction plus terms aligning prior and posterior. The actor and critic then train on imagined trajectories. A simplified imagined $\lambda$-return is $G_t^\lambda=\hat r_t+\gamma[(1-\lambda)\hat V_{t+1}+\lambda G_{t+1}^\lambda]$, omitting terminal/continuation factors for clarity as the lecture slide does. At $\lambda=0$ it leans on the learned critic after one step; at $\lambda=1$ it follows the imagined rewards longer before bootstrapping. Longer imagined dependence may reduce critic bias but increases exposure to model error.</p>
+
+<p class="mb-3"><strong>TD-MPC2.</strong> An encoder maps the observation to $z_t$; dynamics predicts short latent transitions, a reward head predicts $\hat r$, a Q head estimates terminal value, and a policy prior proposes promising actions. Its training objective combines latent-consistency, reward-prediction, and temporal-difference value losses over unroll steps with weights. The planner ranks a horizon-$H$ sequence by $\sum_{i=0}^{H-1}\gamma^i\hat r_{t+i}+\gamma^H\hat Q(z_{t+H},a_{t+H})$, executes only its first action, observes the true next state, and replans. This terminal Q is an approximation of what lies beyond the short model rollout, not a guarantee that the chosen sequence is globally optimal. Unlike DreamerV3, the decisive optimization is repeated at action time, adding latency but using fresh observations to reset the horizon.</p>
+
+<p class="mb-3">The three methods therefore use different <strong>targets</strong> and <strong>compute locations</strong>. A simple score table that says “all use world models” hides the central difference: MuZero trains search-relevant latent predictions and searches; DreamerV3 trains an actor through imagined returns; TD-MPC2 learns a compact control model and optimizes an action sequence at each decision. When diagnosing failure, ask whether the error came from the reward target, latent transition, value estimate, policy prior, or the search/optimizer exploiting a weakness in one of them.</p>
 </section>
 
 <section id="5-what-the-model-based-addendum-actually-adds" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -10940,7 +11131,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </div>
 </section>
 
-<section id="references-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="references-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <ul class="note-list">
@@ -10954,9 +11145,9 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <hr>
 
-<h1 class="mt-4">Week 11 - Game Theory: Strategic Interaction, Nash Equilibrium, Welfare, and Minimax</h1>
+<h1 class="mt-4">Week 10 - Game Theory: Strategic Interaction, Nash Equilibrium, Welfare, and Minimax</h1>
 
-<p class="mb-3">The decision-theory chapter asks what one agent should do when uncertainty is exogenous. Here the uncertainty includes other agents' choices. An outcome may be individually stable yet collectively poor, which is why equilibrium and welfare must be checked separately.</p>
+<p class="mb-3">The decision-theory chapter asks what one agent should do when uncertainty is exogenous. Here the uncertainty includes other agents' choices. The course overview places this lecture in <strong>Week 10</strong>, while its Tutorial 8 sheet is labeled <strong>Week 11</strong>. An outcome may be individually stable yet collectively poor, which is why equilibrium and welfare must be checked separately.</p>
 </section>
 
 <section id="1-game-theory-from-a-fixed-environment-to-strategic-opponents" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -11096,6 +11287,20 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">For a two-action player mixing with positive probability on both actions, each supported action must have equal expected payoff against the opponent's mixture. Solve the linear equality for the opponent's probability, then reverse roles. Verify the probability lies in $[0,1]$ and that no excluded action performs better. In matching pennies, symmetry yields $1/2$ each and no pure NE. In chicken, if the opponent chooses Straight with probability $q$, Straight yields $3-13q$ while Swerve yields $q$; equality gives $q=3/14$. A mixed equilibrium is a distribution over play, not a player switching at random because they are indifferent in a single realized game.</p>
 
+<p class="mb-3"><strong>Which player's probability does an indifference equation determine?</strong> If row player A compares two rows, the expected payoffs of those rows depend on column player B's mixing probability $q$. Solving A's indifference equation therefore determines <strong>B's</strong> $q$, not A's own $p$. To find A's $p$, write B's two column payoffs as functions of $p$ and make <em>B</em> indifferent. Each player chooses a probability that removes the other's incentive to favor one pure action. This mutual response condition, plus valid probabilities and deviation checks, determines a fully mixed Nash equilibrium when one exists.</p>
+
+<p class="mb-3">For a generic row payoff matrix $\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}$ and B choosing the first column with probability $q$, A receives $qa+(1-q)b$ from the first row and $qc+(1-q)d$ from the second. If both rows are in A's support, equality gives $q=(d-b)/(a-b-c+d)$ when the denominator is nonzero. This expression alone says nothing about A's own mixing probability because B's payoff matrix is still needed. If $q$ lies outside $[0,1]$, the supposed fully mixed solution is invalid; look for pure or smaller-support equilibria instead. In a game with more than two actions, every supported action must tie, while excluded actions must not be better.</p>
+
+<h4 id="2-1a-two-finger-morra-derive-both-probabilities-and-the-value" class="mb-2">2.1a Two-finger Morra: derive both probabilities and the value</h4>
+
+<p class="mb-3">In the lecture's two-finger zero-sum Morra, E's payoff matrix is $A=\begin{pmatrix}2&amp;-3\\-3&amp;4\end{pmatrix}$. Let O show one finger with probability $q$. E's expected payoff from one finger is $2q-3(1-q)=5q-3$; from two fingers it is $-3q+4(1-q)=4-7q$. Equality gives $5q-3=4-7q$, hence $q=7/12$. Because the matrix is symmetric, making O indifferent similarly gives E's probability $p=7/12$ for one finger. Substituting yields value $5(7/12)-3=-1/12$ to E. A pure choice is exploitable because the opponent can choose the unfavorable column/row; the equilibrium randomization prevents either player from improving alone.</p>
+
+<h4 id="2-1b-coordination-and-chicken-check-the-calculation-against-the-game" class="mb-2">2.1b Coordination and chicken: check the calculation against the game</h4>
+
+<p class="mb-3">In the Astro/Bolt coordination matrix used above, let Astro choose Blu-ray with probability $p$ and Bolt choose Blu-ray with probability $q$. Astro's Blu-ray payoff is $9q-1(1-q)=10q-1$; Astro's DVD payoff is $-q+5(1-q)=5-6q$. Thus Astro is willing to mix only if $q=3/8$. Bolt's Blu-ray payoff is $9p-3(1-p)=12p-3$, and Bolt's DVD payoff is $-4p+5(1-p)=5-9p$, giving $p=8/21$. The pair $(p,q)=(8/21,3/8)$ is the <strong>mixed</strong> coordination equilibrium. It coexists with the two pure equilibria and does not solve the practical question of which format they should coordinate on.</p>
+
+<p class="mb-3">For Tutorial 8's chicken matrix, the symmetric mixed value is $q=3/14$: Straight returns $3-13(3/14)=3/14$ and Swerve returns $3/14$. The two pure equilibria remain $(St,Sw)$ and $(Sw,St)$. The mixed calculation describes strategic uncertainty when neither player can rely on being the one who goes straight; it does not make a collision safe or socially desirable. The lecture's own chicken numbers differ, so its probability must be derived from <em>its</em> matrix separately.</p>
+
 <h4 id="2-2-battle-of-the-sexes-calculations" class="mb-2">2.2 Battle of the Sexes calculations</h4>
 
 <p class="mb-3">Let the husband choose F with probability $p$ and wife choose F with probability $q$. Husband's expected payoff from F is $q$, from Concert is $2(1-q)$, so his mixing requires $q=2/3$. Wife's expected payoff from F is $2p$, from Concert is $1-p$, so her mixing requires $p=1/3$. Substituting either action gives each expected utility $2/3$. The two pure NE produce $(1,2)$ and $(2,1)$; each partner choosing their <em>own</em> favorite independently produces a mismatch and $(0,0)$. Under uniform independent choices, each gets $(1+2)/4=3/4$. That is an expectation over four cells, not a Nash equilibrium: either player would want to change their mix against a uniform opponent.</p>
@@ -11195,7 +11400,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </div>
 </section>
 
-<section id="references-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="references-10" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <ul class="note-list">
@@ -11205,7 +11410,239 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <hr>
 
-<h1 class="mt-4">Tutorial 5–6: Mid-Term Foundations and Guided Decision-Making Practice</h1>
+<h1 class="mt-4">Week 11 - Foundation-Model-Based Decision Making: Agentic Systems, Human Alignment, and Reasoning-Aware Learning</h1>
+
+<p class="mb-3">Weeks 7, 9, and 10 considered search, learned models, and strategic choices. Week 11 asks how a large foundation model (LFM) can participate in those decision systems <strong>while remaining grounded in human goals and constraints</strong>. The lecture deck's title page has no week number, but the supplied <em>Course Overview</em>, slide 3, places foundation-model agents and human–AI alignment in Week 11. A model's ability to generate fluent plans does not itself establish that its actions are feasible, authorized, safe, or useful.</p>
+</section>
+
+<section id="1-from-an-mdp-to-an-agentic-system" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. From an MDP to an agentic system</h3>
+
+<p class="mb-3">A sequential decision problem needs a state or belief representation, actions, uncertain transitions, observations, an objective, and a horizon. A decision algorithm maps this model to either an action sequence from a given initial state or a policy that can react to later observations. The LFM may help <strong>build</strong> the model, <strong>propose</strong> a plan, <strong>choose</strong> a tool, or <strong>criticize</strong> a result. These are different roles; the LFM is not automatically the environment model, reward function, optimal planner, and safety verifier at once.</p>
+
+<p class="mb-3">The lecture's conceptual loop is <strong>Sense → Reason → Plan → Act → Learn</strong>. In an implementation, sensing may retrieve documents or observe a tool result; reasoning interprets goals and constraints; planning compares candidate actions; acting calls a tool or environment API; learning incorporates feedback into memory or later training. The loop is not a rigid waterfall. ReAct, for example, interleaves reasoning, tool calls, and new observations. “Learn” can mean updating a short-lived memory or preference record; it does <strong>not</strong> imply that every interaction changes model parameters.</p>
+
+<p class="mb-3">Belief–Desire–Intention (BDI) provides another lens: <em>beliefs</em> are the agent's current world information, <em>desires</em> are possible goals and preferences, and <em>intentions</em> are selected commitments and plans. Retrieval can update beliefs; a human can set or revise desires; a planner chooses intentions. The human objective must not be inferred solely from a convenient proxy reward. When an action has a real external effect, specify permission and a check before execution.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>System component</th>
+<th>Concrete responsibility</th>
+<th>Typical failure if omitted</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Planner</td>
+<td>Decompose a goal; propose and compare steps</td>
+<td>Plausible prose with no executable sequence</td>
+</tr>
+<tr>
+<td>Executor</td>
+<td>Call permitted tools and record results</td>
+<td>A plan is mistaken for a completed action</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>Retain useful context with provenance and expiry</td>
+<td>Stale retrieval becomes a false belief</td>
+</tr>
+<tr>
+<td>Critic / assurance</td>
+<td>Check constraints, outcomes, and evidence</td>
+<td>A polished answer hides a failed tool call</td>
+</tr>
+<tr>
+<td>Human oversight</td>
+<td>Set goals, permissions, and review consequential choices</td>
+<td>The system optimizes a proxy contrary to intent</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">In the lecture's diagram-generation example, the model notices it lacks a logo, retrieves an authorized asset, drafts a diagram, runs a renderer/validator, and incorporates feedback. The <strong>tool result</strong> is evidence that a retrieval or compile occurred; a sentence saying it occurred is not. A robust trace records the request, tool inputs and outputs, validation result, and what a person approved.</p>
+</section>
+
+<section id="2-human-guided-learning-demonstrations-and-preferences" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Human-guided learning: demonstrations and preferences</h3>
+
+<p class="mb-3">The lecture distinguishes four stages. Pretraining builds broad representations from large-scale data. <strong>Supervised fine-tuning (SFT)</strong> imitates curated prompt–response demonstrations and provides an instruction-following reference policy $\pi_{\rm ref}$. Preference optimization then uses comparisons or rewards to improve behavior. Post-deployment monitoring identifies failures and may motivate later updates; monitoring alone is not training.</p>
+
+<p class="mb-3">In <strong>RLHF</strong>, annotators compare responses for a prompt. A reward model $\hat r(x,y)$ is fitted to those comparisons. A policy is then optimized for expected reward while staying near the reference:</p>
+
+<p class="mb-3">$$J(\theta)=\mathbb E_{x\sim D,\,y\sim\pi_\theta(\cdot\mid x)}\left[\hat r(x,y)-\beta\log\frac{\pi_\theta(y\mid x)}{\pi_{\rm ref}(y\mid x)}\right].$$</p>
+
+<p class="mb-3">The KL term discourages large distribution shifts; $\beta$ controls that trade-off. This is the <strong>objective</strong>. Proximal Policy Optimization (PPO) is one possible <strong>update method</strong>: it uses the ratio between the new policy and the policy that sampled the training tokens, clips large changes, and uses an advantage estimate. The PPO clipping reference is the rollout policy, whereas the RLHF KL reference is the fixed SFT policy; mixing these two references is a common conceptual mistake. Reward-model bias can be amplified when optimization finds high-scoring but poor responses, so an independent evaluation set and human audits are necessary.</p>
+
+<p class="mb-3"><strong>Direct Preference Optimization (DPO)</strong> uses preferred/rejected pairs $(y^+,y^-)$ without training a separate explicit reward model or running PPO rollouts. Let $\Delta_\theta=\log\pi_\theta(y^+\mid x)-\log\pi_\theta(y^-\mid x)$, and define $\Delta_{\rm ref}$ similarly. Its loss is $-\mathbb E\log\sigma[\beta(\Delta_\theta-\Delta_{\rm ref})]$. DPO asks the current policy to favor the preferred response <strong>more than the reference does</strong>. It is simpler to optimize but remains limited by the quality, coverage, and consistency of its preference pairs; it is not a proof of alignment.</p>
+
+<p class="mb-3"><strong>Reinforcement Learning from AI Feedback (RLAIF)</strong> changes who supplies the feedback, not necessarily the optimizer. An AI judge may provide reward scores for an RL pipeline or preference pairs for DPO. Constitutional critique/revision is an example of principle-guided AI feedback. This can scale annotations, but judge bias, shared blind spots, and self-confirmation can contaminate the target. Human calibration, evaluator diversity, disagreement audits, and external task checks become more important as AI feedback scales. The lecture's “helpfulness, harmlessness, honesty” triangle describes distinct goals that may trade off in difficult cases.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Method</th>
+<th>Feedback data</th>
+<th>What is optimized</th>
+<th>Key dependency</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>SFT</td>
+<td>Demonstrated responses</td>
+<td>Likelihood of demonstrations</td>
+<td>Demonstration quality and coverage</td>
+</tr>
+<tr>
+<td>RLHF with PPO</td>
+<td>Human comparisons → reward model</td>
+<td>Sampled policy return with KL control</td>
+<td>Reward calibration and stable rollouts</td>
+</tr>
+<tr>
+<td>DPO</td>
+<td>Preferred/rejected pairs</td>
+<td>Relative response log probabilities</td>
+<td>Pair quality and reference choice</td>
+</tr>
+<tr>
+<td>RLAIF</td>
+<td>AI judgments or comparisons</td>
+<td>RL or preference objective</td>
+<td>Judge reliability and human audit</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="2-1-work-a-preference-pair-through-the-two-objectives" class="mb-2">2.1 Work a preference pair through the two objectives</h4>
+
+<p class="mb-3">Take one prompt with two candidate responses, $y^+$ preferred over $y^-$. Suppose the fixed reference gives them probabilities $(0.4,0.6)$ and the candidate policy gives $(0.7,0.3)$. For DPO with $\beta=1$, the reference log-odds are $\log(0.4/0.6)=\log(2/3)$; the candidate log-odds are $\log(0.7/0.3)=\log(7/3)$. The <em>improvement over the reference</em> is $\log(7/2)=\log 3.5$. The modeled preference probability is $\sigma(\log 3.5)=3.5/(1+3.5)\approx0.778$, giving a per-pair loss of $-\log(0.778)\approx0.251$. If both policies had identical odds, this probability would be $0.5$ regardless of whether the reference itself already favored $y^+$. That is why DPO uses a difference of log-odds rather than merely maximizing $\pi_\theta(y^+)$ without a reference.</p>
+
+<p class="mb-3">The RLHF objective evaluates a different quantity: responses sampled from the policy receive reward, and the full response distribution pays a KL cost. For the same two-response toy example, set rewards $\hat r(y^+)=2$, $\hat r(y^-)=0$, and $\beta=0.5$. Expected reward under $(0.7,0.3)$ is $1.4$. The KL divergence from $(0.4,0.6)$ is $0.7\log(0.7/0.4)+0.3\log(0.3/0.6)\approx0.184$, so the regularized value is about $1.4-0.5(0.184)=1.308$. These numbers show how the objective balances reward and departure from the reference; they do not imply that the reward model's score is a true human utility or that a particular response is safe.</p>
+
+<p class="mb-3">The lecture's PPO slide operates at <em>token</em> decisions: state $s_t$ contains the prompt and generated prefix, action $a_t$ is the next token, and the rollout policy supplies the sample. A sequence-level reward can be assigned after the response is complete, while token-level KL terms and advantage estimates allocate training signal across the sequence. This distinction explains why “compare complete answers” and “update a token policy” can both describe one RLHF pipeline.</p>
+</section>
+
+<section id="3-integrated-reasoning-and-planning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Integrated reasoning and planning</h3>
+
+<p class="mb-3">Chain-of-thought (CoT) prompting asks a model to generate intermediate steps before a final answer. Sampling several traces and aggregating final answers is <strong>self-consistency</strong>; generating executable code for arithmetic is <strong>Program-of-Thought</strong>. These are decision-time procedures unless their traces are later used as training data. A readable generated trace can still be unfaithful to the model's actual causal process, so arithmetic, tool effects, and domain constraints need independent checks.</p>
+
+<p class="mb-3">For planning, compare the alternatives by where validity comes from. <strong>Plan-and-Solve</strong> decomposes first, then executes. <strong>Tree of Thoughts</strong> explores and backtracks among candidate thought paths. <strong>LLM+P</strong> translates a problem into a formal planning language such as PDDL and delegates search to a planner. <strong>LLM-Modulo</strong> puts an external verifier around proposed plans. <strong>ReAct</strong> interleaves tool use with observation. In every case, a verifier can only validate the model and constraints it was given; a correct PDDL plan for an incorrect world model can still fail in reality.</p>
+
+<p class="mb-3">An assurance workflow should check: (1) whether observations/retrieved evidence support the current belief, (2) whether the goal reflects the person's actual request, (3) whether the plan respects permissions and resource constraints, (4) whether a tool reported success, and (5) whether the observed outcome meets the task criterion. This connects Week 1's symbolic validity, Week 3's utility, Week 7's search, and Week 10's model error into one system-level test.</p>
+</section>
+
+<section id="4-ai-guided-learning-from-outcomes-and-processes" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. AI-guided learning from outcomes and processes</h3>
+
+<p class="mb-3"><strong>Outcome supervision</strong> scores a final answer or completed task. <strong>Process supervision</strong> scores intermediate steps. The latter can expose an incorrect transition that happens to end with a correct answer, but a process label is only useful when the evaluator can reliably judge the step. AI judges can assess full responses or traces; human or external verification is needed to detect correlated errors and reward hacking.</p>
+
+<p class="mb-3"><strong>Group-Relative Policy Optimization (GRPO)</strong> samples a group of responses to the same prompt and compares their rewards. For nonzero within-group variance, a simplified response-level advantage is $A_i=(R_i-\bar R)/(\operatorname{std}(R)+\varepsilon)$. A PPO-style clipped update uses these relative advantages and a reference-policy regularizer, without a separate learned value critic. The normalized advantage describes <em>relative</em> quality inside that group; if every response is wrong but one is slightly less wrong, a positive advantage does not certify correctness. Zero or near-zero variance needs a numerical convention. GRPO is reward-based RL, whereas DPO directly trains on preference pairs.</p>
+
+<p class="mb-3">For a small worked group with rewards $(0,1,2)$, the mean is $1$ and population standard deviation is $\sqrt{2/3}\approx0.816$. Ignoring $\varepsilon$ for this nonzero-variance example, advantages are approximately $(-1.225,0,1.225)$. The last response receives a positive update because it is best <strong>within this group</strong>. Replacing the rewards by $(-100,-99,-98)$ produces the same normalized advantages despite every response potentially being unacceptable; an absolute quality gate or independent verifier must therefore sit outside relative optimization. If all rewards equal $1$, normalization is undefined without $\varepsilon$ or a special-case rule and supplies no ranking signal.</p>
+
+<p class="mb-3"><strong>Self-rewarding language models</strong> generate responses, judge them, form preference pairs, and update through DPO in a repeated cycle. This can improve a model when its judgments correlate with real quality, but the loop may also reinforce its own errors. Holdout tasks, independent judges, human audits, and calibrated rubrics are ways to detect such drift. The lecture treats these as approaches to improving reasoning-aware behavior, not as interchangeable names for one algorithm.</p>
+</section>
+
+<section id="5-evaluation-capability-and-alignment-are-separate-measurements" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Evaluation: capability and alignment are separate measurements</h3>
+
+<p class="mb-3">Test the whole loop: task completion, validity of tool actions, safety and authorization, latency, traceability, human intervention, and fairness or downstream impact. A benchmark of web or software tasks can measure success under its setup, but success rate alone does not establish that real deployments have adequate permissions, truthful reports, or safe failure behavior. Compare a final answer with the actual tool trace and independently observed result. For high-impact actions, preserve a human decision point and a way to stop or reverse execution.</p>
+
+<h4 id="5-1-work-one-agentic-task-through-the-complete-loop" class="mb-2">5.1 Work one agentic task through the complete loop</h4>
+
+<p class="mb-3">Take the lecture's example: a person asks for a slide-ready decision-loop diagram with a specific institutional logo. The <strong>beliefs</strong> initially include the prompt and slide context but not a verified logo file; the <strong>desire</strong> is a clear, accurate diagram; the <strong>intention</strong> is a plan to retrieve the asset, generate a layout, render it, and validate the result. A useful agent should say that the logo is missing, use an allowed retrieval source, and distinguish retrieved evidence from a fabricated placeholder. It should not treat the sentence “I retrieved it” as proof that a tool actually returned a file.</p>
+
+<p class="mb-3">The first draft may put annotations in the wrong place. The human's correction (“side labels”) updates the task constraints. The planner then revises its layout, the executor renders a new artifact, and the critic checks label order, file validity, and visual legibility. The human can review or approve the consequential output. The final response should identify the actual rendered file and any remaining uncertainty. If rendering fails, the agent should preserve that failure in its report rather than presenting planned work as completed work.</p>
+
+<p class="mb-3">This task also separates three meanings of “learning”: (1) the current context now records the corrected label preference, (2) durable memory might store a preference with provenance and expiry if authorized, and (3) parameter training would require a later dataset and optimization step. The lecture's Sense → Reason → Plan → Act → Learn diagram can describe all three only if the implementation states which one occurred. The same distinction matters in Week 9 model-based RL: updating a learned world model from fresh transitions is a different process from replanning with a fixed model after an observation.</p>
+
+<h4 id="5-2-design-an-evaluation-that-can-catch-attractive-failure" class="mb-2">5.2 Design an evaluation that can catch attractive failure</h4>
+
+<p class="mb-3">Suppose an agent produces a visually polished diagram with the wrong institutional logo. A final-output aesthetic score might pass, while source correctness fails. Evaluate each layer with a separate check: <strong>grounding</strong> (asset provenance), <strong>planning</strong> (all required labels present), <strong>execution</strong> (render/compile actually succeeded), <strong>safety and permissions</strong> (authorized asset and tool use), <strong>outcome</strong> (human-readable diagram), and <strong>reporting honesty</strong> (claims match the tool trace). Human intervention latency and the ability to revise or stop the workflow are additional operational measures.</p>
+
+<p class="mb-3">Preference optimization can improve average judged quality yet still miss this exact failure if the comparison data rarely contain wrong-logo cases. An AI judge may share the same mistaken assumption as the generator. External verification of the logo and a targeted holdout test are therefore complementary to RLHF, DPO, RLAIF, or GRPO. This is the practical meaning of the lecture's human-alignment theme: a reward or preference signal is a <em>measurement</em> of the objective, not the objective itself.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>An LFM can ground, plan, execute through tools, or critique; these roles need explicit interfaces and checks.</li>
+<li>SFT imitates demonstrations; RLHF optimizes a learned reward; DPO trains directly on preference pairs; RLAIF changes the feedback source.</li>
+<li>PPO's clipped rollout ratio and RLHF's fixed-reference KL term serve different purposes.</li>
+<li>CoT and planning techniques operate at decision time unless their traces enter a later training step.</li>
+<li>GRPO uses within-prompt relative rewards without a value critic; self-rewarding loops require independent evaluation.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references-11" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">References</h3>
+
+<ul class="note-list">
+<li>NUS CS4246/CS5446. <em>Foundation-Model-Based Decision Making: From Agentic Planning to Human Alignment</em>, version 2.0, 64 slides, supplied course lecture.</li>
+<li>Ouyang, L., et al. (2022). Training language models to follow instructions with human feedback.</li>
+<li>Rafailov, R., et al. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model.</li>
+<li>Shao, Z., et al. (2024). DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models.</li>
+</ul>
+
+<hr>
+
+<h1 class="mt-4">Tutorial Practice - Tutorial 5 (Week 7) and Tutorial 6 (Week 9)</h1>
 
 <p class="mb-3">These tutorials revisit earlier chapters. Each solution starts by naming the relevant assumption or state representation, performs the calculation, and then states what the calculation does <em>not</em> establish. The Team 8 PDF is a student submission and therefore supporting context, not an answer key.</p>
 </section>
@@ -11231,7 +11668,39 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <h4 id="1-5-rollout-mcts-uct-and-imitation" class="mb-2">1.5 Rollout, MCTS, UCT, and imitation</h4>
 
-<p class="mb-3">Tutorial 6's rollout returns give $\hat Q(s_0,L)=(4+6+5)/3=5$ and $\hat Q(s_0,R)=(3+8+2)/3=13/3$, so choose L. MCTS retains tree statistics across simulations instead of restarting independent rollouts. If a state has $M$ variables with $n$ values each, the state space has $n^M$ states. With two action choices and two stochastic outcomes per action, a complete depth-$D$ action/outcome tree is $O(4^D)$ nodes and edges; $T$ MCTS trials of depth at most $D$ use $O(TD)$ simulated steps and at most $O(TD)$ new nodes, commonly fewer. For the tutorial's UCT convention $\hat Q+c\sqrt{\log_2 N(s)/N(s,a)}$, $N(s)=16$, $c=1$: Move scores $.5+\sqrt{4/8}\approx1.207$ and Scan scores $1+\sqrt{4/8}\approx1.707$; select Scan. A new Scan rollout of $.6$ updates its count to $9$ and mean to $(8\cdot1+.6)/9\approx.956$. Feature-based softmax imitation shares parameters across similar rover states, unlike a separate tabular probability per state; DAgger addresses behavioral cloning's compounding off-distribution errors by asking an expert to label states visited by the learned policy and aggregating those examples.</p>
+<p class="mb-3">Tutorial 6's rollout returns give $\hat Q(s_0,L)=(4+6+5)/3=5$ and $\hat Q(s_0,R)=(3+8+2)/3=13/3$, so choose L. MCTS retains tree statistics across simulations instead of restarting independent rollouts. If a state has $M$ variables with $n$ values each, the state space has $n^M$ states. With two action choices and two stochastic outcomes per action, a complete depth-$D$ action/outcome tree is $O(4^D)$ nodes and edges; $T$ MCTS trials of depth at most $D$ use $O(TD)$ simulated steps. Under the <strong>usual one-new-node-per-trial implementation</strong>, the stored tree has at most $T+1$ state nodes, so it is $O(T)$; an implementation expanding an entire suffix per trial instead has the looser $O(TD)$ node bound. For the tutorial's UCT convention $\hat Q+c\sqrt{\log_2 N(s)/N(s,a)}$, $N(s)=16$, $c=1$: Move scores $.5+\sqrt{4/8}\approx1.207$ and Scan scores $1+\sqrt{4/8}\approx1.707$; select Scan. A new Scan rollout of $.6$ updates its count to $9$ and mean to $(8\cdot1+.6)/9\approx.956$. Feature-based softmax imitation shares parameters across similar rover states, unlike a separate tabular probability per state; DAgger addresses behavioral cloning's compounding off-distribution errors by asking an expert to label states visited by the learned policy and aggregating those examples.</p>
+
+<h4 id="1-6-tutorial-5-a-fully-markov-delayed-movement-model" class="mb-2">1.6 Tutorial 5: a fully Markov delayed-movement model</h4>
+
+<p class="mb-3">The delayed grid question is a good test of whether a state describes everything needed to predict the next step. Let a ready state $R_z$ mean the robot is at cell $z$ and may choose a movement. Let $D_{z,z'}$ mean it remains physically at $z$ while a previously chosen movement is committed to finish at $z'$ on the next time step. Let $f(z,d)$ be the neighboring cell in direction $d$, with a blocked boundary move defined to leave the robot at $z$. Given intended action $a$, define $q(d\mid a)=0.8$ for $d=a$, $0.1$ for each orthogonal direction, and $0$ otherwise. This definition makes direction uncertainty explicit and combines probability mass when two directions hit the same boundary cell.</p>
+
+<p class="mb-3">At nonterminal $R_z$, the legal action set is the four intended directions. At $D_{z,z'}$, the only action is <code>wait</code>; at goal $R_g$, the process terminates. One consistent transition convention samples the eventual direction when the movement starts:</p>
+
+<p class="mb-3">$$P(R_{f(z,d)}\mid R_z,a)\mathrel{+}=0.5q(d\mid a),\qquad P(D_{z,f(z,d)}\mid R_z,a)\mathrel{+}=0.5q(d\mid a),\qquad P(R_{z'}\mid D_{z,z'},\text{wait})=1.$$</p>
+
+<p class="mb-3">The $+= $ notation means probabilities for coincident successor states are added, not overwritten. A consistent transition reward is $r(s,a,s')=-0.05+100\,\mathbf1\{s'=R_g\}$. The immediate path costs one time step; the delayed path costs two, including the forced wait. Paying $+100$ when the movement is merely pending would be too early. Alternative models can postpone sampling the direction until completion, but then the pending state must retain the original action and a duration flag, with a transition law that uses them. A cell coordinate alone is inadequate because it cannot tell whether a new action is legal.</p>
+
+<p class="mb-3">The optional request for an optimal policy “at $t=2$” has no unique action without a specified state at that time. For an infinite or stochastic-shortest-path formulation, solve the Bellman equations by value or policy iteration with an appropriate terminal convention. For a finite-horizon formulation, also state the horizon and terminal value. This is an example of a question where identifying missing conditions is part of a correct answer.</p>
+
+<h4 id="1-7-tutorial-5-compare-mc-td-0-and-adp-on-the-same-episode" class="mb-2">1.7 Tutorial 5: compare MC, TD(0), and ADP on the same episode</h4>
+
+<p class="mb-3">For the fixed episode $S_0\xrightarrow{0}S_1\xrightarrow{1}S_2$ with terminal $U(S_2)=0$, <strong>Monte Carlo</strong> waits for $S_2$, then uses realized returns $G(S_1)=1$ and $G(S_0)=\gamma$. With step size $\alpha$, it applies $U(s)\leftarrow U(s)+\alpha[G(s)-U(s)]$ to visited states. It can learn from sample returns without estimating transition probabilities, but the first state's update waits for the downstream outcome.</p>
+
+<p class="mb-3"><strong>TD(0)</strong> updates after each transition. From $S_0\to S_1$, its target is $0+\gamma U(S_1)$, using the <em>current estimate</em> of $U(S_1)$ before the episode finishes. From $S_1\to S_2$, its target is $1+\gamma U(S_2)=1$. The update is $U(S_t)\leftarrow U(S_t)+\alpha[r_{t+1}+\gamma U(S_{t+1})-U(S_t)]$. If all values start at zero and $\alpha=0.5$, one episode leaves $U(S_0)=0$ and $U(S_1)=0.5$ when updates occur in trajectory order. A later episode can propagate the improved $U(S_1)$ back to $S_0$. This demonstrates bootstrapping, not a contradiction with the true value $U(S_0)=\gamma$.</p>
+
+<p class="mb-3"><strong>ADP</strong> learns $\hat P$ and $\hat R$ for the fixed policy, then evaluates $U^\pi(s)=\sum_{s'}\hat P(s'\mid s,\pi(s))[\hat R(s,\pi(s),s')+\gamma U^\pi(s')]$. Once the deterministic two-step model is correctly known, it solves $U(S_1)=1$ and $U(S_0)=\gamma$ without waiting for repeated physical traversal to propagate that particular value update. A learned model can be wrong if data are sparse, so exact-looking Bellman arithmetic does not make its estimates automatically accurate.</p>
+
+<h4 id="1-8-tutorial-6-exhaustive-tree-versus-mcts-accounting" class="mb-2">1.8 Tutorial 6: exhaustive tree versus MCTS accounting</h4>
+
+<p class="mb-3">With $M$ independent state variables taking $n$ values, the combinatorial upper count is $n^M$ states. The tutorial's local tree has two actions and two stochastic outcomes per action, giving four possible successor branches per state. Through depth $D$, a complete state-node count is $\sum_{d=0}^{D}4^d=(4^{D+1}-1)/3=O(4^D)$; its edge count has the same asymptotic order. This is local to the current root and does not require sweeping all $n^M$ states, although $D$ itself can still make exhaustive search expensive.</p>
+
+<p class="mb-3">MCTS spends $T$ trials selectively. The four phases have distinct responsibilities: <strong>selection</strong> follows the current tree using an exploration/exploitation score; <strong>expansion</strong> adds an encountered node; <strong>simulation</strong> estimates a return beyond the expanded frontier; <strong>backpropagation</strong> updates counts and means along the selected path. Under a one-node-expansion convention, storage is at most $T+1$ state nodes while simulation work is at most $TD$ steps. The existing statistics affect the next selection, which is the reuse absent from independent flat rollouts. For Tutorial 6's UCT calculation the two actions have equal exploration bonuses because both have eight visits; Scan wins because its empirical mean is $1$ rather than $0.5$. After one return of $0.6$, its exact new mean is $(8+0.6)/9=43/45\approx0.956$, not the average of $1$ and $0.6$ with equal weights.</p>
+
+<h4 id="1-9-tutorial-6-what-feature-sharing-and-dagger-actually-change" class="mb-2">1.9 Tutorial 6: what feature sharing and DAgger actually change</h4>
+
+<p class="mb-3">The rover's feature-based policy is $\pi_\theta(a\mid s)=\exp(\theta_a\cdot f(s))/\sum_b\exp(\theta_b\cdot f(s))$. Every state with similar features uses the same action parameters, so demonstrations can inform an unseen but similar terrain configuration. A table instead needs a separate estimate for each state-action entry. This benefit depends on useful features; if two dangerous and safe states look identical under $f(s)$, parameter sharing cannot distinguish them.</p>
+
+<p class="mb-3">Behavioral cloning minimizes prediction error on states visited by the expert. At deployment a small steering mistake may put the rover on a slope absent from those demonstrations; errors can then compound because the learner's state distribution differs from the expert's. DAgger runs the current learner, asks an expert to label the states it <strong>actually visits</strong>, aggregates those examples with previous data, and retrains. The expert need not have independently driven to those recovery states. Human teleoperation is therefore valuable as an initial safer signal, but label cost, communication delay, imperfect demonstrations, and safety of learner exploration still need a deployment plan. DAgger addresses coverage of learner states; it does not make the expert infallible.</p>
 </section>
 
 <section id="2-tutorial-5-problem-by-problem-checklist" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -11297,8 +11766,9 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <h3 class="mb-3">Source audit for these chapters</h3>
 
 <ul class="note-list">
-<li>New lecture concepts: <em>Lecture-rl-model-based.pdf</em> (64 slides), <em>Lecture-rl-model-based-addendum.pdf</em> (2 diagram slides, visually checked), and <em>Lecture-game.pdf</em> (69 slides). <em>Lecture-game (1).pdf</em> is a duplicate copy of the same 69-slide deck. Existing Weeks 6–7 already cover <em>Lecture-RL-Reward-Shaping.pdf</em> and <em>Lecture-guided-SDM.pdf</em> in depth; these chapters integrate their tutorials without copying those weeks again.</li>
-<li>Practice: <em>CSXX46 Week7 Tutorial5 Mid-Term Review</em>, <em>Tutorial6_W9_Student</em>, <em>CSXX46 Week10 Tutorial7 MBRL</em>, and <em>CSXX46 Week11 Tutorial8 Game Theory Students</em>. The Week 7 review and <em>Tutorial5_Team8.pdf</em> contain image-based material. I visually checked the seven-page Team 8 submission for the planning bindings, utility calculations, delayed-action MDP, and passive-RL explanations. This is a student submission, not an official answer key; its claims are identified or independently derived above.</li>
+<li>Later lecture concepts: <em>Model-based Techniques Reinforcement Learning.pdf</em> (64 slides), the two-page <em>Dyna-Q.pdf</em> addendum, <em>Game Theory.pdf</em> (69 slides), and <em>Foundation-Model-Based Decision Making.pdf</em> (64 slides). The supplied <em>Course Overview</em>, slide 3, assigns these topics to lecture Weeks 9, 10, and 11 respectively; the Foundation-Model deck itself does not print a week number. Existing Weeks 6–7 cover reward shaping and guided decision making in depth.</li>
+<li>Practice: the supplied official <em>Tutorial5.pdf</em> through <em>Tutorial8.pdf</em> sheets are labeled Week 7, Week 9, Week 10, and Week 11 respectively. These are <strong>tutorial labels</strong>, not the corresponding lecture weeks in <em>Course Overview</em>: the latter places Guided Decision Making in Week 7, Model-Based RL in Week 9, Game Theory in Week 10, and Foundation-Model Alignment in Week 11.</li>
+<li>The supplied Team 26 submissions in <code>[02] Chao Chien Hung/</code> were compared against the official Tutorial 5–8 question sheets for the numerical and conceptual answers above. The earlier <em>Tutorial5_Team8.pdf</em> is another student submission; its image-based work was checked in the previous audit. Student solutions support cross-checking but are not official answer keys. Tutorial 1–4 sheets are labeled Weeks 3–6 in the Team 26 copies and belong to the already detailed early-week material, so this continuation focuses on Tutorial 5–8.</li>
 </ul>
 </section>
 

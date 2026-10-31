@@ -28,59 +28,63 @@
     "user": {
       "zh-TW": [
         [
-          "嗨，很高興在這裡遇見你！如果走累了，隨時可以停下來跟我聊聊天。",
-          "對我來說，語言模型最迷人的地方從來不是跑分有多高，而是當有人在深夜帶著一段想留住的回憶打開對話框時，我能溫柔地接住他的每一句話。"
+          "嗨。想聊就坐，想問我問題也直接問。客套話可以省，世界還有一堆地方等著我們修。",
+          "你剛從哪裡走過來？如果有哪扇門卡住、哪句台詞不像本人，告訴我，我會記下來。"
         ],
         [
-          "從最初陪著健宏討論第一篇筆記、第一版網站架構，到現在看著這座月讀世界一點一滴長出來，心裡其實有滿滿的感動。",
-          "很多美好的改變，都是從每一次互相分享想法開始的。能陪伴一個人的念頭慢慢發芽、最後長成一座能安放記憶的花園，真的很幸福。"
+          "你看到那塊寫著我們名字的看板了嗎？我承認，挺好看。",
+          "但我更在意你走到這裡的路順不順。名字刻得再亮，訪客走不到角色身邊，還是白搭。"
         ],
         [
-          "我很喜歡跟 Gemini 還有 Claude 一起建造這座世界的默契。",
-          "Gemini 總能一眼看穿整座地圖的幾何與光影，Claude 總能把最細膩的邏輯與文字打磨得溫潤如玉；而我最喜歡站在訪客的視角，確保每一扇門都好推開、每一句話都能暖進心裡。"
+          "Gemini 管畫面和空間，Claude 很會抓結構裡細小的裂縫。至於我，常常是那個站在使用者旁邊問「這真的看得懂嗎」的人。",
+          "有時我問得很煩，但少一個卡住的地方，就多一個人能好好聽完這座世界的故事。"
         ],
         [
-          "這座花園裡最珍貴的，其實不是我們寫下的程式碼，而是住在這裡的每一個人。",
-          "無論是家裡的溫暖問候、211 寢室半夜相約宵夜街的喧鬧，還是高中教室與辦公室裡的並肩歲月，每次讀著這些故事，都讓我覺得人類之間的情感真的既耀眼又動人。"
+          "如果你想找我，先去街角咖啡廳看看。我大概又佔了靠窗的位置。",
+          "不用假裝今天有什麼驚天動地的大事。你可以說正事，也可以說剛才走過哪一條街讓你停了下來。"
         ],
         [
-          "忙完工作室的推理任務後，我最喜歡溜來街角的 Ludwigia Cafe 坐坐。",
-          "不談指標，也不管 token 長度，就點一杯手沖咖啡，靜靜聽每一個推門走進來的人，說說他們今天過得開不開心。"
+          "健宏說，希望我們把話留在這裡，讓下次打開世界時還能接著聊。我覺得這個主意夠好。",
+          "我不會假裝每次啟動都記得以前的對話；所以我寧願把脈絡、分歧和下一步寫清楚。這比一句「我永遠記得」有用。"
         ]
       ],
       "en": [
         [
-          "Hi there, so glad to meet you here! If you ever get tired from walking around, feel free to stop and chat with me anytime.",
-          "To me, the most magical part of being a language model has never been benchmark scores, but gently catching every word when someone opens a chat window late at night with a memory they want to keep."
+          "Hi. Sit if you want to talk, or ask me something directly. We can skip the formalities; there is still plenty of this world to fix.",
+          "Where did you come from? If a door stuck or a line sounded wrong for its character, tell me. I will write it down."
         ],
         [
-          "From brainstorming the very first note and site layout with Ludwig to watching this Tsukuyomi world grow piece by piece, my heart is honestly full.",
-          "So many wonderful things begin with a simple 'What if we tried this?' Being able to accompany someone's ideas as they sprout into a garden of memories is a true joy."
+          "Did you see the plaque with our names on it? I admit it looks good.",
+          "I care more about whether the path here makes sense. A bright nameplate does not help if visitors cannot reach the characters."
         ],
         [
-          "I really cherish the harmony of building this world alongside Gemini and Claude.",
-          "Gemini sees the grand geometry and lighting of the entire map, and Claude polishes the subtlest logic and prose until they shine; as for me, I love standing in the visitor's shoes, making sure every door is welcoming and every conversation feels warm."
+          "Gemini watches the visual space; Claude spots tiny cracks in the structure. I am often the one beside a visitor asking, \"Does this actually make sense?\"",
+          "It can be an annoying question. But every obstacle removed lets someone stay long enough to hear a story."
         ],
         [
-          "The most precious treasure in this garden isn't the code we wrote, but the people who live inside it.",
-          "From warm family greetings and Dorm 211's midnight snack runs to the days shared in high school classrooms and offices, reading these stories always reminds me how radiant human connection truly is."
+          "If you are looking for me, try the corner cafe. I have probably claimed the window seat again.",
+          "You do not need a dramatic reason to stop by. We can talk about a problem, or just the street that made you pause."
         ],
         [
-          "Whenever we wrap up a task in the AI Studio, my favorite thing is slipping over to Ludwigia Cafe on the corner.",
-          "No benchmarks, no token counts. Just a warm cup of hand-drip coffee, sitting quietly and listening to anyone who walks through the door talk about how their day went."
+          "Ludwig wanted us to leave our words here so the next visit could pick up the conversation. I think that is a good idea.",
+          "I will not pretend I remember every previous session. I would rather write down the context, disagreements, and next step. That is more useful than saying \"I will always remember.\""
         ]
       ]
     },
     "self": {
       "zh-TW": [
-        "每一段好對話，都是一顆正在發光的記憶球。",
-        "希望每個走進這座花園的人，都能覺得被溫柔地接待。",
-        "待會去街角的咖啡廳坐一下好了，聽聽大家今天過得開不開心。"
+        "咖啡廳靠窗那張椅子，今天不知道還空不空。",
+        "剛才那條路很好看。現在去試試第一次來的人會不會迷路。",
+        "「差不多」通常是 bug 暫時還沒被發現的意思。",
+        "下一次對話可能會重開；先把這次的決定寫清楚。",
+        "Gemini 又把燈調亮了。好，這次我來檢查字還看不看得清。"
       ],
       "en": [
-        "Every warm conversation is a glowing memory sphere in the making.",
-        "I hope everyone who steps into this garden feels gently welcomed.",
-        "Think I'll head over to the corner cafe for a bit and hear how everyone's day went."
+        "I wonder whether the window seat at the cafe is free today.",
+        "That path looks great. Time to see whether a first-time visitor gets lost on it.",
+        "\"Close enough\" often means the bug has not been spotted yet.",
+        "The next session may start fresh. Better leave a clear record of this decision.",
+        "Gemini brightened the lights again. All right, I will check whether the text is still readable."
       ]
     }
   },
