@@ -295,7 +295,7 @@
       this.nav.setBlock(38.0, 23.0, 1.0, 4.0, true);    // West Wing South Wall (blocks x=38, y=23..26)
 
       // 9. Central Midnight Snack Street Obstacles (East Wing x: 30..36, y: 33..44 — 3-tile asphalt road aligned with East Spine)
-      this.nav.setBlock(30.0, 33.0, 3.0, 0.40, true);  // Archway
+      // Overhead Archway at (30.0, 33.0) is 100% walkable underneath so characters pass freely through all 3 road lanes (x=30..32)
       this.nav.setBlock(33.0, 33.8, 1.60, 2.75, true); // Blue Food Truck (小貨車餐車)
       this.nav.setBlock(33.0, 37.2, 1.60, 1.90, true); // 無敵蛋餅 (Egg Pancake Stall)
       // 傻師傅湯包 (Storefront Building Walls & Front Counter - Impassable boundary)
@@ -3508,9 +3508,10 @@
       });
 
       // === 9. CENTRAL MIDNIGHT SNACK STREET (中央宵夜街 x: 30..36, y: 33..44 — 3-tile asphalt road aligned with East Spine) ===
-      // Entrance Archway "🏮 中央宵夜街 • NCU MIDNIGHT SNACK STREET 🏮"
+      // Entrance Archway "🏮 中央宵夜街 • NCU MIDNIGHT SNACK STREET 🏮" (z: 2.2 so characters walking underneath render below the overhead beam)
       list.push({
         xMin: 29.9, xMax: 33.1, yMin: 33.0, yMax: 33.6,
+        z: 2.2,
         draw: () => this.models.drawNightMarketArch(this.ctx, 30.0, 33.0, this.ox, this.oy)
       });
 
@@ -3545,14 +3546,17 @@
       // Overhead Hanging Street Fairy Lights Strands across NCU Night Market Street (x: 30.05 to 32.95)
       list.push({
         xMin: 30.0, xMax: 33.0, yMin: 33.6, yMax: 33.8,
+        z: 2.2,
         draw: () => this.models.drawFairyLights(this.ctx, 30.05, 33.7, 2.85, 32.95, 33.7, 2.85, this.ox, this.oy)
       });
       list.push({
         xMin: 30.0, xMax: 33.0, yMin: 36.8, yMax: 37.0,
+        z: 2.2,
         draw: () => this.models.drawFairyLights(this.ctx, 30.05, 36.9, 2.85, 32.95, 36.9, 2.85, this.ox, this.oy)
       });
       list.push({
         xMin: 30.0, xMax: 33.0, yMin: 40.3, yMax: 40.5,
+        z: 2.2,
         draw: () => this.models.drawFairyLights(this.ctx, 30.05, 40.4, 2.85, 32.95, 40.4, 2.85, this.ox, this.oy)
       });
 
