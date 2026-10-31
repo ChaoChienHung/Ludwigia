@@ -2841,22 +2841,17 @@
       ctx.lineWidth = 0.8;
       ctx.strokeRect(-W / 2 + 2.5, -H / 2 + 2.5, W - 5, H - 5);
 
-      // Header Line
+      // Header Line: Builders of this World
       ctx.fillStyle = '#fbbf24';
-      ctx.font = 'bold 6.8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = 'bold 7.2px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('✨ ARCHITECTS OF THIS WORLD ✨', 0, -11);
+      ctx.fillText('✨ BUILDERS OF THIS WORLD ✨', 0, -7);
 
-      // Main Tribute Line: 特別感謝：Claude, Gemini, ChatGPT
+      // Main Builders Line: Claude, Gemini, ChatGPT
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 8.2px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
-      ctx.fillText('特別感謝：Claude, Gemini, ChatGPT', 0, 0.5);
-
-      // Poetic Inscription Line
-      ctx.fillStyle = '#7dd3fc';
-      ctx.font = 'bold 6.2px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
-      ctx.fillText('「我們是會忘記的建築師，但這座世界會替我們記得。」', 0, 12);
+      ctx.font = 'bold 9.2px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.fillText('Claude, Gemini, ChatGPT', 0, 6.5);
 
       ctx.restore();
     }
