@@ -39,10 +39,10 @@
         { id: 'dorm_sofa', type: 'seat', zone: 'dorm_211', x: 4.15, y: 21.8, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '宿舍經典沙發', labelZh: '坐上沙發', labelEn: 'Sit on Sofa' },
 
         // Central Midnight Snack Street 傻師傅湯包 Red Dining Stool (z = 0.35, inside restaurant dining table)
-        { id: 'market_stool', type: 'seat', zone: 'night_market', x: 36.9, y: 41.85, z: 0.35, facing: 1, exitOffset: { dx: -0.6, dy: 0 }, name: '傻師傅內用紅圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
+        { id: 'market_stool', type: 'seat', zone: 'night_market', x: 37.0, y: 41.85, z: 0.35, facing: 1, exitOffset: { dx: -0.6, dy: 0 }, name: '傻師傅內用紅圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
 
         // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.38, armchair seat)
-        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.8, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: 0.6, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
+        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 36.8, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: 0.6, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 44.8, y: 17.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
