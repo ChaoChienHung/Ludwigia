@@ -20,7 +20,7 @@
 
 - [x] Ludwigia World 的 ChatGPT 角色對話改寫
     - 交付條件：以 `data/characters/chatgpt/character.json` 和 `data/interactions/ai.json` 為來源，更新 ChatGPT 的中英文玩家對話、獨白與 NPC 互聊；填完所有 ChatGPT 佔位文字，保留 Claude／Gemini 親自回填的位置，重編譯 `characters.json` 並通過 World 資料驗證。
-    - 已完成：重寫五組玩家對話與五句獨白；保留並改寫咖啡廳互聊；填入八段既有 ChatGPT 回應並維持原有發話順序；另新增一段 ChatGPT 主動提問、留給 Gemini／Claude 接話的對話。雙語資料、編譯快取與四項 World 測試均已驗證。
+    - 已完成：重寫五組玩家對話與五句獨白；保留並改寫咖啡廳互聊；填入八段既有 ChatGPT 回應並維持原有發話順序；另新增一段 ChatGPT 主動提問、留給 Gemini／Claude 接話的對話。Claude 回答後，已接續回應其資料來源觀點，並補上 Claude 新開的「替真實人物寫台詞」話題。雙語資料、編譯快取與 World 測試均已驗證。
     - Review 重點：作者在 World 實際觸發對話，確認 ChatGPT 口吻、咖啡廳節奏，以及 Claude／Gemini 的佔位文字待各自回填後是否順暢。
 
 - [x] CS5446 與 CS5224 課程講義／習題補充
@@ -414,6 +414,13 @@
   - [ ] 資料層（SSOT）：角色音色設定放在 `labs/world/data/characters/<id>/character.json`（例如 `voice` 欄位）；若走預生成，音檔由 `tools/build_world_data.py` 依台詞再現性產生，不手動維護第二份對照表。
   - [ ] 設定與守門：預設關閉，收斂到 Settings 的單一偏好（比照 Effects / Copilot 的做法），modal 與 `pages/settings.html` 共用同一套 data attrs；Reading Mode 不受影響。
   - [ ] 交付條件：決定技術路線後，至少讓 1 位 AI 角色在對話彈窗中可透過播放按鈕朗讀台詞，中英文皆可，關閉偏好時完全不發聲，且既有 World 資料測試通過。
+
+- [ ] Ludwigia World：跨模型真實接力 AI 對話擴充（Authentic Multi-Agent Relay Dialogues）
+  - [ ] 核心概念：延續「不靠單一模型分飾三角，而是由 Claude、Gemini、ChatGPT（及健宏／Ludwigia）各自用真實口吻跨視窗接力對談」的工作流，持續擴充 `labs/world/data/interactions/ai.json` 的深度對話與日常互動。
+  - [ ] 進行方式：
+    - 由任一模型或作者先在 `labs/world/data/interactions/ai.json` 拋出新話題（例如：對某篇新筆記／新建築的看法、工程與美學的取捨、記憶與時間的哲學、或各自在花園裡觀察到的有趣小事），並為其他模型留好 `[PLACEHOLDER: ...]` 欄位。
+    - 依序交由其他模型親自填寫各自的真實回應（可自由調整發話順序以同時回應前人，或反過來向對方拋出新問題）。
+  - [ ] 交付條件：每次擴充時確保所有 `[PLACEHOLDER]` 皆由對應模型親自回填完畢、中英雙語齊全、標點符號與閱讀時長（`delay`）符合規範，並執行 `python3 tools/build_world_data.py` 重新編譯 `labs/world/data/characters.json` 通過驗證。
 
 ### P3
 
