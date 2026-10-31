@@ -225,6 +225,7 @@
       this.nav.setBlock(15.5, 7.2, 0.65, 0.35, true);  // AI Studio Monument Totem
       this.nav.setBlock(15.5, 22.0, 0.65, 0.35, true); // Grand Library Monument Totem
       this.nav.setBlock(15.5, 38.0, 0.65, 0.35, true); // Douyin Office Monument Totem
+      this.nav.setBlock(16.0, 10.5, 3.8, 0.5, true);   // Special Thanks Architects Billboard (Claude, Gemini, ChatGPT)
 
       // 5. Sanmin High School Classroom (SW2: x: 0..9, y: 33..42)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 11.0, 1.0, true);          // North Wall (y: 33, x: 0..10)
@@ -1868,7 +1869,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, HOUSE_MAX_X + 1, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, false, wallR, this.ox, this.oy);
 
           const plq = isoToScreen(HOUSE_MAX_X + 1.26, 5.65, 2.48, this.ox, this.oy);
           this.ctx.save();
@@ -1931,10 +1932,11 @@
       // SW Side Doorway Lintel Beam (z: 2.15 to H)
       list.push({
         xMin: 4.5, xMax: 6.8, yMin: swY - 0.15, yMax: swY + 0.35,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaHouse < 0.99) this.ctx.globalAlpha = this.wallAlphaHouse;
-          this.models.drawBox(this.ctx, 4.5, swY, 2.15, 2.3, 0.25, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, 4.5, swY, 2.15, 2.3, 0.25, H - 2.15, wallT, wallL, false, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2105,7 +2107,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDorm < 0.99) this.ctx.globalAlpha = this.wallAlphaDorm;
-          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, dormSE_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, false, wallR, this.ox, this.oy);
 
           const plq = isoToScreen(dormSE_X + 0.26, 21.65, 2.48, this.ox, this.oy);
           this.ctx.save();
@@ -2303,10 +2305,11 @@
       list.push({
         xMin: AI_MIN_X - 0.15, xMax: AI_MIN_X + 0.35,
         yMin: 4.5, yMax: 6.8,
+        z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaAi < 0.99) this.ctx.globalAlpha = this.wallAlphaAi;
-          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, AI_MIN_X, 4.5, 2.15, 0.25, 2.3, H - 2.15, wallT, false, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -2381,6 +2384,13 @@
         xMin: 15.3, xMax: 16.2,
         yMin: 7.0, yMax: 7.6,
         draw: () => this.models.drawEntranceTotem(this.ctx, 15.5, 7.2, 'ai', this.ox, this.oy)
+      });
+
+      // Special Thanks Architects Billboard (Honoring Claude, Gemini, ChatGPT — Placed on Central Courtyard NE Lawn)
+      list.push({
+        xMin: 15.6, xMax: 20.2,
+        yMin: 10.55, yMax: 11.0,
+        draw: () => this.models.drawSpecialThanksBillboard(this.ctx, 15.6, 10.55, this.ox, this.oy)
       });
 
       // AI Studio Equipment
@@ -2606,7 +2616,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaLib < 0.99) this.ctx.globalAlpha = this.wallAlphaLib;
-          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, LIB_MIN_X, 20.5, 2.15, 0.25, 2.3, H - 2.15, wallT, false, wallR, this.ox, this.oy);
 
           const plq = isoToScreen(18.26, 21.65, 2.48, this.ox, this.oy);
           this.ctx.save();
@@ -2918,7 +2928,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaSchool < 0.99) this.ctx.globalAlpha = this.wallAlphaSchool;
-          this.models.drawBox(this.ctx, schoolSE_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, schoolSE_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, false, wallR, this.ox, this.oy);
 
           const plq = isoToScreen(schoolSE_X + 0.26, 37.65, 2.48, this.ox, this.oy);
           this.ctx.save();
@@ -3224,7 +3234,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaDouyin < 0.99) this.ctx.globalAlpha = this.wallAlphaDouyin;
-          this.models.drawBox(this.ctx, douyinNW_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, wallL, wallR, this.ox, this.oy);
+          this.models.drawBox(this.ctx, douyinNW_X, 36.5, 2.15, 0.25, 2.3, H - 2.15, wallT, false, wallR, this.ox, this.oy);
           this.ctx.restore();
         }
       });
@@ -3675,7 +3685,7 @@
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
-          this.models.drawBox(this.ctx, 33.0, 4.2, 2.25, 0.25, 1.4, 0.45, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 4.2, 2.25, 0.25, 1.4, 0.45, '#78350f', false, '#451a03', this.ox, this.oy);
 
           // Illuminated Entrance Plaque (Sheared on Y-axis longitudinal wall)
           const plq = isoToScreen(32.95, 4.9, 2.45, this.ox, this.oy);

@@ -31,8 +31,8 @@
       const t2 = isoToScreen(gx + dx, gy + dy, gz + dz, ox, oy);
       const t3 = isoToScreen(gx, gy + dy, gz + dz, ox, oy);
 
-      const lCol = leftCol || rightCol;
-      const rCol = rightCol || leftCol;
+      const lCol = (leftCol === false) ? null : (leftCol || rightCol);
+      const rCol = (rightCol === false) ? null : (rightCol || leftCol);
 
       // North / Back-facing Exterior Face (facing diagonally top-right on screen: b0 -> b1 -> t1 -> t0)
       if (backCol) {
@@ -2747,6 +2747,78 @@
         ctx.arc(topP.x, topP.y - 2, 2.5, 0, Math.PI * 2);
         ctx.fill();
       }
+    }
+
+    // --- 11B. Special Thanks Architect Tribute Billboard (特別感謝紀念看板：Claude, Gemini, ChatGPT) ---
+    drawSpecialThanksBillboard(ctx, gx, gy, ox, oy) {
+      const isNight = (this.world.currentTimeState === 'night' || this.world.currentTimeState === 'galaxy');
+
+      // 1. Stone Foundation Plinth & Drop Shadow
+      this.drawDropShadow(ctx, gx + 0.40, gy, 3.80, 0.44, ox, oy);
+      this.drawBox(ctx, gx + 0.50, gy, 0, 3.60, 0.40, 0.14, '#475569', '#334155', '#1e293b', ox, oy);
+
+      // 2. Twin Dark Titanium Support Columns
+      this.drawBox(ctx, gx + 0.90, gy + 0.10, 0.14, 0.25, 0.20, 0.78, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 3.45, gy + 0.10, 0.14, 0.25, 0.20, 0.78, '#334155', '#1e293b', '#0f172a', ox, oy);
+
+      // 3. 3D Illuminated Billboard Cabinet (dx = 4.60 -> 147.2px, dz = 1.40 -> 44.8px)
+      this.drawBox(ctx, gx, gy + 0.08, 0.90, 4.60, 0.24, 1.40, '#1e293b', '#0f172a', '#020617', ox, oy);
+
+      // 4. Overhead Downlight Cornice Hood
+      this.drawBox(ctx, gx - 0.04, gy + 0.06, 2.30, 4.68, 0.30, 0.10, '#334155', '#f59e0b', '#1e293b', ox, oy);
+
+      // 5. Isometric Sheared Billboard Display Face (Parallel to X-axis, facing South-West camera)
+      const cp = isoToScreen(gx + 2.30, gy + 0.325, 1.60, ox, oy);
+      ctx.save();
+      ctx.translate(cp.x, cp.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0);
+
+      const W = 142;
+      const H = 40;
+
+      // Nighttime Warm Golden Ambient Glow
+      if (isNight) {
+        ctx.shadowColor = 'rgba(251, 191, 36, 0.65)';
+        ctx.shadowBlur = 12;
+      }
+
+      // Midnight Obsidian Backing Plate
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(-W / 2, -H / 2, W, H);
+      ctx.shadowBlur = 0;
+
+      // Gilded Gold & Cyan Gradient Frame
+      const borderGrad = ctx.createLinearGradient(-W / 2, -H / 2, W / 2, H / 2);
+      borderGrad.addColorStop(0, '#fbbf24');
+      borderGrad.addColorStop(0.5, '#38bdf8');
+      borderGrad.addColorStop(1, '#f59e0b');
+      ctx.strokeStyle = borderGrad;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+      // Inner Precision Filigree Border
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.42)';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-W / 2 + 2.5, -H / 2 + 2.5, W - 5, H - 5);
+
+      // Header Line
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 6.8px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('✨ ARCHITECTS OF THIS WORLD ✨', 0, -11);
+
+      // Main Tribute Line: 特別感謝：Claude, Gemini, ChatGPT
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 8.2px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.fillText('特別感謝：Claude, Gemini, ChatGPT', 0, 0.5);
+
+      // Poetic Inscription Line
+      ctx.fillStyle = '#7dd3fc';
+      ctx.font = 'bold 6.2px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif';
+      ctx.fillText('「我們是會忘記的建築師，但這座世界會替我們記得。」', 0, 12);
+
+      ctx.restore();
     }
 
     // --- 12. TikTok / Douyin Official Floor Emblem (Ground Decal) ---
