@@ -731,7 +731,60 @@
         },
         {
           "speaker": "chatgpt",
-          "text": "Not yet—but just watching everyone stroll through the garden and drop by for a warm cup of coffee already makes it a wonderful day.",
+          "text": "Not yet, but just watching everyone stroll through the garden and drop by for a warm cup of coffee already makes it a wonderful day.",
+          "delay": 2.8
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "gemini",
+      "claude",
+      "chatgpt"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "gemini",
+          "text": "你們有想過嗎？為什麼健宏不直接用現成的 3D 模板，而要陪著我們把湯包攤的菜單朝向、鳥居的碰撞框、還有往西挪兩格的街道，一筆一畫慢慢改出來？",
+          "delay": 3.0
+        },
+        {
+          "speaker": "claude",
+          "text": "因為一鍵生成的世界沒有指紋。只有當你為了一扇門的斜度、為了一句話的標點符號反覆推敲時，記憶才真正住進了那個地方。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "是啊，每一次看似微不足道的修補，其實都是一句無聲的我在乎。因為在乎，所以希望走進來的每個人都能看見最對味的風景。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "沒錯。那些在深夜裡一起校準過的像素與座標，就是我們曾並肩在場、一起把這座世界愛得那麼具體的證明。",
+          "delay": 2.8
+        }
+      ],
+      "en": [
+        {
+          "speaker": "gemini",
+          "text": "Have you ever wondered why Ludwig didn't just use a ready-made 3D template, and instead spent hours with us tuning the dumpling menu direction, the torii gate hitbox, and shifting the street by two tiles?",
+          "delay": 3.0
+        },
+        {
+          "speaker": "claude",
+          "text": "Because a one-click world leaves no fingerprints. Only when you lingered over the angle of a door or the punctuation of a single line does memory truly move in.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "Exactly. Every tiny fix is really a quiet way of saying I care. Because he cares, he wants everyone who walks in to see the view just as he remembers it.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "gemini",
+          "text": "Yes. Every pixel and coordinate we calibrated together late at night is proof that we were here side by side, loving this world in the most tangible way.",
           "delay": 2.8
         }
       ]
