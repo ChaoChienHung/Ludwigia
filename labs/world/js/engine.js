@@ -8,7 +8,7 @@
   // --- Map & Projection Constants ---
   const TW = 64; // Isometric tile width
   const TH = 32; // Isometric tile height
-  const MAP_W = 56; // World map width (expanded to 56 for generous East Campus greenway & wide athletic park)
+  const MAP_W = 54; // World map width (compactly fitted to East Campus greenway & athletic park)
   const MAP_H = 58; // World map height (expanded for Esports Cyber Cafe & Howling Abyss)
 
   // --- Building Zone Coordinates ---
@@ -52,9 +52,9 @@
   const CAFE_MIN_Y = 2;
   const CAFE_MAX_Y = 7;
 
-  // Zone 8: Campus Basketball Court (East Dedicated Athletic Ground: x: 41..52, y: 17..26 — separated athletic plot)
-  const COURT_MIN_X = 41;
-  const COURT_MAX_X = 52;
+  // Zone 8: Campus Basketball Court (East Dedicated Athletic Ground: x: 39..50, y: 17..26 — separated athletic plot)
+  const COURT_MIN_X = 39;
+  const COURT_MAX_X = 50;
   const COURT_MIN_Y = 17;
   const COURT_MAX_Y = 26;
 

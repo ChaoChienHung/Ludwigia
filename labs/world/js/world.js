@@ -270,10 +270,10 @@
       const treeBlocks = [
         [1, 14], [8, 15],
         [2, 30], [8, 30],
-        [44, 3], [44, 7],
-        [36, 19], [36, 24], [39, 25],
-        [37, 10], [42, 11], [46, 14],
-        [44, 29], [49, 30]
+        [42, 3], [42, 7],
+        [34, 19], [34, 24], [37, 25],
+        [35, 10], [40, 11], [44, 14],
+        [42, 29], [47, 30]
       ];
       treeBlocks.forEach(([tx, ty]) => {
         this.nav.setBlock(tx, ty, 1.0, 1.0, true);
@@ -282,47 +282,47 @@
       // 7. West Campus Greenway (x: 0..9, y: 27..32 — Peaceful lawn between Dorm 211 and Sanmin High)
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);    // Greenway Shaded Park Bench along path roadside
 
-      // 8. Campus Basketball Court Obstacles (East Dedicated Athletic Ground x: 41..52, y: 17..26)
-      this.nav.setBlock(41.2, 21.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline)
-      this.nav.setBlock(47.5, 17.2, 0.45, 0.90, true);  // Metallic Ball Rack (North sideline)
-      this.nav.setBlock(44.0, 17.2, 1.60, 0.65, true);  // Court Rest Bench (North sideline)
+      // 8. Campus Basketball Court Obstacles (East Dedicated Athletic Ground x: 39..50, y: 17..26)
+      this.nav.setBlock(39.2, 21.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline)
+      this.nav.setBlock(45.5, 17.2, 0.45, 0.90, true);  // Metallic Ball Rack (North sideline)
+      this.nav.setBlock(42.0, 17.2, 1.60, 0.65, true);  // Court Rest Bench (North sideline)
 
       // Solid Sports Perimeter Walls & Boundary Enclosure (Impassable borders)
-      this.nav.setBlock(41.0, 16.0, 11.2, 1.0, true);   // North Boundary Wall (blocks y=16 from x=41 to 52)
-      this.nav.setBlock(53.0, 16.0, 1.0, 12.0, true);   // East Boundary Wall (blocks x=53 from y=16 to 27)
-      this.nav.setBlock(41.0, 27.0, 11.2, 1.0, true);   // South Boundary Wall (blocks y=27 from x=41 to 52)
-      this.nav.setBlock(40.0, 16.0, 1.0, 4.0, true);    // West Wing North Wall (blocks x=40, y=16..19)
-      this.nav.setBlock(40.0, 23.0, 1.0, 4.0, true);    // West Wing South Wall (blocks x=40, y=23..26)
+      this.nav.setBlock(39.0, 16.0, 11.2, 1.0, true);   // North Boundary Wall (blocks y=16 from x=39 to 50)
+      this.nav.setBlock(51.0, 16.0, 1.0, 12.0, true);   // East Boundary Wall (blocks x=51 from y=16 to 27)
+      this.nav.setBlock(39.0, 27.0, 11.2, 1.0, true);   // South Boundary Wall (blocks y=27 from x=39 to 50)
+      this.nav.setBlock(38.0, 16.0, 1.0, 4.0, true);    // West Wing North Wall (blocks x=38, y=16..19)
+      this.nav.setBlock(38.0, 23.0, 1.0, 4.0, true);    // West Wing South Wall (blocks x=38, y=23..26)
 
-      // 9. Central Midnight Snack Street Obstacles (East Wing x: 32..38, y: 33..44 — 3-tile asphalt road aligned with East Spine)
-      this.nav.setBlock(32.0, 33.0, 3.0, 0.40, true);  // Archway
-      this.nav.setBlock(35.0, 33.8, 1.60, 2.75, true); // Blue Food Truck (小貨車餐車)
-      this.nav.setBlock(35.0, 37.2, 1.60, 1.90, true); // 無敵蛋餅 (Egg Pancake Stall)
+      // 9. Central Midnight Snack Street Obstacles (East Wing x: 30..36, y: 33..44 — 3-tile asphalt road aligned with East Spine)
+      this.nav.setBlock(30.0, 33.0, 3.0, 0.40, true);  // Archway
+      this.nav.setBlock(33.0, 33.8, 1.60, 2.75, true); // Blue Food Truck (小貨車餐車)
+      this.nav.setBlock(33.0, 37.2, 1.60, 1.90, true); // 無敵蛋餅 (Egg Pancake Stall)
       // 傻師傅湯包 (Storefront Building Walls & Front Counter - Impassable boundary)
-      this.nav.setBlock(35.0, 40.5, 4.5, 1.0, true);   // North Wall (blocks row 41 along building width)
-      this.nav.setBlock(38.0, 41.0, 1.0, 3.5, true);   // East Back Wall (blocks column 38 along y=41..44)
-      this.nav.setBlock(35.0, 44.0, 4.5, 1.0, true);   // South Wall (blocks row 44 along building width)
-      this.nav.setBlock(35.0, 41.0, 1.5, 2.0, true);   // Front Cooking Counter (blocks tile 35 at y=41, 42)
-      this.nav.setBlock(37.0, 41.6, 1.2, 0.9, true);   // Interior Dining Table & Stools
-      // Keeps doorway at x = 35, y = 43 100% open for official entrance
-      this.nav.setBlock(32.05, 35.5, 0.45, 0.90, true); // Parked Scooter 1 (West curb)
-      this.nav.setBlock(32.05, 38.5, 0.45, 0.90, true); // Parked Scooter 2 (West curb)
+      this.nav.setBlock(33.0, 40.5, 4.5, 1.0, true);   // North Wall (blocks row 41 along building width)
+      this.nav.setBlock(36.0, 41.0, 1.0, 3.5, true);   // East Back Wall (blocks column 36 along y=41..44)
+      this.nav.setBlock(33.0, 44.0, 4.5, 1.0, true);   // South Wall (blocks row 44 along building width)
+      this.nav.setBlock(33.0, 41.0, 1.5, 2.0, true);   // Front Cooking Counter (blocks tile 33 at y=41, 42)
+      this.nav.setBlock(35.0, 41.6, 1.2, 0.9, true);   // Interior Dining Table & Stools
+      // Keeps doorway at x = 33, y = 43 100% open for official entrance
+      this.nav.setBlock(30.05, 35.5, 0.45, 0.90, true); // Parked Scooter 1 (West curb)
+      this.nav.setBlock(30.05, 38.5, 0.45, 0.90, true); // Parked Scooter 2 (West curb)
 
       // 10. South Boulevard Twin Streetlights & Signpost
       this.nav.setBlock(11.2, 42.4, 0.35, 0.35, true); // Streetlight Left
       this.nav.setBlock(17.2, 42.4, 0.35, 0.35, true); // Streetlight Right
       this.nav.setBlock(14.2, 42.8, 0.35, 0.35, true); // Portal Signpost
 
-      // 11. Ludwigia Indoor Cafe Obstacles (Compact Cozy Indoor Building x: 35..41, y: 2..7)
-      this.nav.setBlock(35.0, 2.0, 7.0, 1.0, true);    // North Wall (blocks row 2 from x=35 to 41)
-      this.nav.setBlock(41.0, 2.0, 1.0, 6.0, true);    // East Wall (blocks column 41 from y=2 to 7)
-      this.nav.setBlock(35.0, 7.0, 7.0, 1.0, true);    // South Wall (with panoramic window, blocks row 7)
+      // 11. Ludwigia Indoor Cafe Obstacles (Compact Cozy Indoor Building x: 33..39, y: 2..7)
+      this.nav.setBlock(33.0, 2.0, 7.0, 1.0, true);    // North Wall (blocks row 2 from x=33 to 39)
+      this.nav.setBlock(39.0, 2.0, 1.0, 6.0, true);    // East Wall (blocks column 39 from y=2 to 7)
+      this.nav.setBlock(33.0, 7.0, 7.0, 1.0, true);    // South Wall (with panoramic window, blocks row 7)
       // West Wall (Entrance doorway at y: 4.0 to 6.0 - tiles 4 and 5 open)
-      this.nav.setBlock(35.0, 2.0, 1.0, 2.0, true);    // West Wall Top (blocks tile 35 at y=2, 3)
-      this.nav.setBlock(35.0, 6.0, 1.0, 2.0, true);    // West Wall Bottom (blocks tile 35 at y=6, 7)
+      this.nav.setBlock(33.0, 2.0, 1.0, 2.0, true);    // West Wall Top (blocks tile 33 at y=2, 3)
+      this.nav.setBlock(33.0, 6.0, 1.0, 2.0, true);    // West Wall Bottom (blocks tile 33 at y=6, 7)
       // Indoor Cafe Furniture
-      this.nav.setBlock(38.5, 2.8, 2.5, 1.2, true);    // Barista Bar & Espresso Station (blocks x=39,40 at y=3)
-      this.nav.setBlock(37.0, 4.4, 1.4, 1.2, true);    // Indoor Lounge Table (leaves aisle x=35..36, y=4..5 open)
+      this.nav.setBlock(36.5, 2.8, 2.5, 1.2, true);    // Barista Bar & Espresso Station (blocks x=37,38 at y=3)
+      this.nav.setBlock(35.0, 4.4, 1.4, 1.2, true);    // Indoor Lounge Table (leaves aisle x=33..34, y=4..5 open)
 
       // 11. Cyber LAN Lounge Obstacles (x: 1..11, y: 45..53)
       this.nav.setBlock(1.0, 44.8, 4.0, 0.45, true);   // North Wall Left
@@ -660,9 +660,9 @@
       if (x >= 17.5 && x <= 27.5 && y >= 16.5 && y <= 26.5) return 'library';
       if (x <= 9.8 && y >= 32.5 && y <= 42.8) return 'sanmin_school';
       if (x >= 17.5 && x <= 27.5 && y >= 32.5 && y <= 42.8) return 'douyin_office';
-      if (x >= 34.5 && x <= 46.5 && y >= 16.5 && y <= 26.5) return 'basketball_court';
-      if (x >= 31.5 && x <= 39.5 && y >= 32.5 && y <= 44.5) return 'night_market';
-      if (x >= 34.5 && x <= 41.5 && y >= 2.0 && y <= 7.5) return 'cafe';
+      if (x >= 38.5 && x <= 50.5 && y >= 16.5 && y <= 26.5) return 'basketball_court';
+      if (x >= 29.5 && x <= 37.5 && y >= 32.5 && y <= 44.5) return 'night_market';
+      if (x >= 32.5 && x <= 39.5 && y >= 2.0 && y <= 7.5) return 'cafe';
       if (x >= 0.8 && x <= 11.5 && y >= 44.5 && y <= 53.5) return 'cyber_cafe';
       if (x >= 12.0 && x <= 42.5 && y >= 46.5 && y <= 55.5) return 'howling_abyss';
       return 'plaza';
@@ -760,15 +760,15 @@
         currentZone = 'douyin_office';
         isInsideAnyHouse = true;
         statusMessage = "Douyin Office • 抖音演算法研發辦公室";
-      } else if (checkZone('basketball_court', 40.5, 52.5, 16.5, 26.5)) {
+      } else if (checkZone('basketball_court', 38.5, 50.5, 16.5, 26.5)) {
         currentZone = 'basketball_court';
         isInsideAnyHouse = false;
         statusMessage = "Campus Basketball Court • 青春熱血的陽光運動場 🏀";
-      } else if (checkZone('night_market', 31.5, 39.5, 32.5, 44.5)) {
+      } else if (checkZone('night_market', 29.5, 37.5, 32.5, 44.5)) {
         currentZone = 'night_market';
         isInsideAnyHouse = false;
         statusMessage = "中央宵夜街 • NCU Midnight Snack Street 🏮";
-      } else if (checkZone('cafe', 34.5, 41.5, 2.0, 7.5)) {
+      } else if (checkZone('cafe', 32.5, 39.5, 2.0, 7.5)) {
         currentZone = 'cafe';
         isInsideAnyHouse = true;
         statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
@@ -817,7 +817,7 @@
 
       // 傻師傅湯包 front (East/South) walls fade out when the player is inside / at the doorway
       const shopPlayer = this.charManager.player;
-      const inShaShiFu = !!shopPlayer && shopPlayer.x >= 34.5 && shopPlayer.x <= 39.0 && shopPlayer.y >= 40.8 && shopPlayer.y <= 44.4;
+      const inShaShiFu = !!shopPlayer && shopPlayer.x >= 32.5 && shopPlayer.x <= 37.0 && shopPlayer.y >= 40.8 && shopPlayer.y <= 44.4;
       if (this.wallAlphaShaShiFu === undefined) this.wallAlphaShaShiFu = 1.0;
       this.wallAlphaShaShiFu += ((inShaShiFu ? 0.32 : 1.0) - this.wallAlphaShaShiFu) * Math.min(1.0, dt * 6.0);
 
@@ -840,7 +840,7 @@
       const nearSchoolDoor = this.charManager.characters.some(c => Math.hypot(c.x - 10.0, c.y - 37.65) < 2.4);
       this.doorSchoolOpen += ((nearSchoolDoor ? 1.0 : 0.0) - this.doorSchoolOpen) * Math.min(1.0, dt * 5.0);
 
-      const nearCafeDoor = this.charManager.characters.some(c => Math.hypot(c.x - 35.0, c.y - 4.9) < 2.4);
+      const nearCafeDoor = this.charManager.characters.some(c => Math.hypot(c.x - 33.0, c.y - 4.9) < 2.4);
       this.doorCafeOpen += ((nearCafeDoor ? 1.0 : 0.0) - this.doorCafeOpen) * Math.min(1.0, dt * 5.0);
 
       // 2. Douyin Office Erratic Speed Gate State Machine ("開關時機難以捉摸、不定期開關搞人心態")
@@ -1275,31 +1275,31 @@
               ];
 
               const basketballAnchors = [
-                { x: 47.0, y: 21.5 }, // Top of the Key
-                { x: 45.5, y: 21.5 }, // Free Throw Line
-                { x: 41.8, y: 21.5 }, // Under the West Basketball Hoop
-                { x: 49.5, y: 21.5 }, // Right Half-Court Aisle
-                { x: 44.0, y: 18.5 }, // North Wing Three-Point Corner
-                { x: 44.0, y: 24.5 }, // South Wing Three-Point Corner
-                { x: 44.2, y: 17.8 }  // Sideline Team Bench Area
+                { x: 45.0, y: 21.5 }, // Top of the Key
+                { x: 43.5, y: 21.5 }, // Free Throw Line
+                { x: 39.8, y: 21.5 }, // Under the West Basketball Hoop
+                { x: 47.5, y: 21.5 }, // Right Half-Court Aisle
+                { x: 42.0, y: 18.5 }, // North Wing Three-Point Corner
+                { x: 42.0, y: 24.5 }, // South Wing Three-Point Corner
+                { x: 42.2, y: 17.8 }  // Sideline Team Bench Area
               ];
 
               const nightMarketAnchors = [
-                { x: 33.5, y: 35.2 }, // Ordering at Blue Food Truck (小貨車餐車)
-                { x: 33.5, y: 38.2 }, // Waiting for Sizzling Egg Pancake (無敵蛋餅)
-                { x: 33.5, y: 42.0 }, // Ordering at ShaShiFu Dumpling Front Counter (傻師傅湯包外帶)
-                { x: 36.5, y: 43.0 }, // Seated inside ShaShiFu Dine-In Table (傻師傅湯包內用)
-                { x: 33.5, y: 33.5 }, // Entering under Central Night Market Archway
-                { x: 33.5, y: 40.0 }  // Strolling along the Narrow Night Market Street
+                { x: 31.5, y: 35.2 }, // Ordering at Blue Food Truck (小貨車餐車)
+                { x: 31.5, y: 38.2 }, // Waiting for Sizzling Egg Pancake (無敵蛋餅)
+                { x: 31.5, y: 42.0 }, // Ordering at ShaShiFu Dumpling Front Counter (傻師傅湯包外帶)
+                { x: 34.5, y: 43.0 }, // Seated inside ShaShiFu Dine-In Table (傻師傅湯包內用)
+                { x: 31.5, y: 33.5 }, // Entering under Central Night Market Archway
+                { x: 31.5, y: 40.0 }  // Strolling along the Narrow Night Market Street
               ];
 
               const cafeAnchors = [
-                { x: 36.68, y: 4.85 }, // Indoor Cafe Lounge Armchair (cafe_chair)
-                { x: 36.5, y: 3.5 },   // Barista Counter Order Spot
-                { x: 39.0, y: 4.5 },   // Indoor Reading Nook & Bookshelf
-                { x: 38.0, y: 6.0 },   // Window-Facing Sunlit Lounge
-                { x: 36.0, y: 5.0 },   // Indoor Cafe Entrance Lobby
-                { x: 34.0, y: 5.0 }    // Outdoor Cafe Glass Entrance Patio
+                { x: 34.68, y: 4.85 }, // Indoor Cafe Lounge Armchair (cafe_chair)
+                { x: 34.5, y: 3.5 },   // Barista Counter Order Spot
+                { x: 37.0, y: 4.5 },   // Indoor Reading Nook & Bookshelf
+                { x: 36.0, y: 6.0 },   // Window-Facing Sunlit Lounge
+                { x: 34.0, y: 5.0 },   // Indoor Cafe Entrance Lobby
+                { x: 32.0, y: 5.0 }    // Outdoor Cafe Glass Entrance Patio
               ];
 
               const cyberAnchors = [
@@ -1510,9 +1510,9 @@
           const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
           const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
           const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
-          const isBasketball = (x >= 41 && x <= 52 && y >= 17 && y <= 26);
-          const isNightMarket = (x >= 32 && x <= 34 && y >= 33 && y <= 44);
-          const isCafe = (x >= 35 && x <= 41 && y >= 2 && y <= 7);
+          const isBasketball = (x >= 39 && x <= 50 && y >= 17 && y <= 26);
+          const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
+          const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
           const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
           const isAbyssBridge = (
             (x >= 13 && x <= 41 && y >= 48 && y <= 53) ||
@@ -1525,14 +1525,14 @@
 
           // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
           const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
-          const isEastNorthSouthSpine = (x >= 32 && x <= 34 && y >= 4 && y <= 32);  // East Promenade Spine (width 3: x=32..34, seamlessly aligned with Night Market x=32..34!)
+          const isEastNorthSouthSpine = (x >= 30 && x <= 32 && y >= 4 && y <= 32);  // East Promenade Spine (width 3: x=30..32, 2 tiles east of AI Studio / Library / TikTok Office, seamlessly aligned with Night Market x=30..32!)
           const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 17);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance
-          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 34);        // Central Cross Street & Plaza Axis ↔ East Spine (width 3, with 2-tile grass buffer along Library North Wall)
+          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (width 3, with 2-tile grass buffer along Library North Wall)
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
           const isSouthSectorConnector = (x >= 5 && x <= 14 && y >= 43 && y <= 45); // South Connector to Cyber & Abyss
 
           // East Campus Basketball Court Direct Paved Access
-          const isBasketballEntrance = (x >= 34 && x <= 41 && y >= 20 && y <= 22); // Direct paved avenue from East Spine into Basketball Court West Sideline
+          const isBasketballEntrance = (x >= 32 && x <= 39 && y >= 20 && y <= 22); // Direct paved avenue from East Spine into Basketball Court West Sideline
 
           // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds only)
           const isLudwigDoorSpur = (x >= 10 && x <= 12 && y >= 5 && y <= 6);
@@ -1542,7 +1542,7 @@
           const isAiDoorSpur = (x >= 15 && x <= 18 && y >= 5 && y <= 6);
           const isLibDoorSpur = (x >= 15 && x <= 18 && y >= 21 && y <= 22);
           const isDouyinDoorSpur = (x >= 15 && x <= 18 && y >= 37 && y <= 38);
-          const isCafeDoorSpur = (x >= 34 && x <= 35 && y >= 4 && y <= 6);
+          const isCafeDoorSpur = (x >= 32 && x <= 33 && y >= 4 && y <= 6);
 
           const isPath = (
             isMainNorthSouthSpine ||
@@ -1597,8 +1597,8 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
           } else if (isBasketball) {
             // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf
-            const isKey = (x >= 41 && x <= 45 && y >= 20 && y <= 22);
-            const isBorder = (x === 41 || x === 52 || y === 17 || y === 26);
+            const isKey = (x >= 39 && x <= 43 && y >= 20 && y <= 22);
+            const isBorder = (x === 39 || x === 50 || y === 17 || y === 26);
             if (isKey) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
             } else if (isBorder) {
@@ -1608,7 +1608,7 @@
             }
           } else if (isNightMarket) {
             // Central Midnight Snack Street — Slender Authentic Taiwanese Asphalt Roadway
-            const isCenterDash = (x === 33 && y % 2 === 0);
+            const isCenterDash = (x === 31 && y % 2 === 0);
             if (isCenterDash) {
               ctx.fillStyle = '#facc15'; // Yellow dashed line
             } else {
@@ -1681,7 +1681,7 @@
       this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
       ctx.restore();
 
-      // Basketball Court Boundary & Key Markings (True Isometric Ground Projection at x: 41..52, y: 17..26)
+      // Basketball Court Boundary & Key Markings (True Isometric Ground Projection at x: 39..50, y: 17..26)
       ctx.save();
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
       ctx.lineWidth = 1.8;
@@ -1698,72 +1698,72 @@
         ctx.stroke();
       };
 
-      // 1. Key Rectangle (Red Paint Boundary: baseline x: 41.2 to free-throw line x: 46.0, y: 20.0 to 23.0)
-      const k0 = isoToScreen(41.2, 20.0, 0, ox, oy);
-      const k1 = isoToScreen(46.0, 20.0, 0, ox, oy);
-      const k2 = isoToScreen(46.0, 23.0, 0, ox, oy);
-      const k3 = isoToScreen(41.2, 23.0, 0, ox, oy);
+      // 1. Key Rectangle (Red Paint Boundary: baseline x: 39.2 to free-throw line x: 44.0, y: 20.0 to 23.0)
+      const k0 = isoToScreen(39.2, 20.0, 0, ox, oy);
+      const k1 = isoToScreen(44.0, 20.0, 0, ox, oy);
+      const k2 = isoToScreen(44.0, 23.0, 0, ox, oy);
+      const k3 = isoToScreen(39.2, 23.0, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(k0.x, k0.y); ctx.lineTo(k1.x, k1.y); ctx.lineTo(k2.x, k2.y); ctx.lineTo(k3.x, k3.y);
       ctx.stroke();
 
-      // 2. Free Throw Circle (Centered at Free Throw Line midpoint: x=46.0, y=21.5, radius r=1.5)
-      // Solid outer semi-circle facing into the court (x >= 46.0, angle from -pi/2 to pi/2)
-      drawIsoArc(46.0, 21.5, 0, 1.5, -Math.PI / 2, Math.PI / 2, 28);
-      // Dashed inner semi-circle inside the key (x <= 46.0, angle from pi/2 to 3*pi/2)
+      // 2. Free Throw Circle (Centered at Free Throw Line midpoint: x=44.0, y=21.5, radius r=1.5)
+      // Solid outer semi-circle facing into the court (x >= 44.0, angle from -pi/2 to pi/2)
+      drawIsoArc(44.0, 21.5, 0, 1.5, -Math.PI / 2, Math.PI / 2, 28);
+      // Dashed inner semi-circle inside the key (x <= 44.0, angle from pi/2 to 3*pi/2)
       ctx.save();
       ctx.setLineDash([5, 4]);
-      drawIsoArc(46.0, 21.5, 0, 1.5, Math.PI / 2, 3 * Math.PI / 2, 24);
+      drawIsoArc(44.0, 21.5, 0, 1.5, Math.PI / 2, 3 * Math.PI / 2, 24);
       ctx.restore();
 
-      // 3. Restricted Area Arc (No-charge semi-circle under the basket: centered at x=42.0, y=21.5, r=0.90)
-      drawIsoArc(42.0, 21.5, 0, 0.90, -Math.PI / 2, Math.PI / 2, 20);
+      // 3. Restricted Area Arc (No-charge semi-circle under the basket: centered at x=40.0, y=21.5, r=0.90)
+      drawIsoArc(40.0, 21.5, 0, 0.90, -Math.PI / 2, Math.PI / 2, 20);
 
-      // 4. Three-Point Line (Pro-court arc centered at x=42.0, y=21.5 with corner straight sections)
+      // 4. Three-Point Line (Pro-court arc centered at x=40.0, y=21.5 with corner straight sections)
       // Radius r = 5.6, corner line offset dy = 3.5 (y = 18.0 and 25.0)
       const tpR = 5.6;
       const tpDy = 3.5;
       const tpDx = Math.sqrt(tpR * tpR - tpDy * tpDy); // ~4.37
-      const tpStraightEndX = 42.0 + tpDx; // ~46.37
+      const tpStraightEndX = 40.0 + tpDx; // ~44.37
       const tpAngStart = Math.atan2(-tpDy, tpDx);
       const tpAngEnd = Math.atan2(tpDy, tpDx);
 
-      // North straight sideline section (y = 18.0, x: 41.2 to 46.37)
-      const tpN0 = isoToScreen(41.2, 18.0, 0, ox, oy);
+      // North straight sideline section (y = 18.0, x: 39.2 to 44.37)
+      const tpN0 = isoToScreen(39.2, 18.0, 0, ox, oy);
       const tpN1 = isoToScreen(tpStraightEndX, 18.0, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(tpN0.x, tpN0.y); ctx.lineTo(tpN1.x, tpN1.y);
       ctx.stroke();
 
-      // South straight sideline section (y = 25.0, x: 41.2 to 46.37)
-      const tpS0 = isoToScreen(41.2, 25.0, 0, ox, oy);
+      // South straight sideline section (y = 25.0, x: 39.2 to 44.37)
+      const tpS0 = isoToScreen(39.2, 25.0, 0, ox, oy);
       const tpS1 = isoToScreen(tpStraightEndX, 25.0, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(tpS0.x, tpS0.y); ctx.lineTo(tpS1.x, tpS1.y);
       ctx.stroke();
 
       // Curved Three-Point Arc seamlessly bridging the two straight sections
-      drawIsoArc(42.0, 21.5, 0, tpR, tpAngStart, tpAngEnd, 36);
+      drawIsoArc(40.0, 21.5, 0, tpR, tpAngStart, tpAngEnd, 36);
 
-      // 5. Court Perimeter White Line (x: 41.2 to 51.8, y: 17.2 to 25.8)
-      const c0 = isoToScreen(41.2, 17.2, 0, ox, oy);
-      const c1 = isoToScreen(51.8, 17.2, 0, ox, oy);
-      const c2 = isoToScreen(51.8, 25.8, 0, ox, oy);
-      const c3 = isoToScreen(41.2, 25.8, 0, ox, oy);
+      // 5. Court Perimeter White Line (x: 39.2 to 49.8, y: 17.2 to 25.8)
+      const c0 = isoToScreen(39.2, 17.2, 0, ox, oy);
+      const c1 = isoToScreen(49.8, 17.2, 0, ox, oy);
+      const c2 = isoToScreen(49.8, 25.8, 0, ox, oy);
+      const c3 = isoToScreen(39.2, 25.8, 0, ox, oy);
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
       ctx.lineWidth = 1.6;
       ctx.beginPath();
       ctx.moveTo(c0.x, c0.y); ctx.lineTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(c3.x, c3.y); ctx.lineTo(c0.x, c0.y);
       ctx.stroke();
 
-      // 6. Half-court line at x: 51.8 & Center Circle Semi-Arc (r=1.8)
-      const hc0 = isoToScreen(51.8, 17.2, 0, ox, oy);
-      const hc1 = isoToScreen(51.8, 25.8, 0, ox, oy);
+      // 6. Half-court line at x: 49.8 & Center Circle Semi-Arc (r=1.8)
+      const hc0 = isoToScreen(49.8, 17.2, 0, ox, oy);
+      const hc1 = isoToScreen(49.8, 25.8, 0, ox, oy);
       ctx.beginPath();
       ctx.moveTo(hc0.x, hc0.y); ctx.lineTo(hc1.x, hc1.y);
       ctx.stroke();
-      // Center Circle semi-arc (facing left into court: x <= 51.8, angle from pi/2 to 3*pi/2)
-      drawIsoArc(51.8, 21.5, 0, 1.8, Math.PI / 2, 3 * Math.PI / 2, 24);
+      // Center Circle semi-arc (facing left into court: x <= 49.8, angle from pi/2 to 3*pi/2)
+      drawIsoArc(49.8, 21.5, 0, 1.8, Math.PI / 2, 3 * Math.PI / 2, 24);
       ctx.restore();
 
       // Render 3D Diorama Floating Island Crust along outer borders
@@ -3475,23 +3475,23 @@
         [2, 30],
         [8, 30],
 
-        // 3. East Lawn Buffer (x: 42..50, y: 1..8 — open park lawn east of Cafe)
-        [44, 3],
-        [44, 7],
+        // 3. East Lawn Buffer (x: 40..48, y: 1..8 — open park lawn east of Cafe)
+        [42, 3],
+        [42, 7],
 
-        // 4. East Park Corridor (x: 35..40, y: 18..25 — vast peaceful park between East Promenade and Basketball Court)
-        [36, 19],
-        [36, 24],
-        [39, 25],
+        // 4. East Park Corridor (x: 33..38, y: 18..25 — vast peaceful park between East Promenade and Basketball Court)
+        [34, 19],
+        [34, 24],
+        [37, 25],
 
-        // 5. Campus Grand Central Park (x: 35..46, y: 9..15 — between Cafe and Basketball Court)
-        [37, 10],
-        [42, 11],
-        [46, 14],
+        // 5. Campus Grand Central Park (x: 33..44, y: 9..15 — between Cafe and Basketball Court)
+        [35, 10],
+        [40, 11],
+        [44, 14],
 
-        // 6. South Lawn Buffer (x: 42..51, y: 28..32 — south of Basketball Court)
-        [44, 29],
-        [49, 30]
+        // 6. South Lawn Buffer (x: 40..49, y: 28..32 — south of Basketball Court)
+        [42, 29],
+        [47, 30]
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
@@ -3507,53 +3507,53 @@
         draw: () => this.models.drawParkBench(this.ctx, 4.5, 29.0, this.ox, this.oy)
       });
 
-      // === 9. CENTRAL MIDNIGHT SNACK STREET (中央宵夜街 x: 32..38, y: 33..44 — 3-tile asphalt road aligned with East Spine) ===
+      // === 9. CENTRAL MIDNIGHT SNACK STREET (中央宵夜街 x: 30..36, y: 33..44 — 3-tile asphalt road aligned with East Spine) ===
       // Entrance Archway "🏮 中央宵夜街 • NCU MIDNIGHT SNACK STREET 🏮"
       list.push({
-        xMin: 31.9, xMax: 35.1, yMin: 33.0, yMax: 33.6,
-        draw: () => this.models.drawNightMarketArch(this.ctx, 32.0, 33.0, this.ox, this.oy)
+        xMin: 29.9, xMax: 33.1, yMin: 33.0, yMax: 33.6,
+        draw: () => this.models.drawNightMarketArch(this.ctx, 30.0, 33.0, this.ox, this.oy)
       });
 
       // Food Stall 1: Authentic NCU Blue Food Truck (經典小貨車改裝餐車)
       list.push({
-        xMin: 35.0, xMax: 36.8, yMin: 33.8, yMax: 36.6,
-        draw: () => this.models.drawFoodTruck(this.ctx, 35.0, 33.8, this.ox, this.oy)
+        xMin: 33.0, xMax: 34.8, yMin: 33.8, yMax: 36.6,
+        draw: () => this.models.drawFoodTruck(this.ctx, 33.0, 33.8, this.ox, this.oy)
       });
 
       // Food Stall 2: Famous 「無敵蛋餅」 with iconic round yellow sign & sizzling griddle
       list.push({
-        xMin: 35.0, xMax: 36.6, yMin: 37.2, yMax: 39.2,
-        draw: () => this.models.drawEggPancakeStall(this.ctx, 35.0, 37.2, this.ox, this.oy)
+        xMin: 33.0, xMax: 34.6, yMin: 37.2, yMax: 39.2,
+        draw: () => this.models.drawEggPancakeStall(this.ctx, 33.0, 37.2, this.ox, this.oy)
       });
 
       // Food Stall 3: Legendary 「傻師傅湯包」 Storefront Shop Building (實體店面建築)
       list.push({
-        xMin: 35.0, xMax: 38.8, yMin: 41.0, yMax: 44.2,
-        draw: () => this.models.drawShaShiFuDumplings(this.ctx, 35.0, 41.0, this.ox, this.oy)
+        xMin: 33.0, xMax: 36.8, yMin: 41.0, yMax: 44.2,
+        draw: () => this.models.drawShaShiFuDumplings(this.ctx, 33.0, 41.0, this.ox, this.oy)
       });
 
-      // West Curb: Parked Scooters along West curb of asphalt street (x = 32.05)
+      // West Curb: Parked Scooters along West curb of asphalt street (x = 30.05)
       list.push({
-        xMin: 32.0, xMax: 32.5, yMin: 35.5, yMax: 36.5,
-        draw: () => this.models.drawScooter(this.ctx, 32.05, 35.5, '#f8fafc', this.ox, this.oy)
+        xMin: 30.0, xMax: 30.5, yMin: 35.5, yMax: 36.5,
+        draw: () => this.models.drawScooter(this.ctx, 30.05, 35.5, '#f8fafc', this.ox, this.oy)
       });
       list.push({
-        xMin: 32.0, xMax: 32.5, yMin: 38.5, yMax: 39.5,
-        draw: () => this.models.drawScooter(this.ctx, 32.05, 38.5, '#1e3a8a', this.ox, this.oy)
+        xMin: 30.0, xMax: 30.5, yMin: 38.5, yMax: 39.5,
+        draw: () => this.models.drawScooter(this.ctx, 30.05, 38.5, '#1e3a8a', this.ox, this.oy)
       });
 
-      // Overhead Hanging Street Fairy Lights Strands across NCU Night Market Street (x: 32.05 to 34.95)
+      // Overhead Hanging Street Fairy Lights Strands across NCU Night Market Street (x: 30.05 to 32.95)
       list.push({
-        xMin: 32.0, xMax: 35.0, yMin: 33.6, yMax: 33.8,
-        draw: () => this.models.drawFairyLights(this.ctx, 32.05, 33.7, 2.85, 34.95, 33.7, 2.85, this.ox, this.oy)
+        xMin: 30.0, xMax: 33.0, yMin: 33.6, yMax: 33.8,
+        draw: () => this.models.drawFairyLights(this.ctx, 30.05, 33.7, 2.85, 32.95, 33.7, 2.85, this.ox, this.oy)
       });
       list.push({
-        xMin: 32.0, xMax: 35.0, yMin: 36.8, yMax: 37.0,
-        draw: () => this.models.drawFairyLights(this.ctx, 32.05, 36.9, 2.85, 34.95, 36.9, 2.85, this.ox, this.oy)
+        xMin: 30.0, xMax: 33.0, yMin: 36.8, yMax: 37.0,
+        draw: () => this.models.drawFairyLights(this.ctx, 30.05, 36.9, 2.85, 32.95, 36.9, 2.85, this.ox, this.oy)
       });
       list.push({
-        xMin: 32.0, xMax: 35.0, yMin: 40.3, yMax: 40.5,
-        draw: () => this.models.drawFairyLights(this.ctx, 32.05, 40.4, 2.85, 34.95, 40.4, 2.85, this.ox, this.oy)
+        xMin: 30.0, xMax: 33.0, yMin: 40.3, yMax: 40.5,
+        draw: () => this.models.drawFairyLights(this.ctx, 30.05, 40.4, 2.85, 32.95, 40.4, 2.85, this.ox, this.oy)
       });
 
       // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (y: 42..43) ===
@@ -3570,91 +3570,91 @@
         draw: () => this.models.drawRoadPortalSign(this.ctx, 14.2, 42.8, this.ox, this.oy)
       });
 
-      // === 11. CAMPUS BASKETBALL COURT (East Dedicated Athletic Ground x: 41..52, y: 17..26) ===
+      // === 11. CAMPUS BASKETBALL COURT (East Dedicated Athletic Ground x: 39..50, y: 17..26) ===
       // Basketball Hoop (Positioned at West boundary line facing east towards court)
       list.push({
-        xMin: 41.0, xMax: 42.8, yMin: 21.0, yMax: 22.4,
-        draw: () => this.models.drawBasketballHoop(this.ctx, 41.2, 21.2, this.ox, this.oy)
+        xMin: 39.0, xMax: 40.8, yMin: 21.0, yMax: 22.4,
+        draw: () => this.models.drawBasketballHoop(this.ctx, 39.2, 21.2, this.ox, this.oy)
       });
 
       // Metallic Ball Rack with Spalding Basketballs (North sideline)
       list.push({
-        xMin: 47.2, xMax: 48.0, yMin: 16.95, yMax: 17.9,
-        draw: () => this.models.drawBasketballRack(this.ctx, 47.5, 17.2, this.ox, this.oy)
+        xMin: 45.2, xMax: 46.0, yMin: 16.95, yMax: 17.9,
+        draw: () => this.models.drawBasketballRack(this.ctx, 45.5, 17.2, this.ox, this.oy)
       });
 
       // Court Sideline Rest Bench (North sideline, with exact seat center)
       list.push({
         furnitureId: 'basketball_bench',
-        xMin: 43.8, xMax: 45.6, yMin: 16.95, yMax: 17.8,
-        draw: () => this.models.drawParkBench(this.ctx, 44.0, 17.2, this.ox, this.oy)
+        xMin: 41.8, xMax: 43.6, yMin: 16.95, yMax: 17.8,
+        draw: () => this.models.drawParkBench(this.ctx, 42.0, 17.2, this.ox, this.oy)
       });
 
       // Protective Campus Sports Perimeter Walls & High Steel Safety Netting (North, East, South, West wings)
       // 1. North Sideline High Sports Wall & Mesh (y: 16.7 to 16.9)
       list.push({
-        xMin: 41.0, xMax: 52.0, yMin: 16.65, yMax: 16.92,
-        draw: () => this.models.drawSportsFence(this.ctx, 41.0, 16.70, this.ox, this.oy, 11.0, 0.22)
+        xMin: 39.0, xMax: 50.0, yMin: 16.65, yMax: 16.92,
+        draw: () => this.models.drawSportsFence(this.ctx, 39.0, 16.70, this.ox, this.oy, 11.0, 0.22)
       });
-      // 2. East Baseline High Sports Wall & Mesh (x: 51.9 to 52.2)
+      // 2. East Baseline High Sports Wall & Mesh (x: 49.9 to 50.2)
       list.push({
-        xMin: 51.85, xMax: 52.25, yMin: 16.95, yMax: 26.05,
-        draw: () => this.models.drawSportsFence(this.ctx, 51.95, 17.0, this.ox, this.oy, 0.22, 9.1)
+        xMin: 49.85, xMax: 50.25, yMin: 16.95, yMax: 26.05,
+        draw: () => this.models.drawSportsFence(this.ctx, 49.95, 17.0, this.ox, this.oy, 0.22, 9.1)
       });
       // 3. South Sideline High Sports Wall & Mesh (y: 26.08 to 26.3)
       list.push({
-        xMin: 41.0, xMax: 52.0, yMin: 26.08, yMax: 26.35,
-        draw: () => this.models.drawSportsFence(this.ctx, 41.0, 26.10, this.ox, this.oy, 11.0, 0.22)
+        xMin: 39.0, xMax: 50.0, yMin: 26.08, yMax: 26.35,
+        draw: () => this.models.drawSportsFence(this.ctx, 39.0, 26.10, this.ox, this.oy, 11.0, 0.22)
       });
-      // 4. West Entrance North Wing High Sports Wall & Mesh (x: 40.9 to 41.1, y: 17.0 to 19.8)
+      // 4. West Entrance North Wing High Sports Wall & Mesh (x: 38.9 to 39.1, y: 17.0 to 19.8)
       list.push({
-        xMin: 40.85, xMax: 41.15, yMin: 16.95, yMax: 19.8,
-        draw: () => this.models.drawSportsFence(this.ctx, 40.90, 17.0, this.ox, this.oy, 0.22, 2.8)
+        xMin: 38.85, xMax: 39.15, yMin: 16.95, yMax: 19.8,
+        draw: () => this.models.drawSportsFence(this.ctx, 38.90, 17.0, this.ox, this.oy, 0.22, 2.8)
       });
-      // 5. West Entrance South Wing High Sports Wall & Mesh (x: 40.9 to 41.1, y: 22.2 to 26.05)
+      // 5. West Entrance South Wing High Sports Wall & Mesh (x: 38.9 to 39.1, y: 22.2 to 26.05)
       list.push({
-        xMin: 40.85, xMax: 41.15, yMin: 22.2, yMax: 26.05,
-        draw: () => this.models.drawSportsFence(this.ctx, 40.90, 22.2, this.ox, this.oy, 0.22, 3.85)
+        xMin: 38.85, xMax: 39.15, yMin: 22.2, yMax: 26.05,
+        draw: () => this.models.drawSportsFence(this.ctx, 38.90, 22.2, this.ox, this.oy, 0.22, 3.85)
       });
 
-      // === 12. LUDWIGIA INDOOR SPECIALTY CAFE (Compact Cozy Building x: 35..41, y: 2..7) ===
-      // North Wall (y = 2, x: 35 to 41)
+      // === 12. LUDWIGIA INDOOR SPECIALTY CAFE (Compact Cozy Building x: 33..39, y: 2..7) ===
+      // North Wall (y = 2, x: 33 to 39)
       list.push({
-        xMin: 34.9, xMax: 41.1, yMin: 1.8, yMax: 2.2,
+        xMin: 32.9, xMax: 39.1, yMin: 1.8, yMax: 2.2,
         draw: () => {
           this.ctx.save();
-          this.models.drawBox(this.ctx, 35.0, 2.0, 0, 6.2, 0.25, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 2.0, 0, 6.2, 0.25, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
           // Blackboard menu mounted on North Wall (X-axis transversal shear)
-          this.models.drawCafeMenuBoard(this.ctx, 37.5, 2.15, this.ox, this.oy);
+          this.models.drawCafeMenuBoard(this.ctx, 35.5, 2.15, this.ox, this.oy);
           this.ctx.restore();
         }
       });
 
-      // East Wall (x = 41, y: 2 to 7)
+      // East Wall (x = 39, y: 2 to 7)
       list.push({
-        xMin: 40.9, xMax: 41.3, yMin: 2.0, yMax: 7.1,
+        xMin: 38.9, xMax: 39.3, yMin: 2.0, yMax: 7.1,
         draw: () => {
           this.ctx.save();
-          this.models.drawBox(this.ctx, 41.0, 2.0, 0, 0.25, 5.0, 2.7, '#58240a', '#451a03', '#291006', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 39.0, 2.0, 0, 0.25, 5.0, 2.7, '#58240a', '#451a03', '#291006', this.ox, this.oy);
           this.ctx.restore();
         }
       });
 
-      // South Wall with Floor-to-Ceiling Panoramic Glass Window (y = 7, x: 35 to 41)
+      // South Wall with Floor-to-Ceiling Panoramic Glass Window (y = 7, x: 33 to 39)
       list.push({
-        xMin: 34.9, xMax: 41.1, yMin: 6.8, yMax: 7.3,
+        xMin: 32.9, xMax: 39.1, yMin: 6.8, yMax: 7.3,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
           // Timber Frame Base & Top
-          this.models.drawBox(this.ctx, 35.0, 7.0, 0, 6.2, 0.25, 0.55, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
-          this.models.drawBox(this.ctx, 35.0, 7.0, 2.45, 6.2, 0.25, 0.25, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 7.0, 0, 6.2, 0.25, 0.55, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 7.0, 2.45, 6.2, 0.25, 0.25, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
 
-          // Floor-to-Ceiling Glass Window Panels (x: 35.5 to 40.5, z: 0.55 to 2.45)
-          const g0 = isoToScreen(35.5, 7.12, 0.55, this.ox, this.oy);
-          const g1 = isoToScreen(40.5, 7.12, 0.55, this.ox, this.oy);
-          const g2 = isoToScreen(40.5, 7.12, 2.45, this.ox, this.oy);
-          const g3 = isoToScreen(35.5, 7.12, 2.45, this.ox, this.oy);
+          // Floor-to-Ceiling Glass Window Panels (x: 33.5 to 38.5, z: 0.55 to 2.45)
+          const g0 = isoToScreen(33.5, 7.12, 0.55, this.ox, this.oy);
+          const g1 = isoToScreen(38.5, 7.12, 0.55, this.ox, this.oy);
+          const g2 = isoToScreen(38.5, 7.12, 2.45, this.ox, this.oy);
+          const g3 = isoToScreen(33.5, 7.12, 2.45, this.ox, this.oy);
           this.ctx.fillStyle = 'rgba(224, 242, 254, 0.35)';
           this.ctx.beginPath();
           this.ctx.moveTo(g0.x, g0.y); this.ctx.lineTo(g1.x, g1.y); this.ctx.lineTo(g2.x, g2.y); this.ctx.lineTo(g3.x, g3.y);
@@ -3665,7 +3665,7 @@
           this.ctx.stroke();
 
           // Mullion divider lines
-          [37.2, 38.8].forEach(mx => {
+          [35.2, 36.8].forEach(mx => {
             const m0 = isoToScreen(mx, 7.12, 0.55, this.ox, this.oy);
             const m1 = isoToScreen(mx, 7.12, 2.45, this.ox, this.oy);
             this.ctx.beginPath();
@@ -3676,58 +3676,58 @@
         }
       });
 
-      // West Facade Wall (x = 35, y: 2 to 7) with Entrance Doorway at y: 4.2 to 5.6
+      // West Facade Wall (x = 33, y: 2 to 7) with Entrance Doorway at y: 4.2 to 5.6
       // West Wall Top Segment (y: 2.0 to 4.2)
       list.push({
-        xMin: 34.8, xMax: 35.3, yMin: 2.0, yMax: 4.2,
+        xMin: 32.8, xMax: 33.3, yMin: 2.0, yMax: 4.2,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
-          this.models.drawBox(this.ctx, 35.0, 2.0, 0, 0.25, 2.2, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 2.0, 0, 0.25, 2.2, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
           this.ctx.restore();
         }
       });
       // West Wall Bottom Segment (y: 5.6 to 7.0)
       list.push({
-        xMin: 34.8, xMax: 35.3, yMin: 5.6, yMax: 7.1,
+        xMin: 32.8, xMax: 33.3, yMin: 5.6, yMax: 7.1,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
-          this.models.drawBox(this.ctx, 35.0, 5.6, 0, 0.25, 1.4, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 5.6, 0, 0.25, 1.4, 2.7, '#78350f', '#58240a', '#451a03', this.ox, this.oy);
           this.ctx.restore();
         }
       });
-      // Cafe Double Mahogany Swinging Doors (x = 35.0, y: 4.2 to 5.6)
+      // Cafe Double Mahogany Swinging Doors (x = 33.0, y: 4.2 to 5.6)
       const cafeDoorW = 0.70;
       list.push({
-        xMin: 34.8,
-        xMax: 35.8,
+        xMin: 32.8,
+        xMax: 33.8,
         yMin: 4.15,
         yMax: 5.65,
         draw: () => {
           const cafeDoorAngle = (this.doorCafeOpen || 0) * 1.35;
-          const cnTipX = 35.0 + Math.sin(cafeDoorAngle) * cafeDoorW;
+          const cnTipX = 33.0 + Math.sin(cafeDoorAngle) * cafeDoorW;
           const cnTipY = 4.2 + Math.cos(cafeDoorAngle) * cafeDoorW;
-          const csTipX = 35.0 + Math.sin(cafeDoorAngle) * cafeDoorW;
+          const csTipX = 33.0 + Math.sin(cafeDoorAngle) * cafeDoorW;
           const csTipY = 5.6 - Math.cos(cafeDoorAngle) * cafeDoorW;
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
-          this.drawDoorLeaf(35.0, 4.2, cnTipX, cnTipY, this.ox, this.oy);
-          this.drawDoorLeaf(35.0, 5.6, csTipX, csTipY, this.ox, this.oy);
+          this.drawDoorLeaf(33.0, 4.2, cnTipX, cnTipY, this.ox, this.oy);
+          this.drawDoorLeaf(33.0, 5.6, csTipX, csTipY, this.ox, this.oy);
           this.ctx.restore();
         }
       });
       // West Entrance Doorway Lintel Beam & Mounted Signboard
       list.push({
-        xMin: 34.8, xMax: 35.4, yMin: 4.1, yMax: 5.7,
+        xMin: 32.8, xMax: 33.4, yMin: 4.1, yMax: 5.7,
         z: 2.15,
         draw: () => {
           this.ctx.save();
           if (this.wallAlphaCafe < 0.99) this.ctx.globalAlpha = this.wallAlphaCafe;
-          this.models.drawBox(this.ctx, 35.0, 4.2, 2.15, 0.25, 1.4, 0.55, '#78350f', false, '#451a03', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 33.0, 4.2, 2.15, 0.25, 1.4, 0.55, '#78350f', false, '#451a03', this.ox, this.oy);
 
           // Illuminated Entrance Plaque (Sheared on Y-axis longitudinal wall)
-          const plq = isoToScreen(34.95, 4.9, 2.45, this.ox, this.oy);
+          const plq = isoToScreen(32.95, 4.9, 2.45, this.ox, this.oy);
           this.ctx.save();
           this.ctx.translate(plq.x, plq.y);
           this.ctx.transform(1, -0.5, 0, 1, 0, 0);
@@ -3751,33 +3751,33 @@
 
       // Interior Barista Bar & Commercial Espresso Machine
       list.push({
-        xMin: 38.2, xMax: 40.8, yMin: 2.6, yMax: 3.8,
-        draw: () => this.models.drawCafeBarCounter(this.ctx, 38.5, 2.8, this.ox, this.oy)
+        xMin: 36.2, xMax: 38.8, yMin: 2.6, yMax: 3.8,
+        draw: () => this.models.drawCafeBarCounter(this.ctx, 36.5, 2.8, this.ox, this.oy)
       });
 
       // Interior Lounge Table & Leather Armchairs
       list.push({
         furnitureId: 'cafe_chair',
-        xMin: 36.0, xMax: 37.8, yMin: 3.8, yMax: 5.2,
-        draw: () => this.models.drawCafeLoungeTable(this.ctx, 36.5, 4.2, this.ox, this.oy)
+        xMin: 34.0, xMax: 35.8, yMin: 3.8, yMax: 5.2,
+        draw: () => this.models.drawCafeLoungeTable(this.ctx, 34.5, 4.2, this.ox, this.oy)
       });
 
       // Tall Indoor Potted Monstera Plant
       list.push({
-        xMin: 39.8, xMax: 40.7, yMin: 2.1, yMax: 2.9,
-        draw: () => this.models.drawCafeIndoorPlant(this.ctx, 40.0, 2.3, this.ox, this.oy)
+        xMin: 37.8, xMax: 38.7, yMin: 2.1, yMax: 2.9,
+        draw: () => this.models.drawCafeIndoorPlant(this.ctx, 38.0, 2.3, this.ox, this.oy)
       });
 
       // Corner Bookshelf
       list.push({
-        xMin: 40.0, xMax: 40.8, yMin: 4.4, yMax: 5.8,
-        draw: () => this.models.drawCafeBookshelf(this.ctx, 40.2, 4.6, this.ox, this.oy)
+        xMin: 38.0, xMax: 38.8, yMin: 4.4, yMax: 5.8,
+        draw: () => this.models.drawCafeBookshelf(this.ctx, 38.2, 4.6, this.ox, this.oy)
       });
 
       // Suspended Warm Pendant Lamp
       list.push({
-        xMin: 36.8, xMax: 37.3, yMin: 4.0, yMax: 4.5,
-        draw: () => this.models.drawCafePendantLamp(this.ctx, 37.0, 4.2, 2.2, this.ox, this.oy)
+        xMin: 34.8, xMax: 35.3, yMin: 4.0, yMax: 4.5,
+        draw: () => this.models.drawCafePendantLamp(this.ctx, 35.0, 4.2, 2.2, this.ox, this.oy)
       });
 
 
@@ -3909,8 +3909,6 @@
 
       // Floating Broken Abyss Chasm Crags & Anchor Chains in the Deep Void
       const chasmPillars = [
-        { gx: 20.0, gy: 44.5 },
-        { gx: 33.0, gy: 44.2 },
         { gx: 25.0, gy: 55.8 },
         { gx: 35.5, gy: 56.0 }
       ];
