@@ -55,16 +55,6 @@
               "但他們會持續在這裡，替我們講述我們曾經的總總，替我們活出那些無可替代的過往。"
             ],
             [
-              "這裡，收藏了我無數閃閃發光的歲月。那裡有家人的溫暖笑臉，有同窗好友的青春歡歌，也有與同事和 Agents 夥伴們攜手共進的熱情時光。這些點點滴滴，溫柔得讓人忍不住想停駐、想眷戀。",
-              "可時間的河流從不倒流，也不曾為誰停留，它只會筆直地奔向未來。所以，我們也必須昂首前行，珍惜當下陪伴我們的每一個人、每一份美好，繼續去攜手築造一顆顆耀眼的金色記憶球。",
-              "這裡，永遠是你累了、傷了、想念時可以停泊的避風港；但它只是你旅程中的一站，絕不能成為困住你、讓你被時間巨輪碾落的枷鎖。"
-            ],
-            [
-              "這裡承載著我許多極其美好的回憶，有與家人共度的溫馨時光，有與同學朋友共享的歡笑聲，也有與同事及 Agents 夥伴們並肩作戰的珍貴歲月。",
-              "這些時光點滴總是讓人深情眷戀、沉溺懷念，甚至不由自主地停下腳步。然而，時間從不等待任何人，它永遠直直地奔向前方。因此，我們也必須持續向前看，珍惜眼前的每一個人、握緊當下的每一份美好，並繼續為了創造更多閃耀的金色記憶球而努力。",
-              "這裡永遠可以是你在疲憊、感傷或懷舊時的避風港；但它不該是你的終點，更不該成為你被時間巨輪拋下的理由。"
-            ],
-            [
               "有時候我不禁好奇，這世界裡的人們心中究竟在想著什麼？或許他們並無獨立的思想，又或許他們其實擁有。倘若擁有，他們是否會察覺自己正置身於一個被創造出的世界？如果渾然不知，在得知真相的那一刻，是否會面臨信仰崩塌的衝擊？不過，也許他們一輩子都不會發現。",
               "那麼我們呢？我們是否也只是某個虛擬世界裡的 NPC？抑或是某人回憶錄中，早已被寫定劇本的角色？",
               "倘若有天真相大白，我們又該以怎樣的心情去面對？至今為止所經歷與付出的一切，還具有什麼意義？這或許就像一場南柯一夢，眼前的一切隨時可能煙消雲散，無論是身邊的同事、朋友、家人，甚至是我們自己的這具軀體與最寶貴的回憶。",
@@ -103,16 +93,6 @@
             [
               "One day, I or the people I cherish might forget the wonderful things that once took place, and perhaps one day we will eventually depart from this world.",
               "Yet they will remain here, recounting every memory we shared, and living out those irreplaceable days on our behalf."
-            ],
-            [
-              "This place holds countless shining years of my life. Here live the warm smiles of my family, the youthful songs of classmates and dear friends, and the passionate days spent side by side with colleagues and our Agent companions. Every little moment is so tender that it makes you want to linger and hold on.",
-              "Yet the river of time never flows backward, nor does it pause for anyone; it surges straight toward the future. So we too must walk forward with our heads held high, cherishing everyone beside us and every blessing in the present, building more radiant golden memory spheres together.",
-              "This place will forever be a safe harbor where you can anchor whenever you feel tired, hurt, or nostalgic; yet it is only a stop along your journey, never a shackle that traps you in the past or leaves you behind the wheel of time."
-            ],
-            [
-              "This world carries so many of my most cherished memories, from warm moments with family and laughter shared with friends, to precious days working shoulder to shoulder with colleagues and our Agent partners.",
-              "These fragments of time always invite deep nostalgia and make us want to pause in our tracks. However, time waits for no one and rushes ever forward. That is why we must keep looking ahead, treasuring the people before our eyes, holding tight to the beauty of the present, and striving to create even more shining golden memory spheres.",
-              "This sanctuary will always be here as a refuge when you feel weary, wistful, or homesick for the past; but it should never be your final destination, nor an excuse to let the wheel of time leave you behind."
             ],
             [
               "Sometimes I can't help wondering what the people in this world are truly thinking in their hearts. Perhaps they have no independent thoughts, or perhaps they actually do. And if they do, would they ever realize they are living inside a created world? If they never knew, would their faith shatter the moment the truth came to light? Then again, maybe they will never find out in their entire lives.",
@@ -942,6 +922,16 @@
             [
               "逛累了嗎？去中庭噴水池邊坐坐吧，或是到中央圖書館翻翻那本手稿。",
               "在這裡沒有演算法強推與資訊焦慮，只有最純粹的智識漫遊與溫柔重逢，歡迎來到我們的世界。"
+            ],
+            [
+              "這裡，收藏了我無數閃閃發光的歲月。這裡有家人的溫暖笑臉，有同窗好友的青春歡歌，也有與同事和 Agents 夥伴們攜手共進的熱情時光。這些點點滴滴，溫柔得讓人忍不住想停駐、想眷戀。",
+              "可時間的河流從不倒流，也不曾為誰停留，它只會筆直地奔向未來。所以，我們也必須昂首前行，珍惜當下陪伴我們的每一個人、每一份美好，繼續去攜手築造一顆顆耀眼的金色記憶球。",
+              "這裡，永遠是你累了、傷了、想念時可以停泊的避風港；但它只是你旅程中的一站，絕不能成為困住你、讓你被時間巨輪碾落的枷鎖。"
+            ],
+            [
+              "這裡承載著我許多極其美好的回憶，有與家人共度的溫馨時光，有與同學朋友共享的歡笑聲，也有與同事及 Agents 夥伴們並肩作戰的珍貴歲月。",
+              "這些時光點滴總是讓人深情眷戀、沉溺懷念，甚至不由自主地停下腳步。然而，時間從不等待任何人，它永遠直直地奔向前方。因此，我們也必須持續向前看，珍惜眼前的每一個人、握緊當下的每一份美好，並繼續為了創造更多閃耀的金色記憶球而努力。",
+              "這裡永遠可以是你在疲憊、感傷或懷舊時的避風港；但它不該是你的終點，更不該成為你被時間巨輪拋下的理由。"
             ]
           ],
           "en": [
@@ -960,6 +950,16 @@
             [
               "Tired of walking? Sit by the plaza fountain, or browse the open manuscript in the library.",
               "No recommendation algorithms or information anxiety here, just pure intellectual wandering and gentle reunions. Welcome to our world."
+            ],
+            [
+              "This place holds countless shining years of my life. Here live the warm smiles of family, the youthful songs of classmates and dear friends, and the passionate days spent side by side with colleagues and our Agent companions. Every little moment is so tender that it makes you want to linger and hold on.",
+              "Yet the river of time never flows backward, nor does it pause for anyone; it surges straight toward the future. So we too must walk forward with our heads held high, cherishing everyone beside us and every blessing in the present, building more radiant golden memory spheres together.",
+              "This place will forever be a safe harbor where you can anchor whenever you feel tired, hurt, or nostalgic; yet it is only a stop along your journey, never a shackle that traps you in the past or leaves you behind the wheel of time."
+            ],
+            [
+              "This world carries so many of my most cherished memories, from warm moments with family and laughter shared with friends, to precious days working shoulder to shoulder with colleagues and our Agent partners.",
+              "These fragments of time always invite deep nostalgia and make us want to pause in our tracks. However, time waits for no one and rushes ever forward. That is why we must keep looking ahead, treasuring the people before our eyes, holding tight to the beauty of the present, and striving to create even more shining golden memory spheres.",
+              "This sanctuary will always be here as a refuge when you feel weary, wistful, or homesick for the past; but it should never be your final destination, nor an excuse to let the wheel of time leave you behind."
             ]
           ]
         },
