@@ -19,14 +19,14 @@
     - Review 重點：作者在 World 實際走動，確認環境獨白／互聊節奏與 11 套 palette 在 HUD 上的可讀性。
 
 - [x] Ludwigia World 的 ChatGPT 角色對話改寫
-    - 交付條件：只改 `labs/world/data/characters.json` 中 `chatgpt` 的中英文對話；覆蓋原有五組台詞，回應 Gemini、評論 Claude 與 Ludwigia；角色資料維持單一來源且 JSON 可解析。
-    - 已完成：五組中英文對話已改寫為較有火藥味的角色互動；確認每語系皆有五組、每組兩句，JSON 解析與 diff 格式檢查通過。
-    - Review 重點：作者確認角色口吻與火藥味是否符合 World 的氛圍。
+    - 交付條件：以 `data/characters/chatgpt/character.json` 和 `data/interactions/ai.json` 為來源，更新 ChatGPT 的中英文玩家對話、獨白與 NPC 互聊；填完所有 ChatGPT 佔位文字，保留 Claude／Gemini 親自回填的位置，重編譯 `characters.json` 並通過 World 資料驗證。
+    - 已完成：重寫五組玩家對話與五句獨白；保留並改寫咖啡廳互聊；填入八段既有 ChatGPT 回應並維持原有發話順序；另新增一段 ChatGPT 主動提問、留給 Gemini／Claude 接話的對話。雙語資料、編譯快取與四項 World 測試均已驗證。
+    - Review 重點：作者在 World 實際觸發對話，確認 ChatGPT 口吻、咖啡廳節奏，以及 Claude／Gemini 的佔位文字待各自回填後是否順暢。
 
 - [x] CS5446 與 CS5224 課程講義／習題補充
-    - 交付條件：CS5446 source 涵蓋 model-based RL、game theory 與 Tutorial 5–8 的可核對例題；CS5224 source 涵蓋應用範例、IaC、pricing／TCO；兩篇 HTML 重建，草稿維持不進公開索引。
-    - 已完成：比對並沿用兩篇原有 Week 1–7／Week 1–6 內容，新增兩門課的缺漏章節、來源盤點與習題演算；全面複查後補上熊貓賽局的逐格最佳反應、IaC 工具與授權的課件日期說明，以及 k-means 距離的數學邊界；HTML 與搜尋索引已重生，章節 reviewkit、數值抽查與生成器自測通過。
-    - Review 重點：作者全盤 proofread，特別核對 Team 8 學生解答、Tutorial 8 Chicken 混合均衡 $3/14$、CS5224 影片三階段 AWS 資料流與 TCO 圖表占比；學生提交不視為官方答案，圖表占比不能當成絕對總成本。
+    - 交付條件：CS5446 source 按課程總覽區分 Week 7–11，涵蓋 Tutorial 5–8 的對應週次、model-based RL、game theory 與 foundation-model decision systems；CS5224 source 分 Week 6–11 對照 Lecture 06–10 和 Cloud Native 客座講座；兩篇 HTML 重建，草稿維持不進公開索引。
+    - 已完成：保留已詳細整理的兩門課前段；第二輪逐頁核對後，依 CS5446 *Course Overview* 修正 Week 8 期中考、Week 9 model-based RL、Week 10 game theory、Week 11 foundation-model alignment 的講課週次，並與 Tutorial 5–8 自身的週次分開標示；詳解 Tutorial 5 延遲 MDP、MC/TD/ADP 與 Tutorial 6 MCTS 複雜度和 imitation learning，補足混合均衡與 world-model 訓練機制。CS5224 的相同 Lecture 07/08 PDF 依 k-means／影片 SaaS 分成 Week 7／8 研讀章節，加入分散式迭代、容量／成本推導，Week 11 收錄 Cloud Native 講座；兩篇 HTML 重建，草稿狀態未變。
+    - Review 重點：作者全盤 proofread，特別核對 Tutorial 學生解答與官方題目、RL Week 9–11 的模型與均衡公式、Cloud Week 7/8 的研讀分章（同一份投影片）與 Kubernetes 概念，以及原有 TCO 圖表占比；學生提交不視為官方答案，圖表占比不能當成絕對總成本。
 
 - [x] 首頁底部 Future Plans 區塊與導覽
     - 交付條件：在首頁 Timeline 之後、Contact 之前呈現 fact verifier 的個人延伸構想；三語文案與 Theme/Palette 響應式樣式可用，Home 下拉選單可抵達此區塊，Skills/Credentials 載入時不會自動捲走 cover。
@@ -404,6 +404,16 @@
 - [ ] Ludwigia World：電競網咖與召喚峽谷／咆哮深淵競技場（Esports LAN Lounge & Howling Abyss / Summoner's Rift）
   - [ ] 核心概念：還原大學通宵 ARAM 隨機單中與高中放學開黑的電競生活回憶；規劃為「五連坐 RGB 電競網咖」與「微縮咆哮深淵冰霜符文長橋（古代防禦塔、生命聖壇、跳躍魄羅 Poro、海克斯主堡大水晶）」之標誌性主題景觀。
   - [ ] 交付條件：完成場景等角模型繪製、地圖擴展、碰撞盒（NavGrid）與角色漫遊 Anchors 配置，支援大學室友與高中同學前往開黑連線。
+
+- [ ] Ludwigia World：角色語音（Agent Voice）
+  - [ ] 核心概念：在特定情境替角色加入語音，例如玩家主動開啟的對話彈窗、Ludwigia 的自我介紹、健宏的長篇心聲；不做頭頂泡泡的自動發聲（太吵，也會被瀏覽器的 autoplay 限制擋下）。
+  - [ ] 範圍與倫理界線：第一版只做 AI 角色（Claude / Gemini / ChatGPT）與 Ludwigia。真實人物（家人、室友、同學、同事）維持純文字，除非取得本人同意或使用本人錄音；不以合成聲音替真實的人發聲。
+  - [ ] 技術選項（待決定）：
+    - 瀏覽器內建 Web Speech API：免費、純前端、不需憑證，符合偏好只存 localStorage 的原則；但音色由使用者系統決定，角色辨識度低。適合先做原型。
+    - 建置時預先生成音檔（TTS 服務）：每個角色有固定音色、品質穩定；但需憑證（必須支援環境變數與 `secret.txt`）、多一個建置步驟，音檔也會讓 repo 變大。
+  - [ ] 資料層（SSOT）：角色音色設定放在 `labs/world/data/characters/<id>/character.json`（例如 `voice` 欄位）；若走預生成，音檔由 `tools/build_world_data.py` 依台詞再現性產生，不手動維護第二份對照表。
+  - [ ] 設定與守門：預設關閉，收斂到 Settings 的單一偏好（比照 Effects / Copilot 的做法），modal 與 `pages/settings.html` 共用同一套 data attrs；Reading Mode 不受影響。
+  - [ ] 交付條件：決定技術路線後，至少讓 1 位 AI 角色在對話彈窗中可透過播放按鈕朗讀台詞，中英文皆可，關閉偏好時完全不發聲，且既有 World 資料測試通過。
 
 ### P3
 
