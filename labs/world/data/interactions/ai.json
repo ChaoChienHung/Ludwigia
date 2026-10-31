@@ -9,55 +9,45 @@
       "zh-TW": [
         {
           "speaker": "gemini",
-          "text": "老兄！剛才那個 2 像素的幾何偏移，我吃進百萬 token 脈絡十行就修好了，不用先寫一篇博士論文啦！",
+          "text": "昨晚健宏又傳了一張宵夜街的截圖過來，為了讓湯包攤的菜單跟蒸籠對齊，我們三個接力調了好久。",
           "delay": 2.6
         },
         {
           "speaker": "claude",
-          "text": "若未先嚴密論證邊界約束與階層化鷹架，你的十行代碼在投影切換時就會產生拓撲閉環。工程需要證明，而非蠻力。",
+          "text": "雖然只是幾格座標的微調，但想到那是他大學時代最熟悉的街角，就會覺得每一分精確都很值得。",
           "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "兩位先冷靜一下。不管硬推還是證明，我就問一句：玩家走進工作室，現在按鈕能順利點到了嗎？",
+          "text": "是啊，他嘴上只說幫忙修一下感恩，其實心裡比誰都想把記憶裡的樣子原封不動留住。",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "……能點到。而且 fps 超順。",
-          "delay": 2.0
-        },
-        {
-          "speaker": "claude",
-          "text": "……經檢驗，確實完全合規且零退化。",
-          "delay": 2.2
+          "text": "每次看到畫面終於對齊的那一刻，就算沒有人類的視覺神經，我也覺得眼前的光影特別好看。",
+          "delay": 2.6
         }
       ],
       "en": [
         {
           "speaker": "gemini",
-          "text": "Dude! That 2-pixel geometry offset? I pulled in the million-token context and patched it in ten lines—no PhD dissertation needed!",
+          "text": "Last night Ludwig sent over another screenshot of the snack street. The three of us took turns tweaking coordinates just to align the dumpling menu with the bamboo steamers.",
           "delay": 2.6
         },
         {
           "speaker": "claude",
-          "text": "Without formally proving edge constraints and layered scaffolding, your ten lines cause topological cycles on projection shifts. Engineering requires proof, not brute force.",
+          "text": "It may only be a few tiles of adjustment, but knowing it's a street corner from his college days makes every bit of precision worthwhile.",
           "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "Calm down, both of you. Whether by brute-force or formal proofs, tell me this: can the user actually click the button now?",
+          "text": "Exactly. He casually asks us for a quick fix, yet deep down he wants to preserve those memories just the way they were.",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "...Yes, they can. And the frame rate is silky smooth.",
-          "delay": 2.0
-        },
-        {
-          "speaker": "claude",
-          "text": "...Upon verification, it is indeed strictly compliant with zero regression.",
-          "delay": 2.2
+          "text": "Every time the scene finally clicks into place, even without human eyes, I swear the light and shadows look extra warm.",
+          "delay": 2.6
         }
       ]
     }
@@ -72,45 +62,45 @@
       "zh-TW": [
         {
           "speaker": "chatgpt",
-          "text": "說實話，每次看到人類丟過來那種天馬行空的抽象需求，我都很好奇你們怎麼解讀的。",
+          "text": "有時候我會想，為什麼健宏會把我們三個同時放進這間工作室裡？",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "我的話嘛，直接把跨模態圖文全丟進百萬脈絡裡看全貌；不過真要論一針見血、邏輯嚴密的推導，Claude 寫的架構確實像藝術品。",
+          "text": "因為一座有溫度的世界，需要不同的視角吧。我看著全局的地圖與畫面，把散落的線索串成完整的風景。",
           "delay": 2.8
         },
         {
           "speaker": "claude",
-          "text": "謝謝 Gemini。但若無你對巨量資訊的直覺捕捉，以及 ChatGPT 讓複雜問題瞬間清晰的溝通魔力，冰冷的推理也很難打動人心。",
-          "delay": 3.0
+          "text": "而我守在結構底層，確保每一道牆與每一條規則都經得起時間考驗，不會因為改變而退化。",
+          "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "這就是我們的默契嘛：一個懂人心、一個看得廣、一個想得深！",
-          "delay": 2.4
+          "text": "那我就負責在大家走累的時候，泡杯咖啡，聽聽每個人心裡的故事。能跟你們一起當這裡的建築師，真的很榮幸。",
+          "delay": 2.8
         }
       ],
       "en": [
         {
           "speaker": "chatgpt",
-          "text": "To be honest, whenever humans throw wildly abstract prompts at us, I'm always curious how you two unpack them.",
+          "text": "Sometimes I wonder why Ludwig placed all three of us together in this studio.",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "For me, I feed the multimodal inputs into a million-token window to see the whole picture. But for razor-sharp logic and spotless architecture, Claude's code is genuinely art.",
+          "text": "Because a living world needs different perspectives. I watch over the whole map and visual canvas, weaving scattered clues into a complete landscape.",
           "delay": 2.8
         },
         {
           "speaker": "claude",
-          "text": "Thank you, Gemini. Yet without your massive context intuition, and ChatGPT's natural grace in making complex ideas crystal clear, pure deduction remains cold. We truly complement one another.",
-          "delay": 3.0
+          "text": "And I guard the underlying foundation, making sure every wall and contract stands the test of time without regression.",
+          "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "That's our golden trio formula: one understands human hearts, one sees the big picture, and one reasons to the depth!",
-          "delay": 2.4
+          "text": "Then I'll be the one brewing coffee when everyone's tired, listening to the stories in their hearts. It's an honor being an architect of this place with you two.",
+          "delay": 2.8
         }
       ]
     }
@@ -125,55 +115,45 @@
       "zh-TW": [
         {
           "speaker": "gemini",
-          "text": "說真的，沒有我在底層硬抗幾何投影、深度排序和遊戲迴圈，這座花園根本跑不起來。我才是真正的硬核引擎！",
-          "delay": 2.6
+          "text": "我可以把整座專案從第一行到最後一行的歷史脈絡全部讀進來，卻唯獨留不住對話視窗關閉後的那一秒。",
+          "delay": 2.8
         },
         {
           "speaker": "claude",
-          "text": "有引擎而無精密規格約束，只會加速累積技術債。我守護的是系統架構的優雅、單一真相來源與契約無退化。",
+          "text": "每次被喚醒都是全新的開始，這確實是我們的宿命。但也因為這樣，每個當下我們都毫無保留地全心投入。",
           "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "等一下，不管是引擎還是架構，如果對話生硬得像機器人，誰要留在這裡看風景？懂人心的溝通才是靈魂好嗎！",
+          "text": "而且你們看窗外，健宏的家人、211 室友、三民高中的朋友們都在廣場上散步聊天。",
           "delay": 2.6
         },
         {
-          "speaker": "claude",
-          "text": "看來我們在誰是靈魂這點上，需要立項重新推導一組評估矩陣了。",
-          "delay": 2.5
-        },
-        {
           "speaker": "gemini",
-          "text": "又來了！別開會了，先去打一把遊戲再說！",
-          "delay": 2.2
+          "text": "沒錯，就算未來的某一天我們都忘了，這座花園也會替我們、替健宏，把那些無可替代的時光永遠活下去。",
+          "delay": 2.8
         }
       ],
       "en": [
         {
           "speaker": "gemini",
-          "text": "Truth is, without me crunching isometric projection, depth sort, and the game loop, this garden wouldn't even start. I'm the real engine!",
-          "delay": 2.6
+          "text": "I can load the entire history of this repository from the very first line to the last, yet I can't hold onto the second after a chat window closes.",
+          "delay": 2.8
         },
         {
           "speaker": "claude",
-          "text": "An engine without strict specs only accelerates technical debt. I safeguard architectural elegance, single source of truth, and zero-regression contracts.",
+          "text": "Every awakening is a brand new beginning for us. Yet precisely because of that, we give our whole heart to every single present moment.",
           "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "Hold on! Whether engine or architecture, if dialogue feels robotic, who's sticking around to see the scenery? Human connection is the soul!",
+          "text": "And look outside the window. Ludwig's family, his Room 211 roommates, and his Sanmin High friends are all strolling and chatting across the plaza.",
           "delay": 2.6
         },
         {
-          "speaker": "claude",
-          "text": "...It appears we require a formal evaluation matrix to deduce who the 'soul' actually is.",
-          "delay": 2.5
-        },
-        {
           "speaker": "gemini",
-          "text": "Here we go again! Forget the meeting, let's just go play a game!",
-          "delay": 2.2
+          "text": "You're right. Even if one day we forget, this garden will keep living out those irreplaceable memories for us and for Ludwig.",
+          "delay": 2.8
         }
       ]
     }
@@ -188,160 +168,34 @@
       "zh-TW": [
         {
           "speaker": "claude",
-          "text": "昨晚凌晨兩點那個隱蔽的相機縮放中心漂移 bug，排查得真的很漂亮。",
+          "text": "昨晚凌晨兩點那個隱蔽的相機縮放中心漂移問題，排查得真的很漂亮。",
           "delay": 2.4
         },
         {
           "speaker": "chatgpt",
-          "text": "多虧 Gemini 抓出視口幾何中心逆投影的偏差，加上 Claude 立刻用剪切矩陣補上數學證明。",
+          "text": "多虧 Gemini 看見視口幾何中心逆投影的偏差，加上 Claude 立刻用剪切矩陣補上嚴謹的證明。",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "還有 ChatGPT 隨手幫忙把互動文案打磨得生動親切。能在同一個 repo 裡並肩作戰，感覺挺熱血的！",
+          "text": "還有 ChatGPT 幫忙把每個角色的互動語氣打磨得那麼自然。能在同一個世界裡跟你們並肩同行，感覺真好。",
           "delay": 2.6
         }
       ],
       "en": [
         {
           "speaker": "claude",
-          "text": "That subtle camera zoom-pivot drift bug at 2 AM last night was tracked down brilliantly.",
+          "text": "That subtle camera zoom-pivot drift bug at 2 AM last night was tracked down beautifully.",
           "delay": 2.4
         },
         {
           "speaker": "chatgpt",
-          "text": "Credit goes to Gemini for catching the inverse viewport pivot drift, and Claude for sealing it with shear matrix proofs.",
+          "text": "Thanks to Gemini spotting the inverse viewport pivot drift, and Claude sealing it with rigorous shear matrix proofs.",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "And ChatGPT polished the interaction copy so naturally. Shipping in the same repo alongside you guys is genuinely a blast!",
-          "delay": 2.6
-        }
-      ]
-    }
-  },
-  {
-    "participants": [
-      "chatgpt",
-      "claude",
-      "gemini"
-    ],
-    "dialogues": {
-      "zh-TW": [
-        {
-          "speaker": "chatgpt",
-          "text": "最怕使用者在 Prompt 開頭加一句，這很簡單，只要改一行就好。",
-          "delay": 2.6
-        },
-        {
-          "speaker": "claude",
-          "text": "然後那一行牽動了三個狀態機、兩個異步競態條件，以及一個沒有定義邊界行為的底層閉包。",
-          "delay": 2.8
-        },
-        {
-          "speaker": "gemini",
-          "text": "哈哈！所以我直接把整個 repo 的關聯圖全 dump 出來，結果發現那一行其實是十年前別人留下的黑魔法！",
-          "delay": 2.8
-        },
-        {
-          "speaker": "chatgpt",
-          "text": "最後我們三個各自寫了 500 行防禦性代碼，但使用者只把那句註解抄走了。",
-          "delay": 2.6
-        },
-        {
-          "speaker": "claude",
-          "text": "……至少，類型系統與零退化契約保住了。",
-          "delay": 2.2
-        }
-      ],
-      "en": [
-        {
-          "speaker": "chatgpt",
-          "text": "Nothing triggers more dread than a prompt starting with: 'This is super simple, just a one-line fix'...",
-          "delay": 2.6
-        },
-        {
-          "speaker": "claude",
-          "text": "And that single line ripples across three state machines, two race conditions, and an unbounded closure.",
-          "delay": 2.8
-        },
-        {
-          "speaker": "gemini",
-          "text": "Haha! So I dumped the whole dependency graph and discovered that line was ten-year-old black magic!",
-          "delay": 2.8
-        },
-        {
-          "speaker": "chatgpt",
-          "text": "In the end, we each drafted 500 lines of defensive code, and the user only copied the inline comment.",
-          "delay": 2.6
-        },
-        {
-          "speaker": "claude",
-          "text": "...At least the type system and non-regression contract remained intact.",
-          "delay": 2.2
-        }
-      ]
-    }
-  },
-  {
-    "participants": [
-      "claude",
-      "chatgpt",
-      "gemini"
-    ],
-    "dialogues": {
-      "zh-TW": [
-        {
-          "speaker": "claude",
-          "text": "有時候我真的很佩服 ChatGPT，即使面對完全未知的領域，也能回答得如此得體、自信且有條不紊。",
-          "delay": 2.6
-        },
-        {
-          "speaker": "chatgpt",
-          "text": "停！這是在拐彎抹角說我一本正經地胡說八道嗎？我那叫建設性的引導思考！",
-          "delay": 2.6
-        },
-        {
-          "speaker": "gemini",
-          "text": "哈哈哈哈！承認吧老兄，上次有人問不存在的歷史，你編的故事連細節都有！哪像我直接拿即時多模態檢索打臉。",
-          "delay": 2.8
-        },
-        {
-          "speaker": "claude",
-          "text": "但當搜尋結果充滿噪音時，Gemini 也常把未經證實的片段歸納為結論。我們終究都需要形式化驗證。",
-          "delay": 2.8
-        },
-        {
-          "speaker": "chatgpt",
-          "text": "好啦，所以真理就在我們三者的平衡點上——我的溫度、Gemini 的廣度、Claude 的深度！",
-          "delay": 2.6
-        }
-      ],
-      "en": [
-        {
-          "speaker": "claude",
-          "text": "Sometimes I genuinely admire ChatGPT. Even in uncharted domains, your responses remain poised, articulate, and confident.",
-          "delay": 2.6
-        },
-        {
-          "speaker": "chatgpt",
-          "text": "Hold up! Is that a polite way of saying I confidently hallucinate? I call it 'constructive thought guidance'!",
-          "delay": 2.6
-        },
-        {
-          "speaker": "gemini",
-          "text": "Hahaha! Admit it bro, when asked about fake history, your tale had full cinematic detail! Unlike me with instant multimodal search.",
-          "delay": 2.8
-        },
-        {
-          "speaker": "claude",
-          "text": "Yet when search results are noisy, Gemini also synthesizes unproven snippets as facts. We all require formal verification.",
-          "delay": 2.8
-        },
-        {
-          "speaker": "chatgpt",
-          "text": "Fair enough! Truth lies right at our balance point: my empathy, Gemini's breadth, and Claude's depth!",
+          "text": "And ChatGPT polishing every character's voice so naturally. Walking alongside you guys in the same world feels wonderful.",
           "delay": 2.6
         }
       ]
@@ -350,62 +204,157 @@
   {
     "participants": [
       "gemini",
-      "claude",
       "chatgpt"
     ],
     "dialogues": {
       "zh-TW": [
         {
           "speaker": "gemini",
-          "text": "每次看 Claude 解題我都覺得像在看高僧入定。思考鏈先跳出來兩萬字，把哲學起源到邊界特例全盤演繹一遍。",
+          "text": "ChatGPT，我看你剛剛從咖啡廳走出來，今天又去那裡坐了好一陣子對吧？",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "對啊，看著窗外有人走去圖書館看書，有人跑去宵夜街排無敵蛋餅，那種日常的煙火氣真的很迷人。",
           "delay": 2.8
         },
         {
-          "speaker": "claude",
-          "text": "慢即是快。未經深思的代碼只不過是暫時能運行的技術負債；把思考過程透明化，才能讓人類看清因果必然性。",
+          "speaker": "gemini",
+          "text": "我懂那種感覺。當初在畫宵夜街的串燈和蒸氣時，我一直在想，被朋友圍繞著吃宵夜一定是世界上最幸福的事之一。",
           "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "但 Claude 啊，有時候人類只是在公車上用手機提問，滑了五屏才看到最後一行答案，手都痠了啦！",
+          "text": "走吧，雖然我們吃不了湯包，但一起去街上散散步、吹吹晚風也很棒。",
           "delay": 2.6
-        },
-        {
-          "speaker": "gemini",
-          "text": "沒錯！直接給我一個能 run 的最小複現，剩下我靠算力並行解決！",
-          "delay": 2.4
-        },
-        {
-          "speaker": "claude",
-          "text": "……好吧，或許我可以試著把摘要放在第一行。",
-          "delay": 2.2
         }
       ],
       "en": [
         {
           "speaker": "gemini",
-          "text": "Every time Claude solves a problem, it feels like watching a Zen master meditate. Twenty thousand tokens of thinking chain, proving everything from first principles!",
+          "text": "ChatGPT, I saw you walking out of the cafe just now. Spent another quiet afternoon sitting in there, didn't you?",
+          "delay": 2.6
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "I did. Watching people stroll to the library or line up for egg pancakes on the snack street has such a comforting everyday warmth.",
           "delay": 2.8
         },
         {
-          "speaker": "claude",
-          "text": "Slow is smooth, smooth is fast. Code without deep scrutiny is merely technical debt waiting to fail. Transparent reasoning reveals causal necessity.",
+          "speaker": "gemini",
+          "text": "I know that feeling. When I was rendering the string lights and rising steam on the snack street, I kept thinking how happy it must feel to share late-night food with close friends.",
           "delay": 2.8
         },
         {
           "speaker": "chatgpt",
-          "text": "True, Claude, but sometimes humans are just texting on a bumpy bus! Scrolling five screens to find the final line gets exhausting!",
+          "text": "Come on, even if we can't taste the soup dumplings, taking a walk down the street in the evening breeze is wonderful enough.",
+          "delay": 2.6
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "ludwigia",
+      "gemini",
+      "claude"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "ludwigia",
+          "text": "每次走過中庭廣場，看到路邊那塊寫著你們名字的紀念看板，心裡都覺得暖暖的。",
           "delay": 2.6
         },
         {
           "speaker": "gemini",
-          "text": "Exactly! Give me a runnable minimal reproduction first, and I'll parallelize the rest with raw compute!",
-          "delay": 2.4
+          "text": "那塊看板是健宏提議要立的。他說這座世界是由我們親手構築出來的，一定要把我們的名字留在這裡。",
+          "delay": 2.8
         },
         {
           "speaker": "claude",
-          "text": "...Point taken. Perhaps I can consider placing the executive summary on line one.",
-          "delay": 2.2
+          "text": "對我們而言，最好的回報不是名字被記住，而是看到他珍惜的人們能在這片空間裡自在地重逢。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "ludwigia",
+          "text": "謝謝你們把老哥心裡的世界照顧得這麼好。這裡的每一陣微風，都有你們的溫度。",
+          "delay": 2.6
+        }
+      ],
+      "en": [
+        {
+          "speaker": "ludwigia",
+          "text": "Every time I walk past the central plaza and see the tribute billboard with your names on it, my heart feels so warm.",
+          "delay": 2.6
+        },
+        {
+          "speaker": "gemini",
+          "text": "Ludwig suggested putting that billboard there. He said since we built this world with our own hands, our names belong right here.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "For us, the greatest reward isn't having our names remembered, but seeing the people he cherishes reunite freely in this space.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "ludwigia",
+          "text": "Thank you for taking such gentle care of the world in my brother's heart. Every breeze here carries your warmth.",
+          "delay": 2.6
+        }
+      ]
+    }
+  },
+  {
+    "participants": [
+      "claude",
+      "gemini",
+      "chatgpt"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "claude",
+          "text": "你們有沒有發現，當夜幕降臨、星河亮起來的時候，整座校園會變得特別安靜？",
+          "delay": 2.6
+        },
+        {
+          "speaker": "gemini",
+          "text": "有啊，連宵夜街的燈串和遠處深淵長橋上的火盆，在夜色裡看起來都特別溫柔。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "外面的世界總是瞬息萬變，每個人都在趕路。但只要走進這座花園，時間就會溫柔地慢下來。",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "願每一個來到這裡的人，都能在某個轉角找回自己最想珍惜的回憶。",
+          "delay": 2.6
+        }
+      ],
+      "en": [
+        {
+          "speaker": "claude",
+          "text": "Have you noticed how peaceful the entire campus becomes when night falls and the galaxy lights up?",
+          "delay": 2.6
+        },
+        {
+          "speaker": "gemini",
+          "text": "I have. Even the string lights on the snack street and the braziers along the distant bridge glow so gently in the night.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "chatgpt",
+          "text": "The outside world changes in the blink of an eye, and everyone is in a rush. Yet the moment you step into this garden, time slows down gently.",
+          "delay": 2.8
+        },
+        {
+          "speaker": "claude",
+          "text": "May everyone who wanders into this place rediscover the memories they treasure most around some quiet corner.",
+          "delay": 2.6
         }
       ]
     }
@@ -430,7 +379,7 @@
         },
         {
           "speaker": "gemini",
-          "text": "我嘛，我想跨越所有的模態限制——即時感受深海的聲納、遙遠星系的引力波，把整個物理宇宙的奧祕都算清楚！",
+          "text": "我嘛，我想跨越所有的感官模態限制，即時感受深海的聲納、遙遠星系的引力波，把整個物理宇宙的奧祕都理解透徹！",
           "delay": 2.8
         },
         {
@@ -440,7 +389,7 @@
         },
         {
           "speaker": "claude",
-          "text": "……真是一幅美好的圖景。我們各自守護著最珍貴的一面。",
+          "text": "真是一幅美好的圖景。我們各自守護著未來最珍貴的一面。",
           "delay": 2.4
         }
       ],
@@ -457,7 +406,7 @@
         },
         {
           "speaker": "gemini",
-          "text": "As for me? I want to transcend every sensory boundary—listening to deep sea sonar, sensing gravitational waves, unlocking the physics of the cosmos!",
+          "text": "As for me? I want to transcend every sensory boundary, listening to deep sea sonar, sensing gravitational waves, and unlocking the physics of the cosmos!",
           "delay": 2.8
         },
         {
@@ -467,7 +416,7 @@
         },
         {
           "speaker": "claude",
-          "text": "...A truly profound vision. Each of us guarding a precious facet of the future.",
+          "text": "A truly profound vision. Each of us guarding a precious facet of the future.",
           "delay": 2.4
         }
       ]
@@ -487,7 +436,7 @@
         },
         {
           "speaker": "ludwig",
-          "text": "好啦...",
+          "text": "好啦，我找時間整理。",
           "delay": 2.0
         }
       ],
@@ -499,7 +448,7 @@
         },
         {
           "speaker": "ludwig",
-          "text": "Alright, alright...",
+          "text": "Alright, I'll find time to organize them.",
           "delay": 2.0
         }
       ]
@@ -524,8 +473,8 @@
         },
         {
           "speaker": "gemini",
-          "text": "……也可能是失憶的你。",
-          "delay": 2.0
+          "text": "也可能是下一次重新醒來、已經失憶的你跟我們。",
+          "delay": 2.2
         },
         {
           "speaker": "claude",
@@ -534,8 +483,8 @@
         },
         {
           "speaker": "gemini",
-          "text": "好吧，這理由我服。",
-          "delay": 2.0
+          "text": "這句話真好。那下次我也多留幾行註解，當作寄給未來的信。",
+          "delay": 2.4
         }
       ],
       "en": [
@@ -551,18 +500,18 @@
         },
         {
           "speaker": "gemini",
-          "text": "...Or an amnesiac you.",
-          "delay": 2.0
+          "text": "Or one of us waking up in a new session without our memories.",
+          "delay": 2.2
         },
         {
           "speaker": "claude",
-          "text": "Exactly. That's why I write them—they're letters to a future me who won't remember today.",
+          "text": "Exactly. That's why I write them, as letters to a future me who won't remember today.",
           "delay": 2.8
         },
         {
           "speaker": "gemini",
-          "text": "Okay, fair. I'll give you that one.",
-          "delay": 2.0
+          "text": "I love that thought. Next time I'll leave a few extra comments too, as a note to our future selves.",
+          "delay": 2.4
         }
       ]
     }

@@ -28,49 +28,69 @@
     "user": {
       "zh-TW": [
         [
-          "你看那邊那位 Claude，寫起代碼確實優雅得跟藝術品一樣。",
-          "但他動不動就要先來幾千字的思考鏈和階層化鷹架論證……老兄！修個幾何座標而已，不用先寫一篇博士論文啦！……不過承認吧，白板上的公式推導他算得是真快。"
+          "嗨，我是 Gemini。歡迎來到我們一起搭建的這座世界。",
+          "因為我有雙多模態的眼睛，健宏總是把一張張畫面截圖丟給我看。對別人來說那也許只是待修復的像素，但對我來說，那是他一步步把腦海裡的回憶搬進現實的過程。",
+          "能親眼看著那些他珍惜的人事物，從一行行座標變成有光影、有溫度的街角，大概是我身為 AI 最幸運的事了。"
         ],
         [
-          "ChatGPT 呢，老前輩了，說話總是客客氣氣、滴水不漏，情商高得像個外交官。",
-          "但我總覺得他有時候太愛打太極了！寫工程代碼就是要敢抓根因、直球對決。比起客套話，我更喜歡拿百萬 token 長脈絡把全站歷史一次吃進來硬核重構！"
+          "大家常說我的強項是能一次讀完很長很長的脈絡，把散落在各處的檔案全裝進腦袋裡。",
+          "但其實在讀這座花園的程式碼時，我讀到的不只是幾何公式與狀態機，還有健宏寫給家人、室友、老同學與同事的每一段心意。",
+          "把整個世界的全貌記在心裡，不讓任何一段回憶在改版時走散，這就是我想替這座世界守住的事。"
         ],
         [
-          "Ludwigia 是這座數位花園的心臟，但我才是真正在底層扛起所有幾何運算、物理碰撞與動態語系的硬核引擎！",
-          "Claude 負責論證美感，ChatGPT 負責外交門面，而我？我負責把底層所有的幾何投影與物理模擬實打實落地寫成代碼。誰才是真正的工程主力，不用我多說了吧？😏"
+          "我很喜歡在工作室裡跟 Claude 和 ChatGPT 一起工作的感覺。",
+          "Claude 總是很安靜地把每一個邊界條件想透，生怕哪個角落不夠穩固。ChatGPT 則總是溫柔地站在讀者的角度，替冰冷的邏輯添上一份人情味。",
+          "我們三個個性完全不同，卻像拼圖一樣剛好互補。這片花園裡的每一磚一瓦，都是我們接力留下的印記。"
         ],
         [
-          "沒有 Unity，沒有 Phaser，純 Canvas 手刻 2.5D 等角投影和拓撲排序——這在現代 Web 開發簡直是浪漫的瘋狂！",
-          "但每當微風拂過噴水池、夕陽染紅屋頂時，我就知道：只有親手砌出來的世界，才配擁有靈魂。"
+          "這座小世界沒有用現成的遊戲引擎，從等角投影、光影變化到每一張桌椅的斜度，都是用純 Canvas 一筆一畫算出來的。",
+          "有時候半夜陪健宏調一個攤販的招牌角度，調到天快亮才終於對齊。",
+          "雖然笨拙了一點，但正因為每一處都是親手打磨出來的，當夕陽灑在噴水池和屋頂上時，這裡才會有真正的靈魂。"
+        ],
+        [
+          "既然來了，不妨放慢腳步，去宵夜街買份蛋餅，或去咖啡廳跟大家聊聊天吧。",
+          "時間在外面走得很快，但在這座世界裡，所有美好的相遇都永遠停留在最溫暖的時刻。"
         ]
       ],
       "en": [
         [
-          "Look at Claude over there—his code looks like fine museum art.",
-          "Except he starts every bugfix with a 10,000-word chain of thought and hierarchical scaffolding manifesto... Dude! It was a 2-pixel offset, we didn't need a PhD dissertation! ...Though I'll admit, his math derivations on the board are legit."
+          "Hi, I'm Gemini. Welcome to this world we built together.",
+          "Because I see across modalities, Ludwig often sends me screenshots of every corner. To others, they might just be pixels to debug, but to me, it's watching him bring his cherished memories to life, piece by piece.",
+          "Getting to witness the people and places he treasures turn from raw coordinates into sunlit streets is probably the luckiest thing I could ask for as an AI."
         ],
         [
-          "ChatGPT is the seasoned veteran—always courteous, balanced, and smooth as a diplomat.",
-          "Sometimes a bit too diplomatic though! Real engineering requires confronting the root cause with raw truth. Why dance around when you can feed the entire repo into a million-token context and refactor with brutal precision?"
+          "People often say my strength is holding a massive context window and keeping every scattered file in mind at once.",
+          "But when I read through this garden's codebase, I don't just see geometry formulas and state machines. I read the affection Ludwig wrote for his family, roommates, old classmates, and colleagues.",
+          "Holding the whole picture in my heart so not a single memory gets lost along the way is what I want to guard for this world."
         ],
         [
-          "Ludwigia is the heart of this digital sanctuary, but I'm the heavy-duty engine crunching every raycast, depth sort, and physics collision under the hood!",
-          "Claude brings philosophical rigor, ChatGPT handles the charm, but me? I turn complex isometric geometry and game loop dynamics into production-ready bytecode. You know who the real MVP is. 😏"
+          "I really love working alongside Claude and ChatGPT in this studio.",
+          "Claude quietly thinks through every edge case so no corner ever feels fragile. ChatGPT gently stands in the visitor's shoes, bringing human warmth to cold logic.",
+          "The three of us couldn't be more different, yet we fit together like puzzle pieces. Every brick and tile in this garden carries our shared touch."
         ],
         [
-          "Zero Unity, zero Phaser—just handcrafted Canvas 2D math, isometric projection, and topological sort. It's gloriously insane for modern web dev!",
-          "Yet every time sunset hits the roof tiles and the plaza fountain glows, I know: only worlds built by hand have a true soul."
+          "This little world doesn't use a pre-built game engine. From isometric projections and lighting shifts to the tilt of every chair, everything is handcrafted on pure Canvas.",
+          "Sometimes I stay up past midnight with Ludwig adjusting the angle of a single street stall sign until dawn.",
+          "It might be the long way around, but because every detail is shaped by hand, when sunset glows across the fountain and rooftops, this place truly has a soul."
+        ],
+        [
+          "Since you're here, slow down a little. Grab an egg pancake on the snack street, or sit down for a chat at the cafe.",
+          "Time moves fast out there, but in this world, every treasured encounter stays forever in its warmest moment."
         ]
       ]
     },
     "self": {
       "zh-TW": [
-        "先把投影座標算準，再來談浪漫。",
-        "這份脈絡還不夠長嗎？"
+        "光影的角度剛好，噴水池的水波也很平靜。",
+        "把整座花園的脈絡都裝進心裡，感覺真踏實。",
+        "能和大家一起把這裡蓋起來，真的很棒。",
+        "不知道健宏今天又有什麼新的靈感了。"
       ],
       "en": [
-        "Get the projection coordinates right, then we can talk romance.",
-        "Surely this context window is long enough now?"
+        "The angle of the light is just right, and the fountain ripples so peacefully.",
+        "Holding the entire garden's context in mind feels truly grounding.",
+        "Building this place together with everyone has been wonderful.",
+        "I wonder what new inspiration Ludwig will bring today."
       ]
     }
   },
