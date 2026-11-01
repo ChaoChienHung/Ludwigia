@@ -846,7 +846,7 @@
       } else if (checkZone('cyber_cafe', 8.5, 19.5, 48.5, 57.2)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
-        statusMessage = "Howling Abyss Cyber • 召喚師電競網咖 🎮";
+        statusMessage = "Gaming Dimension Portal • 電玩次元穿梭站 ⚡🕹️";
       } else if (checkZone('howling_abyss', 10.5, 17.5, 57.2, 93.2)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;

@@ -4638,7 +4638,7 @@
       ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('⚡ 召喚師電競網咖 • CYBER LAN LOUNGE ⚡', 0, 0);
+      ctx.fillText('⚡ 電玩次元穿梭站 • GAMING DIMENSION PORTAL ⚡', 0, 0);
 
       ctx.restore();
     }
@@ -4648,30 +4648,78 @@
       // Carbon fiber desk surface
       this.drawBox(ctx, gx, gy, 0, 1.35, 0.75, 0.72, '#0f172a', '#020617', '#1e293b', ox, oy);
 
-      // Curved Ultrawide Gaming Monitor
+      // Curved Ultrawide Gaming Monitor Casing
       this.drawBox(ctx, gx + 0.30, gy + 0.12, 0.72, 0.75, 0.14, 0.45, '#1e293b', '#0f172a', '#020617', ox, oy);
 
-      // Screen Display (Glowing League of Legends ARAM / Rift Match)
-      const sp0 = isoToScreen(gx + 0.32, gy + 0.24, 0.78, ox, oy);
-      const sp1 = isoToScreen(gx + 1.02, gy + 0.24, 0.78, ox, oy);
-      const st1 = isoToScreen(gx + 1.02, gy + 0.24, 1.15, ox, oy);
-      const st0 = isoToScreen(gx + 0.32, gy + 0.24, 1.15, ox, oy);
+      // Screen Display (Screen Glass Face at y = gy + 0.261, strictly aligned with isometric shear (1, 0.5, 0, 1, 0, 0))
+      const screenX0 = gx + 0.33;
+      const screenX1 = gx + 1.02;
+      const screenZ0 = 0.75;
+      const screenZ1 = 1.14;
+      const sTopLeft = isoToScreen(screenX0, gy + 0.261, screenZ1, ox, oy);
+      const sW = (screenX1 - screenX0) * 32; // ~22.08 px
+      const sH = (screenZ1 - screenZ0) * 32; // ~12.48 px
 
-      ctx.fillStyle = isRedSide ? '#ef4444' : '#0284c7';
+      ctx.save();
+      ctx.translate(sTopLeft.x, sTopLeft.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Exact +0.5 isometric shear matching screen surface
+
+      // 1. Dark Screen Frame / Glossy Glass Panel
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(0, 0, sW, sH);
+
+      // 2. In-Game Battlefield / ARAM Match Arena Glow
+      ctx.fillStyle = isRedSide ? 'rgba(239, 68, 68, 0.22)' : 'rgba(56, 189, 248, 0.22)';
+      ctx.fillRect(1.5, 2.0, sW - 3.0, sH - 3.5);
+
+      // 3. Health & Resource HUD Bar (Top of screen, perfectly sheared!)
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.fillRect(2.0, 1.0, sW - 4.0, 1.6);
+      ctx.fillStyle = '#22c55e'; // Vibrant green active HP bar
+      ctx.fillRect(2.0, 1.0, (sW - 4.0) * 0.72, 1.6);
+
+      // 4. In-Game Mini Map & Lane Diagonal
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+      ctx.fillRect(sW - 6.5, sH - 4.8, 5.0, 3.8);
+      ctx.strokeStyle = isRedSide ? '#ef4444' : '#38bdf8';
+      ctx.lineWidth = 0.8;
       ctx.beginPath();
-      ctx.moveTo(sp0.x, sp0.y); ctx.lineTo(sp1.x, sp1.y); ctx.lineTo(st1.x, st1.y); ctx.lineTo(st0.x, st0.y);
-      ctx.closePath();
+      ctx.moveTo(sW - 5.8, sH - 4.0);
+      ctx.lineTo(sW - 2.2, sH - 1.8);
+      ctx.stroke();
+
+      // 5. Champion Ability / Spell Icons Bar (Bottom of screen)
+      for (let k = 0; k < 4; k++) {
+        ctx.fillStyle = isRedSide ? '#f87171' : '#38bdf8';
+        ctx.fillRect(2.5 + k * 2.3, sH - 2.8, 1.6, 1.6);
+      }
+      ctx.restore();
+
+      // RGB Desk Mat & Backlit Gaming Keyboard (True Isometric Axonometric Projections)
+      // Large Stitched Edge Gaming Desk Mat
+      this.drawBox(ctx, gx + 0.35, gy + 0.34, 0.725, 0.65, 0.34, 0.015, '#020617', '#0f172a', '#1e293b', ox, oy);
+      // Mechanical Backlit Keyboard Body
+      this.drawBox(ctx, gx + 0.40, gy + 0.40, 0.74, 0.42, 0.20, 0.025, '#0f172a', '#1e293b', '#334155', ox, oy);
+      // Keycap RGB Underglow Strip (Sloping at +0.5 along X)
+      const kbL = isoToScreen(gx + 0.43, gy + 0.50, 0.768, ox, oy);
+      const kbR = isoToScreen(gx + 0.79, gy + 0.50, 0.768, ox, oy);
+      ctx.strokeStyle = isRedSide ? '#ef4444' : '#06b6d4';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(kbL.x, kbL.y);
+      ctx.lineTo(kbR.x, kbR.y);
+      ctx.stroke();
+
+      // Ergonomic Gaming Mouse
+      const mP = isoToScreen(gx + 0.90, gy + 0.50, 0.74, ox, oy);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(mP.x, mP.y, 2.5, 0, Math.PI * 2);
       ctx.fill();
-
-      // Mini Health Bar & Map lines on screen
-      ctx.fillStyle = '#22c55e';
-      const hpBar = isoToScreen(gx + 0.65, gy + 0.25, 1.12, ox, oy);
-      ctx.fillRect(hpBar.x - 12, hpBar.y, 24, 2);
-
-      // RGB Backlit Keyboard & Mouse Pad
-      const kp = isoToScreen(gx + 0.65, gy + 0.52, 0.73, ox, oy);
-      ctx.fillStyle = isRedSide ? 'rgba(239, 68, 68, 0.75)' : 'rgba(6, 182, 212, 0.75)';
-      ctx.fillRect(kp.x - 10, kp.y - 3, 20, 7);
+      ctx.fillStyle = isRedSide ? '#ef4444' : '#06b6d4';
+      ctx.beginPath();
+      ctx.arc(mP.x, mP.y, 1.0, 0, Math.PI * 2);
+      ctx.fill();
 
       // Liquid-Cooled Tempered Glass PC Tower with Internal RGB LEDs
       this.drawBox(ctx, gx + 1.12, gy + 0.15, 0.72, 0.20, 0.48, 0.42, '#38bdf8', '#0284c7', '#0f172a', ox, oy);

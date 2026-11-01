@@ -18,20 +18,20 @@
       // Directly aligned with Central Boulevard (x: 12..15)
       // ======================================================================
       // North Wall (y = 48.8): Left (x: 9..13) and Right (x: 15..19.2)
-      // Leaves doorway at x: 13.0..15.0 wide open for direct North entrance!
-      nav.setBlock(9.0, 48.8, 4.0, 0.45, true);
-      nav.setBlock(15.0, 48.8, 4.2, 0.45, true);
+      // Solid collision block on row 48, leaving doorway at x: 13.0..15.0 wide open for direct North entrance!
+      nav.setBlock(9.0, 48.4, 4.0, 0.80, true);
+      nav.setBlock(15.0, 48.4, 4.2, 0.80, true);
 
       // West Wall: Floor-to-ceiling panoramic glass curtain wall (x = 8.8, y: 48.8..57.2)
-      nav.setBlock(8.8, 48.8, 0.45, 8.4, true);
+      nav.setBlock(8.6, 48.5, 0.50, 8.5, true);
 
       // East Wall: Floor-to-ceiling panoramic glass curtain wall (x = 19.0, y: 48.8..57.2)
-      nav.setBlock(19.0, 48.8, 0.45, 8.4, true);
+      nav.setBlock(19.0, 48.5, 0.50, 8.5, true);
 
       // South Wall (y = 57.0): Left (x: 9..13) and Right (x: 15..19.2)
       // Leaves south portal doorway at x: 13.0..15.0 wide open directly onto bridge deck!
-      nav.setBlock(9.0, 57.0, 4.0, 0.45, true);
-      nav.setBlock(15.0, 57.0, 4.2, 0.45, true);
+      nav.setBlock(9.0, 56.6, 4.0, 0.80, true);
+      nav.setBlock(15.0, 56.6, 4.2, 0.80, true);
 
       // Cyber Cafe Internal Rigs (flanking the central x: 13..15 aisle)
       nav.setBlock(10.2, 51.2, 1.8, 0.8, true);   // Blue Rig Row 1
@@ -45,8 +45,8 @@
       // Blocks anyone from walking off the south cliff into the abyss
       // Only passage across to the other side is through the Bridge!
       // ======================================================================
-      nav.setBlock(0.0, 57.0, 9.0, 0.45, true);   // West Cliff Fence (x: 0..9)
-      nav.setBlock(19.0, 57.0, 35.0, 0.45, true); // East Cliff Fence (x: 19..54 completely sealed!)
+      nav.setBlock(0.0, 56.6, 9.0, 0.80, true);   // West Cliff Fence (x: 0..9)
+      nav.setBlock(19.0, 56.6, 35.0, 0.80, true); // East Cliff Fence (x: 19..54 completely sealed!)
 
       // ======================================================================
       // C. THE HOWLING ABYSS BOTTOMLESS VOID CHASM & BRIDGE BALUSTRADES
@@ -314,7 +314,7 @@
         draw: () => {
           // Lintle wall beam above doorway
           models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
-          // Glowing Neon Portal Sign "HOWLING ABYSS PORTAL"
+          // Glowing Neon Portal Sign "DIMENSION PORTAL"
           const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
           ctx.save();
           ctx.fillStyle = '#38bdf8';
@@ -322,7 +322,7 @@
           ctx.textAlign = 'center';
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = 8;
-          ctx.fillText('ABYSS PORTAL', sp.x, sp.y);
+          ctx.fillText('⚡ DIMENSION PORTAL ⚡', sp.x, sp.y);
           ctx.restore();
         }
       });
