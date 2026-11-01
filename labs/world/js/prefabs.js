@@ -1,6 +1,6 @@
 // ============================================================================
 // Ludwigia World — Modular Architecture Prefabs
-// Gaming Dimension: Cyber Cafe Enclosure, Symmetric ARAM Bridge & Minecraft Island
+// Gaming Dimension: Centered Cyber Cafe, Grand Symmetric ARAM Bridge & Minecraft Island
 // ============================================================================
 
 (function(window) {
@@ -14,75 +14,92 @@
       if (!nav) return;
 
       // ======================================================================
-      // A. CYBER CAFE (x: 4..14, y: 49..56) — 6 tiles South of Sanmin School
+      // A. CYBER CAFE (x: 9..19, y: 49..57, centered at x: 14)
+      // Directly aligned with Central Boulevard (x: 12..15)
       // ======================================================================
-      // North Wall: y = 48.8, x: 4..14 with North Entrance at x: 8..10
-      nav.setBlock(4.0, 48.8, 4.0, 0.45, true);   // North Wall Left (x: 4..8)
-      nav.setBlock(10.0, 48.8, 4.2, 0.45, true);  // North Wall Right (x: 10..14.2)
+      // North Wall (y = 48.8): Left (x: 9..13) and Right (x: 15..19.2)
+      // Leaves doorway at x: 13.0..15.0 wide open for direct North entrance!
+      nav.setBlock(9.0, 48.8, 4.0, 0.45, true);
+      nav.setBlock(15.0, 48.8, 4.2, 0.45, true);
 
-      // West Wall: Floor-to-ceiling panoramic glass curtain wall (x = 3.8, y: 48.8..56.2)
-      nav.setBlock(3.8, 48.8, 0.45, 7.4, true);
+      // West Wall: Floor-to-ceiling panoramic glass curtain wall (x = 8.8, y: 48.8..57.2)
+      nav.setBlock(8.8, 48.8, 0.45, 8.4, true);
 
-      // East Wall: Floor-to-ceiling panoramic glass curtain wall overlooking chasm (x = 14.0, y: 48.8..56.2)
-      nav.setBlock(14.0, 48.8, 0.45, 7.4, true);
+      // East Wall: Floor-to-ceiling panoramic glass curtain wall (x = 19.0, y: 48.8..57.2)
+      nav.setBlock(19.0, 48.8, 0.45, 8.4, true);
 
-      // South Wall: y = 56.0, x: 4..14 with South Abyss Portal doorway at x: 8..10
-      nav.setBlock(4.0, 56.0, 4.0, 0.45, true);   // South Wall Left (x: 4..8)
-      nav.setBlock(10.0, 56.0, 4.2, 0.45, true);  // South Wall Right (x: 10..14.2)
+      // South Wall (y = 57.0): Left (x: 9..13) and Right (x: 15..19.2)
+      // Leaves south portal doorway at x: 13.0..15.0 wide open directly onto bridge deck!
+      nav.setBlock(9.0, 57.0, 4.0, 0.45, true);
+      nav.setBlock(15.0, 57.0, 4.2, 0.45, true);
 
-      // Cyber Cafe Internal Rigs & Snack Bar
-      nav.setBlock(5.2, 50.2, 1.4, 0.8, true);    // Rig 1
-      nav.setBlock(7.0, 50.2, 1.4, 0.8, true);    // Rig 2
-      nav.setBlock(11.0, 50.2, 1.4, 0.8, true);   // Rig 3
-      nav.setBlock(5.2, 53.5, 1.4, 0.8, true);    // Rig 4
-      nav.setBlock(7.0, 53.5, 1.4, 0.8, true);    // Rig 5
-      nav.setBlock(11.0, 53.5, 1.4, 0.8, true);   // Rig 6
-      nav.setBlock(11.5, 52.0, 1.8, 0.85, true);  // Snack & Monster Bar
-
-      // ======================================================================
-      // B. HOWLING ABYSS NORTH-SOUTH BRIDGE (x: 6..12, y: 56..92, 36 tiles long!)
-      // ======================================================================
-      // West Balustrade Railing (blocks falling into West Abyss)
-      nav.setBlock(5.0, 56.0, 1.0, 36.2, true);
-      // East Balustrade Railing (blocks falling into East Abyss)
-      nav.setBlock(13.0, 56.0, 1.0, 36.2, true);
-
-      // Symmetrical Artifacts Collision Obstacles
-      nav.setBlock(8.0, 57.5, 2.0, 1.8, true);   // Blue Nexus
-      nav.setBlock(8.3, 60.5, 1.4, 1.4, true);   // Blue Inhibitor
-      nav.setBlock(8.2, 63.5, 1.6, 1.6, true);   // Blue Inner Turret
-      nav.setBlock(8.2, 67.5, 1.6, 1.6, true);   // Blue Outer Turret
-
-      nav.setBlock(8.2, 79.5, 1.6, 1.6, true);   // Red Outer Turret
-      nav.setBlock(8.2, 83.5, 1.6, 1.6, true);   // Red Inner Turret
-      nav.setBlock(8.3, 86.5, 1.4, 1.4, true);   // Red Inhibitor
-      nav.setBlock(8.0, 89.5, 2.0, 1.8, true);   // Red Nexus
+      // Cyber Cafe Internal Rigs (flanking the central x: 13..15 aisle)
+      nav.setBlock(10.2, 51.2, 1.8, 0.8, true);   // Blue Rig Row 1
+      nav.setBlock(10.2, 54.2, 1.8, 0.8, true);   // Blue Rig Row 2
+      nav.setBlock(16.0, 51.2, 1.8, 0.8, true);   // Red Rig Row 1
+      nav.setBlock(16.0, 54.2, 1.8, 0.8, true);   // Red Rig Row 2
+      nav.setBlock(17.2, 52.5, 1.6, 1.0, true);   // Snack & Monster Bar
 
       // ======================================================================
-      // C. THE MINECRAFT ISLAND (x: 2..16, y: 92..110)
+      // B. MAIN ISLAND SOUTH CLIFF WOODEN PERIMETER FENCE (y = 57.0)
+      // Blocks anyone from walking off the south cliff into the abyss
+      // Only passage across to the other side is through the Bridge!
       // ======================================================================
-      // Oak Wood Cabin (x: 4..10, y: 96..102, doorway at x: 6.5..7.5, y: 96)
-      nav.setBlock(4.0, 96.0, 2.5, 0.40, true);  // North Wall Left (x: 4.0..6.5)
-      nav.setBlock(7.5, 96.0, 2.5, 0.40, true);  // North Wall Right (x: 7.5..10.0)
-      nav.setBlock(3.8, 96.0, 0.40, 6.2, true);  // West Wall
-      nav.setBlock(10.0, 96.0, 0.40, 6.2, true); // East Wall
-      nav.setBlock(4.0, 102.0, 6.2, 0.40, true); // South Wall
+      nav.setBlock(0.0, 57.0, 9.0, 0.45, true);   // West Cliff Fence (x: 0..9)
+      nav.setBlock(19.0, 57.0, 14.0, 0.45, true); // East Cliff Fence (x: 19..33)
+
+      // ======================================================================
+      // C. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 11..17, y: 57..93)
+      // 36 tiles long North-South grand bridge centered at x: 14
+      // ======================================================================
+      // West Balustrade Railing & Abyss void (blocks tile 10)
+      nav.setBlock(10.0, 57.0, 1.0, 36.2, true);
+      // East Balustrade Railing & Abyss void (blocks tile 18)
+      nav.setBlock(18.0, 57.0, 1.0, 36.2, true);
+
+      // Symmetrical Artifacts Obstacles along centerline x: 14
+      nav.setBlock(13.0, 58.2, 2.0, 1.8, true);   // Blue Nexus
+      nav.setBlock(13.3, 61.3, 1.4, 1.4, true);   // Blue Inhibitor
+      nav.setBlock(13.2, 64.3, 1.6, 1.4, true);   // Blue Inner Turret
+      nav.setBlock(13.2, 68.3, 1.6, 1.4, true);   // Blue Outer Turret
+
+      nav.setBlock(13.2, 80.3, 1.6, 1.4, true);   // Red Outer Turret
+      nav.setBlock(13.2, 84.3, 1.6, 1.4, true);   // Red Inner Turret
+      nav.setBlock(13.3, 87.3, 1.4, 1.4, true);   // Red Inhibitor
+      nav.setBlock(13.0, 90.2, 2.0, 1.8, true);   // Red Nexus
+
+      // ======================================================================
+      // D. MINECRAFT ISLAND NORTH CLIFF WOODEN PERIMETER FENCE (y = 93.0)
+      // Blocks anyone from walking into north abyss; only way back is the bridge!
+      // ======================================================================
+      nav.setBlock(6.0, 93.0, 5.0, 0.45, true);   // West Northern Fence (x: 6..11)
+      nav.setBlock(17.0, 93.0, 5.5, 0.45, true);  // East Northern Fence (x: 17..22.5)
+
+      // ======================================================================
+      // E. MINECRAFT ISLAND (x: 7..21, y: 93..111)
+      // ======================================================================
+      // Oak Wood Cabin (x: 9..15, y: 97..103, doorway at x: 13..15, y: 97)
+      nav.setBlock(9.0, 97.0, 4.0, 0.40, true);   // North Wall Left (x: 9..13)
+      nav.setBlock(15.0, 97.0, 0.4, 0.40, true);  // North Wall Right Pillar
+      nav.setBlock(8.8, 97.0, 0.40, 6.2, true);   // West Wall
+      nav.setBlock(15.0, 97.0, 0.40, 6.2, true);  // East Wall
+      nav.setBlock(9.0, 103.0, 6.2, 0.40, true);  // South Wall
 
       // Cabin Furniture Obstacles
-      nav.setBlock(4.5, 98.2, 1.4, 1.8, true);   // Minecraft Red Bed
-      nav.setBlock(8.8, 97.2, 0.8, 0.8, true);   // Crafting Table
-      nav.setBlock(8.8, 99.2, 0.8, 0.8, true);   // Furnace
-      nav.setBlock(4.5, 96.8, 0.8, 0.8, true);   // Chest
+      nav.setBlock(9.5, 99.2, 1.4, 1.8, true);    // Minecraft Red Bed
+      nav.setBlock(13.8, 98.2, 0.8, 0.8, true);   // Crafting Table
+      nav.setBlock(13.8, 100.2, 0.8, 0.8, true);  // Furnace
+      nav.setBlock(9.5, 97.8, 0.8, 0.8, true);    // Chest
 
-      // Farmland Fences (x: 11..15, y: 96..101, gate at x: 11, y: 98)
-      nav.setBlock(11.0, 96.0, 0.35, 2.0, true); // West Fence Top
-      nav.setBlock(11.0, 99.0, 0.35, 2.0, true); // West Fence Bottom (leaves 98..99 open as gate!)
-      nav.setBlock(15.0, 96.0, 0.35, 5.0, true); // East Fence
-      nav.setBlock(11.0, 96.0, 4.2, 0.35, true); // North Fence
-      nav.setBlock(11.0, 101.0, 4.2, 0.35, true);// South Fence
+      // Farmland Fences (x: 16..20, y: 97..102, gate at x: 16, y: 99)
+      nav.setBlock(16.0, 97.0, 0.35, 2.0, true);  // West Fence Top
+      nav.setBlock(16.0, 100.0, 0.35, 2.0, true); // West Fence Bottom (leaves 99..100 gate)
+      nav.setBlock(20.0, 97.0, 0.35, 5.0, true);  // East Fence
+      nav.setBlock(16.0, 97.0, 4.2, 0.35, true);  // North Fence
+      nav.setBlock(16.0, 102.0, 4.2, 0.35, true); // South Fence
 
-      // Tree Trunk Obstacle
-      nav.setBlock(2.7, 105.0, 0.8, 0.8, true);  // Oak Tree Trunk
+      // Oak Tree Trunk
+      nav.setBlock(7.7, 106.0, 0.8, 0.8, true);
     },
 
     // --- 2. Register Bed Furniture Spot for Minecraft Red Bed ---
@@ -93,8 +110,8 @@
           id: 'minecraft_bed',
           type: 'bed',
           zone: 'minecraft_sanctuary',
-          x: 5.2,
-          y: 99.2,
+          x: 10.2,
+          y: 100.2,
           z: 0.32,
           facing: 1,
           name: 'Minecraft 經典大紅床',
@@ -113,290 +130,304 @@
       const H = 2.70;
 
       // ======================================================================
-      // A. CYBER CAFE ENCLOSURE & PANORAMIC GLASS CURTAIN WALLS (x: 4..14, y: 49..56)
+      // A. CYBER CAFE ENCLOSURE & PANORAMIC GLASS CURTAIN WALLS (x: 9..19, y: 49..57)
+      // Directly aligned with Central Boulevard (x: 12..15)
       // ======================================================================
       const cyberWallT = '#0f172a';
       const cyberWallL = '#090d16';
       const cyberWallR = '#020617';
 
-      // 1. North Wall (y = 48.8, x: 4..14, doorway at x: 8..10)
+      // 1. North Exterior Wall with Central Doorway (x = 13..15, y = 48.8)
       list.push({
-        xMin: 4.0, xMax: 8.0, yMin: 48.6, yMax: 49.0,
-        draw: () => models.drawBox(ctx, 4.0, 48.8, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallR)
+        xMin: 8.8, xMax: 13.0, yMin: 48.6, yMax: 49.0,
+        draw: () => models.drawBox(ctx, 9.0, 48.8, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
       });
       list.push({
-        xMin: 10.0, xMax: 14.2, yMin: 48.6, yMax: 49.0,
-        draw: () => models.drawBox(ctx, 10.0, 48.8, 0, 4.2, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallR)
+        xMin: 15.0, xMax: 19.2, yMin: 48.6, yMax: 49.0,
+        draw: () => models.drawBox(ctx, 15.0, 48.8, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
       });
-      // Overhead North Door Lintel & Marquee Sign
+      // Overhead North Door Lintel & Neon Marquee Sign
       list.push({
-        xMin: 8.0, xMax: 10.0, yMin: 48.6, yMax: 49.0,
+        xMin: 13.0, xMax: 15.0, yMin: 48.6, yMax: 49.0,
         draw: () => {
-          models.drawBox(ctx, 8.0, 48.8, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
-          models.drawCyberCafeSign(ctx, 7.6, 48.7, world.ox, world.oy);
+          models.drawBox(ctx, 13.0, 48.8, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawCyberCafeSign(ctx, 12.6, 48.7, world.ox, world.oy);
         }
       });
 
-      // 2. West Panoramic Glass Curtain Wall (x = 3.8, y: 48.8..56.2)
+      // 2. West Panoramic Glass Curtain Wall (x = 8.8, y: 48.8..57.2)
       list.push({
-        xMin: 3.6, xMax: 4.1, yMin: 48.8, yMax: 56.2,
+        xMin: 8.7, xMax: 9.1, yMin: 48.8, yMax: 57.2,
         draw: () => {
-          const wLen = 7.4;
-          models.drawBox(ctx, 3.8, 48.8, 0, 0.25, wLen, 0.40, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
-          models.drawBox(ctx, 3.8, 48.8, 2.30, 0.25, wLen, H - 2.30, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
-          for (let my = 50.8; my <= 55.2; my += 2.0) {
-            models.drawBox(ctx, 3.8, my, 0.40, 0.25, 0.18, 1.90, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 8.8, 48.8, 0, 0.25, 8.2, 0.35, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          models.drawBox(ctx, 8.8, 48.8, H - 0.25, 0.25, 8.2, 0.25, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          for (let y = 48.8; y <= 57.0; y += 2.05) {
+            models.drawBox(ctx, 8.8, y, 0.35, 0.25, 0.25, H - 0.60, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy);
           }
-          for (let gy = 48.8; gy < 56.0; gy += 2.0) {
-            const p0 = isoToScreen(3.85, gy, 0.40, world.ox, world.oy);
-            const p1 = isoToScreen(3.85, gy + 1.82, 0.40, world.ox, world.oy);
-            const p2 = isoToScreen(3.85, gy + 1.82, 2.30, world.ox, world.oy);
-            const p3 = isoToScreen(3.85, gy, 2.30, world.ox, world.oy);
-            ctx.fillStyle = 'rgba(56, 189, 248, 0.14)';
-            ctx.beginPath();
-            ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-            ctx.closePath(); ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(p0.x + 3, p0.y - 4); ctx.lineTo(p2.x - 3, p2.y + 4);
-            ctx.stroke();
-          }
+          const p0 = isoToScreen(8.92, 48.8, 0.35, world.ox, world.oy);
+          const p1 = isoToScreen(8.92, 57.0, 0.35, world.ox, world.oy);
+          const p2 = isoToScreen(8.92, 57.0, H - 0.25, world.ox, world.oy);
+          const p3 = isoToScreen(8.92, 48.8, H - 0.25, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.restore();
         }
       });
 
-      // 3. East Panoramic Glass Curtain Wall Overlooking Chasm (x = 14.0, y: 48.8..56.2)
+      // 3. East Panoramic Glass Curtain Wall (x = 19.0, y: 48.8..57.2)
       list.push({
-        xMin: 13.8, xMax: 14.3, yMin: 48.8, yMax: 56.2,
+        xMin: 18.9, xMax: 19.3, yMin: 48.8, yMax: 57.2,
         draw: () => {
-          const wLen = 7.4;
-          models.drawBox(ctx, 14.0, 48.8, 0, 0.25, wLen, 0.40, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
-          models.drawBox(ctx, 14.0, 48.8, 2.30, 0.25, wLen, H - 2.30, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
-          for (let my = 50.8; my <= 55.2; my += 2.0) {
-            models.drawBox(ctx, 14.0, my, 0.40, 0.25, 0.18, 1.90, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 19.0, 48.8, 0, 0.25, 8.2, 0.35, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          models.drawBox(ctx, 19.0, 48.8, H - 0.25, 0.25, 8.2, 0.25, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          for (let y = 48.8; y <= 57.0; y += 2.05) {
+            models.drawBox(ctx, 19.0, y, 0.35, 0.25, 0.25, H - 0.60, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy);
           }
-          for (let gy = 48.8; gy < 56.0; gy += 2.0) {
-            const p0 = isoToScreen(14.05, gy, 0.40, world.ox, world.oy);
-            const p1 = isoToScreen(14.05, gy + 1.82, 0.40, world.ox, world.oy);
-            const p2 = isoToScreen(14.05, gy + 1.82, 2.30, world.ox, world.oy);
-            const p3 = isoToScreen(14.05, gy, 2.30, world.ox, world.oy);
-            ctx.fillStyle = 'rgba(56, 189, 248, 0.16)';
-            ctx.beginPath();
-            ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-            ctx.closePath(); ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.40)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(p0.x + 4, p0.y - 6); ctx.lineTo(p2.x - 4, p2.y + 6);
-            ctx.stroke();
-          }
+          const p0 = isoToScreen(19.12, 48.8, 0.35, world.ox, world.oy);
+          const p1 = isoToScreen(19.12, 57.0, 0.35, world.ox, world.oy);
+          const p2 = isoToScreen(19.12, 57.0, H - 0.25, world.ox, world.oy);
+          const p3 = isoToScreen(19.12, 48.8, H - 0.25, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.restore();
         }
       });
 
-      // 4. South Wall & Abyss Portal Air-lock Gateway (along y = 56.0, x: 4..14, doorway at x: 8..10)
+      // 4. South Exterior Wall with Abyss Portal Doorway (x = 13..15, y = 57.0)
       list.push({
-        xMin: 4.0, xMax: 8.0, yMin: 55.8, yMax: 56.2,
-        draw: () => models.drawBox(ctx, 4.0, 56.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
+        xMin: 8.8, xMax: 13.0, yMin: 56.8, yMax: 57.2,
+        draw: () => models.drawBox(ctx, 9.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
       });
       list.push({
-        xMin: 10.0, xMax: 14.2, yMin: 55.8, yMax: 56.2,
-        draw: () => models.drawBox(ctx, 10.0, 56.0, 0, 4.2, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
+        xMin: 15.0, xMax: 19.2, yMin: 56.8, yMax: 57.2,
+        draw: () => models.drawBox(ctx, 15.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
       });
-      // South Abyss Portal Overhead Beam & Runic LED Sign
       list.push({
-        xMin: 7.8, xMax: 10.2, yMin: 55.8, yMax: 56.3,
+        xMin: 13.0, xMax: 15.0, yMin: 56.8, yMax: 57.2,
         draw: () => {
-          models.drawBox(ctx, 7.8, 56.0, 2.15, 2.4, 0.35, 0.70, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
-          const pP = isoToScreen(9.0, 56.05, 2.45, world.ox, world.oy);
+          models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          // Glowing Neon Portal Sign "HOWLING ABYSS PORTAL"
+          const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
+          ctx.save();
           ctx.fillStyle = '#38bdf8';
-          ctx.shadowColor = '#38bdf8';
-          ctx.shadowBlur = 8;
-          ctx.fillRect(pP.x - 24, pP.y - 4, 48, 8);
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = '#0f172a';
           ctx.font = 'bold 8px monospace';
           ctx.textAlign = 'center';
-          ctx.fillText('⚡ ABYSS GATEWAY ⚡', pP.x, pP.y + 3);
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.fillText('ABYSS PORTAL', sp.x, sp.y);
+          ctx.restore();
         }
       });
 
-      // 5. Cyber Cafe Internal Stations (Rigs & Snack Counter)
-      [5.2, 7.0, 11.0].forEach(rx => {
-        list.push({
-          xMin: rx, xMax: rx + 1.4, yMin: 50.2, yMax: 51.1,
-          draw: () => models.drawCyberCafeRig(ctx, rx, 50.2, world.ox, world.oy, false)
-        });
-        list.push({
-          xMin: rx, xMax: rx + 1.4, yMin: 53.5, yMax: 54.4,
-          draw: () => models.drawCyberCafeRig(ctx, rx, 53.5, world.ox, world.oy, true)
-        });
+      // 5. Cyber Cafe Internal Stations (flanking the central open walkway)
+      // Blue Team Battle Stations (West row x = 10.5)
+      list.push({
+        xMin: 10.2, xMax: 12.0, yMin: 51.2, yMax: 52.1,
+        draw: () => models.drawCyberCafeRig(ctx, 10.5, 51.2, world.ox, world.oy, false)
       });
       list.push({
-        xMin: 11.5, xMax: 13.3, yMin: 52.0, yMax: 53.5,
-        draw: () => models.drawCyberSnackBar(ctx, 11.5, 52.0, world.ox, world.oy)
+        xMin: 10.2, xMax: 12.0, yMin: 54.2, yMax: 55.1,
+        draw: () => models.drawCyberCafeRig(ctx, 10.5, 54.2, world.ox, world.oy, false)
+      });
+      // Red Team Battle Stations (East row x = 16.0)
+      list.push({
+        xMin: 16.0, xMax: 17.8, yMin: 51.2, yMax: 52.1,
+        draw: () => models.drawCyberCafeRig(ctx, 16.0, 51.2, world.ox, world.oy, true)
+      });
+      list.push({
+        xMin: 16.0, xMax: 17.8, yMin: 54.2, yMax: 55.1,
+        draw: () => models.drawCyberCafeRig(ctx, 16.0, 54.2, world.ox, world.oy, true)
+      });
+      // Snack & Monster Energy Counter
+      list.push({
+        xMin: 17.0, xMax: 18.8, yMin: 52.5, yMax: 54.0,
+        draw: () => models.drawCyberSnackBar(ctx, 17.0, 52.5, world.ox, world.oy)
       });
 
       // ======================================================================
-      // B. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 6..12, y: 56..92)
+      // B. MAIN ISLAND SOUTH CLIFF RUSTIC WOODEN PERIMETER FENCE (y = 57.0)
+      // Runs across southern island edge (x: 0..9 and x: 19..32)
+      // ======================================================================
+      const drawFenceSegment = (xStart, xEnd, yPos) => {
+        // Continuous horizontal crossbars
+        models.drawBox(ctx, xStart, yPos, 0.30, xEnd - xStart, 0.12, 0.10, '#a16e3b', '#7c4d21', '#5c3714', world.ox, world.oy);
+        models.drawBox(ctx, xStart, yPos, 0.60, xEnd - xStart, 0.12, 0.10, '#a16e3b', '#7c4d21', '#5c3714', world.ox, world.oy);
+        // Vertical fence posts every 1.5 tiles
+        for (let fx = xStart; fx <= xEnd + 0.1; fx += 1.5) {
+          models.drawBox(ctx, fx, yPos, 0, 0.22, 0.22, 0.85, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+        }
+      };
+
+      // West Southern Cliff Fence (x: 0..9)
+      list.push({
+        xMin: -0.2, xMax: 9.2, yMin: 56.8, yMax: 57.2,
+        draw: () => drawFenceSegment(0.0, 9.0, 57.0)
+      });
+      // East Southern Cliff Fence (x: 19..32)
+      list.push({
+        xMin: 18.8, xMax: 32.5, yMin: 56.8, yMax: 57.2,
+        draw: () => drawFenceSegment(19.0, 32.0, 57.0)
+      });
+
+      // ======================================================================
+      // C. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 11..17, y: 57..93)
       // Fully Symmetrical ARAM Layout (Blue Nexus -> Blue Turrets -> Mid -> Red Turrets -> Red Nexus)
       // ======================================================================
-      // 1. Bridgehead Portals & Guardian Obelisks
+      // 1. North Bridgehead Gateway Arch (at y = 57.0)
       list.push({
-        xMin: 5.6, xMax: 6.4, yMin: 56.0, yMax: 56.8,
-        draw: () => models.drawAbyssEntranceGateway(ctx, 5.6, 56.0, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 11.6, xMax: 12.4, yMin: 56.0, yMax: 56.8,
-        draw: () => models.drawAbyssEntranceGateway(ctx, 11.6, 56.0, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 5.6, xMax: 6.4, yMin: 91.5, yMax: 92.3,
-        draw: () => models.drawAbyssEntranceGateway(ctx, 5.6, 91.5, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 11.6, xMax: 12.4, yMin: 91.5, yMax: 92.3,
-        draw: () => models.drawAbyssEntranceGateway(ctx, 11.6, 91.5, world.ox, world.oy)
+        xMin: 10.6, xMax: 17.4, yMin: 56.8, yMax: 57.4,
+        draw: () => {
+          models.drawBox(ctx, 10.8, 57.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawBox(ctx, 16.5, 57.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawBox(ctx, 10.8, 57.0, 2.50, 6.40, 0.50, 0.40, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          models.drawAbyssBrazier(ctx, 10.9, 56.8, world.ox, world.oy);
+          models.drawAbyssBrazier(ctx, 16.6, 56.8, world.ox, world.oy);
+        }
       });
 
-      // 2. Parapet Rails along West (x: 5.8) and East (x: 12.0)
+      // 2. West Stone Balustrade (x = 11.0, y: 57..93)
       list.push({
-        xMin: 5.7, xMax: 6.1, yMin: 56.8, yMax: 70.5,
-        draw: () => models.drawAbyssParapetSegment(ctx, 5.8, 56.8, 0.35, 13.7, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 5.7, xMax: 6.1, yMin: 70.5, yMax: 72.5,
-        draw: () => models.drawAbyssBrokenRailing(ctx, 5.8, 70.5, world.ox, world.oy, true)
-      });
-      list.push({
-        xMin: 5.7, xMax: 6.1, yMin: 72.5, yMax: 91.5,
-        draw: () => models.drawAbyssParapetSegment(ctx, 5.8, 72.5, 0.35, 19.0, world.ox, world.oy)
+        xMin: 10.8, xMax: 11.3, yMin: 57.0, yMax: 93.0,
+        draw: () => {
+          models.drawBox(ctx, 11.0, 57.0, 0, 0.28, 36.0, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
+          models.drawBox(ctx, 10.95, 57.0, 0.75, 0.36, 36.0, 0.12, '#e2e8f0', '#cbd5e1', '#94a3b8', world.ox, world.oy);
+          for (let y = 58.0; y <= 92.0; y += 3.0) {
+            models.drawBox(ctx, 10.95, y, 0, 0.36, 0.36, 0.95, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          }
+        }
       });
 
+      // 3. East Stone Balustrade (x = 17.0, y: 57..93)
       list.push({
-        xMin: 11.9, xMax: 12.3, yMin: 56.8, yMax: 76.5,
-        draw: () => models.drawAbyssParapetSegment(ctx, 12.0, 56.8, 0.35, 19.7, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 11.9, xMax: 12.3, yMin: 76.5, yMax: 78.5,
-        draw: () => models.drawAbyssBrokenRailing(ctx, 12.0, 76.5, world.ox, world.oy, false)
-      });
-      list.push({
-        xMin: 11.9, xMax: 12.3, yMin: 78.5, yMax: 91.5,
-        draw: () => models.drawAbyssParapetSegment(ctx, 12.0, 78.5, 0.35, 13.0, world.ox, world.oy)
+        xMin: 16.8, xMax: 17.3, yMin: 57.0, yMax: 93.0,
+        draw: () => {
+          models.drawBox(ctx, 17.0, 57.0, 0, 0.28, 36.0, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
+          models.drawBox(ctx, 16.95, 57.0, 0.75, 0.36, 36.0, 0.12, '#e2e8f0', '#cbd5e1', '#94a3b8', world.ox, world.oy);
+          for (let y = 58.0; y <= 92.0; y += 3.0) {
+            models.drawBox(ctx, 16.95, y, 0, 0.36, 0.36, 0.95, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          }
+        }
       });
 
-      // 3. Fire Braziers along North-South Parapets
-      [
-        { gx: 5.8, gy: 60.0 }, { gx: 5.8, gy: 66.0 }, { gx: 5.8, gy: 82.0 }, { gx: 5.8, gy: 88.0 },
-        { gx: 12.0, gy: 60.0 }, { gx: 12.0, gy: 66.0 }, { gx: 12.0, gy: 82.0 }, { gx: 12.0, gy: 88.0 }
-      ].forEach(b => {
-        list.push({
-          xMin: b.gx, xMax: b.gx + 0.65, yMin: b.gy, yMax: b.gy + 0.65,
-          draw: () => models.drawAbyssBrazier(ctx, b.gx, b.gy, world.ox, world.oy)
-        });
+      // 4. Blue Side Artifacts (y: 58..72, centered at x: 14.0)
+      list.push({
+        xMin: 12.9, xMax: 15.1, yMin: 58.5, yMax: 60.5,
+        draw: () => models.drawAbyssNexus(ctx, 12.9, 58.5, world.ox, world.oy)
+      });
+      list.push({
+        xMin: 13.2, xMax: 14.8, yMin: 61.3, yMax: 62.7,
+        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 61.3, world.ox, world.oy)
+      });
+      list.push({
+        xMin: 13.1, xMax: 14.9, yMin: 64.3, yMax: 65.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 64.3, world.ox, world.oy)
+      });
+      list.push({
+        xMin: 13.1, xMax: 14.9, yMin: 68.3, yMax: 69.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 68.3, world.ox, world.oy)
+      });
+      list.push({
+        xMin: 13.3, xMax: 14.7, yMin: 71.5, yMax: 72.8,
+        draw: () => models.drawAbyssRelic(ctx, 13.3, 71.5, world.ox, world.oy)
       });
 
-      // 4. Guardian Ram-Horn Statues
-      [
-        { gx: 5.2, gy: 62.0, isNorth: true },
-        { gx: 5.2, gy: 86.0, isNorth: true },
-        { gx: 12.0, gy: 62.0, isNorth: false },
-        { gx: 12.0, gy: 86.0, isNorth: false }
-      ].forEach(s => {
-        list.push({
-          xMin: s.gx, xMax: s.gx + 1.2, yMin: s.gy, yMax: s.gy + 1.2,
-          draw: () => models.drawAbyssGuardianStatue(ctx, s.gx, s.gy, world.ox, world.oy, s.isNorth)
-        });
+      // 5. Mid-Lane Symmetrical Frost Bushes & Poros (y: 74..76)
+      // West Wall Bush & Poro
+      list.push({
+        xMin: 11.2, xMax: 12.6, yMin: 74.0, yMax: 76.2,
+        draw: () => {
+          models.drawAbyssFrostBrush(ctx, 11.3, 74.2, world.ox, world.oy);
+          models.drawAbyssPoro(ctx, 11.8, 75.2, world.ox, world.oy);
+        }
+      });
+      // East Wall Bush & Poro
+      list.push({
+        xMin: 15.4, xMax: 16.8, yMin: 74.0, yMax: 76.2,
+        draw: () => {
+          models.drawAbyssFrostBrush(ctx, 15.5, 74.2, world.ox, world.oy);
+          models.drawAbyssPoro(ctx, 16.0, 75.2, world.ox, world.oy);
+        }
       });
 
-      // 5. Symmetric Lane Artifacts:
-      // Blue Base
+      // 6. Red Side Artifacts (y: 78..92, centered at x: 14.0)
       list.push({
-        xMin: 7.9, xMax: 10.1, yMin: 57.5, yMax: 59.5,
-        draw: () => models.drawAbyssNexus(ctx, 7.9, 57.5, world.ox, world.oy)
+        xMin: 13.3, xMax: 14.7, yMin: 77.5, yMax: 78.8,
+        draw: () => models.drawAbyssRelic(ctx, 13.3, 77.5, world.ox, world.oy)
       });
       list.push({
-        xMin: 8.3, xMax: 9.7, yMin: 60.5, yMax: 61.9,
-        draw: () => models.drawAbyssInhibitor(ctx, 8.3, 60.5, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 80.3, yMax: 81.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 80.3, world.ox, world.oy)
       });
       list.push({
-        xMin: 8.2, xMax: 9.8, yMin: 63.5, yMax: 65.1,
-        draw: () => models.drawAbyssTurret(ctx, 8.2, 63.5, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 84.3, yMax: 85.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 84.3, world.ox, world.oy)
       });
       list.push({
-        xMin: 8.2, xMax: 9.8, yMin: 67.5, yMax: 69.1,
-        draw: () => models.drawAbyssTurret(ctx, 8.2, 67.5, world.ox, world.oy)
+        xMin: 13.2, xMax: 14.8, yMin: 87.3, yMax: 88.7,
+        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 87.3, world.ox, world.oy)
       });
-
-      // Blue Health Relic
       list.push({
-        xMin: 7.2, xMax: 8.4, yMin: 71.0, yMax: 72.2,
-        draw: () => models.drawHealthRelic(ctx, 7.5, 71.2, world.ox, world.oy)
+        xMin: 12.9, xMax: 15.1, yMin: 90.3, yMax: 92.3,
+        draw: () => models.drawAbyssNexus(ctx, 12.9, 90.3, world.ox, world.oy)
       });
 
-      // Mid-Lane Frost Bushes (Lining the west and east parapets!)
-      for (let by = 73.0; by <= 75.2; by += 1.0) {
-        list.push({
-          xMin: 6.2, xMax: 7.2, yMin: by, yMax: by + 0.8,
-          draw: () => models.drawAbyssBrush(ctx, 6.4, by, world.ox, world.oy)
-        });
-        list.push({
-          xMin: 10.8, xMax: 11.8, yMin: by, yMax: by + 0.8,
-          draw: () => models.drawAbyssBrush(ctx, 11.0, by, world.ox, world.oy)
-        });
-      }
-
-      // Poros Playing in Mid-Lane
+      // 7. South Bridgehead Gateway Arch (at y = 93.0)
       list.push({
-        xMin: 8.2, xMax: 8.8, yMin: 74.0, yMax: 74.6,
-        draw: () => models.drawPoro(ctx, 8.4, 74.2, world.ox, world.oy, 'snack')
-      });
-      list.push({
-        xMin: 9.5, xMax: 10.1, yMin: 74.8, yMax: 75.4,
-        draw: () => models.drawPoro(ctx, 9.7, 75.0, world.ox, world.oy, 'tongue')
-      });
-
-      // Red Health Relic
-      list.push({
-        xMin: 9.6, xMax: 10.8, yMin: 76.8, yMax: 78.0,
-        draw: () => models.drawHealthRelic(ctx, 10.0, 77.2, world.ox, world.oy)
-      });
-
-      // Red Base
-      list.push({
-        xMin: 8.2, xMax: 9.8, yMin: 79.5, yMax: 81.1,
-        draw: () => models.drawAbyssTurret(ctx, 8.2, 79.5, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 8.2, xMax: 9.8, yMin: 83.5, yMax: 85.1,
-        draw: () => models.drawAbyssTurret(ctx, 8.2, 83.5, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 8.3, xMax: 9.7, yMin: 86.5, yMax: 87.9,
-        draw: () => models.drawAbyssInhibitor(ctx, 8.3, 86.5, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 7.9, xMax: 10.1, yMin: 89.5, yMax: 91.5,
-        draw: () => models.drawAbyssNexus(ctx, 7.9, 89.5, world.ox, world.oy)
+        xMin: 10.6, xMax: 17.4, yMin: 92.8, yMax: 93.4,
+        draw: () => {
+          models.drawBox(ctx, 10.8, 93.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawBox(ctx, 16.5, 93.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawBox(ctx, 10.8, 93.0, 2.50, 6.40, 0.50, 0.40, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          models.drawAbyssBrazier(ctx, 10.9, 92.8, world.ox, world.oy);
+          models.drawAbyssBrazier(ctx, 16.6, 92.8, world.ox, world.oy);
+        }
       });
 
       // ======================================================================
-      // C. THE MINECRAFT ISLAND (x: 2..16, y: 92..110)
+      // D. MINECRAFT ISLAND NORTH CLIFF WOODEN PERIMETER FENCE (y = 93.0)
+      // ======================================================================
+      // West Northern Cliff Fence (x: 7..11)
+      list.push({
+        xMin: 6.8, xMax: 11.2, yMin: 92.8, yMax: 93.2,
+        draw: () => drawFenceSegment(7.0, 11.0, 93.0)
+      });
+      // East Northern Cliff Fence (x: 17..21)
+      list.push({
+        xMin: 16.8, xMax: 21.2, yMin: 92.8, yMax: 93.2,
+        draw: () => drawFenceSegment(17.0, 21.0, 93.0)
+      });
+
+      // ======================================================================
+      // E. THE MINECRAFT ISLAND (x: 7..21, y: 93..111)
       // ======================================================================
       const oakLogBark = '#49331e';
       const oakLogSide = '#6d4c28';
       const oakLogRing = '#9c7a4f';
       const oakPlankTop = '#c69a59';
-      const oakPlankLeft = '#a67b3d';
-      const oakPlankRight = '#8c6328';
+      const oakPlankLeft = '#a1783f';
+      const oakPlankRight = '#7c5928';
 
-      // 1. Oak Signpost at Island Entrance (x: 9.0, y: 93.0)
+      // 1. Entrance Welcome Signboard (x: 14.0, y: 94.5)
       list.push({
-        xMin: 8.8, xMax: 9.6, yMin: 92.8, yMax: 93.6,
+        xMin: 13.6, xMax: 14.6, yMin: 94.3, yMax: 94.8,
         draw: () => {
-          models.drawBox(ctx, 9.0, 93.0, 0, 0.18, 0.18, 0.70, oakLogSide, oakLogBark, oakLogBark, world.ox, world.oy);
-          models.drawBox(ctx, 8.6, 92.9, 0.65, 1.00, 0.14, 0.45, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          const sp = isoToScreen(9.10, 92.95, 0.90, world.ox, world.oy);
+          models.drawBox(ctx, 13.9, 94.4, 0, 0.16, 0.16, 0.70, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 13.5, 94.4, 0.65, 1.00, 0.14, 0.45, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          const sp = isoToScreen(14.0, 94.45, 0.90, world.ox, world.oy);
           ctx.fillStyle = '#382314';
           ctx.font = 'bold 7px monospace';
           ctx.textAlign = 'center';
@@ -405,257 +436,180 @@
         }
       });
 
-      // 2. Classic Minecraft Oak Wood Cabin (x: 4..10, y: 96..102)
+      // 2. Classic Minecraft Oak Wood Cabin (x: 9..15, y: 97..103)
+      // Open-top isometric building — NO ROOF so interior layout is 100% visible!
       // Complete Solid Oak Wood Floor inside the cabin!
       list.push({
-        xMin: 4.0, xMax: 10.0, yMin: 96.0, yMax: 102.0,
+        xMin: 9.0, xMax: 15.0, yMin: 97.0, yMax: 103.0,
         draw: () => {
-          models.drawBox(ctx, 4.0, 96.0, 0, 6.0, 6.0, 0.08, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 9.0, 97.0, 0, 6.0, 6.0, 0.08, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // 4 Corner Oak Log Pillars (z: 0..2.2)
+          models.drawBox(ctx, 9.0, 97.0, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 14.2, 97.0, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 9.0, 102.2, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 14.2, 102.2, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+
+          // West Wall with 2x2 Glass Window
+          models.drawBox(ctx, 9.0, 97.8, 0, 0.35, 4.4, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 9.0, 97.8, 1.80, 0.35, 4.4, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 9.0, 99.0, 0.80, 0.28, 2.0, 1.00, 'rgba(186, 230, 253, 0.55)', 'rgba(125, 211, 252, 0.4)', 'rgba(56, 189, 248, 0.3)', world.ox, world.oy);
+
+          // South Wall with Glass Window
+          models.drawBox(ctx, 9.8, 102.6, 0, 4.4, 0.35, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 102.6, 1.80, 4.4, 0.35, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 11.0, 102.6, 0.80, 2.0, 0.28, 1.00, 'rgba(186, 230, 253, 0.55)', 'rgba(125, 211, 252, 0.4)', 'rgba(56, 189, 248, 0.3)', world.ox, world.oy);
+
+          // East Wall with Window
+          models.drawBox(ctx, 14.6, 97.8, 0, 0.35, 4.4, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 14.6, 97.8, 1.80, 0.35, 4.4, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 14.6, 99.0, 0.80, 0.28, 2.0, 1.00, 'rgba(186, 230, 253, 0.55)', 'rgba(125, 211, 252, 0.4)', 'rgba(56, 189, 248, 0.3)', world.ox, world.oy);
+
+          // North Wall (doorway at x: 13..15)
+          models.drawBox(ctx, 9.8, 97.0, 0, 3.2, 0.35, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 13.0, 97.0, 2.00, 1.2, 0.35, 0.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
         }
       });
 
-      // 4 Corner Oak Log Pillars (3 blocks high)
-      const cabinPosts = [
-        { gx: 4.0, gy: 96.0 },
-        { gx: 9.4, gy: 96.0 },
-        { gx: 4.0, gy: 101.4 },
-        { gx: 9.4, gy: 101.4 }
-      ];
-      cabinPosts.forEach(cp => {
-        list.push({
-          xMin: cp.gx, xMax: cp.gx + 0.60, yMin: cp.gy, yMax: cp.gy + 0.60,
-          draw: () => models.drawBox(ctx, cp.gx, cp.gy, 0, 0.60, 0.60, 2.30, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy)
-        });
-      });
-
-      // North Wall with finished oak doorway: x: 4..10, y: 96.0 (Door at x: 6.6..7.8)
+      // 3. Cabin Interior Furniture (Fully visible without roof!)
+      // A. Minecraft Red Bed (x: 9.8, y: 99.5)
       list.push({
-        xMin: 4.0, xMax: 6.6, yMin: 95.8, yMax: 96.2,
-        draw: () => models.drawBox(ctx, 4.58, 96.0, 0, 2.02, 0.25, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 7.8, xMax: 10.0, yMin: 95.8, yMax: 96.2,
-        draw: () => models.drawBox(ctx, 7.8, 96.0, 0, 1.62, 0.25, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy)
-      });
-      list.push({
-        xMin: 6.6, xMax: 7.8, yMin: 95.8, yMax: 96.2,
-        draw: () => models.drawBox(ctx, 6.6, 96.0, 1.85, 1.20, 0.25, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy)
-      });
-
-      // West Wall with 2x2 Glass Panes (x: 4.0, y: 96..102)
-      list.push({
-        xMin: 3.8, xMax: 4.2, yMin: 96.5, yMax: 101.5,
+        xMin: 9.5, xMax: 11.0, yMin: 99.3, yMax: 101.5,
         draw: () => {
-          models.drawBox(ctx, 4.0, 96.58, 0, 0.25, 4.84, 0.65, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          models.drawBox(ctx, 4.0, 96.58, 1.85, 0.25, 4.84, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          const p0 = isoToScreen(4.05, 97.6, 0.65, world.ox, world.oy);
-          const p1 = isoToScreen(4.05, 100.4, 0.65, world.ox, world.oy);
-          const p2 = isoToScreen(4.05, 100.4, 1.85, world.ox, world.oy);
-          const p3 = isoToScreen(4.05, 97.6, 1.85, world.ox, world.oy);
-          ctx.fillStyle = 'rgba(186, 230, 253, 0.40)';
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-          ctx.closePath(); ctx.fill();
-          ctx.strokeStyle = '#38bdf8';
-          ctx.lineWidth = 1;
-          ctx.stroke();
+          models.drawBox(ctx, 9.8, 99.5, 0, 1.05, 1.95, 0.18, '#582b0c', '#3f1d08', '#291006', world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 99.5, 0.18, 1.05, 1.95, 0.20, '#dc2626', '#b91c1c', '#991b1b', world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 99.5, 0.38, 1.05, 0.55, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
         }
       });
 
-      // East Wall with 2x2 Glass Panes (x: 10.0, y: 96..102)
+      // B. Crafting Table (x: 13.8, y: 98.2)
       list.push({
-        xMin: 9.8, xMax: 10.2, yMin: 96.5, yMax: 101.5,
+        xMin: 13.6, xMax: 14.6, yMin: 98.0, yMax: 99.0,
         draw: () => {
-          models.drawBox(ctx, 9.75, 96.58, 0, 0.25, 4.84, 0.65, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          models.drawBox(ctx, 9.75, 96.58, 1.85, 0.25, 4.84, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          const p0 = isoToScreen(9.82, 97.6, 0.65, world.ox, world.oy);
-          const p1 = isoToScreen(9.82, 100.4, 0.65, world.ox, world.oy);
-          const p2 = isoToScreen(9.82, 100.4, 1.85, world.ox, world.oy);
-          const p3 = isoToScreen(9.82, 97.6, 1.85, world.ox, world.oy);
-          ctx.fillStyle = 'rgba(186, 230, 253, 0.40)';
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-          ctx.closePath(); ctx.fill();
-          ctx.strokeStyle = '#38bdf8';
-          ctx.lineWidth = 1;
-          ctx.stroke();
+          models.drawBox(ctx, 13.8, 98.2, 0, 0.75, 0.75, 0.75, '#b45309', '#92400e', '#78350f', world.ox, world.oy);
+          const topP = isoToScreen(14.18, 98.58, 0.75, world.ox, world.oy);
+          ctx.fillStyle = '#451a03';
+          ctx.fillRect(topP.x - 5, topP.y - 4, 10, 8);
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 0.8;
+          ctx.strokeRect(topP.x - 5, topP.y - 4, 10, 8);
         }
       });
 
-      // South Wall (y = 102.0, x: 4..10)
+      // C. Furnace (x: 13.8, y: 100.2)
       list.push({
-        xMin: 4.0, xMax: 10.0, yMin: 101.8, yMax: 102.2,
-        draw: () => models.drawBox(ctx, 4.58, 101.75, 0, 4.84, 0.25, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy)
-      });
-
-      // Overhanging Finished Eaves / Roof Trim (z: 2.20..2.45)
-      list.push({
-        xMin: 3.8, xMax: 10.2, yMin: 95.8, yMax: 102.2,
+        xMin: 13.6, xMax: 14.6, yMin: 100.0, yMax: 101.0,
         draw: () => {
-          models.drawBox(ctx, 3.8, 95.8, 2.20, 6.4, 6.4, 0.18, '#582b0c', '#3f1d08', '#291006', world.ox, world.oy);
-        }
-      });
-
-      // 3. Cabin Interior Furniture
-      // A. Minecraft Red Bed (x: 4.8, y: 98.5)
-      list.push({
-        xMin: 4.6, xMax: 6.0, yMin: 98.4, yMax: 100.6,
-        draw: () => {
-          models.drawBox(ctx, 4.8, 98.5, 0, 1.05, 1.95, 0.18, '#582b0c', '#3f1d08', '#291006', world.ox, world.oy);
-          models.drawBox(ctx, 4.8, 98.5, 0.18, 1.05, 1.95, 0.20, '#dc2626', '#b91c1c', '#991b1b', world.ox, world.oy);
-          models.drawBox(ctx, 4.82, 98.55, 0.38, 1.00, 0.50, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
-        }
-      });
-
-      // B. Crafting Table (x: 8.8, y: 97.2)
-      list.push({
-        xMin: 8.6, xMax: 9.6, yMin: 97.0, yMax: 98.0,
-        draw: () => {
-          models.drawBox(ctx, 8.8, 97.2, 0, 0.80, 0.80, 0.80, '#b88a53', '#85592e', '#603c19', world.ox, world.oy);
-          const tp = isoToScreen(9.20, 97.60, 0.80, world.ox, world.oy);
-          ctx.strokeStyle = '#582b0c';
-          ctx.lineWidth = 1.0;
-          ctx.strokeRect(tp.x - 8, tp.y - 4, 16, 9);
-        }
-      });
-
-      // C. Cobblestone Furnace (x: 8.8, y: 99.2)
-      list.push({
-        xMin: 8.6, xMax: 9.6, yMin: 99.0, yMax: 100.0,
-        draw: () => {
-          models.drawBox(ctx, 8.8, 99.2, 0, 0.80, 0.80, 0.80, '#64748b', '#475569', '#334155', world.ox, world.oy);
-          const fp = isoToScreen(9.20, 99.2, 0.35, world.ox, world.oy);
+          models.drawBox(ctx, 13.8, 100.2, 0, 0.75, 0.75, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
+          const fp = isoToScreen(13.8, 100.58, 0.38, world.ox, world.oy);
           ctx.fillStyle = '#f97316';
-          ctx.shadowColor = '#f97316';
-          ctx.shadowBlur = 6;
-          ctx.fillRect(fp.x - 5, fp.y - 4, 10, 7);
+          ctx.shadowColor = '#ea580c';
+          ctx.shadowBlur = 8;
+          ctx.fillRect(fp.x - 3, fp.y - 3, 6, 6);
           ctx.shadowBlur = 0;
         }
       });
 
-      // D. Large Wooden Chest (x: 4.8, y: 96.8)
+      // D. Large Wooden Storage Chest (x: 9.8, y: 97.8)
       list.push({
-        xMin: 4.6, xMax: 5.6, yMin: 96.6, yMax: 97.6,
+        xMin: 9.5, xMax: 10.6, yMin: 97.6, yMax: 98.6,
         draw: () => {
-          models.drawBox(ctx, 4.8, 96.8, 0, 0.80, 0.80, 0.65, '#b45309', '#92400e', '#78350f', world.ox, world.oy);
-          const lp = isoToScreen(5.20, 96.8, 0.40, world.ox, world.oy);
-          ctx.fillStyle = '#f1f5f9';
-          ctx.fillRect(lp.x - 2, lp.y - 3, 5, 7);
+          models.drawBox(ctx, 9.8, 97.8, 0, 0.75, 0.75, 0.65, '#a16207', '#854d0e', '#713f12', world.ox, world.oy);
+          const cp = isoToScreen(10.18, 97.8, 0.40, world.ox, world.oy);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.fillRect(cp.x - 2, cp.y - 2, 4, 4);
         }
       });
 
       // E. Wall Torch
       list.push({
-        xMin: 6.4, xMax: 6.8, yMin: 96.0, yMax: 96.4,
+        xMin: 11.8, xMax: 12.4, yMin: 97.0, yMax: 97.4,
         draw: () => {
-          models.drawBox(ctx, 6.5, 96.1, 1.20, 0.10, 0.10, 0.45, '#78350f', '#58240a', '#451a03', world.ox, world.oy);
-          const tp = isoToScreen(6.55, 96.15, 1.68, world.ox, world.oy);
-          ctx.fillStyle = '#facc15';
-          ctx.shadowColor = '#facc15';
-          ctx.shadowBlur = 8;
-          ctx.fillRect(tp.x - 3, tp.y - 3, 6, 6);
-          ctx.shadowBlur = 0;
+          models.drawBox(ctx, 12.0, 97.1, 1.20, 0.10, 0.10, 0.45, '#78350f', '#451a03', '#291006', world.ox, world.oy);
+          const tp = isoToScreen(12.05, 97.15, 1.70, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#fbbf24';
+          ctx.shadowColor = '#f59e0b';
+          ctx.shadowBlur = 10;
+          ctx.fillRect(tp.x - 2.5, tp.y - 2.5, 5, 5);
+          ctx.restore();
         }
       });
 
-      // 4. Continuous Rectangular Farmland & Crops (x: 11..15, y: 96..101)
-      // Solid tilled soil bed & water channel
+      // 4. Rectangular Minecraft Farmland (x: 16..20, y: 97..102)
       list.push({
-        xMin: 11.0, xMax: 15.0, yMin: 96.0, yMax: 101.0,
+        xMin: 15.8, xMax: 20.2, yMin: 96.8, yMax: 102.2,
         draw: () => {
-          // Continuous dark wet soil base
-          models.drawBox(ctx, 11.0, 96.0, 0, 4.0, 5.0, 0.14, '#382314', '#26170d', '#1a0f08', world.ox, world.oy);
-          // Center 1x1 Water Hole
-          models.drawBox(ctx, 12.5, 98.0, 0.05, 1.0, 1.0, 0.09, '#2563eb', '#1d4ed8', '#1e40af', world.ox, world.oy);
-          const lp = isoToScreen(13.0, 98.5, 0.15, world.ox, world.oy);
-          ctx.fillStyle = '#16a34a';
-          ctx.beginPath();
-          ctx.arc(lp.x, lp.y, 7, 0.2, Math.PI * 1.9);
-          ctx.lineTo(lp.x, lp.y);
-          ctx.fill();
-        }
-      });
+          // Continuous Farmland Soil Bed
+          models.drawBox(ctx, 16.0, 97.0, 0, 4.0, 5.0, 0.12, '#3b2314', '#27170c', '#170c06', world.ox, world.oy);
 
-      // Crop Stalks: 2 dense rows of Wheat + 2 dense rows of Carrots
-      for (let cy = 96.5; cy <= 100.5; cy += 1.0) {
-        // Wheat column (x = 11.6)
-        list.push({
-          xMin: 11.4, xMax: 12.0, yMin: cy - 0.2, yMax: cy + 0.4,
-          draw: () => {
-            const cp = isoToScreen(11.6, cy, 0.14, world.ox, world.oy);
-            ctx.strokeStyle = '#eab308';
-            ctx.lineWidth = 2.4;
-            ctx.beginPath();
-            ctx.moveTo(cp.x - 3, cp.y); ctx.lineTo(cp.x - 4, cp.y - 14);
-            ctx.moveTo(cp.x, cp.y); ctx.lineTo(cp.x - 16);
-            ctx.moveTo(cp.x + 3, cp.y); ctx.lineTo(cp.x + 4, cp.y - 14);
-            ctx.stroke();
-          }
-        });
-        // Carrot column (x = 14.2)
-        list.push({
-          xMin: 14.0, xMax: 14.6, yMin: cy - 0.2, yMax: cy + 0.4,
-          draw: () => {
-            const cp = isoToScreen(14.2, cy, 0.14, world.ox, world.oy);
-            ctx.fillStyle = '#ea580c';
-            ctx.fillRect(cp.x - 3, cp.y - 2, 6, 4);
-            ctx.strokeStyle = '#22c55e';
-            ctx.lineWidth = 2.0;
-            ctx.beginPath();
-            ctx.moveTo(cp.x, cp.y - 2); ctx.lineTo(cp.x - 4, cp.y - 11);
-            ctx.moveTo(cp.x, cp.y - 2); ctx.lineTo(cp.x + 4, cp.y - 11);
-            ctx.stroke();
-          }
-        });
-      }
+          // Central 1x1 Water Irrigation Well (at x: 18, y: 99)
+          models.drawBox(ctx, 18.0, 99.0, 0.08, 1.0, 1.0, 0.04, '#0284c7', '#0369a1', '#075985', world.ox, world.oy);
+          const lp = isoToScreen(18.5, 99.5, 0.13, world.ox, world.oy);
+          ctx.fillStyle = '#15803d';
+          ctx.fillRect(lp.x - 3, lp.y - 2, 6, 4);
 
-      // Continuous Fencing surrounding the farmland
-      list.push({
-        xMin: 10.9, xMax: 15.1, yMin: 95.9, yMax: 101.1,
-        draw: () => {
-          // Posts
-          const posts = [
-            { gx: 11.0, gy: 96.0 }, { gx: 13.0, gy: 96.0 }, { gx: 15.0, gy: 96.0 },
-            { gx: 15.0, gy: 98.5 }, { gx: 15.0, gy: 101.0 },
-            { gx: 13.0, gy: 101.0 }, { gx: 11.0, gy: 101.0 },
-            { gx: 11.0, gy: 97.0 }, { gx: 11.0, gy: 100.0 }
+          // Flourishing Crops: Golden Wheat & Carrots
+          const cropSpots = [
+            { x: 16.5, y: 97.5, type: 'wheat' }, { x: 17.5, y: 97.5, type: 'carrot' }, { x: 18.5, y: 97.5, type: 'wheat' }, { x: 19.5, y: 97.5, type: 'carrot' },
+            { x: 16.5, y: 98.5, type: 'carrot' }, { x: 17.5, y: 98.5, type: 'wheat' }, { x: 19.5, y: 98.5, type: 'wheat' },
+            { x: 16.5, y: 100.5, type: 'wheat' }, { x: 17.5, y: 100.5, type: 'carrot' }, { x: 19.5, y: 100.5, type: 'carrot' },
+            { x: 16.5, y: 101.5, type: 'carrot' }, { x: 17.5, y: 101.5, type: 'wheat' }, { x: 18.5, y: 101.5, type: 'wheat' }, { x: 19.5, y: 101.5, type: 'carrot' }
           ];
-          posts.forEach(p => {
+
+          cropSpots.forEach(c => {
+            const topColor = c.type === 'wheat' ? '#eab308' : '#22c55e';
+            const leftColor = c.type === 'wheat' ? '#ca8a04' : '#16a34a';
+            const rightColor = c.type === 'wheat' ? '#a16207' : '#15803d';
+            models.drawBox(ctx, c.x - 0.25, c.y - 0.25, 0.12, 0.50, 0.50, 0.40, topColor, leftColor, rightColor, world.ox, world.oy);
+          });
+
+          // Interconnected Perimeter Fences & Gate (x: 16, y: 99)
+          const fencePosts = [
+            { gx: 16.0, gy: 97.0 }, { gx: 18.0, gy: 97.0 }, { gx: 20.0, gy: 97.0 },
+            { gx: 20.0, gy: 99.5 }, { gx: 20.0, gy: 102.0 },
+            { gx: 18.0, gy: 102.0 }, { gx: 16.0, gy: 102.0 },
+            { gx: 16.0, gy: 98.0 }, { gx: 16.0, gy: 100.5 }
+          ];
+          fencePosts.forEach(p => {
             models.drawBox(ctx, p.gx, p.gy, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
           });
         }
       });
 
-      // 5. Blocky Minecraft Sheep (grazing peacefully at x = 7.5, y = 104.5)
+      // 5. Blocky Minecraft Sheep (grazing peacefully at x: 12.0, y: 105.0)
       list.push({
-        xMin: 7.2, xMax: 8.4, yMin: 104.0, yMax: 105.2,
+        xMin: 11.6, xMax: 12.8, yMin: 104.5, yMax: 105.8,
         draw: () => {
-          const sx = 7.5, sy = 104.5;
+          const sx = 12.0, sy = 105.0;
           models.drawBox(ctx, sx, sy, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx + 0.45, sy, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx, sy + 0.55, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx + 0.45, sy + 0.55, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx - 0.06, sy - 0.06, 0.40, 0.75, 0.85, 0.55, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
-          models.drawBox(ctx, sx + 0.14, sy - 0.38, 0.30, 0.38, 0.38, 0.38, '#f8fafc', '#fbcfe8', '#e2e8f0', world.ox, world.oy);
-          const ep = isoToScreen(sx + 0.32, sy - 0.39, 0.50, world.ox, world.oy);
-          ctx.fillStyle = '#020617';
+          models.drawBox(ctx, sx + 0.50, sy, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
+          models.drawBox(ctx, sx, sy + 0.70, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
+          models.drawBox(ctx, sx + 0.50, sy + 0.70, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
+          // Fluffy White Wool Body
+          models.drawBox(ctx, sx - 0.10, sy - 0.10, 0.40, 0.85, 1.10, 0.75, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          // Pink/Beige Head
+          models.drawBox(ctx, sx + 0.10, sy - 0.35, 0.65, 0.45, 0.45, 0.45, '#fbcfe8', '#f472b6', '#e2e8f0', world.ox, world.oy);
+          const ep = isoToScreen(sx + 0.10, sy - 0.35, 0.85, world.ox, world.oy);
+          ctx.fillStyle = '#0f172a';
           ctx.fillRect(ep.x - 4, ep.y - 2, 2.5, 2.5);
           ctx.fillRect(ep.x + 2, ep.y - 2, 2.5, 2.5);
         }
       });
 
-      // 6. Blocky Minecraft Oak Tree (at x: 2.8, y: 105.0)
+      // 6. Blocky Minecraft Oak Tree (at x: 7.8, y: 106.0)
       list.push({
-        xMin: 2.0, xMax: 4.2, yMin: 104.0, yMax: 106.5,
+        xMin: 7.0, xMax: 9.2, yMin: 105.0, yMax: 107.5,
         draw: () => {
-          const tx = 2.8, ty = 105.0;
+          const tx = 7.8, ty = 106.0;
           models.drawBox(ctx, tx, ty, 0, 0.65, 0.65, 2.40, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
-          models.drawBox(ctx, tx - 0.95, ty - 0.95, 2.00, 2.55, 2.55, 0.90, '#2e7d32', '#1b5e20', '#144617', world.ox, world.oy);
-          models.drawBox(ctx, tx - 0.50, ty - 0.50, 2.90, 1.65, 1.65, 0.90, '#388e3c', '#2e7d32', '#1b5e20', world.ox, world.oy);
+          models.drawBox(ctx, tx - 1.20, ty - 1.20, 2.00, 3.00, 3.00, 1.00, '#38a169', '#2f855a', '#22543d', world.ox, world.oy);
+          models.drawBox(ctx, tx - 0.75, ty - 0.75, 3.00, 2.10, 2.10, 0.90, '#48bb78', '#38a169', '#276749', world.ox, world.oy);
+          models.drawBox(ctx, tx - 0.35, ty - 0.35, 3.90, 1.35, 1.35, 0.60, '#68d391', '#48bb78', '#2f855a', world.ox, world.oy);
         }
       });
     }
   };
 
   window.GamingDimensionPrefab = GamingDimensionPrefab;
+
 })(window);

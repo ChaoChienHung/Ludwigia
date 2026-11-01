@@ -76,17 +76,18 @@ body.space-body {
   inset: 0;
   overflow: hidden;
   touch-action: none;
-  background: radial-gradient(circle at 50% 40%, #0d1527 0%, #060913 60%, var(--space-bg-deep) 100%);
+  background-color: var(--space-bg-deep);
 }
 
-/* Deep Space Ambient Edge Vignette */
+/* Dreamscape Pink & Cosmic Abyss Dynamic Edge Vignette */
 .space-viewport::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 120px 30px rgba(0, 0, 0, 0.65),
-              inset 0 0 45px 5px var(--space-accent-glow);
+  box-shadow: inset 0 0 100px 25px rgba(244, 114, 182, var(--pink-halo-opacity, 0.35)),
+              inset 0 0 45px 5px rgba(251, 207, 232, var(--pink-halo-opacity, 0.40)),
+              inset 0 0 120px 30px rgba(0, 0, 0, var(--abyss-halo-opacity, 0.0));
   z-index: 5;
   transition: opacity 0.8s ease;
 }

@@ -642,9 +642,9 @@
       if (x >= 38.5 && x <= 50.5 && y >= 16.5 && y <= 26.5) return 'basketball_court';
       if (x >= 29.5 && x <= 37.5 && y >= 32.5 && y <= 44.5) return 'night_market';
       if (x >= 32.5 && x <= 39.5 && y >= 2.0 && y <= 7.5) return 'cafe';
-      if (x >= 3.8 && x <= 14.2 && y >= 48.5 && y <= 56.2) return 'cyber_cafe';
-      if (x >= 5.5 && x <= 12.5 && y >= 56.2 && y <= 92.2) return 'howling_abyss';
-      if (x >= 1.8 && x <= 16.5 && y >= 92.2 && y <= 110.5) return 'minecraft_sanctuary';
+      if (x >= 8.5 && x <= 19.5 && y >= 48.5 && y <= 57.2) return 'cyber_cafe';
+      if (x >= 10.5 && x <= 17.5 && y >= 57.2 && y <= 93.2) return 'howling_abyss';
+      if (x >= 6.5 && x <= 21.5 && y >= 93.2 && y <= 111.5) return 'minecraft_sanctuary';
       return 'plaza';
     }
 
@@ -752,15 +752,15 @@
         currentZone = 'cafe';
         isInsideAnyHouse = true;
         statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
-      } else if (checkZone('cyber_cafe', 3.8, 14.2, 48.5, 56.2)) {
+      } else if (checkZone('cyber_cafe', 8.5, 19.5, 48.5, 57.2)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
         statusMessage = "Howling Abyss Cyber • 召喚師電競網咖 🎮";
-      } else if (checkZone('howling_abyss', 5.5, 12.5, 56.2, 92.2)) {
+      } else if (checkZone('howling_abyss', 10.5, 17.5, 57.2, 93.2)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;
         statusMessage = "The Howling Abyss • 冰封咆哮深淵長橋 ❄️";
-      } else if (checkZone('minecraft_sanctuary', 1.8, 16.5, 92.2, 110.5)) {
+      } else if (checkZone('minecraft_sanctuary', 6.5, 21.5, 93.2, 111.5)) {
         currentZone = 'minecraft_sanctuary';
         isInsideAnyHouse = false;
         statusMessage = "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
@@ -1285,31 +1285,30 @@
               ];
 
               const cyberAnchors = [
-                { x: 6.0, y: 51.5 }, // Blue Side Gaming Station
-                { x: 9.0, y: 51.5 }, // Central Aisle
-                { x: 12.0, y: 51.5 }, // Rig 3
-                { x: 6.0, y: 54.5 }, // Red Side Gaming Station
-                { x: 12.5, y: 53.5 }, // Hot Ramen & Snack Counter
-                { x: 9.0, y: 53.5 }  // Cyber Cafe Central Lobby
+                { x: 14.0, y: 51.5 }, // Central North Corridor
+                { x: 11.5, y: 52.0 }, // Blue Side Gaming Station
+                { x: 16.5, y: 52.0 }, // Red Side Gaming Station
+                { x: 18.0, y: 53.5 }, // Hot Ramen & Snack Counter
+                { x: 14.0, y: 55.5 }  // South Portal to Abyss Bridge
               ];
 
               const abyssAnchors = [
-                { x: 9.0, y: 59.0 }, // Blue Nexus Approach
-                { x: 7.5, y: 64.0 }, // Near Blue Inner Turret
-                { x: 9.0, y: 71.0 }, // Blue Health Relic Shrine
-                { x: 8.0, y: 74.0 }, // Mid-Lane Frost Brush Ambush & Poro
-                { x: 9.0, y: 77.0 }, // Red Health Relic Shrine
-                { x: 7.5, y: 84.0 }, // Near Red Inner Turret
-                { x: 9.0, y: 88.0 }, // Red Inhibitor Platform
-                { x: 9.0, y: 91.0 }  // Red Nexus Approach
+                { x: 14.0, y: 60.0 }, // Blue Nexus Approach
+                { x: 14.0, y: 65.0 }, // Blue Inner Turret
+                { x: 14.0, y: 72.0 }, // Blue Health Relic Shrine
+                { x: 12.5, y: 75.0 }, // Mid-Lane Frost Brush Ambush & Poro West
+                { x: 15.5, y: 75.0 }, // Mid-Lane Frost Brush Ambush & Poro East
+                { x: 14.0, y: 78.0 }, // Red Health Relic Shrine
+                { x: 14.0, y: 85.0 }, // Red Inner Turret
+                { x: 14.0, y: 91.0 }  // Red Nexus Approach
               ];
 
               const minecraftAnchors = [
-                { x: 7.0, y: 94.0 }, // Welcome Signboard
-                { x: 7.0, y: 98.0 }, // Oak Cabin Living Room
-                { x: 5.5, y: 100.0 }, // Next to Red Bed
-                { x: 13.0, y: 98.0 }, // Farmland Crops
-                { x: 5.0, y: 105.0 }  // Under Giant Oak Tree
+                { x: 14.0, y: 95.0 }, // Welcome Signboard
+                { x: 12.0, y: 99.0 }, // Oak Cabin Living Room
+                { x: 10.5, y: 100.5 }, // Next to Red Bed
+                { x: 18.0, y: 99.0 }, // Farmland Crops
+                { x: 10.0, y: 106.0 }  // Under Giant Oak Tree
               ];
 
               const zoneAnchorMap = {
@@ -1502,20 +1501,20 @@
           const isBasketball = (x >= 39 && x <= 50 && y >= 17 && y <= 26);
           const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
           const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
-          const isCyber = (x >= 4 && x <= 14 && y >= 49 && y <= 56);
-          const isAbyssBridge = (x >= 6 && x <= 12 && y >= 56 && y <= 92);
-          const isMinecraft = (x >= 2 && x <= 16 && y >= 92 && y <= 110);
+          const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
+          const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 93);
+          const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe;
 
           // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
           const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
-          const isEastNorthSouthSpine = (x >= 30 && x <= 32 && y >= 4 && y <= 32);  // East Promenade Spine (width 3: x=30..32, 2 tiles east of AI Studio / Library / TikTok Office, seamlessly aligned with Night Market x=30..32!)
+          const isEastNorthSouthSpine = (x >= 30 && x <= 32 && y >= 4 && y <= 32);  // East Promenade Spine (width 3)
           const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 17);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance
-          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (width 3, with 2-tile grass buffer along Library North Wall)
+          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
           const isSouthSectorConnector = (
-            (x >= 5 && x <= 14 && y >= 43 && y <= 45) ||
-            (x >= 8 && x <= 10 && y >= 43 && y <= 49) // Direct 6-tile connector spur from Sanmin South junction to Cyber Cafe North Door
+            (x >= 5 && x <= 32 && y >= 43 && y <= 45) ||
+            (x >= 13 && x <= 15 && y >= 45 && y <= 49) // Direct straight boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
           );
 
           // East Campus Basketball Court Direct Paved Access
@@ -1549,8 +1548,12 @@
             isCafeDoorSpur
           );
 
+          // Chasm Void: y <= 57 is all island land (bounded by south wooden cliff fence at y: 57)
+          // y in [57..93]: bridge is x: 11..17, all flanking space is bottomless void!
+          // y > 93: minecraft island is x: 7..21, all flanking space is bottomless void!
           const isAbyssChasm = (
-            y >= 44 && !isCyber && !isAbyssBridge && !isMinecraft && !isPath
+            (y > 57 && y <= 93 && (x < 11 || x > 17)) ||
+            (y > 93 && (x < 7 || x > 21))
           );
 
           ctx.save();
@@ -1618,7 +1621,7 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
           } else if (isAbyssBridge) {
             // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Flagstones & Snow Edges
-            const isEdge = (x === 6 || x === 12);
+            const isEdge = (x === 11 || x === 17);
             if (isEdge) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
             } else {
@@ -1646,8 +1649,8 @@
             ctx.stroke();
           }
 
-          // Centerline Glowing Arcane Rune Inlays on Bridge Spine (North-South along x = 9)
-          if (isAbyssBridge && x === 9 && y >= 57 && y <= 91) {
+          // Centerline Glowing Arcane Rune Inlays on Bridge Spine (North-South along x = 14)
+          if (isAbyssBridge && x === 14 && y >= 58 && y <= 92) {
             ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
             ctx.lineWidth = 1.8;
             ctx.beginPath();
@@ -3901,6 +3904,50 @@
       this.ctx.fillRect(hPos.x - 2, hPos.y - 10, 4, 16);
     }
 
+    // --- Dynamic Sky & Abyss Background Interpolation ---
+    drawSkyBackground(ctx, abyssT) {
+      const w = this.width;
+      const h = this.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const maxR = Math.max(w, h) * 0.85;
+
+      // Color 0: Center glow (Pink: [255, 237, 245], Dark Void: [13, 21, 39])
+      const r0 = Math.round(255 + (13 - 255) * abyssT);
+      const g0 = Math.round(237 + (21 - 237) * abyssT);
+      const b0 = Math.round(245 + (39 - 245) * abyssT);
+
+      // Color 1: Inner ring 25% (Pink: [252, 231, 243], Dark Void: [9, 14, 28])
+      const r1 = Math.round(252 + (9 - 252) * abyssT);
+      const g1 = Math.round(231 + (14 - 231) * abyssT);
+      const b1 = Math.round(243 + (28 - 243) * abyssT);
+
+      // Color 2: Mid ring 50% (Pink: [251, 207, 232], Dark Void: [6, 9, 19])
+      const r2 = Math.round(251 + (6 - 251) * abyssT);
+      const g2 = Math.round(207 + (9 - 207) * abyssT);
+      const b2 = Math.round(232 + (19 - 232) * abyssT);
+
+      // Color 3: Outer ring 75% (Pink: [244, 114, 182], Dark Void: [4, 6, 13])
+      const r3 = Math.round(244 + (4 - 244) * abyssT);
+      const g3 = Math.round(114 + (6 - 114) * abyssT);
+      const b3 = Math.round(182 + (13 - 182) * abyssT);
+
+      // Color 4: Edge rim 100% (Pink: [219, 39, 119], Dark Void: [2, 6, 23])
+      const r4 = Math.round(219 + (2 - 219) * abyssT);
+      const g4 = Math.round(39 + (6 - 39) * abyssT);
+      const b4 = Math.round(119 + (23 - 119) * abyssT);
+
+      const grad = ctx.createRadialGradient(cx, cy * 0.8, 10, cx, cy, maxR);
+      grad.addColorStop(0, `rgb(${r0}, ${g0}, ${b0})`);
+      grad.addColorStop(0.25, `rgb(${r1}, ${g1}, ${b1})`);
+      grad.addColorStop(0.50, `rgb(${r2}, ${g2}, ${b2})`);
+      grad.addColorStop(0.75, `rgb(${r3}, ${g3}, ${b3})`);
+      grad.addColorStop(1, `rgb(${r4}, ${g4}, ${b4})`);
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+    }
+
     // --- Atmospheric Full-Screen Lighting Overlay ---
     drawLightingOverlay(ctx) {
       const w = this.width;
@@ -3931,7 +3978,8 @@
       }
 
       // 2. The Howling Abyss: Volumetric God Rays & Swirling Frost Blizzard
-      if (this.player && this.player.y >= 44 && this.player.x >= 10) {
+      const p = this.charManager ? this.charManager.player : null;
+      if (p && p.y >= 57 && p.y <= 93 && p.x >= 10 && p.x <= 18) {
         ctx.save();
         const t = performance.now() * 0.001;
         // 1. Diagonal Volumetric Light Beams (streaming from top-left, matching the iconic ARAM map!)
@@ -3978,6 +4026,18 @@
 
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.width, this.height);
+
+      // Smooth Dynamic Sky / Abyss Void Background Transition
+      // (y <= 50: 100% original pink dreamscape, y >= 60: 100% deep space bottomless abyss void)
+      const camY = this.camCurrentY || 20;
+      const abyssT = Math.max(0, Math.min(1, (camY - 50) / 10));
+      this.drawSkyBackground(ctx, abyssT);
+
+      // Dynamically update vignette halo properties on viewport
+      if (this.canvas && this.canvas.parentElement) {
+        this.canvas.parentElement.style.setProperty('--pink-halo-opacity', (0.35 * (1 - abyssT)).toFixed(3));
+        this.canvas.parentElement.style.setProperty('--abyss-halo-opacity', (0.75 * abyssT).toFixed(3));
+      }
 
       ctx.save();
       const { ox, oy } = this.getOrigin();
