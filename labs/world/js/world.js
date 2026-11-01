@@ -323,30 +323,10 @@
       this.nav.setBlock(36.5, 2.8, 2.5, 1.2, true);    // Barista Bar & Espresso Station (blocks x=37,38 at y=3)
       this.nav.setBlock(35.0, 4.4, 1.4, 1.2, true);    // Indoor Lounge Table (leaves aisle x=33..34, y=4..5 open)
 
-      // 11. Cyber LAN Lounge Obstacles (x: 1..11, y: 45..53)
-      this.nav.setBlock(1.0, 44.8, 4.0, 0.45, true);   // North Wall Left
-      this.nav.setBlock(7.0, 44.8, 4.5, 0.45, true);   // North Wall Right (Entrance at 5..7)
-      this.nav.setBlock(0.8, 44.8, 0.45, 8.5, true);   // West Wall
-      this.nav.setBlock(1.0, 53.2, 10.5, 0.45, true);  // South Wall
-      this.nav.setBlock(11.2, 44.8, 0.45, 3.2, true);  // East Wall Top
-      this.nav.setBlock(11.2, 50.0, 0.45, 3.5, true);  // East Wall Bottom (Doorway to Abyss at 48..50)
-      this.nav.setBlock(2.2, 46.2, 1.4, 0.8, true);    // Blue Rig 1
-      this.nav.setBlock(4.2, 46.2, 1.4, 0.8, true);    // Blue Rig 2
-      this.nav.setBlock(6.2, 46.2, 1.4, 0.8, true);    // Blue Rig 3
-      this.nav.setBlock(2.2, 50.2, 1.4, 0.8, true);    // Red Rig 1
-      this.nav.setBlock(4.2, 50.2, 1.4, 0.8, true);    // Red Rig 2
-      this.nav.setBlock(6.2, 50.2, 1.4, 0.8, true);    // Red Rig 3
-      this.nav.setBlock(8.5, 47.8, 1.8, 0.85, true);   // Snack & Ramen Bar
-
-      // 12. Howling Abyss ARAM Obstacles (Grand Suspension Bridge x: 13..41.5, y: 48..53)
-      this.nav.setBlock(13.0, 47.3, 28.5, 0.5, true);  // North Bridge Stone Parapet (blocks falling into North Abyss)
-      this.nav.setBlock(13.0, 53.3, 28.5, 0.5, true);  // South Bridge Stone Parapet (blocks falling into South Abyss)
-      this.nav.setBlock(41.2, 47.5, 0.6, 6.0, true);   // East Bridge Terminus Railing
-      this.nav.setBlock(12.8, 47.2, 0.8, 0.8, true);   // West Entrance Gateway North Obelisk
-      this.nav.setBlock(12.8, 52.8, 0.8, 0.8, true);   // West Entrance Gateway South Obelisk
-      this.nav.setBlock(19.2, 49.8, 1.6, 1.6, true);   // Ancient Outer Turret Plinth
-      this.nav.setBlock(29.5, 49.8, 1.4, 1.4, true);   // Freljordian Inhibitor Dais
-      this.nav.setBlock(37.8, 49.5, 2.2, 2.2, true);   // Grand Nexus Core Platform
+      // 11. Gaming Dimension Modular Prefab (Cyber Cafe Walls, Howling Abyss Bridge, Minecraft Sanctuary)
+      if (window.GamingDimensionPrefab) {
+        window.GamingDimensionPrefab.initNav(this.nav);
+      }
     }
 
     initParticles() {
@@ -662,8 +642,9 @@
       if (x >= 38.5 && x <= 50.5 && y >= 16.5 && y <= 26.5) return 'basketball_court';
       if (x >= 29.5 && x <= 37.5 && y >= 32.5 && y <= 44.5) return 'night_market';
       if (x >= 32.5 && x <= 39.5 && y >= 2.0 && y <= 7.5) return 'cafe';
-      if (x >= 0.8 && x <= 11.5 && y >= 44.5 && y <= 53.5) return 'cyber_cafe';
-      if (x >= 12.0 && x <= 42.5 && y >= 46.5 && y <= 55.5) return 'howling_abyss';
+      if (x >= 0.8 && x <= 11.5 && y >= 44.5 && y <= 53.2) return 'cyber_cafe';
+      if (x >= 3.5 && x <= 8.5 && y >= 53.2 && y <= 61.2) return 'howling_abyss';
+      if (x >= 0.8 && x <= 12.5 && y >= 61.2 && y <= 70.5) return 'minecraft_sanctuary';
       return 'plaza';
     }
 
@@ -771,14 +752,18 @@
         currentZone = 'cafe';
         isInsideAnyHouse = true;
         statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
-      } else if (checkZone('cyber_cafe', 0.8, 11.5, 44.5, 53.5)) {
+      } else if (checkZone('cyber_cafe', 0.8, 11.5, 44.5, 53.2)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
         statusMessage = "Howling Abyss Cyber • 召喚師電競網咖 🎮";
-      } else if (checkZone('howling_abyss', 12.0, 42.5, 46.5, 55.5)) {
+      } else if (checkZone('howling_abyss', 3.5, 8.5, 53.2, 61.2)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;
-        statusMessage = "The Howling Abyss • 冰封咆哮深淵戰場 ❄️";
+        statusMessage = "The Howling Abyss • 冰封咆哮深淵長橋 ❄️";
+      } else if (checkZone('minecraft_sanctuary', 0.8, 12.5, 61.2, 70.5)) {
+        currentZone = 'minecraft_sanctuary';
+        isInsideAnyHouse = false;
+        statusMessage = "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
       }
 
       this.currentZone = currentZone;
@@ -1511,12 +1496,11 @@
           const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
           const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
           const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
-          const isAbyssBridge = (
-            (x >= 13 && x <= 41 && y >= 48 && y <= 53) ||
-            (x >= 11 && x <= 13 && y >= 48 && y <= 50) // Ramp connector from Cyber Cafe
-          );
+          const isAbyssBridge = (x >= 4 && x <= 8 && y >= 53 && y <= 61);
+          const isMinecraft = (x >= 1 && x <= 12 && y >= 61 && y <= 70);
           const isAbyssChasm = (
-            x >= 12 && x <= 43 && y >= 44 && y <= 57 && !isCyber && !isAbyssBridge
+            ((x >= 12 && x <= 43 && y >= 44 && y <= 57) || (y >= 53 && y <= 61 && (x < 4 || x > 8))) &&
+            !isCyber && !isAbyssBridge && !isMinecraft
           );
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe;
 
@@ -1619,12 +1603,15 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
           } else if (isAbyssBridge) {
             // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Flagstones & Snow Edges
-            const isEdge = (y === 48 || y === 53);
+            const isEdge = (x === 4 || x === 8);
             if (isEdge) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
             } else {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#1a2738' : '#23344a';
             }
+          } else if (isMinecraft) {
+            // Minecraft Sanctuary — Classic Grass Block Green Turf
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#5b8c32' : '#4d7828';
           } else if (isAbyssChasm) {
             // Deep Bottomless Frozen Abyss Chasm Void
             ctx.fillStyle = (x + y) % 2 === 0 ? '#020617' : '#050f22';
@@ -1644,19 +1631,19 @@
           ctx.closePath();
           ctx.fill();
 
-          if (isAbyssChasm || isAbyssBridge || (y >= 45 && !isCyber && !isPath)) {
+          if (isAbyssChasm || isAbyssBridge || (y >= 45 && !isCyber && !isPath && !isMinecraft)) {
             ctx.strokeStyle = isAbyssChasm ? 'rgba(56, 189, 248, 0.08)' : (isAbyssBridge ? 'rgba(147, 197, 253, 0.20)' : 'rgba(244, 114, 182, 0.22)');
             ctx.lineWidth = 1;
             ctx.stroke();
           }
 
-          // Centerline Glowing Arcane Rune Inlays on Bridge Spine
-          if (isAbyssBridge && (y === 50 || y === 51) && x >= 14 && x <= 40) {
+          // Centerline Glowing Arcane Rune Inlays on Bridge Spine (North-South along x = 6)
+          if (isAbyssBridge && x === 6 && y >= 54 && y <= 60) {
             ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
             ctx.lineWidth = 1.6;
             ctx.beginPath();
-            ctx.moveTo(p0.x, p0.y);
-            ctx.lineTo(p2.x, p2.y);
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p3.x, p3.y);
             ctx.stroke();
           }
 
@@ -3811,176 +3798,13 @@
         draw: () => this.models.drawCyberSnackBar(this.ctx, 8.5, 47.8, this.ox, this.oy)
       });
 
-      // === 14. HOWLING ABYSS ARAM BRIDGE / 咆哮深淵長橋 (Grand Suspension Bridge x: 13..41.5, y: 48..53) ===
-      // West Gateway Entrance Rune Obelisks
-      list.push({
-        xMin: 12.8, xMax: 13.6, yMin: 47.2, yMax: 48.0,
-        draw: () => this.models.drawAbyssEntranceGateway(this.ctx, 12.8, 47.2, this.ox, this.oy)
-      });
-      list.push({
-        xMin: 12.8, xMax: 13.6, yMin: 52.8, yMax: 53.6,
-        draw: () => this.models.drawAbyssEntranceGateway(this.ctx, 12.8, 52.8, this.ox, this.oy)
-      });
-
-      // North Balustrade Railing Segments
-      const northRailingIntervals = [
-        { gx: 13.6, len: 1.4 },
-        { gx: 16.3, len: 1.2 },
-        { gx: 18.2, len: 3.8 },
-        { gx: 23.3, len: 1.2 },
-        { gx: 27.2, len: 3.3 },
-        { gx: 31.8, len: 3.2 },
-        { gx: 35.7, len: 2.3 },
-        { gx: 39.3, len: 1.9 }
-      ];
-      northRailingIntervals.forEach(r => {
-        list.push({
-          xMin: r.gx, xMax: r.gx + r.len, yMin: 47.3, yMax: 47.7,
-          draw: () => this.models.drawAbyssParapetSegment(this.ctx, r.gx, 47.3, r.len, 0.40, this.ox, this.oy)
-        });
-      });
-
-      // South Balustrade Railing Segments
-      const southRailingIntervals = [
-        { gx: 13.6, len: 1.9 },
-        { gx: 16.2, len: 2.3 },
-        { gx: 19.8, len: 1.7 },
-        { gx: 22.8, len: 1.7 },
-        { gx: 25.2, len: 2.3 },
-        { gx: 28.8, len: 2.7 },
-        { gx: 32.2, len: 1.3 },
-        { gx: 34.2, len: 2.3 },
-        { gx: 37.8, len: 3.4 }
-      ];
-      southRailingIntervals.forEach(r => {
-        list.push({
-          xMin: r.gx, xMax: r.gx + r.len, yMin: 53.3, yMax: 53.7,
-          draw: () => this.models.drawAbyssParapetSegment(this.ctx, r.gx, 53.3, r.len, 0.40, this.ox, this.oy)
-        });
-      });
-
-      // East Bridge Terminus Railing
-      list.push({
-        xMin: 41.2, xMax: 41.6, yMin: 47.5, yMax: 53.5,
-        draw: () => this.models.drawAbyssParapetSegment(this.ctx, 41.2, 47.5, 0.40, 6.00, this.ox, this.oy)
-      });
-
-      // Broken Railing Gaps with Dangling Chains
-      list.push({
-        xMin: 24.5, xMax: 26.1, yMin: 47.2, yMax: 47.7,
-        draw: () => this.models.drawAbyssBrokenRailing(this.ctx, 24.5, 47.3, this.ox, this.oy, true)
-      });
-      list.push({
-        xMin: 21.5, xMax: 22.8, yMin: 53.2, yMax: 53.7,
-        draw: () => this.models.drawAbyssBrokenRailing(this.ctx, 21.5, 53.3, this.ox, this.oy, false)
-      });
-
-      // Glowing Fire Braziers on Parapets (Flickering Orange Flame on Frost Stone)
-      const braziers = [
-        { gx: 17.5, gy: 47.3 },
-        { gx: 26.5, gy: 47.3 },
-        { gx: 35.0, gy: 47.3 },
-        { gx: 15.5, gy: 53.3 },
-        { gx: 24.5, gy: 53.3 },
-        { gx: 33.5, gy: 53.3 }
-      ];
-      braziers.forEach(b => {
-        list.push({
-          xMin: b.gx, xMax: b.gx + 0.65, yMin: b.gy, yMax: b.gy + 0.65,
-          draw: () => this.models.drawAbyssBrazier(this.ctx, b.gx, b.gy, this.ox, this.oy)
-        });
-      });
-
-      // Giant Horned Freljordian Guardian Statues (holding heavy suspension chains over the abyss!)
-      const statues = [
-        { gx: 15.0, gy: 46.8, isNorth: true },
-        { gx: 22.0, gy: 46.8, isNorth: true },
-        { gx: 30.5, gy: 46.8, isNorth: true },
-        { gx: 38.0, gy: 46.8, isNorth: true },
-        { gx: 18.5, gy: 53.5, isNorth: false },
-        { gx: 27.5, gy: 53.5, isNorth: false },
-        { gx: 36.5, gy: 53.5, isNorth: false }
-      ];
-      statues.forEach(s => {
-        list.push({
-          xMin: s.gx, xMax: s.gx + 1.30, yMin: s.gy, yMax: s.gy + 1.30,
-          draw: () => this.models.drawAbyssGuardianStatue(this.ctx, s.gx, s.gy, this.ox, this.oy, s.isNorth)
-        });
-      });
-
-      // Floating Broken Abyss Chasm Crags & Anchor Chains in the Deep Void
-      const chasmPillars = [
-        { gx: 25.0, gy: 55.8 },
-        { gx: 35.5, gy: 56.0 }
-      ];
-      chasmPillars.forEach(cp => {
-        list.push({
-          xMin: cp.gx, xMax: cp.gx + 1.10, yMin: cp.gy, yMax: cp.gy + 1.10,
-          draw: () => this.models.drawAbyssChasmPillar(this.ctx, cp.gx, cp.gy, this.ox, this.oy)
-        });
-      });
-
-      // Ancient Outer Turret (Frost Obelisk with Floating Laser Gem & Target Ring)
-      list.push({
-        xMin: 19.2, xMax: 20.8, yMin: 49.8, yMax: 51.4,
-        draw: () => this.models.drawAbyssTurret(this.ctx, 19.2, 49.8, this.ox, this.oy)
-      });
-
-      // West Emerald Health Relic
-      list.push({
-        xMin: 23.6, xMax: 24.8, yMin: 51.4, yMax: 52.6,
-        draw: () => this.models.drawHealthRelic(this.ctx, 24.0, 51.8, this.ox, this.oy)
-      });
-
-      // Mid-Lane Freljord Frost Brush Patches
-      list.push({
-        xMin: 26.5, xMax: 27.5, yMin: 49.0, yMax: 49.8,
-        draw: () => this.models.drawAbyssBrush(this.ctx, 26.8, 49.2, this.ox, this.oy)
-      });
-      list.push({
-        xMin: 27.5, xMax: 28.5, yMin: 49.0, yMax: 49.8,
-        draw: () => this.models.drawAbyssBrush(this.ctx, 27.8, 49.2, this.ox, this.oy)
-      });
-
-      // Freljordian Inhibitor (Hexagonal Dais & Floating Arcane Core Crystal)
-      list.push({
-        xMin: 29.5, xMax: 30.9, yMin: 49.8, yMax: 51.2,
-        draw: () => this.models.drawAbyssInhibitor(this.ctx, 29.5, 49.8, this.ox, this.oy)
-      });
-
-      // East Emerald Health Relic
-      list.push({
-        xMin: 34.1, xMax: 35.3, yMin: 48.4, yMax: 49.6,
-        draw: () => this.models.drawHealthRelic(this.ctx, 34.5, 48.8, this.ox, this.oy)
-      });
-
-      // The Grand Nexus Core Platform (Pulsing Nexus Crystal & Rotating Golden Orbital Blades)
-      list.push({
-        xMin: 37.8, xMax: 40.0, yMin: 49.5, yMax: 51.7,
-        draw: () => this.models.drawAbyssNexus(this.ctx, 37.8, 49.5, this.ox, this.oy)
-      });
-
-      // Fluffy Snow Poros (Snack / Tongue / Sleep / Hop)
-      list.push({
-        xMin: 17.2, xMax: 17.8, yMin: 49.2, yMax: 49.8,
-        draw: () => this.models.drawPoro(this.ctx, 17.5, 49.5, this.ox, this.oy, 'snack')
-      });
-      list.push({
-        xMin: 23.2, xMax: 23.8, yMin: 50.5, yMax: 51.1,
-        draw: () => this.models.drawPoro(this.ctx, 23.5, 50.8, this.ox, this.oy, 'tongue')
-      });
-      list.push({
-        xMin: 27.7, xMax: 28.3, yMin: 51.9, yMax: 52.5,
-        draw: () => this.models.drawPoro(this.ctx, 28.0, 52.2, this.ox, this.oy, 'sleep')
-      });
-      list.push({
-        xMin: 32.7, xMax: 33.3, yMin: 49.2, yMax: 49.8,
-        draw: () => this.models.drawPoro(this.ctx, 33.0, 49.5, this.ox, this.oy, 'tongue')
-      });
-      list.push({
-        xMin: 36.7, xMax: 37.3, yMin: 51.7, yMax: 52.3,
-        draw: () => this.models.drawPoro(this.ctx, 37.0, 52.0, this.ox, this.oy, 'snack')
-      });
+      // === 14. GAMING DIMENSION PREFAB (CYBER CAFE WALLS, ABYSS BRIDGE & MINECRAFT SANCTUARY) ===
+      if (window.GamingDimensionPrefab) {
+        window.GamingDimensionPrefab.initEntities(list, this);
+        if (this.charManager) {
+          window.GamingDimensionPrefab.initFurniture(this.charManager);
+        }
+      }
 
       // Pre-calculate midpoint bounds for fast O(1) viewport culling
       list.forEach(e => {

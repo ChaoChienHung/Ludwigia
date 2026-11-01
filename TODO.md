@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] CS5224 全課與 CS5446 Week 7 後段複習資料包
+    - 交付條件：兩份按週閱讀的純文字 Markdown 濃縮知識點；對應的 A4 PDF 與可編輯 LaTeX 納入原講義圖、相關 Tutorial／Lab 原題與詳解。檔案暫存 `artifacts/`，Markdown 不含圖片與站點專用語法。
+    - 已完成：CS5224 涵蓋 Week 1–10、Lab 1／2；CS5446 涵蓋 Week 7–11 與 Tutorial 5–8。純文字 Markdown 縮至約 18.4k／6.9k words。PDF／`.tex` 參考原 CS5446 Note 的藍色標題、目錄與紫色逐題問答框，每題下方直接附綠色解答；保留 61 張有助理解的原講義圖（Cloud 44、RL 17），移除 20 張整頁題單截圖。題目共 187 題（Cloud Labs 17、Cloud quizzes 40、歷屆 tests 75、RL Tutorial 5–8 共 55）；Lab 2 另附 PySpark 與 Lambda 程式，並提供 LaTeX 原始碼壓縮包。Week 12 無獨立講義，未虛構章節。
+    - Review 重點：作者最終全盤 proofread；尤其核對 CS5224 Week 7 合併後的雙案例、歷屆 test sample answer、Lab 2 報告中的數值，以及 CS5446 Week 7–11 的公式和 Tutorial 週次標示。CS5224 四組 Quiz 共 40 題已依 Canvas 批改截圖逐題核對，修正五題答案；Quiz 1 Q3 依畫面顯示的正解標記校正。LaTeX 原始檔尚待在裝有 XeLaTeX 的環境實際編譯核對；PDF 由相同 Markdown 及圖檔另行排版生成。
+
 - [x] Ludwigia World 對話資料與色盤來源收斂
     - 交付條件：玩家對話、角色獨白、NPC 互聊在 `characters.json` 分欄維護並保持中英雙語；後兩類隨機觸發；主站與 World 共用 palette 基色，文件與驗證同步完成。
     - 已完成：23 位角色拆成 `dialogues.user/self`、15 組有效互聊收斂為 `npcDialogues`，移除重複與失效 ID；World 的 Theme／Palette 套用函式與 11 組 palette 基色各收斂到一處。
@@ -24,9 +29,9 @@
     - Review 重點：作者在 World 實際觸發對話，確認 ChatGPT 口吻、咖啡廳節奏，以及 Claude／Gemini 的佔位文字待各自回填後是否順暢。
 
 - [x] CS5446 與 CS5224 課程講義／習題補充
-    - 交付條件：CS5446 source 按課程總覽區分 Week 7–11，涵蓋 Tutorial 5–8 的對應週次、model-based RL、game theory 與 foundation-model decision systems；CS5224 source 分 Week 6–11 對照 Lecture 06–10 和 Cloud Native 客座講座；兩篇 HTML 重建，草稿維持不進公開索引。
-    - 已完成：保留已詳細整理的兩門課前段；第二輪逐頁核對後，依 CS5446 *Course Overview* 修正 Week 8 期中考、Week 9 model-based RL、Week 10 game theory、Week 11 foundation-model alignment 的講課週次，並與 Tutorial 5–8 自身的週次分開標示；詳解 Tutorial 5 延遲 MDP、MC/TD/ADP 與 Tutorial 6 MCTS 複雜度和 imitation learning，補足混合均衡與 world-model 訓練機制。CS5224 的相同 Lecture 07/08 PDF 依 k-means／影片 SaaS 分成 Week 7／8 研讀章節，加入分散式迭代、容量／成本推導，Week 11 收錄 Cloud Native 講座；兩篇 HTML 重建，草稿狀態未變。
-    - Review 重點：作者全盤 proofread，特別核對 Tutorial 學生解答與官方題目、RL Week 9–11 的模型與均衡公式、Cloud Week 7/8 的研讀分章（同一份投影片）與 Kubernetes 概念，以及原有 TCO 圖表占比；學生提交不視為官方答案，圖表占比不能當成絕對總成本。
+    - 交付條件：CS5446 source 按課程總覽區分 Week 7–11，涵蓋 Tutorial 5–8 的對應週次、model-based RL、game theory 與 foundation-model decision systems；CS5224 source 分 Week 6–10 對照 Lecture 06–10 和 Cloud Native 客座講座；兩篇 HTML 重建，草稿維持不進公開索引。
+    - 已完成：保留已詳細整理的兩門課前段；第二輪逐頁核對後，依 CS5446 *Course Overview* 修正 Week 8 期中考、Week 9 model-based RL、Week 10 game theory、Week 11 foundation-model alignment 的講課週次，並與 Tutorial 5–8 自身的週次分開標示；詳解 Tutorial 5 延遲 MDP、MC/TD/ADP 與 Tutorial 6 MCTS 複雜度和 imitation learning，補足混合均衡與 world-model 訓練機制。CS5224 的相同 Lecture 07/08 PDF 依 k-means／影片 SaaS 合併為 Week 7 單一研讀章節，加入分散式迭代、容量／成本推導，Week 10 收錄 Cloud Native 講座；兩篇 HTML 重建，草稿狀態未變。
+    - Review 重點：作者全盤 proofread，特別核對 Tutorial 學生解答與官方題目、RL Week 9–11 的模型與均衡公式、Cloud Week 7 的雙案例（同一份投影片）與 Kubernetes 概念，以及原有 TCO 圖表占比；學生提交不視為官方答案，圖表占比不能當成絕對總成本。
 
 - [x] 首頁底部 Future Plans 區塊與導覽
     - 交付條件：在首頁 Timeline 之後、Contact 之前呈現 fact verifier 的個人延伸構想；三語文案與 Theme/Palette 響應式樣式可用，Home 下拉選單可抵達此區塊，Skills/Credentials 載入時不會自動捲走 cover。
@@ -401,9 +406,32 @@
     - 容錯與降級（Fail-safe）：若特定表情資源遺失或載入失敗，優雅回退至該角色之 default avatar 或 emoji fallback，杜絕破圖或破壞版面排版。
   - [ ] 交付條件：完成資料規格定義、台詞標籤解析、至少挑選 1~2 位角色（如 `chatgpt` 或 `ludwigia`）建立多表情示例，在 World 對話彈窗中點擊「繼續 / Next」時能精準且平滑切換對應表情，且編譯腳本與既有靜態角色資料相容性測試通過。
 
-- [ ] Ludwigia World：電競網咖與召喚峽谷／咆哮深淵競技場（Esports LAN Lounge & Howling Abyss / Summoner's Rift）
-  - [ ] 核心概念：還原大學通宵 ARAM 隨機單中與高中放學開黑的電競生活回憶；規劃為「五連坐 RGB 電競網咖」與「微縮咆哮深淵冰霜符文長橋（古代防禦塔、生命聖壇、跳躍魄羅 Poro、海克斯主堡大水晶）」之標誌性主題景觀。
-  - [ ] 交付條件：完成場景等角模型繪製、地圖擴展、碰撞盒（NavGrid）與角色漫遊 Anchors 配置，支援大學室友與高中同學前往開黑連線。
+- [ ] Ludwigia World：電競網咖落地窗改建、深淵長橋與麥塊像素生態島（Cyber Cafe Windows, Chasm Bridge & Minecraft Sanctuary）
+  - [ ] 核心概念：
+    - **網咖加蓋升級**：網咖改建為具備完整立體牆體的獨立建築，東西兩側導入像 TikTok Office 的通透全景落地大窗（Floor-to-ceiling Windows），打遊戲時可俯瞰兩側深淵冰霧；南側開闢專屬通道閘門（Air-lock Gateway）。
+    - **南北向咆哮深淵長橋**：長橋由網咖南門筆直向南跨越冰封大裂谷，兩側為萬丈深淵、浮石、巨鏈與冷光冰霧，橋上依序排布防禦塔、火盆、神像、兵營與魄羅。
+    - **麥塊經典像素世界（The Minecraft Sanctuary）**：跨過長橋後的全新土地，以純方塊投影打造懷舊溫馨的 Minecraft 生態島（經典橡木原木小屋、經典大紅床、工作台、石熔爐、大木箱、方塊火把、一格水農田與小麥胡蘿蔔、方塊白羊、方塊橡木樹與木告示牌）。
+  - [ ] 交付條件：完成網咖落地窗與立體牆體、長橋向南跨越裂谷、麥塊方塊建築與家具模型、紅床互動（睡覺）支援與碰撞導航（NavGrid）。
+
+- [ ] Ludwigia World：中央大學教室與道地拉麵店（NCU Classroom & Authentic Ramen Shop）
+  - [ ] 核心概念：
+    - **國立中央大學教室（NCU Classroom）**：還原中壢雙連坡大學時期資工/數學課堂回憶（斜坡階梯教室或經典木桌椅、綠色大黑板、投影幕、講台與校園松樹景觀）。
+    - **道地日式拉麵店（Authentic Ramen Shop）**：溫暖深夜食堂風（暖黃燈籠、日式暖簾 Noren、一蘭式獨立吧台/吧台高腳椅、熱氣騰騰的拉麵碗、豚骨湯鍋與菜單木牌掛簾）。
+  - [ ] 交付條件：規劃地圖合適區塊，完成建築外觀與室內等軸測模型、碰撞與座位 Anchor 註冊，支援角色與 NPC 進入自習或品嚐拉麵。
+
+- [ ] Ludwigia World：獨立專案分離與主站 Labs 外部連結架構評估（Standalone Project Separation & External Link Architecture）
+  - [ ] 核心概念：評估將 `labs/world/` 從目前 Ludwigia 靜態站點主倉中獨立拆分為單獨託管的專案（獨立 Repo / 獨立域名主機託管，如 Vercel / Cloudflare Pages / Railway），Ludwigia 主站的 Labs 僅保留精緻卡片入口與直連外部 URL。
+  - [ ] 優點與動機：
+    - 主站本體（Ludwigia Portfolio & Garden）維持純粹輕量的個人品牌與數位花園，徹底擺脫虛擬世界龐大 JS / 模型 / 地圖資源對主站 git 體積的負擔。
+    - 虛擬世界專案獲得完全獨立的技術棧自由度（可引入現代打包工具、Vite、獨立模組化 prefabs、甚至 WebSocket 多人即時連線等遊戲級架構），不受限於主站無打包純靜態約束。
+  - [ ] 交付條件：完成獨立拆分架構評估與遷移計畫設計，定義與主站的導航連結、偏好同步協議（Theme / Palette / Language）與降級外鏈方案。
+
+- [ ] Ludwigia World：地圖建築模組化解耦重構（Modular Building & Model Prefabs Architecture）
+  - [ ] 核心概念：解決目前 `models.js`（>5200行）與 `world.js`（>4200行）過於龐大（Bulky）與單體化（Monolithic）的架構痛點；將各建築之「等軸模型繪製（Models）」、「靜態實體註冊（Entities）」、「碰撞盒與邊界（Nav Blocks）」及「內部家具錨點（Furniture Spots）」收斂為高內聚、低耦合的獨立建築模組（Prefabs / Sector Modules）。
+  - [ ] 拆分方向：
+    - 依區域或功能拆分：如 `prefabs/campus.js`（家/宿舍/教室/圖書館/中央大學）、`prefabs/tech_commercial.js`（AI中心/抖音/咖啡館/夜市/拉麵店/網咖）、`prefabs/fantasy_games.js`（深淵長橋/麥塊世界）。
+    - 統一 Prefab 介面：每個模組自我宣告 `bounds`, `navBlocks`, `furnitureSpots`, `entities`，由 `world.js` 統一動態加載與遍歷，消除手動硬編碼長列表。
+  - [ ] 交付條件：完成檔案拆分重構，`models.js` 與 `world.js` 行數顯著收斂，全站現有場景渲染、碰撞尋路與角色互動 100% 無回歸退化。
 
 - [ ] Ludwigia World：角色語音（Agent Voice）
   - [ ] 核心概念：在特定情境替角色加入語音，例如玩家主動開啟的對話彈窗、Ludwigia 的自我介紹、健宏的長篇心聲；不做頭頂泡泡的自動發聲（太吵，也會被瀏覽器的 autoplay 限制擋下）。
