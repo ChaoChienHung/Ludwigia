@@ -52,10 +52,10 @@
       // C. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 11..17, y: 57..93)
       // 36 tiles long North-South grand bridge centered at x: 14
       // ======================================================================
-      // West Balustrade Railing & Abyss void (blocks tile 10)
-      nav.setBlock(10.0, 57.0, 1.0, 36.2, true);
-      // East Balustrade Railing & Abyss void (blocks tile 18)
-      nav.setBlock(18.0, 57.0, 1.0, 36.2, true);
+      // West Balustrade Railing & Abyss void (blocks tile 10 and west edge)
+      nav.setBlock(10.0, 57.0, 1.25, 36.2, true);
+      // East Balustrade Railing & Abyss void (blocks tile 18 and east edge)
+      nav.setBlock(17.75, 57.0, 1.25, 36.2, true);
 
       // Symmetrical Artifacts Obstacles along centerline x: 14
       nav.setBlock(13.0, 58.2, 2.0, 1.8, true);   // Blue Nexus
@@ -299,29 +299,45 @@
         }
       });
 
-      // 2. West Stone Balustrade (x = 11.0, y: 57..93)
-      list.push({
-        xMin: 10.8, xMax: 11.3, yMin: 57.0, yMax: 93.0,
-        draw: () => {
-          models.drawBox(ctx, 11.0, 57.0, 0, 0.28, 36.0, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
-          models.drawBox(ctx, 10.95, 57.0, 0.75, 0.36, 36.0, 0.12, '#e2e8f0', '#cbd5e1', '#94a3b8', world.ox, world.oy);
-          for (let y = 58.0; y <= 92.0; y += 3.0) {
-            models.drawBox(ctx, 10.95, y, 0, 0.36, 0.36, 0.95, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+      // 2. West Stone Balustrade (segmented by 2-tile chunks for cycle-free isometric depth sorting)
+      for (let y = 57; y < 93; y += 2) {
+        const segLen = Math.min(2, 93 - y);
+        list.push({
+          xMin: 10.90, xMax: 11.35,
+          yMin: y, yMax: y + segLen,
+          draw: () => {
+            // Parapet stone base (z: 0..0.48)
+            models.drawBox(ctx, 11.0, y, 0, 0.25, segLen, 0.48, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+            // Frosted stone cap (z: 0.48..0.58)
+            models.drawBox(ctx, 10.96, y, 0.48, 0.33, segLen, 0.10, '#93c5fd', '#60a5fa', '#3b82f6', world.ox, world.oy);
+            // Decorative stone pillar at pillar intervals (every 4 tiles)
+            if (y % 4 === 1) {
+              models.drawBox(ctx, 10.94, y + 0.80, 0, 0.35, 0.35, 0.50, '#475569', '#334155', '#1e293b', world.ox, world.oy);
+              models.drawBox(ctx, 10.92, y + 0.78, 0.50, 0.39, 0.39, 0.10, '#bae6fd', '#7dd3fc', '#38bdf8', world.ox, world.oy);
+            }
           }
-        }
-      });
+        });
+      }
 
-      // 3. East Stone Balustrade (x = 17.0, y: 57..93)
-      list.push({
-        xMin: 16.8, xMax: 17.3, yMin: 57.0, yMax: 93.0,
-        draw: () => {
-          models.drawBox(ctx, 17.0, 57.0, 0, 0.28, 36.0, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
-          models.drawBox(ctx, 16.95, 57.0, 0.75, 0.36, 36.0, 0.12, '#e2e8f0', '#cbd5e1', '#94a3b8', world.ox, world.oy);
-          for (let y = 58.0; y <= 92.0; y += 3.0) {
-            models.drawBox(ctx, 16.95, y, 0, 0.36, 0.36, 0.95, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+      // 3. East Stone Balustrade (segmented by 2-tile chunks on outer edge of tile 17: x = 17.75)
+      for (let y = 57; y < 93; y += 2) {
+        const segLen = Math.min(2, 93 - y);
+        list.push({
+          xMin: 17.65, xMax: 18.10,
+          yMin: y, yMax: y + segLen,
+          draw: () => {
+            // Parapet stone base (z: 0..0.48)
+            models.drawBox(ctx, 17.75, y, 0, 0.25, segLen, 0.48, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+            // Frosted stone cap (z: 0.48..0.58)
+            models.drawBox(ctx, 17.71, y, 0.48, 0.33, segLen, 0.10, '#93c5fd', '#60a5fa', '#3b82f6', world.ox, world.oy);
+            // Decorative stone pillar at pillar intervals (every 4 tiles)
+            if (y % 4 === 1) {
+              models.drawBox(ctx, 17.69, y + 0.80, 0, 0.35, 0.35, 0.50, '#475569', '#334155', '#1e293b', world.ox, world.oy);
+              models.drawBox(ctx, 17.67, y + 0.78, 0.50, 0.39, 0.39, 0.10, '#bae6fd', '#7dd3fc', '#38bdf8', world.ox, world.oy);
+            }
           }
-        }
-      });
+        });
+      }
 
       // 4. Blue Side Artifacts (y: 58..72, centered at x: 14.0)
       list.push({
