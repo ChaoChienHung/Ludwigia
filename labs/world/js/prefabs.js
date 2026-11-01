@@ -133,43 +133,136 @@
       const H = 2.70;
 
       // ======================================================================
-      // A. CYBER CAFE ENCLOSURE & PANORAMIC GLASS CURTAIN WALLS (x: 9..19, y: 49..57)
+      // A. CYBER CAFE / GAMING DIMENSION PORTAL ENCLOSURE (x: 9..19, y: 49..57)
       // Directly aligned with Central Boulevard (x: 12..15)
+      // Features large glowing colored glass windows & automated sliding glass doors!
       // ======================================================================
       const cyberWallT = '#0f172a';
-      const cyberWallL = '#090d16';
-      const cyberWallR = '#020617';
+      const cyberWallL = '#1e293b';
+      const cyberWallR = '#090d16';
 
-      // 1. North Exterior Wall with Central Doorway (x = 13..15, y = 48.8)
+      // 1. North Facade — Left Panoramic Colored Glass Window Bay (x = 9..12.8, y = 48.8)
       list.push({
-        xMin: 8.8, xMax: 13.0, yMin: 48.6, yMax: 49.0,
-        draw: () => models.drawBox(ctx, 9.0, 48.8, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
+        xMin: 8.8, xMax: 12.9, yMin: 48.6, yMax: 49.0,
+        draw: () => {
+          // Bottom Sill & Top Lintel (Full 3D with North backCol)
+          models.drawBox(ctx, 9.0, 48.8, 0, 3.8, 0.25, 0.45, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          models.drawBox(ctx, 9.0, 48.8, 2.30, 3.8, 0.25, H - 2.30, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+
+          // Structural Vertical Pillars (Left corner & Door frame left)
+          models.drawBox(ctx, 9.0, 48.8, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          models.drawBox(ctx, 12.45, 48.8, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          // Vertical Center Window Mullion
+          models.drawBox(ctx, 10.75, 48.8, 0.45, 0.18, 0.25, 1.85, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy, '#0284c7');
+          // Horizontal Transom Bar
+          models.drawBox(ctx, 9.35, 48.8, 1.35, 3.10, 0.25, 0.10, '#0f172a', '#1e293b', '#334155', world.ox, world.oy, '#1e293b');
+
+          // Large Vibrant Cyan-Teal Tinted Glass Window Pane (Facing North directly to visitors!)
+          const p0 = isoToScreen(9.35, 48.78, 0.45, world.ox, world.oy);
+          const p1 = isoToScreen(12.45, 48.78, 0.45, world.ox, world.oy);
+          const p2 = isoToScreen(12.45, 48.78, 2.30, world.ox, world.oy);
+          const p3 = isoToScreen(9.35, 48.78, 2.30, world.ox, world.oy);
+
+          ctx.save();
+          const gGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
+          gGrad.addColorStop(0, 'rgba(6, 182, 212, 0.72)');
+          gGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.58)');
+          gGrad.addColorStop(1, 'rgba(56, 189, 248, 0.70)');
+          ctx.fillStyle = gGrad;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Crisp Silver Window Edge
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+
+          // Electric Cyan Neon Glow Line along the window sill
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2.0;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+          ctx.restore();
+        }
       });
+
+      // 1.1 North Facade — Right Panoramic Colored Glass Window Bay (x = 15.2..19.0, y = 48.8)
       list.push({
-        xMin: 15.0, xMax: 19.2, yMin: 48.6, yMax: 49.0,
-        draw: () => models.drawBox(ctx, 15.0, 48.8, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
+        xMin: 15.1, xMax: 19.2, yMin: 48.6, yMax: 49.0,
+        draw: () => {
+          // Bottom Sill & Top Lintel (Full 3D with North backCol)
+          models.drawBox(ctx, 15.2, 48.8, 0, 3.8, 0.25, 0.45, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          models.drawBox(ctx, 15.2, 48.8, 2.30, 3.8, 0.25, H - 2.30, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+
+          // Structural Vertical Pillars (Door frame right & Right corner)
+          models.drawBox(ctx, 15.2, 48.8, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          models.drawBox(ctx, 18.65, 48.8, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          // Vertical Center Window Mullion
+          models.drawBox(ctx, 16.95, 48.8, 0.45, 0.18, 0.25, 1.85, '#a855f7', '#8b5cf6', '#7c3aed', world.ox, world.oy, '#8b5cf6');
+          // Horizontal Transom Bar
+          models.drawBox(ctx, 15.55, 48.8, 1.35, 3.10, 0.25, 0.10, '#0f172a', '#1e293b', '#334155', world.ox, world.oy, '#1e293b');
+
+          // Large Vibrant Electric Sky-Blue/Violet Tinted Glass Window Pane
+          const p0 = isoToScreen(15.55, 48.78, 0.45, world.ox, world.oy);
+          const p1 = isoToScreen(18.65, 48.78, 0.45, world.ox, world.oy);
+          const p2 = isoToScreen(18.65, 48.78, 2.30, world.ox, world.oy);
+          const p3 = isoToScreen(15.55, 48.78, 2.30, world.ox, world.oy);
+
+          ctx.save();
+          const gGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
+          gGrad.addColorStop(0, 'rgba(56, 189, 248, 0.72)');
+          gGrad.addColorStop(0.5, 'rgba(129, 140, 248, 0.60)');
+          gGrad.addColorStop(1, 'rgba(168, 85, 247, 0.68)');
+          ctx.fillStyle = gGrad;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Crisp Silver Window Edge
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+
+          // Electric Violet Neon Glow Line along the window sill
+          ctx.strokeStyle = '#c084fc';
+          ctx.lineWidth = 2.0;
+          ctx.shadowColor = '#c084fc';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+          ctx.restore();
+        }
       });
+
       // Overhead North Door Lintel & Neon Marquee Sign
       list.push({
         xMin: 12.8, xMax: 15.2, yMin: 48.6, yMax: 49.0,
         draw: () => {
-          models.drawBox(ctx, 13.0, 48.8, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 12.8, 48.8, 2.25, 2.4, 0.25, H - 2.25, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
           models.drawCyberCafeSign(ctx, 12.6, 48.7, world.ox, world.oy);
         }
       });
 
-      // Automatic Dual-Leaf Sliding Glass Door at Cyber Cafe North Entrance (x: 13..15, y: 48.8)
+      // Automatic Dual-Leaf Sliding Glass Door at North Entrance (x: 13..15, y: 48.8)
+      // Features prominent glowing cyan sliding glass panels clearly visible whether open or closed!
       list.push({
         xMin: 12.0, xMax: 16.0, yMin: 48.55, yMax: 49.05,
         draw: () => {
           const openT = world.doorCyberNorthOpen || 0.0;
           const slideDist = 0.88 * openT;
 
-          // 1. Sleek Titanium Door Top Header & Overhead Slide Rail (z: 2.12..2.26)
-          models.drawBox(ctx, 12.8, 48.8, 2.12, 2.4, 0.20, 0.14, '#0f172a', '#1e293b', '#334155', world.ox, world.oy);
+          // 1. Sleek Titanium Door Top Header & Overhead Slide Rail (z: 2.15..2.27)
+          models.drawBox(ctx, 12.75, 48.74, 2.15, 2.50, 0.22, 0.12, '#0f172a', '#1e293b', '#334155', world.ox, world.oy, '#334155');
 
-          // 2. Motion Sensor Unit (Centered above door at x: 14.0, z: 2.20)
-          const sensP = isoToScreen(14.0, 48.88, 2.20, world.ox, world.oy);
+          // 2. Motion Sensor Unit (Centered above door at x: 14.0, z: 2.22)
+          const sensP = isoToScreen(14.0, 48.72, 2.22, world.ox, world.oy);
           ctx.save();
           ctx.fillStyle = '#090d16';
           ctx.fillRect(sensP.x - 7, sensP.y - 3, 14, 6);
@@ -182,33 +275,80 @@
           ctx.fill();
           ctx.restore();
 
-          // 3. Left Sliding Glass Leaf (Width 0.95, Slides Left)
-          const leftDoorX = 13.0 - slideDist;
-          models.drawBox(ctx, leftDoorX, 48.8, 0, 0.95, 0.10, 2.12,
-            'rgba(14, 165, 233, 0.55)', 'rgba(2, 132, 199, 0.60)', 'rgba(3, 105, 161, 0.70)',
-            world.ox, world.oy
-          );
-          models.drawBox(ctx, leftDoorX + 0.05, 48.8, 0.90, 0.85, 0.12, 0.22,
-            'rgba(240, 249, 255, 0.70)', 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.60)',
-            world.ox, world.oy
-          );
-          models.drawBox(ctx, leftDoorX + 0.82, 48.8, 0.75, 0.06, 0.14, 0.55,
-            '#e2e8f0', '#94a3b8', '#64748b', world.ox, world.oy
-          );
+          // 3. Recessed Ground Door Guide Track
+          models.drawBox(ctx, 12.75, 48.76, 0, 2.50, 0.16, 0.03, '#334155', '#1e293b', '#0f172a', world.ox, world.oy, '#334155');
 
-          // 4. Right Sliding Glass Leaf (Width 0.95, Slides Right)
-          const rightDoorX = 14.05 + slideDist;
-          models.drawBox(ctx, rightDoorX, 48.8, 0, 0.95, 0.10, 2.12,
-            'rgba(14, 165, 233, 0.55)', 'rgba(2, 132, 199, 0.60)', 'rgba(3, 105, 161, 0.70)',
-            world.ox, world.oy
+          // 4. Left Sliding Glass Leaf (Width 0.96, Slides Left)
+          const leftDoorX = 13.0 - slideDist;
+          models.drawBox(ctx, leftDoorX, 48.78, 0.03, 0.96, 0.12, 2.12,
+            'rgba(56, 189, 248, 0.85)', 'rgba(2, 132, 199, 0.75)', 'rgba(3, 105, 161, 0.75)',
+            world.ox, world.oy, 'rgba(14, 165, 233, 0.80)'
           );
-          models.drawBox(ctx, rightDoorX + 0.05, 48.8, 0.90, 0.85, 0.12, 0.22,
-            'rgba(240, 249, 255, 0.70)', 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.60)',
-            world.ox, world.oy
+          // Left North Glass Panel Face with Frosted Privacy Bands
+          const lp0 = isoToScreen(leftDoorX + 0.04, 48.76, 0.05, world.ox, world.oy);
+          const lp1 = isoToScreen(leftDoorX + 0.92, 48.76, 0.05, world.ox, world.oy);
+          const lp2 = isoToScreen(leftDoorX + 0.92, 48.76, 2.10, world.ox, world.oy);
+          const lp3 = isoToScreen(leftDoorX + 0.04, 48.76, 2.10, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = 'rgba(14, 165, 233, 0.58)';
+          ctx.beginPath();
+          ctx.moveTo(lp0.x, lp0.y); ctx.lineTo(lp1.x, lp1.y); ctx.lineTo(lp2.x, lp2.y); ctx.lineTo(lp3.x, lp3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+
+          // Frosted center horizontal stripe
+          const lb0 = isoToScreen(leftDoorX + 0.08, 48.75, 0.88, world.ox, world.oy);
+          const lb1 = isoToScreen(leftDoorX + 0.88, 48.75, 0.88, world.ox, world.oy);
+          const lb2 = isoToScreen(leftDoorX + 0.88, 48.75, 1.18, world.ox, world.oy);
+          const lb3 = isoToScreen(leftDoorX + 0.08, 48.75, 1.18, world.ox, world.oy);
+          ctx.fillStyle = 'rgba(240, 249, 255, 0.85)';
+          ctx.beginPath();
+          ctx.moveTo(lb0.x, lb0.y); ctx.lineTo(lb1.x, lb1.y); ctx.lineTo(lb2.x, lb2.y); ctx.lineTo(lb3.x, lb3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+
+          // Left Handle (Vertical brushed silver handle)
+          models.drawBox(ctx, leftDoorX + 0.82, 48.74, 0.70, 0.06, 0.16, 0.65, '#f8fafc', '#cbd5e1', '#94a3b8', world.ox, world.oy, '#cbd5e1');
+
+          // 5. Right Sliding Glass Leaf (Width 0.96, Slides Right)
+          const rightDoorX = 14.04 + slideDist;
+          models.drawBox(ctx, rightDoorX, 48.78, 0.03, 0.96, 0.12, 2.12,
+            'rgba(56, 189, 248, 0.85)', 'rgba(2, 132, 199, 0.75)', 'rgba(3, 105, 161, 0.75)',
+            world.ox, world.oy, 'rgba(14, 165, 233, 0.80)'
           );
-          models.drawBox(ctx, rightDoorX + 0.07, 48.8, 0.75, 0.06, 0.14, 0.55,
-            '#e2e8f0', '#94a3b8', '#64748b', world.ox, world.oy
-          );
+          // Right North Glass Panel Face with Frosted Privacy Bands
+          const rp0 = isoToScreen(rightDoorX + 0.04, 48.76, 0.05, world.ox, world.oy);
+          const rp1 = isoToScreen(rightDoorX + 0.92, 48.76, 0.05, world.ox, world.oy);
+          const rp2 = isoToScreen(rightDoorX + 0.92, 48.76, 2.10, world.ox, world.oy);
+          const rp3 = isoToScreen(rightDoorX + 0.04, 48.76, 2.10, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = 'rgba(14, 165, 233, 0.58)';
+          ctx.beginPath();
+          ctx.moveTo(rp0.x, rp0.y); ctx.lineTo(rp1.x, rp1.y); ctx.lineTo(rp2.x, rp2.y); ctx.lineTo(rp3.x, rp3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+
+          // Frosted center horizontal stripe
+          const rb0 = isoToScreen(rightDoorX + 0.08, 48.75, 0.88, world.ox, world.oy);
+          const rb1 = isoToScreen(rightDoorX + 0.88, 48.75, 0.88, world.ox, world.oy);
+          const rb2 = isoToScreen(rightDoorX + 0.88, 48.75, 1.18, world.ox, world.oy);
+          const rb3 = isoToScreen(rightDoorX + 0.08, 48.75, 1.18, world.ox, world.oy);
+          ctx.fillStyle = 'rgba(240, 249, 255, 0.85)';
+          ctx.beginPath();
+          ctx.moveTo(rb0.x, rb0.y); ctx.lineTo(rb1.x, rb1.y); ctx.lineTo(rb2.x, rb2.y); ctx.lineTo(rb3.x, rb3.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+
+          // Right Handle (Vertical brushed silver handle)
+          models.drawBox(ctx, rightDoorX + 0.08, 48.74, 0.70, 0.06, 0.16, 0.65, '#f8fafc', '#cbd5e1', '#94a3b8', world.ox, world.oy, '#cbd5e1');
         }
       });
 
@@ -303,17 +443,17 @@
       // 4. South Exterior Wall & Automatic Sliding Glass Doorway (x = 13..15, y = 57.0)
       list.push({
         xMin: 8.8, xMax: 13.0, yMin: 56.8, yMax: 57.2,
-        draw: () => models.drawBox(ctx, 9.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
+        draw: () => models.drawBox(ctx, 9.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL)
       });
       list.push({
         xMin: 15.0, xMax: 19.2, yMin: 56.8, yMax: 57.2,
-        draw: () => models.drawBox(ctx, 15.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
+        draw: () => models.drawBox(ctx, 15.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL)
       });
       list.push({
         xMin: 12.8, xMax: 15.2, yMin: 56.8, yMax: 57.2,
         draw: () => {
           // Lintle wall beam above doorway
-          models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
           // Glowing Neon Portal Sign "DIMENSION PORTAL"
           const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
           ctx.save();

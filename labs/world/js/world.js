@@ -361,10 +361,10 @@
       this.poros = [
         { id: 'poro_1', x: 12.5, y: 64.0, targetX: 12.5, targetY: 64.0, z: 0, speed: 1.1, mood: 'tongue', hopTimer: 0, restTimer: 2.0, radius: 0.35 },
         { id: 'poro_2', x: 15.5, y: 67.5, targetX: 15.5, targetY: 67.5, z: 0, speed: 1.0, mood: 'snack', hopTimer: 0, restTimer: 3.5, radius: 0.35 },
-        { id: 'poro_3', x: 12.0, y: 74.0, targetX: 12.0, targetY: 74.0, z: 0, speed: 1.3, mood: 'hop', hopTimer: 0, restTimer: 1.2, radius: 0.35 },
-        { id: 'poro_4', x: 16.0, y: 75.5, targetX: 16.0, targetY: 75.5, z: 0, speed: 1.2, mood: 'tongue', hopTimer: 0, restTimer: 2.5, radius: 0.35 },
+        { id: 'poro_3', x: 12.5, y: 74.0, targetX: 12.5, targetY: 74.0, z: 0, speed: 1.3, mood: 'hop', hopTimer: 0, restTimer: 1.2, radius: 0.35 },
+        { id: 'poro_4', x: 15.5, y: 75.5, targetX: 15.5, targetY: 75.5, z: 0, speed: 1.2, mood: 'tongue', hopTimer: 0, restTimer: 2.5, radius: 0.35 },
         { id: 'poro_5', x: 12.8, y: 81.5, targetX: 12.8, targetY: 81.5, z: 0, speed: 0.9, mood: 'sleep', hopTimer: 0, restTimer: 4.5, radius: 0.35 },
-        { id: 'poro_6', x: 15.2, y: 85.0, targetX: 15.2, targetY: 85.0, z: 0, speed: 1.2, mood: 'hop', hopTimer: 0, restTimer: 1.8, radius: 0.35 }
+        { id: 'poro_6', x: 15.5, y: 85.0, targetX: 15.5, targetY: 85.0, z: 0, speed: 1.2, mood: 'hop', hopTimer: 0, restTimer: 1.8, radius: 0.35 }
       ];
     }
 
@@ -380,7 +380,7 @@
         if (p.restTimer <= 0) {
           const candX = 12.2 + Math.random() * 3.6;
           const candY = 60.5 + Math.random() * 28.5;
-          if (this.nav && this.nav.isWalkable(candX, candY)) {
+          if (this.nav && this.nav.isWalkableRadius(candX, candY, 0.30)) {
             p.targetX = candX;
             p.targetY = candY;
             p.restTimer = 4.0 + Math.random() * 4.5;
@@ -389,15 +389,32 @@
           }
         }
 
-        // Move toward target
+        // Move toward target with strict collision check against walls/turrets
         const dx = p.targetX - p.x;
         const dy = p.targetY - p.y;
         const dist = Math.hypot(dx, dy);
         const step = p.speed * dt;
 
         if (dist > 0.12 && p.mood !== 'sleep') {
-          p.x += (dx / dist) * Math.min(step, dist);
-          p.y += (dy / dist) * Math.min(step, dist);
+          const moveDist = Math.min(step, dist);
+          const mx = (dx / dist) * moveDist;
+          const my = (dy / dist) * moveDist;
+          const nx = p.x + mx;
+          const ny = p.y + my;
+
+          // Strict NavGrid collision checking prevents Poros from ever penetrating walls/turrets
+          if (this.nav && this.nav.isWalkableRadius(nx, ny, 0.28)) {
+            p.x = nx;
+            p.y = ny;
+          } else if (this.nav && this.nav.isWalkableRadius(nx, p.y, 0.28)) {
+            p.x = nx; // Slide along X axis
+          } else if (this.nav && this.nav.isWalkableRadius(p.x, ny, 0.28)) {
+            p.y = ny; // Slide along Y axis
+          } else {
+            // Blocked by turret, railing, or wall: stop and pick new wander target immediately
+            p.restTimer = 0;
+          }
+
           p.hopTimer = (p.hopTimer || 0) + dt * 8.5;
           p.z = Math.abs(Math.sin(p.hopTimer)) * 0.16;
         } else {
@@ -405,7 +422,7 @@
           p.hopTimer = 0;
         }
 
-        // Poro-Character Collision Volume (gentle physical push)
+        // Poro-Character Collision Volume (gentle physical push, strictly respectful of walls)
         for (let j = 0; j < chars.length; j++) {
           const c = chars[j];
           const cdx = c.x - p.x;
@@ -413,8 +430,16 @@
           const cdist = Math.hypot(cdx, cdy);
           if (cdist < 0.70 && cdist > 0.001) {
             const push = (0.70 - cdist) * 2.2 * dt;
-            p.x -= (cdx / cdist) * push;
-            p.y -= (cdy / cdist) * push;
+            const pxTarget = p.x - (cdx / cdist) * push;
+            const pyTarget = p.y - (cdy / cdist) * push;
+            if (this.nav && this.nav.isWalkableRadius(pxTarget, pyTarget, 0.26)) {
+              p.x = pxTarget;
+              p.y = pyTarget;
+            } else if (this.nav && this.nav.isWalkableRadius(pxTarget, p.y, 0.26)) {
+              p.x = pxTarget;
+            } else if (this.nav && this.nav.isWalkableRadius(p.x, pyTarget, 0.26)) {
+              p.y = pyTarget;
+            }
             if (c.isPlayer) {
               p.mood = 'tongue';
             }
@@ -429,10 +454,16 @@
           const pdist = Math.hypot(pdx, pdy);
           if (pdist < 0.65 && pdist > 0.001) {
             const push = (0.65 - pdist) * 1.5 * dt;
-            p.x += (pdx / pdist) * push;
-            p.y += (pdy / pdist) * push;
-            p2.x -= (pdx / pdist) * push;
-            p2.y -= (pdy / pdist) * push;
+            const px1 = p.x + (pdx / pdist) * push;
+            const py1 = p.y + (pdy / pdist) * push;
+            const px2 = p2.x - (pdx / pdist) * push;
+            const py2 = p2.y - (pdy / pdist) * push;
+            if (this.nav && this.nav.isWalkableRadius(px1, py1, 0.26)) {
+              p.x = px1; p.y = py1;
+            }
+            if (this.nav && this.nav.isWalkableRadius(px2, py2, 0.26)) {
+              p2.x = px2; p2.y = py2;
+            }
           }
         }
 
@@ -1392,20 +1423,20 @@
               ];
 
               const abyssAnchors = [
-                { x: 14.0, y: 60.0 }, // Blue Nexus Approach
-                { x: 14.0, y: 65.0 }, // Blue Inner Turret
-                { x: 14.0, y: 72.0 }, // Blue Health Relic Shrine
+                { x: 14.0, y: 58.5 }, // Blue Nexus Approach (clear of Blue Nexus)
+                { x: 14.0, y: 65.0 }, // Blue Inner Turret Aisle
+                { x: 12.5, y: 70.0 }, // Blue Health Relic Shrine (West Balustrade side)
                 { x: 12.5, y: 75.0 }, // Mid-Lane Frost Brush Ambush & Poro West
                 { x: 15.5, y: 75.0 }, // Mid-Lane Frost Brush Ambush & Poro East
-                { x: 14.0, y: 78.0 }, // Red Health Relic Shrine
-                { x: 14.0, y: 85.0 }, // Red Inner Turret
-                { x: 14.0, y: 91.0 }  // Red Nexus Approach
+                { x: 15.5, y: 80.0 }, // Red Health Relic Shrine (East Balustrade side)
+                { x: 14.0, y: 85.0 }, // Red Inner Turret Aisle
+                { x: 14.0, y: 91.0 }  // Red Nexus Approach (in front of Red Nexus)
               ];
 
               const minecraftAnchors = [
                 { x: 14.0, y: 95.0 }, // Welcome Signboard
                 { x: 12.0, y: 99.0 }, // Oak Cabin Living Room
-                { x: 10.5, y: 100.5 }, // Next to Red Bed
+                { x: 11.5, y: 101.5 }, // Near Minecraft Red Bed
                 { x: 18.0, y: 99.0 }, // Farmland Crops
                 { x: 10.0, y: 106.0 }  // Under Giant Oak Tree
               ];
