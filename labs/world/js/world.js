@@ -59,6 +59,7 @@
       this.doorLibOpen = 0.0;
       this.doorSchoolOpen = 0.0;
       this.doorCafeOpen = 0.0;
+      this.doorCyberSouthOpen = 0.0;
       this.doorDouyinOpen = 0.0;
       this.douyinGateTimer = 2.0;
       this.douyinGateOpen = 0.0;
@@ -824,6 +825,10 @@
 
       const nearCafeDoor = this.charManager.characters.some(c => Math.hypot(c.x - 33.0, c.y - 4.9) < 2.4);
       this.doorCafeOpen += ((nearCafeDoor ? 1.0 : 0.0) - this.doorCafeOpen) * Math.min(1.0, dt * 5.0);
+
+      // Cyber Cafe South Exit Automatic Sliding Glass Door to Howling Abyss (x: 14.0, y: 57.0)
+      const nearCyberSouthDoor = this.charManager.characters.some(c => Math.hypot(c.x - 14.0, c.y - 57.0) < 2.6);
+      this.doorCyberSouthOpen += ((nearCyberSouthDoor ? 1.0 : 0.0) - this.doorCyberSouthOpen) * Math.min(1.0, dt * 5.0);
 
       // 2. Douyin Office Erratic Speed Gate State Machine ("開關時機難以捉摸、不定期開關搞人心態")
       const playerNearDouyin = (Math.hypot(player.x - 18.0, player.y - 37.65) < 3.2);
@@ -3977,38 +3982,16 @@
         ctx.fillRect(0, 0, w, h);
       }
 
-      // 2. The Howling Abyss: Volumetric God Rays & Swirling Frost Blizzard
+      // 2. The Howling Abyss: Swirling Ambient Frost Snowflakes Drifting in the Wind
       const p = this.charManager ? this.charManager.player : null;
       if (p && p.y >= 57 && p.y <= 93 && p.x >= 10 && p.x <= 18) {
         ctx.save();
         const t = performance.now() * 0.001;
-        // 1. Diagonal Volumetric Light Beams (streaming from top-left, matching the iconic ARAM map!)
-        const beamPulse = 0.82 + Math.sin(t * 1.6) * 0.18;
-        const numRays = 4;
-        for (let i = 0; i < numRays; i++) {
-          const rayX = (w * 0.12) + (i * w * 0.22) + Math.sin(t * 0.4 + i) * 30;
-          const rayWidth = 70 + (i % 2) * 35;
-          const beamGrad = ctx.createLinearGradient(rayX, 0, rayX + h * 0.55, h);
-          beamGrad.addColorStop(0, `rgba(224, 242, 254, ${0.20 * beamPulse})`);
-          beamGrad.addColorStop(0.35, `rgba(56, 189, 248, ${0.11 * beamPulse})`);
-          beamGrad.addColorStop(0.80, 'rgba(14, 165, 233, 0.02)');
-          beamGrad.addColorStop(1, 'rgba(14, 165, 233, 0)');
-          ctx.fillStyle = beamGrad;
-          ctx.beginPath();
-          ctx.moveTo(rayX - rayWidth * 0.4, 0);
-          ctx.lineTo(rayX + rayWidth * 0.4, 0);
-          ctx.lineTo(rayX + h * 0.55 + rayWidth, h);
-          ctx.lineTo(rayX + h * 0.55 - rayWidth, h);
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        // 2. Swirling Frost Snowflakes & Ice Shards Drifting in the Wind
-        ctx.fillStyle = 'rgba(240, 249, 255, 0.72)';
-        for (let j = 0; j < 32; j++) {
-          const fx = ((j * 137.5 + t * 50) % w);
-          const fy = ((j * 91.3 + t * 70) % h);
-          const size = 1.1 + (j % 3) * 0.7;
+        ctx.fillStyle = 'rgba(240, 249, 255, 0.65)';
+        for (let j = 0; j < 28; j++) {
+          const fx = ((j * 137.5 + t * 45) % w);
+          const fy = ((j * 91.3 + t * 65) % h);
+          const size = 1.0 + (j % 3) * 0.6;
           ctx.beginPath();
           ctx.arc(fx, fy, size, 0, Math.PI * 2);
           ctx.fill();

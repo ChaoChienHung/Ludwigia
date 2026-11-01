@@ -46,27 +46,37 @@
       // Only passage across to the other side is through the Bridge!
       // ======================================================================
       nav.setBlock(0.0, 57.0, 9.0, 0.45, true);   // West Cliff Fence (x: 0..9)
-      nav.setBlock(19.0, 57.0, 14.0, 0.45, true); // East Cliff Fence (x: 19..33)
+      nav.setBlock(19.0, 57.0, 35.0, 0.45, true); // East Cliff Fence (x: 19..54 completely sealed!)
 
       // ======================================================================
-      // C. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 11..17, y: 57..93)
-      // 36 tiles long North-South grand bridge centered at x: 14
+      // C. THE HOWLING ABYSS BOTTOMLESS VOID CHASM & BRIDGE BALUSTRADES
+      // 36 tiles long North-South grand bridge (x: 11..17, y: 57..93)
+      // Flanking empty void chasm is 100% blocked from walking/pathfinding!
       // ======================================================================
-      // West Balustrade Railing & Abyss void (blocks tile 10 and west edge)
-      nav.setBlock(10.0, 57.0, 1.25, 36.2, true);
-      // East Balustrade Railing & Abyss void (blocks tile 18 and east edge)
-      nav.setBlock(17.75, 57.0, 1.25, 36.2, true);
+      // 1. Flanking Void Chasm (Prevents characters from ever stepping/wandering into the void!)
+      nav.setBlock(0.0, 57.0, 11.2, 36.0, true);   // West Flanking Abyss Void (x: 0..11.2, y: 57..93)
+      nav.setBlock(17.8, 57.0, 36.2, 36.0, true);  // East Flanking Abyss Void (x: 17.8..54, y: 57..93)
 
-      // Symmetrical Artifacts Obstacles along centerline x: 14
-      nav.setBlock(13.0, 58.2, 2.0, 1.8, true);   // Blue Nexus
-      nav.setBlock(13.3, 61.3, 1.4, 1.4, true);   // Blue Inhibitor
-      nav.setBlock(13.2, 64.3, 1.6, 1.4, true);   // Blue Inner Turret
-      nav.setBlock(13.2, 68.3, 1.6, 1.4, true);   // Blue Outer Turret
+      // 2. Minecraft Island Flanking Void (x < 7 or x > 21 for y >= 93)
+      nav.setBlock(0.0, 93.0, 7.0, 19.0, true);    // West Minecraft Flanking Void (x: 0..7, y: 93..112)
+      nav.setBlock(21.0, 93.0, 33.0, 19.0, true);  // East Minecraft Flanking Void (x: 21..54, y: 93..112)
+      nav.setBlock(0.0, 111.0, 54.0, 1.0, true);   // South Minecraft Void Boundary (y >= 111)
 
-      nav.setBlock(13.2, 80.3, 1.6, 1.4, true);   // Red Outer Turret
-      nav.setBlock(13.2, 84.3, 1.6, 1.4, true);   // Red Inner Turret
-      nav.setBlock(13.3, 87.3, 1.4, 1.4, true);   // Red Inhibitor
-      nav.setBlock(13.0, 90.2, 2.0, 1.8, true);   // Red Nexus
+      // 3. West & East Balustrades (Physical parapet barriers along bridge deck)
+      nav.setBlock(10.0, 57.0, 1.25, 36.2, true);  // West Balustrade Railing
+      nav.setBlock(17.75, 57.0, 1.25, 36.2, true); // East Balustrade Railing
+
+      // 4. Symmetrical Bridge Artifacts along Centerline x: 14.0
+      // Blue Nexus placed at y: 61.5, leaving y: 57..61.5 (4.5 tiles!) 100% CLEAR in front of Cyber Cafe South Door!
+      nav.setBlock(12.9, 61.5, 2.2, 2.0, true);   // Blue Nexus
+      nav.setBlock(13.3, 65.0, 1.4, 1.4, true);   // Blue Inhibitor
+      nav.setBlock(13.2, 68.0, 1.6, 1.4, true);   // Blue Inner Turret
+      nav.setBlock(13.2, 71.0, 1.6, 1.4, true);   // Blue Outer Turret
+
+      nav.setBlock(13.2, 77.0, 1.6, 1.4, true);   // Red Outer Turret
+      nav.setBlock(13.2, 80.0, 1.6, 1.4, true);   // Red Inner Turret
+      nav.setBlock(13.3, 83.0, 1.4, 1.4, true);   // Red Inhibitor
+      nav.setBlock(12.9, 86.0, 2.2, 2.0, true);   // Red Nexus (leaves y: 88..93 5.0 tiles clear for Minecraft gate!)
 
       // ======================================================================
       // D. MINECRAFT ISLAND NORTH CLIFF WOODEN PERIMETER FENCE (y = 93.0)
@@ -207,7 +217,7 @@
         }
       });
 
-      // 4. South Exterior Wall with Abyss Portal Doorway (x = 13..15, y = 57.0)
+      // 4. South Exterior Wall & Automatic Sliding Glass Doorway (x = 13..15, y = 57.0)
       list.push({
         xMin: 8.8, xMax: 13.0, yMin: 56.8, yMax: 57.2,
         draw: () => models.drawBox(ctx, 9.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
@@ -217,8 +227,9 @@
         draw: () => models.drawBox(ctx, 15.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.0, xMax: 15.0, yMin: 56.8, yMax: 57.2,
+        xMin: 12.8, xMax: 15.2, yMin: 56.8, yMax: 57.2,
         draw: () => {
+          // Lintle wall beam above doorway
           models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
           // Glowing Neon Portal Sign "HOWLING ABYSS PORTAL"
           const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
@@ -230,6 +241,66 @@
           ctx.shadowBlur = 8;
           ctx.fillText('ABYSS PORTAL', sp.x, sp.y);
           ctx.restore();
+        }
+      });
+
+      // Automatic Dual-Leaf Sliding Glass Door (Opens seamlessly when characters approach!)
+      list.push({
+        xMin: 12.0, xMax: 16.0, yMin: 56.75, yMax: 57.25,
+        draw: () => {
+          const openT = world.doorCyberSouthOpen || 0.0;
+          const slideDist = 0.88 * openT;
+
+          // 1. Sleek Titanium Door Top Header & Overhead Slide Rail (z: 2.12..2.26)
+          models.drawBox(ctx, 12.8, 57.0, 2.12, 2.4, 0.20, 0.14, '#0f172a', '#1e293b', '#334155', world.ox, world.oy);
+
+          // 2. Motion Sensor Unit (Centered above door at x: 14.0, z: 2.20)
+          const sensP = isoToScreen(14.0, 57.08, 2.20, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#090d16';
+          ctx.fillRect(sensP.x - 7, sensP.y - 3, 14, 6);
+          // Sensor LED Status Indicator: Red/Orange when closed, Electric Cyan when approaching/open!
+          ctx.fillStyle = openT > 0.08 ? '#38bdf8' : '#f97316';
+          ctx.shadowColor = openT > 0.08 ? '#38bdf8' : '#f97316';
+          ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.arc(sensP.x, sensP.y, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // 3. Left Sliding Glass Leaf (Width 0.95, Slides Left)
+          const leftDoorX = 13.0 - slideDist;
+          // Left Door Frame & Tinted Cyber Glass
+          models.drawBox(ctx, leftDoorX, 57.0, 0, 0.95, 0.10, 2.12,
+            'rgba(14, 165, 233, 0.55)', 'rgba(2, 132, 199, 0.60)', 'rgba(3, 105, 161, 0.70)',
+            world.ox, world.oy
+          );
+          // Frosted Glass Safety Stripe on Left Leaf
+          models.drawBox(ctx, leftDoorX + 0.05, 57.0, 0.90, 0.85, 0.12, 0.22,
+            'rgba(240, 249, 255, 0.70)', 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.60)',
+            world.ox, world.oy
+          );
+          // Left Handle (Vertical metallic bar at leading edge)
+          models.drawBox(ctx, leftDoorX + 0.82, 57.0, 0.75, 0.06, 0.14, 0.55,
+            '#e2e8f0', '#94a3b8', '#64748b', world.ox, world.oy
+          );
+
+          // 4. Right Sliding Glass Leaf (Width 0.95, Slides Right)
+          const rightDoorX = 14.05 + slideDist;
+          // Right Door Frame & Tinted Cyber Glass
+          models.drawBox(ctx, rightDoorX, 57.0, 0, 0.95, 0.10, 2.12,
+            'rgba(14, 165, 233, 0.55)', 'rgba(2, 132, 199, 0.60)', 'rgba(3, 105, 161, 0.70)',
+            world.ox, world.oy
+          );
+          // Frosted Glass Safety Stripe on Right Leaf
+          models.drawBox(ctx, rightDoorX + 0.05, 57.0, 0.90, 0.85, 0.12, 0.22,
+            'rgba(240, 249, 255, 0.70)', 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.60)',
+            world.ox, world.oy
+          );
+          // Right Handle (Vertical metallic bar at leading edge)
+          models.drawBox(ctx, rightDoorX + 0.07, 57.0, 0.75, 0.06, 0.14, 0.55,
+            '#e2e8f0', '#94a3b8', '#64748b', world.ox, world.oy
+          );
         }
       });
 
@@ -339,26 +410,26 @@
         });
       }
 
-      // 4. Blue Side Artifacts (y: 58..72, centered at x: 14.0)
+      // 4. Blue Side Artifacts (centered at x: 14.0, leaves y: 57..61.5 wide open!)
       list.push({
-        xMin: 12.9, xMax: 15.1, yMin: 58.5, yMax: 60.5,
-        draw: () => models.drawAbyssNexus(ctx, 12.9, 58.5, world.ox, world.oy)
+        xMin: 12.8, xMax: 15.2, yMin: 61.4, yMax: 63.8,
+        draw: () => models.drawAbyssNexus(ctx, 12.9, 61.5, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.2, xMax: 14.8, yMin: 61.3, yMax: 62.7,
-        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 61.3, world.ox, world.oy)
+        xMin: 13.2, xMax: 14.8, yMin: 64.9, yMax: 66.5,
+        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 65.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 64.3, yMax: 65.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 64.3, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 67.9, yMax: 69.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 68.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 68.3, yMax: 69.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 68.3, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 70.9, yMax: 72.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 71.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.3, xMax: 14.7, yMin: 71.5, yMax: 72.8,
-        draw: () => models.drawAbyssRelic(ctx, 13.3, 71.5, world.ox, world.oy)
+        xMin: 13.3, xMax: 14.7, yMin: 73.1, yMax: 74.5,
+        draw: () => models.drawHealthRelic(ctx, 13.5, 73.2, world.ox, world.oy)
       });
 
       // 5. Mid-Lane Symmetrical Frost Bushes & Poros (y: 74..76)
@@ -366,39 +437,39 @@
       list.push({
         xMin: 11.2, xMax: 12.6, yMin: 74.0, yMax: 76.2,
         draw: () => {
-          models.drawAbyssFrostBrush(ctx, 11.3, 74.2, world.ox, world.oy);
-          models.drawAbyssPoro(ctx, 11.8, 75.2, world.ox, world.oy);
+          models.drawAbyssBrush(ctx, 11.3, 74.2, world.ox, world.oy);
+          models.drawPoro(ctx, 11.8, 75.0, world.ox, world.oy);
         }
       });
       // East Wall Bush & Poro
       list.push({
         xMin: 15.4, xMax: 16.8, yMin: 74.0, yMax: 76.2,
         draw: () => {
-          models.drawAbyssFrostBrush(ctx, 15.5, 74.2, world.ox, world.oy);
-          models.drawAbyssPoro(ctx, 16.0, 75.2, world.ox, world.oy);
+          models.drawAbyssBrush(ctx, 15.5, 74.2, world.ox, world.oy);
+          models.drawPoro(ctx, 16.0, 75.0, world.ox, world.oy);
         }
       });
 
-      // 6. Red Side Artifacts (y: 78..92, centered at x: 14.0)
+      // 6. Red Side Artifacts (centered at x: 14.0, perfectly symmetrical)
       list.push({
-        xMin: 13.3, xMax: 14.7, yMin: 77.5, yMax: 78.8,
-        draw: () => models.drawAbyssRelic(ctx, 13.3, 77.5, world.ox, world.oy)
+        xMin: 13.3, xMax: 14.7, yMin: 75.5, yMax: 76.9,
+        draw: () => models.drawHealthRelic(ctx, 13.5, 75.6, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 80.3, yMax: 81.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 80.3, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 76.9, yMax: 78.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 77.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 84.3, yMax: 85.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 84.3, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 79.9, yMax: 81.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 80.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.2, xMax: 14.8, yMin: 87.3, yMax: 88.7,
-        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 87.3, world.ox, world.oy)
+        xMin: 13.2, xMax: 14.8, yMin: 82.9, yMax: 84.5,
+        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 83.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 12.9, xMax: 15.1, yMin: 90.3, yMax: 92.3,
-        draw: () => models.drawAbyssNexus(ctx, 12.9, 90.3, world.ox, world.oy)
+        xMin: 12.8, xMax: 15.2, yMin: 85.9, yMax: 88.3,
+        draw: () => models.drawAbyssNexus(ctx, 12.9, 86.0, world.ox, world.oy)
       });
 
       // 7. South Bridgehead Gateway Arch (at y = 93.0)
@@ -579,7 +650,7 @@
             models.drawBox(ctx, c.x - 0.25, c.y - 0.25, 0.12, 0.50, 0.50, 0.40, topColor, leftColor, rightColor, world.ox, world.oy);
           });
 
-          // Interconnected Perimeter Fences & Gate (x: 16, y: 99)
+          // Interconnected Perimeter Fences & Gate (x: 16, y: 99..100.5)
           const fencePosts = [
             { gx: 16.0, gy: 97.0 }, { gx: 18.0, gy: 97.0 }, { gx: 20.0, gy: 97.0 },
             { gx: 20.0, gy: 99.5 }, { gx: 20.0, gy: 102.0 },
@@ -589,6 +660,22 @@
           fencePosts.forEach(p => {
             models.drawBox(ctx, p.gx, p.gy, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
           });
+          // Dual horizontal oak fence rails linking posts together
+          // North perimeter rail
+          models.drawBox(ctx, 16.0, 97.04, 0.25, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 97.04, 0.50, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          // East perimeter rail
+          models.drawBox(ctx, 20.04, 97.0, 0.25, 0.12, 5.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.04, 97.0, 0.50, 0.12, 5.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          // South perimeter rail
+          models.drawBox(ctx, 16.0, 102.04, 0.25, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 102.04, 0.50, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          // West perimeter top rail (y: 97..98)
+          models.drawBox(ctx, 16.04, 97.0, 0.25, 0.12, 1.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 97.0, 0.50, 0.12, 1.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          // West perimeter bottom rail (y: 100.5..102)
+          models.drawBox(ctx, 16.04, 100.5, 0.25, 0.12, 1.5, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 100.5, 0.50, 0.12, 1.5, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 

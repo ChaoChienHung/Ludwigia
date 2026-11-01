@@ -5059,6 +5059,10 @@
       ctx.strokeRect(crossP.x - 8, crossP.y - 2.5, 16, 5);
     }
 
+    drawAbyssRelic(ctx, gx, gy, ox, oy) {
+      return this.drawHealthRelic(ctx, gx, gy, ox, oy);
+    }
+
     // --- 26. Multi-Mood Snow Poros (Snack / Tongue / Sleep / Hop) ---
     drawPoro(ctx, gx, gy, ox, oy, mood = 'tongue') {
       const p = isoToScreen(gx + 0.35, gy + 0.35, 0.20, ox, oy);
@@ -5172,6 +5176,14 @@
         ctx.closePath();
         ctx.fill();
       });
+    }
+
+    drawAbyssPoro(ctx, gx, gy, ox, oy, mood = 'tongue') {
+      return this.drawPoro(ctx, gx, gy, ox, oy, mood);
+    }
+
+    drawAbyssFrostBrush(ctx, gx, gy, ox, oy) {
+      return this.drawAbyssBrush(ctx, gx, gy, ox, oy);
     }
 
     // --- 28. Floating Broken Abyss Chasm Crag & Suspended Chains ---
