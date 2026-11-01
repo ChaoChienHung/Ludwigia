@@ -59,6 +59,7 @@
       this.doorLibOpen = 0.0;
       this.doorSchoolOpen = 0.0;
       this.doorCafeOpen = 0.0;
+      this.doorCyberNorthOpen = 0.0;
       this.doorCyberSouthOpen = 0.0;
       this.doorDouyinOpen = 0.0;
       this.douyinGateTimer = 2.0;
@@ -67,6 +68,9 @@
       this.douyinGateState = 'closed';
       this.douyinGateMessage = '';
       this.douyinGateBlocked = true;
+
+      // Dynamic Wandering Snow Poros on Howling Abyss Bridge
+      this.initPoros();
 
       // Particles
       this.particles = [];
@@ -216,7 +220,7 @@
       this.nav.setBlock(18.2, 12.0, 1.6, 0.5, true);  // East Avenue West Bench (Plaza side)
       this.nav.setBlock(25.2, 12.0, 1.6, 0.5, true);  // East Avenue East Bench (Court & Cafe side)
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);   // West Greenway North Edge Bench
-      this.nav.setBlock(11.0, 43.0, 1.6, 0.5, true);  // South Avenue North Edge Bench
+      this.nav.setBlock(11.0, 45.0, 1.6, 0.5, true);  // South Avenue North Edge Bench (moved to y: 45.0)
       this.nav.setBlock(1.8, 11.6, 1.6, 0.45, true);   // Garden Stone Terrace Bench beside Xiangqi Table (Lawn)
 
       // Garden Stone Chess Table & Stools (Ludwig's South Lawn Terrace)
@@ -308,10 +312,10 @@
       this.nav.setBlock(30.05, 35.5, 0.45, 0.90, true); // Parked Scooter 1 (West curb)
       this.nav.setBlock(30.05, 38.5, 0.45, 0.90, true); // Parked Scooter 2 (West curb)
 
-      // 10. South Boulevard Twin Streetlights & Signpost
-      this.nav.setBlock(11.2, 42.4, 0.35, 0.35, true); // Streetlight Left
-      this.nav.setBlock(17.2, 42.4, 0.35, 0.35, true); // Streetlight Right
-      this.nav.setBlock(14.2, 42.8, 0.35, 0.35, true); // Portal Signpost
+      // 10. South Boulevard Twin Streetlights & Signpost (aligned with y: 45)
+      this.nav.setBlock(11.2, 44.4, 0.35, 0.35, true); // Streetlight Left
+      this.nav.setBlock(17.2, 44.4, 0.35, 0.35, true); // Streetlight Right
+      this.nav.setBlock(14.2, 44.8, 0.35, 0.35, true); // Portal Signpost
 
       // 11. Ludwigia Indoor Cafe Obstacles (Compact Cozy Indoor Building x: 33..39, y: 2..7)
       this.nav.setBlock(33.0, 2.0, 7.0, 1.0, true);    // North Wall (blocks row 2 from x=33 to 39)
@@ -349,6 +353,92 @@
           color: dreamColors[Math.floor(Math.random() * dreamColors.length)],
           size: 2.2 + Math.random() * 2.8
         });
+      }
+    }
+
+    // --- Dynamic Snow Poros System (Wandering, Hopping & Collision on Howling Abyss Bridge) ---
+    initPoros() {
+      this.poros = [
+        { id: 'poro_1', x: 12.5, y: 64.0, targetX: 12.5, targetY: 64.0, z: 0, speed: 1.1, mood: 'tongue', hopTimer: 0, restTimer: 2.0, radius: 0.35 },
+        { id: 'poro_2', x: 15.5, y: 67.5, targetX: 15.5, targetY: 67.5, z: 0, speed: 1.0, mood: 'snack', hopTimer: 0, restTimer: 3.5, radius: 0.35 },
+        { id: 'poro_3', x: 12.0, y: 74.0, targetX: 12.0, targetY: 74.0, z: 0, speed: 1.3, mood: 'hop', hopTimer: 0, restTimer: 1.2, radius: 0.35 },
+        { id: 'poro_4', x: 16.0, y: 75.5, targetX: 16.0, targetY: 75.5, z: 0, speed: 1.2, mood: 'tongue', hopTimer: 0, restTimer: 2.5, radius: 0.35 },
+        { id: 'poro_5', x: 12.8, y: 81.5, targetX: 12.8, targetY: 81.5, z: 0, speed: 0.9, mood: 'sleep', hopTimer: 0, restTimer: 4.5, radius: 0.35 },
+        { id: 'poro_6', x: 15.2, y: 85.0, targetX: 15.2, targetY: 85.0, z: 0, speed: 1.2, mood: 'hop', hopTimer: 0, restTimer: 1.8, radius: 0.35 }
+      ];
+    }
+
+    updatePoros(dt) {
+      if (!this.poros) return;
+      const chars = this.charManager ? this.charManager.characters : [];
+
+      for (let i = 0; i < this.poros.length; i++) {
+        const p = this.poros[i];
+        p.restTimer -= dt;
+
+        // Pick new random wander target on the bridge deck
+        if (p.restTimer <= 0) {
+          const candX = 12.2 + Math.random() * 3.6;
+          const candY = 60.5 + Math.random() * 28.5;
+          if (this.nav && this.nav.isWalkable(candX, candY)) {
+            p.targetX = candX;
+            p.targetY = candY;
+            p.restTimer = 4.0 + Math.random() * 4.5;
+            const moods = ['tongue', 'snack', 'hop', 'sleep'];
+            p.mood = moods[Math.floor(Math.random() * moods.length)];
+          }
+        }
+
+        // Move toward target
+        const dx = p.targetX - p.x;
+        const dy = p.targetY - p.y;
+        const dist = Math.hypot(dx, dy);
+        const step = p.speed * dt;
+
+        if (dist > 0.12 && p.mood !== 'sleep') {
+          p.x += (dx / dist) * Math.min(step, dist);
+          p.y += (dy / dist) * Math.min(step, dist);
+          p.hopTimer = (p.hopTimer || 0) + dt * 8.5;
+          p.z = Math.abs(Math.sin(p.hopTimer)) * 0.16;
+        } else {
+          p.z = 0;
+          p.hopTimer = 0;
+        }
+
+        // Poro-Character Collision Volume (gentle physical push)
+        for (let j = 0; j < chars.length; j++) {
+          const c = chars[j];
+          const cdx = c.x - p.x;
+          const cdy = c.y - p.y;
+          const cdist = Math.hypot(cdx, cdy);
+          if (cdist < 0.70 && cdist > 0.001) {
+            const push = (0.70 - cdist) * 2.2 * dt;
+            p.x -= (cdx / cdist) * push;
+            p.y -= (cdy / cdist) * push;
+            if (c.isPlayer) {
+              p.mood = 'tongue';
+            }
+          }
+        }
+
+        // Poro-Poro Collision Separation
+        for (let j = i + 1; j < this.poros.length; j++) {
+          const p2 = this.poros[j];
+          const pdx = p.x - p2.x;
+          const pdy = p.y - p2.y;
+          const pdist = Math.hypot(pdx, pdy);
+          if (pdist < 0.65 && pdist > 0.001) {
+            const push = (0.65 - pdist) * 1.5 * dt;
+            p.x += (pdx / pdist) * push;
+            p.y += (pdy / pdist) * push;
+            p2.x -= (pdx / pdist) * push;
+            p2.y -= (pdy / pdist) * push;
+          }
+        }
+
+        // Physical Bridge Balustrade Clamping (Keeps Poros safely on bridge deck)
+        p.x = Math.max(12.0, Math.min(16.0, p.x));
+        p.y = Math.max(59.5, Math.min(91.0, p.y));
       }
     }
 
@@ -825,6 +915,10 @@
 
       const nearCafeDoor = this.charManager.characters.some(c => Math.hypot(c.x - 33.0, c.y - 4.9) < 2.4);
       this.doorCafeOpen += ((nearCafeDoor ? 1.0 : 0.0) - this.doorCafeOpen) * Math.min(1.0, dt * 5.0);
+
+      // Cyber Cafe North Entrance Automatic Sliding Glass Door (x: 14.0, y: 48.8)
+      const nearCyberNorthDoor = this.charManager.characters.some(c => Math.hypot(c.x - 14.0, c.y - 48.8) < 2.6);
+      this.doorCyberNorthOpen += ((nearCyberNorthDoor ? 1.0 : 0.0) - this.doorCyberNorthOpen) * Math.min(1.0, dt * 5.0);
 
       // Cyber Cafe South Exit Automatic Sliding Glass Door to Howling Abyss (x: 14.0, y: 57.0)
       const nearCyberSouthDoor = this.charManager.characters.some(c => Math.hypot(c.x - 14.0, c.y - 57.0) < 2.6);
@@ -1402,6 +1496,9 @@
       // 6. Autonomous NPC Dialogues & Speech Bubble Dynamics
       this.charManager.update(dt);
 
+      // 6.1 Update Autonomous Wandering Poros on Howling Abyss Bridge
+      this.updatePoros(dt);
+
       // 7. Proximity Check for Space/Enter Dialogue Prompt with Hysteresis (prevents threshold flickering)
       let closest = null;
       // Enter threshold is 1.85 tiles; exit threshold is 2.30 tiles to prevent rapid toggling
@@ -1507,7 +1604,7 @@
           const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
           const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
           const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
-          const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 93);
+          const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 92);
           const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe;
 
@@ -1518,8 +1615,9 @@
           const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
           const isSouthSectorConnector = (
-            (x >= 5 && x <= 32 && y >= 43 && y <= 45) ||
-            (x >= 13 && x <= 15 && y >= 45 && y <= 49) // Direct straight boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
+            (x >= 5 && x <= 32 && y >= 44 && y <= 46) || // South Avenue (centered at y = 45)
+            (x >= 9 && x <= 19 && y >= 47 && y <= 48) || // Wide Cobblestone Sidewalk Plaza in front of Cyber Cafe at y: 47!
+            (x >= 12 && x <= 16 && y >= 45 && y <= 49)  // Central boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
           );
 
           // East Campus Basketball Court Direct Paved Access
@@ -1553,12 +1651,14 @@
             isCafeDoorSpur
           );
 
-          // Chasm Void: y <= 57 is all island land (bounded by south wooden cliff fence at y: 57)
-          // y in [57..93]: bridge is x: 11..17, all flanking space is bottomless void!
-          // y > 93: minecraft island is x: 7..21, all flanking space is bottomless void!
+          // Chasm Void:
+          // y <= 57: all main campus island land (bounded by south cliff wooden fence at y: 57)
+          // y in [58..92]: bridge is x: 11..17, flanking space is bottomless void!
+          // y >= 93: minecraft island is x: 7..21 (including y: 93 & y: 94 solid land!), flanking space is bottomless void!
           const isAbyssChasm = (
-            (y > 57 && y <= 93 && (x < 11 || x > 17)) ||
-            (y > 93 && (x < 7 || x > 21))
+            (y > 57 && y <= 92 && (x < 11 || x > 17)) ||
+            (y >= 93 && (x < 7 || x > 21)) ||
+            (y > 111)
           );
 
           ctx.save();
@@ -3452,7 +3552,7 @@
         { gx: 18.2, gy: 12.0, furnitureId: 'bench_central_east' },     // East Avenue West Bench (Plaza side)
         { gx: 25.2, gy: 12.0, furnitureId: 'bench_east_lawn' },         // East Avenue East Bench (Court & Cafe side)
         { gx: 1.8,  gy: 11.6, furnitureId: 'xiangqi_bench' },          // Beside Garden Chinese Chess Table (Lawn, clear of doorway)
-        { gx: 11.0, gy: 43.0, furnitureId: 'bench_south_avenue' }      // South Avenue North Edge Bench
+        { gx: 11.0, gy: 45.0, furnitureId: 'bench_south_avenue' }      // South Avenue North Edge Bench (moved to y: 45.0)
       ];
       benches.forEach(b => {
         list.push({
@@ -3563,18 +3663,18 @@
         draw: () => this.models.drawFairyLights(this.ctx, 30.05, 40.4, 2.85, 32.95, 40.4, 2.85, this.ox, this.oy)
       });
 
-      // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (y: 42..43) ===
+      // === 10. SOUTH BOULEVARD STREETLIGHTS & HIGHWAY PORTAL SIGN (moved to y: 44.4 / 44.8, aligned with y: 45) ===
       list.push({
-        xMin: 11.2, xMax: 11.6, yMin: 42.4, yMax: 42.8,
-        draw: () => this.models.drawStreetlight(this.ctx, 11.2, 42.4, this.ox, this.oy)
+        xMin: 11.2, xMax: 11.6, yMin: 44.4, yMax: 44.8,
+        draw: () => this.models.drawStreetlight(this.ctx, 11.2, 44.4, this.ox, this.oy)
       });
       list.push({
-        xMin: 17.2, xMax: 17.6, yMin: 42.4, yMax: 42.8,
-        draw: () => this.models.drawStreetlight(this.ctx, 17.2, 42.4, this.ox, this.oy)
+        xMin: 17.2, xMax: 17.6, yMin: 44.4, yMax: 44.8,
+        draw: () => this.models.drawStreetlight(this.ctx, 17.2, 44.4, this.ox, this.oy)
       });
       list.push({
-        xMin: 14.2, xMax: 15.2, yMin: 42.8, yMax: 43.2,
-        draw: () => this.models.drawRoadPortalSign(this.ctx, 14.2, 42.8, this.ox, this.oy)
+        xMin: 14.2, xMax: 15.2, yMin: 44.8, yMax: 45.2,
+        draw: () => this.models.drawRoadPortalSign(this.ctx, 14.2, 44.8, this.ox, this.oy)
       });
 
       // === 11. CAMPUS BASKETBALL COURT (East Dedicated Athletic Ground x: 39..50, y: 17..26) ===
@@ -4070,6 +4170,24 @@
             z: c.z || 0,
             furnitureId: c.furniture ? c.furniture.id : null,
             draw: () => this.charManager.drawCharacter(ctx, c, ox, oy)
+          });
+        }
+      }
+
+      // Add dynamic Poros wandering on Howling Abyss Bridge
+      const poros = this.poros || [];
+      for (let i = 0; i < poros.length; i++) {
+        const p = poros[i];
+        const pt = isoToScreen(p.x, p.y, p.z || 0, ox, oy);
+        if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
+          visibleEntities.push({
+            isPoro: true,
+            xMin: p.x - 0.35,
+            xMax: p.x + 0.35,
+            yMin: p.y - 0.35,
+            yMax: p.y + 0.35,
+            z: p.z || 0,
+            draw: () => this.models.drawPoro(ctx, p.x, p.y, ox, oy, p.mood, p.z || 0)
           });
         }
       }

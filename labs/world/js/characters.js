@@ -55,7 +55,7 @@
         { id: 'bench_central_east', type: 'seat', zone: 'plaza', x: 19.0, y: 12.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '東向大道西側長椅', labelZh: '坐下看書', labelEn: 'Sit & Read' },
         { id: 'bench_east_lawn', type: 'seat', zone: 'plaza', x: 26.0, y: 12.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '東向大道東側長椅', labelZh: '坐下吹風', labelEn: 'Sit & Rest' },
         { id: 'bench_west_greenway', type: 'seat', zone: 'plaza', x: 5.3, y: 29.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '西區綠廊北緣長椅', labelZh: '坐下小憩', labelEn: 'Sit & Rest' },
-        { id: 'bench_south_avenue', type: 'seat', zone: 'plaza', x: 11.8, y: 43.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '南區大道北緣長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' }
+        { id: 'bench_south_avenue', type: 'seat', zone: 'plaza', x: 11.8, y: 45.35, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '南區大道北緣長椅', labelZh: '坐下休息', labelEn: 'Sit & Rest' }
       ];
     }
 

@@ -5064,8 +5064,8 @@
     }
 
     // --- 26. Multi-Mood Snow Poros (Snack / Tongue / Sleep / Hop) ---
-    drawPoro(ctx, gx, gy, ox, oy, mood = 'tongue') {
-      const p = isoToScreen(gx + 0.35, gy + 0.35, 0.20, ox, oy);
+    drawPoro(ctx, gx, gy, ox, oy, mood = 'tongue', gz = 0) {
+      const p = isoToScreen(gx + 0.35, gy + 0.35, 0.20 + gz, ox, oy);
 
       if (mood === 'sleep') {
         // Curled up sleeping snowball
@@ -5094,7 +5094,7 @@
         ctx.stroke();
 
         // 'zZ' drift
-        const zP = isoToScreen(gx + 0.35, gy + 0.35, 0.65 + Math.sin(performance.now() * 0.002) * 0.05, ox, oy);
+        const zP = isoToScreen(gx + 0.35, gy + 0.35, 0.65 + gz + Math.sin(performance.now() * 0.002) * 0.05, ox, oy);
         ctx.fillStyle = 'rgba(148, 163, 184, 0.85)';
         ctx.font = 'bold 8px sans-serif';
         ctx.fillText('zZ', zP.x + 6, zP.y - 4);

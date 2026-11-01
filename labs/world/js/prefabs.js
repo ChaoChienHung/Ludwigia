@@ -53,40 +53,33 @@
       // 36 tiles long North-South grand bridge (x: 11..17, y: 57..93)
       // Flanking empty void chasm is 100% blocked from walking/pathfinding!
       // ======================================================================
-      // 1. Flanking Void Chasm (Prevents characters from ever stepping/wandering into the void!)
-      nav.setBlock(0.0, 57.0, 11.2, 36.0, true);   // West Flanking Abyss Void (x: 0..11.2, y: 57..93)
-      nav.setBlock(17.8, 57.0, 36.2, 36.0, true);  // East Flanking Abyss Void (x: 17.8..54, y: 57..93)
+      // 1. Flanking Void Chasm & Parapet Railings (Zero gaps, strictly prevents walking into abyss!)
+      nav.setBlock(0.0, 57.0, 11.35, 36.5, true);   // West Flanking Abyss Void + Balustrade (x: 0..11.35, y: 57..93.5)
+      nav.setBlock(16.75, 57.0, 37.25, 36.5, true); // East Flanking Abyss Void + Balustrade (x: 16.75..54, y: 57..93.5)
 
-      // 2. Minecraft Island Flanking Void (x < 7 or x > 21 for y >= 93)
-      nav.setBlock(0.0, 93.0, 7.0, 19.0, true);    // West Minecraft Flanking Void (x: 0..7, y: 93..112)
-      nav.setBlock(21.0, 93.0, 33.0, 19.0, true);  // East Minecraft Flanking Void (x: 21..54, y: 93..112)
-      nav.setBlock(0.0, 111.0, 54.0, 1.0, true);   // South Minecraft Void Boundary (y >= 111)
+      // 2. Minecraft Island North Cliff Edge & Fence (blocks y: 93..94.8 outside x: 12.5..15.5)
+      nav.setBlock(0.0, 93.0, 12.35, 1.8, true);    // West Northern Fence & Cliff
+      nav.setBlock(15.75, 93.0, 38.25, 1.8, true);  // East Northern Fence & Cliff
 
-      // 3. West & East Balustrades (Physical parapet barriers along bridge deck)
-      nav.setBlock(10.0, 57.0, 1.25, 36.2, true);  // West Balustrade Railing
-      nav.setBlock(17.75, 57.0, 1.25, 36.2, true); // East Balustrade Railing
+      // 3. Minecraft Island Outer Flanking Void (x < 7 or x > 21 for y >= 94.5)
+      nav.setBlock(0.0, 94.5, 7.0, 17.0, true);     // West Minecraft Flanking Void (x: 0..7, y: 94.5..111.5)
+      nav.setBlock(21.0, 94.5, 33.0, 17.0, true);   // East Minecraft Flanking Void (x: 21..54, y: 94.5..111.5)
+      nav.setBlock(0.0, 111.0, 54.0, 2.0, true);    // South Minecraft Void Boundary (y >= 111)
 
       // 4. Symmetrical Bridge Artifacts along Centerline x: 14.0
-      // Blue Nexus placed at y: 61.5, leaving y: 57..61.5 (4.5 tiles!) 100% CLEAR in front of Cyber Cafe South Door!
-      nav.setBlock(12.9, 61.5, 2.2, 2.0, true);   // Blue Nexus
-      nav.setBlock(13.3, 65.0, 1.4, 1.4, true);   // Blue Inhibitor
-      nav.setBlock(13.2, 68.0, 1.6, 1.4, true);   // Blue Inner Turret
-      nav.setBlock(13.2, 71.0, 1.6, 1.4, true);   // Blue Outer Turret
+      // Inner & Outer Turret distance enlarged to 4.5 tiles, keeping health relics on the sides!
+      nav.setBlock(12.9, 60.2, 2.2, 2.0, true);   // Blue Nexus (leaves y: 57..60.2 clear in front of door!)
+      nav.setBlock(13.3, 63.8, 1.4, 1.4, true);   // Blue Inhibitor
+      nav.setBlock(13.2, 67.0, 1.6, 1.4, true);   // Blue Inner Turret
+      nav.setBlock(13.2, 71.5, 1.6, 1.4, true);   // Blue Outer Turret (distance between turrets = 4.5 tiles!)
 
-      nav.setBlock(13.2, 77.0, 1.6, 1.4, true);   // Red Outer Turret
-      nav.setBlock(13.2, 80.0, 1.6, 1.4, true);   // Red Inner Turret
-      nav.setBlock(13.3, 83.0, 1.4, 1.4, true);   // Red Inhibitor
-      nav.setBlock(12.9, 86.0, 2.2, 2.0, true);   // Red Nexus (leaves y: 88..93 5.0 tiles clear for Minecraft gate!)
-
-      // ======================================================================
-      // D. MINECRAFT ISLAND NORTH CLIFF WOODEN PERIMETER FENCE (y = 93.0)
-      // Blocks anyone from walking into north abyss; only way back is the bridge!
-      // ======================================================================
-      nav.setBlock(6.0, 93.0, 5.0, 0.45, true);   // West Northern Fence (x: 6..11)
-      nav.setBlock(17.0, 93.0, 5.5, 0.45, true);  // East Northern Fence (x: 17..22.5)
+      nav.setBlock(13.2, 78.5, 1.6, 1.4, true);   // Red Outer Turret
+      nav.setBlock(13.2, 83.0, 1.6, 1.4, true);   // Red Inner Turret (distance between turrets = 4.5 tiles!)
+      nav.setBlock(13.3, 86.2, 1.4, 1.4, true);   // Red Inhibitor
+      nav.setBlock(12.9, 89.0, 2.2, 2.0, true);   // Red Nexus (leaves clear approach to Minecraft gate)
 
       // ======================================================================
-      // E. MINECRAFT ISLAND (x: 7..21, y: 93..111)
+      // D. MINECRAFT ISLAND (x: 7..21, y: 93..111)
       // ======================================================================
       // Oak Wood Cabin (x: 9..15, y: 97..103, doorway at x: 13..15, y: 97)
       nav.setBlock(9.0, 97.0, 4.0, 0.40, true);   // North Wall Left (x: 9..13)
@@ -158,14 +151,68 @@
       });
       // Overhead North Door Lintel & Neon Marquee Sign
       list.push({
-        xMin: 13.0, xMax: 15.0, yMin: 48.6, yMax: 49.0,
+        xMin: 12.8, xMax: 15.2, yMin: 48.6, yMax: 49.0,
         draw: () => {
           models.drawBox(ctx, 13.0, 48.8, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
           models.drawCyberCafeSign(ctx, 12.6, 48.7, world.ox, world.oy);
         }
       });
 
-      // 2. West Panoramic Glass Curtain Wall (x = 8.8, y: 48.8..57.2)
+      // Automatic Dual-Leaf Sliding Glass Door at Cyber Cafe North Entrance (x: 13..15, y: 48.8)
+      list.push({
+        xMin: 12.0, xMax: 16.0, yMin: 48.55, yMax: 49.05,
+        draw: () => {
+          const openT = world.doorCyberNorthOpen || 0.0;
+          const slideDist = 0.88 * openT;
+
+          // 1. Sleek Titanium Door Top Header & Overhead Slide Rail (z: 2.12..2.26)
+          models.drawBox(ctx, 12.8, 48.8, 2.12, 2.4, 0.20, 0.14, '#0f172a', '#1e293b', '#334155', world.ox, world.oy);
+
+          // 2. Motion Sensor Unit (Centered above door at x: 14.0, z: 2.20)
+          const sensP = isoToScreen(14.0, 48.88, 2.20, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#090d16';
+          ctx.fillRect(sensP.x - 7, sensP.y - 3, 14, 6);
+          // Sensor LED Status Indicator: Red/Orange when closed, Electric Cyan when active/open!
+          ctx.fillStyle = openT > 0.08 ? '#38bdf8' : '#f97316';
+          ctx.shadowColor = openT > 0.08 ? '#38bdf8' : '#f97316';
+          ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.arc(sensP.x, sensP.y, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // 3. Left Sliding Glass Leaf (Width 0.95, Slides Left)
+          const leftDoorX = 13.0 - slideDist;
+          models.drawBox(ctx, leftDoorX, 48.8, 0, 0.95, 0.10, 2.12,
+            'rgba(14, 165, 233, 0.55)', 'rgba(2, 132, 199, 0.60)', 'rgba(3, 105, 161, 0.70)',
+            world.ox, world.oy
+          );
+          models.drawBox(ctx, leftDoorX + 0.05, 48.8, 0.90, 0.85, 0.12, 0.22,
+            'rgba(240, 249, 255, 0.70)', 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.60)',
+            world.ox, world.oy
+          );
+          models.drawBox(ctx, leftDoorX + 0.82, 48.8, 0.75, 0.06, 0.14, 0.55,
+            '#e2e8f0', '#94a3b8', '#64748b', world.ox, world.oy
+          );
+
+          // 4. Right Sliding Glass Leaf (Width 0.95, Slides Right)
+          const rightDoorX = 14.05 + slideDist;
+          models.drawBox(ctx, rightDoorX, 48.8, 0, 0.95, 0.10, 2.12,
+            'rgba(14, 165, 233, 0.55)', 'rgba(2, 132, 199, 0.60)', 'rgba(3, 105, 161, 0.70)',
+            world.ox, world.oy
+          );
+          models.drawBox(ctx, rightDoorX + 0.05, 48.8, 0.90, 0.85, 0.12, 0.22,
+            'rgba(240, 249, 255, 0.70)', 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.60)',
+            world.ox, world.oy
+          );
+          models.drawBox(ctx, rightDoorX + 0.07, 48.8, 0.75, 0.06, 0.14, 0.55,
+            '#e2e8f0', '#94a3b8', '#64748b', world.ox, world.oy
+          );
+        }
+      });
+
+      // 2. West Panoramic Colored Glass Windows (x = 8.8, y: 48.8..57.2)
       list.push({
         xMin: 8.7, xMax: 9.1, yMin: 48.8, yMax: 57.2,
         draw: () => {
@@ -174,24 +221,42 @@
           for (let y = 48.8; y <= 57.0; y += 2.05) {
             models.drawBox(ctx, 8.8, y, 0.35, 0.25, 0.25, H - 0.60, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy);
           }
+          models.drawBox(ctx, 8.8, 48.8, 1.25, 0.25, 8.2, 0.12, '#0f172a', '#1e293b', '#334155', world.ox, world.oy);
+
           const p0 = isoToScreen(8.92, 48.8, 0.35, world.ox, world.oy);
           const p1 = isoToScreen(8.92, 57.0, 0.35, world.ox, world.oy);
           const p2 = isoToScreen(8.92, 57.0, H - 0.25, world.ox, world.oy);
           const p3 = isoToScreen(8.92, 48.8, H - 0.25, world.ox, world.oy);
+
           ctx.save();
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.22)';
+          const glassGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
+          glassGrad.addColorStop(0, 'rgba(6, 182, 212, 0.58)');
+          glassGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.48)');
+          glassGrad.addColorStop(1, 'rgba(2, 132, 199, 0.62)');
+          ctx.fillStyle = glassGrad;
           ctx.beginPath();
           ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
           ctx.closePath();
           ctx.fill();
-          ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
-          ctx.lineWidth = 1;
+
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.40)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+          ctx.lineWidth = 1.8;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 6;
+          const nm0 = isoToScreen(8.93, 48.8, 1.25, world.ox, world.oy);
+          const nm1 = isoToScreen(8.93, 57.0, 1.25, world.ox, world.oy);
+          ctx.beginPath();
+          ctx.moveTo(nm0.x, nm0.y); ctx.lineTo(nm1.x, nm1.y);
           ctx.stroke();
           ctx.restore();
         }
       });
 
-      // 3. East Panoramic Glass Curtain Wall (x = 19.0, y: 48.8..57.2)
+      // 3. East Panoramic Colored Glass Windows (x = 19.0, y: 48.8..57.2)
       list.push({
         xMin: 18.9, xMax: 19.3, yMin: 48.8, yMax: 57.2,
         draw: () => {
@@ -200,18 +265,36 @@
           for (let y = 48.8; y <= 57.0; y += 2.05) {
             models.drawBox(ctx, 19.0, y, 0.35, 0.25, 0.25, H - 0.60, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy);
           }
+          models.drawBox(ctx, 19.0, 48.8, 1.25, 0.25, 8.2, 0.12, '#0f172a', '#1e293b', '#334155', world.ox, world.oy);
+
           const p0 = isoToScreen(19.12, 48.8, 0.35, world.ox, world.oy);
           const p1 = isoToScreen(19.12, 57.0, 0.35, world.ox, world.oy);
           const p2 = isoToScreen(19.12, 57.0, H - 0.25, world.ox, world.oy);
           const p3 = isoToScreen(19.12, 48.8, H - 0.25, world.ox, world.oy);
+
           ctx.save();
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.22)';
+          const glassGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
+          glassGrad.addColorStop(0, 'rgba(6, 182, 212, 0.58)');
+          glassGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.48)');
+          glassGrad.addColorStop(1, 'rgba(2, 132, 199, 0.62)');
+          ctx.fillStyle = glassGrad;
           ctx.beginPath();
           ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
           ctx.closePath();
           ctx.fill();
-          ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
-          ctx.lineWidth = 1;
+
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.40)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+          ctx.lineWidth = 1.8;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 6;
+          const nm0 = isoToScreen(19.13, 48.8, 1.25, world.ox, world.oy);
+          const nm1 = isoToScreen(19.13, 57.0, 1.25, world.ox, world.oy);
+          ctx.beginPath();
+          ctx.moveTo(nm0.x, nm0.y); ctx.lineTo(nm1.x, nm1.y);
           ctx.stroke();
           ctx.restore();
         }
@@ -410,92 +493,86 @@
         });
       }
 
-      // 4. Blue Side Artifacts (centered at x: 14.0, leaves y: 57..61.5 wide open!)
+      // 4. Blue Side Artifacts (turret distance enlarged to 4.5 tiles; health relic along West balustrade)
       list.push({
-        xMin: 12.8, xMax: 15.2, yMin: 61.4, yMax: 63.8,
-        draw: () => models.drawAbyssNexus(ctx, 12.9, 61.5, world.ox, world.oy)
+        xMin: 12.8, xMax: 15.2, yMin: 60.1, yMax: 62.5,
+        draw: () => models.drawAbyssNexus(ctx, 12.9, 60.2, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.2, xMax: 14.8, yMin: 64.9, yMax: 66.5,
-        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 65.0, world.ox, world.oy)
+        xMin: 13.2, xMax: 14.8, yMin: 63.7, yMax: 65.3,
+        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 63.8, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 67.9, yMax: 69.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 68.0, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 66.9, yMax: 68.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 67.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 70.9, yMax: 72.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 71.0, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 71.4, yMax: 73.2,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 71.5, world.ox, world.oy)
       });
+      // Blue Side Health Relic (Nestled along West Wall Balustrade, clearing the center lane!)
       list.push({
-        xMin: 13.3, xMax: 14.7, yMin: 73.1, yMax: 74.5,
-        draw: () => models.drawHealthRelic(ctx, 13.5, 73.2, world.ox, world.oy)
+        xMin: 11.4, xMax: 12.4, yMin: 69.8, yMax: 71.0,
+        draw: () => models.drawHealthRelic(ctx, 11.6, 70.0, world.ox, world.oy)
       });
 
-      // 5. Mid-Lane Symmetrical Frost Bushes & Poros (y: 74..76)
-      // West Wall Bush & Poro
+      // 5. Mid-Lane Symmetrical Frost Bushes (y: 74..76)
       list.push({
         xMin: 11.2, xMax: 12.6, yMin: 74.0, yMax: 76.2,
-        draw: () => {
-          models.drawAbyssBrush(ctx, 11.3, 74.2, world.ox, world.oy);
-          models.drawPoro(ctx, 11.8, 75.0, world.ox, world.oy);
-        }
+        draw: () => models.drawAbyssBrush(ctx, 11.3, 74.2, world.ox, world.oy)
       });
-      // East Wall Bush & Poro
       list.push({
         xMin: 15.4, xMax: 16.8, yMin: 74.0, yMax: 76.2,
-        draw: () => {
-          models.drawAbyssBrush(ctx, 15.5, 74.2, world.ox, world.oy);
-          models.drawPoro(ctx, 16.0, 75.0, world.ox, world.oy);
-        }
+        draw: () => models.drawAbyssBrush(ctx, 15.5, 74.2, world.ox, world.oy)
       });
 
-      // 6. Red Side Artifacts (centered at x: 14.0, perfectly symmetrical)
+      // 6. Red Side Artifacts (turret distance enlarged to 4.5 tiles; health relic along East balustrade)
+      // Red Side Health Relic (Nestled along East Wall Balustrade, clearing the center lane!)
       list.push({
-        xMin: 13.3, xMax: 14.7, yMin: 75.5, yMax: 76.9,
-        draw: () => models.drawHealthRelic(ctx, 13.5, 75.6, world.ox, world.oy)
+        xMin: 15.6, xMax: 16.8, yMin: 79.8, yMax: 81.0,
+        draw: () => models.drawHealthRelic(ctx, 16.0, 80.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 76.9, yMax: 78.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 77.0, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 78.4, yMax: 80.2,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 78.5, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.1, xMax: 14.9, yMin: 79.9, yMax: 81.7,
-        draw: () => models.drawAbyssTurret(ctx, 13.2, 80.0, world.ox, world.oy)
+        xMin: 13.1, xMax: 14.9, yMin: 82.9, yMax: 84.7,
+        draw: () => models.drawAbyssTurret(ctx, 13.2, 83.0, world.ox, world.oy)
       });
       list.push({
-        xMin: 13.2, xMax: 14.8, yMin: 82.9, yMax: 84.5,
-        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 83.0, world.ox, world.oy)
+        xMin: 13.2, xMax: 14.8, yMin: 86.1, yMax: 87.7,
+        draw: () => models.drawAbyssInhibitor(ctx, 13.3, 86.2, world.ox, world.oy)
       });
       list.push({
-        xMin: 12.8, xMax: 15.2, yMin: 85.9, yMax: 88.3,
-        draw: () => models.drawAbyssNexus(ctx, 12.9, 86.0, world.ox, world.oy)
+        xMin: 12.8, xMax: 15.2, yMin: 88.9, yMax: 91.3,
+        draw: () => models.drawAbyssNexus(ctx, 12.9, 89.0, world.ox, world.oy)
       });
 
-      // 7. South Bridgehead Gateway Arch (at y = 93.0)
+      // 7. South Bridgehead Gateway Pillars & Braziers (at y = 93.8, framing Minecraft Sanctuary entrance without any beam obscuring the Nexus)
       list.push({
-        xMin: 10.6, xMax: 17.4, yMin: 92.8, yMax: 93.4,
+        xMin: 10.6, xMax: 17.4, yMin: 93.6, yMax: 94.2,
         draw: () => {
-          models.drawBox(ctx, 10.8, 93.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawBox(ctx, 16.5, 93.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawBox(ctx, 10.8, 93.0, 2.50, 6.40, 0.50, 0.40, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
-          models.drawAbyssBrazier(ctx, 10.9, 92.8, world.ox, world.oy);
-          models.drawAbyssBrazier(ctx, 16.6, 92.8, world.ox, world.oy);
+          models.drawBox(ctx, 10.8, 93.8, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawBox(ctx, 16.5, 93.8, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawAbyssBrazier(ctx, 10.9, 93.6, world.ox, world.oy);
+          models.drawAbyssBrazier(ctx, 16.6, 93.6, world.ox, world.oy);
         }
       });
 
       // ======================================================================
-      // D. MINECRAFT ISLAND NORTH CLIFF WOODEN PERIMETER FENCE (y = 93.0)
+      // D. MINECRAFT ISLAND NORTH CLIFF WOODEN PERIMETER FENCE (y = 94.0)
+      // Placed securely on solid ground at y = 94, cleanly connecting to bridge entrance
       // ======================================================================
-      // West Northern Cliff Fence (x: 7..11)
+      // West Northern Cliff Fence (x: 7.0..12.5)
       list.push({
-        xMin: 6.8, xMax: 11.2, yMin: 92.8, yMax: 93.2,
-        draw: () => drawFenceSegment(7.0, 11.0, 93.0)
+        xMin: 6.8, xMax: 12.6, yMin: 93.8, yMax: 94.2,
+        draw: () => drawFenceSegment(7.0, 12.5, 94.0)
       });
-      // East Northern Cliff Fence (x: 17..21)
+      // East Northern Cliff Fence (x: 15.5..21.0)
       list.push({
-        xMin: 16.8, xMax: 21.2, yMin: 92.8, yMax: 93.2,
-        draw: () => drawFenceSegment(17.0, 21.0, 93.0)
+        xMin: 15.4, xMax: 21.2, yMin: 93.8, yMax: 94.2,
+        draw: () => drawFenceSegment(15.5, 21.0, 94.0)
       });
 
       // ======================================================================
