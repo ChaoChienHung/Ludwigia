@@ -9,7 +9,7 @@
   const TW = 64; // Isometric tile width
   const TH = 32; // Isometric tile height
   const MAP_W = 54; // World map width (compactly fitted to East Campus greenway & athletic park)
-  const MAP_H = 72; // World map height (expanded for Southbound Abyss Bridge & Minecraft Sanctuary)
+  const MAP_H = 112; // World map height (expanded for Southbound Abyss Bridge & Minecraft Island)
 
   // --- Building Zone Coordinates ---
   // Zone 1: Ludwig's Family Residence (NW)

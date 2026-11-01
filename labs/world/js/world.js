@@ -339,8 +339,8 @@
       ];
       for (let i = 0; i < 65; i++) {
         this.particles.push({
-          x: 1 + Math.random() * 26,
-          y: 1 + Math.random() * 56,
+          x: 1 + Math.random() * 32,
+          y: 1 + Math.random() * 105,
           z: 0.5 + Math.random() * 3.2,
           vz: -0.008 - Math.random() * 0.015,
           vx: 0.008 + Math.random() * 0.018,
@@ -642,9 +642,9 @@
       if (x >= 38.5 && x <= 50.5 && y >= 16.5 && y <= 26.5) return 'basketball_court';
       if (x >= 29.5 && x <= 37.5 && y >= 32.5 && y <= 44.5) return 'night_market';
       if (x >= 32.5 && x <= 39.5 && y >= 2.0 && y <= 7.5) return 'cafe';
-      if (x >= 0.8 && x <= 11.5 && y >= 44.5 && y <= 53.2) return 'cyber_cafe';
-      if (x >= 3.5 && x <= 8.5 && y >= 53.2 && y <= 61.2) return 'howling_abyss';
-      if (x >= 0.8 && x <= 12.5 && y >= 61.2 && y <= 70.5) return 'minecraft_sanctuary';
+      if (x >= 3.8 && x <= 14.2 && y >= 48.5 && y <= 56.2) return 'cyber_cafe';
+      if (x >= 5.5 && x <= 12.5 && y >= 56.2 && y <= 92.2) return 'howling_abyss';
+      if (x >= 1.8 && x <= 16.5 && y >= 92.2 && y <= 110.5) return 'minecraft_sanctuary';
       return 'plaza';
     }
 
@@ -752,15 +752,15 @@
         currentZone = 'cafe';
         isInsideAnyHouse = true;
         statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
-      } else if (checkZone('cyber_cafe', 0.8, 11.5, 44.5, 53.2)) {
+      } else if (checkZone('cyber_cafe', 3.8, 14.2, 48.5, 56.2)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
         statusMessage = "Howling Abyss Cyber • 召喚師電競網咖 🎮";
-      } else if (checkZone('howling_abyss', 3.5, 8.5, 53.2, 61.2)) {
+      } else if (checkZone('howling_abyss', 5.5, 12.5, 56.2, 92.2)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;
         statusMessage = "The Howling Abyss • 冰封咆哮深淵長橋 ❄️";
-      } else if (checkZone('minecraft_sanctuary', 0.8, 12.5, 61.2, 70.5)) {
+      } else if (checkZone('minecraft_sanctuary', 1.8, 16.5, 92.2, 110.5)) {
         currentZone = 'minecraft_sanctuary';
         isInsideAnyHouse = false;
         statusMessage = "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
@@ -1285,26 +1285,31 @@
               ];
 
               const cyberAnchors = [
-                { x: 3.0, y: 47.5 }, // Blue Side Gaming Station 1
-                { x: 5.0, y: 47.5 }, // Blue Side Gaming Station 2
-                { x: 7.0, y: 47.5 }, // Blue Side Gaming Station 3
-                { x: 3.0, y: 51.5 }, // Red Side Gaming Station 1
-                { x: 5.0, y: 51.5 }, // Red Side Gaming Station 2
-                { x: 8.8, y: 49.0 }, // Hot Ramen & Coke Counter
-                { x: 6.0, y: 49.5 }  // Cyber Cafe Central Lobby
+                { x: 6.0, y: 51.5 }, // Blue Side Gaming Station
+                { x: 9.0, y: 51.5 }, // Central Aisle
+                { x: 12.0, y: 51.5 }, // Rig 3
+                { x: 6.0, y: 54.5 }, // Red Side Gaming Station
+                { x: 12.5, y: 53.5 }, // Hot Ramen & Snack Counter
+                { x: 9.0, y: 53.5 }  // Cyber Cafe Central Lobby
               ];
 
               const abyssAnchors = [
-                { x: 14.5, y: 50.5 }, // West Gateway Approach
-                { x: 17.5, y: 49.0 }, // Parapet Fire Brazier Glow
-                { x: 21.5, y: 51.5 }, // Flanking Ancient Turret
-                { x: 24.5, y: 52.0 }, // West Health Relic Shrine
-                { x: 27.5, y: 49.2 }, // Mid-Lane Frost Brush Ambush Spot
-                { x: 31.0, y: 52.0 }, // Guarding Inhibitor Crystal
-                { x: 34.5, y: 49.0 }, // East Health Relic Shrine
-                { x: 37.0, y: 50.5 }, // Nexus Platform Approach
-                { x: 40.0, y: 50.5 }, // Gazing in Awe at Grand Nexus Core
-                { x: 23.0, y: 49.2 }  // Petting Poros in the Lane
+                { x: 9.0, y: 59.0 }, // Blue Nexus Approach
+                { x: 7.5, y: 64.0 }, // Near Blue Inner Turret
+                { x: 9.0, y: 71.0 }, // Blue Health Relic Shrine
+                { x: 8.0, y: 74.0 }, // Mid-Lane Frost Brush Ambush & Poro
+                { x: 9.0, y: 77.0 }, // Red Health Relic Shrine
+                { x: 7.5, y: 84.0 }, // Near Red Inner Turret
+                { x: 9.0, y: 88.0 }, // Red Inhibitor Platform
+                { x: 9.0, y: 91.0 }  // Red Nexus Approach
+              ];
+
+              const minecraftAnchors = [
+                { x: 7.0, y: 94.0 }, // Welcome Signboard
+                { x: 7.0, y: 98.0 }, // Oak Cabin Living Room
+                { x: 5.5, y: 100.0 }, // Next to Red Bed
+                { x: 13.0, y: 98.0 }, // Farmland Crops
+                { x: 5.0, y: 105.0 }  // Under Giant Oak Tree
               ];
 
               const zoneAnchorMap = {
@@ -1328,7 +1333,9 @@
                 cyber_cafe: cyberAnchors,
                 cyber: cyberAnchors,
                 howling_abyss: abyssAnchors,
-                abyss: abyssAnchors
+                abyss: abyssAnchors,
+                minecraft_sanctuary: minecraftAnchors,
+                minecraft: minecraftAnchors
               };
 
               const rawVisited = c.visitedZones;
@@ -1495,13 +1502,9 @@
           const isBasketball = (x >= 39 && x <= 50 && y >= 17 && y <= 26);
           const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
           const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
-          const isCyber = (x >= 1 && x <= 11 && y >= 45 && y <= 53);
-          const isAbyssBridge = (x >= 4 && x <= 8 && y >= 53 && y <= 61);
-          const isMinecraft = (x >= 1 && x <= 12 && y >= 61 && y <= 70);
-          const isAbyssChasm = (
-            ((x >= 12 && x <= 43 && y >= 44 && y <= 57) || (y >= 53 && y <= 61 && (x < 4 || x > 8))) &&
-            !isCyber && !isAbyssBridge && !isMinecraft
-          );
+          const isCyber = (x >= 4 && x <= 14 && y >= 49 && y <= 56);
+          const isAbyssBridge = (x >= 6 && x <= 12 && y >= 56 && y <= 92);
+          const isMinecraft = (x >= 2 && x <= 16 && y >= 92 && y <= 110);
           const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe;
 
           // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
@@ -1510,7 +1513,10 @@
           const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 17);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance
           const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 32);        // Central Cross Street & Plaza Axis ↔ East Spine (width 3, with 2-tile grass buffer along Library North Wall)
           const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
-          const isSouthSectorConnector = (x >= 5 && x <= 14 && y >= 43 && y <= 45); // South Connector to Cyber & Abyss
+          const isSouthSectorConnector = (
+            (x >= 5 && x <= 14 && y >= 43 && y <= 45) ||
+            (x >= 8 && x <= 10 && y >= 43 && y <= 49) // Direct 6-tile connector spur from Sanmin South junction to Cyber Cafe North Door
+          );
 
           // East Campus Basketball Court Direct Paved Access
           const isBasketballEntrance = (x >= 32 && x <= 39 && y >= 20 && y <= 22); // Direct paved avenue from East Spine into Basketball Court West Sideline
@@ -1543,7 +1549,16 @@
             isCafeDoorSpur
           );
 
+          const isAbyssChasm = (
+            y >= 44 && !isCyber && !isAbyssBridge && !isMinecraft && !isPath
+          );
+
           ctx.save();
+          if (isAbyssChasm) {
+            ctx.restore();
+            continue; // True Empty Void: Flanking chasm is completely empty, revealing deep background below!
+          }
+
           if (this.currentZone === 'ludwig_house' && !isLudwig) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'dorm_211' && !isDorm) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'ai_studio' && !isAi) ctx.globalAlpha = this.outsideAlpha;
@@ -1603,7 +1618,7 @@
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
           } else if (isAbyssBridge) {
             // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Flagstones & Snow Edges
-            const isEdge = (x === 4 || x === 8);
+            const isEdge = (x === 6 || x === 12);
             if (isEdge) {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
             } else {
@@ -1612,12 +1627,6 @@
           } else if (isMinecraft) {
             // Minecraft Sanctuary — Classic Grass Block Green Turf
             ctx.fillStyle = (x + y) % 2 === 0 ? '#5b8c32' : '#4d7828';
-          } else if (isAbyssChasm) {
-            // Deep Bottomless Frozen Abyss Chasm Void
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#020617' : '#050f22';
-          } else if (y >= 45) {
-            // Dreamscape Chasm of Clouds — Ethereal Pastel Pink & Nebula Sea
-            ctx.fillStyle = (x + y) % 2 === 0 ? 'rgba(251, 207, 232, 0.40)' : 'rgba(244, 114, 182, 0.35)';
           } else if (isPath) {
             // Cobblestone Paved Paths
             ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -1631,19 +1640,21 @@
           ctx.closePath();
           ctx.fill();
 
-          if (isAbyssChasm || isAbyssBridge || (y >= 45 && !isCyber && !isPath && !isMinecraft)) {
-            ctx.strokeStyle = isAbyssChasm ? 'rgba(56, 189, 248, 0.08)' : (isAbyssBridge ? 'rgba(147, 197, 253, 0.20)' : 'rgba(244, 114, 182, 0.22)');
+          if (isAbyssBridge) {
+            ctx.strokeStyle = 'rgba(147, 197, 253, 0.20)';
             ctx.lineWidth = 1;
             ctx.stroke();
           }
 
-          // Centerline Glowing Arcane Rune Inlays on Bridge Spine (North-South along x = 6)
-          if (isAbyssBridge && x === 6 && y >= 54 && y <= 60) {
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
-            ctx.lineWidth = 1.6;
+          // Centerline Glowing Arcane Rune Inlays on Bridge Spine (North-South along x = 9)
+          if (isAbyssBridge && x === 9 && y >= 57 && y <= 91) {
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+            ctx.lineWidth = 1.8;
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p3.x, p3.y);
+            const midN = isoToScreen(x + 0.5, y, 0, ox, oy);
+            const midS = isoToScreen(x + 0.5, y + 1, 0, ox, oy);
+            ctx.moveTo(midN.x, midN.y);
+            ctx.lineTo(midS.x, midS.y);
             ctx.stroke();
           }
 
@@ -3768,35 +3779,6 @@
         draw: () => this.models.drawCafePendantLamp(this.ctx, 35.0, 4.2, 2.2, this.ox, this.oy)
       });
 
-
-      // === 13. CYBER LAN LOUNGE / 召喚師電競網咖 (West x: 1..11, y: 45..53) ===
-      // Neon Marquee Sign at North Entrance
-      list.push({
-        xMin: 3.5, xMax: 5.5, yMin: 44.5, yMax: 44.9,
-        draw: () => this.models.drawCyberCafeSign(this.ctx, 4.0, 44.6, this.ox, this.oy)
-      });
-
-      // Blue Team Battle Stations (North Row)
-      [2.2, 4.2, 6.2].forEach(rx => {
-        list.push({
-          xMin: rx, xMax: rx + 1.4, yMin: 46.2, yMax: 47.1,
-          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 46.2, this.ox, this.oy, false)
-        });
-      });
-
-      // Red Team Battle Stations (South Row)
-      [2.2, 4.2, 6.2].forEach(rx => {
-        list.push({
-          xMin: rx, xMax: rx + 1.4, yMin: 50.2, yMax: 51.1,
-          draw: () => this.models.drawCyberCafeRig(this.ctx, rx, 50.2, this.ox, this.oy, true)
-        });
-      });
-
-      // Ramen & Monster Snack Counter
-      list.push({
-        xMin: 8.5, xMax: 10.3, yMin: 47.8, yMax: 49.3,
-        draw: () => this.models.drawCyberSnackBar(this.ctx, 8.5, 47.8, this.ox, this.oy)
-      });
 
       // === 14. GAMING DIMENSION PREFAB (CYBER CAFE WALLS, ABYSS BRIDGE & MINECRAFT SANCTUARY) ===
       if (window.GamingDimensionPrefab) {
