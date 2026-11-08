@@ -1524,6 +1524,19 @@
         }
       });
 
+      // 5.1 Failsafe Abyss Boundary Clamp: Strictly clamp any characters on the Howling Abyss bridge deck (prevents falling/wandering into abyss)
+      chars.forEach(c => {
+        if (c.y > 57.0 && c.y <= 92.8) {
+          if (c.x < 11.8) {
+            c.x = 12.2;
+            if (c.path) c.path = [];
+          } else if (c.x > 16.5) {
+            c.x = 16.0;
+            if (c.path) c.path = [];
+          }
+        }
+      });
+
       // 6. Autonomous NPC Dialogues & Speech Bubble Dynamics
       this.charManager.update(dt);
 

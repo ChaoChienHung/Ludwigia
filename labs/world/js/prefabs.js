@@ -581,13 +581,12 @@
       // C. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 11..17, y: 57..93)
       // Fully Symmetrical ARAM Layout (Blue Nexus -> Blue Turrets -> Mid -> Red Turrets -> Red Nexus)
       // ======================================================================
-      // 1. North Bridgehead Gateway Arch (at y = 57.0)
+      // 1. North Bridgehead Gateway Pillars & Braziers (at y = 57.0, framing bridge entrance cleanly without any crossbeam obscuring the Nexus)
       list.push({
         xMin: 10.6, xMax: 17.4, yMin: 56.8, yMax: 57.4,
         draw: () => {
-          models.drawBox(ctx, 10.8, 57.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawBox(ctx, 16.5, 57.0, 0, 0.70, 0.70, 2.80, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawBox(ctx, 10.8, 57.0, 2.50, 6.40, 0.50, 0.40, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          models.drawBox(ctx, 10.8, 57.0, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+          models.drawBox(ctx, 16.5, 57.0, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
           models.drawAbyssBrazier(ctx, 10.9, 56.8, world.ox, world.oy);
           models.drawAbyssBrazier(ctx, 16.6, 56.8, world.ox, world.oy);
         }

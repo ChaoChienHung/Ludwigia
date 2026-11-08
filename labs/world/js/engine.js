@@ -106,6 +106,16 @@
       const ix = Math.floor(gx);
       const iy = Math.floor(gy);
       if (ix < 0 || iy < 0 || ix >= this.w || iy >= this.h) return false;
+
+      // Hard Abyss Void & Boundary Enforcement (Guarantees zero characters/paths can ever enter the abyss void)
+      if (
+        (iy > 57 && iy <= 92 && (ix < 11 || ix > 17)) ||
+        (iy >= 93 && (ix < 7 || ix > 21)) ||
+        (iy > 111)
+      ) {
+        return false;
+      }
+
       return !this.blocked[ix][iy];
     }
 
