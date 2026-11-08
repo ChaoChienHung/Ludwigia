@@ -10,7 +10,7 @@ Lang: en
 Tags: AI Planning, Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, Decision Theory, Game Theory, Reinforcement Learning
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-10-31
+LastModified: 2026-11-01
 </meta>
 
 # NUS CS5446 Reinforcement Learning and Sequential Decision Making
@@ -33,17 +33,15 @@ Week 5  Function approximation, DQN, policy gradients, and actor-critic methods
 Week 6  Exploration, PBRS, process rewards, RLHF, and multi-agent rewards
    ↓  Runtime search and demonstrations offer other forms of guidance
 Week 7  Rollouts, MCTS, UCT, AlphaGo Zero, and imitation learning
-   ↓  Mid-term consolidation and test
-Week 8  Mid-term review of planning, utility, MDPs, and RL foundations
    ↓  Learn a simulator instead of assuming one is given
-Week 9  Model-based RL, Dyna-Q, world models, MuZero, DreamerV3, TD-MPC2
+Week 8  Model-based RL, Dyna-Q, world models, MuZero, DreamerV3, TD-MPC2
    ↓  Other agents also make strategic choices
-Week 10  Best responses, Nash equilibrium, Pareto optimality, mixed strategies
+Week 9  Best responses, Nash equilibrium, Pareto optimality, mixed strategies
    ↓  Integrate models, tools, plans, feedback, and human constraints
-Week 11  Foundation-model-based decision systems and human–AI alignment
+Week 10  Foundation-model-based decision systems and human–AI alignment
 ```
 
-Use the same reading checklist each week: `state / action / transition / objective / information / improvement mechanism`. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; Week 7 compares guidance from runtime search with guidance from demonstrations, Week 8 consolidates the mid-term material, Week 9 learns a model for planning, Week 10 introduces strategic opponents, and Week 11 integrates foundation models with human alignment. These lecture weeks follow *Course Overview*, slide 3; Tutorial 6/7/8 are labeled Weeks 9/10/11 on their own sheets and therefore lag the corresponding lecture topics.
+Use the same reading checklist each week: `state / action / transition / objective / information / improvement mechanism`. Weeks 1–2 establish how to describe and search a problem; Weeks 3–4 define and compute value; Weeks 5–6 address learning at scale or with weak rewards; Week 7 compares guidance from runtime search with guidance from demonstrations, Week 8 learns a model for planning, Week 9 introduces strategic opponents, and Week 10 integrates foundation models with human alignment. This study sequence omits the mid-term-only calendar week in the supplied *Course Overview*; official lecture and tutorial week labels are retained only when identifying source material.
 
 | Week | New central question | What it prepares you to study next |
 |---|---|---|
@@ -54,10 +52,9 @@ Use the same reading checklist each week: `state / action / transition / objecti
 | 5 | How do function approximators replace tables, and how do we manage gradient instability? | Explains why reward design shapes Week 6 exploration and alignment |
 | 6 | How do we supply a more useful reward signal without changing the original objective? | Prepares the Week 7 comparison of search and demonstrations |
 | 7 | How do we search at decision time or learn behavior from expert data? | Connects search, learning, and imitation |
-| 8 | Which planning, utility, MDP and RL assumptions survive mixed review problems? | Mid-term test; no new lecture deck is assigned in the course overview |
-| 9 | How do learned models support planning and policy improvement? | Distinguishes background updates, online search, latent models, and model error |
-| 10 | How do choices change when other agents choose strategically? | Adds best response, equilibrium, and welfare to single-agent rationality |
-| 11 | How can foundation models assist planning and learn from human or AI feedback? | Integrates tool execution, preference optimization, verification, and oversight |
+| 8 | How do learned models support planning and policy improvement? | Distinguishes background updates, online search, latent models, and model error |
+| 9 | How do choices change when other agents choose strategically? | Adds best response, equilibrium, and welfare to single-agent rationality |
+| 10 | How can foundation models assist planning and learn from human or AI feedback? | Integrates tool execution, preference optimization, verification, and oversight |
 
 > **Reading tip:** For each new method, ask which bottleneck from the previous week it addresses before studying its equations and algorithms. DQN, PPO, PBRS, and MCTS then become responses to different limits on state space, feedback, computation, and data rather than isolated names.
 
@@ -1016,23 +1013,6 @@ This directly motivates the subsequent chapters of our course:
 
 ---
 
-<reviewkit>
-<takeaways>
-- **The Closed-Loop Rational Agent:** Modern AI planning formalizes intelligence as a continuous Sensing-Communicating-Acting feedback loop, integrating perception, modeling, reasoning, planning, and decision making across diverse real-world domains.
-- **The Simple vs. Complex Planning Matrix:** Classical planning operates on toy assumptions (discrete, deterministic, static, fully observable), whereas real-world industrial planning demands handling uncertainty, continuous dynamics, multi-agent competition, and human factors.
-- **Four Generations of Agents:** Intelligent systems have evolved from 1980s Symbolic AI (STRIPS logic) through 2000s Reinforcement Learning (trial-and-error policies) and 2020s LLM Agents (ReACT natural language reasoning) to 2030s tool-using multi-agent ecosystems.
-- **PDDL Factored Representation:** States are conjunctions of ground atomic fluents governed by the Closed-World Assumption (CWA) and Unique Names Assumption (UNA). Actions update states via set operations: $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.
-- **The Frame Problem Solution:** PDDL resolves the persistence of facts through the inertia assumption, while propositional SATPlan encodes Successor-State Axioms to reduce $\mathcal{O}(mn)$ naive frame axioms to $\mathcal{O}(n)$ clauses.
-- **Progression vs. Regression:** Forward search navigates $2^n$ ground states, while backward regression searches $3^n$ partial state descriptions using Most General Unifiers (MGU), aggressively pruning irrelevant actions.
-- **SATPlan Propositional Reduction:** Converts planning into bounded CNF formulas evaluated by DPLL/CDCL SAT solvers, guaranteed to extract shortest-length plans if one exists.
-- **Computational Complexity:** Classical planning plan existence (PlanSAT) is PSPACE-complete in general, while bounded length planning (Bounded PlanSAT) is NP-complete.
-- **Modern LFM-Assisted Planning:** Modern paradigms combine LLM commonsense with classical verification: LLM-guided PDDL authoring (Mahdavi 2024), hybrid MCTS subgoal planning (Kwon 2025), LLM heuristic code generation (Corrêa 2025), and generalized PDDL programs (Silver 2024).
-- **Responsible AI Governance:** Trusted autonomous planning requires balancing raw performance against societal constraints (safety, privacy, fairness, transparency) embedded systematically throughout the SDLC.
-</takeaways>
-
-<qprompt/>
-</reviewkit>
-
 ## References
 
 1. Russell, S., & Norvig, P. (2020). *Artificial Intelligence: A Modern Approach* (4th ed.). Pearson. (Chapters 11 & 27).
@@ -1666,23 +1646,6 @@ Despite their scalability, HTNs and classical planners fundamentally assume **de
 This brings us directly to **Week 3: Rational Decision Making — Decision Theory, Utility Theory, and Game Theory**!
 
 ---
-
-<reviewkit>
-<takeaways>
-- **The Curse of Flat Planning:** Non-hierarchical planning scales as $\mathcal{O}(b^d)$, making even simple 30-step plans ($\mathcal{O}(10^{30})$) completely intractable for classical search engines.
-- **Explicit vs. Implicit Heuristics:** Search algorithms use explicit heuristic functions $h(s)$ to guide queue expansion, whereas logic/SAT solvers rely on implicit clause and variable ordering heuristics.
-- **Problem Relaxation:** Dropping action preconditions derives the Misplaced Tiles heuristic; dropping delete effects derives Manhattan Distance, $h_{\max}$ (admissible), $h_{\text{add}}$ (informative but inadmissible), and $h_{\text{FF}}$ (Fast-Forward greedy relaxed plan length).
-- **The Sussman Anomaly:** Highlights the non-serializability of independent subgoals, where achieving one goal requires actively undoing a previously established goal.
-- **State Abstraction Power:** In Air Cargo transport, grouping 10 airports, 50 planes, and 200 cargos into 5 composite corridors collapses the state space from $10^{405}$ to $10^{11}$ states.
-- **Hierarchical Task Networks (HTN):** Break tasks into High-Level Actions (HLAs) that encode procedural domain knowledge. In the Changi Airport case study, HTN decomposition reduces planning cost from $\mathcal{O}(10^{30})$ to $\approx 34$ operations ($\mathcal{O}(r^{(d-1)/(k-1)})$).
-- **Reachable Sets & Downward Refinement Property:** $\text{REACH}(s, h)$ represents all states reachable by any HLA implementation. The Downward Refinement Property guarantees that if an abstract plan intersects the goal, a valid primitive plan is guaranteed to exist.
-- **Tilde Notation ($\sim$):** Represents deliberate agent choices within HLAs ($\tilde{+} A$ possibly adds $A$, $\tilde{-} A$ possibly deletes $A$, $\tilde{\pm} A$ gives full control).
-- **Approximate Reachable Sets:** Optimistic $\text{REACH}^+$ overestimates reachability and is safe for pruning failures; pessimistic $\text{REACH}^-$ underestimates reachability and is safe for certifying success without further refinement.
-- **PANDA Framework & HDDL:** PANDA provides industrial HTN plan-space, progression, and SAT solvers, utilizing the HDDL standard for hierarchical benchmarking.
-</takeaways>
-
-<qprompt/>
-</reviewkit>
 
 ## References
 
@@ -2825,23 +2788,6 @@ In single-stage and short-horizon problems, computing MEU via decision trees is 
 This marks the transition into the next core phase of CS5446: **Markov Decision Processes (MDPs)**, **Dynamic Programming**, and **Reinforcement Learning (RL)**!
 
 ---
-
-<reviewkit>
-<takeaways>
-- **The Core Decision Triad:** A rational agent combines probabilistic Beliefs, subjective Preferences (Utility function), and an MEU Decision Process to act optimally under uncertainty.
-- **Bayesian Observation Dynamics:** In Panda Lulu's lunch choice, sensory observations update posterior beliefs via Bayes' Rule, altering expected utilities and reversing optimal actions ($O=\text{rustling} \implies \text{Berry } (4.0 > 2.5)$; $O=\text{silence} \implies \text{Grove } (6.67 > 4.0)$).
-- **VNM Axioms of Rationality:** Six foundational conditions (Orderability, Transitivity, Continuity, Substitutability, Monotonicity, Decomposability) mathematically guarantee the existence of an expected utility function.
-- **Positive Affine Invariance:** Utility scales are unique strictly up to $U'(s) = a U(s) + b$ with $a > 0$. Shifting or scaling leaves decisions unchanged, but strictly forbids interpersonal utility comparisons between different agents.
-- **Expected Monetary Value vs. Expected Utility:** Rational agents maximize Expected Utility, not Expected Monetary Value (EMV). Under concave utility of money, an agent correctly declines the $\$1\text{M}$ coin flip gamble despite its positive monetary expectation ($\$1.25\text{M}$).
-- **Risk Premium:** Defined as $\text{EMV} - \text{CE}$, representing the cash value an agent sacrifices to eliminate risk. Concave curves indicate risk aversion ($\text{Risk Premium} > 0$), linear curves indicate risk neutrality, and convex curves indicate risk seeking.
-- **Prescriptive Decision Analysis:** Ronald Howard's framework translates messy real-world dilemmas into structured influence diagrams (decision, chance, and utility nodes) and decision trees solved via backward induction (Martian Adventures case study).
-- **The Game-Theoretic Paradox:** As proven by the Pandas' Dilemma (Prisoner's Dilemma), independent self-interested agents inevitably converge on a suboptimal Nash Equilibrium $(+1, +1)$ despite the existence of a Pareto optimal cooperative alternative $(+3, +3)$.
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
 
 ## References
 
@@ -4253,27 +4199,6 @@ While tabular dynamic programming and tabular reinforcement learning provide exa
 
 ---
 
-<reviewkit>
-<takeaways>
-- **The Core MDP Paradigm:** An MDP $\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \gamma \rangle$ models sequential decision problems in fully observable, stochastic environments where actions influence both immediate rewards and future state distributions.
-- **The Markov Property:** Future transitions depend exclusively on the current state and action ($P(S_{t+1} \mid S_t, A_t)$), allowing memoryless optimization without storing historical trajectories.
-- **Horizon & Stationarity:** Infinite-horizon discounted formulations ($\gamma < 1$) guarantee bounded cumulative rewards ($U_{\max} \le \frac{R_{\max}}{1 - \gamma}$) and yield time-invariant stationary optimal policies $\pi^*(s)$.
-- **Bellman Expectation vs. Optimality Equations:** The Bellman Expectation Equation linearly evaluates a fixed policy ($U^\pi = R^\pi + \gamma T^\pi U^\pi$), while the Bellman Optimality Equation non-linearly defines the global upper bound ($U(s) = \max_a \sum_{s'} P(s' \mid s, a)[R + \gamma U(s')]$).
-- **The Q-Function Duality:** Action-utility values $Q(s, a)$ represent the expected return of taking action $a$ in state $s$ and acting optimally thereafter, enabling direct policy extraction ($\pi^*(s) = \arg\max_a Q(s, a)$) without transition probability lookahead.
-- **Value Iteration as a Contraction Mapping:** Value Iteration executes iterative Bellman backups ($U_{i+1} \leftarrow B U_i$). By the Banach Fixed-Point Theorem, $B$ is a contraction with factor $\gamma$ under the max norm, guaranteeing geometric convergence to a unique fixed point.
-- **Error Dynamics & Policy Loss:** As illustrated in the $4 \times 3$ world (Figure 17.8), policy loss reaches zero far earlier (iteration 4) than utility convergence (iteration 14), because ranking actions under argmax is robust to small value errors.
-- **Policy Iteration Efficiency:** Policy Iteration alternates between exact Policy Evaluation ($\mathcal{O}(|\mathcal{S}|^3)$ linear system without max operator) and Policy Improvement ($\mathcal{O}(|\mathcal{S}|^2 |\mathcal{A}|)$). By the Policy Improvement Theorem (Sutton & Barto 4.2), each consecutive policy is monotonically superior, terminating in finite steps.
-- **Passive RL Showdown (ADP vs. TD vs. MC):** ADP learns empirical models $\hat{P}, \hat{R}$ and solves global linear Bellman systems with maximal data efficiency (converging in 20-30 trials); Monte Carlo directly averages returns across visits ($U(s) \leftarrow \frac{1}{N(s)}\sum G_t$) with zero bias but high variance and episode-delayed updates; TD(0) bootstraps online from successive state estimates ($U(s) \leftarrow U(s) + \alpha [R + \gamma U(s') - U(s)]$) with low variance and step-level updates.
-- **The Unified Spectrum (n-Step TD & TD(lambda)):** $n$-step returns bridge 1-step TD(0) and $\infty$-step Monte Carlo. $\text{TD}(\lambda)$ geometrically weights $n$-step returns with $(1-\lambda)\lambda^{n-1}$, converging to TD(0) as $\lambda \to 0$ and Monte Carlo as $\lambda \to 1$, mechanistically implemented via backward-view eligibility traces.
-- **Active ADP Failure & Exploration Functions:** Purely greedy active ADP gets trapped in suboptimal policies (e.g. state $(2,1)$ in $4 \times 3$ Grid World going Right instead of Left) because actions serve a dual role (earning reward vs. gathering information). Exploration functions $f(u, n) = R^+$ if $n < N_e$ else $u$ enforce optimism in the face of uncertainty, driving policy loss to zero in 20 trials.
-- **SARSA vs. Q-Learning in Cliff Walking:** SARSA is on-policy, evaluating the action $a'$ actually taken by the behavior policy, learning a safe route away from hazards during $\epsilon$-greedy exploration (return $\approx -25$). Q-learning is off-policy, evaluating target greedy actions $\max_{a'} Q(s', a')$, learning the shortest optimal cliff-edge route but frequently falling off during exploration (return $\approx -50$). Under GLIE ($\epsilon \to 0$), both converge to the optimal path.
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
-
 ## References
 
 1. Bellman, R. (1957). *Dynamic Programming*. Princeton University Press.
@@ -5172,26 +5097,6 @@ PPO achieves trust-region stability using first-order gradient descent via a **C
 
 ---
 
-<reviewkit>
-<takeaways>
-- **The Curse of Dimensionality:** State spaces grow exponentially ($|\mathcal{S}| \approx 10^{20}$ in Backgammon, $10^{40}$ in Chess, $10^{172}$ in Go), rendering tabular lookups impossible. Function approximation enables compact representation and generalization to unvisited states.
-- **Linear vs. Neural Approximators:** Linear models ($\theta^T f(s)$) suffer from structural under-parameterization bias when approximating oscillatory value functions. Deep neural networks automatically learn hierarchical non-linear feature representations directly from sensory observations.
-- **The Widrow-Hoff (Delta) Rule:** Minimizing per-sample squared error yields the Delta Rule ($\Delta \theta_i = \alpha \delta f_i$). Unlike naive batch gradient descent (which requires storing historical datasets and computing offline sums), Widrow-Hoff performs instantaneous online updates on streaming transitions.
-- **Semi-Gradient TD:** Temporal difference targets depend on weights $\boldsymbol{	heta}$ but are treated as fixed constants during differentiation. On-policy linear TD(0) is guaranteed to converge under standard stochastic approximation conditions.
-- **The Deadly Triad:** Unbounded parameter divergence occurs when Function Approximation, Bootstrapping, and Off-Policy learning coincide. Baird\'s 7-state star counterexample proves that semi-gradient off-policy linear TD explodes to infinity even with zero transition rewards!
-- **DQN Breakthroughs:** Deep Q-Networks stabilize deep RL via (1) Experience Replay (breaks sample autocorrelation) and (2) Fixed Target Networks (freezes target weights $\boldsymbol{	heta}^-$, resolving moving target oscillations).
-- **DQN Extensions & Bottlenecks:** Double DQN eliminates maximization overestimation bias; Multi-step learning accelerates reward propagation; Distributional RL models return distributions. However, vanilla DQN cannot handle continuous action spaces, scales poorly with $|\mathcal{A}|$, and cannot model stochastic policies.
-- **The Policy Gradient Theorem:** Directly parameterizes stochastic policies ($\pi_\theta(a \mid s)$), proving that $\nabla_\theta J(\boldsymbol{\theta}) = \mathbb{E}[Q^{\pi_\theta}(s, a) \nabla_\theta \log \pi_\theta(a \mid s)]$ without requiring derivatives of environmental transition physics.
-- **Baseline Variance Reduction:** Subtracting an action-independent baseline $B(s) = U(s)$ leaves policy gradients strictly unbiased ($\mathbb{E}[B(s) \nabla \log \pi] = 0$) while slashing gradient variance (collapsing sample variance from 15,275 to 28.4).
-- **Actor-Critic Frameworks:** The Actor updates policy parameters $\boldsymbol{	heta}$ along the policy gradient, while the Critic updates value parameters $\mathbf{w}$ to estimate advantages via 1-step TD errors $\delta_t$. Vanilla AC is on-policy and stable, while off-policy variants (SAC) use entropy regularization and double target critics.
-- **Advanced Policy Search (TRPO & PPO):** TRPO enforces a second-order KL divergence speed limit to guarantee monotonic policy improvement ($J(\theta_{\text{new}}) \ge J(\theta_{\text{old}})$). Proximal Policy Optimization (PPO) simplifies this via a first-order Clipped Surrogate Objective, establishing the industry standard for continuous robotic control and LLM post-training alignment (RLHF).
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
-
 ## References
 
 1. Russell, S., & Norvig, P. (2020). *Artificial Intelligence: A Modern Approach* (4th ed.). Pearson. (Chapters 22.4.1 to 22.4.3, 22.5).
@@ -5951,27 +5856,6 @@ Instead of relying on black-box neural reward agents, **SASR** dynamically calib
    Sampling the success rate and passing it through mapping function $f(r^S)$ delivers an optimal, self-adaptive shaping reward $R^S(s)$ that matures dynamically alongside agent competence.
 
 ---
-
-<reviewkit>
-<takeaways>
-- **The Curse of Sparse Native Rewards:** Real-world environmental rewards are almost universally sparse, delayed, and non-informative. In zero-reward in-process states, standard Q-learning executes empty updates ($0 \leftarrow 0$), and algorithms only begin to learn after stumbling upon a rare goal state through random exploration (e.g., $y_0 \approx \gamma^{20} \times 1 \approx 0.12$).
-- **The Reward Shaping Paradigm:** General reward shaping reformulates the feedback landscape as $R^{\text{new}} = \alpha R^{\text{env}} + \beta R^{\text{sha}}$, converting sparse binary goals into dense intermediate milestone gradients.
-- **Exploration Shaping & RND:** Novelty bonuses reward under-explored states. While tabular counters use $1/(N(s)+1)$ and continuous domains use pseudo-counts, high-dimensional spaces deploy Random Network Distillation (RND), measuring prediction errors between a trained predictor and a frozen target network ($\|f(s) - \hat{f}_\theta(s)\|^2$).
-- **The Noisy-TV Vulnerability:** Pure prediction-error novelty is vulnerable to environmental stochastic noise (e.g., random static on a TV screen). The agent becomes hypnotized by unpredictable noise, harvesting infinite exploration bonuses while abandoning the task.
-- **Exploitation Shaping & Process Supervision:** Assigning bonuses to critical bottleneck states accelerates optimization. In LLM multi-step reasoning, Math-Shepherd replaces sparse outcome supervision with process-level step rewards ($y_{s_i}^{\text{SE}}$) evaluated via automated Monte Carlo tree rollouts.
-- **Reward Hacking in Process Supervision:** PRM-guided reasoning is vulnerable to Goodhart's Law and reward hacking: policy generators exploit PRM heuristics via verbosity bias, superficial math jargon, false-positive rollouts (accidental error cancellation), and hallucinated lemmas. Robust process supervision requires coupling PRMs with final outcome verification, length penalties, and KL divergence constraints.
-- **Potential-Based Policy Invariance:** Arbitrary reward shaping risks policy corruption (reward gaming). Ng, Harada, and Russell proved that a consistently signed potential difference ($R^{\text{sha}} = \phi(s) - \gamma \phi(s')$, or its negative with a negated potential) induces telescoping cancellation along trajectories, guaranteeing that the optimal policy $\pi^*$ remains identical to the native MDP. Outside PBRS, heuristic methods lack theoretical invariance and are justified empirically by sample-efficiency gains.
-- **RLHF in Open-Ended Domains:** For subjective LLM generation lacking programmatic rewards (self-introductions, coffee shop names, LinkedIn headlines), Reinforcement Learning from Human Feedback trains a regression reward model ($r_\theta(x, y) \in \mathbb{R}$) on human pairwise preference rankings using the Bradley-Terry logistic loss ($-\log \sigma(r(y_+) - r(y_-))$).
-- **Advanced Autonomous Shaping Architectures (Ma et al., NUS):**
-  - **ReLara (ICML 2024):** Decouples execution from guidance via a two-agent architecture: a Policy Agent ($\mathcal{A}_P$) executing actions and an Assistant Reward Agent ($\mathcal{A}_R$) learning shaping bonuses as a secondary MDP.
-  - **CenRA (NeurIPS 2025):** Deploys a Centralized Reward Agent ($\mathcal{A}^{\text{rwd}}$) analyzing concatenated multi-task replay buffers ($\bigcup \mathcal{D}_i$) to distill universal structural meta-knowledge across multiple policy agents.
-  - **SASR (ICLR 2025):** Formulates Self-Adaptive Success Rate shaping by computing spatial densities via Kernel Density Estimation and Random Fourier Features, modeling localized Beta distributions ($\text{Beta}(\tilde{N}_S, \tilde{N}_F)$) that transition seamlessly from early-stage exploration to late-stage exploitation.
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
 
 ## References
 
@@ -6901,29 +6785,6 @@ Future planning frontiers must model these deviations through:
 
 ---
 
-<reviewkit>
-<takeaways>
-- **The Curse of Dimensionality in Planning:** When state spaces scale exponentially ($|\mathcal{S}| = |\mathcal{S}_{\text{local}}|^K$), global offline dynamic programming (Value Iteration) and global tabular RL become intractable. Modern systems bypass this via Decision-Time Online Search or Demonstration-Based Offline Learning.
-- **Decision-Time vs. Demonstration-Based Planning:** Decision-time planning simulates futures locally at runtime from the current state $s_0$ to choose immediate action $a^*$; demonstration-based planning learns safe, competent global policies from expert trajectories before runtime.
-- **The Four Utility Quantities:** Realized return $G_t$, expected policy utility $U^\pi(s_t) = \mathbb{E}[G_t \mid s_t]$, optimal utility $U(s_t) = \max_\pi U^\pi(s_t)$, and action-utility $Q^\pi(s_t, a_t) = \mathbb{E}[G_t \mid s_t, a_t]$.
-- **Rollout Algorithms:** Execute one-step policy improvement at decision time by simulating $N$ trajectories under a rollout policy $\pi$ for each candidate action, evaluating $\hat{Q}^\pi(s, a) \approx \frac{1}{N} \sum G_t$.
-- **Rollout Continuation:** Hold each candidate first action fixed, then follow the same base policy from its resulting state. A terminal rollout uses the full return; a cutoff needs a leaf estimate or accepts truncation bias. Exact $Q^\pi$ supports policy improvement, while finite samples do not guarantee it.
-- **The Four MCTS Phases:** (1) **Selection** via a tree policy balancing exploration/exploitation; (2) **Expansion** of untried child nodes; (3) **Simulation** via fast rollouts to terminal states; (4) **Backup** of discounted returns $G_t$ upward to root $s_0$. MCTS is an anytime algorithm.
-- **MCTS Memory and Backup:** The tree and $N,W,\hat Q$ persist across trials for the current decision; an action edge is expanded once but revisited many times. Each new sample updates only its selected path, using $\hat Q_{N+1}=\hat Q_N+(g-\hat Q_N)/(N+1)$, with discount and player perspective handled at each ancestor.
-- **The UCT1 Selection Formula:** Action selection at node $n$ follows $\pi_{\text{UCT}} = \arg\max_a [ \hat{Q}(s, a) + c \sqrt{\ln N(s) / N(s, a)} ]$. Unvisited actions require a separate priority convention because the formula is undefined at $N(s,a)=0$; under ordinary finite-action UCT this encourages initial trials, while the bonus continues to allocate later trials between promising and under-sampled branches.
-- **AlphaGo Zero PUCT Innovation:** Replaces noisy Monte Carlo rollouts with a neural Value Head $v_\theta(s)$, and guides tree expansion via a Policy Head prior $P(s, a)$ in the PUCT formula, scaling MCTS to Go's $10^{170}$ states.
-- **REINFORCE and AlphaZero Roles:** REINFORCE updates a policy with sampled-return gradients during training; MCTS spends decision-time compute with a model. AlphaZero-style self-play generates search visit targets and outcomes, then network optimization learns policy priors and state values. This loop resembles approximate policy iteration, without guaranteeing improvement on every finite search.
-- **The Breakdown of Supervised Learning in Sequential Decisions:** Behavioral Cloning treats expert actions as supervised labels. Because agent actions alter future states, the i.i.d. assumption is violated. Minor errors cause covariate shift into unvisited states, inducing compounding quadratic errors ($\mathcal{O}(T^2 \epsilon)$) and failure to recover.
-- **DAgger Resolves Distribution Mismatch:** Dataset Aggregation iteratively executes the learner's own policy $\pi_i$, collects visited states, queries the expert for optimal actions on those exact visited states, and retrains on aggregated data $\mathcal{D} \cup \mathcal{D}_i$, reducing compounding error to $\mathcal{O}(T \epsilon)$.
-- **DAgger's $\beta$ Distinction:** Decaying $\beta$ changes who *visits* states, not who *labels* them: the expert oracle still supplies actions for learner-visited states. Scheduled sampling with fixed reference tokens lacks that general expert-on-new-prefix guarantee; BC/SFT exposure bias is a related distribution-shift analogy.
-- **GAIL Adversarial Imitation:** Generative Adversarial Imitation Learning matches state-action occupancy measures $\rho_\pi \approx \rho_E$ through an adversarial minimax game between a policy generator and a discriminator, eliminating the need for an interactive expert during training.
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
-
 ## References
 
 1. Russell, S., & Norvig, P. (2020). *Artificial Intelligence: A Modern Approach (4th ed.)*. Chapters 5.4, 17.2.4. Pearson.
@@ -6951,58 +6812,7 @@ Future planning frontiers must model these deviations through:
 
 ---
 
-# Week 8 - Mid-Term Consolidation: Planning, Utility, MDP State Design, and Passive RL
-
-<draft>
-- 1. Use the Week 7 Tutorial 5 review as preparation for the Week 8 mid-term test.
-- 2. Make assumptions explicit before applying a planning or decision algorithm.
-- 3. Bridge the prior chapters to the model-based learning chapter that follows.
-</draft>
-
-The supplied *Course Overview*, slide 3, assigns the **mid-term test** to Week 8 and no new lecture topic. The official Tutorial 5 sheet is labeled **Week 7: Mid-Term Review**. This chapter therefore consolidates earlier material rather than pretending that Week 8 introduced a new algorithm. The detailed problem-by-problem worked answers appear in the Tutorial 5–6 practice chapter below; the questions here are the cross-topic checks that reveal whether the first seven weeks form one coherent decision model.
-
-## 1. Choose the right mathematical object before calculating
-
-| Question type | Object needed | First check | What a correct result establishes |
-|---|---|---|---|
-| Classical planning | Grounded facts and action schemas | Are all preconditions true in the current state? | An applicable action and its add/delete successor |
-| Abstract planning | Optimistic and pessimistic reachable sets | Are these over- or under-approximations? | A possibility in the optimistic estimate or a certified result under the stated pessimistic-set semantics; not guaranteed real-world success from optimism alone |
-| Preference/utility | Lotteries over **final wealth** or outcomes | Are probabilities normalized and utility applied before averaging? | A ranking under the specified utility representation |
-| Delayed stochastic control | A Markov state including action progress | Can the next state/reward distribution be determined from it and the legal action? | A well-defined MDP, before trying to compute a policy |
-| Passive RL | Fixed policy plus experience | Does the method wait for returns, bootstrap, or learn a model? | A value estimate for that policy, not necessarily an optimal policy |
-
-The review sheet deliberately mixes these objects. A grounded `Fly` action uses logical preconditions, not expected value. A gamble ranking uses expected *utility*, not a search tree. A robot with a pending movement needs a state variable recording that commitment before a Bellman equation is valid. Passive RL evaluates a fixed policy, while active control compares actions. Naming this object first prevents the most common category mistakes.
-
-## 2. A four-step answer routine for the review problems
-
-1. **Copy the given model exactly.** Do not add a “from ≠ to” flight condition if the schema omits it. Do not assume a discount factor or boundary rule that the question does not state.
-2. **Identify state and timing.** For a delayed robot move, distinguish ready and pending states and charge the non-goal cost at each elapsed step. For a lottery, add gain/loss to initial wealth before applying $\ln$.
-3. **Compute using the matching rule.** STRIPS successor is $(s\setminus Del)\cup Add$; expected utility is $\sum_i p_iU(x_i)$; a Bellman backup averages next-state values; a Monte Carlo update uses completed returns.
-4. **State the inference limit.** Optimistic reachable sets do not prove guaranteed success; a value for one fixed policy is not an optimal control solution; one episode or one sampled model outcome does not prove a population expectation.
-
-For the review's two-coin preference problem, equal expected dollars are insufficient: the correct bridge is that Game 2 is a half chance of a sure $50$ and a half chance of Game 1. Under the expected-utility independence assumption, preferring Game 2 implies preferring the sure $50$ to Game 1. For the passive $S_0\to S_1\to S_2$ trajectory, the actual values are $U^\pi(S_2)=0$, $U^\pi(S_1)=1$, and $U^\pi(S_0)=\gamma$, but MC, TD(0), and ADP reach or approximate them through different evidence and update schedules. Those derivations are expanded in the tutorial chapter.
-
-## 3. Bridge to the next lecture
-
-The first seven weeks either use a known planning model, estimate values directly from experience, or use a provided simulator for decision-time search. Week 9 asks what happens when the simulator itself must be learned from transitions. The Week 8 review exposes the prerequisite: a model needs explicit state, action, reward, and transition semantics. If the delayed robot's pending state is omitted, a learned dynamics model built on cell coordinates alone would inherit a non-Markov representation and produce unreliable plans even with a powerful neural network.
-
-<reviewkit>
-<takeaways>
-- Week 8 is mid-term consolidation in the supplied course overview, not a new lecture method.
-- Use the official Tutorial 5 Week 7 review to test planning, utility, delayed MDP, and passive-RL prerequisites.
-- State the model, compute with the matching rule, and say exactly what the answer proves.
-</takeaways>
-<qprompt/>
-</reviewkit>
-
-## References
-
-- *Course Overview.pdf*, CS4246/CS5446, slide 3 (Week 8 mid-term schedule).
-- *Tutorial5.pdf*, official AY2026/27 Tutorial 5 Week 7 Mid-Term Review, 4 pages.
-
----
-
-# Week 9 - Model-Based Reinforcement Learning: Learned Dynamics, Planning, Dyna-Q, and Latent World Models
+# Week 8 - Model-Based Reinforcement Learning: Learned Dynamics, Planning, Dyna-Q, and Latent World Models
 
 <draft>
 - 1. Why a learned model is useful and how it is estimated.
@@ -7014,7 +6824,7 @@ The first seven weeks either use a known planning model, estimate values directl
 </draft>
 
 
-The earlier weeks supplied two ways to improve a policy: learn directly from experience, or search from the current state with a simulator. **Model-based RL connects them** by learning the simulator itself. The course overview places this lecture in **Week 9**; its corresponding Tutorial 7 sheet is labeled **Week 10**, one week later. Game theory then changes the environment assumption: another decision maker may adapt to our policy, so a single-agent optimal response need not be stable.
+The earlier weeks supplied two ways to improve a policy: learn directly from experience, or search from the current state with a simulator. **Model-based RL connects them** by learning the simulator itself. This study sequence numbers the model-based RL lecture as **Week 8**; the corresponding Tutorial 7 sheet retains its original **Week 10** label. Game theory then changes the environment assumption: another decision maker may adapt to our policy, so a single-agent optimal response need not be stable.
 
 ## 1. Model-based reinforcement learning: learn a model, then choose how to use it
 
@@ -7150,17 +6960,6 @@ The second slide places symbolic planning, tabular RL, neural model-free RL, lea
 
 Problem 1 distinguishes expected Bellman integration from one noisy Q-planning sample. Problem 2 demonstrates why a conditional mean can be physically impossible. Problem 3 classifies Q-planning as background work and MCTS/MPC as decision-time work, computes $6.6>5.8$ for the two MPC sequences, and explains why MuZero can plan without pixel reconstruction. Problem 4 contrasts DreamerV3's imagined policy learning with TD-MPC2's receding-horizon action choice; its terminal-value example gives $8.66>6.51$. In every case, specify whether the result is an expectation under the model, a single stochastic model draw, or an observed environment transition.
 
-<reviewkit>
-<takeaways>
-- A learned dynamics model is useful only when it preserves decision-relevant consequences.
-- Full-model Bellman backups integrate branches; Q-planning uses simulated samples; Dyna-Q mixes real and simulated updates.
-- MCTS and MPC focus compute at decision time. MPC executes one action and replans.
-- MuZero searches with a latent model; DreamerV3 trains a policy in imagination; TD-MPC2 optimizes short latent rollouts with a terminal value.
-- Model bias can compound across imagined steps and be exploited by the planner.
-</takeaways>
-<qprompt/>
-</reviewkit>
-
 ## References
 
 - Gopalan, A. *Lecture-rl-model-based.pdf*, CS4246/CS5446, AY2026/27 Semester 1, 64 slides; two-slide addendum.
@@ -7172,7 +6971,7 @@ Problem 1 distinguishes expected Bellman integration from one noisy Q-planning s
 
 ---
 
-# Week 10 - Game Theory: Strategic Interaction, Nash Equilibrium, Welfare, and Minimax
+# Week 9 - Game Theory: Strategic Interaction, Nash Equilibrium, Welfare, and Minimax
 
 <draft>
 - 1. Identify players, actions, payoffs, information and strategic dependence.
@@ -7182,7 +6981,7 @@ Problem 1 distinguishes expected Bellman integration from one noisy Q-planning s
 - 5. Tutorial 8 complete matrix practice and limitations of equilibrium predictions.
 </draft>
 
-The decision-theory chapter asks what one agent should do when uncertainty is exogenous. Here the uncertainty includes other agents' choices. The course overview places this lecture in **Week 10**, while its Tutorial 8 sheet is labeled **Week 11**. An outcome may be individually stable yet collectively poor, which is why equilibrium and welfare must be checked separately.
+The decision-theory chapter asks what one agent should do when uncertainty is exogenous. Here the uncertainty includes other agents' choices. This study sequence numbers game theory as **Week 9**; its Tutorial 8 sheet retains its original **Week 11** label. An outcome may be individually stable yet collectively poor, which is why equilibrium and welfare must be checked separately.
 
 ## 1. Game theory: from a fixed environment to strategic opponents
 
@@ -7287,16 +7086,6 @@ For trustworthy AI, stability alone is insufficient: a stable joint policy can b
 
 The lecture's chicken payoff example is not numerically identical to the Tutorial 8 chicken matrix; the indifference probability above applies to **Tutorial 8**. Use the given matrix rather than memorizing a probability. Battle of the Sexes has two pure coordination equilibria and one mixed equilibrium; its randomization yields lower expected payoffs than successful coordination. Equilibrium predicts stability conditional on assumptions about rationality and knowledge, but does not choose between multiple equilibria or guarantee fair outcomes.
 
-<reviewkit>
-<takeaways>
-- A game requires strategic interdependence, not merely several named organizations.
-- Pure Nash equilibrium is a mutual best response; Pareto efficiency is a separate outcome comparison.
-- Mixed equilibria equalize expected payoffs of actions in support.
-- In finite two-player zero-sum games, maximin and minimax agree.
-</takeaways>
-<qprompt/>
-</reviewkit>
-
 ## References
 
 - Gopalan, A. *Lecture-game.pdf*, CS4246/CS5446, AY2026/27 Semester 1, 69 slides. The “(1)” download is the same deck.
@@ -7304,7 +7093,7 @@ The lecture's chicken payoff example is not numerically identical to the Tutoria
 
 ---
 
-# Week 11 - Foundation-Model-Based Decision Making: Agentic Systems, Human Alignment, and Reasoning-Aware Learning
+# Week 10 - Foundation-Model-Based Decision Making: Agentic Systems, Human Alignment, and Reasoning-Aware Learning
 
 <draft>
 - 1. Bridge sequential decision problems to an agentic decision loop and BDI.
@@ -7314,7 +7103,7 @@ The lecture's chicken payoff example is not numerically identical to the Tutoria
 - 5. Explain outcome and process supervision, GRPO, self-rewarding, and evaluation limits.
 </draft>
 
-Weeks 7, 9, and 10 considered search, learned models, and strategic choices. Week 11 asks how a large foundation model (LFM) can participate in those decision systems **while remaining grounded in human goals and constraints**. The lecture deck's title page has no week number, but the supplied *Course Overview*, slide 3, places foundation-model agents and human–AI alignment in Week 11. A model's ability to generate fluent plans does not itself establish that its actions are feasible, authorized, safe, or useful.
+Weeks 7, 8, and 9 considered search, learned models, and strategic choices. Week 10 asks how a large foundation model (LFM) can participate in those decision systems **while remaining grounded in human goals and constraints**. The lecture deck's title page has no week number; the supplied *Course Overview*, slide 3, calls this calendar Week 11, while this mid-term-free study sequence calls it Week 10. A model's ability to generate fluent plans does not itself establish that its actions are feasible, authorized, safe, or useful.
 
 ## 1. From an MDP to an agentic system
 
@@ -7369,7 +7158,7 @@ Chain-of-thought (CoT) prompting asks a model to generate intermediate steps bef
 
 For planning, compare the alternatives by where validity comes from. **Plan-and-Solve** decomposes first, then executes. **Tree of Thoughts** explores and backtracks among candidate thought paths. **LLM+P** translates a problem into a formal planning language such as PDDL and delegates search to a planner. **LLM-Modulo** puts an external verifier around proposed plans. **ReAct** interleaves tool use with observation. In every case, a verifier can only validate the model and constraints it was given; a correct PDDL plan for an incorrect world model can still fail in reality.
 
-An assurance workflow should check: (1) whether observations/retrieved evidence support the current belief, (2) whether the goal reflects the person's actual request, (3) whether the plan respects permissions and resource constraints, (4) whether a tool reported success, and (5) whether the observed outcome meets the task criterion. This connects Week 1's symbolic validity, Week 3's utility, Week 7's search, and Week 10's model error into one system-level test.
+An assurance workflow should check: (1) whether observations/retrieved evidence support the current belief, (2) whether the goal reflects the person's actual request, (3) whether the plan respects permissions and resource constraints, (4) whether a tool reported success, and (5) whether the observed outcome meets the task criterion. This connects Week 1's symbolic validity, Week 3's utility, Week 7's search, and Week 8's model error into one system-level test.
 
 ## 4. AI-guided learning from outcomes and processes
 
@@ -7391,24 +7180,13 @@ Take the lecture's example: a person asks for a slide-ready decision-loop diagra
 
 The first draft may put annotations in the wrong place. The human's correction (“side labels”) updates the task constraints. The planner then revises its layout, the executor renders a new artifact, and the critic checks label order, file validity, and visual legibility. The human can review or approve the consequential output. The final response should identify the actual rendered file and any remaining uncertainty. If rendering fails, the agent should preserve that failure in its report rather than presenting planned work as completed work.
 
-This task also separates three meanings of “learning”: (1) the current context now records the corrected label preference, (2) durable memory might store a preference with provenance and expiry if authorized, and (3) parameter training would require a later dataset and optimization step. The lecture's Sense → Reason → Plan → Act → Learn diagram can describe all three only if the implementation states which one occurred. The same distinction matters in Week 9 model-based RL: updating a learned world model from fresh transitions is a different process from replanning with a fixed model after an observation.
+This task also separates three meanings of “learning”: (1) the current context now records the corrected label preference, (2) durable memory might store a preference with provenance and expiry if authorized, and (3) parameter training would require a later dataset and optimization step. The lecture's Sense → Reason → Plan → Act → Learn diagram can describe all three only if the implementation states which one occurred. The same distinction matters in Week 8 model-based RL: updating a learned world model from fresh transitions is a different process from replanning with a fixed model after an observation.
 
 ### 5.2 Design an evaluation that can catch attractive failure
 
 Suppose an agent produces a visually polished diagram with the wrong institutional logo. A final-output aesthetic score might pass, while source correctness fails. Evaluate each layer with a separate check: **grounding** (asset provenance), **planning** (all required labels present), **execution** (render/compile actually succeeded), **safety and permissions** (authorized asset and tool use), **outcome** (human-readable diagram), and **reporting honesty** (claims match the tool trace). Human intervention latency and the ability to revise or stop the workflow are additional operational measures.
 
 Preference optimization can improve average judged quality yet still miss this exact failure if the comparison data rarely contain wrong-logo cases. An AI judge may share the same mistaken assumption as the generator. External verification of the logo and a targeted holdout test are therefore complementary to RLHF, DPO, RLAIF, or GRPO. This is the practical meaning of the lecture's human-alignment theme: a reward or preference signal is a *measurement* of the objective, not the objective itself.
-
-<reviewkit>
-<takeaways>
-- An LFM can ground, plan, execute through tools, or critique; these roles need explicit interfaces and checks.
-- SFT imitates demonstrations; RLHF optimizes a learned reward; DPO trains directly on preference pairs; RLAIF changes the feedback source.
-- PPO's clipped rollout ratio and RLHF's fixed-reference KL term serve different purposes.
-- CoT and planning techniques operate at decision time unless their traces enter a later training step.
-- GRPO uses within-prompt relative rewards without a value critic; self-rewarding loops require independent evaluation.
-</takeaways>
-<qprompt/>
-</reviewkit>
 
 ## References
 
@@ -7419,7 +7197,7 @@ Preference optimization can improve average judged quality yet still miss this e
 
 ---
 
-# Tutorial Practice - Tutorial 5 (Week 7) and Tutorial 6 (Week 9)
+# Tutorial Practice - Tutorial 5 and Tutorial 6
 
 <draft>
 - 1. Tutorial 5: planning applicability, reachable-set bounds, preference, utility, delayed MDP and passive RL.
@@ -7501,11 +7279,102 @@ The rollout problem averages three simulated returns per initial action before c
 ## Source audit for these chapters
 
 - Later lecture concepts: *Model-based Techniques Reinforcement Learning.pdf* (64 slides), the two-page *Dyna-Q.pdf* addendum, *Game Theory.pdf* (69 slides), and *Foundation-Model-Based Decision Making.pdf* (64 slides). The supplied *Course Overview*, slide 3, assigns these topics to lecture Weeks 9, 10, and 11 respectively; the Foundation-Model deck itself does not print a week number. Existing Weeks 6–7 cover reward shaping and guided decision making in depth.
-- Practice: the supplied official *Tutorial5.pdf* through *Tutorial8.pdf* sheets are labeled Week 7, Week 9, Week 10, and Week 11 respectively. These are **tutorial labels**, not the corresponding lecture weeks in *Course Overview*: the latter places Guided Decision Making in Week 7, Model-Based RL in Week 9, Game Theory in Week 10, and Foundation-Model Alignment in Week 11.
+- Practice: the supplied official *Tutorial5.pdf* through *Tutorial8.pdf* sheets are labeled Week 7, Week 9, Week 10, and Week 11 respectively. These are the original **tutorial-sheet labels**. This study sequence omits the mid-term-only week and places Guided Decision Making in Week 7, Model-Based RL in Week 8, Game Theory in Week 9, and Foundation-Model Alignment in Week 10.
 - The supplied Team 26 submissions in `[02] Chao Chien Hung/` were compared against the official Tutorial 5–8 question sheets for the numerical and conceptual answers above. The earlier *Tutorial5_Team8.pdf* is another student submission; its image-based work was checked in the previous audit. Student solutions support cross-checking but are not official answer keys. Tutorial 1–4 sheets are labeled Weeks 3–6 in the Team 26 copies and belong to the already detailed early-week material, so this continuation focuses on Tutorial 5–8.
 
 <reviewkit>
 <takeaways>
+- **The Closed-Loop Rational Agent:** Modern AI planning formalizes intelligence as a continuous Sensing-Communicating-Acting feedback loop, integrating perception, modeling, reasoning, planning, and decision making across diverse real-world domains.
+- **The Simple vs. Complex Planning Matrix:** Classical planning operates on toy assumptions (discrete, deterministic, static, fully observable), whereas real-world industrial planning demands handling uncertainty, continuous dynamics, multi-agent competition, and human factors.
+- **Four Generations of Agents:** Intelligent systems have evolved from 1980s Symbolic AI (STRIPS logic) through 2000s Reinforcement Learning (trial-and-error policies) and 2020s LLM Agents (ReACT natural language reasoning) to 2030s tool-using multi-agent ecosystems.
+- **PDDL Factored Representation:** States are conjunctions of ground atomic fluents governed by the Closed-World Assumption (CWA) and Unique Names Assumption (UNA). Actions update states via set operations: $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.
+- **The Frame Problem Solution:** PDDL resolves the persistence of facts through the inertia assumption, while propositional SATPlan encodes Successor-State Axioms to reduce $\mathcal{O}(mn)$ naive frame axioms to $\mathcal{O}(n)$ clauses.
+- **Progression vs. Regression:** Forward search navigates $2^n$ ground states, while backward regression searches $3^n$ partial state descriptions using Most General Unifiers (MGU), aggressively pruning irrelevant actions.
+- **SATPlan Propositional Reduction:** Converts planning into bounded CNF formulas evaluated by DPLL/CDCL SAT solvers, guaranteed to extract shortest-length plans if one exists.
+- **Computational Complexity:** Classical planning plan existence (PlanSAT) is PSPACE-complete in general, while bounded length planning (Bounded PlanSAT) is NP-complete.
+- **Modern LFM-Assisted Planning:** Modern paradigms combine LLM commonsense with classical verification: LLM-guided PDDL authoring (Mahdavi 2024), hybrid MCTS subgoal planning (Kwon 2025), LLM heuristic code generation (Corrêa 2025), and generalized PDDL programs (Silver 2024).
+- **Responsible AI Governance:** Trusted autonomous planning requires balancing raw performance against societal constraints (safety, privacy, fairness, transparency) embedded systematically throughout the SDLC.
+- **The Curse of Flat Planning:** Non-hierarchical planning scales as $\mathcal{O}(b^d)$, making even simple 30-step plans ($\mathcal{O}(10^{30})$) completely intractable for classical search engines.
+- **Explicit vs. Implicit Heuristics:** Search algorithms use explicit heuristic functions $h(s)$ to guide queue expansion, whereas logic/SAT solvers rely on implicit clause and variable ordering heuristics.
+- **Problem Relaxation:** Dropping action preconditions derives the Misplaced Tiles heuristic; dropping delete effects derives Manhattan Distance, $h_{\max}$ (admissible), $h_{\text{add}}$ (informative but inadmissible), and $h_{\text{FF}}$ (Fast-Forward greedy relaxed plan length).
+- **The Sussman Anomaly:** Highlights the non-serializability of independent subgoals, where achieving one goal requires actively undoing a previously established goal.
+- **State Abstraction Power:** In Air Cargo transport, grouping 10 airports, 50 planes, and 200 cargos into 5 composite corridors collapses the state space from $10^{405}$ to $10^{11}$ states.
+- **Hierarchical Task Networks (HTN):** Break tasks into High-Level Actions (HLAs) that encode procedural domain knowledge. In the Changi Airport case study, HTN decomposition reduces planning cost from $\mathcal{O}(10^{30})$ to $\approx 34$ operations ($\mathcal{O}(r^{(d-1)/(k-1)})$).
+- **Reachable Sets & Downward Refinement Property:** $\text{REACH}(s, h)$ represents all states reachable by any HLA implementation. The Downward Refinement Property guarantees that if an abstract plan intersects the goal, a valid primitive plan is guaranteed to exist.
+- **Tilde Notation ($\sim$):** Represents deliberate agent choices within HLAs ($\tilde{+} A$ possibly adds $A$, $\tilde{-} A$ possibly deletes $A$, $\tilde{\pm} A$ gives full control).
+- **Approximate Reachable Sets:** Optimistic $\text{REACH}^+$ overestimates reachability and is safe for pruning failures; pessimistic $\text{REACH}^-$ underestimates reachability and is safe for certifying success without further refinement.
+- **PANDA Framework & HDDL:** PANDA provides industrial HTN plan-space, progression, and SAT solvers, utilizing the HDDL standard for hierarchical benchmarking.
+- **The Core Decision Triad:** A rational agent combines probabilistic Beliefs, subjective Preferences (Utility function), and an MEU Decision Process to act optimally under uncertainty.
+- **Bayesian Observation Dynamics:** In Panda Lulu's lunch choice, sensory observations update posterior beliefs via Bayes' Rule, altering expected utilities and reversing optimal actions ($O=\text{rustling} \implies \text{Berry } (4.0 > 2.5)$; $O=\text{silence} \implies \text{Grove } (6.67 > 4.0)$).
+- **VNM Axioms of Rationality:** Six foundational conditions (Orderability, Transitivity, Continuity, Substitutability, Monotonicity, Decomposability) mathematically guarantee the existence of an expected utility function.
+- **Positive Affine Invariance:** Utility scales are unique strictly up to $U'(s) = a U(s) + b$ with $a > 0$. Shifting or scaling leaves decisions unchanged, but strictly forbids interpersonal utility comparisons between different agents.
+- **Expected Monetary Value vs. Expected Utility:** Rational agents maximize Expected Utility, not Expected Monetary Value (EMV). Under concave utility of money, an agent correctly declines the $\$1\text{M}$ coin flip gamble despite its positive monetary expectation ($\$1.25\text{M}$).
+- **Risk Premium:** Defined as $\text{EMV} - \text{CE}$, representing the cash value an agent sacrifices to eliminate risk. Concave curves indicate risk aversion ($\text{Risk Premium} > 0$), linear curves indicate risk neutrality, and convex curves indicate risk seeking.
+- **Prescriptive Decision Analysis:** Ronald Howard's framework translates messy real-world dilemmas into structured influence diagrams (decision, chance, and utility nodes) and decision trees solved via backward induction (Martian Adventures case study).
+- **The Game-Theoretic Paradox:** As proven by the Pandas' Dilemma (Prisoner's Dilemma), independent self-interested agents inevitably converge on a suboptimal Nash Equilibrium $(+1, +1)$ despite the existence of a Pareto optimal cooperative alternative $(+3, +3)$.
+- **The Core MDP Paradigm:** An MDP $\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \gamma \rangle$ models sequential decision problems in fully observable, stochastic environments where actions influence both immediate rewards and future state distributions.
+- **The Markov Property:** Future transitions depend exclusively on the current state and action ($P(S_{t+1} \mid S_t, A_t)$), allowing memoryless optimization without storing historical trajectories.
+- **Horizon & Stationarity:** Infinite-horizon discounted formulations ($\gamma < 1$) guarantee bounded cumulative rewards ($U_{\max} \le \frac{R_{\max}}{1 - \gamma}$) and yield time-invariant stationary optimal policies $\pi^*(s)$.
+- **Bellman Expectation vs. Optimality Equations:** The Bellman Expectation Equation linearly evaluates a fixed policy ($U^\pi = R^\pi + \gamma T^\pi U^\pi$), while the Bellman Optimality Equation non-linearly defines the global upper bound ($U(s) = \max_a \sum_{s'} P(s' \mid s, a)[R + \gamma U(s')]$).
+- **The Q-Function Duality:** Action-utility values $Q(s, a)$ represent the expected return of taking action $a$ in state $s$ and acting optimally thereafter, enabling direct policy extraction ($\pi^*(s) = \arg\max_a Q(s, a)$) without transition probability lookahead.
+- **Value Iteration as a Contraction Mapping:** Value Iteration executes iterative Bellman backups ($U_{i+1} \leftarrow B U_i$). By the Banach Fixed-Point Theorem, $B$ is a contraction with factor $\gamma$ under the max norm, guaranteeing geometric convergence to a unique fixed point.
+- **Error Dynamics & Policy Loss:** As illustrated in the $4 \times 3$ world (Figure 17.8), policy loss reaches zero far earlier (iteration 4) than utility convergence (iteration 14), because ranking actions under argmax is robust to small value errors.
+- **Policy Iteration Efficiency:** Policy Iteration alternates between exact Policy Evaluation ($\mathcal{O}(|\mathcal{S}|^3)$ linear system without max operator) and Policy Improvement ($\mathcal{O}(|\mathcal{S}|^2 |\mathcal{A}|)$). By the Policy Improvement Theorem (Sutton & Barto 4.2), each consecutive policy is monotonically superior, terminating in finite steps.
+- **Passive RL Showdown (ADP vs. TD vs. MC):** ADP learns empirical models $\hat{P}, \hat{R}$ and solves global linear Bellman systems with maximal data efficiency (converging in 20-30 trials); Monte Carlo directly averages returns across visits ($U(s) \leftarrow \frac{1}{N(s)}\sum G_t$) with zero bias but high variance and episode-delayed updates; TD(0) bootstraps online from successive state estimates ($U(s) \leftarrow U(s) + \alpha [R + \gamma U(s') - U(s)]$) with low variance and step-level updates.
+- **The Unified Spectrum (n-Step TD & TD(lambda)):** $n$-step returns bridge 1-step TD(0) and $\infty$-step Monte Carlo. $\text{TD}(\lambda)$ geometrically weights $n$-step returns with $(1-\lambda)\lambda^{n-1}$, converging to TD(0) as $\lambda \to 0$ and Monte Carlo as $\lambda \to 1$, mechanistically implemented via backward-view eligibility traces.
+- **Active ADP Failure & Exploration Functions:** Purely greedy active ADP gets trapped in suboptimal policies (e.g. state $(2,1)$ in $4 \times 3$ Grid World going Right instead of Left) because actions serve a dual role (earning reward vs. gathering information). Exploration functions $f(u, n) = R^+$ if $n < N_e$ else $u$ enforce optimism in the face of uncertainty, driving policy loss to zero in 20 trials.
+- **SARSA vs. Q-Learning in Cliff Walking:** SARSA is on-policy, evaluating the action $a'$ actually taken by the behavior policy, learning a safe route away from hazards during $\epsilon$-greedy exploration (return $\approx -25$). Q-learning is off-policy, evaluating target greedy actions $\max_{a'} Q(s', a')$, learning the shortest optimal cliff-edge route but frequently falling off during exploration (return $\approx -50$). Under GLIE ($\epsilon \to 0$), both converge to the optimal path.
+- **The Curse of Dimensionality:** State spaces grow exponentially ($|\mathcal{S}| \approx 10^{20}$ in Backgammon, $10^{40}$ in Chess, $10^{172}$ in Go), rendering tabular lookups impossible. Function approximation enables compact representation and generalization to unvisited states.
+- **Linear vs. Neural Approximators:** Linear models ($\theta^T f(s)$) suffer from structural under-parameterization bias when approximating oscillatory value functions. Deep neural networks automatically learn hierarchical non-linear feature representations directly from sensory observations.
+- **The Widrow-Hoff (Delta) Rule:** Minimizing per-sample squared error yields the Delta Rule ($\Delta \theta_i = \alpha \delta f_i$). Unlike naive batch gradient descent (which requires storing historical datasets and computing offline sums), Widrow-Hoff performs instantaneous online updates on streaming transitions.
+- **Semi-Gradient TD:** Temporal difference targets depend on weights $\boldsymbol{	heta}$ but are treated as fixed constants during differentiation. On-policy linear TD(0) is guaranteed to converge under standard stochastic approximation conditions.
+- **The Deadly Triad:** Unbounded parameter divergence occurs when Function Approximation, Bootstrapping, and Off-Policy learning coincide. Baird\'s 7-state star counterexample proves that semi-gradient off-policy linear TD explodes to infinity even with zero transition rewards!
+- **DQN Breakthroughs:** Deep Q-Networks stabilize deep RL via (1) Experience Replay (breaks sample autocorrelation) and (2) Fixed Target Networks (freezes target weights $\boldsymbol{	heta}^-$, resolving moving target oscillations).
+- **DQN Extensions & Bottlenecks:** Double DQN eliminates maximization overestimation bias; Multi-step learning accelerates reward propagation; Distributional RL models return distributions. However, vanilla DQN cannot handle continuous action spaces, scales poorly with $|\mathcal{A}|$, and cannot model stochastic policies.
+- **The Policy Gradient Theorem:** Directly parameterizes stochastic policies ($\pi_\theta(a \mid s)$), proving that $\nabla_\theta J(\boldsymbol{\theta}) = \mathbb{E}[Q^{\pi_\theta}(s, a) \nabla_\theta \log \pi_\theta(a \mid s)]$ without requiring derivatives of environmental transition physics.
+- **Baseline Variance Reduction:** Subtracting an action-independent baseline $B(s) = U(s)$ leaves policy gradients strictly unbiased ($\mathbb{E}[B(s) \nabla \log \pi] = 0$) while slashing gradient variance (collapsing sample variance from 15,275 to 28.4).
+- **Actor-Critic Frameworks:** The Actor updates policy parameters $\boldsymbol{	heta}$ along the policy gradient, while the Critic updates value parameters $\mathbf{w}$ to estimate advantages via 1-step TD errors $\delta_t$. Vanilla AC is on-policy and stable, while off-policy variants (SAC) use entropy regularization and double target critics.
+- **Advanced Policy Search (TRPO & PPO):** TRPO enforces a second-order KL divergence speed limit to guarantee monotonic policy improvement ($J(\theta_{\text{new}}) \ge J(\theta_{\text{old}})$). Proximal Policy Optimization (PPO) simplifies this via a first-order Clipped Surrogate Objective, establishing the industry standard for continuous robotic control and LLM post-training alignment (RLHF).
+- **The Curse of Sparse Native Rewards:** Real-world environmental rewards are almost universally sparse, delayed, and non-informative. In zero-reward in-process states, standard Q-learning executes empty updates ($0 \leftarrow 0$), and algorithms only begin to learn after stumbling upon a rare goal state through random exploration (e.g., $y_0 \approx \gamma^{20} \times 1 \approx 0.12$).
+- **The Reward Shaping Paradigm:** General reward shaping reformulates the feedback landscape as $R^{\text{new}} = \alpha R^{\text{env}} + \beta R^{\text{sha}}$, converting sparse binary goals into dense intermediate milestone gradients.
+- **Exploration Shaping & RND:** Novelty bonuses reward under-explored states. While tabular counters use $1/(N(s)+1)$ and continuous domains use pseudo-counts, high-dimensional spaces deploy Random Network Distillation (RND), measuring prediction errors between a trained predictor and a frozen target network ($\|f(s) - \hat{f}_\theta(s)\|^2$).
+- **The Noisy-TV Vulnerability:** Pure prediction-error novelty is vulnerable to environmental stochastic noise (e.g., random static on a TV screen). The agent becomes hypnotized by unpredictable noise, harvesting infinite exploration bonuses while abandoning the task.
+- **Exploitation Shaping & Process Supervision:** Assigning bonuses to critical bottleneck states accelerates optimization. In LLM multi-step reasoning, Math-Shepherd replaces sparse outcome supervision with process-level step rewards ($y_{s_i}^{\text{SE}}$) evaluated via automated Monte Carlo tree rollouts.
+- **Reward Hacking in Process Supervision:** PRM-guided reasoning is vulnerable to Goodhart's Law and reward hacking: policy generators exploit PRM heuristics via verbosity bias, superficial math jargon, false-positive rollouts (accidental error cancellation), and hallucinated lemmas. Robust process supervision requires coupling PRMs with final outcome verification, length penalties, and KL divergence constraints.
+- **Potential-Based Policy Invariance:** Arbitrary reward shaping risks policy corruption (reward gaming). Ng, Harada, and Russell proved that a consistently signed potential difference ($R^{\text{sha}} = \phi(s) - \gamma \phi(s')$, or its negative with a negated potential) induces telescoping cancellation along trajectories, guaranteeing that the optimal policy $\pi^*$ remains identical to the native MDP. Outside PBRS, heuristic methods lack theoretical invariance and are justified empirically by sample-efficiency gains.
+- **RLHF in Open-Ended Domains:** For subjective LLM generation lacking programmatic rewards (self-introductions, coffee shop names, LinkedIn headlines), Reinforcement Learning from Human Feedback trains a regression reward model ($r_\theta(x, y) \in \mathbb{R}$) on human pairwise preference rankings using the Bradley-Terry logistic loss ($-\log \sigma(r(y_+) - r(y_-))$).
+- **Advanced Autonomous Shaping Architectures (Ma et al., NUS):**
+- **ReLara (ICML 2024):** Decouples execution from guidance via a two-agent architecture: a Policy Agent ($\mathcal{A}_P$) executing actions and an Assistant Reward Agent ($\mathcal{A}_R$) learning shaping bonuses as a secondary MDP.
+- **CenRA (NeurIPS 2025):** Deploys a Centralized Reward Agent ($\mathcal{A}^{\text{rwd}}$) analyzing concatenated multi-task replay buffers ($\bigcup \mathcal{D}_i$) to distill universal structural meta-knowledge across multiple policy agents.
+- **SASR (ICLR 2025):** Formulates Self-Adaptive Success Rate shaping by computing spatial densities via Kernel Density Estimation and Random Fourier Features, modeling localized Beta distributions ($\text{Beta}(\tilde{N}_S, \tilde{N}_F)$) that transition seamlessly from early-stage exploration to late-stage exploitation.
+- **The Curse of Dimensionality in Planning:** When state spaces scale exponentially ($|\mathcal{S}| = |\mathcal{S}_{\text{local}}|^K$), global offline dynamic programming (Value Iteration) and global tabular RL become intractable. Modern systems bypass this via Decision-Time Online Search or Demonstration-Based Offline Learning.
+- **Decision-Time vs. Demonstration-Based Planning:** Decision-time planning simulates futures locally at runtime from the current state $s_0$ to choose immediate action $a^*$; demonstration-based planning learns safe, competent global policies from expert trajectories before runtime.
+- **The Four Utility Quantities:** Realized return $G_t$, expected policy utility $U^\pi(s_t) = \mathbb{E}[G_t \mid s_t]$, optimal utility $U(s_t) = \max_\pi U^\pi(s_t)$, and action-utility $Q^\pi(s_t, a_t) = \mathbb{E}[G_t \mid s_t, a_t]$.
+- **Rollout Algorithms:** Execute one-step policy improvement at decision time by simulating $N$ trajectories under a rollout policy $\pi$ for each candidate action, evaluating $\hat{Q}^\pi(s, a) \approx \frac{1}{N} \sum G_t$.
+- **Rollout Continuation:** Hold each candidate first action fixed, then follow the same base policy from its resulting state. A terminal rollout uses the full return; a cutoff needs a leaf estimate or accepts truncation bias. Exact $Q^\pi$ supports policy improvement, while finite samples do not guarantee it.
+- **The Four MCTS Phases:** (1) **Selection** via a tree policy balancing exploration/exploitation; (2) **Expansion** of untried child nodes; (3) **Simulation** via fast rollouts to terminal states; (4) **Backup** of discounted returns $G_t$ upward to root $s_0$. MCTS is an anytime algorithm.
+- **MCTS Memory and Backup:** The tree and $N,W,\hat Q$ persist across trials for the current decision; an action edge is expanded once but revisited many times. Each new sample updates only its selected path, using $\hat Q_{N+1}=\hat Q_N+(g-\hat Q_N)/(N+1)$, with discount and player perspective handled at each ancestor.
+- **The UCT1 Selection Formula:** Action selection at node $n$ follows $\pi_{\text{UCT}} = \arg\max_a [ \hat{Q}(s, a) + c \sqrt{\ln N(s) / N(s, a)} ]$. Unvisited actions require a separate priority convention because the formula is undefined at $N(s,a)=0$; under ordinary finite-action UCT this encourages initial trials, while the bonus continues to allocate later trials between promising and under-sampled branches.
+- **AlphaGo Zero PUCT Innovation:** Replaces noisy Monte Carlo rollouts with a neural Value Head $v_\theta(s)$, and guides tree expansion via a Policy Head prior $P(s, a)$ in the PUCT formula, scaling MCTS to Go's $10^{170}$ states.
+- **REINFORCE and AlphaZero Roles:** REINFORCE updates a policy with sampled-return gradients during training; MCTS spends decision-time compute with a model. AlphaZero-style self-play generates search visit targets and outcomes, then network optimization learns policy priors and state values. This loop resembles approximate policy iteration, without guaranteeing improvement on every finite search.
+- **The Breakdown of Supervised Learning in Sequential Decisions:** Behavioral Cloning treats expert actions as supervised labels. Because agent actions alter future states, the i.i.d. assumption is violated. Minor errors cause covariate shift into unvisited states, inducing compounding quadratic errors ($\mathcal{O}(T^2 \epsilon)$) and failure to recover.
+- **DAgger Resolves Distribution Mismatch:** Dataset Aggregation iteratively executes the learner's own policy $\pi_i$, collects visited states, queries the expert for optimal actions on those exact visited states, and retrains on aggregated data $\mathcal{D} \cup \mathcal{D}_i$, reducing compounding error to $\mathcal{O}(T \epsilon)$.
+- **DAgger's $\beta$ Distinction:** Decaying $\beta$ changes who *visits* states, not who *labels* them: the expert oracle still supplies actions for learner-visited states. Scheduled sampling with fixed reference tokens lacks that general expert-on-new-prefix guarantee; BC/SFT exposure bias is a related distribution-shift analogy.
+- **GAIL Adversarial Imitation:** Generative Adversarial Imitation Learning matches state-action occupancy measures $\rho_\pi \approx \rho_E$ through an adversarial minimax game between a policy generator and a discriminator, eliminating the need for an interactive expert during training.
+- A learned dynamics model is useful only when it preserves decision-relevant consequences.
+- Full-model Bellman backups integrate branches; Q-planning uses simulated samples; Dyna-Q mixes real and simulated updates.
+- MCTS and MPC focus compute at decision time. MPC executes one action and replans.
+- MuZero searches with a latent model; DreamerV3 trains a policy in imagination; TD-MPC2 optimizes short latent rollouts with a terminal value.
+- Model bias can compound across imagined steps and be exploited by the planner.
+- A game requires strategic interdependence, not merely several named organizations.
+- Pure Nash equilibrium is a mutual best response; Pareto efficiency is a separate outcome comparison.
+- Mixed equilibria equalize expected payoffs of actions in support.
+- In finite two-player zero-sum games, maximin and minimax agree.
+- An LFM can ground, plan, execute through tools, or critique; these roles need explicit interfaces and checks.
+- SFT imitates demonstrations; RLHF optimizes a learned reward; DPO trains directly on preference pairs; RLAIF changes the feedback source.
+- PPO's clipped rollout ratio and RLHF's fixed-reference KL term serve different purposes.
+- CoT and planning techniques operate at decision time unless their traces enter a later training step.
+- GRPO uses within-prompt relative rewards without a value critic; self-rewarding loops require independent evaluation.
 - Grounded planning actions must satisfy the literal schema; do not add unstated constraints.
 - Expected money and expected utility can rank lotteries differently.
 - A delayed action requires pending state to preserve the Markov property.
