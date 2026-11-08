@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5224-cloud-computing">
   <meta name="site:published_at" content="2026-08-30">
   <meta name="site:last_modified_at" content="2026-10-31">
-  <meta name="site:reading_time_minutes" content="387">
+  <meta name="site:reading_time_minutes" content="403">
   <meta name="site:source" content="notes/NUS CS5224 Cloud Computing/NUS CS5224 Cloud Computing.md">
   <script>
   (() => {
@@ -180,6 +180,7 @@
 <a class="note-toc-link level-2" href="#10-3-latency-bandwidth-and-physical-datacenter-distance">10.3 Latency, Bandwidth, and Physical Datacenter Distance</a>
 <a class="note-toc-link level-2" href="#10-4-compliance-data-localization-and-legal-risks">10.4 Compliance, Data Localization, and Legal Risks</a>
 <a class="note-toc-link level-2" href="#10-5-vendor-lock-in-and-cloud-repatriation">10.5 Vendor Lock-in and Cloud Repatriation</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-choose-the-layer-before-the-product">Exam reasoning bridge: choose the layer before the product</a>
 <a class="note-toc-link level-1" href="#11-summary">11. Summary</a>
 <a class="note-toc-link level-1" href="#references">References</a>
 <a class="note-toc-link level-1" href="#1-nist-sp-800-145-five-essential-characteristics">1. NIST SP 800-145: Five Essential Characteristics</a>
@@ -207,6 +208,7 @@
 <a class="note-toc-link level-1" href="#10-security-boundaries-and-code-vs-data-decoupling">10. Security Boundaries and Code vs. Data Decoupling</a>
 <a class="note-toc-link level-2" href="#10-1-shared-responsibility-model-and-trust-boundaries-2">10.1 Shared Responsibility Model and Trust Boundaries</a>
 <a class="note-toc-link level-2" href="#10-2-code-vs-data-decoupling-architecture">10.2 Code vs. Data Decoupling Architecture</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-separate-service-deployment-and-governance">Exam reasoning bridge: separate service, deployment, and governance</a>
 <a class="note-toc-link level-1" href="#11-summary-2">11. Summary</a>
 <a class="note-toc-link level-1" href="#references-2">References</a>
 <a class="note-toc-link level-1" href="#1-rapid-elasticity-and-resource-organisation-objectives">1. Rapid Elasticity and Resource Organisation Objectives</a>
@@ -229,6 +231,7 @@
 <a class="note-toc-link level-1" href="#7-cloud-bursting-architecture-scaling-on-premise-provisioning">7. Cloud Bursting Architecture (Scaling On-Premise Provisioning)</a>
 <a class="note-toc-link level-2" href="#7-1-burst-out-vs-burst-in">7.1 Burst Out vs. Burst In</a>
 <a class="note-toc-link level-2" href="#7-2-core-architectural-requirements">7.2 Core Architectural Requirements</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-identify-the-failure-and-the-control-loop">Exam reasoning bridge: identify the failure and the control loop</a>
 <a class="note-toc-link level-1" href="#8-summary">8. Summary</a>
 <a class="note-toc-link level-1" href="#references-3">References</a>
 <a class="note-toc-link level-1" href="#1-resource-hosting-paradigms-on-premise-vs-cloud-based">1. Resource Hosting Paradigms: On-Premise vs. Cloud-Based</a>
@@ -265,7 +268,9 @@
 <a class="note-toc-link level-2" href="#8-4-the-idling-energy-crisis-and-energy-proportional-computing">8.4 The Idling Energy Crisis and Energy-Proportional Computing</a>
 <a class="note-toc-link level-1" href="#9-datacenter-reliability-standards-uptime-institute-tiers-i-iv">9. Datacenter Reliability Standards: Uptime Institute Tiers I–IV</a>
 <a class="note-toc-link level-2" href="#9-1-exact-annual-downtime-calculation-methodology">9.1 Exact Annual Downtime Calculation Methodology</a>
+<a class="note-toc-link level-2" href="#worked-example-20-year-build-and-downtime-cost">Worked example: 20-year build and downtime cost</a>
 <a class="note-toc-link level-2" href="#9-2-tier-architecture-characteristics">9.2 Tier Architecture Characteristics</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-diagnose-time-and-cost-with-units">Exam reasoning bridge: diagnose time and cost with units</a>
 <a class="note-toc-link level-1" href="#10-summary">10. Summary</a>
 <a class="note-toc-link level-1" href="#references-4">References</a>
 <a class="note-toc-link level-1" href="#1-virtualization-definition-motivation-and-core-trade-offs">1. Virtualization Definition, Motivation, and Core Trade-Offs</a>
@@ -297,6 +302,7 @@
 <a class="note-toc-link level-2" href="#7-2-relationship-between-multitenancy-and-virtualisation">7.2 Relationship Between Multitenancy and Virtualisation</a>
 <a class="note-toc-link level-2" href="#7-3-six-key-characteristics-of-multi-tenancy">7.3 Six Key Characteristics of Multi-Tenancy</a>
 <a class="note-toc-link level-2" href="#7-4-data-tier-multi-tenancy-architectural-patterns">7.4 Data Tier Multi-Tenancy Architectural Patterns</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-locate-the-isolation-boundary">Exam reasoning bridge: locate the isolation boundary</a>
 <a class="note-toc-link level-1" href="#8-summary-2">8. Summary</a>
 <a class="note-toc-link level-1" href="#references-5">References</a>
 <a class="note-toc-link level-1" href="#1-cloud-providers-recap-workload-taxonomy">1. Cloud Providers Recap &amp; Workload Taxonomy</a>
@@ -345,24 +351,25 @@
 <a class="note-toc-link level-2" href="#10-3-aws-lambda-three-step-operational-lifecycle">10.3 AWS Lambda Three-Step Operational Lifecycle</a>
 <a class="note-toc-link level-2" href="#10-4-deployment-and-management-interfaces-for-aws-lambda">10.4 Deployment and Management Interfaces for AWS Lambda</a>
 <a class="note-toc-link level-1" href="#11-architectural-synthesis-the-cloud-application-spectrum">11. Architectural Synthesis: The Cloud Application Spectrum</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-map-work-to-a-service-model-and-execution-path">Exam reasoning bridge: map work to a service model and execution path</a>
 <a class="note-toc-link level-1" href="#12-summary">12. Summary</a>
 <a class="note-toc-link level-1" href="#references-6">References</a>
 <a class="note-toc-link level-1" href="#1-k-means-as-an-iterative-distributed-workload">1. K-means as an iterative distributed workload</a>
-<a class="note-toc-link level-2" href="#1-1-k-means-clustering-on-mapreduce">1.1 K-means clustering on MapReduce</a>
-<a class="note-toc-link level-2" href="#1-2-one-complete-map-shuffle-reduce-iteration">1.2 One complete map–shuffle–reduce iteration</a>
+<a class="note-toc-link level-2" href="#5-1-k-means-clustering-on-mapreduce">5.1 K-means clustering on MapReduce</a>
+<a class="note-toc-link level-2" href="#5-2-one-complete-map-shuffle-reduce-iteration">5.2 One complete map–shuffle–reduce iteration</a>
 <a class="note-toc-link level-1" href="#2-k-means-distribution-costs-and-result-interpretation">2. K-means distribution costs and result interpretation</a>
 <a class="note-toc-link level-1" href="#3-reconstruct-the-complete-emr-s3-iteration-workflow">3. Reconstruct the complete EMR/S3 iteration workflow</a>
 <a class="note-toc-link level-1" href="#4-map-the-algorithmic-choices-to-cloud-costs">4. Map the algorithmic choices to cloud costs</a>
+<a class="note-toc-link level-1" href="#5-video-sharing-saas-upload-encode-stream">5. Video-sharing SaaS: upload, encode, stream</a>
+<a class="note-toc-link level-2" href="#5-1-trace-a-single-upload-through-the-architecture">5.1 Trace a single upload through the architecture</a>
+<a class="note-toc-link level-2" href="#5-2-service-model-and-bottleneck-comparison">5.2 Service model and bottleneck comparison</a>
+<a class="note-toc-link level-2" href="#5-3-read-the-lecture-architecture-diagrams-as-a-data-flow">5.3 Read the lecture architecture diagrams as a data flow</a>
+<a class="note-toc-link level-2" href="#5-4-lecture-workload-and-capacity-arithmetic">5.4 Lecture workload and capacity arithmetic</a>
+<a class="note-toc-link level-2" href="#5-5-stage-by-stage-service-responsibility">5.5 Stage-by-stage service responsibility</a>
+<a class="note-toc-link level-1" href="#6-capacity-and-reliability-worked-from-the-lecture-workload">6. Capacity and reliability worked from the lecture workload</a>
+<a class="note-toc-link level-1" href="#7-price-the-complete-video-path-then-compare-alternatives">7. Price the complete video path, then compare alternatives</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-trace-one-request-and-one-failure">Exam reasoning bridge: trace one request and one failure</a>
 <a class="note-toc-link level-1" href="#references-7">References</a>
-<a class="note-toc-link level-1" href="#1-video-sharing-saas-upload-encode-stream">1. Video-sharing SaaS: upload, encode, stream</a>
-<a class="note-toc-link level-2" href="#1-1-trace-a-single-upload-through-the-architecture">1.1 Trace a single upload through the architecture</a>
-<a class="note-toc-link level-2" href="#1-2-service-model-and-bottleneck-comparison">1.2 Service model and bottleneck comparison</a>
-<a class="note-toc-link level-2" href="#1-3-read-the-lecture-architecture-diagrams-as-a-data-flow">1.3 Read the lecture architecture diagrams as a data flow</a>
-<a class="note-toc-link level-2" href="#1-4-lecture-workload-and-capacity-arithmetic">1.4 Lecture workload and capacity arithmetic</a>
-<a class="note-toc-link level-2" href="#1-5-stage-by-stage-service-responsibility">1.5 Stage-by-stage service responsibility</a>
-<a class="note-toc-link level-1" href="#2-capacity-and-reliability-worked-from-the-lecture-workload">2. Capacity and reliability worked from the lecture workload</a>
-<a class="note-toc-link level-1" href="#3-price-the-complete-video-path-then-compare-alternatives">3. Price the complete video path, then compare alternatives</a>
-<a class="note-toc-link level-1" href="#references-8">References</a>
 <a class="note-toc-link level-1" href="#1-infrastructure-as-code-iac">1. Infrastructure as Code (IaC)</a>
 <a class="note-toc-link level-2" href="#1-1-imperative-and-declarative-approaches">1.1 Imperative and declarative approaches</a>
 <a class="note-toc-link level-2" href="#1-2-drift-and-the-pets-versus-cattle-distinction">1.2 Drift and the pets-versus-cattle distinction</a>
@@ -371,7 +378,8 @@
 <a class="note-toc-link level-2" href="#2-2-compare-tool-boundaries-through-one-bucket">2.2 Compare tool boundaries through one bucket</a>
 <a class="note-toc-link level-2" href="#2-3-a-reviewable-change-sequence">2.3 A reviewable change sequence</a>
 <a class="note-toc-link level-1" href="#3-trace-an-infrastructure-change-across-code-graph-state-and-live-service">3. Trace an infrastructure change across code, graph, state, and live service</a>
-<a class="note-toc-link level-1" href="#references-9">References</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-separate-reusable-code-from-isolated-state">Exam reasoning bridge: separate reusable code from isolated state</a>
+<a class="note-toc-link level-1" href="#references-8">References</a>
 <a class="note-toc-link level-1" href="#1-pricing-models-usage-metrics-and-total-cost-of-ownership">1. Pricing models, usage metrics, and total cost of ownership</a>
 <a class="note-toc-link level-2" href="#1-1-match-pricing-to-workload-shape">1.1 Match pricing to workload shape</a>
 <a class="note-toc-link level-1" href="#2-build-a-complete-usage-ledger">2. Build a complete usage ledger</a>
@@ -382,7 +390,8 @@
 <a class="note-toc-link level-2" href="#3-4-provider-consumer-and-saas-provider-viewpoints">3.4 Provider, consumer, and SaaS-provider viewpoints</a>
 <a class="note-toc-link level-1" href="#4-end-to-end-decision-checklist">4. End-to-end decision checklist</a>
 <a class="note-toc-link level-2" href="#4-1-dated-course-administration-note-from-the-lecture">4.1 Dated course-administration note from the lecture</a>
-<a class="note-toc-link level-1" href="#references-10">References</a>
+<a class="note-toc-link level-1" href="#exam-reasoning-bridge-compare-options-over-the-same-horizon">Exam reasoning bridge: compare options over the same horizon</a>
+<a class="note-toc-link level-1" href="#references-9">References</a>
 <a class="note-toc-link level-1" href="#source-audit-for-lectures-06-10">Source audit for Lectures 06–10</a>
 <a class="note-toc-link level-1" href="#1-cloud-computing-versus-cloud-native-design">1. Cloud computing versus cloud-native design</a>
 <a class="note-toc-link level-1" href="#2-why-split-a-monolith-and-where-splitting-hurts">2. Why split a monolith, and where splitting hurts</a>
@@ -393,7 +402,7 @@
 <a class="note-toc-link level-2" href="#4-2-separate-three-different-recovery-questions">4.2 Separate three different recovery questions</a>
 <a class="note-toc-link level-1" href="#5-operational-boundaries-and-the-cost-of-abstraction">5. Operational boundaries and the cost of abstraction</a>
 <a class="note-toc-link level-2" href="#5-1-interpret-the-guest-lectures-2025-survey-as-dated-evidence">5.1 Interpret the guest lecture's 2025 survey as dated evidence</a>
-<a class="note-toc-link level-1" href="#references-11">References</a>
+<a class="note-toc-link level-1" href="#references-10">References</a>
 <a class="note-toc-link level-1" href="#1-establish-a-shared-foundation-from-requirements">1. Establish a shared foundation from requirements</a>
 <a class="note-toc-link level-2" href="#1-1-workload-and-system-scope">1.1 Workload and system scope</a>
 <a class="note-toc-link level-2" href="#1-2-service-models-define-responsibility-boundaries">1.2 Service models define responsibility boundaries</a>
@@ -442,7 +451,7 @@
 <a class="note-toc-link level-1" href="#10-viva-answers-and-acceptance-cases">10. Viva answers and acceptance cases</a>
 <a class="note-toc-link level-2" href="#10-1-answer-with-requirements-choice-cost-and-verification">10.1 Answer with requirements, choice, cost, and verification</a>
 <a class="note-toc-link level-2" href="#10-2-minimum-acceptance-matrix">10.2 Minimum acceptance matrix</a>
-<a class="note-toc-link level-1" href="#references-12">References</a>
+<a class="note-toc-link level-1" href="#references-11">References</a>
 <a class="note-toc-link level-2" href="#course-materials">Course materials</a>
 <a class="note-toc-link level-2" href="#technical-articles">Technical articles</a>
           </nav>
@@ -543,26 +552,21 @@
 </tr>
 <tr>
 <td>7</td>
-<td>Apply MapReduce to iterative k-means and interpret the Twitter clustering example</td>
-<td>Move from batch computation to a user-facing application</td>
+<td>Work through k-means on MapReduce and a video SaaS upload, encoding, and streaming pipeline</td>
+<td>Connect batch and user-facing workloads to service choices and end-to-end costs</td>
 </tr>
 <tr>
 <td>8</td>
-<td>Design and size a video SaaS upload, encoding, and streaming pipeline</td>
-<td>Move from named services to end-to-end workload and data-flow reasoning</td>
-</tr>
-<tr>
-<td>9</td>
 <td>Express desired resources as Infrastructure as Code</td>
 <td>Make deployment repeatable, reviewable, and recoverable</td>
 </tr>
 <tr>
-<td>10</td>
+<td>9</td>
 <td>Model metered cloud costs and datacenter TCO</td>
 <td>Compare architectures with consistent assumptions and utilization</td>
 </tr>
 <tr>
-<td>11 (guest lecture)</td>
+<td>10 (guest lecture)</td>
 <td>Build cloud-native applications with containers, microservices, Kubernetes, and reconciliation</td>
 <td>Connect application decomposition to operational complexity and platform automation</td>
 </tr>
@@ -920,6 +924,16 @@ Risk: Outages on Traffic Spikes        Requires Advanced Auto-Scaling         Ri
 <hr>
 </section>
 
+<section id="exam-reasoning-bridge-choose-the-layer-before-the-product" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: choose the layer before the product</h3>
+
+<p class="mb-3">A cloud answer becomes clearer when the stem's <strong>decision variable</strong> is identified first. “Always true” asks for a defining characteristic, so broad network access is stronger than an optional benefit such as encryption or lower latency. “Lower risk” in the pay-as-you-go question means a smaller <em>upfront commitment</em>, not a guarantee that security or long-run cost improves. For a sudden demand increase, distinguish the provider's metered resource bill from the consumer's incremental administration effort. Automation can keep patching/configuration overhead roughly stable while usage charges grow.</p>
+
+<p class="mb-3">Next separate two axes. <strong>Service model</strong> describes what the consumer receives and manages: SaaS is a finished application, PaaS is a managed environment for the consumer's code, and IaaS is configurable compute/storage/network beneath the consumer's OS and app. <strong>Scaling direction</strong> describes what changes: horizontal adds instances, vertical enlarges one instance. <strong>Elasticity</strong> describes <em>when and why</em> capacity changes, usually in response to demand. A database with many reads and writes may need horizontal partitioning, but adding read replicas alone does not distribute writes. The partition key, consistency model, and hot spots still matter.</p>
+
+<p class="mb-3">For legacy migration, the constraint “quickly with minimal changes” points to IaaS rehosting because it can preserve an existing runtime; PaaS modernization may be better later but asks for adaptation. For SaaS suitability, avoid claiming that sensitive data can never be hosted there. Evaluate identity, encryption, residency, exportability, provider responsibilities, and connectivity. The related questions are grouped in <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-1---cloud-computing-fundamentals" target="_blank" rel="noopener noreferrer">Q1–22</a>.</p>
+</section>
+
 <section id="11-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">11. Summary</h3>
 
@@ -1079,6 +1093,17 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 |  IaaS (Infrastructure-as-a-Service)| Virtual compute, Net, Storage|
 |  (AWS EC2, DigitalOcean, Linode)  | (SysAdmin VM Control)         |
 +-------------------------------------------------------------------+</code></pre></div>
+
+<p class="mb-3"><strong>Scaling is not exclusive to one service model.</strong> A <em>service model</em> describes what the provider supplies and what the consumer manages; load balancing and autoscaling are mechanisms used within an application architecture:</p>
+
+<ul class="note-list">
+<li><strong>Elastic Load Balancer (ELB)</strong> distributes requests among healthy application instances. Its own load-balancer capacity may scale, but ELB does not by itself add application instances.</li>
+<li><strong>Auto Scaling</strong> adds or removes application instances according to configured demand or health policies. It is a scaling mechanism/service, not one of the NIST SaaS/PaaS/IaaS service models.</li>
+<li><strong>PaaS</strong> lets developers deploy their own application to a managed runtime. A platform can manage instance scaling and load balancing (for example, AWS Elastic Beanstalk), subject to its configuration; PaaS as a category does not guarantee automatic scaling.</li>
+<li><strong>IaaS</strong> also supports dynamic scaling: the consumer can configure virtual-machine autoscaling and a load balancer, while retaining more responsibility for the OS, runtime, and application. SaaS is a service model too, but its consumer uses the provider's finished application rather than implementing its scaling.</li>
+</ul>
+
+<p class="mb-3">In <strong>2526 Sem1 Test Q19</strong>, the phrase <em>service model</em> makes <strong>PaaS (d)</strong> the intended choice among the offered answers. IaaS is not an option; if it were, the question would need more requirements to distinguish it from PaaS.</p>
 
 <h4 id="3-1-infrastructure-as-a-service-iaas" class="mb-2">3.1 Infrastructure-as-a-Service (IaaS)</h4>
 
@@ -1387,7 +1412,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <ol class="mb-3">
 <li><strong>Service Intermediation</strong>: Delivering value-added services on top of existing cloud services (e.g., identity management wrappers, custom security controls).</li>
 <li><strong>Service Aggregation</strong>: Combining and integrating multiple distinct cloud services into one or more new services, providing data integration and ensuring secure data movement between consumers and multiple providers.</li>
-<li><strong>Service Arbitrage</strong>: Providing consumers with the flexibility to dynamically choose, compare, and switch between services from multiple different cloud agencies based on cost or performance.</li>
+<li><strong>Service Arbitrage</strong>: Similar to aggregation, except that the services being combined are <strong>not fixed</strong>. The broker can choose among providers as requirements change (e.g., price, location, or performance). For an exam scenario, combining a specified set of services from Providers A, B, and C into one product is <strong>aggregation</strong>; selecting or replacing providers within that combination is <strong>arbitrage</strong> (NIST SP 500-292).</li>
 </ol>
 
 <h4 id="8-2-cloud-carrier-slas" class="mb-2">8.2 Cloud Carrier SLAs</h4>
@@ -1449,6 +1474,8 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">Consists of two or more distinct clouds (on-site private, off-site private, community, or public) that remain separate entities but are connected together to allow data and application interoperability. Enables organizations to balance control and cost—e.g., storing sensitive data on a private cloud while executing application workloads on a public cloud.</p>
 
+<p class="mb-3"><strong>Security-versus-cost decision (past-test Q23):</strong> A stated concern about data in public cloud does not by itself require hybrid deployment. Identify the threat first. For confidentiality, assess encryption at rest and in transit, key ownership, least-privilege access, network boundaries and auditing in the existing public-cloud environment. Encryption cannot fix every threat, especially misuse by an authorized account, compromised keys or a rule requiring data to stay in a particular environment. Use private or hybrid placement only where these controls fail a concrete requirement, then include private capacity, cross-environment data movement and operations in the cost comparison. Public and hybrid costs depend on the workload; neither is categorically cheaper.</p>
+
 <h4 id="9-5-sovereign-cloud" class="mb-2">9.5 Sovereign Cloud</h4>
 
 <ul class="note-list">
@@ -1495,6 +1522,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <hr>
 </section>
 
+<section id="exam-reasoning-bridge-separate-service-deployment-and-governance" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: separate service, deployment, and governance</h3>
+
+<p class="mb-3">Before selecting an answer, label the three different decisions: the <strong>service model</strong> allocates management responsibility; the <strong>deployment model</strong> says who can use/control the cloud environment; the <strong>location and access policy</strong> says where every data copy may reside and who may administer it. Public cloud in a Singapore region, private cloud, and sovereign cloud are not interchangeable legal guarantees. A residency design must account for replicas, backups, logs, metadata, keys, support access, and disaster recovery, not just the primary database. Encryption protects confidentiality but does not by itself satisfy a prohibition on cross-border copies or access.</p>
+
+<p class="mb-3">Hybrid cloud combines private and public environments for a reason: for example, governed records stay in a controlled location while permissible compute expands elsewhere. It adds networking, identity, synchronization and operating costs; therefore the cheapest compliant solution might instead strengthen controls in a single environment. For an unconstrained one-off analytics task, either public or private cloud may work; do not infer a multi-cloud requirement from the word “large.”</p>
+
+<p class="mb-3">For NIST actors, a <strong>broker</strong> mediates use of services: intermediation adds value to one service, aggregation combines a relatively fixed bundle, and arbitrage can substitute/select providers dynamically. An <strong>auditor</strong> independently evaluates conformance; a <strong>carrier</strong> transports connectivity. The distinction is the action performed, not the company label. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-2---cloud-computing-reference-architecture" target="_blank" rel="noopener noreferrer">Q23–34</a>.</p>
+</section>
+
 <section id="11-summary-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">11. Summary</h3>
 
@@ -1524,6 +1561,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>Multi-Tenancy vs. Single Tenant:</strong> Multi-tenancy pools resources so a single software/VM instance serves multiple tenants, maximizing hardware utilization. Single tenant offers dedicated hardware at higher cost.</li>
 <li><strong>10-Layer Responsibility Stack:</strong> On-premise (Consumer 10/10), IaaS (5/5 split), PaaS (8 Provider / 2 Consumer), SaaS (Provider 10/0).</li>
 <li><strong>PaaS Disqualification Rules:</strong> A service must provide the runtime to deploy and execute custom code. UI-only services are SaaS; OS/kernel configuration services are IaaS; API-only query stores are DBaaS.</li>
+<li><strong>Service Model vs. Scaling Mechanism:</strong> PaaS and IaaS are service models; ELB distributes traffic and Auto Scaling changes instance count. Both PaaS and IaaS can support scaling, with different consumer management responsibilities.</li>
 <li><strong>Cross-Provider Wrapping &amp; FaaS:</strong> Subscribing to PaaS from Provider X physically hosted on IaaS from Provider Y satisfies regional data laws. FaaS provides reactive event-driven execution, though underlying servers still exist under the hood.</li>
 <li><strong>NIST SP 500-292 Reference Model (5 Actors):</strong> Cloud Consumer, Cloud Provider (3-layer Service Orchestration, Cloud Service Management, Security, Privacy), Cloud Auditor (independent compliance evaluation), Cloud Broker (Intermediation, Aggregation, Arbitrage), and Cloud Carrier (SLA-backed connectivity).</li>
 <li><strong>Deployment Models &amp; Sovereign Cloud:</strong> Public, Private (On-Site/Out-Sourced &amp; VPC), Community (IAM access control across orgs), Hybrid, and Sovereign Cloud (all data and metadata locked within national borders to prevent foreign access).</li>
@@ -1711,6 +1749,8 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">The <strong>Service Load Balancing Architecture</strong> is a specialized variant of workload distribution designed specifically for redundant cloud service instances. In this architecture, a resource pool acts as a duplicate cloud service tier.</p>
 
+<p class="mb-3">For a highly available web server farm, distinguish two causes of downtime: <strong>traffic overload</strong> and <strong>instance or zone failure</strong>. Autoscaling adds capacity when demand rises (provided scaling reacts in time); redundant instances across availability zones, combined with health checks and load balancing, keep serving requests when an instance or zone fails. An autoscaling group may manage those replicas, but capacity scaling and failure recovery are separate availability goals.</p>
+
 <div class="note-markdown-block"><pre><code>Independent Load Balancer                      Built-In Load Balancer
 +-----------------------+                    +-----------------------+
 |   Service Consumer    |                    |   Service Consumer    |
@@ -1893,6 +1933,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <hr>
 </section>
 
+<section id="exam-reasoning-bridge-identify-the-failure-and-the-control-loop" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: identify the failure and the control loop</h3>
+
+<p class="mb-3">High availability requires a response to at least two different disturbances. A traffic spike causes <strong>capacity exhaustion</strong>; autoscaling adds or removes instances after observing load. A crashed instance or zone causes <strong>resource failure</strong>; redundant replicas plus health-based routing keep requests on working targets. A load balancer distributes requests and avoids unhealthy backends but does not itself create or replace instances. Caching/CDN and query optimisation are another lever: they reduce the work each request imposes on the origin or database.</p>
+
+<p class="mb-3">For elastic capacity diagrams, trace <strong>measurement → decision → actuation</strong>. The automated scaling listener observes conditions, the intelligent automation engine decides whether to change allocation, and the hypervisor applies the resource change. Repeated scale-up/scale-down near a threshold is oscillation; use hysteresis, evaluation windows and cooldown. Horizontal vs vertical says <em>what kind of capacity changes</em>; dynamic vs elastic says <em>how/when the change is controlled</em>. Dynamic relocation moves a VM or workload between hosts, which differs from cloning a service.</p>
+
+<p class="mb-3">Cloud bursting specifically crosses from normal on-premise/private capacity into prearranged cloud capacity at a trigger, then returns when demand falls. It needs secure connectivity and a plan for sessions/data consistency. Sibling pools are separate peer pools, whereas nested pools are subpools within a parent hierarchy. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-3---cloud-architectures" target="_blank" rel="noopener noreferrer">Q35–51</a>.</p>
+</section>
+
 <section id="8-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">8. Summary</h3>
 
@@ -1919,6 +1969,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>Rapid Elasticity &amp; Objectives:</strong> Resource organization aims to achieve elasticity/scaling and balanced resource utilization across workload and resource volatility.</li>
 <li><strong>Workload Distribution &amp; AWS ELB:</strong> Load balancers enable horizontal scaling seamlessly for consumers. AWS provides ALB (Layer 7 HTTP with rules and geolocation target groups), NLB (Layer 4 TCP/UDP), GWLB (Layer 3 virtual appliances), and CLB (Legacy).</li>
 <li><strong>Independent vs. Built-In Load Balancing:</strong> Independent load balancers operate separately to intercept traffic. Built-in load balancers integrate routing logic inside the primary application server instance.</li>
+<li><strong>Two Availability Goals:</strong> Autoscaling handles rising demand; redundant instances across zones with health-based routing handle instance or zone failure. One autoscaling group can help implement both.</li>
 <li><strong>Hierarchical Resource Pooling:</strong> Hierarchical structures use Parent, Sibling (physically grouped in facility, isolated per tenant), and Nested pools (sub-divided for internal departments) to eliminate dedicated pool complexity.</li>
 <li><strong>Dynamic Scalability &amp; Relocation:</strong> Dynamic relocation live-migrates VMs to higher-capacity hosts with near-zero downtime by pre-provisioning target hosts. "Scaling" defaults to scale UP; "Elastic Scaling" implies scaling UP and DOWN.</li>
 <li><strong>Elastic Resource Capacity:</strong> Automated Scaling Listeners monitor capacity and trigger Intelligent Automation Engines to script hypervisors to dynamically allocate/reclaim CPU and RAM.</li>
@@ -2704,6 +2755,11 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <ul class="note-list">
 <li><strong>IT Equipment Power ($P_{\text{IT}}$):</strong> The electrical power delivered directly to computing, storage, and networking hardware doing productive work.</li>
 <li><strong>Overhead Power ($P_{\text{Overhead}}$):</strong> The electrical power consumed by support infrastructure, including chillers, cooling pumps, CRAC fans, UPS transformer conversion losses, and lighting.</li>
+</ul>
+
+<p class="mb-3"><strong>Worked power and energy exercise (illustrative).</strong> If IT equipment draws 100 kW and cooling plus other support draws 50 kW, facility power is 150 kW and PUE is $150/100=1.5$. Over 24 hours at those constant loads, the facility uses $150\times24=3{,}600$ kWh: IT uses 2,400 kWh and support uses 1,200 kWh. If support falls to 20 kW while IT stays at 100 kW, PUE becomes $120/100=1.2$ and facility energy becomes $120\times24=2{,}880$ kWh, saving 720 kWh/day. <strong>kW is instantaneous power; kWh is energy over time.</strong> Lowering IT power alone does not necessarily lower PUE, since it changes both numerator and denominator.</p>
+
+<ul class="note-list">
 <li><strong>Ideal Case:</strong> In a thermodynamically ideal datacenter, zero power is lost to cooling or electrical distribution ($P_{\text{Overhead}} = 0$), yielding a <strong>$\text{PUE} = 1.0$</strong>.</li>
 <li><strong>Industry Baselines:</strong> Older enterprise datacenters historically operated at PUEs of $1.8\text{--}2.0$ (consuming as much power on cooling as on computing!). State-of-the-art hyperscale facilities now achieve annualized PUEs below $1.15$.</li>
 </ul>
@@ -2867,6 +2923,56 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">$$\text{Downtime} = 8,766 \times (1 - 0.99995) = 8,766 \times 0.00005 = \mathbf{0.438\text{ hours/year}} = \mathbf{26.298\text{ minutes/year}} \quad (\approx 26\text{m } 17\text{s})$$</p>
 
+<h4 id="worked-example-20-year-build-and-downtime-cost" class="mb-2">Worked example: 20-year build and downtime cost</h4>
+
+<p class="mb-3">For <strong>Course Quiz 2 Q10</strong>, use the question's stated <strong>365 days/year</strong>, so one year has <strong>8,760 hours</strong> (rather than the 8,766-hour convention above). With build cost in USD millions and downtime loss of USD 2 million per hour over 20 years:</p>
+
+<p class="mb-3">$$\text{Total cost (USD M)} = \text{Build cost (USD M)} + 8{,}760 \times (1-\text{Availability}) \times 20 \times 2$$</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Tier</th>
+<th>Annual downtime (hours)</th>
+<th>20-year downtime cost (USD M)</th>
+<th>Build cost (USD M)</th>
+<th>Total cost (USD M)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1</td>
+<td>$8{,}760(1-0.99671)=28.8204$</td>
+<td>$28.8204\times20\times2=1{,}152.816$</td>
+<td>300</td>
+<td><strong>1,452.816</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>$8{,}760(1-0.99741)=22.6884$</td>
+<td>$22.6884\times20\times2=907.536$</td>
+<td>400</td>
+<td><strong>1,307.536</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>$8{,}760(1-0.99982)=1.5768$</td>
+<td>$1.5768\times20\times2=63.072$</td>
+<td>500</td>
+<td><strong>563.072</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>$8{,}760(1-0.99995)=0.4380$</td>
+<td>$0.4380\times20\times2=17.520$</td>
+<td>550</td>
+<td><strong>567.520</strong></td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3"><strong>Tier 3 minimizes total cost:</strong> USD 563.072M. Tier 4 saves only $63.072-17.520=45.552$M in expected downtime loss relative to Tier 3, less than its extra $550-500=50$M build cost.</p>
+
 <h4 id="9-2-tier-architecture-characteristics" class="mb-2">9.2 Tier Architecture Characteristics</h4>
 
 <ul class="note-list">
@@ -2877,6 +2983,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 </ul>
 
 <hr>
+</section>
+
+<section id="exam-reasoning-bridge-diagnose-time-and-cost-with-units" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: diagnose time and cost with units</h3>
+
+<p class="mb-3">For transfers such as backup, a useful lower-bound model is <code>time ≥ bytes to transfer / sustained bytes per second</code>. Thus data amount alone cannot determine backup time. Bandwidth affects bulk transfers; round-trip latency particularly affects sequential small requests; server, storage and database wait can contribute even when CPU is idle. A low-CPU latency report is evidence against pure CPU saturation, not proof of a network fault. Check RTT, packet loss, throughput and I/O wait before adding instances.</p>
+
+<p class="mb-3">For energy, write <code>PUE = facility energy / IT energy = 1 + support overhead / IT energy</code>. The ideal value 1 means no cooling or power-distribution loss and is a theoretical bound. Improving PUE by reducing overhead differs from improving useful computation per joule. Do not compare values unless numerator and denominator use the same measurement boundary and period.</p>
+
+<p class="mb-3">For the tier-choice calculation, use the horizon and units consistently: <code>expected downtime hours = 8,760 × (1 − availability) × 20</code>; <code>total USD million = build USD million + downtime hours × 2</code>. The provided tier figures give approximately 1,452.816, 1,307.536, 563.072 and 567.520 million for Tiers 1–4, respectively. Tier 3 wins narrowly over Tier 4; “highest availability” is not automatically “lowest total cost.” Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-4---datacenter-infrastructure" target="_blank" rel="noopener noreferrer">Q52–59</a>.</p>
 </section>
 
 <section id="10-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -2920,6 +3036,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><strong>Thermodynamic Airflow:</strong> Raised-floor hot-cold aisle containment prevents air mixing. Water holds over $1,000\times$ more heat per unit volume than air, driving adoption of direct-to-chip liquid cooling and seawater-cooled facilities.</li>
 <li><strong>PUE &amp; Energy Proportionality:</strong> $\text{PUE} = \frac{\text{Total Facility Power}}{\text{IT Equipment Power}}$. Hyperscale facilities achieve PUE $&lt; 1.15$ with only $11\%$ cooling overhead. Cyclical quarterly PUE swings reflect summer ambient heat vs. winter economizer free cooling. Energy-proportional computing ($P(u) = u \cdot P_{\text{max}}$) minimizes the 50% power penalty of idle servers.</li>
 <li><strong>Uptime Institute Tiers:</strong> Tier 1 (99.671% availability, 28.84h/yr downtime); Tier 2 (99.741%, 22.70h/yr downtime); Tier 3 (99.982%, 1.58h/yr downtime, concurrently maintainable industry standard); Tier 4 (99.995%, 26.3m/yr downtime, fault-tolerant active-active dual feeds).</li>
+<li><strong>20-Year Tier Cost Comparison:</strong> For a question specifying 365 days/year, use 8,760 hours/year and add build cost to expected downtime cost. At USD 2M per downtime hour, Tier 3 has the lowest total of USD 563.072M.</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
@@ -3842,6 +3959,16 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <hr>
 </section>
 
+<section id="exam-reasoning-bridge-locate-the-isolation-boundary" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: locate the isolation boundary</h3>
+
+<p class="mb-3">A <strong>VM</strong> virtualizes hardware for a guest OS; different guests may run different kernels on one host. A <strong>container</strong> isolates processes and namespaces while sharing the host kernel. That explains why VMs can offer a stronger kernel boundary, while containers often start faster and use fewer resources. Neither is automatically secure: configuration, image/guest patching and host vulnerabilities still matter. Type 1/Type 2 describes where the hypervisor sits relative to the host OS; hardware-assisted virtualization describes processor support for trapping privileged guest operations. These are separate axes.</p>
+
+<p class="mb-3">Resource contention is a host-level allocation question. CPU overcommit, memory pressure, disk IOPS and shared network capacity can each be the bottleneck; measuring and rebalancing VM allocations is more comprehensive than buying only one faster component. Application multitenancy is another distinct layer: one application instance may serve isolated tenants even when it runs inside VMs. Single tenancy offers a simpler separation boundary at higher utilisation cost; it does not erase identity or application-level risks.</p>
+
+<p class="mb-3">For the disputed VM/container MCQ, retain the source conflict: its printed key says “separate namespaces,” but the accompanying explanation points to VM hardware virtualization as the primary architectural difference. State the reasoning and the key conflict explicitly rather than silently switching answers. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-5---virtualization-technologies" target="_blank" rel="noopener noreferrer">Q60–73</a>.</p>
+</section>
+
 <section id="8-summary-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">8. Summary</h3>
 
@@ -4482,6 +4609,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li><em>Container Engines:</em> Installing Docker or Podman on the VM and pulling pre-built application images.</li>
 <li><em>Golden Machine Images:</em> Pre-baking complete application environments into machine images using tools like HashiCorp Packer to produce customized Amazon Machine Images (AMIs).</li>
 <li><strong>Target Persona:</strong> Infrastructure engineers, systems architects, and DevOps specialists requiring low-level OS configuration, custom network protocols, or legacy software compatibility.</li>
+<li><strong>Legacy Migration / Rehost:</strong> When the priority is to move an existing application quickly with minimal code changes, IaaS can host a compatible VM, OS, and runtime stack. This is a <em>rehost</em> or <em>lift-and-shift</em> approach; network, storage, identity, licensing, and compatibility still need migration work. Refactoring to serverless, rewriting for PaaS, or replacing the application with SaaS changes more of the application or operating model.</li>
 </ul>
 
 <hr>
@@ -5714,6 +5842,16 @@ function reduce(String key, Iterator values):
 <hr>
 </section>
 
+<section id="exam-reasoning-bridge-map-work-to-a-service-model-and-execution-path" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: map work to a service model and execution path</h3>
+
+<p class="mb-3">For a team building its own application, PaaS can reduce runtime/OS operations while preserving control of code; IaaS is useful when a legacy runtime needs to be rehosted with little change. A load balancer routes requests, and autoscaling changes capacity: neither is itself an IaaS/PaaS/SaaS <strong>service model</strong>. IaaS can scale when its consumer configures those mechanisms; PaaS can package them into the managed platform. For a real-time sensitive-data pipeline, the service choice still needs identity, encryption, data governance and latency assessment.</p>
+
+<p class="mb-3">In three-tier applications, the presentation layer is the user interface, the application layer applies business rules and generates server responses, and the data layer stores records. For MapReduce, the developer writes map and reduce functions; the framework partitions input, schedules tasks and shuffles/groups intermediate key-value records. Adding workers helps only while useful parallel work outweighs scheduling and network shuffle overhead.</p>
+
+<p class="mb-3">A FaaS function fits short, event-driven, stateless computation with variable demand. State required across invocations belongs in external storage; long-lived in-process sessions or persistent connections fit poorly. A “serverless” design still has servers, permissions, dependencies, limits and bills. For a low-latency payment gate, minimize synchronous work on the critical path and move safe settlement steps to a durable asynchronous workflow, with explicit reconciliation and failure handling. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-6---cloud-application-architectures-and-computing" target="_blank" rel="noopener noreferrer">Q74–98</a>.</p>
+</section>
+
 <section id="12-summary" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">12. Summary</h3>
 
@@ -5760,6 +5898,7 @@ function reduce(String key, Iterator values):
 <li><strong>SOAP vs. REST:</strong> SOAP is a formal XML protocol with strict WSDL contracts and enterprise WS-Security; REST is an architectural style based on URI resources, standard HTTP verbs, statelessness, and lightweight JSON representations.</li>
 <li><strong>REST Principles:</strong> Uniform Interface, Client-Server Decoupling, Statelessness (session state stored in client tokens/cookies, not server memory), Cacheability, Layered System, and Code on Demand.</li>
 <li><strong>IaaS vs. PaaS vs. SaaS Spectrum:</strong> IaaS = manage OS, runtime, and app (full control, high maintenance); PaaS = manage app code only ("test offline, deploy online"); SaaS = consume hosted software directly (zero setup, zero architectural control).</li>
+<li><strong>Legacy Migration:</strong> If the goal is quick cloud migration with minimal application changes, IaaS rehosting is usually the closest fit; a serverless refactor, PaaS rewrite, or SaaS replacement changes more. Rehosting still needs compatibility, data, network, identity, and licensing work.</li>
 <li><strong>MapReduce Programming Model:</strong> Designed for arbitrarily divisible web-scale data (100s of GBs to PBs) over commodity clusters. Transforms input $\langle k_1, v_1 \rangle \to \text{list}(\langle k_2, v_2 \rangle) \to \langle k_2, \text{list}(v_2) \rangle \to \langle k_3, v_3 \rangle$. Follows the SPMD paradigm with a centralized master coordinating workers.</li>
 <li><strong>MapReduce Execution Flow:</strong> Mappers write intermediate outputs to <strong>local disks</strong> (saving network and replication costs). Reducers shuffle intermediate partitions over HTTP/RPC, merge-sort grouped keys, execute <code>reduce()</code>, and commit final outputs to distributed file systems (GFS/HDFS with $3\times$ replication).</li>
 <li><strong>MapReduce Optimizations:</strong> Data locality (scheduling tasks on nodes or racks hosting target data chunks), worker role switching, optimal reducer count tuning ($R$), and local Combiners (mini-reducers) to slash network shuffle volume.</li>
@@ -5830,15 +5969,15 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <li>IBM Cloud Education. (2023). <em>What is Function as a Service (FaaS)?</em> IBM Think Topics.</li>
 </ol>
 
-<h1 class="mt-4">Week 7 - Example Applications I: K-Means Clustering with MapReduce</h1>
+<h1 class="mt-4">Week 7 - Example Applications: K-Means with MapReduce and Video-Sharing SaaS</h1>
 
-<p class="mb-3">Week 6 introduced MapReduce as a processing model. This week turns it into a complete iterative workload: choose the input representation, send points to clusters, recompute centroids, and repeat with the new model. The supplied files named Lecture 07 and Lecture 08 are byte-identical and both contain the k-means and video examples. <strong>The Week 7/8 division here is a study organization, not evidence of two different slide decks or a claim about the exact teaching calendar.</strong></p>
+<p class="mb-3">Week 6 introduced MapReduce as a processing model. This week turns it into a complete iterative workload: choose the input representation, send points to clusters, recompute centroids, and repeat with the new model. The supplied Lecture 07 and 08 PDFs are byte-identical and contain both the k-means and video examples, which are studied together here.</p>
 </section>
 
 <section id="1-k-means-as-an-iterative-distributed-workload" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">1. K-means as an iterative distributed workload</h3>
 
-<h4 id="1-1-k-means-clustering-on-mapreduce" class="mb-2">1.1 K-means clustering on MapReduce</h4>
+<h4 id="5-1-k-means-clustering-on-mapreduce" class="mb-2">5.1 K-means clustering on MapReduce</h4>
 
 <p class="mb-3">K-means groups $m$ objects represented by $n$-dimensional attribute vectors into $k&lt;m$ clusters. Each iteration has an <strong>assignment</strong> step and an <strong>update</strong> step. Given centroids $\mu_1,\ldots,\mu_k$, assign point $x_i$ to $c_i=\arg\min_j d(x_i,\mu_j)$; then recompute $\mu_j=\frac1{|C_j|}\sum_{i\in C_j}x_i$. Repeat until assignments or centroids stabilize, or a chosen iteration limit is reached. The familiar objective is within-cluster squared Euclidean distance $\sum_i\|x_i-\mu_{c_i}\|_2^2$; the lecture's broader phrase “minimize intra-cluster and maximize inter-cluster distances” is intuition rather than this exact objective. Euclidean distance is a $2$-norm; a valid metric also needs non-negativity, identity of indiscernibles, symmetry, and the triangle inequality.</p>
 
@@ -5848,7 +5987,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">The example uses S3 for input/code/output storage and Amazon EMR as the managed data-processing cluster. Four reported cluster sizes are 23,904; 22,125; 5,166; and 25,074, with centroids in log-feature space. For the cluster of 5,166 users, centroid coordinates $(5.051,2.712)$ mean approximately $2^{5.051}\approx33$ followers and $2^{2.712}\approx6.6$ followees; <strong>do not interpret log coordinates as raw counts</strong>. The lecture observes that clusters with similar follower/followee dimensions have more members, but this dataset alone does not prove a universal social-network rule. Choice of $k$, initialization, feature scaling, empty clusters, and stopping criteria affect the result.</p>
 
-<h4 id="1-2-one-complete-map-shuffle-reduce-iteration" class="mb-2">1.2 One complete map–shuffle–reduce iteration</h4>
+<h4 id="5-2-one-complete-map-shuffle-reduce-iteration" class="mb-2">5.2 One complete map–shuffle–reduce iteration</h4>
 
 <p class="mb-3">Suppose points $x_1=(0,0)$, $x_2=(2,0)$, and $x_3=(9,0)$ start with centroids $\mu_A=(0,0)$ and $\mu_B=(10,0)$. Mappers send the first two points under key A and the third under key B. Shuffle groups values as $A:[(0,0),(2,0)]$ and $B:[(9,0)]$. Reducers produce new centroids $\mu_A=(1,0)$ and $\mu_B=(9,0)$ with counts 2 and 1. The next iteration must use these outputs as inputs; a single MapReduce pass is not the full k-means algorithm. If clusters are badly initialized, the algorithm may converge to a local optimum; running several seeds and comparing within-cluster cost helps, though the lecture's cloud example chiefly emphasizes deployment and key-value flow.</p>
 
@@ -5890,88 +6029,13 @@ Next job:          load v+1 centroids before mapping the same input again</code>
 
 <p class="mb-3">For $I$ iterations, the direct distance work is roughly $O(Imkd)$, and the input dataset may be read repeatedly. MapReduce adds job startup, distributed storage reads/writes, shuffle traffic, and centroid distribution each iteration. If the dataset fits in a cluster's memory, an iterative in-memory engine may reduce repeated disk I/O, but it still needs fault tolerance and a way to persist results. S3 provides durable input and output objects; EMR manages the compute cluster and framework. A larger instance or more workers can shorten wall-clock time but raise compute cost, and speedup is limited by shuffle imbalance or an overloaded cluster whose points all map to one key.</p>
 
-<p class="mb-3">To compare two configurations, record input bytes, number of iterations, workers and runtime, shuffle bytes, S3 requests/storage, and the quality metric. “Cheaper per instance” is not the right comparison if it takes more instances or more iterations. Conversely, a smaller $k$ may reduce distance work but answer the analytical question poorly. Week 10's TCO method should be applied to the <strong>whole converged run</strong>, not one map task.</p>
+<p class="mb-3">To compare two configurations, record input bytes, number of iterations, workers and runtime, shuffle bytes, S3 requests/storage, and the quality metric. “Cheaper per instance” is not the right comparison if it takes more instances or more iterations. Conversely, a smaller $k$ may reduce distance work but answer the analytical question poorly. Week 9's TCO method should be applied to the <strong>whole converged run</strong>, not one map task.</p>
+
+<p class="mb-3">The same supplied Lecture 07/08 deck also asks how to build a user-facing SaaS whose upload, transcoding, and playback paths have very different resource demands.</p>
 </section>
 
-<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
-  <div class="note-callout note-summary-kit-shell">
-    <div class="note-summary-kit-header">
-      <h3 class="mb-0">Review Kit</h3>
-    </div>
-    <div class="note-reviewkit-body">
-      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
-      </li>
-      </ul>
-      <div class="tab-content note-reviewkit-content">
-      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
-<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>K-means requires repeated assignment and centroid-update passes; one MapReduce job is only one iteration.</li>
-<li>Mapper output keys determine grouping; reducers need sums and counts to calculate new centroids.</li>
-<li>Log-space centroid coordinates are not raw follower counts or arithmetic raw-count means.</li>
-<li>Choice of $k$, preprocessing, initialization, and empty-cluster rules affect the result.</li>
-<li>An iteration's reducer output must be versioned and distributed to every mapper in the next job.</li>
-</ul></div>
-      </div>
-      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
-<div class="note-qa" data-qa-block="review-kit--prompt">
-  <div class="note-qa-header">
-    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
-    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
-      <i class="fa-regular fa-copy me-2"></i>Copy
-    </button>
-  </div>
-  <div class="note-markdown-block">
-    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
-Read and understand the content, then generate approximately 20 questions.
-Requested question type(s): ["mcq"]
-Most questions should be drawn directly from the material, focusing on key concepts, definitions,
-and core ideas, while a smaller portion can be creative or application-based,
-extending the material into real-world or novel scenarios but staying conceptually grounded.
-Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
-For each question, provide the question number, type (conceptual, application, analytical),
-difficulty, topic, the correct answer, and a brief explanation.
-If the requested question format requires options (for example MCQ), include the necessary answer choices.
-Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
-  </div>
-  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
-Read and understand the content, then generate approximately 20 questions.
-Requested question type(s): ["mcq"]
-Most questions should be drawn directly from the material, focusing on key concepts, definitions,
-and core ideas, while a smaller portion can be creative or application-based,
-extending the material into real-world or novel scenarios but staying conceptually grounded.
-Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
-For each question, provide the question number, type (conceptual, application, analytical),
-difficulty, topic, the correct answer, and a brief explanation.
-If the requested question format requires options (for example MCQ), include the necessary answer choices.
-Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
-</div>
-      </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="references-7" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">References</h3>
-
-<ul class="note-list">
-<li>Gopalan, A. <em>Lecture 07.pdf</em> and <em>Lecture 08.pdf</em>, CS5224 Example Applications, AY2026/27 Semester 1, identical 41-slide files; k-means portion, slides 3–18.</li>
-</ul>
-
-<hr>
-
-<h1 class="mt-4">Week 8 - Example Applications II: Video-Sharing SaaS Architecture and Workload Costs</h1>
-
-<p class="mb-3">Week 7 showed how data-intensive computation maps to cloud services. The second example in the same supplied Lecture 07/08 deck asks how to build a user-facing SaaS whose upload, transcoding, and playback paths have very different resource demands. The duplicate PDFs are covered once across these two study chapters; this split keeps each week's reading goal explicit.</p>
-</section>
-
-<section id="1-video-sharing-saas-upload-encode-stream" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. Video-sharing SaaS: upload, encode, stream</h3>
+<section id="5-video-sharing-saas-upload-encode-stream" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Video-sharing SaaS: upload, encode, stream</h3>
 
 <p class="mb-3">The second application must accept videos in different formats, convert them to streamable renditions, and deliver them to many viewers. Upload and streaming are I/O-heavy; encoding is CPU-heavy. Separate those workloads so a burst of viewers does not starve transcode jobs.</p>
 
@@ -6004,11 +6068,11 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">The lecture illustrates EC2 web servers, S3 object storage, cloud-managed components, and alternative IaaS/PaaS/SaaS responsibilities. For a production design, a queue between upload and encoding decouples arrival rate from processing capacity; idempotent job IDs prevent retries from producing duplicate outputs. Multiple renditions can support different devices and network conditions. A CDN reduces repeated origin transfer for popular objects but does not eliminate outbound transfer charges. If user accounts are intentionally outside the lecture's scope, do not silently claim that the sample architecture solves authorization; a real SaaS must add identity, tenant permissions, abuse controls, and content policy.</p>
 
-<h4 id="1-1-trace-a-single-upload-through-the-architecture" class="mb-2">1.1 Trace a single upload through the architecture</h4>
+<h4 id="5-1-trace-a-single-upload-through-the-architecture" class="mb-2">5.1 Trace a single upload through the architecture</h4>
 
 <p class="mb-3">A browser uploads a file through a front-end service or directly to object storage using a scoped upload grant. After durable storage acknowledges it, metadata records the object and an encoding job is queued. A worker takes the job, reads the original, transcodes to the chosen streaming format/renditions, writes outputs to object storage, and marks the video ready. A viewer then retrieves metadata and the prepared segments, ideally through cache/CDN paths. This separation allows upload servers, encoding workers, and streaming delivery to scale by their own bottleneck. Do not hold a synchronous browser request open for the entire transcode. A failed worker should leave a retriable job and an honest status, not a published broken link.</p>
 
-<h4 id="1-2-service-model-and-bottleneck-comparison" class="mb-2">1.2 Service model and bottleneck comparison</h4>
+<h4 id="5-2-service-model-and-bottleneck-comparison" class="mb-2">5.2 Service model and bottleneck comparison</h4>
 
 <div class="note-table-wrap mb-3">
   <table class="note-table">
@@ -6049,7 +6113,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">The lecture compares traditional hosting and cloud costs under an example workload (about 50 uploads daily). Convert that to a monthly model only after stating assumptions about video size, encode minutes per upload, number of renditions, viewer count, watch time, storage retention, and egress. A small upload count can still produce large viewing bandwidth; sizing from uploads alone is misleading. This application makes the Week 6 service-model distinction concrete: IaaS gives control over server setup, PaaS or managed media services reduce operational burden, and SaaS is the delivered video product from the viewer's perspective.</p>
 
-<h4 id="1-3-read-the-lecture-architecture-diagrams-as-a-data-flow" class="mb-2">1.3 Read the lecture architecture diagrams as a data flow</h4>
+<h4 id="5-3-read-the-lecture-architecture-diagrams-as-a-data-flow" class="mb-2">5.3 Read the lecture architecture diagrams as a data flow</h4>
 
 <p class="mb-3">The slide sequence gives a more specific reference architecture than the generic three-stage table above. On <strong>upload</strong>, a browser sends a raw video through an Elastic Load Balancer to EC2 web servers in an Auto Scaling Group. The web tier writes the raw file to an S3 raw-files bucket, records application data in an RDS database, and sends a processing message to SQS. The diagram's numbered arrows place the queue after the upload/metadata path; the browser does not wait for encoding to finish. The lecture uses EC2 and RDS as illustrative service choices, not as a proof that every video SaaS requires those exact products.</p>
 
@@ -6067,19 +6131,19 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">This diagram explains why the tiers scale independently: upload depends on incoming connections and raw-byte ingress, encoding on CPU minutes and queue depth, streaming on read throughput and egress. A direct-to-S3 browser upload is a possible alternative architecture, but it is <strong>not</strong> the flow drawn in the lecture.</p>
 
-<h4 id="1-4-lecture-workload-and-capacity-arithmetic" class="mb-2">1.4 Lecture workload and capacity arithmetic</h4>
+<h4 id="5-4-lecture-workload-and-capacity-arithmetic" class="mb-2">5.4 Lecture workload and capacity arithmetic</h4>
 
 <p class="mb-3">The lecture's worked workload assumes about <strong>50 uploads/day</strong>, each a <strong>100 MB</strong> HD movie. In decimal units that is $50\times100\text{ MB}=5\text{ GB/day}$, or about <strong>150 GB/month</strong> for a 30-day month, <em>before</em> encoded renditions, thumbnails, old versions, or replication. Each encode takes about one minute, so 50 uploads imply at least 50 encoder-minutes per day; that average does not tell us peak concurrent jobs. A burst of 50 simultaneous uploads could create an encoding queue even if average daily compute is small.</p>
 
 <p class="mb-3">The viewing side assumes <strong>500 streams/day</strong> of 100 MB each, or $50\text{ GB/day}\approx1.5\text{ TB/month}$ of delivered data, assuming viewers consume the full movie and decimal units. This is ten times the uploaded daily volume. Streaming egress can therefore dominate the bill even when storage grows modestly. If viewers abandon early or adaptive streaming selects lower bitrates, delivered bytes fall; if popular videos are replayed repeatedly, they rise. The lecture asks for traditional-versus-cloud, inter-cloud, and intra-cloud comparisons. Each comparison must use the same upload/stream counts, time horizon, region, and delivery quality.</p>
 
-<h4 id="1-5-stage-by-stage-service-responsibility" class="mb-2">1.5 Stage-by-stage service responsibility</h4>
+<h4 id="5-5-stage-by-stage-service-responsibility" class="mb-2">5.5 Stage-by-stage service responsibility</h4>
 
 <p class="mb-3">The lecture's diagrams classify EC2, S3, auto scaling, Elastic Load Balancer, and SQS as cloud infrastructure services supporting the upload and encode pipeline; the SaaS provider still assembles them into the actual video product. <code>ffmpeg</code> is the video encoder in the illustration, not a managed cloud service by itself. CloudFront is an edge delivery service for streaming; the user-facing media player and the completed application belong to the delivered SaaS experience. Do not infer from the classification table that an S3 bucket automatically performs encoding or that a CDN supplies authentication. Every stage still needs explicit ownership of access rules, errors, and data lifecycle.</p>
 </section>
 
-<section id="2-capacity-and-reliability-worked-from-the-lecture-workload" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. Capacity and reliability worked from the lecture workload</h3>
+<section id="6-capacity-and-reliability-worked-from-the-lecture-workload" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. Capacity and reliability worked from the lecture workload</h3>
 
 <p class="mb-3">The 50-upload/day case produces roughly $150$ GB of raw video in a 30-day month. If every original is retained for 12 such months, raw storage alone reaches about $1.8$ TB before encoded versions, metadata, temporary files, replication, or deletions. If transcoding produces two additional full-size outputs, the simple steady growth estimate becomes roughly $450$ GB/month. These are <em>scenario assumptions</em>: actual codecs and bitrates determine encoded sizes. A request counter cannot replace a byte ledger.</p>
 
@@ -6090,8 +6154,8 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <p class="mb-3">Follow one failure through the pipeline. A browser retry after a lost response can create duplicate upload attempts; use a stable upload/job identifier. An encoder can crash after writing an output but before acknowledging SQS; a retry must recognize that output rather than publish a duplicate or mark a half-written object ready. A CDN can retain a stale rendition after a replacement; versioned object keys or deliberate invalidation define what viewers see. Separating raw and encoded buckets, metadata status (<code>uploaded</code>, <code>processing</code>, <code>ready</code>, <code>failed</code>), and idempotent transitions makes these failure paths understandable. These are production design deductions from the lecture's diagram, not features promised by merely selecting EC2, S3, SQS, or CloudFront.</p>
 </section>
 
-<section id="3-price-the-complete-video-path-then-compare-alternatives" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. Price the complete video path, then compare alternatives</h3>
+<section id="7-price-the-complete-video-path-then-compare-alternatives" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. Price the complete video path, then compare alternatives</h3>
 
 <p class="mb-3">Slide 37 lists EC2 instances, S3 storage, CloudFront delivery, and usage-priced platform software as cost components. Write an equation before entering a calculator:</p>
 
@@ -6132,7 +6196,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </table>
 </div>
 
-<p class="mb-3">A smaller VM rate can be offset by more runtime; an inexpensive storage class can have retrieval costs or delays that do not fit interactive streaming. The comparison must include the three traffic planes separately: upload ingress, encoder reads/writes, and viewer delivery. Week 10 gives the general price/TCO framework; this video's byte and job counts provide its concrete input ledger.</p>
+<p class="mb-3">A smaller VM rate can be offset by more runtime; an inexpensive storage class can have retrieval costs or delays that do not fit interactive streaming. The comparison must include the three traffic planes separately: upload ingress, encoder reads/writes, and viewer delivery. Week 9 gives the general price/TCO framework; this video's byte and job counts provide its concrete input ledger.</p>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
@@ -6152,6 +6216,11 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>K-means requires repeated assignment and centroid-update passes; one MapReduce job is only one iteration.</li>
+<li>Mapper output keys determine grouping; reducers need sums and counts to calculate new centroids.</li>
+<li>Log-space centroid coordinates are not raw follower counts or arithmetic raw-count means.</li>
+<li>Choice of $k$, preprocessing, initialization, and empty-cluster rules affect the result.</li>
+<li>An iteration's reducer output must be versioned and distributed to every mapper in the next job.</li>
 <li>Upload, encoding, and streaming have distinct I/O, CPU, storage, and delivery bottlenecks.</li>
 <li>The lecture's raw S3 → SQS → encoder → encoded S3 → CloudFront path separates asynchronous work from playback.</li>
 <li>Average jobs, peak arrival, retained copies, and viewer-facing bytes require separate capacity calculations.</li>
@@ -6198,16 +6267,24 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </div>
 </section>
 
-<section id="references-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="exam-reasoning-bridge-trace-one-request-and-one-failure" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: trace one request and one failure</h3>
+
+<p class="mb-3">A video-sharing architecture is easiest to test by following one upload: authenticate the owner, store the original privately, enqueue a conversion job, produce renditions, record processing state, authorize each viewer, then deliver through a CDN. Object storage is durable file storage; the queue absorbs bursts and retries; encoders perform CPU-heavy work; the database tracks ownership and workflow; the CDN caches delivery near viewers. A CDN does not determine whether a viewer is allowed to see a private asset.</p>
+
+<p class="mb-3">Ask what happens when encoding fails after the original upload. The original should remain durable, the job should be retryable or moved to a dead-letter path, and the UI should show a processing/failure state instead of advertising a nonexistent rendition. A queue smooths a spike but does not create compute capacity; worker scaling and queue age monitoring are needed. Cost includes retained originals/renditions, conversion work, requests and data egress, not just storage volume. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-7---example-applications" target="_blank" rel="noopener noreferrer">Q116–118</a>.</p>
+</section>
+
+<section id="references-7" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <ul class="note-list">
-<li>Gopalan, A. <em>Lecture 07.pdf</em> and <em>Lecture 08.pdf</em>, CS5224 Example Applications, AY2026/27 Semester 1, identical 41-slide files; video SaaS and pricing portion, slides 20–39.</li>
+<li>Gopalan, A. <em>Lecture 07.pdf</em> and <em>Lecture 08.pdf</em>, CS5224 Example Applications, AY2026/27 Semester 1, identical 41-slide files; k-means portion, slides 3–18; video SaaS and pricing portion, slides 20–39.</li>
 </ul>
 
 <hr>
 
-<h1 class="mt-4">Week 9 - Infrastructure as Code: Repeatable Cloud Environments and Terraform</h1>
+<h1 class="mt-4">Week 8 - Infrastructure as Code: Repeatable Cloud Environments and Terraform</h1>
 
 <p class="mb-3">The prior application designs contain many dependent resources. IaC turns that dependency graph into a reviewable source artifact so deployment can be repeated and changed deliberately.</p>
 </section>
@@ -6303,6 +6380,8 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3">Terraform configuration expresses the desired objects; the state file maps those declarations to provider resource IDs; a refresh or plan compares recorded and observed state; provider API calls change the live system. These are four related representations, not one perfectly synchronized truth. If someone edits a bucket policy in the console, the next plan may show drift. If state is lost, the resource can still exist even though Terraform no longer tracks it. If an apply succeeds but the application cannot read the queue, infrastructure creation has succeeded while service validation has failed. A full recovery test must cover state backup, configuration version, resource import or recreation rules, and the application's data and behavior.</p>
 
+<p class="mb-3">**<code>plan</code> versus <code>apply</code>:** <code>terraform plan</code> previews the operations needed to move from the observed/current resources toward the configuration's desired state; it does not execute those operations. <code>terraform apply</code> executes a plan. If no saved plan is supplied, it generates a fresh plan and normally asks for confirmation before changing resources. If a saved plan file is supplied, it executes that plan without a new interactive approval; <code>-auto-approve</code> also skips confirmation when generating a fresh plan. For CI drift checks, run <code>plan</code> and alert for review rather than scheduling <code>apply</code>. An ordinary non-empty plan may reflect a deliberate <code>.tf</code> change as well as external drift; <code>plan -refresh-only</code> focuses on changes to real resources relative to recorded state.</p>
+
 <p class="mb-3">The lecture's future-facing ideas add a feedback loop. <strong>Policy-as-Code</strong> rejects deployments that violate explicit rules (for example, a public bucket or unrestricted ingress); <strong>GitOps</strong> reconciles a declared repository state into a target environment; <strong>self-healing IaC</strong> monitors, analyzes, then remedies deviations. Policy checks are only as complete as their rules, and automatic remediation should have a bounded scope and an audit trail. A runaway reconciliation loop can repeatedly undo a necessary emergency change unless the incident process records and reconciles that change back to source.</p>
 </section>
 
@@ -6369,7 +6448,15 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </div>
 </section>
 
-<section id="references-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="exam-reasoning-bridge-separate-reusable-code-from-isolated-state" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: separate reusable code from isolated state</h3>
+
+<p class="mb-3">Infrastructure as Code describes desired resources in versioned files so environments can be recreated and reviewed. Declarative tools describe the target state and compute a plan; imperative scripts prescribe a sequence of commands. In Terraform, a <strong>module</strong> packages a reusable resource pattern, variables parameterize it, and outputs expose created identifiers. A <strong>state file</strong> records the relationship between configuration and deployed resources. Modules provide reuse; separate state/backends keep development, staging and production operations isolated. One is not a substitute for the other.</p>
+
+<p class="mb-3">Before applying, inspect the plan for unintended replacement, deletion or cross-environment changes. Protect state because it may contain sensitive values and is needed for consistent operations; use appropriate remote storage and locking for collaboration. Portability across providers still depends on provider-specific resource definitions, services and data formats. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-8---infrastructure-as-code" target="_blank" rel="noopener noreferrer">Q119–124</a>.</p>
+</section>
+
+<section id="references-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <ul class="note-list">
@@ -6378,7 +6465,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <hr>
 
-<h1 class="mt-4">Week 10 - Cloud Pricing and Total Cost of Ownership</h1>
+<h1 class="mt-4">Week 9 - Cloud Pricing and Total Cost of Ownership</h1>
 
 <p class="mb-3">Choosing a lower unit price is not the same as minimizing cost. The workload's duration, data movement, utilization, commitment, and operational labor determine the total.</p>
 </section>
@@ -6502,6 +6589,59 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <p class="mb-3"><strong>Worked break-even illustration, not a provider quote.</strong> Suppose one year of on-prem operation costs $F=\text{S\$}100{,}000$ fixed plus $c_p=\text{S\$}1$ per completed job. A cloud design costs $S=\text{S\$}20{,}000$ fixed plus $c_c=\text{S\$}3$ per job, including the modeled compute and transfer. Setting $100{,}000+x=20{,}000+3x$ gives $x^*=40{,}000$ jobs/year. At 20,000 jobs, modeled on-prem is S$120,000 and cloud S$80,000; at 60,000 jobs, they are S$160,000 and S$200,000. If cloud egress or migration costs have been omitted, these rankings are invalid. If the on-prem capacity cannot meet a peak SLA at 60,000 jobs without new hardware, the linear on-prem model must be revised rather than used to declare a winner.</p>
 
+<p class="mb-3"><strong>Worked sequential compute + I/O question (2526 Sem1 Test Q21).</strong> Convert 60 PFLOP to 60,000 TFLOP. With 800,000 I/O operations, $t=60{,}000/(\text{TFLOP/s})+800{,}000(\text{ms/I/O})/1000$ seconds; cost is $t\times(\text{USD/s})$. The two stages are sequential, so add their times rather than taking the maximum.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Instance</th>
+<th>Compute time (s)</th>
+<th>I/O time (s)</th>
+<th>Total time (s)</th>
+<th>Cost (USD)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>m7 (1, 3, 1)</td>
+<td>60,000</td>
+<td>2,400</td>
+<td>62,400</td>
+<td>62,400</td>
+</tr>
+<tr>
+<td>i8 (1, 1, 2)</td>
+<td>60,000</td>
+<td>800</td>
+<td>60,800</td>
+<td>121,600</td>
+</tr>
+<tr>
+<td>c5a (3, 2, 2)</td>
+<td>20,000</td>
+<td>1,600</td>
+<td>21,600</td>
+<td><strong>43,200</strong></td>
+</tr>
+<tr>
+<td>r7 (1, 3, 2)</td>
+<td>60,000</td>
+<td>2,400</td>
+<td>62,400</td>
+<td>124,800</td>
+</tr>
+<tr>
+<td>g4 (30, 10, 5)</td>
+<td>2,000</td>
+<td>8,000</td>
+<td>10,000</td>
+<td>50,000</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Thus <strong>c5a minimizes cost</strong>, while g4 finishes fastest. The table uses the question's simplified per-second rates; actual billing rules and parallelism could change a real deployment comparison.</p>
+
 <p class="mb-3"><strong>Commitment illustration.</strong> Consider an on-demand compute unit at S$0.10 per running hour versus a commitment with a S$15 monthly fixed fee and S$0.06 per running hour. Ignoring other charges, equal cost occurs at $h=15/(0.10-0.06)=375$ running hours/month. Below that, on-demand is cheaper; above it, the commitment is cheaper <em>for those hours</em>. If the workload may disappear or change size, the fixed fee is a risk even when a forecast exceeds 375 hours. The example shows why a discount percentage alone cannot decide the purchase: utilization and commitment duration matter.</p>
 
 <h4 id="3-3-tiered-price-calculation-and-unit-discipline" class="mb-2">3.3 Tiered price calculation and unit discipline</h4>
@@ -6594,7 +6734,15 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </div>
 </section>
 
-<section id="references-10" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="exam-reasoning-bridge-compare-options-over-the-same-horizon" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Exam reasoning bridge: compare options over the same horizon</h3>
+
+<p class="mb-3">Start with workload shape. A stable baseline can justify reserved/committed capacity; an uncertain or short-lived component favors on-demand flexibility; interruptible batch work may use Spot if it can checkpoint/retry. Right-size resources before buying discounts, and scale idle capacity down when possible. Compare <strong>total</strong> cost: compute-hours, storage, requests, transfer/egress, support, labor, migration and downtime over the same time period.</p>
+
+<p class="mb-3">For a compute-instance choice, calculate each candidate's execution time from required operations and effective throughput, add I/O time where it cannot overlap, then multiply by its price rate; the fastest machine need not minimize cost. For migration, separate future incremental costs from sunk expenditure: money already spent cannot be recovered by choosing on-premise now, although remaining asset life and avoidable operating costs matter. TCO is useful precisely because purchase price alone omits ongoing and risk-related costs. Review <a class="note-inline-link" href="../../artifacts/CS5224%20Questions%20and%20Answers.md#week-9---cloud-pricing-and-total-cost-of-ownership" target="_blank" rel="noopener noreferrer">Q125–132</a>.</p>
+</section>
+
+<section id="references-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <ul class="note-list">
@@ -6607,13 +6755,13 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 
 <ul class="note-list">
 <li><em>Lecture 06 Part 1</em> and <em>Lecture 06 Part 2</em> are covered in the existing Week 6 chapter: application tiers and service models, MapReduce/Hadoop/Spark, and FaaS/Lambda. Both parts have 32 pages; the detailed Week 6 chapter was checked for these topic families.</li>
-<li>The supplied <em>Lecture 07</em> and <em>Lecture 08</em> files are byte-identical, each 41 slides of Example Applications. Their k-means and video portions are split into Week 7 and Week 8 study chapters without duplicating slide content or claiming a distinct teaching date for each file. <em>Lecture 09</em> has 41 IaC slides and <em>Lecture 10</em> has 32 pricing/TCO slides. Lecture 10's “Next Week” slide announces a guest lecture, so the unnumbered 75-slide Cloud Native deck is placed in Week 11.</li>
+<li>The supplied <em>Lecture 07</em> and <em>Lecture 08</em> files are byte-identical, each 41 slides of Example Applications. Their k-means and video portions are both covered in the Week 7 example-applications chapter without duplicating slide content. <em>Lecture 09</em> has 41 IaC slides and <em>Lecture 10</em> has 32 pricing/TCO slides. Lecture 10's “Next Week” slide announces a guest lecture, so the unnumbered 75-slide Cloud Native deck is placed in Week 10.</li>
 <li>The video architecture and TCO pie charts were visually checked from the original slides. Chart percentages are recorded as within-case shares; their absolute totals are not supplied, and ambiguous small labels are not used.</li>
 </ul>
 
-<h1 class="mt-4">Week 11 - Guest Lecture: The Cloud-Native Paradigm Shift, Microservices, Containers, and Kubernetes</h1>
+<h1 class="mt-4">Week 10 - Guest Lecture: The Cloud-Native Paradigm Shift, Microservices, Containers, and Kubernetes</h1>
 
-<p class="mb-3">The numbered lectures explain how cloud resources are offered, assembled into applications, reproduced with code, and priced. The guest lecture follows a related but different question: <strong>how should an application be designed and operated when its components change frequently and run across dynamic infrastructure?</strong> Its title page does not give a week number, but Lecture 10's “Next Week” slide announces the guest lecture; this places the supplied deck in Week 11.</p>
+<p class="mb-3">The numbered lectures explain how cloud resources are offered, assembled into applications, reproduced with code, and priced. The guest lecture follows a related but different question: <strong>how should an application be designed and operated when its components change frequently and run across dynamic infrastructure?</strong> Its title page does not give a week number, but Lecture 10's “Next Week” slide announces the guest lecture; this places the supplied deck in Week 10.</p>
 </section>
 
 <section id="1-cloud-computing-versus-cloud-native-design" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -6847,7 +6995,7 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
   </div>
 </section>
 
-<section id="references-11" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="references-10" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <ul class="note-list">
@@ -7431,6 +7579,8 @@ Content-Length: 5242880
 
 <p class="mb-3">Originals are about 74.51 GiB and previews about 4.47 GiB, totaling 78.98 GiB. S3 prices storage in binary GB ($2^{30}$ bytes); converting units is not a discount. <a class="note-inline-link" href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">AWS: S3 pricing</a></p>
 
+<p class="mb-3"><strong>Worked capacity check:</strong> 40 weddings/year $\times$ 400 photos/wedding $=16{,}000$ photos/year; at 5 decimal MB each, new originals are 80 GB/year. At triple volume, new originals are 240 GB/year. With five years of retention, no deletion and constant volume, accumulated originals reach about 400 GB (or 1.2 TB at triple volume), before previews, replicas and versions. Billing uses average GB-months, so annual new bytes are not the same as a year's storage bill.</p>
+
 <p class="mb-3">Do not multiply year-end capacity by 12 to estimate the first year if the bucket starts empty. Under roughly uniform growth and no deletions, average first-year capacity is about half the year-end amount, around $6\times78.98$ GiB-month in Standard. All photos uploaded at the start and retained all year would yield about $12\times78.98$ GiB-month. Later years must include older photos.</p>
 
 <h4 id="8-2-include-every-cost-category" class="mb-2">8.2 Include every cost category</h4>
@@ -7680,7 +7830,7 @@ Content-Length: 5242880
 <p class="mb-3">The core of the case is tracing one photo: who can upload it, where its bytes travel, who can read it, how failures recover, how old data is restored, and what each action costs. This connects Week 1 economics, Week 2 responsibility, Week 3 elasticity, Week 5 isolation, and Week 6 event-driven execution.</p>
 </section>
 
-<section id="references-12" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<section id="references-11" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">References</h3>
 
 <h4 id="course-materials" class="mb-2">Course materials</h4>
