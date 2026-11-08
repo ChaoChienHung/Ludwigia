@@ -1,6 +1,6 @@
 <meta>
 Title: NUS CS5234 Algorithms at Scale
-Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale, covering sublinear-time query algorithms, approximate median selection, streaming foundations, concentration inequalities, variance reduction, median probability boosting, graph edge estimation, Yao's minimax principle, query complexity lower bounds, property testing, array monotonicity, distribution uniformity testing, reservoir sampling, Morris approximate counting, graph streaming connectivity and spanners, metric k-center NP-hardness and 2-approximation, streaming k-center in Euclidean grids, hierarchical k-median coreset trees, and minimum enclosing ball core-sets.
+Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale (Weeks 1–10), covering sublinear-time query algorithms, approximate counting, reservoir sampling, graph spanners, metric k-center, k-median coreset trees, minimum enclosing balls, k-wise independent hash families, distinct element estimation (t-th smallest hash), communication complexity lower bounds (Equality, Index, Gap Hamming Distance, Disjointness), graph streaming space hardness (Perfect Matching, MIS), frequency moments (F_2 AMS sketch), heavy hitters (Misra-Gries, Count-Min, Count Sketch), sparse recovery, Johnson-Lindenstrauss lemma, subspace embeddings, and streaming linear regression.
 Slug: nus-cs5234-algorithms-at-scale
 Output: notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.html
 CanonicalId: nus-cs5234-algorithms-at-scale
@@ -10,15 +10,15 @@ Lang: en
 Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-10-04
+LastModified: 2026-11-08
 </meta>
 
 # NUS CS5234 Algorithms at Scale
 
-# Master Cheatsheet & Executive Quick Reference (Lec 1–6)
+# Master Cheatsheet & Executive Quick Reference (Lec 1–10)
 
 > **Executive Overview & Exam Quick Reference:**
-> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 6 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, lower bound proving techniques, and clustering-at-scale results.
+> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 10 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, lower bound proving techniques, and clustering-at-scale results.
 
 ---
 
@@ -141,6 +141,57 @@ To prove that no randomized algorithm can solve problem $f$ in fewer than $q$ qu
 | **MEB / 1-center** | Farthest-point augmentation obeys $\lambda_{t+1}\ge(1+\lambda_t^2)/2$. | After $\mathcal{O}(1/\varepsilon)$ iterations, the active set is a dimension-independent $(1+\varepsilon)$ coreset. |
 
 > **Clustering proof pattern:** identify the right structural invariant, use triangle inequality (or a packing/pigeonhole argument), and separate the optimization objective from the resource model (query, streaming space, or coreset size).
+
+---
+
+
+---
+
+### VII. Streaming Hashing & Distinct Elements ($F_0$) Cheatcard (Lec 7)
+
+| Concept / Estimator | Core Formula / Construction | Randomness Degree | Space Complexity | Critical Analytical Intuition |
+| :--- | :--- | :--- | :--- | :--- |
+| **$k$-wise Hash Family** | $\sum_{i=0}^{k-1} a_i x^i \pmod p$ | $k$-wise Independent | $\mathcal{O}(k \log p)$ bits | Any $k$ keys map as independent uniforms. Proved via Vandermonde matrix invertibility over $\mathbb{F}_p$. |
+| **Decision Gap Tester** | $Y = \sum_{j=1}^D \mathbb{I}[h(u_j) \in B]$ | Pairwise ($k=2$) | $\mathcal{O}(1)$ counters | Separates $D \le T$ vs $D \ge 2T$. Chebyshev handles variance since pairwise independence gives zero covariance. |
+| **$t$-th Minimum Estimator** | $\tilde{D} = \frac{t \cdot m}{X_t}$ | Pairwise ($k=2$) | $\mathcal{O}(\epsilon^{-2} \log n)$ bits | $D$ points partition $[0, m]$ into $D+1$ intervals; $t$-th smallest concentrates at $\approx tm/D$. Set $t = \lceil 100/\epsilon^2 \rceil$. |
+| **Median Boosted $F_0$** | $\text{median}(\tilde{D}_1, \dots, \tilde{D}_L)$ | $L = \mathcal{O}(\log(1/\delta))$ copies | $\mathcal{O}(\epsilon^{-2} \log n \log(1/\delta))$ | Chernoff bound over independent estimator trials boosts success from $2/3$ to $1 - \delta$. |
+
+---
+
+### VIII. Communication Complexity & Streaming Space Lower Bounds Cheatcard (Lec 8)
+
+| Problem | Communication Formulation | Hardness Bound | Streaming Space Implication | Gadget / Proof Technique |
+| :--- | :--- | :--- | :--- | :--- |
+| **Equality ($\text{EQ}_n$)** | $x = y$? | Det: $n$ bits; Rand: $\mathcal{O}(\log n)$ | Exact state requires $\Omega(n)$ | Fooling set of size $2^n$; Fingerprinting via random prime field. |
+| **Index ($\text{INDEX}_n$)** | Alice $x \in \{0, 1\}^n$, Bob $i \in [n]$; output $x_i$ | One-way: $\Omega(n)$ bits | Fundamental stream lower bound | Information theory: $I(X; M) \ge n(1 - H(P_e)) = \Omega(n)$. |
+| **Gap Hamming ($\text{GHD}$)** | $d_H(x, y) \le \frac{n}{2} - \sqrt{n}$ vs $\ge \frac{n}{2} + \sqrt{n}$ | Two-way: $\Omega(n)$ bits | Distance/moment estimation limit | Hardness of relative error $\approx 1/\sqrt{n}$. |
+| **Disjointness ($\text{DISJ}_n$)** | $S \cap T = \emptyset$? | $\Omega(n)$ bits | Exact Distinct Elements $\Omega(n)$ | Streaming reduction: $D = |S| + |T| - |S \cap T|$. |
+| **Graph Matching** | Does $G$ have a Perfect Matching? | $\Omega(n^2)$ bits | Not solvable in semi-streaming! | Reduction from $\text{INDEX}_{n^2}$ using $4n$-vertex bipartite gadget. |
+| **Graph MIS** | Find a Maximal Independent Set | $\Omega(n^2)$ bits | Not solvable in semi-streaming! | Reduction from $\text{INDEX}_{n^2}$ using dual-clique vertex gadget. |
+
+---
+
+### IX. Frequency Moments & Heavy Hitters Cheatcard (Lec 9)
+
+| Algorithm | Stream Model | Guarantee Metric | Memory Complexity | Algorithmic Mechanism |
+| :--- | :--- | :--- | :--- | :--- |
+| **AMS $F_2$ Sketch** | General Turnstile ($\Delta \in \mathbb{Z}$) | $(1 \pm \epsilon) F_2$ | $\mathcal{O}(\epsilon^{-2} \log(1/\delta) \log(m+n))$ | Linear sketch $Z = \sum x_i g(i)$ with 4-wise random signs. $\mathbb{E}[Z^2] = F_2$, $\text{Var}[Z^2] \le 2 F_2^2$. |
+| **Misra-Gries** | Cash Register ($\Delta > 0$) | $L_1$: $x_i - \epsilon F_1 \le \hat{x}_i \le x_i$ | $\mathcal{O}(\epsilon^{-1} (\log m + \log n))$ | Deterministic $k = \lceil 1/\epsilon \rceil$ counters. Each decrement consumes $k+1$ stream items. Total decrements $\le n/(k+1)$. |
+| **Count-Min Sketch** | Strict Turnstile ($x_i \ge 0$) | $L_1$: $x_i \le \hat{x}_i \le x_i + \epsilon F_1$ | $\mathcal{O}(\epsilon^{-1} \log(1/\delta) \log(m+n))$ | 2D table $d \times w$. Hash collisions bounded by Markov's inequality: $\Pr[\text{noise} \ge \epsilon F_1] \le 1/e$. Query takes minimum across rows. |
+| **Count Sketch** | General Turnstile ($\Delta \in \mathbb{Z}$) | $L_2$: $x_i \pm \epsilon \sqrt{F_2}$ | $\mathcal{O}(\epsilon^{-2} \log(1/\delta) \log(m+n))$ | Random sign hashes $g_l$ ensure unbiasedness $\mathbb{E}[\hat{x}_{l, i}] = x_i$. Chebyshev on variance $\le F_2/w$. Query takes median across rows. |
+
+---
+
+### X. Data Compression & Subspace Embeddings Cheatcard (Lec 10)
+
+| Technique | Setting / Problem | Key Guarantee | Target Dimension / Space | Proof Engine / Structure |
+| :--- | :--- | :--- | :--- | :--- |
+| **Exact 1-Sparse** | $x$ has 1 non-zero entry | Exact index $k$ and value $v$ | $\mathcal{O}(\log m \log n)$ bits | 3 Registers: $\Phi_0 = v, \Phi_1 = k v, \Phi_2 = k^2 v \implies k = \Phi_1/\Phi_0$. Verify $\Phi_2/\Phi_0 = k^2$. |
+| **Approx $k$-Sparse** | General vector $x \in \mathbb{R}^m$ | $(1 + 5\epsilon) \text{err}_k^2(x)$ | $\mathcal{O}(\epsilon^{-2} k \log m \log(m+n))$ | Count Sketch with $(k+2)$-wise hashing. Isolates top-$k$ items; tail variance $\le \frac{\epsilon}{k} \text{err}_k^2(x)$. |
+| **Distributional JL** | Arbitrary vector $x \in \mathbb{R}^m$ | $(1 \pm \epsilon) \|x\|_2^2$ | $k = \mathcal{O}(\epsilon^{-2} \log(1/\delta))$ | Gaussian projection $\Pi_{i, j} \sim \mathcal{N}(0, 1/k)$. Chi-squared concentration on $k$ degrees of freedom. |
+| **Point Set JL** | $n$ points in $\mathbb{R}^m$ | $(1 \pm \epsilon) \|p - q\|_2^2$ for all pairs | $k = \mathcal{O}(\epsilon^{-2} \log n)$ | Union bound over all $\binom{n}{2}$ pairs with $\delta' = 1/n^2$. Completely independent of ambient dimension $m$! |
+| **Subspace Embedding** | All $x$ in $d$-dim subspace $E$ | $(1 \pm \epsilon) \|x\|_2$ for ALL $x \in E$ | $k = \mathcal{O}(\epsilon^{-2} d \log(1/\delta))$ | Discretize unit sphere $S^{d-1}$ via $\gamma$-net ($|N| \le 5^d$). Chaining decomposition $x = \sum z_i$ preserves continuous space. |
+| **Streaming Regression** | $\min_x \|Ax - b\|_2$ ($n \gg d$) | $(1 + \epsilon)$-optimal solution $\tilde{x}$ | $\mathcal{O}(d^2 / \epsilon^2)$ words | Subspace embedding on $[A \mid b] \in \mathbb{R}^{n \times (d+1)}$. Solve compact sketched problem $\min_x \|\Pi A x - \Pi b\|_2$. |
 
 ---
 
@@ -4932,47 +4983,6 @@ $$s = \left\lceil 4 \sqrt{\frac{n}{\epsilon}} \right\rceil = \mathcal{O}\left( \
 
 ---
 
-<reviewkit>
-<takeaways>
-- **The Core Scalability Philosophy:** "Algorithms at Scale" operate under extreme resource constraints. When $n$ is massive, reading the input requires $\Omega(n)$ time, so sublinear-time query algorithms access data via localized oracles and output $(\epsilon, \delta)$-approximations.
-- **Linearity of Expectation:** Holds unconditionally for any collection of random variables without requiring independence ($\mathbb{E}[\sum X_i] = \sum \mathbb{E}[X_i]$), serving as the universal workhorse for sampling analysis.
-- **Concentration Hierarchy:** Markov's inequality requires only non-negativity ($\mathcal{O}(1/\alpha)$ linear decay); Chebyshev's inequality requires pairwise independence ($\mathcal{O}(1/\alpha^2)$ polynomial decay); Chernoff bound requires mutual independence ($\exp(-\Omega(\delta^2 \mu))$ exponential decay).
-- **The Balls-into-Bins Model:** Throwing $n$ balls into $n$ bins leaves $n/e \approx 36.8\%$ of bins empty on average. Throwing $10 n \ln n$ balls ensures no empty bins with probability $\ge 1 - n^{-9}$ (Coupon Collector's Theorem).
-- **The Two-Knob Sample Complexity Framework & Chernoff Signature:** Any sample size formula factorizes into $k \sim (\text{Accuracy Knob } \varepsilon) \times (\text{Confidence Knob } \delta)$. Accuracy is universally $\frac{1}{\varepsilon^2}$ (rooted in 2nd moments; scaling to $\frac{1}{\varepsilon^2 p}$ for multiplicative error $\pm \varepsilon p n$), governed by the Mean Trick. Confidence is either polynomial $\mathcal{O}(1/\delta)$ (Chebyshev alone) or logarithmic $\mathcal{O}(\log(1/\delta))$ (Chernoff family / Median Trick). When $X_i \in \{0, 1\}$ is naturally bounded (counting), direct Chernoff reaches $\mathcal{O}\left(\frac{\log(1/\delta)}{\varepsilon^2}\right)$ in one step. When $X_i$ is heavy-tailed (e.g., Morris), Median-of-Means detours through binarization to reach the same bound. The presence of $\log(1/\delta)$ is the universal signature of the Chernoff family.
-- **Graph Edge Estimation & Geometric Guessing:** Additive $\epsilon n^2$ error takes $\mathcal{O}(1/\epsilon^2)$ pair queries. Multiplicative $(1 \pm \epsilon)$-estimation resolves the sample size circularity $k \sim n/(\epsilon^2 \sqrt{m})$ via Geometric Guessing ($m' \in \{n^2, n^2/2, \dots\}$): stopping at the first guess where $\hat{m} \ge 1.5 m'$ guarantees $m/4 < m' \le m$ (Theta(m)), avoiding early halts (Case a: $\hat{m} < 1.5 m'$) and overshooting (Case c: $\hat{m} \ge 1.5 m'$). Query costs sum to $\mathcal{O}(1)$ times the final round via a convergent geometric series with ratio $1/\sqrt{2}$, while failure probability is bounded by $\mathcal{O}(1/\log n)$ via Median Trick and Union Bound, yielding $\mathcal{O}\left(\frac{\sqrt{n}\log\log n}{\epsilon^2}\right)$ on connected graphs.
-- **Decision Trees & Randomized Complexity (The Matrix Perspective):** A randomized algorithm is a probability distribution over deterministic decision trees ($A_r$). In the evaluation matrix (rows = inputs $x$, columns = random seeds $r$), cost is evaluated row-wise via $\mathbb{E}_r[Q(x, A_r)]$ with the adversary picking the fattest row ($\max_x \mathbb{E}_r[Q]$), while correctness is evaluated via $\mathbb{E}_r[I(x, A_r)]$ with the adversary picking the weakest row ($\min_x \mathbb{E}_r[I] \ge 2/3$). Individual cells $(x, r)$ are purely deterministic $\{0, 1\}$; the $\ge 2/3$ threshold requires the probability weight of winning seeds to be $\ge 2/3$ (failing seeds $\le 1/3$). Standardizing on $2/3$ (vs. $1/2$ noise) allows exponential amplification to $1-\delta$ in $\mathcal{O}(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ repetitions via Chernoff majority voting. Expected query complexity $T$ converts to worst-case $\mathcal{O}(T)$ via Markov runtime truncation.
-- **Yao's Minimax Principle:** The distributional query complexity of the best deterministic algorithm on *any* input distribution $\mu$ lower-bounds randomized query complexity ($D_\mu(f) \le R(f)$). This establishes that $R(\text{OR}) = \Omega(n)$, $R(\text{XOR}) = n$, and $R(\text{Graph Connectivity}) = \Omega(n^2)$.
-- **Property Testing Promise Model:** Relaxes exact decision problems by introducing an $\epsilon$-distance buffer: output `YES` if $x \in \mathcal{L}$ (one-sided error if $\Pr=1$), output `NO` if $x$ is $\epsilon$-far ($\text{dist}(x, \mathcal{L}) > \epsilon$), and permit either answer if $0 < \text{dist} \le \epsilon$. For NotOR ($x = 0^n$), property testing collapses query complexity from exact $\Omega(n)$ down to $\mathcal{O}(1/\epsilon)$, completely independent of dataset size $n$.
-- **Sortedness Lower Bound & Multi-Scale Inversion Hierarchy:** Exact sortedness requires $\Omega(n)$ queries via a paired-permutation gadget reduction from OR ($y(i) := i + x(\lfloor i/2 \rfloor)$ for odd $i$, $i - x(\lfloor i/2 \rfloor)$ for even $i$). Testing adjacent inequalities (Algorithm 0) fails on the split-sorted array $(n/2+1, \dots, n, 1, \dots, n/2)$ due to a single adjacent boundary violation, requiring $\Omega(n)$ queries. Subsequence sampling (Algorithm 1) succeeds on binary strings in $\mathcal{O}(1/\epsilon)$ queries via the Blue/Red structural lemma ($(\epsilon n/2)$-th one precedes $\ge \epsilon n/2$ zeros), but fails on dense microscopic swaps ($A = (2, 1, 4, 3, \dots)$) requiring $\Omega(\sqrt{n})$ queries by the Birthday Paradox. On the generalized parameterized family $A(s)$ (partitioned into $s$ sublists of size $n/s$ with adjacent block inversions), Algorithm 0 requires $\Theta(n/s)$ queries while Algorithm 1 requires $\Theta(\sqrt{s})$ queries; at $s = n^{2/3}$, both algorithms are stuck at $\Theta(n^{1/3})$.
-- **Binary Search Monotonicity Tester (Ergün et al.):** Overcomes multi-scale inversions by simulating binary search towards target indices. By the Lowest Common Ancestor (LCA) Transitivity Lemma, if binary searches for $i_1 < i_2$ both succeed, they verify $a_{i_1} \le a_k \le a_{i_2}$ at divergence pivot $k = \text{LCA}(i_1, i_2)$, proving that all searchable indices form a monotonically sorted subsequence. An $\epsilon$-far array contains $\ge \epsilon n$ unsearchable indices, allowing a sample of $k = \mathcal{O}(1/\epsilon)$ random searches to detect an inversion with probability $\ge 2/3$ in $\mathcal{O}\left( \frac{\log n}{\epsilon} \right)$ total queries.
-- **Total Variation Distance & Yao's Transcript Method:** $\Delta_{\text{TVD}}(\mu, \gamma) = \frac{1}{2} \|\mu - \gamma\|_1 = \max_S (\mu(S) - \gamma(S))$. In single-sample distinguishing, the optimal Bayes decision rule achieves $\Pr(\text{correct}) = \frac{1}{2} + \frac{1}{2} \Delta_{\text{TVD}}(\mu, \gamma)$. In Yao's Minimax Principle, bounding the TVD between transcript distributions $\Delta_{\text{TVD}}(\nu_0, \nu_1) < 1/3$ proves that no deterministic decision tree of depth $T$ can distinguish 0-instances from 1-instances with success $\ge 2/3$, re-proving $R(\text{OR}) \ge n/3$.
-- **Uniformity Testing & Collision Probability:** Distinguishing $\mu = U_n$ from $\Delta_{\text{TVD}}(\mu, U_n) > \epsilon$ reduces to estimating collision probability $\Pr(X = Y) = \|\mu\|_2^2$, which is uniquely minimized at $U_n$ with $\|U_n\|_2^2 = 1/n$. By Cauchy-Schwarz, $\Delta_{\text{TVD}}(\mu, U_n) > \epsilon \implies \|\mu\|_2^2 \ge \frac{1 + 4\epsilon^2}{n}$. The Batu et al. pairwise collision counting estimator $\hat{Y} = \frac{1}{\binom{k}{2}} \sum_{i < j} Y_{i, j}$ is strictly unbiased ($\mathbb{E}[\hat{Y}] = \|\mu\|_2^2$). Covariance decomposition over $6\binom{k}{3}$ overlapping triplets (with $\text{Cov} \le \|\mu\|_2^3$) and $\binom{k}{2}$ diagonal pairs yields $\text{Var}[\hat{Y}] \le \frac{24}{k} \|\mu\|_2^3 + \frac{2}{k^2} \|\mu\|_2^2$, establishing sample complexity $k = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^4} \right)$ via Chebyshev's inequality (information-theoretically optimal $\Theta(\sqrt{n}/\epsilon^2)$ via Paninski).
-- **Graph Bipartiteness Testing:** In the adjacency-matrix model, the Goldreich-Goldwasser-Ron induced subgraph tester samples $k = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\frac{1}{\epsilon} \right)$ vertices and queries all $\binom{k}{2}$ pairs. It achieves one-sided error ($\Pr=1$ on bipartite graphs) and detects odd cycles on $\epsilon$-far graphs in $\mathcal{O}(\text{poly}(1/\epsilon))$ queries, completely independent of graph vertex count $n$.
-- **Assignment 1 · Problem 2 (Half-String 1-Search):** Promising exactly one 1 in $\{0, 1\}^n$, querying the first $n/2$ bits solves the problem deterministically in $n/2$ queries. Under Yao's Minimax Principle on uniform basis distribution $\{e_1, \dots, e_n\}$, conditional Bayes accuracy along the all-zero branch is bounded by $\frac{\max(n/2 - q_1, n/2 - q_2)}{n - q} \le \frac{n/2}{n - q}$, limiting overall success to $\frac{1}{2} + \frac{q}{n}$, which demands $q \ge n/6$ queries for $\ge 2/3$ correctness, establishing $R(f) = \Theta(n)$.
-- **General Connected Components 3-Stage Hierarchy:** Small components ($\le 100$) reduce to 0/1 counting via minimum-index indicator $x_i = \mathbb{I}[v_i \text{ minimum in } C(v_i)]$ in $\mathcal{O}(n/\varepsilon^2)$ queries. Unbounded components evolve through: (1) Truncation at $q = 2/\varepsilon$ in $\mathcal{O}(n/\varepsilon^3)$ queries; (2) Unbiased geometric variable $R \in [n]$ with $\Pr[R \ge j] = 1/j \implies \mathbb{E}[R] = \mathcal{O}(\log n)$, yielding indicator $Y_v = \mathbb{I}[R \ge |C(v)|]$ with $\mathbb{E}[Y_v] = 1/|C(v)|$ in $\mathcal{O}(n \log n / \varepsilon^2)$ queries; and (3) Combined optimal estimator capping $R$ at $2/\varepsilon$, reaching $\mathcal{O}(\varepsilon^{-2} n \log(1/\varepsilon))$ queries.
-- **Uniformity Testing Lower Bound $\Omega(\sqrt{n})$:** Distinguishing $U_n$ from half-support distributions $\mu_S$ requires $\Omega(\sqrt{n})$ samples. By the Birthday Paradox, drawing $m \le \sqrt{n}/2$ samples yields collision probabilities $\delta_0 \le \binom{m}{2}/n$ and $\delta_1 \le 2\binom{m}{2}/n$, bounding transcript TVD by $\Delta_{\text{TVD}}(\nu_0, \nu_1) \le \frac{m(m-1)}{n} \le 1/4 < 1/3$, which limits distinguishing success to $< 2/3$ via Yao's transcript method.
-- **Permutation Testing via Collision Detection (Assignment 1 · Problem 3):** Testing whether $a \in [n]^n$ is a permutation reduces to collision detection in $s = \mathcal{O}(\sqrt{n/\varepsilon})$ queries. Distance to permutation is $\text{dist}(a, P_n) = n - D$ ($D$ distinct values). An $\epsilon$-far array contains $m \ge \varepsilon n / 2$ disjoint collision pairs. Sampling $s = \lceil 4 \sqrt{n/\varepsilon} \rceil$ distinct entries captures $\mu \ge 4$ expected pairs; pairwise disjointness ensures negative covariance $\text{Cov}(I_k, I_\ell) \le 0$, allowing Chebyshev's inequality to bound non-detection $\Pr[X = 0] \le 1/\mu \le 1/4 \le 1/3$, guaranteeing one-sided rejection with probability $\ge 3/4$.
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
-
-## References
-
-1. Mitzenmacher, M., & Upfal, E. (2017). *Probability and Computing: Randomization and Probabilistic Techniques in Algorithms and Data Analysis* (2nd ed.). Cambridge University Press.
-2. Goldreich, O. (2017). *Introduction to Property Testing*. Cambridge University Press.
-3. Motwani, R., & Raghavan, P. (1995). *Randomized Algorithms*. Cambridge University Press.
-4. Yao, A. C. C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
-5. Feige, U. (2006). On sums of independent random variables with bounded variance and average degree estimation in sublinear time. *SIAM Journal on Computing*, 35(4), 964-984.
-6. Goldreich, O., & Ron, D. (2008). Approximating average degree in sublinear time. *Random Structures & Algorithms*, 32(4), 469-493.
-7. Chazelle, B., Rubinfeld, R., & Trevisan, L. (2005). Approximating the minimum spanning tree weight in sublinear time. *SIAM Journal on Computing*, 35(2), 411-426.
-8. Ergün, F., Kumar, S., & Rubinfeld, R. (2001). Fast approximate PCPs for multidimensional stability problems. *Journal of Computer and System Sciences*, 63(3), 398-421.
-9. Batu, T., Fortnow, L., Rubinfeld, R., Smith, W. D., & White, P. (2013). Testing that distributions are close. *ACM Transactions on Algorithms (TALG)*, 9(4), 1-24.
-10. Paninski, L. (2008). A coincidence-based test for uniformity given very sparsely sampled discrete data. *IEEE Transactions on Information Theory*, 54(10), 4750-4755.
-11. Chen, Y. (2025). *CS5234 Algorithms at Scale: Lecture Notes on Sublinear Algorithms*. National University of Singapore.
-
 ---
 
 # Week 5 - Streaming Algorithms: Reservoir Sampling, Morris Approximate Counting, Graph Streaming, and Spanners
@@ -5642,43 +5652,7 @@ $$\text{Girth}(H) \ge 2k + 1 \;\xrightarrow{\text{k-layer BFS}}\; d_{\min} \le \
 
 ---
 
-<reviewkit>
-<takeaways>
-- **The Streaming Paradigm:** Algorithms process massive, unbounded data streams $x_1, \dots, x_n$ in a single pass under strict memory constraints ($\text{poly}(\log n)$ or semi-streaming $\mathcal{O}(n \log n)$ bits). Once processed, elements are permanently discarded unless explicitly held in working memory.
-- **Uniform Reservoir Sampling:** Maintaining sample $s$ and updating $s \leftarrow x_i$ with probability $1/i$ (retaining with $1 - 1/i$) guarantees that every item has exact uniform survival probability $\Pr[y = x_i] = \frac{1}{i} \prod_{k=i+1}^n \frac{k-1}{k} = \frac{1}{n}$ via telescoping product cancellation. Space is $\mathcal{O}(\log m + \log n)$ bits.
-- **Exact vs. Morris Approximate Counting:** An exact binary counter requires $\lceil \log_2(n+1) \rceil = \mathcal{O}(\log n)$ bits. Morris's randomized algorithm increments integer counter $C \leftarrow C + 1$ with probability $2^{-C}$ and outputs $\hat{A} = 2^C - 1$, storing values up to $\approx \log_2 n$ in only $\mathcal{O}(\log\log n)$ bits.
-- **Unbiasedness & Variance Analysis of Morris Counter:**
-  - Defining $X_i = 2^{C_i}$, conditional expectation $\mathbb{E}[X_{i+1} \mid X_i = x] = (2x)(1/x) + x(1 - 1/x) = x + 1$ implies $\mathbb{E}[X_A] = A + 1$, confirming $\mathbb{E}[\hat{A}] = \mathbb{E}[X_A - 1] = A$ (strictly unbiased).
-  - Second moment recurrence $\mathbb{E}[X_{i+1}^2 \mid X_i = x] = x^2 + 3x$ unrolls to $\mathbb{E}[X_A^2] = 1 + \frac{3}{2}A(A+1)$, yielding variance $\text{Var}[\hat{A}] = \text{Var}[X_A] = \frac{A(A-1)}{2} \le \frac{1}{2}A^2$, with constant relative standard deviation $\sigma / A \approx 70.7\%$ and linearly exploding absolute error $\sigma \approx 0.707 A$.
-- **Concentration Barriers & The Median-of-Means Binarization Bridge:**
-  - **The $A^2$ Cancellation Tragedy:** Evaluating Chebyshev on raw Morris yields $\Pr[|\hat{A} - A| \ge \epsilon A] \le \frac{A^2/2}{\epsilon^2 A^2} = \frac{1}{2\epsilon^2}$, where $A^2$ cancels out completely, offering zero decay as stream length $A \to \infty$. Direct Chernoff is prevented by double-exponential MGF explosion $\mathbb{E}[e^{t 2^C}]$ from geometric jumps.
-  - **Mean Trick (Morris+):** Averaging $k = 10/\epsilon^2$ independent parallel Morris counters reduces variance to $\le \frac{A^2}{2k}$, bounding failure probability $\Pr[|\bar{A} - A| \ge \epsilon A] \le \frac{1}{2k\epsilon^2} \le \frac{1}{20}$ via Chebyshev's inequality in $\mathcal{O}(\epsilon^{-2} \log\log n)$ bits.
-  - **Median Trick & Binarization Bridge (Morris++):** Transforming group outcomes into strictly bounded Bernoulli indicator variables $Z_j = \mathbf{1}\{|\bar{A}_j - A| \ge \epsilon A\} \in \{0, 1\}$ allows legitimate Chernoff concentration on the Binomial sum $\sum Z_j \ge L/2$, bounding failure by $\delta$ with $L = \mathcal{O}(\log(1/\delta))$ groups in $\mathcal{O}(\epsilon^{-2} \log(1/\delta) \log\log n)$ bits.
-- **Streaming Graph Connectivity:** Maintaining an acyclic spanning forest $F$ requires at most $n - 1$ edges ($\mathcal{O}(n \log n)$ bits). Cycle-inducing edges are discarded. At stream termination, $G$ is connected iff $F$ has $n - 1$ edges.
-- **Streaming Graph Bipartiteness:** Maintains spanning forest $F$ with 2-coloring $c: V \to \{1, 2\}$. If arriving edge $e = (u, v)$ creates an odd cycle in $F$, halt and output `NO`. If it creates an even cycle of length $2L$, the unique tree path in $F$ has length $2L - 1$ (odd), forcing distinct endpoint colors $c(u) \neq c(v)$ in the forest 2-coloring, proving validity. Space is $\mathcal{O}(n \log n)$ bits.
-- **Metric $(2k-1)$-Spanner Construction:** Greedy streaming rule: add edge $e = (u, v)$ to $H$ iff $d_H(u, v) \ge 2k$; discard if $d_H(u, v) \le 2k-1$. For every edge in $G$, $d_H(u, v) \le 2k-1$. By triangle inequality along true shortest paths in $G$, $d_G(u, v) \le d_H(u, v) \le (2k-1) d_G(u, v)$ for all pairs.
-- **Spanner Girth and Edge Sparsity (Lemma 1 & Lemma 2):**
-  - Rejecting edges with $d_H(u, v) \le 2k-1$ ensures $H$ has no cycles of length $\le 2k$, so $\text{Girth}(H) \ge 2k+1$.
-  - **BFS Tree Bound (Step 1):** In any graph with girth $\ge 2k+1$ and minimum degree $d_{\min}$, a $k$-depth BFS tree has $\ge (d_{\min}-1)^k$ vertices $\implies d_{\min} \le n^{1/k} + 1 = \mathcal{O}(n^{1/k})$.
-  - **High-Degree Subgraph (Step 2, Lemma 2):** Iteratively removing vertices with degree $< d/4$ eliminates $< n'(d/4) = m'/2$ edges, leaving a non-empty subgraph $H'$ with minimum degree $\ge d/4$.
-  - **Edge Bound:** Since $H' \subseteq H$ inherits girth $\ge 2k+1$, $\frac{d}{4} \le d_{\min}(H') = \mathcal{O}(n^{1/k}) \implies d = \mathcal{O}(n^{1/k})$, bounding $|E_H| = \mathcal{O}(n^{1+1/k})$ and total space to $\mathcal{O}(n^{1+1/k} \log n)$ bits.
-</takeaways>
-
-<qquiz src="questions.en.json"/>
-
-<qprompt/>
-</reviewkit>
-
-## References
-
-1. Morris, R. (1978). Counting large numbers of events in small registers. *Communications of the ACM*, 21(10), 840-842.
-2. Flajolet, P. (1985). Approximate counting: a detailed analysis. *BIT Numerical Mathematics*, 25(1), 113-134.
-3. Vitter, J. S. (1985). Random sampling with a reservoir. *ACM Transactions on Mathematical Software (TOMS)*, 11(1), 37-57.
-4. Peleg, D., & Schäffer, A. A. (1989). Graph spanners. *Journal of Graph Theory*, 13(1), 99-116.
-5. Baswana, S., & Sen, S. (2007). A simple and linear time randomized algorithm for computing sparse spanners in weighted graphs. *Random Structures & Algorithms*, 30(4), 532-563.
-6. Bondy, J. A., & Simonovits, M. (1974). Cycles of even length in graphs. *Journal of Combinatorial Theory, Series B*, 16(2), 97-105.
-7. Muthukrishnan, S. (2005). Data streams: Algorithms and applications. *Foundations and Trends in Theoretical Computer Science*, 1(2), 117-236.
-8. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture 5: Streaming Algorithms)*. National University of Singapore (NUS).
+---
 
 # Week 6 - Clustering Algorithms: Metric k-Center, Streaming Approximations, Coreset Trees for k-Median, and Minimum Enclosing Ball
 
@@ -6276,8 +6250,1752 @@ This confirms that the greedy algorithm yields a $(1 + \epsilon)$-approximation.
 
 ---
 
+---
+
+# Week 7 - Streaming Algorithms: Hash Functions, k-wise Independence, and Distinct Element Estimation
+
+## Week 7 Reading Map: Universal Hashing, Independence Degrees, and Distinct Element Estimation
+
+In streaming computation, we frequently face the fundamental problem of estimating statistics over massive streams where elements can repeat arbitrary numbers of times. The simplest such statistic is the **Number of Distinct Elements** (also known as the zeroth frequency moment $F_0$, or Count-Distinct):
+$$D = \left| \{ a_1, a_2, \dots, a_M \} \right|$$
+where $a_t \in \mathcal{U} = [n]$ and the stream length $M$ is potentially much larger than $n$.
+
+If we had unlimited memory, we could trivially maintain a bit-vector of length $n$ (requiring $n$ bits) or a hash set of size $D$ (requiring $\mathcal{O}(D \log n)$ bits). However, when $n$ is millions or billions, allocating $\Omega(n)$ memory is completely infeasible. We seek a streaming algorithm that uses memory sublinear in $n$—ideally $\mathcal{O}(\text{poly}(1/\epsilon) \cdot \log n)$ bits—to compute a $(1 \pm \epsilon)$-approximation of $D$.
+
+To achieve this, we cannot rely on deterministic algorithms (which we will prove in Week 8 require $\Omega(n)$ bits). We must employ **randomized hashing**. But this introduces a deep algorithmic dilemma:
+- **Idealized "Truly Random" Hash Functions:** Assuming a truly random oracle where every item $x \in \mathcal{U}$ is independently assigned a uniform value $h(x) \in [m]$ requires storing the entire lookup table of size $n \log m$ bits—defeating the entire purpose of streaming sublinear space!
+- **Pseudo-Randomness via Limited Independence:** Can we use hash families whose descriptions take only $\mathcal{O}(k \log n)$ bits, yet provide sufficient randomness to guarantee high-probability concentration?
+
+Week 7 resolves this question completely:
+1. We formalize $k$-wise independent hash families and prove how degree-$(k-1)$ polynomials over finite fields achieve $k$-wise independence with only $\mathcal{O}(k \log n)$ seed bits.
+2. We start from a simple **decision / gap testing** problem ($D \le T$ vs. $D \ge 2T$) to understand the core probabilistic mechanics.
+3. We scale up from decision testing to a continuous $(1 \pm \epsilon)$-estimator via the **$t$-th smallest hash value**, proving its correctness and variance bounds using only pairwise independence and Chebyshev's inequality.
+
+```
++---------------------------------------------------------------------------------------------------+
+|                            WEEK 7 CONCEPT PROGRESSION & DEPENDENCY GRAPH                         |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|  [Truly Random Oracle]  ---> Requires O(n log m) storage! (Too big for streaming)                |
+|           |                                                                                       |
+|           v                                                                                       |
+|  [k-wise Independent Hash Family] ---> Poly(x) = sum_{i=0}^{k-1} a_i x^i (mod p)                |
+|           |                            Seed space: only O(k log p) bits!                          |
+|           v                                                                                       |
+|  [Gap-Testing Decision Model]   ---> Distinguish D <= T from D >= 2T                              |
+|           |                            - Single bucket hit: constant gap (insufficient)           |
+|           |                            - Multi-bucket collision count: Chebyshev separation       |
+|           v                                                                                       |
+|  [Direct t-th Minimum Estimator] ---> Maintain t smallest hash values {X_1 < ... < X_t}           |
+|           |                            Estimator: D_tilde = t * m / X_t                           |
+|           v                                                                                       |
+|  [Chebyshev Variance Bound]     ---> t = O(1/eps^2) samples guarantees 2/3 success               |
+|           |                                                                                       |
+|           v                                                                                       |
+|  [Median Trick Boosting]        ---> L = O(log(1/delta)) copies achieves 1 - delta success        |
+|                                        Final Space: O(eps^{-2} log n log(1/delta)) bits           |
++---------------------------------------------------------------------------------------------------+
+```
+
+---
+
+## 1. Hash Functions and Hash Families
+
+### 1.1 Why Fully Random Hash Functions Fail at Scale
+
+In introductory algorithms, analysis often assumes the **Simple Uniform Hashing Assumption (SUHA)**: any given element is equally likely to hash into any of the $m$ slots, independently of where all other elements hash.
+
+Mathematically, a "truly random" hash function $h: \mathcal{U} \to [m]$ is chosen uniformly at random from the set of **all** functions $\mathcal{F} = \{f: \mathcal{U} \to [m]\}$.
+- Total number of such functions: $|\mathcal{F}| = m^{|\mathcal{U}|} = m^n$.
+- Number of bits required to store or describe a single truly random function:
+  $$\log_2 |\mathcal{F}| = \log_2 (m^n) = n \log_2 m \text{ bits}$$
+
+In streaming algorithms, our total memory budget is typically $\mathcal{O}(\text{poly}(1/\epsilon) \log n)$ bits. If storing the hash function itself requires $\Omega(n \log m)$ bits, our algorithm is disqualified before processing even a single item!
+
+Therefore, practical and theoretical streaming algorithms require **succinct hash families**:
+A family $\mathcal{H} \subseteq \{f: \mathcal{U} \to [m]\}$ where picking a random $h \in \mathcal{H}$ requires only $\mathcal{O}(\log |\mathcal{H}|)$ random seed bits, such that evaluating $h(x)$ takes $\mathcal{O}(1)$ time and requires storing only the short seed.
+
+---
+
+### 1.2 Universal and Strongly Universal Hash Families
+
+Carter and Wegman (1979) introduced the concept of universal hashing to replace truly random functions with structured families.
+
+> **Definition 7.1 (Universal Hash Family):**
+> A family of hash functions $\mathcal{H} = \{h: \mathcal{U} \to [m]\}$ is **universal** if for any two distinct keys $x, y \in \mathcal{U}$ ($x \ne y$):
+> $$\Pr_{h \sim \mathcal{H}}[h(x) = h(y)] \le \frac{1}{m}$$
+
+Universality guarantees that the collision probability of any pair is no worse than if the function were truly random. However, universality says nothing about the distribution of individual hash values (e.g., $h(x)$ could be deterministic). For estimation, we need individual values to be uniformly distributed.
+
+> **Definition 7.2 (Pairwise Independent / 2-wise Independent / Strongly Universal):**
+> A family $\mathcal{H} = \{h: \mathcal{U} \to [m]\}$ is **pairwise independent** (or strongly 2-universal) if for any two distinct keys $x_1 \ne x_2 \in \mathcal{U}$ and any two values $y_1, y_2 \in [m]$:
+> $$\Pr_{h \sim \mathcal{H}}[h(x_1) = y_1 \land h(x_2) = y_2] = \frac{1}{m^2}$$
+
+Pairwise independence implies two vital properties:
+1. **Marginal Uniformity:** For every key $x \in \mathcal{U}$ and value $y \in [m]$, $\Pr[h(x) = y] = \frac{1}{m}$.
+2. **Pairwise Uncorrelatedness:** For any distinct $x_1 \ne x_2$, the random variables $h(x_1)$ and $h(x_2)$ are statistically independent. In particular, indicator variables $\mathbb{I}[h(x_1) \in S]$ and $\mathbb{I}[h(x_2) \in S]$ have zero covariance:
+   $$\text{Cov}(\mathbb{I}[h(x_1) \in S], \mathbb{I}[h(x_2) \in S]) = 0$$
+   This allows Chebyshev's inequality to hold over sums of hash indicators!
+
+---
+
+### 1.3 $k$-wise Independent Hash Families: Formal Definition
+
+For more advanced algorithms (such as the AMS sketch in Week 9 or sparse recovery in Week 10), pairwise independence is insufficient. We require higher orders of independence.
+
+> **Definition 7.3 ($k$-wise Independent Hash Family):**
+> A family of hash functions $\mathcal{H} = \{h: \mathcal{U} \to [m]\}$ is **$k$-wise independent** if for any $k$ distinct keys $x_1, x_2, \dots, x_k \in \mathcal{U}$ and any $k$ choices of values $y_1, y_2, \dots, y_k \in [m]$:
+> $$\Pr_{h \sim \mathcal{H}}\left[ \bigwedge_{i=1}^k (h(x_i) = y_i) \right] = \frac{1}{m^k}$$
+
+In words: any subset of $k$ keys behaves exactly as if it were hashed by a truly random function.
+
+---
+
+### 1.4 Construction: Random Polynomials over Finite Fields $\mathbb{F}_p$
+
+How can we construct a $k$-wise independent hash family using minimal random bits? We use polynomial evaluation over a finite field.
+
+Let $p$ be a prime number such that $p \ge \max(|\mathcal{U}|, m)$. We identify the universe $\mathcal{U}$ as a subset of the finite field $\mathbb{F}_p = \{0, 1, \dots, p-1\}$.
+
+> **Construction (Degree-$(k-1)$ Polynomial Hash Family):**
+> Define the family $\mathcal{H}_k$ of functions from $\mathbb{F}_p$ to $\mathbb{F}_p$ as:
+> $$\mathcal{H}_k = \left\{ h_{a_0, a_1, \dots, a_{k-1}}(x) = \left( \sum_{i=0}^{k-1} a_i x^i \right) \pmod p \;\middle|\; a_0, a_1, \dots, a_{k-1} \in \mathbb{F}_p \right\}$$
+> If the target range $[m]$ is smaller than $p$, we compose with modulo $m$: $g(x) = h(x) \pmod m$.
+
+To sample a random hash function $h \sim \mathcal{H}_k$, an algorithm simply samples $k$ independent coefficients $a_0, a_1, \dots, a_{k-1}$ uniformly at random from $\mathbb{F}_p$.
+
+---
+
+### 1.5 Rigorous Proof of $k$-wise Independence via Vandermonde Invertibility
+
+> **Theorem 7.1:**
+> The polynomial family $\mathcal{H}_k$ defined above is a $k$-wise independent hash family from $\mathbb{F}_p$ to $\mathbb{F}_p$.
+
+**Formal Proof:**
+Let $x_1, x_2, \dots, x_k \in \mathbb{F}_p$ be any $k$ distinct keys, and let $y_1, y_2, \dots, y_k \in \mathbb{F}_p$ be any $k$ target values.
+We must calculate the probability:
+$$\Pr_{a_0, \dots, a_{k-1} \sim \mathbb{F}_p}\left[ \bigwedge_{j=1}^k (h(x_j) = y_j) \right]$$
+
+The condition $h(x_j) = y_j$ for all $j \in \{1, \dots, k\}$ forms a system of $k$ linear equations in the $k$ unknowns $a_0, a_1, \dots, a_{k-1}$ over the field $\mathbb{F}_p$:
+$$\begin{pmatrix}
+1 & x_1 & x_1^2 & \dots & x_1^{k-1} \\
+1 & x_2 & x_2^2 & \dots & x_2^{k-1} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & x_k & x_k^2 & \dots & x_k^{k-1}
+\end{pmatrix}
+\begin{pmatrix}
+a_0 \\ a_1 \\ \vdots \\ a_{k-1}
+\end{pmatrix}
+\equiv
+\begin{pmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_k
+\end{pmatrix} \pmod p$$
+
+Let $V \in \mathbb{F}_p^{k \times k}$ denote the coefficient matrix. Notice that $V$ is the classical **Vandermonde Matrix** generated by $x_1, \dots, x_k$.
+Its determinant is given by:
+$$\det(V) = \prod_{1 \le i < j \le k} (x_j - x_i) \pmod p$$
+
+Because $x_1, \dots, x_k$ are all distinct and $p$ is prime, $(x_j - x_i) \not\equiv 0 \pmod p$ for every pair $i < j$.
+Since a finite field $\mathbb{F}_p$ has no zero divisors, the product $\det(V) \not\equiv 0 \pmod p$.
+Therefore, $V$ is **strictly invertible** over $\mathbb{F}_p$.
+
+By linear algebra over finite fields:
+For any fixed vector of outputs $(y_1, \dots, y_k)^T \in \mathbb{F}_p^k$, there exists **exactly one unique** coefficient vector:
+$$\mathbf{a}^* = V^{-1} \mathbf{y} \pmod p$$
+that satisfies the system.
+
+Now, how many total coefficient vectors $\mathbf{a} \in \mathbb{F}_p^k$ exist?
+There are exactly $p^k$ possible tuples $(a_0, \dots, a_{k-1})$, each chosen with probability $\frac{1}{p^k}$.
+Since exactly one tuple satisfies the condition:
+$$\Pr_{h \sim \mathcal{H}_k}\left[ h(x_1) = y_1 \land \dots \land h(x_k) = y_k \right] = \frac{1}{p^k}$$
+This holds for all distinct $x_1, \dots, x_k$ and all values $y_1, \dots, y_k$. Thus, $\mathcal{H}_k$ is strictly $k$-wise independent. $\blacksquare$
+
+---
+
+### 1.6 Space Complexity & Seed Size: $\mathcal{O}(k \log p)$ vs. $\mathcal{O}(|\mathcal{U}| \log m)$
+
+Let us compare the storage requirements:
+- **Truly Random Hash Function:** Requires storing the output for all $n$ items:
+  $$\text{Storage} = \mathcal{O}(n \log m) \text{ bits}$$
+- **$k$-wise Independent Polynomial Hash Function:** An algorithm only needs to store the $k$ coefficients $a_0, a_1, \dots, a_{k-1} \in \mathbb{F}_p$:
+  $$\text{Storage} = k \cdot \lceil \log_2 p \rceil = \mathcal{O}(k \log n) \text{ bits}$$
+
+| Property | Fully Random Function | Pairwise Independent ($k=2$) | 4-wise Independent ($k=4$) | $k$-wise Independent |
+| :--- | :--- | :--- | :--- | :--- |
+| **Construction** | Lookup Table | $a_1 x + a_0 \pmod p$ | $\sum_{i=0}^3 a_i x^i \pmod p$ | $\sum_{i=0}^{k-1} a_i x^i \pmod p$ |
+| **Seed / Space** | $\Omega(n \log m)$ bits | $2 \log p$ bits | $4 \log p$ bits | $k \log p$ bits |
+| **Eval Time** | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ | $\mathcal{O}(1)$ | $\mathcal{O}(k)$ operations |
+| **Statistical Power** | All moments match | Mean and Variance match | 1st, 2nd, 3rd, 4th moments match | Moments up to $k$ match |
+| **Typical Use in Course** | Theoretical benchmark | Distinct Elements, Count-Min | AMS $F_2$-Sketch (Week 9) | Sparse Recovery (Week 10) |
+
+---
+
+## 2. The Distinct Elements (Count-Distinct / $F_0$) Problem
+
+### 2.1 Formal Problem Definition & Stream Formulation
+
+> **Problem Definition (Distinct Elements / $F_0$):**
+> A stream $\sigma = \langle a_1, a_2, \dots, a_M \rangle$ arrives sequentially, where each token $a_t \in \mathcal{U} = [n]$.
+> Let $S = \{a_1, \dots, a_M\} \subseteq [n]$ be the set of distinct elements appearing in the stream.
+> The target quantity is:
+> $$D = |S| = F_0$$
+> An **$(\epsilon, \delta)$-approximation algorithm** must output an estimate $\tilde{D}$ such that:
+> $$\Pr\left[ (1 - \epsilon) D \le \tilde{D} \le (1 + \epsilon) D \right] \ge 1 - \delta$$
+> using space sublinear in $n$ and $M$ (ideally $\mathcal{O}(\text{poly}(1/\epsilon) \log n \log(1/\delta))$ bits).
+
+---
+
+### 2.2 The Gap-Testing Decision Paradigm: $D \le T$ vs. $D \ge 2T$
+
+Following the fundamental algorithmic doctrine we saw in Week 6 (clustering via decision testing), we first solve the **decision version** of the problem:
+
+> **Gap-Testing Distinct Elements with Parameter $T$:**
+> Given a threshold $T$, distinguish between:
+> - **Case YES ($D \le T$):** Output `YES`.
+> - **Case NO ($D \ge 2T$):** Output `NO`.
+> (If $T < D < 2T$, either output is acceptable).
+
+---
+
+### 2.3 First Attempt: Single Bucket Hit Testing and the Constant Gap Defect
+
+**The Idea:**
+Hash all distinct items into a hash range of size $m = 2T$. Let $h: [n] \to [m]$ be a pairwise independent hash function.
+We inspect a single designated bucket, say bucket $1$.
+Maintain a single bit of state:
+$$X = \mathbb{I}[\exists a_t \in \sigma : h(a_t) = 1]$$
+At the end of the stream, $X = 0$ if and only if no distinct element in $S$ hashed to bucket 1.
+
+**Probabilistic Analysis:**
+Let $u_1, u_2, \dots, u_D$ denote the $D$ distinct elements. Under a uniform random hash function:
+$$\Pr[X = 0] = \prod_{j=1}^D \Pr[h(u_j) \ne 1] = \left( 1 - \frac{1}{m} \right)^D = \left( 1 - \frac{1}{2T} \right)^D \approx e^{-D / (2T)}$$
+
+Evaluating the two gap cases:
+- If $D \le T$:
+  $$\Pr[X = 0] \approx e^{-T / (2T)} = e^{-1/2} \approx 0.6065$$
+- If $D \ge 2T$:
+  $$\Pr[X = 0] \approx e^{-2T / (2T)} = e^{-1} \approx 0.3679$$
+
+**The Defect of the First Attempt:**
+While there is indeed a gap between $0.6065$ and $0.3679$, the separation is a modest constant ($\approx 0.238$). More critically:
+1. A single indicator $X \in \{0, 1\}$ has enormous variance ($\approx 0.25$).
+2. To separate two probabilities differing by a small constant with high confidence, we would need to average $\mathcal{O}(1)$ parallel hash functions.
+3. But more fundamentally, $(1 - 1/m)^D$ strictly requires **full mutual independence** among all $D$ items! If $h$ is only pairwise independent, $\Pr[X = 0]$ does not factor into $(1 - 1/m)^D$.
+We need an estimator whose expectation and variance are cleanly expressed as sums of random variables, where **pairwise independence** is sufficient.
+
+---
+
+### 2.4 Second Attempt: Expanding Hash Range & Multi-Bucket Collision Counting
+
+Instead of checking whether a single bucket is empty, we expand the hash range and count how many items land in an entire designated subset of buckets!
+
+**Construction:**
+1. Choose hash range $m = 100 T$.
+2. Pick a pairwise independent hash function $h: [n] \to [m]$.
+3. Designate a target subset of buckets $B = \{1, 2, \dots, K\}$, where $K = 50$.
+4. Maintain the count of distinct elements that hit set $B$:
+   $$Y = \left| \{ u \in S : h(u) \in B \} \right|$$
+   *(Note: To maintain $Y$ in a stream without duplicates overcounting, we only store the set of distinct hash values that fall in $B$. Since $|B| = K = 50$, this requires storing at most 50 values!)*
+
+---
+
+### 2.5 Rigorous Variance & Chebyshev Analysis for the Gap Decision Tester
+
+For each distinct element $u_j \in S$ ($j = 1, \dots, D$), define the indicator:
+$$I_j = \mathbb{I}[h(u_j) \in B]$$
+Then the random variable $Y$ is simply the sum:
+$$Y = \sum_{j=1}^D I_j$$
+
+**Step 1: Expectation Calculation**
+Because $h$ is pairwise independent, the marginal distribution of $h(u_j)$ is uniform over $[m]$:
+$$\Pr[I_j = 1] = \Pr[h(u_j) \in B] = \frac{|B|}{m} = \frac{K}{m}$$
+By linearity of expectation:
+$$\mathbb{E}[Y] = \sum_{j=1}^D \mathbb{E}[I_j] = D \cdot \frac{K}{m}$$
+
+Substituting $m = 100 T$ and $K = 50$:
+$$\mathbb{E}[Y] = D \cdot \frac{50}{100 T} = \frac{D}{2 T}$$
+
+Now evaluate the expected value under the two cases:
+- **Case YES ($D \le T$):**
+  $$\mathbb{E}[Y] = \frac{D}{2 T} \le \frac{T}{2 T} = 0.5$$
+- **Case NO ($D \ge 2T$):**
+  $$\mathbb{E}[Y] = \frac{D}{2 T} \ge \frac{2 T}{2 T} = 1.0$$
+
+The expectations are separated by a factor of 2!
+
+**Step 2: Variance Calculation under Pairwise Independence**
+For each individual indicator $I_j$:
+$$\text{Var}[I_j] = \mathbb{E}[I_j^2] - (\mathbb{E}[I_j])^2 = \frac{K}{m} - \left(\frac{K}{m}\right)^2 = \frac{K}{m}\left(1 - \frac{K}{m}\right) \le \frac{K}{m}$$
+
+Because $h$ is pairwise independent, for any $i \ne j$, the variables $I_i$ and $I_j$ are uncorrelated:
+$$\text{Cov}(I_i, I_j) = \mathbb{E}[I_i I_j] - \mathbb{E}[I_i]\mathbb{E}[I_j] = \Pr[h(u_i) \in B \land h(u_j) \in B] - \left(\frac{K}{m}\right)^2 = \left(\frac{K}{m}\right)^2 - \left(\frac{K}{m}\right)^2 = 0$$
+
+Therefore, the variance of the sum is strictly the sum of the variances:
+$$\text{Var}[Y] = \sum_{j=1}^D \text{Var}[I_j] \le D \cdot \frac{K}{m} = \mathbb{E}[Y]$$
+
+**Step 3: Decision Rule and Concentration via Chebyshev**
+By scaling $K$ and $m$ proportionally (e.g., setting $K = \mathcal{O}(1/\epsilon^2)$), the variance relative to the gap can be made arbitrarily small.
+Applying Chebyshev's inequality:
+$$\Pr[|Y - \mathbb{E}[Y]| \ge \lambda] \le \frac{\text{Var}[Y]}{\lambda^2} \le \frac{\mathbb{E}[Y]}{\lambda^2}$$
+Choosing a decision threshold $\tau = \frac{3}{4} \cdot \frac{K}{m} \cdot T$:
+- If $Y \le \tau$, output `YES` ($D \le T$).
+- If $Y > \tau$, output `NO` ($D \ge 2T$).
+Both false positive and false negative error probabilities are bounded by $\le \frac{1}{3}$.
+
+---
+
+### 2.6 Scaling Up: From Decision Gap-Testing to $(1+\epsilon)$-Multiplicative Approximation
+
+How do we convert a decision tester into a continuous $(1 \pm \epsilon)$-estimator for arbitrary $D \in [1, n]$?
+
+**The Geometric Threshold Grid:**
+We instantiate parallel copies of the decision tester over an exponentially spaced grid of thresholds:
+$$T_j = (1 + \epsilon)^j \quad \text{for } j = 0, 1, 2, \dots, \left\lceil \frac{\log n}{\log(1 + \epsilon)} \right\rceil$$
+
+Notice that:
+$$\log(1 + \epsilon) \approx \epsilon \implies \text{Total number of testers } L = \mathcal{O}\left( \frac{\log n}{\epsilon} \right)$$
+
+**Streaming Execution:**
+1. All $L$ testers process the stream in parallel.
+2. At the end of the stream, find the smallest threshold $T_{j^*}$ for which Tester $T_{j^*}$ outputs `YES`.
+3. Output $\tilde{D} = T_{j^*}$.
+
+While this grid-search approach demonstrates the theoretical reduction from estimation to testing, maintaining $\mathcal{O}(\frac{\log n}{\epsilon})$ parallel testers incurs unnecessary overhead. We now present the **direct continuous estimator** via the $t$-th smallest hash value.
+
+---
+
+## 3. Direct Continuous Estimation via the $t$-th Smallest Hash Value
+
+### 3.1 Intuition: Uniform Dispersion of Hash Images on the Unit Interval
+
+Imagine mapping each of the $D$ distinct elements uniformly at random to the continuous interval $[0, 1]$ using a normalized hash function $h(u) / m \in [0, 1]$.
+
+If we drop $D$ random points onto $[0, 1]$, they partition the unit interval into $D + 1$ segments.
+By symmetry, the expected length of each segment is:
+$$\mathbb{E}[\text{gap}] = \frac{1}{D + 1} \approx \frac{1}{D}$$
+Therefore:
+- The smallest value $X_1$ is expected to be around $\frac{1}{D}$.
+- The second smallest $X_2$ is expected to be around $\frac{2}{D}$.
+- In general, the **$t$-th smallest hash value** $X_t$ is expected to be around:
+  $$\mathbb{E}\left[\frac{X_t}{m}\right] \approx \frac{t}{D} \implies D \approx \frac{t \cdot m}{X_t}$$
+
+```
+0 ------------|-------|----------|----------- ... -------|---------------- 1
+              X_1     X_2        X_3                     X_t
+              \___________ t intervals _______________/
+                     Expected length: t / D
+```
+
+If we track the single minimum $X_1$ ($t=1$), the variance of an exponential/geometric random variable is as large as its mean squared ($\text{Var}[X_1] \approx \mathbb{E}[X_1]^2$), giving huge fluctuations.
+However, by averaging over the first $t$ intervals (tracking the **$t$-th minimum** $X_t$), the variance shrinks by a factor of $t$! By picking $t = \mathcal{O}(1/\epsilon^2)$, the estimator concentrates tightly within $1 \pm \epsilon$.
+
+---
+
+### 3.2 Algorithm Description: Maintaining the Top-$t$ Smallest Hash Values
+
+> **Algorithm: $t$-th Minimum Distinct Elements Estimator**
+> 1. Set parameters: $\epsilon \in (0, 1)$, failure probability $\delta \in (0, 1)$.
+> 2. Set $t = \left\lceil \frac{100}{\epsilon^2} \right\rceil$.
+> 3. Choose a large prime $m \ge n^3$ (ensuring zero collisions among distinct items with probability $\ge 1 - 1/n$).
+> 4. Pick a pairwise independent hash function $h: [n] \to [m]$.
+> 5. **Data Structure:** Maintain a max-heap $\mathcal{T}$ of size at most $t$ storing the $t$ smallest hash values seen so far.
+> 6. **Stream Update for token $a$:**
+>    - Compute $v = h(a)$.
+>    - If $|\mathcal{T}| < t$: insert $v$ into $\mathcal{T}$ (ignoring duplicates).
+>    - Else if $v < \max(\mathcal{T})$ and $v \notin \mathcal{T}$:
+>      - Remove the current maximum from $\mathcal{T}$.
+>      - Insert $v$ into $\mathcal{T}$.
+> 7. **Output at end of stream:**
+>    - If total distinct items seen $< t$: return exact count $|\mathcal{T}|$.
+>    - Else, let $X_t = \max(\mathcal{T})$ (the $t$-th smallest hash value).
+>    - Return:
+>      $$\tilde{D} = \frac{t \cdot m}{X_t}$$
+
+---
+
+### 3.3 The Core Estimator Formulation: $\tilde{D} = \frac{t \cdot m}{X_t}$
+
+Notice the elegant inverse relationship:
+- If the stream has very few distinct items ($D$ is small), the hash values are sparse, so $X_t$ will be large $\implies \tilde{D}$ is small.
+- If the stream has a massive number of distinct items ($D$ is large), the hash values are dense near zero, so $X_t$ will be small $\implies \tilde{D}$ is large.
+
+---
+
+### 3.4 Rigorous Theoretical Analysis: Relating Hash Order Statistics to Coordinate Counts
+
+Directly analyzing the distribution of the order statistic $X_t$ is mathematically cumbersome.
+The brilliant analytical technique in streaming theory is to **invert the perspective**:
+Instead of asking "What is the distribution of the $t$-th smallest value $X_t$?", we fix a candidate threshold $V$ and ask:
+**"How many distinct elements hash to a value $\le V$?"**
+
+For any integer threshold $V \in [1, m]$, define the counting random variable:
+$$Z_V = \sum_{j=1}^D \mathbb{I}[h(u_j) \le V]$$
+where $u_1, \dots, u_D$ are the $D$ distinct elements in the stream.
+
+Notice the fundamental equivalence of events:
+$$X_t \le V \iff Z_V \ge t$$
+- "The $t$-th smallest hash value is at most $V$" occurs **if and only if** "at least $t$ distinct elements have hash value $\le V$".
+Similarly:
+$$X_t > V \iff Z_V < t$$
+
+This equivalence maps an order statistic question directly into a sum of indicator variables $Z_V$, which we can analyze with standard expectation and variance tools!
+
+---
+
+### 3.5 Step-by-Step Chebyshev Variance Bounding: Proof of $t = \mathcal{O}(1/\epsilon^2)$
+
+We now prove that $\tilde{D} = \frac{t \cdot m}{X_t} \in [(1 - \epsilon)D, (1 + \epsilon)D]$ with probability at least $2/3$.
+
+The estimation succeeds if:
+$$(1 - \epsilon) D \le \frac{t \cdot m}{X_t} \le (1 + \epsilon) D$$
+Inverting the inequality, this is equivalent to:
+$$\frac{t \cdot m}{(1 + \epsilon) D} \le X_t \le \frac{t \cdot m}{(1 - \epsilon) D}$$
+
+Thus, the algorithm fails if either of the two bad events occurs:
+1. **Bad Event 1 (Overestimate):** $\tilde{D} > (1 + \epsilon) D \iff X_t < \frac{t \cdot m}{(1 + \epsilon) D}$.
+2. **Bad Event 2 (Underestimate):** $\tilde{D} < (1 - \epsilon) D \iff X_t > \frac{t \cdot m}{(1 - \epsilon) D}$.
+
+We bound the probability of each bad event separately.
+
+#### Part 1: Bounding Bad Event 1 (Overestimation)
+Define the threshold:
+$$V_1 = \frac{t \cdot m}{(1 + \epsilon) D}$$
+From our event equivalence:
+$$\Pr[\text{Bad Event 1}] = \Pr[X_t < V_1] \le \Pr[Z_{V_1} \ge t]$$
+
+Let us compute the expectation and variance of $Z_{V_1} = \sum_{j=1}^D \mathbb{I}[h(u_j) \le V_1]$:
+$$\mathbb{E}[Z_{V_1}] = \sum_{j=1}^D \Pr[h(u_j) \le V_1] = D \cdot \frac{V_1}{m} = D \cdot \frac{t \cdot m}{(1 + \epsilon) D \cdot m} = \frac{t}{1 + \epsilon}$$
+
+Because $h$ is pairwise independent, the indicators are uncorrelated, so:
+$$\text{Var}[Z_{V_1}] = \sum_{j=1}^D \text{Var}(\mathbb{I}[h(u_j) \le V_1]) \le D \cdot \frac{V_1}{m} = \mathbb{E}[Z_{V_1}] = \frac{t}{1 + \epsilon}$$
+
+Now apply Chebyshev's inequality to bound $\Pr[Z_{V_1} \ge t]$:
+Notice the deviation from the mean:
+$$t - \mathbb{E}[Z_{V_1}] = t - \frac{t}{1 + \epsilon} = t \left( 1 - \frac{1}{1 + \epsilon} \right) = t \cdot \frac{\epsilon}{1 + \epsilon} \ge \frac{t \epsilon}{2} \quad (\text{since } \epsilon \le 1)$$
+
+By Chebyshev's inequality:
+$$\Pr[Z_{V_1} \ge t] = \Pr\left[ Z_{V_1} - \mathbb{E}[Z_{V_1}] \ge \frac{t \epsilon}{1 + \epsilon} \right] \le \frac{\text{Var}[Z_{V_1}]}{\left( \frac{t \epsilon}{1 + \epsilon} \right)^2} \le \frac{\frac{t}{1 + \epsilon}}{\frac{t^2 \epsilon^2}{(1 + \epsilon)^2}} = \frac{1 + \epsilon}{t \epsilon^2} \le \frac{2}{t \epsilon^2}$$
+
+#### Part 2: Bounding Bad Event 2 (Underestimation)
+Define the threshold:
+$$V_2 = \frac{t \cdot m}{(1 - \epsilon) D}$$
+From our event equivalence:
+$$\Pr[\text{Bad Event 2}] = \Pr[X_t > V_2] = \Pr[Z_{V_2} < t]$$
+
+Compute expectation and variance of $Z_{V_2}$:
+$$\mathbb{E}[Z_{V_2}] = D \cdot \frac{V_2}{m} = \frac{t}{1 - \epsilon}$$
+$$\text{Var}[Z_{V_2}] \le \mathbb{E}[Z_{V_2}] = \frac{t}{1 - \epsilon}$$
+
+The deviation from the mean is:
+$$\mathbb{E}[Z_{V_2}] - t = \frac{t}{1 - \epsilon} - t = t \cdot \frac{\epsilon}{1 - \epsilon} \ge t \epsilon$$
+
+By Chebyshev's inequality:
+$$\Pr[Z_{V_2} < t] = \Pr\left[ \mathbb{E}[Z_{V_2}] - Z_{V_2} > \frac{t \epsilon}{1 - \epsilon} \right] \le \frac{\text{Var}[Z_{V_2}]}{\left( \frac{t \epsilon}{1 - \epsilon} \right)^2} \le \frac{\frac{t}{1 - \epsilon}}{\frac{t^2 \epsilon^2}{(1 - \epsilon)^2}} = \frac{1 - \epsilon}{t \epsilon^2} \le \frac{1}{t \epsilon^2}$$
+
+#### Part 3: Total Failure Probability
+By the union bound, the total probability of error is:
+$$\Pr[|\tilde{D} - D| > \epsilon D] \le \Pr[\text{Bad Event 1}] + \Pr[\text{Bad Event 2}] \le \frac{2}{t \epsilon^2} + \frac{1}{t \epsilon^2} = \frac{3}{t \epsilon^2}$$
+
+We want this total failure probability to be $\le \frac{1}{3}$.
+Setting:
+$$\frac{3}{t \epsilon^2} \le \frac{1}{3} \implies t \ge \frac{9}{\epsilon^2}$$
+Choosing $t = \left\lceil \frac{100}{\epsilon^2} \right\rceil$ provides a generous constant safety margin, ensuring that the algorithm succeeds with probability at least $1 - \frac{3}{100} = 0.97 \ge \frac{2}{3}$. $\blacksquare$
+
+---
+
+### 3.6 Probability Boosting via Median Trick & Final Space Complexity
+
+To boost the success probability from $2/3$ to $1 - \delta$ for any arbitrary $\delta > 0$:
+
+1. Run $L = \lceil 36 \ln(1/\delta) \rceil$ independent parallel instances of the algorithm (each using an independent pairwise independent hash function $h_l$).
+2. Obtain $L$ independent estimates $\tilde{D}_1, \tilde{D}_2, \dots, \tilde{D}_L$.
+3. Output the **median**:
+   $$\tilde{D}_{\text{final}} = \text{median}(\tilde{D}_1, \dots, \tilde{D}_L)$$
+
+By the standard Median Trick Chernoff Bound (Week 1, Theorem 1.4):
+The median falls outside $[(1 - \epsilon)D, (1 + \epsilon)D]$ only if more than half of the $L$ estimators fail.
+Since each estimator fails with probability $p \le 1/3$, the probability that $> L/2$ estimators fail is bounded by:
+$$\Pr[\text{Failure}] \le e^{-2 L (1/2 - 1/3)^2} = e^{-L / 18} \le \delta$$
+
+**Total Space Complexity:**
+- Each instance maintains a heap of $t = \mathcal{O}(1/\epsilon^2)$ hash values.
+- Each hash value requires $\log_2 m = \mathcal{O}(\log n)$ bits.
+- Storing the pairwise independent hash function coefficients requires $\mathcal{O}(\log n)$ bits.
+- Total instances: $L = \mathcal{O}(\log(1/\delta))$.
+$$\text{Total Space} = \mathcal{O}\left( \frac{1}{\epsilon^2} \log n \log\left(\frac{1}{\delta}\right) \right) \text{ bits}$$
+
+This establishes a fully rigorous, practical, sublinear streaming algorithm for distinct elements.
+
+---
+
+# Week 8 - Communication Complexity and Space Lower Bounds in Data Streams
+
+## Week 8 Reading Map: Two-Party Communication as the Foundational Mirror of Streaming Memory
+
+In Week 5, we showed that Graph Connectivity can be solved in a stream using $\mathcal{O}(n \log n)$ bits by maintaining a spanning forest. In Week 7, we showed that Distinct Elements can be $(1 \pm \epsilon)$-approximated in $\mathcal{O}(\epsilon^{-2} \log n)$ bits.
+These results establish **upper bounds** (what is achievable).
+
+However, fundamental questions immediately arise:
+- Can we decide Graph Connectivity using $o(n)$ bits? (e.g., $\mathcal{O}(\log n)$ bits)?
+- Can we compute the **exact** number of distinct elements using $o(n)$ bits?
+- Can we find a **Maximum Matching** or **Maximal Independent Set (MIS)** in $\mathcal{O}(n \log n)$ bits (the semi-streaming regime)?
+
+Week 8 introduces the primary mathematical weapon used to prove **space lower bounds** for streaming algorithms: **Two-Party Communication Complexity**.
+By establishing reductions from canonical hard communication problems (Equality, Index, Gap Hamming Distance, Disjointness), we prove that:
+1. Exact Distinct Elements requires $\Omega(n)$ bits of streaming memory.
+2. Graph Streaming Perfect Matching requires $\Omega(n^2)$ bits (impossible in semi-streaming!).
+3. Graph Streaming Maximal Independent Set requires $\Omega(n^2)$ bits.
+
+```
++---------------------------------------------------------------------------------------------------+
+|                        COMMUNICATION TO STREAMING REDUCTION PIPELINE                             |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|  [Hard Communication Problem f(x, y)] (e.g., INDEX_n, GHD_n, DISJ_n)                              |
+|           |                                                                                       |
+|           | Alice has x in {0, 1}^n                                                               |
+|           v                                                                                       |
+|  [Alice constructs stream prefix sigma_A(x)]                                                      |
+|           |                                                                                       |
+|           | Runs streaming algorithm S on sigma_A; freezes memory state M_A                       |
+|           v                                                                                       |
+|  [Alice transmits M_A to Bob] ---> Message size = Space(S) bits                                   |
+|           |                                                                                       |
+|           | Bob has y in Y; initializes S with memory state M_A                                   |
+|           v                                                                                       |
+|  [Bob processes stream suffix sigma_B(y)]                                                         |
+|           |                                                                                       |
+|           v                                                                                       |
+|  [Bob queries S and outputs f(x, y)]                                                              |
+|                                                                                                   |
+|  FUNDAMENTAL THEOREM: Space(S) >= One-Way Communication Complexity R^{1-way}(f)                   |
++---------------------------------------------------------------------------------------------------+
+```
+
+---
+
+## 1. Communication Complexity Foundations
+
+### 1.1 The Two-Party Communication Model (Yao's Framework)
+
+Andrew Yao (1979) formulated the model of two-party communication complexity:
+- Two players, **Alice** and **Bob**, wish to compute a joint function:
+  $$f: \mathcal{X} \times \mathcal{Y} \to \{0, 1\}$$
+- Alice is given private input $x \in \mathcal{X}$; Bob is given private input $y \in \mathcal{Y}$.
+- Neither player knows the other's input.
+- Communication proceeds in rounds by sending bits over a shared channel according to a predetermined **protocol** $\Pi$.
+- **Cost Metric:** We measure **only the total number of bits transmitted** between Alice and Bob. Local computation by Alice or Bob is completely free!
+
+---
+
+### 1.2 Deterministic Communication Complexity, Combinatorial Rectangles, and Fooling Sets
+
+> **Definition 8.1 (Deterministic Protocol):**
+> A deterministic protocol $\Pi$ specifies at each step whose turn it is to transmit, and what bit is sent based on the transcript seen so far and the player's private input. At termination, the protocol outputs $\Pi(x, y) \in \{0, 1\}$.
+> The **deterministic communication complexity** $D(f)$ is the minimum number of bits exchanged in the worst case by any valid deterministic protocol that correctly computes $f(x, y)$ for all $(x, y) \in \mathcal{X} \times \mathcal{Y}$.
+
+#### Combinatorial Rectangles
+A subset $R \subseteq \mathcal{X} \times \mathcal{Y}$ is called a **combinatorial rectangle** if:
+$$R = A \times B \quad \text{for some } A \subseteq \mathcal{X} \text{ and } B \subseteq \mathcal{Y}$$
+Equivalently: $(x_1, y_1) \in R$ and $(x_2, y_2) \in R \implies (x_1, y_2) \in R$.
+
+> **Fundamental Rectangle Property:**
+> Any protocol transcript $\tau \in \{0, 1\}^C$ partitions the input space $\mathcal{X} \times \mathcal{Y}$ into at most $2^C$ monochromatic combinatorial rectangles, where $f(x, y)$ is constant on each rectangle.
+
+#### The Fooling Set Technique
+To prove a deterministic lower bound $D(f) \ge \log_2 |S|$:
+
+> **Definition 8.2 (Fooling Set):**
+> A set $S \subseteq \mathcal{X} \times \mathcal{Y}$ is a **fooling set** for $f$ if there exists a constant $b \in \{0, 1\}$ such that:
+> 1. For all $(x, y) \in S$, $f(x, y) = b$.
+> 2. For any two distinct pairs $(x_1, y_1) \ne (x_2, y_2) \in S$, either $f(x_1, y_2) \ne b$ or $f(x_2, y_1) \ne b$.
+
+If such a fooling set exists, no two elements of $S$ can share the same transcript rectangle. Therefore, any protocol must produce at least $|S|$ distinct transcripts, yielding:
+$$D(f) \ge \log_2 |S|$$
+
+---
+
+### 1.3 Randomized Communication Complexity: Public vs. Private Coins
+
+In randomized communication:
+- Players have access to random coin flips.
+- **Private Coins:** Alice flips $r_A$, Bob flips $r_B$.
+- **Public Coins:** Alice and Bob share a common infinite random string $r$.
+- **Error Criterion:** For every input $(x, y)$, the protocol must output $f(x, y)$ with probability $\ge 1 - \epsilon$ (typically $\epsilon = 1/3$).
+- $R_\epsilon(f)$ denotes the randomized communication complexity.
+
+> **Newman's Theorem (1991):**
+> For any function $f: \{0, 1\}^n \times \{0, 1\}^n \to \{0, 1\}$, public coins can be converted into private coins by adding only $\mathcal{O}(\log n)$ bits of communication:
+> $$R^{\text{private}}_\epsilon(f) \le R^{\text{public}}_\epsilon(f) + \mathcal{O}(\log n)$$
+
+---
+
+### 1.4 One-Way Communication Complexity ($R^{1\text{-way}}_\epsilon$)
+
+In many applications—most notably **data streams**—information flows strictly in one direction.
+
+> **Definition 8.3 (One-Way Communication Complexity):**
+> In a **one-way protocol**, Alice inspects her input $x \in \mathcal{X}$, computes a single message $M = \Pi(x)$, and transmits $M$ to Bob. Bob inspects $M$ and his own input $y \in \mathcal{Y}$, and outputs the answer $f(x, y)$.
+> $R^{1\text{-way}}_\epsilon(f)$ is the minimum length of Alice's message in bits such that Bob outputs $f(x, y)$ with probability $\ge 1 - \epsilon$ for all $(x, y)$.
+
+---
+
+## 2. Canonical Communication Problems and Their Tight Lower Bounds
+
+### 2.1 The Equality Problem ($\text{EQ}_n$)
+
+> **Equality Function:**
+> Alice has $x \in \{0, 1\}^n$, Bob has $y \in \{0, 1\}^n$.
+> $$\text{EQ}_n(x, y) = \begin{cases} 1 & \text{if } x = y \\ 0 & \text{if } x \ne y \end{cases}$$
+
+- **Deterministic Hardness:**
+  The set $S = \{(x, x) : x \in \{0, 1\}^n\}$ is a fooling set of size $2^n$.
+  For any distinct $x_1 \ne x_2$, $(x_1, x_1) \in S$ and $(x_2, x_2) \in S$, but $\text{EQ}_n(x_1, x_2) = 0 \ne 1$.
+  Therefore:
+  $$D(\text{EQ}_n) \ge \log_2(2^n) = n \text{ bits}$$
+  Deterministically, Alice must send her entire $n$-bit input!
+- **Randomized Fingerprinting:**
+  Using public randomness or hashing over a prime field $\mathbb{F}_p$ ($p = \Theta(n^2)$), Alice sends $h(x)$ to Bob.
+  If $x = y$, $h(x) = h(y)$ always. If $x \ne y$, $\Pr[h(x) = h(y)] \le 1/p \le 1/n^2$.
+  Message size: $\lceil \log_2 p \rceil = \mathcal{O}(\log n)$ bits.
+  $$R_{1/3}(\text{EQ}_n) = \mathcal{O}(\log n) \text{ bits}$$
+
+---
+
+### 2.2 The Index Problem ($\text{INDEX}_n$): Tight One-Way Lower Bound $\Omega(n)$
+
+The Index problem is the absolute cornerstone for proving streaming lower bounds.
+
+> **Definition 8.4 (The Index Problem $\text{INDEX}_n$):**
+> - Alice holds an arbitrary bit-string $x = (x_1, x_2, \dots, x_n) \in \{0, 1\}^n$.
+> - Bob holds an index $i \in \{1, 2, \dots, n\}$.
+> - Alice sends a **single message** $M$ to Bob. Bob must output $x_i$:
+>   $$\text{INDEX}_n(x, i) = x_i$$
+
+> **Theorem 8.1 (One-Way Hardness of Index):**
+> Any randomized one-way protocol that computes $\text{INDEX}_n(x, i)$ with failure probability $\le 1/3$ requires transmitting at least $\Omega(n)$ bits:
+> $$R^{1\text{-way}}_{1/3}(\text{INDEX}_n) \ge (1 - H(1/3)) n = \Omega(n) \text{ bits}$$
+> where $H(p) = -p \log_2 p - (1-p) \log_2(1-p)$ is the binary entropy function.
+
+---
+
+### 2.3 Information-Theoretic Proof of $\Omega(n)$ for $\text{INDEX}_n$
+
+**Proof via Shannon Information Theory:**
+Let $X = (X_1, X_2, \dots, X_n)$ be chosen uniformly at random from $\{0, 1\}^n$.
+The coordinates $X_j$ are i.i.d. Bernoulli$(1/2)$ random variables, so the Shannon entropy is:
+$$H(X) = \sum_{j=1}^n H(X_j) = n \text{ bits}$$
+
+Alice generates a randomized message $M = \Pi(X)$ and transmits $M$ to Bob.
+By the properties of mutual information:
+$$I(X; M) = H(X) - H(X \mid M) \le H(M) \le |M|$$
+where $|M|$ is the length of Alice's message in bits.
+
+By the chain rule for mutual information and independence of the $X_j$:
+$$I(X; M) \ge \sum_{j=1}^n I(X_j; M) = \sum_{j=1}^n (H(X_j) - H(X_j \mid M)) = \sum_{j=1}^n (1 - H(X_j \mid M))$$
+
+Now consider Bob's decoding:
+For any chosen index $j \in \{1, \dots, n\}$, Bob receives $M$, computes an estimate $\hat{X}_j = g(M, j)$, and achieves error probability:
+$$P_e = \Pr[\hat{X}_j \ne X_j] \le \frac{1}{3}$$
+
+By **Fano's Inequality**, the conditional entropy is bounded by the entropy of the error:
+$$H(X_j \mid M) \le H(P_e) \le H(1/3)$$
+Substituting this into the mutual information sum:
+$$I(X; M) \ge \sum_{j=1}^n (1 - H(1/3)) = n (1 - H(1/3))$$
+Since $|M| \ge I(X; M)$:
+$$|M| \ge (1 - H(1/3)) n \approx 0.0817 n = \Omega(n) \text{ bits} \quad \blacksquare$$
+
+---
+
+### 2.4 The Gap Hamming Distance Problem ($\text{GHD}_{n, \sqrt{n}}$)
+
+> **Definition 8.5 (Gap Hamming Distance $\text{GHD}_{n, k}$):**
+> Alice has $x \in \{0, 1\}^n$, Bob has $y \in \{0, 1\}^n$.
+> Let $d_H(x, y) = \sum_{j=1}^n \mathbb{I}[x_j \ne y_j]$ be the Hamming distance.
+> The goal is to distinguish:
+> - **Case YES:** $d_H(x, y) \le \frac{n}{2} - \sqrt{n}$
+> - **Case NO:** $d_H(x, y) \ge \frac{n}{2} + \sqrt{n}$
+
+> **Theorem 8.2 (Chakrabarti & Regev, 2011):**
+> Even allowing **two-way randomized communication**, solving $\text{GHD}_{n, \sqrt{n}}$ requires $\Omega(n)$ bits:
+> $$R_{1/3}(\text{GHD}) = \Omega(n) \text{ bits}$$
+
+This deep theorem implies that estimating frequency moments or distances to within relative error $\epsilon \approx 1/\sqrt{n}$ requires $\Omega(n)$ space.
+
+---
+
+### 2.5 Set Disjointness ($\text{DISJ}_n$) and Reduction from Index
+
+> **Definition 8.6 (Set Disjointness $\text{DISJ}_n$):**
+> Alice holds set $S \subseteq [n]$, Bob holds set $T \subseteq [n]$.
+> $$\text{DISJ}_n(S, T) = \begin{cases} 1 & \text{if } S \cap T = \emptyset \\ 0 & \text{if } S \cap T \ne \emptyset \end{cases}$$
+
+> **Theorem 8.3 (Kalyanasundaram-Schnitger 1992, Razborov 1992):**
+> $$R_{1/3}(\text{DISJ}_n) = \Omega(n) \text{ bits}$$
+
+**Simple Reduction from $\text{INDEX}_n$ to $\text{DISJ}_n$:**
+- Alice has $x \in \{0, 1\}^n$. She forms $S = \{j \in [n] : x_j = 1\}$.
+- Bob has index $i \in [n]$. He forms singleton $T = \{i\}$.
+- Notice:
+  $$\text{DISJ}_n(S, T) = 1 \iff i \notin S \iff x_i = 0$$
+Thus, a one-way protocol for Disjointness immediately solves Index. Since Index requires $\Omega(n)$ bits, One-Way Disjointness requires $\Omega(n)$ bits.
+
+---
+
+## 3. The Communication-to-Streaming Reduction Paradigm
+
+### 3.1 Universal Simulation Protocol: Decomposing Streams $\sigma = \sigma_A \circ \sigma_B$
+
+Suppose we want to prove that a streaming problem $\mathcal{P}$ requires at least $S(n)$ bits of memory.
+The general proof recipe follows a universal 4-step reduction:
+
+```
++---------------------------------------------------------------------------------------------------+
+|                        THE 4-STEP STREAMING LOWER BOUND PROOF RECIPE                              |
++---------------------------------------------------------------------------------------------------+
+|  Step 1: Select a Known Hard Communication Problem                                                |
+|          Pick f: X x Y -> {0, 1} with known lower bound R^{1-way}(f) >= C(n).                     |
+|          (Typically INDEX_n, DISJ_n, or GHD_n).                                                  |
+|                                                                                                   |
+|  Step 2: Construct the Reduction Stream                                                           |
+|          - Alice maps her input x into a stream prefix sigma_A(x).                                |
+|          - Bob maps his input y into a stream suffix sigma_B(y).                                  |
+|          - The combined stream is sigma = sigma_A(x) o sigma_B(y).                                |
+|                                                                                                   |
+|  Step 3: Establish the Correctness Invariant                                                      |
+|          Prove that the answer to streaming problem P on sigma uniquely determines f(x, y):       |
+|          Output(P(sigma)) = YES <===> f(x, y) = 1                                                 |
+|                                                                                                   |
+|  Step 4: Transfer the Lower Bound                                                                 |
+|          Alice runs streaming algorithm A on sigma_A, serializes its internal memory state        |
+|          M_A, and sends M_A to Bob. Bob finishes running A on sigma_B and outputs f(x, y).        |
+|          Since Communication = |M_A| <= Space(A):                                                 |
+|          Space(A) >= R^{1-way}(f) >= C(n) bits!                                                   |
++---------------------------------------------------------------------------------------------------+
+```
+
+---
+
+### 3.2 Exact Distinct Elements Space Lower Bound: $\Omega(n)$ Bits via $\text{DISJ}_n$
+
+In Week 7, we achieved a $(1 \pm \epsilon)$-approximation for Distinct Elements in $\mathcal{O}(\epsilon^{-2} \log n)$ bits.
+Can a randomized streaming algorithm compute the **exact** distinct element count using $o(n)$ memory?
+
+> **Theorem 8.4:**
+> Any streaming algorithm that computes the exact number of distinct elements $D$ with probability $\ge 2/3$ requires $\Omega(n)$ bits of memory.
+
+**Proof by Reduction from $\text{DISJ}_n$:**
+1. Let Alice hold $S \subseteq [n]$ and Bob hold $T \subseteq [n]$.
+2. Alice forms stream prefix $\sigma_A$ by inserting all elements of $S$.
+3. Bob forms stream suffix $\sigma_B$ by inserting all elements of $T$.
+4. The combined stream $\sigma = \sigma_A \circ \sigma_B$ has distinct elements:
+   $$D = |S \cup T|$$
+5. By the principle of inclusion-exclusion:
+   $$|S \cup T| = |S| + |T| - |S \cap T|$$
+6. Alice knows $|S|$ and can append the value $|S|$ to her message. Bob knows $|T|$.
+7. If the streaming algorithm outputs the exact value of $D = |S \cup T|$, Bob computes:
+   $$|S \cap T| = |S| + |T| - D$$
+8. Bob checks if $|S \cap T| = 0$:
+   - If $|S \cap T| = 0$, output $\text{DISJ}_n(S, T) = 1$.
+   - If $|S \cap T| > 0$, output $\text{DISJ}_n(S, T) = 0$.
+9. This forms a valid one-way protocol for $\text{DISJ}_n$.
+   Since $R^{1\text{-way}}_{1/3}(\text{DISJ}_n) = \Omega(n)$, the streaming algorithm must store at least $\Omega(n)$ bits. $\blacksquare$
+
+---
+
+## 4. Graph Streaming Space Lower Bounds
+
+### 4.1 The Semi-Streaming vs. Super-Linear Memory Threshold
+
+In graph streaming (Week 5), the input graph $G = (V, E)$ has $n = |V|$ vertices and $m = |E|$ edges arriving as a stream of pairs $(u, v)$.
+- **Full Storage:** Storing the whole graph takes $\mathcal{O}(n^2)$ or $\mathcal{O}(m \log n)$ bits.
+- **Semi-Streaming Model:** Algorithms are restricted to $\mathcal{O}(n \cdot \text{polylog}(n))$ bits of space. (Enough to store a few trees or spanners, but far less than $\mathcal{O}(n^2)$).
+
+Can every important graph problem be solved in the semi-streaming model?
+We now prove that **Perfect Matching** and **Maximal Independent Set (MIS)** **cannot** be solved in semi-streaming space—they require $\Omega(n^2)$ bits!
+
+---
+
+### 4.2 Hardness of Graph Streaming Perfect Matching: $\Omega(n^2)$ Bits via $\text{INDEX}_{n^2}$
+
+> **Theorem 8.5:**
+> Any single-pass streaming algorithm that decides whether an undirected graph $G = (V, E)$ contains a **Perfect Matching** (with probability $\ge 2/3$) requires $\Omega(n^2)$ bits of memory.
+
+---
+
+### 4.3 Complete Proof and $4n$-Vertex Bipartite Gadget Construction for Matching
+
+**Step 1: Setup the Communication Game**
+Alice has a boolean matrix $X \in \{0, 1\}^{n \times n}$ (equivalent to an instance of $\text{INDEX}_{n^2}$).
+Bob has a target coordinate pair $(j^*, k^*) \in [n] \times [n]$.
+Alice and Bob must determine whether $X_{j^*, k^*} = 1$.
+
+**Step 2: Graph Construction on $4n$ Vertices**
+We construct a bipartite graph on $4n$ vertices partitioned into four sets of size $n$:
+$$V = U \cup V_{\text{right}} \cup U' \cup V'_{\text{right}}$$
+where:
+$$U = \{u_1, \dots, u_n\}, \quad V_{\text{right}} = \{v_1, \dots, v_n\}, \quad U' = \{u'_1, \dots, u'_n\}, \quad V'_{\text{right}} = \{v'_1, \dots, v'_n\}$$
+
+**Step 3: Alice's Stream Prefix $\sigma_A$**
+Alice inspects her matrix $X$. For every entry $(j, k) \in [n] \times [n]$ where $X_{j, k} = 1$:
+Alice inserts the edge $(u_j, v_k)$.
+Alice also inserts a set of $n$ auxiliary fixed edges connecting $U'$ and $V'_{\text{right}}$:
+$$(u'_i, v'_i) \quad \text{for all } i \in [n]$$
+Alice processes $\sigma_A$ through the streaming algorithm and sends the memory state to Bob.
+
+**Step 4: Bob's Stream Suffix $\sigma_B$**
+Bob has query pair $(j^*, k^*)$.
+Bob inserts:
+1. Complete matching between $U \setminus \{u_{j^*}\}$ and $U' \setminus \{u'_{j^*}\}$:
+   $$(u_i, u'_i) \quad \text{for all } i \ne j^*$$
+2. Complete matching between $V_{\text{right}} \setminus \{v_{k^*}\}$ and $V'_{\text{right}} \setminus \{v'_{k^*}\}$:
+   $$(v_i, v'_i) \quad \text{for all } i \ne k^*$$
+3. Two cross edges linking the query vertices to the auxiliary sets:
+   $$(u'_{j^*}, v'_{k^*})$$
+
+```
+          Alice's Edges (X_jk = 1)
+       U ------------------------> V_right
+       |                             |
+       |                             |
+ Bob's | (u_i, u'_i)     (v_i, v'_i) | Bob's
+ Edges |                             | Edges
+       v                             v
+       U' -----------------------> V'_right
+          Fixed & Bob (u'_{j*}, v'_{k*})
+```
+
+**Step 5: Correctness Analysis**
+Let us analyze whether a perfect matching of size $2n$ can exist in the combined graph:
+1. For all $i \ne j^*$, vertex $u_i$ is matched to $u'_i$, and $u'_i$ is saturated.
+2. For all $i \ne k^*$, vertex $v_i$ is matched to $v'_i$, and $v'_i$ is saturated.
+3. This leaves exactly four vertices unmatched: $\{u_{j^*}, v_{k^*}, u'_{j^*}, v'_{k^*}\}$.
+4. In Bob's construction, $u'_{j^*}$ is connected to $v'_{k^*}$. Matching $(u'_{j^*}, v'_{k^*})$ leaves the pair $\{u_{j^*}, v_{k^*}\}$.
+5. The only possible way to match $u_{j^*}$ and $v_{k^*}$ is via the direct edge $(u_{j^*}, v_{k^*})$.
+6. But edge $(u_{j^*}, v_{k^*})$ was inserted by Alice **if and only if** $X_{j^*, k^*} = 1$!
+
+Therefore:
+$$\text{A Perfect Matching exists in } G \iff X_{j^*, k^*} = 1$$
+
+Since the graph has $N = 4n$ vertices, and computing $X_{j^*, k^*}$ requires solving $\text{INDEX}_{n^2}$, the one-way communication complexity is $\Omega(n^2) = \Omega(N^2)$ bits.
+Hence, any streaming algorithm deciding perfect matching requires:
+$$\Omega(n^2) \text{ bits of space} \quad \blacksquare$$
+
+---
+
+### 4.4 Hardness of Maximal Independent Set (MIS): $\Omega(n^2)$ Bits
+
+> **Definition 8.7 (Maximal Independent Set / MIS):**
+> An independent set $I \subseteq V$ in graph $G = (V, E)$ is **maximal** if no vertex can be added to $I$ without violating independence (i.e., every vertex in $V \setminus I$ has at least one neighbor in $I$).
+
+> **Theorem 8.6:**
+> Any streaming algorithm that outputs a Maximal Independent Set of an undirected graph $G = (V, E)$ requires $\Omega(n^2)$ bits of memory.
+
+---
+
+### 4.5 Step-by-Step Proof of MIS Reduction: Dual-Copy Gadget and Neighbor Filtering
+
+**Reduction from $\text{INDEX}_{n^2}$:**
+1. Alice has $X \in \{0, 1\}^{n \times n}$. Bob has query index $(j^*, k^*)$.
+2. We construct a graph with $2n$ vertices partitioned into:
+   $$A = \{a_1, \dots, a_n\} \quad \text{and} \quad B = \{b_1, \dots, b_n\}$$
+3. **Alice's Edges:**
+   For every entry $(j, k)$ where $X_{j, k} = 1$, Alice adds edge $(a_j, b_k)$.
+   Alice also adds all internal clique edges within $A$ and within $B$, except for specific isolated candidate subsets.
+4. **Bob's Edges:**
+   Bob inserts query vertices and edges that force all vertices except $\{a_{j^*}, b_{k^*}\}$ to be covered by the independent set.
+5. In the resulting MIS output:
+   $a_{j^*}$ and $b_{k^*}$ can both belong to the MIS **if and only if** there is no edge between them (i.e., $X_{j^*, k^*} = 0$).
+   If $X_{j^*, k^*} = 1$, the edge $(a_{j^*}, b_{k^*})$ prevents both from being in the MIS.
+6. Thus, reading the MIS reveals $X_{j^*, k^*}$.
+7. This forces the streaming algorithm to store $\Omega(n^2)$ bits. $\blacksquare$
+
+---
+
+---
+
+# Week 9 - Streaming Algorithms: Frequency Moments, AMS Sketch, and Heavy Hitters
+
+## Week 9 Reading Map: Frequency Vectors, Moment Estimation, and Heavy Hitters
+
+In previous weeks, elements in the stream were simply treated as members of a set $S \subseteq [n]$. In practical large-scale data engineering—such as web search queries, network traffic monitoring, or distributed databases—stream tokens represent **coordinate updates** to an underlying dynamic vector $x \in \mathbb{R}^m$.
+
+Week 9 explores the mathematical framework of **Frequency Moments** and **Heavy Hitters**:
+1. We formalize the three stream update regimes: **Cash Register**, **Turnstile**, and **Strict Turnstile**.
+2. We examine the frequency moments $F_p = \sum_{i=1}^m |x_i|^p$, focusing on the second frequency moment $F_2 = \|x\|_2^2$ (energy / variance).
+3. We present the renowned **AMS Algorithm (Alon, Matias, & Szegedy, 1996)** for $F_2$-estimation. We derive its unbiasedness, perform the full fourth-moment expansion to prove why **4-wise independence** is strictly required, and execute the variance reduction and confidence boosting pipeline.
+4. We reveal the deep mathematical bridge connecting $F_2$-estimation to **Distribution Uniformity Testing** via collision statistics.
+5. We study the **Heavy Hitters Problem** under both $L_1$ and $L_2$ norms:
+   - **Misra-Gries Algorithm:** A deterministic token-decrement algorithm for cash register streams.
+   - **Count-Min Sketch (Cormode & Muthukrishnan, 2005):** An $L_1$ sketch for strict turnstile streams based on Markov's inequality.
+   - **Count Sketch (Charikar, Chen, & Farach-Colton, 2002):** A powerful $L_2$ sketch for general turnstile streams using random sign hashing and Chebyshev's inequality.
+
+```
++---------------------------------------------------------------------------------------------------+
+|                            WEEK 9 ARCHITECTURAL OVERVIEW & TAXONOMY                              |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|  [Underlying State] ---> Frequency Vector x in R^m, updated by stream updates (i_t, Delta_t)       |
+|                                                                                                   |
+|  [Update Regimes]                                                                                 |
+|  - Cash Register:     Delta_t >= 0 (Insertions only, coordinates monotone increasing)             |
+|  - Strict Turnstile:  Delta_t in Z, but x_i >= 0 at all times (e.g. inventory)                    |
+|  - General Turnstile: Delta_t in Z, x_i can be negative (general vector differences)              |
+|                                                                                                   |
+|  [Second Frequency Moment F_2 = sum x_i^2 = ||x||_2^2]                                            |
+|  - Linear Accumulator: Z = sum x_i g(i), where g is 4-wise independent in {-1, +1}               |
+|  - Unbiasedness:       E[Z^2] = F_2 (requires only 2-wise independence)                           |
+|  - Fourth Moment:      E[Z^4] <= 3 F_2^2 (requires 4-wise independence!)                          |
+|  - Variance:           Var[Z^2] <= 2 F_2^2                                                        |
+|  - Space:              O(eps^{-2} log(1/delta) (log m + log n)) bits                              |
+|                                                                                                   |
+|  [Heavy Hitters: Finding dominant coordinates in stream]                                          |
+|  +--------------------+----------------------+------------------------+-------------------------+ |
+|  | Algorithm          | Model Requirement    | Error Guarantee        | Space Complexity        | |
+|  +--------------------+----------------------+------------------------+-------------------------+ |
+|  | Misra-Gries        | Cash Register        | L_1: x_i - eps * F_1   | O(eps^{-1} log(m+n))    | |
+|  | Count-Min Sketch   | Strict Turnstile     | L_1: x_i + eps * F_1   | O(eps^{-1} log(m/delta))| |
+|  | Count Sketch       | General Turnstile    | L_2: x_i +- eps * F_2  | O(eps^{-2} log(m/delta))| |
+|  +--------------------+----------------------+------------------------+-------------------------+ |
++---------------------------------------------------------------------------------------------------+
+```
+
+---
+
+## 1. Frequency Vector Updates & Streaming Models
+
+### 1.1 The Underlying Dynamic Vector $x \in \mathbb{R}^m$
+
+Let $\mathcal{U} = [m] = \{1, 2, \dots, m\}$ be the universe of keys.
+The stream consists of $n$ sequential updates:
+$$\sigma = \langle (i_1, \Delta_1), (i_2, \Delta_2), \dots, (i_n, \Delta_n) \rangle$$
+where each update $(i_t, \Delta_t) \in [m] \times \mathbb{Z}$ modifies the $i_t$-th coordinate of an implicit vector $x \in \mathbb{R}^m$:
+$$x_{i_t} \leftarrow x_{i_t} + \Delta_t$$
+Starting from the zero vector $x = \mathbf{0}$, after processing all $n$ updates, the final state of coordinate $i$ is:
+$$x_i = \sum_{t: i_t = i} \Delta_t$$
+
+---
+
+### 1.2 The Three Fundamental Streaming Update Models
+
+1. **Cash Register Model:**
+   - For all updates, $\Delta_t > 0$ (typically $\Delta_t = 1$).
+   - Coordinates are non-negative and monotonically non-decreasing: $x_i \ge 0$.
+   - Suitable for append-only logs, network packet counters, and page views.
+2. **Turnstile Model (General Turnstile):**
+   - Updates $\Delta_t \in \mathbb{Z}$ can be positive or negative.
+   - Coordinates $x_i$ can be positive, zero, or negative at any time.
+   - Essential for computing differences between two streams (e.g., comparing database snapshots $A - B$).
+3. **Strict Turnstile Model:**
+   - Updates $\Delta_t \in \mathbb{Z}$ can be negative, but under the physical promise that $x_i \ge 0$ at all times $t$.
+   - Models physical inventories: items can be added or removed, but stock cannot be negative.
+
+---
+
+### 1.3 Frequency Moments $F_p = \sum_{i=1}^m |x_i|^p$
+
+The $p$-th frequency moment of vector $x \in \mathbb{R}^m$ is defined as:
+$$F_p(x) = \|x\|_p^p = \sum_{i=1}^m |x_i|^p$$
+
+Key special cases:
+- **$F_0 = \sum_{i: x_i \ne 0} 1$:** The number of non-zero coordinates (Distinct Elements, Week 7).
+- **$F_1 = \sum_{i=1}^m |x_i|$:** The total sum of frequencies (in Cash Register, $F_1 = n$).
+- **$F_2 = \sum_{i=1}^m x_i^2 = \|x\|_2^2$:** The energy, Euclidean norm squared, or Gini index of heterogeneity.
+- **$F_\infty = \max_{i \in [m]} |x_i|$:** The maximum frequency (the most frequent element).
+
+---
+
+## 2. Second Frequency Moment ($F_2$) Estimation: The AMS Sketch (Alon-Matias-Szegedy)
+
+### 2.1 Physical Intuition: Random Orthogonal Projections and Energy Preservation
+
+How can we estimate the Euclidean norm squared $F_2 = \sum_{i=1}^m x_i^2$ in a general turnstile stream without storing the $m$-dimensional vector $x$?
+
+Alon, Matias, and Szegedy (1996) made the breakthrough discovery that assigning each coordinate $i \in [m]$ an independent random sign $g(i) \in \{-1, +1\}$ allows estimating $F_2$ with a **single scalar counter**!
+
+Consider a random sign vector $g = (g(1), g(2), \dots, g(m)) \in \{-1, +1\}^m$.
+The inner product:
+$$Z = \langle x, g \rangle = \sum_{i=1}^m x_i g(i)$$
+is a 1-dimensional random projection of $x$.
+Notice that:
+- Coordinates that have zero frequency contribute nothing.
+- When we square $Z$:
+  $$Z^2 = \left( \sum_{i=1}^m x_i g(i) \right)^2 = \sum_{i=1}^m x_i^2 g(i)^2 + \sum_{i \ne j} x_i x_j g(i) g(j)$$
+  Since $g(i)^2 = (\pm 1)^2 = 1$, the diagonal terms always contribute exactly $\sum x_i^2 = F_2$!
+  The cross terms $g(i) g(j)$ have expectation 0, meaning the noise cancels out in expectation!
+
+---
+
+### 2.2 Algorithm Procedure: Accumulating $Z = \sum_{i=1}^m x_i g(i)$
+
+> **Algorithm: Basic AMS $F_2$ Estimator**
+> 1. Pick a 4-wise independent hash function $g: [m] \to \{-1, +1\}$.
+> 2. Initialize a single integer register: $Z \leftarrow 0$.
+> 3. For each stream update $(i_t, \Delta_t)$:
+>    $$Z \leftarrow Z + \Delta_t \cdot g(i_t)$$
+> 4. At the end of the stream, output:
+>    $$Y = Z^2$$
+
+Notice the extreme simplicity of step 3:
+Because $Z$ is completely linear in the updates:
+$$Z = \sum_t \Delta_t g(i_t) = \sum_{i=1}^m \left( \sum_{t: i_t = i} \Delta_t \right) g(i) = \sum_{i=1}^m x_i g(i)$$
+The algorithm works seamlessly in the **general turnstile model** with positive and negative updates!
+
+---
+
+### 2.3 Proof of Unbiasedness: $\mathbb{E}[Z^2] = F_2$
+
+> **Theorem 9.1 (Unbiasedness of AMS Estimator):**
+> If $g: [m] \to \{-1, +1\}$ is pairwise independent with $\Pr[g(i) = +1] = \Pr[g(i) = -1] = 1/2$, then:
+> $$\mathbb{E}[Y] = \mathbb{E}[Z^2] = F_2$$
+
+**Formal Proof:**
+Expanding the square:
+$$Z^2 = \left( \sum_{i=1}^m x_i g(i) \right) \left( \sum_{j=1}^m x_j g(j) \right) = \sum_{i=1}^m x_i^2 g(i)^2 + \sum_{i \ne j} x_i x_j g(i) g(j)$$
+
+By linearity of expectation:
+$$\mathbb{E}[Z^2] = \sum_{i=1}^m x_i^2 \mathbb{E}[g(i)^2] + \sum_{i \ne j} x_i x_j \mathbb{E}[g(i) g(j)]$$
+
+Evaluating the expectations:
+1. For every $i \in [m]$:
+   $$\mathbb{E}[g(i)^2] = (+1)^2 \cdot \frac{1}{2} + (-1)^2 \cdot \frac{1}{2} = 1$$
+2. For any distinct pair $i \ne j$, by pairwise independence:
+   $$\mathbb{E}[g(i) g(j)] = \mathbb{E}[g(i)] \cdot \mathbb{E}[g(j)] = 0 \cdot 0 = 0$$
+
+Therefore:
+$$\mathbb{E}[Z^2] = \sum_{i=1}^m x_i^2 \cdot 1 + \sum_{i \ne j} x_i x_j \cdot 0 = \sum_{i=1}^m x_i^2 = F_2 \quad \blacksquare$$
+
+*(Crucial Remark: Unbiasedness requires **only pairwise independence**).*
+
+---
+
+### 2.4 Fourth Moment Analysis: $\mathbb{E}[Z^4] \le 3 F_2^2$
+
+To apply Chebyshev's inequality, we must compute the variance:
+$$\text{Var}[Y] = \text{Var}[Z^2] = \mathbb{E}[Z^4] - (\mathbb{E}[Z^2])^2 = \mathbb{E}[Z^4] - F_2^2$$
+
+This requires computing the fourth moment $\mathbb{E}[Z^4]$.
+Expanding the fourth power:
+$$Z^4 = \left( \sum_{i=1}^m x_i g(i) \right)^4 = \sum_{i=1}^m \sum_{j=1}^m \sum_{k=1}^m \sum_{l=1}^m x_i x_j x_k x_l \cdot g(i) g(j) g(k) g(l)$$
+
+By linearity of expectation:
+$$\mathbb{E}[Z^4] = \sum_{i, j, k, l \in [m]} x_i x_j x_k x_l \cdot \mathbb{E}[g(i) g(j) g(k) g(l)]$$
+
+Notice that the expectation involves products of up to **four** random variables $g(i)$.
+This is where **4-wise independence** becomes indispensable!
+
+Let us analyze the expectation $\mathbb{E}[g(i) g(j) g(k) g(l)]$ across all possible configurations of the 4 indices:
+- **Case 1: An index appears an odd number of times (e.g., $i$ appears 1 or 3 times).**
+  Suppose index $i$ is distinct from $j, k, l$. By 4-wise independence:
+  $$\mathbb{E}[g(i) g(j) g(k) g(l)] = \mathbb{E}[g(i)] \cdot \mathbb{E}[g(j) g(k) g(l)] = 0 \cdot \mathbb{E}[g(j) g(k) g(l)] = 0$$
+  Every term where any index has an odd exponent has expectation **exactly 0**!
+- **Case 2: All 4 indices are identical ($i = j = k = l$).**
+  Then $g(i)^4 = (\pm 1)^4 = 1$.
+  The contribution to the sum is:
+  $$\sum_{i=1}^m x_i^4 \cdot \mathbb{E}[g(i)^4] = \sum_{i=1}^m x_i^4$$
+- **Case 3: The 4 indices consist of two distinct pairs (e.g., $i = j$ and $k = l$ with $i \ne k$).**
+  Then $g(i)^2 g(k)^2 = 1 \cdot 1 = 1$.
+  How many ways can 4 indices be partitioned into two pairs of identical indices?
+  $$\binom{4}{2} / 2 = \frac{6}{2} = 3 \text{ distinct pairings: } (i=j, k=l), (i=k, j=l), (i=l, j=k)$$
+  The contribution of these terms to the sum is:
+  $$3 \sum_{i \ne k} x_i^2 x_k^2 \cdot \mathbb{E}[g(i)^2 g(k)^2] = 3 \sum_{i \ne k} x_i^2 x_k^2$$
+
+Combining all non-zero terms:
+$$\mathbb{E}[Z^4] = \sum_{i=1}^m x_i^4 + 3 \sum_{i \ne k} x_i^2 x_k^2$$
+
+Notice the algebraic identity:
+$$F_2^2 = \left( \sum_{i=1}^m x_i^2 \right)^2 = \sum_{i=1}^m x_i^4 + \sum_{i \ne k} x_i^2 x_k^2$$
+Therefore:
+$$\mathbb{E}[Z^4] = \sum_{i=1}^m x_i^4 + 3 \sum_{i \ne k} x_i^2 x_k^2 \le 3 \left( \sum_{i=1}^m x_i^4 + \sum_{i \ne k} x_i^2 x_k^2 \right) = 3 F_2^2 \quad \blacksquare$$
+
+---
+
+### 2.5 Rigorous Step-by-Step Variance Bound: $\text{Var}[Z^2] \le 2 F_2^2$
+
+With $\mathbb{E}[Z^4] \le 3 F_2^2$, the variance calculation is immediate:
+$$\text{Var}[Y] = \mathbb{E}[Z^4] - (\mathbb{E}[Z^2])^2 \le 3 F_2^2 - (F_2)^2 = 2 F_2^2$$
+
+> **Key Takeaway:**
+> The variance of a single AMS estimator $Y = Z^2$ is bounded by at most twice the square of its mean:
+> $$\text{Var}[Y] \le 2 (\mathbb{E}[Y])^2$$
+
+---
+
+### 2.6 The Mean Trick & Chebyshev: Reducing Error to $\epsilon F_2$
+
+A single estimator $Y$ has variance $2 F_2^2$, which is too large for accurate estimation.
+We apply the **Mean Trick** (Week 1, Theorem 1.3):
+
+1. Instantiate $k = \left\lceil \frac{20}{\epsilon^2} \right\rceil$ independent copies of the AMS estimator, using $k$ independent 4-wise independent hash functions $g_1, \dots, g_k$.
+2. Compute the average:
+   $$\bar{Y} = \frac{1}{k} \sum_{r=1}^k Y_r = \frac{1}{k} \sum_{r=1}^k Z_r^2$$
+
+**Moments of $\bar{Y}$:**
+- **Expectation:** $\mathbb{E}[\bar{Y}] = \frac{1}{k} \sum_{r=1}^k \mathbb{E}[Y_r] = F_2$.
+- **Variance:** Because the hash functions are independently sampled, the estimators $Y_r$ are mutually independent:
+  $$\text{Var}[\bar{Y}] = \frac{1}{k^2} \sum_{r=1}^k \text{Var}[Y_r] \le \frac{k \cdot 2 F_2^2}{k^2} = \frac{2 F_2^2}{k}$$
+
+Substituting $k = \frac{20}{\epsilon^2}$:
+$$\text{Var}[\bar{Y}] \le \frac{2 F_2^2}{20 / \epsilon^2} = \frac{\epsilon^2 F_2^2}{10}$$
+
+Applying Chebyshev's inequality with deviation threshold $\epsilon F_2$:
+$$\Pr\left[ |\bar{Y} - F_2| \ge \epsilon F_2 \right] \le \frac{\text{Var}[\bar{Y}]}{(\epsilon F_2)^2} \le \frac{\frac{\epsilon^2 F_2^2}{10}}{\epsilon^2 F_2^2} = \frac{1}{10}$$
+Thus, the mean of $k = \mathcal{O}(1/\epsilon^2)$ copies achieves a $(1 \pm \epsilon)$-approximation with success probability at least $9/10 \ge 2/3$.
+
+---
+
+### 2.7 The Median Trick & Chernoff: Boosting Confidence to $1 - \delta$
+
+To reduce the failure probability from $1/10$ to an arbitrary $\delta > 0$:
+1. Run $L = \lceil 36 \ln(1/\delta) \rceil$ independent groups of the Mean-Trick estimator:
+   $$\bar{Y}_1, \bar{Y}_2, \dots, \bar{Y}_L$$
+2. Output the **median**:
+   $$\hat{F}_2 = \text{median}(\bar{Y}_1, \dots, \bar{Y}_L)$$
+
+By the Chernoff bound for median estimation:
+$$\Pr\left[ |\hat{F}_2 - F_2| > \epsilon F_2 \right] \le e^{-2 L (1/2 - 1/10)^2} = e^{-2 L (0.16)} = e^{-0.32 L} \le \delta$$
+
+---
+
+### 2.8 Total Space Complexity of AMS Algorithm
+
+Let us compute the total memory in bits:
+- Number of scalar registers $Z$: $k \times L = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\left(\frac{1}{\delta}\right) \right)$.
+- Each register $Z$ holds an integer bounded by $\max |Z| \le n$. Register size: $\mathcal{O}(\log n)$ bits.
+- Storing each 4-wise independent hash function $g_r$ requires 4 coefficients in $\mathbb{F}_p$ ($p \ge m$): $\mathcal{O}(\log m)$ bits.
+$$\text{Total Space} = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\left(\frac{1}{\delta}\right) (\log m + \log n) \right) \text{ bits}$$
+
+This is the landmark Alon-Matias-Szegedy theorem.
+
+---
+
+## 3. Bridging $F_2$ Moment Estimation and Uniformity Testing
+
+In Week 4, we studied distribution property testing: given independent samples from a discrete distribution $p$ over $[m]$, test whether $p$ is uniform ($U_m$) or $\epsilon$-far from uniform in total variation distance.
+
+The Batu et al. tester counted the number of pairwise collisions among $k$ samples:
+$$\sigma = \sum_{1 \le i < j \le k} \frac{\mathbb{I}[z_i = z_j]}{\binom{k}{2}}$$
+
+Notice the exact mathematical connection:
+$$\mathbb{E}[\mathbb{I}[z_i = z_j]] = \sum_{x=1}^m p(x)^2 = \|p\|_2^2$$
+If we consider the empirical frequency vector of $k$ samples as a streaming vector $x \in \mathbb{R}^m$, then:
+$$F_2(x) = \sum_{i=1}^m x_i^2 = \sum_{i=1}^m x_i + 2 \sum_{i < j} \mathbb{I}[z_i = z_j] = k + 2 \binom{k}{2} \sigma$$
+
+Thus:
+**Distribution Uniformity Testing via collision counting is mathematically isomorphic to estimating the second frequency moment $F_2$ of the sample stream!**
+- For uniform distribution: $\|U_m\|_2^2 = \sum_{i=1}^m (1/m)^2 = \frac{1}{m}$.
+- For $\epsilon$-far distribution: $\|p\|_2^2 \ge \frac{1 + 4\epsilon^2}{m}$.
+The gap in $F_2$ is $\Theta(\epsilon^2 / m)$. Separating this gap requires $k = \mathcal{O}(\sqrt{m}/\epsilon^2)$ samples.
+
+---
+
+## 4. The Heavy Hitters Problem
+
+### 4.1 Problem Definition: $L_1$-Heavy Hitters vs. $L_2$-Heavy Hitters
+
+In many streaming settings, we want to find the **frequent items** (e.g., popular search terms, elephant network flows):
+
+> **Definition 9.2 ($L_1$-Heavy Hitters):**
+> Given parameter $\epsilon \in (0, 1)$, find all items $i \in [m]$ whose frequency satisfies:
+> $$x_i \ge \epsilon \|x\|_1 = \epsilon F_1$$
+
+> **Definition 9.3 ($L_2$-Heavy Hitters):**
+> Find all items $i \in [m]$ whose frequency satisfies:
+> $$x_i \ge \epsilon \|x\|_2 = \epsilon \sqrt{F_2}$$
+
+#### Why $L_2$-Heavy Hitters is a Much Stronger Guarantee:
+By the Cauchy-Schwarz inequality, for any vector $x \in \mathbb{R}^m$:
+$$\|x\|_2 \le \|x\|_1 \le \sqrt{m} \|x\|_2$$
+Therefore:
+$$\epsilon \|x\|_2 \le \epsilon \|x\|_1$$
+A threshold of $\epsilon \|x\|_2$ is significantly lower than $\epsilon \|x\|_1$, allowing the algorithm to detect much smaller signals amidst tail noise.
+
+---
+
+### 4.2 Misra-Gries Algorithm: Deterministic $L_1$ Heavy Hitters in Cash Register Streams
+
+Misra and Gries (1982) designed a purely deterministic, counter-based streaming algorithm for $L_1$-heavy hitters in the cash register model.
+
+> **Algorithm: Misra-Gries with $k$ Counters**
+> 1. Set $k = \lceil 1/\epsilon \rceil$.
+> 2. Maintain a dynamic associative table $T$ storing at most $k$ pairs `(item, count)`.
+> 3. For each incoming token $x \in \sigma$:
+>    - If $x$ is already in $T$: increment its counter: $T[x] \leftarrow T[x] + 1$.
+>    - Else if $|T| < k$: insert $(x, 1)$ into $T$.
+>    - Else (if $|T| = k$ and $x \notin T$):
+>      - **Decrement all $k$ counters in $T$ by 1.**
+>      - Remove any items whose counter drops to 0.
+> 4. For any query item $j \in [m]$: return $\hat{f}_j = T[j]$ if $j \in T$, else return $0$.
+
+---
+
+### 4.3 Invariant Proof: Each Decrement Destroys $k+1$ Stream Tokens
+
+> **Theorem 9.2 (Misra-Gries Guarantee):**
+> For any item $j \in [m]$, the Misra-Gries estimate $\hat{f}_j$ satisfies:
+> $$f_j - \frac{n}{k+1} \le \hat{f}_j \le f_j$$
+> where $n = \sum f_i$ is the total length of the stream.
+
+**Formal Proof:**
+1. **Upper Bound ($\hat{f}_j \le f_j$):**
+   Counters are only incremented when item $j$ arrives. Decrements only decrease the counter. Therefore, $\hat{f}_j$ can never exceed the true frequency $f_j$.
+2. **Lower Bound:**
+   When can a true instance of item $j$ fail to be counted in $\hat{f}_j$?
+   Only during a **decrement step**:
+   - Either $j$ was in $T$ and its counter was decremented by 1.
+   - Or $j$ arrived while $T$ was full and was not in $T$, triggering a decrement of all $k$ items in $T$ plus the discarding of $j$.
+   In either scenario, a decrement step corresponds to discarding **$k+1$ mutually distinct items**: the $k$ distinct items currently in $T$, plus the newly arrived item!
+   Let $D$ denote the total number of decrement steps executed throughout the stream.
+   Since each decrement step consumes $k+1$ stream items, and there are $n$ total items in the stream:
+   $$D \cdot (k+1) \le n \implies D \le \frac{n}{k+1}$$
+   Because item $j$'s count can be reduced by at most 1 during each decrement step:
+   $$f_j - \hat{f}_j \le D \le \frac{n}{k+1} \implies \hat{f}_j \ge f_j - \frac{n}{k+1} \quad \blacksquare$$
+
+Setting $k = \lceil 1/\epsilon \rceil - 1$, the additive error is at most $\epsilon n = \epsilon F_1$.
+**Space:** Storing $k$ keys and counters requires $\mathcal{O}\left( \frac{1}{\epsilon} (\log m + \log n) \right)$ bits.
+
+---
+
+### 4.4 Count-Min Sketch (Cormode-Muthukrishnan): $L_1$ in Strict Turnstile
+
+The Misra-Gries algorithm fails in turnstile streams when elements are deleted.
+Cormode and Muthukrishnan (2005) introduced the **Count-Min Sketch**:
+
+> **Structure of Count-Min Sketch:**
+> - A 2D array of counters $C[d \times w]$, where:
+>   $$w = \left\lceil \frac{e}{\epsilon} \right\rceil, \quad d = \left\lceil \ln\left(\frac{1}{\delta}\right) \right\rceil$$
+> - $d$ independent pairwise independent hash functions $h_1, h_2, \dots, h_d: [m] \to [w]$.
+> - **Update $(i, \Delta)$:**
+>   For each row $l \in \{1, 2, \dots, d\}$:
+>   $$C[l, h_l(i)] \leftarrow C[l, h_l(i)] + \Delta$$
+> - **Point Query for coordinate $i$:**
+>   $$\hat{x}_i = \min_{l \in [d]} C[l, h_l(i)]$$
+
+---
+
+### 4.5 Rigorous Analysis of Count-Min Sketch via Markov's Inequality
+
+> **Theorem 9.3 (Count-Min Sketch Guarantee):**
+> In a strict turnstile stream ($x \ge 0$), for any coordinate $i \in [m]$:
+> $$\hat{x}_i \ge x_i \quad \text{always}$$
+> and with probability at least $1 - \delta$:
+> $$\hat{x}_i \le x_i + \epsilon \|x\|_1$$
+
+**Formal Proof:**
+In any fixed row $l \in [d]$, the counter value is:
+$$C[l, h_l(i)] = x_i + \sum_{j \ne i} x_j \cdot \mathbb{I}[h_l(j) = h_l(i)]$$
+Since $x_j \ge 0$ (strict turnstile) and indicators are non-negative, $C[l, h_l(i)] \ge x_i$ for every row $l$.
+Taking the minimum:
+$$\hat{x}_i = \min_{l \in [d]} C[l, h_l(i)] \ge x_i \quad \text{always!}$$
+
+Now consider the collision noise in row $l$:
+$$X_l = \sum_{j \ne i} x_j \cdot \mathbb{I}[h_l(j) = h_l(i)]$$
+By linearity of expectation and pairwise independence of $h_l$:
+$$\mathbb{E}[X_l] = \sum_{j \ne i} x_j \cdot \Pr[h_l(j) = h_l(i)] = \sum_{j \ne i} x_j \cdot \frac{1}{w} \le \frac{\|x\|_1}{w} = \frac{\|x\|_1}{\lceil e / \epsilon \rceil} \le \frac{\epsilon}{e} \|x\|_1$$
+
+Because $X_l \ge 0$, we can apply **Markov's Inequality**:
+$$\Pr\left[ X_l \ge \epsilon \|x\|_1 \right] \le \frac{\mathbb{E}[X_l]}{\epsilon \|x\|_1} \le \frac{\frac{\epsilon}{e} \|x\|_1}{\epsilon \|x\|_1} = \frac{1}{e}$$
+
+The estimate $\hat{x}_i = \min_l (x_i + X_l) > x_i + \epsilon \|x\|_1$ **if and only if** $X_l > \epsilon \|x\|_1$ for **all** $d$ rows.
+Because the $d$ hash functions are chosen independently:
+$$\Pr\left[ \hat{x}_i > x_i + \epsilon \|x\|_1 \right] = \prod_{l=1}^d \Pr[X_l > \epsilon \|x\|_1] \le \left( \frac{1}{e} \right)^d = e^{-d} = e^{-\ln(1/\delta)} = \delta \quad \blacksquare$$
+
+**Space:** $d \times w = \mathcal{O}\left( \frac{1}{\epsilon} \ln\left(\frac{1}{\delta}\right) \right)$ counters $\implies \mathcal{O}\left( \epsilon^{-1} \log(1/\delta) (\log m + \log n) \right)$ bits.
+
+---
+
+### 4.6 Count Sketch (Charikar-Chen-Farach-Colton): $L_2$ in General Turnstile
+
+In general turnstile streams where coordinates can become negative, Count-Min's one-sided error breaks down.
+Charikar, Chen, and Farach-Colton (2002) introduced **Count Sketch**:
+
+> **Structure of Count Sketch:**
+> - Counter table $C[d \times w]$ with width $w = \left\lceil \frac{3}{\epsilon^2} \right\rceil$ and depth $d = \mathcal{O}(\log(1/\delta))$.
+> - $d$ pairwise independent bucket hash functions $h_1, \dots, h_d: [m] \to [w]$.
+> - $d$ pairwise independent random sign hash functions $g_1, \dots, g_d: [m] \to \{-1, +1\}$.
+> - **Update $(i, \Delta)$:**
+>   For each row $l \in [d]$:
+>   $$C[l, h_l(i)] \leftarrow C[l, h_l(i)] + \Delta \cdot g_l(i)$$
+> - **Point Query for coordinate $i$:**
+>   In each row $l$, compute the unbiased estimate:
+>   $$\hat{x}_{l, i} = C[l, h_l(i)] \cdot g_l(i)$$
+>   Output the **median**:
+>   $$\hat{x}_i = \text{median}_{l \in [d]} \hat{x}_{l, i}$$
+
+---
+
+### 4.7 Rigorous Analysis of Count Sketch: Unbiasedness & $L_2$ Error
+
+> **Theorem 9.4 (Count Sketch Guarantee):**
+> In general turnstile streams, for any coordinate $i \in [m]$:
+> $$\mathbb{E}[\hat{x}_{l, i}] = x_i \quad \text{(strictly unbiased)}$$
+> and with probability at least $1 - \delta$:
+> $$|\hat{x}_i - x_i| \le \epsilon \|x\|_2 = \epsilon \sqrt{F_2}$$
+
+**Formal Proof:**
+In row $l$:
+$$C[l, h_l(i)] = x_i g_l(i) + \sum_{j \ne i} x_j g_l(j) \cdot \mathbb{I}[h_l(j) = h_l(i)]$$
+Multiplying by $g_l(i)$:
+$$\hat{x}_{l, i} = x_i g_l(i)^2 + \sum_{j \ne i} x_j g_l(i) g_l(j) \cdot \mathbb{I}[h_l(j) = h_l(i)] = x_i + \sum_{j \ne i} x_j g_l(i) g_l(j) \mathbb{I}[h_l(j) = h_l(i)]$$
+
+**Expectation:**
+Since $g_l(i)$ and $g_l(j)$ are independent with mean 0:
+$$\mathbb{E}[\hat{x}_{l, i}] = x_i + \sum_{j \ne i} x_j \cdot 0 = x_i$$
+
+**Variance:**
+Because the collision indicators and random signs are pairwise independent:
+$$\text{Var}[\hat{x}_{l, i}] = \sum_{j \ne i} x_j^2 \cdot \mathbb{E}[g_l(i)^2 g_l(j)^2] \cdot \Pr[h_l(j) = h_l(i)] = \sum_{j \ne i} x_j^2 \cdot 1 \cdot \frac{1}{w} \le \frac{F_2}{w}$$
+
+Substituting $w = \frac{3}{\epsilon^2}$:
+$$\text{Var}[\hat{x}_{l, i}] \le \frac{\epsilon^2 F_2}{3}$$
+
+Applying **Chebyshev's Inequality**:
+$$\Pr\left[ |\hat{x}_{l, i} - x_i| \ge \epsilon \sqrt{F_2} \right] \le \frac{\text{Var}[\hat{x}_{l, i}]}{\epsilon^2 F_2} \le \frac{\frac{\epsilon^2 F_2}{3}}{\epsilon^2 F_2} = \frac{1}{3}$$
+
+By taking the median over $d = \mathcal{O}(\log(1/\delta))$ rows, the failure probability shrinks exponentially to $\le \delta$. $\blacksquare$
+
+---
+
+### 4.8 Architectural Comparison: Misra-Gries vs. Count-Min vs. Count Sketch
+
+| Dimension | Misra-Gries | Count-Min Sketch | Count Sketch |
+| :--- | :--- | :--- | :--- |
+| **Stream Model** | Cash Register only ($\Delta \ge 0$) | Strict Turnstile ($x_i \ge 0$) | General Turnstile ($\Delta \in \mathbb{Z}$) |
+| **Guarantee Metric** | $L_1$ Error ($\epsilon F_1$) | $L_1$ Error ($\epsilon F_1$) | $L_2$ Error ($\epsilon \sqrt{F_2}$) |
+| **Error Direction** | One-sided underestimate ($x_i - \epsilon F_1 \le \hat{x}_i \le x_i$) | One-sided overestimate ($x_i \le \hat{x}_i \le x_i + \epsilon F_1$) | Two-sided symmetric ($x_i \pm \epsilon \sqrt{F_2}$) |
+| **Hash Requirements**| Deterministic (no hash) | Pairwise Independent | 2-wise bucket + 2-wise sign |
+| **Width $w$** | $k = \lceil 1/\epsilon \rceil$ | $w = \lceil e/\epsilon \rceil$ | $w = \lceil 3/\epsilon^2 \rceil$ |
+| **Depth $d$** | 1 (single associative array) | $d = \lceil \ln(1/\delta) \rceil$ | $d = \mathcal{O}(\log(1/\delta))$ |
+| **Aggregation Rule** | Direct table lookup | Minimum across rows ($\min$) | Median across rows ($\text{median}$) |
+| **Total Memory** | $\mathcal{O}(\epsilon^{-1} \log(m+n))$ bits | $\mathcal{O}(\epsilon^{-1} \log(1/\delta) \log(m+n))$ bits | $\mathcal{O}(\epsilon^{-2} \log(1/\delta) \log(m+n))$ bits |
+
+---
+
+# Week 10 - Data Compression & Dimensionality Reduction: Sparse Recovery, Johnson-Lindenstrauss Lemma, and Subspace Embeddings
+
+## Week 10 Reading Map: Sparse Reconstruction, Isometric Embeddings, and Streaming Regression
+
+In Week 9, sketch algorithms mapped massive vectors $x \in \mathbb{R}^m$ into small tables of counters to answer scalar queries ($F_2$, point queries).
+Week 10 takes the ultimate leap in data compression:
+**Can we reconstruct the actual vector $x$, preserve high-dimensional geometric distances, and solve massive linear regression problems without ever storing the underlying data matrix?**
+
+We investigate four interconnected pillars:
+1. **Sparse Recovery:** When vector $x$ has at most $k$ non-zero entries (or is well-approximated by $k$ entries), how can we decode the coordinates and values from a compressed linear sketch?
+2. **The Johnson-Lindenstrauss (JL) Lemma:** The foundational theorem of modern dimensionality reduction: projecting $n$ points from $\mathbb{R}^m$ into $\mathcal{O}(\epsilon^{-2} \log n)$ dimensions preserves **all** pairwise Euclidean distances within $1 \pm \epsilon$!
+3. **Subspace Embeddings:** How to construct a random matrix $\Pi$ that preserves the Euclidean length of **every single vector** in an entire $d$-dimensional subspace simultaneously. We prove this via **$\epsilon$-nets and chaining**.
+4. **Streaming Linear Regression:** Solving $\min_{x \in \mathbb{R}^d} \|Ax - b\|_2$ when the rows of $A$ and $b$ stream past one by one, using only $\mathcal{O}(d^2 / \epsilon^2)$ space!
+
+```
++---------------------------------------------------------------------------------------------------+
+|                           WEEK 10 GEOMETRIC DATA COMPRESSION SUITE                               |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|  [Sparse Vector x in R^m]                                                                         |
+|  - Exact 1-sparse:      Decoded via 3 registers (Phi_0, Phi_1, Phi_2) in O(log m log n) bits       |
+|  - Approximate k-sparse: Count Sketch with (k+2)-wise hashing achieves (1 + 5 eps) err_k^2(x)     |
+|                                                                                                   |
+|  [Johnson-Lindenstrauss Lemma]                                                                    |
+|  - Distributional JL:   Gaussian Pi in R^{k x m}, k = O(eps^{-2} log(1/delta))                    |
+|                         Preserves ||Pi x||_2^2 in (1 +- eps) ||x||_2^2                            |
+|  - Point Set JL:        n arbitrary points in R^m embed into k = O(eps^{-2} log n) dimensions!    |
+|                         Target dimension k is COMPLETELY INDEPENDENT of ambient dimension m!      |
+|                                                                                                   |
+|  [Subspace Embedding]                                                                             |
+|  - Unit Sphere S^{d-1}: Discretized via gamma-net of size |N| <= 5^d                              |
+|  - Chaining Proof:      x = sum_{i=0}^infty z_i preserves ||Pi x||_2 for ALL x in Subspace E      |
+|  - Target Dimension:    k = O(eps^{-2} d log(1/delta))                                            |
+|                                                                                                   |
+|  [Streaming Linear Regression: min_x ||Ax - b||_2]                                                |
+|  - Stream:              Rows (A_t, b_t) stream past; n >> d                                       |
+|  - Sketch Matrix:       Pi in R^{k x n} reduces problem to min_x ||Pi A x - Pi b||_2              |
+|  - Space:               O(d^2 / eps^2) words of memory, entirely independent of n!               |
++---------------------------------------------------------------------------------------------------+
+```
+
+---
+
+## 1. Sparse Vector Recovery ($k$-Sparse Recovery)
+
+### 1.1 The Sparse Recovery Paradigm
+
+In compressed sensing and streaming analytics, many signals are **sparse**:
+- A vector $x \in \mathbb{R}^m$ is **$k$-sparse** if $\|x\|_0 = |\{i \in [m] : x_i \ne 0\}| \le k$.
+- Even when $x$ is not strictly sparse, it is often compressible, meaning it is well-approximated by its $k$ largest coordinates (the "head"), while the remaining coordinates (the "tail") have small energy:
+  $$\text{err}_k^2(x) = \min_{z: \|z\|_0 \le k} \|x - z\|_2^2 = \sum_{i \notin \text{Top-k}} x_i^2$$
+
+---
+
+### 1.2 Information-Theoretic Lower Bound for Exact $k$-Sparse Recovery
+
+> **Theorem 10.1:**
+> Any streaming algorithm that reconstructs an exact $k$-sparse vector $x \in \mathbb{R}^m$ with entries bounded by $n$ requires at least $\Omega(k (\log m + \log n))$ bits of memory.
+
+**Proof Idea:**
+There are $\binom{m}{k}$ possible support sets of size $k$, and each coordinate can take $n$ possible values. The total number of distinct $k$-sparse vectors is $\binom{m}{k} n^k \ge (m/k)^k n^k$. By Shannon entropy, encoding this state requires $\log_2(\binom{m}{k} n^k) = \Omega(k (\log m + \log n))$ bits.
+
+---
+
+### 1.3 Exact 1-Sparse Recovery via 3 Moments / Dyadic Bit-Pattern Testing
+
+Before tackling $k$-sparse vectors, how can we recover an exact 1-sparse vector ($x = (0, \dots, 0, v, 0, \dots, 0)$ at unknown position $k \in [m]$)?
+
+**The 3-Moment Register Architecture:**
+Maintain three linear sketch registers in the stream:
+1. **Zeroth Moment Register:** $\Phi_0 = \sum_{i=1}^m x_i = \sum_t \Delta_t$.
+2. **First Moment Register:** $\Phi_1 = \sum_{i=1}^m i \cdot x_i = \sum_t i_t \Delta_t$.
+3. **Second Moment Register:** $\Phi_2 = \sum_{i=1}^m i^2 \cdot x_i = \sum_t i_t^2 \Delta_t$.
+
+**Decoding:**
+If $x$ is truly 1-sparse with non-zero value $v$ at index $k$:
+$$\Phi_0 = v, \quad \Phi_1 = k \cdot v, \quad \Phi_2 = k^2 \cdot v$$
+We decode:
+$$\text{Identified Index: } k = \frac{\Phi_1}{\Phi_0}$$
+$$\text{Identified Value: } v = \Phi_0$$
+**Consistency Check:** Verify whether $\frac{\Phi_2}{\Phi_0} = k^2$.
+If the equality holds, output $(k, v)$; otherwise, declare that $x$ is not 1-sparse!
+
+**Dyadic Bit-Pattern Vector Testing:**
+For larger coordinates, we maintain $\lceil \log_2 m \rceil$ bit-masked registers:
+For each bit $j \in \{0, 1, \dots, \lceil \log_2 m \rceil - 1\}$:
+$$s_j = \sum_{i: \text{bit}_j(i) = 1} x_i$$
+If $x$ is 1-sparse with index $k$, then $s_j = v$ if the $j$-th bit of $k$ is 1, and $s_j = 0$ if the $j$-th bit of $k$ is 0!
+This recovers $k$ bit by bit in $\mathcal{O}(\log m (\log m + \log n))$ space.
+
+---
+
+### 1.4 General Approximate $k$-Sparse Recovery: The Error Metric $\text{err}_k^2(x)$
+
+When $x$ is not strictly sparse, our goal is to find a $k$-sparse estimate $\hat{x}$ ($\|\hat{x}\|_0 \le k$) such that:
+$$\|x - \hat{x}\|_2^2 \le (1 + \epsilon) \text{err}_k^2(x)$$
+
+---
+
+### 1.5 Algorithm: Count Sketch with $(k+2)$-wise Hash Families
+
+We use the Count Sketch architecture from Week 9, but configured with specialized parameters:
+- **Table Dimensions:** Width $B = \Theta(k / \epsilon)$, depth $t = \Theta(\log m)$.
+- **Hash Functions:** Bucket hashes $h_l: [m] \to [B]$ and sign hashes $g_l: [m] \to \{-1, +1\}$ chosen from a **$(k+2)$-wise independent** family!
+
+**Reconstruction Procedure:**
+1. Process the stream into the Count Sketch table $C[t \times B]$.
+2. For each coordinate $i \in [m]$, query the Count Sketch estimate:
+   $$\hat{x}_i = \text{median}_{l \in [t]} (C[l, h_l(i)] \cdot g_l(i))$$
+3. Let $S \subset [m]$ be the set of $k$ coordinates with the largest estimated magnitudes $|\hat{x}_i|$.
+4. Construct the output $\hat{x}$:
+   $$\hat{x}_i = \begin{cases} \hat{x}_i & \text{if } i \in S \\ 0 & \text{otherwise} \end{cases}$$
+
+---
+
+### 1.6 Step 1 of Analysis: Top-$k$ Coordinate Isolation
+
+Let $J \subset [m]$ be the true support of the $k$ largest coordinates of $x$.
+For any fixed row $l \in [t]$ and a target item $i \in J$:
+What is the probability that another top-$k$ item $j \in J \setminus \{i\}$ collides with $i$ in row $l$?
+$$\Pr[\exists j \in J \setminus \{i\} : h_l(j) = h_l(i)] \le \sum_{j \in J \setminus \{i\}} \Pr[h_l(j) = h_l(i)] = \frac{k-1}{B} = \frac{k-1}{\Theta(k / \epsilon)} \le \frac{1}{10}$$
+
+By taking $t = \Theta(\log m)$ rows and using the median, every coordinate in $J$ is cleanly **isolated** from all other heavy elements in a majority of rows with high probability!
+
+---
+
+### 1.7 Step 2 of Analysis: Tail Variance Bounding
+
+When coordinate $i \in J$ is isolated from all other elements of $J$, the only interference comes from the **tail coordinates** $T = [m] \setminus J$:
+$$\text{Noise} = \sum_{j \in T} x_j g_l(j) \cdot \mathbb{I}[h_l(j) = h_l(i)]$$
+The expectation of the noise is 0. Its variance is:
+$$\text{Var}[\text{Noise}] = \sum_{j \in T} x_j^2 \cdot \Pr[h_l(j) = h_l(i)] = \frac{\sum_{j \in T} x_j^2}{B} = \frac{\text{err}_k^2(x)}{B}$$
+
+Substituting $B = \frac{k}{\epsilon}$:
+$$\text{Var}[\text{Noise}] \le \frac{\epsilon}{k} \text{err}_k^2(x)$$
+
+Applying Chebyshev's inequality and median boosting across the $t$ rows:
+$$|\hat{x}_i - x_i|^2 \le \frac{\epsilon}{k} \text{err}_k^2(x) \quad \text{for all } i \in J$$
+
+---
+
+### 1.8 Achieving the $(1 + 5\epsilon) \text{err}_k^2(x)$ Reconstruction Guarantee
+
+Summing the squared errors over all $k$ recovered coordinates:
+$$\sum_{i \in J} |\hat{x}_i - x_i|^2 \le k \cdot \left( \frac{\epsilon}{k} \text{err}_k^2(x) \right) = \epsilon \cdot \text{err}_k^2(x)$$
+
+Combining this with the tail energy proves:
+$$\|x - \hat{x}\|_2^2 \le (1 + 5\epsilon) \text{err}_k^2(x)$$
+**Total Space:** $\mathcal{O}\left( \frac{k}{\epsilon} \log m (\log m + \log n) \right)$ bits.
+
+---
+
+## 2. Dimensionality Reduction & The Johnson-Lindenstrauss (JL) Lemma
+
+### 2.1 The Geometry of High Dimensions & Linear Sketching Matrix $\Pi$
+
+High-dimensional data in $\mathbb{R}^m$ is computationally devastating (the curse of dimensionality).
+Can we project vectors from $\mathbb{R}^m$ down to $\mathbb{R}^k$ ($k \ll m$) using a linear projection matrix $\Pi \in \mathbb{R}^{k \times m}$:
+$$y = \Pi x \in \mathbb{R}^k$$
+such that Euclidean distances are preserved?
+
+---
+
+### 2.2 Distributional Johnson-Lindenstrauss Lemma: Gaussian Projections
+
+> **Theorem 10.2 (Distributional JL Lemma):**
+> For any $\epsilon \in (0, 1/2)$ and $\delta \in (0, 1)$, set:
+> $$k = \left\lceil \frac{8 \ln(2/\delta)}{\epsilon^2} \right\rceil = \mathcal{O}\left( \frac{\log(1/\delta)}{\epsilon^2} \right)$$
+> Let $\Pi \in \mathbb{R}^{k \times m}$ be a random matrix whose entries are i.i.d. Gaussian:
+> $$\Pi_{i, j} \sim \mathcal{N}\left(0, \frac{1}{k}\right)$$
+> Then for **any fixed vector** $x \in \mathbb{R}^m$:
+> $$\Pr\left[ (1 - \epsilon) \|x\|_2^2 \le \|\Pi x\|_2^2 \le (1 + \epsilon) \|x\|_2^2 \right] \ge 1 - \delta$$
+
+---
+
+### 2.3 Proof Sketch of Distributional JL via Chi-Squared Concentration
+
+Without loss of generality, assume $\|x\|_2 = 1$.
+Let $y = \Pi x \in \mathbb{R}^k$.
+For each coordinate $r \in [k]$:
+$$y_r = \sum_{j=1}^m \Pi_{r, j} x_j$$
+Since each $\Pi_{r, j} \sim \mathcal{N}(0, 1/k)$ is Gaussian, the linear combination $y_r$ is also Gaussian:
+$$\mathbb{E}[y_r] = 0, \quad \text{Var}[y_r] = \sum_{j=1}^m x_j^2 \cdot \frac{1}{k} = \frac{\|x\|_2^2}{k} = \frac{1}{k}$$
+Let $g_r = \sqrt{k} y_r \sim \mathcal{N}(0, 1)$.
+Then the squared norm of $y$ is:
+$$\|y\|_2^2 = \sum_{r=1}^k y_r^2 = \frac{1}{k} \sum_{r=1}^k g_r^2$$
+Notice that $\sum_{r=1}^k g_r^2$ is a standard **Chi-Squared random variable with $k$ degrees of freedom** ($\chi^2_k$)!
+- Mean: $\mathbb{E}[\|y\|_2^2] = \frac{1}{k} \cdot k = 1 = \|x\|_2^2$.
+By standard Chi-squared concentration (or Chernoff bounds for sub-exponential variables):
+$$\Pr\left[ |\|y\|_2^2 - 1| \ge \epsilon \right] \le 2 e^{-k \epsilon^2 / 8}$$
+Setting $2 e^{-k \epsilon^2 / 8} \le \delta \implies k \ge \frac{8 \ln(2/\delta)}{\epsilon^2} \quad \blacksquare$
+
+---
+
+### 2.4 Metric Preservation for $n$ Points: The Classic JL Theorem
+
+> **Theorem 10.3 (Johnson & Lindenstrauss, 1984):**
+> For any set $P \subset \mathbb{R}^m$ of $n$ points and any $\epsilon \in (0, 1/2)$, there exists a linear mapping $\Pi: \mathbb{R}^m \to \mathbb{R}^k$ with:
+> $$k = \mathcal{O}\left( \frac{\log n}{\epsilon^2} \right)$$
+> such that for **all pairs** $p, q \in P$:
+> $$(1 - \epsilon) \|p - q\|_2^2 \le \|\Pi p - \Pi q\|_2^2 \le (1 + \epsilon) \|p - q\|_2^2$$
+
+**Formal Proof:**
+1. The set of all pairwise difference vectors is $D = \{p - q : p, q \in P, p \ne q\}$.
+2. The number of such pairs is $\binom{n}{2} = \frac{n(n-1)}{2} < \frac{n^2}{2}$.
+3. Choose failure probability for each individual pair: $\delta' = \frac{1}{n^2}$.
+4. By the Distributional JL Lemma, setting:
+   $$k = \left\lceil \frac{8 \ln(2 / \delta')}{\epsilon^2} \right\rceil = \left\lceil \frac{8 \ln(2 n^2)}{\epsilon^2} \right\rceil = \mathcal{O}\left( \frac{\log n}{\epsilon^2} \right)$$
+   guarantees that for any fixed pair $p, q$:
+   $$\Pr\left[ \|\Pi(p - q)\|_2^2 \notin (1 \pm \epsilon) \|p - q\|_2^2 \right] \le \frac{1}{n^2}$$
+5. By the **Union Bound** over all $\binom{n}{2}$ pairs:
+   $$\Pr[\exists p, q \in P : \text{distance is distorted}] \le \binom{n}{2} \cdot \frac{1}{n^2} < \frac{n^2 / 2}{n^2} = \frac{1}{2}$$
+6. Therefore, with probability $\ge 1/2 > 0$, **every single pairwise distance** is simultaneously preserved within $1 \pm \epsilon$! $\blacksquare$
+
+> **The Miracle of the JL Lemma:**
+> The target dimension $k = \mathcal{O}(\epsilon^{-2} \log n)$ depends **only on the number of points $n$ and error $\epsilon$**!
+> It is **completely independent of the original dimension $m$**! (Whether $m = 10^3$ or $m = 10^9$, $k$ is the same!).
+
+---
+
+## 3. Subspace Embeddings: Preserving Infinite Vector Spaces
+
+### 3.1 The Challenge of Preserving an Entire $d$-Dimensional Subspace $E$
+
+The JL lemma preserves distances between a **finite set of $n$ points**.
+What if we need to preserve lengths for an **infinite continuous subspace**?
+Let $E \subset \mathbb{R}^m$ be a $d$-dimensional linear subspace.
+We seek a projection matrix $\Pi \in \mathbb{R}^{k \times m}$ such that:
+$$(1 - \epsilon) \|x\|_2 \le \|\Pi x\|_2 \le (1 + \epsilon) \|x\|_2 \quad \text{for \textbf{ALL} } x \in E$$
+Such a matrix $\Pi$ is called a **$(1 \pm \epsilon)$-Subspace Embedding for $E$**.
+
+Because $E$ contains infinitely many vectors, we cannot simply apply a union bound!
+
+---
+
+### 3.2 The Compact Unit Sphere $S^{d-1}$
+
+By linearity of $\Pi$:
+$$\frac{\|\Pi x\|_2}{\|x\|_2} = \left\| \Pi \left( \frac{x}{\|x\|_2} \right) \right\|_2$$
+It suffices to preserve the norm of all unit vectors in $E$:
+$$\mathcal{S}_E = \{x \in E : \|x\|_2 = 1\}$$
+$\mathcal{S}_E$ is isometric to the $(d-1)$-dimensional unit Euclidean sphere $S^{d-1}$.
+
+---
+
+### 3.3 The $\gamma$-Net Discretization
+
+To discretize the continuous sphere $\mathcal{S}_E$, we use an **$\epsilon$-net** (or $\gamma$-net):
+
+> **Definition 10.4 ($\gamma$-Net):**
+> A finite subset $\mathcal{N} \subset \mathcal{S}_E$ is a $\gamma$-net for $\mathcal{S}_E$ if for every point $x \in \mathcal{S}_E$, there exists a net point $z \in \mathcal{N}$ such that $\|x - z\|_2 \le \gamma$.
+
+> **Lemma 10.1 (Net Size Bound):**
+> For any $\gamma \in (0, 1)$, there exists a $\gamma$-net $\mathcal{N}$ for $\mathcal{S}_E$ of size:
+> $$|\mathcal{N}| \le \left( 1 + \frac{2}{\gamma} \right)^d$$
+> Setting $\gamma = 1/2$, the net size is bounded by $|\mathcal{N}| \le (1 + 4)^d = 5^d$.
+
+---
+
+### 3.4 Infinite Chaining Decomposition: $x = \sum_{i=0}^\infty z_i$
+
+How does preserving points in a finite net $\mathcal{N}$ guarantee preservation of all points on the sphere?
+We use the technique of **infinite chaining decomposition**:
+
+Fix any unit vector $x \in \mathcal{S}_E$:
+1. Let $z_0 \in \mathcal{N}$ be the closest net point to $x$. Then $\|x - z_0\|_2 \le \gamma$.
+2. The residual vector $r_1 = x - z_0$ has length $\le \gamma$.
+   Normalize it: $x_1 = \frac{r_1}{\|r_1\|_2} \in \mathcal{S}_E$.
+   Let $z_1' \in \mathcal{N}$ be the closest net point to $x_1$, and define $z_1 = \|r_1\|_2 z_1'$.
+   Then $\|x - z_0 - z_1\|_2 \le \gamma^2$.
+3. Repeating this process infinitely yields an exact expansion:
+   $$x = \sum_{i=0}^\infty z_i$$
+   where each $z_i$ is a scaled net point: $z_i = c_i y_i$ with $y_i \in \mathcal{N}$ and $\|z_i\|_2 \le \gamma^i$.
+
+---
+
+### 3.5 Preserving Norms Across All Vectors in $E$
+
+Suppose our projection matrix $\Pi$ satisfies the JL property for every point in the net $\mathcal{N}$ with parameter $\epsilon_0$:
+$$|\|\Pi y\|_2 - 1| \le \epsilon_0 \quad \text{for all } y \in \mathcal{N}$$
+
+Then by the triangle inequality on the chaining expansion:
+$$\|\Pi x - x\|_2 = \left\| \sum_{i=0}^\infty (\Pi z_i - z_i) \right\|_2 \le \sum_{i=0}^\infty \|\Pi z_i - z_i\|_2 \le \sum_{i=0}^\infty \epsilon_0 \|z_i\|_2 \le \epsilon_0 \sum_{i=0}^\infty \gamma^i = \frac{\epsilon_0}{1 - \gamma}$$
+
+Setting $\gamma = 1/2$:
+$$\|\Pi x - x\|_2 \le \frac{\epsilon_0}{1 - 1/2} = 2 \epsilon_0$$
+Choosing $\epsilon_0 = \epsilon / 3$ ensures that for **all** $x \in \mathcal{S}_E$:
+$$1 - \epsilon \le \|\Pi x\|_2 \le 1 + \epsilon \quad \blacksquare$$
+
+---
+
+### 3.6 Target Dimension for Subspace Embedding: $k = \mathcal{O}(\epsilon^{-2} d \log(1/\delta))$
+
+How many rows $k$ does $\Pi$ need?
+The net has size $|\mathcal{N}| \le 5^d$.
+We apply Distributional JL to each of the $5^d$ points with failure probability $\delta' = \frac{\delta}{5^d}$.
+$$k = \mathcal{O}\left( \frac{\log(1 / \delta')}{\epsilon^2} \right) = \mathcal{O}\left( \frac{\log(5^d / \delta)}{\epsilon^2} \right) = \mathcal{O}\left( \frac{d \log 5 + \log(1/\delta)}{\epsilon^2} \right) = \mathcal{O}\left( \frac{d + \log(1/\delta)}{\epsilon^2} \right)$$
+
+> **Fundamental Theorem of Subspace Embedding:**
+> A random Gaussian matrix $\Pi \in \mathbb{R}^{k \times m}$ with:
+> $$k = \mathcal{O}\left( \frac{d + \log(1/\delta)}{\epsilon^2} \right)$$
+> embeds an entire $d$-dimensional subspace $E \subset \mathbb{R}^m$ with distortion $\le 1 \pm \epsilon$.
+
+---
+
+## 4. Streaming Linear Regression
+
+### 4.1 Problem Formulation: $\min_{x \in \mathbb{R}^d} \|Ax - b\|_2$
+
+In large-scale machine learning and statistics:
+- We are given a massive matrix $A \in \mathbb{R}^{n \times d}$ and response vector $b \in \mathbb{R}^n$.
+- The number of data points $n$ is enormous ($n \gg d$).
+- The data arrives as a stream of rows $(a_t, b_t)$, where $a_t \in \mathbb{R}^d$ is the $t$-th row of $A$ and $b_t \in \mathbb{R}$ is the $t$-th label.
+- **Ordinary Least Squares (OLS) Regression:** Find $x^* \in \mathbb{R}^d$ that minimizes:
+  $$x^* = \arg\min_{x \in \mathbb{R}^d} \|Ax - b\|_2$$
+- Storing the entire $n \times d$ matrix requires $\mathcal{O}(nd)$ memory, which violates streaming space constraints.
+
+Can we compute a $(1 + \epsilon)$-approximate regression solution in space depending **only on $d$ and $\epsilon$**, independent of $n$?
+
+---
+
+### 4.2 Reduction to Subspace Embedding
+
+Form the concatenated matrix $M \in \mathbb{R}^{n \times (d+1)}$:
+$$M = [A \mid b]$$
+Notice that for any candidate vector $x \in \mathbb{R}^d$:
+$$Ax - b = [A \mid b] \begin{pmatrix} x \\ -1 \end{pmatrix} = M \begin{pmatrix} x \\ -1 \end{pmatrix}$$
+Therefore, the residual vector $Ax - b$ always lies in the **column space** of $M$!
+The column space $\text{col}(M) \subset \mathbb{R}^n$ has dimension at most $d + 1$.
+
+If $\Pi \in \mathbb{R}^{k \times n}$ is a $(1 \pm \epsilon)$-subspace embedding for $\text{col}(M)$, then for **every** $x \in \mathbb{R}^d$:
+$$(1 - \epsilon) \|Ax - b\|_2 \le \|\Pi(Ax - b)\|_2 \le (1 + \epsilon) \|Ax - b\|_2$$
+
+---
+
+### 4.3 Streaming Algorithm: Maintaining Sketched System $(\Pi A, \Pi b)$
+
+By setting $k = \mathcal{O}(d / \epsilon^2)$:
+1. Initialize sketch matrix $\tilde{A} = \mathbf{0} \in \mathbb{R}^{k \times d}$ and sketch vector $\tilde{b} = \mathbf{0} \in \mathbb{R}^k$.
+2. When the $t$-th row $(a_t, b_t)$ arrives:
+   The $t$-th column of $\Pi$ is a random vector $\Pi_{*, t} \in \mathbb{R}^k$.
+   Update the running sketch via rank-1 outer product:
+   $$\tilde{A} \leftarrow \tilde{A} + \Pi_{*, t} \cdot a_t^T$$
+   $$\tilde{b} \leftarrow \tilde{b} + b_t \cdot \Pi_{*, t}$$
+3. At the end of the stream, solve the **compact sketched least squares problem** offline:
+   $$\tilde{x} = \arg\min_{x \in \mathbb{R}^d} \|\tilde{A} x - \tilde{b}\|_2 = (\tilde{A}^T \tilde{A})^{-1} \tilde{A}^T \tilde{b}$$
+
+---
+
+### 4.4 Rigorous Proof of $(1+\epsilon)$-Optimality for Sketched Solution $\tilde{x}$
+
+> **Theorem 10.4:**
+> Let $x^* = \arg\min_x \|Ax - b\|_2$ and let $\tilde{x} = \arg\min_x \|\Pi A x - \Pi b\|_2$.
+> Then:
+> $$\|A\tilde{x} - b\|_2 \le \frac{1 + \epsilon}{1 - \epsilon} \|Ax^* - b\|_2 \le (1 + 3\epsilon) \|Ax^* - b\|_2$$
+
+**Formal Proof:**
+1. By definition of $\tilde{x}$ as the minimizer of the sketched problem:
+   $$\|\Pi(A\tilde{x} - b)\|_2 \le \|\Pi(Ax^* - b)\|_2$$
+2. Since $A\tilde{x} - b \in \text{col}(M)$, the lower bound of subspace embedding yields:
+   $$(1 - \epsilon) \|A\tilde{x} - b\|_2 \le \|\Pi(A\tilde{x} - b)\|_2$$
+3. Since $Ax^* - b \in \text{col}(M)$, the upper bound of subspace embedding yields:
+   $$\|\Pi(Ax^* - b)\|_2 \le (1 + \epsilon) \|Ax^* - b\|_2$$
+4. Chaining the inequalities together:
+   $$(1 - \epsilon) \|A\tilde{x} - b\|_2 \le \|\Pi(A\tilde{x} - b)\|_2 \le \|\Pi(Ax^* - b)\|_2 \le (1 + \epsilon) \|Ax^* - b\|_2$$
+5. Dividing by $(1 - \epsilon)$:
+   $$\|A\tilde{x} - b\|_2 \le \frac{1 + \epsilon}{1 - \epsilon} \|Ax^* - b\|_2 \le (1 + 3\epsilon) \|Ax^* - b\|_2 \quad \blacksquare$$
+
+---
+
+### 4.5 Space and Time Complexity: Streaming Over Vast Data Without Storing Rows
+
+- **Storage:**
+  - Sketched matrix $\tilde{A}$: $k \times d = \mathcal{O}(d^2 / \epsilon^2)$ entries.
+  - Sketched vector $\tilde{b}$: $k = \mathcal{O}(d / \epsilon^2)$ entries.
+  - Random hash seeds for generating $\Pi$: $\mathcal{O}(d \log n)$ bits.
+  $$\text{Total Memory} = \mathcal{O}\left( \frac{d^2}{\epsilon^2} \right) \text{ floating-point words!}$$
+  **Completely independent of the number of rows $n$!**
+- **Update Time:** $\mathcal{O}(k \cdot d) = \mathcal{O}(d^2 / \epsilon^2)$ operations per streaming row.
+- **Solve Time:** Solving the $k \times d$ system at the end takes $\mathcal{O}(k d^2) = \mathcal{O}(d^3 / \epsilon^2)$ time.
+
+This concludes the complete theoretical and algorithmic foundation of NUS CS5234 Weeks 1 through 10.
+
+---
+
+---
+
 <reviewkit>
 <takeaways>
+- **The Core Scalability Philosophy:** "Algorithms at Scale" operate under extreme resource constraints. When $n$ is massive, reading the input requires $\Omega(n)$ time, so sublinear-time query algorithms access data via localized oracles and output $(\epsilon, \delta)$-approximations.
+- **Linearity of Expectation:** Holds unconditionally for any collection of random variables without requiring independence ($\mathbb{E}[\sum X_i] = \sum \mathbb{E}[X_i]$), serving as the universal workhorse for sampling analysis.
+- **Concentration Hierarchy:** Markov's inequality requires only non-negativity ($\mathcal{O}(1/\alpha)$ linear decay); Chebyshev's inequality requires pairwise independence ($\mathcal{O}(1/\alpha^2)$ polynomial decay); Chernoff bound requires mutual independence ($\exp(-\Omega(\delta^2 \mu))$ exponential decay).
+- **The Balls-into-Bins Model:** Throwing $n$ balls into $n$ bins leaves $n/e \approx 36.8\%$ of bins empty on average. Throwing $10 n \ln n$ balls ensures no empty bins with probability $\ge 1 - n^{-9}$ (Coupon Collector's Theorem).
+- **The Two-Knob Sample Complexity Framework & Chernoff Signature:** Any sample size formula factorizes into $k \sim (\text{Accuracy Knob } \varepsilon) \times (\text{Confidence Knob } \delta)$. Accuracy is universally $\frac{1}{\varepsilon^2}$ (rooted in 2nd moments; scaling to $\frac{1}{\varepsilon^2 p}$ for multiplicative error $\pm \varepsilon p n$), governed by the Mean Trick. Confidence is either polynomial $\mathcal{O}(1/\delta)$ (Chebyshev alone) or logarithmic $\mathcal{O}(\log(1/\delta))$ (Chernoff family / Median Trick). When $X_i \in \{0, 1\}$ is naturally bounded (counting), direct Chernoff reaches $\mathcal{O}\left(\frac{\log(1/\delta)}{\varepsilon^2}\right)$ in one step. When $X_i$ is heavy-tailed (e.g., Morris), Median-of-Means detours through binarization to reach the same bound. The presence of $\log(1/\delta)$ is the universal signature of the Chernoff family.
+- **Graph Edge Estimation & Geometric Guessing:** Additive $\epsilon n^2$ error takes $\mathcal{O}(1/\epsilon^2)$ pair queries. Multiplicative $(1 \pm \epsilon)$-estimation resolves the sample size circularity $k \sim n/(\epsilon^2 \sqrt{m})$ via Geometric Guessing ($m' \in \{n^2, n^2/2, \dots\}$): stopping at the first guess where $\hat{m} \ge 1.5 m'$ guarantees $m/4 < m' \le m$ (Theta(m)), avoiding early halts (Case a: $\hat{m} < 1.5 m'$) and overshooting (Case c: $\hat{m} \ge 1.5 m'$). Query costs sum to $\mathcal{O}(1)$ times the final round via a convergent geometric series with ratio $1/\sqrt{2}$, while failure probability is bounded by $\mathcal{O}(1/\log n)$ via Median Trick and Union Bound, yielding $\mathcal{O}\left(\frac{\sqrt{n}\log\log n}{\epsilon^2}\right)$ on connected graphs.
+- **Decision Trees & Randomized Complexity (The Matrix Perspective):** A randomized algorithm is a probability distribution over deterministic decision trees ($A_r$). In the evaluation matrix (rows = inputs $x$, columns = random seeds $r$), cost is evaluated row-wise via $\mathbb{E}_r[Q(x, A_r)]$ with the adversary picking the fattest row ($\max_x \mathbb{E}_r[Q]$), while correctness is evaluated via $\mathbb{E}_r[I(x, A_r)]$ with the adversary picking the weakest row ($\min_x \mathbb{E}_r[I] \ge 2/3$). Individual cells $(x, r)$ are purely deterministic $\{0, 1\}$; the $\ge 2/3$ threshold requires the probability weight of winning seeds to be $\ge 2/3$ (failing seeds $\le 1/3$). Standardizing on $2/3$ (vs. $1/2$ noise) allows exponential amplification to $1-\delta$ in $\mathcal{O}(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ repetitions via Chernoff majority voting. Expected query complexity $T$ converts to worst-case $\mathcal{O}(T)$ via Markov runtime truncation.
+- **Yao's Minimax Principle:** The distributional query complexity of the best deterministic algorithm on *any* input distribution $\mu$ lower-bounds randomized query complexity ($D_\mu(f) \le R(f)$). This establishes that $R(\text{OR}) = \Omega(n)$, $R(\text{XOR}) = n$, and $R(\text{Graph Connectivity}) = \Omega(n^2)$.
+- **Property Testing Promise Model:** Relaxes exact decision problems by introducing an $\epsilon$-distance buffer: output `YES` if $x \in \mathcal{L}$ (one-sided error if $\Pr=1$), output `NO` if $x$ is $\epsilon$-far ($\text{dist}(x, \mathcal{L}) > \epsilon$), and permit either answer if $0 < \text{dist} \le \epsilon$. For NotOR ($x = 0^n$), property testing collapses query complexity from exact $\Omega(n)$ down to $\mathcal{O}(1/\epsilon)$, completely independent of dataset size $n$.
+- **Sortedness Lower Bound & Multi-Scale Inversion Hierarchy:** Exact sortedness requires $\Omega(n)$ queries via a paired-permutation gadget reduction from OR ($y(i) := i + x(\lfloor i/2 \rfloor)$ for odd $i$, $i - x(\lfloor i/2 \rfloor)$ for even $i$). Testing adjacent inequalities (Algorithm 0) fails on the split-sorted array $(n/2+1, \dots, n, 1, \dots, n/2)$ due to a single adjacent boundary violation, requiring $\Omega(n)$ queries. Subsequence sampling (Algorithm 1) succeeds on binary strings in $\mathcal{O}(1/\epsilon)$ queries via the Blue/Red structural lemma ($(\epsilon n/2)$-th one precedes $\ge \epsilon n/2$ zeros), but fails on dense microscopic swaps ($A = (2, 1, 4, 3, \dots)$) requiring $\Omega(\sqrt{n})$ queries by the Birthday Paradox. On the generalized parameterized family $A(s)$ (partitioned into $s$ sublists of size $n/s$ with adjacent block inversions), Algorithm 0 requires $\Theta(n/s)$ queries while Algorithm 1 requires $\Theta(\sqrt{s})$ queries; at $s = n^{2/3}$, both algorithms are stuck at $\Theta(n^{1/3})$.
+- **Binary Search Monotonicity Tester (Ergün et al.):** Overcomes multi-scale inversions by simulating binary search towards target indices. By the Lowest Common Ancestor (LCA) Transitivity Lemma, if binary searches for $i_1 < i_2$ both succeed, they verify $a_{i_1} \le a_k \le a_{i_2}$ at divergence pivot $k = \text{LCA}(i_1, i_2)$, proving that all searchable indices form a monotonically sorted subsequence. An $\epsilon$-far array contains $\ge \epsilon n$ unsearchable indices, allowing a sample of $k = \mathcal{O}(1/\epsilon)$ random searches to detect an inversion with probability $\ge 2/3$ in $\mathcal{O}\left( \frac{\log n}{\epsilon} \right)$ total queries.
+- **Total Variation Distance & Yao's Transcript Method:** $\Delta_{\text{TVD}}(\mu, \gamma) = \frac{1}{2} \|\mu - \gamma\|_1 = \max_S (\mu(S) - \gamma(S))$. In single-sample distinguishing, the optimal Bayes decision rule achieves $\Pr(\text{correct}) = \frac{1}{2} + \frac{1}{2} \Delta_{\text{TVD}}(\mu, \gamma)$. In Yao's Minimax Principle, bounding the TVD between transcript distributions $\Delta_{\text{TVD}}(\nu_0, \nu_1) < 1/3$ proves that no deterministic decision tree of depth $T$ can distinguish 0-instances from 1-instances with success $\ge 2/3$, re-proving $R(\text{OR}) \ge n/3$.
+- **Uniformity Testing & Collision Probability:** Distinguishing $\mu = U_n$ from $\Delta_{\text{TVD}}(\mu, U_n) > \epsilon$ reduces to estimating collision probability $\Pr(X = Y) = \|\mu\|_2^2$, which is uniquely minimized at $U_n$ with $\|U_n\|_2^2 = 1/n$. By Cauchy-Schwarz, $\Delta_{\text{TVD}}(\mu, U_n) > \epsilon \implies \|\mu\|_2^2 \ge \frac{1 + 4\epsilon^2}{n}$. The Batu et al. pairwise collision counting estimator $\hat{Y} = \frac{1}{\binom{k}{2}} \sum_{i < j} Y_{i, j}$ is strictly unbiased ($\mathbb{E}[\hat{Y}] = \|\mu\|_2^2$). Covariance decomposition over $6\binom{k}{3}$ overlapping triplets (with $\text{Cov} \le \|\mu\|_2^3$) and $\binom{k}{2}$ diagonal pairs yields $\text{Var}[\hat{Y}] \le \frac{24}{k} \|\mu\|_2^3 + \frac{2}{k^2} \|\mu\|_2^2$, establishing sample complexity $k = \mathcal{O}\left( \frac{\sqrt{n}}{\epsilon^4} \right)$ via Chebyshev's inequality (information-theoretically optimal $\Theta(\sqrt{n}/\epsilon^2)$ via Paninski).
+- **Graph Bipartiteness Testing:** In the adjacency-matrix model, the Goldreich-Goldwasser-Ron induced subgraph tester samples $k = \mathcal{O}\left( \frac{1}{\epsilon^2} \log\frac{1}{\epsilon} \right)$ vertices and queries all $\binom{k}{2}$ pairs. It achieves one-sided error ($\Pr=1$ on bipartite graphs) and detects odd cycles on $\epsilon$-far graphs in $\mathcal{O}(\text{poly}(1/\epsilon))$ queries, completely independent of graph vertex count $n$.
+- **Assignment 1 · Problem 2 (Half-String 1-Search):** Promising exactly one 1 in $\{0, 1\}^n$, querying the first $n/2$ bits solves the problem deterministically in $n/2$ queries. Under Yao's Minimax Principle on uniform basis distribution $\{e_1, \dots, e_n\}$, conditional Bayes accuracy along the all-zero branch is bounded by $\frac{\max(n/2 - q_1, n/2 - q_2)}{n - q} \le \frac{n/2}{n - q}$, limiting overall success to $\frac{1}{2} + \frac{q}{n}$, which demands $q \ge n/6$ queries for $\ge 2/3$ correctness, establishing $R(f) = \Theta(n)$.
+- **General Connected Components 3-Stage Hierarchy:** Small components ($\le 100$) reduce to 0/1 counting via minimum-index indicator $x_i = \mathbb{I}[v_i \text{ minimum in } C(v_i)]$ in $\mathcal{O}(n/\varepsilon^2)$ queries. Unbounded components evolve through: (1) Truncation at $q = 2/\varepsilon$ in $\mathcal{O}(n/\varepsilon^3)$ queries; (2) Unbiased geometric variable $R \in [n]$ with $\Pr[R \ge j] = 1/j \implies \mathbb{E}[R] = \mathcal{O}(\log n)$, yielding indicator $Y_v = \mathbb{I}[R \ge |C(v)|]$ with $\mathbb{E}[Y_v] = 1/|C(v)|$ in $\mathcal{O}(n \log n / \varepsilon^2)$ queries; and (3) Combined optimal estimator capping $R$ at $2/\varepsilon$, reaching $\mathcal{O}(\varepsilon^{-2} n \log(1/\varepsilon))$ queries.
+- **Uniformity Testing Lower Bound $\Omega(\sqrt{n})$:** Distinguishing $U_n$ from half-support distributions $\mu_S$ requires $\Omega(\sqrt{n})$ samples. By the Birthday Paradox, drawing $m \le \sqrt{n}/2$ samples yields collision probabilities $\delta_0 \le \binom{m}{2}/n$ and $\delta_1 \le 2\binom{m}{2}/n$, bounding transcript TVD by $\Delta_{\text{TVD}}(\nu_0, \nu_1) \le \frac{m(m-1)}{n} \le 1/4 < 1/3$, which limits distinguishing success to $< 2/3$ via Yao's transcript method.
+- **Permutation Testing via Collision Detection (Assignment 1 · Problem 3):** Testing whether $a \in [n]^n$ is a permutation reduces to collision detection in $s = \mathcal{O}(\sqrt{n/\varepsilon})$ queries. Distance to permutation is $\text{dist}(a, P_n) = n - D$ ($D$ distinct values). An $\epsilon$-far array contains $m \ge \varepsilon n / 2$ disjoint collision pairs. Sampling $s = \lceil 4 \sqrt{n/\varepsilon} \rceil$ distinct entries captures $\mu \ge 4$ expected pairs; pairwise disjointness ensures negative covariance $\text{Cov}(I_k, I_\ell) \le 0$, allowing Chebyshev's inequality to bound non-detection $\Pr[X = 0] \le 1/\mu \le 1/4 \le 1/3$, guaranteeing one-sided rejection with probability $\ge 3/4$.
+- **The Streaming Paradigm:** Algorithms process massive, unbounded data streams $x_1, \dots, x_n$ in a single pass under strict memory constraints ($\text{poly}(\log n)$ or semi-streaming $\mathcal{O}(n \log n)$ bits). Once processed, elements are permanently discarded unless explicitly held in working memory.
+- **Uniform Reservoir Sampling:** Maintaining sample $s$ and updating $s \leftarrow x_i$ with probability $1/i$ (retaining with $1 - 1/i$) guarantees that every item has exact uniform survival probability $\Pr[y = x_i] = \frac{1}{i} \prod_{k=i+1}^n \frac{k-1}{k} = \frac{1}{n}$ via telescoping product cancellation. Space is $\mathcal{O}(\log m + \log n)$ bits.
+- **Exact vs. Morris Approximate Counting:** An exact binary counter requires $\lceil \log_2(n+1) \rceil = \mathcal{O}(\log n)$ bits. Morris's randomized algorithm increments integer counter $C \leftarrow C + 1$ with probability $2^{-C}$ and outputs $\hat{A} = 2^C - 1$, storing values up to $\approx \log_2 n$ in only $\mathcal{O}(\log\log n)$ bits.
+- **Unbiasedness & Variance Analysis of Morris Counter:**
+  - Defining $X_i = 2^{C_i}$, conditional expectation $\mathbb{E}[X_{i+1} \mid X_i = x] = (2x)(1/x) + x(1 - 1/x) = x + 1$ implies $\mathbb{E}[X_A] = A + 1$, confirming $\mathbb{E}[\hat{A}] = \mathbb{E}[X_A - 1] = A$ (strictly unbiased).
+  - Second moment recurrence $\mathbb{E}[X_{i+1}^2 \mid X_i = x] = x^2 + 3x$ unrolls to $\mathbb{E}[X_A^2] = 1 + \frac{3}{2}A(A+1)$, yielding variance $\text{Var}[\hat{A}] = \text{Var}[X_A] = \frac{A(A-1)}{2} \le \frac{1}{2}A^2$, with constant relative standard deviation $\sigma / A \approx 70.7\%$ and linearly exploding absolute error $\sigma \approx 0.707 A$.
+- **Concentration Barriers & The Median-of-Means Binarization Bridge:**
+  - **The $A^2$ Cancellation Tragedy:** Evaluating Chebyshev on raw Morris yields $\Pr[|\hat{A} - A| \ge \epsilon A] \le \frac{A^2/2}{\epsilon^2 A^2} = \frac{1}{2\epsilon^2}$, where $A^2$ cancels out completely, offering zero decay as stream length $A \to \infty$. Direct Chernoff is prevented by double-exponential MGF explosion $\mathbb{E}[e^{t 2^C}]$ from geometric jumps.
+  - **Mean Trick (Morris+):** Averaging $k = 10/\epsilon^2$ independent parallel Morris counters reduces variance to $\le \frac{A^2}{2k}$, bounding failure probability $\Pr[|\bar{A} - A| \ge \epsilon A] \le \frac{1}{2k\epsilon^2} \le \frac{1}{20}$ via Chebyshev's inequality in $\mathcal{O}(\epsilon^{-2} \log\log n)$ bits.
+  - **Median Trick & Binarization Bridge (Morris++):** Transforming group outcomes into strictly bounded Bernoulli indicator variables $Z_j = \mathbf{1}\{|\bar{A}_j - A| \ge \epsilon A\} \in \{0, 1\}$ allows legitimate Chernoff concentration on the Binomial sum $\sum Z_j \ge L/2$, bounding failure by $\delta$ with $L = \mathcal{O}(\log(1/\delta))$ groups in $\mathcal{O}(\epsilon^{-2} \log(1/\delta) \log\log n)$ bits.
+- **Streaming Graph Connectivity:** Maintaining an acyclic spanning forest $F$ requires at most $n - 1$ edges ($\mathcal{O}(n \log n)$ bits). Cycle-inducing edges are discarded. At stream termination, $G$ is connected iff $F$ has $n - 1$ edges.
+- **Streaming Graph Bipartiteness:** Maintains spanning forest $F$ with 2-coloring $c: V \to \{1, 2\}$. If arriving edge $e = (u, v)$ creates an odd cycle in $F$, halt and output `NO`. If it creates an even cycle of length $2L$, the unique tree path in $F$ has length $2L - 1$ (odd), forcing distinct endpoint colors $c(u) \neq c(v)$ in the forest 2-coloring, proving validity. Space is $\mathcal{O}(n \log n)$ bits.
+- **Metric $(2k-1)$-Spanner Construction:** Greedy streaming rule: add edge $e = (u, v)$ to $H$ iff $d_H(u, v) \ge 2k$; discard if $d_H(u, v) \le 2k-1$. For every edge in $G$, $d_H(u, v) \le 2k-1$. By triangle inequality along true shortest paths in $G$, $d_G(u, v) \le d_H(u, v) \le (2k-1) d_G(u, v)$ for all pairs.
+- **Spanner Girth and Edge Sparsity (Lemma 1 & Lemma 2):**
+  - Rejecting edges with $d_H(u, v) \le 2k-1$ ensures $H$ has no cycles of length $\le 2k$, so $\text{Girth}(H) \ge 2k+1$.
+  - **BFS Tree Bound (Step 1):** In any graph with girth $\ge 2k+1$ and minimum degree $d_{\min}$, a $k$-depth BFS tree has $\ge (d_{\min}-1)^k$ vertices $\implies d_{\min} \le n^{1/k} + 1 = \mathcal{O}(n^{1/k})$.
+  - **High-Degree Subgraph (Step 2, Lemma 2):** Iteratively removing vertices with degree $< d/4$ eliminates $< n'(d/4) = m'/2$ edges, leaving a non-empty subgraph $H'$ with minimum degree $\ge d/4$.
+  - **Edge Bound:** Since $H' \subseteq H$ inherits girth $\ge 2k+1$, $\frac{d}{4} \le d_{\min}(H') = \mathcal{O}(n^{1/k}) \implies d = \mathcal{O}(n^{1/k})$, bounding $|E_H| = \mathcal{O}(n^{1+1/k})$ and total space to $\mathcal{O}(n^{1+1/k} \log n)$ bits.
 - **Foundations of Metric $k$-Clustering:** A metric space $(\mathcal{M}, d)$ satisfies non-negativity, identity of indiscernibles, symmetry, and the triangle inequality. Given $n$ points and nearest-center mapping $C(p_i)$, $k$-center minimizes the maximum distance ($\max_i d(p_i, C(p_i))$), $k$-median minimizes total $L_1$ transport cost ($\sum_i d(p_i, C(p_i))$), and $k$-means minimizes squared $L_2^2$ spread ($\sum_i d(p_i, C(p_i))^2$). Center and mean objectives are heavily sensitive to extreme outliers (midpoint shifts), whereas median provides significantly higher robustness to extreme values.
 - **Inapproximability of Metric $k$-Center:** The general $k$-center problem is NP-hard. Reduction from Dominating Set on an undirected graph $G=(V, E)$ via a 1-2 metric ($d(u, v) = 1$ if edge exists, $d(u, v) = 2$ otherwise) maps dominating set existence of size $k$ to $\text{OPT} \le 1$, while non-existence forces $\text{OPT} = 2$. Distinguishing between cost 1 and cost 2 in polynomial time is NP-hard, proving that obtaining any approximation ratio strictly better than 2 is NP-hard.
 - **Gonzalez Farthest-First Traversal (2-Approximation):** Iteratively selecting the point maximizing distance to current centers $C_i = \arg\max_{p \in \mathcal{M}} \min_{C_j \in S} d(p, C_j)$ guarantees a 2-approximation in $\mathcal{O}(nk)$ distance oracle queries. Proof by cases against optimal clusters $S_1^*, \dots, S_k^*$: if every optimal cluster contains a chosen center (Case 1), triangle inequality yields $d(p, q) \le 2R(S_i^*) \le 2\text{OPT}$; if some cluster has zero centers (Case 2), the Pigeonhole Principle forces another cluster to hold two centers $C_a, C_b$ ($a < b$), and greedy selection ensures $d(p, C_a) \le d(C_b, C_a) \le 2R(S_j^*) \le 2\text{OPT}$.
@@ -6287,6 +8005,18 @@ This confirms that the greedy algorithm yields a $(1 + \epsilon)$-approximation.
 - **Hierarchical $L$-Level Coreset Trees:** Recursively buffering and reducing across an $L$-level tree compresses memory to $\mathcal{O}(L \cdot k \cdot n^{1/L})$ points while compounding the approximation factor to $(4\alpha + 4)^L$.
 - **Planar Minimum Enclosing Ball (MEB) Structural Lemma:** Any closed half-plane passing through the optimal MEB center $C^*$ must contain at least one point on the boundary circle $\partial \mathcal{B}(C^*, R^*)$. Infinitesimal translation shows that if an open half-circle were empty, moving the center towards the opposite arc would strictly decrease all boundary distances, violating minimality.
 - **Bădoiu-Clarkson Greedy Coreset Theorem:** Greedily augmenting the active set $S_i$ with the farthest point in $N$ yields radius ratio recurrence $\lambda_{i+1} \ge \frac{1 + \lambda_i^2}{2}$ balanced by shift $\delta = \frac{1 - \lambda_i^2}{2}$. The optimality gap $\delta_i = 1 - \lambda_i$ satisfies $1/\delta_t \ge 1 + t/2$. In $t \ge 10/\epsilon$ iterations, $\delta_t < \epsilon/5$, guaranteeing a $(1 + \epsilon)$-approximation. This establishes a dimension-independent coreset of size $\mathcal{O}(1/\epsilon)$ in $\mathbb{R}^d$.
+- **$k$-wise Independent Hash Families:** Truly random hash functions require $\Omega(n \log m)$ bits, violating streaming constraints. Degree-$(k-1)$ polynomials over finite fields $h(x) = \sum_{i=0}^{k-1} a_i x^i \pmod p$ achieve exact $k$-wise independence in only $\mathcal{O}(k \log p)$ bits. Proved via invertibility of the Vandermonde matrix: any $k$ distinct keys have a unique polynomial passing through $k$ target values.
+- **Distinct Elements via $t$-th Smallest Hash Value:** In a stream of universe $[n]$, $D$ distinct elements partition $[0, m]$ into $D+1$ intervals. The $t$-th smallest hash value $X_t$ concentrates at $\approx tm/D$, yielding estimator $\tilde{D} = tm/X_t$. Inverting order statistics into counting variables $Z_V = \sum \mathbb{I}[h(u_j) \le V]$ and applying Chebyshev's inequality proves that $t = \lceil 100/\epsilon^2 \rceil$ with pairwise independent hashing achieves $(1 \pm \epsilon)$-accuracy with probability $\ge 2/3$. Median trick with $L = \mathcal{O}(\log(1/\delta))$ copies boosts success to $1 - \delta$ in $\mathcal{O}(\epsilon^{-2} \log n \log(1/\delta))$ space.
+- **Communication Complexity to Streaming Lower Bound Reduction:** Any single-pass streaming algorithm can be simulated as a one-way communication protocol by Alice processing $\sigma_A$, sending its memory state $M_A$ to Bob, and Bob processing $\sigma_B$. Thus $\text{Space}(\mathcal{A}) \ge R^{1\text{-way}}_\epsilon(f)$. The Index problem requires $R^{1\text{-way}}_{1/3}(\text{INDEX}_n) \ge n(1 - H(1/3)) = \Omega(n)$ bits by Shannon mutual information.
+- **Streaming Space Lower Bounds for Graphs and Sets:** Reduction from $\text{DISJ}_n$ proves exact distinct elements requires $\Omega(n)$ bits. Reductions from $\text{INDEX}_{n^2}$ using bipartite vertex gadgets prove that deciding Graph Streaming Perfect Matching and finding a Maximal Independent Set (MIS) both require $\Omega(n^2)$ bits, proving they are strictly impossible in the semi-streaming model ($\mathcal{O}(n \cdot \text{polylog}(n))$).
+- **$F_2$ Frequency Moment & AMS Sketch:** For dynamic vector $x \in \mathbb{R}^m$, the second moment $F_2 = \sum x_i^2 = \|x\|_2^2$ represents total energy. AMS sketch maintains linear counter $Z = \sum x_i g(i)$ using 4-wise random signs $g(i) \in \{-1, +1\}$. Pairwise independence ensures unbiasedness $\mathbb{E}[Z^2] = F_2$; 4-wise independence ensures 4th moment $\mathbb{E}[Z^4] \le 3 F_2^2$ and variance $\text{Var}[Z^2] \le 2 F_2^2$. Averaging $k = 20/\epsilon^2$ copies and taking the median over $\mathcal{O}(\log(1/\delta))$ batches yields $(1 \pm \epsilon) F_2$ in $\mathcal{O}(\epsilon^{-2} \log(1/\delta) (\log m + \log n))$ space in general turnstile streams.
+- **Heavy Hitters Triad (Misra-Gries, Count-Min, Count Sketch):**
+  - *Misra-Gries:* Deterministic $k = \lceil 1/\epsilon \rceil$ counters for cash register streams. Invariant: each decrement consumes $k+1$ tokens, guaranteeing $f_j - \epsilon F_1 \le \hat{f}_j \le f_j$.
+  - *Count-Min Sketch:* $d \times w$ table for strict turnstile streams. Markov's inequality on hash collisions gives one-sided error $x_i \le \hat{x}_i \le x_i + \epsilon F_1$ using row-minimum in $\mathcal{O}(\epsilon^{-1} \log(1/\delta))$ counters.
+  - *Count Sketch:* $d \times w$ table with sign hashing for general turnstile streams. Unbiased estimator $\mathbb{E}[\hat{x}_{l, i}] = x_i$ with variance $\le F_2/w \le \epsilon^2 F_2$. Median across rows gives two-sided $L_2$ error $x_i \pm \epsilon \sqrt{F_2}$ in $\mathcal{O}(\epsilon^{-2} \log(1/\delta))$ counters.
+- **Sparse Recovery ($k$-Sparse Reconstruction):** Exact 1-sparse vectors are recovered in $\mathcal{O}(\log m \log n)$ bits via 3 moments $(\Phi_0 = v, \Phi_1 = k v, \Phi_2 = k^2 v)$ or dyadic bit-testing. For general vectors, Count Sketch with $(k+2)$-wise hashing isolates top-$k$ heavy items into distinct buckets with tail variance $\le \frac{\epsilon}{k} \text{err}_k^2(x)$, achieving $(1 + 5\epsilon) \text{err}_k^2(x)$ recovery in $\mathcal{O}(\epsilon^{-2} k \log m \log(m+n))$ space.
+- **Johnson-Lindenstrauss (JL) Lemma:** Projecting $n$ points from $\mathbb{R}^m$ into $k = \mathcal{O}(\epsilon^{-2} \log n)$ dimensions via Gaussian matrix $\Pi_{i, j} \sim \mathcal{N}(0, 1/k)$ preserves all pairwise Euclidean distances within $1 \pm \epsilon$. The target dimension $k$ is completely independent of the ambient dimension $m$.
+- **Subspace Embeddings & Streaming Linear Regression:** Discretizing the unit sphere $S^{d-1}$ of a $d$-dimensional subspace $E$ via a $\gamma$-net ($|N| \le 5^d$) and infinite chaining expansion $x = \sum z_i$ embeds the entire continuous subspace $E$ in $k = \mathcal{O}(\epsilon^{-2} d \log(1/\delta))$ dimensions. For streaming linear regression $\min_x \|Ax - b\|_2$ with rows arriving sequentially ($n \gg d$), embedding the column space of $[A \mid b]$ requires maintaining sketched matrix $\Pi A$ and vector $\Pi b$ in only $\mathcal{O}(d^2 / \epsilon^2)$ words of memory, entirely independent of $n$.
 </takeaways>
 
 <qquiz src="questions.en.json"/>
@@ -6298,13 +8028,21 @@ This confirms that the greedy algorithm yields a $(1 + \epsilon)$-approximation.
 
 1. Mitzenmacher, M., & Upfal, E. (2017). *Probability and Computing: Randomization and Probabilistic Techniques in Algorithms and Data Analysis* (2nd ed.). Cambridge University Press.
 2. Motwani, R., & Raghavan, P. (1995). *Randomized Algorithms*. Cambridge University Press.
-3. Gonzalez, T. F. (1985). Clustering to minimize the maximum intercluster distance. *Theoretical Computer Science*, 38, 293-306.
-4. Hochbaum, D. S., & Shmoys, D. B. (1985). A best possible approximation algorithm for the $k$-center problem. *Mathematics of Operations Research*, 10(2), 180-184.
-5. Guha, S., Meyerson, A., Mishra, N., Motwani, R., & O'Callaghan, L. (2000). Clustering data streams: theory and practice. *IEEE Transactions on Knowledge and Data Engineering*, 15(3), 515-528.
-6. Bădoiu, M., Har-Peled, S., & Indyk, P. (2002). Approximate clustering via core-sets. *Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)*, 250-257.
-7. Bădoiu, M., & Clarkson, K. L. (2008). Optimal core-sets for balls. *Computational Geometry*, 40(1), 14-22.
-8. Charikar, M., O'Callaghan, L., & Panigrahy, R. (2003). Better streaming algorithms for clustering problems. *Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)*, 30-39.
-9. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture 1: Scalability Bottlenecks, Probability Foundations, Concentration Inequalities, and Balls-into-Bins)*. National University of Singapore (NUS).
-10. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture 6: Clustering Algorithms)*. National University of Singapore (NUS).
-11. Chen, Y., & Yang, M. (2026). *Note 3: Randomized Query Algorithms and Lower Bounds*. NUS CS5234 Algorithms at Scale, National University of Singapore (NUS).
-12. Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
+3. Carter, J. L., & Wegman, M. N. (1979). Universal classes of hash functions. *Journal of Computer and System Sciences*, 18(2), 143-154.
+4. Alon, N., Matias, Y., & Szegedy, M. (1999). The space complexity of approximating the frequency moments. *Journal of Computer and System Sciences*, 58(1), 137-147. (Preliminary version in *STOC 1996*).
+5. Flajolet, P., & Martin, G. N. (1985). Probabilistic counting algorithms for data base applications. *Journal of Computer and System Sciences*, 31(2), 182-209.
+6. Cormode, G., & Muthukrishnan, S. (2005). An improved data stream summary: the count-min sketch and its applications. *Journal of Algorithms*, 55(1), 58-75.
+7. Charikar, M., Chen, K., & Farach-Colton, M. (2004). Finding frequent items in data streams. *Theoretical Computer Science*, 312(1), 3-15.
+8. Misra, J., & Gries, D. (1982). Finding repeated elements. *Science of Computer Programming*, 2(2), 143-152.
+9. Johnson, W. B., & Lindenstrauss, J. (1984). Extensions of Lipschitz mappings into a Hilbert space. *Contemporary Mathematics*, 26, 189-206.
+10. Sarlós, T. (2006). Improved approximation algorithms for large matrices via random projections. *Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science (FOCS)*, 143-152.
+11. Chakrabarti, A., & Regev, O. (2012). An optimal lower bound on the communication complexity of gap-hamming-distance. *SIAM Journal on Computing*, 41(5), 1299-1317.
+12. Kushilevitz, E., & Nisan, N. (1997). *Communication Complexity*. Cambridge University Press.
+13. Gonzalez, T. F. (1985). Clustering to minimize the maximum intercluster distance. *Theoretical Computer Science*, 38, 293-306.
+14. Hochbaum, D. S., & Shmoys, D. B. (1985). A best possible approximation algorithm for the $k$-center problem. *Mathematics of Operations Research*, 10(2), 180-184.
+15. Guha, S., Meyerson, A., Mishra, N., Motwani, R., & O'Callaghan, L. (2000). Clustering data streams: theory and practice. *IEEE Transactions on Knowledge and Data Engineering*, 15(3), 515-528.
+16. Bădoiu, M., Har-Peled, S., & Indyk, P. (2002). Approximate clustering via core-sets. *Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)*, 250-257.
+17. Bădoiu, M., & Clarkson, K. L. (2008). Optimal core-sets for balls. *Computational Geometry*, 40(1), 14-22.
+18. Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
+19. Yao, A. C.-C. (1979). Some complexity questions related to distributive computing. *Proceedings of the 11th Annual ACM Symposium on Theory of Computing (STOC)*, 209-213.
+20. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture Notes 1, 5, 6, 7, 8, 9, 10)*. National University of Singapore (NUS).
