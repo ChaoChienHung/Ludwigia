@@ -6812,574 +6812,1329 @@ Future planning frontiers must model these deviations through:
 
 ---
 
+---
+
 # Week 8 - Model-Based Reinforcement Learning: Learned Dynamics, Planning, Dyna-Q, and Latent World Models
 
 <draft>
-- 1. Why a learned model is useful and how it is estimated.
-- 2. Value-equivalent models and the conditional-mean trap.
-- 3. Full Bellman solving, simulated Q-planning, and Dyna-Q.
-- 4. Decision-time MCTS and receding-horizon MPC.
-- 5. MuZero, DreamerV3, and TD-MPC2: where computation happens.
-- 6. Tutorial 7 calculations, failure modes, and comparison.
+- 1. The Model-Based RL Paradigm: Motivation, formal MDP model estimation, and sample efficiency vs computational trade-offs.
+- 2. The 5-Stage Evolution of Agent Paradigms in Sequential Decision Making (Symbolic -> Tabular -> Deep Model-Free -> Model-Based World Models -> Responsible Autonomous Agents).
+- 3. Dynamics Models and the Conditional Mean Trap: Why squared-error loss fails under multi-modal transitions and how probabilistic/distributional models preserve feasible branches.
+- 4. Bellman Backups on Learned Models: Expected Bellman target vs Sampled Q-planning, variance analysis, and numerical walkthroughs.
+- 5. The Dyna Architecture: Dyna-Q unified loop (Acting, Direct RL, Model Learning, Q-Planning), Dyna-Q+ exploration bonuses for non-stationary environments.
+- 6. Decision-Time Planning & Model Predictive Control (MPC): Background planning vs decision-time search, shooting methods, receding-horizon execution.
+- 7. Modern Latent World Models: MuZero (latent MCTS without reconstruction), DreamerV3 (RSSM, actor-critic in imagination), TD-MPC2 (short-horizon MPC with terminal value).
 </draft>
 
+The earlier chapters of this curriculum explored two distinct pathways toward optimizing sequential decision-making policies:
+1. **Model-Free Reinforcement Learning (Weeks 4–6)**: The agent treats the environment as an opaque black box, improving value functions or policy parameters exclusively through direct experiential trial-and-error ($s_t, a_t, r_{t+1}, s_{t+1}$).
+2. **Decision-Time Search & Planning (Week 7)**: The agent leverages a known, perfect simulator or generative transition model $\mathcal{M}^*$ to simulate prospective futures via rollouts or Monte Carlo Tree Search (MCTS) prior to committing to an action.
 
-The earlier weeks supplied two ways to improve a policy: learn directly from experience, or search from the current state with a simulator. **Model-based RL connects them** by learning the simulator itself. This study sequence numbers the model-based RL lecture as **Week 8**; the corresponding Tutorial 7 sheet retains its original **Week 10** label. Game theory then changes the environment assumption: another decision maker may adapt to our policy, so a single-agent optimal response need not be stable.
+**Model-Based Reinforcement Learning (MBRL)** bridges these paradigms by **learning the simulator itself from interaction data**, transforming empirical experience into a predictive mental model of the environment. Once learned, this internal world model enables an agent to generate simulated trajectories, perform background policy iteration, or conduct online lookahead search without consuming additional physical, expensive, or dangerous real-world steps.
 
-## 1. Model-based reinforcement learning: learn a model, then choose how to use it
+---
 
-A learned model $\hat M=(\hat P,\hat R)$ estimates the distribution of next states and rewards from observed $(s,a,r,s')$ transitions. It is useful because simulated transitions can supplement costly real interaction. Its quality must be judged by downstream decisions, not merely one-step prediction accuracy: a small error near a decision boundary can reverse an action ranking, while a visually imperfect latent model can still preserve the reward and value information needed for planning.
+## 1. The Model-Based Learning Paradigm
 
-| Model family | What it represents | Strength | Main failure mode |
-|---|---|---|---|
-| Tabular counts / ADP | $\hat P(s'\mid s,a)$ and mean rewards for observed pairs | Interpretable, exact enumeration in small spaces | Sparse visits and state explosion |
-| Deterministic regression | A single predicted next state $\hat s'=f_\eta(s,a)$ | Simple and cheap | Conditional mean may be an impossible state |
-| Probabilistic dynamics | Multiple possible outcomes or their distribution | Preserves multimodality and risk | Harder likelihood estimation and sampling |
-| Neural / latent world model | Compressed state with learned transition, reward, and often value heads | Handles pixels and large observations | Representation may omit decision-critical information |
+In standard Reinforcement Learning, the agent interacts with an underlying Markov Decision Process $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma \rangle$. In the model-based paradigm, the true transition dynamics $\mathcal{P}(s' \mid s, a)$ and reward function $\mathcal{R}(s, a, s')$ are unknown. The agent collects empirical transitions $\mathcal{D} = \{(s_t, a_t, r_{t+1}, s_{t+1})\}$ and fits a parameterized **world model**:
 
-For example, if the next lateral position is $-1$ or $+1$ with equal probability while $0$ lies inside an obstacle, squared-error deterministic regression predicts the conditional mean $0$. This minimizes prediction loss but describes an unsafe, impossible outcome. A distributional model retains both branches. In Tutorial 7, if both outcomes pay $1$, $U(-1)=4$, $U(+1)=8$, and $\gamma=.9$, the correct one-step expectation is $\tfrac12(1+.9\cdot4)+\tfrac12(1+.9\cdot8)=6.4$. A single model sample gives either $4.6$ or $8.2$; its expectation is still $6.4$, but its variance affects individual updates.
+$$\hat{\mathcal{M}}_\eta = \langle \hat{\mathcal{P}}_\eta(s' \mid s, a), \hat{\mathcal{R}}_\eta(s, a, s') \rangle$$
 
-### 1.1 Learning a model from a transition dataset
+where $\eta$ denotes the learnable parameters of the dynamics and reward estimators.
 
-A model is not automatically available merely because an MDP is written as $(S,A,P,R,\gamma)$. The agent must collect tuples $(s_t,a_t,r_{t+1},s_{t+1})$, choose a representation, fit it, and continually check whether it predicts consequences under the *current* policy. In a small discrete MDP, the maximum-likelihood transition estimate is
-
-$$\hat P(s'\mid s,a)=\frac{N(s,a,s')}{N(s,a)},\qquad \hat R(s,a,s')=\operatorname{mean}\{r_i:(s_i,a_i,s'_i)=(s,a,s')\}.$$
-
-The denominator requires $N(s,a)>0$; unvisited pairs need a prior, smoothing convention, exploration, or explicit “unknown” handling. A zero empirical count is not proof that an outcome is impossible. If a state-action pair has seen 3 left outcomes and 1 right outcome, the unsmoothed model predicts $(.75,.25)$; as more transitions arrive, both the estimate and its uncertainty change.
-
-For continuous vector states, a linear model can predict $\hat s'=W_as+b_a$ per discrete action. A neural model generalizes across states but still needs a loss function and training data. A deterministic squared-error model estimates $\mathbb E[s'\mid s,a]$ when it can represent the optimum; that is why multimodal outcomes can collapse to the unsafe mean in Tutorial 7. A probabilistic model estimates a distribution, often by maximizing log likelihood. For images or complex sensors, an encoder $z=E_\eta(o)$ may compress observations before dynamics are learned. The representation must retain enough information to predict rewards and action consequences; reconstruction fidelity is one diagnostic, not the only objective.
-
-### 1.2 From model error to planning error
-
-One-step prediction loss is a local score. A planner uses the model recursively, so its own candidate actions determine the future inputs to the model. Errors can compound with depth and move imagined states outside the training distribution. Worse, optimization can select a trajectory because the model is *wrongly* optimistic there. Evaluate both held-out one-step predictions and multi-step returns on real rollouts when safe. For an uncertain action, consider shorter search, uncertainty penalties, or more real samples. A very accurate model of irrelevant visual detail may be less useful than a compact value-equivalent model that preserves reward-relevant events.
-
-
-### 1.3 Four uses of the same learned model
-
-1. **Direct model solving:** substitute $\hat P,\hat R$ into Bellman backups and solve or iterate: $Q(s,a)\leftarrow\sum_{s'}\hat P(s'\mid s,a)[\hat R(s,a,s')+\gamma\max_{a'}Q(s',a')]$. This uses all modeled branches, but may be expensive over large spaces.
-2. **Q-planning:** sample a simulated $(s,a,r,s')$ and apply a Q-learning backup, $Q(s,a)\leftarrow Q(s,a)+\alpha[r+\gamma\max_{a'}Q(s',a')-Q(s,a)]$. Background samples can update a value function without new real-world transitions.
-3. **Decision-time planning:** MCTS or MPC starts at the current state, spends compute on relevant futures, acts, and replans. MCTS grows a sampled search tree; MPC optimizes a finite action sequence and executes only its first action so later observations can correct model error.
-4. **Integrated learning and planning:** Dyna-Q learns from actual transitions, updates the model, and performs several simulated Q updates between real interactions. The real data anchors the model; planning reuses it.
-
-**Tutorial 7 worked backup.** With branch probabilities $(.75,.25)$, branch rewards $(2,-2)$, next-state values $(6,2)$, $\gamma=.9$, $Q(s,a)=3$, and $\alpha=.5$, full-model target is $.75(2+.9\cdot6)+.25(-2+.9\cdot2)=5.5$. The update is $3+.5(5.5-3)=4.25$. If Q-planning samples only the second branch, its target is $-0.2$ and update is $3+.5(-.2-3)=1.4$. Neither contradicts the other: one integrates over the model; the other is one noisy sample. Repeated unbiased samples approach the model expectation, subject to learning and sampling conditions.
-
-### 1.4 World-model architectures and their different compute locations
-
-- **MuZero** learns a latent dynamics model, reward prediction, policy prior, and value prediction for MCTS. It need not reconstruct future camera frames if its latent state supports the quantities the search needs. Search improves action selection at decision time; training uses search targets to improve the network.
-- **DreamerV3** learns a recurrent latent world model and trains actor and critic through imagined trajectories. Much of its policy improvement happens during training in imagination; inaccurate long imagined rollouts can bias the actor. Keep horizons controlled and validate against real experience.
-- **TD-MPC2** learns latent dynamics jointly with reward and value estimates, then optimizes short action sequences at decision time. A terminal $\hat Q$ represents value beyond the finite horizon: $\hat G=\sum_{h=0}^{H-1}\gamma^h\hat r_{t+h}+\gamma^H\hat Q_{\mathrm{terminal}}$. Receding-horizon replanning limits commitment to mistaken predictions. In Tutorial 7, A has $(2,2),\hat Q=6$ and B has $(3,3),\hat Q=1$ with $\gamma=.9$: $G_A=2+1.8+.81(6)=8.66$; $G_B=3+2.7+.81(1)=6.51$, so A wins despite B's larger immediate rewards.
-
-Model error compounds with rollout depth and can make an agent exploit model artifacts. Evaluate on held-out real transitions *and* task return; use uncertainty-aware or shorter-horizon planning, real-data refresh, and model ensembles when appropriate. Model-based methods are attractive when real samples are expensive and the model is accurate enough to improve decisions; they are not automatically better than model-free methods.
-
-## 2. Value equivalence, model error, and decision-sensitive prediction
-
-A model is useful when it induces the right value updates for the policies and value functions being considered. For a policy $\pi$ and candidate value $v$, write its Bellman operator as $(\mathcal T_M^\pi v)(s)=\mathbb E_{a\sim\pi,s'\sim P_M}[R_M(s,a,s')+\gamma v(s')]$. Two models are **value equivalent relative to a selected class** $\Pi,\mathcal V$ if these operators agree for all relevant $\pi\in\Pi$ and $v\in\mathcal V$. This is a task-relative criterion, not a claim that the models reconstruct identical observations. A latent model can discard visually irrelevant pixels while retaining action rankings; it fails if the discarded feature changes reward, transition risk, or a later decision.
-
-The conditional-mean obstacle example above illustrates the opposite: low squared prediction error can still create a fictitious state. A stochastic model represents outcome probabilities; if a safety constraint is nonlinear, planning on the mean can be especially misleading. Calibration and evaluation must examine state distributions reached by the *learned policy*, because a planner may intentionally seek places where its model is overoptimistic. Longer open-loop rollouts amplify one-step error. Shorter horizons, uncertainty penalties, ensembles, real-world validation, and frequent replanning each address a different part of that problem.
-
-## 3. Background planning versus decision-time planning
-
-Background Q-planning samples state-action pairs for value updates before the next decision; it amortizes computation across future visits. Decision-time MCTS and MPC concentrate compute at the current state. MCTS performs selection, model-based expansion, leaf simulation or evaluation, and return backup; learned transitions make its branches possible. MPC evaluates short action sequences, applies only the first action, observes the actual successor, and solves again. For Tutorial 7's sequences A $(3,4)$ and B $(4,2)$ with $\gamma=.9$, A scores $3+.9(4)=6.6$ and B scores $4+.9(2)=5.8$; A's first action is executed, then the horizon moves forward. This rolling update limits commitment to a mistaken path, although it cannot eliminate model bias.
-
-Dyna-Q combines real and imagined experience in one loop: (i) act and observe $(s,a,r,s')$, (ii) update Q from the real transition, (iii) update the model, (iv) repeat $k$ simulated transition/Q updates. Increasing $k$ saves real samples if the model is sound, but can amplify an inaccurate model. Prioritized sweeping is a related improvement that spends simulated updates on states whose value changes are likely to matter to predecessors; its exact priority scheme is beyond the supplied lecture's core Dyna-Q loop.
-
-### 3.1 A concrete Dyna-Q loop
-
-```text
-Initialize Q and a model M; collect real experience.
-For every real transition (s, a, r, s_next):
-    Q[s,a] += alpha * (r + gamma * max_b Q[s_next,b] - Q[s,a])
-    M.update(s, a, r, s_next)
-    Repeat k times:
-        choose a previously observed (u,b)
-        (r_hat, v_hat) = M.sample(u,b)
-        Q[u,b] += alpha * (r_hat + gamma * max_c Q[v_hat,c] - Q[u,b])
+```
+       +--------------------------------------------------------+
+       |                  REAL ENVIRONMENT                     |
+       +--------------------------------------------------------+
+              ^                                  |
+              | Real Actions a_t                 | Real Transitions (s_t, a_t, r_t+1, s_t+1)
+              |                                  v
+       +--------------------------------------------------------+
+       |                     AGENT SYSTEM                       |
+       |                                                        |
+       |  +---------------------+        +-------------------+  |
+       |  |   Model Learning    | -----> | Learned Dynamics  |  |
+       |  |  (Fit P_eta, R_eta) |        |    World Model    |  |
+       |  +---------------------+        +-------------------+  |
+       |             |                             |            |
+       |             | Direct Model-Free           | Simulated  |
+       |             | Updates                     | Rollouts   |
+       |             v                             v            |
+       |  +--------------------------------------------------+  |
+       |  |      Policy / Value Function Optimization        |  |
+       |  |       (Planning, Q-Learning, Policy Search)      |  |
+       |  +--------------------------------------------------+  |
+       +--------------------------------------------------------+
 ```
 
-The first Q update learns from the environment; the loop after it learns from *imagined* experience. The model can be tabular or approximated. If $k=0$, this is ordinary Q-learning. As $k$ grows, each real sample is reused more, which can improve sample efficiency. But if a doorway closes while the learned model still says it is open, planning may repeatedly reinforce an invalid route. Model refresh and continued real exploration are therefore necessary. The lecture's Dyna-Q architecture depicts these two streams meeting at the same value learner.
+### 1.1 The Fundamental Trade-off: Sample Efficiency vs. Model Bias
 
-### 3.2 Full expectation versus simulation variance
+The central engineering trade-off of Model-Based RL revolves around **sample efficiency versus asymptotic performance**:
 
-A full-model Bellman backup weights *all* modeled outcomes, while a sampled backup uses one outcome. Let $Y=\hat R(s,a,S')+\gamma\max_bQ(S',b)$ for $S'\sim\hat P(\cdot\mid s,a)$. The full target is $\mathbb E_{\hat P}[Y]$; one Q-planning step uses a realization $Y_i$. Averaging $m$ independent model samples has variance $\operatorname{Var}(Y)/m$ if the model and Q values are held fixed, explaining why sampling can be cheap but noisy. That statement does not remove **model bias**: infinitely many samples converge to the learned model's expectation, which may still differ from the real environment's expectation.
+| Evaluation Dimension | Model-Free RL (e.g., SAC, PPO) | Model-Based RL (e.g., Dyna, Dreamer, MPC) |
+|---|---|---|
+| **Sample Efficiency** | Low ($10^6 - 10^8$ real environment interactions required) | High ($10^3 - 10^5$ real interactions; orders of magnitude fewer) |
+| **Computational Footprint** | Low per-step compute (gradient step on replay buffer or batch) | High compute (training dynamics networks, running lookahead search) |
+| **Asymptotic Ceiling** | High (converges to true optimal policy as $N \to \infty$) | Bound by **model bias** ($\hat{\mathcal{M}} \neq \mathcal{M}^*$; compounding rollout error) |
+| **Safety in Exploration** | Dangerous (must execute random physical exploratory actions) | Safe exploration in imagination (catastrophic failures occur in simulation) |
 
+---
 
-## 4. Latent world models in detail
+## 2. The 5-Stage Evolution of Agent Paradigms in Sequential Decision Making
 
-**MuZero's interface.** A representation function maps observation history to latent state; a dynamics function maps latent state and action to a new latent state and predicted reward; a prediction function outputs policy prior and value. MCTS uses these quantities for search. Training unrolls the latent dynamics on stored trajectories and compares predicted rewards, values, and policy targets with observed rewards and search-improved targets. The learned state need not reconstruct images; it must support planning-relevant predictions.
+As synthesized in the CS5446 curriculum addendum (*Dyna-Q.pdf*), the historical evolution of artificial agent systems in sequential decision making spans five foundational epochs:
 
-**DreamerV3's interface.** A recurrent state-space model has a deterministic recurrent history state $h_t$ and a stochastic latent state $z_t$. With observations, a posterior infers $z_t$; during imagination, a prior predicts it without new observations. The world model learns reconstruction/prediction, reward, and continuation information from real replay. Imagined rollouts then train an actor and critic. At execution the actor can select actions without running an MCTS tree every step. If the world model rewards an impossible imagined trajectory, the actor may exploit that artifact; limiting imagination horizon and refreshing the replay buffer help bound the error.
+```
+  Stage 1: Symbolic Planning (STRIPS / PDDL / SATPlan)
+     |     Exact declarative domain logic; zero data learning; brittle to noise.
+     v
+  Stage 2: Tabular Reinforcement Learning (Q-Learning / SARSA / ADP)
+     |     Exact Bellman optimality; tabular representations; bounded by curse of dimensionality.
+     v
+  Stage 3: Modern Model-Free Deep RL (DQN / PPO / SAC)
+     |     High-dimensional neural function approximators; trial-and-error; poor sample efficiency.
+     v
+  Stage 4: Model-Based RL & Latent World Models (Dyna-Q / MuZero / DreamerV3 / TD-MPC2)
+     |     Learned simulator; planning in imagination; latent representations; high sample efficiency.
+     v
+  Stage 5: Responsible Autonomous Agent Systems (Foundation Models + Tools + Human Alignment)
+           Multi-modal grounding; natural language planning; verifiable tool use; human oversight.
+```
 
-**TD-MPC2's interface.** Learned latent dynamics and reward predictions support a finite-horizon optimizer at each decision. The terminal Q-value estimates what lies beyond the short planning horizon, preventing a candidate from winning solely through immediate reward. Joint temporal-difference and model learning makes the representation decision-relevant. Because the optimizer replans, only the first action is committed. Model error still changes candidate rankings, especially when predictions are extrapolated far from real data.
+### Epochal Breakdown:
+1. **Stage 1 — Symbolic Planning**: Agents operate on symbolic closed-world models (e.g., STRIPS, PDDL). Transition physics are assumed known, deterministic, and complete. Optimization is purely combinatorial graph search or boolean satisfiability (SATPlan). Completely brittle when confronted with sensor noise or stochastic environments.
+2. **Stage 2 — Tabular Reinforcement Learning**: Formalized by Bellman (1957) and Sutton & Barto (1998). Value iteration, policy iteration, TD(0), and Q-learning guarantee asymptotic convergence to $V^*$ or $Q^*$ in discrete Markov Decision Processes, but fail when $|\mathcal{S}| \times |\mathcal{A}|$ exceeds memory bounds.
+3. **Stage 3 — Modern Model-Free Deep RL**: Deep neural networks approximate $Q_\theta(s, a)$ or $\pi_\theta(a \mid s)$. Breakthroughs in Atari (Mnih et al., 2015) and continuous locomotion (Schulman et al., 2017; Haarnoja et al., 2018). While capable of processing raw pixels, these methods require millions of physical interactions, rendering them impractical for physical robotics or clinical trials.
+4. **Stage 4 — Model-Based RL & Latent World Models**: The agent simultaneously learns dynamics and exploits them for planning. From Sutton's Dyna-Q to DeepMind's MuZero and Hafner's Dreamer, agents simulate the consequences of actions inside compact, latent representations, achieving superhuman performance with fractionally small sample budgets.
+5. **Stage 5 — Responsible Autonomous Agent Systems**: Foundation models (LLMs/VLMs) serve as deliberative reasoning engines. Agents coordinate perception, tool execution, memory retrieval, and self-reflection under explicit human oversight, safety guardrails, and value alignment.
 
-| Architecture | Where it primarily improves behavior | Search at action time? | What the model must predict |
-|---|---|---|---|
-| MuZero | Search targets plus decision-time MCTS | Yes | Latent dynamics, reward, prior, value |
-| DreamerV3 | Actor–critic training in imagination | Usually no tree search in deployment | Posterior/prior latent dynamics, reward, continuation |
-| TD-MPC2 | Short-horizon latent optimization with terminal value | Yes | Latent dynamics, reward, terminal action value |
+---
 
-### 4.1 What is learned and what is optimized
+## 3. Dynamics Models and the Conditional Mean Trap
 
-MuZero, DreamerV3, and TD-MPC2 all use latent states but optimize different objects. MuZero trains representation, dynamics, and prediction networks to support search; its policy target is informed by MCTS visit counts. DreamerV3 trains a world model from replay, imagines latent trajectories, and differentiates or estimates policy improvement through an actor–critic objective. TD-MPC2 couples temporal-difference value learning to short model rollouts, then repeatedly optimizes candidate action sequences online. The distinction is **where model-generated trajectories enter policy improvement**: search targets, imagined training, or per-decision sequence optimization.
+When learning a dynamics model $\hat{s}_{t+1} = f_\eta(s_t, a_t)$, the mathematical objective chosen to train $f_\eta$ fundamentally determines what kind of future states the model can represent.
 
-For TD-MPC2, the terminal value term $\gamma^H\hat Q(z_{t+H},a_{t+H})$ reduces short-horizon myopia but imports approximation error from the learned critic. DreamerV3 can suffer if its actor exploits unrealistic imagined rewards; TD-MPC2 can suffer if an optimizer selects high-scoring but physically impossible latent trajectories. Real-data validation, conservative horizons, and uncertainty-aware ranking are relevant to both, but they enter at different points in the pipeline.
+### 3.1 The Failure of Mean Squared Error (MSE) in Multimodal Environments
 
-### 4.2 Compare learning signals and failure controls
+Suppose a vehicle encounters a circular obstacle centered at lateral position $x = 0$. From the current state $s_t$, taking action $a$ ("swerve") can successfully evade the obstacle by veering either:
+- **Left**: $s'_L = -1.0$ (probability $p = 0.5$)
+- **Right**: $s'_R = +1.0$ (probability $p = 0.5$)
 
-The lecture's technical comparison is sharper than “both use latent models.” DreamerV3 fits prediction/dynamics terms and a critic from **imagined $\lambda$-returns**, then improves an actor on those imagined trajectories. TD-MPC2 uses latent-consistency, reward, and value losses, trains Q with temporal-difference targets, and uses a learned policy prior to help short-horizon MPC at decision time. MuZero instead trains its representation/dynamics/prediction functions against reward, value, and search-policy targets, and obtains its next action through MCTS. Thus a failure in a shared model can enter through different channels: Dreamer's training targets, TD-MPC2's online candidate ranking, or MuZero's search tree and training targets.
+The true physical transition distribution is bimodal:
 
-| Method | Model use | Compute location | Immediate output |
-|---|---|---|---|
-| Active ADP | Bellman backups under learned $\hat P,\hat R$ | Background/global solving | Value or policy |
-| Q-planning | One-step simulated transitions | Background | Q updates |
-| Dyna-Q | Real updates plus learned-model updates | Background between actions | Q updates/policy |
-| MCTS / MuZero | Branch and evaluate simulated futures | Decision time | Search-improved current action |
-| MPC / TD-MPC2 | Optimize a short predicted sequence, then replan | Decision time | First action of sequence |
-| DreamerV3 | Train actor/critic on imagined latent trajectories | Training time | Deployed policy and critic |
+$$\mathcal{P}(s' \mid s, a) = 0.5\,\delta(s' - (-1)) + 0.5\,\delta(s' - (+1))$$
 
-### 4.3 Emerging directions are extensions, not proven replacements
+Suppose a practitioner fits a deterministic neural network $f_\eta(s, a)$ by minimizing the standard Mean Squared Error loss:
 
-The lecture's closing map points from compact latent control models toward controllable interactive simulators and broad predictive representations. It lists examples of interactive world simulation (Genie 3), world foundation models (V-JEPA 2), joint world–action modeling, and physical-AI world models. The shared research question is whether an agent can predict action-conditioned futures accurately and cheaply enough for training, testing, or control across many tasks. The slide is a direction map; the present note makes no claim that these systems satisfy a common benchmark or replace MuZero, DreamerV3, or TD-MPC2. As models grow broader, the same value-equivalence and model-bias checks remain necessary.
+$$\mathcal{L}(\eta) = \mathbb{E}_{(s, a, s') \sim \mathcal{D}} \left[ \| s' - f_\eta(s, a) \|_2^2 \right]$$
 
-### 4.4 Read the training targets, not only the architecture names
+Setting the gradient with respect to the output $\hat{s}' = f_\eta(s, a)$ to zero:
 
-**MuZero.** Starting from real observation history $o_{\le t}$, a representation network produces latent $z_t=h(o_{\le t})$. The dynamics network unrolls $z_{t,k+1},\hat r_{t,k+1}=g(z_{t,k},a_{t+k})$, and the prediction network outputs policy prior and value $(p_{t,k},v_{t,k})=f(z_{t,k})$. MCTS uses these quantities to choose an action. During training, unrolled reward predictions are compared with observed rewards, value predictions with return/value targets, and policy predictions with the search-improved MCTS policy. This is why the model can be useful without reconstructing the next camera image: it is trained to preserve consequences that affect search. A bad latent representation can still fail if it merges situations with different rewards or action outcomes.
+$$\nabla_{\hat{s}'} \mathbb{E} \left[ (s' - \hat{s}')^2 \right] = -2 \mathbb{E}[s' - \hat{s}'] = 0 \implies \hat{s}'^* = \mathbb{E}[s' \mid s, a]$$
 
-**DreamerV3.** A recurrent state-space model maintains deterministic history $h_t$ and stochastic latent $z_t$. On a real transition, the posterior $q_\eta(z_{t+1}\mid h_{t+1},o_{t+1})$ can use the observed next frame; in imagination, the prior $p_\eta(z_{t+1}\mid h_{t+1})$ must predict without that observation. World-model losses include observation, reward and continuation prediction plus terms aligning prior and posterior. The actor and critic then train on imagined trajectories. A simplified imagined $\lambda$-return is $G_t^\lambda=\hat r_t+\gamma[(1-\lambda)\hat V_{t+1}+\lambda G_{t+1}^\lambda]$, omitting terminal/continuation factors for clarity as the lecture slide does. At $\lambda=0$ it leans on the learned critic after one step; at $\lambda=1$ it follows the imagined rewards longer before bootstrapping. Longer imagined dependence may reduce critic bias but increases exposure to model error.
+The deterministic model trained under squared error **inevitably predicts the conditional mean**:
 
-**TD-MPC2.** An encoder maps the observation to $z_t$; dynamics predicts short latent transitions, a reward head predicts $\hat r$, a Q head estimates terminal value, and a policy prior proposes promising actions. Its training objective combines latent-consistency, reward-prediction, and temporal-difference value losses over unroll steps with weights. The planner ranks a horizon-$H$ sequence by $\sum_{i=0}^{H-1}\gamma^i\hat r_{t+i}+\gamma^H\hat Q(z_{t+H},a_{t+H})$, executes only its first action, observes the true next state, and replans. This terminal Q is an approximation of what lies beyond the short model rollout, not a guarantee that the chosen sequence is globally optimal. Unlike DreamerV3, the decisive optimization is repeated at action time, adding latency but using fresh observations to reset the horizon.
+$$\hat{s}'^* = 0.5(-1.0) + 0.5(+1.0) = \mathbf{0.0}$$
 
-The three methods therefore use different **targets** and **compute locations**. A simple score table that says “all use world models” hides the central difference: MuZero trains search-relevant latent predictions and searches; DreamerV3 trains an actor through imagined returns; TD-MPC2 learns a compact control model and optimizes an action sequence at each decision. When diagnosing failure, ask whether the error came from the reward target, latent transition, value estimate, policy prior, or the search/optimizer exploiting a weakness in one of them.
+> [!CAUTION]
+> **The Conditional Mean Trap (Tutorial 7, Problem 2)**:
+> Position $x = 0.0$ lies **directly inside the obstacle**! Although both real-world physical outcomes ($s' = -1$ and $s' = +1$) safely avoid collision, the deterministic regression model predicts a fatal crash directly into the center of the obstacle.
+> If a planner uses this model, it will mistakenly reject a safe action, concluding that swerving guarantees a collision, or produce an unsafe target if the mean is pursued!
 
-## 5. What the model-based addendum actually adds
+```
+                  TRUE PHYSICAL OUTCOMES (Bimodal)
+                           Obstacle at x=0
+                          [   OBSTACLE   ]
+                                |
+               s'_L = -1.0 <----+----> s'_R = +1.0
+                 (Safe)                   (Safe)
+                                |
+              ------------------+------------------
+                                |
+                   PREDICTED CONDITIONAL MEAN
+                         x_pred = 0.0
+                     (CRASHES INTO OBSTACLE!)
+```
 
-The two-page addendum contains an annotated Dyna-Q flow and a cross-course agent-paradigm diagram. The first visually confirms the branch structure used above: one real transition updates Q directly **and** updates the model; the model then generates extra transitions for further Q updates; the improved Q/policy changes later behavior. The diagram does not imply that simulated transitions are new independent evidence about the real world. They reuse a learned approximation of earlier evidence.
+### 3.2 Expected One-Step Backup Comparison: Deterministic vs. Probabilistic
 
-The second slide places symbolic planning, tabular RL, neural model-free RL, learned world models, and responsible autonomy on a teaching progression. Its final column adds **constraints, uncertainty, human guidance, reliability and alignment** to competence. These are design requirements layered over the methods, not a theorem that one agent generation replaces all earlier ones. A system can combine symbolic safety rules, learned values, a world model, online search, and human oversight. When comparing methods, ask which information is available, which objective is optimized, where computation happens, and how mistakes are detected before deployment.
+Consider the numerical case from **Tutorial 7, Problem 2**:
+- Two feasible transition states: $s'_L = -1$ and $s'_R = +1$, each with probability $p = 0.5$.
+- Both transitions yield immediate reward $R(s, a, s') = 1.0$.
+- Downstream utility values: $U(s'_L) = 4.0$ and $U(s'_R) = 8.0$.
+- Discount factor $\gamma = 0.9$.
 
-## 6. Worked Tutorial 7 answer map and synthesis
+#### Probabilistic Model (Exact Expectation):
+The probabilistic model retains both modes. The branch-specific backups are:
+$$\text{Backup}_L = R + \gamma U(s'_L) = 1 + 0.9(4.0) = 1 + 3.6 = 4.6$$
+$$\text{Backup}_R = R + \gamma U(s'_R) = 1 + 0.9(8.0) = 1 + 7.2 = 8.2$$
 
-Problem 1 distinguishes expected Bellman integration from one noisy Q-planning sample. Problem 2 demonstrates why a conditional mean can be physically impossible. Problem 3 classifies Q-planning as background work and MCTS/MPC as decision-time work, computes $6.6>5.8$ for the two MPC sequences, and explains why MuZero can plan without pixel reconstruction. Problem 4 contrasts DreamerV3's imagined policy learning with TD-MPC2's receding-horizon action choice; its terminal-value example gives $8.66>6.51$. In every case, specify whether the result is an expectation under the model, a single stochastic model draw, or an observed environment transition.
+The true expected one-step backup is:
+$$\mathbb{E}[\text{Backup}] = 0.5(4.6) + 0.5(8.2) = 2.3 + 4.1 = \mathbf{6.4}$$
 
-## References
+#### Sampled Planning (One Next State):
+If a sampling-based planner draws a single state $s' \sim \hat{\mathcal{P}}$:
+- If $s'_L$ is sampled: $\text{Target} = 4.6$
+- If $s'_R$ is sampled: $\text{Target} = 8.2$
 
-- Gopalan, A. *Lecture-rl-model-based.pdf*, CS4246/CS5446, AY2026/27 Semester 1, 64 slides; two-slide addendum.
-- Sutton, R. S., & Barto, A. G. (2018). *Reinforcement Learning: An Introduction* (2nd ed.), planning and learning chapters.
-- Schrittwieser, J., et al. (2020). Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model. *Nature*.
-- Hafner, D., et al. (2025). Mastering Diverse Domains through World Models. *Nature*.
-- Hansen, N., et al. (2024). TD-MPC2: Scalable, Robust World Models for Continuous Control. *ICLR*.
-- *CSXX46 AY2026/27 Week 10 Tutorial 7: Model-Based Reinforcement Learning*.
+While individual sampled backups exhibit sampling variance, their expectation is strictly unbiased:
+$$\mathbb{E}_{\text{sample}}[\text{Target}] = 0.5(4.6) + 0.5(8.2) = 6.4$$
+
+**Key Takeaway**: A deterministic regression model collapses distinct feasible modes into an unfeasible average. To accurately model physical systems with discontinuous boundaries or stochastic branches, dynamics models must be probabilistic (e.g., Gaussian Mixtures, Deep Ensembles, or Diffusion Models).
+
+---
+
+## 4. Bellman Backups on Learned Models: Expected vs. Sampled Q-Planning
+
+Once a dynamics model $\hat{\mathcal{M}} = \langle \hat{\mathcal{P}}, \hat{\mathcal{R}} \rangle$ is learned, an agent can use it to update its action-value function $Q(s, a)$ in two distinct ways.
+
+### 4.1 Mathematical Comparison
+
+```
+1. Expected Bellman Backup (Full Model Integration):
+   T_exp = Sum_{s'} P_eta(s' | s, a) [ R_eta(s, a, s') + gamma * max_{a'} Q(s', a') ]
+   Compute: O(|S|) per update | Variance: Zero sampling variance
+
+2. Sampled Q-Planning (Single Transition Sample):
+   Sample s' ~ P_eta(. | s, a), r = R_eta(s, a, s')
+   T_sampled = r + gamma * max_{a'} Q(s', a')
+   Compute: O(1) per update   | Variance: Stochastic sampling noise
+```
+
+### 4.2 Numerical Walkthrough (Tutorial 7, Problem 1)
+
+A Mars rover learns a transition model for action $a$ in state $s$:
+- $\hat{\mathcal{P}}(s_1 \mid s, a) = 0.75$, with learned reward $\hat{\mathcal{R}}(s, a, s_1) = 2.0$
+- $\hat{\mathcal{P}}(s_2 \mid s, a) = 0.25$, with learned reward $\hat{\mathcal{R}}(s, a, s_2) = -2.0$
+- Downstream values: $U(s_1) = \max_{a'} Q(s_1, a') = 6.0$, $U(s_2) = \max_{a'} Q(s_2, a') = 2.0$
+- Discount factor $\gamma = 0.9$, learning rate $\alpha = 0.5$, initial estimate $Q(s, a) = 3.0$
+
+#### Part (a): Expected Bellman Target & Update
+Weight the candidate branch targets by their model transition probabilities:
+$$\mathcal{T}_{\text{exp}} = 0.75 \left[ 2 + 0.9(6) \right] + 0.25 \left[ -2 + 0.9(2) \right]$$
+$$\mathcal{T}_{\text{exp}} = 0.75(2 + 5.4) + 0.25(-2 + 1.8) = 0.75(7.4) + 0.25(-0.2)$$
+$$\mathcal{T}_{\text{exp}} = 5.55 - 0.05 = \mathbf{5.5}$$
+
+Applying the incremental temporal-difference update:
+$$Q_{\text{new}}(s, a) = Q(s, a) + \alpha \left[ \mathcal{T}_{\text{exp}} - Q(s, a) \right]$$
+$$Q_{\text{new}}(s, a) = 3.0 + 0.5(5.5 - 3.0) = 3.0 + 0.5(2.5) = \mathbf{4.25}$$
+
+#### Part (b): Sampled Q-Planning Update
+Suppose the planner draws a single simulated transition and samples the low-probability outcome $s \to s_2$ with reward $-2.0$:
+$$\mathcal{T}_{\text{sampled}} = -2.0 + 0.9 U(s_2) = -2.0 + 0.9(2.0) = -2.0 + 1.8 = \mathbf{-0.2}$$
+
+Updating the Q-value with this sample:
+$$Q_{\text{new}}(s, a) = 3.0 + 0.5(-0.2 - 3.0) = 3.0 + 0.5(-3.2) = 3.0 - 1.6 = \mathbf{1.4}$$
+
+#### Part (c): Why Do the Updates Differ?
+Both updates utilize the exact same underlying model $\hat{\mathcal{M}}$. However:
+- The **Expected Bellman update** integrates over the complete distribution, eliminating sampling variance entirely for the given model.
+- The **Sampled Q-planning update** relies on a single realization ($s_2$), which happens to be the inferior branch. It suffers from high single-sample variance, although its mathematical expectation across repeated samples converges exactly to the expected target ($0.75 \times 7.4 + 0.25 \times (-0.2) = 5.5$).
+
+---
+
+## 5. The Dyna Architecture: Integrating Learning, Acting, and Planning
+
+Introduced by Richard Sutton (1990), the **Dyna architecture** seamlessly unifies online trial-and-error reinforcement learning with background model-based planning.
+
+```
+                  +-----------------------------------+
+                  |        Real Environment           |
+                  +-----------------------------------+
+                       ^                         |
+        Real Action a  |                         | Real Transition (s, a, r, s')
+                       |                         v
+                  +---------+               +---------+
+                  |  Agent  | ------------> |  Model  |
+                  +---------+               +---------+
+                       ^                         |
+                       | Simulated (s, a, r, s') |
+                       +-------------------------+
+                               Q-Planning
+```
+
+### 5.1 The Dyna-Q Algorithm
+
+```python
+Initialize Q(s, a) and Model(s, a) for all s in S, a in A
+Loop forever (for each episode):
+    s = initial_state()
+    Loop for each step of episode:
+        a = epsilon_greedy(Q, s)
+        Execute action a in real world; observe real r, s'
+        
+        # 1. Direct Model-Free Q-Learning Update
+        Q(s, a) = Q(s, a) + alpha * [ r + gamma * max_a' Q(s', a') - Q(s, a) ]
+        
+        # 2. Model Learning (Update internal simulator)
+        Model(s, a) <- (r, s')
+        
+        # 3. Background Q-Planning (k simulated steps)
+        Repeat k times:
+            s_sim = randomly chosen previously visited state
+            a_sim = randomly chosen previously executed action in s_sim
+            (r_sim, s'_sim) = Model(s_sim, a_sim)
+            Q(s_sim, a_sim) = Q(s_sim, a_sim) + alpha * [ r_sim + gamma * max_a' Q(s'_sim, a') - Q(s_sim, a_sim) ]
+            
+        s = s'
+```
+
+### 5.2 Planning in Non-Stationary Environments: Dyna-Q+
+
+When an environment changes (e.g., a previously blocked corridor opens, or a shortcut closes), a standard Dyna-Q agent may persist in obsolete beliefs because it only samples actions it has previously tried.
+
+**Dyna-Q+** introduces an **exploration bonus** based on the elapsed time $\tau(s, a)$ since state-action pair $(s, a)$ was last tried in the real environment:
+
+$$r_{\text{sim}} = r + \kappa \sqrt{\tau(s, a)}$$
+
+where $\kappa > 0$ is a small exploration constant. As time elapses without physically testing $(s, a)$, $\tau(s, a)$ grows monotonically, inflating the simulated reward and encouraging the planner to route trajectories through unvisited regions to verify whether transitions have changed.
+
+---
+
+## 6. Decision-Time Planning & Model Predictive Control (MPC)
+
+While Dyna performs **background planning** (updating a global $Q(s, a)$ table or network offline), **decision-time planning** focuses all computational effort locally on the current state $s_t$.
+
+### 6.1 Background Planning vs. Decision-Time Planning
+
+| Criterion | Background Planning (e.g., Dyna-Q, Prioritized Sweeping) | Decision-Time Planning (e.g., MPC, MCTS) |
+|---|---|---|
+| **When Compute Occurs** | Between actions or during idle time | Immediately after observing $s_t$, before choosing $a_t$ |
+| **Output** | Global value function $Q(s, a)$ or policy $\pi(s)$ | A single chosen action $a_t^*$ for current state $s_t$ |
+| **Search Space** | Global state space $\mathcal{S}$ | Local forward tree rooted at $s_t$ |
+| **Handling Dynamic Changes** | Slow; must update global table | Fast; immediately incorporates latest state $s_t$ |
+
+### 6.2 The Receding-Horizon Principle in Model Predictive Control (MPC)
+
+In **Model Predictive Control (MPC)**:
+1. At time step $t$, with current observed state $s_t$, formulate an optimization problem over a planning horizon $H$:
+   $$\max_{a_0, a_1, \dots, a_{H-1}} \sum_{h=0}^{H-1} \gamma^h \hat{\mathcal{R}}(s_{t+h}, a_{t+h}) \quad \text{s.t.} \quad s_{t+h+1} = \hat{\mathcal{P}}(s_{t+h}, a_{t+h})$$
+2. Find the optimal action sequence $\mathbf{a}^* = (a_0^*, a_1^*, \dots, a_{H-1}^*)$ via random shooting, Cross-Entropy Method (CEM), or gradient ascent.
+3. **Execute only the first action** $a_t = a_0^*$.
+4. Observe the actual resulting state $s_{t+1}$ from the real environment.
+5. **Recede the horizon and replan** from $s_{t+1}$ at step $t+1$.
+
+> [!NOTE]
+> **Why execute only the first action? (Tutorial 7, Problem 3c)**
+> Open-loop execution of the entire sequence $(a_0^*, \dots, a_{H-1}^*)$ compounds model prediction errors and fails under unmodeled external disturbances. Replanning at every single time step incorporates fresh state feedback, continuously correcting for modeling discrepancies!
+
+#### Numerical Walkthrough (Tutorial 7, Problem 3b):
+At state $s_t$, an MPC planner evaluates two prospective candidate action sequences over horizon $H = 2$ with $\gamma = 0.9$:
+- Sequence A predicted rewards: $(3.0, 4.0)$
+- Sequence B predicted rewards: $(4.0, 2.0)$
+
+Discounted returns:
+$$G_A = 3.0 + 0.9(4.0) = 3.0 + 3.6 = \mathbf{6.6}$$
+$$G_B = 4.0 + 0.9(2.0) = 4.0 + 1.8 = \mathbf{5.8}$$
+
+Sequence A yields the higher predicted return ($6.6 > 5.8$). The agent executes the first action of sequence A ($a_A$), observes $s_{t+1}$, and replans.
+
+---
+
+## 7. Modern Latent World Models: MuZero, DreamerV3, and TD-MPC2
+
+High-dimensional observations (such as raw camera images) make pixel-level dynamics modeling prohibitively expensive and error-prone. Modern Model-Based RL constructs **latent world models**, learning dynamics in an abstract feature space $\mathcal{Z}$.
+
+```
+  MuZero (Schrittwieser et al., 2020)
+  +-------------------------------------------------------------------------+
+  |  Obs o_t -> [Representation h] -> Latent s_0                            |
+  |  Search: MCTS in latent space using [Dynamics g] & [Prediction f]       |
+  |  NO pixel reconstruction! Only predicts rewards, policy priors, values.  |
+  +-------------------------------------------------------------------------+
+
+  DreamerV3 (Hafner et al., 2023)
+  +-------------------------------------------------------------------------+
+  |  RSSM: Deterministic h_t (GRU) + Categorical Stochastic z_t             |
+  |  Training: Actor-Critic trained completely inside imagined trajectories |
+  |  Decision Time: Pure actor forward pass pi(a | s_t) (zero search cost!) |
+  +-------------------------------------------------------------------------+
+
+  TD-MPC2 (Hansen et al., 2024)
+  +-------------------------------------------------------------------------+
+  |  Short-horizon latent MPC (H ~ 3-5 steps) + Terminal Value Q_terminal   |
+  |  Combines immediate reward model with long-term Q-value-to-go           |
+  |  Decision Time: Online sampling (CEM) in latent space                   |
+  +-------------------------------------------------------------------------+
+```
+
+### 7.1 Deep Dive: MuZero (Schrittwieser et al., 2020)
+MuZero eliminates the need to reconstruct future image frames by training three coupled networks strictly on task-relevant signals:
+1. **Representation Network**: $s_0 = h_\theta(o_1, \dots, o_t)$ maps observation history to latent root state.
+2. **Dynamics Network**: $(r_k, s_k) = g_\theta(s_{k-1}, a_k)$ predicts reward and next latent state.
+3. **Prediction Network**: $(p_k, v_k) = f_\theta(s_k)$ outputs policy prior logits $p_k \approx \pi(a \mid s_k)$ and scalar value $v_k \approx V(s_k)$.
+
+Because MCTS only requires comparing relative action values, policy priors, and immediate rewards, predicting task-irrelevant visual details (e.g., background clouds, leaf movements) is unnecessary and wasteful.
+
+### 7.2 Deep Dive: DreamerV3 (Hafner et al., 2023)
+DreamerV3 constructs a **Recurrent State-Space Model (RSSM)**:
+- Deterministic recurrence: $h_t = f_\phi(h_{t-1}, z_{t-1}, a_{t-1})$ (captures long-term temporal dependencies via GRU).
+- Stochastic state: $z_t \sim q_\phi(z_t \mid h_t, o_t)$ (represents uncertainty via discrete categorical classes).
+- World model loss: Reconstruction loss + reward prediction loss + KL divergence between representation and dynamics prior.
+- **Imagination Training**: An Actor $\pi_\psi(a \mid s)$ and Critic $v_\xi(s)$ are trained purely on imagined rollouts generated by the RSSM up to horizon $H \approx 15$. At decision time, the actor executes with zero search latency ($\mathcal{O}(1)$ forward pass).
+
+### 7.3 Deep Dive: TD-MPC2 (Hansen et al., 2024)
+TD-MPC2 addresses the Achilles' heel of long-horizon imagination—**compounding model error**—by truncating the planning horizon to a short window ($H = 2 \sim 5$) and appending a learned terminal action-value function:
+
+$$\hat{G}_t = \sum_{h=0}^{H-1} \gamma^h \hat{r}_{t+h} + \gamma^H \hat{Q}_{\text{terminal}}(z_{t+H}, a_{t+H})$$
+
+#### Numerical Walkthrough (Tutorial 7, Problem 4b):
+A TD-MPC2 planner evaluates two candidate sequences with horizon $H = 2$ and discount factor $\gamma = 0.9$:
+- Candidate Sequence A: predicted rewards $(2, 2)$, terminal value $\hat{Q}_{\text{terminal}} = 6.0$
+- Candidate Sequence B: predicted rewards $(3, 3)$, terminal value $\hat{Q}_{\text{terminal}} = 1.0$
+
+Computing the composite returns:
+$$\hat{G}_A = 2 + 0.9(2) + 0.9^2(6.0) = 2 + 1.8 + 0.81(6.0) = 3.8 + 4.86 = \mathbf{8.66}$$
+$$\hat{G}_B = 3 + 0.9(3) + 0.9^2(1.0) = 3 + 2.7 + 0.81(1.0) = 5.7 + 0.81 = \mathbf{6.51}$$
+
+Even though sequence B provides higher immediate rewards ($3 + 3 = 6$ vs $2 + 2 = 4$), Sequence A is strictly preferred ($\hat{G}_A = 8.66 > \hat{G}_B = 6.51$) because the terminal value function correctly identifies superior long-term potential!
+
+### 7.4 Failure Modes and Mitigations
+
+| Model Architecture | Vulnerability to Model Error | Established Engineering Mitigations |
+|---|---|---|
+| **DreamerV3** | Compounding errors along long imagined rollouts misguide actor and critic gradients | Keep imagination horizons bounded ($H \le 15$); symlog value transformation; continual model retraining on replay buffer |
+| **TD-MPC2** | Optimizer exploits model inaccuracies (adversarial sequences that score spuriously high) | Short planning horizons; ensemble models with conservative lower-bound values ($Q_{\min}$); CEM regularization |
+| **MuZero** | Latent dynamics collapse or drift if unconstrained by real-world transitions | Value-equivalence training; self-consistent consistency losses; off-policy re-analysis |
 
 ---
 
 # Week 9 - Game Theory: Strategic Interaction, Nash Equilibrium, Welfare, and Minimax
 
 <draft>
-- 1. Identify players, actions, payoffs, information and strategic dependence.
-- 2. Best responses, dominance, pure Nash equilibria and Pareto optimality.
-- 3. Mixed equilibria via indifference, coordination, chicken and Battle of the Sexes.
-- 4. Zero-sum minimax and Morra.
-- 5. Tutorial 8 complete matrix practice and limitations of equilibrium predictions.
+- 1. Foundations of Game Theory: Normal-form vs extensive-form, strategic interdependence criteria (identifying games vs single-agent decision problems).
+- 2. Solution Concepts: Best responses, Pure-Strategy Nash Equilibrium (PSNE), strict vs weak dominance, Iterated Elimination of Strictly Dominated Strategies (IESDS).
+- 3. Social Welfare and Efficiency: Pareto optimality, Pareto frontier, the inefficiency of Nash equilibrium, Price of Anarchy.
+- 4. Canonical 2x2 Matrix Games: Prisoner's Dilemma, Coordination (Astro vs Bolt), Stag Hunt, Chicken / Hawk-Dove, Matching Pennies.
+- 5. Mixed-Strategy Nash Equilibrium (MSNE): The Indifference Principle, step-by-step probability derivation.
+- 6. Complete Mathematical Case Study: Battle of the Sexes (Tutorial 8 Problem 3).
+- 7. Two-Player Zero-Sum Games & Minimax: von Neumann Minimax Theorem, LP formulation, Three-Finger Morra complete solution (Tutorial 8 Problem 4).
 </draft>
 
-The decision-theory chapter asks what one agent should do when uncertainty is exogenous. Here the uncertainty includes other agents' choices. This study sequence numbers game theory as **Week 9**; its Tutorial 8 sheet retains its original **Week 11** label. An outcome may be individually stable yet collectively poor, which is why equilibrium and welfare must be checked separately.
+Throughout Weeks 1–8, our rational agent optimized decisions against an environment governed either by deterministic physics or stochastic natural laws ($\mathcal{P}(s' \mid s, a)$). The environment had no personal agenda, no intentional malice, and no strategic adaptation—nature merely rolled dice.
 
-## 1. Game theory: from a fixed environment to strategic opponents
-
-The lecture opens with **Bobo and Almo's bamboo dilemma**. Each panda simultaneously chooses whether to keep a grove secret or share its location. With Bobo's payoff first, the four outcomes are:
-
-| Bobo \\ Almo | Keep | Share |
-|---|---:|---:|
-| Keep | $(1,1)$ | $(5,0)$ |
-| Share | $(0,5)$ | $(3,3)$ |
-
-If Almo keeps, Bobo gets 1 by keeping versus 0 by sharing; if Almo shares, Bobo gets 5 by keeping versus 3 by sharing. Thus **Keep strictly dominates Share** for Bobo, and the same reasoning applies to Almo. The unique Nash equilibrium is $(Keep,Keep)=(1,1)$. Yet $(Share,Share)=(3,3)$ improves *both* pandas' payoffs and raises total payoff from 2 to 6. This establishes the lecture's central distinction: individually stable behavior need not be Pareto efficient or maximize joint welfare. The slide calls this efficiency gap a price of anarchy; a numerical price-of-anarchy ratio would require specifying its exact welfare convention and the set of equilibria.
-
-A normal-form game specifies players, each player's available strategies, and payoff $u_i(a_1,\ldots,a_n)$. **Best response** maximizes one player's payoff while holding others' actions fixed. A **Nash equilibrium (NE)** is a profile in which every action is a best response; it says no one gains by deviating alone, not that the outcome maximizes collective welfare. An outcome is **Pareto optimal** when no other outcome makes at least one player better off without making anyone worse off. A dominant strategy is a best response regardless of opponents' actions; domination permits eliminating a strategy before searching for NE.
-
-To solve a small matrix, mark the row player's maximum in each column and the column player's maximum in each row. Cells marked for both are pure NE. Check Pareto efficiency separately against *every* other cell. If no pure equilibrium exists or randomized commitment matters, assign probabilities and make every action in a player's mixed-strategy support yield equal expected payoff; actions outside support must do no better.
-
-### 1.1 Strategic dependence and game types
-
-Specify players $N$, each player's available action set $A_i$, payoff $u_i(a_1,\ldots,a_n)$, and what each knows when acting. A simultaneous normal-form game is represented by a matrix; a sequential game requires a tree and information sets. “Non-cooperative” means each actor chooses its own strategy rather than binding jointly enforceable actions; their payoffs may still align. Pure competition is zero-sum, whereas coordination may improve both payoffs. A rational best response depends on beliefs about others; Nash equilibrium asks for mutual consistency of those best responses.
-
-### 1.2 Solving pure games without confusing stability and welfare
-
-For each column, mark row payoff maxima; for each row, mark column payoff maxima. Intersections are pure NE. A dominant strategy wins against every possible opponent action; a weakly dominant strategy may tie. Strictly dominated actions can be removed without losing an equilibrium in which they are played, while careless removal of weakly dominated actions can change the equilibrium set. Pareto efficiency compares *outcomes*, not incentives: Prisoner's Dilemma has a stable $(T,T)$ that is dominated by $(R,R)$.
-
-### 1.3 Worked pure-strategy reasoning
-
-**Prisoner's Dilemma.** If Al testifies, Bo gets $-5$ by testifying and $-10$ by refusing; if Al refuses, Bo gets $0$ by testifying and $-1$ by refusing. Thus Bo's best response is testimony in both columns. By symmetry, Al also testifies. The unique pure NE is $(T,T)=(-5,-5)$. Yet $(R,R)=(-1,-1)$ makes both better off, proving that NE need not be Pareto optimal. The two asymmetric outcomes are also Pareto efficient because improving the harmed player would reduce the other player's payoff.
-
-**Astro/Bolt coordination.** If Bolt chooses Blu-ray, Astro prefers Blu-ray (9 versus $-1$); if Bolt chooses DVD, Astro prefers DVD (5 versus $-1$). Bolt has the corresponding responses. Thus $(B,B)$ and $(D,D)$ are both NE. Since $(B,B)=(9,9)$ dominates every other cell, only it is Pareto optimal. Equilibrium analysis alone does not explain how the players coordinate on it; communication, conventions, or focal points can matter.
-
-**Stag Hunt.** Each player prefers Stag when the other chooses Stag (4 versus 3) and Hare when the other chooses Hare (2 versus 0). This yields $(S,S)$ and $(H,H)$ as NE. Stag–Stag is payoff dominant; Hare–Hare is safer when one fears the other will not coordinate. This distinction is the intuitive reason a collectively better equilibrium may not be selected.
-
-
-## 2. Tutorial 8 matrix solutions
-
-| Game | Pure NE | Pareto-optimal outcomes | Mixed equilibrium, when requested |
-|---|---|---|---|
-| Prisoner's dilemma: $(T,T)=(-5,-5)$, $(T,R)=(0,-10)$, $(R,T)=(-10,0)$, $(R,R)=(-1,-1)$ | $(T,T)$; testify strictly dominates refuse | $(T,R),(R,T),(R,R)$ | None needed |
-| Astro/Bolt coordination: $(B,B)=(9,9)$, $(B,D)=(-1,-4)$, $(D,B)=(-1,-3)$, $(D,D)=(5,5)$ | $(B,B),(D,D)$ | $(B,B)$ only | A mixed NE also exists, but both prefer coordination on B |
-| Matching pennies, row wants a match | No pure NE | All four outcomes (each is zero-sum with no joint improvement) | Each plays H with probability $1/2$; game value $0$ |
-| Stag hunt: $(S,S)=(4,4)$, $(S,H)=(0,3)$, $(H,S)=(3,0)$, $(H,H)=(2,2)$ | $(S,S),(H,H)$ | $(S,S)$ | Risk can favor the lower-payoff H equilibrium |
-| Chicken: $(St,St)=(-10,-10)$, $(St,Sw)=(3,1)$, $(Sw,St)=(1,3)$, $(Sw,Sw)=(0,0)$ | $(St,Sw),(Sw,St)$ | The two asymmetric outcomes | Symmetry gives $P(St)=3/14$: against opponent $q$, $EU(St)=3-13q$, $EU(Sw)=q$ |
-
-For Battle of the Sexes, husband is row and wife column; $(F,F)=(1,2)$, $(C,C)=(2,1)$, mismatches $(0,0)$. Both matched cells are pure NE and Pareto optimal. Let wife choose F with probability $q$; husband is indifferent when $q=2(1-q)$, so $q=2/3$. Let husband choose F with probability $p$; wife is indifferent when $2p=1-p$, so $p=1/3$. At the mixed NE, husband and wife each receive $2/3$. Pure $(F,F)$ yields $(1,2)$; pure $(C,C)$ yields $(2,1)$. Each independently taking their favorite gives mismatch $(0,0)$; uniform independent randomization yields $(3/4,3/4)$.
-
-**Three-finger Morra.** If E receives the even total and O receives the odd total, E's payoff matrix, with rows E showing $1,2,3$ and columns O showing $1,2,3$, is
-
-| E \\ O | 1 | 2 | 3 |
-|---|---:|---:|---:|
-| 1 | 2 | -3 | 4 |
-| 2 | -3 | 4 | -5 |
-| 3 | 4 | -5 | 6 |
-
-The matrix is symmetric. The distribution $(1/4,1/2,1/4)$ gives every opposing pure choice expected payoff $0$; both players using it is a minimax equilibrium with value $0$. A deterministic choice can be countered. This is a two-player zero-sum game, so minimax reasoning applies.
-
-### 2.1 Derive mixed strategies by indifference
-
-For a two-action player mixing with positive probability on both actions, each supported action must have equal expected payoff against the opponent's mixture. Solve the linear equality for the opponent's probability, then reverse roles. Verify the probability lies in $[0,1]$ and that no excluded action performs better. In matching pennies, symmetry yields $1/2$ each and no pure NE. In chicken, if the opponent chooses Straight with probability $q$, Straight yields $3-13q$ while Swerve yields $q$; equality gives $q=3/14$. A mixed equilibrium is a distribution over play, not a player switching at random because they are indifferent in a single realized game.
-
-**Which player's probability does an indifference equation determine?** If row player A compares two rows, the expected payoffs of those rows depend on column player B's mixing probability $q$. Solving A's indifference equation therefore determines **B's** $q$, not A's own $p$. To find A's $p$, write B's two column payoffs as functions of $p$ and make *B* indifferent. Each player chooses a probability that removes the other's incentive to favor one pure action. This mutual response condition, plus valid probabilities and deviation checks, determines a fully mixed Nash equilibrium when one exists.
-
-For a generic row payoff matrix $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ and B choosing the first column with probability $q$, A receives $qa+(1-q)b$ from the first row and $qc+(1-q)d$ from the second. If both rows are in A's support, equality gives $q=(d-b)/(a-b-c+d)$ when the denominator is nonzero. This expression alone says nothing about A's own mixing probability because B's payoff matrix is still needed. If $q$ lies outside $[0,1]$, the supposed fully mixed solution is invalid; look for pure or smaller-support equilibria instead. In a game with more than two actions, every supported action must tie, while excluded actions must not be better.
-
-### 2.1a Two-finger Morra: derive both probabilities and the value
-
-In the lecture's two-finger zero-sum Morra, E's payoff matrix is $A=\begin{pmatrix}2&-3\\-3&4\end{pmatrix}$. Let O show one finger with probability $q$. E's expected payoff from one finger is $2q-3(1-q)=5q-3$; from two fingers it is $-3q+4(1-q)=4-7q$. Equality gives $5q-3=4-7q$, hence $q=7/12$. Because the matrix is symmetric, making O indifferent similarly gives E's probability $p=7/12$ for one finger. Substituting yields value $5(7/12)-3=-1/12$ to E. A pure choice is exploitable because the opponent can choose the unfavorable column/row; the equilibrium randomization prevents either player from improving alone.
-
-### 2.1b Coordination and chicken: check the calculation against the game
-
-In the Astro/Bolt coordination matrix used above, let Astro choose Blu-ray with probability $p$ and Bolt choose Blu-ray with probability $q$. Astro's Blu-ray payoff is $9q-1(1-q)=10q-1$; Astro's DVD payoff is $-q+5(1-q)=5-6q$. Thus Astro is willing to mix only if $q=3/8$. Bolt's Blu-ray payoff is $9p-3(1-p)=12p-3$, and Bolt's DVD payoff is $-4p+5(1-p)=5-9p$, giving $p=8/21$. The pair $(p,q)=(8/21,3/8)$ is the **mixed** coordination equilibrium. It coexists with the two pure equilibria and does not solve the practical question of which format they should coordinate on.
-
-For Tutorial 8's chicken matrix, the symmetric mixed value is $q=3/14$: Straight returns $3-13(3/14)=3/14$ and Swerve returns $3/14$. The two pure equilibria remain $(St,Sw)$ and $(Sw,St)$. The mixed calculation describes strategic uncertainty when neither player can rely on being the one who goes straight; it does not make a collision safe or socially desirable. The lecture's own chicken numbers differ, so its probability must be derived from *its* matrix separately.
-
-### 2.2 Battle of the Sexes calculations
-
-Let the husband choose F with probability $p$ and wife choose F with probability $q$. Husband's expected payoff from F is $q$, from Concert is $2(1-q)$, so his mixing requires $q=2/3$. Wife's expected payoff from F is $2p$, from Concert is $1-p$, so her mixing requires $p=1/3$. Substituting either action gives each expected utility $2/3$. The two pure NE produce $(1,2)$ and $(2,1)$; each partner choosing their *own* favorite independently produces a mismatch and $(0,0)$. Under uniform independent choices, each gets $(1+2)/4=3/4$. That is an expectation over four cells, not a Nash equilibrium: either player would want to change their mix against a uniform opponent.
-
-
-### 2.3 Tutorial 8: decide whether an interaction is a game
-
-The test is **strategic interdependence**: one actor's best choice depends on another actor's choice and payoffs. OPEC output, supplier negotiation, nuts/bolts standards, and executive option-plan bargaining can be modeled as games when actors choose strategically. A single airline hiring decision or a government's plant decision under exogenous demand is ordinary decision-making *unless* competing applicants, airlines, regulators, or strategic demand responses are explicitly modeled. Names of organizations alone do not determine whether a problem is a game; specify players, actions, and payoffs first.
-
-## 3. Minimax, zero-sum games, and Morra
-
-In a two-player zero-sum game, $u_E=-u_O$. E can maximize its guaranteed payoff, $\max_p\min_q p^TAq$, while O minimizes E's best attainable payoff, $\min_q\max_p p^TAq$. The finite-game minimax theorem makes these values equal and produces mutually optimal mixed strategies. This is stronger than merely checking one pure action against another: the opponent can adapt to a predictable pure action.
-
-For the lecture's two-finger Morra with E payoff matrix $[[2,-3],[-3,4]]$, indifference gives $P(1)=7/12$, $P(2)=5/12$ for both players, and E's value is $-1/12$. Tutorial 8 extends the action set to three fingers; its symmetric $3\times3$ matrix and equilibrium $(1/4,1/2,1/4)$ are worked below. The two variants must not be conflated.
-
-### 3.1 Three-finger Morra derivation
-
-The total finger count fixes the transfer: even totals give E $+f$, odd totals E $-f$. The E payoff matrix is $A=\begin{pmatrix}2&-3&4\\-3&4&-5\\4&-5&6\end{pmatrix}$. Let both players mix with $p=(1/4,1/2,1/4)$. Each column against E's mix has expected payoff $p^TA=(0,0,0)$, so E guarantees at least zero. Each row against O's same mix has payoff $Ap=(0,0,0)$, so O holds E to at most zero. Both bounds meet at value $0$, establishing a minimax equilibrium. This proof verifies all pure deviations, not merely indifference among the selected actions.
-
-## 4. Computational scope and extensions beyond one-shot games
-
-The lecture focuses on non-cooperative single-move games because normal-form matrices let us see best responses directly. Every finite game has at least one Nash equilibrium when mixed strategies are allowed. In a two-player zero-sum matrix game, minimax strategies can be computed efficiently with linear programming. Computing a Nash equilibrium of a general finite game is PPAD-complete, so the small 2×2 indifference exercises are **not** a general scalable algorithm for arbitrary multi-agent games. This matters when moving from a classroom payoff matrix to a large strategic AI system.
-
-The assumptions also matter. The matrix model treats each player's actions, payoffs and information as known and rationally optimized. Real participants can have bounded rationality, hidden preferences, noisy observations and changing incentives. Sequential and repeated games add history, reputation and credible commitments; Bayesian games add uncertainty about player types; stochastic/Markov games combine strategic choice with evolving states; mechanism design asks how to choose rules that make desired behavior individually attractive. Multi-agent RL studies how strategies are learned through interaction, where the opponents' adaptation makes the effective environment nonstationary from one learner's perspective. These extensions are named in the lecture as directions beyond the present one-shot methods, not solved by the Nash tables above.
-
-For trustworthy AI, stability alone is insufficient: a stable joint policy can be unsafe, unfair or Pareto dominated. Specify the real human and institutional incentives, then evaluate safety constraints, welfare and distributional effects as separate criteria. The lecture's game-theory framework helps expose these questions; it does not itself certify alignment.
-
-## 5. Tutorial 8 source and comparison
-
-The lecture's chicken payoff example is not numerically identical to the Tutorial 8 chicken matrix; the indifference probability above applies to **Tutorial 8**. Use the given matrix rather than memorizing a probability. Battle of the Sexes has two pure coordination equilibria and one mixed equilibrium; its randomization yields lower expected payoffs than successful coordination. Equilibrium predicts stability conditional on assumptions about rationality and knowledge, but does not choose between multiple equilibria or guarantee fair outcomes.
-
-## References
-
-- Gopalan, A. *Lecture-game.pdf*, CS4246/CS5446, AY2026/27 Semester 1, 69 slides. The “(1)” download is the same deck.
-- *CSXX46 AY2026/27 Week 11 Tutorial 8: Game Theory (Students)*.
+In **Game Theory**, we cross the threshold into **multi-agent strategic interaction**. Here, the outcome of an agent's choice depends critically on the concurrent or sequential choices of other self-interested, optimizing agents. An action that is optimal against a passive environment may prove catastrophic if an opponent anticipates it and counter-adapts.
 
 ---
 
-# Week 10 - Foundation-Model-Based Decision Making: Agentic Systems, Human Alignment, and Reasoning-Aware Learning
+## 1. Strategic Foundations: When Does Decision-Making Become a Game?
 
-<draft>
-- 1. Bridge sequential decision problems to an agentic decision loop and BDI.
-- 2. Separate model roles, system components, tool execution, and assurance.
-- 3. Derive the differences among SFT, RLHF/PPO, DPO, and RLAIF.
-- 4. Compare decision-time reasoning/planning with training-time feedback methods.
-- 5. Explain outcome and process supervision, GRPO, self-rewarding, and evaluation limits.
-</draft>
+### 1.1 The Strategic Interdependence Criterion
 
-Weeks 7, 8, and 9 considered search, learned models, and strategic choices. Week 10 asks how a large foundation model (LFM) can participate in those decision systems **while remaining grounded in human goals and constraints**. The lecture deck's title page has no week number; the supplied *Course Overview*, slide 3, calls this calendar Week 11, while this mid-term-free study sequence calls it Week 10. A model's ability to generate fluent plans does not itself establish that its actions are feasible, authorized, safe, or useful.
+A decision scenario is formalized as a **game** if and only if there is **strategic interdependence**: each participant's objective (payoff or utility) depends not only on their own decisions, but also on the specific actions chosen by other intentional agents.
 
-## 1. From an MDP to an agentic system
+```
+                      DECISION CLASSIFICATION
+                                 |
+              Is outcome determined solely by player 
+                 and passive nature / market?
+                       /               \
+                     YES                NO
+                     /                    \
+       +-----------------------+   +-----------------------+
+       |   Single-Agent        |   |   Strategic Game      |
+       | Decision Problem      |   | (Game Theory)         |
+       | (Nature / Parameter)  |   | (Strategic Agents)    |
+       +-----------------------+   +-----------------------+
+```
 
-A sequential decision problem needs a state or belief representation, actions, uncertain transitions, observations, an objective, and a horizon. A decision algorithm maps this model to either an action sequence from a given initial state or a policy that can react to later observations. The LFM may help **build** the model, **propose** a plan, **choose** a tool, or **criticize** a result. These are different roles; the LFM is not automatically the environment model, reward function, optimal planner, and safety verifier at once.
+### 1.2 Case Analysis: Games vs. Single-Agent Decisions (Tutorial 8, Problem 1)
 
-The lecture's conceptual loop is **Sense → Reason → Plan → Act → Learn**. In an implementation, sensing may retrieve documents or observe a tool result; reasoning interprets goals and constraints; planning compares candidate actions; acting calls a tool or environment API; learning incorporates feedback into memory or later training. The loop is not a rigid waterfall. ReAct, for example, interleaves reasoning, tool calls, and new observations. “Learn” can mean updating a short-lived memory or preference record; it does **not** imply that every interaction changes model parameters.
-
-Belief–Desire–Intention (BDI) provides another lens: *beliefs* are the agent's current world information, *desires* are possible goals and preferences, and *intentions* are selected commitments and plans. Retrieval can update beliefs; a human can set or revise desires; a planner chooses intentions. The human objective must not be inferred solely from a convenient proxy reward. When an action has a real external effect, specify permission and a check before execution.
-
-| System component | Concrete responsibility | Typical failure if omitted |
+| Scenario | Classification | Underlying Structural Justification |
 |---|---|---|
-| Planner | Decompose a goal; propose and compare steps | Plausible prose with no executable sequence |
-| Executor | Call permitted tools and record results | A plan is mistaken for a completed action |
-| Memory | Retain useful context with provenance and expiry | Stale retrieval becomes a false belief |
-| Critic / assurance | Check constraints, outcomes, and evidence | A polished answer hides a failed tool call |
-| Human oversight | Set goals, permissions, and review consequential choices | The system optimizes a proxy contrary to intent |
-
-In the lecture's diagram-generation example, the model notices it lacks a logo, retrieves an authorized asset, drafts a diagram, runs a renderer/validator, and incorporates feedback. The **tool result** is evidence that a retrieval or compile occurred; a sentence saying it occurred is not. A robust trace records the request, tool inputs and outputs, validation result, and what a person approved.
-
-## 2. Human-guided learning: demonstrations and preferences
-
-The lecture distinguishes four stages. Pretraining builds broad representations from large-scale data. **Supervised fine-tuning (SFT)** imitates curated prompt–response demonstrations and provides an instruction-following reference policy $\pi_{\rm ref}$. Preference optimization then uses comparisons or rewards to improve behavior. Post-deployment monitoring identifies failures and may motivate later updates; monitoring alone is not training.
-
-In **RLHF**, annotators compare responses for a prompt. A reward model $\hat r(x,y)$ is fitted to those comparisons. A policy is then optimized for expected reward while staying near the reference:
-
-$$J(\theta)=\mathbb E_{x\sim D,\,y\sim\pi_\theta(\cdot\mid x)}\left[\hat r(x,y)-\beta\log\frac{\pi_\theta(y\mid x)}{\pi_{\rm ref}(y\mid x)}\right].$$
-
-The KL term discourages large distribution shifts; $\beta$ controls that trade-off. This is the **objective**. Proximal Policy Optimization (PPO) is one possible **update method**: it uses the ratio between the new policy and the policy that sampled the training tokens, clips large changes, and uses an advantage estimate. The PPO clipping reference is the rollout policy, whereas the RLHF KL reference is the fixed SFT policy; mixing these two references is a common conceptual mistake. Reward-model bias can be amplified when optimization finds high-scoring but poor responses, so an independent evaluation set and human audits are necessary.
-
-**Direct Preference Optimization (DPO)** uses preferred/rejected pairs $(y^+,y^-)$ without training a separate explicit reward model or running PPO rollouts. Let $\Delta_\theta=\log\pi_\theta(y^+\mid x)-\log\pi_\theta(y^-\mid x)$, and define $\Delta_{\rm ref}$ similarly. Its loss is $-\mathbb E\log\sigma[\beta(\Delta_\theta-\Delta_{\rm ref})]$. DPO asks the current policy to favor the preferred response **more than the reference does**. It is simpler to optimize but remains limited by the quality, coverage, and consistency of its preference pairs; it is not a proof of alignment.
-
-**Reinforcement Learning from AI Feedback (RLAIF)** changes who supplies the feedback, not necessarily the optimizer. An AI judge may provide reward scores for an RL pipeline or preference pairs for DPO. Constitutional critique/revision is an example of principle-guided AI feedback. This can scale annotations, but judge bias, shared blind spots, and self-confirmation can contaminate the target. Human calibration, evaluator diversity, disagreement audits, and external task checks become more important as AI feedback scales. The lecture's “helpfulness, harmlessness, honesty” triangle describes distinct goals that may trade off in difficult cases.
-
-| Method | Feedback data | What is optimized | Key dependency |
-|---|---|---|---|
-| SFT | Demonstrated responses | Likelihood of demonstrations | Demonstration quality and coverage |
-| RLHF with PPO | Human comparisons → reward model | Sampled policy return with KL control | Reward calibration and stable rollouts |
-| DPO | Preferred/rejected pairs | Relative response log probabilities | Pair quality and reference choice |
-| RLAIF | AI judgments or comparisons | RL or preference objective | Judge reliability and human audit |
-
-### 2.1 Work a preference pair through the two objectives
-
-Take one prompt with two candidate responses, $y^+$ preferred over $y^-$. Suppose the fixed reference gives them probabilities $(0.4,0.6)$ and the candidate policy gives $(0.7,0.3)$. For DPO with $\beta=1$, the reference log-odds are $\log(0.4/0.6)=\log(2/3)$; the candidate log-odds are $\log(0.7/0.3)=\log(7/3)$. The *improvement over the reference* is $\log(7/2)=\log 3.5$. The modeled preference probability is $\sigma(\log 3.5)=3.5/(1+3.5)\approx0.778$, giving a per-pair loss of $-\log(0.778)\approx0.251$. If both policies had identical odds, this probability would be $0.5$ regardless of whether the reference itself already favored $y^+$. That is why DPO uses a difference of log-odds rather than merely maximizing $\pi_\theta(y^+)$ without a reference.
-
-The RLHF objective evaluates a different quantity: responses sampled from the policy receive reward, and the full response distribution pays a KL cost. For the same two-response toy example, set rewards $\hat r(y^+)=2$, $\hat r(y^-)=0$, and $\beta=0.5$. Expected reward under $(0.7,0.3)$ is $1.4$. The KL divergence from $(0.4,0.6)$ is $0.7\log(0.7/0.4)+0.3\log(0.3/0.6)\approx0.184$, so the regularized value is about $1.4-0.5(0.184)=1.308$. These numbers show how the objective balances reward and departure from the reference; they do not imply that the reward model's score is a true human utility or that a particular response is safe.
-
-The lecture's PPO slide operates at *token* decisions: state $s_t$ contains the prompt and generated prefix, action $a_t$ is the next token, and the rollout policy supplies the sample. A sequence-level reward can be assigned after the response is complete, while token-level KL terms and advantage estimates allocate training signal across the sequence. This distinction explains why “compare complete answers” and “update a token policy” can both describe one RLHF pipeline.
-
-## 3. Integrated reasoning and planning
-
-Chain-of-thought (CoT) prompting asks a model to generate intermediate steps before a final answer. Sampling several traces and aggregating final answers is **self-consistency**; generating executable code for arithmetic is **Program-of-Thought**. These are decision-time procedures unless their traces are later used as training data. A readable generated trace can still be unfaithful to the model's actual causal process, so arithmetic, tool effects, and domain constraints need independent checks.
-
-For planning, compare the alternatives by where validity comes from. **Plan-and-Solve** decomposes first, then executes. **Tree of Thoughts** explores and backtracks among candidate thought paths. **LLM+P** translates a problem into a formal planning language such as PDDL and delegates search to a planner. **LLM-Modulo** puts an external verifier around proposed plans. **ReAct** interleaves tool use with observation. In every case, a verifier can only validate the model and constraints it was given; a correct PDDL plan for an incorrect world model can still fail in reality.
-
-An assurance workflow should check: (1) whether observations/retrieved evidence support the current belief, (2) whether the goal reflects the person's actual request, (3) whether the plan respects permissions and resource constraints, (4) whether a tool reported success, and (5) whether the observed outcome meets the task criterion. This connects Week 1's symbolic validity, Week 3's utility, Week 7's search, and Week 8's model error into one system-level test.
-
-## 4. AI-guided learning from outcomes and processes
-
-**Outcome supervision** scores a final answer or completed task. **Process supervision** scores intermediate steps. The latter can expose an incorrect transition that happens to end with a correct answer, but a process label is only useful when the evaluator can reliably judge the step. AI judges can assess full responses or traces; human or external verification is needed to detect correlated errors and reward hacking.
-
-**Group-Relative Policy Optimization (GRPO)** samples a group of responses to the same prompt and compares their rewards. For nonzero within-group variance, a simplified response-level advantage is $A_i=(R_i-\bar R)/(\operatorname{std}(R)+\varepsilon)$. A PPO-style clipped update uses these relative advantages and a reference-policy regularizer, without a separate learned value critic. The normalized advantage describes *relative* quality inside that group; if every response is wrong but one is slightly less wrong, a positive advantage does not certify correctness. Zero or near-zero variance needs a numerical convention. GRPO is reward-based RL, whereas DPO directly trains on preference pairs.
-
-For a small worked group with rewards $(0,1,2)$, the mean is $1$ and population standard deviation is $\sqrt{2/3}\approx0.816$. Ignoring $\varepsilon$ for this nonzero-variance example, advantages are approximately $(-1.225,0,1.225)$. The last response receives a positive update because it is best **within this group**. Replacing the rewards by $(-100,-99,-98)$ produces the same normalized advantages despite every response potentially being unacceptable; an absolute quality gate or independent verifier must therefore sit outside relative optimization. If all rewards equal $1$, normalization is undefined without $\varepsilon$ or a special-case rule and supplies no ranking signal.
-
-**Self-rewarding language models** generate responses, judge them, form preference pairs, and update through DPO in a repeated cycle. This can improve a model when its judgments correlate with real quality, but the loop may also reinforce its own errors. Holdout tasks, independent judges, human audits, and calibrated rubrics are ways to detect such drift. The lecture treats these as approaches to improving reasoning-aware behavior, not as interchangeable names for one algorithm.
-
-## 5. Evaluation: capability and alignment are separate measurements
-
-Test the whole loop: task completion, validity of tool actions, safety and authorization, latency, traceability, human intervention, and fairness or downstream impact. A benchmark of web or software tasks can measure success under its setup, but success rate alone does not establish that real deployments have adequate permissions, truthful reports, or safe failure behavior. Compare a final answer with the actual tool trace and independently observed result. For high-impact actions, preserve a human decision point and a way to stop or reverse execution.
-
-### 5.1 Work one agentic task through the complete loop
-
-Take the lecture's example: a person asks for a slide-ready decision-loop diagram with a specific institutional logo. The **beliefs** initially include the prompt and slide context but not a verified logo file; the **desire** is a clear, accurate diagram; the **intention** is a plan to retrieve the asset, generate a layout, render it, and validate the result. A useful agent should say that the logo is missing, use an allowed retrieval source, and distinguish retrieved evidence from a fabricated placeholder. It should not treat the sentence “I retrieved it” as proof that a tool actually returned a file.
-
-The first draft may put annotations in the wrong place. The human's correction (“side labels”) updates the task constraints. The planner then revises its layout, the executor renders a new artifact, and the critic checks label order, file validity, and visual legibility. The human can review or approve the consequential output. The final response should identify the actual rendered file and any remaining uncertainty. If rendering fails, the agent should preserve that failure in its report rather than presenting planned work as completed work.
-
-This task also separates three meanings of “learning”: (1) the current context now records the corrected label preference, (2) durable memory might store a preference with provenance and expiry if authorized, and (3) parameter training would require a later dataset and optimization step. The lecture's Sense → Reason → Plan → Act → Learn diagram can describe all three only if the implementation states which one occurred. The same distinction matters in Week 8 model-based RL: updating a learned world model from fresh transitions is a different process from replanning with a fixed model after an observation.
-
-### 5.2 Design an evaluation that can catch attractive failure
-
-Suppose an agent produces a visually polished diagram with the wrong institutional logo. A final-output aesthetic score might pass, while source correctness fails. Evaluate each layer with a separate check: **grounding** (asset provenance), **planning** (all required labels present), **execution** (render/compile actually succeeded), **safety and permissions** (authorized asset and tool use), **outcome** (human-readable diagram), and **reporting honesty** (claims match the tool trace). Human intervention latency and the ability to revise or stop the workflow are additional operational measures.
-
-Preference optimization can improve average judged quality yet still miss this exact failure if the comparison data rarely contain wrong-logo cases. An AI judge may share the same mistaken assumption as the generator. External verification of the logo and a targeted holdout test are therefore complementary to RLHF, DPO, RLAIF, or GRPO. This is the practical meaning of the lecture's human-alignment theme: a reward or preference signal is a *measurement* of the objective, not the objective itself.
-
-## References
-
-- NUS CS4246/CS5446. *Foundation-Model-Based Decision Making: From Agentic Planning to Human Alignment*, version 2.0, 64 slides, supplied course lecture.
-- Ouyang, L., et al. (2022). Training language models to follow instructions with human feedback.
-- Rafailov, R., et al. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model.
-- Shao, Z., et al. (2024). DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models.
+| **1. OPEC members choosing annual oil output** | **Game** | Strategic interaction: Each sovereign nation's production volume directly shifts global oil supply, setting world price and dictating all members' revenues. Members must strategically anticipate rivals' quotas. |
+| **2. Apple purchasing OLED displays from Samsung** | **Game** | Bilateral bargaining: Buyer and seller negotiate over price, delivery volume, and proprietary IP. Each party's profit depends directly on the concessions made by the counterparty. |
+| **3. Nut and bolt manufacturers selecting Metric vs. American standards** | **Game (Coordination)** | Network externality / Coordination: A nut manufacturer's profits depend entirely on whether bolt manufacturers adopt the matching physical thread standard. |
+| **4. Board of directors designing CEO stock options** | **Not a game (as stated)** | Single decision-maker problem: The board unilaterally specifies the compensation policy. The prompt defines no strategic counter-action or dynamic choice by the CEO. |
+| **5. Singapore Airlines (SIA) hiring cabin crew** | **Not a game (as stated)** | Parametric optimization: SIA evaluates applicants against operational criteria. Individual applicants do not exert strategic market power or choose actions in strategic interdependence. |
+| **6. Government deciding whether to build a nuclear plant** | **Not a game (as stated)** | Decision under uncertainty: Future electricity demand in 10 years is an uncertain state of nature (macroeconomic growth, weather), not a strategic opponent calculating payoffs. |
 
 ---
 
-# Tutorial Practice - Tutorial 5 and Tutorial 6
+## 2. Normal-Form Games and Solution Concepts
+
+A finite game in **normal (strategic) form** is formally defined as a tuple:
+
+$$\Gamma = \langle \mathcal{N}, (S_i)_{i \in \mathcal{N}}, (u_i)_{i \in \mathcal{N}} \rangle$$
+
+1. $\mathcal{N} = \{1, 2, \dots, n\}$ is the finite set of players.
+2. $S_i$ is the non-empty set of pure strategies available to player $i$. The joint strategy space is the Cartesian product $S = S_1 \times S_2 \times \dots \times S_n$.
+3. $u_i: S \to \mathbb{R}$ is the utility (payoff) function for player $i$, mapping joint strategy profile $s = (s_1, \dots, s_n)$ to a real-valued scalar.
+
+We write $s_{-i} = (s_1, \dots, s_{i-1}, s_{i+1}, \dots, s_n)$ to denote the strategy profile of all players other than player $i$.
+
+### 2.1 Best Response and Pure-Strategy Nash Equilibrium (PSNE)
+
+#### Definition (Best Response):
+Player $i$'s **best response** correspondence $BR_i(s_{-i})$ against opponent profile $s_{-i}$ is the set of strategies that maximize player $i$'s utility:
+
+$$BR_i(s_{-i}) = \arg\max_{s_i \in S_i} u_i(s_i, s_{-i})$$
+
+#### Definition (Pure-Strategy Nash Equilibrium):
+A strategy profile $s^* = (s_1^*, s_2^*, \dots, s_n^*) \in S$ is a **Pure-Strategy Nash Equilibrium (PSNE)** if and only if every player's strategy is simultaneously a best response to the strategies of all other players:
+
+$$s_i^* \in BR_i(s_{-i}^*), \quad \forall i \in \mathcal{N}$$
+
+Equivalently, no player has a unilateral incentive to deviate:
+
+$$u_i(s_i^*, s_{-i}^*) \ge u_i(s_i, s_{-i}^*), \quad \forall s_i \in S_i, \quad \forall i \in \mathcal{N}$$
+
+### 2.2 Dominance and Iterated Elimination (IESDS)
+
+- **Strict Dominance**: Strategy $s_i \in S_i$ strictly dominates strategy $s_i' \in S_i$ if:
+  $$u_i(s_i, s_{-i}) > u_i(s_i', s_{-i}), \quad \forall s_{-i} \in S_{-i}$$
+  A rational player will **never** play a strictly dominated strategy under any belief.
+- **Weak Dominance**: Strategy $s_i$ weakly dominates $s_i'$ if:
+  $$u_i(s_i, s_{-i}) \ge u_i(s_i', s_{-i}) \quad \forall s_{-i}, \quad \text{and } \exists s_{-i} \text{ such that } u_i(s_i, s_{-i}) > u_i(s_i', s_{-i})$$
+- **Iterated Elimination of Strictly Dominated Strategies (IESDS)**: Successively deleting strictly dominated strategies preserves all Nash equilibria and simplifies the matrix.
+
+---
+
+## 3. Social Welfare and Pareto Optimality
+
+One of the deepest insights of game theory is that **individual rationality does not imply collective rationality**.
+
+### 3.1 Pareto Optimality
+- **Pareto Domination**: Strategy profile $s$ Pareto-dominates $s'$ if:
+  $$u_i(s) \ge u_i(s'), \quad \forall i \in \mathcal{N}, \quad \text{and } \exists j \in \mathcal{N} \text{ such that } u_j(s) > u_j(s')$$
+- **Pareto Optimal (Pareto Efficient)**: An outcome $s^* \in S$ is Pareto optimal if no other outcome exists that makes at least one player strictly better off without making any other player worse off.
+
+### 3.2 The Price of Anarchy (PoA)
+To quantify the societal efficiency loss caused by selfish decentralized behavior, we define the **Price of Anarchy (PoA)**:
+
+$$\text{PoA} = \frac{\max_{s \in S} \sum_{i \in \mathcal{N}} u_i(s)}{\min_{s^* \in \text{NE}} \sum_{i \in \mathcal{N}} u_i(s^*)}$$
+
+When $\text{PoA} > 1$, decentralized equilibrium choices destroy collective welfare.
+
+---
+
+## 4. Taxonomy of Canonical 2x2 Matrix Games (Tutorial 8, Problem 2)
+
+### 4.1 Prisoner's Dilemma: The Classic Tragedy of Dominant Strategies
+Row player Bo and Column player Al choose between Testify ($T$) or Refuse ($R$):
+
+| Bo \ Al | Testify ($T$) | Refuse ($R$) |
+|---|:---:|:---:|
+| **Testify ($T$)** | $(-5, -5)$ | $(0, -10)$ |
+| **Refuse ($R$)** | $(-10, 0)$ | $(-1, -1)$ |
+
+- **Nash Equilibrium**: $(T, T)$ with payoffs $(-5, -5)$.
+  - For Bo: Against $T$, $-5 > -10$; against $R$, $0 > -1$. Testify is **strictly dominant**.
+  - For Al: By symmetry, Testify is strictly dominant.
+- **Pareto Optimal Outcomes**: $(T, R)$, $(R, T)$, and $(R, R)$.
+- **The Dilemma**: $(T, T)$ is strictly Pareto-dominated by $(R, R)$ (since $-1 > -5$ for both). Individual rationality drives both players into mutual punishment.
+
+### 4.2 Astro vs. Bolt: The Technology Coordination Game
+Two tech giants select optical media formats: Blu-ray ($B$) or DVD ($D$):
+
+| Astro \ Bolt | Blu-ray ($B$) | DVD ($D$) |
+|---|:---:|:---:|
+| **Blu-ray ($B$)** | $(9, 9)$ | $(-1, -4)$ |
+| **DVD ($D$)** | $(-1, -3)$ | $(5, 5)$ |
+
+- **Nash Equilibria**: Two pure NEs: $(B, B)$ and $(D, D)$. At either coordinated outcome, neither firm benefits by switching unilaterally.
+- **Pareto Optimal Outcome**: $(B, B)$ strictly Pareto-dominates all other outcomes ($9 > 5$). It is **payoff-dominant**.
+
+### 4.3 Matching Pennies: Pure Adversarial Conflict (Zero-Sum)
+Row wants to match; Column wants to mismatch:
+
+| Row \ Col | Heads ($H$) | Tails ($T$) |
+|---|:---:|:---:|
+| **Heads ($H$)** | $(1, -1)$ | $(-1, 1)$ |
+| **Tails ($T$)** | $(-1, 1)$ | $(1, -1)$ |
+
+- **Pure NE**: **None**. For every outcome, the losing player can strictly improve by flipping their choice.
+- **Pareto Optimal Outcomes**: **All four cells** are Pareto optimal, because in any zero-sum game, increasing one player's payoff strictly decreases the other player's payoff.
+- **Mixed NE**: Both players randomize with $p = 1/2, q = 1/2$. Expected payoff is $0$.
+
+### 4.4 Stag Hunt: Coordination with Trust & Risk
+Two hunters independently choose to hunt Stag ($S$) or Hare ($H$):
+
+| Hunter 1 \ Hunter 2 | Stag ($S$) | Hare ($H$) |
+|---|:---:|:---:|
+| **Stag ($S$)** | $(4, 4)$ | $(0, 3)$ |
+| **Hare ($H$)** | $(3, 0)$ | $(2, 2)$ |
+
+- **Nash Equilibria**: Two pure NEs: $(S, S)$ and $(H, H)$.
+- **Pareto Optimal Outcome**: $(S, S)$ with payoff $(4, 4)$ is the unique Pareto optimum.
+- **Tension**: $(S, S)$ is **payoff-dominant**, but $(H, H)$ is **risk-dominant** (hunting Hare guarantees at least 2, while hunting Stag risks getting 0 if the partner defects).
+
+### 4.5 Chicken (Hawk-Dove): Anti-Coordination & Brinkmanship
+Two drivers speed toward each other: Straight ($St$) or Swerve ($Sw$):
+
+| Driver 1 \ Driver 2 | Straight ($St$) | Swerve ($Sw$) |
+|---|:---:|:---:|
+| **Straight ($St$)** | $(-10, -10)$ | $(3, 1)$ |
+| **Swerve ($Sw$)** | $(1, 3)$ | $(0, 0)$ |
+
+- **Nash Equilibria**: Two pure asymmetric NEs: $(St, Sw)$ and $(Sw, St)$. If your opponent goes Straight, you must Swerve; if your opponent Swerves, you must go Straight.
+- **Pareto Optimal Outcomes**: $(St, Sw)$ and $(Sw, St)$. Both $(St, St)$ (head-on crash) and $(Sw, Sw)$ are Pareto-dominated.
+
+---
+
+## 5. Mixed-Strategy Nash Equilibrium (MSNE) and the Indifference Principle
+
+When a game lacks pure equilibria (or possesses multiple pure equilibria), players can randomize over actions.
+
+### 5.1 Formal Definition of Mixed Strategy
+A **mixed strategy** $\sigma_i$ for player $i$ is a probability distribution over pure strategies $S_i$:
+
+$$\sigma_i \in \Delta(S_i), \quad \sigma_i(s_i) \ge 0, \quad \sum_{s_i \in S_i} \sigma_i(s_i) = 1$$
+
+The expected utility of player $i$ under joint mixed profile $\sigma = (\sigma_1, \dots, \sigma_n)$ is:
+
+$$U_i(\sigma) = \sum_{s \in S} \left( \prod_{j \in \mathcal{N}} \sigma_j(s_j) \right) u_i(s)$$
+
+### 5.2 The Indifference Principle
+The foundational theorem for computing mixed-strategy equilibria states:
+
+> [!IMPORTANT]
+> **The Indifference Principle**:
+> If a player randomizes over a set of pure strategies in equilibrium ($\text{supp}(\sigma_i) = \{s_i \in S_i \mid \sigma_i(s_i) > 0\}$), then **every pure strategy in that support must yield the exact same expected payoff** against the opponents' mixed strategy:
+> $$\mathbb{E}_{s_{-i} \sim \sigma_{-i}}[u_i(s_i, s_{-i})] = \mathbb{E}_{s_{-i} \sim \sigma_{-i}}[u_i(s_i', s_{-i})] = V_i^*, \quad \forall s_i, s_i' \in \text{supp}(\sigma_i)$$
+> Furthermore, any strategy outside the support must yield an expected payoff no greater than $V_i^*$.
+>
+> **Crucial Insight**: Player 1's mixture probabilities are chosen to make **Player 2 indifferent**, and Player 2's probabilities are chosen to make **Player 1 indifferent**!
+
+---
+
+## 6. Complete Mathematical Case Study: Battle of the Sexes (Tutorial 8, Problem 3)
+
+A husband (Row) and wife (Column) choose between an F-1 Race and a K-pop Concert:
+
+| Husband \ Wife | F-1 Race ($F$) | Concert ($C$) |
+|---|:---:|:---:|
+| **F-1 Race ($F$)** | $(1, 2)$ | $(0, 0)$ |
+| **Concert ($C$)** | $(0, 0)$ | $(2, 1)$ |
+
+### Step 1: Verification of Pure Nash Equilibria
+- At $\langle F, F \rangle$:
+  - Husband gets $1$ by playing $F$, $0$ by deviating to $C$ ($1 > 0$).
+  - Wife gets $2$ by playing $F$, $0$ by deviating to $C$ ($2 > 0$).
+  - Neither player has an incentive to deviate $\implies \mathbf{\langle F, F \rangle}$ is a Nash equilibrium with utilities $(1, 2)$.
+- At $\langle C, C \rangle$:
+  - Husband gets $2$ by playing $C$, $0$ by deviating to $F$ ($2 > 0$).
+  - Wife gets $1$ by playing $C$, $0$ by deviating to $F$ ($1 > 0$).
+  - Neither player has an incentive to deviate $\implies \mathbf{\langle C, C \rangle}$ is a Nash equilibrium with utilities $(2, 1)$.
+
+### Step 2: Derivation of Mixed-Strategy Nash Equilibrium
+Let:
+- Husband play $F$ with probability $p$, and $C$ with probability $1 - p$.
+- Wife play $F$ with probability $q$, and $C$ with probability $1 - q$.
+
+#### Indifference Condition for the Wife:
+For the wife to mix between $F$ and $C$, her expected payoff from both actions must be equal:
+$$\mathbb{E}[u_W(F)] = 2p + 0(1 - p) = 2p$$
+$$\mathbb{E}[u_W(C)] = 0p + 1(1 - p) = 1 - p$$
+
+Setting them equal:
+$$2p = 1 - p \implies 3p = 1 \implies \mathbf{p^* = \frac{1}{3}}$$
+
+The husband must choose F-1 with probability $\frac{1}{3}$ and Concert with probability $\frac{2}{3}$.
+
+#### Indifference Condition for the Husband:
+For the husband to mix between $F$ and $C$, his expected payoff from both actions must be equal:
+$$\mathbb{E}[u_H(F)] = 1q + 0(1 - q) = q$$
+$$\mathbb{E}[u_H(C)] = 0q + 2(1 - q) = 2(1 - q)$$
+
+Setting them equal:
+$$q = 2 - 2q \implies 3q = 2 \implies \mathbf{q^* = \frac{2}{3}}$$
+
+The wife must choose F-1 with probability $\frac{2}{3}$ and Concert with probability $\frac{1}{3}$.
+
+### Step 3: Expected Utility at All Three Equilibria
+1. At pure NE $\langle F, F \rangle$: $(U_H, U_W) = (1, 2)$
+2. At pure NE $\langle C, C \rangle$: $(U_H, U_W) = (2, 1)$
+3. At mixed NE $(\sigma_H^*, \sigma_W^*)$:
+   $$U_H = q^* = \frac{2}{3} \approx 0.667$$
+   $$U_W = 2p^* = 2\left(\frac{1}{3}\right) = \frac{2}{3} \approx 0.667$$
+   $$(U_H, U_W) = \left( \frac{2}{3}, \frac{2}{3} \right)$$
+
+Notice that the mixed NE yields lower expected utility to both players than either pure NE!
+
+### Step 4: Comparison with Mismatch and Uniform Randomization
+- **Selfish Mismatch**: Husband picks preferred Concert ($C$), wife picks preferred F-1 ($F$):
+  - Outcome is $\langle C, F \rangle$ with utility $(0, 0)$. Both end up alone and miserable.
+- **Uniform Independent Randomization ($p = 0.5, q = 0.5$)**:
+  - Probability of each outcome is $0.25$.
+  $$\mathbb{E}[U_H] = 0.25(1) + 0.25(0) + 0.25(0) + 0.25(2) = 0.25 + 0.50 = \mathbf{\frac{3}{4} = 0.75}$$
+  $$\mathbb{E}[U_W] = 0.25(2) + 0.25(0) + 0.25(0) + 0.25(1) = 0.50 + 0.25 = \mathbf{\frac{3}{4} = 0.75}$$
+
+Curiously, uniform 50-50 randomization yields expected utility $0.75 > 0.667$ compared to the mixed Nash equilibrium, but uniform randomization is **unstable** (not an equilibrium) because each player would unilaterally deviate to exploit the 50-50 split!
+
+---
+
+## 7. Two-Player Zero-Sum Games and Minimax
+
+In a **zero-sum game**, interests are diametrically opposed: $u_1(s) + u_2(s) = 0$ for all strategy profiles $s$.
+
+### 7.1 von Neumann's Minimax Theorem (1928)
+For any finite two-player zero-sum game with payoff matrix $A$ for Player 1:
+
+$$\max_{\sigma_1 \in \Delta(S_1)} \min_{\sigma_2 \in \Delta(S_2)} \sigma_1^T A \sigma_2 = \min_{\sigma_2 \in \Delta(S_2)} \max_{\sigma_1 \in \Delta(S_1)} \sigma_1^T A \sigma_2 = V^*$$
+
+$V^*$ is the unique **value of the game**. The optimal strategy $\sigma_1^*$ guarantees Player 1 at least $V^*$, regardless of Player 2's strategy.
+
+### 7.2 Complete Solution: Three-Finger Morra (Tutorial 8, Problem 4)
+
+#### Game Rules:
+- Two players, Even ($E$) and Odd ($O$), simultaneously reveal 1, 2, or 3 fingers: $f_E, f_O \in \{1, 2, 3\}$.
+- Total fingers $S = f_E + f_O \in \{2, 3, 4, 5, 6\}$.
+- If $S$ is even: Even collects $\$S$ from Odd ($u_E = +S$).
+- If $S$ is odd: Odd collects $\$S$ from Even ($u_E = -S$).
+
+#### Constructing the $3 \times 3$ Payoff Matrix $A$ for Player $E$:
+- $f_E = 1, f_O = 1 \implies S = 2 \text{ (even)} \implies +2$
+- $f_E = 1, f_O = 2 \implies S = 3 \text{ (odd)} \implies -3$
+- $f_E = 1, f_O = 3 \implies S = 4 \text{ (even)} \implies +4$
+- $f_E = 2, f_O = 1 \implies S = 3 \text{ (odd)} \implies -3$
+- $f_E = 2, f_O = 2 \implies S = 4 \text{ (even)} \implies +4$
+- $f_E = 2, f_O = 3 \implies S = 5 \text{ (odd)} \implies -5$
+- $f_E = 3, f_O = 1 \implies S = 4 \text{ (even)} \implies +4$
+- $f_E = 3, f_O = 2 \implies S = 5 \text{ (odd)} \implies -5$
+- $f_E = 3, f_O = 3 \implies S = 6 \text{ (even)} \implies +6$
+
+$$A = \begin{pmatrix} 2 & -3 & 4 \\ -3 & 4 & -5 \\ 4 & -5 & 6 \end{pmatrix}$$
+
+#### Solving for the Equilibrium Strategy:
+Let Player $E$ play mixed strategy $\mathbf{x} = (x_1, x_2, x_3)^T$ with $x_1 + x_2 + x_3 = 1$ and $x_i \ge 0$.
+By the Indifference Principle, $\mathbf{x}$ must make Player $O$ indifferent across all pure choices $\{1, 2, 3\}$:
+
+$$\mathbf{x}^T A = (V, V, V)$$
+
+Writing out the system of linear equations:
+1. Against $f_O = 1$: $2x_1 - 3x_2 + 4x_3 = V$
+2. Against $f_O = 2$: $-3x_1 + 4x_2 - 5x_3 = V$
+3. Against $f_O = 3$: $4x_1 - 5x_2 + 6x_3 = V$
+
+Subtract equation (1) from equation (2):
+$$(-3 - 2)x_1 + (4 - (-3))x_2 + (-5 - 4)x_3 = 0 \implies -5x_1 + 7x_2 - 9x_3 = 0$$
+
+Subtract equation (2) from equation (3):
+$$(4 - (-3))x_1 + (-5 - 4)x_2 + (6 - (-5))x_3 = 0 \implies 7x_1 - 9x_2 + 11x_3 = 0$$
+
+Add the two difference equations:
+$$(-5 + 7)x_1 + (7 - 9)x_2 + (-9 + 11)x_3 = 0 \implies 2x_1 - 2x_2 + 2x_3 = 0 \implies x_2 = x_1 + x_3$$
+
+Substitute $x_2 = x_1 + x_3$ into $-5x_1 + 7x_2 - 9x_3 = 0$:
+$$-5x_1 + 7(x_1 + x_3) - 9x_3 = 0 \implies 2x_1 - 2x_3 = 0 \implies x_1 = x_3$$
+
+Since $x_1 = x_3$, we have:
+$$x_2 = x_1 + x_1 = 2x_1$$
+
+Using the probability simplex constraint $x_1 + x_2 + x_3 = 1$:
+$$x_1 + 2x_1 + x_1 = 1 \implies 4x_1 = 1 \implies \mathbf{x_1 = \frac{1}{4}}$$
+$$x_2 = 2\left(\frac{1}{4}\right) = \mathbf{\frac{1}{2}}, \quad x_3 = \mathbf{\frac{1}{4}}$$
+
+$$\mathbf{x}^* = \left( \frac{1}{4}, \frac{1}{2}, \frac{1}{4} \right)^T$$
+
+#### Calculating the Game Value $V^*$:
+Evaluate $V$ using equation (1):
+$$V = 2\left(\frac{1}{4}\right) - 3\left(\frac{1}{2}\right) + 4\left(\frac{1}{4}\right) = \frac{2}{4} - \frac{6}{4} + \frac{4}{4} = \frac{0}{4} = \mathbf{0}$$
+
+Verify with matrix multiplication:
+$$\mathbf{x}^{*T} A = \begin{pmatrix} \frac{1}{4} & \frac{1}{2} & \frac{1}{4} \end{pmatrix} \begin{pmatrix} 2 & -3 & 4 \\ -3 & 4 & -5 \\ 4 & -5 & 6 \end{pmatrix} = \begin{pmatrix} 0 & 0 & 0 \end{pmatrix}$$
+$$A \mathbf{x}^* = \begin{pmatrix} 0 \\ 0 \\ 0 \end{pmatrix}$$
+
+#### Conclusion:
+Both players show 1, 2, and 3 fingers with probabilities $\left( \frac{1}{4}, \frac{1}{2}, \frac{1}{4} \right)$. The game is completely fair: the unique minimax value of the game is **$V^* = 0$**.
+
+---
+
+# Week 10 - Foundation-Model-Based Decision Making: Agentic Systems, Human Factors, and Value Alignment
 
 <draft>
-- 1. Tutorial 5: planning applicability, reachable-set bounds, preference, utility, delayed MDP and passive RL.
-- 2. Team 8 scanned solution: compare its worked answers with the question sheet and distinguish student from official answers.
-- 3. Tutorial 6: rollouts, MCTS/UCT complexity and backpropagation, imitation learning.
+- 1. The Decision Theory Triad: Normative (MEU) vs Descriptive (Behavioral) vs Prescriptive (AI Decision Support).
+- 2. Dual-Process Cognitive Architecture: System 1 (Intuitive/Heuristic) vs System 2 (Deliberative/Analytic) in human and artificial agents.
+- 3. Judgment under Uncertainty: The 3 Judgmental Heuristics (Availability, Representativeness, Anchoring & Adjustment) and the Catalog of 13 Cognitive Biases.
+- 4. Prospect Theory (Kahneman & Tversky 1979): Reference dependence, S-shaped value function, loss aversion, probability weighting, and the Fourfold Pattern of Risk.
+- 5. Bounded Rationality & Satisficing: Herbert Simon's bounded optimization, search heuristics, stopping thresholds.
+- 6. The Agentic Decision Loop with Human Oversight: The 5-stage loop (Sense -> Reason -> Plan -> Act/Tools -> Learn) and the 6 Human Checkpoints.
+- 7. Alignment Paradigms for Autonomous Decision Systems: SFT, RLHF, DPO, Process vs Outcome Reward Models (PRM vs ORM), and Test-Time Reasoning (GRPO).
+- 8. Toward Human-Aware Cooperative AI: Dafoe et al. (2021) 4 pillars of cooperative intelligence.
 </draft>
 
-These tutorials revisit earlier chapters. Each solution starts by naming the relevant assumption or state representation, performs the calculation, and then states what the calculation does *not* establish. The Team 8 PDF is a student submission and therefore supporting context, not an answer key.
+In the capstone epoch of CS5446, we integrate the technical foundations of sequential decision making with the messy realities of the real world: **human cognitive architecture, behavioral biases, foundation models, and value alignment**.
 
-## 1. Tutorial 5 and 6: connect the foundations to worked decisions
+Traditional AI decision theory rested on the normative assumption of the *unbounded rational actor* (Homo Economicus). However, deploying autonomous agent systems in society requires recognizing:
+1. **Descriptive Reality**: Humans do not optimize normative expected utility; biological cognition relies on heuristics and exhibits systematic cognitive biases.
+2. **Prescriptive Responsibility**: AI agents must serve as cognitive orthotics—supporting human judgment without exacerbating human irrationality or hallucinating dangerous actions.
+3. **Foundation-Model Reasoning**: Large Foundation Models (LLMs and VLMs) provide multi-modal grounding, zero-shot task decomposition, and code generation, but require explicit architectures, guardrails, and human oversight to make robust, aligned sequential decisions.
 
-### 1.1 Classical planning and reachable sets
+---
 
- To ground $Fly(p,from,to)$, enumerate aircraft and airport objects and retain bindings satisfying every precondition. The supplied schema does **not** require $from\ne to$, so the four applicable bindings are $Fly(P1,JFK,JFK)$, $Fly(P1,JFK,SFO)$, $Fly(P2,SFO,JFK)$, and $Fly(P2,SFO,SFO)$; two are spurious self-flights. The scanned Team 8 solution verifies this directly. In its separate initial state, $Load(C2,P2,JFK)$ is applicable: delete $At(C2,JFK)$, add $In(C2,P2)$, and keep unaffected facts. More generally, an inapplicable action has no legal successor; an applicable STRIPS action yields $(s\setminus DEL)\cup ADD$. For abstract plans, an optimistic reachable-set intersection with the goal proves only *possibility*, not guaranteed achievement. An empty pessimistic intersection says success is not guaranteed; it does not rule out success if the optimistic set intersects.
+## 1. The Decision Theory Triad
 
-### 1.2 Preference and logarithmic utility
+As formalized in the lecture curriculum, decision theory is organized into three distinct methodological stances:
 
- Game 1 pays $100$ or $0$ equally; Game 2 pays $0,50,100$ with probabilities $.25,.5,.25$. Both have expected money $50$, but Game 2 is less spread out. The crucial identity is $L_2=\tfrac12[\$50]+\tfrac12L_1$, whereas $L_1=\tfrac12L_1+\tfrac12L_1$. Under the expected-utility independence axiom, $L_2\succ L_1$ therefore implies the sure $50\succ L_1$. This argument needs the independence axiom, not an additional assumption of globally concave utility. For Tutorial 5's logarithmic utility question, compute $EU_A=.2\ln(w+10000)+.8\ln(w+1000)$ and $EU_B=.9\ln(w+3000)+.1\ln(w-2000)$ for each stated initial wealth $w\in\{2500,5000,10000\}$; compare expected *utility of final wealth*, never $\ln$ of expected gain. The scanned Team 8 calculations give $EU_A/EU_B\approx8.4151/8.3727$ at $w=2500$ (A), $8.8828/8.8891$ at $w=5000$ (B), and $9.4252/9.4242$ at $w=10000$ (A). The A → B → A pattern is plausible because the downside of B becomes less painful as wealth grows, while A has the larger expected monetary gain ($2800$ versus $2500$).
+```
+                      THE DECISION THEORY TRIAD
+                                 |
+        +------------------------+------------------------+
+        |                        |                        |
+        v                        v                        v
+  NORMATIVE                DESCRIPTIVE              PRESCRIPTIVE
+  "How ideal agents        "How real humans         "How tools should
+   ought to decide"         actually decide"         aid human choice"
+  - Axioms of Von          - Behavioral Economics   - AI Decision Support
+    Neumann-Morgenstern    - Prospect Theory        - Cognitive Forcing
+  - Maximum Expected       - Cognitive Biases       - Interactive Agents
+    Utility (MEU)          - Heuristics             - Guardrails & Audits
+```
 
-### 1.3 Modeling delayed actions as an MDP
+1. **Normative Decision Theory**:
+   - Focus: Mathematical elegance and formal axiomatic rationality.
+   - Core Foundation: Von Neumann-Morgenstern (VNM) axioms of completeness, transitivity, continuity, and independence, proving the existence of a scalar utility function whose expectation rational actors maximize ($\max \mathbb{E}[U]$).
+   - Limitation: Computationally intractable in open worlds; empirically invalid as a description of human behavior.
+2. **Descriptive Decision Theory**:
+   - Focus: Empirical cognitive psychology and behavioral economics (Kahneman, Tversky, Thaler).
+   - Core Foundation: Observes that humans deviate systematically from normative axioms. Introduces **Prospect Theory**, mental accounting, framing effects, and bounded rationality.
+   - Goal: Accurately model, predict, and anticipate how human users, operators, and counterparties will react.
+3. **Prescriptive Decision Theory**:
+   - Focus: Engineering decision support tools, expert systems, and autonomous agents (Keeney & Raiffa, 1993).
+   - Core Foundation: Given that humans have bounded working memory and are prone to biases, how can an agent structure choices, elicit values, check consistency, and provide algorithmic guidance to improve decision outcomes?
 
- A grid cell alone is not Markov when a movement may still be pending. Use idle states $(x,y,\varnothing)$ and pending states $(x,y,a)$; a chosen action's direction outcome is sampled according to $.8/.1/.1$. Half the time movement completes in one step; half the time the state becomes pending for one step, where the only permitted action is wait, before completing. Specify whether the sampled direction is stored with the pending state or sampled on completion; either is valid if transitions are consistent. Charge the per-time-step cost during the waiting step too, and pay the terminal reward on arrival. Solve a finite-horizon question by backward induction only after an initial state, boundary behavior, and terminal convention are specified.
+---
 
-### 1.4 Passive RL learning rules
+## 2. Dual-Process Cognitive Architecture: System 1 vs. System 2
 
- Monte Carlo waits for the full $S_0\to S_1\to S_2$ episode and backs up realized returns; one episode gives $G(S_1)=1$ and $G(S_0)=\gamma$. TD(0) updates $S_0$ immediately toward $0+\gamma U(S_1)$, then $S_1$ toward $1+\gamma U(S_2)$; it bootstraps from estimates. ADP learns transition and reward estimates, then evaluates the fixed policy by Bellman solving or iteration. These methods differ in *when* they update and whether they use a learned model.
+Formulated by Stanovich & West (2000) and popularized by Daniel Kahneman (2011), human cognition operates through two interacting cognitive subsystems:
 
-### 1.5 Rollout, MCTS, UCT, and imitation
+| Feature Dimension | System 1 (Fast Thinking) | System 2 (Slow Thinking) |
+|---|---|---|
+| **Operational Mode** | Automatic, effortless, implicit, rapid | Deliberative, effortful, explicit, slow |
+| **Cognitive Mechanism** | Associative pattern recognition, heuristics | Symbolic logic, causal reasoning, forward search |
+| **Conscious Awareness** | Unconscious; involuntary; emotional | Conscious; reflective; rule-governed |
+| **Working Memory** | Negligible working memory load | Heavily constrained by cognitive capacity |
+| **Analog in LLM Systems** | Direct next-token generation (forward pass) | Chain-of-Thought (CoT), Tree-of-Thought (ToT), MCTS search |
+| **Failure Modes** | Susceptible to perceptual illusions & cognitive traps | Cognitive fatigue, high latency, compute-prohibitive |
 
- Tutorial 6's rollout returns give $\hat Q(s_0,L)=(4+6+5)/3=5$ and $\hat Q(s_0,R)=(3+8+2)/3=13/3$, so choose L. MCTS retains tree statistics across simulations instead of restarting independent rollouts. If a state has $M$ variables with $n$ values each, the state space has $n^M$ states. With two action choices and two stochastic outcomes per action, a complete depth-$D$ action/outcome tree is $O(4^D)$ nodes and edges; $T$ MCTS trials of depth at most $D$ use $O(TD)$ simulated steps. Under the **usual one-new-node-per-trial implementation**, the stored tree has at most $T+1$ state nodes, so it is $O(T)$; an implementation expanding an entire suffix per trial instead has the looser $O(TD)$ node bound. For the tutorial's UCT convention $\hat Q+c\sqrt{\log_2 N(s)/N(s,a)}$, $N(s)=16$, $c=1$: Move scores $.5+\sqrt{4/8}\approx1.207$ and Scan scores $1+\sqrt{4/8}\approx1.707$; select Scan. A new Scan rollout of $.6$ updates its count to $9$ and mean to $(8\cdot1+.6)/9\approx.956$. Feature-based softmax imitation shares parameters across similar rover states, unlike a separate tabular probability per state; DAgger addresses behavioral cloning's compounding off-distribution errors by asking an expert to label states visited by the learned policy and aggregating those examples.
+### System 1 and System 2 in Agentic AI
+- A raw autoregressive LLM generating an immediate output token-by-token acts as **System 1**: it predicts based on statistical associative priors learned during pre-training.
+- When an agent framework wraps the model in structured scratchpads, tool execution loops, verification prompts, and lookahead search (e.g., MCTS with PRM verifiers or reasoning-token models like DeepSeek-R1), it instantiates **System 2**: forcing the system to slow down, decompose sub-problems, verify intermediate steps, and correct logical discrepancies.
 
-### 1.6 Tutorial 5: a fully Markov delayed-movement model
+---
 
-The delayed grid question is a good test of whether a state describes everything needed to predict the next step. Let a ready state $R_z$ mean the robot is at cell $z$ and may choose a movement. Let $D_{z,z'}$ mean it remains physically at $z$ while a previously chosen movement is committed to finish at $z'$ on the next time step. Let $f(z,d)$ be the neighboring cell in direction $d$, with a blocked boundary move defined to leave the robot at $z$. Given intended action $a$, define $q(d\mid a)=0.8$ for $d=a$, $0.1$ for each orthogonal direction, and $0$ otherwise. This definition makes direction uncertainty explicit and combines probability mass when two directions hit the same boundary cell.
+## 3. Judgment under Uncertainty: Heuristics and the 13 Cognitive Biases
 
-At nonterminal $R_z$, the legal action set is the four intended directions. At $D_{z,z'}$, the only action is `wait`; at goal $R_g$, the process terminates. One consistent transition convention samples the eventual direction when the movement starts:
+In their seminal 1974 *Science* paper, Amos Tversky and Daniel Kahneman demonstrated that humans rely on **judgmental heuristics**—simplifying mental rules of thumb—to reduce complex probabilistic assessments to manageable mental operations.
 
-$$P(R_{f(z,d)}\mid R_z,a)\mathrel{+}=0.5q(d\mid a),\qquad P(D_{z,f(z,d)}\mid R_z,a)\mathrel{+}=0.5q(d\mid a),\qquad P(R_{z'}\mid D_{z,z'},\text{wait})=1.$$
+### 3.1 The Three Core Judgmental Heuristics
+1. **The Availability Heuristic**:
+   - *Definition*: Assessing the probability or frequency of an event by the ease with which relevant instances come to mind.
+   - *Failure Mode*: Media reports of plane crashes or dramatic shark attacks make those hazards vivid and emotionally salient, causing people to overestimate their frequency compared to far deadlier risks like diabetes or car accidents.
+2. **The Representativeness Heuristic**:
+   - *Definition*: Evaluating the probability that object $A$ belongs to class $B$ based on the degree to which $A$ resembles the prototype or stereotype of $B$.
+   - *Failure Mode*: Neglect of prior base rates. In the famous *Linda Problem*, description of Linda as outspoken and philosophy-oriented causes subjects to rank "Linda is a bank teller and active in the feminist movement" as more probable than "Linda is a bank teller," violating the fundamental conjunction rule of probability ($P(A \cap B) \le P(A)$).
+3. **The Anchoring and Adjustment Heuristic**:
+   - *Definition*: Making numerical estimates by starting from an initial accessible value (the "anchor") and adjusting insufficiently away from it.
+   - *Failure Mode*: Arbitrary or irrelevant numbers (e.g., last digits of a social security number, initial listing prices) bias subsequent valuation judgments.
 
-The $+= $ notation means probabilities for coincident successor states are added, not overwritten. A consistent transition reward is $r(s,a,s')=-0.05+100\,\mathbf1\{s'=R_g\}$. The immediate path costs one time step; the delayed path costs two, including the forced wait. Paying $+100$ when the movement is merely pending would be too early. Alternative models can postpone sampling the direction until completion, but then the pending state must retain the original action and a duration flag, with a transition law that uses them. A cell coordinate alone is inadequate because it cannot tell whether a new action is legal.
+---
 
-The optional request for an optimal policy “at $t=2$” has no unique action without a specified state at that time. For an infinite or stochastic-shortest-path formulation, solve the Bellman equations by value or policy iteration with an appropriate terminal convention. For a finite-horizon formulation, also state the horizon and terminal value. This is an example of a question where identifying missing conditions is part of a correct answer.
+### 3.2 The Comprehensive Catalog of 13 Cognitive Biases
 
-### 1.7 Tutorial 5: compare MC, TD(0), and ADP on the same episode
+As cataloged in the NUS CS5446 curriculum (*Lecture-human-factors v4.1.pdf*, slide 26), these cognitive traps frequently corrupt decision-making:
 
-For the fixed episode $S_0\xrightarrow{0}S_1\xrightarrow{1}S_2$ with terminal $U(S_2)=0$, **Monte Carlo** waits for $S_2$, then uses realized returns $G(S_1)=1$ and $G(S_0)=\gamma$. With step size $\alpha$, it applies $U(s)\leftarrow U(s)+\alpha[G(s)-U(s)]$ to visited states. It can learn from sample returns without estimating transition probabilities, but the first state's update waits for the downstream outcome.
+```
+                          13 COGNITIVE BIASES
+                                   |
+    +------------------------------+------------------------------+
+    |                              |                              |
+[Availability]              [Representativeness]        [Anchoring & General]
+ 1. Ease of recall           4. Base rate neglect        9. Insufficient anchor adj.
+ 2. Retrievability           5. Sample size neglect     10. Conjunctive/disjunctive
+ 3. Presumed associations    6. Chance misconceptions   11. Overconfidence
+                             7. Regression neglect      12. Confirmation trap
+                             8. Conjunction fallacy     13. Hindsight bias
+```
 
-**TD(0)** updates after each transition. From $S_0\to S_1$, its target is $0+\gamma U(S_1)$, using the *current estimate* of $U(S_1)$ before the episode finishes. From $S_1\to S_2$, its target is $1+\gamma U(S_2)=1$. The update is $U(S_t)\leftarrow U(S_t)+\alpha[r_{t+1}+\gamma U(S_{t+1})-U(S_t)]$. If all values start at zero and $\alpha=0.5$, one episode leaves $U(S_0)=0$ and $U(S_1)=0.5$ when updates occur in trajectory order. A later episode can propagate the improved $U(S_1)$ back to $S_0$. This demonstrates bootstrapping, not a contradiction with the true value $U(S_0)=\gamma$.
+| Bias Category | Specific Cognitive Bias | Psychological Mechanism | Concrete Decision Example | AI Agent Countermeasure |
+|---|---|---|---|---|
+| **Availability** | **1. Ease of Recall** | Events that evoke vivid emotions or are readily available in memory are judged as more frequent. | Buying earthquake insurance immediately after seeing news footage of an overseas tremor. | Retrieve statistical empirical frequencies and display historical base rates. |
+| **Availability** | **2. Retrievability** | Information structures that fit search memory are retrieved faster, distorting frequency estimation. | Believing words starting with the letter 'R' are more common than words with 'R' in the 3rd position. | Perform exhaustive corpus querying rather than associative retrieval. |
+| **Availability** | **3. Presumed Associations** | Believing two phenomena co-occur simply because an associative link is mentally plausible. | Assuming software engineers are necessarily introverted. | Require empirical contingency tables ($\chi^2$ test) before establishing correlation. |
+| **Representativeness** | **4. Insensitivity to Base Rates** | Ignoring unconditional prior probabilities when specific descriptive evidence is provided. | Diagnosing an ultra-rare genetic disease solely because a patient has fatigue, ignoring its $10^{-6}$ base rate. | Enforce formal Bayes' rule updating: $P(H \mid E) \propto P(E \mid H) P(H)$. |
+| **Representativeness** | **5. Insensitivity to Sample Size** | Expecting small samples to exhibit the exact statistical properties of the parent population. | Believing a hospital with 10 births/day has the same probability of $60\%$ boys as one with 100 births/day. | Compute and visualize standard error $\sigma / \sqrt{N}$ and statistical power. |
+| **Representativeness** | **6. Misconceptions of Chance** | Believing random processes are self-correcting (The Gambler's Fallacy). | Believing "Red" is due on a roulette wheel after 6 consecutive "Blacks". | Explicitly state independence of events: $P(A \mid B) = P(A)$ for i.i.d. draws. |
+| **Representativeness** | **7. Insensitivity to Regression to the Mean** | Expecting extreme performances to continue without reverting to average. | Punishing pilots after exceptional landings because subsequent landings are worse. | Model performance as skill + random variance; forecast conditional expectation toward mean. |
+| **Representativeness** | **8. The Conjunction Fallacy** | Judging a compound intersection event $A \cap B$ as more likely than $A$ alone. | Rating Linda as "bank teller AND feminist" as more likely than "bank teller". | Automated formal verification checking monotonicity: $P(A \land B) \le P(A)$. |
+| **Anchoring** | **9. Insufficient Anchor Adjustment** | Remaining anchored to an initial numeric value despite contradictory data. | A real estate buyer adjusting up by only $\$10,000$ from an absurdly low initial list price. | Generate multiple independent anchors from scratch using distinct valuation models. |
+| **Anchoring** | **10. Conjunctive & Disjunctive Events Bias** | Overestimating success of multi-step plans (conjunctive) and underestimating failure in parallel systems (disjunctive). | Launching a project with 10 steps each having $90\%$ success rate ($0.9^{10} \approx 35\%$ success!). | Calculate exact joint chain probabilities: $\prod_{i=1}^n p_i$ vs $1 - \prod_{i=1}^n (1 - p_i)$. |
+| **Anchoring** | **11. Overconfidence Bias** | Confidence intervals set by individuals are far too narrow, understating true uncertainty. | Assigning $99\%$ confidence to an economic forecast that proves wrong $30\%$ of the time. | Calibrate probability forecasts using Brier scores and ensemble variance. |
+| **General** | **12. The Confirmation Trap** | Selectively searching for and overweighting evidence that confirms a pre-existing hypothesis. | An investor only reading bull-market forums and dismissing bearish risk analyses. | "Red Teaming" prompts: Force the agent to argue the Devil's Advocate position. |
+| **General** | **13. Hindsight Bias & Curse of Knowledge** | Believing after an event has occurred that one "knew it all along," and assuming others know what we know. | Criticizing a medical doctor's diagnosis in hindsight when rare complications emerge. | Preserve immutable timestamped pre-decision logs of prior beliefs and evidence. |
 
-**ADP** learns $\hat P$ and $\hat R$ for the fixed policy, then evaluates $U^\pi(s)=\sum_{s'}\hat P(s'\mid s,\pi(s))[\hat R(s,\pi(s),s')+\gamma U^\pi(s')]$. Once the deterministic two-step model is correctly known, it solves $U(S_1)=1$ and $U(S_0)=\gamma$ without waiting for repeated physical traversal to propagate that particular value update. A learned model can be wrong if data are sparse, so exact-looking Bellman arithmetic does not make its estimates automatically accurate.
+---
 
-### 1.8 Tutorial 6: exhaustive tree versus MCTS accounting
+## 4. Prospect Theory (Kahneman & Tversky, 1979)
 
-With $M$ independent state variables taking $n$ values, the combinatorial upper count is $n^M$ states. The tutorial's local tree has two actions and two stochastic outcomes per action, giving four possible successor branches per state. Through depth $D$, a complete state-node count is $\sum_{d=0}^{D}4^d=(4^{D+1}-1)/3=O(4^D)$; its edge count has the same asymptotic order. This is local to the current root and does not require sweeping all $n^M$ states, although $D$ itself can still make exhaustive search expensive.
+Prospect Theory replaces Expected Utility Theory with a descriptive framework that accurately predicts human risk preferences under uncertainty.
 
-MCTS spends $T$ trials selectively. The four phases have distinct responsibilities: **selection** follows the current tree using an exploration/exploitation score; **expansion** adds an encountered node; **simulation** estimates a return beyond the expanded frontier; **backpropagation** updates counts and means along the selected path. Under a one-node-expansion convention, storage is at most $T+1$ state nodes while simulation work is at most $TD$ steps. The existing statistics affect the next selection, which is the reuse absent from independent flat rollouts. For Tutorial 6's UCT calculation the two actions have equal exploration bonuses because both have eight visits; Scan wins because its empirical mean is $1$ rather than $0.5$. After one return of $0.6$, its exact new mean is $(8+0.6)/9=43/45\approx0.956$, not the average of $1$ and $0.6$ with equal weights.
+```
+       Value v(x)
+           ^                   GAINS
+           |                 / (Concave: Risk Averse)
+           |                /
+           |               /
+           |              /
+  ---------+-------------+----------------> Outcome x (Wealth relative to ref point)
+          /|
+         / |
+        /  |
+       /   |                   LOSSES
+      /    |                 (Convex: Risk Seeking, Stitched Steeper!)
+     /     |
+    v      |
+```
 
-### 1.9 Tutorial 6: what feature sharing and DAgger actually change
+### 4.1 Core Axioms of Prospect Theory
+1. **Reference Dependence**:
+   - Outcomes are not evaluated in terms of absolute terminal wealth ($W$), but as **gains ($+x$) or losses ($-x$) relative to a subjective reference point $r$**:
+     $$x = W - r$$
+   - The reference point can be manipulated by linguistic **framing** (e.g., "saving 200 lives" vs. "letting 400 people die").
+2. **The Asymmetric S-Shaped Value Function $v(x)$**:
+   - **Concave in the domain of gains** ($v''(x) < 0$ for $x > 0$): Diminishing marginal utility of gains produces **risk aversion** for gains (preferring a sure $\$500$ over a $50\%$ chance at $\$1,000$).
+   - **Convex in the domain of losses** ($v''(x) > 0$ for $x < 0$): Diminishing sensitivity to losses produces **risk-seeking behavior** to avoid certain losses (preferring a $50\%$ gamble of losing $\$1,000$ over a sure loss of $\$500$).
+   - **Loss Aversion**: Losses loom larger than corresponding gains. The value function is steeper for losses than for gains, characterized by loss aversion coefficient $\lambda \approx 2.0 - 2.5$:
+     $$v(x) = \begin{cases} x^\alpha & \text{if } x \ge 0 \\ -\lambda (-x)^\beta & \text{if } x < 0 \end{cases} \quad (\alpha \approx \beta \approx 0.88, \; \lambda \approx 2.25)$$
+3. **Non-linear Probability Weighting $\pi(p)$**:
+   - Humans do not weight outcomes by their linear objective probabilities $p$. Instead, they apply a non-linear weighting function $\pi(p)$:
+     $$\pi(p) = \frac{p^\gamma}{(p^\gamma + (1 - p)^\gamma)^{1/\gamma}} \quad (\gamma \approx 0.65)$$
+   - **Overweighting of Low Probabilities** ($\pi(p) > p$ for small $p$): Explains why people buy both state lottery tickets (overweighting microscopic gain probability) and flight insurance (overweighting microscopic disaster probability).
+   - **Underweighting of Moderate & High Probabilities** ($\pi(p) < p$ for $p > 0.2$).
 
-The rover's feature-based policy is $\pi_\theta(a\mid s)=\exp(\theta_a\cdot f(s))/\sum_b\exp(\theta_b\cdot f(s))$. Every state with similar features uses the same action parameters, so demonstrations can inform an unseen but similar terrain configuration. A table instead needs a separate estimate for each state-action entry. This benefit depends on useful features; if two dangerous and safe states look identical under $f(s)$, parameter sharing cannot distinguish them.
+### 4.2 The Fourfold Pattern of Risk Attitudes
 
-Behavioral cloning minimizes prediction error on states visited by the expert. At deployment a small steering mistake may put the rover on a slope absent from those demonstrations; errors can then compound because the learner's state distribution differs from the expert's. DAgger runs the current learner, asks an expert to label the states it **actually visits**, aggregates those examples with previous data, and retrains. The expert need not have independently driven to those recovery states. Human teleoperation is therefore valuable as an initial safer signal, but label cost, communication delay, imperfect demonstrations, and safety of learner exploration still need a deployment plan. DAgger addresses coverage of learner states; it does not make the expert infallible.
+| Probability Level | GAINS Domain ($x > 0$) | LOSSES Domain ($x < 0$) |
+|---|---|---|
+| **HIGH Probability** (Certainty Effect) | **Risk Averse**<br>Example: Prefer sure $\$900$ over $95\%$ chance at $\$1,000$.<br>*Fear of disappointment.* | **Risk Seeking**<br>Example: Prefer $95\%$ chance of $-\$1,000$ over sure $-\$900$.<br>*Desperate gamble to avoid loss.* |
+| **LOW Probability** (Possibility Effect) | **Risk Seeking**<br>Example: Buying lottery tickets ($10^{-6}$ chance of millions).<br>*Hope of large gain.* | **Risk Averse**<br>Example: Buying insurance against rare accidents.<br>*Fear of catastrophic loss.* |
 
-## 2. Tutorial 5 problem-by-problem checklist
+---
 
-| Problem | Given evidence | Required reasoning | Frequent error |
-|---|---|---|---|
-| 1. Air cargo | Ground predicates and action schemas | Check every precondition before applying add/delete lists | Excluding same-airport Fly without an inequality precondition |
-| 2. Reachable sets | Optimistic and pessimistic sets | Separate possible from guaranteed goal reachability | Reading an optimistic superset as a proof of success |
-| 3. Preferences | Two lotteries with equal expected money | Use independence to compare sure $50$ with Game 1 | Inferring utility from money expectation alone |
-| 4. Log utility | Initial wealth and gain/loss outcomes | Take expected logs of **final wealth** | Taking the log of expected dollars |
-| 5. Delayed MDP | Position, unfinished movement, random duration | Add pending-action state and wait-only action | Treating position alone as Markov |
-| 6. Passive RL | Fixed $S_0\to S_1\to S_2$ path | Distinguish episode returns, TD targets, learned model | Treating ADP as model-free or TD as Monte Carlo |
+## 5. Bounded Rationality & Satisficing (Herbert Simon, 1957)
 
-## 3. Tutorial 6 problem-by-problem checklist
+In 1957, Nobel laureate Herbert Simon challenged the classical assumption that rational actors possess infinite compute to identify the globally optimal action $a^* = \arg\max_{a} \mathbb{E}[U]$.
 
-The rollout problem averages three simulated returns per initial action before choosing; it does not prove either action is globally optimal. The MCTS problem makes the curse of dimensionality concrete: $n^M$ global states versus a depth-$D$ local tree, with UCT allocating trials selectively. The Scan backpropagation update is an incremental mean, $\hat Q_{new}=\hat Q_{old}+(G-\hat Q_{old})/(N+1)$, giving $1+(.6-1)/9\approx.956$. The imitation problem asks why feature sharing generalizes beyond visited states and why deployment distribution shift requires DAgger's expert labels on the learner's own states. Human teleoperation is useful when safe demonstrations exist, but expensive expert time, imperfect behavior, and unobserved state features limit it.
+### 5.1 The Principle of Bounded Rationality
+Real-world decision makers face three severe constraints:
+1. **Incomplete Information**: The complete state space, transition distribution, and future outcomes are unknown.
+2. **Computational Limits**: The time and memory required to compute exact Bellman optimality scale exponentially ($\mathcal{O}(|\mathcal{S}|^2 |\mathcal{A}|)$).
+3. **Finite Time Horizon**: Decisions must be made under real-time operational deadlines.
 
-## Source audit for these chapters
+### 5.2 Satisficing vs. Optimizing
+Instead of **optimizing** (searching for the perfect policy $\pi^*$), boundedly rational agents **satisfice** (*satisfy* + *suffice*):
+- The agent defines an **aspiration level** or acceptability threshold $\tau$.
+- The agent searches sequentially across alternatives.
+- The search terminates immediately upon encountering the first candidate action whose predicted utility meets or exceeds the aspiration threshold:
+  $$\text{Select } a \quad \text{such that} \quad \hat{U}(a) \ge \tau$$
+- If no alternative meets $\tau$ within the time budget, the aspiration level is dynamically relaxed: $\tau \leftarrow \tau - \Delta$.
 
-- Later lecture concepts: *Model-based Techniques Reinforcement Learning.pdf* (64 slides), the two-page *Dyna-Q.pdf* addendum, *Game Theory.pdf* (69 slides), and *Foundation-Model-Based Decision Making.pdf* (64 slides). The supplied *Course Overview*, slide 3, assigns these topics to lecture Weeks 9, 10, and 11 respectively; the Foundation-Model deck itself does not print a week number. Existing Weeks 6–7 cover reward shaping and guided decision making in depth.
-- Practice: the supplied official *Tutorial5.pdf* through *Tutorial8.pdf* sheets are labeled Week 7, Week 9, Week 10, and Week 11 respectively. These are the original **tutorial-sheet labels**. This study sequence omits the mid-term-only week and places Guided Decision Making in Week 7, Model-Based RL in Week 8, Game Theory in Week 9, and Foundation-Model Alignment in Week 10.
-- The supplied Team 26 submissions in `[02] Chao Chien Hung/` were compared against the official Tutorial 5–8 question sheets for the numerical and conceptual answers above. The earlier *Tutorial5_Team8.pdf* is another student submission; its image-based work was checked in the previous audit. Student solutions support cross-checking but are not official answer keys. Tutorial 1–4 sheets are labeled Weeks 3–6 in the Team 26 copies and belong to the already detailed early-week material, so this continuation focuses on Tutorial 5–8.
+---
+
+## 6. The Agentic Decision Loop with Human Oversight
+
+Deploying modern Foundation-Model-based agents in high-stakes environments requires embedding autonomous execution within a **closed-loop feedback system featuring explicit human checkpoints**.
+
+```
+   ======================= HUMAN OVERSIGHT CHECKPOINTS =======================
+   [1. Intent & Context] -> [2. Scope & Goals] -> [3. Confirm Plan]
+                                                         |
+   +-----------------------------------------------------+
+   |
+   v
+   +-------------------------------------------------------------------------+
+   |                     AGENTIC DECISION LOOP                               |
+   |                                                                         |
+   |  +------------+       +------------+       +------------+               |
+   |  |   Sense    | ----> |   Reason   | ----> |    Plan    |               |
+   |  | Understand |       | Analyze &  |       | Decompose  |               |
+   |  | Context    |       | Identify   |       | Strategy   |               |
+   |  +------------+       +------------+       +------------+               |
+   |                                                  |                      |
+   |                                                  v                      |
+   |  +------------+       +------------+       +------------+               |
+   |  |   Learn    | <---- | Execution  | <---- | Tool Use / |               |
+   |  | Self-Reflect|       | Log & State|       | Execute    |               |
+   |  +------------+       +------------+       +------------+               |
+   +-------------------------------------------------------------------------+
+                                                         |
+   +-----------------------------------------------------+
+   |
+   v
+   [4. Policy Guardrails] -> [5. Review & Approve] -> [6. Continuous Feedback]
+   ===========================================================================
+```
+
+### 6.1 The 6 Human-in-the-Loop Checkpoints
+As synthesized from *Lecture-human-factors v4.1.pdf* (slide 32):
+1. **Checkpoint 1: Human Sets Intent & Context**: The human provides high-level objectives, business background, and ethical priorities.
+2. **Checkpoint 2: Human Defines Scope & Goals**: Explicit specification of what is within scope, what is strictly out-of-scope, and quantitative acceptance criteria.
+3. **Checkpoint 3: Human Confirms Plan**: Before executing irreversible, financial, or hazardous actions, the agent must present its structured plan for explicit human sign-off.
+4. **Checkpoint 4: Policy Guardrails Check Tools & Sources**: Programmatic sandboxing, token constraints, API rate limiters, and permission checks verify tool inputs prior to dispatch.
+5. **Checkpoint 5: Human Reviews & Approves Output**: Consequential deliverables (e.g., patient prescriptions, code merges, wire transfers) require human verification of factual correctness.
+6. **Checkpoint 6: Human Provides Feedback for Improvement**: Iterative corrections, preference annotations, and critique loops refine the agent's prompt, memory, and model weights over time.
+
+---
+
+## 7. Human Alignment Paradigms for Autonomous Decision Systems
+
+How do we mathematically steer foundation models toward human intent and safety?
+
+```
+                      ALIGNMENT & POST-TRAINING HIERARCHY
+                                       |
+    +----------------------------------+----------------------------------+
+    |                                                                     |
+[Demonstration Imitation]                                    [Preference Optimization]
+ - Supervised Fine-Tuning (SFT)                               - RLHF (Bradley-Terry)
+ - Behavior Cloning (BC)                                      - Direct Preference Opt (DPO)
+                                                              - Group Relative Opt (GRPO)
+                                       |
+    +----------------------------------+----------------------------------+
+    |                                                                     |
+[Reward Modeling & Verification]                             [Decision-Time Reasoning]
+ - Outcome Reward Models (ORM)                                - Chain-of-Thought (CoT)
+ - Process Reward Models (PRM)                                - Tree-of-Thought (ToT)
+                                                              - Self-Consistency Voting
+```
+
+### 7.1 Supervised Fine-Tuning (SFT)
+The model is trained on curated demonstration trajectories $\mathcal{D}_{\text{SFT}} = \{(x_i, y_i)\}$ using standard cross-entropy loss:
+$$\mathcal{L}_{\text{SFT}}(\theta) = -\sum_{(x, y) \in \mathcal{D}} \sum_{t=1}^{|y|} \log \pi_\theta(y_t \mid x, y_{<t})$$
+*Limitation*: Suffers from covariate shift; cannot easily penalize subtle hallucinations or reward rare creative insights.
+
+### 7.2 Reinforcement Learning from Human Feedback (RLHF)
+1. **Bradley-Terry Preference Model**: Given prompt $x$ and candidate responses $y_w \succ y_l$, human annotators label preferences. Train reward model $r_\phi(x, y)$ via:
+   $$\mathcal{L}_{\text{RM}}(\phi) = -\mathbb{E}_{(x, y_w, y_l)} \left[ \log \sigma \left( r_\phi(x, y_w) - r_\phi(x, y_l) \right) \right]$$
+2. **Policy Optimization via PPO**: Optimize policy $\pi_\theta$ against reward model $r_\phi$, regularized by a KL divergence penalty to prevent policy drift away from reference model $\pi_{\text{ref}}$:
+   $$\max_\theta \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta} \left[ r_\phi(x, y) - \beta \, \mathbb{D}_{\text{KL}}(\pi_\theta(y \mid x) \parallel \pi_{\text{ref}}(y \mid x)) \right]$$
+
+### 7.3 Direct Preference Optimization (DPO; Rafailov et al., 2023)
+DPO mathematically proves that the constrained RL objective under the Bradley-Terry model can be solved **in closed form**, bypassing the instability of training an explicit reward model and running PPO:
+
+$$\mathcal{L}_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} \right) \right]$$
+
+### 7.4 Process vs. Outcome Reward Models (PRM vs. ORM)
+- **Outcome Reward Models (ORM)**: Evaluates only the final scalar result ($r \in \{0, 1\}$).
+  - *Risk*: Reward hacking; an agent might generate flawed reasoning that accidentally hits the right answer.
+- **Process Reward Models (PRM)**: Assigns step-level rewards to every intermediate step of a multi-step reasoning trace:
+  $$r_{\text{process}} = \sum_{t=1}^T \lambda^t r_{\text{step}}(s_t)$$
+  - *Benefit*: Catches mathematical and logical flaws at the exact step they occur, guiding tree search (e.g., MCTS) toward valid solutions.
+
+### 7.5 Group Relative Policy Optimization (GRPO; Shao et al., 2024 / DeepSeek-R1)
+GRPO eliminates the separate critic network in PPO. For each prompt $q$, the policy generates a group of $G$ candidate outputs $\{o_1, o_2, \dots, o_G\}$. The objective normalizes rewards relative to the group mean and standard deviation:
+
+$$\tilde{A}_i = \frac{r_i - \operatorname{mean}(\{r_1, \dots, r_G\})}{\operatorname{std}(\{r_1, \dots, r_G\})}$$
+
+The policy is optimized purely on relative advantage, enabling massive scalability for verifiable reasoning tasks.
+
+---
+
+## 8. Toward Human-Aware Cooperative AI (Dafoe et al., 2021)
+
+As autonomous systems proliferate, AI agents will increasingly interact not with passive environments or isolated users, but in dense multi-agent networks consisting of humans, institutions, and other AI systems.
+
+Published in *Nature*, Dafoe et al. (2021) established the four fundamental pillars of **Cooperative Intelligence**:
+1. **Understanding (Theory of Mind)**: Agents must construct beliefs regarding other agents' internal states, cognitive bounds, preferences, and heuristics.
+2. **Communication**: Developing shared representations, protocols, and natural language interfaces that facilitate truthful signaling and intent coordination.
+3. **Commitment**: The capacity to enter into credible, verifiable, and enforceable agreements, overcoming classic defection dilemmas (e.g., Prisoner's Dilemma, Tragedy of the Commons).
+4. **Norms and Institutions**: Aligning AI agents with societal legal conventions, ethical boundaries, and mechanism design rules that enforce fairness, accountability, and collective welfare.
+
+---
+
+# Tutorial Practice - Complete Worked Solutions for Tutorials 5, 6, 7, and 8
+
+<draft>
+- 1. Tutorial 5 (Week 7): Classical planning schemas, reachable sets, risk preferences, log utility of final wealth, delayed grid MDP, passive RL comparison.
+- 2. Tutorial 6 (Week 9): Mars rover rollouts, MCTS complexity and UCT calculation, imitation learning with DAgger.
+- 3. Tutorial 7 (Week 10): Model-based RL, expected vs sampled Bellman updates, conditional mean trap in obstacle avoidance, MPC receding-horizon planning, MuZero vs DreamerV3 vs TD-MPC2.
+- 4. Tutorial 8 (Week 11): Strategic interdependence test, 2x2 matrix games (PD, Coordination, Matching Pennies, Stag Hunt, Chicken), Battle of the Sexes MSNE, Three-Finger Morra Minimax.
+</draft>
+
+---
+
+## 1. Tutorial 5 (Week 7): Planning, Decision Theory, and Passive RL
+
+### Problem 1: Air Cargo Planning Grounding & Action Schemas
+- **Premise**: An air cargo problem with planes and cargo at airports.
+- **Core Challenge**: Verifying action schema preconditions before applying add and delete lists.
+- **Key Insight**: A grounded action is only applicable if **every precondition literal** holds in the current state. Without an explicit inequality precondition like $p_1 \neq p_2$, an action schema like $\text{Fly}(p, a_1, a_2)$ technically allows flying from an airport to the exact same airport ($a_1 = a_2$). Planners strictly follow grounded schemas; human common sense cannot be assumed unless codified.
+
+### Problem 2: Reachable Sets Under Uncertainty
+- **Optimistic Reachable Set ($\mathcal{R}_{\text{opt}}$)**: The set of all states reachable by *at least one* possible transition branch.
+- **Pessimistic Reachable Set ($\mathcal{R}_{\text{pess}}$)**: The set of states guaranteed to be reached *regardless* of nature's stochastic realization.
+- **Key Insight**: $\mathcal{R}_{\text{pess}} \subseteq \mathcal{R}_{\text{opt}}$. Achieving a goal in $\mathcal{R}_{\text{opt}}$ means goal reachability is *possible*; achieving a goal in $\mathcal{R}_{\text{pess}}$ means goal reachability is *guaranteed*. Conflating the two leads to overoptimistic, unsafe execution.
+
+### Problem 3: Preferences & The Independence Axiom
+- **Premise**: Evaluating lotteries $L_1$ and $L_2$ with identical expected dollar payoffs.
+- **Key Insight**: By the VNM Independence Axiom, if $A \succ B$, then for any $p \in (0, 1]$ and any lottery $C$:
+  $$p A + (1 - p) C \succ p B + (1 - p) C$$
+  Expected monetary value alone does not dictate preference; risk attitude (curvature of utility $U$) determines choice.
+
+### Problem 4: Log Utility of Wealth
+- **Initial Wealth**: $W_0$. A gamble offers gain $+G$ with probability $p$ and loss $-L$ with probability $1 - p$.
+- **Frequent Trap**: Taking the logarithm of expected wealth $\log(\mathbb{E}[W])$.
+- **Correct Formulation**: Compute the **expected logarithm of final wealth**:
+  $$\mathbb{E}[U(W)] = p \log(W_0 + G) + (1 - p) \log(W_0 - L)$$
+  Because $\log(x)$ is strictly concave ($U''(x) = -1/x^2 < 0$), Jensen's inequality guarantees $\mathbb{E}[\log(W)] < \log(\mathbb{E}[W])$, representing risk aversion.
+
+### Problem 5: Delayed Gridworld MDP (Markov State Augmentation)
+- **Problem**: A robot moves on a grid. With probability $0.5$, an action completes immediately ($t+1$). With probability $0.5$, it suffers a 1-step transmission delay, completing at $t+2$, during which the robot must wait.
+- **Markov Failure of Raw Coordinates**: The physical coordinate $(x, y)$ alone is non-Markov: it cannot tell whether the robot is free to choose a new direction or committed to waiting for a pending action.
+- **Augmented State Space**:
+  - $R_z$: Robot is ready at cell $z$; legal actions are $\{\text{North}, \text{South}, \text{East}, \text{West}\}$.
+  - $D_{z, z'}$: Robot is physically at $z$, with a pending movement committed to arrive at $z'$ next step; only legal action is $\{\text{Wait}\}$.
+- **Transition Dynamics**:
+  $$P(R_{z'} \mid R_z, a) = 0.5 \cdot q(z' \mid z, a), \quad P(D_{z, z'} \mid R_z, a) = 0.5 \cdot q(z' \mid z, a)$$
+  $$P(R_{z'} \mid D_{z, z'}, \text{Wait}) = 1.0$$
+- **Reward Function**: $r(s, a, s') = -0.05 + 100 \cdot \mathbf{1}\{s' = R_{\text{goal}}\}$. The immediate path costs 1 step; the delayed path costs 2 steps.
+
+### Problem 6: Passive RL (Monte Carlo vs. TD(0) vs. ADP)
+For a fixed trajectory $S_0 \xrightarrow{r=0} S_1 \xrightarrow{r=1} S_2$ (terminal, $U(S_2) = 0$), with initial estimates $U(s) = 0$, $\alpha = 0.5$, $\gamma = 0.9$:
+1. **Monte Carlo (MC)**:
+   - Waits until episode terminates. Realized returns: $G(S_1) = 1.0$, $G(S_0) = 0 + 0.9(1.0) = 0.9$.
+   - Updates:
+     $$U(S_1) \leftarrow 0 + 0.5(1.0 - 0) = 0.5$$
+     $$U(S_0) \leftarrow 0 + 0.5(0.9 - 0) = 0.45$$
+2. **TD(0)**:
+   - Updates sequentially along the trajectory:
+   - Step 1 ($S_0 \to S_1$): Target is $r + \gamma U(S_1) = 0 + 0.9(0) = 0$.
+     $$U(S_0) \leftarrow 0 + 0.5(0 - 0) = \mathbf{0.0}$$
+   - Step 2 ($S_1 \to S_2$): Target is $r + \gamma U(S_2) = 1 + 0.9(0) = 1.0$.
+     $$U(S_1) \leftarrow 0 + 0.5(1.0 - 0) = \mathbf{0.5}$$
+   - *Key Insight*: TD(0) bootstraps from current estimates. Information at $S_1$ propagates back to $S_0$ only on subsequent episodes.
+3. **Adaptive Dynamic Programming (ADP)**:
+   - Learns empirical transition model $\hat{P}(S_1 \mid S_0) = 1, \hat{P}(S_2 \mid S_1) = 1$ and rewards $\hat{R}(S_0) = 0, \hat{R}(S_1) = 1$.
+   - Solves Bellman equations directly: $U(S_1) = 1.0, U(S_0) = 0 + 0.9(1.0) = 0.9$.
+   - Model-based ADP propagates values immediately without requiring repeated physical traversals.
+
+---
+
+## 2. Tutorial 6 (Week 9): Rollouts, MCTS, and Imitation Learning
+
+### Problem 1: Persy the Mars Rover Flat Rollouts
+- **Problem**: Rover at state $s_0$ chooses between Left ($a_L$) and Right ($a_R$).
+- **Simulations**:
+  - $a_L$ rollout returns: $4, 6, 5 \implies \hat{Q}(s_0, a_L) = \frac{4 + 6 + 5}{3} = \mathbf{5.0}$
+  - $a_R$ rollout returns: $3, 7, 3 \implies \hat{Q}(s_0, a_R) = \frac{3 + 7 + 3}{3} = \frac{13}{3} \approx \mathbf{4.333}$
+- **Decision**: Execute $a_L$ because $\hat{Q}(s_0, a_L) = 5.0 > 4.333$. Flat rollouts evaluate actions by sample averages, discarding simulation statistics after selection.
+
+### Problem 2: MCTS State-Space Accounting & UCT Selection
+- **State Space**: $M$ state variables each with $n$ discrete values $\implies |\mathcal{S}| = n^M$.
+- **Exhaustive Tree Size**: With 2 actions and 2 stochastic branches per action, branching factor is $b = 4$. Complete tree to depth $D$ has:
+  $$N_{\text{nodes}} = \sum_{d=0}^D 4^d = \frac{4^{D+1} - 1}{3} = \mathcal{O}(4^D)$$
+- **MCTS Node Efficiency**: In $T$ iterations expanding 1 node per iteration, MCTS stores at most $T + 1$ nodes, focusing compute on high-value branches rather than searching the global $n^M$ space.
+- **The Four Phases of MCTS**:
+  1. *Selection*: Traverse tree using UCT until reaching an expandable leaf.
+  2. *Expansion*: Instantiate one or more child nodes.
+  3. *Simulation (Rollout)*: Execute default policy until terminal state or horizon.
+  4. *Backpropagation*: Update visit counts $N$ and mean values $Q$ along the trajectory.
+- **UCT Formula**:
+  $$\text{UCT}(s, a) = Q(s, a) + c \sqrt{\frac{\ln N(s)}{N(s, a)}}$$
+- **UCT Calculation (Problem 2)**:
+  - Root visit count $N(s_0) = 16$.
+  - Action Move: $N(s_0, \text{Move}) = 8, Q(s_0, \text{Move}) = 0.5$.
+    $$\text{UCT}(\text{Move}) = 0.5 + 1.0 \sqrt{\frac{\log_2 16}{8}} = 0.5 + \sqrt{\frac{4}{8}} = 0.5 + \sqrt{0.5} \approx 0.5 + 0.707 = \mathbf{1.207}$$
+  - Action Scan: $N(s_0, \text{Scan}) = 8, Q(s_0, \text{Scan}) = 1.0$.
+    $$\text{UCT}(\text{Scan}) = 1.0 + 1.0 \sqrt{\frac{\log_2 16}{8}} = 1.0 + \sqrt{0.5} \approx 1.0 + 0.707 = \mathbf{1.707}$$
+  - Action Scan is selected ($\text{UCT} = 1.707 > 1.207$).
+- **Incremental Mean Backpropagation**:
+  - After simulating, a return $G = 0.6$ is observed.
+  - Previous count $N = 8$, previous sum $\sum = 8 \times 1.0 = 8.0$.
+  - Updated count: $N_{\text{new}} = 9$.
+  - Updated mean:
+    $$\hat{Q}_{\text{new}} = \frac{8.0 + 0.6}{9} = \frac{8.6}{9} = \frac{43}{45} \approx \mathbf{0.956}$$
+
+### Problem 3: Imitation Learning, Feature Sharing & DAgger
+- **Policy Parameterization**: Softmax policy over linear feature combinations:
+  $$\pi_\theta(a \mid s) = \frac{\exp(\theta_a^T f(s))}{\sum_b \exp(\theta_b^T f(s))}$$
+- **Why Feature Sharing Generalizes**: Because weights $\theta_a$ multiply feature vectors $f(s)$, learning from an expert demonstration in state $s$ updates predictions for all unseen states $s'$ sharing similar features ($f(s') \approx f(s)$).
+- **The Compounding Error Problem in Behavioral Cloning**:
+  - Training distribution: $s \sim d_{\pi^*}$ (expert trajectory distribution).
+  - Test distribution: $s \sim d_{\pi_\theta}$ (learner trajectory distribution).
+  - A single small prediction error shifts the learner into an unfamiliar state. Because the learner was never trained on recovery states, errors compound quadratically: $\mathcal{O}(\epsilon T^2)$.
+- **Dataset Aggregation (DAgger; Ross et al., 2011)**:
+  1. Train initial policy $\hat{\pi}_1$ on expert demonstrations $\mathcal{D}_0$.
+  2. For iteration $k = 1, \dots, K$:
+     a. Run policy $\hat{\pi}_k$ to collect trajectories of states visited by the *learner*: $\mathcal{S}_k \sim d_{\hat{\pi}_k}$.
+     b. Query human expert to label the optimal action for states actually visited: $\mathcal{D}_k = \{(s, \pi^*(s)) \mid s \in \mathcal{S}_k\}$.
+     c. Aggregate dataset: $\mathcal{D} \leftarrow \mathcal{D} \cup \mathcal{D}_k$.
+     d. Retrain policy $\hat{\pi}_{k+1}$ on aggregated dataset $\mathcal{D}$.
+  - DAgger ensures the training distribution matches the deployment distribution, bounding error linearly: $\mathcal{O}(\epsilon T)$.
+
+---
+
+## 3. Tutorial 7 (Week 10): Model-Based RL & Latent Planning
+
+### Problem 1: One Learned Model, Different Uses
+- **Learned Model**:
+  $$\hat{P}(s_1 \mid s, a) = 0.75, \quad \hat{P}(s_2 \mid s, a) = 0.25$$
+  $$\hat{R}(s, a, s_1) = 2.0, \quad \hat{R}(s, a, s_2) = -2.0$$
+  $$U(s_1) = 6.0, \quad U(s_2) = 2.0, \quad \gamma = 0.9, \quad \alpha = 0.5, \quad Q(s, a) = 3.0$$
+- **(a) Expected Bellman Target & Update**:
+  $$\mathcal{T}_{\text{exp}} = 0.75[2 + 0.9(6)] + 0.25[-2 + 0.9(2)] = 0.75(7.4) + 0.25(-0.2) = 5.55 - 0.05 = \mathbf{5.5}$$
+  $$Q_{\text{new}}(s, a) = 3.0 + 0.5(5.5 - 3.0) = 3.0 + 1.25 = \mathbf{4.25}$$
+- **(b) Sampled Q-Planning Target & Update ($s \to s_2$)**:
+  $$\mathcal{T}_{\text{sampled}} = -2.0 + 0.9(2.0) = -2.0 + 1.8 = \mathbf{-0.2}$$
+  $$Q_{\text{new}}(s, a) = 3.0 + 0.5(-0.2 - 3.0) = 3.0 + 0.5(-3.2) = \mathbf{1.4}$$
+- **(c) Why Updates Differ**:
+  Part (a) integrates over the full probability distribution, eliminating sampling variance for the fixed model. Part (b) updates using a single stochastic sample, which happened to be the lower-value branch.
+- **(d) Dyna-Q Extension**:
+  Dyna-Q executes three steps in a continuous loop: (1) update $Q$ from real transitions, (2) update the learned model, (3) execute $k$ simulated Q-planning updates from previously visited state-action pairs.
+
+### Problem 2: When the Conditional Mean Is Misleading
+- **Environment**: True next lateral position is $s'_L = -1$ ($p=0.5$) or $s'_R = +1$ ($p=0.5$). Position $0$ is an obstacle.
+- **(a) Deterministic Model Prediction**:
+  $$\hat{s}' = 0.5(-1) + 0.5(+1) = \mathbf{0.0}$$
+  A deterministic regression model trained on MSE predicts $0$, which crashes directly into the obstacle!
+- **(b) Probabilistic Expected Backup**:
+  With $R = 1, U(s'_L) = 4, U(s'_R) = 8, \gamma = 0.9$:
+  $$\mathbb{E}[\text{Backup}] = 0.5[1 + 0.9(4)] + 0.5[1 + 0.9(8)] = 0.5(4.6) + 0.5(8.2) = 2.3 + 4.1 = \mathbf{6.4}$$
+- **(c) Sampled Planning Values**:
+  - Sample $s'_L$: Backup $= 4.6$
+  - Sample $s'_R$: Backup $= 8.2$
+  - Expected sample backup: $0.5(4.6) + 0.5(8.2) = \mathbf{6.4}$
+- **(d) Core Lesson**:
+  Squared-error deterministic regression collapses multi-modal distributions into an unfeasible average. Probabilistic models preserve both modes, enabling exact or unbiased sampled planning.
+
+### Problem 3: Background vs. Decision-Time Planning & MPC
+- **(a) Classification**:
+  - *Q-planning*: Background planning (amortizes compute offline into a reusable value table).
+  - *MCTS & MPC*: Decision-time planning (simulates from current state $s_t$ at execution time).
+- **(b) MPC Horizon $H=2$ Evaluation**:
+  Discount factor $\gamma = 0.9$.
+  $$G_A = 3 + 0.9(4) = 3 + 3.6 = \mathbf{6.6}$$
+  $$G_B = 4 + 0.9(2) = 4 + 1.8 = \mathbf{5.8}$$
+  Sequence A is preferred ($6.6 > 5.8$).
+- **(c) Why MPC Executes Only the First Action**:
+  After executing $a_0^*$, the agent observes real state $s_{t+1}$ and replans. This receding-horizon closed-loop feedback continuously corrects for model inaccuracies and unmodeled external disturbances.
+- **(d) MuZero Latent MCTS**:
+  MuZero predicts rewards, policy priors, and state values in an abstract latent space without reconstructing pixels. MCTS requires only relative action evaluations; predicting task-irrelevant visual pixels is unnecessary.
+
+### Problem 4: DreamerV3 and TD-MPC2
+- **(a) Main Difference**:
+  DreamerV3 trains an Actor-Critic completely in imagination inside its RSSM world model; at decision time, the actor executes via a fast forward pass ($\mathcal{O}(1)$). TD-MPC2 performs online optimization (CEM) in latent space over a short horizon at decision time, combining immediate predicted rewards with a learned terminal action-value function.
+- **(b) TD-MPC2 Return Calculation**:
+  Given $H = 2, \gamma = 0.9$:
+  $$\hat{G}_A = 2 + 0.9(2) + 0.9^2(6.0) = 2 + 1.8 + 0.81(6.0) = 3.8 + 4.86 = \mathbf{8.66}$$
+  $$\hat{G}_B = 3 + 0.9(3) + 0.9^2(1.0) = 3 + 2.7 + 0.81(1.0) = 5.7 + 0.81 = \mathbf{6.51}$$
+  Sequence A is preferred ($8.66 > 6.51$).
+- **(c) Role of Terminal Q-value**:
+  $\hat{Q}_{\text{terminal}}$ estimates the infinite-horizon value-to-go beyond the planning horizon $H$, accounting for long-term consequences without unrolling models deep into the future where errors compound.
+- **(d) Vulnerabilities & Mitigations**:
+  - *DreamerV3*: Compounding imagination errors misguide actor-critic gradients. *Mitigation*: Limit rollout horizons ($H \le 15$); symlog value normalization; continual model retraining on replay buffer.
+  - *TD-MPC2*: Optimizers exploit model inaccuracies to find spuriously high reward paths. *Mitigation*: Short horizons; ensemble value models with conservative lower bounds ($Q_{\min}$).
+
+---
+
+## 4. Tutorial 8 (Week 11): Game Theory & Minimax
+
+### Problem 1: Playing Games (Strategic Interdependence Test)
+- **1. OPEC output quotas**: **Game**. Members' quotas jointly determine world oil price and revenues.
+- **2. Apple buying OLED from Samsung**: **Game**. Bilateral bargaining over price and terms.
+- **3. Metric vs. American nuts and bolts**: **Game**. Compatibility coordination.
+- **4. Board setting CEO stock options**: **Not a game as stated**. Unilateral compensation policy choice.
+- **5. Singapore Airlines hiring cabin crew**: **Not a game as stated**. Parametric selection problem.
+- **6. Government nuclear power plant investment**: **Not a game as stated**. Decision under uncertain demand (state of nature).
+
+### Problem 2: Nash Equilibria & Pareto Optima in 2x2 Games
+- **(a) Prisoner's Dilemma**:
+  - Pure NE: $(T, T)$ with payoffs $(-5, -5)$.
+  - Pareto Optima: $(T, R), (R, T), (R, R)$. $(T, T)$ is Pareto-dominated by $(R, R)$.
+- **(b) Astro vs. Bolt (Coordination)**:
+  - Pure NEs: $(B, B)$ with $(9, 9)$ and $(D, D)$ with $(5, 5)$.
+  - Pareto Optimum: $(B, B)$ only ($9 > 5$).
+- **(c) Matching Pennies (Zero-Sum)**:
+  - Pure NE: **None**.
+  - Pareto Optima: **All four cells** (zero-sum trade-off).
+  - Mixed NE: Row plays $H$ with $p = 1/2$; Col plays $H$ with $q = 1/2$. Value is $0$.
+- **(d) Stag Hunt**:
+  - Pure NEs: $(S, S)$ with $(4, 4)$ and $(H, H)$ with $(2, 2)$.
+  - Pareto Optimum: $(S, S)$ only ($4 > 2$).
+- **(e) Chicken (Hawk-Dove)**:
+  - Pure NEs: $(St, Sw)$ with $(3, 1)$ and $(Sw, St)$ with $(1, 3)$.
+  - Pareto Optima: $(St, Sw)$ and $(Sw, St)$.
+
+### Problem 3: Battle of the Sexes
+- **Matrix**: Husband (Row), Wife (Col):
+  $$(F, F): (1, 2), \quad (F, C): (0, 0), \quad (C, F): (0, 0), \quad (C, C): (2, 1)$$
+- **(a) Pure NE Verification**:
+  At $(F, F)$, husband gets $1 > 0$, wife gets $2 > 0$. At $(C, C)$, husband gets $2 > 0$, wife gets $1 > 0$. Neither benefits from unilateral deviation $\implies$ both are NE.
+- **(b) Mixed NE Derivation**:
+  - Wife indifferent: $2p = 1 - p \implies p^* = \mathbf{1/3}$ (Husband plays F-1 with $1/3$, Concert with $2/3$).
+  - Husband indifferent: $q = 2(1 - q) \implies q^* = \mathbf{2/3}$ (Wife plays F-1 with $2/3$, Concert with $1/3$).
+- **(c) Expected Utilities at Equilibria**:
+  - Pure $(F, F)$: $(U_H, U_W) = (1, 2)$
+  - Pure $(C, C)$: $(U_H, U_W) = (2, 1)$
+  - Mixed NE: $U_H = q = 2/3, U_W = 2p = 2/3 \implies (U_H, U_W) = (\mathbf{2/3, 2/3})$
+- **(d) Mismatch vs. Uniform Randomization**:
+  - Mismatch $(C, F)$: $(U_H, U_W) = (\mathbf{0, 0})$
+  - Uniform 50-50: Each matching cell occurs with prob $1/4$.
+    $$\mathbb{E}[U_H] = \frac{1}{4}(1) + \frac{1}{4}(2) = \mathbf{\frac{3}{4} = 0.75}$$
+    $$\mathbb{E}[U_W] = \frac{1}{4}(2) + \frac{1}{4}(1) = \mathbf{\frac{3}{4} = 0.75}$$
+
+### Problem 4: Three-Finger Morra
+- **Payoff Matrix $A$ for Even ($E$)**:
+  $$A = \begin{pmatrix} 2 & -3 & 4 \\ -3 & 4 & -5 \\ 4 & -5 & 6 \end{pmatrix}$$
+- **Optimal Equilibrium Strategy**:
+  Setting $\mathbf{x}^T A = (0, 0, 0)$ and $x_1 + x_2 + x_3 = 1$:
+  $$\mathbf{x}^* = \left( \frac{1}{4}, \frac{1}{2}, \frac{1}{4} \right)^T$$
+- **Game Value**:
+  $$V^* = \mathbf{x}^{*T} A \mathbf{x}^* = 0$$
+  Both players play $1, 2, 3$ fingers with probabilities $\left( \frac{1}{4}, \frac{1}{2}, \frac{1}{4} \right)$. Game value is exactly **$0$**.
+
+---
+
+## References
+
+- **Russell, S., & Norvig, P. (2020).** *Artificial Intelligence: A Modern Approach (4th ed.)*. Pearson. (Chapters 3, 11, 16, 17, 18, 22).
+- **Sutton, R. S., & Barto, A. G. (2018).** *Reinforcement Learning: An Introduction (2nd ed.)*. MIT Press. (Chapters 8, 9, 11, 13).
+- **Hafner, D., Pasukonis, J., Ba, J., & Lillicrap, T. (2023).** *Mastering Diverse Domains through World Models*. arXiv:2301.04104 (DreamerV3).
+- **Hansen, N., Yuan, H., Su, H., & Wang, X. (2024).** *TD-MPC2: Scalable, Robust World Models for Continuous Control*. International Conference on Learning Representations (ICLR).
+- **Schrittwieser, J., Antonoglou, I., Hubert, T., Simonyan, K., Sifre, L., Schmitt, S., ... & Silver, D. (2020).** *Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model*. Nature, 588(7839), 604-609 (MuZero).
+- **Ross, S., Gordon, G., & Bagnell, D. (2011).** *A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning*. AISTATS (DAgger).
+- **Kahneman, D., & Tversky, A. (1979).** *Prospect Theory: An Analysis of Decision under Risk*. Econometrica, 47(2), 263-291.
+- **Tversky, A., & Kahneman, D. (1974).** *Judgment under Uncertainty: Heuristics and Biases*. Science, 185(4157), 1124-1131.
+- **Tversky, A., & Kahneman, D. (1981).** *The Framing of Decisions and the Psychology of Choice*. Science, 211(4481), 453-458.
+- **Kahneman, D. (2011).** *Thinking, Fast and Slow*. Farrar, Straus and Giroux.
+- **Simon, H. A. (1957).** *Models of Man: Social and Rational*. John Wiley & Sons.
+- **Dafoe, A., Hughes, E., Bachrach, Y., Collins, T., McKee, K. R., Leibo, J. Z., ... & Graepel, T. (2021).** *Cooperative AI: Machines must learn to find common ground*. Nature, 593(7857), 33-36.
+- **Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., & Finn, C. (2023).** *Direct Preference Optimization: Your Language Model is Secretly a Reward Model*. NeurIPS.
+- **Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J., Zhang, M., ... & Guo, D. (2024).** *DeepSeek-Math: Pushing the Limits of Mathematical Reasoning in Open Language Models*. arXiv:2402.03300 (GRPO).
+- **Buçinca, Z., Malaya, M. B., & Gajos, K. Z. (2021).** *To trust or to think: Cognitive forcing functions can reduce overreliance on AI in AI-assisted decision-making*. Proceedings of the ACM on Human-Computer Interaction, 5(CSCW1), 1-21.
+- **Kim, S. S. Y., et al. (2025).** *Fostering Appropriate Reliance on Large Language Models: The Role of Explanations, Sources, and Inconsistencies*. CHI 2025.
+- **Bazerman, M. H., & Moore, D. A. (2013).** *Judgment in Managerial Decision Making (8th ed.)*. John Wiley & Sons.
+- **Stanovich, K. E., & West, R. F. (2000).** *Individual differences in reasoning: Implications for the rationality debate*. Behavioral and Brain Sciences, 23(5), 645-665.
+
+---
 
 <reviewkit>
 <takeaways>
-- **The Closed-Loop Rational Agent:** Modern AI planning formalizes intelligence as a continuous Sensing-Communicating-Acting feedback loop, integrating perception, modeling, reasoning, planning, and decision making across diverse real-world domains.
-- **The Simple vs. Complex Planning Matrix:** Classical planning operates on toy assumptions (discrete, deterministic, static, fully observable), whereas real-world industrial planning demands handling uncertainty, continuous dynamics, multi-agent competition, and human factors.
-- **Four Generations of Agents:** Intelligent systems have evolved from 1980s Symbolic AI (STRIPS logic) through 2000s Reinforcement Learning (trial-and-error policies) and 2020s LLM Agents (ReACT natural language reasoning) to 2030s tool-using multi-agent ecosystems.
-- **PDDL Factored Representation:** States are conjunctions of ground atomic fluents governed by the Closed-World Assumption (CWA) and Unique Names Assumption (UNA). Actions update states via set operations: $s' = (s \setminus \text{DEL}(a)) \cup \text{ADD}(a)$.
-- **The Frame Problem Solution:** PDDL resolves the persistence of facts through the inertia assumption, while propositional SATPlan encodes Successor-State Axioms to reduce $\mathcal{O}(mn)$ naive frame axioms to $\mathcal{O}(n)$ clauses.
-- **Progression vs. Regression:** Forward search navigates $2^n$ ground states, while backward regression searches $3^n$ partial state descriptions using Most General Unifiers (MGU), aggressively pruning irrelevant actions.
-- **SATPlan Propositional Reduction:** Converts planning into bounded CNF formulas evaluated by DPLL/CDCL SAT solvers, guaranteed to extract shortest-length plans if one exists.
-- **Computational Complexity:** Classical planning plan existence (PlanSAT) is PSPACE-complete in general, while bounded length planning (Bounded PlanSAT) is NP-complete.
-- **Modern LFM-Assisted Planning:** Modern paradigms combine LLM commonsense with classical verification: LLM-guided PDDL authoring (Mahdavi 2024), hybrid MCTS subgoal planning (Kwon 2025), LLM heuristic code generation (Corrêa 2025), and generalized PDDL programs (Silver 2024).
-- **Responsible AI Governance:** Trusted autonomous planning requires balancing raw performance against societal constraints (safety, privacy, fairness, transparency) embedded systematically throughout the SDLC.
-- **The Curse of Flat Planning:** Non-hierarchical planning scales as $\mathcal{O}(b^d)$, making even simple 30-step plans ($\mathcal{O}(10^{30})$) completely intractable for classical search engines.
-- **Explicit vs. Implicit Heuristics:** Search algorithms use explicit heuristic functions $h(s)$ to guide queue expansion, whereas logic/SAT solvers rely on implicit clause and variable ordering heuristics.
-- **Problem Relaxation:** Dropping action preconditions derives the Misplaced Tiles heuristic; dropping delete effects derives Manhattan Distance, $h_{\max}$ (admissible), $h_{\text{add}}$ (informative but inadmissible), and $h_{\text{FF}}$ (Fast-Forward greedy relaxed plan length).
-- **The Sussman Anomaly:** Highlights the non-serializability of independent subgoals, where achieving one goal requires actively undoing a previously established goal.
-- **State Abstraction Power:** In Air Cargo transport, grouping 10 airports, 50 planes, and 200 cargos into 5 composite corridors collapses the state space from $10^{405}$ to $10^{11}$ states.
-- **Hierarchical Task Networks (HTN):** Break tasks into High-Level Actions (HLAs) that encode procedural domain knowledge. In the Changi Airport case study, HTN decomposition reduces planning cost from $\mathcal{O}(10^{30})$ to $\approx 34$ operations ($\mathcal{O}(r^{(d-1)/(k-1)})$).
-- **Reachable Sets & Downward Refinement Property:** $\text{REACH}(s, h)$ represents all states reachable by any HLA implementation. The Downward Refinement Property guarantees that if an abstract plan intersects the goal, a valid primitive plan is guaranteed to exist.
-- **Tilde Notation ($\sim$):** Represents deliberate agent choices within HLAs ($\tilde{+} A$ possibly adds $A$, $\tilde{-} A$ possibly deletes $A$, $\tilde{\pm} A$ gives full control).
-- **Approximate Reachable Sets:** Optimistic $\text{REACH}^+$ overestimates reachability and is safe for pruning failures; pessimistic $\text{REACH}^-$ underestimates reachability and is safe for certifying success without further refinement.
-- **PANDA Framework & HDDL:** PANDA provides industrial HTN plan-space, progression, and SAT solvers, utilizing the HDDL standard for hierarchical benchmarking.
-- **The Core Decision Triad:** A rational agent combines probabilistic Beliefs, subjective Preferences (Utility function), and an MEU Decision Process to act optimally under uncertainty.
-- **Bayesian Observation Dynamics:** In Panda Lulu's lunch choice, sensory observations update posterior beliefs via Bayes' Rule, altering expected utilities and reversing optimal actions ($O=\text{rustling} \implies \text{Berry } (4.0 > 2.5)$; $O=\text{silence} \implies \text{Grove } (6.67 > 4.0)$).
-- **VNM Axioms of Rationality:** Six foundational conditions (Orderability, Transitivity, Continuity, Substitutability, Monotonicity, Decomposability) mathematically guarantee the existence of an expected utility function.
-- **Positive Affine Invariance:** Utility scales are unique strictly up to $U'(s) = a U(s) + b$ with $a > 0$. Shifting or scaling leaves decisions unchanged, but strictly forbids interpersonal utility comparisons between different agents.
-- **Expected Monetary Value vs. Expected Utility:** Rational agents maximize Expected Utility, not Expected Monetary Value (EMV). Under concave utility of money, an agent correctly declines the $\$1\text{M}$ coin flip gamble despite its positive monetary expectation ($\$1.25\text{M}$).
-- **Risk Premium:** Defined as $\text{EMV} - \text{CE}$, representing the cash value an agent sacrifices to eliminate risk. Concave curves indicate risk aversion ($\text{Risk Premium} > 0$), linear curves indicate risk neutrality, and convex curves indicate risk seeking.
-- **Prescriptive Decision Analysis:** Ronald Howard's framework translates messy real-world dilemmas into structured influence diagrams (decision, chance, and utility nodes) and decision trees solved via backward induction (Martian Adventures case study).
-- **The Game-Theoretic Paradox:** As proven by the Pandas' Dilemma (Prisoner's Dilemma), independent self-interested agents inevitably converge on a suboptimal Nash Equilibrium $(+1, +1)$ despite the existence of a Pareto optimal cooperative alternative $(+3, +3)$.
-- **The Core MDP Paradigm:** An MDP $\langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \gamma \rangle$ models sequential decision problems in fully observable, stochastic environments where actions influence both immediate rewards and future state distributions.
-- **The Markov Property:** Future transitions depend exclusively on the current state and action ($P(S_{t+1} \mid S_t, A_t)$), allowing memoryless optimization without storing historical trajectories.
-- **Horizon & Stationarity:** Infinite-horizon discounted formulations ($\gamma < 1$) guarantee bounded cumulative rewards ($U_{\max} \le \frac{R_{\max}}{1 - \gamma}$) and yield time-invariant stationary optimal policies $\pi^*(s)$.
-- **Bellman Expectation vs. Optimality Equations:** The Bellman Expectation Equation linearly evaluates a fixed policy ($U^\pi = R^\pi + \gamma T^\pi U^\pi$), while the Bellman Optimality Equation non-linearly defines the global upper bound ($U(s) = \max_a \sum_{s'} P(s' \mid s, a)[R + \gamma U(s')]$).
-- **The Q-Function Duality:** Action-utility values $Q(s, a)$ represent the expected return of taking action $a$ in state $s$ and acting optimally thereafter, enabling direct policy extraction ($\pi^*(s) = \arg\max_a Q(s, a)$) without transition probability lookahead.
-- **Value Iteration as a Contraction Mapping:** Value Iteration executes iterative Bellman backups ($U_{i+1} \leftarrow B U_i$). By the Banach Fixed-Point Theorem, $B$ is a contraction with factor $\gamma$ under the max norm, guaranteeing geometric convergence to a unique fixed point.
-- **Error Dynamics & Policy Loss:** As illustrated in the $4 \times 3$ world (Figure 17.8), policy loss reaches zero far earlier (iteration 4) than utility convergence (iteration 14), because ranking actions under argmax is robust to small value errors.
-- **Policy Iteration Efficiency:** Policy Iteration alternates between exact Policy Evaluation ($\mathcal{O}(|\mathcal{S}|^3)$ linear system without max operator) and Policy Improvement ($\mathcal{O}(|\mathcal{S}|^2 |\mathcal{A}|)$). By the Policy Improvement Theorem (Sutton & Barto 4.2), each consecutive policy is monotonically superior, terminating in finite steps.
-- **Passive RL Showdown (ADP vs. TD vs. MC):** ADP learns empirical models $\hat{P}, \hat{R}$ and solves global linear Bellman systems with maximal data efficiency (converging in 20-30 trials); Monte Carlo directly averages returns across visits ($U(s) \leftarrow \frac{1}{N(s)}\sum G_t$) with zero bias but high variance and episode-delayed updates; TD(0) bootstraps online from successive state estimates ($U(s) \leftarrow U(s) + \alpha [R + \gamma U(s') - U(s)]$) with low variance and step-level updates.
-- **The Unified Spectrum (n-Step TD & TD(lambda)):** $n$-step returns bridge 1-step TD(0) and $\infty$-step Monte Carlo. $\text{TD}(\lambda)$ geometrically weights $n$-step returns with $(1-\lambda)\lambda^{n-1}$, converging to TD(0) as $\lambda \to 0$ and Monte Carlo as $\lambda \to 1$, mechanistically implemented via backward-view eligibility traces.
-- **Active ADP Failure & Exploration Functions:** Purely greedy active ADP gets trapped in suboptimal policies (e.g. state $(2,1)$ in $4 \times 3$ Grid World going Right instead of Left) because actions serve a dual role (earning reward vs. gathering information). Exploration functions $f(u, n) = R^+$ if $n < N_e$ else $u$ enforce optimism in the face of uncertainty, driving policy loss to zero in 20 trials.
-- **SARSA vs. Q-Learning in Cliff Walking:** SARSA is on-policy, evaluating the action $a'$ actually taken by the behavior policy, learning a safe route away from hazards during $\epsilon$-greedy exploration (return $\approx -25$). Q-learning is off-policy, evaluating target greedy actions $\max_{a'} Q(s', a')$, learning the shortest optimal cliff-edge route but frequently falling off during exploration (return $\approx -50$). Under GLIE ($\epsilon \to 0$), both converge to the optimal path.
-- **The Curse of Dimensionality:** State spaces grow exponentially ($|\mathcal{S}| \approx 10^{20}$ in Backgammon, $10^{40}$ in Chess, $10^{172}$ in Go), rendering tabular lookups impossible. Function approximation enables compact representation and generalization to unvisited states.
-- **Linear vs. Neural Approximators:** Linear models ($\theta^T f(s)$) suffer from structural under-parameterization bias when approximating oscillatory value functions. Deep neural networks automatically learn hierarchical non-linear feature representations directly from sensory observations.
-- **The Widrow-Hoff (Delta) Rule:** Minimizing per-sample squared error yields the Delta Rule ($\Delta \theta_i = \alpha \delta f_i$). Unlike naive batch gradient descent (which requires storing historical datasets and computing offline sums), Widrow-Hoff performs instantaneous online updates on streaming transitions.
-- **Semi-Gradient TD:** Temporal difference targets depend on weights $\boldsymbol{	heta}$ but are treated as fixed constants during differentiation. On-policy linear TD(0) is guaranteed to converge under standard stochastic approximation conditions.
-- **The Deadly Triad:** Unbounded parameter divergence occurs when Function Approximation, Bootstrapping, and Off-Policy learning coincide. Baird\'s 7-state star counterexample proves that semi-gradient off-policy linear TD explodes to infinity even with zero transition rewards!
-- **DQN Breakthroughs:** Deep Q-Networks stabilize deep RL via (1) Experience Replay (breaks sample autocorrelation) and (2) Fixed Target Networks (freezes target weights $\boldsymbol{	heta}^-$, resolving moving target oscillations).
-- **DQN Extensions & Bottlenecks:** Double DQN eliminates maximization overestimation bias; Multi-step learning accelerates reward propagation; Distributional RL models return distributions. However, vanilla DQN cannot handle continuous action spaces, scales poorly with $|\mathcal{A}|$, and cannot model stochastic policies.
-- **The Policy Gradient Theorem:** Directly parameterizes stochastic policies ($\pi_\theta(a \mid s)$), proving that $\nabla_\theta J(\boldsymbol{\theta}) = \mathbb{E}[Q^{\pi_\theta}(s, a) \nabla_\theta \log \pi_\theta(a \mid s)]$ without requiring derivatives of environmental transition physics.
-- **Baseline Variance Reduction:** Subtracting an action-independent baseline $B(s) = U(s)$ leaves policy gradients strictly unbiased ($\mathbb{E}[B(s) \nabla \log \pi] = 0$) while slashing gradient variance (collapsing sample variance from 15,275 to 28.4).
-- **Actor-Critic Frameworks:** The Actor updates policy parameters $\boldsymbol{	heta}$ along the policy gradient, while the Critic updates value parameters $\mathbf{w}$ to estimate advantages via 1-step TD errors $\delta_t$. Vanilla AC is on-policy and stable, while off-policy variants (SAC) use entropy regularization and double target critics.
-- **Advanced Policy Search (TRPO & PPO):** TRPO enforces a second-order KL divergence speed limit to guarantee monotonic policy improvement ($J(\theta_{\text{new}}) \ge J(\theta_{\text{old}})$). Proximal Policy Optimization (PPO) simplifies this via a first-order Clipped Surrogate Objective, establishing the industry standard for continuous robotic control and LLM post-training alignment (RLHF).
-- **The Curse of Sparse Native Rewards:** Real-world environmental rewards are almost universally sparse, delayed, and non-informative. In zero-reward in-process states, standard Q-learning executes empty updates ($0 \leftarrow 0$), and algorithms only begin to learn after stumbling upon a rare goal state through random exploration (e.g., $y_0 \approx \gamma^{20} \times 1 \approx 0.12$).
-- **The Reward Shaping Paradigm:** General reward shaping reformulates the feedback landscape as $R^{\text{new}} = \alpha R^{\text{env}} + \beta R^{\text{sha}}$, converting sparse binary goals into dense intermediate milestone gradients.
-- **Exploration Shaping & RND:** Novelty bonuses reward under-explored states. While tabular counters use $1/(N(s)+1)$ and continuous domains use pseudo-counts, high-dimensional spaces deploy Random Network Distillation (RND), measuring prediction errors between a trained predictor and a frozen target network ($\|f(s) - \hat{f}_\theta(s)\|^2$).
-- **The Noisy-TV Vulnerability:** Pure prediction-error novelty is vulnerable to environmental stochastic noise (e.g., random static on a TV screen). The agent becomes hypnotized by unpredictable noise, harvesting infinite exploration bonuses while abandoning the task.
-- **Exploitation Shaping & Process Supervision:** Assigning bonuses to critical bottleneck states accelerates optimization. In LLM multi-step reasoning, Math-Shepherd replaces sparse outcome supervision with process-level step rewards ($y_{s_i}^{\text{SE}}$) evaluated via automated Monte Carlo tree rollouts.
-- **Reward Hacking in Process Supervision:** PRM-guided reasoning is vulnerable to Goodhart's Law and reward hacking: policy generators exploit PRM heuristics via verbosity bias, superficial math jargon, false-positive rollouts (accidental error cancellation), and hallucinated lemmas. Robust process supervision requires coupling PRMs with final outcome verification, length penalties, and KL divergence constraints.
-- **Potential-Based Policy Invariance:** Arbitrary reward shaping risks policy corruption (reward gaming). Ng, Harada, and Russell proved that a consistently signed potential difference ($R^{\text{sha}} = \phi(s) - \gamma \phi(s')$, or its negative with a negated potential) induces telescoping cancellation along trajectories, guaranteeing that the optimal policy $\pi^*$ remains identical to the native MDP. Outside PBRS, heuristic methods lack theoretical invariance and are justified empirically by sample-efficiency gains.
-- **RLHF in Open-Ended Domains:** For subjective LLM generation lacking programmatic rewards (self-introductions, coffee shop names, LinkedIn headlines), Reinforcement Learning from Human Feedback trains a regression reward model ($r_\theta(x, y) \in \mathbb{R}$) on human pairwise preference rankings using the Bradley-Terry logistic loss ($-\log \sigma(r(y_+) - r(y_-))$).
-- **Advanced Autonomous Shaping Architectures (Ma et al., NUS):**
-- **ReLara (ICML 2024):** Decouples execution from guidance via a two-agent architecture: a Policy Agent ($\mathcal{A}_P$) executing actions and an Assistant Reward Agent ($\mathcal{A}_R$) learning shaping bonuses as a secondary MDP.
-- **CenRA (NeurIPS 2025):** Deploys a Centralized Reward Agent ($\mathcal{A}^{\text{rwd}}$) analyzing concatenated multi-task replay buffers ($\bigcup \mathcal{D}_i$) to distill universal structural meta-knowledge across multiple policy agents.
-- **SASR (ICLR 2025):** Formulates Self-Adaptive Success Rate shaping by computing spatial densities via Kernel Density Estimation and Random Fourier Features, modeling localized Beta distributions ($\text{Beta}(\tilde{N}_S, \tilde{N}_F)$) that transition seamlessly from early-stage exploration to late-stage exploitation.
-- **The Curse of Dimensionality in Planning:** When state spaces scale exponentially ($|\mathcal{S}| = |\mathcal{S}_{\text{local}}|^K$), global offline dynamic programming (Value Iteration) and global tabular RL become intractable. Modern systems bypass this via Decision-Time Online Search or Demonstration-Based Offline Learning.
-- **Decision-Time vs. Demonstration-Based Planning:** Decision-time planning simulates futures locally at runtime from the current state $s_0$ to choose immediate action $a^*$; demonstration-based planning learns safe, competent global policies from expert trajectories before runtime.
-- **The Four Utility Quantities:** Realized return $G_t$, expected policy utility $U^\pi(s_t) = \mathbb{E}[G_t \mid s_t]$, optimal utility $U(s_t) = \max_\pi U^\pi(s_t)$, and action-utility $Q^\pi(s_t, a_t) = \mathbb{E}[G_t \mid s_t, a_t]$.
-- **Rollout Algorithms:** Execute one-step policy improvement at decision time by simulating $N$ trajectories under a rollout policy $\pi$ for each candidate action, evaluating $\hat{Q}^\pi(s, a) \approx \frac{1}{N} \sum G_t$.
-- **Rollout Continuation:** Hold each candidate first action fixed, then follow the same base policy from its resulting state. A terminal rollout uses the full return; a cutoff needs a leaf estimate or accepts truncation bias. Exact $Q^\pi$ supports policy improvement, while finite samples do not guarantee it.
-- **The Four MCTS Phases:** (1) **Selection** via a tree policy balancing exploration/exploitation; (2) **Expansion** of untried child nodes; (3) **Simulation** via fast rollouts to terminal states; (4) **Backup** of discounted returns $G_t$ upward to root $s_0$. MCTS is an anytime algorithm.
-- **MCTS Memory and Backup:** The tree and $N,W,\hat Q$ persist across trials for the current decision; an action edge is expanded once but revisited many times. Each new sample updates only its selected path, using $\hat Q_{N+1}=\hat Q_N+(g-\hat Q_N)/(N+1)$, with discount and player perspective handled at each ancestor.
-- **The UCT1 Selection Formula:** Action selection at node $n$ follows $\pi_{\text{UCT}} = \arg\max_a [ \hat{Q}(s, a) + c \sqrt{\ln N(s) / N(s, a)} ]$. Unvisited actions require a separate priority convention because the formula is undefined at $N(s,a)=0$; under ordinary finite-action UCT this encourages initial trials, while the bonus continues to allocate later trials between promising and under-sampled branches.
-- **AlphaGo Zero PUCT Innovation:** Replaces noisy Monte Carlo rollouts with a neural Value Head $v_\theta(s)$, and guides tree expansion via a Policy Head prior $P(s, a)$ in the PUCT formula, scaling MCTS to Go's $10^{170}$ states.
-- **REINFORCE and AlphaZero Roles:** REINFORCE updates a policy with sampled-return gradients during training; MCTS spends decision-time compute with a model. AlphaZero-style self-play generates search visit targets and outcomes, then network optimization learns policy priors and state values. This loop resembles approximate policy iteration, without guaranteeing improvement on every finite search.
-- **The Breakdown of Supervised Learning in Sequential Decisions:** Behavioral Cloning treats expert actions as supervised labels. Because agent actions alter future states, the i.i.d. assumption is violated. Minor errors cause covariate shift into unvisited states, inducing compounding quadratic errors ($\mathcal{O}(T^2 \epsilon)$) and failure to recover.
-- **DAgger Resolves Distribution Mismatch:** Dataset Aggregation iteratively executes the learner's own policy $\pi_i$, collects visited states, queries the expert for optimal actions on those exact visited states, and retrains on aggregated data $\mathcal{D} \cup \mathcal{D}_i$, reducing compounding error to $\mathcal{O}(T \epsilon)$.
-- **DAgger's $\beta$ Distinction:** Decaying $\beta$ changes who *visits* states, not who *labels* them: the expert oracle still supplies actions for learner-visited states. Scheduled sampling with fixed reference tokens lacks that general expert-on-new-prefix guarantee; BC/SFT exposure bias is a related distribution-shift analogy.
-- **GAIL Adversarial Imitation:** Generative Adversarial Imitation Learning matches state-action occupancy measures $\rho_\pi \approx \rho_E$ through an adversarial minimax game between a policy generator and a discriminator, eliminating the need for an interactive expert during training.
-- A learned dynamics model is useful only when it preserves decision-relevant consequences.
-- Full-model Bellman backups integrate branches; Q-planning uses simulated samples; Dyna-Q mixes real and simulated updates.
-- MCTS and MPC focus compute at decision time. MPC executes one action and replans.
-- MuZero searches with a latent model; DreamerV3 trains a policy in imagination; TD-MPC2 optimizes short latent rollouts with a terminal value.
-- Model bias can compound across imagined steps and be exploited by the planner.
-- A game requires strategic interdependence, not merely several named organizations.
-- Pure Nash equilibrium is a mutual best response; Pareto efficiency is a separate outcome comparison.
-- Mixed equilibria equalize expected payoffs of actions in support.
-- In finite two-player zero-sum games, maximin and minimax agree.
-- An LFM can ground, plan, execute through tools, or critique; these roles need explicit interfaces and checks.
-- SFT imitates demonstrations; RLHF optimizes a learned reward; DPO trains directly on preference pairs; RLAIF changes the feedback source.
-- PPO's clipped rollout ratio and RLHF's fixed-reference KL term serve different purposes.
-- CoT and planning techniques operate at decision time unless their traces enter a later training step.
-- GRPO uses within-prompt relative rewards without a value critic; self-rewarding loops require independent evaluation.
-- Grounded planning actions must satisfy the literal schema; do not add unstated constraints.
-- Expected money and expected utility can rank lotteries differently.
-- A delayed action requires pending state to preserve the Markov property.
-- MC waits for returns, TD bootstraps, and ADP learns a model.
-- MCTS reuses search statistics; DAgger corrects the learner's encountered states.
+- **The Closed-Loop Rational Agent**: Modern AI planning formalizes intelligence as a continuous Sense-Reason-Plan-Act-Learn cycle grounded in state representations, causal transition dynamics, and objective optimization.
+- **The Curse of Flat Planning**: Non-hierarchical planning scales exponentially as $\mathcal{O}(b^d)$. Hierarchical Task Networks (HTN) and state abstractions constrain search combinatorics by enforcing domain hierarchy and serializable subgoals.
+- **The Core Decision Triad**: Rational agents combine probabilistic Beliefs (Bayesian filtering), subjective Preferences (VNM utility theory), and sequential Choices under environmental uncertainty.
+- **The Core MDP Paradigm**: Markov Decision Processes model environments where future states depend strictly on current state-action pairs. Value Iteration and Policy Iteration solve for optimal policies $\pi^*$ via contractive Bellman operators.
+- **Function Approximation & Instability**: Deep Q-Networks and Actor-Critic architectures extend RL to continuous state spaces, managing the "deadly triad" (bootstrapping, function approximation, off-policy learning) through target networks, experience replay, and baseline normalization.
+- **Potential-Based Reward Shaping**: Augmented rewards $F(s, a, s') = \gamma \Phi(s') - \Phi(s)$ preserve policy invariance, dramatically accelerating exploration in sparse environments without distorting the optimal policy.
+- **Decision-Time Search & Demonstration Guidance**: Monte Carlo Tree Search balances exploration and exploitation via UCT. Behavioral cloning suffers from $\mathcal{O}(\epsilon T^2)$ compounding error under covariate shift, which DAgger resolves through online expert aggregation.
+- **Model-Based RL & The Conditional Mean Trap**: Dynamics models trained with Mean Squared Error predict conditional means $\mathbb{E}[s' \mid s, a]$, which collapse multimodal distributions into catastrophic obstacles. Probabilistic world models preserve feasible modes.
+- **Expected vs. Sampled Q-Planning**: Expected Bellman backups eliminate sampling variance at $\mathcal{O}(|\mathcal{S}|)$ compute cost; sampled updates provide cheap $\mathcal{O}(1)$ updates with stochastic noise. Dyna-Q unifies direct trial-and-error with background simulated rollouts.
+- **Receding Horizon Model Predictive Control**: MPC evaluates finite-horizon sequences, executes solely the initial action $a_0^*$, and replans from the next observed state, continuously compensating for model drift and unmodeled perturbations.
+- **Modern Latent World Models**: MuZero conducts MCTS in abstract latent space without pixel reconstruction; DreamerV3 trains actor-critic networks completely inside imagined trajectories; TD-MPC2 combines short-horizon latent MPC with terminal action-values.
+- **Strategic Interdependence in Game Theory**: A decision problem is a game if and only if each agent's payoff depends on opponents' simultaneous or sequential actions. Pure Nash equilibria represent mutual best responses where no player possesses a unilateral incentive to deviate.
+- **The Indifference Principle**: In a mixed-strategy Nash equilibrium, each player randomizes to make opponents indifferent across their active pure strategies. Player 1's mixture probabilities are dictated by Player 2's payoff matrix.
+- **Minimax Theorem & Zero-Sum Optimality**: In finite two-player zero-sum games, minimax value equals maximin value ($V^*$). Optimal mixed strategies guarantee baseline returns regardless of opponent counter-strategies, as proven in Three-Finger Morra ($x^* = (1/4, 1/2, 1/4), V^* = 0$).
+- **The Decision Theory Triad**: Normative theory dictates how unbounded rational agents *ought* to decide (MEU); Descriptive theory captures how human psychology *actually* decides (heuristics and Prospect Theory); Prescriptive theory designs AI systems and cognitive orthotics to *aid* decision making.
+- **Dual-Process Cognitive Architecture**: System 1 operates rapidly through associative heuristics and pattern matching (LLM autoregressive generation); System 2 operates through conscious, deliberative, rule-following search (Chain-of-Thought, MCTS, PRM verification).
+- **The 13 Judgmental Biases**: Availability (ease of recall, retrievability, presumed associations), Representativeness (base rate neglect, sample size neglect, gambler's fallacy, regression neglect, conjunction fallacy), Anchoring (insufficient adjustment, conjunctive/disjunctive bias, overconfidence), and General biases (confirmation trap, hindsight bias).
+- **Prospect Theory**: Human decisions depend on reference-point framing, exhibit risk aversion for gains (concave) and risk seeking for losses (convex), are distorted by loss aversion ($\lambda \approx 2.25$), and non-linearly overweight rare probabilities.
+- **Bounded Rationality & Satisficing**: Real-world agents operating under finite compute and incomplete information terminate search once an alternative meets a satisfactory aspiration threshold ($\hat{U} \ge \tau$).
+- **The Closed-Loop Agent with 6 Human Checkpoints**: Safe autonomous systems require human oversight at intent definition, scope boundary setting, plan pre-approval, policy guardrail enforcement, output verification, and continuous feedback.
+- **Modern Preference Alignment**: SFT provides foundational behavior; RLHF and DPO optimize preferences; Process Reward Models (PRM) verify intermediate reasoning steps; Group Relative Policy Optimization (GRPO) scales rule-based verification.
+- **Cooperative AI**: Future agent systems require Understanding (Theory of Mind), Communication, Commitment mechanisms, and Normative Institutional Alignment to foster multi-agent cooperation.
 </takeaways>
+<qquiz src="questions.en.json"/>
 <qprompt/>
 </reviewkit>
