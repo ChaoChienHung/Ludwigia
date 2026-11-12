@@ -10,7 +10,7 @@ Lang: en
 Tags: Cloud Computing, Cloud Architecture, Datacenter, Virtualization, Resource Pooling
 Status: drafting
 Published: 2026-08-30
-LastModified: 2026-10-31
+LastModified: 2026-11-12
 </meta>
 
 # NUS CS5224: Cloud Computing
@@ -419,24 +419,303 @@ A cloud answer becomes clearer when the stem's **decision variable** is identifi
 
 Next separate two axes. **Service model** describes what the consumer receives and manages: SaaS is a finished application, PaaS is a managed environment for the consumer's code, and IaaS is configurable compute/storage/network beneath the consumer's OS and app. **Scaling direction** describes what changes: horizontal adds instances, vertical enlarges one instance. **Elasticity** describes *when and why* capacity changes, usually in response to demand. A database with many reads and writes may need horizontal partitioning, but adding read replicas alone does not distribute writes. The partition key, consistency model, and hot spots still matter.
 
-For legacy migration, the constraint “quickly with minimal changes” points to IaaS rehosting because it can preserve an existing runtime; PaaS modernization may be better later but asks for adaptation. For SaaS suitability, avoid claiming that sensitive data can never be hosted there. Evaluate identity, encryption, residency, exportability, provider responsibilities, and connectivity. The related questions are grouped in [Q1–22](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-1---cloud-computing-fundamentals).
+For legacy migration, the constraint “quickly with minimal changes” points to IaaS rehosting because it can preserve an existing runtime; PaaS modernization may be better later but asks for adaptation. For SaaS suitability, avoid claiming that sensitive data can never be hosted there. Evaluate identity, encryption, residency, exportability, provider responsibilities, and connectivity. The related questions are grouped in Q1–22 in the Exam Questions & Worked Problems section below.
 
 ## 11. Summary
 
 Cloud computing transforms IT infrastructure through on-demand elastic resource delivery, shifting CAPEX to flexible OPEX models. Organizations scale workloads using Lead, Lag, or Match capacity planning, relying primarily on horizontal scaling across commodity nodes. Service delivery spans IaaS, PaaS, and SaaS stacks. While cloud architectures enable agility and rapid adoption of AI/IoT innovations, governance requires navigating shared responsibility models, multi-tenancy trust boundary risks, data localization laws (such as Singapore citizen data residency), vendor lock-in, and cloud repatriation dynamics. Furthermore, modern hybrid architectures decouple application code on the cloud from sensitive data on-premise to balance scalability with regulatory compliance.
 
-<reviewkit>
-<takeaways>
-- **Core Identity & Definitions:** Gartner and NIST 2011 define cloud computing as on-demand, elastic resource delivery. The program acts as a cloud service; the platform consists of distributed datacenters.
-- **CAPEX to OPEX Shift:** Eliminates upfront hardware investments (e.g., GPU clusters for AI model training) and shifts maintenance costs to providers.
-- **Capacity Planning Strategies:** Lead Strategy (adds capacity ahead; high availability, over-provisioning risk); Lag Strategy (adds at 100% usage; minimal cost, outage risk); Match Strategy (incremental real-time auto-scaling).
-- **Horizontal vs. Vertical Scaling:** Horizontal scaling uses commodity hardware, enables zero-downtime scaling out/in, and has near-infinite capacity. Vertical scaling upgrades single nodes using specialized hardware and is bounded by single-machine physical limits.
-- **Trust Boundaries & Multi-Tenancy:** Multi-tenancy creates overlapping trust boundaries with co-location security risks. Dedicated Instances offer complete hardware isolation at higher cost.
-- **Code vs. Data Decoupling:** Repatriation and hybrid cloud architectures do not require co-locating code and data. Application code (less sensitive, high elasticity) remains on the public cloud, while sensitive data resides on-premise behind corporate firewalls to satisfy compliance regulations and eliminate egress costs.
-- **Governance & Compliance:** Data localization regulations (e.g., Singapore citizen data residency), privacy vs. legal disclosure tension, vendor lock-in, and Cloud Repatriation trends drive hybrid cloud architecture choices.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-1---cloud-computing-fundamentals-architecture-business-drivers-scaling-mechanics-and-security-governance) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-1---cloud-computing-fundamentals-architecture-business-drivers-scaling-mechanics-and-security-governance)
+
+### 1. 2425 Sem2 Test Q16 · PDF p. 1
+
+Which of the following statements about cloud computing is always true?
+- a. It cannot be used in environments where data needs to be stored within a particular region/boundary
+- b. It helps protect your data through encryption
+- c. It enables users to access systems and resources regardless of location
+- d. It introduces latency as servers are geographically distributed
+- e. It can improve web server response time by having servers closer to the user
+
+**Answer:** (c)
+
+**Explanation:** (c) Broad network access makes cloud services reachable from different locations when the user has suitable connectivity and permission. Residency restrictions do not rule out cloud (a); encryption is a configuration and responsibility choice (b); geographic distance can add latency but is not inevitable (d); placing servers nearer users can improve response time but is not guaranteed (e). The word **always** is the key filter.
+
+### 2. Course Quiz 1 Q5 · PDF p. 2
+
+Which distinguishes cloud computing from traditional computing?
+- a. Increased flexibility in scaling resources and services
+- b. Decreased accessibility
+- c. Increased control over underlying hardware
+- d. On-demand self-service
+- e. All of the above
+
+**Answer:** (a), (d)
+
+**Explanation:** (a), (d) Elastic capacity lets consumers change allocated resources more readily, while on-demand self-service lets them provision resources without a human provider interaction. These are distinct: one concerns capacity over time, the other provisioning control. Cloud does not inherently reduce accessibility (b) or give consumers more hardware control (c), so (e) cannot hold.
+
+### 3. 2425 Sem2 Test Q4 · PDF p. 3
+
+What cloud benefits make it lower risk for enterprises to adopt the cloud?
+- a. The pay-as-you-go model allows enterprises to experiment with technologies as opposed to making long-term decisions based on little or no trial
+- b. Data security associated with loss or unavailability of data causing business disruption
+- c. The advantage of not managing infrastructure
+- d. Standardized APIs and integration tools simplify interoperability, reducing complexity and adoption risks
+- e. None of the above
+
+**Answer:** (a)
+
+**Explanation:** (a) Pay-as-you-go lowers the cost of trying a new workload and stopping it if it fails; this reduces commitment risk, though usage charges and migration costs remain. Data loss is a risk, not a benefit (b). Standardized APIs could reduce integration risk, but providers do not guarantee uniform APIs or effortless interoperability, so (d) is too broad as a general cloud benefit. Avoiding infrastructure management can help with managed services, but is not universal across IaaS, PaaS, and SaaS (c).
+
+### 4. 2425 Sem2 Test Q13 · PDF p. 3
+
+Your company has built a SaaS that is meant to serve around 5000 customers. However, your SaaS has become very popular (yay!) and suddenly there is a demand from about 25000 users. This will lead to an increase in resource utilisation. What are the incremental maintenance costs (mainly management overheads such as configuring servers, patching, etc.) of adding these new resources?
+- a. About the same as before
+- b. Twice the original cost
+- c. Three times the original cost
+- d. Four times the original cost
+- e. Five times the original cost
+
+**Answer:** (a)
+
+**Explanation:** (a) Under the question’s managed-cloud assumption, increasing users from 5,000 to 25,000 need not multiply the staff work of configuring and patching each server: automation and provider-managed infrastructure absorb much of that routine work. This concerns **incremental management overhead**, not the cloud bill, database capacity, support volume, or application operations, all of which may rise. A self-managed IaaS design may still incur extra admin work.
+
+### 5. Course Quiz 1 Q1 · PDF p. 3
+
+Which is NOT a reason for companies bringing data in house?
+- a. Bring down costs
+- b. Build redundancy for data storage
+- c. Comply with data privacy laws
+- d. Ensure better security for client data
+- e. None of the above
+
+**Answer:** (b)
+
+**Explanation:** (b) Replication and backup can be built in cloud or on-premise, so redundancy alone does not explain bringing data in house. Repatriation can be motivated by total cost, legal control, or a specific security/governance need. Neither location automatically makes data secure: compare controls, recovery targets, and the actual threat model.
+
+### 6. Course Quiz 1 Q7 · PDF p. 4
+
+A service is winding down but customer downloads spike. Which capacity strategy minimizes cost while avoiding long waits?
+- a. Match capacity to demand
+- b. Lead: add resources before a last-day rush
+- c. Lead: reduce resources as customers leave
+- d. Do nothing despite waits
+- e. None
+
+**Answer:** (a)
+
+**Explanation:** (a) Match capacity to observed demand: increase resources as download traffic rises and release them as it falls. Lead capacity (b) protects against a predicted last-day peak but pays for idle headroom; reducing resources as demand rises (c) worsens waits. In practice, scaling needs enough lead time for provisioning and a small safety margin.
+
+### 7. 2526 Sem2 Test Q20 · PDF p. 5
+
+Which one of the following is an optimal strategy to employ when you have a very large number of reads and write operations to a scalable cloud database?
+- a. Horizontal scaling
+- b. Vertical scaling
+- c. Increasing storage
+- d. Cloud bursting
+- e. Migrate to a faster database
+
+**Answer:** (a)
+
+**Explanation:** (a) More nodes can split independent reads and partitioned writes, increasing aggregate throughput. Read replicas alone do not distribute writes, and write scaling requires suitable partition keys and consistency design; a hot partition can still bottleneck. Vertical scaling (b) adds capacity to one node but has a machine ceiling, while storage size (c) does not itself improve operation throughput.
+
+### 8. Course Quiz 1 Q8 · PDF p. 6
+
+What is a key advantage of vertical over horizontal scaling?
+- a. Lower total cost
+- b. Better redundancy
+- c. Unlimited scale
+- d. Simpler implementation without redesigning application architecture
+- e. Lower latency
+
+**Answer:** (d)
+
+**Explanation:** (d) Simpler implementation without redesigning application architecture. Adding resources to one machine often avoids distributed coordination changes, subject to machine limits.
+
+### 9. 2425 Sem2 Test Q1 · PDF p. 6
+
+Which one of the following would be the best use case for SaaS?
+- a. Applications with highly confidential and sensitive data
+- b. A mobile application
+- c. An application used by an organisation with people working around the world, where some have erratic or unreliable internet connections
+- d. Organisations looking to reduce on-premises IT infrastructure and capital expenditure
+- e. Applications that need a lot of user data
+
+**Answer:** (d)
+
+**Explanation:** (d) SaaS supplies a finished application with provider-operated infrastructure, so an organisation can reduce local servers and upfront spending. This is a **best fit** question, not a claim that confidential data or mobile access can never use SaaS: those depend on contracts, security controls, connectivity, and the product. Unreliable internet (c) is a practical obstacle for network-dependent SaaS.
+
+### 10. 2425 Sem2 Test Q3 · PDF p. 6
+
+Which level of cloud service is usually provided for the application to run the development environment?
+- a. PaaS
+- b. IaaS
+- c. SaaS
+- d. FaaS
+- e. None of the above
+
+**Answer:** (a)
+
+**Explanation:** (a) PaaS offers an application development/deployment environment: the provider operates the runtime and supporting platform while developers supply code and configuration. IaaS gives lower-level VM, network, and storage building blocks; SaaS gives users a finished application; FaaS runs functions on events. The question’s “development environment” cue points to PaaS.
+
+### 11. 2425 Sem2 Test Q7 · PDF p. 7
+
+Which of the following is an example of Software as a Service (SaaS)?
+- a. Microsoft Azure
+- b. Amazon EC2
+- c. Google Cloud Platform
+- d. Google Photos
+- e. Amazon EMR
+
+**Answer:** (d)
+
+**Explanation:** (d) Google Photos is a finished application consumed through a provider-operated service. EC2 is IaaS compute, while Azure and Google Cloud Platform name broad provider portfolios rather than a single SaaS product; EMR is a managed data-processing platform. Classify the **specific offering**, not merely the company supplying it.
+
+### 12. 2526 Sem1 Test Q13 · PDF p. 7
+
+Who amongst the following are primary users of PaaS?
+- a. Clients looking to use a software online
+- b. Software developers
+- c. System administrators
+- d. Hardware engineers
+- e. Network engineers
+
+**Answer:** (b)
+
+**Explanation:** (b) Software developers are the primary PaaS users because they build and deploy their own code on a managed runtime. End users consume SaaS; infrastructure operators usually work more directly with IaaS. A developer can still use all three models, so “primary” describes the usual responsibility split.
+
+### 13. 2526 Sem2 Test Q9 · PDF p. 7
+
+“Great power and control come with greater responsibility.” Which cloud service model best reflects this statement?
+- a. SaaS
+- b. FaaS
+- c. CaaS
+- d. IaaS
+- e. PaaS
+
+**Answer:** (d)
+
+**Explanation:** (d) IaaS. (IaaS) provides the highest level of control over computing resources (VMs, storage, networking). However, this also means the user is responsible for managing the OS, updates, scaling, and security.
+
+### 14. Course Quiz 1 Q2 · PDF p. 8
+
+Who are the primary users of PaaS?
+- a. Clients looking for software online
+- b. Hardware engineers
+- c. Software developers
+- d. System administrators
+- e. Network engineers
+
+**Answer:** (c)
+
+**Explanation:** (c) PaaS exposes language runtimes, deployment and often managed middleware so developers can focus on application code. SaaS is what end users consume; IaaS leaves more OS/network administration to the consumer. The same idea is tested in Q12 with different option letters.
+
+### 15. Course Quiz 1 Q6 · PDF p. 8
+
+SoC provisions GPUs and CPUs from its own datacenter to students and staff. What service model is it providing?
+- a. SaaS
+- b. PaaS
+- c. IaaS
+- d. FaaS
+- e. LLMs as a service
+
+**Answer:** (c)
+
+**Explanation:** (c) The school supplies computing resources (CPU/GPU capacity) from its datacenter, so the described offer is infrastructure-level. If it instead supplied a managed development runtime or a complete application, PaaS or SaaS might fit. The fact that the hardware is owned by SoC does not itself determine the service model; **what consumers receive and manage** does.
+
+### 16. 2425 Sem2 Test Q2 · PDF p. 8
+
+Which of the following statements is false?
+- a. Containers and virtual machines have similar resource isolation and distribution advantages
+- b. Elastic load balancing automatically distributes access traffic to multiple cloud servers, expands the external service capabilities of application systems and achieves higher levels of application fault tolerance
+- c. Moving a SaaS deployment from one cloud provider to another is an easy proposition
+- d. Hypervisors separate VMs logically and assigns each a share of the underlying computing power, memory, and storage
+- e. The NIST definition of cloud computing includes five essential characteristics, four deployment models, and three service models
+
+**Answer:** (c)
+
+**Explanation:** (c) Moving a SaaS deployment can involve data export, identity, integrations, APIs, operational procedures and contractual dependencies. Therefore “easy” is not generally true. Containers and VMs both offer forms of isolation (a), a hypervisor allocates virtual resources (d), and NIST defines five characteristics, three service models and four deployment models (e).
+
+### 17. 2425 Sem2 Test Q17 · PDF p. 9
+
+Your company operates a multi-cloud environment (e.g., AWS and Azure) and is experiencing data synchronization issues between the clouds, such as incomplete transfers or data loss. What is the most likely cause?
+- a. Slow storage performance on one cloud
+- b. Limited virtualisation on one cloud
+- c. Incompatible cloud APIs
+- d. Uneven resource provisioning (e.g., storage, compute, or network)
+- e. Inconsistent security configurations
+
+**Answer:** (d)
+
+**Explanation:** (d) If destination storage, compute throughput or network capacity is insufficient, synchronization can lag, truncate, retry or fail even when both clouds expose usable APIs. The course key targets this capacity imbalance, especially a destination with too little space. API differences (c) can also cause migration failures in another scenario; the wording alone does not prove (d) is the only possible real-world cause.
+
+### 18. 2425 Sem2 Test Q20 · PDF p. 9
+
+What is a primary challenge when migrating legacy on-premise systems to the cloud?
+- a. Decreased performance
+- b. Increased data compliance
+- c. Increased management
+- d. Increased costs
+- e. Application compatibility
+
+**Answer:** (e)
+
+**Explanation:** (e) A legacy application may assume a particular OS, hardware device, network layout, database driver, license or tightly coupled local dependency. Those assumptions may break when moved, so compatibility is the most direct migration obstacle. Performance, management and cost can change in either direction; compliance is a requirement to satisfy rather than automatically “increased” by migration.
+
+### 19. 2526 Sem2 Test Q16 · PDF p. 9
+
+What is the primary challenge when migrating legacy systems to the cloud?
+- a. Increased cost
+- b. Decreased oversight
+- c. Application compatibility
+- d. Decreased performance
+- e. Increased performance
+
+**Answer:** (c)
+
+**Explanation:** (c) Application compatibility. Legacy assumptions about runtime, interfaces, or dependencies may not carry over to the new environment.
+
+### 20. 2526 Sem1 Test Q7 · PDF p. 11
+
+Assuming you are moving from an on-premise deployment to a cloud deployment, which is the most important area of concern?
+- a. Scalability
+- b. Security
+- c. Load Balancing
+- d. Storage
+- e. Bandwidth
+
+**Answer:** (b)
+
+**Explanation:** (b) Moving workloads outside the organisation changes who administers infrastructure and where data crosses trust boundaries. Review identity, encryption, key ownership, access logging, data location and the provider/consumer responsibility split before migration. Scalability, load balancing, storage and bandwidth matter too, but the course treats security as the leading concern here.
+
+### 21. 2526 Sem1 Test Q16 · PDF p. 11
+
+Your company has a policy of encrypting all data that is stored. Your data is hosted in a virtual private cloud and attached to it are multiple storage devices which has the data that must be encrypted. You have the following options available. Based on this, which one of the following options will allow you to do this? (if multiple options are possible choose the one that allows you the most choice) (i) Ask clients to encrypt their data before they give it to you (ii) Use third party encryption tools to encrypt the data (iii) Use native encryption tools available in the Operating System to encrypt the data (iv) Encrypt your data within the application before storing
+- a. (i) or (iii)
+- b. Only (iv)
+- c. (ii) or (iii) or (iv)
+- d. (i) or (ii) or (iii)
+- e. (iii) or (iv)
+
+**Answer:** (c)
+
+**Explanation:** (c) Third-party, OS-native, or application-level encryption can all protect stored data; relying on every client to encrypt correctly gives less direct control.
+
+### 22. Course Quiz 1 Q4 · PDF p. 11
+
+When moving from on-premise to cloud, what is the most important area of concern?
+- a. Scalability
+- b. Security
+- c. Load balancing
+- d. Storage
+- e. Bandwidth
+
+**Answer:** (b)
+
+**Explanation:** (b) The move introduces new identities, network exposure and a shared-responsibility boundary. Check who controls data, keys, access, patching and audit evidence for the chosen service model. The other choices are design concerns, but none substitutes for a security model; this repeats Q20 in quiz form.
 
 ## References
 
@@ -865,7 +1144,7 @@ Before selecting an answer, label the three different decisions: the **service m
 
 Hybrid cloud combines private and public environments for a reason: for example, governed records stay in a controlled location while permissible compute expands elsewhere. It adds networking, identity, synchronization and operating costs; therefore the cheapest compliant solution might instead strengthen controls in a single environment. For an unconstrained one-off analytics task, either public or private cloud may work; do not infer a multi-cloud requirement from the word “large.”
 
-For NIST actors, a **broker** mediates use of services: intermediation adds value to one service, aggregation combines a relatively fixed bundle, and arbitrage can substitute/select providers dynamically. An **auditor** independently evaluates conformance; a **carrier** transports connectivity. The distinction is the action performed, not the company label. Review [Q23–34](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-2---cloud-computing-reference-architecture).
+For NIST actors, a **broker** mediates use of services: intermediation adds value to one service, aggregation combines a relatively fixed bundle, and arbitrage can substitute/select providers dynamically. An **auditor** independently evaluates conformance; a **carrier** transports connectivity. The distinction is the action performed, not the company label. Review Q23–34 in the Exam Questions & Worked Problems section below.
 
 ## 11. Summary
 
@@ -873,20 +1152,142 @@ NIST SP 800-145 and SP 500-292 establish standard reference architectures for ev
 
 NIST SP 500-292 identifies five major cloud actors: Consumer, Provider (featuring 3-layer Service Orchestration and Cloud Service Management), Auditor (conducting independent security, privacy, and performance audits), Broker (delivering Intermediation, Aggregation, and Arbitrage), and Carrier (supplying SLA-backed network transport). Deployment models include Public, Private (On-Site/Out-Sourced & VPC), Community (IAM-governed multi-organization sharing), Hybrid, and Sovereign Cloud (locking all data and metadata within national borders). Finally, code vs. data decoupling architectures balance cloud elasticity with strict enterprise data security.
 
-<reviewkit>
-<takeaways>
-- **NIST 5 Essential Characteristics:** On-demand self-service, broad network access, resource pooling (multi-tenancy), rapid elasticity, and measured service (pay-per-use).
-- **Multi-Tenancy vs. Single Tenant:** Multi-tenancy pools resources so a single software/VM instance serves multiple tenants, maximizing hardware utilization. Single tenant offers dedicated hardware at higher cost.
-- **10-Layer Responsibility Stack:** On-premise (Consumer 10/10), IaaS (5/5 split), PaaS (8 Provider / 2 Consumer), SaaS (Provider 10/0).
-- **PaaS Disqualification Rules:** A service must provide the runtime to deploy and execute custom code. UI-only services are SaaS; OS/kernel configuration services are IaaS; API-only query stores are DBaaS.
-- **Service Model vs. Scaling Mechanism:** PaaS and IaaS are service models; ELB distributes traffic and Auto Scaling changes instance count. Both PaaS and IaaS can support scaling, with different consumer management responsibilities.
-- **Cross-Provider Wrapping & FaaS:** Subscribing to PaaS from Provider X physically hosted on IaaS from Provider Y satisfies regional data laws. FaaS provides reactive event-driven execution, though underlying servers still exist under the hood.
-- **NIST SP 500-292 Reference Model (5 Actors):** Cloud Consumer, Cloud Provider (3-layer Service Orchestration, Cloud Service Management, Security, Privacy), Cloud Auditor (independent compliance evaluation), Cloud Broker (Intermediation, Aggregation, Arbitrage), and Cloud Carrier (SLA-backed connectivity).
-- **Deployment Models & Sovereign Cloud:** Public, Private (On-Site/Out-Sourced & VPC), Community (IAM access control across orgs), Hybrid, and Sovereign Cloud (all data and metadata locked within national borders to prevent foreign access).
-- **Code vs. Data Decoupling:** Application code stays on the public cloud for compute elasticity, while sensitive data remains on-premise behind corporate firewalls to satisfy compliance and eliminate egress costs.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-2---cloud-computing-reference-architecture-nist-sp-500-292-models-service-layering-and-cloud-governance) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-2---cloud-computing-reference-architecture-nist-sp-500-292-models-service-layering-and-cloud-governance)
+
+### 23. 2526 Sem1 Test Q10 · PDF p. 15
+
+A cloud-native consulting firm offers a new product to its clients. This product integrates a SaaS-based Cloud Resource Management from Provider A, a PaaS-based database from Provider B, and a Storage-as-a-Service solution from Provider C. The firm combines these into a single, new, unified service with one dashboard and one bill, and it manages the secure data movement between the three providers. According to the NIST Cloud Computing Reference Architecture, which specific role and service is this firm fulfilling?
+- a. Cloud Auditor, performing a Security Audit
+- b. Cloud Carrier, providing transport of cloud services
+- c. Cloud Broker (Service Intermediation)
+- d. Cloud Broker (Service Arbitrage)
+- e. Cloud Broker (Service Aggregation)
+
+**Answer:** (e)
+
+**Explanation:** (e) Cloud Broker (Service Aggregation). The firm combines the specified services from Providers A, B, and C into one offering. Arbitrage would additionally involve choosing or replacing providers because the service combination is not fixed.
+
+### 24. Course Quiz 1 Q9 · PDF p. 15
+
+Which is NOT a main service provided by cloud brokers?
+- a. Integrate cloud services
+- b. Advise consumers on provider choice
+- c. Manage provider–consumer relationships
+- d. Ensure provider conformance to regulations and standards
+- e. None
+
+**Answer:** (d)
+
+**Explanation:** (d) An auditor independently assesses security, privacy or standards conformance. A broker instead helps a consumer use services through intermediation, aggregation or arbitrage, including integration and provider selection. A broker can pass along audit reports, but that is different from being the independent conformity assessor.
+
+### 25. 2425 Sem2 Test Q9 · PDF p. 17
+
+Which of the following scenarios is best suited for using a hybrid cloud model?
+- a. A government agency hosting sensitive data
+- b. A startup hosting a website
+- c. A user hosting a blog
+- d. A large enterprise with varying workloads
+- e. A startup having a lot of data
+
+**Answer:** (d)
+
+**Explanation:** (d) A large enterprise can retain some workloads privately and place variable or less-sensitive demand in public cloud, using both environments together. Hybrid does not automatically solve compliance: data flow, identity, networking and operational integration must be designed. A government agency could also use hybrid, but the question gives only sensitivity, not a need to combine environments.
+
+### 26. 2425 Sem2 Test Q23 · PDF p. 17
+
+Your company is using a public cloud environment but is facing some security concerns regarding its data. As the lead cloud engineer, you are asked to come up with the solution, while keeping costs down. How would you do it? Explain your answer.
+
+**Answer:** The supplied study-pack answer proposes a hybrid deployment: keep sensitive data in a controlled private environment and use public cloud for permitted workloads. With only the facts in this question, first assess whether encryption and access controls in the existing public cloud resolve the concern at lower cost.
+
+**Explanation:** The stem does not identify the threat or impose a residency/private-hosting rule, so hybrid cannot be justified as the cheapest solution from the information given. If the concern is unauthorized reading, begin with encryption at rest and in transit, appropriate key control, least-privilege IAM, network restrictions and audit; verify these controls against the actual threat. Encryption alone does not prevent misuse by an authorized identity, compromised keys, or unlawful data placement. Move sensitive data to private infrastructure only if public-cloud controls cannot meet the required isolation, governance or legal condition. Compare full costs: public-cloud usage and egress versus private capacity plus hybrid networking, synchronization and operations. Public cloud is not automatically cheaper, and hybrid is not automatically more secure.
+
+### 27. 2425 Sem2 Test Q25 · PDF p. 17
+
+Your workplace wishes to make the work environment a bit more fun ☺. They are going to provide advanced collaboration services, such as video, chat, and an online whiteboard. Given the cost of hosting the infrastructure for this, they have decided that a cloud-based approach is the way to go. Which cloud computing deployment* model would best suit your company’s needs? Explain your answer.
+
+**Answer:** It depends on privacy requirements: public cloud may suffice for ordinary collaboration, while private or hybrid deployment can retain tighter control over sensitive data.
+
+**Explanation:** For ordinary collaboration, public-cloud SaaS is a plausible cost-efficient choice: the provider operates video/chat/whiteboard capacity and the company pays for use. If sensitive internal material must remain under tighter control, private or hybrid placement may be justified. The question asks for a **deployment model** (public/private/hybrid), not a service model (SaaS/PaaS/IaaS); state the data-governance assumption before choosing.
+
+### 28. 2526 Sem1 Test Q12 · PDF p. 17
+
+You are part of an e-commerce start-up and wish to understand the shopping patterns arising from last year’s sales events. In order to do this, you have been tasked with doing the data analysis where you have a lot of data. Which cloud deployment will you choose as the best option?
+- a. Public cloud only
+- b. Private cloud only
+- c. Hybrid cloud
+- d. Either Public or Private cloud
+- e. Multi-cloud
+
+**Answer:** (d)
+
+**Explanation:** (d) The dataset can be analysed in either a public or a private cloud; the stem gives no residency, budget, latency or existing-investment constraint that forces one deployment. Public cloud often avoids upfront capacity for a one-off batch job, while private cloud can use existing controlled capacity. Multi-cloud or hybrid adds complexity without a stated need. This is the course’s “insufficient constraints” answer.
+
+### 29. 2526 Sem1 Test Q25 · PDF p. 18
+
+While setting up a new cloud deployment, you are tasked with ensuring that data availability must be high and that you must also comply with data protection guidelines which mandate that you must store Singapore customer data only within Singapore. How can you ensure compliance in such a scenario while keeping costs down? Briefly explain your answer.
+
+**Answer:** Keep Singapore customer data and its replicas in permitted Singapore regions or a suitable sovereign environment
+
+**Explanation:** Place the primary Singapore customer data **and backups/replicas** in an allowed Singapore location. Use replication across independent local failure domains for availability, then route and authorize requests so cross-border access and data movement obey the applicable rule. Compare local managed-cloud capacity with private/sovereign options; avoid paying for a global multi-region setup that violates residency. Verify whether the guideline also covers metadata, logs, keys and support access.
+
+### 30. 2526 Sem2 Test Q5 · PDF p. 18
+
+A public-sector platform must keep both data and metadata within one country’s borders and prevent foreign access under all circumstances. Which cloud deployment model is the best fit?
+- a. Public Cloud
+- b. Private Cloud
+- c. Hybrid Cloud
+- d. Sovereign Cloud
+- e. Multi Cloud
+
+**Answer:** (d)
+
+**Explanation:** (d) A sovereign cloud is designed around jurisdictional control, including residency and restrictions on foreign administration/access. Merely choosing a public-cloud region does not by itself establish that metadata, backups, keys and operator access stay within the country. The phrase “under all circumstances” is stronger than an ordinary deployment label can prove; the actual contractual and technical controls must be checked.
+
+### 31. 2526 Sem2 Test Q22 · PDF p. 18
+
+Design a cloud strategy for a healthcare analytics SaaS used by multiple hospitals. Patient data must be tightly governed, demand can spike during outbreaks, and the system must still scale nationally. What deployment model(s) and scaling architecture(s) would you choose, and why?
+
+**Answer:** Use private or hybrid placement for governed patient data, with controlled dynamic scaling or cloud bursting for permitted workloads during outbreaks.
+
+**Explanation:** Separate governed patient records from scalable analytics tasks. Keep identified data in an approved private/sovereign environment; use hybrid cloud bursting only for data and processing legally allowed to leave that boundary, perhaps after approved de-identification. Use horizontal replicas and load balancing for request spikes, plus queues/worker scaling for batch analytics. Define access control, encryption, audit, locality of copies and the path back to private capacity when the outbreak load falls.
+
+### 32. 2526 Sem2 Test Q23 · PDF p. 18
+
+You are responsible for the cloud infrastructure in company TheGreatCloud.sg. You have been told that the new system you are designing will be holding sensitive data which must comply with data residency laws across multiple countries. How will you design your data storage to be able to manage this cross-border access while being compliant to the data residency laws? Give two ways in which you can achieve this.
+
+**Answer:** Keep each country’s data and replicas inside its permitted region; route requests to region-specific services.
+
+**Explanation:** Two complementary controls are (1) **regional partitioning**: store each country’s primary data, replicas and backups only in a compliant location; and (2) **region-aware access and processing**: send each request to the right regional service and restrict cross-border reads/exports using IAM and policy. Encryption and audit support these controls but do not make an unlawful data transfer lawful. Check metadata, logs, keys and disaster-recovery copies as well.
+
+### 33. Course Quiz 1 Q3 · PDF p. 19
+
+An e-commerce startup wants to analyze large sales-event data. Which deployment option offers the most flexibility?
+- a. Public cloud only
+- b. Private cloud only
+- c. Hybrid cloud
+- d. Either public or private cloud
+- e. Multi-cloud
+
+**Answer:** (d)
+
+**Explanation:** (d) Either public or private cloud. The graded Canvas attempt marks (e) Multi-cloud wrong and points to (d) as the correct answer. This is the course key even though the question's flexibility wording may invite broader interpretations.
+
+### 34. 2425 Sem2 Test Q8 · PDF p. 19
+
+An organisation O (cloud service consumer), accesses a cloud service offered by public cloud A. Based on this, which of the following statements is false?
+- a. O has its own organisational boundary
+- b. A has its own organisational boundary
+- c. O extends its trust boundary to encompass the organisational boundary of A
+- d. A extends its trust boundary to encompass the organisational boundary of O
+- e. One of the above statements is false
+
+**Answer:** (d)
+
+**Explanation:** (d) A extends its trust boundary to encompass the organisational boundary of O. Both O and A define their organisational boundaries, but cloud consumer must also extend its boundary to trust the cloud provider, and not the other way around.
 
 ## References
 
@@ -1248,25 +1649,228 @@ High availability requires a response to at least two different disturbances. A 
 
 For elastic capacity diagrams, trace **measurement → decision → actuation**. The automated scaling listener observes conditions, the intelligent automation engine decides whether to change allocation, and the hypervisor applies the resource change. Repeated scale-up/scale-down near a threshold is oscillation; use hysteresis, evaluation windows and cooldown. Horizontal vs vertical says *what kind of capacity changes*; dynamic vs elastic says *how/when the change is controlled*. Dynamic relocation moves a VM or workload between hosts, which differs from cloning a service.
 
-Cloud bursting specifically crosses from normal on-premise/private capacity into prearranged cloud capacity at a trigger, then returns when demand falls. It needs secure connectivity and a plan for sessions/data consistency. Sibling pools are separate peer pools, whereas nested pools are subpools within a parent hierarchy. Review [Q35–51](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-3---cloud-architectures).
+Cloud bursting specifically crosses from normal on-premise/private capacity into prearranged cloud capacity at a trigger, then returns when demand falls. It needs secure connectivity and a plan for sessions/data consistency. Sibling pools are separate peer pools, whereas nested pools are subpools within a parent hierarchy. Review Q35–51 in the Exam Questions & Worked Problems section below.
 
 ## 8. Summary
 
 Cloud architectures transform static IT resources into dynamic, self-scaling systems. Workload distribution leverages load balancers (such as AWS ALB Layer 7 with listeners and geolocation target groups, NLB Layer 4, and GWLB Layer 3 virtual appliances) to achieve horizontal scalability seamlessly. Service load balancing deploys independent or built-in load balancing logic. Resource pooling manages capacity through hierarchical Parent, Sibling, and Nested pools. Dynamic scalability enables dynamic horizontal/vertical scaling and live relocation with near-zero downtime. Elastic resource capacity automates CPU/RAM provisioning using Automated Scaling Listeners and Intelligent Automation Engines, while Cloud Bursting enables hybrid on-premise infrastructure to burst into public cloud resources during demand surges with real-time state database synchronization.
 
-<reviewkit>
-<takeaways>
-- **Rapid Elasticity & Objectives:** Resource organization aims to achieve elasticity/scaling and balanced resource utilization across workload and resource volatility.
-- **Workload Distribution & AWS ELB:** Load balancers enable horizontal scaling seamlessly for consumers. AWS provides ALB (Layer 7 HTTP with rules and geolocation target groups), NLB (Layer 4 TCP/UDP), GWLB (Layer 3 virtual appliances), and CLB (Legacy).
-- **Independent vs. Built-In Load Balancing:** Independent load balancers operate separately to intercept traffic. Built-in load balancers integrate routing logic inside the primary application server instance.
-- **Two Availability Goals:** Autoscaling handles rising demand; redundant instances across zones with health-based routing handle instance or zone failure. One autoscaling group can help implement both.
-- **Hierarchical Resource Pooling:** Hierarchical structures use Parent, Sibling (physically grouped in facility, isolated per tenant), and Nested pools (sub-divided for internal departments) to eliminate dedicated pool complexity.
-- **Dynamic Scalability & Relocation:** Dynamic relocation live-migrates VMs to higher-capacity hosts with near-zero downtime by pre-provisioning target hosts. "Scaling" defaults to scale UP; "Elastic Scaling" implies scaling UP and DOWN.
-- **Elastic Resource Capacity:** Automated Scaling Listeners monitor capacity and trigger Intelligent Automation Engines to script hypervisors to dynamically allocate/reclaim CPU and RAM.
-- **Cloud Bursting Architecture:** Scales on-premise workloads into public cloud resources during traffic surges (Burst Out) and releases cloud leases when traffic normalizes (Burst In). Relies on pre-deployed inactive cloud instances, automated listeners, and real-time database state replication.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-3---cloud-architectures-workload-distribution-resource-pooling-dynamic-scalability-and-cloud-bursting) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-3---cloud-architectures-workload-distribution-resource-pooling-dynamic-scalability-and-cloud-bursting)
+
+### 35. 2425 Sem2 Test Q11 · PDF p. 21
+
+A company provides users with a SaaS to file their taxes. Close to the deadline, there is a huge spike in demand. Which strategy is most effective for ensuring performance and availability for this SaaS during the spike?
+- a. Design a robust load balancing architecture
+- b. Design a system for the highest probable peak load
+- c. Upgrade network connection to deal with potential spike
+- d. Lease additional hardware during peak period, as necessary
+- e. Ask the users to wait in an online queue
+
+**Answer:** (a)
+
+**Explanation:** (a) Design a robust load balancing architecture. We can never estimate the real peak and leasing expensive hardware is not an option due to delays in provisioning. (c) and (e) are not really options.
+
+### 36. 2425 Sem2 Test Q22 · PDF p. 22
+
+The company you work for is responsible for a large web server farm. You are tasked with increasing the availability of this farm to ensure little to no downtime. List two ways in which you can achieve this.
+
+**Answer:** (1) Use autoscaling to add capacity when traffic spikes. (2) Keep redundant server instances across availability zones/locations, and use health checks plus load balancing to route around failed instances.
+
+**Explanation:** These address different causes of downtime. Autoscaling prevents overload when demand rises; redundancy with health-based routing keeps the service available when an instance or zone fails. An autoscaling group may also manage the redundant instances, so the mechanisms can be implemented together, but the two availability goals should be stated separately. The source PDF gives the same two ideas in one sentence.
+
+### 37. 2526 Sem1 Test Q8 · PDF p. 22
+
+You are running a cloud environment and realise you need a load balancer. What is its primary purpose?
+- a. To ensure a high bandwidth between your application and the client
+- b. To automatically adjust the necessary amount of computing resources that are used by your applications
+- c. To distribute incoming service requests across multiple servers
+- d. To ensure that data in the cloud is synchronised across multiple servers
+- e. To manage the various computing resources within a datacenter
+
+**Answer:** (c)
+
+**Explanation:** (c) A load balancer chooses a healthy backend for each incoming request, avoiding concentration on one server and permitting replicated service instances. It does not create more compute capacity by itself (b: autoscaling), synchronize data (d), or guarantee a faster client network link (a). Health checks can also stop routing to failed backends, improving availability.
+
+### 38. 2526 Sem1 Test Q11 · PDF p. 22
+
+An organization has deployed a redundant service (Service A) on three virtual servers (Server A, Server B, Server C). To manage load, all consumer requests are sent directly to Server A. Server A contains application logic that allows it to assess its own load and forward a portion of the incoming requests to Server B and Server C as needed. This differs from a model where an external device intercepts all traffic. Which specific architecture does this scenario illustrate?
+- a. Independent Load Balancer
+- b. Sibling Resource Pool
+- c. Dynamic Vertical Scaling
+- d. Built-In Load Balancer
+- e. Cloud Bursting Architecture
+
+**Answer:** (d)
+
+**Explanation:** (d) Built-In Load Balancer. Server A contains the routing logic, so this is built-in load balancing. The source explicitly rejects the independent-balancer option.
+
+### 39. 2526 Sem1 Test Q23 · PDF p. 22
+
+It is the upcoming holiday season and your application has gained a lot of traction – yay! However, the downside is that your cloud infrastructure is struggling with this load. You have looked into auto-scaling and load-balancing already. List two other methods that you can use to help with this issue.
+
+**Answer:** Use caching/CDN delivery to reduce origin traffic and optimize database indexes/query paths
+
+**Explanation:** Caching or CDN delivery serves repeated static content without invoking the application for every request, reducing origin CPU and network work. Database indexes and query-path optimisation reduce work per request, so the same fleet handles more traffic. Measure cache hit rate and slow queries first; stale cache entries and write-heavy traffic can limit these gains.
+
+### 40. 2526 Sem2 Test Q1 · PDF p. 23
+
+How does an Application Load Balancer enable reliability?
+- a. By routing traffic to the least busy instances
+- b. By routing traffic away from failed instances
+- c. By caching frequently accessed content
+- d. By replacing failed instances
+- e. By routing traffic to new instances
+
+**Answer:** (b)
+
+**Explanation:** (b) Health checks identify an unhealthy target and the ALB stops sending new requests there, letting healthy replicas continue serving. An ALB routes traffic; it does not itself replace failed VMs (d), create capacity, or cache content (c). Reliability therefore also requires redundant healthy targets and an instance-replacement mechanism.
+
+### 41. 2526 Sem2 Test Q15 · PDF p. 23
+
+Which of the following are signs of a highly available application? (i) Applications are protected behind multiple layers of security (ii) Spikes in user demand are met through automatically increasing resources (iii) A failure in one geographic region will trigger an automatic switch to resources in a different region (iv) Virtualized hypervisor-driven systems are deployed as mandated by company policy (v) Application developers ensure the necessary software updates are applied
+- a. (i) and (iii)
+- b. (ii) and (iv)
+- c. Only (v)
+- d. (ii) and (iii)
+- e. (i) and (v)
+
+**Answer:** (d)
+
+**Explanation:** (d) (ii) and (iii). Security and keeping software updated doesn’t directly translate into availability of the application.
+
+### 42. Course Quiz 2 Q2 · PDF p. 23
+
+Where does built-in load-balancing logic reside?
+- a. External independent appliance
+- b. Within the cloud service or its application environment
+- c. Only the consumer OS
+- d. Top-of-rack switch
+- e. Intelligent Automation Engine outside the pool
+
+**Answer:** (b)
+
+**Explanation:** (b) The dispatching logic lives in the service/application environment—here Server A inspects its own load and forwards work to B or C. In an independent-balancer design, a separate component receives traffic before the service servers. Both can spread work; the diagnostic clue is **where the routing decision executes**.
+
+### 43. Course Quiz 2 Q9 · PDF p. 24
+
+Which statements hold for an independent load balancer? Select all that apply.
+- a. Not separate from servers
+- b. Uses vertical scaling
+- c. Uses horizontal scaling
+- d. Cloud service is replicated across servers
+- e. Must be managed by the consumer
+
+**Answer:** (c), (d)
+
+**Explanation:** (c) Uses horizontal scaling, (d) Cloud service is replicated across servers. A separate balancer distributes requests to replicated service instances.
+
+### 44. Course Quiz 2 Q3 · PDF p. 25
+
+Physically grouped IT resources are isolated into consumer-specific pools. Which pooling architecture is this?
+- a. Sibling Resource Pool
+- b. Nested Resource Pool
+- c. Dynamic Resource Pool
+- d. Embedded Resource Pool
+- e. Rapid Elasticity Pool
+
+**Answer:** (a)
+
+**Explanation:** (a) Sibling Resource Pool. Sibling pools are separate, isolated peer pools drawn from physically grouped resources.
+
+### 45. 2526 Sem1 Test Q15 · PDF p. 26
+
+Which one of the following statements is NOT true about Cloud Computing?
+- a. Opex includes expenses like electricity and maintenance for on-premise IT resources
+- b. Detecting spam in social media is a good example of a use case for MapReduce
+- c. PaaS is the cloud service that is usually provided to run the development environment
+- d. Elastic scaling can dynamically increase or decrease server resources based on a specific period
+- e. Higher security threats are a disadvantage of using public PaaS for SaaS development
+
+**Answer:** (d)
+
+**Explanation:** (d) The statement is not generally true: elasticity responds to workload or configured conditions, not inherently to a fixed time period.
+
+### 46. 2526 Sem1 Test Q17 · PDF p. 26
+
+In a cloud environment, which type of scaling adjusts the number of resources based on the load and traffic?
+- a. Load scaling
+- b. Vertical scaling
+- c. Horizontal scaling
+- d. Network scaling
+- e. Elastic scaling
+
+**Answer:** (e)
+
+**Explanation:** (e) “Elastic” describes automatic adjustment of capacity with demand: resources can be added and later removed. Horizontal scaling adds/removes instances and vertical scaling resizes one instance; either can be used as a **mechanism** within elastic scaling. The stem asks for the demand-responsive behaviour, not the direction of the change.
+
+### 47. 2526 Sem2 Test Q18 · PDF p. 26
+
+A company, GreatestCloudOfAll Inc, have noticed that their cloud infrastructure frequently scales up and down, which is causing great instability and hence extra costs. You have been called in as an expert to advise them. What would your advice be?
+- a. You just need to increase your number of instances and it’ll be fine
+- b. You can re-check your thresholds for scaling and also add a cooldown period which prevents further scaling during this period
+- c. You can monitor it and over time just disable scaling as that will help in the long run in this case
+- d. Best is manual scaling, nothing beats it!
+- e. Reduce the overall cost by reducing your number of instances
+
+**Answer:** (b)
+
+**Explanation:** (b) Rapid up/down changes near a threshold are scaling oscillation. Set separate scale-out and scale-in thresholds or longer evaluation windows, and add a cooldown so each action has time to affect measured load. More permanent instances (a) raises baseline cost without fixing the control loop; disabling automation or using manual changes loses demand response.
+
+### 48. Course Quiz 2 Q4 · PDF p. 27
+
+A database VM moves to a host with faster/larger storage. Which dynamic scalability type is this?
+- a. Dynamic Horizontal Scaling
+- b. Dynamic Vertical Scaling
+- c. Dynamic Relocation
+- d. Cloud Bursting
+- e. Service Load Balancing
+
+**Answer:** (c)
+
+**Explanation:** (c) The database VM is moved to a different physical host with better storage. The **placement** changes; the question does not say a new service replica is created (horizontal) or that the same VM is resized in place (vertical). A relocation may still improve performance by accessing different underlying hardware.
+
+### 49. 2526 Sem1 Test Q20 · PDF p. 27
+
+Which of the following best distinguishes Dynamic Scalability Architecture from Elastic Resource Capacity Architecture?
+- a. Dynamic Scalability relies on manual scaling operations, whereas Elastic Resource Capacity is fully automated and static
+- b. Dynamic Scalability only involves vertical scaling, while Elastic Resource Capacity only involves horizontal scaling
+- c. Dynamic Scalability focuses on scaling within a single resource pool, whereas Elastic Resource Capacity focuses solely on scaling between sibling pools
+- d. Dynamic Scalability requires an Automated Scaling Listener, while Elastic Resource Capacity does not use any monitoring component
+- e. Dynamic Scalability adjusts resources based on predefined conditions, while Elastic Resource Capacity uses intelligent automation to allocate or reclaim resources in real time
+
+**Answer:** (e)
+
+**Explanation:** (e) Dynamic Scalability Architecture reacts when defined thresholds/conditions are met; Elastic Resource Capacity Architecture coordinates monitoring, an intelligent automation engine and a hypervisor to assign or reclaim resources. Both can be automated and can change capacity, so “manual vs automatic” (a) and “no monitoring” (d) are false distinctions. Focus on the specific control workflow in the course diagram.
+
+### 50. Course Quiz 2 Q1 · PDF p. 28
+
+In Elastic Resource Capacity Architecture, what does the hypervisor do?
+- a. Listen for the Intelligent Automation Engine signal
+- b. Always exist as hardware
+- c. Allocate additional resources based on workload
+- d. Decide when to scale
+- e. Deny consumer requests
+
+**Answer:** (a), (c)
+
+**Explanation:** (a) Listens to the signal from the Intelligent Automation Engine; (c) Allocates additional resources based on workload. The engine decides when to scale; the hypervisor acts on its signal.
+
+### 51. 2526 Sem2 Test Q6 · PDF p. 29
+
+A retailer normally runs their infrastructure on-premise but wants excess holiday traffic to spill over into pre-deployed cloud resources only when local thresholds are exceeded, then return to on-premise when the load drops. Which architecture best matches this?
+- a. Resource pooling architecture`
+- b. Service load balancing architecture
+- c. Cloud bursting architecture
+- d. Elastic resource capacity architecture
+- e. Using horizontal or vertical scaling architecture
+
+**Answer:** (c)
+
+**Explanation:** (c) Cloud bursting uses on-premise capacity normally, directs excess demand to prearranged cloud resources when a threshold is exceeded, and withdraws that spillover as demand falls. The key is crossing the **private/on-premise to public-cloud boundary**; ordinary horizontal scaling may remain entirely within one environment. Stateful applications also need session/data consistency and secure connectivity for bursting to work.
 
 ## References
 
@@ -2148,7 +2752,7 @@ For transfers such as backup, a useful lower-bound model is `time ≥ bytes to t
 
 For energy, write `PUE = facility energy / IT energy = 1 + support overhead / IT energy`. The ideal value 1 means no cooling or power-distribution loss and is a theoretical bound. Improving PUE by reducing overhead differs from improving useful computation per joule. Do not compare values unless numerator and denominator use the same measurement boundary and period.
 
-For the tier-choice calculation, use the horizon and units consistently: `expected downtime hours = 8,760 × (1 − availability) × 20`; `total USD million = build USD million + downtime hours × 2`. The provided tier figures give approximately 1,452.816, 1,307.536, 563.072 and 567.520 million for Tiers 1–4, respectively. Tier 3 wins narrowly over Tier 4; “highest availability” is not automatically “lowest total cost.” Review [Q52–59](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-4---datacenter-infrastructure).
+For the tier-choice calculation, use the horizon and units consistently: `expected downtime hours = 8,760 × (1 − availability) × 20`; `total USD million = build USD million + downtime hours × 2`. The provided tier figures give approximately 1,452.816, 1,307.536, 563.072 and 567.520 million for Tiers 1–4, respectively. Tier 3 wins narrowly over Tier 4; “highest availability” is not automatically “lowest total cost.” Review Q52–59 in the Exam Questions & Worked Problems section below.
 
 ## 10. Summary
 
@@ -2161,20 +2765,105 @@ Modern datacenters are complex engineering facilities that balance electrical di
 6. **Cooling & Energy Efficiency:** The thermodynamic reality of Joule heating requires hot-cold aisle airflow containment, transition to high-capacity liquid cooling, and sustainable water sourcing. Datacenter efficiency is measured via Power Usage Effectiveness (PUE), with hyperscale facilities achieving PUEs below $1.15$ and employing energy-proportional computing mechanisms to eliminate idle power waste.
 7. **Reliability:** The Uptime Institute Tier classification benchmarks physical redundancy, ranging from basic Tier 1 facilities ($28.84\text{ hours/year}$ downtime) to concurrently maintainable Tier 3 commercial standards ($1.58\text{ hours/year}$) and fully fault-tolerant Tier 4 installations ($26.3\text{ minutes/year}$).
 
-<reviewkit>
-<takeaways>
-- **Hosting Trade-offs:** On-premise provides deterministic QoS and strict physical isolation; cloud hosting provides elastic scaling and utility OPEX, but delegates QoS to third-party transit carriers. Cloud security challenges arise from multi-actor trust boundaries and co-tenancy rather than inherent infrastructure flaws.
-- **Latency vs. Bandwidth:** Bandwidth is scalable by adding physical channels; latency is bounded by physical propagation limits ($v_{\text{fiber}} \approx 204,000\text{ km/s}$). Scaled to 1 CPU cycle = 1 second, main memory access equals 6 minutes, local SSD read equals 2–6 days, and an international network round-trip equals 16 years.
-- **Hierarchical Networking:** Datacenter networks use Core, Aggregation, and Access layers. Top-of-Rack (TOR) switches solve the $\mathcal{O}(N^2)$ pairwise cabling explosion, scaling host runs linearly at $\mathcal{O}(N)$.
-- **Server Standards:** $1\text{U} = 1.75\text{ inches} = 44.45\text{ mm}$ (EIA-310). Modern 1U hyper servers pack dual processors (up to 512 cores), DDR5 ECC RDIMMs (electrically isolated contacts), PCIe 5.0 lanes, and OCP-compliant AIOM mezzanine network cards into standard 42U racks.
-- **Storage Hierarchy:** Trades off private local storage (sub-microsecond latency, non-shared, node-locked) against distributed shared storage (100 µs to 10 ms latency, resilient, cluster-wide access via SAN/NVMe-oF).
-- **Thermodynamic Airflow:** Raised-floor hot-cold aisle containment prevents air mixing. Water holds over $1,000\times$ more heat per unit volume than air, driving adoption of direct-to-chip liquid cooling and seawater-cooled facilities.
-- **PUE & Energy Proportionality:** $\text{PUE} = \frac{\text{Total Facility Power}}{\text{IT Equipment Power}}$. Hyperscale facilities achieve PUE $< 1.15$ with only $11\%$ cooling overhead. Cyclical quarterly PUE swings reflect summer ambient heat vs. winter economizer free cooling. Energy-proportional computing ($P(u) = u \cdot P_{\text{max}}$) minimizes the 50% power penalty of idle servers.
-- **Uptime Institute Tiers:** Tier 1 (99.671% availability, 28.84h/yr downtime); Tier 2 (99.741%, 22.70h/yr downtime); Tier 3 (99.982%, 1.58h/yr downtime, concurrently maintainable industry standard); Tier 4 (99.995%, 26.3m/yr downtime, fault-tolerant active-active dual feeds).
-- **20-Year Tier Cost Comparison:** For a question specifying 365 days/year, use 8,760 hours/year and add build cost to expected downtime cost. At USD 2M per downtime hour, Tier 3 has the lowest total of USD 563.072M.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-4---datacenter-infrastructure-resource-hosting-hardware-architecture-network-layering-and-energy-efficiency) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-4---datacenter-infrastructure-resource-hosting-hardware-architecture-network-layering-and-energy-efficiency)
+
+### 52. 2526 Sem2 Test Q21 · PDF p. 30
+
+Assume that you are responsible for organising your cloud resources globally as the leader of an enterprise. Discuss at least two key factors that you should consider when deciding on cloud resource hosting.
+
+**Answer:** Consider regional availability, latency to users, regional price, and legal/data-residency constraints.
+
+**Explanation:** At minimum, compare user proximity (latency), permitted data/metadata location (law and contracts), regional availability/disaster recovery, and the full regional cost including egress. A low-price distant region can lose its advantage if network delay harms the application or cross-border storage is prohibited. The hosting choice should follow workload/data requirements rather than a single universal “best region.”
+
+### 53. 2425 Sem2 Test Q6 · PDF p. 31
+
+A company which recently migrated to the cloud is noticing that its customers are facing slow data access times. What could be the main cause?
+- a. Virtualisation
+- b. Dedicated server allocation
+- c. Elastic load balancing
+- d. Automatic scaling
+- e. Low Bandwidth
+
+**Answer:** (e)
+
+**Explanation:** (e) For large transfers, limited throughput increases transfer time approximately as data size divided by usable bandwidth. Virtualisation, load balancing and autoscaling are not inherently the cause in the listed choices, though none guarantees fast access. If users complain about **response latency** for small requests, also inspect RTT, placement, packet loss and server/database time; bandwidth alone is not a universal diagnosis.
+
+### 54. 2425 Sem2 Test Q24 · PDF p. 31
+
+The time it takes to back up your data on the cloud depends only on the amount of data you have. Is this statement true or false? Explain your answer
+
+**Answer:** False.
+
+**Explanation:** False. A first approximation is backup time ≥ data size / sustained transfer throughput; effective throughput depends on available bandwidth, congestion, protocol overhead and parallelism. Latency matters especially for many small requests, while compression, deduplication and incremental backup change how much data must cross the link. Measure restore time as well as backup time.
+
+### 55. 2526 Sem2 Test Q17 · PDF p. 31
+
+Your users are reporting increased levels of latency. On checking you notice that CPU usage is actually low. What may be the primary cause then?
+- a. Servers are overprovisioned
+- b. Too many instances have been set up
+- c. Horizontal scaling
+- d. Network bottleneck
+- e. Usage of CDNs
+
+**Answer:** (d)
+
+**Explanation:** (d) Low CPU means the request may be waiting for the network rather than computation: check RTT, congestion, packet loss, DNS, bandwidth saturation and the location of users/data. Extra instances or a CDN are not generally causes of high latency in this scenario. Low CPU is only a clue; storage or database I/O wait is another possible real-world explanation.
+
+### 56. 2526 Sem1 Test Q9 · PDF p. 37
+
+A datacenter operator is analysing their energy consumption using the "Energy Usage and Power Efficiency" pie chart. They want to improve their Power Usage Efficiency (PUE), which is calculated as: Total power used by datacenter includes both equipment and overhead power. To achieve an ideal PUE of 1, their efforts should focus on reducing the power consumption of which components? PUE = total facility energy / IT equipment energy.
+- a. CPUs, DRAM, and Disks
+- b. Power Overhead and Cooling Overhead
+- c. Networking and Miscellaneous
+- d. CPUs
+- e. The Electrical Yard and Main Server Hall
+
+**Answer:** (b)
+
+**Explanation:** (b) PUE = total facility energy / IT equipment energy = 1 + non-IT overhead / IT energy. To move the ratio toward its theoretical minimum of 1, reduce cooling and power-distribution losses. Reducing CPU power alone can shrink both numerator and denominator and need not improve PUE; PUE also says nothing by itself about useful work per joule.
+
+### 57. 2526 Sem2 Test Q11 · PDF p. 38
+
+You are tasked with designing a datacenter. Your manager asks you to prioritize components based on increasing energy consumption (from lowest to highest). Which of the following orders is correct?
+- a. Networking → Disk → DRAM
+- b. CPU → Disk → Networking
+- c. Disk → DRAM → Cooling
+- d. Cooling → Networking → DRAM
+- e. Disk → Cooling → CPU
+
+**Answer:** (e)
+
+**Explanation:** (e) Disk → Cooling → CPU. Based on the lecture’s energy breakdown, disks consume the least energy among the listed components, followed by cooling infrastructure, while CPUs typically account for the highest energy consumption.
+
+### 58. Course Quiz 2 Q5 · PDF p. 38
+
+What is the ideal datacenter PUE?
+- a. 0
+- b. 0.5
+- c. 1
+- d. 1.5
+- e. 100
+
+**Answer:** (c)
+
+**Explanation:** (c) 1 is the theoretical lower bound because total facility energy includes IT energy plus non-IT overhead. Real facilities consume power for cooling, distribution and other support, so measured PUE is above 1. A ratio below 1 would imply total energy is less than its IT subset and signals inconsistent measurement boundaries.
+
+### 59. Course Quiz 2 Q10 · PDF p. 39
+
+For 20 years (365 days/year) and USD 2M per downtime hour, build costs are Tier 1 USD 300M, Tier 2 USD 400M, Tier 3 USD 500M, Tier 4 USD 550M. Which tier minimizes build plus expected downtime cost?
+- a. Tier 1
+- b. Tier 2
+- c. Tier 3
+- d. Tier 4
+- e. Tier 5
+
+**Answer:** (c)
+
+**Explanation:** Use the question's 365 days/year: $8{,}760$ hours/year. Total cost (USD M) = build cost (USD M) + $8{,}760\times(1-\text{availability})\times20\times2$. Tier 1: $300+28.8204\times20\times2=1{,}452.816$M; Tier 2: $400+22.6884\times20\times2=1{,}307.536$M; Tier 3: $500+1.5768\times20\times2=563.072$M; Tier 4: $550+0.4380\times20\times2=567.520$M. **Tier 3 is lowest.**
 
 ## References
 
@@ -2812,7 +3501,7 @@ A **VM** virtualizes hardware for a guest OS; different guests may run different
 
 Resource contention is a host-level allocation question. CPU overcommit, memory pressure, disk IOPS and shared network capacity can each be the bottleneck; measuring and rebalancing VM allocations is more comprehensive than buying only one faster component. Application multitenancy is another distinct layer: one application instance may serve isolated tenants even when it runs inside VMs. Single tenancy offers a simpler separation boundary at higher utilisation cost; it does not erase identity or application-level risks.
 
-For the disputed VM/container MCQ, retain the source conflict: its printed key says “separate namespaces,” but the accompanying explanation points to VM hardware virtualization as the primary architectural difference. State the reasoning and the key conflict explicitly rather than silently switching answers. Review [Q60–73](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-5---virtualization-technologies).
+For the disputed VM/container MCQ, retain the source conflict: its printed key says “separate namespaces,” but the accompanying explanation points to VM hardware virtualization as the primary architectural difference. State the reasoning and the key conflict explicitly rather than silently switching answers. Review Q60–73 in the Exam Questions & Worked Problems section below.
 
 ## 8. Summary
 
@@ -2828,22 +3517,193 @@ For the disputed VM/container MCQ, retain the source conflict: its printed key s
 7. **Cloud Delivery Models:** Virtualization enables IaaS (consumer-managed virtual infrastructure), PaaS (managed application runtime environments), and SaaS (multi-tenant end-user software).
 8. **Multi-Tenancy Engineering:** Contrasts the cloud provider view (single application instance serving multiple tenants) with the cloud consumer view (dedicated logical instance). Driven by six key characteristics: usage isolation, data security, independent recovery, scalability, metered consumption, and data tier isolation (database-per-tenant, schema-per-tenant, shared-table with partition keys).
 
-<reviewkit>
-<takeaways>
-- **Virtualization Definition & Mechanism:** Enables a single physical infrastructure to function as multiple logical infrastructures by multiplexing processors, memory, storage, and networking under a hypervisor (VMM) via a 1:N sharing relationship.
-- **Canonical Trade-Offs:** Delivers Hardware Independence, Resource Consolidation, and Resource Replication (rapid scaling via disk images); incurs Performance Overhead and introduces a centralized Single Point of Failure (SPOF).
-- **Four Resource Subsystems:** Processor virtualization (vCPUs), Memory virtualization (two-stage GVA -> GPA -> HPA translation), Storage virtualization (logical LUNs and virtual disk files), and Network virtualization (vSwitches and overlay fabrics).
-- **Three Approaches to Virtualization:**
-  - *Full Virtualization:* Binary translation dynamically rewrites sensitive instructions while direct execution runs user code; unmodified guest OS is completely unaware; VMware ESX.
-  - *Para-Virtualization:* OS-assisted model where guest kernel source is modified to issue direct Hypercalls; eliminates binary translation tax; Cambridge Xen.
-  - *Hardware-Assisted Virtualization:* CPU silicon extensions (Intel VT-x / AMD-V) add VMX Root and Non-Root modes; privileged requests trap directly to silicon via VMCS; Microsoft, Virtual Iron, XenSource.
-- **Hypervisor Classifications:** Type 1 Bare-Metal runs directly on silicon (ESXi, Xen, Hyper-V, KVM); Type 2 Hosted runs on a host OS (Workstation, VirtualBox, Parallels). Security vectors include Host OS attacks (compromising all instances) and Guest OS attacks (VM escape).
-- **Containers vs. VMs:** Containers virtualize operating system user space and share the single host kernel using Linux Namespaces (`pid`, `net`, `mnt`, `ipc`, `uts`, `user`) and Cgroups (CPU, RAM, block I/O limits), delivering lightweight footprint and sub-second startup.
-- **Docker Architecture:** Built in Go with a Client-Server model (REST API over UNIX sockets/TCP). Components include Docker Desktop, Docker Client, Docker Daemon (`dockerd`), Docker Registries (Docker Hub), Docker Images (read-only layer templates), and Docker Containers (live running instances). Runs on macOS/Windows via background Linux VMs (WSL2 / Virtualization.framework).
-- **Multi-Tenancy Principles:** Balances the Cloud Provider View (single shared app) with the Cloud Consumer View (dedicated logical instance). Governed by usage isolation, data security, per-tenant recovery, scalability, metered usage, and data tier isolation patterns (database-per-tenant, schema-per-tenant, shared-table with partition keys).
-</takeaways>
-<qprompt/>
-</reviewkit>
+
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-5---virtualization-technologies-hypervisors-hardware-assists-containerization-and-multi-tenancy-engineering) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-5---virtualization-technologies-hypervisors-hardware-assists-containerization-and-multi-tenancy-engineering)
+
+### 60. 2425 Sem2 Test Q10 · PDF p. 40
+
+Your company uses virtual machines (VMs) and is experiencing resource contention (e.g., CPU, memory, disk I/O, or network). Which solution is most effective to address this issue comprehensively?
+- a. Add more physical servers
+- b. Add more memory
+- c. Use faster storage devices
+- d. Increase your network speeds
+- e. Optimise VM resource allocation
+
+**Answer:** (e)
+
+**Explanation:** (e) Resource contention can arise from CPU overcommit, memory pressure, storage IOPS or network sharing. Measure per-VM and host utilisation/latency, then resize allocations, set appropriate limits/reservations, rebalance or migrate VMs. Buying only memory, disks or bandwidth (b–d) fixes one guessed bottleneck; adding hosts (a) helps only if placement and allocation use them effectively.
+
+### 61. 2526 Sem2 Test Q3 · PDF p. 41
+
+Which one of the following statements is correct regarding virtualization?
+- a. Virtualization increases compatibility among hardware that use different standards
+- b. Operating System virtualization is better suited for an application which requires direct communication with hardware resources
+- c. In hardware-assisted virtualization, the guest operating system directly communicates with hardware resources
+- d. Virtualization technology allows the isolation of applications running on the same server
+- e. Virtualization allows multitenancy only when it is Type 2
+
+**Answer:** (d)
+
+**Explanation:** (d) A virtualisation layer provides separate execution environments on the same physical server, limiting interference and enabling independent guest workloads. Containers also isolate processes, but share a kernel; VMs isolate guest OS instances through a hypervisor. Hardware-assisted guests do not bypass the hypervisor for privileged operations (c), and multitenancy is not restricted to Type 2 hypervisors (e).
+
+### 62. 2425 Sem2 Test Q5 · PDF p. 44
+
+Is it possible to run completely different operating systems on virtual machines (VMs) hosted on a single physical host with an OS? If yes, what makes this possible?
+- a. Yes, virtualization makes it possible—VMs can run different operating systems on a single host
+- b. No, it is not possible – VMs are software-based versions of a single host. They cannot have different environments from one another
+- c. Yes, containerization makes it possible – to have VMs that are unique physical entities, so you can have completely different operating systems on them
+- d. No, it is not possible – A single host can only work as one single virtual environment, and can, therefore, have only one environment
+- e. Yes, it is possible – this can be done through a Type 1 Hypervisor
+
+**Answer:** (a)
+
+**Explanation:** (a) Yes: VM virtualization lets several guest operating systems run on one host. Containers instead share the host kernel; Type 1 is only one hypervisor arrangement.
+
+### 63. Course Quiz 2 Q6 · PDF p. 44
+
+Which virtualization approach uses processor extensions to trap guest OS operations to the hypervisor?
+- a. Full Virtualization
+- b. Para Virtualization
+- c. OS-Level Virtualization
+- d. Software-Assisted Virtualization
+- e. Hardware-Assisted Virtualization
+
+**Answer:** (e)
+
+**Explanation:** (e) Hardware-Assisted Virtualization. Hardware assist avoids guest modification or binary translation for privileged operations.
+
+### 64. Course Quiz 2 Q8 · PDF p. 45
+
+Which describes a Type 2 hosted hypervisor?
+- a. Runs directly on bare metal
+- b. Uses a host OS to communicate with infrastructure
+- c. ESXi and Hyper-V are Type 2
+- d. Outperforms Type 1 by bypassing the OS
+- e. Only for container orchestration
+
+**Answer:** (b)
+
+**Explanation:** (b) A Type 2 hypervisor is hosted on a conventional OS and uses that OS to reach devices and physical resources. A Type 1 hypervisor runs directly on hardware. This placement distinction is independent of whether the guest uses CPU hardware-assist extensions, and it does not say which guest OS the VM can run.
+
+### 65. 2425 Sem2 Test Q15 · PDF p. 46
+
+What is one key advantage of using virtual machines over containers?
+- a. Requires less memory space
+- b. More secure
+- c. Faster startup time
+- d. Easy to scale
+- e. More cost-effective
+
+**Answer:** (b)
+
+**Explanation:** (b) VM guests have separate kernels behind a hypervisor, giving a stronger isolation boundary than containers sharing the host kernel in the standard comparison. This is a general architectural advantage, not a blanket guarantee that every VM deployment is secure: hypervisor bugs and poor configuration still matter. Containers usually have lower startup and memory overhead (a, c), and cost/scale depend on workload.
+
+### 66. 2425 Sem2 Test Q18 · PDF p. 47
+
+Out of the following five compute models, which one requires the most maintenance?
+- a. PaaS and VMs
+- b. FaaS and Containers
+- c. PaaS and Containers
+- d. Containers and VMs
+- e. PaaS and FaaS
+
+**Answer:** (d)
+
+**Explanation:** (d) With VMs the consumer commonly maintains guest OS patches and application software; with self-managed containers the consumer also maintains images, runtime configuration and orchestration. PaaS/FaaS shift more platform work to the provider, though the user still owns application code, dependencies, IAM and data. The answer compares typical **consumer operations burden**, not an absolute ranking for every managed offering.
+
+### 67. 2526 Sem1 Test Q18 · PDF p. 47
+
+You realise that using containerised applications in a datacenter environment gives you certain advantages. Which one of the following could be one of them?
+- a. Increases the physical size of the server infrastructure
+- b. Eliminates the need for cloud-based applications
+- c. Improves isolation between applications and operating system
+- d. Reduces the number of physical servers needed
+- e. Reduces the overall cost
+
+**Answer:** (c)
+
+**Explanation:** (c) OS-level isolation separates an application’s processes, filesystem view and network namespace from other containers while sharing one host kernel. This can ease packaging and deployment. It does not remove all security risk or the need for host maintenance, and it does not automatically reduce physical-server count or total cost; those depend on utilisation and consolidation.
+
+### 68. 2526 Sem2 Test Q10 · PDF p. 47
+
+Which of the following features is the primary distinguishing factor between Virtual Machines (VMs) and Docker containers?
+- a. Isolation
+- b. Security
+- c. Hardware virtualization
+- d. Command-line Interfaces
+- e. Separate namespaces
+
+**Answer:** (c)
+
+**Explanation:** (c) Hardware virtualization. The source prints option (e), but its explanation contrasts VM hardware virtualization with containers sharing a host kernel; that supports option (c). Treat the printed key as inconsistent.
+
+### 69. Course Quiz 2 Q7 · PDF p. 48
+
+Which Docker component builds/runs containers and listens for API requests?
+- a. Docker Client
+- b. Docker Registry
+- c. Docker Hub
+- d. Docker Daemon
+- e. Dockerfile
+
+**Answer:** (d)
+
+**Explanation:** (d) The Docker daemon (dockerd) receives API calls and manages image builds, containers, networks and volumes. The CLI client sends requests; a registry stores/distributes images; a Dockerfile is build instructions. Distinguish the **control process** from the interface and artifact it uses.
+
+### 70. 2425 Sem2 Test Q12 · PDF p. 49
+
+What is the advantage of a multitenancy cloud environment over a single tenancy environment?
+- a. Easy to customize
+- b. Cost savings
+- c. Faster performance
+- d. Higher data security
+- e. Higher data governance
+
+**Answer:** (b)
+
+**Explanation:** (b) Cost savings. Multiple users share the same infrastructure and resource, thus leading to better resource utilisation and hence cost savings.
+
+### 71. 2425 Sem2 Test Q14 · PDF p. 50
+
+What is the advantage of a single tenancy cloud environment over a multitenancy environment?
+- a. Lower costs due to shared resources
+- b. Enhanced data security and isolation
+- c. Faster scalability for user spikes
+- d. Simplified resource management
+- e. Reduced need for compliance controls
+
+**Answer:** (b)
+
+**Explanation:** (b) Dedicated tenancy can reduce cross-tenant sharing and make isolation, custom controls and evidence collection easier. It does not eliminate misconfiguration, insider risk or compliance duties. Shared multitenancy usually wins on utilisation and cost (a), while performance and scaling depend on the specific implementation.
+
+### 72. 2526 Sem1 Test Q6 · PDF p. 50
+
+Which one of the following statements most accurately distinguishes the architectural difference between Virtualization (using a Type 1 Hypervisor) and Multitenancy?
+- a. Virtualization and Multitenancy are identical concepts, both referring to a single software instance serving multiple tenants
+- b. Virtualization involves a hypervisor running on a Host OS, while Multitenancy involves a hypervisor running directly on the physical infrastructure
+- c. Virtualization is an enabling technology that abstracts physical hardware (e.g., CPU, memory), allowing a single server to run multiple, isolated guest OSs. Multitenancy is a software architecture where a single instance of an application serves multiple tenants, keeping their data and configuration isolated
+- d. Virtualization is a security risk due to Guest OS attacks, whereas Multitenancy is inherently secure because it always guarantees tenant isolation and data security
+- e. Virtualization is used for IaaS, while Multitenancy is an architecture used exclusively for SaaS
+
+**Answer:** (c)
+
+**Explanation:** (c) Virtualization is an enabling technology that abstracts physical hardware (e.g., CPU, memory), allowing a single server to run multiple, isolated guest OSs. Multitenancy is a software architecture where a single instance of an application serves multiple tenants, keeping their data and configuration isolated. Virtualization abstracts hardware into isolated guest OSs; application multitenancy isolates tenants within one app instance.
+
+### 73. 2526 Sem1 Test Q14 · PDF p. 50
+
+A company wants to move its deployment to the cloud but is worried about the security threats in the cloud. Which one of the following is the major security threat that the company needs to worry about?
+- a. Unauthorized physical access
+- b. Data breaches due to multi-tenancy
+- c. Outdated antivirus software
+- d. Limited user authentication methods
+- e. Data leaks due to bad programming practices
+
+**Answer:** (b)
+
+**Explanation:** (b) In a shared environment, a flaw in tenant isolation or access policy can expose one tenant’s data to another. This is the course’s targeted public-cloud threat, not a claim that multitenancy necessarily causes breaches. Misconfigured IAM, application bugs and leaked credentials can also cause data leaks; assess the actual isolation controls and shared-responsibility boundary.
 
 ## References
 
@@ -4083,7 +4943,7 @@ For a team building its own application, PaaS can reduce runtime/OS operations w
 
 In three-tier applications, the presentation layer is the user interface, the application layer applies business rules and generates server responses, and the data layer stores records. For MapReduce, the developer writes map and reduce functions; the framework partitions input, schedules tasks and shuffles/groups intermediate key-value records. Adding workers helps only while useful parallel work outweighs scheduling and network shuffle overhead.
 
-A FaaS function fits short, event-driven, stateless computation with variable demand. State required across invocations belongs in external storage; long-lived in-process sessions or persistent connections fit poorly. A “serverless” design still has servers, permissions, dependencies, limits and bills. For a low-latency payment gate, minimize synchronous work on the critical path and move safe settlement steps to a durable asynchronous workflow, with explicit reconciliation and failure handling. Review [Q74–98](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-6---cloud-application-architectures-and-computing).
+A FaaS function fits short, event-driven, stateless computation with variable demand. State required across invocations belongs in external storage; long-lived in-process sessions or persistent connections fit poorly. A “serverless” design still has servers, permissions, dependencies, limits and bills. For a low-latency payment gate, minimize synchronous work on the critical path and move safe settlement steps to a durable asynchronous workflow, with explicit reconciliation and failure handling. Review Q74–98 in the Exam Questions & Worked Problems section below.
 
 ## 12. Summary
 
@@ -4102,28 +4962,466 @@ A FaaS function fits short, event-driven, stateless computation with variable de
 13. **FaaS Best Practices & Statelessness:** Functions are strictly stateless, requiring external persistence tiers (DynamoDB, S3, Redis). Functions must follow single responsibility, avoid synchronous function chaining, and minimize dependencies to eliminate cold start overhead.
 14. **AWS Lambda Execution & Lifecycle:** Managed execution service driven by code and configuration bindings. Follows a disciplined 3-step lifecycle (Create $\to$ Deploy $\to$ Invoke/Test) managed via web consoles, the AWS SAM CLI for local emulation, or declarative Infrastructure as Code (Terraform).
 
-<reviewkit>
-<takeaways>
-- **Workload Suitability:** Ideal cloud applications are divisible into independent, stateless tasks with low inter-instance communication (web services, distributed DBs, asynchronous ML). Non-ideal applications exhibit complex sequential dependencies or intensive inter-node communication (traditional MPI HPC).
-- **Core Cloud Challenges:** Consumers face dynamic elasticity, automated failover, and checkpoint/restart hurdles. Providers face multi-tenant isolation, hypervisor overhead, and strict QoS guarantees.
-- **Noisy Neighbor Problem:** Resource contention across shared hypervisors (memory bus, L3 cache, network switches) causes performance jitter. Mitigated by cgroups, CPU pinning, and redundancy at increased operational cost.
-- **Logging Trade-offs:** Diagnostic logging is critical for post-crash recovery and auditing, but synchronous disk/network logging incurs severe I/O penalties. Requires asynchronous buffering and tiered shipping.
-- **Three-Tier Architecture:** Tier 1 (Presentation: UI, browser, reverse proxy), Tier 2 (Application: business logic, microservices, API servers), Tier 3 (Data: relational/NoSQL databases, persistent storage).
-- **SOAP vs. REST:** SOAP is a formal XML protocol with strict WSDL contracts and enterprise WS-Security; REST is an architectural style based on URI resources, standard HTTP verbs, statelessness, and lightweight JSON representations.
-- **REST Principles:** Uniform Interface, Client-Server Decoupling, Statelessness (session state stored in client tokens/cookies, not server memory), Cacheability, Layered System, and Code on Demand.
-- **IaaS vs. PaaS vs. SaaS Spectrum:** IaaS = manage OS, runtime, and app (full control, high maintenance); PaaS = manage app code only ("test offline, deploy online"); SaaS = consume hosted software directly (zero setup, zero architectural control).
-- **Legacy Migration:** If the goal is quick cloud migration with minimal application changes, IaaS rehosting is usually the closest fit; a serverless refactor, PaaS rewrite, or SaaS replacement changes more. Rehosting still needs compatibility, data, network, identity, and licensing work.
-- **MapReduce Programming Model:** Designed for arbitrarily divisible web-scale data (100s of GBs to PBs) over commodity clusters. Transforms input $\langle k_1, v_1 \rangle \to \text{list}(\langle k_2, v_2 \rangle) \to \langle k_2, \text{list}(v_2) \rangle \to \langle k_3, v_3 \rangle$. Follows the SPMD paradigm with a centralized master coordinating workers.
-- **MapReduce Execution Flow:** Mappers write intermediate outputs to **local disks** (saving network and replication costs). Reducers shuffle intermediate partitions over HTTP/RPC, merge-sort grouped keys, execute `reduce()`, and commit final outputs to distributed file systems (GFS/HDFS with $3\times$ replication).
-- **MapReduce Optimizations:** Data locality (scheduling tasks on nodes or racks hosting target data chunks), worker role switching, optimal reducer count tuning ($R$), and local Combiners (mini-reducers) to slash network shuffle volume.
-- **Hadoop Architecture:** Comprises HDFS for distributed chunk storage ($128/256\text{ MB}$ blocks, NameNode/DataNodes), YARN for cluster resource negotiation (ResourceManager/NodeManagers), and the MapReduce compute engine.
-- **Apache Spark vs. MapReduce:** MapReduce materializes data to disk at every phase boundary, causing severe I/O penalties for iterative algorithms. Spark runs in-memory using Resilient Distributed Datasets (RDDs) and DAG scheduling, supporting native streaming and machine learning (MLlib) with $10\times - 100\times$ speedup.
-- **Serverless FaaS Hierarchy:** Event-Driven Computing $\supset$ Function as a Service (FaaS) $\supset$ Serverless FaaS. Applications are decomposed into ephemeral, single-purpose functions that scale elastically with zero idle capacity and pay-per-execution billing.
-- **FaaS Best Practices:** Single responsibility per function; strictly stateless design (state externalized to S3/DynamoDB/Redis); self-contained isolation (avoid synchronous function chaining; use queues/event buses); minimal dependencies to mitigate cold starts.
-- **AWS Lambda Execution & Lifecycle:** Combines application logic code with configuration metadata (memory, timeout, IAM roles, triggers). Operates through a 3-step lifecycle: Create $\to$ Deploy $\to$ Invoke/Test. Managed via the AWS Console, AWS SAM CLI (local Docker testing), Serverless Framework, and Terraform.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-6---cloud-application-architectures-and-computing-paradigms-delivery-models-multi-tier-systems-mapreduce-and-serverless-faas) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-6---cloud-application-architectures-and-computing-paradigms-delivery-models-multi-tier-systems-mapreduce-and-serverless-faas)
+
+### 74. 2526 Sem1 Test Q1 · PDF p. 53
+
+What is a key benefit of using cloud-based databases compared to traditional on- premise non-cloud databases?
+- a. Increased security
+- b. Lower upfront costs
+- c. Increased accessibility and scalability
+- d. Cheaper storage
+- e. Lower latency
+
+**Answer:** (c)
+
+**Explanation:** (c) Network-accessible managed databases can be provisioned, replicated and scaled without buying and installing every server in advance. Whether scale is automatic depends on the product and configuration. Security, latency and storage price are workload/location dependent, so (a), (d) and (e) are not general guarantees; lower upfront cost (b) may also be true but is less specific to the database capability tested.
+
+### 75. Course Quiz 1 Q10 · PDF p. 54
+
+What is a key cloud-database benefit over traditional on-premise databases?
+- a. Increased security
+- b. Lower upfront costs
+- c. Increased accessibility and scalability
+- d. Cheaper storage
+- e. Lower latency
+
+**Answer:** (c)
+
+**Explanation:** (c) Increased accessibility and scalability. Managed cloud databases can be reached and scaled more flexibly; the other benefits are not guaranteed.
+
+### 76. Course Quiz 3 Q1 · PDF p. 54
+
+Which application characteristic makes a workload well suited to cloud? Select all that apply.
+- a. Divisible into many independent tasks
+- b. Intense communication among concurrent instances
+- c. Complex workflow with many dependencies
+- d. Search or database service
+- e. Cannot be arbitrarily partitioned
+
+**Answer:** (a), (d)
+
+**Explanation:** (a) Divisible into many independent tasks; (d) Search or database service. Independent jobs scale well, and cloud-managed search/database services can scale with demand. The Canvas key is hidden, so this is inferred from the lecture topics.
+
+### 77. Course Quiz 3 Q2 · PDF p. 54
+
+Which is NOT one of the cloud-application challenges discussed in lecture?
+- a. Performance isolation at high utilization
+- b. Server failures in large cooperating systems
+- c. Shared-resource latency/bandwidth fluctuation
+- d. Absence of any standard client interface to cloud services
+- e. None
+
+**Answer:** (d)
+
+**Explanation:** (d) HTTP and service styles such as REST/SOAP provide established interfaces, so “no standard client interface” is not a sound lecture challenge. The genuine difficulties are noisy-neighbour performance at high utilisation, failures among many cooperating machines, and variable latency/bandwidth on shared infrastructure. Standards do not make all vendor APIs identical.
+
+### 78. Course Quiz 3 Q3 · PDF p. 55
+
+Code on a web server receives requests, applies business logic, and generates content. Which three-tier layer?
+- a. Presentation
+- b. Application
+- c. Data
+- d. Presentation and data
+- e. None
+
+**Answer:** (b)
+
+**Explanation:** (b) The application tier handles request processing and business rules between the user-facing presentation tier and persistent data tier. It may generate HTML, but generating a response does not make it the presentation tier in this three-tier decomposition. The data tier stores and retrieves records.
+
+### 79. Course Quiz 3 Q4 · PDF p. 55
+
+Which is true of SOAP but not REST?
+- a. Platform/language independence
+- b. Common XML-based request/response messaging format
+- c. Caching
+- d. Stateless client-server communication
+- e. Less structured
+
+**Answer:** (b)
+
+**Explanation:** (b) SOAP specifies an XML envelope and message-processing rules; REST is an architectural style commonly implemented over HTTP and is not tied to one message format. Both can be language independent and stateless, and HTTP caching is often associated with RESTful designs. “Less structured” (e) is vague and does not uniquely identify SOAP.
+
+### 80. 2526 Sem1 Test Q2 · PDF p. 57
+
+You are the founder of a start-up with very limited personnel. Your company handles the input and processing of infectious disease clinical trial data on the cloud. The data processing needs to be real-time. The data contain highly sensitive, personally identifiable information. However, you want to reduce as much manual work as you can due to your small team. Which service should you choose for this application?
+- a. IaaS
+- b. FaaS
+- c. CaaS
+- d. PaaS
+- e. SaaS
+
+**Answer:** (d)
+
+**Explanation:** (d) PaaS. It reduces platform-management work while the team retains control of its real-time application and sensitive-data handling.
+
+### 81. 2526 Sem1 Test Q19 · PDF p. 57
+
+When expecting a huge variation in traffic, as a cloud engineer, we need to be able to ensure the application can scale dynamically based on demand. Which cloud computing service model would we use to implement scalability?
+- a. Elastic load balancer
+- b. SaaS
+- c. Auto-scaling
+- d. PaaS
+- e. None of the above
+
+**Answer:** (d)
+
+**Explanation:** The question asks for a **service model**, so (d) PaaS is the intended choice among the options: developers deploy their application to a managed runtime, and a PaaS platform can manage scaling when configured. (a) Elastic Load Balancer routes requests among healthy instances; it does not itself add application instances. (c) Auto Scaling adds/removes instances, but is a mechanism/service rather than a SaaS/PaaS/IaaS model. **IaaS can scale too** when the consumer configures autoscaling and load balancing; it is absent from the options. Scaling is not unique to PaaS, and not every PaaS automatically scales.
+
+### 82. 2526 Sem2 Test Q2 · PDF p. 58
+
+You wish to build your own application and are operating in a highly competitive market where being first is more important than being perfect, and rapid iteration is critical. Which cloud service model is most appropriate?
+- a. IaaS
+- b. FaaS
+- c. CaaS
+- d. PaaS
+- e. SaaS
+
+**Answer:** (d)
+
+**Explanation:** (d) PaaS. PaaS enables the fastest building and deployment. IaaS takes time while SaaS is too restrictive since you wish to build your own application here.
+
+### 83. 2526 Sem2 Test Q4 · PDF p. 58
+
+A company wants to use MySQL as the database for its web application while selecting the PaaS cloud service model. Which of the following is the most appropriate?
+- a. The company can use AWS RDS (Relational Database Service) and configure a MySQL database
+- b. The company needs to install a MySQL server
+- c. The company should use MongoDB instead of a MySQL server
+- d. The company should use the LAMP stack, which contains Linux, Apache web server, MySQL, and Python
+- e. It is not possible to use MySQL with PaaS
+
+**Answer:** (a)
+
+**Explanation:** (a) The company can use AWS RDS (Relational Database Service) and configure a MySQL database. For a PaaS, you configure MySQL. LAMP is an IaaS stack.
+
+### 84. 2526 Sem2 Test Q19 · PDF p. 58
+
+A company wishes to migrate its legacy application to the cloud quickly with minimal changes. Which approach from the following would be most suited (you can assume that all options listed are technically feasible)?
+- a. Refactor the application to use serverless functions and then deploy it
+- b. Get a cloud provider to build a SaaS equivalent solution for you and then use it
+- c. Rewrite the application using a PaaS platform which allows for easy deployment
+- d. Use IaaS and move application as is from on-premise to cloud
+- e. Keep it on-premise
+
+**Answer:** (d)
+
+**Explanation:** The deciding phrase is **quickly with minimal changes**. (d) is a *rehost/lift-and-shift*: a compatible IaaS VM can preserve much of the existing application, OS, and runtime. (a) refactors the application into functions; (c) explicitly rewrites it for PaaS; (b) replaces it with a SaaS equivalent rather than moving the same application; and (e) does not migrate it. The question assumes every option is technically feasible, so feasibility is not the reason to reject (b). Rehosting still requires compatibility, data, network, identity, and licensing work; it is not literally zero-change.
+
+### 85. 2526 Sem2 Test Q24 · PDF p. 59
+
+A bank wants to move away from its legacy application and modernise it with strict compliance and some sensitive data. Which cloud service and cloud deployment model would you use and why?
+
+**Answer:** Use hybrid deployment: regulated/sensitive workloads private, less-sensitive workloads public.
+
+**Explanation:** A sensible transition separates the bank’s two constraints. Keep sensitive/regulated records in a controlled private or compliant environment, while using public cloud only where data and access policy permit. Use IaaS to rehost legacy components needing their existing OS/runtime, then PaaS for newly modernized services where managed operations reduce burden. “Hybrid” is a deployment choice, while IaaS/PaaS are service choices; spell out both and the migration path.
+
+### 86. Course Quiz 3 Q5 · PDF p. 59
+
+A team builds and deploys its own MERN analytics pipeline but does not want to provision compute or install MongoDB/Node.js. Which model?
+- a. SaaS
+- b. PaaS
+- c. FaaS
+- d. IaaS
+- e. On-premise
+
+**Answer:** (b)
+
+**Explanation:** (b) The team supplies its own MERN application but wants the platform to provision execution capacity and provide a managed MongoDB/Node.js environment. That is the PaaS responsibility split. SaaS would mean consuming someone else’s finished analytics application; IaaS would leave the team installing and managing more of the runtime. Verify the chosen PaaS actually supports the required database/runtime combination.
+
+### 87. Course Quiz 3 Q6 · PDF p. 59
+
+Which is NOT a SaaS-provider characteristic?
+- a. Multitenanted applications
+- b. Multidevice/web access
+- c. High availability and scalability
+- d. Offline developer access to the development platform
+- e. API integration
+
+**Answer:** (d)
+
+**Explanation:** (d) Offline developer access to the development platform. Developer platform access describes PaaS, not end-user SaaS.
+
+### 88. 2526 Sem1 Test Q3 · PDF p. 61
+
+Which one of the statements below about the number of workers in a MapReduce framework is correct?
+- a. Too many workers can reduce overall efficiency because it overloads the master node’s task and increases data transfer overhead between workers
+- b. The number of workers has no effect on performance, because MapReduce automatically balances tasks perfectly
+- c. Using fewer workers than available CPUs is always better, because it reduces network usage and eliminates the risk of data skew
+- d. MapReduce performance depends only on the size of the input data, not on the number of workers assigned
+- e. Having too few workers is not efficient because total worker idle time increases
+
+**Answer:** (a)
+
+**Explanation:** (a) Too many workers can reduce overall efficiency because it overloads the master node’s task and increases data transfer overhead between workers. Too many workers can add scheduling and shuffle overhead; scaling workers has diminishing returns.
+
+### 89. 2526 Sem1 Test Q5 · PDF p. 62
+
+According to the MapReduce execution flow described in the slides, which statement most accurately describes the data flow and the division of responsibility between the developer and the system?
+- a. The developer codes the Map function, which writes intermediate data to a shared storage server, and the Reduce function, which reads from that shared storage to aggregate results
+- b. The developer codes the Map and Reduce functions, but must also explicitly implement the "Shuffle and Sort" logic to ensure intermediate data is correctly grouped for the reducers
+- c. The Master instance partitions the input data, assigns segments to Map instances, and then directly sends the intermediate output from each Map instance to the correct Reduce instance
+- d. The developer's Map function writes intermediate results to the local disk of its worker node; the MapReduce system is then responsible for shuffling, merging, and sorting this data before feeding it to the developer's Reduce function
+- e. Map instances run in parallel, and Reduce instances run in parallel. To optimize performance, a Reduce worker is always placed on the same node as the Map worker that generated its data, eliminating network shuffling
+
+**Answer:** (d)
+
+**Explanation:** (d) The developer's Map function writes intermediate results to the local disk of its worker node; the MapReduce system is then responsible for shuffling, merging, and sorting this data before feeding it to the developer's Reduce function. The developer supplies map and reduce; the framework stores intermediate output locally and performs shuffle/sort.
+
+### 90. Course Quiz 3 Q9 · PDF p. 62
+
+Map output from one split must move to several reducers. What is this movement?
+- a. Merging implemented by developer
+- b. Reducing handled by framework
+- c. Shuffling handled by framework
+- d. Partitioning implemented by developer
+- e. None
+
+**Answer:** (c)
+
+**Explanation:** (c) Shuffle is the framework’s movement of mapper intermediate records to reducers according to their keys/partitions, followed by grouping/sorting for reduce input. A map task can send output to several reducers. Developers write map/reduce logic and may choose partitioning, but do not ordinarily hand-code the whole data movement.
+
+### 91. Course Quiz 3 Q10 · PDF p. 64
+
+Which Hadoop/Spark statement is true?
+- a. HDFS allocates resources
+- b. Hadoop MapReduce is closed source Google software
+- c. Spark supports stream processing and built-in ML; Hadoop MapReduce needs external ML tools
+- d. Spark must run on Hadoop
+- e. Neither supports batch
+
+**Answer:** (c)
+
+**Explanation:** (c) Spark supports stream processing and built-in ML; Hadoop MapReduce needs external ML tools. HDFS stores data; YARN manages resources; Spark also supports batch, streaming and ML libraries.
+
+### 92. 2425 Sem2 Test Q19 · PDF p. 65
+
+You wish to migrate to the cloud to run a simple server side computation which maintains no state about clients. Which of the following is best suited for this purpose?
+- a. Amazon EC2
+- b. REST
+- c. SOAP
+- d. AWS Lambda
+- e. Amazon EMR
+
+**Answer:** (d)
+
+**Explanation:** A stateless, short computation can be packaged as an event/request-triggered FaaS function: no long-lived per-user server state is required and idle capacity need not be provisioned continuously. Persist any necessary state in an external database/object store. Check invocation duration, startup latency, concurrency and per-request cost before assuming FaaS is always cheapest.
+
+### 93. 2526 Sem1 Test Q4 · PDF p. 65
+
+You have an idea for an app that finds local festivity celebration parties. During the few festivities throughout the year (e.g. New Year, National Day, etc.) many users will use your app to find the most suitable party for them to go to based on users’ criteria. Which AWS service is the most suitable to the usage profile and also cost effective?
+- a. EC2: Virtual server to run your app
+- b. S3: Store static app contents (party flyers, images) and serve directly to users
+- c. Elastic Beanstalk: Managed EC2 with auto-scaling
+- d. CloudFront: Cache contents and reduce latency for app users
+- e. Lambda: App logic as a serverless function
+
+**Answer:** (e)
+
+**Explanation:** (e) Lambda. The workload is bursty and event-driven, so pay-per-invocation avoids paying for continuously idle application servers.
+
+### 94. 2526 Sem2 Test Q7 · PDF p. 65
+
+Which requirement is the clearest sign that a workload is a poor fit for FaaS?
+- a. It is triggered by file uploads
+- b. It requires long-lived stateful sessions and persistent in-process connections
+- c. It performs short request-driven transformations
+- d. It runs sporadically and scales by event volume
+- e. It requires long-lived stateless sessions
+
+**Answer:** (b)
+
+**Explanation:** A task that must run continuously for a long time or hold in-process state across invocations is a poor direct FaaS fit. Functions are normally ephemeral, bounded invocations; use external storage/queues or a long-running container/VM service if the workload demands persistent processes. “Serverless” means server operations are abstracted, not that servers disappear.
+
+### 95. 2526 Sem2 Test Q12 · PDF p. 66
+
+Which of the following best describes a serverless application?
+- a. A serverless application is usually developed in the context of PaaS
+- b. The developer of a serverless application needs to pay a small fee for the idle periods
+- c. A serverless application does not need a server/host to run on
+- d. The developer of a serverless application does not need to provision or manage any servers
+- e. The developer of a serverless application has lower costs
+
+**Answer:** (d)
+
+**Explanation:** A serverless application delegates server provisioning and much of capacity management to the platform while the developer supplies code and configuration. FaaS is one common building block, often paired with managed storage, queues and APIs. The developer still manages correctness, permissions, data and cost, and “serverless” does not imply zero infrastructure.
+
+### 96. 2526 Sem2 Test Q25 · PDF p. 66
+
+You are a Solutions Architect at a leading technology company. The IT division of the metropolitan MRT (Mass Rapid Transit) system has approached you to design a next- generation payment platform to support SimplyGo and phase out the legacy EZ-Link card system. A key concern is that during peak hours, the current system experiences high latency, resulting in long queues and poor commuter experience. The reason for this is that for each user, the system performs fare calculation, balance deduction, and displays the update immediately before letting the user pass through the gate. Your task is to propose two ways in which this payment platform can be scalable and also have low-latency.
+
+**Answer:** Minimize synchronous gate work: authorize passage quickly, then perform suitable fare/account updates asynchronously.
+
+**Explanation:** Two complementary changes address the gate path. First, make the **synchronous decision** small: validate a token/balance or risk rule quickly, durably record the tap, and defer fare calculation/settlement to an asynchronous worker where the policy permits. Second, scale independent gate API instances for rush-hour traffic and keep a low-latency local/nearby data path. Queueing alone does not guarantee low latency or correct balances: design idempotent tap IDs, ordered/account-safe updates, reconciliation, outage handling and a bound on permitted offline exposure.
+
+### 97. Course Quiz 3 Q7 · PDF p. 66
+
+Which are FaaS coding best practices? Select all that apply.
+- a. One action per function
+- b. Never call other functions
+- c. Use as few libraries as practical
+- d. Keep state in function memory across invocations
+- e. Provision spare capacity before a peak
+
+**Answer:** (a), (b), (c)
+
+**Explanation:** (a) One action per function; (b) A function should be self-contained and should not call other functions; (c) Use as few libraries as possible. These are the three choices marked correct in the graded course quiz. Do not depend on in-memory state across invocations.
+
+### 98. Course Quiz 3 Q8 · PDF p. 67
+
+Which is NOT a FaaS advantage over PaaS, containers, and VMs?
+- a. Millisecond-scale provisioning
+- b. Minimal administration/capacity planning
+- c. Per-action elastic scaling
+- d. Better support for long-lived connections and in-process state
+- e. High availability in the model
+
+**Answer:** (d)
+
+**Explanation:** (d) FaaS platforms scale short invocations per event and usually remove server provisioning work. Their ephemeral execution makes long-lived connections and in-memory state a poor fit; state should live in an external service or a long-running process should be used. A high-availability model still requires retry/idempotency and dependency design.
+
+**Lab 1 review:** [artifact lab note](CS5224%20Cloud%20Computing%20Study%20Notes.md#lab-1-cloud-architecture-for-a-private-photography-gallery-and-viva-preparation) · [full lab note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#lab-1-cloud-architecture-for-a-private-photography-gallery-and-viva-preparation)
+
+### 99. Lab 1 · S3 public read · PDF p. 70
+
+Why can an object URL be readable while bucket listing remains forbidden?
+
+**Answer:** S3 object GetObject and bucket ListBucket are separate permissions.
+
+**Explanation:** A public object read does not imply that anonymous users can enumerate the bucket; production sharing should use scoped access such as signed URLs.
+
+### 100. Lab 1 · Map services to jobs · PDF p. 72
+
+Map the video-sharing workload to storage, compute, identity, delivery, and metadata services.
+
+**Answer:** S3 stores originals and renditions; asynchronous compute transcodes uploads; a database stores users, metadata, and access rules; identity/auth controls users; CDN delivers renditions; monitoring records failures and usage.
+
+**Explanation:** Map each requirement to a service role: durable originals and renditions in object storage; event/queue plus encoding workers for CPU-heavy video conversion; identity and per-user authorization for private access; CDN for geographically distributed delivery; database for ownership, metadata and processing state. A CDN is not the source of truth for files, and object-store permissions alone do not implement the whole application workflow.
+
+### 101. Lab 1 · Architecture data flow · PDF p. 72
+
+Trace one original image from Priya’s upload to a private client view.
+
+**Answer:** Priya authenticates and uploads to a private originals bucket.
+
+**Explanation:** An event triggers a worker to create a preview and update gallery metadata. A client signs in; an API checks that client’s gallery membership, then issues short-lived URLs for only that gallery’s images.
+
+### 102. Lab 1 · Cross-gallery isolation · PDF p. 73
+
+What prevents the Tan–Mei couple from reading Wong–Lim photos?
+
+**Answer:** Authenticate the viewer, check a server-side gallery membership record for each requested object, then authorize only that gallery key.
+
+**Explanation:** Keep buckets private and issue short-lived signed URLs after the check. Guessable object keys alone must never grant access.
+
+### 103. Lab 1 · Retention tradeoff · PDF p. 74
+
+How should five-year-old galleries be retained cheaply, and what cost is introduced?
+
+**Answer:** Apply age-based lifecycle transitions from hot object storage to an archival tier.
+
+**Explanation:** The lower storage price trades for slower retrieval and possible restore/request charges; tell clients when old photos will be ready.
+
+### 104. Lab 1 · Annual storage · PDF p. 76
+
+At 40 weddings/year, 400 edited photos/wedding, and 5 MB/photo, how much original storage is accumulated in one year?
+
+**Answer:** The count is 40×400 = 16,000 photos.
+
+**Explanation:** Storage is 16,000×5 MB = 80,000 MB, approximately 80 GB decimal. Add previews, replication, and retention separately.
+
+### 105. Lab 1 · Free-tier reflection · PDF p. 76
+
+Does 80 GB of new original photos per year fit a small free-tier object-storage allowance?
+
+**Answer:** Usually no: compare 80 GB against the chosen provider’s current free-tier storage quota and state the quota, region, unit convention, and date.
+
+**Explanation:** No. 40 × 400 × 5 MB = 80,000 MB, about 80 GB of **new originals per year** before edited versions, thumbnails, videos, replicas and request/egress charges. Compare this annual growth with the allowance and include retained cumulative storage. “Free tier” details vary by provider and time, so use the problem’s stated allowance rather than assuming a current commercial offer.
+
+### 106. Lab 1 · Business triples · PDF p. 76
+
+What changes if Priya’s wedding volume triples?
+
+**Answer:** Expect about 240 GB/year of new originals at the same photo size.
+
+**Explanation:** Keep the object-store and stateless API design, increase worker concurrency and budget quotas, monitor queue backlog and egress, and review CDN, database capacity, retention, and support workflows.
+
+### 107. Lab 1 · Cost and reliability · PDF p. 77
+
+What must a defensible video-service cost and reliability answer include?
+
+**Answer:** Price storage GB-months, request counts, transcode compute, CDN/egress, database, logs, and backups from workload assumptions.
+
+**Explanation:** State the region and unit prices. Check upload retry/idempotency, private access, lifecycle rules, and failure recovery.
+
+**Lab 2 review:** [artifact lab note](CS5224%20Cloud%20Computing%20Study%20Notes.md#lab-2-cloud-services-and-a-scalable-social-graph-analytics-pipeline)
+
+### 108. Lab 2 · Deployment choices · PDF p. 78
+
+How do healthcare and bank constraints change service/deployment model choices?
+
+**Answer:** Healthcare may use a hybrid design: keep regulated records in a controlled private environment and burst de-identified analytics to public cloud only when policy permits.
+
+**Explanation:** A bank with strict hardware and regulatory control may prefer private-cloud IaaS. The workload and compliance boundary determine the answer.
+
+### 109. Lab 2 P1(a) · Healthcare SaaS · PDF p. 78
+
+Hospitals need tight patient-data governance and national outbreak scale. Which deployment and scaling model fits?
+
+**Answer:** Use a governed private or hybrid boundary for identifiable patient data, with public-cloud burst capacity for allowed/de-identified workloads.
+
+**Explanation:** Horizontally scale stateless services behind load balancing; partition or replicate data carefully, apply tenant isolation, audit, encryption, and data-residency controls.
+
+### 110. Lab 2 P1(b) · Bank modernization · PDF p. 78
+
+A bank has legacy code, sensitive data and strict compliance. Which service and deployment model fits?
+
+**Answer:** A private-cloud IaaS migration gives OS/runtime control for legacy software while meeting a controlled compliance boundary.
+
+**Explanation:** Modernize services gradually; move components to managed PaaS or hybrid/public only when their data and regulatory constraints allow.
+
+### 111. Lab 2 · Social graph counts · PDF p. 79
+
+For a directed Follow(x,y) edge, what are follower and followee counts, and how do duplicates affect them?
+
+**Answer:** For user u, followers = number of unique x with Follow(x,u); followees = number of unique y with Follow(u,y).
+
+**Explanation:** Deduplicate identical directed edges before counting; never reverse direction or count duplicates as new relationships.
+
+### 112. Lab 2 · Scalable pipeline · PDF p. 80
+
+How does the submitted pipeline compute and serve per-user social-graph statistics?
+
+**Answer:** Parse input, validate IDs, deduplicate edges, aggregate incoming and outgoing counts in PySpark, write a materialized result, then let the query service read a keyed record (for example DynamoDB).
+
+**Explanation:** Ingest directed Follow edges, deduplicate them, then aggregate outgoing edges for each user’s followee count and incoming edges for follower count in distributed processing. Store the resulting per-user counts in a queryable datastore; the backend reads them and exposes an API to the frontend. Batch computation and serving are separate paths, so the UI should not rescan the graph on every page request.
+
+### 113. Lab 2 P2 · Front end · PDF p. 80
+
+What must the front end show, and how does it obtain the statistics?
+
+**Answer:** For each requested user ID, display followers and followees as separate labeled counts.
+
+**Explanation:** Call a backend API rather than parsing the whole dataset in the browser. The submitted UI should visibly include users 214328887 and 107830991.
+
+### 114. Lab 2 P2 · Back end and analysis · PDF p. 80
+
+What are the distinct jobs of the backend API and distributed analysis component?
+
+**Answer:** The backend validates user IDs and serves materialized counts to the UI.
+
+**Explanation:** Spark reads the cloud-stored edge file, cleans duplicates, computes incoming/outgoing counts in parallel, and writes the result. This keeps a query fast without rerunning a whole-data scan.
+
+### 115. Lab 2 · Validate two records · PDF p. 81
+
+What counts did the submitted solution report for users 214328887 and 107830991?
+
+**Answer:** For 214328887: 180 followers and 214 followees.
+
+**Explanation:** For 107830991: 180 followers and 157 followees. These are acceptance checks for the submitted data and parsing rules, not universal graph properties.
 
 ## References
 
@@ -4294,27 +5592,56 @@ The deck asks for three different comparisons:
 
 A smaller VM rate can be offset by more runtime; an inexpensive storage class can have retrieval costs or delays that do not fit interactive streaming. The comparison must include the three traffic planes separately: upload ingress, encoder reads/writes, and viewer delivery. Week 9 gives the general price/TCO framework; this video's byte and job counts provide its concrete input ledger.
 
-<reviewkit>
-<takeaways>
-- K-means requires repeated assignment and centroid-update passes; one MapReduce job is only one iteration.
-- Mapper output keys determine grouping; reducers need sums and counts to calculate new centroids.
-- Log-space centroid coordinates are not raw follower counts or arithmetic raw-count means.
-- Choice of $k$, preprocessing, initialization, and empty-cluster rules affect the result.
-- An iteration's reducer output must be versioned and distributed to every mapper in the next job.
-- Upload, encoding, and streaming have distinct I/O, CPU, storage, and delivery bottlenecks.
-- The lecture's raw S3 → SQS → encoder → encoded S3 → CloudFront path separates asynchronous work from playback.
-- Average jobs, peak arrival, retained copies, and viewer-facing bytes require separate capacity calculations.
-- Retries require idempotent job and publication rules; selecting a managed service does not supply them automatically.
-- The monthly bill needs compute, retained copies, requests, CDN delivery, and operational costs under one consistent workload.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
 
 ## Exam reasoning bridge: trace one request and one failure
 
 A video-sharing architecture is easiest to test by following one upload: authenticate the owner, store the original privately, enqueue a conversion job, produce renditions, record processing state, authorize each viewer, then deliver through a CDN. Object storage is durable file storage; the queue absorbs bursts and retries; encoders perform CPU-heavy work; the database tracks ownership and workflow; the CDN caches delivery near viewers. A CDN does not determine whether a viewer is allowed to see a private asset.
 
-Ask what happens when encoding fails after the original upload. The original should remain durable, the job should be retryable or moved to a dead-letter path, and the UI should show a processing/failure state instead of advertising a nonexistent rendition. A queue smooths a spike but does not create compute capacity; worker scaling and queue age monitoring are needed. Cost includes retained originals/renditions, conversion work, requests and data egress, not just storage volume. Review [Q116–118](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-7---example-applications).
+Ask what happens when encoding fails after the original upload. The original should remain durable, the job should be retryable or moved to a dead-letter path, and the UI should show a processing/failure state instead of advertising a nonexistent rendition. A queue smooths a spike but does not create compute capacity; worker scaling and queue age monitoring are needed. Cost includes retained originals/renditions, conversion work, requests and data egress, not just storage volume. Review Q116–118 in the Exam Questions & Worked Problems section below.
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-7---example-applications-k-means-with-mapreduce-and-video-sharing-saas) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-7---example-applications-k-means-with-mapreduce-and-video-sharing-saas)
+
+### 116. Course Quiz 4 Q1 · PDF p. 85
+
+Which video-sharing SaaS activity is typically CPU intensive?
+- a. Upload video
+- b. Download stored video
+- c. Encode video to another format
+- d. Transfer to storage
+- e. Stream encoded video
+
+**Answer:** (c)
+
+**Explanation:** (c) Encode video to another format. Transcoding processes and compresses media; delivery is mainly network/I/O intensive.
+
+### 117. Course Quiz 4 Q3 · PDF p. 85
+
+Why put a message queue between upload and encoding?
+- a. Distribute browser connections
+- b. Buffer encoding jobs asynchronously
+- c. Store raw files permanently
+- d. Increase each encoder’s CPU
+- e. Cache videos near viewers
+
+**Answer:** (b)
+
+**Explanation:** (b) Buffer encoding jobs asynchronously. The queue decouples bursty uploads from slower transcode workers and supports retry.
+
+### 118. Course Quiz 4 Q2 · PDF p. 86
+
+What is the main CDN benefit for video delivery?
+- a. Faster encoding
+- b. More origin storage
+- c. Automatic format conversion
+- d. Faster delivery via distributed edge locations
+- e. More upload-server CPU
+
+**Answer:** (d)
+
+**Explanation:** A CDN caches eligible video segments near geographically distributed viewers, reducing round trips and load on the origin. It improves delivery latency and throughput when content is cacheable and cache hits occur. It does not transcode uploads, store the authoritative original, or decide private-gallery permissions by itself; access control must remain enforced in the delivery path.
 
 ## References
 
@@ -4406,22 +5733,90 @@ Terraform configuration expresses the desired objects; the state file maps those
 
 The lecture's future-facing ideas add a feedback loop. **Policy-as-Code** rejects deployments that violate explicit rules (for example, a public bucket or unrestricted ingress); **GitOps** reconciles a declared repository state into a target environment; **self-healing IaC** monitors, analyzes, then remedies deviations. Policy checks are only as complete as their rules, and automatic remediation should have a bounded scope and an audit trail. A runaway reconciliation loop can repeatedly undo a necessary emergency change unless the incident process records and reconciles that change back to source.
 
-<reviewkit>
-<takeaways>
-- IaC records desired infrastructure so changes can be reviewed and reproduced.
-- Declarative tools reconcile desired and observed state; their plans can still be destructive.
-- Terraform uses providers, resources, dependency graphs, modules and sensitive state.
-- Configuration, state, live resources, and the running application need separate validation.
-- Replaceable compute needs separate persistence and recovery design.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
 
 ## Exam reasoning bridge: separate reusable code from isolated state
 
 Infrastructure as Code describes desired resources in versioned files so environments can be recreated and reviewed. Declarative tools describe the target state and compute a plan; imperative scripts prescribe a sequence of commands. In Terraform, a **module** packages a reusable resource pattern, variables parameterize it, and outputs expose created identifiers. A **state file** records the relationship between configuration and deployed resources. Modules provide reuse; separate state/backends keep development, staging and production operations isolated. One is not a substitute for the other.
 
-Before applying, inspect the plan for unintended replacement, deletion or cross-environment changes. Protect state because it may contain sensitive values and is needed for consistent operations; use appropriate remote storage and locking for collaboration. Portability across providers still depends on provider-specific resource definitions, services and data formats. Review [Q119–124](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-8---infrastructure-as-code).
+Before applying, inspect the plan for unintended replacement, deletion or cross-environment changes. Protect state because it may contain sensitive values and is needed for consistent operations; use appropriate remote storage and locking for collaboration. Portability across providers still depends on provider-specific resource definitions, services and data formats. Review Q119–124 in the Exam Questions & Worked Problems section below.
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-8---infrastructure-as-code-repeatable-cloud-environments-and-terraform) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-8---infrastructure-as-code-repeatable-cloud-environments-and-terraform)
+
+### 119. 2526 Sem1 Test Q22 · PDF p. 88
+
+As part of an annual review in your company, you realise you have been with your cloud provider for many years and start to worry about the potential risks of ‘vendor lock-in’. List two methods in which you could help mitigate this risk. Briefly (in one or two sentences) explain your answer.
+
+**Answer:** Reduce proprietary dependencies, package workloads with portable technologies such as containers, and/or spread appropriate services across providers.
+
+**Explanation:** The economic reason to leave a provider is not merely that another advertises a lower unit price. Compare migration effort, data egress, API rewrites, retraining, contractual commitments, downtime risk and the new provider’s recurring charges over the same period. Portability improves when infrastructure, data formats and application interfaces are documented and reproducible.
+
+### 120. Course Quiz 4 Q4 · PDF p. 88
+
+What distinguishes declarative IaC from imperative IaC?
+- a. Describe desired state rather than execution steps
+- b. Execute every resource operation sequentially
+- c. Use CLI rather than GUI
+- d. Support public cloud only
+- e. Track every state transition manually
+
+**Answer:** (a)
+
+**Explanation:** (a) Describe desired state rather than execution steps. The tool computes operations to converge actual resources toward desired state.
+
+### 121. Course Quiz 4 Q5 · PDF p. 89
+
+Which IaC statement is incorrect?
+- a. Configuration can be version controlled
+- b. Supports repeatable provisioning
+- c. Integrates with CI/CD
+- d. Helps consistent test environments
+- e. Automatically prevents manual changes outside code
+
+**Answer:** (e)
+
+**Explanation:** (e) Automatically prevents manual changes outside code. Out-of-band changes can still happen; plan/drift detection reveals them.
+
+### 122. 2526 Sem2 Test Q13 · PDF p. 90
+
+A company manages development, staging, and production environments using Terraform. Which one of the following approaches best avoids duplication and ensures consistency?
+- a. Copy-paste configurations per environment
+- b. Use separate state files
+- c. Use only one environment
+- d. Hardcode environment values
+- e. Keep separate code repositories
+
+**Answer:** (b)
+
+**Explanation:** (b) Use separate state files, according to the supplied key. This isolates environment state; reusable modules and inputs are still needed to avoid duplicating configuration code.
+
+### 123. 2526 Sem2 Test Q14 · PDF p. 90
+
+Your company has recently gotten to grips with Terraform and wish to use it. However, they also wish to have automatic drift detection during continuous integration (the practice of merging code changes into a central repository frequently). Which of the following is the best approach to achieve this?
+- a. Run terraform apply daily
+- b. Disable drift checks
+- c. Use manual audits
+- d. Periodically recreate the infrastructure
+- e. Run terraform plan and provide an alert on changes
+
+**Answer:** (e)
+
+**Explanation:** (e) Run `terraform plan` in CI and alert for review when it reports changes. The configuration (`.tf`) describes the **desired state**; Terraform consults its state file and normally refreshes information about the **actual cloud resources**, then previews the actions needed to reach the desired state. `plan` does not change the cloud resources. `terraform apply` executes a plan: without a saved plan file it first creates a new plan and normally asks for approval; with a saved plan file it executes that previously reviewed plan. `-auto-approve` skips the interactive confirmation. Thus daily `apply` (a) may make unreviewed changes. A non-empty ordinary plan can also reflect an intentional code change, not just external drift; `terraform plan -refresh-only` isolates changes between recorded state and actual resources.
+
+### 124. Course Quiz 4 Q6 · PDF p. 91
+
+Which IaC feature shares repeated definitions while allowing environment-specific inputs?
+- a. Separate state files
+- b. Naming conventions
+- c. Execution plans
+- d. Reusable modules with inputs
+- e. Command history
+
+**Answer:** (d)
+
+**Explanation:** A Terraform module packages repeated resource definitions. Variables let development, staging and production pass different sizes, regions or names, and outputs expose created resource identifiers. Separate state/backends are additionally needed to isolate deployments; they are not the reuse feature itself.
 
 ## References
 
@@ -4528,22 +5923,106 @@ A cloud provider chooses prices while balancing datacenter design/operation, res
 
 Slide 29 of the supplied Lecture 10 deck lists a test for **3 November 2026, 18:30–20:00, LT17**, using Examplify with a non-secure blocked-internet mode. It describes an open-book mix of MCQ, MRQ, and structured questions, emphasizing application over recall. This is a record of the supplied slide, not a live schedule confirmation; use current course announcements for any change of venue, time, or allowed materials.
 
-<reviewkit>
-<takeaways>
-- Price is a unit rate; cost needs time, usage, fixed charges and operations.
-- Compare cloud with on-prem TCO over the same workload, horizon and service level.
-- Include network egress, requests, storage copies, reserved commitments and labor.
-- Low datacenter utilization raises cost per useful workload unit.
-- Sensitivity analysis exposes which assumptions decide the result.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
 
 ## Exam reasoning bridge: compare options over the same horizon
 
 Start with workload shape. A stable baseline can justify reserved/committed capacity; an uncertain or short-lived component favors on-demand flexibility; interruptible batch work may use Spot if it can checkpoint/retry. Right-size resources before buying discounts, and scale idle capacity down when possible. Compare **total** cost: compute-hours, storage, requests, transfer/egress, support, labor, migration and downtime over the same time period.
 
-For a compute-instance choice, calculate each candidate's execution time from required operations and effective throughput, add I/O time where it cannot overlap, then multiply by its price rate; the fastest machine need not minimize cost. For migration, separate future incremental costs from sunk expenditure: money already spent cannot be recovered by choosing on-premise now, although remaining asset life and avoidable operating costs matter. TCO is useful precisely because purchase price alone omits ongoing and risk-related costs. Review [Q125–132](../../artifacts/CS5224%20Questions%20and%20Answers.md#week-9---cloud-pricing-and-total-cost-of-ownership).
+For a compute-instance choice, calculate each candidate's execution time from required operations and effective throughput, add I/O time where it cannot overlap, then multiply by its price rate; the fastest machine need not minimize cost. For migration, separate future incremental costs from sunk expenditure: money already spent cannot be recovered by choosing on-premise now, although remaining asset life and avoidable operating costs matter. TCO is useful precisely because purchase price alone omits ongoing and risk-related costs. Review Q125–132 in the Exam Questions & Worked Problems section below.
+
+## Exam Questions & Worked Problems
+
+**Review in context:** [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-9---cloud-pricing-and-total-cost-of-ownership) · [full course note](../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-9---cloud-pricing-and-total-cost-of-ownership)
+
+### 125. 2425 Sem2 Test Q21 · PDF p. 92
+
+You are a cloud developer who is deploying your application (which has a steady-state workload) to AWS. Which pricing option would you choose and why?
+
+**Answer:** Reserved capacity is suitable for a predictable 24/7 workload over a long term
+
+**Explanation:** For a steady, predictable workload, a reservation or committed-use discount can lower cost relative to on-demand capacity if the instance family, region and term fit actual use. First estimate the stable baseline; reserve only that portion and leave variable demand on flexible capacity. Commitments can waste money if the workload moves or shrinks.
+
+### 126. 2526 Sem1 Test Q24 · PDF p. 92
+
+You are responsible for the cloud infrastructure in company WeAreAwesome Inc. As awesome as you are, you have however noticed that your VMs that are running on the cloud are costing more than they should. Given your understanding of Cloud Computing, you wish to optimise the cost of running the VMs. Give two ways in which you can achieve this.
+
+**Answer:** Right-size VMs and scale down when idle
+
+**Explanation:** Two direct VM-cost controls are **right-sizing** and **reducing idle runtime**. Use utilisation and performance metrics to lower oversized CPU/memory allocations without violating latency targets, then stop/schedule non-production VMs or autoscale the fleet down when demand falls. For a stable baseline, commitment discounts can be an additional option, but buying a discount on an oversized always-on VM preserves waste.
+
+### 127. Course Quiz 4 Q8 · PDF p. 93
+
+Which workload best fits Spot instances?
+- a. Interactive payments
+- b. Emergency alerts
+- c. Sole critical database
+- d. Uninterruptible live broadcast
+- e. Restartable batch jobs with flexible deadlines
+
+**Answer:** (e)
+
+**Explanation:** (e) Restartable batch jobs with flexible deadlines. Spot capacity can be interrupted, so jobs must checkpoint or restart.
+
+### 128. Course Quiz 4 Q9 · PDF p. 93
+
+Which payment flow is integrated SaaS pricing?
+- a. Customer → SaaS provider → IaaS provider
+- b. Customer pays SaaS and IaaS separately
+- c. IaaS provider → SaaS provider → customer
+- d. Customer → IaaS provider only
+- e. SaaS provider → customer → IaaS provider
+
+**Answer:** (a)
+
+**Explanation:** (a) Customer → SaaS provider → IaaS provider. The customer pays the SaaS vendor, which pays its infrastructure provider.
+
+### 129. 2526 Sem1 Test Q21 · PDF p. 95
+
+A sequential project requires 60 PFLOP of computation and 800,000 I/O operations. Which instance minimizes cost? Rates (TFLOP/s, ms/I/O, USD /s): m7 (1,3,1); i8 (1,1,2); c5a (3,2,2); r7 (1,3,2); g4 (30,10,5). Show working.
+
+**Answer:** Choose c5a.
+
+**Explanation:** 60 PFLOP = 60,000 TFLOP; c5a takes 60,000/3 + 800,000×0.002 = 21,600 s and costs USD 43,200. Other totals: m7 USD 62,400; i8 USD 121,600; r7 USD 124,800; g4 USD 50,000. Thus c5a is cheapest.
+
+### 130. 2526 Sem2 Test Q8 · PDF p. 96
+
+A company has already made significant investments in on-premise infrastructure. Migrating to the cloud would require substantial additional costs for integration. Which of the following is the most appropriate conclusion based on this scenario?
+- a. Cloud is always cheaper because it reduces upfront capital expenditure
+- b. Reserved cloud pricing eliminates migration and integration costs
+- c. On-premise solutions always have lower operational costs than cloud
+- d. Past investments should not be considered when evaluating future decisions
+- e. Cloud adoption may be less attractive due to high migration and integration costs
+
+**Answer:** (e)
+
+**Explanation:** (e) Cloud adoption may be less attractive because future migration and integration costs are substantial. Already incurred on-premise investment is a sunk cost and should not be counted again in a forward-looking comparison.
+
+### 131. Course Quiz 4 Q7 · PDF p. 96
+
+Which are typical business cost metrics in cloud-adoption analysis? Select all that apply.
+- a. Marketing budgets
+- b. Operational expenses (Opex)
+- c. Cost of capital
+- d. Sunk costs
+- e. Capital expenses (Capex)
+
+**Answer:** (b), (c), (d), (e)
+
+**Explanation:** (b) Operational expenses (Opex); (c) Cost of capital; (d) Sunk costs; (e) Capital expenses (Capex). The graded course quiz counts all four as business cost metrics. For a prospective choice, avoid counting already incurred sunk costs again as future costs.
+
+### 132. Course Quiz 4 Q10 · PDF p. 96
+
+Why use TCO rather than server purchase price alone?
+- a. Only capital cost
+- b. Exclude staff/maintenance
+- c. Include acquisition and operating costs
+- d. Remove utilization effects
+- e. Assume cheaper servers win
+
+**Answer:** (c)
+
+**Explanation:** (c) Total cost of ownership adds purchase/provisioning to electricity, facility/network, licences, operations staff, maintenance, replacement and downtime over a common workload and time horizon. A cheap server may be expensive to run or poorly utilised. Use the same assumptions on both sides of a cloud versus on-premise comparison; TCO does not mean excluding utilisation.
 
 ## References
 
@@ -4674,16 +6153,7 @@ Slides 64–65 summarize a *State of Kubernetes 2025* survey. The deck reports t
 
 The architectural lesson is more durable than the percentages: multi-environment placement, AI/GPU demand, edge connectivity, and platform fragmentation create cost and operations pressure. A team evaluating Kubernetes should measure its own cluster utilization, network egress, staffing time, failure recovery, and deployment lead time. The percentages do not show that every team needs Kubernetes, that AI optimization will lower a particular bill, or that migrating VMs is always beneficial.
 
-<reviewkit>
-<takeaways>
-- Cloud-native refers to application architecture and operations; cloud computing refers to resource/service delivery properties.
-- Microservices gain independent deployment but add distributed failure and data-consistency work.
-- Containers standardize packaging; Kubernetes orchestrates placement, discovery, scaling, rollout, and replacement.
-- A Pod is ephemeral; a Deployment declares replicas; controllers reconcile observed state toward desired state.
-- Pod self-healing does not replace application validation, persistent-data recovery, or cost analysis.
-</takeaways>
-<qprompt/>
-</reviewkit>
+
 
 ## References
 
@@ -5127,8 +6597,387 @@ The core of the case is tracing one photo: who can upload it, where its bytes tr
 7. [AWS: Free Tier FAQs](https://aws.amazon.com/free/free-tier-faqs/)
 8. [AWS: Lambda quotas](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html)
 
+# Lab 2: Cloud Services and a Scalable Social-Graph Analytics Pipeline
+
+Lab 2 combines service/deployment-model judgment with a batch analytics system. It is grouped after Week 6 because the implementation uses MapReduce-style aggregation, Spark, object storage, managed compute, and serverless APIs.
+
+## 1. Service and deployment model decisions
+
+A healthcare analytics SaaS serving multiple hospitals must separate application scale from patient-data governance.
+For a bank modernizing a legacy application, IaaS in a dedicated private-cloud environment is one plausible first stage because it preserves control of the OS, middleware, network, migration sequence, and application configuration.
+
+## 2. Directed-edge semantics and data cleaning
+
+Each input line contains two user IDs, `A B`, meaning **A follows B**.
+For each distinct valid edge `(A,B)`, emit `(A,(0,1))` and `(B,(1,0))`, where the tuple order is `(followers,followees)`.
+
+## 3. Batch computation, materialization, and serving
+
+The supplied implementation stores the dataset in S3 and runs a PySpark batch job on EMR Serverless.
+The reported implementation imported the precomputed CSV into DynamoDB keyed by `user_id`. A Lambda function reads one record and API Gateway exposes `GET /stats` to a static Amplify-hosted HTML/JavaScript front end.
+The student's submitted checks reported user `214328887`: 180 followers and 214 followees; user `107830991`: 180 followers and 157 followees.
+
+## 4. Architecture and engineering trade-offs
+
+The data path is `S3 input → EMR Serverless/Spark → S3 result → DynamoDB import`; the query path is `browser → API Gateway → Lambda → DynamoDB → response`.
+Use least-privilege IAM roles for S3 input/output, EMR execution, DynamoDB import/read, and Lambda.
+
+# Week 7 - Example Applications: K-Means with MapReduce and Video-Sharing SaaS
+
+Week 6 introduced MapReduce as a processing model. This week turns it into a complete iterative workload: choose the input representation, send points to clusters, recompute centroids, and repeat with the new model.
+
+## 1. K-means as an iterative distributed workload
+
+### 5.1 K-means clustering on MapReduce
+
+K-means groups $m$ objects represented by $n$-dimensional attribute vectors into $k<m$ clusters. Each iteration has an **assignment** step and an **update** step.
+For the usual $p$-norm distance $\|x-y\|_p=(\sum_i|x_i-y_i|^p)^{1/p}$, the metric guarantee requires **$p\geq1$**. The slide's wording “$p>0$” is too broad: when $0<p<1$, this expression generally violates the triangle inequality.
+The lecture's Twitter example represents each user by two attributes: $\log_2(\text{followers})$ and $\log_2(\text{followees})$.
+The example uses S3 for input/code/output storage and Amazon EMR as the managed data-processing cluster.
+
+### 5.2 One complete map–shuffle–reduce iteration
+
+Suppose points $x_1=(0,0)$, $x_2=(2,0)$, and $x_3=(9,0)$ start with centroids $\mu_A=(0,0)$ and $\mu_B=(10,0)$. Mappers send the first two points under key A and the third under key B.
+The Twitter input value contains two log-transformed features. Logarithms reduce the dominance of high-follower outliers, but zero counts require an explicit transform convention such as $\log_2(1+x)$; the slide's encoded examples should not be read as prescribing one universal zero-handling rule.
+
+## 2. K-means distribution costs and result interpretation
+
+For $m$ points, $k$ centroids, and $d$ numeric features, a straightforward assignment pass evaluates about $mk$ distances, each costing $O(d)$ arithmetic, so its compute is $O(mkd)$ per iteration before parallelization.
+The lecture's example output includes a cluster of 5,166 people centered at log-space coordinates $(5.051,2.712)$.
+
+## 3. Reconstruct the complete EMR/S3 iteration workflow
+
+The lecture first asks authors to **preprocess the data**. A source record is keyed by a user ID and carries a two-dimensional feature vector.
+One iteration can be written as a data contract:
+The mapper's *input* key identifies a person, while its *output* key identifies a cluster.
+The output of one job is not the final answer unless a stopping rule is met.
+The slide asks “what is $k$?” without prescribing a universal choice. $k$ is a modeling decision: too small merges distinct groups, while too large can fragment meaningful groups and increase compute.
+
+## 4. Map the algorithmic choices to cloud costs
+
+For $I$ iterations, the direct distance work is roughly $O(Imkd)$, and the input dataset may be read repeatedly.
+To compare two configurations, record input bytes, number of iterations, workers and runtime, shuffle bytes, S3 requests/storage, and the quality metric. “Cheaper per instance” is not the right comparison if it takes more instances or more iterations.
+
+
+The same supplied Lecture 07/08 deck also asks how to build a user-facing SaaS whose upload, transcoding, and playback paths have very different resource demands.
+
+## 5. Video-sharing SaaS: upload, encode, stream
+
+The second application must accept videos in different formats, convert them to streamable renditions, and deliver them to many viewers.
+- Upload. Main path: Browser → upload interface → object storage; Capacity and reliability question: How are large files transferred, authenticated, checked, and made durable?
+- Encoding. Main path: New-object event / job queue → workers → transcoded renditions and metadata; Capacity and reliability question: How are CPU-intensive jobs retried, deduplicated, and scaled independently?
+- Streaming. Main path: Viewer → web/app tier or CDN → prepared video segments in storage; Capacity and reliability question: How are bandwidth, cache hit rate, adaptive formats, and egress cost controlled?
+
+### 5.1 Trace a single upload through the architecture
+
+A browser uploads a file through a front-end service or directly to object storage using a scoped upload grant.
+
+### 5.2 Service model and bottleneck comparison
+
+- EC2 / web tier. What the lecture demonstrates: IaaS compute for front-end connections; Capacity driver: Concurrent uploads and API requests; What the application owner still decides: Instance configuration, application deployment, load balancing
+- S3 / storage. What the lecture demonstrates: Durable cloud object service; Capacity driver: Video bytes, copies, requests; What the application owner still decides: Object naming, access control, retention
+The lecture compares traditional hosting and cloud costs under an example workload (about 50 uploads daily).
+
+### 5.3 Read the lecture architecture diagrams as a data flow
+
+The slide sequence gives a more specific reference architecture than the generic three-stage table above.
+On **encoding**, EC2 encoder workers in a separate Auto Scaling Group poll SQS, download the raw file from the raw-files bucket, transcode it (the lecture names `ffmpeg`), then upload the encoded result to a separate S3 encoded-files bucket.
+On **streaming**, a viewer's browser/media player receives encoded video through CloudFront, whose origin is the encoded-files bucket.
+
+### 5.4 Lecture workload and capacity arithmetic
+
+The lecture's worked workload assumes about **50 uploads/day**, each a **100 MB** HD movie.
+The viewing side assumes **500 streams/day** of 100 MB each, or $50\text{ GB/day}\approx1.5\text{ TB/month}$ of delivered data, assuming viewers consume the full movie and decimal units.
+
+### 5.5 Stage-by-stage service responsibility
+
+The lecture's diagrams classify EC2, S3, auto scaling, Elastic Load Balancer, and SQS as cloud infrastructure services supporting the upload and encode pipeline; the SaaS provider still assembles them into the actual video product.
+
+## 6. Capacity and reliability worked from the lecture workload
+
+The 50-upload/day case produces roughly $150$ GB of raw video in a 30-day month.
+The lecture's 500 full-view streams/day at 100 MB each imply $1.5$ TB/month delivered.
+One minute of encoding work per upload gives an average arrival rate $\lambda=50/1440\approx0.035$ jobs/minute and only 50 worker-minutes/day.
+Follow one failure through the pipeline. A browser retry after a lost response can create duplicate upload attempts; use a stable upload/job identifier.
+
+## 7. Price the complete video path, then compare alternatives
+
+Slide 37 lists EC2 instances, S3 storage, CloudFront delivery, and usage-priced platform software as cost components.
+This is a model template, not a claim that the lecture supplies current prices for every term.
+The deck asks for three different comparisons:
+- Traditional hosting vs cloud. Hold fixed: Same upload/stream workload, retention, region, quality and availability target; Change: Ownership, capacity procurement, operations; Question answered: Is on-prem total cost and peak capacity preferable to cloud metering?
+- Inter-cloud. Hold fixed: Same application behavior and assumptions; Change: Provider prices and service implementations; Question answered: Which provider's *whole path* is preferable, including migration and egress?
+
+## Exam reasoning bridge: trace one request and one failure
+
+A video-sharing architecture is easiest to test by following one upload: authenticate the owner, store the original privately, enqueue a conversion job, produce renditions, record processing state, authorize each viewer, then deliver through a CDN. Object storage is durable file storage; the queue absorbs bursts and retries; encoders perform CPU-heavy work; the database tracks ownership and workflow; the CDN caches delivery near viewers. A CDN does not determine whether a viewer is allowed to see a private asset.
+
+Ask what happens when encoding fails after the original upload. The original should remain durable, the job should be retryable or moved to a dead-letter path, and the UI should show a processing/failure state instead of advertising a nonexistent rendition. A queue smooths a spike but does not create compute capacity; worker scaling and queue age monitoring are needed. Cost includes retained originals/renditions, conversion work, requests and data egress, not just storage volume. Review [Q116–118](CS5224%20Questions%20and%20Answers.md#week-7---example-applications).
+
+# Week 8 - Infrastructure as Code: Repeatable Cloud Environments and Terraform
+
+The prior application designs contain many dependent resources. IaC turns that dependency graph into a reviewable source artifact so deployment can be repeated and changed deliberately.
+
+## 1. Infrastructure as Code (IaC)
+
+A cloud environment consists of VMs, networks, databases, load balancers, storage, identity rules, and their dependencies.
+
+### 1.1 Imperative and declarative approaches
+
+- Imperative. Author describes: Ordered operations: create network, then subnet, then VM; Benefit: Direct control over individual steps; simple one-off tasks; Limit: Must track current state and edge cases; reruns may not be idempotent
+- Declarative. Author describes: Desired resources and properties; Benefit: Tool calculates changes, handles dependencies, and can converge after drift; Limit: Less step-level control; state management and abstraction can add complexity
+
+### 1.2 Drift and the pets-versus-cattle distinction
+
+Drift arises when console edits, emergency fixes, or automated services change live resources without matching source updates.
+
+## 2. Tools and Terraform workflow
+
+The lecture surveys provider tools (AWS CloudFormation/CDK, Azure Resource Manager, Google Infrastructure Manager) and independent tools (Terraform, Pulumi).
+The tool distinctions in the slides are more specific. **CloudFormation** manages AWS resources from declarative templates; **AWS CDK** lets authors define resources in familiar programming languages and synthesizes a CloudFormation deployment.
+A safe Terraform cycle is: **write** configuration → initialize providers/modules → **plan** and inspect the proposed diff → **apply** reviewed changes → observe actual resources and drift → update configuration or state deliberately.
+
+### 2.1 Terraform configuration, plan, graph, and state
+
+A resource block declares a desired object, such as an S3 bucket, while providers translate resource operations to cloud APIs.
+A practical review asks: Which resources will be **created, changed, or destroyed**? Will a change recreate a database or public endpoint?
+
+### 2.2 Compare tool boundaries through one bucket
+
+A minimal Terraform-style resource declaration can express an S3 bucket and tags:
+This describes a desired object; it does **not** create the bucket until a provider is configured and an apply is authorized.
+
+### 2.3 A reviewable change sequence
+
+1. Put the infrastructure configuration in version control and initialize the tool/providers.
+2. Change a resource property in a branch and run a plan. Read the *operations*, not merely the final count of resources.
+3. Review security effects: public exposure, IAM permissions, encryption, backup, network routes, and data retention.
+4. Apply the reviewed change with controlled credentials and serialized state access.
+5. Confirm the live resource, test application behavior, and monitor for drift.
+
+## 3. Trace an infrastructure change across code, graph, state, and live service
+
+Suppose a video application declares a bucket, a processing queue, and encoder workers.
+Terraform configuration expresses the desired objects; the state file maps those declarations to provider resource IDs; a refresh or plan compares recorded and observed state; provider API calls change the live system.
+**`plan` versus `apply`:** `terraform plan` previews the operations needed to move from the observed/current resources toward the configuration's desired state; it does not execute those operations. `terraform apply` executes a plan. If no saved plan is supplied, it generates a fresh plan and normally asks for confirmation before changing resources. If a saved plan file is supplied, it executes that plan without a new interactive approval; `-auto-approve` also skips confirmation when generating a fresh plan. For CI drift checks, run `plan` and alert for review rather than scheduling `apply`. An ordinary non-empty plan may reflect a deliberate `.tf` change as well as external drift; `plan -refresh-only` focuses on changes to real resources relative to recorded state.
+The lecture's future-facing ideas add a feedback loop. **Policy-as-Code** rejects deployments that violate explicit rules (for example, a public bucket or unrestricted ingress); **GitOps** reconciles a declared repository state into a target environment; **self-healing IaC** monitors, analyzes, then remedies deviations.
+
+## Exam reasoning bridge: separate reusable code from isolated state
+
+Infrastructure as Code describes desired resources in versioned files so environments can be recreated and reviewed. Declarative tools describe the target state and compute a plan; imperative scripts prescribe a sequence of commands. In Terraform, a **module** packages a reusable resource pattern, variables parameterize it, and outputs expose created identifiers. A **state file** records the relationship between configuration and deployed resources. Modules provide reuse; separate state/backends keep development, staging and production operations isolated. One is not a substitute for the other.
+
+Before applying, inspect the plan for unintended replacement, deletion or cross-environment changes. Protect state because it may contain sensitive values and is needed for consistent operations; use appropriate remote storage and locking for collaboration. Portability across providers still depends on provider-specific resource definitions, services and data formats. Review [Q119–124](CS5224%20Questions%20and%20Answers.md#week-8---infrastructure-as-code).
+
+# Week 9 - Cloud Pricing and Total Cost of Ownership
+
+Choosing a lower unit price is not the same as minimizing cost. The workload's duration, data movement, utilization, commitment, and operational labor determine the total.
+
+## 1. Pricing models, usage metrics, and total cost of ownership
+
+A **price** is a unit charge, such as per compute second, GB-month, GB transferred, user-month, or 1,000 requests.
+
+### 1.1 Match pricing to workload shape
+
+- **IaaS:** VM type/size and run duration, storage allocation and I/O, network transfer, and sometimes licensed software.
+- **PaaS:** Compute and storage plus managed platform, development tooling, and possible license charges.
+- **SaaS:** Subscription modules, nominated users, transaction volume, or combinations. Under integrated pricing the SaaS provider pays its IaaS host and bundles that cost into the customer bill; under separate pricing the customer pays SaaS and hosting providers separately.
+
+## 2. Build a complete usage ledger
+
+- Network. Quantity to calculate: Inbound, outbound, inter-region/inter-cloud, and intra-cloud bytes by path; Common omission: Assuming all internal or inbound traffic is free
+- Compute. Quantity to calculate: Instance type × running hours; reserved commitment; serverless requests and execution duration; Common omission: Counting only CPU-active time for a running VM
+- Storage. Quantity to calculate: Average GB held × months, storage class, requests and I/O; Common omission: Counting only final data size, not intermediate and replicated copies
+- Service. Quantity to calculate: User-months, subscription period, API transactions; Common omission: Forgetting minimum fees or tier changes
+- Operations. Quantity to calculate: Monitoring, backup, support, security, integration, staff time; Common omission: Comparing provider bill with on-prem hardware alone
+
+## 3. TCO comparison and utilization
+
+The lecture's datacenter TCO decomposition is **datacenter depreciation + datacenter operating cost + server depreciation + server operating cost**.
+The three lecture cases compare high-end servers, lower-cost but higher-power servers, and the latter at 50% datacenter utilization.
+
+### 3.1 A reusable break-even model
+
+Let fixed on-prem annual cost be $F$, incremental on-prem workload cost $c_p$ per unit, cloud fixed subscription/support cost $S$, and cloud marginal workload cost $c_c$.
+In the lecture's Case A/B/C comparison, changing server efficiency and utilization alters both numerator and denominator of cost per useful work.
+**Worked break-even illustration, not a provider quote.** Suppose one year of on-prem operation costs $F=\text{S\$}100{,}000$ fixed plus $c_p=\text{S\$}1$ per completed job.
+A cloud design costs $S=\text{S\$}20{,}000$ fixed plus $c_c=\text{S\$}3$ per job. Equating $100{,}000+x=20{,}000+3x$ yields $x^*=40{,}000$ jobs/year. At 20,000 jobs, on-prem costs S$120,000 and cloud S$80,000; at 60,000 jobs, on-prem costs S$160,000 and cloud S$200,000. These rankings assume the same workload and SLA, enough on-prem capacity, and all relevant cloud transfer/migration charges included.
+
+**Worked sequential compute + I/O question (2526 Sem1 Test Q21).** Convert 60 PFLOP to 60,000 TFLOP. With 800,000 I/O operations, $t=60{,}000/(\text{TFLOP/s})+800{,}000(\text{ms/I/O})/1000$ seconds; cost is $t\times(\text{USD/s})$. The two stages are sequential, so add their times rather than taking the maximum.
+
+| Instance | Compute time (s) | I/O time (s) | Total time (s) | Cost (USD) |
+| --- | ---: | ---: | ---: | ---: |
+| m7 (1, 3, 1) | 60,000 | 2,400 | 62,400 | 62,400 |
+| i8 (1, 1, 2) | 60,000 | 800 | 60,800 | 121,600 |
+| c5a (3, 2, 2) | 20,000 | 1,600 | 21,600 | **43,200** |
+| r7 (1, 3, 2) | 60,000 | 2,400 | 62,400 | 124,800 |
+| g4 (30, 10, 5) | 2,000 | 8,000 | 10,000 | 50,000 |
+
+Thus **c5a minimizes cost**, while g4 finishes fastest. The table uses the question's simplified per-second rates; actual billing rules and parallelism could change a real deployment comparison.
+
+### 3.3 Tiered price calculation and unit discipline
+
+Suppose, solely as an arithmetic exercise, the first 1 GB of monthly transfer is free, the next 999 GB cost S$0.01/GB, and any remaining bytes cost S$0.005/GB.
+Compute charges require a compatible unit. A VM rate per second is multiplied by *allocated running seconds*, often subject to a minimum billing duration; a reserved commitment has upfront and recurring components whether the workload fully uses it or not.
+
+### 3.4 Provider, consumer, and SaaS-provider viewpoints
+
+A cloud provider chooses prices while balancing datacenter design/operation, resource sharing, volume discounts, competition, and regulation.
+
+## 4. End-to-end decision checklist
+
+1. Describe workload arrival, storage growth, peak-to-average ratio, data transfer, latency, resilience, and compliance requirements.
+2. Choose an architecture and deployment model, then map every resource to a meter and rate.
+3. Estimate costs across the same horizon as the on-prem option, including staff and migration effort.
+4. Vary utilization, demand, egress, and commitment assumptions; compute a break-even point where possible.
+5. Review the IaC plan and the estimated bill whenever a design change adds a resource, replication path, or new data movement.
+
+## Exam reasoning bridge: compare options over the same horizon
+
+Start with workload shape. A stable baseline can justify reserved/committed capacity; an uncertain or short-lived component favors on-demand flexibility; interruptible batch work may use Spot if it can checkpoint/retry. Right-size resources before buying discounts, and scale idle capacity down when possible. Compare **total** cost: compute-hours, storage, requests, transfer/egress, support, labor, migration and downtime over the same time period.
+
+For a compute-instance choice, calculate each candidate's execution time from required operations and effective throughput, add I/O time where it cannot overlap, then multiply by its price rate; the fastest machine need not minimize cost. For migration, separate future incremental costs from sunk expenditure: money already spent cannot be recovered by choosing on-premise now, although remaining asset life and avoidable operating costs matter. TCO is useful precisely because purchase price alone omits ongoing and risk-related costs. Review [Q125–132](CS5224%20Questions%20and%20Answers.md#week-9---cloud-pricing-and-total-cost-of-ownership).
+
+# Week 10 - Guest Lecture: The Cloud-Native Paradigm Shift, Microservices, Containers, and Kubernetes
+
+The numbered lectures explain how cloud resources are offered, assembled into applications, reproduced with code, and priced.
+
+## 1. Cloud computing versus cloud-native design
+
+Cloud computing describes properties of a resource/service delivery model: on-demand self-service, broad network access, resource pooling, rapid elasticity, and measured usage.
+The lecture names scalability, loose coupling, resilience, manageability, and observability as motivations. These are desired properties, not free outcomes of installing Kubernetes.
+
+## 2. Why split a monolith, and where splitting hurts
+
+A monolith packages many functions into one deployment unit. This can simplify initial development and local transactions, but as the application grows, unrelated features can become coupled in builds, releases, scaling, and failure recovery.
+That split trades in-process calls for distributed operations. A checkout that once used one transaction may now need coordination among cart, inventory, and payment.
+- Release. One deployment unit: A change can require redeploying the whole unit; Independently deployed services: A bounded service can release alone if API contracts remain compatible
+- Scaling. One deployment unit: Often scale all functions together; Independently deployed services: Scale hot functions separately, with network and coordination cost
+
+## 3. Containers solve packaging; orchestration handles a fleet
+
+A container image packages an application with its language runtime, libraries, executables, and configuration expectations into a standard deployment unit.
+Once many independently deployed services each have several replicas, **container sprawl** emerges. Operators need to place instances, discover endpoints, balance traffic, attach storage, roll versions forward or backward, scale to load, manage configuration and secrets, and replace failures.
+
+### 3.1 The five cloud-native techniques in the guest lecture
+
+- Containers. Problem it addresses: Package code and dependencies into a repeatable runtime unit; Cost or boundary to remember: Shared-kernel isolation, image provenance, and external services still matter
+- Microservices. Problem it addresses: Let bounded business capabilities release and scale separately; Cost or boundary to remember: Network calls, data ownership, API compatibility, and partial failure appear
+
+## 4. Kubernetes: desired state, Pods, Deployments, and reconciliation
+
+A **Pod** is Kubernetes' smallest deployable unit. One Pod can contain one or more tightly coupled containers that share network context and storage volumes; a Pod receives an IP within the cluster.
+A **Deployment** declares the desired replica count and rollout template for stateless Pods.
+A Kubernetes **Service** gives clients a stable way to reach a changing set of Pod endpoints; the Deployment maintains replica identity and count.
+
+### 4.1 Read a minimal desired-state declaration
+
+The selector and Pod label must agree, or the Deployment cannot manage the intended Pods.
+
+### 4.2 Separate three different recovery questions
+
+1. **Process/Pod failure:** Can the controller replace a failed replica and route traffic only to ready Pods?
+2. **Application defect:** If a new image returns incorrect prices, can metrics and validation detect it and can the rollout be reversed?
+3. **Data or dependency failure:** If the payment database is unavailable or corrupted, are retries bounded, transactions idempotent, and backups restorable?
+These questions explain why the guest lecture's reconciliation diagram is one layer of reliability rather than the entire reliability design.
+
+## 5. Operational boundaries and the cost of abstraction
+
+The course's earlier IaC chapter describes desired infrastructure; Kubernetes applies a related declarative pattern to workloads.
+Cloud-native architecture can reduce release friction and improve fault containment, but it introduces observability, policy, security, and platform costs.
+
+### 5.1 Interpret the guest lecture's 2025 survey as dated evidence
+
+Slides 64–65 summarize a *State of Kubernetes 2025* survey. The deck reports that 90% of surveyed respondents expected AI workloads on Kubernetes to grow, the average adopter used clusters in more than five environments, 42% named cost as a top challenge, 88% reported rising Kubernetes TCO, and 92% were investing in AI-driven optimization.
+The architectural lesson is more durable than the percentages: multi-environment placement, AI/GPU demand, edge connectivity, and platform fragmentation create cost and operations pressure.
+
 <reviewkit>
 <takeaways>
+- **Core Identity & Definitions:** Gartner and NIST 2011 define cloud computing as on-demand, elastic resource delivery. The program acts as a cloud service; the platform consists of distributed datacenters.
+- **CAPEX to OPEX Shift:** Eliminates upfront hardware investments (e.g., GPU clusters for AI model training) and shifts maintenance costs to providers.
+- **Capacity Planning Strategies:** Lead Strategy (adds capacity ahead; high availability, over-provisioning risk); Lag Strategy (adds at 100% usage; minimal cost, outage risk); Match Strategy (incremental real-time auto-scaling).
+- **Horizontal vs. Vertical Scaling:** Horizontal scaling uses commodity hardware, enables zero-downtime scaling out/in, and has near-infinite capacity. Vertical scaling upgrades single nodes using specialized hardware and is bounded by single-machine physical limits.
+- **Trust Boundaries & Multi-Tenancy:** Multi-tenancy creates overlapping trust boundaries with co-location security risks. Dedicated Instances offer complete hardware isolation at higher cost.
+- **Code vs. Data Decoupling:** Repatriation and hybrid cloud architectures do not require co-locating code and data. Application code (less sensitive, high elasticity) remains on the public cloud, while sensitive data resides on-premise behind corporate firewalls to satisfy compliance regulations and eliminate egress costs.
+- **Governance & Compliance:** Data localization regulations (e.g., Singapore citizen data residency), privacy vs. legal disclosure tension, vendor lock-in, and Cloud Repatriation trends drive hybrid cloud architecture choices.
+- **NIST 5 Essential Characteristics:** On-demand self-service, broad network access, resource pooling (multi-tenancy), rapid elasticity, and measured service (pay-per-use).
+- **Multi-Tenancy vs. Single Tenant:** Multi-tenancy pools resources so a single software/VM instance serves multiple tenants, maximizing hardware utilization. Single tenant offers dedicated hardware at higher cost.
+- **10-Layer Responsibility Stack:** On-premise (Consumer 10/10), IaaS (5/5 split), PaaS (8 Provider / 2 Consumer), SaaS (Provider 10/0).
+- **PaaS Disqualification Rules:** A service must provide the runtime to deploy and execute custom code. UI-only services are SaaS; OS/kernel configuration services are IaaS; API-only query stores are DBaaS.
+- **Service Model vs. Scaling Mechanism:** PaaS and IaaS are service models; ELB distributes traffic and Auto Scaling changes instance count. Both PaaS and IaaS can support scaling, with different consumer management responsibilities.
+- **Cross-Provider Wrapping & FaaS:** Subscribing to PaaS from Provider X physically hosted on IaaS from Provider Y satisfies regional data laws. FaaS provides reactive event-driven execution, though underlying servers still exist under the hood.
+- **NIST SP 500-292 Reference Model (5 Actors):** Cloud Consumer, Cloud Provider (3-layer Service Orchestration, Cloud Service Management, Security, Privacy), Cloud Auditor (independent compliance evaluation), Cloud Broker (Intermediation, Aggregation, Arbitrage), and Cloud Carrier (SLA-backed connectivity).
+- **Deployment Models & Sovereign Cloud:** Public, Private (On-Site/Out-Sourced & VPC), Community (IAM access control across orgs), Hybrid, and Sovereign Cloud (all data and metadata locked within national borders to prevent foreign access).
+- **Code vs. Data Decoupling:** Application code stays on the public cloud for compute elasticity, while sensitive data remains on-premise behind corporate firewalls to satisfy compliance and eliminate egress costs.
+- **Rapid Elasticity & Objectives:** Resource organization aims to achieve elasticity/scaling and balanced resource utilization across workload and resource volatility.
+- **Workload Distribution & AWS ELB:** Load balancers enable horizontal scaling seamlessly for consumers. AWS provides ALB (Layer 7 HTTP with rules and geolocation target groups), NLB (Layer 4 TCP/UDP), GWLB (Layer 3 virtual appliances), and CLB (Legacy).
+- **Independent vs. Built-In Load Balancing:** Independent load balancers operate separately to intercept traffic. Built-in load balancers integrate routing logic inside the primary application server instance.
+- **Two Availability Goals:** Autoscaling handles rising demand; redundant instances across zones with health-based routing handle instance or zone failure. One autoscaling group can help implement both.
+- **Hierarchical Resource Pooling:** Hierarchical structures use Parent, Sibling (physically grouped in facility, isolated per tenant), and Nested pools (sub-divided for internal departments) to eliminate dedicated pool complexity.
+- **Dynamic Scalability & Relocation:** Dynamic relocation live-migrates VMs to higher-capacity hosts with near-zero downtime by pre-provisioning target hosts. "Scaling" defaults to scale UP; "Elastic Scaling" implies scaling UP and DOWN.
+- **Elastic Resource Capacity:** Automated Scaling Listeners monitor capacity and trigger Intelligent Automation Engines to script hypervisors to dynamically allocate/reclaim CPU and RAM.
+- **Cloud Bursting Architecture:** Scales on-premise workloads into public cloud resources during traffic surges (Burst Out) and releases cloud leases when traffic normalizes (Burst In). Relies on pre-deployed inactive cloud instances, automated listeners, and real-time database state replication.
+- **Hosting Trade-offs:** On-premise provides deterministic QoS and strict physical isolation; cloud hosting provides elastic scaling and utility OPEX, but delegates QoS to third-party transit carriers. Cloud security challenges arise from multi-actor trust boundaries and co-tenancy rather than inherent infrastructure flaws.
+- **Latency vs. Bandwidth:** Bandwidth is scalable by adding physical channels; latency is bounded by physical propagation limits ($v_{\text{fiber}} \approx 204,000\text{ km/s}$). Scaled to 1 CPU cycle = 1 second, main memory access equals 6 minutes, local SSD read equals 2–6 days, and an international network round-trip equals 16 years.
+- **Hierarchical Networking:** Datacenter networks use Core, Aggregation, and Access layers. Top-of-Rack (TOR) switches solve the $\mathcal{O}(N^2)$ pairwise cabling explosion, scaling host runs linearly at $\mathcal{O}(N)$.
+- **Server Standards:** $1\text{U} = 1.75\text{ inches} = 44.45\text{ mm}$ (EIA-310). Modern 1U hyper servers pack dual processors (up to 512 cores), DDR5 ECC RDIMMs (electrically isolated contacts), PCIe 5.0 lanes, and OCP-compliant AIOM mezzanine network cards into standard 42U racks.
+- **Storage Hierarchy:** Trades off private local storage (sub-microsecond latency, non-shared, node-locked) against distributed shared storage (100 µs to 10 ms latency, resilient, cluster-wide access via SAN/NVMe-oF).
+- **Thermodynamic Airflow:** Raised-floor hot-cold aisle containment prevents air mixing. Water holds over $1,000\times$ more heat per unit volume than air, driving adoption of direct-to-chip liquid cooling and seawater-cooled facilities.
+- **PUE & Energy Proportionality:** $\text{PUE} = \frac{\text{Total Facility Power}}{\text{IT Equipment Power}}$. Hyperscale facilities achieve PUE $< 1.15$ with only $11\%$ cooling overhead. Cyclical quarterly PUE swings reflect summer ambient heat vs. winter economizer free cooling. Energy-proportional computing ($P(u) = u \cdot P_{\text{max}}$) minimizes the 50% power penalty of idle servers.
+- **Uptime Institute Tiers:** Tier 1 (99.671% availability, 28.84h/yr downtime); Tier 2 (99.741%, 22.70h/yr downtime); Tier 3 (99.982%, 1.58h/yr downtime, concurrently maintainable industry standard); Tier 4 (99.995%, 26.3m/yr downtime, fault-tolerant active-active dual feeds).
+- **20-Year Tier Cost Comparison:** For a question specifying 365 days/year, use 8,760 hours/year and add build cost to expected downtime cost. At USD 2M per downtime hour, Tier 3 has the lowest total of USD 563.072M.
+- **Virtualization Definition & Mechanism:** Enables a single physical infrastructure to function as multiple logical infrastructures by multiplexing processors, memory, storage, and networking under a hypervisor (VMM) via a 1:N sharing relationship.
+- **Canonical Trade-Offs:** Delivers Hardware Independence, Resource Consolidation, and Resource Replication (rapid scaling via disk images); incurs Performance Overhead and introduces a centralized Single Point of Failure (SPOF).
+- **Four Resource Subsystems:** Processor virtualization (vCPUs), Memory virtualization (two-stage GVA -> GPA -> HPA translation), Storage virtualization (logical LUNs and virtual disk files), and Network virtualization (vSwitches and overlay fabrics).
+- **Three Approaches to Virtualization:**
+- *Full Virtualization:* Binary translation dynamically rewrites sensitive instructions while direct execution runs user code; unmodified guest OS is completely unaware; VMware ESX.
+- *Para-Virtualization:* OS-assisted model where guest kernel source is modified to issue direct Hypercalls; eliminates binary translation tax; Cambridge Xen.
+- *Hardware-Assisted Virtualization:* CPU silicon extensions (Intel VT-x / AMD-V) add VMX Root and Non-Root modes; privileged requests trap directly to silicon via VMCS; Microsoft, Virtual Iron, XenSource.
+- **Hypervisor Classifications:** Type 1 Bare-Metal runs directly on silicon (ESXi, Xen, Hyper-V, KVM); Type 2 Hosted runs on a host OS (Workstation, VirtualBox, Parallels). Security vectors include Host OS attacks (compromising all instances) and Guest OS attacks (VM escape).
+- **Containers vs. VMs:** Containers virtualize operating system user space and share the single host kernel using Linux Namespaces (`pid`, `net`, `mnt`, `ipc`, `uts`, `user`) and Cgroups (CPU, RAM, block I/O limits), delivering lightweight footprint and sub-second startup.
+- **Docker Architecture:** Built in Go with a Client-Server model (REST API over UNIX sockets/TCP). Components include Docker Desktop, Docker Client, Docker Daemon (`dockerd`), Docker Registries (Docker Hub), Docker Images (read-only layer templates), and Docker Containers (live running instances). Runs on macOS/Windows via background Linux VMs (WSL2 / Virtualization.framework).
+- **Multi-Tenancy Principles:** Balances the Cloud Provider View (single shared app) with the Cloud Consumer View (dedicated logical instance). Governed by usage isolation, data security, per-tenant recovery, scalability, metered usage, and data tier isolation patterns (database-per-tenant, schema-per-tenant, shared-table with partition keys).
+- **Workload Suitability:** Ideal cloud applications are divisible into independent, stateless tasks with low inter-instance communication (web services, distributed DBs, asynchronous ML). Non-ideal applications exhibit complex sequential dependencies or intensive inter-node communication (traditional MPI HPC).
+- **Core Cloud Challenges:** Consumers face dynamic elasticity, automated failover, and checkpoint/restart hurdles. Providers face multi-tenant isolation, hypervisor overhead, and strict QoS guarantees.
+- **Noisy Neighbor Problem:** Resource contention across shared hypervisors (memory bus, L3 cache, network switches) causes performance jitter. Mitigated by cgroups, CPU pinning, and redundancy at increased operational cost.
+- **Logging Trade-offs:** Diagnostic logging is critical for post-crash recovery and auditing, but synchronous disk/network logging incurs severe I/O penalties. Requires asynchronous buffering and tiered shipping.
+- **Three-Tier Architecture:** Tier 1 (Presentation: UI, browser, reverse proxy), Tier 2 (Application: business logic, microservices, API servers), Tier 3 (Data: relational/NoSQL databases, persistent storage).
+- **SOAP vs. REST:** SOAP is a formal XML protocol with strict WSDL contracts and enterprise WS-Security; REST is an architectural style based on URI resources, standard HTTP verbs, statelessness, and lightweight JSON representations.
+- **REST Principles:** Uniform Interface, Client-Server Decoupling, Statelessness (session state stored in client tokens/cookies, not server memory), Cacheability, Layered System, and Code on Demand.
+- **IaaS vs. PaaS vs. SaaS Spectrum:** IaaS = manage OS, runtime, and app (full control, high maintenance); PaaS = manage app code only ("test offline, deploy online"); SaaS = consume hosted software directly (zero setup, zero architectural control).
+- **Legacy Migration:** If the goal is quick cloud migration with minimal application changes, IaaS rehosting is usually the closest fit; a serverless refactor, PaaS rewrite, or SaaS replacement changes more. Rehosting still needs compatibility, data, network, identity, and licensing work.
+- **MapReduce Programming Model:** Designed for arbitrarily divisible web-scale data (100s of GBs to PBs) over commodity clusters. Transforms input $\langle k_1, v_1 \rangle \to \text{list}(\langle k_2, v_2 \rangle) \to \langle k_2, \text{list}(v_2) \rangle \to \langle k_3, v_3 \rangle$. Follows the SPMD paradigm with a centralized master coordinating workers.
+- **MapReduce Execution Flow:** Mappers write intermediate outputs to **local disks** (saving network and replication costs). Reducers shuffle intermediate partitions over HTTP/RPC, merge-sort grouped keys, execute `reduce()`, and commit final outputs to distributed file systems (GFS/HDFS with $3\times$ replication).
+- **MapReduce Optimizations:** Data locality (scheduling tasks on nodes or racks hosting target data chunks), worker role switching, optimal reducer count tuning ($R$), and local Combiners (mini-reducers) to slash network shuffle volume.
+- **Hadoop Architecture:** Comprises HDFS for distributed chunk storage ($128/256\text{ MB}$ blocks, NameNode/DataNodes), YARN for cluster resource negotiation (ResourceManager/NodeManagers), and the MapReduce compute engine.
+- **Apache Spark vs. MapReduce:** MapReduce materializes data to disk at every phase boundary, causing severe I/O penalties for iterative algorithms. Spark runs in-memory using Resilient Distributed Datasets (RDDs) and DAG scheduling, supporting native streaming and machine learning (MLlib) with $10\times - 100\times$ speedup.
+- **Serverless FaaS Hierarchy:** Event-Driven Computing $\supset$ Function as a Service (FaaS) $\supset$ Serverless FaaS. Applications are decomposed into ephemeral, single-purpose functions that scale elastically with zero idle capacity and pay-per-execution billing.
+- **FaaS Best Practices:** Single responsibility per function; strictly stateless design (state externalized to S3/DynamoDB/Redis); self-contained isolation (avoid synchronous function chaining; use queues/event buses); minimal dependencies to mitigate cold starts.
+- **AWS Lambda Execution & Lifecycle:** Combines application logic code with configuration metadata (memory, timeout, IAM roles, triggers). Operates through a 3-step lifecycle: Create $\to$ Deploy $\to$ Invoke/Test. Managed via the AWS Console, AWS SAM CLI (local Docker testing), Serverless Framework, and Terraform.
+- K-means requires repeated assignment and centroid-update passes; one MapReduce job is only one iteration.
+- Mapper output keys determine grouping; reducers need sums and counts to calculate new centroids.
+- Log-space centroid coordinates are not raw follower counts or arithmetic raw-count means.
+- Choice of $k$, preprocessing, initialization, and empty-cluster rules affect the result.
+- An iteration's reducer output must be versioned and distributed to every mapper in the next job.
+- Upload, encoding, and streaming have distinct I/O, CPU, storage, and delivery bottlenecks.
+- The lecture's raw S3 → SQS → encoder → encoded S3 → CloudFront path separates asynchronous work from playback.
+- Average jobs, peak arrival, retained copies, and viewer-facing bytes require separate capacity calculations.
+- Retries require idempotent job and publication rules; selecting a managed service does not supply them automatically.
+- The monthly bill needs compute, retained copies, requests, CDN delivery, and operational costs under one consistent workload.
+- IaC records desired infrastructure so changes can be reviewed and reproduced.
+- Declarative tools reconcile desired and observed state; their plans can still be destructive.
+- Terraform uses providers, resources, dependency graphs, modules and sensitive state.
+- Configuration, state, live resources, and the running application need separate validation.
+- Replaceable compute needs separate persistence and recovery design.
+- Price is a unit rate; cost needs time, usage, fixed charges and operations.
+- Compare cloud with on-prem TCO over the same workload, horizon and service level.
+- Include network egress, requests, storage copies, reserved commitments and labor.
+- Low datacenter utilization raises cost per useful workload unit.
+- Sensitivity analysis exposes which assumptions decide the result.
+- Cloud-native refers to application architecture and operations; cloud computing refers to resource/service delivery properties.
+- Microservices gain independent deployment but add distributed failure and data-consistency work.
+- Containers standardize packaging; Kubernetes orchestrates placement, discovery, scaling, rollout, and replacement.
+- A Pod is ephemeral; a Deployment declares replicas; controllers reconcile observed state toward desired state.
+- Pod self-healing does not replace application validation, persistent-data recovery, or cost analysis.
 - Block storage suits high-frequency random updates such as database index pages; file storage provides shared directory semantics; object storage serves large collections of complete static assets through HTTP APIs.
 - The control plane uses API Gateway, Lambda A, and DynamoDB for small authorization messages; the data plane transfers image bytes directly between browser and S3 with a SigV4 presigned URL.
 - S3 does not validate Cognito JWTs directly. A presigned URL is a short-lived bearer capability signed with the Lambda role's temporary AWS credentials; expiry is checked when a request begins.
@@ -5137,6 +6986,9 @@ The core of the case is tracing one photo: who can upload it, where its bytes tr
 - Keep previews immediately available and evaluate archiving originals after 365 days; restoration is an asynchronous state machine with temporary-copy costs.
 - Handle duplicate or out-of-order events and crashes. Deterministic keys, source versions, and conditional state updates together protect against rollback and duplicate work.
 - Cost estimates must include time in storage, requests, transitions, restores, egress, compute, retained versions, and applicable credits.
+- Lab 2 uses EMR Serverless and Spark for batch social-graph aggregation, S3 for intermediate files, DynamoDB for keyed serving, and API Gateway with Lambda for low-latency queries.
+- For directed edge (A, B) where A follows B, emit (A, (0, 1)) for followees and (B, (1, 0)) for followers; sum by key to obtain exact counts.
+- Least-privilege IAM roles and validation on user_id parameters are essential for secure serverless API exposure.
 </takeaways>
 <qprompt/>
 </reviewkit>
