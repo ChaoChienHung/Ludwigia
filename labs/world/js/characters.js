@@ -19,6 +19,7 @@
       this.dialogueQueue = [];
       this.queueTimer = 0;
       this.npcDialogues = [];
+      this.activeGathering = null;
     }
 
     initFurnitureSpots() {
@@ -72,11 +73,45 @@
       return this.characters.find(c => c.furniture && c.furniture.id === spot.id);
     }
 
-    useFurniture(char, spot) {
+    getFurnitureApproachPoint(spot) {
+      if (!spot) return null;
+      if (spot.id === 'dorm_bed_happy') return { x: 3.4, y: 18.2 };
+      if (spot.id === 'dorm_bed_clark') return { x: 5.9, y: 18.2 };
+      if (spot.id === 'dorm_bed_kerry') return { x: 3.4, y: 25.2 };
+      if (spot.id === 'dorm_bed_billy') return { x: 5.9, y: 25.2 };
+      if (spot.id === 'ludwig_bed') return { x: 3.4, y: 2.0 };
+      if (spot.id === 'cafe_chair') return { x: 39.8, y: 5.25 };
+      if (spot.id === 'how_are_you_sofa') return { x: 40.2, y: 18.5 };
+      if (spot.id === 'market_stool') return { x: 34.4, y: 41.85 };
+      if (spot.exitOffset) {
+        return { x: spot.x + (spot.exitOffset.dx || 0), y: spot.y + (spot.exitOffset.dy || 0) };
+      }
+      return { x: spot.x, y: spot.y };
+    }
+
+    walkNpcToFurniture(char, spot) {
+      if (!char || char.isPlayer || !spot) return;
+      char.targetFurniture = spot;
+      const pt = this.getFurnitureApproachPoint(spot);
+      if (this.world && this.world.requestNpcPath) {
+        this.world.requestNpcPath(char, pt.x, pt.y);
+      }
+    }
+
+    useFurniture(char, spot, force = false) {
       if (!char || !spot) return false;
       if (this.isSpotOccupied(spot, char)) return false;
 
+      // Safe Proximity Check: If character is far from the furniture spot, DO NOT TELEPORT!
+      // Instead, guide the NPC to walk to the furniture approach point first.
+      const dist = Math.hypot(char.x - spot.x, char.y - spot.y);
+      if (!force && !char.isPlayer && dist > 1.8) {
+        this.walkNpcToFurniture(char, spot);
+        return false;
+      }
+
       char.furniture = spot;
+      char.targetFurniture = null;
       char.state = (spot.type === 'bed') ? 'lying' : 'sitting';
       char.x = spot.x;
       char.y = spot.y;
@@ -804,7 +839,7 @@
       }
     }
 
-    // --- Autonomous Dialogue Update Loop ---
+    // --- Autonomous Dialogue & Event Update Loop ---
     update(dt) {
       // 1. Update active speech bubble timers & smooth alpha fade
       this.characters.forEach(c => {
@@ -821,9 +856,33 @@
             c.speechBubble = null;
           }
         }
+
+        // Automatic Arrival Check for targeted furniture
+        if (c.targetFurniture && !c.furniture) {
+          const tf = c.targetFurniture;
+          const dist = Math.hypot(c.x - tf.x, c.y - tf.y);
+          if (dist <= 1.6 && (!c.path || c.path.length <= 1)) {
+            if (!this.isSpotOccupied(tf, c)) {
+              this.useFurniture(c, tf, true);
+            }
+            c.targetFurniture = null;
+          }
+        }
       });
 
-      // 2. Process conversation queue sequence (supports simultaneous chorus lines when nextDelay === 0)
+      // 2. Active Gathering Progression & Trigger Check
+      if (this.activeGathering) {
+        const now = performance.now();
+        if (now - this.activeGathering.startTime > this.activeGathering.timeout) {
+          this.activeGathering = null;
+        } else if (this.checkGatheringReadiness(this.activeGathering)) {
+          const pair = this.activeGathering.pair;
+          this.activeGathering = null;
+          this.startNpcDialogue(pair, this.getLangKey());
+        }
+      }
+
+      // 3. Process conversation queue sequence (supports simultaneous chorus lines when nextDelay === 0)
       if (this.dialogueQueue.length > 0) {
         this.queueTimer -= dt;
         while (this.queueTimer <= 0 && this.dialogueQueue.length > 0) {
@@ -838,7 +897,7 @@
         return;
       }
 
-      // 3. Autonomous scheduler
+      // 4. Autonomous scheduler
       this.autoChatTimer -= dt;
       if (this.autoChatTimer <= 0) {
         this.autoChatTimer = 5.5 + Math.random() * 4.5;
@@ -859,7 +918,222 @@
       }
     }
 
+    isMatchingZone(currentZone, reqZone) {
+      if (!currentZone || !reqZone) return false;
+      if (currentZone === reqZone) return true;
+      if ((reqZone === 'house' || reqZone === 'ludwig_house') && (currentZone === 'house' || currentZone === 'ludwig_house')) return true;
+      return false;
+    }
+
+    isCharInZone(char, reqZone) {
+      if (!char || !reqZone) return false;
+      const currentZone = (this.world && this.world.getZoneAt) ? this.world.getZoneAt(char.x, char.y) : null;
+      return this.isMatchingZone(currentZone, reqZone);
+    }
+
+    getZoneAnchors(zone) {
+      switch (zone) {
+        case 'dorm_211':
+          return [{ x: 4.5, y: 20.0 }, { x: 5.5, y: 21.0 }, { x: 4.0, y: 22.5 }, { x: 5.2, y: 23.0 }];
+        case 'basketball_court':
+          return [{ x: 41.0, y: 37.0 }, { x: 43.5, y: 38.5 }, { x: 42.0, y: 39.5 }, { x: 45.0, y: 37.0 }];
+        case 'night_market':
+          return [{ x: 33.5, y: 38.0 }, { x: 35.0, y: 39.0 }, { x: 33.0, y: 40.5 }, { x: 35.5, y: 41.0 }];
+        case 'cafe':
+          return [{ x: 39.5, y: 5.0 }, { x: 40.5, y: 4.0 }, { x: 39.0, y: 3.5 }];
+        case 'how_are_you':
+          return [{ x: 41.0, y: 19.5 }, { x: 43.0, y: 19.5 }, { x: 40.5, y: 18.0 }];
+        case 'ludwig_house':
+        case 'house':
+          return [{ x: 4.5, y: 4.5 }, { x: 5.5, y: 5.5 }, { x: 4.0, y: 6.0 }];
+        case 'sanmin_school':
+          return [{ x: 5.0, y: 36.0 }, { x: 6.5, y: 37.0 }, { x: 4.5, y: 38.0 }];
+        case 'douyin_office':
+          return [{ x: 22.0, y: 36.0 }, { x: 24.0, y: 37.0 }, { x: 21.5, y: 38.5 }];
+        case 'library':
+          return [{ x: 21.5, y: 21.0 }, { x: 23.0, y: 22.5 }, { x: 20.5, y: 23.0 }];
+        case 'ai_studio':
+          return [{ x: 21.5, y: 4.5 }, { x: 23.5, y: 5.5 }, { x: 20.5, y: 6.0 }];
+        default:
+          return [{ x: 14.5, y: 14.5 }, { x: 13.5, y: 15.5 }, { x: 15.5, y: 15.5 }];
+      }
+    }
+
+    checkGatheringReadiness(gathering) {
+      if (!gathering || !gathering.pair) return false;
+      const { pair } = gathering;
+      const group = pair.participants.map(id => this.characters.find(c => c.id === id));
+      if (group.some(c => !c)) return false;
+
+      // 1. If occupyBeds is required (e.g. dorm midnight chat)
+      if (pair.occupyBeds) {
+        const dormBedMap = {
+          billy: 'dorm_bed_billy',
+          clark: 'dorm_bed_clark',
+          jerry: 'dorm_bed_kerry',
+          ludwig: 'dorm_bed_happy'
+        };
+        const allInBeds = group.every(c => {
+          const reqBed = dormBedMap[c.id];
+          return c.furniture && c.furniture.id === reqBed;
+        });
+        if (!allInBeds) return false;
+        return true;
+      }
+
+      // 2. If occupyCafeSeat is required (e.g. ChatGPT cafe event)
+      if (pair.occupyCafeSeat) {
+        const chatgptChar = group.find(c => c.id === 'chatgpt') || group[0];
+        if (!chatgptChar || !chatgptChar.furniture || chatgptChar.furniture.id !== 'cafe_chair') {
+          return false;
+        }
+      }
+
+      // 3. If requiredZone is set, all participants must physically be inside the required zone
+      if (pair.requiredZone) {
+        const allInZone = group.every(c => this.isCharInZone(c, pair.requiredZone));
+        if (!allInZone) return false;
+      }
+
+      // 4. Proximity Check: All participants must be within reasonable speaking distance
+      const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
+      const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
+      const maxDist = pair.maxDistance || (group.length > 2 ? 4.5 : 3.8);
+      const allNear = group.every(c => Math.hypot(c.x - centerX, c.y - centerY) <= maxDist);
+      if (!allNear) return false;
+
+      // 5. Participants must not still be traveling long distances (no lengthy path remaining)
+      const allArrived = group.every(c => !c.path || c.path.length <= 1);
+      if (!allArrived) return false;
+
+      return true;
+    }
+
+    initiateGathering(pair, now) {
+      const group = pair.participants.map(id => this.characters.find(c => c.id === id));
+      if (group.some(c => !c)) return false;
+
+      if (pair.occupyBeds && this.furnitureSpots) {
+        const dormBedMap = {
+          billy: 'dorm_bed_billy',
+          clark: 'dorm_bed_clark',
+          jerry: 'dorm_bed_kerry',
+          ludwig: 'dorm_bed_happy'
+        };
+        for (const c of group) {
+          if (c.isPlayer) continue;
+          const bedId = dormBedMap[c.id];
+          if (bedId) {
+            const spot = this.furnitureSpots.find(f => f.id === bedId);
+            if (spot && (!c.furniture || c.furniture.id !== bedId)) {
+              this.walkNpcToFurniture(c, spot);
+            }
+          }
+        }
+      } else if (pair.occupyCafeSeat && this.furnitureSpots) {
+        const cafeSpot = this.furnitureSpots.find(f => f.id === 'cafe_chair');
+        const chatgptChar = group.find(c => c.id === 'chatgpt') || group[0];
+        if (cafeSpot && chatgptChar && !chatgptChar.isPlayer && (!chatgptChar.furniture || chatgptChar.furniture.id !== 'cafe_chair')) {
+          this.walkNpcToFurniture(chatgptChar, cafeSpot);
+        }
+      } else if (pair.requiredZone) {
+        const anchors = this.getZoneAnchors(pair.requiredZone);
+        group.forEach((c, idx) => {
+          if (c.isPlayer) return;
+          if (!this.isCharInZone(c, pair.requiredZone)) {
+            const anchor = anchors[idx % anchors.length];
+            if (this.world && this.world.requestNpcPath) {
+              this.world.requestNpcPath(c, anchor.x, anchor.y);
+            }
+          }
+        });
+      } else {
+        const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
+        const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
+        group.forEach(c => {
+          if (c.isPlayer) return;
+          if (Math.hypot(c.x - centerX, c.y - centerY) > 3.5) {
+            if (this.world && this.world.requestNpcPath) {
+              this.world.requestNpcPath(c, centerX, centerY);
+            }
+          }
+        });
+      }
+
+      this.activeGathering = {
+        pair,
+        startTime: now,
+        timeout: 45000 // 45 seconds timeout protection
+      };
+      return true;
+    }
+
+    startNpcDialogue(pair, langKey) {
+      const group = pair.participants.map(id => this.characters.find(c => c.id === id));
+      if (group.some(c => !c)) return false;
+
+      const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
+      const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
+
+      const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
+      if (!lines || lines.length === 0) return false;
+
+      const getEffectiveDelay = (item) => {
+        if (item.delay === 0) return 0;
+        const readTime = this.estimateReadTime(item.text);
+        return Math.max(item.delay || 3.2, readTime);
+      };
+
+      const totalDialogueTime = lines.reduce((sum, item) => sum + getEffectiveDelay(item), 0) + 4.5;
+      for (const c of group) {
+        c.path = [];
+        c.isWalking = false;
+        c.facing = (centerX - c.x >= 0) ? 1 : -1;
+        c.timer = Math.max(8.0, totalDialogueTime);
+      }
+
+      // First character speaks
+      const first = lines[0];
+      const firstDelay = getEffectiveDelay(first);
+      const speaker1 = this.characters.find(c => c.id === first.speaker);
+      if (speaker1) {
+        const firstDuration = first.duration || Math.max(4.8, firstDelay + 1.6);
+        this.triggerSpeechBubble(speaker1, first.text, firstDuration);
+      }
+
+      // Queue remaining replies
+      this.dialogueQueue = [];
+      for (let i = 1; i < lines.length; i++) {
+        const item = lines[i];
+        const effDelay = getEffectiveDelay(item);
+        const itemDuration = item.duration || Math.max(4.8, effDelay + 1.6);
+        this.dialogueQueue.push({
+          speakerId: item.speaker,
+          text: item.text,
+          duration: itemDuration,
+          nextDelay: effDelay
+        });
+      }
+      this.queueTimer = firstDelay;
+      return true;
+    }
+
     tryTriggerNpcDialogue(langKey, now) {
+      // 1. If currently gathering an event, check if everyone is in place
+      if (this.activeGathering) {
+        if (now - this.activeGathering.startTime > this.activeGathering.timeout) {
+          this.activeGathering = null;
+          return false;
+        }
+
+        if (this.checkGatheringReadiness(this.activeGathering)) {
+          const p = this.activeGathering.pair;
+          this.activeGathering = null;
+          return this.startNpcDialogue(p, langKey);
+        }
+        return false;
+      }
+
       const pairs = this.npcDialogues.slice().sort(() => Math.random() - 0.5);
 
       for (const pair of pairs) {
@@ -869,120 +1143,34 @@
         // Ensure no character in the group has spoken within the last 10 seconds
         if (group.some(c => now - (c.lastSpokeTime || 0) < 10000)) continue;
 
-        const maxDist = pair.maxDistance || (group.length > 2 ? 4.5 : 3.8);
-        const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
-        const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
+        // If this is a specialized event with requiredZone or furniture actions:
+        const isSpecialEvent = !!(pair.requiredZone || pair.occupyBeds || pair.occupyCafeSeat);
 
-        // Check if all characters in the group are close to conversation center
-        const allNear = group.every(c => Math.hypot(c.x - centerX, c.y - centerY) <= maxDist);
+        const fakeGathering = { pair };
+        const isReady = this.checkGatheringReadiness(fakeGathering);
 
-        const firstZone = group[0].zone;
-        const shareLocation = group.every(c =>
-          c.zone === firstZone ||
-          (c.visitedZones && group[0].visitedZones && c.visitedZones.some(z => group[0].visitedZones.includes(z))) ||
-          Math.hypot(c.x - centerX, c.y - centerY) <= 4.5
-        );
-        if (!shareLocation) continue;
-
-        // Location-Restricted Events Contract:
-        // If dialogue/event specifies requiredZone, ensure the conversation group is currently inside that zone!
-        if (pair.requiredZone) {
-          const reqZone = pair.requiredZone;
-          const currentZone = this.world && this.world.getZoneAt ? this.world.getZoneAt(centerX, centerY) : group[0].zone;
-          const isHouse = (reqZone === 'house' || reqZone === 'ludwig_house') && (currentZone === 'ludwig_house' || group[0].zone === 'house');
-          const isDorm = (reqZone === 'dorm_211') && (currentZone === 'dorm_211' || group[0].zone === 'dorm_211');
-          const matchesZone = (currentZone === reqZone) || isHouse || isDorm;
-          if (!matchesZone) continue;
+        if (isReady) {
+          // Everyone is already at the location & properly situated: Start chatting directly!
+          return this.startNpcDialogue(pair, langKey);
         }
 
-        // Bed Occupancy Action for Dorm Events (e.g. Late-Night Bed Chat)
-        if (pair.occupyBeds && this.furnitureSpots) {
-          const dormBedMap = {
-            billy: 'dorm_bed_billy',
-            clark: 'dorm_bed_clark',
-            jerry: 'dorm_bed_kerry',
-            ludwig: 'dorm_bed_happy'
-          };
-          for (const c of group) {
-            const bedId = dormBedMap[c.id];
-            if (bedId) {
-              const spot = this.furnitureSpots.find(f => f.id === bedId);
-              if (spot && c.furniture !== spot) {
-                this.useFurniture(c, spot);
-              }
-            }
+        if (isSpecialEvent) {
+          // Candidates are not fully in place. If none of them are speaking or engaged, initiate gathering!
+          const canGather = group.every(c => !c.speechBubble && (c.timer <= 0 || c.state === 'idle' || c.isWalking));
+          if (canGather) {
+            this.initiateGathering(pair, now);
+            return false;
+          }
+        } else {
+          // General ambient conversation (no required zone or furniture)
+          const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
+          const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
+          const maxDist = pair.maxDistance || (group.length > 2 ? 4.5 : 3.8);
+          const allNear = group.every(c => Math.hypot(c.x - centerX, c.y - centerY) <= maxDist);
+          if (allNear) {
+            return this.startNpcDialogue(pair, langKey);
           }
         }
-
-        // Cafe Seat Occupancy Action for Cafe Events (e.g. ChatGPT sitting at Ludwigia's Cafe)
-        if (pair.occupyCafeSeat && this.furnitureSpots) {
-          const cafeSpot = this.furnitureSpots.find(f => f.id === 'cafe_chair');
-          const chatgptChar = group.find(c => c.id === 'chatgpt') || group[0];
-          if (cafeSpot && chatgptChar && chatgptChar.furniture !== cafeSpot && !this.isSpotOccupied(cafeSpot, chatgptChar)) {
-            this.useFurniture(chatgptChar, cafeSpot);
-          }
-        }
-
-        // If characters share zone but are spread apart, guide them to approach conversation center
-        if (!allNear) {
-          if (this.world && this.world.nav) {
-            for (const c of group) {
-              const d = Math.hypot(c.x - centerX, c.y - centerY);
-              if (d > maxDist && d <= 7.0) {
-                if (!c.path || c.path.length === 0) {
-                  const path = this.world.nav.findPath({ x: c.x, y: c.y }, { x: centerX, y: centerY });
-                  if (path && path.length > 0) {
-                    c.path = path;
-                    c.isWalking = true;
-                  }
-                }
-              }
-            }
-          }
-          continue;
-        }
-
-        // Within conversational proximity: pause wandering, face toward group center, and converse!
-        const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
-        if (!lines || lines.length === 0) continue;
-
-        const getEffectiveDelay = (item) => {
-          if (item.delay === 0) return 0;
-          const readTime = this.estimateReadTime(item.text);
-          return Math.max(item.delay || 3.2, readTime);
-        };
-
-        const totalDialogueTime = lines.reduce((sum, item) => sum + getEffectiveDelay(item), 0) + 4.5;
-        for (const c of group) {
-          c.path = []; c.isWalking = false;
-          c.facing = (centerX - c.x >= 0) ? 1 : -1;
-          c.timer = Math.max(8.0, totalDialogueTime);
-        }
-
-        // First character speaks
-        const first = lines[0];
-        const firstDelay = getEffectiveDelay(first);
-        const speaker1 = this.characters.find(c => c.id === first.speaker);
-        if (speaker1) {
-          const firstDuration = first.duration || Math.max(4.8, firstDelay + 1.6);
-          this.triggerSpeechBubble(speaker1, first.text, firstDuration);
-        }
-
-        // Queue remaining replies
-        this.dialogueQueue = [];
-        for (let i = 1; i < lines.length; i++) {
-          const item = lines[i];
-          const effDelay = getEffectiveDelay(item);
-          const itemDuration = item.duration || Math.max(4.8, effDelay + 1.6);
-          this.dialogueQueue.push({
-            speakerId: item.speaker,
-            text: item.text,
-            duration: itemDuration,
-            nextDelay: effDelay
-          });
-        }
-        this.queueTimer = firstDelay;
-        return true;
       }
       return false;
     }

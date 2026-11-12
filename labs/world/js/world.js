@@ -783,9 +783,10 @@
       if (x >= 17.5 && x <= 27.5 && y >= 16.5 && y <= 26.5) return 'library';
       if (x <= 9.8 && y >= 32.5 && y <= 42.8) return 'sanmin_school';
       if (x >= 17.5 && x <= 27.5 && y >= 32.5 && y <= 42.8) return 'douyin_office';
-      if (x >= 38.5 && x <= 50.5 && y >= 16.5 && y <= 26.5) return 'basketball_court';
+      if (x >= 37.5 && x <= 49.5 && y >= 33.5 && y <= 43.5) return 'basketball_court';
       if (x >= 29.5 && x <= 37.5 && y >= 32.5 && y <= 44.5) return 'night_market';
-      if (x >= 32.5 && x <= 39.5 && y >= 2.0 && y <= 7.5) return 'cafe';
+      if (x >= 37.5 && x <= 45.5 && y >= 2.0 && y <= 8.5) return 'cafe';
+      if (x >= 37.5 && x <= 48.5 && y >= 14.5 && y <= 24.5) return 'how_are_you';
       if (x >= 8.5 && x <= 19.5 && y >= 48.5 && y <= 57.2) return 'cyber_cafe';
       if (x >= 10.5 && x <= 17.5 && y >= 57.2 && y <= 93.2) return 'howling_abyss';
       if (x >= 6.5 && x <= 21.5 && y >= 93.2 && y <= 111.5) return 'minecraft_sanctuary';
@@ -1253,24 +1254,34 @@
             if (c.path.length === 0) {
               c.isWalking = false;
               c.walkTimer = 0;
-              // Check if arrived near an unoccupied bench/chair in home or visited zones
-              const nearSeat = this.charManager.furnitureSpots.find(s =>
-                s.type === 'seat' &&
-                (!s.zone || s.zone === 'plaza' || s.zone === c.zone || (Array.isArray(c.visitedZones) && c.visitedZones.includes(s.zone))) &&
-                Math.hypot(s.x - c.x, s.y - c.y) < 1.25 &&
-                !this.charManager.isSpotOccupied(s, c)
-              );
-              if (nearSeat && (c.wantsCafeSeat || Math.random() < 0.65)) {
-                const isCafeVisit = !!c.wantsCafeSeat;
-                c.wantsCafeSeat = false;
-                this.charManager.useFurniture(c, nearSeat);
-                // Rest on bench/chair enjoying coffee or scenery
-                c.timer = isCafeVisit ? (16.0 + Math.random() * 10.0) : (8.0 + Math.random() * 10.0);
+              // 1. Check if arrived near designated target furniture (gathering or directed action)
+              if (c.targetFurniture) {
+                const tf = c.targetFurniture;
+                const dtf = Math.hypot(tf.x - c.x, tf.y - c.y);
+                if (dtf <= 1.8 && !this.charManager.isSpotOccupied(tf, c)) {
+                  this.charManager.useFurniture(c, tf, true);
+                }
+                c.targetFurniture = null;
               } else {
-                c.wantsCafeSeat = false;
-                c.state = 'idle';
-                // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
-                c.timer = 2.5 + Math.random() * 3.5;
+                // 2. Check if arrived near an unoccupied bench/chair in home or visited zones
+                const nearSeat = this.charManager.furnitureSpots.find(s =>
+                  s.type === 'seat' &&
+                  (!s.zone || s.zone === 'plaza' || s.zone === c.zone || (Array.isArray(c.visitedZones) && c.visitedZones.includes(s.zone))) &&
+                  Math.hypot(s.x - c.x, s.y - c.y) < 1.25 &&
+                  !this.charManager.isSpotOccupied(s, c)
+                );
+                if (nearSeat && (c.wantsCafeSeat || Math.random() < 0.65)) {
+                  const isCafeVisit = !!c.wantsCafeSeat;
+                  c.wantsCafeSeat = false;
+                  this.charManager.useFurniture(c, nearSeat);
+                  // Rest on bench/chair enjoying coffee or scenery
+                  c.timer = isCafeVisit ? (16.0 + Math.random() * 10.0) : (8.0 + Math.random() * 10.0);
+                } else {
+                  c.wantsCafeSeat = false;
+                  c.state = 'idle';
+                  // Natural rest while observing/enjoying spot (2.5 to 6.0 seconds)
+                  c.timer = 2.5 + Math.random() * 3.5;
+                }
               }
             }
           } else {
@@ -1288,7 +1299,15 @@
 
         if (c.timer <= 0) {
           if (c.furniture) {
-            this.charManager.leaveFurniture(c);
+            const isGathering = this.charManager.activeGathering &&
+              this.charManager.activeGathering.pair.participants.includes(c.id);
+            const isSpeaking = !!c.speechBubble || this.charManager.dialogueQueue.some(d => d.speakerId === c.id);
+            if (isGathering || isSpeaking) {
+              c.timer = 5.0;
+            } else {
+              this.charManager.leaveFurniture(c);
+              c.timer = 1.5 + Math.random() * 2.5;
+            }
           }
           c.timer = 1.5 + Math.random() * 2.5;
           if (c.isCat) {
