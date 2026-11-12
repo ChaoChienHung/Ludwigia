@@ -46,23 +46,23 @@
   const DOUYIN_MIN_Y = 33;
   const DOUYIN_MAX_Y = 42;
 
-  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 33..39, y: 2..7 — compact cozy indoor shop)
-  const CAFE_MIN_X = 33;
-  const CAFE_MAX_X = 39;
+  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 35..42, y: 2..8 — Entrance at x: 35)
+  const CAFE_MIN_X = 35;
+  const CAFE_MAX_X = 42;
   const CAFE_MIN_Y = 2;
-  const CAFE_MAX_Y = 7;
+  const CAFE_MAX_Y = 8;
 
-  // Zone 8: Campus Basketball Court (East Dedicated Athletic Ground: x: 39..50, y: 17..26 — separated athletic plot)
-  const COURT_MIN_X = 39;
-  const COURT_MAX_X = 50;
-  const COURT_MIN_Y = 17;
-  const COURT_MAX_Y = 26;
+  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 35..43, y: 10..17 — Entrance at x: 35)
+  const HOW_ARE_YOU_MIN_X = 35;
+  const HOW_ARE_YOU_MAX_X = 43;
+  const HOW_ARE_YOU_MIN_Y = 10;
+  const HOW_ARE_YOU_MAX_Y = 17;
 
-  // Zone 9: "How Are You Doing Today" Sanctuary (NE3: x: 42..50, y: 2..10 — 心靈小屋「你今天過得好嗎」)
-  const HOW_ARE_YOU_MIN_X = 42;
-  const HOW_ARE_YOU_MAX_X = 50;
-  const HOW_ARE_YOU_MIN_Y = 2;
-  const HOW_ARE_YOU_MAX_Y = 10;
+  // Zone 9: Campus Basketball Court (East Athletic Ground: x: 35..46, y: 20..29 — Entrance at x: 35)
+  const COURT_MIN_X = 35;
+  const COURT_MAX_X = 46;
+  const COURT_MIN_Y = 20;
+  const COURT_MAX_Y = 29;
 
   // --- Axonometric Coordinate Projections ---
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {

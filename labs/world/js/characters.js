@@ -42,13 +42,13 @@
         { id: 'market_stool', type: 'seat', zone: 'night_market', x: 35.0, y: 41.85, z: 0.35, facing: 1, exitOffset: { dx: -0.6, dy: 0 }, name: '傻師傅內用紅圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
 
         // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.38, exact armchair seat cushion center)
-        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 34.68, y: 4.85, z: 0.38, facing: 1, exitOffset: { dx: -0.55, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
+        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 37.68, y: 5.25, z: 0.38, facing: 1, exitOffset: { dx: -0.55, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // "How Are You Doing Today" Healing Lounge Sofa (z = 0.42, exact seat cushion center)
-        { id: 'how_are_you_sofa', type: 'seat', zone: 'how_are_you', x: 44.3, y: 4.5, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '心靈傾聽沙發', labelZh: '坐下傾聽心事', labelEn: 'Sit & Unwind' },
+        { id: 'how_are_you_sofa', type: 'seat', zone: 'how_are_you', x: 36.8, y: 11.5, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '心靈傾聽沙發', labelZh: '坐下傾聽心事', labelEn: 'Sit & Unwind' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
-        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 42.8, y: 17.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
+        { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 38.8, y: 20.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
 
         // Garden Terrace Chinese Chess Bench beside Xiangqi Table (z = 0.42, exact seat center)
         { id: 'xiangqi_bench', type: 'seat', zone: 'garden_terrace', x: 2.6, y: 11.95, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.15 }, name: '花園象棋長凳', labelZh: '坐下觀棋', labelEn: 'Watch Xiangqi' },
