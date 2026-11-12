@@ -807,9 +807,9 @@ When random variables are **mutually independent**, deviations from the mean dec
 3. By mutual independence of $X_1, \dots, X_n$:
    $$\mathbb{E}[e^{tX}] = \mathbb{E}\left[ \prod_{i=1}^n e^{t X_i} \right] = \prod_{i=1}^n \mathbb{E}[e^{t X_i}]$$
 4. Using the convexity inequality $e^{tx} \le 1 - x + x e^t$ for $x \in [0, 1]$:
-   $$\mathbb{E}[e^{t X_i}] \le 1 - \mathbb{E}[X_i] + \mathbb{E}[X_i] e^t = 1 + \mathbb{E}[X_i](e^t - 1) \le \exp(\mathbb{E}[X_i](e^t - 1))$$
+   $$\mathbb{E}[e^{t X_i}] \le 1 - \mathbb{E}[X_i] + \mathbb{E}[X_i] e^t = 1 + \mathbb{E}[X_i] \cdot (e^t - 1) \le \exp(\mathbb{E}[X_i] \cdot (e^t - 1))$$
 5. Multiplying across all $i$:
-   $$\mathbb{E}[e^{tX}] \le \prod_{i=1}^n \exp(\mathbb{E}[X_i](e^t - 1)) = \exp\left( (e^t - 1) \sum_{i=1}^n \mathbb{E}[X_i] \right) = e^{(e^t - 1)\mu}$$
+   $$\mathbb{E}[e^{tX}] \le \prod_{i=1}^n \exp(\mathbb{E}[X_i] \cdot (e^t - 1)) = \exp\left( (e^t - 1) \sum_{i=1}^n \mathbb{E}[X_i] \right) = e^{(e^t - 1)\mu}$$
 6. Substituting back into the Markov bound:
    $$\Pr(X \ge (1 + \delta)\mu) \le \frac{e^{(e^t - 1)\mu}}{e^{t(1 + \delta)\mu}} = \exp\left( \mu \left( e^t - 1 - t(1 + \delta) \right) \right)$$
 7. Minimizing the exponent with respect to $t$ yields $t = \ln(1 + \delta) > 0$. Substituting optimal $t$:

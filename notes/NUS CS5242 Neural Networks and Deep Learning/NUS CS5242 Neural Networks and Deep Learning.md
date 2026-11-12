@@ -540,4 +540,11 @@ torch.cuda.set_device(self.encoder.first_device)
 - Important when working with multiple GPUs.
 
 ---
-
+<reviewkit>
+<takeaways>
+- 深度學習架構：CNN 卷積特徵提取、RNN/LSTM 序列依賴與 Transformer 自注意力機制。
+- 訓練與優化：反向傳播梯度流、學習率調度、正則化與梯度裁剪技巧。
+- 系統工程與分散式：PyTorch 跨裝置部署、CUDA 裝置管理與記憶體優化。
+</takeaways>
+<qprompt/>
+</reviewkit>

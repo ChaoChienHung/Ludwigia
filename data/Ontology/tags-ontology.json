@@ -2932,6 +2932,637 @@
         "core-set",
         "核心集"
       ]
+    },
+    {
+      "concept_id": "concept.multi_token_prediction",
+      "labels": {
+        "en": "Multi-Token Prediction",
+        "zh-Hant": "多 Token 預測",
+        "zh-Hans": "多 Token 预测"
+      },
+      "aliases": [
+        "multi-token prediction",
+        "Multi-token prediction",
+        "Multi-Token Prediction",
+        "MTP",
+        "多token預測",
+        "多Token預測",
+        "多token预测"
+      ]
+    },
+    {
+      "concept_id": "concept.large_language_models",
+      "labels": {
+        "en": "Large Language Models",
+        "zh-Hant": "大型語言模型",
+        "zh-Hans": "大型语言模型"
+      },
+      "aliases": [
+        "large language models",
+        "Large Language Models",
+        "LLM",
+        "LLMs",
+        "大型語言模型",
+        "大語言模型",
+        "大模型",
+        "大型语言模型",
+        "大语言模型"
+      ]
+    },
+    {
+      "concept_id": "concept.speculative_decoding",
+      "labels": {
+        "en": "Speculative Decoding",
+        "zh-Hant": "推測解碼",
+        "zh-Hans": "推测解码"
+      },
+      "aliases": [
+        "speculative decoding",
+        "Speculative Decoding",
+        "推測解碼",
+        "投機解碼",
+        "推测解码"
+      ]
+    },
+    {
+      "concept_id": "concept.generative_recommendation",
+      "labels": {
+        "en": "Generative Recommendation",
+        "zh-Hant": "生成式推薦",
+        "zh-Hans": "生成式推荐"
+      },
+      "aliases": [
+        "generative recommendation",
+        "Generative Recommendation",
+        "生成式推薦",
+        "生成式推荐"
+      ]
+    },
+    {
+      "concept_id": "concept.decision_transformer",
+      "labels": {
+        "en": "Decision Transformer",
+        "zh-Hant": "決策 Transformer",
+        "zh-Hans": "决策 Transformer"
+      },
+      "aliases": [
+        "Decision Transformer",
+        "decision transformer",
+        "決策 Transformer",
+        "决策 Transformer"
+      ]
+    },
+    {
+      "concept_id": "concept.offline_reinforcement_learning",
+      "labels": {
+        "en": "Offline Reinforcement Learning",
+        "zh-Hant": "離線強化學習",
+        "zh-Hans": "离线强化学习"
+      },
+      "aliases": [
+        "offline reinforcement learning",
+        "Offline RL",
+        "離線強化學習",
+        "离线强化学习"
+      ]
+    },
+    {
+      "concept_id": "concept.upside_down_rl",
+      "labels": {
+        "en": "Upside-Down Reinforcement Learning",
+        "zh-Hant": "顛倒強化學習",
+        "zh-Hans": "颠倒强化学习"
+      },
+      "aliases": [
+        "Upside-Down RL",
+        "upside-down rl",
+        "Upside Down RL",
+        "顛倒強化學習",
+        "颠倒强化学习"
+      ]
+    },
+    {
+      "concept_id": "concept.return_conditioning",
+      "labels": {
+        "en": "Return Conditioning",
+        "zh-Hant": "回報條件化",
+        "zh-Hans": "回报条件化"
+      },
+      "aliases": [
+        "return conditioning",
+        "Return Conditioning",
+        "回報條件化",
+        "回报条件化"
+      ]
+    },
+    {
+      "concept_id": "concept.dlrm",
+      "labels": {
+        "en": "DLRM",
+        "zh-Hant": "深度學習推薦模型",
+        "zh-Hans": "深度学习推荐模型"
+      },
+      "aliases": [
+        "DLRM",
+        "dlrm",
+        "Deep Learning Recommendation Model",
+        "深度學習推薦模型",
+        "深度学习推荐模型"
+      ]
+    },
+    {
+      "concept_id": "concept.hstu",
+      "labels": {
+        "en": "HSTU",
+        "zh-Hant": "階層式循序轉換器單元",
+        "zh-Hans": "分层顺序转换器单元"
+      },
+      "aliases": [
+        "HSTU",
+        "hstu",
+        "Hierarchical Sequential Transduction Unit"
+      ]
+    },
+    {
+      "concept_id": "concept.ultra_hstu",
+      "labels": {
+        "en": "ULTRA-HSTU",
+        "zh-Hant": "超長序列階層式轉換器",
+        "zh-Hans": "超长序列分层转换器"
+      },
+      "aliases": [
+        "ULTRA-HSTU",
+        "ultra-hstu",
+        "Ultra-HSTU"
+      ]
+    },
+    {
+      "concept_id": "concept.onetrans",
+      "labels": {
+        "en": "OneTrans",
+        "zh-Hant": "OneTrans",
+        "zh-Hans": "OneTrans"
+      },
+      "aliases": [
+        "OneTrans",
+        "onetrans"
+      ]
+    },
+    {
+      "concept_id": "concept.onetrans_v2",
+      "labels": {
+        "en": "OneTrans-V2",
+        "zh-Hant": "OneTrans-V2",
+        "zh-Hans": "OneTrans-V2"
+      },
+      "aliases": [
+        "OneTrans-V2",
+        "onetrans-v2"
+      ]
+    },
+    {
+      "concept_id": "concept.mtfm",
+      "labels": {
+        "en": "MTFM",
+        "zh-Hant": "多場景多任務特徵交互模型",
+        "zh-Hans": "多场景多任务特征交互模型"
+      },
+      "aliases": [
+        "MTFM",
+        "mtfm"
+      ]
+    },
+    {
+      "concept_id": "concept.mtgr",
+      "labels": {
+        "en": "MTGR",
+        "zh-Hant": "多任務生成式推薦模型",
+        "zh-Hans": "多任务生成式推荐模型"
+      },
+      "aliases": [
+        "MTGR",
+        "mtgr"
+      ]
+    },
+    {
+      "concept_id": "concept.meituan",
+      "labels": {
+        "en": "Meituan",
+        "zh-Hant": "美團",
+        "zh-Hans": "美团"
+      },
+      "aliases": [
+        "Meituan",
+        "meituan",
+        "美團",
+        "美团"
+      ]
+    },
+    {
+      "concept_id": "concept.gpu",
+      "labels": {
+        "en": "GPU",
+        "zh-Hant": "圖形處理器",
+        "zh-Hans": "图形处理器"
+      },
+      "aliases": [
+        "GPU",
+        "gpu",
+        "圖形處理器",
+        "图形处理器",
+        "顯示卡",
+        "显卡"
+      ]
+    },
+    {
+      "concept_id": "concept.pytorch",
+      "labels": {
+        "en": "PyTorch",
+        "zh-Hant": "PyTorch",
+        "zh-Hans": "PyTorch"
+      },
+      "aliases": [
+        "pytorch",
+        "PyTorch"
+      ]
+    },
+    {
+      "concept_id": "concept.cudnn",
+      "labels": {
+        "en": "cuDNN",
+        "zh-Hant": "cuDNN",
+        "zh-Hans": "cuDNN"
+      },
+      "aliases": [
+        "cudnn",
+        "cuDNN"
+      ]
+    },
+    {
+      "concept_id": "concept.triton",
+      "labels": {
+        "en": "Triton",
+        "zh-Hant": "Triton",
+        "zh-Hans": "Triton"
+      },
+      "aliases": [
+        "triton",
+        "Triton"
+      ]
+    },
+    {
+      "concept_id": "concept.kernel_fusion",
+      "labels": {
+        "en": "Kernel Fusion",
+        "zh-Hant": "算子融合",
+        "zh-Hans": "算子融合"
+      },
+      "aliases": [
+        "kernel fusion",
+        "Kernel Fusion",
+        "算子融合",
+        "核心融合"
+      ]
+    },
+    {
+      "concept_id": "concept.actor_critic",
+      "labels": {
+        "en": "Actor-Critic",
+        "zh-Hant": "行動者-評論家架構",
+        "zh-Hans": "行动者-评论家架构"
+      },
+      "aliases": [
+        "actor-critic",
+        "Actor-Critic",
+        "行動者-評論家",
+        "行动者-评论家"
+      ]
+    },
+    {
+      "concept_id": "concept.dpg",
+      "labels": {
+        "en": "Deterministic Policy Gradient",
+        "zh-Hant": "確定性策略梯度",
+        "zh-Hans": "确定性策略梯度"
+      },
+      "aliases": [
+        "dpg",
+        "DPG",
+        "Deterministic Policy Gradient",
+        "確定性策略梯度",
+        "确定性策略梯度"
+      ]
+    },
+    {
+      "concept_id": "concept.ddpg",
+      "labels": {
+        "en": "Deep Deterministic Policy Gradient",
+        "zh-Hant": "深度確定性策略梯度",
+        "zh-Hans": "深度确定性策略梯度"
+      },
+      "aliases": [
+        "ddpg",
+        "DDPG",
+        "Deep Deterministic Policy Gradient",
+        "深度確定性策略梯度",
+        "深度确定性策略梯度"
+      ]
+    },
+    {
+      "concept_id": "concept.continuous_control",
+      "labels": {
+        "en": "Continuous Control",
+        "zh-Hant": "連續動作控制",
+        "zh-Hans": "连续动作控制"
+      },
+      "aliases": [
+        "continuous control",
+        "Continuous Control",
+        "連續控制",
+        "连续控制"
+      ]
+    },
+    {
+      "concept_id": "concept.dr_grpo",
+      "labels": {
+        "en": "DR-GRPO",
+        "zh-Hant": "分佈式強健群組相對策略優化",
+        "zh-Hans": "分布式鲁棒群组相对策略优化"
+      },
+      "aliases": [
+        "dr-grpo",
+        "DR-GRPO"
+      ]
+    },
+    {
+      "concept_id": "concept.gspo",
+      "labels": {
+        "en": "GSPO",
+        "zh-Hant": "群組排序策略優化",
+        "zh-Hans": "群组排序策略优化"
+      },
+      "aliases": [
+        "gspo",
+        "GSPO"
+      ]
+    },
+    {
+      "concept_id": "concept.arpo",
+      "labels": {
+        "en": "ARPO",
+        "zh-Hant": "主動排序策略優化",
+        "zh-Hans": "主动排序策略优化"
+      },
+      "aliases": [
+        "arpo",
+        "ARPO"
+      ]
+    },
+    {
+      "concept_id": "concept.sglang",
+      "labels": {
+        "en": "SGLang",
+        "zh-Hant": "SGLang",
+        "zh-Hans": "SGLang"
+      },
+      "aliases": [
+        "sglang",
+        "SGLang"
+      ]
+    },
+    {
+      "concept_id": "concept.verl",
+      "labels": {
+        "en": "veRL",
+        "zh-Hant": "veRL",
+        "zh-Hans": "veRL"
+      },
+      "aliases": [
+        "verl",
+        "veRL"
+      ]
+    },
+    {
+      "concept_id": "concept.ray",
+      "labels": {
+        "en": "Ray",
+        "zh-Hant": "Ray 分佈式框架",
+        "zh-Hans": "Ray 分布式框架"
+      },
+      "aliases": [
+        "ray",
+        "Ray"
+      ]
+    },
+    {
+      "concept_id": "concept.radixattention",
+      "labels": {
+        "en": "RadixAttention",
+        "zh-Hant": "前綴基數樹注意力",
+        "zh-Hans": "前缀基数树注意力"
+      },
+      "aliases": [
+        "radixattention",
+        "RadixAttention"
+      ]
+    },
+    {
+      "concept_id": "concept.kv_cache",
+      "labels": {
+        "en": "KV Cache",
+        "zh-Hant": "鍵值快取",
+        "zh-Hans": "键值缓存"
+      },
+      "aliases": [
+        "kv cache",
+        "KV Cache",
+        "鍵值快取",
+        "键值缓存"
+      ]
+    },
+    {
+      "concept_id": "concept.llm_systems",
+      "labels": {
+        "en": "LLM Systems",
+        "zh-Hant": "大型語言模型系統工程",
+        "zh-Hans": "大型语言模型系统工程"
+      },
+      "aliases": [
+        "llm systems",
+        "LLM Systems",
+        "大模型系統",
+        "大模型系统"
+      ]
+    },
+    {
+      "concept_id": "concept.long_sequence",
+      "labels": {
+        "en": "Long Sequence Modeling",
+        "zh-Hant": "長序列建模",
+        "zh-Hans": "长序列建模"
+      },
+      "aliases": [
+        "long sequence",
+        "Long Sequence",
+        "長序列",
+        "长序列"
+      ]
+    },
+    {
+      "concept_id": "concept.multi_scenario",
+      "labels": {
+        "en": "Multi-Scenario Modeling",
+        "zh-Hant": "多場景建模",
+        "zh-Hans": "多场景建模"
+      },
+      "aliases": [
+        "multi-scenario",
+        "Multi-Scenario",
+        "多場景",
+        "多场景"
+      ]
+    },
+    {
+      "concept_id": "concept.target_attention",
+      "labels": {
+        "en": "Target Attention",
+        "zh-Hant": "目標注意力機制",
+        "zh-Hans": "目标注意力机制"
+      },
+      "aliases": [
+        "target attention",
+        "Target Attention",
+        "目標注意力",
+        "目标注意力"
+      ]
+    },
+    {
+      "concept_id": "concept.sequence_native_training",
+      "labels": {
+        "en": "Sequence-Native Training",
+        "zh-Hant": "全序列原生訓練",
+        "zh-Hans": "全序列原生训练"
+      },
+      "aliases": [
+        "sequence native training",
+        "Sequence Native Training",
+        "序列原生訓練",
+        "序列原生训练"
+      ]
+    },
+    {
+      "concept_id": "concept.feature_interaction",
+      "labels": {
+        "en": "Feature Interaction",
+        "zh-Hant": "特徵交互",
+        "zh-Hans": "特征交互"
+      },
+      "aliases": [
+        "feature interaction",
+        "Feature Interaction",
+        "特徵交互",
+        "特征交叉"
+      ]
+    },
+    {
+      "concept_id": "concept.mixture_of_experts",
+      "labels": {
+        "en": "Mixture of Experts",
+        "zh-Hant": "混合專家架構",
+        "zh-Hans": "混合专家架构"
+      },
+      "aliases": [
+        "mixture of experts",
+        "Mixture of Experts",
+        "MoE",
+        "混合專家",
+        "混合专家"
+      ]
+    },
+    {
+      "concept_id": "concept.model_scaling",
+      "labels": {
+        "en": "Model Scaling",
+        "zh-Hant": "模型擴展法則",
+        "zh-Hans": "模型扩展法则"
+      },
+      "aliases": [
+        "model scaling",
+        "Model Scaling",
+        "模型擴展",
+        "模型扩展",
+        "Scaling Law"
+      ]
+    },
+    {
+      "concept_id": "concept.sequence_modeling",
+      "labels": {
+        "en": "Sequence Modeling",
+        "zh-Hant": "序列建模",
+        "zh-Hans": "序列建模"
+      },
+      "aliases": [
+        "sequence modeling",
+        "Sequence Modeling",
+        "序列建模"
+      ]
+    },
+    {
+      "concept_id": "concept.computer_vision",
+      "labels": {
+        "en": "Computer Vision",
+        "zh-Hant": "電腦視覺",
+        "zh-Hans": "计算机视觉"
+      },
+      "aliases": [
+        "computer vision",
+        "Computer Vision",
+        "CV",
+        "電腦視覺",
+        "计算机视觉"
+      ]
+    },
+    {
+      "concept_id": "concept.neural_networks",
+      "labels": {
+        "en": "Neural Networks",
+        "zh-Hant": "神經網絡",
+        "zh-Hans": "神经网络"
+      },
+      "aliases": [
+        "neural networks",
+        "Neural Networks",
+        "神經網絡",
+        "神经网络"
+      ]
+    },
+    {
+      "concept_id": "concept.cross_entropy",
+      "labels": {
+        "en": "Cross Entropy",
+        "zh-Hant": "交叉熵",
+        "zh-Hans": "交叉熵"
+      },
+      "aliases": [
+        "cross entropy",
+        "Cross Entropy",
+        "交叉熵"
+      ]
+    },
+    {
+      "concept_id": "concept.information_theory",
+      "labels": {
+        "en": "Information Theory",
+        "zh-Hant": "資訊理論",
+        "zh-Hans": "信息论"
+      },
+      "aliases": [
+        "information theory",
+        "Information Theory",
+        "資訊理論",
+        "信息論",
+        "信息论"
+      ]
     }
   ]
 }

@@ -5336,6 +5336,400 @@
       // 4. Draw FRONT orbital blades (in front of the crystal in 3D orbit)
       blades.filter(b => !b.isBack).forEach(drawBlade);
     }
+
+    // =========================================================================
+    // "HOW ARE YOU DOING TODAY" SANCTUARY (心靈小屋「你今天過得好嗎」)
+    // =========================================================================
+
+    // --- 13. "How Are You Doing Today" Heart Planet Ground Decal Floor ---
+    // Faithfully renders the user's uploaded Heart Planet with Saturn Ring, cute face, crescent moon, sun and stars
+    drawHeartPlanetFloor(ctx, cx, cy, radiusTiles = 2.6, ox, oy) {
+      const center = isoToScreen(cx, cy, 0.005, ox, oy);
+      const R = radiusTiles * 32 * 1.414; // ~117px base radius
+
+      ctx.save();
+      ctx.translate(center.x, center.y);
+      ctx.scale(1, 0.5); // Project 2D upright coordinates into 2:1 isometric ground plane!
+
+      // 0. Soft Dreamy Cosmic Aura Backdrop (Pale lilac/blue cloud shape)
+      ctx.save();
+      ctx.fillStyle = 'rgba(238, 242, 255, 0.85)'; // Soft periwinkle cloud
+      ctx.beginPath();
+      const cloudBlobs = [
+        { x: -R * 0.45, y: -R * 0.35, r: R * 0.65 },
+        { x: R * 0.45, y: -R * 0.35, r: R * 0.65 },
+        { x: 0, y: -R * 0.60, r: R * 0.55 },
+        { x: -R * 0.65, y: R * 0.15, r: R * 0.50 },
+        { x: R * 0.65, y: R * 0.15, r: R * 0.50 },
+        { x: 0, y: R * 0.50, r: R * 0.55 }
+      ];
+      cloudBlobs.forEach(b => {
+        ctx.moveTo(b.x + b.r, b.y);
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      });
+      ctx.fill();
+      ctx.restore();
+
+      // Helper function to define the heart path (centered at ~ (0, -R*0.05))
+      const heartOffsetY = -R * 0.05;
+      const buildHeartPath = () => {
+        ctx.beginPath();
+        const topY = heartOffsetY - R * 0.38;
+        const botY = heartOffsetY + R * 0.88;
+        ctx.moveTo(0, topY);
+        // Left lobe
+        ctx.bezierCurveTo(-R * 0.50, topY - R * 0.55, -R * 1.05, topY + R * 0.15, -R * 0.78, topY + R * 0.65);
+        ctx.bezierCurveTo(-R * 0.55, topY + R * 0.95, -R * 0.22, topY + R * 1.15, 0, botY);
+        // Right lobe
+        ctx.bezierCurveTo(R * 0.22, topY + R * 1.15, R * 0.55, topY + R * 0.95, R * 0.78, topY + R * 0.65);
+        ctx.bezierCurveTo(R * 1.05, topY + R * 0.15, R * 0.50, topY - R * 0.55, 0, topY);
+        ctx.closePath();
+      };
+
+      // Ring Geometry Parameters
+      const ringTilt = -22 * Math.PI / 180; // Tilted ~ -22 degrees like the uploaded image
+      const ringY = heartOffsetY + R * 0.28;
+      const aOut = R * 1.48; // Outer major radius
+      const bOut = R * 0.40; // Outer minor radius
+      const aIn = R * 1.18;  // Inner major radius
+      const bIn = R * 0.22;  // Inner minor radius
+
+      // 1. REAR RING ARC (Passes BEHIND the heart — top half in tilted frame)
+      ctx.save();
+      ctx.translate(0, ringY);
+      ctx.rotate(ringTilt);
+
+      // Back half: angle from PI to 2*PI (top half)
+      ctx.beginPath();
+      ctx.ellipse(0, 0, aOut, bOut, 0, Math.PI, 2 * Math.PI, false);
+      ctx.ellipse(0, 0, aIn, bIn, 0, 2 * Math.PI, Math.PI, true);
+      ctx.closePath();
+      ctx.fillStyle = '#1e293b'; // Deep navy ring
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff'; // White inner & outer borders
+      ctx.lineWidth = 3.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. HEART PLANET BODY
+      ctx.save();
+      buildHeartPath();
+      const heartGrad = ctx.createLinearGradient(0, heartOffsetY - R * 0.9, 0, heartOffsetY + R * 0.9);
+      heartGrad.addColorStop(0, '#fce7f3'); // Pastel blush
+      heartGrad.addColorStop(0.45, '#fbcfe8'); // Soft pink
+      heartGrad.addColorStop(1, '#f472b6'); // Rose pink glow
+      ctx.fillStyle = heartGrad;
+      ctx.fill();
+
+      // Heart Outer Border
+      ctx.strokeStyle = '#be123c'; // Crisp berry rose border
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+
+      // 3. HEART HIGHLIGHTS (Top-left lobe gloss)
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.beginPath();
+      ctx.ellipse(-R * 0.42, heartOffsetY - R * 0.35, R * 0.18, R * 0.08, -35 * Math.PI / 180, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(-R * 0.60, heartOffsetY - R * 0.18, R * 0.045, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 4. CUTE KAWAII FACE
+      const faceY = heartOffsetY + R * 0.08;
+      // Eyes: Two shiny black rounded dots with white sparkle reflection
+      const eyeSpacing = R * 0.28;
+      const eyeR = R * 0.085;
+      [-eyeSpacing, eyeSpacing].forEach(ex => {
+        ctx.fillStyle = '#0f172a'; // Deep slate black
+        ctx.beginPath();
+        ctx.ellipse(ex, faceY - R * 0.05, eyeR * 0.85, eyeR, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eye reflection gleam
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(ex + eyeR * 0.25, faceY - R * 0.05 - eyeR * 0.30, eyeR * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Cheeks / Blush: Soft rosy orange blush circles
+      const blushSpacing = R * 0.46;
+      [-blushSpacing, blushSpacing].forEach(bx => {
+        ctx.fillStyle = 'rgba(251, 146, 60, 0.55)'; // Peach blush
+        ctx.beginPath();
+        ctx.ellipse(bx, faceY + R * 0.04, R * 0.10, R * 0.065, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Smile: Cute little happy curve
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 3.0;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(0, faceY + R * 0.02, R * 0.09, 0.15 * Math.PI, 0.85 * Math.PI, false);
+      ctx.stroke();
+
+      ctx.restore(); // end heart body context
+
+      // 5. FRONT RING ARC (Passes IN FRONT of the heart — bottom half in tilted frame)
+      ctx.save();
+      ctx.translate(0, ringY);
+      ctx.rotate(ringTilt);
+
+      // Front half: angle from 0 to PI (bottom half)
+      ctx.beginPath();
+      ctx.ellipse(0, 0, aOut, bOut, 0, 0, Math.PI, false);
+      ctx.ellipse(0, 0, aIn, bIn, 0, Math.PI, 0, true);
+      ctx.closePath();
+      ctx.fillStyle = '#1e293b'; // Deep navy ring
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff'; // White inner & outer borders
+      ctx.lineWidth = 3.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 6. CELESTIAL ELEMENTS (Surrounding the heart planet)
+      // (a) Top-Left: Crescent Moon (Pale blue / lavender crescent)
+      ctx.save();
+      const moonX = -R * 0.95;
+      const moonY = -R * 0.72;
+      const moonR = R * 0.22;
+      ctx.fillStyle = '#93c5fd'; // Soft moon blue
+      ctx.beginPath();
+      ctx.arc(moonX, moonY, moonR, 0, Math.PI * 2);
+      ctx.fill();
+      // Cutout inner circle to make crescent
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(moonX + moonR * 0.45, moonY - moonR * 0.20, moonR * 0.85, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // (b) Top-Right: Golden Mini Sun / Orb
+      ctx.save();
+      const sunX = R * 0.92;
+      const sunY = -R * 0.70;
+      const sunR = R * 0.16;
+      ctx.fillStyle = '#f59e0b'; // Warm amber sun
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.55)';
+      ctx.beginPath();
+      ctx.arc(sunX - sunR * 0.25, sunY - sunR * 0.25, sunR * 0.55, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // (c) Four-Pointed Sparkles (Stars)
+      const drawSparkle = (sx, sy, size, color) => {
+        ctx.save();
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy - size);
+        ctx.quadraticCurveTo(sx, sy, sx + size, sy);
+        ctx.quadraticCurveTo(sx, sy, sx, sy + size);
+        ctx.quadraticCurveTo(sx, sy, sx - size, sy);
+        ctx.quadraticCurveTo(sx, sy, sx, sy - size);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      };
+
+      drawSparkle(-R * 1.15, R * 0.12, R * 0.12, '#fb923c'); // Left sparkle
+      drawSparkle(R * 1.20, R * 0.15, R * 0.14, '#f43f5e');  // Right sparkle
+      drawSparkle(-R * 0.55, -R * 0.88, R * 0.08, '#1e293b'); // Upper tiny star
+      drawSparkle(R * 0.65, -R * 0.92, R * 0.07, '#1e293b');  // Upper right tiny star
+
+      // (d) Small Star Dot Accents
+      const dots = [
+        { x: -R * 1.10, y: -R * 0.30, r: 2.2, c: '#60a5fa' },
+        { x: R * 0.60, y: -R * 0.65, r: 2.5, c: '#e2e8f0' },
+        { x: R * 1.15, y: -R * 0.25, r: 2.2, c: '#cbd5e1' }
+      ];
+      dots.forEach(d => {
+        ctx.fillStyle = d.c;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 7. BOTTOM CALLIGRAPHY & HEART EMBLEM
+      // "你今天過得好嗎" (How are you doing today?)
+      ctx.save();
+      const textY = heartOffsetY + R * 1.18;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // English subtitle
+      ctx.fillStyle = '#64748b';
+      ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillText('How are you doing today?', 0, textY - 14);
+
+      // Chinese Title
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold 19px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif';
+      ctx.fillText('你今天過得好嗎', 0, textY + 4);
+
+      // Decorative Flourish Line with Heart
+      const lineY = textY + 20;
+      ctx.strokeStyle = '#f472b6';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(-R * 0.65, lineY);
+      ctx.lineTo(-R * 0.12, lineY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(R * 0.12, lineY);
+      ctx.lineTo(R * 0.65, lineY);
+      ctx.stroke();
+
+      // Tiny heart in center of line
+      ctx.fillStyle = '#e11d48';
+      ctx.beginPath();
+      ctx.moveTo(0, lineY - 2);
+      ctx.bezierCurveTo(-5, lineY - 7, -8, lineY, 0, lineY + 6);
+      ctx.bezierCurveTo(8, lineY, 5, lineY - 7, 0, lineY - 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.restore(); // end overall ground decal context
+    }
+
+    // --- 14. "How Are You Doing Today" Building Entrance Plaque (Sheared on Y-axis longitudinal wall) ---
+    drawHowAreYouSign(ctx, gx, gy, ox, oy) {
+      const plq = isoToScreen(gx, gy, 2.45, ox, oy);
+      ctx.save();
+      ctx.translate(plq.x, plq.y);
+      ctx.transform(1, -0.5, 0, 1, 0, 0); // Sheared onto Y-axis longitudinal wall!
+
+      const W = 110;
+      const H = 24;
+      // Ivory Cream Plaque with Rose Gold & Berry Border
+      ctx.fillStyle = '#fffdfa';
+      ctx.fillRect(-W / 2, -H / 2, W, H);
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2.0;
+      ctx.strokeRect(-W / 2, -H / 2, W, H);
+
+      // Gold inner pinstripe
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
+
+      // Title & Subtitle
+      ctx.fillStyle = '#be123c';
+      ctx.font = 'bold 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('💖 你今天過得好嗎', 0, -3.5);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '6.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillText('How are you doing today?', 0, 6.5);
+
+      ctx.restore();
+    }
+
+    // --- 15. "How Are You Doing Today" Healing Heart Lounge Sofa ---
+    drawHowAreYouSofa(ctx, gx, gy, ox, oy) {
+      // 1. Soft Oval Pastel Area Rug
+      const rCenter = isoToScreen(gx + 0.45, gy + 1.0, 0.01, ox, oy);
+      ctx.save();
+      ctx.translate(rCenter.x, rCenter.y);
+      ctx.scale(1, 0.5);
+      ctx.fillStyle = 'rgba(253, 242, 248, 0.85)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 52, 38, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fbcfe8';
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Cozy Two-Seater Sofa (Facing East towards center of room)
+      // Soft cream base with dusty rose cushions
+      this.drawBox(ctx, gx, gy, 0, 0.85, 2.0, 0.42, '#fdf2f8', '#fce7f3', '#fbcfe8', ox, oy);
+      // High Curved Backrest
+      this.drawBox(ctx, gx, gy, 0.42, 0.28, 2.0, 0.52, '#fbcfe8', '#f472b6', '#e11d48', ox, oy);
+      // North Armrest
+      this.drawBox(ctx, gx + 0.28, gy, 0.42, 0.57, 0.22, 0.28, '#fdf2f8', '#fce7f3', '#fbcfe8', ox, oy);
+      // Fluffy Heart & Gold Throw Pillows
+      this.drawBox(ctx, gx + 0.30, gy + 0.26, 0.42, 0.24, 0.32, 0.25, '#fb7185', '#f43f5e', '#be123c', ox, oy);
+      this.drawBox(ctx, gx + 0.30, gy + 1.42, 0.42, 0.24, 0.32, 0.25, '#fef08a', '#facc15', '#eab308', ox, oy);
+      // South Armrest
+      this.drawBox(ctx, gx + 0.28, gy + 1.78, 0.42, 0.57, 0.22, 0.28, '#fdf2f8', '#fce7f3', '#fbcfe8', ox, oy);
+
+      // Low Natural Oak Tea Table
+      this.drawBox(ctx, gx + 1.25, gy + 0.55, 0, 0.75, 0.95, 0.30, '#fde68a', '#fcd34d', '#f59e0b', ox, oy);
+      // Herbal Teapot & Steaming Mug
+      const teaP = isoToScreen(gx + 1.55, gy + 0.95, 0.32, ox, oy);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(teaP.x, teaP.y, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // --- 16. "How Are You Doing Today" Diary Notepad Desk & Heart Mailbox ---
+    drawHowAreYouDiaryTable(ctx, gx, gy, ox, oy) {
+      // Warm White & Light Oak Writing Desk
+      this.drawBox(ctx, gx, gy, 0, 1.80, 0.85, 0.85, '#fffbeb', '#fef3c7', '#fde68a', ox, oy);
+      // Desk Rim Overhang
+      this.drawBox(ctx, gx - 0.05, gy - 0.05, 0.85, 1.90, 0.95, 0.08, '#fdf2f8', '#fce7f3', '#fbcfe8', ox, oy);
+
+      // 1. Open Notepad / Diary on desk (呼應「記事本」)
+      const bookP = isoToScreen(gx + 0.65, gy + 0.40, 0.93, ox, oy);
+      ctx.save();
+      ctx.translate(bookP.x, bookP.y);
+      ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared to desk surface
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-12, -7, 24, 14);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-12, -7, 24, 14);
+      // Blue bookmark ribbon
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(0, -7, 1.5, 16);
+      ctx.restore();
+
+      // 2. Feather Quill & Inkpot
+      const inkP = isoToScreen(gx + 1.15, gy + 0.40, 0.93, ox, oy);
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.arc(inkP.x, inkP.y, 2.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 3. Heart Mailbox / Card Box (心事卡片箱)
+      this.drawBox(ctx, gx + 1.35, gy + 0.20, 0.93, 0.35, 0.45, 0.40, '#f43f5e', '#e11d48', '#be123c', ox, oy);
+    }
+
+    // --- 17. "How Are You Doing Today" Warm Star Floor Lamp ---
+    drawHowAreYouFloorLamp(ctx, gx, gy, ox, oy) {
+      const baseP = isoToScreen(gx, gy, 0, ox, oy);
+      // Warm Radial Floor Glow
+      const glowGrad = ctx.createRadialGradient(baseP.x, baseP.y, 2, baseP.x, baseP.y, 40);
+      glowGrad.addColorStop(0, 'rgba(254, 240, 138, 0.55)');
+      glowGrad.addColorStop(0.5, 'rgba(251, 146, 60, 0.20)');
+      glowGrad.addColorStop(1, 'rgba(251, 146, 60, 0)');
+      ctx.save();
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.ellipse(baseP.x, baseP.y, 40, 20, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Brass Base Disc
+      this.drawBox(ctx, gx - 0.2, gy - 0.2, 0, 0.4, 0.4, 0.08, '#f59e0b', '#d97706', '#b45309', ox, oy);
+      // Slender Vertical Rod
+      this.drawBox(ctx, gx - 0.03, gy - 0.03, 0.08, 0.06, 0.06, 1.85, '#d97706', '#b45309', '#92400e', ox, oy);
+      // Luminous Cream Lampshade with Golden Star Top
+      this.drawBox(ctx, gx - 0.25, gy - 0.25, 1.85, 0.50, 0.50, 0.45, '#fffbeb', '#fef3c7', '#fde68a', ox, oy);
+    }
   }
 
   // Export to Global Scope

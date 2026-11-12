@@ -156,15 +156,7 @@ $$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
 
 在演算法分析與系統設計的初期，這往往是我們建立信心水準的第一道防線。然而，正如我們所探討的，僅依賴期望值的代價就是界限相對鬆散。當我們對系統有更深入的掌握，例如取得了變異數等高階統計特徵時，我們自然會渴望獲得更緊緻的界限。這份對精確度的追求，將引領我們邁向集中不等式工具箱的下一階梯，探索更為強大的放縮工具。
 
-<reviewkit>
-  <takeaways>
-    - **核心前提**：Markov 不等式是要求最低的集中不等式，只需要「幾乎必然非負變數」與「一階動差（期望值）」。
-    - **直觀倍數形式**：$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le 1/\alpha$。數值超過平均值 $\alpha$ 倍的機率，必不大於 $1/\alpha$。
-    - **反證直覺**：如果極端大值的機率過高，其貢獻的權重就會打破現有期望值的平衡。
-    - **演算法應用**：在未知具體機率分佈的情況下，它是評估隨機演算法「最壞時間上限（Worst-case Tail Bound）」的終極保底工具。
-    - **承先啟後**：由於其衰減速率僅為 $\mathcal{O}(1/a)$，當我們需要更緊緻的界限時，必須將其結合函數變換（如平方、指數）來引入更高階的動差資訊，這也是後續 Chebyshev 與 Chernoff 不等式的發展脈絡。
-  </takeaways>
-</reviewkit>
+
 
 ## 參考資料（References）
 
@@ -176,3 +168,14 @@ $$\operatorname{Pr}[\text{運行時間} < 10T] \ge 1 - 0.1 = 90\%$$
 ### 學術論文與專著（Academic Literature & Textbooks）
 
 1. Taboga, Marco (2021). "Markov's inequality", *Lectures on probability theory and mathematical statistics*. Kindle Direct Publishing. Online appendix. https://www.statlect.com/fundamentals-of-probability/Markov-inequality
+
+<reviewkit>
+  <takeaways>
+    - **核心前提**：Markov 不等式是要求最低的集中不等式，只需要「幾乎必然非負變數」與「一階動差（期望值）」。
+    - **直觀倍數形式**：$\operatorname{Pr}[X \ge \alpha \mathbb{E}[X]] \le 1/\alpha$。數值超過平均值 $\alpha$ 倍的機率，必不大於 $1/\alpha$。
+    - **反證直覺**：如果極端大值的機率過高，其貢獻的權重就會打破現有期望值的平衡。
+    - **演算法應用**：在未知具體機率分佈的情況下，它是評估隨機演算法「最壞時間上限（Worst-case Tail Bound）」的終極保底工具。
+    - **承先啟後**：由於其衰減速率僅為 $\mathcal{O}(1/a)$，當我們需要更緊緻的界限時，必須將其結合函數變換（如平方、指數）來引入更高階的動差資訊，這也是後續 Chebyshev 與 Chernoff 不等式的發展脈絡。
+  </takeaways>
+<qprompt/>
+</reviewkit>

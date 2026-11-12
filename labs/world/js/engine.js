@@ -58,6 +58,12 @@
   const COURT_MIN_Y = 17;
   const COURT_MAX_Y = 26;
 
+  // Zone 9: "How Are You Doing Today" Sanctuary (NE3: x: 42..50, y: 2..10 — 心靈小屋「你今天過得好嗎」)
+  const HOW_ARE_YOU_MIN_X = 42;
+  const HOW_ARE_YOU_MAX_X = 50;
+  const HOW_ARE_YOU_MIN_Y = 2;
+  const HOW_ARE_YOU_MAX_Y = 10;
+
   // --- Axonometric Coordinate Projections ---
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {
     return {
@@ -461,6 +467,7 @@
     DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y,
     CAFE_MIN_X, CAFE_MAX_X, CAFE_MIN_Y, CAFE_MAX_Y,
     COURT_MIN_X, COURT_MAX_X, COURT_MIN_Y, COURT_MAX_Y,
+    HOW_ARE_YOU_MIN_X, HOW_ARE_YOU_MAX_X, HOW_ARE_YOU_MIN_Y, HOW_ARE_YOU_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,

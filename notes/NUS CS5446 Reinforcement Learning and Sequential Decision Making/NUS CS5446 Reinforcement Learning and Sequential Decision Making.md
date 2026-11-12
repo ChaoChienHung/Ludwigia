@@ -2717,7 +2717,7 @@ This brings us directly to **Week 3: Rational Decision Making — Decision Theor
     - AI Applications: MEU in planning, learning, and inference; human-AI collaboration.
     - Open Challenges: Eliciting preferences in dynamic contexts, integrating expert judgment with data, responsible AI governance.
     - Bridge to Reinforcement Learning: Transition from single-stage MEU to sequential decision making, Markov Decision Processes (MDPs), and RL.
-    - Reviewkit (<takeaways>, <qquiz/>, <qprompt/>) & Formal Academic References.
+    - Reviewkit (Takeaways, Quiz, Prompt) & Formal Academic References.
 </draft>
 
 In the physical world, autonomous agents rarely operate in the idealized, deterministic, static environments of classical planning. Physical robotic sensors deliver noisy, incomplete observations; mechanical actuators suffer from slippage and wear; external environments evolve dynamically; and other autonomous entities simultaneously optimize their own self-interested objectives.
@@ -3828,7 +3828,7 @@ This marks the transition into the next core phase of CS5446: **Markov Decision 
 - 12. Summary of Tabular Reinforcement Learning & The Bridge to Deep RL
     - Comprehensive 2x2 Matrix: Passive vs. Active x Model-Based vs. Model-Free.
     - The Curse of Dimensionality in Tabular Methods: Why tables fail in high dimensions, setting the stage for Week 5's Function Approximation, Deep Q-Networks, and Policy Gradients.
-- 13. Reviewkit (<takeaways>, <qquiz/>, <qprompt/>) & Academic References
+- 13. Reviewkit (Takeaways, Quiz, Prompt) & Academic References
 </draft>
 
 

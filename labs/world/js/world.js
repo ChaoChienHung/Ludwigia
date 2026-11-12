@@ -15,6 +15,7 @@
     DOUYIN_MIN_X, DOUYIN_MAX_X, DOUYIN_MIN_Y, DOUYIN_MAX_Y,
     CAFE_MIN_X, CAFE_MAX_X, CAFE_MIN_Y, CAFE_MAX_Y,
     COURT_MIN_X, COURT_MAX_X, COURT_MIN_Y, COURT_MAX_Y,
+    HOW_ARE_YOU_MIN_X, HOW_ARE_YOU_MAX_X, HOW_ARE_YOU_MIN_Y, HOW_ARE_YOU_MAX_Y,
     isoToScreen, screenToIso,
     NavGrid,
     sortIsometricEntities,
@@ -46,6 +47,7 @@
       this.wallAlphaSchool = 1.0;
       this.wallAlphaDouyin = 1.0;
       this.wallAlphaCafe = 1.0;
+      this.wallAlphaHowAreYou = 1.0;
 
       // Day / Night mood
       this.mood = 'auto';
@@ -59,6 +61,7 @@
       this.doorLibOpen = 0.0;
       this.doorSchoolOpen = 0.0;
       this.doorCafeOpen = 0.0;
+      this.doorHowAreYouOpen = 0.0;
       this.doorCyberNorthOpen = 0.0;
       this.doorCyberSouthOpen = 0.0;
       this.doorDouyinOpen = 0.0;
@@ -327,6 +330,18 @@
       // Indoor Cafe Furniture
       this.nav.setBlock(36.5, 2.8, 2.5, 1.2, true);    // Barista Bar & Espresso Station (blocks x=37,38 at y=3)
       this.nav.setBlock(35.0, 4.4, 1.4, 1.2, true);    // Indoor Lounge Table (leaves aisle x=33..34, y=4..5 open)
+
+      // 12. "How Are You Doing Today" Sanctuary Obstacles (心靈小屋「你今天過得好嗎」x: 42..50, y: 2..10)
+      this.nav.setBlock(42.0, 2.0, 9.0, 1.0, true);    // North Wall (blocks row 2 from x=42 to 50)
+      this.nav.setBlock(50.0, 2.0, 1.0, 9.0, true);    // East Wall (blocks column 50 from y=2 to 10)
+      this.nav.setBlock(42.0, 10.0, 9.0, 1.0, true);   // South Wall with panoramic glass window (blocks row 10)
+      // West Wall (Entrance doorway at y: 5.2 to 6.8 - tiles 5 and 6 fully open for entrance)
+      this.nav.setBlock(42.0, 2.0, 1.0, 3.2, true);    // West Wall Top (blocks tile 42 from y=2 to 5.2)
+      this.nav.setBlock(42.0, 6.8, 1.0, 3.5, true);    // West Wall Bottom (blocks tile 42 from y=6.8 to 10)
+      // Indoor Furniture
+      this.nav.setBlock(43.5, 3.4, 0.85, 2.0, true);   // Healing Heart Lounge Sofa
+      this.nav.setBlock(47.5, 3.2, 1.8, 0.85, true);   // Diary Notepad Writing Desk
+      this.nav.setBlock(42.4, 2.4, 0.5, 0.5, true);    // Warm Star Floor Lamp
 
       // 11. Gaming Dimension Modular Prefab (Cyber Cafe Walls, Howling Abyss Bridge, Minecraft Sanctuary)
       if (window.GamingDimensionPrefab) {
@@ -874,6 +889,10 @@
         currentZone = 'cafe';
         isInsideAnyHouse = true;
         statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
+      } else if (checkZone('how_are_you', 41.5, 50.5, 2.0, 10.5)) {
+        currentZone = 'how_are_you';
+        isInsideAnyHouse = true;
+        statusMessage = "你今天過得好嗎 • 溫暖傾聽心靈小屋 💖";
       } else if (checkZone('cyber_cafe', 8.5, 19.5, 48.5, 57.2)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
@@ -919,6 +938,9 @@
       const targetWallCafe = (this.currentZone === 'cafe') ? 0.32 : 1.0;
       this.wallAlphaCafe += (targetWallCafe - this.wallAlphaCafe) * Math.min(1.0, dt * 6.0);
 
+      const targetWallHowAreYou = (this.currentZone === 'how_are_you') ? 0.32 : 1.0;
+      this.wallAlphaHowAreYou += (targetWallHowAreYou - this.wallAlphaHowAreYou) * Math.min(1.0, dt * 6.0);
+
       // 傻師傅湯包 front (East/South) walls fade out when the player is inside / at the doorway
       const shopPlayer = this.charManager.player;
       const inShaShiFu = !!shopPlayer && shopPlayer.x >= 32.5 && shopPlayer.x <= 37.0 && shopPlayer.y >= 40.8 && shopPlayer.y <= 44.4;
@@ -946,6 +968,9 @@
 
       const nearCafeDoor = this.charManager.characters.some(c => Math.hypot(c.x - 33.0, c.y - 4.9) < 2.4);
       this.doorCafeOpen += ((nearCafeDoor ? 1.0 : 0.0) - this.doorCafeOpen) * Math.min(1.0, dt * 5.0);
+
+      const nearHowAreYouDoor = this.charManager.characters.some(c => Math.hypot(c.x - 42.0, c.y - 6.0) < 2.4);
+      this.doorHowAreYouOpen += ((nearHowAreYouDoor ? 1.0 : 0.0) - this.doorHowAreYouOpen) * Math.min(1.0, dt * 5.0);
 
       // Cyber Cafe North Entrance Automatic Sliding Glass Door (x: 14.0, y: 48.8)
       const nearCyberNorthDoor = this.charManager.characters.some(c => Math.hypot(c.x - 14.0, c.y - 48.8) < 2.6);
