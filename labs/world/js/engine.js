@@ -52,11 +52,11 @@
   const CAFE_MIN_Y = 2;
   const CAFE_MAX_Y = 8;
 
-  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 38..46, y: 15..22 — Entrance at x: 38)
+  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 38..48, y: 15..24 — Entrance at x: 38)
   const HOW_ARE_YOU_MIN_X = 38;
-  const HOW_ARE_YOU_MAX_X = 46;
+  const HOW_ARE_YOU_MAX_X = 48;
   const HOW_ARE_YOU_MIN_Y = 15;
-  const HOW_ARE_YOU_MAX_Y = 22;
+  const HOW_ARE_YOU_MAX_Y = 24;
 
   // Zone 9: Campus Basketball Court (East of Night Market: x: 38..49, y: 34..43 — Entrance at x: 38)
   const COURT_MIN_X = 38;

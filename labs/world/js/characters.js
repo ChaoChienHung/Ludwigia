@@ -45,7 +45,7 @@
         { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 40.68, y: 5.25, z: 0.38, facing: 1, exitOffset: { dx: -0.55, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // "How Are You Doing Today" Healing Lounge Sofa (z = 0.42, exact seat cushion center)
-        { id: 'how_are_you_sofa', type: 'seat', zone: 'how_are_you', x: 39.8, y: 16.5, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '心靈傾聽沙發', labelZh: '坐下傾聽心事', labelEn: 'Sit & Unwind' },
+        { id: 'how_are_you_sofa', type: 'seat', zone: 'how_are_you', x: 40.2, y: 17.5, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '心靈傾聽沙發', labelZh: '坐下傾聽心事', labelEn: 'Sit & Unwind' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 41.8, y: 34.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
