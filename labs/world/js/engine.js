@@ -46,21 +46,21 @@
   const DOUYIN_MIN_Y = 33;
   const DOUYIN_MAX_Y = 42;
 
-  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 35..42, y: 2..8 — Entrance at x: 35)
-  const CAFE_MIN_X = 35;
-  const CAFE_MAX_X = 42;
+  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 38..45, y: 2..8 — Entrance at x: 38)
+  const CAFE_MIN_X = 38;
+  const CAFE_MAX_X = 45;
   const CAFE_MIN_Y = 2;
   const CAFE_MAX_Y = 8;
 
-  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 35..43, y: 10..17 — Entrance at x: 35)
-  const HOW_ARE_YOU_MIN_X = 35;
-  const HOW_ARE_YOU_MAX_X = 43;
+  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 38..46, y: 10..17 — Entrance at x: 38)
+  const HOW_ARE_YOU_MIN_X = 38;
+  const HOW_ARE_YOU_MAX_X = 46;
   const HOW_ARE_YOU_MIN_Y = 10;
   const HOW_ARE_YOU_MAX_Y = 17;
 
-  // Zone 9: Campus Basketball Court (East Athletic Ground: x: 35..46, y: 20..29 — Entrance at x: 35)
-  const COURT_MIN_X = 35;
-  const COURT_MAX_X = 46;
+  // Zone 9: Campus Basketball Court (East Athletic Ground: x: 38..49, y: 20..29 — Entrance at x: 38)
+  const COURT_MIN_X = 38;
+  const COURT_MAX_X = 49;
   const COURT_MIN_Y = 20;
   const COURT_MAX_Y = 29;
 
