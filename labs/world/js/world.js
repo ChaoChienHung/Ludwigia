@@ -1726,8 +1726,8 @@
             (x >= 12 && x <= 16 && y >= 45 && y <= 49)  // Central boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
           );
 
-          // Dedicated 2-tile wide North-South Promenade (x: 36..37, y: 5..39) linking Cafe ↔ How Are You ↔ Basketball Court
-          const isEastWingPromenade = (x >= 36 && x <= 37 && y >= 5 && y <= 39);
+          // Dedicated 2-tile wide Pathway Connector (x: 36..37, y: 31..39) linking North Promenade path down to Basketball Court Entrance
+          const isBasketballPromenade = (x >= 36 && x <= 37 && y >= 31 && y <= 39);
 
           // Dedicated Pathway Connectors from East Spine (x: 32..34) into x = 38 entrances
           const isBasketballEntrance = (x >= 36 && x <= 38 && y >= 38 && y <= 39); // Basketball Court West Entrance
@@ -1747,7 +1747,7 @@
           const isPath = (
             isMainNorthSouthSpine ||
             isEastNorthSouthSpine ||
-            isEastWingPromenade ||
+            isBasketballPromenade ||
             isEastWestAve1 ||
             isEastWestAve2 ||
             isGardenTerracePath ||
