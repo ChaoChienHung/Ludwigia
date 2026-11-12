@@ -156,12 +156,12 @@
       // 1. Ludwig's Family Residence (NW: x: 0..9, y: 0..9)
       this.nav.setBlock(0, 0, 11.0, 1.0, true);                  // Northeast Wall (y: 0, x: 0..10)
       this.nav.setBlock(0, 0, 1.0, 11.0, true);                  // Northwest Wall (x: 0, y: 0..10)
-      // East Wall Doorway at y: 5..6 (keep tiles 5 and 6 100% open)
-      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 1.0, 5.0, true);     // East Wall Top (y: 0..4 at x: 10)
-      this.nav.setBlock(HOUSE_MAX_X + 1, 7.0, 1.0, 4.0, true);   // East Wall Bottom (y: 7..10 at x: 10)
-      // South Terrace Doorway at x: 5..6 (keep tiles 5 and 6 100% open)
-      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 5.0, 1.0, true);     // South Terrace Wall Left (x: 0..4 at y: 10)
-      this.nav.setBlock(7.0, HOUSE_MAX_Y + 1, 4.0, 1.0, true);   // South Terrace Wall Right (x: 7..10 at y: 10)
+      // East Wall Doorway at y: 4.5..6.8 (door center 5.65, aligned exactly with visual doorframe)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 0, 1.0, 4.5, true);     // East Wall Top (y: 0..4.5 at x: 10)
+      this.nav.setBlock(HOUSE_MAX_X + 1, 6.8, 1.0, 3.2, true);   // East Wall Bottom (y: 6.8..10 at x: 10)
+      // South Terrace Doorway at x: 4.5..6.8 (door center 5.65, aligned exactly with visual terrace door)
+      this.nav.setBlock(0, HOUSE_MAX_Y + 1, 4.5, 1.0, true);     // South Terrace Wall Left (x: 0..4.5 at y: 10)
+      this.nav.setBlock(6.8, HOUSE_MAX_Y + 1, 3.2, 1.0, true);   // South Terrace Wall Right (x: 6.8..10 at y: 10)
 
       this.nav.setBlock(1.0, 1.0, 2.2, 2.3, true); // Master Bed
       this.nav.setBlock(6.0, 1.0, 2.5, 1.2, true); // Desk
@@ -174,9 +174,9 @@
       this.nav.setBlock(0, DORM_MIN_Y, 11.0, 1.0, true);         // North Wall (y: 17, x: 0..10)
       this.nav.setBlock(0, DORM_MIN_Y, 1.0, 11.0, true);         // West Wall (x: 0, y: 17..27)
       this.nav.setBlock(0, DORM_MAX_Y + 1, 11.0, 1.0, true);     // South Wall (y: 27, x: 0..10)
-      // SE Wall Doorway at y: 21..22 (keep tiles 21 and 22 100% open)
-      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 1.0, 4.0, true);  // SE Wall Top (y: 17..20 at x: 10)
-      this.nav.setBlock(DORM_MAX_X + 1, 23.0, 1.0, 5.0, true);        // SE Wall Bottom (y: 23..27 at x: 10)
+      // SE Wall Doorway at y: 20.5..22.8 (door center 21.65, aligned exactly with visual double doors)
+      this.nav.setBlock(DORM_MAX_X + 1, DORM_MIN_Y, 1.0, 3.5, true);  // SE Wall Top (y: 17..20.5 at x: 10)
+      this.nav.setBlock(DORM_MAX_X + 1, 22.8, 1.0, 4.45, true);       // SE Wall Bottom (y: 22.8..27.25 at x: 10)
 
       // 4 Loft Bed/Desk Combos
       this.nav.setBlock(1.0, 17.5, 2.2, 1.6, true);   // Happy Wang (Bed 1)
@@ -189,9 +189,9 @@
       this.nav.setBlock(AI_MIN_X, 0, 11.0, 1.0, true);               // North Wall (y: 0, x: 18..28)
       this.nav.setBlock(AI_MAX_X + 1, 0, 1.0, 11.0, true);           // East Wall (x: 28, y: 0..10)
       this.nav.setBlock(AI_MIN_X, AI_MAX_Y + 1, 11.0, 1.0, true);   // South Wall (y: 10, x: 18..28)
-      // West Doorway at y: 5..6 (keep tiles 5 and 6 100% open)
-      this.nav.setBlock(AI_MIN_X, 0, 1.0, 5.0, true);                // West Wall Top (y: 0..4 at x: 18)
-      this.nav.setBlock(AI_MIN_X, 7.0, 1.0, 4.0, true);              // West Wall Bottom (y: 7..10 at x: 18)
+      // West Doorway at y: 4.5..6.8 (door center 5.65, aligned exactly with visual sliding glass doors)
+      this.nav.setBlock(AI_MIN_X, 0, 1.0, 4.5, true);                // West Wall Top (y: 0..4.5 at x: 18)
+      this.nav.setBlock(AI_MIN_X, 6.8, 1.0, 3.2, true);              // West Wall Bottom (y: 6.8..10 at x: 18)
 
       this.nav.setBlock(19.2, 1.2, 1.7, 1.1, true); // Server Cabinets
       this.nav.setBlock(23.5, 1.2, 2.5, 1.1, true); // AI Command Desk
@@ -202,9 +202,9 @@
       this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 11.0, 1.0, true);     // North Wall (y: 17, x: 18..28)
       this.nav.setBlock(LIB_MAX_X + 1, LIB_MIN_Y, 1.0, 11.0, true); // East Wall (x: 28, y: 17..27)
       this.nav.setBlock(LIB_MIN_X, LIB_MAX_Y + 1, 11.0, 1.0, true); // South Wall (y: 27, x: 18..28)
-      // West Doorway at y: 21..22 (keep tiles 21 and 22 100% open)
-      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1.0, 4.0, true);      // West Wall Top (y: 17..20 at x: 18)
-      this.nav.setBlock(LIB_MIN_X, 23.0, 1.0, 5.0, true);           // West Wall Bottom (y: 23..27 at x: 18)
+      // West Doorway at y: 20.5..22.8 (door center 21.65, aligned exactly with visual double doors)
+      this.nav.setBlock(LIB_MIN_X, LIB_MIN_Y, 1.0, 3.5, true);      // West Wall Top (y: 17..20.5 at x: 18)
+      this.nav.setBlock(LIB_MIN_X, 22.8, 1.0, 4.45, true);          // West Wall Bottom (y: 22.8..27.25 at x: 18)
 
       this.nav.setBlock(18.4, 17.2, 8.4, 0.8, true); // Grand North Book Walls
       this.nav.setBlock(18.2, 17.6, 0.8, 2.6, true); // West Wall Library Stack
@@ -239,9 +239,9 @@
       this.nav.setBlock(0, SCHOOL_MIN_Y, 11.0, 1.0, true);          // North Wall (y: 33, x: 0..10)
       this.nav.setBlock(0, SCHOOL_MIN_Y, 1.0, 11.0, true);          // West Wall (x: 0, y: 33..43)
       this.nav.setBlock(0, SCHOOL_MAX_Y + 1, 11.0, 1.0, true);      // South Wall (y: 43, x: 0..10)
-      // East Wall Doorway at y: 37..38 (keep tiles 37 and 38 100% open)
-      this.nav.setBlock(SCHOOL_MAX_X + 1, SCHOOL_MIN_Y, 1.0, 4.0, true); // East Wall Top (y: 33..36 at x: 10)
-      this.nav.setBlock(SCHOOL_MAX_X + 1, 39.0, 1.0, 5.0, true);         // East Wall Bottom (y: 39..43 at x: 10)
+      // East Wall Doorway at y: 36.5..38.8 (door center 37.65, aligned exactly with visual classroom doors)
+      this.nav.setBlock(SCHOOL_MAX_X + 1, SCHOOL_MIN_Y, 1.0, 3.5, true); // East Wall Top (y: 33..36.5 at x: 10)
+      this.nav.setBlock(SCHOOL_MAX_X + 1, 38.8, 1.0, 4.45, true);        // East Wall Bottom (y: 38.8..43.25 at x: 10)
 
       // Classroom Furniture Obstacles
       this.nav.setBlock(2.4, 33.1, 5.2, 0.4, true); // Blackboard Wall Area (North Wall)
@@ -258,9 +258,9 @@
       this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 11.0, 1.0, true);     // North Wall (y: 33, x: 18..28)
       this.nav.setBlock(DOUYIN_MAX_X + 1, DOUYIN_MIN_Y, 1.0, 11.0, true); // East Wall (x: 28, y: 33..43)
       this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MAX_Y + 1, 11.0, 1.0, true); // South Wall (y: 43, x: 18..28)
-      // West Wall Doorway at y: 37..38 (keep tiles 37 and 38 100% open)
-      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 1.0, 4.0, true);      // West Wall Top (y: 33..36 at x: 18)
-      this.nav.setBlock(DOUYIN_MIN_X, 39.0, 1.0, 5.0, true);              // West Wall Bottom (y: 39..43 at x: 18)
+      // West Wall Doorway at y: 36.5..38.8 (door center 37.65, aligned exactly with visual glass doorway)
+      this.nav.setBlock(DOUYIN_MIN_X, DOUYIN_MIN_Y, 1.0, 3.5, true);      // West Wall Top (y: 33..36.5 at x: 18)
+      this.nav.setBlock(DOUYIN_MIN_X, 38.8, 1.0, 4.45, true);             // West Wall Bottom (y: 38.8..43.25 at x: 18)
 
       // Tech Office Furniture Obstacles
       this.nav.setBlock(19.2, 34.4, 1.6, 0.85, true); // Workstation 1
@@ -301,11 +301,11 @@
       this.nav.setBlock(41.0, 34.2, 1.60, 0.65, true);  // Court Rest Bench (North sideline)
 
       // Solid Sports Perimeter Walls & Boundary Enclosure (Impassable borders)
-      this.nav.setBlock(38.0, 33.5, 11.5, 0.8, true);   // North Boundary Fence (blocks row 34 from x=38 to 49)
-      this.nav.setBlock(49.0, 33.8, 0.8, 9.8, true);    // East Boundary Fence (blocks column 49 from y=34 to 43)
-      this.nav.setBlock(38.0, 43.2, 11.5, 0.8, true);   // South Boundary Fence (blocks row 43 from x=38 to 49)
-      this.nav.setBlock(37.8, 33.8, 0.5, 3.8, true);    // West Wing North Fence (blocks x=38, y=34..37.5)
-      this.nav.setBlock(37.8, 39.5, 0.5, 3.8, true);    // West Wing South Fence (blocks x=38, y=39.5..43)
+      this.nav.setBlock(38.0, 33.6, 11.5, 0.6, true);   // North Boundary Fence (blocks y=33.7, row 34 from x=38 to 49)
+      this.nav.setBlock(48.9, 33.8, 0.6, 9.5, true);    // East Boundary Fence (blocks x=49.0, column 49 from y=34 to 43)
+      this.nav.setBlock(38.0, 43.0, 11.5, 0.6, true);   // South Boundary Fence (blocks y=43.1, row 43 from x=38 to 49)
+      this.nav.setBlock(37.8, 33.8, 0.5, 3.7, true);    // West Wing North Fence (blocks x=38, y=33.8..37.5)
+      this.nav.setBlock(37.8, 39.5, 0.5, 3.7, true);    // West Wing South Fence (blocks x=38, y=39.5..43.2)
       // Entrance doorway at x = 38, y = 37.5..39.5 is 100% open!
 
       // 9. Central Midnight Snack Street Obstacles (East Wing x: 30..36, y: 33..44 — 3-tile asphalt road aligned with East Spine)
@@ -777,19 +777,19 @@
 
     getZoneAt(x, y) {
       if (x <= 9.8 && y <= 9.8) return 'ludwig_house';
-      if (x <= 9.8 && y >= 10.0 && y <= 16.4) return 'garden_terrace';
-      if (x <= 9.8 && y >= 16.5 && y <= 26.5) return 'dorm_211';
-      if (x >= 17.5 && x <= 27.5 && y <= 9.8) return 'ai_studio';
-      if (x >= 17.5 && x <= 27.5 && y >= 16.5 && y <= 26.5) return 'library';
-      if (x <= 9.8 && y >= 32.5 && y <= 42.8) return 'sanmin_school';
-      if (x >= 17.5 && x <= 27.5 && y >= 32.5 && y <= 42.8) return 'douyin_office';
-      if (x >= 37.5 && x <= 49.5 && y >= 33.5 && y <= 43.5) return 'basketball_court';
-      if (x >= 29.5 && x <= 37.5 && y >= 32.5 && y <= 44.5) return 'night_market';
-      if (x >= 37.5 && x <= 45.5 && y >= 2.0 && y <= 8.5) return 'cafe';
-      if (x >= 37.5 && x <= 48.5 && y >= 14.5 && y <= 24.5) return 'how_are_you';
-      if (x >= 8.5 && x <= 19.5 && y >= 48.5 && y <= 57.2) return 'cyber_cafe';
-      if (x >= 10.5 && x <= 17.5 && y >= 57.2 && y <= 93.2) return 'howling_abyss';
-      if (x >= 6.5 && x <= 21.5 && y >= 93.2 && y <= 111.5) return 'minecraft_sanctuary';
+      if (x <= 9.8 && y >= 10.0 && y < 17.0) return 'garden_terrace';
+      if (x <= 9.8 && y >= 17.0 && y <= 26.8) return 'dorm_211';
+      if (x >= 18.0 && x <= 27.8 && y <= 9.8) return 'ai_studio';
+      if (x >= 18.0 && x <= 27.8 && y >= 17.0 && y <= 26.8) return 'library';
+      if (x <= 9.8 && y >= 33.0 && y <= 42.8) return 'sanmin_school';
+      if (x >= 18.0 && x <= 27.8 && y >= 33.0 && y <= 42.8) return 'douyin_office';
+      if (x >= 38.0 && x <= 49.0 && y >= 33.8 && y <= 43.1) return 'basketball_court';
+      if (x >= 29.8 && x <= 36.8 && y >= 33.0 && y <= 44.5) return 'night_market';
+      if (x >= 38.0 && x <= 44.8 && y >= 2.0 && y <= 8.0) return 'cafe';
+      if (x >= 38.0 && x <= 47.8 && y >= 15.0 && y <= 24.0) return 'how_are_you';
+      if (x >= 8.8 && x <= 19.0 && y >= 48.8 && y <= 57.0) return 'cyber_cafe';
+      if (x >= 11.0 && x <= 17.0 && y >= 57.0 && y <= 93.0) return 'howling_abyss';
+      if (x >= 7.0 && x <= 21.0 && y >= 93.0 && y <= 111.0) return 'minecraft_sanctuary';
       return 'plaza';
     }
 
@@ -861,55 +861,55 @@
         currentZone = 'ludwig_house';
         isInsideAnyHouse = true;
         statusMessage = "Ludwig's Home • 溫馨客廳與起居室";
-      } else if (checkZone('garden_terrace', 0, 9.8, 10.0, 16.4)) {
+      } else if (checkZone('garden_terrace', 0, 9.8, 10.0, 16.8)) {
         currentZone = 'garden_terrace';
         isInsideAnyHouse = false;
         statusMessage = "Garden Terrace • 露天花園與石雕棋盤";
-      } else if (checkZone('dorm_211', 0, 9.8, 16.5, 26.5)) {
+      } else if (checkZone('dorm_211', 0, 9.8, 17.0, 26.8)) {
         currentZone = 'dorm_211';
         isInsideAnyHouse = true;
         statusMessage = "男11 211 宿舍 • 青春熱血的大學生活";
-      } else if (checkZone('ai_studio', 17.5, 27.5, 0, 9.8)) {
+      } else if (checkZone('ai_studio', 18.0, 27.8, 0, 9.8)) {
         currentZone = 'ai_studio';
         isInsideAnyHouse = true;
         statusMessage = "AI Studio • Ludwigia 智慧研究室";
-      } else if (checkZone('library', 17.5, 27.5, 16.5, 26.5)) {
+      } else if (checkZone('library', 18.0, 27.8, 17.0, 26.8)) {
         currentZone = 'library';
         isInsideAnyHouse = true;
         statusMessage = "Central Library • 知識藏書閣與典雅閱覽室";
-      } else if (checkZone('sanmin_school', 0, 9.8, 32.5, 42.8)) {
+      } else if (checkZone('sanmin_school', 0, 9.8, 33.0, 42.8)) {
         currentZone = 'sanmin_school';
         isInsideAnyHouse = true;
         statusMessage = "Sanmin High School • 青春回憶與三民高中教室";
-      } else if (checkZone('douyin_office', 17.5, 27.5, 32.5, 42.8)) {
+      } else if (checkZone('douyin_office', 18.0, 27.8, 33.0, 42.8)) {
         currentZone = 'douyin_office';
         isInsideAnyHouse = true;
         statusMessage = "Douyin Office • 抖音演算法研發辦公室";
-      } else if (checkZone('basketball_court', 37.5, 49.5, 33.5, 43.5)) {
+      } else if (checkZone('basketball_court', 38.0, 49.0, 33.8, 43.1)) {
         currentZone = 'basketball_court';
         isInsideAnyHouse = false;
         statusMessage = "Campus Basketball Court • 青春熱血的陽光運動場 🏀";
-      } else if (checkZone('night_market', 29.5, 37.5, 32.5, 44.5)) {
+      } else if (checkZone('night_market', 29.8, 36.8, 33.0, 44.5)) {
         currentZone = 'night_market';
         isInsideAnyHouse = false;
         statusMessage = "中央宵夜街 • NCU Midnight Snack Street 🏮";
-      } else if (checkZone('cafe', 37.5, 45.5, 2.0, 8.5)) {
+      } else if (checkZone('cafe', 38.0, 44.8, 2.0, 8.0)) {
         currentZone = 'cafe';
         isInsideAnyHouse = true;
         statusMessage = "Ludwigia Cafe • 溫馨文青的室內精品咖啡館 ☕";
-      } else if (checkZone('how_are_you', 37.5, 48.5, 14.5, 24.5)) {
+      } else if (checkZone('how_are_you', 38.0, 47.8, 15.0, 24.0)) {
         currentZone = 'how_are_you';
         isInsideAnyHouse = true;
         statusMessage = "你今天過得好嗎 • 溫暖傾聽心靈小屋 💖";
-      } else if (checkZone('cyber_cafe', 8.5, 19.5, 48.5, 57.2)) {
+      } else if (checkZone('cyber_cafe', 8.8, 19.0, 48.8, 57.0)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
         statusMessage = "Gaming Dimension Portal • 電玩次元穿梭站 ⚡🕹️";
-      } else if (checkZone('howling_abyss', 10.5, 17.5, 57.2, 93.2)) {
+      } else if (checkZone('howling_abyss', 11.0, 17.0, 57.0, 93.0)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;
         statusMessage = "The Howling Abyss • 冰封咆哮深淵長橋 ❄️";
-      } else if (checkZone('minecraft_sanctuary', 6.5, 21.5, 93.2, 111.5)) {
+      } else if (checkZone('minecraft_sanctuary', 7.0, 21.0, 93.0, 111.0)) {
         currentZone = 'minecraft_sanctuary';
         isInsideAnyHouse = false;
         statusMessage = "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
