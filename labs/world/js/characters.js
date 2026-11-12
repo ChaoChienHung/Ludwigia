@@ -889,7 +889,10 @@
           const nextItem = this.dialogueQueue.shift();
           const targetChar = this.characters.find(c => c.id === nextItem.speakerId);
           if (targetChar) {
-            this.triggerSpeechBubble(targetChar, nextItem.text, nextItem.duration || 3.8);
+            const partInfo = (nextItem.partTotal && nextItem.partTotal > 1)
+              ? { index: nextItem.partIndex, total: nextItem.partTotal }
+              : null;
+            this.triggerSpeechBubble(targetChar, nextItem.text, nextItem.duration || 3.8, partInfo);
           }
           this.queueTimer = (nextItem.nextDelay !== undefined) ? nextItem.nextDelay : 2.2;
           if (this.queueTimer > 0) break;
@@ -1068,6 +1071,52 @@
       return true;
     }
 
+    chunkText(text, maxChars = 40) {
+      if (!text || text.length <= maxChars) return [text];
+      let cjkCount = 0;
+      for (let i = 0; i < text.length; i++) {
+        if (text.charCodeAt(i) > 0x2E80) cjkCount++;
+      }
+      const isCjk = (cjkCount / text.length) > 0.3;
+      const limit = isCjk ? maxChars : Math.round(maxChars * 2.6);
+      if (text.length <= limit) return [text];
+
+      const primaryRegex = isCjk
+        ? /([^。！？\n]+[。！？\n]*[」』”"’\)]*)/g
+        : /([^.!?\n]+[.!?\n]*["’\)]*)/g;
+      const sentences = text.match(primaryRegex) || [text];
+      const chunks = [];
+      let currentChunk = '';
+
+      for (let s of sentences) {
+        s = s.trim();
+        if (!s) continue;
+        if (s.length > limit) {
+          const subRegex = isCjk ? /([^，；、]+[，；、]*)/g : /([^,;]+[,;]*)/g;
+          const subParts = s.match(subRegex) || [s];
+          for (let sub of subParts) {
+            sub = sub.trim();
+            if (!sub) continue;
+            if ((currentChunk + sub).length <= limit) {
+              currentChunk += (currentChunk && !isCjk ? ' ' : '') + sub;
+            } else {
+              if (currentChunk) chunks.push(currentChunk);
+              currentChunk = sub;
+            }
+          }
+        } else {
+          if ((currentChunk + s).length <= limit) {
+            currentChunk += (currentChunk && !isCjk ? ' ' : '') + s;
+          } else {
+            if (currentChunk) chunks.push(currentChunk);
+            currentChunk = s;
+          }
+        }
+      }
+      if (currentChunk) chunks.push(currentChunk);
+      return chunks.length > 0 ? chunks : [text];
+    }
+
     startNpcDialogue(pair, langKey) {
       const group = pair.participants.map(id => this.characters.find(c => c.id === id));
       if (group.some(c => !c)) return false;
@@ -1075,8 +1124,32 @@
       const centerX = group.reduce((sum, c) => sum + c.x, 0) / group.length;
       const centerY = group.reduce((sum, c) => sum + c.y, 0) / group.length;
 
-      const lines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
-      if (!lines || lines.length === 0) return false;
+      const rawLines = pair.dialogues[langKey] || pair.dialogues['zh-TW'];
+      if (!rawLines || rawLines.length === 0) return false;
+
+      // Automatically batch & split overly long dialogue lines into pleasant, bite-sized bubble chunks
+      const lines = [];
+      for (const item of rawLines) {
+        const chunks = this.chunkText(item.text, 40);
+        if (chunks.length <= 1) {
+          lines.push(item);
+        } else {
+          chunks.forEach((chunk, idx) => {
+            const chunkReadTime = this.estimateReadTime(chunk);
+            const chunkDuration = Math.max(3.6, chunkReadTime + 1.2);
+            // Brief 0.3s pause between batches of the same speaker
+            const chunkDelay = (idx < chunks.length - 1) ? (chunkDuration + 0.3) : (item.delay || (chunkDuration + 0.8));
+            lines.push({
+              speaker: item.speaker,
+              text: chunk,
+              duration: chunkDuration,
+              delay: chunkDelay,
+              partIndex: idx + 1,
+              partTotal: chunks.length
+            });
+          });
+        }
+      }
 
       const getEffectiveDelay = (item) => {
         if (item.delay === 0) return 0;
@@ -1098,7 +1171,8 @@
       const speaker1 = this.characters.find(c => c.id === first.speaker);
       if (speaker1) {
         const firstDuration = first.duration || Math.max(4.8, firstDelay + 1.6);
-        this.triggerSpeechBubble(speaker1, first.text, firstDuration);
+        const partInfo = (first.partTotal && first.partTotal > 1) ? { index: first.partIndex, total: first.partTotal } : null;
+        this.triggerSpeechBubble(speaker1, first.text, firstDuration, partInfo);
       }
 
       // Queue remaining replies
@@ -1111,7 +1185,9 @@
           speakerId: item.speaker,
           text: item.text,
           duration: itemDuration,
-          nextDelay: effDelay
+          nextDelay: effDelay,
+          partIndex: item.partIndex,
+          partTotal: item.partTotal
         });
       }
       this.queueTimer = firstDelay;
@@ -1195,13 +1271,34 @@
       if (!eligible.length) return false;
       const char = eligible[Math.floor(Math.random() * eligible.length)];
       const pool = char.dialogues.self[langKey] || char.dialogues.self['zh-TW'];
-      const text = pool[Math.floor(Math.random() * pool.length)];
-      const duration = Math.max(4.8, this.estimateReadTime(text) + 1.4);
-      this.triggerSpeechBubble(char, text, duration);
+      const rawText = pool[Math.floor(Math.random() * pool.length)];
+
+      const chunks = this.chunkText(rawText, 40);
+      if (chunks.length <= 1) {
+        const duration = Math.max(4.8, this.estimateReadTime(rawText) + 1.4);
+        this.triggerSpeechBubble(char, rawText, duration);
+      } else {
+        const first = chunks[0];
+        const firstDur = Math.max(3.6, this.estimateReadTime(first) + 1.2);
+        this.triggerSpeechBubble(char, first, firstDur, { index: 1, total: chunks.length });
+        for (let i = 1; i < chunks.length; i++) {
+          const chk = chunks[i];
+          const chkDur = Math.max(3.6, this.estimateReadTime(chk) + 1.2);
+          this.dialogueQueue.push({
+            speakerId: char.id,
+            text: chk,
+            duration: chkDur,
+            nextDelay: chkDur + 0.3,
+            partIndex: i + 1,
+            partTotal: chunks.length
+          });
+        }
+        this.queueTimer = firstDur + 0.3;
+      }
       return true;
     }
 
-    triggerSpeechBubble(char, text, duration = 3.8) {
+    triggerSpeechBubble(char, text, duration = 3.8, partInfo = null) {
       if (!char || !text) return;
       char.speechBubble = {
         text,
@@ -1209,12 +1306,14 @@
         color: char.nameColor || '#38bdf8',
         duration,
         timer: duration,
-        alpha: 0.0
+        alpha: 0.0,
+        partIndex: partInfo ? partInfo.index : null,
+        partTotal: partInfo ? partInfo.total : null
       };
       char.lastSpokeTime = performance.now();
     }
 
-    wrapText(ctx, text, maxWidth = 145) {
+    wrapText(ctx, text, maxWidth = 160) {
       if (!text) return [];
       const lines = [];
       let currentLine = '';
@@ -1240,7 +1339,7 @@
 
       ctx.save();
       ctx.font = '500 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      const lines = this.wrapText(ctx, bubble.text, 145);
+      const lines = this.wrapText(ctx, bubble.text, 160);
       if (lines.length === 0) {
         ctx.restore();
         return;
@@ -1256,7 +1355,7 @@
       const padY = 7;
       const lineHeight = 15;
       const headerH = 12;
-      const bw = Math.max(76, Math.min(175, maxLineWidth + padX * 2));
+      const bw = Math.max(80, Math.min(185, maxLineWidth + padX * 2));
       const bh = lines.length * lineHeight + padY * 2 + headerH;
       const bx = x - bw / 2;
       const by = y - bh;
@@ -1299,12 +1398,16 @@
       ctx.lineTo(x + 5, by + bh);
       ctx.stroke();
 
-      // Speaker Name Header
+      // Speaker Name Header with optional multi-part badge (e.g. "Claude • 1/2")
       ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       ctx.fillStyle = bubble.color;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText(bubble.name, bx + padX, by + padY);
+      let title = bubble.name;
+      if (bubble.partTotal && bubble.partTotal > 1) {
+        title += ` • ${bubble.partIndex}/${bubble.partTotal}`;
+      }
+      ctx.fillText(title, bx + padX, by + padY);
 
       // Dialogue Text Lines
       ctx.font = '500 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
