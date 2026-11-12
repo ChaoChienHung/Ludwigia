@@ -951,13 +951,12 @@
       this.wallAlphaHowAreYou += (targetWallHowAreYou - this.wallAlphaHowAreYou) * Math.min(1.0, dt * 6.0);
 
       // Minecraft Oak Cabin front (East/South) walls fade out when the player is inside the cabin
-      const playerInMinecraftCabin = !!shopPlayer && shopPlayer.x >= 9.0 && shopPlayer.x <= 15.0 && shopPlayer.y >= 97.0 && shopPlayer.y <= 103.0;
+      const playerInMinecraftCabin = !!player && player.x >= 9.0 && player.x <= 15.0 && player.y >= 97.0 && player.y <= 103.0;
       if (this.wallAlphaMinecraft === undefined) this.wallAlphaMinecraft = 1.0;
       this.wallAlphaMinecraft += ((playerInMinecraftCabin ? 0.32 : 1.0) - this.wallAlphaMinecraft) * Math.min(1.0, dt * 6.0);
 
       // 傻師傅湯包 front (East/South) walls fade out when the player is inside / at the doorway
-      const shopPlayer = this.charManager.player;
-      const inShaShiFu = !!shopPlayer && shopPlayer.x >= 32.5 && shopPlayer.x <= 37.0 && shopPlayer.y >= 40.8 && shopPlayer.y <= 44.4;
+      const inShaShiFu = !!player && player.x >= 32.5 && player.x <= 37.0 && player.y >= 40.8 && player.y <= 44.4;
       if (this.wallAlphaShaShiFu === undefined) this.wallAlphaShaShiFu = 1.0;
       this.wallAlphaShaShiFu += ((inShaShiFu ? 0.32 : 1.0) - this.wallAlphaShaShiFu) * Math.min(1.0, dt * 6.0);
 
