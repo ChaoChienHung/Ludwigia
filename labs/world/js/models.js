@@ -1309,27 +1309,72 @@
       }
     }
 
-    // --- Lush Flowering Cherry Blossom Tree ---
+    // --- Lush Flowering Cherry Blossom / Botanical Shade Tree ---
     drawTree(ctx, tx, ty, ox, oy) {
-      // Trunk
-      this.drawBox(ctx, tx + 0.35, ty + 0.35, 0, 0.35, 0.35, 1.20, '#78350f', '#58240a', '#451a03', ox, oy);
+      // Ground Ambient Drop Shadow
+      this.drawDropShadow(ctx, tx + 0.15, ty + 0.15, 0.70, 0.70, ox, oy);
 
-      // Canopy Spheres
-      const p = isoToScreen(tx + 0.5, ty + 0.5, 1.8, ox, oy);
+      // 3D Textured Wooden Trunk with Root Flare
+      this.drawBox(ctx, tx + 0.35, ty + 0.35, 0, 0.30, 0.30, 1.15, '#78350f', '#58240a', '#451a03', ox, oy);
+
+      // Canopy Center Anchor (z = 1.70)
+      const p = isoToScreen(tx + 0.5, ty + 0.5, 1.70, ox, oy);
       const isBlossom = (Math.floor(tx + ty) % 2 === 0);
-      const col1 = isBlossom ? '#f472b6' : '#22c55e';
-      const col2 = isBlossom ? '#fbcfe8' : '#86efac';
 
-      ctx.fillStyle = col1;
+      // Multi-layer Volumetric Foliage with Sunlight Highlights
+      ctx.save();
+
+      // Palette definition
+      const deepColor = isBlossom ? '#be123c' : '#14532d';
+      const midColor = isBlossom ? '#f43f5e' : '#16a34a';
+      const brightColor = isBlossom ? '#fb7185' : '#22c55e';
+      const highlightColor = isBlossom ? '#fce7f3' : '#86efac';
+
+      // 1. Lower Deep Shadow Foliage Tier
+      const gradShadow = ctx.createRadialGradient(p.x, p.y + 4, 4, p.x, p.y + 4, 24);
+      gradShadow.addColorStop(0, midColor);
+      gradShadow.addColorStop(1, deepColor);
+      ctx.fillStyle = gradShadow;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 22, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y + 4, 22, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = col2;
+      // 2. Left & Right Organic Foliage Bulges
+      ctx.fillStyle = midColor;
       ctx.beginPath();
-      ctx.arc(p.x - 5, p.y - 7, 15, 0, Math.PI * 2);
-      ctx.arc(p.x + 8, p.y - 4, 13, 0, Math.PI * 2);
+      ctx.arc(p.x - 12, p.y - 1, 14, 0, Math.PI * 2);
+      ctx.arc(p.x + 12, p.y + 2, 13, 0, Math.PI * 2);
       ctx.fill();
+
+      // 3. Main Sunlit Canopy Sphere
+      const gradMain = ctx.createRadialGradient(p.x - 4, p.y - 8, 3, p.x, p.y - 3, 20);
+      gradMain.addColorStop(0, brightColor);
+      gradMain.addColorStop(0.7, midColor);
+      gradMain.addColorStop(1, deepColor);
+      ctx.fillStyle = gradMain;
+      ctx.beginPath();
+      ctx.arc(p.x - 2, p.y - 5, 19, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4. Crown Sunlit Highlight Cluster
+      const gradCrown = ctx.createRadialGradient(p.x - 5, p.y - 12, 1, p.x - 4, p.y - 11, 14);
+      gradCrown.addColorStop(0, highlightColor);
+      gradCrown.addColorStop(0.6, brightColor);
+      gradCrown.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gradCrown;
+      ctx.beginPath();
+      ctx.arc(p.x - 4, p.y - 11, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 5. Blossom Petal / Leaf Speckles
+      ctx.fillStyle = highlightColor;
+      ctx.beginPath();
+      ctx.arc(p.x - 8, p.y - 4, 2.0, 0, Math.PI * 2);
+      ctx.arc(p.x + 6, p.y - 8, 2.2, 0, Math.PI * 2);
+      ctx.arc(p.x - 2, p.y - 14, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
     }
 
     // =========================================================================

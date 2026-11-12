@@ -280,11 +280,8 @@
         [1, 14], [8, 15],
         // 2. West Campus Greenway (x: 0..9, y: 28..32)
         [2, 30], [8, 30],
-        // 3. Central Promenade Park Lawn (x: 29..31 — placed out in open lawn, 2 full tiles clear of Library glass window)
+        // 3. Central Promenade Park Lawn (x: 29..31 — placed out in open lawn, north of Library)
         [30, 9],
-        [30, 18],
-        [30, 25],
-        [30, 29],
         // 4. North & East Buffer Lawns (outside buildings)
         [41, 0], [48, 1],
         // 5. Far East Lawn (east of How Are You & Basketball Court)
@@ -299,8 +296,8 @@
       // 7. West Campus Greenway (x: 0..9, y: 27..32 — Peaceful lawn between Dorm 211 and Sanmin High)
       this.nav.setBlock(4.5, 29.0, 1.6, 0.5, true);    // Greenway Shaded Park Bench along path roadside
 
-      // 8. Campus Basketball Court Obstacles (East of Night Market x: 38..49, y: 34..43 — Entrance at x: 38)
-      this.nav.setBlock(38.2, 38.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline)
+      // 8. Campus Basketball Court Obstacles (East of Night Market x: 38..49, y: 34..43 — Wide Entrance at x: 38, y: 34.2..38.0)
+      this.nav.setBlock(38.2, 38.2, 0.65, 0.70, true);  // Basketball Hoop Base (West sideline, safely behind south boundary fence at y=38.2)
       this.nav.setBlock(44.5, 34.2, 0.45, 0.90, true);  // Metallic Ball Rack (North sideline)
       this.nav.setBlock(41.0, 34.2, 1.60, 0.65, true);  // Court Rest Bench (North sideline)
 
@@ -308,9 +305,9 @@
       this.nav.setBlock(38.0, 33.6, 11.5, 0.6, true);   // North Boundary Fence (blocks y=33.7, row 34 from x=38 to 49)
       this.nav.setBlock(48.9, 33.8, 0.6, 9.5, true);    // East Boundary Fence (blocks x=49.0, column 49 from y=34 to 43)
       this.nav.setBlock(38.0, 43.0, 11.5, 0.6, true);   // South Boundary Fence (blocks y=43.1, row 43 from x=38 to 49)
-      this.nav.setBlock(37.8, 33.8, 0.5, 3.7, true);    // West Wing North Fence (blocks x=38, y=33.8..37.5)
-      this.nav.setBlock(37.8, 39.5, 0.5, 3.7, true);    // West Wing South Fence (blocks x=38, y=39.5..43.2)
-      // Entrance doorway at x = 38, y = 37.5..39.5 is 100% open!
+      this.nav.setBlock(37.8, 33.8, 0.5, 0.4, true);    // West Wing North Corner Post (blocks x=38, y=33.8..34.2)
+      this.nav.setBlock(37.8, 38.0, 0.5, 5.2, true);    // West Wing South Fence (blocks x=38, y=38.0..43.2, enclosing hoop base)
+      // Wide West Entrance Doorway at x = 38, y = 34.2..38.0 is 100% wide open (almost 4 full tiles, zero obstacles)!
 
       // 9. Central Midnight Snack Street Obstacles (East Wing x: 30..36, y: 33..44 — 3-tile asphalt road aligned with East Spine)
       // Overhead Archway at (30.0, 33.0) is 100% walkable underneath so characters pass freely through all 3 road lanes (x=30..32)
@@ -1738,12 +1735,16 @@
             (x >= 12 && x <= 16 && y >= 45 && y <= 49)  // Central boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
           );
 
-          // Dedicated 2-tile wide Pathway Connector (x: 36..37, y: 31..39) linking North Promenade path down to Basketball Court Entrance
-          const isBasketballPromenade = (x >= 36 && x <= 37 && y >= 31 && y <= 39);
+          // 1. East Sector Main Path (主路徑) at x: 36..37, y: 28..34 connecting south towards Basketball Court
+          const isEastMainSouthPath = (x >= 36 && x <= 37 && y >= 28 && y <= 34);
+
+          // 2. Cross Connector linking East Promenade Spine (x: 32..35) to Main Path (x: 36..37) at y: 28..30
+          const isEastMainSpineConnector = (x >= 32 && x <= 36 && y >= 28 && y <= 30);
+
+          // 3. Wide Side Spur into Basketball Court (分一塊小路到籃球場) from Main Path (x: 36..37) into Court Entrance (x: 38) at y: 34..37
+          const isBasketballEntranceSpur = (x >= 36 && x <= 38 && y >= 34 && y <= 37);
 
           // Dedicated Pathway Connectors from East Spine (x: 32..34) into x = 38 entrances
-          const isBasketballEntrance = (x >= 36 && x <= 38 && y >= 38 && y <= 39); // Basketball Court West Entrance
-          const isBasketballNorthPath = (x >= 34 && x <= 38 && y >= 31 && y <= 32); // Basketball Court North Promenade Path
           const isCafeDoorSpur = (x >= 34 && x <= 38 && y >= 5 && y <= 6);         // Cafe West Entrance
           const isHowAreYouDoorSpur = (x >= 34 && x <= 38 && y >= 19 && y <= 20);   // "How Are You" West Entrance
 
@@ -1759,13 +1760,13 @@
           const isPath = (
             isMainNorthSouthSpine ||
             isEastNorthSouthSpine ||
-            isBasketballPromenade ||
+            isEastMainSouthPath ||
+            isEastMainSpineConnector ||
+            isBasketballEntranceSpur ||
             isEastWestAve1 ||
             isEastWestAve2 ||
             isGardenTerracePath ||
             isSouthSectorConnector ||
-            isBasketballEntrance ||
-            isBasketballNorthPath ||
             isLudwigDoorSpur ||
             isLudwigTerraceSpur ||
             isDormDoorSpur ||
@@ -3723,11 +3724,8 @@
         [2, 30],
         [8, 30],
 
-        // 3. Central Promenade Park Lawn (x: 29..31 — placed out in open lawn, 2 full tiles clear of Library glass window)
+        // 3. Central Promenade Park Lawn (x: 29..31 — placed out in open lawn, north of Library)
         [30, 9],
-        [30, 18],
-        [30, 25],
-        [30, 29],
 
         // 4. North & East Buffer Lawns (outside buildings)
         [41, 0],
@@ -4153,15 +4151,38 @@
         xMin: 38.0, xMax: 49.0, yMin: 43.08, yMax: 43.35,
         draw: () => this.models.drawSportsFence(this.ctx, 38.0, 43.10, this.ox, this.oy, 11.0, 0.22)
       });
-      // 4. West Entrance North Wing High Sports Wall & Mesh (x: 37.9 to 38.1, y: 33.8 to 37.5)
+      // 4. West Entrance North Corner Post High Sports Wall & Mesh (x: 37.9 to 38.1, y: 33.8 to 34.2)
       list.push({
-        xMin: 37.85, xMax: 38.15, yMin: 33.8, yMax: 37.5,
-        draw: () => this.models.drawSportsFence(this.ctx, 37.90, 33.8, this.ox, this.oy, 0.22, 3.7)
+        xMin: 37.85, xMax: 38.15, yMin: 33.8, yMax: 34.2,
+        draw: () => this.models.drawSportsFence(this.ctx, 37.90, 33.8, this.ox, this.oy, 0.22, 0.4)
       });
-      // 5. West Entrance South Wing High Sports Wall & Mesh (x: 37.9 to 38.1, y: 39.5 to 43.2)
+      // 5. West Entrance South Wing High Sports Wall & Mesh (x: 37.9 to 38.1, y: 38.0 to 43.2)
       list.push({
-        xMin: 37.85, xMax: 38.15, yMin: 39.5, yMax: 43.2,
-        draw: () => this.models.drawSportsFence(this.ctx, 37.90, 39.5, this.ox, this.oy, 0.22, 3.7)
+        xMin: 37.85, xMax: 38.15, yMin: 38.0, yMax: 43.2,
+        draw: () => this.models.drawSportsFence(this.ctx, 37.90, 38.0, this.ox, this.oy, 0.22, 5.2)
+      });
+      // 6. Basketball Court Entrance Gateway Posts (at x: 37.85, y: 34.2 and y: 38.0)
+      list.push({
+        xMin: 37.75, xMax: 38.05, yMin: 34.10, yMax: 34.35,
+        draw: () => {
+          this.models.drawBox(this.ctx, 37.80, 34.15, 0, 0.25, 0.25, 2.45, '#1e293b', '#0f172a', '#020617', this.ox, this.oy);
+          const p = isoToScreen(37.92, 34.27, 2.50, this.ox, this.oy);
+          this.ctx.fillStyle = '#f97316';
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      });
+      list.push({
+        xMin: 37.75, xMax: 38.05, yMin: 37.90, yMax: 38.15,
+        draw: () => {
+          this.models.drawBox(this.ctx, 37.80, 37.95, 0, 0.25, 0.25, 2.45, '#1e293b', '#0f172a', '#020617', this.ox, this.oy);
+          const p = isoToScreen(37.92, 38.07, 2.50, this.ox, this.oy);
+          this.ctx.fillStyle = '#f97316';
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
       });
 
 
