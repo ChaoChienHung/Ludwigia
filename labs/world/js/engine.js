@@ -52,17 +52,17 @@
   const CAFE_MIN_Y = 2;
   const CAFE_MAX_Y = 8;
 
-  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 38..46, y: 10..17 — Entrance at x: 38)
+  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 38..46, y: 15..22 — Entrance at x: 38)
   const HOW_ARE_YOU_MIN_X = 38;
   const HOW_ARE_YOU_MAX_X = 46;
-  const HOW_ARE_YOU_MIN_Y = 10;
-  const HOW_ARE_YOU_MAX_Y = 17;
+  const HOW_ARE_YOU_MIN_Y = 15;
+  const HOW_ARE_YOU_MAX_Y = 22;
 
-  // Zone 9: Campus Basketball Court (East Athletic Ground: x: 38..49, y: 20..29 — Entrance at x: 38)
+  // Zone 9: Campus Basketball Court (East of Night Market: x: 38..49, y: 34..43 — Entrance at x: 38)
   const COURT_MIN_X = 38;
   const COURT_MAX_X = 49;
-  const COURT_MIN_Y = 20;
-  const COURT_MAX_Y = 29;
+  const COURT_MIN_Y = 34;
+  const COURT_MAX_Y = 43;
 
   // --- Axonometric Coordinate Projections ---
   function isoToScreen(gx, gy, gz = 0, ox = 0, oy = 0) {
