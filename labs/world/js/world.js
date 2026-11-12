@@ -1726,11 +1726,14 @@
             (x >= 12 && x <= 16 && y >= 45 && y <= 49)  // Central boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
           );
 
-          // Dedicated 2-tile wide Pathway Connectors from East Spine (x: 35..37) into x = 38 entrances
-          const isBasketballEntrance = (x >= 35 && x <= 37 && y >= 38 && y <= 39); // Basketball Court West Entrance (2-tile wide spur)
+          // Dedicated 2-tile wide North-South Promenade (x: 36..37, y: 5..39) linking Cafe ↔ How Are You ↔ Basketball Court
+          const isEastWingPromenade = (x >= 36 && x <= 37 && y >= 5 && y <= 39);
+
+          // Dedicated Pathway Connectors from East Spine (x: 32..34) into x = 38 entrances
+          const isBasketballEntrance = (x >= 36 && x <= 38 && y >= 38 && y <= 39); // Basketball Court West Entrance
           const isBasketballNorthPath = (x >= 34 && x <= 38 && y >= 31 && y <= 32); // Basketball Court North Promenade Path
-          const isCafeDoorSpur = (x >= 35 && x <= 37 && y >= 5 && y <= 6);         // Cafe West Entrance (2-tile wide spur)
-          const isHowAreYouDoorSpur = (x >= 35 && x <= 37 && y >= 19 && y <= 20);   // "How Are You" West Entrance (2-tile wide spur)
+          const isCafeDoorSpur = (x >= 34 && x <= 38 && y >= 5 && y <= 6);         // Cafe West Entrance
+          const isHowAreYouDoorSpur = (x >= 34 && x <= 38 && y >= 19 && y <= 20);   // "How Are You" West Entrance
 
           // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds only)
           const isLudwigDoorSpur = (x >= 10 && x <= 12 && y >= 5 && y <= 6);
@@ -1744,6 +1747,7 @@
           const isPath = (
             isMainNorthSouthSpine ||
             isEastNorthSouthSpine ||
+            isEastWingPromenade ||
             isEastWestAve1 ||
             isEastWestAve2 ||
             isGardenTerracePath ||
