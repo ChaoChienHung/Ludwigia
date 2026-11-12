@@ -1439,6 +1439,15 @@
                 { x: 32.0, y: 5.0 }    // Outdoor Cafe Glass Entrance Patio
               ];
 
+              const howAreYouAnchors = [
+                { x: 44.5, y: 4.8 }, // Healing Heart Lounge Sofa
+                { x: 46.0, y: 6.0 }, // Heart Planet Floor Center
+                { x: 47.0, y: 4.2 }, // Diary Writing Desk & Mailbox
+                { x: 44.0, y: 7.5 }, // Sunlit Window-facing Floor
+                { x: 42.5, y: 6.0 }, // Entrance Threshold
+                { x: 40.5, y: 5.5 }  // Outdoor Garden Spur Approach
+              ];
+
               const cyberAnchors = [
                 { x: 14.0, y: 51.5 }, // Central North Corridor
                 { x: 11.5, y: 52.0 }, // Blue Side Gaming Station
@@ -1484,6 +1493,7 @@
                 snack_street: nightMarketAnchors,
                 cafe: cafeAnchors,
                 garden_cafe: cafeAnchors,
+                how_are_you: howAreYouAnchors,
                 cyber_cafe: cyberAnchors,
                 cyber: cyberAnchors,
                 howling_abyss: abyssAnchors,
@@ -1672,10 +1682,11 @@
           const isBasketball = (x >= 39 && x <= 50 && y >= 17 && y <= 26);
           const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
           const isCafe = (x >= 33 && x <= 39 && y >= 2 && y <= 7);
+          const isHowAreYou = (x >= HOW_ARE_YOU_MIN_X && x <= HOW_ARE_YOU_MAX_X && y >= HOW_ARE_YOU_MIN_Y && y <= HOW_ARE_YOU_MAX_Y);
           const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
           const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 92);
           const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
-          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe;
+          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou;
 
           // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
           const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
@@ -1701,6 +1712,7 @@
           const isLibDoorSpur = (x >= 15 && x <= 18 && y >= 21 && y <= 22);
           const isDouyinDoorSpur = (x >= 15 && x <= 18 && y >= 37 && y <= 38);
           const isCafeDoorSpur = (x >= 32 && x <= 33 && y >= 4 && y <= 6);
+          const isHowAreYouDoorSpur = (x >= 39 && x <= 42 && y >= 5 && y <= 6);
 
           const isPath = (
             isMainNorthSouthSpine ||
@@ -1717,7 +1729,8 @@
             isAiDoorSpur ||
             isLibDoorSpur ||
             isDouyinDoorSpur ||
-            isCafeDoorSpur
+            isCafeDoorSpur ||
+            isHowAreYouDoorSpur
           );
 
           // Chasm Void:
@@ -1743,6 +1756,7 @@
           else if (this.currentZone === 'sanmin_school' && !isSchool) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'douyin_office' && !isDouyin) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'cafe' && !isCafe) ctx.globalAlpha = this.outsideAlpha;
+          else if (this.currentZone === 'how_are_you' && !isHowAreYou) ctx.globalAlpha = this.outsideAlpha;
           else if (this.currentZone === 'cyber_cafe' && !isCyber) ctx.globalAlpha = this.outsideAlpha;
 
           const p0 = isoToScreen(x, y, 0, ox, oy);
@@ -1790,6 +1804,9 @@
           } else if (isCafe) {
             // Ludwigia Indoor Specialty Cafe — Warm Walnut Herringbone Wood Floor
             ctx.fillStyle = (x + y) % 2 === 0 ? '#58240a' : '#451a03';
+          } else if (isHowAreYou) {
+            // "How Are You Doing Today" Healing Sanctuary — Soft Warm Ivory Blush Parquet Flooring
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#fff1f2' : '#fce7f3';
           } else if (isCyber) {
             // Cyber LAN Lounge — High-Tech Carbon Soundproof Carpet
             ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
@@ -1851,6 +1868,12 @@
       ctx.save();
       if (this.currentZone !== 'douyin_office') ctx.globalAlpha = this.outsideAlpha;
       this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
+      ctx.restore();
+
+      // Render "How Are You Doing Today" Heart Planet Ground Decal Floor (centered at cx: 46.0, cy: 6.0)
+      ctx.save();
+      if (this.currentZone !== 'how_are_you') ctx.globalAlpha = this.outsideAlpha;
+      this.models.drawHeartPlanetFloor(ctx, 46.0, 6.0, 2.45, ox, oy);
       ctx.restore();
 
       // Basketball Court Boundary & Key Markings (True Isometric Ground Projection at x: 39..50, y: 17..26)
@@ -3647,9 +3670,9 @@
         [2, 30],
         [8, 30],
 
-        // 3. East Lawn Buffer (x: 40..48, y: 1..8 — open park lawn east of Cafe)
-        [42, 3],
-        [42, 7],
+        // 3. East Lawn Buffer (Open garden lawn flanking the "How Are You Doing Today" Sanctuary)
+        [41, 1],
+        [51, 11],
 
         // 4. East Park Corridor (x: 33..38, y: 18..25 — vast peaceful park between East Promenade and Basketball Court)
         [34, 19],
@@ -3954,6 +3977,135 @@
       list.push({
         xMin: 34.8, xMax: 35.3, yMin: 4.0, yMax: 4.5,
         draw: () => this.models.drawCafePendantLamp(this.ctx, 35.0, 4.2, 2.2, this.ox, this.oy)
+      });
+
+      // === 13. "HOW ARE YOU DOING TODAY" SANCTUARY (心靈小屋「你今天過得好嗎」x: 42..50, y: 2..10) ===
+      // North Wall (y = 2, x: 42 to 50)
+      list.push({
+        xMin: 41.9, xMax: 50.1, yMin: 1.8, yMax: 2.2,
+        draw: () => {
+          this.ctx.save();
+          this.models.drawBox(this.ctx, 42.0, 2.0, 0, 8.2, 0.25, 2.7, '#fffdfa', '#fef3c7', '#fde68a', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+
+      // East Wall (x = 50, y: 2 to 10)
+      list.push({
+        xMin: 49.9, xMax: 50.3, yMin: 2.0, yMax: 10.1,
+        draw: () => {
+          this.ctx.save();
+          this.models.drawBox(this.ctx, 50.0, 2.0, 0, 0.25, 8.0, 2.7, '#fef3c7', '#fde68a', '#f59e0b', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+
+      // South Wall with Panoramic Blush Glass Window (y = 10, x: 42 to 50)
+      list.push({
+        xMin: 41.9, xMax: 50.1, yMin: 9.8, yMax: 10.3,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHowAreYou < 0.99) this.ctx.globalAlpha = this.wallAlphaHowAreYou;
+          // Timber Frame Base & Top
+          this.models.drawBox(this.ctx, 42.0, 10.0, 0, 8.2, 0.25, 0.55, '#fde68a', '#fcd34d', '#f59e0b', this.ox, this.oy);
+          this.models.drawBox(this.ctx, 42.0, 10.0, 2.45, 8.2, 0.25, 0.25, '#fde68a', '#fcd34d', '#f59e0b', this.ox, this.oy);
+
+          // Floor-to-Ceiling Glass Window Panels (x: 42.5 to 49.5, z: 0.55 to 2.45)
+          const g0 = isoToScreen(42.5, 10.12, 0.55, this.ox, this.oy);
+          const g1 = isoToScreen(49.5, 10.12, 0.55, this.ox, this.oy);
+          const g2 = isoToScreen(49.5, 10.12, 2.45, this.ox, this.oy);
+          const g3 = isoToScreen(42.5, 10.12, 2.45, this.ox, this.oy);
+          this.ctx.fillStyle = 'rgba(253, 242, 248, 0.40)';
+          this.ctx.beginPath();
+          this.ctx.moveTo(g0.x, g0.y); this.ctx.lineTo(g1.x, g1.y); this.ctx.lineTo(g2.x, g2.y); this.ctx.lineTo(g3.x, g3.y);
+          this.ctx.closePath();
+          this.ctx.fill();
+          this.ctx.strokeStyle = '#f472b6';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+
+          // Mullion divider vertical lines
+          [44.5, 46.5, 48.0].forEach(mx => {
+            const m0 = isoToScreen(mx, 10.12, 0.55, this.ox, this.oy);
+            const m1 = isoToScreen(mx, 10.12, 2.45, this.ox, this.oy);
+            this.ctx.beginPath();
+            this.ctx.moveTo(m0.x, m0.y); this.ctx.lineTo(m1.x, m1.y);
+            this.ctx.stroke();
+          });
+          this.ctx.restore();
+        }
+      });
+
+      // West Facade Wall (x = 42, y: 2 to 10) with Entrance Doorway at y: 5.2 to 6.8
+      // West Wall Top Segment (y: 2.0 to 5.2)
+      list.push({
+        xMin: 41.8, xMax: 42.3, yMin: 2.0, yMax: 5.2,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHowAreYou < 0.99) this.ctx.globalAlpha = this.wallAlphaHowAreYou;
+          this.models.drawBox(this.ctx, 42.0, 2.0, 0, 0.25, 3.2, 2.7, '#fffdfa', '#fef3c7', '#fde68a', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+      // West Wall Bottom Segment (y: 6.8 to 10.0)
+      list.push({
+        xMin: 41.8, xMax: 42.3, yMin: 6.8, yMax: 10.1,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHowAreYou < 0.99) this.ctx.globalAlpha = this.wallAlphaHowAreYou;
+          this.models.drawBox(this.ctx, 42.0, 6.8, 0, 0.25, 3.2, 2.7, '#fffdfa', '#fef3c7', '#fde68a', this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+      // Double Swinging Doors (x = 42.0, y: 5.2 to 6.8)
+      const howAreYouDoorW = 0.80;
+      list.push({
+        xMin: 41.8, xMax: 42.8, yMin: 5.15, yMax: 6.85,
+        draw: () => {
+          const doorAngle = (this.doorHowAreYouOpen || 0) * 1.35;
+          const dnTipX = 42.0 + Math.sin(doorAngle) * howAreYouDoorW;
+          const dnTipY = 5.2 + Math.cos(doorAngle) * howAreYouDoorW;
+          const dsTipX = 42.0 + Math.sin(doorAngle) * howAreYouDoorW;
+          const dsTipY = 6.8 - Math.cos(doorAngle) * howAreYouDoorW;
+          this.ctx.save();
+          if (this.wallAlphaHowAreYou < 0.99) this.ctx.globalAlpha = this.wallAlphaHowAreYou;
+          this.drawDoorLeaf(42.0, 5.2, dnTipX, dnTipY, this.ox, this.oy);
+          this.drawDoorLeaf(42.0, 6.8, dsTipX, dsTipY, this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+      // West Entrance Doorway Lintel Beam & Mounted Signboard
+      list.push({
+        xMin: 41.8, xMax: 42.4, yMin: 5.1, yMax: 6.9,
+        z: 2.15,
+        draw: () => {
+          this.ctx.save();
+          if (this.wallAlphaHowAreYou < 0.99) this.ctx.globalAlpha = this.wallAlphaHowAreYou;
+          this.models.drawBox(this.ctx, 42.0, 5.2, 2.15, 0.25, 1.6, 0.55, '#fde68a', false, '#f59e0b', this.ox, this.oy);
+
+          // Illuminated Entrance Plaque (Sheared on Y-axis longitudinal wall)
+          this.models.drawHowAreYouSign(this.ctx, 41.95, 6.0, this.ox, this.oy);
+          this.ctx.restore();
+        }
+      });
+
+      // Interior Healing Lounge Sofa
+      list.push({
+        furnitureId: 'how_are_you_sofa',
+        xMin: 43.2, xMax: 45.5, yMin: 3.2, yMax: 5.8,
+        draw: () => this.models.drawHowAreYouSofa(this.ctx, 43.5, 3.6, this.ox, this.oy)
+      });
+
+      // Interior Diary Writing Desk (記事本與心事留言桌)
+      list.push({
+        xMin: 47.2, xMax: 49.6, yMin: 2.8, yMax: 4.4,
+        draw: () => this.models.drawHowAreYouDiaryTable(this.ctx, 47.5, 3.2, this.ox, this.oy)
+      });
+
+      // Warm Star Floor Lamp
+      list.push({
+        xMin: 42.2, xMax: 42.8, yMin: 2.2, yMax: 2.8,
+        draw: () => this.models.drawHowAreYouFloorLamp(this.ctx, 42.5, 2.5, this.ox, this.oy)
       });
 
 
