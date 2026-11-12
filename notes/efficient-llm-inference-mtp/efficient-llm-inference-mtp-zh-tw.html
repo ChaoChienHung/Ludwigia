@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="efficient-llm-inference-mtp">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/efficient-llm-inference-mtp/efficient-llm-inference-mtp-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,37 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Somesh Mehra 等人在 2025 年初發表的《On multi-token prediction for efficient LLM inference》，直面了一個關鍵的工業痛點：<strong>如何為已經基於標準 NTP 預訓練完成的現成大模型（如 LLaMA、Mistral）後向適配 MTP 能力？</strong> 該研究深入剖析了隱層表徵的特異性帶來的適配壁壘。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">研究既有 next-token 模型的未來預測與 MTP 適配問題。hidden representations 對 NTP 的專門化意味新增 heads 並非自動成功；凍結與共同微調的結果需分開看。</p>
+<p class="mb-3">依據論文分析：</p>
+
+<ul class="note-list">
+<li><strong>NTP 特徵的過度專門化（Specialization Bottleneck）</strong>：在純粹 NTP 下訓練的大模型，其頂層隱層特徵向量被高度優化為「僅包含足夠預測下一個相鄰 token 的局部殘差資訊」，關於更遠未來 token 的信息早在深層計算中被作為噪聲丟棄。</li>
+<li><strong>凍結主幹適配的局限</strong>：若僅凍結主幹訓練頂層 MTP Heads，由於輸入特徵源頭本身缺乏未來多步的全局特徵，輔助 Heads 的準確率存在不可逾越的理論上限。</li>
+<li><strong>輕量解凍與適配器架構</strong>：論文對比了 LoRA 微調主幹頂層、引入跨層特徵穿透連接（Skip Connections）等策略，探尋最低微調代價下激發多步預測能力的路徑。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">未來距離實驗；frozen head與joint adaptation；表示專門化的證據與限制。</p>
+<ul class="note-list">
+<li><strong>量化適配天花板</strong>：實驗證實，直接在凍結的 NTP 主幹上掛載 Heads，其推測解碼加速比普遍被壓制在 <strong>1.3× 至 1.6×</strong> 之間，難以達到從頭預訓練 MTP 所具備的 2.5×+ 的高接受長度。</li>
+<li><strong>微調權衡曲線</strong>：解凍主模型最後 2–4 層並配合小學習率進行聯合微調，能在不破壞主模型原始性能的前提下，將接受長度拉升約 20%–30%。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>後向適配不等於原生預訓練</strong>：這項研究最關鍵的邊界在於明確指出「事後補課」與「從頭預訓練」的不可替代性；無法僅靠微調幾個小 Head 就能完全獲得原生 MTP 模型的表徵全局性。</li>
+<li><strong>實驗集中於中等規模</strong>：論文的主要實證落在 7B 與 13B 級別模型，更大規模（如 70B+）下隱層表徵的富餘能力是否能緩解此瓶頸仍需獨立論證。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +280,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>純 NTP 預訓練模型頂層表徵存在嚴重的「下一步局部專門化」，丟失了遠期預測線索。</li>
+<li>完全凍結主幹訓練附加 Heads 會面臨明顯的接受率天花板（通常加速比 &lt;1.6×）。</li>
+<li>適度解凍主幹頂層或引入跨層特徵融合是突破後向適配瓶頸的必要代價。</li>
+<li>清晰劃分了後向加載 MTP 與原生預訓練 MTP 之間的本質特徵差距。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

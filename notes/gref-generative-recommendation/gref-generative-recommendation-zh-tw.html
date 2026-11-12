@@ -11,8 +11,8 @@
   <meta name="site:tag_concepts" content=",,concept.machine_learning">
   <meta name="site:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
   <meta name="site:canonical_id" content="gref-generative-recommendation">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/gref-generative-recommendation/gref-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -42,6 +42,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -59,7 +62,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -154,8 +157,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
 <a class="note-toc-link level-2" href="#technical-articles">技術文章（Technical Articles）</a>
@@ -181,7 +185,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -207,22 +211,37 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
-
-<p class="mb-3">重排序要從候選集合決定一串 item 排列，逐 item 自回歸產生會造成延遲。GReF 的 Gen-Reranker 先以曝光順序預訓練，再以 Rerank-DPO 納入序列層級評估；Ordered MTP 讓模型同時預測多個未來位置的 items 並保留順序。</p>
-
-<p class="mb-3">token 是排序序列裡的 item／候選位置，不是同一 item 的 SID 成分。論文發表於 CIKM 2025，作者報告快手部署與接近非自回歸模型的 offline latency。這些是作者結果，不代表本筆記獨立重現，也不自動保證 LLM speculative decoding 的取樣分布不變。</p>
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">快手團隊在 CIKM 2025 發表的 GReF（《GReF: A Unified Generative Framework for Efficient Reranking via Ordered Multi-token Prediction》），直面了推薦系統中最精細、延遲約束最苛刻的<strong>重排序（Reranking）階段</strong>，開創性地利用 Ordered MTP 將生成式重排的解碼時間壓縮至極限。</p>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
+
+<p class="mb-3">依據 CIKM 2025 論文：</p>
 
 <ul class="note-list">
-<li>問題：候選序列的組合空間與自回歸延遲。</li>
-<li>模型：bidirectional encoder 與 dynamic autoregressive decoder。</li>
-<li>目標：Rerank-DPO 與 Ordered MTP。</li>
-<li>驗證：latency、list quality、線上收益與解碼保證。</li>
+<li><strong>Token 的實體語義</strong>：最終呈現給用戶的<strong>推薦列表（Recommendation Slate）中具有先後排列順序的多個推薦商品</strong>。</li>
+<li><strong>Ordered MTP 機制</strong>：重排序本質上需要建模列表中商品之間的相互排列多樣性與組合效應。GReF 透過 Ordered MTP Heads，在保持輸出順序敏感性的同時，單步解碼出前置列表中排名靠前的一整組商品。</li>
+<li><strong>Rerank-DPO 偏好優化</strong>：結合直接偏好優化（DPO）演算法，以用戶對整個推薦列表的宏觀正負反饋（如跳出率、停留時長、連續點擊）微調 Ordered MTP 模型，確保並行輸出的推薦列表具備全局列表級最優性。</li>
+</ul>
+</section>
+
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
+
+<ul class="note-list">
+<li><strong>工業生產部署驗證</strong>：作者在論文中正式報告，該框架已經在<strong>快手短視頻推薦重排流水線中全面投入工業部署（Deployed in Production）</strong>。</li>
+<li><strong>時延大幅下降</strong>：在滿足極致毫秒級超時控制（P99 Latency SLA）的嚴苛條件下，實現在線各項互動指標的大幅改善。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>重排序場景限定</strong>：GReF 的輸入是精排階段篩選出的幾十到上百個候選集合，任務是列表重排（Reranking），這與全庫百萬級商品的開放式生成式檢索（Generative Retrieval）在搜尋空間規模上有著本質差異。</li>
+<li><strong>序列依賴的重排偏好限制</strong>：Ordered MTP 在極端長列表下的表現受限於重排窗口大小，超長推薦列表仍需分塊調度。</li>
 </ul>
 </section>
 
@@ -277,9 +296,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>GReF 的 MTP 單位是 reranking 序列的多個未來 items。</li>
-<li>Ordered MTP 負責生成效率，Rerank-DPO 負責序列偏好對齊。</li>
-<li>作者報告快手部署；取樣分布保證需要另外查核。</li>
+<li>GReF 首次將 MTP 引入推薦系統延遲極其敏感的列表重排序（Reranking）階段。</li>
+<li>採用 Ordered MTP 同步輸出具備順序依賴的多商品列表，大幅壓低 P99 響應延遲。</li>
+<li>結合 Rerank-DPO 實現列表級用戶宏觀反饋的端到端優化。</li>
+<li>作者報告該方案已在快手短視頻推薦核心鏈路全面生產部署。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

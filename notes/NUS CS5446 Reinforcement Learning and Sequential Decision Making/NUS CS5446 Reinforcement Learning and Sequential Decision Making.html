@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5446-reinforcement-learning-and-sequential-decision-making">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-11-01">
-  <meta name="site:reading_time_minutes" content="508">
+  <meta name="site:reading_time_minutes" content="575">
   <meta name="site:source" content="notes/NUS CS5446 Reinforcement Learning and Sequential Decision Making/NUS CS5446 Reinforcement Learning and Sequential Decision Making.md">
   <script>
   (() => {
@@ -166,6 +166,60 @@
 <a class="note-toc-link level-2" href="#4-notation-contract">4. Notation contract</a>
 <a class="note-toc-link level-2" href="#5-five-confusions-to-resolve-before-reading-formulas">5. Five confusions to resolve before reading formulas</a>
 <a class="note-toc-link level-2" href="#6-what-complete-understanding-means-for-each-week">6. What “complete understanding” means for each week</a>
+<a class="note-toc-link level-1" href="#foundations-and-notation">Foundations and notation</a>
+<a class="note-toc-link level-2" href="#one-course-several-decision-problems">One course, several decision problems</a>
+<a class="note-toc-link level-2" href="#symbols-and-reward-timing">Symbols and reward timing</a>
+<a class="note-toc-link level-2" href="#pick-the-right-target">Pick the right target</a>
+<a class="note-toc-link level-1" href="#week-1-classical-planning">Week 1 — Classical planning</a>
+<a class="note-toc-link level-2" href="#1-1-problem-representation-and-assumptions">1.1 Problem representation and assumptions</a>
+<a class="note-toc-link level-2" href="#1-2-strips-and-pddl">1.2 STRIPS and PDDL</a>
+<a class="note-toc-link level-2" href="#1-3-progression-and-regression">1.3 Progression and regression</a>
+<a class="note-toc-link level-2" href="#1-4-search-heuristics-and-complexity">1.4 Search, heuristics, and complexity</a>
+<a class="note-toc-link level-2" href="#1-5-satplan">1.5 SATPlan</a>
+<a class="note-toc-link level-2" href="#1-6-lfm-assisted-and-responsible-planning">1.6 LFM-assisted and responsible planning</a>
+<a class="note-toc-link level-1" href="#week-2-real-world-planning">Week 2 — Real-world planning</a>
+<a class="note-toc-link level-2" href="#2-1-relaxation-and-admissibility">2.1 Relaxation and admissibility</a>
+<a class="note-toc-link level-2" href="#2-2-state-abstraction-and-subgoal-serialization">2.2 State abstraction and subgoal serialization</a>
+<a class="note-toc-link level-2" href="#2-3-htns-and-high-level-actions">2.3 HTNs and high-level actions</a>
+<a class="note-toc-link level-2" href="#2-4-reachable-sets-and-safe-deductions">2.4 Reachable sets and safe deductions</a>
+<a class="note-toc-link level-1" href="#week-3-rational-decision-making">Week 3 — Rational decision making</a>
+<a class="note-toc-link level-2" href="#3-1-beliefs-preferences-and-meu">3.1 Beliefs, preferences, and MEU</a>
+<a class="note-toc-link level-2" href="#3-2-six-preference-axioms">3.2 Six preference axioms</a>
+<a class="note-toc-link level-2" href="#3-3-money-risk-and-certainty-equivalents">3.3 Money, risk, and certainty equivalents</a>
+<a class="note-toc-link level-2" href="#3-4-allais-paradox-and-independence">3.4 Allais paradox and independence</a>
+<a class="note-toc-link level-2" href="#3-5-game-theory">3.5 Game theory</a>
+<a class="note-toc-link level-2" href="#3-6-decision-networks-information-and-utility-objectives">3.6 Decision networks, information, and utility objectives</a>
+<a class="note-toc-link level-1" href="#week-4-markov-decision-processes-and-reinforcement-learning">Week 4 — Markov decision processes and reinforcement learning</a>
+<a class="note-toc-link level-2" href="#4-1-specify-the-model-completely">4.1 Specify the model completely</a>
+<a class="note-toc-link level-2" href="#4-2-policy-return-and-horizons">4.2 Policy, return, and horizons</a>
+<a class="note-toc-link level-2" href="#4-3-bellman-equations">4.3 Bellman equations</a>
+<a class="note-toc-link level-2" href="#4-4-value-iteration-vi">4.4 Value iteration (VI)</a>
+<a class="note-toc-link level-2" href="#4-5-policy-iteration-pi">4.5 Policy iteration (PI)</a>
+<a class="note-toc-link level-2" href="#4-6-grid-world-and-delayed-action-templates">4.6 Grid-world and delayed-action templates</a>
+<a class="note-toc-link level-2" href="#4-7-prediction-control-and-model-information">4.7 Prediction/control and model information</a>
+<a class="note-toc-link level-2" href="#4-8-adaptive-dynamic-programming-adp">4.8 Adaptive dynamic programming (ADP)</a>
+<a class="note-toc-link level-2" href="#4-9-monte-carlo-mc">4.9 Monte Carlo (MC)</a>
+<a class="note-toc-link level-2" href="#4-10-temporal-difference-prediction-td-0">4.10 Temporal difference prediction: TD(0)</a>
+<a class="note-toc-link level-2" href="#4-11-sarsa-and-q-learning">4.11 SARSA and Q-learning</a>
+<a class="note-toc-link level-2" href="#4-12-exploration-convergence-and-optimism">4.12 Exploration, convergence, and optimism</a>
+<a class="note-toc-link level-1" href="#week-5-function-approximation-and-policy-search">Week 5 — Function approximation and policy search</a>
+<a class="note-toc-link level-2" href="#5-1-regression-gradients-and-generalization">5.1 Regression, gradients, and generalization</a>
+<a class="note-toc-link level-2" href="#5-2-semi-gradient-td-and-approximate-q-learning">5.2 Semi-gradient TD and approximate Q-learning</a>
+<a class="note-toc-link level-2" href="#5-3-why-function-approximation-can-be-unstable">5.3 Why function approximation can be unstable</a>
+<a class="note-toc-link level-2" href="#5-4-deep-q-networks-dqn">5.4 Deep Q-networks (DQN)</a>
+<a class="note-toc-link level-2" href="#5-5-policy-search-and-softmax">5.5 Policy search and softmax</a>
+<a class="note-toc-link level-2" href="#5-6-reinforce-and-baselines">5.6 REINFORCE and baselines</a>
+<a class="note-toc-link level-2" href="#5-7-actor-critic">5.7 Actor-Critic</a>
+<a class="note-toc-link level-2" href="#5-8-trpo-and-ppo">5.8 TRPO and PPO</a>
+<a class="note-toc-link level-1" href="#week-7-guided-sequential-decisions">Week 7 — Guided sequential decisions</a>
+<a class="note-toc-link level-2" href="#7-1-decision-time-versus-demonstration-based-methods">7.1 Decision-time versus demonstration-based methods</a>
+<a class="note-toc-link level-2" href="#7-2-rollout">7.2 Rollout</a>
+<a class="note-toc-link level-2" href="#7-3-mcts-and-uct">7.3 MCTS and UCT</a>
+<a class="note-toc-link level-2" href="#7-4-alphago-zero-and-puct">7.4 AlphaGo Zero and PUCT</a>
+<a class="note-toc-link level-2" href="#7-5-bc-dagger-irl-and-gail">7.5 BC, DAgger, IRL, and GAIL</a>
+<a class="note-toc-link level-1" href="#common-mistakes-and-calculation-techniques">Common mistakes and calculation techniques</a>
+<a class="note-toc-link level-2" href="#common-wrong-answers-and-their-repairs">Common wrong answers and their repairs</a>
+<a class="note-toc-link level-2" href="#reusable-answer-structure">Reusable answer structure</a>
 <a class="note-toc-link level-1" href="#1-foundations-of-ai-planning-the-rational-agent-architecture">1. Foundations of AI Planning &amp; The Rational Agent Architecture</a>
 <a class="note-toc-link level-2" href="#1-1-the-perception-action-communication-loop">1.1 The Perception-Action-Communication Loop</a>
 <a class="note-toc-link level-2" href="#1-2-real-world-application-domains">1.2 Real-World Application Domains</a>
@@ -954,6 +1008,1587 @@ Week 10  Foundation-model-based decision systems and human–AI alignment</code>
 </ol>
 
 <blockquote class="blockquote mb-3"><strong>Summary:</strong> Weeks 1–2 address how to represent and decompose problems; Week 3 defines preferences and rational choice; Week 4 computes value under known or unknown stochastic dynamics; Week 5 handles generalization and stable learning in large spaces; Week 6 supplies guidance when rewards are weak or unreliable; Week 7 compares decision-time search with learning from demonstrations; later chapters add learned world models and strategic multi-agent choices.</blockquote>
+
+<h1 class="mt-4">Master Cheatsheet &amp; Executive Quick Reference (Lec 1–10)</h1>
+
+<blockquote class="blockquote mb-3"><strong>Executive Overview &amp; Exam Quick Reference:</strong></blockquote>
+
+<blockquote class="blockquote mb-3">This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 10 of NUS CS5446 (<em>Reinforcement Learning and Sequential Decision Making</em>). It provides an immediate look-up guide for classical planning heuristics, rational preference axioms, MEU, game theory, dynamic programming Bellman operators, model-free TD/Q-learning updates, policy gradients, PBRS reward shaping, MCTS UCT bounds, and common calculation techniques.</blockquote>
+
+<hr>
+</section>
+
+<section id="foundations-and-notation" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Foundations and notation</h3>
+
+<h4 id="one-course-several-decision-problems" class="mb-2">One course, several decision problems</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Problem</th>
+<th>Information supplied</th>
+<th>Objective</th>
+<th>Typical method</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Classical planning</td>
+<td>Symbolic initial state, deterministic actions, goal</td>
+<td>Find a valid or low-cost action sequence</td>
+<td>Progression, regression, SATPlan</td>
+</tr>
+<tr>
+<td>Hierarchical planning</td>
+<td>Primitive actions and task decomposition methods</td>
+<td>Find an executable refinement of a task network</td>
+<td>HTN search</td>
+</tr>
+<tr>
+<td>One-shot uncertain choice</td>
+<td>Outcome probabilities and preferences</td>
+<td>Maximize expected utility</td>
+<td>MEU</td>
+</tr>
+<tr>
+<td>Known-model sequential choice</td>
+<td>MDP transition and reward model</td>
+<td>Maximize expected cumulative return</td>
+<td>Value/policy iteration</td>
+</tr>
+<tr>
+<td>Unknown-model prediction</td>
+<td>Experience under a fixed policy</td>
+<td>Estimate that policy's value</td>
+<td>Passive ADP, MC, TD</td>
+</tr>
+<tr>
+<td>Unknown-model control</td>
+<td>Experience and freedom to choose actions</td>
+<td>Learn a good policy while exploring</td>
+<td>Active ADP, MC control, SARSA, Q-learning</td>
+</tr>
+<tr>
+<td>Large/continuous state space</td>
+<td>Features or neural representation</td>
+<td>Generalize values/policies</td>
+<td>Function approximation, DQN, policy gradients</td>
+</tr>
+<tr>
+<td>Large model with simulator</td>
+<td>Current state and simulation budget</td>
+<td>Choose an action now</td>
+<td>Rollout, MCTS</td>
+</tr>
+<tr>
+<td>Expert demonstrations</td>
+<td>Expert state-action pairs</td>
+<td>Learn expert-like behavior</td>
+<td>BC, DAgger; IRL recovers rewards</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3"><strong>Three distinctions to state precisely:</strong> prediction estimates a fixed policy; control improves a policy. Model-based methods know or learn transitions/rewards; model-free methods can learn without an explicit transition model. Planning spends computation using a model; learning changes estimates or parameters using experience.</p>
+
+<h4 id="symbols-and-reward-timing" class="mb-2">Symbols and reward timing</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Symbol</th>
+<th>Meaning</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>$s,a,s'$</td>
+<td>Current state, chosen action, next state</td>
+</tr>
+<tr>
+<td>$P(s'\mid s,a)$ or $T(s'\mid s,a)$</td>
+<td>Transition probability</td>
+</tr>
+<tr>
+<td>$R(s,a,s')$</td>
+<td>Reward for the transition</td>
+</tr>
+<tr>
+<td>$\gamma$</td>
+<td>Discount factor; normally $0\le\gamma&lt;1$ for continuing discounted problems</td>
+</tr>
+<tr>
+<td>$\alpha$</td>
+<td>Learning rate; distinct from discounting</td>
+</tr>
+<tr>
+<td>$\pi(a\mid s)$</td>
+<td>Stochastic policy; deterministic policy written $\pi(s)$</td>
+</tr>
+<tr>
+<td>$G_t$</td>
+<td>Return from one realized trajectory</td>
+</tr>
+<tr>
+<td>$V^\pi(s)$ or $U^\pi(s)$</td>
+<td>Expected return under fixed policy $\pi$</td>
+</tr>
+<tr>
+<td>$Q^\pi(s,a)$</td>
+<td>Expected return for first taking $a$, then following $\pi$</td>
+</tr>
+<tr>
+<td>$V^<em>,Q^</em>,\pi^*$</td>
+<td>Optimal value, action value, and policy</td>
+</tr>
+<tr>
+<td>$\delta$</td>
+<td>TD error: target minus current estimate</td>
+</tr>
+<tr>
+<td>$\theta,w,\beta$</td>
+<td>Trainable parameters; different symbols do not imply different principles</td>
+</tr>
+<tr>
+<td>$\hat V,\hat Q,\hat P$</td>
+<td>Estimates rather than exact quantities</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3"><strong>Use transition rewards consistently.</strong> The course defaults to reward-on-entry unless specified otherwise: $R(s,a,s')=f(s')$. Reward-of-current-state is another valid convention: $R(s,a,s')=f(s)$. Rewards may also depend on $(s,a)$ alone, independent of the resulting state. Never mix conventions inside a solution.</p>
+
+<p class="mb-3">If the immediate reward received after $a_t$ is denoted $r_t$, then</p>
+
+<p class="mb-3">$$G_t=r_t+\gamma r_{t+1}+\gamma^2r_{t+2}+\cdots.$$</p>
+
+<p class="mb-3">With Sutton–Barto indexing, exactly the same reward is called $R_{t+1}$, giving $G_t=R_{t+1}+\gamma R_{t+2}+\cdots$. Use the indexing convention specified in the problem.</p>
+
+<p class="mb-3"><strong>Episodic terminal state:</strong> assign $V(T)=0$ after termination and pay terminal reward on the transition into $T$. Do not pay it once on entry and again by using a nonzero terminal value. A genuine terminal transition has no bootstrap term; a time-limit truncation is not automatically a terminal state.</p>
+
+<h4 id="pick-the-right-target" class="mb-2">Pick the right target</h4>
+
+<p class="mb-3">All incremental value updates have the form <strong>estimate ← estimate + learning rate × (target − estimate)</strong>.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Method</th>
+<th>Target for the current sample</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>MC</td>
+<td>Completed return $G_t$</td>
+</tr>
+<tr>
+<td>TD(0) prediction</td>
+<td>$r+\gamma V(s')$</td>
+</tr>
+<tr>
+<td>SARSA</td>
+<td>$r+\gamma Q(s',a')$, using the actually selected next action</td>
+</tr>
+<tr>
+<td>Q-learning</td>
+<td>$r+\gamma\max_bQ(s',b)$</td>
+</tr>
+<tr>
+<td>DQN</td>
+<td>$r+\gamma\max_bQ_{\theta^-}(s',b)$, with a target network</td>
+</tr>
+<tr>
+<td>Policy evaluation</td>
+<td>$\sum_{s'}P(s'\mid s,\pi(s))[R+\gamma V(s')]$</td>
+</tr>
+<tr>
+<td>Value iteration</td>
+<td>Maximum over actions of the expected Bellman backup</td>
+</tr>
+<tr>
+<td>REINFORCE actor weight</td>
+<td>$G_t$, or $G_t-b(s_t)$ with an action-independent baseline</td>
+</tr>
+<tr>
+<td>TD Actor-Critic actor weight</td>
+<td>$r+\gamma V_w(s')-V_w(s)$</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section id="week-1-classical-planning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 1 — Classical planning</h3>
+
+<h4 id="1-1-problem-representation-and-assumptions" class="mb-2">1.1 Problem representation and assumptions</h4>
+
+<p class="mb-3">A planning problem specifies an initial state, legal actions with effects, a goal test, and optionally action costs. A plan is an action sequence whose execution reaches a goal-satisfying state.</p>
+
+<p class="mb-3">Classical planning normally assumes <strong>fully observable, deterministic, static, discrete, single-agent</strong> dynamics and a known model. A partially observable problem may require a belief state; stochastic effects require contingent behavior; continuous actions and changing environments need richer models.</p>
+
+<p class="mb-3">A rational agent senses, models/reasons, decides, acts, and may communicate. The chosen action is justified by the information and objective available at decision time; a bad realized outcome alone does not establish irrationality.</p>
+
+<h4 id="1-2-strips-and-pddl" class="mb-2">1.2 STRIPS and PDDL</h4>
+
+<ul class="note-list">
+<li><strong>State:</strong> set of true ground atoms, e.g. $\{At(x,l),Object(x),Location(l)\}$. Under the closed-world assumption, an absent atom is false.</li>
+<li><strong>Ground atom/action:</strong> all variables replaced by objects. An action schema represents a family of ground actions.</li>
+<li><strong>Goal:</strong> conjunction of literals, usually a partial state description. Extra facts are allowed unless excluded by negative goals.</li>
+<li><strong>Action:</strong> preconditions, add effects, delete effects; costs if specified.</li>
+<li><strong>Static predicates:</strong> facts such as <code>Plane</code>, <code>Airport</code>, or adjacency that no action changes.</li>
+</ul>
+
+<p class="mb-3">For positive STRIPS preconditions:</p>
+
+<p class="mb-3">$$Pre(a)\subseteq s\quad\Rightarrow\quad a\text{ applicable},$$</p>
+
+<p class="mb-3">$$Result(s,a)=(s\setminus Del(a))\cup Add(a).$$</p>
+
+<p class="mb-3">For negative preconditions, also check that each forbidden atom is absent. For goals $G^+,G^-$, check $G^+\subseteq s$ and $G^-\cap s=\varnothing$.</p>
+
+<p class="mb-3"><strong>Frame problem:</strong> specifying changes without re-listing every unchanged fact. STRIPS/PDDL uses inertia: facts outside the effects persist. Preserve type facts and unrelated locations when applying an action.</p>
+
+<p class="mb-3"><strong>PDDL separates reusable domain knowledge from a particular problem instance.</strong></p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Component</th>
+<th>Role</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Domain <code>:requirements</code></td>
+<td>Declare language features actually used, such as typing or negative preconditions</td>
+</tr>
+<tr>
+<td>Domain <code>:types</code> / <code>:predicates</code></td>
+<td>Specify object categories and the symbolic vocabulary</td>
+</tr>
+<tr>
+<td>Action <code>:parameters</code></td>
+<td>Variables and their allowed types</td>
+</tr>
+<tr>
+<td>Action <code>:precondition</code></td>
+<td>Conditions that must hold before execution</td>
+</tr>
+<tr>
+<td>Action <code>:effect</code></td>
+<td>Facts added/deleted by execution; <code>(not ...)</code> expresses a delete effect</td>
+</tr>
+<tr>
+<td>Problem <code>:objects</code></td>
+<td>Concrete objects that ground the schemas</td>
+</tr>
+<tr>
+<td>Problem <code>:init</code></td>
+<td>Facts true initially under closed-world semantics</td>
+</tr>
+<tr>
+<td>Problem <code>:goal</code></td>
+<td>Desired conditions, not a complete description of every final fact</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">A problem file supplies <code>:domain</code>, <code>:objects</code>, <code>:init</code>, and <code>:goal</code>. Add requirements such as negative preconditions only when the model uses them.</p>
+
+<p class="mb-3"><strong>Grounding procedure:</strong> enumerate type-correct substitutions, constrain variables with current facts, then check every precondition. Do not add an unstated constraint such as <code>from != to</code>.</p>
+
+<h5 class="mb-2">Modeling invariants and validating transitions</h5>
+
+<p class="mb-3">An invariant is a property that must hold in every reachable state: one location per object, mutually exclusive status predicates, conserved resources, or occupancy within capacity. Establish it in the initial state and check that every applicable action preserves it. An intended rule written only in prose has no effect on planner behavior; encode it in preconditions, effects, or supported constraints.</p>
+
+<ul class="note-list">
+<li>A change of location should remove the old location as well as add the new one.</li>
+<li>Acquisition/release of a resource must update both ownership and availability consistently.</li>
+<li>Safety conditions belong in action applicability, not merely in the final goal.</li>
+<li>Goals must specify actual desired completion, rather than incidental intermediate conditions.</li>
+</ul>
+
+<p class="mb-3">Validate a plan by replaying each action: check applicability, apply effects, check invariants, and test the final goal. This distinguishes a plausible action list from an executable plan. A valid plan is not necessarily optimal for the chosen objective.</p>
+
+<h4 id="1-3-progression-and-regression" class="mb-2">1.3 Progression and regression</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Dimension</th>
+<th>Progression (forward)</th>
+<th>Regression (backward)</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Start</td>
+<td>Initial concrete state $s_0$</td>
+<td>Goal description $G$</td>
+</tr>
+<tr>
+<td>Node</td>
+<td>Complete state under closed-world semantics</td>
+<td>Conditions describing many possible states</td>
+</tr>
+<tr>
+<td>Actions considered</td>
+<td>Applicable actions</td>
+<td>Relevant actions that can achieve a goal literal without destroying another</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Apply delete/add effects</td>
+<td>Remove achieved requirements, add action preconditions</td>
+</tr>
+<tr>
+<td>Stop</td>
+<td>Current state satisfies goal</td>
+<td>Initial state satisfies the regressed conditions</td>
+</tr>
+<tr>
+<td>Benefit</td>
+<td>Easy execution semantics</td>
+<td>Focus on actions related to the goal</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Many applicable irrelevant actions</td>
+<td>Complex goal interactions and variable bindings</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">For a positive goal set and a relevant, non-threatening STRIPS action:</p>
+
+<p class="mb-3">$$Regress(G,a)=(G\setminus Add(a))\cup Pre(a),$$</p>
+
+<p class="mb-3">with $Add(a)\cap G\ne\varnothing$ and $Del(a)\cap G=\varnothing$. With negative literals, handle both desired truth values and reject inconsistent regressions.</p>
+
+<p class="mb-3"><strong>Trap:</strong> stopping regression requires $s_0\models G_{regressed}$, not that a partial goal description contains every fact in the initial state.</p>
+
+<h4 id="1-4-search-heuristics-and-complexity" class="mb-2">1.4 Search, heuristics, and complexity</h4>
+
+<ul class="note-list">
+<li>BFS is complete for finite branching and finds a minimum-length plan with equal action costs; UCS handles nonnegative varying costs.</li>
+<li>DFS may get trapped on an infinite/cyclic branch; use cycle checking or depth bounds.</li>
+<li>A* uses $f(n)=g(n)+h(n)$. An admissible $h$ never overestimates remaining optimal cost. For graph search without reopening, consistency is the usual sufficient condition: $h(s)\le c(s,a)+h(s')$.</li>
+<li><strong>Soundness:</strong> every reported plan is valid. <strong>Completeness:</strong> a solution is found if one exists. <strong>Optimality:</strong> the chosen plan minimizes the stated cost.</li>
+<li>With $n$ Boolean fluents, there may be $2^n$ states. A schema with $k$ variables over $m$ objects can generate $O(m^k)$ substitutions before type/precondition pruning.</li>
+<li>General finite propositional STRIPS plan existence is PSPACE-complete. Polynomially bounded plan existence is generally NP-complete; do not equate a SAT encoding at a fixed horizon with unbounded planning complexity.</li>
+</ul>
+
+<h4 id="1-5-satplan" class="mb-2">1.5 SATPlan</h4>
+
+<p class="mb-3"><strong>Idea:</strong> ask whether a valid action sequence exists within a candidate horizon by encoding it as propositional satisfiability.</p>
+
+<ol class="mb-3">
+<li>Create fluent variables $F_t$ for states $t=0,\ldots,H$ and action variables $A_t$ for transitions $t=0,\ldots,H-1$.</li>
+<li>Assert all initial truths and falsities; assert the goal at $H$.</li>
+<li>Encode action preconditions and effects at adjacent times.</li>
+<li>Add frame/successor-state constraints to prevent unexplained changes.</li>
+<li>Add action exclusivity or interference constraints according to the serial/parallel encoding.</li>
+<li>Solve. If UNSAT, increase $H$. If SAT, extract and independently replay the selected actions.</li>
+</ol>
+
+<p class="mb-3">Typical implications: $A_t\Rightarrow Pre_t$, $A_t\Rightarrow Add_{t+1}$, $A_t\Rightarrow\neg Del_{t+1}$.</p>
+
+<p class="mb-3">A successor-state axiom can express persistence and causes of change:</p>
+
+<p class="mb-3">$$F_{t+1}\leftrightarrow\left[\bigvee_{a:F\in Add(a)}a_t\right]\lor\left[F_t\land\neg\bigvee_{a:F\in Del(a)}a_t\right].$$</p>
+
+<p class="mb-3">Increasing a serial horizon finds minimum plan length under that encoding, not automatically minimum weighted cost. Concurrent actions require correct mutex constraints.</p>
+
+<h5 class="mb-2">Encoding checks: clauses, frames, and horizon</h5>
+
+<p class="mb-3">An implication $A_t\Rightarrow F_t$ becomes the CNF clause $\neg A_t\lor F_t$. A negative effect becomes $\neg A_t\lor\neg F_{t+1}$. Serial at-most-one constraints add $\neg A_t\lor\neg B_t$ for distinct actions. At-most-one allows idle steps; exactly-one requires an action or explicit no-op at each step. State which convention is used when interpreting “within H steps.”</p>
+
+<p class="mb-3">Without frame constraints, a SAT solver may change a fluent without any action causing the change. Satisfying such an incomplete encoding does not establish a valid plan. Preconditions/effects constrain selected actions; frame axioms also constrain what happens when those actions are not selected. Replay an extracted plan in the original transition model to validate the encoding.</p>
+
+<h4 id="1-6-lfm-assisted-and-responsible-planning" class="mb-2">1.6 LFM-assisted and responsible planning</h4>
+
+<p class="mb-3">The lecture's four LFM roles are <strong>model creation/refinement</strong>, <strong>task/subgoal decomposition</strong>, <strong>heuristic generation</strong>, and <strong>generalized reusable planning strategies</strong>. Symbolic solvers/validators can check preconditions, effects, and plan execution; an LFM's plausible text is not proof that a plan works. A generated heuristic does not become admissible merely because a model generated it.</p>
+
+<p class="mb-3">Responsible planning connects the objective and constraints to human impact: fairness, accountability, transparency, robustness, resilience, privacy, security, meaningful human oversight, and social/ethical/governance requirements. Domain, user, economic, and system limitations affect deployment. Give a concrete example: a faster allocation policy may discriminate; an efficient robot policy may expose unsafe actions; a reward maximizing clicks may diverge from user welfare.</p>
+
+<p class="mb-3">The introductory lecture lists twelve recurring responsibilities: <strong>safety, privacy, fairness, trust, accountability, transparency, responsibility, diversity/inclusion, equality, collaboration, human rights/values, and limiting harmful uses</strong>. Incorporate them through requirements, design, implementation, testing, deployment, and evolution. A useful answer names the stakeholder, the risk, the mitigation, and the trade-off with accuracy/cost; an ethical constraint need not be traded away simply because its utility is hard to quantify.</p>
+</section>
+
+<section id="week-2-real-world-planning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 2 — Real-world planning</h3>
+
+<h4 id="2-1-relaxation-and-admissibility" class="mb-2">2.1 Relaxation and admissibility</h4>
+
+<p class="mb-3">A relaxation makes the problem easier by removing constraints while retaining every original solution. With unchanged nonnegative action costs:</p>
+
+<p class="mb-3">$$h_{relaxed}^<em>(s)\le h_{original}^</em>(s).$$</p>
+
+<p class="mb-3">Removing preconditions permits more actions. Removing delete effects lets achieved positive facts persist. <strong>Delete relaxation is valid for positive goals and preconditions</strong>, but needs care when negative requirements exist.</p>
+
+<p class="mb-3">Counterexample: initial $A$, action DeleteA deletes $A$, goal $\neg A$. Removing the delete effect makes the goal impossible. Likewise, deleting $A$ may be needed to enable an action with precondition $\neg A$. The relaxed model can then exclude an original solution, so the usual lower-bound proof fails.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Heuristic</th>
+<th>Idea</th>
+<th>Admissible?</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Misplaced tiles</td>
+<td>Each misplaced tile needs at least one move in the appropriate puzzle relaxation</td>
+<td>Yes under standard unit-cost assumptions</td>
+</tr>
+<tr>
+<td>Manhattan distance</td>
+<td>Sum tile grid distances, ignoring obstructions in the standard puzzle</td>
+<td>Yes in the standard sliding puzzle</td>
+</tr>
+<tr>
+<td>$h_{max}$</td>
+<td>Maximum individual goal-achievement estimate</td>
+<td>Yes when component estimates are lower bounds</td>
+</tr>
+<tr>
+<td>$h_{add}$</td>
+<td>Sum estimates and ignore sharing</td>
+<td>Not generally; one action may achieve multiple goals</td>
+</tr>
+<tr>
+<td>$h^+$</td>
+<td>Optimal delete-relaxed plan cost</td>
+<td>A lower bound in positive STRIPS; exact computation can be hard</td>
+</tr>
+<tr>
+<td>$h_{FF}$</td>
+<td>Length/cost of a greedily extracted relaxed plan</td>
+<td>Not generally; extracted plan need not be optimal even in the relaxation</td>
+</tr>
+<tr>
+<td>Abstract-state distance</td>
+<td>Solve a smaller state abstraction</td>
+<td>A lower bound if transitions/costs are relaxed correctly</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3"><strong>Positive goal interaction:</strong> one action helps multiple goals; summing can double-count and overestimate. <strong>Negative interaction:</strong> solving one goal destroys another; independent estimates may underestimate. Sum is valid when subproblems are independent or a sound cost-partitioning scheme prevents double-counting. Taking the maximum of admissible heuristics remains admissible.</p>
+
+<p class="mb-3">For relaxed fact costs, conceptually use minimum over achieving actions, with either max or sum over their preconditions. Add action cost once. Do not confuse these recursive estimates with a globally optimal relaxed plan.</p>
+
+<h5 class="mb-2">Computing relaxed fact costs</h5>
+
+<p class="mb-3">For a positive STRIPS state s, initialize $c(p)=0$ for facts already true and infinity for other facts. Repeatedly lower costs using all achievers of p:</p>
+
+<p class="mb-3">$$c_{max}(p)=\min_{a:p\in Add(a)}\left[c(a)+\max_{q\in Pre(a)}c_{max}(q)\right],$$</p>
+
+<p class="mb-3">$$c_{add}(p)=\min_{a:p\in Add(a)}\left[c(a)+\sum_{q\in Pre(a)}c_{add}(q)\right].$$</p>
+
+<p class="mb-3">Initial facts retain cost zero. For an action with no preconditions, the empty maximum/sum is zero. Iterate to a fixed point because achievers can depend on other facts; facts that cannot be established retain infinity. Aggregate goal costs by max for $h_{max}$ and sum for $h_{add}$.</p>
+
+<p class="mb-3"><strong>Sharing counterexample:</strong> one unit-cost action has no preconditions and adds both p and q. Goal $p\land q$ has $h^*=h^+=1$, $h_{max}=1$, but $h_{add}=2$. The additive estimate counts the same action twice. A relaxed plan extracting that shared action once has length 1. In general $h_{FF}\ge h^+$, but its greedy extraction can exceed the original optimum, so relaxed-plan extraction alone gives no admissibility guarantee.</p>
+
+<p class="mb-3"><strong>Proof pattern for delete relaxation:</strong> replay an original plan in the relaxed model. Inductively its relaxed state contains every fact in the original state. Positive preconditions remain satisfied, and positive goals still hold at the end. The unchanged-cost original plan is feasible in the relaxed model, so the relaxed optimum cannot be more expensive. The proof breaks for negative requirements because a larger fact set can violate them.</p>
+
+<h5 class="mb-2">From action preconditions to an 8-puzzle heuristic</h5>
+
+<p class="mb-3">The lecture's tile-move schema requires $On(t,s_1)$, $Tile(t)$, $Blank(s_2)$, and $Adjacent(s_1,s_2)$. Its effects move t to $s_2$, make $s_1$ blank, and remove the old tile location and destination-blank facts.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Constraints ignored</th>
+<th>New freedom</th>
+<th>Lower-bound heuristic</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Blank destination and adjacency</td>
+<td>Move a tile directly to its target square</td>
+<td>Number of misplaced numbered tiles</td>
+</tr>
+<tr>
+<td>Blank destination, retaining adjacency</td>
+<td>Move a tile along grid edges without waiting for the blank</td>
+<td>Sum of numbered tiles' Manhattan distances</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Exclude the blank from the sums. Each real move relocates one numbered tile by one grid edge. Therefore every misplaced tile needs at least one move, and each tile needs at least its grid distance in moves. Manhattan distance dominates misplaced tiles: $h_{Manhattan}\ge h_{misplaced}$, while both remain lower bounds in the standard unit-cost puzzle. A stronger admissible heuristic gives more information, but computing it also has a cost. These claims concern the stated puzzle model, not arbitrary action costs or movement rules.</p>
+
+<h4 id="2-2-state-abstraction-and-subgoal-serialization" class="mb-2">2.2 State abstraction and subgoal serialization</h4>
+
+<p class="mb-3">State abstraction maps concrete states into a smaller space, e.g. grouping airports or ignoring some facts. Refinement must restore details. Abstraction can create spurious abstract paths; validate that a concrete implementation exists.</p>
+
+<p class="mb-3">Subgoal decomposition solves $G_1,\ldots,G_k$. <strong>Serializable subgoals</strong> admit an order in which later work preserves earlier achieved goals. Independent goals can be solved separately. Interacting goals may require interleaving actions rather than concatenating completed subplans; Blocks World supplies standard counterexamples.</p>
+
+<p class="mb-3"><strong>Goal interaction:</strong> committing to a complete solution for one subgoal can block actions needed for another. A coordinated plan may need preparatory actions or interleaving before either subgoal is finalized. The Sussman anomaly in Blocks World illustrates why independently solving and concatenating subplans can fail even when a valid joint plan exists.</p>
+
+<p class="mb-3"><strong>State-space reduction:</strong> if n independently located objects each have m possible locations, their joint locations already give $m^n$ combinations. Grouping or dropping distinctions can reduce this exponentially large representation. The abstract problem may admit paths that have no concrete refinement: smaller state space alone does not establish soundness or heuristic admissibility.</p>
+
+<h4 id="2-3-htns-and-high-level-actions" class="mb-2">2.3 HTNs and high-level actions</h4>
+
+<ul class="note-list">
+<li>A <strong>primitive action</strong> changes the world and has executable preconditions/effects.</li>
+<li>A <strong>compound task/HLA</strong> has alternative decomposition methods into smaller tasks.</li>
+<li>A <strong>method</strong> specifies applicability conditions and an ordered or partially ordered task network.</li>
+<li>Refine an applicable compound task until all remaining tasks are primitive; simulate their execution and check constraints/goals.</li>
+</ul>
+
+<p class="mb-3">An HLA may have several implementations. The planner chooses one deliberately. This is different from stochastic action outcomes, which the environment chooses according to probabilities.</p>
+
+<p class="mb-3"><strong>Algorithm:</strong> start with the initial task network, choose a compound task, choose an applicable method, replace it with subtasks, and repeat. Backtrack when a method or primitive execution fails. A method library imposes procedural knowledge and can restrict which plans are expressible; a physically valid plan need not be derivable from that library.</p>
+
+<p class="mb-3"><strong>Scalability intuition:</strong> flat branching $b$ over $d$ primitive steps gives roughly $O(b^d)$. If each HLA has $r$ refinements into $k$ subtasks across a balanced hierarchy with $d$ leaves, the number of internal refinement choices is about $(d-1)/(k-1)$, giving $r^{(d-1)/(k-1)}$. This is an illustrative structured-search comparison, not a universal complexity guarantee.</p>
+
+<h5 class="mb-2">Tracing HTN execution and refinement choices</h5>
+
+<p class="mb-3">For a totally ordered task list, keep <strong>both</strong> the current world state and remaining tasks:</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">solve(state, tasks):
+    if tasks is empty: return empty plan
+    first, rest = tasks[0], tasks[1:]
+    if first is primitive:
+        reject if its preconditions do not hold
+        solve(result(state, first), rest); prepend first on success
+    otherwise:
+        for each applicable method for first:
+            solve(state, method.subtasks + rest)
+            return the first successful refinement
+    return failure</code></pre></div>
+
+<p class="mb-3">Method selection itself does not apply primitive effects. Earlier primitive execution can change whether later methods/actions are applicable. Backtracking must restore the state and task list for the alternative branch. This is a search procedure; choosing the first successful refinement guarantees neither shortest length nor highest utility. A summary containing a <strong>possible</strong> effect does not certify that an arbitrary chosen implementation realizes it.</p>
+
+<h4 id="2-4-reachable-sets-and-safe-deductions" class="mb-2">2.4 Reachable sets and safe deductions</h4>
+
+<p class="mb-3">For fixed start $s$ and HLA $h$, $REACH(s,h)$ contains endpoints of executable primitive implementations. For a sequence:</p>
+
+<p class="mb-3">$$REACH(s,[h_1,h_2])=\bigcup_{s'\in REACH(s,h_1)}REACH(s',h_2).$$</p>
+
+<p class="mb-3">Approximate with pessimistic lower bound $R^-$ and optimistic upper bound $R^+$:</p>
+
+<p class="mb-3">$$R^-\subseteq R\subseteq R^+.$$</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Relationship to goal set $G$</th>
+<th>Safe conclusion</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>$R^+\cap G=\varnothing$</td>
+<td>No successful refinement; prune</td>
+</tr>
+<tr>
+<td>$R^-\cap G\ne\varnothing$</td>
+<td>At least one successful refinement exists</td>
+</tr>
+<tr>
+<td>$R^+\cap G\ne\varnothing$</td>
+<td>Success may be possible; not proved</td>
+</tr>
+<tr>
+<td>$R^-\cap G=\varnothing$</td>
+<td>Lower bound gives no success certificate; failure not proved</td>
+</tr>
+<tr>
+<td>$G\subseteq R^+$</td>
+<td>Still does not prove a goal is actually reachable</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Existence of a successful refinement is not a claim that every refinement succeeds. A valid downward-refinement property depends on correct HLA descriptions and executable implementations.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Possible effect</th>
+<th>Meaning across available implementations</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>$\sim^+A$</td>
+<td>Can add A or leave it unchanged</td>
+</tr>
+<tr>
+<td>$\sim^-A$</td>
+<td>Can delete A or leave it unchanged</td>
+</tr>
+<tr>
+<td>$\sim^{\pm}A$</td>
+<td>Can make A true or false</td>
+</tr>
+<tr>
+<td>Definite A / $\neg A$</td>
+<td>Every applicable implementation produces that truth value</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Uncertainty in a summary describes <strong>choice among refinements</strong>, not necessarily random dynamics.</p>
+</section>
+
+<section id="week-3-rational-decision-making" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 3 — Rational decision making</h3>
+
+<h4 id="3-1-beliefs-preferences-and-meu" class="mb-2">3.1 Beliefs, preferences, and MEU</h4>
+
+<p class="mb-3">Beliefs describe outcome probabilities. Preferences describe which outcomes matter. Intentions are commitments to chosen plans (BDI: Belief–Desire–Intention).</p>
+
+<ul class="note-list">
+<li><strong>Normative:</strong> how an ideal rational agent should choose.</li>
+<li><strong>Descriptive:</strong> how people actually choose, including biases.</li>
+<li><strong>Prescriptive:</strong> how to improve real decisions.</li>
+<li><strong>Substantive rationality:</strong> achieving desirable ends; <strong>procedural rationality:</strong> a coherent decision process; <strong>meta-level rationality:</strong> deciding how much computation to spend on deciding.</li>
+</ul>
+
+<p class="mb-3">For known state $s$:</p>
+
+<p class="mb-3">$$EU(a\mid s)=\sum_{s'}P(s'\mid s,a)U(s'),\qquad a^*=\arg\max_a EU(a).$$</p>
+
+<p class="mb-3">For uncertain current state with belief $b(s)$:</p>
+
+<p class="mb-3">$$EU(a)=\sum_s b(s)\sum_{s'}P(s'\mid s,a)U(s').$$</p>
+
+<p class="mb-3">Utility is an internal representation of preference; an external performance measure evaluates actual behavior/histories. Rationality does not mean omniscience or guaranteed success.</p>
+
+<h4 id="3-2-six-preference-axioms" class="mb-2">3.2 Six preference axioms</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Axiom</th>
+<th>Statement / meaning</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Completeness (orderability)</td>
+<td>Any pair is comparable: $A\succ B$, $B\succ A$, or $A\sim B$</td>
+</tr>
+<tr>
+<td>Transitivity</td>
+<td>$A\succ B$ and $B\succ C$ imply $A\succ C$; avoid preference cycles</td>
+</tr>
+<tr>
+<td>Continuity</td>
+<td>If $A\succ B\succ C$, some $p$ makes $B\sim[p,A;1-p,C]$</td>
+</tr>
+<tr>
+<td>Independence (substitutability)</td>
+<td>Replace equally preferred outcomes in a common lottery without changing preference; a strict preference is preserved under mixing with the same alternative for $p&gt;0$</td>
+</tr>
+<tr>
+<td>Monotonicity</td>
+<td>Between lotteries over the same better/worse pair, prefer a higher probability of the better outcome</td>
+</tr>
+<tr>
+<td>Decomposability</td>
+<td>Compound lotteries reduce to final outcome probabilities; multiply branch probabilities and sum duplicate outcomes</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">The expected-utility representation gives</p>
+
+<p class="mb-3">$$U([p_1,x_1;\ldots;p_n,x_n])=\sum_i p_iU(x_i).$$</p>
+
+<p class="mb-3">A positive affine transformation $U'(x)=kU(x)+b$, $k&gt;0$, preserves lottery preferences because $EU'=kEU+b$. An arbitrary increasing nonlinear transformation preserves rankings of certain outcomes but <strong>can change lottery preferences</strong>. Utility scales are not inherently comparable across people.</p>
+
+<p class="mb-3"><strong>Nested lottery example:</strong> $[0.6,A;0.4,[0.7,B;0.3,C]]$ reduces to $[0.6,A;0.28,B;0.12,C]$.</p>
+
+<h4 id="3-3-money-risk-and-certainty-equivalents" class="mb-2">3.3 Money, risk, and certainty equivalents</h4>
+
+<p class="mb-3">Compute utility of <strong>final wealth</strong>, not the gain alone: for initial wealth $W$ and payoff $X$, $EU=\mathbb E[U(W+X)]$.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Attitude for increasing utility</th>
+<th>Shape</th>
+<th>Relation</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Risk-averse</td>
+<td>Concave, $U''&lt;0$</td>
+<td>$U(E[X])\ge E[U(X)]$, CE ≤ expected wealth</td>
+</tr>
+<tr>
+<td>Risk-neutral</td>
+<td>Linear</td>
+<td>CE = expected wealth</td>
+</tr>
+<tr>
+<td>Risk-seeking</td>
+<td>Convex, $U''&gt;0$</td>
+<td>CE ≥ expected wealth</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">$$CE=U^{-1}(EU),\qquad RiskPremium=E[W+X]-CE.$$</p>
+
+<p class="mb-3">If expressing CE as a gain, subtract $W$ from wealth CE and compare with $E[X]$. Use one convention throughout. Examples: log utility has $CE=e^{EU}$; $U(x)=\sqrt{x}$ has $CE=EU^2$; $U(x)=\log(1+x)$ has $CE=e^{EU}-1$.</p>
+
+<p class="mb-3"><strong>Insurance:</strong> compare $EU_{uninsured}$ with utility of the correctly calculated insured final wealth. Maximum premium for full indemnity $L$ on a loss from wealth $W$ satisfies $U(W-p_{max})=EU_{uninsured}$, hence $p_{max}=W-CE_{uninsured}$. Partial coverage produces a lottery and needs its own expected utility. The insurer's expected profit uses expected money when the question asks monetary value; its preferences need not match the customer's.</p>
+
+<p class="mb-3"><strong>Probability equivalent:</strong> normalize the worst/best outcomes to utilities 0/1. If $x\sim[p,x_{best};1-p,x_{worst}]$, then $U(x)=p$ on that scale.</p>
+
+<h5 class="mb-2">Expected utility and risk: calculation procedure</h5>
+
+<ol class="mb-3">
+<li>List final outcomes and probabilities; account for initial wealth, gains/losses, fees, and coverage before applying utility.</li>
+<li>Compute $EU=\sum_i p_iU(x_i)$ and check that every outcome lies in the utility function's domain.</li>
+<li>Compute the certainty equivalent $CE=U^{-1}(EU)$ when U is invertible on the relevant range.</li>
+<li>Compute expected outcome in the same units, then $RiskPremium=E[X]-CE$.</li>
+<li>Compare alternatives by EU or CE consistently; a larger expected monetary value need not imply greater expected utility.</li>
+</ol>
+
+<p class="mb-3">A stated CE expresses preferences; probabilities alone cannot determine it. Observing risk aversion for one lottery does not prove global concavity for every possible outcome range. Positive affine transformations preserve EU rankings, whereas changing to an arbitrary nonlinear utility can change risk preferences.</p>
+
+<h4 id="3-4-allais-paradox-and-independence" class="mb-2">3.4 Allais paradox and independence</h4>
+
+<p class="mb-3">The paradox concerns a <strong>preference reversal under a common lottery mixture</strong>. Let A be a risky lottery and B a sure outcome. Mix each with the same outcome C at the same probability $0&lt;q&lt;1$:</p>
+
+<p class="mb-3">$$A'=[q,A;1-q,C],\qquad B'=[q,B;1-q,C].$$</p>
+
+<p class="mb-3">Independence requires $B\succ A\Rightarrow B'\succ A'$. Expected utility proves this directly:</p>
+
+<p class="mb-3">$$EU(B')-EU(A')=q[EU(B)-EU(A)].$$</p>
+
+<p class="mb-3">The common component cancels, and positive q preserves the sign. Preferring B to A but A' to B' therefore violates independence under the expected-utility axioms. Decomposability reduces the compound lotteries before comparison. A certainty effect can explain the observed reversal descriptively, but does not reconcile it with these normative axioms. The argument concerns preference consistency, not an arithmetic contradiction in probability.</p>
+
+<h4 id="3-5-game-theory" class="mb-2">3.5 Game theory</h4>
+
+<p class="mb-3">A game gives players, available strategies, and payoff functions depending on everyone's choices. A <strong>best response</strong> maximizes a player's payoff given other strategies. A <strong>Nash equilibrium</strong> is a profile where no player benefits from changing only their own strategy. A <strong>dominant strategy</strong> is best regardless of others' actions. Pareto improvement benefits at least one player without hurting another; equilibrium need not be Pareto-efficient.</p>
+
+<p class="mb-3">A two-player dilemma illustrates the distinction between individual incentives and collective welfare (row player first):</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th></th>
+<th>Other keeps</th>
+<th>Other shares</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Keep</td>
+<td>(1,1)</td>
+<td>(5,0)</td>
+</tr>
+<tr>
+<td>Share</td>
+<td>(0,5)</td>
+<td>(3,3)</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Keep strictly dominates Share: $1&gt;0$ against Keep and $5&gt;3$ against Share. Both Keep is a Nash equilibrium, but both Share is better for both. Explain the incentive conflict rather than calling the equilibrium collectively optimal.</p>
+
+<p class="mb-3">For a mixed-strategy equilibrium, if asked, choose probabilities that make the other player's supported actions have equal expected payoff. For example, in a two-action game solve $EU(A_1\mid q)=EU(A_2\mid q)$, then verify legal probabilities and best responses. A zero-sum game has opposing payoffs; a cooperative gain is not generally available.</p>
+
+<h4 id="3-6-decision-networks-information-and-utility-objectives" class="mb-2">3.6 Decision networks, information, and utility objectives</h4>
+
+<p class="mb-3">A decision network combines chance nodes, decision nodes, and utility nodes. For each decision, condition on available evidence, infer outcome probabilities, compute EU, and maximize. An information arc means the observation is available when deciding, not a causal effect by itself.</p>
+
+<p class="mb-3">Lecture utility applications: QALY = years × quality; lower DALY is better; a micromort is $10^{-6}$ death risk; value of statistical life values small population risk reductions rather than literally pricing a particular person's life. These are modeling choices requiring stated units and ethical context.</p>
+
+<h5 class="mb-2">Choosing the optimization objective</h5>
+
+<p class="mb-3">Validity asks whether the constraints and goals are satisfied. Quality asks which valid solution is preferred. Minimum action count, minimum cost, minimum completion time, and maximum total utility are different objectives and can rank the same plans differently. Deadlines, penalties, and shared resource constraints can make a locally attractive ordering globally poor.</p>
+
+<p class="mb-3">A branch-and-bound search maximizing utility may prune only when a valid <strong>upper bound</strong> on attainable utility cannot beat the incumbent. For cost minimization, use a valid <strong>lower bound</strong> on attainable cost. Reversing the bound direction can discard the optimum. State representations and memoization keys must preserve every quantity affecting future feasibility and objective value.</p>
+</section>
+
+<section id="week-4-markov-decision-processes-and-reinforcement-learning" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 4 — Markov decision processes and reinforcement learning</h3>
+
+<h4 id="4-1-specify-the-model-completely" class="mb-2">4.1 Specify the model completely</h4>
+
+<p class="mb-3">An MDP is $(S,A,P,R,\gamma)$, with legal actions $A(s)$, plus an initial distribution and horizon/termination when required.</p>
+
+<p class="mb-3">$$P(S_{t+1}\mid S_0,A_0,\ldots,S_t,A_t)=P(S_{t+1}\mid S_t,A_t).$$</p>
+
+<p class="mb-3">The state must contain enough information to predict the next state and reward: position alone may omit battery, inventory, door state, pending action, or remaining time. Choose the smallest sufficient representation. A history-dependent problem can often be made Markov by augmenting the state.</p>
+
+<p class="mb-3"><strong>Modeling checklist:</strong> state meaning → legal actions → every possible successor and probability → reward timing → initial/terminal state → objective/horizon. For every $(s,a)$, probabilities sum to 1. Aggregate probabilities when several outcomes lead to the same successor, such as bumping into a wall.</p>
+
+<h4 id="4-2-policy-return-and-horizons" class="mb-2">4.2 Policy, return, and horizons</h4>
+
+<p class="mb-3">A policy maps observations/states to actions; unlike a fixed plan, it can react to stochastic outcomes. A deterministic stationary policy is $\pi:S\to A$; a stochastic one is $\pi(a\mid s)$. For $n$ states and $m$ legal actions at each, there are $m^n$ deterministic stationary policies.</p>
+
+<p class="mb-3">$$V^\pi(s)=E_\pi[G_t\mid s_t=s],\qquad Q^\pi(s,a)=E_\pi[G_t\mid s_t=s,a_t=a].$$</p>
+
+<p class="mb-3"><strong>Finite horizon:</strong> optimal action can depend on remaining time. With $h$ steps remaining:</p>
+
+<p class="mb-3">$$V_0(s)=0,\quad V_h(s)=\max_a\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma V_{h-1}(s')].$$</p>
+
+<p class="mb-3">An explicit terminal utility replaces the zero boundary if specified. Finite-horizon policies are generally nonstationary; adding remaining time to the state gives a stationary rule over augmented states.</p>
+
+<p class="mb-3"><strong>Infinite discounted horizon:</strong> bounded rewards and $\gamma&lt;1$ imply</p>
+
+<p class="mb-3">$$|G_t|\le\frac{R_{max}}{1-\gamma}.$$</p>
+
+<p class="mb-3">Smaller $\gamma$ emphasizes near-term rewards; larger $\gamma$ values delayed consequences and can slow convergence. Effective reward horizon is roughly $1/(1-\gamma)$. $\gamma=0$ selects by immediate expected reward. $\gamma=1$ can give divergent sums in a continuing task. Episodic undiscounted values may be finite with suitable termination and finite expected cumulative reward; eventual termination alone does not establish a finite expected duration. A <strong>proper policy</strong> reaches termination with probability 1; assumptions about expected cost/time still matter. Average reward is an alternative objective, not the same discounted calculation.</p>
+
+<h4 id="4-3-bellman-equations" class="mb-2">4.3 Bellman equations</h4>
+
+<p class="mb-3">For a deterministic fixed policy:</p>
+
+<p class="mb-3">$$V^\pi(s)=\sum_{s'}P(s'\mid s,\pi(s))[R(s,\pi(s),s')+\gamma V^\pi(s')].$$</p>
+
+<p class="mb-3">For a stochastic policy, additionally sum over $a$ with weight $\pi(a\mid s)$. <strong>Evaluation contains no maximum.</strong></p>
+
+<p class="mb-3">Optimality:</p>
+
+<p class="mb-3">$$V^<em>(s)=\max_a\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma V^</em>(s')],$$</p>
+
+<p class="mb-3">$$Q^<em>(s,a)=\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma\max_bQ^</em>(s',b)],$$</p>
+
+<p class="mb-3">$$V^<em>(s)=\max_aQ^</em>(s,a),\quad\pi^<em>(s)\in\arg\max_aQ^</em>(s,a).$$</p>
+
+<p class="mb-3"><strong>Order matters:</strong> maximize over the action chosen before the random next state; take an expectation over uncontrollable outcomes. $\max_a E_{s'}$ is not generally $E_{s'}\max_a$.</p>
+
+<h4 id="4-4-value-iteration-vi" class="mb-2">4.4 Value iteration (VI)</h4>
+
+<p class="mb-3">Initialize $V_0$, then repeatedly use the entire previous vector:</p>
+
+<p class="mb-3">$$Q_{k+1}(s,a)=\sum_{s'}P(s'\mid s,a)[R(s,a,s')+\gamma V_k(s')],\quad V_{k+1}(s)=\max_aQ_{k+1}(s,a).$$</p>
+
+<p class="mb-3">Extract a greedy policy using the final value estimate. Synchronous sweeps read old values for every state; in-place asynchronous updates can differ numerically during a sweep. Follow the question's convention.</p>
+
+<p class="mb-3">The Bellman optimality operator is a $\gamma$-contraction in max norm for a finite bounded discounted MDP:</p>
+
+<p class="mb-3">$$\|BV-BW\|_\infty\le\gamma\|V-W\|_\infty.$$</p>
+
+<p class="mb-3">Thus it has a unique fixed point and $\|V_k-V^<em>\|_\infty\le\gamma^k\|V_0-V^</em>\|_\infty$. Near convergence, a greedy policy may stabilize before values do. Approximate convergence does not automatically prove an exactly optimal policy when action gaps are tiny.</p>
+
+<p class="mb-3">For an estimate $V$ with Bellman residual $\rho=\|BV-V\|_\infty$:</p>
+
+<p class="mb-3">$$\|V-V^*\|_\infty\le\rho/(1-\gamma).$$</p>
+
+<p class="mb-3">For synchronous successive iterates, $\Delta_k=\|V_k-V_{k-1}\|_\infty$ bounds $\|V_k-V^*\|_\infty\le\gamma\Delta_k/(1-\gamma)$. To target value error $\epsilon$, use $\Delta_k\le\epsilon(1-\gamma)/\gamma$ for $\gamma&gt;0$. A value-error bound and a policy-loss bound are different claims.</p>
+
+<p class="mb-3">Dense sweep cost is $O(|S|^2|A|)$, or less with sparse transitions; higher discount/precision may need more sweeps.</p>
+
+<p class="mb-3"><strong>Appendix-level iteration bound:</strong> if initial error is bounded by $E_0$, then $\gamma^NE_0\le\epsilon$ after</p>
+
+<p class="mb-3">$$N\ge\left\lceil\frac{\ln(E_0/\epsilon)}{\ln(1/\gamma)}\right\rceil,$$</p>
+
+<p class="mb-3">for $0&lt;\gamma&lt;1$ and $E_0&gt;\epsilon$. Initial $V_0=0$ gives $E_0\le R_{max}/(1-\gamma)$; arbitrary initialization within the same reward bounds gives $E_0\le2R_{max}/(1-\gamma)$. For a greedy policy $\pi_V$ and $\|V-V^*\|_\infty\le\epsilon$, a general discounted bound is</p>
+
+<p class="mb-3">$$\|V^{\pi_V}-V^*\|_\infty\le\frac{2\gamma\epsilon}{1-\gamma}.$$</p>
+
+<p class="mb-3">The one-step action-choice error can be bounded by $2\gamma\epsilon$, but cumulative policy loss can compound over future steps. Do not identify the two without additional assumptions.</p>
+
+<h4 id="4-5-policy-iteration-pi" class="mb-2">4.5 Policy iteration (PI)</h4>
+
+<ol class="mb-3">
+<li>Start with a policy $\pi$.</li>
+<li><strong>Evaluate:</strong> solve $V^\pi=r_\pi+\gamma P_\pi V^\pi$, so $(I-\gamma P_\pi)V^\pi=r_\pi$, where $r_\pi(s)=\sum_{s'}P(s'\mid s,\pi(s))R(s,\pi(s),s')$.</li>
+<li><strong>Improve:</strong> choose $\pi_{new}(s)\in\arg\max_a\sum_{s'}P(s'\mid s,a)[R+\gamma V^\pi(s')]$.</li>
+<li>Repeat until no improvement. Preserve an existing action on exact ties to avoid arbitrary cycling.</li>
+</ol>
+
+<p class="mb-3">Policy improvement gives $V^{\pi_{new}}\ge V^\pi$ under exact evaluation and the discounted assumptions. Exact dense evaluation is roughly $O(|S|^3)$; improvement is $O(|S|^2|A|)$. Modified PI uses partial evaluation sweeps.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th></th>
+<th>VI</th>
+<th>PI</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Object initialized</td>
+<td>Value vector</td>
+<td>Policy</td>
+</tr>
+<tr>
+<td>Main operation</td>
+<td>One-step optimality backup</td>
+<td>Policy evaluation then improvement</td>
+</tr>
+<tr>
+<td>Evaluation max?</td>
+<td>Max in each optimality backup</td>
+<td>No max while evaluating the fixed policy</td>
+</tr>
+<tr>
+<td>Stopping</td>
+<td>Value changes/residual small</td>
+<td>Policy stable</td>
+</tr>
+<tr>
+<td>Practical trade-off</td>
+<td>Cheap sweeps, often many</td>
+<td>Fewer outer iterations, heavier evaluation</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="4-6-grid-world-and-delayed-action-templates" class="mb-2">4.6 Grid-world and delayed-action templates</h4>
+
+<p class="mb-3">For a standard stochastic move, enumerate intended direction and slips; wall/obstacle outcomes stay put unless stated otherwise. A negative living reward favors reaching termination sooner, but risk and terminal payoff may change the optimal path. A positive living reward can encourage avoiding termination.</p>
+
+<p class="mb-3">If an action takes one or two clock steps and no new movement can be selected while it is pending, use states $(x,ready)$ and $(x,pending,a)$, not position alone. The pending action must be remembered. Give pending states only WAIT; charge every elapsed step. A decision-epoch model could instead be semi-Markov, requiring duration-aware rewards/discounting; an ordinary clock-step MDP instead requires the augmented state.</p>
+
+<h4 id="4-7-prediction-control-and-model-information" class="mb-2">4.7 Prediction/control and model information</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th></th>
+<th>Passive RL</th>
+<th>Active RL</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Policy</td>
+<td>Fixed</td>
+<td>Changes during learning</td>
+</tr>
+<tr>
+<td>Goal</td>
+<td>Estimate $V^\pi$ or $Q^\pi$</td>
+<td>Learn a high-return policy</td>
+</tr>
+<tr>
+<td>Main issue</td>
+<td>Learning accurate predictions</td>
+<td>Prediction plus exploration/exploitation</td>
+</tr>
+<tr>
+<td>Examples</td>
+<td>Passive ADP, MC, TD</td>
+<td>Active ADP, MC control, SARSA, Q-learning</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Model-based ADP learns transitions/rewards and performs planning. Model-free MC/TD learns values from samples without an explicit transition model. Generalized policy iteration interleaves evaluation and improvement; exact convergence claims require suitable assumptions and data coverage.</p>
+
+<h4 id="4-8-adaptive-dynamic-programming-adp" class="mb-2">4.8 Adaptive dynamic programming (ADP)</h4>
+
+<p class="mb-3">Count outcomes to estimate</p>
+
+<p class="mb-3">$$\hat P(s'\mid s,a)=\frac{N(s,a,s')}{\sum_xN(s,a,x)}.$$</p>
+
+<p class="mb-3">Estimate rewards by the appropriate sample averages. Do not fabricate zero-probability certainty for an unobserved action; the denominator is zero and exploration or a prior is needed.</p>
+
+<ul class="note-list">
+<li>Passive ADP: solve/evaluate Bellman expectation equations for the fixed policy with $\hat P,\hat R$.</li>
+<li>Active ADP: solve/improve the learned MDP using Bellman optimality, with exploration.</li>
+<li>Replanning propagates information globally and can reuse a sample through many model backups; computation and model-estimation error are costs.</li>
+</ul>
+
+<h4 id="4-9-monte-carlo-mc" class="mb-2">4.9 Monte Carlo (MC)</h4>
+
+<p class="mb-3">After an episode, compute $G_t$ backward and average observed returns:</p>
+
+<p class="mb-3">$$V(s)\leftarrow V(s)+\alpha[G_t-V(s)],\quad \alpha=1/N(s)\text{ for a sample mean}.$$</p>
+
+<p class="mb-3">First-visit MC uses only the first visit to each state per episode; every-visit MC uses each visit. Specify which when a state repeats. MC needs completed returns (or an explicit truncation treatment), does not bootstrap, and has high variance. On-policy sampled returns are unbiased targets for the fixed policy value, but early estimated values remain noisy. MC control estimates $Q$, improves the policy, and still needs exploration.</p>
+
+<h5 class="mb-2">Handling repeated visits and incremental averages</h5>
+
+<p class="mb-3">For first-visit MC, retain only the earliest visit to a state in each episode. For every-visit MC, retain each visit and its own return. Returns from repeated visits can differ because the remaining rewards and discount exponents differ; they can also be correlated within an episode.</p>
+
+<p class="mb-3">For n previously retained samples with mean m and a new return G:</p>
+
+<p class="mb-3">$$m_{new}=\frac{nm+G}{n+1}=m+\frac{G-m}{n+1}.$$</p>
+
+<p class="mb-3">Increment the count for each retained return, not automatically once per episode. A constant learning rate instead gives recency weighting rather than the arithmetic mean of all samples. For MC control, count state-action visits rather than only state visits.</p>
+
+<h4 id="4-10-temporal-difference-prediction-td-0" class="mb-2">4.10 Temporal difference prediction: TD(0)</h4>
+
+<p class="mb-3">For observed $(s,r,s')$:</p>
+
+<p class="mb-3">$$\delta=r+\gamma V(s')-V(s),\qquad V(s)\leftarrow V(s)+\alpha\delta.$$</p>
+
+<p class="mb-3">TD updates immediately after one transition and <strong>bootstraps</strong> from an estimated successor value. It learns without knowing all possible successors. It often has lower target variance than MC but can be biased by inaccurate estimates. TD(0) means no eligibility-trace extension, not $\gamma=0$ or $\alpha=0$. Terminal successor has value zero.</p>
+
+<p class="mb-3">Example: $V(s)=.84$, $V(s')=.92$, $r=-.04$, $\gamma=1$, $\alpha=.5$: target $.88$, error $.04$, new value $.86$.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Feature</th>
+<th>ADP</th>
+<th>TD(0)</th>
+<th>MC</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Model</td>
+<td>Learned/given</td>
+<td>Not required</td>
+<td>Not required</td>
+</tr>
+<tr>
+<td>Target</td>
+<td>Expected model backup</td>
+<td>Sample reward + next estimate</td>
+<td>Completed sample return</td>
+</tr>
+<tr>
+<td>Update timing</td>
+<td>Model evaluation/planning</td>
+<td>Every transition</td>
+<td>Episode completion</td>
+</tr>
+<tr>
+<td>Bootstrapping</td>
+<td>Yes for iterative Bellman backups</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Model storage and planning</td>
+<td>Small local update</td>
+<td>Return calculation and averaging</td>
+</tr>
+<tr>
+<td>Principal risk</td>
+<td>Model error and incomplete coverage</td>
+<td>Bootstrap bias/instability</td>
+<td>High variance and long episodes</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="4-11-sarsa-and-q-learning" class="mb-2">4.11 SARSA and Q-learning</h4>
+
+<p class="mb-3"><strong>SARSA</strong> uses $(s,a,r,s',a')$:</p>
+
+<p class="mb-3">$$Q(s,a)\leftarrow Q(s,a)+\alpha[r+\gamma Q(s',a')-Q(s,a)].$$</p>
+
+<p class="mb-3">The next action $a'$ is sampled from the behavior policy. SARSA is <strong>on-policy</strong>: it learns the value of the policy including its exploratory choices.</p>
+
+<p class="mb-3"><strong>Q-learning</strong> uses $(s,a,r,s')$:</p>
+
+<p class="mb-3">$$Q(s,a)\leftarrow Q(s,a)+\alpha[r+\gamma\max_bQ(s',b)-Q(s,a)].$$</p>
+
+<p class="mb-3">Q-learning is <strong>off-policy</strong>: the greedy target can differ from the exploring behavior. Both update only the sampled pair in the tabular case. If the next sampled action is greedy, their sample targets coincide; otherwise they can differ. On a terminal transition, both targets are $r$.</p>
+
+<p class="mb-3">In cliff-like tasks, SARSA can account for the danger created by continuing exploratory behavior; Q-learning's greedy target evaluates greedy continuation. Do not claim Q-learning is always safer or better during training.</p>
+
+<h4 id="4-12-exploration-convergence-and-optimism" class="mb-2">4.12 Exploration, convergence, and optimism</h4>
+
+<p class="mb-3">A purely greedy learner can miss better actions because its own choices determine its data. Exploration temporarily sacrifices estimated reward to obtain information; exploitation uses current estimates.</p>
+
+<p class="mb-3"><strong>$\epsilon$-greedy with $m$ actions:</strong> choose a greedy action with probability $1-\epsilon$, otherwise sample uniformly from all actions. With a unique greedy action, its total probability is $1-\epsilon+\epsilon/m$; each other action has probability $\epsilon/m$. A variant sampling only nongreedy actions has different probabilities.</p>
+
+<p class="mb-3"><strong>GLIE:</strong> all relevant state-action pairs are visited infinitely often and the behavior becomes greedy in the limit. Decaying $\epsilon$ must still provide sufficient exploration; an arbitrary fast decay need not satisfy GLIE.</p>
+
+<p class="mb-3">Typical tabular stochastic approximation conditions for each pair are</p>
+
+<p class="mb-3">$$\sum_n\alpha_n=\infty,\qquad\sum_n\alpha_n^2&lt;\infty,$$</p>
+
+<p class="mb-3">with sufficient visits, bounded rewards, and appropriate MDP assumptions. Constant learning rates can track changes but do not give the same exact asymptotic guarantee. These guarantees do not transfer automatically to nonlinear function approximation.</p>
+
+<p class="mb-3"><strong>Optimism:</strong> initialize unknown action values high or use</p>
+
+<p class="mb-3">$$f(u,n)=\begin{cases}R^+,&amp;n&lt;N_e,\\u,&amp;n\ge N_e.\end{cases}$$</p>
+
+<p class="mb-3">Inflated values favor insufficiently tried actions. A fixed exploration threshold encourages some trials but by itself is not infinite exploration. Counts are per relevant state-action pair, not merely a global episode count.</p>
+</section>
+
+<section id="week-5-function-approximation-and-policy-search" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 5 — Function approximation and policy search</h3>
+
+<h4 id="5-1-regression-gradients-and-generalization" class="mb-2">5.1 Regression, gradients, and generalization</h4>
+
+<p class="mb-3">A table uses independent entries. An approximator shares parameters across states/actions, supporting large or continuous spaces but allowing one update to affect many predictions.</p>
+
+<p class="mb-3">Linear value model:</p>
+
+<p class="mb-3">$$\hat V_\theta(s)=\theta^\top\phi(s)=\sum_i\theta_i\phi_i(s).$$</p>
+
+<p class="mb-3">For a fixed target $y$, squared loss $L=\frac12(y-\hat V_\theta(s))^2$ gives</p>
+
+<p class="mb-3">$$\theta\leftarrow\theta-\alpha\nabla_\theta L =\theta+\alpha(y-\hat V_\theta(s))\phi(s).$$</p>
+
+<p class="mb-3">Gradient <strong>descent</strong> minimizes a loss; gradient <strong>ascent</strong> maximizes expected return. Neural networks provide nonlinear representations and compute gradients by backpropagation. Features and architecture constrain what can be represented; more data cannot remove a structural impossibility such as $\hat Q(0,a)=0$ for all parameters in a model without an intercept.</p>
+
+<h4 id="5-2-semi-gradient-td-and-approximate-q-learning" class="mb-2">5.2 Semi-gradient TD and approximate Q-learning</h4>
+
+<p class="mb-3">TD target $y=r+\gamma\hat V_\theta(s')$ depends on current parameters. The usual <strong>semi-gradient</strong> treats it as fixed when differentiating the current prediction:</p>
+
+<p class="mb-3">$$\delta=r+\gamma\hat V_\theta(s')-\hat V_\theta(s),\quad \theta\leftarrow\theta+\alpha\delta\nabla_\theta\hat V_\theta(s).$$</p>
+
+<p class="mb-3">For a linear model, the gradient is $\phi(s)$. Do not differentiate the successor estimate when asked for the standard semi-gradient update.</p>
+
+<p class="mb-3">Approximate Q-learning:</p>
+
+<p class="mb-3">$$\delta=r+\gamma\max_b\hat Q_\theta(s',b)-\hat Q_\theta(s,a),\quad \theta\leftarrow\theta+\alpha\delta\nabla_\theta\hat Q_\theta(s,a).$$</p>
+
+<p class="mb-3">For coordinate-based features, $\phi(x,y)=(1,x,y,d)$, $d=\sqrt{(x-x_g)^2+(y-y_g)^2}$. Updates are $\theta_0+=\alpha\delta$, $\theta_1+=\alpha\delta x$, $\theta_2+=\alpha\delta y$, $\theta_3+=\alpha\delta d$.</p>
+
+<p class="mb-3"><strong>Approximate MC:</strong> replace the TD target with the completed return:</p>
+
+<p class="mb-3">$$\theta\leftarrow\theta+\alpha(G_t-\hat V_\theta(s_t))\nabla_\theta\hat V_\theta(s_t).$$</p>
+
+<p class="mb-3"><strong>Approximate SARSA:</strong> replace the greedy max in approximate Q-learning with the selected next action:</p>
+
+<p class="mb-3">$$\delta=r+\gamma\hat Q_\theta(s',a')-\hat Q_\theta(s,a).$$</p>
+
+<p class="mb-3">On-policy linear TD prediction converges under standard sampling/stepsize assumptions to its projected solution; this is not a claim that its feature class can represent the true value exactly. Nonlinear/off-policy cases do not inherit this guarantee.</p>
+
+<h5 class="mb-2">Feature adequacy and parameter updates</h5>
+
+<p class="mb-3">For a linear estimate $\hat V_\theta(s)=\sum_i\theta_i\phi_i(s)$, the component update is</p>
+
+<p class="mb-3">$$\theta_i\leftarrow\theta_i+\alpha\delta\phi_i(s).$$</p>
+
+<p class="mb-3">Compute current and successor predictions from the specified old parameters, then apply the common TD error to each current-state feature. A zero feature gives no direct update to its coefficient. Differentiation is with respect to parameters, not the input coordinates or their feature-construction formula.</p>
+
+<p class="mb-3">Feature design constrains expressiveness. A model $\hat Q(x,a)=\beta_ax$ forces every action value at x=0 to zero, regardless of training data. Adding an action-specific intercept or using one-hot state-action features can remove that restriction. Shared features support generalization, but can also couple predictions that should differ. Separate insufficient data from a representation that cannot express the desired function.</p>
+
+<h4 id="5-3-why-function-approximation-can-be-unstable" class="mb-2">5.3 Why function approximation can be unstable</h4>
+
+<p class="mb-3">The <strong>deadly triad</strong> is function approximation + bootstrapping + off-policy learning. Baird's counterexample shows that even linear off-policy semi-gradient TD can diverge. Shared parameters, moving targets, correlated data, distribution shifts, and catastrophic forgetting can worsen behavior. Tabular convergence theorems are not general deep-RL guarantees.</p>
+
+<h4 id="5-4-deep-q-networks-dqn" class="mb-2">5.4 Deep Q-networks (DQN)</h4>
+
+<p class="mb-3">DQN approximates $Q(s,a)$ with a neural network; the original approach maps image observations to values for discrete actions.</p>
+
+<ol class="mb-3">
+<li>Act using an exploratory policy, such as $\epsilon$-greedy.</li>
+<li>Store $(s,a,r,s',done)$ in replay buffer.</li>
+<li>Sample a minibatch, reducing temporal correlation and reusing experience.</li>
+<li>Compute target with a slowly updated target network:</li>
+</ol>
+
+<p class="mb-3">$$y=r+\gamma(1-done)\max_bQ_{\theta^-}(s',b).$$</p>
+
+<ol class="mb-3">
+<li>Minimize $(y-Q_\theta(s,a))^2$ or a specified robust loss, holding $y$ fixed.</li>
+<li>Periodically copy or slowly mix online parameters into the target network.</li>
+</ol>
+
+<p class="mb-3"><strong>Replay</strong> addresses correlated samples/reuse; <strong>target network</strong> stabilizes moving targets. Neither guarantees convergence. Vanilla DQN's max over actions is straightforward for a small discrete set but difficult for continuous actions.</p>
+
+<p class="mb-3"><strong>Recognition-level variants:</strong> Double DQN selects with the online network and evaluates with the target network to reduce max overestimation; Dueling separates value and action advantage; prioritized replay favors informative transitions but changes sampling; recurrent variants address observation histories. The core Week 5 mechanism is replay plus a separate target network.</p>
+
+<h4 id="5-5-policy-search-and-softmax" class="mb-2">5.5 Policy search and softmax</h4>
+
+<p class="mb-3">Directly parameterize a stochastic policy and maximize</p>
+
+<p class="mb-3">$$J(\theta)=E_{\tau\sim\pi_\theta}\left[\sum_t\gamma^tr_t\right].$$</p>
+
+<p class="mb-3">For action preference $z_\theta(s,a)$:</p>
+
+<p class="mb-3">$$\pi_\theta(a\mid s)=\frac{e^{z_\theta(s,a)}}{\sum_b e^{z_\theta(s,b)}}.$$</p>
+
+<p class="mb-3">A deterministic argmax rule is generally not smoothly differentiable in its parameters. For linear logits $z_\theta(s,a)=\theta^\top\phi(s,a)$:</p>
+
+<p class="mb-3">$$\nabla_\theta\log\pi_\theta(a\mid s)=\phi(s,a)-\sum_b\pi_\theta(b\mid s)\phi(s,b).$$</p>
+
+<p class="mb-3">Policy-gradient theorem, under the corresponding discounted occupancy convention:</p>
+
+<p class="mb-3">$$\nabla_\theta J\propto E[Q^\pi(s,a)\nabla_\theta\log\pi_\theta(a\mid s)].$$</p>
+
+<h4 id="5-6-reinforce-and-baselines" class="mb-2">5.6 REINFORCE and baselines</h4>
+
+<p class="mb-3">REINFORCE uses completed episodes and sampled return as the action-value target:</p>
+
+<p class="mb-3">$$\theta\leftarrow\theta+\alpha G_t\nabla_\theta\log\pi_\theta(a_t\mid s_t).$$</p>
+
+<p class="mb-3">The return tells how good the sampled continuation was; the score gradient says how to change the probability of the sampled action. Positive relative performance increases its likelihood; negative relative performance decreases it.</p>
+
+<p class="mb-3"><strong>Discount convention:</strong> the expression above uses local return weighting. For an unbiased trajectory gradient of the explicitly discounted start-state objective $E[\sum_t\gamma^tr_t]$, the full sum is $\sum_t\gamma^tG_t\nabla\log\pi(a_t\mid s_t)$. An equivalent policy-gradient form can absorb this weighting in discounted state visitation. Keep the objective, estimator, and discount weighting consistent.</p>
+
+<p class="mb-3">Use an action-independent baseline:</p>
+
+<p class="mb-3">$$\theta\leftarrow\theta+\alpha[G_t-b(s_t)]\nabla_\theta\log\pi_\theta(a_t\mid s_t).$$</p>
+
+<p class="mb-3">It preserves the expected score gradient since</p>
+
+<p class="mb-3">$$E_{a\sim\pi}[b(s)\nabla_\theta\log\pi(a\mid s)] =b(s)\nabla_\theta\sum_a\pi(a\mid s)=0.$$</p>
+
+<p class="mb-3">$V^\pi(s)$ is a useful reference: the update measures performance relative to typical return from that state. It reduces variance in many settings; the mathematically variance-minimizing baseline need not equal $V^\pi$ exactly. Detach the baseline/advantage when applying the usual actor update. A sample $G_t$ is not itself the expected value $V^\pi(s_t)$.</p>
+
+<h5 class="mb-2">Advantage: what counts as better than the policy's baseline?</h5>
+
+<p class="mb-3">The Week 5 lecture defines advantage as action value minus state value:</p>
+
+<p class="mb-3">$$A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s),\qquad V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).$$</p>
+
+<p class="mb-3">Positive advantage means the action is better than the policy's average continuation from that state; negative advantage means worse. For example, if $Q^\pi(s,a)=10$ but $V^\pi(s)=12$, the advantage is −2 despite a positive action value. Under the same policy, $\sum_a\pi(a\mid s)A^\pi(s,a)=0$.</p>
+
+<p class="mb-3">REINFORCE uses the sampled estimate $G_t-b(s_t)$. Actor-Critic can use the TD error instead. With an exact value function and a nonterminal transition:</p>
+
+<p class="mb-3">$$E[r+\gamma V^\pi(s')-V^\pi(s)\mid s,a]=A^\pi(s,a).$$</p>
+
+<p class="mb-3">One observed TD error is noisy; an inaccurate critic also introduces estimation error. This connects the REINFORCE baseline, Actor-Critic's feedback, and PPO's advantage sign without requiring a softmax parameter calculation.</p>
+
+<h4 id="5-7-actor-critic" class="mb-2">5.7 Actor-Critic</h4>
+
+<p class="mb-3">Actor learns $\pi_\theta$; critic learns $V_w$ or $Q_w$. In one-step TD Actor-Critic:</p>
+
+<p class="mb-3">$$\delta_t=r_t+\gamma V_w(s_{t+1})-V_w(s_t),$$</p>
+
+<p class="mb-3">$$w\leftarrow w+\alpha_w\delta_t\nabla_wV_w(s_t),$$</p>
+
+<p class="mb-3">$$\theta\leftarrow\theta+\alpha_\theta\delta_t\nabla_\theta\log\pi_\theta(a_t\mid s_t).$$</p>
+
+<p class="mb-3">The critic's TD error estimates advantage. Bootstrapping allows earlier/lower-variance updates than complete-return REINFORCE but introduces critic-estimation bias. Actor and critic can have different learning rates. A2C is synchronous; A3C uses asynchronous workers. These are implementation families, not changes to the definition of advantage.</p>
+
+<h4 id="5-8-trpo-and-ppo" class="mb-2">5.8 TRPO and PPO</h4>
+
+<p class="mb-3">Unrestricted policy updates can destroy a good policy. TRPO maximizes a surrogate objective subject to a KL constraint limiting policy change:</p>
+
+<p class="mb-3">$$\max_\theta E[r_t(\theta)\hat A_t] \quad\text{subject to }E[D_{KL}(\pi_{old}\|\pi_\theta)]\le\delta_{KL}.$$</p>
+
+<p class="mb-3">PPO replaces this costly constrained update with a clipped surrogate:</p>
+
+<p class="mb-3">$$r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)},$$</p>
+
+<p class="mb-3">$$L^{CLIP}=E\left[\min\left(r_t\hat A_t,\operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t\right)\right].$$</p>
+
+<p class="mb-3">This is a maximization objective; implementations minimizing a loss use its negative. $r_t&gt;1$ increases the probability of the sampled action; $r_t&lt;1$ decreases it. This ratio is not the environment reward $r_t$ despite the reused letter.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Advantage sign</th>
+<th>Desirable change</th>
+<th>Where the sample's beneficial change is clipped</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>$\hat A&gt;0$</td>
+<td>Increase action probability</td>
+<td>Above $1+\epsilon$</td>
+</tr>
+<tr>
+<td>$\hat A&lt;0$</td>
+<td>Decrease action probability</td>
+<td>Below $1-\epsilon$</td>
+</tr>
+<tr>
+<td>$\hat A=0$</td>
+<td>No actor contribution</td>
+<td>Terms are zero</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3"><strong>Always multiply by advantage before taking min.</strong> For $\hat A&lt;0$, ordering reverses. PPO clips the objective incentive; it does not force every ratio to remain in the interval, impose a hard KL constraint, or guarantee monotonic policy improvement. Data generated by the old policy is normally reused for a limited number of minibatch epochs.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Method</th>
+<th>What changes?</th>
+<th>Feedback</th>
+<th>Main trade-off</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>DQN</td>
+<td>Action-value network</td>
+<td>Bootstrapped greedy TD target</td>
+<td>Off-policy sample reuse; discrete-action maximization and instability</td>
+</tr>
+<tr>
+<td>REINFORCE</td>
+<td>Stochastic policy</td>
+<td>Complete sample return</td>
+<td>Direct optimization; high variance</td>
+</tr>
+<tr>
+<td>Actor-Critic</td>
+<td>Policy and critic</td>
+<td>Estimated advantage</td>
+<td>Earlier/lower-variance updates; critic bias</td>
+</tr>
+<tr>
+<td>TRPO</td>
+<td>Policy with critic/advantages</td>
+<td>KL-constrained surrogate</td>
+<td>More explicit step control; expensive optimization</td>
+</tr>
+<tr>
+<td>PPO</td>
+<td>Policy and critic</td>
+<td>Clipped surrogate</td>
+<td>Simpler optimization; approximate step control</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h5 class="mb-2">PPO clipping as a piecewise objective</h5>
+
+<p class="mb-3">Let r be the policy probability ratio, A the estimated advantage, and $\epsilon&gt;0$. The per-sample objective can be written</p>
+
+<p class="mb-3">$$L(r,A)=\begin{cases} A\min(r,1+\epsilon),&amp;A\ge0,\\ A\max(r,1-\epsilon),&amp;A&lt;0. \end{cases}$$</p>
+
+<p class="mb-3">For positive advantage, increasing r beyond the upper threshold gives no additional surrogate reward. For negative advantage, decreasing r below the lower threshold gives no additional surrogate reward. Harmful changes remain penalized: reducing probability for a good action or increasing it for a bad action is not protected by clipping. This is why multiplying by advantage before taking the minimum matters.</p>
+</section>
+
+<section id="week-7-guided-sequential-decisions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Week 7 — Guided sequential decisions</h3>
+
+<h4 id="7-1-decision-time-versus-demonstration-based-methods" class="mb-2">7.1 Decision-time versus demonstration-based methods</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th></th>
+<th>Decision-time planning</th>
+<th>Demonstration-based learning</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>When computation happens</td>
+<td>At each decision</td>
+<td>Mostly before deployment</td>
+</tr>
+<tr>
+<td>Information</td>
+<td>Simulator/model and current state</td>
+<td>Expert demonstrations or corrections</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>An action for the current state</td>
+<td>A learned policy</td>
+</tr>
+<tr>
+<td>Examples</td>
+<td>Rollout, MCTS, UCT</td>
+<td>BC, DAgger, GAIL</td>
+</tr>
+<tr>
+<td>Trade-off</td>
+<td>Runtime search cost</td>
+<td>Data coverage and expert quality</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Both avoid solving the entire enormous state space by exhaustive offline DP. A simulator is still needed for ordinary rollouts/MCTS; “no model-free RL training” does not mean “no model.”</p>
+
+<h4 id="7-2-rollout" class="mb-2">7.2 Rollout</h4>
+
+<p class="mb-3">For each candidate first action $a$, hold it fixed, then follow a base rollout policy $\pi$ in simulated continuations:</p>
+
+<p class="mb-3">$$\hat Q^\pi(s,a)=\frac1N\sum_{i=1}^NG^{(i)}(s,a),\quad a^*=\arg\max_a\hat Q^\pi(s,a).$$</p>
+
+<p class="mb-3">For a depth cutoff, include $\gamma^H\hat V(s_H)$ or explicitly accept truncation bias. Comparing candidate actions with different reward horizons is misleading unless intentionally modeled. Exact one-step greedy improvement using $Q^\pi$ satisfies policy improvement under the usual assumptions; finite noisy rollout estimates do not guarantee every chosen action improves the base policy.</p>
+
+<p class="mb-3">Lecture example: Left returns $4,6,5$, mean $5$; Right returns $3,8,2$, mean $13/3\approx4.333$. Choose Left. $G$ is one realized sum, while $Q^\pi$ is an expectation over possible continuations.</p>
+
+<p class="mb-3">Chance nodes average according to transition probabilities (or Monte Carlo samples); decision nodes choose among actions. Random environment outcomes are not controllable choices.</p>
+
+<h4 id="7-3-mcts-and-uct" class="mb-2">7.3 MCTS and UCT</h4>
+
+<p class="mb-3">Four stages in each repeated trial:</p>
+
+<ol class="mb-3">
+<li><strong>Selection:</strong> follow existing tree edges using a tree policy.</li>
+<li><strong>Expansion:</strong> add an untried action/node.</li>
+<li><strong>Simulation:</strong> use a rollout or leaf evaluator.</li>
+<li><strong>Backup:</strong> update visits, total return, and average value along the selected path.</li>
+</ol>
+
+<p class="mb-3">Keep the tree statistics between trials for the current decision. An edge is expanded once but may be visited repeatedly. If $N$ samples have mean $\bar Q$, a new return $g$ gives</p>
+
+<p class="mb-3">$$\bar Q_{new}=\bar Q+\frac{g-\bar Q}{N+1}.$$</p>
+
+<p class="mb-3">Return backed up at an ancestor includes its intervening rewards and discount; do not blindly use an undiscounted leaf reward for all levels. MCTS is <strong>anytime</strong>: more trials can improve the decision estimate and it can return a current answer when interrupted.</p>
+
+<p class="mb-3">UCT selection:</p>
+
+<p class="mb-3">$$a=\arg\max_a\left[\bar Q(s,a)+c\sqrt{\frac{\ln N(s)}{N(s,a)}}\right].$$</p>
+
+<p class="mb-3">First term exploits average return; second explores less-sampled actions. Larger $c$ favors exploration. Unvisited actions need a separate convention (e.g. prioritize them); the formula is undefined at $N(s,a)=0$. The simulation-selection rule is different from the final root recommendation, which may use visit count or estimated value according to the specified algorithm. Finite compute is not an optimality guarantee.</p>
+
+<h4 id="7-4-alphago-zero-and-puct" class="mb-2">7.4 AlphaGo Zero and PUCT</h4>
+
+<p class="mb-3">A neural network provides a policy prior $P(s,a)$ and a state value $v(s)$. PUCT uses the prior to guide search:</p>
+
+<p class="mb-3">$$\bar Q(s,a)+cP(s,a)\frac{\sqrt{\sum_bN(s,b)}}{1+N(s,a)}.$$</p>
+
+<p class="mb-3">AlphaGo Zero evaluates leaves with its value network rather than random rollouts and trains from self-play rather than expert games. MCTS visit distributions become policy targets; game outcomes become value targets. This resembles approximate policy iteration: search improves behavior and network learning approximates that improvement. In alternating zero-sum games, backup must respect player perspective, often reversing value signs between turns.</p>
+
+<h4 id="7-5-bc-dagger-irl-and-gail" class="mb-2">7.5 BC, DAgger, IRL, and GAIL</h4>
+
+<p class="mb-3"><strong>Behavioral cloning (BC):</strong> supervised learning on expert state-action pairs:</p>
+
+<p class="mb-3">$$L_{BC}=-E_{(s,a_E)\sim D}[\log\pi_\theta(a_E\mid s)].$$</p>
+
+<p class="mb-3">It is simple and requires no explicit reward model. But the learner's mistakes change which states it visits, so deployment distribution differs from expert data. Early errors can compound and lead to unseen recovery states.</p>
+
+<p class="mb-3"><strong>DAgger:</strong> train initial policy → run current learner (possibly mixed with the expert) → query expert actions on the visited states → add those labels to the dataset → retrain. Decaying expert-execution probability $\beta$ changes the states visited; expert labels are still queried on learner-visited states. It reduces distribution mismatch at the cost of interactive expert access. Dataset aggregation retains earlier data.</p>
+
+<p class="mb-3"><strong>IRL:</strong> infer a reward explaining expert behavior, then solve/learn under that reward. Reward inference may be ambiguous: many rewards can justify the same behavior.</p>
+
+<p class="mb-3"><strong>GAIL:</strong> learn a policy through adversarial discrimination of expert versus learner state-action behavior, matching occupancy distributions without explicitly identifying a unique reward. It generally requires learner rollouts during training; expert demonstrations alone are not the entire computation.</p>
+
+<p class="mb-3"><strong>Comparison:</strong> BC predicts actions from a fixed dataset; DAgger obtains corrections on the learner's states; IRL recovers a reward model; GAIL adversarially matches behavior. None establishes that an imperfect expert is globally optimal. Human demonstrations may reflect biases and bounded rationality.</p>
+</section>
+
+<section id="common-mistakes-and-calculation-techniques" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Common mistakes and calculation techniques</h3>
+
+<h4 id="common-wrong-answers-and-their-repairs" class="mb-2">Common wrong answers and their repairs</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Mistake</th>
+<th>Repair</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>“A goal describes the entire desired state”</td>
+<td>It normally constrains only selected literals</td>
+</tr>
+<tr>
+<td>Changing facts not mentioned in the effects</td>
+<td>Apply inertia; only delete/add specified facts</td>
+</tr>
+<tr>
+<td>Adding an unstated distinctness condition when grounding</td>
+<td>Enumerate substitutions using the actual schema</td>
+</tr>
+<tr>
+<td>“Any delete-relaxed heuristic is admissible”</td>
+<td>Exact relaxed optimum is a lower bound; greedy extraction or additive sharing can overestimate</td>
+</tr>
+<tr>
+<td>“Optimistic includes a goal, so success is certain”</td>
+<td>It may include unreachable states</td>
+</tr>
+<tr>
+<td>“Pessimistic misses a goal, so the plan fails”</td>
+<td>It may omit reachable successes</td>
+</tr>
+<tr>
+<td>$U(E[X])$ instead of $E[U(X)]$</td>
+<td>Evaluate utility at outcomes before averaging</td>
+</tr>
+<tr>
+<td>Taking log of a negative payoff</td>
+<td>Apply log to positive final wealth</td>
+</tr>
+<tr>
+<td>Equating CE with EU</td>
+<td>CE has outcome units; EU has utility units</td>
+</tr>
+<tr>
+<td>Assuming arbitrary monotone transformations preserve lotteries</td>
+<td>Positive affine transformations preserve expected-utility preferences</td>
+</tr>
+<tr>
+<td>Treating Nash equilibrium as socially best</td>
+<td>Check incentives and welfare separately</td>
+</tr>
+<tr>
+<td>$E[\max_a]$ when action precedes uncertainty</td>
+<td>Choose one action then average its possible outcomes</td>
+</tr>
+<tr>
+<td>Putting max into fixed-policy evaluation</td>
+<td>Max is for improvement/optimality, not evaluation</td>
+</tr>
+<tr>
+<td>Paying terminal reward twice</td>
+<td>Reward on entry, terminal future value zero</td>
+</tr>
+<tr>
+<td>Reusing newly updated values in a synchronous VI sweep</td>
+<td>Read the entire previous vector</td>
+</tr>
+<tr>
+<td>Learning rate and discount mixed up</td>
+<td>$\alpha$ controls update size; $\gamma$ weights future reward</td>
+</tr>
+<tr>
+<td>SARSA uses a greedy next action automatically</td>
+<td>Use the behavior's actual next action</td>
+</tr>
+<tr>
+<td>“Q-learning never uses negative outcomes”</td>
+<td>Every observed reward enters its update; only continuation is greedy</td>
+</tr>
+<tr>
+<td>MC updates before its full return is available</td>
+<td>Wait for completion unless another estimator is specified</td>
+</tr>
+<tr>
+<td>Differentiating a TD target in a semi-gradient update</td>
+<td>Treat the target as fixed</td>
+</tr>
+<tr>
+<td>Approximator failure blamed only on too little data</td>
+<td>Check whether its features can represent the desired values</td>
+</tr>
+<tr>
+<td>PPO takes min of ratios before considering sign</td>
+<td>Multiply both terms by advantage first</td>
+</tr>
+<tr>
+<td>“PPO guarantees every ratio stays clipped”</td>
+<td>Clipping affects the objective, not a hard parameter constraint</td>
+</tr>
+<tr>
+<td>Position-only state for delayed actions</td>
+<td>Include pending status and the action still being executed</td>
+</tr>
+<tr>
+<td>MCTS forgets old samples each trial</td>
+<td>Maintain visit/return statistics across trials</td>
+</tr>
+<tr>
+<td>DAgger merely adds more expert trajectories</td>
+<td>Query labels on states visited by the learner</td>
+</tr>
+<tr>
+<td>Shortest valid plan equals highest utility</td>
+<td>Evaluate the stated objective, including timing and resource constraints</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="reusable-answer-structure" class="mb-2">Reusable answer structure</h4>
+
+<p class="mb-3"><strong>Definition question:</strong> state the problem solved → define the key quantity → give the mechanism → distinguish its closest alternative.</p>
+
+<p class="mb-3"><strong>Modeling question:</strong> enumerate state variables → legal actions → successor probabilities → reward timing → terminal/horizon → verify Markov sufficiency and probability normalization.</p>
+
+<p class="mb-3"><strong>Update question:</strong> write old value → calculate target using the specified pre-update quantities → subtract to get error → multiply by learning rate → update only the intended entry/parameters → show final answer.</p>
+
+<p class="mb-3"><strong>Proof/counterexample:</strong> state assumptions → write the relevant inequality/set inclusion → derive the requested implication; when an implication fails, give one small concrete counterexample.</p>
+
+<p class="mb-3"><strong>Comparison question:</strong> compare model information, training data, target, update timing, prediction/control, and main trade-off. Avoid declaring one algorithm universally best.</p>
 
 <h1 class="mt-4">Week 1 - AI Planning Foundations, Classical Planning, SATPlan, and Responsible AI Governance</h1>
 

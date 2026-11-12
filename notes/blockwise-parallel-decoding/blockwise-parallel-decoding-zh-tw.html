@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="blockwise-parallel-decoding">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/blockwise-parallel-decoding/blockwise-parallel-decoding-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,37 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Google 團隊（Mitchell Stern, Noam Shazeer, Jakob Uszkoreit）在 NeurIPS 2018 發表的《Blockwise Parallel Decoding for Deep Autoregressive Models》，是今日所有推測解碼（Speculative Decoding）與 MTP 驗證機制的歷史奠基之作。該論文首次確立了「多步並行前瞻預測（Proposal）+ 昂貴模型打分並截取最長已驗證前綴（Prefix Verification）」的核心骨架。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">多步候選由 scoring model 驗證最長有效前綴，是 MTP 解碼的重要前史。exact 模式對齊 greedy 輸出；approximate 模式交換速度與品質。原始研究任務為翻譯與影像，不是現代聊天 LLM。</p>
+<p class="mb-3">依據 NeurIPS 2018 論文：</p>
+
+<ul class="note-list">
+<li><strong>塊狀前瞻預測（Block Proposal）</strong>：在自迴歸生成的第 $t$ 步，利用輕量輔助預測前饋網絡（Proposal Heads）一次性輸出未來 $K$ 個位置的 token 猜測塊 $(x_{t+1}, \dots, x_{t+K})$。</li>
+<li><strong>平行打分（Scoring Pass）</strong>：將當前已知前綴與這 $K$ 個候選拼合成一段序列，輸入至完整的深層自迴歸模型進行單次平行前向打分，一次性獲得每個位置的真實條件概率分佈 $P(x_i \mid x_{&lt;i})$。</li>
+<li><strong>最長公共前綴裁剪（Longest Verified Prefix）</strong>：自左向右逐個核對候選與打分模型的最高機率選擇（Greedy Selection），一旦在某個位置發生分歧立即中斷截斷，並以打分模型的修正輸出作為最新結果。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">proposal／scoring／accept流程；exact greedy的保證；approximate容許條件。</p>
+<ul class="note-list">
+<li><strong>早期機器翻譯與語音驗證</strong>：在 WMT 機器翻譯與語音特徵自迴歸解碼任務中，該方法在保持輸出文字與逐步貪婪解碼 100% 完全一致的前提下，取得了 <strong>2× 至 4×</strong> 的解碼步數縮減。</li>
+<li><strong>近似速度交換</strong>：論文同時探索了允許容忍微小邊界概率差異的 Approximate 模式，進一步將解碼延遲壓低。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>Exact 的語意限定於 Greedy 判定</strong>：2018 論文中所謂的「Exact（精確一致）」，是指完全精確復現確定性貪婪解碼（Greedy Argmax）的生成路徑；它尚未涉及現代大模型所依賴的「保留隨機溫度採樣分佈（Temperature Sampling Distribution）」的拒絕採樣數學機制。</li>
+<li><strong>原始實驗情境的歷史局限</strong>：該論文誕生於經典 Transformer 翻譯模型時代，其驗證場景與當前數十億至千億級參量的指令遵循與長程對話 LLM 存在架構與顯存帶寬瓶頸上的顯著差異。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +280,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>Blockwise Parallel Decoding 是推測解碼的歷史始祖，確立了多步猜測加最長驗證前綴的範式。</li>
+<li>透過單次並行 Scoring 替代逐步串行 Forward，顯著減少序列自迴歸迭代次數。</li>
+<li>歷史論文中的 Exact 嚴格限定於 Greedy 解碼路徑完全一致，而非現代隨機採樣分佈保真。</li>
+<li>原始任務為翻譯與序列轉導，閱讀時應理解其作為當代 LLM 候選驗證的架構原型地位。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

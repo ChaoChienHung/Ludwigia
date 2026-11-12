@@ -11,8 +11,8 @@
   <meta name="site:tag_concepts" content=",,concept.machine_learning">
   <meta name="site:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
   <meta name="site:canonical_id" content="gpr-generative-recommendation">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="6">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="7">
   <meta name="site:source" content="notes/gpr-generative-recommendation/gpr-generative-recommendation-zh-tw.md">
   <script>
   (() => {
@@ -42,6 +42,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -59,7 +62,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -154,8 +157,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -180,7 +184,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -206,22 +210,37 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
-
-<p class="mb-3">廣告推薦要同時承接多個興趣方向與不同商業目標。GPR 把廣告及自然內容映射成多層 semantic IDs，再以共享 backbone 與平行 heads 建模多重興趣。v1 方法預設四個 heads，各預測一條完整 item code path；不是四個頭各猜同一 item 的一個成分。</p>
-
-<p class="mb-3">MTP 用於預訓練，後續接 value-aware fine-tuning 與 HEPO。最新版摘要仍明確提到 MTP，作者報告已完整部署於微信 Channels。這是作者的一手部署描述，尚非本筆記獨立驗證；v1 同時加入 MTP 與 Thinking 的線上收益也不能全歸給 MTP。</p>
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">騰訊微信團隊發布的 GPR（《GPR: Towards a Generative Pre-trained One-Model Paradigm for Large-Scale Advertising Recommendation》，2025 年底預印本，2026 年 v3 更新），展示了在超大規模工業級廣告推薦場景中，利用 MTP 構建「生成式預訓練單一模型架構（One-Model Paradigm）」的重磅實踐，並報告了在微信視頻號廣告中的全面部署。</p>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
+
+<p class="mb-3">依據論文架構說明（v1 §3.1 &amp; v3 摘要）：</p>
 
 <ul class="note-list">
-<li>場景：廣告與自然內容的統一表示及多重興趣。</li>
-<li>機制：HHD 與平行完整 SID 路徑。</li>
-<li>訓練：MTP、價值對齊與 HEPO 各負責什麼。</li>
-<li>證據：offline 消融、online 組合改動與歸因限制。</li>
+<li><strong>Token 的實體語義</strong>：廣告商品的層級化語義編碼（Hierarchical Semantic Codes）。在 GPR 中，用戶在當下時刻往往同時存在多個潛在興趣維度（如美妝、數碼、運動）。</li>
+<li><strong>多興趣並行 MTP 預測頭</strong>：共享強大的推薦主幹模型，向外分叉出預設 4 個並行的 MTP 預測頭（Multi-Interest Heads），每個 Head 負責並行解碼出對應於一個獨立興趣方向的完整商品層級編碼路徑。</li>
+<li><strong>訓練與業務目標對齊</strong>：預訓練階段利用多興趣 MTP 學習全局潛在表示；在微調階段採用價值感知 MTP（Value-Aware MTP）以及 HEPO 策略優化算法，將點擊率（CTR）與廣告商業轉化（GMV）深度綁定。</li>
+</ul>
+</section>
+
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
+
+<ul class="note-list">
+<li><strong>全面工業部署</strong>：最新 v3 論文摘要明確確認保留了 MTP 架構，並由作者報告已在<strong>騰訊微信視頻號廣告系統中全面上線部署（Full Production Deployment）</strong>。</li>
+<li><strong>線上業務增量</strong>：作者報告的在線迭代數據顯示取得了包括 GMV 增長在內的顯著業務效益。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>版本細節的謹慎追溯</strong>：v3 摘要確認了 MTP 與全面部署，但 4 個並行 Heads 的具體架構圖是自 v1 §3.1 讀取，不可在未重新核對 v3 全文公式前斷言所有參數配置在跨版本演進中未做微調。</li>
+<li><strong>複合迭代與因果消融界限</strong>：在 v1 報告的線上迭代實驗中，線上系統是<strong>同時引入了 MTP 與 Thinking 機制</strong>，其最終獲得的 +0.63% GMV 增長屬於多模塊協同的系統性收益，嚴禁在技術分析中歸因於「單純 MTP 帶來的淨收益」。</li>
 </ul>
 </section>
 
@@ -271,9 +290,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>GPR 的平行 heads 對應多個興趣路徑，各路徑產生完整 item SID。</li>
-<li>作者明確報告 MTP 與微信 Channels 部署。</li>
-<li>組合新增 MTP 與 Thinking 的線上結果不能當成 MTP 單獨收益。</li>
+<li>GPR 創新性地將 MTP Heads 用於並行表徵用戶的多個並發興趣維度（預設 4 個 heads）。</li>
+<li>透過價值感知 MTP 與 HEPO 策略對齊，將多興趣預測直接轉化為商業目標導向。</li>
+<li>作者報告該模型已在騰訊微信視頻號廣告場景達成全量生產部署。</li>
+<li>線上業務增量為 MTP 與 Thinking 等機制複合疊加成果，不可作為單一組件消融結論。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

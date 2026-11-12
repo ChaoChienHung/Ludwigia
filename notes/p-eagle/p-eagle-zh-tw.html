@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="p-eagle">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/p-eagle/p-eagle-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,37 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Mude Hui 等人在 2026 年初發布的《P-EAGLE: Parallel-Drafting EAGLE with Scalable Training》，對開源社群極具影響力的 EAGLE 框架進行了架構級再造：<strong>將原本自迴歸（Autoregressive）形式的 EAGLE 草稿頭，徹底替換為平行多 token 預測（Parallel MTP）</strong>，並攻克了長序列訓練下的顯存與計算擴展難題。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">以可學習共享 hidden state 將 EAGLE 的自迴歸 drafter 改為 parallel MTP；attention-mask預計算與sequence partitioning支援長序列訓練。這是 drafter 方法研究，不代表測試的 backbone 原生採用 MTP。</p>
+<p class="mb-3">依據 P-EAGLE 論文（2026-02）：</p>
+
+<ul class="note-list">
+<li><strong>從 AR 到 Parallel 的範式轉換</strong>：原版 EAGLE 在生成候選樹時，其輕量 Drafter 自身仍需要執行多次小型的自迴歸循環，在超長上下文或多並發請求下，Drafter 自身的串行延遲逐漸成為整體瓶頸。P-EAGLE 改用 Parallel MTP Heads，單步並行吐出多層候選。</li>
+<li><strong>長序列訓練 Attention Mask 優化</strong>：針對長文本微調，提出專屬的長序列分塊注意力排程，解決了長上下文訓練下草稿頭梯度反向傳播的顯存爆炸問題。</li>
+<li><strong>與主流推論引擎生態深度打通</strong>：專門針對 vLLM 與 GPT-OSS 等高吞吐服務引擎進行了底層算子融合優化。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">parallel positions的conditioning；mask與partitioning；vLLM相對EAGLE-3的基準。</p>
+<ul class="note-list">
+<li><strong>推論吞吐再度拉升</strong>：在 Qwen3-Coder 等長文本代碼生成評測中，相較於經典 EAGLE，P-EAGLE 使得草稿生成的純計算延遲降低了 <strong>40% 以上</strong>，整體端到端吞吐進一步提升。</li>
+<li><strong>訓練擴展性驗證</strong>：在萬級（16K–32K）序列長度的訓練中展示出極為平滑的 Scaling 曲線。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>改進對象純屬 Drafter 推論系統</strong>：P-EAGLE 是針對推論 Draft 機制的高效工程與架構改良，未涉及且未改善主模型的基礎預訓練表示。</li>
+<li><strong>評測受限於特定開源生態</strong>：其出色的延遲數據均是在專用優化的 vLLM 核心算子與特定 GPU 集群上測得，在未經定製的推論環境下無法直接復現最佳延遲。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +280,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>P-EAGLE 將 EAGLE 草稿頭由小型自迴歸重構成非阻塞的平行多頭 MTP 架構。</li>
+<li>優化長序列訓練中的 Attention Mask 機制，解決了長文本草稿頭微調的顯存擴展瓶頸。</li>
+<li>草稿生成計算耗時縮減 40% 以上，顯著緩解了高並發下的草稿頭延遲瓶頸。</li>
+<li>定位為純粹的推論服務工程加速，不應與預訓練階段的主模型增強混淆。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

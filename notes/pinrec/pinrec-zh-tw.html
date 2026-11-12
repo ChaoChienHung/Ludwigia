@@ -11,7 +11,7 @@
   <meta name="site:tag_concepts" content=",,concept.machine_learning">
   <meta name="site:tag_labels" content="{&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
   <meta name="site:canonical_id" content="pinrec">
-  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:last_modified_at" content="2026-11-12">
   <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/pinrec/pinrec-zh-tw.md">
   <script>
@@ -42,6 +42,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -59,7 +62,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -154,8 +157,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
 <a class="note-toc-link level-2" href="#technical-articles">技術文章（Technical Articles）</a>
@@ -181,7 +185,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -207,22 +211,35 @@
     <div class="row justify-content-center">
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
-          <section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
-
-<p class="mb-3">Pinterest 的短時間互動順序未必代表嚴格的興趣轉移。PinRec v1 用 windowed multi-token objective，讓多個生成位置對應一段未來互動，而非只拘泥下一 item。模型產生連續 item representations，再以 Faiss 找實際候選；token 不是離散 SID 的一個 code。</p>
-
-<p class="mb-3">必須分版閱讀：v1 明確以 Multi-Token 命名並介紹此目標；v7 已改名為跨 Pinterest 入口的統一檢索研究，正文不再出現 multi-token 一詞。不能把 v1 的機制直接當成最新版已保留的契約。最新摘要報告 Pinterest 級部署，但不替 v1 MTP 的沿用提供證明。</p>
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">Pinterest 團隊在 2025 年初發布的 PinRec（《PinRec: Outcome-Conditioned, Multi-Token Generative Retrieval for Industry-Scale Recommendation Systems》），代表了工業級圖片與社群推薦中將 MTP 應用於短視窗多行為生成的重要探索。該研究為我們理解工業預印本隨版本重構發生的詞彙與演算法演化提供了經典範本。</p>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
+
+<p class="mb-3">依據 PinRec 歷史版本分析（特別是保留原始架構細節的 2025 v1）：</p>
 
 <ul class="note-list">
-<li>問題：session 內互動順序與候選多樣性。</li>
-<li>歷史方法：windowed supervision 與連續 item embedding。</li>
-<li>Serving：自回歸生成、outcome conditioning 與 ANN。</li>
-<li>版本比較：v1 MTP 與 v7 統一模型的共同點及差異。</li>
+<li><strong>Token 的實體語義</strong>：連續實值向量（Continuous Representations）或短滑動視窗內的多個連續互動實體（Multi-Item Interactions in a Short Window）。</li>
+<li><strong>結果條件化（Outcome-Conditioned）</strong>：在給定用戶過往瀏覽序列的同時，將期望獲得的互動結果（如用戶 Save、Pin 或 Click）作為先驗條件注入解碼器，藉助 MTP 同步生成符合該預期的候選物品群。</li>
+<li><strong>視窗化多 Token 生成（Windowed MTP）</strong>：在單次前向迭代中，透過滑動視窗預測未來數個交互節點，大幅降低高並發檢索階段的排隊延遲。</li>
+</ul>
+</section>
+
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
+
+<ul class="note-list">
+<li><strong>Pinterest 工業級離線與在線評測</strong>：在億級用戶規模與海量圖文 Pins 推薦中，展示出優於傳統雙塔檢索（Two-Tower Retrieval）的檢索多樣性與相關性指標。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>版本演進的重大標記</strong>：PinRec 在 arXiv 上的後續版本（最新至 v7）經歷了顯著的標題重構、作者變更與正文修改，「Multi-Token」等術語在後續版本被弱化或替換。<strong>引用其 MTP 機制時，必須嚴格錨定為 2025 年 4 月發布的原始 v1 版本設計</strong>，絕不能將 v1 的歷史分析不加說明地套用到最新版本文檔中。</li>
 </ul>
 </section>
 
@@ -277,9 +294,9 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>歷史 v1 明確提出 windowed multi-token generation。</li>
-<li>PinRec 用連續 item 表示與 ANN 檢索，不是多個 SID code components。</li>
-<li>最新 v7 改名且不再使用 MTP 一詞，需要保留版本界線。</li>
+<li>PinRec v1 採用了結果條件化與短視窗 MTP 生成機制，服務於工業級生成式檢索。</li>
+<li>探索了在推薦中預測連續實值表示及短時間窗內多商品群的技術路線。</li>
+<li>該論文版本跨度極大（v1 至 v7），引用 MTP 結論時必須嚴格限定於 v1 原始文獻。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

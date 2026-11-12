@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="your-llm-knows-the-future">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/your-llm-knows-the-future/your-llm-knows-the-future-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,41 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Mohammad Samragh 等人在 2025 年發布的《Your LLM Knows the Future: Uncovering Its Multi-Token Prediction Potential》，開闢了一條無需高昂全量預訓練成本、僅在<strong>後訓練（Post-Training）階段透過掩碼輸入與門控 LoRA 激活現有大模型多步預測潛力</strong>的高效路線。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">結合 masked-input MTP、gated LoRA、可學習 sampler 與 consistency losses，讓既有模型形成多 token 候選。標題的「知道未來」是研究命名；品質與分布保證仍以驗證規則為準。</p>
+<p class="mb-3">論文的核心機制圍繞三大創新展開：</p>
+
+<ul class="note-list">
+<li><strong>掩碼輸入前瞻訓練（Masked-Input MTP）</strong>：在後訓練階段，透過精巧設計的 Attention Mask 與輸入擾動，迫使模型在中間 token 被遮蔽的情況下，利用上下文剩餘線索預測多個未來目標。</li>
+<li><strong>門控 LoRA 適配器（Gated LoRA Adaptor）</strong>：不修改主模型預訓練權重，僅為多步預測掛載由門控機制控制的 LoRA 低秩矩陣，動態調節不同難度 token 下的草稿預測權重。</li>
+<li><strong>自洽性一致性損失（Consistency Losses）</strong>：引入連續未來預測步之間的自洽性正則化項，懲罰相鄰預測頭在語意上的邏輯矛盾，大幅提升候選序列的內部連貫性。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">masked visibility；gated LoRA保留原功能的方式；sampler與consistency；測速條件。</p>
+<ul class="note-list">
+<li><strong>驚人的後訓練加速比</strong>：在已發布的開源模型（如 LLaMA-3-8B）上僅進行少量後訓練微調：
+<ul class="note-list">
+<li>在代碼（Coding）與數學推理（Math）任務上，端到端推論速度實現了接近 <strong>5 倍</strong> 的峰值加速。</li>
+<li>在標準知識對話任務上，亦穩健實現了約 <strong>2.5 倍</strong> 的加速。</li>
+</ul></li>
+<li><strong>極低算力消耗</strong>：僅耗費極少量的 GPU Hours 與微調數據集，便成功賦予普通開源模型頂級推測解碼器的能力。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>論文標題的擬人化修辭界限</strong>：「Your LLM Knows the Future（你的大模型知曉未來）」純屬形象的學術隱喻，是指模型深層表徵已隱含了足夠的多步預測統計相關性，絕非模型具備超自然的時間前瞻或預知能力。</li>
+<li><strong>領域專門化分佈</strong>：5× 的超高加速主要出現在符號規範極強、確定性高的代碼與數學長公式生成中，在高度發散的開放式對話與文學創作中，接受長度會顯著回落。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +284,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>該研究提出了基於 Masked Input 與 Gated LoRA 的低成本後訓練 MTP 激發框架。</li>
+<li>引入 Consistency Loss 顯著約束了多步候選在自洽性上的邏輯衝突。</li>
+<li>在代碼與數學等結構化場景下取得了接近 5× 的推論加速，通用對話約 2.5×。</li>
+<li>「知曉未來」屬於表徵統計特性的修辭性表達，不可脫離科學邊界做擬人化解讀。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

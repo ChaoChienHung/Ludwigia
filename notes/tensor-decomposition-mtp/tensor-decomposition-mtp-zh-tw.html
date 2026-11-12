@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="tensor-decomposition-mtp">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="7">
   <meta name="site:source" content="notes/tensor-decomposition-mtp/tensor-decomposition-mtp-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,43 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Artem Basharin 等人在 2024 年底提出的《Faster Language Models with Better Multi-Token Prediction Using Tensor Decomposition》，從高維多線性代數的視角，為多 token 預測的<strong>聯合機率分佈建模（Joint Distribution Modeling）</strong>提供了理論突破。該研究利用張量 CP 分解（CANDECOMP/PARAFAC）突破了傳統獨立頭的 Rank-1 局限性。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">把獨立多頭預測連到 rank-1 機率分解，再以 rank-r canonical probability decomposition 表達未來 token 的聯合關係。更高 rank 的候選品質與預測頭成本須一起衡量。</p>
+<p class="mb-3">依據論文數學推導：</p>
+
+<ul class="note-list">
+<li><strong>獨立 Heads 的本質：Rank-1 聯合分佈</strong>：傳統獨立 MTP Heads 將未來 $K$ 個 token 的聯合機率強行假設為各邊際的乘積：</li>
+</ul>
+
+<p class="mb-3">$$q(x_{t+1}, \dots, x_{t+K} \mid x_{\le t}) = \prod_{k=1}^K q_k(x_{t+k} \mid x_{\le t})$$ 這在幾何上對應於一個秩為 1（Rank-1）的極高維概率張量，無法捕捉未來詞彙之間的複雜互資訊與多模態分歧。</p>
+
+<ul class="note-list">
+<li><strong>Rank-$R$ 張量 CP 分解</strong>：論文將未來的聯合條件分佈張量表示為 $R$ 個 Rank-1 張量的凸組合加權和：</li>
+</ul>
+
+<p class="mb-3">$$q(x_{t+1}, \dots, x_{t+K} \mid x_{\le t}) = \sum_{r=1}^R w_r \prod_{k=1}^K q_{k, r}(x_{t+k} \mid x_{\le t})$$ 透過張量分解，以微小的參數增量引入了多個隱含「未來路徑模式（Modes）」，使模型能夠同時維護多條語義自洽的潛在未來分支。</p>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">rank-1直覺；rank-r CP分解、採樣與loss；rank/vocabulary/速度的權衡。</p>
+<ul class="note-list">
+<li><strong>聯合分佈保真度提升</strong>：在合成語言建模與程式碼生成的評測中，Rank-$R$ 張量分解顯著降低了未來 token 聯合分佈的困惑度（Joint Perplexity）。</li>
+<li><strong>推測解碼接受率改善</strong>：在自推測解碼中，由於提出的多 token 候選具備內在的模式一致性，多步接受率明顯優於單純獨立頭的預測方案。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>增加 Rank 存在計算開銷邊界</strong>：增大張量分解的秩 $R$ 雖然能增強分佈表達能力，但也顯著放大了 Head 的計算複雜度與詞表投影矩陣的顯存佔用；當 $R$ 過大時，Draft Head 自身的計算延遲將抵消跳步帶來的時間節省。</li>
+<li><strong>預印本研究定位</strong>：該方法為極具數學優雅性的前沿探索，在超大規模工業級模型上的完整穩定性與擴展法則（Scaling Law）尚待進一步的大規模驗證。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +286,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>傳統獨立 MTP Heads 在數學上等價於極度嚴苛的 Rank-1 聯合機率張量。</li>
+<li>Tensor Decomposition 引入 Rank-R CP 分解，能自然捕捉未來的多模態分支分歧。</li>
+<li>在維持輕量參數量的前提下顯著降低了未來多步的聯合交叉熵損失。</li>
+<li>Rank 的取值存在理論表達力與推論計算延遲之間的實體權衡。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

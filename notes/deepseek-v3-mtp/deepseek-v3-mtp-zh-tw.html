@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="deepseek-v3-mtp">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="8">
   <meta name="site:source" content="notes/deepseek-v3-mtp/deepseek-v3-mtp-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
 <a class="note-toc-link level-2" href="#technical-articles">技術文章與模型卡（Technical Articles）</a>
@@ -180,7 +184,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -207,21 +211,49 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是一份待補寫的文獻資源種子，用來建立閱讀入口與來源關係，尚不是完整的方法深度解析。</p>
+<p class="mb-3">DeepSeek-V3 是當前開源大型語言模型中，將 Multi-Token Prediction（MTP）同時應用於<strong>預訓練主幹監督（Backbone Supervision）</strong>與<strong>推論自推測解碼（Self-Speculative Decoding）</strong>最具代表性的工業級範例。DeepSeek 團隊在報告中揭示了 MTP 的模組化串接機制，證明了額外未來 token 監督能在預訓練階段強化主模型特徵表達，並在推論服務階段提供實質吞吐量倍增。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">共享 embedding 與 output head，串接 Transformer MTP 模組；實際 depth 為 1。額外預測 loss 與 backbone 聯合訓練，推論可移除模組，也可用它提出候選並交由主模型驗證。</p>
+<p class="mb-3">在 DeepSeek-V3 的技術報告（§2.2）中，MTP 被設計為一個或多個串聯的 Transformer 模組（Sequential Transformer Modules）：</p>
 
-<p class="mb-3">框架支援 MTP 或 speculative decoding 本身不足以證明模型採用；本筆記以指定版本的一手文件為準。</p>
+<ul class="note-list">
+<li><strong>參數共享與串接結構</strong>：MTP 模組與主模型（Main Backbone）深度共享底層的 Word Embedding 矩陣與頂層的 Output Projection（Unembedding Head）。這大幅節省了詞表參數量（對於 128K 詞表的大模型尤為重要）。</li>
+<li><strong>預測深度與因果鏈</strong>：在官方正式開源的檢查點中，MTP 模組的深度固定為 $	ext{depth} = 1$。這意味著在位置 $t$，除了主模型預測下一個 token $t+1$ 外，MTP 模組以第 $t$ 步的表徵與真實 token $t+1$ 的 Embedding 作為輸入，預測額外的一個未來 token $t+2$。</li>
+<li><strong>聯合損失函數（Joint Objective）</strong>：預訓練期間，MTP 模組產生輔助交叉熵損失（Auxiliary Cross-Entropy Loss）$\mathcal{L}_{\text{MTP}}$，並乘以加權係數 $\lambda$ 與主語言模型損失 $\mathcal{L}_{\text{NTP}}$ 共同反向傳播：</li>
+</ul>
+
+<p class="mb-3">$$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{NTP}} + \lambda \mathcal{L}_{\text{MTP}}$$ 來自 $\mathcal{L}_{\text{MTP}}$ 的梯度會直接流回主模型的 Transformer 層與 Embedding 層，形成額外的多步預測正則化約束。</p>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">§2.2 架構與 loss；§4.5.1 backbone 消融；§5.4.3 接受率與 TPS 的量測條件。</p>
+<p class="mb-3">DeepSeek-V3 報告提供了清晰的消融實驗（Ablation）與推論性能數據：</p>
+
+<ul class="note-list">
+<li><strong>預訓練主模型消融（§4.5.1）</strong>：在控制總預訓練資料量與計算資源的基準對比下，開啟 MTP 輔助監督能穩定提升主模型在程式碼生成（HumanEval、MBPP）、數學推理（GSM8K、MATH）以及標準學科評測上的準確率。這證明即使在部署時完全移除 MTP 模組，主模型本身也已從多步監督中獲益。</li>
+<li><strong>推論自推測解碼吞吐量（§5.4.3）</strong>：在推論階段，MTP 模組可作為內建的 Draft Head 提出第 $t+2$ 個 token 的預測候選，由主模型在下一個 forward pass 中進行平行驗證：
+<ul class="note-list">
+<li>第二個 token 的平均接受率（Acceptance Rate）穩定落在 <strong>85% 至 90%</strong> 之間。</li>
+<li>在官方推論引擎配置下，端到端 Tokens Per Second（TPS）提升了約 <strong>1.8 倍</strong>。</li>
+<li>官方代碼庫直接釋出了獨立的 14B MTP 權重文件，支援社區直接載入推論。</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<p class="mb-3">引用 DeepSeek-V3 的 MTP 結論時，必須維持嚴格的證據邊界：</p>
+
+<ol class="mb-3">
+<li><strong>訓練改善 vs. 解碼加速是兩種獨立收益</strong>：訓練收益來自輔助損失對共享表示的梯度塑造；解碼加速來自高接受率草稿對主模型序列 forward 次數的節省。兩者不可混為一談。</li>
+<li><strong>實際部署深度僅為 1</strong>：雖然論文討論了理論上可串聯多個模組，但開源權重與生產配置均為預測 1 個額外 token（即每次驗證 2 個 token）。</li>
+<li><strong>推論加速倍數依賴於特定硬體與 Batch 條件</strong>：1.8× TPS 是在特定服務器環境、特定 Batch Size 與長度條件下測得的系統指標，不可跨架構直接泛化為普適常數。</li>
+</ol>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -284,8 +316,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>聯合訓練與推論用途是不同收益。</li>
-<li>實際一個 MTP 模組提供一個額外 token 預測。</li>
+<li>DeepSeek-V3 採用 Sequential Transformer 模組，共享 Embedding 與 Unembedding Head，開源實作深度為 1。</li>
+<li>訓練階段 MTP 輔助損失能有效提升 Backbone 特徵品質，推論階段可直接丟棄或作為 Draft Head。</li>
+<li>推論自推測解碼達成 85%–90% 的第二 token 接受率，實測帶來約 1.8× TPS 加速。</li>
+<li>不可將特定的 1.8× 系統吞吐量推廣為硬體無關的通用性質。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

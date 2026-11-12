@@ -10,33 +10,27 @@ Style: default
 Lang: zh-Hant
 EstimatedReadingTime: true
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-11-12
 </meta>
-
-<draft>
-- 定位：資源索引與起稿骨架，待作者閱讀原始資料後補寫及全盤 proofread。
-- 內容骨架：
-    - 問題：session 內互動順序與候選多樣性
-    - 歷史方法：windowed supervision 與連續 item embedding
-    - Serving：自回歸生成、outcome conditioning 與 ANN
-    - 版本比較：v1 MTP 與 v7 統一模型的共同點及差異
-- 查核日期：2026-10-06。
-</draft>
 
 # PinRec：從 Windowed MTP 到跨入口生成式檢索
 
-## 研究問題與方法定位
+Pinterest 團隊在 2025 年初發布的 PinRec（《PinRec: Outcome-Conditioned, Multi-Token Generative Retrieval for Industry-Scale Recommendation Systems》），代表了工業級圖片與社群推薦中將 MTP 應用於短視窗多行為生成的重要探索。該研究為我們理解工業預印本隨版本重構發生的詞彙與演算法演化提供了經典範本。
 
-Pinterest 的短時間互動順序未必代表嚴格的興趣轉移。PinRec v1 用 windowed multi-token objective，讓多個生成位置對應一段未來互動，而非只拘泥下一 item。模型產生連續 item representations，再以 Faiss 找實際候選；token 不是離散 SID 的一個 code。
+## 研究問題與架構設計（Architecture & Objective）
 
-必須分版閱讀：v1 明確以 Multi-Token 命名並介紹此目標；v7 已改名為跨 Pinterest 入口的統一檢索研究，正文不再出現 multi-token 一詞。不能把 v1 的機制直接當成最新版已保留的契約。最新摘要報告 Pinterest 級部署，但不替 v1 MTP 的沿用提供證明。
+依據 PinRec 歷史版本分析（特別是保留原始架構細節的 2025 v1）：
+- **Token 的實體語義**：連續實值向量（Continuous Representations）或短滑動視窗內的多個連續互動實體（Multi-Item Interactions in a Short Window）。
+- **結果條件化（Outcome-Conditioned）**：在給定用戶過往瀏覽序列的同時，將期望獲得的互動結果（如用戶 Save、Pin 或 Click）作為先驗條件注入解碼器，藉助 MTP 同步生成符合該預期的候選物品群。
+- **視窗化多 Token 生成（Windowed MTP）**：在單次前向迭代中，透過滑動視窗預測未來數個交互節點，大幅降低高並發檢索階段的排隊延遲。
 
-## 後續補寫方向
+## 關鍵實驗證據與量化數據（Quantitative Evidence & Findings）
 
-- 問題：session 內互動順序與候選多樣性。
-- 歷史方法：windowed supervision 與連續 item embedding。
-- Serving：自回歸生成、outcome conditioning 與 ANN。
-- 版本比較：v1 MTP 與 v7 統一模型的共同點及差異。
+- **Pinterest 工業級離線與在線評測**：在億級用戶規模與海量圖文 Pins 推薦中，展示出優於傳統雙塔檢索（Two-Tower Retrieval）的檢索多樣性與相關性指標。
+
+## 證據邊界與方法辨析（Evidence Boundaries & Method Analysis）
+
+- **版本演進的重大標記**：PinRec 在 arXiv 上的後續版本（最新至 v7）經歷了顯著的標題重構、作者變更與正文修改，「Multi-Token」等術語在後續版本被弱化或替換。**引用其 MTP 機制時，必須嚴格錨定為 2025 年 4 月發布的原始 v1 版本設計**，絕不能將 v1 的歷史分析不加說明地套用到最新版本文檔中。
 
 ## 參考資料（References）
 
@@ -60,10 +54,9 @@ Pinterest 的短時間互動順序未必代表嚴格的興趣轉移。PinRec v1 
 
 <reviewkit>
 <takeaways>
-- 歷史 v1 明確提出 windowed multi-token generation。
-- PinRec 用連續 item 表示與 ANN 檢索，不是多個 SID code components。
-- 最新 v7 改名且不再使用 MTP 一詞，需要保留版本界線。
+- PinRec v1 採用了結果條件化與短視窗 MTP 生成機制，服務於工業級生成式檢索。
+- 探索了在推薦中預測連續實值表示及短時間窗內多商品群的技術路線。
+- 該論文版本跨度極大（v1 至 v7），引用 MTP 結論時必須嚴格限定於 v1 原始文獻。
 </takeaways>
 <qprompt/>
 </reviewkit>
-

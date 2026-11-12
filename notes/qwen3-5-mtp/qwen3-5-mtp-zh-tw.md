@@ -10,22 +10,30 @@ Lang: zh-Hant
 EstimatedReadingTime: true
 Tags: multi-token prediction, large language models
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-11-12
 </meta>
 
 # Qwen3.5 的 MTP：多步訓練與原生推測解碼資源
 
-這是一份待補寫的文獻資源種子，用來建立閱讀入口與來源關係，尚不是完整的方法深度解析。
+2026 年初發布的 Qwen3.5-397B-A17B 官方模型卡正式將 MTP 部署契約納入千億級多模態智慧體模型。該案例最重要的意義在於展示了 MTP 在主流推論加速框架（如 SGLang、vLLM）中的工業標準化封裝。
 
-## 研究問題與方法定位
+## 研究問題與架構設計（Architecture & Objective）
 
-Qwen3.5-397B-A17B 官方模型卡明示 MTP trained with multi-steps，並給出 SGLang 與 vLLM 的 MTP 部署指令。採用證據來自這個特定 checkpoint；完整 loss、訓練梯度與獨立消融留待補寫。
+依據 Qwen3.5-397B-A17B 官方模型卡與博客（2026-02）：
+- **多步 MTP 原生預訓練**：模型概覽明確指出模型採用 multi-step MTP 原生訓練。
+- **推論引擎開箱即用**：官方模型卡直接給出主流高並發服務引擎的配置指令：
+  - **SGLang**：支援 `--speculative-algorithm NEXTN` 參數。
+  - **vLLM**：支援 `--speculative-model qwen3_next_mtp` 專屬原生解碼參數。
+- **無縫適配多模態任務**：在多模態長文本對話與複雜代理工具調用中，MTP 模組均能維持穩定的預測生成。
 
-框架支援 MTP 或 speculative decoding 本身不足以證明模型採用；本筆記以指定版本的一手文件為準。
+## 關鍵實驗證據與量化數據（Quantitative Evidence & Findings）
 
-## 後續補寫方向
+- **工業級部署支援**：無需第三方額外蒸餾或微調 Draft Head，開發者拉取官方檢查點即可直接在生產叢集中開啟推測解碼服務。
 
-官方模型卡的 Model Overview 與 MTP deployment；多模態 backbone 與 token drafter 的界面；獨立 MTP 收益。
+## 證據邊界與方法辨析（Evidence Boundaries & Method Analysis）
+
+- **檢查點限定契約**：官方模型卡確認了 Qwen3.5-397B-A17B 這個特定旗艦檢查點的原生 MTP，不能未經查驗直接將此結論套用到 Qwen3 或 Qwen3.5 的所有其他大小或蒸餾版本。
+- **模型卡不提供學術消融數據**：模型卡聚焦於部署與使用說明，未提供獨立切除 MTP 模組的嚴格學術對比數據。
 
 ## 參考資料（References）
 
@@ -40,9 +48,9 @@ Qwen3.5-397B-A17B 官方模型卡明示 MTP trained with multi-steps，並給出
 
 <reviewkit>
 <takeaways>
-- 特定官方 checkpoint 明示多步訓練 MTP。
-- 部署指令支援原生推測解碼使用。
+- Qwen3.5-397B-A17B 官方模型卡直接載明原生多步 MTP 訓練。
+- 官方支援 SGLang (NEXTN) 與 vLLM (qwen3_next_mtp) 原生推測解碼部署指令。
+- 此項證據限定於特定官方發布之檢查點，不延伸至未核對的系列其他尺寸。
 </takeaways>
 <qprompt/>
 </reviewkit>
-

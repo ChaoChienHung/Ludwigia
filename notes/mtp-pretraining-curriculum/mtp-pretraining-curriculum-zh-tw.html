@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="mtp-pretraining-curriculum">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/mtp-pretraining-curriculum/mtp-pretraining-curriculum-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,39 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Ansar Aynetdinov 與 Alan Akbik 在 ACL 2025 主會發表的《Pre-Training Curriculum for Multi-Token Prediction in Language Models》，探討了預訓練期間動態調整 MTP 預測步長與損失權重的課程學習（Curriculum Learning）策略，並給出了一個至關重要的發現：<strong>主模型語言建模品質的改善，與推論自推測解碼的加速收益，可以完全解耦分離！</strong></p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">以小模型比較 forward/reverse curriculum。不同訓練次序可以在 next-token 品質與 self-speculative decoding 收益上走向不同結果，適合用來拆開 MTP 的兩種目標。</p>
+<p class="mb-3">論文設計了對比鮮明的兩套課程排程機制（Curriculum Schedules）：</p>
+
+<ul class="note-list">
+<li><strong>正向課程（Forward Curriculum）</strong>：從標準 NTP（$k=1$）開始預訓練，隨著訓練步數增加，逐步將預測長度擴展為 $k=2, 3, 4$。模型先打牢局部語法基礎，再逐步過渡到長程規劃。</li>
+<li><strong>反向課程（Reverse Curriculum）</strong>：在預訓練初期直接採用較長的多步預測（$k=4$），強迫模型在數據最豐富的早期學習粗粒度的宏觀語義；在預訓練後期逐步收縮回 $k=1$（純 NTP 監督），專注於極致打磨相鄰 token 的預測精度。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">curriculum定義與公平預算；NTP／MTP品質；head接受率與解碼收益。</p>
+<ul class="note-list">
+<li><strong>雙重收益的劇烈分化</strong>：
+<ul class="note-list">
+<li><strong>Reverse Curriculum 的表現</strong>：在最終的標準語言評測（Perplexity、常識問答）中，Reverse Curriculum 取得了所有配置中最強的主模型表現（超越固定 MTP 與標準 NTP）；但由於後期收縮，其額外 Heads 的推測解碼能力大幅退化，<strong>幾乎失去了推論加速收益</strong>。</li>
+<li><strong>Forward Curriculum 的表現</strong>：完美保留了高水準的推論自推測解碼加速比，但對主幹模型最終困惑度的改善不如 Reverse 明顯。</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>直接粉碎「一石二鳥」的盲目樂觀</strong>：這項研究提供了直接的消融證據，證明「強化主幹預訓練」與「最大化草稿推論吞吐」在損失權重配置上存在內在張力，不可默認兩者永遠正向同步增長。</li>
+<li><strong>小模型算力約束</strong>：論文實驗主要在中小規模模型（1B 級別）與受控 Token 預算下完成，在大規模集群上的最優課程拐點仍需配合具體算力預算重新校準。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +282,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>Aynetdinov &amp; Akbik 提出了 MTP 的 Forward 與 Reverse 預訓練課程學習策略。</li>
+<li>Reverse 課程最顯著提升主幹模型下游評測品質，但推論加速收益幾乎歸零。</li>
+<li>Forward 課程最穩定保留推測解碼高接受長度，兩者收益軸存在明確解耦。</li>
+<li>證明了預訓練主幹優化與推論草稿頭擬合屬於不同的目標權衡。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

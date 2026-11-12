@@ -10,22 +10,29 @@ Lang: zh-Hant
 EstimatedReadingTime: true
 Tags: multi-token prediction, large language models
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-11-12
 </meta>
 
 # Qwen3-Next 的 MTP：原生多步預測與訓練推論一致性
 
-這是一份待補寫的文獻資源種子，用來建立閱讀入口與來源關係，尚不是完整的方法深度解析。
+阿里巴巴 Qwen 團隊在 Qwen3-Next（80B-A3B）發布中，將 Native MTP 作為推動極致訓練與推論效率的核心支柱。Qwen3-Next 特別強調了「多步訓練與多步推論的一致性」，試圖縮小傳統 MTP 訓練目標與自迴歸草稿驗證之間的分布偏移。
 
-## 研究問題與方法定位
+## 研究問題與架構設計（Architecture & Objective）
 
-官方文章明示原生 MTP 同時用於整體性能與 speculative decoding，並以 multi-step training 改善訓練與推論的一致性。此筆記以官方文章為主要證據，目前未另列獨立技術論文。
+依據 Qwen 官方技術博客（2025-09-10）：
+- **多步訓練對齊（Multi-Step Training Alignment）**：Qwen3-Next 採用原生多步訓練目標，訓練時直接模擬多步自推測解碼的推論場景，使輔助預測頭在優化時面臨與線上 serving 高度一致的輸入分布。
+- **全系列覆蓋**：原生 MTP 涵蓋了 Qwen3-Next-80B-A3B 的 Base、Instruct 以及 Thinking（深度推理）全系列模型檢查點。
+- **生態提示**：官方特別提醒，標準開源 Transformers 庫通常不提供開箱即用的 MTP 執行邏輯，需配合專門的部署框架運行。
 
-框架支援 MTP 或 speculative decoding 本身不足以證明模型採用；本筆記以指定版本的一手文件為準。
+## 關鍵實驗證據與量化數據（Quantitative Evidence & Findings）
 
-## 後續補寫方向
+- **性能與接受率雙重提升**：官方博客指出，原生多步 MTP 訓練在提升下游綜合任務表現的同時，顯著提高了推論自推測解碼的接受長度。
+- **端到端高吞吐**：在結合了混合架構（Hybrid Architecture）與 MTP 後，官方系統展示了極高的服務吞吐量提升。
 
-多步 conditioning 與 loss；MTP 獨立消融；避免把 hybrid attention 與稀疏 MoE 的整體速度提升歸因於 MTP。
+## 證據邊界與方法辨析（Evidence Boundaries & Method Analysis）
+
+- **官方技術文章的證據屬性**：該博客為官方發布說明，而非同行評審之獨立學術消融論文；缺乏各層單獨的梯度路徑拆解與固定算力下的消融曲線。
+- **混合架構的綜合效益分流**：Qwen3-Next 宣傳的大幅吞吐量提升是 MoE 稀疏激活、注意力優化與 MTP 共同作用的結果，嚴禁在技術分析中將總體收益全數歸功於 MTP。
 
 ## 參考資料（References）
 
@@ -49,8 +56,9 @@ LastModified: 2026-10-06
 
 <reviewkit>
 <takeaways>
-- 官方明示 native MTP 和 multi-step training。
-- 整體架構速度不能視為 MTP 的獨立收益。
+- Qwen3-Next 原生引入多步訓練對齊，縮小 MTP 訓練與推論時的分布差距。
+- 覆蓋 Base、Instruct、Thinking 全系列檢查點，確立為核心架構配置。
+- 宣稱的超高總吞吐量屬於混合架構綜合收益，不能直接等同於 MTP 的單獨消融淨得。
 </takeaways>
 <qprompt/>
 </reviewkit>

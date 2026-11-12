@@ -10,22 +10,28 @@ Lang: zh-Hant
 EstimatedReadingTime: true
 Tags: multi-token prediction, large language models
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-11-12
 </meta>
 
 # GLM-5 的 MTP：共享參數與多步接受率
 
-這是一份待補寫的文獻資源種子，用來建立閱讀入口與來源關係，尚不是完整的方法深度解析。
+GLM-5（2026-02 技術報告）代表了將 MTP 與「極致參數量約束」及「強化學習訓練加速」深度融合的最新進展。GLM-5 透過精巧的**多步參數共享機制**，解決了多步推測解碼帶來的參數量膨脹難題。
 
-## 研究問題與方法定位
+## 研究問題與架構設計（Architecture & Objective）
 
-報告以共享參數的三個 MTP 訓練步減少訓練與推論落差。架構表的一個 MTP 層與三步訓練相容：多步不必代表多份權重。推論與 RL rollout 都使用 MTP。
+依據 GLM-5 技術報告（§2.1 & §3.6.2）：
+- **共享參數的多步訓練（Parameter-Shared Multi-Step Training）**：GLM-5 使用單一組物理參數塊，遞迴地執行 3 個 MTP 訓練步數。這既模擬了多步預測的誤差傳遞，又嚴格限制了參數量的增加（架構表上僅佔用 1 個 MTP Layer 的參數配額）。
+- **縮小訓練與推論的認知差距**：在預訓練期間就讓同一組 Head 適應不同未來距離的預測，顯著緩解了多頭分離設計中的泛化不一致問題。
 
-框架支援 MTP 或 speculative decoding 本身不足以證明模型採用；本筆記以指定版本的一手文件為準。
+## 關鍵實驗證據與量化數據（Quantitative Evidence & Findings）
 
-## 後續補寫方向
+- **更高的多步接受長度**：在專有真實用戶 Prompts 的評測中，配置 4 個推測步驟時，GLM-5 達到了 **2.76 個 tokens** 的平均接受長度（對比 DeepSeek-V3.2 的 2.55 tokens）。
+- **長尾 RL Rollout 加速（§3.6.2）**：在後訓練強化學習中，小 Batch 的長文本採樣往往存在嚴重的「長尾等待」（Stragglers）。MTP 能顯著壓縮這些長尾序列的解碼延遲，使整個分散式訓練節拍顯著加快。
 
-§2.1 shared MTP；私有 prompt 接受長度比較；§3.6 長尾 rollout 的速度與訓練等待。
+## 證據邊界與方法辨析（Evidence Boundaries & Method Analysis）
+
+- **共享 3 步與單一物理層的正確理解**：報告中的 3 個 MTP training steps 與實體架構表上的 1 個 MTP layer 不矛盾，屬於時間步遞迴展開而非參數量增加三倍。
+- **Rollout 時間壓縮非演算法革新**：Rollout 階段的加速純屬工程層面的管線優化，不可混淆為演算法收斂效率提升。
 
 ## 參考資料（References）
 
@@ -43,9 +49,9 @@ LastModified: 2026-10-06
 
 <reviewkit>
 <takeaways>
-- 多個預測步可共用一份參數。
-- RL rollout 加速與 backbone 能力改善需分開評估。
+- GLM-5 採用共享參數的 3 步 MTP 訓練機制，在不增加物理層數的前提下對齊多步推論。
+- 在 4 步推測評測中取得 2.76 tokens 的平均接受長度，超越 DeepSeek-V3.2 的 2.55。
+- MTP 被明確用於消除大規模 RL 訓練中長尾採樣導致的等待瓶頸。
 </takeaways>
 <qprompt/>
 </reviewkit>
-

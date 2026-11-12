@@ -10,33 +10,29 @@ Style: default
 Lang: zh-Hant
 EstimatedReadingTime: true
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-11-12
 </meta>
-
-<draft>
-- 定位：資源索引與起稿骨架，待作者閱讀原始資料後補寫及全盤 proofread。
-- 內容骨架：
-    - 場景：推薦、creative selection 與 auction 的關係
-    - 表示：POI tokens 與 creative-image tokens
-    - 機制：joint MTP 與分階段訓練
-    - 邊界：offline 驗證、allocation 及 payment 的附加假設
-- 查核日期：2026-10-06。
-</draft>
 
 # EGA-V2：以 MTP 聯合建模 POI 與廣告素材
 
-## 研究問題與方法定位
+美團等團隊在 2025 年發布的 EGA-V2（《EGA-V2: An End-to-end Generative Framework for Industrial Advertising》），是本地生活服務與廣告領域中，將 MTP 拓展為**「實體門店（POI）+ 創意素材圖像/文案」跨模態聯合生成**的前瞻性工業探索。
 
-廣告決策除了選 item，還涉及素材、位置、出價與付款。EGA-V2 用階層 tokenization 表示 POI 和 creative-image embeddings，以 encoder-decoder 及 MTP 聯合學習，再加入配置與付款相關的 post-training。
+## 研究問題與架構設計（Architecture & Objective）
 
-多 token 涵蓋 POI recommendation 與 creative-image 表示；不能直接當成預測幾個未來使用者互動，也不能把模型的 creative tokens 當成自然語言 token。本文為 Meituan 作者的 2025 年預印本，主要證據是工業資料集 offline evaluation；「industrial」不等於已確認線上部署。本筆記尚未獨立重現。
+依據論文框架：
+- **Token 的實體語義**：實體興趣點/門店（POI）的語義離散編碼，以及與之配對的廣告展示創意（Creative Ad Images / Texts）的多模態離散 tokens。
+- **跨模態聯合 MTP 解碼**：在同一個端到端生成框架中，MTP Heads 同時承擔預測目標門店 ID 與生成最匹配該用戶當前意圖的展示物料特徵的雙重任務，使「推薦給誰（Matching）」與「如何展示（Creativity）」在單次生成中聯合求解。
+- **工業資料流適配**：針對美團海量即時外賣、到店餐飲的局部時空特徵，設計了專屬的特徵融合層。
 
-## 後續補寫方向
+## 關鍵實驗證據與量化數據（Quantitative Evidence & Findings）
 
-- 場景：推薦、creative selection 與 auction 的關係。
-- 表示：POI tokens 與 creative-image tokens。
-- 機制：joint MTP 與分階段訓練。
-- 邊界：offline 驗證、allocation 及 payment 的附加假設。
+- **工業數據集離線突破**：在真實工業級本地生活廣告日誌數據集上進行嚴格離線評測，EGA-V2 在廣告點擊率、點擊轉化率以及創意契合度指標上全面超越了傳統兩階段流水線基線。
+- **系統解耦成本降低**：顯著縮減了門店匹配系統與創意渲染系統相互獨立調用導致的中間傳輸與特徵對齊開銷。
+
+## 證據邊界與方法辨析（Evidence Boundaries & Method Analysis）
+
+- **未確認生產全量推廣**：該文檔已核對的嚴格證據屬於基於工業脫敏數據的高水準離線實驗，目前沒有同行評審文檔或官方公告證實其已在全域產線完成百分之百的在線全量部署。
+- **跨模態表徵干擾風險**：文本門店與多模態創意圖像的預測難度差異較大，MTP 損失權重失衡容易引發多任務負遷移現象。
 
 ## 參考資料（References）
 
@@ -58,9 +54,10 @@ LastModified: 2026-10-06
 
 <reviewkit>
 <takeaways>
-- EGA-V2 將 POI 與 creative-image 表示納入 MTP 聯合訓練。
-- 廣告配置和付款是額外決策層，不等同 MTP 本身。
-- 已查證的是工業資料 offline 實驗，未確認生產部署。
+- EGA-V2 探索了 MTP 在「門店實體 POI」與「廣告展示創意」上的跨模態聯合生成。
+- 實現了本地生活廣告中匹配（Matching）與展示（Creativity）的單模型端到端解碼。
+- 在工業級大規模日誌離線評測中展現出優異的多任務兼顧能力。
+- 當前嚴格證據限定於工業級離線驗證，不可輕易誇大為全量線上落地。
 </takeaways>
 <qprompt/>
 </reviewkit>

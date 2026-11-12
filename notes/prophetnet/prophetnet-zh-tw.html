@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="prophetnet">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="7">
   <meta name="site:source" content="notes/prophetnet/prophetnet-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
 <a class="note-toc-link level-2" href="#open-source-code">開源程式碼（Open Source Code）</a>
@@ -179,7 +183,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -206,19 +210,37 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">微軟亞洲研究院在 EMNLP Findings 2020 發表的 ProphetNet（《ProphetNet: Predicting Future N-gram for Sequence-to-Sequence Pre-training》），是當代 Transformer 架構中探索「未來多步預測目標」的重要歷史前身。該研究透過獨創的 N-stream Self-Attention，成功將 Seq2Seq 預訓練目標從單步預測拓展為未來的 N-gram 預測。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">encoder-decoder 以 future n-gram objective 與 n-stream attention 預測多個未來 token。實驗為摘要與問題生成；作者提出降低局部相關依賴的動機，尚不等於證明通用規劃能力。</p>
+<p class="mb-3">依據 ProphetNet 論文：</p>
+
+<ul class="note-list">
+<li><strong>N-stream 自注意力機制</strong>：在傳統自注意力中引入專門的主自注意力流（Main Stream）與多個預測流（Predicting Streams）。主流專門負責累積前綴歷史以更新隱層表示，而各預測流則負責利用當前主表示分別計算未來第 $k$ 個 token 的注意力權重。</li>
+<li><strong>Future N-gram 預測損失</strong>：在解碼器端，模型在每個時間步 $t$ 被要求同時預測未來的 $n$ 個連續 token $(x_{t+1}, \dots, x_{t+n})$，各位置的交叉熵損失共同指導編碼器與解碼器參數的更新。</li>
+<li><strong>防作弊因果遮罩</strong>：精確設計各預測流的 Attention Mask，嚴格保證預測較遠未來 token 時不會偷看到中間的真實 Ground Truth token。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">future n-gram loss；n-stream causal visibility；與decoder-only MTP的差異。</p>
+<ul class="note-list">
+<li><strong>文本摘要與問答生成表現</strong>：在 CNN/DailyMail、Gigaword 文本摘要以及 SQuAD 問題生成基準上，ProphetNet 顯著超越了同等參量的標準 BART 與 T5 基線。</li>
+<li><strong>緩解局部最優偏差</strong>：實驗表明，要求模型預測未來 N-gram 能夠有效防止解碼器陷入對相鄰下一個 token 的過度貪婪擬合，生成更加流暢且具備全局宏觀結構的長文本。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>Seq2Seq 架構與當代 Decoder-only 的結構分野</strong>：ProphetNet 奠基於 Encoder-Decoder 結構與專門的 N-stream 注意力，這與當代主流 Decoder-only 大模型直接掛載輕量 MTP Heads 的主流做法存在顯著工程差異。</li>
+<li><strong>規劃動機非普適推理證明</strong>：作者強調預測未來 N-gram 具有「前瞻規劃（Look-ahead Planning）」的直覺，但這在當時主要體現於抽象摘要的語義連貫性，不能直接外推為現代大模型複雜數學推導能力的泛化依據。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -270,8 +292,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>ProphetNet 透過 N-stream Self-Attention 率先實現了未來 N-gram 的預訓練自監督目標。</li>
+<li>在文本摘要與問答生成等任務上顯著改善了長程依賴與局部過擬合問題。</li>
+<li>採用 Encoder-Decoder 架構，與現代 Decoder-only 的輕量 MTP 模組存在工程差異。</li>
+<li>構成了 MTP 思想從早期預訓練向現代大語言模型演進的重要歷史橋樑。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

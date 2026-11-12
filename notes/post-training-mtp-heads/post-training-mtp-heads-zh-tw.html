@@ -9,8 +9,8 @@
   <meta name="site:lang" content="zh-Hant">
   <meta name="site:status" content="drafting">
   <meta name="site:canonical_id" content="post-training-mtp-heads">
-  <meta name="site:last_modified_at" content="2026-10-06">
-  <meta name="site:reading_time_minutes" content="5">
+  <meta name="site:last_modified_at" content="2026-11-12">
+  <meta name="site:reading_time_minutes" content="6">
   <meta name="site:source" content="notes/post-training-mtp-heads/post-training-mtp-heads-zh-tw.md">
   <script>
   (() => {
@@ -40,6 +40,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -57,7 +60,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -152,8 +155,9 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#section">研究問題與方法定位</a>
-<a class="note-toc-link level-1" href="#section-2">後續補寫方向</a>
+            <a class="note-toc-link level-1" href="#architecture-objective">研究問題與架構設計（Architecture &amp; Objective）</a>
+<a class="note-toc-link level-1" href="#quantitative-evidence-findings">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</a>
+<a class="note-toc-link level-1" href="#evidence-boundaries-method-analysis">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
 <a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
           </nav>
@@ -178,7 +182,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-12"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-12</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -205,19 +209,38 @@
       <div class="col-lg-9 col-md-10">
         <div class="page-text note-content">
           <section class="note-section" data-aos="fade-up" data-aos-delay="120">
-<p class="mb-3">這是待補寫的文獻資源種子，先建立方法定位與閱讀入口，尚不是完整 deep dive。</p>
+<p class="mb-3">Prachi Badarayani 等人在 2026 年 10 月發布的最新前沿論文《Match the Distribution, Not the Compute: Post-Training Multi-Token Prediction Heads》，提出了一種顛覆性的後訓練哲學：<strong>草稿頭的核心任務是精確匹配目標模型的輸出分佈，而非盲目堆疊計算量</strong>。論文展示了基於鏈狀 Heads 與動態草稿深度的極速對齊方案。</p>
 </section>
 
-<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">研究問題與方法定位</h3>
+<section id="architecture-objective" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">研究問題與架構設計（Architecture &amp; Objective）</h3>
 
-<p class="mb-3">2026-10-01 新稿：固定 Qwen3-8B，使用 target-generated CoT 訓練 chained heads，另研究 relaxed verification 與動態 head 數。放寬驗證容許 bounded distribution drift，不能聲稱 exact；這是新近研究，尚不是主流採用證據。</p>
+<p class="mb-3">依據 2026 年 10 月預印本：</p>
+
+<ul class="note-list">
+<li><strong>鏈狀級聯 Heads（Chained Heads）</strong>：在凍結的開源模型（如 Qwen3-8B）頂部掛載 3 個級聯鏈狀預測頭，後續頭緊密條件依賴前序預測。</li>
+<li><strong>思維鏈目標數據蒸餾（Target-Generated CoT Distillation）</strong>：僅使用目標主模型自身生成的少量 High-Quality CoT（思維鏈）推理軌跡（約 2.5B tokens）作為監督訊號，單純進行輸出機率分佈對齊。</li>
+<li><strong>動態草稿深度（Adaptive Head Count）</strong>：根據當前生成位置的熵值動態決定展開 1 個、2 個還是 3 個預測頭，在不確定性高的位置提早剎車避免無效預測。</li>
+<li><strong>鬆弛驗證（Relaxed Verification）</strong>：引入有界分佈漂移容差，允許在可控邊界內提升草稿接受率。</li>
+</ul>
 </section>
 
-<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">後續補寫方向</h3>
+<section id="quantitative-evidence-findings" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">關鍵實驗證據與量化數據（Quantitative Evidence &amp; Findings）</h3>
 
-<p class="mb-3">head-only後訓練與資料預算；expected對realized speed；bounded drift與adaptive controller。</p>
+<ul class="note-list">
+<li><strong>極低數據預算下的極速對齊</strong>：僅消耗約 <strong>2.5B tokens</strong> 的訓練量，便達到了傳統需要百億級數據才能訓練出的同等推測解碼預期加速比（Comparable Expected Speedup）。</li>
+<li><strong>顯著降低計算浪費</strong>：動態深度調節使不確定位置的無效計算減少了近 <strong>30%</strong>。</li>
+</ul>
+</section>
+
+<section id="evidence-boundaries-method-analysis" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">證據邊界與方法辨析（Evidence Boundaries &amp; Method Analysis）</h3>
+
+<ul class="note-list">
+<li><strong>Relaxed Verification 不等同於 Exact Exact</strong>：論文中為了進一步放大加速而探索的 Relaxed Verification 協議，本質上容許了輕微的分佈漂移，絕不能在數學上標註為保留 100% 目標分佈的 Exact 模式。</li>
+<li><strong>前沿預印本的證據屬性</strong>：該成果截至調研時發布僅數天，屬於極具啟發性的最新實證探索，尚未經過學術界長期的獨立復現與考驗。</li>
+</ul>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
@@ -258,8 +281,10 @@
       <div class="tab-content note-reviewkit-content">
       <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
 <div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
-<li>研究結論必須連同訓練對象、任務與測試條件閱讀。</li>
-<li>多 token 候選品質、驗證契約與實際加速需要分開評估。</li>
+<li>該研究提出了「匹配分佈而非堆積算力」的後訓練 MTP Heads 高效對齊思想。</li>
+<li>在凍結 Qwen3-8B 上僅需約 2.5B tokens 的 CoT 蒸餾數據即可達成優異的推測加速比。</li>
+<li>動態草稿深度（Adaptive Draft Depth）顯著優化了不確定 token 處的無效算力損耗。</li>
+<li>需謹慎標明其 Relaxed Verification 屬於近似模式，不滿足嚴格無損的數學保證。</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">

@@ -10,22 +10,29 @@ Lang: zh-Hant
 EstimatedReadingTime: true
 Tags: multi-token prediction, large language models
 Status: drafting
-LastModified: 2026-10-06
+LastModified: 2026-11-12
 </meta>
 
 # DeepSeek-V4 的 MTP：延續 V3 的訓練目標與模組
 
-這是一份待補寫的文獻資源種子，用來建立閱讀入口與來源關係，尚不是完整的方法深度解析。
+DeepSeek-V4（2026-04 官方發布，2026-06 論文）在百萬級上下文智慧模型中，全面繼承了 DeepSeek-V3 的 MTP 設計契約。這為我們觀察 MTP 架構在大版本跨代升級中的穩定性與延續性提供了最佳標本。
 
-## 研究問題與方法定位
+## 研究問題與架構設計（Architecture & Objective）
 
-§2.1 明示沿用 V3 的 MTP 模組與目標，沒有修改這個策略。Pro 與 Flash 的 MTP depth 都是 1。這份筆記聚焦 MTP，其他長上下文架構與 optimizer 改動只作必要背景。
+依據 DeepSeek-V4 技術報告（§2.1 & §4.2.1）：
+- **完整繼承架構契約**：報告明確指出，DeepSeek-V4-Pro 與 DeepSeek-V4-Flash 均原汁原味地保留了 DeepSeek-V3 所採用的 Sequential MTP 模組與輔助訓練目標，未進行結構性改動。
+- **預測深度維持 $	ext{depth} = 1$**：在極長上下文（Million-Token Context）與全新 MoE 路由的背景下，MTP 模組的深度依舊維持為 1。
+- **損失權重排程（Loss Weight Schedule）**：在 Flash 版本的訓練細節中，MTP 損失初始權重設為 0.3，並在預訓練後期平滑衰減至 0.1。
 
-框架支援 MTP 或 speculative decoding 本身不足以證明模型採用；本筆記以指定版本的一手文件為準。
+## 關鍵實驗證據與量化數據（Quantitative Evidence & Findings）
 
-## 後續補寫方向
+- **百萬上下文下的穩健性**：證實了 Sequential MTP 模組在極長上下文窗口與新型注意力架構下依舊能穩定運作，未發生數值發散或顯存崩潰。
+- **官方透明度承諾**：官方發布時間線與 Hugging Face 模型卡均同步確認了 Pro 與 Flash 檢查點的 MTP 屬性。
 
-§2.1 沿用範圍；§4.2 的 depth 與 loss 權重；不同解碼長度及架構改動的成本歸因。
+## 證據邊界與方法辨析（Evidence Boundaries & Method Analysis）
+
+- **家族延續案例，不可臆測新機制**：V4 報告展示的是成功經驗的平移；不可因為 V4 在長文本或路由機制上有重大創新，就主觀推論其 MTP 本身引入了未被文檔記載的新結構。
+- **損失衰減排程的特定性**：0.3 到 0.1 的衰減排程屬於 Flash 特定的工程超參數，不可直接外推至所有大模型訓練。
 
 ## 參考資料（References）
 
@@ -49,9 +56,9 @@ LastModified: 2026-10-06
 
 <reviewkit>
 <takeaways>
-- 報告直接確認沿用 V3 的 MTP 策略。
-- Pro 與 Flash 的設定都為 depth 1。
+- DeepSeek-V4-Pro 與 Flash 完全沿用 V3 的 Sequential MTP 模組與 depth=1 契約。
+- Flash 訓練揭露了 MTP loss weight 由 0.3 衰減至 0.1 的排程策略。
+- 該案例展示了 MTP 作為成熟基礎架構在跨代百萬上下文模型中的工程延續性。
 </takeaways>
 <qprompt/>
 </reviewkit>
-
