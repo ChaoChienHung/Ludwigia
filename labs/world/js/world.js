@@ -48,6 +48,7 @@
       this.wallAlphaDouyin = 1.0;
       this.wallAlphaCafe = 1.0;
       this.wallAlphaHowAreYou = 1.0;
+      this.wallAlphaMinecraft = 1.0;
 
       // Day / Night mood
       this.mood = 'auto';
@@ -279,8 +280,11 @@
         [1, 14], [8, 15],
         // 2. West Campus Greenway (x: 0..9, y: 28..32)
         [2, 30], [8, 30],
-        // 3. Central Promenade Park Lawn (x: 28..30)
-        [28, 10], [28, 19], [28, 24], [28, 29],
+        // 3. Central Promenade Park Lawn (x: 29..31 — placed out in open lawn, 2 full tiles clear of Library glass window)
+        [30, 9],
+        [30, 18],
+        [30, 25],
+        [30, 29],
         // 4. North & East Buffer Lawns (outside buildings)
         [41, 0], [48, 1],
         // 5. Far East Lawn (east of How Are You & Basketball Court)
@@ -911,8 +915,8 @@
         statusMessage = "The Howling Abyss • 冰封咆哮深淵長橋 ❄️";
       } else if (checkZone('minecraft_sanctuary', 7.0, 21.0, 93.0, 111.0)) {
         currentZone = 'minecraft_sanctuary';
-        isInsideAnyHouse = false;
-        statusMessage = "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
+        isInsideAnyHouse = playerInMinecraftCabin;
+        statusMessage = playerInMinecraftCabin ? "Minecraft Cabin • 溫馨橡木小屋與大紅床 🛏️" : "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
       }
 
       this.currentZone = currentZone;
@@ -948,6 +952,11 @@
 
       const targetWallHowAreYou = (this.currentZone === 'how_are_you') ? 0.32 : 1.0;
       this.wallAlphaHowAreYou += (targetWallHowAreYou - this.wallAlphaHowAreYou) * Math.min(1.0, dt * 6.0);
+
+      // Minecraft Oak Cabin front (East/South) walls fade out when the player is inside the cabin
+      const playerInMinecraftCabin = !!shopPlayer && shopPlayer.x >= 9.0 && shopPlayer.x <= 15.0 && shopPlayer.y >= 97.0 && shopPlayer.y <= 103.0;
+      if (this.wallAlphaMinecraft === undefined) this.wallAlphaMinecraft = 1.0;
+      this.wallAlphaMinecraft += ((playerInMinecraftCabin ? 0.32 : 1.0) - this.wallAlphaMinecraft) * Math.min(1.0, dt * 6.0);
 
       // 傻師傅湯包 front (East/South) walls fade out when the player is inside / at the doorway
       const shopPlayer = this.charManager.player;
@@ -1712,7 +1721,10 @@
           const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
           const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 92);
           const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
-          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou;
+          const isMinecraftCabinFloor = (x >= 9 && x <= 14 && y >= 97 && y <= 102);
+          const isMinecraftWater = (x === 18 && y === 99);
+          const isMinecraftFarmland = (x >= 16 && x <= 19 && y >= 97 && y <= 101 && !isMinecraftWater);
+          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou || isMinecraftCabinFloor;
 
           // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
           const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
@@ -1850,6 +1862,15 @@
             } else {
               ctx.fillStyle = (x + y) % 2 === 0 ? '#1a2738' : '#23344a';
             }
+          } else if (isMinecraftCabinFloor) {
+            // Minecraft Cabin Oak Wood Floor (drawn directly on terrain layer for zero-clipping sorting)
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#c69a59' : '#b88c4b';
+          } else if (isMinecraftWater) {
+            // Minecraft Farmland 1x1 Water Source Block
+            ctx.fillStyle = '#0284c7';
+          } else if (isMinecraftFarmland) {
+            // Minecraft Farmland Tilled Soil
+            ctx.fillStyle = (x + y) % 2 === 0 ? '#3b2314' : '#27170c';
           } else if (isMinecraft) {
             // Minecraft Sanctuary — Classic Grass Block Green Turf
             ctx.fillStyle = (x + y) % 2 === 0 ? '#5b8c32' : '#4d7828';
@@ -3702,11 +3723,11 @@
         [2, 30],
         [8, 30],
 
-        // 3. Central Promenade Park Lawn (x: 28..30)
-        [28, 10],
-        [28, 19],
-        [28, 24],
-        [28, 29],
+        // 3. Central Promenade Park Lawn (x: 29..31 — placed out in open lawn, 2 full tiles clear of Library glass window)
+        [30, 9],
+        [30, 18],
+        [30, 25],
+        [30, 29],
 
         // 4. North & East Buffer Lawns (outside buildings)
         [41, 0],
@@ -3723,7 +3744,7 @@
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
-          xMin: tx, xMax: tx + 1.0, yMin: ty, yMax: ty + 1.0,
+          xMin: tx + 0.1, xMax: tx + 0.9, yMin: ty + 0.1, yMax: ty + 0.9,
           draw: () => this.models.drawTree(this.ctx, tx, ty, this.ox, this.oy)
         });
       });
