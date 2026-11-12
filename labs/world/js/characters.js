@@ -368,6 +368,8 @@
           pants: c.appearance?.pants || '#1e293b',
           hairStyle: c.appearance?.hairStyle || 0,
           isCat: !!c.appearance?.isCat,
+          catEars: !!c.appearance?.catEars,
+          catEarsColor: c.appearance?.catEarsColor || null,
           nameColor: c.nameColor || '#38bdf8',
           dialogues: c.dialogues || {},
           timer: 0.8 + Math.random() * 2.2,
@@ -636,6 +638,40 @@
         ctx.fillRect(pos.x - 7, sitY - 25, 2.5, 5);
         ctx.fillRect(pos.x + 4.5, sitY - 25, 2.5, 5);
 
+        // Cat Ears Accessory (e.g. for Xiaomiaomiao)
+        if (c.catEars) {
+          const earColor = c.catEarsColor || c.hair || '#27272a';
+          ctx.fillStyle = earColor;
+          ctx.beginPath();
+          ctx.moveTo(pos.x - 6.5, sitY - 27);
+          ctx.lineTo(pos.x - 3.2, sitY - 35);
+          ctx.lineTo(pos.x - 0.5, sitY - 28);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#fca5a5';
+          ctx.beginPath();
+          ctx.moveTo(pos.x - 5.5, sitY - 27.5);
+          ctx.lineTo(pos.x - 3.2, sitY - 33.5);
+          ctx.lineTo(pos.x - 1.5, sitY - 28.5);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = earColor;
+          ctx.beginPath();
+          ctx.moveTo(pos.x + 0.5, sitY - 28);
+          ctx.lineTo(pos.x + 3.2, sitY - 35);
+          ctx.lineTo(pos.x + 6.5, sitY - 27);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#fca5a5';
+          ctx.beginPath();
+          ctx.moveTo(pos.x + 1.5, sitY - 28.5);
+          ctx.lineTo(pos.x + 3.2, sitY - 33.5);
+          ctx.lineTo(pos.x + 5.5, sitY - 27.5);
+          ctx.closePath();
+          ctx.fill();
+        }
+
         // Eyes
         ctx.fillStyle = '#0f172a';
         if (c.facing >= 0) {
@@ -722,6 +758,40 @@
         ctx.fill();
         ctx.fillRect(px - 7, py - 33, 2.5, 5);
         ctx.fillRect(px + 4.5, py - 33, 2.5, 5);
+      }
+
+      // Cat Ears Accessory (e.g. for Xiaomiaomiao)
+      if (c.catEars) {
+        const earColor = c.catEarsColor || c.hair || '#27272a';
+        ctx.fillStyle = earColor;
+        ctx.beginPath();
+        ctx.moveTo(px - 6.5, py - 35);
+        ctx.lineTo(px - 3.2, py - 43);
+        ctx.lineTo(px - 0.5, py - 36);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#fca5a5';
+        ctx.beginPath();
+        ctx.moveTo(px - 5.5, py - 35.5);
+        ctx.lineTo(px - 3.2, py - 41.5);
+        ctx.lineTo(px - 1.5, py - 36.5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = earColor;
+        ctx.beginPath();
+        ctx.moveTo(px + 0.5, py - 36);
+        ctx.lineTo(px + 3.2, py - 43);
+        ctx.lineTo(px + 6.5, py - 35);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#fca5a5';
+        ctx.beginPath();
+        ctx.moveTo(px + 1.5, py - 36.5);
+        ctx.lineTo(px + 3.2, py - 41.5);
+        ctx.lineTo(px + 5.5, py - 35.5);
+        ctx.closePath();
+        ctx.fill();
       }
 
       // Eyes

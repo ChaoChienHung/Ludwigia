@@ -97,5 +97,37 @@
         }
       ]
     }
+  },
+  {
+    "participants": [
+      "ludwig",
+      "xiaomiaomiao"
+    ],
+    "dialogues": {
+      "zh-TW": [
+        {
+          "speaker": "ludwig",
+          "text": "我要偷吃你一顆滷蛋。",
+          "delay": 3.8
+        },
+        {
+          "speaker": "xiaomiaomiao",
+          "text": "那我會再幫你叫一顆滷蛋好確保你有吃飽。",
+          "delay": 4.2
+        }
+      ],
+      "en": [
+        {
+          "speaker": "ludwig",
+          "text": "I'm gonna steal one of your braised eggs.",
+          "delay": 3.8
+        },
+        {
+          "speaker": "xiaomiaomiao",
+          "text": "Then I'll order another braised egg for you to make sure you're full.",
+          "delay": 4.2
+        }
+      ]
+    }
   }
 ]

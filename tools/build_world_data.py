@@ -17,7 +17,7 @@ OUTPUT_FILE = DATA_DIR / "characters.json"
 
 # Preferred order of character IDs for canonical presentation
 DEFAULT_CHAR_ORDER = [
-    "ludwig", "yully", "wuyen", "luena", "mochi",
+    "ludwig", "yully", "wuyen", "luena", "mochi", "xiaomiaomiao",
     "happy", "kerry", "clark", "jerry", "billy",
     "ludwigia", "gemini", "claude", "chatgpt",
     "haolei", "baisen", "weihao", "chenxin",

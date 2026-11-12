@@ -1,0 +1,73 @@
+{
+  "id": "xiaomiaomiao",
+  "name": {
+    "zh-TW": "小喵喵",
+    "en": "Xiao Miao Miao"
+  },
+  "gender": "female",
+  "role": {
+    "zh-TW": "溫暖陪伴者",
+    "en": "Gentle Companion"
+  },
+  "avatar": "assets/avatars/xiaomiaomiao.png",
+  "avatarFallback": "🐱",
+  "zone": "how_are_you",
+  "spawn": {
+    "x": 42.5,
+    "y": 18.5
+  },
+  "nameColor": "#f472b6",
+  "appearance": {
+    "skin": "#fdf2f8",
+    "hair": "#27272a",
+    "shirt": "#fda4af",
+    "pants": "#475569",
+    "hairStyle": 1,
+    "catEars": true,
+    "catEarsColor": "#27272a"
+  },
+  "dialogues": {
+    "user": {
+      "zh-TW": [
+        [
+          "L 你今天有沒有好好吃飯？"
+        ],
+        [
+          "L 你要不要視吃？"
+        ],
+        [
+          "你的腳傷有沒有好點？"
+        ]
+      ],
+      "en": [
+        [
+          "L, did you eat well today?"
+        ],
+        [
+          "L, want to have a virtual bite with your eyes?"
+        ],
+        [
+          "How is your foot injury? Getting any better?"
+        ]
+      ]
+    },
+    "self": {
+      "zh-TW": [
+        "今天過得好嗎？記得要好好吃飯喔。",
+        "不知道健宏今天有沒有乖乖吃飽～",
+        "坐在這裡曬太陽，心情都變柔軟了呢。"
+      ],
+      "en": [
+        "How are you doing today? Remember to eat well.",
+        "Wonder if Ludwig has eaten well today~",
+        "Soaking in the sun here makes everything feel so gentle."
+      ]
+    }
+  },
+  "visitedZones": [
+    "how_are_you",
+    "plaza",
+    "cafe",
+    "night_market"
+  ]
+}
