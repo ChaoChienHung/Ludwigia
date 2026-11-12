@@ -285,8 +285,8 @@
         [41, 0], [48, 1],
         // 5. Far East Lawn (east of How Are You & Basketball Court)
         [50, 11], [50, 15], [50, 25],
-        // 6. South Lawn Buffer (south of Basketball Court)
-        [42, 31], [47, 31]
+        // 6. South Lawn Buffers (South Garden of How Are You & South Lawn of Basketball Court)
+        [43, 26], [45, 45]
       ];
       treeBlocks.forEach(([tx, ty]) => {
         this.nav.setBlock(tx, ty, 1.0, 1.0, true);
@@ -3694,9 +3694,9 @@
         [50, 15],
         [50, 25],
 
-        // 6. South Lawn Buffer (x: 40..49, y: 30..32 — south of Basketball Court)
-        [42, 31],
-        [47, 31]
+        // 6. South Lawn Buffers (South Garden of How Are You & South Lawn of Basketball Court)
+        [43, 26],
+        [45, 45]
       ];
       trees.forEach(([tx, ty]) => {
         list.push({
