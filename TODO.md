@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] Aetheria Portals 接入、境域收斂 (portals/realms/)、極致扁平化與 Realm 測試規範
+    - 交付條件：將 Aetheria Portals 整合為一級目錄 `portals/`，平鋪原始碼並使用天然 `portals/assets/` 產物，支援純靜態開箱即用與 TypeScript 源碼維護；全站 FAB 與 Mobile Nav Sheet 轉移為 `Portals` 與 `Labs` 雙核心探索樞紐，Portals 支援一鍵躍遷至 `Digital Garden` 與 `Ludwigia World`；在 `portals/` 底下建立 `realms/` 專屬目錄收納已完成世界；`labs/` 解散 `future/` 扁平化收納實驗原型；將境域專屬測試遷入各境域目錄（`portals/realms/*/tests/`），由根目錄 `tests/test_misc_data.py` 動態聚合執行；撰寫 `docs/specs/realm-spec.md` 規範境域架構與擴充流程；規格文件與部署白名單同步更新；通過全套單元與合約測試。
+    - 已完成：完成 `portals/` 靜態與原始碼架構建立，徹底消除 `aetheria-portals/` 與 `portal-assets/` 多餘層級，新增 `python3 cli.py build-portals` 自動構建管線；完成 TopBar 維度錨點、古樹之門與浮島星環躍遷至 Garden 與 World 的互動；更新全站 FAB（含 `zh-Hant`/`zh-Hans`/`en`）、Mobile Nav Sheet、`pages/more.html`、`pages/search.html` 與 `labs/index.html`；解散 `labs/future/`，原型直接平鋪於 `labs/`；建立 `portals/realms/garden` 與 `portals/realms/world`；建立境域專屬測試 `test_world_data.py` 與 `test_garden_data.py`，由 `tests/test_misc_data.py` 自動無感掛載；建立 `docs/specs/realm-spec.md` 並更新全站文檔索引；`python3 cli.py test` 52 項單元測試全數通過，所有本地端點 HTTP 200 實測成功。
+    - Review 重點：作者在本機瀏覽器確認右下角 FAB 展開項目（傳送門、實驗室）、點擊進入 `portals/index.html` 體驗神木之門/浮島星環穿梭效果與頂部導覽列跳轉，並確認 `portals/realms/garden/` 與 `portals/realms/world/` 及其返回傳送門按鈕運作正常。
+
 - [x] CS5224 全課與 CS5446 Week 7 後段複習資料包
     - 交付條件：兩份按週閱讀的純文字 Markdown 濃縮知識點；對應的 A4 PDF 與可編輯 LaTeX 納入原講義圖、相關 Tutorial／Lab 原題與詳解。檔案暫存 `artifacts/`，Markdown 不含圖片與站點專用語法。
     - 已完成：CS5224 涵蓋 Week 1–10、Lab 1／2；CS5446 涵蓋 Week 7–11 與 Tutorial 5–8。純文字 Markdown 縮至約 18.4k／6.9k words。PDF／`.tex` 參考原 CS5446 Note 的藍色標題、目錄與紫色逐題問答框，每題下方直接附綠色解答；保留 61 張有助理解的原講義圖（Cloud 44、RL 17），移除 20 張整頁題單截圖。題目共 187 題（Cloud Labs 17、Cloud quizzes 40、歷屆 tests 75、RL Tutorial 5–8 共 55）；Lab 2 另附 PySpark 與 Lambda 程式，並提供 LaTeX 原始碼壓縮包。Week 12 無獨立講義，未虛構章節。

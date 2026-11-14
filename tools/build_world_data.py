@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "labs" / "world" / "data"
+DATA_DIR = ROOT / "portals" / "realms" / "world" / "data"
 CHARS_DIR = DATA_DIR / "characters"
 INTERACTIONS_DIR = DATA_DIR / "interactions"
 OUTPUT_FILE = DATA_DIR / "characters.json"

@@ -519,7 +519,7 @@
 
   const getProjectRoot = () => {
     const path = String(window.location.pathname || '');
-    const markers = ['/notes/', '/writing/', '/canvas/', '/garden/', '/tag/', '/pages/', '/labs/', '/future/'];
+    const markers = ['/notes/', '/writing/', '/canvas/', '/garden/', '/portals/', '/tag/', '/pages/', '/labs/', '/future/'];
     for (const marker of markers) {
       const idx = path.indexOf(marker);
       if (idx >= 0) return path.slice(0, idx + 1);
@@ -595,7 +595,7 @@
       ? String(tag.label || getTagLabel(tag.conceptId || tag.concept_id || '', { lang: getPreferredLang() }) || '').trim()
       : getTagLabel(tag, { lang: getPreferredLang(), fallback: String(tag || '').trim() });
     const encoded = encodeURIComponent(String(label || '').trim());
-    return resolveSiteHref(`garden/index.html#patch/${encoded}`, ctx);
+    return resolveSiteHref(`portals/realms/garden/index.html#patch/${encoded}`, ctx);
   };
 
   const resolveHref = (doc) => {

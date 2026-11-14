@@ -1,8 +1,8 @@
 # Ludwigia
 
-Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內容放在 `notes/`，探索入口放在 `garden/`。它刻意不引入後端與資料庫，用最小工具鏈換來長期可維護、可攜帶、可擴展的筆記體驗。
+Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內容放在 `notes/`，探索入口放在 `portals/realms/garden/`。它刻意不引入後端與資料庫，用最小工具鏈換來長期可維護、可攜帶、可擴展的筆記體驗。
 
-英文一句話版：A static personal site + digital garden. Notes live in `notes/`, discovery lives in `garden/`.
+英文一句話版：A static personal site + digital garden. Notes live in `notes/`, discovery lives in `portals/realms/garden/`.
 
 ## TL;DR
 
@@ -12,7 +12,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - 這個 repo 能做什麼：產生內容頁、建立 search index、提供 Garden / tag / search / section landing 等探索入口
 - 內容怎麼維護：source-driven；用 `.md` + `<meta>` + 少量語意化 tag 寫內容，再生成 HTML
 - 平常怎麼用：單篇重生用 `python3 cli.py build <source.md>`，整批重生用 `python3 cli.py build-all --content-dir notes|writing|canvas|all`
-- 想先跑站看結果：用 `python3 -m http.server 8000`，再打開 `index.html` / `pages/search.html` / `garden/index.html`
+- 想先跑站看結果：用 `python3 -m http.server 8000`，再打開 `index.html` / `pages/search.html` / `portals/realms/garden/index.html`
 
 若你是第一次進這個 repo，建議閱讀順序：
 
@@ -48,6 +48,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Timeline, Skills, Credentials 資料新增與維護：看 `docs/guide/data-authoring-guide.md`
 - inline enhancement contract：看 `docs/specs/inline-enhancement-spec.md`
 - 內容 metadata contract：看 `docs/specs/content-metadata-spec.md`
+- 境域架構與擴充規範（Realm Spec）：看 `docs/specs/realm-spec.md`
 - 翻譯 workflow contract：看 `docs/specs/translation-spec.md`
 - 設計理由 / UI/UX 取捨 / 重大決策：看 `docs/design/design.md`
 - 技術實作與排查：看 `docs/tech/README.md`
@@ -67,7 +68,8 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Notes：知識筆記 / 學習筆記（可被引用、可長期整理的內容）
 - Writing：長文與文字內容入口（UI 中文名稱目前為「文章」；技術路徑仍為 `writing/`）
 - Canvas：視覺內容入口（UI 中文名稱目前為「視界」；技術路徑仍為 `canvas/`）
-- Labs：實驗功能入口（Future：`future/massive-multiplayer-laser-tag` / `future/cosmic-flow`）
+- Portals：多維傳送樞紐（Aetheria Portals，以太仙境全景畫卷，集結已完成世界：直通 Digital Garden 與 Ludwigia World）
+- Labs：實驗功能入口（包含 Shooting Mode、Question Bank，以及 Laser-tag / Cosmic Flow 實驗原型）
 - Timeline：首頁上的獨立 section；採 source-driven data contract（由獨立 data file authoring，再交給 runtime projection），ongoing phase 可用 `end: "present"` 表達
 - Settings：全站可喚起的 settings modal；`pages/settings.html` 保留作 direct-link / fallback 入口
 - Mobile Additional Entry：手機 / 窄視窗下，misc 與單篇頁 metadata/outline 共享同一個右下角主入口
@@ -87,11 +89,10 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
   - `pages/search.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/search-page.js` 讀 `window.SITE_SEARCH_INDEX`，提供 query ranking + multi-tag filter
   - tag filter 仍留在 search 內；若已選單一 tag，可用明確的 `Open tag page` 入口切到 `tag/index.html`
 - Garden：
-  - `garden/index.html` 是獨立 UI，資料仍只讀 `window.SITE_SEARCH_INDEX`
+  - `portals/realms/garden/index.html` 是獨立 UI，資料仍只讀 `window.SITE_SEARCH_INDEX`
 - Tag detail：
   - `tag/index.html` 是穩定的 tag detail 入口；runtime 可帶 `?concept=...&tag=...`，並向後相容既有 `?tag=...`
   - tag detail / related tags / search filter 優先以 ontology `concept_id` 判斷是否為同一概念，再依目前語系決定顯示 label
-  - 單篇頁的 tag pill / related tag 連結預設都應導到 `tag/index.html`
   - 單篇頁的 tag pill / related tag 連結預設都應導到 `tag/index.html`
 
 ## 現有優點（請保持不退化）
@@ -101,7 +102,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Search：client-side 搜尋 + multi-tag filter
 - Clusters：popular / recent tags 的花叢視圖
 - Patch：卡片視圖 + 展開閱讀面板（同頁閱讀）
-- Tag detail：`tag/index.html` 提供穩定 detail route，不再讓 tag 入口綁在 `garden/` 底下
+- Tag detail：`tag/index.html` 提供穩定 detail route，不再讓 tag 入口綁在 `portals/realms/garden/` 底下
 
 ## 快速開始（建議用本機伺服器）
 
@@ -113,7 +114,9 @@ python3 -m http.server 8000
 
 然後開：
 - `http://localhost:8000/pages/search.html`
-- `http://localhost:8000/garden/index.html`
+- `http://localhost:8000/portals/realms/garden/index.html`
+- `http://localhost:8000/portals/realms/world/index.html`
+- `http://localhost:8000/portals/index.html`
 - `http://localhost:8000/labs/index.html`
 - `http://localhost:8000/index.html`（可直接用 navbar 的 gear icon 打開 settings modal）
 
@@ -139,11 +142,11 @@ python3 -m http.server 8000
 - 若修 theme 視覺時發現需要一直疊 override，優先回頭整理底層 token / selector / variable pipeline，而不是繼續堆例外規則
 - 未來若要新增 / 調整 theme、palette 或 settings controls，優先先看 `docs/guide/theme-palette-guide.md`
 
-`labs/world/` 的角色台詞只編輯 `labs/world/data/characters.json`：每位角色的 `dialogues.user` 是點擊後的多句對話，`dialogues.self` 是隨機環境獨白；頂層 `npcDialogues` 是兩位角色的隨機互聊，`participants` 與每句 `speaker` 都須引用現有角色 `id`。兩種環境對話隨機擇一，無可用台詞時才退到另一種。World 的 palette 值與主站共用 `assets/css/site/palette-tokens.css`；新增色盤只改這個 token 檔，不在 `world.css` 另抄一份。
+`portals/realms/world/` 的角色台詞只編輯 `portals/realms/world/data/characters.json`：每位角色的 `dialogues.user` 是點擊後的多句對話，`dialogues.self` 是隨機環境獨白；頂層 `npcDialogues` 是兩位角色的隨機互聊，`participants` 與每句 `speaker` 都須引用現有角色 `id`。兩種環境對話隨機擇一，無可用台詞時才退到另一種。World 的 palette 值與主站共用 `assets/css/site/palette-tokens.css`；新增色盤只改這個 token檔，不在 `world.css` 另抄一份。
 
 ## Garden UI（獨立設計）
 
-- Garden 入口頁為 `garden/index.html`，使用獨立 UI，不依賴主站 Theme/Palette
+- Garden 入口頁為 `portals/realms/garden/index.html`，使用獨立 UI，不依賴主站 Theme/Palette
 - Garden 的資料來源仍然只讀 `window.SITE_SEARCH_INDEX`（由 `search/search-index.js` 提供）
 
 ## 新增/修改筆記（唯一工作流）
@@ -185,8 +188,8 @@ python3 -m http.server 8000
      - `search/search-index.json`
      - `search/search-index.js`
    - 版本控制原則：
-     - `search/search-index.{json,js}` 與 `garden/floral-assets/` 需要納入版本控制（供靜態頁面讀取）
-     - 其餘 build output 一律視為生成物並加入 `.gitignore`（例如 `garden/_floral_dist/`）
+     - `search/search-index.{json,js}`、`portals/realms/garden/floral-assets/` 與 `portals/assets/` 需要納入版本控制（供靜態頁面讀取）
+     - 其餘 build output 一律視為生成物並加入 `.gitignore`（例如 `portals/realms/garden/_floral_dist/`）
    - 確認這篇 note 在 index 裡：
      - `title / url / tags / summary` 正確
      - 若有 `readingTimeMin`（可選）也要合理
@@ -450,6 +453,8 @@ python3 cli.py scan-information writing/<topic>/<topic>.md
 python3 cli.py scan-information writing/<topic>/<topic>.md --json
 python3 cli.py build notes/<topic>/<topic>.md
 python3 cli.py build-all
+python3 cli.py build-portals
+python3 cli.py build-world
 python3 cli.py translate --source notes/<topic>/<topic>.md --target-lang en --backend gemini-api
 python3 cli.py install-hooks
 python3 cli.py serve --port 8000
@@ -569,33 +574,41 @@ Ludwigia/
 ├── writing/
 │   └── index.html
 ├── labs/
-│   └── index.html
-├── future/
+│   ├── index.html
+│   ├── shooting-mode/
+│   ├── question-bank/
 │   ├── massive-multiplayer-laser-tag/
-│   │   ├── page.html        # static overview / WIP page
-│   │   └── src/             # prototype source
+│   │   ├── page.html    # static overview / WIP page
+│   │   └── src/         # prototype source
 │   └── cosmic-flow/
-│       ├── page.html        # static overview / WIP page
-│       └── src/             # prototype source
+│       ├── page.html    # static overview / WIP page
+│       └── src/         # prototype source
+├── portals/
+│   ├── index.html          # Aetheria Portals 傳送門入口
+│   ├── assets/              # Portals 構建產物（JS/CSS）
+│   ├── src/                 # Portals 原始碼（React 19/Vite）
+│   ├── index.source.html    # Portals 構建模板
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── realms/              # 完成態探索境域收斂目錄
+│       ├── garden/          # 數位花園 (Digital Garden)
+│       │   ├── index.html   # Garden landing + Patch view（同頁，hash route）
+│       │   ├── floral-assets/       # Garden build output
+│       │   ├── floral-patch-garden/ # Garden source（React/Vite）
+│       │   └── assets/js/           # Garden 專用 JS
+│       └── world/           # Ludwigia World (2.5D 生活世界)
+│           ├── index.html
+│           ├── world.css
+│           ├── js/
+│           └── data/
 ├── notes/
 │   └── *.html
 ├── search/
 │   ├── indexer.py
 │   ├── search-index.json
 │   └── search-index.js
-├── garden/
-│   ├── index.html          # Garden landing + Patch view（同頁，hash route）
-│   ├── floral-assets/       # Garden build output
-│   ├── floral-patch-garden/ # Garden source（React/Vite）
-│   └── assets/js/           # Garden 專用 JS
-│   └── note_styles/
-│       ├── _shared/
-│       └── default/
-│           ├── partials/
 ├── tag/
 │   └── index.html          # tag detail page
-│           ├── style.css
-│           └── style.py
 ├── assets/
 │   ├── css/style.css
 │   ├── js/

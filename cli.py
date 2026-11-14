@@ -127,6 +127,25 @@ def cmd_build_world(args: argparse.Namespace) -> None:
     _run(argv)
 
 
+def cmd_build_portals(_: argparse.Namespace) -> None:
+    portals_dir = os.path.join(_repo_dir(), "portals")
+    subprocess.run(["npm", "run", "build"], cwd=portals_dir, check=True)
+    dist_dir = os.path.join(portals_dir, "_dist")
+    out_html = os.path.join(dist_dir, "index.source.html")
+    dest_html = os.path.join(portals_dir, "index.html")
+    dist_assets = os.path.join(dist_dir, "assets")
+    dest_assets = os.path.join(portals_dir, "assets")
+    if os.path.exists(out_html):
+        shutil.copy2(out_html, dest_html)
+    if os.path.exists(dist_assets):
+        if os.path.exists(dest_assets):
+            shutil.rmtree(dest_assets)
+        shutil.copytree(dist_assets, dest_assets)
+    if os.path.exists(dist_dir):
+        shutil.rmtree(dist_dir)
+    print("Successfully built Aetheria Portals to portals/index.html and portals/assets/")
+
+
 def cmd_test(_: argparse.Namespace) -> None:
     _run([sys.executable, "tools/create_content.py", "--self-test"])
     _run([sys.executable, "-m", "unittest"])
@@ -354,6 +373,9 @@ def main() -> None:
     p_build_world = sub.add_parser("build-world")
     p_build_world.add_argument("--check", action="store_true")
     p_build_world.set_defaults(func=cmd_build_world)
+
+    p_build_portals = sub.add_parser("build-portals")
+    p_build_portals.set_defaults(func=cmd_build_portals)
 
     args = parser.parse_args()
     args.func(args)

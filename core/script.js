@@ -289,7 +289,7 @@ if (!COMPANION_FEATURE_ENABLED) {
 
 const isCompanionRouteSupported = () => {
   const path = String(window.location.pathname || "").toLowerCase();
-  return !/(^|\/)(garden|labs|future)(\/|$)/.test(path);
+  return !/(^|\/)(garden|labs|future|portals)(\/|$)/.test(path);
 };
 
 const isCompanionViewportSupported = () => {
@@ -1444,6 +1444,8 @@ const getMobileNavI18n = () => {
       explore: "全站探索",
       projects: "精选项目",
       projectsDesc: "独立开发与工程作品",
+      portals: "传送门",
+      portalsDesc: "幻光仙境与多维传送枢纽",
       garden: "数字花园",
       gardenDesc: "交互式网状思辨与视觉标签",
       labs: "实验室",
@@ -1483,6 +1485,8 @@ const getMobileNavI18n = () => {
       explore: "全站探索",
       projects: "精選專案",
       projectsDesc: "獨立開發與工程作品",
+      portals: "傳送門",
+      portalsDesc: "幻光仙境與多維傳送樞紐",
       garden: "數位花園",
       gardenDesc: "互動式網狀思辨與視覺標籤",
       labs: "實驗室",
@@ -1521,6 +1525,8 @@ const getMobileNavI18n = () => {
     explore: "Explore Site",
     projects: "Projects",
     projectsDesc: "Showcase of projects and works",
+    portals: "Portals",
+    portalsDesc: "Aetheria portals & dimensional hub",
     garden: "Digital Garden",
     gardenDesc: "Visual concept map & idea garden",
     labs: "Labs",
@@ -1600,7 +1606,7 @@ const ensureMobileNavSheet = () => {
       ${makeItemHtml("fa-regular fa-envelope", txt.contact, txt.contactDesc, "#contact", 'data-mobile-sheet-jump="#contact"')}
       <div class="mobile-nav-sheet-section-title mt-2">${txt.explore}</div>
       ${makeItemHtml("fa-solid fa-laptop-code", txt.projects, txt.projectsDesc, resolveProjectPath("pages/projects.html"))}
-      ${makeItemHtml("fa-solid fa-seedling", txt.garden, txt.gardenDesc, resolveProjectPath("garden/index.html"))}
+      ${makeItemHtml("fa-solid fa-circle-nodes", txt.portals, txt.portalsDesc, resolveProjectPath("portals/index.html"))}
       ${makeItemHtml("fa-solid fa-flask", txt.labs, txt.labsDesc, resolveProjectPath("labs/index.html"))}
       ${makeItemHtml("fa-solid fa-gear", txt.settings, txt.settingsDesc, "#", 'data-mobile-sheet-action="settings"')}
       ${makeItemHtml("fa-solid fa-sitemap", txt.allPages, txt.allPagesDesc, resolveProjectPath("pages/more.html"))}
@@ -1614,7 +1620,7 @@ const ensureMobileNavSheet = () => {
       <div class="mobile-nav-sheet-section-title mt-2">${txt.explore}</div>
       ${makeItemHtml("fa-solid fa-house", txt.home, txt.aboutDesc, resolveProjectPath("index.html"))}
       ${makeItemHtml("fa-regular fa-folder-open", txt.portfolio, "Notes, Writing & Canvas", resolveProjectPath("pages/portfolio.html"))}
-      ${makeItemHtml("fa-solid fa-seedling", txt.garden, txt.gardenDesc, resolveProjectPath("garden/index.html"))}
+      ${makeItemHtml("fa-solid fa-circle-nodes", txt.portals, txt.portalsDesc, resolveProjectPath("portals/index.html"))}
       ${makeItemHtml("fa-solid fa-gear", txt.settings, txt.settingsDesc, "#", 'data-mobile-sheet-action="settings"')}
       ${makeItemHtml("fa-solid fa-sitemap", txt.allPages, txt.allPagesDesc, resolveProjectPath("pages/more.html"))}
     `;
@@ -1623,7 +1629,7 @@ const ensureMobileNavSheet = () => {
       <div class="mobile-nav-sheet-section-title">${txt.explore}</div>
       ${makeItemHtml("fa-solid fa-house", txt.home, "Main landing page", resolveProjectPath("index.html"))}
       ${makeItemHtml("fa-solid fa-laptop-code", txt.projects, txt.projectsDesc, resolveProjectPath("pages/projects.html"))}
-      ${makeItemHtml("fa-solid fa-seedling", txt.garden, txt.gardenDesc, resolveProjectPath("garden/index.html"))}
+      ${makeItemHtml("fa-solid fa-circle-nodes", txt.portals, txt.portalsDesc, resolveProjectPath("portals/index.html"))}
       ${makeItemHtml("fa-solid fa-flask", txt.labs, txt.labsDesc, resolveProjectPath("labs/index.html"))}
       ${makeItemHtml("fa-solid fa-gear", txt.settings, txt.settingsDesc, "#", 'data-mobile-sheet-action="settings"')}
       ${makeItemHtml("fa-solid fa-sitemap", txt.allPages, txt.allPagesDesc, resolveProjectPath("pages/more.html"))}
@@ -1836,6 +1842,7 @@ const getContentUiI18n = () => {
       fabOpenMenu: "打开菜单",
       fabMetadata: "信息",
       fabOutline: "大纲",
+      fabPortals: "传送门",
       fabGarden: "花园",
       fabLabs: "实验室",
       estimatedReadingTime: "预计阅读时间",
@@ -1867,6 +1874,7 @@ const getContentUiI18n = () => {
       fabOpenMenu: "開啟選單",
       fabMetadata: "資訊",
       fabOutline: "大綱",
+      fabPortals: "傳送門",
       fabGarden: "花園",
       fabLabs: "實驗室",
       estimatedReadingTime: "預估閱讀時間",
@@ -1897,6 +1905,7 @@ const getContentUiI18n = () => {
     fabOpenMenu: "Open menu",
     fabMetadata: "Metadata",
     fabOutline: "Outline",
+    fabPortals: "Portals",
     fabGarden: "Garden",
     fabLabs: "Labs",
     estimatedReadingTime: "Estimated Reading Time",
@@ -2002,9 +2011,9 @@ const initFab = () => {
     panel.appendChild(tocAction);
   }
 
-  const gardenLink = makeLink(resolveProjectPath("garden/index.html"), "", "fa-solid fa-seedling fa-fw");
-  gardenLink.dataset.fabLabelKey = "garden";
-  panel.appendChild(gardenLink);
+  const portalsLink = makeLink(resolveProjectPath("portals/index.html"), "", "fa-solid fa-circle-nodes fa-fw");
+  portalsLink.dataset.fabLabelKey = "portals";
+  panel.appendChild(portalsLink);
   const labsLink = makeLink(resolveProjectPath("labs/index.html"), "", "fa-solid fa-flask fa-fw");
   labsLink.dataset.fabLabelKey = "labs";
   panel.appendChild(labsLink);
@@ -2015,6 +2024,7 @@ const initFab = () => {
     const mapping = {
       metadata: labels.fabMetadata,
       outline: labels.fabOutline,
+      portals: labels.fabPortals,
       garden: labels.fabGarden,
       labs: labels.fabLabs,
     };

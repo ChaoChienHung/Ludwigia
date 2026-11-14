@@ -363,11 +363,23 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 - 放 indexer 與生成物（`search-index.{json,js}`）
 - 不放 UI 與 theme/palette（避免把資料層變成大雜燴）
 
-`garden/`（子系統）：
+`portals/`（子系統與已完成世界統合區）：
 
-- 放 Garden 專用 UI、資產、以及 build output（例如 `garden/floral-assets/`）
+- 放 Aetheria Portals 傳送門專用 UI、原始碼（`portals/src/`），以及 build output（`portals/index.html` 與 `portals/assets/`）
+- 作為全景多維探索樞紐與已完成世界之統整集結區，原生整合跨維度躍遷至 `portals/realms/garden/`（Digital Garden）與 `portals/realms/world/`（Ludwigia World 2.5D）
+- 採純前端 Web Audio API 與 Canvas 繪製，無外部伺服器依賴，靜態開箱即用
+
+`portals/realms/garden/`（子系統）：
+
+- 放 Garden 專用 UI、資產、以及 build output（例如 `portals/realms/garden/floral-assets/`）
 - 但仍只讀 `window.SITE_SEARCH_INDEX`，不自己產生第二份索引
-- `garden/index.html` 的 floral runtime 與主站 `core/script.js` 的 theme runtime 屬不同責任邊界；預設允許各自演進，不強制共享 ambient effect 實作
+- `portals/realms/garden/index.html` 的 floral runtime 與主站 `core/script.js` 的 theme runtime 屬不同責任邊界；預設允許各自演進，不強制共享 ambient effect 實作
+
+`portals/realms/world/`（子系統）：
+
+- 放 Ludwigia World 2.5D 等軸測生活世界之 Canvas 引擎、角色名冊與多語社交對話資料（`portals/realms/world/data/`）
+- 社交內容以 `portals/realms/world/data/characters.json` 為唯一來源，由 `tools/build_world_data.py` 再現性生成
+- 支援實時光影、尋路導航與全站 Design Tokens 色盤連動
 
 ## 生成物策略（Deploy Artifacts Whitelist）
 
@@ -379,20 +391,21 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 - 靜態站沒有後端，入口頁必須能直接讀到索引（含 `file://` 場景）
 - 若 schema/內容影響索引，必須同步更新並納入版本控制，避免「改內容忘記更新 index」
 
-### 為什麼 `garden/floral-assets/` 必須進版控
+### 為什麼 `portals/realms/garden/floral-assets/` 與 `portals/assets/` 必須進版控
 
-- `garden/index.html` 直接引用這個資料夾的 build 產物
-- 不提交會導致 Garden 入口在別人的機器上不可用（除非他自己 build）
+- `portals/realms/garden/index.html` 與 `portals/index.html` 直接引用這兩個資料夾的 build 產物
+- 不提交會導致 Garden 與 Portals 入口在別人的機器或純靜態 Pages 上不可用（除非他自己 build）
 
 ### 目前白名單（必須 commit）
 
 - `search/search-index.json`
 - `search/search-index.js`
-- `garden/floral-assets/`
+- `portals/realms/garden/floral-assets/`
+- `portals/assets/`
 
 ### 其它生成物（必須 ignore）
 
-- 例：`garden/_floral_dist/`
+- 例：`portals/realms/garden/_floral_dist/`
 
 ## 響應式分層架構與 i18n 作用域契約（Responsive & i18n Architecture）
 
@@ -413,7 +426,7 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 
 ## CI / Guardrails（合併前自動擋壞）
 
-`labs/world/` 的社交內容以 `data/characters.json` 為唯一來源：角色的 `dialogues.user` 是玩家主動對話序列，`dialogues.self` 是環境獨白，頂層 `npcDialogues` 是兩位現有角色的對話序列。三類皆須提供 `zh-TW` 與 `en`；環境排程只在獨白和 NPC 互聊間隨機選擇，缺席時退到另一類，不拿玩家對話冒充獨白。主站與 World 的 palette 基色共用 `assets/css/site/palette-tokens.css`，World 的 surface 差異仍由 `world.css` 管理。
+`portals/realms/world/` 的社交內容以 `portals/realms/world/data/characters.json` 為唯一來源：角色的 `dialogues.user` 是玩家主動對話序列，`dialogues.self` 是環境獨白，頂層 `npcDialogues` 是兩位現有角色的對話序列。三類皆須提供 `zh-TW` 與 `en`；環境排程只在獨白和 NPC 互聊間隨機選擇，缺席時退到另一類，不拿玩家對話冒充獨白。主站與 World 的 palette 基色共用 `assets/css/site/palette-tokens.css`，World 的 surface 差異仍由 `world.css` 管理。
 
 核心方向：
 

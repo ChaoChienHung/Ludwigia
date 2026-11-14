@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #030712;
+    color: #e2e8f0;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  h1, h2, h3, .font-fantasy {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+/* GPU-accelerated portal rotation */
+@keyframes portal-spin-cw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes portal-spin-ccw {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes modal-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+/* Smooth dash flowing along stroke - zero displacement */
+@keyframes dash-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -48px; }
+}
+
+.animate-portal-cw {
+  animation: portal-spin-cw 22s linear infinite;
+  will-change: transform;
+}
+
+.animate-portal-ccw {
+  animation: portal-spin-ccw 16s linear infinite;
+  will-change: transform;
+}
+
+.animate-float {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+.animate-modal-in {
+  animation: modal-scale-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-dash-flow {
+  animation: dash-flow 8s linear infinite;
+}
+
+/* Hide scrollbar cleanly */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

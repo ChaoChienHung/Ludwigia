@@ -57,6 +57,7 @@
 - `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
 - `docs/specs/citation-spec.md`：參考文獻（References）結構、APA/IEEE 引用格式、真實驗核與原語言留存 spec
 - `docs/specs/isometric-world-spec.md`：等軸 2.5D 虛擬生活空間、原創演算法（拓撲遮擋、視口中心縮放、牆面剪切投影）與社交世界技術規格
+- `docs/specs/realm-spec.md`：完成態世界境域（Realms）架構規範、專屬測試隔離、動態聚合與傳送門擴充指南
 
 ### Design
 

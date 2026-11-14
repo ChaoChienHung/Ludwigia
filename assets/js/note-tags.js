@@ -57,7 +57,7 @@
       return core.resolveTagHref({ conceptId, label: tag });
     }
     const path = String(window.location.pathname || '');
-    const markers = ['/notes/', '/writing/', '/canvas/', '/garden/', '/tag/', '/labs/', '/future/'];
+    const markers = ['/notes/', '/writing/', '/canvas/', '/garden/', '/portals/', '/tag/', '/labs/', '/future/'];
     let root = '';
     for (const marker of markers) {
       const idx = path.indexOf(marker);

@@ -30,7 +30,7 @@
 
   const isRouteSupported = () => {
     const path = String(window.location.pathname || "").toLowerCase();
-    return !/(^|\/)(garden|labs|future)(\/|$)/.test(path);
+    return !/(^|\/)(garden|labs|future|portals)(\/|$)/.test(path);
   };
 
   const isViewportSupported = () => {

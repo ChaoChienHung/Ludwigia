@@ -919,7 +919,7 @@
       } else if (checkZone('cyber_cafe', 8.8, 19.0, 48.8, 57.0)) {
         currentZone = 'cyber_cafe';
         isInsideAnyHouse = true;
-        statusMessage = "Gaming Portal ⚡🕹️";
+        statusMessage = "Gaming Portal • 電玩傳送門 ⚡🕹️";
       } else if (checkZone('howling_abyss', 11.0, 17.0, 57.0, 93.0)) {
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;

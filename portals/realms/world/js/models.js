@@ -4678,12 +4678,14 @@
       ctx.lineWidth = 0.8;
       ctx.strokeRect(-W / 2 + 2, -H / 2 + 2, W - 4, H - 4);
 
-      // High-Tech Clean Typography
+      // High-Tech Clean Typography (Bilingual: 電玩傳送門 • GAMING PORTAL)
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
+      ctx.font = 'bold 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('⚡ Gaming Portal ⚡', 0, 0);
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 6;
+      ctx.fillText('⚡ 電玩傳送門 • GAMING PORTAL ⚡', 0, 0);
 
       ctx.restore();
     }
@@ -4872,47 +4874,150 @@
       ctx.stroke();
     }
 
-    // --- 19. Parapet Fire Brazier (Warm Orange Glow on Frost Stone) ---
-    drawAbyssBrazier(ctx, gx, gy, ox, oy) {
-      // Carved Stone Pedestal
-      this.drawBox(ctx, gx, gy, 0, 0.65, 0.65, 0.65, '#334155', '#1e293b', '#0f172a', ox, oy);
+    // --- 19. Gateway Fire Pillar & Brazier (Chiseled stone pillar with iron brazier & animated fire) ---
+    drawGatewayFirePillar(ctx, gx, gy, ox, oy, height = 1.30) {
+      // 1. Chiseled Stone Base (z: 0 to 0.30)
+      this.drawBox(ctx, gx, gy, 0, 0.65, 0.65, 0.30, '#1e293b', '#0f172a', '#020617', ox, oy);
+      // 2. Pillar Shaft (z: 0.30 to height - 0.12)
+      this.drawBox(ctx, gx + 0.05, gy + 0.05, 0.30, 0.55, 0.55, height - 0.42, '#334155', '#1e293b', '#0f172a', ox, oy);
+      // 3. Molded Stone Capital / Mantle (z: height - 0.12 to height)
+      this.drawBox(ctx, gx, gy, height - 0.12, 0.65, 0.65, 0.12, '#475569', '#334155', '#1e293b', ox, oy);
 
-      // Wrought-iron Tripod Bowl at z: 0.65
-      const bP = isoToScreen(gx + 0.32, gy + 0.32, 0.68, ox, oy);
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.arc(bP.x, bP.y, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+      // 4. 3D Wrought Iron Brazier Basket on top of Mantle
+      const bz = height;
+      this.drawBox(ctx, gx + 0.08, gy + 0.08, bz, 0.49, 0.49, 0.08, '#0f172a', '#1e293b', '#334155', ox, oy);
+      // 4 Corner Iron Prongs
+      this.drawBox(ctx, gx + 0.08, gy + 0.08, bz + 0.08, 0.08, 0.08, 0.15, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 0.49, gy + 0.08, bz + 0.08, 0.08, 0.08, 0.15, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 0.08, gy + 0.49, bz + 0.08, 0.08, 0.08, 0.15, '#334155', '#1e293b', '#0f172a', ox, oy);
+      this.drawBox(ctx, gx + 0.49, gy + 0.49, bz + 0.08, 0.08, 0.08, 0.15, '#334155', '#1e293b', '#0f172a', ox, oy);
 
-      // Warm Amber Glow onto Surrounding Frost Stone
-      const pulse = 0.85 + Math.sin(performance.now() * 0.007) * 0.15;
-      const glow = ctx.createRadialGradient(bP.x, bP.y, 2, bP.x, bP.y, 28 * pulse);
-      glow.addColorStop(0, 'rgba(251, 146, 60, 0.65)');
-      glow.addColorStop(0.45, 'rgba(249, 115, 22, 0.28)');
+      // 5. Glowing Charcoal Embers Bed
+      this.drawBox(ctx, gx + 0.14, gy + 0.14, bz + 0.06, 0.37, 0.37, 0.06, '#ea580c', '#c2410c', '#9a3412', ox, oy);
+
+      // 6. Warm Amber Radiance onto the Mantle & Surroundings
+      const bP = isoToScreen(gx + 0.325, gy + 0.325, bz + 0.14, ox, oy);
+      const pulse = 0.88 + Math.sin(performance.now() * 0.008) * 0.12;
+      const glow = ctx.createRadialGradient(bP.x, bP.y, 2, bP.x, bP.y, 32 * pulse);
+      glow.addColorStop(0, 'rgba(251, 146, 60, 0.70)');
+      glow.addColorStop(0.4, 'rgba(249, 115, 22, 0.30)');
       glow.addColorStop(1, 'rgba(234, 88, 12, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(bP.x, bP.y, 28 * pulse, 0, Math.PI * 2);
+      ctx.arc(bP.x, bP.y, 32 * pulse, 0, Math.PI * 2);
       ctx.fill();
 
-      // Animated Leaping Fire Flame
-      const fH = 9 + Math.sin(performance.now() * 0.015) * 3;
-      ctx.fillStyle = '#fbbf24';
+      // 7. Dynamic Leaping 3D Isometric Flame
+      const time = performance.now() * 0.012;
+      const fH = 14 + Math.sin(time) * 4;
+      const fW = 7 + Math.sin(time * 0.8) * 2;
+
+      // Outer Flame Silhouette (Orange-Red)
+      ctx.fillStyle = '#f97316';
       ctx.beginPath();
-      ctx.moveTo(bP.x - 4, bP.y);
-      ctx.quadraticCurveTo(bP.x - 3, bP.y - fH * 0.6, bP.x, bP.y - fH);
-      ctx.quadraticCurveTo(bP.x + 3, bP.y - fH * 0.6, bP.x + 4, bP.y);
+      ctx.moveTo(bP.x - fW * 0.6, bP.y + 2);
+      ctx.quadraticCurveTo(bP.x - fW * 0.5, bP.y - fH * 0.6, bP.x, bP.y - fH);
+      ctx.quadraticCurveTo(bP.x + fW * 0.5, bP.y - fH * 0.6, bP.x + fW * 0.6, bP.y + 2);
       ctx.closePath();
       ctx.fill();
 
-      // White Hot Flame Core
+      // Inner Core Flame (Bright Golden-Yellow)
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.moveTo(bP.x - fW * 0.35, bP.y + 1);
+      ctx.quadraticCurveTo(bP.x - fW * 0.25, bP.y - fH * 0.5, bP.x, bP.y - fH * 0.8);
+      ctx.quadraticCurveTo(bP.x + fW * 0.25, bP.y - fH * 0.5, bP.x + fW * 0.35, bP.y + 1);
+      ctx.closePath();
+      ctx.fill();
+
+      // White-Hot Spark Center
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(bP.x, bP.y - 2, 2.2, 0, Math.PI * 2);
+      ctx.arc(bP.x, bP.y - 3, 2.4, 0, Math.PI * 2);
       ctx.fill();
+
+      // 8. Gentle Translucent Smoke Puffs wafting upward
+      const smokeTime = performance.now() * 0.002;
+      for (let s = 0; s < 3; s++) {
+        const offset = (smokeTime + s * 0.33) % 1.0;
+        const sY = bP.y - fH - offset * 24;
+        const sX = bP.x + Math.sin(smokeTime * 3 + s) * (3 + offset * 6);
+        const sR = 3 + offset * 5;
+        const sAlpha = (1 - offset) * 0.35;
+        ctx.fillStyle = `rgba(226, 232, 240, ${sAlpha.toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(sX, sY, sR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // --- 19B. Authentic Minecraft Ground Campfire (3 logs, burning coals, leaping fire, wafting smoke) ---
+    drawMinecraftCampfire(ctx, gx, gy, ox, oy) {
+      // 3 Criss-Crossed Oak Logs at Base (z: 0 to 0.18)
+      this.drawBox(ctx, gx + 0.08, gy + 0.12, 0, 0.74, 0.18, 0.18, '#854d0e', '#713f12', '#451a03', ox, oy);
+      this.drawBox(ctx, gx + 0.08, gy + 0.60, 0, 0.74, 0.18, 0.18, '#854d0e', '#713f12', '#451a03', ox, oy);
+      this.drawBox(ctx, gx + 0.14, gy + 0.14, 0.16, 0.18, 0.62, 0.16, '#713f12', '#582b0c', '#3b1c06', ox, oy);
+      this.drawBox(ctx, gx + 0.58, gy + 0.14, 0.16, 0.18, 0.62, 0.16, '#713f12', '#582b0c', '#3b1c06', ox, oy);
+
+      // Glowing Ember Charcoal Core
+      this.drawBox(ctx, gx + 0.26, gy + 0.26, 0.04, 0.38, 0.38, 0.18, '#ea580c', '#c2410c', '#7c2d12', ox, oy);
+
+      // Warm Campfire Light Cast on Ground
+      const cP = isoToScreen(gx + 0.45, gy + 0.45, 0.22, ox, oy);
+      const pulse = 0.85 + Math.sin(performance.now() * 0.009) * 0.15;
+      const glow = ctx.createRadialGradient(cP.x, cP.y, 2, cP.x, cP.y, 36 * pulse);
+      glow.addColorStop(0, 'rgba(251, 146, 60, 0.65)');
+      glow.addColorStop(0.45, 'rgba(249, 115, 22, 0.25)');
+      glow.addColorStop(1, 'rgba(234, 88, 12, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cP.x, cP.y, 36 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Animated Campfire Flame
+      const time = performance.now() * 0.014;
+      const fH = 16 + Math.sin(time) * 4;
+      const fW = 8 + Math.sin(time * 0.7) * 2;
+
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(cP.x - fW * 0.6, cP.y + 2);
+      ctx.quadraticCurveTo(cP.x - fW * 0.5, cP.y - fH * 0.6, cP.x, cP.y - fH);
+      ctx.quadraticCurveTo(cP.x + fW * 0.5, cP.y - fH * 0.6, cP.x + fW * 0.6, cP.y + 2);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.moveTo(cP.x - fW * 0.35, cP.y + 1);
+      ctx.quadraticCurveTo(cP.x - fW * 0.25, cP.y - fH * 0.5, cP.x, cP.y - fH * 0.8);
+      ctx.quadraticCurveTo(cP.x + fW * 0.25, cP.y - fH * 0.5, cP.x + fW * 0.35, cP.y + 1);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(cP.x, cP.y - 2, 2.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Characteristic Tall Minecraft Campfire Smoke Column
+      const smokeTime = performance.now() * 0.0018;
+      for (let s = 0; s < 4; s++) {
+        const offset = (smokeTime + s * 0.25) % 1.0;
+        const sY = cP.y - fH - offset * 42;
+        const sX = cP.x + Math.sin(smokeTime * 2.5 + s * 1.5) * (4 + offset * 8);
+        const sR = 3.5 + offset * 7;
+        const sAlpha = (1 - offset) * 0.40;
+        ctx.fillStyle = `rgba(241, 245, 249, ${sAlpha.toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(sX, sY, sR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Backwards-compatible drawAbyssBrazier wrapper
+    drawAbyssBrazier(ctx, gx, gy, ox, oy) {
+      this.drawGatewayFirePillar(ctx, gx, gy, ox, oy, 0.65);
     }
 
     // --- 20. Stone Balustrade / Railing Wall Segment with Frost Cap ---

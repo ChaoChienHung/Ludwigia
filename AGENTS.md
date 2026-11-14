@@ -2,7 +2,7 @@
 
 本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
 
-本文件只放「必須永遠成立」的規則；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；地圖規劃藍圖請看 `labs/world/world-map-spec.md`；parser / metadata / translation / citation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`、`docs/specs/citation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
+本文件只放「必須永遠成立」的規則；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；地圖規劃藍圖請看 `portals/realms/world/world-map-spec.md`；parser / metadata / translation / citation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`、`docs/specs/citation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
 
 ## 不退化原則（Non-regression）
 
@@ -38,12 +38,12 @@
   - 作者只維護 source JSON，前端 runtime (`about-skills.js` / `about-credentials.js`) 負責載入、正規化、多語切換與 DOM 渲染；不應要求手動維護第二份 HTML 靜態資料
   - `Skills` 必須維持類別分組與頁籤/箭頭控制，確保多個技能面板共用顯示空間，隨技能成長仍能維持空間精簡
   - `Credentials` 必須維持 `Type` 與 `Domain/Category` 雙維度篩選、主視覺展示區、縮圖導覽列與 Modal 燈箱放大檢視能力；視覺元件必須完全繼承全站 Theme 與 Palette Design Tokens
-- 若 `labs/world/`（Ludwigia World 虛擬空間）啟用 source-driven 社交與建築資料（例如 `labs/world/data/characters.json`），必須維持：
-  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `labs/world/data/characters/<id>/character.json` 與 `labs/world/data/interactions/*.json` 為創作真相來源（SSOT），由 `tools/build_world_data.py`（或 `cli.py build-world`）再現性編譯為執行期快取 `labs/world/data/characters.json`；單人對話須區分 `dialogues.user`（玩家主動交談）與 `dialogues.self`（環境獨白），角色互聊只維護在 `interactions/` 的 `npcDialogues`，後兩者可隨機觸發；前端執行期（`characters.js`）負責載入解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
+- 若 `portals/realms/world/`（Ludwigia World 虛擬空間）啟用 source-driven 社交與建築資料（例如 `portals/realms/world/data/characters.json`），必須維持：
+  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `portals/realms/world/data/characters/<id>/character.json` 與 `portals/realms/world/data/interactions/*.json` 為創作真相來源（SSOT），由 `tools/build_world_data.py`（或 `cli.py build-world`）再現性編譯為執行期快取 `portals/realms/world/data/characters.json`；單人對話須區分 `dialogues.user`（玩家主動交談）與 `dialogues.self`（環境獨白），角色互聊只維護在 `interactions/` 的 `npcDialogues`，後兩者可隨機觸發；前端執行期（`characters.js`）負責載入解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
   - **鏡頭縮放以視口中心/玩家為軸心（Centered Viewport Zoom Focus）**：鏡頭 `zoom` 縮放與點擊尋路逆投影必須永遠以視口幾何中心（即焦點玩家所在之屏幕中心）為錨定軸心，不得退化為以世界原點 `(ox, oy)` 為縮放中心，確保玩家走入任何遠端分區建築（如三民高中、抖音研發中心）時皆能精準聚焦於室內與角色，杜絕畫面失焦偏移
   - **等軸測牆面剪切與幾何斜度對齊契約（Isometric Wall Projection Contract）**：建築牆面上的黑板、掛鐘、門樑招牌等平面裝飾，必須與所依附的牆面軸向傾角精確匹配：北向與南向橫牆（沿 X 軸）必須使用 `(1, 0.5, 0, 1, 0, 0)` 剪切矩陣；東向與西向縱牆（沿 Y 軸）必須使用 `(1, -0.5, 0, 1, 0, 0)` 剪切矩陣；文字、算式與圖表嚴禁水平裸繪
   - **拓撲深度排序無閉環契約（Cycle-Free Topological Depth Sorting）**：立體建築牆體、門樑、大型家具（如圖書館大型落地書櫃、教室課桌椅群）之包圍盒邊界（Bounding Box）必須嚴格維持前/後景拓撲因果分層（例如後牆 `yMax` 嚴格小於或等於家具 `yMin`），嚴禁在家具背後疊加重疊包圍盒之裝飾，杜絕在人物走動時觸發深度閉環而產生模型閃爍（Flickering / Glitch）或破面消失
-  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`labs/world/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 World 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
+  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`portals/realms/world/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 World 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
 - `qprompt` 的基本語意若啟用，必須維持：
   - prompt 本體由 `<qprompt>...</qprompt>` 或 `<qprompt/>` 再現性生成
   - 若 placeholder 出現在 `reviewkit` 內，就渲染成該 `reviewkit` 的 prompt pane
@@ -119,7 +119,7 @@
   - 這條規則適用於主站共用 theme runtime；Reading Mode 的責任是保證閱讀時不被 ambient effect 干擾，而不是尊重使用者先前是否開啟動效
 - 主站共用 `Theme / Palette / Effects` runtime 的責任邊界必須維持清楚：
   - 預設只保證主站頁面與標準內容頁生效（例如首頁、Portfolio/More、Projects/Search/Settings、section landing、tag detail、`notes / writing / canvas` 的 landing 與內容頁）
-  - `garden/index.html`（Garden of Ludwigia）或其他明確獨立的 extension / prototype surface，可保留自己的 theme/runtime；不應因主站 theme contract 而被視為必須同步套用同一套 ambient effect
+  - `portals/realms/garden/index.html`（Garden of Ludwigia）或其他明確獨立的 extension / prototype surface，可保留自己的 theme/runtime；不應因主站 theme contract 而被視為必須同步套用同一套 ambient effect
   - 若未來要讓某個 extension 接上主站 theme，必須是顯式整合的契約，不應僅因共用 repo、入口或某些 UI 元件就被動繼承
 - note 頁的 theme-aware 補充元件（至少 `block` / `callout` / `takeaways`）必須維持：
   - 各自擁有明確的 theme surface variables（例如 background / border / shadow / radius / icon）
@@ -139,6 +139,7 @@
 - 小螢幕 Additional 入口若啟用，必須維持「單一角落、單一主入口」心智模型：
   - 首頁 / section landing 的 misc/FAB，與 note / writing 單篇頁的 metadata 入口，優先收斂到同一個右下角主入口
   - note / writing 的 page-level action（例如 `Outline` / `Metadata`）若不走右下角主入口，則應優先收斂到內容頁頂部 navbar 的左右兩側；不得另外再長成互搶角落的 mobile FAB
+  - 全站浮動選單（Site FAB / Misc）之探索入口契約：預設收斂為 `Portals` 與 `Labs` 雙核心探索樞紐；`Garden` 與 `World` 之跨維度躍遷由 `Portals` 承接，不應在 FAB 平行塞滿過多入口破壞精簡心智模型
   - 不應把它們拆成多顆各自漂浮、只靠位置微調硬避開的入口
 - 手機導覽若啟用獨立 IA，必須維持：
   - 僅作用在真正手機螢幕；desktop 與一般 laptop / tablet 不應被連帶改成 mobile 導覽
@@ -175,21 +176,21 @@
 
 - Garden 必須維持以下入口頁面可用（僅依賴 `window.SITE_SEARCH_INDEX`）：
   - `pages/search.html`：搜尋 + multi-tag filter
-  - `garden/index.html`：Garden landing + Patch view（同頁）
-- `tag/index.html` 必須維持為 tag detail 的穩定入口；`garden/` 保留給探索視角，不要求再承擔 tag detail page
+  - `portals/realms/garden/index.html`：Garden landing + Patch view（同頁）
+- `tag/index.html` 必須維持為 tag detail 的穩定入口；`portals/realms/garden/` 保留給探索視角，不要求再承擔 tag detail page
 - 若 search / section landing 支援 pinned writing，語意必須維持：只有符合 query/tag filter 的 writing 才能被置頂；pinned 只是排序 boost，不是繞過 filter 的白名單
 
 ## 最小工具鏈
 
 - 核心工作流（新增/修改 note、更新索引）必須可用 Python（stdlib）完成，不引入後端/資料庫作為必要依賴
 - `search/search-index.js` 必須能在 `file://` 受限場景用 `<script>` 載入（或至少在本機簡易靜態伺服器下可工作）
-- Asset 分層：可跨頁共用的 CSS/JS/圖片放在 `assets/`；Garden 等子系統可保留自己的 build 產物與專用資源（例如 `garden/floral-assets/`），避免為了集中而引入路徑/建置耦合
+- Asset 分層：可跨頁共用的 CSS/JS/圖片放在 `assets/`；Garden 與 Portals 等子系統可保留自己的 build 產物與專用資源（例如 `portals/realms/garden/floral-assets/` 與 `portals/assets/`），避免為了集中而引入路徑/建置耦合
 - 若引入 `core/` 作為共用區，`core/` 不得存放生成物（例如 search index）或任何子系統 build output（避免把 core 變成大雜燴）
 - 生成物策略：少數生成物屬於部署必需品，必須進版控；其餘一律視為本機/CI 生成物，必須進 `.gitignore`
   - `search/search-index.{json,js}` 必須進版控：它是全站搜尋/瀏覽的資料來源，靜態站必須能直接讀到
-  - `garden/floral-assets/` 必須進版控：`garden/index.html` 直接引用其 build 產物，不提交會導致 Garden 入口不可用（除非自己 build）
-  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`garden/floral-assets/`
-  - 其它生成物（必須 ignore）例：`garden/_floral_dist/`
+  - `portals/realms/garden/floral-assets/` 與 `portals/assets/` 必須進版控：`portals/realms/garden/index.html` 與 `portals/index.html` 直接引用其 build 產物，不提交會導致 Garden 或 Portals 入口不可用（除非自己 build）
+  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`
+  - 其它生成物（必須 ignore）例：`portals/realms/garden/_floral_dist/`
 
 ## 文件一致性
 
@@ -224,13 +225,14 @@
 - `docs/specs/translation-spec.md`：source-driven translation workflow contract
 - `docs/specs/citation-spec.md`：參考文獻（References）結構、APA/IEEE 引用格式、真實驗核與原語言留存 spec
 - `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
+- `docs/specs/realm-spec.md`：完成態世界境域（Realms）架構規範、專屬測試隔離、動態聚合與傳送門擴充指南
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡
 - `docs/rules/checklist.md` / `docs/rules/guardrails.md`：交付收尾與守門清單
 - `docs/guide/data-authoring-guide.md` / `docs/guide/language-guide.md` / `docs/guide/theme-palette-guide.md` / `docs/guide/ontology-guide.md` / `docs/guide/companion-guide.md`：共享維護 guide
 - `docs/tech/README.md`：技術文件入口；實作細節再往下分到 `docs/tech/*.md`
 - `docs/author/writing-notes.md` / `docs/author/testing-notes.md` / `docs/author/dev-notes.md`：作者自己的寫作、測試與演進筆記
 - `notes/**/<slug>.md`、`writing/**/<slug>.md`、`canvas/**/<slug>.md`：內容來源；若調整語法/解析器，需同步檢查相容性
-- `skills/**/skill.md`、`future/**/README.md`：分別是 skill 規格與實驗性原型記錄
+- `skills/**/skill.md`、`labs/**/README.md`：分別是 skill 規格與實驗性原型記錄
 
 為避免索引漂移，這裡只保留短版路由；若新增、搬移、刪除或重命名文檔，必須先更新 `docs/README.md`，再回頭同步本檔與 `README.md` 的短版說明。
 

@@ -59,9 +59,9 @@
       nav.setBlock(0.0, 57.0, 11.35, 36.5, true);   // West Flanking Abyss Void + Balustrade (x: 0..11.35, y: 57..93.5)
       nav.setBlock(16.75, 57.0, 37.25, 36.5, true); // East Flanking Abyss Void + Balustrade (x: 16.75..54, y: 57..93.5)
 
-      // 2. Minecraft Island North Cliff Edge & Fences (blocks y: 93.6..94.2 outside entrance x: 12.5..15.5)
-      nav.setBlock(7.0, 93.6, 5.5, 0.6, true);      // West Northern Fence & Cliff
-      nav.setBlock(15.5, 93.6, 5.5, 0.6, true);     // East Northern Fence & Cliff
+      // 2. Minecraft Island North Cliff Edge, Fences & Gateway Fire Pillars (blocks entrance flanks, leaving center x: 12.75..15.25 open)
+      nav.setBlock(7.0, 93.6, 5.75, 0.8, true);      // West Northern Fence, Cliff & West Gateway Pillar (x: 7.0..12.75)
+      nav.setBlock(15.25, 93.6, 5.75, 0.8, true);    // East Northern Fence, Cliff & East Gateway Pillar (x: 15.25..21.0)
 
       // 3. Minecraft Island Perimeter Fences (West x=7.0, East x=21.0, South y=111.0)
       nav.setBlock(6.8, 94.0, 0.5, 17.2, true);     // West Cliff Fence (x: 6.8..7.3, y: 94..111.2)
@@ -553,20 +553,43 @@
         }
       });
       list.push({
-        xMin: 12.8, xMax: 15.2, yMin: 56.8, yMax: 57.2,
+        xMin: 12.8, xMax: 15.2, yMin: 56.8, yMax: 57.3,
         draw: () => {
           ctx.save();
           if (world.wallAlphaCyber < 0.99) ctx.globalAlpha = world.wallAlphaCyber;
-          // Lintel wall beam above doorway
+          // Lintel wall beam above doorway (z: 2.20 to H = 2.70, x: 13.0 to 15.0)
           models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
-          // Glowing Neon Portal Sign "GAMING PORTAL"
-          const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
-          ctx.fillStyle = '#38bdf8';
-          ctx.font = 'bold 8px monospace';
-          ctx.textAlign = 'center';
+
+          // Sheared High-Tech Cyber Signboard mounted flush on lintel front surface (y = 57.26, z: 2.48, safely above sliding door header)
+          const sp = isoToScreen(14.0, 57.26, 2.48, world.ox, world.oy);
+          ctx.save();
+          ctx.translate(sp.x, sp.y);
+          ctx.transform(1, 0.5, 0, 1, 0, 0); // Sheared onto X-axis longitudinal wall!
+
+          const sW = 142;
+          const sH = 17;
+          // Dark Cyber Carbon Plate
+          ctx.fillStyle = '#020617';
+          ctx.fillRect(-sW / 2, -sH / 2, sW, sH);
+
+          // Neon Cyan Glow Border
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 1.2;
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = 8;
-          ctx.fillText('⚡ GAMING PORTAL ⚡', sp.x, sp.y);
+          ctx.strokeRect(-sW / 2, -sH / 2, sW, sH);
+          ctx.shadowBlur = 0;
+
+          // Crisp Bilingual Typography
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 4;
+          ctx.fillText('⚡ 電玩傳送門 • GAMING PORTAL ⚡', 0, 0);
+
+          ctx.restore();
           ctx.restore();
         }
       });
@@ -695,14 +718,12 @@
       // C. HOWLING ABYSS NORTH-SOUTH SUSPENSION BRIDGE (x: 11..17, y: 57..93)
       // Fully Symmetrical ARAM Layout (Blue Nexus -> Blue Turrets -> Mid -> Red Turrets -> Red Nexus)
       // ======================================================================
-      // 1. North Bridgehead Gateway Pillars & Braziers (at y = 57.0, framing bridge entrance cleanly without any crossbeam obscuring the Nexus)
+      // 1. North Bridgehead Gateway Pillars & Braziers (at y = 57.3, aligned with bridge balustrades)
       list.push({
-        xMin: 10.6, xMax: 17.4, yMin: 56.8, yMax: 57.4,
+        xMin: 10.8, xMax: 17.2, yMin: 57.1, yMax: 57.7,
         draw: () => {
-          models.drawBox(ctx, 10.8, 57.0, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawBox(ctx, 16.5, 57.0, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawAbyssBrazier(ctx, 10.9, 56.8, world.ox, world.oy);
-          models.drawAbyssBrazier(ctx, 16.6, 56.8, world.ox, world.oy);
+          models.drawGatewayFirePillar(ctx, 11.0, 57.3, world.ox, world.oy, 1.30);
+          models.drawGatewayFirePillar(ctx, 16.35, 57.3, world.ox, world.oy, 1.30);
         }
       });
 
@@ -804,12 +825,10 @@
 
       // 7. South Bridgehead Gateway Pillars & Braziers (at y = 93.8, framing Minecraft Sanctuary entrance without any beam obscuring the Nexus)
       list.push({
-        xMin: 10.6, xMax: 17.4, yMin: 93.6, yMax: 94.2,
+        xMin: 12.0, xMax: 16.0, yMin: 93.6, yMax: 94.2,
         draw: () => {
-          models.drawBox(ctx, 10.8, 93.8, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawBox(ctx, 16.5, 93.8, 0, 0.70, 0.70, 1.50, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
-          models.drawAbyssBrazier(ctx, 10.9, 93.6, world.ox, world.oy);
-          models.drawAbyssBrazier(ctx, 16.6, 93.6, world.ox, world.oy);
+          models.drawGatewayFirePillar(ctx, 12.1, 93.8, world.ox, world.oy, 1.30);
+          models.drawGatewayFirePillar(ctx, 15.25, 93.8, world.ox, world.oy, 1.30);
         }
       });
 
@@ -817,14 +836,14 @@
       // D. MINECRAFT ISLAND PERIMETER FENCES & CLIFF BOUNDARIES (x: 7..21, y: 93..111)
       // Placed securely along the floating island edges to frame the sanctuary
       // ======================================================================
-      // 1. North Cliff Fences (y = 94.0, framing bridge entrance gate at x: 12.5..15.5)
+      // 1. North Cliff Fences (y = 94.0, terminates flush against Gateway Stone Pillars at x: 12.1 and x: 15.9)
       list.push({
-        xMin: 6.8, xMax: 12.6, yMin: 93.8, yMax: 94.2,
-        draw: () => drawFenceSegment(7.0, 12.5, 94.0)
+        xMin: 6.8, xMax: 12.2, yMin: 93.8, yMax: 94.2,
+        draw: () => drawFenceSegment(7.0, 12.1, 94.0)
       });
       list.push({
-        xMin: 15.4, xMax: 21.2, yMin: 93.8, yMax: 94.2,
-        draw: () => drawFenceSegment(15.5, 21.0, 94.0)
+        xMin: 15.8, xMax: 21.2, yMin: 93.8, yMax: 94.2,
+        draw: () => drawFenceSegment(15.9, 21.0, 94.0)
       });
 
       // 2. West Cliff Fence (x = 7.0, y: 94..111)

@@ -3,12 +3,13 @@ import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+REALM_DIR = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[4]
 
 
 class WorldDataContractTests(unittest.TestCase):
     def test_dialogue_pools_and_speakers_have_one_source(self):
-        data = json.loads((ROOT / "labs/world/data/characters.json").read_text())
+        data = json.loads((REALM_DIR / "data/characters.json").read_text(encoding="utf-8"))
         self.assertEqual(set(data), {"characters", "npcDialogues"})
         characters = {char["id"]: char for char in data["characters"]}
         self.assertEqual(len(characters), len(data["characters"]))
@@ -39,9 +40,9 @@ class WorldDataContractTests(unittest.TestCase):
                                     for line in lines))
 
     def test_world_uses_shared_palette_tokens(self):
-        world_css = (ROOT / "labs/world/world.css").read_text()
-        shared_css = (ROOT / "assets/css/site/shared.css").read_text()
-        tokens = (ROOT / "assets/css/site/palette-tokens.css").read_text()
+        world_css = (REALM_DIR / "world.css").read_text(encoding="utf-8")
+        shared_css = (ROOT / "assets/css/site/shared.css").read_text(encoding="utf-8")
+        tokens = (ROOT / "assets/css/site/palette-tokens.css").read_text(encoding="utf-8")
         self.assertIn("@import url('./palette-tokens.css')", shared_css)
         self.assertIn("var(--palette-accent-dark", world_css)
         self.assertNotIn("html.palette-", world_css)
@@ -50,7 +51,7 @@ class WorldDataContractTests(unittest.TestCase):
             self.assertIn(f".palette-{name}", tokens)
 
     def test_dorm_exchange_is_npc_only(self):
-        data = json.loads((ROOT / "labs/world/data/characters.json").read_text())
+        data = json.loads((REALM_DIR / "data/characters.json").read_text(encoding="utf-8"))
         characters = {char["id"]: char for char in data["characters"]}
         exchange = next(pair for pair in data["npcDialogues"]
                         if [line["text"] for line in pair["dialogues"]["zh-TW"]]
@@ -66,7 +67,7 @@ class WorldDataContractTests(unittest.TestCase):
     def test_world_data_bundle_is_up_to_date(self):
         from tools.build_world_data import compile_world_data
         compiled = compile_world_data()
-        current = (ROOT / "labs/world/data/characters.json").read_text(encoding="utf-8")
+        current = (REALM_DIR / "data/characters.json").read_text(encoding="utf-8")
         self.assertEqual(compiled, current,
                          "characters.json is out of date with characters/ and interactions/. Run 'python3 tools/build_world_data.py'")
 
