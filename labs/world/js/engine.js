@@ -46,15 +46,15 @@
   const DOUYIN_MIN_Y = 33;
   const DOUYIN_MAX_Y = 42;
 
-  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 38..45, y: 2..8 — Entrance at x: 38)
-  const CAFE_MIN_X = 38;
-  const CAFE_MAX_X = 45;
+  // Zone 7: Ludwigia Indoor Cafe (NE2: x: 36..43, y: 2..8 — Entrance at x: 36)
+  const CAFE_MIN_X = 36;
+  const CAFE_MAX_X = 43;
   const CAFE_MIN_Y = 2;
   const CAFE_MAX_Y = 8;
 
-  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 38..48, y: 15..24 — Entrance at x: 38)
-  const HOW_ARE_YOU_MIN_X = 38;
-  const HOW_ARE_YOU_MAX_X = 48;
+  // Zone 8: "How Are You Doing Today" Sanctuary (NE3: x: 36..46, y: 15..24 — Entrance at x: 36)
+  const HOW_ARE_YOU_MIN_X = 36;
+  const HOW_ARE_YOU_MAX_X = 46;
   const HOW_ARE_YOU_MIN_Y = 15;
   const HOW_ARE_YOU_MAX_Y = 24;
 

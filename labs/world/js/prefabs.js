@@ -6,6 +6,8 @@
 (function(window) {
   'use strict';
 
+  const { isoToScreen, screenToIso } = window.LudwigWorldEngine || {};
+
   const GamingDimensionPrefab = {
     id: 'gaming_dimension',
 
@@ -86,25 +88,25 @@
       // ======================================================================
       // D. MINECRAFT ISLAND INTERIOR OBSTACLES (x: 7..21, y: 93..111)
       // ======================================================================
-      // Oak Wood Cabin (x: 9..15, y: 97..103, doorway at x: 13..14.2 at y: 97)
-      nav.setBlock(9.0, 96.8, 4.0, 0.5, true);    // North Wall Left (x: 9..13)
+      // Oak Wood Cabin (x: 9..15, y: 97..103, spacious doorway at x: 12.8..14.2 at y: 97)
+      nav.setBlock(9.0, 96.8, 3.8, 0.5, true);    // North Wall Left (x: 9..12.8)
       nav.setBlock(14.2, 96.8, 0.8, 0.5, true);   // North Wall Right Pillar (x: 14.2..15)
       nav.setBlock(8.8, 97.0, 0.5, 6.0, true);    // West Wall (x: 8.8..9.3, y: 97..103)
       nav.setBlock(14.7, 97.0, 0.5, 6.0, true);   // East Wall (x: 14.7..15.2, y: 97..103)
       nav.setBlock(9.0, 102.7, 6.0, 0.5, true);   // South Wall (x: 9..15, y: 102.7..103.2)
 
-      // Cabin Furniture Obstacles
-      nav.setBlock(9.6, 99.3, 1.4, 2.1, true);    // Minecraft Red Bed
-      nav.setBlock(13.6, 98.0, 0.9, 0.9, true);   // Crafting Table
-      nav.setBlock(13.6, 100.0, 0.9, 0.9, true);  // Furnace
-      nav.setBlock(9.6, 97.6, 0.9, 0.9, true);    // Chest
+      // Cabin Furniture Obstacles (Neatly arranged along back & side walls, doorway corridor 100% unobstructed!)
+      nav.setBlock(9.6, 97.5, 0.9, 0.9, true);    // Large Wooden Storage Chest (x: 9.8)
+      nav.setBlock(10.6, 97.5, 0.9, 0.9, true);   // Crafting Table (x: 10.7)
+      nav.setBlock(11.5, 97.5, 0.9, 0.9, true);   // Furnace (x: 11.6)
+      nav.setBlock(9.6, 99.3, 1.4, 2.1, true);    // Minecraft Red Bed (x: 9.8, y: 99.5)
 
-      // Farmland Fences (x: 16..20, y: 97..102, gate at x: 16, y: 99..100.5)
-      nav.setBlock(15.8, 96.8, 4.5, 0.5, true);   // North Fence
-      nav.setBlock(19.9, 97.0, 0.5, 5.2, true);   // East Fence
-      nav.setBlock(15.8, 101.8, 4.5, 0.5, true);  // South Fence
-      nav.setBlock(15.8, 97.0, 0.5, 2.0, true);   // West Fence Top (y: 97..99)
-      nav.setBlock(15.8, 100.5, 0.5, 1.5, true);  // West Fence Bottom (y: 100.5..102, gate open at 99..100.5)
+      // Farmland Fences (x: 16..20, y: 97..102, perimeter fences placed cleanly at x=15.5 and y=96.6/102.0)
+      nav.setBlock(15.4, 96.4, 4.8, 0.4, true);   // North Fence (y = 96.6)
+      nav.setBlock(19.8, 96.6, 0.4, 5.6, true);   // East Fence (x = 20.0)
+      nav.setBlock(15.4, 101.8, 4.8, 0.4, true);  // South Fence (y = 102.0)
+      nav.setBlock(15.4, 96.6, 0.4, 2.2, true);   // West Fence Top (y: 96.6..98.8)
+      nav.setBlock(15.4, 100.2, 0.4, 2.0, true);  // West Fence Bottom (y: 100.2..102.2, gate open at 98.8..100.2)
 
       // Oak Tree Trunk
       nav.setBlock(7.6, 105.8, 1.0, 1.0, true);
@@ -403,8 +405,10 @@
 
       // 3. East Panoramic Colored Glass Windows (x = 19.0, y: 48.8..57.2)
       list.push({
-        xMin: 18.9, xMax: 19.3, yMin: 48.8, yMax: 57.2,
+        xMin: 18.9, xMax: 19.35, yMin: 48.8, yMax: 57.2,
         draw: () => {
+          ctx.save();
+          if (world.wallAlphaCyber < 0.99) ctx.globalAlpha = world.wallAlphaCyber;
           models.drawBox(ctx, 19.0, 48.8, 0, 0.25, 8.2, 0.35, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
           models.drawBox(ctx, 19.0, 48.8, H - 0.25, 0.25, 8.2, 0.25, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
           for (let y = 48.8; y <= 57.0; y += 2.05) {
@@ -412,12 +416,11 @@
           }
           models.drawBox(ctx, 19.0, 48.8, 1.25, 0.25, 8.2, 0.12, '#0f172a', '#1e293b', '#334155', world.ox, world.oy);
 
-          const p0 = isoToScreen(19.12, 48.8, 0.35, world.ox, world.oy);
-          const p1 = isoToScreen(19.12, 57.0, 0.35, world.ox, world.oy);
-          const p2 = isoToScreen(19.12, 57.0, H - 0.25, world.ox, world.oy);
-          const p3 = isoToScreen(19.12, 48.8, H - 0.25, world.ox, world.oy);
+          const p0 = isoToScreen(19.26, 48.8, 0.35, world.ox, world.oy);
+          const p1 = isoToScreen(19.26, 57.0, 0.35, world.ox, world.oy);
+          const p2 = isoToScreen(19.26, 57.0, H - 0.25, world.ox, world.oy);
+          const p3 = isoToScreen(19.26, 48.8, H - 0.25, world.ox, world.oy);
 
-          ctx.save();
           const glassGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
           glassGrad.addColorStop(0, 'rgba(6, 182, 212, 0.58)');
           glassGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.48)');
@@ -428,7 +431,7 @@
           ctx.closePath();
           ctx.fill();
 
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.40)';
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.60)';
           ctx.lineWidth = 1.5;
           ctx.stroke();
 
@@ -436,8 +439,8 @@
           ctx.lineWidth = 1.8;
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = 6;
-          const nm0 = isoToScreen(19.13, 48.8, 1.25, world.ox, world.oy);
-          const nm1 = isoToScreen(19.13, 57.0, 1.25, world.ox, world.oy);
+          const nm0 = isoToScreen(19.27, 48.8, 1.25, world.ox, world.oy);
+          const nm1 = isoToScreen(19.27, 57.0, 1.25, world.ox, world.oy);
           ctx.beginPath();
           ctx.moveTo(nm0.x, nm0.y); ctx.lineTo(nm1.x, nm1.y);
           ctx.stroke();
@@ -445,29 +448,125 @@
         }
       });
 
-      // 4. South Exterior Wall & Automatic Sliding Glass Doorway (x = 13..15, y = 57.0)
+      // 4. South Exterior Wall & Panoramic Cyber Glass Windows Overlooking Howling Abyss (x: 9..19, y = 57.0)
+      // 4.1 South Facade — Left Panoramic Cyber Glass Window Bay (x = 9..12.8, y = 57.0)
       list.push({
-        xMin: 8.8, xMax: 13.0, yMin: 56.8, yMax: 57.2,
-        draw: () => models.drawBox(ctx, 9.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL)
+        xMin: 8.8, xMax: 13.0, yMin: 56.8, yMax: 57.3,
+        draw: () => {
+          ctx.save();
+          if (world.wallAlphaCyber < 0.99) ctx.globalAlpha = world.wallAlphaCyber;
+
+          // Bottom Sill & Top Lintel (Full 3D)
+          models.drawBox(ctx, 9.0, 57.0, 0, 3.8, 0.25, 0.45, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 9.0, 57.0, 2.30, 3.8, 0.25, H - 2.30, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+
+          // Structural Vertical Pillars (Left corner & Door frame left)
+          models.drawBox(ctx, 9.0, 57.0, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 12.45, 57.0, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          // Vertical Center Window Mullion
+          models.drawBox(ctx, 10.75, 57.0, 0.45, 0.18, 0.25, 1.85, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy, '#0284c7');
+          // Horizontal Transom Bar
+          models.drawBox(ctx, 9.35, 57.0, 1.35, 3.10, 0.25, 0.10, '#0f172a', '#1e293b', '#334155', world.ox, world.oy, '#1e293b');
+
+          // Large Vibrant Cyan-Teal Tinted Glass Window Pane (Facing South toward Abyss Bridge!)
+          const p0 = isoToScreen(9.35, 57.25, 0.45, world.ox, world.oy);
+          const p1 = isoToScreen(12.45, 57.25, 0.45, world.ox, world.oy);
+          const p2 = isoToScreen(12.45, 57.25, 2.30, world.ox, world.oy);
+          const p3 = isoToScreen(9.35, 57.25, 2.30, world.ox, world.oy);
+
+          const gGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
+          gGrad.addColorStop(0, 'rgba(6, 182, 212, 0.65)');
+          gGrad.addColorStop(0.5, 'rgba(14, 165, 233, 0.50)');
+          gGrad.addColorStop(1, 'rgba(56, 189, 248, 0.60)');
+          ctx.fillStyle = gGrad;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Crisp Silver Window Edge
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.80)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+
+          // Electric Cyan Neon Glow Line along the window sill
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2.0;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+          ctx.restore();
+        }
       });
+
+      // 4.2 South Facade — Right Panoramic Cyber Glass Window Bay (x = 15.2..19.0, y = 57.0)
       list.push({
-        xMin: 15.0, xMax: 19.2, yMin: 56.8, yMax: 57.2,
-        draw: () => models.drawBox(ctx, 15.0, 57.0, 0, 4.0, 0.25, H, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL)
+        xMin: 15.0, xMax: 19.2, yMin: 56.8, yMax: 57.3,
+        draw: () => {
+          ctx.save();
+          if (world.wallAlphaCyber < 0.99) ctx.globalAlpha = world.wallAlphaCyber;
+
+          // Bottom Sill & Top Lintel (Full 3D)
+          models.drawBox(ctx, 15.2, 57.0, 0, 3.8, 0.25, 0.45, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 15.2, 57.0, 2.30, 3.8, 0.25, H - 2.30, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+
+          // Structural Vertical Pillars (Door frame right & Right corner)
+          models.drawBox(ctx, 15.2, 57.0, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          models.drawBox(ctx, 18.65, 57.0, 0.45, 0.35, 0.25, 1.85, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy);
+          // Vertical Center Window Mullion
+          models.drawBox(ctx, 16.95, 57.0, 0.45, 0.18, 0.25, 1.85, '#a855f7', '#8b5cf6', '#7c3aed', world.ox, world.oy, '#8b5cf6');
+          // Horizontal Transom Bar
+          models.drawBox(ctx, 15.55, 57.0, 1.35, 3.10, 0.25, 0.10, '#0f172a', '#1e293b', '#334155', world.ox, world.oy, '#1e293b');
+
+          // Large Vibrant Electric Sky-Blue/Violet Tinted Glass Window Pane
+          const p0 = isoToScreen(15.55, 57.25, 0.45, world.ox, world.oy);
+          const p1 = isoToScreen(18.65, 57.25, 0.45, world.ox, world.oy);
+          const p2 = isoToScreen(18.65, 57.25, 2.30, world.ox, world.oy);
+          const p3 = isoToScreen(15.55, 57.25, 2.30, world.ox, world.oy);
+
+          const gGrad = ctx.createLinearGradient(p0.x, p0.y, p2.x, p2.y);
+          gGrad.addColorStop(0, 'rgba(56, 189, 248, 0.65)');
+          gGrad.addColorStop(0.5, 'rgba(129, 140, 248, 0.50)');
+          gGrad.addColorStop(1, 'rgba(168, 85, 247, 0.60)');
+          ctx.fillStyle = gGrad;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Crisp Silver Window Edge
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+
+          // Electric Violet Neon Glow Line along the window sill
+          ctx.strokeStyle = '#c084fc';
+          ctx.lineWidth = 2.0;
+          ctx.shadowColor = '#c084fc';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+          ctx.restore();
+        }
       });
       list.push({
         xMin: 12.8, xMax: 15.2, yMin: 56.8, yMax: 57.2,
         draw: () => {
-          // Lintle wall beam above doorway
-          models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
-          // Glowing Neon Portal Sign "DIMENSION PORTAL"
-          const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
           ctx.save();
+          if (world.wallAlphaCyber < 0.99) ctx.globalAlpha = world.wallAlphaCyber;
+          // Lintel wall beam above doorway
+          models.drawBox(ctx, 13.0, 57.0, 2.20, 2.0, 0.25, H - 2.20, cyberWallT, cyberWallL, cyberWallR, world.ox, world.oy, cyberWallL);
+          // Glowing Neon Portal Sign "GAMING PORTAL"
+          const sp = isoToScreen(14.0, 57.12, 2.45, world.ox, world.oy);
           ctx.fillStyle = '#38bdf8';
           ctx.font = 'bold 8px monospace';
           ctx.textAlign = 'center';
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = 8;
-          ctx.fillText('⚡ DIMENSION PORTAL ⚡', sp.x, sp.y);
+          ctx.fillText('⚡ GAMING PORTAL ⚡', sp.x, sp.y);
           ctx.restore();
         }
       });
@@ -756,25 +855,119 @@
       const oakPlankLeft = '#a1783f';
       const oakPlankRight = '#7c5928';
 
-      // 1. Entrance Welcome Signboard (x: 14.0, y: 94.5)
-      list.push({
-        xMin: 13.6, xMax: 14.6, yMin: 94.3, yMax: 94.8,
-        draw: () => {
-          models.drawBox(ctx, 13.9, 94.4, 0, 0.16, 0.16, 0.70, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
-          models.drawBox(ctx, 13.5, 94.4, 0.65, 1.00, 0.14, 0.45, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          const sp = isoToScreen(14.0, 94.45, 0.90, world.ox, world.oy);
-          ctx.fillStyle = '#382314';
-          ctx.font = 'bold 7px monospace';
-          ctx.textAlign = 'center';
-          ctx.fillText('MINECRAFT', sp.x, sp.y - 2);
-          ctx.fillText('SANCTUARY', sp.x, sp.y + 6);
-        }
-      });
-
       // 2. Classic Minecraft Oak Wood Cabin (x: 9..15, y: 97..103)
       // Decomposed into distinct architectural layers for 100% cycle-free topological depth sorting!
 
-      // 2A. Back North Wall & NW/NE Pillars (y: 96.8..97.4, doorway at x: 13..14.2)
+      // Helper: Authentic Minecraft Connected Glass Window (Seamless connected blocks, pixelated white rim & diagonal glare streaks)
+      const drawMinecraftConnectedGlassWindow = (gx, gy, gz, dx, dy, dz, isAlongX, alpha = 1.0) => {
+        ctx.save();
+        if (alpha < 0.99) ctx.globalAlpha = alpha;
+
+        // 1. 3D Translucent Glass Block Volume (Matches wall thickness 0.35)
+        models.drawBox(
+          ctx, gx, gy, gz, dx, dy, dz,
+          'rgba(240, 249, 255, 0.55)',
+          'rgba(186, 230, 253, 0.45)',
+          'rgba(147, 197, 253, 0.45)',
+          world.ox, world.oy,
+          'rgba(186, 230, 253, 0.40)'
+        );
+
+        // 2. Camera-Facing Facet: Connected Border, Block Seams & Classic Diagonal Glare Streaks
+        if (isAlongX) {
+          // South-Facing Facade (Along X axis, at py = gy + dy)
+          const py = gy + dy;
+          const p0 = isoToScreen(gx, py, gz, world.ox, world.oy);
+          const p1 = isoToScreen(gx + dx, py, gz, world.ox, world.oy);
+          const p2 = isoToScreen(gx + dx, py, gz + dz, world.ox, world.oy);
+          const p3 = isoToScreen(gx, py, gz + dz, world.ox, world.oy);
+
+          // Subtle Glass Surface Tint
+          ctx.fillStyle = 'rgba(186, 230, 253, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Connected Glass Outer Frame
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+
+          // Seamless block subdivision seams (connected 1x1 glass block panes)
+          const blockCount = Math.round(dx / 1.1) || 4;
+          const step = dx / blockCount;
+          for (let i = 1; i < blockCount; i++) {
+            const bx = gx + step * i;
+            const bBottom = isoToScreen(bx, py, gz, world.ox, world.oy);
+            const bTop = isoToScreen(bx, py, gz + dz, world.ox, world.oy);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(bBottom.x, bBottom.y); ctx.lineTo(bTop.x, bTop.y);
+            ctx.stroke();
+          }
+
+          // Iconic Minecraft Glass Glare Streaks in each block
+          for (let i = 0; i < blockCount; i++) {
+            const cx = gx + step * (i + 0.35);
+            const cz = gz + dz * 0.72;
+            const g1 = isoToScreen(cx, py, cz, world.ox, world.oy);
+            const g2 = isoToScreen(cx + step * 0.32, py, cz - dz * 0.38, world.ox, world.oy);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(g1.x, g1.y); ctx.lineTo(g2.x, g2.y);
+            ctx.stroke();
+          }
+        } else {
+          // East-Facing Facade (Along Y axis, at px = gx + dx)
+          const px = gx + dx;
+          const p0 = isoToScreen(px, gy, gz, world.ox, world.oy);
+          const p1 = isoToScreen(px, gy + dy, gz, world.ox, world.oy);
+          const p2 = isoToScreen(px, gy + dy, gz + dz, world.ox, world.oy);
+          const p3 = isoToScreen(px, gy, gz + dz, world.ox, world.oy);
+
+          ctx.fillStyle = 'rgba(186, 230, 253, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+          ctx.lineWidth = 1.3;
+          ctx.stroke();
+
+          const blockCount = Math.round(dy / 1.1) || 4;
+          const step = dy / blockCount;
+          for (let i = 1; i < blockCount; i++) {
+            const by = gy + step * i;
+            const bBottom = isoToScreen(px, by, gz, world.ox, world.oy);
+            const bTop = isoToScreen(px, by, gz + dz, world.ox, world.oy);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(bBottom.x, bBottom.y); ctx.lineTo(bTop.x, bTop.y);
+            ctx.stroke();
+          }
+
+          for (let i = 0; i < blockCount; i++) {
+            const cy = gy + step * (i + 0.35);
+            const cz = gz + dz * 0.72;
+            const g1 = isoToScreen(px, cy, cz, world.ox, world.oy);
+            const g2 = isoToScreen(px, cy + step * 0.32, cz - dz * 0.38, world.ox, world.oy);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(g1.x, g1.y); ctx.lineTo(g2.x, g2.y);
+            ctx.stroke();
+          }
+        }
+
+        ctx.restore();
+      };
+
+      // 2A. Back North Wall & NW/NE Pillars (y: 96.8..97.4, doorway at x: 12.8..14.2)
       list.push({
         xMin: 8.9, xMax: 15.1, yMin: 96.8, yMax: 97.4,
         draw: () => {
@@ -782,14 +975,14 @@
           models.drawBox(ctx, 9.0, 97.0, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
           // NE Log Pillar
           models.drawBox(ctx, 14.2, 97.0, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
-          // North Wall Solid Left
-          models.drawBox(ctx, 9.8, 97.0, 0, 3.2, 0.35, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          // North Doorway Overhead Lintel
-          models.drawBox(ctx, 13.0, 97.0, 1.95, 1.2, 0.35, 0.25, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // North Wall Solid Left (x: 9.8..12.8)
+          models.drawBox(ctx, 9.8, 97.0, 0, 3.0, 0.35, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // North Doorway Overhead Lintel (x: 12.8..14.2)
+          models.drawBox(ctx, 12.8, 97.0, 1.95, 1.4, 0.35, 0.25, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
 
           // Wall Torch with Warm Animated Flickering Light
-          models.drawBox(ctx, 12.0, 97.1, 1.20, 0.10, 0.10, 0.45, '#78350f', '#451a03', '#291006', world.ox, world.oy);
-          const tp = isoToScreen(12.05, 97.15, 1.70, world.ox, world.oy);
+          models.drawBox(ctx, 12.4, 97.1, 1.20, 0.10, 0.10, 0.45, '#78350f', '#451a03', '#291006', world.ox, world.oy);
+          const tp = isoToScreen(12.45, 97.15, 1.70, world.ox, world.oy);
           ctx.save();
           ctx.fillStyle = '#fbbf24';
           ctx.shadowColor = '#f59e0b';
@@ -799,7 +992,7 @@
         }
       });
 
-      // 2B. Back-Left West Wall (x: 8.8..9.35, y: 97.8..102.2)
+      // 2B. Back-Left West Wall (x: 8.8..9.35, y: 97.8..102.2) — Spans full width connecting NW to SW log pillar
       list.push({
         xMin: 8.8, xMax: 9.35, yMin: 97.8, yMax: 102.2,
         draw: () => {
@@ -807,29 +1000,29 @@
           models.drawBox(ctx, 9.0, 97.8, 0, 0.35, 4.4, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
           // Upper Solid Planks
           models.drawBox(ctx, 9.0, 97.8, 1.80, 0.35, 4.4, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          // West Window Glass Pane
-          models.drawBox(ctx, 9.0, 99.0, 0.80, 0.28, 2.0, 1.00, 'rgba(186, 230, 253, 0.55)', 'rgba(125, 211, 252, 0.4)', 'rgba(56, 189, 248, 0.3)', world.ox, world.oy);
+          // West Window Connected Minecraft Glass (Full 4.4 span from y: 97.8 to 102.2)
+          drawMinecraftConnectedGlassWindow(9.0, 97.8, 0.80, 0.35, 4.4, 1.00, false, 1.0);
         }
       });
 
-      // 2C. Cabin Interior Furniture (Ordered naturally from back to front)
-      // Large Wooden Storage Chest (x: 9.8, y: 97.8)
+      // 2C. Cabin Interior Furniture (Arranged along back & side walls, doorway corridor 100% unobstructed!)
+      // Large Wooden Storage Chest (x: 9.8, y: 97.6)
       list.push({
-        xMin: 9.6, xMax: 10.6, yMin: 97.6, yMax: 98.6,
+        xMin: 9.6, xMax: 10.6, yMin: 97.4, yMax: 98.4,
         draw: () => {
-          models.drawBox(ctx, 9.8, 97.8, 0, 0.75, 0.75, 0.65, '#a16207', '#854d0e', '#713f12', world.ox, world.oy);
-          const cp = isoToScreen(10.18, 97.8, 0.40, world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 97.6, 0, 0.75, 0.75, 0.65, '#a16207', '#854d0e', '#713f12', world.ox, world.oy);
+          const cp = isoToScreen(10.18, 97.6, 0.40, world.ox, world.oy);
           ctx.fillStyle = '#cbd5e1';
           ctx.fillRect(cp.x - 2, cp.y - 2, 4, 4);
         }
       });
 
-      // Crafting Table (x: 13.8, y: 98.2)
+      // Crafting Table (x: 10.7, y: 97.6) — Placed neatly beside chest along solid north wall
       list.push({
-        xMin: 13.6, xMax: 14.6, yMin: 98.0, yMax: 99.0,
+        xMin: 10.5, xMax: 11.5, yMin: 97.4, yMax: 98.4,
         draw: () => {
-          models.drawBox(ctx, 13.8, 98.2, 0, 0.75, 0.75, 0.75, '#b45309', '#92400e', '#78350f', world.ox, world.oy);
-          const topP = isoToScreen(14.18, 98.58, 0.75, world.ox, world.oy);
+          models.drawBox(ctx, 10.7, 97.6, 0, 0.75, 0.75, 0.75, '#b45309', '#92400e', '#78350f', world.ox, world.oy);
+          const topP = isoToScreen(11.08, 97.98, 0.75, world.ox, world.oy);
           ctx.fillStyle = '#451a03';
           ctx.fillRect(topP.x - 5, topP.y - 4, 10, 8);
           ctx.strokeStyle = '#f59e0b';
@@ -838,28 +1031,28 @@
         }
       });
 
-      // Minecraft Red Bed (x: 9.8, y: 99.5)
+      // Furnace (x: 11.6, y: 97.6) — Placed neatly beside crafting table along solid north wall
       list.push({
-        xMin: 9.6, xMax: 11.0, yMin: 99.3, yMax: 101.4,
+        xMin: 11.4, xMax: 12.4, yMin: 97.4, yMax: 98.4,
         draw: () => {
-          models.drawBox(ctx, 9.8, 99.5, 0, 1.05, 1.95, 0.18, '#582b0c', '#3f1d08', '#291006', world.ox, world.oy);
-          models.drawBox(ctx, 9.8, 99.5, 0.18, 1.05, 1.95, 0.20, '#dc2626', '#b91c1c', '#991b1b', world.ox, world.oy);
-          models.drawBox(ctx, 9.8, 99.5, 0.38, 1.05, 0.55, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
-        }
-      });
-
-      // Furnace (x: 13.8, y: 100.2)
-      list.push({
-        xMin: 13.6, xMax: 14.6, yMin: 100.0, yMax: 101.0,
-        draw: () => {
-          models.drawBox(ctx, 13.8, 100.2, 0, 0.75, 0.75, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
-          const fp = isoToScreen(13.8, 100.58, 0.38, world.ox, world.oy);
+          models.drawBox(ctx, 11.6, 97.6, 0, 0.75, 0.75, 0.75, '#475569', '#334155', '#1e293b', world.ox, world.oy);
+          const fp = isoToScreen(11.98, 98.35, 0.38, world.ox, world.oy);
           ctx.save();
           ctx.fillStyle = '#f97316';
           ctx.shadowColor = '#ea580c';
           ctx.shadowBlur = 8;
           ctx.fillRect(fp.x - 3, fp.y - 3, 6, 6);
           ctx.restore();
+        }
+      });
+
+      // Minecraft Red Bed (x: 9.8, y: 99.5) — Placed comfortably along west wall beneath the window
+      list.push({
+        xMin: 9.6, xMax: 11.0, yMin: 99.3, yMax: 101.4,
+        draw: () => {
+          models.drawBox(ctx, 9.8, 99.5, 0, 1.05, 1.95, 0.18, '#582b0c', '#3f1d08', '#291006', world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 99.5, 0.18, 1.05, 1.95, 0.20, '#dc2626', '#b91c1c', '#991b1b', world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 99.5, 0.38, 1.05, 0.55, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
         }
       });
 
@@ -873,8 +1066,8 @@
           models.drawBox(ctx, 14.6, 97.8, 0, 0.35, 4.4, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
           // Upper Solid Planks
           models.drawBox(ctx, 14.6, 97.8, 1.80, 0.35, 4.4, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          // East Window Glass Pane
-          models.drawBox(ctx, 14.6, 99.0, 0.80, 0.28, 2.0, 1.00, 'rgba(186, 230, 253, 0.55)', 'rgba(125, 211, 252, 0.4)', 'rgba(56, 189, 248, 0.3)', world.ox, world.oy);
+          // East Window Connected Minecraft Glass (Full 4.4 span from y: 97.8 to 102.2)
+          drawMinecraftConnectedGlassWindow(14.6, 97.8, 0.80, 0.35, 4.4, 1.00, false, world.wallAlphaMinecraft);
           ctx.restore();
         }
       });
@@ -893,122 +1086,454 @@
           models.drawBox(ctx, 9.8, 102.6, 0, 4.4, 0.35, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
           // Upper Solid Planks
           models.drawBox(ctx, 9.8, 102.6, 1.80, 4.4, 0.35, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          // South Window Glass Pane
-          models.drawBox(ctx, 11.0, 102.6, 0.80, 2.0, 0.28, 1.00, 'rgba(186, 230, 253, 0.55)', 'rgba(125, 211, 252, 0.4)', 'rgba(56, 189, 248, 0.3)', world.ox, world.oy);
+          // South Window Connected Minecraft Glass (Full 4.4 span from x: 9.8 to 14.2)
+          drawMinecraftConnectedGlassWindow(9.8, 102.6, 0.80, 4.4, 0.35, 1.00, true, world.wallAlphaMinecraft);
           ctx.restore();
         }
       });
 
       // 3. Rectangular Minecraft Farmland (x: 16..20, y: 97..102)
-      // Decomposed cleanly: Soil/Water are on terrain layer, fences and crops sort seamlessly!
+      // Authentic Minecraft Pumpkins & Crops cleanly decoupled from perimeter fences!
 
-      // 3A. North & East Back Perimeter Fences (x: 16..20.2, y: 96.8..102.2)
+      // 3A. North & East Back Perimeter Fences (Placed cleanly outside crop tiles at y=96.6 & x=20.0)
       list.push({
-        xMin: 15.8, xMax: 20.4, yMin: 96.8, yMax: 97.3,
+        xMin: 15.5, xMax: 20.2, yMin: 96.4, yMax: 96.8,
         draw: () => {
           // North perimeter fence posts & rails
-          for (let gx = 16.0; gx <= 20.0; gx += 2.0) {
-            models.drawBox(ctx, gx, 97.0, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          }
-          models.drawBox(ctx, 16.0, 97.04, 0.25, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.0, 97.04, 0.50, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.6, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 17.8, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 96.64, 0.25, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 96.64, 0.50, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
       list.push({
-        xMin: 20.0, xMax: 20.4, yMin: 97.0, yMax: 102.2,
+        xMin: 19.8, xMax: 20.3, yMin: 96.6, yMax: 102.2,
         draw: () => {
           // East perimeter fence posts & rails
-          for (let gy = 97.0; gy <= 102.0; gy += 2.5) {
-            models.drawBox(ctx, 20.0, gy, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          }
-          models.drawBox(ctx, 20.04, 97.0, 0.25, 0.12, 5.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 20.04, 97.0, 0.50, 0.12, 5.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 99.3, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.04, 96.64, 0.25, 0.10, 5.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.04, 96.64, 0.50, 0.10, 5.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 
-      // 3B. Flourishing Crops: Golden Wheat & Carrots (Layered in 4 rows for clean sorting)
-      const drawCropRow = (rowSpots) => {
-        rowSpots.forEach(c => {
-          const topColor = c.type === 'wheat' ? '#eab308' : '#22c55e';
-          const leftColor = c.type === 'wheat' ? '#ca8a04' : '#16a34a';
-          const rightColor = c.type === 'wheat' ? '#a16207' : '#15803d';
-          models.drawBox(ctx, c.x - 0.25, c.y - 0.25, 0.08, 0.50, 0.50, 0.38, topColor, leftColor, rightColor, world.ox, world.oy);
-        });
+      // 3B. Helper: Authentic Minecraft Pumpkin Modeling
+      const drawMinecraftPumpkin = (gx, gy, gz = 0.08, hasFace = false) => {
+        const pSize = 0.56;
+        const x0 = gx - pSize / 2;
+        const y0 = gy - pSize / 2;
+        // Orange Pumpkin Block
+        models.drawBox(
+          ctx, x0, y0, gz,
+          pSize, pSize, pSize,
+          '#f97316', '#ea580c', '#c2410c',
+          world.ox, world.oy
+        );
+        // Dark Green Top Stem
+        models.drawBox(
+          ctx, gx - 0.07, gy - 0.07, gz + pSize,
+          0.14, 0.14, 0.12,
+          '#65a30d', '#4d7c0f', '#365314',
+          world.ox, world.oy
+        );
+        // Subtle vertical segment seams on the left and right visible faces
+        const leftMid = isoToScreen(gx, y0 + pSize, gz + pSize * 0.5, world.ox, world.oy);
+        ctx.strokeStyle = 'rgba(154, 52, 18, 0.45)';
+        ctx.lineWidth = 0.8;
+        const pTop = isoToScreen(gx, y0 + pSize, gz + pSize, world.ox, world.oy);
+        const pBot = isoToScreen(gx, y0 + pSize, gz, world.ox, world.oy);
+        ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pBot.x, pBot.y); ctx.stroke();
+
+        // Iconic Minecraft Carved Face (Jack-o'-Lantern) on South-West front face
+        if (hasFace) {
+          const ep1 = isoToScreen(gx - 0.14, y0 + pSize + 0.01, gz + pSize * 0.62, world.ox, world.oy);
+          const ep2 = isoToScreen(gx + 0.14, y0 + pSize + 0.01, gz + pSize * 0.62, world.ox, world.oy);
+          const mp = isoToScreen(gx, y0 + pSize + 0.01, gz + pSize * 0.25, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#1e1b4b';
+          ctx.fillRect(ep1.x - 2.5, ep1.y - 2.5, 4.5, 4.5);
+          ctx.fillRect(ep2.x - 2.5, ep2.y - 2.5, 4.5, 4.5);
+          ctx.fillRect(mp.x - 5.5, mp.y - 2, 11, 3.5);
+          ctx.restore();
+        }
       };
 
+      const drawWheat = (gx, gy, gz = 0.08) => {
+        models.drawBox(ctx, gx - 0.22, gy - 0.22, gz, 0.44, 0.44, 0.36, '#eab308', '#ca8a04', '#a16207', world.ox, world.oy);
+      };
+
+      const drawCarrot = (gx, gy, gz = 0.08) => {
+        models.drawBox(ctx, gx - 0.22, gy - 0.22, gz, 0.44, 0.44, 0.32, '#22c55e', '#16a34a', '#15803d', world.ox, world.oy);
+      };
+
+      // Crop Rows (Decomposed per row with tight bounds, xMin >= 16.2 completely clear of west fence at x=15.6!)
+      // Row 1: y = 97.5
       list.push({
         xMin: 16.2, xMax: 19.8, yMin: 97.2, yMax: 97.8,
-        draw: () => drawCropRow([
-          { x: 16.5, y: 97.5, type: 'wheat' }, { x: 17.5, y: 97.5, type: 'carrot' },
-          { x: 18.5, y: 97.5, type: 'wheat' }, { x: 19.5, y: 97.5, type: 'carrot' }
-        ])
+        draw: () => {
+          drawMinecraftPumpkin(16.5, 97.5, 0.08, false);
+          drawWheat(17.5, 97.5, 0.08);
+          drawMinecraftPumpkin(18.5, 97.5, 0.08, true);
+          drawWheat(19.5, 97.5, 0.08);
+        }
       });
+
+      // Row 2: y = 98.5
       list.push({
         xMin: 16.2, xMax: 19.8, yMin: 98.2, yMax: 98.8,
-        draw: () => drawCropRow([
-          { x: 16.5, y: 98.5, type: 'carrot' }, { x: 17.5, y: 98.5, type: 'wheat' }, { x: 19.5, y: 98.5, type: 'wheat' }
-        ])
+        draw: () => {
+          drawCarrot(16.5, 98.5, 0.08);
+          drawMinecraftPumpkin(17.5, 98.5, 0.08, false);
+          drawCarrot(19.5, 98.5, 0.08);
+        }
       });
+
+      // Row 3: y = 100.5
       list.push({
         xMin: 16.2, xMax: 19.8, yMin: 100.2, yMax: 100.8,
-        draw: () => drawCropRow([
-          { x: 16.5, y: 100.5, type: 'wheat' }, { x: 17.5, y: 100.5, type: 'carrot' }, { x: 19.5, y: 100.5, type: 'carrot' }
-        ])
+        draw: () => {
+          drawMinecraftPumpkin(16.5, 100.5, 0.08, true);
+          drawWheat(17.5, 100.5, 0.08);
+          drawMinecraftPumpkin(19.5, 100.5, 0.08, false);
+        }
       });
+
+      // Row 4: y = 101.5
       list.push({
         xMin: 16.2, xMax: 19.8, yMin: 101.2, yMax: 101.8,
-        draw: () => drawCropRow([
-          { x: 16.5, y: 101.5, type: 'carrot' }, { x: 17.5, y: 101.5, type: 'wheat' },
-          { x: 18.5, y: 101.5, type: 'wheat' }, { x: 19.5, y: 101.5, type: 'carrot' }
-        ])
+        draw: () => {
+          drawWheat(16.5, 101.5, 0.08);
+          drawMinecraftPumpkin(17.5, 101.5, 0.08, false);
+          drawWheat(18.5, 101.5, 0.08);
+          drawCarrot(19.5, 101.5, 0.08);
+        }
       });
 
-      // 3C. South & West Front Perimeter Fences (x: 15.8..20.2, y: 101.8..102.3)
+      // 3C. South & West Perimeter Fences (Placed at x=15.6 & y=102.0, zero clipping with crops!)
       list.push({
-        xMin: 15.8, xMax: 20.4, yMin: 101.8, yMax: 102.3,
+        xMin: 15.5, xMax: 20.2, yMin: 101.9, yMax: 102.3,
         draw: () => {
           // South perimeter fence posts & rails
-          for (let gx = 16.0; gx <= 20.0; gx += 2.0) {
-            models.drawBox(ctx, gx, 102.0, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          }
-          models.drawBox(ctx, 16.0, 102.04, 0.25, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.0, 102.04, 0.50, 4.0, 0.12, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-        }
-      });
-      list.push({
-        xMin: 15.8, xMax: 16.3, yMin: 97.0, yMax: 102.2,
-        draw: () => {
-          // West perimeter posts
-          models.drawBox(ctx, 16.0, 97.0, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.0, 98.0, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.0, 100.5, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.0, 102.0, 0, 0.20, 0.20, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          // Top rail
-          models.drawBox(ctx, 16.04, 97.0, 0.25, 0.12, 1.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.04, 97.0, 0.50, 0.12, 1.0, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          // Bottom rail (gate opening at y: 98..100.5 is 100% open!)
-          models.drawBox(ctx, 16.04, 100.5, 0.25, 0.12, 1.5, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 16.04, 100.5, 0.50, 0.12, 1.5, 0.12, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.6, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 17.8, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 102.04, 0.25, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 102.04, 0.50, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 
-      // 4. Blocky Minecraft Sheep (grazing peacefully at x: 12.0, y: 105.0)
+      // West Perimeter Fence North Segment (x: 15.6, y: 96.6..98.6)
       list.push({
-        xMin: 11.6, xMax: 12.8, yMin: 104.5, yMax: 106.1,
+        xMin: 15.4, xMax: 15.8, yMin: 96.5, yMax: 98.7,
         draw: () => {
-          const sx = 12.0, sy = 105.0;
-          models.drawBox(ctx, sx, sy, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx + 0.50, sy, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx, sy + 0.70, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          models.drawBox(ctx, sx + 0.50, sy + 0.70, 0, 0.16, 0.16, 0.40, '#cbd5e1', '#94a3b8', '#64748b', world.ox, world.oy);
-          // Fluffy White Wool Body
-          models.drawBox(ctx, sx - 0.10, sy - 0.10, 0.40, 0.85, 1.10, 0.75, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
-          // Pink/Beige Head
-          models.drawBox(ctx, sx + 0.10, sy - 0.35, 0.65, 0.45, 0.45, 0.45, '#fbcfe8', '#f472b6', '#e2e8f0', world.ox, world.oy);
-          const ep = isoToScreen(sx + 0.10, sy - 0.35, 0.85, world.ox, world.oy);
-          ctx.fillStyle = '#0f172a';
-          ctx.fillRect(ep.x - 4, ep.y - 2, 2.5, 2.5);
-          ctx.fillRect(ep.x + 2, ep.y - 2, 2.5, 2.5);
+          models.drawBox(ctx, 15.6, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.6, 98.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 96.64, 0.25, 0.10, 2.00, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 96.64, 0.50, 0.10, 2.00, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+        }
+      });
+
+      // West Perimeter Fence South Segment (x: 15.6, y: 100.2..102.0, gate opening at y: 98.6..100.2 is wide open!)
+      list.push({
+        xMin: 15.4, xMax: 15.8, yMin: 100.1, yMax: 102.3,
+        draw: () => {
+          models.drawBox(ctx, 15.6, 100.2, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.6, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 100.24, 0.25, 0.10, 1.80, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 15.64, 100.24, 0.50, 0.10, 1.80, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+        }
+      });
+
+      // 4. Living Animated Minecraft Sheep (Wanders peacefully, grazes grass, authentic face & eyes!)
+      list.push({
+        get xMin() { return (world.minecraftSheep ? world.minecraftSheep.x : 12.0) - 0.7; },
+        get xMax() { return (world.minecraftSheep ? world.minecraftSheep.x : 12.0) + 0.7; },
+        get yMin() { return (world.minecraftSheep ? world.minecraftSheep.y : 105.0) - 0.7; },
+        get yMax() { return (world.minecraftSheep ? world.minecraftSheep.y : 105.0) + 0.7; },
+        draw: () => {
+          // Initialize persistent sheep state on world engine
+          if (!world.minecraftSheep) {
+            world.minecraftSheep = {
+              x: 12.0,
+              y: 105.2,
+              targetX: 12.0,
+              targetY: 105.2,
+              state: 'grazing', // 'grazing', 'idle', 'walking'
+              timer: 3.5,
+              facing: 'south_west',
+              walkTimer: 0,
+              headAngle: 0.85,
+              bubbleText: '',
+              bubbleTimer: 0
+            };
+          }
+          const sheep = world.minecraftSheep;
+          const dt = 0.016; // Standard frame tick approximation
+
+          // Behavior state machine
+          sheep.timer -= dt;
+          if (sheep.bubbleTimer > 0) sheep.bubbleTimer -= dt;
+
+          if (sheep.state === 'grazing') {
+            sheep.headAngle += (1.0 - sheep.headAngle) * 0.1;
+            if (sheep.timer <= 0) {
+              sheep.state = Math.random() < 0.4 ? 'idle' : 'walking';
+              if (sheep.state === 'walking') {
+                sheep.targetX = 11.2 + Math.random() * 2.2;
+                sheep.targetY = 104.5 + Math.random() * 2.2;
+                sheep.facing = (sheep.targetX - sheep.x > (sheep.targetY - sheep.y)) ? 'south_east' : 'south_west';
+              }
+              sheep.timer = 3.0 + Math.random() * 3.0;
+            }
+          } else if (sheep.state === 'idle') {
+            sheep.headAngle += (0.0 - sheep.headAngle) * 0.1;
+            if (sheep.timer <= 0) {
+              sheep.state = 'walking';
+              sheep.targetX = 11.2 + Math.random() * 2.2;
+              sheep.targetY = 104.5 + Math.random() * 2.2;
+              sheep.facing = (sheep.targetX - sheep.x > (sheep.targetY - sheep.y)) ? 'south_east' : 'south_west';
+              sheep.timer = 4.0;
+            }
+          } else if (sheep.state === 'walking') {
+            sheep.headAngle += (0.05 - sheep.headAngle) * 0.1;
+            const dx = sheep.targetX - sheep.x;
+            const dy = sheep.targetY - sheep.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 0.08) {
+              const speed = 0.55 * dt;
+              sheep.x += (dx / dist) * speed;
+              sheep.y += (dy / dist) * speed;
+              sheep.walkTimer += dt * 8;
+            } else {
+              sheep.state = 'grazing';
+              sheep.timer = 4.0 + Math.random() * 4.0;
+            }
+          }
+
+          const sx = sheep.x;
+          const sy = sheep.y;
+          const isWalking = sheep.state === 'walking';
+          const legSwing = isWalking ? Math.sin(sheep.walkTimer) * 0.08 : 0;
+          const chewOffset = (sheep.state === 'grazing') ? Math.sin(performance.now() * 0.012) * 0.015 : 0;
+
+          // 1. Four Blocky Minecraft Sheep Legs (Tan skin with dark hooves)
+          const legW = 0.16;
+          const legH = 0.42;
+          const hoofH = 0.10;
+          const legSkinT = '#c49c7d';
+          const legSkinL = '#bfa085';
+          const legSkinR = '#ad8e75';
+          const hoofT = '#4a382a';
+          const hoofL = '#3f3024';
+          const hoofR = '#2a1f17';
+
+          // Helper to draw one authentic two-tone leg (tan skin upper + dark hoof base)
+          const drawLeg = (lx, ly, swing) => {
+            const curY = ly + swing;
+            // Dark Hoof Base (z: 0 to 0.10)
+            models.drawBox(ctx, lx, curY, 0, legW, legW, hoofH, hoofT, hoofL, hoofR, world.ox, world.oy);
+            // Tan Skin Upper Leg (z: 0.10 to 0.42)
+            models.drawBox(ctx, lx, curY, hoofH, legW, legW, legH - hoofH, legSkinT, legSkinL, legSkinR, world.ox, world.oy);
+          };
+
+          // Back Legs
+          drawLeg(sx - 0.30, sy - 0.34, -legSwing); // Back-Left
+          drawLeg(sx + 0.14, sy - 0.34, legSwing);  // Back-Right
+
+          // Front Legs
+          drawLeg(sx - 0.30, sy + 0.20, legSwing);  // Front-Left
+          drawLeg(sx + 0.14, sy + 0.20, -legSwing); // Front-Right
+
+          // 2. Volumetric White Wool Body (0.78 x 1.00 x 0.66)
+          models.drawBox(ctx, sx - 0.39, sy - 0.50, 0.40, 0.78, 1.00, 0.66, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+
+          // Subtle Minecraft Pixelated Wool Shading (soft authentic blocky texture)
+          const woolPatch0 = isoToScreen(sx - 0.20, sy - 0.20, 1.06, world.ox, world.oy);
+          ctx.fillStyle = '#f1f5f9';
+          ctx.fillRect(woolPatch0.x - 5, woolPatch0.y - 2, 7, 5);
+          const woolPatch1 = isoToScreen(sx + 0.10, sy + 0.15, 1.06, world.ox, world.oy);
+          ctx.fillRect(woolPatch1.x - 3, woolPatch1.y - 2, 6, 4);
+
+          // Tiny Wool Tail at the Back Center
+          const tailWag = Math.sin(performance.now() * 0.006) * 0.02;
+          models.drawBox(ctx, sx - 0.07 + tailWag, sy - 0.54, 0.82, 0.14, 0.08, 0.14, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+
+          // 3. Authentic Minecraft Sheep Head & Wool Hood
+          // Dynamic Head Elevation: Held high and level when standing/walking; lowered to grass when grazing!
+          const headZ = (0.68 * (1 - sheep.headAngle) + 0.16 * sheep.headAngle) + chewOffset;
+          const headY = sy + 0.32 + sheep.headAngle * 0.16;
+          const headX = sx - 0.19;
+          const hW = 0.38; // Width along X
+          const hL = 0.44; // Length along Y
+          const hH = 0.38; // Height along Z
+
+          // Base Head Box (Top face: White Wool Hood; Right face: shaded side; Left/Front: face base)
+          models.drawBox(
+            ctx, headX, headY, headZ,
+            hW, hL, hH,
+            '#f8fafc', // Top: 100% Authentic White Wool Hood!
+            '#c49c7d', // Left (+Y): Tan Skin Face Base
+            '#cbd5e1', // Right (+X): Wool Side Hood
+            world.ox, world.oy
+          );
+
+          // Head Side Face (+X face): Front 40% is Tan Skin; Back 60% is White Wool Hood
+          const sideSkinY0 = headY + hL * 0.55;
+          const sideSkinY1 = headY + hL;
+          const sp0 = isoToScreen(headX + hW, sideSkinY0, headZ, world.ox, world.oy);
+          const sp1 = isoToScreen(headX + hW, sideSkinY1, headZ, world.ox, world.oy);
+          const sp2 = isoToScreen(headX + hW, sideSkinY1, headZ + hH * 0.65, world.ox, world.oy);
+          const sp3 = isoToScreen(headX + hW, sideSkinY0, headZ + hH * 0.65, world.ox, world.oy);
+          ctx.fillStyle = '#ad8e75'; // Tan skin on front half of side head
+          ctx.beginPath();
+          ctx.moveTo(sp0.x, sp0.y); ctx.lineTo(sp1.x, sp1.y);
+          ctx.lineTo(sp2.x, sp2.y); ctx.lineTo(sp3.x, sp3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Side Eye Wrap (White sclera wraps around the +X corner)
+          const sew0 = isoToScreen(headX + hW, headY + hL * 0.84, headZ + hH * 0.44, world.ox, world.oy);
+          const sew1 = isoToScreen(headX + hW, sideSkinY1, headZ + hH * 0.44, world.ox, world.oy);
+          const sew2 = isoToScreen(headX + hW, sideSkinY1, headZ + hH * 0.66, world.ox, world.oy);
+          const sew3 = isoToScreen(headX + hW, headY + hL * 0.84, headZ + hH * 0.66, world.ox, world.oy);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.moveTo(sew0.x, sew0.y); ctx.lineTo(sew1.x, sew1.y);
+          ctx.lineTo(sew2.x, sew2.y); ctx.lineTo(sew3.x, sew3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Front Face (+Y face at fy = headY + hL, facing South-West directly toward the camera!)
+          const fy = headY + hL;
+
+          // 1. Forehead Wool Fringe (Top 35% of front face is thick white fleece)
+          const wfTopL = isoToScreen(headX, fy, headZ + hH, world.ox, world.oy);
+          const wfTopR = isoToScreen(headX + hW, fy, headZ + hH, world.ox, world.oy);
+          const wfBotR = isoToScreen(headX + hW, fy, headZ + hH * 0.65, world.ox, world.oy);
+          const wfBotL = isoToScreen(headX, fy, headZ + hH * 0.65, world.ox, world.oy);
+          ctx.fillStyle = '#f8fafc';
+          ctx.beginPath();
+          ctx.moveTo(wfTopL.x, wfTopL.y); ctx.lineTo(wfTopR.x, wfTopR.y);
+          ctx.lineTo(wfBotR.x, wfBotR.y); ctx.lineTo(wfBotL.x, wfBotL.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // 2. Eyes (Positioned right at the two outer lateral edges, below forehead wool)
+          // Left Eye (-X corner): Outer white sclera + Inner black pupil
+          const leW0 = isoToScreen(headX, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const leW1 = isoToScreen(headX + hW * 0.16, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const leW2 = isoToScreen(headX + hW * 0.16, fy, headZ + hH * 0.66, world.ox, world.oy);
+          const leW3 = isoToScreen(headX, fy, headZ + hH * 0.66, world.ox, world.oy);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.moveTo(leW0.x, leW0.y); ctx.lineTo(leW1.x, leW1.y);
+          ctx.lineTo(leW2.x, leW2.y); ctx.lineTo(leW3.x, leW3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          const leB0 = isoToScreen(headX + hW * 0.14, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const leB1 = isoToScreen(headX + hW * 0.28, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const leB2 = isoToScreen(headX + hW * 0.28, fy, headZ + hH * 0.66, world.ox, world.oy);
+          const leB3 = isoToScreen(headX + hW * 0.14, fy, headZ + hH * 0.66, world.ox, world.oy);
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.moveTo(leB0.x, leB0.y); ctx.lineTo(leB1.x, leB1.y);
+          ctx.lineTo(leB2.x, leB2.y); ctx.lineTo(leB3.x, leB3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Right Eye (+X corner): Inner black pupil + Outer white sclera
+          const reB0 = isoToScreen(headX + hW * 0.72, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const reB1 = isoToScreen(headX + hW * 0.86, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const reB2 = isoToScreen(headX + hW * 0.86, fy, headZ + hH * 0.66, world.ox, world.oy);
+          const reB3 = isoToScreen(headX + hW * 0.72, fy, headZ + hH * 0.66, world.ox, world.oy);
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.moveTo(reB0.x, reB0.y); ctx.lineTo(reB1.x, reB1.y);
+          ctx.lineTo(reB2.x, reB2.y); ctx.lineTo(reB3.x, reB3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          const reW0 = isoToScreen(headX + hW * 0.84, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const reW1 = isoToScreen(headX + hW, fy, headZ + hH * 0.44, world.ox, world.oy);
+          const reW2 = isoToScreen(headX + hW, fy, headZ + hH * 0.66, world.ox, world.oy);
+          const reW3 = isoToScreen(headX + hW * 0.84, fy, headZ + hH * 0.66, world.ox, world.oy);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.moveTo(reW0.x, reW0.y); ctx.lineTo(reW1.x, reW1.y);
+          ctx.lineTo(reW2.x, reW2.y); ctx.lineTo(reW3.x, reW3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // 3. Pink Minecraft Sheep Snout / Nose (Centered on lower face)
+          const sntX0 = headX + hW * 0.32;
+          const sntX1 = headX + hW * 0.68;
+          const sntZ0 = headZ + hH * 0.10;
+          const sntZ1 = headZ + hH * 0.38;
+          const snt0 = isoToScreen(sntX0, fy, sntZ0, world.ox, world.oy);
+          const snt1 = isoToScreen(sntX1, fy, sntZ0, world.ox, world.oy);
+          const snt2 = isoToScreen(sntX1, fy, sntZ1, world.ox, world.oy);
+          const snt3 = isoToScreen(sntX0, fy, sntZ1, world.ox, world.oy);
+          ctx.fillStyle = '#c87582'; // Natural authentic Minecraft sheep nose pink
+          ctx.beginPath();
+          ctx.moveTo(snt0.x, snt0.y); ctx.lineTo(snt1.x, snt1.y);
+          ctx.lineTo(snt2.x, snt2.y); ctx.lineTo(snt3.x, snt3.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // Subtle Nostril / Mouth Line
+          const mth0 = isoToScreen(headX + hW * 0.38, fy, headZ + hH * 0.12, world.ox, world.oy);
+          const mth1 = isoToScreen(headX + hW * 0.62, fy, headZ + hH * 0.12, world.ox, world.oy);
+          ctx.strokeStyle = '#834550';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(mth0.x, mth0.y); ctx.lineTo(mth1.x, mth1.y);
+          ctx.stroke();
+
+          // Grazing Grass Particles (when actively eating grass)
+          if (sheep.state === 'grazing' && Math.sin(performance.now() * 0.01) > 0.3) {
+            const gp = isoToScreen(headX + hW * 0.5, fy + 0.06, headZ, world.ox, world.oy);
+            ctx.fillStyle = '#84cc16';
+            ctx.fillRect(gp.x - 2, gp.y - 1, 2.5, 2.5);
+            ctx.fillRect(gp.x + 3, gp.y - 3, 2, 2);
+          }
+
+          // Floating Speech Bubble when Bleating
+          if (sheep.bubbleTimer > 0 && sheep.bubbleText) {
+            const bp = isoToScreen(sx, sy, 1.45, world.ox, world.oy);
+            ctx.save();
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const tw = ctx.measureText(sheep.bubbleText).width;
+            const bw = tw + 16;
+            const bh = 22;
+            const bx = bp.x - bw / 2;
+            const by = bp.y - bh - 6;
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+            ctx.strokeStyle = '#84cc16';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.roundRect(bx, by, bw, bh, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            // Downward pointer arrow
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+            ctx.beginPath();
+            ctx.moveTo(bp.x - 4, by + bh);
+            ctx.lineTo(bp.x + 4, by + bh);
+            ctx.lineTo(bp.x, by + bh + 5);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(sheep.bubbleText, bp.x, by + bh / 2);
+            ctx.restore();
+          }
         }
       });
 

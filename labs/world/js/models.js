@@ -4680,10 +4680,10 @@
 
       // High-Tech Clean Typography
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('⚡ 電玩次元穿梭站 • GAMING DIMENSION PORTAL ⚡', 0, 0);
+      ctx.fillText('⚡ Gaming Portal ⚡', 0, 0);
 
       ctx.restore();
     }

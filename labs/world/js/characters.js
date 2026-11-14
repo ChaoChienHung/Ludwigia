@@ -43,10 +43,10 @@
         { id: 'market_stool', type: 'seat', zone: 'night_market', x: 35.0, y: 41.85, z: 0.35, facing: 1, exitOffset: { dx: -0.6, dy: 0 }, name: '傻師傅內用紅圓凳', labelZh: '坐下吃宵夜', labelEn: 'Sit Down' },
 
         // Ludwigia Indoor Specialty Cafe Lounge Chair (z = 0.38, exact armchair seat cushion center)
-        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 40.68, y: 5.25, z: 0.38, facing: 1, exitOffset: { dx: -0.55, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
+        { id: 'cafe_chair', type: 'seat', zone: 'cafe', x: 38.68, y: 5.25, z: 0.38, facing: 1, exitOffset: { dx: -0.55, dy: 0 }, name: '室內文青咖啡椅', labelZh: '坐下品咖啡', labelEn: 'Sit & Sip Coffee' },
 
         // "How Are You Doing Today" Healing Lounge Sofa (z = 0.42, exact seat cushion center)
-        { id: 'how_are_you_sofa', type: 'seat', zone: 'how_are_you', x: 40.2, y: 17.5, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '心靈傾聽沙發', labelZh: '坐下傾聽心事', labelEn: 'Sit & Unwind' },
+        { id: 'how_are_you_sofa', type: 'seat', zone: 'how_are_you', x: 38.2, y: 17.5, z: 0.42, facing: 1, exitOffset: { dx: 0.85, dy: 0 }, name: '心靈傾聽沙發', labelZh: '坐下傾聽心事', labelEn: 'Sit & Unwind' },
 
         // Campus Basketball Court Sideline Rest Bench (z = 0.42, exact seat center)
         { id: 'basketball_bench', type: 'seat', zone: 'basketball_court', x: 41.8, y: 34.55, z: 0.42, facing: 1, exitOffset: { dx: 0, dy: 1.1 }, name: '球場休息長椅', labelZh: '坐下看球', labelEn: 'Sit & Watch Game' },
@@ -80,8 +80,8 @@
       if (spot.id === 'dorm_bed_kerry') return { x: 3.4, y: 25.2 };
       if (spot.id === 'dorm_bed_billy') return { x: 5.9, y: 25.2 };
       if (spot.id === 'ludwig_bed') return { x: 3.4, y: 2.0 };
-      if (spot.id === 'cafe_chair') return { x: 39.8, y: 5.25 };
-      if (spot.id === 'how_are_you_sofa') return { x: 40.2, y: 18.5 };
+      if (spot.id === 'cafe_chair') return { x: 37.8, y: 5.25 };
+      if (spot.id === 'how_are_you_sofa') return { x: 38.2, y: 18.5 };
       if (spot.id === 'market_stool') return { x: 34.4, y: 41.85 };
       if (spot.exitOffset) {
         return { x: spot.x + (spot.exitOffset.dx || 0), y: spot.y + (spot.exitOffset.dy || 0) };
