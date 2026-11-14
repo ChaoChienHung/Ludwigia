@@ -10,7 +10,7 @@ Lang: en
 Tags: AI Planning, Classical Planning, STRIPS, PDDL, SATPlan, Automated Reasoning, Decision Theory, Game Theory, Reinforcement Learning
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-11-01
+LastModified: 2026-11-14
 </meta>
 
 # NUS CS5446 Reinforcement Learning and Sequential Decision Making
@@ -8760,6 +8760,30 @@ Published in *Nature*, Dafoe et al. (2021) established the four fundamental pill
 
 ---
 
+# Tutorial 2–3: Utility and Active RL Worked Examples
+
+These earlier tutorials connect the Week 3 utility model to the Week 4 learning algorithms. The [full Week 4–5 notes](source-material/Week4-5_Notes.md) preserve the worked questions and intermediate calculations.
+
+## Tutorial 2 — Rational decision making
+
+Before an MDP can optimize a return, the agent needs a coherent preference over outcomes. Tutorial 2 practices three consequences of that foundation:
+
+1. **Utility Matchmaker:** Compare lotteries by expected *utility*, not expected money. A convex utility curve prefers a spread; a concave one avoids it; a linear one is risk neutral. If $U_1=k_1U_2+k_2$ with $k_1>0$, then $EU_1(L)-EU_1(L')=k_1[EU_2(L)-EU_2(L')]$, so a positive affine transform preserves every lottery preference.
+2. **PacBaby insurance:** With $U(x)=\log(1+x)$, wealth $100$, theft probability $0.2$, and full insurance leaving wealth $70$, the uninsured utility is $0.8\log(101)\approx3.693$; the insured utility is $\log(71)\approx4.263$. Insurance is preferred despite its lower expected wealth, because it removes a severe downside. The insurer's expected profit is $30-0.2(70)=16$.
+3. **Allais paradox:** Preferences $B\succ A$ and $C\succ D$ in the tutorial imply both $U(3000)/U(4000)>0.8$ and $U(3000)/U(4000)<0.8$. No single expected-utility function can satisfy both. Decomposing the compound lotteries exposes the violated independence/substitutability axiom.
+
+## Tutorial 3 — From a known MDP to learning from experience
+
+First specify the reward timing. This tutorial usually treats a transition into $s'$ as receiving $R(s,a,s')$; an episodic terminal state has no future value after that entry reward. Mixing reward-on-entry with reward-of-current-state shifts every Bellman calculation.
+
+**Nova the Mars Rover:** For each candidate action, compute $Q(s,a)=R(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V(s')$, then set $V_{k+1}(s)=\max_aQ(s,a)$. Value iteration performs this optimality backup repeatedly. Policy iteration instead chooses a policy, evaluates that fixed policy (often by solving linear equations), and improves it. When $\gamma=1$ in a continuing positive-reward problem, the undiscounted total may diverge; the horizon and return definition must be stated before comparing policies.
+
+**Aster's Rescue Route:** The observed transition $s_0\xrightarrow{b,-2}s_1\xrightarrow{d,5}T$ has discounted return $-2+0.8(5)=2$. Monte Carlo control averages completed episode returns; the five observed returns for $(s_0,b)$ give $(6+6+6+2+2)/5=4.4$. Active ADP instead updates the transition counts and plans with the estimated model. With $\alpha=0.5$, $Q(s_0,b)=2$, $Q(s_1,d)=1$, and $\max_{a'}Q(s_1,a')=4$, SARSA updates to $0.4$ using the *actual* next action $d$, whereas Q-learning updates to $1.6$ using the greedy next value. This is the on-policy/off-policy distinction in one calculation. Both require exploration to learn about actions a greedy policy would otherwise never try.
+
+The archived student tutorial sheets and team submissions listed below contain the original problem statements; the calculations above are study notes, not a replacement for those sources.
+
+---
+
 # Tutorial Practice - Complete Worked Solutions for Tutorials 5, 6, 7, and 8
 
 <draft>
@@ -9000,6 +9024,108 @@ For a fixed trajectory $S_0 \xrightarrow{r=0} S_1 \xrightarrow{r=1} S_2$ (termin
 - **Game Value**:
   $$V^* = \mathbf{x}^{*T} A \mathbf{x}^* = 0$$
   Both players play $1, 2, 3$ fingers with probabilities $\left( \frac{1}{4}, \frac{1}{2}, \frac{1}{4} \right)$. Game value is exactly **$0$**.
+
+---
+
+# Source Material and Coursework Archive
+
+The course notes above synthesize the lecture material. The original lecture slides, tutorial sheets, assignment files, study drafts, and course guidelines are archived here so their exact wording, exercises, code, and figures remain available. Assignment submissions are kept as submitted artifacts; they are separate from the explanatory note. Paths below are relative to this note. Duplicate cache files and Finder metadata were omitted.
+
+## Assignments
+
+- [Assignments/Assignment 1 Submission/1_PDDL.ipynb](source-material/Assignments/Assignment%201%20Submission/1_PDDL.ipynb)
+- [Assignments/Assignment 1 Submission/1_PDDL_solution.py](source-material/Assignments/Assignment%201%20Submission/1_PDDL_solution.py)
+- [Assignments/Assignment 1 Submission/2_hierarchical.ipynb](source-material/Assignments/Assignment%201%20Submission/2_hierarchical.ipynb)
+- [Assignments/Assignment 1 Submission/2_hierarchical_solution.py](source-material/Assignments/Assignment%201%20Submission/2_hierarchical_solution.py)
+- [Assignments/Assignment 1 Submission/3_freeform_planning.ipynb](source-material/Assignments/Assignment%201%20Submission/3_freeform_planning.ipynb)
+- [Assignments/Assignment 1 Submission/3_freeform_planning_solution.py](source-material/Assignments/Assignment%201%20Submission/3_freeform_planning_solution.py)
+- [Assignments/Assignment 1 Submission/EleEnv/Envs.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/Envs.py)
+- [Assignments/Assignment 1 Submission/EleEnv/PDDL.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/PDDL.py)
+- [Assignments/Assignment 1 Submission/EleEnv/__init__.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/__init__.py)
+- [Assignments/Assignment 1 Submission/EleEnv/configs.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/configs.py)
+- [Assignments/Assignment 1 Submission/ai_usage.md](source-material/Assignments/Assignment%201%20Submission/ai_usage.md)
+- [Assignments/Assignment-1.pdf](source-material/Assignments/Assignment-1.pdf)
+- [Assignments/Assignment1-Programming-Package/0_env_walkthrough.ipynb](source-material/Assignments/Assignment1-Programming-Package/0_env_walkthrough.ipynb)
+- [Assignments/Assignment1-Programming-Package/1_PDDL.ipynb](source-material/Assignments/Assignment1-Programming-Package/1_PDDL.ipynb)
+- [Assignments/Assignment1-Programming-Package/1_PDDL_solution.py](source-material/Assignments/Assignment1-Programming-Package/1_PDDL_solution.py)
+- [Assignments/Assignment1-Programming-Package/2_hierarchical.ipynb](source-material/Assignments/Assignment1-Programming-Package/2_hierarchical.ipynb)
+- [Assignments/Assignment1-Programming-Package/2_hierarchical_solution.py](source-material/Assignments/Assignment1-Programming-Package/2_hierarchical_solution.py)
+- [Assignments/Assignment1-Programming-Package/3_freeform_planning.ipynb](source-material/Assignments/Assignment1-Programming-Package/3_freeform_planning.ipynb)
+- [Assignments/Assignment1-Programming-Package/3_freeform_planning_solution.py](source-material/Assignments/Assignment1-Programming-Package/3_freeform_planning_solution.py)
+- [Assignments/Assignment1-Programming-Package/EleEnv/Envs.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/Envs.py)
+- [Assignments/Assignment1-Programming-Package/EleEnv/PDDL.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/PDDL.py)
+- [Assignments/Assignment1-Programming-Package/EleEnv/__init__.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/__init__.py)
+- [Assignments/Assignment1-Programming-Package/EleEnv/configs.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/configs.py)
+- [Assignments/Assignment1-Programming-Package/README.md](source-material/Assignments/Assignment1-Programming-Package/README.md)
+- [Assignments/Assignment1-Programming-Package/ai_usage.md](source-material/Assignments/Assignment1-Programming-Package/ai_usage.md)
+- [Assignments/Assignment1-Programming-Package/requirements.txt](source-material/Assignments/Assignment1-Programming-Package/requirements.txt)
+
+## Course notes
+
+- [CS5446-study-notes-revised.tex](source-material/CS5446-study-notes-revised.tex)
+- [Week4-5_Notes.md](source-material/Week4-5_Notes.md)
+
+## Midterm Exam
+
+- [Midterm Exam/Mid-Term Guidelines 2627-1.pdf](source-material/Midterm%20Exam/Mid-Term%20Guidelines%202627-1.pdf)
+
+## Project
+
+- [Project/CSxx46-Project-Guidelines 2627-1.pdf](source-material/Project/CSxx46-Project-Guidelines%202627-1.pdf)
+
+## Tutorials
+
+- [Tutorials/CS5446_Week3_Tutorial_1_Students.pdf](source-material/Tutorials/CS5446_Week3_Tutorial_1_Students.pdf)
+- [Tutorials/CS5446_Week4_Tutorial2_Rational_Decision_Making_AY2627_S1_Student_slides.pdf](source-material/Tutorials/CS5446_Week4_Tutorial2_Rational_Decision_Making_AY2627_S1_Student_slides.pdf)
+- [Tutorials/CSXX46_AY2627_1_Week3_Tutorial1_Real_World_Planning_and_Acting_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week3_Tutorial1_Real_World_Planning_and_Acting_Students.pdf)
+- [Tutorials/CSXX46_AY2627_1_Week4_Tutorial2_Rational_Decision_Making_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week4_Tutorial2_Rational_Decision_Making_Students.pdf)
+- [Tutorials/CSXX46_AY2627_1_Week5_Tutorial3_Sequential_decision_making_under_uncertainty_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week5_Tutorial3_Sequential_decision_making_under_uncertainty_Students.pdf)
+- [Tutorials/CSXX46_AY2627_1_Week6_Tutorial4_Function_Approximation_and_Policy_Search_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week6_Tutorial4_Function_Approximation_and_Policy_Search_Students.pdf)
+- [Tutorials/CSXX46_AY2627_1_Week7_Tutorial5_Mid-Term_Review.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week7_Tutorial5_Mid-Term_Review.pdf)
+- [Tutorials/Insurance_pay_willingness.png](source-material/Tutorials/Insurance_pay_willingness.png)
+- [Tutorials/Team Submissions/Team26_Tutorial1.pdf](source-material/Tutorials/Team%20Submissions/Team26_Tutorial1.pdf)
+- [Tutorials/Team Submissions/Team26_Tutorial2.pdf](source-material/Tutorials/Team%20Submissions/Team26_Tutorial2.pdf)
+- [Tutorials/Team Submissions/Team26_Tutorial3.pdf](source-material/Tutorials/Team%20Submissions/Team26_Tutorial3.pdf)
+- [Tutorials/Team26_Tutorial3.pdf](source-material/Tutorials/Team26_Tutorial3.pdf)
+- [Tutorials/Tutorial3_MDP_AY2627_STUDENT_VERSION_FINAL.pdf](source-material/Tutorials/Tutorial3_MDP_AY2627_STUDENT_VERSION_FINAL.pdf)
+- [Tutorials/Tutorial4_Function_Approximation_and_Policy_Search_AY2627_Student.pdf](source-material/Tutorials/Tutorial4_Function_Approximation_and_Policy_Search_AY2627_Student.pdf)
+- [Tutorials/Tutorial5_Midterm_Review_AY2627_TEACHING_FINAL_Students.pdf](source-material/Tutorials/Tutorial5_Midterm_Review_AY2627_TEACHING_FINAL_Students.pdf)
+
+## Week 1 Lecture
+
+- [Week 1 Lecture/Lecture-Intro.pdf](source-material/Week%201%20Lecture/Lecture-Intro.pdf)
+- [Week 1 Lecture/Lecture-classic v4.0.pdf](source-material/Week%201%20Lecture/Lecture-classic%20v4.0.pdf)
+- [Week 1 Lecture/classical-planning-models-search-and-inference.md](source-material/Week%201%20Lecture/classical-planning-models-search-and-inference.md)
+- [Week 1 Lecture/classical-planning-strips-pddl-and-satplan.md](source-material/Week%201%20Lecture/classical-planning-strips-pddl-and-satplan.md)
+- [Week 1 Lecture/slide-making-responsible-decisions.jpg](source-material/Week%201%20Lecture/slide-making-responsible-decisions.jpg)
+
+## Week 2 Lecture
+
+- [Week 2 Lecture/Lecture-complex Notes.pdf](source-material/Week%202%20Lecture/Lecture-complex%20Notes.pdf)
+- [Week 2 Lecture/Lecture-complex v4.0.pdf](source-material/Week%202%20Lecture/Lecture-complex%20v4.0.pdf)
+
+## Week 3 Lecture
+
+- [Week 3 Lecture/Lecture-rational-utility-Examples and Notes.pdf](source-material/Week%203%20Lecture/Lecture-rational-utility-Examples%20and%20Notes.pdf)
+- [Week 3 Lecture/Lecture-rational-utility.pdf](source-material/Week%203%20Lecture/Lecture-rational-utility.pdf)
+- [Week 3 Lecture/rational-decision-making-utility-theory-and-game-theory.md](source-material/Week%203%20Lecture/rational-decision-making-utility-theory-and-game-theory.md)
+
+## Week 4 Lecture
+
+- [Week 4 Lecture/Lecture-mdp.pdf](source-material/Week%204%20Lecture/Lecture-mdp.pdf)
+- [Week 4 Lecture/Lecture-sdm.pdf](source-material/Week%204%20Lecture/Lecture-sdm.pdf)
+
+## Week 5 Lecture
+
+- [Week 5 Lecture/Lecture-rl-modelfree.pdf](source-material/Week%205%20Lecture/Lecture-rl-modelfree.pdf)
+
+## Week 6 Lecture
+
+- [Week 6 Lecture/Lecture-RL-Reward-Shaping.pdf](source-material/Week%206%20Lecture/Lecture-RL-Reward-Shaping.pdf)
+
+## Week 7 Lecture
+
+- [Week 7 Lecture/Lecture-guided-SDM.pdf](source-material/Week%207%20Lecture/Lecture-guided-SDM.pdf)
 
 ---
 
