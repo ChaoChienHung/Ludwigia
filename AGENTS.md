@@ -43,6 +43,7 @@
   - **鏡頭縮放以視口中心/玩家為軸心（Centered Viewport Zoom Focus）**：鏡頭 `zoom` 縮放與點擊尋路逆投影必須永遠以視口幾何中心（即焦點玩家所在之屏幕中心）為錨定軸心，不得退化為以世界原點 `(ox, oy)` 為縮放中心，確保玩家走入任何遠端分區建築（如三民高中、抖音研發中心）時皆能精準聚焦於室內與角色，杜絕畫面失焦偏移
   - **等軸測牆面剪切與幾何斜度對齊契約（Isometric Wall Projection Contract）**：建築牆面上的黑板、掛鐘、門樑招牌等平面裝飾，必須與所依附的牆面軸向傾角精確匹配：北向與南向橫牆（沿 X 軸）必須使用 `(1, 0.5, 0, 1, 0, 0)` 剪切矩陣；東向與西向縱牆（沿 Y 軸）必須使用 `(1, -0.5, 0, 1, 0, 0)` 剪切矩陣；文字、算式與圖表嚴禁水平裸繪
   - **拓撲深度排序無閉環契約（Cycle-Free Topological Depth Sorting）**：立體建築牆體、門樑、大型家具（如圖書館大型落地書櫃、教室課桌椅群）之包圍盒邊界（Bounding Box）必須嚴格維持前/後景拓撲因果分層（例如後牆 `yMax` 嚴格小於或等於家具 `yMin`），嚴禁在家具背後疊加重疊包圍盒之裝飾，杜絕在人物走動時觸發深度閉環而產生模型閃爍（Flickering / Glitch）或破面消失
+  - **可見內容成本契約（Visible-Cost Scaling Contract）**：Portals 與各 Realm 的每幀成本必須跟著「畫面可見內容」成長，不得跟著世界總量成長。深度排序只在螢幕 x 欄位重疊的實體之間建邊，不得退回全量兩兩比對；地形、貼花、崖壁、粒子與靜態實體一律依 `viewRect` 裁剪；主迴圈不得每幀無條件寫 DOM 或 CSS 變數；不可見或透明度為 0 的元素不得常駐 `will-change` 合成層；必須遵守 `prefers-reduced-motion`。細則與量測方式見 `docs/specs/realm-spec.md` §6
   - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`portals/realms/world/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 World 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
 - `qprompt` 的基本語意若啟用，必須維持：
   - prompt 本體由 `<qprompt>...</qprompt>` 或 `<qprompt/>` 再現性生成
@@ -104,6 +105,7 @@
 - 允許內容放在子資料夾（`notes/**/<slug>.html`、`writing/**/<slug>.html`、`canvas/**/<slug>.html`），且索引/標籤頁連結必須在 nested paths 下仍可工作
 - 語系/Theme/Palette 等偏好狀態必須維持為 client-side（localStorage）狀態，不引入後端 state 依賴
 - Theme/Palette 的 localStorage 值需保持向後相容（允許舊值 alias），避免既有使用者偏好失效
+- 首屏 Theme/Palette class 必須只由 `core/theme-preload.js` 掛上：所有頁面在 `<head>` 第一個 stylesheet 之前以 `<script src>` 載入它，不得再內嵌 inline 複本（`tests/test_page_shell.py` 守門）
 - Theme 專屬視覺效果必須可被關閉/限定（例如 Galaxy 內的流星/星空），避免遮擋可讀性與互動
 - 若新增 theme（例如 `Sky` / `Garden`），其動效控制需收斂到同一個可關閉機制，避免每個 theme 各自長出平行設定開關
 - `notes / writing / canvas` 單篇內容頁底部的 footer 必須維持為語意完整的 footer 區塊：
@@ -229,7 +231,7 @@
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡
 - `docs/rules/checklist.md` / `docs/rules/guardrails.md`：交付收尾與守門清單
 - `docs/guide/data-authoring-guide.md` / `docs/guide/language-guide.md` / `docs/guide/theme-palette-guide.md` / `docs/guide/ontology-guide.md` / `docs/guide/companion-guide.md`：共享維護 guide
-- `docs/tech/README.md`：技術文件入口；實作細節再往下分到 `docs/tech/*.md`
+- `docs/tech/README.md`：技術文件入口；實作細節再往下分到 `docs/tech/*.md`（技術棧看 `docs/tech/tech-stack.md`，重構計畫看 `docs/tech/refactor-roadmap.md`，Portals／World 效能看 `docs/tech/portals-world-performance.md`）
 - `docs/author/writing-notes.md` / `docs/author/testing-notes.md` / `docs/author/dev-notes.md`：作者自己的寫作、測試與演進筆記
 - `notes/**/<slug>.md`、`writing/**/<slug>.md`、`canvas/**/<slug>.md`：內容來源；若調整語法/解析器，需同步檢查相容性
 - `skills/**/skill.md`、`labs/**/README.md`：分別是 skill 規格與實驗性原型記錄

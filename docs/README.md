@@ -79,6 +79,9 @@
 ### Tech
 
 - `docs/tech/README.md`：技術文件入口
+- `docs/tech/tech-stack.md`：完整技術棧與版本
+- `docs/tech/refactor-roadmap.md`：技術債盤點與分階段重構計畫
+- `docs/tech/portals-world-performance.md`：Portals 與 World 效能優化紀錄
 - `docs/tech/search-and-recommendation.md`：搜推 as-built 解釋
 
 ### Author

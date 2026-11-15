@@ -212,6 +212,30 @@
   - [ ] 段落之間是否有平滑的因果過渡，而非生硬跳躍？
   - [ ] 讀者的心理模型（Mental Model）是否呈平滑線性或層次生長，而非反覆經歷認知斷崖？
 
+### 3. 學術報告 / 論文寫作檢查清單（Academic Writing Flow）
+
+- **適合**：課程報告、survey、paper 與其他英文學術寫作。Agent 協助撰寫或潤稿時，應先套用這份清單。
+- **整體風格**：讀起來要像學生自己寫的，不要有 AI 腔。與其像寶寶一樣大幅刪減，不如補上具體的解釋。
+- **檢查清單**：
+  1. **第一人稱，講清楚「我們做了什麼」**：例如 "In this project, we survey…"、"We study…"、"We then…"。避免用定義式的句子開頭，像 "X asks how…"。
+  2. **每節、每小節開頭都要有過渡句**：交代這一段跟前文的關係，以及為什麼接著講它。例如 "With the benchmark in place, we can ask why…"、"What if we relax neither condition?"
+  3. **並列結果先預告**：先寫 "…did so in two ways. The first…"，後面再接 "Their second result…"，不讓第二個結果突然冒出來。
+  4. **Introduction 的順序**：具體情境 → 正式概念 → 引導問題 → 章節導覽（roadmap）。
+  5. **長證明先預告**：開始前先說明分幾步，以及每一步在做什麼。
+  6. **類比要短**：並明講它在哪裡不成立。
+  7. **重複的摘要段改成承上啟下**：不要只是把前面講過的再講一遍。
+  8. **指代要清楚**："this"、"the same paper"、"the restriction" 這類詞要能明確對應到前文；有歧義就直接寫出名稱。
+  9. **順句子的同時核對適用範圍**：潤稿時要檢查每個說法的範圍是否正確（例如曾經發現 "only coverage" 的說法其實不對）。
+  10. **改寫時盡量維持篇幅**：改完重新編譯並確認頁數，再用中文說明新增了哪些過渡句。
+  11. **過渡句不能預設讀者還沒看過的事實**：例如還沒說明 1/2 和 1−1/e 的差距，就先寫 "why a one-pass algorithm falls behind greedy"。下筆前先問「讀者此刻知道什麼？」，缺的事實先補上，最好能呼應上一節的結尾。
+  12. **表格和圖要在需要它的概念之後立刻引入**：說明關鍵欄位怎麼讀；章節導覽放在表格引用之後。
+- **參考範例（章節導覽 roadmap）**：
+
+  > The report is organized as follows. Section 2 defines the problem and the offline greedy benchmark. Section 3 surveys the known results, grouped by which assumption each one changes. Section 4 proves the Sieve-Streaming guarantee and compares it with the streaming k-center algorithm from the course. Section 5 discusses the cost hidden in the oracle model and proposes a question about changing objectives.
+
+  這段好在：每一節只用一句話交代「做什麼」，而且帶出組織邏輯（例如 "grouped by which assumption each one changes"），也點出跟課程內容的連結，而不是只列出章節標題。
+- **持續擴充**：review 時發現清單還沒涵蓋的毛病，就補進這一節。
+
 ## 寫作模板
 
 ### 1. 觀點論述型

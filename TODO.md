@@ -13,6 +13,29 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] Portals 與 World 效能優化（讓成本跟著可見內容成長）
+    - 交付條件：先量測再優化，取得桌面與手機的前後數據；World 的深度排序不再是 O(n²)；不退化視口中心縮放、牆面剪切矩陣、無閉環深度排序與 palette / theme 聯動契約；`portals/assets/` 重建；`cli.py test` 與 realm 測試通過；同步 spec / design / TODO。
+    - 已完成（World）：深度排序改為「螢幕 x 欄位掃描線＋binary heap」（`isBehind` 規則不變）；地形改為初始化時分類一次，每幀只走訪視口格子並合併 fill；地面貼花、浮島崖壁與雲海、粒子加上視口裁剪；靜態實體改用 footprint 外框裁剪；HUD 的 DOM 寫入與 halo CSS 變數只在值改變時才寫；backing-store DPR 上限為桌面 2×、觸控 1.75×；通關密語遮罩或 modal 蓋住 canvas 時降到約 20 fps；支援 `prefers-reduced-motion`；觸控裝置的 HUD 改用實色表面，不做 backdrop blur。
+    - 已完成（Portals）：spring 鏡頭改為按需 rAF，收斂後停止；日夜相位只掛載目前相位與淡出中的相位；`PortalComponent` 加上 `React.memo`，並以 `IntersectionObserver` 暫停畫面外的動畫；靈脈線拿掉 `feGaussianBlur`；進度條改用 `scaleX`；支援 `prefers-reduced-motion`；孢子數量依視口面積縮放；已重建 `portals/assets/`。
+    - 量測（headless Chrome / CDP；桌面 1440×900 DPR 2，手機 390×844 DPR 3、CPU 4× 降速）：
+        - World 手機：主執行緒忙碌 60% → 41%；每秒強制 layout 59 → 0；地形每幀 2.4–3.0 ms → 0.6–1.7 ms；每幀 JS 時間（8 個地點）例如深淵 5.5 → 3.1 ms、Minecraft 島 5.9 → 3.2 ms、抖音 5.8 → 4.3 ms、校園 6.4 → 4.7 ms。
+        - World 桌面：主執行緒 36.6% → 26.1%；每幀 JS 時間例如抖音 7.6 → 6.5 ms、東區 5.8 → 4.1 ms、深淵 3.2 → 2.1 ms。
+        - World 首次造訪（密語遮罩未解鎖）：手機主執行緒 62.8% → 20.7%，桌面 22.1% → 12.8%。優化前在遮罩下，東區曾量到 28 fps，p95 為 100 ms。
+        - 深度排序擴展性（真實 footprint 複製 1–8 倍）：287 個實體 2.3 → 1.3 ms，1,148 個 25 → 1.7 ms，2,296 個 101 → 3.7 ms。在 11 個地點比對 3,647 組直接遮擋關係，新舊排序的違反數相同（皆為 2，來自閉環回復）。
+        - Portals：合成層面積 57.7 → 20.9 MP（估計 GPU 記憶體：桌面約 880 → 320 MB，手機約 1.6 GB → 590 MB）；手機主執行緒 64% → 37.5%（script 20.7% → 7.5%，layout 4.3% → 1.6%）；桌面平移 52 → 58–60 fps；日夜切換 50.5 → 60 fps；DOM 節點 867 → 763。
+        - 視覺回歸：World 在 10 個地點與 HEAD 版本逐像素比對，差異 ≤ 0.18%，只有時間相關的雪花、水晶脈動，以及一處長牆因 footprint 裁剪而不再錯誤消失。Portals 截圖肉眼一致。
+    - Review 重點：headless Chrome 的合成器不等於手機 GPU，請在實機手機上走一圈 World（特別是抖音、東區、深淵橋）並平移 Portals，感受是否明顯變順；確認觸控裝置 HUD 從毛玻璃改成實色可以接受；確認靈脈線改成靜態光暈後的樣子；細節規則見 `docs/specs/realm-spec.md` §6。
+
+- [x] 重構 Phase 0：共用 theme preload 與技術文件
+    - 交付條件：123 份相同的 inline theme / palette script 收斂成 `core/theme-preload.js`（生成器模板同步），行為完全等價；新增 `docs/tech/tech-stack.md` 與 `docs/tech/refactor-roadmap.md`。
+    - 已完成：Node 比對 192 種 theme × palette 組合零差異；重新生成內容頁與替換後逐位元組相同；新增 `tests/test_page_shell.py`（5 項）；全套 61 項測試通過；theme guide、AGENTS、docs 索引已同步。
+    - Review 重點：在瀏覽器切換幾種 Theme / Palette 後重新整理，確認首屏沒有閃爍；讀過 roadmap 後決定 Phase 1 的兩個選擇題（git hooks 補回或移除、保留哪條部署路徑）。
+
+- [x] Labs Grimoire 魔導書（Prompts & Skills）
+    - 交付條件：Labs 新增 `labs/grimoire/index.html`，以 `data/Grimoire/grimoire.json` 為 SSOT；skill 條目直接讀 `skills/<name>/skill.md`，不複製第二份；靈力狀態由 `verified_at` 與 `stale_after_days` 在前端推導；版面沿用 tag 頁的總覽卡（總數、類型統計磚、流派 pill）；卡片點開後整列展開，左側渲染全文、右側顯示狀態與複製／下載／原始檔；三語切換與 Theme / Palette。
+    - 已完成：資料檔與第一則 prompt（知識鷹架審稿）、3 個 skill 條目、`assets/js/grimoire-labs.js`、Labs 卡片；Labs 移除 Portals 卡片；新增 `tests/test_grimoire_data.py`。
+    - Review 重點：所有條目的 `verified_with` / `verified_at` 目前都是 null（顯示「未經試煉」），請實際用模型測過後填入；確認要公開哪些 skill；在瀏覽器檢查桌面與手機版面。
+
 - [x] CS5234 全課筆記補至 Lecture 13
     - 交付條件：source note 納入 Lecture 11–13 的 graph streaming/query、deterministic 與 randomized communication 內容；對照 supplied Notes 1–10、Exercises 1–3、Homework 1–3、Quiz 1–2；重生 HTML 並確認 drafting 不進公開索引。
     - 已完成：保留 Week 1–10 既有詳解，新增 Week 11–13 的模型、演算法、公式、證明主線與 assessment crosswalk；補充 Homework 1–3、Quiz 1–2 的可重用推導重點，並更新摘要、quick reference、takeaways、references；`cli.py build` 成功，公開 search index 未因 drafting 筆記變動。

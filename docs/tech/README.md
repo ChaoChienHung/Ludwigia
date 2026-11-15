@@ -10,7 +10,8 @@
 
 ## 讀法
 
-- 想先知道整個專案用什麼技術：先看本文
+- 想先知道整個專案用什麼技術：看 `docs/tech/tech-stack.md`
+- 想知道重構計畫與目前的技術債：看 `docs/tech/refactor-roadmap.md`
 - 想查站內搜推怎麼運作：看 `docs/tech/search-and-recommendation.md`
 - 想看站內 Copilot 的入口、fallback 與問題範圍規格：看 `docs/specs/copilot-entry-spec.md`
 - 想看 `About Me` 下 timeline 的正式設計規格：看 `docs/specs/timeline-design-spec.md`
@@ -19,7 +20,10 @@
 
 ## 文件清單
 
-- `docs/tech/README.md`：`docs/tech/` 的入口頁，也是技術棧的集中摘要
+- `docs/tech/README.md`：`docs/tech/` 的入口頁
+- `docs/tech/tech-stack.md`：完整技術棧（主站、內容工具鏈、Portals / Realms、Labs、部署）
+- `docs/tech/refactor-roadmap.md`：技術債盤點與分階段重構計畫
+- `docs/tech/portals-world-performance.md`：Portals 與 World 的效能優化紀錄、量測數據與守則
 - `docs/specs/copilot-entry-spec.md`：站內 Copilot 的入口位置、入口文案、fallback 與問題範圍小規格
 - `docs/tech/search-and-recommendation.md`：站內搜推的資料流、排序、推薦與已知落差
 - `docs/specs/timeline-design-spec.md`：`About Me` 下 timeline 的正式設計規格（desktop/mobile、point/period、MVP interaction）
@@ -27,27 +31,4 @@
 
 ## Tech Stack
 
-這份摘要只放「目前真的在用、而且會影響理解專案」的最小技術棧。
-
-### Runtime / Languages
-
-- Python（以 stdlib 為主）：內容生成、indexer、最小工具鏈
-- HTML / CSS / JavaScript：主站是純靜態站，沒有後端
-- React + Vite：只用在 `garden/` 子系統；資料仍只讀 `window.SITE_SEARCH_INDEX`
-
-### Data / Index
-
-- `search/indexer.py`：掃描 `notes/`、`writing/`、`canvas/`，生成 `search/search-index.{json,js}`
-- `search/search-index.json`：runtime 優先抓取的索引版本
-- `search/search-index.js`：提供 `window.SITE_SEARCH_INDEX`，支援 `file://` 或 JSON fetch 失敗時 fallback
-
-### Build / Deploy Artifacts
-
-- 白名單生成物：`search/search-index.{json,js}`、`garden/floral-assets/`
-- 其它生成物一律視為本機 / CI 產物，應進 `.gitignore`
-
-### Source Of Truth
-
-- 內容層：source `.md` 與生成後 HTML `<head>` metadata
-- 搜尋 / 瀏覽層：`search/search-index.{json,js}`
-- 偏好狀態：client-side localStorage
+完整的技術棧（各子系統、函式庫版本、CLI 指令、部署方式）已移到 `docs/tech/tech-stack.md`，以那份為準，這裡不再維護第二份摘要。
