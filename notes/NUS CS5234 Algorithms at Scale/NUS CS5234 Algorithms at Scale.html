@@ -4,41 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NUS CS5234 Algorithms at Scale — Ludwig</title>
-  <meta name="garden:tags" content="Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev&#x27;s Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset, Linear Sketch, Graph Streaming, Communication Complexity, Information Theory">
-  <meta name="garden:summary" content="Comprehensive NUS CS5234 Algorithms at Scale notes (Lectures 1–13), from sublinear query and streaming algorithms through clustering, sketches, graph algorithms, deterministic and randomized communication complexity, information cost, and course exercises.">
+  <meta name="garden:tags" content="Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev&#x27;s Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset, Linear Sketch, Graph Streaming, Communication Complexity, Information Theory, Submodular Maximization">
+  <meta name="garden:summary" content="Comprehensive NUS CS5234 Algorithms at Scale notes (Lectures 1–13), from sublinear query and streaming algorithms through clustering, sketches, graph algorithms, deterministic and randomized communication complexity, information cost, course exercises, and a course-project survey of streaming submodular maximization.">
   <meta name="site:lang" content="en">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.sublinear_algorithm,concept.query_algorithm,concept.randomized_algorithm,concept.concentration_inequalities,concept.chernoff_bound,concept.chebyshev_inequality,concept.variance_reduction,concept.graph_algorithm,concept.algorithm,concept.probability,concept.streaming_algorithm,concept.spanner,concept.clustering,concept.metric_space,concept.coreset,concept.linear_sketch,concept.graph_streaming,concept.communication_complexity,concept.information_theory">
-  <meta name="site:tag_labels" content="{&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.variance_reduction&quot;:{&quot;en&quot;:&quot;Variance Reduction&quot;,&quot;zh-Hant&quot;:&quot;方差降低技巧&quot;,&quot;zh-Hans&quot;:&quot;方差降低技巧&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.streaming_algorithm&quot;:{&quot;en&quot;:&quot;Streaming Algorithm&quot;,&quot;zh-Hant&quot;:&quot;串流演算法&quot;,&quot;zh-Hans&quot;:&quot;流式算法&quot;},&quot;concept.spanner&quot;:{&quot;en&quot;:&quot;Spanner&quot;,&quot;zh-Hant&quot;:&quot;跨角圖&quot;,&quot;zh-Hans&quot;:&quot;跨角图&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.metric_space&quot;:{&quot;en&quot;:&quot;Metric Space&quot;,&quot;zh-Hant&quot;:&quot;度量空間&quot;,&quot;zh-Hans&quot;:&quot;度量空间&quot;},&quot;concept.coreset&quot;:{&quot;en&quot;:&quot;Coreset&quot;,&quot;zh-Hant&quot;:&quot;核心集&quot;,&quot;zh-Hans&quot;:&quot;核心集&quot;},&quot;concept.linear_sketch&quot;:{&quot;en&quot;:&quot;Linear Sketch&quot;,&quot;zh-Hant&quot;:&quot;線性草圖&quot;,&quot;zh-Hans&quot;:&quot;线性草图&quot;},&quot;concept.graph_streaming&quot;:{&quot;en&quot;:&quot;Graph Streaming&quot;,&quot;zh-Hant&quot;:&quot;圖串流&quot;,&quot;zh-Hans&quot;:&quot;图流式&quot;},&quot;concept.communication_complexity&quot;:{&quot;en&quot;:&quot;Communication Complexity&quot;,&quot;zh-Hant&quot;:&quot;通訊複雜度&quot;,&quot;zh-Hans&quot;:&quot;通信复杂度&quot;},&quot;concept.information_theory&quot;:{&quot;en&quot;:&quot;Information Theory&quot;,&quot;zh-Hant&quot;:&quot;資訊理論&quot;,&quot;zh-Hans&quot;:&quot;信息论&quot;}}">
+  <meta name="site:tag_concepts" content="concept.sublinear_algorithm,concept.query_algorithm,concept.randomized_algorithm,concept.concentration_inequalities,concept.chernoff_bound,concept.chebyshev_inequality,concept.variance_reduction,concept.graph_algorithm,concept.algorithm,concept.probability,concept.streaming_algorithm,concept.spanner,concept.clustering,concept.metric_space,concept.coreset,concept.linear_sketch,concept.graph_streaming,concept.communication_complexity,concept.information_theory,concept.submodular_maximization">
+  <meta name="site:tag_labels" content="{&quot;concept.sublinear_algorithm&quot;:{&quot;en&quot;:&quot;Sublinear Algorithm&quot;,&quot;zh-Hant&quot;:&quot;亞線性演算法&quot;,&quot;zh-Hans&quot;:&quot;亚线性算法&quot;},&quot;concept.query_algorithm&quot;:{&quot;en&quot;:&quot;Query Algorithm&quot;,&quot;zh-Hant&quot;:&quot;查詢演算法&quot;,&quot;zh-Hans&quot;:&quot;查询算法&quot;},&quot;concept.randomized_algorithm&quot;:{&quot;en&quot;:&quot;Randomized Algorithm&quot;,&quot;zh-Hant&quot;:&quot;隨機化演算法&quot;,&quot;zh-Hans&quot;:&quot;随机化算法&quot;},&quot;concept.concentration_inequalities&quot;:{&quot;en&quot;:&quot;Concentration Inequalities&quot;,&quot;zh-Hant&quot;:&quot;集中不等式&quot;,&quot;zh-Hans&quot;:&quot;集中不等式&quot;},&quot;concept.chernoff_bound&quot;:{&quot;en&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hant&quot;:&quot;Chernoff Bound&quot;,&quot;zh-Hans&quot;:&quot;Chernoff Bound&quot;},&quot;concept.chebyshev_inequality&quot;:{&quot;en&quot;:&quot;Chebyshev&#x27;s Inequality&quot;,&quot;zh-Hant&quot;:&quot;Chebyshev 不等式&quot;,&quot;zh-Hans&quot;:&quot;Chebyshev 不等式&quot;},&quot;concept.variance_reduction&quot;:{&quot;en&quot;:&quot;Variance Reduction&quot;,&quot;zh-Hant&quot;:&quot;方差降低技巧&quot;,&quot;zh-Hans&quot;:&quot;方差降低技巧&quot;},&quot;concept.graph_algorithm&quot;:{&quot;en&quot;:&quot;Graph Algorithm&quot;,&quot;zh-Hant&quot;:&quot;圖演算法&quot;,&quot;zh-Hans&quot;:&quot;图算法&quot;},&quot;concept.algorithm&quot;:{&quot;en&quot;:&quot;Algorithm&quot;,&quot;zh-Hant&quot;:&quot;演算法&quot;,&quot;zh-Hans&quot;:&quot;算法&quot;},&quot;concept.probability&quot;:{&quot;en&quot;:&quot;Probability&quot;,&quot;zh-Hant&quot;:&quot;機率學&quot;,&quot;zh-Hans&quot;:&quot;概率学&quot;},&quot;concept.streaming_algorithm&quot;:{&quot;en&quot;:&quot;Streaming Algorithm&quot;,&quot;zh-Hant&quot;:&quot;串流演算法&quot;,&quot;zh-Hans&quot;:&quot;流式算法&quot;},&quot;concept.spanner&quot;:{&quot;en&quot;:&quot;Spanner&quot;,&quot;zh-Hant&quot;:&quot;跨角圖&quot;,&quot;zh-Hans&quot;:&quot;跨角图&quot;},&quot;concept.clustering&quot;:{&quot;en&quot;:&quot;Clustering&quot;,&quot;zh-Hant&quot;:&quot;分群&quot;,&quot;zh-Hans&quot;:&quot;聚类&quot;},&quot;concept.metric_space&quot;:{&quot;en&quot;:&quot;Metric Space&quot;,&quot;zh-Hant&quot;:&quot;度量空間&quot;,&quot;zh-Hans&quot;:&quot;度量空间&quot;},&quot;concept.coreset&quot;:{&quot;en&quot;:&quot;Coreset&quot;,&quot;zh-Hant&quot;:&quot;核心集&quot;,&quot;zh-Hans&quot;:&quot;核心集&quot;},&quot;concept.linear_sketch&quot;:{&quot;en&quot;:&quot;Linear Sketch&quot;,&quot;zh-Hant&quot;:&quot;線性草圖&quot;,&quot;zh-Hans&quot;:&quot;线性草图&quot;},&quot;concept.graph_streaming&quot;:{&quot;en&quot;:&quot;Graph Streaming&quot;,&quot;zh-Hant&quot;:&quot;圖串流&quot;,&quot;zh-Hans&quot;:&quot;图流式&quot;},&quot;concept.communication_complexity&quot;:{&quot;en&quot;:&quot;Communication Complexity&quot;,&quot;zh-Hant&quot;:&quot;通訊複雜度&quot;,&quot;zh-Hans&quot;:&quot;通信复杂度&quot;},&quot;concept.information_theory&quot;:{&quot;en&quot;:&quot;Information Theory&quot;,&quot;zh-Hant&quot;:&quot;資訊理論&quot;,&quot;zh-Hans&quot;:&quot;信息论&quot;},&quot;concept.submodular_maximization&quot;:{&quot;en&quot;:&quot;Submodular Maximization&quot;,&quot;zh-Hant&quot;:&quot;次模函數最大化&quot;,&quot;zh-Hans&quot;:&quot;次模函数最大化&quot;}}">
   <meta name="site:canonical_id" content="nus-cs5234-algorithms-at-scale">
   <meta name="site:published_at" content="2026-08-20">
-  <meta name="site:last_modified_at" content="2026-11-14">
-  <meta name="site:reading_time_minutes" content="606">
+  <meta name="site:last_modified_at" content="2026-11-15">
+  <meta name="site:reading_time_minutes" content="624">
   <meta name="site:source" content="notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.md">
-  <script>
-  (() => {
-    try {
-      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
-      if (theme === "light") document.documentElement.classList.add("light-theme");
-      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
-      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
-      if (theme === "sky") document.documentElement.classList.add("sky-theme");
-      if (theme === "garden") document.documentElement.classList.add("garden-theme");
-      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
-      if (palette === "ember") document.documentElement.classList.add("palette-ember");
-      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
-      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
-      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
-      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
-      if (palette === "sky") document.documentElement.classList.add("palette-sky");
-      if (palette === "garden") document.documentElement.classList.add("palette-garden");
-      if (palette === "grove") document.documentElement.classList.add("palette-grove");
-      if (palette === "red") document.documentElement.classList.add("palette-red");
-      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
-      if (palette === "ash") document.documentElement.classList.add("palette-ash");
-    } catch (e) {}
-  })();
-</script>
+  <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -476,6 +453,22 @@
 <a class="note-toc-link level-1" href="#4-internal-and-external-information-in-two-way-protocols-slides-26-29">4. Internal and external information in two-way protocols (slides 26–29)</a>
 <a class="note-toc-link level-1" href="#5-disjointness-as-a-direct-sum-information-argument-slides-30-40">5. Disjointness as a direct-sum information argument (slides 30–40)</a>
 <a class="note-toc-link level-1" href="#6-how-the-later-lectures-fit-the-earlier-ones">6. How the later lectures fit the earlier ones</a>
+<a class="note-toc-link level-1" href="#project-reading-map-choosing-k-good-items-from-a-stream-you-cannot-revisit">Project Reading Map: Choosing $k$ Good Items from a Stream You Cannot Revisit</a>
+<a class="note-toc-link level-1" href="#1-problem-definition-diminishing-returns-and-the-offline-benchmark">1. Problem Definition: Diminishing Returns and the Offline Benchmark</a>
+<a class="note-toc-link level-2" href="#1-1-monotone-submodular-functions">1.1 Monotone submodular functions</a>
+<a class="note-toc-link level-2" href="#1-2-coverage-the-running-example">1.2 Coverage: the running example</a>
+<a class="note-toc-link level-2" href="#1-3-offline-greedy-and-why-it-is-tight">1.3 Offline greedy and why it is tight</a>
+<a class="note-toc-link level-1" href="#2-known-results-organized-by-assumption">2. Known Results, Organized by Assumption</a>
+<a class="note-toc-link level-2" href="#2-1-relaxing-the-order-random-arrival">2.1 Relaxing the order: random arrival</a>
+<a class="note-toc-link level-2" href="#2-2-relaxing-the-passes-a-second-look">2.2 Relaxing the passes: a second look</a>
+<a class="note-toc-link level-2" href="#2-3-relaxing-neither-the-1-2-barrier">2.3 Relaxing neither: the $1/2$ barrier</a>
+<a class="note-toc-link level-2" href="#2-4-keeping-both-conditions-saving-memory-sieve-streaming">2.4 Keeping both conditions, saving memory: Sieve-Streaming++</a>
+<a class="note-toc-link level-1" href="#3-sieve-streaming-the-proof-in-three-steps">3. Sieve-Streaming: The Proof in Three Steps</a>
+<a class="note-toc-link level-2" href="#3-1-step-1-the-threshold-rule-with-a-known-estimate-v">3.1 Step 1: the threshold rule with a known estimate $v$</a>
+<a class="note-toc-link level-2" href="#3-2-step-2-parallel-geometric-guesses">3.2 Step 2: parallel geometric guesses</a>
+<a class="note-toc-link level-2" href="#3-3-step-3-lazy-guesses-within-one-pass">3.3 Step 3: lazy guesses within one pass</a>
+<a class="note-toc-link level-1" href="#4-connections-to-the-course">4. Connections to the Course</a>
+<a class="note-toc-link level-1" href="#5-hidden-costs-and-open-directions">5. Hidden Costs and Open Directions</a>
 <a class="note-toc-link level-1" href="#worked-principles-from-the-supplied-assessments">Worked principles from the supplied assessments</a>
 <a class="note-toc-link level-2" href="#homework-1-query-estimation-a-hidden-bit-and-permutation-testing">Homework 1: query estimation, a hidden bit, and permutation testing</a>
 <a class="note-toc-link level-2" href="#homework-2-joint-sampling-exact-f-0-and-one-summary-k-center">Homework 2: joint sampling, exact $F_0$, and one-summary $k$-center</a>
@@ -504,7 +497,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-11-14" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-14</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-15" data-published-at="2026-08-20"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-15</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -10522,6 +10515,224 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 
 <p class="mb-3">Week 11 turns Week 9's linear-sketch viewpoint into a graph algorithm: a cut vector is a sum of vertex vectors, so an outgoing edge can be sampled after the stream. Weeks 12–13 turn Week 8's streaming lower-bound reductions into a more systematic toolkit: deterministic rectangles and rank give exact communication barriers, while entropy, information cost, Pinsker, and randomized rectangles handle bounded-error protocols. The lesson across all three is to specify <strong>what is observed</strong>, <strong>what is stored or communicated</strong>, and <strong>which randomness remains independent</strong> before writing a guarantee.</p>
 
+<h1 class="mt-4">Course Project - Streaming Submodular Maximization under a Cardinality Constraint</h1>
+</section>
+
+<section id="project-reading-map-choosing-k-good-items-from-a-stream-you-cannot-revisit" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Project Reading Map: Choosing $k$ Good Items from a Stream You Cannot Revisit</h3>
+
+<p class="mb-3">The course project was a survey of <strong>streaming submodular maximization under a cardinality constraint</strong>. It sits naturally after Week 6: streaming $k$-center taught us to replace an offline greedy rule with a <strong>threshold test</strong> and to run <strong>parallel geometric guesses</strong> for an unknown optimum. Sieve-Streaming uses the same design pattern for a different objective, so this section reads best as "Week 6's pattern, applied to set-function maximization". Its lower-bound part reuses Week 8's Index reduction.</p>
+
+<p class="mb-3">The section follows the survey's order:</p>
+
+<ol class="mb-3">
+<li>Define the problem and the offline greedy benchmark ($1-1/e$).</li>
+<li>Map the known results by which assumption they change: arrival order, number of passes, or memory.</li>
+<li>Prove the main result, Sieve-Streaming's one-pass $(1/2-\varepsilon)$ guarantee, in three steps.</li>
+<li>Compare it with streaming $k$-center and with the sketches of Weeks 7–10.</li>
+<li>Note the cost hidden in the oracle model and an open question about changing objectives.</li>
+</ol>
+</section>
+
+<section id="1-problem-definition-diminishing-returns-and-the-offline-benchmark" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Problem Definition: Diminishing Returns and the Offline Benchmark</h3>
+
+<h4 id="1-1-monotone-submodular-functions" class="mb-2">1.1 Monotone submodular functions</h4>
+
+<p class="mb-3">Let $V=\{e_1,\ldots,e_n\}$ be the ground set, presented as a stream, and $f:2^V\to\mathbb{R}_{\ge0}$ a set function. The <strong>marginal gain</strong> of $e\notin S$ is</p>
+
+<p class="mb-3">$$ \Delta_f(e\mid S)=f(S\cup\{e\})-f(S). $$</p>
+
+<ul class="note-list">
+<li><strong>Monotone:</strong> $\Delta_f(e\mid S)\ge0$ for every $S$ and $e\notin S$.</li>
+<li><strong>Submodular:</strong> for $A\subseteq B$ and $e\notin B$, $\Delta_f(e\mid A)\ge\Delta_f(e\mid B)$. An item cannot become more valuable just because more items were already chosen.</li>
+</ul>
+
+<p class="mb-3">The goal is $\operatorname{OPT}=\max_{|S|\le k}f(S)$, with $S^<em>$ an optimal set. We assume a </em><em>value oracle</em>* that returns $f(S)$ for any requested set. Without loss of generality $f(\varnothing)=0$: subtracting $f(\varnothing)$ keeps every marginal gain, and an $\alpha$-approximation for the shifted function is still one for $f$ when $0\le\alpha\le1$.</p>
+
+<h4 id="1-2-coverage-the-running-example" class="mb-2">1.2 Coverage: the running example</h4>
+
+<p class="mb-3">Each item $e$ covers a topic set $C(e)$, and topic $c$ has weight $w_c\ge0$:</p>
+
+<p class="mb-3">$$ f(S)=\sum_{c\in\bigcup_{e\in S}C(e)}w_c. $$</p>
+
+<p class="mb-3">Adding $e$ gains the weight of the topics $e$ covers <strong>for the first time</strong>. That gain is never negative (monotone) and can only shrink as $S$ grows (submodular). With $C(x)=\{a,b\}$, $C(y)=\{b,c\}$ and unit weights, $f(\{y\})=2$ but $\Delta_f(y\mid\{x\})=1$, because topic $b$ is counted once. During a stream, what matters is an item's <strong>current</strong> marginal gain, not its value in isolation.</p>
+
+<p class="mb-3">Not every objective has diminishing returns. A recommender that values a phone and its case more together than apart is <strong>complementary</strong>, which submodularity rules out; none of the results below apply to it.</p>
+
+<h4 id="1-3-offline-greedy-and-why-it-is-tight" class="mb-2">1.3 Offline greedy and why it is tight</h4>
+
+<p class="mb-3">Offline greedy starts from $S_0=\varnothing$ and repeatedly adds the item of largest marginal gain:</p>
+
+<p class="mb-3">$$ f(S_{\text{greedy}})\ge\Bigl(1-\bigl(1-\tfrac1k\bigr)^k\Bigr)\operatorname{OPT}\ge(1-1/e)\operatorname{OPT}. $$</p>
+
+<p class="mb-3"><strong>Proof idea.</strong> The at most $k$ optimal items together can close the residual gap $\operatorname{OPT}-f(S_{i-1})$, so one of them closes at least a $1/k$ fraction of it. Greedy's choice is at least as good as that item, so the gap shrinks by a factor $1-1/k$ each step.</p>
+
+<p class="mb-3"><strong>Tight example ($k=2$).</strong> Add $z$ with $C(z)=\{c,d\}$. The optimum $\{x,z\}$ has value $4$. All singletons have value $2$, so greedy may pick $y$ first; then $x$ and $z$ each add only $1$, and greedy ends at $3=\tfrac34\operatorname{OPT}$, exactly the bound.</p>
+
+<p class="mb-3">The key step, "compare against every remaining item", is what a stream takes away: an item that was not kept on arrival cannot be reconsidered.</p>
+</section>
+
+<section id="2-known-results-organized-by-assumption" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Known Results, Organized by Assumption</h3>
+
+<p class="mb-3">A one-pass algorithm loses ground for two reasons: each decision is <strong>irrevocable</strong> (discarded items are gone), and in the <strong>arbitrary-order</strong> model an adversary may send many overlapping, moderately good items before the useful ones. Every result below relaxes one of these, proves that under both of them $1/2$ is the limit, or keeps both and saves memory.</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>Method</th>
+<th>Access model</th>
+<th>Guarantee</th>
+<th>Stored elements</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Offline greedy</td>
+<td>Repeated access</td>
+<td>$1-1/e$</td>
+<td>Full input</td>
+</tr>
+<tr>
+<td>Sieve-Streaming (2014)</td>
+<td>Arbitrary order, one pass</td>
+<td>$1/2-\varepsilon$</td>
+<td>$O(k\log k/\varepsilon)$</td>
+</tr>
+<tr>
+<td>SALSA (2018)</td>
+<td>Random order, one pass</td>
+<td>$&gt;1/2$ in expectation</td>
+<td>$O(k\log k)$</td>
+</tr>
+<tr>
+<td>Agrawal–Shadravan–Stein (2019)</td>
+<td>Random order, one pass</td>
+<td>$1-1/e-\varepsilon-O(1/k)$</td>
+<td>$O(k)$, exponential in $1/\varepsilon$</td>
+</tr>
+<tr>
+<td>Liu–Rubinstein–Vondrák–Zhao (2021)</td>
+<td>Random order, one pass</td>
+<td>$1-1/e-\varepsilon$</td>
+<td>$O(k/\varepsilon)$</td>
+</tr>
+<tr>
+<td>Two-pass (2018)</td>
+<td>Arbitrary order, two passes</td>
+<td>$5/9-\varepsilon$</td>
+<td>$O(k\log k/\varepsilon)$</td>
+</tr>
+<tr>
+<td>Sieve-Streaming++ (2019)</td>
+<td>Arbitrary order, one pass</td>
+<td>$1/2-\varepsilon$</td>
+<td>$O(k/\varepsilon)$</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 id="2-1-relaxing-the-order-random-arrival" class="mb-2">2.1 Relaxing the order: random arrival</h4>
+
+<ul class="note-list">
+<li><strong>SALSA</strong> (Norouzi-Fard et al.) was the first to beat $1/2$. In a random order, the early optimal elements are a random sample of the optimum, so early selections tell the algorithm how much value later thresholds must recover. An adversarial order breaks this.</li>
+<li><strong>Agrawal, Shadravan, and Stein</strong> split the random stream into many short windows. Optimal elements spread roughly evenly across windows, so a greedy-like step inside each window usually finds an item comparable to what offline greedy would pick.</li>
+<li><strong>Liu et al.</strong> keep $1-1/e-\varepsilon$ and cut memory to $O(k/\varepsilon)$. Since $1-1/e$ is essentially the limit for random order, random order closes the gap to offline greedy.</li>
+</ul>
+
+<h4 id="2-2-relaxing-the-passes-a-second-look" class="mb-2">2.2 Relaxing the passes: a second look</h4>
+
+<p class="mb-3">Keeping arbitrary order but allowing <strong>two passes</strong>, Norouzi-Fard et al. reach $5/9-\varepsilon$: the first pass accepts only items above a high threshold, and the second rereads the stream with a lower one, giving rejected useful items a second chance.</p>
+
+<h4 id="2-3-relaxing-neither-the-1-2-barrier" class="mb-2">2.3 Relaxing neither: the $1/2$ barrier</h4>
+
+<ul class="note-list">
+<li><strong>Conditional bound (Norouzi-Fard et al. 2018).</strong> Any arbitrary-order algorithm with ratio $\alpha&gt;1/2$ that queries the oracle only on <strong>feasible</strong> sets ($|S|\le k$) needs $\Omega(n/k)$ memory. The proof is a Week 8 Index reduction: Alice encodes an $m$-bit string in the first $km$ items, Bob's final item selects the bit, and the optimum is $k$ or $2k-1$ depending on that bit. Feasible queries on Alice's prefix cannot reveal Bob's index, which is exactly where the restriction is used. Separating the two optima would let Bob read the bit from Alice's memory state, so memory is $\Omega(m)=\Omega(n/k)$.</li>
+<li><strong>Unconditional bound (Feldman et al. 2020).</strong> For any $\varepsilon&gt;0$ and large enough $k$, ratio $1/2+\varepsilon$ needs $\Omega(\varepsilon n/k^3)$ memory, with no restriction on queries. The reduction uses <strong>many players</strong>, each holding a block of the stream, and a new family of coverage functions that hide the optimal elements among the blocks.</li>
+</ul>
+
+<p class="mb-3">Together with Sieve-Streaming, this settles the one-pass arbitrary-order problem: $1/2$ is achievable with memory independent of $n$, and anything above $1/2$ needs memory linear in $n$ for fixed $k$.</p>
+
+<h4 id="2-4-keeping-both-conditions-saving-memory-sieve-streaming" class="mb-2">2.4 Keeping both conditions, saving memory: Sieve-Streaming++</h4>
+
+<p class="mb-3">Since the factor cannot improve, the remaining room is memory. Sieve-Streaming++ uses the fixed threshold $\tau=v/(2k)$ and tracks the best current candidate value $LB$, dropping every threshold below $LB/(2k)$. Each accepted item added at least $\tau$, so $\tau|S_\tau|\le f(S_\tau)\le LB$, i.e. $|S_\tau|\le LB/\tau$. Summing over geometric thresholds $\tau_i=(1+\varepsilon)^i\tau_0$ with $\tau_0\ge LB/(2k)$:</p>
+
+<p class="mb-3">$$ \sum_{i\ge0}\frac{LB}{\tau_i}\le2k\sum_{i\ge0}(1+\varepsilon)^{-i}=O(k/\varepsilon). $$</p>
+
+<p class="mb-3">Low thresholds may hold $k$ items, but high thresholds hold geometrically fewer, which removes the $\log k$ factor.</p>
+</section>
+
+<section id="3-sieve-streaming-the-proof-in-three-steps" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Sieve-Streaming: The Proof in Three Steps</h3>
+
+<p class="mb-3">Sieve-Streaming (Badanidiyuru et al., KDD 2014) gets $(1/2-\varepsilon)\operatorname{OPT}$ in one arbitrary-order pass, storing $O(k\log k/\varepsilon)$ elements with $O(\log k/\varepsilon)$ oracle calls per item. The proof first assumes a good estimate of $\operatorname{OPT}$, then replaces it with parallel guesses, and finally creates those guesses lazily inside one pass.</p>
+
+<h4 id="3-1-step-1-the-threshold-rule-with-a-known-estimate-v" class="mb-2">3.1 Step 1: the threshold rule with a known estimate $v$</h4>
+
+<p class="mb-3">Suppose $\alpha\operatorname{OPT}\le v\le\operatorname{OPT}$. Keep $S$, and while $|S|&lt;k$ accept the arriving $e$ iff</p>
+
+<p class="mb-3">$$ \Delta_f(e\mid S)\ge\frac{v/2-f(S)}{k-|S|}. $$</p>
+
+<p class="mb-3">Numerator: value still needed to reach $v/2$. Denominator: slots left.</p>
+
+<p class="mb-3"><strong>Invariant.</strong> After every acceptance, $f(S)\ge v|S|/(2k)$. If it holds at $|S|=j$ and $e$ passes,</p>
+
+<p class="mb-3">$$ f(S\cup\{e\})\ge\frac{k-j-1}{k-j}f(S)+\frac{v}{2(k-j)}\ge\frac{k-j-1}{k-j}\cdot\frac{vj}{2k}+\frac{v}{2(k-j)}=\frac{v(j+1)}{2k}. $$</p>
+
+<p class="mb-3">The coefficient of $f(S)$ is nonnegative, so substituting the lower bound is valid.</p>
+
+<p class="mb-3"><strong>Case A: $S$ fills.</strong> The invariant gives $f(S)\ge v/2\ge\alpha\operatorname{OPT}/2$.</p>
+
+<p class="mb-3"><strong>Case B: $S$ ends with free slots.</strong> Every $a\in S^*\setminus S$ was rejected when it arrived, against some earlier $S_a\subseteq S$. Rejection plus the invariant give</p>
+
+<p class="mb-3">$$ \Delta_f(a\mid S_a)&lt;\frac{v/2-f(S_a)}{k-|S_a|}\le\frac{v}{2k}. $$</p>
+
+<p class="mb-3">Submodularity gives $\Delta_f(a\mid S)\le v/(2k)$, and at most $k$ such items add at most $v/2$ on top of $S$. By monotonicity, $\operatorname{OPT}\le f(S\cup S^<em>)\le f(S)+v/2$, so $f(S)\ge\operatorname{OPT}/2$. ($S\cup S^</em>$ exists only in the analysis, never in memory.)</p>
+
+<p class="mb-3"><strong>Why one half?</strong> With a fixed threshold $\tau$, a full set has $f(S)\ge k\tau$ and an unfilled one has $f(S)\ge\operatorname{OPT}-k\tau$. We cannot know which case will happen, so the guarantee is $\min\{k\tau,\operatorname{OPT}-k\tau\}$, maximized at $\tau=\operatorname{OPT}/(2k)$ where both equal $\operatorname{OPT}/2$. The adaptive rule aims at the same balance using the current state of $S$.</p>
+
+<p class="mb-3"><strong>General form, used next.</strong> The induction needs only $v&gt;0$. So for any $v$: a full set gives $f(S)\ge v/2$, and an unfilled one gives $f(S)\ge\operatorname{OPT}-v/2$. This is what handles an estimate slightly <strong>above</strong> $\operatorname{OPT}$.</p>
+
+<h4 id="3-2-step-2-parallel-geometric-guesses" class="mb-2">3.2 Step 2: parallel geometric guesses</h4>
+
+<p class="mb-3">Let $m=\max_e f(\{e\})$. Monotonicity gives $m\le\operatorname{OPT}$, and submodularity gives $\operatorname{OPT}\le km$ (no more than $k$ singleton values). Run one threshold candidate $S_v$ for each $v=(1+\varepsilon)^i\in[m,2km]$ and return the best. That is $O(\log k/\varepsilon)$ guesses. <strong>Multiplicative</strong> spacing suffices because the guarantee is a ratio; an additive grid would need about $k/\varepsilon$ guesses.</p>
+
+<p class="mb-3">Let $v^<em>$ be the smallest grid point $\ge\operatorname{OPT}$, so $\operatorname{OPT}\le v^</em>&lt;(1+\varepsilon)\operatorname{OPT}\le2km$. If $S_{v^<em>}$ fills, $f\ge v^</em>/2\ge\operatorname{OPT}/2$. Otherwise the general form gives $f\ge\operatorname{OPT}-v^*/2&gt;(1/2-\varepsilon/2)\operatorname{OPT}$.</p>
+
+<h4 id="3-3-step-3-lazy-guesses-within-one-pass" class="mb-2">3.3 Step 3: lazy guesses within one pass</h4>
+
+<p class="mb-3">Knowing $m$ in advance would cost a pass. Instead track the running maximum $m_t$ and keep guesses in $[m_t,2km_t]$, creating an empty $S_v$ for each newly active guess <strong>before</strong> testing the current item and deleting guesses that fall out of range.</p>
+
+<p class="mb-3"><strong>Why starting late is safe.</strong> Since $m_t\le m\le v^<em>$, the good guess $v^</em>$ is never dropped from below. Before it becomes active, $v^*&gt;2km_t$, so every earlier item has</p>
+
+<p class="mb-3">$$ \Delta_f(e\mid\varnothing)\le f(\{e\})\le m_t&lt;\frac{v^*}{2k}, $$</p>
+
+<p class="mb-3">which is below the empty candidate's first threshold $v^<em>/(2k)$. A candidate started at the beginning would have rejected all of them anyway. Once an item large enough to pass arrives, updating $m_t$ first activates $v^</em>$ before the test, and from then on the lazy and eager candidates see the same items and make the same decisions. This is the role of the factor $2$ in $2km_t$.</p>
+
+<p class="mb-3"><strong>Theorem (Sieve-Streaming).</strong> For monotone submodular $f$ and any $\varepsilon&gt;0$, one arbitrary-order pass returns $|S|\le k$ with $f(S)\ge(1/2-\varepsilon)\operatorname{OPT}$, storing $O(k\log(2k)/\varepsilon)$ elements with $O(\log(2k)/\varepsilon)$ oracle calls per item.</p>
+</section>
+
+<section id="4-connections-to-the-course" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Connections to the Course</h3>
+
+<ul class="note-list">
+<li><strong>Offline greedy vs. threshold.</strong> Greedy's proof needs the chosen item to beat every optimal item, which requires seeing them side by side. The threshold test compares only the current item with the state $S$, and the two-case argument supplies what revisiting used to supply. The price is $1-1/e\to1/2$, and Section 2.3 shows it cannot be avoided with small memory and arbitrary order.</li>
+<li><strong>Week 6 streaming $k$-center.</strong> Same pattern: a one-pass threshold test plus parallel geometric guesses for an unknown optimum. But $k$-center minimizes a maximum distance and <strong>discards</strong> a guess once it needs more than $k$ centers. Sieve-Streaming never discards a guess for failing; its guarantee comes from analyzing a full versus an unfilled budget, which is why its threshold depends on $f(S)$ and $|S|$.</li>
+<li><strong>Weeks 7–10 sketches.</strong> A sketch compresses the information needed to estimate a statistic. Sieve-Streaming keeps actual items, because its output must be a feasible set. Its storage is sublinear in $n$, but total oracle calls are $O(n\log k/\varepsilon)$: it saves <strong>space</strong>, not <strong>time</strong>. Reservoir sampling appears only in a supporting role, to keep an evaluation sample for objectives that depend on the whole dataset.</li>
+<li><strong>Week 8 lower bounds.</strong> The $1/2$ barrier is an Index-style reduction (two-player with feasible queries, many-player without).</li>
+</ul>
+</section>
+
+<section id="5-hidden-costs-and-open-directions" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Hidden Costs and Open Directions</h3>
+
+<p class="mb-3"><strong>Oracle cost.</strong> All bounds count oracle calls, not the time of one call. For exemplar-based clustering, one evaluation can scan all $n$ points. Evaluating on a random sample makes the threshold test noisy: an item just below the threshold may be accepted, and the invariant then holds only approximately. That estimation loss must be bounded separately from the $1/2-\varepsilon$ selection loss.</p>
+
+<p class="mb-3"><strong>Changing objectives (recommendation).</strong> Sliding windows let old items expire, and consistent submodular maximization limits changes between steps, but both assume a fixed $f$. A natural model keeps topic sets fixed and lets weights drift, $f_t(S)=\sum_{c\in\cup C(e)}w_{t,c}$, and asks for small memory, few replacements $|S_t\triangle S_{t-1}|$, and a bound on $f_t(S_t)/\operatorname{OPT}_t$.</p>
+
+<p class="mb-3">Some limit on the drift is necessary. With $k=1$ and many past items on distinct topics, a small-memory algorithm must have discarded most of them, and an adversary can move all weight onto a discarded one, making the kept item worth zero. So any guarantee needs something like $\|w_t-w_{t-1}\|_1\le\delta$ or a recent-window restriction, and a realistic target is $f_t(S_t)\ge\alpha\operatorname{OPT}_t-g(\delta)$.</p>
+
 <h1 class="mt-4">Course Materials and Assessment Crosswalk</h1>
 
 <p class="mb-3">The original Lecture 1–13 slides are the chronological source for these notes; the provided Note 1–10 PDFs add derivations and exercises for the first ten weeks. The two cheatsheets are compact revision aids, not substitutes for proof assumptions. Lecture 11–13 currently have slides but no matching numbered Note PDFs in the supplied bundle. The following map connects the supplied exercise, homework, and quiz files to the concepts above; it states the technique to study rather than reproducing the answer sheets.</p>
@@ -10637,6 +10848,15 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <li>Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. <em>Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)</em>, 222-227.</li>
 <li>Yao, A. C.-C. (1979). Some complexity questions related to distributive computing. <em>Proceedings of the 11th Annual ACM Symposium on Theory of Computing (STOC)</em>, 209-213.</li>
 <li>CS5234 course staff. (2026). <em>Algorithms at Scale: Lecture slides 1–13, Notes 1–10, exercises, homework, quizzes, and supplied solutions</em>. National University of Singapore (NUS). Local course materials supplied by the author; exact author and year vary among individual files.</li>
+<li>Nemhauser, G. L., Wolsey, L. A., &amp; Fisher, M. L. (1978). An analysis of approximations for maximizing submodular set functions—I. <em>Mathematical Programming</em>, 14, 265-294.</li>
+<li>Badanidiyuru, A., Mirzasoleiman, B., Karbasi, A., &amp; Krause, A. (2014). Streaming submodular maximization: Massive data summarization on the fly. <em>Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 671-680.</li>
+<li>Norouzi-Fard, A., Tarnawski, J., Mitrović, S., Zandieh, A., Mousavifar, A., &amp; Svensson, O. (2018). Beyond 1/2-approximation for submodular maximization on massive data streams. <em>Proceedings of the 35th International Conference on Machine Learning (ICML)</em>, PMLR 80, 3829-3838.</li>
+<li>Kazemi, E., Mitrovic, M., Zadimoghaddam, M., Lattanzi, S., &amp; Karbasi, A. (2019). Submodular streaming in all its glory: Tight approximation, minimum memory and low adaptive complexity. <em>Proceedings of the 36th International Conference on Machine Learning (ICML)</em>, PMLR 97, 3311-3320.</li>
+<li>Feldman, M., Norouzi-Fard, A., Svensson, O., &amp; Zenklusen, R. (2020). The one-way communication complexity of submodular maximization with applications to streaming and robustness. <em>Proceedings of the 52nd Annual ACM Symposium on Theory of Computing (STOC)</em>.</li>
+<li>Agrawal, S., Shadravan, M., &amp; Stein, C. (2019). Submodular secretary problem with shortlists. <em>10th Innovations in Theoretical Computer Science Conference (ITCS)</em>, LIPIcs 124.</li>
+<li>Liu, P., Rubinstein, A., Vondrák, J., &amp; Zhao, J. (2021). Cardinality constrained submodular maximization for random streams. <em>Advances in Neural Information Processing Systems 34 (NeurIPS)</em>.</li>
+<li>Chen, J., Nguyen, H. L., &amp; Zhang, Q. (2016). Submodular maximization over sliding windows. arXiv:1611.00129.</li>
+<li>Duetting, P., Fusco, F., Lattanzi, S., Norouzi-Fard, A., &amp; Zadimoghaddam, M. (2024). Consistent submodular maximization. <em>Proceedings of the 41st International Conference on Machine Learning (ICML)</em>, PMLR 235, 11979-11991.</li>
 </ol>
 </section>
 
@@ -10728,6 +10948,7 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <li><strong>Graph Streams (Lecture 11):</strong> For strict-turnstile updates, oriented vertex-incidence vectors sum to a cut vector whose nonzero coordinates are outgoing edges. Independent $\ell_0$-samplers recover a spanning forest in $O(n\log^4 n)$ space. For insertion-only weighted streams, cycle-edge deletion keeps an MST in $O(n)$ edges; in the query model, the weight identity $\operatorname{MST}=n-W+\sum_{i=1}^{W-1}c(G_i)$ reduces estimation to connected-component counts.</li>
 <li><strong>Adaptivity and Local Graph Decisions (Lecture 11):</strong> Luby's random local minima remove at least half the remaining edges in expectation, leading to $O(\log n)$ rounds and two graph-stream passes per round. Random-greedy matching can be locally queried because recursive dependencies follow strictly decreasing random edge priorities; the simple depth bound uses $d^r/r!$.</li>
 <li><strong>Communication and Information (Lectures 12–13):</strong> Deterministic protocol transcripts are combinatorial rectangles, yielding $C\ge\log_2\operatorname{rank}(A_f)-O(1)$ and an $\Omega(n)$ Equality bound. For randomized one-way Index, $I(M;X_J\mid J)\le H(M)/n$ forces $\Omega(n)$ bits. Randomized Disjointness requires an $\Omega(n)$ direct-sum information argument, with Pinsker and randomized rectangle structure establishing the constant-cost AND base case.</li>
+<li><strong>Course Project: Streaming Submodular Maximization:</strong> Offline greedy gets $1-1/e$ for monotone submodular $f$ with $|S|\le k$, but needs to revisit items. Sieve-Streaming replaces it with the adaptive threshold $\Delta_f(e\mid S)\ge(v/2-f(S))/(k-|S|)$: a full set has $f(S)\ge v/2$ by the invariant $f(S)\ge v|S|/(2k)$, while an unfilled set rejected every optimal item at gain $&lt;v/(2k)$, so $f(S)\ge\operatorname{OPT}-v/2$. Geometric guesses $v\in[m_t,2km_t]$, created lazily before each test, give $(1/2-\varepsilon)$ in one pass with $O(k\log k/\varepsilon)$ items. In arbitrary order $1/2$ is tight (Index-style lower bounds); random order reaches $1-1/e-\varepsilon$, and Sieve-Streaming++ cuts memory to $O(k/\varepsilon)$. Same pattern as Week 6 streaming $k$-center, but no guess is ever discarded for failing.</li>
 </ul></div>
       </div>
       <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-quiz" id="review-kit--quiz-pane" role="tabpanel" aria-labelledby="review-kit--quiz-tab" tabindex="0">

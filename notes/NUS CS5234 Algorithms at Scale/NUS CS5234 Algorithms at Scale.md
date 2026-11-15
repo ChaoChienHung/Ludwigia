@@ -1,16 +1,16 @@
 <meta>
 Title: NUS CS5234 Algorithms at Scale
-Summary: Comprehensive NUS CS5234 Algorithms at Scale notes (Lectures 1–13), from sublinear query and streaming algorithms through clustering, sketches, graph algorithms, deterministic and randomized communication complexity, information cost, and course exercises.
+Summary: Comprehensive NUS CS5234 Algorithms at Scale notes (Lectures 1–13), from sublinear query and streaming algorithms through clustering, sketches, graph algorithms, deterministic and randomized communication complexity, information cost, course exercises, and a course-project survey of streaming submodular maximization.
 Slug: nus-cs5234-algorithms-at-scale
 Output: notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.html
 CanonicalId: nus-cs5234-algorithms-at-scale
 Style: default
 EstimatedReadingTime: true
 Lang: en
-Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset, Linear Sketch, Graph Streaming, Communication Complexity, Information Theory
+Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset, Linear Sketch, Graph Streaming, Communication Complexity, Information Theory, Submodular Maximization
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-11-14
+LastModified: 2026-11-15
 </meta>
 
 # NUS CS5234 Algorithms at Scale
@@ -8105,6 +8105,173 @@ Why does AND require information even though $\mu^*$ never samples $(1,1)$? If i
 
 Week 11 turns Week 9's linear-sketch viewpoint into a graph algorithm: a cut vector is a sum of vertex vectors, so an outgoing edge can be sampled after the stream. Weeks 12–13 turn Week 8's streaming lower-bound reductions into a more systematic toolkit: deterministic rectangles and rank give exact communication barriers, while entropy, information cost, Pinsker, and randomized rectangles handle bounded-error protocols. The lesson across all three is to specify **what is observed**, **what is stored or communicated**, and **which randomness remains independent** before writing a guarantee.
 
+# Course Project - Streaming Submodular Maximization under a Cardinality Constraint
+
+## Project Reading Map: Choosing $k$ Good Items from a Stream You Cannot Revisit
+
+The course project was a survey of **streaming submodular maximization under a cardinality constraint**. It sits naturally after Week 6: streaming $k$-center taught us to replace an offline greedy rule with a **threshold test** and to run **parallel geometric guesses** for an unknown optimum. Sieve-Streaming uses the same design pattern for a different objective, so this section reads best as "Week 6's pattern, applied to set-function maximization". Its lower-bound part reuses Week 8's Index reduction.
+
+The section follows the survey's order:
+
+1. Define the problem and the offline greedy benchmark ($1-1/e$).
+2. Map the known results by which assumption they change: arrival order, number of passes, or memory.
+3. Prove the main result, Sieve-Streaming's one-pass $(1/2-\varepsilon)$ guarantee, in three steps.
+4. Compare it with streaming $k$-center and with the sketches of Weeks 7–10.
+5. Note the cost hidden in the oracle model and an open question about changing objectives.
+
+## 1. Problem Definition: Diminishing Returns and the Offline Benchmark
+
+### 1.1 Monotone submodular functions
+
+Let $V=\{e_1,\ldots,e_n\}$ be the ground set, presented as a stream, and $f:2^V\to\mathbb{R}_{\ge0}$ a set function. The **marginal gain** of $e\notin S$ is
+
+$$
+\Delta_f(e\mid S)=f(S\cup\{e\})-f(S).
+$$
+
+- **Monotone:** $\Delta_f(e\mid S)\ge0$ for every $S$ and $e\notin S$.
+- **Submodular:** for $A\subseteq B$ and $e\notin B$, $\Delta_f(e\mid A)\ge\Delta_f(e\mid B)$. An item cannot become more valuable just because more items were already chosen.
+
+The goal is $\operatorname{OPT}=\max_{|S|\le k}f(S)$, with $S^*$ an optimal set. We assume a **value oracle** that returns $f(S)$ for any requested set. Without loss of generality $f(\varnothing)=0$: subtracting $f(\varnothing)$ keeps every marginal gain, and an $\alpha$-approximation for the shifted function is still one for $f$ when $0\le\alpha\le1$.
+
+### 1.2 Coverage: the running example
+
+Each item $e$ covers a topic set $C(e)$, and topic $c$ has weight $w_c\ge0$:
+
+$$
+f(S)=\sum_{c\in\bigcup_{e\in S}C(e)}w_c.
+$$
+
+Adding $e$ gains the weight of the topics $e$ covers **for the first time**. That gain is never negative (monotone) and can only shrink as $S$ grows (submodular). With $C(x)=\{a,b\}$, $C(y)=\{b,c\}$ and unit weights, $f(\{y\})=2$ but $\Delta_f(y\mid\{x\})=1$, because topic $b$ is counted once. During a stream, what matters is an item's **current** marginal gain, not its value in isolation.
+
+Not every objective has diminishing returns. A recommender that values a phone and its case more together than apart is **complementary**, which submodularity rules out; none of the results below apply to it.
+
+### 1.3 Offline greedy and why it is tight
+
+Offline greedy starts from $S_0=\varnothing$ and repeatedly adds the item of largest marginal gain:
+
+$$
+f(S_{\text{greedy}})\ge\Bigl(1-\bigl(1-\tfrac1k\bigr)^k\Bigr)\operatorname{OPT}\ge(1-1/e)\operatorname{OPT}.
+$$
+
+**Proof idea.** The at most $k$ optimal items together can close the residual gap $\operatorname{OPT}-f(S_{i-1})$, so one of them closes at least a $1/k$ fraction of it. Greedy's choice is at least as good as that item, so the gap shrinks by a factor $1-1/k$ each step.
+
+**Tight example ($k=2$).** Add $z$ with $C(z)=\{c,d\}$. The optimum $\{x,z\}$ has value $4$. All singletons have value $2$, so greedy may pick $y$ first; then $x$ and $z$ each add only $1$, and greedy ends at $3=\tfrac34\operatorname{OPT}$, exactly the bound.
+
+The key step, "compare against every remaining item", is what a stream takes away: an item that was not kept on arrival cannot be reconsidered.
+
+## 2. Known Results, Organized by Assumption
+
+A one-pass algorithm loses ground for two reasons: each decision is **irrevocable** (discarded items are gone), and in the **arbitrary-order** model an adversary may send many overlapping, moderately good items before the useful ones. Every result below relaxes one of these, proves that under both of them $1/2$ is the limit, or keeps both and saves memory.
+
+| Method | Access model | Guarantee | Stored elements |
+| --- | --- | --- | --- |
+| Offline greedy | Repeated access | $1-1/e$ | Full input |
+| Sieve-Streaming (2014) | Arbitrary order, one pass | $1/2-\varepsilon$ | $O(k\log k/\varepsilon)$ |
+| SALSA (2018) | Random order, one pass | $>1/2$ in expectation | $O(k\log k)$ |
+| Agrawal–Shadravan–Stein (2019) | Random order, one pass | $1-1/e-\varepsilon-O(1/k)$ | $O(k)$, exponential in $1/\varepsilon$ |
+| Liu–Rubinstein–Vondrák–Zhao (2021) | Random order, one pass | $1-1/e-\varepsilon$ | $O(k/\varepsilon)$ |
+| Two-pass (2018) | Arbitrary order, two passes | $5/9-\varepsilon$ | $O(k\log k/\varepsilon)$ |
+| Sieve-Streaming++ (2019) | Arbitrary order, one pass | $1/2-\varepsilon$ | $O(k/\varepsilon)$ |
+
+### 2.1 Relaxing the order: random arrival
+
+- **SALSA** (Norouzi-Fard et al.) was the first to beat $1/2$. In a random order, the early optimal elements are a random sample of the optimum, so early selections tell the algorithm how much value later thresholds must recover. An adversarial order breaks this.
+- **Agrawal, Shadravan, and Stein** split the random stream into many short windows. Optimal elements spread roughly evenly across windows, so a greedy-like step inside each window usually finds an item comparable to what offline greedy would pick.
+- **Liu et al.** keep $1-1/e-\varepsilon$ and cut memory to $O(k/\varepsilon)$. Since $1-1/e$ is essentially the limit for random order, random order closes the gap to offline greedy.
+
+### 2.2 Relaxing the passes: a second look
+
+Keeping arbitrary order but allowing **two passes**, Norouzi-Fard et al. reach $5/9-\varepsilon$: the first pass accepts only items above a high threshold, and the second rereads the stream with a lower one, giving rejected useful items a second chance.
+
+### 2.3 Relaxing neither: the $1/2$ barrier
+
+- **Conditional bound (Norouzi-Fard et al. 2018).** Any arbitrary-order algorithm with ratio $\alpha>1/2$ that queries the oracle only on **feasible** sets ($|S|\le k$) needs $\Omega(n/k)$ memory. The proof is a Week 8 Index reduction: Alice encodes an $m$-bit string in the first $km$ items, Bob's final item selects the bit, and the optimum is $k$ or $2k-1$ depending on that bit. Feasible queries on Alice's prefix cannot reveal Bob's index, which is exactly where the restriction is used. Separating the two optima would let Bob read the bit from Alice's memory state, so memory is $\Omega(m)=\Omega(n/k)$.
+- **Unconditional bound (Feldman et al. 2020).** For any $\varepsilon>0$ and large enough $k$, ratio $1/2+\varepsilon$ needs $\Omega(\varepsilon n/k^3)$ memory, with no restriction on queries. The reduction uses **many players**, each holding a block of the stream, and a new family of coverage functions that hide the optimal elements among the blocks.
+
+Together with Sieve-Streaming, this settles the one-pass arbitrary-order problem: $1/2$ is achievable with memory independent of $n$, and anything above $1/2$ needs memory linear in $n$ for fixed $k$.
+
+### 2.4 Keeping both conditions, saving memory: Sieve-Streaming++
+
+Since the factor cannot improve, the remaining room is memory. Sieve-Streaming++ uses the fixed threshold $\tau=v/(2k)$ and tracks the best current candidate value $LB$, dropping every threshold below $LB/(2k)$. Each accepted item added at least $\tau$, so $\tau|S_\tau|\le f(S_\tau)\le LB$, i.e. $|S_\tau|\le LB/\tau$. Summing over geometric thresholds $\tau_i=(1+\varepsilon)^i\tau_0$ with $\tau_0\ge LB/(2k)$:
+
+$$
+\sum_{i\ge0}\frac{LB}{\tau_i}\le2k\sum_{i\ge0}(1+\varepsilon)^{-i}=O(k/\varepsilon).
+$$
+
+Low thresholds may hold $k$ items, but high thresholds hold geometrically fewer, which removes the $\log k$ factor.
+
+## 3. Sieve-Streaming: The Proof in Three Steps
+
+Sieve-Streaming (Badanidiyuru et al., KDD 2014) gets $(1/2-\varepsilon)\operatorname{OPT}$ in one arbitrary-order pass, storing $O(k\log k/\varepsilon)$ elements with $O(\log k/\varepsilon)$ oracle calls per item. The proof first assumes a good estimate of $\operatorname{OPT}$, then replaces it with parallel guesses, and finally creates those guesses lazily inside one pass.
+
+### 3.1 Step 1: the threshold rule with a known estimate $v$
+
+Suppose $\alpha\operatorname{OPT}\le v\le\operatorname{OPT}$. Keep $S$, and while $|S|<k$ accept the arriving $e$ iff
+
+$$
+\Delta_f(e\mid S)\ge\frac{v/2-f(S)}{k-|S|}.
+$$
+
+Numerator: value still needed to reach $v/2$. Denominator: slots left.
+
+**Invariant.** After every acceptance, $f(S)\ge v|S|/(2k)$. If it holds at $|S|=j$ and $e$ passes,
+
+$$
+f(S\cup\{e\})\ge\frac{k-j-1}{k-j}f(S)+\frac{v}{2(k-j)}\ge\frac{k-j-1}{k-j}\cdot\frac{vj}{2k}+\frac{v}{2(k-j)}=\frac{v(j+1)}{2k}.
+$$
+
+The coefficient of $f(S)$ is nonnegative, so substituting the lower bound is valid.
+
+**Case A: $S$ fills.** The invariant gives $f(S)\ge v/2\ge\alpha\operatorname{OPT}/2$.
+
+**Case B: $S$ ends with free slots.** Every $a\in S^*\setminus S$ was rejected when it arrived, against some earlier $S_a\subseteq S$. Rejection plus the invariant give
+
+$$
+\Delta_f(a\mid S_a)<\frac{v/2-f(S_a)}{k-|S_a|}\le\frac{v}{2k}.
+$$
+
+Submodularity gives $\Delta_f(a\mid S)\le v/(2k)$, and at most $k$ such items add at most $v/2$ on top of $S$. By monotonicity, $\operatorname{OPT}\le f(S\cup S^*)\le f(S)+v/2$, so $f(S)\ge\operatorname{OPT}/2$. ($S\cup S^*$ exists only in the analysis, never in memory.)
+
+**Why one half?** With a fixed threshold $\tau$, a full set has $f(S)\ge k\tau$ and an unfilled one has $f(S)\ge\operatorname{OPT}-k\tau$. We cannot know which case will happen, so the guarantee is $\min\{k\tau,\operatorname{OPT}-k\tau\}$, maximized at $\tau=\operatorname{OPT}/(2k)$ where both equal $\operatorname{OPT}/2$. The adaptive rule aims at the same balance using the current state of $S$.
+
+**General form, used next.** The induction needs only $v>0$. So for any $v$: a full set gives $f(S)\ge v/2$, and an unfilled one gives $f(S)\ge\operatorname{OPT}-v/2$. This is what handles an estimate slightly **above** $\operatorname{OPT}$.
+
+### 3.2 Step 2: parallel geometric guesses
+
+Let $m=\max_e f(\{e\})$. Monotonicity gives $m\le\operatorname{OPT}$, and submodularity gives $\operatorname{OPT}\le km$ (no more than $k$ singleton values). Run one threshold candidate $S_v$ for each $v=(1+\varepsilon)^i\in[m,2km]$ and return the best. That is $O(\log k/\varepsilon)$ guesses. **Multiplicative** spacing suffices because the guarantee is a ratio; an additive grid would need about $k/\varepsilon$ guesses.
+
+Let $v^*$ be the smallest grid point $\ge\operatorname{OPT}$, so $\operatorname{OPT}\le v^*<(1+\varepsilon)\operatorname{OPT}\le2km$. If $S_{v^*}$ fills, $f\ge v^*/2\ge\operatorname{OPT}/2$. Otherwise the general form gives $f\ge\operatorname{OPT}-v^*/2>(1/2-\varepsilon/2)\operatorname{OPT}$.
+
+### 3.3 Step 3: lazy guesses within one pass
+
+Knowing $m$ in advance would cost a pass. Instead track the running maximum $m_t$ and keep guesses in $[m_t,2km_t]$, creating an empty $S_v$ for each newly active guess **before** testing the current item and deleting guesses that fall out of range.
+
+**Why starting late is safe.** Since $m_t\le m\le v^*$, the good guess $v^*$ is never dropped from below. Before it becomes active, $v^*>2km_t$, so every earlier item has
+
+$$
+\Delta_f(e\mid\varnothing)\le f(\{e\})\le m_t<\frac{v^*}{2k},
+$$
+
+which is below the empty candidate's first threshold $v^*/(2k)$. A candidate started at the beginning would have rejected all of them anyway. Once an item large enough to pass arrives, updating $m_t$ first activates $v^*$ before the test, and from then on the lazy and eager candidates see the same items and make the same decisions. This is the role of the factor $2$ in $2km_t$.
+
+**Theorem (Sieve-Streaming).** For monotone submodular $f$ and any $\varepsilon>0$, one arbitrary-order pass returns $|S|\le k$ with $f(S)\ge(1/2-\varepsilon)\operatorname{OPT}$, storing $O(k\log(2k)/\varepsilon)$ elements with $O(\log(2k)/\varepsilon)$ oracle calls per item.
+
+## 4. Connections to the Course
+
+- **Offline greedy vs. threshold.** Greedy's proof needs the chosen item to beat every optimal item, which requires seeing them side by side. The threshold test compares only the current item with the state $S$, and the two-case argument supplies what revisiting used to supply. The price is $1-1/e\to1/2$, and Section 2.3 shows it cannot be avoided with small memory and arbitrary order.
+- **Week 6 streaming $k$-center.** Same pattern: a one-pass threshold test plus parallel geometric guesses for an unknown optimum. But $k$-center minimizes a maximum distance and **discards** a guess once it needs more than $k$ centers. Sieve-Streaming never discards a guess for failing; its guarantee comes from analyzing a full versus an unfilled budget, which is why its threshold depends on $f(S)$ and $|S|$.
+- **Weeks 7–10 sketches.** A sketch compresses the information needed to estimate a statistic. Sieve-Streaming keeps actual items, because its output must be a feasible set. Its storage is sublinear in $n$, but total oracle calls are $O(n\log k/\varepsilon)$: it saves **space**, not **time**. Reservoir sampling appears only in a supporting role, to keep an evaluation sample for objectives that depend on the whole dataset.
+- **Week 8 lower bounds.** The $1/2$ barrier is an Index-style reduction (two-player with feasible queries, many-player without).
+
+## 5. Hidden Costs and Open Directions
+
+**Oracle cost.** All bounds count oracle calls, not the time of one call. For exemplar-based clustering, one evaluation can scan all $n$ points. Evaluating on a random sample makes the threshold test noisy: an item just below the threshold may be accepted, and the invariant then holds only approximately. That estimation loss must be bounded separately from the $1/2-\varepsilon$ selection loss.
+
+**Changing objectives (recommendation).** Sliding windows let old items expire, and consistent submodular maximization limits changes between steps, but both assume a fixed $f$. A natural model keeps topic sets fixed and lets weights drift, $f_t(S)=\sum_{c\in\cup C(e)}w_{t,c}$, and asks for small memory, few replacements $|S_t\triangle S_{t-1}|$, and a bound on $f_t(S_t)/\operatorname{OPT}_t$.
+
+Some limit on the drift is necessary. With $k=1$ and many past items on distinct topics, a small-memory algorithm must have discarded most of them, and an adversary can move all weight onto a discarded one, making the kept item worth zero. So any guarantee needs something like $\|w_t-w_{t-1}\|_1\le\delta$ or a recent-window restriction, and a realistic target is $f_t(S_t)\ge\alpha\operatorname{OPT}_t-g(\delta)$.
+
 # Course Materials and Assessment Crosswalk
 
 The original Lecture 1–13 slides are the chronological source for these notes; the provided Note 1–10 PDFs add derivations and exercises for the first ten weeks. The two cheatsheets are compact revision aids, not substitutes for proof assumptions. Lecture 11–13 currently have slides but no matching numbered Note PDFs in the supplied bundle. The following map connects the supplied exercise, homework, and quiz files to the concepts above; it states the technique to study rather than reproducing the answer sheets.
@@ -8173,6 +8340,15 @@ Three especially useful exercise connections are easy to miss. Homework 2's rese
 18. Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
 19. Yao, A. C.-C. (1979). Some complexity questions related to distributive computing. *Proceedings of the 11th Annual ACM Symposium on Theory of Computing (STOC)*, 209-213.
 20. CS5234 course staff. (2026). *Algorithms at Scale: Lecture slides 1–13, Notes 1–10, exercises, homework, quizzes, and supplied solutions*. National University of Singapore (NUS). Local course materials supplied by the author; exact author and year vary among individual files.
+21. Nemhauser, G. L., Wolsey, L. A., & Fisher, M. L. (1978). An analysis of approximations for maximizing submodular set functions—I. *Mathematical Programming*, 14, 265-294.
+22. Badanidiyuru, A., Mirzasoleiman, B., Karbasi, A., & Krause, A. (2014). Streaming submodular maximization: Massive data summarization on the fly. *Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, 671-680.
+23. Norouzi-Fard, A., Tarnawski, J., Mitrović, S., Zandieh, A., Mousavifar, A., & Svensson, O. (2018). Beyond 1/2-approximation for submodular maximization on massive data streams. *Proceedings of the 35th International Conference on Machine Learning (ICML)*, PMLR 80, 3829-3838.
+24. Kazemi, E., Mitrovic, M., Zadimoghaddam, M., Lattanzi, S., & Karbasi, A. (2019). Submodular streaming in all its glory: Tight approximation, minimum memory and low adaptive complexity. *Proceedings of the 36th International Conference on Machine Learning (ICML)*, PMLR 97, 3311-3320.
+25. Feldman, M., Norouzi-Fard, A., Svensson, O., & Zenklusen, R. (2020). The one-way communication complexity of submodular maximization with applications to streaming and robustness. *Proceedings of the 52nd Annual ACM Symposium on Theory of Computing (STOC)*.
+26. Agrawal, S., Shadravan, M., & Stein, C. (2019). Submodular secretary problem with shortlists. *10th Innovations in Theoretical Computer Science Conference (ITCS)*, LIPIcs 124.
+27. Liu, P., Rubinstein, A., Vondrák, J., & Zhao, J. (2021). Cardinality constrained submodular maximization for random streams. *Advances in Neural Information Processing Systems 34 (NeurIPS)*.
+28. Chen, J., Nguyen, H. L., & Zhang, Q. (2016). Submodular maximization over sliding windows. arXiv:1611.00129.
+29. Duetting, P., Fusco, F., Lattanzi, S., Norouzi-Fard, A., & Zadimoghaddam, M. (2024). Consistent submodular maximization. *Proceedings of the 41st International Conference on Machine Learning (ICML)*, PMLR 235, 11979-11991.
 
 <reviewkit>
 <takeaways>
@@ -8236,6 +8412,7 @@ Three especially useful exercise connections are easy to miss. Homework 2's rese
 - **Graph Streams (Lecture 11):** For strict-turnstile updates, oriented vertex-incidence vectors sum to a cut vector whose nonzero coordinates are outgoing edges. Independent $\ell_0$-samplers recover a spanning forest in $O(n\log^4 n)$ space. For insertion-only weighted streams, cycle-edge deletion keeps an MST in $O(n)$ edges; in the query model, the weight identity $\operatorname{MST}=n-W+\sum_{i=1}^{W-1}c(G_i)$ reduces estimation to connected-component counts.
 - **Adaptivity and Local Graph Decisions (Lecture 11):** Luby's random local minima remove at least half the remaining edges in expectation, leading to $O(\log n)$ rounds and two graph-stream passes per round. Random-greedy matching can be locally queried because recursive dependencies follow strictly decreasing random edge priorities; the simple depth bound uses $d^r/r!$.
 - **Communication and Information (Lectures 12–13):** Deterministic protocol transcripts are combinatorial rectangles, yielding $C\ge\log_2\operatorname{rank}(A_f)-O(1)$ and an $\Omega(n)$ Equality bound. For randomized one-way Index, $I(M;X_J\mid J)\le H(M)/n$ forces $\Omega(n)$ bits. Randomized Disjointness requires an $\Omega(n)$ direct-sum information argument, with Pinsker and randomized rectangle structure establishing the constant-cost AND base case.
+- **Course Project: Streaming Submodular Maximization:** Offline greedy gets $1-1/e$ for monotone submodular $f$ with $|S|\le k$, but needs to revisit items. Sieve-Streaming replaces it with the adaptive threshold $\Delta_f(e\mid S)\ge(v/2-f(S))/(k-|S|)$: a full set has $f(S)\ge v/2$ by the invariant $f(S)\ge v|S|/(2k)$, while an unfilled set rejected every optimal item at gain $<v/(2k)$, so $f(S)\ge\operatorname{OPT}-v/2$. Geometric guesses $v\in[m_t,2km_t]$, created lazily before each test, give $(1/2-\varepsilon)$ in one pass with $O(k\log k/\varepsilon)$ items. In arbitrary order $1/2$ is tight (Index-style lower bounds); random order reaches $1-1/e-\varepsilon$, and Sieve-Streaming++ cuts memory to $O(k/\varepsilon)$. Same pattern as Week 6 streaming $k$-center, but no guess is ever discarded for failing.
 </takeaways>
 
 <qquiz src="questions.en.json"/>

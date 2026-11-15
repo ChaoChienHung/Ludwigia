@@ -1961,6 +1961,22 @@
       ]
     },
     {
+      "concept_id": "concept.submodular_maximization",
+      "labels": {
+        "en": "Submodular Maximization",
+        "zh-Hant": "次模函數最大化",
+        "zh-Hans": "次模函数最大化"
+      },
+      "aliases": [
+        "submodular maximization",
+        "submodular optimization",
+        "次模函數最大化",
+        "次模函数最大化",
+        "子模函數最大化",
+        "子模函数最大化"
+      ]
+    },
+    {
       "concept_id": "concept.probability",
       "labels": {
         "en": "Probability",
