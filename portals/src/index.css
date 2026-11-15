@@ -10,9 +10,147 @@
     -webkit-user-select: none;
   }
 
-  h1, h2, h3, .font-fantasy {
+  /* Display face is opt-in (.font-fantasy) and reserved for the brand + one title per view */
+  .font-fantasy {
     font-family: 'Cinzel', serif;
   }
+}
+
+/* ==========================================================================
+   Design tokens (one accent, neutral surfaces, one radius/border/shadow system)
+   Accent is projected from the site-wide palette (assets/css/site/palette-tokens.css,
+   loaded by the preload script in index.source.html) - never a second palette here.
+   Spacing follows the 4 / 8 / 12 / 16 / 24 / 32 scale (Tailwind 1/2/3/4/6/8).
+   ========================================================================== */
+:root {
+  --ap-accent: var(--palette-accent-dark, #ff6b00);
+  --ap-accent-soft: color-mix(in srgb, var(--ap-accent) 14%, transparent);
+  --ap-accent-line: color-mix(in srgb, var(--ap-accent) 55%, transparent);
+  --ap-on-accent: #0b0f17;
+
+  --ap-surface: rgba(11, 15, 23, 0.88);
+  --ap-surface-hover: rgba(255, 255, 255, 0.1);
+  --ap-fill: rgba(255, 255, 255, 0.06);
+  --ap-border: rgba(255, 255, 255, 0.08);
+  --ap-border-strong: rgba(255, 255, 255, 0.16);
+
+  --ap-text: #e5e7eb;
+  --ap-text-muted: #9ca3af;
+  --ap-text-dim: #6b7280;
+
+  --ap-radius-sm: 10px;
+  --ap-radius: 16px;
+  --ap-radius-lg: 22px;
+  --ap-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+/* Component classes live in the components layer so Tailwind utilities can still override them */
+@layer components {
+  /* Type scale: caption 11 / body 13 / title 16 / display 22 */
+  .ap-caption {
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    color: var(--ap-text-muted);
+  }
+  .ap-body {
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--ap-text);
+  }
+  .ap-title {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .ap-display {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+  }
+
+  /* Surfaces */
+  .ap-panel {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius);
+    box-shadow: var(--ap-shadow);
+  }
+
+  /* Controls: one chip shape for every button, close in feel to the site's .hub-chip */
+  .ap-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--ap-border);
+    background: var(--ap-fill);
+    color: var(--ap-text);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+  }
+  .ap-chip:hover {
+    background: var(--ap-surface-hover);
+    color: #fff;
+  }
+  .ap-chip[aria-pressed='true'],
+  .ap-chip.is-active {
+    border-color: var(--ap-accent-line);
+    background: var(--ap-accent-soft);
+    color: var(--ap-accent);
+  }
+  .ap-chip:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .ap-chip--icon {
+    width: 32px;
+    padding: 0;
+  }
+  .ap-chip--lg {
+    height: 40px;
+  }
+  .ap-chip--lg.ap-chip--icon {
+    width: 40px;
+  }
+  .ap-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--ap-accent);
+    color: var(--ap-on-accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.14s ease;
+  }
+  .ap-btn-primary:hover {
+    filter: brightness(1.08);
+  }
+}
+
+.ap-chip:focus-visible,
+.ap-btn-primary:focus-visible,
+.portal-root:focus-visible {
+  outline: 2px solid var(--ap-accent);
+  outline-offset: 2px;
 }
 
 /* GPU-accelerated portal rotation */

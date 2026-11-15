@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PortalItem } from '../types/portal';
+import { Lang, UI } from '../i18n';
 
 interface WarpTransitionProps {
   portal: PortalItem;
+  lang: Lang;
   onCancel: () => void;
 }
 
-// Duration of the swirl before navigation. Short on purpose: the portal click *is* the decision,
+// Duration of the swirl before navigation. Short on purpose: the portal click *is* the decision;
 // this only gives a sense of travel and a brief window to cancel (Esc or the cancel button).
+// This is the one deliberate, full-strength effect in the lobby.
 export const WARP_DURATION_MS = 700;
 
 const prefersReducedMotion = () =>
@@ -15,7 +18,7 @@ const prefersReducedMotion = () =>
   typeof window.matchMedia === 'function' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export const WarpTransition: React.FC<WarpTransitionProps> = ({ portal, onCancel }) => {
+export const WarpTransition: React.FC<WarpTransitionProps> = ({ portal, lang, onCancel }) => {
   const cancelledRef = useRef(false);
   const [reduced] = useState(prefersReducedMotion);
 
@@ -43,38 +46,33 @@ export const WarpTransition: React.FC<WarpTransitionProps> = ({ portal, onCancel
   }, [portal, onCancel, reduced]);
 
   const [c0, c1, c2] = portal.colors.vortexGradient;
+  const dest = portal.destination?.[lang] ?? portal.name[lang];
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden select-none animate-warp-backdrop"
-      style={{ background: `radial-gradient(circle at 50% 50%, ${portal.colors.glow} 0%, #020617 70%)` }}
+      className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden select-none bg-[#05070c] animate-warp-backdrop"
       role="status"
       aria-live="polite"
     >
       {!reduced && (
         <div
           className="absolute w-[40vmax] h-[40vmax] rounded-full animate-warp-swirl"
-          style={{
-            background: `conic-gradient(from 0deg, ${c0}, ${c2 ?? c1}, ${c1}, ${c0})`,
-            boxShadow: `0 0 120px 40px ${portal.colors.glow}`,
-          }}
+          style={{ background: `conic-gradient(from 0deg, ${c0}, ${c2}, ${c1}, ${c0})` }}
         />
       )}
 
-      <div className="relative z-10 flex flex-col items-center gap-3 text-center px-6">
-        <span className="text-xs tracking-[0.3em] uppercase text-white/70">躍遷中</span>
-        <span className="text-xl md:text-2xl font-fantasy font-bold text-white drop-shadow">
-          {portal.targetLabel ?? portal.signpost.destination}
-        </span>
+      <div className="relative z-10 flex flex-col items-center gap-2 text-center px-6">
+        <span className="ap-caption uppercase tracking-[0.2em] text-white/70">{UI.warping[lang]}</span>
+        <span className="ap-display">{dest}</span>
         <button
           type="button"
           onClick={() => {
             cancelledRef.current = true;
             onCancel();
           }}
-          className="mt-2 px-3 py-1 rounded-full bg-black/40 border border-white/20 text-[11px] text-white/80 hover:text-white cursor-pointer"
+          className="ap-chip mt-4"
         >
-          取消（Esc）
+          {UI.cancelWarp[lang]}
         </button>
       </div>
     </div>

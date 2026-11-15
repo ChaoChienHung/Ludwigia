@@ -4,15 +4,12 @@ import {
   ChevronRight,
   ChevronUp,
   ChevronDown,
-  Compass,
   Sun,
   Sunrise,
   Sunset,
   Moon,
   Play,
   Pause,
-  Clock,
-  Sparkles,
 } from 'lucide-react';
 import { PORTALS_DATA } from '../data/portalsData';
 import { PortalItem } from '../types/portal';
@@ -20,8 +17,10 @@ import { TimePhase, TIME_PHASE_CONFIGS } from '../types/timeCycle';
 import { PortalComponent } from './PortalComponent';
 import { ParallaxBackground } from './ParallaxBackground';
 import { wonderlandAudio } from '../utils/audio';
+import { fmt, Lang, UI } from '../i18n';
 
 interface PanoramicStageProps {
+  lang: Lang;
   onSelectPortal: (portal: PortalItem) => void;
   activePortalId: string | null;
   onHoverPortal: (id: string | null) => void;
@@ -35,6 +34,7 @@ const CYCLE_ORDER: TimePhase[] = ['dawn', 'day', 'dusk', 'night'];
 const AUTO_CYCLE_DURATION_MS = 20000;
 
 export const PanoramicStage: React.FC<PanoramicStageProps> = ({
+  lang,
   onSelectPortal,
   activePortalId,
   onHoverPortal,
@@ -65,7 +65,7 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
 
   // Global Day / Night Cycle
   const [timePhase, setTimePhase] = useState<TimePhase>('night');
-  const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
+  const [isAutoCycling, setIsAutoCycling] = useState<boolean>(false);
   const [cycleProgress, setCycleProgress] = useState<number>(0);
   const [isHudOpen, setIsHudOpen] = useState<boolean>(false);
 
@@ -171,19 +171,126 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
     }
   }, [scrollTargetX, viewportWidth, onScrollTargetDone, kickSpring]);
 
+  // --- Phone layout: swipe / arrows move one portal at a time (card-style browsing) ---
+  const [isPhone, setIsPhone] = useState<boolean>(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767.98px)').matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767.98px)');
+    const onChange = (e: MediaQueryListEvent) => setIsPhone(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  const viewportWidthRef = useRef(viewportWidth);
+  viewportWidthRef.current = viewportWidth;
+
+  // Index of the portal closest to the viewport centre for a given scroll position
+  const nearestPortalIndex = useCallback((x: number) => {
+    const centre = x + viewportWidthRef.current / 2;
+    let best = 0;
+    for (let i = 1; i < PORTALS_DATA.length; i++) {
+      if (Math.abs(PORTALS_DATA[i].x - centre) < Math.abs(PORTALS_DATA[best].x - centre)) best = i;
+    }
+    return best;
+  }, []);
+
+  const snapToPortal = useCallback(
+    (index: number) => {
+      const i = Math.max(0, Math.min(PORTALS_DATA.length - 1, index));
+      const max = maxScrollRef.current;
+      targetXRef.current = Math.max(0, Math.min(max, PORTALS_DATA[i].x - viewportWidthRef.current / 2));
+      kickSpring();
+    },
+    [kickSpring],
+  );
+
   // Smooth Spring Arrow Navigation
   const panLeft = () => {
     wonderlandAudio.playNavClick();
+    if (isPhone) {
+      snapToPortal(nearestPortalIndex(targetXRef.current) - 1);
+      return;
+    }
     targetXRef.current = Math.max(0, targetXRef.current - SCROLL_STEP);
     kickSpring();
   };
 
   const panRight = () => {
     wonderlandAudio.playNavClick();
+    if (isPhone) {
+      snapToPortal(nearestPortalIndex(targetXRef.current) + 1);
+      return;
+    }
     const max = maxScrollRef.current;
     targetXRef.current = Math.min(max, targetXRef.current + SCROLL_STEP);
     kickSpring();
   };
+
+  // Touch: the stage follows the finger; on release phones snap to the previous / next portal
+  // (swipe > 40px) or back to the nearest one. A swipe never counts as a tap on a portal.
+  const touchRef = useRef<{ x0: number; scroll0: number; moved: boolean } | null>(null);
+  const suppressClickRef = useRef(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    touchRef.current = { x0: e.touches[0].clientX, scroll0: currentXRef.current, moved: false };
+    isDraggingRef.current = true;
+    velocityRef.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const t = touchRef.current;
+    if (!t || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - t.x0;
+    if (Math.abs(dx) > 8) t.moved = true;
+    const max = maxScrollRef.current;
+    let nextX = t.scroll0 - dx;
+    if (nextX < 0) nextX *= 0.4;
+    else if (nextX > max) nextX = max + (nextX - max) * 0.4;
+    currentXRef.current = nextX;
+    targetXRef.current = nextX;
+    commitScroll(nextX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const t = touchRef.current;
+    touchRef.current = null;
+    isDraggingRef.current = false;
+    if (!t) return;
+    const dx = (e.changedTouches[0]?.clientX ?? t.x0) - t.x0;
+    if (t.moved) {
+      suppressClickRef.current = true;
+      window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 400);
+    }
+    if (isPhone) {
+      const from = nearestPortalIndex(t.scroll0);
+      snapToPortal(dx < -40 ? from + 1 : dx > 40 ? from - 1 : nearestPortalIndex(currentXRef.current));
+    } else {
+      const max = maxScrollRef.current;
+      targetXRef.current = Math.max(0, Math.min(max, currentXRef.current));
+      kickSpring();
+    }
+  };
+
+  const handleClickCapture = (e: React.MouseEvent) => {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  };
+
+  // Phones open on the first portal centred
+  const didInitialSnapRef = useRef(false);
+  useEffect(() => {
+    if (isPhone && !didInitialSnapRef.current && viewportWidth < 768) {
+      didInitialSnapRef.current = true;
+      snapToPortal(0);
+    }
+  }, [isPhone, viewportWidth, snapToPortal]);
 
   // Mouse Drag with spring physics and momentum fling
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -285,380 +392,255 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
 
   const canScrollLeft = scrollX > 15;
   const canScrollRight = scrollX < maxScroll - 15;
-  const currentConfig = TIME_PHASE_CONFIGS[timePhase];
+  const centreIndex = nearestPortalIndex(scrollX);
+  const centrePortal = PORTALS_DATA[centreIndex];
 
   const getTimePhaseIcon = (phase: TimePhase) => {
+    const cls = 'w-4 h-4';
     switch (phase) {
       case 'dawn':
-        return <Sunrise className="w-3.5 h-3.5 text-amber-400" />;
+        return <Sunrise className={cls} aria-hidden="true" />;
       case 'day':
-        return <Sun className="w-3.5 h-3.5 text-yellow-300" />;
+        return <Sun className={cls} aria-hidden="true" />;
       case 'dusk':
-        return <Sunset className="w-3.5 h-3.5 text-fuchsia-400" />;
+        return <Sunset className={cls} aria-hidden="true" />;
       case 'night':
-        return <Moon className="w-3.5 h-3.5 text-cyan-300" />;
+        return <Moon className={cls} aria-hidden="true" />;
     }
   };
 
-  // --- Dynamic Mathematical Spline for Ley Line ---
-  // Guaranteed 100% exact node alignment with all 6 portals in pixels
-  const portalNodes = useMemo(() => {
-    return PORTALS_DATA.map((p) => ({
-      id: p.id,
-      name: p.name,
-      x: p.x,
-      y: (p.yPercent / 100) * stageHeight,
-      color: p.colors.primary,
-      accent: p.colors.accent,
-      glow: p.colors.glow,
-      symbol: p.signpost.runeSymbol,
-    }));
-  }, [stageHeight]);
-
+  // Path connecting the portals: one thin dashed line in the site accent (no multi-colour
+  // gradient, no glow filter, no animation)
   const leyLineSplinePath = useMemo(() => {
-    if (portalNodes.length < 2) return '';
-    let d = `M ${portalNodes[0].x} ${portalNodes[0].y}`;
-
-    for (let i = 0; i < portalNodes.length - 1; i++) {
-      const p1 = portalNodes[i];
-      const p2 = portalNodes[i + 1];
+    const nodes = PORTALS_DATA.map((p) => ({ x: p.x, y: (p.yPercent / 100) * stageHeight }));
+    if (nodes.length < 2) return '';
+    let d = `M ${nodes[0].x} ${nodes[0].y}`;
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const p1 = nodes[i];
+      const p2 = nodes[i + 1];
       const dx = p2.x - p1.x;
-
-      // Smooth horizontal-tangent cubic bezier control points (S-curve)
-      const cp1x = p1.x + dx * 0.5;
-      const cp1y = p1.y;
-      const cp2x = p2.x - dx * 0.5;
-      const cp2y = p2.y;
-
-      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+      d += ` C ${p1.x + dx * 0.5} ${p1.y}, ${p2.x - dx * 0.5} ${p2.y}, ${p2.x} ${p2.y}`;
     }
-
     return d;
-  }, [portalNodes]);
+  }, [stageHeight]);
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden bg-slate-950 select-none"
+      className="relative w-full h-full overflow-hidden bg-[#05070c] select-none"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUpOrLeave}
       onMouseLeave={handleMouseUpOrLeave}
       onWheel={handleWheel}
-      style={{ cursor: isDraggingState ? 'grabbing' : 'grab' }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onClickCapture={handleClickCapture}
+      style={{ cursor: isDraggingState ? 'grabbing' : 'grab', touchAction: 'none' }}
     >
-      {/* 1. Parallax Background Layer: Fixed to viewport, zero cutoff */}
-      <ParallaxBackground
-        scrollX={scrollX}
-        stageWidth={STAGE_WIDTH}
-        timePhase={timePhase}
-      />
+      <ParallaxBackground scrollX={scrollX} stageWidth={STAGE_WIDTH} timePhase={timePhase} />
 
-      {/* 2. Scrollable Viewport with Spring Physics */}
-      <div
-        ref={containerRef}
-        className="w-full h-full overflow-x-hidden overflow-y-hidden no-scrollbar relative z-10 bg-transparent"
-      >
-        {/* 3400px Wide Panoramic Stage */}
-        <div
-          className="relative h-full pointer-events-none"
-          style={{ width: `${STAGE_WIDTH}px` }}
-        >
-          {/* Dynamic Celestial Ley-Line SVG: 1:1 Pixel Accuracy connecting every portal center */}
+      {/* Scrollable viewport driven by the spring camera */}
+      <div ref={containerRef} className="w-full h-full overflow-hidden no-scrollbar relative z-10">
+        <div className="relative h-full pointer-events-none" style={{ width: `${STAGE_WIDTH}px` }}>
           <svg
             className="absolute inset-0 pointer-events-none z-10 overflow-visible"
             width={STAGE_WIDTH}
             height={stageHeight}
             style={{ width: `${STAGE_WIDTH}px`, height: `${stageHeight}px` }}
+            aria-hidden="true"
           >
-            <defs>
-              <linearGradient id="celestialLeyGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.6" />
-                <stop offset="20%" stopColor="#06b6d4" stopOpacity="0.75" />
-                <stop offset="45%" stopColor="#14b8a6" stopOpacity="0.75" />
-                <stop offset="70%" stopColor="#a855f7" stopOpacity="0.75" />
-                <stop offset="85%" stopColor="#f59e0b" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#818cf8" stopOpacity="0.6" />
-              </linearGradient>
-
-            </defs>
-
-            {/* Soft static halo under the ley line. Replaces an feGaussianBlur filter that had to be
-                re-rasterised across the whole 3400px stage on every dash-flow animation frame. */}
             <path
               d={leyLineSplinePath}
               fill="none"
-              stroke="url(#celestialLeyGradient)"
-              strokeWidth="7"
-              strokeOpacity="0.18"
+              stroke="var(--ap-accent)"
+              strokeOpacity="0.35"
+              strokeWidth="1.5"
+              strokeDasharray="2 8"
               strokeLinecap="round"
             />
-
-            {/* Glowing Ley Line Spline Path */}
-            <path
-              d={leyLineSplinePath}
-              fill="none"
-              stroke="url(#celestialLeyGradient)"
-              strokeWidth="2.2"
-              strokeDasharray="8 12"
-              className="animate-dash-flow"
-            />
-
-            {/* Precision Node Anchor Points at each Portal Center */}
-            {portalNodes.map((node) => (
-              <g key={`node-${node.id}`} className="transition-transform duration-300">
-                {/* Concentric node glow ring */}
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r="14"
-                  fill="none"
-                  stroke={node.color}
-                  strokeWidth="1.5"
-                  strokeDasharray="3 4"
-                  className="animate-dash-flow"
-                  opacity="0.8"
-                />
-                {/* Core node dot */}
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r="5"
-                  fill={node.accent}
-                  style={{
-                    filter: `drop-shadow(0 0 8px ${node.color})`,
-                  }}
-                />
-              </g>
+            {PORTALS_DATA.map((p) => (
+              <circle
+                key={`node-${p.id}`}
+                cx={p.x}
+                cy={(p.yPercent / 100) * stageHeight}
+                r="3"
+                fill={p.targetUrl ? 'var(--ap-accent)' : 'rgba(255,255,255,0.35)'}
+              />
             ))}
           </svg>
 
-          {/* Render All 6 Portals with their custom surroundings and signposts */}
           {PORTALS_DATA.map((portal) => (
             <div key={portal.id} className="pointer-events-auto">
               <PortalComponent
                 portal={portal}
+                lang={lang}
                 onSelect={onSelectPortal}
                 isHovered={activePortalId === portal.id}
                 onHoverChange={onHoverPortal}
-                glowMultiplier={currentConfig.glowIntensity}
               />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Floating Day / Night Cycle HUD (Top Right): collapsed to a small pill by default so it
-          never covers the portals; expands on demand. */}
-      <div className="fixed top-20 right-4 md:right-6 z-40 pointer-events-none">
+      {/* Time of day: a single chip by default; expands into a small panel on demand */}
+      <div className="absolute top-4 right-4 md:right-6 z-40">
         {isHudOpen ? (
-          <div className="p-3 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-slate-700/60 shadow-2xl flex flex-col gap-2.5 pointer-events-auto max-w-xs transition-all duration-300">
-            <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-slate-900 border border-slate-700">
-                  {getTimePhaseIcon(timePhase)}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-white font-fantasy">
-                    <span>{currentConfig.name}</span>
-                    <span className="text-[10px] text-slate-400 font-sans">
-                      ({Math.round(currentConfig.glowIntensity * 100)}% 光暈)
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-emerald-400">
-                    仙境日夜光影流轉
-                  </div>
-                </div>
-              </div>
-
+          <div className="ap-panel p-3 flex flex-col gap-3 w-[248px]" role="group" aria-label={UI.timeOfDay[lang]}>
+            <div className="flex items-center justify-between gap-2">
+              <span className="ap-caption">{UI.timeOfDay[lang]}</span>
               <button
-                onClick={() => setIsAutoCycling(!isAutoCycling)}
-                className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-all cursor-pointer ${
-                  isAutoCycling
-                    ? 'bg-emerald-950/70 border-emerald-500/50 text-emerald-300'
-                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white'
-                }`}
-                title={isAutoCycling ? '暫停日夜自動流轉' : '啟動日夜自動流轉'}
-                aria-label="切換自動循環"
-              >
-                {isAutoCycling ? (
-                  <Pause className="w-3.5 h-3.5" />
-                ) : (
-                  <Play className="w-3.5 h-3.5" />
-                )}
-              </button>
-              <button
+                type="button"
                 onClick={() => setIsHudOpen(false)}
-                className="p-1.5 rounded-lg border bg-slate-900 border-slate-700 text-slate-400 hover:text-white cursor-pointer"
-                title="收合日夜面板"
-                aria-label="收合日夜面板"
+                className="ap-chip ap-chip--icon"
+                title={UI.closeHud[lang]}
+                aria-label={UI.closeHud[lang]}
               >
-                <ChevronUp className="w-3.5 h-3.5" />
+                <ChevronUp className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
-
-            {/* 4 Time Phase Selector Buttons */}
-            <div className="grid grid-cols-4 gap-1.5">
-              {CYCLE_ORDER.map((phase) => {
-                const active = timePhase === phase;
-                return (
-                  <button
-                    key={phase}
-                    onClick={() => handlePhaseSelect(phase)}
-                    className={`py-1.5 px-2 rounded-xl text-[11px] font-medium flex flex-col items-center gap-1 transition-all cursor-pointer border ${
-                      active
-                        ? 'bg-slate-800 text-white border-emerald-400/80 shadow-md ring-1 ring-emerald-400/40'
-                        : 'bg-slate-900/60 text-slate-400 border-slate-800 hover:bg-slate-850 hover:text-slate-200'
-                    }`}
-                  >
-                    {getTimePhaseIcon(phase)}
-                    <span className="text-[10px]">
-                      {phase === 'dawn'
-                        ? '晨曦'
-                        : phase === 'day'
-                        ? '正午'
-                        : phase === 'dusk'
-                        ? '暮色'
-                        : '幽夜'}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="grid grid-cols-4 gap-2">
+              {CYCLE_ORDER.map((phase) => (
+                <button
+                  key={phase}
+                  type="button"
+                  onClick={() => handlePhaseSelect(phase)}
+                  aria-pressed={timePhase === phase}
+                  className="ap-chip ap-chip--icon !w-full"
+                  title={UI.phase[phase][lang]}
+                  aria-label={UI.phase[phase][lang]}
+                >
+                  {getTimePhaseIcon(phase)}
+                </button>
+              ))}
             </div>
-
-            {/* Time Progression Progress Bar */}
+            <button
+              type="button"
+              onClick={() => setIsAutoCycling(!isAutoCycling)}
+              aria-pressed={isAutoCycling}
+              className="ap-chip !justify-start"
+              title={isAutoCycling ? UI.pauseCycle[lang] : UI.resumeCycle[lang]}
+            >
+              {isAutoCycling ? <Pause className="w-4 h-4" aria-hidden="true" /> : <Play className="w-4 h-4" aria-hidden="true" />}
+              <span>{UI.autoCycle[lang]}</span>
+            </button>
             {isAutoCycling && (
-              <div className="space-y-1">
-                <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-                  <div
-                    className="h-full w-full origin-left bg-gradient-to-r from-emerald-500 via-cyan-400 to-purple-400 transition-transform duration-200 ease-linear"
-                    style={{ transform: `scaleX(${cycleProgress / 100})` }}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-[9px] text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-2.5 h-2.5" />
-                    <span>流轉進行中</span>
-                  </span>
-                  <span>{Math.round((cycleProgress / 100) * (AUTO_CYCLE_DURATION_MS / 1000))}s</span>
-                </div>
+              <div className="h-0.5 w-full rounded-full bg-[var(--ap-fill)] overflow-hidden" aria-hidden="true">
+                <div
+                  className="h-full w-full origin-left bg-[var(--ap-accent)] transition-transform duration-200 ease-linear"
+                  style={{ transform: `scaleX(${cycleProgress / 100})` }}
+                />
               </div>
             )}
-
-            <p className="text-[10px] text-slate-400 leading-tight italic bg-slate-900/50 p-2 rounded-xl border border-slate-800/60">
-              {currentConfig.description}
-            </p>
           </div>
         ) : (
           <button
+            type="button"
             onClick={() => setIsHudOpen(true)}
-            className="pointer-events-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-950/85 border border-slate-700/60 text-[11px] text-slate-200 hover:text-white shadow-lg cursor-pointer"
-            title="展開日夜面板"
-            aria-label={`日夜：${currentConfig.name}，展開面板`}
+            className="ap-chip"
+            title={UI.openHud[lang]}
+            aria-label={`${UI.timeOfDay[lang]}: ${UI.phase[timePhase][lang]}`}
             aria-expanded={false}
           >
             {getTimePhaseIcon(timePhase)}
-            <span className="hidden sm:inline font-fantasy">{currentConfig.name}</span>
-            <ChevronDown className="w-3 h-3 text-slate-400" />
+            <span className="hidden sm:inline">{UI.phase[timePhase][lang]}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[var(--ap-text-muted)]" aria-hidden="true" />
           </button>
         )}
       </div>
 
-      {/* Floating Left Navigation Arrow (Triggers Spring Glide) */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40 pointer-events-none">
-        <button
-          onClick={panLeft}
-          disabled={!canScrollLeft}
-          className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all duration-200 pointer-events-auto backdrop-blur-md cursor-pointer ${
-            canScrollLeft
-              ? 'bg-slate-950/80 border-emerald-500/50 text-emerald-300 hover:scale-105 hover:bg-emerald-950/80 shadow-lg shadow-emerald-950/60 active:scale-95'
-              : 'opacity-25 bg-slate-950/40 border-slate-800 text-slate-600 cursor-not-allowed'
-          }`}
-          style={{
-            boxShadow: canScrollLeft ? '0 0 20px rgba(16, 185, 129, 0.3)' : undefined,
-          }}
-          aria-label="向左探索仙境"
-          title="向左平移畫面"
-        >
-          <ChevronLeft className="w-8 h-8 -ml-0.5" />
-        </button>
-      </div>
+      {/* Side arrows (desktop: pan a screen; phone: previous / next portal) */}
+      <button
+        type="button"
+        onClick={panLeft}
+        disabled={!canScrollLeft}
+        className="ap-chip ap-chip--lg ap-chip--icon absolute left-4 top-1/2 -translate-y-1/2 z-40"
+        aria-label={UI.panLeft[lang]}
+        title={UI.panLeft[lang]}
+      >
+        <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        onClick={panRight}
+        disabled={!canScrollRight}
+        className="ap-chip ap-chip--lg ap-chip--icon absolute right-4 top-1/2 -translate-y-1/2 z-40"
+        aria-label={UI.panRight[lang]}
+        title={UI.panRight[lang]}
+      >
+        <ChevronRight className="w-5 h-5" aria-hidden="true" />
+      </button>
 
-      {/* Floating Right Navigation Arrow (Triggers Spring Glide) */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 z-40 pointer-events-none">
-        <button
-          onClick={panRight}
-          disabled={!canScrollRight}
-          className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all duration-200 pointer-events-auto backdrop-blur-md cursor-pointer ${
-            canScrollRight
-              ? 'bg-slate-950/80 border-emerald-500/50 text-emerald-300 hover:scale-105 hover:bg-emerald-950/80 shadow-lg shadow-emerald-950/60 active:scale-95'
-              : 'opacity-25 bg-slate-950/40 border-slate-800 text-slate-600 cursor-not-allowed'
-          }`}
-          style={{
-            boxShadow: canScrollRight ? '0 0 20px rgba(16, 185, 129, 0.3)' : undefined,
-          }}
-          aria-label="向右探索仙境"
-          title="向右平移畫面"
-        >
-          <ChevronRight className="w-8 h-8 -mr-0.5" />
-        </button>
-      </div>
+      {/* Bottom: phone = current portal card + dots; desktop = minimap */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-32px)] max-w-xl flex flex-col gap-2">
+        {isPhone && (
+          <div className="ap-panel px-4 py-3 flex items-center gap-3">
+            <span className="font-fantasy text-base text-[var(--ap-text-muted)]" aria-hidden="true">
+              {centrePortal.signpost.runeSymbol}
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="ap-title truncate">
+                {centrePortal.targetUrl ? centrePortal.destination?.[lang] : centrePortal.name[lang]}
+              </div>
+              <div className="ap-caption truncate">
+                {centrePortal.targetUrl ? centrePortal.name[lang] : UI.sealed[lang]} · {centreIndex + 1}/{PORTALS_DATA.length}
+              </div>
+            </div>
+            {centrePortal.targetUrl ? (
+              <button type="button" onClick={() => onSelectPortal(centrePortal)} className="ap-btn-primary !h-9 !px-4">
+                {UI.enter[lang]}
+              </button>
+            ) : (
+              <span className="ap-caption">{UI.sealed[lang]}</span>
+            )}
+          </div>
+        )}
 
-      {/* Bottom Floating Mini-Map / Radar Navigation Bar */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 pointer-events-none w-[90%] max-w-xl">
-        <div className="p-2.5 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-slate-800/80 shadow-2xl flex flex-col gap-2 pointer-events-auto">
-          <div className="relative h-6 w-full rounded-lg bg-slate-900/90 border border-slate-800 overflow-hidden flex items-center px-3">
-            {/* Viewport Highlight indicator */}
+        <div className="ap-panel px-4 py-2 flex flex-col gap-1">
+          <div className="relative h-5 w-full">
+            {/* Viewport indicator */}
             <div
-              className="absolute top-0 bottom-0 bg-emerald-500/15 border-x border-emerald-400/40 transition-all duration-75 pointer-events-none rounded"
+              className="absolute top-0 bottom-0 rounded-full border border-[var(--ap-border-strong)] bg-[var(--ap-fill)] pointer-events-none"
               style={{
                 left: `${(scrollX / STAGE_WIDTH) * 100}%`,
                 width: `${(viewportWidth / STAGE_WIDTH) * 100}%`,
               }}
             />
-
-            {/* Portal Markers on Radar */}
-            {PORTALS_DATA.map((p) => {
-              const markerLeftPercent = (p.x / STAGE_WIDTH) * 100;
-              const isActive = activePortalId === p.id;
+            {PORTALS_DATA.map((p, i) => {
+              const isActive = activePortalId === p.id || (isPhone && i === centreIndex);
               return (
                 <button
                   key={p.id}
+                  type="button"
                   onClick={() => {
                     wonderlandAudio.playNavClick();
-                    const max = maxScrollRef.current;
-                    targetXRef.current = Math.max(0, Math.min(max, p.x - viewportWidth / 2));
+                    snapToPortal(i);
                   }}
-                  className={`absolute -translate-x-1/2 flex items-center justify-center transition-all cursor-pointer group ${
-                    isActive ? 'scale-125 z-20' : 'hover:scale-110'
-                  }`}
-                  style={{ left: `${markerLeftPercent}%` }}
-                  title={`${p.name} · ${p.signpost.destination}`}
+                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center cursor-pointer"
+                  style={{ left: `${(p.x / STAGE_WIDTH) * 100}%` }}
+                  title={fmt(UI.jumpTo[lang], { name: p.name[lang] })}
+                  aria-label={fmt(UI.jumpTo[lang], { name: p.name[lang] })}
                 >
-                  <div
-                    className="w-3.5 h-3.5 rounded-full border flex items-center justify-center text-[8px] font-fantasy font-bold transition-transform shadow-md"
+                  <span
+                    className="block rounded-full transition-all duration-150"
                     style={{
-                      backgroundColor: p.colors.primary,
-                      borderColor: p.colors.accent,
-                      boxShadow: `0 0 10px ${p.colors.glow}`,
-                      color: '#020617',
+                      width: isActive ? 10 : 6,
+                      height: isActive ? 10 : 6,
+                      background: isActive
+                        ? 'var(--ap-accent)'
+                        : p.targetUrl
+                        ? 'rgba(255,255,255,0.7)'
+                        : 'rgba(255,255,255,0.3)',
                     }}
-                  >
-                    {p.signpost.runeSymbol}
-                  </div>
+                  />
                 </button>
               );
             })}
           </div>
-
-          <div className="hidden sm:flex items-center justify-between text-[11px] text-slate-400 px-1">
-            <div className="flex items-center gap-1.5 text-slate-300">
-              <Compass className="w-3.5 h-3.5 text-emerald-400" />
-              <span>拖曳或滾輪平移 · 點圓點跳轉</span>
-            </div>
-            <span className="text-emerald-400 font-fantasy">
-              {Math.round((scrollX / (maxScroll || 1)) * 100)}%
-            </span>
-          </div>
+          <div className="hidden sm:block ap-caption text-center">{UI.minimapHint[lang]}</div>
+          {isPhone && <div className="ap-caption text-center">{UI.swipeHint[lang]}</div>}
         </div>
       </div>
     </div>

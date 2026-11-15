@@ -67,33 +67,26 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
     };
     window.addEventListener('resize', handleResize);
 
-    // Scale particle count with viewport area (55 on a 1440x900 desktop, fewer on phones)
-    const count = Math.round(Math.max(18, Math.min(55, (width * height) / (1440 * 900) * 55)));
+    // A few quiet spores; count scales with viewport area (24 on a 1440x900 desktop, ~10 on phones)
+    const count = Math.round(Math.max(10, Math.min(24, (width * height) / (1440 * 900) * 24)));
     const reduceMotion =
       typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const particles: Particle[] = Array.from({ length: count }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 2 + 0.8,
+      radius: Math.random() * 1.2 + 0.6,
       color: '255, 255, 255',
-      speedX: (Math.random() - 0.5) * 0.35,
-      speedY: -Math.random() * 0.4 - 0.1,
-      alpha: Math.random() * 0.6 + 0.2,
-      pulseSpeed: Math.random() * 0.025 + 0.015,
+      speedX: (Math.random() - 0.5) * 0.15,
+      speedY: -Math.random() * 0.2 - 0.05,
+      alpha: Math.random() * 0.3 + 0.15,
+      pulseSpeed: Math.random() * 0.01 + 0.005,
       phase: Math.random() * Math.PI * 2,
     }));
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      const baseColor =
-        timePhase === 'dawn'
-          ? '251, 191, 36'
-          : timePhase === 'day'
-          ? '56, 189, 248'
-          : timePhase === 'dusk'
-          ? '216, 70, 239'
-          : '52, 211, 153';
+      const baseColor = '226, 232, 240'; // neutral: the accent is reserved for UI
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -106,18 +99,12 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        const a = Math.max(0.1, Math.min(0.9, p.alpha + Math.sin(p.phase) * 0.3));
-
-        // Outer soft glow
-        ctx.fillStyle = `rgba(${baseColor}, ${a * 0.35})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius * 2.8, 0, Math.PI * 2);
-        ctx.fill();
+        const a = Math.max(0.08, Math.min(0.5, p.alpha + Math.sin(p.phase) * 0.12));
 
         // Core bright pip
         ctx.fillStyle = `rgba(${baseColor}, ${a})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius * 0.9, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -166,7 +153,7 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
             key={`aurora-${phase}`}
             className={`absolute top-0 h-[75%] w-[5600px] transition-opacity duration-1000 ease-in-out will-change-transform${isActive ? fadeInClass : ''}`}
             style={{
-              opacity: isActive ? 0.9 : 0,
+              opacity: isActive ? 0.4 : 0,
               transform: `translate3d(${farSkyX}px, 0, 0)`,
               background: cfg.auroraMist,
               zIndex: 3,
@@ -183,38 +170,25 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
           top: `${currentConfig.sunPosition.y}px`,
           transform: `translate3d(${farSkyX * 1.15}px, 0, 0)`,
           opacity: currentConfig.sunOpacity,
-          background: 'radial-gradient(circle at center, #ffffff 0%, #fef08a 25%, #f59e0b 60%, transparent 80%)',
-          boxShadow: `0 0 90px 30px rgba(245, 158, 11, ${0.4 * currentConfig.glowIntensity})`,
+          background: 'radial-gradient(circle at center, #fffbeb 0%, #fde68a 35%, rgba(245, 158, 11, 0.6) 65%, transparent 80%)',
+          boxShadow: `0 0 40px 8px rgba(245, 158, 11, ${0.18 * currentConfig.glowIntensity})`,
           zIndex: 4,
         }}
       >
-        <div className="absolute -inset-8 rounded-full border border-amber-300/25 animate-spin" style={{ animationDuration: '45s' }} />
       </div>
 
-      {/* 4. Luminous Twin Moons (Dusk / Night) */}
+      {/* 4. Moon (dusk / night): one pale neutral disc */}
       <div
         className="absolute top-12 left-[480px] w-36 h-36 rounded-full pointer-events-none transition-opacity duration-1000 ease-in-out will-change-[transform,opacity]"
         style={{
           transform: `translate3d(${farSkyX * 1.2}px, 0, 0)`,
           opacity: currentConfig.moonOpacity,
-          background: 'radial-gradient(circle at 35% 35%, #f0f9ff 0%, #7dd3fc 45%, #0284c7 90%)',
-          boxShadow: `0 0 60px rgba(56, 189, 248, ${0.45 * currentConfig.glowIntensity})`,
+          background: 'radial-gradient(circle at 35% 35%, #f8fafc 0%, #cbd5e1 55%, #64748b 100%)',
+          boxShadow: `0 0 32px rgba(226, 232, 240, ${0.15 * currentConfig.glowIntensity})`,
           zIndex: 4,
         }}
       >
-        <div className="absolute -inset-5 rounded-full border border-sky-300/25 animate-pulse" />
       </div>
-
-      <div
-        className="absolute top-28 left-[2350px] w-24 h-24 rounded-full pointer-events-none transition-opacity duration-1000 ease-in-out will-change-[transform,opacity]"
-        style={{
-          transform: `translate3d(${farSkyX * 1.3}px, 0, 0)`,
-          opacity: currentConfig.moonOpacity * 0.85,
-          background: 'radial-gradient(circle at 30% 30%, #faf5ff 0%, #c084fc 50%, #7e22ce 90%)',
-          boxShadow: `0 0 45px rgba(168, 85, 247, ${0.45 * currentConfig.glowIntensity})`,
-          zIndex: 4,
-        }}
-      />
 
       {/* 5. Distant Mystical Mountain Ridges (Ultra-wide 5600px continuous span) */}
       <div
@@ -273,7 +247,8 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
                    L 5600 290"
                 fill="none"
                 stroke={cfg.mountainGrad.rimGlow}
-                strokeWidth="2.5"
+                strokeWidth="1.25"
+                strokeOpacity="0.5"
               />
             </svg>
           );

@@ -1,24 +1,25 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { PortalItem } from '../types/portal';
 import { wonderlandAudio } from '../utils/audio';
-import { Lock, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Lock, ArrowRight } from 'lucide-react';
+import { fmt, Lang, UI } from '../i18n';
 
 interface PortalComponentProps {
   portal: PortalItem;
   onSelect: (portal: PortalItem) => void;
   isHovered: boolean;
   onHoverChange: (portalId: string | null) => void;
-  glowMultiplier?: number;
+  lang: Lang;
 }
 
 // Memoised: the stage re-renders on every spring-camera frame while panning, but a portal
-// only needs to re-render when its own hover state or the global glow level changes.
+// only needs to re-render when its own hover state or the language changes.
 const PortalComponentImpl: React.FC<PortalComponentProps> = ({
   portal,
   onSelect,
   isHovered,
   onHoverChange,
-  glowMultiplier = 1.0,
+  lang,
 }) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -51,7 +52,7 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
   const handleMouseEnter = () => {
     setInternalHover(true);
     onHoverChange(portal.id);
-    wonderlandAudio.playPortalHover(portal.worldDetails.audioPreset);
+    wonderlandAudio.playPortalHover(portal.audioPreset);
   };
 
   const handleMouseLeave = () => {
@@ -263,7 +264,7 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
             <ellipse cx="52" cy="110" rx="5" ry="8" transform="rotate(-25 52 110)" fill="#6ee7b7" />
             <ellipse cx="60" cy="155" rx="5" ry="8" transform="rotate(20 60 155)" fill="#34d399" />
             <ellipse cx="58" cy="205" rx="4.5" ry="7" transform="rotate(-15 58 205)" fill="#6ee7b7" />
-            <circle cx="52" cy="255" r="3.5" fill="#a7f3d0" className="animate-pulse" />
+            <circle cx="52" cy="255" r="3.5" fill="#a7f3d0" />
 
             {/* Left Hanging Vine 2 (Shorter) */}
             <path
@@ -285,7 +286,7 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
             <ellipse cx="248" cy="110" rx="5" ry="8" transform="rotate(25 248 110)" fill="#6ee7b7" />
             <ellipse cx="240" cy="155" rx="5" ry="8" transform="rotate(-20 240 155)" fill="#34d399" />
             <ellipse cx="242" cy="205" rx="4.5" ry="7" transform="rotate(15 242 205)" fill="#6ee7b7" />
-            <circle cx="248" cy="255" r="3.5" fill="#a7f3d0" className="animate-pulse" />
+            <circle cx="248" cy="255" r="3.5" fill="#a7f3d0" />
 
             {/* Right Hanging Vine 2 (Shorter) */}
             <path
@@ -304,13 +305,11 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
               stroke="#34d399"
               strokeWidth="2.8"
               strokeDasharray="8 14"
-              className={activeHover ? 'opacity-100 animate-pulse' : 'opacity-70'}
+              className={activeHover ? 'opacity-100' : 'opacity-70'}
               style={{ filter: 'drop-shadow(0 0 6px #10b981)' }}
             />
 
             {/* Glowing Golden Sap Beads & Floating Spores */}
-            <circle cx="85" cy="110" r="4.5" fill="#fbbf24" className="animate-ping" style={{ animationDuration: '3s' }} />
-            <circle cx="215" cy="110" r="4.5" fill="#fbbf24" className="animate-ping" style={{ animationDuration: '3.6s' }} />
             <circle cx="150" cy="46" r="5" fill="#a7f3d0" />
             <circle cx="-10" cy="-30" r="3.5" fill="#6ee7b7" />
             <circle cx="310" cy="-30" r="3.5" fill="#6ee7b7" />
@@ -442,8 +441,8 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
             <circle cx="272" cy="128" r="2.2" fill="#fef08a" />
 
             {/* Water Spray Sparkles */}
-            <circle cx="95" cy="55" r="2.5" fill="#a7f3d0" className="animate-pulse" />
-            <circle cx="215" cy="165" r="2.5" fill="#a7f3d0" className="animate-pulse" />
+            <circle cx="95" cy="55" r="2.5" fill="#a7f3d0" />
+            <circle cx="215" cy="165" r="2.5" fill="#a7f3d0" />
             <circle cx="160" cy="40" r="2" fill="#6ee7b7" />
           </g>
         );
@@ -524,7 +523,7 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
               stroke="#c084fc"
               strokeWidth="2.2"
               strokeDasharray="6 8"
-              className={activeHover ? 'opacity-100 animate-pulse' : 'opacity-70'}
+              className={activeHover ? 'opacity-100' : 'opacity-70'}
               style={{ filter: 'drop-shadow(0 0 6px #a855f7)' }}
             />
             {/* Secondary Finer Neon Violet Fissures */}
@@ -691,7 +690,7 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
                 stroke="#e9d5ff"
                 strokeWidth="1.5"
                 strokeDasharray="4 6"
-                className="animate-pulse"
+               
                 style={{ filter: 'drop-shadow(0 0 5px #a855f7)' }}
               />
               {/* Lower threshold arc */}
@@ -747,12 +746,10 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
             </g>
 
             {/* Floating Ion Particles & Amethyst Stardust */}
-            <circle cx="62" cy="155" r="3.2" fill="#f3e8ff" className="animate-ping" style={{ animationDuration: '3.4s' }} />
-            <circle cx="238" cy="155" r="3.2" fill="#f3e8ff" className="animate-ping" style={{ animationDuration: '2.9s' }} />
-            <circle cx="150" cy="62" r="3.5" fill="#e9d5ff" className="animate-pulse" />
+            <circle cx="150" cy="62" r="3.5" fill="#e9d5ff" />
             <circle cx="92" cy="215" r="2.5" fill="#c084fc" />
             <circle cx="208" cy="215" r="2.5" fill="#c084fc" />
-            <circle cx="150" cy="275" r="2.8" fill="#f3e8ff" className="animate-pulse" />
+            <circle cx="150" cy="275" r="2.8" fill="#f3e8ff" />
           </g>
         );
 
@@ -823,9 +820,7 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
             </g>
 
             {/* Drifting Golden Spores */}
-            <circle cx="70" cy="140" r="3" fill="#fde68a" className="animate-ping" style={{ animationDuration: '3.6s' }} />
-            <circle cx="210" cy="140" r="3" fill="#fde68a" className="animate-ping" style={{ animationDuration: '3.1s' }} />
-            <circle cx="140" cy="100" r="2.5" fill="#fef08a" className="animate-pulse" />
+            <circle cx="140" cy="100" r="2.5" fill="#fef08a" />
           </g>
         );
 
@@ -985,23 +980,6 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
     );
   };
 
-  const getSignpostContainerStyle = () => {
-    switch (portal.signpost.material) {
-      case 'mossy-wood':
-        return 'bg-emerald-950/90 border-emerald-500/50 text-emerald-100';
-      case 'floating-stone':
-        return 'bg-slate-900/90 border-cyan-400/60 text-cyan-50';
-      case 'carved-river-rock':
-        return 'bg-teal-950/90 border-teal-500/60 text-teal-100';
-      case 'amethyst-spire':
-        return 'bg-purple-950/90 border-purple-500/60 text-purple-100';
-      case 'fungal-bark':
-        return 'bg-amber-950/90 border-amber-500/60 text-amber-100';
-      case 'ruin-marble':
-        return 'bg-indigo-950/90 border-indigo-400/60 text-indigo-100';
-    }
-  };
-
   return (
     <div
       ref={rootRef}
@@ -1022,7 +1000,11 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      aria-label={isSealed ? `傳送門：${portal.name}（封印中，尚未開放）` : `傳送門：${portal.name}，直接穿越至${portal.targetLabel ?? portal.signpost.destination}`}
+      aria-label={
+        isSealed
+          ? fmt(UI.portalSealedAria[lang], { name: portal.name[lang] })
+          : fmt(UI.portalAria[lang], { name: portal.name[lang], dest: portal.destination?.[lang] ?? '' })
+      }
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -1030,14 +1012,12 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
         }
       }}
     >
-      {/* Dynamic Glow Aura behind portal with glowMultiplier */}
+      {/* Soft halo: quiet at rest, a little stronger on hover (no pulsing) */}
       <div
-        className="absolute inset-0 rounded-full transition-opacity duration-500 pointer-events-none will-change-[opacity]"
+        className="absolute inset-0 rounded-full transition-[opacity,box-shadow] duration-300 pointer-events-none"
         style={{
-          boxShadow: activeHover
-            ? `0 0 ${Math.round(80 * glowMultiplier)}px ${Math.round(24 * glowMultiplier)}px ${portal.colors.glow}`
-            : `0 0 ${Math.round(40 * glowMultiplier)}px ${Math.round(10 * glowMultiplier)}px ${portal.colors.glow}`,
-          opacity: Math.min(1, (activeHover ? 1 : 0.6) * glowMultiplier),
+          boxShadow: activeHover ? `0 0 56px 12px ${portal.colors.glow}` : `0 0 32px 4px ${portal.colors.glow}`,
+          opacity: activeHover ? 0.7 : 0.35,
         }}
       />
 
@@ -1052,79 +1032,67 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
       {/* Inner Vortex */}
       <div className="absolute inset-4 z-10">{renderInnerVortex()}</div>
 
-      {/* Center hover indicator */}
+      {/* Centre hover label */}
       <div
         className={`absolute inset-0 flex items-center justify-center pointer-events-none z-30 transition-opacity duration-200 ${
           activeHover ? 'opacity-100' : 'opacity-0'
         }`}
+        aria-hidden="true"
       >
-        <div className="px-3 py-1.5 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 text-xs font-medium text-white flex items-center gap-1.5 shadow-xl">
-          {isSealed ? (
-            <>
-              <Lock className="w-3.5 h-3.5 text-slate-300" />
-              <span>封印中</span>
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>點擊穿越</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-white/70" />
-            </>
-          )}
-        </div>
+        <span className="ap-chip pointer-events-none !bg-[var(--ap-surface)]">
+          {isSealed ? <Lock className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+          <span>{isSealed ? UI.sealed[lang] : UI.clickToEnter[lang]}</span>
+        </span>
       </div>
 
-      {/* Signpost */}
+      {/* Signpost: one neutral card for every portal (rune · destination / status) */}
       <div
-        className={`absolute z-30 transition-all duration-200 pointer-events-auto ${
-          activeHover ? 'scale-105 -translate-y-0.5' : ''
-        }`}
+        className="absolute z-30 pointer-events-auto"
         style={{
           left: `calc(50% + ${portal.signpost.offsetX}px)`,
           top: `calc(50% + ${portal.signpost.offsetY}px)`,
-          width: '210px',
+          width: '184px',
         }}
         onClick={handleClick}
       >
-        <div className="flex flex-col items-center">
-          {portal.signpost.material === 'mossy-wood' && (
-            <div className="w-1.5 h-5 bg-emerald-800/80 -mb-0.5 rounded-t" />
-          )}
-          {portal.signpost.material === 'floating-stone' && (
-            <div className="w-1 h-3.5 bg-cyan-400/50 -mb-0.5" />
+        <div
+          className={`ap-panel p-2 transition-colors duration-150 ${
+            activeHover ? '!border-[var(--ap-border-strong)]' : ''
+          }`}
+        >
+          {/* Hover-only preview thumbnail (optional; only rendered when the image exists) */}
+          {showThumb && (
+            <img
+              src={portal.previewImage}
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+              onLoad={() => setThumbState('ok')}
+              onError={() => setThumbState('missing')}
+              className={`w-full aspect-video object-cover rounded-[var(--ap-radius-sm)] transition-opacity duration-200 ${
+                thumbState === 'ok' ? 'opacity-100 mb-2' : 'opacity-0 h-0'
+              }`}
+            />
           )}
 
-          <div
-            className={`w-full p-2 rounded-xl border backdrop-blur-md shadow-xl transition-all duration-200 ${getSignpostContainerStyle()} ${
-              activeHover ? 'ring-1 ring-white/40' : ''
-            }`}
-          >
-            {/* Hover-only preview thumbnail (optional; only rendered when the image exists) */}
-            {showThumb && (
-              <img
-                src={portal.previewImage}
-                alt=""
-                aria-hidden="true"
-                decoding="async"
-                onLoad={() => setThumbState('ok')}
-                onError={() => setThumbState('missing')}
-                className={`w-full aspect-video object-cover rounded-lg mb-2 border border-white/10 transition-opacity duration-200 ${
-                  thumbState === 'ok' ? 'opacity-100' : 'opacity-0 h-0 mb-0'
+          <div className="flex items-center gap-2 px-1">
+            <span className="font-fantasy text-sm text-[var(--ap-text-muted)] shrink-0" aria-hidden="true">
+              {portal.signpost.runeSymbol}
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="ap-body font-semibold text-white truncate">
+                {isSealed ? portal.name[lang] : portal.destination?.[lang]}
+              </div>
+              <div className="ap-caption truncate">{isSealed ? UI.sealed[lang] : portal.name[lang]}</div>
+            </div>
+            {!isSealed && (
+              <ArrowRight
+                className={`w-4 h-4 shrink-0 transition-colors ${
+                  activeHover ? 'text-[var(--ap-accent)]' : 'text-[var(--ap-text-dim)]'
                 }`}
+                aria-hidden="true"
               />
             )}
-
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-fantasy font-bold text-amber-300 shrink-0">
-                {portal.signpost.runeSymbol}
-              </span>
-              <h4 className="flex-1 min-w-0 text-xs font-fantasy font-bold tracking-wide text-white leading-tight truncate">
-                {isSealed ? portal.name : portal.targetLabel ?? portal.signpost.destination}
-              </h4>
-              <span className={`text-[10px] font-semibold shrink-0 ${isSealed ? 'text-slate-400' : 'text-amber-200'}`}>
-                {isSealed ? '封印中' : '通往 ➔'}
-              </span>
-            </div>
           </div>
         </div>
       </div>

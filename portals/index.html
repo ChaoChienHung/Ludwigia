@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>幻光仙境傳送門 - Aetheria Portals</title>
-    <meta name="description" content="探索奇幻發光仙境中的多維秘境傳送門，體驗高低錯落的自然奇觀、流光旋渦動效、全景視角平移與異界導覽。" />
-    <meta property="og:title" content="幻光仙境傳送門 - Aetheria Portals" />
-    <meta property="og:description" content="探索奇幻發光仙境中的多維秘境傳送門，體驗高低錯落的自然奇觀、流光旋渦動效、全景視角平移與異界導覽。" />
+    <title>傳送門 · Ludwigia</title>
+    <meta name="description" content="Ludwigia 的傳送門大廳：點一扇門，直接進入數位花園或 Ludwigia World。" />
+    <meta property="og:title" content="傳送門 · Ludwigia" />
+    <meta property="og:description" content="Ludwigia 的傳送門大廳：點一扇門，直接進入數位花園或 Ludwigia World。" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="./assets/favicon-BAJC-WMu.svg">
@@ -15,8 +15,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/main-D3rYZdOG.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/main-D-shoOyc.css">
+    <!-- Theme & palette preload (same contract as the main site / World): apply the saved
+         theme + palette classes and load the shared palette tokens, so the Portals accent
+         (--ap-accent) is projected from the site-wide palette instead of a second colour set.
+         Injected at runtime so Vite leaves the shared stylesheet as a live link. -->
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var themes = ['light-theme', 'deep-sea-theme', 'galaxy-theme', 'sky-theme', 'garden-theme'];
+        function apply() {
+          try {
+            root.classList.remove.apply(root.classList, themes);
+            var theme = String(localStorage.getItem('theme') || '').trim().toLowerCase();
+            var selected = theme === 'deep-sea' || theme === 'galaxy-night' ? 'deep-sea-theme' : theme + '-theme';
+            if (themes.indexOf(selected) >= 0) root.classList.add(selected);
+            Array.prototype.slice.call(root.classList).forEach(function (n) {
+              if (n.indexOf('palette-') === 0) root.classList.remove(n);
+            });
+            var palette = String(localStorage.getItem('site_palette_v1') || '').trim().toLowerCase();
+            if (/^[a-z0-9-]+$/.test(palette)) root.classList.add('palette-' + palette);
+            var lang = String(localStorage.getItem('site_lang_v1') || '').trim();
+            if (lang) root.setAttribute('lang', lang);
+          } catch (e) { /* storage unavailable */ }
+        }
+        apply();
+        window.addEventListener('storage', function (e) {
+          if (!e.key || e.key === 'theme' || e.key === 'site_palette_v1') apply();
+        });
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '../assets/css/site/palette-tokens.css';
+        document.head.appendChild(link);
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/main-AOimLm5b.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/main-DF-d9j2O.css">
   </head>
   <body>
     <div id="root"></div>
