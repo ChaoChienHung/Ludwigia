@@ -96,9 +96,12 @@
 - [x] 確認 LaTeX 原始檔可編譯，且所有引用鍵都對應到 bibliography。
 - [x] 補上 Feldman et al.（STOC 2020）的無條件 $1/2$ lower bound、random-order $1-1/e-\varepsilon$ 結果（Agrawal et al. 2019；Liu et al. 2021），以及 Sieve-Streaming pseudocode 與 Sieve-Streaming++ 的 $O(k/\varepsilon)$ 求和論證。
 - [x] 對照原文核對新增三篇論文的定理敘述（特別是 Feldman et al. 的 $\Omega(\varepsilon n/k^3)$ 與 Agrawal et al. 的 window 直覺描述）。
-- [ ] 檢查預覽 PDF 的實際頁數及視覺排版；目標約 10 頁。
+- [x] 檢查預覽 PDF 的實際頁數及視覺排版；目標約 10 頁。（2026-11-15：含參考文獻共 10 頁，交叉引用皆已解析。）
+- [x] 去除 AI 腔與重複段落：修正 §3.2「The same paper」指代、合併 §5.1 與結論重複的結果摘要、改寫 Introduction 中 space vs. time 一段。
 - [ ] 由組員逐段人工 proofread，確認論述是自己的文字並符合課程要求。
 
 ## 六、目前草稿的狀態
 
-[`main.tex`](main.tex) 已完成一輪完整的 survey：正式問題定義、主要結果與假設比較、Sieve-Streaming 的核心證明、課堂技術連結、具體 future direction、結論，以及 Generative AI Acknowledgment。LaTeX 原始檔已可編譯；實際 PDF 頁數與視覺排版仍待預覽核對。作者姓名已填入；提交前仍須由作者逐段審閱數學、引用及全文措辭，並確認 acknowledgment 對實際審閱情況的敘述屬實。
+[`main.tex`](main.tex) 已完成一輪完整的 survey：正式問題定義、主要結果與假設比較、Sieve-Streaming 的核心證明、課堂技術連結、具體 future direction、結論，以及 Generative AI Acknowledgment。已對照第一節的四項課堂要求逐項核對，皆有對應章節；PDF 含參考文獻共 10 頁。
+
+實際篇幅與第三節的規劃略有出入：§5.1 的比較段在刪除重複內容後約半頁（比較已分散在 §3 各小節與 §4.4），參考文獻約占一頁。提交前仍須由作者逐段審閱數學、引用及全文措辭，並確認 acknowledgment 對實際審閱情況的敘述屬實；修改 `main.tex` 後需重新編譯 `main.pdf`。
