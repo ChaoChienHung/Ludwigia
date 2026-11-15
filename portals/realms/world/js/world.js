@@ -22,6 +22,15 @@
     AmbientAudio
   } = window.LudwigWorldEngine;
 
+  // --- DOM write guards: HUD elements are updated from the 60fps loop, so only touch the DOM
+  // when the content really changes (avoids per-frame style recalcs / innerHTML re-parsing).
+  function setTextIfChanged(el, value) {
+    if (el && el.textContent !== value) el.textContent = value;
+  }
+  function setHtmlIfChanged(el, html) {
+    if (el && el.__lwHtml !== html) { el.__lwHtml = html; el.innerHTML = html; }
+  }
+
   class LudwigiaWorld {
     constructor(canvas) {
       this.canvas = canvas;
@@ -76,6 +85,15 @@
 
       // Dynamic Wandering Snow Poros on Howling Abyss Bridge
       this.initPoros();
+
+      // Reduced-motion preference: ambient particles / drifting snow are decorative only
+      this.reducedMotion = false;
+      try {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.reducedMotion = mq.matches;
+        const onMq = (e) => { this.reducedMotion = e.matches; };
+        if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq);
+      } catch (e) { /* matchMedia unavailable */ }
 
       // Particles
       this.particles = [];
@@ -771,10 +789,14 @@
 
     resize() {
       const rect = this.canvas.parentElement.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      this.canvas.width = rect.width * dpr;
-      this.canvas.height = rect.height * dpr;
-      this.ctx.scale(dpr, dpr);
+      // Cap the backing-store DPR: phones report 3x, which makes every fill rasterise 2.25x more
+      // pixels than at 2x with no visible gain for this illustrated style. Coordinates stay in CSS px.
+      const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.75 : 2);
+      this.dpr = dpr;
+      this.canvas.width = Math.round(rect.width * dpr);
+      this.canvas.height = Math.round(rect.height * dpr);
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       this.width = rect.width;
       this.height = rect.height;
     }
@@ -1085,12 +1107,12 @@
 
       // Status text
       const statusEl = document.getElementById('status-text');
-      if (statusEl) statusEl.textContent = statusMessage;
+      if (statusEl) setTextIfChanged(statusEl, statusMessage);
 
       // Compass Realtime Coordinates
       const compassCoordsEl = document.getElementById('compass-coords');
       if (compassCoordsEl) {
-        compassCoordsEl.textContent = `X: ${Math.round(player.x)} · Y: ${Math.round(player.y)}`;
+        setTextIfChanged(compassCoordsEl, `X: ${Math.round(player.x)} · Y: ${Math.round(player.y)}`);
       }
 
       // 3. Player Movement with Reliable Walking Animation
@@ -1645,7 +1667,7 @@
       if (promptEl) {
         if (closest) {
           promptEl.classList.add('visible');
-          document.getElementById('prompt-name').textContent = closest.name;
+          setTextIfChanged(document.getElementById('prompt-name'), closest.name);
         } else {
           promptEl.classList.remove('visible');
         }
@@ -1672,18 +1694,18 @@
         if (player.furniture) {
           furnPromptEl.classList.add('visible');
           const isZh = (this.charManager.getLangKey() === 'zh-TW');
-          furnPromptEl.innerHTML = `<i class="fa-solid fa-person-walking-arrow-right text-accent"></i> <span>[E / 點擊] ${isZh ? '起身' : 'Stand Up'}</span>`;
+          setHtmlIfChanged(furnPromptEl, `<i class="fa-solid fa-person-walking-arrow-right text-accent"></i> <span>[E / 點擊] ${isZh ? '起身' : 'Stand Up'}</span>`);
         } else if (closestFurniture) {
           furnPromptEl.classList.add('visible');
           const isZh = (this.charManager.getLangKey() === 'zh-TW');
           const occupant = this.charManager.getOccupant(closestFurniture);
           if (occupant) {
             const occName = occupant.name || (isZh ? '有人' : 'Someone');
-            furnPromptEl.innerHTML = `<i class="fa-solid fa-user-clock text-accent"></i> <span>[${occName} ${isZh ? '正坐著休息' : 'is resting'}]</span>`;
+            setHtmlIfChanged(furnPromptEl, `<i class="fa-solid fa-user-clock text-accent"></i> <span>[${occName} ${isZh ? '正坐著休息' : 'is resting'}]</span>`);
           } else {
             const icon = (closestFurniture.type === 'bed') ? 'fa-bed' : 'fa-chair';
             const label = isZh ? closestFurniture.labelZh : closestFurniture.labelEn;
-            furnPromptEl.innerHTML = `<i class="fa-solid ${icon} text-accent"></i> <span>[E / 點擊] ${label}</span>`;
+            setHtmlIfChanged(furnPromptEl, `<i class="fa-solid ${icon} text-accent"></i> <span>[E / 點擊] ${label}</span>`);
           }
         } else {
           furnPromptEl.classList.remove('visible');
@@ -1704,7 +1726,232 @@
     }
 
     // --- Terrain Renderer for Campus (expanded to MAP_W x MAP_H with Viewport Culling) ---
+    // --- Static Terrain Tile Table (built once; tile colours/zones never change at runtime) ---
+    // Each tile stores: palette colour index, alpha group (the zone whose interior it belongs to,
+    // used for the outside-dimming cutaway), and decoration flags. drawTerrain() then only
+    // walks the visible tile window and batches fills per (alpha group, colour).
+    classifyTerrainTile(x, y) {
+      const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
+      const isDorm = (x <= DORM_MAX_X && y >= DORM_MIN_Y && y <= DORM_MAX_Y);
+      const isAi = (x >= AI_MIN_X && x <= AI_MAX_X && y >= AI_MIN_Y && y <= AI_MAX_Y);
+      const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
+      const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
+      const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
+      const isBasketball = (x >= COURT_MIN_X && x <= COURT_MAX_X && y >= COURT_MIN_Y && y <= COURT_MAX_Y);
+      const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
+      const isCafe = (x >= CAFE_MIN_X && x <= CAFE_MAX_X && y >= CAFE_MIN_Y && y <= CAFE_MAX_Y);
+      const isHowAreYou = (x >= HOW_ARE_YOU_MIN_X && x <= HOW_ARE_YOU_MAX_X && y >= HOW_ARE_YOU_MIN_Y && y <= HOW_ARE_YOU_MAX_Y);
+      const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
+      const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 92);
+      const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
+      const isMinecraftCabinFloor = (x >= 9 && x <= 14 && y >= 97 && y <= 102);
+      const isMinecraftWater = (x === 18 && y === 99);
+      const isMinecraftFarmland = (x >= 16 && x <= 19 && y >= 97 && y <= 101 && !isMinecraftWater);
+      const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou || isMinecraftCabinFloor;
+
+      // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
+      const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
+      const isEastNorthSouthSpine = (x >= 30 && x <= 31 && y >= 2 && y <= 33);  // East Promenade Spine (width 2, shifted to x: 30..31 flush with Night Market!)
+      const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 18);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance (East window is grass lawn)
+      const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 31);        // Central Cross Street & Plaza Axis ↔ East Spine
+      const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
+      const isSouthSectorConnector = (
+        (x >= 5 && x <= 32 && y >= 44 && y <= 46) || // South Avenue (centered at y = 45)
+        (x >= 9 && x <= 19 && y >= 47 && y <= 48) || // Wide Cobblestone Sidewalk Plaza in front of Cyber Cafe at y: 47!
+        (x >= 12 && x <= 16 && y >= 45 && y <= 49)  // Central boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
+      );
+
+      // 1. East Sector Main Path (主路徑) at x: 36..37, y: 28..34 connecting south towards Basketball Court
+      const isEastMainSouthPath = (x >= 36 && x <= 37 && y >= 28 && y <= 34);
+
+      // 2. Cross Connector linking East Promenade Spine (x: 30..35) to Main Path (x: 36..37) at y: 28..30
+      const isEastMainSpineConnector = (x >= 30 && x <= 36 && y >= 28 && y <= 30);
+
+      // 3. Wide Side Spur into Basketball Court (分一塊小路到籃球場) from Main Path (x: 36..37) into Court Entrance (x: 38) at y: 34..37
+      const isBasketballEntranceSpur = (x >= 36 && x <= 38 && y >= 34 && y <= 37);
+
+      // Dedicated Pathway Connectors from East Spine (x: 30..31) into x = 36 entrances
+      const isCafeDoorSpur = (x >= 31 && x <= 36 && y >= 5 && y <= 6);         // Cafe West Entrance
+      const isHowAreYouDoorSpur = (x >= 31 && x <= 36 && y >= 19 && y <= 20);   // "How Are You" West Entrance
+
+      // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds only)
+      const isLudwigDoorSpur = (x >= 10 && x <= 12 && y >= 5 && y <= 6);
+      const isLudwigTerraceSpur = (y >= 10 && y <= 11 && x >= 5 && x <= 6);
+      const isDormDoorSpur = (x >= 10 && x <= 12 && y >= 21 && y <= 22);
+      const isSchoolDoorSpur = (x >= 10 && x <= 12 && y >= 37 && y <= 38);
+      const isAiDoorSpur = (x >= 15 && x <= 18 && y >= 5 && y <= 6);
+      const isLibDoorSpur = (x >= 15 && x <= 18 && y >= 21 && y <= 22);
+      const isDouyinDoorSpur = (x >= 15 && x <= 18 && y >= 37 && y <= 38);
+
+      const isPath = (
+        isMainNorthSouthSpine ||
+        isEastNorthSouthSpine ||
+        isEastMainSouthPath ||
+        isEastMainSpineConnector ||
+        isBasketballEntranceSpur ||
+        isEastWestAve1 ||
+        isEastWestAve2 ||
+        isGardenTerracePath ||
+        isSouthSectorConnector ||
+        isLudwigDoorSpur ||
+        isLudwigTerraceSpur ||
+        isDormDoorSpur ||
+        isSchoolDoorSpur ||
+        isAiDoorSpur ||
+        isLibDoorSpur ||
+        isDouyinDoorSpur ||
+        isCafeDoorSpur ||
+        isHowAreYouDoorSpur
+      );
+
+      // Chasm Void:
+      // y <= 57: all main campus island land (bounded by south cliff wooden fence at y: 57)
+      // y in [58..92]: bridge is x: 11..17, flanking space is bottomless void!
+      // y >= 93: minecraft island is x: 7..21 (including y: 93 & y: 94 solid land!), flanking space is bottomless void!
+      const isAbyssChasm = (
+        (y > 57 && y <= 92 && (x < 11 || x > 17)) ||
+        (y >= 93 && (x < 7 || x > 21)) ||
+        (y > 111)
+      );
+
+
+      if (isAbyssChasm) return null;
+
+      let group = '';
+      if (isLudwig) group = 'ludwig_house';
+      else if (isDorm) group = 'dorm_211';
+      else if (isAi) group = 'ai_studio';
+      else if (isLib) group = 'library';
+      else if (isSchool) group = 'sanmin_school';
+      else if (isDouyin) group = 'douyin_office';
+      else if (isCafe) group = 'cafe';
+      else if (isHowAreYou) group = 'how_are_you';
+      else if (isCyber) group = 'cyber_cafe';
+
+      let color = null;
+      if (isLudwig) {
+        // Warm Alternating Oak Parquet Flooring
+        color = (x + y) % 2 === 0 ? '#cbaf90' : '#be9f80';
+      } else if (isDorm) {
+        // Taiwanese University Dorm Terrazzo Composite Flooring
+        color = (x + y) % 2 === 0 ? '#cbd5e1' : '#94a3b8';
+      } else if (isAi) {
+        // Futuristic Dark Cyber Slate Tiles
+        color = (x + y) % 2 === 0 ? '#0f172a' : '#1e293b';
+      } else if (isLib) {
+        // Classic Dark Walnut Parquet Floor with Amber Sheen
+        color = (x + y) % 2 === 0 ? '#451a03' : '#3b180a';
+      } else if (isSchool) {
+        // Classic Taiwanese Classroom Polished Honey Wood Parquet
+        color = (x + y) % 2 === 0 ? '#dfb88e' : '#ce9e72';
+      } else if (isDouyin) {
+        // High-Tech Cyber Carbon Slate Floor Tiles
+        color = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
+      } else if (isBasketball) {
+        // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf (x: 35..46, y: 20..29)
+        const isKey = (x >= 35 && x <= 39 && y >= 23 && y <= 26);
+        const isBorder = (x === 35 || x === 46 || y === 20 || y === 29);
+        if (isKey) {
+          color = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
+        } else if (isBorder) {
+          color = '#c2410c'; // Terracotta court apron
+        } else {
+          color = (x + y) % 2 === 0 ? '#15803d' : '#166534';
+        }
+      } else if (isNightMarket) {
+        // Central Midnight Snack Street — Slender Authentic Taiwanese Asphalt Roadway
+        const isCenterDash = (x === 31 && y % 2 === 0);
+        if (isCenterDash) {
+          color = '#facc15'; // Yellow dashed line
+        } else {
+          color = (x + y) % 2 === 0 ? '#334155' : '#1e293b'; // Dark asphalt
+        }
+      } else if (isCafe) {
+        // Ludwigia Indoor Specialty Cafe — Warm Walnut Herringbone Wood Floor
+        color = (x + y) % 2 === 0 ? '#58240a' : '#451a03';
+      } else if (isHowAreYou) {
+        // "How Are You Doing Today" Healing Sanctuary — Soft Warm Ivory Blush Parquet Flooring
+        color = (x + y) % 2 === 0 ? '#fff1f2' : '#fce7f3';
+      } else if (isCyber) {
+        // Cyber LAN Lounge — High-Tech Carbon Soundproof Carpet
+        color = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
+      } else if (isAbyssBridge) {
+        // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Flagstones & Snow Edges
+        const isEdge = (x === 11 || x === 17);
+        if (isEdge) {
+          color = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
+        } else {
+          color = (x + y) % 2 === 0 ? '#1a2738' : '#23344a';
+        }
+      } else if (isMinecraftCabinFloor) {
+        // Minecraft Cabin Oak Wood Floor (drawn directly on terrain layer for zero-clipping sorting)
+        color = (x + y) % 2 === 0 ? '#c69a59' : '#b88c4b';
+      } else if (isMinecraftWater) {
+        // Minecraft Farmland 1x1 Water Source Block
+        color = '#0284c7';
+      } else if (isMinecraftFarmland) {
+        // Minecraft Farmland Tilled Soil
+        color = (x + y) % 2 === 0 ? '#3b2314' : '#27170c';
+      } else if (isMinecraft) {
+        // Minecraft Sanctuary — Classic Grass Block Green Turf
+        color = (x + y) % 2 === 0 ? '#5b8c32' : '#4d7828';
+      } else if (isPath) {
+        // Cobblestone Paved Paths
+        color = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
+      } else {
+        // Lush Green Campus Lawn
+        color = (x + y) % 2 === 0 ? '#4f772d' : '#456b27';
+      }
+
+
+      return {
+        color,
+        group,
+        bridgeStroke: isAbyssBridge,
+        rune: isAbyssBridge && x === 14 && y >= 58 && y <= 92,
+        neon: isAi && (x === AI_MIN_X + 4 || y === AI_MIN_Y + 5)
+      };
+    }
+
+    buildTerrainTable() {
+      const colors = [];
+      const colorIdx = new Map();
+      const groups = [''];
+      const groupIdx = new Map([['', 0]]);
+      const n = MAP_W * MAP_H;
+      const tileColor = new Int16Array(n).fill(-1); // -1 = abyss void (not drawn)
+      const tileGroup = new Uint8Array(n);
+      const tileFlags = new Uint8Array(n); // 1 = bridge stroke, 2 = rune inlay, 4 = AI neon runner
+      for (let x = 0; x < MAP_W; x++) {
+        for (let y = 0; y < MAP_H; y++) {
+          const t = this.classifyTerrainTile(x, y);
+          if (!t) continue;
+          const i = x * MAP_H + y;
+          if (!colorIdx.has(t.color)) { colorIdx.set(t.color, colors.length); colors.push(t.color); }
+          if (!groupIdx.has(t.group)) { groupIdx.set(t.group, groups.length); groups.push(t.group); }
+          tileColor[i] = colorIdx.get(t.color);
+          tileGroup[i] = groupIdx.get(t.group);
+          tileFlags[i] = (t.bridgeStroke ? 1 : 0) | (t.rune ? 2 : 0) | (t.neon ? 4 : 0);
+        }
+      }
+      return { colors, groups, tileColor, tileGroup, tileFlags };
+    }
+
+    // True when a ground-plane (z = 0) grid rectangle projects into the current view rect.
+    isGroundRectVisible(x0, y0, x1, y1, ox, oy, pad = 24) {
+      const vr = this.viewRect;
+      if (!vr) return true;
+      const hw = TW / 2, hh = TH / 2;
+      const sx0 = ox + (x0 - y1) * hw - pad;
+      const sx1 = ox + (x1 - y0) * hw + pad;
+      const sy0 = oy + (x0 + y0) * hh - pad;
+      const sy1 = oy + (x1 + y1) * hh + pad;
+      return sx1 >= vr.minX && sx0 <= vr.maxX && sy1 >= vr.minY && sy0 <= vr.maxY;
+    }
+
     drawTerrain(ctx, ox, oy) {
+      if (!this.terrainTable) this.terrainTable = this.buildTerrainTable();
+      const T = this.terrainTable;
       const cx = this.width / 2;
       const cy = this.height / 2;
       const margin = 140 / this.zoom;
@@ -1713,323 +1960,208 @@
       const minY = cy - (cy / this.zoom) - margin;
       const maxY = cy + (cy / this.zoom) + margin;
 
-      for (let x = 0; x < MAP_W; x++) {
-        for (let y = 0; y < MAP_H; y++) {
-          // High-performance Viewport Culling (skips ~80% off-screen ground tiles)
-          const pCenter = isoToScreen(x + 0.5, y + 0.5, 0, ox, oy);
-          if (pCenter.x < minX || pCenter.x > maxX || pCenter.y < minY || pCenter.y > maxY) {
-            continue;
-          }
+      // Visible tile window: invert the four viewport corners into grid space so we only
+      // iterate tiles near the screen instead of the whole MAP_W x MAP_H grid every frame.
+      const vc0 = screenToIso(minX, minY, ox, oy);
+      const vc1 = screenToIso(maxX, minY, ox, oy);
+      const vc2 = screenToIso(minX, maxY, ox, oy);
+      const vc3 = screenToIso(maxX, maxY, ox, oy);
+      const gx0 = Math.max(0, Math.floor(Math.min(vc0.gx, vc1.gx, vc2.gx, vc3.gx)) - 1);
+      const gx1 = Math.min(MAP_W - 1, Math.ceil(Math.max(vc0.gx, vc1.gx, vc2.gx, vc3.gx)) + 1);
+      const gy0 = Math.max(0, Math.floor(Math.min(vc0.gy, vc1.gy, vc2.gy, vc3.gy)) - 1);
+      const gy1 = Math.min(MAP_H - 1, Math.ceil(Math.max(vc0.gy, vc1.gy, vc2.gy, vc3.gy)) + 1);
 
-          const isLudwig = (x <= HOUSE_MAX_X && y <= HOUSE_MAX_Y);
-          const isDorm = (x <= DORM_MAX_X && y >= DORM_MIN_Y && y <= DORM_MAX_Y);
-          const isAi = (x >= AI_MIN_X && x <= AI_MAX_X && y >= AI_MIN_Y && y <= AI_MAX_Y);
-          const isLib = (x >= LIB_MIN_X && x <= LIB_MAX_X && y >= LIB_MIN_Y && y <= LIB_MAX_Y);
-          const isSchool = (x <= SCHOOL_MAX_X && y >= SCHOOL_MIN_Y && y <= SCHOOL_MAX_Y);
-          const isDouyin = (x >= DOUYIN_MIN_X && x <= DOUYIN_MAX_X && y >= DOUYIN_MIN_Y && y <= DOUYIN_MAX_Y);
-          const isBasketball = (x >= COURT_MIN_X && x <= COURT_MAX_X && y >= COURT_MIN_Y && y <= COURT_MAX_Y);
-          const isNightMarket = (x >= 30 && x <= 32 && y >= 33 && y <= 44);
-          const isCafe = (x >= CAFE_MIN_X && x <= CAFE_MAX_X && y >= CAFE_MIN_Y && y <= CAFE_MAX_Y);
-          const isHowAreYou = (x >= HOW_ARE_YOU_MIN_X && x <= HOW_ARE_YOU_MAX_X && y >= HOW_ARE_YOU_MIN_Y && y <= HOW_ARE_YOU_MAX_Y);
-          const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
-          const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 92);
-          const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
-          const isMinecraftCabinFloor = (x >= 9 && x <= 14 && y >= 97 && y <= 102);
-          const isMinecraftWater = (x === 18 && y === 99);
-          const isMinecraftFarmland = (x >= 16 && x <= 19 && y >= 97 && y <= 101 && !isMinecraftWater);
-          const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou || isMinecraftCabinFloor;
+      // Outside-dimming: when the player is inside one of these zones, every tile that is not
+      // part of that zone's interior is drawn at outsideAlpha (same semantics as before).
+      const dimZones = this._terrainDimZones || (this._terrainDimZones = new Set([
+        'ludwig_house', 'dorm_211', 'ai_studio', 'library', 'sanmin_school',
+        'douyin_office', 'cafe', 'how_are_you', 'cyber_cafe'
+      ]));
+      const dimming = dimZones.has(this.currentZone);
+      const activeGroup = dimming ? T.groups.indexOf(this.currentZone) : -1;
 
-          // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
-          const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
-          const isEastNorthSouthSpine = (x >= 30 && x <= 31 && y >= 2 && y <= 33);  // East Promenade Spine (width 2, shifted to x: 30..31 flush with Night Market!)
-          const isEastWestAve1 = (y >= 5 && y <= 6 && x >= 10 && x <= 18);         // Row 1: Ludwig's Home ↔ Central Spine ↔ AI Studio West Entrance (East window is grass lawn)
-          const isEastWestAve2 = (y >= 12 && y <= 14 && x >= 10 && x <= 31);        // Central Cross Street & Plaza Axis ↔ East Spine
-          const isGardenTerracePath = (y >= 12 && y <= 13 && x >= 5 && x <= 11);   // Walkway spur from Ludwig Terrace stairs to Plaza
-          const isSouthSectorConnector = (
-            (x >= 5 && x <= 32 && y >= 44 && y <= 46) || // South Avenue (centered at y = 45)
-            (x >= 9 && x <= 19 && y >= 47 && y <= 48) || // Wide Cobblestone Sidewalk Plaza in front of Cyber Cafe at y: 47!
-            (x >= 12 && x <= 16 && y >= 45 && y <= 49)  // Central boulevard connection into Cyber Cafe North Door at x: 14, y: 49!
-          );
+      // Buckets: [alphaSlot][colorIdx] -> flat array of tile indices
+      const nColors = T.colors.length;
+      const buckets = this._terrainBuckets || (this._terrainBuckets = [[], []]);
+      for (let s = 0; s < 2; s++) {
+        const b = buckets[s];
+        for (let c = 0; c < nColors; c++) { if (b[c]) b[c].length = 0; else b[c] = []; }
+      }
+      const strokeTiles = this._terrainStrokeTiles || (this._terrainStrokeTiles = []);
+      strokeTiles.length = 0;
 
-          // 1. East Sector Main Path (主路徑) at x: 36..37, y: 28..34 connecting south towards Basketball Court
-          const isEastMainSouthPath = (x >= 36 && x <= 37 && y >= 28 && y <= 34);
-
-          // 2. Cross Connector linking East Promenade Spine (x: 30..35) to Main Path (x: 36..37) at y: 28..30
-          const isEastMainSpineConnector = (x >= 30 && x <= 36 && y >= 28 && y <= 30);
-
-          // 3. Wide Side Spur into Basketball Court (分一塊小路到籃球場) from Main Path (x: 36..37) into Court Entrance (x: 38) at y: 34..37
-          const isBasketballEntranceSpur = (x >= 36 && x <= 38 && y >= 34 && y <= 37);
-
-          // Dedicated Pathway Connectors from East Spine (x: 30..31) into x = 36 entrances
-          const isCafeDoorSpur = (x >= 31 && x <= 36 && y >= 5 && y <= 6);         // Cafe West Entrance
-          const isHowAreYouDoorSpur = (x >= 31 && x <= 36 && y >= 19 && y <= 20);   // "How Are You" West Entrance
-
-          // Local Doorway Connectors (short clean 2-tile spurs into doorway thresholds only)
-          const isLudwigDoorSpur = (x >= 10 && x <= 12 && y >= 5 && y <= 6);
-          const isLudwigTerraceSpur = (y >= 10 && y <= 11 && x >= 5 && x <= 6);
-          const isDormDoorSpur = (x >= 10 && x <= 12 && y >= 21 && y <= 22);
-          const isSchoolDoorSpur = (x >= 10 && x <= 12 && y >= 37 && y <= 38);
-          const isAiDoorSpur = (x >= 15 && x <= 18 && y >= 5 && y <= 6);
-          const isLibDoorSpur = (x >= 15 && x <= 18 && y >= 21 && y <= 22);
-          const isDouyinDoorSpur = (x >= 15 && x <= 18 && y >= 37 && y <= 38);
-
-          const isPath = (
-            isMainNorthSouthSpine ||
-            isEastNorthSouthSpine ||
-            isEastMainSouthPath ||
-            isEastMainSpineConnector ||
-            isBasketballEntranceSpur ||
-            isEastWestAve1 ||
-            isEastWestAve2 ||
-            isGardenTerracePath ||
-            isSouthSectorConnector ||
-            isLudwigDoorSpur ||
-            isLudwigTerraceSpur ||
-            isDormDoorSpur ||
-            isSchoolDoorSpur ||
-            isAiDoorSpur ||
-            isLibDoorSpur ||
-            isDouyinDoorSpur ||
-            isCafeDoorSpur ||
-            isHowAreYouDoorSpur
-          );
-
-          // Chasm Void:
-          // y <= 57: all main campus island land (bounded by south cliff wooden fence at y: 57)
-          // y in [58..92]: bridge is x: 11..17, flanking space is bottomless void!
-          // y >= 93: minecraft island is x: 7..21 (including y: 93 & y: 94 solid land!), flanking space is bottomless void!
-          const isAbyssChasm = (
-            (y > 57 && y <= 92 && (x < 11 || x > 17)) ||
-            (y >= 93 && (x < 7 || x > 21)) ||
-            (y > 111)
-          );
-
-          ctx.save();
-          if (isAbyssChasm) {
-            ctx.restore();
-            continue; // True Empty Void: Flanking chasm is completely empty, revealing deep background below!
-          }
-
-          if (this.currentZone === 'ludwig_house' && !isLudwig) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'dorm_211' && !isDorm) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'ai_studio' && !isAi) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'library' && !isLib) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'sanmin_school' && !isSchool) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'douyin_office' && !isDouyin) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'cafe' && !isCafe) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'how_are_you' && !isHowAreYou) ctx.globalAlpha = this.outsideAlpha;
-          else if (this.currentZone === 'cyber_cafe' && !isCyber) ctx.globalAlpha = this.outsideAlpha;
-
-          const p0 = isoToScreen(x, y, 0, ox, oy);
-          const p1 = isoToScreen(x + 1, y, 0, ox, oy);
-          const p2 = isoToScreen(x + 1, y + 1, 0, ox, oy);
-          const p3 = isoToScreen(x, y + 1, 0, ox, oy);
-
-          if (isLudwig) {
-            // Warm Alternating Oak Parquet Flooring
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#cbaf90' : '#be9f80';
-          } else if (isDorm) {
-            // Taiwanese University Dorm Terrazzo Composite Flooring
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#cbd5e1' : '#94a3b8';
-          } else if (isAi) {
-            // Futuristic Dark Cyber Slate Tiles
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#0f172a' : '#1e293b';
-          } else if (isLib) {
-            // Classic Dark Walnut Parquet Floor with Amber Sheen
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#451a03' : '#3b180a';
-          } else if (isSchool) {
-            // Classic Taiwanese Classroom Polished Honey Wood Parquet
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#dfb88e' : '#ce9e72';
-          } else if (isDouyin) {
-            // High-Tech Cyber Carbon Slate Floor Tiles
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#0b1120' : '#111827';
-          } else if (isBasketball) {
-            // Campus Basketball Court — Brick Red Key & Emerald Green Court PU Turf (x: 35..46, y: 20..29)
-            const isKey = (x >= 35 && x <= 39 && y >= 23 && y <= 26);
-            const isBorder = (x === 35 || x === 46 || y === 20 || y === 29);
-            if (isKey) {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#b91c1c' : '#991b1b';
-            } else if (isBorder) {
-              ctx.fillStyle = '#c2410c'; // Terracotta court apron
-            } else {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#15803d' : '#166534';
-            }
-          } else if (isNightMarket) {
-            // Central Midnight Snack Street — Slender Authentic Taiwanese Asphalt Roadway
-            const isCenterDash = (x === 31 && y % 2 === 0);
-            if (isCenterDash) {
-              ctx.fillStyle = '#facc15'; // Yellow dashed line
-            } else {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b'; // Dark asphalt
-            }
-          } else if (isCafe) {
-            // Ludwigia Indoor Specialty Cafe — Warm Walnut Herringbone Wood Floor
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#58240a' : '#451a03';
-          } else if (isHowAreYou) {
-            // "How Are You Doing Today" Healing Sanctuary — Soft Warm Ivory Blush Parquet Flooring
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#fff1f2' : '#fce7f3';
-          } else if (isCyber) {
-            // Cyber LAN Lounge — High-Tech Carbon Soundproof Carpet
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#0b0f19' : '#020617';
-          } else if (isAbyssBridge) {
-            // Howling Abyss ARAM Bridge — Freljordian Frost-Carved Flagstones & Snow Edges
-            const isEdge = (x === 11 || x === 17);
-            if (isEdge) {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#334155' : '#1e293b';
-            } else {
-              ctx.fillStyle = (x + y) % 2 === 0 ? '#1a2738' : '#23344a';
-            }
-          } else if (isMinecraftCabinFloor) {
-            // Minecraft Cabin Oak Wood Floor (drawn directly on terrain layer for zero-clipping sorting)
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#c69a59' : '#b88c4b';
-          } else if (isMinecraftWater) {
-            // Minecraft Farmland 1x1 Water Source Block
-            ctx.fillStyle = '#0284c7';
-          } else if (isMinecraftFarmland) {
-            // Minecraft Farmland Tilled Soil
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#3b2314' : '#27170c';
-          } else if (isMinecraft) {
-            // Minecraft Sanctuary — Classic Grass Block Green Turf
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#5b8c32' : '#4d7828';
-          } else if (isPath) {
-            // Cobblestone Paved Paths
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
-          } else {
-            // Lush Green Campus Lawn
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#4f772d' : '#456b27';
-          }
-
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
-          ctx.closePath();
-          ctx.fill();
-
-          if (isAbyssBridge) {
-            ctx.strokeStyle = 'rgba(147, 197, 253, 0.20)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-
-          // Centerline Glowing Arcane Rune Inlays on Bridge Spine (North-South along x = 14)
-          if (isAbyssBridge && x === 14 && y >= 58 && y <= 92) {
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
-            ctx.lineWidth = 1.8;
-            ctx.beginPath();
-            const midN = isoToScreen(x + 0.5, y, 0, ox, oy);
-            const midS = isoToScreen(x + 0.5, y + 1, 0, ox, oy);
-            ctx.moveTo(midN.x, midN.y);
-            ctx.lineTo(midS.x, midS.y);
-            ctx.stroke();
-          }
-
-          // Cyber Floor Neon Runners in AI Studio
-          if (isAi && (x === AI_MIN_X + 4 || y === AI_MIN_Y + 5)) {
-            ctx.strokeStyle = 'rgba(6, 182, 212, 0.55)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-          }
-
-          ctx.restore();
+      const hw = TW / 2;
+      const hh = TH / 2;
+      for (let x = gx0; x <= gx1; x++) {
+        for (let y = gy0; y <= gy1; y++) {
+          const i = x * MAP_H + y;
+          const col = T.tileColor[i];
+          if (col < 0) continue;
+          const sx = ox + (x - y + 0) * hw;            // screen x of the tile centre
+          const sy = oy + (x + y + 1) * hh;            // screen y of the tile centre
+          if (sx < minX || sx > maxX || sy < minY || sy > maxY) continue;
+          const slot = (dimming && T.tileGroup[i] !== activeGroup) ? 1 : 0;
+          buckets[slot][col].push(x, y);
+          if (T.tileFlags[i]) strokeTiles.push(i);
         }
       }
 
-      // Render Permanent Ground Plane Decals (e.g. Official TikTok Floor Emblem)
-      // Rendered at floor level so characters and 3D furniture naturally render ON TOP of it without depth sorting popping
-      ctx.save();
-      if (this.currentZone !== 'douyin_office') ctx.globalAlpha = this.outsideAlpha;
-      this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
-      ctx.restore();
-
-      // Render "How Are You Doing Today" Heart Planet Ground Decal Floor (centered at cx: 41.0, cy: 19.5)
-      ctx.save();
-      if (this.currentZone !== 'how_are_you') ctx.globalAlpha = this.outsideAlpha;
-      this.models.drawHeartPlanetFloor(ctx, 41.0, 19.5, 3.1, ox, oy);
-      ctx.restore();
-
-      // Basketball Court Boundary & Key Markings (True Isometric Ground Projection at x: 38..49, y: 34..43)
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
-      ctx.lineWidth = 1.8;
-
-      // Mathematical Helper: True Isometric Circle Arc in World Space
-      const drawIsoArc = (xc, yc, z, r, startAngle, endAngle, segs = 32) => {
-        ctx.beginPath();
-        for (let i = 0; i <= segs; i++) {
-          const a = startAngle + (endAngle - startAngle) * (i / segs);
-          const pt = isoToScreen(xc + r * Math.cos(a), yc + r * Math.sin(a), z, ox, oy);
-          if (i === 0) ctx.moveTo(pt.x, pt.y);
-          else ctx.lineTo(pt.x, pt.y);
-        }
-        ctx.stroke();
+      const quad = (x, y) => {
+        const x0 = ox + (x - y) * hw, y0 = oy + (x + y) * hh;
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x0 + hw, y0 + hh);
+        ctx.lineTo(x0, y0 + TH);
+        ctx.lineTo(x0 - hw, y0 + hh);
+        ctx.closePath();
       };
 
-      // 1. Key Rectangle (Red Paint Boundary: baseline x: 38.2 to free-throw line x: 43.0, y: 37.0 to 40.0)
-      const k0 = isoToScreen(38.2, 37.0, 0, ox, oy);
-      const k1 = isoToScreen(43.0, 37.0, 0, ox, oy);
-      const k2 = isoToScreen(43.0, 40.0, 0, ox, oy);
-      const k3 = isoToScreen(38.2, 40.0, 0, ox, oy);
-      ctx.beginPath();
-      ctx.moveTo(k0.x, k0.y); ctx.lineTo(k1.x, k1.y); ctx.lineTo(k2.x, k2.y); ctx.lineTo(k3.x, k3.y);
-      ctx.stroke();
-
-      // 2. Free Throw Circle (Centered at Free Throw Line midpoint: x=43.0, y=38.5, radius r=1.5)
-      // Solid outer semi-circle facing into the court (x >= 43.0, angle from -pi/2 to pi/2)
-      drawIsoArc(43.0, 38.5, 0, 1.5, -Math.PI / 2, Math.PI / 2, 28);
-      // Dashed inner semi-circle inside the key (x <= 43.0, angle from pi/2 to 3*pi/2)
       ctx.save();
-      ctx.setLineDash([5, 4]);
-      drawIsoArc(43.0, 38.5, 0, 1.5, Math.PI / 2, 3 * Math.PI / 2, 24);
+      for (let s = 0; s < 2; s++) {
+        ctx.globalAlpha = s === 1 ? this.outsideAlpha : 1;
+        const b = buckets[s];
+        for (let c = 0; c < nColors; c++) {
+          const list = b[c];
+          if (!list.length) continue;
+          ctx.fillStyle = T.colors[c];
+          ctx.beginPath();
+          for (let k = 0; k < list.length; k += 2) quad(list[k], list[k + 1]);
+          ctx.fill();
+        }
+      }
+
+      // Decorative tile strokes (bridge flagstone edges, rune inlays, AI neon runners)
+      for (let k = 0; k < strokeTiles.length; k++) {
+        const i = strokeTiles[k];
+        const x = (i / MAP_H) | 0;
+        const y = i - x * MAP_H;
+        const f = T.tileFlags[i];
+        ctx.globalAlpha = (dimming && T.tileGroup[i] !== activeGroup) ? this.outsideAlpha : 1;
+        if (f & 1) {
+          ctx.strokeStyle = 'rgba(147, 197, 253, 0.20)';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); quad(x, y); ctx.stroke();
+        }
+        if (f & 2) {
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          const midN = isoToScreen(x + 0.5, y, 0, ox, oy);
+          const midS = isoToScreen(x + 0.5, y + 1, 0, ox, oy);
+          ctx.moveTo(midN.x, midN.y);
+          ctx.lineTo(midS.x, midS.y);
+          ctx.stroke();
+        }
+        if (f & 4) {
+          ctx.strokeStyle = 'rgba(6, 182, 212, 0.55)';
+          ctx.lineWidth = 2;
+          ctx.beginPath(); quad(x, y); ctx.stroke();
+        }
+      }
       ctx.restore();
 
-      // 3. Restricted Area Arc (No-charge semi-circle under the basket: centered at x=39.0, y=38.5, r=0.90)
-      drawIsoArc(39.0, 38.5, 0, 0.90, -Math.PI / 2, Math.PI / 2, 20);
+      // Render Permanent Ground Plane Decals (e.g. Official TikTok Floor Emblem)
+      // Rendered at floor level so characters and 3D furniture naturally render ON TOP of it without depth sorting popping
+      if (this.isGroundRectVisible(21.0, 35.7, 24.6, 39.3, ox, oy)) {
+        ctx.save();
+        if (this.currentZone !== 'douyin_office') ctx.globalAlpha = this.outsideAlpha;
+        this.models.drawTikTokFloorEmblem(ctx, 22.8, 37.5, 1.5, ox, oy);
+        ctx.restore();
+      }
 
-      // 4. Three-Point Line (Pro-court arc centered at x=39.0, y=38.5 with corner straight sections)
-      // Radius r = 5.6, corner line offset dy = 3.5 (y = 35.0 and 42.0)
-      const tpR = 5.6;
-      const tpDy = 3.5;
-      const tpDx = Math.sqrt(tpR * tpR - tpDy * tpDy); // ~4.37
-      const tpStraightEndX = 39.0 + tpDx; // ~43.37
-      const tpAngStart = Math.atan2(-tpDy, tpDx);
-      const tpAngEnd = Math.atan2(tpDy, tpDx);
+      // Render "How Are You Doing Today" Heart Planet Ground Decal Floor (centered at cx: 41.0, cy: 19.5)
+      if (this.isGroundRectVisible(37.4, 15.9, 44.6, 23.1, ox, oy)) {
+        ctx.save();
+        if (this.currentZone !== 'how_are_you') ctx.globalAlpha = this.outsideAlpha;
+        this.models.drawHeartPlanetFloor(ctx, 41.0, 19.5, 3.1, ox, oy);
+        ctx.restore();
+      }
 
-      // North straight sideline section (y = 35.0, x: 38.2 to 43.37)
-      const tpN0 = isoToScreen(38.2, 35.0, 0, ox, oy);
-      const tpN1 = isoToScreen(tpStraightEndX, 35.0, 0, ox, oy);
-      ctx.beginPath();
-      ctx.moveTo(tpN0.x, tpN0.y); ctx.lineTo(tpN1.x, tpN1.y);
-      ctx.stroke();
+      // Basketball Court Boundary & Key Markings (True Isometric Ground Projection at x: 38..49, y: 34..43)
+      if (this.isGroundRectVisible(38.0, 34.0, 49.2, 43.2, ox, oy)) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.lineWidth = 1.8;
 
-      // South straight sideline section (y = 42.0, x: 38.2 to 43.37)
-      const tpS0 = isoToScreen(38.2, 42.0, 0, ox, oy);
-      const tpS1 = isoToScreen(tpStraightEndX, 42.0, 0, ox, oy);
-      ctx.beginPath();
-      ctx.moveTo(tpS0.x, tpS0.y); ctx.lineTo(tpS1.x, tpS1.y);
-      ctx.stroke();
+        // Mathematical Helper: True Isometric Circle Arc in World Space
+        const drawIsoArc = (xc, yc, z, r, startAngle, endAngle, segs = 32) => {
+          ctx.beginPath();
+          for (let i = 0; i <= segs; i++) {
+            const a = startAngle + (endAngle - startAngle) * (i / segs);
+            const pt = isoToScreen(xc + r * Math.cos(a), yc + r * Math.sin(a), z, ox, oy);
+            if (i === 0) ctx.moveTo(pt.x, pt.y);
+            else ctx.lineTo(pt.x, pt.y);
+          }
+          ctx.stroke();
+        };
 
-      // Curved Three-Point Arc seamlessly bridging the two straight sections
-      drawIsoArc(39.0, 38.5, 0, tpR, tpAngStart, tpAngEnd, 36);
+        // 1. Key Rectangle (Red Paint Boundary: baseline x: 38.2 to free-throw line x: 43.0, y: 37.0 to 40.0)
+        const k0 = isoToScreen(38.2, 37.0, 0, ox, oy);
+        const k1 = isoToScreen(43.0, 37.0, 0, ox, oy);
+        const k2 = isoToScreen(43.0, 40.0, 0, ox, oy);
+        const k3 = isoToScreen(38.2, 40.0, 0, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(k0.x, k0.y); ctx.lineTo(k1.x, k1.y); ctx.lineTo(k2.x, k2.y); ctx.lineTo(k3.x, k3.y);
+        ctx.stroke();
 
-      // 5. Court Perimeter White Line (x: 38.2 to 48.8, y: 34.2 to 42.8)
-      const c0 = isoToScreen(38.2, 34.2, 0, ox, oy);
-      const c1 = isoToScreen(48.8, 34.2, 0, ox, oy);
-      const c2 = isoToScreen(48.8, 42.8, 0, ox, oy);
-      const c3 = isoToScreen(38.2, 42.8, 0, ox, oy);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
-      ctx.lineWidth = 1.6;
-      ctx.beginPath();
-      ctx.moveTo(c0.x, c0.y); ctx.lineTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(c3.x, c3.y); ctx.lineTo(c0.x, c0.y);
-      ctx.stroke();
+        // 2. Free Throw Circle (Centered at Free Throw Line midpoint: x=43.0, y=38.5, radius r=1.5)
+        // Solid outer semi-circle facing into the court (x >= 43.0, angle from -pi/2 to pi/2)
+        drawIsoArc(43.0, 38.5, 0, 1.5, -Math.PI / 2, Math.PI / 2, 28);
+        // Dashed inner semi-circle inside the key (x <= 43.0, angle from pi/2 to 3*pi/2)
+        ctx.save();
+        ctx.setLineDash([5, 4]);
+        drawIsoArc(43.0, 38.5, 0, 1.5, Math.PI / 2, 3 * Math.PI / 2, 24);
+        ctx.restore();
 
-      // 6. Half-court line at x: 48.8 & Center Circle Semi-Arc (r=1.8)
-      const hc0 = isoToScreen(48.8, 34.2, 0, ox, oy);
-      const hc1 = isoToScreen(48.8, 42.8, 0, ox, oy);
-      ctx.beginPath();
-      ctx.moveTo(hc0.x, hc0.y); ctx.lineTo(hc1.x, hc1.y);
-      ctx.stroke();
-      // Center Circle semi-arc (facing left into court: x <= 48.8, angle from pi/2 to 3*pi/2)
-      drawIsoArc(48.8, 38.5, 0, 1.8, Math.PI / 2, 3 * Math.PI / 2, 24);
-      ctx.restore();
+        // 3. Restricted Area Arc (No-charge semi-circle under the basket: centered at x=39.0, y=38.5, r=0.90)
+        drawIsoArc(39.0, 38.5, 0, 0.90, -Math.PI / 2, Math.PI / 2, 20);
+
+        // 4. Three-Point Line (Pro-court arc centered at x=39.0, y=38.5 with corner straight sections)
+        // Radius r = 5.6, corner line offset dy = 3.5 (y = 35.0 and 42.0)
+        const tpR = 5.6;
+        const tpDy = 3.5;
+        const tpDx = Math.sqrt(tpR * tpR - tpDy * tpDy); // ~4.37
+        const tpStraightEndX = 39.0 + tpDx; // ~43.37
+        const tpAngStart = Math.atan2(-tpDy, tpDx);
+        const tpAngEnd = Math.atan2(tpDy, tpDx);
+
+        // North straight sideline section (y = 35.0, x: 38.2 to 43.37)
+        const tpN0 = isoToScreen(38.2, 35.0, 0, ox, oy);
+        const tpN1 = isoToScreen(tpStraightEndX, 35.0, 0, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(tpN0.x, tpN0.y); ctx.lineTo(tpN1.x, tpN1.y);
+        ctx.stroke();
+
+        // South straight sideline section (y = 42.0, x: 38.2 to 43.37)
+        const tpS0 = isoToScreen(38.2, 42.0, 0, ox, oy);
+        const tpS1 = isoToScreen(tpStraightEndX, 42.0, 0, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(tpS0.x, tpS0.y); ctx.lineTo(tpS1.x, tpS1.y);
+        ctx.stroke();
+
+        // Curved Three-Point Arc seamlessly bridging the two straight sections
+        drawIsoArc(39.0, 38.5, 0, tpR, tpAngStart, tpAngEnd, 36);
+
+        // 5. Court Perimeter White Line (x: 38.2 to 48.8, y: 34.2 to 42.8)
+        const c0 = isoToScreen(38.2, 34.2, 0, ox, oy);
+        const c1 = isoToScreen(48.8, 34.2, 0, ox, oy);
+        const c2 = isoToScreen(48.8, 42.8, 0, ox, oy);
+        const c3 = isoToScreen(38.2, 42.8, 0, ox, oy);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(c0.x, c0.y); ctx.lineTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(c3.x, c3.y); ctx.lineTo(c0.x, c0.y);
+        ctx.stroke();
+
+        // 6. Half-court line at x: 48.8 & Center Circle Semi-Arc (r=1.8)
+        const hc0 = isoToScreen(48.8, 34.2, 0, ox, oy);
+        const hc1 = isoToScreen(48.8, 42.8, 0, ox, oy);
+        ctx.beginPath();
+        ctx.moveTo(hc0.x, hc0.y); ctx.lineTo(hc1.x, hc1.y);
+        ctx.stroke();
+        // Center Circle semi-arc (facing left into court: x <= 48.8, angle from pi/2 to 3*pi/2)
+        drawIsoArc(48.8, 38.5, 0, 1.8, Math.PI / 2, 3 * Math.PI / 2, 24);
+        ctx.restore();
+      }
 
       // Render 3D Diorama Floating Island Crust along outer borders
       this.models.drawDioramaCrust(ctx, MAP_W, MAP_H, ox, oy);
@@ -4398,7 +4530,7 @@
 
       // 2. The Howling Abyss: Swirling Ambient Frost Snowflakes Drifting in the Wind
       const p = this.charManager ? this.charManager.player : null;
-      if (p && p.y >= 57 && p.y <= 93 && p.x >= 10 && p.x <= 18) {
+      if (!this.reducedMotion && p && p.y >= 57 && p.y <= 93 && p.x >= 10 && p.x <= 18) {
         ctx.save();
         const t = performance.now() * 0.001;
         ctx.fillStyle = 'rgba(240, 249, 255, 0.65)';
@@ -4415,7 +4547,25 @@
     }
 
     // --- Main Render Frame Loop ---
+    // True while a full-screen blurred overlay (cipher gate, modal) covers the canvas.
+    // Re-checked a few times per second instead of per frame.
+    isCanvasCovered(now) {
+      if (!this._coverCheckAt || now - this._coverCheckAt > 250) {
+        this._coverCheckAt = now;
+        this._covered = !!document.querySelector('.cipher-lock-overlay:not(.unlocked), .space-modal-backdrop.open');
+      }
+      return this._covered;
+    }
+
     loop(now) {
+      // Under a blurred full-screen overlay every canvas frame forces an expensive re-blur,
+      // while the world is barely visible: throttle to ~20fps until the overlay closes.
+      if (this.isCanvasCovered(now) && this._lastFullFrame && now - this._lastFullFrame < 50) {
+        requestAnimationFrame(this.loop.bind(this));
+        return;
+      }
+      this._lastFullFrame = now;
+
       const dt = Math.min(0.1, (now - this.lastTime) / 1000);
       this.lastTime = now;
 
@@ -4431,7 +4581,9 @@
       this.drawSkyBackground(ctx, abyssT);
 
       // Dynamically update vignette halo properties on viewport
-      if (this.canvas && this.canvas.parentElement) {
+      // (only written when the value actually changes: a per-frame style write forces a style recalc every frame)
+      if (this.canvas && this.canvas.parentElement && this._lastAbyssT !== abyssT) {
+        this._lastAbyssT = abyssT;
         this.canvas.parentElement.style.setProperty('--pink-halo-opacity', (0.35 * (1 - abyssT)).toFixed(3));
         this.canvas.parentElement.style.setProperty('--abyss-halo-opacity', (0.75 * abyssT).toFixed(3));
       }
@@ -4447,6 +4599,14 @@
       ctx.scale(this.zoom, this.zoom);
       ctx.translate(-cx, -cy);
 
+      // Shared pre-zoom viewport rectangle for culling in terrain / decals / crust / entities
+      const vMargin = 160 / this.zoom;
+      const vr = this.viewRect || (this.viewRect = {});
+      vr.minX = cx - (cx / this.zoom) - vMargin;
+      vr.maxX = cx + (cx / this.zoom) + vMargin;
+      vr.minY = cy - (cy / this.zoom) - vMargin;
+      vr.maxY = cy + (cy / this.zoom) + vMargin;
+
       // 1. Draw Map Terrain
       this.drawTerrain(ctx, ox, oy);
 
@@ -4460,10 +4620,17 @@
       // Filter visible static entities (zero allocations)
       const visibleEntities = [];
       const staticCount = this.staticEntities ? this.staticEntities.length : 0;
+      // Footprint-based culling: test the entity's projected screen bounds (not just its midpoint),
+      // so long walls/fences whose centre is off-screen but whose ends are visible never pop out.
+      const hw = TW / 2;
+      const hh = TH / 2;
       for (let i = 0; i < staticCount; i++) {
         const e = this.staticEntities[i];
-        const pt = isoToScreen(e.midX, e.midY, e.z || 0, ox, oy);
-        if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
+        const sx0 = ox + (e.xMin - e.yMax) * hw;
+        const sx1 = ox + (e.xMax - e.yMin) * hw;
+        const sy0 = oy + (e.xMin + e.yMin) * hh - (e.z || 0) * TH;
+        const sy1 = oy + (e.xMax + e.yMax) * hh - (e.z || 0) * TH;
+        if (sx1 >= minX && sx0 <= maxX && sy1 >= minY && sy0 <= maxY) {
           visibleEntities.push(e);
         }
       }
@@ -4513,14 +4680,18 @@
         try { e.draw(); } catch(err) { console.error('Render entity error:', err); }
       });
 
-      // 4. Render Ambient Particles
-      this.particles.forEach(p => {
-        const pt = isoToScreen(p.x, p.y, p.z, ox, oy);
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      // 4. Render Ambient Particles (culled to viewport; skipped under prefers-reduced-motion)
+      if (!this.reducedMotion) {
+        for (let i = 0; i < this.particles.length; i++) {
+          const p = this.particles[i];
+          const pt = isoToScreen(p.x, p.y, p.z, ox, oy);
+          if (pt.x < minX || pt.x > maxX || pt.y < minY || pt.y > maxY) continue;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
 
       // 5. Render Top-Most Character Speech Bubbles (Always in front of all buildings, walls, and roofs)
       if (this.charManager && this.charManager.drawSpeechBubblesOverlay) {

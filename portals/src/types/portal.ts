@@ -44,5 +44,10 @@ export interface PortalItem {
   worldDetails: PortalWorldDetails;
   targetUrl?: string; // Direct link to site surface (e.g. ../garden/index.html or ../labs/world/index.html)
   targetLabel?: string;
+  /**
+   * Optional hover thumbnail (relative to portals/index.html), e.g. './realms/garden/preview.webp'.
+   * Shown on the signpost only while hovered and only if the image actually loads.
+   */
+  previewImage?: string;
   badgeText?: string;
 }

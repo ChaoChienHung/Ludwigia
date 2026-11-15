@@ -260,98 +260,170 @@
   }
 
   // --- Topological Isometric Sorting (Cycle-Free Kahn's Algorithm on Occlusion Graph) ---
+  //
+  // Scalability contract (see docs/specs/realm-spec.md §6):
+  // - Occlusion edges are only tested between entities whose *screen-x columns* overlap.
+  //   In this projection screen-x = (gx - gy) * TW/2 is independent of height (gz), so two
+  //   footprints whose [xMin - yMax, xMax - yMin] spans are disjoint can never overlap on
+  //   screen and need no ordering edge. A sort+sweep over these spans replaces the old
+  //   all-pairs O(n^2) scan with O(n log n + k) where k = overlapping column pairs.
+  // - The Kahn ready-queue is a binary min-heap on (baseDepth, idx) instead of re-sorting
+  //   the whole queue after every push.
+  // - The pairwise isBehind() rules (furniture-user hierarchy, elevation, causal
+  //   front/back layering) and the baseDepth cycle-breaking recovery are unchanged.
+  const SORT_COLUMN_PAD = 1.5; // tiles of horizontal overhang tolerance (roof eaves, signs, name tags)
+
+  function isBehind(b, a) {
+    // 1. Explicit Furniture-User Hierarchy
+    // If 'a' is a character resting on furniture 'b', furniture MUST be drawn first (behind)
+    if (a.isChar && a.char && a.char.furniture && b.furnitureId && a.char.furniture.id === b.furnitureId) {
+      return true;
+    }
+    if (b.isChar && b.char && b.char.furniture && a.furnitureId && b.char.furniture.id === a.furnitureId) {
+      return false;
+    }
+
+    const overlapX = (b.xMax > a.xMin && b.xMin < a.xMax);
+    const overlapY = (b.yMax > a.yMin && b.yMin < a.yMax);
+
+    // If bounding boxes overlap in both axes (e.g. corner intersection, elevated item on ground)
+    if (overlapX && overlapY) {
+      // Vertical elevation check: lower elevation draws first
+      const bZ = (b.isChar && b.char ? (b.char.z || 0) : (b.z || 0));
+      const aZ = (a.isChar && a.char ? (a.char.z || 0) : (a.z || 0));
+      if (Math.abs(bZ - aZ) > 0.15) {
+        return bZ < aZ;
+      }
+      if (b.baseDepth !== a.baseDepth) {
+        return b.baseDepth < a.baseDepth;
+      }
+      return b.idx < a.idx;
+    }
+
+    // Non-overlapping in at least one axis: standard isometric occlusion causality
+    if (b.xMax <= a.xMin && overlapY) return true;
+    if (b.yMax <= a.yMin && overlapX) return true;
+    if (b.xMax <= a.xMin && b.yMax <= a.yMin) return true;
+
+    return false;
+  }
+
   function sortIsometricEntities(entities) {
     const n = entities.length;
+    if (n <= 1) return entities.slice();
+
+    const colL = new Float64Array(n);
+    const colR = new Float64Array(n);
+    const byLeft = new Array(n);
     for (let i = 0; i < n; i++) {
       const e = entities[i];
       e.idx = i;
       e.baseDepth = (e.xMin + e.xMax + e.yMin + e.yMax) / 2;
+      colL[i] = e.xMin - e.yMax - SORT_COLUMN_PAD;
+      colR[i] = e.xMax - e.yMin + SORT_COLUMN_PAD;
+      byLeft[i] = i;
     }
+    byLeft.sort((a, b) => colL[a] - colL[b]);
 
-    function isBehind(b, a) {
-      // 1. Explicit Furniture-User Hierarchy
-      // If 'a' is a character resting on furniture 'b', furniture MUST be drawn first (behind)
-      if (a.isChar && a.char && a.char.furniture && b.furnitureId && a.char.furniture.id === b.furnitureId) {
-        return true;
-      }
-      if (b.isChar && b.char && b.char.furniture && a.furnitureId && b.char.furniture.id === a.furnitureId) {
-        return false;
-      }
-
-      const overlapX = (b.xMax > a.xMin && b.xMin < a.xMax);
-      const overlapY = (b.yMax > a.yMin && b.yMin < a.yMax);
-
-      // If bounding boxes overlap in both axes (e.g. corner intersection, elevated item on ground)
-      if (overlapX && overlapY) {
-        // Vertical elevation check: lower elevation draws first
-        const bZ = (b.isChar && b.char ? (b.char.z || 0) : (b.z || 0));
-        const aZ = (a.isChar && a.char ? (a.char.z || 0) : (a.z || 0));
-        if (Math.abs(bZ - aZ) > 0.15) {
-          return bZ < aZ;
-        }
-        if (b.baseDepth !== a.baseDepth) {
-          return b.baseDepth < a.baseDepth;
-        }
-        return b.idx < a.idx;
-      }
-
-      // Non-overlapping in at least one axis: standard isometric occlusion causality
-      if (b.xMax <= a.xMin && overlapY) return true;
-      if (b.yMax <= a.yMin && overlapX) return true;
-      if (b.xMax <= a.xMin && b.yMax <= a.yMin) return true;
-
-      return false;
-    }
-
+    // Adjacency as flat edge lists (CSR-ish) to avoid n small arrays per frame
     const inDegree = new Int32Array(n);
-    const adj = Array.from({ length: n }, () => []);
-
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n; j++) {
-        if (i === j) continue;
-        if (isBehind(entities[i], entities[j])) {
-          adj[i].push(j);
-          inDegree[j]++;
+    const edgeFrom = [];
+    const edgeTo = [];
+    const active = [];
+    for (let k = 0; k < n; k++) {
+      const i = byLeft[k];
+      const left = colL[i];
+      // Drop entities whose column ended before this one starts
+      let w = 0;
+      for (let m = 0; m < active.length; m++) {
+        const j = active[m];
+        if (colR[j] > left) {
+          active[w++] = j;
+          const ei = entities[i];
+          const ej = entities[j];
+          if (isBehind(ej, ei)) { edgeFrom.push(j); edgeTo.push(i); inDegree[i]++; }
+          if (isBehind(ei, ej)) { edgeFrom.push(i); edgeTo.push(j); inDegree[j]++; }
         }
       }
+      active.length = w;
+      active.push(i);
     }
 
-    const queue = [];
+    const edgeCount = edgeFrom.length;
+    const adjStart = new Int32Array(n + 1);
+    for (let e = 0; e < edgeCount; e++) adjStart[edgeFrom[e] + 1]++;
+    for (let i = 0; i < n; i++) adjStart[i + 1] += adjStart[i];
+    const adj = new Int32Array(edgeCount);
+    const fill = adjStart.slice(0, n);
+    for (let e = 0; e < edgeCount; e++) adj[fill[edgeFrom[e]]++] = edgeTo[e];
+
+    // Binary min-heap keyed by (baseDepth, idx)
+    const heap = new Int32Array(n);
+    let hs = 0;
+    const less = (a, b) => {
+      const da = entities[a].baseDepth;
+      const db = entities[b].baseDepth;
+      return da < db || (da === db && a < b);
+    };
+    const push = (v) => {
+      let c = hs++;
+      heap[c] = v;
+      while (c > 0) {
+        const p = (c - 1) >> 1;
+        if (!less(heap[c], heap[p])) break;
+        const t = heap[c]; heap[c] = heap[p]; heap[p] = t;
+        c = p;
+      }
+    };
+    const pop = () => {
+      const top = heap[0];
+      heap[0] = heap[--hs];
+      let c = 0;
+      for (;;) {
+        const l = 2 * c + 1;
+        const r = l + 1;
+        let m = c;
+        if (l < hs && less(heap[l], heap[m])) m = l;
+        if (r < hs && less(heap[r], heap[m])) m = r;
+        if (m === c) break;
+        const t = heap[c]; heap[c] = heap[m]; heap[m] = t;
+        c = m;
+      }
+      return top;
+    };
+
+    const inQueueOrSorted = new Uint8Array(n);
     for (let i = 0; i < n; i++) {
-      if (inDegree[i] === 0) queue.push(i);
+      if (inDegree[i] === 0) { push(i); inQueueOrSorted[i] = 1; }
     }
-    queue.sort((a, b) => entities[a].baseDepth - entities[b].baseDepth);
+
+    // Pre-sorted by depth for O(n) amortised cycle-breaking recovery
+    let byDepth = null;
+    let depthPtr = 0;
 
     const sorted = [];
-    const inQueueOrSorted = new Uint8Array(n);
-    for (let k = 0; k < queue.length; k++) inQueueOrSorted[queue[k]] = 1;
-
     while (sorted.length < n) {
-      if (queue.length === 0) {
+      if (hs === 0) {
         // Cycle-breaking recovery: pop the unvisited node with the smallest baseDepth
-        let best = -1;
-        let bestDepth = Infinity;
-        for (let i = 0; i < n; i++) {
-          if (!inQueueOrSorted[i] && entities[i].baseDepth < bestDepth) {
-            bestDepth = entities[i].baseDepth;
-            best = i;
-          }
+        if (!byDepth) {
+          byDepth = Array.from({ length: n }, (_, i) => i).sort((a, b) => (less(a, b) ? -1 : 1));
         }
-        if (best === -1) break;
-        queue.push(best);
+        while (depthPtr < n && inQueueOrSorted[byDepth[depthPtr]]) depthPtr++;
+        if (depthPtr >= n) break;
+        const best = byDepth[depthPtr];
+        push(best);
         inQueueOrSorted[best] = 1;
       }
 
-      const u = queue.shift();
+      const u = pop();
       sorted.push(entities[u]);
 
-      for (let k = 0; k < adj[u].length; k++) {
-        const v = adj[u][k];
+      for (let k = adjStart[u]; k < adjStart[u + 1]; k++) {
+        const v = adj[k];
         inDegree[v]--;
         if (inDegree[v] === 0 && !inQueueOrSorted[v]) {
-          queue.push(v);
+          push(v);
           inQueueOrSorted[v] = 1;
-          queue.sort((a, b) => entities[a].baseDepth - entities[b].baseDepth);
         }
       }
     }

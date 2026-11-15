@@ -3362,11 +3362,17 @@
       const shadowCol = 'rgba(0, 0, 0, 0.35)';
       const tNow = performance.now() * 0.001;
 
+      // Viewport culling (world.viewRect is set by the main loop in pre-zoom screen space).
+      // The crust spans the whole map perimeter, but usually only a few segments are on screen.
+      const vr = this.world.viewRect;
+      const inView = (x0, y0, x1, y1) => !vr || (x1 >= vr.minX && x0 <= vr.maxX && y1 >= vr.minY && y0 <= vr.maxY);
+
       // 1. Dream Pink Cloud Sea (夢境粉雲海) — Floating beneath the cliff before cliff is drawn
       for (let x = 0; x < mapW; x += 1.5) {
         const floatY = Math.sin(tNow * 1.4 + x * 0.7) * 4;
         const cp = isoToScreen(x + 0.75, mapH, -depth - 0.28, ox, oy);
         const rad = 28 + Math.sin(tNow + x) * 6;
+        if (!inView(cp.x - rad, cp.y - rad - 4, cp.x + rad, cp.y + rad + 4)) continue;
         const cGrad = ctx.createRadialGradient(cp.x, cp.y + floatY, 3, cp.x, cp.y + floatY, rad);
         cGrad.addColorStop(0, 'rgba(251, 207, 232, 0.45)');
         cGrad.addColorStop(0.5, 'rgba(244, 114, 182, 0.28)');
@@ -3381,6 +3387,7 @@
         const floatY = Math.sin(tNow * 1.4 + y * 0.7) * 4;
         const cp = isoToScreen(mapW, y + 0.75, -depth - 0.28, ox, oy);
         const rad = 28 + Math.sin(tNow + y) * 6;
+        if (!inView(cp.x - rad, cp.y - rad - 4, cp.x + rad, cp.y + rad + 4)) continue;
         const cGrad = ctx.createRadialGradient(cp.x, cp.y + floatY, 3, cp.x, cp.y + floatY, rad);
         cGrad.addColorStop(0, 'rgba(251, 207, 232, 0.45)');
         cGrad.addColorStop(0.5, 'rgba(244, 114, 182, 0.28)');
@@ -3402,6 +3409,7 @@
         const b1 = isoToScreen(x + 1, mapH, -depth, ox, oy);
         const s0 = isoToScreen(x, mapH, -depth - 0.25, ox, oy);
         const s1 = isoToScreen(x + 1, mapH, -depth - 0.25, ox, oy);
+        if (!inView(Math.min(t0.x, t1.x), t0.y < t1.y ? t0.y : t1.y, Math.max(t0.x, t1.x), Math.max(s0.y, s1.y) + 6)) continue;
 
         // Drop shadow below cliff
         ctx.fillStyle = shadowCol;
@@ -3445,6 +3453,7 @@
         const b1 = isoToScreen(mapW, y + 1, -depth, ox, oy);
         const s0 = isoToScreen(mapW, y, -depth - 0.25, ox, oy);
         const s1 = isoToScreen(mapW, y + 1, -depth - 0.25, ox, oy);
+        if (!inView(Math.min(t0.x, t1.x), t0.y < t1.y ? t0.y : t1.y, Math.max(t0.x, t1.x), Math.max(s0.y, s1.y) + 6)) continue;
 
         // Drop shadow below cliff
         ctx.fillStyle = shadowCol;
@@ -3487,17 +3496,21 @@
       // South cliff baseline
       const sb0 = isoToScreen(0, mapH, -depth, ox, oy);
       const sb1 = isoToScreen(mapW, mapH, -depth, ox, oy);
-      ctx.beginPath();
-      ctx.moveTo(sb0.x, sb0.y);
-      ctx.lineTo(sb1.x, sb1.y);
-      ctx.stroke();
+      if (inView(Math.min(sb0.x, sb1.x) - 12, Math.min(sb0.y, sb1.y) - 12, Math.max(sb0.x, sb1.x) + 12, Math.max(sb0.y, sb1.y) + 12)) {
+        ctx.beginPath();
+        ctx.moveTo(sb0.x, sb0.y);
+        ctx.lineTo(sb1.x, sb1.y);
+        ctx.stroke();
+      }
       // East cliff baseline
       const eb0 = isoToScreen(mapW, 0, -depth, ox, oy);
       const eb1 = isoToScreen(mapW, mapH, -depth, ox, oy);
-      ctx.beginPath();
-      ctx.moveTo(eb0.x, eb0.y);
-      ctx.lineTo(eb1.x, eb1.y);
-      ctx.stroke();
+      if (inView(Math.min(eb0.x, eb1.x) - 12, Math.min(eb0.y, eb1.y) - 12, Math.max(eb0.x, eb1.x) + 12, Math.max(eb0.y, eb1.y) + 12)) {
+        ctx.beginPath();
+        ctx.moveTo(eb0.x, eb0.y);
+        ctx.lineTo(eb1.x, eb1.y);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 

@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Compass,
   Sun,
   Sunrise,
@@ -65,6 +67,9 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
   const [timePhase, setTimePhase] = useState<TimePhase>('night');
   const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
   const [cycleProgress, setCycleProgress] = useState<number>(0);
+  const [isHudOpen, setIsHudOpen] = useState<boolean>(false);
+
+  const kickSpringRef = useRef<(() => void) | null>(null);
 
   // Measure viewport and stage dimensions
   const updateMetrics = useCallback(() => {
@@ -76,6 +81,8 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
       setStageHeight(vh);
       setMaxScroll(newMax);
       maxScrollRef.current = newMax;
+      if (targetXRef.current > newMax) targetXRef.current = newMax;
+      kickSpringRef.current?.();
     }
   }, []);
 
@@ -85,46 +92,72 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
     return () => window.removeEventListener('resize', updateMetrics);
   }, [updateMetrics]);
 
-  // Spring Animation Physics Loop (Locked 60/120fps RAF)
-  useEffect(() => {
-    let animId: number;
+  // Spring Animation Physics Loop (on-demand RAF)
+  // The loop only runs while the camera is actually moving: it starts when a target/drag/fling
+  // changes (kickSpring) and stops once position and velocity settle. At rest the stage costs
+  // zero frames, and React state is only updated when the rounded scroll position changes.
+  const springRafRef = useRef<number | null>(null);
+  const lastCommittedXRef = useRef<number>(0);
+
+  const commitScroll = useCallback((x: number) => {
+    const container = containerRef.current;
+    if (container) container.scrollLeft = x;
+    const rounded = Math.round(x * 2) / 2;
+    if (rounded !== lastCommittedXRef.current) {
+      lastCommittedXRef.current = rounded;
+      setScrollX(rounded);
+    }
+  }, []);
+
+  const kickSpring = useCallback(() => {
+    if (springRafRef.current !== null) return;
     const springK = 0.082; // Spring stiffness
     const damping = 0.81; // Damping ratio
 
     const step = () => {
-      const container = containerRef.current;
-      if (container) {
-        const max = maxScrollRef.current;
+      springRafRef.current = null;
+      if (isDraggingRef.current) return; // drag handler drives position directly
+      const max = maxScrollRef.current;
 
-        if (!isDraggingRef.current) {
-          // Calculate spring acceleration toward target
-          const diff = targetXRef.current - currentXRef.current;
-          const force = diff * springK;
-          velocityRef.current = (velocityRef.current + force) * damping;
-          currentXRef.current += velocityRef.current;
+      // Calculate spring acceleration toward target
+      const diff = targetXRef.current - currentXRef.current;
+      const force = diff * springK;
+      velocityRef.current = (velocityRef.current + force) * damping;
+      currentXRef.current += velocityRef.current;
 
-          // Boundary spring resistance
-          if (currentXRef.current < 0) {
-            currentXRef.current *= 0.8;
-            velocityRef.current *= 0.5;
-            targetXRef.current = 0;
-          } else if (currentXRef.current > max) {
-            currentXRef.current = max + (currentXRef.current - max) * 0.8;
-            velocityRef.current *= 0.5;
-            targetXRef.current = max;
-          }
-
-          // Apply to DOM scroll
-          container.scrollLeft = currentXRef.current;
-          setScrollX(currentXRef.current);
-        }
+      // Boundary spring resistance
+      if (currentXRef.current < 0) {
+        currentXRef.current *= 0.8;
+        velocityRef.current *= 0.5;
+        targetXRef.current = 0;
+      } else if (currentXRef.current > max) {
+        currentXRef.current = max + (currentXRef.current - max) * 0.8;
+        velocityRef.current *= 0.5;
+        targetXRef.current = max;
       }
 
-      animId = requestAnimationFrame(step);
+      // Settled: snap to target and stop scheduling frames
+      const settled =
+        Math.abs(targetXRef.current - currentXRef.current) < 0.3 && Math.abs(velocityRef.current) < 0.05;
+      if (settled) {
+        currentXRef.current = targetXRef.current;
+        velocityRef.current = 0;
+      }
+
+      commitScroll(currentXRef.current);
+
+      if (!settled) springRafRef.current = requestAnimationFrame(step);
     };
 
-    animId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animId);
+    springRafRef.current = requestAnimationFrame(step);
+  }, [commitScroll]);
+
+  kickSpringRef.current = kickSpring;
+
+  useEffect(() => {
+    return () => {
+      if (springRafRef.current !== null) cancelAnimationFrame(springRafRef.current);
+    };
   }, []);
 
   // Handle external scroll target (from TopBar or Minimap) with spring glide
@@ -133,20 +166,23 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
       const max = maxScrollRef.current;
       const target = Math.max(0, Math.min(max, scrollTargetX - viewportWidth / 2));
       targetXRef.current = target;
+      kickSpring();
       onScrollTargetDone();
     }
-  }, [scrollTargetX, viewportWidth, onScrollTargetDone]);
+  }, [scrollTargetX, viewportWidth, onScrollTargetDone, kickSpring]);
 
   // Smooth Spring Arrow Navigation
   const panLeft = () => {
     wonderlandAudio.playNavClick();
     targetXRef.current = Math.max(0, targetXRef.current - SCROLL_STEP);
+    kickSpring();
   };
 
   const panRight = () => {
     wonderlandAudio.playNavClick();
     const max = maxScrollRef.current;
     targetXRef.current = Math.min(max, targetXRef.current + SCROLL_STEP);
+    kickSpring();
   };
 
   // Mouse Drag with spring physics and momentum fling
@@ -188,10 +224,7 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
     currentXRef.current = nextX;
     targetXRef.current = nextX;
 
-    if (containerRef.current) {
-      containerRef.current.scrollLeft = nextX;
-      setScrollX(nextX);
-    }
+    commitScroll(nextX);
   };
 
   const handleMouseUpOrLeave = () => {
@@ -206,6 +239,7 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
 
       const max = maxScrollRef.current;
       targetXRef.current = Math.max(0, Math.min(max, currentXRef.current + clampedFling * 12));
+      kickSpring();
     }
   };
 
@@ -214,6 +248,7 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
     const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
     const max = maxScrollRef.current;
     targetXRef.current = Math.max(0, Math.min(max, targetXRef.current + delta * 1.15));
+    kickSpring();
   };
 
   // Day/Night Auto-cycle timer
@@ -345,11 +380,18 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
                 <stop offset="100%" stopColor="#818cf8" stopOpacity="0.6" />
               </linearGradient>
 
-              <filter id="leyGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
             </defs>
+
+            {/* Soft static halo under the ley line. Replaces an feGaussianBlur filter that had to be
+                re-rasterised across the whole 3400px stage on every dash-flow animation frame. */}
+            <path
+              d={leyLineSplinePath}
+              fill="none"
+              stroke="url(#celestialLeyGradient)"
+              strokeWidth="7"
+              strokeOpacity="0.18"
+              strokeLinecap="round"
+            />
 
             {/* Glowing Ley Line Spline Path */}
             <path
@@ -359,7 +401,6 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
               strokeWidth="2.2"
               strokeDasharray="8 12"
               className="animate-dash-flow"
-              filter="url(#leyGlow)"
             />
 
             {/* Precision Node Anchor Points at each Portal Center */}
@@ -406,97 +447,120 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
         </div>
       </div>
 
-      {/* Floating Day / Night Cycle HUD (Top Right) */}
-      <div className="fixed top-20 right-6 z-40 pointer-events-none">
-        <div className="p-3 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-slate-700/60 shadow-2xl flex flex-col gap-2.5 pointer-events-auto max-w-xs transition-all duration-300">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-2">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-slate-900 border border-slate-700">
-                {getTimePhaseIcon(timePhase)}
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-white font-fantasy">
-                  <span>{currentConfig.name}</span>
-                  <span className="text-[10px] text-slate-400 font-sans">
-                    ({Math.round(currentConfig.glowIntensity * 100)}% 光暈)
-                  </span>
+      {/* Floating Day / Night Cycle HUD (Top Right): collapsed to a small pill by default so it
+          never covers the portals; expands on demand. */}
+      <div className="fixed top-20 right-4 md:right-6 z-40 pointer-events-none">
+        {isHudOpen ? (
+          <div className="p-3 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-slate-700/60 shadow-2xl flex flex-col gap-2.5 pointer-events-auto max-w-xs transition-all duration-300">
+            <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-slate-900 border border-slate-700">
+                  {getTimePhaseIcon(timePhase)}
                 </div>
-                <div className="text-[10px] text-emerald-400">
-                  仙境日夜光影流轉
+                <div>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-white font-fantasy">
+                    <span>{currentConfig.name}</span>
+                    <span className="text-[10px] text-slate-400 font-sans">
+                      ({Math.round(currentConfig.glowIntensity * 100)}% 光暈)
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-emerald-400">
+                    仙境日夜光影流轉
+                  </div>
                 </div>
               </div>
+
+              <button
+                onClick={() => setIsAutoCycling(!isAutoCycling)}
+                className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-all cursor-pointer ${
+                  isAutoCycling
+                    ? 'bg-emerald-950/70 border-emerald-500/50 text-emerald-300'
+                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white'
+                }`}
+                title={isAutoCycling ? '暫停日夜自動流轉' : '啟動日夜自動流轉'}
+                aria-label="切換自動循環"
+              >
+                {isAutoCycling ? (
+                  <Pause className="w-3.5 h-3.5" />
+                ) : (
+                  <Play className="w-3.5 h-3.5" />
+                )}
+              </button>
+              <button
+                onClick={() => setIsHudOpen(false)}
+                className="p-1.5 rounded-lg border bg-slate-900 border-slate-700 text-slate-400 hover:text-white cursor-pointer"
+                title="收合日夜面板"
+                aria-label="收合日夜面板"
+              >
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
             </div>
 
-            <button
-              onClick={() => setIsAutoCycling(!isAutoCycling)}
-              className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 transition-all cursor-pointer ${
-                isAutoCycling
-                  ? 'bg-emerald-950/70 border-emerald-500/50 text-emerald-300'
-                  : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white'
-              }`}
-              title={isAutoCycling ? '暫停日夜自動流轉' : '啟動日夜自動流轉'}
-              aria-label="切換自動循環"
-            >
-              {isAutoCycling ? (
-                <Pause className="w-3.5 h-3.5" />
-              ) : (
-                <Play className="w-3.5 h-3.5" />
-              )}
-            </button>
-          </div>
-
-          {/* 4 Time Phase Selector Buttons */}
-          <div className="grid grid-cols-4 gap-1.5">
-            {CYCLE_ORDER.map((phase) => {
-              const active = timePhase === phase;
-              return (
-                <button
-                  key={phase}
-                  onClick={() => handlePhaseSelect(phase)}
-                  className={`py-1.5 px-2 rounded-xl text-[11px] font-medium flex flex-col items-center gap-1 transition-all cursor-pointer border ${
-                    active
-                      ? 'bg-slate-800 text-white border-emerald-400/80 shadow-md ring-1 ring-emerald-400/40'
-                      : 'bg-slate-900/60 text-slate-400 border-slate-800 hover:bg-slate-850 hover:text-slate-200'
-                  }`}
-                >
-                  {getTimePhaseIcon(phase)}
-                  <span className="text-[10px]">
-                    {phase === 'dawn'
-                      ? '晨曦'
-                      : phase === 'day'
-                      ? '正午'
-                      : phase === 'dusk'
-                      ? '暮色'
-                      : '幽夜'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Time Progression Progress Bar */}
-          {isAutoCycling && (
-            <div className="space-y-1">
-              <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-500 via-cyan-400 to-purple-400 transition-all duration-200"
-                  style={{ width: `${cycleProgress}%` }}
-                />
-              </div>
-              <div className="flex items-center justify-between text-[9px] text-slate-500">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-2.5 h-2.5" />
-                  <span>流轉進行中</span>
-                </span>
-                <span>{Math.round((cycleProgress / 100) * (AUTO_CYCLE_DURATION_MS / 1000))}s</span>
-              </div>
+            {/* 4 Time Phase Selector Buttons */}
+            <div className="grid grid-cols-4 gap-1.5">
+              {CYCLE_ORDER.map((phase) => {
+                const active = timePhase === phase;
+                return (
+                  <button
+                    key={phase}
+                    onClick={() => handlePhaseSelect(phase)}
+                    className={`py-1.5 px-2 rounded-xl text-[11px] font-medium flex flex-col items-center gap-1 transition-all cursor-pointer border ${
+                      active
+                        ? 'bg-slate-800 text-white border-emerald-400/80 shadow-md ring-1 ring-emerald-400/40'
+                        : 'bg-slate-900/60 text-slate-400 border-slate-800 hover:bg-slate-850 hover:text-slate-200'
+                    }`}
+                  >
+                    {getTimePhaseIcon(phase)}
+                    <span className="text-[10px]">
+                      {phase === 'dawn'
+                        ? '晨曦'
+                        : phase === 'day'
+                        ? '正午'
+                        : phase === 'dusk'
+                        ? '暮色'
+                        : '幽夜'}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
-          )}
 
-          <p className="text-[10px] text-slate-400 leading-tight italic bg-slate-900/50 p-2 rounded-xl border border-slate-800/60">
-            {currentConfig.description}
-          </p>
-        </div>
+            {/* Time Progression Progress Bar */}
+            {isAutoCycling && (
+              <div className="space-y-1">
+                <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                  <div
+                    className="h-full w-full origin-left bg-gradient-to-r from-emerald-500 via-cyan-400 to-purple-400 transition-transform duration-200 ease-linear"
+                    style={{ transform: `scaleX(${cycleProgress / 100})` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[9px] text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-2.5 h-2.5" />
+                    <span>流轉進行中</span>
+                  </span>
+                  <span>{Math.round((cycleProgress / 100) * (AUTO_CYCLE_DURATION_MS / 1000))}s</span>
+                </div>
+              </div>
+            )}
+
+            <p className="text-[10px] text-slate-400 leading-tight italic bg-slate-900/50 p-2 rounded-xl border border-slate-800/60">
+              {currentConfig.description}
+            </p>
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsHudOpen(true)}
+            className="pointer-events-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-950/85 border border-slate-700/60 text-[11px] text-slate-200 hover:text-white shadow-lg cursor-pointer"
+            title="展開日夜面板"
+            aria-label={`日夜：${currentConfig.name}，展開面板`}
+            aria-expanded={false}
+          >
+            {getTimePhaseIcon(timePhase)}
+            <span className="hidden sm:inline font-fantasy">{currentConfig.name}</span>
+            <ChevronDown className="w-3 h-3 text-slate-400" />
+          </button>
+        )}
       </div>
 
       {/* Floating Left Navigation Arrow (Triggers Spring Glide) */}
@@ -586,19 +650,14 @@ export const PanoramicStage: React.FC<PanoramicStageProps> = ({
             })}
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+          <div className="hidden sm:flex items-center justify-between text-[11px] text-slate-400 px-1">
             <div className="flex items-center gap-1.5 text-slate-300">
               <Compass className="w-3.5 h-3.5 text-emerald-400" />
-              <span>仙境全景探索軸</span>
+              <span>拖曳或滾輪平移 · 點圓點跳轉</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="hidden sm:inline opacity-75">
-                點擊兩側箭頭、拖曳甩動或滾輪平移 (彈性緩衝已啟動)
-              </span>
-              <span className="text-emerald-400 font-fantasy">
-                {Math.round((scrollX / (maxScroll || 1)) * 100)}% 領域
-              </span>
-            </div>
+            <span className="text-emerald-400 font-fantasy">
+              {Math.round((scrollX / (maxScroll || 1)) * 100)}%
+            </span>
           </div>
         </div>
       </div>

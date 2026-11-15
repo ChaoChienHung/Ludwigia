@@ -907,3 +907,20 @@ body.space-body {
     transform-origin: top left;
   }
 }
+
+/* ==========================================================================
+   Performance tier (see docs/specs/realm-spec.md §6)
+   Touch devices: HUD glass panels sit on top of a canvas that repaints every
+   frame, so a live backdrop blur re-blurs on every frame. Use the theme's solid
+   surface token instead (theme / palette tokens remain the single source).
+   ========================================================================== */
+@media (pointer: coarse) {
+  .hud-glass-panel,
+  .hud-status-pill,
+  .dpad-center,
+  .hud-compass-panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: color-mix(in srgb, var(--space-surface-solid) 94%, transparent);
+  }
+}

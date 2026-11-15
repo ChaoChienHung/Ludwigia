@@ -282,8 +282,9 @@ Y: 57 └───────────────────┘───�
   * 每影格僅對動態角色（`this.charManager.characters`）進行輕量封裝並與靜態實體陣列合併，GC 負擔徹底歸零。
 
 ### 7.2 雙層視口幾何剔除 (Two-Tier Viewport Bounding-Box Culling)
-* **地磚層剔除**: `drawTerrain()` 藉由相機原點、當前縮放比率與畫面視口（擴充 `margin = 140 / zoom`），在每格地磚渲染前以 `isoToScreen` 幾何檢驗，跳過 $80\%$ 以上的畫面外地磚繪製與 Path 運算。
-* **實體層剔除**: 在進行等軸測深度拓撲排序（`sortIsometricEntities`）之前，預先過濾出視口內可見實體（`visibleEntities`），將排序複雜度由全圖 $O(N \log N)$ 陡降至可見集合 $O(K \log K)$（$K \ll N$）。
+* **地磚層剔除與合批**：地磚的顏色、所屬室內區與裝飾旗標由 `buildTerrainTable()` 在第一次繪製時分類一次，存成 typed array。之後 `drawTerrain()` 用 `screenToIso` 反投影視口四角（擴充 `margin = 140 / zoom`），只走訪這個範圍內的格子，再依「透明度群組 × 顏色」合併成少量 path 一次 fill。地面貼花、籃球場線、浮島崖壁與雲海也都依共用的 `world.viewRect` 裁剪。
+* **實體層剔除**：靜態實體以 footprint 的投影外框（不是中點）和 `viewRect` 比對，濾出可見實體（`visibleEntities`），長牆只要有一端在畫面內就會繪製。
+* **排序複雜度**：`sortIsometricEntities` 只在「螢幕 x 欄位重疊」的實體之間建立遮擋邊（依左界排序後做掃描線），Kahn ready queue 使用 binary heap。可見實體數為 $K$、欄位重疊的實體對數為 $P$ 時，複雜度為 $O(K \log K + P)$；舊版是 $O(K^2)$ 的兩兩比對，而且每次入隊都要重新排序。詳見 `docs/specs/realm-spec.md` §6。
 
 ### 7.3 時間切片尋路佇列 (Time-Sliced Pathfinding Queue)
 * **平滑分散 A* 負載**:

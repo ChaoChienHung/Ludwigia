@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
 import { wonderlandAudio } from '../utils/audio';
 import { Volume2, VolumeX, RotateCcw, Sparkles, Sprout, Globe, Home } from 'lucide-react';
-import { PORTALS_DATA } from '../data/portalsData';
 
 interface TopBarProps {
-  onScrollToPortal: (x: number) => void;
   onResetView: () => void;
-  activePortalId: string | null;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({
-  onScrollToPortal,
-  onResetView,
-  activePortalId,
-}) => {
+export const TopBar: React.FC<TopBarProps> = ({ onResetView }) => {
   const [isMuted, setIsMuted] = useState(wonderlandAudio.getMuted());
 
   const handleAudioToggle = () => {
@@ -38,25 +31,8 @@ export const TopBar: React.FC<TopBarProps> = ({
         </a>
       </div>
 
-      {/* Zone 2: Portal jumping navigation */}
-      <nav className="hidden xl:flex items-center gap-5 text-xs font-medium text-slate-300">
-        {PORTALS_DATA.map((portal) => (
-          <button
-            key={portal.id}
-            onClick={() => {
-              wonderlandAudio.playNavClick();
-              onScrollToPortal(portal.x);
-            }}
-            className={`transition-colors whitespace-nowrap shrink-0 hover:text-emerald-300 cursor-pointer ${
-              activePortalId === portal.id
-                ? 'text-emerald-300 font-semibold underline underline-offset-4 decoration-emerald-400'
-                : 'text-slate-400'
-            }`}
-          >
-            {portal.name}
-          </button>
-        ))}
-      </nav>
+      {/* Portal-by-portal navigation lives in the bottom minimap; the top bar keeps only
+          brand, the two realm shortcuts, home and audio so it fits on phones. */}
 
       {/* Zone 3: Dimensional Teleport Gateways (Garden, World, Home) & Controls */}
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
@@ -98,13 +74,12 @@ export const TopBar: React.FC<TopBarProps> = ({
           aria-label="回歸起點"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span className="hidden md:inline">重置視角</span>
         </button>
 
         {/* Audio Mute/Unmute */}
         <button
           onClick={handleAudioToggle}
-          className={`px-2.5 md:px-3 py-1.5 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+          className={`p-1.5 md:p-2 rounded-xl border text-xs font-medium flex items-center transition-all cursor-pointer ${
             isMuted
               ? 'bg-slate-900/80 border-slate-700 text-slate-400 hover:text-slate-200'
               : 'bg-emerald-950/80 border-emerald-600/50 text-emerald-300 shadow-sm shadow-emerald-900/40'
@@ -115,12 +90,10 @@ export const TopBar: React.FC<TopBarProps> = ({
           {isMuted ? (
             <>
               <VolumeX className="w-4 h-4 text-slate-400" />
-              <span className="hidden md:inline">靜音</span>
             </>
           ) : (
             <>
-              <Volume2 className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span className="hidden md:inline">音律</span>
+              <Volume2 className="w-4 h-4 text-emerald-400" />
             </>
           )}
         </button>

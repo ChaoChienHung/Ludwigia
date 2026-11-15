@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { PortalItem } from '../types/portal';
 import { wonderlandAudio } from '../utils/audio';
-import { Compass, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Lock, Sparkles, ArrowUpRight } from 'lucide-react';
 
 interface PortalComponentProps {
   portal: PortalItem;
@@ -11,15 +11,42 @@ interface PortalComponentProps {
   glowMultiplier?: number;
 }
 
-export const PortalComponent: React.FC<PortalComponentProps> = ({
+// Memoised: the stage re-renders on every spring-camera frame while panning, but a portal
+// only needs to re-render when its own hover state or the global glow level changes.
+const PortalComponentImpl: React.FC<PortalComponentProps> = ({
   portal,
   onSelect,
   isHovered,
   onHoverChange,
   glowMultiplier = 1.0,
 }) => {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  // Pause this portal's infinite CSS animations (vortex spin, ping, pulse, dash flow) while it
+  // is scrolled out of view. Written straight to the DOM attribute so it never re-renders React.
+  // Keeps per-frame animation cost proportional to *visible* portals as more realms are added.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          el.dataset.offscreen = entry.isIntersecting ? 'false' : 'true';
+        }
+      },
+      { rootMargin: '0px 200px 0px 200px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const [internalHover, setInternalHover] = useState(false);
   const activeHover = isHovered || internalHover;
+  // Portals without a destination are "sealed": dimmed, animations frozen, click shows a notice
+  const isSealed = !portal.targetUrl;
+  // Hover thumbnail: requested only while hovered; hidden for good if the image is missing
+  const [thumbState, setThumbState] = useState<'unknown' | 'ok' | 'missing'>('unknown');
+  const showThumb = !!portal.previewImage && activeHover && thumbState !== 'missing';
 
   const handleMouseEnter = () => {
     setInternalHover(true);
@@ -34,8 +61,7 @@ export const PortalComponent: React.FC<PortalComponentProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    wonderlandAudio.playPortalWarp();
-    onSelect(portal);
+    onSelect(portal); // App plays the warp / sealed sound and decides what happens
   };
 
   // High-detail SVG nature frames with delicate aesthetic
@@ -978,7 +1004,9 @@ export const PortalComponent: React.FC<PortalComponentProps> = ({
 
   return (
     <div
-      className="absolute cursor-pointer transition-transform duration-300 ease-out select-none will-change-transform"
+      ref={rootRef}
+      data-sealed={isSealed ? 'true' : 'false'}
+      className="portal-root absolute cursor-pointer transition-transform duration-300 ease-out select-none"
       style={{
         left: `${portal.x}px`,
         top: `${portal.yPercent}%`,
@@ -994,7 +1022,7 @@ export const PortalComponent: React.FC<PortalComponentProps> = ({
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      aria-label={`傳送門：${portal.name}，通往${portal.signpost.destination}`}
+      aria-label={isSealed ? `傳送門：${portal.name}（封印中，尚未開放）` : `傳送門：${portal.name}，直接穿越至${portal.targetLabel ?? portal.signpost.destination}`}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -1031,9 +1059,18 @@ export const PortalComponent: React.FC<PortalComponentProps> = ({
         }`}
       >
         <div className="px-3 py-1.5 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 text-xs font-medium text-white flex items-center gap-1.5 shadow-xl">
-          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          <span>點擊穿梭</span>
-          <ArrowUpRight className="w-3.5 h-3.5 text-white/70" />
+          {isSealed ? (
+            <>
+              <Lock className="w-3.5 h-3.5 text-slate-300" />
+              <span>封印中</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>點擊穿越</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-white/70" />
+            </>
+          )}
         </div>
       </div>
 
@@ -1058,33 +1095,35 @@ export const PortalComponent: React.FC<PortalComponentProps> = ({
           )}
 
           <div
-            className={`w-full p-2.5 rounded-xl border backdrop-blur-md shadow-xl transition-all duration-200 ${getSignpostContainerStyle()} ${
+            className={`w-full p-2 rounded-xl border backdrop-blur-md shadow-xl transition-all duration-200 ${getSignpostContainerStyle()} ${
               activeHover ? 'ring-1 ring-white/40' : ''
             }`}
           >
-            <div className="flex items-start justify-between gap-1.5 mb-1">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-fantasy font-bold text-amber-300">
-                  {portal.signpost.runeSymbol}
-                </span>
-                <span className="text-[10px] tracking-wider uppercase opacity-80 font-medium">
-                  {portal.signpost.label}
-                </span>
-              </div>
-              <Compass className="w-3.5 h-3.5 opacity-70 shrink-0" />
-            </div>
+            {/* Hover-only preview thumbnail (optional; only rendered when the image exists) */}
+            {showThumb && (
+              <img
+                src={portal.previewImage}
+                alt=""
+                aria-hidden="true"
+                decoding="async"
+                onLoad={() => setThumbState('ok')}
+                onError={() => setThumbState('missing')}
+                className={`w-full aspect-video object-cover rounded-lg mb-2 border border-white/10 transition-opacity duration-200 ${
+                  thumbState === 'ok' ? 'opacity-100' : 'opacity-0 h-0 mb-0'
+                }`}
+              />
+            )}
 
-            <h4 className="text-xs font-fantasy font-bold tracking-wide text-white leading-tight">
-              {portal.signpost.destination}
-            </h4>
-
-            <p className="text-[10px] opacity-80 mt-1 line-clamp-2 leading-tight">
-              {portal.signpost.subtext}
-            </p>
-
-            <div className="mt-2 pt-1.5 border-t border-white/10 flex items-center justify-between text-[9px] opacity-90">
-              <span className="truncate max-w-[130px]">{portal.signpost.statusText}</span>
-              <span className="font-semibold text-amber-200 shrink-0">通往 ➔</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-fantasy font-bold text-amber-300 shrink-0">
+                {portal.signpost.runeSymbol}
+              </span>
+              <h4 className="flex-1 min-w-0 text-xs font-fantasy font-bold tracking-wide text-white leading-tight truncate">
+                {isSealed ? portal.name : portal.targetLabel ?? portal.signpost.destination}
+              </h4>
+              <span className={`text-[10px] font-semibold shrink-0 ${isSealed ? 'text-slate-400' : 'text-amber-200'}`}>
+                {isSealed ? '封印中' : '通往 ➔'}
+              </span>
             </div>
           </div>
         </div>
@@ -1092,3 +1131,5 @@ export const PortalComponent: React.FC<PortalComponentProps> = ({
     </div>
   );
 };
+
+export const PortalComponent = memo(PortalComponentImpl);

@@ -78,3 +78,59 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Incoming day/night phase layer (mounted fresh) fades from transparent to its own opacity */
+@keyframes phase-fade-in {
+  from { opacity: 0; }
+}
+.animate-phase-in {
+  animation: phase-fade-in 1s ease-in-out;
+}
+
+/* ==========================================================================
+   Performance tier (see docs/specs/realm-spec.md §6)
+   ========================================================================== */
+
+/* Portals scrolled out of view pause their infinite decorative animations
+   (vortex spin, ping, pulse, float, dash flow). Set by PortalComponent via IntersectionObserver. */
+.portal-root[data-offscreen='true'],
+.portal-root[data-offscreen='true'] * {
+  animation-play-state: paused !important;
+}
+
+/* Sealed portals (no destination yet): dimmed and frozen, so they read as "not open" at a glance */
+.portal-root[data-sealed='true'] {
+  filter: saturate(0.35) brightness(0.75);
+}
+.portal-root[data-sealed='true'] * {
+  animation-play-state: paused !important;
+}
+
+/* Direct warp transition: backdrop fades in while the portal vortex swirls up to fill the screen */
+@keyframes warp-backdrop-in {
+  from { opacity: 0; }
+}
+@keyframes warp-swirl {
+  from { transform: scale(0.15) rotate(0deg); opacity: 0.4; }
+  to { transform: scale(3.2) rotate(540deg); opacity: 1; }
+}
+.animate-warp-backdrop {
+  animation: warp-backdrop-in 0.25s ease-out;
+}
+.animate-warp-swirl {
+  animation: warp-swirl 0.7s cubic-bezier(0.55, 0, 0.75, 0.2) forwards;
+  will-change: transform;
+}
+
+/* Respect the OS reduced-motion preference: no infinite ambient loops */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

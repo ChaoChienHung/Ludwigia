@@ -1,28 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import { PORTALS_DATA } from './data/portalsData';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PortalItem } from './types/portal';
 import { TopBar } from './components/TopBar';
 import { PanoramicStage } from './components/PanoramicStage';
-import { WorldPreviewModal } from './components/WorldPreviewModal';
+import { WarpTransition } from './components/WarpTransition';
 import { wonderlandAudio } from './utils/audio';
 import { Compass, Sparkles, MoveHorizontal, MousePointerClick } from 'lucide-react';
 
+const WELCOME_SEEN_KEY = 'aetheria_welcome_seen_v1';
+
 export default function App() {
-  const [selectedPortal, setSelectedPortal] = useState<PortalItem | null>(null);
+  const [warpPortal, setWarpPortal] = useState<PortalItem | null>(null);
+  const [sealedNotice, setSealedNotice] = useState<string | null>(null);
   const [activePortalId, setActivePortalId] = useState<string | null>(null);
   const [scrollTargetX, setScrollTargetX] = useState<number | null>(null);
-  const [showWelcomeGuide, setShowWelcomeGuide] = useState(true);
+  // Welcome guide is shown only on the first visit (remembered in localStorage)
+  const [showWelcomeGuide, setShowWelcomeGuide] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(WELCOME_SEEN_KEY) !== '1';
+    } catch {
+      return true;
+    }
+  });
 
   // Initialize ambient music upon user's first gesture
   const handleStartExploring = () => {
     setShowWelcomeGuide(false);
+    try {
+      localStorage.setItem(WELCOME_SEEN_KEY, '1');
+    } catch {
+      /* storage unavailable: guide simply shows again next time */
+    }
     wonderlandAudio.startAmbient();
     wonderlandAudio.playNavClick();
   };
 
-  const handleScrollToPortal = (x: number) => {
-    setScrollTargetX(x);
-  };
+  // Returning visitors skip the guide, so start ambience on their first gesture instead
+  useEffect(() => {
+    if (showWelcomeGuide) return;
+    const start = () => wonderlandAudio.startAmbient();
+    window.addEventListener('pointerdown', start, { once: true });
+    window.addEventListener('keydown', start, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', start);
+      window.removeEventListener('keydown', start);
+    };
+  }, [showWelcomeGuide]);
+
+  // Clicking a portal warps straight into its realm (no info panel). Portals without a
+  // destination are "sealed": they only show a short notice.
+  const handleSelectPortal = useCallback((portal: PortalItem) => {
+    if (portal.targetUrl) {
+      wonderlandAudio.playPortalWarp();
+      setWarpPortal(portal);
+    } else {
+      wonderlandAudio.playNavClick();
+      setSealedNotice(portal.name);
+    }
+  }, []);
+
+  const handleCancelWarp = useCallback(() => setWarpPortal(null), []);
+
+  // Coming back with the browser Back button can restore this page from the bfcache with the
+  // warp overlay still mounted; clear it so the lobby is usable again.
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setWarpPortal(null);
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
+  }, []);
+  const handleHoverPortal = useCallback((id: string | null) => setActivePortalId(id), []);
+  const handleScrollTargetDone = useCallback(() => setScrollTargetX(null), []);
+
+  useEffect(() => {
+    if (!sealedNotice) return;
+    const t = window.setTimeout(() => setSealedNotice(null), 2200);
+    return () => window.clearTimeout(t);
+  }, [sealedNotice]);
 
   const handleResetView = () => {
     setScrollTargetX(0);
@@ -32,28 +86,32 @@ export default function App() {
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-950 font-sans text-slate-100 select-none">
       {/* Top Bar with Top Bar Contract */}
-      <TopBar
-        onScrollToPortal={handleScrollToPortal}
-        onResetView={handleResetView}
-        activePortalId={activePortalId}
-      />
+      <TopBar onResetView={handleResetView} />
 
       {/* Main Interactive Panoramic Wonderland Stage */}
       <main className="w-full h-full pt-16">
         <PanoramicStage
-          onSelectPortal={(portal) => setSelectedPortal(portal)}
+          onSelectPortal={handleSelectPortal}
           activePortalId={activePortalId}
-          onHoverPortal={(id) => setActivePortalId(id)}
+          onHoverPortal={handleHoverPortal}
           scrollTargetX={scrollTargetX}
-          onScrollTargetDone={() => setScrollTargetX(null)}
+          onScrollTargetDone={handleScrollTargetDone}
         />
       </main>
 
-      {/* World Preview Card Modal (when a portal is clicked) */}
-      <WorldPreviewModal
-        portal={selectedPortal}
-        onClose={() => setSelectedPortal(null)}
-      />
+      {/* Direct warp transition (~0.7s swirl, Esc / button to cancel) */}
+      {warpPortal && <WarpTransition portal={warpPortal} onCancel={handleCancelWarp} />}
+
+      {/* Sealed portal notice */}
+      {sealedNotice && (
+        <div
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-slate-950/90 border border-slate-700 text-xs text-slate-200 shadow-xl animate-modal-in pointer-events-none"
+          role="status"
+          aria-live="polite"
+        >
+          {sealedNotice} · 封印中，尚未開放
+        </div>
+      )}
 
       {/* First-time Welcome & Exploration Guide Overlay */}
       {showWelcomeGuide && (
@@ -93,7 +151,7 @@ export default function App() {
                   <span>維度躍遷樞紐</span>
                 </div>
                 <p className="text-[11px] text-slate-400">
-                  古樹之門直通【數位花園】，浮島星環直通【Ludwigia World】。
+                  點擊傳送門即刻穿越：古樹之門直通【數位花園】，浮島星環直通【Ludwigia World】。
                 </p>
               </div>
             </div>

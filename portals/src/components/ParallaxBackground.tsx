@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TimePhase, TIME_PHASE_CONFIGS } from '../types/timeCycle';
 
 interface ParallaxBackgroundProps {
@@ -19,7 +19,6 @@ interface Particle {
   phase: number;
 }
 
-const PHASES: TimePhase[] = ['dawn', 'day', 'dusk', 'night'];
 
 export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   scrollX,
@@ -28,6 +27,27 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const currentConfig = TIME_PHASE_CONFIGS[timePhase];
+
+  // Only the active time phase (plus the outgoing one during its 1s crossfade) is mounted.
+  // Previously all 4 phases were always mounted at opacity 0, which kept ~12 extra 5600px-wide
+  // composited layers alive (hundreds of MB of GPU tiles) for invisible content.
+  // Derived during render (not in an effect) so the outgoing layer never unmounts for a frame.
+  const [phaseState, setPhaseState] = useState<{ current: TimePhase; fading: TimePhase | null }>({
+    current: timePhase,
+    fading: null,
+  });
+  if (phaseState.current !== timePhase) {
+    setPhaseState({ current: timePhase, fading: phaseState.current });
+  }
+  const fadingPhase = phaseState.current === timePhase ? phaseState.fading : phaseState.current;
+  useEffect(() => {
+    if (!phaseState.fading) return;
+    const t = window.setTimeout(() => setPhaseState((st) => ({ ...st, fading: null })), 1100);
+    return () => window.clearTimeout(t);
+  }, [phaseState]);
+  const mountedPhases: TimePhase[] = fadingPhase && fadingPhase !== timePhase ? [fadingPhase, timePhase] : [timePhase];
+  // Incoming layer fades in via keyframes (it mounts fresh, so a CSS transition would not run)
+  const fadeInClass = fadingPhase ? ' animate-phase-in' : '';
 
   // Optimize canvas particles: lightweight, locked 60fps
   useEffect(() => {
@@ -47,7 +67,10 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
     };
     window.addEventListener('resize', handleResize);
 
-    const count = 55;
+    // Scale particle count with viewport area (55 on a 1440x900 desktop, fewer on phones)
+    const count = Math.round(Math.max(18, Math.min(55, (width * height) / (1440 * 900) * 55)));
+    const reduceMotion =
+      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const particles: Particle[] = Array.from({ length: count }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -98,7 +121,8 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
         ctx.fill();
       }
 
-      animId = requestAnimationFrame(render);
+      // prefers-reduced-motion: draw a single static frame of spores, no animation loop
+      if (!reduceMotion) animId = requestAnimationFrame(render);
     };
 
     render();
@@ -117,13 +141,13 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
       {/* 1. Base Sky: 100% full viewport, zero cutoff, opacity crossfade */}
-      {PHASES.map((phase) => {
+      {mountedPhases.map((phase) => {
         const cfg = TIME_PHASE_CONFIGS[phase];
         const isActive = timePhase === phase;
         return (
           <div
             key={phase}
-            className="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out will-change-[opacity]"
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out${isActive ? fadeInClass : ''}`}
             style={{
               opacity: isActive ? 1 : 0,
               background: cfg.skyBackground,
@@ -134,13 +158,13 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
       })}
 
       {/* 2. Seamless Ultra-wide Aurora Mist (5600px wide, zero boundary cut) */}
-      {PHASES.map((phase) => {
+      {mountedPhases.map((phase) => {
         const cfg = TIME_PHASE_CONFIGS[phase];
         const isActive = timePhase === phase;
         return (
           <div
             key={`aurora-${phase}`}
-            className="absolute top-0 h-[75%] w-[5600px] transition-opacity duration-1000 ease-in-out will-change-[transform,opacity]"
+            className={`absolute top-0 h-[75%] w-[5600px] transition-opacity duration-1000 ease-in-out will-change-transform${isActive ? fadeInClass : ''}`}
             style={{
               opacity: isActive ? 0.9 : 0,
               transform: `translate3d(${farSkyX}px, 0, 0)`,
@@ -200,13 +224,13 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
           zIndex: 5,
         }}
       >
-        {PHASES.map((phase) => {
+        {mountedPhases.map((phase) => {
           const cfg = TIME_PHASE_CONFIGS[phase];
           const isActive = timePhase === phase;
           return (
             <svg
               key={`mountains-${phase}`}
-              className="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out will-change-[opacity]"
+              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out${isActive ? fadeInClass : ''}`}
               style={{ opacity: isActive ? 0.75 : 0 }}
               viewBox="0 0 5600 600"
               preserveAspectRatio="none"
@@ -264,13 +288,13 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
           zIndex: 6,
         }}
       >
-        {PHASES.map((phase) => {
+        {mountedPhases.map((phase) => {
           const cfg = TIME_PHASE_CONFIGS[phase];
           const isActive = timePhase === phase;
           return (
             <svg
               key={`forest-${phase}`}
-              className="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out will-change-[opacity]"
+              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out${isActive ? fadeInClass : ''}`}
               style={{ opacity: isActive ? 0.95 : 0 }}
               viewBox="0 0 5600 800"
               preserveAspectRatio="none"
@@ -364,13 +388,13 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-10" />
 
       {/* 8. Bottom Fog with Opacity Crossfade */}
-      {PHASES.map((phase) => {
+      {mountedPhases.map((phase) => {
         const cfg = TIME_PHASE_CONFIGS[phase];
         const isActive = timePhase === phase;
         return (
           <div
             key={`fog-${phase}`}
-            className="absolute bottom-0 left-0 right-0 h-36 pointer-events-none transition-opacity duration-1000 ease-in-out will-change-[opacity]"
+            className={`absolute bottom-0 left-0 right-0 h-36 pointer-events-none transition-opacity duration-1000 ease-in-out${isActive ? fadeInClass : ''}`}
             style={{
               opacity: isActive ? 1 : 0,
               background: cfg.fogGradient,
