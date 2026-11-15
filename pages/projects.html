@@ -12,30 +12,7 @@
   <link rel="apple-touch-icon" href="../assets/images/icons/apple-touch-icon.png">
   <script src="../core/i18n-preload.js?v=2026-06-10-2"></script>
 
-  <script>
-  (() => {
-    try {
-      const theme = String(localStorage.getItem("theme") || "").trim().toLowerCase();
-      if (theme === "light") document.documentElement.classList.add("light-theme");
-      if (theme === "deep-sea" || theme === "galaxy-night") document.documentElement.classList.add("deep-sea-theme");
-      if (theme === "galaxy") document.documentElement.classList.add("galaxy-theme");
-      if (theme === "sky") document.documentElement.classList.add("sky-theme");
-      if (theme === "garden") document.documentElement.classList.add("garden-theme");
-      const palette = String(localStorage.getItem("site_palette_v1") || "").trim().toLowerCase();
-      if (palette === "ember") document.documentElement.classList.add("palette-ember");
-      if (palette === "cedar") document.documentElement.classList.add("palette-cedar");
-      if (palette === "abyss") document.documentElement.classList.add("palette-abyss");
-      if (palette === "nebula") document.documentElement.classList.add("palette-nebula");
-      if (palette === "galaxy") document.documentElement.classList.add("palette-galaxy");
-      if (palette === "sky") document.documentElement.classList.add("palette-sky");
-      if (palette === "garden") document.documentElement.classList.add("palette-garden");
-      if (palette === "grove") document.documentElement.classList.add("palette-grove");
-      if (palette === "red") document.documentElement.classList.add("palette-red");
-      if (palette === "yellow") document.documentElement.classList.add("palette-yellow");
-      if (palette === "ash") document.documentElement.classList.add("palette-ash");
-    } catch (e) {}
-  })();
-</script>
+  <script src="../core/theme-preload.js?v=2026-11-15-1"></script>
 
   <!--------------->
   <!-- Bootstrap -->

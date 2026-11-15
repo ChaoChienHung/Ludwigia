@@ -78,10 +78,11 @@
 
 ### 3. 首次載入 preload
 
-- 檔案：`tools/content_styles/_shared/partials/head_links.html`
+- 檔案：`core/theme-preload.js`（全站唯一的 theme / palette preload；所有頁面都在 `<head>` 第一個 stylesheet 之前以 `<script src>` 載入）
 - 檢查：
-  - `<head>` preload script 是否會在首屏前掛上新 theme class
-  - 若有對應 palette，也要同步 preload
+  - 新 theme 是否已加進 `THEME_CLASSES`，在首屏前掛上對應 class
+  - 新 palette 是否已加進 `PALETTES`；`tests/test_page_shell.py` 會比對它與 `palette-tokens.css` 的 `.palette-*` 是否一致
+  - 新增手寫頁面時，引用 `core/theme-preload.js`，不要再內嵌一份 inline script（測試會擋）
 
 ### 4. Settings 選項與標籤
 
@@ -218,7 +219,7 @@
 
 ## 常見漏點
 
-- 忘了更新 `head_links.html`，結果首屏先閃成舊 theme
+- 忘了更新 `core/theme-preload.js`，結果首屏先閃成舊 theme
 - modal 有新選項，但 `pages/settings.html` 沒同步
 - 把 `Theme` / `Palette` 的 preview 色直接拿去控制 selected 外框/背景，結果違反「Theme 管大方向、Palette 管細節」的原則
 - settings controls 的 active 狀態若要做 theme-specific style，需先確認是不是其實該回到 palette-driven 規則；只有 surface / atmosphere / text contrast 才應主要由 theme 接手
