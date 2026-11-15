@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] 重構 Phase 1：hooks、白名單、部署路徑、Portals 依賴
+    - 交付條件：`cli.py install-hooks` 可用；生成物白名單與現況一致；只保留一條部署路徑；Portals 移除未使用的依賴且 build 產物不變。
+    - 已完成：補回 `.githooks/`（pre-commit 重生 staged 內容頁；pre-push 跑測試並擋下過期索引與 World 資料），兩個 hook 都在暫時的 worktree 實測過；`characters.json` 加入 AGENTS 白名單；移除 GitHub Pages workflow，部署收斂為 Cloudflare，`.assetsignore` 補排除 `.githooks/`、`.claude/`；Portals 移除 `@google/genai`、`express`、`dotenv`、`@types/express`、`esbuild`，重新 build 後 JS 逐位元組相同。
+    - Review 重點：在本機執行一次 `python3 cli.py install-hooks`；到 GitHub repo 的 Settings → Pages 關閉 GitHub Pages；確認 Cloudflare 是自動部署（連 GitHub）還是手動 `wrangler deploy`。
+
 - [x] Portals 與 World 效能優化（讓成本跟著可見內容成長）
     - 交付條件：先量測再優化，取得桌面與手機的前後數據；World 的深度排序不再是 O(n²)；不退化視口中心縮放、牆面剪切矩陣、無閉環深度排序與 palette / theme 聯動契約；`portals/assets/` 重建；`cli.py test` 與 realm 測試通過；同步 spec / design / TODO。
     - 已完成（World）：深度排序改為「螢幕 x 欄位掃描線＋binary heap」（`isBehind` 規則不變）；地形改為初始化時分類一次，每幀只走訪視口格子並合併 fill；地面貼花、浮島崖壁與雲海、粒子加上視口裁剪；靜態實體改用 footprint 外框裁剪；HUD 的 DOM 寫入與 halo CSS 變數只在值改變時才寫；backing-store DPR 上限為桌面 2×、觸控 1.75×；通關密語遮罩或 modal 蓋住 canvas 時降到約 20 fps；支援 `prefers-reduced-motion`；觸控裝置的 HUD 改用實色表面，不做 backdrop blur。
@@ -268,7 +273,7 @@
     - 消除對主站上層檔案的相對路徑強穿透（如 `../../../assets/`、`../../../search/`），共用資源（favicon、palette tokens 等）改為自包含或建置期注入。
     - 各 Realm 根目錄維持統一入口 `index.html`，並保留返回大廳按鈕（連向 `../../index.html`）。
     - 遵守 `AGENTS.md` 的全站 Design System 繼承與實時色盤聯動契約（讀取 `--space-accent` / `localStorage`）。
-  - [ ] CI/CD 部署工作流：GitHub Actions 部署腳本配置 `submodules: true`，確保發布至 GitHub Pages 時自動拉取並構建各境域，主 Repo 保持極簡輕量。
+  - [ ] CI/CD 部署工作流：GitHub Actions 部署腳本配置 `submodules: true`，確保發布至 Cloudflare 時自動拉取並構建各境域，主 Repo 保持極簡輕量。
   - [ ] 交付條件：完成首個境域（如 `portals/realms/world`）獨立拆分與 submodule 掛載驗證；本地與 CI 構建皆能成功載入；主站 repo 體積不因境域資產膨脹；同步更新 `docs/specs/realm-spec.md`、`docs/specs/system-spec.md` 與 `AGENTS.md`。
 
 

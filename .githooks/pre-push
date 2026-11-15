@@ -1,0 +1,36 @@
+#!/bin/sh
+# Ludwigia pre-push hook.
+# 1. Run the full check suite (`python3 cli.py test`: create_content self-test,
+#    unittest, py_compile, check-tags).
+# 2. Refuse to push stale committed build outputs: search/search-index.{json,js}
+#    and portals/realms/world/data/characters.json must match their sources.
+# Install with `python3 cli.py install-hooks`. Skip once with `git push --no-verify`.
+set -eu
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+
+if ! python3 cli.py test >"$tmp/test.log" 2>&1; then
+  cat "$tmp/test.log" >&2
+  echo "" >&2
+  echo "pre-push: 'python3 cli.py test' failed, so the push was stopped." >&2
+  exit 1
+fi
+
+status=0
+
+python3 search/indexer.py --out-json "$tmp/search-index.json" --out-js "$tmp/search-index.js" >/dev/null
+if ! cmp -s "$tmp/search-index.json" search/search-index.json || ! cmp -s "$tmp/search-index.js" search/search-index.js; then
+  echo "pre-push: search/search-index.{json,js} is out of date. Run 'python3 cli.py index' and commit the result." >&2
+  status=1
+fi
+
+if ! python3 tools/build_world_data.py --check >/dev/null; then
+  echo "pre-push: portals/realms/world/data/characters.json is out of date. Run 'python3 cli.py build-world' and commit the result." >&2
+  status=1
+fi
+
+exit "$status"

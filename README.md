@@ -84,7 +84,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Indexer：`search/indexer.py` 掃描 `notes/`、`writing/`、`canvas/` → 產出 `search/search-index.{json,js}`（JS 會掛 `window.SITE_SEARCH_INDEX`）
 - Section landing：
   - `notes/index.html` / `writing/index.html` / `canvas/index.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/section-landing.js` 讀索引，只顯示該 section 的內容（含 scoped search + tag filter）
-  - freshness guard：section landing / search / tag page 與 note recommendation 會優先抓 `search/search-index.json`（`cache: "no-store"`），抓不到才退回 `window.SITE_SEARCH_INDEX` / `search-index.js`；目的不是放棄 JS 版本，而是降低 GitHub Pages / 瀏覽器快取把舊索引一直當成真相的機率
+  - freshness guard：section landing / search / tag page 與 note recommendation 會優先抓 `search/search-index.json`（`cache: "no-store"`），抓不到才退回 `window.SITE_SEARCH_INDEX` / `search-index.js`；目的不是放棄 JS 版本，而是降低 CDN / 瀏覽器快取把舊索引一直當成真相的機率
   - Cover 圖片策略：若未提供內容專屬 cover，section landing 與搜尋卡片會使用「預設 cover」當作列表縮圖（`notes` 預設使用 `assets/images/Notes.png`，`writing` 預設使用 `assets/images/Writing.png`），確保未指定 cover 時版面視覺一致
 - Search：
   - `pages/search.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/search-page.js` 讀 `window.SITE_SEARCH_INDEX`，提供 query ranking + multi-tag filter
@@ -121,7 +121,7 @@ python3 -m http.server 8000
 - `http://localhost:8000/labs/index.html`
 - `http://localhost:8000/index.html`（可直接用 navbar 的 gear icon 打開 settings modal）
 
-若你是在 GitHub Pages / 正式站驗證剛部署的變更，特別是：
+若你是在 Cloudflare 正式站驗證剛部署的變更，特別是：
 
 - `notes/index.html` / `writing/index.html` 文章列表
 - 單篇頁的 `Recommended Posts`
@@ -504,8 +504,9 @@ python3 cli.py translate \
 python3 cli.py install-hooks
 ```
 
-- `pre-commit`：若 staged 了 `notes/` / `writing/` / `canvas/` 的 `.md`，會自動重生對應 `.html`，並在必要時更新 `search/search-index.{json,js}`
-- `pre-push`：執行 `python3 cli.py test`（包含 `create_content` self-test、`unittest`、`py_compile`、`check-tags`）
+- `pre-commit`：若 staged 了 `notes/` / `writing/` / `canvas/` 的 `.md`，會自動重生對應 `.html`，並把重生的 `.html` 與 `search/search-index.{json,js}` 一起 stage
+- `pre-push`：執行 `python3 cli.py test`（包含 `create_content` self-test、`unittest`、`py_compile`、`check-tags`），並確認提交的 `search/search-index.{json,js}` 與 World 的 `characters.json` 沒有過期
+- 只想跳過一次時，可用 `git commit --no-verify` / `git push --no-verify`
 - 若偏好 shell script，也可直接跑 `./scripts/install-git-hooks.sh`
 
 ### Tag Ontology Coverage

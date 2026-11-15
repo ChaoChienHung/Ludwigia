@@ -21,9 +21,9 @@
 | `assets/css/site/shared.css` | 8,349 行 | 元件、Theme、頁面樣式混在一起；Theme ambient 用一長串 `body > :not(#a):not(#b)…` 排除清單把所有 body 子元素設成 `position: relative; z-index: 1`，新增任何浮層（例如 modal）都得回來加一條排除 |
 | 手寫頁面的 navbar | 首頁、`pages/`、`tag/`、`labs/` 等手寫頁面各自複製一份 navbar | `AGENTS.md` 規定 navbar 以 `pages/_shared/` 為唯一來源，但目前只有生成的內容頁遵守，手寫頁面已經出現不一致（例如 Labs 子頁的 navbar 沒有品牌 logo 和下拉選單） |
 | `tools/create_content.py` | 2,790 行 | parser、metadata、渲染、模板替換都在同一個檔案 |
-| Git hooks | `cli.py install-hooks` 會指向 `.githooks/` | `.githooks/` 不在 repo 裡，指令會直接失敗 |
+| Git hooks | `cli.py install-hooks` 會指向 `.githooks/` | `.githooks/` 不在 repo 裡，指令會直接失敗 → **已在 Phase 1 補回** |
 | 生成物白名單 | World 的 `data/characters.json` 有提交且執行期必需 | `AGENTS.md` 的白名單沒列它，規則與現況不一致 |
-| 部署 | 同時有 Cloudflare（`wrangler.jsonc`）和 GitHub Pages（Jekyll workflow） | 兩條部署路徑的排除規則不同（`.assetsignore` vs Jekyll 預設），上線內容可能不一致 |
+| 部署 | 同時有 Cloudflare（`wrangler.jsonc`）和 GitHub Pages（Jekyll workflow） | 兩條部署路徑的排除規則不同（`.assetsignore` vs Jekyll 預設），上線內容可能不一致 → **已在 Phase 1 收斂為 Cloudflare** |
 | Portals 依賴 | `portals/package.json` 宣告 `@google/genai`、`express`、`dotenv` | `portals/src` 沒有使用這些套件；前端專案帶著 API SDK 也有誤把金鑰打包進前端的風險 |
 | `docs/tech/README.md` | 技術棧摘要 | 仍寫著已搬走的 `garden/` 路徑 → **已在 Phase 0 改為指向 `tech-stack.md`** |
 
@@ -38,12 +38,12 @@
   - 新增 `tests/test_page_shell.py`：禁止 inline 複本回流、檢查路徑可解析且在第一個 stylesheet 之前載入、palette 清單與 `palette-tokens.css` 一致、保留 `galaxy-night` 舊值 alias。
 - 新增 `docs/tech/tech-stack.md` 與本文件。
 
-### Phase 1：小型修正（低風險，不影響畫面）
+### Phase 1：小型修正（已完成）
 
-- [ ] 補回 `.githooks/`（pre-commit 跑 `cli.py test`、pre-push 檢查索引是否最新），或移除 `install-hooks` 指令；二擇一由作者決定。
-- [ ] 把 `portals/realms/world/data/characters.json` 寫進 `AGENTS.md` 生成物白名單。
-- [ ] 決定唯一的部署路徑（Cloudflare 或 GitHub Pages），另一條移除或明確標成備援，並讓兩邊的排除規則一致。
-- [ ] 等 Portals session 合併後，移除 `portals/package.json` 中未使用的 `@google/genai`、`express`、`dotenv`，重新 build 確認產物不變。
+- [x] 補回 `.githooks/`，行為依 README 原本的規格：`pre-commit` 重生 staged 的內容頁 `.html` 並一起 stage；`pre-push` 跑 `cli.py test`，另外擋下過期的 `search/search-index.{json,js}` 與 World `characters.json`。已在暫時的 worktree 實測兩個 hook。
+- [x] 把 `portals/realms/world/data/characters.json` 寫進 `AGENTS.md` 生成物白名單。
+- [x] 部署路徑收斂為 Cloudflare：移除 GitHub Pages 的 Jekyll workflow；`.assetsignore` 補上 `.githooks/` 與 `.claude/`。GitHub 端的 Pages 設定需要作者在 repo Settings 手動關閉。
+- [x] 移除 `portals/package.json` 中未使用的 `@google/genai`、`express`、`dotenv`、`@types/express`，以及與 Vite 8 版本衝突、也沒有直接使用的 `esbuild`。重新 build 後 JS 與提交的版本逐位元組相同；順便用 `cli.py build-portals` 對齊先前多出未用 Tailwind 變數的 CSS。
 
 ### Phase 2：手寫頁面 shell 收斂（中風險，影響畫面）
 

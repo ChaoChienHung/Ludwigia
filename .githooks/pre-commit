@@ -1,0 +1,45 @@
+#!/bin/sh
+# Ludwigia pre-commit hook.
+# When source .md files under notes/, writing/ or canvas/ are staged, regenerate
+# their .html with tools/create_content.py (which also refreshes
+# search/search-index.{json,js}) and stage the regenerated files.
+# Install with `python3 cli.py install-hooks`. Skip once with `git commit --no-verify`.
+set -eu
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+python3 - <<'PY'
+import os
+import subprocess
+import sys
+
+staged = subprocess.run(
+    ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"],
+    check=True, capture_output=True,
+).stdout.decode("utf-8").split("\0")
+sources = [
+    p for p in staged
+    if p.endswith(".md") and p.split("/", 1)[0] in {"notes", "writing", "canvas"} and os.path.isfile(p)
+]
+if not sources:
+    sys.exit(0)
+
+to_stage = []
+for src in sources:
+    print(f"pre-commit: regenerating {src}")
+    result = subprocess.run(
+        [sys.executable, "tools/create_content.py", "--source", src, "--force"],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        sys.stderr.write(result.stdout + result.stderr)
+        sys.stderr.write(f"pre-commit: could not regenerate {src}; commit stopped.\n")
+        sys.exit(1)
+    html = os.path.splitext(src)[0] + ".html"
+    if os.path.isfile(html):
+        to_stage.append(html)
+
+to_stage += [p for p in ("search/search-index.json", "search/search-index.js") if os.path.isfile(p)]
+subprocess.run(["git", "add", "--", *to_stage], check=True)
+PY

@@ -191,7 +191,8 @@
 - 生成物策略：少數生成物屬於部署必需品，必須進版控；其餘一律視為本機/CI 生成物，必須進 `.gitignore`
   - `search/search-index.{json,js}` 必須進版控：它是全站搜尋/瀏覽的資料來源，靜態站必須能直接讀到
   - `portals/realms/garden/floral-assets/` 與 `portals/assets/` 必須進版控：`portals/realms/garden/index.html` 與 `portals/index.html` 直接引用其 build 產物，不提交會導致 Garden 或 Portals 入口不可用（除非自己 build）
-  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`
+  - `portals/realms/world/data/characters.json` 必須進版控：World 執行期直接讀它；由 `cli.py build-world` 從 `characters/` 與 `interactions/` 再現性編譯
+  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/world/data/characters.json`
   - 其它生成物（必須 ignore）例：`portals/realms/garden/_floral_dist/`
 
 ## 文件一致性

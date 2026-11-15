@@ -119,10 +119,9 @@ Ludwigia 分成四層，越往下越獨立：
 
 ## 部署與自動化
 
-- **Cloudflare Workers 靜態資產**：`wrangler.jsonc` 以 repo 根目錄為資產目錄；`.assetsignore` 排除 `tests/`、`tools/`、`docs/`、`temp/`、`*.py` 等不該上線的檔案。
-- **GitHub Pages**：`.github/workflows/jekyll-gh-pages.yml` 在推送到 `main` 時以 Jekyll 建置並部署。
-- **Git hooks**：`scripts/install-git-hooks.sh`（`cli.py install-hooks`）會把 `core.hooksPath` 指向 `.githooks/`。注意：盤點時 `.githooks/` 不在 repo 裡，這個指令目前會失敗，見 `docs/tech/refactor-roadmap.md`。
+- **Cloudflare Workers 靜態資產（唯一的部署路徑）**：`wrangler.jsonc` 以 repo 根目錄為資產目錄；`.assetsignore` 排除 `tests/`、`tools/`、`docs/`、`temp/`、`*.py` 等不該上線的檔案。
+- **Git hooks**：`cli.py install-hooks`（或 `scripts/install-git-hooks.sh`）把 `core.hooksPath` 指向 `.githooks/`。`pre-commit` 會重生 staged 的內容頁 `.html` 並一起 stage；`pre-push` 跑 `cli.py test`，並擋下過期的搜尋索引與 World `characters.json`。
 
 ## 生成物政策（摘要）
 
-必須提交：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`。World 的 `data/characters.json` 目前也有提交（執行期直接讀它），但還沒寫進 `AGENTS.md` 的白名單，見 `docs/tech/refactor-roadmap.md`。其他生成物一律進 `.gitignore`。完整規則見 `AGENTS.md`「最小工具鏈」。
+必須提交：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/world/data/characters.json`。其他生成物一律進 `.gitignore`。完整規則見 `AGENTS.md`「最小工具鏈」。

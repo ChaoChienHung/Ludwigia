@@ -95,4 +95,3 @@
 
 - 真實手機的體感尚未驗證。
 - 沒有存過語言偏好的訪客：主站預設英文，Portals 目前會跟隨瀏覽器語言，兩邊可能不一致。
-- `portals/assets/` 裡提交的 CSS 比用目前原始碼重新 build 的版本多了一些沒用到的 Tailwind 顏色變數（JS 完全一致）。不影響畫面，下次 `cli.py build-portals` 時會自動對齊。
