@@ -3563,6 +3563,54 @@
         "信息論",
         "信息论"
       ]
+    },
+    {
+      "concept_id": "concept.linear_sketch",
+      "labels": {
+        "en": "Linear Sketch",
+        "zh-Hant": "線性草圖",
+        "zh-Hans": "线性草图"
+      },
+      "aliases": [
+        "linear sketch",
+        "Linear Sketch",
+        "線性草圖",
+        "线性草图",
+        "線性 Sketch",
+        "线性 Sketch"
+      ]
+    },
+    {
+      "concept_id": "concept.graph_streaming",
+      "labels": {
+        "en": "Graph Streaming",
+        "zh-Hant": "圖串流",
+        "zh-Hans": "图流式"
+      },
+      "aliases": [
+        "graph streaming",
+        "Graph Streaming",
+        "圖串流",
+        "图流式",
+        "圖串流演算法",
+        "图流式算法",
+        "Graph Stream",
+        "graph stream"
+      ]
+    },
+    {
+      "concept_id": "concept.communication_complexity",
+      "labels": {
+        "en": "Communication Complexity",
+        "zh-Hant": "通訊複雜度",
+        "zh-Hans": "通信复杂度"
+      },
+      "aliases": [
+        "communication complexity",
+        "Communication Complexity",
+        "通訊複雜度",
+        "通信复杂度"
+      ]
     }
   ]
 }

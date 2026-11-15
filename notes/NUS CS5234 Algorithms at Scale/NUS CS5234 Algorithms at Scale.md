@@ -1,24 +1,24 @@
 <meta>
 Title: NUS CS5234 Algorithms at Scale
-Summary: Comprehensive lecture and study notes for NUS CS5234 Algorithms at Scale (Weeks 1–10), covering sublinear-time query algorithms, approximate counting, reservoir sampling, graph spanners, metric k-center, k-median coreset trees, minimum enclosing balls, k-wise independent hash families, distinct element estimation (t-th smallest hash), communication complexity lower bounds (Equality, Index, Gap Hamming Distance, Disjointness), graph streaming space hardness (Perfect Matching, MIS), frequency moments (F_2 AMS sketch), heavy hitters (Misra-Gries, Count-Min, Count Sketch), sparse recovery, Johnson-Lindenstrauss lemma, subspace embeddings, and streaming linear regression.
+Summary: Comprehensive NUS CS5234 Algorithms at Scale notes (Lectures 1–13), from sublinear query and streaming algorithms through clustering, sketches, graph algorithms, deterministic and randomized communication complexity, information cost, and course exercises.
 Slug: nus-cs5234-algorithms-at-scale
 Output: notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.html
 CanonicalId: nus-cs5234-algorithms-at-scale
 Style: default
 EstimatedReadingTime: true
 Lang: en
-Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset
+Tags: Sublinear Algorithm, Query Algorithm, Randomized Algorithm, Concentration Inequalities, Chernoff Bound, Chebyshev Inequality, Variance Reduction, Graph Algorithm, Algorithm, Probability, Streaming Algorithm, Spanner, Clustering, Metric Space, Coreset, Linear Sketch, Graph Streaming, Communication Complexity, Information Theory
 Status: drafting
 Published: 2026-08-20
-LastModified: 2026-11-08
+LastModified: 2026-11-14
 </meta>
 
 # NUS CS5234 Algorithms at Scale
 
-# Master Cheatsheet & Executive Quick Reference (Lec 1–10)
+# Master Cheatsheet & Executive Quick Reference (Lec 1–13)
 
 > **Executive Overview & Exam Quick Reference:**
-> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 10 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, lower bound proving techniques, and clustering-at-scale results.
+> This synthesized quick-reference card distills the core mechanics, decision frameworks, and mathematical guarantees across Lectures 1 through 13 of NUS CS5234 (*Algorithms at Scale*). It provides an immediate look-up guide for concentration bounds, sample complexity formulas, variance reduction, graph algorithms, and communication lower bounds.
 
 ---
 
@@ -192,6 +192,20 @@ To prove that no randomized algorithm can solve problem $f$ in fewer than $q$ qu
 | **Point Set JL** | $n$ points in $\mathbb{R}^m$ | $(1 \pm \epsilon) \|p - q\|_2^2$ for all pairs | $k = \mathcal{O}(\epsilon^{-2} \log n)$ | Union bound over all $\binom{n}{2}$ pairs with $\delta' = 1/n^2$. Completely independent of ambient dimension $m$! |
 | **Subspace Embedding** | All $x$ in $d$-dim subspace $E$ | $(1 \pm \epsilon) \|x\|_2$ for ALL $x \in E$ | $k = \mathcal{O}(\epsilon^{-2} d \log(1/\delta))$ | Discretize unit sphere $S^{d-1}$ via $\gamma$-net ($|N| \le 5^d$). Chaining decomposition $x = \sum z_i$ preserves continuous space. |
 | **Streaming Regression** | $\min_x \|Ax - b\|_2$ ($n \gg d$) | $(1 + \epsilon)$-optimal solution $\tilde{x}$ | $\mathcal{O}(d^2 / \epsilon^2)$ words | Subspace embedding on $[A \mid b] \in \mathbb{R}^{n \times (d+1)}$. Solve compact sketched problem $\min_x \|\Pi A x - \Pi b\|_2$. |
+
+---
+
+### XI–XIII. Graph Algorithms and Communication Lower Bounds (Lec 11–13)
+
+| Topic | Access / assumption | Result or identity | Proof hinge |
+| :--- | :--- | :--- | :--- |
+| Dynamic spanning forest | Strict-turnstile edge updates | $O(n\log^4 n)$ space in the lecture construction | Oriented edge incidences cancel inside a component; independent $\ell_0$-samplers find outgoing cut edges across $O(\log n)$ rounds. |
+| Insertion-only MST | Weighted edge stream | Keep at most $n-1$ edges | When adding an edge creates a cycle, discard one maximum-weight edge; the cycle property preserves an MST. |
+| MST weight query | Integer weights $1,\ldots,W$ | $\operatorname{MST}=n-W+\sum_{i=1}^{W-1}c(G_i)$ | Replace tree output by connected-component count estimates at weight thresholds. |
+| Luby MIS | Multiple passes, semi-streaming space | $O(\log n)$ rounds, two passes per round | Random local minima remove at least half the remaining edges in expectation. |
+| Deterministic Equality | One-way or interactive communication | $\Omega(n)$ bits | Pigeonhole for one-way; transcript rectangles and matrix rank for interaction. |
+| Randomized Index | One-way communication | $\Omega(n)$ bits | $I(M;X_J\mid J)\le H(M)/n$ under independent uniform bits. |
+| Disjointness | Randomized interactive communication | $\Omega(n)$ bits | Embed one AND instance; internal information divides by $n$, then Pinsker and randomized rectangles force constant base-case information. |
 
 ---
 
@@ -7952,11 +7966,213 @@ By setting $k = \mathcal{O}(d / \epsilon^2)$:
 - **Update Time:** $\mathcal{O}(k \cdot d) = \mathcal{O}(d^2 / \epsilon^2)$ operations per streaming row.
 - **Solve Time:** Solving the $k \times d$ system at the end takes $\mathcal{O}(k d^2) = \mathcal{O}(d^3 / \epsilon^2)$ time.
 
-This concludes the complete theoretical and algorithmic foundation of NUS CS5234 Weeks 1 through 10.
+The first ten weeks establish the sampling, streaming, sketching, and clustering toolkit. The next three lectures apply it to graph problems and develop the communication and information-theoretic lower-bound language.
+
+# Week 11 - Graph Algorithms in Edge Streams and Query Models
+
+## 1. Which graph access model is being used?
+
+An **edge stream** gives the vertex set in advance and presents edges one at a time. In an insertion-only stream, an edge arrives once and stays. In a **strict turnstile** stream, an update $(u,v,\Delta)$ changes the edge weight by $\Delta$, possibly deleting an edge, while all current weights remain nonnegative. The latter model is harder: merely remembering that an edge appeared does not tell us whether it survives at the end. In a **query model**, the graph is already fixed and the algorithm chooses what to inspect: a pair query asks whether $(u,v)$ is an edge (or asks its weight), while degree and neighbor queries expose adjacency-list information.
+
+The output requirement matters as much as access. Producing an actual spanning tree or matching requires naming edges, while estimating its weight or size may be possible after inspecting much less of the graph. Lecture 11 repeatedly uses this distinction. A final recurring resource is **adaptivity**: a decision about the next vertex or edge may depend on previous decisions, forcing another pass unless many decisions can be made together.
+
+## 2. Dynamic spanning forest from linear sketches (Lecture 11, slides 2–9)
+
+A spanning forest $F\subseteq G$ has exactly the same connected components as $G$ and contains no cycle. In a strict-turnstile stream, a small linear sketch can recover a currently nonzero coordinate of a vector; an $\ell_0$-sampler is the standard primitive. For a vector of dimension $N$, the lecture states a sampler using $O(\log^2 N\log(1/\delta))$ space and succeeding with probability at least $1-\delta$. Here the vector coordinates represent possible edges, so $N=\Theta(n^2)$ and $\log N=\Theta(\log n)$.
+
+The key construction is an **oriented incidence vector** for each vertex. Fix an ordering of vertices and give an edge $e=(u,v)$, with $u<v$, coefficient $-w_e$ in $x_u$ and $+w_e$ in $x_v$. For a set $S$ of vertices, add the vectors: $x_S=\sum_{v\in S}x_v$. Internal edges cancel because their two endpoint coefficients have opposite signs; a coordinate remains nonzero exactly when its edge crosses the cut $(S,V\setminus S)$. Linearity lets us obtain a sketch of $x_S$ by adding the stored vertex sketches, even though $S$ is chosen **after** the stream. Sampling a nonzero coordinate of $x_S$ therefore finds an outgoing edge from the component $S$.
+
+The AGM construction stores independent sampler families for $L=\lceil\log_2 n\rceil$ future rounds. After the stream, start with isolated vertices. In each round, form the sketch of every current component, recover one outgoing edge from each nonfinal component, add those edges, and recompute components. Every component with an outgoing edge joins at least one other component, so the number of components inside each connected component of $G$ falls by at least half per round. After $O(\log n)$ rounds, each output component equals a true component of $G$; a spanning forest of the recovered edges is the answer. The independent sketch family at each round is important: the components used in round $i$ depend on earlier sketches, so reusing the same randomness would invalidate a straightforward fixed-vector sampler guarantee.
+
+There are $nL=O(n\log n)$ maintained samplers. A union bound over the $O(n\log n)$ later recovery attempts is satisfied by a sufficiently small per-attempt failure probability such as $n^{-3}$; each sampler then uses $O(\log^3 n)$ space. The resulting lecture bound is $O(n\log^4 n)$ space. This is semi-streaming in $n$, rather than a claim that the algorithm can ignore edges as they arrive.
+
+## 3. Minimum spanning tree: maintaining edges versus estimating weight (slides 10–22)
+
+In an insertion-only weighted edge stream, keep a forest $F$. Add each new edge; if it closes a cycle, delete a maximum-weight edge of that cycle. The **cycle property** says that some MST avoids a maximum-weight edge of any cycle. Applying it after every deletion preserves an MST of all edges seen so far. The forest retains at most $n-1$ edges, although processing an update may still require finding a path and its heaviest edge. This result concerns insertion-only streams; deletions require a different dynamic construction.
+
+For query access, first change the target from an MST **edge set** to its **total weight**. Suppose the connected graph has integer weights in $\{1,\ldots,W\}$. Let $G_i$ contain edges of weight at most $i$, and write $c_i$ for its number of connected components. Kruskal's process gives the identity
+
+$$
+\operatorname{MST}(G)=n-W+\sum_{i=1}^{W-1}c_i.
+$$
+
+One way to derive it is to view each edge of the tree as contributing one unit at each level below its weight: at level $i$, the number of selected edges heavier than $i$ is $c_i-1$. Summing these level contributions, together with the $n-1$ baseline units, yields the displayed formula. For $W=2$, it reduces to $n+c_1-2$. Thus connected-component **count estimates** from the earlier graph-query material become MST-weight estimates.
+
+An additive $\eta n$ estimate for each $c_i$ gives at most $(W-1)\eta n$ total error. Setting $\eta=\epsilon/W$ and applying the earlier component estimator separately gives a valid but expensive bound. Lecture 11 sharpens this by choosing a randomized cutoff for each sampled component with tail probability $\Pr[r\ge j]=1/j$ up to $W/\epsilon$. This makes a single trial's expectation approximate $c_i/n$ with downward bias at most $\epsilon/W$. Averaging $O(\epsilon^{-2})$ independent trials per level and combining the variance bounds gives $O(\epsilon^{-2}nW\log(W/\epsilon))$ pair queries and constant success probability for additive $\epsilon n$ MST-weight error. Since a connected graph has MST weight at least $n-1$, this becomes a $(1+O(\epsilon))$ multiplicative estimate after adjusting constants. It estimates a **number**, not a tree.
+
+## 4. Maximal independent set and the cost of adaptivity (slides 23–42)
+
+An independent set contains no adjacent pair. It is **maximal** if no further vertex can be added; maximal does not mean maximum cardinality. Greedy selection is easy offline but difficult in a one-pass edge stream because whether a vertex can be chosen depends on decisions involving its neighbors. The lecture recalls an $\Omega(n^2)$ one-pass space lower bound for outputting an MIS. Allowing multiple passes and $O(n\operatorname{polylog}n)$ space changes the problem: the goal becomes few passes.
+
+Luby's algorithm provides the parallel step. Give every active vertex an independent continuous random priority. Select every vertex whose priority is below all active neighbors' priorities; these selected vertices are pairwise nonadjacent. Remove them and their neighbors, then repeat on the remaining graph. Two passes implement a round: first identify local minima, then identify their neighbors for removal. Only per-vertex state and priorities are needed, so the lecture's storage is $O(n\log n)$ bits.
+
+The round analysis counts **edges removed**, not simply selected vertices. For an oriented edge $(w,u)$, let $X_{wu}$ indicate that $w$ has minimum priority among the vertices in $N(w)\cup N(u)$. Then $\mathbb E X_{wu}\ge1/(d_w+d_u)$. If this happens, $w$ is selected and all $d_u$ edges at $u$ are removed. Accounting for the fact that a removed edge can be charged from at most two endpoints gives
+
+$$
+\mathbb E[\text{edges removed}]\ge\frac12\sum_{\{u,w\}\in E}\frac{d_u+d_w}{d_u+d_w}=\frac{|E|}{2}.
+$$
+
+Conditional on the current graph, the expected number of surviving edges is therefore at most half. Repeating the conditional bound yields $\mathbb E[m_t]\le m_0 2^{-t}$. Since $m_0\le n^2$, Markov's inequality makes the chance of any edge after $O(\log n)$ rounds tiny. Any remaining isolated vertices can be added at the end. This gives $O(\log n)$ rounds, hence $O(\log n)$ passes up to the two-pass constant per round.
+
+## 5. Matching and local simulation of random greedy (slides 43–53)
+
+A matching has no shared endpoints; a maximal matching cannot accept another edge. Every maximal matching has size at least half that of a maximum matching: charge each optimum edge to a greedy edge touching it, with at most two optimum edges charged to each greedy edge. In an insertion-only stream, the greedy maximal matching retains at most $n/2$ edges and gives this factor-two size guarantee.
+
+With query access, outputting the matching is harder than estimating its size. Assign independent continuous priorities to edges, defining a uniformly random greedy order. To ask whether vertex $v$ is matched, inspect its incident edges in priority order; an edge can be chosen only if no smaller-priority incident edge has already matched its other endpoint. This recursively defines a **local computation algorithm** for the particular random greedy matching. If $X$ of $t=\Theta(\epsilon^{-2})$ sampled vertices are matched, return $nX/(2t)$, since a matching of size $M$ has exactly $2M$ matched vertices. A bounded-variable concentration bound gives additive $\epsilon n$ error for the size of that random maximal matching. Combined with maximality, this brackets the maximum matching size within approximately a factor of two, with additive sampling error.
+
+The subtlety is recursion depth. Every recursive call moves to a lower-priority edge. A fixed path of length $r$ has decreasing priorities with probability $1/r!$; at most $d^r$ length-$r$ paths start at a vertex of maximum degree $d$. Hence a union bound controls deep recursion by $d^r/r!$. Taking $r$ on the order of $d/\epsilon$ makes the probability small, but a naive search tree can still use $d^{O(d/\epsilon)}$ neighbor queries. The lecture notes that more careful analysis improves the expected local work; the elementary path bound alone does **not** establish a near-linear query algorithm for arbitrary degree.
+
+# Week 12 - Deterministic Communication Complexity
+
+## 1. Why streaming lower bounds become communication questions
+
+Alice holds $x$, Bob holds $y$, and together they must compute $f(x,y)$ while exchanging as few bits as possible. In a **one-way** protocol Alice sends one message and Bob outputs; in a **two-way** protocol they alternate messages. To turn a one-pass streaming algorithm into a one-way protocol, give Alice the first part of a stream, let her send the algorithm's memory state, and let Bob resume on his part. If solving the associated communication problem needs $C$ bits, then that streaming algorithm needs at least $C$ bits of state. For a $p$-pass stream, the state can move back and forth between Alice and Bob, so communication is at most about $p$ times the streaming space; this explains why a one-way lower bound need not remain unchanged for multi-pass algorithms.
+
+## 2. Equality: pigeonhole proof and its limitation (slides 5, 13)
+
+For $\operatorname{EQ}_n(x,y)=[x=y]$, a deterministic one-way message shorter than $n$ bits cannot encode all $2^n$ choices of $x$. Two different strings $x_1,x_2$ have the same message. Give Bob $y=x_1$: the inputs $(x_1,x_1)$ and $(x_2,x_1)$ demand different outputs, yet Bob sees the same message and $y$. Thus deterministic one-way Equality costs at least $n$ bits. This argument depends on determinism; with random fingerprints, randomized Equality can be much cheaper. Always state the randomness and interaction model alongside a lower bound.
+
+## 3. Transcript rectangles extend the proof to interaction (slides 14–19)
+
+Fix a deterministic two-way protocol and a complete transcript $T$. The input pairs producing $T$ form a **combinatorial rectangle** $X_T\times Y_T$. To see why, take $(x_1,y_1)$ and $(x_2,y_2)$ producing the same transcript. Alice's first message is identical for $x_1,x_2$; conditioned on it, Bob's next message is identical for $y_1,y_2$; continue inductively. The crossed pairs $(x_1,y_2)$ and $(x_2,y_1)$ produce the same transcript too.
+
+The answer must be constant over each transcript rectangle. Equality's $2^n$ diagonal 1-inputs cannot share a rectangle: if $(z_1,z_1)$ and $(z_2,z_2)$ did, the crossed off-diagonal input $(z_1,z_2)$ would incorrectly receive 1. Therefore at least $2^n$ distinct accepting transcripts are needed, implying $n$ bits of deterministic communication, up to transcript-encoding conventions. The matrix version is equally useful. Write the Boolean answer matrix as a sum of matrices supported on the monochromatic transcript rectangles; each such matrix has rank at most one, so
+
+$$
+\operatorname{rank}(A_f)\le\#\{\text{transcripts}\}\le 2^{C+O(1)},
+\qquad C\ge\log_2\operatorname{rank}(A_f)-O(1).
+$$
+
+For Equality, $A_f$ is the $2^n\times2^n$ identity matrix and has rank $2^n$. The rank method provides a general deterministic lower-bound template: choose the correct answer matrix, calculate or bound its rank, then translate the count of rectangles into communication. It does not automatically prove randomized lower bounds, because a randomized protocol is a distribution over deterministic ones.
+
+## 4. Public and private coins; what interaction changes (slides 6–12)
+
+With **public randomness**, both players see the same random seed; with **private randomness**, each sees only their own. Fixing public coins turns a randomized protocol into a deterministic one, a convenient starting point for distributional arguments. The lecture cites Newman's theorem for relating the two models with a small overhead; do not silently equate their exact costs. Interaction can drastically change a problem: for Index, Bob can send the desired index in $O(\log n)$ bits and Alice can reply with one bit, while one-way randomized Index still needs $\Omega(n)$ bits. This is why the direction of communication must be preserved in a streaming reduction.
+
+# Week 13 - Randomized Communication and Information Cost
+
+## 1. From counting transcripts to measuring information (slides 2–9)
+
+Take logarithms in base two. Entropy $H(X)=\sum_x p(x)\log_2(1/p(x))$ measures uncertainty; conditional entropy $H(X\mid Y)$ is the average uncertainty left after learning $Y$. Mutual information is
+
+$$
+I(X;Y)=H(X)-H(X\mid Y)=D_{\mathrm{KL}}(P_{XY}\|P_XP_Y).
+$$
+
+It is zero for independent variables and never exceeds either marginal entropy. The chain rule $I(X;Y,Z)=I(X;Y)+I(X;Z\mid Y)$ lets us account for information exposed by successive messages or coordinates. A message of at most $C$ bits has entropy at most $C$, so any information that the message reveals is bounded by its communication cost.
+
+KL divergence compares distributions but is asymmetric. Total variation distance is $\operatorname{TV}(P,Q)=\frac12\sum_z|P(z)-Q(z)|$ and has a direct testing meaning: with equal prior probabilities, the best test distinguishing one sample from $P$ or $Q$ succeeds with probability $\frac12+\frac12\operatorname{TV}(P,Q)$. With base-two logarithms, Pinsker's inequality reads
+
+$$
+\operatorname{TV}(P,Q)^2\le\frac{\ln 2}{2}D_{\mathrm{KL}}(P\|Q).
+$$
+
+The lecture's proof first establishes the Bernoulli case by calculus. For general distributions, set $A=\{z:p(z)\ge q(z)\}$ and map every outcome to the bit $1_A(z)$. This mapping preserves TV, while data processing cannot increase KL. The Bernoulli inequality then implies the general one. The proof pattern is important: reduce a high-dimensional statistical distinction to a binary event that retains exactly the distinguishing gap.
+
+## 2. Lower-bound recipe: hard inputs, transcripts, and distinguishability (slides 15–20)
+
+Choose a distribution $\mu_0$ over 0-inputs and $\mu_1$ over 1-inputs, then draw one of them with equal probability. Yao's principle reduces randomized worst-case success to the performance of deterministic algorithms on this hard mixture. A short-query algorithm or a low-communication protocol produces an observation or transcript distribution $T_0$ or $T_1$. If $\operatorname{TV}(T_0,T_1)$ is small, no decoder can identify the correct case with probability $2/3$. Often the easier route is to bound KL or the information $I(B;T)$ about the hidden case bit $B$, and then apply Pinsker. The observation must include everything the decoder knows, such as Bob's own input and public coins; bounding only a bare message can omit useful side information.
+
+## 3. One-way Index: why one random bit still costs linear communication (slides 21–25)
+
+Let Alice's $X=(X_1,\ldots,X_n)$ consist of independent uniform bits, and Bob's $J$ be a uniform independent index. Alice sends message $M=M(X)$; Bob wants $X_J$. Because $J$ is independent of $(X,M)$,
+
+$$
+I(M;X_J\mid J)=\frac1n\sum_{i=1}^n I(M;X_i)
+\le\frac1n I(M;X_1,\ldots,X_n)
+\le\frac{H(M)}{n}\le\frac{C}{n}.
+$$
+
+The middle inequality uses the independence of the $X_i$ and the chain rule: $I(M;X_1,\ldots,X_n)=\sum_i I(M;X_i\mid X_{<i})\ge\sum_i I(M;X_i)$. If $C=o(n)$, Bob learns vanishing information about the uniformly requested bit. A decoder with constant advantage over random guessing would instead require a positive constant amount of information about that bit (for example by binary Fano or Pinsker), a contradiction. Thus one-way randomized Index needs $\Omega(n)$ communication. The argument is a reusable streaming-space lower bound: encode the hard bit string in Alice's prefix, let Bob's suffix select a coordinate, and show that the stream algorithm's answer reveals it.
+
+## 4. Internal and external information in two-way protocols (slides 26–29)
+
+For inputs $(X,Y)$, transcript $T$, public coins $R$, and players' private coins $R_A,R_B$, the lecture distinguishes **external information** $I(X,Y;T,R)$, what an outside observer learns, from **internal information**
+
+$$
+I(X;T\mid Y,R,R_B)+I(Y;T\mid X,R,R_A),
+$$
+
+what Bob learns about Alice's input plus what Alice learns about Bob's input. Both are bounded by communication under the lecture's protocol setup. For each message, the sender's new bit cannot reveal fresh information about the receiver's own input once the sender's view and preceding transcript are fixed. A chain-rule decomposition therefore charges its contribution to the sender's input side; summing over messages proves the lecture's internal-versus-external comparison. In a proof, include the coin variables and conditioning explicitly—dropping them can turn a valid chain-rule step into a false independence assertion.
+
+## 5. Disjointness as a direct-sum information argument (slides 30–40)
+
+Set Disjointness asks whether some coordinate has $X_i=Y_i=1$. Think of it as $n$ copies of the one-bit AND problem. The hard base distribution $\mu^*$ is uniform on $(0,0),(0,1),(1,0)$: it contains only NO instances, but a correct protocol must also respond correctly to $(1,1)$. Embed one real AND input at a uniformly random coordinate $J$ and fill other coordinates with appropriately shared or privately generated NO instances. Running a putative Disjointness protocol on the resulting length-$n$ input yields a protocol for AND. The construction is arranged so that the embedded AND protocol has only $1/n$ of the Disjointness protocol's internal information cost. If every correct AND protocol has constant information cost under $\mu^*$, Disjointness must cost $\Omega(n)$ information and hence $\Omega(n)$ communication.
+
+Why does AND require information even though $\mu^*$ never samples $(1,1)$? If information cost were tiny, Pinsker would make transcript distributions for $(0,0),(0,1),(1,0)$ nearly indistinguishable. The randomized **rectangle identity** for transcript probabilities transfers this closeness to $(1,1)$: for each fixed public coin value and transcript $t$, the protocol's input-local message rules give $P_{00}(t)P_{11}(t)=P_{01}(t)P_{10}(t)$. In Hellinger distance this yields $h(T_{00},T_{11})=h(T_{01},T_{10})$. The triangle inequality and the TV–Hellinger comparison then imply $T_{00}$ and $T_{11}$ are too similar to support a $2/3$-correct answer, a contradiction. This is the randomized analogue of Week 12's deterministic transcript rectangle, but it works with **distributions** rather than monochromatic sets.
+
+## 6. How the later lectures fit the earlier ones
+
+Week 11 turns Week 9's linear-sketch viewpoint into a graph algorithm: a cut vector is a sum of vertex vectors, so an outgoing edge can be sampled after the stream. Weeks 12–13 turn Week 8's streaming lower-bound reductions into a more systematic toolkit: deterministic rectangles and rank give exact communication barriers, while entropy, information cost, Pinsker, and randomized rectangles handle bounded-error protocols. The lesson across all three is to specify **what is observed**, **what is stored or communicated**, and **which randomness remains independent** before writing a guarantee.
+
+# Course Materials and Assessment Crosswalk
+
+The original Lecture 1–13 slides are the chronological source for these notes; the provided Note 1–10 PDFs add derivations and exercises for the first ten weeks. The two cheatsheets are compact revision aids, not substitutes for proof assumptions. Lecture 11–13 currently have slides but no matching numbered Note PDFs in the supplied bundle. The following map connects the supplied exercise, homework, and quiz files to the concepts above; it states the technique to study rather than reproducing the answer sheets.
+
+| Material | Main problems | Reusable proof move |
+| --- | --- | --- |
+| Exercise 1 and answer | Concentration tools; estimating connected components | Design an estimator, check expectation and variance, then translate additive error into query cost. |
+| Exercise 2 and answer | Dense-graph bipartiteness testing | State the distance promise before analyzing sampled edges and witnesses. |
+| Exercise 3 and answer | Uniformity-testing $\Omega(\sqrt n)$ lower bound | Choose hard distributions, analyze indistinguishable sample transcripts, then invoke Yao. |
+| Homework 1 and solution | Hamming-distance estimation, location of a unique 1, permutation testing | Separate estimator analysis, randomized query lower bounds, and collision-based property testing. |
+| Homework 2 and solution | Uniform $s$-item reservoir, exact distinct-elements space, streaming $k$-center | Prove **uniformity of subsets**, not just marginals; reduce Index to space; maintain domination across threshold changes. |
+| Homework 3 | Higher frequency-moment linear sketch; multi-pass MIS | Expand the sketch's sign moments, amplify by mean/median, prove the counter array is linear; bound active degree and pass count in random-order greedy simulation. No solution PDF is present in the supplied bundle. |
+| Quiz 1 and solution | Palindrome property testing; triangle counting | Compare exact-decision lower bounds with $\epsilon$-far testers; derive an unbiased local triangle estimator and its variance. |
+| Quiz 2 and solution | Cycle detection; binary inner-product sketch and communication | Maintain a forest, reduce Index for space, use pairwise hashing and a row minimum for one-sided estimation; distinguish deterministic from randomized lower bounds. |
+
+## Worked principles from the supplied assessments
+
+### Homework 1: query estimation, a hidden bit, and permutation testing
+
+For Hamming distance $d(x,y)$, sample independent uniform coordinates and set $Z=n\mathbf 1[x_I\ne y_I]$. Then $\mathbb E Z=d(x,y)$. The sample mean is unbiased, but an error guarantee requires a variance or bounded-variable tail calculation and a sample count chosen for the stated **additive or relative** tolerance. In the unique-1 half-location problem, the upper bound is a scan; for the randomized lower bound, put the single 1 uniformly in a half chosen by a hidden fair bit. A deterministic algorithm making too few queries sees all zeros with substantial probability and cannot infer the half. Yao turns this distributional obstruction into a randomized worst-case lower bound. The important lesson is that finding **which half** still requires locating evidence when there is only one marked coordinate.
+
+The permutation tester illustrates a different information bottleneck. If an array of length $n$ has $D$ distinct values, its Hamming distance to a permutation is exactly $n-D$: keep one copy of every observed value and replace all surplus copies by missing values. Being $\epsilon$-far therefore means many repetitions. Pair up disjoint equal-valued positions; a random sample of roughly $\sqrt{n/\epsilon}$ positions has a constant chance of capturing both endpoints of some pair. The official solution controls the collision count by its expectation and nonpositive covariance for disjoint pairs under sampling without replacement. A true permutation has no collision, giving one-sided error. This is the same birthday-paradox structure that appears in distribution and property testing, but the proof must relate distance from the **property** to a large enough matching of bad pairs first.
+
+### Homework 2: joint sampling, exact $F_0$, and one-summary $k$-center
+
+For a uniform reservoir of $s$ **positions**, store the first $s$ arrivals; at time $t>s$, draw $J$ uniformly from $[t]$ and replace slot $J$ if $J\le s$. To prove that every $s$-subset of $[t]$ has probability $1/\binom ts$, split on whether the proposed subset contains the new position $t$. If it does not, the same subset had probability $1/\binom{t-1}s$ before the update and survives with probability $(t-s)/t$. If it does, sum over the $t-s$ possible old positions that could have been displaced; each predecessor set has probability $1/\binom{t-1}s$ and the required replacement occurs with probability $1/t$. Both cases simplify to $1/\binom ts$. Showing only $\Pr[i\text{ retained}]=s/t$ would miss dependencies between positions.
+
+For **exact** distinct counting, the official Index reduction takes Alice's bit string $z_1,\ldots,z_r$ and streams one item from each pair $\{2j-1,2j\}$, chosen by $z_j$. Bob appends $2i-1$. The final distinct count is $r$ if $z_i=0$ and $r+1$ if $z_i=1$, so a correct exact-$F_0$ streaming state would send enough information to solve one-way Index. This proves $\Omega(r)$ bits, in sharp contrast to the randomized approximate distinct-element estimators of Week 7. The proof depends on **exactness**: the two possible counts differ by only one.
+
+The $k$-center problem revisits Lecture 6's geometric guesses with a single evolving summary. A set is $T$-dominating if every seen point is within $T$ of it, and $T$-independent if its representatives are pairwise farther than $T$. A $(k+1)$-point $2T$-independent set certifies $\operatorname{OPT}>T$ by assigning two representatives to one optimal center and using the triangle inequality. Conversely, a $T$-dominating set of at most $k$ points is a feasible solution of cost at most $T$. When the threshold rises, compression changes the domination radius: if old representatives $A$ are $T$-dominating for all prior points and new representatives $B$ are $2T$-dominating for $A$, then $B$ is $3T$-dominating for the prior points. This **composition of errors** is the invariant that must survive every update; discarding old points without tracking their distance to the new summary would make the argument invalid.
+
+### Homework 3: the boundary between a linear state and nonlinear readout
+
+Problem 1 asks for a higher frequency-moment estimator in a strict-turnstile vector stream. Each update changes a collection of signed bucket counters by a fixed multiple of the update value; stacking those counters gives a matrix equation $s=Ax$. The estimate formed from products of counters is nonlinear, but this does not change the fact that the **maintained state** is a linear sketch. The proof first expands a product and checks which sign monomials survive expectation, then bounds its second moment after conditioning on bucket assignments. Independent copies are averaged for variance reduction and their group estimates are combined by a median for confidence. This is the same two-stage probability-amplification grammar used earlier, now applied to a higher-order sketch. The supplied bundle includes the problem sheet but no official solution, so exact constants and moment assumptions should be checked against the original assignment before using a proposed derivation as an answer.
+
+Problem 2 asks for a multi-pass MIS by simulating greedy selection in a random **vertex** order. The prefix of that order determines an active set and active degrees. If a still-active vertex has many active neighbors, a uniformly random next vertex is reasonably likely to remove it; exposing the permutation incrementally gives a high-probability bound on maximum active degree after a cutoff. That degree bound controls how many edges of the residual graph fit in a small buffer, permitting later greedy decisions to be simulated from stored edges. The analysis must union-bound failure across phases and explicitly handle the phase where the residual graph already fits in memory. This route differs from Luby's simultaneous local-minimum rounds, even though both reduce greedy adaptivity by randomization.
+
+### Quiz 1 and Quiz 2: the same models in shorter problems
+
+Quiz 1 contrasts **exact palindrome decision** with **palindrome property testing**. Exact decision inherits an $\Omega(n)$ randomized query lower bound by encoding an OR instance in mirrored pairs. Under an $\epsilon$-far promise, at least $\epsilon n$ mirrored pairs disagree, so sampling $O(1/\epsilon)$ pairs finds a witness with constant probability and never rejects a real palindrome. Its triangle-counting problem uses a local witness estimator: for a $d$-regular graph, sample vertex $v$, sample two of its neighbors, and query whether they are adjacent. If $X$ is this indicator, then $\mathbb E X=3T/[n\binom d2]$, so $Z=n\binom d2 X/3$ is unbiased for triangle count $T$. The remaining work is to bound $\operatorname{Var}(Z)$ and apply mean and median amplification for the requested error and confidence.
+
+Quiz 2's cycle detector stores a forest and reports a cycle when a new edge joins vertices already connected in it. The forest has $O(n)$ edges, hence $O(n\log n)$ bits for endpoint identifiers. Its lower-bound gadget encodes Alice's Index bits as star edges and lets Bob's final edge close a triangle exactly when the requested bit is one, proving $\Omega(n)$ bits. The two bounds differ by a logarithm; the quiz does not establish tight bit complexity. Its binary-inner-product estimator hashes coordinates into buckets and multiplies bucket sums. Cross-coordinate collisions are nonnegative, so each trial overestimates $J=x\cdot y$, with expected excess $(\|x\|_1\|y\|_1-J)/B$. Markov bounds the excess when $B=\Theta(1/\epsilon)$; taking the **minimum** over independent trials boosts confidence while preserving the one-sided bound. The deterministic exact-communication lower bound uses Bob's basis-vector input $e_i$ to turn an inner-product answer into the bit $x_i$, an Index-style pigeonhole argument.
+
+Three especially useful exercise connections are easy to miss. Homework 2's reservoir asks for a uniform **set of positions** even when values repeat; individual inclusion probabilities alone do not prove the joint distribution. Quiz 2's exact cycle detector uses $O(n\log n)$ bits, while its Index reduction gives only an $\Omega(n)$ bit lower bound; these are not a matching pair. Homework 3's final estimate is nonlinear, yet the maintained counters can still form a linear sketch because linearity concerns the update state, not postprocessing.
 
 ---
 
----
+## References
+1. Mitzenmacher, M., & Upfal, E. (2017). *Probability and Computing: Randomization and Probabilistic Techniques in Algorithms and Data Analysis* (2nd ed.). Cambridge University Press.
+2. Motwani, R., & Raghavan, P. (1995). *Randomized Algorithms*. Cambridge University Press.
+3. Carter, J. L., & Wegman, M. N. (1979). Universal classes of hash functions. *Journal of Computer and System Sciences*, 18(2), 143-154.
+4. Alon, N., Matias, Y., & Szegedy, M. (1999). The space complexity of approximating the frequency moments. *Journal of Computer and System Sciences*, 58(1), 137-147. (Preliminary version in *STOC 1996*).
+5. Flajolet, P., & Martin, G. N. (1985). Probabilistic counting algorithms for data base applications. *Journal of Computer and System Sciences*, 31(2), 182-209.
+6. Cormode, G., & Muthukrishnan, S. (2005). An improved data stream summary: the count-min sketch and its applications. *Journal of Algorithms*, 55(1), 58-75.
+7. Charikar, M., Chen, K., & Farach-Colton, M. (2004). Finding frequent items in data streams. *Theoretical Computer Science*, 312(1), 3-15.
+8. Misra, J., & Gries, D. (1982). Finding repeated elements. *Science of Computer Programming*, 2(2), 143-152.
+9. Johnson, W. B., & Lindenstrauss, J. (1984). Extensions of Lipschitz mappings into a Hilbert space. *Contemporary Mathematics*, 26, 189-206.
+10. Sarlós, T. (2006). Improved approximation algorithms for large matrices via random projections. *Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science (FOCS)*, 143-152.
+11. Chakrabarti, A., & Regev, O. (2012). An optimal lower bound on the communication complexity of gap-hamming-distance. *SIAM Journal on Computing*, 41(5), 1299-1317.
+12. Kushilevitz, E., & Nisan, N. (1997). *Communication Complexity*. Cambridge University Press.
+13. Gonzalez, T. F. (1985). Clustering to minimize the maximum intercluster distance. *Theoretical Computer Science*, 38, 293-306.
+14. Hochbaum, D. S., & Shmoys, D. B. (1985). A best possible approximation algorithm for the $k$-center problem. *Mathematics of Operations Research*, 10(2), 180-184.
+15. Guha, S., Meyerson, A., Mishra, N., Motwani, R., & O'Callaghan, L. (2000). Clustering data streams: theory and practice. *IEEE Transactions on Knowledge and Data Engineering*, 15(3), 515-528.
+16. Bădoiu, M., Har-Peled, S., & Indyk, P. (2002). Approximate clustering via core-sets. *Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)*, 250-257.
+17. Bădoiu, M., & Clarkson, K. L. (2008). Optimal core-sets for balls. *Computational Geometry*, 40(1), 14-22.
+18. Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
+19. Yao, A. C.-C. (1979). Some complexity questions related to distributive computing. *Proceedings of the 11th Annual ACM Symposium on Theory of Computing (STOC)*, 209-213.
+20. CS5234 course staff. (2026). *Algorithms at Scale: Lecture slides 1–13, Notes 1–10, exercises, homework, quizzes, and supplied solutions*. National University of Singapore (NUS). Local course materials supplied by the author; exact author and year vary among individual files.
 
 <reviewkit>
 <takeaways>
@@ -8017,32 +8233,12 @@ This concludes the complete theoretical and algorithmic foundation of NUS CS5234
 - **Sparse Recovery ($k$-Sparse Reconstruction):** Exact 1-sparse vectors are recovered in $\mathcal{O}(\log m \log n)$ bits via 3 moments $(\Phi_0 = v, \Phi_1 = k v, \Phi_2 = k^2 v)$ or dyadic bit-testing. For general vectors, Count Sketch with $(k+2)$-wise hashing isolates top-$k$ heavy items into distinct buckets with tail variance $\le \frac{\epsilon}{k} \text{err}_k^2(x)$, achieving $(1 + 5\epsilon) \text{err}_k^2(x)$ recovery in $\mathcal{O}(\epsilon^{-2} k \log m \log(m+n))$ space.
 - **Johnson-Lindenstrauss (JL) Lemma:** Projecting $n$ points from $\mathbb{R}^m$ into $k = \mathcal{O}(\epsilon^{-2} \log n)$ dimensions via Gaussian matrix $\Pi_{i, j} \sim \mathcal{N}(0, 1/k)$ preserves all pairwise Euclidean distances within $1 \pm \epsilon$. The target dimension $k$ is completely independent of the ambient dimension $m$.
 - **Subspace Embeddings & Streaming Linear Regression:** Discretizing the unit sphere $S^{d-1}$ of a $d$-dimensional subspace $E$ via a $\gamma$-net ($|N| \le 5^d$) and infinite chaining expansion $x = \sum z_i$ embeds the entire continuous subspace $E$ in $k = \mathcal{O}(\epsilon^{-2} d \log(1/\delta))$ dimensions. For streaming linear regression $\min_x \|Ax - b\|_2$ with rows arriving sequentially ($n \gg d$), embedding the column space of $[A \mid b]$ requires maintaining sketched matrix $\Pi A$ and vector $\Pi b$ in only $\mathcal{O}(d^2 / \epsilon^2)$ words of memory, entirely independent of $n$.
+- **Graph Streams (Lecture 11):** For strict-turnstile updates, oriented vertex-incidence vectors sum to a cut vector whose nonzero coordinates are outgoing edges. Independent $\ell_0$-samplers recover a spanning forest in $O(n\log^4 n)$ space. For insertion-only weighted streams, cycle-edge deletion keeps an MST in $O(n)$ edges; in the query model, the weight identity $\operatorname{MST}=n-W+\sum_{i=1}^{W-1}c(G_i)$ reduces estimation to connected-component counts.
+- **Adaptivity and Local Graph Decisions (Lecture 11):** Luby's random local minima remove at least half the remaining edges in expectation, leading to $O(\log n)$ rounds and two graph-stream passes per round. Random-greedy matching can be locally queried because recursive dependencies follow strictly decreasing random edge priorities; the simple depth bound uses $d^r/r!$.
+- **Communication and Information (Lectures 12–13):** Deterministic protocol transcripts are combinatorial rectangles, yielding $C\ge\log_2\operatorname{rank}(A_f)-O(1)$ and an $\Omega(n)$ Equality bound. For randomized one-way Index, $I(M;X_J\mid J)\le H(M)/n$ forces $\Omega(n)$ bits. Randomized Disjointness requires an $\Omega(n)$ direct-sum information argument, with Pinsker and randomized rectangle structure establishing the constant-cost AND base case.
 </takeaways>
 
 <qquiz src="questions.en.json"/>
 
 <qprompt/>
 </reviewkit>
-
-## References
-
-1. Mitzenmacher, M., & Upfal, E. (2017). *Probability and Computing: Randomization and Probabilistic Techniques in Algorithms and Data Analysis* (2nd ed.). Cambridge University Press.
-2. Motwani, R., & Raghavan, P. (1995). *Randomized Algorithms*. Cambridge University Press.
-3. Carter, J. L., & Wegman, M. N. (1979). Universal classes of hash functions. *Journal of Computer and System Sciences*, 18(2), 143-154.
-4. Alon, N., Matias, Y., & Szegedy, M. (1999). The space complexity of approximating the frequency moments. *Journal of Computer and System Sciences*, 58(1), 137-147. (Preliminary version in *STOC 1996*).
-5. Flajolet, P., & Martin, G. N. (1985). Probabilistic counting algorithms for data base applications. *Journal of Computer and System Sciences*, 31(2), 182-209.
-6. Cormode, G., & Muthukrishnan, S. (2005). An improved data stream summary: the count-min sketch and its applications. *Journal of Algorithms*, 55(1), 58-75.
-7. Charikar, M., Chen, K., & Farach-Colton, M. (2004). Finding frequent items in data streams. *Theoretical Computer Science*, 312(1), 3-15.
-8. Misra, J., & Gries, D. (1982). Finding repeated elements. *Science of Computer Programming*, 2(2), 143-152.
-9. Johnson, W. B., & Lindenstrauss, J. (1984). Extensions of Lipschitz mappings into a Hilbert space. *Contemporary Mathematics*, 26, 189-206.
-10. Sarlós, T. (2006). Improved approximation algorithms for large matrices via random projections. *Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science (FOCS)*, 143-152.
-11. Chakrabarti, A., & Regev, O. (2012). An optimal lower bound on the communication complexity of gap-hamming-distance. *SIAM Journal on Computing*, 41(5), 1299-1317.
-12. Kushilevitz, E., & Nisan, N. (1997). *Communication Complexity*. Cambridge University Press.
-13. Gonzalez, T. F. (1985). Clustering to minimize the maximum intercluster distance. *Theoretical Computer Science*, 38, 293-306.
-14. Hochbaum, D. S., & Shmoys, D. B. (1985). A best possible approximation algorithm for the $k$-center problem. *Mathematics of Operations Research*, 10(2), 180-184.
-15. Guha, S., Meyerson, A., Mishra, N., Motwani, R., & O'Callaghan, L. (2000). Clustering data streams: theory and practice. *IEEE Transactions on Knowledge and Data Engineering*, 15(3), 515-528.
-16. Bădoiu, M., Har-Peled, S., & Indyk, P. (2002). Approximate clustering via core-sets. *Proceedings of the 34th Annual ACM Symposium on Theory of Computing (STOC)*, 250-257.
-17. Bădoiu, M., & Clarkson, K. L. (2008). Optimal core-sets for balls. *Computational Geometry*, 40(1), 14-22.
-18. Yao, A. C.-C. (1977). Probabilistic computations: Toward a unified measure of complexity. *Proceedings of the 18th Annual Symposium on Foundations of Computer Science (FOCS)*, 222-227.
-19. Yao, A. C.-C. (1979). Some complexity questions related to distributive computing. *Proceedings of the 11th Annual ACM Symposium on Theory of Computing (STOC)*, 209-213.
-20. Chen, Y. (2025). *CS5234 Algorithms at Scale (Lecture Notes 1, 5, 6, 7, 8, 9, 10)*. National University of Singapore (NUS).

@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] CS5234 全課筆記補至 Lecture 13
+    - 交付條件：source note 納入 Lecture 11–13 的 graph streaming/query、deterministic 與 randomized communication 內容；對照 supplied Notes 1–10、Exercises 1–3、Homework 1–3、Quiz 1–2；重生 HTML 並確認 drafting 不進公開索引。
+    - 已完成：保留 Week 1–10 既有詳解，新增 Week 11–13 的模型、演算法、公式、證明主線與 assessment crosswalk；補充 Homework 1–3、Quiz 1–2 的可重用推導重點，並更新摘要、quick reference、takeaways、references；`cli.py build` 成功，公開 search index 未因 drafting 筆記變動。
+    - Review 重點：作者核對 Lecture 11 AGM／MST、Lecture 13 information cost 的講義版本，以及 Homework 3 尚無官方答案的標示；通讀新增數學推導與生成頁面。
+
 - [x] Aetheria Portals 接入、境域收斂 (portals/realms/)、極致扁平化與 Realm 測試規範
     - 交付條件：將 Aetheria Portals 整合為一級目錄 `portals/`，平鋪原始碼並使用天然 `portals/assets/` 產物，支援純靜態開箱即用與 TypeScript 源碼維護；全站 FAB 與 Mobile Nav Sheet 轉移為 `Portals` 與 `Labs` 雙核心探索樞紐，Portals 支援一鍵躍遷至 `Digital Garden` 與 `Ludwigia World`；在 `portals/` 底下建立 `realms/` 專屬目錄收納已完成世界；`labs/` 解散 `future/` 扁平化收納實驗原型；將境域專屬測試遷入各境域目錄（`portals/realms/*/tests/`），由根目錄 `tests/test_misc_data.py` 動態聚合執行；撰寫 `docs/specs/realm-spec.md` 規範境域架構與擴充流程；規格文件與部署白名單同步更新；通過全套單元與合約測試。
     - 已完成：完成 `portals/` 靜態與原始碼架構建立，徹底消除 `aetheria-portals/` 與 `portal-assets/` 多餘層級，新增 `python3 cli.py build-portals` 自動構建管線；完成 TopBar 維度錨點、古樹之門與浮島星環躍遷至 Garden 與 World 的互動；更新全站 FAB（含 `zh-Hant`/`zh-Hans`/`en`）、Mobile Nav Sheet、`pages/more.html`、`pages/search.html` 與 `labs/index.html`；解散 `labs/future/`，原型直接平鋪於 `labs/`；建立 `portals/realms/garden` 與 `portals/realms/world`；建立境域專屬測試 `test_world_data.py` 與 `test_garden_data.py`，由 `tests/test_misc_data.py` 自動無感掛載；建立 `docs/specs/realm-spec.md` 並更新全站文檔索引；`python3 cli.py test` 52 項單元測試全數通過，所有本地端點 HTTP 200 實測成功。
@@ -230,6 +235,18 @@
   - [ ] 方向：評估讓具備延伸連結（`references` 包含 `canonical` 或站內文章連結）的事件，在手機端被點擊時，能直達導流至該篇 Note 或 Writing 文章，提升深度閱讀連貫性。
   - [ ] 規格：定義點擊行為與視覺 hint（如標題旁或右上角呈現跳轉 icon / arrow），若無關聯文章則維持純卡片展示，不影響桌機橫向軸線與現有 references 點擊。
   - [ ] 交付條件：實作手機點擊跳轉機制並更新 `docs/specs/timeline-design-spec.md`。
+
+- [ ] Portals & Realms 解耦擴展架構：保留 Portals 大廳樞紐，將各 Realm 拆分為獨立 Git Submodule
+  - [ ] 背景與動機：避免虛擬空間資產（3D 模型、貼圖、音效、地圖切片等二進制檔案）在 scale 時造成主 Repo `.git` 歷史體積膨脹，並確保各 Realm（如 `world`、`garden`）擁有獨立的技術棧、依賴與版本生命週期。
+  - [ ] 架構邊界（Hub & Destinations）：
+    - `portals/` 維持在主站：作為輕量傳送門大廳（Nexus / Lobby），負責入口導航、門面 UI Shell、全站主題與色盤串接。
+    - `portals/realms/<realm-name>` 獨立拆分：各個世界各自成立獨立 GitHub Repository，並透過 `git submodule` 掛載至 `portals/realms/` 底下。
+  - [ ] 介面與依賴契約（Realm Contract）：
+    - 消除對主站上層檔案的相對路徑強穿透（如 `../../../assets/`、`../../../search/`），共用資源（favicon、palette tokens 等）改為自包含或建置期注入。
+    - 各 Realm 根目錄維持統一入口 `index.html`，並保留返回大廳按鈕（連向 `../../index.html`）。
+    - 遵守 `AGENTS.md` 的全站 Design System 繼承與實時色盤聯動契約（讀取 `--space-accent` / `localStorage`）。
+  - [ ] CI/CD 部署工作流：GitHub Actions 部署腳本配置 `submodules: true`，確保發布至 GitHub Pages 時自動拉取並構建各境域，主 Repo 保持極簡輕量。
+  - [ ] 交付條件：完成首個境域（如 `portals/realms/world`）獨立拆分與 submodule 掛載驗證；本地與 CI 構建皆能成功載入；主站 repo 體積不因境域資產膨脹；同步更新 `docs/specs/realm-spec.md`、`docs/specs/system-spec.md` 與 `AGENTS.md`。
 
 
 ## Author-driven

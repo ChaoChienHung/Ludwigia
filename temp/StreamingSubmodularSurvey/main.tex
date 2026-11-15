@@ -1,10 +1,15 @@
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
 \usepackage{hyperref}
+\let\oldthebibliography\thebibliography
+\renewcommand{\thebibliography}[1]{\oldthebibliography{#1}\setlength{\itemsep}{1pt}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -13,34 +18,35 @@
 \newcommand{\marg}[2]{\Delta_f(#1\mid #2)}
 
 \title{Streaming Submodular Maximization under a Cardinality Constraint}
-\author{Your Name(s)}
+\author{Chao Chien Hung (A0327301U)}
 \date{}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Streaming submodular maximization asks how to retain a small, valuable subset of items that arrive sequentially when the full input cannot be revisited. We survey the monotone, cardinality-constrained problem, emphasizing the relationship between approximation quality, memory, and arrival order. Our detailed result is Sieve-Streaming: a one-pass algorithm for arbitrary-order streams that obtains a $(1/2-\varepsilon)$ approximation while storing $O(k\log k/\varepsilon)$ elements. We give the central threshold argument and explain how parallel guesses remove the need to know the optimum in advance. We then compare this result with later improvements and propose a changing-objective extension motivated by recommendation.
+Streaming submodular maximization asks how to retain a small, valuable subset of items that arrive sequentially when the full input cannot be revisited. We survey the monotone, cardinality-constrained problem, emphasizing the relationship between approximation quality, memory, and arrival order. The result we study in detail is Sieve-Streaming: a one-pass algorithm for arbitrary-order streams that obtains a $(1/2-\varepsilon)$ approximation while storing $O(k\log k/\varepsilon)$ elements. We give the central threshold argument and explain how parallel guesses remove the need to know the optimum in advance. We then compare this result with later work: a matching lower bound showing that $1/2$ is the limit for one-pass arbitrary-order algorithms with small memory, random-order algorithms that reach $1-1/e-\varepsilon$, and memory improvements. Finally, we propose a changing-objective extension motivated by recommendation.
 \end{abstract}
 
 \section{Introduction}
 Suppose items arrive one at a time and only a small number can be retained. The aim is to keep a set that represents the entire collection well. Examples include selecting representative data points for clustering, summarizing documents, and constructing a diverse candidate pool for recommendation. The selection problem is especially demanding when the data are too large to store or arrive too quickly to inspect again.
 
-One intuitive analogy is reading a long text only once while trying to retain a few important ideas. The paragraphs arrive in order, attention and notes have limited capacity, and a second example of an idea already understood may add less than the first. If the goal is to preserve coverage of the text's concepts, choosing which ideas to record resembles streaming submodular selection. This is a motivating analogy rather than a model of human comprehension: understanding may depend on prerequisites, the order of ideas, and forgetting, whereas our theorem assumes a fixed monotone submodular utility function on sets.
+Reading a long text once offers a useful analogy: ideas arrive in sequence, attention and notes have limited capacity, and another example of an already familiar concept may add less than a new one. The analogy also shows where the model stops. A definition can be almost useless until its prerequisite has been read, so two passages can be worth more together than apart, and a reader may forget what was learned early on. Both effects break diminishing returns, so we use reading only as intuition for why coverage-type objectives are natural, not as a case that the theory below covers.
 
 Submodular functions formalize diminishing returns. Under a cardinality constraint, classical offline greedy obtains a $(1-1/e)$ approximation, but it repeatedly searches the available items for the best next choice \cite{nemhauser1978analysis}. A streaming algorithm instead makes decisions when items arrive, using memory that is small relative to the stream length $n$. Our guiding question is: what approximation can be achieved in one pass, with memory independent of $n$, for an arbitrary arrival order?
 
-This question is about limited \emph{space}, rather than a promise to inspect only a sublinear number of inputs. An algorithm that must react to an arbitrary-order stream processes every arrival; its achievement is to avoid retaining the entire history. It may also spend several value-oracle queries on each arrival. Approximation ratio, number of stored elements, and per-item update cost must therefore be reported separately. The distinction echoes the course's separation of query algorithms, which inspect only part of an accessible input, from streaming algorithms, which see the whole input sequentially but keep a small state.
+This question is about limited \emph{space}, rather than a promise to inspect only a sublinear number of inputs. An algorithm that must react to an arbitrary-order stream still reads every arrival; what it saves is memory, not reading time. It may also spend several value-oracle queries on each arrival. Approximation ratio, number of stored elements, and per-item update cost must therefore be reported separately. This is the course's distinction between query algorithms, which inspect only part of an accessible input, and streaming algorithms, which see the whole input sequentially but keep a small state.
 
 The principal result studied here is Sieve-Streaming, introduced by Badanidiyuru et al.\ \cite{badanidiyuru2014streaming}. It achieves a $(1/2-\varepsilon)$ approximation using $O(k\log k/\varepsilon)$ stored elements. We explain the acceptance threshold and its proof in detail, then compare the result with algorithms that change the assumptions or improve the memory bound.
 
 \section{Problem Definition and Background}
+\label{sec:problem}
 Let $V=\{e_1,\ldots,e_n\}$ be a ground set, presented as a stream. A nonnegative set function $f:2^V\to\mathbb{R}_{\geq 0}$ assigns value to each subset. For an item $e\notin S$, define its marginal gain by
 \begin{equation}
   \marg{e}{S}=f(S\cup\{e\})-f(S).
   \label{eq:marginal}
 \end{equation}
-The function is \emph{monotone} if $\marg{e}{S}\geq 0$ for all eligible $S,e$. It is \emph{submodular} if, for $A\subseteq B$ and $e\notin B$,
+The function is \emph{monotone} if $\marg{e}{S}\geq 0$ for all $S\subseteq V$ and $e\in V\setminus S$. It is \emph{submodular} if, for $A\subseteq B$ and $e\notin B$,
 \begin{equation}
   \marg{e}{A}\geq\marg{e}{B}.
   \label{eq:submodular}
@@ -50,9 +56,9 @@ Thus, adding the same item cannot become more valuable merely because more items
   \OPT=\max_{S\subseteq V,\,|S|\leq k} f(S).
   \label{eq:problem}
 \end{equation}
-Let $S^*$ denote an optimal solution. We assume that a value oracle can evaluate $f(S)$ for a requested set $S$. The main streaming model permits one pass in arbitrary order and stores only a limited number of elements. The number of oracle evaluations is an update-cost measure; the actual running time also depends on the cost of one evaluation \cite{badanidiyuru2014streaming}.
+Let $S^*$ denote an optimal solution. We assume that a value oracle can evaluate $f(S)$ for a requested set $S$. The main streaming model permits one pass in arbitrary order and stores only a limited number of elements.
 
-For the proof below we take $f(\varnothing)=0$. This is without loss of generality for a nonnegative monotone function: replacing $f$ by $g(S)=f(S)-f(\varnothing)$ preserves its marginal gains, monotonicity, and submodularity, and makes $g$ nonnegative and normalized. An $\alpha$ approximation for $g$ also gives an $\alpha$ approximation for the original $f$, because $f(S)=g(S)+f(\varnothing)\geq\alpha\OPT_g+f(\varnothing)\geq\alpha\OPT_f$ for $0\leq\alpha\leq1$. We use $f$ for this normalized function in the remaining analysis.
+For the proof below we take $f(\varnothing)=0$. This loses no generality: $g(S)=f(S)-f(\varnothing)$ has the same marginal gains, and an $\alpha$ approximation for $g$ gives $f(S)\geq\alpha\OPT_g+f(\varnothing)\geq\alpha\OPT_f$ for $0\leq\alpha\leq1$.
 
 \subsection{A coverage example}
 Let $C(e)$ be the topics covered by item $e$, and give each topic $c$ a nonnegative weight $w_c$. Define
@@ -60,11 +66,39 @@ Let $C(e)$ be the topics covered by item $e$, and give each topic $c$ a nonnegat
   f(S)=\sum_{c\in\bigcup_{e\in S}C(e)} w_c.
   \label{eq:coverage}
 \end{equation}
-An item's marginal gain is the weight of topics that it covers for the first time. Enlarging $S$ can only reduce that gain, so $f$ is monotone and submodular. For a recommendation candidate pool, the topics could represent content categories or user interests. This is a mathematical example of diversity, not a claim that every recommendation objective is submodular.
+An item's marginal gain is the weight of topics that it covers for the first time. Enlarging $S$ can only reduce that gain, so $f$ is monotone and submodular. For a recommendation candidate pool, the topics could represent content categories or user interests. Not every recommendation objective has this form: a model that rewards complementary items, such as a phone together with its case, can value a pair more than the sum of its parts, which is exactly what submodularity rules out. The results in this survey apply only once the objective has been written in a coverage-like, diminishing-returns form.
 
-For instance, suppose one item covers $\{a,b\}$ and another covers $\{b,c\}$, with unit topic weights. Each item alone has value $2$, while their pair has value $3$. The second item's gain drops from $2$ when chosen first to $1$ when chosen after the first. This small example explains why selecting the largest singleton values independently can waste a budget on redundant items. It also shows why the relevant quantity during a stream is the \emph{current} marginal gain, not the item's value in isolation.
+Figure~\ref{fig:coverage} shows a small example. With unit topic weights, both items have singleton value $2$, but the second contributes only $1$ after the first is selected. The relevant quantity during a stream is therefore the \emph{current} marginal gain, not the item's value in isolation.
 
-The value-oracle assumption is mathematically convenient but can hide work. For coverage, evaluating $f(S)$ requires a representation of the covered topics; for exemplar-based clustering, utility may depend on all data points, including those the streaming algorithm did not keep. The main theorem first treats oracle evaluations as available, while the original paper separately studies sampled evaluation for decomposable objectives \cite{badanidiyuru2014streaming}. Keeping these two layers separate makes the resource guarantee interpretable.
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[baseline=(b.base), every node/.style={font=\small}]
+  % shared topic highlighted
+  \fill[gray!25] (1.6,0) circle (0.33);
+  % items as ellipses
+  \draw[thick] (0.8,0) ellipse (1.35 and 0.78);
+  \draw[thick, dashed] (2.4,0) ellipse (1.35 and 0.78);
+  \node at (0.8,1.08) {item $x$};
+  \node at (2.4,1.08) {item $y$};
+  % topics as dots
+  \foreach \p/\name in {0/a, 1.6/b, 3.2/c}{
+    \fill (\p,0) circle (1.5pt);
+    \node[right=1pt] (\name) at (\p,0) {$\name$};
+  }
+\end{tikzpicture}
+\qquad
+\begin{minipage}[c]{0.40\linewidth}
+\small
+$C(x)=\{a,b\}$, \quad $C(y)=\{b,c\}$\\[4pt]
+unit weights $w_a=w_b=w_c=1$\\[4pt]
+$f(\{x\})=f(\{y\})=2$, \quad $f(\{x,y\})=3$\\[4pt]
+$\marg{y}{\varnothing}=2$ \quad but \quad $\marg{y}{\{x\}}=1$
+\end{minipage}
+\caption{Coverage has diminishing returns. Items $x$ and $y$ (ellipses) cover topics $a,b,c$ (dots). The shared topic $b$ (shaded) is counted once, so $y$ adds $2$ on its own but only $1$ after $x$ has been selected.}
+\label{fig:coverage}
+\end{figure}
+
+The value-oracle assumption is mathematically convenient but can hide work. For coverage, evaluating $f(S)$ requires a representation of the covered topics; for exemplar-based clustering, utility may depend on all data points, including those the streaming algorithm did not keep. The main theorem first treats oracle evaluations as available, while the original paper separately studies sampled evaluation for decomposable objectives \cite{badanidiyuru2014streaming}. A guarantee of $O(\log k/\varepsilon)$ evaluations per item sounds cheap, but if one evaluation of the clustering objective scans every stored data point, the real time per item grows with that data. We therefore treat the number of evaluations and the cost of one evaluation as two separate quantities.
 
 \subsection{The offline benchmark}
 Offline greedy starts with $S_0=\varnothing$. At step $i$, it adds an item with the largest marginal gain relative to $S_{i-1}$. For a normalized monotone submodular function, its value obeys
@@ -74,47 +108,59 @@ Offline greedy starts with $S_0=\varnothing$. At step $i$, it adds an item with 
   \geq (1-1/e)\OPT.
   \label{eq:greedy}
 \end{equation}
-The proof compares the residual gap $\OPT-f(S_{i-1})$ with the total marginal gain of the at most $k$ optimal items. At least one of those items contributes at least one $k$th of the gap, giving a geometric decrease in the residual \cite{nemhauser1978analysis}. A stream prevents this repeated search: once the chosen set changes, a previously discarded item cannot ordinarily be reconsidered.
+The proof compares the residual gap $\OPT-f(S_{i-1})$ with the total marginal gain of the at most $k$ optimal items. At least one of those items contributes at least one $k$th of the gap, giving a geometric decrease in the residual \cite{nemhauser1978analysis}. Working through a small case helped us see that the bound is not loose. Add to Figure~\ref{fig:coverage} a third item $z$ with $C(z)=\{c,d\}$ and take $k=2$. The optimum is $\{x,z\}$ with value $4$. All three singletons have value $2$, so greedy may break the tie by choosing $y$ first; after that, both $x$ and $z$ add only $1$, and greedy ends with $3$. This is exactly $(1-(1-1/2)^2)\OPT=3/4\cdot\OPT$, so for $k=2$ the guarantee in Equation~\eqref{eq:greedy} is tight. A stream prevents this repeated search: once the chosen set changes, a previously discarded item cannot ordinarily be reconsidered.
 
 \section{Known Results and Their Assumptions}
-Table~\ref{tab:results} separates approximation ratios from the arrival models and memory bounds under which they hold. The entries use asymptotic bounds in the standard value-oracle model; constant factors and evaluation costs are suppressed.
+Table~\ref{tab:results} separates approximation ratios from the arrival models and memory bounds under which they hold. The entries use asymptotic bounds in the standard value-oracle model; constant factors and evaluation costs are suppressed. A one-pass algorithm falls behind greedy for two reasons. Each decision is made when the item arrives and cannot be undone, because a discarded item is not stored; and in the arbitrary-order model the order may be chosen adversarially, for example by sending many overlapping, moderately good items before the truly useful ones. Each result below either relaxes one of these two conditions, proves that neither can be avoided, or keeps both and reduces memory.
 
 \begin{table}[ht]
 \centering
 \caption{Selected results for monotone submodular maximization with $|S|\leq k$.}
 \label{tab:results}
-\begin{tabular}{@{}p{0.28\linewidth}p{0.30\linewidth}p{0.17\linewidth}p{0.16\linewidth}@{}}
+\begin{tabular}{@{}p{0.22\linewidth}p{0.24\linewidth}p{0.24\linewidth}p{0.20\linewidth}@{}}
 \toprule
 Method & Access model & Guarantee & Stored elements \\
 \midrule
 Offline greedy \cite{nemhauser1978analysis} & Repeated access & $1-1/e$ & Full input access \\
 Sieve-Streaming \cite{badanidiyuru2014streaming} & Arbitrary order, one pass & $1/2-\varepsilon$ & $O(k\log k/\varepsilon)$ \\
 SALSA \cite{norouzifard2018beyond} & Random order, one pass & $>1/2$ in expectation & $O(k\log k)$ \\
+Agrawal et al.\ \cite{agrawal2019shortlists} & Random order, one pass & $1-1/e-\varepsilon-O(1/k)$ & $O(k)$, exponential in $1/\varepsilon$ \\
+Liu et al.\ \cite{liu2021random} & Random order, one pass & $1-1/e-\varepsilon$ & $O(k/\varepsilon)$ \\
 Two-Pass \cite{norouzifard2018beyond} & Arbitrary order, two passes & $5/9-\varepsilon$ & $O(k\log k/\varepsilon)$ \\
 Sieve-Streaming++ \cite{kazemi2019glory} & Arbitrary order, one pass & $1/2-\varepsilon$ & $O(k/\varepsilon)$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{The first one-pass constant-factor guarantee}
-For every $\varepsilon>0$, Badanidiyuru et al.\ prove that Sieve-Streaming outputs $S$ with $|S|\leq k$ and $f(S)\geq(1/2-\varepsilon)\OPT$ after one arbitrary-order pass. It stores $O(k\log k/\varepsilon)$ elements and performs $O(\log k/\varepsilon)$ oracle evaluations per arrival \cite{badanidiyuru2014streaming}. Its proof replaces offline greedy's repeated search with a threshold rule. For one sufficiently accurate estimate of $\OPT$, either the candidate fills its $k$ slots with enough gain, or submodularity shows that all rejected elements of an optimal set have little residual value. Parallel estimates make the unknown optimum manageable without a second pass. Section~4 develops this argument in detail.
+\subsection{Sieve-Streaming's one-pass guarantee}
+For every $\varepsilon>0$, Badanidiyuru et al.\ prove that Sieve-Streaming outputs $S$ with $|S|\leq k$ and $f(S)\geq(1/2-\varepsilon)\OPT$ after one arbitrary-order pass. It stores $O(k\log k/\varepsilon)$ elements and performs $O(\log k/\varepsilon)$ oracle evaluations per arrival \cite{badanidiyuru2014streaming}. Its proof replaces offline greedy's repeated search with a threshold rule. For one sufficiently accurate estimate of $\OPT$, either the candidate fills its $k$ slots with enough gain, or submodularity shows that all rejected elements of an optimal set have little residual value. Running many estimates in parallel removes the need to know $\OPT$, without a second pass. Section~\ref{sec:sieve} develops this argument in detail.
 
 \subsection{What changes with random order or another pass?}
-Norouzi-Fard et al.\ establish two ways to move beyond the one-pass arbitrary-order factor. Their SALSA algorithm obtains $\mathbb{E}[f(S)]\geq\alpha\OPT$ for some constant $\alpha>1/2$ when the elements arrive in uniformly random order; it stores $O(k\log k)$ elements and uses $O(\log k)$ evaluations per arrival. Random arrival is doing real work in the proof. The analysis divides optimal solutions into cases where a small subset carries substantial value (a dense optimum) and where value is more dispersed. SALSA runs procedures for these cases in parallel and changes its thresholds between early and later portions of the stream. In the dispersed case, an early optimal element is effectively a random member of the optimum, so early selections give information about how much value the later threshold must recover. These arguments do not extend unchanged to an adversarial order \cite{norouzifard2018beyond}.
+Norouzi-Fard et al.\ establish two ways to move beyond the one-pass arbitrary-order factor. Their SALSA algorithm obtains $\mathbb{E}[f(S)]\geq\alpha\OPT$ for some constant $\alpha>1/2$ when the elements arrive in uniformly random order; it stores $O(k\log k)$ elements and uses $O(\log k)$ evaluations per arrival. The proof relies on random arrival: SALSA handles a dense optimum (a few items carry most of the value) and a dispersed one in parallel, and changes its thresholds between early and late parts of the stream. In a random order, early optimal elements are a random sample of the optimum, so early selections tell the algorithm how much value the later threshold must recover; an adversarial order breaks this \cite{norouzifard2018beyond}.
 
-The same paper gives an arbitrary-order \emph{two-pass} algorithm with a $(5/9-\varepsilon)$ guarantee and $O(k\log k/\varepsilon)$ stored elements. Its idealized version first accepts elements above a relatively high marginal-gain threshold, then revisits the stream with a lower threshold. The second pass can recover useful items rejected before the candidate set changed. The proof balances the value obtained in the first pass against the value still available in the second; geometric guesses remove advance knowledge of $\OPT$ \cite{norouzifard2018beyond}. This result isolates a different resource trade-off: an extra sequential pass can improve approximation without assuming random order.
+SALSA's factor exceeds $1/2$ only by a tiny constant, and random order turns out to allow much more. Agrawal, Shadravan, and Stein study a secretary-style problem in which the algorithm may keep a shortlist of $O(k)$ items, and show that the same method gives a one-pass random-order streaming algorithm with a $(1-1/e-\varepsilon-O(1/k))$ approximation and $O(k)$ memory for constant $\varepsilon$ \cite{agrawal2019shortlists}. The high-level idea is to split the random stream into many short windows. Because the order is random, the optimal elements are spread roughly evenly across windows, so the algorithm can run a greedy-like step inside each window and still expect to find, in most windows, an item whose marginal gain is comparable to the one offline greedy would choose. Their memory bound depends exponentially on $1/\varepsilon$. Liu, Rubinstein, Vondr\'ak, and Zhao reduce this to $O(k/\varepsilon)$ while keeping the $1-1/e-\varepsilon$ factor \cite{liu2021random}. They also note that $1-1/e$ is essentially the limit for one-pass random-order algorithms, so random order closes the gap to the offline greedy benchmark, while arbitrary order cannot pass $1/2$ (Section~\ref{sec:barrier}).
 
-\subsection{A conditional barrier above one half}
-Norouzi-Fard et al.\ also prove a lower bound: for any constant $\alpha>1/2$, an arbitrary-order streaming algorithm that guarantees an $\alpha$ approximation and queries the value oracle only on \emph{feasible} sets, $|S|\leq k$, requires $\Omega(n/k)$ memory. Their statement covers randomized algorithms as well \cite{norouzifard2018beyond}. The exact restriction is essential: this is a lower bound for a specified oracle model, not a claim about every conceivable access model.
+Norouzi-Fard et al.\ also give an arbitrary-order \emph{two-pass} algorithm with a $(5/9-\varepsilon)$ guarantee and $O(k\log k/\varepsilon)$ stored elements. It first accepts elements above a relatively high threshold, then rereads the stream with a lower one, so useful items rejected in the first pass get a second chance \cite{norouzifard2018beyond}. Here an extra pass, rather than random order, is what breaks the $1/2$ barrier.
 
-The proof in the full version makes a direct connection to the course's communication-complexity lectures. It reduces the one-way \textsc{Index} problem to the streaming optimization problem. Alice encodes an $m$-bit string in the first $km$ stream items; Bob contributes a final item specifying which bit matters. Feasible oracle queries on Alice's prefix cannot reveal Bob's index. In the constructed instances, the optimum is $k$ for one value of the indexed bit and $2k-1$ for the other. An approximation that separates these cases would let Bob recover the bit from Alice's transmitted memory state. Since one-way \textsc{Index} needs $\Omega(m)$ communication, the streaming state needs $\Omega(m)=\Omega(n/k)$ memory. This proof sketch explains both the space bound and why the feasible-query condition appears in the theorem \cite{norouzifard2018beyond}.
+\subsection{The barrier at one half: from conditional to tight}
+\label{sec:barrier}
+Norouzi-Fard et al.\ also prove a lower bound: for any constant $\alpha>1/2$, an arbitrary-order streaming algorithm that guarantees an $\alpha$ approximation and queries the value oracle only on \emph{feasible} sets, $|S|\leq k$, requires $\Omega(n/k)$ memory. Their statement covers randomized algorithms as well \cite{norouzifard2018beyond}. As stated, this is a lower bound for a restricted oracle model.
+
+The proof in the full version makes a direct connection to the course's communication-complexity lectures. It reduces the one-way \textsc{Index} problem to the streaming optimization problem. Alice encodes an $m$-bit string in the first $km$ stream items; Bob contributes a final item specifying which bit matters. Feasible oracle queries on Alice's prefix cannot reveal Bob's index. In the constructed instances, the optimum is $k$ for one value of the indexed bit and $2k-1$ for the other. An approximation that separates these cases would let Bob recover the bit from Alice's transmitted memory state. Since one-way \textsc{Index} needs $\Omega(m)$ communication, the streaming state needs $\Omega(m)=\Omega(n/k)$ memory. This also explains why the theorem needs the feasible-query condition \cite{norouzifard2018beyond}.
+
+The restriction was later removed. Feldman, Norouzi-Fard, Svensson, and Zenklusen prove that, for any $\varepsilon>0$, a streaming algorithm with approximation guarantee $1/2+\varepsilon$ must use memory $\Omega(\varepsilon n/k^3)$, where $n$ is the stream length; the statement places no restriction on which sets the algorithm may query and holds once $k$ is sufficiently large \cite{feldman2020oneway}. The idea is again a reduction from one-way communication, but with many players rather than two: each player holds a block of the stream and passes a message to the next, so a small-memory streaming algorithm yields a protocol with short messages. The hard instances are a new family of coverage functions in which the optimal elements are hidden among blocks so that no short message can identify them. The same paper also shows that infeasible queries do help in its two-player version of the problem, where approximations above $1/2$ become possible; the streaming hardness comes from having many players. Together with Sieve-Streaming, this settles the one-pass arbitrary-order problem: $1/2$ is achievable with memory independent of $n$, and anything above $1/2$ requires memory growing linearly in $n$ for fixed $k$.
 
 \subsection{Removing the extra logarithmic memory factor}
-For any fixed $\varepsilon>0$, Sieve-Streaming++ achieves a $(1/2-\varepsilon)$ approximation after one arbitrary-order pass with $O(k/\varepsilon)$ stored elements and $O(\log k/\varepsilon)$ oracle evaluations per arrival \cite{kazemi2019glory}. Its proof idea is to sharpen the set of useful thresholds as the stream progresses. Instead of using only the largest singleton value to lower-bound $\OPT$, it also tracks the best value $LB$ among its current candidate sets. Thresholds too small relative to $LB/(2k)$ can be discarded. A larger threshold can hold fewer elements before its value reaches $LB$, so the memory used across the remaining geometric thresholds decreases rather than simply adding $k$ elements per threshold. This removes the $\log k$ factor from the space bound while keeping an approximation arbitrarily close to $1/2$.
+For any fixed $\varepsilon>0$, Sieve-Streaming++ achieves a $(1/2-\varepsilon)$ approximation after one arbitrary-order pass with $O(k/\varepsilon)$ stored elements and $O(\log k/\varepsilon)$ oracle evaluations per arrival \cite{kazemi2019glory}. Its proof idea is to sharpen the set of useful thresholds as the stream progresses. Each candidate uses the fixed threshold $\tau=v/(2k)$ for its guess $v$, rather than the adaptive rule of Section~\ref{sec:sieve}. Instead of using only the largest singleton value to lower-bound $\OPT$, the algorithm also tracks the best value $LB$ among its current candidate sets, and discards every threshold below $LB/(2k)$. The memory saving follows from a one-line bound. Every element accepted by candidate $S_\tau$ added at least $\tau$, so $\tau|S_\tau|\leq f(S_\tau)\leq LB$, giving $|S_\tau|\leq LB/\tau$. Index the surviving geometric thresholds from the smallest one, $\tau_0\geq LB/(2k)$. Then $\tau_i=(1+\varepsilon)^i\tau_0$, so the total storage is at most
+\begin{equation*}
+  \sum_{i\geq0}\frac{LB}{\tau_i}\leq2k\sum_{i\geq0}(1+\varepsilon)^{-i}=O(k/\varepsilon).
+\end{equation*}
+Low thresholds may hold up to $k$ elements, but high thresholds hold geometrically fewer. This removes the $\log k$ factor from the space bound while keeping an approximation arbitrarily close to $1/2$.
 
-The word \emph{optimal} in descriptions of this result refers to the limiting $1/2$ factor under the relevant arbitrary-order and feasible-query assumptions; its formal theorem retains the parameter $\varepsilon$ and states $(1/2-\varepsilon)$ with $O(k/\varepsilon)$ memory. Table~\ref{tab:results} uses these formal bounds. All one-pass algorithms in the table still process the full input stream, even when their memory is sublinear in $n$.
+The word \emph{optimal} in descriptions of this result refers to the limiting $1/2$ factor, which Feldman et al.\ show cannot be exceeded \cite{feldman2020oneway}; the formal theorem, used in Table~\ref{tab:results}, keeps the parameter $\varepsilon$.
 
-\section{Detailed Result: Sieve-Streaming}
+\section{Sieve-Streaming}
+\label{sec:sieve}
 \subsection{A threshold rule when an optimum estimate is known}
 Suppose an estimate $v$ satisfies
 \begin{equation}
@@ -127,7 +173,7 @@ Maintain $S=\varnothing$. When $e$ arrives and $|S|<k$, accept $e$ if
   \marg{e}{S}\geq\frac{v/2-f(S)}{k-|S|}.
   \label{eq:threshold}
 \end{equation}
-The numerator is the remaining value needed to reach $v/2$; the denominator is the number of slots left. A simple fixed threshold would ignore this changing state. The adaptive threshold in Equation~\eqref{eq:threshold} lets the algorithm reason about both possible outcomes: filling all slots or leaving some slots unused \cite{badanidiyuru2014streaming}.
+The numerator is the remaining value needed to reach $v/2$; the denominator is the number of slots left. A simple fixed threshold would ignore this changing state. The adaptive threshold in Equation~\eqref{eq:threshold} is designed around the two ways the stream can end: with all slots filled, or with some slots still empty \cite{badanidiyuru2014streaming}.
 
 \begin{proposition}[Known-estimate guarantee \cite{badanidiyuru2014streaming}]
 Under Equation~\eqref{eq:guess}, the threshold rule returns a set $S$ with $|S|\leq k$ and $f(S)\geq\alpha\OPT/2$.
@@ -157,16 +203,16 @@ Otherwise $|S|<k$. Consider an item $a\in S^*\setminus S$, and let $S_a$ be the 
   <\frac{v/2-f(S_a)}{k-|S_a|}
   \leq\frac{v}{2k}.
 \end{equation*}
-As $S_a\subseteq S$, submodularity implies $\marg{a}{S}\leq v/(2k)$. There are at most $k$ items in $S^*\setminus S$. Adding them to $S$ one by one, submodularity bounds their combined extra value by $v/2$. Monotonicity therefore gives
+As $S_a\subseteq S$, submodularity implies $\marg{a}{S}\leq v/(2k)$. There are at most $k$ items in $S^*\setminus S$. Adding them to $S$ one by one, submodularity bounds their combined extra value by $v/2$. The set $S\cup S^*$ may contain up to $2k$ items, but this is not a problem: it appears only in the analysis as a point of comparison, and the algorithm never stores it. Monotonicity therefore gives
 \begin{equation*}
   \OPT=f(S^*)\leq f(S\cup S^*)\leq f(S)+\frac{v}{2}.
 \end{equation*}
 Since $v\leq\OPT$, we get $f(S)\geq\OPT/2$, which is at least $\alpha\OPT/2$.
 \end{proof}
 
-The proof's two cases capture the central design idea. If the algorithm fills its budget, each accepted item has contributed enough. If the budget remains partly unused, every rejected optimal item is too small to close a large gap.
+Informally, the threshold is chosen so that the algorithm wins in either case. If it uses all $k$ slots, every accepted item paid at least its share of the target $v/2$, so the total is large. If it ends with empty slots, every optimal item that was turned away had gain below the threshold, and the invariant keeps that threshold at most $v/(2k)$; since there are at most $k$ such items, together they can add at most $v/2$ on top of $S$. The choice of $1/2$ becomes clearer with a simpler fixed threshold $\tau$, which the same two-case argument also handles. A full set then has $f(S)\geq k\tau$, while an unfilled set has $f(S)\geq\OPT-k\tau$. Since we cannot know in advance which case will occur, the guarantee is $\min\{k\tau,\ \OPT-k\tau\}$. The first term grows with $\tau$ and the second shrinks, and the minimum is largest when the two are equal, at $\tau=\OPT/(2k)$, where both equal $\OPT/2$. A threshold of $\OPT/(4k)$, for instance, would guarantee only $\OPT/4$. The adaptive rule in Equation~\eqref{eq:threshold} aims at the same balance point while using the current state of $S$.
 
-Notice that the case analysis gives a useful statement even when $v$ is not a lower bound on $\OPT$. The induction itself requires only $v>0$. If the set fills, its value is at least $v/2$; if it does not, the rejected-optimal-items argument gives
+The case analysis still says something even when $v$ is not a lower bound on $\OPT$. The induction itself requires only $v>0$. If the set fills, its value is at least $v/2$; if it does not, the rejected-optimal-items argument gives
 \begin{equation}
   f(S)\geq\OPT-\frac{v}{2}.
   \label{eq:two-cases}
@@ -176,14 +222,14 @@ The assumption $v\leq\OPT$ was used only to turn these case-specific bounds into
 \subsection{Replacing the unknown optimum by parallel guesses}
 The algorithm cannot usually know $v$ beforehand. Let $m=\max_{e\in V} f(\{e\})$. Monotonicity gives $m\leq\OPT$, while submodularity gives $\OPT\leq km$: the value of any feasible set is no greater than the sum of at most $k$ singleton values. Thus the optimum lies in a multiplicative range of width $k$.
 
-For a fixed $m$, run an independent threshold set $S_v$ for each geometric guess $v=(1+\varepsilon)^i$ in $[m,2km]$, and return the candidate with greatest value. The original paper first presents a known-$m$ version over $[m,km]$ and then expands the range for its final lazy implementation; we use the final range throughout this proof \cite{badanidiyuru2014streaming}. For $0<\varepsilon\leq1$, the number of guesses is at most $1+\lceil\log_{1+\varepsilon}(2k)\rceil=O(\log(2k)/\varepsilon)$. Each candidate stores at most $k$ elements.
+For a fixed $m$, run an independent threshold set $S_v$ for each geometric guess $v=(1+\varepsilon)^i$ in $[m,2km]$, and return the candidate with greatest value. The original paper first presents a known-$m$ version over $[m,km]$ and then expands the range for its final lazy implementation; we use the final range throughout this proof \cite{badanidiyuru2014streaming}. For $0<\varepsilon\leq1$, the number of guesses is at most $1+\lceil\log_{1+\varepsilon}(2k)\rceil=O(\log(2k)/\varepsilon)$. For $k\geq2$ this is the $O(\log k/\varepsilon)$ of Table~\ref{tab:results}. Each candidate stores at most $k$ elements. A grid with equal additive steps of $\varepsilon m$ would need about $k/\varepsilon$ guesses to cover $[m,km]$. Multiplicative spacing is enough because the guarantee is a ratio: we only need some guess within a factor $1+\varepsilon$ of $\OPT$, not within a fixed additive distance.
 
 Let $v^*$ be the smallest point of the geometric grid at least $\OPT$. Then
 \begin{equation}
   \OPT\leq v^*<(1+\varepsilon)\OPT\leq2km.
   \label{eq:good-upper-guess}
 \end{equation}
-Also $v^*\geq m$, so this guess is in the final active range. If its set fills, $f(S_{v^*})\geq v^*/2\geq\OPT/2$. If it does not, Equation~\eqref{eq:two-cases} and Equation~\eqref{eq:good-upper-guess} give $f(S_{v^*})\geq(1/2-\varepsilon/2)\OPT$. This upper-guess argument handles the geometric-grid endpoint without assuming that a grid point happens to lie between $m$ and $\OPT$. The paper's stated $(1/2-\varepsilon)$ guarantee follows after the harmless parameter slack.
+Also $v^*\geq m$, so this guess is in the final active range. If its set fills, $f(S_{v^*})\geq v^*/2\geq\OPT/2$. If it does not, Equation~\eqref{eq:two-cases} and Equation~\eqref{eq:good-upper-guess} give $f(S_{v^*})\geq(1/2-\varepsilon/2)\OPT$. Since $1/2-\varepsilon/2\geq1/2-\varepsilon$, this already gives the paper's $(1/2-\varepsilon)$ guarantee.
 
 \subsection{One-pass lazy guesses}
 The parallel construction still seems to require advance knowledge of $m$, which would ordinarily cost an extra pass. The final algorithm instead tracks the largest singleton value $m_t$ seen by time $t$. It maintains geometric guesses in the expanded range
@@ -193,7 +239,7 @@ The parallel construction still seems to require advance knowledge of $m$, which
 \end{equation}
 creating a new empty candidate set for each newly active guess and deleting sets that leave the range. It performs this update \emph{before} testing the current item against Equation~\eqref{eq:threshold}. If all singleton values are zero, the algorithm can return the empty set.
 
-Why is it safe to start a candidate set late? Consider the good final guess $v^*$ from Equation~\eqref{eq:good-upper-guess}. Because $m_t\leq m\leq v^*$ throughout the stream, this guess is never removed for falling below the range. Before it becomes active, $v^*>2km_t$. Hence every item $e$ seen so far has
+This was the step we found least obvious at first: why is it safe to start a candidate set late? Consider the good final guess $v^*$ from Equation~\eqref{eq:good-upper-guess}. Because $m_t\leq m\leq v^*$ throughout the stream, this guess is never removed for falling below the range. Before it becomes active, $v^*>2km_t$. Hence every item $e$ seen so far has
 \begin{equation}
   \marg{e}{\varnothing}
   =f(\{e\})-f(\varnothing)
@@ -203,6 +249,7 @@ Why is it safe to start a candidate set late? Consider the good final guess $v^*
   \label{eq:missed-prefix}
 \end{equation}
 An eager candidate for $v^*$ would still be empty: none of those earlier items could pass its initial threshold $v^*/(2k)$. When the first potentially acceptable item arrives, updating $m_t$ first makes $v^*$ active before that item is tested. From then on, the lazy and eager candidates receive the same items and make the same decisions. Therefore the proof for a candidate run from the beginning applies to $S_{v^*}$ despite its late creation. This is the technical role of the factor $2$ in Equation~\eqref{eq:lazy-range} \cite{badanidiyuru2014streaming}.
+
 
 \begin{theorem}[Sieve-Streaming \cite{badanidiyuru2014streaming}]
 For a monotone submodular function and any $\varepsilon>0$, Sieve-Streaming makes one pass over an arbitrary-order stream and returns a feasible set $S$ such that
@@ -216,53 +263,104 @@ It stores $O(k\log(2k)/\varepsilon)$ elements and performs $O(\log(2k)/\varepsil
 Use the good grid value $v^*$ from Equation~\eqref{eq:good-upper-guess}. Equation~\eqref{eq:missed-prefix} shows that lazy initialization reproduces the decisions of an eager threshold candidate for this value. The two-case argument gives at least $(1/2-\varepsilon/2)\OPT$ for that candidate, hence at least $(1/2-\varepsilon)\OPT$ for the best candidate returned. At any time the interval in Equation~\eqref{eq:lazy-range} contains $O(\log(2k)/\varepsilon)$ grid points, and each candidate stores at most $k$ elements and needs a constant number of oracle evaluations per arrival. These observations give the stated memory and update bounds.
 \end{proof}
 
+Figure~\ref{fig:sieve-flow} shows how one arriving element is handled. The active guesses are updated before the marginal-gain tests, which is essential to the lazy-guess argument. Algorithm~\ref{alg:sieve} gives the precise procedure.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[>=stealth, every node/.style={font=\scriptsize},
+  box/.style={draw, rounded corners, align=center, minimum height=0.75cm, inner sep=3pt}]
+  % step 1: arrival
+  \node[box, text width=1.3cm] (item) at (0,0) {arriving item $e_t$};
+  % step 2: refresh guesses (must happen before any test)
+  \node[box, text width=3.5cm] (upd) at (3.35,0)
+    {\textbf{1. refresh guesses}\\ $m_t\gets\max\{m_{t-1},\,f(\{e_t\})\}$\\ keep guesses $v\in[m_t,\,2km_t]$\\ new $v$: $S_v\gets\varnothing$; \ stale $v$: drop};
+  % step 3: parallel sieves
+  \node[box, text width=3.3cm] (s1) at (8.0,1.35) {\textbf{2. sieve $v_1$}\\ add $e_t$ to $S_{v_1}$ iff $\marg{e_t}{S_{v_1}}\geq\tau_{v_1}$};
+  \node[box, text width=3.3cm] (s2) at (8.0,0)    {\textbf{2. sieve $v_2$}\\ add $e_t$ to $S_{v_2}$ iff $\marg{e_t}{S_{v_2}}\geq\tau_{v_2}$};
+  \node at (8.0,-0.85) {$\vdots$};
+  \node[box, text width=3.3cm] (sL) at (8.0,-1.7) {\textbf{2. sieve $v_L$}\\ add $e_t$ to $S_{v_L}$ iff $\marg{e_t}{S_{v_L}}\geq\tau_{v_L}$};
+  % step 4: output after the stream ends
+  \node[box, text width=2.3cm, dashed] (out) at (12.5,0) {\textbf{after the last item}\\ return the $S_v$\\ with largest $f(S_v)$};
+  \draw[->,thick] (item) -- (upd);
+  \foreach \s in {s1,s2,sL}{
+    \draw[->,thick] (upd.east) -- (\s.west);
+    \draw[->,dashed] (\s.east) -- (out.west);
+  }
+\end{tikzpicture}
+\caption{How Sieve-Streaming processes one item. Step 1 runs before any test, which is what makes lazy guesses safe. Each active guess $v$ then tests $e_t$ independently against its own threshold $\tau_v=\bigl(v/2-f(S_v)\bigr)/(k-|S_v|)$, applied only while $|S_v|<k$; the $L=O(\log k/\varepsilon)$ candidate sets evolve in parallel.}
+\label{fig:sieve-flow}
+\end{figure}
+
+\begin{algorithm}[ht]
+\caption{Sieve-Streaming (one pass, lazy guesses)}
+\label{alg:sieve}
+\begin{algorithmic}[1]
+\Require stream $e_1,\ldots,e_n$; budget $k$; accuracy $\varepsilon\in(0,1]$; value oracle for $f$
+\State $m\gets 0$; \quad $\mathcal{G}\gets\varnothing$ \Comment{active guesses $v$, each with a candidate $S_v$}
+\For{$t=1,\ldots,n$}
+    \State $m\gets\max\{m,\ f(\{e_t\})\}$
+    \State $\mathcal{G}\gets\{(1+\varepsilon)^i : i\in\mathbb{Z},\ m\leq(1+\varepsilon)^i\leq 2km\}$
+    \State delete $S_v$ for every $v$ that left $\mathcal{G}$; create $S_v\gets\varnothing$ for every new $v\in\mathcal{G}$
+    \ForAll{$v\in\mathcal{G}$}
+        \If{$|S_v|<k$ \textbf{and} $\marg{e_t}{S_v}\geq \dfrac{v/2-f(S_v)}{k-|S_v|}$}
+            \State $S_v\gets S_v\cup\{e_t\}$
+        \EndIf
+    \EndFor
+\EndFor
+\If{$m=0$}
+    \State \Return $\varnothing$
+\EndIf
+\State \Return $\arg\max_{v\in\mathcal{G}} f(S_v)$
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Connection to the course's streaming toolkit}
-The proof clarifies what changes when an offline approximation algorithm becomes a streaming algorithm. Offline greedy repeatedly finds the largest marginal gain over the whole ground set. That step is unavailable after earlier items have disappeared from a one-pass stream. The threshold rule replaces a comparison against \emph{all} remaining items with a test involving only the current item and the maintained state $S$. Its two-case proof supplies what the offline greedy proof obtained by revisiting the ground set: either the selected set has accumulated enough value, or every unselected optimal item has a bounded remaining contribution. This is the precise point at which the streaming constraint shapes the approximation argument.
+Comparing this proof with the offline greedy proof shows which step the stream takes away. Offline greedy repeatedly finds the largest marginal gain over the whole ground set. Its proof uses this search in a specific way: the chosen item is at least as good as every optimal item, so the gap to $\OPT$ shrinks by a factor $1-1/k$ at each step. That step is unavailable after earlier items have disappeared from a one-pass stream, because the algorithm never sees the optimal items side by side with the current one. The threshold rule replaces a comparison against \emph{all} remaining items with a test involving only the current item and the maintained state $S$. Its two-case proof supplies what the offline greedy proof obtained by revisiting the ground set: either the selected set has accumulated enough value, or every unselected optimal item has a bounded remaining contribution. The cost of this replacement is the drop from $1-1/e$ to $1/2$, and the lower bounds in Section~\ref{sec:barrier} show that, with small memory and arbitrary order, this drop cannot be avoided.
 
-The closest technique in the course is the streaming $k$-center algorithm from Lecture 6. That algorithm cannot run the offline farthest-point greedy rule after earlier points have passed. It instead tests arriving points against a distance threshold $T$, while parallel copies with geometrically spaced values of $T$ handle the unknown optimal radius. Sieve-Streaming uses the same general design pattern of a one-pass threshold test plus parallel guesses for an unknown optimum. The objectives and proofs differ: $k$-center minimizes a maximum distance and tests whether a radius is sufficient, whereas Sieve-Streaming maximizes a submodular value and accepts an item according to its marginal gain and the remaining budget. In particular, the full-versus-not-full argument above has no direct counterpart in the $k$-center proof. This comparison explains both why the paper belongs in an algorithms-at-scale course and what its new technical work contributes beyond the course example.
+The closest technique from class is the streaming $k$-center algorithm from Lecture 6. That algorithm cannot run the offline farthest-point greedy rule after earlier points have passed. It instead tests arriving points against a distance threshold $T$, while parallel copies with geometrically spaced values of $T$ handle the unknown optimal radius. Sieve-Streaming uses the same general design pattern of a one-pass threshold test plus parallel guesses for an unknown optimum. The objectives and proofs differ: $k$-center minimizes a maximum distance and tests whether a radius is sufficient, whereas Sieve-Streaming maximizes a submodular value and accepts an item according to its marginal gain and the remaining budget. In particular, the full-versus-not-full argument above has no direct counterpart in the $k$-center proof. In $k$-center, a guess either succeeds or is discarded once it would need more than $k$ centers. In Sieve-Streaming no guess is ever discarded for failing; the guarantee instead comes from analysing what the set looks like when its budget does or does not fill, which is why the threshold depends on the current $f(S)$ and $|S|$.
 
-The maintained state also illustrates a distinction among streaming techniques covered in the course. A distinct-elements sketch compresses information needed to estimate a statistic; Sieve-Streaming retains actual candidate elements because its output must be a feasible set. Its $O(k\log k/\varepsilon)$ storage is sublinear in stream length $n$ when $k$ is small, while its $O(n\log k/\varepsilon)$ total oracle evaluations still require processing the stream. The geometric guesses make the space--accuracy trade-off explicit: a finer grid gives a closer estimate of $\OPT$ but increases the number of concurrent states and per-item evaluations.
+The stored state also differs from the sketches in Lectures 7--10. A distinct-elements sketch compresses information needed to estimate a statistic; Sieve-Streaming retains actual candidate elements because its output must be a feasible set. Its $O(k\log k/\varepsilon)$ storage is sublinear in stream length $n$ when $k$ is small, while its $O(n\log k/\varepsilon)$ total oracle evaluations still require processing the stream. The geometric guesses make the space--accuracy trade-off explicit: a finer grid gives a closer estimate of $\OPT$ but increases the number of concurrent states and per-item evaluations.
 
-Finally, value estimation is a separate layer from set selection. The theorem above assumes an available value oracle, whereas the original paper also studies sampling to approximate objectives that depend on the whole dataset. Reservoir sampling, familiar from streaming algorithms, can help maintain an evaluation sample for certain decomposable objectives; it does not by itself prove the selection guarantee \cite{badanidiyuru2014streaming}. Likewise, lower bounds based on limited streaming memory must be quoted with their model assumptions: the $>1/2$ arbitrary-order barrier discussed earlier concerns algorithms that query only feasible sets \cite{norouzifard2018beyond}.
+Reservoir sampling from the course also appears, but in a supporting role: the original paper uses it to keep an evaluation sample for decomposable objectives, while the selection guarantee itself comes from the threshold argument \cite{badanidiyuru2014streaming}.
 
 \section{Discussion and Future Directions}
-\subsection{Which assumptions are doing the work?}
-Random arrival permits SALSA's expected factor above $1/2$; another pass permits the $5/9-\varepsilon$ guarantee without random arrival; and a better lower bound on $\OPT$ lets Sieve-Streaming++ reduce the memory used near the $1/2$ boundary. None of these statements is an unconditional improvement over the others because the resource and arrival assumptions differ. In particular, the conditional arbitrary-order lower bound does not apply to an algorithm allowed to query infeasible sets \cite{norouzifard2018beyond,kazemi2019glory}.
-
-One practical gap between a value-oracle theorem and an implementation is evaluation cost. Reporting $O(\log k/\varepsilon)$ oracle calls per item does not say how long one call takes. The original Sieve-Streaming paper examines a sampled approximation when the utility is a decomposable average over all input items \cite{badanidiyuru2014streaming}. An implementation must account for the sample's memory, the statistical error in each evaluation, and how those errors affect threshold decisions. The high-level lesson is that approximation of the \emph{selection} and approximation of its \emph{objective values} are separate sources of error.
+\subsection{Assumptions and evaluation cost}
+\label{sec:assumptions}
+Table~\ref{tab:results} shows that, with one pass and memory independent of $n$, the arrival order alone separates the attainable factors $1/2$ and $1-1/e$ \cite{feldman2020oneway,liu2021random}. All of these bounds count oracle evaluations, not the time one evaluation takes, and Section~\ref{sec:problem} noted that the two can differ greatly. The original Sieve-Streaming paper examines a sampled approximation when the utility is a decomposable average over all input items \cite{badanidiyuru2014streaming}. An implementation must account for the sample's memory, the statistical error in each evaluation, and how those errors affect threshold decisions. The difficulty is that the proof compares $\marg{e}{S}$ with the threshold exactly. With a sampled estimate, an item whose true gain is just below the threshold may be accepted, or one just above it may be rejected, and the invariant $f(S)\geq v|S|/(2k)$ then holds only approximately. The noise in evaluating $f$ therefore adds a loss on top of the $1/2-\varepsilon$ coming from the selection rule, and the two losses have to be bounded separately.
 
 \subsection{A recommendation-motivated question}
-Existing extensions already treat important departures from the basic model. Sliding-window algorithms optimize over only recent stream items \cite{chen2016sliding}. Consistent submodular maximization studies how to maintain a good solution while limiting changes between consecutive solutions as items arrive \cite{duetting2024consistent}. These results make it inappropriate to present recency or solution stability by itself as an untouched research problem.
+Sliding-window algorithms optimize over only recent stream items \cite{chen2016sliding}. Consistent submodular maximization studies how to maintain a good solution while limiting changes between consecutive solutions as items arrive \cite{duetting2024consistent}. Sliding windows let old items expire but keep the objective fixed, and consistent maximization limits changes to the solution but also assumes a fixed $f$. Neither covers the case where the objective itself changes.
 
-A more specific direction is to combine a changing utility function with a small-memory, low-recourse summary. In a recommendation service, the same item pool may be evaluated under updated user-interest weights. As a tractable starting model, assign each item a fixed topic set $C(e)$ but allow nonnegative topic weights to evolve:
+We therefore propose combining a changing utility function with a small-memory, low-recourse summary. In a recommendation service, the same item pool may be evaluated under updated user-interest weights. As a tractable starting model, assign each item a fixed topic set $C(e)$ but allow nonnegative topic weights to evolve:
 \begin{equation}
-  f_t(S)=\sum_{c\in\bigcup_{e\in S}C(e)}w_{t,c},\qquad w_{t,c}\geq0,
+  f_t(S)=\sum_{c\in\bigcup_{e\in S}C(e)}w_{t,c},\qquad w_{t,c}\geq0.
   \label{eq:drift}
 \end{equation}
-where $V_t$ is the set of items seen by time $t$. Each $f_t$ is monotone submodular, but the fixed-$f$ theorem does not compare a summary selected under old weights with the new optimum
+Each $f_t$ is monotone submodular, but the fixed-$f$ theorem does not compare a summary selected under old weights with the new optimum over the set $V_t$ of items seen by time $t$,
 \begin{equation}
   \OPT_t=\max_{S\subseteq V_t,\ |S|\leq k}f_t(S).
   \label{eq:time-opt}
 \end{equation}
 The question is whether an algorithm can maintain sets $S_t$ with small memory, $|S_t|\leq k$, few replacements $|S_t\triangle S_{t-1}|$, and a useful lower bound on $f_t(S_t)/\OPT_t$.
 
-Some condition on the changes is necessary. Consider $k=1$ and many past items, each covering a different topic. An algorithm that has discarded one item cannot output it later. If all weight is subsequently moved to that item's topic, the new optimum has positive value while the maintained item has value zero. This simple adversarial example shows why a fixed-factor guarantee under completely arbitrary weight changes is implausible with small memory. One could instead assume bounded drift, such as $\|w_t-w_{t-1}\|_1\leq\delta$, or restrict attention to a recent window.
+Some condition on the changes is necessary. Consider $k=1$ and many past items, each covering a different topic. An algorithm that has discarded one item cannot output it later. If all weight is subsequently moved to that item's topic, the new optimum has positive value while the maintained item has value zero. The difficulty here is not the selection rule. Any algorithm whose memory is much smaller than the number of past items must have thrown most of them away, and for a deterministic algorithm an adversary can move all the weight onto one of the discarded items. A fixed approximation factor under arbitrary weight changes is therefore impossible with small memory, and any guarantee must limit how fast the weights move. Two natural limits are bounded drift, such as $\|w_t-w_{t-1}\|_1\leq\delta$, and restricting attention to a recent window.
 
-Our first attempt would maintain several candidate summaries at different timescales and a small reserve of items covering currently underrepresented topics. We would re-evaluate candidates when weights change, replacing items only when the predicted gain exceeds a threshold. The analysis would need to quantify how much value can be lost because old items were discarded, how drift accumulates between rebuilds, and how a replacement budget restricts recovery. A useful experiment would vary $\delta$ and compare utility, memory, oracle calls, and replacements against an offline solution for each time step. This is a proposed model and research path, rather than a claim that its precise guarantees are already known.
+Our first attempt would maintain several candidate summaries at different timescales and a small reserve of items covering currently underrepresented topics. We would re-evaluate candidates when weights change, replacing items only when the predicted gain exceeds a threshold. The analysis would need to quantify how much value can be lost because old items were discarded, how drift accumulates between rebuilds, and how a replacement budget restricts recovery. A useful experiment would vary $\delta$ and compare utility, memory, oracle calls, and replacements against an offline solution for each time step. We have not proved any guarantee for this model. A realistic first goal would be a bound of the form $f_t(S_t)\geq\alpha\OPT_t-g(\delta)$, where the additive loss $g$ grows with the drift; whether such a bound is possible with memory independent of $t$ is the open part of the question.
 
-A second direction is to make oracle cost explicit for objectives whose values depend on the entire stream. For a decomposable objective, an evaluation sample can estimate $f_t(S)$, but inaccurate estimates near the acceptance threshold may change which elements are retained. A useful theoretical target would relate sample size and update time to the final approximation loss, while accounting for the fact that candidate sets are chosen adaptively from the same stream. The 2014 paper begins this analysis for a fixed objective; evolving weights would add another source of estimation error \cite{badanidiyuru2014streaming}.
+A second direction follows from Section~\ref{sec:assumptions}: relate the sample size used to estimate $f_t$ to the final approximation loss, taking into account that candidate sets are chosen adaptively from the same stream, and that evolving weights add another source of estimation error.
 
 \section{Conclusion}
-Streaming submodular maximization asks how much utility can be retained when a large input is read once and only a small subset can be stored. Sieve-Streaming gives a one-pass $(1/2-\varepsilon)$ approximation for arbitrary-order streams by combining an adaptive acceptance threshold with a geometric family of guesses for the unknown optimum. Its proof turns on a concrete dichotomy: a full candidate has accumulated enough value, while an unfilled candidate has rejected only low-marginal optimal elements. The lazy implementation preserves this argument because no item that could pass a newly created sieve's initial threshold arrived before that sieve became active.
+Sieve-Streaming gives a one-pass $(1/2-\varepsilon)$ approximation for arbitrary-order streams by combining an adaptive acceptance threshold with a geometric family of guesses for the unknown optimum. The proof has two cases: a full candidate has collected enough value, because every accepted item paid its share of $v/2$, and an unfilled candidate has rejected only optimal elements with small marginal gain, so they cannot add much to it. The lazy implementation preserves this argument because no item that could pass a newly created sieve's initial threshold arrived before that sieve became active.
 
-Later results separate the roles of arrival order, passes, and memory. Random order can improve the factor beyond $1/2$; two passes can also improve it; and Sieve-Streaming++ reduces memory for a factor approaching $1/2$. The resulting picture is a useful example of the course's broader theme: limited resources do not merely slow an offline algorithm, but demand a different decision rule and a proof adapted to the information available at each step. In recommendation-oriented applications, the next modeling question is how these guarantees change when the utility function itself evolves.
+Later results separate the roles of arrival order, passes, and memory. In arbitrary order, $1/2$ is tight: Sieve-Streaming++ reaches it with $O(k/\varepsilon)$ memory, and any better factor needs memory growing with $n$. Random order raises the attainable factor to $1-1/e-\varepsilon$, matching offline greedy, and two passes also improve on $1/2$ without assuming random order. Across these results, the one-pass restriction forces the algorithm to decide on each item as it arrives, so a threshold test replaces greedy's global search, and the proof has to be rebuilt around what that test guarantees. In recommendation-oriented applications, the next modeling question is how these guarantees change when the utility function itself evolves.
 
-% Authors: keep the following first-person statement only after you have
-% actually reviewed the complete manuscript and verified its references.
+% Author: keep this statement accurate to how the manuscript was actually reviewed.
 \section*{Generative AI Acknowledgment}
-Generative AI tools assisted throughout this project with planning the survey, organizing the literature, drafting and revising the prose, checking the presentation of proof arguments, and preparing the LaTeX and bibliography. The authors have read the cited sources, reviewed and revised the final manuscript, and approved its contents. All mathematical claims, interpretations, citations, and any remaining errors are the authors' responsibility.
+Generative AI assisted with research and manuscript preparation. I have reviewed and approved the final text. Some cited work was summarized with AI assistance without a full reading of every source. I am responsible for the mathematical claims, interpretations, citations, and any remaining errors.
 
+{\small
 \bibliographystyle{plain}
 \bibliography{references}
+}
 
 \end{document}

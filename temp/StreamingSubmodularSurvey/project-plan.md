@@ -34,6 +34,8 @@
 4. Kazemi et al.（2019）：Sieve-Streaming++ 的正式定理為 $(1/2-\varepsilon)$ approximation 與 $O(k/\varepsilon)$ 儲存量；固定 $\varepsilon$ 時，記憶體對 $k$ 呈線性。
 5. Chen, Nguyen, and Zhang（2016）：sliding-window submodular maximization；用於定位 future directions。
 6. Duetting et al.（2024）：維持解的品質時限制相鄰時間點的替換量；用於定位 future directions。
+7. Feldman et al.（2020）：arbitrary-order、one-pass 模型中無條件的 $1/2$ barrier。
+8. Agrawal, Shadravan, and Stein（2019）與 Liu et al.（2021）：random-order 模型逼近 $1-1/e$ 的結果。
 
 **範圍界線：**先集中於 monotone objective、cardinality constraint、value-oracle 模型。Non-monotone、matroid constraint、完整的線上推薦系統實作都不是本文的主要分析對象。推薦只用來說明動機與後續研究問題；固定 $f$ 的定理不能直接宣稱適用於會變動的使用者偏好。
 
@@ -92,9 +94,11 @@
 - [x] 查證 future direction 的相關研究，將「偏好漂移」收斂成具體且不誇稱新穎性的研究問題。
 - [x] 加入 Generative AI Acknowledgment，並在 TeX 原始檔提醒作者須先實際審閱再提交。
 - [x] 確認 LaTeX 原始檔可編譯，且所有引用鍵都對應到 bibliography。
+- [x] 補上 Feldman et al.（STOC 2020）的無條件 $1/2$ lower bound、random-order $1-1/e-\varepsilon$ 結果（Agrawal et al. 2019；Liu et al. 2021），以及 Sieve-Streaming pseudocode 與 Sieve-Streaming++ 的 $O(k/\varepsilon)$ 求和論證。
+- [x] 對照原文核對新增三篇論文的定理敘述（特別是 Feldman et al. 的 $\Omega(\varepsilon n/k^3)$ 與 Agrawal et al. 的 window 直覺描述）。
 - [ ] 檢查預覽 PDF 的實際頁數及視覺排版；目標約 10 頁。
 - [ ] 由組員逐段人工 proofread，確認論述是自己的文字並符合課程要求。
 
 ## 六、目前草稿的狀態
 
-[`main.tex`](main.tex) 已完成一輪完整的 survey：正式問題定義、主要結果與假設比較、Sieve-Streaming 的核心證明、課堂技術連結、具體 future direction、結論，以及 Generative AI Acknowledgment。LaTeX 原始檔已可編譯；實際 PDF 頁數與視覺排版仍待預覽核對。提交前須填入組員姓名，並由組員逐段審閱數學、引用及全文措辭；確認 acknowledgment 對實際審閱情況的敘述屬實。
+[`main.tex`](main.tex) 已完成一輪完整的 survey：正式問題定義、主要結果與假設比較、Sieve-Streaming 的核心證明、課堂技術連結、具體 future direction、結論，以及 Generative AI Acknowledgment。LaTeX 原始檔已可編譯；實際 PDF 頁數與視覺排版仍待預覽核對。作者姓名已填入；提交前仍須由作者逐段審閱數學、引用及全文措辭，並確認 acknowledgment 對實際審閱情況的敘述屬實。
