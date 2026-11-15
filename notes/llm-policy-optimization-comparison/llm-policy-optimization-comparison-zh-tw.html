@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>GRPO、Dr. GRPO、GSPO、ARPO：四個改動各在解什麼問題 — Ludwig</title>
-  <meta name="garden:tags" content="強化學習, GRPO (群體相對策略優化), dr-grpo, gspo, arpo, RLHF (人類回饋強化學習)">
+  <meta name="garden:tags" content="強化學習, GRPO (群體相對策略優化), 分佈式強健群組相對策略優化, 群組排序策略優化, 主動排序策略優化, RLHF (人類回饋強化學習)">
   <meta name="garden:summary" content="以採樣、loss 權重、重要性比率與工具互動四條差異軸，對照 GRPO、Dr. GRPO、GSPO、ARPO 的核心機制與證據邊界。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.reinforcement_learning,concept.grpo,,,,concept.rlhf">
-  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.grpo&quot;:{&quot;en&quot;:&quot;GRPO&quot;,&quot;zh-Hant&quot;:&quot;GRPO (群體相對策略優化)&quot;,&quot;zh-Hans&quot;:&quot;GRPO (群体相对策略优化)&quot;},&quot;concept.rlhf&quot;:{&quot;en&quot;:&quot;RLHF&quot;,&quot;zh-Hant&quot;:&quot;RLHF (人類回饋強化學習)&quot;,&quot;zh-Hans&quot;:&quot;RLHF (人类反馈强化学习)&quot;}}">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,concept.grpo,concept.dr_grpo,concept.gspo,concept.arpo,concept.rlhf">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.grpo&quot;:{&quot;en&quot;:&quot;GRPO&quot;,&quot;zh-Hant&quot;:&quot;GRPO (群體相對策略優化)&quot;,&quot;zh-Hans&quot;:&quot;GRPO (群体相对策略优化)&quot;},&quot;concept.dr_grpo&quot;:{&quot;en&quot;:&quot;DR-GRPO&quot;,&quot;zh-Hant&quot;:&quot;分佈式強健群組相對策略優化&quot;,&quot;zh-Hans&quot;:&quot;分布式鲁棒群组相对策略优化&quot;},&quot;concept.gspo&quot;:{&quot;en&quot;:&quot;GSPO&quot;,&quot;zh-Hant&quot;:&quot;群組排序策略優化&quot;,&quot;zh-Hans&quot;:&quot;群组排序策略优化&quot;},&quot;concept.arpo&quot;:{&quot;en&quot;:&quot;ARPO&quot;,&quot;zh-Hant&quot;:&quot;主動排序策略優化&quot;,&quot;zh-Hans&quot;:&quot;主动排序策略优化&quot;},&quot;concept.rlhf&quot;:{&quot;en&quot;:&quot;RLHF&quot;,&quot;zh-Hant&quot;:&quot;RLHF (人類回饋強化學習)&quot;,&quot;zh-Hans&quot;:&quot;RLHF (人类反馈强化学习)&quot;}}">
   <meta name="site:canonical_id" content="llm-policy-optimization-comparison">
   <meta name="site:last_modified_at" content="2026-10-11">
   <meta name="site:reading_time_minutes" content="9">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"

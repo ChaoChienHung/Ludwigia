@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Upside-Down RL：用想達成的結果指揮下一個動作 — Ludwig</title>
-  <meta name="garden:tags" content="強化學習, Upside-Down RL, return conditioning, 監督式學習">
+  <meta name="garden:tags" content="強化學習, 顛倒強化學習, 回報條件化, 監督式學習">
   <meta name="garden:summary" content="理解 Upside-Down RL 如何把期望回報與時間範圍當成指令，以回頭標記的經驗訓練行為模型，並對照 Decision Transformer。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.reinforcement_learning,,,concept.supervised_learning">
-  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.supervised_learning&quot;:{&quot;en&quot;:&quot;Supervised Learning&quot;,&quot;zh-Hant&quot;:&quot;監督式學習&quot;,&quot;zh-Hans&quot;:&quot;监督学习&quot;}}">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,concept.upside_down_rl,concept.return_conditioning,concept.supervised_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.upside_down_rl&quot;:{&quot;en&quot;:&quot;Upside-Down Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;顛倒強化學習&quot;,&quot;zh-Hans&quot;:&quot;颠倒强化学习&quot;},&quot;concept.return_conditioning&quot;:{&quot;en&quot;:&quot;Return Conditioning&quot;,&quot;zh-Hant&quot;:&quot;回報條件化&quot;,&quot;zh-Hans&quot;:&quot;回报条件化&quot;},&quot;concept.supervised_learning&quot;:{&quot;en&quot;:&quot;Supervised Learning&quot;,&quot;zh-Hant&quot;:&quot;監督式學習&quot;,&quot;zh-Hans&quot;:&quot;监督学习&quot;}}">
   <meta name="site:canonical_id" content="upside-down-rl">
   <meta name="site:last_modified_at" content="2026-10-10">
   <meta name="site:reading_time_minutes" content="7">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -209,7 +212,7 @@
 <section id="3-decision-transformer" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">3. 為什麼值得和 Decision Transformer 一起讀？</h3>
 
-<p class="mb-3">UDRL 早於 <a class="note-content-link" data-canonical-id="decision-transformer" href="../decision-transformer/decision-transformer-zh-tw.html">Decision Transformer（DT）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Decision Transformer：把離線強化學習改寫成條件式序列預測</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">強化學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從行為複製的限制出發，理解 Decision Transformer 如何用目標回報、狀態與動作組成序列，以及訓練與部署時的回報更新。</span></span></span></a>，清楚提出<strong>用期望結果條件化動作預測</strong>的觀點。DT 沿著相近想法，把離線軌跡排成 <code>RTG, state, action</code> 的 token 序列，用因果 Transformer 訓練；原始 UDRL 的指令則同時含回報與時間範圍，實作工作也強調互動收集與再訓練。它們共享「結果條件 → 行動」的方向，但資料流程與模型形式不同。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">DT 原論文 §2–3</a>；<a class="note-inline-link" href="https://arxiv.org/abs/1912.02877" target="_blank" rel="noopener noreferrer">UDRL 實作論文</a></p>
+<p class="mb-3">UDRL 早於 <a class="note-content-link" data-canonical-id="decision-transformer" href="../decision-transformer/decision-transformer-zh-tw.html">Decision Transformer（DT）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Decision Transformer：把離線強化學習改寫成條件式序列預測</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">強化學習</span><span class="note-content-link-preview-tag">離線強化學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從行為複製的限制出發，理解 Decision Transformer 如何用目標回報、狀態與動作組成序列，以及訓練與部署時的回報更新。</span></span></span></a>，清楚提出<strong>用期望結果條件化動作預測</strong>的觀點。DT 沿著相近想法，把離線軌跡排成 <code>RTG, state, action</code> 的 token 序列，用因果 Transformer 訓練；原始 UDRL 的指令則同時含回報與時間範圍，實作工作也強調互動收集與再訓練。它們共享「結果條件 → 行動」的方向，但資料流程與模型形式不同。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">DT 原論文 §2–3</a>；<a class="note-inline-link" href="https://arxiv.org/abs/1912.02877" target="_blank" rel="noopener noreferrer">UDRL 實作論文</a></p>
 
 <p class="mb-3">需要守住一個界線：指令是<strong>要求</strong>，不是<strong>保證</strong>。若資料裡沒有對應高回報的可學行為，只把數字調高，不會憑空產生成功策略。實作論文也討論模型可能忽略指令的問題，因此如何讓條件真正影響行動，是方法是否有效的關鍵。<a class="note-inline-link" href="https://arxiv.org/html/1912.02877" target="_blank" rel="noopener noreferrer">實作論文 §3–4</a></p>
 </section>

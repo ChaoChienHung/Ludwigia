@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>OneTrans：同一個 Transformer 如何處理行為序列與特徵交互 — Ludwig</title>
-  <meta name="garden:tags" content="推薦系統, OneTrans, Transformer 模型, feature interaction">
+  <meta name="garden:tags" content="推薦系統, OneTrans, Transformer 模型, 特徵交互">
   <meta name="garden:summary" content="從傳統推薦模型分開處理歷史與特徵的成本出發，拆解 OneTrans 的 S／NS tokens、混合參數、因果遮罩、金字塔序列與快取。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.recommender_systems,,concept.transformers,">
-  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;}}">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.onetrans,concept.transformers,concept.feature_interaction">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.onetrans&quot;:{&quot;en&quot;:&quot;OneTrans&quot;,&quot;zh-Hant&quot;:&quot;OneTrans&quot;,&quot;zh-Hans&quot;:&quot;OneTrans&quot;},&quot;concept.transformers&quot;:{&quot;en&quot;:&quot;Transformers&quot;,&quot;zh-Hant&quot;:&quot;Transformer 模型&quot;,&quot;zh-Hans&quot;:&quot;Transformer 模型&quot;},&quot;concept.feature_interaction&quot;:{&quot;en&quot;:&quot;Feature Interaction&quot;,&quot;zh-Hant&quot;:&quot;特徵交互&quot;,&quot;zh-Hans&quot;:&quot;特征交互&quot;}}">
   <meta name="site:canonical_id" content="onetrans">
   <meta name="site:last_modified_at" content="2026-10-09">
   <meta name="site:reading_time_minutes" content="7">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -209,7 +212,7 @@
 <section id="3-onetrans-v2" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">3. 與 OneTrans-V2 的邊界</h3>
 
-<p class="mb-3">原始 OneTrans 統一的是<strong>一個排序模型內</strong>的序列建模與特徵交互；它並未把召回、粗排、精排三個階段全部變成同一模型。<a class="note-content-link" data-canonical-id="onetrans-v2" href="../onetrans-v2/onetrans-v2-zh-tw.html">OneTrans-V2<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">OneTrans-V2：一個使用者脈絡服務召回、粗排與精排</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">OneTrans-V2</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從三級推薦流水線的重複歷史計算出發，理解 OneTrans-V2 的階段 token、生成式召回、SNT、跨階段快取與其限制。</span></span></span></a> 才把共用使用者脈絡擴展到整個級聯流水線。對照 <a class="note-content-link" data-canonical-id="dlrm" href="../dlrm/deep-learning-recommendation-model-zh-tw.html">DLRM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">DLRM：從特徵表到候選商品打分</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">DLRM</span><span class="note-content-link-preview-tag">精排</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從推薦排序的業務問題出發，理解 DLRM 如何處理稠密與稀疏特徵、計算交互並預測點擊，以及它為何成為序列式推薦模型的比較基準。</span></span></span></a>，可以記成：DLRM 先組織候選特徵再打分；OneTrans 把歷史 token 與特徵 token 放入同一 Transformer 共同處理。</p>
+<p class="mb-3">原始 OneTrans 統一的是<strong>一個排序模型內</strong>的序列建模與特徵交互；它並未把召回、粗排、精排三個階段全部變成同一模型。<a class="note-content-link" data-canonical-id="onetrans-v2" href="../onetrans-v2/onetrans-v2-zh-tw.html">OneTrans-V2<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">OneTrans-V2：一個使用者脈絡服務召回、粗排與精排</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">OneTrans-V2</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從三級推薦流水線的重複歷史計算出發，理解 OneTrans-V2 的階段 token、生成式召回、SNT、跨階段快取與其限制。</span></span></span></a> 才把共用使用者脈絡擴展到整個級聯流水線。對照 <a class="note-content-link" data-canonical-id="dlrm" href="../dlrm/deep-learning-recommendation-model-zh-tw.html">DLRM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">DLRM：從特徵表到候選商品打分</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">深度學習推薦模型</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從推薦排序的業務問題出發，理解 DLRM 如何處理稠密與稀疏特徵、計算交互並預測點擊，以及它為何成為序列式推薦模型的比較基準。</span></span></span></a>，可以記成：DLRM 先組織候選特徵再打分；OneTrans 把歷史 token 與特徵 token 放入同一 Transformer 共同處理。</p>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">

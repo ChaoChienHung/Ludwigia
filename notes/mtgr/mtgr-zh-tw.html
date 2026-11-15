@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>MTGR：在序列骨幹中保留工業排序的交叉特徵 — Ludwig</title>
-  <meta name="garden:tags" content="推薦系統, MTGR, Meituan, 精排, HSTU">
+  <meta name="garden:tags" content="推薦系統, 多任務生成式推薦模型, 美團, 精排, 階層式循序轉換器單元">
   <meta name="garden:summary" content="理解美團 MTGR 為何將 HSTU 類序列建模與 DLRM 特徵結合，以及 user-level 聚合、動態 mask 和判別式目標的角色。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.recommender_systems,,,concept.ranking,">
-  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;}}">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.mtgr,concept.meituan,concept.ranking,concept.hstu">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.mtgr&quot;:{&quot;en&quot;:&quot;MTGR&quot;,&quot;zh-Hant&quot;:&quot;多任務生成式推薦模型&quot;,&quot;zh-Hans&quot;:&quot;多任务生成式推荐模型&quot;},&quot;concept.meituan&quot;:{&quot;en&quot;:&quot;Meituan&quot;,&quot;zh-Hant&quot;:&quot;美團&quot;,&quot;zh-Hans&quot;:&quot;美团&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;},&quot;concept.hstu&quot;:{&quot;en&quot;:&quot;HSTU&quot;,&quot;zh-Hant&quot;:&quot;階層式循序轉換器單元&quot;,&quot;zh-Hans&quot;:&quot;分层顺序转换器单元&quot;}}">
   <meta name="site:canonical_id" content="mtgr">
   <meta name="site:last_modified_at" content="2026-10-09">
   <meta name="site:reading_time_minutes" content="7">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -190,7 +193,7 @@
 <section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">1. 資料先分成共用與候選專屬</h3>
 
-<p class="mb-3">使用者基本資料與較早的歷史、近期即時行為，大多能讓同一請求的多個候選共用；候選商品特徵與 user–item 交叉特徵則會隨候選而變。MTGR 把這些來源整理為 token 序列，讓 HSTU 類骨幹共同建模，同時保留傳統 <a class="note-content-link" data-canonical-id="dlrm" href="../dlrm/deep-learning-recommendation-model-zh-tw.html">DLRM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">DLRM：從特徵表到候選商品打分</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">DLRM</span><span class="note-content-link-preview-tag">精排</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從推薦排序的業務問題出發，理解 DLRM 如何處理稠密與稀疏特徵、計算交互並預測點擊，以及它為何成為序列式推薦模型的比較基準。</span></span></span></a> 的豐富候選特徵。<a class="note-inline-link" href="https://arxiv.org/html/2505.18654" target="_blank" rel="noopener noreferrer">原論文 §3–4</a></p>
+<p class="mb-3">使用者基本資料與較早的歷史、近期即時行為，大多能讓同一請求的多個候選共用；候選商品特徵與 user–item 交叉特徵則會隨候選而變。MTGR 把這些來源整理為 token 序列，讓 HSTU 類骨幹共同建模，同時保留傳統 <a class="note-content-link" data-canonical-id="dlrm" href="../dlrm/deep-learning-recommendation-model-zh-tw.html">DLRM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">DLRM：從特徵表到候選商品打分</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">深度學習推薦模型</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從推薦排序的業務問題出發，理解 DLRM 如何處理稠密與稀疏特徵、計算交互並預測點擊，以及它為何成為序列式推薦模型的比較基準。</span></span></span></a> 的豐富候選特徵。<a class="note-inline-link" href="https://arxiv.org/html/2505.18654" target="_blank" rel="noopener noreferrer">原論文 §3–4</a></p>
 
 <div class="note-markdown-block"><pre><code class="language-text">使用者與歷史 ─┐
 即時行為 ────┼→ HSTU 類骨幹 → 候選分數
@@ -212,7 +215,7 @@
 
 <p class="mb-3">關鍵是以使用者為粒度聚合樣本，讓多個候選和曝光共用歷史計算；再配合 embedding 查詢、負載平衡與算子方面的優化。論文報告大型版本單樣本前向 FLOPs 約為基線的 65 倍，但訓練成本相近、線上推理資源較低；這些是其特定系統與基線下的結果，不能把 FLOPs 當成實際延遲的同義詞。<a class="note-inline-link" href="https://arxiv.org/html/2505.18654" target="_blank" rel="noopener noreferrer">原論文實驗</a></p>
 
-<p class="mb-3"><a class="note-content-link" data-canonical-id="mtfm" href="../mtfm/mtfm-zh-tw.html">MTFM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">MTFM：跨業務共用行為骨幹並擴大 Target 表示</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">MTFM</span><span class="note-content-link-preview-tag">Meituan</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從美團多場景推薦的特徵不一致與長序列成本出發，理解 H/R/T tokens、動態遮罩、Hybrid Target Attention 與 Target Scale-Up。</span></span></span></a> 進一步把問題擴展到多個外賣業務場景，並擴大 target token 的表示；它不是 MTGR 的別名。</p>
+<p class="mb-3"><a class="note-content-link" data-canonical-id="mtfm" href="../mtfm/mtfm-zh-tw.html">MTFM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">MTFM：跨業務共用行為骨幹並擴大 Target 表示</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從美團多場景推薦的特徵不一致與長序列成本出發，理解 H/R/T tokens、動態遮罩、Hybrid Target Attention 與 Target Scale-Up。</span></span></span></a> 進一步把問題擴展到多個外賣業務場景，並擴大 target token 的表示；它不是 MTGR 的別名。</p>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">

@@ -14,15 +14,18 @@
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-08-22">
   <meta name="site:cover" content="notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities.png">
-  <meta name="site:reading_time_minutes" content="25">
+  <meta name="site:reading_time_minutes" content="24">
   <meta name="site:source" content="notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.md">
   <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
-  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
 <body class="note-page note-style-default" data-i18n-page="contentPage">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
@@ -38,7 +41,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -358,9 +361,9 @@
 <ul class="note-list">
 <li><strong><a class="note-content-link" data-canonical-id="markovs-inequality-probabilistic-bounds-for-non-negative-variables" href="../markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html">馬可夫不等式（Markov's Inequality）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">馬爾科夫不等式：基於期望值的非負隨機變數機率上限</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">詳細介紹馬爾科夫不等式的數學定義、非負前提條件、幾何證明直覺，以及在隨機演算法執行時間上限與一階矩 Tail Bound 中的基礎應用。</span></span></span></a></strong>
 <p class="mb-2">這是不等式家族中最基礎、也最通用的工具。它唯一的前提條件是隨機變數必須為非負數（即 $X \ge 0$）。在我們只知道一階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>，亦即<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span> $\mathbb{E}[X]$ 的匱乏情況下，它就能給出一個<span class="note-information" tabindex="0" data-information-concept="concept.tail_bound" data-information-lang="zh-tw">尾端衰減速率<span class="note-information-tooltip" aria-hidden="true"></span></span>為多項式級 $\mathcal{O}(1/t)$ 的保證。由於所需條件極低，當我們對系統幾乎一無所知時，它通常作為最底層的保底界限。</p></li>
-<li><strong><a class="note-content-link" data-canonical-id="chebyshevs-inequality-and-variance" href="../chebyshevs-inequality-and-variance/chebyshevs-inequality-and-variance-zh-tw.html">柴比雪夫不等式（Chebyshev's Inequality）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chebyshev 不等式與變異數分析：從方差壓制偏差</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">深入 Chebyshev 不等式的數學推導、Pairwise Independence 條件、共變異數（Covariance）矩陣，並以 Balls &amp; Bins 模型中負共變異數（Negative Covariance）的精確界限證明為實戰範例。</span></span></span></a></strong>
+<li><strong>柴比雪夫不等式（Chebyshev's Inequality）</strong>
 <p class="mb-2">當我們對系統有進一步的了解，除了<span class="note-information" tabindex="0" data-information-concept="concept.expectation" data-information-lang="zh-tw">期望值<span class="note-information-tooltip" aria-hidden="true"></span></span>，還掌握了二階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>，也就是<span class="note-information" tabindex="0" data-information-concept="concept.variance" data-information-lang="zh-tw">變異數<span class="note-information-tooltip" aria-hidden="true"></span></span> $\operatorname{Var}(X)$ 為有限值的狀態時，就可以升級使用柴比雪夫不等式。它將衰減速率顯著提升到了 $\mathcal{O}(1/t^2)$，使得界限大幅收緊。在實務上，它特別適用於我們能證明變數之間存在弱條件的場景，像是成對獨立（Pairwise independence）。</p></li>
-<li><strong><a class="note-content-link" data-canonical-id="chernoff-bound-and-exponential-concentration" href="../chernoff-bound-and-exponential-concentration/chernoff-bound-and-exponential-concentration-zh-tw.html">切爾諾夫界（Chernoff Bound）<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Chernoff Bound 與指數級集中：獨立隨機變數和的強界限</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">演算法</span><span class="note-content-link-preview-tag">機率學</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">剖析矩生成函數（MGF）與 Chernoff Bound 的指數級衰減特性，對比 Chebyshev 界的優勢，並深入證明多項式球桶分配下的強集中度與無空桶極高機率定理。</span></span></span></a></strong>
+<li><strong>切爾諾夫界（Chernoff Bound）</strong>
 <p class="mb-2">這是工具箱中最銳利的武器。當隨機變數是由多個互相獨立且有界的子變數加總而成（形式為 $X = \sum X_i$）時，我們可以利用<span class="note-information" tabindex="0" data-information-concept="concept.mgf" data-information-lang="zh-tw">動差生成函數<span class="note-information-tooltip" aria-hidden="true"></span></span>，來捕捉無限階<span class="note-information" tabindex="0" data-information-concept="concept.moments" data-information-lang="zh-tw">動差<span class="note-information-tooltip" aria-hidden="true"></span></span>的資訊。藉由如此強大的前提，它能給出指數級別的衰減速率 $e^{-\Omega(t^2)}$。在分析獨立試驗總和，像是在計算隨機演算法的成功率時，它能提供極強且令人安心的機率保證。</p></li>
 <li><strong>聯集界限（Union Bound）</strong>
 <p class="mb-2">常被稱為 Boole's Inequality。與上述探討單一隨機變數偏移的工具不同，它是用來處理事件集合的。它不需要任何獨立性前提，完全無條件適用。只要知道個別壞事件發生的機率，就可以透過簡單的線性疊加 $\sum \operatorname{Pr}[A_i]$ 來計算出至少發生一件壞事的總失敗率上界。在結合多個可能導致系統崩潰的潛在問題時，它是不可或缺的最強實用工具。</p></li>

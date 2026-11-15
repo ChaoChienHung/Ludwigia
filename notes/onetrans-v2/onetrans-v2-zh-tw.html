@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>OneTrans-V2：一個使用者脈絡服務召回、粗排與精排 — Ludwig</title>
-  <meta name="garden:tags" content="推薦系統, OneTrans-V2, 召回, 精排, sequence native training">
+  <meta name="garden:tags" content="推薦系統, OneTrans-V2, 召回, 精排, 全序列原生訓練">
   <meta name="garden:summary" content="從三級推薦流水線的重複歷史計算出發，理解 OneTrans-V2 的階段 token、生成式召回、SNT、跨階段快取與其限制。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.recommender_systems,,concept.retrieval,concept.ranking,">
-  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.retrieval&quot;:{&quot;en&quot;:&quot;Retrieval&quot;,&quot;zh-Hant&quot;:&quot;召回&quot;,&quot;zh-Hans&quot;:&quot;召回&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;}}">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.onetrans_v2,concept.retrieval,concept.ranking,concept.sequence_native_training">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.onetrans_v2&quot;:{&quot;en&quot;:&quot;OneTrans-V2&quot;,&quot;zh-Hant&quot;:&quot;OneTrans-V2&quot;,&quot;zh-Hans&quot;:&quot;OneTrans-V2&quot;},&quot;concept.retrieval&quot;:{&quot;en&quot;:&quot;Retrieval&quot;,&quot;zh-Hant&quot;:&quot;召回&quot;,&quot;zh-Hans&quot;:&quot;召回&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;},&quot;concept.sequence_native_training&quot;:{&quot;en&quot;:&quot;Sequence-Native Training&quot;,&quot;zh-Hant&quot;:&quot;全序列原生訓練&quot;,&quot;zh-Hans&quot;:&quot;全序列原生训练&quot;}}">
   <meta name="site:canonical_id" content="onetrans-v2">
   <meta name="site:last_modified_at" content="2026-10-09">
   <meta name="site:reading_time_minutes" content="8">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -217,7 +220,7 @@
 <section id="4" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">4. 如何與其他路線定位？</h3>
 
-<p class="mb-3"><a class="note-content-link" data-canonical-id="mtfm" href="../mtfm/mtfm-zh-tw.html">MTFM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">MTFM：跨業務共用行為骨幹並擴大 Target 表示</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">MTFM</span><span class="note-content-link-preview-tag">Meituan</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從美團多場景推薦的特徵不一致與長序列成本出發，理解 H/R/T tokens、動態遮罩、Hybrid Target Attention 與 Target Scale-Up。</span></span></span></a> 主要統一<strong>多業務場景的精排</strong>；OneTrans-V2 統一<strong>同一推薦流水線的三個階段</strong>。<a class="note-content-link" data-canonical-id="hstu" href="../hstu/hstu-zh-tw.html">HSTU<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">HSTU：把推薦改寫為使用者行為的序列預測</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">HSTU</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從逐候選打分的重複計算出發，理解 HSTU 的序列轉導、pointwise aggregated attention、長序列工程，以及它與後續排序模型的邊界。</span></span></span></a> 則由行為序列預測問題出發。它們都重視使用者歷史與計算重用，但處理的系統邊界不同。</p>
+<p class="mb-3"><a class="note-content-link" data-canonical-id="mtfm" href="../mtfm/mtfm-zh-tw.html">MTFM<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">MTFM：跨業務共用行為骨幹並擴大 Target 表示</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從美團多場景推薦的特徵不一致與長序列成本出發，理解 H/R/T tokens、動態遮罩、Hybrid Target Attention 與 Target Scale-Up。</span></span></span></a> 主要統一<strong>多業務場景的精排</strong>；OneTrans-V2 統一<strong>同一推薦流水線的三個階段</strong>。<a class="note-content-link" data-canonical-id="hstu" href="../hstu/hstu-zh-tw.html">HSTU<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">HSTU：把推薦改寫為使用者行為的序列預測</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從逐候選打分的重複計算出發，理解 HSTU 的序列轉導、pointwise aggregated attention、長序列工程，以及它與後續排序模型的邊界。</span></span></span></a> 則由行為序列預測問題出發。它們都重視使用者歷史與計算重用，但處理的系統邊界不同。</p>
 </section>
 
 <section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">

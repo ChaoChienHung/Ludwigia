@@ -4,10 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>LLM Rollout 系統地圖：veRL、Resharding、SGLang 與 Ray — Ludwig</title>
-  <meta name="garden:tags" content="llm systems, verl, sglang, radixattention, ray, kv cache">
+  <meta name="garden:tags" content="大型語言模型系統工程, veRL, SGLang, 前綴基數樹注意力, Ray 分佈式框架, 鍵值快取">
   <meta name="garden:summary" content="從「產生回答後更新模型」的一次循環出發，理解 veRL 3D-HybridEngine 的權重重分片、SGLang DSL 與 RadixAttention，以及 Ray 的分散式協調角色。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.llm_systems,concept.verl,concept.sglang,concept.radixattention,concept.ray,concept.kv_cache">
+  <meta name="site:tag_labels" content="{&quot;concept.llm_systems&quot;:{&quot;en&quot;:&quot;LLM Systems&quot;,&quot;zh-Hant&quot;:&quot;大型語言模型系統工程&quot;,&quot;zh-Hans&quot;:&quot;大型语言模型系统工程&quot;},&quot;concept.verl&quot;:{&quot;en&quot;:&quot;veRL&quot;,&quot;zh-Hant&quot;:&quot;veRL&quot;,&quot;zh-Hans&quot;:&quot;veRL&quot;},&quot;concept.sglang&quot;:{&quot;en&quot;:&quot;SGLang&quot;,&quot;zh-Hant&quot;:&quot;SGLang&quot;,&quot;zh-Hans&quot;:&quot;SGLang&quot;},&quot;concept.radixattention&quot;:{&quot;en&quot;:&quot;RadixAttention&quot;,&quot;zh-Hant&quot;:&quot;前綴基數樹注意力&quot;,&quot;zh-Hans&quot;:&quot;前缀基数树注意力&quot;},&quot;concept.ray&quot;:{&quot;en&quot;:&quot;Ray&quot;,&quot;zh-Hant&quot;:&quot;Ray 分佈式框架&quot;,&quot;zh-Hans&quot;:&quot;Ray 分布式框架&quot;},&quot;concept.kv_cache&quot;:{&quot;en&quot;:&quot;KV Cache&quot;,&quot;zh-Hant&quot;:&quot;鍵值快取&quot;,&quot;zh-Hans&quot;:&quot;键值缓存&quot;}}">
   <meta name="site:canonical_id" content="llm-rollout-systems-verl-sglang-ray">
   <meta name="site:last_modified_at" content="2026-10-11">
   <meta name="site:reading_time_minutes" content="7">
@@ -17,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -34,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"

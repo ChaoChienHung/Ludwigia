@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Decision Transformer：把離線強化學習改寫成條件式序列預測 — Ludwig</title>
-  <meta name="garden:tags" content="強化學習, offline reinforcement learning, Decision Transformer, sequence modeling">
+  <meta name="garden:tags" content="強化學習, 離線強化學習, 決策 Transformer, 序列建模">
   <meta name="garden:summary" content="從行為複製的限制出發，理解 Decision Transformer 如何用目標回報、狀態與動作組成序列，以及訓練與部署時的回報更新。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content="concept.reinforcement_learning,,,">
-  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;}}">
+  <meta name="site:tag_concepts" content="concept.reinforcement_learning,concept.offline_reinforcement_learning,concept.decision_transformer,concept.sequence_modeling">
+  <meta name="site:tag_labels" content="{&quot;concept.reinforcement_learning&quot;:{&quot;en&quot;:&quot;Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;強化學習&quot;,&quot;zh-Hans&quot;:&quot;强化学习&quot;},&quot;concept.offline_reinforcement_learning&quot;:{&quot;en&quot;:&quot;Offline Reinforcement Learning&quot;,&quot;zh-Hant&quot;:&quot;離線強化學習&quot;,&quot;zh-Hans&quot;:&quot;离线强化学习&quot;},&quot;concept.decision_transformer&quot;:{&quot;en&quot;:&quot;Decision Transformer&quot;,&quot;zh-Hant&quot;:&quot;決策 Transformer&quot;,&quot;zh-Hans&quot;:&quot;决策 Transformer&quot;},&quot;concept.sequence_modeling&quot;:{&quot;en&quot;:&quot;Sequence Modeling&quot;,&quot;zh-Hant&quot;:&quot;序列建模&quot;,&quot;zh-Hans&quot;:&quot;序列建模&quot;}}">
   <meta name="site:canonical_id" content="decision-transformer">
   <meta name="site:last_modified_at" content="2026-10-10">
   <meta name="site:reading_time_minutes" content="9">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
@@ -223,7 +226,7 @@
 
 <p class="mb-3">一般行為複製只問「在這個狀態，資料中的人做了什麼？」DT 還問「<strong>要達到這個回報</strong>時，資料中相應的行動模式是什麼？」傳統 value-based 離線 RL 則會估計動作價值，再用價值來選動作。DT 沒有把這個估值步驟放進核心訓練目標。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">原論文 §1、§3</a></p>
 
-<p class="mb-3">這個「由期望結果反過來決定動作」的觀念，早於 DT 就出現在 <a class="note-content-link" data-canonical-id="upside-down-rl" href="../upside-down-rl/upside-down-rl-zh-tw.html">Upside-Down RL<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Upside-Down RL：用想達成的結果指揮下一個動作</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">強化學習</span><span class="note-content-link-preview-tag">Upside-Down RL</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">理解 Upside-Down RL 如何把期望回報與時間範圍當成指令，以回頭標記的經驗訓練行為模型，並對照 Decision Transformer。</span></span></span></a>。兩者都用結果條件做監督式動作學習；原始 Upside-Down RL 的指令還明確包含<strong>剩餘時間範圍</strong>，而 DT 用 <strong>RTG／狀態／動作的因果序列</strong>與離線軌跡訓練。DT 論文也明確列出 Upside-Down RL 為相關工作。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">DT 原論文 §2</a>；<a class="note-inline-link" href="https://arxiv.org/abs/1912.02875" target="_blank" rel="noopener noreferrer">Upside-Down RL 原文</a></p>
+<p class="mb-3">這個「由期望結果反過來決定動作」的觀念，早於 DT 就出現在 <a class="note-content-link" data-canonical-id="upside-down-rl" href="../upside-down-rl/upside-down-rl-zh-tw.html">Upside-Down RL<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Upside-Down RL：用想達成的結果指揮下一個動作</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">強化學習</span><span class="note-content-link-preview-tag">顛倒強化學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">理解 Upside-Down RL 如何把期望回報與時間範圍當成指令，以回頭標記的經驗訓練行為模型，並對照 Decision Transformer。</span></span></span></a>。兩者都用結果條件做監督式動作學習；原始 Upside-Down RL 的指令還明確包含<strong>剩餘時間範圍</strong>，而 DT 用 <strong>RTG／狀態／動作的因果序列</strong>與離線軌跡訓練。DT 論文也明確列出 Upside-Down RL 為相關工作。<a class="note-inline-link" href="https://arxiv.org/html/2106.01345" target="_blank" rel="noopener noreferrer">DT 原論文 §2</a>；<a class="note-inline-link" href="https://arxiv.org/abs/1912.02875" target="_blank" rel="noopener noreferrer">Upside-Down RL 原文</a></p>
 
 <p class="mb-3">最後要注意：把目標回報設得比資料中任何軌跡都高，模型仍可能輸出動作，但<strong>高條件不等於高績效保證</strong>。它學到的是資料支持的條件式行為；超出資料範圍時能否泛化，要靠實驗驗證。這是從訓練設定推得的實務邊界，而非單憑輸入目標就能消除的問題。</p>
 </section>

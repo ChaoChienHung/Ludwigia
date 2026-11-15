@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Kernel Fusion、PyTorch 與 cuDNN：誰描述運算，誰執行融合？ — Ludwig</title>
-  <meta name="garden:tags" content="gpu, kernel fusion, cudnn, pytorch, triton, 注意力">
+  <meta name="garden:tags" content="圖形處理器, 算子融合, cuDNN, PyTorch, Triton, 注意力">
   <meta name="garden:summary" content="從 GPU kernel 啟動與中間結果搬運的成本出發，辨清 PyTorch、torch.compile、Triton 與 cuDNN Graph API 的使用關係，以及 fused attention 的意思。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="drafting">
-  <meta name="site:tag_concepts" content=",,,,,concept.attention">
-  <meta name="site:tag_labels" content="{&quot;concept.attention&quot;:{&quot;en&quot;:&quot;Attention&quot;,&quot;zh-Hant&quot;:&quot;注意力&quot;,&quot;zh-Hans&quot;:&quot;注意力&quot;}}">
+  <meta name="site:tag_concepts" content="concept.gpu,concept.kernel_fusion,concept.cudnn,concept.pytorch,concept.triton,concept.attention">
+  <meta name="site:tag_labels" content="{&quot;concept.gpu&quot;:{&quot;en&quot;:&quot;GPU&quot;,&quot;zh-Hant&quot;:&quot;圖形處理器&quot;,&quot;zh-Hans&quot;:&quot;图形处理器&quot;},&quot;concept.kernel_fusion&quot;:{&quot;en&quot;:&quot;Kernel Fusion&quot;,&quot;zh-Hant&quot;:&quot;算子融合&quot;,&quot;zh-Hans&quot;:&quot;算子融合&quot;},&quot;concept.cudnn&quot;:{&quot;en&quot;:&quot;cuDNN&quot;,&quot;zh-Hant&quot;:&quot;cuDNN&quot;,&quot;zh-Hans&quot;:&quot;cuDNN&quot;},&quot;concept.pytorch&quot;:{&quot;en&quot;:&quot;PyTorch&quot;,&quot;zh-Hant&quot;:&quot;PyTorch&quot;,&quot;zh-Hans&quot;:&quot;PyTorch&quot;},&quot;concept.triton&quot;:{&quot;en&quot;:&quot;Triton&quot;,&quot;zh-Hant&quot;:&quot;Triton&quot;,&quot;zh-Hans&quot;:&quot;Triton&quot;},&quot;concept.attention&quot;:{&quot;en&quot;:&quot;Attention&quot;,&quot;zh-Hant&quot;:&quot;注意力&quot;,&quot;zh-Hans&quot;:&quot;注意力&quot;}}">
   <meta name="site:canonical_id" content="kernel-fusion-cudnn-pytorch">
   <meta name="site:last_modified_at" content="2026-10-11">
   <meta name="site:reading_time_minutes" content="7">
@@ -19,6 +19,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
   <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
 </head>
@@ -36,7 +39,7 @@
       <span class="visually-hidden">Outline</span>
     </button>
 
-    <a class="navbar-brand fw-bold custom-brand" href="../../index.html">Ludwig</a>
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
     <button
       type="button"
