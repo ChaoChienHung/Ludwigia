@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "stale_after_days": 90,
+  "categories": [
+    {
+      "id": "writing",
+      "title": { "en": "Writing", "zh-Hant": "寫作", "zh-Hans": "写作" }
+    },
+    {
+      "id": "workflow",
+      "title": { "en": "Workflow", "zh-Hant": "工作流", "zh-Hans": "工作流" }
+    }
+  ],
+  "items": [
+    {
+      "id": "knowledge-scaffolding-review",
+      "kind": "prompt",
+      "category": "writing",
+      "title": {
+        "en": "Knowledge scaffolding review",
+        "zh-Hant": "知識鷹架審稿",
+        "zh-Hans": "知识鹰架审稿"
+      },
+      "summary": {
+        "en": "Checks whether an article builds bottom-up without cognitive cliffs, inverted concepts, or disconnected sections.",
+        "zh-Hant": "檢查文章是否由底層往上逐層堆疊，找出認知斷崖、概念倒置與段落孤島。",
+        "zh-Hans": "检查文章是否由底层往上逐层堆叠，找出认知断崖、概念倒置与段落孤岛。"
+      },
+      "source": "data/Grimoire/prompts/knowledge-scaffolding-review.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "article-structure-extractor",
+      "kind": "skill",
+      "category": "writing",
+      "title": {
+        "en": "Article structure extractor",
+        "zh-Hant": "文章結構拆解",
+        "zh-Hans": "文章结构拆解"
+      },
+      "summary": {
+        "en": "Reverse-engineers a well-written article into its skeleton, section purposes, transitions, and a reusable template.",
+        "zh-Hant": "把一篇寫得好的文章逆向拆成骨架、每節目的、轉場方式與可重用模板。",
+        "zh-Hans": "把一篇写得好的文章逆向拆成骨架、每节目的、转场方式与可重用模板。"
+      },
+      "source": "skills/article-structure-extractor/skill.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "article-structure-writer",
+      "kind": "skill",
+      "category": "writing",
+      "title": {
+        "en": "Article structure writer",
+        "zh-Hant": "依結構成文",
+        "zh-Hans": "依结构成文"
+      },
+      "summary": {
+        "en": "Turns a given outline, per-section details, and raw notes into a readable article instead of a bullet dump.",
+        "zh-Hant": "把既定骨架、每節細項與原始素材轉寫成可讀的完整文章，而不是條列筆記。",
+        "zh-Hans": "把既定骨架、每节细项与原始素材转写成可读的完整文章，而不是条列笔记。"
+      },
+      "source": "skills/article-structure-writer/skill.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "markdown-to-note",
+      "kind": "skill",
+      "category": "workflow",
+      "title": {
+        "en": "Markdown to note",
+        "zh-Hant": "Markdown 轉筆記",
+        "zh-Hans": "Markdown 转笔记"
+      },
+      "summary": {
+        "en": "Restructures a plain Markdown article into Ludwigia's note format and generates the indexed HTML page.",
+        "zh-Hant": "把一般 Markdown 文章整理成 Ludwigia 的筆記格式，並生成可被索引的 HTML 頁面。",
+        "zh-Hans": "把一般 Markdown 文章整理成 Ludwigia 的笔记格式，并生成可被索引的 HTML 页面。"
+      },
+      "source": "skills/markdown-to-note/skill.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    }
+  ]
+}
