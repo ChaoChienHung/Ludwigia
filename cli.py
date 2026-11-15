@@ -127,6 +127,13 @@ def cmd_build_world(args: argparse.Namespace) -> None:
     _run(argv)
 
 
+def cmd_build_pages(args: argparse.Namespace) -> None:
+    argv = [sys.executable, os.path.join("tools", "build_pages.py")]
+    if getattr(args, "check", False):
+        argv.append("--check")
+    _run(argv)
+
+
 def cmd_build_portals(_: argparse.Namespace) -> None:
     portals_dir = os.path.join(_repo_dir(), "portals")
     subprocess.run(["npm", "run", "build"], cwd=portals_dir, check=True)
@@ -373,6 +380,10 @@ def main() -> None:
     p_build_world = sub.add_parser("build-world")
     p_build_world.add_argument("--check", action="store_true")
     p_build_world.set_defaults(func=cmd_build_world)
+
+    p_build_pages = sub.add_parser("build-pages")
+    p_build_pages.add_argument("--check", action="store_true")
+    p_build_pages.set_defaults(func=cmd_build_pages)
 
     p_build_portals = sub.add_parser("build-portals")
     p_build_portals.set_defaults(func=cmd_build_portals)

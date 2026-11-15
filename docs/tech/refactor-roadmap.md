@@ -45,11 +45,12 @@
 - [x] 部署路徑收斂為 Cloudflare：移除 GitHub Pages 的 Jekyll workflow；`.assetsignore` 補上 `.githooks/` 與 `.claude/`。GitHub 端的 Pages 設定需要作者在 repo Settings 手動關閉。
 - [x] 移除 `portals/package.json` 中未使用的 `@google/genai`、`express`、`dotenv`、`@types/express`，以及與 Vite 8 版本衝突、也沒有直接使用的 `esbuild`。重新 build 後 JS 與提交的版本逐位元組相同；順便用 `cli.py build-portals` 對齊先前多出未用 Tailwind 變數的 CSS。
 
-### Phase 2：手寫頁面 shell 收斂（中風險，影響畫面）
+### Phase 2：手寫頁面 shell 收斂（已完成，待作者驗收畫面）
 
 - 目標：手寫頁面的 `<head>`、navbar、footer 也從 `pages/_shared/` 生成，和內容頁共用同一套 partial。
-- 做法：手寫頁面改成 `*.src.html` + 一個 stdlib 的 Python 組裝步驟（`cli.py build-pages`），產物照樣提交，維持 `file://` 可用。
-- 守門：測試確認每個手寫頁面的 navbar 都和 partial 一致；組裝結果可重現。
+- 做法（實作時調整）：不另外維護 `*.src.html`，改在頁面本身用 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記區塊，由 stdlib 的 `tools/build_pages.py`（`cli.py build-pages`）重寫標記內容。這樣每頁仍只有一個檔案，產物照樣提交，`file://` 可用。
+- 結果：16 個手寫頁面原本有 9 種 navbar（部分缺 logo、缺 Skills / Credentials、少下拉選單；`notes/index.html` 還多一個 `</div>`），現在全部由 `pages/_shared/navbar.html` 生成；footer 由新的 `pages/_shared/footer.html` 生成。另發現 73 篇內容頁是舊版生成的（navbar 缺 logo、tag concept 未對齊），已用目前的生成器重生並重建索引。
+- 守門：`tests/test_page_shell.py` 確認手寫頁面的 shell 與 partial 一致、每頁恰好一個 navbar、標籤成對且連結可解析，並確認所有內容頁的 navbar 與 partial 一致；`pre-push` 也會檢查。
 - 驗收：作者在桌面與手機看過首頁、Portfolio、More、Projects、Search、Settings、Tag、Labs。
 
 ### Phase 3：拆分 `core/script.js`（中高風險）

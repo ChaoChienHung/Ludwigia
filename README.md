@@ -456,12 +456,14 @@ python3 cli.py build notes/<topic>/<topic>.md
 python3 cli.py build-all
 python3 cli.py build-portals
 python3 cli.py build-world
+python3 cli.py build-pages
 python3 cli.py translate --source notes/<topic>/<topic>.md --target-lang en --backend gemini-api
 python3 cli.py install-hooks
 python3 cli.py serve --port 8000
 python3 cli.py clean
 ```
 
+- `cli.py build-pages` 會把 `pages/_shared/navbar.html` 與 `footer.html` 組裝進手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）中 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記之間的區塊；改 navbar 時只改 partial，再跑一次 `build-pages`，並重新生成內容頁（`build-all`）
 - `cli.py scan-information` 會掃描單篇 source `.md` 裡命中 `information` ontology 的詞，列出：
   - 哪些詞已經有 `<information>`
   - 哪些詞第一次出現但還沒標註，適合作為候選詞
@@ -505,7 +507,7 @@ python3 cli.py install-hooks
 ```
 
 - `pre-commit`：若 staged 了 `notes/` / `writing/` / `canvas/` 的 `.md`，會自動重生對應 `.html`，並把重生的 `.html` 與 `search/search-index.{json,js}` 一起 stage
-- `pre-push`：執行 `python3 cli.py test`（包含 `create_content` self-test、`unittest`、`py_compile`、`check-tags`），並確認提交的 `search/search-index.{json,js}` 與 World 的 `characters.json` 沒有過期
+- `pre-push`：執行 `python3 cli.py test`（包含 `create_content` self-test、`unittest`、`py_compile`、`check-tags`），並確認提交的 `search/search-index.{json,js}`、World 的 `characters.json` 與手寫頁面的 shell 沒有過期
 - 只想跳過一次時，可用 `git commit --no-verify` / `git push --no-verify`
 - 若偏好 shell script，也可直接跑 `./scripts/install-git-hooks.sh`
 

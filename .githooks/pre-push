@@ -3,7 +3,8 @@
 # 1. Run the full check suite (`python3 cli.py test`: create_content self-test,
 #    unittest, py_compile, check-tags).
 # 2. Refuse to push stale committed build outputs: search/search-index.{json,js}
-#    and portals/realms/world/data/characters.json must match their sources.
+#    portals/realms/world/data/characters.json and the hand-written page
+#    shells (tools/build_pages.py) must match their sources.
 # Install with `python3 cli.py install-hooks`. Skip once with `git push --no-verify`.
 set -eu
 
@@ -25,6 +26,11 @@ status=0
 python3 search/indexer.py --out-json "$tmp/search-index.json" --out-js "$tmp/search-index.js" >/dev/null
 if ! cmp -s "$tmp/search-index.json" search/search-index.json || ! cmp -s "$tmp/search-index.js" search/search-index.js; then
   echo "pre-push: search/search-index.{json,js} is out of date. Run 'python3 cli.py index' and commit the result." >&2
+  status=1
+fi
+
+if ! python3 tools/build_pages.py --check >/dev/null 2>&1; then
+  echo "pre-push: hand-written page shells are out of date. Run 'python3 cli.py build-pages' and commit the result." >&2
   status=1
 fi
 

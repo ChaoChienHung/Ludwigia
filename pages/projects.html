@@ -51,30 +51,17 @@
 <!------------>
 <!-- Navbar -->
 <!------------>
+  <!-- shell:navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
     <div class="container">
-
-      <!----------->
-      <!-- Brand -->
-      <!----------->
       <a class="navbar-brand fw-bold custom-brand" href="../index.html"><img class="brand-logo" src="../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
 
-      <!------------------------>
-      <!-- Toggler for Mobile -->
-      <!------------------------>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!------------------>
-      <!-- Navbar Links -->
-      <!------------------>
       <div class="collapse navbar-collapse justify-content-end" id="nav">
         <ul class="navbar-nav">
-
-          <!------------------->
-          <!-- Home Dropdown -->
-          <!------------------->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle mx-2" href="../index.html" id="homeDropdown" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
@@ -82,30 +69,29 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
               <li><a class="dropdown-item" href="../index.html#about">About</a></li>
+              <li><a class="dropdown-item" href="../index.html#skills" data-nav-skills>Skills</a></li>
+              <li><a class="dropdown-item" href="../index.html#credentials" data-nav-credentials>Credentials</a></li>
               <li><a class="dropdown-item" href="../index.html#timeline" data-nav-timeline>Timeline</a></li>
               <li><a class="dropdown-item" href="../index.html#future-plans" data-nav-future-plans>Future Plans</a></li>
               <li><a class="dropdown-item" href="../index.html#contact">Contact</a></li>
             </ul>
           </li>
 
-          <!----------------------->
-          <!-- Projects Dropdown -->
-          <!----------------------->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle mx-2" href="projects.html" id="projectsDropdown" role="button"
+            <a class="nav-link dropdown-toggle mx-2" href="../pages/projects.html" id="projectsDropdown" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
               Projects
             </a>
             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
-              <li><a class="dropdown-item" href="projects.html#spaceshipX">SpaceshipX</a></li>
-              <li><a class="dropdown-item" href="projects.html#ludwigia">Ludwigia</a></li>
-              <li><a class="dropdown-item" href="projects.html#karen">Karen</a></li>
-              <li><a class="dropdown-item" href="projects.html#mentorion">Mentorion</a></li>
-              <li><a class="dropdown-item" href="projects.html#detoxio">Detox.io</a></li>
-              <li><a class="dropdown-item" href="projects.html#piggynest">PiggyNest</a></li>
-              <li><a class="dropdown-item" href="projects.html#scriba">Scriba</a></li>
-              <li><a class="dropdown-item" href="projects.html#sesame">Sesame</a></li>
-              <li><a class="dropdown-item" href="projects.html#vellichor">Vellichor</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#ludwigia">Ludwigia</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#karen">Karen</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#mentorion">Mentorion</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#detoxio">Detox.io</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#piggynest">PiggyNest</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#scriba">Scriba</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#sesame">Sesame</a></li>
+              <li><a class="dropdown-item" href="../pages/projects.html#vellichor">Vellichor</a></li>
             </ul>
           </li>
 
@@ -122,23 +108,23 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link mx-2" href="search.html" aria-label="Search">
+            <a class="nav-link mx-2" href="../pages/search.html" aria-label="Search">
               <i class="fa-solid fa-magnifying-glass"></i>
               <span class="visually-hidden">Search</span>
             </a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link mx-2" href="settings.html" aria-label="Settings">
+            <a class="nav-link mx-2" href="../pages/settings.html" aria-label="Settings">
               <i class="fa-solid fa-gear"></i>
               <span class="visually-hidden">Settings</span>
             </a>
           </li>
-
         </ul>
       </div>
     </div>
   </nav>
+  <!-- /shell:navbar -->
 
   <!------------------------------------->
   <!-- Hero (Project Carousel Preview) -->
@@ -574,9 +560,11 @@
   <!------------>
   <!-- FOOTER -->
   <!------------>
-  <footer class="text-center p-4">
-    © 2025 Ludwig — All Rights Reserved
+  <!-- shell:footer -->
+  <footer>
+    <p>© 2025 Ludwig — All Rights Reserved</p>
   </footer>
+  <!-- /shell:footer -->
 
   <!------------->
   <!-- Scripts -->

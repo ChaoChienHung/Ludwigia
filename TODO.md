@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] 重構 Phase 2：手寫頁面 shell 收斂
+    - 交付條件：手寫頁面的 navbar / footer 只有一個來源（`pages/_shared/`），由 `cli.py build-pages` 生成並有測試守門；內容頁 navbar 與 partial 一致。
+    - 已完成：16 個手寫頁面（9 種 navbar 版本）改用標記區塊，由 `tools/build_pages.py` 生成，順便修掉 `notes/index.html` 多出的 `</div>`；新增 `pages/_shared/footer.html`；73 篇舊版生成的內容頁用目前生成器重生並重建索引；`tests/test_page_shell.py` 新增 4 項測試，`pre-push` 也會檢查。全套 64 項測試通過。
+    - Review 重點（看畫面）：Labs 各子頁的 navbar 現在有 logo 和完整下拉選單；Portfolio / More 的桌面 navbar 從精簡的 Portfolio／Search／More 改成全站共用版本（手機底部導覽不受影響）；Projects 的 footer 改成全站統一樣式；抽看幾篇內容頁的 tag 顯示。
+
 - [x] 重構 Phase 1：hooks、白名單、部署路徑、Portals 依賴
     - 交付條件：`cli.py install-hooks` 可用；生成物白名單與現況一致；只保留一條部署路徑；Portals 移除未使用的依賴且 build 產物不變。
     - 已完成：補回 `.githooks/`（pre-commit 重生 staged 內容頁；pre-push 跑測試並擋下過期索引與 World 資料），兩個 hook 都在暫時的 worktree 實測過；`characters.json` 加入 AGENTS 白名單；移除 GitHub Pages workflow，部署收斂為 Cloudflare，`.assetsignore` 補排除 `.githooks/`、`.claude/`；Portals 移除 `@google/genai`、`express`、`dotenv`、`@types/express`、`esbuild`，重新 build 後 JS 逐位元組相同。
