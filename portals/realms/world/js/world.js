@@ -59,6 +59,7 @@
       this.wallAlphaHowAreYou = 1.0;
       this.wallAlphaMinecraft = 1.0;
       this.wallAlphaCyber = 1.0;
+      this.roofAlphaMinecraft = 1.0;
 
       // Day / Night mood
       this.mood = 'auto';
@@ -75,6 +76,8 @@
       this.doorHowAreYouOpen = 0.0;
       this.doorCyberNorthOpen = 0.0;
       this.doorCyberSouthOpen = 0.0;
+      this.doorMinecraftNorthOpen = 0.0;
+      this.doorMinecraftSouthOpen = 0.0;
       this.doorDouyinOpen = 0.0;
       this.douyinGateTimer = 2.0;
       this.douyinGateOpen = 0.0;
@@ -692,6 +695,44 @@
           this.minecraftSheep.headAngle = 0.1;
           this.minecraftSheep.facing = (player.x >= this.minecraftSheep.x) ? 'south_east' : 'south_west';
           player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: this.minecraftSheep.x, y: this.minecraftSheep.y - 1.0 });
+        } else if (this.snorlax && Math.hypot(this.snorlax.x - gx, this.snorlax.y - gy) < 2.2) {
+          // Interactive Snorlax (snoozing peacefully with gentle snores & alternating sleepy dreams)
+          const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+          this.snorlax.dialogueIdx = ((this.snorlax.dialogueIdx || 0) + 1) % 3;
+          if (this.snorlax.dialogueIdx === 1) {
+            this.snorlax.bubbleText = isEn ? 'Snorrr-lax! (Dreaming of giant berries) 🍓💤' : '卡比～... (夢裡好像在吃巨無霸樹果) 🍓💤';
+          } else if (this.snorlax.dialogueIdx === 2) {
+            this.snorlax.bubbleText = isEn ? 'Snoo... Zzz... (Turned over and kept snoring) 😴' : '呼嚕嚕…… (翻了個身繼續呼呼大睡) 😴';
+          } else {
+            this.snorlax.bubbleText = isEn ? 'Zzz... Snooorrr... 💤' : '呼……嚕…… (肚子隨著呼吸平靜起伏) 💤';
+          }
+          this.snorlax.bubbleTimer = 3.8;
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: this.snorlax.x - 1.5, y: this.snorlax.y });
+        } else if (this.eevee && Math.hypot(this.eevee.x - gx, this.eevee.y - gy) < 1.3) {
+          // Interactive Pokémon Quest Eevee (方可夢 伊布)
+          const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+          this.eevee.bubbleText = isEn ? 'Eev-vee! ✨' : '布咿～！✨';
+          this.eevee.bubbleTimer = 3.5;
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: this.eevee.x, y: this.eevee.y - 1.0 });
+        } else if (this.jolteon && Math.hypot(this.jolteon.x - gx, this.jolteon.y - gy) < 1.3) {
+          // Interactive Pokémon Quest Jolteon (方可夢 雷伊布)
+          const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+          this.jolteon.bubbleText = isEn ? 'Jolt-teon! ⚡' : '雷伊～！⚡';
+          this.jolteon.bubbleTimer = 3.5;
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: this.jolteon.x, y: this.jolteon.y - 1.0 });
+        } else if (this.flareon && Math.hypot(this.flareon.x - gx, this.flareon.y - gy) < 1.3) {
+          // Interactive Pokémon Quest Flareon (方可夢 火伊布)
+          const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+          this.flareon.bubbleText = isEn ? 'Fla-flare! 🔥' : '火伊～！🔥';
+          this.flareon.bubbleTimer = 3.5;
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: this.flareon.x, y: this.flareon.y - 1.0 });
+        } else if (Math.hypot(38.5 - gx, 95.5 - gy) < 1.8) {
+          // Interactive Pokémon Center Healing Machine
+          const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+          this.pokeCenterHealTimer = 3.0;
+          this.pokeCenterBubbleText = isEn ? 'Your Pokémon are fighting fit! 💖' : '寶可夢已全部恢復元氣！💖';
+          this.pokeCenterBubbleTimer = 3.5;
+          player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: 38.5, y: 96.5 });
         } else if (this.nav.isWalkable(gx, gy)) {
           player.path = this.nav.findPath({ x: player.x, y: player.y }, { x: gx, y: gy });
         }
@@ -823,7 +864,9 @@
       if (x >= 36.0 && x <= 45.8 && y >= 15.0 && y <= 24.0) return 'how_are_you';
       if (x >= 8.8 && x <= 19.0 && y >= 48.8 && y <= 57.0) return 'cyber_cafe';
       if (x >= 11.0 && x <= 17.0 && y >= 57.0 && y <= 93.0) return 'howling_abyss';
-      if (x >= 7.0 && x <= 21.0 && y >= 93.0 && y <= 111.0) return 'minecraft_sanctuary';
+      if (x >= 6.0 && x <= 22.0 && y >= 93.0 && y <= 111.0) return 'minecraft_sanctuary';
+      if (x >= 34.0 && x <= 42.0 && y >= 94.0 && y <= 98.5) return 'pokemon_center';
+      if (x >= 25.0 && x <= 50.0 && y >= 93.0 && y <= 111.0) return 'pokemon_sanctuary';
       return 'plaza';
     }
 
@@ -946,10 +989,20 @@
         currentZone = 'howling_abyss';
         isInsideAnyHouse = false;
         statusMessage = "The Howling Abyss • 冰封咆哮深淵長橋 ❄️";
-      } else if (checkZone('minecraft_sanctuary', 7.0, 21.0, 93.0, 111.0)) {
+      } else if (checkZone('minecraft_sanctuary', 6.0, 22.0, 93.0, 111.0)) {
         currentZone = 'minecraft_sanctuary';
         isInsideAnyHouse = playerInMinecraftCabin;
         statusMessage = playerInMinecraftCabin ? "Minecraft Cabin • 溫馨橡木小屋與大紅床 🛏️" : "Minecraft Sanctuary • 麥塊方塊生息之地 🟩";
+      } else if (checkZone('pokemon_center', 34.0, 42.0, 94.0, 98.5)) {
+        currentZone = 'pokemon_center';
+        isInsideAnyHouse = true;
+        const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+        statusMessage = isEn ? "Pokémon Center • Rest and heal your Pokémon! 🏥⚡" : "寶可夢中心 • 歡迎來到寶可夢中心！要讓寶可夢休息一下嗎？💖🏥";
+      } else if (checkZone('pokemon_sanctuary', 25.0, 50.0, 93.0, 111.0)) {
+        currentZone = 'pokemon_sanctuary';
+        isInsideAnyHouse = false;
+        const isEn = (window.LudwigiaI18n?.currentLang === 'en');
+        statusMessage = isEn ? "Pokémon Sanctuary • Poké Ball Plaza & Wild Friends ⚡🔴" : "寶可夢生態區 • 寶貝球紀念廣場與寶可夢夥伴 ⚡🔴";
       }
 
       this.currentZone = currentZone;
@@ -994,6 +1047,15 @@
       if (this.wallAlphaMinecraft === undefined) this.wallAlphaMinecraft = 1.0;
       this.wallAlphaMinecraft += ((playerInMinecraftCabin ? 0.32 : 1.0) - this.wallAlphaMinecraft) * Math.min(1.0, dt * 6.0);
 
+      // Minecraft Oak Cabin Roof fades out smoothly to 0.0 (completely hidden) when player enters cabin
+      if (this.roofAlphaMinecraft === undefined) this.roofAlphaMinecraft = (playerInMinecraftCabin ? 0.0 : 1.0);
+      this.roofAlphaMinecraft += ((playerInMinecraftCabin ? 0.0 : 1.0) - this.roofAlphaMinecraft) * Math.min(1.0, dt * 6.0);
+
+      // Pokémon Center Roof & South Wall fade out smoothly to 0.0 (completely hidden) when player enters Pokémon Center
+      const playerInPokeCenter = (this.currentZone === 'pokemon_center') || (player && player.x >= 34.0 && player.x <= 42.0 && player.y >= 94.0 && player.y <= 98.8);
+      if (this.wallAlphaPokemonCenter === undefined) this.wallAlphaPokemonCenter = 1.0;
+      this.wallAlphaPokemonCenter += ((playerInPokeCenter ? 0.0 : 1.0) - this.wallAlphaPokemonCenter) * Math.min(1.0, dt * 6.0);
+
       // 傻師傅湯包 front (East/South) walls fade out when the player is inside / at the doorway
       const inShaShiFu = !!player && player.x >= 32.5 && player.x <= 37.0 && player.y >= 40.8 && player.y <= 44.4;
       if (this.wallAlphaShaShiFu === undefined) this.wallAlphaShaShiFu = 1.0;
@@ -1031,6 +1093,16 @@
       // Cyber Cafe South Exit Automatic Sliding Glass Door to Howling Abyss (x: 14.0, y: 57.0)
       const nearCyberSouthDoor = this.charManager.characters.some(c => Math.hypot(c.x - 14.0, c.y - 57.0) < 2.6);
       this.doorCyberSouthOpen += ((nearCyberSouthDoor ? 1.0 : 0.0) - this.doorCyberSouthOpen) * Math.min(1.0, dt * 5.0);
+
+      // Minecraft Cabin North Entrance Wooden Oak Door (x: 13.5, y: 97.0)
+      const nearMinecraftNorth = this.charManager.characters.some(c => Math.hypot(c.x - 13.5, c.y - 97.0) < 2.5);
+      if (this.doorMinecraftNorthOpen === undefined) this.doorMinecraftNorthOpen = 0.0;
+      this.doorMinecraftNorthOpen += ((nearMinecraftNorth ? 1.0 : 0.0) - this.doorMinecraftNorthOpen) * Math.min(1.0, dt * 6.0);
+
+      // Minecraft Cabin South Entrance Wooden Oak Door (x: 13.5, y: 102.45)
+      const nearMinecraftSouth = this.charManager.characters.some(c => Math.hypot(c.x - 13.5, c.y - 102.45) < 2.5);
+      if (this.doorMinecraftSouthOpen === undefined) this.doorMinecraftSouthOpen = 0.0;
+      this.doorMinecraftSouthOpen += ((nearMinecraftSouth ? 1.0 : 0.0) - this.doorMinecraftSouthOpen) * Math.min(1.0, dt * 6.0);
 
       // 2. Douyin Office Erratic Speed Gate State Machine ("開關時機難以捉摸、不定期開關搞人心態")
       const playerNearDouyin = (Math.hypot(player.x - 18.0, player.y - 37.65) < 3.2);
@@ -1541,8 +1613,19 @@
                 { x: 14.0, y: 95.0 }, // Welcome Signboard
                 { x: 12.0, y: 99.0 }, // Oak Cabin Living Room
                 { x: 11.5, y: 101.5 }, // Near Minecraft Red Bed
-                { x: 18.0, y: 99.0 }, // Farmland Crops
-                { x: 10.0, y: 106.0 }  // Under Giant Oak Tree
+                { x: 19.5, y: 99.0 }, // Farmland Crops
+                { x: 10.0, y: 106.0 }, // Under Giant Oak Tree
+                { x: 13.0, y: 106.0 }  // Back Campfire & Sheep
+              ];
+
+              const pokemonAnchors = [
+                { x: 38.0, y: 104.0 }, // Center of Poké Ball Plaza
+                { x: 32.5, y: 101.0 }, // Eevee (West Plaza Lawn)
+                { x: 34.5, y: 107.5 }, // Jolteon (South-West Plaza Lawn)
+                { x: 43.0, y: 101.0 }, // Flareon (East Plaza Lawn)
+                { x: 38.0, y: 97.0 },  // In front of Pokémon Center
+                { x: 38.0, y: 96.0 },  // Inside Pokémon Center
+                { x: 44.0, y: 104.0 }  // Near Snorlax
               ];
 
               const zoneAnchorMap = {
@@ -1569,7 +1652,10 @@
                 howling_abyss: abyssAnchors,
                 abyss: abyssAnchors,
                 minecraft_sanctuary: minecraftAnchors,
-                minecraft: minecraftAnchors
+                minecraft: minecraftAnchors,
+                pokemon_sanctuary: pokemonAnchors,
+                pokemon_center: pokemonAnchors,
+                pokemon: pokemonAnchors
               };
 
               const rawVisited = c.visitedZones;
@@ -1743,11 +1829,20 @@
       const isHowAreYou = (x >= HOW_ARE_YOU_MIN_X && x <= HOW_ARE_YOU_MAX_X && y >= HOW_ARE_YOU_MIN_Y && y <= HOW_ARE_YOU_MAX_Y);
       const isCyber = (x >= 9 && x <= 19 && y >= 49 && y <= 57);
       const isAbyssBridge = (x >= 11 && x <= 17 && y >= 57 && y <= 92);
-      const isMinecraft = (x >= 7 && x <= 21 && y >= 93 && y <= 111);
+      const isMinecraft = (x >= 6 && x <= 22 && y >= 93 && y <= 111);
       const isMinecraftCabinFloor = (x >= 9 && x <= 14 && y >= 97 && y <= 102);
       const isMinecraftWater = (x === 18 && y === 99);
-      const isMinecraftFarmland = (x >= 16 && x <= 19 && y >= 97 && y <= 101 && !isMinecraftWater);
-      const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou || isMinecraftCabinFloor;
+      const isMinecraftFarmland = (x >= 17 && x <= 19 && y >= 98 && y <= 100 && !isMinecraftWater);
+      const isPokeBridge = (x >= 22 && x <= 26 && y >= 99 && y <= 101);
+      const isPokemon = (x >= 26 && x <= 49 && y >= 93 && y <= 111);
+      const isPokeCenterFloor = (x >= 34 && x <= 41 && y >= 94 && y <= 98);
+      const pokeDist = Math.hypot(x - 38, y - 104);
+      const isPokePlaza = (isPokemon && pokeDist <= 4.8);
+      const isPokePath = (
+        (isPokemon && x >= 26 && x <= 34 && y >= 99 && y <= 101) ||
+        (isPokemon && x >= 37 && x <= 39 && y >= 98 && y <= 100)
+      );
+      const isInsideBuilding = isLudwig || isDorm || isAi || isLib || isSchool || isDouyin || isCyber || isCafe || isHowAreYou || isMinecraftCabinFloor || isPokeCenterFloor;
 
       // Orthogonal Grid Pathway Network connecting all buildings, courtyards and attractions
       const isMainNorthSouthSpine = (x >= 12 && x <= 15 && y >= 0 && y <= 45); // Central Boulevard (width 4)
@@ -1807,10 +1902,14 @@
       // Chasm Void:
       // y <= 57: all main campus island land (bounded by south cliff wooden fence at y: 57)
       // y in [58..92]: bridge is x: 11..17, flanking space is bottomless void!
-      // y >= 93: minecraft island is x: 7..21 (including y: 93 & y: 94 solid land!), flanking space is bottomless void!
+      // y >= 93: minecraft island is x: 6..22; bridge is x: 21..26, y: 99..101; pokemon island is x: 26..49, y: 93..111!
       const isAbyssChasm = (
         (y > 57 && y <= 92 && (x < 11 || x > 17)) ||
-        (y >= 93 && (x < 7 || x > 21)) ||
+        (y >= 93 && y <= 111 && !(
+          (x >= 6 && x <= 22) ||
+          isPokeBridge ||
+          (x >= 26 && x <= 49)
+        )) ||
         (y > 111)
       );
 
@@ -1827,6 +1926,7 @@
       else if (isCafe) group = 'cafe';
       else if (isHowAreYou) group = 'how_are_you';
       else if (isCyber) group = 'cyber_cafe';
+      else if (isPokeCenterFloor) group = 'pokemon_center';
 
       let color = null;
       if (isLudwig) {
@@ -1895,6 +1995,36 @@
       } else if (isMinecraft) {
         // Minecraft Sanctuary — Classic Grass Block Green Turf
         color = (x + y) % 2 === 0 ? '#5b8c32' : '#4d7828';
+      } else if (isPokeCenterFloor) {
+        // Pokémon Center Polished Sanitary Cyan-White Tiles
+        color = (x + y) % 2 === 0 ? '#f0f9ff' : '#e0f2fe';
+      } else if (isPokePlaza) {
+        // Grand Poké Ball Plaza Circular Pavement
+        if (pokeDist <= 1.2) {
+          // Central Release Button
+          color = (pokeDist <= 0.6) ? '#ffffff' : '#0f172a';
+        } else if (Math.abs(y - 104) < 0.65) {
+          // Horizontal Dividing Black Band
+          color = '#0f172a';
+        } else if (pokeDist >= 4.3) {
+          // Plaza Rim Slate Border
+          color = '#334155';
+        } else if (y < 104) {
+          // Upper Half: Crimson Poké Ball Red
+          color = (x + y) % 2 === 0 ? '#ef4444' : '#dc2626';
+        } else {
+          // Lower Half: Pure White Poké Ball Base
+          color = (x + y) % 2 === 0 ? '#f8fafc' : '#e2e8f0';
+        }
+      } else if (isPokeBridge) {
+        // Connecting Wood Plank Skybridge
+        color = (x + y) % 2 === 0 ? '#92400e' : '#78350f';
+      } else if (isPokePath) {
+        // Pokémon Sanctuary Cobblestone Paths
+        color = (x + y) % 2 === 0 ? '#cbd5e1' : '#94a3b8';
+      } else if (isPokemon) {
+        // Pokémon Sanctuary Emerald Turf
+        color = (x + y) % 2 === 0 ? '#34d399' : '#10b981';
       } else if (isPath) {
         // Cobblestone Paved Paths
         color = (x + y) % 2 === 0 ? '#94a3b8' : '#8592a6';
@@ -1975,7 +2105,7 @@
       // part of that zone's interior is drawn at outsideAlpha (same semantics as before).
       const dimZones = this._terrainDimZones || (this._terrainDimZones = new Set([
         'ludwig_house', 'dorm_211', 'ai_studio', 'library', 'sanmin_school',
-        'douyin_office', 'cafe', 'how_are_you', 'cyber_cafe'
+        'douyin_office', 'cafe', 'how_are_you', 'cyber_cafe', 'pokemon_center'
       ]));
       const dimming = dimZones.has(this.currentZone);
       const activeGroup = dimming ? T.groups.indexOf(this.currentZone) : -1;

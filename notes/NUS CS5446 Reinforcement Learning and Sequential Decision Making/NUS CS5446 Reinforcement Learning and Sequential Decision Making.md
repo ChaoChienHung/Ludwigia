@@ -8762,7 +8762,7 @@ Published in *Nature*, Dafoe et al. (2021) established the four fundamental pill
 
 # Tutorial 2–3: Utility and Active RL Worked Examples
 
-These earlier tutorials connect the Week 3 utility model to the Week 4 learning algorithms. The [full Week 4–5 notes](source-material/Week4-5_Notes.md) preserve the worked questions and intermediate calculations.
+These earlier tutorials connect the Week 3 utility model to the Week 4 learning algorithms, preserving the worked questions and intermediate calculations.
 
 ## Tutorial 2 — Rational decision making
 
@@ -9024,108 +9024,6 @@ For a fixed trajectory $S_0 \xrightarrow{r=0} S_1 \xrightarrow{r=1} S_2$ (termin
 - **Game Value**:
   $$V^* = \mathbf{x}^{*T} A \mathbf{x}^* = 0$$
   Both players play $1, 2, 3$ fingers with probabilities $\left( \frac{1}{4}, \frac{1}{2}, \frac{1}{4} \right)$. Game value is exactly **$0$**.
-
----
-
-# Source Material and Coursework Archive
-
-The course notes above synthesize the lecture material. The original lecture slides, tutorial sheets, assignment files, study drafts, and course guidelines are archived here so their exact wording, exercises, code, and figures remain available. Assignment submissions are kept as submitted artifacts; they are separate from the explanatory note. Paths below are relative to this note. Duplicate cache files and Finder metadata were omitted.
-
-## Assignments
-
-- [Assignments/Assignment 1 Submission/1_PDDL.ipynb](source-material/Assignments/Assignment%201%20Submission/1_PDDL.ipynb)
-- [Assignments/Assignment 1 Submission/1_PDDL_solution.py](source-material/Assignments/Assignment%201%20Submission/1_PDDL_solution.py)
-- [Assignments/Assignment 1 Submission/2_hierarchical.ipynb](source-material/Assignments/Assignment%201%20Submission/2_hierarchical.ipynb)
-- [Assignments/Assignment 1 Submission/2_hierarchical_solution.py](source-material/Assignments/Assignment%201%20Submission/2_hierarchical_solution.py)
-- [Assignments/Assignment 1 Submission/3_freeform_planning.ipynb](source-material/Assignments/Assignment%201%20Submission/3_freeform_planning.ipynb)
-- [Assignments/Assignment 1 Submission/3_freeform_planning_solution.py](source-material/Assignments/Assignment%201%20Submission/3_freeform_planning_solution.py)
-- [Assignments/Assignment 1 Submission/EleEnv/Envs.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/Envs.py)
-- [Assignments/Assignment 1 Submission/EleEnv/PDDL.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/PDDL.py)
-- [Assignments/Assignment 1 Submission/EleEnv/__init__.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/__init__.py)
-- [Assignments/Assignment 1 Submission/EleEnv/configs.py](source-material/Assignments/Assignment%201%20Submission/EleEnv/configs.py)
-- [Assignments/Assignment 1 Submission/ai_usage.md](source-material/Assignments/Assignment%201%20Submission/ai_usage.md)
-- [Assignments/Assignment-1.pdf](source-material/Assignments/Assignment-1.pdf)
-- [Assignments/Assignment1-Programming-Package/0_env_walkthrough.ipynb](source-material/Assignments/Assignment1-Programming-Package/0_env_walkthrough.ipynb)
-- [Assignments/Assignment1-Programming-Package/1_PDDL.ipynb](source-material/Assignments/Assignment1-Programming-Package/1_PDDL.ipynb)
-- [Assignments/Assignment1-Programming-Package/1_PDDL_solution.py](source-material/Assignments/Assignment1-Programming-Package/1_PDDL_solution.py)
-- [Assignments/Assignment1-Programming-Package/2_hierarchical.ipynb](source-material/Assignments/Assignment1-Programming-Package/2_hierarchical.ipynb)
-- [Assignments/Assignment1-Programming-Package/2_hierarchical_solution.py](source-material/Assignments/Assignment1-Programming-Package/2_hierarchical_solution.py)
-- [Assignments/Assignment1-Programming-Package/3_freeform_planning.ipynb](source-material/Assignments/Assignment1-Programming-Package/3_freeform_planning.ipynb)
-- [Assignments/Assignment1-Programming-Package/3_freeform_planning_solution.py](source-material/Assignments/Assignment1-Programming-Package/3_freeform_planning_solution.py)
-- [Assignments/Assignment1-Programming-Package/EleEnv/Envs.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/Envs.py)
-- [Assignments/Assignment1-Programming-Package/EleEnv/PDDL.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/PDDL.py)
-- [Assignments/Assignment1-Programming-Package/EleEnv/__init__.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/__init__.py)
-- [Assignments/Assignment1-Programming-Package/EleEnv/configs.py](source-material/Assignments/Assignment1-Programming-Package/EleEnv/configs.py)
-- [Assignments/Assignment1-Programming-Package/README.md](source-material/Assignments/Assignment1-Programming-Package/README.md)
-- [Assignments/Assignment1-Programming-Package/ai_usage.md](source-material/Assignments/Assignment1-Programming-Package/ai_usage.md)
-- [Assignments/Assignment1-Programming-Package/requirements.txt](source-material/Assignments/Assignment1-Programming-Package/requirements.txt)
-
-## Course notes
-
-- [CS5446-study-notes-revised.tex](source-material/CS5446-study-notes-revised.tex)
-- [Week4-5_Notes.md](source-material/Week4-5_Notes.md)
-
-## Midterm Exam
-
-- [Midterm Exam/Mid-Term Guidelines 2627-1.pdf](source-material/Midterm%20Exam/Mid-Term%20Guidelines%202627-1.pdf)
-
-## Project
-
-- [Project/CSxx46-Project-Guidelines 2627-1.pdf](source-material/Project/CSxx46-Project-Guidelines%202627-1.pdf)
-
-## Tutorials
-
-- [Tutorials/CS5446_Week3_Tutorial_1_Students.pdf](source-material/Tutorials/CS5446_Week3_Tutorial_1_Students.pdf)
-- [Tutorials/CS5446_Week4_Tutorial2_Rational_Decision_Making_AY2627_S1_Student_slides.pdf](source-material/Tutorials/CS5446_Week4_Tutorial2_Rational_Decision_Making_AY2627_S1_Student_slides.pdf)
-- [Tutorials/CSXX46_AY2627_1_Week3_Tutorial1_Real_World_Planning_and_Acting_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week3_Tutorial1_Real_World_Planning_and_Acting_Students.pdf)
-- [Tutorials/CSXX46_AY2627_1_Week4_Tutorial2_Rational_Decision_Making_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week4_Tutorial2_Rational_Decision_Making_Students.pdf)
-- [Tutorials/CSXX46_AY2627_1_Week5_Tutorial3_Sequential_decision_making_under_uncertainty_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week5_Tutorial3_Sequential_decision_making_under_uncertainty_Students.pdf)
-- [Tutorials/CSXX46_AY2627_1_Week6_Tutorial4_Function_Approximation_and_Policy_Search_Students.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week6_Tutorial4_Function_Approximation_and_Policy_Search_Students.pdf)
-- [Tutorials/CSXX46_AY2627_1_Week7_Tutorial5_Mid-Term_Review.pdf](source-material/Tutorials/CSXX46_AY2627_1_Week7_Tutorial5_Mid-Term_Review.pdf)
-- [Tutorials/Insurance_pay_willingness.png](source-material/Tutorials/Insurance_pay_willingness.png)
-- [Tutorials/Team Submissions/Team26_Tutorial1.pdf](source-material/Tutorials/Team%20Submissions/Team26_Tutorial1.pdf)
-- [Tutorials/Team Submissions/Team26_Tutorial2.pdf](source-material/Tutorials/Team%20Submissions/Team26_Tutorial2.pdf)
-- [Tutorials/Team Submissions/Team26_Tutorial3.pdf](source-material/Tutorials/Team%20Submissions/Team26_Tutorial3.pdf)
-- [Tutorials/Team26_Tutorial3.pdf](source-material/Tutorials/Team26_Tutorial3.pdf)
-- [Tutorials/Tutorial3_MDP_AY2627_STUDENT_VERSION_FINAL.pdf](source-material/Tutorials/Tutorial3_MDP_AY2627_STUDENT_VERSION_FINAL.pdf)
-- [Tutorials/Tutorial4_Function_Approximation_and_Policy_Search_AY2627_Student.pdf](source-material/Tutorials/Tutorial4_Function_Approximation_and_Policy_Search_AY2627_Student.pdf)
-- [Tutorials/Tutorial5_Midterm_Review_AY2627_TEACHING_FINAL_Students.pdf](source-material/Tutorials/Tutorial5_Midterm_Review_AY2627_TEACHING_FINAL_Students.pdf)
-
-## Week 1 Lecture
-
-- [Week 1 Lecture/Lecture-Intro.pdf](source-material/Week%201%20Lecture/Lecture-Intro.pdf)
-- [Week 1 Lecture/Lecture-classic v4.0.pdf](source-material/Week%201%20Lecture/Lecture-classic%20v4.0.pdf)
-- [Week 1 Lecture/classical-planning-models-search-and-inference.md](source-material/Week%201%20Lecture/classical-planning-models-search-and-inference.md)
-- [Week 1 Lecture/classical-planning-strips-pddl-and-satplan.md](source-material/Week%201%20Lecture/classical-planning-strips-pddl-and-satplan.md)
-- [Week 1 Lecture/slide-making-responsible-decisions.jpg](source-material/Week%201%20Lecture/slide-making-responsible-decisions.jpg)
-
-## Week 2 Lecture
-
-- [Week 2 Lecture/Lecture-complex Notes.pdf](source-material/Week%202%20Lecture/Lecture-complex%20Notes.pdf)
-- [Week 2 Lecture/Lecture-complex v4.0.pdf](source-material/Week%202%20Lecture/Lecture-complex%20v4.0.pdf)
-
-## Week 3 Lecture
-
-- [Week 3 Lecture/Lecture-rational-utility-Examples and Notes.pdf](source-material/Week%203%20Lecture/Lecture-rational-utility-Examples%20and%20Notes.pdf)
-- [Week 3 Lecture/Lecture-rational-utility.pdf](source-material/Week%203%20Lecture/Lecture-rational-utility.pdf)
-- [Week 3 Lecture/rational-decision-making-utility-theory-and-game-theory.md](source-material/Week%203%20Lecture/rational-decision-making-utility-theory-and-game-theory.md)
-
-## Week 4 Lecture
-
-- [Week 4 Lecture/Lecture-mdp.pdf](source-material/Week%204%20Lecture/Lecture-mdp.pdf)
-- [Week 4 Lecture/Lecture-sdm.pdf](source-material/Week%204%20Lecture/Lecture-sdm.pdf)
-
-## Week 5 Lecture
-
-- [Week 5 Lecture/Lecture-rl-modelfree.pdf](source-material/Week%205%20Lecture/Lecture-rl-modelfree.pdf)
-
-## Week 6 Lecture
-
-- [Week 6 Lecture/Lecture-RL-Reward-Shaping.pdf](source-material/Week%206%20Lecture/Lecture-RL-Reward-Shaping.pdf)
-
-## Week 7 Lecture
-
-- [Week 7 Lecture/Lecture-guided-SDM.pdf](source-material/Week%207%20Lecture/Lecture-guided-SDM.pdf)
 
 ---
 

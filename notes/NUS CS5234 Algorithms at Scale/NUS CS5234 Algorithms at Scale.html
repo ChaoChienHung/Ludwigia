@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5234-algorithms-at-scale">
   <meta name="site:published_at" content="2026-08-20">
   <meta name="site:last_modified_at" content="2026-11-15">
-  <meta name="site:reading_time_minutes" content="624">
+  <meta name="site:reading_time_minutes" content="632">
   <meta name="site:source" content="notes/NUS CS5234 Algorithms at Scale/NUS CS5234 Algorithms at Scale.md">
   <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -354,13 +354,13 @@
 <a class="note-toc-link level-1" href="#2-the-distinct-elements-count-distinct-f-0-problem">2. The Distinct Elements (Count-Distinct / $F_0$) Problem</a>
 <a class="note-toc-link level-2" href="#2-1-formal-problem-definition-stream-formulation">2.1 Formal Problem Definition &amp; Stream Formulation</a>
 <a class="note-toc-link level-2" href="#2-2-the-gap-testing-decision-paradigm-d-le-t-vs-d-ge-2t">2.2 The Gap-Testing Decision Paradigm: $D \le T$ vs. $D \ge 2T$</a>
-<a class="note-toc-link level-2" href="#2-3-first-attempt-single-bucket-hit-testing-and-the-constant-gap-defect">2.3 First Attempt: Single Bucket Hit Testing and the Constant Gap Defect</a>
-<a class="note-toc-link level-2" href="#2-4-second-attempt-expanding-hash-range-multi-bucket-collision-counting">2.4 Second Attempt: Expanding Hash Range &amp; Multi-Bucket Collision Counting</a>
-<a class="note-toc-link level-2" href="#2-5-rigorous-variance-chebyshev-analysis-for-the-gap-decision-tester">2.5 Rigorous Variance &amp; Chebyshev Analysis for the Gap Decision Tester</a>
-<a class="note-toc-link level-2" href="#2-6-scaling-up-from-decision-gap-testing-to-1-epsilon-multiplicative-approximation">2.6 Scaling Up: From Decision Gap-Testing to $(1+\epsilon)$-Multiplicative Approximation</a>
+<a class="note-toc-link level-2" href="#2-3-first-attempt-one-empty-bucket-as-a-noisy-signal">2.3 First Attempt: One Empty Bucket as a Noisy Signal</a>
+<a class="note-toc-link level-2" href="#2-4-second-attempt-independent-repetitions-and-an-explicit-decision-rule">2.4 Second Attempt: Independent Repetitions and an Explicit Decision Rule</a>
+<a class="note-toc-link level-2" href="#2-5-the-storage-bill-the-bit-is-not-the-whole-state">2.5 The Storage Bill: The Bit Is Not the Whole State</a>
+<a class="note-toc-link level-2" href="#2-6-from-gap-testing-to-a-constant-factor-estimate">2.6 From Gap Testing to a Constant-Factor Estimate</a>
 <a class="note-toc-link level-1" href="#3-direct-continuous-estimation-via-the-t-th-smallest-hash-value">3. Direct Continuous Estimation via the $t$-th Smallest Hash Value</a>
 <a class="note-toc-link level-2" href="#3-1-intuition-uniform-dispersion-of-hash-images-on-the-unit-interval">3.1 Intuition: Uniform Dispersion of Hash Images on the Unit Interval</a>
-<a class="note-toc-link level-2" href="#3-2-algorithm-description-maintaining-the-top-t-smallest-hash-values">3.2 Algorithm Description: Maintaining the Top-$t$ Smallest Hash Values</a>
+<a class="note-toc-link level-2" href="#3-2-algorithm-description-maintaining-the-t-smallest-distinct-keys">3.2 Algorithm Description: Maintaining the $t$ Smallest Distinct Keys</a>
 <a class="note-toc-link level-2" href="#3-3-the-core-estimator-formulation-tilde-d-frac-t-cdot-m-x-t">3.3 The Core Estimator Formulation: $\tilde{D} = \frac{t \cdot m}{X_t}$</a>
 <a class="note-toc-link level-2" href="#3-4-rigorous-theoretical-analysis-relating-hash-order-statistics-to-coordinate-counts">3.4 Rigorous Theoretical Analysis: Relating Hash Order Statistics to Coordinate Counts</a>
 <a class="note-toc-link level-2" href="#3-5-step-by-step-chebyshev-variance-bounding-proof-of-t-mathcal-o-1-epsilon-2">3.5 Step-by-Step Chebyshev Variance Bounding: Proof of $t = \mathcal{O}(1/\epsilon^2)$</a>
@@ -774,11 +774,11 @@
 <td>Any $k$ keys map as independent uniforms. Proved via Vandermonde matrix invertibility over $\mathbb{F}_p$.</td>
 </tr>
 <tr>
-<td><strong>Decision Gap Tester</strong></td>
-<td>$Y = \sum_{j=1}^D \mathbb{I}[h(u_j) \in B]$</td>
-<td>Pairwise ($k=2$)</td>
-<td>$\mathcal{O}(1)$ counters</td>
-<td>Separates $D \le T$ vs $D \ge 2T$. Chebyshev handles variance since pairwise independence gives zero covariance.</td>
+<td><strong>Idealized Gap Tester</strong></td>
+<td>$p_D=\Pr[\text{bucket 1 empty}]=(1-1/T)^D$; average $k$ independent trials</td>
+<td>Fully random within each trial; independent across trials</td>
+<td>$k$ flags <strong>plus costly function descriptions</strong></td>
+<td>Hoeffding separates $D\le T$ from $D\ge2T$; the one-bit flag is not the total space.</td>
 </tr>
 <tr>
 <td><strong>$t$-th Minimum Estimator</strong></td>
@@ -8403,7 +8403,7 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 |           v                                                                                       |
 |  [Gap-Testing Decision Model]   ---&gt; Distinguish D &lt;= T from D &gt;= 2T                              |
 |           |                            - Single bucket hit: constant gap (insufficient)           |
-|           |                            - Multi-bucket collision count: Chebyshev separation       |
+|           |                            - Independent empty-bucket trials: Hoeffding separation      |
 |           v                                                                                       |
 |  [Direct t-th Minimum Estimator] ---&gt; Maintain t smallest hash values {X_1 &lt; ... &lt; X_t}           |
 |           |                            Estimator: D_tilde = t * m / X_t                           |
@@ -8495,7 +8495,7 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 
 <blockquote class="blockquote mb-3">$$\mathcal{H}_k = \left\{ h_{a_0, a_1, \dots, a_{k-1}}(x) = \left( \sum_{i=0}^{k-1} a_i x^i \right) \pmod p \;\middle|\; a_0, a_1, \dots, a_{k-1} \in \mathbb{F}_p \right\}$$</blockquote>
 
-<blockquote class="blockquote mb-3">If the target range $[m]$ is smaller than $p$, we compose with modulo $m$: $g(x) = h(x) \pmod m$.</blockquote>
+<blockquote class="blockquote mb-3">For the exact independence proof below, use the field $\mathbb F_p$ as the output range. Reducing outputs modulo a smaller $m$ need not preserve exact uniformity unless the reduction is designed carefully.</blockquote>
 
 <p class="mb-3">To sample a random hash function $h \sim \mathcal{H}_k$, an algorithm simply samples $k$ independent coefficients $a_0, a_1, \dots, a_{k-1}$ uniformly at random from $\mathbb{F}_p$.</p>
 
@@ -8628,113 +8628,81 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 
 <hr>
 
-<h4 id="2-3-first-attempt-single-bucket-hit-testing-and-the-constant-gap-defect" class="mb-2">2.3 First Attempt: Single Bucket Hit Testing and the Constant Gap Defect</h4>
+<h4 id="2-3-first-attempt-one-empty-bucket-as-a-noisy-signal" class="mb-2">2.3 First Attempt: One Empty Bucket as a Noisy Signal</h4>
 
-<p class="mb-3"><strong>The Idea:</strong> Hash all distinct items into a hash range of size $m = 2T$. Let $h: [n] \to [m]$ be a pairwise independent hash function. We inspect a single designated bucket, say bucket $1$. Maintain a single bit of state: $$X = \mathbb{I}[\exists a_t \in \sigma : h(a_t) = 1]$$ At the end of the stream, $X = 0$ if and only if no distinct element in $S$ hashed to bucket 1.</p>
+<p class="mb-3">The threshold $T$ is a <strong>number</strong>, not a set supplied to the tester. The tester sees the whole stream and must say YES when $D \le T$ and NO when $D \ge 2T$; it may say either in the gap. A direct deterministic baseline remembers seen keys until it has found $T+1$ distinct ones. This uses $\mathcal{O}(T\log n)$ bits and does not establish a lower bound of $T$ stored keys. We seek a smaller state when $T$ is large.</p>
 
-<p class="mb-3"><strong>Probabilistic Analysis:</strong> Let $u_1, u_2, \dots, u_D$ denote the $D$ distinct elements. Under a uniform random hash function: $$\Pr[X = 0] = \prod_{j=1}^D \Pr[h(u_j) \ne 1] = \left( 1 - \frac{1}{m} \right)^D = \left( 1 - \frac{1}{2T} \right)^D \approx e^{-D / (2T)}$$</p>
+<p class="mb-3"><strong>Fix one random function for the entire stream.</strong> Choose $h:[n]\to[T]$ uniformly from <em>all</em> functions. For a designated bucket, say $1$, maintain one bit recording whether any stream item has hashed there. Sampling $h$ once is essential: a repeated input gets the same value every time. Distinct inputs have independent uniform hash values, although they may collide.</p>
 
-<p class="mb-3">Evaluating the two gap cases:</p>
+<p class="mb-3">Let $E$ be the event that bucket $1$ is empty at the end. Each of the $D$ distinct keys avoids bucket $1$ with probability $1-1/T$. Full independence across these $D$ keys gives</p>
 
-<ul class="note-list">
-<li>If $D \le T$:</li>
-</ul>
+<p class="mb-3">$$\Pr(E)=p_D=\left(1-\frac1T\right)^D.$$</p>
 
-<p class="mb-3">$$\Pr[X = 0] \approx e^{-T / (2T)} = e^{-1/2} \approx 0.6065$$</p>
+<p class="mb-3">The exponent is $D$, not the stream length $M$: repeated appearances of a key reuse its one hash value. Since the base is below $1$, $p_D$ decreases as $D$ increases:</p>
 
-<ul class="note-list">
-<li>If $D \ge 2T$:</li>
-</ul>
+<p class="mb-3">$$D\le T \implies p_D\ge \left(1-\frac1T\right)^T,\qquad D\ge 2T \implies p_D\le \left(1-\frac1T\right)^{2T}\le e^{-2}.$$</p>
 
-<p class="mb-3">$$\Pr[X = 0] \approx e^{-2T / (2T)} = e^{-1} \approx 0.3679$$</p>
+<p class="mb-3">The first lower bound approaches $e^{-1}$ <strong>from below</strong> as $T$ grows. It is not literally at least $e^{-1}$ for finite $T$. For example, at $T=2$ it equals $1/4$. When $T\ge3$, it is at least $(2/3)^3\approx0.296$, which remains separated from $e^{-2}\approx0.135$. Small $T$ can use the deterministic baseline.</p>
 
-<p class="mb-3"><strong>The Defect of the First Attempt:</strong> While there is indeed a gap between $0.6065$ and $0.3679$, the separation is a modest constant ($\approx 0.238$). More critically:</p>
-
-<ol class="mb-3">
-<li>A single indicator $X \in \{0, 1\}$ has enormous variance ($\approx 0.25$).</li>
-<li>To separate two probabilities differing by a small constant with high confidence, we would need to average $\mathcal{O}(1)$ parallel hash functions.</li>
-<li>But more fundamentally, $(1 - 1/m)^D$ strictly requires <strong>full mutual independence</strong> among all $D$ items! If $h$ is only pairwise independent, $\Pr[X = 0]$ does not factor into $(1 - 1/m)^D$.</li>
-</ol>
-
-<p class="mb-3">We need an estimator whose expectation and variance are cleanly expressed as sums of random variables, where <strong>pairwise independence</strong> is sufficient.</p>
+<p class="mb-3">This is only a <strong>noisy signal</strong>, not yet a reliable decision rule. A single empty bucket can occur even when $D$ is large, and a hit can occur even when $D$ is small. The one-bit bucket state also omits the cost of describing $h$.</p>
 
 <hr>
 
-<h4 id="2-4-second-attempt-expanding-hash-range-multi-bucket-collision-counting" class="mb-2">2.4 Second Attempt: Expanding Hash Range &amp; Multi-Bucket Collision Counting</h4>
+<h4 id="2-4-second-attempt-independent-repetitions-and-an-explicit-decision-rule" class="mb-2">2.4 Second Attempt: Independent Repetitions and an Explicit Decision Rule</h4>
 
-<p class="mb-3">Instead of checking whether a single bucket is empty, we expand the hash range and count how many items land in an entire designated subset of buckets!</p>
+<p class="mb-3">Choose $k$ independent fully random functions $h_1,\ldots,h_k$. Copy $i$ maintains a bit $Y_i$, equal to $1$ if bucket $1$ stays empty under $h_i$ and $0$ otherwise. The copies process the <strong>same stream simultaneously</strong>; within a copy, the selected function remains fixed. Define</p>
 
-<p class="mb-3"><strong>Construction:</strong></p>
+<p class="mb-3">$$\bar Y=\frac1k\sum_{i=1}^kY_i,\qquad \mathbb E[\bar Y]=p_D.$$</p>
 
-<ol class="mb-3">
-<li>Choose hash range $m = 100 T$.</li>
-<li>Pick a pairwise independent hash function $h: [n] \to [m]$.</li>
-<li>Designate a target subset of buckets $B = \{1, 2, \dots, K\}$, where $K = 50$.</li>
-<li>Maintain the count of distinct elements that hit set $B$:</li>
-</ol>
+<p class="mb-3">The $Y_i$ are independent bounded variables in $[0,1]$. This is why averaging reduces random fluctuation. If all copies reused the same function, they would produce the same $Y_i$ and averaging would give no benefit. Unbiasedness of $\bar Y$ for $p_D$ alone does not imply concentration; independence and boundedness do the work. Also, $\bar Y$ estimates the empty-bucket probability $p_D$, <strong>not</strong> $D$ without further reasoning.</p>
 
-<p class="mb-3">$$Y = \left| \{ u \in S : h(u) \in B \} \right|$$ <em>(Note: To maintain $Y$ in a stream without duplicates overcounting, we only store the set of distinct hash values that fall in $B$. Since $|B| = K = 50$, this requires storing at most 50 values!)</em></p>
+<p class="mb-3">Choose a decision cutoff between the two regimes,</p>
 
-<hr>
+<p class="mb-3">$$c=\frac{e^{-1}+e^{-2}}2\approx0.252,$$</p>
 
-<h4 id="2-5-rigorous-variance-chebyshev-analysis-for-the-gap-decision-tester" class="mb-2">2.5 Rigorous Variance &amp; Chebyshev Analysis for the Gap Decision Tester</h4>
+<p class="mb-3">and output YES when $\bar Y&gt;c$, NO otherwise. For $T\ge3$, the exact small-$D$ bound $(1-1/T)^T$ is more than $c+0.01$; the large-$D$ bound $e^{-2}$ is less than $c-0.01$. Thus the decision is correct whenever $|\bar Y-\mathbb E[\bar Y]|\le0.01$.</p>
 
-<p class="mb-3">For each distinct element $u_j \in S$ ($j = 1, \dots, D$), define the indicator: $$I_j = \mathbb{I}[h(u_j) \in B]$$ Then the random variable $Y$ is simply the sum: $$Y = \sum_{j=1}^D I_j$$</p>
+<p class="mb-3"><strong>Where does the tail bound come from?</strong> For independent $Y_i\in[0,1]$, the additive Hoeffding inequality gives</p>
 
-<p class="mb-3"><strong>Step 1: Expectation Calculation</strong> Because $h$ is pairwise independent, the marginal distribution of $h(u_j)$ is uniform over $[m]$: $$\Pr[I_j = 1] = \Pr[h(u_j) \in B] = \frac{|B|}{m} = \frac{K}{m}$$ By linearity of expectation: $$\mathbb{E}[Y] = \sum_{j=1}^D \mathbb{E}[I_j] = D \cdot \frac{K}{m}$$</p>
+<p class="mb-3">$$\Pr\!\left(\left|\bar Y-\mathbb E[\bar Y]\right|&gt;\eta\right) \le 2e^{-2k\eta^2}.$$</p>
 
-<p class="mb-3">Substituting $m = 100 T$ and $K = 50$: $$\mathbb{E}[Y] = D \cdot \frac{50}{100 T} = \frac{D}{2 T}$$</p>
+<p class="mb-3">Setting $\eta=0.01$ and $k=\lceil100/\eta^2\rceil$ makes the right side $2e^{-200}&lt;0.1$. The constant $100$ is deliberately generous. Consequently each promised case is classified correctly with probability greater than $0.9$.</p>
 
-<p class="mb-3">Now evaluate the expected value under the two cases:</p>
-
-<ul class="note-list">
-<li><strong>Case YES ($D \le T$):</strong></li>
-</ul>
-
-<p class="mb-3">$$\mathbb{E}[Y] = \frac{D}{2 T} \le \frac{T}{2 T} = 0.5$$</p>
-
-<ul class="note-list">
-<li><strong>Case NO ($D \ge 2T$):</strong></li>
-</ul>
-
-<p class="mb-3">$$\mathbb{E}[Y] = \frac{D}{2 T} \ge \frac{2 T}{2 T} = 1.0$$</p>
-
-<p class="mb-3">The expectations are separated by a factor of 2!</p>
-
-<p class="mb-3"><strong>Step 2: Variance Calculation under Pairwise Independence</strong> For each individual indicator $I_j$: $$\text{Var}[I_j] = \mathbb{E}[I_j^2] - (\mathbb{E}[I_j])^2 = \frac{K}{m} - \left(\frac{K}{m}\right)^2 = \frac{K}{m}\left(1 - \frac{K}{m}\right) \le \frac{K}{m}$$</p>
-
-<p class="mb-3">Because $h$ is pairwise independent, for any $i \ne j$, the variables $I_i$ and $I_j$ are uncorrelated: $$\text{Cov}(I_i, I_j) = \mathbb{E}[I_i I_j] - \mathbb{E}[I_i]\mathbb{E}[I_j] = \Pr[h(u_i) \in B \land h(u_j) \in B] - \left(\frac{K}{m}\right)^2 = \left(\frac{K}{m}\right)^2 - \left(\frac{K}{m}\right)^2 = 0$$</p>
-
-<p class="mb-3">Therefore, the variance of the sum is strictly the sum of the variances: $$\text{Var}[Y] = \sum_{j=1}^D \text{Var}[I_j] \le D \cdot \frac{K}{m} = \mathbb{E}[Y]$$</p>
-
-<p class="mb-3"><strong>Step 3: Decision Rule and Concentration via Chebyshev</strong> By scaling $K$ and $m$ proportionally (e.g., setting $K = \mathcal{O}(1/\epsilon^2)$), the variance relative to the gap can be made arbitrarily small. Applying Chebyshev's inequality: $$\Pr[|Y - \mathbb{E}[Y]| \ge \lambda] \le \frac{\text{Var}[Y]}{\lambda^2} \le \frac{\mathbb{E}[Y]}{\lambda^2}$$ Choosing a decision threshold $\tau = \frac{3}{4} \cdot \frac{K}{m} \cdot T$:</p>
-
-<ul class="note-list">
-<li>If $Y \le \tau$, output <code>YES</code> ($D \le T$).</li>
-<li>If $Y &gt; \tau$, output <code>NO</code> ($D \ge 2T$).</li>
-</ul>
-
-<p class="mb-3">Both false positive and false negative error probabilities are bounded by $\le \frac{1}{3}$.</p>
+<p class="mb-3">This bound has $k$ in its exponent because $k$ is the <strong>number of independent copies</strong>. It is the additive Hoeffding form, even if lecture notes loosely call it a Chernoff bound. In a multiplicative Chernoff formula for $S=\sum_iY_i$, the mean is $\mu=\mathbb E[S]=kp_D$, not $k$. The event $|\bar Y-p_D|&gt;\eta$ becomes $|S-\mu|&gt;k\eta$; a relative-deviation parameter would be $\eta/p_D$. One must make this conversion rather than replace $\mu$ by $k$.</p>
 
 <hr>
 
-<h4 id="2-6-scaling-up-from-decision-gap-testing-to-1-epsilon-multiplicative-approximation" class="mb-2">2.6 Scaling Up: From Decision Gap-Testing to $(1+\epsilon)$-Multiplicative Approximation</h4>
+<h4 id="2-5-the-storage-bill-the-bit-is-not-the-whole-state" class="mb-2">2.5 The Storage Bill: The Bit Is Not the Whole State</h4>
 
-<p class="mb-3">How do we convert a decision tester into a continuous $(1 \pm \epsilon)$-estimator for arbitrary $D \in [1, n]$?</p>
+<p class="mb-3">For one copy, the bucket-hit flag is one bit. But a fully random $h:[n]\to[T]$ is one of $T^n$ functions. Describing which one was chosen needs about</p>
 
-<p class="mb-3"><strong>The Geometric Threshold Grid:</strong> We instantiate parallel copies of the decision tester over an exponentially spaced grid of thresholds: $$T_j = (1 + \epsilon)^j \quad \text{for } j = 0, 1, 2, \dots, \left\lceil \frac{\log n}{\log(1 + \epsilon)} \right\rceil$$</p>
+<p class="mb-3">$$\log_2(T^n)=n\log_2T$$</p>
 
-<p class="mb-3">Notice that: $$\log(1 + \epsilon) \approx \epsilon \implies \text{Total number of testers } L = \mathcal{O}\left( \frac{\log n}{\epsilon} \right)$$</p>
+<p class="mb-3">bits; $k$ independent copies multiply this cost. For example, if $T=8$, one such function alone needs about $3n$ bits. The idealized tester therefore does <strong>not</strong> use constant total space. This motivates a different estimator whose proof uses only pairwise independence, allowing a much smaller hash family and an $\mathcal{O}(\log n)$-bit seed.</p>
 
-<p class="mb-3"><strong>Streaming Execution:</strong></p>
+<hr>
 
-<ol class="mb-3">
-<li>All $L$ testers process the stream in parallel.</li>
-<li>At the end of the stream, find the smallest threshold $T_{j^<em>}$ for which Tester $T_{j^</em>}$ outputs <code>YES</code>.</li>
-<li>Output $\tilde{D} = T_{j^*}$.</li>
-</ol>
+<h4 id="2-6-from-gap-testing-to-a-constant-factor-estimate" class="mb-2">2.6 From Gap Testing to a Constant-Factor Estimate</h4>
 
-<p class="mb-3">While this grid-search approach demonstrates the theoretical reduction from estimation to testing, maintaining $\mathcal{O}(\frac{\log n}{\epsilon})$ parallel testers incurs unnecessary overhead. We now present the <strong>direct continuous estimator</strong> via the $t$-th smallest hash value.</p>
+<p class="mb-3">First make an <strong>idealized deterministic-oracle assumption</strong>: for every threshold $T$, a tester $\mathcal A(T)$ obeys the two promises exactly. This is separate from the randomized empty-bucket construction above. Run copies for a geometric grid</p>
+
+<p class="mb-3">$$T_j=(1+\epsilon)^j,\qquad j=0,1,\ldots,b,\qquad b=\left\lceil\log_{1+\epsilon}n\right\rceil.$$</p>
+
+<p class="mb-3">All copies see each arriving stream item, because a one-pass algorithm cannot rewind the stream for the next threshold. Let $T^<em>$ be the </em><em>smallest</em>* grid threshold returning YES. It exists because the last threshold is at least $n\ge D$.</p>
+
+<p class="mb-3">A YES at $T^<em>$ implies $D&lt;2T^</em>$: if $D\ge2T^<em>$, the tester would have to say NO. The previous grid threshold $T_{\rm prev}=T^</em>/(1+\epsilon)$ returned NO, so $D&gt;T_{\rm prev}$: if $D\le T_{\rm prev}$, it would have to say YES. Combining these facts gives</p>
+
+<p class="mb-3">$$\frac D2&lt;T^*&lt;(1+\epsilon)D.$$</p>
+
+<p class="mb-3">This is a <strong>constant-factor</strong> estimate, not a $(1\pm\epsilon)$ estimate. For $0&lt;\epsilon\le1$ it gives a factor-2 guarantee; the lecture's $(2+2\epsilon)$ statement is a looser guarantee. The gap region $T&lt;D&lt;2T$ may produce either answer and is already accounted for by the two implications. In an integer implementation, round grid thresholds and absorb the small boundary effects into the guarantee.</p>
+
+<p class="mb-3"><strong>Why the space multiplies.</strong> The number of grid thresholds is $b+1$. Since</p>
+
+<p class="mb-3">$$b=\Theta\!\left(\log_{1+\epsilon}n\right) =\Theta\!\left(\frac{\log n}{\log(1+\epsilon)}\right) =\Theta\!\left(\epsilon^{-1}\log n\right) \quad(0&lt;\epsilon\le1),$$</p>
+
+<p class="mb-3">if one tester uses $B$ bits, all copies use $\mathcal O(B\epsilon^{-1}\log n)$ bits. Here “copies” means <strong>different thresholds running in parallel</strong>; the deterministic assumption requires no probabilistic independence. If each tester is randomized with constant failure probability, simply running all of them does not preserve that guarantee simultaneously: first reduce each copy's failure probability and then apply a union bound across the grid.</p>
+
+<p class="mb-3">The grid reduction explains how a decision procedure yields a rough estimate. The next section develops a different, direct estimator to obtain $(1\pm\epsilon)$ accuracy.</p>
 
 <hr>
 </section>
@@ -8761,45 +8729,25 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
               \___________ t intervals _______________/
                      Expected length: t / D</code></pre></div>
 
-<p class="mb-3">If we track the single minimum $X_1$ ($t=1$), the variance of an exponential/geometric random variable is as large as its mean squared ($\text{Var}[X_1] \approx \mathbb{E}[X_1]^2$), giving huge fluctuations. However, by averaging over the first $t$ intervals (tracking the <strong>$t$-th minimum</strong> $X_t$), the variance shrinks by a factor of $t$! By picking $t = \mathcal{O}(1/\epsilon^2)$, the estimator concentrates tightly within $1 \pm \epsilon$.</p>
+<p class="mb-3">This equal-spacing picture is a heuristic for fully independent uniform points; it is <strong>not</strong> the proof for the pairwise independent family used below. A single minimum fluctuates heavily. Moving to the $t$-th minimum makes its <em>relative</em> fluctuations smaller (roughly $1/\sqrt t$ in the ideal continuous model). We prove the required $t=\mathcal O(1/\epsilon^2)$ guarantee by counting points below a fixed cutoff, rather than assuming the gaps themselves are independent.</p>
 
 <hr>
 
-<h4 id="3-2-algorithm-description-maintaining-the-top-t-smallest-hash-values" class="mb-2">3.2 Algorithm Description: Maintaining the Top-$t$ Smallest Hash Values</h4>
+<h4 id="3-2-algorithm-description-maintaining-the-t-smallest-distinct-keys" class="mb-2">3.2 Algorithm Description: Maintaining the $t$ Smallest Distinct Keys</h4>
 
 <blockquote class="blockquote mb-3"><strong>Algorithm: $t$-th Minimum Distinct Elements Estimator</strong></blockquote>
 
-<blockquote class="blockquote mb-3">1. Set parameters: $\epsilon \in (0, 1)$, failure probability $\delta \in (0, 1)$.</blockquote>
+<blockquote class="blockquote mb-3">1. Choose $\epsilon\in(0,1)$ and $t=\lceil100/\epsilon^2\rceil$. Choose a prime hash range $m$ large compared with the input universe $[n]$ (for example $m\ge n^3$), and sample a pairwise independent $h:[n]\to[m]=\{1,\ldots,m\}$. A field-valued polynomial hash can be shifted by $+1$ to use this positive range, so $X_t$ cannot be zero.</blockquote>
 
-<blockquote class="blockquote mb-3">2. Set $t = \left\lceil \frac{100}{\epsilon^2} \right\rceil$.</blockquote>
+<blockquote class="blockquote mb-3">2. Maintain at most $t$ <strong>distinct input keys</strong>, ordered by the pair $(h(a),a)$. The key is included to distinguish two different inputs that happen to collide under $h$. Let $\mathcal T$ contain the $t$ smallest such pairs seen so far.</blockquote>
 
-<blockquote class="blockquote mb-3">3. Choose a large prime $m \ge n^3$ (ensuring zero collisions among distinct items with probability $\ge 1 - 1/n$).</blockquote>
+<blockquote class="blockquote mb-3">3. When input $a$ arrives: if $a$ is already in $\mathcal T$, do nothing. If the heap has fewer than $t$ pairs, insert $(h(a),a)$. Otherwise replace the maximum pair only when $(h(a),a)$ is smaller. Once a key has fallen outside the retained prefix, the cutoff can only decrease, so a later duplicate of that key cannot re-enter.</blockquote>
 
-<blockquote class="blockquote mb-3">4. Pick a pairwise independent hash function $h: [n] \to [m]$.</blockquote>
+<blockquote class="blockquote mb-3">4. If $|\mathcal T|&lt;t$ at the end, fewer than $t$ distinct inputs ever appeared; output the <strong>exact</strong> count $|\mathcal T|$. Otherwise let $X_t$ be the hash coordinate of the maximum retained pair and output $\tilde D=tm/X_t$.</blockquote>
 
-<blockquote class="blockquote mb-3">5. <strong>Data Structure:</strong> Maintain a max-heap $\mathcal{T}$ of size at most $t$ storing the $t$ smallest hash values seen so far.</blockquote>
+<p class="mb-3">For example, with $t=3$, distinct keys arriving with hash values $40,10,30,20$ leave values $10,20,30$ in the heap; $X_t=30$. A later new key with hash value $5$ changes the retained values to $5,10,20$ and $X_t$ to $20$.</p>
 
-<blockquote class="blockquote mb-3">6. <strong>Stream Update for token $a$:</strong></blockquote>
-
-<blockquote class="blockquote mb-3">- Compute $v = h(a)$.</blockquote>
-
-<blockquote class="blockquote mb-3">- If $|\mathcal{T}| &lt; t$: insert $v$ into $\mathcal{T}$ (ignoring duplicates).</blockquote>
-
-<blockquote class="blockquote mb-3">- Else if $v &lt; \max(\mathcal{T})$ and $v \notin \mathcal{T}$:</blockquote>
-
-<blockquote class="blockquote mb-3">- Remove the current maximum from $\mathcal{T}$.</blockquote>
-
-<blockquote class="blockquote mb-3">- Insert $v$ into $\mathcal{T}$.</blockquote>
-
-<blockquote class="blockquote mb-3">7. <strong>Output at end of stream:</strong></blockquote>
-
-<blockquote class="blockquote mb-3">- If total distinct items seen $&lt; t$: return exact count $|\mathcal{T}|$.</blockquote>
-
-<blockquote class="blockquote mb-3">- Else, let $X_t = \max(\mathcal{T})$ (the $t$-th smallest hash value).</blockquote>
-
-<blockquote class="blockquote mb-3">- Return:</blockquote>
-
-<blockquote class="blockquote mb-3">$$\tilde{D} = \frac{t \cdot m}{X_t}$$</blockquote>
+<p class="mb-3">The lecture-note shorthand “ignore duplicate hash values” is insufficient by itself: different keys can collide. Keeping the input key with its hash value makes the order statistic over <strong>distinct inputs</strong> well defined. Each retained pair uses $\mathcal O(\log n+\log m)$ bits; storing $t$ pairs still costs $\mathcal O(t\log m)$ bits when $m$ is polynomial in $n$.</p>
 
 <hr>
 
@@ -8830,11 +8778,48 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 
 <p class="mb-3">This equivalence maps an order statistic question directly into a sum of indicator variables $Z_V$, which we can analyze with standard expectation and variance tools!</p>
 
+<p class="mb-3"><strong>Concrete sorting check.</strong> Hold $t=3$ and a cutoff $V=30$ fixed before looking at the random hash values:</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>First hash values in sorted order</th>
+<th>Third-smallest $X_3$</th>
+<th>Count $Z_{30}$ of values at most 30</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>$4,12,24,41,\ldots$</td>
+<td>$24$</td>
+<td>$3$</td>
+</tr>
+<tr>
+<td>$4,12,30,41,\ldots$</td>
+<td>$30$</td>
+<td>$3$</td>
+</tr>
+<tr>
+<td>$4,12,42,55,\ldots$</td>
+<td>$42$</td>
+<td>$2$</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">The first two rows have $X_3\le30$ and at least three values at or left of the cutoff. The last row has $X_3&gt;30$ and fewer than three. We are <strong>not</strong> counting the values before $X_3$; we count values before the separately fixed cutoff $V$.</p>
+
+<p class="mb-3"><strong>Proof-only cutoff.</strong> Later we set $V$ using the true, unknown $D$ and the permitted error $\epsilon$. The running algorithm cannot do that: it only maintains $X_t$ and outputs $tm/X_t$. The cutoff and $Z_V$ exist solely in our analysis to characterize the event that this output is wrong.</p>
+
+<p class="mb-3"><strong>Why variance appears next.</strong> The expectation of $Z_V$ locates its average, but it does not tell us how often the actual count crosses $t$. A variable that is always $6$ and one that is $0$ or $12$ with equal probability both have mean $6$; only the latter frequently falls below $3$. Variance measures that spread. Pairwise independence will let us add the indicator variances, and Chebyshev will convert that bound into a probability of crossing $t$.</p>
+
+<p class="mb-3">For a non-integer cutoff, use a consistent strict or non-strict comparison and the corresponding floor or ceiling. If $0&lt;V&lt;m$, the exact success probability for one uniform hash is $\lfloor V\rfloor/m$, which differs from $V/m$ by less than $1/m$. Across all $D\le n$ keys, this changes the mean count by less than $D/m\le 1/n^2$ when $m\ge n^3$. The formulas below display the cleaner continuous values; this small correction fits inside the generous choice $t=100/\epsilon^2$.</p>
+
 <hr>
 
 <h4 id="3-5-step-by-step-chebyshev-variance-bounding-proof-of-t-mathcal-o-1-epsilon-2" class="mb-2">3.5 Step-by-Step Chebyshev Variance Bounding: Proof of $t = \mathcal{O}(1/\epsilon^2)$</h4>
 
-<p class="mb-3">We now prove that $\tilde{D} = \frac{t \cdot m}{X_t} \in [(1 - \epsilon)D, (1 + \epsilon)D]$ with probability at least $2/3$.</p>
+<p class="mb-3">We now bound the probability that $\tilde{D} = \frac{t \cdot m}{X_t}$ leaves $[(1 - \epsilon)D, (1 + \epsilon)D]$. Assume $D\ge t$; the algorithm returns the exact count when $D&lt;t$. We first write the clean continuous-cutoff algebra, then account for the discrete hash range by rounding as noted above.</p>
 
 <p class="mb-3">The estimation succeeds if: $$(1 - \epsilon) D \le \frac{t \cdot m}{X_t} \le (1 + \epsilon) D$$ Inverting the inequality, this is equivalent to: $$\frac{t \cdot m}{(1 + \epsilon) D} \le X_t \le \frac{t \cdot m}{(1 - \epsilon) D}$$</p>
 
@@ -8846,6 +8831,8 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 </ol>
 
 <p class="mb-3">We bound the probability of each bad event separately.</p>
+
+<p class="mb-3">Why does a <strong>variance</strong> appear here? The algorithm stores the order statistic $X_t$, but the event “$X_t$ crossed a fixed line $V$” is equivalent to asking whether the count $Z_V$ of hashes on the left of that line reached $t$. A mean alone tells us the center of this count, not how likely it is to cross $t$. For each distinct key put $I_j=\mathbb I[h(u_j)\le V]$ and $p=\Pr[I_j=1]$. Then $Z_V=\sum_{j=1}^D I_j$, $\mathbb E[Z_V]=Dp$, and $$\operatorname{Var}(Z_V)=\sum_j\operatorname{Var}(I_j)+2\sum_{i&lt;j}\operatorname{Cov}(I_i,I_j)=Dp(1-p)\le Dp=\mathbb E[Z_V].$$ The covariance terms vanish because the hash family is <strong>pairwise independent</strong>. The identity $I_j^2=I_j$ applies to each indicator, not to their sum $Z_V$. This is precisely the variance bound needed by Chebyshev below; full independence is unnecessary.</p>
 
 <h5 class="mb-2">Part 1: Bounding Bad Event 1 (Overestimation)</h5>
 
@@ -8862,6 +8849,8 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <h5 class="mb-2">Part 2: Bounding Bad Event 2 (Underestimation)</h5>
 
 <p class="mb-3">Define the threshold: $$V_2 = \frac{t \cdot m}{(1 - \epsilon) D}$$ From our event equivalence: $$\Pr[\text{Bad Event 2}] = \Pr[X_t &gt; V_2] = \Pr[Z_{V_2} &lt; t]$$</p>
+
+<p class="mb-3">If $V_2\ge m$, then $X_t\le m$ always, so this bad event is impossible. In the remaining case $V_2&lt;m$, the count and its concentration can be analyzed as follows.</p>
 
 <p class="mb-3">Compute expectation and variance of $Z_{V_2}$: $$\mathbb{E}[Z_{V_2}] = D \cdot \frac{V_2}{m} = \frac{t}{1 - \epsilon}$$ $$\text{Var}[Z_{V_2}] \le \mathbb{E}[Z_{V_2}] = \frac{t}{1 - \epsilon}$$</p>
 
@@ -9059,13 +9048,15 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <li><strong>Deterministic Hardness:</strong></li>
 </ul>
 
-<p class="mb-3">The set $S = \{(x, x) : x \in \{0, 1\}^n\}$ is a fooling set of size $2^n$. For any distinct $x_1 \ne x_2$, $(x_1, x_1) \in S$ and $(x_2, x_2) \in S$, but $\text{EQ}_n(x_1, x_2) = 0 \ne 1$. Therefore: $$D(\text{EQ}_n) \ge \log_2(2^n) = n \text{ bits}$$ Deterministically, Alice must send her entire $n$-bit input!</p>
+<p class="mb-3">For a concrete one-way picture, take $n=3$: there are eight possible strings for Alice. A message of fewer than three bits has at most four values, so two different strings, say $x_1$ and $x_2$, receive the same message. If Bob's string is $y=x_1$, the two inputs $(x_1,x_1)$ and $(x_2,x_1)$ require opposite answers, yet Bob sees the same message and the same $y$. The set $S = \{(x, x) : x \in \{0, 1\}^n\}$ is a fooling set of size $2^n$. For any distinct $x_1 \ne x_2$, $(x_1, x_1) \in S$ and $(x_2, x_2) \in S$, but $\text{EQ}_n(x_1, x_2) = 0 \ne 1$. Therefore: $$D(\text{EQ}_n) \ge \log_2(2^n) = n \text{ bits}$$ Deterministically, Alice must send her entire $n$-bit input!</p>
 
 <ul class="note-list">
 <li><strong>Randomized Fingerprinting:</strong></li>
 </ul>
 
-<p class="mb-3">Using public randomness or hashing over a prime field $\mathbb{F}_p$ ($p = \Theta(n^2)$), Alice sends $h(x)$ to Bob. If $x = y$, $h(x) = h(y)$ always. If $x \ne y$, $\Pr[h(x) = h(y)] \le 1/p \le 1/n^2$. Message size: $\lceil \log_2 p \rceil = \mathcal{O}(\log n)$ bits. $$R_{1/3}(\text{EQ}_n) = \mathcal{O}(\log n) \text{ bits}$$</p>
+<p class="mb-3">A fingerprint is a randomized hash. Different strings <strong>may</strong> share a fingerprint; the guarantee is that for any fixed $x\ne y$, they collide with low probability over the random choice of hash. For a concrete private-coin construction, choose a prime $p\ge 3n$, sample $r\in\mathbb F_p$, and interpret $x=(x_0,\ldots,x_{n-1})$ as $P_x(z)=\sum_{j=0}^{n-1}x_jz^j\pmod p$. Alice sends $(r,P_x(r))$; Bob compares the received value with $P_y(r)$. If $x=y$, equality always holds. If $x\ne y$, $P_x-P_y$ is a nonzero polynomial of degree at most $n-1$, so it has at most $n-1$ roots in $\mathbb F_p$. Hence $\Pr_r[P_x(r)=P_y(r)]\le(n-1)/p&lt;1/3$. Sending the seed and value costs $2\lceil\log_2p\rceil=\mathcal O(\log n)$ bits. With a public random seed, Alice need only send the value. Thus $R^{1\text{-way,private}}_{1/3}(\mathrm{EQ}_n)=\mathcal O(\log n)$.</p>
+
+<p class="mb-3">This is the point of the example: a short randomized summary can be useful even though it does not identify every possible input uniquely. The collision probability is taken over the hash choice for each <strong>fixed pair</strong> of different inputs; it does not claim that one selected hash has no collisions anywhere.</p>
 
 <hr>
 
@@ -9090,6 +9081,8 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 <blockquote class="blockquote mb-3">$$R^{1\text{-way}}_{1/3}(\text{INDEX}_n) \ge (1 - H(1/3)) n = \Omega(n) \text{ bits}$$</blockquote>
 
 <blockquote class="blockquote mb-3">where $H(p) = -p \log_2 p - (1-p) \log_2(1-p)$ is the binary entropy function.</blockquote>
+
+<p class="mb-3">The direction of communication matters. If Bob could speak first, he could send the index $i$ using $\lceil\log_2 n\rceil$ bits; Alice would reply with the single bit $x_i$. The $\Omega(n)$ statement concerns a message sent <strong>from Alice to Bob before Alice learns $i$</strong>, exactly the information-flow pattern used when turning a streaming algorithm's memory state into a message.</p>
 
 <hr>
 
@@ -9127,7 +9120,9 @@ Pair n/2: (n, n-1) at indices (n-1, n)</code></pre></div>
 
 <blockquote class="blockquote mb-3">$$R_{1/3}(\text{GHD}) = \Omega(n) \text{ bits}$$</blockquote>
 
-<p class="mb-3">This deep theorem implies that estimating frequency moments or distances to within relative error $\epsilon \approx 1/\sqrt{n}$ requires $\Omega(n)$ space.</p>
+<p class="mb-3">This deep theorem can yield $\Omega(n)$ streaming-space lower bounds for suitable distance or frequency-moment estimation problems when the task admits a reduction from Gap Hamming.</p>
+
+<p class="mb-3">To see the scale of the promise, take $n=16$. The two cases are distances at most $8-4=4$ and at least $8+4=12$; distances $5$ through $11$ are outside the promise, so either answer is allowed there. In general, the center is $n/2$ and the offset is $\sqrt n$, giving a relative separation of order $1/\sqrt n$. A streaming space lower bound for a particular distance or frequency-moment task still needs an explicit reduction from Gap Hamming to that task; the communication theorem alone does not automatically cover every estimator.</p>
 
 <hr>
 

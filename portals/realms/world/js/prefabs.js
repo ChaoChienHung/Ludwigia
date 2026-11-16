@@ -60,20 +60,27 @@
       nav.setBlock(16.75, 57.0, 37.25, 36.5, true); // East Flanking Abyss Void + Balustrade (x: 16.75..54, y: 57..93.5)
 
       // 2. Minecraft Island North Cliff Edge, Fences & Gateway Fire Pillars (blocks entrance flanks, leaving center x: 12.75..15.25 open)
-      nav.setBlock(7.0, 93.6, 5.75, 0.8, true);      // West Northern Fence, Cliff & West Gateway Pillar (x: 7.0..12.75)
-      nav.setBlock(15.25, 93.6, 5.75, 0.8, true);    // East Northern Fence, Cliff & East Gateway Pillar (x: 15.25..21.0)
+      nav.setBlock(6.0, 93.6, 6.75, 0.8, true);      // West Northern Fence, Cliff & West Gateway Pillar (x: 6.0..12.75)
+      nav.setBlock(15.25, 93.6, 6.75, 0.8, true);    // East Northern Fence, Cliff & East Gateway Pillar (x: 15.25..22.0)
 
-      // 3. Minecraft Island Perimeter Fences (West x=7.0, East x=21.0, South y=111.0)
-      nav.setBlock(6.8, 94.0, 0.5, 17.2, true);     // West Cliff Fence (x: 6.8..7.3, y: 94..111.2)
-      nav.setBlock(20.7, 94.0, 0.5, 17.2, true);    // East Cliff Fence (x: 20.7..21.2, y: 94..111.2)
-      nav.setBlock(7.0, 110.7, 14.2, 0.5, true);    // South Cliff Fence (x: 7..21.2, y: 110.7..111.2)
+      // 3. Minecraft Island Perimeter Fences (West x=6.0, East x=22.0, South y=111.0)
+      nav.setBlock(5.8, 94.0, 0.5, 17.2, true);      // West Cliff Fence (x: 5.8..6.3, y: 94..111.2)
+      nav.setBlock(21.8, 94.0, 0.5, 5.0, true);      // East Cliff Fence North (y: 94..99)
+      nav.setBlock(21.8, 101.0, 0.5, 10.2, true);    // East Cliff Fence South (y: 101..111.2)
+      nav.setBlock(6.0, 110.7, 16.0, 0.5, true);     // South Cliff Fence (x: 6..22, y: 110.7..111.2)
 
-      // 4. Void Chasm Outer Boundaries
-      nav.setBlock(0.0, 93.0, 6.8, 20.0, true);     // Flanking Void West of Island
-      nav.setBlock(21.2, 93.0, 32.8, 20.0, true);   // Flanking Void East of Island
-      nav.setBlock(0.0, 111.2, 54.0, 2.0, true);    // Flanking Void South of Island
+      // 4. Void Chasm Outer Boundaries & Inter-Island Abyss Gaps
+      nav.setBlock(0.0, 93.0, 5.8, 20.0, true);      // Flanking Void West of Minecraft Island
+      nav.setBlock(22.2, 93.0, 3.6, 6.0, true);      // Void Chasm between islands North of bridge (y: 93..99)
+      nav.setBlock(22.2, 101.4, 3.6, 10.0, true);    // Void Chasm between islands South of bridge (y: 101.4..111.4)
+      nav.setBlock(49.2, 93.0, 4.8, 20.0, true);     // Flanking Void East of Pokemon Island
+      nav.setBlock(0.0, 111.2, 54.0, 2.0, true);     // Flanking Void South of all Islands
 
-      // 5. Symmetrical Bridge Artifacts along Centerline x: 14.0
+      // 5. Connecting Skybridge to Pokémon Island (x: 22.0..26.0, y: 99..101)
+      nav.setBlock(22.0, 98.6, 4.0, 0.4, true);      // Bridge North Railing (y = 98.6..99.0)
+      nav.setBlock(22.0, 101.0, 4.0, 0.4, true);     // Bridge South Railing (y = 101.0..101.4)
+
+      // 6. Symmetrical Bridge Artifacts along Centerline x: 14.0
       // Inner & Outer Turret distance enlarged to 4.5 tiles, keeping health relics on the sides!
       nav.setBlock(12.9, 60.2, 2.2, 2.0, true);   // Blue Nexus (leaves y: 57..60.2 clear in front of door!)
       nav.setBlock(13.3, 63.8, 1.4, 1.4, true);   // Blue Inhibitor
@@ -86,30 +93,62 @@
       nav.setBlock(12.9, 89.0, 2.2, 2.0, true);   // Red Nexus (leaves clear approach to Minecraft gate)
 
       // ======================================================================
-      // D. MINECRAFT ISLAND INTERIOR OBSTACLES (x: 7..21, y: 93..111)
+      // D. MINECRAFT ISLAND INTERIOR OBSTACLES (x: 6..22, y: 93..111)
+      // Fully decluttered: spacious central avenue & smooth front-to-back pass-through!
       // ======================================================================
-      // Oak Wood Cabin (x: 9..15, y: 97..103, spacious doorway at x: 12.8..14.2 at y: 97)
+      // Oak Wood Cabin (x: 9..15, y: 97..103, front door at y: 97, matching back door at y: 103!)
       nav.setBlock(9.0, 96.8, 3.8, 0.5, true);    // North Wall Left (x: 9..12.8)
       nav.setBlock(14.2, 96.8, 0.8, 0.5, true);   // North Wall Right Pillar (x: 14.2..15)
       nav.setBlock(8.8, 97.0, 0.5, 6.0, true);    // West Wall (x: 8.8..9.3, y: 97..103)
       nav.setBlock(14.7, 97.0, 0.5, 6.0, true);   // East Wall (x: 14.7..15.2, y: 97..103)
-      nav.setBlock(9.0, 102.7, 6.0, 0.5, true);   // South Wall (x: 9..15, y: 102.7..103.2)
+      nav.setBlock(9.0, 102.3, 3.8, 0.5, true);   // South Wall Left (x: 9..12.8)
+      nav.setBlock(14.2, 102.3, 0.8, 0.5, true);  // South Wall Right Pillar (x: 14.2..15)
+      // Note: Doorway at x: 12.8..14.2 is 100% open at both front and back!
 
-      // Cabin Furniture Obstacles (Neatly arranged along back & side walls, doorway corridor 100% unobstructed!)
+      // Cabin Furniture Obstacles (Neatly arranged along back & side walls)
       nav.setBlock(9.6, 97.5, 0.9, 0.9, true);    // Large Wooden Storage Chest (x: 9.8)
       nav.setBlock(10.6, 97.5, 0.9, 0.9, true);   // Crafting Table (x: 10.7)
       nav.setBlock(11.5, 97.5, 0.9, 0.9, true);   // Furnace (x: 11.6)
       nav.setBlock(9.6, 99.3, 1.4, 2.1, true);    // Minecraft Red Bed (x: 9.8, y: 99.5)
 
-      // Farmland Fences (x: 16..20, y: 97..102, perimeter fences placed cleanly at x=15.5 and y=96.6/102.0)
-      nav.setBlock(15.4, 96.4, 4.8, 0.4, true);   // North Fence (y = 96.6)
-      nav.setBlock(19.8, 96.6, 0.4, 5.6, true);   // East Fence (x = 20.0)
-      nav.setBlock(15.4, 101.8, 4.8, 0.4, true);  // South Fence (y = 102.0)
-      nav.setBlock(15.4, 96.6, 0.4, 2.2, true);   // West Fence Top (y: 96.6..98.8)
-      nav.setBlock(15.4, 100.2, 0.4, 2.0, true);  // West Fence Bottom (y: 100.2..102.2, gate open at 98.8..100.2)
+      // Farmland Fences placed neatly at x: 16.0..20.0 (leaving 2.0-tile wide passage to bridge on East!)
+      nav.setBlock(16.0, 96.4, 4.0, 0.4, true);   // North Fence (y = 96.6)
+      nav.setBlock(19.8, 96.6, 0.4, 5.0, true);   // East Fence (x = 20.0)
+      nav.setBlock(16.0, 101.4, 4.0, 0.4, true);  // South Fence (y = 101.4)
+      nav.setBlock(16.0, 96.6, 0.4, 1.4, true);   // West Fence Top (y: 96.6..98.0)
+      nav.setBlock(16.0, 100.0, 0.4, 1.4, true);  // West Fence Bottom (y: 100.0..101.4, spacious 2.0-tile gate open at 98.0..100.0!)
 
-      // Oak Tree Trunk
-      nav.setBlock(7.6, 105.8, 1.0, 1.0, true);
+      // Oak Tree Trunk (placed on west fringe leaving central lawn unobstructed)
+      nav.setBlock(6.8, 106.5, 1.0, 1.0, true);
+
+      // ======================================================================
+      // E. POKÉMON SANCTUARY & CENTER (x: 25.8..49.2, y: 93..111)
+      // ======================================================================
+      // 1. Perimeter Fences & Cliff Boundaries
+      nav.setBlock(25.8, 93.0, 23.4, 0.8, true);   // North Perimeter Fence (y = 93.0)
+      nav.setBlock(48.8, 93.0, 0.5, 18.2, true);   // East Perimeter Fence (x = 48.8..49.2)
+      nav.setBlock(25.8, 110.8, 23.4, 0.8, true);  // South Perimeter Fence (y = 110.8..111.2)
+      nav.setBlock(25.8, 93.0, 0.5, 6.0, true);    // West Perimeter Fence North (y: 93..99)
+      nav.setBlock(25.8, 101.0, 0.5, 10.0, true);  // West Perimeter Fence South (y: 101..111)
+
+      // 2. Pokémon Center Architectural Walls (x: 34..42, y: 94..98.5)
+      nav.setBlock(34.0, 93.8, 8.0, 0.5, true);    // North Wall (y = 93.8..94.2)
+      nav.setBlock(33.8, 94.0, 0.5, 4.4, true);    // West Wall (x = 33.8..34.2)
+      nav.setBlock(41.8, 94.0, 0.5, 4.4, true);    // East Wall (x = 41.8..42.2)
+      nav.setBlock(34.0, 98.1, 3.0, 0.4, true);    // South Wall Left (x: 34..37)
+      nav.setBlock(39.0, 98.1, 3.0, 0.4, true);    // South Wall Right (x: 39..42)
+      // Wide automatic sliding door opening at x: 37.0..39.0 at y: 98.1 is 100% WALKABLE!
+
+      // 3. Pokémon Center Interior Furniture
+      nav.setBlock(37.0, 94.9, 3.0, 0.9, true);    // Center Healing Counter & 6-Ball Recovery Station (ix: 37..39 only; ix: 35 & 36 100% CLEAR!)
+      nav.setBlock(40.5, 94.9, 1.3, 0.9, true);    // Corner PC Storage Terminal (ix: 40..41 only)
+      nav.setBlock(34.1, 96.1, 0.9, 1.5, true);    // Plush Waiting Lounge Sofa along west wall (ix: 34 only!)
+
+      // 4. Pokémon Creatures Obstacles
+      nav.setBlock(43.6, 103.5, 2.8, 2.0, true);   // Snoozing Snorlax on Eastern Lawn (Immense Body)
+      nav.setBlock(32.1, 100.6, 0.8, 0.8, true);   // Pokémon Quest Eevee on Western Lawn
+      nav.setBlock(34.1, 107.1, 0.8, 0.8, true);   // Pokémon Quest Jolteon on SW Lawn
+      nav.setBlock(42.6, 100.6, 0.8, 0.8, true);   // Pokémon Quest Flareon on East Lawn
     },
 
     // --- 2. Register Bed Furniture Spot for Minecraft Red Bed ---
@@ -838,30 +877,36 @@
       // ======================================================================
       // 1. North Cliff Fences (y = 94.0, terminates flush against Gateway Stone Pillars at x: 12.1 and x: 15.9)
       list.push({
-        xMin: 6.8, xMax: 12.2, yMin: 93.8, yMax: 94.2,
-        draw: () => drawFenceSegment(7.0, 12.1, 94.0)
+        xMin: 6.0, xMax: 12.2, yMin: 93.8, yMax: 94.2,
+        draw: () => drawFenceSegment(6.0, 12.1, 94.0)
       });
       list.push({
-        xMin: 15.8, xMax: 21.2, yMin: 93.8, yMax: 94.2,
-        draw: () => drawFenceSegment(15.9, 21.0, 94.0)
-      });
-
-      // 2. West Cliff Fence (x = 7.0, y: 94..111)
-      list.push({
-        xMin: 6.8, xMax: 7.3, yMin: 94.0, yMax: 111.0,
-        draw: () => drawFenceSegmentY(7.0, 94.0, 111.0)
+        xMin: 15.8, xMax: 22.0, yMin: 93.8, yMax: 94.2,
+        draw: () => drawFenceSegment(15.9, 21.8, 94.0)
       });
 
-      // 3. East Cliff Fence (x = 21.0, y: 94..111)
+      // 2. West Cliff Fence (x = 6.0, y: 94..111)
       list.push({
-        xMin: 20.7, xMax: 21.2, yMin: 94.0, yMax: 111.0,
-        draw: () => drawFenceSegmentY(21.0, 94.0, 111.0)
+        xMin: 5.8, xMax: 6.3, yMin: 94.0, yMax: 111.0,
+        draw: () => drawFenceSegmentY(6.0, 94.0, 111.0)
       });
 
-      // 4. South Cliff Fence (y = 111.0, x: 7..21)
+      // 3. East Cliff Fence North (x = 21.8, y: 94..99)
       list.push({
-        xMin: 6.8, xMax: 21.2, yMin: 110.8, yMax: 111.2,
-        draw: () => drawFenceSegment(7.0, 21.0, 111.0)
+        xMin: 21.5, xMax: 22.1, yMin: 94.0, yMax: 99.0,
+        draw: () => drawFenceSegmentY(21.8, 94.0, 99.0)
+      });
+
+      // 3B. East Cliff Fence South (x = 21.8, y: 101..111)
+      list.push({
+        xMin: 21.5, xMax: 22.1, yMin: 101.0, yMax: 111.0,
+        draw: () => drawFenceSegmentY(21.8, 101.0, 111.0)
+      });
+
+      // 4. South Cliff Fence (y = 111.0, x: 6..22)
+      list.push({
+        xMin: 6.0, xMax: 22.0, yMin: 110.8, yMax: 111.2,
+        draw: () => drawFenceSegment(6.0, 21.8, 111.0)
       });
 
       // ======================================================================
@@ -986,9 +1031,154 @@
         ctx.restore();
       };
 
-      // 2A. Back North Wall & NW/NE Pillars (y: 96.8..97.4, doorway at x: 12.8..14.2)
+      // Helper: Authentic Dynamic Minecraft Oak Door with Auto Open/Close Swing
+      // Features: Oak wood door leaf (with 4 upper peek windows in 2x2 grid, 4 lower recessed panels, iron latch)
+      // Swings smoothly between closed (flush across doorway along X) and open (90° inward against inner left jamb along Y).
+      const drawMinecraftOakDoor = (doorX, doorY, doorZ, isSouthFacing = false, alpha = 1.0, openProgress = 0.0) => {
+        ctx.save();
+        if (alpha < 0.99) ctx.globalAlpha = alpha;
+
+        const jambW = 0.12;
+        const doorW = 1.16;   // Door leaf width along length
+        const doorT = 0.08;   // Door leaf thickness
+        const doorH = 1.95;   // Height of Minecraft door (2 blocks high)
+
+        // 1. Left and Right Door Jamb Trims
+        models.drawBox(ctx, doorX, doorY, doorZ, jambW, 0.35, 1.95, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+        models.drawBox(ctx, doorX + 1.40 - jambW, doorY, doorZ, jambW, 0.35, 1.95, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+
+        // 2. Dynamic Rotated Door Leaf
+        const prog = Math.max(0, Math.min(1, openProgress));
+        // Swing angle:
+        // North door swings into cabin (+Y): angle 0 -> +PI/2
+        // South door swings into cabin (-Y): angle 0 -> -PI/2
+        const angle = (isSouthFacing ? -prog : prog) * (Math.PI / 2);
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        // Hinge anchor (inner edge of left jamb)
+        const hx = doorX + jambW;
+        const hy = isSouthFacing ? (doorY + 0.35 - 0.04) : (doorY + 0.04);
+        const hz = doorZ;
+
+        // Direction vectors
+        const ux = doorW * cos, uy = doorW * sin;
+        const vx = isSouthFacing ? (doorT * sin) : (-doorT * sin);
+        const vy = isSouthFacing ? (-doorT * cos) : (doorT * cos);
+
+        // 4 Base corners & 4 Top corners
+        const p0 = isoToScreen(hx, hy, hz, world.ox, world.oy);
+        const p1 = isoToScreen(hx + ux, hy + uy, hz, world.ox, world.oy);
+        const p2 = isoToScreen(hx + ux + vx, hy + uy + vy, hz, world.ox, world.oy);
+        const p3 = isoToScreen(hx + vx, hy + vy, hz, world.ox, world.oy);
+
+        const q0 = isoToScreen(hx, hy, hz + doorH, world.ox, world.oy);
+        const q1 = isoToScreen(hx + ux, hy + uy, hz + doorH, world.ox, world.oy);
+        const q2 = isoToScreen(hx + ux + vx, hy + uy + vy, hz + doorH, world.ox, world.oy);
+        const q3 = isoToScreen(hx + vx, hy + vy, hz + doorH, world.ox, world.oy);
+
+        const cross2d = (a, b, c) => (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
+
+        const drawPoly = (pts, fillCol, strokeCol = null) => {
+          ctx.beginPath();
+          ctx.moveTo(pts[0].x, pts[0].y);
+          for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+          ctx.closePath();
+          ctx.fillStyle = fillCol;
+          ctx.fill();
+          if (strokeCol) {
+            ctx.strokeStyle = strokeCol;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        };
+
+        // Screen projection of surface point on front/back face
+        const getPointOnFace = (u, v, isBackFace = false) => {
+          const gx = hx + u * ux + (isBackFace ? vx : 0);
+          const gy = hy + u * uy + (isBackFace ? vy : 0);
+          const gz = hz + v * doorH;
+          return isoToScreen(gx, gy, gz, world.ox, world.oy);
+        };
+
+        const drawDoorFaceDetails = (isBackFace = false) => {
+          // Upper Cutout Peek Windows (4 windows in 2x2 grid)
+          const winCols = [[0.15, 0.46], [0.54, 0.85]];
+          const winRows = [[0.74, 0.90], [0.55, 0.71]];
+          for (const [u1, u2] of winCols) {
+            for (const [v1, v2] of winRows) {
+              const wPts = [
+                getPointOnFace(u1, v1, isBackFace),
+                getPointOnFace(u2, v1, isBackFace),
+                getPointOnFace(u2, v2, isBackFace),
+                getPointOnFace(u1, v2, isBackFace)
+              ];
+              drawPoly(wPts, '#0f172a', '#1e293b');
+            }
+          }
+
+          // Lower Recessed Wood Panels (4 panels in 2x2 grid)
+          const panRows = [[0.29, 0.48], [0.08, 0.26]];
+          for (const [u1, u2] of winCols) {
+            for (const [v1, v2] of panRows) {
+              const panPts = [
+                getPointOnFace(u1, v1, isBackFace),
+                getPointOnFace(u2, v1, isBackFace),
+                getPointOnFace(u2, v2, isBackFace),
+                getPointOnFace(u1, v2, isBackFace)
+              ];
+              drawPoly(panPts, '#8c6239', '#71421e');
+            }
+          }
+
+          // Metal Latch / Handle
+          const handlePts = [
+            getPointOnFace(0.86, 0.47, isBackFace),
+            getPointOnFace(0.95, 0.47, isBackFace),
+            getPointOnFace(0.95, 0.53, isBackFace),
+            getPointOnFace(0.86, 0.53, isBackFace)
+          ];
+          drawPoly(handlePts, '#64748b', '#334155');
+        };
+
+        // Determine face visibility with 2D cross products
+        const fFront = cross2d(p0, q0, q1) > 0;
+        const fLatch = cross2d(p1, q1, q2) > 0;
+        const fBack  = cross2d(p2, q2, q3) > 0;
+        const fHinge = cross2d(p3, q3, q0) > 0;
+
+        // Render visible faces in correct painter's depth order
+        // 1. Back face (if facing camera)
+        if (fBack) {
+          drawPoly([p2, q2, q3, p3], '#8c6239', '#71421e');
+          drawDoorFaceDetails(true);
+        }
+
+        // 2. Hinge edge (if facing camera)
+        if (fHinge) {
+          drawPoly([p3, q3, q0, p0], '#784d28', '#5a3416');
+        }
+
+        // 3. Latch edge (if facing camera)
+        if (fLatch) {
+          drawPoly([p1, q1, q2, p2], '#9a6b3f', '#784d28');
+        }
+
+        // 4. Front face (if facing camera)
+        if (fFront) {
+          drawPoly([p0, q0, q1, p1], '#b88958', '#9a6b3f');
+          drawDoorFaceDetails(false);
+        }
+
+        // 5. Top face (always visible from above)
+        drawPoly([q0, q1, q2, q3], '#d4a373', '#b88958');
+
+        ctx.restore();
+      };
+
+      // 2A. Back North Wall & NW/NE Pillars (y: 96.8..98.4, doorway at x: 12.8..14.2)
       list.push({
-        xMin: 8.9, xMax: 15.1, yMin: 96.8, yMax: 97.4,
+        xMin: 8.9, xMax: 15.1, yMin: 96.8, yMax: 98.4,
         draw: () => {
           // NW Log Pillar
           models.drawBox(ctx, 9.0, 97.0, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
@@ -998,6 +1188,8 @@
           models.drawBox(ctx, 9.8, 97.0, 0, 3.0, 0.35, 2.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
           // North Doorway Overhead Lintel (x: 12.8..14.2)
           models.drawBox(ctx, 12.8, 97.0, 1.95, 1.4, 0.35, 0.25, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // Authentic Minecraft Oak Door at North Entrance (smooth dynamic swing auto open/close)
+          drawMinecraftOakDoor(12.8, 97.0, 0, false, 1.0, world.doorMinecraftNorthOpen || 0);
 
           // Wall Torch with Warm Animated Flickering Light
           models.drawBox(ctx, 12.4, 97.1, 1.20, 0.10, 0.10, 0.45, '#78350f', '#451a03', '#291006', world.ox, world.oy);
@@ -1091,9 +1283,10 @@
         }
       });
 
-      // 2E. Camera-Facing South Wall & SW/SE Pillars (y: 102.2..103.1) — Supports wallAlphaMinecraft
+      // 2E. Camera-Facing South Wall & SW/SE Pillars (y: 101.15..103.1) — Supports wallAlphaMinecraft
+      // Open back door at x: 12.8..14.2 allows smooth pass-through from front door straight into backyard!
       list.push({
-        xMin: 8.9, xMax: 15.1, yMin: 102.2, yMax: 103.1,
+        xMin: 8.9, xMax: 15.1, yMin: 101.15, yMax: 103.1,
         draw: () => {
           ctx.save();
           if (world.wallAlphaMinecraft < 0.99) ctx.globalAlpha = world.wallAlphaMinecraft;
@@ -1101,40 +1294,104 @@
           models.drawBox(ctx, 9.0, 102.2, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
           // SE Log Pillar
           models.drawBox(ctx, 14.2, 102.2, 0, 0.8, 0.8, 2.20, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          // Left Wall Section (x: 9.8..12.8) - Flush at y: 102.45
           // Lower Solid Planks
-          models.drawBox(ctx, 9.8, 102.6, 0, 4.4, 0.35, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 102.45, 0, 3.0, 0.35, 0.80, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
           // Upper Solid Planks
-          models.drawBox(ctx, 9.8, 102.6, 1.80, 4.4, 0.35, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
-          // South Window Connected Minecraft Glass (Full 4.4 span from x: 9.8 to 14.2)
-          drawMinecraftConnectedGlassWindow(9.8, 102.6, 0.80, 4.4, 0.35, 1.00, true, world.wallAlphaMinecraft);
+          models.drawBox(ctx, 9.8, 102.45, 1.80, 3.0, 0.35, 0.40, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // South Window Connected Minecraft Glass (Span x: 9.8 to 12.8)
+          drawMinecraftConnectedGlassWindow(9.8, 102.45, 0.80, 3.0, 0.35, 1.00, true, world.wallAlphaMinecraft);
+          // Upper Oak Lintel above Open Back Doorway (x: 12.8 to 14.2, z: 1.95..2.20)
+          models.drawBox(ctx, 12.8, 102.45, 1.95, 1.4, 0.35, 0.25, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // Authentic Minecraft Oak Door at South Exit (smooth dynamic swing auto open/close)
+          drawMinecraftOakDoor(12.8, 102.45, 0, true, world.wallAlphaMinecraft, world.doorMinecraftSouthOpen || 0);
           ctx.restore();
         }
       });
 
-      // 3. Rectangular Minecraft Farmland (x: 16..20, y: 97..102)
-      // Authentic Minecraft Pumpkins & Crops cleanly decoupled from perimeter fences!
-
-      // 3A. North & East Back Perimeter Fences (Placed cleanly outside crop tiles at y=96.6 & x=20.0)
+      // 2F. Minecraft Sanctuary Oak Cabin Authentic Gabled Roof & Chimney (z: 2.20..3.85)
+      // Elevated above interior walls (z: 2.20), smoothly fades to 0.0 when player enters cabin!
       list.push({
-        xMin: 15.5, xMax: 20.2, yMin: 96.4, yMax: 96.8,
+        xMin: 8.5, xMax: 15.5, yMin: 96.5, yMax: 103.3, z: 2.20,
+        draw: () => {
+          if (world.roofAlphaMinecraft <= 0.005) return;
+
+          ctx.save();
+          if (world.roofAlphaMinecraft < 0.99) ctx.globalAlpha = world.roofAlphaMinecraft;
+
+          // Tier 1 (Lowest Eaves Overhang, z = 2.20..2.55)
+          // West Eaves
+          models.drawBox(ctx, 8.6, 96.6, 2.20, 1.8, 6.6, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // East Eaves
+          models.drawBox(ctx, 13.6, 96.6, 2.20, 1.8, 6.6, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // North & South Cobblestone Eaves Trim
+          models.drawBox(ctx, 8.6, 96.6, 2.20, 6.8, 0.40, 0.38, '#737373', '#525252', '#404040', world.ox, world.oy);
+          models.drawBox(ctx, 8.6, 102.8, 2.20, 6.8, 0.40, 0.38, '#737373', '#525252', '#404040', world.ox, world.oy);
+
+          // Tier 2 (Mid-slope Stairs, z = 2.55..2.90)
+          // West Slope
+          models.drawBox(ctx, 9.8, 96.6, 2.55, 1.4, 6.6, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // East Slope
+          models.drawBox(ctx, 12.8, 96.6, 2.55, 1.4, 6.6, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // North & South Cobblestone Mid Trim
+          models.drawBox(ctx, 9.8, 96.6, 2.55, 4.4, 0.40, 0.38, '#737373', '#525252', '#404040', world.ox, world.oy);
+          models.drawBox(ctx, 9.8, 102.8, 2.55, 4.4, 0.40, 0.38, '#737373', '#525252', '#404040', world.ox, world.oy);
+
+          // Tier 3 (Peak Roof Ridge Slabs, z = 2.90..3.25)
+          // Central Peak Ridge
+          models.drawBox(ctx, 10.8, 96.6, 2.90, 2.4, 6.6, 0.35, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          // North & South Cobblestone Peak Gable Cap
+          models.drawBox(ctx, 10.8, 96.6, 2.90, 2.4, 0.40, 0.38, '#737373', '#525252', '#404040', world.ox, world.oy);
+          models.drawBox(ctx, 10.8, 102.8, 2.90, 2.4, 0.40, 0.38, '#737373', '#525252', '#404040', world.ox, world.oy);
+
+          // Cobblestone Chimney (x: 13.2..14.1, y: 97.4..98.3, z: 2.50..3.85)
+          models.drawBox(ctx, 13.2, 97.4, 2.50, 0.90, 0.90, 1.25, '#737373', '#525252', '#404040', world.ox, world.oy);
+          models.drawBox(ctx, 13.1, 97.3, 3.75, 1.10, 1.10, 0.15, '#525252', '#404040', '#262626', world.ox, world.oy);
+          models.drawBox(ctx, 13.3, 97.5, 3.85, 0.70, 0.70, 0.05, '#0f172a', '#020617', '#000000', world.ox, world.oy);
+
+          // Animated Cozy Campfire Smoke Particles drifting into the sky
+          const smt = performance.now() * 0.0018;
+          for (let s = 0; s < 3; s++) {
+            const sp = (smt + s * 0.33) % 1.0;
+            const sx = 13.65 + Math.sin(sp * 4 + s) * 0.15;
+            const sy = 97.85 + Math.cos(sp * 3 + s) * 0.15;
+            const sz = 3.90 + sp * 1.5;
+            const smScreen = isoToScreen(sx, sy, sz, world.ox, world.oy);
+            ctx.fillStyle = `rgba(226, 232, 240, ${(1.0 - sp) * 0.65})`;
+            ctx.beginPath();
+            ctx.arc(smScreen.x, smScreen.y, 4 + sp * 6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.restore();
+        }
+      });
+
+      // 3. Rectangular Minecraft Farmland (shifted to x: 16.0..20.0, y: 96.6..101.4)
+      // Wide 2.0-tile avenue on east (x: 20.0..22.0) cleanly unblocks movement to the Skybridge!
+      // Farmland soil (x: 17..19, y: 98..100) has an authentic 1-tile grass buffer from the perimeter fence!
+
+      // 3A. North & East Back Perimeter Fences (x: 16.0..20.0)
+      list.push({
+        xMin: 15.9, xMax: 20.1, yMin: 96.4, yMax: 96.8,
         draw: () => {
           // North perimeter fence posts & rails
-          models.drawBox(ctx, 15.6, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 17.8, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 18.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
           models.drawBox(ctx, 20.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 96.64, 0.25, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 96.64, 0.50, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 96.64, 0.25, 3.96, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 96.64, 0.50, 3.96, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
       list.push({
-        xMin: 19.8, xMax: 20.3, yMin: 96.6, yMax: 102.2,
+        xMin: 19.8, xMax: 20.2, yMin: 96.6, yMax: 101.6,
         draw: () => {
           // East perimeter fence posts & rails
           models.drawBox(ctx, 20.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 20.0, 99.3, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 20.0, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 20.04, 96.64, 0.25, 0.10, 5.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 20.04, 96.64, 0.50, 0.10, 5.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 99.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 101.4, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.04, 96.64, 0.25, 0.10, 4.76, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.04, 96.64, 0.50, 0.10, 4.76, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 
@@ -1187,81 +1444,83 @@
         models.drawBox(ctx, gx - 0.22, gy - 0.22, gz, 0.44, 0.44, 0.32, '#22c55e', '#16a34a', '#15803d', world.ox, world.oy);
       };
 
-      // Crop Rows (Decomposed per row with tight bounds, xMin >= 16.2 completely clear of west fence at x=15.6!)
-      // Row 1: y = 97.5
+      // Crop Rows (Decomposed per row with tight bounds, cleanly positioned inside x: 17.2..18.8, y: 98.2..100.2)
+      // Row 1: y = 98.5
       list.push({
-        xMin: 16.2, xMax: 19.8, yMin: 97.2, yMax: 97.8,
+        xMin: 17.2, xMax: 18.8, yMin: 98.2, yMax: 98.8,
         draw: () => {
-          drawMinecraftPumpkin(16.5, 97.5, 0.08, false);
-          drawWheat(17.5, 97.5, 0.08);
-          drawMinecraftPumpkin(18.5, 97.5, 0.08, true);
-          drawWheat(19.5, 97.5, 0.08);
-        }
-      });
-
-      // Row 2: y = 98.5
-      list.push({
-        xMin: 16.2, xMax: 19.8, yMin: 98.2, yMax: 98.8,
-        draw: () => {
-          drawCarrot(16.5, 98.5, 0.08);
           drawMinecraftPumpkin(17.5, 98.5, 0.08, false);
-          drawCarrot(19.5, 98.5, 0.08);
+          drawWheat(18.5, 98.5, 0.08);
         }
       });
 
-      // Row 3: y = 100.5
+      // Row 2: y = 99.5 (Water hole is at 18.0, 99.0)
       list.push({
-        xMin: 16.2, xMax: 19.8, yMin: 100.2, yMax: 100.8,
+        xMin: 17.2, xMax: 18.8, yMin: 99.2, yMax: 99.8,
         draw: () => {
-          drawMinecraftPumpkin(16.5, 100.5, 0.08, true);
-          drawWheat(17.5, 100.5, 0.08);
-          drawMinecraftPumpkin(19.5, 100.5, 0.08, false);
+          drawCarrot(17.5, 99.5, 0.08);
+          drawMinecraftPumpkin(18.5, 99.5, 0.08, true);
         }
       });
 
-      // Row 4: y = 101.5
+      // Row 3: y = 100.2
       list.push({
-        xMin: 16.2, xMax: 19.8, yMin: 101.2, yMax: 101.8,
+        xMin: 17.2, xMax: 18.8, yMin: 99.9, yMax: 100.5,
         draw: () => {
-          drawWheat(16.5, 101.5, 0.08);
-          drawMinecraftPumpkin(17.5, 101.5, 0.08, false);
-          drawWheat(18.5, 101.5, 0.08);
-          drawCarrot(19.5, 101.5, 0.08);
+          drawWheat(17.5, 100.2, 0.08);
+          drawCarrot(18.5, 100.2, 0.08);
         }
       });
 
-      // 3C. South & West Perimeter Fences (Placed at x=15.6 & y=102.0, zero clipping with crops!)
+      // 3C. South & West Perimeter Fences (Placed at x: 16.0 & y: 101.4)
       list.push({
-        xMin: 15.5, xMax: 20.2, yMin: 101.9, yMax: 102.3,
+        xMin: 15.9, xMax: 20.1, yMin: 101.3, yMax: 101.7,
         draw: () => {
           // South perimeter fence posts & rails
-          models.drawBox(ctx, 15.6, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 17.8, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 20.0, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 102.04, 0.25, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 102.04, 0.50, 4.36, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 101.4, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 18.0, 101.4, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 20.0, 101.4, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 101.44, 0.25, 3.96, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 101.44, 0.50, 3.96, 0.10, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 
-      // West Perimeter Fence North Segment (x: 15.6, y: 96.6..98.6)
+      // West Perimeter Fence North Segment (x: 16.0, y: 96.6..98.0)
       list.push({
-        xMin: 15.4, xMax: 15.8, yMin: 96.5, yMax: 98.7,
+        xMin: 15.8, xMax: 16.2, yMin: 96.5, yMax: 98.1,
         draw: () => {
-          models.drawBox(ctx, 15.6, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.6, 98.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 96.64, 0.25, 0.10, 2.00, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 96.64, 0.50, 0.10, 2.00, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 96.6, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 98.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 96.64, 0.25, 0.10, 1.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 96.64, 0.50, 0.10, 1.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 
-      // West Perimeter Fence South Segment (x: 15.6, y: 100.2..102.0, gate opening at y: 98.6..100.2 is wide open!)
+      // West Perimeter Fence South Segment & Spacious Farm Gate (x: 16.0, y: 98.0..100.0, 2.0-tile wide entrance!)
       list.push({
-        xMin: 15.4, xMax: 15.8, yMin: 100.1, yMax: 102.3,
+        xMin: 15.8, xMax: 16.2, yMin: 97.9, yMax: 101.6,
         draw: () => {
-          models.drawBox(ctx, 15.6, 100.2, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.6, 102.0, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 100.24, 0.25, 0.10, 1.80, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
-          models.drawBox(ctx, 15.64, 100.24, 0.50, 0.10, 1.80, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          // Grand High-Clearance Gate Posts (Height 1.65, Width 2.0 tiles: y=98.0 to 100.0)
+          models.drawBox(ctx, 16.0, 98.0, 0, 0.22, 0.22, 1.65, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 16.0, 100.0, 0, 0.22, 0.22, 1.65, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          // Overhead High Lintel (spanning across top at z = 1.65, plenty of headroom!)
+          models.drawBox(ctx, 16.0, 98.0, 1.65, 0.22, 2.22, 0.20, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+
+          // Warm Flickering Torches on both gateposts!
+          const tpGate1 = isoToScreen(16.11, 98.11, 1.80, world.ox, world.oy);
+          const tpGate2 = isoToScreen(16.11, 100.11, 1.80, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#fbbf24';
+          ctx.shadowColor = '#f59e0b';
+          ctx.shadowBlur = 8;
+          ctx.fillRect(tpGate1.x - 2, tpGate1.y - 2, 4, 4);
+          ctx.fillRect(tpGate2.x - 2, tpGate2.y - 2, 4, 4);
+          ctx.restore();
+
+          // Fence post and rails towards south (y: 100.0..101.4)
+          models.drawBox(ctx, 16.0, 101.4, 0, 0.18, 0.18, 0.75, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 100.04, 0.25, 0.10, 1.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
+          models.drawBox(ctx, 16.04, 100.04, 0.50, 0.10, 1.36, 0.10, '#85592e', '#603c19', '#49331e', world.ox, world.oy);
         }
       });
 
@@ -1556,15 +1815,869 @@
         }
       });
 
-      // 5. Blocky Minecraft Oak Tree (at x: 7.8, y: 106.0)
+      // 5. Blocky Minecraft Oak Tree (at x: 6.8, y: 106.5)
       list.push({
-        xMin: 7.0, xMax: 9.2, yMin: 105.0, yMax: 107.5,
+        xMin: 6.0, xMax: 8.2, yMin: 105.5, yMax: 108.0,
         draw: () => {
-          const tx = 7.8, ty = 106.0;
+          const tx = 6.8, ty = 106.5;
           models.drawBox(ctx, tx, ty, 0, 0.65, 0.65, 2.40, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
           models.drawBox(ctx, tx - 1.20, ty - 1.20, 2.00, 3.00, 3.00, 1.00, '#38a169', '#2f855a', '#22543d', world.ox, world.oy);
           models.drawBox(ctx, tx - 0.75, ty - 0.75, 3.00, 2.10, 2.10, 0.90, '#48bb78', '#38a169', '#276749', world.ox, world.oy);
           models.drawBox(ctx, tx - 0.35, ty - 0.35, 3.90, 1.35, 1.35, 0.60, '#68d391', '#48bb78', '#2f855a', world.ox, world.oy);
+        }
+      });
+
+      // ======================================================================
+      // F. THE CONNECTING SKYBRIDGE (x: 22.0..26.0, y: 99..101)
+      // Connects Minecraft Island smoothly to the new Pokémon Sanctuary!
+      // ======================================================================
+      list.push({
+        xMin: 21.8, xMax: 26.2, yMin: 98.8, yMax: 101.2,
+        draw: () => {
+          // Bridge North Railing
+          drawFenceSegment(22.0, 26.0, 99.0);
+          // Bridge South Railing
+          drawFenceSegment(22.0, 26.0, 101.0);
+
+          // Minecraft Bridgehead Gateway Posts & Torches (at x: 22.0)
+          models.drawBox(ctx, 22.0, 99.0, 0, 0.25, 0.25, 1.80, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 22.0, 101.0, 0, 0.25, 0.25, 1.80, oakLogRing, oakLogSide, oakLogBark, world.ox, world.oy);
+          models.drawBox(ctx, 22.0, 99.0, 1.80, 0.25, 2.25, 0.22, oakPlankTop, oakPlankLeft, oakPlankRight, world.ox, world.oy);
+          const tp1 = isoToScreen(22.1, 99.1, 1.95, world.ox, world.oy);
+          const tp2 = isoToScreen(22.1, 101.1, 1.95, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#f59e0b';
+          ctx.shadowColor = '#ea580c';
+          ctx.shadowBlur = 8;
+          ctx.fillRect(tp1.x - 2, tp1.y - 2, 4, 4);
+          ctx.fillRect(tp2.x - 2, tp2.y - 2, 4, 4);
+          ctx.restore();
+
+          // Pokémon Sanctuary Bridgehead Archway (at x: 25.8)
+          models.drawBox(ctx, 25.8, 99.0, 0, 0.25, 0.25, 1.90, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          models.drawBox(ctx, 25.8, 101.0, 0, 0.25, 0.25, 1.90, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          models.drawBox(ctx, 25.8, 99.0, 1.90, 0.25, 2.25, 0.25, '#ef4444', '#dc2626', '#b91c1c', world.ox, world.oy);
+
+          // Miniature glowing Poké Ball on Pokémon Sanctuary entrance arch
+          const pbp = isoToScreen(25.9, 100.1, 2.05, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath(); ctx.arc(pbp.x, pbp.y, 6.5, Math.PI, 0); ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(pbp.x, pbp.y, 6.5, 0, Math.PI); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.3;
+          ctx.beginPath(); ctx.arc(pbp.x, pbp.y, 6.5, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(pbp.x - 6.5, pbp.y); ctx.lineTo(pbp.x + 6.5, pbp.y); ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(pbp.x, pbp.y, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          ctx.restore();
+        }
+      });
+
+      // Helper for Pokémon Sanctuary White Picket Fences
+      const drawWhiteFenceSegment = (xStart, xEnd, yPos) => {
+        models.drawBox(ctx, xStart, yPos, 0.25, xEnd - xStart, 0.10, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        models.drawBox(ctx, xStart, yPos, 0.55, xEnd - xStart, 0.10, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        for (let fx = xStart; fx <= xEnd + 0.1; fx += 1.4) {
+          models.drawBox(ctx, fx, yPos, 0, 0.16, 0.16, 0.80, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        }
+      };
+
+      const drawWhiteFenceSegmentY = (xPos, yStart, yEnd) => {
+        models.drawBox(ctx, xPos, yStart, 0.25, 0.10, yEnd - yStart, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        models.drawBox(ctx, xPos, yStart, 0.55, 0.10, yEnd - yStart, 0.08, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        for (let fy = yStart; fy <= yEnd + 0.1; fy += 1.4) {
+          models.drawBox(ctx, xPos, fy, 0, 0.16, 0.16, 0.80, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        }
+      };
+
+      // ======================================================================
+      // G. POKÉMON SANCTUARY PERIMETER FENCES (x: 25.8..49.0, y: 93..111)
+      // ======================================================================
+      list.push({
+        xMin: 25.6, xMax: 49.2, yMin: 92.8, yMax: 93.2,
+        draw: () => drawWhiteFenceSegment(25.8, 49.0, 93.0)
+      });
+      list.push({
+        xMin: 48.8, xMax: 49.3, yMin: 93.0, yMax: 111.0,
+        draw: () => drawWhiteFenceSegmentY(49.0, 93.0, 111.0)
+      });
+      list.push({
+        xMin: 25.6, xMax: 49.2, yMin: 110.8, yMax: 111.2,
+        draw: () => drawWhiteFenceSegment(25.8, 49.0, 111.0)
+      });
+      list.push({
+        xMin: 25.6, xMax: 26.1, yMin: 93.0, yMax: 99.0,
+        draw: () => drawWhiteFenceSegmentY(25.8, 93.0, 99.0)
+      });
+      list.push({
+        xMin: 25.6, xMax: 26.1, yMin: 101.0, yMax: 111.0,
+        draw: () => drawWhiteFenceSegmentY(25.8, 101.0, 111.0)
+      });
+
+      // ======================================================================
+      // H. THE POKÉMON CENTER (x: 34..42, y: 94..98.5)
+      // Authentic Pokémon Center with classic sloping red roof, white walls,
+      // glowing Poké Ball emblem, automatic glass doors and 6-ball recovery station!
+      // ======================================================================
+      // 1. Exterior North Wall & Foundation Base
+      list.push({
+        xMin: 33.8, xMax: 42.2, yMin: 93.6, yMax: 94.2,
+        draw: () => {
+          // Foundation plinth
+          models.drawBox(ctx, 33.9, 93.7, 0, 8.2, 0.50, 0.25, '#38bdf8', '#0284c7', '#0369a1', world.ox, world.oy);
+          // Solid North Wall
+          models.drawBox(ctx, 34.0, 93.8, 0.25, 8.0, 0.40, 2.35, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+        }
+      });
+
+      // 2. Exterior West & East Sidewalls
+      list.push({
+        xMin: 33.7, xMax: 34.2, yMin: 94.2, yMax: 98.1,
+        draw: () => {
+          models.drawBox(ctx, 33.8, 94.2, 0, 0.40, 3.9, 2.60, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          // West Viewing Window
+          models.drawBox(ctx, 33.78, 95.2, 0.85, 0.42, 2.0, 1.15, 'rgba(186, 230, 253, 0.70)', 'rgba(147, 197, 253, 0.60)', 'rgba(125, 211, 252, 0.50)', world.ox, world.oy);
+        }
+      });
+      list.push({
+        xMin: 41.8, xMax: 42.3, yMin: 94.2, yMax: 98.1,
+        draw: () => {
+          models.drawBox(ctx, 41.8, 94.2, 0, 0.40, 3.9, 2.60, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          // East Viewing Window
+          models.drawBox(ctx, 41.78, 95.2, 0.85, 0.42, 2.0, 1.15, 'rgba(186, 230, 253, 0.70)', 'rgba(147, 197, 253, 0.60)', 'rgba(125, 211, 252, 0.50)', world.ox, world.oy);
+        }
+      });
+
+      // 3a. Interior Healing Counter & 6-Poké Ball Recovery Machine (x: 36.9..40.1, y: 94.9..95.8)
+      list.push({
+        xMin: 36.9, xMax: 40.1, yMin: 94.9, yMax: 95.8, z: 0,
+        draw: () => {
+          // Curved Front Healing Counter
+          models.drawBox(ctx, 37.0, 95.0, 0, 3.0, 0.80, 0.85, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          models.drawBox(ctx, 36.9, 94.9, 0.85, 3.2, 0.90, 0.08, '#f43f5e', '#e11d48', '#be123c', world.ox, world.oy);
+
+          // 6-Poké Ball Recovery Machine Console (on the counter)
+          models.drawBox(ctx, 37.5, 95.0, 0.93, 2.0, 0.60, 0.35, '#0f172a', '#1e293b', '#020617', world.ox, world.oy);
+
+          // 6 Animated Poké Ball Healing Slots
+          const tNow = performance.now() * 0.004;
+          const isHealing = (world.pokeCenterHealTimer > 0);
+          if (isHealing) world.pokeCenterHealTimer -= 0.016;
+
+          const slots = [
+            { x: 37.85, y: 95.15 }, { x: 38.50, y: 95.15 }, { x: 39.15, y: 95.15 },
+            { x: 37.85, y: 95.38 }, { x: 38.50, y: 95.38 }, { x: 39.15, y: 95.38 }
+          ];
+
+          slots.forEach((s, idx) => {
+            const p = isoToScreen(s.x, s.y, 1.28, world.ox, world.oy);
+            const activeCycle = isHealing ? Math.sin(tNow * 4 + idx * 0.8) > 0 : (Math.sin(tNow + idx) > 0.3);
+            ctx.save();
+            ctx.fillStyle = activeCycle ? '#f43f5e' : '#475569';
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4.0, Math.PI, 0); ctx.fill();
+            ctx.fillStyle = activeCycle ? '#ffffff' : '#94a3b8';
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4.0, 0, Math.PI); ctx.fill();
+            ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4.0, 0, Math.PI * 2); ctx.stroke();
+            if (activeCycle) {
+              ctx.shadowColor = '#f43f5e';
+              ctx.shadowBlur = 6;
+              ctx.fillStyle = '#fef08a';
+              ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.restore();
+          });
+
+          // Floating Healing Bubble when healing
+          if (world.pokeCenterBubbleTimer > 0 && world.pokeCenterBubbleText) {
+            world.pokeCenterBubbleTimer -= 0.016;
+            const bp = isoToScreen(38.5, 95.0, 2.2, world.ox, world.oy);
+            ctx.save();
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const tw = ctx.measureText(world.pokeCenterBubbleText).width;
+            const bw = tw + 18, bh = 24;
+            const bx = bp.x - bw / 2, by = bp.y - bh - 6;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#f43f5e';
+            ctx.beginPath(); ctx.moveTo(bp.x - 4, by + bh); ctx.lineTo(bp.x + 4, by + bh); ctx.lineTo(bp.x, by + bh + 5); ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(world.pokeCenterBubbleText, bp.x, by + bh / 2);
+            ctx.restore();
+          }
+        }
+      });
+
+      // 3b. Corner PC Storage Terminal (x: 40.4..41.8, y: 94.9..95.8)
+      list.push({
+        xMin: 40.4, xMax: 41.8, yMin: 94.9, yMax: 95.8, z: 0,
+        draw: () => {
+          // PC Storage Terminal on Corner Table (x: 40.5, y: 95.0)
+          models.drawBox(ctx, 40.5, 95.0, 0, 1.2, 0.75, 0.80, '#e2e8f0', '#cbd5e1', '#94a3b8', world.ox, world.oy);
+          models.drawBox(ctx, 40.8, 95.15, 0.80, 0.60, 0.40, 0.55, '#1e293b', '#0f172a', '#020617', world.ox, world.oy);
+          const scrP = isoToScreen(41.1, 95.35, 1.08, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#38bdf8';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.fillRect(scrP.x - 5, scrP.y - 4, 10, 7);
+          ctx.fillStyle = '#facc15';
+          ctx.beginPath(); ctx.arc(scrP.x, scrP.y - 1, 2.5, 0, Math.PI * 2); ctx.fill(); // Pikachu silhouette
+          ctx.restore();
+        }
+      });
+
+      // 4. Interior Waiting Lounge Sofa & Potted Palm (x: 34.0..35.1, y: 96.0..97.6)
+      list.push({
+        xMin: 34.0, xMax: 35.1, yMin: 96.0, yMax: 97.6, z: 0,
+        draw: () => {
+          // Curved Red & White Plush Sofa flush against west wall
+          models.drawBox(ctx, 34.15, 96.2, 0, 0.85, 1.40, 0.35, '#dc2626', '#b91c1c', '#991b1b', world.ox, world.oy);
+          models.drawBox(ctx, 34.15, 96.2, 0.35, 0.25, 1.40, 0.45, '#dc2626', '#b91c1c', '#991b1b', world.ox, world.oy);
+          models.drawBox(ctx, 34.40, 96.3, 0.35, 0.55, 1.20, 0.12, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          // Ceramic Planter & Palm
+          models.drawBox(ctx, 34.15, 97.4, 0, 0.45, 0.45, 0.45, '#e2e8f0', '#cbd5e1', '#94a3b8', world.ox, world.oy);
+          models.drawBox(ctx, 34.20, 97.45, 0.45, 0.35, 0.35, 0.85, '#22c55e', '#16a34a', '#15803d', world.ox, world.oy);
+        }
+      });
+
+      // 5. Camera-Facing South Wall, Automatic Doors & Welcome Mat (Supports wallAlphaPokemonCenter)
+      list.push({
+        xMin: 33.8, xMax: 42.2, yMin: 98.0, yMax: 98.5, z: 0,
+        draw: () => {
+          // Welcome Mat at Threshold (Always visible on floor)
+          models.drawBox(ctx, 37.1, 98.1, 0, 1.8, 0.50, 0.03, '#0284c7', '#0369a1', '#075985', world.ox, world.oy);
+          const matP = isoToScreen(38.0, 98.35, 0.04, world.ox, world.oy);
+          ctx.save();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(matP.x, matP.y, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+
+          // South Wall & Glass Doors fade smoothly to 0.0 when inside
+          if (world.wallAlphaPokemonCenter <= 0.005) return;
+
+          ctx.save();
+          if (world.wallAlphaPokemonCenter < 0.99) ctx.globalAlpha = world.wallAlphaPokemonCenter;
+
+          // Left South Wall Section (x: 34.0..37.0)
+          models.drawBox(ctx, 34.0, 98.1, 0, 3.0, 0.30, 0.85, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          models.drawBox(ctx, 34.0, 98.1, 0.85, 3.0, 0.30, 1.45, 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.55)', 'rgba(147, 197, 253, 0.45)', world.ox, world.oy);
+          models.drawBox(ctx, 34.0, 98.1, 2.30, 3.0, 0.30, 0.30, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+
+          // Right South Wall Section (x: 39.0..42.0)
+          models.drawBox(ctx, 39.0, 98.1, 0, 3.0, 0.30, 0.85, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+          models.drawBox(ctx, 39.0, 98.1, 0.85, 3.0, 0.30, 1.45, 'rgba(224, 242, 254, 0.65)', 'rgba(186, 230, 253, 0.55)', 'rgba(147, 197, 253, 0.45)', world.ox, world.oy);
+          models.drawBox(ctx, 39.0, 98.1, 2.30, 3.0, 0.30, 0.30, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+
+          // Automatic Sliding Doors Overhead Lintel (x: 37.0..39.0)
+          models.drawBox(ctx, 37.0, 98.1, 2.20, 2.0, 0.30, 0.40, '#f8fafc', '#e2e8f0', '#cbd5e1', world.ox, world.oy);
+
+          // Cyan Sliding Glass Door Leaves (Walkable opening at x: 37.0..39.0)
+          const pOpen = (world.currentZone === 'pokemon_center') ? 0.35 : 0.0;
+          models.drawBox(ctx, 37.0 - pOpen, 98.15, 0.03, 0.95, 0.10, 2.17, 'rgba(186, 230, 253, 0.60)', 'rgba(147, 197, 253, 0.50)', 'rgba(125, 211, 252, 0.40)', world.ox, world.oy);
+          models.drawBox(ctx, 38.05 + pOpen, 98.15, 0.03, 0.95, 0.10, 2.17, 'rgba(186, 230, 253, 0.60)', 'rgba(147, 197, 253, 0.50)', 'rgba(125, 211, 252, 0.40)', world.ox, world.oy);
+
+          ctx.restore();
+        }
+      });
+
+      // 6. Iconic Curved Red Roof, Eaves & Glowing Poké Ball Emblem
+      // Elevated at z: 2.6 (drawn after interior furniture), and smoothly fades out completely (opacity 0) when player enters!
+      list.push({
+        xMin: 33.4, xMax: 42.6, yMin: 93.4, yMax: 98.6, z: 2.6,
+        draw: () => {
+          // Completely transparent / hidden when inside Pokémon Center
+          if (world.wallAlphaPokemonCenter <= 0.005) return;
+
+          ctx.save();
+          if (world.wallAlphaPokemonCenter < 0.99) ctx.globalAlpha = world.wallAlphaPokemonCenter;
+
+          // White Molded Eaves Plinth
+          models.drawBox(ctx, 33.4, 93.4, 2.50, 9.2, 5.2, 0.12, '#ffffff', '#f1f5f9', '#e2e8f0', world.ox, world.oy);
+          // Classic Pokémon Center Sloping Crimson Red Roof Volume
+          models.drawBox(ctx, 33.6, 93.6, 2.62, 8.8, 4.8, 0.65, '#ef4444', '#dc2626', '#b91c1c', world.ox, world.oy);
+          // Upper Roof Gable Ridge
+          models.drawBox(ctx, 34.6, 94.6, 3.27, 6.8, 2.8, 0.40, '#f87171', '#ef4444', '#dc2626', world.ox, world.oy);
+
+          // Front Entrance Pediment Gable (x: 37.0..39.0, y: 98.4, z: 2.60..3.60)
+          models.drawBox(ctx, 36.8, 98.3, 2.60, 2.4, 0.35, 0.60, '#ffffff', '#f1f5f9', '#e2e8f0', world.ox, world.oy);
+
+          // Grand Glowing 3D Poké Ball Center Signboard Emblem
+          const ep = isoToScreen(38.0, 98.65, 3.15, world.ox, world.oy);
+          const rad = 13.5;
+          // Upper Crimson Dome
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath(); ctx.arc(ep.x, ep.y, rad, Math.PI, 0); ctx.fill();
+          // Lower Crisp White Dome
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(ep.x, ep.y, rad, 0, Math.PI); ctx.fill();
+          // Black Central Band
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.4;
+          ctx.beginPath(); ctx.arc(ep.x, ep.y, rad, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(ep.x - rad, ep.y); ctx.lineTo(ep.x + rad, ep.y); ctx.stroke();
+          // Center Button with Pulsing Cyan Neon Glow
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 10;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(ep.x, ep.y, 4.2, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.4;
+          ctx.stroke();
+          ctx.fillStyle = '#38bdf8';
+          ctx.beginPath(); ctx.arc(ep.x, ep.y, 1.8, 0, Math.PI * 2); ctx.fill();
+
+          ctx.restore();
+        }
+      });
+
+      // ======================================================================
+      // I. GRAND POKÉ BALL PLAZA ACCENTS (Centered at x: 38, y: 104)
+      // ======================================================================
+      // 4 Plaza Corner Streetlamps (NW, NE, SW, SE)
+      const streetlamps = [
+        { x: 33.0, y: 99.0 }, { x: 43.0, y: 99.0 },
+        { x: 33.0, y: 109.0 }, { x: 43.0, y: 109.0 }
+      ];
+      streetlamps.forEach((lamp, idx) => {
+        list.push({
+          xMin: lamp.x - 0.3, xMax: lamp.x + 0.3, yMin: lamp.y - 0.3, yMax: lamp.y + 0.3,
+          draw: () => {
+            // Iron Lamp Post
+            models.drawBox(ctx, lamp.x - 0.08, lamp.y - 0.08, 0, 0.16, 0.16, 1.60, '#334155', '#1e293b', '#0f172a', world.ox, world.oy);
+            // Glowing Amber Lantern Head
+            models.drawBox(ctx, lamp.x - 0.18, lamp.y - 0.18, 1.60, 0.36, 0.36, 0.36, '#facc15', '#eab308', '#ca8a04', world.ox, world.oy);
+            const lp = isoToScreen(lamp.x, lamp.y, 1.78, world.ox, world.oy);
+            ctx.save();
+            ctx.fillStyle = 'rgba(254, 240, 138, 0.85)';
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 10;
+            ctx.beginPath(); ctx.arc(lp.x, lp.y, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+          }
+        });
+      });
+
+      // ======================================================================
+      // J. POKÉMON QUEST SNORLAX (方可夢 卡比獸) (x: 45.0, y: 104.5)
+      // 100% Authentic Supine Lying-Down Pose (Giant Mountainous Voxel Anatomy):
+      // - Lying on back resting under the sun with head back and feet pointing forward
+      // - Massive, mountainous, multi-tiered rounded cream belly dome heaving with deep snores
+      // - Right arm lazily raised high into the air with sharp white claws
+      // - Left arm resting flat on the grass beside the belly with claws
+      // - Two giant forward-facing cream feet with caramel pads & 3 sharp white claws
+      // - Head on grass with ears, sleeping closed eyes (- -) and tiny fangs
+      // - Glowing animated Zzz bubbles floating up from head into the sky
+      // ======================================================================
+      list.push({
+        xMin: 43.4, xMax: 46.6, yMin: 103.5, yMax: 105.6,
+        draw: () => {
+          if (!world.snorlax) {
+            world.snorlax = { x: 45.0, y: 104.5, bubbleText: '', bubbleTimer: 0 };
+          }
+          const snor = world.snorlax;
+          if (snor.bubbleTimer > 0) snor.bubbleTimer -= 0.016;
+
+          const sx = snor.x, sy = snor.y;
+          const tNow = performance.now() * 0.002;
+          const breathe = Math.sin(tNow * 1.6) * 0.045;
+
+          // Palette: Authentic Dark Slate Teal-Navy & Warm Vanilla Cream
+          const tealT = '#155e75', tealL = '#0e7490', tealR = '#082f49';
+          const creamT = '#fffbeb', creamL = '#fef3c7', creamR = '#fde68a';
+          const padCol = '#92400e', clawCol = '#ffffff';
+
+          const drawFaceQuad = (hx, hy, hz, dx, dy, dz, u1, v1, u2, v2, fillCol) => {
+            const p0 = isoToScreen(hx + u1 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p1 = isoToScreen(hx + u2 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p2 = isoToScreen(hx + u2 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            const p3 = isoToScreen(hx + u1 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
+            ctx.fillStyle = fillCol;
+            ctx.fill();
+          };
+
+          // 1. Head Resting on Grass Behind Body (North / Y = sy - 0.72)
+          models.drawBox(ctx, sx - 0.60, sy - 0.75, 0, 1.20, 0.55, 0.48, tealT, tealL, tealR, world.ox, world.oy);
+
+          // Pointed Ears on Back Corners of Head
+          // Left Ear
+          models.drawBox(ctx, sx - 0.70, sy - 0.78, 0.32, 0.28, 0.26, 0.36, tealT, tealL, tealR, world.ox, world.oy);
+          // Right Ear
+          models.drawBox(ctx, sx + 0.42, sy - 0.78, 0.32, 0.28, 0.26, 0.36, tealT, tealL, tealR, world.ox, world.oy);
+
+          // Cream Face Mask on Top Surface of Head
+          models.drawBox(ctx, sx - 0.45, sy - 0.70, 0.48, 0.90, 0.44, 0.02, creamT, creamL, creamR, world.ox, world.oy);
+
+          // Sleeping Facial Features (Drawn seamlessly on top surface of head)
+          const fP = isoToScreen(sx, sy - 0.48, 0.50, world.ox, world.oy);
+          ctx.save();
+          ctx.strokeStyle = '#082f49';
+          ctx.lineWidth = 2.0;
+          // Left closed slit eye (- -)
+          ctx.beginPath(); ctx.moveTo(fP.x - 16, fP.y - 4); ctx.lineTo(fP.x - 4, fP.y - 1); ctx.stroke();
+          // Right closed slit eye (- -)
+          ctx.beginPath(); ctx.moveTo(fP.x + 4, fP.y - 1); ctx.lineTo(fP.x + 16, fP.y - 4); ctx.stroke();
+          // Nose dots
+          ctx.fillStyle = '#082f49';
+          ctx.beginPath(); ctx.arc(fP.x - 2, fP.y - 1, 1.8, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(fP.x + 2, fP.y - 1, 1.8, 0, Math.PI * 2); ctx.fill();
+          // Peaceful sleeping smile
+          ctx.beginPath(); ctx.arc(fP.x, fP.y + 5, 8, 0, Math.PI); ctx.stroke();
+          // Two white fangs pointing up from bottom jaw
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.moveTo(fP.x - 7, fP.y + 8); ctx.lineTo(fP.x - 4, fP.y + 2); ctx.lineTo(fP.x - 2, fP.y + 8); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(fP.x + 2, fP.y + 8); ctx.lineTo(fP.x + 4, fP.y + 2); ctx.lineTo(fP.x + 7, fP.y + 8); ctx.fill();
+          ctx.restore();
+
+          // 2. Base Mountainous Torso Resting Flat on Grass
+          models.drawBox(ctx, sx - 1.05, sy - 0.38, 0, 2.10, 1.05, 0.40, tealT, tealL, tealR, world.ox, world.oy);
+
+          // 3. Right Arm (Screen-Left) Lazily Raised into the Air with 5 White Claws
+          models.drawBox(ctx, sx - 1.38, sy - 0.32, 0.20, 0.38, 0.42, 0.58, tealT, tealL, tealR, world.ox, world.oy);
+          models.drawBox(ctx, sx - 1.34, sy - 0.30, 0.74, 0.32, 0.36, 0.34, tealT, tealL, tealR, world.ox, world.oy);
+          models.drawBox(ctx, sx - 1.32, sy - 0.28, 1.04, 0.28, 0.32, 0.12, clawCol, clawCol, clawCol, world.ox, world.oy);
+
+          // 4. Left Arm (Screen-Right) Resting Flat along Side on Grass with 5 White Claws
+          models.drawBox(ctx, sx + 0.98, sy - 0.28, 0.02, 0.38, 0.72, 0.28, tealT, tealL, tealR, world.ox, world.oy);
+          models.drawBox(ctx, sx + 1.00, sy + 0.40, 0.02, 0.32, 0.14, 0.22, clawCol, clawCol, clawCol, world.ox, world.oy);
+
+          // 5. GIGANTIC MOUNTAINOUS CREAM BELLY DOME (Heaves up & down rhythmically with deep snores)
+          // Tier 1: Broad belly foundation
+          models.drawBox(ctx, sx - 0.90, sy - 0.32, 0.16, 1.80, 0.92, 0.42 + breathe, creamT, creamL, creamR, world.ox, world.oy);
+          // Tier 2: Plump middle belly mound
+          models.drawBox(ctx, sx - 0.72, sy - 0.24, 0.44, 1.44, 0.76, 0.36 + breathe * 1.3, creamT, creamL, creamR, world.ox, world.oy);
+          // Tier 3: High chest mound
+          models.drawBox(ctx, sx - 0.50, sy - 0.16, 0.68, 1.00, 0.58, 0.28 + breathe * 1.6, creamT, creamL, creamR, world.ox, world.oy);
+          // Tier 4: Peak crest dome
+          models.drawBox(ctx, sx - 0.30, sy - 0.08, 0.88, 0.60, 0.40, 0.18 + breathe * 2.0, creamT, creamL, creamR, world.ox, world.oy);
+
+          // 6. Two Giant Forward-Facing Cream Feet with Caramel Pads & 3 Sharp Claws
+          // Left Foot (Screen-Left)
+          models.drawBox(ctx, sx - 0.98, sy + 0.34, 0, 0.64, 0.58, 0.55, creamT, creamL, creamR, world.ox, world.oy);
+          // Caramel paw pad on front sole
+          drawFaceQuad(sx - 0.98, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.18, 0.18, 0.82, 0.82, padCol);
+          // 3 sharp white claws on outer rim
+          drawFaceQuad(sx - 0.98, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.10, 0.85, 0.28, 1.00, clawCol);
+          drawFaceQuad(sx - 0.98, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.42, 0.85, 0.58, 1.00, clawCol);
+          drawFaceQuad(sx - 0.98, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.72, 0.85, 0.90, 1.00, clawCol);
+
+          // Right Foot (Screen-Right)
+          models.drawBox(ctx, sx + 0.34, sy + 0.34, 0, 0.64, 0.58, 0.55, creamT, creamL, creamR, world.ox, world.oy);
+          // Caramel paw pad on front sole
+          drawFaceQuad(sx + 0.34, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.18, 0.18, 0.82, 0.82, padCol);
+          // 3 sharp white claws on outer rim
+          drawFaceQuad(sx + 0.34, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.10, 0.85, 0.28, 1.00, clawCol);
+          drawFaceQuad(sx + 0.34, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.42, 0.85, 0.58, 1.00, clawCol);
+          drawFaceQuad(sx + 0.34, sy + 0.34, 0, 0.64, 0.58, 0.55, 0.72, 0.85, 0.90, 1.00, clawCol);
+
+          // 7. Animated Floating Neon Zzz Bubbles (Rising gently from head into the sky)
+          const zAnchor = isoToScreen(sx + 0.20, sy - 0.60, 0.85, world.ox, world.oy);
+          ctx.save();
+          for (let i = 0; i < 3; i++) {
+            const zPhase = (tNow * 0.75 + i * 0.33) % 1.0;
+            const zx = zAnchor.x + zPhase * 28 + Math.sin(zPhase * 5) * 6;
+            const zy = zAnchor.y - zPhase * 50;
+            const zSize = 14 + zPhase * 10;
+            ctx.font = `bold ${Math.round(zSize)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = `rgba(186, 230, 253, ${1.0 - zPhase * 0.75})`;
+            ctx.fillText('Z', zx, zy);
+          }
+          ctx.restore();
+
+          // 8. Interactive Speech Bubble
+          if (snor.bubbleTimer > 0 && snor.bubbleText) {
+            const bp = isoToScreen(sx, sy - 0.10, 1.85, world.ox, world.oy);
+            ctx.save();
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const tw = ctx.measureText(snor.bubbleText).width;
+            const bw = tw + 18, bh = 24;
+            const bx = bp.x - bw / 2, by = bp.y - bh - 6;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath(); ctx.moveTo(bp.x - 4, by + bh); ctx.lineTo(bp.x + 4, by + bh); ctx.lineTo(bp.x, by + bh + 5); ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(snor.bubbleText, bp.x, by + bh / 2);
+            ctx.restore();
+          }
+        }
+      });
+
+      // ======================================================================
+      // K. POKÉMON QUEST EEVEE (方可夢 伊布) (x: 32.5, y: 101.0)
+      // 100% Authentic Pokémon Quest Voxel Anatomy:
+      // Huge fluffy cream-white cloud mane, flared fox ears with dark inner cavities,
+      // 3-tone pixel eyes with amber iris & sparkle, cute 2-tone mouth, and bushy wagging tail!
+      // ======================================================================
+      list.push({
+        xMin: 31.8, xMax: 33.2, yMin: 100.3, yMax: 101.7,
+        draw: () => {
+          if (!world.eevee) {
+            world.eevee = { x: 32.5, y: 101.0, bubbleText: '', bubbleTimer: 0 };
+          }
+          const eev = world.eevee;
+          if (eev.bubbleTimer > 0) eev.bubbleTimer -= 0.016;
+
+          const ex = eev.x, ey = eev.y;
+          const tNow = performance.now() * 0.004;
+          const bob = Math.sin(tNow * 2.0) * 0.015;
+          const tailWag = Math.sin(tNow * 3.5) * 0.06;
+
+          // Authentic Pokémon Quest Palette
+          const furT = '#c48950', furL = '#a8713b', furR = '#8c5928';
+          const creamT = '#fffdf5', creamL = '#fef3c7', creamR = '#fae8b0';
+
+          // Helper: Isometric Face Polygon Renderer on front face (Y = front)
+          const drawFaceQuad = (hx, hy, hz, dx, dy, dz, u1, v1, u2, v2, fillCol) => {
+            const p0 = isoToScreen(hx + u1 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p1 = isoToScreen(hx + u2 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p2 = isoToScreen(hx + u2 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            const p3 = isoToScreen(hx + u1 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
+            ctx.fillStyle = fillCol;
+            ctx.fill();
+          };
+
+          // 1. 4 Stubby Voxel Paws
+          const legW = 0.12, legH = 0.18;
+          models.drawBox(ctx, ex - 0.18, ey - 0.14, 0, legW, legW, legH, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, ex + 0.06, ey - 0.14, 0, legW, legW, legH, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, ex - 0.18, ey + 0.06, 0, legW, legW, legH, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, ex + 0.06, ey + 0.06, 0, legW, legW, legH, furT, furL, furR, world.ox, world.oy);
+
+          // 2. Compact Voxel Torso
+          models.drawBox(ctx, ex - 0.18, ey - 0.18, 0.14 + bob, 0.36, 0.34, 0.26, furT, furL, furR, world.ox, world.oy);
+
+          // 3. Iconic Grand Fluffy Cream-White Cloud Mane (Puffing out in 3D around neck & chest)
+          // Central chest ruff puffing out forward over front legs
+          models.drawBox(ctx, ex - 0.18, ey + 0.04, 0.16 + bob, 0.36, 0.22, 0.28, creamT, creamL, creamR, world.ox, world.oy);
+          models.drawBox(ctx, ex - 0.13, ey + 0.16, 0.18 + bob, 0.26, 0.14, 0.22, creamT, creamL, creamR, world.ox, world.oy);
+          // Left & Right shoulder fluff puffs
+          models.drawBox(ctx, ex - 0.26, ey - 0.08, 0.18 + bob, 0.16, 0.24, 0.24, creamT, creamL, creamR, world.ox, world.oy);
+          models.drawBox(ctx, ex + 0.10, ey - 0.08, 0.18 + bob, 0.16, 0.24, 0.24, creamT, creamL, creamR, world.ox, world.oy);
+          // Neck back connector collar
+          models.drawBox(ctx, ex - 0.22, ey - 0.16, 0.22 + bob, 0.44, 0.16, 0.20, creamT, creamL, creamR, world.ox, world.oy);
+
+          // 4. Large Bushy Wagging Fox Tail with Big Fluffy Cream Tip
+          models.drawBox(ctx, ex - 0.09 + tailWag * 0.6, ey - 0.28, 0.20 + bob, 0.18, 0.16, 0.18, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, ex - 0.12 + tailWag * 1.1, ey - 0.38, 0.28 + bob, 0.24, 0.18, 0.22, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, ex - 0.14 + tailWag * 1.6, ey - 0.48, 0.40 + bob, 0.28, 0.20, 0.26, creamT, creamL, creamR, world.ox, world.oy);
+          models.drawBox(ctx, ex - 0.10 + tailWag * 2.0, ey - 0.44, 0.58 + bob, 0.20, 0.16, 0.18, creamT, creamL, creamR, world.ox, world.oy);
+
+          // 5. Voxel Head Cube
+          const hx = ex - 0.22, hy = ey - 0.10, hz = 0.38 + bob, dx = 0.44, dy = 0.38, dz = 0.38;
+          models.drawBox(ctx, hx, hy, hz, dx, dy, dz, furT, furL, furR, world.ox, world.oy);
+
+          // 6. Two Diagonally Flared Fox Ears with Dark Inner Cavities
+          // Left Ear (Angled outwards to -X)
+          models.drawBox(ctx, hx - 0.08, hy + 0.06, hz + dz - 0.04, 0.16, 0.14, 0.20, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, hx - 0.18, hy + 0.08, hz + dz + 0.12, 0.16, 0.14, 0.22, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, hx - 0.26, hy + 0.10, hz + dz + 0.30, 0.14, 0.12, 0.18, furT, furL, furR, world.ox, world.oy);
+          drawFaceQuad(hx - 0.18, hy + 0.08, hz + dz + 0.12, 0.16, 0.14, 0.22, 0.20, 0.10, 0.85, 0.90, '#3b1808');
+
+          // Right Ear (Angled outwards to +X)
+          models.drawBox(ctx, hx + dx - 0.08, hy + 0.06, hz + dz - 0.04, 0.16, 0.14, 0.20, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, hx + dx + 0.02, hy + 0.08, hz + dz + 0.12, 0.16, 0.14, 0.22, furT, furL, furR, world.ox, world.oy);
+          models.drawBox(ctx, hx + dx + 0.12, hy + 0.10, hz + dz + 0.30, 0.14, 0.12, 0.18, furT, furL, furR, world.ox, world.oy);
+          drawFaceQuad(hx + dx + 0.02, hy + 0.08, hz + dz + 0.12, 0.16, 0.14, 0.22, 0.15, 0.10, 0.80, 0.90, '#3b1808');
+
+          // 7. Authentic Pokémon Quest Facial Features (Projected on front face, zero flat 2D distortions!)
+          // Left Eye (3-tone: espresso pupil, amber caramel iris, white sparkle)
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.15, 0.44, 0.41, 0.86, '#261005');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.15, 0.44, 0.41, 0.58, '#b45309');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.18, 0.68, 0.28, 0.84, '#ffffff');
+
+          // Right Eye
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.59, 0.44, 0.85, 0.86, '#261005');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.59, 0.44, 0.85, 0.58, '#b45309');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.62, 0.68, 0.72, 0.84, '#ffffff');
+
+          // Dark Nose Dot
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.47, 0.42, 0.53, 0.48, '#1e0a02');
+
+          // Cheerful Open Mouth (dark cavity + pink tongue)
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.41, 0.20, 0.59, 0.36, '#4c0519');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.43, 0.20, 0.57, 0.27, '#fb7185');
+
+          // Interactive Speech Bubble
+          if (eev.bubbleTimer > 0 && eev.bubbleText) {
+            const bp = isoToScreen(ex, ey, 1.40, world.ox, world.oy);
+            ctx.save();
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const tw = ctx.measureText(eev.bubbleText).width;
+            const bw = tw + 18, bh = 24;
+            const bx = bp.x - bw / 2, by = bp.y - bh - 6;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath(); ctx.moveTo(bp.x - 4, by + bh); ctx.lineTo(bp.x + 4, by + bh); ctx.lineTo(bp.x, by + bh + 5); ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(eev.bubbleText, bp.x, by + bh / 2);
+            ctx.restore();
+          }
+        }
+      });
+
+      // ======================================================================
+      // L. POKÉMON QUEST JOLTEON (方可夢 雷伊布) (x: 34.5, y: 107.5)
+      // Sharp multi-layered exploding white spike collar, tall pointed ears with black cavities,
+      // lightning rump spikes, and fierce determined eyes!
+      // ======================================================================
+      list.push({
+        xMin: 33.8, xMax: 35.2, yMin: 106.8, yMax: 108.2,
+        draw: () => {
+          if (!world.jolteon) {
+            world.jolteon = { x: 34.5, y: 107.5, bubbleText: '', bubbleTimer: 0 };
+          }
+          const jolt = world.jolteon;
+          if (jolt.bubbleTimer > 0) jolt.bubbleTimer -= 0.016;
+
+          const jx = jolt.x, jy = jolt.y;
+          const tNow = performance.now() * 0.005;
+          const bob = Math.sin(tNow * 2.4) * 0.015;
+
+          // Colors
+          const yelT = '#fef08a', yelL = '#fde047', yelR = '#eab308';
+          const whiteT = '#ffffff', whiteL = '#f8fafc', whiteR = '#e2e8f0';
+
+          const drawFaceQuad = (hx, hy, hz, dx, dy, dz, u1, v1, u2, v2, fillCol) => {
+            const p0 = isoToScreen(hx + u1 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p1 = isoToScreen(hx + u2 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p2 = isoToScreen(hx + u2 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            const p3 = isoToScreen(hx + u1 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
+            ctx.fillStyle = fillCol;
+            ctx.fill();
+          };
+
+          // 1. 4 Electric Yellow Voxel Legs
+          const legW = 0.12, legH = 0.20;
+          models.drawBox(ctx, jx - 0.18, jy - 0.14, 0, legW, legW, legH, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, jx + 0.06, jy - 0.14, 0, legW, legW, legH, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, jx - 0.18, jy + 0.06, 0, legW, legW, legH, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, jx + 0.06, jy + 0.06, 0, legW, legW, legH, yelT, yelL, yelR, world.ox, world.oy);
+
+          // 2. Sleek Yellow Voxel Body
+          models.drawBox(ctx, jx - 0.18, jy - 0.18, 0.16 + bob, 0.36, 0.34, 0.26, yelT, yelL, yelR, world.ox, world.oy);
+
+          // 3. Spiky Yellow Rump / Tail Tufts
+          models.drawBox(ctx, jx - 0.18, jy - 0.36, 0.28 + bob, 0.36, 0.18, 0.22, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, jx - 0.12, jy - 0.46, 0.34 + bob, 0.24, 0.14, 0.18, yelT, yelL, yelR, world.ox, world.oy);
+
+          // 4. Iconic Exploding Spiky White Collar (Multi-faceted sharp chevron blocks)
+          models.drawBox(ctx, jx - 0.30, jy - 0.16, 0.26 + bob, 0.60, 0.38, 0.20, whiteT, whiteL, whiteR, world.ox, world.oy);
+          // Left sharp point
+          models.drawBox(ctx, jx - 0.42, jy - 0.06, 0.24 + bob, 0.20, 0.24, 0.20, whiteT, whiteL, whiteR, world.ox, world.oy);
+          // Right sharp point
+          models.drawBox(ctx, jx + 0.22, jy - 0.06, 0.24 + bob, 0.20, 0.24, 0.20, whiteT, whiteL, whiteR, world.ox, world.oy);
+          // Front sharp points
+          models.drawBox(ctx, jx - 0.24, jy + 0.14, 0.22 + bob, 0.20, 0.16, 0.18, whiteT, whiteL, whiteR, world.ox, world.oy);
+          models.drawBox(ctx, jx + 0.04, jy + 0.14, 0.22 + bob, 0.20, 0.16, 0.18, whiteT, whiteL, whiteR, world.ox, world.oy);
+
+          // 5. Voxel Head Cube
+          const hx = jx - 0.22, hy = jy - 0.10, hz = 0.38 + bob, dx = 0.44, dy = 0.38, dz = 0.38;
+          models.drawBox(ctx, hx, hy, hz, dx, dy, dz, yelT, yelL, yelR, world.ox, world.oy);
+
+          // 6. Tall Pointed Ears with Jet-Black Inner Cavities
+          // Left Ear
+          models.drawBox(ctx, hx - 0.08, hy + 0.08, hz + dz - 0.02, 0.14, 0.14, 0.24, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, hx - 0.14, hy + 0.08, hz + dz + 0.20, 0.12, 0.12, 0.22, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, hx - 0.18, hy + 0.10, hz + dz + 0.40, 0.10, 0.10, 0.16, yelT, yelL, yelR, world.ox, world.oy);
+          drawFaceQuad(hx - 0.14, hy + 0.08, hz + dz + 0.12, 0.12, 0.12, 0.26, 0.20, 0.15, 0.85, 0.90, '#0f172a');
+
+          // Right Ear
+          models.drawBox(ctx, hx + dx - 0.06, hy + 0.08, hz + dz - 0.02, 0.14, 0.14, 0.24, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, hx + dx + 0.02, hy + 0.08, hz + dz + 0.20, 0.12, 0.12, 0.22, yelT, yelL, yelR, world.ox, world.oy);
+          models.drawBox(ctx, hx + dx + 0.08, hy + 0.10, hz + dz + 0.40, 0.10, 0.10, 0.16, yelT, yelL, yelR, world.ox, world.oy);
+          drawFaceQuad(hx + dx + 0.02, hy + 0.08, hz + dz + 0.12, 0.12, 0.12, 0.26, 0.15, 0.15, 0.80, 0.90, '#0f172a');
+
+          // 7. Determined Facial Features
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.15, 0.44, 0.41, 0.86, '#0f172a');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.15, 0.44, 0.41, 0.58, '#ca8a04');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.18, 0.68, 0.28, 0.84, '#ffffff');
+
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.59, 0.44, 0.85, 0.86, '#0f172a');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.59, 0.44, 0.85, 0.58, '#ca8a04');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.62, 0.68, 0.72, 0.84, '#ffffff');
+
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.47, 0.42, 0.53, 0.48, '#0f172a');
+
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.41, 0.20, 0.59, 0.36, '#4c0519');
+          drawFaceQuad(hx, hy, hz, dx, dy, dz, 0.43, 0.20, 0.57, 0.27, '#fb7185');
+
+          // Electric Spark Particle
+          if (Math.sin(tNow * 3.5) > 0.5) {
+            const spk = isoToScreen(jx + 0.25 + Math.sin(tNow * 12) * 0.1, jy + 0.05, 0.60 + Math.cos(tNow * 12) * 0.1, world.ox, world.oy);
+            ctx.save();
+            ctx.fillStyle = '#facc15'; ctx.shadowColor = '#eab308'; ctx.shadowBlur = 6;
+            ctx.fillRect(spk.x - 1.5, spk.y - 1.5, 3, 3);
+            ctx.restore();
+          }
+
+          // Interactive Speech Bubble
+          if (jolt.bubbleTimer > 0 && jolt.bubbleText) {
+            const bp = isoToScreen(jx, jy, 1.40, world.ox, world.oy);
+            ctx.save();
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const tw = ctx.measureText(jolt.bubbleText).width;
+            const bw = tw + 18, bh = 24;
+            const bx = bp.x - bw / 2, by = bp.y - bh - 6;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#facc15';
+            ctx.beginPath(); ctx.moveTo(bp.x - 4, by + bh); ctx.lineTo(bp.x + 4, by + bh); ctx.lineTo(bp.x, by + bh + 5); ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(jolt.bubbleText, bp.x, by + bh / 2);
+            ctx.restore();
+          }
+        }
+      });
+
+      // ======================================================================
+      // N. POKÉMON QUEST FLAREON (方可夢 火伊布) (x: 43.0, y: 101.0)
+      // Authentic Pokémon Quest voxel styling: upright fox ears with charcoal cavities,
+      // fluffy golden pompadour cloud head crest, massive billowing cloud mane,
+      // giant curling flame tail, and cheerful warm amber eyes!
+      // ======================================================================
+      list.push({
+        xMin: 42.2, xMax: 43.8, yMin: 100.2, yMax: 101.8,
+        draw: () => {
+          if (!world.flareon) {
+            world.flareon = { x: 43.0, y: 101.0, bubbleText: '', bubbleTimer: 0 };
+          }
+          const fla = world.flareon;
+          if (fla.bubbleTimer > 0) fla.bubbleTimer -= 0.016;
+
+          const fx = fla.x, fy = fla.y;
+          const tNow = performance.now() * 0.0035;
+          const bob = Math.sin(tNow * 1.8) * 0.015;
+
+          // Colors
+          const orgT = '#fb923c', orgL = '#f97316', orgR = '#ea580c';
+          const flameT = '#fef9c3', flameL = '#fef08a', flameR = '#facc15';
+
+          const drawFaceQuad = (hx, hy, hz, dx, dy, dz, u1, v1, u2, v2, fillCol) => {
+            const p0 = isoToScreen(hx + u1 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p1 = isoToScreen(hx + u2 * dx, hy + dy, hz + v1 * dz, world.ox, world.oy);
+            const p2 = isoToScreen(hx + u2 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            const p3 = isoToScreen(hx + u1 * dx, hy + dy, hz + v2 * dz, world.ox, world.oy);
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
+            ctx.fillStyle = fillCol;
+            ctx.fill();
+          };
+
+          // 1. 4 Orange Voxel Legs
+          const legW = 0.12, legH = 0.18;
+          models.drawBox(ctx, fx - 0.18, fy - 0.14, 0, legW, legW, legH, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, fx + 0.06, fy - 0.14, 0, legW, legW, legH, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.18, fy + 0.06, 0, legW, legW, legH, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, fx + 0.06, fy + 0.06, 0, legW, legW, legH, orgT, orgL, orgR, world.ox, world.oy);
+
+          // 2. Orange Voxel Body
+          models.drawBox(ctx, fx - 0.18, fy - 0.18, 0.14 + bob, 0.36, 0.34, 0.26, orgT, orgL, orgR, world.ox, world.oy);
+
+          // 3. Giant Fluffy Flame Cloud Tail (Warm Golden Yellow curling up high)
+          models.drawBox(ctx, fx - 0.14, fy - 0.34, 0.22 + bob, 0.28, 0.22, 0.24, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.20, fy - 0.48, 0.36 + bob, 0.40, 0.26, 0.32, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.16, fy - 0.44, 0.64 + bob, 0.32, 0.22, 0.28, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.11, fy - 0.38, 0.86 + bob, 0.22, 0.18, 0.20, flameT, flameL, flameR, world.ox, world.oy);
+
+          // 4. Massive Billowing Fluffy Golden Cloud Mane (Surrounding neck and puffing in front)
+          // Front chest puffs
+          models.drawBox(ctx, fx - 0.20, fy + 0.06, 0.16 + bob, 0.40, 0.24, 0.30, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.15, fy + 0.18, 0.18 + bob, 0.30, 0.14, 0.24, flameT, flameL, flameR, world.ox, world.oy);
+          // Left & right shoulder puffs
+          models.drawBox(ctx, fx - 0.30, fy - 0.08, 0.18 + bob, 0.18, 0.26, 0.26, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx + 0.12, fy - 0.08, 0.18 + bob, 0.18, 0.26, 0.26, flameT, flameL, flameR, world.ox, world.oy);
+          // Back neck ruff
+          models.drawBox(ctx, fx - 0.24, fy - 0.18, 0.22 + bob, 0.48, 0.16, 0.22, flameT, flameL, flameR, world.ox, world.oy);
+
+          // 5. Voxel Head Cube
+          const hx = fx - 0.22, fyHead = fy - 0.10, hz = 0.38 + bob, dx = 0.44, dy = 0.38, dz = 0.38;
+          models.drawBox(ctx, hx, fyHead, hz, dx, dy, dz, orgT, orgL, orgR, world.ox, world.oy);
+
+          // 6. Upright Sleek Fox Ears with Charcoal Inner Cavities (Rendered on top-back corners of head)
+          // Left Ear
+          models.drawBox(ctx, hx - 0.02, fyHead + 0.08, hz + dz - 0.02, 0.14, 0.14, 0.22, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, hx - 0.06, fyHead + 0.08, hz + dz + 0.18, 0.12, 0.12, 0.22, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, hx - 0.09, fyHead + 0.10, hz + dz + 0.38, 0.10, 0.10, 0.16, orgT, orgL, orgR, world.ox, world.oy);
+          drawFaceQuad(hx - 0.06, fyHead + 0.08, hz + dz + 0.16, 0.12, 0.12, 0.22, 0.18, 0.12, 0.82, 0.88, '#1e293b');
+
+          // Right Ear
+          models.drawBox(ctx, hx + dx - 0.12, fyHead + 0.08, hz + dz - 0.02, 0.14, 0.14, 0.22, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, hx + dx - 0.06, fyHead + 0.08, hz + dz + 0.18, 0.12, 0.12, 0.22, orgT, orgL, orgR, world.ox, world.oy);
+          models.drawBox(ctx, hx + dx - 0.01, fyHead + 0.10, hz + dz + 0.38, 0.10, 0.10, 0.16, orgT, orgL, orgR, world.ox, world.oy);
+          drawFaceQuad(hx + dx - 0.06, fyHead + 0.08, hz + dz + 0.16, 0.12, 0.12, 0.22, 0.18, 0.12, 0.82, 0.88, '#1e293b');
+
+          // 7. Fluffy Golden Cloud Head Crest (Flame Pompadour Tuft between & in front of ears)
+          models.drawBox(ctx, fx - 0.14, fyHead + 0.12, hz + dz - 0.02, 0.28, 0.20, 0.18, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.11, fyHead + 0.22, hz + dz + 0.02, 0.22, 0.14, 0.18, flameT, flameL, flameR, world.ox, world.oy);
+          models.drawBox(ctx, fx - 0.07, fyHead + 0.16, hz + dz + 0.16, 0.14, 0.14, 0.14, flameT, flameL, flameR, world.ox, world.oy);
+
+          // 8. Facial Features (3-tone warm amber eyes)
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.15, 0.44, 0.41, 0.86, '#3b1104');
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.15, 0.44, 0.41, 0.58, '#d97706');
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.18, 0.68, 0.28, 0.84, '#ffffff');
+
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.59, 0.44, 0.85, 0.86, '#3b1104');
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.59, 0.44, 0.85, 0.58, '#d97706');
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.62, 0.68, 0.72, 0.84, '#ffffff');
+
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.47, 0.42, 0.53, 0.48, '#291006');
+
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.41, 0.20, 0.59, 0.36, '#4c0519');
+          drawFaceQuad(hx, fyHead, hz, dx, dy, dz, 0.43, 0.20, 0.57, 0.27, '#fb7185');
+
+          // Warm Ember Particle
+          if (Math.sin(tNow * 4.0) > 0.6) {
+            const ep = isoToScreen(fx - 0.10 + Math.sin(tNow * 8) * 0.1, fy - 0.35, 0.65 + Math.cos(tNow * 8) * 0.1, world.ox, world.oy);
+            ctx.save();
+            ctx.fillStyle = '#f97316'; ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 6;
+            ctx.fillRect(ep.x - 1.5, ep.y - 1.5, 3, 3);
+            ctx.restore();
+          }
+
+          // Interactive Speech Bubble
+          if (fla.bubbleTimer > 0 && fla.bubbleText) {
+            const bp = isoToScreen(fx, fy, 1.40, world.ox, world.oy);
+            ctx.save();
+            ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            const tw = ctx.measureText(fla.bubbleText).width;
+            const bw = tw + 18, bh = 24;
+            const bx = bp.x - bw / 2, by = bp.y - bh - 6;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#f97316';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath(); ctx.moveTo(bp.x - 4, by + bh); ctx.lineTo(bp.x + 4, by + bh); ctx.lineTo(bp.x, by + bh + 5); ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(fla.bubbleText, bp.x, by + bh / 2);
+            ctx.restore();
+          }
         }
       });
     }

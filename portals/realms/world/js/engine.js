@@ -114,10 +114,16 @@
       if (ix < 0 || iy < 0 || ix >= this.w || iy >= this.h) return false;
 
       // Hard Abyss Void & Boundary Enforcement (Guarantees zero characters/paths can ever enter the abyss void)
+      const isPokeBridge = (ix >= 22 && ix <= 26 && iy >= 99 && iy <= 101);
+      const isMinecraftLand = (ix >= 6 && ix <= 22 && iy >= 93 && iy <= 111);
+      const isPokemonLand = (ix >= 26 && ix <= 49 && iy >= 93 && iy <= 111);
+      const isAbyssBridge = (ix >= 11 && ix <= 17 && iy > 57 && iy <= 92);
+
       if (
-        (iy > 57 && iy <= 92 && (ix < 11 || ix > 17)) ||
-        (iy >= 93 && (ix < 7 || ix > 21)) ||
-        (iy > 111)
+        (iy > 57 && iy <= 92 && !isAbyssBridge) ||
+        (iy >= 93 && iy <= 111 && !isMinecraftLand && !isPokeBridge && !isPokemonLand) ||
+        (iy > 111) ||
+        (iy >= 93 && (ix < 6 || ix > 49))
       ) {
         return false;
       }
@@ -294,6 +300,20 @@
       if (Math.abs(bZ - aZ) > 0.15) {
         return bZ < aZ;
       }
+
+      // Overlapping bounding boxes: compare relative directional separation
+      // In axonometric projection, along the shared X column, smaller Y is always behind.
+      const bYBehind = (b.yMax <= a.yMax && b.yMin < a.yMin);
+      const aYBehind = (a.yMax <= b.yMax && a.yMin < b.yMin);
+      if (bYBehind && !aYBehind) return true;
+      if (aYBehind && !bYBehind) return false;
+
+      // Along the shared Y row, smaller X is always behind.
+      const bXBehind = (b.xMax <= a.xMax && b.xMin < a.xMin);
+      const aXBehind = (a.xMax <= b.xMax && a.xMin < b.xMin);
+      if (bXBehind && !aXBehind) return true;
+      if (aXBehind && !bXBehind) return false;
+
       if (b.baseDepth !== a.baseDepth) {
         return b.baseDepth < a.baseDepth;
       }

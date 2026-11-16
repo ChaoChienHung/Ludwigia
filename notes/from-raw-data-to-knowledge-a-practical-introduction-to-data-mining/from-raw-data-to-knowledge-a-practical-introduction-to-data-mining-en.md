@@ -3,7 +3,7 @@ Title: From Raw Data to Knowledge: A Practical Introduction to Data Mining
 CanonicalId: from-raw-data-to-knowledge-a-practical-introduction-to-data-mining
 Tags: Data Mining, Preprocessing, Normalization, Feature Selection
 Summary: A practical introduction to data mining: why it matters, how it differs from naive retrieval, how raw data becomes knowledge, and the core data, quality, preprocessing, and methods foundations behind that process.
-Cover: ./Data-Mining.png
+Cover: ./Data-Mining.jpg
 Slug: from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en
 Output: notes/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining/from-raw-data-to-knowledge-a-practical-introduction-to-data-mining-en.html
 Style: default
@@ -73,7 +73,7 @@ section: Summary Quiz -> summary-quiz
 # From Raw Data to Knowledge: A Practical Introduction to Data Mining
 
 <image>
-src: ./Data-Mining.png
+src: ./Data-Mining.jpg
 alt: Pyramid showing the data-mining abstraction levels from raw data to wisdom
 caption: Data-mining abstraction hierarchy: raw data -> information -> knowledge -> wisdom.
 </image>
@@ -125,7 +125,7 @@ Querying a database is a deterministic process (asking "how many?"). Data mining
 Now that we have a working definition of data mining, we can see that the term covers several different kinds of activity in practice. Organizing relationships within an unstructured body of information can already be regarded as a form of data mining. Uncovering hidden, recurring patterns within that information is also data mining. And when those insights are distilled into more general principles that inform real decisions, that too remains within its scope. At first glance, these activities may seem quite different from one another. In reality, however, they all describe the same upward movement: from raw material toward increasingly meaningful forms of understanding. Seen in that light, data mining is not a collection of isolated cases, but a connected process that can be organized into a clear hierarchy.
 
 <image>
-src: ./Pyramid.png
+src: ./Pyramid.jpg
 alt: Data mining hierarchy from data to wisdom
 caption: The hierarchy of abstraction in data mining, from raw data to wisdom.
 </image>
