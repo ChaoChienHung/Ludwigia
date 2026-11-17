@@ -1051,12 +1051,12 @@ const PortalComponentImpl: React.FC<PortalComponentProps> = ({
         style={{
           left: `calc(50% + ${portal.signpost.offsetX}px)`,
           top: `calc(50% + ${portal.signpost.offsetY}px)`,
-          width: '184px',
+          width: '208px',
         }}
         onClick={handleClick}
       >
         <div
-          className={`ap-panel p-2 transition-colors duration-150 ${
+          className={`ap-panel portal-signpost p-3 transition-colors duration-150 ${
             activeHover ? '!border-[var(--ap-border-strong)]' : ''
           }`}
         >

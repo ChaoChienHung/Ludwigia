@@ -69,8 +69,8 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - Writing：長文與文字內容入口（UI 中文名稱目前為「文章」；技術路徑仍為 `writing/`）
 - Canvas：視覺內容入口（UI 中文名稱目前為「視界」；技術路徑仍為 `canvas/`）
 - Portals：多維傳送樞紐（Aetheria Portals，以太仙境全景畫卷，集結已完成世界：直通 Digital Garden 與 Ludwigia World）
-- Labs：實驗功能入口（包含 Grimoire、Shooting Mode、Question Bank，以及 Laser-tag / Cosmic Flow 實驗原型）
-- Grimoire 魔導書（`labs/grimoire/`）：常用 Prompt（咒語）與 Skill（法術）；資料維護在 `data/Grimoire/grimoire.json`，重新試煉後更新 `verified_with` / `verified_at` 即可，靈力狀態會自動計算
+- Labs：實驗與可重用資源入口（包含 Toolkit、Shooting Mode、Question Bank，以及 Laser-tag / Cosmic Flow 原型）；World 由 Portals 負責導覽
+- Toolkit 工具庫（`labs/grimoire/`）：按「種類」（Template / Guide / Prompt / Skill）與「用途」交叉篩選；Ludwig 密語模式顯示 Grimoire 魔導書文案。資料維護在 `data/Grimoire/grimoire.json`，Prompt / Skill 更新模型驗證欄位後會自動計算時效；Template / Guide 顯示為參考資料
 - Timeline：首頁上的獨立 section；採 source-driven data contract（由獨立 data file authoring，再交給 runtime projection），ongoing phase 可用 `end: "present"` 表達
 - Settings：全站可喚起的 settings modal；`pages/settings.html` 保留作 direct-link / fallback 入口
 - Mobile Additional Entry：手機 / 窄視窗下，misc 與單篇頁 metadata/outline 共享同一個右下角主入口
@@ -579,7 +579,7 @@ Ludwigia/
 │   └── index.html
 ├── labs/
 │   ├── index.html
-│   ├── grimoire/        # 魔導書：Prompts & Skills（data/Grimoire/grimoire.json）
+│   ├── grimoire/        # Toolkit / 密語模式 Grimoire（data/Grimoire/grimoire.json）
 │   ├── shooting-mode/
 │   ├── question-bank/
 │   ├── massive-multiplayer-laser-tag/

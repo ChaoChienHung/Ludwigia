@@ -87,7 +87,7 @@ export default function App() {
     <div className="relative w-screen h-screen overflow-hidden bg-[#05070c] text-[var(--ap-text)] select-none">
       <TopBar lang={lang} onResetView={handleResetView} />
 
-      <main className="w-full h-full pt-14">
+      <main className="w-full h-full pt-16 md:pt-[76px]">
         <PanoramicStage
           lang={lang}
           onSelectPortal={handleSelectPortal}
@@ -116,20 +116,20 @@ export default function App() {
       {showWelcome && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
           <div
-            className="ap-panel w-full max-w-sm p-6 flex flex-col gap-4 animate-modal-in"
+            className="ap-panel portal-welcome w-full max-w-lg p-7 sm:p-10 flex flex-col gap-5 animate-modal-in"
             role="dialog"
             aria-modal="true"
             aria-labelledby="welcome-title"
           >
             <div className="flex flex-col gap-1">
-              <span className="ap-caption">{UI.welcomeEyebrow[lang]}</span>
-              <h2 id="welcome-title" className="ap-display">
+              <span className="ap-caption portal-welcome-eyebrow">{UI.welcomeEyebrow[lang]}</span>
+              <h2 id="welcome-title" className="ap-display portal-welcome-title">
                 {UI.welcomeTitle[lang]}
               </h2>
             </div>
-            <p className="ap-body text-[var(--ap-text-muted)]">{UI.welcomeBody[lang]}</p>
-            <p className="ap-caption">{UI.welcomeOpen[lang]}</p>
-            <button type="button" onClick={handleStart} className="ap-btn-primary self-start" autoFocus>
+            <p className="ap-body portal-welcome-body">{UI.welcomeBody[lang]}</p>
+            <p className="ap-caption portal-welcome-open">{UI.welcomeOpen[lang]}</p>
+            <button type="button" onClick={handleStart} className="ap-btn-primary portal-welcome-start self-start" autoFocus>
               {UI.welcomeStart[lang]}
             </button>
           </div>

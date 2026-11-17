@@ -594,3 +594,9 @@ Portals 與 World 會卡，主因不是某一個效果特別貴，而是好幾�
 - Portals 只掛載看得見的相位，鏡頭靜止就停止 rAF，畫面外的傳送門暫停動畫。
 
 畫質上只做兩個小取捨，都限定在成本最敏感的情境：觸控裝置的 HUD 改用實色表面（不做 backdrop blur），canvas DPR 上限 1.75。其餘視覺以像素比對驗證：在 10 個固定地點與優化前的版本逐像素比對，只剩時間相關的雪花與水晶脈動不同，另外一處長牆因為改用 footprint 裁剪而不再錯誤消失。完整的規則見 `docs/specs/realm-spec.md` §6。
+
+### 16. 入口分工、Portals 導覽與 Toolkit 命名
+
+Labs 只收實驗原型與可重用資源；Portals 自己負責 Garden 與 World 的導覽，因此 World 不再重複出現在 Labs 或 More。Portals 的頂欄保留自己的奇幻氣質，使用 Cinzel 品牌字、單一 palette accent 與安靜的邊線；放大導覽文字與第一次進入時的提示窗，讓資訊更容易讀到。
+
+資源頁平常稱為 Toolkit（工具庫），直接說明用途；Ludwig 密語啟用時才顯示 Grimoire（魔導書）的語氣。兩種呈現共用同一份資料，種類（Template / Guide / Prompt / Skill）與用途（寫作、工作流、網站開發）可交叉篩選。從 `AGENTS.md` / `README.md` 提煉可重用的範本與檢查表，不公開整份站內操作契約；模型驗證時效只適用於 Prompt / Skill。

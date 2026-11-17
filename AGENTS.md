@@ -17,6 +17,7 @@
 - `tools/create_content.py` 的預設輸出必須使用 `tools/content_styles/default`（確保「懶得手刻時也能一鍵生成」的體驗穩定）
 - `tools/create_content.py` 必須維持為標準內容頁生成器：允許少量 style 差異，但不得為 presentation 無限制擴張 parser，避免把標準生成器變成萬用 page builder
 - page-level shared chrome（例如 navbar）若收斂為單一來源，應以 `pages/_shared/` 作為 site shell SSOT；`tools/content_styles/_shared/` 只保留內容生成流程需要的 shared partial，不應再平行維護第二份 navbar 真相來源；手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）的 navbar / footer 必須以 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記，由 `cli.py build-pages`（`tools/build_pages.py`）從 `pages/_shared/` 生成，不得手改標記內的內容；生成的內容頁 navbar 也必須與 partial 一致（`tests/test_page_shell.py` 守門）
+- 探索入口各守職責：Labs 展示原型與可重用資源；Portals 負責 Garden / World 的境域導覽；FAB 可直達 Portals / Labs。Toolkit 的種類與用途只由 `data/Grimoire/grimoire.json` 維護，Ludwig 密語只切換 Grimoire 文案，不維護第二份資料
 - 若啟用翻譯 workflow（`tools/translate_content.py` / `cli.py translate`），必須維持 source-driven contract：只翻必要自然語言；`Tags`、metadata key、slug、路徑與 block 骨架不得被任意改寫
 - 若翻譯 backend 需要憑證，必須支援 environment variables 與 `secret.txt`；`secret.txt` 必須排除在版本控制外
 - `reviewkit` 若存在，必須維持為 semantic container：`qquiz` / `qprompt` 可獨立存在；只有當它們都出現在同一個 `reviewkit` 內時，才組成 tabs UI

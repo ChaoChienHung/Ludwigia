@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Grimoire — Labs — Ludwig</title>
+  <title>Toolkit — Labs — Ludwig</title>
   <link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
   <link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
@@ -58,6 +58,10 @@
 
     .grimoire-stat--static {
       cursor: default;
+    }
+
+    .tag-summary-stats[data-grimoire-stats] {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .grimoire-schools {
@@ -143,6 +147,7 @@
 
     .grimoire-entry-kind {
       font-size: 0.72rem;
+      font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--accent);
@@ -179,7 +184,8 @@
 
     .grimoire-seal.is-fading,
     .grimoire-seal.is-untested,
-    .grimoire-seal.is-sealed {
+    .grimoire-seal.is-sealed,
+    .grimoire-seal.is-reference {
       background: transparent;
       border: 1px dashed var(--grimoire-line);
       color: var(--grimoire-muted);
@@ -355,6 +361,7 @@
     }
 
     @media (max-width: 991.98px) {
+      .tag-summary-stats[data-grimoire-stats] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .grimoire-list.hub-grid--wide {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -409,6 +416,10 @@
       .grimoire-actions .grimoire-action {
         flex: 1 1 auto;
       }
+    }
+
+    @media (max-width: 520px) {
+      .tag-summary-stats[data-grimoire-stats] { grid-template-columns: minmax(0, 1fr); }
     }
   </style>
 </head>
@@ -491,8 +502,8 @@
   <section class="page-section">
     <div class="container" data-grimoire-root="../../">
       <div class="hub-hero hub-hero--compact text-center" data-aos="fade-up">
-        <span class="hub-hero-kicker"><i class="fa-solid fa-book-journal-whills me-2"></i><span data-grimoire-kicker>Labs · Spellbook</span></span>
-        <h1 data-grimoire-title>Grimoire</h1>
+        <span class="hub-hero-kicker"><i class="fa-solid fa-toolbox me-2"></i><span data-grimoire-kicker>Labs · Resources</span></span>
+        <h1 data-grimoire-title>Toolkit</h1>
         <p class="page-text" data-grimoire-intro></p>
       </div>
 

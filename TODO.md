@@ -13,6 +13,10 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] Portals 閱讀性與 Labs 資源入口分工
+    - 已完成：Portals 初訪提示窗、頂欄與門牌字級加大，頂欄保留克制的奇幻風；World 從 Labs 與 More 的獨立入口移除，仍由 Portals 進入；Toolkit 平時用直白名稱、密語模式顯示 Grimoire；增加 Template／Guide，種類與用途可交叉篩選，種類小標籤加粗；重建 Portals 靜態資產。
+    - Review 重點：請在桌機和手機檢查 Portals 頂欄、初訪提示窗與門牌是否易讀；在 Labs 開啟／關閉密語，確認卡片和資源頁名稱同步切換；試用四種種類與用途篩選。
+
 - [x] 重構 Phase 2：手寫頁面 shell 收斂
     - 交付條件：手寫頁面的 navbar / footer 只有一個來源（`pages/_shared/`），由 `cli.py build-pages` 生成並有測試守門；內容頁 navbar 與 partial 一致。
     - 已完成：16 個手寫頁面（9 種 navbar 版本）改用標記區塊，由 `tools/build_pages.py` 生成，順便修掉 `notes/index.html` 多出的 `</div>`；新增 `pages/_shared/footer.html`；73 篇舊版生成的內容頁用目前生成器重生並重建索引；`tests/test_page_shell.py` 新增 4 項測試，`pre-push` 也會檢查。全套 64 項測試通過。

@@ -43,6 +43,7 @@
 
 - [ ] Core vs Additional 的入口分層不退化（navbar 不因實驗功能膨脹；實驗入口優先放到 Additional surface）
   - [ ] `Labs` 維持為 concept page / prototype 的 landing，而不是把實驗入口回塞到主導航
+  - [ ] World 只由 Portals 導覽；Toolkit／密語 Grimoire 使用同一份資源資料，種類與用途可交叉篩選
 
 - [ ] Theme vs Palette 分工不退化（Theme 管氛圍、Palette 管 accent；偏好狀態仍以 localStorage 保存）
   - [ ] Theme 清單可擴充（含 Sky/Garden）時仍維持同一套設定入口與相容鍵值，不長出平行設定系統

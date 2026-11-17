@@ -14,6 +14,12 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/style.css?v=2026-06-21-6">
+  <style>
+    .labs-toolkit-card .toolkit-cipher-copy { display: none; }
+    html.cipher-mode .labs-toolkit-card .toolkit-default-copy { display: none; }
+    html.cipher-mode .labs-toolkit-card .toolkit-cipher-copy { display: inline; }
+    html.cipher-mode .labs-toolkit-card p.toolkit-cipher-copy { display: block; }
+  </style>
 </head>
 
 <body>
@@ -103,17 +109,18 @@
       </div>
 
       <div class="hub-grid hub-grid--wide mt-4" data-aos="fade-up" data-aos-delay="120">
-        <a class="hub-card" href="grimoire/index.html">
-          <div class="hub-card-icon"><i class="fa-solid fa-book-journal-whills"></i></div>
+        <a class="hub-card labs-toolkit-card" href="grimoire/index.html">
+          <div class="hub-card-icon"><i class="fa-solid fa-toolbox"></i></div>
           <div class="hub-card-body">
             <div class="hub-card-title-row">
-              <h2>Grimoire</h2>
-              <span class="hub-card-cta">Spellbook</span>
+              <h2><span class="toolkit-default-copy">Toolkit</span><span class="toolkit-cipher-copy">Grimoire</span></h2>
+              <span class="hub-card-cta"><span class="toolkit-default-copy">Resources</span><span class="toolkit-cipher-copy">Spellbook</span></span>
             </div>
-            <p>The incantations (prompts) and spells (skills) I actually cast, each sealed with the model and date of its last test.</p>
+            <p class="toolkit-default-copy">Reusable templates, guides, prompts, and skills, organized by type and purpose.</p>
+            <p class="toolkit-cipher-copy">A book of prompts, skills, patterns, and field notes.</p>
             <ul class="hub-card-list">
-              <li>Open any page to read, copy, or download it</li>
-              <li>Pages fade when they go too long without a fresh test</li>
+              <li>Open, copy, or download each resource</li>
+              <li>See when model-dependent entries were last tested</li>
             </ul>
           </div>
         </a>
@@ -178,20 +185,6 @@
           </div>
         </a>
 
-        <a class="hub-card" href="../portals/realms/world/index.html" data-cipher-unlock>
-          <div class="hub-card-icon"><i class="fa-solid fa-earth-americas"></i></div>
-          <div class="hub-card-body">
-            <div class="hub-card-title-row">
-              <h2>Ludwigia World</h2>
-              <span class="hub-card-cta" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Secret World</span>
-            </div>
-            <p>A living 2.5D isometric world connecting Ludwig's family home, Men's Dorm 11-211, the AI research lab, and central courtyard plaza.</p>
-            <ul class="hub-card-list">
-              <li>Driven by pure Canvas math, topological sorting, and source JSON</li>
-              <li>Includes randomized dialogues, multi-directional doors, and interactive companions</li>
-            </ul>
-          </div>
-        </a>
       </div>
 
       <div class="hub-callout" data-aos="fade-up" data-aos-delay="180">

@@ -153,6 +153,75 @@
   outline-offset: 2px;
 }
 
+/* The hall keeps its own quieter fantasy identity while using the site's palette. */
+.portal-hall-header {
+  background: color-mix(in srgb, #090e17 94%, var(--ap-accent) 6%);
+  border-bottom: 1px solid color-mix(in srgb, var(--ap-accent) 24%, var(--ap-border-strong));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+.portal-hall-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 32px;
+  width: min(180px, 32vw);
+  height: 1px;
+  background: linear-gradient(90deg, var(--ap-accent), transparent);
+  pointer-events: none;
+}
+.portal-hall-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  letter-spacing: 0.09em;
+  line-height: 1;
+  text-decoration: none;
+}
+.portal-hall-brand::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  transform: rotate(45deg);
+  border: 1px solid var(--ap-accent);
+  box-shadow: inset 0 0 0 3px #090e17;
+  background: var(--ap-accent);
+}
+.portal-hall-nav .ap-chip {
+  height: 42px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border-color: color-mix(in srgb, var(--ap-accent) 18%, var(--ap-border-strong));
+  background: rgba(255, 255, 255, 0.035);
+}
+.portal-hall-nav .ap-chip--icon { width: 42px; padding: 0; }
+.portal-hall-nav .ap-chip svg { color: var(--ap-accent); }
+.portal-hall-nav .ap-chip:hover,
+.portal-hall-nav .ap-chip:focus-visible {
+  border-color: var(--ap-accent-line);
+  background: var(--ap-accent-soft);
+}
+.portal-welcome {
+  border-color: color-mix(in srgb, var(--ap-accent) 35%, var(--ap-border-strong));
+  background: #101720;
+}
+.portal-welcome-eyebrow { font-size: 13px; line-height: 20px; }
+.portal-welcome-title { font-size: clamp(27px, 4vw, 36px); line-height: 1.25; }
+.portal-welcome-body { font-size: 16px; line-height: 1.7; color: var(--ap-text); }
+.portal-welcome-open { font-size: 14px; line-height: 1.5; }
+.portal-welcome-start { min-height: 46px; font-size: 15px; }
+.portal-signpost .ap-body { font-size: 15px; line-height: 22px; }
+.portal-signpost .ap-caption { font-size: 12px; line-height: 18px; }
+
+@media (max-width: 767px) {
+  .portal-hall-header::after { left: 16px; width: 100px; }
+  .portal-hall-nav { gap: 5px; }
+  .portal-hall-nav .ap-chip { width: 38px; height: 38px; padding: 0; }
+}
+
 /* GPU-accelerated portal rotation */
 @keyframes portal-spin-cw {
   0% { transform: rotate(0deg); }

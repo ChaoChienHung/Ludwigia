@@ -18,30 +18,30 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onResetView }) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-14 px-4 md:px-6 bg-[var(--ap-surface)] border-b border-[var(--ap-border)] flex items-center justify-between gap-4 select-none">
+    <header className="portal-hall-header fixed top-0 left-0 right-0 z-40 h-16 md:h-[76px] px-4 md:px-8 flex items-center justify-between gap-3 select-none">
       <a
         href="#"
         onClick={(e) => {
           e.preventDefault();
           onResetView();
         }}
-        className="font-fantasy text-base font-bold tracking-wide text-white hover:text-[var(--ap-accent)] transition-colors whitespace-nowrap"
+        className="portal-hall-brand font-fantasy font-bold text-white hover:text-[var(--ap-accent)] transition-colors whitespace-nowrap"
         title={UI.resetView[lang]}
       >
         {UI.brand[lang]}
       </a>
 
-      <nav className="flex items-center gap-2" aria-label="Portals">
-        <a href="./realms/garden/index.html" className="ap-chip" title={UI.goGarden[lang]}>
-          <Sprout className="w-4 h-4" aria-hidden="true" />
-          <span className="hidden sm:inline">{UI.garden[lang]}</span>
+      <nav className="portal-hall-nav flex items-center gap-2" aria-label="Portals">
+        <a href="./realms/garden/index.html" className="ap-chip" title={UI.goGarden[lang]} aria-label={UI.goGarden[lang]}>
+          <Sprout className="w-[18px] h-[18px]" aria-hidden="true" />
+          <span className="hidden md:inline">{UI.garden[lang]}</span>
         </a>
-        <a href="./realms/world/index.html" className="ap-chip" title={UI.goWorld[lang]}>
-          <Globe className="w-4 h-4" aria-hidden="true" />
-          <span className="hidden sm:inline">{UI.world[lang]}</span>
+        <a href="./realms/world/index.html" className="ap-chip" title={UI.goWorld[lang]} aria-label={UI.goWorld[lang]}>
+          <Globe className="w-[18px] h-[18px]" aria-hidden="true" />
+          <span className="hidden md:inline">{UI.world[lang]}</span>
         </a>
         <a href="../index.html" className="ap-chip ap-chip--icon" title={UI.goHome[lang]} aria-label={UI.goHome[lang]}>
-          <Home className="w-4 h-4" aria-hidden="true" />
+          <Home className="w-[18px] h-[18px]" aria-hidden="true" />
         </a>
         <button
           type="button"
@@ -50,7 +50,7 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onResetView }) => {
           title={UI.resetView[lang]}
           aria-label={UI.resetView[lang]}
         >
-          <RotateCcw className="w-4 h-4" aria-hidden="true" />
+          <RotateCcw className="w-[18px] h-[18px]" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -60,7 +60,7 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onResetView }) => {
           title={isMuted ? UI.soundOn[lang] : UI.soundOff[lang]}
           aria-label={isMuted ? UI.soundOn[lang] : UI.soundOff[lang]}
         >
-          {isMuted ? <VolumeX className="w-4 h-4" aria-hidden="true" /> : <Volume2 className="w-4 h-4" aria-hidden="true" />}
+          {isMuted ? <VolumeX className="w-[18px] h-[18px]" aria-hidden="true" /> : <Volume2 className="w-[18px] h-[18px]" aria-hidden="true" />}
         </button>
       </nav>
     </header>

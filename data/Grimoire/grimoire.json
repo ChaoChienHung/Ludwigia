@@ -9,9 +9,73 @@
     {
       "id": "workflow",
       "title": { "en": "Workflow", "zh-Hant": "工作流", "zh-Hans": "工作流" }
+    },
+    {
+      "id": "site-building",
+      "title": { "en": "Site building", "zh-Hant": "網站開發", "zh-Hans": "网站开发" }
     }
   ],
   "items": [
+    {
+      "id": "agent-rules-template",
+      "kind": "template",
+      "category": "site-building",
+      "title": {
+        "en": "AGENTS.md starter template",
+        "zh-Hant": "AGENTS.md 起始範本",
+        "zh-Hans": "AGENTS.md 起始模板"
+      },
+      "summary": {
+        "en": "A reusable contract for project boundaries, source of truth, and verification, adapted from this site's agent rules.",
+        "zh-Hant": "從本站 Agent 規則整理出的可重用起始範本：邊界、單一真相來源與驗證方式。",
+        "zh-Hans": "从本站 Agent 规则整理出的可重用起始模板：边界、单一真实来源与验证方式。"
+      },
+      "source": "data/Grimoire/resources/agent-rules-template.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "project-readme-template",
+      "kind": "template",
+      "category": "site-building",
+      "title": {
+        "en": "Project README template",
+        "zh-Hant": "專案 README 範本",
+        "zh-Hans": "项目 README 模板"
+      },
+      "summary": {
+        "en": "A concise README structure for setup, the single editing workflow, build outputs, and deployment.",
+        "zh-Hant": "簡明的 README 骨架，涵蓋安裝、唯一修改流程、生成物與部署。",
+        "zh-Hans": "简明的 README 骨架，涵盖安装、唯一修改流程、生成物与部署。"
+      },
+      "source": "data/Grimoire/resources/project-readme-template.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "source-driven-content-guide",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Source-driven content checklist",
+        "zh-Hant": "單一來源內容檢查表",
+        "zh-Hans": "单一来源内容检查表"
+      },
+      "summary": {
+        "en": "A short guide distilled from this project's source, build, index, and review workflow.",
+        "zh-Hant": "從本站的 source、生成、索引與審閱流程整理出的通用檢查表。",
+        "zh-Hans": "从本站的 source、生成、索引与审阅流程整理出的通用检查表。"
+      },
+      "source": "data/Grimoire/resources/source-driven-content-guide.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
     {
       "id": "knowledge-scaffolding-review",
       "kind": "prompt",

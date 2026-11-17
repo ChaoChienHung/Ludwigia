@@ -116,6 +116,7 @@
 
 - [ ] `labs/index.html` / `labs/**`
   - [ ] Labs landing 至少能進入已上線的 concept page / prototype bridge，不再是空白 placeholder
+- [ ] Labs 的資源入口只呈現 Toolkit／密語 Grimoire；World 由 Portals 導覽，避免兩處重複列同一個境域
   - [ ] 若本次改動涉及 concept page：`labs/shooting-mode/index.html` 與 `labs/index.html` 之間可雙向返回，且不依賴後端 routing
   - [ ] 若本次改動涉及 question bank：`question_focus` schema / ontology / loader / Labs filter 已同步；同一 bank 混放不同方向題目時仍可正確過濾與顯示
 

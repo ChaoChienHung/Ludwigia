@@ -39,7 +39,7 @@ class TestGrimoireData(unittest.TestCase):
         for item in self.data["items"]:
             label = item["id"]
             self.assertRegex(label, r"^[a-z0-9]+(?:-[a-z0-9]+)*$", "ids are used as DOM ids and download names")
-            self.assertIn(item.get("kind"), {"prompt", "skill"}, label)
+            self.assertIn(item.get("kind"), {"prompt", "skill", "template", "guide"}, label)
             self.assertIn(item.get("category"), category_ids, label)
             self.assertIn(item.get("status"), {"active", "deprecated"}, label)
             for field in ("title", "summary"):
@@ -66,8 +66,17 @@ class TestGrimoireData(unittest.TestCase):
             if item["kind"] == "skill":
                 # Skills must point at skills/ as their single source of truth.
                 self.assertRegex(source, r"^skills/[^/]+/skill\.md$", item["id"])
-            else:
+            elif item["kind"] == "prompt":
                 self.assertTrue(source.startswith("data/Grimoire/prompts/"), item["id"])
+            else:
+                self.assertTrue(source.startswith("data/Grimoire/resources/"), item["id"])
+
+    def test_type_and_purpose_are_independent_facets(self):
+        pairs = {(item["kind"], item["category"]) for item in self.data["items"]}
+        self.assertIn(("skill", "writing"), pairs)
+        self.assertIn(("prompt", "writing"), pairs)
+        self.assertIn(("template", "site-building"), pairs)
+        self.assertIn(("guide", "workflow"), pairs)
 
 
 if __name__ == "__main__":

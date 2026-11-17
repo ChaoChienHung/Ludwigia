@@ -259,12 +259,12 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 - `references` 延伸連結：支援 `{ title, url }` 或 `{ title, canonical }`（亦支援 `canonical_id` / `canonicalId`）；前端 runtime 於渲染時依 `SITE_SEARCH_INDEX` 自動對接 `writing` / `notes` 文章路徑與標題，缺省標題時會自動從搜尋索引取文章 Title，無法 resolve 時則優雅退化為純文字標題
 - 延伸連結呈現：採用 `<ol class="timeline-detail-links-list">` 有序清單，樣式與 `notes/writings` 內的 linked text 保持一致（預設收斂、hover 時呈現 accent 亮彩與箭頭微動）
 
-Labs Grimoire 魔導書（`labs/grimoire/index.html`）也採同一條路：
+Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoire 魔導書）也採同一條路：
 
 - source of truth：`data/Grimoire/grimoire.json`（`version`、`stale_after_days`、`categories`、`items`）
-- item 欄位：`id`（kebab-case）、`kind = prompt | skill`、`category`、三語 `title` / `summary`、`source`、`verified_with`、`verified_at`（`YYYY-MM-DD` 或 null，兩者需同時設定或同時為 null）、`status = active | deprecated`、`replaced_by`
-- `kind = skill` 的 `source` 必須直接指向 `skills/<name>/skill.md`，不得複製第二份；`kind = prompt` 的本體放在 `data/Grimoire/prompts/<id>.md`
-- 靈力狀態（Charged 靈力充盈 / Fading 靈力衰退 / Untested 未經試煉 / Sealed 已封印）由 runtime 依 `verified_at` 與 `stale_after_days` 推導，作者不手動維護狀態標籤
+- item 欄位：`id`（kebab-case）、`kind = template | guide | prompt | skill`（種類）、`category`（用途）、三語 `title` / `summary`、`source`、`verified_with`、`verified_at`（`YYYY-MM-DD` 或 null，兩者需同時設定或同時為 null）、`status = active | deprecated`、`replaced_by`。種類和用途是互不依賴的篩選維度
+- `kind = skill` 的 `source` 直接指向 `skills/<name>/skill.md`，不得複製第二份；Prompt 本體在 `data/Grimoire/prompts/`，通用範本與指南在 `data/Grimoire/resources/`，僅提煉可公開重用的內容
+- Prompt / Skill 的驗證時效由 runtime 依 `verified_at` 與 `stale_after_days` 推導；Template / Guide 一律標示參考資料，不使用模型驗證狀態；密語模式只改呈現文案，不改資料來源或篩選語意
 - 守門測試：`tests/test_grimoire_data.py`
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。

@@ -3,11 +3,11 @@
   const langRuntime = window.LudwigLanguage || null;
   const DAY_MS = 24 * 60 * 60 * 1000;
 
-  const uiText = {
+  const cipherText = {
     en: {
       kicker: 'Labs · Spellbook',
       title: 'Grimoire',
-      intro: 'The prompts and skills I actually cast. Models shift quickly, so every entry records when it was last tested and with which model.',
+      intro: 'A collection of prompts, skills, patterns, and field notes. Model-dependent spells record when and where they were last tested.',
       summaryKicker: 'Tome overview',
       summaryTitle: 'Everything bound in this book',
       summaryCaption: 'Pick a kind or a school to narrow the pages.',
@@ -19,18 +19,22 @@
       skill: 'Spells',
       skillOne: 'Spell · Skill',
       skillDesc: (n) => `${n} skills for agents to follow.`,
+      template: 'Patterns', templateOne: 'Pattern · Template', templateDesc: (n) => `${n} reusable templates.`,
+      guide: 'Field notes', guideOne: 'Field note · Guide', guideDesc: (n) => `${n} practical guides.`,
+      reference: 'Reference',
       charged: 'Charged',
       chargedDesc: (n) => `${n} verified recently.`,
       schools: 'Schools',
       all: 'All',
-      seals: { charged: 'Charged', fading: 'Fading', untested: 'Untested', sealed: 'Sealed' },
+      seals: { charged: 'Charged', fading: 'Fading', untested: 'Untested', sealed: 'Sealed', reference: 'Reference' },
       sealExplain: {
         charged: (days, model) => `Tested ${days === 0 ? 'today' : `${days} day${days === 1 ? '' : 's'} ago`}${model ? ` with ${model}` : ''}.`,
         fading: (days, model) => `Last tested ${days} days ago${model ? ` with ${model}` : ''}; it may not hold on newer models.`,
         untested: () => 'No test run has been recorded yet.',
         sealed: () => 'Retired. Kept for reference only.',
+        reference: () => 'Reusable reference material.',
       },
-      note: (days) => `An entry fades once it goes ${days} days without a fresh test.`,
+      note: (days) => `Prompts and skills fade after ${days} days without a fresh test; patterns and field notes remain references.`,
       open: 'Open',
       close: 'Close',
       status: 'Status',
@@ -51,7 +55,7 @@
     'zh-Hant': {
       kicker: 'Labs · 魔導書',
       title: '魔導書',
-      intro: '收錄我實際在用的咒語（Prompt）與法術（Skill）。模型變化很快，所以每一則都記下最後一次試煉的時間，以及用的是哪個模型。',
+      intro: '收錄咒語（Prompt）、法術（Skill）、範本與手記。需要依賴模型的項目會記下最後試煉的時間與模型。',
       summaryKicker: '魔導書總覽',
       summaryTitle: '書中收錄的一切',
       summaryCaption: '選擇類型或流派，縮小要翻閱的範圍。',
@@ -63,18 +67,22 @@
       skill: '法術',
       skillOne: '法術 · Skill',
       skillDesc: (n) => `${n} 個給 Agent 遵循的 Skill。`,
+      template: '範本', templateOne: '範本 · Template', templateDesc: (n) => `${n} 份可重用範本。`,
+      guide: '手記', guideOne: '手記 · Guide', guideDesc: (n) => `${n} 份實用指南。`,
+      reference: '參考資料',
       charged: '靈力充盈',
       chargedDesc: (n) => `${n} 則近期驗證過。`,
       schools: '流派',
       all: '全部',
-      seals: { charged: '靈力充盈', fading: '靈力衰退', untested: '未經試煉', sealed: '已封印' },
+      seals: { charged: '靈力充盈', fading: '靈力衰退', untested: '未經試煉', sealed: '已封印', reference: '參考資料' },
       sealExplain: {
         charged: (days, model) => `${days === 0 ? '今天' : `${days} 天前`}${model ? `以 ${model} ` : ''}試煉過。`,
         fading: (days, model) => `上次試煉是 ${days} 天前${model ? `（${model}）` : ''}，在較新的模型上可能不再有效。`,
         untested: () => '尚未記錄試煉的模型與日期。',
         sealed: () => '已停用，僅保留作為參考。',
+        reference: () => '可直接閱讀與重用的參考資料。',
       },
-      note: (days) => `超過 ${days} 天沒有重新試煉的項目，靈力會開始衰退。`,
+      note: (days) => `Prompt 與 Skill 超過 ${days} 天未重新試煉會逐漸衰退；範本與手記屬於參考資料。`,
       open: '翻開',
       close: '闔上',
       status: '狀態',
@@ -95,7 +103,7 @@
     'zh-Hans': {
       kicker: 'Labs · 魔导书',
       title: '魔导书',
-      intro: '收录我实际在用的咒语（Prompt）与法术（Skill）。模型变化很快，所以每一则都记下最后一次试炼的时间，以及用的是哪个模型。',
+      intro: '收录咒语（Prompt）、法术（Skill）、模板与手记。需要依赖模型的项目会记下最后试炼的时间与模型。',
       summaryKicker: '魔导书总览',
       summaryTitle: '书中收录的一切',
       summaryCaption: '选择类型或流派，缩小要翻阅的范围。',
@@ -107,18 +115,22 @@
       skill: '法术',
       skillOne: '法术 · Skill',
       skillDesc: (n) => `${n} 个给 Agent 遵循的 Skill。`,
+      template: '模板', templateOne: '模板 · Template', templateDesc: (n) => `${n} 份可复用模板。`,
+      guide: '手记', guideOne: '手记 · Guide', guideDesc: (n) => `${n} 份实用指南。`,
+      reference: '参考资料',
       charged: '灵力充盈',
       chargedDesc: (n) => `${n} 则近期验证过。`,
       schools: '流派',
       all: '全部',
-      seals: { charged: '灵力充盈', fading: '灵力衰退', untested: '未经试炼', sealed: '已封印' },
+      seals: { charged: '灵力充盈', fading: '灵力衰退', untested: '未经试炼', sealed: '已封印', reference: '参考资料' },
       sealExplain: {
         charged: (days, model) => `${days === 0 ? '今天' : `${days} 天前`}${model ? `以 ${model} ` : ''}试炼过。`,
         fading: (days, model) => `上次试炼是 ${days} 天前${model ? `（${model}）` : ''}，在较新的模型上可能不再有效。`,
         untested: () => '尚未记录试炼的模型与日期。',
         sealed: () => '已停用，仅保留作为参考。',
+        reference: () => '可直接阅读与复用的参考资料。',
       },
-      note: (days) => `超过 ${days} 天没有重新试炼的项目，灵力会开始衰退。`,
+      note: (days) => `Prompt 与 Skill 超过 ${days} 天未重新试炼会逐渐衰退；模板与手记属于参考资料。`,
       open: '翻开',
       close: '合上',
       status: '状态',
@@ -138,12 +150,91 @@
     },
   };
 
-  const KIND_ICONS = { prompt: 'fa-solid fa-scroll', skill: 'fa-solid fa-wand-sparkles' };
+  const neutralText = {
+    en: {
+      ...cipherText.en,
+      kicker: 'Labs · Resources', title: 'Toolkit',
+      intro: 'Templates, guides, prompts and skills I use or recommend. Browse by type and purpose, then open an entry to copy or download it.',
+      summaryKicker: 'Resource overview', summaryTitle: 'Browse the toolkit',
+      summaryCaption: 'Choose a type and a purpose to narrow the collection.', totalSub: 'in this toolkit',
+      prompt: 'Prompts', promptOne: 'Prompt', promptDesc: (n) => `${n} prompts for specific tasks.`,
+      skill: 'Skills', skillOne: 'Skill', skillDesc: (n) => `${n} agent workflows.`,
+      template: 'Templates', templateOne: 'Template', guide: 'Guides', guideOne: 'Guide',
+      schools: 'Purpose', school: 'Purpose',
+      charged: 'Verified', chargedDesc: (n) => `${n} recently verified.`,
+      seals: { charged: 'Verified', fading: 'Review needed', untested: 'Not yet tested', sealed: 'Archived', reference: 'Reference' },
+      sealExplain: {
+        charged: (days, model) => `Tested ${days === 0 ? 'today' : `${days} days ago`}${model ? ` with ${model}` : ''}.`,
+        fading: (days, model) => `Last tested ${days} days ago${model ? ` with ${model}` : ''}; retest before relying on it.`,
+        untested: () => 'No model test has been recorded yet.',
+        sealed: () => 'Archived for reference.',
+        reference: () => 'Reusable reference material; model verification does not apply.',
+      },
+      note: (days) => `Prompts and skills need a fresh test after ${days} days; templates and guides are references.`,
+      open: 'Open', close: 'Close',
+      lastTested: 'Last tested', loading: 'Loading resource...',
+      loadFailed: 'Resources are unavailable right now.', bodyFailed: 'This resource could not be loaded.',
+      empty: 'No resources match these filters.',
+    },
+    'zh-Hant': {
+      ...cipherText['zh-Hant'],
+      kicker: 'Labs · 資源', title: '工具庫',
+      intro: '收錄可重用範本、指南、Prompt 與 Skill。可按種類與用途篩選，展開後複製或下載。',
+      summaryKicker: '資源總覽', summaryTitle: '瀏覽工具庫',
+      summaryCaption: '依種類與用途縮小範圍。', totalSub: '收錄於工具庫',
+      prompt: 'Prompt', promptOne: 'Prompt', promptDesc: (n) => `${n} 則實用 Prompt。`,
+      skill: 'Skill', skillOne: 'Skill', skillDesc: (n) => `${n} 份 Agent 工作流。`,
+      template: '範本', templateOne: '範本 · Template', guide: '指南', guideOne: '指南 · Guide',
+      schools: '用途', school: '用途',
+      charged: '已驗證', chargedDesc: (n) => `${n} 則近期驗證過。`,
+      seals: { charged: '已驗證', fading: '需要複驗', untested: '尚未驗證', sealed: '已封存', reference: '參考資料' },
+      sealExplain: {
+        charged: (days, model) => `${days === 0 ? '今天' : `${days} 天前`}${model ? `以 ${model} ` : ''}驗證過。`,
+        fading: (days, model) => `${days} 天前${model ? `以 ${model} ` : ''}驗證，使用前建議複驗。`,
+        untested: () => '尚未記錄模型驗證結果。',
+        sealed: () => '已封存，僅供參考。',
+        reference: () => '可重用的參考資料，不需要模型驗證。',
+      },
+      note: (days) => `Prompt 與 Skill 超過 ${days} 天需複驗；範本與指南屬於參考資料。`,
+      open: '展開', close: '收起',
+      lastTested: '最後驗證', loading: '正在載入資源...',
+      loadFailed: '目前無法載入資源。', bodyFailed: '目前無法讀取此資源。',
+      empty: '沒有符合篩選條件的資源。',
+    },
+    'zh-Hans': {
+      ...cipherText['zh-Hans'],
+      kicker: 'Labs · 资源', title: '工具库',
+      intro: '收录可复用模板、指南、Prompt 与 Skill。可按种类与用途筛选，展开后复制或下载。',
+      summaryKicker: '资源总览', summaryTitle: '浏览工具库',
+      summaryCaption: '按种类与用途缩小范围。', totalSub: '收录于工具库',
+      prompt: 'Prompt', promptOne: 'Prompt', promptDesc: (n) => `${n} 则实用 Prompt。`,
+      skill: 'Skill', skillOne: 'Skill', skillDesc: (n) => `${n} 份 Agent 工作流。`,
+      template: '模板', templateOne: '模板 · Template', guide: '指南', guideOne: '指南 · Guide',
+      schools: '用途', school: '用途',
+      charged: '已验证', chargedDesc: (n) => `${n} 则近期验证过。`,
+      seals: { charged: '已验证', fading: '需要复验', untested: '尚未验证', sealed: '已归档', reference: '参考资料' },
+      sealExplain: {
+        charged: (days, model) => `${days === 0 ? '今天' : `${days} 天前`}${model ? `以 ${model} ` : ''}验证过。`,
+        fading: (days, model) => `${days} 天前${model ? `以 ${model} ` : ''}验证，使用前建议复验。`,
+        untested: () => '尚未记录模型验证结果。',
+        sealed: () => '已归档，仅供参考。',
+        reference: () => '可复用的参考资料，不需要模型验证。',
+      },
+      note: (days) => `Prompt 与 Skill 超过 ${days} 天需复验；模板与指南属于参考资料。`,
+      open: '展开', close: '收起',
+      lastTested: '最后验证', loading: '正在载入资源...',
+      loadFailed: '目前无法载入资源。', bodyFailed: '目前无法读取此资源。',
+      empty: '没有符合筛选条件的资源。',
+    },
+  };
+
+  const KIND_ICONS = { prompt: 'fa-solid fa-terminal', skill: 'fa-solid fa-list-check', template: 'fa-regular fa-file-lines', guide: 'fa-regular fa-compass' };
   const SEAL_ICONS = {
     charged: 'fa-solid fa-bolt',
     fading: 'fa-solid fa-hourglass-half',
     untested: 'fa-regular fa-circle',
     sealed: 'fa-solid fa-lock',
+    reference: 'fa-regular fa-bookmark',
   };
 
   const state = {
@@ -168,7 +259,8 @@
     return 'en';
   }
 
-  const t = () => uiText[getLang()] || uiText.en;
+  const isCipher = () => Boolean(window.LudwigCipherMode && window.LudwigCipherMode.isEnabled());
+  const t = () => (isCipher() ? cipherText : neutralText)[getLang()] || neutralText.en;
 
   function localized(obj) {
     if (!obj) return '';
@@ -199,6 +291,7 @@
   // Freshness is derived from verified_at at runtime; authors never hand-edit a status label.
   function seal(item) {
     if (item.status === 'deprecated') return { key: 'sealed', days: null };
+    if (item.kind === 'template' || item.kind === 'guide') return { key: 'reference', days: null };
     const at = parseDate(item.verified_at);
     if (at === null) return { key: 'untested', days: null };
     const days = Math.max(0, Math.floor((Date.now() - at) / DAY_MS));
@@ -245,7 +338,6 @@
     const txt = t();
     const all = items();
     const count = (kind) => all.filter((item) => item.kind === kind).length;
-    const charged = all.filter((item) => seal(item).key === 'charged').length;
     root.querySelector('[data-grimoire-total]').textContent = String(all.length);
 
     const toggleKind = (kind) => () => {
@@ -256,7 +348,8 @@
     root.querySelector('[data-grimoire-stats]').replaceChildren(
       statTile({ iconClass: KIND_ICONS.prompt, title: txt.prompt, desc: txt.promptDesc(count('prompt')), active: state.kind === 'prompt', onClick: toggleKind('prompt') }),
       statTile({ iconClass: KIND_ICONS.skill, title: txt.skill, desc: txt.skillDesc(count('skill')), active: state.kind === 'skill', onClick: toggleKind('skill') }),
-      statTile({ iconClass: SEAL_ICONS.charged, title: txt.charged, desc: txt.chargedDesc(charged) }),
+      statTile({ iconClass: KIND_ICONS.template, title: txt.template, desc: txt.templateDesc(count('template')), active: state.kind === 'template', onClick: toggleKind('template') }),
+      statTile({ iconClass: KIND_ICONS.guide, title: txt.guide, desc: txt.guideDesc(count('guide')), active: state.kind === 'guide', onClick: toggleKind('guide') }),
     );
 
     const schools = root.querySelector('[data-grimoire-schools]');
@@ -410,7 +503,7 @@
     const iconBox = el('div', 'hub-card-icon');
     iconBox.appendChild(icon(KIND_ICONS[item.kind] || KIND_ICONS.prompt));
     const body = el('div', 'hub-card-body flex-grow-1');
-    body.appendChild(el('div', 'grimoire-entry-kind', item.kind === 'skill' ? txt.skillOne : txt.promptOne));
+    body.appendChild(el('div', 'grimoire-entry-kind', txt[`${item.kind}One`] || item.kind));
     const row = el('div', 'hub-card-title-row');
     row.append(el('h2', '', localized(item.title)), sealBadge(sealInfo));
     body.append(row, el('p', 'grimoire-entry-summary', localized(item.summary)));
@@ -475,6 +568,7 @@
     }
     render();
     window.addEventListener('ludwig-language-changed', render);
+    window.addEventListener('ludwig-cipher-mode-changed', render);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
