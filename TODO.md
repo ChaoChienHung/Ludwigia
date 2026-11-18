@@ -9,7 +9,7 @@
 - 每個 task 至少包含一行 `交付條件：...`（可驗收、可勾選、可重現）
 - 優先寫「行為」與「影響範圍」（哪些入口頁/哪些工作流）
 - 若變更影響 index/schema，交付條件必須包含「search-index.{json,js} 已更新並納入版本控制」
-- 若變更影響使用方式/約定/寫作語法，交付條件必須包含「文件同步」（依 `AGENTS.md` Doc Map）
+- 若變更影響使用方式/約定/寫作語法，交付條件必須包含「文件同步」（依 `README.md` Repository Map 與 `docs/README.md` 功能導覽找受影響文件）
 
 ## Constellation Queue（待 Review）
 
@@ -217,7 +217,7 @@
 
 - [ ] 修復 Copy Markdown／Download Markdown 遺失 reviewkit 內 takeaways
     - 影響範圍：`tools/content_contract.py` 的 `extract_core_markdown` 與 source-driven 內容頁 Markdown 導出；現有 note 已可重現，不是 MTP 內容新增的 parser 變更。
-    - 交付條件：`reviewkit` 內 `<takeaways>` 在純 Markdown 導出保留為 `## Key Takeaways` 加標準清單；繼續忽略 qprompt／qquiz UI 骨架，加入容器內與獨立 takeaways 的回歸驗證，確認一般正文／清單未退化；若修改語法或工作流，同步 AGENTS Doc Map 的受影響文件並重建必要生成物。
+    - 交付條件：`reviewkit` 內 `<takeaways>` 在純 Markdown 導出保留為 `## Key Takeaways` 加標準清單；繼續忽略 qprompt／qquiz UI 骨架，加入容器內與獨立 takeaways 的回歸驗證，確認一般正文／清單未退化；若修改語法或工作流，依 `docs/README.md` 功能導覽同步受影響文件並重建必要生成物。
 
 ### P0
 

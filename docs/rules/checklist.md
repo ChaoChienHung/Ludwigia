@@ -12,6 +12,7 @@
 
 - [ ] 已按 `AGENTS.md` 的 Agent 工作指引選擇相鄰檢查；交付說明列出驗證結果與未驗證範圍
 - [ ] 跨子系統或涉及名稱歧義的改動，已對照 `README.md` 的「專案術語（Terminology）」；如改了正式用語，術語表與受影響的說明已同步
+- [ ] 已從 `README.md` 的 Repository Map 與 `docs/README.md` 的功能導覽找到受影響範圍；只在資料夾責任、功能歸屬或起始文件改變時更新導覽
 - [ ] 若這次修的是反覆出現的錯誤：已記錄可重現案例，檢查是否能用資料流／API／模組邊界或相鄰自動測試防止再犯；超出任務範圍的重構已列出證據與影響
 
 - [ ] 不破壞不可退化契約（對照 `AGENTS.md` 與 `docs/rules/guardrails.md` 的對應段落）
@@ -56,6 +57,7 @@
   - [ ] 若本次改動涉及 theme surface：`callout / block / takeaways` 的 theme variables 仍完整且可分別調整，不靠 scattered overrides 撐畫面
 
 - [ ] 文件同步（只更新有被這次變更影響到的部分，避免規格漂移）：
+  - [ ] `docs/README.md`（若功能歸屬或起始文件改變）
   - [ ] `README.md`
   - [ ] `docs/specs/system-spec.md`
   - [ ] `docs/specs/timeline-design-spec.md`（若本次改動涉及 timeline data / projection / scale contract）

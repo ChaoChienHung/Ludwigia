@@ -8,6 +8,12 @@ Replace bracketed text with your project's actual paths, commands, and contracts
 - The source of truth for [content or data] is [path]. Generated [output] comes from [command]. Never edit both by hand.
 - Keep the core workflow usable with [minimal toolchain]. Additional apps may have their own build steps.
 
+## Documentation ownership
+
+- Before working, read `README.md` sections [Terminology heading] and [Repository Map heading] for shared vocabulary and folder-level responsibilities. Then use [feature guide path] to find the relevant docs and implementation folders.
+- Keep reader-facing navigation and workflow in `README.md`; use this file for agent-specific instructions and invariants. Keep exact contracts in [specs directory] and feature-to-folder routes in [feature guide path].
+- Update the map only when a folder's responsibility changes, and the feature guide only when ownership or its starting documentation changes. Do not maintain a file-by-file map here.
+
 ## Do and don't
 
 - Do follow [current component or module] and read [dependency manifest] before choosing a library or version.
@@ -46,7 +52,8 @@ Replace bracketed text with your project's actual paths, commands, and contracts
 
 ## Where to look
 
-- Setup and everyday commands: `README.md`
+- Shared terminology, repository map, setup, and everyday commands: `README.md`
+- Feature-to-folder routes and starting docs: [feature guide path]
 - System contracts: [spec path]
 - Design decisions: [design path]
 - Current tasks: [task list]

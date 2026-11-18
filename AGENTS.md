@@ -2,13 +2,12 @@
 
 本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
 
-本文件集中不可退化契約與 Agent 執行時必須遵守的短指引；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；地圖規劃藍圖請看 `portals/realms/world/world-map-spec.md`；parser / metadata / translation / citation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`、`docs/specs/citation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
+本文件集中不可退化契約與 Agent 執行時必須遵守的短指引。專案術語、日常工作流與 Repository Map 由 `README.md` 維護；依功能查文件與實作範圍，從 `docs/README.md` 的「功能導覽」開始。精確契約、設計理由與技術細節再沿該導覽讀對應文件。
 
 ## Agent 工作指引
 
-- **先對齊用詞**：開始 Ludwigia 任務時，先讀 `README.md` 的 `## 專案術語（Terminology）`，依其中定義理解使用者、文件與程式碼中的專案名稱；遇到縮寫或相近概念先回查該表，再讀相關 spec 確認精確契約。不要在 `AGENTS.md` 或其他文件平行維護第二份術語定義。
+- **先對齊用詞與位置**：開始 Ludwigia 任務時，先讀 `README.md` 的 `## 專案術語（Terminology）` 與 `## Repository Map（程式庫導覽）`；依功能從 `docs/README.md` 的 `## 功能導覽` 找起始文件和主要資料夾，再讀相關 spec 與相鄰實作。不要在本文件維護第二份術語表或逐檔路徑清單。
 - **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
-- **找檔案的路線**：內容與 metadata 在 `notes/`、`writing/`、`canvas/` 和 `tools/content/`；索引在 `search/indexer.py`；共用頁面 shell 在 `pages/_shared/`；主站 runtime 在 `core/site/`，樣式在 `assets/css/site/`；首頁資料在 `data/`；Toolkit 資源在 `data/Grimoire/`；Portals / Garden / World 在 `portals/`。技術版本與各子系統 build 步驟以 `docs/tech/tech-stack.md` 和對應 `package.json` 為準。
 - **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
 - **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；World 資料跑 `python3 cli.py build-world --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
 - **把重複錯誤變成可執行約束**：遇到同類回歸或反覆出現的 review 意見時，先找根因與可重現案例；在本次任務範圍內，優先修正資料流、API 或模組邊界，使錯誤選項難以寫出，再用相鄰測試或檢查命令擋住可機械判定的錯誤。只有無法可靠自動判定、仍需 Agent 判斷的原則才寫進 `AGENTS.md`。不要為每次失誤無止境加一條文字規則，也不要每次都打斷使用者提醒；若修正會擴成大範圍重構，先提出具體重複案例、最小方案與影響，再請使用者決定。
@@ -209,50 +208,13 @@
   - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/world/data/characters.json`
   - 其它生成物（必須 ignore）例：`portals/realms/garden/_floral_dist/`
 
-## 文件一致性
+## 文件一致性與導覽維護
 
-- 若新增/調整「作者寫作語法」（例如 `<callout>` / `<qquiz>` / `<block>`）或任何會影響日常工作流/不可退化約束的改動，必須同步更新 `AGENTS.md`、`README.md`、`docs/specs/system-spec.md`、`docs/design/design.md`、`docs/author/dev-notes.md`、`docs/rules/checklist.md`、`docs/rules/guardrails.md` 中對應章節，避免規格漂移
-- 若使用者說「請幫我更新文檔 / 文件」（或語意等同的請求），一律視為「維護所有 `.md` 文件的一致性」：需要更新哪些文件以本節下方的「文檔索引」為準（不要求通讀全部 `.md`，但必須把受影響的文件同步更新，並維持索引本身為最新）
-- Mindset：除非必要，不要先「通讀整個 repo」。先判斷任務會動到的環節，優先查 `README.md` / `docs/specs/system-spec.md` / `docs/design/design.md` / `docs/author/dev-notes.md`；若資訊不足再探索實作，探索後要回補文件
-- 技術債提醒：如果我發現架構開始過度耦合（big ball of mud / god object），我會主動提醒並提出是否需要重構/切分子系統的討論
-
-## 指令處理：更新項目文檔
-
-當使用者提出「請協助更新項目的相關文檔」（或語意等同）時，採以下流程處理：
-
-- 先盤點：掃描本文件的 Doc Map 區塊內所有 `.md` 文件（優先關注 `README.md` / `AGENTS.md` / `TODO.md` / `docs/`）
-- 再篩選：比對本次改動影響範圍，列出「必須同步更新」的文檔清單
-- 優先級：先查 `docs/README.md` 的文檔屬性與關係，優先更新高優先級與強約束文件（例如契約/工作流/系統規格）
-- 逐步完成：不要求一次性完成所有文檔調整；先完成高優先級文件的同步，再逐步補齊其餘文檔
-- 維持索引最新：任何新增/搬移/更名文檔，都必須同步更新 `docs/README.md` 與本文件的 Doc Map 區塊
-
-## 文檔索引（Doc Map）
-
-- 完整文檔索引與路徑，以 `docs/README.md` 為單一真相來源
-- `docs/README.md`：文檔角色總覽，以及目前 `rules/` / `guide/` / `tech/` / `author/` 的資料夾分工
-- `AGENTS.md`：不可退化契約與精簡 Agent 工作指引；新增/重構時的第一優先校驗點
-- `README.md`：專案術語與日常使用入口（跑站、build、內容工作流）
-- `TODO.md`：任務追蹤與待 review queue（系統工程、架構、功能與 UI）
-- `ARTICLES.md`：寫作與筆記主題待辦清單（Writing & Notes Backlog）
-- `docs/specs/system-spec.md`：系統 contract、data flow、schema、生成物策略
-- `docs/specs/companion-spec.md`：`Companion` 的位置、尺寸、placeholder 與 fallback contract
-- `docs/specs/parser-spec.md`：source `.md` parser contract、extended markdown 與 extras downgrade 規則
-- `docs/specs/inline-enhancement-spec.md`：`information` / `content-link` 的 shared inline 視覺、互動與 downgrade contract
-- `docs/specs/content-metadata-spec.md`：`<meta>` 欄位、head metadata、visibility/date/language/ranking contract
-- `docs/specs/translation-spec.md`：source-driven translation workflow contract
-- `docs/specs/citation-spec.md`：參考文獻（References）結構、APA/IEEE 引用格式、真實驗核與原語言留存 spec
-- `docs/specs/skills-credentials-spec.md`：`Skills` 與 `Credentials & Honors` 資料結構、雙維度篩選與展示視窗 spec
-- `docs/specs/realm-spec.md`：完成態世界境域（Realms）架構規範、專屬測試隔離、動態聚合與傳送門擴充指南
-- `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡
-- `docs/rules/checklist.md` / `docs/rules/guardrails.md`：交付收尾與守門清單
-- `docs/guide/data-authoring-guide.md` / `docs/guide/language-guide.md` / `docs/guide/theme-palette-guide.md` / `docs/guide/ontology-guide.md` / `docs/guide/companion-guide.md`：共享維護 guide
-- `docs/tech/README.md`：技術文件入口；實作細節再往下分到 `docs/tech/*.md`（技術棧看 `docs/tech/tech-stack.md`，重構計畫看 `docs/tech/refactor-roadmap.md`，Portals／World 效能看 `docs/tech/portals-world-performance.md`）
-- `docs/author/writing-notes.md` / `docs/author/testing-notes.md` / `docs/author/dev-notes.md`：作者自己的寫作、測試與演進筆記
-- `notes/**/<slug>.md`、`writing/**/<slug>.md`、`canvas/**/<slug>.md`：內容來源；若調整語法/解析器，需同步檢查相容性
-- `skills/**/skill.md`、`labs/**/README.md`：分別是 skill 規格與實驗性原型記錄
-- `data/Grimoire/resources/agent-rules-template.md`：Toolkit 的可重用 `AGENTS.md` 起始範本；卡片文案由 `data/Grimoire/grimoire.json` 維護
-
-為避免索引漂移，這裡只保留短版路由；若新增、搬移、刪除或重命名文檔，必須先更新 `docs/README.md`，再回頭同步本檔與 `README.md` 的短版說明。
+- 文件責任：`README.md` 提供所有人共用的術語、Repository Map 與使用工作流；`docs/README.md` 按功能連到主要資料夾與起始文件；本文件只放 Agent 指引與不可退化約束。不要把同一份逐檔 Doc Map 複製到多處。
+- 新增或調整作者語法、日常工作流、系統契約時，依 `docs/README.md` 的功能導覽找受影響文件，只更新實際受影響的 spec、guide、設計理由與守門清單；不可退化規則改變時同步更新本文件。不要因一般檔案新增就重寫導覽。
+- 當使用者要求更新項目文檔時，先讀 README 的 Repository Map 與 `docs/README.md` 的功能導覽，盤點受影響的功能、主要資料夾與文件；先處理契約和工作流，再補齊設計、技術與檢查文件。功能歸屬或起始文件改變才改功能導覽；資料夾責任改變才改 Repository Map。
+- Mindset：除非必要，不要先通讀整個 repo。從功能導覽與相鄰實作縮小範圍；資訊不足再擴查，探索後回補受影響文件。
+- 技術債提醒：若發現架構開始過度耦合（big ball of mud / god object），主動提出可重現問題與切分子系統的具體方案。
 
 ## 任務追蹤
 

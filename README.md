@@ -16,10 +16,10 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 
 若你是第一次進這個 repo，建議閱讀順序：
 
-1. 看 `專案術語（Terminology）` 和 `Features`：先統一用詞、知道站上有哪些能力
+1. 看 `專案術語（Terminology）`、`Features` 和 `Repository Map（程式庫導覽）`：先統一用詞、知道站上有哪些能力與大致位置
 2. 看 `快速開始`：先把站跑起來
 3. 看 `新增/修改筆記（唯一工作流）`：理解日常怎麼寫內容、怎麼重生
-4. 需要規格時再看 `AGENTS.md` / `docs/specs/system-spec.md` / `docs/specs/parser-spec.md` / `docs/specs/inline-enhancement-spec.md` / `docs/specs/content-metadata-spec.md` / `docs/specs/translation-spec.md`
+4. 需要規格時先看 `docs/README.md` 的「功能導覽」，再讀對應 spec；Agent 另須遵守 `AGENTS.md`
 
 ## 專案術語（Terminology）
 
@@ -52,32 +52,12 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 
 ## Docs（文件分工）
 
-- 完整文檔索引與分工：看 `docs/README.md`
-- 文檔資料夾分工：看 `docs/README.md`
-- 不可退化契約與 Agent 的專案工作指引：看 `AGENTS.md`（先找單一來源、按影響範圍驗證；重複錯誤優先轉成結構或自動檢查，交付時列出結果）
-- 日常使用入口：看 `README.md`
-- `docs/rules/`：交付規則與守門文件
-- `docs/guide/`：擴充與維護 guide
-- `docs/design/`：設計理由與重大決策脈絡
-- `docs/author/`：給作者自己沉澱與回看的筆記
-- 系統 contract / data flow / schema：看 `docs/specs/system-spec.md`
-- `Companion` 的位置 / 大小 / placeholder baseline：看 `docs/specs/companion-spec.md`
-- source `.md` parser contract：看 `docs/specs/parser-spec.md`
-- timeline 資料與投影 contract：看 `docs/specs/timeline-design-spec.md`
-- Timeline, Skills, Credentials 資料新增與維護：看 `docs/guide/data-authoring-guide.md`
-- inline enhancement contract：看 `docs/specs/inline-enhancement-spec.md`
-- 內容 metadata contract：看 `docs/specs/content-metadata-spec.md`
-- 境域架構與擴充規範（Realm Spec）：看 `docs/specs/realm-spec.md`
-- 翻譯 workflow contract：看 `docs/specs/translation-spec.md`
-- 設計理由 / UI/UX 取捨 / 重大決策：看 `docs/design/design.md`
-- 技術實作與排查：看 `docs/tech/README.md`
-- 寫作 / 測試 / 演進筆記：看 `docs/author/`
+- `README.md`：所有人共用的專案入口，提供術語、工作流與下方的 Repository Map。
+- `docs/README.md`：按功能查規格與實作資料夾，並說明 `docs/` 各層的責任。
+- `AGENTS.md`：給 Agent 的執行指引與不可退化約束；直接引用上述兩個入口，不複製導覽內容。
+- `docs/specs/`、`docs/design/`、`docs/rules/`、`docs/guide/`、`docs/tech/`：分別承接精確規格、設計理由、守門清單、維護步驟與實作紀錄。
 
-文件原則：
-
-- 底層規則少而硬，表層說明短而有用
-- 只有會影響工作流、決策一致性或不可退化約束的內容值得長期保留
-- 為避免索引漂移，完整文件清單只維護在 `docs/README.md`
+要找某個功能的入口，先看 `docs/README.md` 的「功能導覽」；要確認精確欄位或行為，再讀其連結的 spec。文件只同步受本次改動影響的部分，不因一般檔案新增而改動資料夾地圖。
 
 ## Features
 
@@ -551,97 +531,21 @@ python3 cli.py check-tags --content-dir writing
 python3 cli.py check-tags --content-dir all
 ```
 
-## 專案結構
+## Repository Map（程式庫導覽）
 
-```text
-Ludwigia/
-├── README.md
-├── AGENTS.md
-├── TODO.md
-├── ARTICLES.md
-├── cli.py
-├── docs/
-│   ├── README.md
-│   ├── specs/
-│   │   ├── layout-spec.md
-│   │   ├── system-spec.md
-│   │   └── skills-credentials-spec.md
-│   ├── design/
-│   │   └── design.md
-│   ├── rules/
-│   │   ├── checklist.md
-│   │   └── guardrails.md
-│   ├── guide/
-│   │   ├── language-guide.md
-│   │   ├── ontology-guide.md
-│   │   └── theme-palette-guide.md
-│   ├── tech/
-│   │   └── README.md
-│   ├── miscellaneous/
-│   │   └── visual-sources.md
-│   └── author/
-│       ├── dev-notes.md
-│       ├── takeaways.md
-│       ├── testing-notes.md
-│       └── writing-notes.md
-├── index.html
-├── pages/
-│   ├── search.html
-│   ├── projects.html
-│   ├── settings.html
-│   ├── portfolio.html
-│   └── more.html
-├── tools/
-│   ├── create_content.py
-│   └── translate_content.py
-├── writing/
-│   └── index.html
-├── labs/
-│   ├── index.html
-│   ├── grimoire/        # Toolkit / 密語模式 Grimoire（data/Grimoire/grimoire.json）
-│   ├── shooting-mode/
-│   ├── question-bank/
-│   ├── massive-multiplayer-laser-tag/
-│   │   ├── page.html    # static overview / WIP page
-│   │   └── src/         # prototype source
-│   └── cosmic-flow/
-│       ├── page.html    # static overview / WIP page
-│       └── src/         # prototype source
-├── portals/
-│   ├── index.html          # Aetheria Portals 傳送門入口
-│   ├── assets/              # Portals 構建產物（JS/CSS）
-│   ├── src/                 # Portals 原始碼（React 19/Vite）
-│   ├── index.source.html    # Portals 構建模板
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── realms/              # 完成態探索境域收斂目錄
-│       ├── garden/          # 數位花園 (Digital Garden)
-│       │   ├── index.html   # Garden landing + Patch view（同頁，hash route）
-│       │   ├── floral-assets/       # Garden build output
-│       │   ├── floral-patch-garden/ # Garden source（React/Vite）
-│       │   └── assets/js/           # Garden 專用 JS
-│       └── world/           # Ludwigia World (2.5D 生活世界)
-│           ├── index.html
-│           ├── world.css
-│           ├── js/
-│           └── data/
-├── notes/
-│   └── *.html
-├── search/
-│   ├── indexer.py
-│   ├── search-index.json
-│   └── search-index.js
-├── tag/
-│   └── index.html          # tag detail page
-├── assets/
-│   ├── css/style.css
-│   ├── js/
-│   │   ├── script.js
-│   │   ├── search-core.js
-│   │   ├── search-page.js
-│   │   ├── section-landing.js
-│   │   ├── tag-page.js
-│   │   ├── note-tags.js
-│   │   └── settings-page.js
-│   └── images/
-```
+這是給讀者與 Agent 共用的資料夾地圖：先用它判斷要往哪個區域查，再到 `docs/README.md` 的「功能導覽」找該功能的規格、維護指南與實作範圍。這裡只記資料夾責任；新增一般檔案時不必更新地圖，只有資料夾的責任或邊界改變時才調整。
+
+| 資料夾 | 高層責任 |
+| --- | --- |
+| `notes/`、`writing/`、`canvas/` | 知識筆記、長文與視覺內容的 source 及對應靜態頁面。 |
+| `pages/`、`tag/` | 主站手寫頁面、共用頁面外框與 tag detail 入口。 |
+| `core/` | 主站共用瀏覽器 runtime、搜尋語意與首屏偏好初始化。 |
+| `assets/`、`i18n/` | 跨頁共用的樣式、腳本、媒體與介面翻譯。 |
+| `data/` | Timeline、Skills、Credentials、Ontology、Toolkit 等結構化 source data。 |
+| `tools/`、`search/` | Python 內容生成與建置工具，以及搜尋索引的生成和部署資料。 |
+| `portals/` | Portals 導覽樞紐及 Garden、World 等 Realm 的實作與專用資產。 |
+| `labs/`、`skills/` | 實驗原型、Toolkit 入口，以及可重用的 Agent skill 來源。 |
+| `docs/` | 功能導覽、系統規格、設計理由、維護指南與技術紀錄。 |
+| `tests/` | 自動化守門測試與相關驗證腳本。 |
+
+日常建置與檢查命令由根目錄的 `cli.py` 提供；具體指令看上方 CLI 章節。`AGENTS.md` 放 Agent 必須遵守的約束，兩者都引用這份地圖，不另維護平行路徑清單。

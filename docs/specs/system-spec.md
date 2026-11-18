@@ -3,7 +3,7 @@
 這份文件整理 Ludwigia 的系統設計與可驗證 spec（system architecture / data flow / schema / runtime spec）。
 
 - 不可退化的「硬契約」與 Agent 執行指引集中在 `AGENTS.md`（repo root）；子系統的實際版本和建置命令見 `docs/tech/tech-stack.md` 與各自的 `package.json`
-- 日常怎麼用請看 `README.md`（repo root）
+- 專案術語、資料夾責任與日常用法看 `README.md`；按功能找本文件及其他 spec 的入口看 `docs/README.md`
 - 這裡放的是：當我們要擴功能或重構時，可用來對齊的系統分層、資料流、schema、runtime 與生成物策略
 - 偏守門 / authoring / UI 行為固定規則，請看 `docs/rules/guardrails.md`
 - 專案名稱與相近概念的日常用語以 `README.md` 的「專案術語（Terminology）」為入口；精確 schema 與 runtime 行為仍以本文件及各專題 spec 為準。
