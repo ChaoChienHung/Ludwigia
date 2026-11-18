@@ -2,7 +2,16 @@
 
 本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
 
-本文件只放「必須永遠成立」的規則；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；地圖規劃藍圖請看 `portals/realms/world/world-map-spec.md`；parser / metadata / translation / citation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`、`docs/specs/citation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
+本文件集中不可退化契約與 Agent 執行時必須遵守的短指引；使用教學請看 `README.md`；系統規格請看 `docs/specs/system-spec.md`；地圖規劃藍圖請看 `portals/realms/world/world-map-spec.md`；parser / metadata / translation / citation 的內容契約請看 `docs/specs/parser-spec.md`、`docs/specs/inline-enhancement-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/specs/translation-spec.md`、`docs/specs/citation-spec.md`；設計理由與重大決策脈絡請看 `docs/design/design.md`；第一視角的心得雜談請看 `docs/author/dev-notes.md`。
+
+## Agent 工作指引
+
+- **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
+- **找檔案的路線**：內容與 metadata 在 `notes/`、`writing/`、`canvas/` 和 `tools/content/`；索引在 `search/indexer.py`；共用頁面 shell 在 `pages/_shared/`；主站 runtime 在 `core/site/`，樣式在 `assets/css/site/`；首頁資料在 `data/`；Toolkit 資源在 `data/Grimoire/`；Portals / Garden / World 在 `portals/`。技術版本與各子系統 build 步驟以 `docs/tech/tech-stack.md` 和對應 `package.json` 為準。
+- **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
+- **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；World 資料跑 `python3 cli.py build-world --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
+- **權限與卡住時**：讀檔、局部修改、相關測試及必要的再現性生成屬日常工作。安裝新依賴、刪除資料、推送或發布等動作，先確認任務授權及影響範圍；不確定契約或將跨越既有子系統邊界時，先整理已查到的事實與最小可行方案，再向使用者確認真正缺少的決策。
+- **交付前**：檢查 diff 是否只含預期的 source、必要生成物與受影響文檔；報告改了什麼、跑了哪些檢查、哪些未驗證。若建立 PR，標題與說明應能指出變更範圍和驗證結果，不要求所有任務套用單一標題格式。
 
 ## 不退化原則（Non-regression）
 
@@ -219,7 +228,7 @@
 
 - 完整文檔索引與路徑，以 `docs/README.md` 為單一真相來源
 - `docs/README.md`：文檔角色總覽，以及目前 `rules/` / `guide/` / `tech/` / `author/` 的資料夾分工
-- `AGENTS.md`：不可退化契約（non-negotiables）；新增/重構時的第一優先校驗點
+- `AGENTS.md`：不可退化契約與精簡 Agent 工作指引；新增/重構時的第一優先校驗點
 - `README.md`：日常使用入口（跑站、build、內容工作流）
 - `TODO.md`：任務追蹤與待 review queue（系統工程、架構、功能與 UI）
 - `ARTICLES.md`：寫作與筆記主題待辦清單（Writing & Notes Backlog）
@@ -239,6 +248,7 @@
 - `docs/author/writing-notes.md` / `docs/author/testing-notes.md` / `docs/author/dev-notes.md`：作者自己的寫作、測試與演進筆記
 - `notes/**/<slug>.md`、`writing/**/<slug>.md`、`canvas/**/<slug>.md`：內容來源；若調整語法/解析器，需同步檢查相容性
 - `skills/**/skill.md`、`labs/**/README.md`：分別是 skill 規格與實驗性原型記錄
+- `data/Grimoire/resources/agent-rules-template.md`：Toolkit 的可重用 `AGENTS.md` 起始範本；卡片文案由 `data/Grimoire/grimoire.json` 維護
 
 為避免索引漂移，這裡只保留短版路由；若新增、搬移、刪除或重命名文檔，必須先更新 `docs/README.md`，再回頭同步本檔與 `README.md` 的短版說明。
 

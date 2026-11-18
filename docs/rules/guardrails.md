@@ -6,6 +6,8 @@
 - 這裡管的是長期守門原則、責任邊界與不可退化底線
 - 本次改動要跑什麼命令、打開哪些頁面、觀察哪些可見結果，請看 `docs/rules/checklist.md`
 
+- Agent 修改前先找 source of truth，沿用現有資料流與 design tokens；只在影響到的子系統內做聚焦驗證，跨模組時再擴大檢查
+
 ## Data / Index（Single Source of Truth）
 
 - [ ] 每篇內容頁的單一真相來源仍在 `<head>` metadata

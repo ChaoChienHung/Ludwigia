@@ -2,7 +2,7 @@
 
 這份文件整理 Ludwigia 的系統設計與可驗證 spec（system architecture / data flow / schema / runtime spec）。
 
-- 不可退化的「硬契約」只寫在 `AGENTS.md`（repo root）
+- 不可退化的「硬契約」與 Agent 執行指引集中在 `AGENTS.md`（repo root）；子系統的實際版本和建置命令見 `docs/tech/tech-stack.md` 與各自的 `package.json`
 - 日常怎麼用請看 `README.md`（repo root）
 - 這裡放的是：當我們要擴功能或重構時，可用來對齊的系統分層、資料流、schema、runtime 與生成物策略
 - 偏守門 / authoring / UI 行為固定規則，請看 `docs/rules/guardrails.md`
@@ -266,6 +266,7 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 - `kind = skill` 的 `source` 直接指向 `skills/<name>/skill.md`，不得複製第二份；Prompt 本體在 `data/Grimoire/prompts/`，通用範本與指南在 `data/Grimoire/resources/`，僅提煉可公開重用的內容
 - Prompt / Skill 的驗證時效由 runtime 依 `verified_at` 與 `stale_after_days` 推導；Template / Guide 一律標示參考資料，不使用模型驗證狀態；密語模式只改呈現文案，不改資料來源或篩選語意
 - 守門測試：`tests/test_grimoire_data.py`
+- `agent-rules-template` 是 `data/Grimoire/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `grimoire.json` 維護，不能另寫一份卡片摘要
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。
 

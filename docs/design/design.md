@@ -599,4 +599,4 @@ Portals 與 World 會卡，主因不是某一個效果特別貴，而是好幾�
 
 Labs 只收實驗原型與可重用資源；Portals 自己負責 Garden 與 World 的導覽，因此 World 不再重複出現在 Labs 或 More。Portals 的頂欄保留自己的奇幻氣質，使用 Cinzel 品牌字、單一 palette accent 與安靜的邊線；放大導覽文字與第一次進入時的提示窗，讓資訊更容易讀到。
 
-資源頁平常稱為 Toolkit（工具庫），直接說明用途；Ludwig 密語啟用時才顯示 Grimoire（魔導書）的語氣。兩種呈現共用同一份資料，種類（Template / Guide / Prompt / Skill）與用途（寫作、工作流、網站開發）可交叉篩選。從 `AGENTS.md` / `README.md` 提煉可重用的範本與檢查表，不公開整份站內操作契約；模型驗證時效只適用於 Prompt / Skill。
+資源頁平常稱為 Toolkit（工具庫），直接說明用途；Ludwig 密語啟用時才顯示 Grimoire（魔導書）的語氣。兩種呈現共用同一份資料，種類（Template / Guide / Prompt / Skill）與用途（寫作、工作流、網站開發）可交叉篩選。`AGENTS.md` 起始範本採通用的專案邊界、單一來源、實際驗證命令、權限與交付檢查欄位，讓使用者填入自己的專案資訊；不公開整份站內操作契約，也不需要在範本中標註來源。模型驗證時效只適用於 Prompt / Skill。

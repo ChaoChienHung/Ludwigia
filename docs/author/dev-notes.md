@@ -6,7 +6,7 @@
 
 ## Docs（文件分工）
 
-- `AGENTS.md`：不可退化契約（non-negotiables；repo root）
+- `AGENTS.md`：不可退化契約與精簡的 Agent 工作指引（repo root）
 - `README.md`：使用入口（怎麼跑站、怎麼新增/修改內容；repo root）
 - `TODO.md`：任務追蹤（只留可驗收的待辦；完成後移除避免噪音；repo root）
 - `docs/README.md`：文檔索引（docs 內所有文件的功能與路徑）
@@ -19,7 +19,7 @@
 
 原則：
 
-- 任何「必須永遠成立」的規則只寫在 `AGENTS.md`
+- 任何「必須永遠成立」的規則只寫在 `AGENTS.md`；實際使用教學與長篇理由仍放在各自文件
 - 其餘文件以引用與對齊為主，避免同一件事寫成多份規格
 
 ## 我想把它做成什麼（高層視角）

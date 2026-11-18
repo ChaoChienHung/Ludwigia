@@ -10,6 +10,8 @@
 
 - [ ] 功能行為符合需求（包含：入口頁、互動流程、空狀態/缺席欄位的 fallback）
 
+- [ ] 已按 `AGENTS.md` 的 Agent 工作指引選擇相鄰檢查；交付說明列出驗證結果與未驗證範圍
+
 - [ ] 不破壞不可退化契約（對照 `AGENTS.md` 與 `docs/rules/guardrails.md` 的對應段落）
   - [ ] 沒有引入第二份手動維護資料（例如 tags / summary / related 仍維持衍生）
   - [ ] 若本次改動涉及 parser / generator / source contract：`tools/create_content.py` 的標準生成器邊界仍成立

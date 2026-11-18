@@ -4,7 +4,7 @@
 
 它不取代：
 
-- `AGENTS.md`：不可退化契約
+- `AGENTS.md`：不可退化契約與精簡 Agent 工作指引
 - `README.md`：repo root 的日常使用入口
 - `docs/specs/system-spec.md`：系統 spec
 - `docs/specs/parser-spec.md`：source `.md` parser spec
@@ -37,7 +37,7 @@
 
 ### Root
 
-- `AGENTS.md`：不可退化契約（新增/重構時的第一優先校驗點）
+- `AGENTS.md`：不可退化契約與精簡 Agent 工作指引（新增/重構時的第一優先校驗點）
 - `README.md`：repo root 使用入口
 - `TODO.md`：任務追蹤（系統工程、功能、架構與 UI）
 - `ARTICLES.md`：寫作與筆記主題待辦清單（Writing & Notes Backlog）

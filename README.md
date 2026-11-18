@@ -35,7 +35,7 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 
 - 完整文檔索引與分工：看 `docs/README.md`
 - 文檔資料夾分工：看 `docs/README.md`
-- 不可退化契約：看 `AGENTS.md`
+- 不可退化契約與 Agent 的專案工作指引：看 `AGENTS.md`（先找單一來源、按影響範圍驗證、交付時列出結果）
 - 日常使用入口：看 `README.md`
 - `docs/rules/`：交付規則與守門文件
 - `docs/guide/`：擴充與維護 guide

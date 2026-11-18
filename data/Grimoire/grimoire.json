@@ -26,9 +26,9 @@
         "zh-Hans": "AGENTS.md 起始模板"
       },
       "summary": {
-        "en": "A reusable contract for project boundaries, source of truth, and verification, adapted from this site's agent rules.",
-        "zh-Hant": "從本站 Agent 規則整理出的可重用起始範本：邊界、單一真相來源與驗證方式。",
-        "zh-Hans": "从本站 Agent 规则整理出的可重用起始模板：边界、单一真实来源与验证方式。"
+        "en": "A reusable agent-rules template for project boundaries, source of truth, focused checks, and review.",
+        "zh-Hant": "可重用的 Agent 規則範本：專案邊界、單一真相來源、聚焦驗證與交付檢查。",
+        "zh-Hans": "可复用的 Agent 规则模板：项目边界、单一真实来源、聚焦验证与交付检查。"
       },
       "source": "data/Grimoire/resources/agent-rules-template.md",
       "verified_with": null,
