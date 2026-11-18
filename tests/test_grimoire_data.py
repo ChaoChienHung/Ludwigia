@@ -2,6 +2,7 @@ import json
 import os
 import re
 import unittest
+from urllib.parse import urlparse
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 GRIMOIRE_PATH = os.path.join(REPO_ROOT, "data", "Grimoire", "grimoire.json")
@@ -45,6 +46,14 @@ class TestGrimoireData(unittest.TestCase):
             for field in ("title", "summary"):
                 for lang in LANGS:
                     self.assertTrue(item[field].get(lang), f"{label} missing {field}.{lang}")
+
+            reference = item.get("reference")
+            self.assertIsInstance(reference, str, f"{label}: reference must be present")
+            self.assertTrue(reference, f"{label}: reference must not be empty")
+            if reference != "Ludwig":
+                parsed = urlparse(reference)
+                self.assertEqual(parsed.scheme, "https", f"{label}: reference must use HTTPS")
+                self.assertTrue(parsed.netloc, f"{label}: reference needs a host")
 
             # verified_with / verified_at go together; the freshness seal is derived from verified_at at runtime.
             verified_at = item.get("verified_at")

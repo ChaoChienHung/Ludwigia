@@ -38,6 +38,7 @@
       open: 'Open',
       close: 'Close',
       status: 'Status',
+      referenceLabel: 'Reference',
       lastTested: 'Last tested',
       school: 'School',
       replacedBy: 'Use instead',
@@ -86,6 +87,7 @@
       open: '翻開',
       close: '闔上',
       status: '狀態',
+      referenceLabel: 'Reference',
       lastTested: '最後試煉',
       school: '流派',
       replacedBy: '改用',
@@ -134,6 +136,7 @@
       open: '翻开',
       close: '合上',
       status: '状态',
+      referenceLabel: 'Reference',
       lastTested: '最后试炼',
       school: '流派',
       replacedBy: '改用',
@@ -436,6 +439,18 @@
     if (item.verified_at) ledger.appendChild(ledgerBlock(txt.lastTested, [item.verified_at, item.verified_with].filter(Boolean).join(' · ')));
     const category = categories().find((c) => c.id === item.category);
     ledger.appendChild(ledgerBlock(txt.school, localized(category && category.title) || item.category));
+    const reference = item.reference;
+    if (reference) {
+      if (/^https:\/\//.test(reference)) {
+        const link = el('a', 'grimoire-ledger-reference', reference);
+        link.href = reference;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        ledger.appendChild(ledgerBlock(txt.referenceLabel, link));
+      } else {
+        ledger.appendChild(ledgerBlock(txt.referenceLabel, reference));
+      }
+    }
     if (sealInfo.key === 'sealed' && item.replaced_by) {
       const target = findItem(item.replaced_by);
       ledger.appendChild(ledgerBlock(txt.replacedBy, target ? localized(target.title) : item.replaced_by));

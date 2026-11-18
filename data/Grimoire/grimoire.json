@@ -31,6 +31,7 @@
         "zh-Hans": "可复用的 Agent 规则模板：项目边界、单一真实来源、聚焦验证与交付检查。"
       },
       "source": "data/Grimoire/resources/agent-rules-template.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -51,6 +52,7 @@
         "zh-Hans": "精简记录 Agent 停点与未完工作，方便接手而不复制长期待办。"
       },
       "source": "data/Grimoire/resources/agent-handoff-template.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -71,6 +73,7 @@
         "zh-Hans": "简明的 README 骨架，涵盖安装、唯一修改流程、生成物与部署。"
       },
       "source": "data/Grimoire/resources/project-readme-template.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -91,6 +94,7 @@
         "zh-Hans": "从本站的 source、生成、索引与审阅流程整理出的通用检查表。"
       },
       "source": "data/Grimoire/resources/source-driven-content-guide.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -111,6 +115,7 @@
         "zh-Hans": "检查文章是否由底层往上逐层堆叠，找出认知断崖、概念倒置与段落孤岛。"
       },
       "source": "data/Grimoire/prompts/knowledge-scaffolding-review.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -131,6 +136,7 @@
         "zh-Hans": "把一篇写得好的文章逆向拆成骨架、每节目的、转场方式与可重用模板。"
       },
       "source": "skills/article-structure-extractor/skill.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -151,6 +157,7 @@
         "zh-Hans": "把既定骨架、每节细项与原始素材转写成可读的完整文章，而不是条列笔记。"
       },
       "source": "skills/article-structure-writer/skill.md",
+      "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
       "status": "active",
@@ -171,6 +178,91 @@
         "zh-Hans": "把一般 Markdown 文章整理成 Ludwigia 的笔记格式，并生成可被索引的 HTML 页面。"
       },
       "source": "skills/markdown-to-note/skill.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "finish-work-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Finish Work",
+        "zh-Hant": "Finish Work：完成與驗證",
+        "zh-Hans": "Finish Work：完成与验证"
+      },
+      "summary": {
+        "en": "An external skill for checking real outcomes and reporting what is proven before calling a task done.",
+        "zh-Hant": "外部 Skill：完成任務前核對實際結果，清楚交代已驗證與未驗證的部分。",
+        "zh-Hans": "外部 Skill：完成任务前核对实际结果，清楚交代已验证与未验证的部分。"
+      },
+      "source": "data/Grimoire/resources/finish-work-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/finish-work",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "adversarial-review-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Adversarial Review",
+        "zh-Hant": "Adversarial Review：對抗式審查",
+        "zh-Hans": "Adversarial Review：对抗式审查"
+      },
+      "summary": {
+        "en": "An external skill for independent review of a draft, with findings checked against evidence.",
+        "zh-Hant": "外部 Skill：讓獨立審查者挑戰草稿，再依證據核對並處理發現。",
+        "zh-Hans": "外部 Skill：让独立审查者挑战草稿，再依证据核对并处理发现。"
+      },
+      "source": "data/Grimoire/resources/adversarial-review-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/adversarial-review",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "strategy-prompt-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Strategy Prompt",
+        "zh-Hant": "Strategy Prompt：方案比較",
+        "zh-Hans": "Strategy Prompt：方案比较"
+      },
+      "summary": {
+        "en": "An external skill for comparing options with explicit criteria, weights, and a challenge to the first recommendation.",
+        "zh-Hant": "外部 Skill：用明確準則與權重比較方案，再檢查初步建議的盲點。",
+        "zh-Hans": "外部 Skill：用明确准则与权重比较方案，再检查初步建议的盲点。"
+      },
+      "source": "data/Grimoire/resources/strategy-prompt-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/strategy-prompt",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "ambitious-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Ambitious",
+        "zh-Hant": "Ambitious：高投入任務",
+        "zh-Hans": "Ambitious：高投入任务"
+      },
+      "summary": {
+        "en": "An external skill for explicitly important work: set measurable targets, build from real material, and seek outside review.",
+        "zh-Hant": "外部 Skill：針對明確重要的任務設定可量測目標、使用真實素材並尋求外部審查。",
+        "zh-Hans": "外部 Skill：针对明确重要的任务设定可测量目标、使用真实素材并寻求外部审查。"
+      },
+      "source": "data/Grimoire/resources/ambitious-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/ambitious",
       "verified_with": null,
       "verified_at": null,
       "status": "active",

@@ -27,7 +27,7 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 - **可持續整理的內容**：Notes（知識筆記）、Writing（文章）與 Canvas（視界）以 Markdown 為主要 source，生成可閱讀、可搜尋的靜態頁面；單篇內容支援閱讀模式與 Markdown 複製／下載。
 - **多條內容探索路徑**：全站搜尋支援多標籤篩選；section landing 依內容類型瀏覽；tag detail 提供穩定的標籤頁；Garden 則用花園與 Patch 視角探索同一份索引。
 - **互動境域**：Portals 是通往各個 Realm 的入口，可前往 Digital Garden 與 2.5D 的 Ludwigia World。World 的人物與對話從 source data 生成。
-- **實驗與可重用資源**：Labs 收錄 Shooting Mode、Question Bank 等實驗，以及 Toolkit 工具庫；Toolkit 可依 Template、Guide、Prompt、Skill 的種類和用途篩選，Ludwig 密語模式會顯示 Grimoire 文案。
+- **實驗與可重用資源**：Labs 收錄 Shooting Mode、Question Bank 等實驗，以及 Toolkit 工具庫；Toolkit 可依 Template、Guide、Prompt、Skill 的種類和用途篩選。資源展開後的 `Reference` 標明本站原創或外部來源；Ludwig 密語模式會顯示 Grimoire 文案。
 - **個人化介面**：Theme、Palette、語言與 Effects 可在設定中調整；手機使用獨立的底部導覽，內容頁的閱讀操作也有觸控入口。偏好保存在瀏覽器端。
 
 想查各功能的實作位置與規格，從 [docs/README.md](./docs/README.md) 的「功能導覽」開始；想直接體驗網站，見下方「快速開始」。

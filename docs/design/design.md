@@ -605,4 +605,4 @@ Portals 與 World 會卡，主因不是某一個效果特別貴，而是好幾�
 
 Labs 只收實驗原型與可重用資源；Portals 自己負責 Garden 與 World 的導覽，因此 World 不再重複出現在 Labs 或 More。Portals 的頂欄保留自己的奇幻氣質，使用 Cinzel 品牌字、單一 palette accent 與安靜的邊線；放大導覽文字與第一次進入時的提示窗，讓資訊更容易讀到。
 
-資源頁平常稱為 Toolkit（工具庫），直接說明用途；Ludwig 密語啟用時才顯示 Grimoire（魔導書）的語氣。兩種呈現共用同一份資料，種類（Template / Guide / Prompt / Skill）與用途（寫作、工作流、網站開發）可交叉篩選。`AGENTS.md` 起始範本採通用的專案邊界、單一來源、實際驗證命令、權限與交付檢查欄位；`HANDOFF.md` 範本則只記最近停點與待續作，不複製長期 backlog。兩者供使用者填入自己的專案資訊，不公開整份站內操作契約，也不需要在範本中標註來源。模型驗證時效只適用於 Prompt / Skill。
+資源頁平常稱為 Toolkit（工具庫），直接說明用途；Ludwig 密語啟用時才顯示 Grimoire（魔導書）的語氣。兩種呈現共用同一份資料，種類（Template / Guide / Prompt / Skill）與用途（寫作、工作流、網站開發）可交叉篩選。`AGENTS.md` 範本採通用的專案邊界、單一來源、實際驗證命令、權限與交付檢查欄位；`HANDOFF.md` 範本則只記最近停點與待續作，不複製長期 backlog。兩者供使用者填入自己的專案資訊。展開卡片的 `Reference` 資訊欄顯示來源：本站原創寫 `Ludwig`，外部借鑑則連到原始網址；來源不用複製到範本正文。外部 Skill 的精選摘要以 Guide 收錄，避免讓讀者誤以為本站已安裝或驗證該 Skill。模型驗證時效只適用於 Prompt / Skill。
