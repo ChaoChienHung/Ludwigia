@@ -4,7 +4,7 @@
 
 ## 概況
 
-- 截至：2026-11-19。已完成 Skills 命名標準化（`SKILL.md`）、Toolkit 測試解耦、File Tabs 介面實作，並引進 11 個通用 Agent Skills 與功能直觀重構。文檔方面已重構 `README.md` Repository Map 為結構清晰的 Tree View、清理舊有 local attach 產生的段落污染（如 Theme 混雜 World 台詞與 CLI 混雜 Timeline/Navbar），收斂為統一的 `Portals 與 Realms` 章節；並在 `AGENTS.md` 加入文檔全局連貫與邏輯自洽硬約束。
+- 截至：2026-11-19。已完成 Skills 命名標準化（`SKILL.md`）、Toolkit 測試解耦、File Tabs 介面實作，並引進 11 個通用 Agent Skills 與功能直觀重構。文檔方面已移除 `README.md` 冗餘的 `TL;DR` 章節，將 `專案術語` 改為更俐落易讀的條列式定義清單（`- **Term**：Definition`），並重構 Repository Map 為結構清晰的 Tree View 與清理段落污染；在 `AGENTS.md` 加入文檔全局連貫與清單留白硬約束。
 - 最近驗證：`python3 cli.py test` 通過 70 項測試；`node tests/js/runtime_smoke.cjs` 通過；`python3 cli.py build-pages --check` 通過；`test_toolkit_data` 與 `test_handoff` 通過。
 - 本輪停點：Skills 目錄、Toolkit 資料、README.md 結構整頓已全部就緒，沒有尚待續做的 Agent 任務。
 

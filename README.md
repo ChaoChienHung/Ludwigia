@@ -4,23 +4,6 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 
 英文一句話版：A static personal site, digital garden, and interactive space built from source-driven content.
 
-## TL;DR
-
-如果你只想先快速知道這個 repo 在幹嘛、能做什麼、怎麼用，可以先看這裡：
-
-- 這個 repo 是什麼：一個靜態的 personal site + digital garden，內容主要放在 `notes/`、`writing/`、`canvas/`
-- 這個 repo 能做什麼：展示作品與經歷、發布內容、搜尋與探索知識，並進入 Portals、World 與 Labs
-- 內容怎麼維護：source-driven；用 `.md` + `<meta>` + 少量語意化 tag 寫內容，再生成 HTML
-- 平常怎麼用：單篇重生用 `python3 cli.py build <source.md>`，整批重生用 `python3 cli.py build-all --content-dir notes|writing|canvas|all`
-- 想先跑站看結果：用 `python3 -m http.server 8000`，再打開 `index.html` / `pages/search.html` / `portals/realms/garden/index.html`
-
-若你是第一次進這個 repo，建議閱讀順序：
-
-1. 看 `功能與特色`、`專案術語（Terminology）` 和 `Repository Map（程式庫導覽）`：先了解網站、統一用詞，再知道各部分大致在哪裡
-2. 看 `快速開始`：先把站跑起來
-3. 看 `新增/修改筆記（唯一工作流）`：理解日常怎麼寫內容、怎麼重生
-4. 需要規格時先看 `docs/README.md` 的「功能導覽」，再讀對應 spec；Agent 另須遵守 `AGENTS.md`
-
 ## 功能與特色
 
 - **個人作品與經歷**：首頁展示作品、Timeline、Skills 與 Credentials；Projects 頁提供作品入口。Timeline、Skills 與 Credentials 的資料由各自的 source JSON 維護。
@@ -36,21 +19,19 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 
 這裡統一日常討論與 Agent 任務中的用詞；詳細 schema、語法與不可退化契約仍以對應的 `docs/specs/` 和 `AGENTS.md` 為準。
 
-| 術語 | 在 Ludwigia 的意思 |
-| --- | --- |
-| **Source / 單一真相來源（SSOT）** | 作者實際維護的內容或資料，例如 `notes/`、`writing/`、`canvas/` 的 `.md`，或 `data/` 的 JSON。HTML、搜尋索引與 bundle 若由它們生成，不是第二份手動資料。 |
-| **Source-driven / 再現性生成** | 修改 source 後，由工具重建對應輸出；相同 source 與規則應得到相同內容。內容頁用 `cli.py build`，索引用 `cli.py index`，其他子系統用各自的 build 命令。 |
-| **內容類型（Notes / Writing / Canvas）** | 三種單篇內容：`notes/` 是知識筆記，`writing/` 是長文／文章，`canvas/` 是視覺內容（介面稱「視界」）；三者都可被全站索引。這裡的 Canvas 是內容分類，不是 World 的繪圖引擎。 |
-| **Metadata / Core Markdown / Extras** | source `.md` 的 `<meta>` 提供公開欄位；core markdown 是可攜的標準正文；`<reviewkit>`、`<information>` 等自訂語法是附加層。不同視圖可退化或忽略 extras，但不能把它們當成 metadata。 |
-| **搜尋索引 / SearchCore** | `search/indexer.py` 生成 `search/search-index.{json,js}`，供搜尋與瀏覽入口使用；`core/search-core.js` 是共用的查詢、篩選與連結邏輯，不是另一份索引資料。 |
-| **Section landing / Tag detail** | `notes/index.html` 等是某一內容類型的列表入口；`tag/index.html` 是可分享的單一 tag 詳情入口。它們不是 Garden 的 Patch 視圖。 |
-| **Garden / Patch** | `portals/realms/garden/` 是以花園方式探索索引內容的 Realm；Patch 是 Garden 同頁的探索／閱讀視角。Garden 不負責全站 tag detail 的穩定網址。 |
-| **Portals / Realm / World** | Portals 是通往各個 Realm 的導覽樞紐；Realm 是可獨立運作的境域；Garden 與 2.5D 的 Ludwigia World 是不同的 Realm。 |
-| **Labs / Toolkit / Grimoire** | Labs 放實驗原型與可重用資源；Toolkit 是其中的資源庫，Ludwig 密語模式才把它顯示為 Grimoire。兩種名稱讀同一份 `data/Toolkit/toolkit.json`。 |
-| **Site shell / Runtime** | `pages/_shared/` 是共用 navbar、footer 等頁面外框的來源；`core/site/` 是主站共用 JavaScript。手寫頁面透過 `cli.py build-pages` 組裝 shell。 |
-| **Theme / Palette / Effects** | Theme 管整體表面、氛圍與可讀性；Palette 管 accent 與互動狀態顏色；Effects 控制可關閉的動效。偏好儲存在瀏覽器端。 |
-| **生成物白名單** | 部署直接需要的少數輸出必須進版控，例如搜尋索引、Portals／Garden 資產與 World 角色快取；完整清單以 `AGENTS.md` 為準，其餘生成物應忽略。 |
-| **AGENTS / HANDOFF / TODO / REVIEW** | `AGENTS.md` 是 Agent 的長期指引與硬約束；`HANDOFF.md` 記最近停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成、待作者驗收的工作。 |
+- **Source / 單一真相來源（SSOT）**：作者實際維護的內容或資料，例如 `notes/`、`writing/`、`canvas/` 的 `.md`，或 `data/` 的 JSON。HTML、搜尋索引與 bundle 若由它們生成，不是第二份手動資料。
+- **Source-driven / 再現性生成**：修改 source 後，由工具重建對應輸出；相同 source 與規則應得到相同內容。內容頁用 `cli.py build`，索引用 `cli.py index`，其他子系統用各自的 build 命令。
+- **內容類型（Notes / Writing / Canvas）**：三種單篇內容：`notes/` 是知識筆記，`writing/` 是長文／文章，`canvas/` 是視覺內容（介面稱「視界」）；三者都可被全站索引。這裡的 Canvas 是內容分類，不是 World 的繪圖引擎。
+- **Metadata / Core Markdown / Extras**：source `.md` 的 `<meta>` 提供公開欄位；core markdown 是可攜的標準正文；`<reviewkit>`、`<information>` 等自訂語法是附加層。不同視圖可退化或忽略 extras，但不能把它們當成 metadata。
+- **搜尋索引 / SearchCore**：`search/indexer.py` 生成 `search/search-index.{json,js}`，供搜尋與瀏覽入口使用；`core/search-core.js` 是共用的查詢、篩選與連結邏輯，不是另一份索引資料。
+- **Section landing / Tag detail**：`notes/index.html` 等是某一內容類型的列表入口；`tag/index.html` 是可分享的單一 tag 詳情入口。它們不是 Garden 的 Patch 視圖。
+- **Garden / Patch**：`portals/realms/garden/` 是以花園方式探索索引內容的 Realm；Patch 是 Garden 同頁的探索／閱讀視角。Garden 不負責全站 tag detail 的穩定網址。
+- **Portals / Realm / World**：Portals 是通往各個 Realm 的導覽樞紐；Realm 是可獨立運作的境域；Garden 與 2.5D 的 Ludwigia World 是不同的 Realm。
+- **Labs / Toolkit / Grimoire**：Labs 放實驗原型與可重用資源；Toolkit 是其中的資源庫，Ludwig 密語模式才把它顯示為 Grimoire。兩種名稱讀同一份 `data/Toolkit/toolkit.json`。
+- **Site shell / Runtime**：`pages/_shared/` 是共用 navbar、footer 等頁面外框的來源；`core/site/` 是主站共用 JavaScript。手寫頁面透過 `cli.py build-pages` 組裝 shell。
+- **Theme / Palette / Effects**：Theme 管整體表面、氛圍與可讀性；Palette 管 accent 與互動狀態顏色；Effects 控制可關閉的動效。偏好儲存在瀏覽器端。
+- **生成物白名單**：部署直接需要的少數輸出必須進版控，例如搜尋索引、Portals／Garden 資產與 World 角色快取；完整清單以 `AGENTS.md` 為準，其餘生成物應忽略。
+- **AGENTS / HANDOFF / TODO / REVIEW**：`AGENTS.md` 是 Agent 的長期指引與硬約束；`HANDOFF.md` 記最近停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成、待作者驗收的工作。
 
 ## Repository Map（程式庫導覽）
 
