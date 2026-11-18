@@ -1,6 +1,6 @@
-# AGENTS.md starter template
+# AGENTS
 
-Replace bracketed text with your project's actual paths, commands, and contracts. Delete sections that do not apply.
+> (Template note — remove before saving `AGENTS.md`: Replace bracketed placeholders with your project's actual paths, commands, and contracts. Delete sections that do not apply.)
 
 ## Project boundary
 
@@ -58,8 +58,8 @@ Replace bracketed text with your project's actual paths, commands, and contracts
 - System contracts: [spec path]
 - Design decisions: [design path]
 - Current tasks: [task list]
-- Previous agent's stopping point: `HANDOFF.md` (use a separate handoff template; do not copy the backlog).
+- Previous agent's stopping point: `HANDOFF.md`.
 
-For a subsystem with distinct rules, add a nested `AGENTS.md` in that directory and state which rules it adds. Keep shared rules here.
+> (Template note — remove before saving: If a subsystem has distinct rules, add a nested `AGENTS.md` there and state which rules it adds. Keep shared rules in the root file. Use the separate `HANDOFF.md` template for the stopping point; do not copy the backlog.)
 
-Keep this file focused on rules that must remain true. Put tutorials and long explanations elsewhere.
+> (Template note — remove before saving: Keep this file focused on rules that must remain true. Put tutorials and long explanations elsewhere.)

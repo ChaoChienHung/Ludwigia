@@ -1,5 +1,7 @@
 # [Project name]
 
+> (Template note — remove before saving `README.md`: Replace bracketed placeholders with project-specific facts. Delete sections that do not apply.)
+
 [One sentence describing the product and who it serves.]
 
 ## Quick start
@@ -35,4 +37,4 @@
 - System specification: [spec path]
 - Design decisions: [design path]
 
-Keep this README actionable. Put long architecture explanations in linked documents.
+> (Template note — remove before saving: Keep this README actionable. Put long architecture explanations in linked documents.)

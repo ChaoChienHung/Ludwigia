@@ -1,6 +1,6 @@
-# HANDOFF.md starter template
+# Handoff
 
-Save as `HANDOFF.md` at the project root and replace brackets with verified facts. Record where the previous agent stopped so the next agent can resume immediately. The task tracker owns the overall and long-term backlog; do not copy unassigned tasks here. Aim for at most 2,000 tokens and enforce a 6 KiB UTF-8 hard limit. Replace stale details instead of appending a log.
+> (Template note — remove before saving `HANDOFF.md`: Save this file at the project root and replace bracketed placeholders with verified facts. Record only the previous agent's stopping point; the task tracker owns the overall and long-term backlog. Aim for at most 2,000 tokens, with a 6 KiB UTF-8 hard limit. Replace stale details instead of appending a log.)
 
 ## Snapshot
 
@@ -18,4 +18,4 @@ Save as `HANDOFF.md` at the project root and replace brackets with verified fact
 - **Next action**: [the first concrete step and its expected result].
 - **Blocker**: [only if external input or a dependency truly prevents progress; otherwise omit].
 
-Repeat the task block only for unfinished work that the next agent should resume. If none remains, write "None" and wait for the next request; do not promote long-term backlog items into this file. Never include secrets or paste long logs, diffs, or transcripts.
+> (Template note — remove before saving: Repeat the task block only for unfinished work the next agent should resume. If none remains, replace this example block with "None". Do not promote long-term backlog items into this file or include secrets, long logs, diffs, or transcripts.)
