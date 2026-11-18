@@ -36,6 +36,7 @@ __pycache__/**
 main.txt
 
 # Local hooks and agent settings (not part of the site)
+HANDOFF.md
 .githooks/
 .githooks/**
 .claude/

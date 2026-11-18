@@ -37,6 +37,26 @@
       "replaced_by": null
     },
     {
+      "id": "agent-handoff-template",
+      "kind": "template",
+      "category": "workflow",
+      "title": {
+        "en": "HANDOFF.md starter template",
+        "zh-Hant": "HANDOFF.md 交接範本",
+        "zh-Hans": "HANDOFF.md 交接模板"
+      },
+      "summary": {
+        "en": "A compact stopping-point snapshot for agents to resume unfinished work without copying the long-term backlog.",
+        "zh-Hant": "精簡記錄 Agent 停點與未完工作，方便接手而不複製長期待辦。",
+        "zh-Hans": "精简记录 Agent 停点与未完工作，方便接手而不复制长期待办。"
+      },
+      "source": "data/Grimoire/resources/agent-handoff-template.md",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
       "id": "project-readme-template",
       "kind": "template",
       "category": "site-building",

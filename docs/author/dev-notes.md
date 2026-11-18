@@ -7,8 +7,9 @@
 ## Docs（文件分工）
 
 - `AGENTS.md`：不可退化契約與精簡的 Agent 工作指引（repo root）
+- `HANDOFF.md`：上一個 Agent 的短期停點與進行中工作（repo root；不複製長期待辦）
 - `README.md`：專案術語、Repository Map 與使用入口（repo root；所有讀者共用）
-- `TODO.md`：任務追蹤（只留可驗收的待辦；完成後移除避免噪音；repo root）
+- `TODO.md`：總體與長期任務追蹤（repo root）
 - `docs/README.md`：按功能查起始文件與主要實作資料夾，不維護逐檔清單
 - `docs/specs/system-spec.md`：系統設計與可驗證約定（schema / data flow / guardrails）
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡

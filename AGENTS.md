@@ -2,17 +2,19 @@
 
 本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
 
-本文件集中不可退化契約與 Agent 執行時必須遵守的短指引。專案術語、日常工作流與 Repository Map 由 `README.md` 維護；依功能查文件與實作範圍，從 `docs/README.md` 的「功能導覽」開始。精確契約、設計理由與技術細節再沿該導覽讀對應文件。
+本文件集中不可退化契約與 Agent 執行時必須遵守的短指引。專案術語、日常工作流與 Repository Map 由 `README.md` 維護；依功能查文件與實作範圍，從 `docs/README.md` 的「功能導覽」開始。`HANDOFF.md` 只記上一個 Agent 的最近停點，總體與長期待辦仍在 `TODO.md`。精確契約、設計理由與技術細節再沿功能導覽讀對應文件。
 
 ## Agent 工作指引
 
 - **先對齊用詞與位置**：開始 Ludwigia 任務時，先讀 `README.md` 的 `## 專案術語（Terminology）` 與 `## Repository Map（程式庫導覽）`；依功能從 `docs/README.md` 的 `## 功能導覽` 找起始文件和主要資料夾，再讀相關 spec 與相鄰實作。不要在本文件維護第二份術語表或逐檔路徑清單。
+- **接續工作**：新 Agent 先讀 `HANDOFF.md` 的停點與進行中工作，再用使用者最新指令、`git status --short` 和相關 source 核對；若快照已過期，以現況為準。`TODO.md` 是總體與長期任務追蹤，不能把其中的未指派待辦當作正在續做的工作。
 - **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
 - **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
 - **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；World 資料跑 `python3 cli.py build-world --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
 - **把重複錯誤變成可執行約束**：遇到同類回歸或反覆出現的 review 意見時，先找根因與可重現案例；在本次任務範圍內，優先修正資料流、API 或模組邊界，使錯誤選項難以寫出，再用相鄰測試或檢查命令擋住可機械判定的錯誤。只有無法可靠自動判定、仍需 Agent 判斷的原則才寫進 `AGENTS.md`。不要為每次失誤無止境加一條文字規則，也不要每次都打斷使用者提醒；若修正會擴成大範圍重構，先提出具體重複案例、最小方案與影響，再請使用者決定。
 - **權限與卡住時**：讀檔、局部修改、相關測試及必要的再現性生成屬日常工作。安裝新依賴、刪除資料、推送或發布等動作，先確認任務授權及影響範圍；不確定契約或將跨越既有子系統邊界時，先整理已查到的事實與最小可行方案，再向使用者確認真正缺少的決策。
 - **交付前**：檢查 diff 是否只含預期的 source、必要生成物與受影響文檔；報告改了什麼、跑了哪些檢查、哪些未驗證。若建立 PR，標題與說明應能指出變更範圍和驗證結果，不要求所有任務套用單一標題格式。
+- **更新交接快照**：工作中斷、移交或進行中狀態有實質變化時，更新根目錄 `HANDOFF.md`；完成且無續作時明寫「無」。每項進行中工作用短標題與「背景／現況／待解問題／下一步」，確有外部阻礙才加「阻礙」。只留最新可核對的事實與必要證據，不複製長期 backlog、日誌、diff 或秘密；上限約 2,000 tokens，且 UTF-8 不得超過 6 KiB（`tests/test_handoff.py` 守門）。
 
 ## 不退化原則（Non-regression）
 
@@ -210,7 +212,7 @@
 
 ## 文件一致性與導覽維護
 
-- 文件責任：`README.md` 提供所有人共用的術語、Repository Map 與使用工作流；`docs/README.md` 按功能連到主要資料夾與起始文件；本文件只放 Agent 指引與不可退化約束。不要把同一份逐檔 Doc Map 複製到多處。
+- 文件責任：`README.md` 提供所有人共用的術語、Repository Map 與使用工作流；`docs/README.md` 按功能連到主要資料夾與起始文件；本文件只放 Agent 指引與不可退化約束；`HANDOFF.md` 只放當下停點；`TODO.md` 管總體與長期待辦。不要把同一份逐檔 Doc Map 或 backlog 複製到多處。
 - 新增或調整作者語法、日常工作流、系統契約時，依 `docs/README.md` 的功能導覽找受影響文件，只更新實際受影響的 spec、guide、設計理由與守門清單；不可退化規則改變時同步更新本文件。不要因一般檔案新增就重寫導覽。
 - 當使用者要求更新項目文檔時，先讀 README 的 Repository Map 與 `docs/README.md` 的功能導覽，盤點受影響的功能、主要資料夾與文件；先處理契約和工作流，再補齊設計、技術與檢查文件。功能歸屬或起始文件改變才改功能導覽；資料夾責任改變才改 Repository Map。
 - Mindset：除非必要，不要先通讀整個 repo。從功能導覽與相鄰實作縮小範圍；資訊不足再擴查，探索後回補受影響文件。

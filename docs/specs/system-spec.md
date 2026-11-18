@@ -269,6 +269,7 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 - Prompt / Skill 的驗證時效由 runtime 依 `verified_at` 與 `stale_after_days` 推導；Template / Guide 一律標示參考資料，不使用模型驗證狀態；密語模式只改呈現文案，不改資料來源或篩選語意
 - 守門測試：`tests/test_grimoire_data.py`
 - `agent-rules-template` 是 `data/Grimoire/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `grimoire.json` 維護，不能另寫一份卡片摘要
+- `agent-handoff-template` 是 `data/Grimoire/resources/agent-handoff-template.md` 內可替換的短期交接範本；根目錄 `HANDOFF.md` 只記 Agent 最近停點，不承接 `TODO.md` 的總體與長期待辦，並由 `.assetsignore` 排除於網站資產之外
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。
 

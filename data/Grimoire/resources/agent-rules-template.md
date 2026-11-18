@@ -13,6 +13,7 @@ Replace bracketed text with your project's actual paths, commands, and contracts
 - Before working, read `README.md` sections [Terminology heading] and [Repository Map heading] for shared vocabulary and folder-level responsibilities. Then use [feature guide path] to find the relevant docs and implementation folders.
 - Keep reader-facing navigation and workflow in `README.md`; use this file for agent-specific instructions and invariants. Keep exact contracts in [specs directory] and feature-to-folder routes in [feature guide path].
 - Update the map only when a folder's responsibility changes, and the feature guide only when ownership or its starting documentation changes. Do not maintain a file-by-file map here.
+- At the start of a new agent session, read `HANDOFF.md` for the previous stopping point; verify it against the user's latest request and working tree. [Task tracker] owns the overall backlog. Update `HANDOFF.md` when in-progress state changes or when no work remains; aim for 2,000 tokens and enforce a 6 KiB UTF-8 hard limit.
 
 ## Do and don't
 
@@ -57,6 +58,7 @@ Replace bracketed text with your project's actual paths, commands, and contracts
 - System contracts: [spec path]
 - Design decisions: [design path]
 - Current tasks: [task list]
+- Previous agent's stopping point: `HANDOFF.md` (use a separate handoff template; do not copy the backlog).
 
 For a subsystem with distinct rules, add a nested `AGENTS.md` in that directory and state which rules it adds. Keep shared rules here.
 

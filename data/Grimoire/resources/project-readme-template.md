@@ -31,6 +31,7 @@
 ## More detail
 
 - Invariants: [AGENTS.md or equivalent]
+- Agent handoff: [HANDOFF.md or equivalent] for the latest stopping point; [task tracker] for the long-term backlog.
 - System specification: [spec path]
 - Design decisions: [design path]
 
