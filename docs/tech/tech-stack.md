@@ -39,7 +39,7 @@ Ludwigia 分成四層，越往下越獨立：
 | `core/theme-preload.js` | 首屏前在 `<html>` 掛上 theme / palette class，避免閃爍；全站唯一來源（`tests/test_page_shell.py` 守門） |
 | `core/i18n-preload.js` | 首屏前決定語言，必要時暫時隱藏尚未翻譯的頁面 |
 | `core/i18n.js` | 依 `i18n/*.json` 字典替換頁面文字 |
-| `core/script.js` | 全站共用 runtime：navbar、Theme / Palette / Effects、settings、行動版導覽、FAB、Copilot、Companion、ambient 特效、內容頁 overlay 與 quiz 等 |
+| `core/site/NN-*.js` | 全站共用 runtime，依編號順序以多個 classic `<script>` 載入（清單在 `pages/_shared/runtime.html`）：`01-bootstrap`、`02-language`、`03-cipher-mode`、`04-assistants`（Copilot / Companion）、`05-cipher-shortcut`、`06-theme`、`07-settings`、`08-page-context`、`09-navigation`（行動導覽、FAB）、`10-ambient`、`11-content-page`、`12-note-overlays`。原本是單一的 `core/script.js` |
 | `core/search-core.js` | 搜尋索引的正規化、排序、tag ontology 比對、輕量 Markdown 預覽渲染（`window.SearchCore`） |
 
 ### 頁面專用腳本（`assets/js/`）
@@ -57,7 +57,7 @@ Ludwigia 分成四層，越往下越獨立：
 
 - `assets/css/style.css`：主站入口樣式表。
 - `assets/css/site/palette-tokens.css`：11 套 Palette 的色彩 token，Portals / World 也從這裡取 accent。
-- `assets/css/site/shared.css`：主站共用元件與 Theme 樣式（hub、garden、settings、nav 等）。
+- `assets/css/site/shared.css`：主站樣式的索引檔，依序 `@import` 11 個分檔 `shared-NN-*.css`（tokens、base、theme-ambient、site-chrome、mobile-navigation、hubs、settings、home-sections、garden-search、footer-contact-fab、skills-credentials）。層疊順序等於原本的單一檔案；改樣式時直接改對應的分檔，分檔與 `shared.css` 放在同一目錄，`url()` 相對路徑不變。
 - `assets/css/content-page/`：`notes / writing / canvas` 內容頁專用樣式。
 
 ### 多語系
@@ -84,7 +84,7 @@ Ludwigia 分成四層，越往下越獨立：
 | `install-hooks` / `clean` | 安裝 git hooks、清除生成物 |
 
 - 主要模組：
-  - `tools/create_content.py`：source `.md` → HTML 生成器（樣式模板在 `tools/content_styles/`）。
+  - `tools/create_content.py`：source `.md` → HTML 生成器的 CLI 與自我測試；實作拆在 `tools/content/`（`common`、`metadata`、`source_blocks`、`paths`、`inline`、`review_widgets`、`templates`、`markdown`，以及每頁渲染狀態 `render_state`）。樣式模板在 `tools/content_styles/`。
   - `tools/content_contract.py`：metadata 解析與 tag ontology 對齊。
   - `tools/information_ontology.py`、`tools/question_bank.py`：ontology tooltip 與題庫。
   - `tools/translate_content.py`：翻譯 workflow；API key 依序讀環境變數 `GEMINI_API_KEY` / `LUDWIGIA_GEMINI_API_KEY`，再讀不進版控的 `secret.txt`。

@@ -21,7 +21,7 @@
 
 - `assets/vendor/avatar/dicebear-pixel-art-neutral-ludwig.js`
 - `assets/css/site/shared.css`
-- `core/script.js` 的 runtime version 常數（若需要 cache bust）
+- `core/site/04-assistants.js` 的 runtime version 常數（若需要 cache bust）
 
 不該碰：
 
@@ -57,7 +57,7 @@
 
 通常會碰：
 
-- `core/script.js`
+- `core/site/04-assistants.js`（Companion 設定）與 `core/site/07-settings.js`（settings UI）
 - `pages/settings.html`
 - 若新增文件，記得同步 `docs/README.md`、`AGENTS.md`、`README.md`
 

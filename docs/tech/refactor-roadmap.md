@@ -53,20 +53,20 @@
 - 守門：`tests/test_page_shell.py` 確認手寫頁面的 shell 與 partial 一致、每頁恰好一個 navbar、標籤成對且連結可解析，並確認所有內容頁的 navbar 與 partial 一致；`pre-push` 也會檢查。
 - 驗收：作者在桌面與手機看過首頁、Portfolio、More、Projects、Search、Settings、Tag、Labs。
 
-### Phase 3：拆分 `core/script.js`（中高風險）
+### Phase 3：拆分 `core/script.js`（已完成，待作者驗收畫面）
 
 - 目標：依功能拆成 `core/site/*.js`（例如 `theme.js`、`settings.js`、`navigation.js`、`fab.js`、`copilot.js`、`ambient.js`、`note-overlays.js`），保留同樣的全域 API（`window.LudwigLanguage`、`LudwigSettingsRuntime` 等）與事件名稱（`ludwig-language-changed`、`ludwig-theme-changed`、`ludwig-palette-changed`）。
 - 不引入 bundler：維持多個 `<script src>` 依序載入，內容頁只載入需要的模組。
 - 守門：先補一組 Node `vm` 的 smoke test（以最小 DOM stub 載入各模組，確認不會在載入時拋錯、全域 API 仍存在），再開始拆。
 - 驗收：作者逐一切換 Theme / Palette / Effects / 語言，並檢查內容頁的 Outline、Metadata、Reading Mode、quiz。
 
-### Phase 4：CSS 分層（中高風險，影響畫面）
+### Phase 4：CSS 分層（已完成，待作者驗收畫面）
 
 - 目標：把 `shared.css` 依 token / layout / component / theme / page 拆檔，並把 ambient 特效的 `:not()` 排除清單改成 opt-in：只有內容容器加上一個 class 才提升層級，浮層預設不受影響。
 - 守門：測試確認拆檔後選擇器總數與宣告不變（只搬位置）；排除清單改寫則另開 commit。
 - 驗收：作者在 11 套 Palette × 6 種 Theme 下抽查首頁、內容頁與 settings。
 
-### Phase 5：拆分 `tools/create_content.py`（低到中風險，不影響畫面）
+### Phase 5：拆分 `tools/create_content.py`（已完成）
 
 - 目標：拆成 parser、metadata、renderer、template 四個模組，`create_content.py` 只保留 CLI。
 - 守門：重構前後對所有 source `.md` 重新生成，輸出必須逐位元組相同（這是最強的不退化保證，因為生成物本來就提交在版控裡）。
@@ -75,3 +75,25 @@
 
 - 每完成一個階段，在 `TODO.md` 的 Constellation Queue 記下完成內容與 review 重點，並更新本文件的勾選狀態。
 - 影響畫面的階段（2、3、4）在作者驗收前不視為完成。
+
+## Phase 3–5 實作紀錄（2026-11-17 ～ 2026-11-18）
+
+### Phase 5：`tools/create_content.py` → `tools/content/`
+
+- 以 AST 原樣搬移函式，不改任何邏輯；`create_content.py` 從 2,790 行降到約 550 行，只留 CLI 與自我測試，並 re-export 原本的函式名稱給既有呼叫端與測試。
+- 原本的模組全域變數（`_ACTIVE_*`）集中到 `tools/content/render_state.py`。
+- 驗證：重構前先用舊生成器把 110 篇 source 全部重生兩次，確認輸出可重現並存成基準；重構後再重生一次，110 篇 HTML 與搜尋索引都與基準逐位元組相同。
+
+### Phase 3：`core/script.js` → `core/site/NN-*.js`
+
+- `script.js` 的 167 個頂層宣告全是 `const` / `let`（沒有會 hoist 的 `function` 宣告），原本就必須「先定義後執行」；依序載入的 classic script 共用同一個全域詞法作用域，所以照原順序切開語意不變。
+- 切成 12 個檔案，接起來與原檔逐位元組相同，每檔都能單獨編譯。頁面改由 `pages/_shared/runtime.html` 依序載入（手寫頁面經 `build-pages`，內容頁經生成器模板），`core/script.js` 已移除。
+- 與原計畫的差異：這一階段只做「原始碼分檔」，所有頁面仍載入全部 12 個檔案；依頁面只載入需要的模組留作後續。
+- 守門：`tests/js/runtime_smoke.cjs` 用最小 DOM 替身在 Node 依序執行全部模組，確認多種頁面路徑下載入不拋錯、`window.Ludwig*` API 完整（打亂順序時會報錯，證明測試有效）；`tests/test_page_shell.py` 確認 runtime 清單與 `core/site/` 一致、每頁依序載入。
+
+### Phase 4：`shared.css` 分層與 ambient 規則改為 opt-in
+
+- `shared.css` 改成索引檔，依序 `@import` 11 個分檔；分檔接起來與原檔逐位元組相同，每檔大括號與註解成對。
+- ambient 的 5 條 `body.<主題> > :not(#a):not(#b)…` 排除清單，改為 opt-in：只把 `section`、`main`、`header`、`article`、`footer` 抬到 ambient 圖層之上，浮層不再需要登記；以 `:not(#ambient-content-lift)` 維持原本的 ID 等級特異性。
+- 順帶修正兩個既有問題：搜尋頁的 `#gardenHelpModal` / `#gardenTagsModal` 原本不在排除清單，ambient 主題下會被改成 `position: relative`；排序抽屜原本是 `<section>`，改成 `<div role="dialog">`，避免被當成內容抬升。
+- 驗證（無頭 Chrome，不開視窗、不截圖）：比對舊版（單一 `shared.css` + `script.js`）與新版在 10 個頁面 × 6 種 Theme / Palette 下每個元素的 computed style，差異與「舊版自己重跑」的雜訊相同；另對 34 個頁面 × 6 種組合比對 `<body>` 直接子元素的 `position` / `z-index`，扣除雜訊後只剩上述兩個 modal 修正與兩個空錨點 div 不再被抬升。

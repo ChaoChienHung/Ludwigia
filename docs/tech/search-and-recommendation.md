@@ -325,4 +325,4 @@ tag matching 的優先順序是：
 - `assets/js/section-landing.js`
 - `assets/js/tag-page.js`
 - `assets/js/note-tags.js`
-- `core/script.js`
+- `core/site/`（`08-page-context.js` 的路徑解析、`09-navigation.js` 的索引載入、`11-content-page.js` 的推薦）

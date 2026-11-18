@@ -107,6 +107,8 @@
 - 語系/Theme/Palette 等偏好狀態必須維持為 client-side（localStorage）狀態，不引入後端 state 依賴
 - Theme/Palette 的 localStorage 值需保持向後相容（允許舊值 alias），避免既有使用者偏好失效
 - 首屏 Theme/Palette class 必須只由 `core/theme-preload.js` 掛上：所有頁面在 `<head>` 第一個 stylesheet 之前以 `<script src>` 載入它，不得再內嵌 inline 複本（`tests/test_page_shell.py` 守門）
+- 主站共用 runtime 由 `core/site/NN-*.js` 依編號順序以 classic `<script>` 載入，清單只維護在 `pages/_shared/runtime.html`（手寫頁面經 `cli.py build-pages`、內容頁經生成器帶入）；模組之間共用全域詞法作用域，新增頂層宣告必須「先定義後執行」，不得依賴跨檔 hoisting（`tests/js/runtime_smoke.cjs` 與 `tests/test_page_shell.py` 守門）
+- 主站樣式由 `assets/css/site/shared.css` 依序 `@import` 分檔 `shared-NN-*.css`；分檔順序就是層疊順序。Theme ambient 的內容抬升必須維持 opt-in（只抬升 `section` / `main` / `header` / `article` / `footer`），浮層不得依賴被登記進排除清單
 - Theme 專屬視覺效果必須可被關閉/限定（例如 Galaxy 內的流星/星空），避免遮擋可讀性與互動
 - 若新增 theme（例如 `Sky` / `Garden`），其動效控制需收斂到同一個可關閉機制，避免每個 theme 各自長出平行設定開關
 - `notes / writing / canvas` 單篇內容頁底部的 footer 必須維持為語意完整的 footer 區塊：

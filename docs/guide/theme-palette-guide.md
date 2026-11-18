@@ -67,7 +67,7 @@
 
 ### 2. Theme class 掛載與持久化
 
-- 檔案：`core/script.js`
+- 檔案：`core/site/06-theme.js`（首屏 class 另由 `core/theme-preload.js` 負責）
 - 檢查：
   - `THEME_LABELS`
   - `THEME_CLASSES`
@@ -87,7 +87,7 @@
 ### 4. Settings 選項與標籤
 
 - 檔案：
-  - `core/script.js`
+  - `core/site/07-settings.js`
   - `core/i18n.js`
   - `pages/settings.html`
 - 檢查：
@@ -142,8 +142,8 @@
 ### 8. 主題特效
 
 - 檔案：
-  - `core/script.js`
-  - `assets/css/site/shared.css`
+  - `core/site/10-ambient.js`
+  - `assets/css/site/shared-03-theme-ambient.css`
   - `docs/miscellaneous/visual-sources.md`
 - 目前結構：
   - `Sky` 與 `Garden` 共享 `initSkyGardenAmbience()` 這類共用掛載點，避免每個 theme 各長一套平行的開關與掛載邏輯
@@ -169,7 +169,7 @@
 
 ### 2. Palette class 掛載與持久化
 
-- 檔案：`core/script.js`
+- 檔案：`core/site/06-theme.js`（首屏 class 另由 `core/theme-preload.js` 負責）
 - 檢查：
   - `PALETTE_CLASSES`
   - `setPalette()`
@@ -178,7 +178,7 @@
 ### 3. Palette labels 與順序
 
 - 檔案：
-  - `core/script.js`
+  - `core/site/07-settings.js`
   - `core/i18n.js`
   - `pages/settings.html`
 - 檢查：

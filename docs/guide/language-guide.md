@@ -57,9 +57,9 @@ Ludwigia 採用 **資料驅動 (Data-Driven)** 與 **Key-Based** 的可擴充多
 }
 ```
 
-### 步驟三：在 `core/script.js` 與語系切換選單中加入新語系
+### 步驟三：在 `core/site/02-language.js` 與語系切換選單中加入新語系
 
-1. 在 `core/script.js` 的 `normalizeLang` 與 `getLanguageLabel` 函式中補上新語系正規化邏輯：
+1. 在 `core/site/02-language.js` 的 `normalizeLang` 與 `getLanguageLabel` 函式中補上新語系正規化邏輯：
 
 ```javascript
 const normalizeLang = (value) => {

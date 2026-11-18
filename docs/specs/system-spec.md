@@ -381,7 +381,7 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 
 - 放 Garden 專用 UI、資產、以及 build output（例如 `portals/realms/garden/floral-assets/`）
 - 但仍只讀 `window.SITE_SEARCH_INDEX`，不自己產生第二份索引
-- `portals/realms/garden/index.html` 的 floral runtime 與主站 `core/script.js` 的 theme runtime 屬不同責任邊界；預設允許各自演進，不強制共享 ambient effect 實作
+- `portals/realms/garden/index.html` 的 floral runtime 與主站 `core/site/`（原 `core/script.js`）的 theme runtime 屬不同責任邊界；預設允許各自演進，不強制共享 ambient effect 實作
 
 `portals/realms/world/`（子系統）：
 

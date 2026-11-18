@@ -16,7 +16,7 @@
 - 套用範圍: `sky-theme` 背景雲層視覺語彙（雲形質感、位移噪聲概念）
 - 實作位置:
   - `assets/css/site/shared.css`（`.sky-cloud*` 與 `@keyframes sky-cloud-*`）
-  - `core/script.js`（`initSkyGardenAmbience()` 內雲層產生邏輯）
+  - `core/site/10-ambient.js`（`initSkyGardenAmbience()` 內雲層產生邏輯）
 - 備註: 目前已依 Ludwigia 風格重寫為背景層動畫，並加入雙向漂移與隨機大小/速度。
 
 ### Deep Sea 魚群（Fish）
@@ -25,7 +25,7 @@
 - 套用範圍: `deep-sea-theme` 的魚群動態與游動節奏參考
 - 實作位置:
   - `assets/css/site/shared.css`（`.deep-sea-fish*` 與相關 keyframes）
-  - `core/script.js`（`buildFishSvg()`、`initDeepSeaFish()`）
+  - `core/site/10-ambient.js`（`buildFishSvg()`、`initDeepSeaFish()`）
 - 備註: 目前使用程式生成與站內樣式變數，不直接依賴外部託管素材。
 
 ### Garden Theme 日光背景（Sunlit Atmosphere）
@@ -34,7 +34,7 @@
 - 套用範圍: `garden-theme` 可參考的日光背景語彙，包括深淺漸層天空、上層光束、hero 錨定地面光暈。
 - 預計實作位置:
   - `assets/css/site/shared.css`（`garden-theme` 背景 gradient tokens、日光 beam / bloom / spotlight layers）
-  - `core/script.js`（沿用 `initSkyGardenAmbience()` 掛載點，必要時為 `garden-ambient` 補日光層）
+  - `core/site/10-ambient.js`（沿用 `initSkyGardenAmbience()` 掛載點，必要時為 `garden-ambient` 補日光層）
 - 備註: 僅借鑑「fixed background canvas + 上層 light beams + content-anchored spotlight」的分層概念與色彩節奏；實作需維持 Ludwigia 現有 `Theme` / `Effects` / `pointer-events:none` 契約，不直接搬運原站結構或素材。當前 Ludwigia 僅在首頁啟用這層較強的日光 ambience，避免干擾搜尋結果與長文閱讀頁。
 
 ### Ludwig's World & Studio（等軸 2.5D 虛擬生活空間與社交世界）

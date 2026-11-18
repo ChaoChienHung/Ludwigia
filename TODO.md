@@ -13,6 +13,11 @@
 
 ## Constellation Queue（待 Review）
 
+- [x] 重構 Phase 3–5：runtime 分檔、CSS 分層、生成器拆模組
+    - 交付條件：`create_content.py` 拆成 `tools/content/` 且所有輸出逐位元組不變；`core/script.js` 拆成 `core/site/` 並有 Node smoke test；`shared.css` 拆成分檔，ambient 抬升改為 opt-in；畫面行為不變（已知 bug 修正除外）。
+    - 已完成：Phase 5 重生 110 篇與基準逐位元組相同；Phase 3 拆成 12 個依序載入的模組，所有頁面改由 `pages/_shared/runtime.html` 載入；Phase 4 拆成 11 個分檔，ambient 規則改 opt-in，並修正搜尋頁兩個 modal 在 ambient 主題下被改成 relative 的既有問題、排序抽屜改為 `div role="dialog"`。以無頭 Chrome 比對 computed style 確認新舊一致（細節見 `docs/tech/refactor-roadmap.md`）。
+    - Review 重點（看畫面）：切換幾種 Theme（特別是 Galaxy、Deep Sea、Sky、Garden 並開啟動態效果）看首頁、搜尋頁、內容頁；在搜尋頁打開 Help 與 Tags 彈窗；手機寬度打開排序抽屜；內容頁的 Outline / Metadata、Reading Mode、quiz、複製 Markdown。
+
 - [x] Portals 閱讀性與 Labs 資源入口分工
     - 已完成：Portals 初訪提示窗、頂欄與門牌字級加大，頂欄保留克制的奇幻風；World 從 Labs 與 More 的獨立入口移除，仍由 Portals 進入；Toolkit 平時用直白名稱、密語模式顯示 Grimoire；增加 Template／Guide，種類與用途可交叉篩選，種類小標籤加粗；重建 Portals 靜態資產。
     - Review 重點：請在桌機和手機檢查 Portals 頂欄、初訪提示窗與門牌是否易讀；在 Labs 開啟／關閉密語，確認卡片和資源頁名稱同步切換；試用四種種類與用途篩選。
