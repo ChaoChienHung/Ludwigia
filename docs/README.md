@@ -1,6 +1,6 @@
 # Docs（功能與文件導覽）
 
-這裡按功能指出「先讀什麼」與「實作大致在哪裡」。所有人共用的術語、日常工作流與資料夾責任，先看根目錄 `README.md` 的「專案術語（Terminology）」與「Repository Map（程式庫導覽）」；Agent 的長期約束看 `AGENTS.md`，最近停點看 `HANDOFF.md`，總體待辦看 `TODO.md`。本頁不是逐檔清單。
+這裡按功能指出「先讀什麼」與「實作大致在哪裡」。所有人共用的術語、日常工作流與資料夾責任，先看根目錄 `README.md` 的「專案術語（Terminology）」與「Repository Map（程式庫導覽）」；Agent 的長期約束看 `AGENTS.md`，最近停點看 `HANDOFF.md`，未完成任務看 `TODO.md`，已完成待驗收的工作看 `REVIEW.md`。本頁不是逐檔清單。
 
 ## 功能導覽
 
@@ -14,9 +14,9 @@
 | 首頁 Timeline、Skills、Credentials | `data/`、`assets/` | [guide/data-authoring-guide.md](guide/data-authoring-guide.md)；契約見 [specs/timeline-design-spec.md](specs/timeline-design-spec.md)、[specs/skills-credentials-spec.md](specs/skills-credentials-spec.md)。 |
 | 主站外觀、設定、導覽與助手 | `core/`、`assets/`、`i18n/`、`pages/` | [guide/theme-palette-guide.md](guide/theme-palette-guide.md)、[specs/layout-spec.md](specs/layout-spec.md)；助手入口見 [specs/copilot-entry-spec.md](specs/copilot-entry-spec.md)。 |
 | Portals、Realms 與 World | `portals/` | [specs/realm-spec.md](specs/realm-spec.md)、[specs/isometric-world-spec.md](specs/isometric-world-spec.md)；效能現況見 [tech/portals-world-performance.md](tech/portals-world-performance.md)。 |
-| Labs、Toolkit 與可重用 Skills | `labs/`、`data/Grimoire/`、`skills/` | [specs/system-spec.md](specs/system-spec.md) 的 Toolkit 契約與 [design/design.md](design/design.md) 的入口分工。 |
+| Labs、Toolkit 與可重用 Skills | `labs/`、`data/Toolkit/`、`skills/` | [specs/system-spec.md](specs/system-spec.md) 的 Toolkit 契約與 [design/design.md](design/design.md) 的入口分工。 |
 | 建置、測試與交付 | `tools/`、`tests/`、各子系統 source | [tech/tech-stack.md](tech/tech-stack.md)、[rules/checklist.md](rules/checklist.md)、[rules/guardrails.md](rules/guardrails.md)。 |
-| Agent 工作交接 | repo root、`data/Grimoire/` | `AGENTS.md` 管長期規則；`HANDOFF.md` 管最近停點；`TODO.md` 管長期待辦。Toolkit 的可重用範本在 `data/Grimoire/resources/`。 |
+| Agent 工作交接與任務追蹤 | repo root、`data/Toolkit/` | `AGENTS.md` 管長期規則；`HANDOFF.md` 管最近停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成待作者驗收。Toolkit 範本在 `data/Toolkit/resources/`。 |
 
 ## 文件層的責任
 
@@ -30,7 +30,7 @@
 | `docs/author/` | 作者的寫作、測試與演進筆記。 |
 | `docs/miscellaneous/` | 暫時不屬於以上類別的參考資料。 |
 
-跨層文件各守職責：`README.md` 回答「這是什麼、去哪裡找」；spec 回答「精確規則是什麼」；guide 回答「怎麼維護」；tech 回答「目前怎麼實作」；`AGENTS.md` 回答「Agent 不能破壞什麼、執行時怎麼做」；`HANDOFF.md` 回答「上一個 Agent 剛停在哪裡」。
+跨層文件各守職責：`README.md` 回答「這是什麼、去哪裡找」；spec 回答「精確規則是什麼」；guide 回答「怎麼維護」；tech 回答「目前怎麼實作」；`AGENTS.md` 回答「Agent 不能破壞什麼、執行時怎麼做」；`HANDOFF.md` 回答「上一個 Agent 剛停在哪裡」；`TODO.md` 與 `REVIEW.md` 分別追蹤待做與待驗收。
 
 ## 維護方式
 

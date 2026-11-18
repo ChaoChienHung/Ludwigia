@@ -10,6 +10,7 @@
 - `HANDOFF.md`：上一個 Agent 的短期停點與進行中工作（repo root；不複製長期待辦）
 - `README.md`：專案術語、Repository Map 與使用入口（repo root；所有讀者共用）
 - `TODO.md`：總體與長期任務追蹤（repo root）
+- `REVIEW.md`：Agent 已完成、等待我驗收的工作（repo root）
 - `docs/README.md`：按功能查起始文件與主要實作資料夾，不維護逐檔清單
 - `docs/specs/system-spec.md`：系統設計與可驗證約定（schema / data flow / guardrails）
 - `docs/design/design.md`：設計理由、UI/UX 取捨與重大決策脈絡

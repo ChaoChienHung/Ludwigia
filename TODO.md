@@ -1,151 +1,17 @@
 # TODO
 
 > [!TIP]
-> **寫作與筆記主題（Writing & Notes Backlog）** 已獨立收錄於 [ARTICLES.md](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/ARTICLES.md)。  
-> 本文件（`TODO.md`）專注於網站系統工程、UI/UX 設計、自動化工作流、效能與架構相關的任務追蹤。
+> **寫作與筆記主題（Writing & Notes Backlog）** 已獨立收錄於 [ARTICLES.md](./ARTICLES.md)。
+> 本文件（`TODO.md`）專注於網站系統工程、UI/UX 設計、自動化工作流、效能與架構相關的未完任務；已完成但待作者驗收的工作見 [REVIEW.md](./REVIEW.md)。
 
-## 寫法約定（每個 task 都要有交付條件）
+## 撰寫規則
 
 - 每個 task 至少包含一行 `交付條件：...`（可驗收、可勾選、可重現）
 - 優先寫「行為」與「影響範圍」（哪些入口頁/哪些工作流）
 - 若變更影響 index/schema，交付條件必須包含「search-index.{json,js} 已更新並納入版本控制」
 - 若變更影響使用方式/約定/寫作語法，交付條件必須包含「文件同步」（依 `README.md` Repository Map 與 `docs/README.md` 功能導覽找受影響文件）
 
-## Constellation Queue（待 Review）
-
-- [x] 重構 Phase 3–5：runtime 分檔、CSS 分層、生成器拆模組
-    - 交付條件：`create_content.py` 拆成 `tools/content/` 且所有輸出逐位元組不變；`core/script.js` 拆成 `core/site/` 並有 Node smoke test；`shared.css` 拆成分檔，ambient 抬升改為 opt-in；畫面行為不變（已知 bug 修正除外）。
-    - 已完成：Phase 5 重生 110 篇與基準逐位元組相同；Phase 3 拆成 12 個依序載入的模組，所有頁面改由 `pages/_shared/runtime.html` 載入；Phase 4 拆成 11 個分檔，ambient 規則改 opt-in，並修正搜尋頁兩個 modal 在 ambient 主題下被改成 relative 的既有問題、排序抽屜改為 `div role="dialog"`。以無頭 Chrome 比對 computed style 確認新舊一致（細節見 `docs/tech/refactor-roadmap.md`）。
-    - Review 重點（看畫面）：切換幾種 Theme（特別是 Galaxy、Deep Sea、Sky、Garden 並開啟動態效果）看首頁、搜尋頁、內容頁；在搜尋頁打開 Help 與 Tags 彈窗；手機寬度打開排序抽屜；內容頁的 Outline / Metadata、Reading Mode、quiz、複製 Markdown。
-
-- [x] Portals 閱讀性與 Labs 資源入口分工
-    - 已完成：Portals 初訪提示窗、頂欄與門牌字級加大，頂欄保留克制的奇幻風；World 從 Labs 與 More 的獨立入口移除，仍由 Portals 進入；Toolkit 平時用直白名稱、密語模式顯示 Grimoire；增加 Template／Guide，種類與用途可交叉篩選，種類小標籤加粗；重建 Portals 靜態資產。
-    - Review 重點：請在桌機和手機檢查 Portals 頂欄、初訪提示窗與門牌是否易讀；在 Labs 開啟／關閉密語，確認卡片和資源頁名稱同步切換；試用四種種類與用途篩選。
-
-- [x] 重構 Phase 2：手寫頁面 shell 收斂
-    - 交付條件：手寫頁面的 navbar / footer 只有一個來源（`pages/_shared/`），由 `cli.py build-pages` 生成並有測試守門；內容頁 navbar 與 partial 一致。
-    - 已完成：16 個手寫頁面（9 種 navbar 版本）改用標記區塊，由 `tools/build_pages.py` 生成，順便修掉 `notes/index.html` 多出的 `</div>`；新增 `pages/_shared/footer.html`；73 篇舊版生成的內容頁用目前生成器重生並重建索引；`tests/test_page_shell.py` 新增 4 項測試，`pre-push` 也會檢查。全套 64 項測試通過。
-    - Review 重點（看畫面）：Labs 各子頁的 navbar 現在有 logo 和完整下拉選單；Portfolio / More 的桌面 navbar 從精簡的 Portfolio／Search／More 改成全站共用版本（手機底部導覽不受影響）；Projects 的 footer 改成全站統一樣式；抽看幾篇內容頁的 tag 顯示。
-
-- [x] 重構 Phase 1：hooks、白名單、部署路徑、Portals 依賴
-    - 交付條件：`cli.py install-hooks` 可用；生成物白名單與現況一致；只保留一條部署路徑；Portals 移除未使用的依賴且 build 產物不變。
-    - 已完成：補回 `.githooks/`（pre-commit 重生 staged 內容頁；pre-push 跑測試並擋下過期索引與 World 資料），兩個 hook 都在暫時的 worktree 實測過；`characters.json` 加入 AGENTS 白名單；移除 GitHub Pages workflow，部署收斂為 Cloudflare，`.assetsignore` 補排除 `.githooks/`、`.claude/`；Portals 移除 `@google/genai`、`express`、`dotenv`、`@types/express`、`esbuild`，重新 build 後 JS 逐位元組相同。
-    - Review 重點：在本機執行一次 `python3 cli.py install-hooks`；到 GitHub repo 的 Settings → Pages 關閉 GitHub Pages；確認 Cloudflare 是自動部署（連 GitHub）還是手動 `wrangler deploy`。
-
-- [x] Portals 與 World 效能優化（讓成本跟著可見內容成長）
-    - 交付條件：先量測再優化，取得桌面與手機的前後數據；World 的深度排序不再是 O(n²)；不退化視口中心縮放、牆面剪切矩陣、無閉環深度排序與 palette / theme 聯動契約；`portals/assets/` 重建；`cli.py test` 與 realm 測試通過；同步 spec / design / TODO。
-    - 已完成（World）：深度排序改為「螢幕 x 欄位掃描線＋binary heap」（`isBehind` 規則不變）；地形改為初始化時分類一次，每幀只走訪視口格子並合併 fill；地面貼花、浮島崖壁與雲海、粒子加上視口裁剪；靜態實體改用 footprint 外框裁剪；HUD 的 DOM 寫入與 halo CSS 變數只在值改變時才寫；backing-store DPR 上限為桌面 2×、觸控 1.75×；通關密語遮罩或 modal 蓋住 canvas 時降到約 20 fps；支援 `prefers-reduced-motion`；觸控裝置的 HUD 改用實色表面，不做 backdrop blur。
-    - 已完成（Portals）：spring 鏡頭改為按需 rAF，收斂後停止；日夜相位只掛載目前相位與淡出中的相位；`PortalComponent` 加上 `React.memo`，並以 `IntersectionObserver` 暫停畫面外的動畫；靈脈線拿掉 `feGaussianBlur`；進度條改用 `scaleX`；支援 `prefers-reduced-motion`；孢子數量依視口面積縮放；已重建 `portals/assets/`。
-    - 量測（headless Chrome / CDP；桌面 1440×900 DPR 2，手機 390×844 DPR 3、CPU 4× 降速）：
-        - World 手機：主執行緒忙碌 60% → 41%；每秒強制 layout 59 → 0；地形每幀 2.4–3.0 ms → 0.6–1.7 ms；每幀 JS 時間（8 個地點）例如深淵 5.5 → 3.1 ms、Minecraft 島 5.9 → 3.2 ms、抖音 5.8 → 4.3 ms、校園 6.4 → 4.7 ms。
-        - World 桌面：主執行緒 36.6% → 26.1%；每幀 JS 時間例如抖音 7.6 → 6.5 ms、東區 5.8 → 4.1 ms、深淵 3.2 → 2.1 ms。
-        - World 首次造訪（密語遮罩未解鎖）：手機主執行緒 62.8% → 20.7%，桌面 22.1% → 12.8%。優化前在遮罩下，東區曾量到 28 fps，p95 為 100 ms。
-        - 深度排序擴展性（真實 footprint 複製 1–8 倍）：287 個實體 2.3 → 1.3 ms，1,148 個 25 → 1.7 ms，2,296 個 101 → 3.7 ms。在 11 個地點比對 3,647 組直接遮擋關係，新舊排序的違反數相同（皆為 2，來自閉環回復）。
-        - Portals：合成層面積 57.7 → 20.9 MP（估計 GPU 記憶體：桌面約 880 → 320 MB，手機約 1.6 GB → 590 MB）；手機主執行緒 64% → 37.5%（script 20.7% → 7.5%，layout 4.3% → 1.6%）；桌面平移 52 → 58–60 fps；日夜切換 50.5 → 60 fps；DOM 節點 867 → 763。
-        - 視覺回歸：World 在 10 個地點與 HEAD 版本逐像素比對，差異 ≤ 0.18%，只有時間相關的雪花、水晶脈動，以及一處長牆因 footprint 裁剪而不再錯誤消失。Portals 截圖肉眼一致。
-    - Review 重點：headless Chrome 的合成器不等於手機 GPU，請在實機手機上走一圈 World（特別是抖音、東區、深淵橋）並平移 Portals，感受是否明顯變順；確認觸控裝置 HUD 從毛玻璃改成實色可以接受；確認靈脈線改成靜態光暈後的樣子；細節規則見 `docs/specs/realm-spec.md` §6。
-
-- [x] 重構 Phase 0：共用 theme preload 與技術文件
-    - 交付條件：123 份相同的 inline theme / palette script 收斂成 `core/theme-preload.js`（生成器模板同步），行為完全等價；新增 `docs/tech/tech-stack.md` 與 `docs/tech/refactor-roadmap.md`。
-    - 已完成：Node 比對 192 種 theme × palette 組合零差異；重新生成內容頁與替換後逐位元組相同；新增 `tests/test_page_shell.py`（5 項）；全套 61 項測試通過；theme guide、AGENTS、docs 索引已同步。
-    - Review 重點：在瀏覽器切換幾種 Theme / Palette 後重新整理，確認首屏沒有閃爍；讀過 roadmap 後決定 Phase 1 的兩個選擇題（git hooks 補回或移除、保留哪條部署路徑）。
-
-- [x] Labs Grimoire 魔導書（Prompts & Skills）
-    - 交付條件：Labs 新增 `labs/grimoire/index.html`，以 `data/Grimoire/grimoire.json` 為 SSOT；skill 條目直接讀 `skills/<name>/skill.md`，不複製第二份；靈力狀態由 `verified_at` 與 `stale_after_days` 在前端推導；版面沿用 tag 頁的總覽卡（總數、類型統計磚、流派 pill）；卡片點開後整列展開，左側渲染全文、右側顯示狀態與複製／下載／原始檔；三語切換與 Theme / Palette。
-    - 已完成：資料檔與第一則 prompt（知識鷹架審稿）、3 個 skill 條目、`assets/js/grimoire-labs.js`、Labs 卡片；Labs 移除 Portals 卡片；新增 `tests/test_grimoire_data.py`。
-    - Review 重點：所有條目的 `verified_with` / `verified_at` 目前都是 null（顯示「未經試煉」），請實際用模型測過後填入；確認要公開哪些 skill；在瀏覽器檢查桌面與手機版面。
-
-- [x] CS5234 全課筆記補至 Lecture 13
-    - 交付條件：source note 納入 Lecture 11–13 的 graph streaming/query、deterministic 與 randomized communication 內容；對照 supplied Notes 1–10、Exercises 1–3、Homework 1–3、Quiz 1–2；重生 HTML 並確認 drafting 不進公開索引。
-    - 已完成：保留 Week 1–10 既有詳解，新增 Week 11–13 的模型、演算法、公式、證明主線與 assessment crosswalk；補充 Homework 1–3、Quiz 1–2 的可重用推導重點，並更新摘要、quick reference、takeaways、references；`cli.py build` 成功，公開 search index 未因 drafting 筆記變動。
-    - Review 重點：作者核對 Lecture 11 AGM／MST、Lecture 13 information cost 的講義版本，以及 Homework 3 尚無官方答案的標示；通讀新增數學推導與生成頁面。
-
-- [x] Aetheria Portals 接入、境域收斂 (portals/realms/)、極致扁平化與 Realm 測試規範
-    - 交付條件：將 Aetheria Portals 整合為一級目錄 `portals/`，平鋪原始碼並使用天然 `portals/assets/` 產物，支援純靜態開箱即用與 TypeScript 源碼維護；全站 FAB 與 Mobile Nav Sheet 轉移為 `Portals` 與 `Labs` 雙核心探索樞紐，Portals 支援一鍵躍遷至 `Digital Garden` 與 `Ludwigia World`；在 `portals/` 底下建立 `realms/` 專屬目錄收納已完成世界；`labs/` 解散 `future/` 扁平化收納實驗原型；將境域專屬測試遷入各境域目錄（`portals/realms/*/tests/`），由根目錄 `tests/test_misc_data.py` 動態聚合執行；撰寫 `docs/specs/realm-spec.md` 規範境域架構與擴充流程；規格文件與部署白名單同步更新；通過全套單元與合約測試。
-    - 已完成：完成 `portals/` 靜態與原始碼架構建立，徹底消除 `aetheria-portals/` 與 `portal-assets/` 多餘層級，新增 `python3 cli.py build-portals` 自動構建管線；完成 TopBar 維度錨點、古樹之門與浮島星環躍遷至 Garden 與 World 的互動；更新全站 FAB（含 `zh-Hant`/`zh-Hans`/`en`）、Mobile Nav Sheet、`pages/more.html`、`pages/search.html` 與 `labs/index.html`；解散 `labs/future/`，原型直接平鋪於 `labs/`；建立 `portals/realms/garden` 與 `portals/realms/world`；建立境域專屬測試 `test_world_data.py` 與 `test_garden_data.py`，由 `tests/test_misc_data.py` 自動無感掛載；建立 `docs/specs/realm-spec.md` 並更新全站文檔索引；`python3 cli.py test` 52 項單元測試全數通過，所有本地端點 HTTP 200 實測成功。
-    - Review 重點：作者在本機瀏覽器確認右下角 FAB 展開項目（傳送門、實驗室）、點擊進入 `portals/index.html` 體驗神木之門/浮島星環穿梭效果與頂部導覽列跳轉，並確認 `portals/realms/garden/` 與 `portals/realms/world/` 及其返回傳送門按鈕運作正常。
-
-- [x] CS5224 全課與 CS5446 Week 7 後段複習資料包
-    - 交付條件：兩份按週閱讀的純文字 Markdown 濃縮知識點；對應的 A4 PDF 與可編輯 LaTeX 納入原講義圖、相關 Tutorial／Lab 原題與詳解。檔案暫存 `artifacts/`，Markdown 不含圖片與站點專用語法。
-    - 已完成：CS5224 涵蓋 Week 1–10、Lab 1／2；CS5446 涵蓋 Week 7–11 與 Tutorial 5–8。純文字 Markdown 縮至約 18.4k／6.9k words。PDF／`.tex` 參考原 CS5446 Note 的藍色標題、目錄與紫色逐題問答框，每題下方直接附綠色解答；保留 61 張有助理解的原講義圖（Cloud 44、RL 17），移除 20 張整頁題單截圖。題目共 187 題（Cloud Labs 17、Cloud quizzes 40、歷屆 tests 75、RL Tutorial 5–8 共 55）；Lab 2 另附 PySpark 與 Lambda 程式，並提供 LaTeX 原始碼壓縮包。Week 12 無獨立講義，未虛構章節。
-    - Review 重點：作者最終全盤 proofread；尤其核對 CS5224 Week 7 合併後的雙案例、歷屆 test sample answer、Lab 2 報告中的數值，以及 CS5446 Week 7–11 的公式和 Tutorial 週次標示。CS5224 四組 Quiz 共 40 題已依 Canvas 批改截圖逐題核對，修正五題答案；Quiz 1 Q3 依畫面顯示的正解標記校正。LaTeX 原始檔尚待在裝有 XeLaTeX 的環境實際編譯核對；PDF 由相同 Markdown 及圖檔另行排版生成。
-
-- [x] Ludwigia World 對話資料與色盤來源收斂
-    - 交付條件：玩家對話、角色獨白、NPC 互聊在 `characters.json` 分欄維護並保持中英雙語；後兩類隨機觸發；主站與 World 共用 palette 基色，文件與驗證同步完成。
-    - 已完成：23 位角色拆成 `dialogues.user/self`、15 組有效互聊收斂為 `npcDialogues`，移除重複與失效 ID；World 的 Theme／Palette 套用函式與 11 組 palette 基色各收斂到一處。
-    - Review 重點：作者在 World 實際走動，確認環境獨白／互聊節奏與 11 套 palette 在 HUD 上的可讀性。
-
-- [x] Ludwigia World 的 ChatGPT 角色對話改寫
-    - 交付條件：以 `data/characters/chatgpt/character.json` 和 `data/interactions/ai.json` 為來源，更新 ChatGPT 的中英文玩家對話、獨白與 NPC 互聊；填完所有 ChatGPT 佔位文字，保留 Claude／Gemini 親自回填的位置，重編譯 `characters.json` 並通過 World 資料驗證。
-    - 已完成：重寫五組玩家對話與五句獨白；保留並改寫咖啡廳互聊；填入八段既有 ChatGPT 回應並維持原有發話順序；另新增一段 ChatGPT 主動提問、留給 Gemini／Claude 接話的對話。Claude 回答後，已接續回應其資料來源觀點，並補上 Claude 新開的「替真實人物寫台詞」話題。雙語資料、編譯快取與 World 測試均已驗證。
-    - Review 重點：作者在 World 實際觸發對話，確認 ChatGPT 口吻、咖啡廳節奏，以及 Claude／Gemini 的佔位文字待各自回填後是否順暢。
-
-- [x] CS5446 與 CS5224 課程講義／習題補充
-    - 交付條件：CS5446 source 按課程總覽區分 Week 7–11，涵蓋 Tutorial 5–8 的對應週次、model-based RL、game theory 與 foundation-model decision systems；CS5224 source 分 Week 6–10 對照 Lecture 06–10 和 Cloud Native 客座講座；兩篇 HTML 重建，草稿維持不進公開索引。
-    - 已完成：保留已詳細整理的兩門課前段；第二輪逐頁核對後，依 CS5446 *Course Overview* 修正 Week 8 期中考、Week 9 model-based RL、Week 10 game theory、Week 11 foundation-model alignment 的講課週次，並與 Tutorial 5–8 自身的週次分開標示；詳解 Tutorial 5 延遲 MDP、MC/TD/ADP 與 Tutorial 6 MCTS 複雜度和 imitation learning，補足混合均衡與 world-model 訓練機制。CS5224 的相同 Lecture 07/08 PDF 依 k-means／影片 SaaS 合併為 Week 7 單一研讀章節，加入分散式迭代、容量／成本推導，Week 10 收錄 Cloud Native 講座；兩篇 HTML 重建，草稿狀態未變。
-    - Review 重點：作者全盤 proofread，特別核對 Tutorial 學生解答與官方題目、RL Week 9–11 的模型與均衡公式、Cloud Week 7 的雙案例（同一份投影片）與 Kubernetes 概念，以及原有 TCO 圖表占比；學生提交不視為官方答案，圖表占比不能當成絕對總成本。
-
-- [x] 首頁底部 Future Plans 區塊與導覽
-    - 交付條件：在首頁 Timeline 之後、Contact 之前呈現 fact verifier 的個人延伸構想；三語文案與 Theme/Palette 響應式樣式可用，Home 下拉選單可抵達此區塊，Skills/Credentials 載入時不會自動捲走 cover。
-    - 已完成：新增 Future Plans 卡片與 navbar 入口；修正 Skills/Credentials 橫向選單在載入時帶動整頁捲動的問題；保留原 Future Plan 待辦供後續實際研究。
-    - Review 重點：作者確認首頁公開文案與放置位置是否符合個人表達；此處不代表專案已啟動。
-
-- [x] Bebop 的 MTP／RL rollout 文獻筆記
-    - 交付條件：在 `notes/` 建立繁體中文 source 與可再現 HTML，從 MTP 入口可抵達；具備一手 References、reviewkit/takeaways/qprompt；維持 drafting，重建搜尋索引並確認草稿不公開。
-    - 已完成：記錄 target-only 與 rejection sampling 的接受規則、多步 TV loss、RL 前訓練與凍結預測頭的配置，以及接受率／rollout／整體訓練速度的證據邊界。
-    - Review 重點：作者全盤 proofread；核對熵與接受率分析的適用條件、TV loss 和候選分布的系統成本，以及最高 1.8 倍加速所對應的實驗設定。
-
-- [x] 四篇技術複習筆記：DPG／DDPG、GRPO 變體、cuDNN fusion、veRL／SGLang／Ray
-    - 交付條件：在 `notes/` 建立四篇繁體中文 source 與可再現 HTML；各篇有 metadata、原始文獻／官方文件、reviewkit/takeaways/qprompt；維持 drafting，不進公開搜尋索引。
-    - 已完成：以「問題與底層機制 → 方法差異 → 例子 → 邊界」整理先前討論；校正 DPG 不只是定理、Dr. GRPO 共用長度因子的尺度意義、GSPO clipping 證據範圍，以及 resharding 零冗餘的適用範圍；四篇 HTML 已生成，索引重生且內容未變。
-    - Review 重點：作者全盤 proofread；確認四篇的拆分方式與複習深度，特別檢查 DPG 梯度的近似條件、ARPO soft 歸因、GSPO 的 clipping 解讀及 cuDNN／SGLang 的版本用語。
-
-- [x] 文章草稿：為什麼機率世界到處都是 log？
-    - 交付條件：在 `writing/` 建立繁體中文 source 與可再現 HTML；串起機率連乘、資訊量與熵、最大概似／交叉熵／KL、sigmoid 梯度與 Log Derivative Trick；drafting 不進公開索引。
-    - 已完成：完成分層推導與公式，標出獨立性、固定目標分佈及參數依賴等適用前提；已生成 HTML 並更新索引。
-    - Review 重點：作者全盤 proofread；確認敘事語氣與篇幅，特別檢查從交叉熵轉到抽樣梯度的銜接；確認後再決定是否發布。
-
-- [x] Decision Transformer 與 Upside-Down RL 兩篇強化學習筆記
-    - 交付條件：各有獨立繁體中文 source 與可再現 HTML；具備 metadata、References、reviewkit/qprompt；相互引用可解析，草稿不進公開索引。
-    - 已完成：分別梳理 DT 的 RTG／序列化／訓推流程，以及 UDRL 的回報與時間指令／回頭標記；引用原論文，保留兩者差異。
-    - Review 重點：作者全盤 proofread；檢查回報條件的例子、UDRL 與 DT 的歷史關係及篇幅深度。
-
-- [x] 七篇推薦模型架構筆記：DLRM、HSTU、ULTRA-HSTU、MTGR、MTFM、OneTrans、OneTrans-V2
-    - 交付條件：每個方法各有獨立繁體中文 source 筆記與可再現 HTML，具備 metadata、References、reviewkit/qprompt；交叉引用可解析，草稿不進公開索引。
-    - 已完成：七篇依「問題 → 資料／token → 核心機制 → 成本與邊界」撰寫；以原論文與美團官方技術文章核對關鍵敘述；重建 HTML，確認 drafting 與 canonical links。
-    - Review 重點：作者全盤 proofread；特別確認 HSTU／MTGR 的 generative 與 discriminative 目標、OneTrans 與 V2 的系統邊界、MTFM 論文與技術文章的版本差異及各篇篇幅深度。
-
-- [x] MTP 系列入口與文獻資源筆記
-    - 交付條件：新增 `notes/multi-token-prediction/` 入口草稿與 29 篇方法／模型／生成式推薦資源筆記；以 canonical links 導覽，各頁提供 References 與 reviewkit/qprompt；維持 drafting，重建 HTML 與 search-index.{json,js}。
-    - 已完成：入口正文、12 篇方法／9 篇模型／8 篇推薦資源筆記與文獻地圖；一手資料核對至 2026-10-06；30 份 Markdown／HTML 均成功生成；metadata／reviewkit／可見 qprompt pane 正確，入口 canonical links 全部可解析至既有 HTML，68 個不重複來源 URL；索引重生後逐位元組相同，新草稿全數排除於公開索引，`git diff --check` 通過。
-    - Review 重點：作者全盤 proofread；確認 backbone supervision／head-only fitting／serving／RL rollout 的區分、PinRec v1 與最新版差異、GPR 架構與部署版本、採樣驗證保證、推薦 token／item 語意；個別深入正文仍待補，不視為完成研究寫作。既有 Markdown 導出限制：`reviewkit` 內的 takeaways 目前被 extractor 丟棄，已另列修復 task；source 與 HTML 重點仍保留。
-
-- [x] CS5246 / CS5228 / CS5223：整合補充材料與釐清概念
-    - 交付條件：將 CS5246 問題與 BPE 化學式實作心得、CS5228 churn case 與概念補充、CS5223 Week 9 與 Paxos preemption 筆記整合進各自 source；重建 HTML 與索引，頁尾提供 reviewkit/qprompt。
-    - 已完成：按概念/既有週次整合，修正 non-regular/undecidable、TF-IDF 長度偏差、ARI、PCA/t-SNE、XGBoost/stacking 誤貼、Paxos safety/leader 退位與 GFS acknowledgment 描述；提供官方/原始文獻核驗連結；三份 HTML 重建、索引重生（drafting 下內容未變），生成器 self-test 與 26 項相關測試通過。
-    - Review 重點：作者全盤 proofread；確認課堂慣例、BPE marker/化學式辨識與 token IDs 的實作一致性、churn 實驗數值及 Phase1A/timer 實際程式。未提供的結果與程式行為均未視為已驗證。
-
-- [x] CS5446 cheatsheet from the supplied course materials
-    - Delivery condition: Maintain a plain English, concept-focused `CS5446-cheatsheet.md` using original week labels, without question-specific Assignment/Tutorial answers, exam administration, lookup maps, reward shaping, or EVPI.
-    - Completed: Removed detailed problem setups, case names, numerical answer sequences, and assignment-specific models. Preserved and generalized PDDL structure/invariants, goal interaction, HTN refinement, risk/EU procedures, objective selection, MC averaging, feature adequacy, advantage, and PPO clipping. Reduced length from 11,413 to 8,872 words. Checked English text, Markdown tables, formula delimiters, section references, original week labels, and equivalence of the PPO piecewise formula to its clipped objective.
-    - Review focus: Author proofread of concept coverage and confirmed exam scope, especially reward/horizon conventions, relaxation assumptions, reachable-set bounds, and policy-gradient estimators. Brief examples illustrate concepts rather than reproduce particular questions. Week 7 retains its original label despite excluding Week 6.
-
-- [x] CS5446 note: convert remaining Chinese passages to English
-    - 交付條件：Translate all remaining Chinese prose in the CS5446 Markdown source, rebuild its HTML, and verify the reader-facing page and English question bank contain no Chinese text.
-    - 已完成：Translated 85 Chinese lines, rebuilt the HTML with `cli.py build`, and checked the Markdown, HTML body, and `questions.en.json`; all reader-facing content is English. The search index was regenerated and is unchanged.
-    - Review 重點：Author proofread of technical phrasing, especially the course overview, progression/regression worked example, EVPI explanation, and Week 5 reading guide.
-
-- [x] CS5224 note: convert the course overview and Lab 1 to English
-    - Delivery condition: Publish the CS5224 Markdown and rebuilt HTML in English, preserve links and code blocks, and verify no Chinese remains in the reader-facing page.
-    - Completed: Rewrote the course reading guide and Lab 1 in English, rebuilt the HTML, and confirmed zero CJK characters in the Markdown and visible HTML. All 31 source links and 172 code-fence markers remain present.
-    - Review focus: Author proofread of the English technical wording and case assumptions, especially identity and authorization, S3 lifecycle, cost calculations, and the viva answers.
-
-- [x] CS5224 Lab 1 補充整合與核驗
-    - 交付條件：將兩份 Lab 1 材料整合進既有 Cloud Computing 筆記，涵蓋 S3、資料流、多租戶授權、可靠性、成本與 Viva；重建 HTML／索引並通過既有測試。
-    - 已完成：新增十節有前後銜接的案例、成本推算與驗收矩陣，核對 AWS 官方來源；HTML／索引重建成功，self-test 與 46 項測試通過。筆記維持 drafting，未修改實際 AWS 資源。
-    - Review 重點：作者全盤 proofread，確認與原始 Lab 題目／實作一致；正文中的設計建議、假設容量與待執行測試不應被當成實際部署成果。
-
-## Task Framing（Priority vs Ownership）
+## 任務分類
 
 - `P0..P4` 表示重要性 / 影響範圍，不等於實作成本
 - `Agent-friendly` 表示規則清楚、驗收清楚、可在少量確認下委派完成
@@ -156,74 +22,11 @@
   - 如果 task 的核心是「把東西做出來」，偏 `Agent-friendly`
   - 如果 task 的核心是「決定要做成什麼樣子 / 想表達什麼」，偏 `Author-driven`
 
-- [x] Layered Scaffolding & Frictionless Progression Contract: 建立知識邏輯階層化鷹架與零割裂閱讀流契約
-  - [x] 已完成什麼：
-    - **非退化硬契約**：在 `AGENTS.md` 加入「知識邏輯與閱讀流暢度契約（階層化鷹架與零割裂推進原則）」，定調「底層成群鋪墊、逐層向上堆疊、零跳躍、零割裂」，徹底消除認知斷崖。
-    - **Backlog 寫作指南**：在 `ARTICLES.md` 頂部確立所有未來待辦長文與技術筆記必須嚴格遵守此原則。
-    - **寫作技巧與自檢清單**：在 `docs/author/writing-notes.md` 新增「階層化鷹架與零割裂知識堆疊」技巧，詳述三層鷹架模型、三大割裂反模式（空中樓閣、板塊孤島拼貼、概念倒置）與自檢清單。
-    - **第一視角演進與設計決策**：在 `docs/author/dev-notes.md`、`docs/design/design.md` 補齊作者對閱讀難度、心智模型自然生長與心智摩擦力最小化的設計脈絡。
-    - **品質守門與交付驗收**：在 `docs/rules/guardrails.md`、`docs/rules/checklist.md` 與 `README.md` 同步補全守門條目。
-  - [x] Review 重點：確認各文檔對「底層成群鋪墊、逐層向上堆疊」的闡述一致、切中痛點，並作為後續文章生成與重構的不可動搖規範。
-
-- [x] Mobile Inset Grouped Settings: 手機端設定體驗重構為原生 iOS 分組卡片流（Inset Grouped Cards）
-  - [x] 已完成什麼：
-    - **取消手機分頁切換**：在小螢幕（<= 767.98px）下隱藏 General / Style 標籤，將所有設定整合為縱向連續流暢捲動之圓角群組卡片，單手滑動即可閱覽並設定全部項目。
-    - **滿版分段控制（Segmented Controls）**：語言（English / 中文 / 简体中文）、動態效果（On / Off）、Copilot（Off / Home / All）導入原生手機風格之全寬膠囊分段控制器，點選反饋即時平滑。
-    - **主題 3x2 網格與色盤流暢觸控**：主題按鈕改為 3x2 緊湊平衡網格，色盤軌道支援觸控慣性滑動，點選目標清晰防誤觸。
-    - **彈窗高度自適應**：全站設定 Modal 在手機端優化為圓角 Bottom-sheet/Modal 卡片，內容捲動與全域滾動隔離，點擊空白處與 Close 關閉無干擾。
-    - **狀態雙向同步與文檔**：`pages/settings.html` 與 Modal 保持完全相同之 `[data-settings-*]` 與 `LudwigSettingsRuntime` 契約，並更新 `AGENTS.md`、`docs/specs/system-spec.md`。
-  - [x] Review 重點：確認手機版點擊設定圖示與開啟 `pages/settings.html` 時，卡片分組清晰、分段切換流暢、各設定項目即時套用且無任何跳頁。
-
-- [x] Responsive Separation & Scoped i18n Architecture: 行動端與桌面端響應式分層架構收斂與選擇器作用域強隔離
-  - [x] 已完成什麼：
-    - **無損響應式雙態標籤**：`Credentials` 的放大預覽與下載按鈕導入宣告式雙態標籤（桌機端 `Full Preview` / `Download Document`，行動端自動切換為 `Preview` / `Download`），由純 CSS media query 控制顯示，徹底防止圖示被吃掉與版面超寬問題。
-    - **選擇器作用域隔離**：`i18n/navbar.json` 與 `core/i18n.js` 全面加上 `.custom-nav` 與 `footer` 容器作用域，行動端底部導覽列改採微觀子元素多語更新（`.mobile-bottom-nav-item span`），杜絕全域選擇器污染卡片與按鈕。
-    - **自動化契約守門**：在 `tests/test_skills_credentials_data.py` 新增 i18n 字典鍵值完整性與全域選擇器容器作用域測試（46 項測試全數 PASS）。
-    - **非退化架構文檔**：將響應式分層架構、雙態標籤模式與選擇器隔離原則寫入 `AGENTS.md`、`docs/specs/system-spec.md`、`docs/rules/guardrails.md` 及 `docs/specs/skills-credentials-spec.md`。
-  - [x] Review 重點：確認手機版首頁 Accolades 區塊預覽/下載按鈕排版舒展不擁擠、底部導覽列圖示常駐、Portfolio 頁面卡片完整保留。
-
-- [x] Standardize `<draft>` block authoring structure: Update documentation with `<draft>` outline patterns & Outcome Bias example
-  - [x] 已完成什麼：已更新 `AGENTS.md`、`docs/author/writing-notes.md`（新增 `## Draft 骨架編寫規範` 及《結果偏誤》文章範例）、`docs/specs/parser-spec.md`、`docs/specs/content-metadata-spec.md`、`docs/design/design.md`、`docs/rules/checklist.md` 與 `docs/rules/guardrails.md`
-  - [x] Review 重點：確認各份文檔中的 `<draft>` 骨架約定（`重點：內容` 或層級化清單）與範例是否完整且與現有規格保持一致
-
-- [x] SMR and Paxos Notes: Add State Machine Replication and Paxos Structured Notes
-  - [x] 已完成什麼：新增 `notes/state-machine-replication-and-paxos-structured-notes/`，整理 SMR 和 Paxos 結構化筆記，包含 SMR 背景與 FLP 不可能性定理、Paxos 各角色與 terminology、二階段算法細節、P2/P2a/P2b/P2c invariants、以及 liveness 與實務議題。
-  - [x] Review 重點：確認筆記的架構層次、排版與 wording 是否合適，以及產生的 HTML 與 `search-index.{json,js}` 是否如預期能被 Digital Garden 入口載入。
-
-- [x] Notes Draft：整理 `Paxos Made Moderately Complex` 結構化筆記與題庫草稿
-  - [x] 已完成什麼：新增 `notes/paxos-made-moderately-complex-structured-notes/`，整理 PMMC 的 SMR 問題設定、Replica / Leader / Acceptor invariants、Scout / Commander 分工、安全性鏈條、fault tolerance sizing，並補上與 Raft 的對照；另附一份約 15 題的外部 question bank
-  - [x] Review 重點：確認主 flow 是否要更偏「第一性原理 / intuition」或更偏「課堂複習版整理」，以及 quiz 的難度分布、題幹語氣與 tags 是否符合你之後想延伸的寫作方向
-
-- [x] Search / Sorting：收斂 Search 與 section landing 的 sorting UI，並把 relevance 相容語意補回文件
-  - [x] 已完成什麼：桌機 sort 改成 icon trigger + viewport-level popover，mobile 維持 drawer；Search 保留 `Default` 作為 relevance / search engine ranking 的 UI 入口，手動 sort 則覆寫目前結果集合排序
-  - [x] 文件同步：已更新 `docs/specs/system-spec.md`、`docs/tech/search-and-recommendation.md`、`docs/design/design.md`
-  - [x] Review 重點：確認 dropdown 不再被 results 蓋住、trigger icon 會隨升降方向變化、`Default` 顯示成 tag 形式且 Search / landing 的排序心智一致
-
-- [x] Companion placeholder：先拿掉目前 companion avatar 圖，但保留 runtime 邏輯與未來擴充文檔
-  - [x] 已完成什麼：settings 先收成 placeholder 說明，只保留 copilot；補 `docs/specs/companion-spec.md` 與 `docs/guide/companion-guide.md`，把 companion 的位置、大小、fallback 與擴充流程先定下來
-  - [x] 文件同步：已更新 `docs/README.md`、`README.md`、`AGENTS.md`
-  - [x] Review 重點：確認站上只剩 copilot 入口、companion 不會因舊 localStorage 再把 copilot 擋掉，且文件足以支撐之後重新開 companion
-
-
-- [x] Landing Page Skills & Credentials Sections: 新增首頁互動式技能樹與榮譽憑證展示區塊
-  - [x] 已完成什麼：
-    - `Skills`：於 `index.html` 的「關於我」下方、Timeline 上方新增定高視窗之分類技能量表與左右切換按鈕，資料由 `data/Skills/skills.json` SSOT 驅動。
-    - `Credentials & Honors`：新增支援 `Type`（獎狀、成績單、證書、感謝狀）與 `Domain`（學術、工程、體育、志工）之雙維度篩選展示視窗，提供主圖展示、可動態切換之縮圖 Option Bar 與全螢幕放大燈箱 Modal，資料由 `data/Credentials/credentials.json` SSOT 驅動。
-    - `Navbar & i18n`：更新頂部 Navbar Home 下拉選單連結，補齊 `core/i18n.js` 多語文案，並完整繼承全站 Palette & Theme Design Tokens。
-    - `Tests & Docs`：新增 `tests/test_skills_credentials_data.py` 單元測試（`python3 cli.py test` 41 項測試全數通過），並建立 `docs/specs/skills-credentials-spec.md` 與同步更新 `AGENTS.md`、`README.md`、`docs/README.md` 等全套文檔。
-  - [x] Review 重點：確認首頁 `#skills` 與 `#credentials` 的互動、類別切換、縮圖選單、燈箱 Modal 與深淺主題/Palette 呈現是否符合預期。
-
 ## Agent-friendly
 
 - [ ] 修復 Copy Markdown／Download Markdown 遺失 reviewkit 內 takeaways
     - 影響範圍：`tools/content_contract.py` 的 `extract_core_markdown` 與 source-driven 內容頁 Markdown 導出；現有 note 已可重現，不是 MTP 內容新增的 parser 變更。
     - 交付條件：`reviewkit` 內 `<takeaways>` 在純 Markdown 導出保留為 `## Key Takeaways` 加標準清單；繼續忽略 qprompt／qquiz UI 骨架，加入容器內與獨立 takeaways 的回歸驗證，確認一般正文／清單未退化；若修改語法或工作流，依 `docs/README.md` 功能導覽同步受影響文件並重建必要生成物。
-
-### P0
-
-- [x] 我感覺我們可以在關於我下方Timeline上方加上兩個page，一個是skills, 另一個是achievements, 之所以先上skills是因為我們這樣才能在後面利用achievements去佐證我的skills。
-  - [x] 然後我在想，我們的achievement應該要娶一個更general的名字才對，因為achievements理論上比較偏向於有得獎的成就，但我其實想做的是把各種獎狀、成績單、感謝狀都放進去，所以應該要更general一點。然後我其實在想的是最簡單餓方是一定是用一個carousel然後showcase所有的獎項，但這樣是不是很容易變得很雜亂？所以我在想我們理論上應該要有一個可以讓reader選擇種類的方式，然後主要分兩種，一種是category，另一種是type，分別代表這個是獎狀(Awards)、成績單(Transcripts)還是其他，然後另一個category代表的則是哪一個領域的，比如academic, basketaball, volunteer, 等等的。然後這樣我們就可以用carousel(我們可以試試看horizontal or vertical)的方式來showcase，其中不只有一個main showcase image的section旁邊或下面要有一個小的option bar，裡面都是縮小版的image，且可以有向左向右或著向上向下的箭頭，用來看更多achivement照片。
-  - [x] 然後另一個膽就是關於skills了 這部分我比較頭痛，因為理論上我們應該想一個可以讓skills scale但同時不會把空間站滿的方式。我感覺就一樣吧，我們用多個section bar charts來showcase不同skills之間的能力值，然後單一section或單一bar charts所顯示的能力就是相同genre的，比如說我第一個想到的是language，然後我們就可以在這個section/bar charts裡有Indonesian, Traditional Chinese, Simplified Chinese, English這四種。然後不同section或不同bar charts的切換則使用左右按鈕。這樣就可以讓多個section/bar charts共用一個空間但又可以scale。scale的方式就是等我skills超過一定量，我們就可以把它拆分成更細的bar chart。
 
 ### P1
 
@@ -236,29 +39,6 @@
   - [ ] 契約：至少定義 `title`、`slug`、`summary`、`status`、`anchors`、`links`、`key features`、`project scope`、排序/置頂欄位，以及多語內容怎麼掛
   - [ ] 守門：維持現有 `pages/projects.html#karen` / `#mentorion` / `#detoxio` / `#piggynest` / `#scriba` / `#sesame` / `#vellichor` deep link 不退化；不要把 `create_project` 做成另一個萬用 page builder
   - [ ] 交付條件：至少能用 1 個 project source 自動更新 `pages/projects.html` 的對應區塊，並定清楚後續新增/修改 project 的唯一工作流
-
-- [x] Mobile UX & UI Optimization: 全站手機版人體工學與介面優化
-  - [x] 已完成什麼：
-    1. **升級底部導覽列（Mobile Bottom Nav）與啟用 Bottom Sheet**：在 `core/script.js` 與 `assets/css/site/shared.css` 中將手機底欄升級為 4 大核心入口（`Home | Portfolio | Search | Menu`），點擊 Menu 即可滑出半透明磨砂抽屜（`mobile-nav-sheet`），支援首頁章節錨點跳轉（About, Skills, Credentials, Timeline, Contact）、全站探索入口（Projects, Garden, Labs, Settings, More Hub）以及單篇閱讀頁的大綱（TOC）、文章資訊（Meta）與專注閱讀模式切換。
-    2. **修復 Credentials 縮圖列表向右破版**：為 `.credentials-thumb-bar` 與 `.cred-thumb-strip` 補齊 `min-width: 0`、原生順暢觸控滾動與箭頭固定樣式，徹底解決原本縮圖列表將右側導航箭頭擠出螢幕外（x ≈ 899px）的嚴重跑版問題。
-    3. **重構 Timeline Scale 按鈕為 iOS 風格 Segmented Control**：將手機視口下的三顆按鈕轉為緊湊膠囊分段控制器，解決原本因字元寬度不足造成的文字擠壓與折行問題。
-    4. **修復 Tag 詳情頁 Grid 錯位重疊**：在媒體查詢中針對 `.hub-card.hub-card--stack` 與 `.tag-summary-card` 強制維持垂直 flex 流式佈局，修復標籤描述與統計卡片相互覆蓋的顯示問題。
-    5. **優化 Hero 首屏比例與搜尋框邊距**：手機下調整圓形頭像大小為 190px，避免單一照片佔滿 100vh；並調整搜尋框內部圖示與按鈕內邊距，防止 Placeholder 在 390px 寬度下被截斷。
-    6. **手機標題與內文字級微調（Responsive Clamp Typography）**：針對手機視口（<= 991.98px）以 clamp 調整 `section h2, .section-title`（收斂至 1.4rem~1.68rem）、`.hero h1 / p` 與 `.page-text`，避免大標題壓迫感過強與內文邊界過窄。
-    7. **Skills 標籤與百分比強制並排對齊（Side-by-Side Meta Alignment）**：在 `about-skills.js` 與 `shared.css` 中封裝 `.skill-meta` 為 `inline-flex` + `flex-shrink: 0` + `white-space: nowrap`，確保 Native / Full Professional 等能力標籤與百分比數字永遠維持在同一行右側對齊，徹底解決因標題長度不同導致忽而並排忽而上下疊的問題。
-    8. **Timeline 手機由上至下垂直時間軸全新重構（Vertical Top-to-Bottom Timeline）**：
-       - 在手機下將時間軸重新設計為乾淨俐落的由上至下垂直流式時間軸。
-       - 左側呈現垂直發光貫穿軸線（Spine）、精準定位之里程碑節點（Marker）與連向卡片的水平引線（Connector）。
-       - 點擊卡片時即時在卡片內部原地展開詳細內容（Inline Detail Expansion，含期間時長、詳情描述與參考連結），隱藏手機下分離的底部詳情區塊，打造直覺且極致優雅的單元卡片式閱讀體驗。
-       - 橫向旋轉手機（Landscape 844x390）自動自適應維持垂直軸線與全寬卡片，無任何橫向溢出。
-    9. **Hub 頁面（Portfolio & More）全站架構對齊與 i18n 系統化**：
-       - 建立 `i18n/portfolio.json` 與 `i18n/more.json`，將 `pages/portfolio.html` 與 `pages/more.html` 接入 `core/i18n.js`，徹底解決 Hub 頁面語言切換失效問題。
-       - 作品集（Portfolio）四顆按鈕（`Projects | Notes | Writing | Canvas`）重構為 4 等分響應式 Grid 排版，手機與桌機均保持單行等寬並列。
-    10. **CSS 冗餘代碼清除與手機版響應式層級整理**：
-       - 清除 `shared.css` 中被 `display: none !important` 遮蔽的失效 clamp 舊規則。
-       - 技能項目重構為標題滿寬（Title Row）+ 徽章與百分比對齊（Meta Row）的雙層流式佈局，徹底根治長技能名在手機窄屏擠壓破版問題。
-       - 榮譽憑證（Accolades）下載按鈕支援 `Download` / `Download Document` 雙模文字，並調校字級比例消除「Button 大字小」視覺失衡。
-  - [x] Review 重點：以手機視口（<= 767.98px 與 390x844 / 844x390）確認底欄 4 鍵導覽、全新由上至下垂直 Timeline 節點與引線、Skills 標籤並排、標題字級舒適，桌機端橫向時間軸與各功能 100% 無退化。
 
 ### P2
 
@@ -289,7 +69,6 @@
     - 遵守 `AGENTS.md` 的全站 Design System 繼承與實時色盤聯動契約（讀取 `--space-accent` / `localStorage`）。
   - [ ] CI/CD 部署工作流：GitHub Actions 部署腳本配置 `submodules: true`，確保發布至 Cloudflare 時自動拉取並構建各境域，主 Repo 保持極簡輕量。
   - [ ] 交付條件：完成首個境域（如 `portals/realms/world`）獨立拆分與 submodule 掛載驗證；本地與 CI 構建皆能成功載入；主站 repo 體積不因境域資產膨脹；同步更新 `docs/specs/realm-spec.md`、`docs/specs/system-spec.md` 與 `AGENTS.md`。
-
 
 ## Author-driven
 

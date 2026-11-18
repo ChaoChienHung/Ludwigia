@@ -50,7 +50,7 @@ Ludwigia 分成四層，越往下越獨立：
 - 搜尋與瀏覽：`search-page.js`、`search-ui.js`、`section-landing.js`、`tag-page.js`
 - 內容頁：`note-information.js`（`data/Ontology/information-ontology.json`）、`note-tags.js`
 - 站內助手：`copilot-base.js`、`copilot.js`、`companion.js`
-- Labs：`question-bank-labs.js`、`grimoire-labs.js`（`data/Grimoire/`）
+- Labs：`question-bank-labs.js`、`grimoire-labs.js`（`data/Toolkit/`）
 - 設定：`settings-page.js`
 
 ### 樣式

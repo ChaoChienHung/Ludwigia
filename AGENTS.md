@@ -2,12 +2,12 @@
 
 本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
 
-本文件集中不可退化契約與 Agent 執行時必須遵守的短指引。專案術語、日常工作流與 Repository Map 由 `README.md` 維護；依功能查文件與實作範圍，從 `docs/README.md` 的「功能導覽」開始。`HANDOFF.md` 只記上一個 Agent 的最近停點，總體與長期待辦仍在 `TODO.md`。精確契約、設計理由與技術細節再沿功能導覽讀對應文件。
+本文件集中不可退化契約與 Agent 執行時必須遵守的短指引。專案術語、日常工作流與 Repository Map 由 `README.md` 維護；依功能查文件與實作範圍，從 `docs/README.md` 的「功能導覽」開始。`HANDOFF.md` 記最近停點，`TODO.md` 管未完成與長期待辦，`REVIEW.md` 管已完成待作者驗收的工作。精確契約、設計理由與技術細節再沿功能導覽讀對應文件。
 
 ## Agent 工作指引
 
 - **先對齊用詞與位置**：開始 Ludwigia 任務時，先讀 `README.md` 的 `## 專案術語（Terminology）` 與 `## Repository Map（程式庫導覽）`；依功能從 `docs/README.md` 的 `## 功能導覽` 找起始文件和主要資料夾，再讀相關 spec 與相鄰實作。不要在本文件維護第二份術語表或逐檔路徑清單。
-- **接續工作**：新 Agent 先讀 `HANDOFF.md` 的停點與進行中工作，再用使用者最新指令、`git status --short` 和相關 source 核對；若快照已過期，以現況為準。`TODO.md` 是總體與長期任務追蹤，不能把其中的未指派待辦當作正在續做的工作。
+- **接續工作**：新 Agent 先讀 `HANDOFF.md` 的停點與進行中工作，再用使用者最新指令、`git status --short` 和相關 source 核對；若快照已過期，以現況為準。`TODO.md` 是未完成與長期任務追蹤，`REVIEW.md` 是待作者驗收清單；不能把兩者的未指派事項當作正在續做的工作。
 - **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
 - **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
 - **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；World 資料跑 `python3 cli.py build-world --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
@@ -29,7 +29,7 @@
 - `tools/create_content.py` 的預設輸出必須使用 `tools/content_styles/default`（確保「懶得手刻時也能一鍵生成」的體驗穩定）
 - `tools/create_content.py` 必須維持為標準內容頁生成器：允許少量 style 差異，但不得為 presentation 無限制擴張 parser，避免把標準生成器變成萬用 page builder
 - page-level shared chrome（例如 navbar）若收斂為單一來源，應以 `pages/_shared/` 作為 site shell SSOT；`tools/content_styles/_shared/` 只保留內容生成流程需要的 shared partial，不應再平行維護第二份 navbar 真相來源；手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）的 navbar / footer 必須以 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記，由 `cli.py build-pages`（`tools/build_pages.py`）從 `pages/_shared/` 生成，不得手改標記內的內容；生成的內容頁 navbar 也必須與 partial 一致（`tests/test_page_shell.py` 守門）
-- 探索入口各守職責：Labs 展示原型與可重用資源；Portals 負責 Garden / World 的境域導覽；FAB 可直達 Portals / Labs。Toolkit 的種類與用途只由 `data/Grimoire/grimoire.json` 維護，Ludwig 密語只切換 Grimoire 文案，不維護第二份資料
+- 探索入口各守職責：Labs 展示原型與可重用資源；Portals 負責 Garden / World 的境域導覽；FAB 可直達 Portals / Labs。Toolkit 的種類與用途只由 `data/Toolkit/toolkit.json` 維護，Ludwig 密語只切換 Grimoire 文案，不維護第二份資料
 - 若啟用翻譯 workflow（`tools/translate_content.py` / `cli.py translate`），必須維持 source-driven contract：只翻必要自然語言；`Tags`、metadata key、slug、路徑與 block 骨架不得被任意改寫
 - 若翻譯 backend 需要憑證，必須支援 environment variables 與 `secret.txt`；`secret.txt` 必須排除在版本控制外
 - `reviewkit` 若存在，必須維持為 semantic container：`qquiz` / `qprompt` 可獨立存在；只有當它們都出現在同一個 `reviewkit` 內時，才組成 tabs UI
@@ -212,7 +212,7 @@
 
 ## 文件一致性與導覽維護
 
-- 文件責任：`README.md` 提供所有人共用的術語、Repository Map 與使用工作流；`docs/README.md` 按功能連到主要資料夾與起始文件；本文件只放 Agent 指引與不可退化約束；`HANDOFF.md` 只放當下停點；`TODO.md` 管總體與長期待辦。不要把同一份逐檔 Doc Map 或 backlog 複製到多處。
+- 文件責任：`README.md` 提供所有人共用的術語、Repository Map 與使用工作流；`docs/README.md` 按功能連到主要資料夾與起始文件；本文件只放 Agent 指引與不可退化約束；`HANDOFF.md` 只放當下停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成待作者驗收的工作。不要把同一份逐檔 Doc Map 或 backlog 複製到多處。
 - 新增或調整作者語法、日常工作流、系統契約時，依 `docs/README.md` 的功能導覽找受影響文件，只更新實際受影響的 spec、guide、設計理由與守門清單；不可退化規則改變時同步更新本文件。不要因一般檔案新增就重寫導覽。
 - 當使用者要求更新項目文檔時，先讀 README 的 Repository Map 與 `docs/README.md` 的功能導覽，盤點受影響的功能、主要資料夾與文件；先處理契約和工作流，再補齊設計、技術與檢查文件。功能歸屬或起始文件改變才改功能導覽；資料夾責任改變才改 Repository Map。
 - Mindset：除非必要，不要先通讀整個 repo。從功能導覽與相鄰實作縮小範圍；資訊不足再擴查，探索後回補受影響文件。
@@ -221,10 +221,9 @@
 ## 任務追蹤
 
 - 討論確認的新任務必須記到 `TODO.md`（用 checkbox），並定期更新狀態；避免未落地的 brainstorming 被遺忘
-- workflow 更新：若一批 task 是由 Agent 代做、且已完成但尚待作者驗收，先移到 `TODO.md` 的 `Constellation Queue（待 Review）`
-  - 先勾選 `[x]`
-  - 保留精簡的「已完成什麼 / review 重點」
-  - 等作者確認後，再決定移除或拆回新的 follow-up task
+- workflow 更新：Agent 完成實作但尚待作者驗收時，將項目從 `TODO.md` 移至 `REVIEW.md`；頂層 `[ ]` 代表待審，項目內已完成步驟可保留 `[x]`
+  - 保留精簡的成果、驗證證據與 Review 重點
+  - 作者確認後移除；若有後續工作，另立 `TODO.md` task
 - `TODO.md` 的 task 盡量寫成可驗收的描述（包含影響範圍/入口頁、預期行為、驗收方式），避免留下「做了但不確定有沒有完成」的模糊項
 
 ## 安全與授權

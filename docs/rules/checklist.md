@@ -70,8 +70,8 @@
   - [ ] `docs/guide/ontology-guide.md`（若本次改動涉及 tag ontology 維護流程）
 
 - [ ] 若本次是一批已完成但尚待作者確認的 agent batch task：
-  - [ ] `TODO.md` 已把它們移到 `Constellation Queue（待 Review）`
-  - [ ] 每個 review item 都保留「已完成什麼 / review 重點」
+  - [ ] 已從 `TODO.md` 移到 `REVIEW.md`
+  - [ ] 每個 review item 都保留「已完成什麼／驗證證據／Review 重點」
 
 ## 建議跑的自動化（能跑就跑）
 

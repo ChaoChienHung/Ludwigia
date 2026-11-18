@@ -1,6 +1,6 @@
 # Handoff
 
-> (Template note — remove before saving `HANDOFF.md`: Save this file at the project root and replace bracketed placeholders with verified facts. Record only the previous agent's stopping point; the task tracker owns the overall and long-term backlog. Aim for at most 2,000 tokens, with a 6 KiB UTF-8 hard limit. Replace stale details instead of appending a log.)
+> (Template note — remove before saving `HANDOFF.md`: Save this file at the project root and replace bracketed placeholders with verified facts. Record only the previous agent's stopping point; `TODO.md` owns unfinished and long-term work, while `REVIEW.md` owns completed work awaiting human review. Aim for at most 2,000 tokens, with a 6 KiB UTF-8 hard limit. Replace stale details instead of appending a log.)
 
 ## Snapshot
 

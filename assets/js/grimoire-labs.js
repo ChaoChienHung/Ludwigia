@@ -575,7 +575,7 @@
     basePath = root.getAttribute('data-grimoire-root') || '';
     render();
     try {
-      const res = await fetch(`${basePath}data/Grimoire/grimoire.json`);
+      const res = await fetch(`${basePath}data/Toolkit/toolkit.json`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       state.data = await res.json();
     } catch (err) {

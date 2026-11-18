@@ -10,7 +10,7 @@
 - 同類錯誤反覆發生時，先找根因與重現方式，再優先改結構並補可執行檢查；文字規則只承接無法可靠自動判定的判斷，不把每次 review 意見都堆進 `AGENTS.md`
 - 專案用語以 `README.md` 的術語表為共用入口；需要精確判斷時讀對應 spec，不在守門清單複製另一份定義
 - 資料夾責任只在 `README.md` 的 Repository Map 維護；功能到主要實作區域與起始文件的路線只在 `docs/README.md` 維護，不在 `AGENTS.md` 平行維護逐檔地圖
-- `HANDOFF.md` 只保存可立即續作的最近停點，總體與長期任務留在 `TODO.md`；交接快照須覆寫過期內容、維持短小並讓下一位 Agent 核對實際工作樹
+- `HANDOFF.md` 只保存可立即續作的最近停點，未完成與長期任務留在 `TODO.md`，已完成待作者驗收的工作放 `REVIEW.md`；交接快照須覆寫過期內容、維持短小並讓下一位 Agent 核對實際工作樹
 
 ## Data / Index（Single Source of Truth）
 

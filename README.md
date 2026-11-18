@@ -46,11 +46,11 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 | **Section landing / Tag detail** | `notes/index.html` 等是某一內容類型的列表入口；`tag/index.html` 是可分享的單一 tag 詳情入口。它們不是 Garden 的 Patch 視圖。 |
 | **Garden / Patch** | `portals/realms/garden/` 是以花園方式探索索引內容的 Realm；Patch 是 Garden 同頁的探索／閱讀視角。Garden 不負責全站 tag detail 的穩定網址。 |
 | **Portals / Realm / World** | Portals 是通往各個 Realm 的導覽樞紐；Realm 是可獨立運作的境域；Garden 與 2.5D 的 Ludwigia World 是不同的 Realm。 |
-| **Labs / Toolkit / Grimoire** | Labs 放實驗原型與可重用資源；Toolkit 是其中的資源庫，Ludwig 密語模式才把它顯示為 Grimoire。兩種名稱讀同一份 `data/Grimoire/grimoire.json`。 |
+| **Labs / Toolkit / Grimoire** | Labs 放實驗原型與可重用資源；Toolkit 是其中的資源庫，Ludwig 密語模式才把它顯示為 Grimoire。兩種名稱讀同一份 `data/Toolkit/toolkit.json`。 |
 | **Site shell / Runtime** | `pages/_shared/` 是共用 navbar、footer 等頁面外框的來源；`core/site/` 是主站共用 JavaScript。手寫頁面透過 `cli.py build-pages` 組裝 shell。 |
 | **Theme / Palette / Effects** | Theme 管整體表面、氛圍與可讀性；Palette 管 accent 與互動狀態顏色；Effects 控制可關閉的動效。偏好儲存在瀏覽器端。 |
 | **生成物白名單** | 部署直接需要的少數輸出必須進版控，例如搜尋索引、Portals／Garden 資產與 World 角色快取；完整清單以 `AGENTS.md` 為準，其餘生成物應忽略。 |
-| **AGENTS / HANDOFF / TODO** | `AGENTS.md` 是 Agent 的長期指引與硬約束；`HANDOFF.md` 只記上一個 Agent 的最近停點與進行中工作；`TODO.md` 管總體與長期待辦。 |
+| **AGENTS / HANDOFF / TODO / REVIEW** | `AGENTS.md` 是 Agent 的長期指引與硬約束；`HANDOFF.md` 記最近停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成、待作者驗收的工作。 |
 
 ## Description（核心理念）
 
@@ -67,7 +67,7 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 - `README.md`：所有人共用的專案入口，提供術語、工作流與下方的 Repository Map。
 - `docs/README.md`：按功能查規格與實作資料夾，並說明 `docs/` 各層的責任。
 - `AGENTS.md`：給 Agent 的執行指引與不可退化約束；直接引用上述兩個入口，不複製導覽內容。
-- `HANDOFF.md`：給新 Agent 的短期交接快照，記錄剛停在哪裡；總體與長期待辦看 `TODO.md`，不複製進交接檔。此檔不作為網站資產部署。
+- `HANDOFF.md`：給新 Agent 的短期交接快照，記錄剛停在哪裡；未完成與長期待辦看 `TODO.md`，已完成待作者驗收的工作看 `REVIEW.md`。交接檔與待審清單不作為網站資產部署。
 - `docs/specs/`、`docs/design/`、`docs/rules/`、`docs/guide/`、`docs/tech/`：分別承接精確規格、設計理由、守門清單、維護步驟與實作紀錄。
 
 要找某個功能的入口，先看 `docs/README.md` 的「功能導覽」；要確認精確欄位或行為，再讀其連結的 spec。文件只同步受本次改動影響的部分，不因一般檔案新增而改動資料夾地圖。

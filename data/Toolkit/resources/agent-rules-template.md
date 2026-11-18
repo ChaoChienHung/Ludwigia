@@ -13,7 +13,7 @@
 - Before working, read `README.md` sections [Terminology heading] and [Repository Map heading] for shared vocabulary and folder-level responsibilities. Then use [feature guide path] to find the relevant docs and implementation folders.
 - Keep reader-facing navigation and workflow in `README.md`; use this file for agent-specific instructions and invariants. Keep exact contracts in [specs directory] and feature-to-folder routes in [feature guide path].
 - Update the map only when a folder's responsibility changes, and the feature guide only when ownership or its starting documentation changes. Do not maintain a file-by-file map here.
-- At the start of a new agent session, read `HANDOFF.md` for the previous stopping point; verify it against the user's latest request and working tree. [Task tracker] owns the overall backlog. Update `HANDOFF.md` when in-progress state changes or when no work remains; aim for 2,000 tokens and enforce a 6 KiB UTF-8 hard limit.
+- At the start of a new agent session, read `HANDOFF.md` for the previous stopping point; verify it against the user's latest request and working tree. `TODO.md` owns unfinished and long-term work; `REVIEW.md` owns completed work awaiting human review. Update `HANDOFF.md` when in-progress state changes or when no work remains; aim for 2,000 tokens and enforce a 6 KiB UTF-8 hard limit.
 
 ## Do and don't
 
@@ -57,7 +57,8 @@
 - Feature-to-folder routes and starting docs: [feature guide path]
 - System contracts: [spec path]
 - Design decisions: [design path]
-- Current tasks: [task list]
+- Unfinished tasks and decisions: `TODO.md`
+- Completed work awaiting human review: `REVIEW.md`
 - Previous agent's stopping point: `HANDOFF.md`.
 
 > (Template note — remove before saving: If a subsystem has distinct rules, add a nested `AGENTS.md` there and state which rules it adds. Keep shared rules in the root file. Use the separate `HANDOFF.md` template for the stopping point; do not copy the backlog.)

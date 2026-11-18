@@ -5,16 +5,16 @@ import unittest
 from urllib.parse import urlparse
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-GRIMOIRE_PATH = os.path.join(REPO_ROOT, "data", "Grimoire", "grimoire.json")
+TOOLKIT_PATH = os.path.join(REPO_ROOT, "data", "Toolkit", "toolkit.json")
 LANGS = ("en", "zh-Hant", "zh-Hans")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
-class TestGrimoireData(unittest.TestCase):
+class TestToolkitData(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(GRIMOIRE_PATH, "r", encoding="utf-8") as f:
+        with open(TOOLKIT_PATH, "r", encoding="utf-8") as f:
             cls.data = json.load(f)
 
     def test_top_level_shape(self):
@@ -35,7 +35,7 @@ class TestGrimoireData(unittest.TestCase):
     def test_items_contract(self):
         category_ids = {c["id"] for c in self.data["categories"]}
         item_ids = [item["id"] for item in self.data["items"]]
-        self.assertEqual(len(item_ids), len(set(item_ids)), "duplicate grimoire item ids")
+        self.assertEqual(len(item_ids), len(set(item_ids)), "duplicate toolkit item ids")
 
         for item in self.data["items"]:
             label = item["id"]
@@ -76,9 +76,9 @@ class TestGrimoireData(unittest.TestCase):
                 # Skills must point at skills/ as their single source of truth.
                 self.assertRegex(source, r"^skills/[^/]+/skill\.md$", item["id"])
             elif item["kind"] == "prompt":
-                self.assertTrue(source.startswith("data/Grimoire/prompts/"), item["id"])
+                self.assertTrue(source.startswith("data/Toolkit/prompts/"), item["id"])
             else:
-                self.assertTrue(source.startswith("data/Grimoire/resources/"), item["id"])
+                self.assertTrue(source.startswith("data/Toolkit/resources/"), item["id"])
 
     def test_type_and_purpose_are_independent_facets(self):
         pairs = {(item["kind"], item["category"]) for item in self.data["items"]}

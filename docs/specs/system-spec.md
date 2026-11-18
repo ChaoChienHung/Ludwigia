@@ -263,14 +263,15 @@ Timeline 是第一個明確採這條路的 page-scoped source data：
 
 Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoire 魔導書）也採同一條路：
 
-- source of truth：`data/Grimoire/grimoire.json`（`version`、`stale_after_days`、`categories`、`items`）
+- source of truth：`data/Toolkit/toolkit.json`（`version`、`stale_after_days`、`categories`、`items`）
 - item 欄位：`id`（kebab-case）、`kind = template | guide | prompt | skill`（種類）、`category`（用途）、三語 `title` / `summary`、`source`、`reference`、`verified_with`、`verified_at`（`YYYY-MM-DD` 或 null，兩者需同時設定或同時為 null）、`status = active | deprecated`、`replaced_by`。種類和用途是互不依賴的篩選維度；`reference` 對本站原創資源寫 `Ludwig`，外部引用／借鑑資源寫原始 HTTPS 網址，展開項目的資訊欄固定顯示 `Reference`
-- `kind = skill` 的 `source` 直接指向 `skills/<name>/skill.md`，不得複製第二份；Prompt 本體在 `data/Grimoire/prompts/`，通用範本與指南在 `data/Grimoire/resources/`，僅提煉可公開重用的內容
+- `kind = skill` 的 `source` 直接指向 `skills/<name>/skill.md`，不得複製第二份；Prompt 本體在 `data/Toolkit/prompts/`，通用範本與指南在 `data/Toolkit/resources/`，僅提煉可公開重用的內容
 - Prompt / Skill 的驗證時效由 runtime 依 `verified_at` 與 `stale_after_days` 推導；Template / Guide 一律標示參考資料，不使用模型驗證狀態；密語模式只改呈現文案，不改資料來源或篩選語意
 - 外部 Skill 若只作精選導覽，收錄為本站撰寫的 Guide 摘要，`source` 指向本地摘要、`reference` 指向原始 Skill；不將摘要冒充已安裝或已在本站驗證的 Skill，也不複製上游完整檔案
-- 守門測試：`tests/test_grimoire_data.py`
-- `agent-rules-template` 是 `data/Grimoire/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `grimoire.json` 維護，不能另寫一份卡片摘要
-- `agent-handoff-template` 是 `data/Grimoire/resources/agent-handoff-template.md` 內可替換的短期交接範本；根目錄 `HANDOFF.md` 只記 Agent 最近停點，不承接 `TODO.md` 的總體與長期待辦，並由 `.assetsignore` 排除於網站資產之外
+- 守門測試：`tests/test_toolkit_data.py`
+- `agent-rules-template` 是 `data/Toolkit/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `toolkit.json` 維護，不能另寫一份卡片摘要
+- `agent-handoff-template` 是 `data/Toolkit/resources/agent-handoff-template.md` 內可替換的短期交接範本；根目錄 `HANDOFF.md` 只記 Agent 最近停點，不承接 `TODO.md` 的總體與長期待辦，並由 `.assetsignore` 排除於網站資產之外
+- `project-todo-template` 與 `project-review-template` 分別提供未完成任務與已完成待作者驗收的範本；根目錄 `TODO.md` 與 `REVIEW.md` 各守職責，`REVIEW.md` 由 `.assetsignore` 排除於網站資產之外
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。
 

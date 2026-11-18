@@ -37,6 +37,7 @@ main.txt
 
 # Local hooks and agent settings (not part of the site)
 HANDOFF.md
+REVIEW.md
 .githooks/
 .githooks/**
 .claude/

@@ -169,4 +169,4 @@ Portals 與 World 都是常駐動畫頁面。我們希望之後加入更多 Real
 - Portals：量測靜止、箭頭平移與日夜切換三種情境。
 - 兩者都記錄 `Performance.getMetrics`（主執行緒 script / style / layout 佔比），Portals 另外記錄 `LayerTree` 的合成層數與面積。
 
-headless Chrome 的合成器不是手機 GPU，即使是優化前的版本，rAF 也幾乎都能維持 60 fps，所以主執行緒佔比、每幀 JS 時間與合成層面積才是主要指標。2026-11-15 的基準數據記錄在 `TODO.md` 的 Constellation Queue。
+headless Chrome 的合成器不是手機 GPU，即使是優化前的版本，rAF 也幾乎都能維持 60 fps，所以主執行緒佔比、每幀 JS 時間與合成層面積才是主要指標。2026-11-15 的基準數據記錄在 `REVIEW.md` 的 Portals 與 World 效能優化項目。
