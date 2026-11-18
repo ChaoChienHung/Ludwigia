@@ -6,6 +6,7 @@
 - 日常怎麼用請看 `README.md`（repo root）
 - 這裡放的是：當我們要擴功能或重構時，可用來對齊的系統分層、資料流、schema、runtime 與生成物策略
 - 偏守門 / authoring / UI 行為固定規則，請看 `docs/rules/guardrails.md`
+- Agent 遇到重複回歸時的處理次序以 `AGENTS.md` 為準：先找根因與可重現案例，再改資料流／API／模組邊界，最後補相鄰的可執行檢查；文字規則承接無法機械判定的判斷。
 
 ## 系統分層（抽象）
 

@@ -29,6 +29,7 @@ Replace bracketed text with your project's actual paths, commands, and contracts
 - Run [full test/build command] when the change spans modules or a required gate calls for it.
 - Regenerate [output] with [command] and check that it is reproducible.
 - Review [critical interaction] on desktop and mobile when its appearance changes.
+- When the same mistake recurs, reproduce it, improve [API or module boundary] to remove the bad path where feasible, and add [targeted automated check]. Keep prose rules for decisions that cannot be checked reliably.
 
 ## Safety and collaboration
 

@@ -10,6 +10,7 @@
 - **找檔案的路線**：內容與 metadata 在 `notes/`、`writing/`、`canvas/` 和 `tools/content/`；索引在 `search/indexer.py`；共用頁面 shell 在 `pages/_shared/`；主站 runtime 在 `core/site/`，樣式在 `assets/css/site/`；首頁資料在 `data/`；Toolkit 資源在 `data/Grimoire/`；Portals / Garden / World 在 `portals/`。技術版本與各子系統 build 步驟以 `docs/tech/tech-stack.md` 和對應 `package.json` 為準。
 - **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
 - **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；World 資料跑 `python3 cli.py build-world --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
+- **把重複錯誤變成可執行約束**：遇到同類回歸或反覆出現的 review 意見時，先找根因與可重現案例；在本次任務範圍內，優先修正資料流、API 或模組邊界，使錯誤選項難以寫出，再用相鄰測試或檢查命令擋住可機械判定的錯誤。只有無法可靠自動判定、仍需 Agent 判斷的原則才寫進 `AGENTS.md`。不要為每次失誤無止境加一條文字規則，也不要每次都打斷使用者提醒；若修正會擴成大範圍重構，先提出具體重複案例、最小方案與影響，再請使用者決定。
 - **權限與卡住時**：讀檔、局部修改、相關測試及必要的再現性生成屬日常工作。安裝新依賴、刪除資料、推送或發布等動作，先確認任務授權及影響範圍；不確定契約或將跨越既有子系統邊界時，先整理已查到的事實與最小可行方案，再向使用者確認真正缺少的決策。
 - **交付前**：檢查 diff 是否只含預期的 source、必要生成物與受影響文檔；報告改了什麼、跑了哪些檢查、哪些未驗證。若建立 PR，標題與說明應能指出變更範圍和驗證結果，不要求所有任務套用單一標題格式。
 
