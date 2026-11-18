@@ -8,6 +8,7 @@
 
 - Agent 修改前先找 source of truth，沿用現有資料流與 design tokens；只在影響到的子系統內做聚焦驗證，跨模組時再擴大檢查
 - 同類錯誤反覆發生時，先找根因與重現方式，再優先改結構並補可執行檢查；文字規則只承接無法可靠自動判定的判斷，不把每次 review 意見都堆進 `AGENTS.md`
+- 專案用語以 `README.md` 的術語表為共用入口；需要精確判斷時讀對應 spec，不在守門清單複製另一份定義
 
 ## Data / Index（Single Source of Truth）
 

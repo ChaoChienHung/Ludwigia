@@ -6,6 +6,7 @@
 
 ## Agent 工作指引
 
+- **先對齊用詞**：開始 Ludwigia 任務時，先讀 `README.md` 的 `## 專案術語（Terminology）`，依其中定義理解使用者、文件與程式碼中的專案名稱；遇到縮寫或相近概念先回查該表，再讀相關 spec 確認精確契約。不要在 `AGENTS.md` 或其他文件平行維護第二份術語定義。
 - **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
 - **找檔案的路線**：內容與 metadata 在 `notes/`、`writing/`、`canvas/` 和 `tools/content/`；索引在 `search/indexer.py`；共用頁面 shell 在 `pages/_shared/`；主站 runtime 在 `core/site/`，樣式在 `assets/css/site/`；首頁資料在 `data/`；Toolkit 資源在 `data/Grimoire/`；Portals / Garden / World 在 `portals/`。技術版本與各子系統 build 步驟以 `docs/tech/tech-stack.md` 和對應 `package.json` 為準。
 - **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
@@ -230,7 +231,7 @@
 - 完整文檔索引與路徑，以 `docs/README.md` 為單一真相來源
 - `docs/README.md`：文檔角色總覽，以及目前 `rules/` / `guide/` / `tech/` / `author/` 的資料夾分工
 - `AGENTS.md`：不可退化契約與精簡 Agent 工作指引；新增/重構時的第一優先校驗點
-- `README.md`：日常使用入口（跑站、build、內容工作流）
+- `README.md`：專案術語與日常使用入口（跑站、build、內容工作流）
 - `TODO.md`：任務追蹤與待 review queue（系統工程、架構、功能與 UI）
 - `ARTICLES.md`：寫作與筆記主題待辦清單（Writing & Notes Backlog）
 - `docs/specs/system-spec.md`：系統 contract、data flow、schema、生成物策略

@@ -16,10 +16,29 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 
 若你是第一次進這個 repo，建議閱讀順序：
 
-1. 看 `Features`：先知道站上有哪些能力
+1. 看 `專案術語（Terminology）` 和 `Features`：先統一用詞、知道站上有哪些能力
 2. 看 `快速開始`：先把站跑起來
 3. 看 `新增/修改筆記（唯一工作流）`：理解日常怎麼寫內容、怎麼重生
 4. 需要規格時再看 `AGENTS.md` / `docs/specs/system-spec.md` / `docs/specs/parser-spec.md` / `docs/specs/inline-enhancement-spec.md` / `docs/specs/content-metadata-spec.md` / `docs/specs/translation-spec.md`
+
+## 專案術語（Terminology）
+
+這裡統一日常討論與 Agent 任務中的用詞；詳細 schema、語法與不可退化契約仍以對應的 `docs/specs/` 和 `AGENTS.md` 為準。
+
+| 術語 | 在 Ludwigia 的意思 |
+| --- | --- |
+| **Source / 單一真相來源（SSOT）** | 作者實際維護的內容或資料，例如 `notes/`、`writing/`、`canvas/` 的 `.md`，或 `data/` 的 JSON。HTML、搜尋索引與 bundle 若由它們生成，不是第二份手動資料。 |
+| **Source-driven / 再現性生成** | 修改 source 後，由工具重建對應輸出；相同 source 與規則應得到相同內容。內容頁用 `cli.py build`，索引用 `cli.py index`，其他子系統用各自的 build 命令。 |
+| **內容類型（Notes / Writing / Canvas）** | 三種單篇內容：`notes/` 是知識筆記，`writing/` 是長文／文章，`canvas/` 是視覺內容（介面稱「視界」）；三者都可被全站索引。這裡的 Canvas 是內容分類，不是 World 的繪圖引擎。 |
+| **Metadata / Core Markdown / Extras** | source `.md` 的 `<meta>` 提供公開欄位；core markdown 是可攜的標準正文；`<reviewkit>`、`<information>` 等自訂語法是附加層。不同視圖可退化或忽略 extras，但不能把它們當成 metadata。 |
+| **搜尋索引 / SearchCore** | `search/indexer.py` 生成 `search/search-index.{json,js}`，供搜尋與瀏覽入口使用；`core/search-core.js` 是共用的查詢、篩選與連結邏輯，不是另一份索引資料。 |
+| **Section landing / Tag detail** | `notes/index.html` 等是某一內容類型的列表入口；`tag/index.html` 是可分享的單一 tag 詳情入口。它們不是 Garden 的 Patch 視圖。 |
+| **Garden / Patch** | `portals/realms/garden/` 是以花園方式探索索引內容的 Realm；Patch 是 Garden 同頁的探索／閱讀視角。Garden 不負責全站 tag detail 的穩定網址。 |
+| **Portals / Realm / World** | Portals 是通往各個 Realm 的導覽樞紐；Realm 是可獨立運作的境域；Garden 與 2.5D 的 Ludwigia World 是不同的 Realm。 |
+| **Labs / Toolkit / Grimoire** | Labs 放實驗原型與可重用資源；Toolkit 是其中的資源庫，Ludwig 密語模式才把它顯示為 Grimoire。兩種名稱讀同一份 `data/Grimoire/grimoire.json`。 |
+| **Site shell / Runtime** | `pages/_shared/` 是共用 navbar、footer 等頁面外框的來源；`core/site/` 是主站共用 JavaScript。手寫頁面透過 `cli.py build-pages` 組裝 shell。 |
+| **Theme / Palette / Effects** | Theme 管整體表面、氛圍與可讀性；Palette 管 accent 與互動狀態顏色；Effects 控制可關閉的動效。偏好儲存在瀏覽器端。 |
+| **生成物白名單** | 部署直接需要的少數輸出必須進版控，例如搜尋索引、Portals／Garden 資產與 World 角色快取；完整清單以 `AGENTS.md` 為準，其餘生成物應忽略。 |
 
 ## Description（核心理念）
 

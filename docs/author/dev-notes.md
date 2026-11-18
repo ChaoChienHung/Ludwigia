@@ -7,7 +7,7 @@
 ## Docs（文件分工）
 
 - `AGENTS.md`：不可退化契約與精簡的 Agent 工作指引（repo root）
-- `README.md`：使用入口（怎麼跑站、怎麼新增/修改內容；repo root）
+- `README.md`：專案術語與使用入口（怎麼跑站、怎麼新增/修改內容；repo root）
 - `TODO.md`：任務追蹤（只留可驗收的待辦；完成後移除避免噪音；repo root）
 - `docs/README.md`：文檔索引（docs 內所有文件的功能與路徑）
 - `docs/specs/system-spec.md`：系統設計與可驗證約定（schema / data flow / guardrails）
