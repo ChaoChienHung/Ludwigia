@@ -105,7 +105,7 @@
   - ordered / unordered item 若帶 continuation paragraph，該段落必須縮排 `4 spaces`
   - nested bullet / nested ordered list 也必須相對 parent item 縮排 `4 spaces`
   - 不允許依賴「未縮排下一行也算同一個 list item」這種寬鬆猜測；source 應寫成標準 markdown 可解析形式
-  - **階層化清單間距（Nested List Blank Line / Spacing）**：清單項目若包含子層級（例如母項目帶有縮排的子項目、或多行次級說明），在該子清單區塊結尾與下一個同級母項目之間必須**空一行（blank line）**分隔；嚴禁讓次級縮排項目直接緊貼下一層母項目。適度留白以維持視覺階層分明與排版清爽（clean）
+  - **階層化清單與樹狀圖間距（Nested List & Tree View Spacing）**：清單項目或目錄樹狀圖若包含子層級（例如帶有縮排的子項目、子資料夾 `└── ...` 或多行次級說明），在該子層級區塊結尾與下一個同級母項目之間必須**空一行（blank line）**分隔；嚴禁讓次級縮排項目直接緊貼下一層母項目。適度留白以維持視覺階層分明與排版清爽（clean）
 - 若支援 markdown table，基本語意必須維持：
   - 採標準 pipe table 寫法（header row + divider row + body rows）
   - 至少要求欄數一致；不依賴鬆散猜測去補齊破損表格

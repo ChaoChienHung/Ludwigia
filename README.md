@@ -44,6 +44,7 @@ Ludwigia/
 ├── canvas/                    # 視覺化作品與視界內容
 ├── pages/                     # 主站手寫頁面與頁面骨架
 │   └── _shared/               # 全站 Chrome 唯一真相來源（navbar/footer/runtime partials）
+
 ├── tag/                       # Tag 標籤詳情頁（跨文章 Concept 聚合檢索）
 ├── data/                      # 站內結構化資料來源（SSOT JSON）
 │   ├── Timeline/              # 經歷與時間軸資料（timeline.json）
@@ -51,24 +52,29 @@ Ludwigia/
 │   ├── Credentials/           # 證照與修課證明（credentials.json）
 │   ├── Toolkit/               # 通用工具庫與 Grimoire 魔導書（toolkit.json）
 │   └── Ontology/              # 標籤本體知識庫（tags-ontology.json）
+
 ├── skills/                    # 可重用的 Agent Skills（依 SKILL.md 標準封裝）
 │   ├── verify-and-complete/   # 任務驗收與交付證明（Finish Work）
 │   ├── adversarial-review/    # 紅隊對抗式獨立審查
 │   └── ...                    # 其他通用 Agentic 工作流
+
 ├── labs/                      # 原型實驗室與 Toolkit（Grimoire）展示入口
 ├── portals/                   # 境域導覽樞紐（Portals）與 Realms 空間
 │   ├── realms/garden/         # 數位花園（Digital Garden）境域
 │   └── realms/world/          # 2.5D 等軸測虛擬世界（Ludwigia World）
+
 ├── core/                      # 全站核心 Runtime、主題預載（theme-preload.js）與搜尋核心
 ├── assets/                    # 全站靜態資源（CSS Design Tokens、共用 JS、字型與圖片）
 ├── search/                    # 搜尋索引生成器（indexer.py）與快照（search-index.json/js）
 ├── tools/                     # Python 建置工具鏈
 │   ├── create_content.py      # 標準內容頁生成器（支援 default/canvas 樣式）
 │   └── build_pages.py         # 頁面 shell 組裝工具（build-pages）
+
 ├── docs/                      # 專案文件庫
 │   ├── specs/                 # 系統契約與不可退化規格（system-spec.md 等）
 │   ├── design/                # 架構決策與設計理由（design.md 等）
 │   └── README.md              # 依功能查閱文件的起點（功能導覽）
+
 ├── tests/                     # 單元測試與自動化品質守門腳本
 ├── cli.py                     # 全站統一命令列入口（build, index, test, build-pages 等）
 ├── AGENTS.md                  # Agent 執行指引與不可退化契約
