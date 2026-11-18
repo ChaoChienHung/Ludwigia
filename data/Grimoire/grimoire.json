@@ -267,6 +267,153 @@
       "verified_at": null,
       "status": "active",
       "replaced_by": null
+    },
+    {
+      "id": "hill-climb-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Hill Climb",
+        "zh-Hant": "Hill Climb：目標分數迭代",
+        "zh-Hans": "Hill Climb：目标分数迭代"
+      },
+      "summary": {
+        "en": "An external skill for repeated agent runs against a locked answer key and independent judges.",
+        "zh-Hant": "外部 Skill：以固定答案集與獨立評審反覆驗證長任務成果；需較多工具與時間。",
+        "zh-Hans": "外部 Skill：以固定答案集与独立评审反复验证长任务成果；需较多工具与时间。"
+      },
+      "source": "data/Grimoire/resources/hill-climb-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/hill-climb",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "t3-code-conductor-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "T3 Code Conductor",
+        "zh-Hant": "T3 Code Conductor：多執行緒協調",
+        "zh-Hans": "T3 Code Conductor：多线程协调"
+      },
+      "summary": {
+        "en": "An external skill for coordinating T3 Code threads and surfacing only decisions that need the user.",
+        "zh-Hant": "外部 Skill：協調 T3 Code 的多個執行緒，聚合進度與需要使用者決定的事項。",
+        "zh-Hans": "外部 Skill：协调 T3 Code 的多个线程，汇总进度与需要用户决定的事项。"
+      },
+      "source": "data/Grimoire/resources/t3-code-conductor-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/t3-code-conductor",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "claude-conductor-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Claude Conductor",
+        "zh-Hant": "Claude Conductor：Claude 工作協調",
+        "zh-Hans": "Claude Conductor：Claude 工作协调"
+      },
+      "summary": {
+        "en": "An external skill for reviewing and coordinating existing Claude Code sessions toward verified completion.",
+        "zh-Hant": "外部 Skill：盤點並協調既有 Claude Code 工作階段，追蹤可驗證的完成狀態。",
+        "zh-Hans": "外部 Skill：盘点并协调既有 Claude Code 工作会话，追踪可验证的完成状态。"
+      },
+      "source": "data/Grimoire/resources/claude-conductor-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/claude-conductor",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "loop-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Loop",
+        "zh-Hant": "Loop：草稿迭代",
+        "zh-Hans": "Loop：草稿迭代"
+      },
+      "summary": {
+        "en": "An external skill for scoring and revising one draft against a 100-point rubric.",
+        "zh-Hant": "外部 Skill：依百點規準反覆修改單份草稿；分數由 Agent 自評，須自行核對。",
+        "zh-Hans": "外部 Skill：依百分标准反复修改单份草稿；分数由 Agent 自评，须自行核对。"
+      },
+      "source": "data/Grimoire/resources/loop-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/loop",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "save-10-percent-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Save 10%",
+        "zh-Hant": "Save 10%：訂閱成本盤點",
+        "zh-Hans": "Save 10%：订阅成本盘点"
+      },
+      "summary": {
+        "en": "An external skill for finding safe savings in recurring costs without cancelling services automatically.",
+        "zh-Hant": "外部 Skill：依實際使用情況盤點定期費用，提出節省方案；取消服務前須明確授權。",
+        "zh-Hans": "外部 Skill：依实际使用情况盘点定期费用，提出节省方案；取消服务前须明确授权。"
+      },
+      "source": "data/Grimoire/resources/save-10-percent-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/save-10-percent",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "goal-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Goal",
+        "zh-Hant": "Goal：長任務目標",
+        "zh-Hans": "Goal：长任务目标"
+      },
+      "summary": {
+        "en": "An external skill for turning a plan into one bounded goal for Codex or Claude.",
+        "zh-Hant": "外部 Skill：把計畫整理成有邊界的長任務目標；上游目前公布的是規格測試，非實際成效。",
+        "zh-Hans": "外部 Skill：把计划整理成有边界的长任务目标；上游目前公布的是规格测试，并非实际成效。"
+      },
+      "source": "data/Grimoire/resources/goal-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/goal",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "email-triage-pro-reference",
+      "kind": "guide",
+      "category": "workflow",
+      "title": {
+        "en": "Email Triage Pro",
+        "zh-Hant": "Email Triage Pro：信箱整理",
+        "zh-Hans": "Email Triage Pro：邮箱整理"
+      },
+      "summary": {
+        "en": "An external skill for email triage and draft replies with a supported Gmail connection.",
+        "zh-Hant": "外部 Skill：在支援的 Gmail 連接下整理郵件並起草回覆；上游目前只有規格測試。",
+        "zh-Hans": "外部 Skill：在支持的 Gmail 连接下整理邮件并起草回复；上游目前只有规格测试。"
+      },
+      "source": "data/Grimoire/resources/email-triage-pro-reference.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/email-triage-pro",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
     }
   ]
 }
