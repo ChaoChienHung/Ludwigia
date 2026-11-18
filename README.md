@@ -1,25 +1,36 @@
 # Ludwigia
 
-Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內容放在 `notes/`，探索入口放在 `portals/realms/garden/`。它刻意不引入後端與資料庫，用最小工具鏈換來長期可維護、可攜帶、可擴展的筆記體驗。
+Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態網站。知識筆記、長文和視覺內容從 Markdown source 生成，讀者可以透過搜尋、標籤與 Garden 發現內容；Portals、World 和 Labs 則提供不同的探索方式。網站不需要後端或資料庫，日常內容維護以 Python 和靜態檔案完成。
 
-英文一句話版：A static personal site + digital garden. Notes live in `notes/`, discovery lives in `portals/realms/garden/`.
+英文一句話版：A static personal site, digital garden, and interactive space built from source-driven content.
 
 ## TL;DR
 
 如果你只想先快速知道這個 repo 在幹嘛、能做什麼、怎麼用，可以先看這裡：
 
 - 這個 repo 是什麼：一個靜態的 personal site + digital garden，內容主要放在 `notes/`、`writing/`、`canvas/`
-- 這個 repo 能做什麼：產生內容頁、建立 search index、提供 Garden / tag / search / section landing 等探索入口
+- 這個 repo 能做什麼：展示作品與經歷、發布內容、搜尋與探索知識，並進入 Portals、World 與 Labs
 - 內容怎麼維護：source-driven；用 `.md` + `<meta>` + 少量語意化 tag 寫內容，再生成 HTML
 - 平常怎麼用：單篇重生用 `python3 cli.py build <source.md>`，整批重生用 `python3 cli.py build-all --content-dir notes|writing|canvas|all`
 - 想先跑站看結果：用 `python3 -m http.server 8000`，再打開 `index.html` / `pages/search.html` / `portals/realms/garden/index.html`
 
 若你是第一次進這個 repo，建議閱讀順序：
 
-1. 看 `專案術語（Terminology）`、`Features` 和 `Repository Map（程式庫導覽）`：先統一用詞、知道站上有哪些能力與大致位置
+1. 看 `功能與特色`、`專案術語（Terminology）` 和 `Repository Map（程式庫導覽）`：先了解網站、統一用詞，再知道各部分大致在哪裡
 2. 看 `快速開始`：先把站跑起來
 3. 看 `新增/修改筆記（唯一工作流）`：理解日常怎麼寫內容、怎麼重生
 4. 需要規格時先看 `docs/README.md` 的「功能導覽」，再讀對應 spec；Agent 另須遵守 `AGENTS.md`
+
+## 功能與特色
+
+- **個人作品與經歷**：首頁展示作品、Timeline、Skills 與 Credentials；Projects 頁提供作品入口。Timeline、Skills 與 Credentials 的資料由各自的 source JSON 維護。
+- **可持續整理的內容**：Notes（知識筆記）、Writing（文章）與 Canvas（視界）以 Markdown 為主要 source，生成可閱讀、可搜尋的靜態頁面；單篇內容支援閱讀模式與 Markdown 複製／下載。
+- **多條內容探索路徑**：全站搜尋支援多標籤篩選；section landing 依內容類型瀏覽；tag detail 提供穩定的標籤頁；Garden 則用花園與 Patch 視角探索同一份索引。
+- **互動境域**：Portals 是通往各個 Realm 的入口，可前往 Digital Garden 與 2.5D 的 Ludwigia World。World 的人物與對話從 source data 生成。
+- **實驗與可重用資源**：Labs 收錄 Shooting Mode、Question Bank 等實驗，以及 Toolkit 工具庫；Toolkit 可依 Template、Guide、Prompt、Skill 的種類和用途篩選，Ludwig 密語模式會顯示 Grimoire 文案。
+- **個人化介面**：Theme、Palette、語言與 Effects 可在設定中調整；手機使用獨立的底部導覽，內容頁的閱讀操作也有觸控入口。偏好保存在瀏覽器端。
+
+想查各功能的實作位置與規格，從 [docs/README.md](./docs/README.md) 的「功能導覽」開始；想直接體驗網站，見下方「快速開始」。
 
 ## 專案術語（Terminology）
 
@@ -60,22 +71,6 @@ Ludwigia 是一個「個人網站 + 個人知識花園」的靜態專案：內�
 - `docs/specs/`、`docs/design/`、`docs/rules/`、`docs/guide/`、`docs/tech/`：分別承接精確規格、設計理由、守門清單、維護步驟與實作紀錄。
 
 要找某個功能的入口，先看 `docs/README.md` 的「功能導覽」；要確認精確欄位或行為，再讀其連結的 spec。文件只同步受本次改動影響的部分，不因一般檔案新增而改動資料夾地圖。
-
-## Features
-
-- Portfolio：首頁與 projects 頁（展示作品）
-- Search：全站搜尋（multi-tag filter）
-- Garden：tags 視角的探索入口（popular / recent tags）、patch（卡片 + 展開閱讀）、tag detail page
-- Notes：知識筆記 / 學習筆記（可被引用、可長期整理的內容）
-- Writing：長文與文字內容入口（UI 中文名稱目前為「文章」；技術路徑仍為 `writing/`）
-- Canvas：視覺內容入口（UI 中文名稱目前為「視界」；技術路徑仍為 `canvas/`）
-- Portals：多維傳送樞紐（Aetheria Portals，以太仙境全景畫卷，集結已完成世界：直通 Digital Garden 與 Ludwigia World）
-- Labs：實驗與可重用資源入口（包含 Toolkit、Shooting Mode、Question Bank，以及 Laser-tag / Cosmic Flow 原型）；World 由 Portals 負責導覽
-- Toolkit 工具庫（`labs/grimoire/`）：按「種類」（Template / Guide / Prompt / Skill）與「用途」交叉篩選；Ludwig 密語模式顯示 Grimoire 魔導書文案。資料維護在 `data/Grimoire/grimoire.json`，Prompt / Skill 更新模型驗證欄位後會自動計算時效；Template / Guide 顯示為參考資料
-- Timeline：首頁上的獨立 section；採 source-driven data contract（由獨立 data file authoring，再交給 runtime projection），ongoing phase 可用 `end: "present"` 表達
-- Settings：全站可喚起的 settings modal；`pages/settings.html` 保留作 direct-link / fallback 入口
-- Mobile Additional Entry：手機 / 窄視窗下，misc 與單篇頁 metadata/outline 共享同一個右下角主入口
-- Mobile Navigation：手機上採獨立 IA；頂部只保留 `Ludwig` 品牌返回首頁，底部導覽收斂成 `Portfolio / Search / More`，其中 `Portfolio` / `More` 會進入各自的 hub page
 
 ## Site Map（連接機制）
 
