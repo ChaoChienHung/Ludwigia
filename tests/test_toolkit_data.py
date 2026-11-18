@@ -73,12 +73,24 @@ class TestToolkitData(unittest.TestCase):
             self.assertTrue(source and not source.startswith("/") and ".." not in source, item["id"])
             self.assertTrue(os.path.isfile(os.path.join(REPO_ROOT, source)), f"{item['id']}: missing {source}")
             if item["kind"] == "skill":
-                # Skills must point at skills/ as their single source of truth.
-                self.assertRegex(source, r"^skills/[^/]+/skill\.md$", item["id"])
+                # Skills can be local implementations in skills/<name>/SKILL.md or curated entries in data/Toolkit/
+                if source.startswith("skills/"):
+                    self.assertRegex(source, r"^skills/[^/]+/SKILL\.md$", item["id"])
+                else:
+                    self.assertTrue(source.startswith("data/Toolkit/"), item["id"])
             elif item["kind"] == "prompt":
                 self.assertTrue(source.startswith("data/Toolkit/prompts/"), item["id"])
             else:
                 self.assertTrue(source.startswith("data/Toolkit/resources/"), item["id"])
+
+            if "files" in item:
+                self.assertIsInstance(item["files"], list, f"{item['id']}: files must be a list")
+                self.assertGreater(len(item["files"]), 0, f"{item['id']}: files must not be empty")
+                item_dir = os.path.dirname(source)
+                for f_entry in item["files"]:
+                    rel_path = f_entry["path"] if isinstance(f_entry, dict) else f_entry
+                    target_path = rel_path if rel_path.startswith(("skills/", "data/")) else os.path.join(item_dir, rel_path)
+                    self.assertTrue(os.path.isfile(os.path.join(REPO_ROOT, target_path)), f"{item['id']}: missing file {target_path}")
 
     def test_type_and_purpose_are_independent_facets(self):
         pairs = {(item["kind"], item["category"]) for item in self.data["items"]}

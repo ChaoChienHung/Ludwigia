@@ -52,6 +52,53 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 | **生成物白名單** | 部署直接需要的少數輸出必須進版控，例如搜尋索引、Portals／Garden 資產與 World 角色快取；完整清單以 `AGENTS.md` 為準，其餘生成物應忽略。 |
 | **AGENTS / HANDOFF / TODO / REVIEW** | `AGENTS.md` 是 Agent 的長期指引與硬約束；`HANDOFF.md` 記最近停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成、待作者驗收的工作。 |
 
+## Repository Map（程式庫導覽）
+
+這是給讀者與 Agent 共用的結構樹地圖：先用它掌握整體架構與各目錄責任，再到 `docs/README.md` 的「功能導覽」查閱各功能的精確規格、維護指南與實作範圍。
+
+```text
+Ludwigia/
+├── notes/                     # 知識筆記（Markdown source 與生成的 HTML 內容頁）
+├── writing/                   # 深度長文／文章專題（Markdown source 與生成的 HTML）
+├── canvas/                    # 視覺化作品與視界內容
+├── pages/                     # 主站手寫頁面與頁面骨架
+│   └── _shared/               # 全站 Chrome 唯一真相來源（navbar/footer/runtime partials）
+├── tag/                       # Tag 標籤詳情頁（跨文章 Concept 聚合檢索）
+├── data/                      # 站內結構化資料來源（SSOT JSON）
+│   ├── Timeline/              # 經歷與時間軸資料（timeline.json）
+│   ├── Skills/                # 技能清單資料（skills.json）
+│   ├── Credentials/           # 證照與修課證明（credentials.json）
+│   ├── Toolkit/               # 通用工具庫與 Grimoire 魔導書（toolkit.json）
+│   └── Ontology/              # 標籤本體知識庫（tags-ontology.json）
+├── skills/                    # 可重用的 Agent Skills（依 SKILL.md 標準封裝）
+│   ├── verify-and-complete/   # 任務驗收與交付證明（Finish Work）
+│   ├── adversarial-review/    # 紅隊對抗式獨立審查
+│   └── ...                    # 其他通用 Agentic 工作流
+├── labs/                      # 原型實驗室與 Toolkit（Grimoire）展示入口
+├── portals/                   # 境域導覽樞紐（Portals）與 Realms 空間
+│   ├── realms/garden/         # 數位花園（Digital Garden）境域
+│   └── realms/world/          # 2.5D 等軸測虛擬世界（Ludwigia World）
+├── core/                      # 全站核心 Runtime、主題預載（theme-preload.js）與搜尋核心
+├── assets/                    # 全站靜態資源（CSS Design Tokens、共用 JS、字型與圖片）
+├── search/                    # 搜尋索引生成器（indexer.py）與快照（search-index.json/js）
+├── tools/                     # Python 建置工具鏈
+│   ├── create_content.py      # 標準內容頁生成器（支援 default/canvas 樣式）
+│   └── build_pages.py         # 頁面 shell 組裝工具（build-pages）
+├── docs/                      # 專案文件庫
+│   ├── specs/                 # 系統契約與不可退化規格（system-spec.md 等）
+│   ├── design/                # 架構決策與設計理由（design.md 等）
+│   └── README.md              # 依功能查閱文件的起點（功能導覽）
+├── tests/                     # 單元測試與自動化品質守門腳本
+├── cli.py                     # 全站統一命令列入口（build, index, test, build-pages 等）
+├── AGENTS.md                  # Agent 執行指引與不可退化契約
+├── HANDOFF.md                 # Agent 當前工作停點交接快照
+├── TODO.md                    # 未完成與長期待辦任務清單
+├── REVIEW.md                  # 已完成、待作者審驗成果清單
+└── README.md                  # 專案首要入口與導覽
+```
+
+日常建置與檢查命令由根目錄的 `cli.py` 提供；具體指令看下方 CLI 章節。`AGENTS.md` 放 Agent 必須遵守的約束，兩者都引用這份地圖，不另維護平行路徑清單。
+
 ## Description（核心理念）
 
 - Single Source of Truth：metadata 與正文各有清楚責任；可索引 metadata 再現性生成，正文則以 `.md` 內可攜的核心內容為主
@@ -64,7 +111,7 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 
 ## Docs（文件分工）
 
-- `README.md`：所有人共用的專案入口，提供術語、工作流與下方的 Repository Map。
+- `README.md`：所有人共用的專案入口，提供術語、工作流與 Repository Map。
 - `docs/README.md`：按功能查規格與實作資料夾，並說明 `docs/` 各層的責任。
 - `AGENTS.md`：給 Agent 的執行指引與不可退化約束；直接引用上述兩個入口，不複製導覽內容。
 - `HANDOFF.md`：給新 Agent 的短期交接快照，記錄剛停在哪裡；未完成與長期待辦看 `TODO.md`，已完成待作者驗收的工作看 `REVIEW.md`。交接檔與待審清單不作為網站資產部署。
@@ -82,11 +129,14 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
   - `notes/index.html` / `writing/index.html` / `canvas/index.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/section-landing.js` 讀索引，只顯示該 section 的內容（含 scoped search + tag filter）
   - freshness guard：section landing / search / tag page 與 note recommendation 會優先抓 `search/search-index.json`（`cache: "no-store"`），抓不到才退回 `window.SITE_SEARCH_INDEX` / `search-index.js`；目的不是放棄 JS 版本，而是降低 CDN / 瀏覽器快取把舊索引一直當成真相的機率
   - Cover 圖片策略：若未提供內容專屬 cover，section landing 與搜尋卡片會使用「預設 cover」當作列表縮圖（`notes` 預設使用 `assets/images/Notes.png`，`writing` 預設使用 `assets/images/Writing.png`），確保未指定 cover 時版面視覺一致
+
 - Search：
   - `pages/search.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/search-page.js` 讀 `window.SITE_SEARCH_INDEX`，提供 query ranking + multi-tag filter
   - tag filter 仍留在 search 內；若已選單一 tag，可用明確的 `Open tag page` 入口切到 `tag/index.html`
+
 - Garden：
   - `portals/realms/garden/index.html` 是獨立 UI，資料仍只讀 `window.SITE_SEARCH_INDEX`
+
 - Tag detail：
   - `tag/index.html` 是穩定的 tag detail 入口；runtime 可帶 `?concept=...&tag=...`，並向後相容既有 `?tag=...`
   - tag detail / related tags / search filter 優先以 ontology `concept_id` 判斷是否為同一概念，再依目前語系決定顯示 label
@@ -134,17 +184,20 @@ python3 -m http.server 8000
 - Theme 動效有獨立 `Effects` 開關（localStorage: `site_theme_motion_v1`）；若使用者偏好 `prefers-reduced-motion`，預設會限制動效
 - Settings 視覺責任要分清：所有 selected / hover 特效都跟著目前 `palette/accent` 走；`Theme` / `Palette` 自身的顏色只負責 preview dot，不直接控制被選中的外框/背景
 - Settings controls 可分成三種語意：sidebar tabs（panel navigation）、status pills（`Language` / `Effects`）、preview pills（`Theme` / `Palette`）；三者用途不同，但 selected / hover 特效都應收斂到同一套 palette-driven 規則
+- Copilot 可見性由 settings runtime 控制，偏好值為 `off / home / all`；`pages/settings.html` 與設定 modal 共用同一套 data attrs / localStorage，不應各自維護平行狀態
 - `Sky` 的雲朵背景屬 theme ambience，不應被 settings pills / active state 的局部樣式誤傷；若調整 sky 視覺，優先分開處理 `sky-clouds` 與 settings controls
 - note 頁的 `block / callout / takeaways` 需各自有明確的 theme color variables；目前可先填同值，但未來擴 theme 時必須三者一起檢查
 - 若修 theme 視覺時發現需要一直疊 override，優先回頭整理底層 token / selector / variable pipeline，而不是繼續堆例外規則
+- 跨境域色盤聯動：World 等軸測空間（`portals/realms/world/`）的 HUD 玻璃擬態面板與焦點光暈共用 `assets/css/site/palette-tokens.css`，新增色盤只改此 token 檔，不在 `world.css` 另抄一份
 - 未來若要新增 / 調整 theme、palette 或 settings controls，優先先看 `docs/guide/theme-palette-guide.md`
 
-`portals/realms/world/` 的角色台詞只編輯 `portals/realms/world/data/characters.json`：每位角色的 `dialogues.user` 是點擊後的多句對話，`dialogues.self` 是隨機環境獨白；頂層 `npcDialogues` 是兩位角色的隨機互聊，`participants` 與每句 `speaker` 都須引用現有角色 `id`。兩種環境對話隨機擇一，無可用台詞時才退到另一種。World 的 palette 值與主站共用 `assets/css/site/palette-tokens.css`；新增色盤只改這個 token檔，不在 `world.css` 另抄一份。
+## Portals 與 Realms（獨立探索境域）
 
-## Garden UI（獨立設計）
+Portals 是通往各具備獨立互動體驗之境域（Realms）的導覽樞紐：
 
-- Garden 入口頁為 `portals/realms/garden/index.html`，使用獨立 UI，不依賴主站 Theme/Palette
-- Garden 的資料來源仍然只讀 `window.SITE_SEARCH_INDEX`（由 `search/search-index.js` 提供）
+- **Portals 樞紐**（`portals/index.html`）：全景導覽門戶，提供跨境域躍遷入口與 Realm 概覽。
+- **Digital Garden**（`portals/realms/garden/index.html`）：以花園視覺隱喻探索全站知識內容；採獨立 UI 設計，資料來源只讀全站索引 `window.SITE_SEARCH_INDEX`。
+- **Ludwigia World**（`portals/realms/world/index.html`）：2.5D 等軸測互動虛擬空間。角色設定與社交對話以 `portals/realms/world/data/` 為創作來源，由 `cli.py build-world` 再現性編譯；視覺介面即時連動全站 Palette Tokens。
 
 ## 新增/修改筆記（唯一工作流）
 
@@ -257,10 +310,6 @@ python3 -m http.server 8000
 - `python3 cli.py build <source.md>` 會幫你重生對應 HTML，並更新 search index
 - `python3 cli.py build-all --content-dir notes|writing|canvas|all` 可以批次重生整個 section，甚至整個 repo
 - `tools/create_content.py` 仍是底層標準生成器；但日常工作流優先用 `cli.py` 比較不容易漏掉 index 更新
-- 若要調整全站 navbar 這類 page-level shared chrome，請優先改 `pages/_shared/navbar.html`；`tools/content_styles/_shared/` 留給內容生成流程自己的 partial，不再作為 navbar 的單一真相來源
-- 若首頁 Timeline 使用 `end: "present"` 表達 ongoing phase，尾端可由 runtime 收斂成單一 `Present / 至今` cluster；作者仍只維護逐筆 timeline data，不需要手做 cluster
-- Timeline 若使用 `category`（例如 `education` / `internship` / `work`），目前只用於顯示輕量 badge；顏色仍維持由 theme / palette runtime 決定，不另外為 category 建第二套固定配色
-- Copilot 可見性現在由 settings runtime 控制，偏好值為 `off / home / all`；`pages/settings.html` 與設定 modal 共用同一套 data attrs / localStorage，不應各自維護平行狀態
 
 單篇重生：
 
@@ -460,12 +509,13 @@ python3 cli.py clean
 ```
 
 - `cli.py build-pages` 會把 `pages/_shared/navbar.html` 與 `footer.html` 組裝進手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）中 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記之間的區塊；改 navbar 時只改 partial，再跑一次 `build-pages`，並重新生成內容頁（`build-all`）
+
 - `cli.py scan-information` 會掃描單篇 source `.md` 裡命中 `information` ontology 的詞，列出：
   - 哪些詞已經有 `<information>`
   - 哪些詞第一次出現但還沒標註，適合作為候選詞
-- 目前候選詞判定以正文 flow 為主；markdown heading 內的命中不算「第一次出現」。
-- 若加 `--json`，會輸出機器可讀的 JSON，方便 agent 或 script 接後續流程。
-- 這個指令是 authoring helper，不會自動把命中的詞插入 `<information>`；是否標註仍由作者控制。
+  - 目前候選詞判定以正文 flow 為主；markdown heading 內的命中不算「第一次出現」
+  - 若加 `--json`，會輸出機器可讀的 JSON，方便 agent 或 script 接後續流程
+  - 這個指令是 authoring helper，不會自動把命中的詞插入 `<information>`；是否標註仍由作者控制
 
 ### Translation Workflow（`tools/translate_content.py`）
 
@@ -527,22 +577,3 @@ python3 cli.py check-tags --content-dir notes
 python3 cli.py check-tags --content-dir writing
 python3 cli.py check-tags --content-dir all
 ```
-
-## Repository Map（程式庫導覽）
-
-這是給讀者與 Agent 共用的資料夾地圖：先用它判斷要往哪個區域查，再到 `docs/README.md` 的「功能導覽」找該功能的規格、維護指南與實作範圍。這裡只記資料夾責任；新增一般檔案時不必更新地圖，只有資料夾的責任或邊界改變時才調整。
-
-| 資料夾 | 高層責任 |
-| --- | --- |
-| `notes/`、`writing/`、`canvas/` | 知識筆記、長文與視覺內容的 source 及對應靜態頁面。 |
-| `pages/`、`tag/` | 主站手寫頁面、共用頁面外框與 tag detail 入口。 |
-| `core/` | 主站共用瀏覽器 runtime、搜尋語意與首屏偏好初始化。 |
-| `assets/`、`i18n/` | 跨頁共用的樣式、腳本、媒體與介面翻譯。 |
-| `data/` | Timeline、Skills、Credentials、Ontology、Toolkit 等結構化 source data。 |
-| `tools/`、`search/` | Python 內容生成與建置工具，以及搜尋索引的生成和部署資料。 |
-| `portals/` | Portals 導覽樞紐及 Garden、World 等 Realm 的實作與專用資產。 |
-| `labs/`、`skills/` | 實驗原型、Toolkit 入口，以及可重用的 Agent skill 來源。 |
-| `docs/` | 功能導覽、系統規格、設計理由、維護指南與技術紀錄。 |
-| `tests/` | 自動化守門測試與相關驗證腳本。 |
-
-日常建置與檢查命令由根目錄的 `cli.py` 提供；具體指令看上方 CLI 章節。`AGENTS.md` 放 Agent 必須遵守的約束，兩者都引用這份地圖，不另維護平行路徑清單。

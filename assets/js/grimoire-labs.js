@@ -379,13 +379,44 @@
     return badge;
   }
 
-  async function loadBody(item) {
-    if (state.bodies.has(item.id)) return state.bodies.get(item.id);
-    const res = await fetch(basePath + item.source);
+  async function loadFile(relPath) {
+    if (state.bodies.has(relPath)) return state.bodies.get(relPath);
+    const res = await fetch(basePath + relPath);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
-    state.bodies.set(item.id, text);
+    state.bodies.set(relPath, text);
     return text;
+  }
+
+  function getFileIcon(filename) {
+    const ext = (filename || '').split('.').pop().toLowerCase();
+    if (ext === 'md') return 'fa-regular fa-file-lines';
+    if (ext === 'py') return 'fa-brands fa-python';
+    if (ext === 'sh' || ext === 'bash') return 'fa-solid fa-terminal';
+    if (ext === 'js' || ext === 'ts' || ext === 'json') return 'fa-regular fa-file-code';
+    return 'fa-regular fa-file';
+  }
+
+  function resolveItemFiles(item) {
+    const source = item.source || '';
+    const lastSlash = source.lastIndexOf('/');
+    const itemDir = lastSlash !== -1 ? source.slice(0, lastSlash + 1) : '';
+    if (Array.isArray(item.files) && item.files.length > 0) {
+      return item.files.map((f) => {
+        const rel = typeof f === 'string' ? f : f.path;
+        const label = typeof f === 'object' && f.label ? f.label : rel;
+        const fullPath = rel.startsWith('skills/') || rel.startsWith('data/') || rel.startsWith('/') ? rel : itemDir + rel;
+        const rawName = rel.split('/').pop() || rel;
+        return { path: fullPath, label, rawName };
+      });
+    }
+    let rawName = source.split('/').pop() || source;
+    let label = rawName;
+    if (item.kind === 'template' && item.title && typeof item.title.en === 'string' && item.title.en.includes('.')) {
+      label = item.title.en;
+      rawName = item.title.en;
+    }
+    return [{ path: source, label, rawName }];
   }
 
   function renderMarkdown(text, target) {
@@ -427,9 +458,43 @@
     const txt = t();
     const detail = el('div', 'grimoire-detail');
 
+    const isPrompt = item.kind === 'prompt';
+    const files = resolveItemFiles(item);
+    let activeIndex = 0;
+    let currentText = '';
+
     const sheet = el('div', 'grimoire-sheet');
     const scroll = el('div', 'grimoire-sheet-scroll');
+    scroll.setAttribute('role', 'tabpanel');
     scroll.appendChild(el('p', 'grimoire-ledger-value', txt.loading));
+
+    const tabButtons = [];
+    if (!isPrompt) {
+      const header = el('div', 'grimoire-sheet-header');
+      const tabsContainer = el('div', 'grimoire-sheet-tabs');
+      tabsContainer.setAttribute('role', 'tablist');
+
+      files.forEach((file, index) => {
+        const tabBtn = el('button', `grimoire-sheet-tab${index === 0 ? ' is-active' : ''}`);
+        tabBtn.type = 'button';
+        tabBtn.setAttribute('role', 'tab');
+        tabBtn.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+        tabBtn.append(icon(getFileIcon(file.rawName)), el('span', '', file.label));
+        tabBtn.addEventListener('click', () => {
+          if (index === activeIndex) return;
+          switchTab(index);
+        });
+        tabButtons.push(tabBtn);
+        tabsContainer.appendChild(tabBtn);
+      });
+
+      header.appendChild(tabsContainer);
+      if (files.length > 1) {
+        const badge = el('span', 'grimoire-sheet-badge', `${files.length} files`);
+        header.appendChild(badge);
+      }
+      sheet.appendChild(header);
+    }
     sheet.appendChild(scroll);
 
     const ledger = el('aside', 'grimoire-ledger');
@@ -460,7 +525,6 @@
     const copyBtn = actionButton('fa-regular fa-copy', txt.copy, true);
     const downloadBtn = actionButton('fa-solid fa-download', txt.download, false);
     const sourceLink = el('a', 'grimoire-action');
-    sourceLink.href = basePath + item.source;
     sourceLink.target = '_blank';
     sourceLink.rel = 'noopener';
     sourceLink.append(icon('fa-solid fa-arrow-up-right-from-square'), el('span', '', txt.source));
@@ -471,34 +535,61 @@
 
     detail.append(sheet, ledger);
 
-    loadBody(item)
-      .then((text) => {
-        renderMarkdown(text, scroll);
+    async function switchTab(index) {
+      activeIndex = index;
+      tabButtons.forEach((btn, i) => {
+        btn.classList.toggle('is-active', i === index);
+        btn.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      });
+
+      const activeFile = files[activeIndex];
+      sourceLink.href = basePath + activeFile.path;
+      copyBtn.disabled = true;
+      downloadBtn.disabled = true;
+
+      scroll.replaceChildren(el('p', 'grimoire-ledger-value', txt.loading));
+
+      try {
+        const text = await loadFile(activeFile.path);
+        currentText = text;
+        if (activeFile.path.endsWith('.md')) {
+          renderMarkdown(text, scroll);
+        } else {
+          const pre = el('pre', 'grimoire-code');
+          const codeEl = el('code', '', text);
+          pre.appendChild(codeEl);
+          scroll.replaceChildren(pre);
+        }
         copyBtn.disabled = false;
         downloadBtn.disabled = false;
-        copyBtn.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(text);
-            flash(copyBtn, t().copied);
-          } catch (err) {
-            flash(copyBtn, t().copyFailed);
-          }
-        });
-        downloadBtn.addEventListener('click', () => {
-          const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${item.id}.md`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 0);
-        });
-      })
-      .catch(() => {
+      } catch (err) {
         scroll.replaceChildren(el('p', 'grimoire-ledger-value', txt.bodyFailed));
-      });
+      }
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(currentText);
+        flash(copyBtn, txt.copied);
+      } catch (err) {
+        flash(copyBtn, txt.copyFailed);
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const activeFile = files[activeIndex];
+      const blob = new Blob([currentText], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = activeFile.rawName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    });
+
+    switchTab(0);
 
     return detail;
   }

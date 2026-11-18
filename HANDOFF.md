@@ -4,9 +4,9 @@
 
 ## 概況
 
-- 截至：2026-11-18。`TODO.md` 的已完成待審工作已拆到 `REVIEW.md`；Toolkit 資料與範本移到 `data/Toolkit/`，新增 `TODO.md`、`REVIEW.md` 範本。
-- 最近驗證：`python3 cli.py test` 通過 70 項測試；`python3 cli.py build-pages --check` 通過。接手時仍應以使用者最新指令與 `git status --short` 核對現況。
-- 本輪停點：上述文件和資料路徑更新已完成，沒有尚待續做的 Agent 任務。
+- 截至：2026-11-19。已完成 Skills 命名標準化（`SKILL.md`）、Toolkit 測試解耦、File Tabs 介面實作，並引進 11 個通用 Agent Skills 與功能直觀重構。文檔方面已重構 `README.md` Repository Map 為結構清晰的 Tree View、清理舊有 local attach 產生的段落污染（如 Theme 混雜 World 台詞與 CLI 混雜 Timeline/Navbar），收斂為統一的 `Portals 與 Realms` 章節；並在 `AGENTS.md` 加入文檔全局連貫與邏輯自洽硬約束。
+- 最近驗證：`python3 cli.py test` 通過 70 項測試；`node tests/js/runtime_smoke.cjs` 通過；`python3 cli.py build-pages --check` 通過；`test_toolkit_data` 與 `test_handoff` 通過。
+- 本輪停點：Skills 目錄、Toolkit 資料、README.md 結構整頓已全部就緒，沒有尚待續做的 Agent 任務。
 
 ## 進行中工作
 

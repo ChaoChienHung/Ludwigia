@@ -177,7 +177,7 @@
         "zh-Hant": "把一篇寫得好的文章逆向拆成骨架、每節目的、轉場方式與可重用模板。",
         "zh-Hans": "把一篇写得好的文章逆向拆成骨架、每节目的、转场方式与可重用模板。"
       },
-      "source": "skills/article-structure-extractor/skill.md",
+      "source": "skills/article-structure-extractor/SKILL.md",
       "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
@@ -198,7 +198,7 @@
         "zh-Hant": "把既定骨架、每節細項與原始素材轉寫成可讀的完整文章，而不是條列筆記。",
         "zh-Hans": "把既定骨架、每节细项与原始素材转写成可读的完整文章，而不是条列笔记。"
       },
-      "source": "skills/article-structure-writer/skill.md",
+      "source": "skills/article-structure-writer/SKILL.md",
       "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
@@ -219,7 +219,7 @@
         "zh-Hant": "把一般 Markdown 文章整理成 Ludwigia 的筆記格式，並生成可被索引的 HTML 頁面。",
         "zh-Hans": "把一般 Markdown 文章整理成 Ludwigia 的笔记格式，并生成可被索引的 HTML 页面。"
       },
-      "source": "skills/markdown-to-note/skill.md",
+      "source": "skills/markdown-to-note/SKILL.md",
       "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,
@@ -227,20 +227,29 @@
       "replaced_by": null
     },
     {
-      "id": "finish-work-reference",
-      "kind": "guide",
+      "id": "verify-and-complete",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Finish Work",
-        "zh-Hant": "Finish Work：完成與驗證",
-        "zh-Hans": "Finish Work：完成与验证"
+        "en": "Outcome Verification & Receipt",
+        "zh-Hant": "任務驗收與交付證明（Finish Work）",
+        "zh-Hans": "任务验收与交付证明（Finish Work）"
       },
       "summary": {
-        "en": "An external skill for checking real outcomes and reporting what is proven before calling a task done.",
-        "zh-Hant": "外部 Skill：完成任務前核對實際結果，清楚交代已驗證與未驗證的部分。",
-        "zh-Hans": "外部 Skill：完成任务前核对实际结果，清楚交代已验证与未验证的部分。"
+        "en": "Check real outcomes through authoritative entry points and record proof before claiming completion.",
+        "zh-Hant": "完成任務前核對實際結果與權威入口，清楚記錄已驗證與未驗證的項目。",
+        "zh-Hans": "完成任务前核对实际结果与权威入口，清楚记录已验证与未验证的项目。"
       },
-      "source": "data/Toolkit/resources/finish-work-reference.md",
+      "source": "skills/verify-and-complete/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/receipt.md",
+        "references/code.md",
+        "references/ui.md",
+        "references/release.md",
+        "references/research.md",
+        "scripts/log_receipt.py"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/finish-work",
       "verified_with": null,
       "verified_at": null,
@@ -248,20 +257,24 @@
       "replaced_by": null
     },
     {
-      "id": "adversarial-review-reference",
-      "kind": "guide",
+      "id": "adversarial-review",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Adversarial Review",
-        "zh-Hant": "Adversarial Review：對抗式審查",
-        "zh-Hans": "Adversarial Review：对抗式审查"
+        "en": "Adversarial Red-Team Review",
+        "zh-Hant": "紅隊對抗式獨立審查（Adversarial Review）",
+        "zh-Hans": "红队对抗式独立审查（Adversarial Review）"
       },
       "summary": {
-        "en": "An external skill for independent review of a draft, with findings checked against evidence.",
-        "zh-Hant": "外部 Skill：讓獨立審查者挑戰草稿，再依證據核對並處理發現。",
-        "zh-Hans": "外部 Skill：让独立审查者挑战草稿，再依证据核对并处理发现。"
+        "en": "Independently critique and revise an answer, plan, workflow, skill, or implementation against a fixed rubric.",
+        "zh-Hant": "以獨立審查者與固定規準挑戰草稿，依實證核對發現並進行最小化修改。",
+        "zh-Hans": "以独立审查者与固定规准挑战草稿，依实证核对发现并进行最小化修改。"
       },
-      "source": "data/Toolkit/resources/adversarial-review-reference.md",
+      "source": "skills/adversarial-review/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/reviewer-contract.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/adversarial-review",
       "verified_with": null,
       "verified_at": null,
@@ -269,20 +282,20 @@
       "replaced_by": null
     },
     {
-      "id": "strategy-prompt-reference",
-      "kind": "guide",
+      "id": "strategy-evaluator",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Strategy Prompt",
-        "zh-Hant": "Strategy Prompt：方案比較",
-        "zh-Hans": "Strategy Prompt：方案比较"
+        "en": "Strategic Option Evaluator",
+        "zh-Hant": "方案比較與盲點挑戰（Strategy Prompt）",
+        "zh-Hans": "方案比较与盲点挑战（Strategy Prompt）"
       },
       "summary": {
-        "en": "An external skill for comparing options with explicit criteria, weights, and a challenge to the first recommendation.",
-        "zh-Hant": "外部 Skill：用明確準則與權重比較方案，再檢查初步建議的盲點。",
-        "zh-Hans": "外部 Skill：用明确准则与权重比较方案，再检查初步建议的盲点。"
+        "en": "Compare strategic options with explicit criteria, weights, and a challenge to the first recommendation.",
+        "zh-Hant": "用明確準則與權重客觀比較技術方案，挑戰初步建議的盲點與隱性假設。",
+        "zh-Hans": "用明确准则与权重客观比较技术方案，挑战初步建议的盲点与隐性假设。"
       },
-      "source": "data/Toolkit/resources/strategy-prompt-reference.md",
+      "source": "skills/strategy-evaluator/SKILL.md",
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/strategy-prompt",
       "verified_with": null,
       "verified_at": null,
@@ -290,20 +303,27 @@
       "replaced_by": null
     },
     {
-      "id": "ambitious-reference",
-      "kind": "guide",
+      "id": "high-stakes-task",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Ambitious",
-        "zh-Hant": "Ambitious：高投入任務",
-        "zh-Hans": "Ambitious：高投入任务"
+        "en": "High-Stakes Task Execution",
+        "zh-Hant": "高投入任務推進（Ambitious）",
+        "zh-Hans": "高投入任务推进（Ambitious）"
       },
       "summary": {
-        "en": "An external skill for explicitly important work: set measurable targets, build from real material, and seek outside review.",
-        "zh-Hant": "外部 Skill：針對明確重要的任務設定可量測目標、使用真實素材並尋求外部審查。",
-        "zh-Hans": "外部 Skill：针对明确重要的任务设定可测量目标、使用真实素材并寻求外部审查。"
+        "en": "Drive explicitly high-stakes work with measurable targets, real evidence, and multi-angle crew review.",
+        "zh-Hant": "針對高重要度任務設定可量測目標、使用真實素材並透過多視角乘員審查。",
+        "zh-Hans": "针对高重要度任务设定可测量目标、使用真实素材并通过多视角乘员审查。"
       },
-      "source": "data/Toolkit/resources/ambitious-reference.md",
+      "source": "skills/high-stakes-task/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/report.md",
+        "references/crew.md",
+        "references/judging.md",
+        "references/instruments.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/ambitious",
       "verified_with": null,
       "verified_at": null,
@@ -311,20 +331,26 @@
       "replaced_by": null
     },
     {
-      "id": "hill-climb-reference",
-      "kind": "guide",
+      "id": "benchmark-climb",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Hill Climb",
-        "zh-Hant": "Hill Climb：目標分數迭代",
-        "zh-Hans": "Hill Climb：目标分数迭代"
+        "en": "Benchmark Score Climbing",
+        "zh-Hant": "測試驅動題庫跑分（Hill Climb）",
+        "zh-Hans": "测试驱动题库跑分（Hill Climb）"
       },
       "summary": {
-        "en": "An external skill for repeated agent runs against a locked answer key and independent judges.",
-        "zh-Hant": "外部 Skill：以固定答案集與獨立評審反覆驗證長任務成果；需較多工具與時間。",
-        "zh-Hans": "外部 Skill：以固定答案集与独立评审反复验证长任务成果；需较多工具与时间。"
+        "en": "Iterate long-running agent tasks against a locked answer key, reproducible harness, and independent judges.",
+        "zh-Hant": "以固定答案集、獨立評審與可再現測試套件反覆迭代驗證長任務成果。",
+        "zh-Hans": "以固定答案集、独立评审与可复现测试套件反复迭代验证长任务成果。"
       },
-      "source": "data/Toolkit/resources/hill-climb-reference.md",
+      "source": "skills/benchmark-climb/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/answer-key.md",
+        "references/hill-json.md",
+        "references/safety.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/hill-climb",
       "verified_with": null,
       "verified_at": null,
@@ -332,20 +358,27 @@
       "replaced_by": null
     },
     {
-      "id": "t3-code-conductor-reference",
-      "kind": "guide",
+      "id": "multithread-conductor",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "T3 Code Conductor",
-        "zh-Hant": "T3 Code Conductor：多執行緒協調",
-        "zh-Hans": "T3 Code Conductor：多线程协调"
+        "en": "Multi-Thread Conductor",
+        "zh-Hant": "多執行緒實證協調（T3 Conductor）",
+        "zh-Hans": "多线程实证协调（T3 Conductor）"
       },
       "summary": {
-        "en": "An external skill for coordinating T3 Code threads and surfacing only decisions that need the user.",
-        "zh-Hant": "外部 Skill：協調 T3 Code 的多個執行緒，聚合進度與需要使用者決定的事項。",
-        "zh-Hans": "外部 Skill：协调 T3 Code 的多个线程，汇总进度与需要用户决定的事项。"
+        "en": "Coordinate parallel T3 Code threads, aggregate verified progress, and bubble up only essential user decisions.",
+        "zh-Hant": "協調 T3 Code 的多個平行執行緒，聚合實證進度與需要使用者決定的事項。",
+        "zh-Hans": "协调 T3 Code 的多个平行线程，汇总实证进度与需要用户决定的事项。"
       },
-      "source": "data/Toolkit/resources/t3-code-conductor-reference.md",
+      "source": "skills/multithread-conductor/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/cycle.md",
+        "references/desk.md",
+        "references/setup.md",
+        "scripts/desk.py"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/t3-code-conductor",
       "verified_with": null,
       "verified_at": null,
@@ -353,20 +386,25 @@
       "replaced_by": null
     },
     {
-      "id": "claude-conductor-reference",
-      "kind": "guide",
+      "id": "session-orchestrator",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Claude Conductor",
-        "zh-Hant": "Claude Conductor：Claude 工作協調",
-        "zh-Hans": "Claude Conductor：Claude 工作协调"
+        "en": "Claude Session Orchestrator",
+        "zh-Hant": "Claude 會話協同管理（Claude Conductor）",
+        "zh-Hans": "Claude 会话协同管理（Claude Conductor）"
       },
       "summary": {
-        "en": "An external skill for reviewing and coordinating existing Claude Code sessions toward verified completion.",
-        "zh-Hant": "外部 Skill：盤點並協調既有 Claude Code 工作階段，追蹤可驗證的完成狀態。",
-        "zh-Hans": "外部 Skill：盘点并协调既有 Claude Code 工作会话，追踪可验证的完成状态。"
+        "en": "Audit, steer, and verify existing Claude Code sessions toward provably completed outcomes.",
+        "zh-Hant": "盤點並協調既有 Claude Code 工作階段，追蹤可驗證的交付與完成狀態。",
+        "zh-Hans": "盘点并协调既有 Claude Code 工作会话，追踪可验证的交付与完成状态。"
       },
-      "source": "data/Toolkit/resources/claude-conductor-reference.md",
+      "source": "skills/session-orchestrator/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/launch-prompt.md",
+        "references/operations.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/claude-conductor",
       "verified_with": null,
       "verified_at": null,
@@ -374,20 +412,24 @@
       "replaced_by": null
     },
     {
-      "id": "loop-reference",
-      "kind": "guide",
+      "id": "draft-refiner",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Loop",
-        "zh-Hant": "Loop：草稿迭代",
-        "zh-Hans": "Loop：草稿迭代"
+        "en": "Draft Rubric Refinement",
+        "zh-Hant": "草稿規準迭代優化（Loop）",
+        "zh-Hans": "草稿规准迭代优化（Loop）"
       },
       "summary": {
-        "en": "An external skill for scoring and revising one draft against a 100-point rubric.",
-        "zh-Hant": "外部 Skill：依百點規準反覆修改單份草稿；分數由 Agent 自評，須自行核對。",
-        "zh-Hans": "外部 Skill：依百分标准反复修改单份草稿；分数由 Agent 自评，须自行核对。"
+        "en": "Repeatedly score and revise a single draft against an objective rubric until convergence.",
+        "zh-Hant": "依明確客觀規準反覆評分並修改單份草稿，直到品質收斂。",
+        "zh-Hans": "依明确客观规准反复评分并修改单份草稿，直到质量收敛。"
       },
-      "source": "data/Toolkit/resources/loop-reference.md",
+      "source": "skills/draft-refiner/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/rubric-adapters.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/loop",
       "verified_with": null,
       "verified_at": null,
@@ -395,20 +437,29 @@
       "replaced_by": null
     },
     {
-      "id": "save-10-percent-reference",
-      "kind": "guide",
+      "id": "cost-audit",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Save 10%",
-        "zh-Hant": "Save 10%：訂閱成本盤點",
-        "zh-Hans": "Save 10%：订阅成本盘点"
+        "en": "Subscription & Cost Audit",
+        "zh-Hant": "訂閱與雲端用量盤點（Save 10%）",
+        "zh-Hans": "订阅与云端用量盘点（Save 10%）"
       },
       "summary": {
-        "en": "An external skill for finding safe savings in recurring costs without cancelling services automatically.",
-        "zh-Hant": "外部 Skill：依實際使用情況盤點定期費用，提出節省方案；取消服務前須明確授權。",
-        "zh-Hans": "外部 Skill：依实际使用情况盘点定期费用，提出节省方案；取消服务前须明确授权。"
+        "en": "Audit recurring cloud and subscription costs against real usage to find safe savings without unconfirmed cancellations.",
+        "zh-Hant": "依實際使用情況盤點定期訂閱費用，在未經授權不主動取消的前提下找出安全節省方案。",
+        "zh-Hans": "依实际使用情况盘点定期订阅费用，在未经授权不主动取消的前提下找出安全节省方案。"
       },
-      "source": "data/Toolkit/resources/save-10-percent-reference.md",
+      "source": "skills/cost-audit/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/case-and-coverage.md",
+        "references/output-contract.md",
+        "references/evidence-policy.md",
+        "references/execution-safety.md",
+        "references/vendor-review.md",
+        "references/data-sources.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/save-10-percent",
       "verified_with": null,
       "verified_at": null,
@@ -416,20 +467,26 @@
       "replaced_by": null
     },
     {
-      "id": "goal-reference",
-      "kind": "guide",
+      "id": "bounded-goal-planner",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Goal",
-        "zh-Hant": "Goal：長任務目標",
-        "zh-Hans": "Goal：长任务目标"
+        "en": "Bounded Goal Setting",
+        "zh-Hant": "自主任務邊界規劃（Goal）",
+        "zh-Hans": "自主任务边界规划（Goal）"
       },
       "summary": {
-        "en": "An external skill for turning a plan into one bounded goal for Codex or Claude.",
-        "zh-Hant": "外部 Skill：把計畫整理成有邊界的長任務目標；上游目前公布的是規格測試，非實際成效。",
-        "zh-Hans": "外部 Skill：把计划整理成有边界的长任务目标；上游目前公布的是规格测试，并非实际成效。"
+        "en": "Turn an open plan into a bounded, verifiable long-horizon goal for autonomous coding agents.",
+        "zh-Hant": "把開放計畫整理成具備明確邊界、可實證進度的自主 Agent 長任務目標。",
+        "zh-Hans": "把开放计划整理成具备明确边界、可实证进度的自主 Agent 长任务目标。"
       },
-      "source": "data/Toolkit/resources/goal-reference.md",
+      "source": "skills/bounded-goal-planner/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "assets/goal.md.template",
+        "assets/progress.md.template",
+        "scripts/goal_slug.py"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/goal",
       "verified_with": null,
       "verified_at": null,
@@ -437,20 +494,28 @@
       "replaced_by": null
     },
     {
-      "id": "email-triage-pro-reference",
-      "kind": "guide",
+      "id": "email-triage",
+      "kind": "skill",
       "category": "workflow",
       "title": {
-        "en": "Email Triage Pro",
-        "zh-Hant": "Email Triage Pro：信箱整理",
-        "zh-Hans": "Email Triage Pro：邮箱整理"
+        "en": "Email Triage & Safe Reply",
+        "zh-Hant": "郵件安全分類與回覆（Email Triage）",
+        "zh-Hans": "邮件安全分类与回复（Email Triage）"
       },
       "summary": {
-        "en": "An external skill for email triage and draft replies with a supported Gmail connection.",
-        "zh-Hant": "外部 Skill：在支援的 Gmail 連接下整理郵件並起草回覆；上游目前只有規格測試。",
-        "zh-Hans": "外部 Skill：在支持的 Gmail 连接下整理邮件并起草回复；上游目前只有规格测试。"
+        "en": "Triage emails, schedule follow-ups, and draft verified replies through a supported connection with strict safety rails.",
+        "zh-Hant": "在嚴格安全邊界與授權連線下分類郵件、排程跟進並起草回覆。",
+        "zh-Hans": "在严格安全边界与授权连线下分类邮件、排程跟进并起草回复。"
       },
-      "source": "data/Toolkit/resources/email-triage-pro-reference.md",
+      "source": "skills/email-triage/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/triage-and-safety.md",
+        "references/scheduling.md",
+        "references/feedback-learning.md",
+        "references/setup-chatgpt.md",
+        "references/setup-claude.md"
+      ],
       "reference": "https://github.com/lennoxsaint/Skills/tree/main/email-triage-pro",
       "verified_with": null,
       "verified_at": null,

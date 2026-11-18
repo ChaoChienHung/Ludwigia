@@ -265,9 +265,9 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 
 - source of truth：`data/Toolkit/toolkit.json`（`version`、`stale_after_days`、`categories`、`items`）
 - item 欄位：`id`（kebab-case）、`kind = template | guide | prompt | skill`（種類）、`category`（用途）、三語 `title` / `summary`、`source`、`reference`、`verified_with`、`verified_at`（`YYYY-MM-DD` 或 null，兩者需同時設定或同時為 null）、`status = active | deprecated`、`replaced_by`。種類和用途是互不依賴的篩選維度；`reference` 對本站原創資源寫 `Ludwig`，外部引用／借鑑資源寫原始 HTTPS 網址，展開項目的資訊欄固定顯示 `Reference`
-- `kind = skill` 的 `source` 直接指向 `skills/<name>/skill.md`，不得複製第二份；Prompt 本體在 `data/Toolkit/prompts/`，通用範本與指南在 `data/Toolkit/resources/`，僅提煉可公開重用的內容
+- `kind = skill` 的 `source` 若為本站自建實作直接指向 `skills/<name>/SKILL.md`，不得複製第二份；外部或精選 Skill 的摘要/實體亦可收錄於 `skills/` 或 `data/Toolkit/`；Prompt 本體在 `data/Toolkit/prompts/`，通用範本與指南在 `data/Toolkit/resources/`，僅提煉可公開重用的內容
 - Prompt / Skill 的驗證時效由 runtime 依 `verified_at` 與 `stale_after_days` 推導；Template / Guide 一律標示參考資料，不使用模型驗證狀態；密語模式只改呈現文案，不改資料來源或篩選語意
-- 外部 Skill 若只作精選導覽，收錄為本站撰寫的 Guide 摘要，`source` 指向本地摘要、`reference` 指向原始 Skill；不將摘要冒充已安裝或已在本站驗證的 Skill，也不複製上游完整檔案
+- 外部 Skill 收錄為 Toolkit 的 Skill 條目，`reference` 指向原始 Skill 網址，保留可公開重用的流程與規範
 - 守門測試：`tests/test_toolkit_data.py`
 - `agent-rules-template` 是 `data/Toolkit/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `toolkit.json` 維護，不能另寫一份卡片摘要
 - `agent-handoff-template` 是 `data/Toolkit/resources/agent-handoff-template.md` 內可替換的短期交接範本；根目錄 `HANDOFF.md` 只記 Agent 最近停點，不承接 `TODO.md` 的總體與長期待辦，並由 `.assetsignore` 排除於網站資產之外
