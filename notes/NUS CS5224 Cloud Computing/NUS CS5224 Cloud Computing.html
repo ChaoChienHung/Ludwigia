@@ -13,7 +13,7 @@
   <meta name="site:canonical_id" content="nus-cs5224-cloud-computing">
   <meta name="site:published_at" content="2026-08-30">
   <meta name="site:last_modified_at" content="2026-11-12">
-  <meta name="site:reading_time_minutes" content="486">
+  <meta name="site:reading_time_minutes" content="462">
   <meta name="site:source" content="notes/NUS CS5224 Cloud Computing/NUS CS5224 Cloud Computing.md">
   <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -576,48 +576,6 @@
 <a class="note-toc-link level-1" href="#2-directed-edge-semantics-and-data-cleaning">2. Directed-edge semantics and data cleaning</a>
 <a class="note-toc-link level-1" href="#3-batch-computation-materialization-and-serving">3. Batch computation, materialization, and serving</a>
 <a class="note-toc-link level-1" href="#4-architecture-and-engineering-trade-offs">4. Architecture and engineering trade-offs</a>
-<a class="note-toc-link level-1" href="#1-k-means-as-an-iterative-distributed-workload-2">1. K-means as an iterative distributed workload</a>
-<a class="note-toc-link level-2" href="#5-1-k-means-clustering-on-mapreduce-2">5.1 K-means clustering on MapReduce</a>
-<a class="note-toc-link level-2" href="#5-2-one-complete-map-shuffle-reduce-iteration-2">5.2 One complete map–shuffle–reduce iteration</a>
-<a class="note-toc-link level-1" href="#2-k-means-distribution-costs-and-result-interpretation-2">2. K-means distribution costs and result interpretation</a>
-<a class="note-toc-link level-1" href="#3-reconstruct-the-complete-emr-s3-iteration-workflow-2">3. Reconstruct the complete EMR/S3 iteration workflow</a>
-<a class="note-toc-link level-1" href="#4-map-the-algorithmic-choices-to-cloud-costs-2">4. Map the algorithmic choices to cloud costs</a>
-<a class="note-toc-link level-1" href="#5-video-sharing-saas-upload-encode-stream-2">5. Video-sharing SaaS: upload, encode, stream</a>
-<a class="note-toc-link level-2" href="#5-1-trace-a-single-upload-through-the-architecture-2">5.1 Trace a single upload through the architecture</a>
-<a class="note-toc-link level-2" href="#5-2-service-model-and-bottleneck-comparison-2">5.2 Service model and bottleneck comparison</a>
-<a class="note-toc-link level-2" href="#5-3-read-the-lecture-architecture-diagrams-as-a-data-flow-2">5.3 Read the lecture architecture diagrams as a data flow</a>
-<a class="note-toc-link level-2" href="#5-4-lecture-workload-and-capacity-arithmetic-2">5.4 Lecture workload and capacity arithmetic</a>
-<a class="note-toc-link level-2" href="#5-5-stage-by-stage-service-responsibility-2">5.5 Stage-by-stage service responsibility</a>
-<a class="note-toc-link level-1" href="#6-capacity-and-reliability-worked-from-the-lecture-workload-2">6. Capacity and reliability worked from the lecture workload</a>
-<a class="note-toc-link level-1" href="#7-price-the-complete-video-path-then-compare-alternatives-2">7. Price the complete video path, then compare alternatives</a>
-<a class="note-toc-link level-1" href="#exam-reasoning-bridge-trace-one-request-and-one-failure-2">Exam reasoning bridge: trace one request and one failure</a>
-<a class="note-toc-link level-1" href="#1-infrastructure-as-code-iac-2">1. Infrastructure as Code (IaC)</a>
-<a class="note-toc-link level-2" href="#1-1-imperative-and-declarative-approaches-2">1.1 Imperative and declarative approaches</a>
-<a class="note-toc-link level-2" href="#1-2-drift-and-the-pets-versus-cattle-distinction-2">1.2 Drift and the pets-versus-cattle distinction</a>
-<a class="note-toc-link level-1" href="#2-tools-and-terraform-workflow-2">2. Tools and Terraform workflow</a>
-<a class="note-toc-link level-2" href="#2-1-terraform-configuration-plan-graph-and-state-2">2.1 Terraform configuration, plan, graph, and state</a>
-<a class="note-toc-link level-2" href="#2-2-compare-tool-boundaries-through-one-bucket-2">2.2 Compare tool boundaries through one bucket</a>
-<a class="note-toc-link level-2" href="#2-3-a-reviewable-change-sequence-2">2.3 A reviewable change sequence</a>
-<a class="note-toc-link level-1" href="#3-trace-an-infrastructure-change-across-code-graph-state-and-live-service-2">3. Trace an infrastructure change across code, graph, state, and live service</a>
-<a class="note-toc-link level-1" href="#exam-reasoning-bridge-separate-reusable-code-from-isolated-state-2">Exam reasoning bridge: separate reusable code from isolated state</a>
-<a class="note-toc-link level-1" href="#1-pricing-models-usage-metrics-and-total-cost-of-ownership-2">1. Pricing models, usage metrics, and total cost of ownership</a>
-<a class="note-toc-link level-2" href="#1-1-match-pricing-to-workload-shape-2">1.1 Match pricing to workload shape</a>
-<a class="note-toc-link level-1" href="#2-build-a-complete-usage-ledger-2">2. Build a complete usage ledger</a>
-<a class="note-toc-link level-1" href="#3-tco-comparison-and-utilization-2">3. TCO comparison and utilization</a>
-<a class="note-toc-link level-2" href="#3-1-a-reusable-break-even-model">3.1 A reusable break-even model</a>
-<a class="note-toc-link level-2" href="#3-3-tiered-price-calculation-and-unit-discipline-2">3.3 Tiered price calculation and unit discipline</a>
-<a class="note-toc-link level-2" href="#3-4-provider-consumer-and-saas-provider-viewpoints-2">3.4 Provider, consumer, and SaaS-provider viewpoints</a>
-<a class="note-toc-link level-1" href="#4-end-to-end-decision-checklist-2">4. End-to-end decision checklist</a>
-<a class="note-toc-link level-1" href="#exam-reasoning-bridge-compare-options-over-the-same-horizon-2">Exam reasoning bridge: compare options over the same horizon</a>
-<a class="note-toc-link level-1" href="#1-cloud-computing-versus-cloud-native-design-2">1. Cloud computing versus cloud-native design</a>
-<a class="note-toc-link level-1" href="#2-why-split-a-monolith-and-where-splitting-hurts-2">2. Why split a monolith, and where splitting hurts</a>
-<a class="note-toc-link level-1" href="#3-containers-solve-packaging-orchestration-handles-a-fleet-2">3. Containers solve packaging; orchestration handles a fleet</a>
-<a class="note-toc-link level-2" href="#3-1-the-five-cloud-native-techniques-in-the-guest-lecture-2">3.1 The five cloud-native techniques in the guest lecture</a>
-<a class="note-toc-link level-1" href="#4-kubernetes-desired-state-pods-deployments-and-reconciliation-2">4. Kubernetes: desired state, Pods, Deployments, and reconciliation</a>
-<a class="note-toc-link level-2" href="#4-1-read-a-minimal-desired-state-declaration-2">4.1 Read a minimal desired-state declaration</a>
-<a class="note-toc-link level-2" href="#4-2-separate-three-different-recovery-questions-2">4.2 Separate three different recovery questions</a>
-<a class="note-toc-link level-1" href="#5-operational-boundaries-and-the-cost-of-abstraction-2">5. Operational boundaries and the cost of abstraction</a>
-<a class="note-toc-link level-2" href="#5-1-interpret-the-guest-lectures-2025-survey-as-dated-evidence-2">5.1 Interpret the guest lecture's 2025 survey as dated evidence</a>
           </nav>
         </div>
       </div>
@@ -1106,8 +1064,6 @@ Risk: Outages on Traffic Spikes        Requires Advanced Auto-Scaling         Ri
 
 <section id="exam-questions-worked-problems" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
-
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-1---cloud-computing-fundamentals-architecture-business-drivers-scaling-mechanics-and-security-governance) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-1---cloud-computing-fundamentals-architecture-business-drivers-scaling-mechanics-and-security-governance" target="_blank" rel="noopener noreferrer">full course note</a></p>
 
 <h4 id="1-2425-sem2-test-q16-pdf-p-1" class="mb-2">1. 2425 Sem2 Test Q16 · PDF p. 1</h4>
 
@@ -2000,8 +1956,6 @@ Risk: Outages on Traffic Spikes        Requires Advanced Auto-Scaling         Ri
 <section id="exam-questions-worked-problems-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
 
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-2---cloud-computing-reference-architecture-nist-sp-500-292-models-service-layering-and-cloud-governance) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-2---cloud-computing-reference-architecture-nist-sp-500-292-models-service-layering-and-cloud-governance" target="_blank" rel="noopener noreferrer">full course note</a></p>
-
 <h4 id="23-2526-sem1-test-q10-pdf-p-15" class="mb-2">23. 2526 Sem1 Test Q10 · PDF p. 15</h4>
 
 <p class="mb-3">A cloud-native consulting firm offers a new product to its clients. This product integrates a SaaS-based Cloud Resource Management from Provider A, a PaaS-based database from Provider B, and a Storage-as-a-Service solution from Provider C. The firm combines these into a single, new, unified service with one dashboard and one bill, and it manages the secure data movement between the three providers. According to the NIST Cloud Computing Reference Architecture, which specific role and service is this firm fulfilling?</p>
@@ -2499,8 +2453,6 @@ Risk: Outages on Traffic Spikes        Requires Advanced Auto-Scaling         Ri
 
 <section id="exam-questions-worked-problems-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
-
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-3---cloud-architectures-workload-distribution-resource-pooling-dynamic-scalability-and-cloud-bursting) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-3---cloud-architectures-workload-distribution-resource-pooling-dynamic-scalability-and-cloud-bursting" target="_blank" rel="noopener noreferrer">full course note</a></p>
 
 <h4 id="35-2425-sem2-test-q11-pdf-p-21" class="mb-2">35. 2425 Sem2 Test Q11 · PDF p. 21</h4>
 
@@ -3758,8 +3710,6 @@ Risk: Outages on Traffic Spikes        Requires Advanced Auto-Scaling         Ri
 <section id="exam-questions-worked-problems-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
 
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-4---datacenter-infrastructure-resource-hosting-hardware-architecture-network-layering-and-energy-efficiency) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-4---datacenter-infrastructure-resource-hosting-hardware-architecture-network-layering-and-energy-efficiency" target="_blank" rel="noopener noreferrer">full course note</a></p>
-
 <h4 id="52-2526-sem2-test-q21-pdf-p-30" class="mb-2">52. 2526 Sem2 Test Q21 · PDF p. 30</h4>
 
 <p class="mb-3">Assume that you are responsible for organising your cloud resources globally as the leader of an enterprise. Discuss at least two key factors that you should consider when deciding on cloud resource hosting.</p>
@@ -4790,8 +4740,6 @@ Risk: Outages on Traffic Spikes        Requires Advanced Auto-Scaling         Ri
 
 <section id="exam-questions-worked-problems-5" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
-
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-5---virtualization-technologies-hypervisors-hardware-assists-containerization-and-multi-tenancy-engineering) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-5---virtualization-technologies-hypervisors-hardware-assists-containerization-and-multi-tenancy-engineering" target="_blank" rel="noopener noreferrer">full course note</a></p>
 
 <h4 id="60-2425-sem2-test-q10-pdf-p-40" class="mb-2">60. 2425 Sem2 Test Q10 · PDF p. 40</h4>
 
@@ -6830,8 +6778,6 @@ function reduce(String key, Iterator values):
 <section id="exam-questions-worked-problems-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
 
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-6---cloud-application-architectures-and-computing-paradigms-delivery-models-multi-tier-systems-mapreduce-and-serverless-faas) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-6---cloud-application-architectures-and-computing-paradigms-delivery-models-multi-tier-systems-mapreduce-and-serverless-faas" target="_blank" rel="noopener noreferrer">full course note</a></p>
-
 <h4 id="74-2526-sem1-test-q1-pdf-p-53" class="mb-2">74. 2526 Sem1 Test Q1 · PDF p. 53</h4>
 
 <p class="mb-3">What is a key benefit of using cloud-based databases compared to traditional on- premise non-cloud databases?</p>
@@ -7216,8 +7162,6 @@ function reduce(String key, Iterator values):
 
 <p class="mb-3"><strong>Explanation:</strong> (d) FaaS platforms scale short invocations per event and usually remove server provisioning work. Their ephemeral execution makes long-lived connections and in-memory state a poor fit; state should live in an external service or a long-running process should be used. A high-availability model still requires retry/idempotency and dependency design.</p>
 
-<p class="mb-3"><strong>Lab 1 review:</strong> [artifact lab note](CS5224%20Cloud%20Computing%20Study%20Notes.md#lab-1-cloud-architecture-for-a-private-photography-gallery-and-viva-preparation) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#lab-1-cloud-architecture-for-a-private-photography-gallery-and-viva-preparation" target="_blank" rel="noopener noreferrer">full lab note</a></p>
-
 <h4 id="99-lab-1-s3-public-read-pdf-p-70" class="mb-2">99. Lab 1 · S3 public read · PDF p. 70</h4>
 
 <p class="mb-3">Why can an object URL be readable while bucket listing remains forbidden?</p>
@@ -7289,8 +7233,6 @@ function reduce(String key, Iterator values):
 <p class="mb-3"><strong>Answer:</strong> Price storage GB-months, request counts, transcode compute, CDN/egress, database, logs, and backups from workload assumptions.</p>
 
 <p class="mb-3"><strong>Explanation:</strong> State the region and unit prices. Check upload retry/idempotency, private access, lifecycle rules, and failure recovery.</p>
-
-<p class="mb-3"><strong>Lab 2 review:</strong> [artifact lab note](CS5224%20Cloud%20Computing%20Study%20Notes.md#lab-2-cloud-services-and-a-scalable-social-graph-analytics-pipeline)</p>
 
 <h4 id="108-lab-2-deployment-choices-pdf-p-78" class="mb-2">108. Lab 2 · Deployment choices · PDF p. 78</h4>
 
@@ -7619,8 +7561,6 @@ Next job:          load v+1 centroids before mapping the same input again</code>
 <section id="exam-questions-worked-problems-7" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
 
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-7---example-applications-k-means-with-mapreduce-and-video-sharing-saas) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-7---example-applications-k-means-with-mapreduce-and-video-sharing-saas" target="_blank" rel="noopener noreferrer">full course note</a></p>
-
 <h4 id="116-course-quiz-4-q1-pdf-p-85" class="mb-2">116. Course Quiz 4 Q1 · PDF p. 85</h4>
 
 <p class="mb-3">Which video-sharing SaaS activity is typically CPU intensive?</p>
@@ -7790,8 +7730,6 @@ Next job:          load v+1 centroids before mapping the same input again</code>
 
 <section id="exam-questions-worked-problems-8" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
-
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-8---infrastructure-as-code-repeatable-cloud-environments-and-terraform) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-8---infrastructure-as-code-repeatable-cloud-environments-and-terraform" target="_blank" rel="noopener noreferrer">full course note</a></p>
 
 <h4 id="119-2526-sem1-test-q22-pdf-p-88" class="mb-2">119. 2526 Sem1 Test Q22 · PDF p. 88</h4>
 
@@ -8107,8 +8045,6 @@ Next job:          load v+1 centroids before mapping the same input again</code>
 
 <section id="exam-questions-worked-problems-9" class="note-section" data-aos="fade-up" data-aos-delay="120">
 <h3 class="mb-3">Exam Questions &amp; Worked Problems</h3>
-
-<p class="mb-3"><strong>Review in context:</strong> [artifact study notes](CS5224%20Cloud%20Computing%20Study%20Notes.md#week-9---cloud-pricing-and-total-cost-of-ownership) · <a class="note-inline-link" href="../notes/NUS%20CS5224%20Cloud%20Computing/NUS%20CS5224%20Cloud%20Computing.md#week-9---cloud-pricing-and-total-cost-of-ownership" target="_blank" rel="noopener noreferrer">full course note</a></p>
 
 <h4 id="125-2425-sem2-test-q21-pdf-p-92" class="mb-2">125. 2425 Sem2 Test Q21 · PDF p. 92</h4>
 
@@ -9290,348 +9226,6 @@ Content-Length: 5242880
 <h3 class="mb-3">4. Architecture and engineering trade-offs</h3>
 
 <p class="mb-3">The data path is <code>S3 input → EMR Serverless/Spark → S3 result → DynamoDB import</code>; the query path is <code>browser → API Gateway → Lambda → DynamoDB → response</code>. Use least-privilege IAM roles for S3 input/output, EMR execution, DynamoDB import/read, and Lambda.</p>
-
-<h1 class="mt-4">Week 7 - Example Applications: K-Means with MapReduce and Video-Sharing SaaS</h1>
-
-<p class="mb-3">Week 6 introduced MapReduce as a processing model. This week turns it into a complete iterative workload: choose the input representation, send points to clusters, recompute centroids, and repeat with the new model.</p>
-</section>
-
-<section id="1-k-means-as-an-iterative-distributed-workload-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. K-means as an iterative distributed workload</h3>
-
-<h4 id="5-1-k-means-clustering-on-mapreduce-2" class="mb-2">5.1 K-means clustering on MapReduce</h4>
-
-<p class="mb-3">K-means groups $m$ objects represented by $n$-dimensional attribute vectors into $k&lt;m$ clusters. Each iteration has an <strong>assignment</strong> step and an <strong>update</strong> step. For the usual $p$-norm distance $\|x-y\|_p=(\sum_i|x_i-y_i|^p)^{1/p}$, the metric guarantee requires <strong>$p\geq1$</strong>. The slide's wording “$p&gt;0$” is too broad: when $0&lt;p&lt;1$, this expression generally violates the triangle inequality. The lecture's Twitter example represents each user by two attributes: $\log_2(\text{followers})$ and $\log_2(\text{followees})$. The example uses S3 for input/code/output storage and Amazon EMR as the managed data-processing cluster.</p>
-
-<h4 id="5-2-one-complete-map-shuffle-reduce-iteration-2" class="mb-2">5.2 One complete map–shuffle–reduce iteration</h4>
-
-<p class="mb-3">Suppose points $x_1=(0,0)$, $x_2=(2,0)$, and $x_3=(9,0)$ start with centroids $\mu_A=(0,0)$ and $\mu_B=(10,0)$. Mappers send the first two points under key A and the third under key B. The Twitter input value contains two log-transformed features. Logarithms reduce the dominance of high-follower outliers, but zero counts require an explicit transform convention such as $\log_2(1+x)$; the slide's encoded examples should not be read as prescribing one universal zero-handling rule.</p>
-</section>
-
-<section id="2-k-means-distribution-costs-and-result-interpretation-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. K-means distribution costs and result interpretation</h3>
-
-<p class="mb-3">For $m$ points, $k$ centroids, and $d$ numeric features, a straightforward assignment pass evaluates about $mk$ distances, each costing $O(d)$ arithmetic, so its compute is $O(mkd)$ per iteration before parallelization. The lecture's example output includes a cluster of 5,166 people centered at log-space coordinates $(5.051,2.712)$.</p>
-</section>
-
-<section id="3-reconstruct-the-complete-emr-s3-iteration-workflow-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. Reconstruct the complete EMR/S3 iteration workflow</h3>
-
-<p class="mb-3">The lecture first asks authors to <strong>preprocess the data</strong>. A source record is keyed by a user ID and carries a two-dimensional feature vector. One iteration can be written as a data contract: The mapper's <em>input</em> key identifies a person, while its <em>output</em> key identifies a cluster. The output of one job is not the final answer unless a stopping rule is met. The slide asks “what is $k$?” without prescribing a universal choice. $k$ is a modeling decision: too small merges distinct groups, while too large can fragment meaningful groups and increase compute.</p>
-</section>
-
-<section id="4-map-the-algorithmic-choices-to-cloud-costs-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">4. Map the algorithmic choices to cloud costs</h3>
-
-<p class="mb-3">For $I$ iterations, the direct distance work is roughly $O(Imkd)$, and the input dataset may be read repeatedly. To compare two configurations, record input bytes, number of iterations, workers and runtime, shuffle bytes, S3 requests/storage, and the quality metric. “Cheaper per instance” is not the right comparison if it takes more instances or more iterations.</p>
-
-<p class="mb-3">The same supplied Lecture 07/08 deck also asks how to build a user-facing SaaS whose upload, transcoding, and playback paths have very different resource demands.</p>
-</section>
-
-<section id="5-video-sharing-saas-upload-encode-stream-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">5. Video-sharing SaaS: upload, encode, stream</h3>
-
-<p class="mb-3">The second application must accept videos in different formats, convert them to streamable renditions, and deliver them to many viewers.</p>
-
-<ul class="note-list">
-<li>Upload. Main path: Browser → upload interface → object storage; Capacity and reliability question: How are large files transferred, authenticated, checked, and made durable?</li>
-<li>Encoding. Main path: New-object event / job queue → workers → transcoded renditions and metadata; Capacity and reliability question: How are CPU-intensive jobs retried, deduplicated, and scaled independently?</li>
-<li>Streaming. Main path: Viewer → web/app tier or CDN → prepared video segments in storage; Capacity and reliability question: How are bandwidth, cache hit rate, adaptive formats, and egress cost controlled?</li>
-</ul>
-
-<h4 id="5-1-trace-a-single-upload-through-the-architecture-2" class="mb-2">5.1 Trace a single upload through the architecture</h4>
-
-<p class="mb-3">A browser uploads a file through a front-end service or directly to object storage using a scoped upload grant.</p>
-
-<h4 id="5-2-service-model-and-bottleneck-comparison-2" class="mb-2">5.2 Service model and bottleneck comparison</h4>
-
-<ul class="note-list">
-<li>EC2 / web tier. What the lecture demonstrates: IaaS compute for front-end connections; Capacity driver: Concurrent uploads and API requests; What the application owner still decides: Instance configuration, application deployment, load balancing</li>
-<li>S3 / storage. What the lecture demonstrates: Durable cloud object service; Capacity driver: Video bytes, copies, requests; What the application owner still decides: Object naming, access control, retention</li>
-</ul>
-
-<p class="mb-3">The lecture compares traditional hosting and cloud costs under an example workload (about 50 uploads daily).</p>
-
-<h4 id="5-3-read-the-lecture-architecture-diagrams-as-a-data-flow-2" class="mb-2">5.3 Read the lecture architecture diagrams as a data flow</h4>
-
-<p class="mb-3">The slide sequence gives a more specific reference architecture than the generic three-stage table above. On <strong>encoding</strong>, EC2 encoder workers in a separate Auto Scaling Group poll SQS, download the raw file from the raw-files bucket, transcode it (the lecture names <code>ffmpeg</code>), then upload the encoded result to a separate S3 encoded-files bucket. On <strong>streaming</strong>, a viewer's browser/media player receives encoded video through CloudFront, whose origin is the encoded-files bucket.</p>
-
-<h4 id="5-4-lecture-workload-and-capacity-arithmetic-2" class="mb-2">5.4 Lecture workload and capacity arithmetic</h4>
-
-<p class="mb-3">The lecture's worked workload assumes about <strong>50 uploads/day</strong>, each a <strong>100 MB</strong> HD movie. The viewing side assumes <strong>500 streams/day</strong> of 100 MB each, or $50\text{ GB/day}\approx1.5\text{ TB/month}$ of delivered data, assuming viewers consume the full movie and decimal units.</p>
-
-<h4 id="5-5-stage-by-stage-service-responsibility-2" class="mb-2">5.5 Stage-by-stage service responsibility</h4>
-
-<p class="mb-3">The lecture's diagrams classify EC2, S3, auto scaling, Elastic Load Balancer, and SQS as cloud infrastructure services supporting the upload and encode pipeline; the SaaS provider still assembles them into the actual video product.</p>
-</section>
-
-<section id="6-capacity-and-reliability-worked-from-the-lecture-workload-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">6. Capacity and reliability worked from the lecture workload</h3>
-
-<p class="mb-3">The 50-upload/day case produces roughly $150$ GB of raw video in a 30-day month. The lecture's 500 full-view streams/day at 100 MB each imply $1.5$ TB/month delivered. One minute of encoding work per upload gives an average arrival rate $\lambda=50/1440\approx0.035$ jobs/minute and only 50 worker-minutes/day. Follow one failure through the pipeline. A browser retry after a lost response can create duplicate upload attempts; use a stable upload/job identifier.</p>
-</section>
-
-<section id="7-price-the-complete-video-path-then-compare-alternatives-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">7. Price the complete video path, then compare alternatives</h3>
-
-<p class="mb-3">Slide 37 lists EC2 instances, S3 storage, CloudFront delivery, and usage-priced platform software as cost components. This is a model template, not a claim that the lecture supplies current prices for every term. The deck asks for three different comparisons:</p>
-
-<ul class="note-list">
-<li>Traditional hosting vs cloud. Hold fixed: Same upload/stream workload, retention, region, quality and availability target; Change: Ownership, capacity procurement, operations; Question answered: Is on-prem total cost and peak capacity preferable to cloud metering?</li>
-<li>Inter-cloud. Hold fixed: Same application behavior and assumptions; Change: Provider prices and service implementations; Question answered: Which provider's <em>whole path</em> is preferable, including migration and egress?</li>
-</ul>
-</section>
-
-<section id="exam-reasoning-bridge-trace-one-request-and-one-failure-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Exam reasoning bridge: trace one request and one failure</h3>
-
-<p class="mb-3">A video-sharing architecture is easiest to test by following one upload: authenticate the owner, store the original privately, enqueue a conversion job, produce renditions, record processing state, authorize each viewer, then deliver through a CDN. Object storage is durable file storage; the queue absorbs bursts and retries; encoders perform CPU-heavy work; the database tracks ownership and workflow; the CDN caches delivery near viewers. A CDN does not determine whether a viewer is allowed to see a private asset.</p>
-
-<p class="mb-3">Ask what happens when encoding fails after the original upload. The original should remain durable, the job should be retryable or moved to a dead-letter path, and the UI should show a processing/failure state instead of advertising a nonexistent rendition. A queue smooths a spike but does not create compute capacity; worker scaling and queue age monitoring are needed. Cost includes retained originals/renditions, conversion work, requests and data egress, not just storage volume. Review [Q116–118](CS5224%20Questions%20and%20Answers.md#week-7---example-applications).</p>
-
-<h1 class="mt-4">Week 8 - Infrastructure as Code: Repeatable Cloud Environments and Terraform</h1>
-
-<p class="mb-3">The prior application designs contain many dependent resources. IaC turns that dependency graph into a reviewable source artifact so deployment can be repeated and changed deliberately.</p>
-</section>
-
-<section id="1-infrastructure-as-code-iac-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. Infrastructure as Code (IaC)</h3>
-
-<p class="mb-3">A cloud environment consists of VMs, networks, databases, load balancers, storage, identity rules, and their dependencies.</p>
-
-<h4 id="1-1-imperative-and-declarative-approaches-2" class="mb-2">1.1 Imperative and declarative approaches</h4>
-
-<ul class="note-list">
-<li>Imperative. Author describes: Ordered operations: create network, then subnet, then VM; Benefit: Direct control over individual steps; simple one-off tasks; Limit: Must track current state and edge cases; reruns may not be idempotent</li>
-<li>Declarative. Author describes: Desired resources and properties; Benefit: Tool calculates changes, handles dependencies, and can converge after drift; Limit: Less step-level control; state management and abstraction can add complexity</li>
-</ul>
-
-<h4 id="1-2-drift-and-the-pets-versus-cattle-distinction-2" class="mb-2">1.2 Drift and the pets-versus-cattle distinction</h4>
-
-<p class="mb-3">Drift arises when console edits, emergency fixes, or automated services change live resources without matching source updates.</p>
-</section>
-
-<section id="2-tools-and-terraform-workflow-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. Tools and Terraform workflow</h3>
-
-<p class="mb-3">The lecture surveys provider tools (AWS CloudFormation/CDK, Azure Resource Manager, Google Infrastructure Manager) and independent tools (Terraform, Pulumi). The tool distinctions in the slides are more specific. <strong>CloudFormation</strong> manages AWS resources from declarative templates; <strong>AWS CDK</strong> lets authors define resources in familiar programming languages and synthesizes a CloudFormation deployment. A safe Terraform cycle is: <strong>write</strong> configuration → initialize providers/modules → <strong>plan</strong> and inspect the proposed diff → <strong>apply</strong> reviewed changes → observe actual resources and drift → update configuration or state deliberately.</p>
-
-<h4 id="2-1-terraform-configuration-plan-graph-and-state-2" class="mb-2">2.1 Terraform configuration, plan, graph, and state</h4>
-
-<p class="mb-3">A resource block declares a desired object, such as an S3 bucket, while providers translate resource operations to cloud APIs. A practical review asks: Which resources will be <strong>created, changed, or destroyed</strong>? Will a change recreate a database or public endpoint?</p>
-
-<h4 id="2-2-compare-tool-boundaries-through-one-bucket-2" class="mb-2">2.2 Compare tool boundaries through one bucket</h4>
-
-<p class="mb-3">A minimal Terraform-style resource declaration can express an S3 bucket and tags: This describes a desired object; it does <strong>not</strong> create the bucket until a provider is configured and an apply is authorized.</p>
-
-<h4 id="2-3-a-reviewable-change-sequence-2" class="mb-2">2.3 A reviewable change sequence</h4>
-
-<ol class="mb-3">
-<li>Put the infrastructure configuration in version control and initialize the tool/providers.</li>
-<li>Change a resource property in a branch and run a plan. Read the <em>operations</em>, not merely the final count of resources.</li>
-<li>Review security effects: public exposure, IAM permissions, encryption, backup, network routes, and data retention.</li>
-<li>Apply the reviewed change with controlled credentials and serialized state access.</li>
-<li>Confirm the live resource, test application behavior, and monitor for drift.</li>
-</ol>
-</section>
-
-<section id="3-trace-an-infrastructure-change-across-code-graph-state-and-live-service-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. Trace an infrastructure change across code, graph, state, and live service</h3>
-
-<p class="mb-3">Suppose a video application declares a bucket, a processing queue, and encoder workers. Terraform configuration expresses the desired objects; the state file maps those declarations to provider resource IDs; a refresh or plan compares recorded and observed state; provider API calls change the live system. **<code>plan</code> versus <code>apply</code>:** <code>terraform plan</code> previews the operations needed to move from the observed/current resources toward the configuration's desired state; it does not execute those operations. <code>terraform apply</code> executes a plan. If no saved plan is supplied, it generates a fresh plan and normally asks for confirmation before changing resources. If a saved plan file is supplied, it executes that plan without a new interactive approval; <code>-auto-approve</code> also skips confirmation when generating a fresh plan. For CI drift checks, run <code>plan</code> and alert for review rather than scheduling <code>apply</code>. An ordinary non-empty plan may reflect a deliberate <code>.tf</code> change as well as external drift; <code>plan -refresh-only</code> focuses on changes to real resources relative to recorded state. The lecture's future-facing ideas add a feedback loop. <strong>Policy-as-Code</strong> rejects deployments that violate explicit rules (for example, a public bucket or unrestricted ingress); <strong>GitOps</strong> reconciles a declared repository state into a target environment; <strong>self-healing IaC</strong> monitors, analyzes, then remedies deviations.</p>
-</section>
-
-<section id="exam-reasoning-bridge-separate-reusable-code-from-isolated-state-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Exam reasoning bridge: separate reusable code from isolated state</h3>
-
-<p class="mb-3">Infrastructure as Code describes desired resources in versioned files so environments can be recreated and reviewed. Declarative tools describe the target state and compute a plan; imperative scripts prescribe a sequence of commands. In Terraform, a <strong>module</strong> packages a reusable resource pattern, variables parameterize it, and outputs expose created identifiers. A <strong>state file</strong> records the relationship between configuration and deployed resources. Modules provide reuse; separate state/backends keep development, staging and production operations isolated. One is not a substitute for the other.</p>
-
-<p class="mb-3">Before applying, inspect the plan for unintended replacement, deletion or cross-environment changes. Protect state because it may contain sensitive values and is needed for consistent operations; use appropriate remote storage and locking for collaboration. Portability across providers still depends on provider-specific resource definitions, services and data formats. Review [Q119–124](CS5224%20Questions%20and%20Answers.md#week-8---infrastructure-as-code).</p>
-
-<h1 class="mt-4">Week 9 - Cloud Pricing and Total Cost of Ownership</h1>
-
-<p class="mb-3">Choosing a lower unit price is not the same as minimizing cost. The workload's duration, data movement, utilization, commitment, and operational labor determine the total.</p>
-</section>
-
-<section id="1-pricing-models-usage-metrics-and-total-cost-of-ownership-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. Pricing models, usage metrics, and total cost of ownership</h3>
-
-<p class="mb-3">A <strong>price</strong> is a unit charge, such as per compute second, GB-month, GB transferred, user-month, or 1,000 requests.</p>
-
-<h4 id="1-1-match-pricing-to-workload-shape-2" class="mb-2">1.1 Match pricing to workload shape</h4>
-
-<ul class="note-list">
-<li><strong>IaaS:</strong> VM type/size and run duration, storage allocation and I/O, network transfer, and sometimes licensed software.</li>
-<li><strong>PaaS:</strong> Compute and storage plus managed platform, development tooling, and possible license charges.</li>
-<li><strong>SaaS:</strong> Subscription modules, nominated users, transaction volume, or combinations. Under integrated pricing the SaaS provider pays its IaaS host and bundles that cost into the customer bill; under separate pricing the customer pays SaaS and hosting providers separately.</li>
-</ul>
-</section>
-
-<section id="2-build-a-complete-usage-ledger-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. Build a complete usage ledger</h3>
-
-<ul class="note-list">
-<li>Network. Quantity to calculate: Inbound, outbound, inter-region/inter-cloud, and intra-cloud bytes by path; Common omission: Assuming all internal or inbound traffic is free</li>
-<li>Compute. Quantity to calculate: Instance type × running hours; reserved commitment; serverless requests and execution duration; Common omission: Counting only CPU-active time for a running VM</li>
-<li>Storage. Quantity to calculate: Average GB held × months, storage class, requests and I/O; Common omission: Counting only final data size, not intermediate and replicated copies</li>
-<li>Service. Quantity to calculate: User-months, subscription period, API transactions; Common omission: Forgetting minimum fees or tier changes</li>
-<li>Operations. Quantity to calculate: Monitoring, backup, support, security, integration, staff time; Common omission: Comparing provider bill with on-prem hardware alone</li>
-</ul>
-</section>
-
-<section id="3-tco-comparison-and-utilization-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. TCO comparison and utilization</h3>
-
-<p class="mb-3">The lecture's datacenter TCO decomposition is <strong>datacenter depreciation + datacenter operating cost + server depreciation + server operating cost</strong>. The three lecture cases compare high-end servers, lower-cost but higher-power servers, and the latter at 50% datacenter utilization.</p>
-
-<h4 id="3-1-a-reusable-break-even-model" class="mb-2">3.1 A reusable break-even model</h4>
-
-<p class="mb-3">Let fixed on-prem annual cost be $F$, incremental on-prem workload cost $c_p$ per unit, cloud fixed subscription/support cost $S$, and cloud marginal workload cost $c_c$. In the lecture's Case A/B/C comparison, changing server efficiency and utilization alters both numerator and denominator of cost per useful work. <strong>Worked break-even illustration, not a provider quote.</strong> Suppose one year of on-prem operation costs $F=\text{S\$}100{,}000$ fixed plus $c_p=\text{S\$}1$ per completed job. A cloud design costs $S=\text{S\$}20{,}000$ fixed plus $c_c=\text{S\$}3$ per job. Equating $100{,}000+x=20{,}000+3x$ yields $x^*=40{,}000$ jobs/year. At 20,000 jobs, on-prem costs S$120,000 and cloud S$80,000; at 60,000 jobs, on-prem costs S$160,000 and cloud S$200,000. These rankings assume the same workload and SLA, enough on-prem capacity, and all relevant cloud transfer/migration charges included.</p>
-
-<p class="mb-3"><strong>Worked sequential compute + I/O question (2526 Sem1 Test Q21).</strong> Convert 60 PFLOP to 60,000 TFLOP. With 800,000 I/O operations, $t=60{,}000/(\text{TFLOP/s})+800{,}000(\text{ms/I/O})/1000$ seconds; cost is $t\times(\text{USD/s})$. The two stages are sequential, so add their times rather than taking the maximum.</p>
-
-<div class="note-table-wrap mb-3">
-  <table class="note-table">
-    <thead><tr>
-<th>Instance</th>
-<th>Compute time (s)</th>
-<th>I/O time (s)</th>
-<th>Total time (s)</th>
-<th>Cost (USD)</th>
-    </tr></thead>
-    <tbody>
-<tr>
-<td>m7 (1, 3, 1)</td>
-<td>60,000</td>
-<td>2,400</td>
-<td>62,400</td>
-<td>62,400</td>
-</tr>
-<tr>
-<td>i8 (1, 1, 2)</td>
-<td>60,000</td>
-<td>800</td>
-<td>60,800</td>
-<td>121,600</td>
-</tr>
-<tr>
-<td>c5a (3, 2, 2)</td>
-<td>20,000</td>
-<td>1,600</td>
-<td>21,600</td>
-<td><strong>43,200</strong></td>
-</tr>
-<tr>
-<td>r7 (1, 3, 2)</td>
-<td>60,000</td>
-<td>2,400</td>
-<td>62,400</td>
-<td>124,800</td>
-</tr>
-<tr>
-<td>g4 (30, 10, 5)</td>
-<td>2,000</td>
-<td>8,000</td>
-<td>10,000</td>
-<td>50,000</td>
-</tr>
-    </tbody>
-  </table>
-</div>
-
-<p class="mb-3">Thus <strong>c5a minimizes cost</strong>, while g4 finishes fastest. The table uses the question's simplified per-second rates; actual billing rules and parallelism could change a real deployment comparison.</p>
-
-<h4 id="3-3-tiered-price-calculation-and-unit-discipline-2" class="mb-2">3.3 Tiered price calculation and unit discipline</h4>
-
-<p class="mb-3">Suppose, solely as an arithmetic exercise, the first 1 GB of monthly transfer is free, the next 999 GB cost S$0.01/GB, and any remaining bytes cost S$0.005/GB. Compute charges require a compatible unit. A VM rate per second is multiplied by <em>allocated running seconds</em>, often subject to a minimum billing duration; a reserved commitment has upfront and recurring components whether the workload fully uses it or not.</p>
-
-<h4 id="3-4-provider-consumer-and-saas-provider-viewpoints-2" class="mb-2">3.4 Provider, consumer, and SaaS-provider viewpoints</h4>
-
-<p class="mb-3">A cloud provider chooses prices while balancing datacenter design/operation, resource sharing, volume discounts, competition, and regulation.</p>
-</section>
-
-<section id="4-end-to-end-decision-checklist-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">4. End-to-end decision checklist</h3>
-
-<ol class="mb-3">
-<li>Describe workload arrival, storage growth, peak-to-average ratio, data transfer, latency, resilience, and compliance requirements.</li>
-<li>Choose an architecture and deployment model, then map every resource to a meter and rate.</li>
-<li>Estimate costs across the same horizon as the on-prem option, including staff and migration effort.</li>
-<li>Vary utilization, demand, egress, and commitment assumptions; compute a break-even point where possible.</li>
-<li>Review the IaC plan and the estimated bill whenever a design change adds a resource, replication path, or new data movement.</li>
-</ol>
-</section>
-
-<section id="exam-reasoning-bridge-compare-options-over-the-same-horizon-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">Exam reasoning bridge: compare options over the same horizon</h3>
-
-<p class="mb-3">Start with workload shape. A stable baseline can justify reserved/committed capacity; an uncertain or short-lived component favors on-demand flexibility; interruptible batch work may use Spot if it can checkpoint/retry. Right-size resources before buying discounts, and scale idle capacity down when possible. Compare <strong>total</strong> cost: compute-hours, storage, requests, transfer/egress, support, labor, migration and downtime over the same time period.</p>
-
-<p class="mb-3">For a compute-instance choice, calculate each candidate's execution time from required operations and effective throughput, add I/O time where it cannot overlap, then multiply by its price rate; the fastest machine need not minimize cost. For migration, separate future incremental costs from sunk expenditure: money already spent cannot be recovered by choosing on-premise now, although remaining asset life and avoidable operating costs matter. TCO is useful precisely because purchase price alone omits ongoing and risk-related costs. Review [Q125–132](CS5224%20Questions%20and%20Answers.md#week-9---cloud-pricing-and-total-cost-of-ownership).</p>
-
-<h1 class="mt-4">Week 10 - Guest Lecture: The Cloud-Native Paradigm Shift, Microservices, Containers, and Kubernetes</h1>
-
-<p class="mb-3">The numbered lectures explain how cloud resources are offered, assembled into applications, reproduced with code, and priced.</p>
-</section>
-
-<section id="1-cloud-computing-versus-cloud-native-design-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. Cloud computing versus cloud-native design</h3>
-
-<p class="mb-3">Cloud computing describes properties of a resource/service delivery model: on-demand self-service, broad network access, resource pooling, rapid elasticity, and measured usage. The lecture names scalability, loose coupling, resilience, manageability, and observability as motivations. These are desired properties, not free outcomes of installing Kubernetes.</p>
-</section>
-
-<section id="2-why-split-a-monolith-and-where-splitting-hurts-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. Why split a monolith, and where splitting hurts</h3>
-
-<p class="mb-3">A monolith packages many functions into one deployment unit. This can simplify initial development and local transactions, but as the application grows, unrelated features can become coupled in builds, releases, scaling, and failure recovery. That split trades in-process calls for distributed operations. A checkout that once used one transaction may now need coordination among cart, inventory, and payment.</p>
-
-<ul class="note-list">
-<li>Release. One deployment unit: A change can require redeploying the whole unit; Independently deployed services: A bounded service can release alone if API contracts remain compatible</li>
-<li>Scaling. One deployment unit: Often scale all functions together; Independently deployed services: Scale hot functions separately, with network and coordination cost</li>
-</ul>
-</section>
-
-<section id="3-containers-solve-packaging-orchestration-handles-a-fleet-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. Containers solve packaging; orchestration handles a fleet</h3>
-
-<p class="mb-3">A container image packages an application with its language runtime, libraries, executables, and configuration expectations into a standard deployment unit. Once many independently deployed services each have several replicas, <strong>container sprawl</strong> emerges. Operators need to place instances, discover endpoints, balance traffic, attach storage, roll versions forward or backward, scale to load, manage configuration and secrets, and replace failures.</p>
-
-<h4 id="3-1-the-five-cloud-native-techniques-in-the-guest-lecture-2" class="mb-2">3.1 The five cloud-native techniques in the guest lecture</h4>
-
-<ul class="note-list">
-<li>Containers. Problem it addresses: Package code and dependencies into a repeatable runtime unit; Cost or boundary to remember: Shared-kernel isolation, image provenance, and external services still matter</li>
-<li>Microservices. Problem it addresses: Let bounded business capabilities release and scale separately; Cost or boundary to remember: Network calls, data ownership, API compatibility, and partial failure appear</li>
-</ul>
-</section>
-
-<section id="4-kubernetes-desired-state-pods-deployments-and-reconciliation-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">4. Kubernetes: desired state, Pods, Deployments, and reconciliation</h3>
-
-<p class="mb-3">A <strong>Pod</strong> is Kubernetes' smallest deployable unit. One Pod can contain one or more tightly coupled containers that share network context and storage volumes; a Pod receives an IP within the cluster. A <strong>Deployment</strong> declares the desired replica count and rollout template for stateless Pods. A Kubernetes <strong>Service</strong> gives clients a stable way to reach a changing set of Pod endpoints; the Deployment maintains replica identity and count.</p>
-
-<h4 id="4-1-read-a-minimal-desired-state-declaration-2" class="mb-2">4.1 Read a minimal desired-state declaration</h4>
-
-<p class="mb-3">The selector and Pod label must agree, or the Deployment cannot manage the intended Pods.</p>
-
-<h4 id="4-2-separate-three-different-recovery-questions-2" class="mb-2">4.2 Separate three different recovery questions</h4>
-
-<ol class="mb-3">
-<li><strong>Process/Pod failure:</strong> Can the controller replace a failed replica and route traffic only to ready Pods?</li>
-<li><strong>Application defect:</strong> If a new image returns incorrect prices, can metrics and validation detect it and can the rollout be reversed?</li>
-<li><strong>Data or dependency failure:</strong> If the payment database is unavailable or corrupted, are retries bounded, transactions idempotent, and backups restorable?</li>
-</ol>
-
-<p class="mb-3">These questions explain why the guest lecture's reconciliation diagram is one layer of reliability rather than the entire reliability design.</p>
-</section>
-
-<section id="5-operational-boundaries-and-the-cost-of-abstraction-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">5. Operational boundaries and the cost of abstraction</h3>
-
-<p class="mb-3">The course's earlier IaC chapter describes desired infrastructure; Kubernetes applies a related declarative pattern to workloads. Cloud-native architecture can reduce release friction and improve fault containment, but it introduces observability, policy, security, and platform costs.</p>
-
-<h4 id="5-1-interpret-the-guest-lectures-2025-survey-as-dated-evidence-2" class="mb-2">5.1 Interpret the guest lecture's 2025 survey as dated evidence</h4>
-
-<p class="mb-3">Slides 64–65 summarize a <em>State of Kubernetes 2025</em> survey. The deck reports that 90% of surveyed respondents expected AI workloads on Kubernetes to grow, the average adopter used clusters in more than five environments, 42% named cost as a top challenge, 88% reported rising Kubernetes TCO, and 92% were investing in AI-driven optimization. The architectural lesson is more durable than the percentages: multi-environment placement, AI/GPU demand, edge connectivity, and platform fragmentation create cost and operations pressure.</p>
 </section>
 
 <section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
@@ -9801,7 +9395,18 @@ Focus on clarity, relevance, and meaningful application, avoiding trivial or ove
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
-<script src="../../core/script.js?v=2026-06-21-6"></script>
+<script src="../../core/site/01-bootstrap.js?v=2026-11-17-1"></script>
+<script src="../../core/site/02-language.js?v=2026-11-17-1"></script>
+<script src="../../core/site/03-cipher-mode.js?v=2026-11-17-1"></script>
+<script src="../../core/site/04-assistants.js?v=2026-11-17-1"></script>
+<script src="../../core/site/05-cipher-shortcut.js?v=2026-11-17-1"></script>
+<script src="../../core/site/06-theme.js?v=2026-11-17-1"></script>
+<script src="../../core/site/07-settings.js?v=2026-11-17-1"></script>
+<script src="../../core/site/08-page-context.js?v=2026-11-17-1"></script>
+<script src="../../core/site/09-navigation.js?v=2026-11-17-1"></script>
+<script src="../../core/site/10-ambient.js?v=2026-11-17-1"></script>
+<script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
+<script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
 <script src="../../core/i18n.js?v=2026-06-14-1"></script>
 <script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
 <script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>

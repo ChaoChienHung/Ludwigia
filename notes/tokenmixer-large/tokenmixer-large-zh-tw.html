@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TokenMixer-Large：從特徵 Token、Mixing／Reverting 到稀疏專家與 GPU 效率 — Ludwig</title>
+  <meta name="garden:tags" content="推薦系統, 深度學習, 混合專家架構, 模型擴展法則, 圖形處理器">
+  <meta name="garden:summary" content="以推薦排序的輸入表示為起點，逐步拆解 TokenMixer-Large 的語意分組、資料重排、深層殘差、Sparse-Pertoken MoE 與算子工作流，並釐清論文數字、架構描述及與 RankMixer、Wukong、MLP-Mixer 的差異。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.deep_learning,concept.mixture_of_experts,concept.model_scaling,concept.gpu">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.mixture_of_experts&quot;:{&quot;en&quot;:&quot;Mixture of Experts&quot;,&quot;zh-Hant&quot;:&quot;混合專家架構&quot;,&quot;zh-Hans&quot;:&quot;混合专家架构&quot;},&quot;concept.model_scaling&quot;:{&quot;en&quot;:&quot;Model Scaling&quot;,&quot;zh-Hant&quot;:&quot;模型擴展法則&quot;,&quot;zh-Hans&quot;:&quot;模型扩展法则&quot;},&quot;concept.gpu&quot;:{&quot;en&quot;:&quot;GPU&quot;,&quot;zh-Hant&quot;:&quot;圖形處理器&quot;,&quot;zh-Hans&quot;:&quot;图形处理器&quot;}}">
+  <meta name="site:canonical_id" content="tokenmixer-large">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="28">
+  <meta name="site:source" content="notes/tokenmixer-large/tokenmixer-large-zh-tw.md">
+  <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#future-plans" data-nav-future-plans>Future Plans</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">TokenMixer-Large：從特徵 Token、Mixing／Reverting 到稀疏專家與 GPU 效率</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-id">1. 輸入地基：數值、ID、序列與交叉特徵</a>
+<a class="note-toc-link level-2" href="#1-1-embedding-lookup">1.1 向量不一定來自 embedding lookup</a>
+<a class="note-toc-link level-2" href="#1-2">1.2 序列長度與向量維度是兩回事</a>
+<a class="note-toc-link level-2" href="#1-3-schema">1.3 交叉欄位是 schema，交叉值是樣本內容</a>
+<a class="note-toc-link level-2" href="#1-4">1.4 交叉特徵與交互算子不能混為一談</a>
+<a class="note-toc-link level-1" href="#2-tokenization">2. Tokenization：把不同來源整理成同寬度的表示單位</a>
+<a class="note-toc-link level-2" href="#2-1-token-id">2.1 Token 在這裡不要求離散 ID</a>
+<a class="note-toc-link level-2" href="#2-2">2.2 不同特徵維度，不是同一欄位每次隨機變長</a>
+<a class="note-toc-link level-2" href="#2-3-global-token">2.3 Global token 是從當筆樣本算出的全局表示</a>
+<a class="note-toc-link level-1" href="#3-mixing-reverting">3. Mixing／Reverting：恢復布局，而非恢復原始語意</a>
+<a class="note-toc-link level-1" href="#4-identity-path">4. 深層訓練：有 identity path，不代表所有參數都學得充分</a>
+<a class="note-toc-link level-2" href="#4-1-rmsnorm-pre-norm">4.1 RMSNorm 與 Pre-Norm 解決不同問題</a>
+<a class="note-toc-link level-2" href="#4-2-pre-norm-inter-residual">4.2 為什麼已有 Pre-Norm，仍加入 inter-residual？</a>
+<a class="note-toc-link level-2" href="#4-3-auxiliary-loss">4.3 Auxiliary loss 與證據限制</a>
+<a class="note-toc-link level-1" href="#5-sparse-pertoken-moe-swiglu-router">5. Sparse-Pertoken MoE：拆分 SwiGLU，靠 router 選專家</a>
+<a class="note-toc-link level-2" href="#5-1-swiglu-moe">5.1 SwiGLU 與 MoE 是不同層次</a>
+<a class="note-toc-link level-2" href="#5-2-gate">5.2 兩種 gate 不同</a>
+<a class="note-toc-link level-2" href="#5-3-dense-sparse">5.3 Dense／Sparse、擴容／拆分要分開</a>
+<a class="note-toc-link level-2" href="#5-4-shared-expert-gate-scaling-z-loss">5.4 Shared expert、Gate Scaling 與 Z-loss</a>
+<a class="note-toc-link level-1" href="#6">6. 系統效率：把零散路由整理成規整計算</a>
+<a class="note-toc-link level-1" href="#7">7. 實驗數字：把規模、口徑與場景分開</a>
+<a class="note-toc-link level-1" href="#8">8. 四篇筆記的閱讀分工</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+<a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
+<a class="note-toc-link level-2" href="#technical-articles">技術文章（Technical Articles）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">推薦排序要回答的是：在某個使用者與當下情境下，候選商品或內容有多值得被排在前面？答案需要把使用者、候選物品與歷史行為一起看。單獨知道「使用者喜歡登山」或「商品是登山鞋」還不夠；模型要學到兩者共同出現時如何改變預測。</p>
+
+<p class="mb-3">本文由原始閱讀筆記與逐步討論整理而成。架構與數字以 <a class="note-inline-link" href="https://arxiv.org/abs/2602.06563v2" target="_blank" rel="noopener noreferrer">TokenMixer-Large 原論文 v2</a> 為核對依據；例子中的特徵與維度均為教學示意。作者亦參考了文末的知乎文章，但整理時該頁回傳 403，未能核驗其標題、作者與全文。</p>
+
+<p class="mb-3">這篇的主線是：先把異質輸入整理成可並行處理的 token，再用可重複堆疊的交互結構學習關係，最後以稀疏專家與規整矩陣運算控制成本。</p>
+</section>
+
+<section id="1-id" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 輸入地基：數值、ID、序列與交叉特徵</h3>
+
+<h4 id="1-1-embedding-lookup" class="mb-2">1.1 向量不一定來自 embedding lookup</h4>
+
+<p class="mb-3">數值特徵可以先做標準化、log 轉換或缺失處理，再組成向量；例如價格、折扣比例、點擊次數與平均觀看時間。類別與 ID 特徵則通常查 embedding table。向量只是一種組織數字的形式，不要求每個向量都來自單一 sparse feature。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">user ID → embedding ─┐
+item ID → embedding ─┼→ 後續表示與交互網路
+數值特徵 → 前處理 ───┘</code></pre></div>
+
+<p class="mb-3">混合向量的一個座標可能是可讀的價格值，也可能只是 embedding 的某一維；後者沒有保證對應固定的人類語意。</p>
+
+<h4 id="1-2" class="mb-2">1.2 序列長度與向量維度是兩回事</h4>
+
+<p class="mb-3">歷史行為可以先形成逐行為的表示，再經 pooling、attention 或其他序列模組聚合成興趣表示。它不一定是 RNN 的最後一個 hidden state，也不一定只有一個向量；短期、長期興趣可以分開表示。某些方法會依候選物品聚合，因此同一人的興趣表示也可能隨候選物品而變。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">10 次行為 × 每次 64 維  ─┐
+                         ├→ 聚合模組 → 各自固定 256 維表示
+100 次行為 × 每次 64 維 ─┘</code></pre></div>
+
+<p class="mb-3">這裡的 10／100 是元素數量，64／256 是向量寬度。不能把變長歷史誤讀成最終向量必須變長。</p>
+
+<h4 id="1-3-schema" class="mb-2">1.3 交叉欄位是 schema，交叉值是樣本內容</h4>
+
+<p class="mb-3">「使用者所在地 × 商品配送地」定義交叉欄位；「新加坡 × 馬來西亞」是某次預測的具體值。交叉表達同次預測中的條件組合，不必是時間上同時發生的事件。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">欄位 schema：所在地 × 配送地
+樣本的值：  新加坡 × 馬來西亞
+                   ↓
+             組合 ID／hash bucket
+                   ↓
+                embedding</code></pre></div>
+
+<p class="mb-3">其他例子包括年齡區間 × 商品類別、時段 × 商品類別、使用者 ID × 品牌 ID。數值也能先分桶後交叉，或直接形成乘積特徵；後者不一定需要 embedding 查表。</p>
+
+<p class="mb-3">組合數量很大時，不可能為所有組合維護專屬向量。一般工程選項包括字典查表加 OOV、固定大小 hashing，或改由網路從原始特徵學交互。具體值未收錄，並不要求輸入少掉一個欄位：OOV 或 bucket 仍可提供固定維度向量。若輸入是變長的命中特徵集合，則可透過 pooling 或 padding／mask 處理。這些是通用處理方式，不是論文明確揭露的完整線上前處理細節。</p>
+
+<h4 id="1-4" class="mb-2">1.4 交叉特徵與交互算子不能混為一談</h4>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>名稱</th>
+<th>例子</th>
+<th>位置</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>輸入交叉特徵</td>
+<td>地區組合 ID 的 embedding</td>
+<td>輸入資料</td>
+</tr>
+<tr>
+<td>特徵交互算子</td>
+<td>Attention、FM、DCN cross layer、Concat＋MLP</td>
+<td>模型內部</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">FM 類方法可以計算 $a^\top b$，得到一個配對交互數值。DCN 則產生交互向量，不是單純逐對點積。原始 DCN 忽略 bias 的第一層為 $x_1=x_0(w^\top x_0)+x_0$；若 $x_0=[a,b]^\top$，展開便有 $a^2$、$ab$、$b^2$。這裡是在向量座標層級形成乘積，與為組合值查表不同。</p>
+
+<p class="mb-3">TokenMixer-Large 的 Pure Model 設計移除額外的碎片化模組，不等於取消交互，也不等於移除輸入交叉特徵。交互主要交給 backbone 承擔。</p>
+</section>
+
+<section id="2-tokenization" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Tokenization：把不同來源整理成同寬度的表示單位</h3>
+
+<h4 id="2-1-token-id" class="mb-2">2.1 Token 在這裡不要求離散 ID</h4>
+
+<p class="mb-3">文字模型的 token 常是離散 ID，再查 embedding；這裡的 token 則是連續向量，代表一個供 backbone 處理的單位。稱為 hidden state 時，強調它在網路某一層的表示；稱為 token 時，強調它在矩陣中是一個獨立位置。兩者可以指同一列向量，但不是所有 hidden states 都必須叫 token。</p>
+
+<p class="mb-3">輸入位置有來源或角色，例如商品組；經過交互後，它可包含其他組的資訊，不能要求保持純粹語意。</p>
+
+<h4 id="2-2" class="mb-2">2.2 不同特徵維度，不是同一欄位每次隨機變長</h4>
+
+<p class="mb-3">特徵 $F_i$ 可以映射為 $e_i\in\mathbb{R}^{d_i}$。不同欄位的 $d_i$ 可以不同，因為來源模組、表格容量與成本不同。全部使用同一個維度也可行，只是不是必要條件。</p>
+
+<p class="mb-3">語意分組後，每組有獨立 MLP：</p>
+
+<p class="mb-3">$$ x_t=\operatorname{MLP}_t(\operatorname{concat}_{i\in G_t}e_i)\in\mathbb{R}^{D}. $$</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">使用者 ID 64 維＋地區 16 維＋年齡桶 8 維
+                 ↓ concat：88 維
+               MLP_user
+                 ↓ D 維 token
+
+商品 ID 128 維＋類別 32 維
+                 ↓ concat：160 維
+               MLP_item
+                 ↓ D 維 token</code></pre></div>
+
+<p class="mb-3">人根據領域知識決定分組，模型學習組內映射。獨立 MLP 允許各組使用不同轉換規則，但不保證壓縮後保留全部資訊，也不表示輸出具有相同語意座標。</p>
+
+<h4 id="2-3-global-token" class="mb-2">2.3 Global token 是從當筆樣本算出的全局表示</h4>
+
+<p class="mb-3">Global MLP 接收所有組的原始特徵 embeddings 拼接，輸出另一個 $D$ 維 token。它不是必須先拼接各組 MLP 的輸出。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">各組 embeddings → 各組 MLP → 各組 tokens
+所有組 embeddings → concat → MLP_global → Global token</code></pre></div>
+
+<p class="mb-3">BERT 的 CLS 從特殊 token embedding 開始，再透過各層聚合資訊；這裡的 Global token 在進 backbone 前就依樣本全部特徵計算。兩者角色相近，建構方式不同。</p>
+
+<p class="mb-3">以下以 $N$ 表示含 Global token 的總數，輸入為 $X\in\mathbb{R}^{N\times D}$。對應結構可查 <a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2#S3.SS2" target="_blank" rel="noopener noreferrer">原論文 §3.2</a>。</p>
+</section>
+
+<section id="3-mixing-reverting" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Mixing／Reverting：恢復布局，而非恢復原始語意</h3>
+
+<p class="mb-3">有三個 tokens，每個切兩塊：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">輸入布局                     Mixing 後
+使用者：[U₁ | U₂]            [U₁ | I₁ | S₁]
+商品：  [I₁ | I₂]     →      [U₂ | I₂ | S₂]
+興趣：  [S₁ | S₂]</code></pre></div>
+
+<p class="mb-3">一般形狀為 $N\times D\rightarrow H\times(ND/H)$。重排本身無可學習參數；混合布局下的網路才讓不同來源的區塊一起影響輸出。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">混合布局 → per-token 網路 → 反向排列
+
+[U₁′ | I₁′ | S₁′]            [U₁′ | U₂′]
+[U₂′ | I₂′ | S₂′]     →      [I₁′ | I₂′]
+                             [S₁′ | S₂′]</code></pre></div>
+
+<p class="mb-3">可用 pixel unshuffle／shuffle 理解互逆重排，但不把 CV 的空間軸與推薦特徵軸視為同一種語意。中間有網路，所以 Reverting 恢復的是布局與形狀，不是原始值。它本身不是線性投影。</p>
+
+<p class="mb-3">忽略 Norm，外層殘差的示意為：</p>
+
+<p class="mb-3">$$ X_{\mathrm{out}}=X+G\bigl(P^{-1}(F(P(X)))\bigr). $$</p>
+
+<p class="mb-3">$P$ 是重排；$F$ 是混合布局下的處理；$G$ 是排回原布局後的 per-token 處理。完整 block 還有內部殘差，這個示意不是逐算子的完整公式。尤其注意：Reverting 後確實還有可學習網路，並非只反向排列就直接結束。</p>
+
+<p class="mb-3">殘差允許加入包含其他 token 資訊的更新；attention 也是如此。問題不在「混入其他資訊就不能相加」，而在位置對應、形狀與連續訊號路徑。RankMixer 的改進應描述為殘差布局與深層傳遞改善，不能寫成數學無效、原始語意被精確還原，或由一個改動單獨保證穩定。<a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2#S3.SS3.SSS1" target="_blank" rel="noopener noreferrer">原論文 §3.3.1 與 §4.3</a></p>
+</section>
+
+<section id="4-identity-path" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. 深層訓練：有 identity path，不代表所有參數都學得充分</h3>
+
+<h4 id="4-1-rmsnorm-pre-norm" class="mb-2">4.1 RMSNorm 與 Pre-Norm 解決不同問題</h4>
+
+<p class="mb-3">RMSNorm 用平方平均根調整尺度，不做 LayerNorm 的均值中心化。Pre-Norm 是把 Norm 放在殘差分支入口，典型結構為：</p>
+
+<p class="mb-3">$$ x_{\ell+1}=x_\ell+F_\ell(\operatorname{Norm}(x_\ell)). $$</p>
+
+<p class="mb-3">論文將 RMSNorm 與移除 bias 的工程調整合併報告約 8.4% 吞吐改善，不能把它當成 RMSNorm 單獨在任意硬體上的保證。Post-Norm 的消融有略高 AUC 後出現 NaN 的紀錄，也不能外推成所有 Post-Norm 都無法訓練。</p>
+
+<h4 id="4-2-pre-norm-inter-residual" class="mb-2">4.2 為什麼已有 Pre-Norm，仍加入 inter-residual？</h4>
+
+<p class="mb-3">普通 Pre-Norm 已有 identity 路徑。其 Jacobian 為 $I+J_\ell$，跨層梯度經過 $(I+J_{L-1})\cdots(I+J_\ell)$。雖然展開含純 identity 項，其他項仍可能放大、抵消或改變方向。梯度能沿主路徑傳回，也不保證殘差分支參數獲得足夠更新。</p>
+
+<p class="mb-3">額外跨層連接可能再次注入早期表示，改變路徑與訊號權重；不是「沒有它就沒 identity path」，也不是必然有益。論文建議每隔數層連接並避開最後一層，應視為該模型的設計經驗。</p>
+
+<h4 id="4-3-auxiliary-loss" class="mb-2">4.3 Auxiliary loss 與證據限制</h4>
+
+<p class="mb-3">低層輸出也參與 logits／loss 的計算，可以提供更直接的監督。論文以估計高層偏差解釋其作用，但不能自行改寫成未揭露的標準 deep-supervision loss 公式。</p>
+
+<p class="mb-3">Table 5 將 inter-residual 與 auxiliary loss 一起移除，報告 $\Delta\mathrm{AUC}=-0.04\%$。這不能分離兩者貢獻，也不能證明 inter-residual 在 Pre-Norm 下必不可少。跨層路徑可帶來 inductive bias，但沒有路徑懲罰或隨機丟棄，不宜直接稱為 pathwise regularization。</p>
+
+<p class="mb-3">此外，down-projection 的 small initialization 讓初期殘差更新較小，也是穩定設計的一部分；數值尺度、路徑與監督共同影響訓練。<a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2#S3.SS3.SSS3" target="_blank" rel="noopener noreferrer">原論文 §3.3.3–3.3.4、Table 5 與 Appendix A</a></p>
+</section>
+
+<section id="5-sparse-pertoken-moe-swiglu-router" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. Sparse-Pertoken MoE：拆分 SwiGLU，靠 router 選專家</h3>
+
+<h4 id="5-1-swiglu-moe" class="mb-2">5.1 SwiGLU 與 MoE 是不同層次</h4>
+
+<p class="mb-3">忽略 bias、採 column-vector 記法，SwiGLU 為：</p>
+
+<p class="mb-3">$$ h=\operatorname{Swish}(W_gx)\odot(W_ux),\qquad y=W_dh. $$</p>
+
+<p class="mb-3">若 $h$ 為 4096 維，分成八組各 512 維，gate／up 矩陣沿輸出維度拆分，down 矩陣沿輸入維度拆分。每組形成：</p>
+
+<p class="mb-3">$$ E_j(x)=W_{d,j}\left[\operatorname{Swish}(W_{g,j}x)\odot(W_{u,j}x)\right]. $$</p>
+
+<p class="mb-3">每個 expert 都接收完整 $D$ 維輸入，輸出 $D$ 維；不是只看輸入八分之一。拆分後仍具 SwiGLU 形式，所以「拆 FC」與「expert 是小型 SwiGLU」並不矛盾。</p>
+
+<p class="mb-3">在匹配切分、偏置妥善處理且無額外路由重加權時，原 dense 輸出可寫成各分塊輸出的和。加入稀疏選擇與路由權重後，模型不再保證與原 dense 函數相等。</p>
+
+<h4 id="5-2-gate" class="mb-2">5.2 兩種 gate 不同</h4>
+
+<p class="mb-3">SwiGLU gate 控制 expert 內部 hidden features；MoE router gate 才決定選哪些 experts。訓練與推理都要先選，再只執行選中的網路，才有稀疏計算收益。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">x → Router → 選部分 experts
+                ├→ 小型 SwiGLU E₂ ─┐
+                └→ 小型 SwiGLU E₄ ─┼→ 加權合併</code></pre></div>
+
+<p class="mb-3">Per-token 意味每個位置有專屬 expert 參數；同一位置跨樣本共用參數，不是為每筆樣本新增網路。混合後的位置可以是重組出的 head token，不必仍是原始使用者或商品組。</p>
+
+<h4 id="5-3-dense-sparse" class="mb-2">5.3 Dense／Sparse、擴容／拆分要分開</h4>
+
+<p class="mb-3">Dense per-token 網路每次使用該位置完整的 FFN，不使用所有其他位置的參數。Sparse per-token 網路只使用該位置部分 experts；被選中的 expert 內部仍做 dense GEMM。</p>
+
+<p class="mb-3">「先 enlarge、再 sparse」是在描述版本策略：先放大 dense 網路取得效果，再細分並稀疏啟用以控制成本。拆分本身不是擴容；但可以增加總 expert 容量並維持啟用預算，讓總容量與每次計算量部分解耦。</p>
+
+<p class="mb-3">忽略 shared expert、以八個等大小 experts 示意：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>啟用參數／總參數</th>
+<th>每次選擇</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>1:1</td>
+<td>8 個</td>
+</tr>
+<tr>
+<td>1:2</td>
+<td>4 個</td>
+</tr>
+<tr>
+<td>1:4</td>
+<td>2 個</td>
+</tr>
+<tr>
+<td>1:8</td>
+<td>1 個</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">完整版本需把常開 shared expert 算入成本。接近零效果損失是離線／線上指標接近 dense 版本，不是 training loss 為零，也不代表端到端時間減半。</p>
+
+<h4 id="5-4-shared-expert-gate-scaling-z-loss" class="mb-2">5.4 Shared expert、Gate Scaling 與 Z-loss</h4>
+
+<p class="mb-3">Shared expert 每次都執行，但只屬於該 token 位置，不是所有位置共用一個全局 expert。輸出可示意為：</p>
+
+<p class="mb-3">$$ y_t=\alpha\sum_{j\in S_t}g_{t,j}(x_t)E_{t,j}(x_t)+E_{t,\mathrm{shared}}(x_t). $$</p>
+
+<p class="mb-3">Gate Value Scaling 的 $\alpha$ 放大 routed experts 的加權輸出，也直接影響固定上游梯度下的 expert 梯度。它不只是提高 optimizer learning rate，因為 forward 值及其他梯度也會變。</p>
+
+<p class="mb-3">Router Z-loss 則約束 log-normalizer：</p>
+
+<p class="mb-3">$$ L_z=\frac1B\sum_b\left(\log\sum_j e^{r_{b,j}}\right)^2. $$</p>
+
+<p class="mb-3">例如 $[2,1,0]$ 與 $[102,101,100]$ 的 softmax 相同，Z-loss 卻不同；它約束共同尺度漂移，不直接要求 expert 使用量均勻。Load-balancing loss 才直接針對路由分布。Z-loss 也不保證每個 logit 的絕對值都小，或 routing entropy 變高。</p>
+
+<p class="mb-3">論文對更高稀疏度試過負載均衡方法與 Z-loss，報告有一些收益；目前 1:2 版本並未因此要求加入它們。不能寫成「極端稀疏一定需要 Z-loss」。S-P MoE 細節見 <a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2#S3.SS4" target="_blank" rel="noopener noreferrer">§3.4 與 Appendix A.1–A.2、A.6</a>；Z-loss 定義見 <a class="note-inline-link" href="https://arxiv.org/abs/2202.08906" target="_blank" rel="noopener noreferrer">ST-MoE</a>。</p>
+</section>
+
+<section id="6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. 系統效率：把零散路由整理成規整計算</h3>
+
+<p class="mb-3">稀疏選專家只代表少算；若對每個樣本逐個呼叫小矩陣乘法，GPU 仍可能利用率低。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">樣本 A → E₁、E₃          按 expert 整理：
+樣本 B → E₂、E₃    →     E₁：[A,C]
+樣本 C → E₁、E₂          E₂：[B,C]
+                         E₃：[A,B]</code></pre></div>
+
+<p class="mb-3">MoEPermute 按 expert 集中輸入，一筆向量可以送往多個選中的 experts。Grouped GEMM 一起排程多組矩陣乘法，各組仍有自己的權重與樣本數。MoEUnpermute 收回輸出並按 router 權重合併。這組 Permute／Unpermute 是 dispatch，不是 block 的 Mixing／Reverting。</p>
+
+<p class="mb-3">FP8 降低推理的儲存與計算精度；論文訓練維持 BF16。Token Parallel 則把位置專屬的參數與計算分散到 GPU，讓 block 輸出維持 token 分片，減少反覆轉回 batch 分片的通訊。</p>
+
+<p class="mb-3">Table 1 的近 90% 是所列三項 MoE 算子的訓練耗時比例，不能直接當作整個訓練作業的時間占比。<a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2#S3.SS5" target="_blank" rel="noopener noreferrer">原論文 §3.5</a></p>
+
+<p class="mb-3">GPU 效率的底層線索是 $\text{FLOPs}/\text{搬運 bytes}$：查表讀出向量，計算少；大 GEMM 可重用輸入與權重。擴大交互網路有機會提高運算強度，但小 batch、通訊或資料重用不足仍可能造成 memory-bound。</p>
+</section>
+
+<section id="7" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">7. 實驗數字：把規模、口徑與場景分開</h3>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>場景</th>
+<th>離線規模</th>
+<th>線上規模</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Feed Ads</td>
+<td>15B</td>
+<td>7B</td>
+</tr>
+<tr>
+<td>E-Commerce</td>
+<td>7B</td>
+<td>4B</td>
+</tr>
+<tr>
+<td>Live Streaming</td>
+<td>4B</td>
+<td>2B</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">因此不能將「150 億參數」與「電商 GMV +2.98%」組合成同一個 15B 線上電商實驗。摘要把該 GMV 指標稱為 per-capita preview payment GMV，應保留人均與業務口徑。</p>
+
+<p class="mb-3">Table 2 的約 500M 模型使用 4.2T FLOPs；這是每批 2048 樣本的訓練成本，不是單次推理。4B S-P MoE 的表格實際列出總量 4.6B、啟用 2.3B。這些參數數字也排除 sparse embedding tables，不能當成整個推薦系統所有參數的總和。</p>
+
+<p class="mb-3">更大模型需要更多資料才能兌現效果，資料天數反映樣本覆蓋，不等於 wall-clock 訓練天數。直播實驗的資料量比較如下；原文標的是 UAUC，不應改寫成一般 AUC：</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>擴展比較</th>
+<th>樣本覆蓋</th>
+<th>報告的 ΔUAUC</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>30M → 90M</td>
+<td>14 天</td>
+<td>+0.94%</td>
+</tr>
+<tr>
+<td>90M → 500M</td>
+<td>30 天</td>
+<td>+0.62%</td>
+</tr>
+<tr>
+<td>500M → 2.3B</td>
+<td>30 天</td>
+<td>+0.41%</td>
+</tr>
+<tr>
+<td>2.3B 延長資料覆蓋</td>
+<td>60 天</td>
+<td>+0.70%</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="mb-3">Table 4 的註腳把各列 baseline 寫成前一規模，但 2.3B 的兩列又是在比較不同資料覆蓋；最後一列的具體基準仍需在引用時保留原表與正文脈絡，不能直接把兩個百分比相加或換算成 AUC 百分點。</p>
+
+<p class="mb-3">線上摘要另報告電商訂單 +1.66%、廣告 ADSS +2.0%、直播收益 +1.4%。這些是不同業務指標，不是同一個 AUC，也不是新增的通用品質分數。評估 scaling 時要同時看參數、啟用計算、訓練資料與收斂程度，不能只比較 headline 參數。<a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2#S4" target="_blank" rel="noopener noreferrer">原論文 §4.1–4.4 與 Table 7</a></p>
+</section>
+
+<section id="8" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">8. 四篇筆記的閱讀分工</h3>
+
+<p class="mb-3"><a class="note-content-link" data-canonical-id="mlp-mixer-for-vision" href="../mlp-mixer-for-vision/mlp-mixer-for-vision-zh-tw.html">MLP-Mixer<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">MLP-Mixer：沿 Token 與 Channel 兩個軸學習影像表示</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">電腦視覺</span><span class="note-content-link-preview-tag">深度學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從圖片 patch 與矩陣布局出發，圖解 MLP-Mixer 的 token-mixing 與 channel-mixing MLP、參數共享、殘差，以及它與 attention、1×1 convolution、pixel shuffle 和推薦 TokenMixer 的差異。</span></span></span></a> 解釋沿 token 軸與 channel 軸的可學習 MLP；<a class="note-content-link" data-canonical-id="rankmixer" href="../rankmixer/rankmixer-zh-tw.html">RankMixer<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">RankMixer：異質特徵如何透過 Token Mixing 與 Per-token FFN 擴展</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">深度學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從推薦特徵的異質性出發，以形狀圖解說明 RankMixer 的語意 Tokenization、無參數多頭重排、位置專屬 FFN，以及 ReLU routing 與 Dense-Training／Sparse-Inference 的取捨。</span></span></span></a> 解釋異質推薦特徵、parameter-free multi-head 重排與 per-token FFN；本篇聚焦深層路徑與稀疏訓練；<a class="note-content-link" data-canonical-id="wukong" href="../wukong/wukong-zh-tw.html">Wukong<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">Wukong：堆疊特徵交互與推薦模型的 Dense Scaling</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">深度學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">以向量配對關係為地基，解釋 Wukong 的 FM Block、Linear Compression Block、高階交互與低秩計算，並釐清 dense scaling 如何提高 GPU 運算強度，以及為何查表本身仍可能 memory-bound。</span></span></span></a> 則走 explicit embedding-wise 交互、再用 MLP 重編碼的路線。</p>
+
+<p class="mb-3">MLP-Mixer 與 RankMixer 共享「分開處理表示軸」的思路，但不是同一個算子。Wukong 也不是不用 MLP；它不把所有交互都交給 MLP 隱式學，而是先顯式計算交互。</p>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<h4 id="academic-literature" class="mb-2">學術論文（Academic Literature）</h4>
+
+<ol class="mb-3">
+<li>Jiang, Y., et al. (2026). TokenMixer-Large: Scaling Up Large Ranking Models in Industrial Recommenders. <em>KDD 2026</em>（接受資訊見下方作者頁；本文核對 arXiv v2）. <a class="note-inline-link" href="https://arxiv.org/abs/2602.06563v2" target="_blank" rel="noopener noreferrer">arXiv:2602.06563v2</a>；<a class="note-inline-link" href="https://arxiv.org/html/2602.06563v2" target="_blank" rel="noopener noreferrer">原文 HTML</a>。</li>
+<li>Zhu, J., et al. (2025). RankMixer: Scaling Up Ranking Models in Industrial Recommenders. <em>CIKM 2025</em>, 6309–6316. <a class="note-inline-link" href="https://doi.org/10.1145/3746252.3761507" target="_blank" rel="noopener noreferrer">DOI</a>；<a class="note-inline-link" href="https://arxiv.org/abs/2507.15551v3" target="_blank" rel="noopener noreferrer">arXiv:2507.15551v3</a>。</li>
+<li>Zhang, B., et al. (2024). Wukong: Towards a Scaling Law for Large-Scale Recommendation. <em>ICML 2024, Proceedings of Machine Learning Research</em>, 235, 59421–59434. <a class="note-inline-link" href="https://proceedings.mlr.press/v235/zhang24ao.html" target="_blank" rel="noopener noreferrer">PMLR</a>。</li>
+<li>Tolstikhin, I., et al. (2021). MLP-Mixer: An all-MLP Architecture for Vision. <em>Advances in Neural Information Processing Systems</em>, 34. <a class="note-inline-link" href="https://proceedings.neurips.cc/paper/2021/hash/cba0a4ee5ccd02fda0fe3f9a3e7b89fe-Abstract.html" target="_blank" rel="noopener noreferrer">NeurIPS</a>。</li>
+<li>Zoph, B., et al. (2022). ST-MoE: Designing Stable and Transferable Sparse Expert Models. <em>arXiv preprint</em>（此處採用預印本版本，未確認正式 venue）. <a class="note-inline-link" href="https://arxiv.org/abs/2202.08906" target="_blank" rel="noopener noreferrer">arXiv:2202.08906</a>。</li>
+<li>Wang, R., Fu, B., Fu, G., &amp; Wang, M. (2017). Deep &amp; Cross Network for Ad Click Predictions. <em>ADKDD 2017</em>. <a class="note-inline-link" href="https://arxiv.org/abs/1708.05123" target="_blank" rel="noopener noreferrer">arXiv:1708.05123</a>；<a class="note-inline-link" href="https://www.adkdd.org/papers/deep-%26-cross-network-for-ad-click-predictions/2017" target="_blank" rel="noopener noreferrer">ADKDD</a>。</li>
+</ol>
+
+<h4 id="technical-articles" class="mb-2">技術文章（Technical Articles）</h4>
+
+<ol class="mb-3">
+<li><a class="note-inline-link" href="https://zhuanlan.zhihu.com/p/2004934991155574234" target="_blank" rel="noopener noreferrer">知乎：作者提供的 TokenMixer-Large 參考文章</a>。原始標題與作者待核驗；2026-10-06 讀取回傳 403。此連結記錄作者的閱讀來源，不作為未核驗技術敘述的證據。</li>
+<li><a class="note-inline-link" href="https://shikangwu.github.io/" target="_blank" rel="noopener noreferrer">Shikang Wu：作者個人頁</a>。用於核對 TokenMixer-Large 的 KDD 2026 接受資訊。</li>
+</ol>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>Token 是處理單位的向量，不要求離散 ID；不同特徵維度與變長行為序列要分清楚。</li>
+<li>交叉特徵是輸入組合，交互算子是模型計算；Pure Model 不等於取消交叉特徵。</li>
+<li>Mixing／Reverting 改變並恢復布局；跨特徵學習來自中間與後續網路，不是語意還原。</li>
+<li>Pre-Norm 已有 identity path；額外跨層殘差的獨立收益不能從聯合消融直接推定。</li>
+<li>SwiGLU 是 expert 內部網路，router 才選 experts；拆分不等於擴容，稀疏不等於刪除參數。</li>
+<li>Z-loss 約束 router 數值尺度；FP8 在本文的部署流程用於推理，訓練維持 BF16。</li>
+<li>15B 是最大離線規模；電商線上規模與人均 GMV 指標必須分開閱讀。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/site/01-bootstrap.js?v=2026-11-17-1"></script>
+<script src="../../core/site/02-language.js?v=2026-11-17-1"></script>
+<script src="../../core/site/03-cipher-mode.js?v=2026-11-17-1"></script>
+<script src="../../core/site/04-assistants.js?v=2026-11-17-1"></script>
+<script src="../../core/site/05-cipher-shortcut.js?v=2026-11-17-1"></script>
+<script src="../../core/site/06-theme.js?v=2026-11-17-1"></script>
+<script src="../../core/site/07-settings.js?v=2026-11-17-1"></script>
+<script src="../../core/site/08-page-context.js?v=2026-11-17-1"></script>
+<script src="../../core/site/09-navigation.js?v=2026-11-17-1"></script>
+<script src="../../core/site/10-ambient.js?v=2026-11-17-1"></script>
+<script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
+<script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

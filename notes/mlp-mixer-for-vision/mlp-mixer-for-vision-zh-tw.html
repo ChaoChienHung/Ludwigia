@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="zh-tw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>MLP-Mixer：沿 Token 與 Channel 兩個軸學習影像表示 — Ludwig</title>
+  <meta name="garden:tags" content="電腦視覺, 深度學習, 神經網絡, 特徵交互">
+  <meta name="garden:summary" content="從圖片 patch 與矩陣布局出發，圖解 MLP-Mixer 的 token-mixing 與 channel-mixing MLP、參數共享、殘差，以及它與 attention、1×1 convolution、pixel shuffle 和推薦 TokenMixer 的差異。">
+  <meta name="site:lang" content="zh-tw">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.computer_vision,concept.deep_learning,concept.neural_networks,concept.feature_interaction">
+  <meta name="site:tag_labels" content="{&quot;concept.computer_vision&quot;:{&quot;en&quot;:&quot;Computer Vision&quot;,&quot;zh-Hant&quot;:&quot;電腦視覺&quot;,&quot;zh-Hans&quot;:&quot;计算机视觉&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.neural_networks&quot;:{&quot;en&quot;:&quot;Neural Networks&quot;,&quot;zh-Hant&quot;:&quot;神經網絡&quot;,&quot;zh-Hans&quot;:&quot;神经网络&quot;},&quot;concept.feature_interaction&quot;:{&quot;en&quot;:&quot;Feature Interaction&quot;,&quot;zh-Hant&quot;:&quot;特徵交互&quot;,&quot;zh-Hans&quot;:&quot;特征交互&quot;}}">
+  <meta name="site:canonical_id" content="mlp-mixer-for-vision">
+  <meta name="site:last_modified_at" content="2026-10-06">
+  <meta name="site:reading_time_minutes" content="13">
+  <meta name="site:source" content="notes/mlp-mixer-for-vision/mlp-mixer-for-vision-zh-tw.md">
+  <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#future-plans" data-nav-future-plans>Future Plans</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">MLP-Mixer：沿 Token 與 Channel 兩個軸學習影像表示</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#1-patch-token-id">1. Patch token：不需要先有離散 ID</a>
+<a class="note-toc-link level-1" href="#2-token-mixing-mlp-channel">2. Token-mixing MLP：沿同一 channel 看不同位置</a>
+<a class="note-toc-link level-1" href="#3-channel-mixing-mlp-channels">3. Channel-mixing MLP：沿同一位置看不同 channels</a>
+<a class="note-toc-link level-1" href="#4-mixer-block">4. Mixer block：兩個軸交替更新</a>
+<a class="note-toc-link level-1" href="#5-cv">5. 與熟悉的 CV 操作相比</a>
+<a class="note-toc-link level-2" href="#5-1-channel-mixing-1-1-convolution">5.1 Channel mixing 類似 1×1 convolution</a>
+<a class="note-toc-link level-2" href="#5-2-pixel-shuffle-mixer-mlp">5.2 Pixel shuffle 只是搬位置，Mixer MLP 會改數值</a>
+<a class="note-toc-link level-2" href="#5-3-attention">5.3 與 attention 的差別</a>
+<a class="note-toc-link level-1" href="#6-cv-mixer-mixer">6. 從 CV Mixer 到推薦 Mixer，哪些概念可以借用？</a>
+<a class="note-toc-link level-1" href="#references">參考資料（References）</a>
+<a class="note-toc-link level-2" href="#academic-literature">學術論文（Academic Literature）</a>
+<a class="note-toc-link level-2" href="#open-source-code">開源專案與代碼（Open Source Code）</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-10-06"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-10-06</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">一張圖片既需要「同一位置看到了什麼」，也需要「不同位置之間有什麼關係」。例如辨認一隻動物，局部毛皮、耳朵與眼睛需要各自被表示，再一起組成整體線索。</p>
+
+<p class="mb-3">MLP-Mixer 將這兩件事分開：沿 channel 軸處理每個位置，沿 token 軸處理不同位置。兩者都使用可學習 MLP，不使用 self-attention 作為 mixing 機制。本文依 <a class="note-inline-link" href="https://proceedings.neurips.cc/paper/2021/hash/cba0a4ee5ccd02fda0fe3f9a3e7b89fe-Abstract.html" target="_blank" rel="noopener noreferrer">NeurIPS 2021 論文入口</a>、<a class="note-inline-link" href="https://arxiv.org/html/2105.01601v1" target="_blank" rel="noopener noreferrer">原文 HTML</a> 與官方程式碼核對。</p>
+</section>
+
+<section id="1-patch-token-id" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. Patch token：不需要先有離散 ID</h3>
+
+<p class="mb-3">圖片切成不重疊 patches，每個 patch 攤平後，透過同一個線性投影產生 $C$ 維表示。若有 $S$ 個 patches，輸入就是：</p>
+
+<p class="mb-3">$$ X\in\mathbb{R}^{S\times C}. $$</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">圖片 → patches → 每個 patch 線性投影
+                       ↓
+           S 個 tokens × 每個 C 維</code></pre></div>
+
+<p class="mb-3">這裡 token 是連續向量。它與文字 token ID 的來源不同，但同樣是一個處理單位。進入網路後，也可稱為該位置的 hidden representation。</p>
+
+<p class="mb-3">用三個 patches、四個 channels 示意：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">             c₁   c₂   c₃   c₄
+patch A      a₁   a₂   a₃   a₄
+patch B      b₁   b₂   b₃   b₄
+patch C      c₁   c₂   c₃   c₄</code></pre></div>
+
+<p class="mb-3">行是不同位置，列是同一 channel 在不同位置的值。Channel 的語意由訓練形成，不一定對應紅色、邊緣或某個固定名稱。</p>
+</section>
+
+<section id="2-token-mixing-mlp-channel" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">2. Token-mixing MLP：沿同一 channel 看不同位置</h3>
+
+<p class="mb-3">取矩陣的一個 column，例如 $[a_1,b_1,c_1]^\top$。Token-mixing MLP 用這三個值一起產生三個更新值：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">channel 1：[a₁,b₁,c₁] → MLP_token → 三個位置的更新
+channel 2：[a₂,b₂,c₂] → 同一套 MLP_token → 三個位置的更新
+...</code></pre></div>
+
+<p class="mb-3">若 token 隱藏寬度為 $D_S$，MLP 形狀是 $S\rightarrow D_S\rightarrow S$。同一層的 token-mixing 權重在所有 channels 間共享。</p>
+
+<p class="mb-3">實作上先把 $S\times C$ 轉置成 $C\times S$，方便 MLP 作用於最後一軸，算完再轉回。<strong>轉置只是布局操作；真正的 mixing 是中間的可學習矩陣乘法與非線性。</strong></p>
+</section>
+
+<section id="3-channel-mixing-mlp-channels" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">3. Channel-mixing MLP：沿同一位置看不同 channels</h3>
+
+<p class="mb-3">接著取每個 row，例如 $[a_1,a_2,a_3,a_4]$：</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">patch A：四個 channels → MLP_channel → 四個更新值
+patch B：四個 channels → 同一套 MLP_channel → 四個更新值
+patch C：四個 channels → 同一套 MLP_channel → 四個更新值</code></pre></div>
+
+<p class="mb-3">形狀是 $C\rightarrow D_C\rightarrow C$，同一層的 channel-mixing 權重在所有 patch 位置間共享。它不直接讀其他位置，但輸入已經可透過前面的 token-mixing 包含其他位置資訊。</p>
+
+<div class="note-table-wrap mb-3">
+  <table class="note-table">
+    <thead><tr>
+<th>模組</th>
+<th>每次處理的向量</th>
+<th>權重共享範圍</th>
+    </tr></thead>
+    <tbody>
+<tr>
+<td>Token-mixing MLP</td>
+<td>某 channel 的所有位置值</td>
+<td>Channels</td>
+</tr>
+<tr>
+<td>Channel-mixing MLP</td>
+<td>某位置的所有 channel 值</td>
+<td>Patch 位置</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section id="4-mixer-block" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">4. Mixer block：兩個軸交替更新</h3>
+
+<p class="mb-3">以 $f_T$、$f_C$ 表示沿最後一軸的兩層 MLP，可概括為：</p>
+
+<p class="mb-3">$$ U=X+\left[f_T(\operatorname{LN}(X)^\top)\right]^\top, $$</p>
+
+<p class="mb-3">$$ Y=U+f_C(\operatorname{LN}(U)). $$</p>
+
+<p class="mb-3">LN 在每個 token 的 channels 上正規化；這個位置與隨後 MLP 操作哪個軸是兩回事。</p>
+
+<div class="note-markdown-block"><pre><code class="language-text">X → LN → Transpose → Token MLP → Transpose back → 加 X = U
+U → LN → Channel MLP                          → 加 U = Y</code></pre></div>
+
+<p class="mb-3">每個 block 維持 $S\times C$。最後沿位置平均池化，再送分類 head。這個 residual 沒有要求更新值保持原始 patch 的純粹資訊；它只要以正確的位置布局輸出可加的更新。<a class="note-inline-link" href="https://arxiv.org/html/2105.01601v1#S2" target="_blank" rel="noopener noreferrer">原文 §2</a></p>
+</section>
+
+<section id="5-cv" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">5. 與熟悉的 CV 操作相比</h3>
+
+<h4 id="5-1-channel-mixing-1-1-convolution" class="mb-2">5.1 Channel mixing 類似 1×1 convolution</h4>
+
+<p class="mb-3">1×1 convolution 在每個位置套用共享的 channel 線性映射。Channel MLP 則是兩次這類映射，中間加非線性。它們都在位置內混合 channels，不能由一個單獨的 1×1 conv 直接讀其他位置。</p>
+
+<h4 id="5-2-pixel-shuffle-mixer-mlp" class="mb-2">5.2 Pixel shuffle 只是搬位置，Mixer MLP 會改數值</h4>
+
+<div class="note-markdown-block"><pre><code class="language-text">Pixel shuffle：      重新排列元素
+MLP-Mixer：          轉置 → 可學習 MLP → 轉置回來
+推薦 TokenMixer：    切分／重組區塊 → per-token 網路</code></pre></div>
+
+<p class="mb-3">Shuffle 類比能解釋布局，但不能取代學習機制。如果只是轉置再轉回、不加任何處理，得到的就是原輸入。</p>
+
+<h4 id="5-3-attention" class="mb-2">5.3 與 attention 的差別</h4>
+
+<p class="mb-3">Attention 依每筆輸入形成位置間的路由權重。Mixer 的 token-mixing 使用固定的可學習權重矩陣，非線性使其輸出仍依內容而變，但沒有像 attention 那樣產生每筆樣本的 $QK^\top$ 關係矩陣。</p>
+
+<p class="mb-3">Token MLP 的輸入／輸出維度與 patch 數 $S$ 綁定，不能像某些 attention 架構那樣直接接受任意 token 數而完全不改參數。參數也對應位置順序，因此不需要另外加位置 embedding，並不等於模型對位置排列不敏感。</p>
+</section>
+
+<section id="6-cv-mixer-mixer" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">6. 從 CV Mixer 到推薦 Mixer，哪些概念可以借用？</h3>
+
+<p class="mb-3">可借用的是：將表示保留成「位置 × channels」矩陣，分開處理跨位置與位置內關係。不能原樣套用的是共享策略與具體算子。</p>
+
+<p class="mb-3">影像 patches 都源自同一種輸入；推薦的 user ID、item ID、序列興趣與數值特徵來源更異質。<a class="note-content-link" data-canonical-id="rankmixer" href="../rankmixer/rankmixer-zh-tw.html">RankMixer<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">RankMixer：異質特徵如何透過 Token Mixing 與 Per-token FFN 擴展</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">深度學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從推薦特徵的異質性出發，以形狀圖解說明 RankMixer 的語意 Tokenization、無參數多頭重排、位置專屬 FFN，以及 ReLU routing 與 Dense-Training／Sparse-Inference 的取捨。</span></span></span></a> 因此採位置專屬 FFN，而不是共享 channel MLP；其 token mixing 本身是無參數區塊重排。<a class="note-content-link" data-canonical-id="tokenmixer-large" href="../tokenmixer-large/tokenmixer-large-zh-tw.html">TokenMixer-Large<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Notes.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">TokenMixer-Large：從特徵 Token、Mixing／Reverting 到稀疏專家與 GPU 效率</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">深度學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">以推薦排序的輸入表示為起點，逐步拆解 TokenMixer-Large 的語意分組、資料重排、深層殘差、Sparse-Pertoken MoE 與算子工作流，並釐清論文數字、架構描述及與 RankMixer、Wukong、MLP-Mixer 的差異。</span></span></span></a> 再加入 Reverting 與稀疏專家。</p>
+
+<p class="mb-3">所以「RankMixer 首次把 MLP-Mixer 引入推薦」不應當成已證明的優先權敘述，也不能把 RankMixer 寫成原樣沿 token 軸套 CV MLP。比較時要問：哪一步有參數、哪個軸被處理、哪些位置共享權重？</p>
+</section>
+
+<section id="references" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料（References）</h3>
+
+<h4 id="academic-literature" class="mb-2">學術論文（Academic Literature）</h4>
+
+<ol class="mb-3">
+<li>Tolstikhin, I., et al. (2021). MLP-Mixer: An all-MLP Architecture for Vision. <em>Advances in Neural Information Processing Systems</em>, 34. <a class="note-inline-link" href="https://proceedings.neurips.cc/paper/2021/hash/cba0a4ee5ccd02fda0fe3f9a3e7b89fe-Abstract.html" target="_blank" rel="noopener noreferrer">NeurIPS 正式論文入口</a>；<a class="note-inline-link" href="https://arxiv.org/abs/2105.01601" target="_blank" rel="noopener noreferrer">arXiv:2105.01601</a>；<a class="note-inline-link" href="https://arxiv.org/html/2105.01601v1" target="_blank" rel="noopener noreferrer">原文 HTML v1</a>。</li>
+<li>Zhu, J., et al. (2025). RankMixer: Scaling Up Ranking Models in Industrial Recommenders. <em>CIKM 2025</em>, 6309–6316. <a class="note-inline-link" href="https://doi.org/10.1145/3746252.3761507" target="_blank" rel="noopener noreferrer">DOI</a>；<a class="note-inline-link" href="https://arxiv.org/abs/2507.15551v3" target="_blank" rel="noopener noreferrer">arXiv:2507.15551v3</a>。</li>
+</ol>
+
+<h4 id="open-source-code" class="mb-2">開源專案與代碼（Open Source Code）</h4>
+
+<ol class="mb-3">
+<li><strong><a class="note-inline-link" href="https://github.com/google-research/vision_transformer" target="_blank" rel="noopener noreferrer">google-research/vision_transformer：官方研究程式庫</a></strong>。</li>
+<li><strong><a class="note-inline-link" href="https://github.com/google-research/vision_transformer/blob/main/vit_jax/models_mixer.py" target="_blank" rel="noopener noreferrer">vit_jax/models_mixer.py：MLP-Mixer 實作</a></strong>。可對照 LayerNorm、swapaxes、兩個 MLP 與 residual 的順序；main 分支可能持續更新。</li>
+</ol>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>圖片 patch token 是連續表示，不需要離散 ID 或查表。</li>
+<li>Token-mixing 沿位置軸、在 channels 間共享權重；Channel-mixing 沿 channel 軸、在位置間共享權重。</li>
+<li>轉置只改布局，MLP 才真正產生可學習交互。</li>
+<li>Channel MLP 類似共享的 pointwise 網路，但完整 Mixer 還有跨位置計算。</li>
+<li>固定位置權重不同於 attention 的輸入依賴路由，也不代表模型不依內容改變輸出。</li>
+<li>CV MLP-Mixer 與推薦 TokenMixer 可共享設計直覺，具體算子與參數共享策略不能混同。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/site/01-bootstrap.js?v=2026-11-17-1"></script>
+<script src="../../core/site/02-language.js?v=2026-11-17-1"></script>
+<script src="../../core/site/03-cipher-mode.js?v=2026-11-17-1"></script>
+<script src="../../core/site/04-assistants.js?v=2026-11-17-1"></script>
+<script src="../../core/site/05-cipher-shortcut.js?v=2026-11-17-1"></script>
+<script src="../../core/site/06-theme.js?v=2026-11-17-1"></script>
+<script src="../../core/site/07-settings.js?v=2026-11-17-1"></script>
+<script src="../../core/site/08-page-context.js?v=2026-11-17-1"></script>
+<script src="../../core/site/09-navigation.js?v=2026-11-17-1"></script>
+<script src="../../core/site/10-ambient.js?v=2026-11-17-1"></script>
+<script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
+<script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

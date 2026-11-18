@@ -50,7 +50,7 @@ HAND_WRITTEN_PAGES = [
     "labs/massive-multiplayer-laser-tag/page.html",
 ]
 
-SECTIONS = ("navbar", "footer")
+SECTIONS = ("navbar", "footer", "runtime")
 
 # The Outline / Metadata buttons only work on article pages, so hand-written
 # pages get the navbar without them.
@@ -61,6 +61,7 @@ _NOTE_NAV_BUTTON = re.compile(
 _INIT_PATTERNS = {
     "navbar": re.compile(r'(?P<indent>[ \t]*)<nav class="navbar[\s\S]*?</nav>'),
     "footer": re.compile(r'(?P<indent>[ \t]*)<footer\b[\s\S]*?</footer>'),
+    "runtime": re.compile(r'(?P<indent>[ \t]*)<script src="[^"]*core/script\.js[^"]*"></script>'),
 }
 
 

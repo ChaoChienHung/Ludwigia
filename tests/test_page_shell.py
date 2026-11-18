@@ -5,6 +5,7 @@ The theme bootstrap used to be copied inline into every page. It now lives in
 keep its palette list aligned with `palette-tokens.css`.
 """
 
+import json
 import os
 import re
 import unittest
@@ -144,3 +145,52 @@ class TestGeneratedPageNavbar(unittest.TestCase):
                 if not match or squash(match.group(0)) != expected:
                     stale.append(str(path.relative_to(REPO_ROOT)))
         self.assertEqual(stale, [], "regenerate these pages so their navbar matches pages/_shared/navbar.html")
+
+
+class TestSiteRuntime(unittest.TestCase):
+    """The site runtime is core/site/NN-*.js, loaded in order through pages/_shared/runtime.html."""
+
+    EXPECTED_GLOBALS = {
+        "LudwigCipherMode", "LudwigCompanionSettings", "LudwigContentRuntime", "LudwigCopilotSettings",
+        "LudwigLanguage", "LudwigSettings", "LudwigSettingsRuntime", "LudwigTheme",
+    }
+
+    @classmethod
+    def setUpClass(cls):
+        cls.modules = sorted(p.name for p in (REPO_ROOT / "core" / "site").glob("*.js"))
+        runtime = (REPO_ROOT / "pages" / "_shared" / "runtime.html").read_text(encoding="utf-8")
+        cls.listed = re.findall(r'core/site/([^"?]+\.js)', runtime)
+
+    def test_runtime_partial_lists_every_module_in_order(self):
+        self.assertTrue(all(re.match(r"^\d\d-[a-z0-9-]+\.js$", m) for m in self.modules), self.modules)
+        self.assertEqual(self.listed, self.modules)
+        self.assertFalse((REPO_ROOT / "core" / "script.js").exists(), "core/script.js was split into core/site/")
+
+    def test_pages_load_the_whole_runtime_in_order(self):
+        problems = []
+        for path in REPO_ROOT.rglob("*.html"):
+            rel = path.relative_to(REPO_ROOT)
+            if SKIP_PARTS.intersection(rel.parts) or "content_styles" in rel.parts:
+                continue
+            text = path.read_text(encoding="utf-8")
+            if "core/script.js" in text:
+                problems.append(f"{rel}: still loads core/script.js")
+            loaded = re.findall(r'<script src="[^"]*core/site/([^"?]+\.js)', text)
+            if loaded and loaded != self.modules:
+                problems.append(f"{rel}: runtime modules out of order or incomplete")
+        self.assertEqual(problems, [])
+
+    def test_runtime_loads_without_errors_in_node(self):
+        import shutil
+        import subprocess
+
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is not installed")
+        files = [str(REPO_ROOT / "core" / "site" / m) for m in self.modules]
+        harness = str(REPO_ROOT / "tests" / "js" / "runtime_smoke.cjs")
+        for pathname in ("/index.html", "/notes/demo/demo.html", "/pages/settings.html", "/labs/grimoire/index.html"):
+            out = subprocess.run([node, harness, pathname, *files], capture_output=True, text=True, check=True).stdout
+            result = json.loads(out)
+            self.assertEqual(result["errors"], [], pathname)
+            self.assertEqual(set(result["globals"]), self.EXPECTED_GLOBALS, pathname)
