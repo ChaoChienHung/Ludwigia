@@ -1,0 +1,219 @@
+/*--------*/
+/* Footer */
+/*--------*/
+footer {
+  padding: 40px;
+  background: var(--footer-bg);
+  text-align: center;
+  margin-top: auto;
+}
+
+/*-----------------*/
+/* Contact Section */
+/*-----------------*/
+
+.contact-icons {
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.contact-item {
+  font-size: 2rem;
+  color: var(--contact-color);
+  transition: color .25s ease, transform .25s ease;
+}
+
+.contact-item:hover {
+  color: var(--accent);
+  transform: translateY(-4px);
+}
+
+.contact-email-text,
+.contact-phone-text {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: var(--contact-color);
+  opacity: 0.8;
+}
+
+.contact-phone-text {
+  line-height: 1.8;
+}
+
+.site-fab {
+  position: fixed;
+  right: var(--fab-right);
+  bottom: var(--fab-bottom);
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--site-accent);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45);
+  z-index: 1050;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.site-fab i {
+  font-size: 22px;
+}
+
+.palette-ash .site-fab,
+.palette-ash .site-fab-link,
+.palette-ash .site-fab-action {
+  background: #111827;
+  color: rgba(249, 250, 251, 0.98);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.palette-yellow .site-fab,
+.palette-yellow .site-fab-link,
+.palette-yellow .site-fab-action {
+  color: rgba(17, 24, 39, 0.96);
+}
+
+.palette-ash .site-fab:hover,
+.palette-ash .site-fab-link:hover,
+.palette-ash .site-fab-link:focus,
+.palette-ash .site-fab-action:hover,
+.palette-ash .site-fab-action:focus {
+  background: #0f172a;
+  color: rgba(249, 250, 251, 0.98);
+}
+
+body.note-toc-open .site-fab,
+body.note-meta-open .site-fab,
+body.garden-note-open .site-fab,
+body.note-page.reading-mode .site-fab,
+body.site-fab-open.note-toc-open .site-fab,
+body.site-fab-open.note-meta-open .site-fab,
+body.site-fab-open.garden-note-open .site-fab {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.note-page.reading-mode .site-fab-panel {
+  display: none;
+}
+
+.site-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+}
+
+.site-fab-panel {
+  position: fixed;
+  right: var(--fab-right);
+  bottom: calc(var(--fab-bottom) + var(--fab-size) + var(--fab-gap));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1049;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+body.site-fab-open .site-fab-panel {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.site-fab-entry-mobile-only {
+  display: none !important;
+}
+
+.site-fab-entry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: 999px;
+  background: var(--site-accent);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  opacity: 0.82;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.site-fab-action {
+  appearance: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.site-fab-entry i {
+  font-size: 18px;
+  width: 1.25em;
+  text-align: center;
+}
+
+.site-fab-entry-label {
+  display: none;
+}
+
+.site-fab-entry:hover,
+.site-fab-entry:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  opacity: 1;
+  text-decoration: none;
+}
+
+@media (max-width: 767.98px) and (hover: none), (max-width: 767.98px) and (pointer: coarse) {
+  .site-fab {
+    right: var(--fab-mobile-right);
+    bottom: var(--fab-mobile-bottom);
+    width: var(--fab-mobile-size);
+    height: var(--fab-mobile-size);
+  }
+
+  .site-fab i {
+    font-size: 18px;
+  }
+
+  .site-fab-panel {
+    right: var(--fab-mobile-right);
+    bottom: calc(var(--fab-mobile-bottom) + var(--fab-mobile-size) + 10px);
+    width: var(--fab-mobile-panel-width);
+    gap: 8px;
+    z-index: 1051;
+  }
+
+  .site-fab-entry-mobile-only {
+    display: inline-flex !important;
+  }
+
+  .site-fab-entry {
+    width: 100%;
+    height: auto;
+    min-height: 50px;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    opacity: 0.96;
+  }
+
+  .site-fab-entry-label {
+    display: inline;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+  }
+}
+
+/*-----------------------------------*/
+/* Skills & Credentials Section CSS  */
+/*-----------------------------------*/
+

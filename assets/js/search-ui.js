@@ -189,8 +189,11 @@
       mobileBackdrop.className = 'site-sort-drawer-backdrop';
       mobileBackdrop.addEventListener('click', closeMenus);
 
-      mobileSheet = document.createElement('section');
+      // A floating panel, not page content: a <div> keeps it out of the ambient content lift.
+      mobileSheet = document.createElement('div');
       mobileSheet.className = 'site-sort-drawer';
+      mobileSheet.setAttribute('role', 'dialog');
+      mobileSheet.setAttribute('aria-label', 'Sort');
       mobileSheet.innerHTML = `
         <div class="site-sort-drawer__handle" aria-hidden="true"></div>
         <div class="site-sort-drawer__title">Sort</div>
