@@ -21,9 +21,9 @@
       "kind": "template",
       "category": "site-building",
       "title": {
-        "en": "AGENTS.md starter template",
-        "zh-Hant": "AGENTS.md 起始範本",
-        "zh-Hans": "AGENTS.md 起始模板"
+        "en": "AGENTS.md",
+        "zh-Hant": "AGENTS.md",
+        "zh-Hans": "AGENTS.md"
       },
       "summary": {
         "en": "A reusable agent-rules template for project boundaries, source of truth, focused checks, and review.",
@@ -41,9 +41,9 @@
       "kind": "template",
       "category": "workflow",
       "title": {
-        "en": "HANDOFF.md starter template",
-        "zh-Hant": "HANDOFF.md 交接範本",
-        "zh-Hans": "HANDOFF.md 交接模板"
+        "en": "HANDOFF.md",
+        "zh-Hant": "HANDOFF.md",
+        "zh-Hans": "HANDOFF.md"
       },
       "summary": {
         "en": "A compact stopping-point snapshot for agents to resume unfinished work without copying the long-term backlog.",
@@ -61,9 +61,9 @@
       "kind": "template",
       "category": "site-building",
       "title": {
-        "en": "Project README template",
-        "zh-Hant": "專案 README 範本",
-        "zh-Hans": "项目 README 模板"
+        "en": "README.md",
+        "zh-Hant": "README.md",
+        "zh-Hans": "README.md"
       },
       "summary": {
         "en": "A concise README structure for setup, the single editing workflow, build outputs, and deployment.",
