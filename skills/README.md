@@ -26,16 +26,18 @@
 
 ## 引用 Skills
 
-引用自 [lennoxsaint/Skills](https://github.com/lennoxsaint/Skills)，正文維持原文（英文）。名稱已依用途完整改名：資料夾、`name`、標題、`agents/openai.yaml` 的呼叫名稱、Skill 之間的互相引用，以及腳本的狀態資料夾與環境變數都用新名稱；括號內保留上游名稱與原始來源連結。
+引用自 [lennoxsaint/Skills](https://github.com/lennoxsaint/Skills)，正文維持原文（英文）。名稱已依用途完整改名：資料夾、`name`、標題、`agents/openai.yaml` 的呼叫名稱、Skill 之間的互相引用，以及腳本的狀態資料夾與環境變數都用新名稱；括號內保留上游名稱與原始來源連結。上游以 MIT License 授權，版權聲明見 [NOTICE-lennoxsaint-skills.md](./NOTICE-lennoxsaint-skills.md)。
 
 - [adversarial-review](./adversarial-review/SKILL.md)：紅隊對抗式獨立審查（上游：[adversarial-review](https://github.com/lennoxsaint/Skills/tree/main/adversarial-review)）。
 - [benchmark-climb](./benchmark-climb/SKILL.md)：以真實資料建立鎖定題庫並跑分爬升（上游：[hill-climb](https://github.com/lennoxsaint/Skills/tree/main/hill-climb)）。
 - [bounded-goal-planner](./bounded-goal-planner/SKILL.md)：把計畫轉成有邊界的自主執行目標（上游：[goal](https://github.com/lennoxsaint/Skills/tree/main/goal)）。
+- [council-review](./council-review/SKILL.md)：三家 AI 實驗室的模型評審同一版本，循環到全數過關（上游：[council](https://github.com/lennoxsaint/Skills/tree/main/council)）。
 - [cost-audit](./cost-audit/SKILL.md)：訂閱與雲端用量盤點（上游：[save-10-percent](https://github.com/lennoxsaint/Skills/tree/main/save-10-percent)）。
 - [draft-refiner](./draft-refiner/SKILL.md)：依 100 分規準迭代修改草稿（上游：[loop](https://github.com/lennoxsaint/Skills/tree/main/loop)）。
 - [email-triage](./email-triage/SKILL.md)：郵件安全分類與回覆草稿（上游：[email-triage-pro](https://github.com/lennoxsaint/Skills/tree/main/email-triage-pro)）。
 - [high-stakes-task](./high-stakes-task/SKILL.md)：高投入任務推進並由外部評審驗收（上游：[ambitious](https://github.com/lennoxsaint/Skills/tree/main/ambitious)）。
 - [multithread-conductor](./multithread-conductor/SKILL.md)：協調多個 T3 Code 執行緒（上游：[t3-code-conductor](https://github.com/lennoxsaint/Skills/tree/main/t3-code-conductor)）。
 - [session-orchestrator](./session-orchestrator/SKILL.md)：協調既有的 Claude Code 會話直到完成（上游：[claude-conductor](https://github.com/lennoxsaint/Skills/tree/main/claude-conductor)）。
+- [ship-ready](./ship-ready/SKILL.md)：做完、驗證、通過評審團並備妥寄送或合併，停在最後一步交還（上游：[ship-ready](https://github.com/lennoxsaint/Skills/tree/main/ship-ready)）。
 - [strategy-evaluator](./strategy-evaluator/SKILL.md)：方案比較與盲點挑戰（上游：[strategy-prompt](https://github.com/lennoxsaint/Skills/tree/main/strategy-prompt)）。
 - [verify-and-complete](./verify-and-complete/SKILL.md)：任務驗收與交付證明（上游：[finish-work](https://github.com/lennoxsaint/Skills/tree/main/finish-work)）。

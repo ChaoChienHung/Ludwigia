@@ -705,6 +705,55 @@
       "verified_at": null,
       "status": "active",
       "replaced_by": null
+    },
+    {
+      "id": "council-review",
+      "kind": "skill",
+      "category": "workflow",
+      "title": {
+        "en": "Cross-Lab Council Review",
+        "zh-Hant": "跨實驗室模型評審團（Council）",
+        "zh-Hans": "跨实验室模型评审团（Council）"
+      },
+      "summary": {
+        "en": "Reviewers from three AI labs score the same exact version; fix only proven findings and loop until all clear the bar, stall, or block.",
+        "zh-Hant": "由三家 AI 實驗室的模型評審同一版本，只修有實證的問題，循環到全數過關、停滯或受阻為止。",
+        "zh-Hans": "由三家 AI 实验室的模型评审同一版本，只修有实证的问题，循环到全数过关、停滞或受阻为止。"
+      },
+      "source": "skills/council-review/SKILL.md",
+      "files": [
+        "SKILL.md",
+        "references/brief.md",
+        "references/routes.md",
+        "references/receipt.md",
+        "references/decide.md"
+      ],
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/council",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "ship-ready",
+      "kind": "skill",
+      "category": "workflow",
+      "title": {
+        "en": "Ship-Ready Handoff",
+        "zh-Hant": "備妥待發交付（Ship-ready）",
+        "zh-Hans": "备妥待发交付（Ship-ready）"
+      },
+      "summary": {
+        "en": "Do the work, prove it as its audience will meet it, pass council review, stage the send or merge, and stop one tap before it goes out.",
+        "zh-Hant": "完成工作、以受眾視角驗證、通過評審團，把寄送或合併準備到只差一步，交還由你按下最後確認。",
+        "zh-Hans": "完成工作、以受众视角验证、通过评审团，把寄送或合并准备到只差一步，交还由你按下最后确认。"
+      },
+      "source": "skills/ship-ready/SKILL.md",
+      "reference": "https://github.com/lennoxsaint/Skills/tree/main/ship-ready",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
     }
   ]
 }

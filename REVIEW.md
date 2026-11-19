@@ -4,6 +4,10 @@
 
 ## 待作者驗收
 
+- [ ] 引入 lennoxsaint/Skills 的 Council 與 Ship-ready
+    - 已完成：新增 `skills/council-review/`（上游 council，含 4 份 references）與 `skills/ship-ready/`，依既有規則改名並更新互相引用（`council-review`、`verify-and-complete`、`COUNCIL_REVIEW_TASTE_FILE`）；加入 Toolkit 並保留上游 reference；新增 `skills/NOTICE-lennoxsaint-skills.md` 附上游 MIT 授權聲明（同時涵蓋先前引入的 11 個）。既有 11 個與上游最新版（11-18）一致，無需更新。Toolkit 頁面確認可展開、分頁正常。
+    - Review 重點：兩者都需要能呼叫三家實驗室模型（GPT、Claude、Gemini/Grok）才能完整運作；上游註明 Ship-ready 尚未在真實任務上端到端跑過。
+
 - [ ] 內容 metadata 前綴從 `garden:*` 遷移到 `site:*`
     - 已完成：生成器模板與 5 個手寫頁改輸出 `site:tags` / `site:summary`；重生 110 篇內容頁，diff 只有這兩行 meta，搜尋索引不變；`core/site/11-content-page.js` 改用 `readSiteMeta()` 讀 `site:*`，舊 `garden:*` 只作 fallback，順帶修好原本讀不到 `site:reading_time_minutes`、`site:source` 的問題；`tests/test_page_shell.py` 新增守門；README、spec、guardrails、checklist、技術文件同步。`cli.py test` 73 項通過。
     - Review 重點：打開幾篇 note / writing，確認閱讀時間、Copy / Download Markdown、tag 連結與相關文章正常。
