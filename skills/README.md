@@ -20,6 +20,7 @@
 - [article-structure-writer](./article-structure-writer/SKILL.md)：給一個既定結構、每節細項與素材，轉寫成一篇完整文章。
 - [markdown-to-note](./markdown-to-note/SKILL.md)：把一般 Markdown 文章整理成符合 rulebook 的 pseudo-markdown，並用 `tools/create_content.py` 生成可被 Garden 索引的 note。
 - [markdown-to-writing](./markdown-to-writing/SKILL.md)：同上，生成 `writing/**.html`。
+- [nus-soc-slurm](./nus-soc-slurm/SKILL.md)：在 NUS SoC Slurm 叢集提交、監看與排解 GPU job，含節點故障判斷、透過 Git 交換 log、同時跑多個 job。
 - [release-checklist](./release-checklist/SKILL.md)：提交前的固定檢查清單（測試、索引一致性、生成物檢查）。
 - [sync-md-from-html](./sync-md-from-html/SKILL.md)：當現有 HTML 是 ground truth 時，回寫 `.md` 並重生 `.html` 的流程。
 

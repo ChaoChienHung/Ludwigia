@@ -684,6 +684,27 @@
       "verified_at": null,
       "status": "active",
       "replaced_by": null
+    },
+    {
+      "id": "nus-soc-slurm",
+      "kind": "skill",
+      "category": "workflow",
+      "title": {
+        "en": "NUS SoC Slurm jobs",
+        "zh-Hant": "NUS SoC Slurm 操作",
+        "zh-Hans": "NUS SoC Slurm 操作"
+      },
+      "summary": {
+        "en": "Submits, monitors, and troubleshoots GPU jobs on the NUS SoC Slurm cluster, including broken-node detection and passing logs back through Git.",
+        "zh-Hant": "在 NUS SoC Slurm 叢集提交、監看與排解 GPU job，包括判斷壞掉的節點，以及透過 Git 把 log 交回給助手。",
+        "zh-Hans": "在 NUS SoC Slurm 集群提交、监看与排解 GPU job，包括判断坏掉的节点，以及通过 Git 把 log 交回给助手。"
+      },
+      "source": "skills/nus-soc-slurm/SKILL.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
     }
   ]
 }
