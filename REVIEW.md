@@ -4,6 +4,18 @@
 
 ## 待作者驗收
 
+- [ ] Semantic ID 篇英文版（`Status: drafting`）
+    - 已完成：新增 `notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-en.md` 與生成的 HTML，沿用雙語慣例（共用 `CanonicalId`、`Slug` 加 `-en`、`Lang: en`、`Tags` 不翻）；以改寫類比後的中文版為底意譯，`<information context>` 一併翻成英文，未翻作者用 `<draft>`。drafting 不進搜尋索引；文中 `content-link` 目前連到中文版（其他篇尚無英文版）。英文版把 TIGER 寫為 NeurIPS 2023、OneRec 寫為 2025（中文版仍是 2022／2024）。
+    - Review 重點：通讀英文是否自然；確認上述兩個年份後是否同步修中文版；封面圖本身畫的是「Footwear | Sports | NIKE」的分類式 ID，和新版「不是分類樹」的說法相衝，決定是否換圖；看完把 `Status` 改成 `published` 並重跑 `cli.py build`。
+
+- [ ] 推薦系統系列五篇去宣傳腔，Semantic ID 篇改寫分類樹類比
+    - 已完成：級聯架構、從級聯到生成式、Semantic ID、RQ-VAE、RQ-Kmeans 五篇的 Title / H1、Summary 與帶宣傳腔的小標題改成直接說明範圍的寫法，`LastModified` 更新為 2026-11-20；其他筆記（PQ、GRID、RQ 兩篇等）指向這幾篇的 `content-link` 標籤同步換成新標題；`ARTICLES.md` §六.2、§六.4 標題同步。Semantic ID 篇依 `ARTICLES.md` §六.4 改寫「從 Atomic ID 到語意序列」一節：不再把 SID 說成生物分類／郵遞區號樹，改為每層共用碼本的殘差逼近（$x \approx e_1[c_1] + e_2[c_2] + e_3[c_3]$），後續 Token 是方向補償，用 GPS 位移與畫師筆觸比喻；保留「由粗到細」與乘法原理（並指出共用碼本才是 300 個碼向量的前提，真正的分類樹需要更多）；c1/c2/c3 例子、共享前綴、平滑退化、Hierarchical Softmax callout 與 takeaways 一併對齊。重生受影響 HTML 與搜尋索引。
+    - Review 重點：新標題與小標題是否合意；Semantic ID 篇「為什麼不是分類樹：由粗到細的殘差逼近」一節的說法與比喻是否符合你的理解（尤其「c1 往往和大類有對應、後面幾層不宜解讀成具體屬性」的分寸）；英文版會以這版為底翻譯。
+
+- [ ] 首頁標題改平實，頁面標題收斂為單一來源
+    - 已完成：首頁標題改為「Ludwig Chao — Machine Learning Engineer · Research Engineer」（三語）；手寫頁面的標題只維護在 `i18n/*.json` 的 `title`，`cli.py build-pages` 由 `title.en` 生成 HTML 靜態 `<title>`，`--check` 與測試守門（`pages/projects.html` 因此由 `Projects — Ludwig Portfolio` 對齊為 `Projects — Ludwig`）；修正 `i18n/settings.json` 的 JSON 語法錯誤（Settings 頁原本整份翻譯載入失敗）；新增 i18n JSON 有效性與頁面對照表一致性兩項測試；首頁 hero 在原本那句下面加一行專業方向（三語，`.hero-focus`），head 補 `meta description` 與 `og:title`（`og:title` 也由 `build-pages` 跟著 `title.en` 生成）；移除 `core/i18n.js` 內殘留舊標題的 `home` fallback bundle，並更新首頁 `i18n.js?v=`；AGENTS、README、tech-stack、language-guide 同步。`cli.py test` 通過。
+    - Review 重點：hero 新增那行的措辭（特別是「LLM post-training」是否準確）；部署後用 LinkedIn Post Inspector 看預覽卡片；瀏覽器分頁標題在三種語言下是否正確；Settings 頁切到中文時，選項是否已翻譯。
+
 - [ ] 引入 lennoxsaint/Skills 的 Council 與 Ship-ready
     - 已完成：新增 `skills/council-review/`（上游 council，含 4 份 references）與 `skills/ship-ready/`，依既有規則改名並更新互相引用（`council-review`、`verify-and-complete`、`COUNCIL_REVIEW_TASTE_FILE`）；加入 Toolkit 並保留上游 reference；新增 `skills/NOTICE-lennoxsaint-skills.md` 附上游 MIT 授權聲明（同時涵蓋先前引入的 11 個）。既有 11 個與上游最新版（11-18）一致，無需更新。Toolkit 頁面確認可展開、分頁正常。
     - Review 重點：兩者都需要能呼叫三家實驗室模型（GPT、Claude、Gemini/Grok）才能完整運作；上游註明 Ship-ready 尚未在真實任務上端到端跑過。

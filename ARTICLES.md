@@ -36,6 +36,25 @@
 - [ ] 補完整模型工程筆記：按 backbone supervision、head-only fitting、serving、RL rollout 記錄版本與部署條件，不把整體模型收益歸因 MTP。
 - [x] 增補 Bebop 的 MTP／RL rollout 資源筆記（2026-10-11；待作者 Review）：`notes/bebop-mtp-rl-rollout/bebop-mtp-rl-rollout-zh-tw.md`。已分開記錄拒絕採樣接受率、多步 TV loss、rollout 與整體 RL 加速；後續深讀需核對成本與跨設定適用性。
 - [ ] 補完整推薦筆記：先辨認 SID 組件／同 session 多興趣／連續未來商品／排序位置，再比較訓練與解碼；固定 PinRec 歷史 v1 與 GPR 所讀版本，分列 offline／A-B／shadow／full deployment 證據。
+- [ ] 推薦分篇：撰寫《生成式推薦裡的 SID-level MTP：從輔助訓練到尾段解碼》（2026-11-20 新增；只建 backlog，尚未起稿）
+    - 位置：建議 `notes/sid-level-mtp-in-generative-recommendation/`，從 MTP 入口「生成式推薦的深入筆記」一節連過來；也可獨立成篇。
+    - 定位：重點是 SID 層級碼和 LLM 時間軸 token 的差異，以及這個差異怎麼改變 MTP 的收益、風險與用法。目前沒有對應的公開論文，全文以機制、設計理由、定性觀察和自己的判斷為主。
+    - 大綱：
+        1. 問題：三層 SID（SA → SB → SC）在 teacher forcing 下越往後越好猜，召回是 beam search 各段命中率的乘積，第一層被剪掉就救不回來；主模型在 CTX 位置只有第一層的直接監督，MTP 的出發點是讓 CTX 直接承擔後續層的預測。
+        2. LLM 與推薦的 MTP 差在哪：LLM 往時間軸後推，額外目標不比主任務簡單，會搶容量；推薦的額外目標是同一件商品的後續層，搶容量壓力小、天花板也低；LLM 的 MTP 有主模型驗證可回退，推薦直接用 MTP 產出尾段時沒有逐 token 驗證。
+        3. 結構：串接優於平行。後一層依附前一層，平行多頭等於不知道前一層就去猜後一層；串接式（DeepSeek-V3 式）每個 module 讀上一步 hidden 與下一層 SID embedding，公開旁證可引 HGenPush 的比較。
+        4. 共用輸出頭的梯度拉扯（全文最有故事性的一段）：第二層留存變差 → 切斷 backbone 通道反而更差 → 判斷問題在共用輸出頭 → 改獨立輸出頭後恢復。用梯度 probe 解釋：主 loss 在共用頭上的梯度多為 batch 噪聲，MTP 梯度方向穩定，AdamW 的 $m/\sqrt{v}$ 讓穩定成分持續累積，所以權重很小的輔助 loss 也能主導共用頭的更新方向；寫成「小權重輔助 loss + 共享參數」的通用提醒。
+        5. 監督範圍：只保留同一件商品內的目標。跨商品目標讓同一份 hidden 同時服務兩件商品，梯度方向對不齊；收窄後 MTP 與主任務梯度的 cosine 上升，與離線指標同向，之後調整監督範圍都先看這個量。削弱 MTP 自身的 attention，避免它不靠 backbone 就從歷史裡找答案。
+        6. Leap：讓 CTX 提前預判下一件商品。先做預檢（凍結 backbone，用線性讀取器從 CTX hidden 讀下一件商品的第一層 SID，明顯高於熱門度先驗）；用可學習 query 而非真實 SID embedding，迫使梯度回到 CTX 表示；MTP 與 Leap 的收益近似可加。
+        7. 收益歸因：把命中率拆成各段乘積，收益主要落在第一層排序；三個獨立 probe（削弱 attention 後的準確率、凍結主模型的線性讀取、梯度 cosine）指向同一方向；CTX 表示有效維度下降可作輔助觀察。
+        8. 從輔助訓練到尾段解碼：推薦 beam search 是 compute-bound，和 LLM decode 的 memory-bound 不同，沒有閒置算力可借，只能直接減少尾段計算；主模型只生成決策 token 與第一層，後續層交給 MTP module，以訓練好的輔助權重為起點；拉近尾段品質的手段（提高 loss 權重、加深層數、以主模型 logit 強蒸餾；溫度調高反而變差，說明收益來自 logit 的相對排序）；MTP 自有 attention 需要為前綴重建 KV，這筆固定成本不隨 batch 攤薄，要先壓下來延遲收益才會出現。
+        9. 限制：串接式 MTP 不引入新訓練資訊，收益上限由 NTP 決定；Leap 增量隨訓練量收窄（目前只有單次訓練支持，寫成假設）；尾段解碼沒有驗證步驟，熵閾值回退只是近似；延遲與品質來自不同實驗，尚未在同一套 serving 配置下聯合驗證，不能外推成吞吐收益；多模組設計的訓練開銷。
+        10. 工程教訓：對照組設定在執行時被靜默覆蓋，導致早期收益被高估；補上的三道檢查（模組開啟後前幾步未執行即報錯、開跑前核對實際生效配置、自動掃描恆定或缺失的訓練指標）。
+        11. Takeaways 與 References：DeepSeek-V3、Gloeckle et al.（Meta MTP）、L-MTP、FastMTP、MTP-D、Medusa、HGenPush、Pre-Training Curriculum for MTP。
+    - 公開邊界：
+        - 只寫結構選擇與理由、現象與解釋、設計邏輯、歸因方法、compute-bound 與 memory-bound 的分析和工程教訓；效果只用「變好／變差／近似可加／收益收窄」這類方向性描述。
+        - 不放任何數字（命中率、吞吐、延遲、訓練超參與 loss 權重）；不寫內部平台名、內部配置、模型維度與硬體、實驗明細連結、同事署名的未公開結果。
+    - 驗收：起稿前先與主管確認可公開範圍；發佈前逐段做保密檢查並給主管看過；遵守本文件開頭的鷹架契約（先鋪 SID 與 MTP 的差異，再進結構與梯度分析）。
 
 ### 1. DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation
 - [ ] 規劃並撰寫 DSpark 深度技術筆記
@@ -271,7 +290,7 @@
     4. **Density-based (DBSCAN) 的流形動機與幾何意義**：追求局部連貫性（Continuity / Connectivity），探討流形空間在實際應用的意義。
     5. **Hierarchical Clustering 的多尺度樹狀層次**：Linkage 規則如何改變分群哲學（Single, Complete, Average/Ward）。
 
-### 2. 重構《從級聯漏斗到自迴歸生成：推薦系統的範式重塑》的寫作焦點
+### 2. 重構《從級聯架構到生成式推薦：轉型的動機與技術挑戰》的寫作焦點
 - [ ] 純粹收斂在「系統架構層 (System Pipeline Architecture)」
   - **主線聚焦**：說明從分階段級聯漏斗（召回 -> 粗排 -> 精排 -> 重排）走向端到端大一統（如 OneRec）的根本原因，在於全鏈路共享同一套 Transformer Backbone。
   - **局部 vs 全局放大效應**：傳統級聯單一模組用 Transformer 仍會被跨模組 RPC/IO、特徵拼接與異構非 GEMM 階段所瓶頸；只有收斂為單一 Backbone 時，Scaling Law、GEMM 硬體親和性、LLM 生態繼承才能從局部擴大到全系統。
@@ -285,9 +304,8 @@
   - **生態繼承與模型對齊**：DPO / RLHF 對齊用戶長期滿意度，無縫繼承 FlashAttention、KV Cache、vLLM、Megatron。
   - **探索機制演進**：從事後規則強插與啟發式外掛轉向解碼原生採樣（Temperature, Top-$k$, Top-$p$）。
 
-### 4. 深化《生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題》
-- [ ] 精準化類比與理論觀點
-  - **分類類比檢討**：否定生物分類/郵遞區號樹，確立 RQ-VAE 本質為「幾何殘差向量逼近 (Residual Vector Approximation)」。後續 Token 是方向補償而非語意子集（GPS 地標位移 / 畫師幾何筆觸）。由粗到細反映幾何座標逼近精度。
+### 4. 深化《生成式推薦中的 Semantic ID：商品 Token 化的設計與取捨》
+- [ ] 精準化類比與理論觀點（分類類比檢討已於 2026-11-20 完成，見 `REVIEW.md`）
   - **為什麼不能直接生成 Continuous Item Embedding**：自迴歸 Transformer 擅長離散空間 Next-Token 機率預測。Atomic ID 無語意且極度依賴歷史互動；Semantic ID 因子化拆分實現冷啟動繼承。
   - **共享統計強度與 TIGER 消融實驗**：實證 Random ID 遠遜於 RQ-VAE，證明由粗到細語意對齊的重要性。
   - **RQ-VAE 碼本崩塌防禦**：First-batch K-means 初始化與 Cluster Features EMA 更新。
@@ -339,6 +357,27 @@
 ### 2. 機器學習與推薦系統洞見
 - [ ] **Writing：寫一篇關於 `pairwise vs listwise ranking` 的文章**
   - 核心主張：`pairwise` 學的是局部相對順序 $s(i) > s(j)$；`listwise` 則是把 pair 放回整個 list 的 context 裡，由整體目標與 metric sensitivity 決定哪些 pair 的錯序真正傷害整體排序品質。以 LambdaRank 為例深入淺出。
+- [ ] **Notes：GMV 決策鏈的設計、評估與限制（DCGR 實作者視角）**（2026-11-20 新增；只建 backlog，尚未起稿）
+    - 位置：建議 `notes/dcgr-gmv-decision-chain/`；履歷「Projects & Technical Writing」預計連到這篇。
+    - 開頭必寫：連到九老師〈OneTrans-DCGR：生成式召回的"CoT"與多目標機制〉（https://blog.recsys-frontier.com/article/dcgr-cot-ant-multi-task ，CC BY-NC-SA 4.0）與 OneTrans-V2（arXiv:2609.28589，DCGR 在 §4.2.1）；明寫「我不是 OneTrans-V2 論文作者，只做了其中 GMV 決策 token 這一環」。
+    - 定位：九老師原文已完整講框架層（多路召回背景、$p(z,i\mid H)=p(z\mid H)\,p(i\mid H,z)$ 的分解、三重價值、與 Upside-Down RL／Decision Transformer 的對應、KL 閉式解 $q^*\propto p\,e^{\beta\phi}$），本文不重講，只寫 GMV 這一支的設計取捨，以及這套機制能做到與做不到什麼。**重心放在限制**，不是結尾帶過的一節。開頭放一張分工小表（關心的問題／理論部分／讀者帶走）。
+    - 大綱：
+        1. 開場與範圍：本文要回答的問題是，決策 token 加進來後，哪些收益來自結構，哪些只是評估口徑造成的錯覺。
+        2. 為什麼在召回階段處理價值：Boost 與粗精排混建模只能對已進入後鏈路的候選重新打分，召回沒撈上的高價值商品後面補不回來；追高客單價或多湊單數隨用戶狀態變化，固定條件給不出這個判斷，所以交給模型逐請求預測。
+        3. 為什麼拆成單數 → 客單價：同樣的 GMV 可能來自多單低價或少單高價，商品分布不同；先定單數再定客單價，每個條件下的分布更集中、價值先驗更清楚；單數截斷成三檔（未購買／一單／多單）的理由；多單時的客單價是近似，要寫清楚。
+        4. 分桶設計的取捨：log1p 等寬 → 增加桶數 → 依心理定價門檻手切 → Coarse → Fine 兩級 → 單數 → 客單價，每步只寫為什麼試與看到的趨勢；核心取捨是桶越細、給定真實桶時 SID 越好解，但推理時決策越難預測、每桶樣本越少，錯桶還會連累後面的 SID；觀察：多一步解碼本身不帶來收益，每步提供不同的價值資訊才有用。
+        5. 限制一：鏈式分解是恆等式。遍歷全部 $z$ 時 $p_0(y\mid h)=\sum_z p_0(z\mid h)\,p_0(y\mid h,z)$，商品分布不變；決策 token 的價值在於提供可觀測、可逐請求調節的條件路徑。寫成對九老師「第一重價值」的補充：他談中間步驟帶來的計算空間，這裡談不調控時的上限。只用公式講道理，不引任何未公開結果。
+        6. 限制二：日誌的分解不等於因果。$\pi_{\log}(y\mid h)\,p_{\log}(z\mid h,y)=p_{\log}(z\mid h)\,p_{\log}(y\mid h,z)$ 只是同一個聯合分布的兩種分解；推理時改變 $z$ 的分布，推不出會得到相同的因果回報，這是 outcome-conditioned 方法共同的前提。
+        7. 限制三：決策誤差沿鏈傳遞，離線評估看不到。單數檔位選錯，後面都在錯的分支上生成，beam 不回頭；teacher forcing 下的命中率不含決策預測誤差。建議同時報告決策本身的校準（例如按用戶活躍度分層看預測與實際成單率）與端到端（預測決策 → SID）命中率。
+        8. 限制四：資料支持度與外推。模型只在日誌覆蓋到的 (h, z, y) 組合上學到條件分布；把 $z$ 推到少見區域（例如給低活躍用戶指定最高客單價檔）更依賴外推。與九老師提到「β→∞ 等於直接指定決策、反而損失 GMV」是同一現象，這裡從資料支持度補充原因。
+        9. 限制五：商品層重加權只是近似。$q_\beta(y\mid h)=\sum_z q_\beta(z\mid h)\,p_0(y\mid h,z)$ 要遍歷全部決策組合才成立；線上只展開部分組合、beam 有限，調 β 時看到的線上指標同時反映了這個近似誤差。
+        10. 硬控與軟控的用法：硬控（直接指定檔位）給出點擊端與價值端的上下限，兩端之間是明顯的置換；軟控在決策 logit 上加 $\beta\phi(z)$，在上下限之間搜尋，同時觀察機率質量往高價桶遷移的程度與頂端桶是否過度集中。只寫操作與觀察指標，推導連到原文。
+        11. Takeaways：三到四條可引用的短結論加原因，例如「決策 token 的收益來自可調節的條件路徑，不來自多一步計算」。
+        12. References：OneTrans-V2、九老師原文、Upside-Down RL、Decision Transformer、Multi-Game Decision Transformers。
+    - 公開邊界：
+        - 全文不放任何數字，只寫想法、設計理由、方向性觀察與自己的判斷；需要佐證效果時連到 OneTrans-V2 與九老師原文。
+        - 不寫內部平台名、內部配置、日誌欄位、實驗 ID、內部文檔連結與同事的未公開結果。
+    - 驗收：初稿完成後先給主管看過再發佈；遵守本文件開頭的鷹架契約（先鋪為什麼在召回處理價值，再進分解與限制）。
 
 ### 3. Vibe-coding 與 Agentic AI 時代的反思
 - [ ] **Writing：Doc-driven vibe-coding（Workflow 篇：如何用文檔整理 repo，讓 vibe-coding 可持續）**
