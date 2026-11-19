@@ -17,9 +17,19 @@ Dated journal of experiments for [model or component]. Newest day at the top. Co
 - **Baseline:** [run name, commit, or config being compared against]
 - **Change:** [what differs from the baseline; one variable at a time where possible]
 - **Data:** [dataset, version, split]
-- **Environment:** [machine or cluster job ID, hardware, seed]
+- **Environment:** [machine or cluster job ID, hardware]
 - **Command:** `[command or script used to run it]`
 - **Artifacts:** [run directory or log location]
+
+#### Settings
+
+| Parameter | Baseline | [Variant] |
+| --- | --- | --- |
+| [e.g. learning rate] | [value] | [value] |
+| [e.g. batch size] | [value] | [value] |
+| Seed | [value] | [value] |
+
+- **Config:** `[config file path or commit that pins every value above]`
 
 #### Expectation
 
