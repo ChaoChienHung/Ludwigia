@@ -3,7 +3,7 @@ name: adversarial-review
 description: Independently critique and revise an answer, plan, workflow, skill, or implementation against a fixed rubric. Use when asked for adversarial review, red-team iteration, or agreement with another model. Preserve evidence and disagreements; a review score does not prove product performance.
 ---
 
-# Adversarial review
+# Adversarial Red-Team Review
 
 Turn a draft into a defensible result through independent criticism and checked revisions. Review the thing the user asked about. Do not silently turn review into implementation, or agreement into permission to act.
 

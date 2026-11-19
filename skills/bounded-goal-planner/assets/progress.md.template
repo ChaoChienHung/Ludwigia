@@ -33,4 +33,4 @@ None yet.
 
 ## Next action
 
-Start native Goal Mode with the launcher returned by `$goal`.
+Start native Goal Mode with the launcher returned by `$bounded-goal-planner`.

@@ -1,9 +1,9 @@
 ---
-name: save-10-percent
+name: cost-audit
 description: Audit personal and small-business recurring costs from CSV, JSON, OFX/QFX, QIF, text PDF, invoices, or read-only billing sources; verify actual use and dependencies; compare cheaper alternatives; persist until at least 10% in net recurring savings is evidenced or every safe lane is exhausted; and optionally execute an exact approved cancellation or downgrade batch with live browser preflight and receipts. Use for subscription audits, SaaS or cloud cleanup, inactive seats, memberships, recurring expense reduction, plan downgrades, tool consolidation, or autonomous cancellation requests. Do not use for payroll, tax, debt, investment advice, or one-off budgeting.
 ---
 
-# Save 10%
+# Subscription & Cost Audit
 
 Find recurring savings without goal-hacking the denominator. Keep analysis, approval, provider confirmation, effective billing, and statement realization separate.
 

@@ -4,6 +4,14 @@
 
 ## 待作者驗收
 
+- [ ] 內容 metadata 前綴從 `garden:*` 遷移到 `site:*`
+    - 已完成：生成器模板與 5 個手寫頁改輸出 `site:tags` / `site:summary`；重生 110 篇內容頁，diff 只有這兩行 meta，搜尋索引不變；`core/site/11-content-page.js` 改用 `readSiteMeta()` 讀 `site:*`，舊 `garden:*` 只作 fallback，順帶修好原本讀不到 `site:reading_time_minutes`、`site:source` 的問題；`tests/test_page_shell.py` 新增守門；README、spec、guardrails、checklist、技術文件同步。`cli.py test` 73 項通過。
+    - Review 重點：打開幾篇 note / writing，確認閱讀時間、Copy / Download Markdown、tag 連結與相關文章正常。
+
+- [ ] Toolkit：研究紀錄範本、學習類 Prompt、Skills 格式統一
+    - 已完成：新增 `experiment-log.md`（依日期的實驗日誌）與 `INSIGHT.md` 範本；新增「學習」用途與 5 個 Prompt（混合題型測驗出題、進階選擇題演練、答案評分與範例解答、對話轉筆記、個人化重點篩選）；中英兩版的出題 Prompt 收斂為一個條目，依網站語言預設顯示對應分頁；題數、題型、難度配比、讀者輪廓改成 `{{名稱：預設值}}` 可替換欄位；本站 6 個 Skill 補上 frontmatter；11 個引用 Skill 完整改成資料夾名稱（`name`、標題、`$` 呼叫名稱、互相引用、狀態資料夾 `~/.benchmark-climb` 等與環境變數如 `HIGH_STAKES_TASK_HOME`），上游名稱只留在 reference；`skills/README.md` 分成本站與引用兩區並附上游連結；`markdown-to-*` 與 `sync-md-from-html` 改寫為 `site:tags` / `site:summary` 並註明生成器仍輸出舊名。`cli.py test` 72 項通過，瀏覽器確認語言分頁切換與欄位高亮。
+    - Review 重點：Prompt 名稱與摘要是否合意；`relevance-filter` 的預設讀者輪廓是你的個人描述，確認要公開；若本機曾用過舊名稱的狀態資料夾（如 `~/.hill-climb`、`~/.ambitious`），需自行搬到新名稱。
+
 - [ ] 重構 Phase 3–5：runtime 分檔、CSS 分層、生成器拆模組
     - 交付條件：`create_content.py` 拆成 `tools/content/` 且所有輸出逐位元組不變；`core/script.js` 拆成 `core/site/` 並有 Node smoke test；`shared.css` 拆成分檔，ambient 抬升改為 opt-in；畫面行為不變（已知 bug 修正除外）。
     - 已完成：Phase 5 重生 110 篇與基準逐位元組相同；Phase 3 拆成 12 個依序載入的模組，所有頁面改由 `pages/_shared/runtime.html` 載入；Phase 4 拆成 11 個分檔，ambient 規則改 opt-in，並修正搜尋頁兩個 modal 在 ambient 主題下被改成 relative 的既有問題、排序抽屜改為 `div role="dialog"`。以無頭 Chrome 比對 computed style 確認新舊一致（細節見 `docs/tech/refactor-roadmap.md`）。

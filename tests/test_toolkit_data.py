@@ -92,6 +92,27 @@ class TestToolkitData(unittest.TestCase):
                     target_path = rel_path if rel_path.startswith(("skills/", "data/")) else os.path.join(item_dir, rel_path)
                     self.assertTrue(os.path.isfile(os.path.join(REPO_ROOT, target_path)), f"{item['id']}: missing file {target_path}")
 
+    def test_language_versions_are_one_item(self):
+        # Translations of one resource are file tabs tagged with `lang`, not parallel items.
+        for item in self.data["items"]:
+            langs = [f.get("lang") for f in item.get("files", []) if isinstance(f, dict) and f.get("lang")]
+            for lang in langs:
+                self.assertIn(lang, LANGS, f"{item['id']}: unknown file lang {lang}")
+            self.assertEqual(len(langs), len(set(langs)), f"{item['id']}: duplicate file lang")
+
+    def test_prompt_slots_fit_the_highlighter(self):
+        # grimoire-labs.js highlights {{...}} slots of at most 120 characters without nested braces.
+        for item in self.data["items"]:
+            if item["kind"] != "prompt":
+                continue
+            item_dir = os.path.dirname(item["source"])
+            paths = [item["source"]] + [os.path.join(item_dir, f["path"] if isinstance(f, dict) else f) for f in item.get("files", [])]
+            for path in set(paths):
+                with open(os.path.join(REPO_ROOT, path), encoding="utf-8") as fh:
+                    text = fh.read()
+                for slot in re.findall(r"\{\{(.*?)\}\}", text, re.S):
+                    self.assertTrue(0 < len(slot) <= 120 and "{" not in slot and "\n" not in slot, f"{path}: slot {slot!r}")
+
     def test_type_and_purpose_are_independent_facets(self):
         pairs = {(item["kind"], item["category"]) for item in self.data["items"]}
         self.assertIn(("skill", "writing"), pairs)

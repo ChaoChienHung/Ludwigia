@@ -7,8 +7,8 @@ Write a receipt for substantive tasks and meaningful checkpoints, including part
 The first match wins:
 
 1. The work log the project's own instructions name, when they name one. Follow that log's format and skip the helper below.
-2. The folder in the `FINISH_WORK_LOG_DIR` environment variable.
-3. `~/.finish-work/log/`.
+2. The folder in the `VERIFY_AND_COMPLETE_LOG_DIR` environment variable.
+3. `~/.verify-and-complete/log/`.
 
 ## Write it
 

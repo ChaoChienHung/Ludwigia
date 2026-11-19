@@ -1,4 +1,4 @@
-"""Tests for the finish-work receipt helper. Standard library only."""
+"""Tests for the verify-and-complete receipt helper. Standard library only."""
 
 import contextlib
 import importlib.util
@@ -17,7 +17,7 @@ BASE = ["--status", "completed", "--objective", "Fix the slug bug", "--outcome",
 
 
 def clean_env(env_extra=None, home=None):
-    env = {key: value for key, value in os.environ.items() if key != "FINISH_WORK_LOG_DIR"}
+    env = {key: value for key, value in os.environ.items() if key != "VERIFY_AND_COMPLETE_LOG_DIR"}
     if home is not None:
         env["HOME"] = str(home)
     env.update(env_extra or {})
@@ -112,7 +112,7 @@ class LogReceiptTests(unittest.TestCase):
     def test_the_environment_variable_names_the_folder(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / "my log"
-            _, payload = run(BASE, env_extra={"FINISH_WORK_LOG_DIR": str(target)})
+            _, payload = run(BASE, env_extra={"VERIFY_AND_COMPLETE_LOG_DIR": str(target)})
             self.assertEqual(payload["status"], "written")
             self.assertEqual(Path(payload["path"]).parent, target)
 
@@ -120,14 +120,14 @@ class LogReceiptTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as home:
             _, payload = run(BASE, home=home)
             self.assertEqual(payload["status"], "written")
-            self.assertEqual(Path(payload["path"]).parent, Path(home) / ".finish-work" / "log")
+            self.assertEqual(Path(payload["path"]).parent, Path(home) / ".verify-and-complete" / "log")
 
     def test_an_empty_folder_setting_fails_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as home:
-            result, payload = run(BASE, env_extra={"FINISH_WORK_LOG_DIR": " "}, home=home)
+            result, payload = run(BASE, env_extra={"VERIFY_AND_COMPLETE_LOG_DIR": " "}, home=home)
             self.assertEqual(result.returncode, 1)
             self.assertEqual(payload["status"], "failed")
-            self.assertFalse((Path(home) / ".finish-work").exists())
+            self.assertFalse((Path(home) / ".verify-and-complete").exists())
 
     def test_an_unwritable_folder_fails_and_says_so(self):
         with tempfile.TemporaryDirectory() as directory:

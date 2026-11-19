@@ -1,10 +1,15 @@
-# Markdown → Ludwigia Note（Rulebook 編撰 + 生成）
+---
+name: markdown-to-note
+description: Convert an ordinary Markdown article into Ludwigia rulebook pseudo-markdown and generate an indexable note page with tools/create_content.py. Use when asked to turn an article, draft, or outline into a Ludwigia note.
+---
+
+# Markdown to Note
 
 目標：把使用者給的「一般 Markdown 文章」整理成符合 Ludwigia rulebook 的 pseudo-markdown（可用 `tools/create_content.py` 產生 HTML note），並確保：
 
 - 文章語意與結構留在 `.md`
 - 不在 `.md` 內寫 CSS class（除非用 `<rawhtml>` 逃生門且允許）
-- 生成出的 `.html` 可被 Garden 索引（`<title>` / `garden:tags` / `garden:summary`）
+- 生成出的 `.html` 可被 Garden 索引（`<title>` / `site:tags` / `site:summary`）
 
 ## 輸入
 

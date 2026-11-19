@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic, local-first helpers for the Save 10% skill."""
+"""Deterministic, local-first helpers for the cost-audit skill."""
 
 from __future__ import annotations
 

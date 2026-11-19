@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SKILL_DIR = REPO_ROOT / "save-10-percent"
+SKILL_DIR = REPO_ROOT / "cost-audit"
 SCRIPTS = SKILL_DIR / "scripts"
 
 
@@ -45,7 +45,7 @@ class CommandLineWorkflowTests(unittest.TestCase):
             baseline = root / "baseline.json"
             run_script(
                 "normalize_transactions.py",
-                REPO_ROOT / "examples" / "save-10-percent" / "sample-transactions.csv",
+                REPO_ROOT / "examples" / "cost-audit" / "sample-transactions.csv",
                 normalized,
                 "--account-id",
                 "checking",
@@ -57,7 +57,7 @@ class CommandLineWorkflowTests(unittest.TestCase):
             self.assertEqual(manifest["period_start"], "2025-03-03")
             self.assertEqual(manifest["period_end"], "2026-03-20")
             run_script("reconcile_transactions.py", normalized, reconciled)
-            run_script("assess_coverage.py", reconciled, REPO_ROOT / "examples" / "save-10-percent" / "sample-scope.json", coverage)
+            run_script("assess_coverage.py", reconciled, REPO_ROOT / "examples" / "cost-audit" / "sample-scope.json", coverage)
             run_script("detect_recurring.py", reconciled, recurring)
             run_script("build_baseline.py", recurring, coverage, baseline)
             coverage_payload = json.loads(coverage.read_text())
@@ -79,10 +79,10 @@ class CommandLineWorkflowTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(first.read_bytes()).hexdigest(), hashlib.sha256(second.read_bytes()).hexdigest())
             with zipfile.ZipFile(first) as archive:
                 names = archive.namelist()
-            self.assertIn("save-10-percent/SKILL.md", names)
+            self.assertIn("cost-audit/SKILL.md", names)
             self.assertFalse(any("__pycache__" in name or name.endswith(".pyc") for name in names))
             self.assertFalse(any(Path(name).name.startswith("test_") for name in names))
-            self.assertTrue(all(name.startswith("save-10-percent/") for name in names))
+            self.assertTrue(all(name.startswith("cost-audit/") for name in names))
 
     def test_case_cli_resumes_from_disk(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -1,3 +1,9 @@
+// Content metadata is `site:*`; older generated pages used `garden:*`, so read that as a fallback.
+const readSiteMeta = (name) => {
+  const meta = document.querySelector(`meta[name="site:${name}"]`) || document.querySelector(`meta[name="garden:${name}"]`);
+  return String(meta?.getAttribute("content") || "").trim();
+};
+
 const markOpened = (docKey) => {
   if (!docKey) return;
   const now = Date.now();
@@ -51,7 +57,7 @@ const setEstimatedReadingTime = () => {
   const textEl = timeEl.querySelector(".note-reading-time-text");
   if (!textEl) return;
 
-  const metaMinutes = Number(document.querySelector('meta[name="garden:reading_time_minutes"]')?.getAttribute("content") || 0);
+  const metaMinutes = Number(readSiteMeta("reading_time_minutes") || 0);
   if (metaMinutes > 0) {
     textEl.textContent = `${metaMinutes} min`;
     return;
@@ -241,8 +247,7 @@ const domToMarkdown = (rootEl) => {
 };
 
 const getNoteSourcePath = () => {
-  const meta = document.querySelector('meta[name="garden:source"]');
-  return String(meta?.getAttribute("content") || "").trim();
+  return readSiteMeta("source");
 };
 
 const getSourceMarkdown = async () => {
@@ -401,8 +406,7 @@ const initNoteRelated = () => {
   if (!contentEl) return;
   contentEl.querySelectorAll(".note-related-section[data-generated-related='1']").forEach((el) => el.remove());
 
-  const meta = document.querySelector('meta[name="garden:tags"]');
-  const raw = meta ? meta.getAttribute("content") : "";
+  const raw = readSiteMeta("tags");
   const tags = String(raw || "")
     .split(",")
     .map((t) => t.trim())

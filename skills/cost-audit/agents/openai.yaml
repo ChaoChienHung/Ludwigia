@@ -1,4 +1,4 @@
 interface:
-  display_name: "Save 10%"
+  display_name: "Subscription & Cost Audit"
   short_description: "Find and safely execute 10% recurring savings"
-  default_prompt: "Use $save-10-percent to audit my recurring costs, verify what I actually use, and keep working until you find 10% in safe net savings or prove the honest shortfall."
+  default_prompt: "Use $cost-audit to audit my recurring costs, verify what I actually use, and keep working until you find 10% in safe net savings or prove the honest shortfall."

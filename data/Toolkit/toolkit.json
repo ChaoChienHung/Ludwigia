@@ -13,6 +13,10 @@
     {
       "id": "site-building",
       "title": { "en": "Site building", "zh-Hant": "網站開發", "zh-Hans": "网站开发" }
+    },
+    {
+      "id": "learning",
+      "title": { "en": "Learning", "zh-Hant": "學習", "zh-Hans": "学习" }
     }
   ],
   "items": [
@@ -101,6 +105,48 @@
       "replaced_by": null
     },
     {
+      "id": "experiment-log-template",
+      "kind": "template",
+      "category": "workflow",
+      "title": {
+        "en": "experiment-log.md",
+        "zh-Hant": "experiment-log.md",
+        "zh-Hans": "experiment-log.md"
+      },
+      "summary": {
+        "en": "A dated experiment journal kept beside each model: motivation, setup, expectation, key metrics, results, and conclusion for every run.",
+        "zh-Hant": "放在各模型旁的實驗日誌：依日期記錄每個實驗的動機、設定、預期、關鍵指標、結果與結論。",
+        "zh-Hans": "放在各模型旁的实验日志：按日期记录每个实验的动机、设置、预期、关键指标、结果与结论。"
+      },
+      "source": "data/Toolkit/resources/experiment-log-template.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "insight-template",
+      "kind": "template",
+      "category": "workflow",
+      "title": {
+        "en": "INSIGHT.md",
+        "zh-Hant": "INSIGHT.md",
+        "zh-Hans": "INSIGHT.md"
+      },
+      "summary": {
+        "en": "Research notes that keep insights, facts, limitations, and numbered hypotheses apart, each citing the experiment behind it.",
+        "zh-Hant": "研究筆記：分開記錄洞見、事實、限制與編號假設，並標明每項結論來自哪個實驗。",
+        "zh-Hans": "研究笔记：分开记录洞见、事实、限制与编号假设，并标明每项结论来自哪个实验。"
+      },
+      "source": "data/Toolkit/resources/insight-template.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
       "id": "project-readme-template",
       "kind": "template",
       "category": "site-building",
@@ -157,6 +203,123 @@
         "zh-Hans": "检查文章是否由底层往上逐层堆叠，找出认知断崖、概念倒置与段落孤岛。"
       },
       "source": "data/Toolkit/prompts/knowledge-scaffolding-review.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "quiz-generator",
+      "kind": "prompt",
+      "category": "learning",
+      "title": {
+        "en": "Mixed-format quiz generator",
+        "zh-Hant": "混合題型測驗出題",
+        "zh-Hans": "混合题型测验出题"
+      },
+      "summary": {
+        "en": "Writes about 15 questions on your notes, from beginner to professional level, across open-ended, short-answer, multiple-choice, and fill-in-the-blank formats.",
+        "zh-Hant": "依筆記或文章出約 15 題，難度從初級到專業級，題型涵蓋開放式、簡答、選擇與填空。",
+        "zh-Hans": "依笔记或文章出约 15 题，难度从初级到专业级，题型涵盖开放式、简答、选择与填空。"
+      },
+      "source": "data/Toolkit/prompts/quiz-generator.en.md",
+      "files": [
+        {
+          "path": "quiz-generator.en.md",
+          "label": "English",
+          "lang": "en"
+        },
+        {
+          "path": "quiz-generator.zh-Hant.md",
+          "label": "繁體中文",
+          "lang": "zh-Hant"
+        }
+      ],
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "multiple-choice-drill",
+      "kind": "prompt",
+      "category": "learning",
+      "title": {
+        "en": "Advanced multiple-choice drill",
+        "zh-Hant": "進階選擇題演練",
+        "zh-Hans": "进阶选择题演练"
+      },
+      "summary": {
+        "en": "Writes about 30 intermediate-to-professional multiple-choice questions, each with the correct answer and an explanation, and may extend beyond the source.",
+        "zh-Hant": "出約 30 題中級到專業級的選擇題，每題附正確答案與解釋，可適度延伸原文。",
+        "zh-Hans": "出约 30 题中级到专业级的选择题，每题附正确答案与解释，可适度延伸原文。"
+      },
+      "source": "data/Toolkit/prompts/multiple-choice-drill.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "answer-grader",
+      "kind": "prompt",
+      "category": "learning",
+      "title": {
+        "en": "Answer grader with model answer",
+        "zh-Hant": "答案評分與範例解答",
+        "zh-Hans": "答案评分与范例解答"
+      },
+      "summary": {
+        "en": "Scores your answer out of 100 on conceptual understanding and reasoning, gives encouraging feedback, and ends with a model 100/100 answer.",
+        "zh-Hant": "以概念理解與推理為主，替你的作答打 100 分制分數並給出鼓勵式回饋，最後附上滿分範例解答。",
+        "zh-Hans": "以概念理解与推理为主，替你的作答打 100 分制分数并给出鼓励式反馈，最后附上满分范例解答。"
+      },
+      "source": "data/Toolkit/prompts/answer-grader.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "discussion-to-notes",
+      "kind": "prompt",
+      "category": "learning",
+      "title": {
+        "en": "Discussion to notes",
+        "zh-Hant": "對話轉筆記",
+        "zh-Hans": "对话转笔记"
+      },
+      "summary": {
+        "en": "Turns the conversation above into detailed, copy-ready flat Markdown notes without condensing or losing information.",
+        "zh-Hant": "把前面的對話整理成可直接複製的詳細扁平 Markdown 筆記，不壓縮、不遺漏資訊。",
+        "zh-Hans": "把前面的对话整理成可直接复制的详细扁平 Markdown 笔记，不压缩、不遗漏信息。"
+      },
+      "source": "data/Toolkit/prompts/discussion-to-notes.md",
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
+      "id": "relevance-filter",
+      "kind": "prompt",
+      "category": "learning",
+      "title": {
+        "en": "Personal relevance filter",
+        "zh-Hant": "個人化重點篩選",
+        "zh-Hans": "个性化重点筛选"
+      },
+      "summary": {
+        "en": "Extracts only the points of an article that matter to a given reader profile, explains why each matters, and suggests next steps.",
+        "zh-Hant": "依讀者身分與目的，只萃取文章中與你相關的重點，說明為何重要並建議下一步。",
+        "zh-Hans": "依读者身份与目的，只萃取文章中与你相关的重点，说明为何重要并建议下一步。"
+      },
+      "source": "data/Toolkit/prompts/relevance-filter.md",
       "reference": "Ludwig",
       "verified_with": null,
       "verified_at": null,

@@ -51,7 +51,7 @@ check('claude judging claude work = same family, fresh context', independence('c
 check('unknown author = unknown independence', independence('gpt-6.1-sol', 'codex', null).independence === 'unknown');
 
 // --- digests: same bytes, same digest; any edit, new digest -------------------------------------------------------
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ambitious-selftest-'));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'high-stakes-task-selftest-'));
 const art = path.join(tmp, 'page.md');
 fs.writeFileSync(art, '# v1\n');
 const d1 = artifactDigest([art]);

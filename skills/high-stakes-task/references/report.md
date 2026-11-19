@@ -40,7 +40,7 @@ Make one private page that lets the person review without opening five files:
 Where the person's standing rules already use private hosted pages (for example Claude's private Artifacts), put it there: a private page for the owner is a delivery to them, not publishing. Otherwise write `review.html` in the run folder and give the path. Never make the page public or share it with anyone else; that stays behind contract item 7.
 
 ## The taste log
-File: `$AMBITIOUS_HOME/taste-log.md` (default `~/.ambitious/taste-log.md`). Create it if missing.
+File: `$HIGH_STAKES_TASK_HOME/taste-log.md` (default `~/.high-stakes-task/taste-log.md`). Create it if missing.
 
 When the person answers "what delighted you, and what missed?", add one line:
 ```
@@ -48,7 +48,7 @@ When the person answers "what delighted you, and what missed?", add one line:
 ```
 Use their words. Don't polish them into your own.
 
-Every fifth entry, read the last five to ten and propose one to three rule changes for `$AMBITIOUS_HOME/profile.md`, each with the entries that justify it:
+Every fifth entry, read the last five to ten and propose one to three rule changes for `$HIGH_STAKES_TASK_HOME/profile.md`, each with the entries that justify it:
 ```
 Proposed taste rule: "<rule>". Evidence: entries <dates>. Add it to your profile?
 ```

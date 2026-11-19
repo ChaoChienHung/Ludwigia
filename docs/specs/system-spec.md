@@ -21,17 +21,19 @@
 目前可索引 metadata 的穩定來源在內容頁 `<head>`：
 
 - `<title>`
-- `<meta name="garden:tags" content="...">`
-- `<meta name="garden:tag_concepts" content="...">`（若 tag 命中 ontology；需與 `garden:tags` 逐項對齊）
-- `<meta name="garden:summary" content="...">`
-- `<meta name="garden:lang" content="zh-Hant|en|...">`
-- `<meta name="garden:status" content="published|drafting">`（若啟用）
-- `<meta name="garden:pinned" content="1|true">`（若作者希望某篇 writing 在命中時優先置頂）
-- `<meta name="garden:priority" content="number">`（若作者希望 pinned writing 之間再細分順序）
-- `<meta name="garden:canonical_id" content="...">`（若該篇內容屬於一組多語言版本）
-- `<meta name="garden:published_at" content="YYYY-MM-DD">`（若作者提供）
-- `<meta name="garden:last_modified_at" content="YYYY-MM-DD">`（若作者提供或系統有穩定 fallback）
-- `<meta name="garden:cover" content="...">`（若作者提供；僅代表單一 card / preview cover image，不代表正文所有插圖）
+- `<meta name="site:tags" content="...">`
+- `<meta name="site:tag_concepts" content="...">`（若 tag 命中 ontology；需與 `site:tags` 逐項對齊）
+- `<meta name="site:summary" content="...">`
+- `<meta name="site:lang" content="zh-Hant|en|...">`
+- `<meta name="site:status" content="published|drafting">`（若啟用）
+- `<meta name="site:pinned" content="1|true">`（若作者希望某篇 writing 在命中時優先置頂）
+- `<meta name="site:priority" content="number">`（若作者希望 pinned writing 之間再細分順序）
+- `<meta name="site:canonical_id" content="...">`（若該篇內容屬於一組多語言版本）
+- `<meta name="site:published_at" content="YYYY-MM-DD">`（若作者提供）
+- `<meta name="site:last_modified_at" content="YYYY-MM-DD">`（若作者提供或系統有穩定 fallback）
+- `<meta name="site:cover" content="...">`（若作者提供；僅代表單一 card / preview cover image，不代表正文所有插圖）
+
+`garden:*` 是舊前綴：生成器與手寫頁一律輸出 `site:*`（`tests/test_page_shell.py` 守門），indexer 與前端 runtime 只把 `garden:*` 當作舊頁面的 fallback 讀取。
 
 然後由 indexer 再現性生成全站索引：
 
@@ -70,7 +72,7 @@ extras layer 的穩定降級規則：
 - `<information>`：在一般內容頁可作為 inline enhancement / tooltip；但在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律退化成純文字
 - `<content-link>`：在一般內容頁可依 target `CanonicalId` resolve 成站內連結；但在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律退化成純文字
 - `<image>`：只屬於一般內容頁的補充 block，不屬於 core content；在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 一律排除
-- Card imagery 必須來自 `<meta>.Cover` / `garden:cover`，而不是從正文 `<image>` 推導；原因是 `Cover` 只承擔單一 card / preview image，而正文可以合法包含多張不同用途的 `<image>`
+- Card imagery 必須來自 `<meta>.Cover` / `site:cover`，而不是從正文 `<image>` 推導；原因是 `Cover` 只承擔單一 card / preview image，而正文可以合法包含多張不同用途的 `<image>`
 - Search result、section landing 與 `content-link` preview card 應共用同一個 default cover fallback contract：target 有 `Cover` 用自己的，沒有則依內容類型退回 shared default cover（`notes` 預設退回 `assets/images/Notes.png`，`writing` 預設退回 `assets/images/Writing.png`）
 
 ## Index Schema（穩定視圖）
@@ -121,7 +123,7 @@ extras layer 的穩定降級規則：
 - `labels` 放各語言顯示字串（例如 `en` / `zh-Hant`）
 - `aliases` 放可接受的舊寫法與同義詞（含大小寫差異）
 - `concept_id` 與對外顯示 label 必須分離；`concept_id` 只承擔穩定識別，`labels.{lang}` 才是對外文字
-- 生成層應依內容 `Lang` 輸出對應語系的 `garden:tags` label；索引層則同步輸出 `tag_concepts` / `tag_labels`，讓 runtime 可依 UI 語系重建顯示
+- 生成層應依內容 `Lang` 輸出對應語系的 `site:tags` label；索引層則同步輸出 `tag_concepts` / `tag_labels`，讓 runtime 可依 UI 語系重建顯示
 - 生成層與索引層都應優先用 ontology 做 alias 正規化；避免 source / HTML / search index 各自長出不同 concept 判斷規則
 
 ### i18n-aware Search（規劃中的搜尋契約）
@@ -266,12 +268,15 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 - source of truth：`data/Toolkit/toolkit.json`（`version`、`stale_after_days`、`categories`、`items`）
 - item 欄位：`id`（kebab-case）、`kind = template | guide | prompt | skill`（種類）、`category`（用途）、三語 `title` / `summary`、`source`、`reference`、`verified_with`、`verified_at`（`YYYY-MM-DD` 或 null，兩者需同時設定或同時為 null）、`status = active | deprecated`、`replaced_by`。種類和用途是互不依賴的篩選維度；`reference` 對本站原創資源寫 `Ludwig`，外部引用／借鑑資源寫原始 HTTPS 網址，展開項目的資訊欄固定顯示 `Reference`
 - `kind = skill` 的 `source` 若為本站自建實作直接指向 `skills/<name>/SKILL.md`，不得複製第二份；外部或精選 Skill 的摘要/實體亦可收錄於 `skills/` 或 `data/Toolkit/`；Prompt 本體在 `data/Toolkit/prompts/`，通用範本與指南在 `data/Toolkit/resources/`，僅提煉可公開重用的內容
+- 可選 `files`：多檔資源以分頁呈現（字串或 `{ path, label, lang }`，相對 `source` 所在資料夾）。同一份內容的不同語言版本收斂為單一條目、每個檔案標上 `lang`（`en` / `zh-Hant` / `zh-Hans`），展開時預設顯示目前網站語言的版本，不另立平行條目
+- Prompt 內的 `{{...}}` 是可替換欄位，頁面會高亮顯示：使用者貼入的輸入寫成 `{{在這裡貼上文章}}`；有預設值的參數（題數、題型、難度配比、讀者輪廓等）寫成 `{{名稱：預設值}}` / `{{name: default}}`，讓使用者知道可以直接改
 - Prompt / Skill 的驗證時效由 runtime 依 `verified_at` 與 `stale_after_days` 推導；Template / Guide 一律標示參考資料，不使用模型驗證狀態；密語模式只改呈現文案，不改資料來源或篩選語意
-- 外部 Skill 收錄為 Toolkit 的 Skill 條目，`reference` 指向原始 Skill 網址，保留可公開重用的流程與規範
+- 外部 Skill 收錄為 Toolkit 的 Skill 條目，`reference` 指向原始 Skill 網址，保留可公開重用的流程與規範；本地名稱以資料夾為準：`SKILL.md` 的 `name`、標題、呼叫名稱與 Skill 間互相引用都使用本地名稱，上游名稱只留在 `reference` 與 `skills/README.md` 的來源連結
 - 守門測試：`tests/test_toolkit_data.py`
 - `agent-rules-template` 是 `data/Toolkit/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `toolkit.json` 維護，不能另寫一份卡片摘要
 - `agent-handoff-template` 是 `data/Toolkit/resources/agent-handoff-template.md` 內可替換的短期交接範本；根目錄 `HANDOFF.md` 只記 Agent 最近停點，不承接 `TODO.md` 的總體與長期待辦，並由 `.assetsignore` 排除於網站資產之外
 - `project-todo-template` 與 `project-review-template` 分別提供未完成任務與已完成待作者驗收的範本；根目錄 `TODO.md` 與 `REVIEW.md` 各守職責，`REVIEW.md` 由 `.assetsignore` 排除於網站資產之外
+- `experiment-log-template` 與 `insight-template` 是一組研究紀錄範本，兩者放在所屬模型或元件旁，而非一律放在 repo root：`experiment-log.md` 是依日期累積的實驗日誌（Motivation / Details / Expectation / Key Metrics / Results / Conclusion，預期在執行前寫定）；`INSIGHT.md` 收斂跨 run 仍成立的 Insights、Facts、Limitations 與編號 Hypothesis，並註明出自哪筆實驗。後續工作仍回到 `TODO.md`，兩者都不承接 backlog
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。
 

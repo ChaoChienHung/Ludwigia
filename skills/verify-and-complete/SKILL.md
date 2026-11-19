@@ -1,9 +1,9 @@
 ---
-name: finish-work
+name: verify-and-complete
 description: Close a substantive task with the right checks for its kind of work, an honest outcome summary and a written receipt. Use when a task is about to be called done, at a meaningful checkpoint, when work stops partial or blocked, or when someone says finish this, close this out, wrap this up, or asks whether it is really done.
 ---
 
-# Finish Work
+# Outcome Verification & Receipt
 
 Finish the requested outcome, verify its proof, and record the actual result. Follow the project's own verification rules and required checks first. Reuse checks already completed in this task.
 

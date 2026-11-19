@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Append one work receipt to a dated Markdown log and print the result as JSON.
 
-The log folder is --log-dir, else $FINISH_WORK_LOG_DIR, else ~/.finish-work/log.
+The log folder is --log-dir, else $VERIFY_AND_COMPLETE_LOG_DIR, else ~/.verify-and-complete/log.
 One file per local day: YYYY-MM-DD.md. Entries are only ever appended.
 
 Every entry ends with a marker line. A receipt counts as already written only
@@ -29,17 +29,17 @@ except ImportError:  # no fcntl on Windows: the helper runs without the lock the
     fcntl = None
 
 STATUSES = ("completed", "in_progress", "waiting", "blocked", "cancelled", "unknown")
-DEFAULT_LOG_DIR = "~/.finish-work/log"
+DEFAULT_LOG_DIR = "~/.verify-and-complete/log"
 LOCK_NAME = ".receipts.lock"
 LISTS = ("file", "check", "decision", "error", "next")
 
 
 def resolve_log_dir(explicit: str | None) -> Path:
-    chosen = explicit if explicit is not None else os.environ.get("FINISH_WORK_LOG_DIR")
+    chosen = explicit if explicit is not None else os.environ.get("VERIFY_AND_COMPLETE_LOG_DIR")
     if chosen is None:
         chosen = DEFAULT_LOG_DIR
     if not chosen.strip():
-        raise ValueError("the log folder is empty. Set --log-dir or FINISH_WORK_LOG_DIR to a folder, or unset it.")
+        raise ValueError("the log folder is empty. Set --log-dir or VERIFY_AND_COMPLETE_LOG_DIR to a folder, or unset it.")
     return Path(chosen).expanduser()
 
 
@@ -148,7 +148,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--decision", action="append", default=[], help="a choice made and why; repeat for more")
     parser.add_argument("--error", action="append", default=[], help="a failure and its fix; repeat for more")
     parser.add_argument("--next", action="append", default=[], help="a remaining step; repeat for more")
-    parser.add_argument("--log-dir", default=None, help=f"log folder (default: $FINISH_WORK_LOG_DIR, else {DEFAULT_LOG_DIR})")
+    parser.add_argument("--log-dir", default=None, help=f"log folder (default: $VERIFY_AND_COMPLETE_LOG_DIR, else {DEFAULT_LOG_DIR})")
     return parser
 
 

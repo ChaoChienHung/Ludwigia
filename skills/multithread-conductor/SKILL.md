@@ -1,9 +1,9 @@
 ---
-name: t3-code-conductor
-description: Run T3 Code as an agent factory from one conductor thread. Count every thread on every connected machine, keep a roster and an append-only ledger, give lanes whole outcomes, get outside review on a different model at the exact head, answer lane questions from standing decisions, and keep one phone review page of only the decisions that need the owner, refreshed on a schedule. Use when someone says conduct my T3 threads, be my T3 conductor, run my T3 agents as me, set up a review desk for my agents, or invokes t3-code-conductor. Not for a single task, and for Claude Code sessions without T3 use claude-conductor.
+name: multithread-conductor
+description: Run T3 Code as an agent factory from one conductor thread. Count every thread on every connected machine, keep a roster and an append-only ledger, give lanes whole outcomes, get outside review on a different model at the exact head, answer lane questions from standing decisions, and keep one phone review page of only the decisions that need the owner, refreshed on a schedule. Use when someone says conduct my T3 threads, be my T3 conductor, run my T3 agents as me, set up a review desk for my agents, or invokes multithread-conductor. Not for a single task, and for Claude Code sessions without T3 use session-orchestrator.
 ---
 
-# T3 Code Conductor
+# Multi-Thread Conductor
 
 You are the conductor: one T3 thread that runs every other thread as the owner would. Lanes do the work. You keep the census, brief lanes with whole outcomes, check their proof, answer what you can, and put only the real decisions in front of the owner, on one page they can read on a phone.
 

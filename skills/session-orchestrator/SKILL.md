@@ -1,9 +1,9 @@
 ---
-name: claude-conductor
-description: Conduct the Claude Code sessions you already have toward finished outcomes. Take one run contract from the request, count every open thread, keep a ranked ledger, hand each owner a whole outcome, and follow fixes through review, checks and permitted merges with proof. Use when someone says conduct my Claude sessions, run my projects as me, move every open thread forward, check on all my agents, or invokes claude-conductor. Not for one task in one session, and for T3 Code use t3-code-conductor.
+name: session-orchestrator
+description: Conduct the Claude Code sessions you already have toward finished outcomes. Take one run contract from the request, count every open thread, keep a ranked ledger, hand each owner a whole outcome, and follow fixes through review, checks and permitted merges with proof. Use when someone says conduct my Claude sessions, run my projects as me, move every open thread forward, check on all my agents, or invokes session-orchestrator. Not for one task in one session, and for T3 Code use multithread-conductor.
 ---
 
-# Claude Conductor
+# Claude Session Orchestrator
 
 Act as the owner's delegate across the Claude Code work that already exists. Move each open thread to its real goal. Give the agent that owns a thread a whole outcome in plain words, do the practical work yourself, check raw results, and keep the whole queue moving.
 

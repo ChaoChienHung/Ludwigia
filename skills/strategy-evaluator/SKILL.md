@@ -1,11 +1,11 @@
 ---
-name: strategy-prompt
+name: strategy-evaluator
 description: Make a rigorous recommendation on a business, strategy, research or decision question. Steelman every option, score them in a weighted matrix, give a first recommendation, check it for bias and blind spots, ask what would make it wrong, then give a final recommendation tied to the user's goals. Use when someone says strategy prompt, steelman both sides, score the options, compare these strategic choices, or asks for a rigorous business recommendation.
 ---
 
-# Strategy Prompt
+# Strategic Option Evaluator
 
-Use this skill when the user asks to apply the Strategy Prompt, steelman both sides, score options, compare strategic choices, or make a rigorous business recommendation.
+Use this skill when the user asks to apply the Strategic Option Evaluator, steelman both sides, score options, compare strategic choices, or make a rigorous business recommendation.
 
 ## Workflow
 

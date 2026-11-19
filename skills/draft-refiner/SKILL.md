@@ -1,13 +1,13 @@
 ---
-name: loop
+name: draft-refiner
 description: Run a quality loop now. Infer a 100-point rubric, revise a local draft or artifact, score each pass, and stop at 100/100 or blocked_below_100. Use when someone says loop this, make it 100/100, iterate until perfect, improve this draft, thumbnail, video, carousel, post or script, or asks for criteria plus execution in one go.
 ---
 
-# Loop
+# Draft Rubric Refinement
 
 Create the criteria, execute the loop now, and report the scorecard.
 
-Use `$hill-climb` instead, when it is installed, for long or high-stakes work that must reach a measured bar: it builds a locked test set from real data and climbs it with fresh sessions and outside judges, where this loop grades itself. When the user only wants a paste-ready prompt to run later, write that prompt and do not run the loop.
+Use `$benchmark-climb` instead, when it is installed, for long or high-stakes work that must reach a measured bar: it builds a locked test set from real data and climbs it with fresh sessions and outside judges, where this loop grades itself. When the user only wants a paste-ready prompt to run later, write that prompt and do not run the loop.
 
 ## Core Contract
 

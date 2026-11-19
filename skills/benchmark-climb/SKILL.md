@@ -1,9 +1,9 @@
 ---
-name: hill-climb
-description: Turn real data into a locked answer key, then climb toward a measured target with fresh agent sessions until the number and two outside judges say it is done. Use for long, ambitious work that must reach a provable quality bar - "hill climb this", "build an eval and climb it", "make the harness/app/agent hit X%", "use the logs as a benchmark", "keep going until it passes", or any big job where vibes are not enough. For quick polish of one draft use `loop` instead.
+name: benchmark-climb
+description: Turn real data into a locked answer key, then climb toward a measured target with fresh agent sessions until the number and two outside judges say it is done. Use for long, ambitious work that must reach a provable quality bar - "hill climb this", "build an eval and climb it", "make the harness/app/agent hit X%", "use the logs as a benchmark", "keep going until it passes", or any big job where vibes are not enough. For quick polish of one draft use `draft-refiner` instead.
 ---
 
-# Hill climb
+# Benchmark Score Climbing
 
 A **hill** is one goal with a locked **answer key** (yes/no test cases built from real data) and a runner that **climbs** it: baseline, one change, score, keep or undo, repeat, all on disk. The verifier sets the ceiling, so most of the craft is the answer key; the climb itself is a script.
 
@@ -11,7 +11,7 @@ Two stages decide **done**:
 1. **Tests**: the visible-test score reaches the target, the hidden tests stay within 5 points, and no must-pass case fails. When the hidden check is what blocks, a change that holds the visible score and raises the hidden score is kept.
 2. **Council**: two judges from different labs (GPT-6.1 Sol and a fresh Opus by default) score the result per rubric category, 1-10 in half points, and say whether they would ship it; the climb continues on their critiques until every judge gives the bar (default 9) in every category and would ship. The judges are blind: they never see the target, the bar or the test score. For visual work they score rendered screens next to frozen **references** (the best products you know) and the starting version, shuffled under letters, and the work must lead every reference. Each judge scores those screens in a look call that sees nothing else, then gives its ship vote in a separate review call with the code and diff. A stage-2 change is kept only when nothing slips (the lowest, the total, any ship vote) and something rises; a judge whose score rose is asked a second time before it counts.
 
-Scripts live in `scripts/` next to this file (call it `$HC`). Every command prints JSON. State lives in the **hill folder** (default `~/.hill-climb/hills/<name>`); the climber edits a separate **work folder** on its own `hill/<name>` git branch.
+Scripts live in `scripts/` next to this file (call it `$HC`). Every command prints JSON. State lives in the **hill folder** (default `~/.benchmark-climb/hills/<name>`); the climber edits a separate **work folder** on its own `hill/<name>` git branch.
 
 ## Steps
 
@@ -19,7 +19,7 @@ Scripts live in `scripts/` next to this file (call it `$HC`). Every command prin
 Write down, in one sentence each: the goal, the files the climber may change (**climbable**), what the score measures, and a stretch target number. Then create the hill:
 
 ```bash
-node $HC/hill.mjs init ~/.hill-climb/hills/<name> --name <name> --repo <git repo> [--base <ref>]   # or --scratch
+node $HC/hill.mjs init ~/.benchmark-climb/hills/<name> --name <name> --repo <git repo> [--base <ref>]   # or --scratch
 ```
 
 Fill `hill.json` (every field: [references/hill-json.md](references/hill-json.md)). Read [references/safety.md](references/safety.md) when the work folder is a real product repo.

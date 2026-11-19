@@ -1,3 +1,8 @@
+---
+name: article-structure-writer
+description: Turn a given article structure, per-section details, and raw notes into a readable article instead of bullet notes, optionally as Ludwigia pseudo-markdown. Use when the user already has an outline and material and asks to write it up as a full article.
+---
+
 # Article Structure Writer
 
 目標：當使用者提供「文章結構 + 每節細項 + 原始素材」時，幫他把這些內容轉寫成一篇真正可讀的文章，而不是只保留條列式筆記。

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// judge.mjs: the outside judge for /ambitious. A different model scores the work; the author never does.
+// judge.mjs: the outside judge for /high-stakes-task. A different model scores the work; the author never does.
 //
 //   node judge.mjs score   --brief <brief.md|text> --artifact <path> [--artifact <path> ...] [--run <run-dir>] [--round N | --concept]
 //                          [--bar "all>=8,truth>=9"] [--judge auto|codex|claude] [--model <codex model>]
@@ -18,7 +18,7 @@
 // Fails closed: a reply only counts when every dimension has a 1-10 score and a line of evidence. The pass/fail verdict
 // is computed here from those scores and the bar, never taken from the judge's prose. Independence is reported, not
 // assumed: the judge's model family is compared with the author's (--author-model, else flight.json author_model,
-// else $AMBITIOUS_AUTHOR_MODEL). Each verdict carries a digest of the artifacts it saw, so "two judges passed the final
+// else $HIGH_STAKES_TASK_AUTHOR_MODEL). Each verdict carries a digest of the artifacts it saw, so "two judges passed the final
 // version" can be checked. Verdict files are never overwritten.
 // JSON on stdout. Exit 0 when a valid verdict was produced, 3 when no judge gave one, 1 on usage errors. Node 18+.
 import { createHash } from 'node:crypto';
@@ -488,7 +488,7 @@ async function judgeWithFallback(kindWanted, ctx, key, validate) {
 }
 
 async function callJudge(kind, { cwd, prompt, images, model, timeoutSec }) {
-  const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'ambitious-judge-msg-'));
+  const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'high-stakes-task-judge-msg-'));
   const lastMessageFile = path.join(scratch, 'last.txt');
   let finalPrompt = prompt;
   if (kind === 'claude' && images.length) finalPrompt += `\n\nThe images to look at (open each with the Read tool):\n${images.map((i) => `- ${i}`).join('\n')}`;
@@ -556,9 +556,9 @@ async function score(args) {
   // as the verdict on the finished work.
   const concept = has(args, '--concept');
   const roundNo = concept ? 0 : Number(argValue(args, '--round', lastRound + 1));
-  const authorModel = argValue(args, '--author-model') ?? (flight?.author_model || null) ?? process.env.AMBITIOUS_AUTHOR_MODEL ?? null;
+  const authorModel = argValue(args, '--author-model') ?? (flight?.author_model || null) ?? process.env.HIGH_STAKES_TASK_AUTHOR_MODEL ?? null;
   const rules = parseBar(argValue(args, '--bar', 'all>=8,truth>=9'));
-  const view = fs.mkdtempSync(path.join(os.tmpdir(), 'ambitious-judge-'));
+  const view = fs.mkdtempSync(path.join(os.tmpdir(), 'high-stakes-task-judge-'));
   const prep = prepare(artifacts, view, { transcribe: !has(args, '--no-transcribe') });
   const digest = artifactDigest(artifacts);
   const prompt = scorePrompt(brief, view, prep.notes);
@@ -616,7 +616,7 @@ export function combineOrders(r1, r2) {
 
 async function compareOnce(args, a, b, swap) {
   const brief = readBrief(argValue(args, '--brief'));
-  const view = fs.mkdtempSync(path.join(os.tmpdir(), 'ambitious-compare-'));
+  const view = fs.mkdtempSync(path.join(os.tmpdir(), 'high-stakes-task-compare-'));
   const opts = { transcribe: !has(args, '--no-transcribe') };
   const shownA = swap ? b : a;
   const shownB = swap ? a : b;
@@ -627,7 +627,7 @@ async function compareOnce(args, a, b, swap) {
   const { j, parsed, status, problems, attempts } = await judgeWithFallback(argValue(args, '--judge', 'auto'),
     { cwd: view, prompt, images: [...pa.images.slice(0, 8), ...pb.images.slice(0, 8)], model: argValue(args, '--model'), timeoutSec: Number(argValue(args, '--timeout-sec', 1200)) }, 'winner', validateCompare);
   const toInput = (w) => (w === 'A' ? (swap ? 'b' : 'a') : w === 'B' ? (swap ? 'a' : 'b') : 'tie');
-  const indep = independence(j.model, j.kind, argValue(args, '--author-model') ?? process.env.AMBITIOUS_AUTHOR_MODEL ?? null);
+  const indep = independence(j.model, j.kind, argValue(args, '--author-model') ?? process.env.HIGH_STAKES_TASK_AUTHOR_MODEL ?? null);
   return {
     mode: 'compare', swapped: swap, kind: j.kind, label: j.label, model: j.model ?? 'UNKNOWN', seconds: round1(j.ms / 1000),
     status, note: noVerdictNote(status, j, problems), attempts, independence: indep.independence, independence_why: indep.why,

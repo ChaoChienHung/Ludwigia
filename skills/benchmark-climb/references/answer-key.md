@@ -18,7 +18,7 @@ Real data goes stale. A real post that broke a rule the owner has since adopted 
 For tool-choice work, `scripts/mine_tools.mjs` turns transcripts into one row per user turn:
 
 ```bash
-node $HC/mine_tools.mjs --server <mcp-server-name> --out ~/.hill-climb/mining/<mcp-server-name>-turns.jsonl [--since 2026-10-01]
+node $HC/mine_tools.mjs --server <mcp-server-name> --out ~/.benchmark-climb/mining/<mcp-server-name>-turns.jsonl [--since 2026-10-01]
 ```
 
 Each row has the user's words, the ordered tools called, the first call's input, which calls errored, the error text, the next user message and the source line. It masks obvious secrets. It reads Claude `tool_use` blocks and Codex `McpToolCall` items and direct function calls, whether named `mcp__<server>__<tool>` or split into `namespace: "mcp__<server>"` plus `name: "<tool>"` (counting a call logged both ways once), including zstd-compressed Codex sessions (these need `zstdcat` on the PATH; without it the miner prints `INCOMPLETE` with the number of files it could not read). One Codex turn often fans out into dozens of calls, so Codex yields fewer turns with richer chains.

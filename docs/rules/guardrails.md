@@ -16,10 +16,10 @@
 
 - [ ] 每篇內容頁的單一真相來源仍在 `<head>` metadata
   - [ ] `<title>`
-  - [ ] `<meta name="garden:tags" ...>`（逗號分隔）
-  - [ ] 若 tag 命中 ontology，`<meta name="garden:tag_concepts" ...>` 與 `garden:tags` 逐項對齊
-  - [ ] `<meta name="garden:summary" ...>`
-  - [ ] 若啟用 status，`<meta name="garden:status" ...>` 的語意固定為內容可見性，而不是其它用途
+  - [ ] `<meta name="site:tags" ...>`（逗號分隔）
+  - [ ] 若 tag 命中 ontology，`<meta name="site:tag_concepts" ...>` 與 `site:tags` 逐項對齊
+  - [ ] `<meta name="site:summary" ...>`
+  - [ ] 若啟用 status，`<meta name="site:status" ...>` 的語意固定為內容可見性，而不是其它用途
 
 - [ ] 搜尋/瀏覽入口只讀索引資料（`window.SITE_SEARCH_INDEX`），不要求維護第二份 tags/summary/related
 
@@ -36,7 +36,7 @@
   - [ ] `published` 仍維持既有公開入口可見性
 
 - [ ] 若支援 pinned writing
-  - [ ] `garden:pinned` / `garden:priority` 由 source metadata 再現性生成，不靠手改 HTML 或另一份推薦清單
+  - [ ] `site:pinned` / `site:priority` 由 source metadata 再現性生成，不靠手改 HTML 或另一份推薦清單
   - [ ] 若首頁 Skills 或 Credentials & Honors 採用獨立 data file（`data/Skills/skills.json` 或 `data/Credentials/credentials.json`）：
   - [ ] source JSON 維持為單一真相來源，不要求在 HTML 硬寫第二份靜態 DOM 資料
   - [ ] `Skills` 切換不引發全頁跳躍或垂直高度大幅膨脹

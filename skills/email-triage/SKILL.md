@@ -1,9 +1,9 @@
 ---
-name: email-triage-pro
+name: email-triage
 description: Triage one or more Gmail inboxes, surface the messages that matter, draft a small reply queue, and learn the user's archive and writing preferences. Use for inbox reviews, email cleanup decisions, reply drafting, or recurring Gmail briefings. Never use it to send email without a separate explicit request.
 ---
 
-# Email Triage Pro
+# Email Triage & Safe Reply
 
 Run a review-first Gmail triage across the user's chosen accounts. Surface the important messages, prepare a few reply drafts, and learn from the user's feedback after every run.
 
@@ -19,7 +19,7 @@ If setup has not been completed in the current environment, pause the triage and
    - ChatGPT: [references/setup-chatgpt.md](references/setup-chatgpt.md)
    - Claude: [references/setup-claude.md](references/setup-claude.md)
 6. Verify read access to every named account with a harmless, narrow query before saying setup is complete. Verify Calendar or Drive only if the user wants that context.
-7. Ask: "Do you want Email Triage Pro to run every morning at 8:00 in your time zone?"
+7. Ask: "Do you want Email Triage to run every morning at 8:00 in your time zone?"
 8. If yes, ask which usage pool they want to conserve and which eligible model they want. Read [references/scheduling.md](references/scheduling.md), recommend the smallest current model that supports the required Gmail connection and schedule, then let the user choose before creating the task.
 
 Do not claim multi-account coverage until each account has returned a successful provider read.
@@ -75,7 +75,7 @@ If the environment cannot persist private state, say `feedback persistence unava
 The default run is read-only.
 
 - Archive only after the user approves the exact items or has created an explicit reusable archive rule.
-- Before archiving, add a dedicated undo label such as `Email-Triage-Pro-Archived`, then remove `INBOX`.
+- Before archiving, add a dedicated undo label such as `Email-Triage-Archived`, then remove `INBOX`.
 - Read back the provider state. Count an archive only when the label is present and `INBOX` is absent.
 - A proposed draft in the report is not a Gmail draft. A provider draft exists only after the provider returns a draft identifier and the skill reads it back.
 - Never send, reply, forward, delete, trash, unsubscribe, change security settings, or accept a meeting invitation without a separate explicit request naming that action.

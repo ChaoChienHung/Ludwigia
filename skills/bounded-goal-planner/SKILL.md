@@ -1,11 +1,11 @@
 ---
-name: goal
+name: bounded-goal-planner
 description: Generate durable Codex goal packets or optimized Claude /goal prompts from user-provided plans, specs, or task lists. Use when someone asks to turn a plan into a /goal prompt, create a steerable autonomous execution goal, optimize a goal prompt, or write a goal contract for implementation.
 ---
 
-# Goal
+# Bounded Goal Setting
 
-When the goal is a quality bar that real data can measure (a pass rate, an eval score, a judge verdict), route to `$hill-climb` when it is installed: it turns the data into a locked test set and runs the climb itself, so it needs no /goal prompt.
+When the goal is a quality bar that real data can measure (a pass rate, an eval score, a judge verdict), route to `$benchmark-climb` when it is installed: it turns the data into a locked test set and runs the climb itself, so it needs no /goal prompt.
 
 ## Entry guard: creation versus continuation
 

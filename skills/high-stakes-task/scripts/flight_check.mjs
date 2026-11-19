@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// flight_check.mjs: the flight log for an /ambitious run, and the check that it landed honestly.
+// flight_check.mjs: the flight log for an /high-stakes-task run, and the check that it landed honestly.
 //
 //   node flight_check.mjs init   <run-dir> --task "<one line>" [--tier lean|standard|max] [--author-model <your model id>]
 //   node flight_check.mjs status <run-dir> in_flight|awaiting|abandoned [--reason "<why>"]
@@ -166,13 +166,13 @@ function main() {
   if (cmd === 'init') {
     const task = argValue(rest, '--task', '');
     const tier = (argValue(rest, '--tier', 'standard') || 'standard').toLowerCase();
-    const authorModel = argValue(rest, '--author-model') ?? process.env.AMBITIOUS_AUTHOR_MODEL ?? null;
+    const authorModel = argValue(rest, '--author-model') ?? process.env.HIGH_STAKES_TASK_AUTHOR_MODEL ?? null;
     if (!TIERS.includes(tier)) out({ status: 'error', error: `tier must be one of ${TIERS.join(', ')}` }, 1);
     fs.mkdirSync(dir, { recursive: true });
     const file = path.join(dir, 'flight.json');
     if (fs.existsSync(file)) out({ status: 'exists', run: dir, note: 'flight.json already exists; continuing that run' });
     save(file, skeleton(task, tier, authorModel));
-    fs.writeSync(1, `AMBITIOUS_RUN=${dir}\n`);
+    fs.writeSync(1, `HIGH_STAKES_TASK_RUN=${dir}\n`);
     out({ status: 'ok', run: dir, file, next: 'fill altitude, sweep, brief, targets and crew as you go; run check before reporting' });
   }
 

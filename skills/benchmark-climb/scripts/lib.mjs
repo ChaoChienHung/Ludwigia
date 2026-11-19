@@ -1,4 +1,4 @@
-// hill-climb shared library. Node 18+, no dependencies.
+// benchmark-climb shared library. Node 18+, no dependencies.
 // A "hill" is a folder holding one climb: hill.json (frozen spec), cases/, exemplars/, scorer/,
 // lock.json, state.json, ledger.jsonl and runs/. The work folder the climber edits lives elsewhere.
 import fs from 'node:fs';
@@ -803,7 +803,7 @@ export function stagedOnlyProblems(W, { alsoIn = [] } = {}) {
   });
 }
 export function commitTree(W, tree, parent, message) {
-  const id = gitOk(W, 'config', 'user.email') ? {} : { GIT_AUTHOR_NAME: 'hill-climb', GIT_AUTHOR_EMAIL: 'hill-climb@localhost', GIT_COMMITTER_NAME: 'hill-climb', GIT_COMMITTER_EMAIL: 'hill-climb@localhost' };
+  const id = gitOk(W, 'config', 'user.email') ? {} : { GIT_AUTHOR_NAME: 'benchmark-climb', GIT_AUTHOR_EMAIL: 'benchmark-climb@localhost', GIT_COMMITTER_NAME: 'benchmark-climb', GIT_COMMITTER_EMAIL: 'benchmark-climb@localhost' };
   return gitx({ cwd: W, env: id, input: message }, 'commit-tree', tree, '-p', parent).trim();
 }
 // Creates a ref only if it does not exist yet; returns the ref actually written.

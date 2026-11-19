@@ -11,7 +11,7 @@ Claude Code work can live in several places. Check each one the owner uses, and 
 | Local Claude Code sessions on this machine | The session tools this runtime exposes, or the CLI commands `claude --help` lists |
 | Cloud project threads on claude.ai/code | A browser tool the owner has approved, or a native project tool if this runtime has one |
 | Background agents and subagents this session started | Their task notifications |
-| T3 Code threads running Claude | Use the `t3-code-conductor` skill instead |
+| T3 Code threads running Claude | Use the `multithread-conductor` skill instead |
 
 A list of local sessions is not a census of cloud projects. If no tool shows a surface's history, record that exact gap and only advance work you can really see.
 
@@ -61,4 +61,4 @@ One private HTML file. Escape all text. No remote scripts, fonts or trackers. Re
 
 ## Closing
 
-Use the owner's closeout routine if they have one (the `finish-work` skill in this repository is one). Release claims on finished work. Hand off unfinished work with its claims and a plain note. A finished review window is not the same as finished products.
+Use the owner's closeout routine if they have one (the `verify-and-complete` skill in this repository is one). Release claims on finished work. Hand off unfinished work with its claims and a plain note. A finished review window is not the same as finished products.

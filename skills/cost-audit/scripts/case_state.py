@@ -5,7 +5,7 @@ from pathlib import Path
 
 from save10_core import CaseStore
 
-parser = argparse.ArgumentParser(description="Create, resume, and advance a durable Save 10% case.")
+parser = argparse.ArgumentParser(description="Create, resume, and advance a durable cost-audit case.")
 subparsers = parser.add_subparsers(dest="command", required=True)
 
 create = subparsers.add_parser("create")

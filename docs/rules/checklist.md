@@ -129,7 +129,7 @@
 
 - [ ] 內容頁（任選 1 篇 notes + 1 篇 writing）
   - [ ] `<head>` metadata（title/tags/summary）正確
-  - [ ] 若本次改動涉及 tag ontology：`garden:tags` 與 `garden:tag_concepts` 順序對齊，且 locale label / concept filter / tag detail 都可用
+  - [ ] 若本次改動涉及 tag ontology：`site:tags` 與 `site:tag_concepts` 順序對齊，且 locale label / concept filter / tag detail 都可用
   - [ ] 若本次改動涉及 `Status`：`drafting` 內容不會出現在公開入口，`published` 內容仍可正常被收錄
   - [ ] 若本次改動涉及 `Pinned` / `Priority`：對應 writing 的 `<head>` metadata 與 search index 欄位一致
   - [ ] 若本次改動涉及日期 metadata：sidebar 的 `Updated` 顯示正確；展開後的 `Published` / `LastModified` 與 fallback 格式正確且一致

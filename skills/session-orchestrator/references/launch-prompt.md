@@ -5,7 +5,7 @@ A template the owner fills in and pastes into a fresh Claude Code session to sta
 Keep it in plain words. The conductor treats this prompt as the whole run contract and will not interview you again.
 
 ```text
-/claude-conductor
+/session-orchestrator
 
 act as me and take my open Claude Code work through to real finished outcomes.
 stay on <model> in this session. don't start another interview: this prompt is the contract.

@@ -39,7 +39,7 @@ This file is how the conductor answers for the owner without asking.
 Create one T3 thread for the conductor and give it the launch prompt below. Put its id in `CONDUCTOR.md`.
 
 ```text
-use t3-code-conductor. you are the conductor for my T3 Code threads.
+use multithread-conductor. you are the conductor for my T3 Code threads.
 the run folder is <path>. read CONDUCTOR.md, STANDING.md, ROSTER.md and the end of LEDGER.md first.
 start with a full census of every thread on every connected machine, map each open thread to a lane,
 then run cycles until <finish line or time box>. keep the review page current.

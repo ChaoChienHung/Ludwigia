@@ -1,3 +1,8 @@
+---
+name: article-structure-extractor
+description: Reverse-engineer a well-written article into its skeleton, the purpose and details of each section, its transitions, and a reusable template. Use when asked to analyze how an article is written or to turn a good article into a template rather than a summary.
+---
+
 # Article Structure Extractor
 
 目標：當使用者提供一篇「覺得寫得很好」的文章時，幫他逆向整理出文章骨架、每一節的目的、每節細項、轉場方式，以及一份可重用的模板，方便沉澱到 `docs/author/writing-notes.md` 或直接在之後套用。

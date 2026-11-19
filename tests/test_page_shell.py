@@ -30,6 +30,15 @@ class TestPageShell(unittest.TestCase):
         offenders = [str(rel) for rel, text in _site_pages() if "site_palette_v1" in text]
         self.assertEqual(offenders, [], "use core/theme-preload.js instead of an inline theme script")
 
+    def test_metadata_uses_site_prefix(self):
+        # `garden:*` is the legacy prefix; readers keep it only as a fallback for old pages.
+        legacy = re.compile(r'<meta[^>]+name=["\']garden:')
+        offenders = [str(rel) for rel, text in _site_pages() if legacy.search(text)]
+        template = (REPO_ROOT / "tools" / "content_styles" / "_shared" / "base.html").read_text(encoding="utf-8")
+        if legacy.search(template):
+            offenders.append("tools/content_styles/_shared/base.html")
+        self.assertEqual(offenders, [], "write content metadata as <meta name=\"site:...\">")
+
     def test_preload_is_resolvable_and_runs_before_styles(self):
         problems = []
         for rel, text in _site_pages():

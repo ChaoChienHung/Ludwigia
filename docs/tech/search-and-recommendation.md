@@ -19,13 +19,13 @@
 ## Data Flow
 
 1. 作者在 source `.md` 或內容頁 HTML `<head>` 提供 metadata，例如：
-   - `garden:tags`
-   - `garden:summary`
-   - `garden:tag_concepts`
-   - `garden:canonical_id`
-   - `garden:pinned`
-   - `garden:priority`
-   - `garden:status`
+   - `site:tags`
+   - `site:summary`
+   - `site:tag_concepts`
+   - `site:canonical_id`
+   - `site:pinned`
+   - `site:priority`
+   - `site:status`
 2. `tools/create_content.py` 會把 source metadata 再現性輸出到 HTML `<head>`
 3. `search/indexer.py` 掃描 `notes/`、`writing/`、`canvas/` 的 HTML，必要時回讀 source `.md` 補：
    - `content_markdown`

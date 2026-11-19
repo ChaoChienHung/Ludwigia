@@ -1,4 +1,4 @@
-"""Run the Node self test for the ambitious skill from Python's unittest runner.
+"""Run the Node self test for the high-stakes-task skill from Python's unittest runner.
 
 The release and validate workflows discover `test_*.py` in each skill's scripts folder,
 so this wrapper makes them run `node selftest.mjs`. In CI a missing Node is a failure;
@@ -16,12 +16,12 @@ from pathlib import Path
 SCRIPTS = Path(__file__).resolve().parent
 
 
-class AmbitiousSelfTest(unittest.TestCase):
+class HighStakesTaskSelfTest(unittest.TestCase):
     def test_node_selftest_passes(self):
         node = shutil.which("node")
         if node is None:
             if os.environ.get("CI"):
-                self.fail("Node 18+ is required in CI to run ambitious/scripts/selftest.mjs")
+                self.fail("Node 18+ is required in CI to run high-stakes-task/scripts/selftest.mjs")
             self.skipTest("Node is not installed")
         result = subprocess.run(
             [node, str(SCRIPTS / "selftest.mjs")],

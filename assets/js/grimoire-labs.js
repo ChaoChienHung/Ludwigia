@@ -407,7 +407,8 @@
         const label = typeof f === 'object' && f.label ? f.label : rel;
         const fullPath = rel.startsWith('skills/') || rel.startsWith('data/') || rel.startsWith('/') ? rel : itemDir + rel;
         const rawName = rel.split('/').pop() || rel;
-        return { path: fullPath, label, rawName };
+        const lang = typeof f === 'object' && f.lang ? f.lang : null;
+        return { path: fullPath, label, rawName, lang };
       });
     }
     let rawName = source.split('/').pop() || source;
@@ -416,7 +417,18 @@
       label = item.title.en;
       rawName = item.title.en;
     }
-    return [{ path: source, label, rawName }];
+    return [{ path: source, label, rawName, lang: null }];
+  }
+
+  // Language versions of one resource are file tabs tagged with `lang`; open the one matching the site language.
+  function initialFileIndex(files) {
+    const lang = getLang();
+    const order = lang === 'zh-Hans' ? ['zh-Hans', 'zh-Hant'] : lang === 'zh-Hant' ? ['zh-Hant', 'zh-Hans'] : [lang];
+    for (const want of order) {
+      const index = files.findIndex((f) => f.lang === want);
+      if (index !== -1) return index;
+    }
+    return 0;
   }
 
   function renderMarkdown(text, target) {
@@ -458,9 +470,9 @@
     const txt = t();
     const detail = el('div', 'grimoire-detail');
 
-    const isPrompt = item.kind === 'prompt';
     const files = resolveItemFiles(item);
-    let activeIndex = 0;
+    const isLanguageSet = files.length > 1 && files.every((f) => f.lang);
+    let activeIndex = initialFileIndex(files);
     let currentText = '';
 
     const sheet = el('div', 'grimoire-sheet');
@@ -469,16 +481,17 @@
     scroll.appendChild(el('p', 'grimoire-ledger-value', txt.loading));
 
     const tabButtons = [];
-    if (!isPrompt) {
+    // Single-file prompts read as one sheet; language versions and multi-file resources get tabs.
+    if (item.kind !== 'prompt' || files.length > 1) {
       const header = el('div', 'grimoire-sheet-header');
       const tabsContainer = el('div', 'grimoire-sheet-tabs');
       tabsContainer.setAttribute('role', 'tablist');
 
       files.forEach((file, index) => {
-        const tabBtn = el('button', `grimoire-sheet-tab${index === 0 ? ' is-active' : ''}`);
+        const tabBtn = el('button', `grimoire-sheet-tab${index === activeIndex ? ' is-active' : ''}`);
         tabBtn.type = 'button';
         tabBtn.setAttribute('role', 'tab');
-        tabBtn.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+        tabBtn.setAttribute('aria-selected', index === activeIndex ? 'true' : 'false');
         tabBtn.append(icon(getFileIcon(file.rawName)), el('span', '', file.label));
         tabBtn.addEventListener('click', () => {
           if (index === activeIndex) return;
@@ -489,7 +502,7 @@
       });
 
       header.appendChild(tabsContainer);
-      if (files.length > 1) {
+      if (files.length > 1 && !isLanguageSet) {
         const badge = el('span', 'grimoire-sheet-badge', `${files.length} files`);
         header.appendChild(badge);
       }
@@ -589,7 +602,7 @@
       setTimeout(() => URL.revokeObjectURL(url), 0);
     });
 
-    switchTab(0);
+    switchTab(activeIndex);
 
     return detail;
   }

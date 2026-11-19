@@ -1,4 +1,4 @@
-"""Run the hill-climb checks from Python's unittest runner.
+"""Run the benchmark-climb checks from Python's unittest runner.
 
 The validate and release workflows discover `test_*.py` in each skill's scripts folder.
 
@@ -24,7 +24,7 @@ def find_node(test: unittest.TestCase) -> str:
     node = shutil.which("node")
     if node is None:
         if os.environ.get("CI"):
-            test.fail("Node 18+ is required in CI to check hill-climb/scripts")
+            test.fail("Node 18+ is required in CI to check benchmark-climb/scripts")
         test.skipTest("Node is not installed")
     return node
 
@@ -42,7 +42,7 @@ class HillClimbScriptTests(unittest.TestCase):
         node = find_node(self)
         if shutil.which("git") is None:
             self.skipTest("git is not installed")
-        with tempfile.TemporaryDirectory(prefix="hill-climb-test-") as root:
+        with tempfile.TemporaryDirectory(prefix="benchmark-climb-test-") as root:
             hill, work = Path(root) / "hill", Path(root) / "work"
             result = subprocess.run(
                 [node, str(SCRIPTS / "hill.mjs"), "init", str(hill), "--name", "smoke", "--scratch", "--worktree", str(work)],

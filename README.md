@@ -108,9 +108,9 @@ Ludwigia/
 
 ## Site Map（連接機制）
 
-- Source of truth：每篇內容頁（notes/writing/canvas）在 `<head>` 提供 `garden:tags` / `garden:summary`；若有 `.md` source，正文的核心內容以其中的 core markdown 為主，其餘 view 從這兩層衍生
-- 若 tag 已映射到 ontology，內容頁可額外輸出 `garden:tag_concepts`；它與 `garden:tags` 逐項對齊，作為 runtime filter / tag detail 的穩定 concept 識別
-- Optional ranking metadata：若要讓某篇 writing 在符合 query/tag filter 時優先出現在 `pages/search.html` 與 `writing/index.html`，可額外輸出 `garden:pinned` / `garden:priority`
+- Source of truth：每篇內容頁（notes/writing/canvas）在 `<head>` 提供 `site:tags` / `site:summary`；若有 `.md` source，正文的核心內容以其中的 core markdown 為主，其餘 view 從這兩層衍生
+- 若 tag 已映射到 ontology，內容頁可額外輸出 `site:tag_concepts`；它與 `site:tags` 逐項對齊，作為 runtime filter / tag detail 的穩定 concept 識別
+- Optional ranking metadata：若要讓某篇 writing 在符合 query/tag filter 時優先出現在 `pages/search.html` 與 `writing/index.html`，可額外輸出 `site:pinned` / `site:priority`
 - Indexer：`search/indexer.py` 掃描 `notes/`、`writing/`、`canvas/` → 產出 `search/search-index.{json,js}`（JS 會掛 `window.SITE_SEARCH_INDEX`）
 - Section landing：
   - `notes/index.html` / `writing/index.html` / `canvas/index.html` 透過 `core/search-core.js`（SearchCore）+ `assets/js/section-landing.js` 讀索引，只顯示該 section 的內容（含 scoped search + tag filter）
@@ -131,7 +131,7 @@ Ludwigia/
 
 ## 現有優點（請保持不退化）
 
-- 單一真相來源：note 的 `<head>` metadata（`<title>` / `garden:tags` / `garden:summary`），其餘一律衍生（以 `AGENTS.md` 為準）
+- 單一真相來源：note 的 `<head>` metadata（`<title>` / `site:tags` / `site:summary`），其餘一律衍生（以 `AGENTS.md` 為準）
 - Indexer：由 `notes/`、`writing/`、`canvas/` 生成 `search/search-index.{json,js}`（並同時生成 `window.SITE_SEARCH_INDEX` 的 JS 版本）
 - Search：client-side 搜尋 + multi-tag filter
 - Clusters：popular / recent tags 的花叢視圖
@@ -207,8 +207,8 @@ Portals 是通往各具備獨立互動體驗之境域（Realms）的導覽樞紐
 3. 填寫 metadata（Single Source of Truth）
    - 在 `<head>` 確保有：
      - `<title>`
-     - `<meta name="garden:tags" content="...">`（逗號分隔）
-     - `<meta name="garden:summary" content="...">`（一句話 summary）
+     - `<meta name="site:tags" content="...">`（逗號分隔）
+     - `<meta name="site:summary" content="...">`（一句話 summary）
    - 若是 source-driven `.md`，請以 `<meta>...</meta>` 作為 single source of truth；完整欄位定義看 `docs/specs/content-metadata-spec.md`
 
 4. 生成 HTML（單篇或整個 repo）
@@ -446,10 +446,10 @@ python3 -m unittest
 最低要有：
 
 - `<title>`
-- `<meta name="garden:tags" ...>`
-- `<meta name="garden:summary" ...>`
+- `<meta name="site:tags" ...>`
+- `<meta name="site:summary" ...>`
 
-若有多語 / tag ontology / 日期 / 狀態需求，再補對應的 `garden:*` metadata。完整最小契約請看 `docs/specs/content-metadata-spec.md`。
+若有多語 / tag ontology / 日期 / 狀態需求，再補對應的 `site:*` metadata。完整最小契約請看 `docs/specs/content-metadata-spec.md`。
 
 修改後請重新生成索引：
 

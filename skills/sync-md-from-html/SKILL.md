@@ -1,6 +1,11 @@
-# Sync MD from HTML（以 HTML 為準回寫 MD）
+---
+name: sync-md-from-html
+description: Write differences from a hand-tuned HTML page back into its source .md and regenerate the HTML with tools/create_content.py. Use when an existing notes/**.html is the ground truth and its Markdown source must catch up.
+---
 
-目的：當現有 `notes/**.html` 是 ground truth（已經手刻/調過 DOM），希望 `notes/**.md` 也能生成出一致的 HTML，則依照此流程把差異回寫到 `.md`，再用 `tools/create_content.py` 重生 `.html`。
+# Sync Markdown from HTML
+
+目標：當現有 `notes/**.html` 是 ground truth（已經手刻/調過 DOM），希望 `notes/**.md` 也能生成出一致的 HTML，則依照此流程把差異回寫到 `.md`，再用 `tools/create_content.py` 重生 `.html`。
 
 ## 0) 先鎖定驗收口徑
 
@@ -12,8 +17,8 @@
 從 HTML 的 `<head>` 抽出：
 
 - `<title>`
-- `meta name="garden:tags"`
-- `meta name="garden:summary"`
+- `meta name="site:tags"`（舊頁面可能是 `garden:tags`）
+- `meta name="site:summary"`（舊頁面可能是 `garden:summary`）
 - `<html lang="...">`
 
 把這些回寫到 `.md` 的 `<meta>`：

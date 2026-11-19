@@ -56,7 +56,7 @@ function init(dir) {
   if (!/^[a-z0-9][a-z0-9-]*$/.test(name)) die('name must be lowercase letters, digits and dashes');
   const hillDir = path.resolve(dir);
   if (fs.existsSync(path.join(hillDir, 'hill.json'))) die(`${hillDir} already has a hill.json`);
-  const workdir = path.resolve(flag('worktree') || path.join(HOME, '.hill-climb', 'worktrees', name));
+  const workdir = path.resolve(flag('worktree') || path.join(HOME, '.benchmark-climb', 'worktrees', name));
   const branch = `hill/${name}`;
   // Every refusal happens before anything is created.
   if (isInside(hillDir, workdir) || isInside(workdir, hillDir)) die('the hill folder and the work folder must not contain each other (the answer key has to stay out of the climber\'s folder)');
@@ -76,7 +76,7 @@ function init(dir) {
     fs.mkdirSync(workdir, { recursive: true });
     git(workdir, 'init', '-q', '-b', branch);
     fs.writeFileSync(path.join(workdir, 'README.md'), `# ${name}\nScratch work folder for hill ${name}. Put the climbable files here.\n`);
-    git(workdir, 'add', '-A'); git(workdir, '-c', 'user.name=hill-climb', '-c', 'user.email=hill-climb@localhost', 'commit', '-qm', 'hill: scratch start');
+    git(workdir, 'add', '-A'); git(workdir, '-c', 'user.name=benchmark-climb', '-c', 'user.email=benchmark-climb@localhost', 'commit', '-qm', 'hill: scratch start');
     baseRef = git(workdir, 'rev-parse', 'HEAD');
   } else die('pass --repo <git repo> (a hill/<name> worktree is created) or --scratch (a fresh git folder)');
   for (const sub of ['cases/pool', 'cases/optimise', 'cases/holdout', 'exemplars', 'scorer', 'runs']) fs.mkdirSync(path.join(hillDir, sub), { recursive: true });

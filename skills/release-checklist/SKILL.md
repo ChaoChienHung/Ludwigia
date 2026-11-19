@@ -1,6 +1,11 @@
-# Release Checklist（提交前固定流程）
+---
+name: release-checklist
+description: Run Ludwigia's fixed pre-commit checklist: tests, search index regeneration, local smoke check, and git review of generated files. Use before committing or pushing changes that may affect non-regression contracts or generated outputs.
+---
 
-目的：確保改動不會破壞 Ludwigia 的不可退化契約，並確保生成物一致性（特別是 `search/search-index.*`）。
+# Release Checklist
+
+目標：確保改動不會破壞 Ludwigia 的不可退化契約，並確保生成物一致性（特別是 `search/search-index.*`）。
 
 ## 0) 清理測試產物（可選）
 

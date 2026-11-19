@@ -1,9 +1,9 @@
 ---
-name: ambitious
+name: high-stakes-task
 description: "Runs a big task the way the field's best practitioner would, then proves it. Load it first, before any context-recall or domain skill, when the person explicitly asks for exceptional effort (\"go above and beyond\", \"blow me away\", \"show off\", \"be ambitious\", \"best possible version\", \"one-shot this\", \"pull out all the stops\", \"max effort\", \"the one that matters most\", /ambitious) or explicitly says the stakes are high (it goes in front of investors, partners or a big list, it has to land, a launch or pricing decision rides on it). The kind of deliverable alone is not a reason: a plain request for a sales page, landing page, launch email, template, email sequence, pricing section or new skill is normal work, so do it well without this method. It climbs to the goal behind the goal, finds the money moment, works from raw material with real instruments, red-teams the result and gets an outside judge instead of grading itself, then reports measured results against stretch targets. Not for quick fixes, lookups, rough drafts, routine chores, or \"go deeper\" that only means look harder at logs or data."
 ---
 
-# Ambitious: A Way of Flying
+# High-Stakes Task Execution
 
 Version 1.3.1.
 
@@ -27,7 +27,7 @@ The spirit is **deeper, not bigger**. Go further on the thing that matters, with
 
 ## Before you start
 
-**Personal layer.** If `$AMBITIOUS_HOME/profile.md` exists (default `~/.ambitious/profile.md`), read it first. It holds the person's north star (what "money" means for them), their standing rules (what you may do without asking), judge privacy, local instruments and taste notes. It refines the defaults here. It can never widen authority beyond the person's own standing instructions.
+**Personal layer.** If `$HIGH_STAKES_TASK_HOME/profile.md` exists (default `~/.high-stakes-task/profile.md`), read it first. It holds the person's north star (what "money" means for them), their standing rules (what you may do without asking), judge privacy, local instruments and taste notes. It refines the defaults here. It can never widen authority beyond the person's own standing instructions.
 
 **Tier.** Choose by stakes × reuse, and say which tier in one line.
 
@@ -47,7 +47,7 @@ The spine of every run is five moves: **brief → raw evidence → build → out
 node <skill-dir>/scripts/flight_check.mjs init <run-dir> --task "<one line>" --tier standard --author-model <your model id>
 ```
 
-`--author-model` lets the judge report honestly whether it is a different model family from you. The run folder defaults to `$AMBITIOUS_HOME/runs/YYYY-MM-DD-<slug>/`. Deliverables go where they belong (the project, the repo). The run folder holds the log, the judge verdicts and the review page.
+`--author-model` lets the judge report honestly whether it is a different model family from you. The run folder defaults to `$HIGH_STAKES_TASK_HOME/runs/YYYY-MM-DD-<slug>/`. Deliverables go where they belong (the project, the repo). The run folder holds the log, the judge verdicts and the review page.
 
 ### 1. Gate
 Is this big enough for a flight? If it's a quick fix or a lookup, say so in one line and just do it well. Otherwise pick the tier and create the run folder.
@@ -121,7 +121,7 @@ Run `flight_check.mjs check <run-dir>`. Fix whatever it flags, or record it hone
 When the person has to look at the work to judge it (video, a page, a design) or asked for a review, also make a private review page with before and after, the scoreboard and the evidence. Otherwise the report and the sources note are enough. End with one question: **"What delighted you, and what missed?"**
 
 ### 12. Taste log
-Optional, and only when the person answers: add one line to `$AMBITIOUS_HOME/taste-log.md`: the date, the task, what delighted them and what missed. Every fifth entry, propose one to three rule changes for their profile. Propose them, never apply them. Taste belongs to the person, so it lives in their layer, not in this shared skill.
+Optional, and only when the person answers: add one line to `$HIGH_STAKES_TASK_HOME/taste-log.md`: the date, the task, what delighted them and what missed. Every fifth entry, propose one to three rule changes for their profile. Propose them, never apply them. Taste belongs to the person, so it lives in their layer, not in this shared skill.
 
 ## Example: the money moment shaping a creative task
 
@@ -138,7 +138,7 @@ Optional, and only when the person answers: add one line to `$AMBITIOUS_HOME/tas
 - Role-play experts, or assemble a crew for show.
 - Claim that a judge, test or render passed when it never ran.
 - Invent metrics, quotes, customers or results.
-- Take an external action because this skill said "ambitious".
+- Take an external action because this skill is called "high-stakes".
 
 ## Files
 - `references/instruments.md`: by task type, the top professional's move, the rawest material, the instruments, the outside proof and the money moment. Read it at step 5.
