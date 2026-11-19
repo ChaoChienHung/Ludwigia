@@ -308,7 +308,9 @@
     .grimoire-sheet-scroll h1,
     .grimoire-sheet-scroll h2,
     .grimoire-sheet-scroll h3,
-    .grimoire-sheet-scroll h4 {
+    .grimoire-sheet-scroll h4,
+    .grimoire-sheet-scroll h5,
+    .grimoire-sheet-scroll h6 {
       font-weight: 760;
       margin: 1.2em 0 0.5em;
     }
@@ -317,6 +319,8 @@
     .grimoire-sheet-scroll h2 { font-size: 1.08rem; }
     .grimoire-sheet-scroll h3,
     .grimoire-sheet-scroll h4 { font-size: 0.98rem; }
+    .grimoire-sheet-scroll h5,
+    .grimoire-sheet-scroll h6 { font-size: 0.93rem; }
 
     .grimoire-sheet-scroll > :first-child { margin-top: 0; }
     .grimoire-sheet-scroll > :last-child { margin-bottom: 0; }
@@ -344,6 +348,28 @@
     .grimoire-sheet-scroll pre code {
       background: transparent;
       padding: 0;
+    }
+
+    .grimoire-sheet-scroll table {
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+      border-collapse: collapse;
+      margin: 0.8em 0;
+      font-size: 0.9em;
+    }
+
+    .grimoire-sheet-scroll th,
+    .grimoire-sheet-scroll td {
+      border: 1px solid var(--grimoire-line);
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .grimoire-sheet-scroll th {
+      font-weight: 700;
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
     }
 
     .grimoire-sheet-scroll blockquote {
@@ -653,7 +679,7 @@
   <script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
   <script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
   <!-- /shell:runtime -->
-  <script src="../../core/search-core.js?v=2026-06-21-6"></script>
+  <script src="../../core/search-core.js?v=2026-11-19-1"></script>
   <script src="../../assets/js/grimoire-labs.js?v=2026-11-15-1"></script>
 </body>
 </html>

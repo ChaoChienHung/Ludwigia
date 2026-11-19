@@ -109,9 +109,9 @@
       "kind": "template",
       "category": "workflow",
       "title": {
-        "en": "experiment-log.md",
-        "zh-Hant": "experiment-log.md",
-        "zh-Hans": "experiment-log.md"
+        "en": "Experiment-log.md",
+        "zh-Hant": "Experiment-log.md",
+        "zh-Hans": "Experiment-log.md"
       },
       "summary": {
         "en": "A dated experiment journal kept beside each model: motivation, setup, expectation, key metrics, results, and conclusion for every run.",

@@ -1,10 +1,10 @@
 # [Project, model, or component] — Research Notes
 
-> (Template note — remove before saving `INSIGHT.md`: This file holds conclusions that outlive a single run; the dated record of what was run lives in the sibling `experiment-log.md`. Place one at the repository root for cross-cutting notes and, when a model or component grows its own findings, another beside it, for example `Recall/TIGER/INSIGHT.md`. At the root, split each section into scope subsections such as `### General`, `### [Stage]`, `### [Model]`; in a model-level file, drop the subsections.)
+> (Template note — remove before saving `INSIGHT.md`: This file holds conclusions that outlive a single run; the dated record of what was run lives in the sibling `Experiment-log.md`. Place one at the repository root for cross-cutting notes and, when a model or component grows its own findings, another beside it, for example `Recall/TIGER/INSIGHT.md`. At the root, split each section into scope subsections such as `### General`, `### [Stage]`, `### [Model]`; in a model-level file, drop the subsections.)
 
-Research notes for [scope]. Keep facts and hypotheses apart, and cite the source of every result: data version, split, model settings, metric, and the `experiment-log.md` entry or run where it came from.
+Research notes for [scope]. Keep facts and hypotheses apart, and cite the source of every result: data version, split, model settings, metric, and the `Experiment-log.md` entry or run where it came from.
 
-*Created: [YYYY-MM-DD]; last updated: [YYYY-MM-DD]. Experiment log: [experiment-log.md](experiment-log.md).*
+*Created: [YYYY-MM-DD]; last updated: [YYYY-MM-DD]. Experiment log: [Experiment-log.md](Experiment-log.md).*
 
 ## Insights
 

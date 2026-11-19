@@ -13,7 +13,7 @@
     - Review 重點：打開幾篇 note / writing，確認閱讀時間、Copy / Download Markdown、tag 連結與相關文章正常。
 
 - [ ] Toolkit：研究紀錄範本、學習類 Prompt、Skills 格式統一
-    - 已完成：新增 `experiment-log.md`（依日期的實驗日誌）與 `INSIGHT.md` 範本；新增「學習」用途與 5 個 Prompt（混合題型測驗出題、進階選擇題演練、答案評分與範例解答、對話轉筆記、個人化重點篩選）；中英兩版的出題 Prompt 收斂為一個條目，依網站語言預設顯示對應分頁；題數、題型、難度配比、讀者輪廓改成 `{{名稱：預設值}}` 可替換欄位；本站 6 個 Skill 補上 frontmatter；11 個引用 Skill 完整改成資料夾名稱（`name`、標題、`$` 呼叫名稱、互相引用、狀態資料夾 `~/.benchmark-climb` 等與環境變數如 `HIGH_STAKES_TASK_HOME`），上游名稱只留在 reference；`skills/README.md` 分成本站與引用兩區並附上游連結；`markdown-to-*` 與 `sync-md-from-html` 改寫為 `site:tags` / `site:summary` 並註明生成器仍輸出舊名。`cli.py test` 72 項通過，瀏覽器確認語言分頁切換與欄位高亮。
+    - 已完成：新增 `Experiment-log.md`（依日期的實驗日誌，最新一天置頂）與 `INSIGHT.md` 範本；新增「學習」用途與 5 個 Prompt（混合題型測驗出題、進階選擇題演練、答案評分與範例解答、對話轉筆記、個人化重點篩選）；中英兩版的出題 Prompt 收斂為一個條目，依網站語言預設顯示對應分頁；題數、題型、難度配比、讀者輪廓改成 `{{名稱：預設值}}` 可替換欄位；本站 6 個 Skill 補上 frontmatter；11 個引用 Skill 完整改成資料夾名稱（`name`、標題、`$` 呼叫名稱、互相引用、狀態資料夾 `~/.benchmark-climb` 等與環境變數如 `HIGH_STAKES_TASK_HOME`），上游名稱只留在 reference；`skills/README.md` 分成本站與引用兩區並附上游連結；`markdown-to-*` 與 `sync-md-from-html` 改寫為 `site:tags` / `site:summary` 並註明生成器仍輸出舊名。`cli.py test` 72 項通過，瀏覽器確認語言分頁切換與欄位高亮。Toolkit 預覽原本不支援 `####` 以下標題與表格（`core/search-core.js` 的 `renderMarkdownPreview`），已補上 h4–h6 與標準 pipe table，並更新 6 個頁面的 `search-core.js?v=` 快取版本；搜尋與 section 卡片的預覽共用同一個渲染器。
     - Review 重點：Prompt 名稱與摘要是否合意；`relevance-filter` 的預設讀者輪廓是你的個人描述，確認要公開；若本機曾用過舊名稱的狀態資料夾（如 `~/.hill-climb`、`~/.ambitious`），需自行搬到新名稱。
 
 - [ ] 重構 Phase 3–5：runtime 分檔、CSS 分層、生成器拆模組

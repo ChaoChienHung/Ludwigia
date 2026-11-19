@@ -276,7 +276,7 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 - `agent-rules-template` 是 `data/Toolkit/resources/agent-rules-template.md` 內可替換的通用範本；目錄文案由 `toolkit.json` 維護，不能另寫一份卡片摘要
 - `agent-handoff-template` 是 `data/Toolkit/resources/agent-handoff-template.md` 內可替換的短期交接範本；根目錄 `HANDOFF.md` 只記 Agent 最近停點，不承接 `TODO.md` 的總體與長期待辦，並由 `.assetsignore` 排除於網站資產之外
 - `project-todo-template` 與 `project-review-template` 分別提供未完成任務與已完成待作者驗收的範本；根目錄 `TODO.md` 與 `REVIEW.md` 各守職責，`REVIEW.md` 由 `.assetsignore` 排除於網站資產之外
-- `experiment-log-template` 與 `insight-template` 是一組研究紀錄範本，兩者放在所屬模型或元件旁，而非一律放在 repo root：`experiment-log.md` 是依日期累積的實驗日誌（Motivation / Details / Expectation / Key Metrics / Results / Conclusion，預期在執行前寫定）；`INSIGHT.md` 收斂跨 run 仍成立的 Insights、Facts、Limitations 與編號 Hypothesis，並註明出自哪筆實驗。後續工作仍回到 `TODO.md`，兩者都不承接 backlog
+- `experiment-log-template` 與 `insight-template` 是一組研究紀錄範本，兩者放在所屬模型或元件旁，而非一律放在 repo root：`Experiment-log.md` 是依日期累積、最新一天置頂的實驗日誌（Motivation / Details / Expectation / Key Metrics / Results / Conclusion，預期在執行前寫定）；`INSIGHT.md` 收斂跨 run 仍成立的 Insights、Facts、Limitations 與編號 Hypothesis，並註明出自哪筆實驗。後續工作仍回到 `TODO.md`，兩者都不承接 backlog
 
 更完整的 parser 語法與各 block 欄位，請看 `docs/specs/parser-spec.md`；這裡只保留系統層依賴的穩定邊界。
 

@@ -276,6 +276,24 @@
       return { html: renderListTree(root, rootType), nextIndex: i };
     };
 
+    // Standard pipe tables: header row, divider row, then body rows until a non-pipe line.
+    const splitTableRow = (row) => String(row || '').trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim());
+    const isTableDivider = (row) => /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?$/.test(String(row || '').trim());
+    const parseTableBlock = (startIndex) => {
+      const header = splitTableRow(lines[startIndex]);
+      const cells = (row, tag) => header.map((_, col) => `<${tag}>${renderInlineMarkdown(row[col] || '')}</${tag}>`).join('');
+      const body = [];
+      let i = startIndex + 2;
+      while (i < lines.length && lines[i].trim().startsWith('|')) {
+        body.push(`<tr>${cells(splitTableRow(lines[i]), 'td')}</tr>`);
+        i += 1;
+      }
+      return {
+        html: `<table><thead><tr>${cells(header, 'th')}</tr></thead><tbody>${body.join('')}</tbody></table>`,
+        nextIndex: i,
+      };
+    };
+
     for (let i = 0; i < lines.length; i += 1) {
       const rawLine = lines[i];
       const line = rawLine.replace(/\s+$/, '');
@@ -301,13 +319,21 @@
         flushQuote();
         continue;
       }
-      const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+      const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
       if (heading) {
         flushParagraph();
         flushList();
         flushQuote();
-        const level = Math.min(4, heading[1].length + 1);
+        const level = Math.min(6, heading[1].length + 1);
         html.push(`<h${level}>${renderInlineMarkdown(heading[2])}</h${level}>`);
+        continue;
+      }
+      if (trimmed.startsWith('|') && isTableDivider(lines[i + 1])) {
+        flushParagraph();
+        flushQuote();
+        const table = parseTableBlock(i);
+        html.push(table.html);
+        i = table.nextIndex - 1;
         continue;
       }
       const quoteMatch = trimmed.match(/^>\s?(.*)$/);

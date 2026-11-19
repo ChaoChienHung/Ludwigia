@@ -1,8 +1,8 @@
 # [Model or component] — Experiment Log
 
-> (Template note — remove before saving `experiment-log.md`: Keep this file next to the model or component it covers, for example `Recall/TIGER/experiment-log.md`, not at the repository root. It is a dated lab journal of what was run each day. Durable conclusions move to the sibling `INSIGHT.md` as Facts, Insights, Limitations, or Hypotheses; follow-up work goes to `TODO.md`.)
+> (Template note — remove before saving `Experiment-log.md`: Keep this file next to the model or component it covers, for example `Recall/TIGER/Experiment-log.md`, not at the repository root. It is a dated lab journal of what was run each day. Durable conclusions move to the sibling `INSIGHT.md` as Facts, Insights, Limitations, or Hypotheses; follow-up work goes to `TODO.md`.)
 
-Dated journal of experiments for [model or component]. Newest day at the bottom. Conclusions that hold beyond one run are promoted to [INSIGHT.md](INSIGHT.md).
+Dated journal of experiments for [model or component]. Newest day at the top. Conclusions that hold beyond one run are promoted to [INSIGHT.md](INSIGHT.md).
 
 ## [YYYY-MM-DD]
 
@@ -44,4 +44,4 @@ Dated journal of experiments for [model or component]. Newest day at the bottom.
 
 [Supported / rejected / inconclusive, and the decision: adopt, discard, or rerun with changes. Name what was promoted to `INSIGHT.md` and which `TODO.md` task follows, if any.]
 
-> (Template note — remove before saving: Repeat `### [Experiment name]` under a date for each experiment that day, and add a new `## [YYYY-MM-DD]` for each new day. Separate validation from held-out test results. Link raw logs instead of pasting them, and do not include secrets.)
+> (Template note — remove before saving: Repeat `### [Experiment name]` under a date for each experiment that day, and add each new day as a new `## [YYYY-MM-DD]` above the previous one, so the latest work is read first. Separate validation from held-out test results. Link raw logs instead of pasting them, and do not include secrets.)
