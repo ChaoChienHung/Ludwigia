@@ -495,7 +495,7 @@ python3 cli.py serve --port 8000
 python3 cli.py clean
 ```
 
-- `cli.py build-pages` 會把 `pages/_shared/navbar.html` 與 `footer.html` 組裝進手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）中 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記之間的區塊；改 navbar 時只改 partial，再跑一次 `build-pages`，並重新生成內容頁（`build-all`）
+- `cli.py build-pages` 會把 `pages/_shared/navbar.html` 與 `footer.html` 組裝進手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）中 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記之間的區塊；改 navbar 時只改 partial，再跑一次 `build-pages`，並重新生成內容頁（`build-all`）。帶 `data-i18n-page` 的頁面，其靜態 `<title>` 也由 `build-pages` 從 `i18n/` bundle 的 `title.en` 生成；改頁面標題時只改 `i18n/*.json`
 
 - `cli.py scan-information` 會掃描單篇 source `.md` 裡命中 `information` ontology 的詞，列出：
   - 哪些詞已經有 `<information>`

@@ -13,6 +13,11 @@ which drifted apart. Each of those pages now marks its shell regions:
 and this tool rewrites the text between the markers. The output stays a plain
 static HTML file that is committed and works under file://.
 
+The static `<title>` (and `og:title`, when a page has one) is generated the same way. A page that declares
+`<body data-i18n-page="...">` gets its English title from that page's bundle in
+`i18n/` (the `title.en` field), which is also where core/i18n.js reads the
+runtime title for every language. Edit the title there, not in the HTML.
+
 Usage:
     python3 tools/build_pages.py            # rewrite every marked region
     python3 tools/build_pages.py --check    # exit 1 if any region is stale
@@ -22,6 +27,8 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import html
+import json
 import os
 import re
 import sys
@@ -51,6 +58,25 @@ HAND_WRITTEN_PAGES = [
 ]
 
 SECTIONS = ("navbar", "footer", "runtime")
+
+I18N_DIR = os.path.join(REPO_DIR, "i18n")
+
+# Same lookup as `loadTranslationsFromData` in core/i18n.js: page key -> bundle
+# file, plus the section landings that share landings.json under their own key.
+# tests/test_page_shell.py keeps the two in sync.
+I18N_PAGE_FILES = {
+    "home": "index.json",
+    "projects": "projects.json",
+    "search": "search.json",
+    "settings": "settings.json",
+    "portfolio": "portfolio.json",
+    "more": "more.json",
+}
+I18N_LANDING_PAGES = ("notesLanding", "writingLanding", "canvasLanding")
+
+_I18N_PAGE_ATTR = re.compile(r'<body\b[^>]*\bdata-i18n-page="([^"]+)"')
+_TITLE = re.compile(r"<title>[\s\S]*?</title>")
+_OG_TITLE = re.compile(r'<meta property="og:title" content="[^"]*">')
 
 # The Outline / Metadata buttons only work on article pages, so hand-written
 # pages get the navbar without them.
@@ -91,10 +117,33 @@ def _wrap(section: str, body: str, indent: str) -> str:
     return "\n".join(lines)
 
 
+def i18n_bundle(page_key: str) -> dict | None:
+    """Load the i18n bundle core/i18n.js would use for `page_key`."""
+    if page_key in I18N_PAGE_FILES:
+        with open(os.path.join(I18N_DIR, I18N_PAGE_FILES[page_key]), encoding="utf-8") as f:
+            return json.load(f)
+    if page_key in I18N_LANDING_PAGES:
+        with open(os.path.join(I18N_DIR, "landings.json"), encoding="utf-8") as f:
+            return json.load(f).get(page_key)
+    return None
+
+
+def page_title(text: str) -> str | None:
+    """English title from the page's i18n bundle, or None if it has none."""
+    match = _I18N_PAGE_ATTR.search(text)
+    bundle = i18n_bundle(match.group(1)) if match else None
+    title = (bundle or {}).get("title", {}).get("en")
+    return title.strip() if title else None
+
+
 def assemble(page: str, text: str) -> str:
     for section in SECTIONS:
         body = render_section(section, page)
         text = _region(section).sub(lambda m: _wrap(section, body, m.group("indent")), text)
+    title = page_title(text)
+    if title:
+        text = _TITLE.sub(lambda _: f"<title>{html.escape(title, quote=False)}</title>", text, count=1)
+        text = _OG_TITLE.sub(lambda _: f'<meta property="og:title" content="{html.escape(title)}">', text, count=1)
     return text
 
 
@@ -138,10 +187,10 @@ def main(argv: list[str] | None = None) -> int:
     if missing:
         return 1
     if args.check and stale:
-        print("Stale page shells (run `python3 cli.py build-pages`): " + ", ".join(stale), file=sys.stderr)
+        print("Stale page shells or titles (run `python3 cli.py build-pages`): " + ", ".join(stale), file=sys.stderr)
         return 1
     if args.check:
-        print("All page shells are up to date.")
+        print("All page shells and titles are up to date.")
     return 0
 
 

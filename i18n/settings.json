@@ -23,7 +23,7 @@
     { "selector": "[data-settings-palette=\"cedar\"]", "text": { "en": "Cedar Brown", "zh-Hant": "雪松棕", "zh-Hans": "雪松棕" } },
     { "selector": "[data-settings-palette=\"yellow\"]", "text": { "en": "Golden Yellow", "zh-Hant": "金黃色", "zh-Hans": "金黄色" } },
     { "selector": "[data-settings-palette=\"garden\"]", "text": { "en": "Garden Green", "zh-Hant": "花園綠", "zh-Hans": "花园绿" } },
-    { "selector": "[data-settings-palette="grove\"]", "text": { "en": "Garden Moss", "zh-Hant": "苔林綠", "zh-Hans": "苔林绿" } },
+    { "selector": "[data-settings-palette=\"grove\"]", "text": { "en": "Garden Moss", "zh-Hant": "苔林綠", "zh-Hans": "苔林绿" } },
     { "selector": "[data-settings-palette=\"abyss\"]", "text": { "en": "Abyss Cyan", "zh-Hant": "深海青", "zh-Hans": "深海青" } },
     { "selector": "[data-settings-palette=\"sky\"]", "text": { "en": "Sky Blue", "zh-Hant": "天空藍", "zh-Hans": "天空蓝" } },
     { "selector": "[data-settings-palette=\"galaxy\"]", "text": { "en": "Galaxy Blue", "zh-Hant": "銀河藍", "zh-Hans": "银河蓝" } },

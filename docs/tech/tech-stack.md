@@ -78,7 +78,7 @@ Ludwigia 分成四層，越往下越獨立：
 | `test` | 跑 `tests/` 底下的 unittest |
 | `translate` / `translate-data` | 內容與資料檔翻譯（Gemini API） |
 | `check-tags` / `scan-information` | 檢查 tag ontology、掃描可加 `<information>` 的詞 |
-| `build-pages` | 把 `pages/_shared/` 的 navbar / footer 組裝進手寫頁面（`--check` 只檢查） |
+| `build-pages` | 把 `pages/_shared/` 的 navbar / footer 組裝進手寫頁面，並由 `i18n/` 的 `title.en` 生成靜態 `<title>`（`--check` 只檢查） |
 | `build-world` | 由 `characters/` 與 `interactions/` 編譯 World 的 `characters.json` |
 | `build-portals` | 建置 Portals |
 | `install-hooks` / `clean` | 安裝 git hooks、清除生成物 |

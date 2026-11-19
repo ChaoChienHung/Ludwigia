@@ -1,12 +1,13 @@
 {
   "title": {
-    "en": "Ludwig — A passionate gamer of Earth Online",
-    "zh-Hant": "Ludwig — 一個熱衷於探索地球 Online 的初級玩家",
-    "zh-Hans": "Ludwig — 一个热衷于探索地球 Online 的初级玩家"
+    "en": "Ludwig Chao — Machine Learning Engineer · Research Engineer",
+    "zh-Hant": "Ludwig Chao — 機器學習工程師 · 研究工程師",
+    "zh-Hans": "Ludwig Chao — 机器学习工程师 · 研究工程师"
   },
   "entries": [
     { "selector": ".hero-text h1", "text": { "en": "Hi, I'm Ludwig", "zh-Hant": "嗨你好，我叫健宏", "zh-Hans": "嗨你好，我叫健宏" } },
-    { "selector": ".hero-text p", "text": { "en": "An engineer driven by curiosity and passion for life.", "zh-Hant": "是一名對生活始終保持好奇與熱情的工程師", "zh-Hans": "是一名对生活始终保持好奇与热情的工程师" } },
+    { "selector": ".hero-text .hero-focus", "text": { "en": "Machine learning engineer working on generative recommendation and LLM post-training.", "zh-Hant": "機器學習工程師，專注於生成式推薦與大型語言模型後訓練", "zh-Hans": "机器学习工程师，专注于生成式推荐与大型语言模型后训练" } },
+    { "selector": ".hero-text .hero-tagline", "text": { "en": "An engineer driven by curiosity and passion for life.", "zh-Hant": "是一名對生活始終保持好奇與熱情的工程師", "zh-Hans": "是一名对生活始终保持好奇与热情的工程师" } },
     { "selector": "#about h2", "text": { "en": "About Me", "zh-Hant": "關於我", "zh-Hans": "关于我" } },
     {
       "selector": "#about [data-about-copy]",

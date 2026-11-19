@@ -10,6 +10,7 @@ Ludwigia 採用 **資料驅動 (Data-Driven)** 與 **Key-Based** 的可擴充多
 
 1. **SSOT 翻譯字典檔**：
    - 全站 UI 標籤、導覽列、頁面標題與動態組件文案統一存放在根目錄 [i18n/](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/i18n) 下的模組化 JSON 檔（如 `i18n/navbar.json`, `i18n/index.json`, `i18n/skills.json`, `i18n/credentials.json` 等）。
+   - 手寫頁面的頁面標題只維護在該頁 bundle 的 `title`（例如 `i18n/index.json`、`i18n/landings.json` 的 `notesLanding`）：`core/i18n.js` 執行期依語系套用，`cli.py build-pages` 則把 `title.en` 寫進 HTML 的靜態 `<title>`，供搜尋引擎與連結預覽讀取；不要直接改 HTML 的 `<title>`。
    - 技能與憑證的內容資料條目則分別存放在 [data/Skills/skills.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/Skills/skills.json) 與 [data/Credentials/credentials.json](file:///Users/ludwigchao/Desktop/Ludwig/Projects/Ludwigia/data/Credentials/credentials.json)。
 
 2. **聲明式 HTML 佔位符 (`data-i18n-key`)**：

@@ -102,6 +102,26 @@ class TestHandWrittenPageShell(unittest.TestCase):
                 stale.append(page)
         self.assertEqual(stale, [], "run `python3 cli.py build-pages`")
 
+    def test_i18n_bundles_are_valid_json(self):
+        # core/i18n.js swallows fetch/parse errors, so a broken bundle silently
+        # leaves its page untranslated instead of failing loudly.
+        broken = []
+        for path in sorted((REPO_ROOT / "i18n").glob("*.json")):
+            try:
+                json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                broken.append(f"{path.name}: {exc}")
+        self.assertEqual(broken, [])
+
+    def test_title_bundle_lookup_matches_i18n_runtime(self):
+        source = (REPO_ROOT / "core" / "i18n.js").read_text(encoding="utf-8")
+        block = re.search(r"const pageFiles = \{([^}]*)\}", source)
+        self.assertIsNotNone(block, "pageFiles map not found in core/i18n.js")
+        runtime_files = dict(re.findall(r"(\w+):\s*'([^']+)'", block.group(1)))
+        self.assertEqual(runtime_files, self.build_pages.I18N_PAGE_FILES)
+        for key in self.build_pages.I18N_LANDING_PAGES:
+            self.assertIn(f"page === '{key}'", source)
+
     def test_each_page_has_exactly_one_marked_navbar(self):
         problems = []
         for page in self.build_pages.HAND_WRITTEN_PAGES:
