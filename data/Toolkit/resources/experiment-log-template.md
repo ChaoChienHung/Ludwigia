@@ -23,12 +23,9 @@ Dated journal of experiments for [model or component]. Newest day at the top. Co
 
 #### Settings
 
-| Parameter | Baseline | [Variant] |
-| --- | --- | --- |
-| [e.g. learning rate] | [value] | [value] |
-| [e.g. batch size] | [value] | [value] |
-| Seed | [value] | [value] |
-
+- **[Parameter, e.g. learning rate]:** [value; note the baseline value if it differs]
+- **[Parameter, e.g. batch size]:** [value]
+- **Seed:** [value]
 - **Config:** `[config file path or commit that pins every value above]`
 
 #### Expectation
@@ -54,4 +51,4 @@ Dated journal of experiments for [model or component]. Newest day at the top. Co
 
 [Supported / rejected / inconclusive, and the decision: adopt, discard, or rerun with changes. Name what was promoted to `INSIGHT.md` and which `TODO.md` task follows, if any.]
 
-> (Template note — remove before saving: Repeat `### [Experiment name]` under a date for each experiment that day, and add each new day as a new `## [YYYY-MM-DD]` above the previous one, so the latest work is read first. Separate validation from held-out test results. Link raw logs instead of pasting them, and do not include secrets.)
+> (Template note — remove before saving: Repeat `### [Experiment name]` under a date for each experiment that day, and add each new day as a new `## [YYYY-MM-DD]` above the previous one, so the latest work is read first. Settings can switch to a parameter-by-variant table when several variants are compared. Separate validation from held-out test results. Link raw logs instead of pasting them, and do not include secrets.)
