@@ -1,8 +1,8 @@
 <meta>
-Title: 現代推薦系統的基石：深入解析「級聯架構」
+Title: 推薦系統的級聯架構：召回、粗排、精排與重混排
 Tags: Recommender Systems, Machine Learning, Deep Learning, Recall, Ranking, Pre-Ranking, Mix-Ranking, Re-Ranking
 CanonicalId: funnel-cascade-architecture-in-recommendation-systems
-Summary: 深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）到重排與混排（Re-Ranking & Mix-Ranking）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。
+Summary: 介紹工業界推薦系統常見的級聯架構（Cascade Architecture）。先說明商品池、排序模組與重混排模組之間的資料流，再依序介紹召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）與重排／混排（Re-Ranking & Mix-Ranking）各階段的目標、延遲約束與特徵規模，討論粗排的定位與各階段目標不一致的問題，最後說明這些限制如何引出生成式檢索（Generative Retrieval）。
 Slug: funnel-cascade-architecture-in-recommendation-systems-zh-tw
 Output: notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html
 Style: default
@@ -12,7 +12,7 @@ Lang: zh-Hant
 TitleSuffix: true
 Status: published
 Published: 2026-07-26
-LastModified: 2026-07-30
+LastModified: 2026-11-20
 </meta>
 <draft>
 - 核心摘要與問題意識
@@ -77,7 +77,7 @@ toc1: takeaways -> 總結與核心要點
 h2: 總結與核心要點 -> takeaways
 </anchors>
 
-# 現代推薦系統的基石：深入解析「級聯架構」
+# 推薦系統的級聯架構：召回、粗排、精排與重混排
 
 <image>
 src: ./funnel-cascade-architecture-in-recommendation-systems.png
@@ -85,7 +85,7 @@ alt: 推薦系統的級聯架構（Cascade Architecture）與三大核心模組�
 caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核心模組資料流示意圖。
 </image>
 
-## 如何在極短的時間內，從千萬級商品庫精準挑出最適合使用者的 10 個結果？
+## 問題設定：在有限延遲內從千萬級商品中選出少量結果
 
 你是否曾想過，當你打開 YouTube、Netflix 或淘寶首頁時，系統是如何在不到一秒的時間內，精準推播你當下最想看的內容？
 
@@ -95,7 +95,7 @@ caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核
 
 但在深入拆解「級聯架構」的技術細節前，我們不妨先建立對推薦系統全貌的宏觀視角，了解在一次推薦請求中，資料是經過哪些核心模組的傳遞，最終才呈現在你眼前的。
 
-## 推薦系統的內容資料流：三大核心模組
+## 推薦系統的資料流：三個模組
 
 雖然一個成熟的推薦系統背後往往牽涉到非常龐大且複雜的工程（例如日誌追蹤、A/B 測試等），但如果我們單純只為了回答最初拋出的問題——**「系統是如何從海量的內容庫中，挑選出使用者最可能喜歡的商品，並精準呈現在他們眼前？」**——那我們可以先主要關注整個資料流動環節中的「三大核心模組」：
 
@@ -112,7 +112,7 @@ caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核
 
    透過重混排機制，系統才能在最終一刻產出一份兼顧使用者體驗與商業價值的推薦清單。
 
-## 核心思維：以「漏斗模型」破解計算資源與精準度的矛盾
+## 漏斗模型：在計算成本與準確度之間分配資源
 
 了解了內容是如何從商品池流向最終重混排模組後，我們現在可以把焦點鎖定在最核心的工程難題：**推薦系統究竟是如何在中間的「排序模組」裡，於極短的時間內完成千萬級別的篩選？**
 
@@ -135,7 +135,7 @@ caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核
 
 在工業界中，這三個核心階段分別被稱為：**召回、粗排與精排**。以下，就讓我們順著這套流程，一步步拆解每一關是如何運作的。
 
-## 三大關鍵排序階段
+## 三個排序階段
 
 整個級聯架構由粗到細主要分為三大關鍵階段：
 
@@ -200,7 +200,7 @@ caption: 推薦系統的「級聯架構」（Cascade Architecture）與三大核
 
 這正是系統進入最終把關的第三大模組——「重混排模組 (Re-Ranking & Mix-Ranking)」 所要解決的課題。
 
-## 重混排模組：從單品預測走向整體版面優化 (Re-Ranking & Mix-Ranking)
+## 重排與混排：從單品打分到整頁排列 (Re-Ranking & Mix-Ranking)
 
 前面經歷的粗排與精排，本質上都是在做「單一內容」的分數預測——試圖回答「使用者有多大機率點擊這一個商品？」。然而，單個商品預測分數高，不代表把它們直接堆疊在一起就是一個好的推薦頁面。
 
@@ -243,7 +243,7 @@ content:
 | **精排 (Ranking)** | 500 -> 50 | < 40 ms | **極高**。深度神經網路、即時行為序列、超大規模稀疏特徵。 | **準確率 (AUC, LogLoss)**。精準預估點擊、轉換等多重互動機率。 |
 | **重排 (Re-ranking)** | 50 -> 10 (展示) | < 10 ms | **策略 / Listwise**。規則引擎、MMR、強化學習或 Listwise 模型。 | **體驗與生態指標**。兼顧多樣性、視覺體驗與曝光公平性。 |
 
-## 級聯架構的隱憂與未來挑戰
+## 級聯架構的限制
 
 漏斗式級聯架構雖然完美解決了工程上的算力瓶頸，但它本質上是一個**「妥協的產物」**。隨著業務規模膨脹與模型複雜度提升，這套架構帶來了三個難以根除的結構性痛點：
 
@@ -256,11 +256,11 @@ content:
 3. **資訊遺失與目標不一致 (Information Loss & Objective Misalignment)**：
     召回看重興趣涵蓋率、粗排看重過濾效率、精排看重 CTR/CVR 預估，重排又看重多樣性與商業規則。各階段優化目標彼此獨立且相互解耦，且前階段的早裁斷（Early Truncation）無法修復，容易導致整個系統收斂於**局部最佳解**，而非全局最優解。
 
-## 邁向下一代範式：生成式檢索與全鏈路一體化（Generative Retrieval）
+## 後續方向：生成式檢索與全鏈路一體化（Generative Retrieval）
 
 正是因為級聯架構存在上述固有的痛點，業界開始尋求能打破傳統「級聯漏斗」限制的新方法，推動著推薦系統朝向「端到端架構（End-to-End Architectures）」與「生成式檢索（Generative Retrieval, GR）」演進。
 
-關於這場範式轉移背後的深層動機，以及業界（如快手 OneRec）在對齊大模型基建時所面臨的挑戰，我在專文中整理了一些個人的觀察與探討。若對這段發展脈絡感興趣，歡迎進一步閱讀：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</content-link>。
+關於這場範式轉移背後的深層動機，以及業界（如快手 OneRec）在對齊大模型基建時所面臨的挑戰，我在專文中整理了一些個人的觀察與探討。若對這段發展脈絡感興趣，歡迎進一步閱讀：<content-link canonical="from-cascade-to-generative-recommendation-paradigm-shift">從級聯架構到生成式推薦：轉型的動機與技術挑戰</content-link>。
 
 在此就不多贅述了，我們主要將重點聚焦於這套新架構所帶來的四大核心優勢，看看它究竟是如何統一優化目標、打破 IO 開銷枷鎖，並直接對齊大語言模型的發展範式：
 
@@ -269,7 +269,7 @@ content:
 * **對齊 LLM 範式以解鎖 Scaling Law 紅利**：生成式檢索將推薦的核心問題重構為自迴歸生成任務。這意味著推薦系統能夠直接繼承大語言模型成熟的 Transformer 架構、硬體加速生態與 <information concept="concept.scaling_law">Scaling Law</information> 技術紅利，使模型表現能隨著參數規模與算力投入而穩定提升。
 * **模型即索引（Model-as-Index）消除候選比對瓶頸**：生成式檢索透過 **Semantic ID**（如 <content-link canonical="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation">RQ-Kmeans</content-link> / <content-link canonical="rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw">RQ-VAE</content-link> 量化碼）將百萬級商品編碼為具備語意階層的 Token 序列。Transformer 模型能直接從全局記憶中「自迴歸生成」出推薦結果，**完全免去了傳統架構需要在龐大候選池（Candidate Pool）中進行逐一運算與向量比對的繁瑣步驟**，並能將這些省下的檢索與比對時間，重新投入到模型的深度運算中。
 
-## 總結與核心要點
+## 總結
 
 <reviewkit>
 <takeaways>

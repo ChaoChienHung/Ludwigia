@@ -36,7 +36,7 @@ LastModified: 2026-08-22
 **核心觀點 Summary**：Snap Research 開源的生成式推薦框架 **GRID**（*Generative Recommendation with Semantic IDs: A Practitioner’s Handbook*, arXiv:2507.22224）針對基於語意識別碼（Semantic ID, SID）的生成式檢索/推薦模型進行了系統性的組件消融與基准測試。研究揭示了多項顛覆直覺的工程實證：**RQ-Kmeans 的推薦效果顯著優於難以訓練的 RQ-VAE**；**Encoder-Decoder 架構顯著打敗 Decoder-Only**；而過去常用的 **User Token、碰撞後追加去重 Token、以及 Trie 樹受限 Beam Search 在實務中效益極低甚至有害**。
 </callout>
 
-在 <content-link canonical="semantic-id-in-generative-recommendation">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</content-link> 中，我們探討了 Semantic ID (SID) 如何將傳統的獨立流水號 (Atomic ID) 因子化為具備階層語意的離散 Token 序列。然而，在過往的學術文獻中，各研究團隊採用的 Tokenizer 演算法、超參數、骨幹網路與實驗設定大相逕庭，導致工業界在評估生成式推薦落地時缺乏統一且客觀的選型依據。
+在 <content-link canonical="semantic-id-in-generative-recommendation">生成式推薦中的 Semantic ID：商品 Token 化的設計與取捨</content-link> 中，我們探討了 Semantic ID (SID) 如何將傳統的獨立流水號 (Atomic ID) 因子化為具備階層語意的離散 Token 序列。然而，在過往的學術文獻中，各研究團隊採用的 Tokenizer 演算法、超參數、骨幹網路與實驗設定大相逕庭，導致工業界在評估生成式推薦落地時缺乏統一且客觀的選型依據。
 
 為了填補這一空白，Snap Research 開源了 **GRID** (Generative Recommendation with Semantic IDs) 模組化框架與基準測試。本文將深入剖析 GRID 手冊中的核心實證，拆解在 Semantic ID Tokenizer、生成骨幹架構與推斷策略上的常見迷思。
 

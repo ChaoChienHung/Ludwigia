@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>從級聯漏斗到自迴歸生成：推薦系統的範式重塑 — Ludwig</title>
+  <title>從級聯架構到生成式推薦：轉型的動機與技術挑戰 — Ludwig</title>
   <meta name="site:tags" content="推薦系統, 縮放定律, 深度學習">
-  <meta name="site:summary" content="本文深入探討推薦系統為何正在經歷從「傳統漏斗級聯架構」向「自迴歸生成式範式」的重大轉型。結合快手 OneRec 最新研究成果，分析傳統碎片化模組如何陷入低 ROI 的 Scaling 陷阱，揭示生成式推薦如何透過一體化架構與聯合機率分佈建模對齊大模型紅利，並剖析 Semantic ID、RQ-VAE 與 RQ-Kmeans 如何解決海量商品 Token 化的核心工程挑戰。">
+  <meta name="site:summary" content="討論推薦系統為何從多階段級聯架構轉向自迴歸生成式架構。以快手 OneRec 為主要參照，分析級聯架構在目標對齊、IO 開銷、GPU 利用率與技術生態上的限制，說明端到端生成式架構如何回應這些問題，並簡介 Semantic ID、RQ-VAE 與 RQ-Kmeans 在商品 Token 化中的角色。">
   <meta name="site:lang" content="zh-tw">
   <meta name="site:status" content="published">
   <meta name="site:tag_concepts" content="concept.recommender_systems,concept.scaling_laws,concept.deep_learning">
   <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.scaling_laws&quot;:{&quot;en&quot;:&quot;Scaling Laws&quot;,&quot;zh-Hant&quot;:&quot;縮放定律&quot;,&quot;zh-Hans&quot;:&quot;缩放定律&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;}}">
   <meta name="site:canonical_id" content="from-cascade-to-generative-recommendation-paradigm-shift">
   <meta name="site:published_at" content="2026-08-02">
-  <meta name="site:last_modified_at" content="2026-08-11">
+  <meta name="site:last_modified_at" content="2026-11-20">
   <meta name="site:cover" content="notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift.png">
   <meta name="site:reading_time_minutes" content="20">
   <meta name="site:source" content="notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.md">
@@ -124,7 +124,7 @@
 </nav>
   <section class="page-section">
   <div class="container">
-    <h1 class="text-center" data-aos="fade-up">從級聯漏斗到自迴歸生成：推薦系統的範式重塑</h1>
+    <h1 class="text-center" data-aos="fade-up">從級聯架構到生成式推薦：轉型的動機與技術挑戰</h1>
 
     <div class="note-toc-hover-zone" aria-hidden="true"></div>
     <div class="note-toc-backdrop" aria-hidden="true"></div>
@@ -136,17 +136,17 @@
         <div class="note-toc-overlay-panel">
           <div class="note-toc-overlay-title">Outline</div>
           <nav class="note-toc">
-            <a class="note-toc-link level-1" href="#1-roi">1. 傳統級聯架構的深層痛點：陷入低 ROI 陷阱</a>
-<a class="note-toc-link level-2" href="#section">痛點一：目標錯位與模型解釋性的喪失</a>
-<a class="note-toc-link level-2" href="#io">痛點二：通信與 IO 吞噬了寶貴算力</a>
-<a class="note-toc-link level-2" href="#gpu">痛點三（核心致命傷）：碎片化模組與 GPU 算力天性的不相容</a>
-<a class="note-toc-link level-2" href="#ai">痛點四：淪為「技術孤島」，與現代 AI 基礎設施脫節</a>
-<a class="note-toc-link level-1" href="#2">2. 破局之道：當推薦系統走向「端到端生成」</a>
-<a class="note-toc-link level-2" href="#section-2">一、統一目標，消除內耗與歸因難題</a>
-<a class="note-toc-link level-2" href="#io-2">二、消除系統 IO，讓計算回歸計算</a>
-<a class="note-toc-link level-2" href="#scaling-law">三、硬體親和性與 Scaling Law 的真正釋放</a>
-<a class="note-toc-link level-2" href="#llm">四、全面繼承 LLM 的技術生態</a>
-<a class="note-toc-link level-1" href="#3">3. 結語：算法、硬體與生態共振的未來</a>
+            <a class="note-toc-link level-1" href="#1">1. 級聯架構的四個限制</a>
+<a class="note-toc-link level-2" href="#section">限制一：目標不一致與可解釋性下降</a>
+<a class="note-toc-link level-2" href="#io">限制二：通訊與 IO 開銷佔用算力</a>
+<a class="note-toc-link level-2" href="#gpu">限制三：碎片化模組難以充分利用 GPU</a>
+<a class="note-toc-link level-2" href="#llm">限制四：與 LLM 基礎設施和工具鏈脫節</a>
+<a class="note-toc-link level-1" href="#2">2. 端到端生成式架構如何回應這些限制</a>
+<a class="note-toc-link level-2" href="#section-2">一、統一訓練目標</a>
+<a class="note-toc-link level-2" href="#io-2">二、減少跨模組 IO</a>
+<a class="note-toc-link level-2" href="#scaling-law">三、提高硬體利用率，讓 Scaling Law 得以發揮</a>
+<a class="note-toc-link level-2" href="#llm-2">四、沿用 LLM 的訓練與推理工具</a>
+<a class="note-toc-link level-1" href="#3">3. 結語</a>
 <a class="note-toc-link level-1" href="#references">參考資料（References）</a>
           </nav>
         </div>
@@ -170,7 +170,7 @@
           <div class="note-meta-section">
             <div class="note-meta-label">Dates</div>
             <div class="note-meta-dates">
-              <div class="note-date-menu-shell" data-last-modified-at="2026-08-11" data-published-at="2026-08-02"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-08-11</span></div></div>
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-20" data-published-at="2026-08-02"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-20</span></div></div>
             </div>
           </div>
           <div class="note-meta-section">
@@ -201,45 +201,45 @@
 
 <p class="mb-3">推薦系統就像是現代網路世界「看不見的手」。從電商首頁的商品展示，到無盡滑動的短影音資訊流，它決定了數十億人每天消費的內容。然而，當整個 AI 圈正因為大語言模型（LLM）的突破而天翻地覆時，支撐著這些龐大商業流量底層的推薦引擎，過去十幾年來卻沒有太多本質上的改變。</p>
 
-<p class="mb-3">長久以來，大廠們的底層心法始終是同一個經典框架——<a class="note-content-link" data-canonical-id="funnel-cascade-architecture-in-recommendation-systems" href="../funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html">漏斗式級聯架構<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">現代推薦系統的基石：深入解析「級聯架構」</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">機器學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">深入剖析工業界推薦系統的核心設計哲學——「級聯架構」（Cascade Architecture）。從推薦系統全貌的三大核心模組（商品池、排序模組、重混排模組）切入，結合 HR 招募海選的比喻，層層拆解召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）到重排與混排（Re-Ranking &amp; Mix-Ranking）的技術細節、延遲約束與特徵維度，特別剖析粗排的尷尬定位與精排目標對齊問題，並分析資訊遺失與目標不一致痛點，為通往生成式檢索（Generative Retrieval）奠定理論基礎。</span></span></span></a>。這套架構在過去十年確實完美解決了「如何在毫秒級延遲下處理海量數據」的現實難題。但如今，這套不斷打補丁的舊系統，正無可避免地撞上一道物理與工程的高牆。系統越疊越厚，投入的算力與研發資源呈指數級飆升，但換來的業務 <span class="note-information" tabindex="0" data-information-concept="concept.roi" data-information-lang="zh-tw">ROI<span class="note-information-tooltip" aria-hidden="true"></span></span> 增長卻越來越微不足道。</p>
+<p class="mb-3">長久以來，大廠們的底層心法始終是同一個經典框架——<a class="note-content-link" data-canonical-id="funnel-cascade-architecture-in-recommendation-systems" href="../funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html">漏斗式級聯架構<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">推薦系統的級聯架構：召回、粗排、精排與重混排</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">機器學習</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">介紹工業界推薦系統常見的級聯架構（Cascade Architecture）。先說明商品池、排序模組與重混排模組之間的資料流，再依序介紹召回（Retrieval）、粗排（Pre-Ranking）、精排（Ranking）與重排／混排（Re-Ranking &amp; Mix-Ranking）各階段的目標、延遲約束與特徵規模，討論粗排的定位與各階段目標不一致的問題，最後說明這些限制如何引出生成式檢索（Generative Retrieval）。</span></span></span></a>。這套架構在過去十年確實完美解決了「如何在毫秒級延遲下處理海量數據」的現實難題。但如今，這套不斷打補丁的舊系統，正無可避免地撞上一道物理與工程的高牆。系統越疊越厚，投入的算力與研發資源呈指數級飆升，但換來的業務 <span class="note-information" tabindex="0" data-information-concept="concept.roi" data-information-lang="zh-tw">ROI<span class="note-information-tooltip" aria-hidden="true"></span></span> 增長卻越來越微不足道。</p>
 
 <p class="mb-3">曾經無往不利的架構，到底卡在了哪裡？面對增長停滯的焦慮，業界前沿團隊又是如何尋找下一代破局之道的？</p>
 
 <p class="mb-3">這篇文章將帶你拆解舊架構的技術債黑盒，並探討一場正在發生、將底層架構「推倒重來」的範式轉移——端到端自迴歸生成（Generative Recommendation）背後的技術全貌與工程挑戰。</p>
 </section>
 
-<section id="1-roi" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">1. 傳統級聯架構的深層痛點：陷入低 ROI 陷阱</h3>
+<section id="1" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">1. 級聯架構的四個限制</h3>
 
 <p class="mb-3">級聯架構的核心工程哲學是「<strong>用空間與階段換取時間</strong>」。面對數百萬甚至數億級別的商品庫，我們不可能在短短 50 毫秒內，用最複雜的深度神經網路把每個商品都精算一遍。</p>
 
 <p class="mb-3">因此，業界標準做法是將鏈路切分為多個階段（召回 $\to$ 粗排 $\to$ 精排 $\to$ 重排）。候選商品像過沙漏一樣被層層篩選，數量從百萬、千、百，一路縮減到最後呈現在用戶眼前的十幾個。隨著數量減少，模型特徵才敢越加越厚。這套「分而治之」的策略在早期吃盡了紅利，但當各個模組的優化都逼近天花板時，架構本身的結構性缺陷就徹底暴露了。</p>
 
-<h4 id="section" class="mb-2">痛點一：目標錯位與模型解釋性的喪失</h4>
+<h4 id="section" class="mb-2">限制一：目標不一致與可解釋性下降</h4>
 
 <p class="mb-3">在長長的級聯鏈路上，各模組的優化目標天然存在不一致。召回階段拼命擴大覆蓋度與多樣性，深怕漏掉潛在興趣；精排階段卻極致追求 <span class="note-information" tabindex="0" data-information-concept="concept.ctr" data-information-lang="zh-tw">CTR<span class="note-information-tooltip" aria-hidden="true"></span></span> 與 <span class="note-information" tabindex="0" data-information-concept="concept.cvr" data-information-lang="zh-tw">CVR<span class="note-information-tooltip" aria-hidden="true"></span></span> 的精準預估。這帶來了嚴重的內部消耗：召回硬塞進來的多樣性內容，往往在精排階段被無情打低分；而精排真正偏好的高潛力內容，可能早就在召回階段被過濾掉了。<strong>各自追求局部最優，最終卻拼湊不出全局最優。</strong></p>
 
 <p class="mb-3">更折磨人的是多模組耦合帶來的「歸因問題」。當線上數據掉血、出現糟糕的推薦時，系統的問題排查宛如大海撈針：是召回通道失效？被粗排的某條硬規則誤殺？還是精排給了異常的低分？模組間互相掣肘，不僅迭代成本極高，還經常演變成不同演算法團隊間的推諉扯皮。</p>
 
-<h4 id="io" class="mb-2">痛點二：通信與 IO 吞噬了寶貴算力</h4>
+<h4 id="io" class="mb-2">限制二：通訊與 IO 開銷佔用算力</h4>
 
 <p class="mb-3">在多階段鏈路中，數據必須頻繁跨越多個獨立模組。每一次跨階段的呼叫，都伴隨著大量的 <span class="note-information" tabindex="0" aria-label="RPC（Remote Procedure Call，遠端程序呼叫）是一種通信協定，讓程式可以像呼叫本地函式一樣去執行遠端伺服器上的程序。它是分散式系統的基礎構件之一，使不同服務能跨越網路邊界互相通信，同時對呼叫端隱藏序列化、傳輸與錯誤處理的複雜性。">RPC<span class="note-information-tooltip" aria-hidden="true">RPC（Remote Procedure Call，遠端程序呼叫）是一種通信協定，讓程式可以像呼叫本地函式一樣去執行遠端伺服器上的程序。它是分散式系統的基礎構件之一，使不同服務能跨越網路邊界互相通信，同時對呼叫端隱藏序列化、傳輸與錯誤處理的複雜性。</span></span> 網路通信、海量的分散式特徵檢索以及記憶體搬運。</p>
 
 <p class="mb-3">在極限的延遲限制下，系統其實花了大半的時間在「等」——等數據傳輸、等特徵拼裝。模型真正在做運算的時間比例少得可憐。對於極度昂貴的硬體資源來說，這是一種極大的浪費。</p>
 
-<h4 id="gpu" class="mb-2">痛點三（核心致命傷）：碎片化模組與 GPU 算力天性的不相容</h4>
+<h4 id="gpu" class="mb-2">限制三：碎片化模組難以充分利用 GPU</h4>
 
 <p class="mb-3">為了解決效果瓶頸，業界這幾年也嘗試讓推薦系統追隨大模型的 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-tw">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span>：拉長用戶行為序列、放大打分候選集。但結果卻是算力成本增加，效果成長有限，<span class="note-information" tabindex="0" data-information-concept="concept.roi" data-information-lang="zh-tw">ROI<span class="note-information-tooltip" aria-hidden="true"></span></span> 不佳。其根本原因在於：<strong>傳統推薦架構與現代 AI 算力的底層天性不完全相容。</strong></p>
 
 <p class="mb-3">現代算力的核心推動力是 <span class="note-information" tabindex="0" data-information-concept="concept.gpu" data-information-lang="zh-tw">GPU<span class="note-information-tooltip" aria-hidden="true"></span></span>，而 GPU 渴望的是「<strong><span class="note-information" tabindex="0" aria-label="算力密集（Compute-bound）描述一種計算工作負載，其效能瓶頸在於處理器的算術運算速度，而非記憶體頻寬或 IO。在這類工作負載中，計算單元被充分利用來進行運算（如矩陣乘法），這正是 GPU 和 TPU 最理想的運行狀態。">算力密集<span class="note-information-tooltip" aria-hidden="true">算力密集（Compute-bound）描述一種計算工作負載，其效能瓶頸在於處理器的算術運算速度，而非記憶體頻寬或 IO。在這類工作負載中，計算單元被充分利用來進行運算（如矩陣乘法），這正是 GPU 和 TPU 最理想的運行狀態。</span></span></strong>」的任務，生來就是為了高效執行「<strong>一致且海量的 <span class="note-information" tabindex="0" data-information-concept="concept.gemm" data-information-lang="zh-tw">GEMM<span class="note-information-tooltip" aria-hidden="true"></span></span></strong>」與「<strong><span class="note-information" tabindex="0" aria-label="SIMT（Single Instruction, Multiple Threads，單指令多執行緒）是由 NVIDIA 首創的 GPU 執行模型。它讓單一指令同時在大量執行緒上執行，每個執行緒操作不同的資料。這種模型是 GPU 平行計算的基礎，也是 GPU 擅長處理深度學習中矩陣運算等資料平行工作負載的根本原因。">SIMT<span class="note-information-tooltip" aria-hidden="true">SIMT（Single Instruction, Multiple Threads，單指令多執行緒）是由 NVIDIA 首創的 GPU 執行模型。它讓單一指令同時在大量執行緒上執行，每個執行緒操作不同的資料。這種模型是 GPU 平行計算的基礎，也是 GPU 擅長處理深度學習中矩陣運算等資料平行工作負載的根本原因。</span></span></strong>」。反觀傳統推薦系統，充斥著各種異構小模型、複雜的規則過濾、樹狀結構與散亂的 <span class="note-information" tabindex="0" data-information-concept="concept.embedding" data-information-lang="zh-tw">Embedding<span class="note-information-tooltip" aria-hidden="true"></span></span> 查找，這是一個典型的「<strong><span class="note-information" tabindex="0" aria-label="記憶體頻寬受限（Memory-bound）描述一種計算工作負載，其效能瓶頸在於記憶體的頻寬或延遲，而非算術運算能力。在這類工作負載中，處理器大部分時間都在等待從記憶體取回資料，導致計算單元閒置。常見的例子包括稀疏查找、圖遍歷，以及存取模式不規則或不連續的工作負載。">記憶體頻寬受限<span class="note-information-tooltip" aria-hidden="true">記憶體頻寬受限（Memory-bound）描述一種計算工作負載，其效能瓶頸在於記憶體的頻寬或延遲，而非算術運算能力。在這類工作負載中，處理器大部分時間都在等待從記憶體取回資料，導致計算單元閒置。常見的例子包括稀疏查找、圖遍歷，以及存取模式不規則或不連續的工作負載。</span></span></strong>」任務。當你把這樣的系統丟給 GPU 時，算力被嚴重的記憶體碎片與邏輯分支所打斷，硬體根本無法跑滿，<span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-tw">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 自然也就無從談起。</p>
 
-<h4 id="ai" class="mb-2">痛點四：淪為「技術孤島」，與現代 AI 基礎設施脫節</h4>
+<h4 id="llm" class="mb-2">限制四：與 LLM 基礎設施和工具鏈脫節</h4>
 
 <p class="mb-3">長久以來，為了應對超大規模的稀疏特徵，推薦領域造了無數特化的輪子——如獨創的分散式 <span class="note-information" tabindex="0" aria-label="參數伺服器（Parameter Server）是一種分散式機器學習架構，將模型參數存放在專用的伺服器節點上，並在訓練期間同步來自多個工作節點的更新。它特別適用於參數量超過單機記憶體上限的大規模稀疏模型，能透過水平擴展同時提升儲存容量與吞吐量。">Parameter Server<span class="note-information-tooltip" aria-hidden="true">參數伺服器（Parameter Server）是一種分散式機器學習架構，將模型參數存放在專用的伺服器節點上，並在訓練期間同步來自多個工作節點的更新。它特別適用於參數量超過單機記憶體上限的大規模稀疏模型，能透過水平擴展同時提升儲存容量與吞吐量。</span></span>。這導致當 LLM 與大模型社群的底層工程基建突飛猛進時，推薦系統卻因為架構太過特殊而淪為一座技術孤島，看著龐大的生態紅利卻吃不到。</p>
 </section>
 
 <section id="2" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">2. 破局之道：當推薦系統走向「端到端生成」</h3>
+<h3 class="mb-3">2. 端到端生成式架構如何回應這些限制</h3>
 
 <p class="mb-3">當級聯架構在目標一致性、IO 開銷與硬體利用率上都走到死胡同時，業界意識到：我們不能再繼續給舊系統打補丁了。答案，其實藏在另一個領域——大語言模型（LLM）所採用的<strong>自迴歸生成（Autoregressive Generation）</strong>。</p>
 
@@ -251,21 +251,21 @@
 
 <p class="mb-3">不僅如此，這種演算法的轉變，更解鎖了傳統架構無法企及的<strong>四大優勢</strong>：</p>
 
-<h4 id="section-2" class="mb-2">一、統一目標，消除內耗與歸因難題</h4>
+<h4 id="section-2" class="mb-2">一、統一訓練目標</h4>
 
 <p class="mb-3">生成式架構採用單一強大的端到端模型，直接根據用戶上下文輸出最終的推薦列表，而非如傳統多階段級聯架構般逐層篩選。由於模型擺脫了分階段優化不同局部目標的妥協，改由單一模型對同一終極目標進行優化，因而能直接對全局最優解負責。同時，由於不再受限於多階段的複雜過濾規則，問題案例的歸因變得極為純粹——成效優劣皆源於該統一模型的權重與訓練數據，徹底消滅了系統偵錯的黑盒現象。</p>
 
-<h4 id="io-2" class="mb-2">二、消除系統 IO，讓計算回歸計算</h4>
+<h4 id="io-2" class="mb-2">二、減少跨模組 IO</h4>
 
 <p class="mb-3">採用單一強大端到端模型的另一項顯著優勢在於：此範式徹底省去了跨網路傳輸、繁雜的特徵拼接與多輪檢索。資訊的流轉、用戶興趣的捕捉以及商品的精準匹配，皆在單一模型的一次<span class="note-information" tabindex="0" data-information-concept="concept.forward_pass" data-information-lang="zh-tw">前向傳播<span class="note-information-tooltip" aria-hidden="true"></span></span>中，經由隱藏層權重運算瞬間完成。至此，系統的 IO 瓶頸被徹底打破，時間預算得以全數挹注於核心的模型計算之上。</p>
 
-<h4 id="scaling-law" class="mb-2">三、硬體親和性與 Scaling Law 的真正釋放</h4>
+<h4 id="scaling-law" class="mb-2">三、提高硬體利用率，讓 Scaling Law 得以發揮</h4>
 
 <p class="mb-3">由於生成式架構的底層骨幹網路（如 <span class="note-information" tabindex="0" data-information-concept="concept.transformer" data-information-lang="zh-tw">Transformer<span class="note-information-tooltip" aria-hidden="true"></span></span>）具備高度同質化的結構，其核心運算幾乎全是大規模的 <span class="note-information" tabindex="0" data-information-concept="concept.gemm" data-information-lang="zh-tw">GEMM<span class="note-information-tooltip" aria-hidden="true"></span></span>，完美契合了現代 GPU 的底層設計，因而得以充分釋放 <span class="note-information" tabindex="0" data-information-concept="concept.scaling_law" data-information-lang="zh-tw">Scaling Law<span class="note-information-tooltip" aria-hidden="true"></span></span> 的紅利。</p>
 
 <p class="mb-3">在軟硬體高度對齊的優勢下，投入的每一分算力都能無縫轉化為模型規模的擴展，這使得推薦系統徹底擺脫了低 <span class="note-information" tabindex="0" data-information-concept="concept.roi" data-information-lang="zh-tw">ROI<span class="note-information-tooltip" aria-hidden="true"></span></span> 的泥沼，正式迎來「算力越大、能力越強」的全新範式。</p>
 
-<h4 id="llm" class="mb-2">四、全面繼承 LLM 的技術生態</h4>
+<h4 id="llm-2" class="mb-2">四、沿用 LLM 的訓練與推理工具</h4>
 
 <p class="mb-3">當推薦系統轉向標準的 Transformer 自迴歸架構後，另一個巨大的隱藏紅利在於：<strong>不再需要重複造輪子</strong>。</p>
 
@@ -284,7 +284,7 @@
 </section>
 
 <section id="3" class="note-section" data-aos="fade-up" data-aos-delay="120">
-<h3 class="mb-3">3. 結語：算法、硬體與生態共振的未來</h3>
+<h3 class="mb-3">3. 結語</h3>
 
 <p class="mb-3">從級聯漏斗到自迴歸生成的演進，本質上是推薦系統架構重新對齊現代硬體物理特性的必然結果。過去十幾年來，業界在多階段漏斗架構上持續進行局部優化，雖然支撐了業務規模的擴張，但也使系統日益繁複，逐漸觸及效能與投資報酬率（ROI）的成長天花板。</p>
 

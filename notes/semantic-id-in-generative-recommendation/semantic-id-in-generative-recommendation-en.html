@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Semantic IDs in Generative Recommendation: Design and Trade-offs in Item Tokenization — Ludwig</title>
+  <meta name="site:tags" content="Recommender Systems, Generative Retrieval, Semantic ID, Deep Learning, Tokenization">
+  <meta name="site:summary" content="How Semantic IDs make generative recommendation and generative retrieval work: why atomic item IDs do not fit autoregressive generation, how residual quantization encodes an item vector as a coarse-to-fine sequence of discrete tokens, what shared prefixes give you, how end-to-end and two-stage tokenizers compare, and the practical issues of invalid IDs, decoding latency and ID collisions.">
+  <meta name="site:lang" content="en">
+  <meta name="site:status" content="drafting">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.semantic_id,concept.deep_learning,concept.tokenization">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;},&quot;concept.deep_learning&quot;:{&quot;en&quot;:&quot;Deep Learning&quot;,&quot;zh-Hant&quot;:&quot;深度學習&quot;,&quot;zh-Hans&quot;:&quot;深度学习&quot;},&quot;concept.tokenization&quot;:{&quot;en&quot;:&quot;Tokenization&quot;,&quot;zh-Hant&quot;:&quot;Token 化&quot;,&quot;zh-Hans&quot;:&quot;Token 化&quot;}}">
+  <meta name="site:canonical_id" content="semantic-id-in-generative-recommendation">
+  <meta name="site:published_at" content="2026-08-11">
+  <meta name="site:last_modified_at" content="2026-11-20">
+  <meta name="site:cover" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png">
+  <meta name="site:reading_time_minutes" content="27">
+  <meta name="site:source" content="notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-en.md">
+  <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#future-plans" data-nav-future-plans>Future Plans</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Semantic IDs in Generative Recommendation: Design and Trade-offs in Item Tokenization</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#the-problem-turning-a-huge-item-catalog-into-tokens">The Problem: Turning a Huge Item Catalog into Tokens</a>
+<a class="note-toc-link level-1" href="#from-atomic-ids-to-semantic-sequences">From Atomic IDs to Semantic Sequences</a>
+<a class="note-toc-link level-2" href="#not-a-classification-tree-coarse-to-fine-residual-approximation">Not a Classification Tree: Coarse-to-Fine Residual Approximation</a>
+<a class="note-toc-link level-2" href="#from-continuous-vectors-to-discrete-token-sequences">From Continuous Vectors to Discrete Token Sequences</a>
+<a class="note-toc-link level-2" href="#shared-prefixes">Shared Prefixes</a>
+<a class="note-toc-link level-2" href="#advantages-of-semantic-ids">Advantages of Semantic IDs</a>
+<a class="note-toc-link level-1" href="#two-families-of-semantic-id-tokenizers">Two Families of Semantic ID Tokenizers</a>
+<a class="note-toc-link level-1" href="#practical-issues-and-engineering-trade-offs">Practical Issues and Engineering Trade-offs</a>
+<a class="note-toc-link level-2" href="#issue-1-invalid-ids-and-hallucination">Issue 1: Invalid IDs and Hallucination</a>
+<a class="note-toc-link level-2" href="#issue-2-autoregressive-decoding-latency">Issue 2: Autoregressive Decoding Latency</a>
+<a class="note-toc-link level-2" href="#issue-3-id-collisions-and-ranking-items-that-share-a-code">Issue 3: ID Collisions and Ranking Items That Share a Code</a>
+<a class="note-toc-link level-1" href="#conclusion">Conclusion</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-20" data-published-at="2026-08-11"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-20</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<figure class="note-image"><img src="./semantic-id-in-generative-recommendation.png" alt="Comparison of a traditional ID, an opaque random identifier, with a Semantic ID whose tokens carry structure derived from the item." loading="lazy"><figcaption class="note-image-caption">Traditional IDs versus Semantic IDs.</figcaption></figure>
+
+<p class="mb-3">In <a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">From Cascade Architectures to Generative Recommendation<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">從級聯架構到生成式推薦：轉型的動機與技術挑戰</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">討論推薦系統為何從多階段級聯架構轉向自迴歸生成式架構。以快手 OneRec 為主要參照，分析級聯架構在目標對齊、IO 開銷、GPU 利用率與技術生態上的限制，說明端到端生成式架構如何回應這些問題，並簡介 Semantic ID、RQ-VAE 與 RQ-Kmeans 在商品 Token 化中的角色。</span></span></span></a>, we looked at why recommender systems are moving toward a generative paradigm. Autoregressive generation does bring stronger sequence modeling and more expressive power, but an elegant formulation does not make deployment easy.</p>
+
+<p class="mb-3">The first obstacle is basic: <strong>how do you apply a generative model to an enormous item catalog?</strong> A natural-language vocabulary is finite and fairly stable, while an item catalog keeps growing and changes every day. Because of this difference, a model cannot simply treat items the way it treats words. Unless the model can represent and generate items, the strength of the autoregressive architecture never comes into play.</p>
+
+<p class="mb-3">This note looks at the abstraction that sits at the center of generative recommendation: the <strong>Semantic ID</strong>. We cover why the traditional item-ID scheme breaks down for large generative models, how Semantic IDs address the problem through quantization, and which issues, such as decoding latency and ranking items that share an ID, remain once the system goes into production.</p>
+</section>
+
+<section id="the-problem-turning-a-huge-item-catalog-into-tokens" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">The Problem: Turning a Huge Item Catalog into Tokens</h3>
+
+<p class="mb-3">In natural language processing, a language model defines its vocabulary before training. It usually holds somewhere between 30,000 and 100,000 tokens; GPT-4's vocabulary, for example, has roughly 100,000. At each step, the final layer only needs to produce a probability distribution over this limited set.</p>
+
+<p class="mb-3">A real e-commerce or content platform, however, has tens of millions or even hundreds of millions of candidate items. So what happens if we follow the old habit and <strong>treat each item as its own token, the traditional atomic ID, and train the model on that?</strong></p>
+
+<p class="mb-3">Two engineering limits show up right away:</p>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Softmax cost and memory blow up.</strong></strong><br>
+  
+<p class="mb-2">To predict the next token, an autoregressive model computes a softmax over every possible item ID in its final layer. With a vocabulary on the order of $10^7$, this <span class="note-information" tabindex="0" data-information-concept="concept.gemm" data-information-lang="en">matrix multiplication<span class="note-information-tooltip" aria-hidden="true"></span></span> consumes a huge amount of <span class="note-information" tabindex="0" data-information-concept="concept.gpu" data-information-lang="en">GPU<span class="note-information-tooltip" aria-hidden="true"></span></span> memory and bandwidth. It also makes the computation numerically fragile, and the model cannot finish inference within the tight latency budget of an online service, often around 50 ms.</p>
+  
+</li>
+<li>
+  <strong><strong>Catalog churn and the cold-start cliff.</strong></strong><br>
+  
+<p class="mb-2">A language model's vocabulary is fairly static: once training converges, the model keeps generalizing with it. An item catalog changes every day, and retraining the model or rebuilding the output layer for each batch of new items is slow and impractical. The deeper issue is that <strong>an atomic ID is only a lookup key into an <span class="note-information" tabindex="0" data-information-concept="concept.embedding" data-information-lang="en">embedding<span class="note-information-tooltip" aria-hidden="true"></span></span> table; it carries no meaning of its own.</strong> Item <code>10023</code> and item <code>10024</code> are two unrelated serial numbers, even if they are the same phone in two colors. When a new item arrives, it has no interaction history, and its new key shares nothing with existing IDs, so the model has no signal to work with. That is the cold-start failure.</p>
+  
+</li>
+</ol>
+
+<p class="mb-3">So we cannot fit a large generative model into the traditional ID scheme; we need a different way to represent and encode items. The approach the industry has largely converged on is the <strong>Semantic ID</strong>.</p>
+</section>
+
+<section id="from-atomic-ids-to-semantic-sequences" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">From Atomic IDs to Semantic Sequences</h3>
+
+<p class="mb-3">A good way into how Semantic IDs work is through an intuition that is often used to explain them but does not quite fit: the classification tree.</p>
+
+<h4 id="not-a-classification-tree-coarse-to-fine-residual-approximation" class="mb-2">Not a Classification Tree: Coarse-to-Fine Residual Approximation</h4>
+
+<p class="mb-3">People manage large collections with hierarchies. Biology classifies organisms as kingdom $\to$ phylum $\to$ class $\to$ order $\to$ family $\to$ genus $\to$ species, and postal codes narrow an address down from region to district to street. These examples share a useful idea: <strong>instead of giving every entity its own code, you locate it with a combination of a few levels.</strong> Many introductions to Semantic IDs borrow this analogy directly and say the first token is the category, the second a subcategory, and the third a finer subcategory.</p>
+
+<p class="mb-3">On one key point, though, the analogy does not match the mainstream way of building Semantic IDs, residual quantization as used in RQ-VAE and RQ-Kmeans. In a classification tree, a child node is a semantic subset of its parent: the genus <em>Homo</em> exists only inside the family Hominidae, and a subcategory number means nothing once you move it under a different parent. Residual quantization works like this instead:</p>
+
+<ol class="mb-3">
+<li>The first level searches the whole vector space for the code vector $e_1[c_1]$ closest to the item embedding $x$, and records its index $c_1$.</li>
+<li>The remaining error $r_1 = x - e_1[c_1]$ goes to the second level, which picks the code vector $e_2[c_2]$ closest to $r_1$ from <strong>a single codebook shared by all items</strong>.</li>
+<li>The third level repeats the same step on $r_2 = r_1 - e_2[c_2]$.</li>
+</ol>
+
+<p class="mb-3">In the end, the item is approximated as a sum of code vectors:</p>
+
+<p class="mb-3">$$ x \approx e_1[c_1] + e_2[c_2] + e_3[c_3] $$</p>
+
+<p class="mb-3">The tokens after the first one therefore behave like offsets, or directional corrections, rather than subcategories of a category. A given $c_2$ stands for the same correction vector no matter which $c_1$ precedes it. Directions are a closer analogy: first you name the nearest landmark, then you add "two hundred meters northeast," then "ten more meters north." Each phrase corrects the error left by the one before, and "two hundred meters northeast" means the same thing whichever landmark it follows. You can also picture a painter who blocks in the outline with a few strokes and then adds layer after layer of corrections, each finer than the last.</p>
+
+<p class="mb-3">Half of the classification-tree intuition does hold: the encoding is <strong>coarse to fine</strong>. Early tokens decide which broad region of the vector space an item falls into, later tokens make progressively smaller corrections, and more levels give a more precise approximation. The difference is that "coarse to fine" here describes approximation accuracy, not semantic containment. If you instead ran a separate K-means inside every parent cluster, hierarchical K-means, you would get a genuine classification tree. That is a different design choice; RQ-VAE and RQ-Kmeans, discussed later in this note, both use residual quantization with one shared codebook per level.</p>
+
+<p class="mb-3">The shared codebooks are also why this representation compresses so well. The underlying principle is the <strong><span class="note-information" tabindex="0" aria-label="The rule of product is a basic principle of counting: if a choice can be split into M independent stages with K options each, the number of combinations is K^M. A small set of building blocks can therefore cover a very large space of combinations.">rule of product<span class="note-information-tooltip" aria-hidden="true">The rule of product is a basic principle of counting: if a choice can be split into M independent stages with K options each, the number of combinations is K^M. A small set of building blocks can therefore cover a very large space of combinations.</span></span></strong>. To distinguish 1,000,000 items with 3 levels of 100 code vectors each, you only need to learn $100 + 100 + 100 = 300$ code vectors, yet they combine into $100^3 = 1,000,000$ distinct codes. A true classification tree would need a separate set of subcategories under every category, which brings the count to $100 + 100 \times 100 + 100^3$, far more than 300.</p>
+
+<div id="related-ideas-hierarchical-softmax-and-first-principles" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-diagram-project me-2"></i>Related Ideas: Hierarchical Softmax and First Principles</h4><p class="mb-3">Hierarchical softmax tackles the same softmax cost problem with a similar idea: replace one decision over all classes with a few smaller decisions. It arranges the classes, or the vocabulary, into a tree, so a single expensive normalization over every class becomes a sequence of binary (or multi-way) choices along a path, and the cost drops from $O(N)$ to $O(\log N)$.</p>
+
+<p class="mb-3">There are two differences. First, hierarchical softmax usually builds its tree from hand-crafted priors or statistics, such as a Huffman tree or a lexical hierarchy, whereas a Semantic ID tokenizer such as RQ-VAE learns its codebooks from data. Second, hierarchical softmax is a real tree, while a residual-quantized Semantic ID shares one codebook per level, so it approximates step by step rather than classifying step by step.</p>
+
+<p class="mb-3">A related idea appears in <a class="note-content-link" data-canonical-id="first-principles-information-compression" href="../../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html">First Principles: The Brain's Ultimate Information Compression<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../../assets/images/defaults/Writing.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Writing</span><span class="note-content-link-preview-title">第一性原理：大腦的終極資訊壓縮術</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">學習</span><span class="note-content-link-preview-tag">認知</span><span class="note-content-link-preview-tag">反思</span></span><span class="note-content-link-preview-summary">第一性原理不僅是拆解問題的工具，更是升級大腦運作機制的關鍵。透過將異質知識收斂至共享的底層結構，我們能達成極致的資訊壓縮、將記憶提取轉為路徑導航，並在跨領域應用中引爆創造力。</span></span></span></a>, which argues that finding the shared underlying logic behind different pieces of knowledge lets the brain compress far more information. Semantic IDs rest on a similar intuition.</p></div>
+
+<p class="mb-3">The core idea of Semantic IDs is to bring this kind of compositional representation into recommendation: <strong>if we want a large model to recommend items, why not express every item as a short sequence built from a small set of shared tokens?</strong></p>
+
+<p class="mb-3">The item code then follows a coarse-to-fine approximation. We no longer assign every item its own code, so the softmax cost stays bounded, and each item is assembled from a few shared code vectors. Each code in a Semantic ID is not an arbitrary serial number but a coarse-to-fine description of where the item sits in the vector space.</p>
+
+<div id="why-do-large-collections-always-have-something-in-common" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa- me-2"></i>Why Do Large Collections Always Have Something in Common?</h4><p class="mb-3">The rule of product only helps if a large set of entities actually shares common structure. Why can we count on that when the number of entities is huge?</p>
+
+<p class="mb-3">Two reasons, one geometric and one behavioral:</p>
+
+<ol class="mb-3">
+<li><strong>High-dimensional geometry and the <span class="note-information" tabindex="0" data-information-concept="concept.law_of_large_numbers" data-information-lang="en">law of large numbers<span class="note-information-tooltip" aria-hidden="true"></span></span>.</strong> When items are described by many features, two of them are very unlikely to be completely unrelated. Across a large sample, the chance that entities share nothing at all approaches zero.</li>
+<li><strong>Real-world regularities.</strong> More importantly, real items and content are not generated at random. They come from similar human motivations and needs, so a large catalog naturally forms clusters with shared features.</li>
+</ol>
+
+<p class="mb-3">The larger the catalog and the higher the dimension, the easier it is to find common structure, and that is what lets Semantic IDs compress so much information through the rule of product.</p></div>
+
+<h4 id="from-continuous-vectors-to-discrete-token-sequences" class="mb-2">From Continuous Vectors to Discrete Token Sequences</h4>
+
+<p class="mb-3">To build a coarse-to-fine representation, the system first needs a good grasp of each item's features. Quantization only makes sense once the item's meaning has been captured. In practice, the conversion has two closely linked steps:</p>
+
+<ol class="mb-3">
+<li><strong>Multimodal feature extraction (from item to meaning).</strong> A pretrained model projects the item's title, description, images or video into a high-dimensional space, producing a dense embedding that captures what the item is.</li>
+<li><strong>Residual quantization (from continuous to discrete).</strong> A tokenizer then converts that embedding into a sequence of discrete tokens that a large model can work with, each token refining the approximation of the original vector:</li>
+</ol>
+
+<p class="mb-3">$$ \text{Item } x \longrightarrow [c_1, c_2, \dots, c_M] $$</p>
+
+<p class="mb-3">This length-$M$ sequence keeps most of the information in the original embedding, and each extra level makes the approximation a little more precise. Taking the common choice $M=3$:</p>
+
+<ul class="note-list">
+<li><strong>Level 1, $c_1$ (coarse location).</strong> Decides which broad region of the vector space the item falls into. Since embeddings of similar items already cluster together, this level often lines up reasonably well with product categories; consumer electronics, for example, tend to concentrate in a handful of $c_1$ values.</li>
+<li><strong>Level 2, $c_2$ (first correction).</strong> Compensates for the error left by $c_1$ and moves the estimate closer to where the item actually lies. It is a correction direction shared by all items and does not necessarily map to a human-readable subcategory such as "laptops."</li>
+<li><strong>Level 3, $c_3$ (finer correction).</strong> Shrinks the remaining error further and separates similar items that the first two levels could not tell apart.</li>
+</ul>
+
+<p class="mb-3">At later levels the residual is smaller and closer to noise, and it usually maps less and less to anything human-readable. A given $c_2$ or $c_3$ should not be read as a specific attribute.</p>
+
+<h4 id="shared-prefixes" class="mb-2">Shared Prefixes</h4>
+
+<p class="mb-3">Because the early tokens fix an item's approximate location in the vector space, items with similar embeddings tend to share their leading tokens, a <strong>shared prefix</strong>.</p>
+
+<p class="mb-3">Suppose an iPhone 15 Pro is quantized to the Semantic ID <code>[30, 14, 93]</code>. Its close relative, the iPhone 15 Pro Max, would likely share the first codes and end up as <code>[30, 14, 94]</code>: both fall in the same region and receive the same first correction, and they differ only in the final refinement. This lets us read off how similar two items are: <strong>more similar items usually share a longer prefix.</strong> The relationship is not guaranteed, though. Two very similar items that happen to sit near the boundary between two code vectors can be split at the very first level.</p>
+
+<p class="mb-3">With the mapping and shared prefixes in view, the contrast with atomic IDs is clear: <strong>an atomic ID is a random, independent key for a table lookup, while a Semantic ID is structure derived from a continuous vector.</strong></p>
+
+<p class="mb-3">Because a Semantic ID is quantized from the item's semantic vector, each token corresponds to a code vector, and adding those code vectors back together approximately reconstructs the item's embedding. Items, like sentences, are composed from a shared set of basic units, which is why Semantic IDs are often described as a "language of items."</p>
+
+<h4 id="advantages-of-semantic-ids" class="mb-2">Advantages of Semantic IDs</h4>
+
+<p class="mb-3">Turning items into token sequences removes the two limits above, and the coarse-to-fine structure and shared prefixes bring further benefits:</p>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>Compact vocabulary through codebook reuse.</strong></strong><br>
+  
+<p class="mb-2">With a codebook size of $K=256$ per level, a 3-level Semantic ID needs an output vocabulary of only $3 \times 256 = 768$ tokens. This removes the <span class="note-information" tabindex="0" data-information-concept="concept.oom" data-information-lang="en">out-of-memory<span class="note-information-tooltip" aria-hidden="true"></span></span> pressure of a softmax over tens of millions of items. Yet those 768 tokens combine into $256^3 \approx 16.8$ million codes, enough to cover a large catalog.</p>
+  
+</li>
+<li>
+  <strong><strong>Transfer of collaborative signals and zero-shot cold start.</strong></strong><br>
+  
+<p class="mb-2">Under a traditional setup, a new item without interaction history is an island. With Semantic IDs, a new item only needs to go through quantization to land under an existing prefix $[c_1, c_2]$. The model has already learned which users prefer that prefix, so the collaborative signal accumulated there transfers to the new item, and the model can recommend it reasonably well even before it receives a single click.</p>
+  
+</li>
+<li>
+  <strong><strong>Prefix pruning with a trie and efficient retrieval.</strong></strong><br>
+  
+<p class="mb-2">Generative recommendation produces candidates through <span class="note-information" tabindex="0" data-information-concept="concept.autoregressive" data-information-lang="en">autoregressive<span class="note-information-tooltip" aria-hidden="true"></span></span> decoding. Coarse-to-fine prefixes turn the search space into a prefix <span class="note-information" tabindex="0" data-information-concept="concept.trie" data-information-lang="en">trie<span class="note-information-tooltip" aria-hidden="true"></span></span>. Decoding the first token already rules out most unrelated regions, and each further step narrows the space, which keeps generation over a catalog of millions of items tractable.</p>
+  
+</li>
+<li>
+  <strong><strong>Graceful degradation.</strong></strong><br>
+  
+<p class="mb-2">The model is often unsure about the finest details. With atomic IDs, a single wrong digit can turn a laptop into a dress. Semantic IDs are more forgiving: even if the last token $c_3$ is wrong, a correct prefix $[c_1, c_2]$ still places the generated code near the intended item, so the recommendation stays among closely related items instead of failing badly.</p>
+  
+</li>
+</ol>
+
+<div id="what-makes-zero-shot-cold-start-possible-whether-the-representation-carries-meaning" class="note-callout mb-3"><h4 class="mb-2"><i class="fa-solid fa-lightbulb me-2"></i>What Makes Zero-Shot Cold Start Possible: Whether the Representation Carries Meaning</h4><p class="mb-3">Whether zero-shot <span class="note-information" tabindex="0" data-information-concept="concept.cold_start" data-information-lang="en">cold start<span class="note-information-tooltip" aria-hidden="true"></span></span> can be mitigated depends on <strong>whether the item representation carries meaning</strong>:</p>
+
+<ul class="note-list">
+<li><strong>Without meaning.</strong> A new item is just an arbitrary number with no relationship to known items. The ID tells the model nothing, so the system has to wait for real interaction data to accumulate.</li>
+<li><strong>With meaning.</strong> As long as the representation reflects real content, such as text, image features or semantic codes, similar items share structure. Even for an item it has never seen, the model can connect it to what it knows about related items.</li>
+</ul>
+
+<p class="mb-3">In short, the ability to handle cold start does not come from a particular model architecture. It comes from <strong>the presence of meaning, which lets the model transfer and generalize across items</strong>. Semantic IDs inherit this property because they are built on a continuous semantic space.</p></div>
+</section>
+
+<section id="two-families-of-semantic-id-tokenizers" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Two Families of Semantic ID Tokenizers</h3>
+
+<p class="mb-3">The next question is how to actually turn a continuous item embedding into this coarse-to-fine sequence of discrete tokens.</p>
+
+<p class="mb-3">In NLP, the component that turns text into model tokens is called a tokenizer. By analogy, the component in a generative recommender that turns an item embedding into a discrete token sequence is called an <strong>item tokenizer</strong>.</p>
+
+<p class="mb-3">Item tokenizers in industry fall into two main families:</p>
+
+<ol class="mb-3">
+<li class="mb-2">
+  <strong><strong>End-to-end neural quantization (RQ-VAE).</strong></strong><br>
+  
+<p class="mb-2">Represented by Google's TIGER (NeurIPS 2023). An encoder, a stack of codebooks and a decoder are trained together, with the straight-through estimator (STE) passing gradients through the quantization step, so the network learns a latent space suited to the downstream recommendation task. This family tends to deliver the strongest results but is more expensive to train and harder to tune. For details, see <a class="note-content-link" data-canonical-id="rq-vae-semantic-id-tokenizer-in-generative-recommendation" href="../rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html">Building a Semantic ID Tokenizer with RQ-VAE<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-architecture.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">用 RQ-VAE 建構 Semantic ID Tokenizer：殘差量化、STE 與碼本崩塌</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">介紹 RQ-VAE（Residual Quantized VAE）作為 Semantic ID Tokenizer 的機制：從 VQ-VAE 到 RQ-VAE 的多層殘差量化、用 Straight-Through Estimator (STE) 處理量化的不可微、各項損失函數與 Depth Dropout 的作用、碼本崩塌 (Codebook Collapse) 的成因與常見對策，以及 Google TIGER 如何使用它。</span></span></span></a>.</p>
+  
+</li>
+<li>
+  <strong><strong>Two-stage geometric quantization (RQ-Kmeans).</strong></strong><br>
+  
+<p class="mb-2">Represented by Kuaishou's OneRec (2025) and similar systems. An existing model, such as a two-tower DSSM, first produces high-quality static item embeddings, which are then split into token sequences by purely geometric residual <span class="note-information" tabindex="0" aria-label="K-means is a centroid-based clustering algorithm. It represents each cluster by a center and repeatedly assigns every point to its nearest center, so it works best when each cluster can be summarized well by a single central point.">K-means<span class="note-information-tooltip" aria-hidden="true">K-means is a centroid-based clustering algorithm. It represents each cluster by a center and repeatedly assigns every point to its nearest center, so it works best when each cluster can be summarized well by a single central point.</span></span>. This avoids the difficult gradient optimization, and it is stable and cost-effective in production. For details, see <a class="note-content-link" data-canonical-id="rq-kmeans-semantic-id-tokenizer-in-generative-recommendation" href="../rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html">Building a Semantic ID Tokenizer with RQ-Kmeans<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">用 RQ-Kmeans 建構 Semantic ID Tokenizer：殘差量化、死碼與解碼取捨</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">從連續向量的離散化出發，說明推薦系統如何從 K-means 聚類、向量量化 (VQ) 演進到 RQ-Kmeans 以控制物品詞彙表的規模，並介紹殘差量化的幾何直覺、死碼問題與正則化殘差量化 (RRQ)、貪婪解碼與束搜尋的取捨，以及 RQ-Kmeans 在生成式推薦中的工作流。</span></span></span></a>.</p>
+  
+</li>
+</ol>
+</section>
+
+<section id="practical-issues-and-engineering-trade-offs" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Practical Issues and Engineering Trade-offs</h3>
+
+<p class="mb-3">A tokenizer can turn items into clean Semantic IDs, but deploying them in a real online system still raises several hard problems and forces some compromises.</p>
+
+<h4 id="issue-1-invalid-ids-and-hallucination" class="mb-2">Issue 1: Invalid IDs and Hallucination</h4>
+
+<p class="mb-3">A large model generates autoregressively from a probability distribution, so at inference time it can produce a Semantic ID that does not correspond to any real item: a sequence that plausibly describes an "Apple-brand microwave," for example, when no such product exists.</p>
+
+<p class="mb-3">To avoid recommending nothing, inference uses <strong>constrained decoding</strong>. A trie holding every valid item token sequence is built in advance. At each decoding step, the model's options are checked against the trie and invalid tokens are filtered out with a <span class="note-information" tabindex="0" aria-label="A mask is a tensor that blocks out certain positions. In attention, autoregressive generation and constrained decoding, it sets the logits of invalid or disallowed options to a very small value (such as -inf) so that the model ignores invalid tokens, cannot look at future positions, or stays on valid generation paths.">mask<span class="note-information-tooltip" aria-hidden="true">A mask is a tensor that blocks out certain positions. In attention, autoregressive generation and constrained decoding, it sets the logits of invalid or disallowed options to a very small value (such as -inf) so that the model ignores invalid tokens, cannot look at future positions, or stays on valid generation paths.</span></span>, so generation can only follow paths that lead to real items.</p>
+
+<h4 id="issue-2-autoregressive-decoding-latency" class="mb-2">Issue 2: Autoregressive Decoding Latency</h4>
+
+<p class="mb-3">A traditional ranking model scores every candidate in a single <span class="note-information" tabindex="0" data-information-concept="concept.forward_pass" data-information-lang="en">forward pass<span class="note-information-tooltip" aria-hidden="true"></span></span>. A generative model has to run $M$ sequential decoding steps for each item it recommends.</p>
+
+<p class="mb-3">If the token sequence is long, latency grows with it, which is a serious problem in a latency-sensitive online system. The number of Semantic ID levels therefore cannot grow without limit; it has to balance how finely items are described against how long decoding takes online.</p>
+
+<h4 id="issue-3-id-collisions-and-ranking-items-that-share-a-code" class="mb-2">Issue 3: ID Collisions and Ranking Items That Share a Code</h4>
+
+<p class="mb-3">To keep decoding latency down, Semantic IDs are usually limited to three levels or fewer. Quantizing a high-dimensional continuous vector into so few discrete tokens inevitably loses information. The direct consequence is that several very similar items, such as one garment in different colors or accessories with nearly identical specifications, map to <strong>exactly the same Semantic ID</strong>. This is an ID collision.</p>
+
+<p class="mb-3">When the model predicts such a Semantic ID, it is really retrieving a set of candidate items. The hard part is that the probability of the Semantic ID alone gives the model little basis for ordering the dozens of near-identical items inside that set.</p>
+
+<p class="mb-3">Two practical compromises are common:</p>
+
+<ol class="mb-3">
+<li><strong>Option A: add a lightweight ranker.</strong> Keep a pure three-level Semantic ID as the generation target. Once a set of items has been retrieved, leave the within-set ordering to a lightweight downstream ranker or to business rules.</li>
+<li><strong>Option B: three semantic tokens plus one product-ID token.</strong> The first three tokens provide semantic generalization and narrow down the region, and the last token gives up semantics and maps directly to the item's product ID (PID), so the model itself can tell colliding items apart.</li>
+</ol>
+
+<blockquote class="blockquote mb-3">⚠️ <strong>Engineering caveat</strong>: Option B solves precision at the end of the sequence, but mixing two very different kinds of representation in one decoding pass (semantic prediction and exact ID lookup) makes the constrained-decoding rules much more complicated and adds a lot of maintenance burden.</blockquote>
+</section>
+
+<section id="conclusion" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Conclusion</h3>
+
+<p class="mb-3">Moving from meaningless serial numbers to token sequences that describe items from coarse to fine is more than an engineering optimization: Semantic IDs are what allow recommender systems to adopt generative modeling at all.</p>
+
+<p class="mb-3">They bridge the gap between language models and huge item catalogs, letting a recommender represent and generate items much as a language model represents and generates text. Constrained decoding, decoding latency and collisions are still open engineering problems, but as tokenizers and inference infrastructure keep improving, this shift in how recommender systems are built is only beginning.</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li><strong>The core abstraction:</strong> Semantic IDs are what make generative recommendation deployable. They replace the atomic ID, a meaningless lookup key, with a short sequence of discrete tokens that approximates each item's semantic vector from coarse to fine and that a large model can read and generate.</li>
+<li><strong>Two bottlenecks removed:</strong> Codebook reuse keeps the output vocabulary small, which avoids the softmax memory blow-up, and the semantic structure gives the model zero-shot generalization for new items, which addresses cold start under constant catalog churn.</li>
+<li><strong>Choosing a tokenizer:</strong> RQ-VAE, a neural quantizer trained end to end, tends to give the best results. RQ-Kmeans, geometric quantization on top of existing embeddings such as a two-tower model, is the practical choice when stability, cost and reuse of existing assets matter more.</li>
+<li><strong>Deployment trade-offs:</strong> Constrained decoding with a trie prevents invalid IDs; latency limits the number of levels; and ID collisions are handled either by a lightweight downstream ranker or by a "three semantic tokens plus one product ID" scheme.</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/site/01-bootstrap.js?v=2026-11-17-1"></script>
+<script src="../../core/site/02-language.js?v=2026-11-17-1"></script>
+<script src="../../core/site/03-cipher-mode.js?v=2026-11-17-1"></script>
+<script src="../../core/site/04-assistants.js?v=2026-11-17-1"></script>
+<script src="../../core/site/05-cipher-shortcut.js?v=2026-11-17-1"></script>
+<script src="../../core/site/06-theme.js?v=2026-11-17-1"></script>
+<script src="../../core/site/07-settings.js?v=2026-11-17-1"></script>
+<script src="../../core/site/08-page-context.js?v=2026-11-17-1"></script>
+<script src="../../core/site/09-navigation.js?v=2026-11-17-1"></script>
+<script src="../../core/site/10-ambient.js?v=2026-11-17-1"></script>
+<script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
+<script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

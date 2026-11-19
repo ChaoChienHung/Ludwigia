@@ -1,6 +1,6 @@
 <meta>
-Title: 端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer
-Summary: 本文深入解析 RQ-VAE（Residual Quantized VAE）在生成式推薦與檢索中的核心機制，包含從 VQ-VAE 到 RQ-VAE 的階層式離散化演進、Straight-Through Estimator (STE) 梯度補正、Depth Dropout 語意分層約束，以及碼本崩塌 (Codebook Collapse) 的工程防禦與 TIGER 模型落地實踐。
+Title: 用 RQ-VAE 建構 Semantic ID Tokenizer：殘差量化、STE 與碼本崩塌
+Summary: 介紹 RQ-VAE（Residual Quantized VAE）作為 Semantic ID Tokenizer 的機制：從 VQ-VAE 到 RQ-VAE 的多層殘差量化、用 Straight-Through Estimator (STE) 處理量化的不可微、各項損失函數與 Depth Dropout 的作用、碼本崩塌 (Codebook Collapse) 的成因與常見對策，以及 Google TIGER 如何使用它。
 Slug: rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw
 Output: notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html
 CanonicalId: rq-vae-semantic-id-tokenizer-in-generative-recommendation
@@ -11,7 +11,7 @@ Lang: zh-tw
 Tags: recommendation systems, generative retrieval, rq-vae, vq-vae, deep learning, semantic id
 Status: published
 Published: 2026-08-02
-LastModified: 2026-08-17
+LastModified: 2026-11-20
 </meta>
 
 <draft>
@@ -43,7 +43,7 @@ LastModified: 2026-08-17
 </draft>
 
 
-# 端到端離散化與生成式檢索：RQ-VAE 如何打造 Semantic ID Tokenizer
+# 用 RQ-VAE 建構 Semantic ID Tokenizer：殘差量化、STE 與碼本崩塌
 
 <image>
 src: ./rq-vae-architecture.png
@@ -51,7 +51,7 @@ alt: RQ-VAE (Residual Vector Quantized-Variational Autoencoder) 多階段殘差�
 caption: RQ-VAE 架構與多階段殘差量化 (Residual Quantization) 運作流程示意圖
 </image>
 
-在<content-link canonical="semantic-id-in-generative-recommendation">生成式推薦的基石：Semantic ID 如何破解海量商品 Token 化難題</content-link>中，我們確立了 Semantic ID（SID）的核心價值。為了解決傳統 Atomic ID 所引發的 Softmax 算力瓶頸與參數膨脹，我們必須將海量商品映射為大語言模型（LLM）易於表徵與生成的「長度為 $M$ 的階層式語意 Token 序列」。
+在<content-link canonical="semantic-id-in-generative-recommendation">生成式推薦中的 Semantic ID：商品 Token 化的設計與取捨</content-link>中，我們確立了 Semantic ID（SID）的核心價值。為了解決傳統 Atomic ID 所引發的 Softmax 算力瓶頸與參數膨脹，我們必須將海量商品映射為大語言模型（LLM）易於表徵與生成的「長度為 $M$ 的階層式語意 Token 序列」。
 
 提及「將語意離散化為 Token」，自然語言處理（NLP）領域成熟的 <information context="Byte-Pair Encoding（BPE）是一種常用的子詞（subword）切分演算法。它透過統計頻次反覆合併出現頻率最高的相鄰字元或位元組對，將常見字詞組合縮減為離散 Token，以兼顧字典容量與未登錄詞處理。">BPE</information> 等 <information concept="concept.tokenizer">Tokenizer</information> 往往是大家最先想到的標準範式。然而，推薦系統面對的標的截然不同。商品本質上是由文字描述、視覺圖像、層級類別與多維中繼資料交織而成的「<information context="多模態（Multimodal）指同時融合並理解文本、圖像、音訊、層級類別與多維中繼資料等多種不同形態資料的綜合資料類型與模型架構。">多模態</information>實體」，我們顯然無法直接套用文字為主的 Tokenizer。
 
@@ -59,7 +59,7 @@ caption: RQ-VAE 架構與多階段殘差量化 (Residual Quantization) 運作流
 
 本文將深入探討 RQ-VAE 的底層數學原理與工程設計，揭示其如何化解碼本維度災難、跨越不可微的數學鴻溝，並直擊實務落地時最棘手的「碼本崩塌」難題。
 
-## 核心運作方式：從 AutoEncoder 到殘差量化
+## 運作方式：從 AutoEncoder 到殘差量化
 
 <block>
 title: 核心概念 Glossary：Codeword 與 Codebook
@@ -108,7 +108,7 @@ content:
 RQ-VAE 僅依靠 $256 \times 256 \times 256 \times 256$ 這 4 層極小的碼本就能組合出超過 42 億種獨特的表徵空間。這徹底突破了單碼本的硬體限制，使我們能以極低的記憶體開銷，為海量商品精準賦碼。
 </block>
 
-## 跨越不可微的鴻溝：STE 與損失函數
+## 處理量化的不可微：STE 與損失函數
 
 掌握 RQ-VAE 的結構與殘差量化機制後，我們接著拆解模型的訓練核心——看看這些元件如何協同運作，並實現端到端的聯合優化。
 
@@ -122,7 +122,7 @@ $$\mathcal{L}_{\text{recon}}(x, \hat{x})$$
 
 為了解開這個數學死局，RQ-VAE 採用了一個直觀且有效的技巧——**Straight-Through Estimator (STE)**。
 
-### STE 的梯度直通策略
+### STE 的梯度直通
 
 STE 的運作邏輯相當直接：**<information concept="concept.forward_pass">前向傳播</information>維持離散運算，反向傳播則直接透傳梯度**。
 
@@ -136,7 +136,7 @@ $$\nabla_{z_e} \approx \nabla_{z_q}$$
 
 2. **Encoder 特徵空間不穩定：** Encoder 雖然獲得了梯度，但它可能會過度改變特徵空間。若 Encoder 變動過於劇烈，即便碼本有在更新，也極可能無法跟上 Encoder 的位移速度。這會導致兩者距離逐漸擴大，最終使量化誤差徹底發散。
 
-### 約束特徵空間的專屬損失函數
+### 損失函數的組成
 
 為了解決 STE 帶來的這兩大副作用，我們必須在基礎的重構損失之外，額外引入兩個與碼本高度相關的專屬損失函數，為特徵空間建立邊界約束，強迫連續向量與離散碼本「雙向對齊」。
 
@@ -168,7 +168,7 @@ content:
      這引發了非線性優化上的**動態追趕效應（The Moving Target Effect）**。一旦 Codebook 1 微幅調整更接近 $z$，殘差 $r_1$ 的分佈就會全面改變。這意味著 Codebook 2 始終在擬合一個動態目標，其前一輪學習到的特徵分佈可能瞬間失效。這種主從關係賦予了 Codebook 1 絕對的宏觀主導權，而後續碼本只能扮演填補殘差的輔助角色。
 </block>
 
-## 落地深水區：解剖與防禦「碼本崩塌 (Codebook Collapse)」
+## 碼本崩塌 (Codebook Collapse) 的成因與對策
 
 即便數學推導看似嚴密，但當工程師將 RQ-VAE 投入實際訓練時，依然會遭遇向量量化領域最棘手的難題：**碼本崩塌 (Codebook Collapse)**。
 
@@ -186,7 +186,7 @@ content:
 
 3. **死碼重置 (Dead Code Revival)：** 這是最後且最直接的保底機制。系統會持續監控每一個 Codeword 的命中頻率。一旦發現某個碼在設定的 Epoch 內活躍度為零，系統便會強行將其覆蓋到當前 Batch 中某個高度活躍的 Encoder 特徵點附近，並加入微小的雜訊干擾。這等同於強制喚醒閒置的參數，使其重新參與特徵空間的映射。
 
-## 業界標竿：Google TIGER 架構剖析
+## 案例：Google TIGER
 
 理解了核心原理後，業界又是如何將其落地為高效的推薦系統呢？Google 在其經典論文 [Recommender Systems with Generative Retrieval](https://arxiv.org/pdf/2305.05065) 中，清晰展示了生成式推薦模型與 RQ-VAE 結合的標準範式。整個架構劃分為兩大核心階段：
 
