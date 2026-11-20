@@ -4,7 +4,7 @@
 
 ## 概況
 
-- 截至：2026-11-20。為履歷連結整理門面：首頁標題改為「Ludwig Chao — Machine Learning Engineer · Research Engineer」，hero 加專業方向一行，補 `meta description` / `og:title`；手寫頁面標題收斂到 `i18n/*.json` 的 `title`，由 `cli.py build-pages` 生成 `<title>` 與 `og:title`。推薦系統系列五篇去宣傳腔、Semantic ID 篇改寫分類樹類比並新增英文版（drafting）；`ARTICLES.md` 新增 DCGR GMV 決策鏈與 SID-level MTP 兩篇 backlog。
+- 截至：2026-11-20。為履歷連結整理門面：首頁標題改為「Ludwig Chao — Machine Learning Engineer · Research Engineer」，補 `meta description` / `og:title`；手寫頁面標題收斂到 `i18n/*.json` 的 `title`，由 `cli.py build-pages` 生成 `<title>` 與 `og:title`。推薦系統系列五篇去宣傳腔、Semantic ID 篇改寫分類樹類比並新增英文版（drafting）；`ARTICLES.md` 新增 DCGR GMV 決策鏈與 SID-level MTP 兩篇 backlog。
 - 最近驗證：`python3 cli.py test` 通過 75 項；`build-pages --check` 通過；本機預覽確認首頁標題、hero 與 meta。
 - 本輪停點：以上已 commit 並推上 main；待作者驗收項目見 `REVIEW.md`。
 

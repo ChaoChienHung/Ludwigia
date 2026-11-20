@@ -13,8 +13,8 @@
     - Review 重點：新標題與小標題是否合意；Semantic ID 篇「為什麼不是分類樹：由粗到細的殘差逼近」一節的說法與比喻是否符合你的理解（尤其「c1 往往和大類有對應、後面幾層不宜解讀成具體屬性」的分寸）；英文版會以這版為底翻譯。
 
 - [ ] 首頁標題改平實，頁面標題收斂為單一來源
-    - 已完成：首頁標題改為「Ludwig Chao — Machine Learning Engineer · Research Engineer」（三語）；手寫頁面的標題只維護在 `i18n/*.json` 的 `title`，`cli.py build-pages` 由 `title.en` 生成 HTML 靜態 `<title>`，`--check` 與測試守門（`pages/projects.html` 因此由 `Projects — Ludwig Portfolio` 對齊為 `Projects — Ludwig`）；修正 `i18n/settings.json` 的 JSON 語法錯誤（Settings 頁原本整份翻譯載入失敗）；新增 i18n JSON 有效性與頁面對照表一致性兩項測試；首頁 hero 在原本那句下面加一行專業方向（三語，`.hero-focus`），head 補 `meta description` 與 `og:title`（`og:title` 也由 `build-pages` 跟著 `title.en` 生成）；移除 `core/i18n.js` 內殘留舊標題的 `home` fallback bundle，並更新首頁 `i18n.js?v=`；AGENTS、README、tech-stack、language-guide 同步。`cli.py test` 通過。
-    - Review 重點：hero 新增那行（Machine Learning Engineer · Research Engineer）；部署後用 LinkedIn Post Inspector 看預覽卡片；瀏覽器分頁標題在三種語言下是否正確；Settings 頁切到中文時，選項是否已翻譯。
+    - 已完成：首頁標題改為「Ludwig Chao — Machine Learning Engineer · Research Engineer」（三語）；手寫頁面的標題只維護在 `i18n/*.json` 的 `title`，`cli.py build-pages` 由 `title.en` 生成 HTML 靜態 `<title>`，`--check` 與測試守門（`pages/projects.html` 因此由 `Projects — Ludwig Portfolio` 對齊為 `Projects — Ludwig`）；修正 `i18n/settings.json` 的 JSON 語法錯誤（Settings 頁原本整份翻譯載入失敗）；新增 i18n JSON 有效性與頁面對照表一致性兩項測試；首頁 head 補 `meta description` 與 `og:title`（`og:title` 也由 `build-pages` 跟著 `title.en` 生成）；移除 `core/i18n.js` 內殘留舊標題的 `home` fallback bundle，並更新首頁 `i18n.js?v=`；AGENTS、README、tech-stack、language-guide 同步。`cli.py test` 通過。
+    - Review 重點：部署後用 LinkedIn Post Inspector 看預覽卡片；瀏覽器分頁標題在三種語言下是否正確；Settings 頁切到中文時，選項是否已翻譯。
 
 - [ ] 引入 lennoxsaint/Skills 的 Council 與 Ship-ready
     - 已完成：新增 `skills/council-review/`（上游 council，含 4 份 references）與 `skills/ship-ready/`，依既有規則改名並更新互相引用（`council-review`、`verify-and-complete`、`COUNCIL_REVIEW_TASTE_FILE`）；加入 Toolkit 並保留上游 reference；新增 `skills/NOTICE-lennoxsaint-skills.md` 附上游 MIT 授權聲明（同時涵蓋先前引入的 11 個）。既有 11 個與上游最新版（11-18）一致，無需更新。Toolkit 頁面確認可展開、分頁正常。
