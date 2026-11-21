@@ -9,11 +9,11 @@
 
 | 功能／工作範圍 | 主要資料夾 | 從這裡開始讀 |
 | --- | --- | --- |
-| 內容撰寫、生成、翻譯與引用 | `notes/`、`writing/`、`canvas/`、`tools/`、`search/` | [specs/parser-spec.md](specs/parser-spec.md)、[specs/content-metadata-spec.md](specs/content-metadata-spec.md)；inline 與引用細節見同層專題 spec。 |
+| 內容撰寫、生成、翻譯與引用 | `notes/`、`writing/`、`canvas/`、`tools/`、`search/` | [specs/parser-spec.md](specs/parser-spec.md)、[specs/content-metadata-spec.md](specs/content-metadata-spec.md)；inline 與引用細節見同層專題 spec；寫作心法與文章骨架見 [author/writing-notes.md](author/writing-notes.md)。 |
 | 搜尋、tag 與 Garden 探索 | `search/`、`core/`、`pages/`、`tag/`、`portals/realms/garden/` | [tech/search-and-recommendation.md](tech/search-and-recommendation.md)、[specs/system-spec.md](specs/system-spec.md)。 |
 | 首頁 Timeline、Skills、Credentials | `data/`、`assets/` | [guide/data-authoring-guide.md](guide/data-authoring-guide.md)；契約見 [specs/timeline-design-spec.md](specs/timeline-design-spec.md)、[specs/skills-credentials-spec.md](specs/skills-credentials-spec.md)。 |
 | 主站外觀、設定、導覽與助手 | `core/`、`assets/`、`i18n/`、`pages/` | [guide/theme-palette-guide.md](guide/theme-palette-guide.md)、[specs/layout-spec.md](specs/layout-spec.md)；助手入口見 [specs/copilot-entry-spec.md](specs/copilot-entry-spec.md)。 |
-| Portals、Realms 與 World | `portals/` | [specs/realm-spec.md](specs/realm-spec.md)、[specs/isometric-world-spec.md](specs/isometric-world-spec.md)；效能現況見 [tech/portals-world-performance.md](tech/portals-world-performance.md)。 |
+| Portals、Realms 與 Pensieve | `portals/` | [specs/realm-spec.md](specs/realm-spec.md)、[specs/isometric-world-spec.md](specs/isometric-world-spec.md)；Pensieve 簡介見 `portals/realms/pensieve/README.md`；效能現況見 [tech/portals-world-performance.md](tech/portals-world-performance.md)。 |
 | Labs、Toolkit 與可重用 Skills | `labs/`、`data/Toolkit/`、`skills/` | [specs/system-spec.md](specs/system-spec.md) 的 Toolkit 契約與 [design/design.md](design/design.md) 的入口分工。 |
 | 建置、測試與交付 | `tools/`、`tests/`、各子系統 source | [tech/tech-stack.md](tech/tech-stack.md)、[rules/checklist.md](rules/checklist.md)、[rules/guardrails.md](rules/guardrails.md)。 |
 | Agent 工作交接與任務追蹤 | repo root、`data/Toolkit/` | `AGENTS.md` 管長期規則；`HANDOFF.md` 管最近停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成待作者驗收。Toolkit 範本在 `data/Toolkit/resources/`。 |

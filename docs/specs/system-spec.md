@@ -385,7 +385,7 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 `portals/`（子系統與已完成世界統合區）：
 
 - 放 Aetheria Portals 傳送門專用 UI、原始碼（`portals/src/`），以及 build output（`portals/index.html` 與 `portals/assets/`）
-- 作為全景多維探索樞紐與已完成世界之統整集結區，原生整合跨維度躍遷至 `portals/realms/garden/`（Digital Garden）與 `portals/realms/world/`（Ludwigia World 2.5D）
+- 作為全景多維探索樞紐與已完成世界之統整集結區，原生整合跨維度躍遷至 `portals/realms/garden/`（Digital Garden）與 `portals/realms/pensieve/`（Pensieve 儲思盆 2.5D）
 - 採純前端 Web Audio API 與 Canvas 繪製，無外部伺服器依賴，靜態開箱即用
 
 `portals/realms/garden/`（子系統）：
@@ -394,10 +394,10 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 - 但仍只讀 `window.SITE_SEARCH_INDEX`，不自己產生第二份索引
 - `portals/realms/garden/index.html` 的 floral runtime 與主站 `core/site/`（原 `core/script.js`）的 theme runtime 屬不同責任邊界；預設允許各自演進，不強制共享 ambient effect 實作
 
-`portals/realms/world/`（子系統）：
+`portals/realms/pensieve/`（子系統）：
 
-- 放 Ludwigia World 2.5D 等軸測生活世界之 Canvas 引擎、角色名冊與多語社交對話資料（`portals/realms/world/data/`）
-- 社交內容以 `portals/realms/world/data/characters.json` 為唯一來源，由 `tools/build_world_data.py` 再現性生成
+- 放 Pensieve（儲思盆）2.5D 等軸測記憶空間之 Canvas 引擎、角色名冊與多語社交對話資料（`portals/realms/pensieve/data/`）
+- 社交內容以 `portals/realms/pensieve/data/characters.json` 為唯一來源，由 `tools/build_pensieve_data.py` 再現性生成
 - 支援實時光影、尋路導航與全站 Design Tokens 色盤連動
 
 ## 生成物策略（Deploy Artifacts Whitelist）
@@ -445,7 +445,7 @@ Labs Toolkit 工具庫（`labs/grimoire/index.html`，密語模式顯示 Grimoir
 
 ## CI / Guardrails（合併前自動擋壞）
 
-`portals/realms/world/` 的社交內容以 `portals/realms/world/data/characters.json` 為唯一來源：角色的 `dialogues.user` 是玩家主動對話序列，`dialogues.self` 是環境獨白，頂層 `npcDialogues` 是兩位現有角色的對話序列。三類皆須提供 `zh-TW` 與 `en`；環境排程只在獨白和 NPC 互聊間隨機選擇，缺席時退到另一類，不拿玩家對話冒充獨白。主站與 World 的 palette 基色共用 `assets/css/site/palette-tokens.css`，World 的 surface 差異仍由 `world.css` 管理。
+`portals/realms/pensieve/` 的社交內容以 `portals/realms/pensieve/data/characters.json` 為唯一來源：角色的 `dialogues.user` 是玩家主動對話序列，`dialogues.self` 是環境獨白，頂層 `npcDialogues` 是兩位現有角色的對話序列。三類皆須提供 `zh-TW` 與 `en`；環境排程只在獨白和 NPC 互聊間隨機選擇，缺席時退到另一類，不拿玩家對話冒充獨白。主站與 Pensieve 的 palette 基色共用 `assets/css/site/palette-tokens.css`，Pensieve 的 surface 差異仍由 `world.css` 管理。
 
 核心方向：
 

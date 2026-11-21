@@ -10,7 +10,7 @@
 - **接續工作**：新 Agent 先讀 `HANDOFF.md` 的停點與進行中工作，再用使用者最新指令、`git status --short` 和相關 source 核對；若快照已過期，以現況為準。`TODO.md` 是未完成與長期任務追蹤，`REVIEW.md` 是待作者驗收清單；不能把兩者的未指派事項當作正在續做的工作。
 - **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
 - **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
-- **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；World 資料跑 `python3 cli.py build-world --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
+- **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；Pensieve 資料跑 `python3 cli.py build-pensieve --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
 - **把重複錯誤變成可執行約束**：遇到同類回歸或反覆出現的 review 意見時，先找根因與可重現案例；在本次任務範圍內，優先修正資料流、API 或模組邊界，使錯誤選項難以寫出，再用相鄰測試或檢查命令擋住可機械判定的錯誤。只有無法可靠自動判定、仍需 Agent 判斷的原則才寫進 `AGENTS.md`。不要為每次失誤無止境加一條文字規則，也不要每次都打斷使用者提醒；若修正會擴成大範圍重構，先提出具體重複案例、最小方案與影響，再請使用者決定。
 - **權限與卡住時**：讀檔、局部修改、相關測試及必要的再現性生成屬日常工作。安裝新依賴、刪除資料、推送或發布等動作，先確認任務授權及影響範圍；不確定契約或將跨越既有子系統邊界時，先整理已查到的事實與最小可行方案，再向使用者確認真正缺少的決策。
 - **文檔拒絕盲目局部外掛（全域連貫與邏輯自洽）**：更新或增補任何文檔（尤其是 `README.md`、`AGENTS.md`、`HANDOFF.md` 或各 spec）時，嚴禁只做機械性的「局部外掛拼貼（local attach）」。新增或修改段落後，必須向上與向下通讀相鄰上下文甚至全篇脈絡，檢查前後邏輯是否自洽、語意是否重複矛盾、行文銜接是否自然流暢、整體排版與章節順序是否合理，確保篇章「文字連貫、邏輯自洽、一氣呵成」才算交付完成。
@@ -53,13 +53,13 @@
   - 作者只維護 source JSON，前端 runtime (`about-skills.js` / `about-credentials.js`) 負責載入、正規化、多語切換與 DOM 渲染；不應要求手動維護第二份 HTML 靜態資料
   - `Skills` 必須維持類別分組與頁籤/箭頭控制，確保多個技能面板共用顯示空間，隨技能成長仍能維持空間精簡
   - `Credentials` 必須維持 `Type` 與 `Domain/Category` 雙維度篩選、主視覺展示區、縮圖導覽列與 Modal 燈箱放大檢視能力；視覺元件必須完全繼承全站 Theme 與 Palette Design Tokens
-- 若 `portals/realms/world/`（Ludwigia World 虛擬空間）啟用 source-driven 社交與建築資料（例如 `portals/realms/world/data/characters.json`），必須維持：
-  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `portals/realms/world/data/characters/<id>/character.json` 與 `portals/realms/world/data/interactions/*.json` 為創作真相來源（SSOT），由 `tools/build_world_data.py`（或 `cli.py build-world`）再現性編譯為執行期快取 `portals/realms/world/data/characters.json`；單人對話須區分 `dialogues.user`（玩家主動交談）與 `dialogues.self`（環境獨白），角色互聊只維護在 `interactions/` 的 `npcDialogues`，後兩者可隨機觸發；前端執行期（`characters.js`）負責載入解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
+- 若 `portals/realms/pensieve/`（Pensieve 儲思盆 2.5D 記憶空間）啟用 source-driven 社交與建築資料（例如 `portals/realms/pensieve/data/characters.json`），必須維持：
+  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `portals/realms/pensieve/data/characters/<id>/character.json` 與 `portals/realms/pensieve/data/interactions/*.json` 為創作真相來源（SSOT），由 `tools/build_pensieve_data.py`（或 `cli.py build-pensieve`）再現性編譯為執行期快取 `portals/realms/pensieve/data/characters.json`；單人對話須區分 `dialogues.user`（玩家主動交談）與 `dialogues.self`（環境獨白），角色互聊只維護在 `interactions/` 的 `npcDialogues`，後兩者可隨機觸發；前端執行期（`characters.js`）負責載入解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
   - **鏡頭縮放以視口中心/玩家為軸心（Centered Viewport Zoom Focus）**：鏡頭 `zoom` 縮放與點擊尋路逆投影必須永遠以視口幾何中心（即焦點玩家所在之屏幕中心）為錨定軸心，不得退化為以世界原點 `(ox, oy)` 為縮放中心，確保玩家走入任何遠端分區建築（如三民高中、抖音研發中心）時皆能精準聚焦於室內與角色，杜絕畫面失焦偏移
   - **等軸測牆面剪切與幾何斜度對齊契約（Isometric Wall Projection Contract）**：建築牆面上的黑板、掛鐘、門樑招牌等平面裝飾，必須與所依附的牆面軸向傾角精確匹配：北向與南向橫牆（沿 X 軸）必須使用 `(1, 0.5, 0, 1, 0, 0)` 剪切矩陣；東向與西向縱牆（沿 Y 軸）必須使用 `(1, -0.5, 0, 1, 0, 0)` 剪切矩陣；文字、算式與圖表嚴禁水平裸繪
   - **拓撲深度排序無閉環契約（Cycle-Free Topological Depth Sorting）**：立體建築牆體、門樑、大型家具（如圖書館大型落地書櫃、教室課桌椅群）之包圍盒邊界（Bounding Box）必須嚴格維持前/後景拓撲因果分層（例如後牆 `yMax` 嚴格小於或等於家具 `yMin`），嚴禁在家具背後疊加重疊包圍盒之裝飾，杜絕在人物走動時觸發深度閉環而產生模型閃爍（Flickering / Glitch）或破面消失
   - **可見內容成本契約（Visible-Cost Scaling Contract）**：Portals 與各 Realm 的每幀成本必須跟著「畫面可見內容」成長，不得跟著世界總量成長。深度排序只在螢幕 x 欄位重疊的實體之間建邊，不得退回全量兩兩比對；地形、貼花、崖壁、粒子與靜態實體一律依 `viewRect` 裁剪；主迴圈不得每幀無條件寫 DOM 或 CSS 變數；不可見或透明度為 0 的元素不得常駐 `will-change` 合成層；必須遵守 `prefers-reduced-motion`。細則與量測方式見 `docs/specs/realm-spec.md` §6
-  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`portals/realms/world/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 World 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
+  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`portals/realms/pensieve/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 Pensieve 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
 - `qprompt` 的基本語意若啟用，必須維持：
   - prompt 本體由 `<qprompt>...</qprompt>` 或 `<qprompt/>` 再現性生成
   - 若 placeholder 出現在 `reviewkit` 內，就渲染成該 `reviewkit` 的 prompt pane
@@ -209,8 +209,8 @@
 - 生成物策略：少數生成物屬於部署必需品，必須進版控；其餘一律視為本機/CI 生成物，必須進 `.gitignore`
   - `search/search-index.{json,js}` 必須進版控：它是全站搜尋/瀏覽的資料來源，靜態站必須能直接讀到
   - `portals/realms/garden/floral-assets/` 與 `portals/assets/` 必須進版控：`portals/realms/garden/index.html` 與 `portals/index.html` 直接引用其 build 產物，不提交會導致 Garden 或 Portals 入口不可用（除非自己 build）
-  - `portals/realms/world/data/characters.json` 必須進版控：World 執行期直接讀它；由 `cli.py build-world` 從 `characters/` 與 `interactions/` 再現性編譯
-  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/world/data/characters.json`
+  - `portals/realms/pensieve/data/characters.json` 必須進版控：Pensieve 執行期直接讀它；由 `cli.py build-pensieve` 從 `characters/` 與 `interactions/` 再現性編譯
+  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/pensieve/data/characters.json`
   - 其它生成物（必須 ignore）例：`portals/realms/garden/_floral_dist/`
 
 ## 文件一致性與導覽維護

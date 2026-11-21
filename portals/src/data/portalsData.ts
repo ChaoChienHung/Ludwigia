@@ -28,9 +28,9 @@ export const PORTALS_DATA: PortalItem[] = [
   {
     id: 'portal-floating-megalith',
     name: { 'zh-Hant': '浮島石環', 'zh-Hans': '浮岛石环', en: 'Floating Stone Ring' },
-    destination: { 'zh-Hant': 'Ludwigia World', 'zh-Hans': 'Ludwigia World', en: 'Ludwigia World' },
-    targetUrl: './realms/world/index.html',
-    previewImage: './realms/world/preview.webp',
+    destination: { 'zh-Hant': '儲思盆 · Pensieve', 'zh-Hans': '冥想盆 · Pensieve', en: 'Pensieve' },
+    targetUrl: './realms/pensieve/index.html',
+    previewImage: './realms/pensieve/preview.webp',
     x: 980,
     yPercent: 22,
     width: 270,

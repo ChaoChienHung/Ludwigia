@@ -10,7 +10,7 @@ Ludwigia 將探索性頁面依「成熟度」與「互動型態」清楚劃分�
 
 | 樞紐 | 目錄位置 | 狀態定位 | 代表範例 |
 | :--- | :--- | :--- | :--- |
-| **Portals (Realms)** | `portals/realms/<realm-id>/` | **已完成、穩定、可長期體驗**的沉浸式互動世界 | `garden`（數位花園）、`world`（2.5D 生活世界） |
+| **Portals (Realms)** | `portals/realms/<realm-id>/` | **已完成、穩定、可長期體驗**的沉浸式互動世界 | `garden`（數位花園）、`pensieve`（2.5D 儲思盆記憶空間） |
 | **Labs** | `labs/<prototype-id>/` | **實驗中、演化中、輕量驗證**的原型展示 | `shooting-mode`、`massive-multiplayer-laser-tag`、`question-bank` |
 
 每個 Realm 皆為一個獨立、自包含（Self-contained）的子系統，擁有自己的視圖渲染邏輯、資產與專屬測試。
@@ -46,7 +46,7 @@ portals/realms/<realm-id>/
 ```
 tests/test_misc_data.py          (根目錄聚合器：透過 importlib 自動掃描發現)
    │
-   ├── 掃描 ──> portals/realms/world/tests/test_world_data.py
+   ├── 掃描 ──> portals/realms/pensieve/tests/test_pensieve_data.py
    └── 掃描 ──> portals/realms/garden/tests/test_garden_data.py
 ```
 
@@ -140,9 +140,9 @@ python3 cli.py build-portals
 
 Portals 與 World 都是常駐動畫頁面。我們希望之後加入更多 Realm、建築與角色時，每幀成本只跟「畫面上看得到的東西」成正比，而不是跟世界總量成正比。以下規則適用於所有 Realm，World 與 Portals 是目前的參考實作。
 
-### 6.1 Ludwigia World（canvas 等軸測引擎）
+### 6.1 Pensieve 儲思盆（canvas 等軸測引擎）
 
-- **深度排序不得退化為 O(n²)**：`sortIsometricEntities()`（`portals/realms/world/js/engine.js`）只在「螢幕 x 欄位重疊」的實體之間建立遮擋邊。等軸測投影的螢幕 x 為 `(gx - gy) · TW/2`，與高度無關；兩個 footprint 的 `[xMin − yMax, xMax − yMin]` 區間不相交時，畫面上不可能重疊，也就不需要排序邊。實作採「依左界排序＋掃描線」，ready queue 使用以 `(baseDepth, idx)` 為鍵的 binary heap。`isBehind()` 的家具／角色層級、高度判斷、前後景因果規則，以及以 `baseDepth` 打破閉環的回復策略都維持不變（無閉環拓撲深度排序契約）。`SORT_COLUMN_PAD`（1.5 tile）保留給屋簷、招牌、名牌等水平外溢的繪製。
+- **深度排序不得退化為 O(n²)**：`sortIsometricEntities()`（`portals/realms/pensieve/js/engine.js`）只在「螢幕 x 欄位重疊」的實體之間建立遮擋邊。等軸測投影的螢幕 x 為 `(gx - gy) · TW/2`，與高度無關；兩個 footprint 的 `[xMin − yMax, xMax − yMin]` 區間不相交時，畫面上不可能重疊，也就不需要排序邊。實作採「依左界排序＋掃描線」，ready queue 使用以 `(baseDepth, idx)` 為鍵的 binary heap。`isBehind()` 的家具／角色層級、高度判斷、前後景因果規則，以及以 `baseDepth` 打破閉環的回復策略都維持不變（無閉環拓撲深度排序契約）。`SORT_COLUMN_PAD`（1.5 tile）保留給屋簷、招牌、名牌等水平外溢的繪製。
 - **靜態地形只分類一次**：`buildTerrainTable()` 在第一次繪製時，把每格的顏色、所屬室內區（供 cutaway 淡化）與裝飾旗標寫入 typed array。之後每幀只走訪視口反投影出的格子範圍，並依「透明度群組 × 顏色」合併成少量 path 一次 fill，不再每格 `save / fill / restore`。新增地形種類時，改 `classifyTerrainTile()` 即可，不要回到每幀逐格判斷。
 - **一律做視口裁剪**：主迴圈每幀算一次 `world.viewRect`（縮放前的螢幕座標），地形、地面貼花（TikTok 標誌、心靈星球、籃球場線）、浮島崖壁與雲海、靜態實體、粒子都用它裁剪。靜態實體以 footprint 的投影外框判斷可見，不再用中點判斷，避免長牆端點在畫面內卻整面消失。新增大型貼花或沿地圖周邊繪製的效果時，必須先檢查 `isGroundRectVisible()` 或 `viewRect`。
 - **每幀不得無條件寫 DOM**：HUD 文字一律經 `setTextIfChanged()` / `setHtmlIfChanged()` 寫入；CSS 變數（例如 abyss halo）只在數值改變時才寫。每幀 `innerHTML` 或 `style.setProperty` 會讓瀏覽器每幀重算樣式與版面。

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and bundle Ludwigia World modular characters and interactions data."""
+"""Build and bundle Pensieve (儲思盆) modular characters and interactions data."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "portals" / "realms" / "world" / "data"
+DATA_DIR = ROOT / "portals" / "realms" / "pensieve" / "data"
 CHARS_DIR = DATA_DIR / "characters"
 INTERACTIONS_DIR = DATA_DIR / "interactions"
 OUTPUT_FILE = DATA_DIR / "characters.json"
@@ -88,7 +88,7 @@ def load_interactions() -> list[dict]:
     return npc_dialogues
 
 
-def compile_world_data() -> str:
+def compile_pensieve_data() -> str:
     characters = load_characters()
     npc_dialogues = load_interactions()
 
@@ -105,7 +105,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=OUTPUT_FILE, help="Custom output path")
     args = parser.parse_args()
 
-    compiled = compile_world_data()
+    compiled = compile_pensieve_data()
 
     if args.check:
         if not args.output.exists():
@@ -113,13 +113,13 @@ def main() -> int:
             return 1
         current = args.output.read_text(encoding="utf-8")
         if current != compiled:
-            print(f"Check failed: {args.output} is out of date. Run 'python3 tools/build_world_data.py' to update.", file=sys.stderr)
+            print(f"Check failed: {args.output} is out of date. Run 'python3 cli.py build-pensieve' to update.", file=sys.stderr)
             return 1
-        print("World data bundle is up to date.")
+        print("Pensieve data bundle is up to date.")
         return 0
 
     args.output.write_text(compiled, encoding="utf-8")
-    print(f"Successfully compiled world data to {args.output}")
+    print(f"Successfully compiled Pensieve data to {args.output}")
     return 0
 
 

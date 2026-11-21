@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Ludwigia World — 數位花園小世界</title>
-  <meta name="site:tags" content="Ludwigia, World, Campus, Isometric, Interactive, Family, Friends, Dorm211, AIStudio">
+  <title>Pensieve（儲思盆）— 記憶與生活片段</title>
+  <meta name="site:tags" content="Ludwigia, Pensieve, 儲思盆, Campus, Isometric, Interactive, Family, Friends, Dorm211, AIStudio">
   <link rel="icon" type="image/svg+xml" href="../../../assets/images/icons/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="../../../assets/images/icons/favicon-32x32.png">
   <link rel="apple-touch-icon" href="../../../assets/images/icons/apple-touch-icon.png">
@@ -45,9 +45,9 @@
       <div class="cipher-lock-icon">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
       </div>
-      <h2>Ludwigia World · 秘密維度</h2>
+      <h2>Pensieve · 儲思盆</h2>
       <p class="cipher-lock-desc">
-        這是一座由彩蛋密語守護的立體數位花園。<br>
+        這是一座由彩蛋密語守護的儲思盆，安放著記憶與生活片段。<br>
         請鍵入通關密語以解鎖次元大門：
       </p>
       <form id="cipher-lock-form" class="cipher-lock-form">
@@ -71,7 +71,7 @@
         <i class="fa-solid fa-arrow-left"></i>
         <span class="brand-text">Portals</span>
       </a>
-      <span class="hud-brand-tag">World</span>
+      <span class="hud-brand-tag">Pensieve</span>
     </div>
 
     <!-- Mood / Time of Day Switcher -->
@@ -165,7 +165,7 @@
   <!-- Top Center Status / Thought Indicator -->
   <div class="hud-layer hud-status-pill">
     <div class="hud-status-dot"></div>
-    <span id="status-text">Ludwigia World • 數位花園小世界</span>
+    <span id="status-text">儲思盆 · 記憶與生活片段</span>
   </div>
 
   <!-- Proximity Dialogue Prompt -->
@@ -226,18 +226,18 @@
       <div class="space-modal-header">
         <div class="space-modal-title">
           <i class="fa-solid fa-house-chimney-user text-accent"></i>
-          <span>歡迎來到屬於我們的世界！</span>
+          <span>歡迎走進 Ludwig 的儲思盆（Pensieve）！</span>
         </div>
       </div>
       <div class="space-modal-body">
-        <p>在這裡，你將走進 Ludwig 的家、男11 211寢室、AI 智慧研究室、典雅藏書閣與中央噴泉花園，與大家相遇交談。</p>
+        <p>這裡安放著跨越不同人生階段的記憶與生活片段——Ludwig 的家、男11 211 寢室、三民高中教室、AI 研究室、藏書閣與職場日常，你可以自由漫步並與大家交談。</p>
         <p style="margin-top: 10px; font-weight: 600;">請告訴我們該怎麼稱呼你？</p>
 
         <form id="form-set-name">
           <input type="text" id="visitor-name-input" class="name-form-input" placeholder="例如：Traveler、訪客或你的名字" maxlength="16" autofocus required>
           <button type="submit" class="btn-primary-action">
             <i class="fa-solid fa-person-walking-arrow-right"></i>
-            <span>進入世界開始探索</span>
+            <span>步入儲思盆開始探索</span>
           </button>
         </form>
       </div>
@@ -250,14 +250,19 @@
       <div class="space-modal-header">
         <div class="space-modal-title">
           <i class="fa-solid fa-book-bookmark text-accent"></i>
-          <span>引用與開源技術致謝（Citations & References）</span>
+          <span>關於儲思盆與開源致謝（About Pensieve & Credits）</span>
         </div>
         <button type="button" class="space-modal-close" aria-label="Close">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <div class="space-modal-body">
-        <p>本虛擬空間之開發由衷借鑑並致謝以下優秀的開源專案與設計理念：</p>
+        <div class="citation-box">
+          <strong>關於 Pensieve（儲思盆）：</strong><br>
+          名稱源自《哈利波特》中的魔法器物 <em>Pensieve</em>（由 <em>pensive</em>「沉思」與 <em>sieve</em>「篩子」合成），用來將腦海裡珍貴的記憶與思緒妥善安放、隨時重訪。這裡把不同人生階段的家園、宿舍、教室、研究室與夥伴折疊在同一座 2.5D 空間中。
+        </div>
+
+        <p style="margin-top: 12px;">本空間之開發亦由衷借鑑並致謝以下優秀的開源專案與設計理念：</p>
 
         <div class="citation-box">
           <strong>主要幾何與 Canvas 架構引用：</strong><br>
@@ -369,7 +374,7 @@
 
         const statusText = document.getElementById('status-text');
         if (statusText) {
-          statusText.textContent = normalized === 'en' ? 'Ludwigia World • Digital Living Sanctuary' : 'Ludwigia World • 數位花園小世界';
+          statusText.textContent = normalized === 'en' ? 'Pensieve · Living Memory Sanctuary' : '儲思盆 · 記憶與生活片段';
         }
 
         const citationLabel = document.getElementById('citation-label');

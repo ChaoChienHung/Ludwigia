@@ -36,9 +36,9 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onResetView }) => {
           <Sprout className="w-[18px] h-[18px]" aria-hidden="true" />
           <span className="hidden md:inline">{UI.garden[lang]}</span>
         </a>
-        <a href="./realms/world/index.html" className="ap-chip" title={UI.goWorld[lang]} aria-label={UI.goWorld[lang]}>
+        <a href="./realms/pensieve/index.html" className="ap-chip" title={UI.goPensieve[lang]} aria-label={UI.goPensieve[lang]}>
           <Globe className="w-[18px] h-[18px]" aria-hidden="true" />
-          <span className="hidden md:inline">{UI.world[lang]}</span>
+          <span className="hidden md:inline">{UI.pensieve[lang]}</span>
         </a>
         <a href="../index.html" className="ap-chip ap-chip--icon" title={UI.goHome[lang]} aria-label={UI.goHome[lang]}>
           <Home className="w-[18px] h-[18px]" aria-hidden="true" />

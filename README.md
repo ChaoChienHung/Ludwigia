@@ -9,7 +9,7 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 - **個人作品與經歷**：首頁展示作品、Timeline、Skills 與 Credentials；Projects 頁提供作品入口。Timeline、Skills 與 Credentials 的資料由各自的 source JSON 維護。
 - **可持續整理的內容**：Notes（知識筆記）、Writing（文章）與 Canvas（視界）以 Markdown 為主要 source，生成可閱讀、可搜尋的靜態頁面；單篇內容支援閱讀模式與 Markdown 複製／下載。
 - **多條內容探索路徑**：全站搜尋支援多標籤篩選；section landing 依內容類型瀏覽；tag detail 提供穩定的標籤頁；Garden 則用花園與 Patch 視角探索同一份索引。
-- **互動境域**：Portals 是通往各個 Realm 的入口，可前往 Digital Garden 與 2.5D 的 Ludwigia World。World 的人物與對話從 source data 生成。
+- **互動境域**：Portals 是通往各個 Realm 的入口，可前往 Digital Garden 與 2.5D 的 Pensieve（儲思盆）。Pensieve 的人物與對話從 source data 生成。
 - **實驗與可重用資源**：Labs 收錄 Shooting Mode、Question Bank 等實驗，以及 Toolkit 工具庫；Toolkit 可依 Template、Guide、Prompt、Skill 的種類和用途篩選。資源展開後的 `Reference` 標明本站原創或外部來源；Ludwig 密語模式會顯示 Grimoire 文案。
 - **個人化介面**：Theme、Palette、語言與 Effects 可在設定中調整；手機使用獨立的底部導覽，內容頁的閱讀操作也有觸控入口。偏好保存在瀏覽器端。
 
@@ -26,7 +26,7 @@ Ludwigia 是結合個人作品集、知識花園與互動探索空間的靜態�
 - **搜尋索引 / SearchCore**：`search/indexer.py` 生成 `search/search-index.{json,js}`，供搜尋與瀏覽入口使用；`core/search-core.js` 是共用的查詢、篩選與連結邏輯，不是另一份索引資料。
 - **Section landing / Tag detail**：`notes/index.html` 等是某一內容類型的列表入口；`tag/index.html` 是可分享的單一 tag 詳情入口。它們不是 Garden 的 Patch 視圖。
 - **Garden / Patch**：`portals/realms/garden/` 是以花園方式探索索引內容的 Realm；Patch 是 Garden 同頁的探索／閱讀視角。Garden 不負責全站 tag detail 的穩定網址。
-- **Portals / Realm / World**：Portals 是通往各個 Realm 的導覽樞紐；Realm 是可獨立運作的境域；Garden 與 2.5D 的 Ludwigia World 是不同的 Realm。
+- **Portals / Realm / Pensieve**：Portals 是通往各個 Realm 的導覽樞紐；Realm 是可獨立運作的境域；Garden 與 2.5D 的 Pensieve（儲思盆）是不同的 Realm。
 - **Labs / Toolkit / Grimoire**：Labs 放實驗原型與可重用資源；Toolkit 是其中的資源庫，Ludwig 密語模式才把它顯示為 Grimoire。兩種名稱讀同一份 `data/Toolkit/toolkit.json`。
 - **Site shell / Runtime**：`pages/_shared/` 是共用 navbar、footer 等頁面外框的來源；`core/site/` 是主站共用 JavaScript。手寫頁面透過 `cli.py build-pages` 組裝 shell。
 - **Theme / Palette / Effects**：Theme 管整體表面、氛圍與可讀性；Palette 管 accent 與互動狀態顏色；Effects 控制可關閉的動效。偏好儲存在瀏覽器端。
@@ -61,7 +61,7 @@ Ludwigia/
 ├── labs/                      # 原型實驗室與 Toolkit（Grimoire）展示入口
 ├── portals/                   # 境域導覽樞紐（Portals）與 Realms 空間
 │   ├── realms/garden/         # 數位花園（Digital Garden）境域
-│   └── realms/world/          # 2.5D 等軸測虛擬世界（Ludwigia World）
+│   └── realms/pensieve/       # 2.5D 等軸測記憶空間（Pensieve · 儲思盆）
 
 ├── core/                      # 全站核心 Runtime、主題預載（theme-preload.js）與搜尋核心
 ├── assets/                    # 全站靜態資源（CSS Design Tokens、共用 JS、字型與圖片）
@@ -149,7 +149,7 @@ python3 -m http.server 8000
 然後開：
 - `http://localhost:8000/pages/search.html`
 - `http://localhost:8000/portals/realms/garden/index.html`
-- `http://localhost:8000/portals/realms/world/index.html`
+- `http://localhost:8000/portals/realms/pensieve/index.html`
 - `http://localhost:8000/portals/index.html`
 - `http://localhost:8000/labs/index.html`
 - `http://localhost:8000/index.html`（可直接用 navbar 的 gear icon 打開 settings modal）
@@ -175,7 +175,7 @@ python3 -m http.server 8000
 - `Sky` 的雲朵背景屬 theme ambience，不應被 settings pills / active state 的局部樣式誤傷；若調整 sky 視覺，優先分開處理 `sky-clouds` 與 settings controls
 - note 頁的 `block / callout / takeaways` 需各自有明確的 theme color variables；目前可先填同值，但未來擴 theme 時必須三者一起檢查
 - 若修 theme 視覺時發現需要一直疊 override，優先回頭整理底層 token / selector / variable pipeline，而不是繼續堆例外規則
-- 跨境域色盤聯動：World 等軸測空間（`portals/realms/world/`）的 HUD 玻璃擬態面板與焦點光暈共用 `assets/css/site/palette-tokens.css`，新增色盤只改此 token 檔，不在 `world.css` 另抄一份
+- 跨境域色盤聯動：Pensieve 等軸測空間（`portals/realms/pensieve/`）的 HUD 玻璃擬態面板與焦點光暈共用 `assets/css/site/palette-tokens.css`，新增色盤只改此 token 檔，不在 `world.css` 另抄一份
 - 未來若要新增 / 調整 theme、palette 或 settings controls，優先先看 `docs/guide/theme-palette-guide.md`
 
 ## Portals 與 Realms（獨立探索境域）
@@ -184,7 +184,7 @@ Portals 是通往各具備獨立互動體驗之境域（Realms）的導覽樞紐
 
 - **Portals 樞紐**（`portals/index.html`）：全景導覽門戶，提供跨境域躍遷入口與 Realm 概覽。
 - **Digital Garden**（`portals/realms/garden/index.html`）：以花園視覺隱喻探索全站知識內容；採獨立 UI 設計，資料來源只讀全站索引 `window.SITE_SEARCH_INDEX`。
-- **Ludwigia World**（`portals/realms/world/index.html`）：2.5D 等軸測互動虛擬空間。角色設定與社交對話以 `portals/realms/world/data/` 為創作來源，由 `cli.py build-world` 再現性編譯；視覺介面即時連動全站 Palette Tokens。
+- **Pensieve（儲思盆）**（`portals/realms/pensieve/index.html`）：2.5D 等軸測互動記憶空間，安放不同人生階段的記憶與生活片段（詳見 [portals/realms/pensieve/README.md](./portals/realms/pensieve/README.md)）。角色設定與社交對話以 `portals/realms/pensieve/data/` 為創作來源，由 `cli.py build-pensieve` 再現性編譯；視覺介面即時連動全站 Palette Tokens。
 
 ## 新增/修改筆記（唯一工作流）
 
@@ -487,7 +487,7 @@ python3 cli.py scan-information writing/<topic>/<topic>.md --json
 python3 cli.py build notes/<topic>/<topic>.md
 python3 cli.py build-all
 python3 cli.py build-portals
-python3 cli.py build-world
+python3 cli.py build-pensieve
 python3 cli.py build-pages
 python3 cli.py translate --source notes/<topic>/<topic>.md --target-lang en --backend gemini-api
 python3 cli.py install-hooks

@@ -3,7 +3,7 @@
 # 1. Run the full check suite (`python3 cli.py test`: create_content self-test,
 #    unittest, py_compile, check-tags).
 # 2. Refuse to push stale committed build outputs: search/search-index.{json,js}
-#    portals/realms/world/data/characters.json and the hand-written page
+#    portals/realms/pensieve/data/characters.json and the hand-written page
 #    shells (tools/build_pages.py) must match their sources.
 # Install with `python3 cli.py install-hooks`. Skip once with `git push --no-verify`.
 set -eu
@@ -34,8 +34,8 @@ if ! python3 tools/build_pages.py --check >/dev/null 2>&1; then
   status=1
 fi
 
-if ! python3 tools/build_world_data.py --check >/dev/null; then
-  echo "pre-push: portals/realms/world/data/characters.json is out of date. Run 'python3 cli.py build-world' and commit the result." >&2
+if ! python3 tools/build_pensieve_data.py --check >/dev/null; then
+  echo "pre-push: portals/realms/pensieve/data/characters.json is out of date. Run 'python3 cli.py build-pensieve' and commit the result." >&2
   status=1
 fi
 

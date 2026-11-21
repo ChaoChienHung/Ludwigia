@@ -7,7 +7,7 @@ REALM_DIR = Path(__file__).resolve().parents[1]
 ROOT = Path(__file__).resolve().parents[4]
 
 
-class WorldDataContractTests(unittest.TestCase):
+class PensieveDataContractTests(unittest.TestCase):
     def test_dialogue_pools_and_speakers_have_one_source(self):
         data = json.loads((REALM_DIR / "data/characters.json").read_text(encoding="utf-8"))
         self.assertEqual(set(data), {"characters", "npcDialogues"})
@@ -64,12 +64,12 @@ class WorldDataContractTests(unittest.TestCase):
             user_lines = characters[char_id]["dialogues"]["user"]["zh-TW"]
             self.assertNotIn(phrase, [line for sequence in user_lines for line in sequence])
 
-    def test_world_data_bundle_is_up_to_date(self):
-        from tools.build_world_data import compile_world_data
-        compiled = compile_world_data()
+    def test_pensieve_data_bundle_is_up_to_date(self):
+        from tools.build_pensieve_data import compile_pensieve_data
+        compiled = compile_pensieve_data()
         current = (REALM_DIR / "data/characters.json").read_text(encoding="utf-8")
         self.assertEqual(compiled, current,
-                         "characters.json is out of date with characters/ and interactions/. Run 'python3 tools/build_world_data.py'")
+                         "characters.json is out of date with characters/ and interactions/. Run 'python3 cli.py build-pensieve'")
 
 
 if __name__ == "__main__":

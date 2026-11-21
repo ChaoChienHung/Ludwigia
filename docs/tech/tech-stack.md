@@ -12,7 +12,7 @@ Ludwigia 分成四層，越往下越獨立：
 | --- | --- | --- | --- |
 | 主站 | `index.html`、`pages/`、`tag/`、`notes/`、`writing/`、`canvas/` | 靜態 HTML + 原生 JS + CSS，Bootstrap 5 | 不用（內容頁由 Python 生成並提交） |
 | 內容工具鏈 | `cli.py`、`tools/`、`search/indexer.py` | Python 3（只用 stdlib） | 產出 HTML 與搜尋索引 |
-| Portals 與 Realms | `portals/`、`portals/realms/garden/`、`portals/realms/world/` | React 19 + Vite + Tailwind（Portals、Garden）；原生 Canvas（World） | Portals、Garden 要 build，產物提交進版控 |
+| Portals 與 Realms | `portals/`、`portals/realms/garden/`、`portals/realms/pensieve/` | React 19 + Vite + Tailwind（Portals、Garden）；原生 Canvas（Pensieve） | Portals、Garden 要 build，產物提交進版控 |
 | Labs 原型 | `labs/` | 靜態頁；部分原型用 React Three Fiber | 只有原型本身需要 |
 
 ## 主站（純靜態）
@@ -79,7 +79,7 @@ Ludwigia 分成四層，越往下越獨立：
 | `translate` / `translate-data` | 內容與資料檔翻譯（Gemini API） |
 | `check-tags` / `scan-information` | 檢查 tag ontology、掃描可加 `<information>` 的詞 |
 | `build-pages` | 把 `pages/_shared/` 的 navbar / footer 組裝進手寫頁面，並由 `i18n/` 的 `title.en` 生成靜態 `<title>`（`--check` 只檢查） |
-| `build-world` | 由 `characters/` 與 `interactions/` 編譯 World 的 `characters.json` |
+| `build-pensieve` | 由 `characters/` 與 `interactions/` 編譯 Pensieve 的 `characters.json` |
 | `build-portals` | 建置 Portals |
 | `install-hooks` / `clean` | 安裝 git hooks、清除生成物 |
 
@@ -88,7 +88,7 @@ Ludwigia 分成四層，越往下越獨立：
   - `tools/content_contract.py`：metadata 解析與 tag ontology 對齊。
   - `tools/information_ontology.py`、`tools/question_bank.py`：ontology tooltip 與題庫。
   - `tools/translate_content.py`：翻譯 workflow；API key 依序讀環境變數 `GEMINI_API_KEY` / `LUDWIGIA_GEMINI_API_KEY`，再讀不進版控的 `secret.txt`。
-  - `tools/build_world_data.py`：World 角色資料編譯。
+  - `tools/build_pensieve_data.py`：Pensieve 角色資料編譯。
   - `search/indexer.py`：掃描 `notes/`、`writing/`、`canvas/`，輸出搜尋索引。
 - 測試：`unittest`（`tests/`），檢查 source 契約、生成器、ontology、資料檔 schema 與共用頁面 shell。
 
@@ -107,11 +107,11 @@ Ludwigia 分成四層，越往下越獨立：
 - 原始碼在 `floral-patch-garden/`，產物在 `floral-assets/`（必須提交）。
 - 資料只讀 `window.SITE_SEARCH_INDEX`。
 
-### Ludwigia World（`portals/realms/world/`）
+### Pensieve 儲思盆（`portals/realms/pensieve/`）
 
 - **原生 JavaScript + Canvas 2D**，沒有框架。模組：`engine.js`（等軸測投影、深度排序、鏡頭）、`world.js`、`models.js`、`prefabs.js`、`characters.js`。
-- 角色資料由 `tools/build_world_data.py` 編譯成 `data/characters.json`。
-- 有自己的測試：`portals/realms/world/tests/`。
+- 角色資料由 `tools/build_pensieve_data.py` 編譯成 `data/characters.json`。
+- 有自己的測試：`portals/realms/pensieve/tests/`。
 
 ## Labs 原型（`labs/`）
 
@@ -125,4 +125,4 @@ Ludwigia 分成四層，越往下越獨立：
 
 ## 生成物政策（摘要）
 
-必須提交：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/world/data/characters.json`。其他生成物一律進 `.gitignore`。完整規則見 `AGENTS.md`「最小工具鏈」。
+必須提交：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/pensieve/data/characters.json`。其他生成物一律進 `.gitignore`。完整規則見 `AGENTS.md`「最小工具鏈」。
