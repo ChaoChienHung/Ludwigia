@@ -156,9 +156,9 @@
         "zh-Hans": "README.md"
       },
       "summary": {
-        "en": "A concise README structure for setup, the single editing workflow, build outputs, and deployment.",
-        "zh-Hant": "簡明的 README 骨架，涵蓋安裝、唯一修改流程、生成物與部署。",
-        "zh-Hans": "简明的 README 骨架，涵盖安装、唯一修改流程、生成物与部署。"
+        "en": "A concise README structure with a repository map, setup, single editing workflow, build outputs, and deployment.",
+        "zh-Hant": "簡明的 README 骨架，涵蓋程式庫地圖、安裝、唯一修改流程、生成物與部署。",
+        "zh-Hans": "简明的 README 骨架，涵盖代码库地图、安装、唯一修改流程、生成物与部署。"
       },
       "source": "data/Toolkit/resources/project-readme-template.md",
       "reference": "Ludwig",

@@ -10,12 +10,27 @@
 2. Run `[local command]`.
 3. Open [local URL or file].
 
-## How the project is organized
+## Repository Map
 
-- Source content: [directory]
-- Shared code and styles: [directory]
-- Generated outputs: [directory and how they are produced]
-- Tests: [directory and command]
+Shared folder-level map for readers and agents. Keep it at the responsibility level rather than listing every file; update it only when a directory's role changes.
+
+```text
+[project-name]/
+├── [src-or-content]/          # Single source of truth ([source files])
+│   └── [sub-area]/            # [Specific responsibility]
+│
+├── [shared-or-core]/          # Shared code, styles, and design tokens
+├── [data-or-config]/          # Structured data and configuration
+├── [generated-output]/        # Generated outputs (produced by `[build command]`)
+├── [tools-or-scripts]/        # Build, migration, and helper scripts
+├── docs/                      # Specs, design decisions, and feature guide
+├── tests/                     # Automated tests (`[test command]`)
+├── AGENTS.md                  # Agent rules and non-regression invariants
+├── HANDOFF.md                 # Latest stopping point for agent handoff
+├── TODO.md                    # Unfinished and long-term tasks
+├── REVIEW.md                  # Completed work awaiting human review
+└── README.md                  # Project entry point and everyday workflow
+```
 
 ## Make one change
 
