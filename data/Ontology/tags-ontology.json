@@ -3627,6 +3627,41 @@
         "通訊複雜度",
         "通信复杂度"
       ]
+    },
+    {
+      "concept_id": "concept.ab_testing",
+      "labels": {
+        "en": "AB Testing",
+        "zh-Hant": "A/B 測試",
+        "zh-Hans": "A/B 测试"
+      },
+      "aliases": [
+        "ab testing",
+        "AB Testing",
+        "a/b testing",
+        "A/B Testing",
+        "A/B 測試",
+        "A/B 测试",
+        "AB 測試",
+        "AB 测试"
+      ]
+    },
+    {
+      "concept_id": "concept.e_commerce",
+      "labels": {
+        "en": "E-Commerce",
+        "zh-Hant": "電子商務",
+        "zh-Hans": "电子商务"
+      },
+      "aliases": [
+        "e-commerce",
+        "E-Commerce",
+        "ecommerce",
+        "電子商務",
+        "电子商务",
+        "電商",
+        "电商"
+      ]
     }
   ]
 }
