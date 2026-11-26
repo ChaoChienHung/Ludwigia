@@ -925,7 +925,10 @@ body.note-page:not(.light-theme) .note-content-link-preview-thumb {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1.2rem;
+  border: 1px solid rgba(61, 46, 37, 0.12);
   border-radius: 14px;
+  background: rgba(253, 249, 236, 0.68);
+  scrollbar-width: thin;
 }
 
 .note-table-wrap::-webkit-scrollbar {
@@ -943,33 +946,27 @@ body.note-page:not(.light-theme) .note-content-link-preview-thumb {
 }
 
 .note-table {
-  width: 100%;
-  min-width: 680px;
-  border-collapse: separate;
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
   border-spacing: 0;
-  border: 1px solid rgba(61, 46, 37, 0.12);
-  border-radius: 14px;
-  overflow: hidden;
-  background: rgba(253, 249, 236, 0.68);
+  border: none;
+  background: transparent;
 }
 
 .note-table th,
 .note-table td {
-  padding: 0.85rem 1.1rem;
+  padding: 0.75rem 1.05rem;
   text-align: left;
   vertical-align: top;
+  white-space: nowrap;
   border-bottom: 1px solid rgba(61, 46, 37, 0.1);
-  min-width: 8rem;
-}
-
-.note-table th:first-child,
-.note-table td:first-child {
-  min-width: 9rem;
+  border-right: 1px solid rgba(61, 46, 37, 0.08);
 }
 
 .note-table th:last-child,
 .note-table td:last-child {
-  min-width: 15rem;
+  border-right: none;
 }
 
 .note-table thead th {
@@ -987,7 +984,7 @@ body.note-page:not(.light-theme) .note-content-link-preview-thumb {
   background: rgba(255, 255, 255, 0.28);
 }
 
-body.note-page:not(.light-theme) .note-table {
+body.note-page:not(.light-theme) .note-table-wrap {
   border-color: rgba(255, 255, 255, 0.1);
   background: rgba(22, 24, 31, 0.82);
 }
@@ -999,6 +996,7 @@ body.note-page:not(.light-theme) .note-table thead th {
 body.note-page:not(.light-theme) .note-table th,
 body.note-page:not(.light-theme) .note-table td {
   border-bottom-color: rgba(255, 255, 255, 0.08);
+  border-right-color: rgba(255, 255, 255, 0.06);
 }
 
 body.note-page:not(.light-theme) .note-table tbody tr:nth-child(even) td {
