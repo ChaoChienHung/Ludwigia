@@ -50,6 +50,7 @@ python3 cli.py test                           # 全站完整守門
 | `notes/`、`writing/`、`canvas/`、`tools/create_content.py`、`tools/translate_content.py`、`search/indexer.py`（metadata、標籤、自訂語法、寫作鷹架、Markdown 格式） | `docs/rules/content-authoring-contracts.md` |
 | 首頁 `data/`（Timeline / Skills / Credentials）、`assets/css/`、`i18n/`、Theme / Palette / Reading Mode / Settings / Mobile IA / 響應式標籤 | `docs/rules/ui-and-data-contracts.md` |
 | `portals/`（Portals 樞紐、Digital Garden、Pensieve 2.5D 幾何／效能／角色資料） | `portals/AGENTS.md` |
+| Agent 工程規範（軟硬護欄、踩坑紀錄、Eval 與工作流，工具無關） | `docs/agents/`（`guardrails.md`、`provenance.md`、`evals.md`、`workflows.md`） |
 | 其他功能規格、設計理由與實作範圍 | `docs/README.md`（「功能導覽」） |
 
 ## 全站不可退化核心契約（Site-Wide Invariants）

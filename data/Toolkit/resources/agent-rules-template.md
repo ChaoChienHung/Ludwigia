@@ -45,6 +45,7 @@ Delegate detailed subsystem rules to focused files so every rule is preserved wi
 | --- | --- |
 | `[subsystem-a/]` ([what it covers]) | `[subsystem-a/AGENTS.md or docs/rules/subsystem-a-contracts.md]` |
 | `[subsystem-b/]` ([what it covers]) | `[docs/rules/subsystem-b-contracts.md]` |
+| Agent workflows, guardrails & evals | `docs/agents/` (`guardrails.md`, `provenance.md`, `evals.md`, `workflows.md`) |
 | Feature-to-folder routes and specs | `[docs/README.md]` |
 
 ## Repo-wide non-regression invariants

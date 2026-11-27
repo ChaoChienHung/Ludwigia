@@ -168,6 +168,33 @@
       "replaced_by": null
     },
     {
+      "id": "agent-docs-pack-template",
+      "kind": "template",
+      "category": "workflow",
+      "title": {
+        "en": "docs/agents/ Pack",
+        "zh-Hant": "docs/agents/ 規範套組",
+        "zh-Hans": "docs/agents/ 规范套组"
+      },
+      "summary": {
+        "en": "A 4-file tool-agnostic docs/agents/ pack covering soft/hard guardrails, provenance failure logs, eval gates, and Scope-Build-Eval-Schedule workflows.",
+        "zh-Hant": "工具無關的 4 檔 docs/agents/ 範本套組：區分軟硬護欄、演進踩坑紀錄、Eval 驗收門檻與排程工作流。",
+        "zh-Hans": "与工具无关的 4 档 docs/agents/ 模板套组：区分软硬护栏、演进踩坑记录、Eval 验收门槛与调度工作流。"
+      },
+      "source": "data/Toolkit/resources/docs-agents/guardrails.md",
+      "files": [
+        "guardrails.md",
+        "provenance.md",
+        "evals.md",
+        "workflows.md"
+      ],
+      "reference": "Ludwig",
+      "verified_with": null,
+      "verified_at": null,
+      "status": "active",
+      "replaced_by": null
+    },
+    {
       "id": "source-driven-content-guide",
       "kind": "guide",
       "category": "workflow",

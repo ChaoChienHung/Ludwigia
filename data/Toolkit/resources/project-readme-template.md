@@ -30,7 +30,8 @@ Shared folder-level map for readers and agents. Describe directory responsibilit
 ├── [data-or-config]/          # Structured data and configuration
 ├── [generated-output]/        # Generated outputs (produced by `[build command]`)
 ├── [tools-or-scripts]/        # Build, migration, and helper scripts
-├── docs/                      # Specs, guides, rules, design decisions, and feature guide
+├── docs/                      # Specs, guides, rules, design decisions, agent workflows, and feature guide
+│   ├── agents/                # Tool-agnostic agent workflows, guardrails, failure log, and Evals
 │   └── README.md              # Feature-to-folder routing entry point
 │
 ├── tests/                     # Automated tests (`[test command]`)
@@ -70,6 +71,7 @@ For full authoring workflows, advanced CLI options, and edge cases, see `[docs/g
 - `README.md`: Shared entry point (quick start, terminology, repository map, everyday commands).
 - `docs/README.md`: Feature-to-folder routes and starting documentation.
 - `AGENTS.md` (and delegated subsystem contracts in nested `AGENTS.md` / `docs/rules/`): Agent rules and non-regression invariants.
+- `docs/agents/`: Tool-agnostic agent workflows, soft-rule vs. hard-guardrail boundaries, provenance/failure logs, and Eval-first automation checklists.
 - `docs/specs/`, `docs/guide/`, `docs/design/`: Exact contracts, step-by-step guides, and design rationale.
 - `HANDOFF.md` / `TODO.md` / `REVIEW.md`: Stopping point, backlog, and completed items awaiting review.
 

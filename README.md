@@ -80,7 +80,7 @@ Ludwigia/
 ├── assets/                    # 全站靜態資源（CSS Design Tokens、共用 JS、字型與圖片）
 ├── search/                    # 搜尋索引生成器（indexer.py）與快照（search-index.json/js）
 ├── tools/                     # Python 建置工具鏈（create_content.py、build_pages.py 等）
-├── docs/                      # 專案文件庫（specs/、design/、rules/、guide/、tech/、author/）
+├── docs/                      # 專案文件庫（specs/、design/、rules/、guide/、tech/、author/、agents/）
 │   └── README.md              # 依功能查閱文件的起點（功能導覽）
 │
 ├── tests/                     # 單元測試與自動化品質守門腳本
@@ -107,6 +107,7 @@ Ludwigia/
 - `README.md`：所有人共用的專案入口（術語、地圖、快速開始與常用指令）。
 - `docs/README.md`：按功能查規格、指南與實作資料夾的導覽入口。
 - `AGENTS.md`（及分流契約 `docs/rules/content-authoring-contracts.md`、`docs/rules/ui-and-data-contracts.md`、`portals/AGENTS.md`）：給 Agent 的執行指引與不可退化契約。
+- `docs/agents/`：工具無關的 Agent 工作流、軟硬護欄邊界、演進踩坑紀錄（Provenance）與 Eval-first 自動化規範。
 - `docs/specs/`、`docs/design/`、`docs/rules/`、`docs/guide/`、`docs/tech/`、`docs/author/`：分別承接精確規格、設計理由、守門清單、操作步驟、技術現況與寫作筆記。
 - `HANDOFF.md` / `TODO.md` / `REVIEW.md`：短期停點、待辦與待審清單（不作為網站資產部署）。
 
