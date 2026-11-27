@@ -49,37 +49,37 @@
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.319201
+        "score": 0.327428
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.156413
+        "score": 0.15675
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.143387
+        "score": 0.139514
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.133158
+        "score": 0.133071
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.132791
+        "score": 0.132631
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.116394
+        "score": 0.115622
       }
     ]
   },
   {
-    "title": "GMV 決策鏈：生成式召回如何調節價值，以及它的限制",
+    "title": "GMV 決策鏈：讀懂 DCGR 的設計與邊界",
     "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
     "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
     "section": "notes",
@@ -124,11 +124,11 @@
         "zh-Hans": "A/B 测试"
       }
     },
-    "summary": "依 OneTrans-V2 的公開設計與實驗，分析 DCGR 為何把 GMV 拆成購買強度與價格尺度、如何用決策前綴調控召回，以及離線消融、召回歸因與全系統指標各能支持什麼結論。",
-    "content": "GMV 決策鏈：生成式召回如何調節價值，以及它的限制 想像兩張最後成交總額相近的購物車：一張裝了好幾件日常小物，另一張只有一件較高價的商品。報表上的 GMV 可能相同，商品與購買方式卻不同。如果要在推薦時找出下一件可能成交的商品，單看總額未必能描述這個差異。 這篇是對 OneTrans-V2 公開設計與實驗的分析，聚焦 Decision-Conditioned Generative Retrieval（DCGR）中與 GMV 相關的兩個決策：購買強度（purchase level）與價格尺度（spending level）。九老師的 DCGR 文章可作為多目標召回框架的延伸閱讀。以下的機制與數字以論文為準；購物車和入場券只是幫助理解的類比。本文不推測未公開的實作動機、分桶配置或內部實驗過程。 先拿到候選入場券，後段才有機會談價值 把推薦鏈路想成一場選秀：召回發入場券，後段排序再評分。精排即使很會辨認高價值商品，也只能處理已進候選集的商品。這說明為何不同業務目標不能只靠後段調整分數：如果目標需要的是另一批候選，召回本身就得有表達目標差異的方式。 OneTrans-V2 §1 與 §4.2.1 說明，傳統系統可能為點擊、成交、發現新類別或廣告等目標維護不同召回通道。DCGR 的公開設計，是讓同一個生成式召回器在產生商品前先預測決策前綴，再用業務偏置調節前綴的優先度。這是論文提出的整合方式；它是否在某個場景更划算，仍要看該場景的完整鏈路結果。 決策前綴究竟在預測什麼 生成順序可以先讀成一句白話：看過使用者情境，預測即將發生的互動型態，再依這個預測生成商品的 Semantic ID。「決策」並非使用者明示下達的命令，也不是自然語言的推理文字；論文以互動日誌中的結果作為訓練標籤。OneTrans-V2 §4.2.1 給出的聯合分解是： $$p(z,y\\mid h)=p(z\\mid h)\\,p(y\\mid h,z),$$ 其中 $h$ 是使用者情境，$z$ 是決策前綴，$y$ 是商品。前半段預測互動，後半段在該條件下生成商品。論文的完整前綴另有發現性與供給類型；這篇只分析與 GMV 相關的兩個維度。 為什麼一個 GMV 桶不夠 回到兩張購物車。單一交易總額會把「買了幾次」與「每次大約花多少」壓在一起。論文因此把交易價值拆為購買強度 $z{oc}$ 和價格尺度 $z{aov}$：前者區分沒有購買、一次購買和多次購買；後者表示每筆訂單的價值範圍。當 $z{oc}=0$ 時，價格尺度沒有購買事件可依附，所以 $z{aov}$ 接在購買強度之後預測。這是論文 §4.2.1 明寫的依賴關係，不需要另外猜測模型內部為何這樣安排。 這個拆法的證據也不只來自直覺。論文 §7.5 報告：把兩個維度換成單一 GMV token，交易價值加權的 HR@1 下降 9%。同節 Table 6 比較線上調控時，單獨偏置購買強度，orders 增加 2.4%，GMV 卻下降 0.6%；在購買強度偏置不變下，再加上較強的價格尺度偏置，AOV 增加 13.7%，GMV 轉為增加 3.0%，orders 則下降 9.4%。這些結果支持「兩個維度控制不同面向」；它們不表示任意提高價格帶都能提高 GMV。 讀實驗前，先問前綴是誰提供的 論文 §7.4 的 Figure 8(a) 在離線消融中，把真實決策標籤交給模型，再看 SID 的 HR@1。這回答的是「若正確決策已知，它對找商品提供多少資訊？」論文也明說，這不等於可部署的端到端召回準確率。某個維度在這張圖裡有訊號，不代表模型在服務時一定能自行預測正確。 同一節的 Figure 8(b) 改在自由解碼時強制某個決策值，檢查生成商品是否隨前綴改變。結果顯示，強制多次購買的 $z{oc}$ 時，GMV slice 的 HR@1 上升 12.8%，click slice 下降 17.6%。這表示前綴確實能改變生成方向；但 HR@1 是重現日誌商品的離線指標，不能直接讀成線上 GMV 的變化。 線上表格也要先看分母。論文 Table 5 只統計歸因到 OneTrans-V2 召回任務的曝光，相對於同模型使用預測前綴的情況；Table 6 則涵蓋使用者全部曝光，對照控制組。前者適合看召回調控本身如何移動結果，後者才接近全系統的影響。論文整體模型的 GMV 提升，更不能直接歸因於其中一個 GMV 決策 token。 硬控與偏置展示了什麼取捨 Table 5 比較兩種介入方式：硬控把某個決策固定為指定值；業務偏置則調整預測前綴的分數，逐步改變哪些路徑更容易被選中。論文中，強制最高的 $z{aov}$ 使 AOV 增加 38.9%，但 orders 下降 33.5%，GMV 下降 7.7%；強制 $z_{oc}=0$ 則使 CTR 增加 8.2%，GMV 下降 5.1%。這兩個極端說明，單一指標往上，總價值不一定跟著上升。 同表中的業務偏置呈現較漸進的取捨：從弱到強，GMV 的相對變化由 +7.5% 到 +26.7%，CTR 則由 +2.2% 到 -5.4%。這些是論文所報告、在特定實驗口徑下的結果，不是一條可外推到任何系統的偏置換算式。Table 6 又提供不同分母的全系統觀察，所以不能把兩張表的百分比直接相加或互換。 回到開頭，兩張購物車總額相近，卻代表不同的購買路徑。DCGR 的 GMV 前綴讓模型在召回時表達這種差異；公開實驗顯示，拆開維度與調節前綴會影響生成商品和線上指標。本文能下的結論到這裡為止：這是一個有公開消融與線上結果支持的調控介面；它的長期效果、其他場景的最佳設定與未公開實作細節，不能由這些表格代答。 參考資料（References） 學術論文（Academic Literature） Cao et al., OneTrans-V2: Unifying Retrieval, Pre-rank, and Fine-rank with One Transformer in Industrial Recommender 技術文章（Technical Articles） 九老師，OneTrans-DCGR：生成式召回的「CoT」與多目標機制",
-    "content_markdown": "# GMV 決策鏈：生成式召回如何調節價值，以及它的限制\n\n想像兩張最後成交總額相近的購物車：一張裝了好幾件日常小物，另一張只有一件較高價的商品。報表上的 GMV 可能相同，商品與購買方式卻不同。如果要在推薦時找出下一件可能成交的商品，單看總額未必能描述這個差異。\n\n這篇是對 [OneTrans-V2](https://arxiv.org/html/2609.28589v1) 公開設計與實驗的分析，聚焦 Decision-Conditioned Generative Retrieval（DCGR）中與 GMV 相關的兩個決策：購買強度（purchase level）與價格尺度（spending level）。[九老師的 DCGR 文章](https://blog.recsys-frontier.com/article/dcgr-cot-ant-multi-task)可作為多目標召回框架的延伸閱讀。以下的機制與數字以論文為準；購物車和入場券只是幫助理解的類比。本文不推測未公開的實作動機、分桶配置或內部實驗過程。\n\n## 先拿到候選入場券，後段才有機會談價值\n\n把推薦鏈路想成一場選秀：召回發入場券，後段排序再評分。精排即使很會辨認高價值商品，也只能處理已進候選集的商品。這說明為何不同業務目標不能只靠後段調整分數：如果目標需要的是另一批候選，召回本身就得有表達目標差異的方式。\n\n[OneTrans-V2 §1 與 §4.2.1](https://arxiv.org/html/2609.28589v1) 說明，傳統系統可能為點擊、成交、發現新類別或廣告等目標維護不同召回通道。DCGR 的公開設計，是讓同一個生成式召回器在產生商品前先預測決策前綴，再用業務偏置調節前綴的優先度。這是論文提出的整合方式；它是否在某個場景更划算，仍要看該場景的完整鏈路結果。\n\n## 決策前綴究竟在預測什麼\n\n生成順序可以先讀成一句白話：**看過使用者情境，預測即將發生的互動型態，再依這個預測生成商品的 Semantic ID。**「決策」並非使用者明示下達的命令，也不是自然語言的推理文字；論文以互動日誌中的結果作為訓練標籤。[OneTrans-V2 §4.2.1](https://arxiv.org/html/2609.28589v1) 給出的聯合分解是：\n\n$$p(z,y\\mid h)=p(z\\mid h)\\,p(y\\mid h,z),$$\n\n其中 $h$ 是使用者情境，$z$ 是決策前綴，$y$ 是商品。前半段預測互動，後半段在該條件下生成商品。論文的完整前綴另有發現性與供給類型；這篇只分析與 GMV 相關的兩個維度。\n\n## 為什麼一個 GMV 桶不夠\n\n回到兩張購物車。單一交易總額會把「買了幾次」與「每次大約花多少」壓在一起。論文因此把交易價值拆為購買強度 $z_{oc}$ 和價格尺度 $z_{aov}$：前者區分沒有購買、一次購買和多次購買；後者表示每筆訂單的價值範圍。當 $z_{oc}=0$ 時，價格尺度沒有購買事件可依附，所以 $z_{aov}$ 接在購買強度之後預測。這是[論文 §4.2.1](https://arxiv.org/html/2609.28589v1) 明寫的依賴關係，不需要另外猜測模型內部為何這樣安排。\n\n這個拆法的證據也不只來自直覺。[論文 §7.5](https://arxiv.org/html/2609.28589v1) 報告：把兩個維度換成單一 GMV token，交易價值加權的 HR@1 下降 9%。同節 Table 6 比較線上調控時，單獨偏置購買強度，orders 增加 2.4%，GMV 卻下降 0.6%；在購買強度偏置不變下，再加上較強的價格尺度偏置，AOV 增加 13.7%，GMV 轉為增加 3.0%，orders 則下降 9.4%。這些結果支持「兩個維度控制不同面向」；它們不表示任意提高價格帶都能提高 GMV。\n\n## 讀實驗前，先問前綴是誰提供的\n\n[論文 §7.4 的 Figure 8(a)](https://arxiv.org/html/2609.28589v1) 在離線消融中，把真實決策標籤交給模型，再看 SID 的 HR@1。這回答的是「**若正確決策已知，它對找商品提供多少資訊？**」論文也明說，這不等於可部署的端到端召回準確率。某個維度在這張圖裡有訊號，不代表模型在服務時一定能自行預測正確。\n\n同一節的 Figure 8(b) 改在自由解碼時強制某個決策值，檢查生成商品是否隨前綴改變。結果顯示，強制多次購買的 $z_{oc}$ 時，GMV slice 的 HR@1 上升 12.8%，click slice 下降 17.6%。這表示前綴確實能改變生成方向；但 HR@1 是重現日誌商品的離線指標，不能直接讀成線上 GMV 的變化。\n\n線上表格也要先看分母。[論文 Table 5](https://arxiv.org/html/2609.28589v1) 只統計歸因到 OneTrans-V2 召回任務的曝光，相對於同模型使用預測前綴的情況；Table 6 則涵蓋使用者全部曝光，對照控制組。前者適合看召回調控本身如何移動結果，後者才接近全系統的影響。論文整體模型的 GMV 提升，更不能直接歸因於其中一個 GMV 決策 token。\n\n## 硬控與偏置展示了什麼取捨\n\nTable 5 比較兩種介入方式：**硬控**把某個決策固定為指定值；**業務偏置**則調整預測前綴的分數，逐步改變哪些路徑更容易被選中。論文中，強制最高的 $z_{aov}$ 使 AOV 增加 38.9%，但 orders 下降 33.5%，GMV 下降 7.7%；強制 $z_{oc}=0$ 則使 CTR 增加 8.2%，GMV 下降 5.1%。這兩個極端說明，單一指標往上，總價值不一定跟著上升。\n\n同表中的業務偏置呈現較漸進的取捨：從弱到強，GMV 的相對變化由 +7.5% 到 +26.7%，CTR 則由 +2.2% 到 -5.4%。這些是論文所報告、在特定實驗口徑下的結果，不是一條可外推到任何系統的偏置換算式。Table 6 又提供不同分母的全系統觀察，所以不能把兩張表的百分比直接相加或互換。\n\n回到開頭，兩張購物車總額相近，卻代表不同的購買路徑。DCGR 的 GMV 前綴讓模型在召回時表達這種差異；公開實驗顯示，拆開維度與調節前綴會影響生成商品和線上指標。**本文能下的結論到這裡為止**：這是一個有公開消融與線上結果支持的調控介面；它的長期效果、其他場景的最佳設定與未公開實作細節，不能由這些表格代答。\n\n## 參考資料（References）\n\n### 學術論文（Academic Literature）\n\n- [Cao et al., OneTrans-V2: Unifying Retrieval, Pre-rank, and Fine-rank with One Transformer in Industrial Recommender](https://arxiv.org/abs/2609.28589)\n\n### 技術文章（Technical Articles）\n\n- [九老師，OneTrans-DCGR：生成式召回的「CoT」與多目標機制](https://blog.recsys-frontier.com/article/dcgr-cot-ant-multi-task)",
-    "preview_markdown": "# GMV 決策鏈：生成式召回如何調節價值，以及它的限制\n\n想像兩張最後成交總額相近的購物車：一張裝了好幾件日常小物，另一張只有一件較高價的商品。報表上的 GMV 可能相同，商品與購買方式卻不同。如果要在推薦時找出下一件可能成交的商品，單看總額未必能描述這個差異。\n\n這篇是對 [OneTrans-V2](https://arxiv.org/html/2609.28589v1) 公開設計與實驗的分析，聚焦 Decision-Conditioned Generative Retrieval（DCGR）中與 GMV 相關的兩個決策：購買強度（purchase level）與價格尺度（spending level）。[九老師的 DCGR 文章](https://blog.recsys-frontier.com/article/dcgr-cot-ant-multi-task)可作為多目標召回框架的延伸閱讀。以下的機制與數字以論文為準；購物車和入場券只是幫助理解的類比。本文不推測未公開的實作動機、分桶配置或內部實驗過程。\n\n## 先拿到候選入場券，後段才有機會談價值",
-    "reading_time_minutes": 10,
+    "summary": "從 OneTrans-V2 的級聯架構出發，用購物車與候選入場券的直覺解釋 DCGR 如何先預測互動、再生成商品；對照公開實驗，分析決策前綴在因果、預測與多目標評估上的邊界及可能的發展方向。",
+    "content": "GMV 決策鏈：讀懂 DCGR 的設計與邊界 前情提要｜從級聯系統看生成式召回 我們談推薦系統時，很容易把注意力放在最後的排序：哪件商品分數最高，就把它放在最前面。但一個成熟的推薦系統通常不會讓最昂貴的模型逐一檢查整個商品庫。它先透過召回找出一批候選，再交給粗排與精排逐步縮小範圍。這是級聯架構成立的工程理由；若想看各階段如何分工，可以先讀級聯架構導讀。 這條鏈路也有一道很直觀的邊界：排序只能挑已拿到手的候選。把推薦想成選秀，召回發入場券，排序則在會場裡評分。若某類商品沒有拿到入場券，後段再懂它的價值，也無法把它推薦出來。 OneTrans-V2 一方面讓召回、粗排、精排共用同一個 Transformer 的使用者情境，另一方面仍保留各階段不同的工作。本文要談的 Decision-Conditioned Generative Retrieval（DCGR）屬於召回那一段：當點擊、購買、發現性、廣告等目標可能需要不同候選時，同一個生成器如何表達這些差異？論文整體系統的成果牽涉多個設計，不能直接當成 DCGR、尤其不能當成單一 GMV 決策的效果。 九老師的 DCGR 文章已從多路召回、非語言 CoT、Offline RL 到業務偏置做了完整推導。這裡先用比較少的術語重建 OneTrans-V2 公開的架構，再把更多篇幅留給我們自己的分析：這個介面說明了什麼，還沒說明什麼，以及可能往哪裡走。 介紹｜兩張總額相近的購物車 想像兩張購物車，最後的成交總額差不多。一張裝著好幾件日常小物，另一張只有一件較高價的商品。若報表只留下 GMV，兩張購物車看起來幾乎等值；但它們所對應的商品、購買次數和可能的下一次需求，都未必相同。 所以「提高 GMV」不能直接翻譯成「每次都找最貴的商品」。有人可能快要買幾件消耗品，有人正在考慮一件較貴的商品，也有人此刻只是瀏覽。若召回只接受一個固定的高價命令，就無法根據使用者情境改變候選。 DCGR 的思路是：在找商品之前，先讓模型描述這次互動可能長成什麼樣子。這段描述叫做「決策前綴」（decision prefix）。它不是使用者按下的選項，也不是模型寫給人看的思考文字，而是根據使用者情境預測、由歷史互動標籤監督的幾個離散結果。接著，模型在這段前綴的條件下生成商品的 Semantic ID。 用逛商店來比喻，普通的生成式召回像直接報出一件商品；DCGR 則先判斷這次可能要走向哪種購物路徑，再沿著該路徑找商品。這個類比只幫我們理解順序：實際上模型不是先選定唯一走道，而是在搜尋時讓多種決策與商品路徑依分數競爭。 原理解釋｜先描述互動，再生成商品 論文 §4.2.1 的生成順序是「使用者情境 → 決策前綴 → 商品 SID」。完整前綴有四種決策維度：購買強度、價格尺度、發現性與供給類型。這篇只深入前兩者，因為它們共同描述與 GMV 有關的交易形狀；另外兩者讓同一個召回器也能表達其他目標。 購買強度回答的是：這次互動沒有購買、一次購買，還是多次購買？價格尺度回答的是：若有購買，每筆訂單大約落在哪個價值範圍？論文沒有把它們壓成單一 GMV token，因為「多次低價」與「一次高價」雖可能有相近總額，卻不是同一種商品選擇問題。更關鍵的是，沒有購買時，價格尺度本來就沒有可依附的訂單，因此後者要在前者之後預測。論文 §7.5 的消融也報告：用單一 GMV token 取代這兩個維度時，交易價值加權的 HR@1 下降 9%。 不是每個決策都需要串成一條長鏈。論文讓購買強度、發現性與供給類型從使用者情境平行預測，把它們合成一個前綴位置；只有依賴購買強度的價格尺度，才放在下一個位置。這個安排同時避免任意替互不依賴的維度排先後，也讓前綴保持短。再往後，模型才逐步生成商品 SID 的各層代碼。 訓練與服務要分開看。訓練時，日誌提供實際發生的決策與商品，模型學習在前面的條件下預測下一個 token。服務時，還沒有任何「正確答案」可看，模型得先從目前情境預測決策，再產生 SID。搜尋時，一條路徑的競爭力同時來自三部分：模型認為這個決策有多可能、業務偏置給這個決策多少額外分數，以及商品 SID 在此決策下有多可能。因此，偏置是調整路徑間的競爭，並非保證每位使用者都走最高價路徑。 若想看完整的機率分解、beam search 競爭，以及業務偏置和 KL 約束的推導，直接讀九老師的原文會比在這裡重寫一遍更完整。本文接下來關心的是：理解了公開機制之後，該怎麼讀它的證據？ 公開實驗回答了三種不同問題 第一個問題是：正確決策能否幫助模型找商品？ 論文 §7.4 Figure 8(a) 把真實決策標籤交給模型，再看 SID 的離線 HR@1。這量到的是前綴提供多少商品資訊；由於服務時得自行預測決策，它不能直接當作可部署的召回準確率。 第二個問題是：改動決策，商品真的會跟著變嗎？ 同節 Figure 8(b) 在自由解碼時強制某個決策值，看生成結果是否轉向。以多次購買的購買強度為例，GMV slice 的 HR@1 上升 12.8%，click slice 下降 17.6%。這支持「前綴影響商品生成」，但離線 HR@1 仍不能直接翻譯為線上 GMV。 第三個問題才是：調節這個介面後，線上指標怎麼變？ 論文 §7.5 Table 5 比較硬性指定決策與逐步增加業務偏置。例如強制最高價格尺度時，AOV 增加 38.9%，orders 卻下降 33.5%，GMV 下降 7.7%。Table 6 又在使用者全部曝光的口徑下，比較只調購買強度與再加入價格尺度的結果：較強的聯合設定使 GMV 增加 3.0%，但 orders 下降 9.4%。Table 5 的分母是歸因到 DCGR 召回任務的曝光，兩張表不能把百分比直接互換。九老師的文章對硬控與偏置的差異也有更完整的解讀。 我們的分析｜這個介面仍有哪些邊界？ 以下是我們從公開方法和結果推導的待驗證問題，不是在宣稱 OneTrans-V2 的實際系統已發生這些故障。它們也不是額外的內部實驗發現。 結果條件能改變候選，不等於保證因果回報 決策標籤來自已發生的互動。模型能學到「在某種購買結果之下，哪些商品常一起出現」，並在服務時讓相應路徑更有競爭力。但如果我們主動把一位使用者推向高價格尺度，不能只憑這個條件分布就斷言他會因此產生同樣的高價購買。原本的意圖、商品曝光與後段排序，都可能影響結果。 論文的線上 A/B 已在其實驗場景裡檢查了調控的實際效果；我們要保留的邊界是：條件生成的數學形式本身，不提供跨場景的因果保證。 若要把偏置用於新商品群、新使用者群或不同流量配置，仍須重新驗證，而不能直接搬用既有表格的百分比。 中間步驟必須能自行預測，還要拿得到搜尋預算 真實標籤下的 HR@1 讓我們知道「有了正確線索會怎樣」，但線上並沒有人把正確決策交給模型。購買強度若選錯，後面的價格尺度與 SID 都是在另一條前綴上繼續生成。beam search 可以保留多條可能路徑，卻受到寬度與延遲預算限制；比較細的決策表示，也未必在完整生成流程裡比較好用。 這是從模型順序與有限搜尋推得的風險，不是論文已報告「決策預測失準」。若未來要改設計，我們認為至少要把三件事拆開量：決策本身是否能預測、給定正確決策時它提供多少商品資訊、模型自由解碼後的候選品質如何。只有第三件事才真正承受前兩步的誤差與搜尋成本。 調得動某個目標，不等於已知道整條鏈路的收益 Table 5 讓我們看到一個很具體的置換：把最高價格尺度硬性指定出來，AOV 可以大幅增加，orders 和 GMV 卻會下降。這不是「價格尺度沒用」，而是提醒我們，召回對某個目標的調節會同時改變其他指標。偏置比硬控更漸進，仍需選擇強度；沒有一個對所有情境都成立的偏置值。 還有歸因問題。OneTrans-V2 的整體成果結合了共享 backbone、聯合訓練、召回與服務系統等設計；某張表只看 DCGR 歸因曝光，另一張表看使用者全部曝光。我們不能把整體 GMV 提升全部記在 GMV 決策 token 名下，也不應把離線命中率當成完整鏈路的業務結果。這是讀公開數據時最值得守住的分寸。 我們怎麼理解這個範式，以及可能往哪裡走 我更願意把 decision prefix 看成一個放在「使用者情境」與「商品候選」之間的可觀察、可調節介面。它把原本藏在不同召回通道裡的目標差異，部分搬到同一個生成過程中。多預測幾個 token 並不自動等於更會推薦；價值在於這些 token 是否真的描述了不同的互動、是否能被模型預測，以及調節後能否找到更合適的商品。 沿著這個理解，未來值得研究的第一件事是決策表示：哪些維度提供新的商品資訊，哪些只是重複描述同一個結果？把維度切得更細、接得更長，也許能讓條件更明確，同時可能增加預測難度與解碼成本。這是設計假說，應用消融與自由解碼實驗驗證，而不是從「CoT」這個名字推定多一步一定更好。 第二件事是情境化調節。業務偏置讓同一模型沿不同決策路徑找候選，但使用者此刻可能只是瀏覽，也可能已有明確購買需求。未來的調節若能對不同情境保持合適的強度，理論上比一個全域固定偏置更有彈性；它是否真的改善 GMV、orders 與體驗，仍須線上驗證。這裡談的是可能方向，並非 OneTrans-V2 已公開部署的下一版功能。 第三件事是與多路召回的關係。九老師也提醒，DCGR 並未宣稱一次取代所有舊通道；不同目標仍可能需要自己的候選入口、搜尋配額與實驗節奏。對我來說，這個範式最有意思的前景，是讓「共用一個能理解使用者與商品的模型」和「保留各目標可檢驗的入口」不必互相排斥。能否做到，最後要看完整鏈路的候選覆蓋、服務成本與使用者結果，而非只看前綴形式是否漂亮。 回到開頭兩張購物車：同樣的 GMV，可以來自不同的購買路徑。DCGR 讓召回器有機會先描述這種差異，再生成商品；公開論文顯示這個介面能影響商品方向與線上目標。真正值得繼續追問的，是模型何時能正確辨認路徑、何時該調節，以及整條系統是否因此給使用者帶來更好的結果。 參考資料（References） 學術論文（Academic Literature） Cao et al., OneTrans-V2: Unifying Retrieval, Pre-rank, and Fine-rank with One Transformer in Industrial Recommender 技術文章（Technical Articles） 九老師，OneTrans-DCGR：生成式召回的「CoT」與多目標機制",
+    "content_markdown": "# GMV 決策鏈：讀懂 DCGR 的設計與邊界\n\n## 前情提要｜從級聯系統看生成式召回\n\n我們談推薦系統時，很容易把注意力放在最後的排序：哪件商品分數最高，就把它放在最前面。但一個成熟的推薦系統通常不會讓最昂貴的模型逐一檢查整個商品庫。它先透過召回找出一批候選，再交給粗排與精排逐步縮小範圍。這是級聯架構成立的工程理由；若想看各階段如何分工，可以先讀級聯架構導讀。\n\n這條鏈路也有一道很直觀的邊界：**排序只能挑已拿到手的候選**。把推薦想成選秀，召回發入場券，排序則在會場裡評分。若某類商品沒有拿到入場券，後段再懂它的價值，也無法把它推薦出來。\n\n[OneTrans-V2](https://arxiv.org/html/2609.28589v1) 一方面讓召回、粗排、精排共用同一個 Transformer 的使用者情境，另一方面仍保留各階段不同的工作。本文要談的 Decision-Conditioned Generative Retrieval（DCGR）屬於**召回那一段**：當點擊、購買、發現性、廣告等目標可能需要不同候選時，同一個生成器如何表達這些差異？論文整體系統的成果牽涉多個設計，不能直接當成 DCGR、尤其不能當成單一 GMV 決策的效果。\n\n[九老師的 DCGR 文章](https://recsys-frontier.com/article/dcgr-cot-ant-multi-task)已從多路召回、非語言 CoT、Offline RL 到業務偏置做了完整推導。這裡先用比較少的術語重建 OneTrans-V2 公開的架構，再把更多篇幅留給我們自己的分析：這個介面說明了什麼，還沒說明什麼，以及可能往哪裡走。\n\n## 介紹｜兩張總額相近的購物車\n\n想像兩張購物車，最後的成交總額差不多。一張裝著好幾件日常小物，另一張只有一件較高價的商品。若報表只留下 GMV，兩張購物車看起來幾乎等值；但它們所對應的商品、購買次數和可能的下一次需求，都未必相同。\n\n所以「提高 GMV」不能直接翻譯成「每次都找最貴的商品」。有人可能快要買幾件消耗品，有人正在考慮一件較貴的商品，也有人此刻只是瀏覽。若召回只接受一個固定的高價命令，就無法根據使用者情境改變候選。\n\nDCGR 的思路是：在找商品之前，先讓模型描述**這次互動可能長成什麼樣子**。這段描述叫做「決策前綴」（decision prefix）。它不是使用者按下的選項，也不是模型寫給人看的思考文字，而是根據使用者情境預測、由歷史互動標籤監督的幾個離散結果。接著，模型在這段前綴的條件下生成商品的 Semantic ID。\n\n用逛商店來比喻，普通的生成式召回像直接報出一件商品；DCGR 則先判斷這次可能要走向哪種購物路徑，再沿著該路徑找商品。這個類比只幫我們理解**順序**：實際上模型不是先選定唯一走道，而是在搜尋時讓多種決策與商品路徑依分數競爭。\n\n## 原理解釋｜先描述互動，再生成商品\n\n[論文 §4.2.1](https://arxiv.org/html/2609.28589v1) 的生成順序是「使用者情境 → 決策前綴 → 商品 SID」。完整前綴有四種決策維度：購買強度、價格尺度、發現性與供給類型。這篇只深入前兩者，因為它們共同描述與 GMV 有關的交易形狀；另外兩者讓同一個召回器也能表達其他目標。\n\n**購買強度**回答的是：這次互動沒有購買、一次購買，還是多次購買？**價格尺度**回答的是：若有購買，每筆訂單大約落在哪個價值範圍？論文沒有把它們壓成單一 GMV token，因為「多次低價」與「一次高價」雖可能有相近總額，卻不是同一種商品選擇問題。更關鍵的是，沒有購買時，價格尺度本來就沒有可依附的訂單，因此後者要在前者之後預測。[論文 §7.5](https://arxiv.org/html/2609.28589v1) 的消融也報告：用單一 GMV token 取代這兩個維度時，交易價值加權的 HR@1 下降 9%。\n\n不是每個決策都需要串成一條長鏈。論文讓購買強度、發現性與供給類型從使用者情境**平行預測**，把它們合成一個前綴位置；只有依賴購買強度的價格尺度，才放在下一個位置。這個安排同時避免任意替互不依賴的維度排先後，也讓前綴保持短。再往後，模型才逐步生成商品 SID 的各層代碼。\n\n訓練與服務要分開看。訓練時，日誌提供實際發生的決策與商品，模型學習在前面的條件下預測下一個 token。服務時，還沒有任何「正確答案」可看，模型得先從目前情境預測決策，再產生 SID。搜尋時，一條路徑的競爭力同時來自三部分：**模型認為這個決策有多可能、業務偏置給這個決策多少額外分數，以及商品 SID 在此決策下有多可能**。因此，偏置是調整路徑間的競爭，並非保證每位使用者都走最高價路徑。\n\n若想看完整的機率分解、beam search 競爭，以及業務偏置和 KL 約束的推導，直接讀[九老師的原文](https://recsys-frontier.com/article/dcgr-cot-ant-multi-task)會比在這裡重寫一遍更完整。本文接下來關心的是：理解了公開機制之後，該怎麼讀它的證據？\n\n### 公開實驗回答了三種不同問題\n\n第一個問題是：**正確決策能否幫助模型找商品？** [論文 §7.4 Figure 8(a)](https://arxiv.org/html/2609.28589v1) 把真實決策標籤交給模型，再看 SID 的離線 HR@1。這量到的是前綴提供多少商品資訊；由於服務時得自行預測決策，它不能直接當作可部署的召回準確率。\n\n第二個問題是：**改動決策，商品真的會跟著變嗎？** 同節 Figure 8(b) 在自由解碼時強制某個決策值，看生成結果是否轉向。以多次購買的購買強度為例，GMV slice 的 HR@1 上升 12.8%，click slice 下降 17.6%。這支持「前綴影響商品生成」，但離線 HR@1 仍不能直接翻譯為線上 GMV。\n\n第三個問題才是：**調節這個介面後，線上指標怎麼變？** [論文 §7.5 Table 5](https://arxiv.org/html/2609.28589v1) 比較硬性指定決策與逐步增加業務偏置。例如強制最高價格尺度時，AOV 增加 38.9%，orders 卻下降 33.5%，GMV 下降 7.7%。Table 6 又在使用者**全部曝光**的口徑下，比較只調購買強度與再加入價格尺度的結果：較強的聯合設定使 GMV 增加 3.0%，但 orders 下降 9.4%。Table 5 的分母是歸因到 DCGR 召回任務的曝光，兩張表不能把百分比直接互換。九老師的文章對硬控與偏置的差異也有更完整的解讀。\n\n## 我們的分析｜這個介面仍有哪些邊界？\n\n以下是**我們從公開方法和結果推導的待驗證問題**，不是在宣稱 OneTrans-V2 的實際系統已發生這些故障。它們也不是額外的內部實驗發現。\n\n### 結果條件能改變候選，不等於保證因果回報\n\n決策標籤來自已發生的互動。模型能學到「在某種購買結果之下，哪些商品常一起出現」，並在服務時讓相應路徑更有競爭力。但如果我們主動把一位使用者推向高價格尺度，不能只憑這個條件分布就斷言他會因此產生同樣的高價購買。原本的意圖、商品曝光與後段排序，都可能影響結果。\n\n論文的線上 A/B 已在其實驗場景裡檢查了調控的實際效果；我們要保留的邊界是：**條件生成的數學形式本身，不提供跨場景的因果保證。** 若要把偏置用於新商品群、新使用者群或不同流量配置，仍須重新驗證，而不能直接搬用既有表格的百分比。\n\n### 中間步驟必須能自行預測，還要拿得到搜尋預算\n\n真實標籤下的 HR@1 讓我們知道「有了正確線索會怎樣」，但線上並沒有人把正確決策交給模型。購買強度若選錯，後面的價格尺度與 SID 都是在另一條前綴上繼續生成。beam search 可以保留多條可能路徑，卻受到寬度與延遲預算限制；比較細的決策表示，也未必在完整生成流程裡比較好用。\n\n這是從模型順序與有限搜尋推得的風險，不是論文已報告「決策預測失準」。若未來要改設計，我們認為至少要把三件事拆開量：決策本身是否能預測、給定正確決策時它提供多少商品資訊、模型自由解碼後的候選品質如何。只有第三件事才真正承受前兩步的誤差與搜尋成本。\n\n### 調得動某個目標，不等於已知道整條鏈路的收益\n\nTable 5 讓我們看到一個很具體的置換：把最高價格尺度硬性指定出來，AOV 可以大幅增加，orders 和 GMV 卻會下降。這不是「價格尺度沒用」，而是提醒我們，召回對某個目標的調節會同時改變其他指標。偏置比硬控更漸進，仍需選擇強度；沒有一個對所有情境都成立的偏置值。\n\n還有歸因問題。OneTrans-V2 的整體成果結合了共享 backbone、聯合訓練、召回與服務系統等設計；某張表只看 DCGR 歸因曝光，另一張表看使用者全部曝光。**我們不能把整體 GMV 提升全部記在 GMV 決策 token 名下**，也不應把離線命中率當成完整鏈路的業務結果。這是讀公開數據時最值得守住的分寸。\n\n## 我們怎麼理解這個範式，以及可能往哪裡走\n\n我更願意把 decision prefix 看成一個放在「使用者情境」與「商品候選」之間的**可觀察、可調節介面**。它把原本藏在不同召回通道裡的目標差異，部分搬到同一個生成過程中。多預測幾個 token 並不自動等於更會推薦；價值在於這些 token 是否真的描述了不同的互動、是否能被模型預測，以及調節後能否找到更合適的商品。\n\n沿著這個理解，未來值得研究的第一件事是**決策表示**：哪些維度提供新的商品資訊，哪些只是重複描述同一個結果？把維度切得更細、接得更長，也許能讓條件更明確，同時可能增加預測難度與解碼成本。這是設計假說，應用消融與自由解碼實驗驗證，而不是從「CoT」這個名字推定多一步一定更好。\n\n第二件事是**情境化調節**。業務偏置讓同一模型沿不同決策路徑找候選，但使用者此刻可能只是瀏覽，也可能已有明確購買需求。未來的調節若能對不同情境保持合適的強度，理論上比一個全域固定偏置更有彈性；它是否真的改善 GMV、orders 與體驗，仍須線上驗證。這裡談的是可能方向，並非 OneTrans-V2 已公開部署的下一版功能。\n\n第三件事是**與多路召回的關係**。九老師也提醒，DCGR 並未宣稱一次取代所有舊通道；不同目標仍可能需要自己的候選入口、搜尋配額與實驗節奏。對我來說，這個範式最有意思的前景，是讓「共用一個能理解使用者與商品的模型」和「保留各目標可檢驗的入口」不必互相排斥。能否做到，最後要看完整鏈路的候選覆蓋、服務成本與使用者結果，而非只看前綴形式是否漂亮。\n\n回到開頭兩張購物車：同樣的 GMV，可以來自不同的購買路徑。DCGR 讓召回器有機會先描述這種差異，再生成商品；公開論文顯示這個介面能影響商品方向與線上目標。**真正值得繼續追問的，是模型何時能正確辨認路徑、何時該調節，以及整條系統是否因此給使用者帶來更好的結果。**\n\n## 參考資料（References）\n\n### 學術論文（Academic Literature）\n\n- [Cao et al., OneTrans-V2: Unifying Retrieval, Pre-rank, and Fine-rank with One Transformer in Industrial Recommender](https://arxiv.org/abs/2609.28589)\n\n### 技術文章（Technical Articles）\n\n- [九老師，OneTrans-DCGR：生成式召回的「CoT」與多目標機制](https://blog.recsys-frontier.com/article/dcgr-cot-ant-multi-task)",
+    "preview_markdown": "# GMV 決策鏈：讀懂 DCGR 的設計與邊界\n\n## 前情提要｜從級聯系統看生成式召回\n\n我們談推薦系統時，很容易把注意力放在最後的排序：哪件商品分數最高，就把它放在最前面。但一個成熟的推薦系統通常不會讓最昂貴的模型逐一檢查整個商品庫。它先透過召回找出一批候選，再交給粗排與精排逐步縮小範圍。這是級聯架構成立的工程理由；若想看各階段如何分工，可以先讀級聯架構導讀。\n\n這條鏈路也有一道很直觀的邊界：**排序只能挑已拿到手的候選**。把推薦想成選秀，召回發入場券，排序則在會場裡評分。若某類商品沒有拿到入場券，後段再懂它的價值，也無法把它推薦出來。",
+    "reading_time_minutes": 15,
     "published_at": "2026-11-27",
     "last_modified_at": "2026-11-27",
     "cover": "",
@@ -142,32 +142,32 @@
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.299965
+        "score": 0.274168
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.212978
-      },
-      {
-        "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.204035
+        "score": 0.253233
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.202348
+        "score": 0.235066
       },
       {
-        "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.165445
+        "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
+        "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
+        "score": 0.203843
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.145879
+        "score": 0.169427
+      },
+      {
+        "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
+        "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
+        "score": 0.164118
       }
     ]
   },
@@ -234,12 +234,12 @@
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.016502
+        "score": 0.017199
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.011513
+        "score": 0.011463
       }
     ]
   },
@@ -307,32 +307,32 @@
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.447932
+        "score": 0.450891
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.327097
-      },
-      {
-        "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.239943
-      },
-      {
-        "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.226229
-      },
-      {
-        "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.220231
+        "score": 0.3353
       },
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.212978
+        "score": 0.253233
+      },
+      {
+        "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
+        "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
+        "score": 0.237798
+      },
+      {
+        "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
+        "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
+        "score": 0.224911
+      },
+      {
+        "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
+        "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
+        "score": 0.21904
       }
     ]
   },
@@ -386,32 +386,32 @@
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.327097
+        "score": 0.3353
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.315155
+        "score": 0.31667
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.250198
-      },
-      {
-        "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.208579
+        "score": 0.240212
       },
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.202348
+        "score": 0.235066
+      },
+      {
+        "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
+        "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
+        "score": 0.2043
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.171258
+        "score": 0.169206
       }
     ]
   },
@@ -492,12 +492,12 @@
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.011334
+        "score": 0.011813
       },
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.010686
+        "score": 0.010645
       }
     ]
   },
@@ -586,32 +586,32 @@
       {
         "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
         "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.280161
+        "score": 0.279928
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.250198
+        "score": 0.240212
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.226229
-      },
-      {
-        "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.204035
+        "score": 0.224911
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.189279
+        "score": 0.18806
+      },
+      {
+        "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "score": 0.151604
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.137423
+        "score": 0.136896
       }
     ]
   },
@@ -685,7 +685,7 @@
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.038296
+        "score": 0.038477
       }
     ]
   },
@@ -746,32 +746,32 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.319201
+        "score": 0.327428
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.145029
+        "score": 0.145537
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.14272
+        "score": 0.1439
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.111271
+        "score": 0.11383
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.101506
+        "score": 0.100786
       },
       {
-        "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.092108
+        "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "score": 0.092834
       }
     ]
   },
@@ -839,32 +839,32 @@
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.465543
+        "score": 0.464259
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.437382
+        "score": 0.439439
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.220231
+        "score": 0.21904
       },
       {
         "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
         "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.184506
-      },
-      {
-        "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.171258
+        "score": 0.183412
       },
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.145879
+        "score": 0.169427
+      },
+      {
+        "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
+        "score": 0.169206
       }
     ]
   },
@@ -939,32 +939,32 @@
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.437382
+        "score": 0.439439
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.322828
+        "score": 0.323784
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.172282
+        "score": 0.17043
       },
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.165445
+        "score": 0.15623
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.144883
+        "score": 0.144534
       },
       {
         "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
         "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.120616
+        "score": 0.121182
       }
     ]
   },
@@ -1032,32 +1032,32 @@
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.465543
+        "score": 0.464259
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.447932
+        "score": 0.450891
       },
       {
         "url": "../notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-vae-semantic-id-tokenizer-in-generative-recommendation/rq-vae-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.322828
+        "score": 0.323784
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.315155
+        "score": 0.31667
       },
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.299965
+        "score": 0.274168
       },
       {
         "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
         "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.19383
+        "score": 0.19511
       }
     ]
   },
@@ -1111,32 +1111,32 @@
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.23228
+        "score": 0.23424
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.180437
+        "score": 0.185901
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
-        "score": 0.162734
+        "score": 0.166185
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.136799
+        "score": 0.133743
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.133158
+        "score": 0.133071
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.13254
+        "score": 0.132063
       }
     ]
   },
@@ -1210,7 +1210,7 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.024367
+        "score": 0.024261
       }
     ]
   },
@@ -1264,32 +1264,32 @@
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.194525
+        "score": 0.198673
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.162734
+        "score": 0.166185
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.127508
+        "score": 0.132385
+      },
+      {
+        "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "score": 0.118506
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.109115
+        "score": 0.108129
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.092811
-      },
-      {
-        "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.092743
+        "score": 0.09763
       }
     ]
   },
@@ -1350,32 +1350,32 @@
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
-        "score": 0.194525
+        "score": 0.198673
       },
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.180437
+        "score": 0.185901
       },
       {
         "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
         "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.167493
+        "score": 0.173306
       },
       {
-        "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.117112
+        "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "score": 0.164118
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.116394
+        "score": 0.115622
       },
       {
-        "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.111271
+        "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
+        "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
+        "score": 0.114576
       }
     ]
   },
@@ -1436,32 +1436,32 @@
       {
         "url": "../notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
         "path": "notes/funnel-cascade-architecture-in-recommendation-systems/funnel-cascade-architecture-in-recommendation-systems-zh-tw.html",
-        "score": 0.280161
+        "score": 0.279928
       },
       {
         "url": "../notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
         "path": "notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.html",
-        "score": 0.239943
+        "score": 0.237798
       },
       {
         "url": "../notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
         "path": "notes/from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html",
-        "score": 0.208579
+        "score": 0.2043
+      },
+      {
+        "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
+        "score": 0.203843
       },
       {
         "url": "../notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
         "path": "notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html",
-        "score": 0.19383
+        "score": 0.19511
       },
       {
         "url": "../notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
         "path": "notes/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation/rq-kmeans-semantic-id-tokenizer-in-generative-recommendation-zh-tw.html",
-        "score": 0.184506
-      },
-      {
-        "url": "../writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "path": "writing/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic/the-essence-of-data-a-snapshot-of-the-worlds-underlying-logic-zh-tw.html",
-        "score": 0.148541
+        "score": 0.183412
       }
     ]
   },
@@ -1556,12 +1556,12 @@
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.029075
+        "score": 0.028948
       },
       {
         "url": "../notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
         "path": "notes/dcgr-gmv-decision-chain/dcgr-gmv-decision-chain-zh-tw.html",
-        "score": 0.020836
+        "score": 0.021717
       }
     ]
   },
@@ -1636,32 +1636,32 @@
       {
         "url": "../writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
         "path": "writing/first-principles-information-compression/first-principles-information-compression-zh-tw.html",
-        "score": 0.23228
+        "score": 0.23424
       },
       {
         "url": "../writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
         "path": "writing/outcome-bias-did-we-really-make-a-wrong-choice/outcome-bias-did-we-really-make-a-wrong-choice-zh-tw.html",
-        "score": 0.167493
+        "score": 0.173306
       },
       {
         "url": "../writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
         "path": "writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.html",
-        "score": 0.148541
+        "score": 0.150109
       },
       {
         "url": "../notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
         "path": "notes/markovs-inequality-probabilistic-bounds-for-non-negative-variables/markovs-inequality-probabilistic-bounds-for-non-negative-variables-zh-tw.html",
-        "score": 0.14272
+        "score": 0.1439
       },
       {
         "url": "../notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
         "path": "notes/concentration-inequalities-from-limit-theorems-to-tail-bounds/concentration-inequalities-from-limit-theorems-to-tail-bounds-zh-tw.html",
-        "score": 0.132791
+        "score": 0.132631
       },
       {
         "url": "../writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
         "path": "writing/illusion-of-knowledge-seeing-vs-understanding/illusion-of-knowledge-seeing-vs-understanding-zh-tw.html",
-        "score": 0.127508
+        "score": 0.132385
       }
     ]
   }

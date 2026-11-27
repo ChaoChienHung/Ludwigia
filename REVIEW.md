@@ -10,8 +10,8 @@
     - Review 重點：抽讀 19 篇 `<draft>` 的 TLDR、敘事弧線與章節交棒是否符合作者自己的寫作判斷；本次只改 author-only 草稿，正文未因這輪骨架同步改寫。
 
 - [ ] 2026-11-27 四篇推薦與排序內容（均為 `published`，本機可從站內入口閱讀）
-    - 已完成：新增 `notes/dcgr-gmv-decision-chain/`、`notes/discriminative-scoring-to-autoregressive-recommendation/`、`writing/pairwise-vs-listwise-ranking/`，並重寫 `notes/from-cascade-to-generative-recommendation-paradigm-shift/`；重建內容 HTML 與搜尋索引。DCGR 依作者最新邊界改為公開技術分析：以兩張購物車和召回入場券建立直覺，集中解讀論文 §4.2.1、§7.4、§7.5 的 GMV 前綴、消融與 Table 5 / Table 6；移除未公開分桶與內部動機推演，`<draft>` 同步改為公開證據導向的推理地圖。寫作方法同步到 `docs/author/writing-notes.md`，`AGENTS.md` 補寫作前閱讀規則。其餘三篇仍待逐篇修訂。
-    - 驗證：`python3 cli.py test` 76 項通過，`python3 cli.py check-tags --content-dir all` 通過；來源以 OneTrans-V2、OneRec、TIGER 與原始排序論文核對。
+    - 已完成：新增 `notes/dcgr-gmv-decision-chain/`、`notes/discriminative-scoring-to-autoregressive-recommendation/`、`writing/pairwise-vs-listwise-ranking/`，並重寫 `notes/from-cascade-to-generative-recommendation-paradigm-shift/`；重建內容 HTML 與搜尋索引。DCGR 再依作者確認的定位重寫為「前情提要 → 介紹 → 白話原理 → 自行分析的局限 → 對範式與未來的理解」；公開機制與實驗以 OneTrans-V2 為準，詳細多路召回、Offline RL 與偏置推導引用九老師文章，局限與展望明確標為待驗證推論，`<draft>` 同步重排。寫作方法同步到 `docs/author/writing-notes.md`，`AGENTS.md` 補寫作前閱讀規則。其餘三篇仍待逐篇修訂。
+    - 驗證：DCGR 已重生 HTML 與搜尋索引；`python3 cli.py test` 77 項、`python3 cli.py check-tags --content-dir all` 與 `git diff --check` 通過；DCGR 數字與架構以 OneTrans-V2 公開論文核對。
     - Review 重點：先通讀 DCGR 的作者語氣、篇幅、論文數字與公開邊界；對外部署或履歷引用前依既定流程給主管確認。其餘三篇需按作者風格逐篇審閱；級聯篇既有封面圖是否仍符合雙路線敘述。人工全盤 proofread 尚待作者完成。
 
 - [ ] AWS Machine Learning Course 改為 `drafting`
