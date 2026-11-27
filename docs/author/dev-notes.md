@@ -152,6 +152,8 @@ navbar 這件事最近也想清楚了：`tools/content_styles/_shared/` 不該�
 
 最近我又更明確了一點：光有 `main flow` 還不夠，最好連 `TL;DR`、`Scope`、`OutOfScope` 都先寫出來。這樣在文章還沒長大之前，就能先知道它到底是在做 overview、single-method deep dive，還是 comparison。對我來說，這幾個欄位更像作者自己的 drafting rails，而不是給讀者看的正式 UI；也因此它們更適合放在 source 的 `<draft>...</draft>`，不要混進 `<meta>`。
 
+這段保留當時的思考紀錄；目前統一採用的欄位與間距規則以 `docs/author/writing-notes.md` 的「統一的 `<draft>` 骨架」為準。
+
 像 clustering 那篇就是一個很典型的提醒：如果一篇文章一邊在講「clustering 這個家族在解什麼問題」、一邊又完整展開 `K-Means` 和 `DBSCAN`，再一路寫到各自 limitation，後半段的 flow 很容易開始鬆掉。更自然的切法通常是把 overview 與單一方法頁解耦：overview 留在地圖層，`K-Means` / `DBSCAN` / `Hierarchical Clustering` / `AGNES` / `DIANA` / `HDBSCAN` 這些再各自承接出去。這樣 limitation 也比較不會像突然插進來的附錄，而是回到各方法自己的主線裡。
 
 我現在也更明確覺得：overview 頁如果把太多篇幅停在某一個代表方法的直覺上，其實很容易失焦。像 `clustering overview` 若一路講到 `K-Means` 的 intuition 幾乎吃掉半篇，表面上看起來還在講 clustering，實際上主 flow 已經悄悄轉成 `K-Means` 導讀了。這對之後想再把更多 clustering 技術放進來也不利，因為整篇會很快失去 scale。

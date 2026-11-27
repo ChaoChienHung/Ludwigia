@@ -15,16 +15,27 @@ LastModified: 2026-06-13
 Status: published
 </meta>
 <draft>
-- Core Summary & Problem Statement
-    - A practical introduction to data mining: why it matters, how it differs from naive retrieval, how raw data becomes knowledge, and the core data, quality, preprocessing, and methods foundations behind that process.
-- What Is Data Mining?
-    - Data Mining vs. Data Retrieval
-    - The Hierarchy of Data Mining: From Raw Data to Wisdom
-- A Systematic Pipeline: Executing the Discovery
-    - Bridging the Gap: Moving from Computation to Action
-- Summary
-    - - The main introduction provides the conceptual map; the detailed topics now live in dedicated follow-up articles
-- References
+- TLDR：Data mining turns raw observations into usable knowledge by combining a clear question, trustworthy data, preprocessing, pattern discovery, and interpretation; retrieving records alone is not discovery.
+- NarrativeArc：Begin with the difference between finding records and finding patterns, move through the data-to-knowledge hierarchy and a practical discovery pipeline, then return to the decision that the findings support.
+- Scope：A conceptual and practical map of data mining, data quality, preprocessing, method families, and interpreting results; individual algorithms belong in follow-up notes.
+- FollowUps：Read the dedicated notes on preprocessing, clustering, and other method families.
+
+- Opening | Receipts are not yet understanding: Use raw records to ask how observations become patterns that can support a decision.
+    - Handoff: Why is querying known records different from discovering something new?
+
+- Definition | Retrieval versus mining: Distinguish deterministic lookup from extracting generalizable structure; place information, knowledge, and wisdom on the same progression.
+    - Handoff: What steps turn a question and a dataset into an insight?
+
+- Pipeline | From question to action: Follow collection, preparation, pattern finding, evaluation, and interpretation, then ask whether the result changes a real decision.
+    - Handoff: What can go wrong before an algorithm even starts?
+
+- Data foundations | Quality, representation, and preparation: Inspect attributes, structures, noise, missing values, outliers, and EDA before choosing a method.
+    - Handoff: Which method family matches the kind of question and labels available?
+
+- Methods | Choose a family by task: Locate supervised, unsupervised, and other methods in the map without turning this introduction into an algorithm manual.
+    - Handoff: What should the reader retain after the method names fade?
+
+- Closing | A useful pattern must survive interpretation: Return to trustworthy data, a clear question, and actionable knowledge; send detailed methods to dedicated notes.
 </draft>
 
 

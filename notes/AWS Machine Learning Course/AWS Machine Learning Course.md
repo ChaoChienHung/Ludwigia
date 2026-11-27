@@ -8,9 +8,9 @@ Style: default
 EstimatedReadingTime: true
 Lang: en
 Tags: Cloud Computing, Machine Learning, Deep Learning, NLP
-Status: published
+Status: drafting
 Published: 2026-10-06
-LastModified: 2026-10-06
+LastModified: 2026-11-27
 </meta>
 
 # AWS Machine Learning Course

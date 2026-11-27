@@ -16,11 +16,24 @@ LastModified: 2026-08-18
 </meta>
 
 <draft>
-TLDR: This piece is the overview page. It explains what clustering is for, why representation and similarity come before algorithms, how data quality shapes the result, and why different clustering families reflect different structural assumptions.
-MainFlow: Start from the problem of unlabeled structure, define what makes a cluster, then show why representation, similarity, clean data, and structural assumptions matter before any specific method enters the picture.
-Scope: Why clustering matters; what defines a cluster; the role of representation and similarity; why data quality and EDA matter; how clustering families reflect different ideas of structure; how these ideas prepare the reader for later algorithm-specific notes.
-OutOfScope: Detailed K-Means mechanics, DBSCAN expansion rules, parameter tuning, and side-by-side method comparison.
-FollowUps: From Centers to Density: K-Means, DBSCAN, and the Geometry of Clusters; K-Means: Clustering Around Centers; DBSCAN: Dense Regions, Loose Boundaries, and Noise
+- TLDR：This piece is the overview page. It explains what clustering is for, why representation and similarity come before algorithms, how data quality shapes the result, and why different clustering families reflect different structural assumptions.
+- NarrativeArc：Start from the problem of unlabeled structure, define what makes a cluster, then show why representation, similarity, clean data, and structural assumptions matter before any specific method enters the picture.
+- Scope：Why clustering matters; what defines a cluster; the role of representation and similarity; why data quality and EDA matter; how clustering families reflect different ideas of structure; how these ideas prepare the reader for later algorithm-specific notes.
+- FollowUps：From Centers to Density: K-Means, DBSCAN, and the Geometry of Clusters; K-Means: Clustering Around Centers; DBSCAN: Dense Regions, Loose Boundaries, and Noise
+
+- Opening | Structure without labels: Give the reader a concrete reason to group unlabeled observations before naming an algorithm.
+    - Handoff: What must be true for a group to count as a cluster?
+
+- Cluster definition | Similarity depends on representation: Establish features, distance, and scale as choices that shape any apparent grouping.
+    - Handoff: Can a good method recover meaningful structure from poor data?
+
+- Data quality | Inspect before fitting: Use cleaning and exploratory analysis to show how missing values, outliers, and measurement choices alter a cluster map.
+    - Handoff: Once data is prepared, do all methods mean the same thing by structure?
+
+- Structural hypotheses | Centers, density, and hierarchy: Compare the shape each family looks for; present these as different assumptions rather than a leaderboard.
+    - Handoff: What should a reader carry into the method-specific notes?
+
+- Closing | Choose the question before the algorithm: Return to representation, similarity, and the kind of structure the task needs.
 </draft>
 
 # Discovering Hidden Structures: What Clustering Really Does

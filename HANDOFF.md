@@ -2,12 +2,16 @@
 
 這是給接手 Agent 的短期工作快照：只記上一個 Agent 剛停在哪裡，以及如何接續。`TODO.md` 管未完成與長期待辦，`REVIEW.md` 管已完成待作者驗收的工作；不把兩者的未指派事項搬進這裡。更新時覆寫過期資訊，不累積逐日紀錄。目標不超過 2,000 tokens；UTF-8 硬上限 6 KiB（`tests/test_handoff.py` 守門；設計理由見 `docs/design/design.md` §17）。
 
-## 概況
+## 2026-11-27 文章寫作與 `<draft>` 骨架
 
-- 截至：2026-11-20。為履歷連結整理門面：首頁標題改為「Ludwig Chao — Machine Learning Engineer · Research Engineer」，補 `meta description` / `og:title`；手寫頁面標題收斂到 `i18n/*.json` 的 `title`，由 `cli.py build-pages` 生成 `<title>` 與 `og:title`。推薦系統系列五篇去宣傳腔、Semantic ID 篇改寫分類樹類比並新增英文版（drafting）；`ARTICLES.md` 新增 DCGR GMV 決策鏈與 SID-level MTP 兩篇 backlog。
-- 最近驗證：`python3 cli.py test` 通過 75 項；`build-pages --check` 通過；本機預覽確認首頁標題、hero 與 meta。
-- 本輪停點：以上已 commit 並推上 main；待作者驗收項目見 `REVIEW.md`。
+- 背景：作者先前要求逐篇修訂推薦與排序文章、擴寫 DCGR GMV 篇、將 AWS Machine Learning Course 改為 `drafting`；最新要求把所有明確 `Status: published` 的 `<draft>` 統一成三個必填欄位、選填 FollowUps 與可讀的章節骨架。
+- 現況：19 篇已發布 source 的 `<draft>` 全部採 `TLDR / NarrativeArc / Scope`，移除 `OutOfScope`，短稿補逐節骨架，長稿保留原有素材並補同級項目空行；`docs/author/writing-notes.md`、相關契約／指南及 `AGENTS.md` 已同步，新增結構測試。DCGR 正文依最新指示收斂成 OneTrans-V2 公開實驗的分析文，移除未公開配置與內部動機推測；AWS 維持 `drafting`，搜尋索引不收錄。`python3 cli.py build-all --content-dir all` 重建 115 篇，`python3 cli.py test` 通過 77 項，tags 與 `git diff --check` 通過。
+- 待解問題：作者尚須全盤 proofread DCGR 的語氣、技術分寸與公開邊界，並抽讀這輪 19 篇草稿骨架；其餘三篇新作仍待逐篇修訂。對外部署或履歷引用 DCGR 前依既定流程給主管確認。
+- 下一步：依作者對骨架與文章的回饋逐篇調整；本輪已提交並 push；未 deploy。
 
-## 進行中工作
+## 工作區既有未提交檔案
 
-無。待作者決定的事項（Semantic ID 中文版 TIGER／OneRec 年份、封面圖是否與新說法相衝、英文版何時改 `published`）已記在 `REVIEW.md`。根目錄的 `ludwigia-article-plan.md` 與 `interview-prep-*.md` 含內部資訊，刻意不納入版控。
+- 背景：開工時已有 `docs/author/writing-notes.md` 修改、根目錄 `ludwigia-article-plan.md` 和 `notes/business-recsys-and-generative-retrieval-practice/` 未追蹤內容。
+- 現況：本輪在既有 `writing-notes.md` 修改上追加 `<draft>` 指引，未覆蓋原有變更；規劃稿與新筆記含內部素材，維持既有未提交狀態。
+- 待解問題：無。
+- 下一步：無。

@@ -291,18 +291,12 @@
     5. **Hierarchical Clustering 的多尺度樹狀層次**：Linkage 規則如何改變分群哲學（Single, Complete, Average/Ward）。
 
 ### 2. 重構《從級聯架構到生成式推薦：轉型的動機與技術挑戰》的寫作焦點
-- [ ] 純粹收斂在「系統架構層 (System Pipeline Architecture)」
-  - **主線聚焦**：說明從分階段級聯漏斗（召回 -> 粗排 -> 精排 -> 重排）走向端到端大一統（如 OneRec）的根本原因，在於全鏈路共享同一套 Transformer Backbone。
-  - **局部 vs 全局放大效應**：傳統級聯單一模組用 Transformer 仍會被跨模組 RPC/IO、特徵拼接與異構非 GEMM 階段所瓶頸；只有收斂為單一 Backbone 時，Scaling Law、GEMM 硬體親和性、LLM 生態繼承才能從局部擴大到全系統。
-  - **逐段精簡**：精簡 Memory-bound 計算細節與演算法數學公式，導流至新模型篇。
+- [x] 純粹收斂在「系統架構層 (System Pipeline Architecture)」（2026-11-27 已重寫，待作者 Review）
+  - **完成範圍**：保留級聯控制候選成本的理由，聚焦跨階段重複編碼與孤立優化；對照 OneRec 的端到端生成與 OneTrans-V2 的級聯共用 backbone，將模型任務細節導流至新篇。避免把單一路線寫成必然趨勢。
 
 ### 3. 規劃與撰寫《從判別式打分到自迴歸生成：推薦模型的範式轉移》
-- [ ] 新建專注文於「模型演算法建模層 (Model Formulation & Algorithmic Paradigm)」的深度筆記
-  - **數學與任務定義**：判別式單點打分 $P(\text{action} \mid u, i)$（是非題/打分題）vs 自迴歸序列生成 $P(\text{items} \mid u, c)$（開放式申論題）。
-  - **物品表示（Item Tokenization）**：原子 ID (Atomic ID) 散列與高維稀疏 Embedding Table vs Semantic ID / RQ-VAE 殘差量化編碼（Model-as-Index）。
-  - **硬體親和性與算力分配**：記憶體頻寬受限 (Memory-bound) 的異構小模型 vs 算力密集 (Compute-bound) 的大規模 GEMM 矩陣乘法。
-  - **生態繼承與模型對齊**：DPO / RLHF 對齊用戶長期滿意度，無縫繼承 FlashAttention、KV Cache、vLLM、Megatron。
-  - **探索機制演進**：從事後規則強插與啟發式外掛轉向解碼原生採樣（Temperature, Top-$k$, Top-$p$）。
+- [x] 新建專注文於「模型演算法建模層 (Model Formulation & Algorithmic Paradigm)」的深度筆記（2026-11-27 已新增 `notes/discriminative-scoring-to-autoregressive-recommendation/`，待作者 Review）
+  - **完成範圍**：比較給定候選的行為打分與直接生成商品代碼，說明 Semantic ID、逐層解碼、有效商品約束與端到端評估；不把解碼採樣或 LLM 工具鏈寫成自動改善探索與業務目標的保證。
 
 ### 4. 深化《生成式推薦中的 Semantic ID：商品 Token 化的設計與取捨》
 - [ ] 精準化類比與理論觀點（分類類比檢討已於 2026-11-20 完成，見 `REVIEW.md`）
@@ -355,29 +349,12 @@
   - 架構先行幫助 refine；前面的整理、填充、重組皆可委派，但最後的人類全盤審閱絕不能省略。
 
 ### 2. 機器學習與推薦系統洞見
-- [ ] **Writing：寫一篇關於 `pairwise vs listwise ranking` 的文章**
-  - 核心主張：`pairwise` 學的是局部相對順序 $s(i) > s(j)$；`listwise` 則是把 pair 放回整個 list 的 context 裡，由整體目標與 metric sensitivity 決定哪些 pair 的錯序真正傷害整體排序品質。以 LambdaRank 為例深入淺出。
-- [ ] **Notes：GMV 決策鏈的設計、評估與限制（DCGR 實作者視角）**（2026-11-20 新增；只建 backlog，尚未起稿）
-    - 位置：建議 `notes/dcgr-gmv-decision-chain/`；履歷「Projects & Technical Writing」預計連到這篇。
-    - 開頭必寫：連到九老師〈OneTrans-DCGR：生成式召回的"CoT"與多目標機制〉（https://blog.recsys-frontier.com/article/dcgr-cot-ant-multi-task ，CC BY-NC-SA 4.0）與 OneTrans-V2（arXiv:2609.28589，DCGR 在 §4.2.1）；明寫「我不是 OneTrans-V2 論文作者，只做了其中 GMV 決策 token 這一環」。
-    - 定位：九老師原文已完整講框架層（多路召回背景、$p(z,i\mid H)=p(z\mid H)\,p(i\mid H,z)$ 的分解、三重價值、與 Upside-Down RL／Decision Transformer 的對應、KL 閉式解 $q^*\propto p\,e^{\beta\phi}$），本文不重講，只寫 GMV 這一支的設計取捨，以及這套機制能做到與做不到什麼。**重心放在限制**，不是結尾帶過的一節。開頭放一張分工小表（關心的問題／理論部分／讀者帶走）。
-    - 大綱：
-        1. 開場與範圍：本文要回答的問題是，決策 token 加進來後，哪些收益來自結構，哪些只是評估口徑造成的錯覺。
-        2. 為什麼在召回階段處理價值：Boost 與粗精排混建模只能對已進入後鏈路的候選重新打分，召回沒撈上的高價值商品後面補不回來；追高客單價或多湊單數隨用戶狀態變化，固定條件給不出這個判斷，所以交給模型逐請求預測。
-        3. 為什麼拆成單數 → 客單價：同樣的 GMV 可能來自多單低價或少單高價，商品分布不同；先定單數再定客單價，每個條件下的分布更集中、價值先驗更清楚；單數截斷成三檔（未購買／一單／多單）的理由；多單時的客單價是近似，要寫清楚。
-        4. 分桶設計的取捨：log1p 等寬 → 增加桶數 → 依心理定價門檻手切 → Coarse → Fine 兩級 → 單數 → 客單價，每步只寫為什麼試與看到的趨勢；核心取捨是桶越細、給定真實桶時 SID 越好解，但推理時決策越難預測、每桶樣本越少，錯桶還會連累後面的 SID；觀察：多一步解碼本身不帶來收益，每步提供不同的價值資訊才有用。
-        5. 限制一：鏈式分解是恆等式。遍歷全部 $z$ 時 $p_0(y\mid h)=\sum_z p_0(z\mid h)\,p_0(y\mid h,z)$，商品分布不變；決策 token 的價值在於提供可觀測、可逐請求調節的條件路徑。寫成對九老師「第一重價值」的補充：他談中間步驟帶來的計算空間，這裡談不調控時的上限。只用公式講道理，不引任何未公開結果。
-        6. 限制二：日誌的分解不等於因果。$\pi_{\log}(y\mid h)\,p_{\log}(z\mid h,y)=p_{\log}(z\mid h)\,p_{\log}(y\mid h,z)$ 只是同一個聯合分布的兩種分解；推理時改變 $z$ 的分布，推不出會得到相同的因果回報，這是 outcome-conditioned 方法共同的前提。
-        7. 限制三：決策誤差沿鏈傳遞，離線評估看不到。單數檔位選錯，後面都在錯的分支上生成，beam 不回頭；teacher forcing 下的命中率不含決策預測誤差。建議同時報告決策本身的校準（例如按用戶活躍度分層看預測與實際成單率）與端到端（預測決策 → SID）命中率。
-        8. 限制四：資料支持度與外推。模型只在日誌覆蓋到的 (h, z, y) 組合上學到條件分布；把 $z$ 推到少見區域（例如給低活躍用戶指定最高客單價檔）更依賴外推。與九老師提到「β→∞ 等於直接指定決策、反而損失 GMV」是同一現象，這裡從資料支持度補充原因。
-        9. 限制五：商品層重加權只是近似。$q_\beta(y\mid h)=\sum_z q_\beta(z\mid h)\,p_0(y\mid h,z)$ 要遍歷全部決策組合才成立；線上只展開部分組合、beam 有限，調 β 時看到的線上指標同時反映了這個近似誤差。
-        10. 硬控與軟控的用法：硬控（直接指定檔位）給出點擊端與價值端的上下限，兩端之間是明顯的置換；軟控在決策 logit 上加 $\beta\phi(z)$，在上下限之間搜尋，同時觀察機率質量往高價桶遷移的程度與頂端桶是否過度集中。只寫操作與觀察指標，推導連到原文。
-        11. Takeaways：三到四條可引用的短結論加原因，例如「決策 token 的收益來自可調節的條件路徑，不來自多一步計算」。
-        12. References：OneTrans-V2、九老師原文、Upside-Down RL、Decision Transformer、Multi-Game Decision Transformers。
-    - 公開邊界：
-        - 全文不放任何數字，只寫想法、設計理由、方向性觀察與自己的判斷；需要佐證效果時連到 OneTrans-V2 與九老師原文。
-        - 不寫內部平台名、內部配置、日誌欄位、實驗 ID、內部文檔連結與同事的未公開結果。
-    - 驗收：初稿完成後先給主管看過再發佈；遵守本文件開頭的鷹架契約（先鋪為什麼在召回處理價值，再進分解與限制）。
+- [x] **Writing：寫一篇關於 `pairwise vs listwise ranking` 的文章**（2026-11-27 已新增 `writing/pairwise-vs-listwise-ranking/`，待作者 Review）
+  - 完成範圍：用交換例子比較 RankNet 與 ListNet 的訓練單位，並以 LambdaRank 說明成對梯度如何承載列表指標敏感度；保留曝光偏差與候選集口徑限制。
+- [x] **Notes：GMV 決策鏈的公開技術分析**（2026-11-27 已新增 `notes/dcgr-gmv-decision-chain/`，待作者 Review）
+  - 定位：依 OneTrans-V2 §4.2.1、§7.4、§7.5 的公開設計與實驗，分析購買強度與價格尺度為何分開、前綴如何調控召回，以及各種評估口徑可以支持的結論；九老師的 DCGR 文章作為多目標框架的延伸閱讀。
+  - 主線：兩張總額相近的購物車 → 召回候選邊界 → 決策前綴與雙維度 → 單一 GMV token 消融 → 真實決策與自由解碼 → Table 5 / Table 6 的硬控、偏置及分母差異。
+  - 公開邊界：只引用論文已公開的數字與機制，不推測內部動機、分桶配置、試驗順序或未公開結果；類比與閱讀解讀明確和論文事實分開。對外部署與履歷引用前仍待作者逐段審閱，並依既定流程給主管確認。
 
 ### 3. Vibe-coding 與 Agentic AI 時代的反思
 - [ ] **Writing：Doc-driven vibe-coding（Workflow 篇：如何用文檔整理 repo，讓 vibe-coding 可持續）**

@@ -4,6 +4,21 @@
 
 ## 待作者驗收
 
+- [ ] 2026-11-27 已發布文章的 `<draft>` 統一骨架
+    - 已完成：盤點 19 篇明確 `Status: published` 的 source，全部採用 `TLDR / NarrativeArc / Scope`、選填 `FollowUps`、空行後接文章專屬章節骨架；移除 `OutOfScope`，補齊短稿的逐節論點與交棒，保留既有長篇草稿素材，整理縮排子項與下一同級項目之間的空行。《結果偏誤》原先誤包在引子下的章節已提回同級。統一風格寫入 `docs/author/writing-notes.md`、相關契約與 workflow，`AGENTS.md` 加寫作前必讀規則，新增 published draft 結構守門。
+    - 驗證：`python3 -m unittest tests.test_published_draft_scaffold`、`python3 tools/create_content.py --self-test`、`python3 cli.py build-all --content-dir all`（115 篇）、`python3 cli.py test`（77 項）、tag 檢查與 `git diff --check` 通過。
+    - Review 重點：抽讀 19 篇 `<draft>` 的 TLDR、敘事弧線與章節交棒是否符合作者自己的寫作判斷；本次只改 author-only 草稿，正文未因這輪骨架同步改寫。
+
+- [ ] 2026-11-27 四篇推薦與排序內容（均為 `published`，本機可從站內入口閱讀）
+    - 已完成：新增 `notes/dcgr-gmv-decision-chain/`、`notes/discriminative-scoring-to-autoregressive-recommendation/`、`writing/pairwise-vs-listwise-ranking/`，並重寫 `notes/from-cascade-to-generative-recommendation-paradigm-shift/`；重建內容 HTML 與搜尋索引。DCGR 依作者最新邊界改為公開技術分析：以兩張購物車和召回入場券建立直覺，集中解讀論文 §4.2.1、§7.4、§7.5 的 GMV 前綴、消融與 Table 5 / Table 6；移除未公開分桶與內部動機推演，`<draft>` 同步改為公開證據導向的推理地圖。寫作方法同步到 `docs/author/writing-notes.md`，`AGENTS.md` 補寫作前閱讀規則。其餘三篇仍待逐篇修訂。
+    - 驗證：`python3 cli.py test` 76 項通過，`python3 cli.py check-tags --content-dir all` 通過；來源以 OneTrans-V2、OneRec、TIGER 與原始排序論文核對。
+    - Review 重點：先通讀 DCGR 的作者語氣、篇幅、論文數字與公開邊界；對外部署或履歷引用前依既定流程給主管確認。其餘三篇需按作者風格逐篇審閱；級聯篇既有封面圖是否仍符合雙路線敘述。人工全盤 proofread 尚待作者完成。
+
+- [ ] AWS Machine Learning Course 改為 `drafting`
+    - 已完成：source 的 `Status` 改為 `drafting`，重建 HTML 與搜尋索引；課程筆記保留本機直連，公開搜尋與列表不再收錄。
+    - 驗證：生成 HTML 的 `site:status` 為 `drafting`，索引中無 `aws-machine-learning-course`；`python3 cli.py test` 通過。
+    - Review 重點：確認日後是否要補寫、校對後再改回 `published`。
+
 - [ ] Semantic ID 篇英文版（`Status: drafting`）
     - 已完成：新增 `notes/semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-en.md` 與生成的 HTML，沿用雙語慣例（共用 `CanonicalId`、`Slug` 加 `-en`、`Lang: en`、`Tags` 不翻）；以改寫類比後的中文版為底意譯，`<information context>` 一併翻成英文，未翻作者用 `<draft>`。drafting 不進搜尋索引；文中 `content-link` 目前連到中文版（其他篇尚無英文版）。英文版把 TIGER 寫為 NeurIPS 2023、OneRec 寫為 2025（中文版仍是 2022／2024）。
     - Review 重點：通讀英文是否自然；確認上述兩個年份後是否同步修中文版；封面圖本身畫的是「Footwear | Sports | NIKE」的分類式 ID，和新版「不是分類樹」的說法相衝，決定是否換圖；看完把 `Status` 改成 `published` 並重跑 `cli.py build`。

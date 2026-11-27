@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>從判別式打分到自迴歸生成：推薦模型換了什麼問題？ — Ludwig</title>
+  <meta name="site:tags" content="推薦系統, 生成式檢索, Semantic ID, 精排, 機器學習">
+  <meta name="site:summary" content="比較候選打分與 Semantic ID 自迴歸生成的任務定義、物品表示、訓練訊號、解碼與評估，說明生成式推薦擴大了模型可選擇的空間，也引入合法性、成本和目標對齊問題。">
+  <meta name="site:lang" content="zh-Hant">
+  <meta name="site:status" content="published">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.generative_retrieval,concept.semantic_id,concept.ranking,concept.machine_learning">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.generative_retrieval&quot;:{&quot;en&quot;:&quot;Generative Retrieval&quot;,&quot;zh-Hant&quot;:&quot;生成式檢索&quot;,&quot;zh-Hans&quot;:&quot;生成式检索&quot;},&quot;concept.semantic_id&quot;:{&quot;en&quot;:&quot;Semantic ID&quot;,&quot;zh-Hant&quot;:&quot;Semantic ID&quot;,&quot;zh-Hans&quot;:&quot;Semantic ID&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;}}">
+  <meta name="site:canonical_id" content="discriminative-scoring-to-autoregressive-recommendation">
+  <meta name="site:published_at" content="2026-11-27">
+  <meta name="site:last_modified_at" content="2026-11-27">
+  <meta name="site:reading_time_minutes" content="9">
+  <meta name="site:source" content="notes/discriminative-scoring-to-autoregressive-recommendation/discriminative-scoring-to-autoregressive-recommendation-zh-tw.md">
+  <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#future-plans" data-nav-future-plans>Future Plans</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">從判別式打分到自迴歸生成：推薦模型換了什麼問題？</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#section">已有候選：對商品逐一打分</a>
+<a class="note-toc-link level-1" href="#section-2">沒有完整候選：把商品變成可生成的代碼</a>
+<a class="note-toc-link level-1" href="#section-3">訓練目標從「給定商品後預測行為」轉向「給定情境後預測商品」</a>
+<a class="note-toc-link level-1" href="#section-4">解碼把搜尋成本帶回模型內部</a>
+<a class="note-toc-link level-1" href="#section-5">兩種模型仍可以一起工作</a>
+<a class="note-toc-link level-1" href="#section-6">參考資料</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-27" data-published-at="2026-11-27"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-27</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">同一位使用者打開首頁時，推薦系統可以面對兩種不同的考題。第一種是：「候選商品已經在桌上，哪件更值得展示？」第二種是：「商品庫很大，下一件值得拿上桌的是什麼？」前者是候選打分與排序，後者是召回或生成。兩者可以組成同一條服務鏈；差別在於<strong>模型被要求選擇的空間</strong>。</p>
+
+<p class="mb-3"><a class="note-content-link" data-canonical-id="from-cascade-to-generative-recommendation-paradigm-shift" href="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift-zh-tw.html">級聯到生成式推薦的架構篇<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../from-cascade-to-generative-recommendation-paradigm-shift/from-cascade-to-generative-recommendation-paradigm-shift.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">從級聯架構到生成式推薦：轉型的動機與技術挑戰</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">縮放定律</span><span class="note-content-link-preview-tag">深度學習</span></span><span class="note-content-link-preview-summary">從多階段推薦系統的重複計算與目標斷層出發，比較端到端生成與保留級聯但共用 Transformer backbone 的兩條整合路線，說明各自能省下什麼、仍需承擔什麼。</span></span></span></a>討論跨階段怎麼共享計算。這篇只看模型任務：判別式打分與自迴歸生成各學什麼、在什麼地方交換了難題。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">已有候選：對商品逐一打分</h3>
+
+<p class="mb-3">傳統排序器接收使用者情境 $h$ 與候選商品 $i$，預測點擊、購買或其他行為的分數，例如 $P(\text{click}\mid h,i)$。模型可使用商品價格、類別、即時特徵及使用者與商品的交叉訊號，再按分數排列候選。</p>
+
+<p class="mb-3">這種模型擅長比較已拿到手的商品。它不需要知道如何「寫出」一個商品 ID；但它也無法替<strong>未進候選集</strong>的商品打分。若召回遺漏高潛力商品，精排模型再強也無法補回。打分與生成的分水嶺，首先是這個候選集邊界，而不是模型名稱是否含 Transformer。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">沒有完整候選：把商品變成可生成的代碼</h3>
+
+<p class="mb-3">生成式召回從情境 $h$ 出發，直接學習下一件商品的分布 $P(i\mid h)$。但商品庫可能很大；若把每件商品當成互不相關的原子 token，輸出詞表與長尾資料都會成為負擔。一條研究路線是先把商品映射為較短的 <a class="note-content-link" data-canonical-id="semantic-id-in-generative-recommendation" href="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation-zh-tw.html">Semantic ID<span class="note-content-link-preview" aria-hidden="true"><span class="note-content-link-preview-thumb"><img src="../semantic-id-in-generative-recommendation/semantic-id-in-generative-recommendation.png" alt="" loading="lazy" decoding="async"></span><span class="note-content-link-preview-body"><span class="note-content-link-preview-kind">Notes</span><span class="note-content-link-preview-title">生成式推薦中的 Semantic ID：商品 Token 化的設計與取捨</span><span class="note-content-link-preview-meta"><span class="note-content-link-preview-tag">推薦系統</span><span class="note-content-link-preview-tag">生成式檢索</span><span class="note-content-link-preview-tag">...</span></span><span class="note-content-link-preview-summary">說明 Semantic ID（語意識別碼）在生成式推薦與生成式檢索中的作用：為何 Atomic ID 不適合自迴歸生成、殘差量化如何把商品向量由粗到細編成離散 Token 序列、共享前綴帶來哪些性質，並比較端到端與兩階段 Tokenizer 的取捨，以及無效 SID、解碼延遲與 ID 碰撞等實務問題。</span></span></span></a>，例如由多層代碼組成的 $(c_1,c_2,c_3)$，再預測：</p>
+
+<p class="mb-3">$$P(c_1,c_2,c_3\mid h)=P(c_1\mid h)P(c_2\mid h,c_1)P(c_3\mid h,c_1,c_2).$$</p>
+
+<p class="mb-3"><a class="note-inline-link" href="https://arxiv.org/abs/2305.05065" target="_blank" rel="noopener noreferrer">TIGER</a> 以語意代碼表示商品，再用序列模型生成下一個商品的代碼。前一步的代碼成為後一步的條件，模型因而可以在較小的代碼空間裡組合商品。這不表示任何代碼組合都對應真實、可售商品；解碼後還要檢查合法性、目錄映射與服務時的庫存狀態。</p>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">訓練目標從「給定商品後預測行為」轉向「給定情境後預測商品」</h3>
+
+<p class="mb-3">候選打分模型通常以已曝光或採樣的商品為訓練單位，學在給定商品時的行為風險。生成式模型以觀察到的後續商品或商品序列為目標，逐個代碼學條件機率。兩者都依賴日誌，因此都會受到曝光偏差、負樣本或觀測策略影響；換成生成目標不會自動消除資料偏差。</p>
+
+<p class="mb-3">單件商品生成與<strong>整張推薦列表生成</strong>也不是一回事。學 $P(i\mid h)$ 可以反覆抽樣或用 beam search 產生候選，但列表的多樣性、重複商品、位置效應與整體使用者體驗仍需另外處理。<a class="note-inline-link" href="https://arxiv.org/abs/2502.18965" target="_blank" rel="noopener noreferrer">OneRec</a> 進一步研究 session 層級生成與偏好對齊，正是因為逐件預測還不足以代表整個展示結果。</p>
+</section>
+
+<section id="section-4" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">解碼把搜尋成本帶回模型內部</h3>
+
+<p class="mb-3">候選排序器的主要成本與候選數、特徵取得及每件商品的打分有關。自迴歸生成免去了枚舉整個商品庫的直接打分，但每生成一層代碼都要選擇分支；beam 越寬，覆蓋可能越好，計算也越多。第一層若把正確路徑剪掉，後面再精確也無法恢復。生成還需維護商品代碼版本、有效路徑與去重規則。</p>
+
+<p class="mb-3">這也解釋了為何「更像 LLM」不等於自然享有 LLM 的所有工程紅利。Transformer 的大矩陣運算、注意力與快取技術可借用，但商品代碼的約束解碼、候選有效性與排序階段的豐富特徵仍是推薦特有的成本。評估應分開看<strong>候選覆蓋、生成品質、端到端延遲與最終業務結果</strong>，不能只拿離線 next-token loss 判斷整條鏈路。</p>
+</section>
+
+<section id="section-5" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">兩種模型仍可以一起工作</h3>
+
+<p class="mb-3">生成模型可負責找候選，判別式排序器再使用即時商品特徵精排；也可以讓多階段任務共用使用者表示。<a class="note-inline-link" href="https://arxiv.org/html/2609.28589v1" target="_blank" rel="noopener noreferrer">OneTrans-V2</a> 就保留召回、粗排與精排三個任務，同時共享 backbone。這說明「判別式到生成式」更適合作為<strong>任務與表示的轉變</strong>來理解，不應被寫成所有舊任務都必須消失的單一路線。</p>
+
+<p class="mb-3">如果現在面對的是候選覆蓋不足，值得研究生成式召回能否在合理解碼成本下找到不同商品；如果問題是已有候選的價值判斷，先改善特徵、標註與排序目標可能更直接。先判定問題發生在哪個邊界，再選模型，是比追逐範式名稱更可靠的起點。</p>
+</section>
+
+<section id="review-kit" class="note-section note-reviewkit note-summary-kit" data-md-exclude="1" data-aos="fade-up" data-aos-delay="120">
+  <div class="note-callout note-summary-kit-shell">
+    <div class="note-summary-kit-header">
+      <h3 class="mb-0">Review Kit</h3>
+    </div>
+    <div class="note-reviewkit-body">
+      <ul class="nav nav-tabs mb-3 note-reviewkit-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="review-kit--takeaways-tab" data-bs-toggle="tab" data-bs-target="#review-kit--takeaways-pane" type="button" role="tab" aria-controls="review-kit--takeaways-pane" aria-selected="true">Key Takeaways</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="review-kit--prompt-tab" data-bs-toggle="tab" data-bs-target="#review-kit--prompt-pane" type="button" role="tab" aria-controls="review-kit--prompt-pane" aria-selected="false">Quiz Generator Prompt</button>
+      </li>
+      </ul>
+      <div class="tab-content note-reviewkit-content">
+      <div class="tab-pane fade show active note-reviewkit-pane note-reviewkit-pane-takeaways" id="review-kit--takeaways-pane" role="tabpanel" aria-labelledby="review-kit--takeaways-tab" tabindex="0">
+<div class="note-callout note-takeaways note-takeaways-embedded mb-0"><div class="note-takeaways-header">  <div class="note-takeaways-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></div>  <div class="note-takeaways-heading-group">    <h3 class="note-takeaways-title">Key Takeaways</h3>  </div></div><ul class="note-list">
+<li>判別式排序回答「給定候選，誰更值得展示」；生成式召回回答「從商品庫中，下一個候選是誰」。</li>
+<li>Semantic ID 讓商品可以被逐步生成，也引入代碼合法性、路徑剪枝與版本維護問題。</li>
+<li>單件商品的生成品質不等於整張列表的體驗；候選覆蓋與最終指標須分開驗證。</li>
+<li>生成與打分可以共存，架構選擇應從實際瓶頸與完整服務成本出發。</li>
+</ul></div>
+      </div>
+      <div class="tab-pane fade note-reviewkit-pane note-reviewkit-pane-prompt" id="review-kit--prompt-pane" role="tabpanel" aria-labelledby="review-kit--prompt-tab" tabindex="0" data-md-exclude="1">
+<div class="note-qa" data-qa-block="review-kit--prompt">
+  <div class="note-qa-header">
+    <h3 class="mb-0"><i class="fa-regular fa-circle-question me-2"></i>QA Generator Prompt</h3>
+    <button type="button" class="note-qa-copy" data-qa-source="#review-kit--prompt--full" data-qa-append-core="1">
+      <i class="fa-regular fa-copy me-2"></i>Copy
+    </button>
+  </div>
+  <div class="note-markdown-block">
+    <pre class="mb-0"><code class="note-qa-preview">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+  </div>
+  <pre class="d-none"><code id="review-kit--prompt--full" class="note-qa-full">You are given a set of notes or an article.
+Read and understand the content, then generate approximately 20 questions.
+Requested question type(s): ["mcq"]
+Most questions should be drawn directly from the material, focusing on key concepts, definitions,
+and core ideas, while a smaller portion can be creative or application-based,
+extending the material into real-world or novel scenarios but staying conceptually grounded.
+Include a mix of difficulty levels—beginner, intermediate, advanced, and professional.
+For each question, provide the question number, type (conceptual, application, analytical),
+difficulty, topic, the correct answer, and a brief explanation.
+If the requested question format requires options (for example MCQ), include the necessary answer choices.
+Focus on clarity, relevance, and meaningful application, avoiding trivial or overly obscure details.</code></pre>
+</div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="section-6" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料</h3>
+
+<ul class="note-list">
+<li><a class="note-inline-link" href="https://arxiv.org/abs/2305.05065" target="_blank" rel="noopener noreferrer">TIGER: Recommender Systems with Generative Retrieval</a></li>
+<li><a class="note-inline-link" href="https://arxiv.org/abs/2502.18965" target="_blank" rel="noopener noreferrer">OneRec: Unifying Retrieve and Rank with Generative Recommender and Iterative Preference Alignment</a></li>
+<li><a class="note-inline-link" href="https://arxiv.org/html/2609.28589v1" target="_blank" rel="noopener noreferrer">OneTrans-V2: Unifying Retrieval, Pre-rank, and Fine-rank with One Transformer</a></li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/site/01-bootstrap.js?v=2026-11-17-1"></script>
+<script src="../../core/site/02-language.js?v=2026-11-17-1"></script>
+<script src="../../core/site/03-cipher-mode.js?v=2026-11-17-1"></script>
+<script src="../../core/site/04-assistants.js?v=2026-11-17-1"></script>
+<script src="../../core/site/05-cipher-shortcut.js?v=2026-11-17-1"></script>
+<script src="../../core/site/06-theme.js?v=2026-11-17-1"></script>
+<script src="../../core/site/07-settings.js?v=2026-11-17-1"></script>
+<script src="../../core/site/08-page-context.js?v=2026-11-17-1"></script>
+<script src="../../core/site/09-navigation.js?v=2026-11-17-1"></script>
+<script src="../../core/site/10-ambient.js?v=2026-11-17-1"></script>
+<script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
+<script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

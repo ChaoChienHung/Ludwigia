@@ -17,6 +17,11 @@ LastModified: 2026-08-10
 </meta>
 
 <draft>
+- TLDR：Recognition and a high score can create an illusion of understanding; durable mastery requires rebuilding an explanation without prompts and connecting new ideas to deeper prior knowledge.
+- NarrativeArc：Open with the gap between test scores and explanation, trace the stages of learning and two common traps, contrast recognition with reconstruction, then offer first-principles and blank-page practices.
+- Scope：Learning and memory as a conceptual model, the limits of recognition-based tests, and practical checks for understanding.
+- FollowUps：Explore first principles as information compression and transferable knowledge.
+
 - Introduction: The Illusion of Grades and the Comprehension Gap
     - Learning Blind Spot: Mistaking high multiple-choice test scores for genuine knowledge mastery.
     - Shattering the Illusion: Discovering how fragile knowledge is when facing short-answer questions or explaining without cues.
@@ -45,7 +50,7 @@ LastModified: 2026-08-10
         - Multiple Choice = Recognition & Verification (assembling fragmented clues and familiarity).
         - Short Answer = Reconstruction from Scratch (requires strict boundary conditions and a complete logical network).
 
-- Recognition Is Not Reconstruction (Recognition vs. Complete Recall)
+- Recognition Is Not Reconstruction (Recognition vs. Complete Recall)｜要點：Use recognizing versus drawing a rabbit to separate familiarity from independent explanation.
     - Metaphor: Recognizing a rabbit (relying on external cues) vs. drawing a rabbit (reconstructing internal structure from scratch).
     - Myth: The fluidity of multiple-choice tests leads to overestimating the ability to "draw the rabbit."
 
@@ -59,7 +64,7 @@ LastModified: 2026-08-10
     - Feynman Technique: Explaining in plain language to an outsider, stripping away jargon, returning to first principles, and anchoring knowledge.
     - Rubber Duck Debugging: Explaining logic aloud in detail, depriving the brain of auto-completing familiarity, and pinpointing knowledge islands.
 
-- Conclusion and Further Reading
+- Conclusion and Further Reading｜要點：Return to reconstruction and transfer as stronger evidence of understanding.
     - Main Conclusion: Recognition is only the start; learning is about building a 3D transferable knowledge network, not resting on the illusion of familiarity.
     - Extension A: Exploring First Principles and Information Compression.
     - Extension B: Exploring the Hidden Value of Multiple-Choice Questions.

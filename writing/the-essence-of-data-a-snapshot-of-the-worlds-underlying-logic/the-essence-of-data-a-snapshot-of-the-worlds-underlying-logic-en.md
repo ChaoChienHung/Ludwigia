@@ -15,14 +15,23 @@ LastModified: 2026-06-20
 </meta>
 
 <draft>
-TLDR: This essay argues that data is not an abstract collection of fields, but a snapshot reality leaves behind at a particular moment. Data science is then the attempt to reverse-engineer the world from those noisy traces.
-MainFlow: Start from the idea that what we see in a database is not just numbers but recorded events, then argue that the world is not purely random but driven by deeper mechanisms, and finally frame data science as the work of inferring real structure from snapshots, traces, and co-occurrences.
-Scope: Data as snapshot, recorded facts, the hidden engine behind behavior, co-occurrence and causality, why data science is possible, reverse-engineering reality, and the philosophical basis for pattern discovery.
-OutOfScope: This draft does not yet go into mathematical details of specific algorithms, nor does it try to fully teach clustering, supervised learning, dimensionality reduction, or anomaly detection.
-FollowUps:
-  - Structure: If data already contains structure, are we discovering it or only approximating it?
-  - Representation: How does a snapshot become distorted by observation choices, schema design, and measurement scale?
-  - Causality: When does a pattern in data reflect a real-world mechanism, and when is it only a coincidence?
+- TLDR：This essay argues that data is not an abstract collection of fields, but a snapshot reality leaves behind at a particular moment. Data science is then the attempt to reverse-engineer the world from those noisy traces.
+- NarrativeArc：Start from the idea that what we see in a database is not just numbers but recorded events, then argue that the world is not purely random but driven by deeper mechanisms, and finally frame data science as the work of inferring real structure from snapshots, traces, and co-occurrences.
+- Scope：Data as snapshot, recorded facts, the hidden engine behind behavior, co-occurrence and causality, why data science is possible, reverse-engineering reality, and the philosophical basis for pattern discovery.
+
+- Opening | Columns as traces of events: Reframe a database record as evidence of something that happened in the world.
+    - Handoff: Why can a finite snapshot tell us anything beyond itself?
+
+- Hidden structure | The world is not pure noise: Explain how repeated mechanisms leave patterns even when observation is partial.
+    - Handoff: How do traces relate to the mechanisms that produced them?
+
+- Footprints and engine | Separate observation from cause: Use footprints as an analogy for the unseen process; mark the limits of inferring causes from co-occurrence.
+    - Handoff: What does this make possible for data science?
+
+- Reverse engineering | Reconstruct a useful model of reality: Treat data science as testing explanations against snapshots rather than inventing structure from thin air.
+    - Handoff: What uncertainty remains when we return to the world?
+
+- Closing | Keep the snapshot and world distinct: Return to the value and limits of noisy residual images.
 </draft>
 
 # The Essence of Data: A Snapshot of the World's Underlying Logic

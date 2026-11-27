@@ -42,7 +42,7 @@ source `.md` 採三層模型：
 ### `<draft>...</draft>`
 
 - 作為作者自己的 planning scaffold 與起稿骨架
-- 語法格式：建議內含 `TLDR / MainFlow / Scope` 欄位與「`重點：內容`」（如 `何謂結果偏誤：結果偏誤是...`）或縮排清單大綱
+- 寫作格式：先列 `TLDR / NarrativeArc / Scope`，可選填 `FollowUps`；空一行後接文章專屬的「段落角色｜核心主張：內容」與四格縮排子項。子項區塊與下一個同級段落之間空一行；詳見 `docs/author/writing-notes.md`
 - 預設不進公開輸出、不進 search index、不進 core markdown（Markdown Extractor 與 HTML build pipeline 均自動忽略）
 
 ## Core Markdown Subset

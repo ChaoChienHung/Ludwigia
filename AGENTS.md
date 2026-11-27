@@ -23,6 +23,7 @@ python3 cli.py test                           # 全站完整守門
 
 - **開工先對齊**：讀 `README.md` 的「專案術語（Terminology）」與「Repository Map」，依 `docs/README.md` 的「功能導覽」定位起始文件與實作範圍。接續工作時先讀 `HANDOFF.md`，再以使用者最新指令、`git status --short` 與 source 核對（快照過期以現況為準）。
 - **先查契約再改 source**：先讀對應子系統契約（見下表）與相鄰實作，改動保持聚焦，沿用現有元件、資料流與設計 token。
+- **寫作先對齊全站風格**：撰寫或大幅改寫 `notes/`、`writing/`、`canvas/` 內容前，先讀 `docs/author/writing-notes.md` 的統一 `<draft>` 骨架與寫作原則，再依 `docs/README.md` 功能導覽查對應的 `docs/guide/`、`docs/specs/` 與內容契約，並對照相鄰已發布文章的理解路徑與篇幅；避免只把大綱擴成條列式摘要。
 - **文檔全域連貫**：更新任何文檔（`README.md`、`AGENTS.md`、`HANDOFF.md`、spec 等）時，嚴禁局部外掛拼貼（local attach）；修改後須通讀上下文，檢查邏輯自洽、無重複矛盾、過渡自然。
 - **交付前核對**：確認 diff 只含預期 source、必要生成物與受影響文檔；報告改了什麼、跑了哪些檢查、哪些未驗證。建立 PR 時標題與說明指出變更範圍與驗證結果。
 - **更新交接快照**：工作中斷、移交或進行中狀態有實質變化時更新 `HANDOFF.md`（完成且無續作時明寫「無」）。每項用短標題與「背景／現況／待解問題／下一步」（有外部阻礙才加「阻礙」），只留最新可核對事實，上限約 2,000 tokens 且 UTF-8 不超過 6 KiB（`tests/test_handoff.py` 守門）。

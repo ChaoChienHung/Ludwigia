@@ -15,30 +15,42 @@ LastModified: 2026-11-20
 </meta>
 
 <draft>
+- TLDR：RQ-VAE 透過可訓練編碼器與多層殘差碼本產生 Semantic ID；不可微量化、梯度傳遞與碼本崩塌，是理解這條路線的關鍵。
+- NarrativeArc：先從多模態商品表示與單碼本瓶頸引出殘差量化，再解決量化梯度和損失函數，最後檢查階層性、碼本使用與 TIGER 案例。
+- Scope：RQ-VAE 的表示、訓練機制、Depth Dropout、碼本崩塌及與 RQ-Kmeans 的工程取捨。
+- FollowUps：結合 Semantic ID 與 RQ-Kmeans 專篇比較 tokenizer 路線。
+
 - 1. 前言：尋找推薦系統的專屬 Tokenizer
     - 承先啟後：確立 Semantic ID 的價值，點出多模態商品無法套用傳統 NLP Tokenizer 的痛點。
     - 引出核心：RQ-VAE 如何同時滿足「深層語意壓縮」與「階層式離散映射」的嚴苛需求。
+
 - 2. 核心運作方式：從 AutoEncoder 到殘差量化
     - 基礎概念釋疑：定義 Codebook (碼本) 與 Codeword (碼字)。
     - 單碼本瓶頸：剖析 VQ-VAE 面對海量商品時在 OOM 與語意碰撞間的兩難。
     - 破局點 (Residual Quantization)：化大為小，透過殘差逼近組合出指數級的表達空間，天然對齊樹狀分類邏輯。
+
 - 3. 跨越不可微的鴻溝：STE 與損失函數
     - 數學死局：$\arg\min$ 階梯函數如何阻斷梯度。
     - 梯度直通 (STE)：解析前向離散、反向直通的運作邏輯。
     - 雙向護欄：引入碼本損失 (Codebook Loss) 與承諾損失 (Commitment Loss) 約束特徵空間。
+
 - 4. [Block] 語意分層的底層約束：Depth Dropout 與視野封鎖
     - 核心提問：為何在 STE 共享梯度下，碼本能維持「由粗到細」的階層？
     - 變異數優先與 MSE 懲罰：利用幾何誤差迫使首層捕捉主成分。
     - Depth Dropout：隨機截斷後續層級，打破協同適應，強制建立前綴可解碼性。
     - 前向路由的物理封鎖：解析「動態追趕效應」，確立首層碼本的絕對主導權。
+
 - 5. 落地深水區：解剖與防禦「碼本崩塌 (Codebook Collapse)」
     - 核心病徵：剖析贏者全拿導致死碼 (Dead Code) 蔓延的馬太效應。
     - 實務防禦：K-means 初始化、EMA 動態更新、死碼重置 (Dead Code Revival)。
+
 - 6. 業界標竿：Google TIGER 架構剖析
     - 兩階段工作流：特徵到 ID (字典構建) 與 ID 到推薦 (序列自迴歸生成)。
+
 - 7. [Callout] 架構權衡：RQ-VAE vs. RQ-Kmeans
     - 路線對比：端到端動態對齊 vs. 兩階段靜態聚類的工程與商業取捨。
-- 8. 結語
+
+- 8. 結語｜要點：回扣商品表示、可微訓練與碼本使用的取捨，不把端到端訓練寫成無條件優勢。
     - 技術收斂：RQ-VAE 完成多模態特徵到 LLM 離散表徵的關鍵閉環，強調工程落地的取捨智慧。
 </draft>
 

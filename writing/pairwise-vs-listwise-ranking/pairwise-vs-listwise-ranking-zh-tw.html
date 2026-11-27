@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Pairwise 與 Listwise Ranking：錯序發生在哪裡，重要嗎？ — Ludwig</title>
+  <meta name="site:tags" content="推薦系統, 精排, 機器學習, 資訊檢索">
+  <meta name="site:summary" content="從同一組候選的交換例子出發，區分 pairwise 的局部順序學習與 listwise 的整體列表目標，並用 RankNet、ListNet、LambdaRank 說明方法名稱與實際優化訊號之間的差異。">
+  <meta name="site:lang" content="zh-Hant">
+  <meta name="site:status" content="published">
+  <meta name="site:tag_concepts" content="concept.recommender_systems,concept.ranking,concept.machine_learning,concept.information_retrieval">
+  <meta name="site:tag_labels" content="{&quot;concept.recommender_systems&quot;:{&quot;en&quot;:&quot;Recommender Systems&quot;,&quot;zh-Hant&quot;:&quot;推薦系統&quot;,&quot;zh-Hans&quot;:&quot;推荐系统&quot;},&quot;concept.ranking&quot;:{&quot;en&quot;:&quot;Ranking&quot;,&quot;zh-Hant&quot;:&quot;精排&quot;,&quot;zh-Hans&quot;:&quot;精排&quot;},&quot;concept.machine_learning&quot;:{&quot;en&quot;:&quot;Machine Learning&quot;,&quot;zh-Hant&quot;:&quot;機器學習&quot;,&quot;zh-Hans&quot;:&quot;机器学习&quot;},&quot;concept.information_retrieval&quot;:{&quot;en&quot;:&quot;Information Retrieval&quot;,&quot;zh-Hant&quot;:&quot;資訊檢索&quot;,&quot;zh-Hans&quot;:&quot;信息检索&quot;}}">
+  <meta name="site:canonical_id" content="pairwise-vs-listwise-ranking">
+  <meta name="site:published_at" content="2026-11-27">
+  <meta name="site:last_modified_at" content="2026-11-27">
+  <meta name="site:reading_time_minutes" content="6">
+  <meta name="site:source" content="writing/pairwise-vs-listwise-ranking/pairwise-vs-listwise-ranking-zh-tw.md">
+  <script src="../../core/theme-preload.js?v=2026-11-15-1"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/images/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" href="../../assets/images/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/content-page/shared.css?v=2026-06-20-1">
+  <link rel="stylesheet" href="../../assets/css/content-page/default/style.css?v=2026-09-25-1">
+</head>
+<body class="note-page note-style-default" data-i18n-page="contentPage">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-nav">
+  <div class="container">
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-left"
+      data-mobile-note-nav-action="toc"
+      aria-label="Open outline"
+      title="Outline"
+    >
+      <i class="fa-solid fa-list"></i>
+      <span class="visually-hidden">Outline</span>
+    </button>
+
+    <a class="navbar-brand fw-bold custom-brand" href="../../index.html"><img class="brand-logo" src="../../assets/images/logo/ludwigia-logo.svg" alt="Ludwigia" width="28" height="28"><span>Ludwig</span></a>
+
+    <button
+      type="button"
+      class="mobile-note-nav-btn mobile-note-nav-btn-right"
+      data-mobile-note-nav-action="meta"
+      aria-label="Open metadata"
+      title="Metadata"
+    >
+      <i class="fa-regular fa-circle-question"></i>
+      <span class="visually-hidden">Metadata</span>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../index.html" id="homeDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Home
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="homeDropdown">
+            <li><a class="dropdown-item" href="../../index.html#about">About</a></li>
+            <li><a class="dropdown-item" href="../../index.html#skills" data-nav-skills>Skills</a></li>
+            <li><a class="dropdown-item" href="../../index.html#credentials" data-nav-credentials>Credentials</a></li>
+            <li><a class="dropdown-item" href="../../index.html#timeline" data-nav-timeline>Timeline</a></li>
+            <li><a class="dropdown-item" href="../../index.html#future-plans" data-nav-future-plans>Future Plans</a></li>
+            <li><a class="dropdown-item" href="../../index.html#contact">Contact</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle mx-2" href="../../pages/projects.html" id="projectsDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="../../pages/projects.html#spaceshipX">SpaceshipX</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#ludwigia">Ludwigia</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#karen">Karen</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#mentorion">Mentorion</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#detoxio">Detox.io</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#piggynest">PiggyNest</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#scriba">Scriba</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#sesame">Sesame</a></li>
+            <li><a class="dropdown-item" href="../../pages/projects.html#vellichor">Vellichor</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../notes/index.html">Notes</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../writing/index.html">Writing</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../canvas/index.html">Canvas</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/search.html" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span class="visually-hidden">Search</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="../../pages/settings.html" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+            <span class="visually-hidden">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <section class="page-section">
+  <div class="container">
+    <h1 class="text-center" data-aos="fade-up">Pairwise 與 Listwise Ranking：錯序發生在哪裡，重要嗎？</h1>
+
+    <div class="note-toc-hover-zone" aria-hidden="true"></div>
+    <div class="note-toc-backdrop" aria-hidden="true"></div>
+    <button class="note-toc-fab" type="button" aria-label="Open outline">
+      <i class="fa-solid fa-list"></i>
+    </button>
+    <div class="note-toc-overlay" aria-label="Outline">
+      <div class="note-toc-overlay-inner">
+        <div class="note-toc-overlay-panel">
+          <div class="note-toc-overlay-title">Outline</div>
+          <nav class="note-toc">
+            <a class="note-toc-link level-1" href="#pairwise">Pairwise：把排序拆成相對偏好</a>
+<a class="note-toc-link level-1" href="#listwise">Listwise：把整張列表當成學習單位</a>
+<a class="note-toc-link level-1" href="#section">一個交換例子：錯在頂端還是尾端</a>
+<a class="note-toc-link level-1" href="#lambdarank-pair">LambdaRank：用 pair 承載列表指標的敏感度</a>
+<a class="note-toc-link level-1" href="#section-2">選方法前，先定義列表邊界</a>
+<a class="note-toc-link level-1" href="#section-3">參考資料</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-meta-hover-zone" aria-hidden="true"></div>
+    <button class="note-meta-fab" type="button" aria-label="Open meta">
+      <i class="fa-regular fa-circle-question"></i>
+    </button>
+    <div class="note-meta-overlay" aria-label="Meta">
+      <div class="note-meta-overlay-inner">
+        <div class="note-meta-overlay-title">Meta</div>
+        <div class="note-meta-panel">
+          <div class="note-meta-section">
+            <div class="note-meta-label">Estimated Reading Time</div>
+            <div id="note-reading-time" class="note-meta-item">
+              <i class="fa-regular fa-clock"></i><span class="note-reading-time-text">— min</span>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Dates</div>
+            <div class="note-meta-dates">
+              <div class="note-date-menu-shell" data-last-modified-at="2026-11-27" data-published-at="2026-11-27"><div class="note-meta-item"><i class="fa-regular fa-pen-to-square"></i><span>Last Modified: 2026-11-27</span></div></div>
+            </div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Tags</div>
+            <div id="note-tags" class="note-tags"></div>
+          </div>
+          <div class="note-meta-section">
+            <div class="note-meta-label">Markdown</div>
+            <div class="note-meta-actions">
+              <button id="note-copy-md" type="button" class="note-meta-action">
+                <i class="fa-regular fa-copy"></i> Copy Markdown
+              </button>
+              <button id="note-download-md" type="button" class="note-meta-action">
+                <i class="fa-solid fa-download"></i> Download Markdown
+              </button>
+            </div>
+            <div id="note-md-status" class="note-meta-status" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-10">
+        <div class="page-text note-content">
+          <section class="note-section" data-aos="fade-up" data-aos-delay="120">
+<p class="mb-3">假設搜尋結果有三個候選：非常相關的 A、尚可的 B、無關的 C。排序模型把 A 和 B 顛倒，與把 B 和 C 顛倒，都是「一對商品順序錯了」。但讀者或使用者看到的影響不一定相同：頂端的交換通常更醒目，而不同相關度的差距也不同。</p>
+
+<p class="mb-3">這就是 pairwise 與 listwise 的關鍵差異。<strong>Pairwise 先問「這一對誰應該在前？」；listwise 把候選放回整張列表，問「整體排序因此差了多少？」</strong> 差異不在輸入是不是兩件商品，而在訓練訊號是否考慮列表的位置、其他候選與最終指標。</p>
+</section>
+
+<section id="pairwise" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Pairwise：把排序拆成相對偏好</h3>
+
+<p class="mb-3">令 $s_i$ 是模型給候選 $i$ 的分數。如果 A 的相關度高於 B，我們希望 $s_A&gt;s_B$。RankNet 以分數差 $s_A-s_B$ 建立偏好機率，再用成對的交叉熵訓練。<a class="note-inline-link" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2005/08/icml_ranking.pdf" target="_blank" rel="noopener noreferrer">RankNet 原論文</a></p>
+
+<p class="mb-3">這個設計很直觀：無需替每個候選定義有意義的絕對分數，只要知道相對順序。把許多 pair 的梯度加總，模型最後仍輸出每件商品的單一分數，供整張列表排序。問題是，若每一對使用相同權重，模型只知道「A 應在 B 前」，不知道這次錯序是在列表最上方還是末端，也不知道交換後對業務或搜尋指標的傷害有多大。</p>
+
+<p class="mb-3">Pairwise 不是只看一對就忘記其餘候選。訓練時一個 query 或請求可提供許多 pair；共享的打分函數也讓它們互相影響。它的<strong>基本損失單位</strong>仍是相對順序，所以「整體列表品質」通常要靠 pair 的選取與權重間接表達。</p>
+</section>
+
+<section id="listwise" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">Listwise：把整張列表當成學習單位</h3>
+
+<p class="mb-3">Listwise 方法直接把同一個 query 下的候選集合與其排序當成訓練單位。ListNet 例如從標註相關度與模型分數各建立一個列表上的機率分布，讓預測分布靠近標註分布；常用的 top-one 形式比較「每個候選排第一」的機率。<a class="note-inline-link" href="https://www.cs.nccu.edu.tw/~mftsai/papers/icml2007_tsai.pdf" target="_blank" rel="noopener noreferrer">ListNet 原論文</a></p>
+
+<p class="mb-3">這讓候選彼此成為同一個正規化空間的一部分。提高 A 的相對機率，會改變 B、C 的相對份額；而單獨訓練 A 對 B 的 pair 時，C 不會直接出現在該項損失裡。不過「listwise」也不是魔法標籤：ListNet 的 top-one 代理目標，與 NDCG 這類實際評估指標並不完全相同。選哪種列表分布、在哪個截斷位置計算品質，仍會影響學到的偏好。</p>
+</section>
+
+<section id="section" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">一個交換例子：錯在頂端還是尾端</h3>
+
+<p class="mb-3">以 DCG 為例，每個位置有折扣 $d_r$，每個候選有相關性收益 $g_i$。在位置 $r$ 和 $t$ 交換 $i$、$j$，指標變化的絕對值是：</p>
+
+<p class="mb-3">$$|\Delta\mathrm{DCG}_{ij}|=|(g_i-g_j)(d_r-d_t)|.$$</p>
+
+<p class="mb-3">於是，同樣是把高相關候選排到低相關候選後面，若交換發生在折扣差距較大的位置，傷害就更大；相關性差距越大也一樣。NDCG 再依該 query 的理想 DCG 正規化。這個簡單式子把「pair 的偏好」與「列表的位置」接在一起：<strong>不是所有正確的 pair 都同樣值得花力氣修正。</strong></p>
+</section>
+
+<section id="lambdarank-pair" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">LambdaRank：用 pair 承載列表指標的敏感度</h3>
+
+<p class="mb-3">NDCG 對排序位置很敏感，但直接對離散名次微分並不方便。LambdaRank 的做法是仍從 pair 產生更新方向，卻依交換這一對後的指標變化調整梯度大小。若一對候選交換會顯著改變 NDCG，它的更新權重就更高。<a class="note-inline-link" href="https://papers.neurips.cc/paper_files/paper/2006/file/af44c4c56f385c43f2529f9b1b018f6a-Paper.pdf" target="_blank" rel="noopener noreferrer">LambdaRank 原論文</a></p>
+
+<p class="mb-3">這提醒我們，<strong>pairwise 與 listwise 不是互斥的模型標籤</strong>。LambdaRank 的計算仍沿著 pair 進行，但監督強度來自整張列表的排序指標。精確說法是「具有列表指標感知的成對更新」，而不是把它簡單歸為純粹的 listwise loss。它改善的是訓練訊號與指標的對齊程度；不保證任何資料集上都勝過所有其他方法。</p>
+</section>
+
+<section id="section-2" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">選方法前，先定義列表邊界</h3>
+
+<p class="mb-3">在搜尋中，一張列表通常屬於同一個 query；在推薦中，可能是一個使用者的一次請求。跨 query 隨意組 pair，往往沒有共同的曝光情境，也不對應同一張可比較的列表。比較方法時，應固定候選集、標註口徑、負樣本來源和評估的 top-$k$；否則效果差異可能來自資料，而不是損失函數。</p>
+
+<p class="mb-3">還有一個共同限制：點擊與購買資料受曝光位置影響。把「被點到」直接當作天生較相關，pairwise 和 listwise 都可能學到原有排序器的曝光偏差。列表感知只回答<strong>如何使用已給定的偏好訊號</strong>，不自動保證訊號無偏。</p>
+
+<p class="mb-3">所以我會這樣記住三者：<strong>RankNet 學 pair 的相對順序；ListNet 比較同一列表上的分布；LambdaRank 仍更新 pair，但讓列表指標決定哪些錯序更值得修。</strong> 真正的選擇依據，是你要優化的列表品質、可取得的標註，以及線上服務願意承擔的計算成本。</p>
+</section>
+
+<section id="section-3" class="note-section" data-aos="fade-up" data-aos-delay="120">
+<h3 class="mb-3">參考資料</h3>
+
+<ul class="note-list">
+<li><a class="note-inline-link" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2005/08/icml_ranking.pdf" target="_blank" rel="noopener noreferrer">Burges et al., Learning to Rank using Gradient Descent（RankNet）</a></li>
+<li><a class="note-inline-link" href="https://www.cs.nccu.edu.tw/~mftsai/papers/icml2007_tsai.pdf" target="_blank" rel="noopener noreferrer">Cao et al., Learning to Rank: From Pairwise Approach to Listwise Approach（ListNet）</a></li>
+<li><a class="note-inline-link" href="https://papers.neurips.cc/paper_files/paper/2006/file/af44c4c56f385c43f2529f9b1b018f6a-Paper.pdf" target="_blank" rel="noopener noreferrer">Burges et al., Learning to Rank with Nonsmooth Cost Functions（LambdaRank）</a></li>
+</ul>
+</section>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <footer>
+  <p>© 2025 Ludwig — All Rights Reserved</p>
+</footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../../data/Ontology/information-ontology.js?v=2026-06-14-1"></script>
+<script src="../../core/site/01-bootstrap.js?v=2026-11-17-1"></script>
+<script src="../../core/site/02-language.js?v=2026-11-17-1"></script>
+<script src="../../core/site/03-cipher-mode.js?v=2026-11-17-1"></script>
+<script src="../../core/site/04-assistants.js?v=2026-11-17-1"></script>
+<script src="../../core/site/05-cipher-shortcut.js?v=2026-11-17-1"></script>
+<script src="../../core/site/06-theme.js?v=2026-11-17-1"></script>
+<script src="../../core/site/07-settings.js?v=2026-11-17-1"></script>
+<script src="../../core/site/08-page-context.js?v=2026-11-17-1"></script>
+<script src="../../core/site/09-navigation.js?v=2026-11-17-1"></script>
+<script src="../../core/site/10-ambient.js?v=2026-11-17-1"></script>
+<script src="../../core/site/11-content-page.js?v=2026-11-17-1"></script>
+<script src="../../core/site/12-note-overlays.js?v=2026-11-17-1"></script>
+<script src="../../core/i18n.js?v=2026-06-14-1"></script>
+<script src="../../assets/js/note-tags.js?v=2026-06-14-4"></script>
+<script src="../../assets/js/note-information.js?v=2026-06-14-1"></script>
+<script>
+  (function () {
+    function tryRenderMath(remaining) {
+      if (typeof renderMathInElement !== "function") {
+        if (remaining <= 0) return;
+        window.setTimeout(function () { tryRenderMath(remaining - 1); }, 50);
+        return;
+      }
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      });
+    }
+    window.addEventListener("load", function () { tryRenderMath(20); });
+  })();
+</script>
+</body>
+</html>

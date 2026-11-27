@@ -200,8 +200,8 @@ source metadata 應可再現性生成以下 HTML / index 欄位：
 
 例如：
 
-- `TLDR` / `MainFlow` / `Scope` / `OutOfScope` / `FollowUps`
-- 格式化章節骨架：採用「`重點：內容`」（如 `何謂結果偏誤：結果偏誤是...`）或層級化縮排大綱清單
+- `TLDR` / `NarrativeArc` / `Scope`（必填）及 `FollowUps`（選填）
+- 章節骨架：規劃欄位後空一行，再用「`段落角色｜核心主張：內容`」及層級化縮排子項記錄各節的推進；子項結束與下一個同級段落之間空一行
 
 規則：
 

@@ -5,7 +5,7 @@
 ## 1. 新增／修改內容（從起稿到發布）
 
 1. **寫內容（先不管 UI）**
-   - 起稿前先寫簡短 planning scaffold：`TLDR`、`MainFlow`、`Scope`、`OutOfScope`，確認本篇只回答少數核心主題，不把整個技術家族一次塞進來。
+   - 起稿前先依 `docs/author/writing-notes.md` 寫 `TLDR`、`NarrativeArc`、`Scope` 與文章專屬的章節骨架，確認本篇只回答少數核心主題。
    - 先把想記的知識寫完整（定義、重點、例子、結論），優先追求可讀、可掃讀（標題／小節／清單），再進入版型與互動。
    - 篇幅建議：overview / survey 類控制在 **8–12 分鐘**；單一方法或觀點 deep dive 控制在 **10–15 分鐘**。超過時拆成獨立文章（各自放資料夾），每篇有合理開頭（如 Guiding Questions）。
    - 若一篇同時在做「技術家族 overview」與「單一方法 deep dive」，優先拆成 overview + follow-up pages；定位為 overview 時，不應把篇幅重心長時間停在 `K-Means` 這類單一子方法的細部流程，而應建立地圖讓更多技術自然納入。
@@ -50,7 +50,7 @@
 
 ## 2. 長文寫作 Workflow（架構先行 + Agent 補稿 + 人工全盤 Proofread）
 
-1. **先定架構**：先列 `# / ## / ###` 並寫清每節要回答的問題；在 `<draft>...</draft>` 補作者 planning 欄位（`TLDR`、`MainFlow`、`Scope`、`OutOfScope`、`FollowUps`）。
+1. **先定架構**：先讀 `docs/author/writing-notes.md`，在 `<draft>...</draft>` 補 `TLDR`、`NarrativeArc`、`Scope`（必填）與 `FollowUps`（選填），再列各節主張、支撐材料及交棒；正文的 `# / ## / ###` 須與之對齊。
 2. **整理 raw info**：把觀察、例子、碎念、反例、問題丟進對應段落，追求不漏而非文句漂亮。
 3. **交給 Agent / LLM 補第一版**：依既有架構填段落、理順措辭與補例子，產出可 refine 的草稿。
 4. **用結構反向 refine**：檢視過空、過長、重複或偏離問題的段落，必要時重排、拆小節、補反例。
@@ -58,7 +58,7 @@
 
 ### 作者規劃欄位（`<draft>...</draft>`，不對外）
 
-放在 `<draft>` 而非 `<meta>` 的欄位：`TLDR`、`MainFlow`、`Scope`、`OutOfScope`、`FollowUps`。它們幫助作者起稿、拆篇與避免 overview 走偏成單一方法 deep dive；`tools/create_content.py`、core markdown extractor、search/indexer 預設忽略 `<draft>`，不輸出至 `<head>` 也不進 search index；未來若需顯示於 UI 必須顯式 opt-in。
+放在 `<draft>` 而非 `<meta>` 的欄位：`TLDR`、`NarrativeArc`、`Scope`（必填）及 `FollowUps`（選填），之後空一行接章節骨架。它們幫助作者起稿、拆篇與避免 overview 走偏成單一方法 deep dive；`tools/create_content.py`、core markdown extractor、search/indexer 預設忽略 `<draft>`，不輸出至 `<head>` 也不進 search index；未來若需顯示於 UI 必須顯式 opt-in。
 
 ## 3. CLI 與 `tools/create_content.py` 命令範例
 
@@ -100,11 +100,14 @@ EstimatedReadingTime: true
 </meta>
 
 <draft>
-TLDR: 用 1-3 句寫這篇真正要講的事
-MainFlow: 這篇要用哪條理解路徑把讀者帶到結論
-Scope: 這篇會回答哪些問題
-OutOfScope: 哪些內容刻意留給下一篇
-FollowUps: 若這篇是 overview，後續要拆出哪些子文章
+- TLDR：用 1–3 句寫這篇最重要的主張
+- NarrativeArc：交代問題、推理與結論的推進路徑
+- Scope：正面界定本篇聚焦的問題與深度
+
+- 引子｜讀者的起點：用具體情境提出問題。
+    - 交棒：這個情境留下什麼待解的問題？
+
+- 核心論證｜本篇的主張：說明主張、證據與必要邊界。
 </draft>
 ```
 
