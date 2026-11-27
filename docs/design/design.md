@@ -606,3 +606,12 @@ Portals 與 World 會卡，主因不是某一個效果特別貴，而是好幾�
 Labs 只收實驗原型與可重用資源；Portals 自己負責 Garden 與 World 的導覽，因此 World 不再重複出現在 Labs 或 More。Portals 的頂欄保留自己的奇幻氣質，使用 Cinzel 品牌字、單一 palette accent 與安靜的邊線；放大導覽文字與第一次進入時的提示窗，讓資訊更容易讀到。
 
 資源頁平常稱為 Toolkit（工具庫），直接說明用途；Ludwig 密語啟用時才顯示 Grimoire（魔導書）的語氣。兩種呈現共用同一份資料，種類（Template / Guide / Prompt / Skill）與用途（寫作、工作流、網站開發）可交叉篩選。`AGENTS.md` 範本採通用的專案邊界、單一來源、實際驗證命令、權限與交付檢查欄位；`HANDOFF.md` 範本則只記最近停點與待續作，不複製長期 backlog。兩者供使用者填入自己的專案資訊。展開卡片的 `Reference` 資訊欄顯示來源：本站原創寫 `Ludwig`，外部借鑑則連到原始網址；來源不用複製到範本正文。外部 Skill 的精選摘要以 Guide 收錄，避免讓讀者誤以為本站已安裝或驗證該 Skill。模型驗證時效只適用於 Prompt / Skill。
+
+### 17. 常駐上下文預算與文件無損分流（Context Budget & Routing over Lossy Compression）
+
+會被 AI 工具自動注入 system prompt 的入口文件（例如根目錄 `AGENTS.md` 與 `HANDOFF.md`）屬於稀缺的常駐上下文。當單一入口檔不斷累積子系統細節而過度膨脹時，代價不只是每輪對話的 token 成本與雜訊上升，更致命的是會觸發工具的**靜默截斷（silent truncation）**——例如當根目錄 `AGENTS.md` 成長到 38 KB 時，後半段 14.5 KB（包含安全紅線與生成物白名單）會直接從預設上下文消失。
+
+因此，我們對 system-prompt 相關文件採取兩條互補原則：
+
+- **設定明確的體積上限並以測試守門**：`HANDOFF.md` 維持 UTF-8 不超過 6 KiB，根目錄 `AGENTS.md` 維持 UTF-8 不超過 12 KiB（均由 `tests/test_handoff.py` 守門），確保核心指令與安全紅線永遠完整載入、不被截斷。
+- **靠「無損分流」而非「有損壓縮」控制體積**：觸及上限時，絕不透過刪減規則或含糊化敘述來硬縮篇幅，而是把子系統專屬契約分流到獨立文件（如 `portals/AGENTS.md`、`docs/rules/content-authoring-contracts.md`、`docs/rules/ui-and-data-contracts.md`）；`README.md` 同理將長篇操作步驟抽離至 `docs/guide/content-workflow-guide.md`。根文件專注承擔「高優先級命令、三檔邊界、全站核心不退化契約與按需查詢路由表」，既保住完整資訊，又把常駐上下文留在安全預算內。

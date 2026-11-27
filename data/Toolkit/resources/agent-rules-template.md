@@ -1,66 +1,63 @@
 # AGENTS
 
-> (Template note — remove before saving `AGENTS.md`: Replace bracketed placeholders with your project's actual paths, commands, and contracts. Delete sections that do not apply.)
+> (Template note — remove before saving `AGENTS.md`: Replace bracketed placeholders with your project's actual paths, commands, and contracts. Keep this root file under ~150 lines / ~12 KiB so agent tools never truncate it. Instead of dropping rules to save space, delegate subsystem-specific contracts to nested `AGENTS.md` or focused `docs/rules/` files and route to them below.)
 
-## Project boundary
+Root instructions and **repo-wide non-regression invariants** for [Project name] ([tech stack with versions, e.g., Python 3.11 + static HTML/JS]). Shared terminology, repository map, and everyday workflows live in `README.md`; feature-to-doc routes live in [feature guide path, e.g., `docs/README.md`].
 
-- This project is [one-sentence description].
-- The source of truth for [content or data] is [path]. Generated [output] comes from [command]. Never edit both by hand.
-- Keep the core workflow usable with [minimal toolchain]. Additional apps may have their own build steps.
+## Commands
 
-## Documentation ownership
+Run the smallest relevant check first; run the full gate before handoff or cross-module changes:
 
-- Before working, read `README.md` sections [Terminology heading] and [Repository Map heading] for shared vocabulary and folder-level responsibilities. Then use [feature guide path] to find the relevant docs and implementation folders.
-- Keep reader-facing navigation and workflow in `README.md`; use this file for agent-specific instructions and invariants. Keep exact contracts in [specs directory] and feature-to-folder routes in [feature guide path].
-- Update the map only when a folder's responsibility changes, and the feature guide only when ownership or its starting documentation changes. Do not maintain a file-by-file map here.
-- At the start of a new agent session, read `HANDOFF.md` for the previous stopping point; verify it against the user's latest request and working tree. `TODO.md` owns unfinished and long-term work; `REVIEW.md` owns completed work awaiting human review. Update `HANDOFF.md` when in-progress state changes or when no work remains; aim for 2,000 tokens and enforce a 6 KiB UTF-8 hard limit.
+```bash
+[exact targeted test command]     # Single module / unit test
+[exact lint or check command]     # Lint, type-check, or generated-file check
+[exact build command]             # Regenerate outputs from source
+[exact full test command]         # Full test suite / release gate
+```
 
-## Do and don't
+## Boundaries
 
-- Do follow [current component or module] and read [dependency manifest] before choosing a library or version.
-- Do use design tokens from [token source] and data access through [client or data layer].
-- Do keep changes focused and reuse existing components and state conventions.
-- Don't hard-code [colors, URLs, or duplicated data] or add dependencies without checking the project's policy.
+### Always
 
-## Non-regression rules
+- Read `README.md` ([Terminology] and [Repository Map]) and [feature guide path] before editing; check `HANDOFF.md` and `git status --short` when resuming work.
+- Read the matching subsystem contract (see table below) before editing files in that area; reuse existing components, clients, and design tokens from [token source].
+- Keep documentation coherent as a whole: when editing any doc, read surrounding sections to prevent contradictions, duplication, or awkward local patches.
+- Review your diff, relevant tests, generated outputs, and user-visible behavior (desktop and mobile when UI changes) before finishing; report what was verified and what was not.
+- Update `HANDOFF.md` when in-progress state changes or when no work remains (target <= 2,000 tokens, hard limit 6 KiB UTF-8); never copy the backlog from `TODO.md`.
 
-- [User-visible behavior] must keep working on [desktop/mobile/file or hosted URL].
-- [Draft or private content] must not appear in public listings.
-- If shared navigation or design tokens change, update the single source at [path] and regenerate dependent pages.
-- Do not add a second hand-maintained copy of [metadata, index, or data].
+### Ask first
 
-## Verification
+- Installing new dependencies, deleting data, pushing, or deploying (unless already authorized by the task).
+- When a contract is ambiguous or a fix would cross subsystem boundaries into a large refactor: report verified facts and the smallest workable option, then ask for the missing decision.
 
-- Run the smallest relevant check: [exact command for one test file or module].
-- Run [exact formatting or type-check command, if supported].
-- Run [full test/build command] when the change spans modules or a required gate calls for it.
-- Regenerate [output] with [command] and check that it is reproducible.
-- Review [critical interaction] on desktop and mobile when its appearance changes.
-- When the same mistake recurs, reproduce it, improve [API or module boundary] to remove the bad path where feasible, and add [targeted automated check]. Keep prose rules for decisions that cannot be checked reliably.
+### Never
 
-## Safety and collaboration
+- Commit secrets, API keys, tokens, credentials, or URLs containing sensitive parameters.
+- Hand-edit generated outputs produced by [build command] or maintain a second manual copy of [metadata, index, or data].
+- Treat unassigned items in `TODO.md` or `REVIEW.md` as active work to resume.
+- Hard-code [colors, URLs, or duplicated data] or bypass [shared client / data layer].
 
-- Routine read, edit, and targeted verification: [what the agent may do directly].
-- Confirm scope before [dependency install, destructive change, push, or deploy], unless the task already authorizes it.
-- If a contract or requirement is unclear, report what you found, propose the smallest workable next step, and ask only for the missing decision.
+## On-demand subsystem contracts
 
-## Examples and review
+Delegate detailed subsystem rules to focused files so every rule is preserved without bloating the root prompt:
 
-- Follow [good example path] for [pattern]; avoid copying [outdated example path] because [reason].
-- API docs: [path or URL]; call APIs through [client path] rather than duplicating requests in UI code.
-- Before a PR, review the diff, relevant tests, generated files, and user-visible behavior; summarize any unverified area.
-- For high-risk behavior changes, optionally write a regression test before implementation if it will catch a real failure mode.
+| Area / path | Contract file |
+| --- | --- |
+| `[subsystem-a/]` ([what it covers]) | `[subsystem-a/AGENTS.md or docs/rules/subsystem-a-contracts.md]` |
+| `[subsystem-b/]` ([what it covers]) | `[docs/rules/subsystem-b-contracts.md]` |
+| Feature-to-folder routes and specs | `[docs/README.md]` |
 
-## Where to look
+## Repo-wide non-regression invariants
 
-- Shared terminology, repository map, setup, and everyday commands: `README.md`
-- Feature-to-folder routes and starting docs: [feature guide path]
-- System contracts: [spec path]
-- Design decisions: [design path]
-- Unfinished tasks and decisions: `TODO.md`
-- Completed work awaiting human review: `REVIEW.md`
-- Previous agent's stopping point: `HANDOFF.md`.
+- **Single source of truth**: [content or data] lives at [path]; generated [output] comes reproducibly from [command].
+- **Visibility & safety**: [Draft or private content] must never appear in public listings.
+- **Shared chrome & tokens**: Shared navigation/layout lives at [path]; regenerate dependent pages after edits.
+- **Minimal toolchain & artifacts**: Core workflow runs with [minimal toolchain]. Only whitelisted deployment artifacts ([list]) are committed; all other build outputs stay in `.gitignore`.
+- **Reference examples**: Follow [good example path] for [pattern]; call APIs through [client path].
 
-> (Template note — remove before saving: If a subsystem has distinct rules, add a nested `AGENTS.md` there and state which rules it adds. Keep shared rules in the root file. Use the separate `HANDOFF.md` template for the stopping point; do not copy the backlog.)
+## Engineering discipline & tracking
 
-> (Template note — remove before saving: Keep this file focused on rules that must remain true. Put tutorials and long explanations elsewhere.)
+- **Turn repeated mistakes into executable constraints**: Reproduce recurring bugs or review findings, tighten [API or module boundary] where feasible, and add a targeted automated check. Reserve prose rules for judgments that cannot be checked reliably.
+- **Documentation ownership**: Keep `README.md` for humans and shared navigation, `AGENTS.md` + delegated contract files for invariants, `HANDOFF.md` for the latest stopping point, `TODO.md` for unfinished tasks with acceptance criteria, and `REVIEW.md` for completed work awaiting human review. Do not duplicate file-by-file maps across files.
+
+> (Template note — remove before saving: If a subsystem grows distinct rules, add a nested `AGENTS.md` in that directory or a dedicated file in `docs/rules/` and link it in the table above. Never let the root file grow past tool truncation limits.)

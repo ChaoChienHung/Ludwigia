@@ -1,236 +1,74 @@
 # AGENTS
 
-本文件列出 Ludwigia 的不可變更約束（non-negotiables）。後續新增功能或重構時，請以「不讓這些特性退化」為第一優先。
+本文件是 Ludwigia 的根級 Agent 執行指引與**全站不可退化核心契約**（UTF-8 上限 12 KiB，`tests/test_handoff.py` 守門；設計理由見 `docs/design/design.md` §17）。子系統專屬契約已依領域無損分流至對應檔案（見下方「按需查詢」）；專案術語、日常工作流與 Repository Map 由 `README.md` 維護，功能導覽見 `docs/README.md`。
 
-本文件集中不可退化契約與 Agent 執行時必須遵守的短指引。專案術語、日常工作流與 Repository Map 由 `README.md` 維護；依功能查文件與實作範圍，從 `docs/README.md` 的「功能導覽」開始。`HANDOFF.md` 記最近停點，`TODO.md` 管未完成與長期待辦，`REVIEW.md` 管已完成待作者驗收的工作。精確契約、設計理由與技術細節再沿功能導覽讀對應文件。
+## 常用指令（Commands）
 
-## Agent 工作指引
+依影響範圍跑最小必要檢查；跨模組或交付前跑完整守門（不要把範例專案的 `tsc` / `vitest` 當成本 repo 命令）：
 
-- **先對齊用詞與位置**：開始 Ludwigia 任務時，先讀 `README.md` 的 `## 專案術語（Terminology）` 與 `## Repository Map（程式庫導覽）`；依功能從 `docs/README.md` 的 `## 功能導覽` 找起始文件和主要資料夾，再讀相關 spec 與相鄰實作。不要在本文件維護第二份術語表或逐檔路徑清單。
-- **接續工作**：新 Agent 先讀 `HANDOFF.md` 的停點與進行中工作，再用使用者最新指令、`git status --short` 和相關 source 核對；若快照已過期，以現況為準。`TODO.md` 是未完成與長期任務追蹤，`REVIEW.md` 是待作者驗收清單；不能把兩者的未指派事項當作正在續做的工作。
-- **先定位單一來源**：先讀與任務相關的規格及相鄰實作，再改 source；不手改由生成器負責的 HTML、索引或 bundle。改動保持聚焦，沿用現有元件、資料流與設計 token，不因局部任務引入平行狀態、硬編碼色盤或新依賴。
-- **參照現有實例**：首頁的 source JSON 與渲染分工可看 `data/Skills/skills.json` 和 `assets/js/about-skills.js`；頁面 shell 的來源和檢查可看 `pages/_shared/` 與 `tests/test_page_shell.py`。若要新增 API 或外部服務，先找該子系統的既有客戶端與文件，不在 UI 元件裡複製請求邏輯。
-- **按影響範圍驗證**：Python 測試先跑相鄰模組，例如 `python3 -m unittest tests.test_grimoire_data`；內容生成器可跑 `python3 tools/create_content.py --self-test`；頁面 shell 跑 `python3 cli.py build-pages --check` 與 `python3 -m unittest tests.test_page_shell`；Pensieve 資料跑 `python3 cli.py build-pensieve --check`。跨模組或交付前需要完整守門時跑 `python3 cli.py test`；視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機、手機檢查。不要把範例專案的 `tsc` / `vitest` 命令當成本 repo 的檢查命令。
-- **把重複錯誤變成可執行約束**：遇到同類回歸或反覆出現的 review 意見時，先找根因與可重現案例；在本次任務範圍內，優先修正資料流、API 或模組邊界，使錯誤選項難以寫出，再用相鄰測試或檢查命令擋住可機械判定的錯誤。只有無法可靠自動判定、仍需 Agent 判斷的原則才寫進 `AGENTS.md`。不要為每次失誤無止境加一條文字規則，也不要每次都打斷使用者提醒；若修正會擴成大範圍重構，先提出具體重複案例、最小方案與影響，再請使用者決定。
-- **權限與卡住時**：讀檔、局部修改、相關測試及必要的再現性生成屬日常工作。安裝新依賴、刪除資料、推送或發布等動作，先確認任務授權及影響範圍；不確定契約或將跨越既有子系統邊界時，先整理已查到的事實與最小可行方案，再向使用者確認真正缺少的決策。
-- **文檔拒絕盲目局部外掛（全域連貫與邏輯自洽）**：更新或增補任何文檔（尤其是 `README.md`、`AGENTS.md`、`HANDOFF.md` 或各 spec）時，嚴禁只做機械性的「局部外掛拼貼（local attach）」。新增或修改段落後，必須向上與向下通讀相鄰上下文甚至全篇脈絡，檢查前後邏輯是否自洽、語意是否重複矛盾、行文銜接是否自然流暢、整體排版與章節順序是否合理，確保篇章「文字連貫、邏輯自洽、一氣呵成」才算交付完成。
-- **交付前**：檢查 diff 是否只含預期的 source、必要生成物與受影響文檔；報告改了什麼、跑了哪些檢查、哪些未驗證。若建立 PR，標題與說明應能指出變更範圍和驗證結果，不要求所有任務套用單一標題格式。
-- **更新交接快照**：工作中斷、移交或進行中狀態有實質變化時，更新根目錄 `HANDOFF.md`；完成且無續作時明寫「無」。每項進行中工作用短標題與「背景／現況／待解問題／下一步」，確有外部阻礙才加「阻礙」。只留最新可核對的事實與必要證據，不複製長期 backlog、日誌、diff 或秘密；上限約 2,000 tokens，且 UTF-8 不得超過 6 KiB（`tests/test_handoff.py` 守門）。
+```bash
+python3 -m unittest tests.test_toolkit_data   # 相鄰 Python 單元測試（依改動換模組）
+python3 tools/create_content.py --self-test   # 內容生成器自檢
+python3 cli.py build-pages --check            # 手寫頁面 shell 同步檢查
+python3 -m unittest tests.test_page_shell     # 頁面 shell 與 preload 守門
+python3 cli.py build-pensieve --check         # Pensieve 角色快取同步檢查
+python3 cli.py test                           # 全站完整守門
+```
 
-## 不退化原則（Non-regression）
+視覺與互動變更另按 `docs/rules/checklist.md` 做相關頁面的桌機與手機檢查。
 
-- 內容的可索引 metadata 必須維持為再現性生成：`<title>` / `meta name="site:tags"` / `meta name="site:summary"` / `meta name="site:status"`（若啟用）不能要求手動維護第二份
-- 若內容支援 pinned/priority metadata，`meta name="site:pinned"` / `meta name="site:priority"` 也必須由 source metadata 再現性生成；不能靠手改 HTML 或另外維護一份推薦清單
-- 頁內大標題若啟用 H1 fallback，必須維持：優先讀正文最前面的第一個 `# Title`；`<meta Title>` 只當頁內顯示 fallback，不得反過來強迫正文標題跟 metadata 耦合
-- 若內容支援日期 metadata，`meta name="site:published_at"` / `meta name="site:last_modified_at"` 也必須由 source metadata / 可重現 fallback 再現性生成，不應要求手動維護第二份 HTML 顯示值
-- Garden 的所有搜尋/瀏覽頁面只讀索引資料（`window.SITE_SEARCH_INDEX`），不得要求手動維護第二份 tags/summary/related
-- 若內容支援 `status` metadata，`drafting` 狀態不得出現在公開搜尋/瀏覽入口；但仍可保留本機預覽與直連工作流
-- 若未來 Reading Mode / Garden 卡片改成從 Markdown source 再現性生成，應依賴「必要 metadata + core markdown 正文」；其中 markdown extractor 只負責 core markdown，`<meta>` 由另一層 metadata parser 處理，其餘 `<...>` 型自訂語法都視為可忽略的附加層
-- 只要內容頁是由 source `.md` 再現性生成，Meta sidebar 就應固定提供 `Copy Markdown` / `Download Markdown`；這不是單篇 opt-in feature，而是 source-driven content 的基本能力
-- `tools/create_content.py` 的預設輸出必須使用 `tools/content_styles/default`（確保「懶得手刻時也能一鍵生成」的體驗穩定）
-- `tools/create_content.py` 必須維持為標準內容頁生成器：允許少量 style 差異，但不得為 presentation 無限制擴張 parser，避免把標準生成器變成萬用 page builder
-- page-level shared chrome（例如 navbar）若收斂為單一來源，應以 `pages/_shared/` 作為 site shell SSOT；`tools/content_styles/_shared/` 只保留內容生成流程需要的 shared partial，不應再平行維護第二份 navbar 真相來源；手寫頁面（首頁、`pages/`、`tag/`、section landing、`labs/`）的 navbar / footer 必須以 `<!-- shell:navbar -->` / `<!-- shell:footer -->` 標記，由 `cli.py build-pages`（`tools/build_pages.py`）從 `pages/_shared/` 生成，不得手改標記內的內容；生成的內容頁 navbar 也必須與 partial 一致（`tests/test_page_shell.py` 守門）
-- 帶 `data-i18n-page` 的手寫頁面，頁面標題只維護在 `i18n/` 該頁 bundle 的 `title`：執行期由 `core/i18n.js` 依語系套用，HTML 的靜態 `<title>` 由 `cli.py build-pages` 從 `title.en` 生成，不得手改（`tests/test_page_shell.py` 守門）
-- 探索入口各守職責：Labs 展示原型與可重用資源；Portals 負責 Garden / World 的境域導覽；FAB 可直達 Portals / Labs。Toolkit 的種類與用途只由 `data/Toolkit/toolkit.json` 維護，Ludwig 密語只切換 Grimoire 文案，不維護第二份資料
-- 若啟用翻譯 workflow（`tools/translate_content.py` / `cli.py translate`），必須維持 source-driven contract：只翻必要自然語言；`Tags`、metadata key、slug、路徑與 block 骨架不得被任意改寫
-- 若翻譯 backend 需要憑證，必須支援 environment variables 與 `secret.txt`；`secret.txt` 必須排除在版本控制外
-- `reviewkit` 若存在，必須維持為 semantic container：`qquiz` / `qprompt` 可獨立存在；只有當它們都出現在同一個 `reviewkit` 內時，才組成 tabs UI
-- 所有 `notes/` 底下的單篇筆記（Note）一律必須在頁面結尾包含 `<reviewkit>` 容器；`<reviewkit>` 內部至少包含 `<qprompt/>`，若存在 `<takeaways>` 或 `<qquiz>`，一律必須包在該 `<reviewkit>` 容器內，不得讓 `<takeaways>` 散落在 `reviewkit` 外
-- 若內容支援 external question bank（`questions.<lang>.json`），題目 metadata 若啟用 `question_focus`，必須維持為 per-question source-driven facet：
-  - 可用來表達如 `concept_understanding` / `algorithm_recognition` 這類題目方向
-  - 同一個 bank 可混放不同方向題目，不應要求拆成多份 bank
-  - Labs / filter UI 只能讀 bank metadata，不應再額外維護另一份題目方向設定
-- 若首頁 `Timeline` section 啟用 source-driven data file（例如 `data/Timeline/timeline.json`），必須維持：
-  - 作者只維護 timeline data，不應要求同步手改前端 JS event 陣列
-  - runtime 只負責 load / validate / normalize / projection / render；projection 不應反過來成為新的手動真相來源
-  - `scale` 若啟用，語意固定為 `macro -> Macro + Meso + Micro`、`meso -> Meso + Micro`、`micro -> Micro only`
-  - `period` 若支援 `start_*` / `end_*` 欄位，缺席時必須 fallback 到共用 `title / summary / detail`；不應強迫作者永遠維護兩份 description
-  - ongoing `period` 若啟用，`end: "present"` 必須作為穩定 authoring 寫法；runtime 可把它投影成「至今 / Present」顯示與可排序的當下時間點，但作者不應被迫反覆手改今天日期
-  - 若同一時間存在多個 ongoing `period`，timeline UI 可把多個 `period-end` 收斂為單一尾端 `Present / 至今` cluster；但 source data 仍維持逐筆 event，不能把 cluster 本身當成新的手動資料層
-  - 若 timeline 支援 `category` metadata（例如 `education` / `internship` / `work`），它只作為輕量 facet 與 badge 顯示來源；不得反過來長成第二套固定配色系統，破壞既有 palette-driven 視覺契約
-  - 若 timeline events 支援 `references` 延伸連結，必須維持：支援 `{ title, url }` 與 `{ title, canonical }`（或 `canonical_id` / `canonicalId`）結構；前端 runtime 負責 resolve canonical link 與無標題時的 title fallback/退化處理；呈現上統一採 ordered list (`<ol>`) 呈現，視覺樣式與 `notes/writings` 內的 linked text 保持一致（預設收斂、hover 時呈現 accent 亮彩與箭頭微動）。
-- 若首頁 `Skills` 與 `Credentials` 區塊啟用 source-driven data file（`data/Skills/skills.json` 與 `data/Credentials/credentials.json`），必須維持：
-  - 作者只維護 source JSON，前端 runtime (`about-skills.js` / `about-credentials.js`) 負責載入、正規化、多語切換與 DOM 渲染；不應要求手動維護第二份 HTML 靜態資料
-  - `Skills` 必須維持類別分組與頁籤/箭頭控制，確保多個技能面板共用顯示空間，隨技能成長仍能維持空間精簡
-  - `Credentials` 必須維持 `Type` 與 `Domain/Category` 雙維度篩選、主視覺展示區、縮圖導覽列與 Modal 燈箱放大檢視能力；視覺元件必須完全繼承全站 Theme 與 Palette Design Tokens
-- 若 `portals/realms/pensieve/`（Pensieve 儲思盆 2.5D 記憶空間）啟用 source-driven 社交與建築資料（例如 `portals/realms/pensieve/data/characters.json`），必須維持：
-  - **資料與執行期嚴格解耦（SSOT）**：所有人物角色（家人、室友、AI 夥伴、國高中同學、抖音實習同事）之性別、外觀配色、初始坐標、出沒區域、多語系稱謂（`role`）與對話集皆以 `portals/realms/pensieve/data/characters/<id>/character.json` 與 `portals/realms/pensieve/data/interactions/*.json` 為創作真相來源（SSOT），由 `tools/build_pensieve_data.py`（或 `cli.py build-pensieve`）再現性編譯為執行期快取 `portals/realms/pensieve/data/characters.json`；單人對話須區分 `dialogues.user`（玩家主動交談）與 `dialogues.self`（環境獨白），角色互聊只維護在 `interactions/` 的 `npcDialogues`，後兩者可隨機觸發；前端執行期（`characters.js`）負責載入解析與動態語言切換，嚴禁在 HTML 或 JS 中手動維護第二份人物名冊或對話資料
-  - **鏡頭縮放以視口中心/玩家為軸心（Centered Viewport Zoom Focus）**：鏡頭 `zoom` 縮放與點擊尋路逆投影必須永遠以視口幾何中心（即焦點玩家所在之屏幕中心）為錨定軸心，不得退化為以世界原點 `(ox, oy)` 為縮放中心，確保玩家走入任何遠端分區建築（如三民高中、抖音研發中心）時皆能精準聚焦於室內與角色，杜絕畫面失焦偏移
-  - **等軸測牆面剪切與幾何斜度對齊契約（Isometric Wall Projection Contract）**：建築牆面上的黑板、掛鐘、門樑招牌等平面裝飾，必須與所依附的牆面軸向傾角精確匹配：北向與南向橫牆（沿 X 軸）必須使用 `(1, 0.5, 0, 1, 0, 0)` 剪切矩陣；東向與西向縱牆（沿 Y 軸）必須使用 `(1, -0.5, 0, 1, 0, 0)` 剪切矩陣；文字、算式與圖表嚴禁水平裸繪
-  - **拓撲深度排序無閉環契約（Cycle-Free Topological Depth Sorting）**：立體建築牆體、門樑、大型家具（如圖書館大型落地書櫃、教室課桌椅群）之包圍盒邊界（Bounding Box）必須嚴格維持前/後景拓撲因果分層（例如後牆 `yMax` 嚴格小於或等於家具 `yMin`），嚴禁在家具背後疊加重疊包圍盒之裝飾，杜絕在人物走動時觸發深度閉環而產生模型閃爍（Flickering / Glitch）或破面消失
-  - **可見內容成本契約（Visible-Cost Scaling Contract）**：Portals 與各 Realm 的每幀成本必須跟著「畫面可見內容」成長，不得跟著世界總量成長。深度排序只在螢幕 x 欄位重疊的實體之間建邊，不得退回全量兩兩比對；地形、貼花、崖壁、粒子與靜態實體一律依 `viewRect` 裁剪；主迴圈不得每幀無條件寫 DOM 或 CSS 變數；不可見或透明度為 0 的元素不得常駐 `will-change` 合成層；必須遵守 `prefers-reduced-motion`。細則與量測方式見 `docs/specs/realm-spec.md` §6
-  - **全站 Design System 繼承與實時色盤聯動契約（Theme & Palette Contract）**：`portals/realms/pensieve/` 之 HUD 玻璃擬態面板、狀態徽章、互動提示、高亮焦點外框必須從 `assets/css/site/palette-tokens.css` 共用全站 11 套色盤值，再投影為 Pensieve 的 `--space-accent` / `--space-accent-glow`；不得在 `world.css` 平行維護第二份 palette 色碼，並須實時監聽 `ludwig-palette-changed` 與 `ludwig-theme-changed` 事件，確保跨頁面偏好變更時即時無感重繪
-- `qprompt` 的基本語意若啟用，必須維持：
-  - prompt 本體由 `<qprompt>...</qprompt>` 或 `<qprompt/>` 再現性生成
-  - 若 placeholder 出現在 `reviewkit` 內，就渲染成該 `reviewkit` 的 prompt pane
-  - 若 placeholder 出現在 `reviewkit` 外，就獨立渲染成可見的 QA prompt section
-- `information` 的基本語意若啟用，必須維持：
-  - source 語法可為 `<information context="...">term or phrase</information>`，或 ontology-backed 的 `<information concept="concept.xxx">term or phrase</information>` / `<information concept="concept.xxx"/>`
-  - 被包住的詞彙/片語維持 inline，不應破壞 paragraph flow
-  - `context` 或 ontology context 只作為該詞彙/片語的補充說明 tooltip，不應被擴張成任意 rich HTML 容器
-  - 若使用 `concept=`，tooltip 內容必須由 `data/Ontology/information-ontology.json` 作為單一來源；HTML 可只輸出 placeholder reference，不應把同一段 definition 重複硬貼進每篇 HTML
-  - 若需要盤點文章裡哪些 ontology term 值得補 `<information>`，可用 `cli.py scan-information <source.md>` 做候選詞掃描；但這只是一個 authoring helper，不代表命中 ontology 的詞應被自動插入 tooltip
-  - tooltip 在 pointer / focus 停留於補充說明本體期間應維持可見；離開整個 explanation 區域後才收起
-- `content-link` 的基本語意若啟用，必須維持：
-  - source 語法可為 `<content-link canonical="some-shared-article-id">Visible Label</content-link>`，或 `<content-link canonical="some-shared-article-id" label="Visible Label"/>`
-  - target resolution 應以 `CanonicalId` 作為穩定 lookup key，而不是要求作者手寫 output path / html href
-  - 在一般內容頁可 resolve 成站內連結；但在 copy/download markdown、Garden/Search surfaces 與 Reading Mode 應退化成純文字 label，不把 link 語意視為 core markdown
-  - 若 target 無法 resolve，至少退化成純文字 label；不應讓整篇內容 build 因單一 cross-reference 失敗而整體不可用
-- `takeaways` 的基本語意若啟用，必須維持：
-  - source 語法為 `<takeaways>...</takeaways>`
-  - 內部以標準 markdown list 承載條列式重點
-  - `takeaways` 屬於正文 flow 外的重點回收區，不應取代正文段落總結
-  - 在 `Copy Markdown` / `Download Markdown` 導出時，會降級轉換成 `## Key Takeaways` 標題加清單，確保重點整理在純文字 Markdown 導出中完好保留
-- 若 source `.md` 支援作者規劃欄位與起稿骨架（例如 `TLDR` / `MainFlow` / `Scope` / `OutOfScope` / `FollowUps` 或大綱骨架）：
-  - 它們屬於 author-only planning scaffolding，應統一放在 source `<draft>...</draft>`，而不是混進公開 metadata 的 `<meta>`
-  - 建議採用「`重點：內容`」（例如 `何謂結果偏誤：結果偏誤是...`）或層級化縮排清單表達章節與重點骨架
-  - `tools/create_content.py`、markdown extractor、search/indexer 預設都應忽略 `<draft>` 內容
-  - 不得被當成公開 `<head>` metadata 或 search index 欄位
-  - 不應要求作者另外手動維護第二份對外摘要
-- 若文章前段需要一個可見的導讀 block，應優先收斂成「這篇最重要的主題 / main flow / scope」：
-  - 不預設要求另開一個專門的 `Guiding Questions` 特殊 block
-  - 若要顯示在正文前段，優先把它寫成一般 `block` / `callout`，語意上偏 `TL;DR` / `Focus` / `Article Compass`
-  - 這個前段 block 的責任是幫讀者抓住主線，不是把分散在各段裡的 guiding questions 再重複列一次
-- 知識型文章若主題其實是「方法家族 overview」，必須優先維持 overview 與單一方法 deep dive 的解耦：
-  - overview 頁聚焦主問題、方法地圖、差異軸與導覽
-  - overview 頁不應把篇幅重心長時間停留在某一個子方法的直覺、推導或細部機制；子方法只需講到足以定位其角色與差異
-  - 單一方法的 limitation / tuning / detailed trade-offs 應回到各自頁面
-  - 不應把「介紹一個技術家族」與「完整講完其中數個演算法」硬塞進同一篇主文
-- 知識邏輯與閱讀流暢度契約（階層化鷹架與零割裂推進原則 / Layered Knowledge Scaffolding & Frictionless Progression Contract）：
-  - 無論是撰寫知識筆記（`notes/`）或深度長文（`writing/`），皆必須遵守「底層成群鋪墊、逐層向上堆疊、零跳躍、零割裂」的知識傳遞結構，根本性降低閱讀難度與讀者的工作記憶負荷：
-    - **底層先鋪齊成群（Clustered Foundation Layer）**：在引入任何進階機制、高階抽象或複雜架構之前，必須先在底層完整鋪墊好同一認知層級的先備地基（生活直覺、問題意識/痛點、物理或業務約束、核心線索群）。嚴禁在讀者尚未建立底層心智錨點前，突兀空降孤立的高階術語或解法。
-    - **逐層穩步向上堆疊（Hierarchical Upward Stacking）**：知識結構推進如同砌磚或深度神經網絡的多層特徵萃取，必須以底層線索為根據，向上推理/衍生出中階機制與引理（Intermediate Lemma），再進一步向上組合出頂層架構、高階抽象與極限邊界；每一層的新概念都必須有前一層作為堅固承托（Causal Scaffolding）。
-    - **消除認知斷崖與割裂感（Eliminate Cognitive Whiplash）**：嚴禁「空中樓閣」（未經底層鋪陳直接跳躍至高階結論）、「概念倒置」（用更晦澀的高階概念去解釋低階直覺）與「板塊孤島拼貼」（段落彼此缺乏因果銜接，各說各話）。底層概念若有多個維度或子分支，應成批交代清晰後，再整批/逐個上升到下一階，確保讀者的心理模型（Mental Model）平滑累積、水到渠成。
-- 若採用 Agent-assisted 寫作 workflow，前面的整理/填充/重組可以被簡化或委派，但最後的人類全盤 proofread 不得被省略
-- Markdown list authoring 規則必須穩定：
-  - ordered / unordered item 若帶 continuation paragraph，該段落必須縮排 `4 spaces`
-  - nested bullet / nested ordered list 也必須相對 parent item 縮排 `4 spaces`
-  - 不允許依賴「未縮排下一行也算同一個 list item」這種寬鬆猜測；source 應寫成標準 markdown 可解析形式
-  - **階層化清單與樹狀圖間距（Nested List & Tree View Spacing）**：清單項目或目錄樹狀圖若包含子層級（例如帶有縮排的子項目、子資料夾 `└── ...` 或多行次級說明），在該子層級區塊結尾與下一個同級母項目之間必須**空一行（blank line）**分隔；嚴禁讓次級縮排項目直接緊貼下一層母項目。適度留白以維持視覺階層分明與排版清爽（clean）
-- 若支援 markdown table，基本語意必須維持：
-  - 採標準 pipe table 寫法（header row + divider row + body rows）
-  - 至少要求欄數一致；不依賴鬆散猜測去補齊破損表格
-  - table 屬於 core markdown，而不是額外自訂 block
-- `search/indexer.py` 必須能從 `notes/`、`writing/`、`canvas/` 再現性生成：
-  - `search/search-index.json`
-  - `search/search-index.js`（必須定義 `window.SITE_SEARCH_INDEX`）
-- 若變更會影響索引內容或 schema，必須同步更新生成物並納入版本控制（避免「改 notes 忘記更新 index」）
+## 三檔邊界（Boundaries）
 
-## 介面穩定性
+### ✅ Always（總是做）
 
-- 允許內容放在子資料夾（`notes/**/<slug>.html`、`writing/**/<slug>.html`、`canvas/**/<slug>.html`），且索引/標籤頁連結必須在 nested paths 下仍可工作
-- 語系/Theme/Palette 等偏好狀態必須維持為 client-side（localStorage）狀態，不引入後端 state 依賴
-- Theme/Palette 的 localStorage 值需保持向後相容（允許舊值 alias），避免既有使用者偏好失效
-- 首屏 Theme/Palette class 必須只由 `core/theme-preload.js` 掛上：所有頁面在 `<head>` 第一個 stylesheet 之前以 `<script src>` 載入它，不得再內嵌 inline 複本（`tests/test_page_shell.py` 守門）
-- 主站共用 runtime 由 `core/site/NN-*.js` 依編號順序以 classic `<script>` 載入，清單只維護在 `pages/_shared/runtime.html`（手寫頁面經 `cli.py build-pages`、內容頁經生成器帶入）；模組之間共用全域詞法作用域，新增頂層宣告必須「先定義後執行」，不得依賴跨檔 hoisting（`tests/js/runtime_smoke.cjs` 與 `tests/test_page_shell.py` 守門）
-- 主站樣式由 `assets/css/site/shared.css` 依序 `@import` 分檔 `shared-NN-*.css`；分檔順序就是層疊順序。Theme ambient 的內容抬升必須維持 opt-in（只抬升 `section` / `main` / `header` / `article` / `footer`），浮層不得依賴被登記進排除清單
-- Theme 專屬視覺效果必須可被關閉/限定（例如 Galaxy 內的流星/星空），避免遮擋可讀性與互動
-- 若新增 theme（例如 `Sky` / `Garden`），其動效控制需收斂到同一個可關閉機制，避免每個 theme 各自長出平行設定開關
-- `notes / writing / canvas` 單篇內容頁底部的 footer 必須維持為語意完整的 footer 區塊：
-  - `© 2025 Ludwig ...` 必須明確落在 footer 內，而不是像漂浮文字剛好疊在背景上
-  - footer 視覺上應是單一、完整、theme-consistent 的底部 surface；不應在 footer 上方額外切出一條來自 theme ambient / body gradient 的帶狀過渡
-  - 這屬於內容頁的共通版型約束，不應只針對某一個 theme 例外修補
-- Theme ambience 若存在，必須區分 landing page 與 content page 的成本等級：
-  - 首頁 / landing 可保留較強的 atmosphere
-  - `notes / writing / canvas` 內容頁應優先使用較省效能、較不搶閱讀注意力的版本
-  - 若某個 ambient effect 在內容頁造成明顯卡頓，優先降級、靜態化或移除高成本子效果，而不是只微調 opacity 硬撐
-- Reading Mode 的 theme effect contract 必須維持：
-  - 一旦進入 Reading Mode，theme ambience / motion layer 必須一律關閉，優先級高於 settings 內的 `Effects` 開關
-  - 這條規則適用於主站共用 theme runtime；Reading Mode 的責任是保證閱讀時不被 ambient effect 干擾，而不是尊重使用者先前是否開啟動效
-- 主站共用 `Theme / Palette / Effects` runtime 的責任邊界必須維持清楚：
-  - 預設只保證主站頁面與標準內容頁生效（例如首頁、Portfolio/More、Projects/Search/Settings、section landing、tag detail、`notes / writing / canvas` 的 landing 與內容頁）
-  - `portals/realms/garden/index.html`（Garden of Ludwigia）或其他明確獨立的 extension / prototype surface，可保留自己的 theme/runtime；不應因主站 theme contract 而被視為必須同步套用同一套 ambient effect
-  - 若未來要讓某個 extension 接上主站 theme，必須是顯式整合的契約，不應僅因共用 repo、入口或某些 UI 元件就被動繼承
-- note 頁的 theme-aware 補充元件（至少 `block` / `callout` / `takeaways`）必須維持：
-  - 各自擁有明確的 theme surface variables（例如 background / border / shadow / radius / icon）
-  - 目前可以暫時使用相同值，但變數命名與責任不可混在一起，避免未來一拆就得回去找散落 override
-  - 未來新增 / 調整 theme 時，必須同步檢查這三類元件，而不是只修其中一個
-- 若某個視覺問題需要連續疊多層 override 才壓得住，優先視為底層 variable pipeline / selector 分層失真：
-  - 應優先回頭修 token、共用元件層或主 selector，避免持續在更上層補例外
-  - 即使代表需要較大範圍 refactor，也優先於累積 override 技術債
-- Settings 的互動語意必須維持：
-  - `Theme` 管大方向的 surface / atmosphere / readability / ambient effect
-  - `Palette` 管 accent 與互動特效（selected / hover / focus / ring）
-  - `Copilot` 若啟用可見性設定，應收斂為單一偏好來源（例如 `off / home / all`），由共用 settings runtime 與 localStorage 管理；不得讓 modal、`pages/settings.html` 與 `copilot.js` 各自長出平行判斷
-  - settings 內所有 selected / hover 特效（含 sidebar tabs、`Language`、`Effects`、`Theme`、`Palette`）都應跟著目前 `Palette` 走
-  - `Theme` / `Palette` 本身的 preview 色只作為 preview dot 或身份提示，不應反過來接管 selected 外框/背景
-  - `pages/settings.html` 若保留，必須與 modal 共用同一套 data attrs / JS API / i18n labels，不可各自長出平行邏輯
-  - **行動端 iOS 分組卡片流（Mobile Inset Grouped Settings Architecture）**：在手機端（<= 767.98px）取消 General / Style 標籤分頁切換，改為縱向連續滾動之圓角群組卡片（Inset Grouped Cards）。語言、動態效果、Copilot 等少項選擇採用滿版分段控制器（Segmented Control），色盤採用橫向流暢觸控滾動，主題採用 3x2 網格排版；桌面端維持分頁導航，行動端與桌面端完全共用同一套 `[data-settings-*]` 屬性與 `LudwigSettingsRuntime`，嚴禁產生狀態分歧
-- 小螢幕 Additional 入口若啟用，必須維持「單一角落、單一主入口」心智模型：
-  - 首頁 / section landing 的 misc/FAB，與 note / writing 單篇頁的 metadata 入口，優先收斂到同一個右下角主入口
-  - note / writing 的 page-level action（例如 `Outline` / `Metadata`）若不走右下角主入口，則應優先收斂到內容頁頂部 navbar 的左右兩側；不得另外再長成互搶角落的 mobile FAB
-  - 全站浮動選單（Site FAB / Misc）之探索入口契約：預設收斂為 `Portals` 與 `Labs` 雙核心探索樞紐；`Garden` 與 `World` 之跨維度躍遷由 `Portals` 承接，不應在 FAB 平行塞滿過多入口破壞精簡心智模型
-  - 不應把它們拆成多顆各自漂浮、只靠位置微調硬避開的入口
-- 手機導覽若啟用獨立 IA，必須維持：
-  - 僅作用在真正手機螢幕；desktop 與一般 laptop / tablet 不應被連帶改成 mobile 導覽
-  - 手機上不應同時保留 desktop-style navbar dropdown、底部 tab bar、以及多顆漂浮入口三套平行系統
-  - note / writing / canvas 單篇頁可在頂部 navbar 保留品牌 `Ludwig`，並以左右兩側按鈕承接 page-level sidebar action；這些按鈕屬於單篇頁閱讀控制，不取代 bottom nav 的 site-level 導覽
-  - 所有依賴 hover 的 sidebar / reveal interaction，在手機上都必須有明確的 tap-first 入口
-- 行動端與桌面端響應式分層與標籤契約（Responsive Content & Label Contract）必須維持：
-  - **無損響應式雙態標籤（Non-Destructive Dual-Span Pattern）**：當按鈕或操作文字在手機與桌機需要長短文案分流（例如 `Full Preview` vs `Preview`、`Download Document` vs `Download`）時，一律採用宣告式雙態標籤結構（`<span class="*-text-desktop">...</span><span class="*-text-mobile">...</span>`）並由 CSS Media Query 控制顯隱；嚴禁依賴運行時 resize 事件以 JS 暴力替換 innerHTML / textContent，以防抹除內部圖示（`<i>`）或觸發畫面抖動
-  - **行動端資訊架構階層化與漸進揭露（Progressive Disclosure for Mobile）**：手機端版面優先保證結構辨識度與空間精簡度，次要說明文案、冗長副標與裝飾性描述應採用語意化類別（如 `d-none d-md-block` 或 `skill-description` 控制）優雅降級或折疊收斂，禁止各元件各自引入 ad-hoc 的破壞性刪減
-  - **資料層與呈現層嚴格解耦（SSOT Preservation）**：無論桌面端或行動端呈現如何精簡，底層資料來源永遠維持單一真相來源（`skills.json`, `credentials.json`, `timeline.json`, source `.md`），不得為行動端維護第二份平行資料
-- 全站 i18n 字典選擇器作用域強隔離契約（Scoped Namespace Isolation Contract）必須維持：
-  - 共用或導覽列語系字典（如 `i18n/navbar.json`）中的所有選擇器必須嚴格以所屬容器為前綴（如 `.custom-nav ...`），嚴禁使用無父層作用域的裸標籤/屬性選擇器（如 `a[href$="..."]`），以防止跨元件污染覆蓋獨立頁面的卡片（`.hub-card`）或行動底部導覽（`#mobile-bottom-nav`）
-  - 行動底部導覽（`#mobile-bottom-nav`）的標籤多語切換必須僅針對其專屬子元素（如 `.mobile-bottom-nav-item span`）更新文字，不得整體覆蓋父層 `<a>` 標籤，確保各按鈕的 FontAwesome 圖示（`<i>`）永不退化
-- tag 的基本語意必須維持：
-  - `site:tags` 以逗號分隔
-  - 若 tag 已收斂到 ontology concept，對外顯示文案應優先依目前語系選對應 label；不強制統一英文
-  - `site:tag_concepts`（若存在）需與 `site:tags` 保持相同順序，作為 tag concept 的穩定對齊欄位
-  - tag 比對應優先走 ontology concept id；未命中 ontology 的 tag 才退回 trim + case-insensitive 的字串精準比對
-  - tag 內允許空白（例如 `system design`），URL 端以 encode 後的值為準
-  - 可點擊的 tag detail 入口預設收斂到 `tag/index.html`；可帶 `?concept=...&tag=...`，且需向後相容既有 `?tag=...`
-  - Search / section landing 的 tag filter UI 若仍保留 local filter 行為，應另外提供明確的 tag detail 入口，而不是讓規則分裂
-- `status` 的基本語意若啟用，必須維持：
-  - source metadata 欄位名為 `Status`
-  - 允許值先收斂為 `published` / `drafting`
-  - 預設值為 `published`（保持既有內容向後相容）
-  - `drafting` 不得被公開 index / listing 視為已發布內容
-- 日期 metadata 的基本語意若啟用，必須維持：
-  - source metadata 欄位名優先為 `Published` / `LastModified`
-  - 支援 `YYYY-MM-DD`（或 ISO8601 但需正規化成 `YYYY-MM-DD`）
-  - `Published` 缺席時不強制顯示
-  - `LastModified` 可允許退回 source 檔案的 last modified date，但不得依賴不穩定的 created/birthtime 當成唯一真相來源
+- **開工先對齊**：讀 `README.md` 的「專案術語（Terminology）」與「Repository Map」，依 `docs/README.md` 的「功能導覽」定位起始文件與實作範圍。接續工作時先讀 `HANDOFF.md`，再以使用者最新指令、`git status --short` 與 source 核對（快照過期以現況為準）。
+- **先查契約再改 source**：先讀對應子系統契約（見下表）與相鄰實作，改動保持聚焦，沿用現有元件、資料流與設計 token。
+- **文檔全域連貫**：更新任何文檔（`README.md`、`AGENTS.md`、`HANDOFF.md`、spec 等）時，嚴禁局部外掛拼貼（local attach）；修改後須通讀上下文，檢查邏輯自洽、無重複矛盾、過渡自然。
+- **交付前核對**：確認 diff 只含預期 source、必要生成物與受影響文檔；報告改了什麼、跑了哪些檢查、哪些未驗證。建立 PR 時標題與說明指出變更範圍與驗證結果。
+- **更新交接快照**：工作中斷、移交或進行中狀態有實質變化時更新 `HANDOFF.md`（完成且無續作時明寫「無」）。每項用短標題與「背景／現況／待解問題／下一步」（有外部阻礙才加「阻礙」），只留最新可核對事實，上限約 2,000 tokens 且 UTF-8 不超過 6 KiB（`tests/test_handoff.py` 守門）。
 
-## Garden 入口
+### ⚠️ Ask first（先問再做）
 
-- Garden 必須維持以下入口頁面可用（僅依賴 `window.SITE_SEARCH_INDEX`）：
-  - `pages/search.html`：搜尋 + multi-tag filter
-  - `portals/realms/garden/index.html`：Garden landing + Patch view（同頁）
-- `tag/index.html` 必須維持為 tag detail 的穩定入口；`portals/realms/garden/` 保留給探索視角，不要求再承擔 tag detail page
-- 若 search / section landing 支援 pinned writing，語意必須維持：只有符合 query/tag filter 的 writing 才能被置頂；pinned 只是排序 boost，不是繞過 filter 的白名單
+- 安裝新依賴、刪除資料、推送（push）或發布（deploy）前，先確認任務授權與影響範圍。
+- 不確定契約、或修正將跨越既有子系統邊界形成大範圍重構時，先整理已查到的事實、具體案例與最小可行方案，再請使用者決定。
 
-## 最小工具鏈
+### 🚫 Never（絕不做）
 
-- 核心工作流（新增/修改 note、更新索引）必須可用 Python（stdlib）完成，不引入後端/資料庫作為必要依賴
-- `search/search-index.js` 必須能在 `file://` 受限場景用 `<script>` 載入（或至少在本機簡易靜態伺服器下可工作）
-- Asset 分層：可跨頁共用的 CSS/JS/圖片放在 `assets/`；Garden 與 Portals 等子系統可保留自己的 build 產物與專用資源（例如 `portals/realms/garden/floral-assets/` 與 `portals/assets/`），避免為了集中而引入路徑/建置耦合
-- 若引入 `core/` 作為共用區，`core/` 不得存放生成物（例如 search index）或任何子系統 build output（避免把 core 變成大雜燴）
-- 生成物策略：少數生成物屬於部署必需品，必須進版控；其餘一律視為本機/CI 生成物，必須進 `.gitignore`
-  - `search/search-index.{json,js}` 必須進版控：它是全站搜尋/瀏覽的資料來源，靜態站必須能直接讀到
-  - `portals/realms/garden/floral-assets/` 與 `portals/assets/` 必須進版控：`portals/realms/garden/index.html` 與 `portals/index.html` 直接引用其 build 產物，不提交會導致 Garden 或 Portals 入口不可用（除非自己 build）
-  - `portals/realms/pensieve/data/characters.json` 必須進版控：Pensieve 執行期直接讀它；由 `cli.py build-pensieve` 從 `characters/` 與 `interactions/` 再現性編譯
-  - 目前白名單（必須 commit）：`search/search-index.json`、`search/search-index.js`、`portals/realms/garden/floral-assets/`、`portals/assets/`、`portals/realms/pensieve/data/characters.json`
-  - 其它生成物（必須 ignore）例：`portals/realms/garden/_floral_dist/`
+- 不在 repo 內提交任何 token、API key、憑證或包含敏感參數的連結（`secret.txt` 必須維持在 `.gitignore`）。
+- 不提交授權不清或無法長期維護的第三方整頁 dump / embed（特別是帶大量外部依賴的匯出 HTML / iframe）。
+- 不手改由生成器負責的 HTML、搜尋索引、`<!-- shell:navbar -->` / `<!-- shell:footer -->` 內容、靜態 i18n `<title>` 或編譯 bundle。
+- 不把 `TODO.md` 或 `REVIEW.md` 的未指派事項當作正在續做的工作。
+- 不在 `core/` 存放生成物（如 search index）或任何子系統 build output，也不因局部任務引入平行狀態或硬編碼色盤。
 
-## 文件一致性與導覽維護
+## 按需查詢：子系統契約分流
 
-- 文件責任：`README.md` 提供所有人共用的術語、Repository Map 與使用工作流；`docs/README.md` 按功能連到主要資料夾與起始文件；本文件只放 Agent 指引與不可退化約束；`HANDOFF.md` 只放當下停點；`TODO.md` 管未完成與長期待辦；`REVIEW.md` 管已完成待作者驗收的工作。不要把同一份逐檔 Doc Map 或 backlog 複製到多處。
-- 新增或調整作者語法、日常工作流、系統契約時，依 `docs/README.md` 的功能導覽找受影響文件，只更新實際受影響的 spec、guide、設計理由與守門清單；不可退化規則改變時同步更新本文件。不要因一般檔案新增就重寫導覽。
-- 當使用者要求更新項目文檔時，先讀 README 的 Repository Map 與 `docs/README.md` 的功能導覽，盤點受影響的功能、主要資料夾與文件；先處理契約和工作流，再補齊設計、技術與檢查文件。功能歸屬或起始文件改變才改功能導覽；資料夾責任改變才改 Repository Map。
-- 文檔修改必須具備全域視野：杜絕「板塊孤島拼貼」與突兀插入。每次新增段落時，必須主動檢視該段落與前後文、同級大綱乃至全篇閱讀流暢度的關係，並順手修潤前後過渡語句，確保整份文件的認知層次由淺入深、無邏輯斷層。
-- Mindset：除非必要，不要先通讀整個 repo。從功能導覽與相鄰實作縮小範圍；資訊不足再擴查，探索後回補受影響文件。
-- 技術債提醒：若發現架構開始過度耦合（big ball of mud / god object），主動提出可重現問題與切分子系統的具體方案。
+修改以下領域時，**必須先讀對應契約檔**（完整細則已分流至這些檔案，根目錄不重複抄寫）：
 
-## 任務追蹤
+| 工作領域／路徑 | 對應契約檔 |
+| --- | --- |
+| `notes/`、`writing/`、`canvas/`、`tools/create_content.py`、`tools/translate_content.py`、`search/indexer.py`（metadata、標籤、自訂語法、寫作鷹架、Markdown 格式） | `docs/rules/content-authoring-contracts.md` |
+| 首頁 `data/`（Timeline / Skills / Credentials）、`assets/css/`、`i18n/`、Theme / Palette / Reading Mode / Settings / Mobile IA / 響應式標籤 | `docs/rules/ui-and-data-contracts.md` |
+| `portals/`（Portals 樞紐、Digital Garden、Pensieve 2.5D 幾何／效能／角色資料） | `portals/AGENTS.md` |
+| 其他功能規格、設計理由與實作範圍 | `docs/README.md`（「功能導覽」） |
 
-- 討論確認的新任務必須記到 `TODO.md`（用 checkbox），並定期更新狀態；避免未落地的 brainstorming 被遺忘
-- workflow 更新：Agent 完成實作但尚待作者驗收時，將項目從 `TODO.md` 移至 `REVIEW.md`；頂層 `[ ]` 代表待審，項目內已完成步驟可保留 `[x]`
-  - 保留精簡的成果、驗證證據與 Review 重點
-  - 作者確認後移除；若有後續工作，另立 `TODO.md` task
-- `TODO.md` 的 task 盡量寫成可驗收的描述（包含影響範圍/入口頁、預期行為、驗收方式），避免留下「做了但不確定有沒有完成」的模糊項
+## 全站不可退化核心契約（Site-Wide Invariants）
 
-## 安全與授權
+- **單一真相來源與搜尋索引**：`search/indexer.py` 從 `notes/`、`writing/`、`canvas/` 再現性生成 `search/search-index.json` 與 `search/search-index.js`（定義 `window.SITE_SEARCH_INDEX`）。所有搜尋與瀏覽入口只讀索引，不維護第二份 tags/summary/related；允許內容放在巢狀子目錄（`notes/**/<slug>.html` 等），且 `search/search-index.js` 須能在 `file://` 場景載入。
+- **頁面 Shell 與載入順序守門**：
+  - `pages/_shared/` 是全站 shared chrome 的唯一來源（`tools/content_styles/_shared/` 只留內容生成流程專用 partial）。手寫頁面由 `cli.py build-pages` 組裝，帶 `data-i18n-page` 的靜態 `<title>` 從 `i18n/` bundle 的 `title.en` 生成（`tests/test_page_shell.py` 守門）。
+  - 首屏 Theme/Palette class 只由 `core/theme-preload.js` 掛上，於 `<head>` 第一個 stylesheet 前以 `<script src>` 載入，不得內嵌 inline 複本（`tests/test_page_shell.py` 守門）。
+  - 主站共用 runtime 由 `core/site/NN-*.js` 依編號以 classic `<script>` 載入，清單只維護於 `pages/_shared/runtime.html`；新增頂層宣告必須「先定義後執行」，不得依賴跨檔 hoisting（`tests/js/runtime_smoke.cjs` 與 `tests/test_page_shell.py` 守門）。
+- **探索入口與偏好狀態**：Labs 展示原型與可重用資源；Portals 負責 Garden / Pensieve 境域導覽；FAB 可直達 Portals / Labs。Toolkit 種類與用途只由 `data/Toolkit/toolkit.json` 維護，Ludwig 密語只切換 Grimoire 文案。語系／Theme／Palette 維持 client-side（`localStorage`）並向後相容舊值 alias。
+- **最小工具鏈與資產分層**：核心工作流（新增／修改內容、更新索引）可用 Python stdlib 完成，不引入後端或資料庫依賴。跨頁共用資源放 `assets/`；子系統自帶 build 產物不反向耦合 `core/`。
+- **生成物白名單策略**：僅部署必需品進版控，其餘一律 `.gitignore`（例：`portals/realms/garden/_floral_dist/`）。目前白名單（必須 commit）：
+  - `search/search-index.json`、`search/search-index.js`
+  - `portals/realms/garden/floral-assets/`、`portals/assets/`
+  - `portals/realms/pensieve/data/characters.json`
+- **參照既有範例**：首頁 source JSON 與渲染分工看 `data/Skills/skills.json` 與 `assets/js/about-skills.js`；頁面 shell 看 `pages/_shared/` 與 `tests/test_page_shell.py`；新增 API 或外部服務優先復用既有客戶端，不在 UI 複製請求邏輯。
 
-- 不在 repo 內提交任何 token、API key、憑證、或包含敏感參數的連結
-- 不提交授權不清或無法長期維護的第三方整頁 dump / embed（特別是帶大量外部依賴的匯出 HTML/iframe）
+## 工程紀律與任務追蹤
+
+- **把重複錯誤變成可執行約束**：遇同類回歸或反覆 review 意見時，先找根因與可重現案例；優先改資料流、API 或模組邊界並補自動化測試，只有無法可靠自動判定的原則才寫進 `AGENTS.md` 或對應契約檔。
+- **探索節奏與技術債**：除非必要，不先通讀整個 repo；從功能導覽與相鄰實作縮小範圍，探索後回補受影響文件。若發現架構過度耦合（big ball of mud / god object），主動提出可重現問題與切分方案。
+- **文件分工維護**：`README.md`（術語／地圖／工作流）、`docs/README.md`（功能導覽）、`AGENTS.md` 與分流契約檔（硬約束）、`HANDOFF.md`（停點）、`TODO.md`（待辦）、`REVIEW.md`（待驗收）。不把逐檔 Doc Map 或 backlog 複製到多處；功能歸屬改變才改功能導覽，目錄責任改變才改 Repository Map。
+- **任務追蹤流程**：討論確認的新任務以可驗收描述（影響範圍、預期行為、驗收方式）用 checkbox 記到 `TODO.md`；實作完成待作者驗收時移至 `REVIEW.md`（頂層 `[ ]` 待審、內部已完成步驟可保留 `[x]`，附精簡成果、驗證證據與 Review 重點）；作者確認後移除，後續工作另立 `TODO.md` task。
