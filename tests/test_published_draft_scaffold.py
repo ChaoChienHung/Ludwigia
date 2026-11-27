@@ -32,10 +32,18 @@ class PublishedDraftScaffoldTests(unittest.TestCase):
                     if lines[first_section].startswith("- FollowUps："):
                         first_section += 1
                     self.assertEqual(lines[first_section], "")
-                    sections = [line for line in lines[first_section + 1:] if line.startswith("- ")]
+                    outline = [line for line in lines[first_section + 1:] if line.strip()]
+                    for line in outline:
+                        item = re.match(r"^( *)(- |[1-9]\d*\. )", line)
+                        self.assertIsNotNone(item)
+                        if item is None:
+                            continue
+                        depth = len(item.group(1))
+                        self.assertEqual(depth % 4, 0)
+                    sections = [line for line in outline if re.match(r"^(?:- |[1-9]\d*\. )", line)]
                     self.assertGreaterEqual(len(sections), 2)
                     for before, after in zip(lines, lines[1:]):
-                        if after.startswith("- ") and re.match(r"^ {4,}[-*+0-9]", before):
+                        if re.match(r"^(?:- |[1-9]\d*\. )", after) and re.match(r"^ {4,}(?:- |[1-9]\d*\. )", before):
                             self.fail("Nested bullets need a blank line before the next section")
 
 
