@@ -19,19 +19,30 @@ LastModified: 2026-06-20
 - NarrativeArc：Start from the idea that what we see in a database is not just numbers but recorded events, then argue that the world is not purely random but driven by deeper mechanisms, and finally frame data science as the work of inferring real structure from snapshots, traces, and co-occurrences.
 - Scope：Data as snapshot, recorded facts, the hidden engine behind behavior, co-occurrence and causality, why data science is possible, reverse-engineering reality, and the philosophical basis for pattern discovery.
 
-- Opening | Columns as traces of events: Reframe a database record as evidence of something that happened in the world.
+- Opening｜Columns as traces of events：Reframe a database record as evidence of something that happened in the world.
+    - Opening：Turn a database row back into a trace of a real event.
     - Handoff: Why can a finite snapshot tell us anything beyond itself?
+    - Next：What can a recorded trace tell us about the event behind it?
 
-- Hidden structure | The world is not pure noise: Explain how repeated mechanisms leave patterns even when observation is partial.
+- Hidden structure｜The world is not pure noise：Explain how repeated mechanisms leave patterns even when observation is partial.
+    - BuildsOn：The snapshot image leads to the idea of repeated structure in observations.
     - Handoff: How do traces relate to the mechanisms that produced them?
+    - Next：Does a repeated pattern reveal the mechanism that made it?
 
-- Footprints and engine | Separate observation from cause: Use footprints as an analogy for the unseen process; mark the limits of inferring causes from co-occurrence.
+- Footprints and engine｜Separate observation from cause：Use footprints as an analogy for the unseen process; mark the limits of inferring causes from co-occurrence.
+    - BuildsOn：A visible pattern is a clue, not direct access to its cause.
     - Handoff: What does this make possible for data science?
+    - Evidence：The footprint-and-engine analogy separates an observed trace from the mechanism that produced it; it is an illustration, not causal proof.
+    - Next：How can we reason from traces toward a useful explanation?
 
-- Reverse engineering | Reconstruct a useful model of reality: Treat data science as testing explanations against snapshots rather than inventing structure from thin air.
+- Reverse engineering｜Reconstruct a useful model of reality：Treat data science as testing explanations against snapshots rather than inventing structure from thin air.
+    - BuildsOn：The footprint analogy calls for testing explanations against observations.
     - Handoff: What uncertainty remains when we return to the world?
+    - Next：What should remain uncertain after this reconstruction?
 
-- Closing | Keep the snapshot and world distinct: Return to the value and limits of noisy residual images.
+- Closing｜Keep the snapshot and world distinct：Return to the value and limits of noisy residual images.
+    - BuildsOn：Reverse engineering yields a useful model while preserving the gap to reality.
+    - Closing：Return to the value of a snapshot while keeping it distinct from the mechanism behind it.
 </draft>
 
 # The Essence of Data: A Snapshot of the World's Underlying Logic

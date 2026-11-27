@@ -5,9 +5,9 @@
 ## 待作者驗收
 
 - [ ] 2026-11-27 已發布文章的 `<draft>` 統一骨架
-    - 已完成：盤點 19 篇明確 `Status: published` 的 source，全部採用 `TLDR / NarrativeArc / Scope`、選填 `FollowUps`、空行後接文章專屬章節骨架；移除 `OutOfScope`，補齊短稿的逐節論點與交棒，保留既有長篇草稿素材，整理縮排子項與下一同級項目之間的空行。《結果偏誤》原先誤包在引子下的章節已提回同級。統一風格寫入 `docs/author/writing-notes.md`、相關契約與 workflow，`AGENTS.md` 加寫作前必讀規則，新增 published draft 結構守門。
-    - 驗證：`python3 -m unittest tests.test_published_draft_scaffold`、`python3 tools/create_content.py --self-test`、`python3 cli.py build-all --content-dir all`（115 篇）、`python3 cli.py test`（77 項）、tag 檢查與 `git diff --check` 通過。
-    - Review 重點：抽讀 19 篇 `<draft>` 的 TLDR、敘事弧線與章節交棒是否符合作者自己的寫作判斷；本次只改 author-only 草稿，正文未因這輪骨架同步改寫。
+    - 已完成：盤點 19 篇明確 `Status: published` 的 source，全部採用 `TLDR / NarrativeArc / Scope`、選填 `FollowUps`、空行後接文章專屬章節骨架；移除 `OutOfScope`，保留既有長篇素材。《結果偏誤》誤包在引子下的章節已提回同級。依作者最新要求，章節標題統一成 `- 段落角色｜核心主張：內容`，移除 `- 1.` 等重複編號，逐篇補有內容的 `開頭／承先／啟後／結尾` 與適用的 `證據`（英文稿用英文對應標記）；更新 `docs/author/writing-notes.md`、內容契約與結構守門。
+    - 驗證：19 篇已發布 source 均編譯至暫存輸出；逐檔比對確認 `<draft>` 外的內容未變，`python3 cli.py test`（77 項，包含 published draft 結構守門）與 `git diff --check` 通過。
+    - Review 重點：抽讀 19 篇 `<draft>` 的 TLDR、敘事弧線，以及承先／啟後是否符合作者自己的寫作判斷；這輪只改 author-only 草稿，正文與公開生成頁未改。
 
 - [ ] 2026-11-27 四篇推薦與排序內容（均為 `published`，本機可從站內入口閱讀）
     - 已完成：新增 `notes/dcgr-gmv-decision-chain/`、`notes/discriminative-scoring-to-autoregressive-recommendation/`、`writing/pairwise-vs-listwise-ranking/`，並重寫 `notes/from-cascade-to-generative-recommendation-paradigm-shift/`；重建內容 HTML 與搜尋索引。DCGR 再依作者確認的定位重寫為「前情提要 → 介紹 → 白話原理 → 自行分析的局限 → 對範式與未來的理解」；公開機制與實驗以 OneTrans-V2 為準，詳細多路召回、Offline RL 與偏置推導引用九老師文章，局限與展望明確標為待驗證推論，`<draft>` 同步重排。寫作方法同步到 `docs/author/writing-notes.md`，`AGENTS.md` 補寫作前閱讀規則。其餘三篇仍待逐篇修訂。

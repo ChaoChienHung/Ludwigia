@@ -40,8 +40,28 @@ class PublishedDraftScaffoldTests(unittest.TestCase):
                             continue
                         depth = len(item.group(1))
                         self.assertEqual(depth % 4, 0)
+                        self.assertNotRegex(line, r"^\s*- (?:-|\d+\.) ")
                     sections = [line for line in outline if re.match(r"^(?:- |[1-9]\d*\. )", line)]
                     self.assertGreaterEqual(len(sections), 2)
+                    appendix = bool(re.match(r"^- (?:References|參考文獻)｜", sections[-1]))
+                    narrative = sections[:-1] if appendix else sections
+                    for section_line in sections:
+                        self.assertRegex(section_line, r"^- (?!\d+\. ).+｜.+：.+")
+                    markers = []
+                    for line in lines[first_section + 1:]:
+                        if line.startswith("- "):
+                            markers.append([])
+                        elif markers and line.startswith("    - "):
+                            markers[-1].append(line[6:].split("：", 1)[0])
+                    opening, previous, next_step, closing = (
+                        ("Opening", "BuildsOn", "Next", "Closing")
+                        if path.name.endswith("-en.md")
+                        else ("開頭", "承先", "啟後", "結尾")
+                    )
+                    for index, section_line in enumerate(narrative):
+                        section_markers = markers[index]
+                        self.assertIn(opening if index == 0 else previous, section_markers)
+                        self.assertIn(closing if index == len(narrative) - 1 else next_step, section_markers)
                     for before, after in zip(lines, lines[1:]):
                         if re.match(r"^(?:- |[1-9]\d*\. )", after) and re.match(r"^ {4,}(?:- |[1-9]\d*\. )", before):
                             self.fail("Nested bullets need a blank line before the next section")

@@ -21,33 +21,48 @@ LastModified: 2026-08-02
 - Scope：The objective, geometric intuition, Lloyd algorithm, practical parameters, limitations, and nearby K-Means variants.
 - FollowUps：Compare center-based clusters with density-based and hierarchical clustering.
 
-- Core Summary & Problem Statement｜要點：Start with why center-based compactness offers a tractable description of a cluster.
+- Opening｜Why center-based compactness is useful：Establish a tractable grouping objective.
+    - Opening：Begin with a grouping problem where compact centers seem useful.
     - An intuition-first note on K-Means, from center-based compactness and centroids to Lloyd's algorithm, limitations, and practical use.
+    - Next：Why can a center summarize within-cluster distances?
 
-- 1. The Pairwise Problem and the Algebraic Miracle｜要點：Replace a costly pairwise view with a centroid identity and the SSE objective.
+- Pairwise distance｜A centroid identity simplifies the objective：Replace costly pair comparisons with SSE.
+    - BuildsOn：A compactness objective becomes tractable once pairwise distances are rewritten around a centroid.
     - The Mathematical Revelation: The Centroid Identity
     - Discovering the SSE
+    - Evidence：The centroid identity and SSE derivation support the move from pairwise distances to a center-based objective.
+    - Next：How is that centroid objective actually minimized?
 
-- 2. The Optimization Process: Global SSE and Lloyd's Algorithm
+- Optimization｜Lloyd’s algorithm alternates assignment and update：Explain how SSE is reduced.
+    - BuildsOn：The algebra identifies SSE; Lloyd’s alternating steps turn it into an algorithm.
     - Solving the Chicken-and-Egg Problem
+    - Next：What choices affect the algorithm before it converges?
 
-- 3. Implementation Details: Initialization and Choosing $K$
+- Implementation｜Initialization and K shape the outcome：Examine starting centers and cluster count.
+    - BuildsOn：Alternating updates depend on initialization and the chosen number of clusters.
     - The Centroid Initialization Problem
     - The $K$ Problem
+    - Next：What kinds of geometry does the objective favor or miss?
 
-- 4. Pros, Cons, and Geometric Assumptions｜要點：Relate speed and interpretability to the shapes K-Means can and cannot represent.
+- Geometry｜The objective favors compact clusters：Connect strengths and limits to its assumptions.
+    - BuildsOn：Those implementation choices do not change the shape assumptions built into SSE.
     - **Where K-Means Shines:**
     - K-Means is incredibly fast, running in $O(N)$ complexity per iteration, conceptually simple, and highly interpretable
+    - Next：Which related methods change those assumptions?
 
-- 5. The K-Means Family: Beyond the Vanilla Algorithm
-    - - **K-Medoids:** Another primary drawback of K-Means is its sensitivity to outliers
-    - - **X-Means:** As previously mentioned, standard K-Means is highly sensitive to the initial choice of $K$
+- Variants｜Change the center model when assumptions fail：Locate K-Medoids and X-Means.
+    - BuildsOn：The limits of the basic method motivate nearby center-based variants.
+    - **K-Medoids:** Another primary drawback of K-Means is its sensitivity to outliers
+    - **X-Means:** As previously mentioned, standard K-Means is highly sensitive to the initial choice of $K$
+    - Next：What single principle unites the method and its limits?
 
-- Summary｜要點：Return to SSE as the single objective that explains the method and its limitations.
+- Closing｜One objective explains both method and limits：Return to SSE and its geometry.
+    - BuildsOn：The family comparison returns us to the SSE objective and its assumptions.
     - That single objective function ($SSE$) explains the entire behavior of the algorithm
     - If your data fits that geometric assumption, K-Means is a lightning-fast, highly interpretable powerhouse
+    - Closing：Return to SSE as the objective behind both K-Means and its geometric limits.
 
-- References｜要點：Keep source material available for the objective, algorithm, and variants.
+- References｜Sources for the objective and variants：Keep verification material separate from the narrative.
 </draft>
 
 # K-Means: Clustering Around Centers

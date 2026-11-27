@@ -21,19 +21,30 @@ LastModified: 2026-08-18
 - Scope：Why clustering matters; what defines a cluster; the role of representation and similarity; why data quality and EDA matter; how clustering families reflect different ideas of structure; how these ideas prepare the reader for later algorithm-specific notes.
 - FollowUps：From Centers to Density: K-Means, DBSCAN, and the Geometry of Clusters; K-Means: Clustering Around Centers; DBSCAN: Dense Regions, Loose Boundaries, and Noise
 
-- Opening | Structure without labels: Give the reader a concrete reason to group unlabeled observations before naming an algorithm.
+- Opening｜Structure without labels：Give the reader a concrete reason to group unlabeled observations before naming an algorithm.
+    - Opening：Begin with observations that have no labels but may still contain groups.
     - Handoff: What must be true for a group to count as a cluster?
+    - Next：What makes two unlabeled observations belong together?
 
-- Cluster definition | Similarity depends on representation: Establish features, distance, and scale as choices that shape any apparent grouping.
+- Cluster definition｜Similarity depends on representation：Establish features, distance, and scale as choices that shape any apparent grouping.
+    - BuildsOn：Once grouping is the task, similarity must be defined through representation.
     - Handoff: Can a good method recover meaningful structure from poor data?
+    - Evidence：用同一批資料在不同特徵縮放下的距離變化，檢查「相似」並非資料自帶的屬性。
+    - Next：Can a similarity rule be trusted before inspecting the data?
 
-- Data quality | Inspect before fitting: Use cleaning and exploratory analysis to show how missing values, outliers, and measurement choices alter a cluster map.
+- Data quality｜Inspect before fitting：Use cleaning and exploratory analysis to show how missing values, outliers, and measurement choices alter a cluster map.
+    - BuildsOn：Distance is only meaningful when missing values, noise, and scale are handled.
     - Handoff: Once data is prepared, do all methods mean the same thing by structure?
+    - Next：Which shapes can different clustering methods actually find?
 
-- Structural hypotheses | Centers, density, and hierarchy: Compare the shape each family looks for; present these as different assumptions rather than a leaderboard.
+- Structural hypotheses｜Centers, density, and hierarchy：Compare the shape each family looks for; present these as different assumptions rather than a leaderboard.
+    - BuildsOn：Prepared data still leaves a modeling choice about what counts as a cluster.
     - Handoff: What should a reader carry into the method-specific notes?
+    - Next：How should we choose among these structural assumptions?
 
-- Closing | Choose the question before the algorithm: Return to representation, similarity, and the kind of structure the task needs.
+- Closing｜Choose the question before the algorithm：Return to representation, similarity, and the kind of structure the task needs.
+    - BuildsOn：The method families answer different questions, so return to the intended structure.
+    - Closing：Return to the question, representation, and cluster shape before naming an algorithm.
 </draft>
 
 # Discovering Hidden Structures: What Clustering Really Does

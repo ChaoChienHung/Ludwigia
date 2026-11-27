@@ -22,19 +22,24 @@ LastModified: 2026-08-10
 - Scope：Learning and memory as a conceptual model, the limits of recognition-based tests, and practical checks for understanding.
 - FollowUps：Explore first principles as information compression and transferable knowledge.
 
-- Introduction: The Illusion of Grades and the Comprehension Gap
+- Opening｜Grades can hide a gap in understanding：Establish the problem of familiarity without mastery.
+    - Opening：Open with the gap between a test score and independent understanding.
     - Learning Blind Spot: Mistaking high multiple-choice test scores for genuine knowledge mastery.
     - Shattering the Illusion: Discovering how fragile knowledge is when facing short-answer questions or explaining without cues.
     - Core Point: Highlighting the massive gap between test scores and cognitive mastery.
+    - Next：What would genuine understanding look like beyond a test score?
 
-- Deconstructing the Gears of Cognition: An Ideal Learning Journey (Four Stages)
-    - 1. Organizing and Structuring Logic: Categorizing information and establishing initial associations.
-    - 2. Accepting Abstract Settings: Temporarily memorizing raw rules to grasp the big picture.
-    - 3. Linear Reorganization: Ordering logic sequentially, where most people falsely believe they "understand."
-    - 4. Internalization and Low-Level Accumulation: Building strong connections with core knowledge to form long-term understanding.
+- Learning path｜Understanding requires a staged reconstruction：Map the four phases of learning.
+    - BuildsOn：The opening gap calls for a model of how understanding is built.
+    1. Organizing and Structuring Logic: Categorizing information and establishing initial associations.
+    2. Accepting Abstract Settings: Temporarily memorizing raw rules to grasp the big picture.
+    3. Linear Reorganization: Ordering logic sequentially, where most people falsely believe they "understand."
+    4. Internalization and Low-Level Accumulation: Building strong connections with core knowledge to form long-term understanding.
         - [Callout] The Role of Analogy and Association: Creating initial connections (lowering barriers) and serving as the starting point for uncovering core principles.
+    - Next：At which points can this learning process go wrong?
 
-- Two Cognitive Traps: How Do We Fall Into Blind Spots?
+- Cognitive traps｜Familiarity can conceal blind spots：Identify two points where learning goes astray.
+    - BuildsOn：The ideal learning path makes two common blind spots easier to locate.
     - Trap 1: Lack of Low-Level Connections Leaving an Unretrievable "Memory Fault" (Failing Stage 4).
         - Phenomenon: Understanding the logic without linking to past experience is like building a floating tower.
         - Case Study: Memorizing $D_{KL}(P||Q)$ formulas vs. analogizing it to a teacher-student relationship.
@@ -43,31 +48,43 @@ LastModified: 2026-08-10
         - Phenomenon: Forgetting that settings were temporary shortcuts and failing to dig into underlying mechanics.
         - Case Study: Memorizing "sear steak for one minute" vs. deconstructing the Maillard reaction and protein denaturation.
         - Conclusion: Stopping at surface settings leads to rigid knowledge and a loss of self-correction capabilities.
+    - Next：Why can someone recognize an answer without producing one?
 
-- Core Difference: Why Can You Solve Multiple-Choice Questions, But Fail at Short-Answer Ones?
+- Question formats｜Multiple choice and short answer test different abilities：Contrast recognition with production.
+    - BuildsOn：The two traps become visible in the gap between multiple-choice and short-answer tasks.
     - Essence of the Gap: Stopping at Stage 3 without crossing to Stage 4 causes memory pathways to fade under noise.
     - Multiple-Choice vs. Short-Answer:
         - Multiple Choice = Recognition & Verification (assembling fragmented clues and familiarity).
         - Short Answer = Reconstruction from Scratch (requires strict boundary conditions and a complete logical network).
+    - Next：What does this gap reveal about recognition and reconstruction?
 
-- Recognition Is Not Reconstruction (Recognition vs. Complete Recall)｜要點：Use recognizing versus drawing a rabbit to separate familiarity from independent explanation.
+- Core difference｜Recognition is not reconstruction：Use the rabbit example to calibrate the distinction.
+    - BuildsOn：Question formats expose a deeper difference between familiarity and independent recall.
     - Metaphor: Recognizing a rabbit (relying on external cues) vs. drawing a rabbit (reconstructing internal structure from scratch).
     - Myth: The fluidity of multiple-choice tests leads to overestimating the ability to "draw the rabbit."
+    - Evidence：Recognizing a rabbit versus drawing one from scratch illustrates recognition versus reconstruction.
+    - Next：How can learning move from familiarity to a rebuildable model?
 
-- The Ultimate Solution to Both Traps: First Principles
+- First principles｜Rebuild from underlying structure：Address the two earlier traps.
+    - BuildsOn：The recognition contrast motivates first-principles reconstruction.
     - Unifying Blind Spots: Surface issues stem from stepping away from fundamental axioms.
     - Resolving Trap 2: Deconstructing to indisputable core mechanics builds flexibility for cross-domain application.
     - Resolving Trap 1: Core mechanics are often grounded in familiar common sense, creating the strongest memory hooks.
     - [Callout] Three Systemic Advantages of First Principles (Convergence & Compression, Optimized Retrieval, Transferability) and Transition Link.
+    - Next：How can a learner test whether that reconstruction worked?
 
-- Practical Tools: The Ultimate Blank-Page Challenge
+- Blank-page test｜Check understanding without cues：Turn the method into a practical exercise.
+    - BuildsOn：The proposed method needs a practical check without answer cues.
     - Feynman Technique: Explaining in plain language to an outsider, stripping away jargon, returning to first principles, and anchoring knowledge.
     - Rubber Duck Debugging: Explaining logic aloud in detail, depriving the brain of auto-completing familiarity, and pinpointing knowledge islands.
+    - Next：What should the blank-page test change about future study?
 
-- Conclusion and Further Reading｜要點：Return to reconstruction and transfer as stronger evidence of understanding.
+- Closing｜Aim for transferable understanding：Return to the score-versus-mastery gap.
+    - BuildsOn：A practical test returns the article to transferable understanding rather than score alone.
     - Main Conclusion: Recognition is only the start; learning is about building a 3D transferable knowledge network, not resting on the illusion of familiarity.
     - Extension A: Exploring First Principles and Information Compression.
     - Extension B: Exploring the Hidden Value of Multiple-Choice Questions.
+    - Closing：Return to independent reconstruction and transfer as evidence of understanding.
 </draft>
 
 # Illusion of Knowledge: The Distance Between "Understanding" and "Genuine Mastery"

@@ -20,22 +20,35 @@ Status: published
 - Scope：A conceptual and practical map of data mining, data quality, preprocessing, method families, and interpreting results; individual algorithms belong in follow-up notes.
 - FollowUps：Read the dedicated notes on preprocessing, clustering, and other method families.
 
-- Opening | Receipts are not yet understanding: Use raw records to ask how observations become patterns that can support a decision.
+- Opening｜Receipts are not yet understanding：Use raw records to ask how observations become patterns that can support a decision.
+    - Opening：Begin with raw receipts and ask what would make them actionable.
     - Handoff: Why is querying known records different from discovering something new?
+    - Next：What makes a record more than a stored fact?
 
-- Definition | Retrieval versus mining: Distinguish deterministic lookup from extracting generalizable structure; place information, knowledge, and wisdom on the same progression.
+- Definition｜Retrieval versus mining：Distinguish deterministic lookup from extracting generalizable structure; place information, knowledge, and wisdom on the same progression.
+    - BuildsOn：A record becomes useful only when we ask for a pattern rather than retrieve a known value.
     - Handoff: What steps turn a question and a dataset into an insight?
+    - Next：Once the task is mining, what steps turn a pattern into a decision?
 
-- Pipeline | From question to action: Follow collection, preparation, pattern finding, evaluation, and interpretation, then ask whether the result changes a real decision.
+- Pipeline｜From question to action：Follow collection, preparation, pattern finding, evaluation, and interpretation, then ask whether the result changes a real decision.
+    - BuildsOn：The distinction between lookup and discovery leads to a full question-to-action pipeline.
     - Handoff: What can go wrong before an algorithm even starts?
+    - Evidence：The question-to-action sequence in the body distinguishes collected records, prepared features, candidate patterns, evaluation, and interpretation.
+    - Next：What must be checked before trusting the patterns this pipeline finds?
 
-- Data foundations | Quality, representation, and preparation: Inspect attributes, structures, noise, missing values, outliers, and EDA before choosing a method.
+- Data foundations｜Quality, representation, and preparation：Inspect attributes, structures, noise, missing values, outliers, and EDA before choosing a method.
+    - BuildsOn：The pipeline depends on how observations are represented and prepared.
     - Handoff: Which method family matches the kind of question and labels available?
+    - Next：With usable data, which methods answer which kinds of questions?
 
-- Methods | Choose a family by task: Locate supervised, unsupervised, and other methods in the map without turning this introduction into an algorithm manual.
+- Methods｜Choose a family by task：Locate supervised, unsupervised, and other methods in the map without turning this introduction into an algorithm manual.
+    - BuildsOn：Data quality is a foundation; the task now determines the method family.
     - Handoff: What should the reader retain after the method names fade?
+    - Next：How do we decide whether the discovered pattern is useful?
 
-- Closing | A useful pattern must survive interpretation: Return to trustworthy data, a clear question, and actionable knowledge; send detailed methods to dedicated notes.
+- Closing｜A useful pattern must survive interpretation：Return to trustworthy data, a clear question, and actionable knowledge; send detailed methods to dedicated notes.
+    - BuildsOn：The method map matters only when its output can be evaluated and interpreted.
+    - Closing：Return to the original receipts: a pattern matters when it answers a clear question and can be interpreted.
 </draft>
 
 

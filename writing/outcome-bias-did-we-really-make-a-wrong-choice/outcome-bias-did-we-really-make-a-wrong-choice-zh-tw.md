@@ -19,14 +19,17 @@ LastModified: 2026-08-02
 - NarrativeArc：先用事後懊悔的情境辨認結果偏誤，再說明不完全資訊下決策與結果的分離，最後用預測、接受小機率遺憾和長期檢驗回應自責。
 - Scope：結果偏誤、有限資訊下的決策評估，以及個人如何以機率與過程改善判斷。
 
-- 引子｜要點：讓一次盡力卻失敗的選擇成為讀者的情緒起點。
+- 引子｜一次盡力卻失敗的選擇：用事後懊悔引出決策品質的問題。
+    - 開頭：從盡力選擇卻得到壞結果的懊悔，引出決策品質的問題。
     - 你有過這種經驗嗎？
         - 在某個人生的叉路中猶豫，即使做了人生無數次的模擬與沙盤推演，甚至預想到了所有可能的突發狀況，最終選擇了一條你認為最穩妥、成功率最高的路徑，但結果卻不如預期。
         - 於是你開始後悔，並質疑起自己的決定，認為當初的選擇就是個錯誤的決定，並為此後悔不已，然後用往後的餘生不斷地問自己「當初為什麼會這樣選？」。
         - 如果你曾經有過這樣的經驗，那我希望可以透過這篇文章跟你分享我的看法，或許，你並沒有做錯也說不定？
         - 事實上，你並非真的「看錯了」或「選錯了」，而是陷入了「結果偏誤（Outcome Bias）」。
+    - 啟後：壞結果能否證明當初的選擇是錯的？
 
-- 結果偏誤｜要點：界定以結果倒推決策品質的錯誤，並說明其成因與風險。
+- 結果偏誤｜別用結果倒推決策品質：界定偏誤的成因與風險。
+    - 承先：開頭的懊悔需要先用結果偏誤加以界定。
     - 定義：
         - 以成敗論英雄的陷阱：結果偏誤是一種常見的認知偏誤（Cognitive Bias）。當我們「只根據最終結果」來倒推並評斷「當初決策的好壞」時，就陷入了這種偏誤。
         - The outcome bias is a cognitive bias that occurs when the quality of a decision is determined only once the outcome is known. But failing to invest the necessary time in understanding how results were achieved can lead to making low-quality decisions in the future, regardless of former outcomes.
@@ -44,18 +47,25 @@ LastModified: 2026-08-02
         - 忽視決策過程與資訊落差：如果單純以結果來評斷過去的決策，而完全忽略了決策者在採取行動當下所擁有（或缺乏）的資訊。如果不去深究結果是「如何」達成的，只看最終成敗，會導致我們盲目複製「純屬僥倖（狗屎運）」的壞決策，進而導致未來更有機會失敗。同理，好的決策過程也可能因為一次壞結果而被抑制。
         - 要求為「不可控因素」負責：現實中，任何重大決策的結果都會受到「外部因素」與「機率（運氣）」的強烈影響，沒有人能確切預知一個經過計算的風險最終會如何發展。當判斷被蒙蔽時，我們等於是在要求決策者為那些根本不在他們控制範圍內的變數負責。
         - Judging a past decision by its outcome instead of the quality of the decision-making process doesn’t take into account the information (or lack thereof) that the decision maker had at the time they took action. This is faulty reasoning because outcomes of any consequential decision are influenced by external factors and some level of chance. When your judgments are clouded by outcome bias, you make the mistake of holding decision-makers responsible for elements of a situation that were beyond their control.
+    - 啟後：結果偏誤與「早知道會這樣」有何差別？
 
-- 比較：結果偏誤 vs 後見之明偏誤
+- 概念比較｜結果偏誤與後見之明偏誤：區分評價扭曲與記憶扭曲。
+    - 承先：定義偏誤後，再區分決策評價與記憶扭曲。
     - The outcome bias is often confused with the hindsight bias, which is similar, but not the same.
     - 後見之明偏誤（Hindsight Bias）：扭曲的是「記憶」。The hindsight bias describes a distorted memory favoring the desired outcome, with someone claiming they knew what the outcome would be throughout the entire process.（事後諸葛，覺得早就知道會這樣）。
     - 結果偏誤（Outcome Bias）：扭曲的是「決策評價」。While the outcome bias ignores the process entirely.（不一定改寫記憶，而是單純用結果來替過去的決策打分數）。
+    - 啟後：除了開頭故事，這種錯誤還會在哪裡出現？
 
-- 結果偏誤常見的例子｜要點：把醫療、商業與日常情境作為檢查直覺的素材。
+- 情境檢驗｜偏誤在醫療、商業與日常決策中出現：用例子測試定義。
+    - 承先：概念差異可以用不同現實決策加以檢驗。
     - The outcome bias is especially problematic in healthcare, where it can lead to a decrease in patient safety. For instance, if a doctor prescribes a drug that has been shown to be effective in most cases, but a patient has a negative reaction to the drug, doctors may be discouraged from prescribing the drug in the future.
     - In business, the outcome bias can lead to a decrease in innovation. For example, if a company has a successful product launch, other companies may be discouraged from developing similar products.
     - 日常生活中也是如此。For example, if we have a bad experience with a certain type of food, we may be discouraged from trying it again, even if it is a perfectly good food.
+    - 證據：醫療、商業與日常案例用來檢驗同一偏誤；須核對來源後再作事實敘述。
+    - 啟後：既然結果會誤導，我們該如何評估決策？
 
-- 決策的本質與解決之道｜要點：從不完全資訊、事前預測、接受遺憾到長期檢驗，提出評估決策的方法。
+- 評估方法｜回到當時資訊與機率：用預測、接受遺憾與長期檢驗改善判斷。
+    - 承先：例子要求把標準拉回當時可得資訊與機率。
     - 認清世界是不完全資訊賽局：現實世界更像德州撲克而非圍棋。在缺乏全局資訊的情況下，未來充滿無數可能。只有結果發生的那一刻，不確定性才收束成確切資訊。
     - 第一步：用「預測」量化未知：預測的本質從來不是保證未來，而是根據現有線索與歷史數據（如考古題）推估機率，對未來的不確定性進行量化（如 90% 會考）。以此做出的高勝率選擇，就是期望值最高的「局部最優解」。
     - 第二步：接受 10% 的遺憾（世界線思維）：
@@ -68,13 +78,16 @@ LastModified: 2026-08-02
     - 第四步：用「長期主義」親自走遍所有世界線：
         - 利用數據擴充知識庫：使用數據來做出決策，而不是基於個人的觀感。積攢更廣闊的知識庫，才能讓局部的最優解勝率不斷提高。
         - 大數法則：單次決策摻雜極大運氣。但長期重複執行高勝率決策，運氣的影響會被彌平（等於你親自走遍了那 100 條世界線）。長期的總體成就必定無限趨近於高期望值。
+    - 啟後：這套標準如何回應開頭那個自責的人？
 
-- 結論｜要點：回到引子的懊悔，強調追求合理過程而非保證每次都贏。
+- 結論｜合理過程不保證每次都贏：回到開頭的選擇與自責。
+    - 承先：評估方法最後要回到最初的遺憾。
     - 因此，若回到文章開端的那個問題，倘若你也有經歷過類似的情境，我想說的是，或許你已經盡力了，也做出當下最好的判斷了，只是沒想到結果不如預期。這沒關係，人生本是如此難以預料，才有如此多的驚喜與意外。
     - 成熟的決策者追求的從來不是「每次都贏」，而是「每次都在當下做出最合理的選擇」。
     - 我們能做的，只有不斷地去精進自己做決策的能力與維持好的決策習慣，盡自己所能的人事，至於結果，真的就只能聽天由命了。放過那個已經盡了全力的自己，帶著優化過後的思維，勇敢邁向下一次選擇。
+    - 結尾：回到開頭的懊悔：單次結果不能代替當時資訊與長期過程。
 
-- References｜要點：保留參考素材供事實與例子核對。
+- References｜保留核對材料：集中列出參考來源。
     1. [Vocus: 想減少失敗?你必須知道的偏誤—結果偏誤【心理學知識分享#3】](https://vocus.cc/article/64618bc2fd89780001db9df0)
     2. [Develop Good Habits: 6 Outcome Bias Examples That Can Negatively Impact Your Decisions](https://www.developgoodhabits.com/outcome-bias/)
 </draft>

@@ -62,7 +62,7 @@
   - 在 `Copy Markdown` / `Download Markdown` 導出時降級為 `## Key Takeaways` 標題加清單，確保重點整理在純文字導出中保留。
 - **`<draft>`（作者規劃欄位與起稿骨架）**：
   - `TLDR` / `NarrativeArc` / `Scope`（必填）、`FollowUps`（選填）與文章專屬的章節骨架屬 author-only planning scaffolding，統一放 `<draft>...</draft>`，不混進公開 `<meta>`。
-  - 三個必填欄位後空一行，接文章專屬的「段落角色｜核心主張：內容」章節骨架。骨架每個節點用標準 Markdown `-` 或 `1.`、`2.` 等有序清單，同一組並列項目寫法一致；需要時用四格縮排清單子項記例子、證據與交棒。子項區塊結束後，與下一個同級章節之間空一行。完整風格見 `docs/author/writing-notes.md`。
+  - 三個必填欄位後空一行，章節骨架統一寫成 `- 段落角色｜核心主張：內容`；不在 `-` 後重複編號，也不用 `段落角色：...` 混合角色與主張。子項以四格縮排清單記 `開頭／承先／證據／啟後／結尾` 等寫作功能，英文內容用對應英文標記；證據只在有具體材料時列。子項區塊結束後，與下一個同級章節之間空一行。完整風格見 `docs/author/writing-notes.md`。
   - `tools/create_content.py`、markdown extractor、search/indexer 預設皆忽略 `<draft>`；不得當成公開 `<head>` metadata 或 search index 欄位，也不要求作者另外維護第二份對外摘要。
 - **前段可見導讀 block**：
   - 若文章前段需要可見導讀 block，優先收斂成「這篇最重要的主題 / main flow / scope」，寫成一般 `block` / `callout`（語意偏 `TL;DR` / `Focus` / `Article Compass`），不預設另開專門的 `Guiding Questions` 特殊 block。
